@@ -1,10 +1,4 @@
-import {
-  intParser,
-  floatParser,
-  boolParser,
-  stringParser,
-  jsonParser,
-} from "@ledgerhq/live-env";
+import { intParser, floatParser, boolParser, stringParser, jsonParser } from "@ledgerhq/live-env";
 
 // Firmware 1.9.1 leaves an OS update available, so the firmware-update flow can be exercised.
 const DEFAULT_MOCK_SERVER_SESSION = {
@@ -99,28 +93,6 @@ const teamLiveDevices = {
     def: "",
     parser: stringParser,
     desc: "Device model id for speculos",
-  },
-  SPECULOS_FIRMWARE_VERSION: {
-    def: "",
-    parser: stringParser,
-    desc: "Firmware version for speculos",
-  },
-  SPECULOS_PID_OFFSET: {
-    def: 0,
-    parser: intParser,
-    desc: "offset to be added to the speculos pid and avoid collision with other instances",
-  },
-  /**
-   * It's just here as a backup, the REST API is supposed to be the right mode
-   * We can always fallback on the previous method if we need to.
-   * The websocket option is harmless, we can remove it at some point but let's
-   * keep it for a while just in case.
-   * Introduced on June 27th 2023 by https://github.com/LedgerHQ/ledger-live/pull/3824
-   */
-  SPECULOS_USE_WEBSOCKET: {
-    def: false,
-    parser: boolParser,
-    desc: "Use speculos websocket interface instead of Rest API",
   },
   EXPERIMENTAL_BLE: {
     def: false,

@@ -1,5 +1,5 @@
 import React from "react";
-import { QrCodeScanner } from "@ledgerhq/lumen-ui-react/symbols";
+import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { VerifyAddressDialog } from "./VerifyAddressDialog.web";
 import type { VerifyAddressIntroViewProps } from "../../types";
 
@@ -16,7 +16,7 @@ export function VerifyAddressIntroView({
       isOpen={isOpen}
       onClose={onClose}
       contentTestId="pay-card-verify-address-intro"
-      icon={QrCodeScanner}
+      icon={LedgerLogo}
       title={title}
       description={description}
       ctaLabel={verifyCta}

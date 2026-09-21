@@ -1,6 +1,8 @@
 services:
   babylond:
-    platform: linux/amd64
+    # No `platform:` pin — babylond ships native amd64 and arm64 builds, so each
+    # host runs its own (see babylond.Dockerfile). Pinning linux/amd64 forced
+    # emulation, which SIGILLs on arm64 (container exit 132).
     image: coin-tester-babylond:latest
     build:
       context: .

@@ -5,8 +5,6 @@ import {
   TokenAccount,
   getParentAccountName,
 } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import type { Application } from "tests/page";
 import {
   addEmptyAccountCommand,
@@ -17,7 +15,6 @@ import { buildTags } from "tests/utils/tagsUtils";
 type ReceiveTestCase = {
   account: Account;
   xrayTicket: string;
-  teamOwner?: Team;
 };
 
 const nativeAccounts: ReceiveTestCase[] = [
@@ -26,10 +23,10 @@ const nativeAccounts: ReceiveTestCase[] = [
   { account: Account.SOL_1, xrayTicket: "B2CQA-2563, B2CQA-2689" },
   { account: Account.TRX_1, xrayTicket: "B2CQA-2565, B2CQA-2690, B2CQA-2699" },
   { account: Account.DOT_1, xrayTicket: "B2CQA-2562, B2CQA-2691" },
-  { account: Account.XRP_1, xrayTicket: "B2CQA-2566, B2CQA-2692", teamOwner: Team.BST },
+  { account: Account.XRP_1, xrayTicket: "B2CQA-2566, B2CQA-2692" },
   { account: Account.BCH_1, xrayTicket: "B2CQA-2558, B2CQA-2693" },
   { account: Account.ATOM_1, xrayTicket: "B2CQA-2560, B2CQA-2694" },
-  { account: Account.XTZ_1, xrayTicket: "B2CQA-2564, B2CQA-2695", teamOwner: Team.BST },
+  { account: Account.XTZ_1, xrayTicket: "B2CQA-2564, B2CQA-2695" },
   { account: Account.BSC_1, xrayTicket: "B2CQA-2686, B2CQA-2696, B2CQA-2698" },
 ];
 
@@ -54,7 +51,7 @@ async function verifySendCurrencyTokensWarning(app: Application, account: Accoun
 for (const receive of nativeAccounts) {
   test.describe("Receive", () => {
     test.use({
-      teamOwner: receive.teamOwner ?? Team.COIN_INTEGRATION,
+      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: receive.account.currency.speculosApp,
       cliCommands: [liveDataCommand(receive.account)],
@@ -73,7 +70,6 @@ for (const receive of nativeAccounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(receive.account.accountName);
         await app.account.expectAccountVisibility(receive.account.accountName);
@@ -108,8 +104,6 @@ test.describe("Receive", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);
       await app.account.expectAccountVisibility(account.accountName);
@@ -137,8 +131,6 @@ test.describe("Receive", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(getParentAccountName(tokenAccount.account));
       await app.account.expectAccountVisibility(getParentAccountName(tokenAccount.account));

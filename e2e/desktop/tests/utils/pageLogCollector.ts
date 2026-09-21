@@ -1,4 +1,5 @@
 import { ElectronApplication, Page, ConsoleMessage, Request, Response } from "@playwright/test";
+import { extractSwapInitError } from "@ledgerhq/live-e2e-shared/swapInitError";
 
 interface ConsoleLog {
   timestamp: string;
@@ -110,15 +111,6 @@ export class PageLogCollector {
   // in `consoleLogs` so getSwapInitError() can match on any level (QAA-1433).
   private static readonly CONSOLE_KEEP_LEVELS = new Set(["warning", "error"]);
 
-  // Swap-init failure signatures (QAA-1326): used to surface the root cause when swap-init stalls.
-  private static readonly SWAP_INIT_ERROR_SIGNATURES = [
-    "custom.exchange.swap",
-    "CompleteExchangeError",
-    "PayloadStepError",
-    "FeeNotLoaded",
-    "SWAP_NOT_CREATED_ERROR",
-  ];
-
   private readonly onConsole = (msg: ConsoleMessage) => {
     this.consoleLogs.push({
       timestamp: new Date().toISOString(),
@@ -224,75 +216,11 @@ export class PageLogCollector {
   }
 
   /**
-   * Extract the swap-init failure (custom.exchange.swap request/response) from the captured
-   * webview console, formatted for readability: `%c` console styling stripped, the embedded
-   * JSON payload pretty-printed, and the noisy minified renderer stacks dropped. Null when none.
+   * Extract the swap-init failure from the captured webview console. Shared with mobile, which
+   * mines the same signatures out of its own bridge logs — see `swapInitError.ts`.
    */
   getSwapInitError(): string | null {
-    const matches = this.consoleLogs.filter(entry =>
-      PageLogCollector.SWAP_INIT_ERROR_SIGNATURES.some(sig => entry.text.includes(sig)),
-    );
-    if (matches.length === 0) return null;
-
-    const step = PageLogCollector.deriveSwapInitStep(matches);
-    const body = matches.map(entry => PageLogCollector.formatSwapInitEntry(entry)).join("\n\n");
-    return step ? `Step: ${step}\n\n${body}` : body;
-  }
-
-  private static deriveSwapInitStep(matches: ConsoleLog[]): string | null {
-    const text = matches.map(entry => entry.text).join(" ");
-    if (text.includes("PayloadStepError") || text.includes("swap002")) {
-      return "PAYLOAD (Backend Swap Payload Retrieval)";
-    }
-    if (text.includes("CompleteExchangeError")) {
-      const deviceStep = /"step"\s*:\s*"([^"]+)"/.exec(text)?.[1] ?? "INIT";
-      return `device Exchange app (${deviceStep})`;
-    }
-    return null;
-  }
-
-  private static formatSwapInitEntry(entry: ConsoleLog): string {
-    const header = `[${entry.timestamp}] [${entry.level.toUpperCase()}]`;
-    const jsonStart = entry.text.indexOf("{");
-    if (jsonStart === -1) {
-      return `${header} ${PageLogCollector.stripConsoleStyling(entry.text)}`;
-    }
-
-    const label = PageLogCollector.stripConsoleStyling(entry.text.slice(0, jsonStart));
-    const rawJson = entry.text.slice(jsonStart);
-    try {
-      const pretty = JSON.stringify(PageLogCollector.dropStacks(JSON.parse(rawJson)), null, 2);
-      return `${header} ${label}\n${pretty}`;
-    } catch {
-      // Not valid JSON (e.g. a plain log line) — keep the cleaned text as-is.
-      return `${header} ${label} ${rawJson}`;
-    }
-  }
-
-  /** Remove `%c` console format tokens and their CSS style arguments, keeping the label text. */
-  private static stripConsoleStyling(text: string): string {
-    return text
-      .replaceAll("%c", "")
-      .replace(/background:[^;]*;?/gi, "")
-      .replace(/color:\s*#[0-9a-f]{3,8};?/gi, "")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  /** Recursively drop `stack` properties — the minified renderer stacks are noise for triage. */
-  private static dropStacks(value: unknown): unknown {
-    if (Array.isArray(value)) {
-      return value.map(item => PageLogCollector.dropStacks(item));
-    }
-    if (value !== null && typeof value === "object") {
-      const result: Record<string, unknown> = {};
-      for (const [key, val] of Object.entries(value)) {
-        if (key === "stack") continue;
-        result[key] = PageLogCollector.dropStacks(val);
-      }
-      return result;
-    }
-    return value;
+    return extractSwapInitError(this.consoleLogs);
   }
 
   getFormattedNetworkLogs(): string {

@@ -4,8 +4,6 @@ import { randomInt, randomUUID } from "node:crypto";
 import { log } from "@ledgerhq/logs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
-import SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
-import { getEnv } from "@shared/env";
 import { delay } from "@ledgerhq/live-promise";
 
 export type SpeculosDevice = {
@@ -15,28 +13,17 @@ export type SpeculosDevice = {
   ports: Awaited<ReturnType<typeof getPorts>>;
 };
 
-export type SpeculosTransport = DeviceManagementKitTransportSpeculos | SpeculosTransportWebsocket;
+export type SpeculosTransport = DeviceManagementKitTransportSpeculos;
 
 export { DeviceModelId };
 
-export type SpeculosDeviceInternal =
-  | {
-      process: ChildProcessWithoutNullStreams;
-      apduPort: number;
-      buttonPort: number;
-      automationPort: number;
-      transport: SpeculosTransportWebsocket;
-      destroy: () => Promise<unknown>;
-    }
-  | {
-      process: ChildProcessWithoutNullStreams;
-      apiPort: string | undefined;
-      transport: DeviceManagementKitTransportSpeculos;
-      destroy: () => Promise<unknown>;
-    };
+export type SpeculosDeviceInternal = {
+  process: ChildProcessWithoutNullStreams;
+  apiPort: string;
+  transport: SpeculosTransport;
+  destroy: () => Promise<unknown>;
+};
 
-// FIXME we need to figure out a better system, using a filesystem file?
-const isSpeculosWebsocket = getEnv("SPECULOS_USE_WEBSOCKET");
 const data: Record<string, SpeculosDeviceInternal | undefined> = {};
 
 export function getMemorySpeculosDeviceInternal(id: string): SpeculosDeviceInternal | undefined {
@@ -155,7 +142,7 @@ async function getRandomAvailablePort(exclude: number[] = []): Promise<number> {
   throw new Error(`Failed to find an available port after ${MAX_PORT_RETRIES} attempts`);
 }
 
-const getPorts = async (isSpeculosWebsocket?: boolean, wantedApiPort?: number) => {
+const getPorts = async (wantedApiPort?: number) => {
   const usedPorts: number[] = [];
   const getPort = async () => {
     const port = await getRandomAvailablePort(usedPorts);
@@ -163,22 +150,13 @@ const getPorts = async (isSpeculosWebsocket?: boolean, wantedApiPort?: number) =
     return port;
   };
 
-  if (isSpeculosWebsocket) {
-    const apduPort = await getPort();
-    const vncPort = await getPort();
-    const buttonPort = await getPort();
-    const automationPort = await getPort();
-
-    return { apduPort, vncPort, buttonPort, automationPort };
-  } else {
-    const apiPort = wantedApiPort ?? (await getPort());
-    if (wantedApiPort) {
-      usedPorts.push(wantedApiPort);
-    }
-    const vncPort = await getPort();
-
-    return { apiPort, vncPort };
+  const apiPort = wantedApiPort ?? (await getPort());
+  if (wantedApiPort) {
+    usedPorts.push(wantedApiPort);
   }
+  const vncPort = await getPort();
+
+  return { apiPort, vncPort };
 };
 
 export function conventionalAppSubpath(
@@ -207,6 +185,11 @@ export type DeviceParams = {
   coinapps: string;
   // if you want to force a specific app path
   overridesAppPath?: string;
+  /**
+   * Runs Speculos against the production PKI (`-p`), which the e2e suites need.
+   * Both providers honour it: local Docker and remote Speculinho.
+   */
+  pki?: boolean;
   onSpeculosDeviceCreated?: (device: SpeculosDevice) => Promise<void>;
 };
 
@@ -228,9 +211,10 @@ export async function createSpeculosDevice(
     coinapps,
     dependency,
     dependencies,
+    pki,
   } = arg;
   const speculosID = `speculosID-${randomUUID()}`;
-  const ports = await getPorts(isSpeculosWebsocket, wantedApiPort);
+  const ports = await getPorts(wantedApiPort);
 
   const sdk = inferSDK(firmware, model);
 
@@ -240,18 +224,6 @@ export async function createSpeculosDevice(
   const getPortMappings = (): string[] => {
     if (process.env.CI) {
       return [];
-    }
-    if (isSpeculosWebsocket) {
-      return [
-        "-p",
-        `${ports.apduPort}:40000`,
-        "-p",
-        `${ports.vncPort}:41000`,
-        "-p",
-        `${ports.buttonPort}:42000`,
-        "-p",
-        `${ports.automationPort}:43000`,
-      ];
     }
     return ["-p", `${ports.apiPort}:40000`, "-p", `${ports.vncPort}:41000`];
   };
@@ -285,18 +257,10 @@ export async function createSpeculosDevice(
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",
     "headless",
-    ...(getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX") ? ["-p"] : []),
+    ...(pki ? ["-p"] : []),
     ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", `${ports.vncPort}`] : []),
-    ...(isSpeculosWebsocket
-      ? [
-          "--apdu-port",
-          process.env.CI ? `${ports.apduPort}` : "40000",
-          "--button-port",
-          process.env.CI ? `${ports.buttonPort}` : "42000",
-          "--automation-port",
-          process.env.CI ? `${ports.automationPort}` : "43000",
-        ]
-      : ["--api-port", process.env.CI ? `${ports.apiPort}` : "40000"]),
+    "--api-port",
+    process.env.CI ? `${ports.apiPort}` : "40000",
   ];
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
@@ -402,34 +366,16 @@ export async function createSpeculosDevice(
     return createSpeculosDevice(arg, maxRetry - 1, wantedApiPort);
   }
 
-  let transport: SpeculosTransport;
-  if (isSpeculosWebsocket) {
-    transport = await SpeculosTransportWebsocket.open({
-      apduPort: ports?.apduPort as number,
-      buttonPort: ports?.buttonPort as number,
-      automationPort: ports?.automationPort as number,
-    });
+  const transport = await DeviceManagementKitTransportSpeculos.open({
+    apiPort: ports.apiPort.toString(),
+  });
 
-    data[speculosID] = {
-      process: p,
-      apduPort: ports.apduPort as number,
-      buttonPort: ports.buttonPort as number,
-      automationPort: ports.automationPort as number,
-      transport,
-      destroy,
-    };
-  } else {
-    transport = await DeviceManagementKitTransportSpeculos.open({
-      apiPort: ports.apiPort?.toString(),
-    });
-
-    data[speculosID] = {
-      process: p,
-      apiPort: ports.apiPort?.toString(),
-      transport,
-      destroy,
-    };
-  }
+  data[speculosID] = {
+    process: p,
+    apiPort: ports.apiPort.toString(),
+    transport,
+    destroy,
+  };
 
   const device = {
     id: speculosID,

@@ -16,4 +16,5 @@ export type CardSessionRefreshResult =
 
 export type CardBaseQueryExtraOptions = Readonly<{
   authenticated?: boolean;
+  renewSession?: boolean;
 }>;

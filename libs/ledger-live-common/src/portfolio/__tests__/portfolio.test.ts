@@ -1,11 +1,8 @@
 import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./currencies";
-import {
-  initialState,
-  loadCountervalues,
-  inferTrackingPairForAccounts,
-} from "@ledgerhq/live-countervalues/logic";
+import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
+import { inferTrackingPairForAccounts } from "../trackingPairs";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import {
   getPortfolioCount,

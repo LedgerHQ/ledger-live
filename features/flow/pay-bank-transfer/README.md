@@ -3,9 +3,10 @@
 > [!CAUTION]
 > **Status: UNSTABLE** — In active development; API may change.
 
-Shared cash-to-stable intro for the Pay deposit **Bank transfer** row. The view-model owns
-intro content, continue / close intents, and tracking. Views are props-only. Host apps own
-sheet / dialog presentation and the partner (Noah) handoff.
+Shared cash-to-stable **feature intro** for the Pay deposit **Bank transfer** row. The view-model
+owns intro content, create-account / log-in / close intents, and tracking. Views are props-only.
+Native uses the Lumen bottom sheet. Web uses the Lumen Dialog. Host apps own the partner (Noah)
+handoff.
 
 This is a dedicated `@features/flow-*` package because Trading owns the partner WebView, not
 the Pay card package.
@@ -13,53 +14,35 @@ the Pay card package.
 ## Usage
 
 ```tsx
-import {
-  BankTransferIntroView,
-  useBankTransferIntroAdapter,
-} from "@features/flow-pay-bank-transfer";
+import { BankTransferIntro, useBankTransferIntroAdapter } from "@features/flow-pay-bank-transfer";
 
 const intro = useBankTransferIntroAdapter({
-  labels: {
-    title: t("payTab.bankTransferIntro.title"),
-    description: t("payTab.bankTransferIntro.description"),
-    continueLabel: t("payTab.bankTransferIntro.continue"),
-    rows: [
-      {
-        icon: "Bank",
-        title: t("payTab.bankTransferIntro.rows.bank.title"),
-        description: t("payTab.bankTransferIntro.rows.bank.description"),
-      },
-    ],
-  },
-  onBankTransfer: () => navigateToPartner(),
+  heroImage: require("./bank-transfer-intro-hero.webp"),
+  onBankTransfer: handoff => navigateToPartner(handoff),
   onTrackEvent: track,
 });
 
 // Deposit options `onSelect("bankTransfer")` → intro.open()
-<QueuedBottomSheet
-  isRequestingToBeOpened={intro.isOpen}
-  onClose={intro.onClosePress}
->
-  <BankTransferIntroView {...intro} />
-</QueuedBottomSheet>
+<BankTransferIntro {...intro.bankTransferIntro} />
 ```
 
-i18n stays in the app. This package is copy-agnostic.
+Copy is resolved inside this package via `@shared/i18n` (`payTab.bankTransferIntro.*` in each
+app's default namespace). Hosts inject data, analytics, and partner handoff only.
 
 ## Host intents
 
 | Intent | When | Host does |
 | --- | --- | --- |
 | `open()` | Deposit row **Bank transfer** | Open the intro overlay |
-| `onBankTransfer` | Intro **Continue** | Partner handoff (below) |
-| `onClosePress` | Overlay dismiss / close | Close the overlay; no partner |
+| `onBankTransfer("createAccount")` | Intro **Create an account** | Partner signup handoff (below) |
+| `onBankTransfer("logIn")` | Intro **Log in to Noah** | Partner login handoff (below) |
 
 Partner UI is **not** in this package. Known in-app routes (deep link TBD):
 
 | App | Route | Partner |
 | --- | --- | --- |
-| Desktop | `/bank` | Noah `WebPlatformPlayer` (`manifestId: "noah"`) |
-| Mobile | `ReceiveFunds` / `ReceiveProvider` `{ manifestId: "noah" }` | Noah `WebReceivePlayer` |
+| Desktop | `/bank?noahAuth=createAccount` or `/bank?noahAuth=logIn` | Noah `WebPlatformPlayer` (`manifestId: "noah"`) |
+| Mobile | `ReceiveFunds` / `ReceiveProvider` `{ manifestId: "noah", noahAuth }` | Noah `WebReceivePlayer` |
 
 Child screens under Figma `6784:63692` are TBD.
 
@@ -72,7 +55,8 @@ Injected `onTrackEvent` only (Pay Tracking Plan). Deposit-row
 | Event | Payload |
 | --- | --- |
 | Open intro | `Page cash to stable` `{ flow: "C2S" }` |
-| Continue | `button_clicked` `{ button: "continue", flow: "C2S", page: "cash to stable" }` |
+| Create an account | `button_clicked` `{ button: "create an account", flow: "C2S", page: "cash to stable" }` |
+| Log in to Noah | `button_clicked` `{ button: "log in to noah", flow: "C2S", page: "cash to stable" }` |
 | Close | `button_clicked` `{ button: "close", flow: "C2S", page: "cash to stable" }` |
 
 ## Platform resolution
@@ -94,6 +78,7 @@ pay-bank-transfer/
     │   ├── useBankTransferIntroAdapter.ts
     │   ├── BankTransferIntroView.web.tsx
     │   ├── BankTransferIntroView.native.tsx
+    │   ├── assets.ts
     │   └── __tests__/
     ├── types.ts
     ├── exports.ts

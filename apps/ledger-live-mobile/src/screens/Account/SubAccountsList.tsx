@@ -153,6 +153,7 @@ export default function SubAccountsList({
         type={"shade"}
         outline
         event="accountExpandTokenList"
+        testID="account-expand-token-list"
         Icon={isCollapsed ? DropdownMedium : DropupMedium}
         iconPosition={"right"}
         onPress={() => setIsCollapsed(!isCollapsed)}

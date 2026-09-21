@@ -67,10 +67,7 @@ const resolveTransactionCelo: LedgerEthTransactionService["resolveTransaction"] 
       }
     | undefined = undefined;
 
-  if (
-    "feeCurrency" in parsedTransaction &&
-    isValidFeeCurrency(parsedTransaction.feeCurrency)
-  ) {
+  if ("feeCurrency" in parsedTransaction && isValidFeeCurrency(parsedTransaction.feeCurrency)) {
     additionalErc20SignaturesConfig = {
       contractAddressToResolve: parsedTransaction.feeCurrency,
       additionalErc20SignaturesBlob,

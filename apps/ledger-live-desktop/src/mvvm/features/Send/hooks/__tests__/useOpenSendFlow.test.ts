@@ -1,6 +1,10 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AssetCategory } from "@domain/api-aggregated-assets";
+import {
+  isZcashShieldedEnabled,
+  setZcashShieldedEnabled,
+} from "@ledgerhq/live-common/bridge/zcashRouting";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useOpenSendFlow } from "../useOpenSendFlow";
 
@@ -144,5 +148,61 @@ describe("useOpenSendFlow", () => {
         skipRecipientStep: true,
       }),
     );
+  });
+
+  describe("balance-type routing override", () => {
+    const previousShieldedEnabled = isZcashShieldedEnabled();
+
+    afterEach(() => {
+      setZcashShieldedEnabled(previousShieldedEnabled);
+    });
+
+    it("should open the new send flow for an excluded currency when its family is allowed and it has a balance type step", () => {
+      setZcashShieldedEnabled(true);
+      const account = genAccount("send-zcash-balance-type", {
+        currency: getCryptoCurrencyById("zcash"),
+      });
+
+      const { result, store } = renderHook(() => useOpenSendFlow(), {
+        initialState: {
+          ...withFlagOverrides({
+            newSendFlow: {
+              enabled: true,
+              params: { families: ["bitcoin"], excludedCurrencyIds: ["zcash"] },
+            },
+          }),
+          accounts: [account],
+        },
+      });
+
+      result.current({ account });
+
+      expect(store.getState().sendFlow.isOpen).toBe(true);
+      expect(store.getState().modals.MODAL_SEND?.isOpened).not.toBe(true);
+    });
+
+    it("should keep the legacy send modal when a currency has a balance type step but its family is not allowed", () => {
+      setZcashShieldedEnabled(true);
+      const account = genAccount("send-zcash-family-not-allowed", {
+        currency: getCryptoCurrencyById("zcash"),
+      });
+
+      const { result, store } = renderHook(() => useOpenSendFlow(), {
+        initialState: {
+          ...withFlagOverrides({
+            newSendFlow: {
+              enabled: true,
+              params: { families: ["evm"], excludedCurrencyIds: [] },
+            },
+          }),
+          accounts: [account],
+        },
+      });
+
+      result.current({ account });
+
+      expect(store.getState().sendFlow.isOpen).toBe(false);
+      expect(store.getState().modals.MODAL_SEND?.isOpened).toBe(true);
+    });
   });
 });

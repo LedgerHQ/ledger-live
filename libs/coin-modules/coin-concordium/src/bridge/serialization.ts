@@ -1,6 +1,4 @@
-import BigNumber from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { Account, AccountRaw, Operation, OperationType } from "@ledgerhq/types-live";
+import type { Account, AccountRaw, Operation } from "@ledgerhq/types-live";
 import type {
   ConcordiumAccount,
   ConcordiumAccountRaw,
@@ -8,6 +6,7 @@ import type {
   RawOperation,
 } from "../types";
 import coinConfig from "../config";
+import { toOperation } from "./operations";
 import { applyTokensToResources } from "./tokens";
 
 export function isConcordiumAccount(account: Account): account is ConcordiumAccount {
@@ -96,22 +95,5 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): 
 }
 
 export function mapRawOperationToBridgeOperation(op: RawOperation, accountId: string): Operation {
-  const type: OperationType = op.type;
-
-  const extra: Record<string, unknown> = op.memo ? { memo: op.memo } : {};
-
-  return {
-    id: encodeOperationId(accountId, op.hash, type),
-    hash: op.hash,
-    accountId,
-    type,
-    value: new BigNumber(op.value),
-    fee: new BigNumber(op.fee),
-    blockHash: op.blockHash,
-    blockHeight: op.blockHeight,
-    senders: [op.sender],
-    recipients: [op.recipient],
-    date: op.date,
-    extra,
-  };
+  return toOperation(op, accountId);
 }

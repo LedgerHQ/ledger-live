@@ -12,7 +12,7 @@ concurrency:
   # overlapping — they would otherwise race on the same on-chain accounts across machines, which no
   # per-run mechanism can prevent. Non-broadcast runs keep the original per-ref/tests_type group.
   group: >-
-    ${{ (inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' || github.event.schedule == '0 0 * * 5') && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, inputs.test_filter && 'filtered' || 'all') }}
+    ${{ (inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' || github.event.schedule == '0 0 * * 5') && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, (inputs.test_filter || (inputs.team && inputs.team != 'all')) && 'filtered' || 'all') }}
   cancel-in-progress: false
 
 on:
@@ -33,6 +33,12 @@ on:
         description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
+      team:
+        description: "Run only one team's tests. ANDed with test_filter, Smoke and the device."
+        required: false
+        type: choice
+        options: [all, bst, buy-and-sell, coin-integration, earn, engagement, swap, wallet-xp]
+        default: all
       tests_type:
         description: "Which tests to run"
         required: true
@@ -69,19 +75,6 @@ on:
         required: false
         type: boolean
         default: false
-      export_to_xray:
-        description: "Send results to Xray"
-        required: false
-        type: boolean
-        default: false
-      test_execution_android:
-        description: "Xray execution key for Android (optional)"
-        required: false
-        type: string
-      test_execution_ios:
-        description: "Xray execution key for iOS (optional)"
-        required: false
-        type: string
       smoke_tests:
         description: "Run smoke tests"
         required: false
@@ -121,6 +114,11 @@ on:
         description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
+      team:
+        description: "Team slug whose specs to run. One of: all, bst, buy-and-sell, coin-integration, earn, engagement, swap, wallet-xp."
+        required: false
+        type: string
+        default: all
       tests_type:
         description: "Which tests to run"
         required: false
@@ -167,7 +165,7 @@ on:
         default: ""
     secrets:
       SPECULINHO_URL:
-        description: Base URL for the Speculinho operator (remote Speculos on iOS E2E). Repository secret; pass via secrets inherit when reusing this workflow.
+        description: Base URL for the Speculinho operator (remote Speculos, both platforms). Repository secret; pass via secrets inherit when reusing this workflow.
         required: false
       ALLURE_LEDGER_LIVE_PASSWORD:
         required: false
@@ -213,10 +211,6 @@ on:
         required: false
       SLACK_BOT_USER_OAUTH_ACCESS_TOKEN:
         required: false
-      XRAY_CLIENT_ID:
-        required: false
-      XRAY_CLIENT_SECRET:
-        required: false
 
 permissions:
   contents: read
@@ -225,13 +219,10 @@ env:
   cache-bucket: ll-nx-cache
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-x86_64-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
-  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}-androidTest.apk
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
   SPECULOS_IMAGE_TAG_ANDROID: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
   SPECULOS_IMAGE_TAG_IOS: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-83978f0' || 'latest' }}
-  COINAPPS: ${{ github.workspace }}/coin-apps
-  SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
   ANDROID_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   IOS_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
@@ -298,7 +289,6 @@ jobs:
           client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           repositories: |
-            coin-apps
             ledger-live
           permission-contents: read
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -362,8 +352,6 @@ jobs:
           ANDROID_DEVICE: ${{ steps.devices.outputs.android_device }}
           BUILD_TYPE: ${{ inputs.production_firebase && 'production' || 'testing' }}
           SMOKE_TESTS: ${{ inputs.smoke_tests }}
-          TEST_EXECUTION_ANDROID: ${{ inputs.test_execution_android || '(not provided)' }}
-          TEST_EXECUTION_IOS: ${{ inputs.test_execution_ios || '(not provided)' }}
           WORKFLOW_REF: ${{ github.ref_name }}
           TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
           COMMIT_SHA: ${{ github.sha }}
@@ -389,8 +377,6 @@ jobs:
           echo "- **Android device:** $ANDROID_DEVICE"
           echo "$FILTER_SUMMARY"
           echo "- **Smoke tests:** $SMOKE_TESTS"
-          echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
-          echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled (iOS):** $IOS_BROADCAST_ENABLED"
           echo "- **Broadcast enabled (Android):** $ANDROID_BROADCAST_ENABLED"
@@ -427,7 +413,7 @@ jobs:
             PREFIX="develop/"
           fi
           echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           HEAD_SHA=$(git rev-parse HEAD)
           echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
@@ -443,32 +429,36 @@ jobs:
       - name: Prepare test filter
         id: test-filter
         run: |
-          RESOLVED_FILTER="$(node e2e/tooling/filter/resolve.mjs \
+          node e2e/tooling/filter/resolve.mjs \
             --input "$TEST_FILTER_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
+            --team "$TEAM_INPUT" \
             --check-dir "e2e/mobile/specs" \
-            --runner detox)"
-          echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
+            --runner detox \
+            --github-output >> "$GITHUB_OUTPUT"
         shell: bash
         env:
           TEST_FILTER_INPUT: ${{ inputs.test_filter }}
           SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
+          TEAM_INPUT: ${{ inputs.team || 'all' }}
 
       - name: Write resolved filter to GitHub Summary
         run: |
-          FILTER_PATTERN="${{ steps.test-filter.outputs.filter }}"
-          if [ -z "$FILTER_PATTERN" ]; then
-            FILTER_PATTERN="(none)"
-          fi
-          echo "- **Resolved filtered pattern:** $FILTER_PATTERN" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "- **Team:** ${TEAM_INPUT}"
+            node e2e/tooling/filter/format-summary.mjs "${FILTER_PATTERN:-}" "- **Resolved filtered pattern:**"
+          } >> "$GITHUB_STEP_SUMMARY"
         shell: bash
+        env:
+          FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
+          TEAM_INPUT: ${{ inputs.team || 'all' }}
 
       - name: Generate shards matrix and test files
         id: generate-shards
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
         with:
           test_directory: e2e/mobile
-          test_filter: ${{ steps.test-filter.outputs.filter }}
+          test_filter: ${{ steps.test-filter.outputs.runner_filter }}
           event_name: ${{ github.event_name }}
           ref: ${{ inputs.ref || github.ref_name }}
           ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
@@ -935,7 +925,7 @@ jobs:
       - name: Prepare APK
         run: |
           mkdir -p /tmp/apk/assets
-          mkdir /home/runner/.android/
+          mkdir -p /home/runner/.android/
           mv ${{ env.ANDROID_JSBUNDLE_PATH }} /tmp/apk/assets/index.android.bundle
           mv ${{ env.ANDROID_APK_PATH }} /tmp/apk/tmp.apk
           (cd /tmp/apk/; zip -r tmp.apk assets/index.android.bundle)
@@ -1005,15 +995,6 @@ jobs:
           echo "ℹ️ Emulator liveness watchdog started."
         shell: bash
 
-      - name: Setup Speculos image and Coin Apps
-        id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
-        timeout-minutes: 20
-        with:
-          coinapps_path: ${{ env.COINAPPS }}
-          bot_id: ${{ secrets.GH_BOT_CLIENT_ID }}
-          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-
       - name: Build e2e dependencies (CLI + libs)
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
@@ -1067,6 +1048,8 @@ jobs:
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
+          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
+          REMOTE_SPECULOS: "true"
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
@@ -1445,74 +1428,6 @@ jobs:
           branch: ${{ inputs.ref || github.ref_name }}
           report_attachments: report-attachments
 
-  upload-to-xray:
-    name: "Test Mobile E2E > XRAY Report"
-    runs-on: [ledger-live-medium]
-    strategy:
-      matrix:
-        platform:
-          - android
-          - ios
-        exclude:
-          - platform: ${{ github.event.inputs.tests_type == 'Android Only' && 'ios' }}
-
-      fail-fast: false
-    env:
-      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
-      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
-      XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
-      JIRA_URL: https://ledgerhq.atlassian.net/browse
-      TEST_EXECUTION: ${{ matrix.platform == 'android' && inputs.test_execution_android || inputs.test_execution_ios }}
-    needs: [detox-tests-android, detox-tests-ios]
-    if: ${{ !cancelled() && inputs.export_to_xray }}
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-
-      - name: Download Allure Results
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          path: "artifacts-${{ matrix.platform }}"
-          pattern: ${{ matrix.platform }}-test-artifacts-*
-          merge-multiple: true
-
-      - name: Format Xray results
-        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ env.TEST_EXECUTION}}
-
-      - name: Upload aggregated xray results
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          retention-days: 1
-          name: xray-reports-${{ matrix.platform }}
-          path: "artifacts-${{ matrix.platform }}/xray_report.json"
-
-      - name: Authenticate to Xray
-        id: authenticate
-        run: |
-          response=$(curl -H "Content-Type: application/json" -X POST \
-                    --data '{"client_id": "${{ env.XRAY_CLIENT_ID }}", "client_secret": "${{ env.XRAY_CLIENT_SECRET }}"}' \
-                    ${{ env.XRAY_API_URL }}/authenticate)
-          echo "Xray Authentication Response: $response"
-          echo "xray_token=$response" >> $GITHUB_OUTPUT
-      - name: Publish report on Xray
-        id: publish-xray
-        run: |
-          response=$(curl -H "Content-Type: application/json" \
-                    -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
-                    -X POST \
-                    --data @artifacts-${{ matrix.platform }}/xray_report.json \
-                    ${{ env.XRAY_API_URL }}/import/execution)
-          echo "Xray Report Response: $response"
-          key=$(echo $response | jq -r '.key')
-          echo "xray_key=$key" >> $GITHUB_OUTPUT
-      - name: Write Xray report link in summary
-        shell: bash
-        env:
-          XRAY_URL: ${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}
-        run: echo "[Open report](${XRAY_URL})" >> "$GITHUB_STEP_SUMMARY"
-
   report-on-slack:
     name: "Test Mobile E2E > Slack Report"
     runs-on: ubuntu-22.04
@@ -1521,7 +1436,12 @@ jobs:
     env:
       REF: ${{ inputs.ref || github.ref_name }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      HEADER_DEVICES: "iOS:${{ needs.determine-builds.outputs.ios_device }} / Android:${{ needs.determine-builds.outputs.android_device }}"
+      HEADER_DEVICES: >-
+        ${{ inputs.tests_type == 'Android Only'
+          && format('Android:{0}', needs.determine-builds.outputs.android_device)
+          || (inputs.tests_type == 'iOS Only'
+            && format('iOS:{0}', needs.determine-builds.outputs.ios_device)
+            || format('iOS:{0} / Android:{1}', needs.determine-builds.outputs.ios_device, needs.determine-builds.outputs.android_device)) }}
       # A platform's label is blanked out when tests_type excludes it; the e2e-slack-report
       # composite then drops that row entirely (and its status stops driving the color).
       IOS_LABEL: ${{ inputs.tests_type != 'Android Only' && 'iOS' || '' }}

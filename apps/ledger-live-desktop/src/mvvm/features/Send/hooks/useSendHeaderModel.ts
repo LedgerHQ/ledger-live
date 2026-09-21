@@ -7,8 +7,7 @@ import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send
 import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
-import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
-import { useContactsFeature } from "@features/platform-contacts";
+import { isEligibleAddressCurrency, useContactsFeature } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "LLD/hooks/redux";
 import { buildTransactionPatchFromURIScheme } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
@@ -113,8 +112,11 @@ export function useSendHeaderModel({
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
   const { recipientType, setInputMethod } = useSendFlowTracking();
   const addNewContactHeader = useAddNewContactHeaderState();
-  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
-    useContactsFeature("desktop");
+  const {
+    isEnabled: isContactsFeatureEnabled,
+    eligibleAddressFamilies,
+    excludedCurrencyIds,
+  } = useContactsFeature("desktop");
   const contacts = useSelector(selectContacts);
 
   const currencyName = state.account.currency?.ticker ?? "";
@@ -162,10 +164,29 @@ export function useSendHeaderModel({
 
   const showTitle = currentStepConfig?.showTitle !== false;
 
+  // Resolved from the send descriptor rather than a currency check, so this stays
+  // family-agnostic: a currency with no balanceType config, or no pool selected yet,
+  // yields `undefined` and the summary below degrades to its pre-existing shape.
+  const poolLabel = useMemo(() => {
+    const currency = state.account.currency;
+    const accountLike = state.account.account;
+    if (!currency || !accountLike) return undefined;
+
+    const balanceTypeConfig = sendFeatures.getBalanceTypeConfig(currency);
+    const selectedOptionId = balanceTypeConfig?.getSelectedOptionId(state.transaction.transaction);
+    if (!balanceTypeConfig || !selectedOptionId) return undefined;
+
+    const selectedOption = balanceTypeConfig
+      .getOptions({ account: accountLike })
+      .find(option => option.id === selectedOptionId);
+    return selectedOption ? t(`newSendFlow.${selectedOption.translationKey}.title`) : undefined;
+  }, [state.account.currency, state.account.account, state.transaction.transaction]);
+
   const accountSummary = useMemo(() => {
-    if (accountName && availableText) return `${accountName} · ${availableText}`;
-    return accountName || availableText || "";
-  }, [accountName, availableText]);
+    const qualifiedName = poolLabel && accountName ? `${accountName} (${poolLabel})` : accountName;
+    if (qualifiedName && availableText) return `${qualifiedName} · ${availableText}`;
+    return qualifiedName || availableText || "";
+  }, [accountName, availableText, poolLabel]);
 
   const titleKey = resolveContactFlowTitleKey({
     isContactAddressFlowStep,
@@ -358,7 +379,11 @@ export function useSendHeaderModel({
 
   const canSearchContacts =
     isContactsFeatureEnabled &&
-    isEligibleAddressCurrency(eligibleAddressFamilies, state.account.currency ?? undefined);
+    isEligibleAddressCurrency(
+      eligibleAddressFamilies,
+      state.account.currency ?? undefined,
+      excludedCurrencyIds,
+    );
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({
       supportsDomain: uiConfig.recipientSupportsDomain,

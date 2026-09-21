@@ -23,7 +23,8 @@ describe("PaySuccess (Web)", () => {
     renderStep();
 
     expect(screen.getByTestId("pay-success-step")).toBeVisible();
-    expect(screen.getByText(/You paid/)).toHaveTextContent("You paid (Ada) 100 USDC");
+    expect(screen.getByText("You paid (Ada)")).toBeVisible();
+    expect(screen.getAllByText("100 USDC")[0]).toBeVisible();
     expect(screen.getByText("Ethereum 1")).toBeVisible();
   });
 
@@ -50,7 +51,8 @@ describe("PaySuccess (Web)", () => {
     renderStep({ recipient: undefined, recipientLabel: "0x1ad2...c53034" });
 
     expect(screen.getByTestId("pay-success-step")).toBeVisible();
-    expect(screen.getByText(/You paid/)).toHaveTextContent("You paid (0x1ad2...c53034) 100 USDC");
+    expect(screen.getByText("You paid (0x1ad2...c53034)")).toBeVisible();
+    expect(screen.getAllByText("100 USDC")[0]).toBeVisible();
   });
 
   it("calls onViewTransaction when the primary CTA is clicked", () => {

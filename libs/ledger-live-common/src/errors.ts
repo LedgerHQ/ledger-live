@@ -1092,3 +1092,12 @@ export class SwapQuotesRequestFailed extends Error {
     super(message || "SwapQuotesRequestFailed", { cause });
   }
 }
+
+export class CurrencyRegionRestrictedError extends Error {
+  override name = "CurrencyRegionRestrictedError";
+  currencyName: string;
+  constructor(currencyName: string, cause?: unknown) {
+    super("CurrencyRegionRestrictedError", { cause });
+    this.currencyName = currencyName;
+  }
+}

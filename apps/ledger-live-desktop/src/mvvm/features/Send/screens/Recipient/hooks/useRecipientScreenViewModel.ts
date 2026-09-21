@@ -3,14 +3,19 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useContacts, useContactsFeature } from "@features/platform-contacts";
+import {
+  isEligibleAddressCurrency,
+  useContacts,
+  useContactsFeature,
+} from "@features/platform-contacts";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientScanner } from "../../../context/RecipientScannerContext";
 import { trackPage } from "~/renderer/analytics/segment";
+import { t } from "~/renderer/i18n/init";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
-import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
+import { getAccountSelfTransferTarget } from "../../../utils/selfTransferTarget";
 
 type RecipientScreenViewModelBase = Readonly<{
   ready: false;
@@ -39,8 +44,11 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
   const { navigation } = useFlowWizard();
   const { isScannerOpen } = useRecipientScanner();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
-    useContactsFeature("desktop");
+  const {
+    isEnabled: isContactsFeatureEnabled,
+    eligibleAddressFamilies,
+    excludedCurrencyIds,
+  } = useContactsFeature("desktop");
 
   const account = state.account.account;
   const parentAccount = state.account.parentAccount ?? undefined;
@@ -51,7 +59,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
   const trackingProperties = useMemo(() => {
     const contactsOnNetwork =
       isContactsFeatureEnabled &&
-      isEligibleAddressCurrency(eligibleAddressFamilies, currency ?? undefined)
+      isEligibleAddressCurrency(eligibleAddressFamilies, currency ?? undefined, excludedCurrencyIds)
         ? filterContactsByNetwork(contacts, currency?.id ?? "")
         : [];
 
@@ -65,6 +73,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     contacts,
     currency,
     eligibleAddressFamilies,
+    excludedCurrencyIds,
     isContactsFeatureEnabled,
     state.account.parentAccount,
   ]);
@@ -80,10 +89,27 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
 
   const onAddressSelected = useCallback(
     (address: string, ensName?: string, goToNextStep?: boolean, memo?: Memo) => {
+      // A typed/pasted address can be the account's own self-transfer target (its
+      // other pool) without going through the self-transfer shortcut. Recognize it
+      // the same way the shortcut does, so it gets the same pool label and locks
+      // the transaction into self-transfer state (see `useSendFlowTransaction`'s
+      // `buildSelfTransferPatch`, which every recipient write passes through).
+      const selfTransferTarget = account
+        ? getAccountSelfTransferTarget(account, state.transaction.transaction)
+        : null;
+      const matchedSelfTransferTarget =
+        selfTransferTarget && selfTransferTarget.address.toLowerCase() === address.toLowerCase()
+          ? selfTransferTarget
+          : null;
+
       transaction.setRecipient({
         ...state.recipient,
         address,
         ensName,
+        displayLabel: matchedSelfTransferTarget
+          ? t(`newSendFlow.${matchedSelfTransferTarget.translationKey}.label`)
+          : undefined,
+        isSelfTransfer: matchedSelfTransferTarget !== null,
         ...(memo ? { memo } : {}),
       });
 
@@ -91,7 +117,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
         navigation.goToNextStep();
       }
     },
-    [transaction, state.recipient, navigation],
+    [account, transaction, state.recipient, state.transaction.transaction, navigation],
   );
 
   if (!account || !currency || isScannerOpen) {

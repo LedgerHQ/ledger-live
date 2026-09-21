@@ -1,15 +1,15 @@
 {
   "name": "@features/flow-contacts-edit-contact",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Shared Edit contact flow for Desktop and Mobile",
-  "main": "src/web.ts",
+  "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
     ".": {
       "react-native": "./src/index.native.ts",
-      "default": "./src/web.ts"
+      "default": "./src/index.ts"
     },
     "./native": "./src/index.native.ts",
     "./package.json": "./package.json"

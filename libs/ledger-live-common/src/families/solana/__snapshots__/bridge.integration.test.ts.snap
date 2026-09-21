@@ -14,7 +14,7 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
     "operationsCount": 3,
     "pendingOperations": [],
     "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
-    "spendableBalance": "82498960",
+    "spendableBalance": "82579216",
     "stakingResources": {
       "actionFeeReserve": "0",
       "delegatedBalance": "0",

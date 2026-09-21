@@ -1,5 +1,153 @@
 # @domain/api-card-management
 
+## 0.6.0
+
+### Minor Changes
+
+- [#21707](https://github.com/LedgerHQ/ledger-live/pull/21707) [`8f62cdb`](https://github.com/LedgerHQ/ledger-live/commit/8f62cdbb6d93e207efd7e551af65a41953d28242) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add View/Hide and a 3D flip for card numbers.
+
+- [#21681](https://github.com/LedgerHQ/ledger-live/pull/21681) [`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add freeze/unfreeze confirmation error handling with retry
+
+- [#21569](https://github.com/LedgerHQ/ledger-live/pull/21569) [`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Resolve a card-linked wallet to the Ledger currency it holds.
+
+  - New `@domain/entity-card-asset-mapping` maps a card provider's `{currency}.{network}` id onto a Ledger currency id. `baanxCatalog.ts` holds Baanx's, covering USDT, USDC, BTC, ETH, XRP, SOL and LTC; a second provider is a second catalog beside it.
+  - Several of Baanx's keys map onto one currency: its docs name the chain, its sandbox has answered with the ticker repeated, and both resolve.
+  - `getCardLinkedWallets` attaches `ledgerId` in its transform, so every consumer reads one answer rather than mapping again.
+  - The join and the devtool carry it through; an unmapped pair has no `ledgerId` at all rather than resolving to a wrong currency.
+  - A "Currency Mapping" screen in the devtool lists the whole catalog, scrollable both ways, so a gap can be read against it.
+
+- [#22011](https://github.com/LedgerHQ/ledger-live/pull/22011) [`e37413b`](https://github.com/LedgerHQ/ledger-live/commit/e37413b588873a1a2a028ebf4c1971e4fa92ed2a) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Show the card's PIN without ever handling the digits.
+
+  - `createCardPinToken` posts to `/v1/card/pin/token` and answers a single-use token and the `imageUrl` that renders the PIN, so the digits never reach the app as a value.
+  - A mutation, like `createCardDetailsToken`: the token is spent once the image has been read, so the answer must never be served from a cache. Dispatch with `track: false`.
+  - `customCss` takes the two colours this endpoint documents. Anything else — the card details image's four included — is dropped on parse and never sent.
+
+- [#21996](https://github.com/LedgerHQ/ledger-live/pull/21996) [`9e61582`](https://github.com/LedgerHQ/ledger-live/commit/9e61582edfcbb98046d0f74111ccf4061ec44bb3) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Expose the provider's hosted page for setting or changing the card PIN.
+
+  - `createCardSetPinToken` posts to `/v1/card/set-pin/token` and answers a single-use token and the `hostedPageUrl` that spends it.
+  - A mutation, like `createCardDetailsToken`: the token is spent when the page opens, so the answer must never be served from a cache. Dispatch with `track: false`.
+  - `hostedPageUrl` and `redirectUrl` must be `https:` — the app opens one and the provider navigates to the other.
+  - `redirectUrl` and `isEmbedded: true` cannot be asked for together: an embedded page posts a message instead of navigating.
+  - `customCss` carries the provider's seven documented styling fields. No caller styles the page yet; the names and types are the API reference's, unverified against a live response.
+
+- [#21675](https://github.com/LedgerHQ/ledger-live/pull/21675) [`3f34609`](https://github.com/LedgerHQ/ledger-live/commit/3f34609edecc5ae85a9a9ac1b76ab47e30a9c66e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Mock card-management HTTP with MSW in tests
+
+- [#21663](https://github.com/LedgerHQ/ledger-live/pull/21663) [`c6f7bfe`](https://github.com/LedgerHQ/ledger-live/commit/c6f7bfead8593c148fe6e3d177ff8dd734728f5a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Mark a frozen pay card on the card visual: the card face fades out behind a centered snow `Spot`, read from the same card status the freeze tile uses. The features/flow jest projects now compile `@ledgerhq/lumen-utils-shared` instead of leaving its ESM untransformed, so views can use `cn`.
+
+- [#21918](https://github.com/LedgerHQ/ledger-live/pull/21918) [`fcc2ac4`](https://github.com/LedgerHQ/ledger-live/commit/fcc2ac4c5ed270fb63df4c0079068ad6dac94612) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Sign a mock Card session in and out from the Pay Card DevTool, and answer the Card endpoints from the desktop MSW worker, so the Card surfaces can be reached without the hosted login.
+
+- [#21626](https://github.com/LedgerHQ/ledger-live/pull/21626) [`eddc89e`](https://github.com/LedgerHQ/ledger-live/commit/eddc89e7b86a13aeedfc0ae4956c2dcd08494e5f) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Show and drive the derived card onboarding status from the Card / Pay devtool.
+
+  - A "Card onboarding" screen: a `Stepper` for the count, every step by the id the app keys it on, and the derived answer printed raw so a step can be traced to the response behind it.
+  - Each step a request decides carries a toggle. It sets what that endpoint answers, so the step follows on the next read and holds until it is cleared. The phone wallet step is answered on the device; the purchase step is read-only while nothing answers it.
+  - An endpoint answers from the provider until its toggle is used, so one step can be held while the rest stay real, and "Use the real answers" hands them all back.
+  - `@domain/api-card-management/mock/card-onboarding-status` holds those answers and the responses that carry them; the mobile MSW handlers read it before falling back to what they answered before.
+  - Mocking is started by an env var, so without it the screen says so instead of offering a toggle that would set an answer nothing reads.
+  - The hook gains `refresh`, which re-asks all three sources: the screen asks on open and on demand.
+
+- [#21872](https://github.com/LedgerHQ/ledger-live/pull/21872) [`37f5759`](https://github.com/LedgerHQ/ledger-live/commit/37f57595f11d40562914794645cb3c7f6e55dc8b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Read the card transactions and give each one its spend category.
+
+  - `useCardTransactionsViewModel` reads the first page of `GET /v1/card/transactions` while a session is live, and hands each transaction its category and that category's translated label.
+  - `mccCategory` is now the closed set the provider documents (`PayCardTransactionCategory`), and a grouping it never named reads as `MISC` so one new label cannot fail a whole page.
+  - `mockPayCardTransactions` answers a page covering every category, served by the desktop and mobile MSW workers on `GET /v1/card/transactions`.
+
+- [#21917](https://github.com/LedgerHQ/ledger-live/pull/21917) [`a2a0288`](https://github.com/LedgerHQ/ledger-live/commit/a2a028844dbfbfa019f1f971bf6fdbed9005b9ec) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show card transactions on the Pay Card panel as a list of items, with a subheader when the list is not empty.
+
+- [#21627](https://github.com/LedgerHQ/ledger-live/pull/21627) [`8b3320d`](https://github.com/LedgerHQ/ledger-live/commit/8b3320d7aab0ff25eeb8930dafa536fb94962c79) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add `getCardTransactions` for `GET /v1/card/transactions`.
+
+  - Newest first, paged by number. The provider answers with a bare array, so a short page is how a caller learns it reached the end.
+  - Narrowed to what a transaction list shows. The card and processor ids, the MCC number, the conversion rates and the funding sources are left undeclared, so Zod drops them before they reach the cache.
+  - `declineReason` accepts the `""` the provider sends on a transaction that was not declined.
+  - `dateFrom` and `dateTo` are validated as a pair before the request goes out, because the provider rejects one without the other.
+
+- [#21635](https://github.com/LedgerHQ/ledger-live/pull/21635) [`e65a6b3`](https://github.com/LedgerHQ/ledger-live/commit/e65a6b3e67e271343b7029613498176b1da2d7d2) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add `getWalletHistory` for `GET /v1/wallet/history`.
+
+  - One wallet at a time, newest first, ten to a page. A card has several linked, so reading them all means one call per wallet.
+  - `walletCurrency` is required for an internal wallet and checked before the request goes out, because the provider errors without it.
+  - `sign` is lowercase here and uppercase on a card transaction. The schema keeps the wire's own case rather than hiding the difference from whatever has to reconcile the two.
+
+- [#21947](https://github.com/LedgerHQ/ledger-live/pull/21947) [`9d0b721`](https://github.com/LedgerHQ/ledger-live/commit/9d0b721dbfd8b71d32d2d16db22ad8e54f45f541) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the mobile Pay Card transaction detail sheet with tracking and copyable transaction IDs.
+
+### Patch Changes
+
+- Updated dependencies [[`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438)]:
+  - @domain/entity-card-asset-mapping@0.6.0
+  - @shared/api-services@0.7.0
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#21707](https://github.com/LedgerHQ/ledger-live/pull/21707) [`8f62cdb`](https://github.com/LedgerHQ/ledger-live/commit/8f62cdbb6d93e207efd7e551af65a41953d28242) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add View/Hide and a 3D flip for card numbers.
+
+- [#21681](https://github.com/LedgerHQ/ledger-live/pull/21681) [`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add freeze/unfreeze confirmation error handling with retry
+
+- [#21569](https://github.com/LedgerHQ/ledger-live/pull/21569) [`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Resolve a card-linked wallet to the Ledger currency it holds.
+
+  - New `@domain/entity-card-asset-mapping` maps a card provider's `{currency}.{network}` id onto a Ledger currency id. `baanxCatalog.ts` holds Baanx's, covering USDT, USDC, BTC, ETH, XRP, SOL and LTC; a second provider is a second catalog beside it.
+  - Several of Baanx's keys map onto one currency: its docs name the chain, its sandbox has answered with the ticker repeated, and both resolve.
+  - `getCardLinkedWallets` attaches `ledgerId` in its transform, so every consumer reads one answer rather than mapping again.
+  - The join and the devtool carry it through; an unmapped pair has no `ledgerId` at all rather than resolving to a wrong currency.
+  - A "Currency Mapping" screen in the devtool lists the whole catalog, scrollable both ways, so a gap can be read against it.
+
+- [#22011](https://github.com/LedgerHQ/ledger-live/pull/22011) [`e37413b`](https://github.com/LedgerHQ/ledger-live/commit/e37413b588873a1a2a028ebf4c1971e4fa92ed2a) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Show the card's PIN without ever handling the digits.
+
+  - `createCardPinToken` posts to `/v1/card/pin/token` and answers a single-use token and the `imageUrl` that renders the PIN, so the digits never reach the app as a value.
+  - A mutation, like `createCardDetailsToken`: the token is spent once the image has been read, so the answer must never be served from a cache. Dispatch with `track: false`.
+  - `customCss` takes the two colours this endpoint documents. Anything else — the card details image's four included — is dropped on parse and never sent.
+
+- [#21996](https://github.com/LedgerHQ/ledger-live/pull/21996) [`9e61582`](https://github.com/LedgerHQ/ledger-live/commit/9e61582edfcbb98046d0f74111ccf4061ec44bb3) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Expose the provider's hosted page for setting or changing the card PIN.
+
+  - `createCardSetPinToken` posts to `/v1/card/set-pin/token` and answers a single-use token and the `hostedPageUrl` that spends it.
+  - A mutation, like `createCardDetailsToken`: the token is spent when the page opens, so the answer must never be served from a cache. Dispatch with `track: false`.
+  - `hostedPageUrl` and `redirectUrl` must be `https:` — the app opens one and the provider navigates to the other.
+  - `redirectUrl` and `isEmbedded: true` cannot be asked for together: an embedded page posts a message instead of navigating.
+  - `customCss` carries the provider's seven documented styling fields. No caller styles the page yet; the names and types are the API reference's, unverified against a live response.
+
+- [#21675](https://github.com/LedgerHQ/ledger-live/pull/21675) [`3f34609`](https://github.com/LedgerHQ/ledger-live/commit/3f34609edecc5ae85a9a9ac1b76ab47e30a9c66e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Mock card-management HTTP with MSW in tests
+
+- [#21663](https://github.com/LedgerHQ/ledger-live/pull/21663) [`c6f7bfe`](https://github.com/LedgerHQ/ledger-live/commit/c6f7bfead8593c148fe6e3d177ff8dd734728f5a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Mark a frozen pay card on the card visual: the card face fades out behind a centered snow `Spot`, read from the same card status the freeze tile uses. The features/flow jest projects now compile `@ledgerhq/lumen-utils-shared` instead of leaving its ESM untransformed, so views can use `cn`.
+
+- [#21918](https://github.com/LedgerHQ/ledger-live/pull/21918) [`fcc2ac4`](https://github.com/LedgerHQ/ledger-live/commit/fcc2ac4c5ed270fb63df4c0079068ad6dac94612) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Sign a mock Card session in and out from the Pay Card DevTool, and answer the Card endpoints from the desktop MSW worker, so the Card surfaces can be reached without the hosted login.
+
+- [#21626](https://github.com/LedgerHQ/ledger-live/pull/21626) [`eddc89e`](https://github.com/LedgerHQ/ledger-live/commit/eddc89e7b86a13aeedfc0ae4956c2dcd08494e5f) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Show and drive the derived card onboarding status from the Card / Pay devtool.
+
+  - A "Card onboarding" screen: a `Stepper` for the count, every step by the id the app keys it on, and the derived answer printed raw so a step can be traced to the response behind it.
+  - Each step a request decides carries a toggle. It sets what that endpoint answers, so the step follows on the next read and holds until it is cleared. The phone wallet step is answered on the device; the purchase step is read-only while nothing answers it.
+  - An endpoint answers from the provider until its toggle is used, so one step can be held while the rest stay real, and "Use the real answers" hands them all back.
+  - `@domain/api-card-management/mock/card-onboarding-status` holds those answers and the responses that carry them; the mobile MSW handlers read it before falling back to what they answered before.
+  - Mocking is started by an env var, so without it the screen says so instead of offering a toggle that would set an answer nothing reads.
+  - The hook gains `refresh`, which re-asks all three sources: the screen asks on open and on demand.
+
+- [#21872](https://github.com/LedgerHQ/ledger-live/pull/21872) [`37f5759`](https://github.com/LedgerHQ/ledger-live/commit/37f57595f11d40562914794645cb3c7f6e55dc8b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Read the card transactions and give each one its spend category.
+
+  - `useCardTransactionsViewModel` reads the first page of `GET /v1/card/transactions` while a session is live, and hands each transaction its category and that category's translated label.
+  - `mccCategory` is now the closed set the provider documents (`PayCardTransactionCategory`), and a grouping it never named reads as `MISC` so one new label cannot fail a whole page.
+  - `mockPayCardTransactions` answers a page covering every category, served by the desktop and mobile MSW workers on `GET /v1/card/transactions`.
+
+- [#21917](https://github.com/LedgerHQ/ledger-live/pull/21917) [`a2a0288`](https://github.com/LedgerHQ/ledger-live/commit/a2a028844dbfbfa019f1f971bf6fdbed9005b9ec) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show card transactions on the Pay Card panel as a list of items, with a subheader when the list is not empty.
+
+- [#21627](https://github.com/LedgerHQ/ledger-live/pull/21627) [`8b3320d`](https://github.com/LedgerHQ/ledger-live/commit/8b3320d7aab0ff25eeb8930dafa536fb94962c79) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add `getCardTransactions` for `GET /v1/card/transactions`.
+
+  - Newest first, paged by number. The provider answers with a bare array, so a short page is how a caller learns it reached the end.
+  - Narrowed to what a transaction list shows. The card and processor ids, the MCC number, the conversion rates and the funding sources are left undeclared, so Zod drops them before they reach the cache.
+  - `declineReason` accepts the `""` the provider sends on a transaction that was not declined.
+  - `dateFrom` and `dateTo` are validated as a pair before the request goes out, because the provider rejects one without the other.
+
+- [#21635](https://github.com/LedgerHQ/ledger-live/pull/21635) [`e65a6b3`](https://github.com/LedgerHQ/ledger-live/commit/e65a6b3e67e271343b7029613498176b1da2d7d2) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add `getWalletHistory` for `GET /v1/wallet/history`.
+
+  - One wallet at a time, newest first, ten to a page. A card has several linked, so reading them all means one call per wallet.
+  - `walletCurrency` is required for an internal wallet and checked before the request goes out, because the provider errors without it.
+  - `sign` is lowercase here and uppercase on a card transaction. The schema keeps the wire's own case rather than hiding the difference from whatever has to reconcile the two.
+
+- [#21947](https://github.com/LedgerHQ/ledger-live/pull/21947) [`9d0b721`](https://github.com/LedgerHQ/ledger-live/commit/9d0b721dbfd8b71d32d2d16db22ad8e54f45f541) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the mobile Pay Card transaction detail sheet with tracking and copyable transaction IDs.
+
+### Patch Changes
+
+- Updated dependencies [[`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438)]:
+  - @domain/entity-card-asset-mapping@0.6.0-next.0
+  - @shared/api-services@0.7.0
+
 ## 0.5.0
 
 ### Minor Changes

@@ -366,6 +366,18 @@ describe("mapRawOperationToBridgeOperation", () => {
 
     expect(result.blockHash).toBeNull();
   });
+
+  it("marks a rejected transfer as failed, as the PLT parent operation does", () => {
+    const raw = createRawOperation({ failed: true });
+
+    expect(mapRawOperationToBridgeOperation(raw, ACCOUNT_ID).hasFailed).toBe(true);
+  });
+
+  it("lists no recipient for a transaction that never named one", () => {
+    const raw = createRawOperation({ recipient: "" });
+
+    expect(mapRawOperationToBridgeOperation(raw, ACCOUNT_ID).recipients).toEqual([]);
+  });
 });
 
 /**

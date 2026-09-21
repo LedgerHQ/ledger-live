@@ -1,4 +1,5 @@
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
+import { createMeDisplayNameFormatter } from "@features/platform-contacts";
 import {
   createContactsListViewModel,
   createContactsSearchViewModel,
@@ -6,7 +7,7 @@ import {
   createPopulatedContactsListViewModel,
 } from "./viewModel";
 
-const formatMeDisplayName = (name: string) => `${name} (Me)`;
+const formatMeDisplayName = createMeDisplayNameFormatter("My addresses", name => `${name} (Me)`);
 
 describe("createEmptyContactsListViewModel", () => {
   it("returns the Me row with no addresses", () => {
@@ -23,7 +24,7 @@ describe("createEmptyContactsListViewModel", () => {
 
   it("derives the initial and address count from Me", () => {
     const me = mockMeContact({
-      name: "Élodie",
+      name: "Алексей",
       addresses: [mockContactAddress()],
     });
 
@@ -31,16 +32,16 @@ describe("createEmptyContactsListViewModel", () => {
       displayMode: "empty",
       me: {
         contactId: "contact-me",
-        name: "Élodie (Me)",
-        initial: "É",
+        name: "Алексей (Me)",
+        initial: "А",
         addressCount: 1,
       },
     });
   });
 
-  it("keeps the default Me label when the stored name is Me", () => {
+  it("uses the default Me label when the stored name is Me", () => {
     expect(createEmptyContactsListViewModel(mockMeContact(), formatMeDisplayName).me.name).toBe(
-      "Me",
+      "My addresses",
     );
   });
 });
@@ -84,7 +85,7 @@ describe("createPopulatedContactsListViewModel", () => {
       displayMode: "populated",
       me: {
         contactId: "contact-me",
-        name: "Me",
+        name: "My addresses",
         initial: "M",
         addressCount: 1,
       },
@@ -151,17 +152,17 @@ describe("createPopulatedContactsListViewModel", () => {
     const contacts = [
       me,
       mockContact({
-        id: "contact-elodie",
-        name: "Élodie",
+        id: "contact-alexei",
+        name: "Алексей",
         addresses: [mockContactAddress(), mockContactAddress({ id: "address-polygon" })],
       }),
     ];
 
     expect(createPopulatedContactsListViewModel(me, contacts).savedContacts).toEqual([
       {
-        contactId: "contact-elodie",
-        name: "Élodie",
-        initial: "É",
+        contactId: "contact-alexei",
+        name: "Алексей",
+        initial: "А",
         addressCount: 2,
       },
     ]);
@@ -233,6 +234,34 @@ describe("createContactsSearchViewModel", () => {
       me: {
         contactId: "contact-me",
         name: "Me",
+        initial: "M",
+        addressCount: 0,
+      },
+      savedContacts: [],
+    });
+  });
+
+  it("should match Me using the default display name", () => {
+    expect(
+      createContactsSearchViewModel(me, contacts, "addresses", formatMeDisplayName),
+    ).toMatchObject({
+      status: "results",
+      me: {
+        contactId: "contact-me",
+        name: "My addresses",
+        initial: "M",
+        addressCount: 0,
+      },
+      savedContacts: [],
+    });
+  });
+
+  it("should still match Me when searching the stored name", () => {
+    expect(createContactsSearchViewModel(me, contacts, "Me", formatMeDisplayName)).toMatchObject({
+      status: "results",
+      me: {
+        contactId: "contact-me",
+        name: "My addresses",
         initial: "M",
         addressCount: 0,
       },

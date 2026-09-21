@@ -22,9 +22,6 @@ jest.mock("@ledgerhq/coin-evm/api/index", () => {
   const evmApiStub: Record<string, unknown> = Object.fromEntries(
     methods.map(name => [name, jest.fn()]),
   );
-  // coin-evm advertises EVM-staking support for Celo; the Celo api now implements
-  // its own (LockedGold + Election) staking and advertises stakingSupported: true.
-  evmApiStub.stakingSupported = true;
   return { createApi: jest.fn(() => evmApiStub) };
 });
 
@@ -103,7 +100,6 @@ describe("createApi", () => {
     const api = createApi("celo");
     const evmApi = (createEvmApi as jest.Mock).mock.results[0].value;
 
-    expect((api as { stakingSupported?: boolean }).stakingSupported).toBe(true);
     expect(typeof api.getStakes).toBe("function");
     expect(typeof api.getValidators).toBe("function");
     expect(typeof api.getRewards).toBe("function");

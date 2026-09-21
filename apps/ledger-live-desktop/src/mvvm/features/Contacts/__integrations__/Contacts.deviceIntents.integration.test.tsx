@@ -111,7 +111,7 @@ describe("Contacts device intents integration", () => {
 
     const addressInput = await screen.findByTestId("contacts-add-address-input");
     fireEvent.change(addressInput, {
-      target: { value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034" },
+      target: { value: "0xabcdef1234567890abcdef1234567890abcdef12" },
     });
     await waitFor(() => {
       expect(screen.getByTestId("contacts-add-address-confirm")).toBeEnabled();

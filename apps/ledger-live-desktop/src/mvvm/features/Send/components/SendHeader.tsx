@@ -9,6 +9,7 @@ import {
   type SendFlowBusinessContext,
   type SendFlowStep,
 } from "@ledgerhq/live-common/flows/send/types";
+import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
 import { useSendHeaderMemo } from "../hooks/useSendHeaderMemo";
 import { useSendHeaderModel } from "../hooks/useSendHeaderModel";
@@ -27,7 +28,16 @@ export function SendHeader() {
   const { currentStep } = wizard;
 
   const headerDisplayMode = currentStep === SEND_FLOW_STEP.COIN_CONTROL ? "crypto" : displayMode;
-  const availableText = useAvailableBalance(state.account.account, headerDisplayMode);
+
+  const account = state.account.account;
+  const transaction = state.transaction.transaction;
+
+  const selectedPoolBalance = useMemo(
+    () => getSelectedBalanceTypeBalance(account, transaction),
+    [account, transaction],
+  );
+
+  const availableText = useAvailableBalance(account, headerDisplayMode, selectedPoolBalance);
 
   const {
     currencyId,
@@ -126,6 +136,7 @@ export function SendHeader() {
               {showMemoValueInput ? (
                 <MemoValueInput
                   currencyId={currencyId}
+                  currencyTicker={state.account.currency?.ticker}
                   value={memo.value}
                   maxLength={uiConfig.memoMaxLength}
                   memoType={uiConfig.memoType}
@@ -153,6 +164,7 @@ export function SendHeader() {
     t,
     showMemoControls,
     currencyId,
+    state.account.currency?.ticker,
     hasMemoTypeOptions,
     memoTypeOptions,
     memo.type,

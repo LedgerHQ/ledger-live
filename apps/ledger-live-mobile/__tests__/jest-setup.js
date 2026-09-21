@@ -40,13 +40,6 @@ import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/asy
 import mockLocalize from "react-native-localize/mock";
 import { EventEmitter } from "events";
 
-jest.mock("expo-crypto", () => ({
-  CryptoDigestAlgorithm: { SHA256: "SHA-256" },
-  CryptoEncoding: { BASE64: "base64" },
-  getRandomBytesAsync: jest.fn(() => Promise.resolve(new Uint8Array(32))),
-  digestStringAsync: jest.fn(() => Promise.resolve("Y29kZS1jaGFsbGVuZ2U=")),
-}));
-
 // Disable max listeners warning for MSW (known issue with multiple tests)
 EventEmitter.defaultMaxListeners = 0;
 
@@ -120,12 +113,6 @@ jest.mock("react-native-gesture-handler", () => {
 });
 
 jest.mock("react-native-gesture-handler/ReanimatedSwipeable");
-
-jest.mock("react-native-haptic-feedback", () => ({
-  default: {
-    trigger: jest.fn(),
-  },
-}));
 
 jest.mock("expo-haptics", () => ({
   impactAsync: jest.fn().mockResolvedValue(undefined),
@@ -339,9 +326,9 @@ jest.mock("@react-native-firebase/remote-config", () => {
 // Inert mock — avoids the real module's `getRemoteConfig()` + `LiveConfig` import side
 // effects. Boot readiness comes from the Redux `remoteFlagsReady` flag instead.
 jest.mock("~/firebase/remoteConfig", () => ({
+  readCachedFlags: jest.fn().mockResolvedValue({}),
   fetchRemoteFlags: jest.fn().mockResolvedValue({}),
   subscribeToRemoteFlags: jest.fn(() => () => {}),
-  whenReady: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.mock("@braze/react-native-sdk", () => ({

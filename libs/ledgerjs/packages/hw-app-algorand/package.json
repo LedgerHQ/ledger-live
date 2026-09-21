@@ -27,14 +27,14 @@
   "types": "lib/Algorand.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "bip32-path": "^0.4.2",
     "hi-base32": "^0.5.1",
     "js-sha512": "^0.8.0",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
@@ -42,6 +42,7 @@
     "@types/node": "catalog:",
     "documentation": "14.0.2",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.4.0"
@@ -57,7 +58,9 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "format": "oxfmt src tests",
+    "format:check": "oxfmt --check src tests"
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "exports": {

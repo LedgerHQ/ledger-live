@@ -105,7 +105,7 @@ const cardBaseQuery: BaseQueryFn<
 
   const result = await sendForCurrentSession(session.token);
 
-  if (!session.token || !isUnauthorized(result.error)) {
+  if (!session.token || !isUnauthorized(result.error) || extraOptions?.renewSession === false) {
     return result;
   }
 

@@ -17,7 +17,6 @@ export default function StepSign({
   dependencies,
   onConfirmationHandler,
   onFailHandler,
-  isACRE,
 }: StepProps) {
   const dispatch = useDispatch();
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
@@ -32,9 +31,8 @@ export default function StepSign({
       message,
       appName: useApp,
       dependencies: appRequests,
-      isACRE,
     };
-  }, [account, dependencies, isACRE, message, useApp]);
+  }, [account, dependencies, message, useApp]);
   return (
     <DeviceAction
       action={action}

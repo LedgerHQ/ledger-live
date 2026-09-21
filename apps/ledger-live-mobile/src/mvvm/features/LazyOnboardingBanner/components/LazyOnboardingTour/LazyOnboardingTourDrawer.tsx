@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, BottomSheetView, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { ProgressIndicator } from "LLM/features/ProductTour/Drawer/components/ProgressIndicator";
+import { ProgressIndicator } from "LLM/components/Slides";
 import { useTranslation } from "~/context/Locale";
 import { LAZY_ONBOARDING_TOUR_SLIDES } from "./content";
 import { LazyOnboardingTourSlideItem } from "./LazyOnboardingTourSlideItem";

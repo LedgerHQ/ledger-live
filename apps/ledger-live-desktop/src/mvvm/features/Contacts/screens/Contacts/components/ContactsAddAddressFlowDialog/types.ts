@@ -10,6 +10,7 @@ import type {
 export type ContactsAddAddressFlowDialogProps = Readonly<{
   state: AddAddressFlowState;
   entryLabels: AddAddressEntryLabels;
+  privacyLink?: Readonly<{ label: string }>;
   sanctionedAddressBanner: SanctionedAddressBannerProps;
   nameLabels: ContactsAddAddressNameLabels;
   reviewLabels: ContactsAddAddressReviewLabels;

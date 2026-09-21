@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-zcash",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Ledger Zcash Coin integration (standalone coin-module)",
   "keywords": [
     "Ledger",
@@ -112,7 +112,7 @@
   },
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-signer-zcash": "workspace:^",
@@ -121,7 +121,7 @@
     "@ledgerhq/wallet-btc": "workspace:^",
     "@ledgerhq/zcash-utils": "catalog:",
     "bignumber.js": "^9.1.2",
-    "@noble/hashes": "1.8.0",
+    "@noble/hashes": "catalog:",
     "bs58": "catalog:",
     "invariant": "^2.2.4",
     "rxjs": "catalog:"
@@ -130,7 +130,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
-    "@noble/curves": "1.9.7",
+    "@noble/curves": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/bs58": "catalog:",

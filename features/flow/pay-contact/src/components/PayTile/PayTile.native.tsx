@@ -19,7 +19,7 @@ export function PayTile({ label, onPress }: PayTileProps): React.JSX.Element {
     >
       <Spot size={56} appearance="icon" icon={Telegram} />
       <TileContent>
-        <TileTitle lx={{ color: "muted" }}>{label}</TileTitle>
+        <TileTitle lx={{ color: "base" }}>{label}</TileTitle>
       </TileContent>
     </Tile>
   );

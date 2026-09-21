@@ -166,20 +166,4 @@
   - @ledgerhq/errors@6.34.1-hotfix.0
   - @ledgerhq/hw-transport@6.35.2-hotfix.0
 
-## 0.22.1
-
-### Patch Changes
-
-- Updated dependencies [[`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d)]:
-  - @ledgerhq/errors@6.34.0
-  - @ledgerhq/hw-transport@6.35.1
-
-## 0.22.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d)]:
-  - @ledgerhq/errors@6.34.0-next.0
-  - @ledgerhq/hw-transport@6.35.1-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -15,7 +15,7 @@ import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import ChooseSyncMethod from "../../screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "../../screens/Synchronize/QrCodeMethod";
 import { Options, Steps } from "../../types/Activation";
-import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
+import { AnalyticsPage, useWalletSyncTrackingFlow } from "../../hooks/useLedgerSyncAnalytics";
 import PinCodeDisplay from "../../screens/Synchronize/PinCodeDisplay";
 import PinCodeInput from "../../screens/Synchronize/PinCodeInput";
 import SyncError from "../../screens/Synchronize/SyncError";
@@ -74,6 +74,7 @@ const ActivationFlow = ({
   );
 
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const trackingFlow = useWalletSyncTrackingFlow();
   const { navigate } =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
@@ -96,7 +97,7 @@ const ActivationFlow = ({
       case Steps.ChooseSyncMethod:
         return (
           <>
-            <TrackScreen category={AnalyticsPage.ChooseSyncMethod} />
+            <TrackScreen category={AnalyticsPage.ChooseSyncMethod} flow={trackingFlow} />
             <ChooseSyncMethod
               onScanMethodPress={navigateToQrCodeMethod}
               onConnectWithLedgerPress={navigateToWalletSyncActivationProcess}

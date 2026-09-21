@@ -73,7 +73,7 @@ function createViewModel({
         title: "Add contact",
         namePlaceholder: "Contact name",
         namingDisclaimer: "Use a nickname.",
-        confirmName: "Confirm name",
+        confirmAddContact: "Add contact",
         nameValidationErrors: {
           InvalidContactNameError: "Special characters are not allowed.",
           DuplicateContactNameError: "This contact name is already in use.",
@@ -88,6 +88,7 @@ function createViewModel({
     ledgerSyncActivationDrawer: {
       isOpen: false,
       onClose: jest.fn(),
+      onNavigate: jest.fn(),
     },
   };
 }

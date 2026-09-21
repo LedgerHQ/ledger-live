@@ -3,8 +3,6 @@ import * as path from "path";
 import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { waitForIdentitiesInAppJson } from "tests/utils/userdata";
 import { FileUtils } from "tests/utils/fileUtils";
@@ -24,8 +22,6 @@ test.describe("Settings", () => {
       annotation: [{ type: "TMS", description: "B2CQA-817" }],
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.showParentAccountTokens(Account.ETH_1.accountName);
       await app.accounts.verifyTokenVisibility(TokenAccount.ETH_USDT_1.currency);
@@ -62,8 +58,6 @@ test.describe("Settings", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.expectCryptoAccountRowVisible(account.accountName);
       const countBeforeLock = await app.accounts.countAccounts();
@@ -104,8 +98,6 @@ test.describe("Settings", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openSettings();
       await app.settings.changeCounterValue("euro");
       await app.settings.expectCounterValue("Euro - EUR");
@@ -137,8 +129,6 @@ test.describe("Settings", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openSettings();
       await app.settings.goToHelpTab();
 
@@ -163,8 +153,6 @@ test.describe("Settings", () => {
       },
     },
     async ({ app, userdataFile, userdataDestinationPath }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openSettings();
       const { userId: userIdBefore } = await waitForIdentitiesInAppJson(userdataFile);
 
@@ -201,8 +189,6 @@ test.describe("Settings", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openSettings();
       await app.settings.goToHelpTab();
       await app.settings.checkViewUserDataButtonIsEnabled();
@@ -254,8 +240,6 @@ test.describe("Settings", () => {
         annotation: { type: "TMS", description: "B2CQA-2344" },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.mainNavigation.openSettings();
         await app.settings.changeLanguage(l10n.lang);
         await app.settings.expectLanguageSelected(l10n.lang);

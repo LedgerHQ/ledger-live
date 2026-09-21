@@ -15,6 +15,33 @@ export function ironwoodBalance(account: ZcashAccount): BigNumber {
   return account.privateInfo?.ironwoodBalance ?? new BigNumber(0);
 }
 
+/**
+ * The operations the sync recorded for the transaction a scenario just made.
+ *
+ * A cross-pool transaction is recorded by both sync legs, and when the two records
+ * report opposite directions -- a self-transfer between the account's own pools --
+ * both are kept, so there is no single "latest operation" to read
+ * (`reconcileLegOperations`, coin-zcash/bridge/sync.ts).
+ */
+export function newOperations(previous: ZcashAccount, current: ZcashAccount) {
+  const before = new Set(previous.operations.map(op => op.id));
+  return current.operations.filter(op => !before.has(op.id));
+}
+
+/** Types of the operations above, sorted, for an order-independent assertion. */
+export function newOperationTypes(previous: ZcashAccount, current: ZcashAccount): string[] {
+  return newOperations(previous, current)
+    .map(op => op.type as string)
+    .sort();
+}
+
+/** The one leg of that transaction carrying the given operation type. */
+export function newOperationOfType(previous: ZcashAccount, current: ZcashAccount, type: string) {
+  const legs = newOperations(previous, current).filter(op => op.type === type);
+  expect(legs).toHaveLength(1);
+  return legs[0];
+}
+
 export function assertCommonTxProperties(previous: ZcashAccount, current: ZcashAccount) {
   const [latestOperation] = current.operations;
   expect(current.operations.length - previous.operations.length).toBe(1);

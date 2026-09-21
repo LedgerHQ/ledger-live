@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-wallet-framework",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Framework for Ledger Wallet",
   "keywords": [
     "Ledger",
@@ -97,12 +97,12 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/devices": "catalog:",
+    "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-currency-format": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
@@ -120,7 +120,6 @@
   },
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

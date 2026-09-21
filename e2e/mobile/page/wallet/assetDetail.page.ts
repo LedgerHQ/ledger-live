@@ -11,7 +11,12 @@ type HoldingAddressExpectation = {
   addressFragment?: string;
 };
 
-const TOKEN_BALANCE_DECIMAL_PRECISION = 5;
+// Allows half a unit of the last decimal each displayed value.
+const displayRoundingTolerance = (text: string) => {
+  const decimals = /\.(\d+)/.exec(text)?.[1].length ?? 0;
+  return 0.5 * 10 ** -decimals;
+};
+
 const OPERATION_DETAILS_OPEN_TIMEOUT = 5000;
 
 export default class AssetDetailPage {
@@ -185,23 +190,21 @@ export default class AssetDetailPage {
   async expectHoldingAddressBalancesSumToTotal(accountIds: string[], ticker: string) {
     const scrollViewId = await this.getScrollViewId();
     await scrollToId(this.totalBalanceId, scrollViewId);
-    const totalBalance = parseTickerAmount(
-      await getTextOfElement(this.totalBalanceCryptoId),
-      ticker,
-    );
+    const totalText = await getTextOfElement(this.totalBalanceCryptoId);
+    const totalBalance = parseTickerAmount(totalText, ticker);
 
     let holdingBalance = 0;
+    let tolerance = displayRoundingTolerance(totalText);
     for (const accountId of accountIds) {
       await this.scrollToAddressItem(accountId);
-      const accountBalance = parseTickerAmount(
-        await getTextOfElement(this.addressItemBalanceId(accountId)),
-        ticker,
-      );
+      const balanceText = await getTextOfElement(this.addressItemBalanceId(accountId));
+      const accountBalance = parseTickerAmount(balanceText, ticker);
       jestExpect(accountBalance).toBeGreaterThan(0);
       holdingBalance += accountBalance;
+      tolerance += displayRoundingTolerance(balanceText);
     }
 
-    jestExpect(holdingBalance).toBeCloseTo(totalBalance, TOKEN_BALANCE_DECIMAL_PRECISION);
+    jestExpect(Math.abs(holdingBalance - totalBalance)).toBeLessThanOrEqual(tolerance);
     return { holdingBalance, totalBalance };
   }
 

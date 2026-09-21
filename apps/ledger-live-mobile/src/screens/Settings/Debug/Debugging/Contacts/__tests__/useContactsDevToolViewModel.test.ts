@@ -19,6 +19,7 @@ describe("useContactsDevToolViewModel", () => {
       params: {
         newBadge: false,
         eligibleAddressFamilies: ["evm"],
+        excludedCurrencyIds: [],
       },
     });
   });
@@ -39,6 +40,7 @@ describe("useContactsDevToolViewModel", () => {
       params: {
         newBadge: true,
         eligibleAddressFamilies: ["evm"],
+        excludedCurrencyIds: [],
       },
     });
   });
@@ -54,6 +56,7 @@ describe("useContactsDevToolViewModel", () => {
     expect(store.getState().featureFlags.overrides[CONTACTS_FLAG]?.params).toEqual({
       newBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
   });
 

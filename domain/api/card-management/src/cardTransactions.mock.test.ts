@@ -1,0 +1,38 @@
+import { PAY_CARD_TRANSACTION_CATEGORIES, PayCardTransactionsResponseSchema } from "./schema";
+import { documentedPayCardTransaction, mockPayCardTransactions } from "./cardTransactions.mock";
+
+describe("mockPayCardTransactions", () => {
+  it("answers a page the transaction schema accepts", () => {
+    expect(PayCardTransactionsResponseSchema.parse(mockPayCardTransactions())).toHaveLength(
+      PAY_CARD_TRANSACTION_CATEGORIES.length,
+    );
+  });
+
+  it("covers every spend category, so each one can be seen in a list", () => {
+    const categories = mockPayCardTransactions().map(({ mccCategory }) => mccCategory);
+
+    expect([...categories].sort()).toEqual([...PAY_CARD_TRANSACTION_CATEGORIES].sort());
+  });
+
+  it("covers different fiat and funding asset amounts for visual testing", () => {
+    const transactions = mockPayCardTransactions();
+    const fiatAmounts = new Set(
+      transactions.map(({ amountInTransactionCurrency }) => amountInTransactionCurrency),
+    );
+    const assetCurrencies = new Set(
+      transactions.flatMap(({ fundingSources }) =>
+        fundingSources.map(({ currency }) => currency.toUpperCase()),
+      ),
+    );
+
+    expect(fiatAmounts.size).toBeGreaterThan(1);
+    expect(assetCurrencies).toEqual(new Set(["USDC", "BTC", "ETH"]));
+    expect(transactions.some(({ fundingSources }) => fundingSources.length > 1)).toBe(true);
+  });
+
+  it("keeps the provider's documented charge as the miscellaneous one", () => {
+    const misc = mockPayCardTransactions().find(({ mccCategory }) => mccCategory === "MISC");
+
+    expect(misc).toEqual(documentedPayCardTransaction);
+  });
+});

@@ -10,27 +10,44 @@ import { Principal } from "@dfinity/principal";
 import BigNumber from "bignumber.js";
 import {
   getNeuronDissolveDurationSeconds,
+  minTopUpAmount,
+  neuronCanAddHotKey,
   neuronCanBeSplit,
+  neuronCanDisburse,
+  neuronCanSpawn,
+  neuronCanStakeMaturity,
   neuronStake,
 } from "../common-logic/neuron";
 import {
+  E8S_PER_ICP,
+  FOLLOWABLE_TOPICS,
   ICP_FEES,
+  MAX_HOT_KEYS_PER_NEURON,
   MIN_NEURON_STAKE,
   NNS_MAXIMUM_DISSOLVE_DELAY,
   NNS_MINIMUM_DISSOLVE_DELAY,
+  SECONDS_IN_DAY,
 } from "../consts";
 import {
   ICPCreateNeuronWarning,
+  ICPDisburseNotAllowed,
   ICPDissolveDelayGTMax,
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
+  ICPFollowTopicNotAllowed,
   ICPHotKeyAlreadyExists,
+  ICPHotKeyIsController,
   ICPIncreaseStakeWarning,
+  ICPInvalidDissolveDelayIncrease,
   ICPInvalidHotKey,
   ICPInvalidPercentage,
   ICPNeuronNotFound,
+  ICPSpawnNotAllowed,
   ICPSplitNotAllowed,
+  ICPStakeMaturityNotAllowed,
   ICPStakeMemoNotRecoverable,
+  ICPTooManyHotKeys,
+  ICPTopUpBelowMinimumStake,
   InvalidMemoICP,
   NotEnoughTransferAmount,
 } from "../errors";
@@ -83,6 +100,21 @@ const validateRecipient = (
   return undefined;
 };
 
+// The bounds are protocol seconds, but every surface that reports them talks in whole days, so each
+// error carries both. A minimum rounds up and a maximum rounds down, keeping the quoted day count
+// one the canister would actually accept.
+// `count` repeats the day figure because that is the field i18next selects a plural form on, and the
+// apps hand the whole error to `t()`. Dropping it would fall the copy back to the generic message.
+const belowMin = (minSeconds: number) => {
+  const minDays = Math.ceil(minSeconds / SECONDS_IN_DAY);
+  return new ICPDissolveDelayLTMin("", { minSeconds, minDays, count: minDays });
+};
+
+const aboveMax = (maxSeconds: number) => {
+  const maxDays = Math.floor(maxSeconds / SECONDS_IN_DAY);
+  return new ICPDissolveDelayGTMax("", { maxSeconds, maxDays, count: maxDays });
+};
+
 // New dissolve delay must be >= the current one and within the network bounds (Mission 70).
 const validateSetDissolveDelay = (
   neuron: ICPNeuron | undefined,
@@ -91,15 +123,15 @@ const validateSetDissolveDelay = (
   if (!neuron) return new ICPNeuronNotFound();
   const seconds = Number(dissolveDelay);
   if (!Number.isInteger(seconds) || seconds < 0) {
-    return new ICPDissolveDelayLTMin("", { minSeconds: NNS_MINIMUM_DISSOLVE_DELAY });
+    return belowMin(NNS_MINIMUM_DISSOLVE_DELAY);
   }
   const requested = BigInt(seconds);
   if (requested < getNeuronDissolveDurationSeconds(neuron)) return new ICPDissolveDelayLTCurrent();
   if (requested < BigInt(NNS_MINIMUM_DISSOLVE_DELAY)) {
-    return new ICPDissolveDelayLTMin("", { minSeconds: NNS_MINIMUM_DISSOLVE_DELAY });
+    return belowMin(NNS_MINIMUM_DISSOLVE_DELAY);
   }
   if (requested > BigInt(NNS_MAXIMUM_DISSOLVE_DELAY)) {
-    return new ICPDissolveDelayGTMax("", { maxSeconds: NNS_MAXIMUM_DISSOLVE_DELAY });
+    return aboveMax(NNS_MAXIMUM_DISSOLVE_DELAY);
   }
   return undefined;
 };
@@ -110,13 +142,14 @@ const validateIncreaseDissolveDelay = (
 ): Error | undefined => {
   if (!neuron) return new ICPNeuronNotFound();
   const value = Number(additional);
-  if (!Number.isInteger(value) || value <= 0)
-    return new ICPDissolveDelayLTMin("", { minSeconds: 1 });
+  // Not belowMin: the network minimum is not what an empty or zero entry violates, and quoting it
+  // would name a bound the user never crossed.
+  if (!Number.isInteger(value) || value <= 0) return new ICPInvalidDissolveDelayIncrease();
   if (
     getNeuronDissolveDurationSeconds(neuron) + BigInt(value) >
     BigInt(NNS_MAXIMUM_DISSOLVE_DELAY)
   ) {
-    return new ICPDissolveDelayGTMax("", { maxSeconds: NNS_MAXIMUM_DISSOLVE_DELAY });
+    return aboveMax(NNS_MAXIMUM_DISSOLVE_DELAY);
   }
   return undefined;
 };
@@ -125,6 +158,12 @@ const validateAddHotKey = (neuron: ICPNeuron | undefined, hotKey?: string): Erro
   if (!neuron) return new ICPNeuronNotFound();
   if (!isValidPrincipal(hotKey)) return new ICPInvalidHotKey();
   if (neuron.hotKeys.includes(hotKey!)) return new ICPHotKeyAlreadyExists();
+  // Compared against the neuron's own controller rather than the account's derived principal: the
+  // controller is what the permission actually duplicates, and it is already on the neuron.
+  if (hotKey === neuron.controller) return new ICPHotKeyIsController();
+  if (!neuronCanAddHotKey(neuron)) {
+    return new ICPTooManyHotKeys("", { max: MAX_HOT_KEYS_PER_NEURON });
+  }
   return undefined;
 };
 
@@ -135,6 +174,40 @@ const validateRemoveHotKey = (
   if (!neuron) return new ICPNeuronNotFound();
   if (!isValidPrincipal(hotKey)) return new ICPInvalidHotKey();
   return undefined;
+};
+
+// The pickers offer FOLLOWABLE_TOPICS only, so what this refuses is a transaction assembled some
+// other way. Either kind of excluded topic spends the signature for nothing: a retired one is refused
+// by the canister after signing, one past the Ledger ICP app's cap is refused on the device.
+const validateFollow = (
+  neuron: ICPNeuron | undefined,
+  followTopic: Transaction["followTopic"],
+): Error | undefined => {
+  if (!neuron) return new ICPNeuronNotFound();
+  // Absent is Unspecified, the default the builder applies.
+  if (followTopic !== undefined && !(followTopic in FOLLOWABLE_TOPICS)) {
+    return new ICPFollowTopicNotAllowed();
+  }
+  return undefined;
+};
+
+// Dissolved is the canister's check; the fee floor is where the ledger refuses the transfer the
+// canister then makes. The screen withholds Disburse on both, so this catches a snapshot that changed
+// after the action was offered — a refusal on device costs a signature to discover.
+const validateDisburse = (neuron: ICPNeuron | undefined): Error | undefined => {
+  if (!neuron) return new ICPNeuronNotFound();
+  return neuronCanDisburse(neuron, BigInt(ICP_FEES)) ? undefined : new ICPDisburseNotAllowed();
+};
+
+// refresh_neuron refuses a balance under the minimum stake once the transfer has settled, leaving
+// the ICP in the neuron's account until a later top-up reaches it. The shortfall is quoted in ICP,
+// the unit the amount field takes, and is the one the last read shows — see minTopUpAmount.
+const validateTopUpAmount = (neuron: ICPNeuron, amount: BigNumber): Error | undefined => {
+  const missing = minTopUpAmount(neuron);
+  if (!amount.isInteger() || BigInt(amount.toFixed(0)) >= missing) return undefined;
+  return new ICPTopUpBelowMinimumStake("", {
+    missing: new BigNumber(missing.toString()).div(E8S_PER_ICP).toString(),
+  });
 };
 
 type NeuronOpResult = { transaction?: Error; amount?: Error; warning?: Error };
@@ -175,6 +248,37 @@ const validatePercentage = (percentage?: string | number): Error | undefined => 
     : new ICPInvalidPercentage();
 };
 
+/** Absent percentage means the whole maturity, the same default the canister applies. */
+const percentageOrAll = (percentage?: string | number): number =>
+  percentage === undefined || percentage === "" ? 100 : Number(percentage);
+
+// The neuron's own state decides both maturity commands, and the screens gate on the same two
+// predicates — this is what stops a snapshot that changed between screens reaching the device.
+// Reported after the percentage so the field the user typed answers first, as the split validator does.
+const validateSpawn = (
+  neuron: ICPNeuron | undefined,
+  percentage?: string | number,
+): NeuronOpResult => {
+  if (!neuron) return opResult(new ICPNeuronNotFound());
+  const invalid = validatePercentage(percentage);
+  if (invalid) return opResult(invalid);
+  return opResult(
+    neuronCanSpawn(neuron, percentageOrAll(percentage)) ? undefined : new ICPSpawnNotAllowed(),
+  );
+};
+
+const validateStakeMaturity = (
+  neuron: ICPNeuron | undefined,
+  percentage?: string | number,
+): NeuronOpResult => {
+  if (!neuron) return opResult(new ICPNeuronNotFound());
+  const invalid = validatePercentage(percentage);
+  if (invalid) return opResult(invalid);
+  // The percentage is not part of this one: the canister has no maturity floor for staking, it just
+  // stakes whatever share is there.
+  return opResult(neuronCanStakeMaturity(neuron) ? undefined : new ICPStakeMaturityNotAllowed());
+};
+
 // Op-specific validation. Governance ops that target a neuron report ICPNeuronNotFound when it is
 // unresolved (which also covers a missing neuronId).
 const validateNeuronOp = (transaction: Transaction, neuron?: ICPNeuron): NeuronOpResult => {
@@ -203,13 +307,13 @@ const validateNeuronOp = (transaction: Transaction, neuron?: ICPNeuron): NeuronO
       return validateSplitNeuron(neuron, transaction.amount);
     case "spawn_neuron":
     case "spawn_neuron_from_maturity":
-      return opResult(
-        neuron ? validatePercentage(transaction.percentageToSpawn) : new ICPNeuronNotFound(),
-      );
+      return validateSpawn(neuron, transaction.percentageToSpawn);
     case "stake_maturity":
-      return opResult(
-        neuron ? validatePercentage(transaction.percentageToStake) : new ICPNeuronNotFound(),
-      );
+      return validateStakeMaturity(neuron, transaction.percentageToStake);
+    case "follow":
+      return opResult(validateFollow(neuron, transaction.followTopic));
+    case "disburse":
+      return opResult(validateDisburse(neuron));
     default:
       return NEURON_REQUIRED_OPS.has(transaction.type) && !neuron
         ? opResult(new ICPNeuronNotFound())
@@ -278,6 +382,12 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
 
   const spend = computeSpend(account, transaction, isTransfer);
   if (spend.error && !errors.amount) errors.amount = spend.error;
+  // Judged on the amount that will actually move, which for "send max" only computeSpend knows. An
+  // empty entry is AmountRequired's to report.
+  if (type === "increase_stake" && neuron && !errors.amount && spend.amount.gt(0)) {
+    const floor = validateTopUpAmount(neuron, spend.amount);
+    if (floor) errors.amount = floor;
+  }
 
   return {
     errors,

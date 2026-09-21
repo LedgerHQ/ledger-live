@@ -1,11 +1,19 @@
 import React from "react";
 import { BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
+import type { SwapTransactionStatusOrigin } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import type { SwapTransactionStatusViewModel } from "../hooks/useSwapTransactionStatusViewModel";
 import { DetailsSection } from "./Details/DetailsSection";
 import { EarnBanner } from "./EarnBanner/EarnBanner";
 import { FooterSection } from "./Footer/FooterSection";
 import { StatusSection } from "./Status/StatusSection";
 import { TransactionHeader } from "./TransactionHeader";
+
+type SwapTransactionStatusViewProps = Readonly<
+  SwapTransactionStatusViewModel & {
+    origin?: SwapTransactionStatusOrigin;
+    onClose: () => void;
+  }
+>;
 
 export function SwapTransactionStatusView({
   sendCurrency,
@@ -26,7 +34,9 @@ export function SwapTransactionStatusView({
   explorerUrl,
   isStatusSectionLoading,
   isFooterLoading,
-}: Readonly<SwapTransactionStatusViewModel>) {
+  origin,
+  onClose,
+}: SwapTransactionStatusViewProps) {
   return (
     <BottomSheetScrollView
       testID="swap-transaction-status-scroll-view"
@@ -38,6 +48,7 @@ export function SwapTransactionStatusView({
           receiveCurrency={receiveCurrency}
           createdAt={createdAt}
           locale={locale}
+          origin={origin}
         />
 
         <StatusSection
@@ -66,7 +77,12 @@ export function SwapTransactionStatusView({
           swapId={swapId}
         />
 
-        <FooterSection explorerUrl={explorerUrl} isLoading={isFooterLoading} />
+        <FooterSection
+          explorerUrl={explorerUrl}
+          isLoading={isFooterLoading}
+          origin={origin}
+          onReturn={onClose}
+        />
       </Box>
     </BottomSheetScrollView>
   );

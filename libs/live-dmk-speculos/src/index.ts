@@ -1,3 +1,6 @@
-export { default as DeviceManagementKitTransportSpeculos } from "./transport/DeviceManagementKitTransportSpeculos";
+export {
+  default as DeviceManagementKitTransportSpeculos,
+  SpeculosButton,
+} from "./transport/DeviceManagementKitTransportSpeculos";
 
 export type { SpeculosHttpTransportOpts } from "./transport/DeviceManagementKitTransportSpeculos";

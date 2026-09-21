@@ -17,6 +17,7 @@ import {
 import { isSpeculosRemote } from "@e2e/helpers/commonHelpers";
 import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "@e2e/bridge/server";
 import { CLI } from "@e2e/utils/cliUtils";
+import { retryUntilTimeout } from "@e2e/utils/retry";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -299,7 +300,9 @@ export async function takeSpeculosScreenshot() {
 
 export async function registerSpeculos(speculosPort: number) {
   const speculosAddress = process.env.SPECULOS_ADDRESS;
-  await device.reverseTcpPort(speculosPort);
+  if (!isSpeculosRemote()) {
+    await device.reverseTcpPort(speculosPort);
+  }
   process.env.SPECULOS_API_PORT = speculosPort.toString();
   delete process.env.DEVICE_PROXY_URL;
   CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
@@ -324,26 +327,29 @@ function getKnownSpeculosAddress(speculosPort: number): string {
 async function waitForBridgeEnv(
   key: string,
   expectedValue: string,
-  attempts = 12,
-  delayMs = 500,
+  timeout = 15_000,
+  interval = 500,
 ): Promise<void> {
-  for (let attempt = 1; attempt <= attempts; attempt++) {
-    try {
-      const envsRaw = await getEnvs();
-      if (envsRaw) {
-        const envs = JSON.parse(envsRaw) as Record<string, string | undefined>;
-        if ((envs[key] ?? "") === expectedValue) return;
-      }
-    } catch {
-      // retry until timeout
-    }
-    if (attempt < attempts) {
-      await new Promise(resolve => setTimeout(resolve, delayMs));
-    }
+  try {
+    await retryUntilTimeout(
+      async () => {
+        const envsRaw = await getEnvs();
+        const envs = envsRaw ? (JSON.parse(envsRaw) as Record<string, string | undefined>) : {};
+        if ((envs[key] ?? "") !== expectedValue) {
+          throw new Error(`env ${key} not yet "${expectedValue}"`);
+        }
+      },
+      timeout,
+      interval,
+      { cancellable: true },
+    );
+  } catch (cause) {
+    const reason = cause instanceof Error ? cause.message : String(cause);
+    throw new Error(
+      `Bridge env sync failed: expected ${key}="${expectedValue}" after ${timeout}ms — ${reason}`,
+      { cause },
+    );
   }
-  throw new Error(
-    `Bridge env sync failed: expected ${key}="${expectedValue}" after ${attempts} attempts`,
-  );
 }
 
 export async function registerKnownSpeculos(speculosPort: number) {
@@ -355,10 +361,12 @@ export async function registerKnownSpeculos(speculosPort: number) {
 export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string) {
   const speculosPort = await deleteSpeculos(deviceId);
   if (speculosPort) {
-    try {
-      await device.unreverseTcpPort(speculosPort);
-    } catch (e) {
-      log.warn(`unreverseTcpPort(${speculosPort}) failed: ${sanitizeError(e)}`);
+    if (!isSpeculosRemote()) {
+      try {
+        await device.unreverseTcpPort(speculosPort);
+      } catch (e) {
+        log.warn(`unreverseTcpPort(${speculosPort}) failed: ${sanitizeError(e)}`);
+      }
     }
     await removeKnownSpeculos(getKnownSpeculosAddress(speculosPort));
     await waitForBridgeEnv("DEVICE_PROXY_URL", "");

@@ -12,17 +12,18 @@ import { cleanedOperation } from "./utils";
 import { OperationCommon } from "./types";
 
 function buildTokenAccount({
+  id,
   parentAccountId,
   assetBalance,
   token,
   operations,
 }: {
+  id: string;
   parentAccountId: string;
   assetBalance: Balance;
   token: TokenCurrency;
   operations: OperationCommon[];
 }): TokenAccount {
-  const id = encodeTokenAccountId(parentAccountId, token);
   const balance = new BigNumber(assetBalance.value.toString() || "0");
 
   // TODO: recheck this logic
@@ -89,8 +90,9 @@ export async function buildSubAccounts({
   for (const { balance, token } of tokenBalances) {
     // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
     if (token && !blacklistedTokenIds.includes(token.id)) {
-      tokenAccounts.push(
-        buildTokenAccount({
+      tokenAccounts.push({
+        ...buildTokenAccount({
+          id: encodeTokenAccountId(accountId, token),
           parentAccountId: accountId,
           assetBalance: balance,
           token,
@@ -109,13 +111,14 @@ export async function buildSubAccounts({
             );
           }),
         }),
-      );
+      });
     }
   }
 
   return tokenAccounts;
 }
 
+/** Keeps only what the chain still reports, carrying the stored operations of a token that stays. */
 export function mergeSubAccounts(
   oldSubAccounts: Array<TokenAccount>,
   newSubAccounts: Array<TokenAccount>,
@@ -128,29 +131,19 @@ export function mergeSubAccounts(
     oldSubAccounts.map((account): [string, TokenAccount] => [String(account.token.id), account]),
   );
 
-  const newSubAccountsToAdd: Array<TokenAccount> = [];
-
-  for (const newSubAccount of newSubAccounts) {
+  return newSubAccounts.map(newSubAccount => {
     const existingSubAccount = oldSubAccountsByTokenId[String(newSubAccount.token.id)];
+    if (!existingSubAccount) return newSubAccount;
 
-    if (!existingSubAccount) {
-      // New sub account does not exist yet. Just add it as is.
-      newSubAccountsToAdd.push(newSubAccount);
-      continue;
-    }
-
-    // New sub account is already known, probably outdated
     const operations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
-    oldSubAccountsByTokenId[String(newSubAccount.token.id)] = {
-      ...existingSubAccount,
-      balance: newSubAccount.balance,
-      spendableBalance: newSubAccount.spendableBalance,
+    return {
+      ...newSubAccount,
       operations,
       operationsCount: operations.length,
+      pendingOperations: existingSubAccount.pendingOperations,
+      swapHistory: existingSubAccount.swapHistory,
+      balanceHistoryCache: existingSubAccount.balanceHistoryCache,
+      creationDate: existingSubAccount.creationDate,
     };
-  }
-
-  const updatedOldSubAccounts = Object.values(oldSubAccountsByTokenId);
-
-  return [...updatedOldSubAccounts, ...newSubAccountsToAdd];
+  });
 }

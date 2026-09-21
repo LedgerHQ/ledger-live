@@ -1,6 +1,6 @@
 import type { AddressParts } from "./splitAddress";
 
-const SECOND_LINE_RATIO = 0.55;
+const SECOND_LINE_RATIO = 0.51;
 
 export function splitMiddleForTwoLines(
   { start, middle, end }: AddressParts,

@@ -4,6 +4,7 @@ import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
   PayCardLinkedWalletsResponseSchema,
+  PayCardLinkedWalletsCanonicalSchema,
   PayCardLogoutResponseSchema,
   PayCardOnboardingStatusResponseSchema,
   PayCardOrderResponseSchema,
@@ -11,10 +12,18 @@ import {
   PayCardSessionSchema,
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
+  PayCardPinCssSchema,
+  PayCardPinTokenResponseSchema,
+  PayCardSetPinTokenRequestSchema,
+  PayCardSetPinTokenResponseSchema,
   PayCardStatusResponseSchema,
+  PayCardTransactionsRequestSchema,
+  PayCardTransactionsResponseSchema,
+  PayCardWalletHistoryRequestSchema,
+  PayCardWalletHistoryResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
-import { transformPayCardSessionResponse } from "./transforms";
+import { transformPayCardLinkedWallets, transformPayCardSessionResponse } from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
   PayCardFreezeStateResult,
@@ -27,11 +36,23 @@ import type {
   PayCardSession,
   PayCardDetailsCss,
   PayCardDetailsToken,
+  PayCardPinCss,
+  PayCardPinToken,
+  PayCardSetPinToken,
+  PayCardSetPinTokenRequest,
   PayCardStatus,
+  PayCardTransaction,
+  PayCardTransactionsRequest,
+  PayCardWalletHistoryEntry,
+  PayCardWalletHistoryRequest,
   PayCardUser,
 } from "./types";
 
 const GRANT = { authenticated: false } as const;
+
+type PayCardLogoutRequest = Readonly<Record<string, never>>;
+
+const logoutAccessTokens = new WeakMap<PayCardLogoutRequest, string | null>();
 
 export const cardManagementApi = cardApi
   .enhanceEndpoints({ addTagTypes: CARD_MANAGEMENT_TAGS })
@@ -65,11 +86,18 @@ export const cardManagementApi = cardApi
         responseSchema: PayCardSessionSchema,
       }),
 
-      logout: build.mutation<PayCardLogoutResult, void>({
-        query: () => ({
-          url: "/v1/auth/logout",
-          method: "POST",
-        }),
+      logout: build.mutation<PayCardLogoutResult, PayCardLogoutRequest>({
+        query: request => {
+          const accessToken = logoutAccessTokens.get(request) ?? null;
+          logoutAccessTokens.delete(request);
+          return {
+            url: "/v1/auth/logout",
+            method: "POST",
+            headers: accessToken ? { authorization: `Bearer ${accessToken}` } : undefined,
+            signal: null,
+          };
+        },
+        extraOptions: { authenticated: false },
         responseSchema: PayCardLogoutResponseSchema,
       }),
 
@@ -107,6 +135,40 @@ export const cardManagementApi = cardApi
       }),
 
       /**
+       * The card's own transactions, newest first.
+       *
+       * Paged by number and nothing else: the provider answers with a bare array, so a short page
+       * is how a caller learns it has reached the end.
+       */
+      getCardTransactions: build.query<PayCardTransaction[], PayCardTransactionsRequest>({
+        query: filters => ({
+          url: "/v1/card/transactions",
+          method: "GET",
+          params: filters,
+        }),
+        argSchema: PayCardTransactionsRequestSchema,
+        responseSchema: PayCardTransactionsResponseSchema,
+        providesTags: ["CardTransactions"],
+      }),
+
+      /**
+       * One wallet's own history, newest first, ten to a page.
+       *
+       * Asked for a single wallet: a card has several linked, so a caller that wants them all asks
+       * once per wallet.
+       */
+      getWalletHistory: build.query<PayCardWalletHistoryEntry[], PayCardWalletHistoryRequest>({
+        query: filters => ({
+          url: "/v1/wallet/history",
+          method: "GET",
+          params: filters,
+        }),
+        argSchema: PayCardWalletHistoryRequestSchema,
+        responseSchema: PayCardWalletHistoryResponseSchema,
+        providesTags: ["WalletHistory"],
+      }),
+
+      /**
        * A mutation, though it reads: the provider spends the token on first use, so the answer must
        * never be served from a cache, and a mutation is never cached.
        *
@@ -124,11 +186,50 @@ export const cardManagementApi = cardApi
         responseSchema: PayCardDetailsTokenResponseSchema,
       }),
 
+      /**
+       * The card's PIN, rendered by the provider as an image: the digits never reach the app as a
+       * value, so nothing here can log or store them.
+       *
+       * A mutation, and retained, for the same reasons as `createCardDetailsToken`: the token is
+       * spent once the image has been read, so the answer must never come from a cache, and
+       * `state.cardApi.mutations` keeps a tracked result. Dispatch with `{ track: false }`, or
+       * reset as soon as the image has loaded.
+       */
+      createCardPinToken: build.mutation<PayCardPinToken, PayCardPinCss | void>({
+        query: customCss => ({
+          url: "/v1/card/pin/token",
+          method: "POST",
+          ...(customCss ? { body: { customCss } } : {}),
+        }),
+        argSchema: PayCardPinCssSchema.optional(),
+        responseSchema: PayCardPinTokenResponseSchema,
+      }),
+
+      /**
+       * Mints the URL of the provider's hosted page for setting or changing the card's PIN.
+       *
+       * A mutation for the same reasons as `createCardDetailsToken`: the token is spent when the
+       * page is opened, so the answer must never be served from a cache. The URL carries the token,
+       * so dispatch with `{ track: false }` or reset once the page has been opened.
+       */
+      createCardSetPinToken: build.mutation<PayCardSetPinToken, PayCardSetPinTokenRequest | void>({
+        query: request => ({
+          url: "/v1/card/set-pin/token",
+          method: "POST",
+          ...(request ? { body: request } : {}),
+        }),
+        argSchema: PayCardSetPinTokenRequestSchema,
+        responseSchema: PayCardSetPinTokenResponseSchema,
+      }),
+
       freezeCard: build.mutation<PayCardFreezeStateResult, void>({
         query: () => ({
           url: "/v1/card/freeze",
           method: "POST",
         }),
+        async onQueryStarted(_, { dispatch, queryFulfilled }) {
+          await patchCardStatus(dispatch, queryFulfilled, "FROZEN");
+        },
         responseSchema: PayCardFreezeStateResponseSchema,
         invalidatesTags: ["CardStatus"],
       }),
@@ -138,6 +239,9 @@ export const cardManagementApi = cardApi
           url: "/v1/card/unfreeze",
           method: "POST",
         }),
+        async onQueryStarted(_, { dispatch, queryFulfilled }) {
+          await patchCardStatus(dispatch, queryFulfilled, "ACTIVE");
+        },
         responseSchema: PayCardFreezeStateResponseSchema,
         invalidatesTags: ["CardStatus"],
       }),
@@ -155,7 +259,9 @@ export const cardManagementApi = cardApi
           url: "/v1/wallet/internal/card_linked",
           method: "GET",
         }),
-        responseSchema: PayCardLinkedWalletsResponseSchema,
+        rawResponseSchema: PayCardLinkedWalletsResponseSchema,
+        transformResponse: transformPayCardLinkedWallets,
+        responseSchema: PayCardLinkedWalletsCanonicalSchema,
       }),
 
       getCardOnboardingStatus: build.query<PayCardOnboardingStatus, void>({
@@ -169,14 +275,27 @@ export const cardManagementApi = cardApi
     }),
   });
 
+export function initiatePayCardLogout(accessToken: string | null) {
+  const request = {};
+  logoutAccessTokens.set(request, accessToken);
+  return cardManagementApi.endpoints.logout.initiate(request, {
+    track: false,
+  });
+}
+
 export type CardManagementApi = typeof cardManagementApi;
 
 export const {
-  useLogoutMutation,
   useGetUserQuery,
   useOrderCardMutation,
   useGetCardStatusQuery,
+  useGetCardTransactionsQuery,
+  useLazyGetCardTransactionsQuery,
+  useGetWalletHistoryQuery,
+  useLazyGetWalletHistoryQuery,
   useCreateCardDetailsTokenMutation,
+  useCreateCardPinTokenMutation,
+  useCreateCardSetPinTokenMutation,
   useLazyGetCardStatusQuery,
   useFreezeCardMutation,
   useUnfreezeCardMutation,
@@ -184,3 +303,25 @@ export const {
   useGetCardLinkedWalletsQuery,
   useGetCardOnboardingStatusQuery,
 } = cardManagementApi;
+
+async function patchCardStatus(
+  dispatch: (action: ReturnType<(typeof cardManagementApi.util)["updateQueryData"]>) => {
+    undo: () => void;
+  },
+  queryFulfilled: Promise<unknown>,
+  status: PayCardStatus["status"],
+) {
+  const patch = dispatch(
+    cardManagementApi.util.updateQueryData("getCardStatus", undefined, draft => {
+      if (!draft) return;
+
+      draft.status = status;
+    }),
+  );
+
+  try {
+    await queryFulfilled;
+  } catch {
+    patch.undo();
+  }
+}

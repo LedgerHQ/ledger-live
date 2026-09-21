@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { useRoute, type RouteProp } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useEnv from "@features/platform-env";
 import { useContactsFeature } from "@features/platform-contacts";
-import { useTranslation } from "@shared/i18n";
 import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
@@ -18,8 +18,8 @@ import { track } from "~/analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
 export function usePayTabViewModel() {
-  const { top } = useNavigationBarHeights();
-  const { t } = useTranslation();
+  const { top, bottom } = useNavigationBarHeights();
+  const insets = useSafeAreaInsets();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
   const balance = usePayCardBalance();
@@ -38,7 +38,7 @@ export function usePayTabViewModel() {
   const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
-  const oauthConfig: CardProps["oauthConfig"] = useMemo(
+  const oauthConfig: CardProps["login"]["oauthConfig"] = useMemo(
     () => ({
       apiUrl,
       clientId,
@@ -51,9 +51,14 @@ export function usePayTabViewModel() {
 
   // The OAuth redirect, when the deep link brought one. The code is the whole of it: PKCE ties it to
   // the verifier on disk, so nothing else has to be echoed back.
-  const callback: CardProps["callback"] = useMemo(
+  const callback: CardProps["login"]["callback"] = useMemo(
     () => (params?.code ? { code: params.code } : null),
     [params?.code],
+  );
+
+  const login: CardProps["login"] = useMemo(
+    () => ({ oauthConfig, callback, onTrackEvent: balance.onTrackEvent }),
+    [oauthConfig, callback, balance.onTrackEvent],
   );
 
   const featureTour: FeatureTourProps = useMemo(
@@ -66,9 +71,8 @@ export function usePayTabViewModel() {
 
   return {
     top,
-    cardTitle: t("payTab.card.title"),
-    oauthConfig,
-    callback,
+    bottom: bottom + insets.bottom,
+    login,
     featureTour,
     balance,
     actionTiles,

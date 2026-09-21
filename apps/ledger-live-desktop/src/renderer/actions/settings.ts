@@ -14,7 +14,6 @@ import {
   filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,
   SettingsState,
-  VaultSigner,
   CurrencySettings,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
@@ -305,11 +304,6 @@ export const setDeepLinkUrl = (url?: string | null) => ({
   type: "SET_DEEPLINK_URL",
   payload: url,
 });
-export const setVaultSigner = (payload: VaultSigner) => ({
-  type: "SET_VAULT_SIGNER",
-  payload,
-});
-
 export const setHasSeenAnalyticsOptInPrompt = (hasSeenAnalyticsOptInPrompt: boolean) => ({
   type: "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
   payload: hasSeenAnalyticsOptInPrompt,
@@ -406,6 +400,11 @@ export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
 export const setHasSeenQ2Tour = (hasSeenQ2Tour: boolean) => ({
   type: "SET_HAS_SEEN_Q2_TOUR",
   payload: hasSeenQ2Tour,
+});
+
+export const setHasSeenQ3Tour = (hasSeenQ3Tour: boolean) => ({
+  type: "SET_HAS_SEEN_Q3_TOUR",
+  payload: hasSeenQ3Tour,
 });
 
 export const setProductTourCompleted = (productTourCompleted: boolean) => ({

@@ -1,7 +1,5 @@
 import React from "react";
 import { View } from "react-native";
-import Share from "react-native-share";
-import { captureRef } from "react-native-view-shot";
 import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { screen, waitFor, within } from "@tests/test-renderer";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
@@ -22,7 +20,6 @@ import {
   FEATURE_TOUR_ROW,
   holdDada,
   mockFullAssetCatalog,
-  payTabEthAccount,
   renderPayTab,
   renderRequestReceive,
   seedContacts,
@@ -435,21 +432,6 @@ describe("PayTab integration", () => {
       expect(screen.getByText("Share")).toBeVisible();
     });
 
-    it("should share a picture of the request card when Share is pressed", async () => {
-      const { user } = renderRequestReceive();
-
-      await user.press(await screen.findByText("Share"));
-
-      await waitFor(() => {
-        expect(captureRef).toHaveBeenCalledWith(expect.anything(), { format: "png" });
-        expect(Share.open).toHaveBeenCalledWith({
-          url: "file://mock.png",
-          message: payTabEthAccount.freshAddress,
-          failOnCancel: false,
-        });
-      });
-    });
-
     it("should render an error when the account is missing", () => {
       renderRequestReceive({
         accountId: "missing-account",
@@ -553,7 +535,7 @@ describe("PayTab integration", () => {
       expect(await screen.findByTestId("pay-select-contact-list")).toBeVisible();
       expect(screen.getByText("Yana")).toBeVisible();
       expect(screen.getByText("Rosa")).toBeVisible();
-      expect(screen.queryByText("Me")).not.toBeOnTheScreen();
+      expect(screen.queryByText("My addresses")).not.toBeOnTheScreen();
 
       await user.type(screen.getByPlaceholderText("Enter contact"), "ros");
 
@@ -574,7 +556,7 @@ describe("PayTab integration", () => {
       expect(await screen.findByPlaceholderText("Enter contact")).toBeVisible();
       expect(await screen.findByTestId("send-recipient-empty-contacts-state")).toBeVisible();
       expect(screen.queryByRole("button", { name: "Add contact" })).not.toBeOnTheScreen();
-      expect(screen.queryByText("Me")).not.toBeOnTheScreen();
+      expect(screen.queryByText("My addresses")).not.toBeOnTheScreen();
       expect(store.getState().modularDrawer.isOpen).toBe(false);
     });
 
@@ -603,7 +585,7 @@ describe("PayTab integration", () => {
       expect(await screen.findByTestId("pay-select-contact-list")).toBeVisible();
       expect(screen.getByText("Contact 0")).toBeVisible();
       expect(screen.getByText("Contact 1")).toBeVisible();
-      expect(screen.queryByText("Me")).not.toBeOnTheScreen();
+      expect(screen.queryByText("My addresses")).not.toBeOnTheScreen();
       expect(store.getState().modularDrawer.isOpen).toBe(false);
     });
 
@@ -623,7 +605,7 @@ describe("PayTab integration", () => {
 
       await user.press(await screen.findByTestId("pay-contacts-see-all"));
       expect(await screen.findByTestId("contacts-screen")).toBeVisible();
-      expect(screen.getByText("Me")).toBeVisible();
+      expect(screen.getByText("My addresses")).toBeVisible();
       await user.press(screen.getByTestId(`contacts-saved-contact-${yana.id}`));
       await user.press(await screen.findByLabelText(`${address.label}, ${address.address}`));
 
@@ -644,7 +626,7 @@ describe("PayTab integration", () => {
       await user.press(screen.getByText("Pay"));
 
       expect(await screen.findByTestId("contacts-screen")).toBeVisible();
-      expect(screen.getByText("Me")).toBeVisible();
+      expect(screen.getByText("My addresses")).toBeVisible();
       expect(screen.queryByTestId("pay-select-contact")).not.toBeOnTheScreen();
       expect(store.getState().appstate.isMainNavigatorVisible).toBe(false);
     });

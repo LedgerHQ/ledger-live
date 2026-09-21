@@ -71,6 +71,8 @@ describe("DevToolsScreen", () => {
           marker: "pay-card-props",
           onNavigateToPortfolio: expect.any(Function),
           onNavigateToPayTab: expect.any(Function),
+          onNavigateToPaySuccess: expect.any(Function),
+          onNavigateToSendSuccess: expect.any(Function),
         },
       },
     ]);

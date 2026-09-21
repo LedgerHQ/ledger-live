@@ -31,7 +31,7 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-xrp": "catalog:",
     "@ledgerhq/hw-app-xrp": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "rxjs": "catalog:"
   },
   "scripts": {

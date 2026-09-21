@@ -41,10 +41,23 @@ describe("useEarnLiveAppModalContentViewModel (mobile)", () => {
     expect(result.current.extraInputs).toEqual({
       uiVersion: "v2",
       lw40enabled: "true",
+      llmWalletApiDeviceIntentSignEnabled: "false",
       ethDepositCohort: "cohort-a",
       stakeProgramsParam: JSON.stringify({ ethereum: "earn", bitcoin: "stakekit" }),
       stakeCurrenciesParam: JSON.stringify(["ethereum", "bitcoin"]),
     });
+  });
+
+  it("returns the enabled device-intent sign flag state", () => {
+    mockedUseVersionedStakePrograms.mockReturnValue(null);
+
+    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
+      overrideInitialState: withFlagOverrides({
+        llmWalletApiDeviceIntentSign: { enabled: true },
+      }),
+    });
+
+    expect(result.current.extraInputs?.llmWalletApiDeviceIntentSignEnabled).toBe("true");
   });
 
   it("returns v3 when earn upselling is enabled", () => {

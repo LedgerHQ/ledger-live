@@ -7,6 +7,7 @@ import { Currency } from "@domain/entity-currency";
 import { CryptoCurrency, ExplorerView } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { Unit } from "@domain/entity-currency-unit";
+import type { Device } from "@ledgerhq/types-devices";
 import {
   Account,
   AnyMessage,
@@ -337,6 +338,32 @@ export type LLDCoinFamily<
   SendStepAmount?: React.ComponentType<SendStepProps>;
 
   /**
+   * Notice rendered on the new Send flow recipient step (e.g. Zcash shielded
+   * sync banner). The component owns its own gating and renders nothing when
+   * it does not apply.
+   *
+   * When it needs to prevent the recipient step from completing/advancing (e.g.
+   * the shielded sync is not complete, so signing could use an incomplete note
+   * set), it reports `onBlockedChange(true)` and `onBlockedChange(false)` once
+   * the block clears. Generic recipient code honors this flag to gate both the
+   * completion signal and forward navigation.
+   */
+  SendRecipientNotice?: React.ComponentType<{
+    account: A;
+    transaction: T;
+    onBlockedChange?: (blocked: boolean) => void;
+  }>;
+
+  /**
+   * Every address by which this account can be recognized as a send
+   * recipient; defaults to the account's fresh address. Lets a family declare
+   * additional stable addresses of its own (e.g. Zcash's unified shielded
+   * address) so pasting one resolves to the same Ledger account as its
+   * transparent fresh address.
+   */
+  getAccountRecipientAddresses?: (account: A) => string[];
+
+  /**
    * Allow to add a family-specific component above the recipient field in the
    * Send modal (e.g. Zcash transparent/shielded "transfer from" selector).
    * The component is responsible for its own gating (feature flags, currency
@@ -392,6 +419,16 @@ export type LLDCoinFamily<
    * manual refresh).
    */
   PostBroadcastEffect?: React.ComponentType<{ account: A; transaction: T; operation: O }>;
+
+  /**
+   * Rendered for its side effects only while the Amount step is active (e.g.
+   * Zcash starts a shielded resync as soon as the source pool is private, so
+   * the note set is fresh by the time the user reaches signing). Provided as a
+   * component, like `SendModalTitle`, so the family owns its own hooks inside
+   * its own render boundary -- a family-provided hook could not keep the Rules
+   * of Hooks satisfied across every family the generic mount point resolves to.
+   */
+  SendAmountEffect?: React.ComponentType<{ account: A; transaction: T }>;
 
   /**
    *  One time modal that is trigger only one time on a account that never send

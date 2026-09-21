@@ -102,6 +102,7 @@ import {
   setSolanaTxcEnabled,
 } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
+import { LinkingProviderWrapper } from "~/components/LinkingProviderWrapper";
 import { setXrpLdmkEnabled } from "@ledgerhq/live-common/families/xrp/setup";
 import { resolveSuiTransport, setSuiTransport } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
@@ -379,36 +380,38 @@ export default class Root extends Component {
                   {/* Two providers, one instance: `I18nextProvider` serves the app's own
                     react-i18next call sites, `I18nProvider` serves the DDD packages through
                     `@shared/i18n`. */}
-                  <I18nextProvider i18n={i18n}>
-                    <I18nProvider i18n={i18n}>
-                      <LocaleProvider>
-                        <PlatformAppProviderWrapper>
-                          <SafeAreaProvider>
-                            <ModalSystemPrimer />
-                            <StylesProvider>
-                              <StyledStatusBar />
-                              <NavBarColorHandler />
-                              <AuthPass>
-                                <GestureHandlerRootView style={styles.root}>
-                                  <WaitForAppReady currencyInitialized={currencyInitialized}>
-                                    <AppProviders initialCountervalues={initialCountervalues}>
-                                      <AppGeoBlocker>
-                                        <AppVersionBlocker>
-                                          <BridgeSyncProvider>
-                                            <App />
-                                          </BridgeSyncProvider>
-                                        </AppVersionBlocker>
-                                      </AppGeoBlocker>
-                                    </AppProviders>
-                                  </WaitForAppReady>
-                                </GestureHandlerRootView>
-                              </AuthPass>
-                            </StylesProvider>
-                          </SafeAreaProvider>
-                        </PlatformAppProviderWrapper>
-                      </LocaleProvider>
-                    </I18nProvider>
-                  </I18nextProvider>
+                  <LinkingProviderWrapper>
+                    <I18nextProvider i18n={i18n}>
+                      <I18nProvider i18n={i18n}>
+                        <LocaleProvider>
+                          <PlatformAppProviderWrapper>
+                            <SafeAreaProvider>
+                              <ModalSystemPrimer />
+                              <StylesProvider>
+                                <StyledStatusBar />
+                                <NavBarColorHandler />
+                                <AuthPass>
+                                  <GestureHandlerRootView style={styles.root}>
+                                    <WaitForAppReady currencyInitialized={currencyInitialized}>
+                                      <AppProviders initialCountervalues={initialCountervalues}>
+                                        <AppGeoBlocker>
+                                          <AppVersionBlocker>
+                                            <BridgeSyncProvider>
+                                              <App />
+                                            </BridgeSyncProvider>
+                                          </AppVersionBlocker>
+                                        </AppGeoBlocker>
+                                      </AppProviders>
+                                    </WaitForAppReady>
+                                  </GestureHandlerRootView>
+                                </AuthPass>
+                              </StylesProvider>
+                            </SafeAreaProvider>
+                          </PlatformAppProviderWrapper>
+                        </LocaleProvider>
+                      </I18nProvider>
+                    </I18nextProvider>
+                  </LinkingProviderWrapper>
                 </QueuedBottomSheetsProvider>
               </BrazeContentCardsProvider>
             </RebootProvider>

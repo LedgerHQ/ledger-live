@@ -1,4 +1,4 @@
-import { Page, expect } from "@playwright/test";
+import { Page, expect, test } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 
@@ -9,6 +9,20 @@ export abstract class WebViewAppPage extends AppPage {
   protected abstract readonly webviewIdentifier: string;
   protected defaultWebViewTimeout = 60_000;
 
+  /** The first Electron window whose title matches this page's webview identifier. */
+  private async findWebviewWindow(): Promise<Page | undefined> {
+    const identifier = this.webviewIdentifier.toLowerCase();
+    for (const window of this.electronApp?.windows() ?? []) {
+      try {
+        const title = await window.title();
+        if (title.toLowerCase().includes(identifier)) return window;
+      } catch {
+        // The webview can detach while its title is read; the next poll re-lists the windows.
+      }
+    }
+    return undefined;
+  }
+
   @step("Wait for WebView to be available")
   protected async getWebView(timeout = 60_000): Promise<Page> {
     if (this._webviewPage) {
@@ -18,62 +32,58 @@ export abstract class WebViewAppPage extends AppPage {
       this._webviewPage = undefined;
     }
     if (!this.electronApp) {
-      throw new Error("No ElectronApplication instance available");
+      test.abort("No ElectronApplication instance available");
     }
 
+    const startTime = Date.now();
     let webview: Page | undefined;
 
-    // Iterate over webviews making multiple attempts over a period of time.
-    // This ensures we handle cases where the right webview is not immediately available.
-    // In some cases a different webview might already be open or it might be loading into the view.
-    const startTime = Date.now();
-
-    while (!webview && Date.now() - startTime < timeout) {
-      const allWindows = this.electronApp.windows();
-      for (const window of allWindows) {
-        try {
-          const webviewTitle = await window.title();
-          if (webviewTitle.toLowerCase().includes(this.webviewIdentifier.toLowerCase())) {
-            webview = window;
-            break;
-          }
-        } catch {
-          // webview might detach in the process, ignore and iterate again
-        }
-      }
-      await this.page.waitForTimeout(500);
-    }
+    // The target webview is not always available immediately: a different one may already
+    // be open, or it may still be loading into the view.
+    await expect
+      .poll(
+        async () => {
+          webview = await this.findWebviewWindow();
+          return webview !== undefined;
+        },
+        {
+          timeout,
+          intervals: [500],
+          message: `WebView with identifier "${this.webviewIdentifier}" not found after ${timeout}ms`,
+        },
+      )
+      .toBe(true);
 
     if (!webview) {
-      throw new Error(
-        `WebView with identifier "${this.webviewIdentifier}" not found after ${timeout}ms`,
-      );
+      // Unreachable: expect.poll only resolves once the callback returned true.
+      test.abort(`WebView "${this.webviewIdentifier}" was matched but not captured.`);
     }
+    // Bind to a const so the narrowing survives into the framenavigated closure below.
+    const resolved = webview;
 
-    const elapsed = Date.now() - startTime;
-    const remainingTimeout = Math.max(timeout - elapsed, 0);
-    await webview.waitForLoadState("domcontentloaded", {
+    const remainingTimeout = Math.max(timeout - (Date.now() - startTime), 0);
+    await resolved.waitForLoadState("domcontentloaded", {
       timeout: remainingTimeout,
     });
-    webview.setDefaultTimeout(this.defaultWebViewTimeout);
+    resolved.setDefaultTimeout(this.defaultWebViewTimeout);
 
-    if (!(webview as any)._ledgerUrlListenerAttached) {
-      webview.on("framenavigated", frame => {
-        if (frame === webview.mainFrame()) {
+    if (!(resolved as any)._ledgerUrlListenerAttached) {
+      resolved.on("framenavigated", frame => {
+        if (frame === resolved.mainFrame()) {
           this.webviewUrlHistory.push(frame.url());
         }
       });
-      (webview as any)._ledgerUrlListenerAttached = true;
+      (resolved as any)._ledgerUrlListenerAttached = true;
     }
 
-    this._webviewPage = webview;
-    return webview;
+    this._webviewPage = resolved;
+    return resolved;
   }
 
   @step("Wait for newWebView to be available")
   protected async waitForNewWindow() {
     if (!this.electronApp) {
-      throw new Error("No electronApp instance");
+      test.abort("No electronApp instance");
     }
     const newWindow = await this.electronApp.waitForEvent("window");
     await newWindow.waitForLoadState();

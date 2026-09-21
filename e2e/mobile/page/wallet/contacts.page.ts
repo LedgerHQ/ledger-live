@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import ContactDetailPage from "@e2e/page/wallet/contactDetail.page";
 
-const DEFAULT_ME_CONTACT_NAME = "Me";
+const ME_CONTACT_DISPLAY_NAME = "My addresses";
 
 export default class ContactsPage {
   savedContactNameRegExp = /^contacts-saved-contact-.+-name$/;
@@ -29,7 +29,7 @@ export default class ContactsPage {
 
   @Step("Expect Me contact displayed")
   async expectMeContactDisplayed() {
-    await detoxExpect(this.meName()).toHaveText(DEFAULT_ME_CONTACT_NAME);
+    await detoxExpect(this.meName()).toHaveText(ME_CONTACT_DISPLAY_NAME);
   }
 
   @Step("Expect Me contact address count to show {{0}}")

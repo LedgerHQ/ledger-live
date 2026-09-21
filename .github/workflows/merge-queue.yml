@@ -19,6 +19,9 @@ permissions:
 jobs:
   determine-affected:
     name: "Affected"
+    permissions:
+      contents: read
+      id-token: write
     uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
     with:
       head_branch: ${{ github.event.merge_group.head_ref }}
@@ -42,8 +45,6 @@ jobs:
       CARD_BAANX_CLIENT_KEY: ${{ secrets.CARD_BAANX_CLIENT_KEY }}
       CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
       CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
-      GH_BOT_CLIENT_ID: ${{ secrets.GH_BOT_CLIENT_ID }}
-      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       NX_KEY: ${{ secrets.NX_KEY }}
     with:
       linux-only: true

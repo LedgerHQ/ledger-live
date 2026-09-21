@@ -59,7 +59,10 @@ export function createBridges(
   };
 
   const signOperation = buildSignOperation(signerContext);
-  const sync = makeSync({ getAccountShape, postSync });
+  // `getAccountShape` already merged. Merging again against the stored account
+  // would undo the discard a re-read depends on and drop every refetched
+  // operation older than the oldest stored one.
+  const sync = makeSync({ getAccountShape, postSync, shouldMergeOps: false });
 
   const accountBridge: AccountBridge<Transaction, ConcordiumAccount> = {
     broadcast,

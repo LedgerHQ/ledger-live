@@ -23,6 +23,9 @@ jest.mock("../useClipboardRecipient");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@features/platform-contacts", () => ({
+  isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).isEligibleAddressCurrency,
   useContacts: jest.fn(),
   useContactsFeature: jest.fn(),
 }));
@@ -103,6 +106,7 @@ describe("useRecipientScreenView", () => {
       isEnabled: false,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseRecipientContactSelection.mockReturnValue({
       selectedContact: undefined,
@@ -140,6 +144,7 @@ describe("useRecipientScreenView", () => {
         isEnabled,
         showNewBadge: false,
         eligibleAddressFamilies: families,
+        excludedCurrencyIds: [],
       });
 
       renderHook(() =>
@@ -249,6 +254,7 @@ describe("useRecipientScreenView", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([
       mockContact({
@@ -286,6 +292,7 @@ describe("useRecipientScreenView", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
 
     const { result } = renderHook(() =>
@@ -310,6 +317,7 @@ describe("useRecipientScreenView", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([
       mockContact({
@@ -345,6 +353,7 @@ describe("useRecipientScreenView", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([
       mockContact({
@@ -497,6 +506,7 @@ describe("useRecipientScreenView", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([contact]);
     mockedUseSendFlowData.mockReturnValue({

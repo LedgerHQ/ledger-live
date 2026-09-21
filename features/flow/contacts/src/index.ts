@@ -1,5 +1,5 @@
-export * from "./contactsListFacade";
-export * from "./contactsViewFacade";
+export * from "./contactsListFacade.web";
+export * from "./contactsViewFacade.web";
 export * from "./analytics";
 export * from "./steps/Detail";
 export * from "./steps/Detail/web";

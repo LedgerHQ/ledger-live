@@ -20,6 +20,12 @@ export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
     unspentPrivateRecords: resources.unspentPrivateRecords
       ? JSON.stringify(resources.unspentPrivateRecords)
       : null,
+    ...(BigNumber.isBigNumber(resources.bondedBalance) && {
+      bondedBalance: resources.bondedBalance.toString(),
+      bondedValidator: resources.bondedValidator ?? null,
+      unbondingBalance: resources.unbondingBalance?.toString() ?? "0",
+      unbondingHeight: resources.unbondingHeight ?? null,
+    }),
     ...(typeof resources.hasMigratedPublicTokens === "boolean" && {
       hasMigratedPublicTokens: resources.hasMigratedPublicTokens,
     }),
@@ -40,6 +46,12 @@ export function fromAleoResourcesRaw(rawResources: AleoResourcesRaw): AleoResour
     unspentPrivateRecords: rawResources.unspentPrivateRecords
       ? JSON.parse(rawResources.unspentPrivateRecords)
       : null,
+    ...(typeof rawResources.bondedBalance === "string" && {
+      bondedBalance: new BigNumber(rawResources.bondedBalance),
+      bondedValidator: rawResources.bondedValidator ?? null,
+      unbondingBalance: new BigNumber(rawResources.unbondingBalance ?? 0),
+      unbondingHeight: rawResources.unbondingHeight ?? null,
+    }),
     ...(typeof rawResources.hasMigratedPublicTokens === "boolean" && {
       hasMigratedPublicTokens: rawResources.hasMigratedPublicTokens,
     }),

@@ -37,7 +37,6 @@ import useUSBTroubleshooting from "~/renderer/hooks/useUSBTroubleshooting";
 import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
-import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
 import {
   useFeature,
@@ -59,6 +58,7 @@ import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/po
 import useEnv from "@features/platform-env";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
 import { useSuppressQ2TourForNewUsers } from "LLD/features/Q2Tour/hooks/useSuppressQ2TourForNewUsers";
+import { useSuppressQ3TourForNewUsers } from "LLD/features/Q3Tour/hooks/useSuppressQ3TourForNewUsers";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
@@ -189,15 +189,6 @@ const RedirectMarketToAsset = () => {
   return <Navigate to={`/asset/${currencyId ?? ""}`} replace />;
 };
 
-export const TopBannerContainer = styled.div`
-  position: sticky;
-  top: 0;
-  z-index: 19;
-  & > *:not(:first-child) {
-    display: none;
-  }
-`;
-
 // Wrapper component for RecoverPlayer with FeatureToggle
 const RecoverPlayerWithFeatureToggle = () => {
   return (
@@ -233,9 +224,6 @@ function MainAppContent({
           <SideBar />
 
           <Page>
-            <TopBannerContainer>
-              <VaultSignerBanner />
-            </TopBannerContainer>
             <Routes>
               <Route path="/" element={withSuspense(PortfolioPage)({})} />
               <Route path="/settings/*" element={withSuspense(Settings)({})} />
@@ -403,6 +391,7 @@ export default function Default() {
   useAutoDismissPostOnboardingEntryPoint();
   useEnforceSupportedLanguage();
   useSuppressQ2TourForNewUsers();
+  useSuppressQ3TourForNewUsers();
 
   useEffect(() => {
     if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {

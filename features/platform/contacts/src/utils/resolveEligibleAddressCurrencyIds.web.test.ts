@@ -16,7 +16,7 @@ const NETWORKS: readonly EligibleAddressNetwork[] = [
 describe("resolveEligibleAddressCurrencyIds", () => {
   it("resolves the default EVM family from production networks", () => {
     const expectedNetworkIds = listCryptoCurrencies()
-      .filter(network => network.family === "evm" && network.managerAppName === "Ethereum")
+      .filter(network => network.family === "evm" && network.ethereumLikeInfo !== undefined)
       .map(network => network.id);
     const excludedNetworkIds = listCryptoCurrencies(true)
       .filter(network => network.family === "evm" && Boolean(network.isTestnetFor))
@@ -29,10 +29,11 @@ describe("resolveEligibleAddressCurrencyIds", () => {
     expect(networkIds).toEqual(expect.not.arrayContaining(excludedNetworkIds));
   });
 
-  it("drops networks the device cannot register, so every offered network reaches a signature", () => {
+  it("keeps every offered network reachable by a device signature", () => {
     const networkIds = resolveEligibleAddressCurrencyIds(["evm"]);
 
-    expect(networkIds).not.toContain("ethereum_classic");
+    expect(networkIds).toContain("sei_evm");
+    expect(networkIds).not.toContain("poa");
     for (const networkId of networkIds) {
       expect(() => resolveContactDeviceContext(networkId)).not.toThrow();
     }
@@ -48,6 +49,16 @@ describe("resolveEligibleAddressCurrencyIds", () => {
 
   it("returns no networks for unknown families", () => {
     expect(resolveEligibleAddressCurrencyIds(["unknown"], NETWORKS)).toEqual([]);
+  });
+
+  it("omits explicitly excluded currency ids from the result", () => {
+    expect(
+      resolveEligibleAddressCurrencyIds(["evm", "tron"], NETWORKS, ["ethereum", "tron"]),
+    ).toEqual(["base"]);
+  });
+
+  it("returns an empty array when all eligible networks are excluded", () => {
+    expect(resolveEligibleAddressCurrencyIds(["evm"], NETWORKS, ["ethereum", "base"])).toEqual([]);
   });
 
   it("deduplicates network ids while preserving their first occurrence", () => {

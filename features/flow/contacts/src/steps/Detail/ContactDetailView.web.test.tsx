@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { CONTACT_NAME_MAX_LENGTH } from "@domain/entity-contact";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { createMeDisplayNameFormatter } from "@features/platform-contacts";
 import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
 import type { ContactDetailLabels } from "./types";
@@ -10,12 +11,12 @@ import { ContactDetailView } from "./ContactDetailView.web";
 
 const labels: ContactDetailLabels = {
   addAddress: "Add address",
-  addExternalAddress: "Add external address",
+  addYourAddress: "Add your address",
   emptyMeTitle: "No saved addresses for you",
   emptyContactTitle: name => `No saved addresses for ${name}`,
   emptyMeDescription: "Save your wallet addresses to receive crypto by name next time.",
   emptyContactDescription: () => "Save their wallet addresses to send to them by name next time",
-  formatMeDisplayName: name => `${name} (Me)`,
+  formatMeDisplayName: createMeDisplayNameFormatter("My addresses", name => `${name} (Me)`),
   formatAddressCount: count => `${count} address`,
 };
 
@@ -32,8 +33,8 @@ describe("ContactDetailView", () => {
     render(<ContactDetailView {...defaultProps} contact={mockMeContact()} />);
 
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeInTheDocument();
-    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Me");
-    expect(screen.getByText("Add external address")).toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses");
+    expect(screen.getByText("Add your address")).toBeInTheDocument();
     expect(screen.getByText("No saved addresses for you")).toBeInTheDocument();
     expect(
       screen.getByText("Save your wallet addresses to receive crypto by name next time."),
@@ -143,7 +144,7 @@ describe("ContactDetailView", () => {
     expect(handleAddAddress).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId("contacts-detail-add-address")).toHaveAttribute(
       "aria-label",
-      "Add external address",
+      "Add your address",
     );
   });
 

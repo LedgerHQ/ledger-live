@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-btc",
-  "version": "11.4.0",
+  "version": "11.5.0",
   "description": "Ledger Hardware Wallet Bitcoin Application API",
   "keywords": [
     "Ledger",
@@ -63,11 +63,11 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/logs": "catalog:",
-    "@ledgerhq/psbtv2": "workspace:^",
-    "@noble/curves": "1.9.7",
-    "@noble/hashes": "1.8.0",
+    "@ledgerhq/psbtv2": "catalog:",
+    "@noble/curves": "catalog:",
+    "@noble/hashes": "catalog:",
     "bip32-path": "^0.4.2",
     "bitcoinjs-lib": "^6.1.7",
     "bs58": "catalog:",
@@ -76,8 +76,8 @@
     "semver": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
@@ -86,6 +86,7 @@
     "axios": "catalog:",
     "documentation": "14.0.2",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.4.0"
@@ -101,7 +102,9 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "format": "oxfmt src tests",
+    "format:check": "oxfmt --check src tests"
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
 }

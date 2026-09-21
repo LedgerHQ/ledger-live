@@ -1,4 +1,4 @@
-import cvsApi from "@ledgerhq/live-countervalues/api/index";
+import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import {
   DEFAULT_GAS_LIMIT,
@@ -16,7 +16,7 @@ import { getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
 import { estimateFees } from "./estimateFees";
 import { getCurrencyToUSDRate, toEVMAddress } from "../network/utils";
 
-jest.mock("@ledgerhq/live-countervalues/api/index");
+jest.mock("@ledgerhq/live-network");
 jest.mock("../network/api");
 
 describe("getEstimatedFees", () => {
@@ -33,7 +33,7 @@ describe("getEstimatedFees", () => {
 
   it("returns estimated fee based on USD rate for CryptoTransfer", async () => {
     const usdRate = 1; // 1 HBAR = 1 USD
-    (cvsApi.fetchLatest as jest.Mock).mockResolvedValueOnce([usdRate]);
+    (network as jest.Mock).mockResolvedValueOnce({ data: { hedera: usdRate } });
 
     const result = await estimateFees({
       currencyId: mockedAccount.currency.id,
@@ -53,7 +53,7 @@ describe("getEstimatedFees", () => {
 
   it("returns estimated fee based on USD rate for TokenTransfer", async () => {
     const usdRate = 0.5; // 1 HBAR = 0.5 USD
-    (cvsApi.fetchLatest as jest.Mock).mockResolvedValueOnce([usdRate]);
+    (network as jest.Mock).mockResolvedValueOnce({ data: { hedera: usdRate } });
 
     const result = await estimateFees({
       currencyId: mockedAccount.currency.id,
@@ -73,7 +73,7 @@ describe("getEstimatedFees", () => {
 
   it("returns estimated fee based on USD rate for TokenAssociate", async () => {
     const usdRate = 2; // 1 HBAR = 2 USD
-    (cvsApi.fetchLatest as jest.Mock).mockResolvedValueOnce([usdRate]);
+    (network as jest.Mock).mockResolvedValueOnce({ data: { hedera: usdRate } });
 
     const result = await estimateFees({
       currencyId: mockedAccount.currency.id,
@@ -228,8 +228,7 @@ describe("getEstimatedFees", () => {
   });
 
   it("falls back to default estimate when cvs api returns null", async () => {
-    const usdRate = null;
-    (cvsApi.fetchLatest as jest.Mock).mockResolvedValueOnce([usdRate]);
+    (network as jest.Mock).mockResolvedValueOnce({ data: {} });
 
     const result = await estimateFees({
       currencyId: mockedAccount.currency.id,
@@ -323,7 +322,7 @@ describe("getEstimatedFees", () => {
   });
 
   it("falls back to default estimate on cvs api failure", async () => {
-    (cvsApi.fetchLatest as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
+    (network as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
 
     const result = await estimateFees({
       currencyId: mockedAccount.currency.id,
@@ -336,6 +335,24 @@ describe("getEstimatedFees", () => {
 
     expect(result).toMatchObject({
       tinybars: expectedTinybars,
+    });
+  });
+
+  it("getCurrencyToUSDRate resolves to null (not throws) when fetch rejects — degraded path still selects DEFAULT_TINYBAR_FEE", async () => {
+    (network as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
+
+    const rate = await getCurrencyToUSDRate(mockedAccount.currency);
+    expect(rate).toBeNull();
+
+    // Clear the LRU cache so the second fetch actually runs (not served from the cached null above)
+    getCurrencyToUSDRate.clear(mockedAccount.currency.ticker);
+    (network as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
+    const result = await estimateFees({
+      currencyId: mockedAccount.currency.id,
+      operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
+    });
+    expect(result).toMatchObject({
+      tinybars: new BigNumber(DEFAULT_TINYBAR_FEE).multipliedBy(ESTIMATED_FEE_SAFETY_RATE),
     });
   });
 });

@@ -82,6 +82,21 @@ describe("updateTransaction", () => {
     expect(result.useAllAmount).toBe(true);
   });
 
+  // `fee` and `energy` are two halves of one estimate. A leftover energy would
+  // be signed as the limit for whatever token the patch selected next, and the
+  // device's "Max fees" step would show a figure never estimated for it.
+  it("drops the energy alongside the fee", () => {
+    // GIVEN
+    const tx = createFixtureTransaction({ fee: new BigNumber(3600), energy: 1080 });
+
+    // WHEN
+    const result = updateTransaction(tx, { subAccountId: "js:2:concordium:pubkey:+other" });
+
+    // THEN
+    expect(result.fee).toBeNull();
+    expect("energy" in result).toBe(false);
+  });
+
   it("should return new transaction object (immutable)", () => {
     // GIVEN
     const tx = createFixtureTransaction();
@@ -92,5 +107,30 @@ describe("updateTransaction", () => {
 
     // THEN
     expect(result).not.toBe(tx);
+  });
+
+  // `useBridgeTransaction` compares by identity, so allocating on a no-op patch
+  // flips `bridgePending` and re-runs preparation — a fee round-trip per patch.
+  it("keeps the same reference when the patch changes nothing", () => {
+    // GIVEN - the fee is already null, so there is nothing left to reset
+    const tx = createFixtureTransaction({ fee: null });
+
+    // WHEN
+    const result = updateTransaction(tx, {});
+
+    // THEN
+    expect(result).toBe(tx);
+  });
+
+  it("allocates when there is a stale energy to strip", () => {
+    // GIVEN
+    const tx = createFixtureTransaction({ fee: null, energy: 1080 });
+
+    // WHEN
+    const result = updateTransaction(tx, {});
+
+    // THEN
+    expect(result).not.toBe(tx);
+    expect("energy" in result).toBe(false);
   });
 });

@@ -4,11 +4,10 @@ import { setEnv } from "@ledgerhq/live-env";
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./tests/currencies";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 // Setup mock store with DAI token for tests
-const mockStore: CryptoAssetsStore = {
-  findTokenById: async (id: string) => {
+const mockStore = {
+  findTokenById: async (id: string): Promise<TokenCurrency | undefined> => {
     if (id === "ethereum/erc20/dai_stablecoin_v2_0") {
       return {
         type: "TokenCurrency",
@@ -25,8 +24,6 @@ const mockStore: CryptoAssetsStore = {
     }
     return undefined;
   },
-  findTokenByAddressInCurrency: async () => undefined,
-  getTokensSyncHash: async () => "",
 };
 
 setEnv("MOCK", "1");

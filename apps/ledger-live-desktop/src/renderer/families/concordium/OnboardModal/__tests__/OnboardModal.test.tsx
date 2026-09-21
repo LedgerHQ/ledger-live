@@ -14,9 +14,8 @@ import {
   createMockDevice,
   defaultConcordiumResources,
   SESSION_TOPIC,
-  T,
-  WAIT_OPTS,
 } from "./testUtils";
+import { EMIT_DELAY, PROGRESS_DELAY, WAIT_OPTS } from "./timing";
 
 const mockPairWalletConnect = jest.fn();
 const mockOnboardAccount = jest.fn();
@@ -27,6 +26,14 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
     pairWalletConnect: mockPairWalletConnect,
     onboardAccount: mockOnboardAccount,
   })),
+}));
+
+// Production debounces each step transition by 1500ms, which is also what holds the
+// transient screens asserted below on screen — so this can come down, but not to zero.
+// A hoisted factory cannot close over an import, so it reads the shared value through
+// requireActual; ./timing is dependency-free precisely so that is safe.
+jest.mock("../constants", () => ({
+  STEP_TRANSITION_TIMEOUT: jest.requireActual("./timing").STEP_TRANSITION_TIMEOUT_TEST,
 }));
 
 jest.mock("@ledgerhq/coin-concordium/network/walletConnect", () => ({
@@ -44,11 +51,11 @@ function createMockPairObservable() {
     subscribe: jest.fn(({ next, complete }: SubscribeArgs) => {
       const t1 = setTimeout(() => {
         next({ status: "PREPARE", walletConnectUri: "wc:mock-uri-for-testing" });
-      }, 10);
+      }, PROGRESS_DELAY);
       const t2 = setTimeout(() => {
         next({ status: "SUCCESS", sessionTopic: SESSION_TOPIC });
         complete();
-      }, T + 200);
+      }, EMIT_DELAY);
 
       return {
         unsubscribe: jest.fn(() => {
@@ -65,7 +72,7 @@ function createMockPairPrepareOnlyObservable() {
     subscribe: jest.fn(({ next }: SubscribeArgs) => {
       const t1 = setTimeout(() => {
         next({ status: "PREPARE", walletConnectUri: "wc:mock-uri-for-testing" });
-      }, 10);
+      }, PROGRESS_DELAY);
       return { unsubscribe: jest.fn(() => clearTimeout(t1)) };
     }),
   };
@@ -76,11 +83,11 @@ function createMockOnboardObservable(completedAccount: Account) {
     subscribe: jest.fn(({ next, complete }: SubscribeArgs) => {
       const t1 = setTimeout(() => {
         next({ status: AccountOnboardStatus.SIGN });
-      }, 10);
+      }, PROGRESS_DELAY);
       const t2 = setTimeout(() => {
         next({ account: completedAccount });
         complete();
-      }, T + 200);
+      }, EMIT_DELAY);
 
       return {
         unsubscribe: jest.fn(() => {
@@ -101,7 +108,7 @@ type SubscribeArgs = {
 function createMockPairErrorObservable(error: Error) {
   return {
     subscribe: jest.fn(({ error: onError }: SubscribeArgs) => {
-      const t1 = setTimeout(() => onError(error), 10);
+      const t1 = setTimeout(() => onError(error), PROGRESS_DELAY);
       return { unsubscribe: jest.fn(() => clearTimeout(t1)) };
     }),
   };
@@ -110,7 +117,7 @@ function createMockPairErrorObservable(error: Error) {
 function createMockOnboardErrorObservable(error: Error) {
   return {
     subscribe: jest.fn(({ error: onError }: SubscribeArgs) => {
-      const t1 = setTimeout(() => onError(error), 10);
+      const t1 = setTimeout(() => onError(error), PROGRESS_DELAY);
       return { unsubscribe: jest.fn(() => clearTimeout(t1)) };
     }),
   };
@@ -195,7 +202,7 @@ describe("OnboardModal", () => {
     expect(doneButton).toBeVisible();
 
     await user.click(doneButton);
-  }, 20_000);
+  });
 
   it("should render QR code during pairing", async () => {
     mockPairWalletConnect.mockReturnValue(createMockPairPrepareOnlyObservable());
@@ -207,7 +214,7 @@ describe("OnboardModal", () => {
     await waitFor(() => {
       expect(screen.getByText(/scan the qr code/i)).toBeVisible();
     }, WAIT_OPTS);
-  }, 10_000);
+  });
 
   it("should show error and Try again when pairing fails", async () => {
     mockPairWalletConnect.mockReturnValue(
@@ -224,7 +231,7 @@ describe("OnboardModal", () => {
     });
 
     expect(screen.getByRole("button", { name: /try again/i })).toBeVisible();
-  }, 10_000);
+  });
 
   it("should show error and Try again when account creation fails", async () => {
     mockPairWalletConnect.mockReturnValue(createMockPairObservable());
@@ -247,7 +254,7 @@ describe("OnboardModal", () => {
     });
 
     expect(screen.getByRole("button", { name: /try again/i })).toBeVisible();
-  }, 15_000);
+  });
 
   it("should retry pairing after failure and complete the flow", async () => {
     mockPairWalletConnect
@@ -282,7 +289,7 @@ describe("OnboardModal", () => {
 
     const doneButton = await screen.findByTestId("add-accounts-finish-close-button");
     expect(doneButton).toBeVisible();
-  }, 25_000);
+  });
 
   it("should auto-retry when pairing session expires", async () => {
     mockPairWalletConnect
@@ -299,7 +306,7 @@ describe("OnboardModal", () => {
     }, WAIT_OPTS);
 
     expect(mockPairWalletConnect).toHaveBeenCalledTimes(2);
-  }, 15_000);
+  });
 
   it("should throw when currency is null", () => {
     expect(() =>
@@ -348,5 +355,5 @@ describe("OnboardModal", () => {
     await waitFor(() => {
       expect(screen.getByText("My Custom Name")).toBeVisible();
     });
-  }, 10_000);
+  });
 });

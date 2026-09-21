@@ -1,19 +1,25 @@
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { useShouldShowDeferredModals } from "./useShouldShowDeferredModals";
-import { setHasSeenWalletV4Tour, setHasSeenQ2Tour } from "~/renderer/actions/settings";
+import {
+  setHasSeenWalletV4Tour,
+  setHasSeenQ2Tour,
+  setHasSeenQ3Tour,
+} from "~/renderer/actions/settings";
 
 const tourEnabledOverrides = {
   lwdWallet40: {
     enabled: true,
-    params: { tour: true, q2Tour: false },
+    params: { tour: true },
   },
+  releaseTour: { enabled: false, params: { variant: "q2" as const } },
 };
 
 const q2TourEnabledOverrides = {
   lwdWallet40: {
     enabled: true,
-    params: { tour: false, q2Tour: true },
+    params: { tour: false },
   },
+  releaseTour: { enabled: true, params: { variant: "q2" as const } },
 };
 
 describe("useShouldShowDeferredModals", () => {
@@ -124,6 +130,64 @@ describe("useShouldShowDeferredModals – Q2 Tour", () => {
 
     act(() => {
       store.dispatch(setHasSeenQ2Tour(true));
+    });
+
+    expect(result.current).toBe(false);
+  });
+});
+
+const q3TourEnabledOverrides = {
+  lwdWallet40: {
+    enabled: true,
+    params: { tour: false },
+  },
+  releaseTour: { enabled: true, params: { variant: "q3_a" as const } },
+};
+
+describe("useShouldShowDeferredModals – Q3 Tour", () => {
+  it("returns false when Q3 tour is enabled and user has not seen tour at mount", () => {
+    const { result } = renderHook(() => useShouldShowDeferredModals(), {
+      initialState: {
+        ...withFlagOverrides(q3TourEnabledOverrides),
+        settings: {
+          hasSeenQ3Tour: false,
+        },
+      },
+      minimal: false,
+    });
+
+    expect(result.current).toBe(false);
+  });
+
+  it("returns true when Q3 tour is enabled but user had already seen tour at mount", () => {
+    const { result } = renderHook(() => useShouldShowDeferredModals(), {
+      initialState: {
+        ...withFlagOverrides(q3TourEnabledOverrides),
+        settings: {
+          hasSeenQ3Tour: true,
+        },
+      },
+      minimal: false,
+    });
+
+    expect(result.current).toBe(true);
+  });
+
+  it("stays false after Q3 hasSeen becomes true in same session (ref frozen at mount)", () => {
+    const { result, store } = renderHook(() => useShouldShowDeferredModals(), {
+      initialState: {
+        ...withFlagOverrides(q3TourEnabledOverrides),
+        settings: {
+          hasSeenQ3Tour: false,
+        },
+      },
+      minimal: false,
+    });
+
+    expect(result.current).toBe(false);
+
+    act(() => {
+      store.dispatch(setHasSeenQ3Tour(true));
     });
 
     expect(result.current).toBe(false);

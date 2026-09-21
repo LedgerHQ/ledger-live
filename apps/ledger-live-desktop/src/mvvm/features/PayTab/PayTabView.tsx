@@ -27,11 +27,13 @@ export function PayTabView({
   isContactsEnabled,
 }: Readonly<PayTabViewModel>) {
   return (
-    <div className="flex flex-col gap-24">
+    <div className="flex flex-col">
       <TrackPage category="Pay" balance_filter={balance.filter} />
       {verifyPhase === "intro" && <TrackPage category="Request Address Verification" />}
-      <PayTabHeader />
-      <Balance {...balance} actionTiles={actionTiles} />
+      <div className="flex flex-col gap-24">
+        <PayTabHeader />
+        <Balance {...balance} actionTiles={actionTiles} />
+      </div>
 
       {isContactsEnabled && (
         <>

@@ -82,6 +82,6 @@ The CLI exposes a small, fixed set of commands consumed by e2e and CI. Run
 | `generateAppJson` | e2e (`generate-e2e-userdata.yml`) — generates the app dataset (userdata) for the desktop/mobile e2e suites |
 | `version` | the package's own smoke test |
 
-All of these run against a Speculos device (`SPECULOS_API_PORT` or `SPECULOS_APDU_PORT`).
+All of these run against a Speculos device (`SPECULOS_API_PORT`).
 Passing a non-Speculos device id fails with an explicit error pointing to the desktop/mobile
 app or `@ledgerhq/wallet-cli`.

@@ -1,8 +1,6 @@
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import test from "tests/fixtures/common";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { performSwapUntilQuoteSelectionStep, setupEnv } from "tests/utils/swapUtils";
 import { keepRunningProviders } from "@ledgerhq/live-e2e-shared/swap";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -60,7 +58,6 @@ test.describe("Swap - cross account warning", () => {
           `${provider.uiName} provider is currently down — skipping cross-account warning check`,
         );
 
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);
         const errorMessage =

@@ -46,7 +46,9 @@ export type Data = {
   disableBacks?: string[];
   walletConnectProxy?: boolean;
   transaction?: Transaction;
-  onConfirmationHandler?: () => void;
+  // Called with the broadcast operation, which the handler then owns: supplying one makes the
+  // flow skip onOperationBroadcasted, so nothing else will file it (GenericStepConnectDevice).
+  onConfirmationHandler?: (operation: Operation) => void;
   onFailHandler?: () => void;
   stepId?: StepId;
 };

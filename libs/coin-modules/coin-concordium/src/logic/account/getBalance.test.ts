@@ -24,6 +24,20 @@ describe("api getBalance", () => {
     ]);
   });
 
+  it("reports a zero balance for an address that does not exist on chain", async () => {
+    getAccountBalance.mockResolvedValue({});
+
+    await expect(getBalance(CONFIG, ADDRESS, "concordium")).resolves.toEqual([
+      { asset: { type: "native" }, value: 0n },
+    ]);
+  });
+
+  it("rejects a balance that is present but carries no amount", async () => {
+    getAccountBalance.mockResolvedValue({ finalizedBalance: { accountTokens: [] } });
+
+    await expect(getBalance(CONFIG, ADDRESS, "concordium")).rejects.toThrow(TypeError);
+  });
+
   it("reports one entry per PLT, keyed by the on-chain token id and the holder", async () => {
     getAccountBalance.mockResolvedValue({
       finalizedBalance: {

@@ -23,6 +23,9 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 jest.mock("LLD/hooks/redux");
 jest.mock("@features/platform-contacts", () => ({
+  isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).isEligibleAddressCurrency,
   useContactsFeature: jest.fn(() => ({
     isEnabled: false,
     eligibleAddressFamilies: ["evm"],
@@ -35,6 +38,7 @@ jest.mock("@ledgerhq/live-common/currencies/index", () => ({
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     hasMemoForRecipient: jest.fn(() => true),
+    getBalanceTypeConfig: jest.fn(() => null),
   },
 }));
 jest.mock("../../context/RecipientContactSelectionContext", () => ({
@@ -161,6 +165,7 @@ beforeEach(() => {
     transaction: { status: {} },
   });
   (useMaybeAccountName as jest.Mock).mockReturnValue("Base 1");
+  jest.mocked(sendFeatures.getBalanceTypeConfig).mockReturnValue(null);
   jest.mocked(useRecipientContactSelection).mockReturnValue({
     selectedContact: undefined,
     selectContact: jest.fn(),
@@ -659,6 +664,83 @@ describe("useSendHeaderModel", () => {
 
       expect(latestVM?.title).toBe("Send ETH");
       expect(latestVM?.descriptionText).toBe("");
+    });
+
+    it("adds the selected pool as a qualifier when the currency declares a balanceType config", () => {
+      mockNavigation();
+      mockActions();
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.RECIPIENT,
+        currentStepConfig: { addressInput: true, showTitle: true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
+      });
+      mockData({
+        account: { currency: { ticker: "ZEC" }, account: {} },
+        recipient: null,
+        transaction: { transaction: { sender: "private" }, status: {} },
+      });
+      jest.mocked(sendFeatures.getBalanceTypeConfig).mockReturnValue({
+        getOptions: () => [
+          { id: "public", translationKey: "balanceType.transparent" },
+          { id: "private", translationKey: "balanceType.shielded" },
+        ],
+        getSelectedOptionId: (transaction: unknown) =>
+          (transaction as { sender?: string } | undefined)?.sender ?? null,
+      } as never);
+
+      renderHook("$763.32");
+
+      expect(latestVM?.descriptionText).toBe("Base 1 (Private balance) · $763.32");
+    });
+
+    it("degrades to the plain account summary when no pool is selected yet", () => {
+      mockNavigation();
+      mockActions();
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.RECIPIENT,
+        currentStepConfig: { addressInput: true, showTitle: true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
+      });
+      mockData({
+        account: { currency: { ticker: "ZEC" }, account: {} },
+        recipient: null,
+        transaction: { transaction: {}, status: {} },
+      });
+      jest.mocked(sendFeatures.getBalanceTypeConfig).mockReturnValue({
+        getOptions: () => [],
+        getSelectedOptionId: () => null,
+      } as never);
+
+      renderHook("$0.00");
+
+      expect(latestVM?.descriptionText).toBe("Base 1 · $0.00");
+    });
+
+    it("is byte-identical to before for a currency with no balanceType config", () => {
+      mockNavigation();
+      mockActions();
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.RECIPIENT,
+        currentStepConfig: { addressInput: true, showTitle: true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
+      });
+
+      renderHook("$5,969.83");
+
+      expect(sendFeatures.getBalanceTypeConfig).toHaveBeenCalled();
+      expect(latestVM?.descriptionText).toBe("Base 1 · $5,969.83");
     });
 
     it("uses the per-step titleKey override when defined", () => {

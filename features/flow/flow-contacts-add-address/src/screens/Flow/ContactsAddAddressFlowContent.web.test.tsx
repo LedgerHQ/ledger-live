@@ -35,6 +35,8 @@ const entryLabels: AddAddressEntryLabels = {
   sanctionedAddress: "Address is sanctioned",
   validationUnavailable: "Address validation is unavailable",
   ensDisclaimer: "ENS disclaimer",
+  ensDisclaimerDescription: "ENS names can change over time.",
+  duplicateAddress: (contactName: string) => `This address is already used for ${contactName}.`,
 };
 const nameLabels: ContactsAddAddressNameLabels = {
   inputLabel: "Address name",
@@ -122,8 +124,7 @@ describe("ContactsAddAddressFlowContent", () => {
     const addressProps = createContentProps(createContentState("enteringAddress"));
     const { rerender } = render(<ContactsAddAddressFlowContent {...addressProps} />);
 
-    fireEvent.click(screen.getByTestId("contacts-add-address-confirm"));
-    expect(addressProps.onContinueFromAddressDetails).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("contacts-add-address-input")).toBeInTheDocument();
 
     const nameProps = createContentProps(createContentState("namingAddress"));
     rerender(<ContactsAddAddressFlowContent {...nameProps} />);

@@ -26,7 +26,7 @@ function createProps(
       namePlaceholder: "Contact name",
       namingDisclaimer:
         "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
-      confirmName: "Add contact",
+      confirmAddContact: "Add contact",
       nameValidationErrors: {
         [INVALID_CONTACT_NAME_ERROR_NAME]: "Special characters are not allowed.",
         [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "This contact name is already in use.",

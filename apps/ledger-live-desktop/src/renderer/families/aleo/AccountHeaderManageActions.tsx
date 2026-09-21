@@ -2,6 +2,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { openModal } from "~/renderer/actions/modals";
 import IconTransfer from "~/renderer/icons/Transfer";
 import IconCoins from "~/renderer/icons/Coins";
@@ -19,17 +20,25 @@ const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({
   const isSelfTransferDisabled = bridge.isAccountEmpty(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const isStakingEnabled = !!getAleoCurrencyConfig(mainAccount.currency)?.enableStaking;
+  const showStakingAction = isStakingEnabled && account.type === "Account";
 
   const onClick = () => {
     dispatch(openModal(AleoCustomModal.SELF_TRANSFER, { account, parentAccount }));
   };
 
   const onManage = () => {
-    const modalKey = bridge.isAccountEmpty(mainAccount)
-      ? "MODAL_NO_FUNDS_STAKE"
-      : AleoCustomModal.MANAGE;
+    if (bridge.isAccountEmpty(mainAccount)) {
+      dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account: mainAccount }));
+      return;
+    }
 
-    dispatch(openModal(modalKey, { account: mainAccount }));
+    const hasBondedPosition = !!(mainAccount as AleoAccount).aleoResources?.bondedValidator;
+
+    dispatch(
+      openModal(hasBondedPosition ? AleoCustomModal.MANAGE : AleoCustomModal.BOND_PUBLIC, {
+        account: mainAccount,
+      }),
+    );
   };
 
   return [
@@ -44,7 +53,7 @@ const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({
       eventProperties: { button: "aleo-self-transfer" },
       accountActionsTestId: "self-transfer-button",
     },
-    ...(isStakingEnabled
+    ...(showStakingAction
       ? [
           {
             key: "AleoBond",

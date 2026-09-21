@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-bank-transfer",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "Pay cash-to-stable bank transfer intro for Ledger Wallet",
   "main": "src/index.ts",
@@ -28,6 +28,7 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-bank-transfer"
   },
   "dependencies": {
+    "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {

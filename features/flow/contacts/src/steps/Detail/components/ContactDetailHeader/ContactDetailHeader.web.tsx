@@ -54,7 +54,7 @@ export function ContactDetailHeader({
     labels.formatMeDisplayName ?? (name => name),
   );
   const addAddressLabel = contact.isMe
-    ? (labels.addExternalAddress ?? labels.addAddress)
+    ? (labels.addYourAddress ?? labels.addAddress)
     : labels.addAddress;
   const { addAddressOffset, contentRight } = getCompactHeaderLayout(detailActions);
 

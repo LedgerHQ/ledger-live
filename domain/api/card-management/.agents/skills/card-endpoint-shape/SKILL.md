@@ -76,6 +76,10 @@ a grant out of the state. A new grant must be added to `CARD_GRANT_ENDPOINTS` in
 `transformResponse` does receive the request as its third argument, after the base query's `meta`.
 Use it to map, never to staple a request value back onto the answer.
 
+When a credential must be captured before local state is cleared, keep it outside the Redux action
+and hide the opaque request behind a domain-owned initiation helper. The logout endpoint uses this
+pattern so callers and Redux readers never receive the access token.
+
 ## Rules
 
 - **Schemas are the only validation.** No `as` on `response.data`, no hand-built `PARSING_ERROR`. A

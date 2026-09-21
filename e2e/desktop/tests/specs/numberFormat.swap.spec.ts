@@ -4,8 +4,6 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { expectFormattedAmount } from "tests/utils/amountUtils";
 import { getExpectedSeparators } from "@ledgerhq/live-e2e-shared/data/numberFormat";
@@ -59,8 +57,6 @@ test.describe("Swap - amount formatting by language", () => {
         annotation: { type: "TMS", description: "B2CQA-4014" },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         // The userdata fixture already boots in English; only switch away from it.
         if (languageId !== "en") {
           await app.mainNavigation.openSettings();

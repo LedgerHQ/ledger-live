@@ -4,8 +4,6 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
@@ -59,8 +57,6 @@ test.describe("Swap - default currency", () => {
       annotation: { type: "TMS", description: "B2CQA-3079, B2CQA-3080" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await test.step("Default currency is set when landing on swap", async () => {
         await app.swap.goAndWaitForSwapToBeReady(() =>
           app.mainNavigation.openTargetFromMainNavigation("swap"),
@@ -129,8 +125,6 @@ test.describe("Swap - rejected on device", () => {
       annotation: { type: "TMS", description: "B2CQA-2212" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
 
@@ -223,8 +217,6 @@ for (const {
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
-        const tmsDescription = getDescription(test.info().annotations, "TMS");
-        await addTmsLink(tmsDescription.split(", "));
         swap.accountToDebit.address = addressFrom;
         swap.accountToCredit.address = addressTo;
 
@@ -275,7 +267,6 @@ test.describe("Swap - account not present", () => {
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
@@ -338,7 +329,6 @@ test.describe("Swap - account not present", () => {
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
@@ -392,7 +382,6 @@ test.describe("Swap - account not present", () => {
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
@@ -454,8 +443,6 @@ test.describe("Swap - switch currencies", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await performSwapUntilQuoteSelectionStep(app, swap, swap.amount ?? "0");
       await app.swap.switchYouSendAndYouReceive();
       await app.swap.checkAssetFromContains(swap.accountToCredit.currency.ticker);

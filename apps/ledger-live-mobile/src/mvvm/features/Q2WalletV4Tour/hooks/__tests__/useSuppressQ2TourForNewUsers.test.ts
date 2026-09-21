@@ -27,7 +27,10 @@ function mockState({
 }
 
 function mockTourEnabled(enabled: boolean) {
-  mockUseFeature.mockReturnValue({ enabled, params: { q2Tour: enabled } } as never);
+  mockUseFeature.mockReturnValue({
+    enabled,
+    params: { variant: enabled ? "q2" : undefined },
+  } as never);
 }
 
 describe("useSuppressQ2TourForNewUsers", () => {

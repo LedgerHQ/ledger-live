@@ -1,7 +1,5 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
@@ -23,8 +21,6 @@ test.describe("Portfolio", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.portfolio.checkNoBalanceTitleVisibility();
       await app.portfolio.expectPortfolioTotalBalanceNotVisible();
       await app.portfolio.expectOneDayPerformanceIndicatorNotVisible();
@@ -60,8 +56,6 @@ test.describe("Portfolio", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.portfolio.checkReceiveButtonVisibility();
       await app.portfolio.checkBuyButtonVisibility();
       await app.portfolio.checkSellButtonDisabled();
@@ -92,8 +86,6 @@ test.describe("Portfolio", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.portfolio.checkSellButtonEnabled();
       await app.portfolio.checkSendButtonEnabled();
       await app.portfolio.expectBalanceVisibility();
@@ -118,8 +110,6 @@ test.describe("Portfolio", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.portfolio.checkNoDeviceTitleVisibility();
       await app.portfolio.checkConnectButtonVisibility();
       await app.portfolio.checkBuyALedgerButtonVisibility();
@@ -145,8 +135,6 @@ test.describe("Portfolio", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.portfolio.checkReceiveButtonVisibility();
       await app.portfolio.checkBuyButtonVisibility();
       await app.portfolio.checkSellButtonDisabled();

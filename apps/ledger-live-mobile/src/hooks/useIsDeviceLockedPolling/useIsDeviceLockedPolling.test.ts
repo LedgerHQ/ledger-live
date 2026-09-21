@@ -1,7 +1,7 @@
 import { firstValueFrom, Subject, take, throwError } from "rxjs";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
-import { DeviceModelId } from "@ledgerhq/devices/index";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { SendApduTimeoutError } from "@ledgerhq/device-management-kit";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { isLockedDevicePolling, useIsDeviceLockedPolling } from "./useIsDeviceLockedPolling";

@@ -197,14 +197,14 @@ describe("createApi", () => {
       data: { type: "tron" },
     };
 
-    // The framework's listFeeOptions receives only the intent (no context): coin-config is read from
-    // the singleton inside the logic layer, so the API method is a thin pass-through of the intent.
+    // The coin-config is read from the singleton inside the logic layer, so the context the
+    // framework passes is unused and the API method is a thin pass-through of the intent.
     it("delegates to the logic layer with the intent and returns its result", async () => {
       const feeOptions = [{ id: TRONIFY_FEE_OPTION_ID, feeAsset: { type: "native" as const } }];
       mockListFeeOptions.mockResolvedValue(feeOptions);
       const api = createApi();
 
-      await expect(api.listFeeOptions!(trc20Intent)).resolves.toBe(feeOptions);
+      await expect(api.listFeeOptions!(context, trc20Intent)).resolves.toBe(feeOptions);
       expect(mockListFeeOptions).toHaveBeenCalledWith(trc20Intent);
     });
   });

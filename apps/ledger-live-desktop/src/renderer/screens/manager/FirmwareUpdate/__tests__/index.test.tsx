@@ -30,7 +30,6 @@ const firmwareWithVersion = (name = "2.2.0"): FirmwareUpdateContext =>
 
 const defaultSettings = {
   discreetMode: false,
-  vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   devicesModelList: [],
   anonymousUserNotifications: {},
   latestFirmware: null as FirmwareUpdateContext | null,

@@ -1,14 +1,14 @@
-import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import Solana from "../src/Solana";
 
 import axios from "axios";
 
-const SPECULOS_APDU_PORT = 9999;
-const SPECULOS_REST_API_ENDPOINT = "http://0.0.0.0:5000";
+const SPECULOS_API_PORT = "5000";
+const SPECULOS_REST_API_ENDPOINT = `http://0.0.0.0:${SPECULOS_API_PORT}`;
 
 async function runSmokeTest() {
-  const speculosTransport = await SpeculosTransport.open({
-    apduPort: SPECULOS_APDU_PORT,
+  const speculosTransport = await DeviceManagementKitTransportSpeculos.open({
+    apiPort: SPECULOS_API_PORT,
   });
 
   try {
@@ -27,7 +27,7 @@ async function runSmokeTest() {
     // sign transaction
     const txBuffer = Buffer.from(
       "010001035eb9862fe23e544a2a0969cc157cb31fd72901cc2824d536a67fb8ee911e02363b9ba3a2ebaf40c1cd672a80a8e1932b982cca8264be33c39359701e113c3da20000000000000000000000000000000000000000000000000000000000000000030303030303030303030303030303030303030303030303030303030303030301020200010c020000002a00000000000000",
-      "hex"
+      "hex",
     );
     const signaturePromise = solana.signTransaction("44'/501'", txBuffer);
 
@@ -44,10 +44,7 @@ async function runSmokeTest() {
 }
 
 function approveTransaction() {
-  return axios.post(
-    `${SPECULOS_REST_API_ENDPOINT}/automation`,
-    approveTransactionFlow
-  );
+  return axios.post(`${SPECULOS_REST_API_ENDPOINT}/automation`, approveTransactionFlow);
 }
 
 const approveTransactionFlow = {
@@ -75,7 +72,7 @@ const approveTransactionFlow = {
   ],
 };
 
-runSmokeTest().catch((e) => {
+runSmokeTest().catch(e => {
   console.error(e);
   process.exit(1);
 });

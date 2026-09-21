@@ -1,40 +1,36 @@
 import React from "react";
 import { Subheader, SubheaderRow, SubheaderTitle, Box } from "@ledgerhq/lumen-ui-rnative";
-import { CardLogin, CardMore } from "@features/flow-pay-card-auth";
-import { CardArtwork, CardVisual, Freeze } from "@features/flow-pay-card-details";
+import { CardLogin } from "@features/flow-pay-card-auth";
+import { CardArtwork, CardDetails } from "@features/flow-pay-card-details";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import type { CardViewProps } from "./Card.types";
 
-export function CardView({
-  title,
-  oauthConfig,
-  callback,
-  onTrackEvent,
-  isSignedIn,
-  cardVisual,
-}: CardViewProps) {
+export function CardView({ title, login, displayState, cardVisual, formatters }: CardViewProps) {
   return (
     <Box lx={{ flex: 1, gap: "s16" }}>
-      {isSignedIn ? (
-        <Subheader>
-          <SubheaderRow>
-            <SubheaderTitle>{title}</SubheaderTitle>
-          </SubheaderRow>
-        </Subheader>
-      ) : null}
-      <CardOnboardingWidget />
-      {/* TODO: orchestrate the display state here. These pieces are mutually exclusive: the card
-          face shows once the holder is signed in and has a card, while the login shows only while
-          nobody is signed in. Right now each child decides on its own, so they can overlap. */}
-      {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
-      <Freeze />
-      <CardLogin
-        key={`${oauthConfig.apiUrl}`}
-        oauthConfig={oauthConfig}
-        callback={callback}
-        onTrackEvent={onTrackEvent}
-      />
-      <CardMore />
+      {displayState === "signedIn" ? (
+        <>
+          <Subheader>
+            <SubheaderRow>
+              <SubheaderTitle>{title}</SubheaderTitle>
+            </SubheaderRow>
+          </Subheader>
+          <CardOnboardingWidget />
+          <CardDetails
+            cardVisual={cardVisual}
+            formatters={{
+              amount: formatters?.transactionAmount,
+              date: formatters?.transactionDate,
+            }}
+            onTrackEvent={login.onTrackEvent}
+          />
+        </>
+      ) : (
+        <>
+          <CardLogin key={login.oauthConfig.apiUrl} {...login} />
+          <CardArtwork />
+        </>
+      )}
     </Box>
   );
 }

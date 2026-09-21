@@ -1,13 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, PanResponder, View, type LayoutChangeEvent } from "react-native";
 import { Box, Pressable, Text } from "@ledgerhq/lumen-ui-rnative";
+import type { SelectSectionOptions } from "./useContactsSectionIndex.native";
 
 type ContactsSectionIndexProps = Readonly<{
   sections: readonly string[];
   activeSectionTitle: string | undefined;
-  onSelectSection: (title: string) => void;
+  onSelectSection: (title: string, options?: SelectSectionOptions) => void;
   verticalCenterOffset: number;
 }>;
+
+const sectionIndexItemHeight = 16;
 
 function clampIndex(index: number, length: number): number {
   return Math.min(Math.max(index, 0), length - 1);
@@ -69,22 +72,23 @@ export function ContactsSectionIndex({
   verticalCenterOffset,
 }: ContactsSectionIndexProps): React.JSX.Element | null {
   const heightRef = useRef(0);
-  const draggedSectionTitleRef = useRef<string | undefined>(undefined);
-  const [height, setHeight] = React.useState(0);
+  const selectedSectionTitleRef = useRef<string | undefined>(undefined);
+  const [height, setHeight] = useState(0);
 
   const selectSectionAt = useCallback(
-    (locationY: number) => {
-      if (heightRef.current === 0 || sections.length === 0) {
+    (locationY: number, animated: boolean) => {
+      if (sections.length === 0) {
         return;
       }
 
-      const sectionHeight = heightRef.current / sections.length;
+      const sectionHeight =
+        heightRef.current > 0 ? heightRef.current / sections.length : sectionIndexItemHeight;
       const sectionIndex = clampIndex(Math.floor(locationY / sectionHeight), sections.length);
       const section = sections[sectionIndex];
 
-      if (section !== undefined && draggedSectionTitleRef.current !== section) {
-        draggedSectionTitleRef.current = section;
-        onSelectSection(section);
+      if (section !== undefined && selectedSectionTitleRef.current !== section) {
+        selectedSectionTitleRef.current = section;
+        onSelectSection(section, { animated });
       }
     },
     [onSelectSection, sections],
@@ -100,12 +104,21 @@ export function ContactsSectionIndex({
   const panResponder = useMemo(
     () =>
       PanResponder.create({
-        onMoveShouldSetPanResponder: (_, gestureState) => Math.abs(gestureState.dy) > 2,
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+        // The list scrolling underneath claims the responder on the first move otherwise.
+        onPanResponderTerminationRequest: () => false,
         onPanResponderGrant: event => {
-          draggedSectionTitleRef.current = undefined;
-          selectSectionAt(event.nativeEvent.locationY);
+          selectedSectionTitleRef.current = undefined;
+          selectSectionAt(event.nativeEvent.locationY, true);
         },
-        onPanResponderMove: event => selectSectionAt(event.nativeEvent.locationY),
+        onPanResponderMove: event => selectSectionAt(event.nativeEvent.locationY, false),
+        onPanResponderRelease: () => {
+          selectedSectionTitleRef.current = undefined;
+        },
+        onPanResponderTerminate: () => {
+          selectedSectionTitleRef.current = undefined;
+        },
       }),
     [selectSectionAt],
   );
@@ -118,10 +131,11 @@ export function ContactsSectionIndex({
     <View
       testID="contacts-section-index"
       onLayout={onLayout}
+      pointerEvents="box-only"
       style={{
         position: "absolute",
         top: verticalCenterOffset - height / 2,
-        right: -7,
+        right: 0,
       }}
       {...panResponder.panHandlers}
     >
