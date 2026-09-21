@@ -31,7 +31,7 @@ import {
 import { UserInputType } from "../signer";
 import type {
   SolanaTokenProgram,
-  SolanaTxData,
+  SolanaTransactionIntentData,
   TokenTransferCommand,
   Transaction,
   TransactionModel,
@@ -63,15 +63,13 @@ const BASE_TRANSACTION: Transaction = {
  */
 export async function estimateFees(
   api: ChainAPI,
-  intent: TransactionIntent<StringMemo | MemoNotSupported> & { data?: { type: string } },
+  intent: TransactionIntent<StringMemo | MemoNotSupported, SolanaTransactionIntentData>,
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
-  const solanaData = intent.data?.type === "solana" ? (intent.data as SolanaTxData) : undefined;
-  if (solanaData?.raw) {
-    const { raw } = solanaData;
+  if ("data" in intent && intent.data.type === "buffer") {
     let transaction: OnChainTransaction;
     try {
-      transaction = OnChainTransaction.deserialize(Buffer.from(raw, "base64"));
+      transaction = OnChainTransaction.deserialize(intent.data.value);
     } catch {
       throw new Error("Invalid or unsupported raw transaction");
     }
@@ -609,11 +607,7 @@ function mapIntentToTxKind(
   if (!MEASURABLE_KINDS.has(intent.type)) {
     return intent.asset.type === "native" ? "transfer" : "token.transfer";
   }
-  if (
-    isSolanaStakingTransactionIntent(intent) ||
-    intent.type === "stake.split" ||
-    intent.type.startsWith("token.")
-  ) {
+  if (isSolanaStakingTransactionIntent(intent) || intent.type.startsWith("token.")) {
     return intent.type as TransactionModel["kind"];
   }
   if (intent.asset.type !== "native") {

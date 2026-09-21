@@ -218,10 +218,7 @@ describe("estimateFees", () => {
       recipient: "",
       amount: 0n,
       asset: { type: "native" },
-      data: {
-        type: "solana",
-        raw: PARTNER_RAW_TX,
-      },
+      data: { type: "buffer", value: Buffer.from(PARTNER_RAW_TX, "base64") },
     } as unknown as TransactionIntent);
 
     expect(result).toEqual({ value: 7000n });
@@ -239,7 +236,7 @@ describe("estimateFees", () => {
       recipient: "",
       amount: 0n,
       asset: { type: "native" },
-      data: { type: "solana", raw: PARTNER_RAW_TX },
+      data: { type: "buffer", value: Buffer.from(PARTNER_RAW_TX, "base64") },
     } as unknown as TransactionIntent);
 
     const [message] = (api.getFeeForMessage as jest.Mock).mock.calls[0];
@@ -415,14 +412,13 @@ describe("estimateFees", () => {
       recipient: TEST_RECIPIENT,
       amount: 1000000n,
       asset: { type: "native" },
-      data: { type: "solana", stakeAccountSeed: "seed-abc" },
+      data: { type: "stakeAccountSeed", value: "seed-abc" },
     } as unknown as StakingTransactionIntent);
 
     expect(result.parameters?.stakeAccountAddress).toEqual(expect.any(String));
     expect(result.parameters?.stakeAccountRent).toBeUndefined();
   });
 
-  // `transactionToIntent` only sets `intentType: "staking"` for delegate and undelegate modes.
   it.each(["stake.createAccount", "stake.withdraw", "stake.split"] as const)(
     "prices %s as a stake kind even though it arrives as a plain transaction intent",
     async type => {
