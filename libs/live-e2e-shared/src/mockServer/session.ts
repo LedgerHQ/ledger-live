@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { ApduMock } from "./types";
+import type { ApduMock, MockServerDeviceState } from "./types";
 import { GET_VERSION_APDU, GET_VERSION_PREFIX, withOnboardingFlags } from "./onboardingFlags";
 
 const REQUEST_TIMEOUT_MS = 10_000;
@@ -45,10 +45,25 @@ export class MockServerSessionHandle {
     };
   }
 
+  /** The seeded devices as the server sees them now, including the apps installed so far. */
+  async devices(): Promise<MockServerDeviceState[]> {
+    const { data } = await axios.get<MockServerDeviceState[]>(
+      `${this.baseUrl}/devices`,
+      this.config,
+    );
+    return data;
+  }
+
   /** Ids of the seeded devices, in the order the session imported them. */
   async deviceIds(): Promise<string[]> {
-    const { data } = await axios.get<{ id: string }[]>(`${this.baseUrl}/devices`, this.config);
-    return data.map(({ id }) => id);
+    return (await this.devices()).map(({ id }) => id);
+  }
+
+  /** Apps installed on the device. */
+  async installedApps(): Promise<string[]> {
+    const id = await this.firstDeviceId();
+    const device = (await this.devices()).find(candidate => candidate.id === id);
+    return (device?.apps ?? []).map(({ name }) => name);
   }
 
   /**

@@ -35,6 +35,8 @@ export class SyncOnboardingPage extends AppPage {
     .locator('*:has(> [data-testid="onboarding-fund-new-seed"])')
     .getByTestId("skip-cta-button");
   private readonly installAppsButton = this.page.getByTestId("install-cta-button");
+  private readonly restoreAppsPanel = this.page.getByTestId("install-set-of-apps-restore-body");
+  private readonly installingText = this.page.getByTestId("installing-text");
   private readonly skipAppsLink = this.page
     .locator('*:has(> [data-testid="install-cta-button"])')
     .getByTestId("skip-cta-button");
@@ -122,6 +124,17 @@ export class SyncOnboardingPage extends AppPage {
   @step("Expect the app installation step to be offered")
   async expectAppInstallOffered() {
     await expect(this.installAppsButton).toBeVisible();
+  }
+
+  @step("Expect the app restore step to be offered")
+  async expectAppRestoreOffered() {
+    await expect(this.restoreAppsPanel).toBeVisible();
+  }
+
+  @step("Install the offered set of apps")
+  async installApps() {
+    await this.installAppsButton.click();
+    await this.installingText.waitFor();
   }
 
   @step("Decline installing apps for now")

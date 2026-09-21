@@ -16,6 +16,11 @@ export type MockServerDevice = {
   modelId: DeviceModelId;
 };
 
+export type MockServerDeviceState = {
+  id: string;
+  apps?: MockServerApp[];
+};
+
 export type MockServerSession = { devices: MockServerDevice[] };
 
 export type ApduMock = { prefix: string; responses: string[] };

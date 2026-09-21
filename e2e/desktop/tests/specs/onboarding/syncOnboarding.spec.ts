@@ -114,9 +114,10 @@ test.describe(`Restore a seed from a configured Ledger Live`, () => {
       await app.syncOnboarding.skipWalletSync();
       await app.syncOnboarding.expectSetupComplete();
 
-      await app.syncOnboarding.expectAppInstallOffered();
-      await app.syncOnboarding.declineAppInstall();
+      await app.syncOnboarding.expectAppRestoreOffered();
+      await app.syncOnboarding.installApps();
       await app.syncOnboarding.expectCompletionScreen(mockDevice.modelId);
+      await mockServer.expectInstalledApps(["Bitcoin", "Ethereum"]);
 
       await app.portfolio.expectBalanceVisibility();
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
