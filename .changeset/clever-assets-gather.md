@@ -4,4 +4,4 @@
 "live-mobile": minor
 ---
 
-Add a manage dialog for viewing Pay card funding assets and starting the add-asset flow.
+Add a manage dialog for reordering Pay card funding assets and starting the add-asset flow.

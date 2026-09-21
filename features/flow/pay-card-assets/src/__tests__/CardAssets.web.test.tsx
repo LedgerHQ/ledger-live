@@ -1,9 +1,20 @@
 import React from "react";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 import { CardAssets } from "../CardAssets";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
+
+const mockUpdateCardWalletPriorities = jest.fn(() => ({
+  unwrap: () => Promise.resolve({ success: true }),
+}));
+
+jest.mock("@domain/api-card-management", () => ({
+  useUpdateCardWalletPrioritiesMutation: () => [
+    mockUpdateCardWalletPriorities,
+    { isLoading: false },
+  ],
+}));
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   useIsCardSignedIn: () => true,
@@ -84,6 +95,12 @@ jest.mock("@features/flow-pay-card-wallets", () => {
           ledgerId: "ethereum/erc20/usd__coin",
           ledgerCurrency,
         },
+        {
+          id: "w-usdt",
+          balance: "20",
+          currency: "usdt",
+          network: "ethereum",
+        },
       ],
       isLoading: false,
       isFetching: false,
@@ -113,6 +130,10 @@ const formatBalance = (value: number) => ({
 });
 
 describe("CardAssets (web)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   function renderCardAssets(onAddAsset?: () => void) {
     render(
       <CardAssets
@@ -230,6 +251,24 @@ describe("CardAssets (web)", () => {
     expect(within(dialog).getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
     expect(within(dialog).getByText("USD Coin")).toBeVisible();
     expect(within(dialog).getByRole("button", { name: CARD_ASSETS_COPY.addAsset })).toBeVisible();
+  });
+
+  it("should reorder assets with the drag handle and send every linked wallet", async () => {
+    const user = userEvent.setup();
+    renderCardAssets();
+
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
+    fireEvent.dragStart(screen.getByRole("button", { name: "Drag USDT" }));
+    fireEvent.drop(screen.getByTestId("card-asset-order-w-usdc"));
+
+    await waitFor(() =>
+      expect(mockUpdateCardWalletPriorities).toHaveBeenCalledWith({
+        wallets: [
+          { addressId: "w-usdt", priority: 1 },
+          { addressId: "w-usdc", priority: 2 },
+        ],
+      }),
+    );
   });
 
   it("should return to the asset list when the manage dialog closes", async () => {

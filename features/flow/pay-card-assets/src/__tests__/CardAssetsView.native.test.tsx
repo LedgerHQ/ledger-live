@@ -40,6 +40,8 @@ const ready: CardAssetsViewModel = {
   onWithdrawContinue: jest.fn(),
   onManagePress: jest.fn(),
   onAddAssetPress: jest.fn(),
+  onReorderAssets: jest.fn(),
+  isReorderingAssets: false,
 };
 
 describe("CardAssetsView (native)", () => {

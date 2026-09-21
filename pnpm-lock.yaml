@@ -6937,6 +6937,9 @@ importers:
 
   features/flow/pay-card-assets:
     dependencies:
+      '@domain/api-card-management':
+        specifier: workspace:^
+        version: link:../../../domain/api/card-management
       '@domain/entity-currency':
         specifier: workspace:^
         version: link:../../../domain/entity/currency

@@ -28,6 +28,7 @@
     "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card-assets/knip.web.config.mjs -W features/flow/pay-card-assets --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card-assets/knip.native.config.mjs -W features/flow/pay-card-assets --tsConfig tsconfig.native.json"
   },
   "dependencies": {
+    "@domain/api-card-management": "workspace:^",
     "@domain/entity-currency": "workspace:^",
     "@features/flow-pay-card-auth": "workspace:^",
     "@features/flow-pay-card-transactions": "workspace:^",

@@ -16,7 +16,7 @@ export const CARD_ASSETS_COPY = {
   continue: "Continue",
   manageDialogTitle: "Manage assets",
   manageDialogDescription:
-    "Your assets are listed in funding order. If one asset runs low, the next one is used automatically.",
+    "Drag to set your funding order. If one asset runs low, the next one is used automatically.",
   addAssetCaption: "You'll be redirected to Baanx's page to add asset.",
   addAsset: "Add asset",
 } as const;

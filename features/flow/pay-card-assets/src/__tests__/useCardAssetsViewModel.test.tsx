@@ -6,6 +6,15 @@ import { formatCardAssetCryptoAmount, useCardAssetsViewModel } from "../useCardA
 
 const mockUseIsCardSignedIn = jest.fn();
 const mockUseCardLinkedWallets = jest.fn();
+const mockUpdateCardWalletPriorities = jest.fn();
+const mockUnwrapUpdate = jest.fn();
+
+jest.mock("@domain/api-card-management", () => ({
+  useUpdateCardWalletPrioritiesMutation: () => [
+    mockUpdateCardWalletPriorities,
+    { isLoading: false },
+  ],
+}));
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   useIsCardSignedIn: () => mockUseIsCardSignedIn(),
@@ -73,6 +82,8 @@ describe("formatCardAssetCryptoAmount", () => {
 describe("useCardAssetsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUpdateCardWalletPriorities.mockReturnValue({ unwrap: mockUnwrapUpdate });
+    mockUnwrapUpdate.mockResolvedValue({ success: true });
     mockUseIsCardSignedIn.mockReturnValue(true);
     stubWallets();
   });
@@ -209,6 +220,35 @@ describe("useCardAssetsViewModel", () => {
     act(() => result.current.onManagePress());
 
     expect(result.current.dialogState).toBe("manage");
+  });
+
+  it("should send every linked wallet in its new order when an asset is reordered", async () => {
+    stubWallets({
+      wallets: [
+        {
+          id: "w-usdc",
+          balance: "125.40",
+          currency: "usdc",
+          network: "ethereum",
+          ledgerId: "ethereum/erc20/usd__coin",
+          ledgerCurrency: USDC,
+        },
+        { id: "w-usdt", balance: "75", currency: "usdt", network: "ethereum" },
+        { id: "w-btc", balance: "1", currency: "btc", network: "bitcoin" },
+      ],
+    });
+    const { result } = renderViewModel();
+
+    await act(() => result.current.onReorderAssets("w-btc", "w-usdc"));
+
+    expect(result.current.rows.map(row => row.id)).toEqual(["w-btc", "w-usdc", "w-usdt"]);
+    expect(mockUpdateCardWalletPriorities).toHaveBeenCalledWith({
+      wallets: [
+        { addressId: "w-btc", priority: 1 },
+        { addressId: "w-usdc", priority: 2 },
+        { addressId: "w-usdt", priority: 3 },
+      ],
+    });
   });
 
   it("should hand add asset through to the host", () => {
