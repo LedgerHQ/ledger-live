@@ -1,10 +1,9 @@
 import { useState } from "react";
 import type { PayCardTransaction } from "@domain/api-card-management";
 import { useCardAssetsViewModel, type CardAssetRow } from "@features/flow-pay-card-assets";
+import { transactionClickedProperties } from "@features/flow-pay-card-transactions";
 import type { CardTransactionItem } from "@features/flow-pay-card-transactions";
-import { transactionClickedProperties } from "@features/flow-pay-card-transactions";
 import { getWalletPlatform } from "@features/flow-pay-card-widget/native";
-import { transactionClickedProperties } from "@features/flow-pay-card-transactions";
 import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import { useFreezeCardViewModel } from "../Freeze/useFreezeCardViewModel";

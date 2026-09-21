@@ -208,7 +208,6 @@ export function useCardViewModel(): CardViewModel {
     () => ({ onManagePin, onAccessBaanx, onHelp }),
     [onManagePin, onAccessBaanx, onHelp],
   );
-
   return {
     formatters,
     assets,

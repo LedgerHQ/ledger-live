@@ -55,7 +55,7 @@ export function useCardOnboardingSources({
       // and reading it as "no card" would send the holder back to choosing a type.
       "choose-card-type": cardStatus.data !== undefined,
       "top-up-card": linkedWallets.wallets.some(({ balance }) => hasPositiveBalance(balance)),
-      "first-purchase": Boolean(transactions.data?.length),
+      "first-purchase": transactions.data?.some(({ status }) => status === "CONFIRMED") === true,
     }),
     [user.data, cardStatus.data, linkedWallets.wallets, transactions.data],
   );

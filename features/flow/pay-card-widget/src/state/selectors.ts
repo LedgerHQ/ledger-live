@@ -18,18 +18,6 @@ export function selectAnalyticsCardId(state: PayCardOnboardingWidgetStateRoot): 
   return state.payCardOnboardingWidget.analyticsCardId ?? null;
 }
 
-export function selectReportedAnalyticsMilestones(
-  state: PayCardOnboardingWidgetStateRoot,
-): PayCardOnboardingWidgetState["reportedAnalyticsMilestones"] {
-  return state.payCardOnboardingWidget.reportedAnalyticsMilestones;
-}
-
-export function selectAnalyticsCardId(
-  state: PayCardOnboardingWidgetStateRoot,
-): string | null {
-  return state.payCardOnboardingWidget.analyticsCardId ?? null;
-}
-
 export function payCardOnboardingWidgetPersistedSelector(
   state: PayCardOnboardingWidgetStateRoot,
 ): PayCardOnboardingWidgetState {

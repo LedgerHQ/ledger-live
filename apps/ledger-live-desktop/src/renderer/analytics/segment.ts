@@ -22,6 +22,7 @@ import type { EventType } from "@shared/analytics";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import { selectContacts } from "@domain/entity-contact";
 import { buildContactsGlobalProperties } from "@features/platform-contacts";
+import { getPayAttributes } from "./getPayAttributes";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { Feature, FeatureId, Features } from "@shared/feature-flags";
@@ -167,16 +168,6 @@ const getProductTourAttributes = () => {
   };
 };
 
-const getPayTabAttributes = () => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const payTab = analyticsFeatureFlagMethod("lwdPayTab");
-
-  return {
-    isEnabled: payTab?.enabled ?? false,
-    card: payTab?.params?.card ?? false,
-  };
-};
-
 const getLargeScreenUpsellAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const flag = analyticsFeatureFlagMethod("largeScreenUpsell");
@@ -313,7 +304,6 @@ const extraProperties = (store: ReduxStore) => {
   const addAccountAttributes = getAddAccountAttributes();
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
-  const payTabAttributes = getPayTabAttributes();
   const largeScreenUpsellAttributes = getLargeScreenUpsellAttributes();
 
   const deviceInfo = device
@@ -362,6 +352,11 @@ const extraProperties = (store: ReduxStore) => {
   );
   const newSendFlow = getNewSendFlowAttribute(analyticsFeatureFlagMethod);
   const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
+  const payAttributes = getPayAttributes(
+    state,
+    analyticsFeatureFlagMethod?.("lwdPayTab")?.enabled ?? false,
+    accountsWithFunds,
+  );
 
   return {
     ...mandatoryProperties,
@@ -407,7 +402,7 @@ const extraProperties = (store: ReduxStore) => {
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
-    payTabAttributes,
+    ...payAttributes,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
     newSendFlow,
