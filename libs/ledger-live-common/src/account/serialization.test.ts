@@ -66,13 +66,12 @@ describe("serialization", () => {
   });
 
   // Zcash declares `family: "bitcoin"`, and coin-bitcoin's hooks know nothing about the
-  // shielded `privateInfo`. Reading it back therefore has to go through coin-zcash even
+  // shielded `privateInfo`. Both directions therefore have to go through coin-zcash even
   // with the shielded flag off: accounts are deserialized at startup, before the host app
-  // mirrors the flag, so a flag-gated reader would drop the viewing key on every boot.
-  test("zcash privateInfo survives deserialization with the shielded flag off", async () => {
-    setZcashShieldedEnabled(false);
-
-    const accRaw: any = {
+  // mirrors the flag, so a flag-gated router would drop the viewing key on every boot --
+  // and re-serializing through coin-bitcoin would drop it again on the next save.
+  describe("zcash with the shielded flag off", () => {
+    const zcashAccountRaw = (): any => ({
       id: "mock:1:zcash:zcash_1:",
       seedIdentifier: "mock",
       derivationMode: "",
@@ -107,11 +106,37 @@ describe("serialization", () => {
         lastProcessedBlock: 3450000,
         transactions: [],
       },
-    };
+    });
 
-    const deserializedAcc: any = await fromAccountRaw(accRaw);
+    beforeEach(() => {
+      setZcashShieldedEnabled(false);
+    });
 
-    expect(deserializedAcc.privateInfo?.ufvk).toBe("uview1test");
-    expect(deserializedAcc.bitcoinResources?.utxos).toHaveLength(1);
+    test("privateInfo survives deserialization", async () => {
+      const deserializedAcc: any = await fromAccountRaw(zcashAccountRaw());
+
+      expect(deserializedAcc.privateInfo?.ufvk).toBe("uview1test");
+      expect(deserializedAcc.bitcoinResources?.utxos).toHaveLength(1);
+    });
+
+    // The save side of the same trap: the mock account id routes `toAccountRaw` to a mock
+    // bridge, and coin-bitcoin's declares no assign hooks at all -- so a flag-gated router
+    // here would drop `privateInfo` *and* the transparent `bitcoinResources` on persist,
+    // silently undoing what deserialization just restored.
+    test("privateInfo and bitcoinResources survive a full round-trip", async () => {
+      const initialRaw = zcashAccountRaw();
+
+      const account: any = await fromAccountRaw(initialRaw);
+      const reserializedRaw: any = await toAccountRaw(account);
+
+      expect(reserializedRaw.privateInfo).toEqual({
+        ...initialRaw.privateInfo,
+        // The fixture omits `lastSyncError`, as an account persisted before that field
+        // existed does; reading one back fills it with `null`, so the round-trip writes
+        // it out. Everything else has to come back byte-identical.
+        lastSyncError: null,
+      });
+      expect(reserializedRaw.bitcoinResources).toEqual(initialRaw.bitcoinResources);
+    });
   });
 });

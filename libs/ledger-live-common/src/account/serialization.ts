@@ -20,7 +20,6 @@ import {
   fromOperationRaw as commonFromOperationRaw,
   toOperationRaw as commonToOperationRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization/index";
-import { getAccountBridge } from "../bridge";
 import { getAccountBridgeByFamily } from "../bridge/impl";
 import { resolveSerializationFamily } from "../bridge/zcashRouting";
 
@@ -83,7 +82,10 @@ export async function toAccountRaw(
   account: Account,
   userData?: AccountUserData,
 ): Promise<AccountRaw> {
-  const bridge = await getAccountBridge(account);
+  const bridge = await getAccountBridgeByFamily(
+    resolveSerializationFamily(account.currency),
+    account.id,
+  );
 
   const commonAccountRaw = commonToAccountRaw(account, {
     assignToAccountRaw: bridge.assignToAccountRaw,

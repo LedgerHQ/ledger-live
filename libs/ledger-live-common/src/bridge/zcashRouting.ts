@@ -29,12 +29,18 @@ export function resolveFamily(currency: CryptoCurrency): string {
 }
 
 /**
- * Bridge family whose raw<->live assign hooks read `currency`'s persisted account data.
- * Always `zcash` for Zcash, whatever the flag says, for two reasons: coin-zcash's hooks
- * round-trip coin-bitcoin's transparent shape as well as the shielded `privateInfo`
- * coin-bitcoin knows nothing about, so they are the safe reader in either routing state;
- * and accounts are deserialized at app startup, before the host app has mirrored the flag
- * here, so a flag-gated answer would read `false` and silently drop `privateInfo`.
+ * Bridge family whose raw<->live assign hooks carry `currency`'s persisted account data,
+ * in both directions. Always `zcash` for Zcash, whatever the flag says, for two reasons:
+ * coin-zcash's hooks round-trip coin-bitcoin's transparent shape as well as the shielded
+ * `privateInfo` coin-bitcoin knows nothing about, so they are the safe endpoint in either
+ * routing state; and accounts are deserialized at app startup, before the host app has
+ * mirrored the flag here, so a flag-gated answer would read `false` and silently drop
+ * `privateInfo`.
+ *
+ * Both `toAccountRaw` and `fromAccountRaw` must use this rather than `resolveFamily`:
+ * routing a save through coin-bitcoin drops what the load restored -- and with `MOCK=true`
+ * it drops the transparent `bitcoinResources` too, since coin-bitcoin's mock bridge
+ * declares no assign hooks at all.
  */
 export function resolveSerializationFamily(currency: CryptoCurrency): string {
   return currency.id === "zcash" ? "zcash" : currency.family;
