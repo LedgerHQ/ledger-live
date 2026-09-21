@@ -1,4 +1,5 @@
 import React from "react";
+import { Skeleton } from "@ledgerhq/lumen-ui-react";
 import { CardLoginView } from "./CardLoginView";
 import { useCardLoginViewModel } from "./useCardLoginViewModel";
 import { openHostedLoginInBrowser } from "./openHostedLogin.web";
@@ -22,8 +23,12 @@ export function CardLogin({
 
   return (
     <>
-      {children}
+      {login?.isResolving ? <CardArtworkSkeleton /> : children}
       {login ? <CardLoginView {...login} /> : null}
     </>
   );
+}
+
+function CardArtworkSkeleton() {
+  return <Skeleton className="h-[195px] w-full rounded-lg" data-testid="card-artwork-skeleton" />;
 }

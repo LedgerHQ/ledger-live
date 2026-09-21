@@ -66,15 +66,9 @@ export function CardLoginView({
 
 function CardLoginSkeleton() {
   return (
-    <Box
-      lx={{ flexDirection: "row", alignItems: "center", gap: "s16" }}
+    <Skeleton
+      lx={{ height: "s80", width: "full", borderRadius: "lg" }}
       testID="card-login-skeleton"
-    >
-      <Box lx={{ flex: 1, flexDirection: "column", gap: "s8" }}>
-        <Skeleton lx={{ height: "s20", width: "s176", borderRadius: "full" }} />
-        <Skeleton lx={{ height: "s12", width: "s112", borderRadius: "full" }} />
-      </Box>
-      <Skeleton lx={{ height: "s40", width: "s96", borderRadius: "full" }} />
-    </Box>
+    />
   );
 }
