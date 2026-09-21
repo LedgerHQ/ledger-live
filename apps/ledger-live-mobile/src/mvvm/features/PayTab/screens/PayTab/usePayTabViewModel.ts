@@ -1,16 +1,24 @@
 import { useCallback, useMemo } from "react";
+import { Linking } from "react-native";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   buildHostedUrl,
   buildTopUpPath,
+  buildAccessBaanxPath,
   openHostedLoginInSecureBrowser,
+  MANAGE_PIN_PATH,
+  openHostedPageInSecureBrowser,
+  openHostedPageSafely,
+  type OpenCardHostedPage,
 } from "@features/flow-pay-card-auth";
 import { readCardUsEnv } from "@features/platform-card";
 import useEnv from "@features/platform-env";
 import { useContactsFeature } from "@features/platform-contacts";
+import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
+import { urls } from "~/utils/urls";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
 import { useCountervalueFormatter } from "../../hooks/useCountervalueFormatter";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
@@ -90,6 +98,41 @@ export function usePayTabViewModel() {
     navigateToCardHistory(navigation);
   }, [navigation]);
 
+  // Adapts the secure-browser opener to the same OpenCardHostedPage shape desktop's
+  // useCardHostedPageOpeners already exposes, so both platforms share openHostedPageSafely below
+  // instead of each hand-rolling its own try/catch.
+  const openHostedPage: OpenCardHostedPage = useCallback(
+    path => openHostedPageInSecureBrowser(buildHostedUrl(hostedUiUrl, path)),
+    [hostedUiUrl],
+  );
+
+  const onManagePin = useCallback(
+    () =>
+      openHostedPageSafely(openHostedPage, MANAGE_PIN_PATH, () =>
+        console.warn("[card] manage pin page did not open"),
+      ),
+    [openHostedPage],
+  );
+
+  const onAccessBaanx = useCallback(async () => {
+    const isUsCardHolder = await readCardUsEnv(usAppId);
+
+    await openHostedPageSafely(
+      openHostedPage,
+      buildAccessBaanxPath(isUsCardHolder ? usAppId : null),
+      () => console.warn("[card] baanx page did not open"),
+    );
+  }, [openHostedPage, usAppId]);
+
+  const onHelp = useCallback(() => {
+    Linking.openURL(urls.cardHelpCenter);
+  }, []);
+
+  const cardSettingsActions: CardSettingsActions = useMemo(
+    () => ({ onManagePin, onAccessBaanx, onHelp }),
+    [onManagePin, onAccessBaanx, onHelp],
+  );
+
   const featureTour: FeatureTourProps = useMemo(
     () => ({
       onTrackScreen: (page: string) => track(page),
@@ -123,5 +166,6 @@ export function usePayTabViewModel() {
     depositOptions: deposit.depositOptions,
     bankTransferIntro: deposit.bankTransferIntro,
     onShowMore,
+    cardSettingsActions,
   };
 }

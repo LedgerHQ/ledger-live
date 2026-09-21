@@ -31,6 +31,7 @@ type PayTabViewProps = {
   readonly depositOptions: DepositOptionsProps;
   readonly bankTransferIntro: BankTransferIntroProps;
   readonly onShowMore: () => void;
+  readonly cardSettingsActions: CardProps["cardSettingsActions"];
 };
 
 export function PayTabView({
@@ -49,6 +50,7 @@ export function PayTabView({
   bankTransferIntro,
   featureTour,
   onShowMore,
+  cardSettingsActions,
 }: PayTabViewProps) {
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
@@ -68,6 +70,7 @@ export function PayTabView({
             formatters={cardFormatters}
             onTopUp={onTopUp}
             onShowMore={onShowMore}
+            cardSettingsActions={cardSettingsActions}
           />
           <FeatureTour {...featureTour} />
           <DepositOptions {...depositOptions} />
