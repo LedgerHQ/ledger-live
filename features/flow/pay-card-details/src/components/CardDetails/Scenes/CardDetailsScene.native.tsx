@@ -5,6 +5,7 @@ import {
   CardAssetTransactionDetailDrawer,
   CardAssetsManageDrawer,
 } from "@features/flow-pay-card-assets";
+import { AddToWalletScene } from "./AddToWalletScene";
 import { FreezeScene } from "./FreezeScene";
 import { MoreScene } from "./MoreScene";
 import { OverviewScene } from "./OverviewScene";
@@ -19,6 +20,7 @@ export function CardDetailsScene({
   overview,
   freeze,
   more,
+  addToWallet,
   transaction,
   assetDetails,
   assetWithdraw,
@@ -31,6 +33,8 @@ export function CardDetailsScene({
       return <FreezeScene {...freeze} />;
     case "more":
       return more ? <MoreScene {...more} /> : null;
+    case "addToWallet":
+      return <AddToWalletScene {...addToWallet} />;
     case "transaction":
       return transaction ? <TransactionScene {...transaction} /> : null;
     case "assetDetails":
