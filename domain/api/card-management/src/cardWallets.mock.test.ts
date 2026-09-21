@@ -13,6 +13,7 @@ import {
   mockPayCardLinkedWallets,
   mockPayCardRewardWallet,
   readPayCardWalletsMock,
+  reorderPayCardLinkedWalletsMock,
 } from "./cardWallets.mock";
 
 describe("the mocked wallet responses", () => {
@@ -91,6 +92,36 @@ describe("the mocked wallet responses", () => {
 
     clearPayCardWalletsMock();
     expect(readPayCardWalletsMock()).toBeUndefined();
+  });
+
+  it("keeps every linked wallet's balance when the charging order is rewritten", () => {
+    fillPayCardWalletsMock();
+    const [usdc, btc, sol] = mockPayCardLinkedWallets();
+
+    expect(
+      reorderPayCardLinkedWalletsMock([
+        { addressId: sol.id, priority: 0 },
+        { addressId: usdc.id, priority: 1 },
+        { addressId: btc.id, priority: 2 },
+      ]),
+    ).toBe(true);
+
+    const reordered = mockPayCardLinkedWallets();
+    expect(reordered.map(({ currency }) => currency)).toEqual(["sol", "usdc", "btc"]);
+
+    // The join reads an amount from the internal answer by wallet id, so a reorder that dropped a
+    // wallet from it, renamed one or zeroed one leaves the row with a ticker and no amount.
+    const balanceById = new Map(
+      (readPayCardWalletsMock() ?? []).map(({ id, balance }) => [id, balance]),
+    );
+    expect(reordered.every(({ id }) => Number(balanceById.get(id)) > 0)).toBe(true);
+  });
+
+  it("refuses an order that names a wallet it does not link, and keeps the one it holds", () => {
+    expect(reorderPayCardLinkedWalletsMock([{ addressId: "not-a-wallet", priority: 0 }])).toBe(
+      false,
+    );
+    expect(mockPayCardLinkedWallets().map(({ priority }) => priority)).toEqual([0, 1, 2]);
   });
 
   it("can fund one linked asset without funding its neighbours", () => {
