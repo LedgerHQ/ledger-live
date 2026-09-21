@@ -140,6 +140,72 @@ describe("near accountRawAssign", () => {
     });
   });
 
+  describe("nearResources", () => {
+    const rawResources = {
+      stakedBalance: "2902170000000000000000000",
+      pendingBalance: "30151800000000000000000",
+      availableBalance: "20000300000000000000",
+      storageUsageBalance: "1820000000000000000000",
+      stakingPositions: [
+        {
+          staked: "2902170000000000000000000",
+          available: "20000300000000000000",
+          pending: "30151800000000000000000",
+          validatorId: "figment.poolv1.near",
+        },
+      ],
+    };
+
+    it("revives a pre-migration account that only has nearResources", () => {
+      const account = {} as Account;
+
+      assignFromAccountRaw({ nearResources: rawResources } as unknown as AccountRaw, account);
+
+      const revived = (account as Account & { nearResources: { stakedBalance: BigNumber } })
+        .nearResources;
+      expect(BigNumber.isBigNumber(revived.stakedBalance)).toBe(true);
+      expect(revived.stakedBalance.toFixed()).toBe("2902170000000000000000000");
+      expect("stakingPositions" in account).toBe(false);
+    });
+
+    it("keeps nearResources alongside stakingPositions through a round trip", () => {
+      const account = {} as Account;
+      assignFromAccountRaw(
+        {
+          nearResources: rawResources,
+          stakingPositions: [position("active", "figment.poolv1.near", "1")],
+        } as unknown as AccountRaw,
+        account,
+      );
+
+      const raw = {} as AccountRaw;
+      assignToAccountRaw(account, raw);
+
+      const serialized = raw as AccountRaw & {
+        nearResources: typeof rawResources;
+        stakingPositions: unknown[];
+      };
+      // Compared numerically: toNearResourcesRaw writes yocto amounts via toString(), which
+      // renders large values in exponential form.
+      expect(new BigNumber(serialized.nearResources.stakedBalance).toFixed()).toBe(
+        rawResources.stakedBalance,
+      );
+      expect(new BigNumber(serialized.nearResources.storageUsageBalance).toFixed()).toBe(
+        rawResources.storageUsageBalance,
+      );
+      expect(serialized.nearResources.stakingPositions[0].validatorId).toBe("figment.poolv1.near");
+      expect(serialized.stakingPositions).toHaveLength(1);
+    });
+
+    it("leaves nearResources absent when the raw account has none", () => {
+      const account = {} as Account;
+
+      assignFromAccountRaw({ stakingPositions: [] } as unknown as AccountRaw, account);
+
+      expect("nearResources" in account).toBe(false);
+    });
+  });
+
   describe("registration", () => {
     it("registers loadAccountRawAssign on the near coin-module loader", () => {
       expect(coinModuleLoaders.find(l => l.family === "near")?.loadAccountRawAssign).toBeDefined();
