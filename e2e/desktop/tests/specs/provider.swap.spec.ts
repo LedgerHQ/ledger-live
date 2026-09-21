@@ -138,7 +138,7 @@ test.describe("Swap - landing page", () => {
 
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+      await performSwapUntilQuoteSelectionStep(app, swap, minAmount, true);
       const providerList = await app.swap.getProviderList();
       await app.swap.checkQuotesContainerInfos(providerList, toAccount.currency.ticker);
       await app.swap.checkBestOffer();

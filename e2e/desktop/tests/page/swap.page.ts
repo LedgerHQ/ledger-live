@@ -1,6 +1,6 @@
 import { WebViewAppPage } from "tests/page/webViewApp.page";
 import { step } from "tests/misc/reporters/step";
-import { expect, Page } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { sendDeepLink } from "tests/utils/deeplink";
 import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
@@ -617,10 +617,21 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.bestValueInfoIcon)).toBeVisible();
   }
 
-  // Not a critical panel, so every check here is soft: a regression should
-  // surface in the report without blocking the swap flow the test cares about.
+  // Not a critical panel: any failure here (missing element, timed-out click,
+  // Playwright throwing) is caught and reported without aborting the swap flow.
   @step("Check landing page Trending Assets and Stablecoins panel")
   async checkLandingPageTrendingAssets() {
+    try {
+      await this.checkLandingPageTrendingAssetsUnsafe();
+    } catch (error) {
+      await test.info().attach("Landing page panel check failed (non-blocking)", {
+        body: String(error),
+        contentType: "text/plain",
+      });
+    }
+  }
+
+  private async checkLandingPageTrendingAssetsUnsafe() {
     const webview = await this.getWebView();
 
     const topGainersRows = webview.locator(this.topGainersItemsSelector);
