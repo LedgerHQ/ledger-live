@@ -1,4 +1,4 @@
-import { http, HttpResponse, passthrough } from "msw";
+import { delay, http, HttpResponse, passthrough } from "msw";
 import {
   MOCK_CARD_DETAILS_IMAGE_URL,
   mockCardDetailsImage,
@@ -12,10 +12,15 @@ import {
   readCardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
 import {
+  applyPayCardWalletPrioritiesMock,
   mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
   mockPayCardRewardWallet,
+  readPayCardReorderMockEnabled,
+  readPayCardWalletsMock,
 } from "@domain/api-card-management/mock/card-wallets";
+
+const REORDER_MS = 200;
 
 const handlers = [
   http.get("*/v1/user", ({ request }) => {
@@ -51,6 +56,15 @@ const handlers = [
   ),
 
   http.get("*/v1/wallet/internal", ({ request }) => {
+    const devtoolWallets = readPayCardWalletsMock();
+    if (devtoolWallets !== undefined) {
+      return HttpResponse.json(devtoolWallets);
+    }
+
+    if (readPayCardReorderMockEnabled()) {
+      return HttpResponse.json(mockPayCardInternalWallets(true));
+    }
+
     const { walletFunded } = readCardOnboardingStatusMock();
     if (walletFunded !== undefined) {
       return HttpResponse.json(mockPayCardInternalWallets(walletFunded));
@@ -62,11 +76,33 @@ const handlers = [
   }),
 
   http.get("*/v1/wallet/internal/card_linked", ({ request }) => {
+    if (readPayCardWalletsMock() !== undefined || readPayCardReorderMockEnabled()) {
+      return HttpResponse.json(mockPayCardLinkedWallets());
+    }
+
     const { walletFunded } = readCardOnboardingStatusMock();
 
     return walletFunded === undefined && !isMockCardRequest(request)
       ? passthrough()
       : HttpResponse.json(mockPayCardLinkedWallets());
+  }),
+
+  http.put("*/v1/wallet/internal/card_linked/priority", async ({ request }) => {
+    if (!readPayCardReorderMockEnabled()) {
+      return isMockCardRequest(request)
+        ? HttpResponse.json({ message: "wallet reorder is not mocked" }, { status: 501 })
+        : passthrough();
+    }
+
+    const body = (await request.json().catch(() => null)) as {
+      wallets?: { addressId: string; priority: number }[];
+    } | null;
+
+    await delay(REORDER_MS);
+
+    return HttpResponse.json({
+      success: applyPayCardWalletPrioritiesMock({ wallets: body?.wallets ?? [] }),
+    });
   }),
 
   http.get("*/v1/wallet/reward", ({ request }) =>

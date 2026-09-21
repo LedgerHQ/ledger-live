@@ -33,6 +33,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     interaction,
     balance,
     currencyMapping,
+    reorder,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
     hasSeenReceiveVerifyHint,
@@ -163,6 +164,20 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
           onChange={flags.setPtxCardEnabled}
         />
       </Section>
+
+      {reorder.available ? (
+        <>
+          <Divider />
+          <Section title="MSW">
+            <ToggleRow
+              label="Allow wallet reorder"
+              description="PUT /v1/wallet/internal/card_linked/priority"
+              checked={reorder.enabled}
+              onChange={reorder.setEnabled}
+            />
+          </Section>
+        </>
+      ) : null}
 
       <Divider />
 

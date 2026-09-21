@@ -19,7 +19,9 @@ import {
   emptyPayCardWalletsMock,
   fillPayCardWalletsMock,
   fundPayCardWalletMock,
+  readPayCardReorderMockEnabled,
   readPayCardWalletsMock,
+  setPayCardReorderMockEnabled,
   type PayCardMockWalletAsset,
 } from "@domain/api-card-management/mock/card-wallets";
 import { BAANX_ASSET_LEDGER_IDS } from "@domain/entity-card-asset-mapping";
@@ -387,6 +389,20 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     },
     [dispatch],
   );
+  const setReorderEnabled = useCallback(
+    (enabled: boolean) => {
+      setPayCardReorderMockEnabled(enabled);
+      setMockVersion(version => version + 1);
+      dispatch(cardManagementApi.util.invalidateTags(["CardLinkedWallets"]));
+    },
+    [dispatch],
+  );
+  const reorder = {
+    available: isRequestMockingEnabled(),
+    enabled: readPayCardReorderMockEnabled(),
+    setEnabled: setReorderEnabled,
+  };
+
   const mockedTransactions = readPayCardTransactionsMock();
   const transactions = {
     available: isRequestMockingEnabled(),
@@ -406,6 +422,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       interaction,
       balance,
       transactions,
+      reorder,
       currencyMapping: CURRENCY_MAPPING_ROWS,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
@@ -424,6 +441,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       interaction,
       balance,
       transactions,
+      reorder,
       hasSeenFeatureTour,
       resetFeatureTour,
       hasSeenReceiveVerifyHint,

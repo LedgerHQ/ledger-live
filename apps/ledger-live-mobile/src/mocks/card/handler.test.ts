@@ -7,7 +7,7 @@ import {
 import {
   clearPayCardWalletsMock,
   emptyPayCardWalletsMock,
-  fillPayCardWalletsMock,
+  setPayCardReorderMockEnabled,
 } from "@domain/api-card-management/mock/card-wallets";
 import handlers from "./handler";
 
@@ -41,6 +41,7 @@ describe("mobile Card mock handlers", () => {
   afterEach(() => {
     clearPayCardTransactionsMock();
     clearPayCardWalletsMock();
+    setPayCardReorderMockEnabled(false);
   });
 
   it("should serve empty wallet balances when the devtool empties them", async () => {
@@ -59,14 +60,14 @@ describe("mobile Card mock handlers", () => {
   describe("the rewritten charging order", () => {
     beforeEach(() => {
       jest.useRealTimers();
-      fillPayCardWalletsMock();
+      setPayCardReorderMockEnabled(true);
     });
 
     afterEach(() => {
       jest.useFakeTimers();
     });
 
-    it("should keep an amount on every linked asset after the charging order is rewritten", async () => {
+    it("should keep an amount on every linked asset when the reorder toggle is enabled", async () => {
       const linked: MockWallet[] = await getJson("/v1/wallet/internal/card_linked");
 
       const { success } = await putJson("/v1/wallet/internal/card_linked/priority", {

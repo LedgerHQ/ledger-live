@@ -2,6 +2,7 @@ import type {
   PayCardInternalWallet,
   PayCardLinkedWalletResponse,
   PayCardRewardWallet,
+  PayCardWalletPrioritiesRequest,
 } from "./types";
 
 /**
@@ -47,6 +48,7 @@ export type PayCardMockWalletAsset = "usdc" | "btc" | "sol";
 
 let internalWalletsOverride: readonly PayCardInternalWallet[] | undefined;
 let linkedPrioritiesOverride: ReadonlyMap<string, number> | undefined;
+let reorderEnabled = false;
 
 /** The join keys balances to linked wallets by id, so both answers describe the same wallets. */
 export function mockPayCardInternalWallets(funded: boolean): readonly PayCardInternalWallet[] {
@@ -147,4 +149,17 @@ export function fundPayCardWalletMock(asset: PayCardMockWalletAsset): void {
 export function clearPayCardWalletsMock(): void {
   internalWalletsOverride = undefined;
   linkedPrioritiesOverride = undefined;
+}
+
+export function readPayCardReorderMockEnabled(): boolean {
+  return reorderEnabled;
+}
+
+export function setPayCardReorderMockEnabled(enabled: boolean): void {
+  reorderEnabled = enabled;
+  if (!enabled) linkedPrioritiesOverride = undefined;
+}
+
+export function applyPayCardWalletPrioritiesMock(request: PayCardWalletPrioritiesRequest): boolean {
+  return reorderEnabled && reorderPayCardLinkedWalletsMock(request.wallets);
 }
