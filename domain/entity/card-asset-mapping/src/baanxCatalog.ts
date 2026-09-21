@@ -18,6 +18,9 @@ export const BAANX_ASSET_LEDGER_IDS: Readonly<Record<AssetMappingKey, string | u
   "usdc.ethereum": "ethereum/erc20/usd__coin",
   "usdc.usdc": "ethereum/erc20/usd__coin",
 
+  "euroc.ethereum": "ethereum/erc20/euro_coin",
+  "euroc.euroc": "ethereum/erc20/euro_coin",
+
   "btc.bitcoin": "bitcoin",
   "btc.btc": "bitcoin",
 
