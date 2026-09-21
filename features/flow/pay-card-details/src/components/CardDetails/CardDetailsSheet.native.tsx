@@ -53,29 +53,27 @@ export function CardDetailsSheet({
       onBack={canGoBack ? onBack : undefined}
       {...sizingProps}
       footer={
-        isOpen && isOverview ? <AddToWalletCta onPress={scene.overview.onAddToWalletPress} /> : null
+        isOpen && isOverview ? (
+          <>
+            <AddToWalletCta onPress={scene.overview.onAddToWalletPress} />
+            {onTopUp ? <CardTopUpButton onTopUp={onTopUp} /> : null}
+          </>
+        ) : null
       }
       testID="card-details-sheet"
     >
       {isOpen ? (
-        <>
-          <BottomSheetScrollView>
-            <Box lx={{ paddingBottom: "s24" }}>
-              <BottomSheetHeader
-                density="compact"
-                spacing
-                title={scene.header.title}
-                description={scene.header.description}
-              />
-              <CardDetailsScene {...scene} />
-            </Box>
-          </BottomSheetScrollView>
-          {onTopUp && isOverview ? (
-            <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s24" }}>
-              <CardTopUpButton onTopUp={onTopUp} />
-            </Box>
-          ) : null}
-        </>
+        <BottomSheetScrollView>
+          <Box lx={{ paddingBottom: "s24" }}>
+            <BottomSheetHeader
+              density="compact"
+              spacing
+              title={scene.header.title}
+              description={scene.header.description}
+            />
+            <CardDetailsScene {...scene} />
+          </Box>
+        </BottomSheetScrollView>
       ) : null}
     </QueuedBottomSheet>
   );
