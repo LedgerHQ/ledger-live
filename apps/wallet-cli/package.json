@@ -89,7 +89,7 @@
     "@types/node": "catalog:",
     "@types/w3c-web-usb": "^1.0.10",
     "bignumber.js": "catalog:",
-    "bun-types": "1.3.14",
+    "bun-types": "1.4.2",
     "bunli": "0.9.1",
     "debug": "4.4.3",
     "oxfmt": "catalog:",
