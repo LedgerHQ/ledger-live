@@ -1,8 +1,8 @@
-# TypeScript configuration in DDD packages
+# TypeScript configuration in monorepo packages
 
 ## The problem
 
-In DDD packages, platform-specific files are colocated in the same directory using the `.web` and `.native` suffixes:
+In `shared/`, `domain/` and `features/` packages, platform-specific files are colocated in the same directory using the `.web` and `.native` suffixes:
 
 ```
 src/
@@ -37,7 +37,7 @@ This was fragile in two ways:
 
 ## The solution: platform-split tsconfig
 
-Each DDD package carries a solution root (`tsconfig.json`) plus one config per platform it targets. A cross-platform package has `tsconfig.web.json` and `tsconfig.native.json`; a platform-only package omits what doesn't apply.
+Each package carries a solution root (`tsconfig.json`) plus one config per platform it targets. A cross-platform package has `tsconfig.web.json` and `tsconfig.native.json`; a platform-only package omits what doesn't apply.
 
 ### `tsconfig.json` — solution root
 

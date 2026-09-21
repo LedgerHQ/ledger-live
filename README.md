@@ -83,7 +83,7 @@ What to run next depends on the workspace you're targeting. See [repo commands](
 | `tests/`    | Dummy apps for testing (dapps, wallet)                                                                     |
 | `tools/`    | CI actions, GitHub bots and Nx plugins                                                                     |
 
-\*[DDD architecture](docs/ddd-monorepo-architecture.md) — where new code goes.
+\*[Monorepo architecture](docs/monorepo-architecture.md) — where new code goes.
 
 \*\*See [libs/README.md](./libs/README.md).
 

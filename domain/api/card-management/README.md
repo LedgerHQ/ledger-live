@@ -1,6 +1,6 @@
 # @domain/api-card-management
 
-> [!CAUTION] > **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+> [!CAUTION] > **Status: UNSTABLE** — Under active development.
 
 Domain API client for **Card Management**. Injects its RTK Query endpoints and cache tags into the
 shared `cardApi` service (`@shared/api-services`, `services/card`) rather than declaring its own

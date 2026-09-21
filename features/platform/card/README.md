@@ -2,7 +2,7 @@
 
 > [!CAUTION]
 >
-> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+> **Status: UNSTABLE** — Under active development.
 
 Cross-flow Card runtime. Owns the stored Card session and the three accessors the app injects into the
 shared `cardApi` service (`@shared/api-services`, `services/card`).

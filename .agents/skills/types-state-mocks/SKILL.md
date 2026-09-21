@@ -1,13 +1,13 @@
 ---
-name: ddd-types-state-mocks
+name: types-state-mocks
 description: Structure a simple Ledger Wallet data layer where one API response maps to one entity slice. Use when creating or reviewing domain/entity schemas, inferred types, initial state, mocks, selectors, slices, domain/api clients, and their tests.
 ---
 
-# DDD Types, State, And Mocks
+# Types, State, And Mocks
 
-Apply this pattern when one API resource maps to one entity slice. Use `ddd-data-layer-advanced` when one response hydrates several entities.
+Apply this pattern when one API resource maps to one entity slice. Use `data-layer-advanced` when one response hydrates several entities.
 
-Source: [Types, Initial State & Mocks](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6102941793/Guideline+Monorepo+DDD+Re-architecture+Types+Initial+State+Mocks)
+Source: [Types, Initial State & Mocks](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6102941793)
 
 ## Place Files
 

@@ -1,7 +1,7 @@
 # @domain/api-altcoins-sentiment
 
 > [!CAUTION]
-> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+> **Status: UNSTABLE** — Under active development.
 
 Domain API client for **altcoins sentiment**, backed by the CoinMarketCap Altcoin Season Index
 endpoint. RTK Query endpoint typed on the canonical `@domain/entity-altcoins-sentiment` entity. Owns

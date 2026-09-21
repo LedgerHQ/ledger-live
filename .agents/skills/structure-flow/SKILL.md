@@ -1,15 +1,15 @@
 ---
-name: ddd-structure-flow
-description: Place and organize Ledger Wallet code in the DDD monorepo. Use when creating, moving, or reviewing code under apps, features, domain, shared, or support; deciding which layer owns a concern; structuring packages and flow steps; or checking package names, dependency boundaries, platform variants, and legacy imports.
+name: structure-flow
+description: Place and organize Ledger Wallet code in the monorepo layers. Use when creating, moving, or reviewing code under apps, features, domain, shared, or support; deciding which layer owns a concern; structuring packages and flow steps; or checking package names, dependency boundaries, platform variants, and legacy imports.
 ---
 
-# DDD Structure And Flow
+# Structure And Flow
 
 Use the lowest layer that can own the concern without depending on a higher layer.
 
-Read [the canonical architecture guide](../../../docs/ddd-monorepo-architecture.md) and [the package creation checklist](../../../docs/new-library.md) before creating a package.
+Read [the canonical architecture guide](../../../docs/monorepo-architecture.md) and [the package creation checklist](../../../docs/new-library.md) before creating a package.
 
-Upstream source: [Structure & Flow](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117/Guideline+Monorepo+DDD+Re-architecture+Structure+Flow)
+Upstream source: [Structure & Flow](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117)
 
 ## Choose The Owner
 
