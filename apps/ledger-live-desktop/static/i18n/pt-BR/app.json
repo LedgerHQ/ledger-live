@@ -2799,7 +2799,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "Inserir {{memoLabel}}",
-      "description" : "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} may result in a loss of funds."
+      "description" : "Uma {{memoLabel}} é necessária ao enviar {{currency}} para uma corretora de criptomoedas. É um recurso usado para identificar o recipiente da transação. Caso não inclua a memo {{memoLabel}}, os fundos podem ser perdidos."
     },
     "networkFeesInFiat" : "Taxas de rede em {{currency}}",
     "feesAmount" : "Quantia da taxa ({{unit}})",
@@ -6941,7 +6941,7 @@
       "memo" : "Etiqueta"
     },
     "zcash" : {
-      "memoTooltip" : "A {{memoLabel}} is optional when sending {{currency}}. It is encrypted and only the recipient can read it. Some exchanges require one to identify your transaction."
+      "memoTooltip" : "O {{memoLabel}} é opcional ao enviar {{currency}}. Ela é criptografada e apenas o destinatário pode lê-la. Algumas corretoras exigem uma para identificar sua transação."
     }
   },
   "errors" : {
@@ -7501,7 +7501,7 @@
     },
     "ZcashShieldedKeyMissing" : {
       "title" : "Ative seu saldo privado primeiro",
-      "description" : "Esta transferência precisa da chave de visualização do seu dispositivo. Ative seu saldo privado para habilitá-lo."
+      "description" : "Esta transferência precisa da chave de visualização do seu dispositivo. Ative seu saldo privado para habilitá-la."
     },
     "ZcashNotesNotYetSpendable" : {
       "title" : "Esses fundos ainda não podem ser gastos",
@@ -9130,7 +9130,11 @@
     "opted_in" : {
       "title" : "Mais clareza. Mais segurança",
       "description" : "Faça o upgrade e ganhe {{discount}}% de desconto.",
-      "cta" : "Atualizar minha Ledger"
+      "cta" : "Atualizar minha Ledger",
+      "nanoS" : {
+        "title" : "Programa de Upgrade da Ledger Nano S",
+        "description" : "Acesse o novo OS e mais recursos de segurança. Tenha {{discount}}% de desconto."
+      }
     },
     "opted_out" : {
       "title" : "Mais proteção. Mais controle",
@@ -9140,7 +9144,11 @@
     "profile" : {
       "title" : "Faça o upgrade do seu dispositivo",
       "description" : "Tela maior, melhor segurança. Aproveite {{discount}}%.",
-      "cta" : "Descobrir"
+      "cta" : "Descobrir",
+      "nanoS" : {
+        "title" : "Programa de Upgrade da Ledger Nano S",
+        "description" : "Acesse o novo OS e mais recursos de segurança. Tenha {{discount}}% de desconto."
+      }
     }
   },
   "largeScreenUpsellModal" : {
