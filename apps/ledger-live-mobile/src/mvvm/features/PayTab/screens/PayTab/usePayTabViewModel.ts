@@ -7,9 +7,8 @@ import {
   buildTopUpPath,
   buildWithdrawalPath,
   buildAccessBaanxPath,
-  openHostedLoginInSecureBrowser,
+  openHostedUrlInSecureBrowser,
   MANAGE_PIN_PATH,
-  openHostedPageInSecureBrowser,
   openHostedPageSafely,
   type CardAssetPathBuilder,
   type OpenCardHostedPage,
@@ -84,25 +83,6 @@ export function usePayTabViewModel() {
     [params?.code, params?.app_id],
   );
 
-  const openAssetPage = useCallback(
-    async (buildPath: CardAssetPathBuilder, currency?: string) => {
-      try {
-        const isUsCardHolder = await readCardUsEnv(usAppId);
-        const url = buildHostedUrl(
-          hostedUiUrl,
-          buildPath(isUsCardHolder ? usAppId : null, currency),
-        );
-
-        await openHostedLoginInSecureBrowser(url, PAY_TAB_DEEP_LINK);
-      } catch {
-        console.warn("[card] the hosted asset page did not open");
-      }
-    },
-    [hostedUiUrl, usAppId],
-  );
-
-  const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
-
   const login: CardProps["login"] = useMemo(
     () => ({ oauthConfig, callback, onTrackEvent: balance.onTrackEvent, requestProtection }),
     [oauthConfig, callback, balance.onTrackEvent, requestProtection],
@@ -116,9 +96,26 @@ export function usePayTabViewModel() {
   // useCardHostedPageOpeners already exposes, so both platforms share openHostedPageSafely below
   // instead of each hand-rolling its own try/catch.
   const openHostedPage: OpenCardHostedPage = useCallback(
-    path => openHostedPageInSecureBrowser(buildHostedUrl(hostedUiUrl, path)),
+    async path => {
+      await openHostedUrlInSecureBrowser(buildHostedUrl(hostedUiUrl, path), PAY_TAB_DEEP_LINK);
+    },
     [hostedUiUrl],
   );
+
+  const openAssetPage = useCallback(
+    async (buildPath: CardAssetPathBuilder, currency?: string) => {
+      try {
+        const isUsCardHolder = await readCardUsEnv(usAppId);
+
+        await openHostedPage(buildPath(isUsCardHolder ? usAppId : null, currency));
+      } catch {
+        console.warn("[card] the hosted asset page did not open");
+      }
+    },
+    [openHostedPage, usAppId],
+  );
+
+  const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
 
   const onManagePin = useCallback(
     () =>

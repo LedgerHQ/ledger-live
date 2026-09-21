@@ -7,8 +7,7 @@ import {
   buildHostedUrl,
   MANAGE_PIN_PATH,
   buildAccessBaanxPath,
-  openHostedLoginInSecureBrowser,
-  openHostedPageInSecureBrowser,
+  openHostedUrlInSecureBrowser,
 } from "@features/flow-pay-card-auth";
 import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { readCardUsEnv } from "@features/platform-card";
@@ -18,12 +17,11 @@ import type { PayTabNavigatorParamList } from "../../types";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
 // ledger-live-mobile does not depend on expo-web-browser directly — only
-// @features/flow-pay-card-auth does, wrapping it behind openHostedPageInSecureBrowser. Importing
+// @features/flow-pay-card-auth does, wrapping it behind openHostedUrlInSecureBrowser. Importing
 // expo-web-browser here would fail typecheck since the app has no types for it.
 jest.mock("@features/flow-pay-card-auth", () => ({
   ...jest.requireActual("@features/flow-pay-card-auth"),
-  openHostedLoginInSecureBrowser: jest.fn(() => Promise.resolve({ type: "dismissed" })),
-  openHostedPageInSecureBrowser: jest.fn(() => Promise.resolve()),
+  openHostedUrlInSecureBrowser: jest.fn(() => Promise.resolve({ type: "dismissed" })),
 }));
 
 jest.mock("@features/platform-card", () => ({
@@ -33,9 +31,8 @@ jest.mock("@features/platform-card", () => ({
 
 const Stack = createNativeStackNavigator<PayTabNavigatorParamList>();
 
-const mockedOpenSecureBrowser = jest.mocked(openHostedLoginInSecureBrowser);
+const mockedOpenSecureBrowser = jest.mocked(openHostedUrlInSecureBrowser);
 const mockedReadCardUsEnv = jest.mocked(readCardUsEnv);
-const mockedOpenHostedPage = jest.mocked(openHostedPageInSecureBrowser);
 
 const CARD_ASSET: CardAssetRow = {
   id: "wallet-btc",
@@ -92,7 +89,6 @@ function renderViewModel(params?: PayTabNavigatorParamList[typeof ScreenName.Pay
 describe("usePayTabViewModel", () => {
   beforeEach(() => {
     mockedOpenSecureBrowser.mockClear();
-    mockedOpenHostedPage.mockClear();
     mockedReadCardUsEnv.mockResolvedValue(false);
   });
 
@@ -244,8 +240,9 @@ describe("usePayTabViewModel", () => {
     fireEvent.press(screen.getByTestId("press-manage-pin"));
 
     await waitFor(() =>
-      expect(mockedOpenHostedPage).toHaveBeenCalledWith(
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
         buildHostedUrl(getEnv("CARD_BAANX_HOSTED_UI"), MANAGE_PIN_PATH),
+        PAY_TAB_DEEP_LINK,
       ),
     );
   });
@@ -256,8 +253,9 @@ describe("usePayTabViewModel", () => {
     fireEvent.press(screen.getByTestId("press-access-baanx"));
 
     await waitFor(() =>
-      expect(mockedOpenHostedPage).toHaveBeenCalledWith(
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
         buildHostedUrl(getEnv("CARD_BAANX_HOSTED_UI"), buildAccessBaanxPath(null)),
+        PAY_TAB_DEEP_LINK,
       ),
     );
   });
@@ -270,15 +268,16 @@ describe("usePayTabViewModel", () => {
     fireEvent.press(screen.getByTestId("press-access-baanx"));
 
     await waitFor(() =>
-      expect(mockedOpenHostedPage).toHaveBeenCalledWith(
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
         buildHostedUrl(getEnv("CARD_BAANX_HOSTED_UI"), buildAccessBaanxPath("LEDGERUS")),
+        PAY_TAB_DEEP_LINK,
       ),
     );
   });
 
   it("should report a warning instead of throwing when the hosted page fails to open", async () => {
     const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
-    mockedOpenHostedPage.mockRejectedValueOnce(new Error("could not open browser"));
+    mockedOpenSecureBrowser.mockRejectedValueOnce(new Error("could not open browser"));
     renderViewModel();
 
     fireEvent.press(screen.getByTestId("press-manage-pin"));
