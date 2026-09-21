@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 4.21.0-next.5
+
+### Patch Changes
+
+- Updated dependencies [[`354486c`](https://github.com/LedgerHQ/ledger-live/commit/354486ca79badb49b9c902b1724a36379c278358)]:
+  - @ledgerhq/live-common@38.0.0-next.1
+  - @ledgerhq/asset-detail@0.11.5-next.1
+  - @ledgerhq/live-dmk-desktop@0.21.1-next.1
+  - @ledgerhq/live-send@0.1.0-next.1
+
 ## 4.21.0-next.4
 
 ### Minor Changes
