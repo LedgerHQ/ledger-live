@@ -1,6 +1,7 @@
 export * from "./components/ChangePasswordSheet";
 export * from "./components/EnableProtectionSheet";
 export * from "./components/ForgotPasswordSheet";
+export * from "./components/KeepProtectionSheet";
 export * from "./components/PasswordChangedSheet";
 export * from "./components/PasswordField";
 export * from "./components/ProtectionEnabledSheet";
