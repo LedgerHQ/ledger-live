@@ -2,6 +2,8 @@
 "@ledgerhq/live-common": patch
 ---
 
-implement the Zcash-only bridge methods in the Zcash mock bridge
+Fix Zcash mock-bridge and serialization so shielded send still works
 
-Activating the private balance under `MOCK=true` threw a TypeError: the mock bridge replaces the extended Zcash bridge but declared none of the methods the export and shielded-receive flows call on it (`getFullViewingKey`, `deriveShieldedAddress`, `getShieldedAddress`). It now answers all three with device-free stand-ins, the derived address being a well-formed unified address so the send flow still classifies it as a private recipient.
+Persisting a Zcash account while `zcashShielded` is off (or under `MOCK=true`) routed `toAccountRaw` through coin-bitcoin, which dropped the viewing key and `privateInfo` the load path had just restored. Both directions now use the Zcash serialization family.
+
+The mock bridge also omitted `getFullViewingKey`, `deriveShieldedAddress`, and `getShieldedAddress`, so activating the private balance under `MOCK=true` threw a TypeError. Those methods now return device-free stand-ins, including a well-formed unified address so the send flow still classifies a self-transfer as a private recipient.
