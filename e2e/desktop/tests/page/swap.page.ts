@@ -98,7 +98,7 @@ export class SwapPage extends WebViewAppPage {
     this.page.getByTestId(`swap-history-to-amount-${swapId}`);
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
 
-  // Landing page (no active quote) - Trending Assets / Stablecoins panel
+  // Landing page (no active quote) panel
   private readonly topGainersContainer = "top-gainers-container";
   private readonly topGainersInfoIcon = "top-gainers-info-icon";
   private readonly topGainersTooltipContent = "top-gainers-tooltip-content";
@@ -617,12 +617,16 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.bestValueInfoIcon)).toBeVisible();
   }
 
-  // Not a critical panel: any failure here (missing element, timed-out click,
-  // Playwright throwing) is caught and reported without aborting the swap flow.
+  // Non-critical panel: failures are reported, not thrown.
   @step("Check landing page Trending Assets and Stablecoins panel")
   async checkLandingPageTrendingAssets() {
+    await this.runPanelCheckSoftly(() => this.checkTrendingAssetsUnsafe());
+    await this.runPanelCheckSoftly(() => this.checkStablecoinsUnsafe());
+  }
+
+  private async runPanelCheckSoftly(check: () => Promise<void>) {
     try {
-      await this.checkLandingPageTrendingAssetsUnsafe();
+      await check();
     } catch (error) {
       await test.info().attach("Landing page panel check failed (non-blocking)", {
         body: String(error),
@@ -631,7 +635,7 @@ export class SwapPage extends WebViewAppPage {
     }
   }
 
-  private async checkLandingPageTrendingAssetsUnsafe() {
+  private async checkTrendingAssetsUnsafe() {
     const webview = await this.getWebView();
 
     const topGainersRows = webview.locator(this.topGainersItemsSelector);
@@ -678,6 +682,10 @@ export class SwapPage extends WebViewAppPage {
     await this.softExpect(async soft => {
       await soft(webview.getByTestId(this.topGainersTooltipContent)).toBeVisible();
     });
+  }
+
+  private async checkStablecoinsUnsafe() {
+    const webview = await this.getWebView();
 
     const topStablecoinsRows = webview.locator(this.topStablecoinsItemsSelector);
     await this.softExpect(async soft => {
