@@ -43,6 +43,8 @@ export { OverrideDeviceIntentExecutorHeader } from "./deviceIntentHeader/Overrid
 export { DeviceIntentExecutorHeaderContext } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
 export type { DeviceIntentExecutorHeaderContextValue } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
 export { useDeviceIntentExecutorHeaderOverrideRequests } from "./deviceIntentHeader/useDeviceIntentExecutorHeaderOverrideRequests";
+export { AddressBookProvider } from "./services/AddressBookProvider";
+export type { AddressBookSource } from "./services/AddressBookProvider";
 export { LedgerLiveLogger } from "./services/LedgerLiveLogger";
 export { UserHashService } from "./services/UserHashService";
 export {

@@ -52,7 +52,8 @@ import {
 } from "~/renderer/reducers/settings";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { evmAddressBookProvider } from "@ledgerhq/live-signer-evm";
-import { toEvmAddressBook } from "@features/platform-contacts";
+import { tronAddressBookProvider } from "@ledgerhq/live-signer-tron";
+import { toEvmAddressBook, toTronAddressBook } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
@@ -209,6 +210,7 @@ async function init() {
 
   liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
   evmAddressBookProvider.setSource(() => toEvmAddressBook(selectContacts(store.getState())));
+  tronAddressBookProvider.setSource(() => toTronAddressBook(selectContacts(store.getState())));
 
   const settingsToLoad = { ...initialSettings };
 

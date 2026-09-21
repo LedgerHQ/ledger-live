@@ -33,6 +33,7 @@
     "@ledgerhq/device-signer-kit-tron": "catalog:",
     "@ledgerhq/hw-app-trx": "workspace:^",
     "@ledgerhq/hw-transport": "catalog:",
+    "@ledgerhq/live-dmk-shared": "workspace:^",
     "rxjs": "catalog:"
   },
   "scripts": {

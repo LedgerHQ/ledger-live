@@ -38,6 +38,7 @@
     "@features/platform-device-intent": "workspace:*",
     "@ledgerhq/device-contacts-kit": "catalog:",
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
+    "@ledgerhq/device-signer-kit-tron": "catalog:",
     "rxjs": "catalog:",
     "semver": "catalog:"
   },

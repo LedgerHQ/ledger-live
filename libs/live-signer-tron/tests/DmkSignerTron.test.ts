@@ -1,15 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
+import { SignerTrxBuilder } from "@ledgerhq/device-signer-kit-tron";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import { of, throwError } from "rxjs";
+import { tronAddressBookProvider } from "../src/addressBook/tronAddressBookProvider";
 import { DmkSignerTron } from "../src/DmkSignerTron";
 
 jest.mock("@ledgerhq/device-signer-kit-tron", () => ({
   SignerTrxBuilder: jest.fn().mockImplementation(() => ({
-    build: () => ({}),
+    withAddressBook: jest.fn().mockReturnThis(),
+    build: jest.fn(() => ({})),
   })),
 }));
+
+const lastBuilder = () =>
+  (SignerTrxBuilder as unknown as jest.Mock).mock.results.at(-1)?.value as {
+    withAddressBook: jest.Mock;
+    build: jest.Mock;
+  };
 
 const PATH = "44'/195'/0'/0/0";
 
@@ -209,5 +218,41 @@ describe("DmkSignerTron", () => {
 
       await expect(signer.sign(PATH, "0a02")).rejects.toThrow("Unknown device action status");
     });
+  });
+});
+
+describe("DmkSignerTron address book", () => {
+  const book = { contactGroups: [], ledgerAccounts: [] };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    tronAddressBookProvider.clearSource();
+  });
+
+  afterEach(() => {
+    tronAddressBookProvider.clearSource();
+  });
+
+  it("does not provide an address book when no source is registered", () => {
+    new DmkSignerTron({} as any, "sessionId");
+
+    expect(lastBuilder().withAddressBook).not.toHaveBeenCalled();
+    expect(lastBuilder().build).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not provide an address book when the registered source yields undefined", () => {
+    tronAddressBookProvider.setSource(() => undefined);
+
+    new DmkSignerTron({} as any, "sessionId");
+
+    expect(lastBuilder().withAddressBook).not.toHaveBeenCalled();
+  });
+
+  it("provides the snapshot to the builder when a source yields one", () => {
+    tronAddressBookProvider.setSource(() => book);
+
+    new DmkSignerTron({} as any, "sessionId");
+
+    expect(lastBuilder().withAddressBook).toHaveBeenCalledWith(book);
   });
 });
