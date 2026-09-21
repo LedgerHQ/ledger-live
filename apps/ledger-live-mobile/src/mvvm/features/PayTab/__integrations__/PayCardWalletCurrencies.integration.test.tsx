@@ -6,9 +6,7 @@ import { BAANX_LEDGER_CURRENCY_IDS } from "@domain/entity-card-asset-mapping";
 
 const USDC_ID = "ethereum/erc20/usd__coin";
 const USDT_ID = "ethereum/erc20/usd_tether__erc20_";
-
-/** What the registry answers for without CAL: the catalog minus its two tokens. */
-const COIN_COUNT = BAANX_LEDGER_CURRENCY_IDS.length - 2;
+const EUROC_ID = "ethereum/erc20/euro_coin";
 
 const CAL_TOKENS: Record<string, unknown> = {
   [USDC_ID]: {
@@ -31,7 +29,22 @@ const CAL_TOKENS: Record<string, unknown> = {
     ticker: "USDT",
     units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
   },
+  [EUROC_ID]: {
+    id: EUROC_ID,
+    contract_address: "0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c",
+    standard: "erc20",
+    decimals: 6,
+    delisted: false,
+    name: "EURC",
+    ticker: "EURC",
+    units: [{ name: "EURC", code: "EURC", magnitude: 6 }],
+  },
 };
+
+const TOKEN_IDS = Object.keys(CAL_TOKENS);
+
+/** What the registry answers for without CAL: the catalog minus its tokens. */
+const COIN_COUNT = BAANX_LEDGER_CURRENCY_IDS.length - TOKEN_IDS.length;
 
 function serveCal(asked: string[]) {
   server.use(
@@ -57,9 +70,10 @@ describe("useCurrenciesByIds for the card catalog", () => {
     await waitFor(() => expect(result.current.size).toBe(BAANX_LEDGER_CURRENCY_IDS.length));
     expect(result.current.get(USDC_ID)?.ticker).toBe("USDC");
     expect(result.current.get(USDT_ID)?.ticker).toBe("USDT");
+    expect(result.current.get(EUROC_ID)?.ticker).toBe("EURC");
 
     // Only the non-registry ids are asked for, and every one of them is.
-    expect(new Set(asked)).toEqual(new Set([USDC_ID, USDT_ID]));
+    expect(new Set(asked)).toEqual(new Set(TOKEN_IDS));
   });
 
   it("leaves a token out when CAL has nothing for it", async () => {
@@ -73,9 +87,9 @@ describe("useCurrenciesByIds for the card catalog", () => {
 
     const { result } = renderHook(() => useCurrenciesByIds(BAANX_LEDGER_CURRENCY_IDS));
 
-    // Waited on both lookups having been asked AND the map having settled to the coins only:
+    // Waited on every token lookup having been asked AND the map having settled to the coins only:
     // asserting on `asked` alone passes before the empty answer is even delivered.
-    await waitFor(() => expect(new Set(asked)).toEqual(new Set([USDC_ID, USDT_ID])));
+    await waitFor(() => expect(new Set(asked)).toEqual(new Set(TOKEN_IDS)));
     await waitFor(() => expect(result.current.size).toBe(COIN_COUNT));
     expect(result.current.has(USDC_ID)).toBe(false);
     expect(result.current.get("bitcoin")?.ticker).toBe("BTC");
