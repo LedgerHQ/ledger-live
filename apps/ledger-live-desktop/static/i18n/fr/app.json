@@ -9130,7 +9130,11 @@
     "opted_in" : {
       "title" : "Voyez plus grand",
       "description" : "Passez au niveau supérieur avec -{{discount}}%.",
-      "cta" : "Choisir mon Ledger"
+      "cta" : "Choisir mon Ledger",
+      "nanoS" : {
+        "title" : "Offre spéciale Ledger Nano S",
+        "description" : "Nouvel OS et sécurité boostée. Profitez de -{{discount}}%."
+      }
     },
     "opted_out" : {
       "title" : "Sécurité et contrôle renforcés",
@@ -9140,7 +9144,11 @@
     "profile" : {
       "title" : "Voyez plus grand",
       "description" : "Écran plus grand, sécurité boostée. Profitez de -{{discount}}%.",
-      "cta" : "Explorer"
+      "cta" : "Explorer",
+      "nanoS" : {
+        "title" : "Offre spéciale Ledger Nano S",
+        "description" : "Nouvel OS et sécurité boostée. Profitez de -{{discount}}%."
+      }
     }
   },
   "largeScreenUpsellModal" : {
