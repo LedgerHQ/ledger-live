@@ -1,6 +1,10 @@
-import { CurrencyLiveConfigDefinition } from "../../config";
+import { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
 
-const nearConfig: CurrencyLiveConfigDefinition = {
+const nearConfig: ConfigSchema = {
+  config_near_generic_bridge: {
+    type: "boolean",
+    default: false,
+  },
   config_currency_near: {
     type: "object",
     default: {
