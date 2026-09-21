@@ -79,7 +79,7 @@
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "1.0.2",
-    "@braze/react-native-sdk": "18.0.0",
+    "@braze/react-native-sdk": "23.0.0",
     "@datadog/mobile-react-native": "3.7.0",
     "@datadog/mobile-react-navigation": "3.7.0",
     "@devtools/bindings": "workspace:^",
