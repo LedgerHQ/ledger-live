@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import { renderHook } from "@testing-library/react-native";
 import { Platform } from "react-native";
 
-jest.mock("./openWalletApp", () => ({ openWalletApp: jest.fn(() => Promise.resolve()) }));
+jest.mock("./openWalletApp", () => ({ openWalletApp: jest.fn() }));
 
 import { CARD_ONBOARDING_ADD_TO_WALLET_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { payCardOnboardingWidgetSlice, selectHasAddedCardToWallet } from "../../state";
@@ -31,6 +31,7 @@ function renderViewModel(onDone = jest.fn()) {
 describe("useAddToWalletInstructionsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(openWalletApp).mockResolvedValue(true);
     Platform.OS = "ios";
   });
 
@@ -55,14 +56,25 @@ describe("useAddToWalletInstructionsViewModel", () => {
     expect(result.current.ctaLabel).toBe(CARD_ONBOARDING_ADD_TO_WALLET_COPY.android.cta);
   });
 
-  it("dispatches, tells the host it is done, and opens the wallet when the CTA is pressed", () => {
+  it("dispatches and tells the host it is done once the wallet opened", async () => {
     const onDone = jest.fn();
     const { store, result } = renderViewModel(onDone);
 
-    result.current.onPressCta();
+    await result.current.onPressCta();
 
     expect(selectHasAddedCardToWallet(store.getState())).toBe(true);
-    expect(onDone).toHaveBeenCalledTimes(1);
     expect(openWalletApp).toHaveBeenCalledTimes(1);
+    expect(onDone).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the instructions on screen when the wallet could not be opened", async () => {
+    jest.mocked(openWalletApp).mockResolvedValue(false);
+    const onDone = jest.fn();
+    const { store, result } = renderViewModel(onDone);
+
+    await result.current.onPressCta();
+
+    expect(selectHasAddedCardToWallet(store.getState())).toBe(false);
+    expect(onDone).not.toHaveBeenCalled();
   });
 });

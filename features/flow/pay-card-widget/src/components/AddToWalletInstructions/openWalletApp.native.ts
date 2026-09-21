@@ -1,7 +1,4 @@
-import { Linking, Platform } from "react-native";
-
-/** `wallet://` is the current Apple Wallet scheme; `shoebox://` is the older one it replaced. */
-const IOS_WALLET_URLS = ["wallet://", "shoebox://"];
+import { Linking, NativeModules, Platform } from "react-native";
 
 /** Scheme registered by the Google Wallet app (`com.google.android.apps.walletnfcrel`). */
 const ANDROID_WALLET_URLS = ["comgooglewallet://"];
@@ -16,27 +13,41 @@ const ANDROID_WALLET_SETTINGS_ACTIONS = [
 ];
 
 /**
- * Sends the user to their phone's wallet so they can run the steps listed in the bottom sheet.
- *
- * Neither platform exposes a deep link into the "add a card" flow, so we open the wallet itself and
- * degrade to the closest system screen when that fails. Opening is attempted rather than probed
- * with `canOpenURL`, which would additionally require declaring every scheme in `Info.plist` /
- * `<queries>`. Never rejects: the sheet's written instructions are the fallback of last resort.
+ * Opens the platform's payment-card setup, reporting whether an entry point could be reached so the
+ * caller can leave the written instructions on screen when none could. Never rejects.
  */
-export async function openWalletApp(): Promise<void> {
-  const isIOS = Platform.OS === "ios";
+export async function openWalletApp(): Promise<boolean> {
+  const opened =
+    Platform.OS === "ios" ? await openApplePaymentSetup() : await openGoogleWalletSetup();
 
-  for (const url of isIOS ? IOS_WALLET_URLS : ANDROID_WALLET_URLS) {
-    if (await didOpen(() => Linking.openURL(url))) return;
+  if (!opened) {
+    console.warn("[pay-card] no wallet setup entry point could be opened");
   }
 
-  if (!isIOS) {
-    for (const action of ANDROID_WALLET_SETTINGS_ACTIONS) {
-      if (await didOpen(() => Linking.sendIntent(action))) return;
-    }
+  return opened;
+}
+
+function openApplePaymentSetup(): Promise<boolean> {
+  return didOpen(openAppleWalletPaymentSetup);
+}
+
+async function openGoogleWalletSetup(): Promise<boolean> {
+  for (const url of ANDROID_WALLET_URLS) {
+    if (await didOpen(() => Linking.openURL(url))) return true;
   }
 
-  await didOpen(() => Linking.openSettings());
+  for (const action of ANDROID_WALLET_SETTINGS_ACTIONS) {
+    if (await didOpen(() => Linking.sendIntent(action))) return true;
+  }
+
+  return didOpen(() => Linking.openSettings());
+}
+
+function openAppleWalletPaymentSetup(): Promise<void> {
+  const module = NativeModules.AppleWalletModule as
+    | { openPaymentSetup: () => Promise<void> }
+    | undefined;
+  return module?.openPaymentSetup() ?? Promise.reject(new Error("AppleWalletModule unavailable"));
 }
 
 async function didOpen(open: () => Promise<unknown>): Promise<boolean> {
