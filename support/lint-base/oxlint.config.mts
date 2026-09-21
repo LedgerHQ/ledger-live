@@ -59,6 +59,20 @@ export default defineConfig({
     "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/no-autofocus": "off",
 
+    // Named by three or more of the layers that have not migrated yet, at the value they agree on.
+    // Promoted here so their presets come out empty rather than repeating these lines.
+    // `typescript/consistent-type-assertions` is deliberately not among them: the seven configs
+    // that set it agree on the value, but none of the migrated layers ever had it and adopting it
+    // here is 1485 new warnings. That is a policy call, not a consolidation, so it stays in the
+    // leaves that already made it.
+    "jest/no-export": "off",
+    "jest/no-standalone-expect": "warn",
+    "jest/valid-describe-callback": "warn",
+    "jest/valid-expect": "warn",
+    "typescript/no-empty-function": "off",
+    "typescript/no-namespace": ["error", { allowDeclarations: true }],
+    "unicorn/no-array-reverse": "off",
+
     // Demoted or disabled identically by every config that names them.
     "eslint/no-constant-binary-expression": "warn",
     "eslint/no-unsafe-optional-chaining": "off",
