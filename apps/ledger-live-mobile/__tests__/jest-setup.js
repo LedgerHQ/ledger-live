@@ -36,7 +36,7 @@ import { NativeModules } from "react-native";
 import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
 import mockRNCNetInfo from "@react-native-community/netinfo/jest/netinfo-mock.js";
 import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
-import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
+import mockAsyncStorage from "@react-native-async-storage/async-storage/jest";
 import mockLocalize from "react-native-localize/mock";
 import { EventEmitter } from "events";
 

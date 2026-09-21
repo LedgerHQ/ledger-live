@@ -26,6 +26,7 @@ const transformIncludePatterns = [
   "@react-native/polyfills",
   "(jest-)?react-native",
   "@react-native(-community)?",
+  "@react-native-async-storage",
   "@react-navigation",
   "react-native-worklets",
   "react-native-reanimated",

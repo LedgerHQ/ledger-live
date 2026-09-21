@@ -5,7 +5,6 @@
 // It's based on https://github.com/jasonmerino/react-native-simple-store
 // with the new React-native-async-store package
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { KeyValuePair } from "@react-native-async-storage/async-storage/lib/typescript/types";
 import merge from "lodash/merge";
 
 const deviceStorage = {
@@ -26,10 +25,8 @@ const deviceStorage = {
       return getCompressedValue(key, value);
     }
 
-    const values = await AsyncStorage.multiGet(key);
-    const data: Promise<T | undefined>[] = values.map(value =>
-      getCompressedValue(value[0], value[1]),
-    );
+    const values = await AsyncStorage.getMany(key);
+    const data: Promise<T | undefined>[] = key.map(k => getCompressedValue(k, values[k]));
     return Promise.all(data).then(array => array.filter(item => item != null) as T[]);
   },
 
@@ -56,12 +53,12 @@ const deviceStorage = {
       pairs = key.map(pair => [pair[0], pair[1]]);
     }
 
-    return AsyncStorage.multiSet(stringifyPairs(pairs));
+    return AsyncStorage.setMany(Object.fromEntries(stringifyPairs(pairs)));
   },
 
   saveString(key: string, value: string) {
     const chunks = chunkStringPair(key, value);
-    return AsyncStorage.multiSet(chunks);
+    return AsyncStorage.setMany(Object.fromEntries(chunks));
   },
 
   /**
@@ -102,7 +99,7 @@ const deviceStorage = {
       );
     }
 
-    return AsyncStorage.multiRemove(keys);
+    return AsyncStorage.removeMany(keys);
   },
 
   /**
@@ -110,7 +107,7 @@ const deviceStorage = {
    */
   async deleteAll() {
     const keys = await AsyncStorage.getAllKeys();
-    return AsyncStorage.multiRemove(keys);
+    return AsyncStorage.removeMany(keys);
   },
 
   /**
@@ -143,8 +140,7 @@ const deviceStorage = {
   /** Stringify the storage data to JSON. */
   async stringify() {
     const keys = await deviceStorage.keys();
-    const pairs = await AsyncStorage.multiGet(keys);
-    const data = Object.fromEntries(pairs);
+    const data = await AsyncStorage.getMany(keys);
 
     return JSON.stringify(data);
   },
@@ -214,15 +210,16 @@ async function getCompressedValue<T = unknown>(
           keys.push(key + CHUNKED_KEY + i);
         }
 
-        let values: KeyValuePair[] = [];
+        let values: Record<string, string | null> = {};
+        const pendingKeys = [...keys];
 
         // multiget will failed when you got keys with a tons of data
         // it crash with 13 CHUNKS of 1MB string so we had splice it.
-        while (keys.length) {
-          values = [...values, ...(await AsyncStorage.multiGet(keys.splice(0, 5)))];
+        while (pendingKeys.length) {
+          values = { ...values, ...(await AsyncStorage.getMany(pendingKeys.splice(0, 5))) };
         }
 
-        const concatString = values.reduce((acc, current) => acc + current[1], "");
+        const concatString = keys.reduce((acc, k) => acc + (values[k] ?? ""), "");
         return JSON.parse(concatString);
       }
     }
@@ -240,16 +237,16 @@ async function getCompressedString(key: string): Promise<string | null> {
     if (value !== null && value.includes(CHUNKED_KEY)) {
       const numberOfChunk = Number(value.replace(CHUNKED_KEY, ""));
       const keys = Array.from({ length: numberOfChunk }, (_, i) => key + CHUNKED_KEY + i);
-      const values: KeyValuePair[] = [];
+      let values: Record<string, string | null> = {};
+      const pendingKeys = [...keys];
 
       // multiget will failed when you got keys with a tons of data
       // it crash with 13 CHUNKS of 1MB string so we had splice it.
-      while (keys.length) {
-        const chunks = await AsyncStorage.multiGet(keys.splice(0, 5));
-        values.push(...chunks);
+      while (pendingKeys.length) {
+        values = { ...values, ...(await AsyncStorage.getMany(pendingKeys.splice(0, 5))) };
       }
 
-      return values.reduce((acc, current) => acc + current[1], "");
+      return keys.reduce((acc, k) => acc + (values[k] ?? ""), "");
     }
 
     return value;

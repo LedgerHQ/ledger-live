@@ -1,6 +1,5 @@
 import storage, { CHUNK_SIZE, CHUNKED_KEY } from "../asyncStorageWrapper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { KeyValuePair } from "@react-native-async-storage/async-storage/lib/typescript/types";
 
 afterEach(() => {
   jest.resetAllMocks();
@@ -58,37 +57,39 @@ describe("AsyncStorageWrapper", () => {
     });
 
     describe("with multiple keys", () => {
-      let multiGetMethod: jest.SpyInstance;
+      let getManyMethod: jest.SpyInstance;
 
-      const returnedValues = [
-        ["key1", `{"a": 1}`],
-        ["key2", `{"b": 2}`],
-      ] as KeyValuePair[];
+      const returnedValues: Record<string, string | null> = {
+        key1: `{"a": 1}`,
+        key2: `{"b": 2}`,
+      };
       let result: Awaited<ReturnType<typeof storage.get>>;
 
       beforeEach(async () => {
         // Arrange
-        multiGetMethod = jest
-          .spyOn(AsyncStorage, "multiGet")
+        getManyMethod = jest
+          .spyOn(AsyncStorage, "getMany")
           .mockImplementation(() => Promise.resolve(returnedValues));
 
         // Act
         result = await storage.get(["key1", "key2"]);
       });
 
-      it("should call AsyncStorage#multiGet once", () => {
-        expect(multiGetMethod).toHaveBeenCalledTimes(1);
+      it("should call AsyncStorage#getMany once", () => {
+        expect(getManyMethod).toHaveBeenCalledTimes(1);
       });
 
-      it("should returns values return by AsyncStorage#multiGet", () => {
-        expect(result).toEqual(returnedValues.map(([_, value]) => JSON.parse(value as string)));
+      it("should returns values return by AsyncStorage#getMany", () => {
+        expect(result).toEqual(
+          Object.values(returnedValues).map(value => JSON.parse(value as string)),
+        );
       });
     });
 
     describe("with chunked key", () => {
       let expectedValue: string;
       let getItemMethod: jest.SpyInstance;
-      let multiGetMethod: jest.SpyInstance;
+      let getManyMethod: jest.SpyInstance;
       let result: Awaited<ReturnType<typeof storage.get>>;
 
       beforeEach(async () => {
@@ -100,21 +101,21 @@ describe("AsyncStorageWrapper", () => {
         expectedValue = `[${Array(testLength).fill(testItem).join(",")}]`;
 
         const chunkListLenth = Math.ceil(expectedValue.length / CHUNK_SIZE);
-        const multiGetResults: KeyValuePair[] = [];
+        const getManyResults: Record<string, string | null> = {};
 
         for (let i = 0; i < chunkListLenth; i++) {
-          multiGetResults.push([
-            `${testKey}${CHUNKED_KEY}${i}`,
-            expectedValue.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE),
-          ]);
+          getManyResults[`${testKey}${CHUNKED_KEY}${i}`] = expectedValue.slice(
+            i * CHUNK_SIZE,
+            (i + 1) * CHUNK_SIZE,
+          );
         }
 
         getItemMethod = jest
           .spyOn(AsyncStorage, "getItem")
           .mockImplementation(() => Promise.resolve(`${CHUNKED_KEY}${chunkListLenth}`));
-        multiGetMethod = jest
-          .spyOn(AsyncStorage, "multiGet")
-          .mockImplementation(() => Promise.resolve(multiGetResults));
+        getManyMethod = jest
+          .spyOn(AsyncStorage, "getMany")
+          .mockImplementation(() => Promise.resolve(getManyResults));
 
         // Act
         result = await storage.get("key");
@@ -124,8 +125,8 @@ describe("AsyncStorageWrapper", () => {
         expect(getItemMethod).toHaveBeenCalledTimes(1);
       });
 
-      it("should call AsyncStorage#multiGet once", () => {
-        expect(multiGetMethod).toHaveBeenCalledTimes(1);
+      it("should call AsyncStorage#getMany once", () => {
+        expect(getManyMethod).toHaveBeenCalledTimes(1);
       });
 
       it("should returns valid JSON string", () => {
@@ -162,7 +163,7 @@ describe("AsyncStorageWrapper", () => {
     describe("with chunked key", () => {
       let expectedValue: string;
       let getItemMethod: jest.SpyInstance;
-      let multiGetMethod: jest.SpyInstance;
+      let getManyMethod: jest.SpyInstance;
       let result: Awaited<ReturnType<typeof storage.getString>>;
 
       beforeEach(async () => {
@@ -170,23 +171,23 @@ describe("AsyncStorageWrapper", () => {
         const testKey = "key";
         const testLength = CHUNK_SIZE + 1;
         const chunkListLength = Math.ceil(testLength / CHUNK_SIZE);
-        const multiGetResults: KeyValuePair[] = [];
+        const getManyResults: Record<string, string | null> = {};
 
         expectedValue = Array(testLength).fill("a").join("");
 
         for (let i = 0; i < chunkListLength; i++) {
-          multiGetResults.push([
-            `${testKey}${CHUNKED_KEY}${i}`,
-            expectedValue.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE),
-          ]);
+          getManyResults[`${testKey}${CHUNKED_KEY}${i}`] = expectedValue.slice(
+            i * CHUNK_SIZE,
+            (i + 1) * CHUNK_SIZE,
+          );
         }
 
         getItemMethod = jest
           .spyOn(AsyncStorage, "getItem")
           .mockImplementation(() => Promise.resolve(`${CHUNKED_KEY}${chunkListLength}`));
-        multiGetMethod = jest
-          .spyOn(AsyncStorage, "multiGet")
-          .mockImplementation(() => Promise.resolve(multiGetResults));
+        getManyMethod = jest
+          .spyOn(AsyncStorage, "getMany")
+          .mockImplementation(() => Promise.resolve(getManyResults));
 
         // Act
         result = await storage.getString("key");
@@ -196,8 +197,8 @@ describe("AsyncStorageWrapper", () => {
         expect(getItemMethod).toHaveBeenCalledTimes(1);
       });
 
-      it("should call AsyncStorage#multiGet once", () => {
-        expect(multiGetMethod).toHaveBeenCalledTimes(1);
+      it("should call AsyncStorage#getMany once", () => {
+        expect(getManyMethod).toHaveBeenCalledTimes(1);
       });
 
       it("should returns the concatenated string", () => {
@@ -207,25 +208,25 @@ describe("AsyncStorageWrapper", () => {
   });
 
   describe("save", () => {
-    let multiSetMethod: jest.SpyInstance;
+    let setManyMethod: jest.SpyInstance;
 
     describe("with a single key", () => {
       beforeEach(async () => {
         // Arrange
-        multiSetMethod = jest
-          .spyOn(AsyncStorage, "multiSet")
+        setManyMethod = jest
+          .spyOn(AsyncStorage, "setMany")
           .mockImplementation(() => Promise.resolve());
 
         // Act
         await storage.save("key", { value: 1 });
       });
 
-      it("should call AsyncStorage#setItem", () => {
-        expect(multiSetMethod).toHaveBeenCalledTimes(1);
+      it("should call AsyncStorage#setMany", () => {
+        expect(setManyMethod).toHaveBeenCalledTimes(1);
       });
 
-      it("should call AsyncStorage#setItem correct KeyValuePair", () => {
-        expect(multiSetMethod).toHaveBeenCalledWith([["key", `{"value":1}`]]);
+      it("should call AsyncStorage#setMany with the correct entries", () => {
+        expect(setManyMethod).toHaveBeenCalledWith({ key: `{"value":1}` });
       });
     });
 
@@ -237,28 +238,28 @@ describe("AsyncStorageWrapper", () => {
 
       beforeEach(async () => {
         // Arrange
-        multiSetMethod = jest
-          .spyOn(AsyncStorage, "multiSet")
+        setManyMethod = jest
+          .spyOn(AsyncStorage, "setMany")
           .mockImplementation(() => Promise.resolve());
 
         // Act
         await storage.save(keyValuePairs);
       });
 
-      it("should call AsyncStorage#setItem", () => {
-        expect(multiSetMethod).toHaveBeenCalledTimes(1);
+      it("should call AsyncStorage#setMany", () => {
+        expect(setManyMethod).toHaveBeenCalledTimes(1);
       });
 
-      it("should call AsyncStorage#setItem correct KeyValuePair", () => {
-        expect(multiSetMethod).toHaveBeenCalledWith(
-          keyValuePairs.map(([k, v]) => [k, JSON.stringify(v)]),
+      it("should call AsyncStorage#setMany with the correct entries", () => {
+        expect(setManyMethod).toHaveBeenCalledWith(
+          Object.fromEntries(keyValuePairs.map(([k, v]) => [k, JSON.stringify(v)])),
         );
       });
     });
 
     describe("with chunkable value", () => {
-      let multiSetMethod: jest.SpyInstance;
-      let multiSetArg: KeyValuePair[];
+      let setManyMethod: jest.SpyInstance;
+      let setManyArg: Record<string, string>;
 
       beforeEach(async () => {
         // Arrange
@@ -268,57 +269,57 @@ describe("AsyncStorageWrapper", () => {
         const chunkableValue = `[${Array(testLength).fill(testItem).join(",")}]`;
         const chunkListLenth = Math.ceil(chunkableValue.length / CHUNK_SIZE);
 
-        multiSetArg = [[testKey, `${CHUNKED_KEY}${chunkListLenth}`]];
+        setManyArg = { [testKey]: `${CHUNKED_KEY}${chunkListLenth}` };
 
         for (let i = 0; i < chunkListLenth; i++) {
-          multiSetArg.push([
-            `${testKey}${CHUNKED_KEY}${i}`,
-            chunkableValue.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE),
-          ]);
+          setManyArg[`${testKey}${CHUNKED_KEY}${i}`] = chunkableValue.slice(
+            i * CHUNK_SIZE,
+            (i + 1) * CHUNK_SIZE,
+          );
         }
 
-        multiSetMethod = jest
-          .spyOn(AsyncStorage, "multiSet")
+        setManyMethod = jest
+          .spyOn(AsyncStorage, "setMany")
           .mockImplementation(() => Promise.resolve());
 
         // Act
         await storage.save(testKey, JSON.parse(chunkableValue));
       });
 
-      it("should call AsyncStorageWrapper#multiSet once", () => {
-        expect(multiSetMethod).toHaveBeenCalledTimes(1);
+      it("should call AsyncStorageWrapper#setMany once", () => {
+        expect(setManyMethod).toHaveBeenCalledTimes(1);
       });
 
-      it("should call AsyncStorageWrapper#multiSet with the correct pairs", () => {
-        expect(multiSetMethod).toHaveBeenCalledWith(multiSetArg);
+      it("should call AsyncStorageWrapper#setMany with the correct entries", () => {
+        expect(setManyMethod).toHaveBeenCalledWith(setManyArg);
       });
     });
   });
 
   describe("saveString", () => {
-    let multiSet: jest.SpyInstance;
+    let setMany: jest.SpyInstance;
 
     describe("with a single key", () => {
       beforeEach(() => {
         // Arrange
-        multiSet = jest.spyOn(AsyncStorage, "multiSet").mockImplementation(() => Promise.resolve());
+        setMany = jest.spyOn(AsyncStorage, "setMany").mockImplementation(() => Promise.resolve());
 
         // Act
         storage.saveString("key", "stringToSave");
       });
 
-      it("should call AsyncStorageWrapper#multiSet", () => {
-        expect(multiSet).toHaveBeenCalledTimes(1);
+      it("should call AsyncStorageWrapper#setMany", () => {
+        expect(setMany).toHaveBeenCalledTimes(1);
       });
 
-      it("should call AsyncStorageWrapper#multiSet with the correct pair", () => {
-        expect(multiSet).toHaveBeenCalledWith([["key", "stringToSave"]]);
+      it("should call AsyncStorageWrapper#setMany with the correct entry", () => {
+        expect(setMany).toHaveBeenCalledWith({ key: "stringToSave" });
       });
     });
 
     describe("with chunkable value", () => {
-      let multiSetMethod: jest.SpyInstance;
-      let multiSetArg: KeyValuePair[];
+      let setManyMethod: jest.SpyInstance;
+      let setManyArg: Record<string, string>;
 
       beforeEach(async () => {
         // Arrange
@@ -327,28 +328,28 @@ describe("AsyncStorageWrapper", () => {
         const chunksLength = Math.ceil(testLength / CHUNK_SIZE);
         const chunkableValue = Array(testLength).fill("a").join("");
 
-        multiSetArg = [[testKey, `${CHUNKED_KEY}${chunksLength}`]];
+        setManyArg = { [testKey]: `${CHUNKED_KEY}${chunksLength}` };
         for (let i = 0; i < chunksLength; i++) {
-          multiSetArg.push([
-            `${testKey}${CHUNKED_KEY}${i}`,
-            chunkableValue.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE),
-          ]);
+          setManyArg[`${testKey}${CHUNKED_KEY}${i}`] = chunkableValue.slice(
+            i * CHUNK_SIZE,
+            (i + 1) * CHUNK_SIZE,
+          );
         }
 
-        multiSetMethod = jest
-          .spyOn(AsyncStorage, "multiSet")
+        setManyMethod = jest
+          .spyOn(AsyncStorage, "setMany")
           .mockImplementation(() => Promise.resolve());
 
         // Act
         await storage.saveString(testKey, chunkableValue);
       });
 
-      it("should call AsyncStorageWrapper#multiSet once", () => {
-        expect(multiSetMethod).toHaveBeenCalledTimes(1);
+      it("should call AsyncStorageWrapper#setMany once", () => {
+        expect(setManyMethod).toHaveBeenCalledTimes(1);
       });
 
-      it("should call AsyncStorageWrapper#multiSet with the correct pairs", () => {
-        expect(multiSetMethod).toHaveBeenCalledWith(multiSetArg);
+      it("should call AsyncStorageWrapper#setMany with the correct entries", () => {
+        expect(setManyMethod).toHaveBeenCalledWith(setManyArg);
       });
     });
   });
@@ -388,7 +389,7 @@ describe("AsyncStorageWrapper", () => {
   });
 
   describe("delete", () => {
-    let multiRemoveMethod: jest.SpyInstance;
+    let removeManyMethod: jest.SpyInstance;
 
     beforeEach(() => {
       jest
@@ -401,20 +402,20 @@ describe("AsyncStorageWrapper", () => {
 
       beforeEach(async () => {
         // Arrange
-        multiRemoveMethod = jest
-          .spyOn(AsyncStorage, "multiRemove")
+        removeManyMethod = jest
+          .spyOn(AsyncStorage, "removeMany")
           .mockImplementation(() => Promise.resolve());
 
         // Act
         await storage.delete(deleteKey);
       });
 
-      it("should call AsyncStorage#multiRemove once", () => {
-        expect(multiRemoveMethod).toHaveBeenCalledTimes(1);
+      it("should call AsyncStorage#removeMany once", () => {
+        expect(removeManyMethod).toHaveBeenCalledTimes(1);
       });
 
-      it("should call AsyncStorage#multiRemove with the correct KeyValuePair", () => {
-        expect(multiRemoveMethod).toHaveBeenCalledWith([deleteKey]);
+      it("should call AsyncStorage#removeMany with the correct keys", () => {
+        expect(removeManyMethod).toHaveBeenCalledWith([deleteKey]);
       });
     });
 
@@ -423,31 +424,31 @@ describe("AsyncStorageWrapper", () => {
 
       beforeEach(async () => {
         // Arrange
-        multiRemoveMethod = jest
-          .spyOn(AsyncStorage, "multiRemove")
+        removeManyMethod = jest
+          .spyOn(AsyncStorage, "removeMany")
           .mockImplementation(() => Promise.resolve());
 
         // Act
         await storage.delete(deleteKeys);
       });
 
-      it("should call AsyncStorage#multiRemove once", () => {
-        expect(multiRemoveMethod).toHaveBeenCalledTimes(1);
+      it("should call AsyncStorage#removeMany once", () => {
+        expect(removeManyMethod).toHaveBeenCalledTimes(1);
       });
 
-      it("should call AsyncStorage#multiRemove with the correct KeyValuePair", () => {
-        expect(multiRemoveMethod).toHaveBeenCalledWith(deleteKeys);
+      it("should call AsyncStorage#removeMany with the correct keys", () => {
+        expect(removeManyMethod).toHaveBeenCalledWith(deleteKeys);
       });
     });
   });
 
   describe("deleteAll", () => {
-    let multiRemoveMethod: jest.SpyInstance;
+    let removeManyMethod: jest.SpyInstance;
 
     beforeEach(async () => {
       // Arrange
-      multiRemoveMethod = jest
-        .spyOn(AsyncStorage, "multiRemove")
+      removeManyMethod = jest
+        .spyOn(AsyncStorage, "removeMany")
         .mockImplementation(() => Promise.resolve());
 
       jest
@@ -462,12 +463,12 @@ describe("AsyncStorageWrapper", () => {
       expect(AsyncStorage.getAllKeys).toHaveBeenCalledTimes(1);
     });
 
-    it("should call AsyncStorage#multiRemove once", () => {
-      expect(multiRemoveMethod).toHaveBeenCalledTimes(1);
+    it("should call AsyncStorage#removeMany once", () => {
+      expect(removeManyMethod).toHaveBeenCalledTimes(1);
     });
 
-    it("should call AsyncStorage#multiRemove with all keys", () => {
-      expect(multiRemoveMethod).toHaveBeenCalledWith(["key1", "key2", "key3"]);
+    it("should call AsyncStorage#removeMany with all keys", () => {
+      expect(removeManyMethod).toHaveBeenCalledWith(["key1", "key2", "key3"]);
     });
   });
 
@@ -551,22 +552,22 @@ describe("AsyncStorageWrapper", () => {
 
 describe("stringify", () => {
   const testKeys = ["key1", "key2"];
-  const multiGetResults: KeyValuePair[] = [
-    ["key1", `{"a": 1}`],
-    ["key2", `{"b": 1}`],
-  ];
+  const getManyResults: Record<string, string | null> = {
+    key1: `{"a": 1}`,
+    key2: `{"b": 1}`,
+  };
 
   let keysMethod: jest.SpyInstance;
-  let multiGetMethod: jest.SpyInstance;
+  let getManyMethod: jest.SpyInstance;
   let result: Awaited<ReturnType<typeof storage.stringify>>;
 
   beforeEach(async () => {
     // Arrange
 
     keysMethod = jest.spyOn(storage, "keys").mockImplementation(() => Promise.resolve(testKeys));
-    multiGetMethod = jest
-      .spyOn(AsyncStorage, "multiGet")
-      .mockImplementation(() => Promise.resolve(multiGetResults));
+    getManyMethod = jest
+      .spyOn(AsyncStorage, "getMany")
+      .mockImplementation(() => Promise.resolve(getManyResults));
 
     // Act
     result = await storage.stringify();
@@ -576,15 +577,15 @@ describe("stringify", () => {
     expect(keysMethod).toHaveBeenCalledTimes(1);
   });
 
-  it("should call AsyncStorage#multiGet once", () => {
-    expect(multiGetMethod).toHaveBeenCalledTimes(1);
+  it("should call AsyncStorage#getMany once", () => {
+    expect(getManyMethod).toHaveBeenCalledTimes(1);
   });
 
-  it("should call AsyncStorage#multiGet with correponding keys", () => {
-    expect(multiGetMethod).toHaveBeenCalledWith(testKeys);
+  it("should call AsyncStorage#getMany with correponding keys", () => {
+    expect(getManyMethod).toHaveBeenCalledWith(testKeys);
   });
 
   it("should returns the storage content as a JSON string", () => {
-    expect(result).toBe(JSON.stringify(Object.fromEntries(multiGetResults)));
+    expect(result).toBe(JSON.stringify(getManyResults));
   });
 });

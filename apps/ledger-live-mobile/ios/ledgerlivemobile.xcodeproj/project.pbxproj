@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		049CE67E12094B398B313321 /* AppleWalletModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFCC7615DEF4A99944CBB00 /* AppleWalletModule.swift */; };
 		0EC70FE5282B9CAA00E9E355 /* AdServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EC70FE4282B9CAA00E9E355 /* AdServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2EA091AF2C3FBD5900B6181E /* GoogleService-Info-Testing.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2EA091AE2C3FBD5900B6181E /* GoogleService-Info-Testing.plist */; };
+		426E73E1B31645388A7FDBCE /* AppleWalletModule.m in Sources */ = {isa = PBXBuildFile; fileRef = E45CE71FCE184F60BE140697 /* AppleWalletModule.m */; };
 		515E9C2C8C0049EC992210D9 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3B6982A2E67F482A8069215B /* Inter-Medium.otf */; };
 		98626A1E5A61599CA1723CF2 /* Pods_ledgerlivemobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2FF455C6D480B1F5F19E871 /* Pods_ledgerlivemobile.framework */; };
 		9DB523402249BD405124BA05 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3FF1B576B23156C611F7B818 /* PrivacyInfo.xcprivacy */; };
@@ -21,8 +23,6 @@
 		BAE7949027D7C46A00C465F5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BAE7948F27D7C46A00C465F5 /* GoogleService-Info.plist */; };
 		BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F63C9E4AC284203A95B417E /* libz.tbd */; };
 		BC26C23ED1C649E7849FF99A /* HMAlphaMono-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1EA470840B7C44A3BF38FA4A /* HMAlphaMono-Medium.otf */; };
-		426E73E1B31645388A7FDBCE /* AppleWalletModule.m in Sources */ = {isa = PBXBuildFile; fileRef = E45CE71FCE184F60BE140697 /* AppleWalletModule.m */; };
-		049CE67E12094B398B313321 /* AppleWalletModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFCC7615DEF4A99944CBB00 /* AppleWalletModule.swift */; };
 		CA0B38082EDF3E62005A0FAA /* BluetoothHelperModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */; };
 		CA33C2532ED88BBB003C128E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA33C2502ED88BBB003C128E /* AppDelegate.swift */; };
 		CA3D2EB42EDDA65A008E836E /* BrazeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EB32EDDA65A008E836E /* BrazeManager.swift */; };
@@ -64,8 +64,6 @@
 		6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Light.ttf; path = ../assets/fonts/FontAwesome5_Pro_Light.ttf; sourceTree = "<group>"; };
 		991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Solid.ttf; path = ../assets/fonts/FontAwesome5_Pro_Solid.ttf; sourceTree = "<group>"; };
 		ADB2A550442C64936574B49B /* Pods-ledgerlivemobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.debug.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.debug.xcconfig"; sourceTree = "<group>"; };
-		E45CE71FCE184F60BE140697 /* AppleWalletModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppleWalletModule.m; sourceTree = "<group>"; };
-		DBFCC7615DEF4A99944CBB00 /* AppleWalletModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWalletModule.swift; sourceTree = "<group>"; };
 		BA451DE627CE516700AAB209 /* GoogleService-Info-Production.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Production.plist"; sourceTree = "<group>"; };
 		BA451DE727CE516700AAB209 /* GoogleService-Info-Staging.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Staging.plist"; sourceTree = "<group>"; };
 		BAE7948F27D7C46A00C465F5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -81,6 +79,8 @@
 		CAEE7B922E9FF33000479D0B /* splash_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash_logo.png; sourceTree = "<group>"; };
 		D2FF455C6D480B1F5F19E871 /* Pods_ledgerlivemobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ledgerlivemobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D91EB0620BDE4709B6F44620 /* Inter-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.otf"; path = "../assets/fonts/Inter-Bold.otf"; sourceTree = "<group>"; };
+		DBFCC7615DEF4A99944CBB00 /* AppleWalletModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWalletModule.swift; sourceTree = "<group>"; };
+		E45CE71FCE184F60BE140697 /* AppleWalletModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppleWalletModule.m; sourceTree = "<group>"; };
 		E85A22C52B17E835005A8E6D /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E9558F002AF93CD200BBEB55 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E9558F022AF93CDA00BBEB55 /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = zh.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -375,6 +375,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/AsyncStorage/AsyncStorage_resources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/BrazeKit/BrazeKit.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/BrazeLocation/BrazeLocation.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/BrazeUI/BrazeUI.bundle",
@@ -396,7 +397,6 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/PLCrashReporter/PLCrashReporter.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/PromisesObjC/FBLPromises_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RCT-Folly/RCT-Folly_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNDeviceInfo/RNDeviceInfoPrivacyInfo.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNSVG/RNSVGFilters.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
@@ -412,6 +412,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AsyncStorage_resources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/BrazeKit.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/BrazeLocation.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/BrazeUI.bundle",
@@ -433,7 +434,6 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/PLCrashReporter.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FBLPromises_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCT-Folly_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNDeviceInfoPrivacyInfo.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNSVGFilters.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
