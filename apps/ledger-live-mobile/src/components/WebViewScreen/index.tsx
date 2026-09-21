@@ -43,7 +43,7 @@ const WebViewScreen = ({
   renderError,
   enableNavigationOverride = true,
 }: Props) => {
-  const ref = useRef<WebView>(null);
+  const ref = useRef<WebView<object>>(null);
   const navigation = useNavigation();
   const [canGoBack, setCanGoBack] = useState(true);
   const [loading, setLoading] = useState(true);
