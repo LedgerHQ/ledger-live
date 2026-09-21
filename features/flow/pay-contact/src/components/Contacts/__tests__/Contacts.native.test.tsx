@@ -11,22 +11,25 @@ import { Contacts } from "../Contacts.native";
 import { makeContactsProps, renderWithContacts } from "./shared.native";
 
 describe("Contacts (Native)", () => {
-  it("should render only the Pay tile when the store holds no saved contact", () => {
-    renderWithContacts([mockMeContact()], <Contacts {...makeContactsProps()} />);
+  it("should render Me as a payable contact and forward it when pressed", () => {
+    const me = mockMeContact();
+    const onContactPress = jest.fn();
+    renderWithContacts([me], <Contacts {...makeContactsProps({ onContactPress })} />);
 
     expect(screen.getByTestId("pay-contacts-pay-tile")).toBeVisible();
-    expect(screen.queryByTestId("pay-contacts-tile-0")).toBeNull();
+    expect(screen.getByText("Me")).toBeVisible();
+    screen.getByTestId("pay-contacts-tile-0").props.onPress();
+    expect(onContactPress).toHaveBeenCalledWith(me);
   });
 
-  it("should exclude the me contact and render a tile for each saved contact", () => {
+  it("should render the me contact and every saved contact", () => {
     renderWithContacts(
       [mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })],
       <Contacts {...makeContactsProps()} />,
     );
 
-    expect(screen.getByTestId("pay-contacts-tile-0")).toBeVisible();
-    expect(screen.getByText("Ada")).toBeVisible();
-    expect(screen.queryByTestId("pay-contacts-tile-1")).toBeNull();
+    expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Me");
+    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Ada");
   });
 
   it("should open the Send flow from the Pay tile", () => {
@@ -57,7 +60,7 @@ describe("Contacts (Native)", () => {
   });
 
   it("should not expose see-all when 8 or fewer contacts are saved", () => {
-    const savedContacts = Array.from({ length: 8 }, (_, index) =>
+    const savedContacts = Array.from({ length: 7 }, (_, index) =>
       mockContact({ id: `contact-${index}`, name: `Contact ${index}` }),
     );
 
@@ -91,15 +94,17 @@ describe("Contacts (Native)", () => {
       <Contacts {...makeContactsProps({ outgoingOperations: sentToBob })} />,
     );
 
-    expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Bob");
-    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Alice");
+    expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Me");
+    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Bob");
+    expect(screen.getByTestId("pay-contacts-tile-2").props.accessibilityLabel).toBe("Alice");
   });
 
   it("should fall back to last added order when no outgoing operation matches", () => {
     renderWithContacts([mockMeContact(), bob, alice], <Contacts {...makeContactsProps()} />);
 
-    expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Alice");
-    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Bob");
+    expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Me");
+    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Alice");
+    expect(screen.getByTestId("pay-contacts-tile-2").props.accessibilityLabel).toBe("Bob");
   });
 
   it("should resolve its copy from the mounted i18n provider, not from props", () => {

@@ -6,6 +6,7 @@ import {
   summarizeContactOperationsByContact,
   useContacts,
 } from "@features/platform-contacts";
+import { placeMeFirst } from "../../model/placeMeFirst";
 import type {
   ContactRowViewModel,
   ContactsProps,
@@ -24,10 +25,14 @@ export function useContactsViewModel({
   const { t } = useTranslation();
   const contacts = useContacts();
   const rows = useMemo<readonly ContactRowViewModel[]>(() => {
-    const savedContacts = contacts.filter(contact => !contact.isMe);
-    const summaries = summarizeContactOperationsByContact(savedContacts, operations);
+    const others = contacts.filter(contact => !contact.isMe);
+    const summaries = summarizeContactOperationsByContact(contacts, operations);
+    const ordered = placeMeFirst([
+      ...contacts.filter(contact => contact.isMe),
+      ...sortContactsByLastSentThenLastAdded(others, summaries),
+    ]);
 
-    return sortContactsByLastSentThenLastAdded(savedContacts, summaries).map(contact => ({
+    return ordered.map(contact => ({
       contact,
       transactionCount: summaries[contact.id]?.txCount ?? 0,
     }));

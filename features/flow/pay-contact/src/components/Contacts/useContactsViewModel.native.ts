@@ -5,6 +5,7 @@ import {
   summarizeOutgoingOperationsByContact,
   useContacts,
 } from "@features/platform-contacts";
+import { placeMeFirst } from "../../model/placeMeFirst";
 import type { ContactsNativeProps, ContactsViewNativeProps } from "../../types";
 
 const MAX_CONTACTS_DISPLAYED = 8;
@@ -18,10 +19,13 @@ export function useContactsViewModel({
   const { t } = useTranslation();
   const contacts = useContacts();
   const sortedContacts = useMemo(() => {
-    const savedContacts = contacts.filter(contact => !contact.isMe);
-    const summaries = summarizeOutgoingOperationsByContact(savedContacts, outgoingOperations);
+    const others = contacts.filter(contact => !contact.isMe);
+    const summaries = summarizeOutgoingOperationsByContact(others, outgoingOperations);
 
-    return sortContactsByLastSentThenLastAdded(savedContacts, summaries);
+    return placeMeFirst([
+      ...contacts.filter(contact => contact.isMe),
+      ...sortContactsByLastSentThenLastAdded(others, summaries),
+    ]);
   }, [contacts, outgoingOperations]);
 
   const hasMore = sortedContacts.length > MAX_CONTACTS_DISPLAYED;

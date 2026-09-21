@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
 import { useContacts } from "@features/platform-contacts";
-import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
+import { placeMeFirst, type ContactAddressPickerProps } from "@features/flow-pay-contact";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
 import { useHideTabBar } from "LLM/hooks/useTabBarVisibility";
@@ -53,9 +53,9 @@ export function usePayTabSelectContactViewModel(): PayTabSelectContactViewModel 
   );
 
   const query = searchValue.trim().toLowerCase();
-  const contacts = storedContacts
-    .filter(contact => !contact.isMe)
-    .filter(contact => !query || contact.name.toLowerCase().includes(query));
+  const contacts = placeMeFirst(
+    storedContacts.filter(contact => !query || contact.name.toLowerCase().includes(query)),
+  );
   const showSearchNoResults = query.length > 0 && contacts.length === 0;
 
   return {
