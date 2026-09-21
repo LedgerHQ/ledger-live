@@ -673,11 +673,12 @@ describe("PayTab integration", () => {
       });
     });
 
-    it("should cap the strip at 8 and open Pay contact via see-all", async () => {
+    it("should render all contacts in the strip and open Pay contact via see-all", async () => {
       const { user, store } = renderPayTab({ contacts: seedContacts(9), contactsEnabled: true });
 
       expect(await screen.findByRole("button", { name: "New" })).toBeVisible();
-      expect(screen.getAllByRole("button", { name: /^Contact / })).toHaveLength(8);
+      expect(screen.getByRole("button", { name: "Me" })).toBeVisible();
+      expect(screen.getAllByRole("button", { name: /^Contact / })).toHaveLength(9);
 
       await user.press(screen.getByText("Pay"));
 

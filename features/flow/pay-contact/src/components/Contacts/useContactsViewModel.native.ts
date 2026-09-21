@@ -29,16 +29,12 @@ export function useContactsViewModel({
   }, [contacts, outgoingOperations]);
 
   const hasMore = sortedContacts.length > MAX_CONTACTS_DISPLAYED;
-  const displayedContacts = useMemo(
-    () => sortedContacts.slice(0, MAX_CONTACTS_DISPLAYED),
-    [sortedContacts],
-  );
 
   return {
     ...props,
     title: t("payTab.contacts.title"),
     payLabel: t("payTab.contacts.pay"),
-    contacts: displayedContacts,
+    contacts: sortedContacts,
     hasMore,
   };
 }
