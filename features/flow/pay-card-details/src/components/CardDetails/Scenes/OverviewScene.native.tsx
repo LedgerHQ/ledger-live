@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Text, TileButton } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
+import { CardAssetsView } from "@features/flow-pay-card-assets";
 import { CardTransactions } from "@features/flow-pay-card-transactions";
 import { CardArtwork } from "../../CardArtwork/CardArtwork";
 import { CardVisual } from "../../CardVisual/CardVisual";
@@ -15,7 +16,7 @@ import type { OverviewSceneProps } from "./types";
 
 type OverviewActionsProps = Omit<
   OverviewSceneProps,
-  "cardVisual" | "onTransactionPress" | "onAddToWalletPress" | "formatters"
+  "cardVisual" | "assetsViewModel" | "onTransactionPress" | "onAddToWalletPress" | "formatters"
 > &
   Readonly<{
     reveal: RevealViewModel;
@@ -72,7 +73,7 @@ function OverviewActions({
 
 export function OverviewScene({
   cardVisual,
-  assets,
+  assetsViewModel,
   freezeViewModel,
   moreViewModel,
   onFreezePress,
@@ -95,7 +96,7 @@ export function OverviewScene({
         reveal={reveal}
       />
 
-      {assets}
+      {assetsViewModel ? <CardAssetsView {...assetsViewModel} /> : null}
 
       <Reward formatters={formatters} />
 

@@ -1,6 +1,6 @@
 import React, { type PropsWithChildren } from "react";
-import { View } from "react-native";
 import { act, render, screen, userEvent } from "@testing-library/react-native";
+import type { CardAssetRow, CardAssetsViewModel } from "@features/flow-pay-card-assets";
 import {
   cardApiWrapper,
   listenToCardApi,
@@ -12,9 +12,25 @@ import { FLIP_MS } from "../Reveal/useRevealViewModel";
 import { CardDetails } from "./CardDetails";
 import type { CardVisualProps } from "../../types";
 
+const mockUseCardAssetsViewModel = jest.fn();
+
+jest.mock("@features/flow-pay-card-auth", () => ({
+  useIsCardSignedIn: () => true,
+}));
+
+jest.mock("@features/flow-pay-card-assets", () => ({
+  ...jest.requireActual("@features/flow-pay-card-assets"),
+  useCardAssetsViewModel: (...args: unknown[]) => mockUseCardAssetsViewModel(...args),
+}));
+
 listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 
 const StoreWrapper = cardApiWrapper({ signedIn: true });
+const assets = {
+  currencies: new Map(),
+  priceWallet: () => 125.4,
+  formatCountervalue: (value: number) => `$${value}`,
+};
 
 function Wrapper({ children }: PropsWithChildren) {
   return (
@@ -33,6 +49,51 @@ function renderCardDetails({ onTrackEvent = jest.fn() }: { onTrackEvent?: jest.M
 }
 
 describe("CardDetails (native)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    const row: CardAssetRow = {
+      id: "w-usdc",
+      currency: "usdc",
+      network: "ethereum",
+      name: "USD Coin",
+      ticker: "USDC",
+      ledgerId: "ethereum/erc20/usd__coin",
+      cryptoAmount: "125.40 USDC",
+      countervalue: "$125.40",
+      countervalueAmount: 125.4,
+    };
+    const viewModel = {
+      isVisible: true,
+      status: "ready",
+      rows: [row],
+      dialogState: "closed",
+      selectedAsset: null as CardAssetRow | null,
+      selectedAssetTransactions: [],
+      dialogCopy: {
+        topUp: "Top up",
+        withdraw: "Withdraw",
+        transactions: "Transactions",
+        withdrawTitle: "Withdraw",
+        withdrawDescription: "Continue to withdraw",
+        continue: "Continue",
+      },
+      onAssetPress: jest.fn((asset: CardAssetRow) => {
+        viewModel.selectedAsset = asset;
+      }),
+      onDialogClose: jest.fn(),
+      onTopUpPress: jest.fn(),
+      onWithdrawPress: jest.fn(),
+      onWithdrawClose: jest.fn(),
+      onShowHistoryPress: jest.fn(),
+      onWithdrawContinue: jest.fn(),
+      onManagePress: jest.fn(),
+      onAddAssetPress: jest.fn(),
+      onReorderAssets: jest.fn(),
+      reorderingAssetId: null,
+    } satisfies CardAssetsViewModel;
+    mockUseCardAssetsViewModel.mockReturnValue(viewModel);
+  });
+
   it("should show the preview actions when the card details screen renders", () => {
     renderCardDetails();
 
@@ -44,20 +105,6 @@ describe("CardDetails (native)", () => {
     renderCardDetails();
 
     expect(screen.getByLabelText(CARD_COPY.placeholder).props.disabled).toBe(true);
-  });
-
-  it("should list the assets the host passes inside the sheet, under the card actions", async () => {
-    const user = userEvent.setup();
-    render(<CardDetails onTrackEvent={jest.fn()} assets={<View testID="card-assets" />} />, {
-      wrapper: Wrapper,
-    });
-
-    // The Pay tab shows the card face alone: the list belongs to the sheet the design draws.
-    expect(screen.queryByTestId("card-assets")).toBeNull();
-
-    await user.press(screen.getByLabelText(CARD_COPY.details));
-
-    expect(await screen.findByTestId("card-assets")).toBeVisible();
   });
 
   it("should carry the same balance on the sheet's card face as on the tab's", async () => {
@@ -107,6 +154,45 @@ describe("CardDetails (native)", () => {
 
     expect(await screen.findByTestId("card-details-add-to-wallet-content")).toBeVisible();
     expect(screen.getByText(ADD_TO_WALLET_COPY.title)).toBeVisible();
+  });
+
+  it("should render funding assets in the overview when assets are provided", async () => {
+    const user = userEvent.setup();
+    render(<CardDetails assets={assets} />, { wrapper: Wrapper });
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+
+    expect(await screen.findByTestId("card-assets")).toBeVisible();
+    expect(screen.getByTestId("card-asset-w-usdc")).toBeVisible();
+  });
+
+  it("should return to the assets overview when asset details goes back", async () => {
+    const user = userEvent.setup();
+    render(<CardDetails assets={assets} />, { wrapper: Wrapper });
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByTestId("card-asset-w-usdc"));
+    expect(screen.getByTestId("card-asset-details-drawer")).toBeVisible();
+
+    await user.press(screen.getByTestId("card-details-sheet-back"));
+
+    expect(screen.getByTestId("card-assets")).toBeVisible();
+    expect(screen.queryByTestId("card-asset-details-drawer")).not.toBeOnTheScreen();
+  });
+
+  it("should return to asset details when withdraw goes back", async () => {
+    const user = userEvent.setup();
+    render(<CardDetails assets={assets} />, { wrapper: Wrapper });
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByTestId("card-asset-w-usdc"));
+    await user.press(screen.getByText("Withdraw"));
+    expect(screen.getByTestId("card-asset-withdraw-drawer")).toBeVisible();
+
+    await user.press(screen.getByTestId("card-details-sheet-back"));
+
+    expect(screen.getByTestId("card-asset-details-drawer")).toBeVisible();
+    expect(screen.queryByTestId("card-asset-withdraw-drawer")).not.toBeOnTheScreen();
   });
 
   it("should show the card numbers image after View", async () => {

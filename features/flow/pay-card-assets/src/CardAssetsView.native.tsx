@@ -20,11 +20,15 @@ import type { CardAssetRow, CardAssetsViewModel } from "./types";
 const ICON_SIZE = 48;
 const COUNTERVALUE_PLACEHOLDER = "\u00a0";
 
-function AssetRow({ row }: Readonly<{ row: CardAssetRow }>) {
+function AssetRow({
+  row,
+  onPress,
+}: Readonly<{ row: CardAssetRow; onPress: (row: CardAssetRow) => void }>) {
   return (
     <ListItem
       testID={`card-asset-${row.id}`}
       lx={{ backgroundColor: "surface", borderRadius: "md" }}
+      onPress={() => onPress(row)}
     >
       <ListItemLeading>
         <CryptoIcon ledgerId={row.ledgerId} ticker={row.ticker} size={ICON_SIZE} shape="circle" />
@@ -45,9 +49,9 @@ function AssetRow({ row }: Readonly<{ row: CardAssetRow }>) {
   );
 }
 
-type AssetsBodyProps = Readonly<Pick<CardAssetsViewModel, "status" | "rows">>;
+type AssetsBodyProps = Readonly<Pick<CardAssetsViewModel, "status" | "rows" | "onAssetPress">>;
 
-function AssetsBody({ status, rows }: AssetsBodyProps) {
+function AssetsBody({ status, rows, onAssetPress }: AssetsBodyProps) {
   const { t } = useTranslation();
   if (status === "error") {
     return (
@@ -78,13 +82,13 @@ function AssetsBody({ status, rows }: AssetsBodyProps) {
   return (
     <Box lx={{ gap: "s8" }}>
       {rows.map(row => (
-        <AssetRow key={row.id} row={row} />
+        <AssetRow key={row.id} row={row} onPress={onAssetPress} />
       ))}
     </Box>
   );
 }
 
-export function CardAssetsView({ isVisible, status, rows }: CardAssetsViewModel) {
+export function CardAssetsView({ isVisible, status, rows, onAssetPress }: CardAssetsViewModel) {
   const { t } = useTranslation();
   const title = t("payTab.card.assets.title");
 
@@ -98,7 +102,7 @@ export function CardAssetsView({ isVisible, status, rows }: CardAssetsViewModel)
         </SubheaderRow>
       </Subheader>
 
-      <AssetsBody status={status} rows={rows} />
+      <AssetsBody status={status} rows={rows} onAssetPress={onAssetPress} />
     </Box>
   );
 }

@@ -8,7 +8,8 @@ import type { CardDetailsSheetProps } from "../../types";
 
 export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetailsSheetProps) {
   const dismissed = useRef(false);
-  const isPending = scene.freeze.viewModel.confirmState === "pending";
+  const isPending =
+    scene.route.name === "freeze" && scene.freeze.viewModel.confirmState === "pending";
   const isOverview = scene.route.name === "overview";
   const { sizing, hasBackButton } = CARD_DETAILS_SCENES[scene.route.name];
   const canGoBack = hasBackButton && !isPending;
@@ -52,7 +53,12 @@ export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetails
       {isOpen ? (
         <BottomSheetScrollView>
           <Box lx={{ paddingBottom: "s24" }}>
-            <BottomSheetHeader density="compact" spacing />
+            <BottomSheetHeader
+              density="compact"
+              spacing
+              title={scene.header.title}
+              description={scene.header.description}
+            />
             <CardDetailsScene {...scene} />
           </Box>
         </BottomSheetScrollView>
