@@ -23,9 +23,11 @@ export const setZcashShieldedEnabled = (enabled: boolean): void => {
 /** Whether Zcash accounts are served by @ledgerhq/coin-zcash. */
 export const isZcashShieldedEnabled = (): boolean => shieldedEnabled;
 
+const isZcash = (currency: CryptoCurrency): boolean => currency.id === "zcash";
+
 /** Bridge family for `currency`: `zcash` when shielded, otherwise `currency.family`. */
 export function resolveFamily(currency: CryptoCurrency): string {
-  return currency.id === "zcash" && isZcashShieldedEnabled() ? "zcash" : currency.family;
+  return isZcash(currency) && isZcashShieldedEnabled() ? "zcash" : currency.family;
 }
 
 /**
@@ -43,5 +45,5 @@ export function resolveFamily(currency: CryptoCurrency): string {
  * declares no assign hooks at all.
  */
 export function resolveSerializationFamily(currency: CryptoCurrency): string {
-  return currency.id === "zcash" ? "zcash" : currency.family;
+  return isZcash(currency) ? "zcash" : currency.family;
 }
