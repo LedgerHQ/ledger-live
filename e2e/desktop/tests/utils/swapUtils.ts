@@ -46,6 +46,7 @@ export async function performSwapUntilQuoteSelectionStep(
   await app.swap.goAndWaitForSwapToBeReady(() =>
     app.mainNavigation.openTargetFromMainNavigation("swap"),
   );
+  await app.swap.checkLandingPageTrendingAssets();
   const isAssetFromSelected = await app.swap.checkIfFromAssetIsAlreadySelected(
     swap.accountToDebit.currency.ticker,
   );
