@@ -29,6 +29,7 @@ export const useWalletV4TourDrawerViewModel = ({
   const closeSourceRef = useRef<CloseSource>("external");
   const hasAutoOpenedRef = useRef(false);
   const hasTrackedOpenRef = useRef(false);
+  const hasLeftFirstSlideRef = useRef(false);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(isTourEnabled && !hasSeenTour);
 
@@ -48,6 +49,7 @@ export const useWalletV4TourDrawerViewModel = ({
       closeSourceRef.current = "external";
       currentIndexRef.current = 0;
       hasTrackedOpenRef.current = false;
+      hasLeftFirstSlideRef.current = false;
       setIsDrawerOpen(true);
     }
   }, [isTourEnabled, hasSeenTour]);
@@ -140,6 +142,12 @@ export const useWalletV4TourDrawerViewModel = ({
     (index: number) => {
       currentIndexRef.current = index;
       if (analytics) {
+        if (!hasLeftFirstSlideRef.current) {
+          if (index === 0) {
+            return;
+          }
+          hasLeftFirstSlideRef.current = true;
+        }
         const context = getContext(index);
         if (context) analytics.trackStepNavigation(context);
         return;
