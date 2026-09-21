@@ -31,6 +31,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/fmt-base": "workspace:*",
+    "@support/jest-domain": "workspace:*",
     "@support/lint-domain": "workspace:*",
     "@support/ts-domain": "workspace:*",
     "@swc/core": "catalog:",

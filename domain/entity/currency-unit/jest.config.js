@@ -1,24 +1,6 @@
-module.exports = {
-  testEnvironment: "node",
-  moduleNameMapper: {
-    "^(\\.\\.?/.*)\\.js$": "$1",
-  },
-  transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
+const { createDomainJestConfig } = require("@support/jest-domain");
+
+module.exports = createDomainJestConfig({
+  moduleNameMapper: { "^(\\.\\.?/.*)\\.js$": "$1" },
   testPathIgnorePatterns: ["lib/"],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  reporters: [
-    "default",
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
-  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
-};
+});
