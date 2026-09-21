@@ -11,6 +11,7 @@ export type CardDetailsRoute =
   | { name: "overview" }
   | { name: "freeze" }
   | { name: "more" }
+  | { name: "addToWallet" }
   | { name: "transaction"; transaction: PayCardTransaction }
   | { name: "assetDetails" }
   | { name: "assetWithdraw" }
@@ -25,6 +26,7 @@ export type OverviewSceneProps = Readonly<{
   onFreezePress: () => void;
   onMorePress: () => void;
   onTransactionPress: (transaction: PayCardTransaction) => void;
+  onAddToWalletPress: () => void;
   onShowMore?: () => void;
   formatters?: CardTransactionFormatters;
 }>;
@@ -40,6 +42,10 @@ export type MoreSceneProps = Readonly<{
 export type TransactionSceneProps = Readonly<{
   transaction: PayCardTransaction;
   formatters?: CardTransactionFormatters;
+}>;
+
+export type AddToWalletSceneProps = Readonly<{
+  onDone: () => void;
 }>;
 
 export type AssetDetailsSceneProps = Readonly<{
@@ -68,6 +74,7 @@ export type CardDetailsSceneProps = Readonly<{
   overview: OverviewSceneProps;
   freeze: FreezeSceneProps;
   more: MoreSceneProps | null;
+  addToWallet: AddToWalletSceneProps;
   transaction: TransactionSceneProps | null;
   assetDetails: AssetDetailsSceneProps | null;
   assetWithdraw: CardAssetsViewModel | null;
