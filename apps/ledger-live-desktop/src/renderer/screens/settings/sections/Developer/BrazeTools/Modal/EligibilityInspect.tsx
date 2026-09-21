@@ -4,6 +4,7 @@ import { Flex, Input, Text } from "@ledgerhq/react-ui";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { APPROVED_STATES } from "@ledgerhq/live-common/braze/localEligibility";
 import { useBraze } from "LLD/features/DynamicContent/components/BrazeProvider";
+import type { ContentCardEligibilityEvaluation } from "LLD/features/DynamicContent/utils/filterEligibleContentCards";
 import { LocationContentCard } from "~/types/dynamicContent";
 import { useTranslation } from "react-i18next";
 
@@ -21,7 +22,34 @@ const FullWidthInput = styled(Input)`
   min-width: 630px;
 `;
 
-const cardId = (card: { id?: string | null }) => String(card.id ?? "");
+const cardId = (card: { id?: string | null }) =>
+  typeof card.id === "string" && card.id.length > 0 ? card.id : "";
+
+type InspectCardStatus =
+  | { kind: "missing-id" }
+  | { kind: "unevaluated" }
+  | { kind: "blocked"; blockedBy: string; reason: string }
+  | { kind: "eligible" };
+
+const inspectCardStatus = (
+  id: string,
+  evaluation: ContentCardEligibilityEvaluation | undefined,
+): InspectCardStatus => {
+  if (!id) {
+    return { kind: "missing-id" };
+  }
+  if (!evaluation) {
+    return { kind: "unevaluated" };
+  }
+  if (evaluation.result.eligible === false) {
+    return {
+      kind: "blocked",
+      blockedBy: evaluation.result.blockedBy,
+      reason: evaluation.result.reason,
+    };
+  }
+  return { kind: "eligible" };
+};
 
 export const EligibilityInspect: React.FC = () => {
   const { t } = useTranslation();
@@ -31,6 +59,10 @@ export const EligibilityInspect: React.FC = () => {
   const [location, setLocation] = useState<string>(LocationContentCard.Portfolio);
   const [requiredStates, setRequiredStates] = useState("hasStax");
 
+  const evaluationById = useMemo(
+    () => new Map(eligibilityEvaluations.map(evaluation => [evaluation.id, evaluation])),
+    [eligibilityEvaluations],
+  );
   const fetchedCount = lastFetchedCards?.length ?? 0;
   const blockedCount = eligibilityEvaluations.filter(
     evaluation => !evaluation.result.eligible,
@@ -38,10 +70,10 @@ export const EligibilityInspect: React.FC = () => {
   const eligibleCount = eligibilityEvaluations.filter(
     evaluation => evaluation.result.eligible,
   ).length;
-  const evaluationById = useMemo(
-    () => new Map(eligibilityEvaluations.map(evaluation => [evaluation.id, evaluation])),
-    [eligibilityEvaluations],
-  );
+  const unevaluatedCount = (lastFetchedCards ?? []).filter(card => {
+    const id = cardId(card);
+    return !id || !evaluationById.has(id);
+  }).length;
 
   const handleInject = () => {
     injectDebugContentCard({
@@ -85,6 +117,11 @@ export const EligibilityInspect: React.FC = () => {
         <Text variant="paragraph">
           {t("settings.developer.brazeTools.modal.inspect.eligible", { count: eligibleCount })}
         </Text>
+        <Text variant="paragraph">
+          {t("settings.developer.brazeTools.modal.inspect.unevaluated", {
+            count: unevaluatedCount,
+          })}
+        </Text>
       </Flex>
 
       <Flex flexDirection="column" rowGap={12}>
@@ -125,19 +162,20 @@ export const EligibilityInspect: React.FC = () => {
             {t("settings.developer.brazeTools.modal.inspect.empty")}
           </Text>
         ) : (
-          (lastFetchedCards ?? []).map(card => {
+          (lastFetchedCards ?? []).map((card, index) => {
             const id = cardId(card);
-            const evaluation = evaluationById.get(id);
+            const evaluation = id ? evaluationById.get(id) : undefined;
+            const status = inspectCardStatus(id, evaluation);
             const extras = "extras" in card ? card.extras : undefined;
             const titleExtra =
               extras && typeof extras === "object" && "title" in extras
                 ? String(extras.title ?? id)
-                : id;
+                : id || t("settings.developer.brazeTools.modal.inspect.missingId");
             return (
-              <Flex key={id} flexDirection="column" rowGap={4}>
+              <Flex key={id || `missing-id-${index}`} flexDirection="column" rowGap={4}>
                 <Text variant="paragraph">{titleExtra}</Text>
                 <Text variant="small" color="neutral.c70">
-                  id: {id}
+                  id: {id || t("settings.developer.brazeTools.modal.inspect.none")}
                 </Text>
                 <Text variant="small" color="neutral.c70">
                   {t("settings.developer.brazeTools.modal.inspect.requiredStates")}:{" "}
@@ -145,16 +183,24 @@ export const EligibilityInspect: React.FC = () => {
                     ? evaluation.requiredStates.join("; ")
                     : t("settings.developer.brazeTools.modal.inspect.none")}
                 </Text>
-                {evaluation?.result.eligible === false ? (
+                {status.kind === "blocked" ? (
                   <Text variant="small" color="error.c50">
                     {t("settings.developer.brazeTools.modal.inspect.blockedBy", {
-                      blockedBy: evaluation.result.blockedBy,
-                      reason: evaluation.result.reason,
+                      blockedBy: status.blockedBy,
+                      reason: status.reason,
                     })}
                   </Text>
-                ) : (
+                ) : status.kind === "eligible" ? (
                   <Text variant="small" color="success.c70">
                     {t("settings.developer.brazeTools.modal.inspect.eligibleStatus")}
+                  </Text>
+                ) : (
+                  <Text variant="small" color="neutral.c70">
+                    {t(
+                      status.kind === "missing-id"
+                        ? "settings.developer.brazeTools.modal.inspect.missingIdStatus"
+                        : "settings.developer.brazeTools.modal.inspect.unevaluatedStatus",
+                    )}
                   </Text>
                 )}
               </Flex>

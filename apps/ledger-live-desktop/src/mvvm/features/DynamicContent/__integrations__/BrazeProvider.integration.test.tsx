@@ -824,6 +824,48 @@ describe("BrazeProvider", () => {
     unmount();
   });
 
+  it("should keep id-less fetched cards out of eligibility evaluations", async () => {
+    let lifecycle = defaultLifecycle;
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <RefreshConsumer
+          onReady={value => {
+            lifecycle = value;
+          }}
+        />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const onContentCardsUpdated = mockedSubscribeToContentCardsUpdates.mock.calls[0][0];
+    await act(async () => {
+      onContentCardsUpdated(
+        mockContentCards([
+          {
+            extras: {
+              location: LocationContentCard.Portfolio,
+              platform: Platform.Desktop,
+            },
+          },
+          desktopCard,
+        ]),
+      );
+    });
+
+    expect(lifecycle.lastFetchedCards).toHaveLength(2);
+    expect(lifecycle.eligibilityEvaluations).toEqual([
+      expect.objectContaining({ id: "wallet-card", result: { eligible: true } }),
+    ]);
+    expect(store.getState().dynamicContent.portfolioCards).toEqual([
+      expect.objectContaining({ id: "wallet-card" }),
+    ]);
+    unmount();
+  });
+
   it("should filter an injected debug card with requiredStates the same as a Braze fetch", async () => {
     let lifecycle = defaultLifecycle;
     const { store, unmount } = renderProvider(

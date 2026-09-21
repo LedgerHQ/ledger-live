@@ -5457,7 +5457,11 @@
             "empty": "No fetched cards.",
             "none": "none",
             "blockedBy": "blockedBy: {{blockedBy}} ({{reason}})",
-            "eligibleStatus": "eligible"
+            "eligibleStatus": "eligible",
+            "unevaluated": "Unevaluated: {{count}}",
+            "unevaluatedStatus": "unevaluated",
+            "missingId": "missing id",
+            "missingIdStatus": "unevaluated (missing id)"
           },
           "fields": {
             "notification": "Notification Content Card",
