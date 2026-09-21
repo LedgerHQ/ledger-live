@@ -1502,6 +1502,9 @@ test.describe("New Send Flow", () => {
         await test.step("Type Sapling address and verify it is blocked", async () => {
           await app.newSendFlow.typeAddress(TEST_ADDRESSES.zcashSapling);
           await expect(app.newSendFlow.recipientErrorBanner).toBeVisible({ timeout: 10000 });
+          await expect(app.newSendFlow.recipientErrorBanner).toContainText(
+            "Sending to Sapling addresses is not supported",
+          );
         });
       });
 
