@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 4.21.0-next.4
+
+### Minor Changes
+
+- [#22254](https://github.com/LedgerHQ/ledger-live/pull/22254) [`7cc3e2c`](https://github.com/LedgerHQ/ledger-live/commit/7cc3e2c36608b105956360c1cb1c911c720fd5c9) Thanks [@sarneijim](https://github.com/sarneijim)! - Share Nano S Touchscreen Upgrade Program banner copy keys so Desktop and Mobile can reuse the same model-specific lookup
+
+### Patch Changes
+
+- Updated dependencies [[`7cc3e2c`](https://github.com/LedgerHQ/ledger-live/commit/7cc3e2c36608b105956360c1cb1c911c720fd5c9)]:
+  - @features/flow-large-screen-upsell@2.1.0-next.1
+
 ## 4.21.0-next.3
 
 ### Minor Changes
