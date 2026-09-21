@@ -58,6 +58,7 @@ oxlint configuration.
 | [`ts-devtools`](./ts-devtools) | `devtools/*` |
 | [`ts-domain`](./ts-domain) | `domain/entity/*`, `domain/api/*` |
 | [`ts-features-flow`](./ts-features-flow) | `features/flow/*` |
+| [`ts-libs`](./ts-libs) | `libs/*` - packages that emit and publish; `./build` drops tests and resets `customConditions` |
 | [`ts-features-platform`](./ts-features-platform) | `features/platform/*` |
 | [`ts-shared`](./ts-shared) | `shared/*` |
 

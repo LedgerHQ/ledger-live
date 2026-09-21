@@ -1,10 +1,8 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/ts-libs",
   "compilerOptions": {
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "declaration": true,
-    "declarationMap": true,
     "lib": [
       "es2022",
       "dom"
@@ -16,8 +14,5 @@
     "outDir": "lib",
     "rootDir": "src",
     "exactOptionalPropertyTypes": true
-  },
-  "include": [
-    "src/**/*"
-  ]
+  }
 }

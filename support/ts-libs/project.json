@@ -1,0 +1,8 @@
+{
+  "name": "@support/ts-libs",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

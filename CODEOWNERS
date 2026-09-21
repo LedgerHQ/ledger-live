@@ -92,6 +92,7 @@ support/lint-libs/                                       @ledgerhq/platform
 support/lint-shared/                                     @ledgerhq/platform
 support/lint-support/                                    @ledgerhq/platform
 support/lint-tools/                                      @ledgerhq/platform
+support/ts-libs/                                         @ledgerhq/platform
 support/test-quarantine/                                 @ledgerhq/platform
 support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
 

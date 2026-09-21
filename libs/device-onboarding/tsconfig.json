@@ -1,15 +1,17 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/ts-libs",
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022"],
-    "declaration": true,
-    "declarationMap": true,
+    "lib": [
+      "ES2022"
+    ],
     "noImplicitAny": true,
     "noImplicitThis": true,
     "outDir": "lib",
     "rootDir": "src",
-    "types": ["node", "jest"]
-  },
-  "include": ["src/**/*"]
+    "types": [
+      "node",
+      "jest"
+    ]
+  }
 }

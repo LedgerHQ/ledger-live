@@ -1,0 +1,10 @@
+{
+  "extends": "@support/ts-base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "${configDir}/lib",
+    "rootDir": "${configDir}/src"
+  },
+  "include": ["${configDir}/src/**/*"]
+}

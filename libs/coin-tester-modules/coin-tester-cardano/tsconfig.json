@@ -1,15 +1,20 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/ts-libs",
   "compilerOptions": {
-    "lib": ["es2022", "dom"],
+    "lib": [
+      "es2022",
+      "dom"
+    ],
     "outDir": "lib",
     "rootDir": "src",
     "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "types": ["node", "jest"]
+    "types": [
+      "node",
+      "jest"
+    ]
   },
-  "include": ["src/**/*", "src/**/*.json"]
+  "include": [
+    "src/**/*",
+    "src/**/*.json"
+  ]
 }

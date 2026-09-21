@@ -1,13 +1,13 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@support/ts-libs",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "outDir": "lib",
     "rootDir": "src",
-    "types": ["node", "jest"]
-  },
-  "include": ["src/**/*"]
+    "types": [
+      "node",
+      "jest"
+    ]
+  }
 }

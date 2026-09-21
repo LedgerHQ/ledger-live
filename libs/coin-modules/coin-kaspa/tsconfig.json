@@ -1,14 +1,17 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/ts-libs",
   "compilerOptions": {
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "declaration": true,
-    "declarationMap": true,
-    "lib": ["es2022", "dom"],
-    "types": ["node", "jest"],
+    "lib": [
+      "es2022",
+      "dom"
+    ],
+    "types": [
+      "node",
+      "jest"
+    ],
     "outDir": "lib",
     "rootDir": "src"
-  },
-  "include": ["src/**/*"]
+  }
 }

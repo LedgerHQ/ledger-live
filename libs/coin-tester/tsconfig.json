@@ -1,13 +1,19 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@support/ts-libs",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "outDir": "lib",
     "rootDir": "src",
-    "typeRoots": ["./types", "./node_modules/@types"],
-    "types": ["node", "jest"]
-  },
-  "include": ["src/**/*"],
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ],
+    "types": [
+      "node",
+      "jest"
+    ]
+  }
 }

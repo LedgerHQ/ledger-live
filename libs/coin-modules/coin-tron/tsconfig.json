@@ -1,24 +1,22 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/ts-libs",
   "compilerOptions": {
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "declaration": true,
-    "declarationMap": true,
     "lib": [
       "es2020",
       "dom"
     ],
-    "types": ["node", "jest"],
+    "types": [
+      "node",
+      "jest"
+    ],
     "outDir": "lib",
     "rootDir": "src",
     "typeRoots": [
       "./node_modules/@types"
     ]
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "src/api/subscan.ts",
     "src/api/websocket.ts"

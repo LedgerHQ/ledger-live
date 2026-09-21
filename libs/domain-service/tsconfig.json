@@ -1,14 +1,19 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@support/ts-libs",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "outDir": "lib",
     "rootDir": "src",
-    "typeRoots": ["./types", "./node_modules/@types"],
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ],
     "jsx": "react",
-    "types": ["node"]
-  },
-  "include": ["src/**/*"]
+    "types": [
+      "node"
+    ]
+  }
 }
