@@ -139,6 +139,26 @@ const EarlySecurityChecks = ({
 
   const [completionLoading, setCompletionLoading] = useState(false);
   const [shouldListInstalledApps, setShouldListInstalledApps] = useState(false);
+
+  // Keep check state bound to device identity. See DONJON-1409.
+  const previousDeviceIdRef = useRef(device.deviceId);
+  useEffect(() => {
+    if (previousDeviceIdRef.current === device.deviceId) return;
+    previousDeviceIdRef.current = device.deviceId;
+
+    log("EarlySecurityCheck", "Device identity changed, resetting checks");
+    resetGenuineCheckState();
+    setGenuineCheckStatus(SoftwareCheckStatus.inactive);
+    setFirmwareUpdateStatus(SoftwareCheckStatus.inactive);
+    setAvailableFirmwareVersion("");
+    setCompletionLoading(false);
+    setShouldListInstalledApps(false);
+    installedAppsRef.current = [];
+    firmwareUpdateCompletedRef.current = false;
+    withAppsToReinstallRef.current = false;
+    setDrawer();
+  }, [device.deviceId, resetGenuineCheckState]);
+
   const managerAction = useConnectManagerAction();
   const listInstalledAppsRequest = useMemo(
     () => (shouldListInstalledApps ? {} : { cancelExecution: true }),
