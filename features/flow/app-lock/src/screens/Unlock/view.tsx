@@ -1,10 +1,10 @@
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
 import React, { useEffect, useRef } from "react";
-import { Keyboard, Pressable, StyleSheet, type TextInput } from "react-native";
+import { Keyboard, Pressable, StyleSheet, View, type TextInput } from "react-native";
 import { PasswordField } from "../../components/PasswordField";
 import { shouldFocusPasswordField } from "./internals/focus";
-import { isShowingSplash } from "./splash";
+import { isOfferingBiometricsRetry, isShowingSplash } from "./splash";
 import type { UnlockViewProps } from "./types";
 
 export function UnlockView({
@@ -57,27 +57,31 @@ export function UnlockView({
   // Takes over from the splash with the mark where the splash had it, so the handover is invisible.
   if (isShowingSplash({ hasPassword, isAwaitingBiometrics })) {
     return (
-      <Pressable
-        accessibilityRole="button"
-        // The whole screen is the control, so a screen reader would otherwise announce only a logo.
-        accessibilityLabel={t("appLock.unlock.retryBiometrics")}
-        accessibilityState={{ disabled: isAwaitingBiometrics }}
-        disabled={isAwaitingBiometrics}
-        onPress={onRetryBiometrics}
-        style={styles.splash}
+      <Box
+        lx={{
+          flex: 1,
+          backgroundColor: "canvas",
+          alignItems: "center",
+          justifyContent: "center",
+          paddingHorizontal: "s16",
+        }}
         testID="app-lock-unlock-screen"
       >
-        <Box
-          lx={{
-            flex: 1,
-            backgroundColor: "canvas",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {logo}
-        </Box>
-      </Pressable>
+        <View style={styles.retrySlot} />
+        {logo}
+        <View style={[styles.retrySlot, styles.retrySlotContent]}>
+          {isOfferingBiometricsRetry({ canRetryBiometrics, isAwaitingBiometrics }) ? (
+            <Button
+              appearance="gray"
+              size="lg"
+              onPress={onRetryBiometrics}
+              testID="app-lock-unlock-retry-biometrics"
+            >
+              {t("appLock.unlock.unlockCta")}
+            </Button>
+          ) : null}
+        </View>
+      </Box>
     );
   }
 
@@ -145,4 +149,11 @@ export function UnlockView({
   );
 }
 
-const styles = StyleSheet.create({ splash: { flex: 1 } });
+// Reserved on both sides of the mark, so it holds its place whether the button is there or not:
+// 64 above the button, which is 56 tall at this size.
+const RETRY_SLOT_HEIGHT = 120;
+
+const styles = StyleSheet.create({
+  retrySlot: { height: RETRY_SLOT_HEIGHT },
+  retrySlotContent: { alignItems: "center", justifyContent: "flex-end" },
+});

@@ -1647,6 +1647,7 @@
       "wrongPassword": "Incorrect password",
       "forgotPassword": "Forgot your password?",
       "retryBiometrics": "Use biometrics",
+      "unlockCta": "Unlock Ledger Wallet",
       "failed": "We couldn't check your password. Please try again.",
       "cta": "Confirm",
       "biometricsPrompt": "Unlock Ledger Wallet",
