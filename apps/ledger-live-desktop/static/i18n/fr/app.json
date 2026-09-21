@@ -899,6 +899,7 @@
     },
     "card" : {
       "title" : "Carte crypto",
+      "topUp" : "Alimenter",
       "balanceLabel" : "Solde",
       "freeze" : "Geler",
       "unfreeze" : "Dégeler",
@@ -918,11 +919,49 @@
         "description" : "Une erreur est survenue. Veuillez réessayer.",
         "retry" : "Réessayer"
       },
+      "assets" : {
+        "title" : "Actifs",
+        "empty" : "Aucun actif pour le moment",
+        "error" : "Échec du chargement des actifs",
+        "info" : "Ces actifs alimentent votre carte. Définissez leur ordre de débit ou ajoutez-en d’autres.",
+        "manage" : "Gérer",
+        "manageDialog" : {
+          "title" : "Gérer les actifs",
+          "description" : "Faites glisser pour définir votre ordre de priorité. En cas de solde insuffisant sur un actif, le suivant est utilisé automatiquement.",
+          "addAssetCaption" : "Vous serez redirigé(e) vers la page de Baanx pour ajouter un actif.",
+          "addAsset" : "Ajouter un actif"
+        },
+        "details" : {
+          "topUp" : "Alimenter",
+          "withdraw" : "Retirer",
+          "transactions" : "Transactions"
+        },
+        "withdraw" : {
+          "title" : "Vous serez redirigé(e) vers Baanx",
+          "description" : "Retirez des actifs de votre compte Baanx vers l’adresse de votre wallet Ledger.",
+          "continue" : "Continuer"
+        },
+        "history" : {
+          "columns" : {
+            "amount" : "Montant",
+            "value" : "Valeur"
+          }
+        }
+      },
+      "reward" : {
+        "title" : "Cashback total"
+      },
       "numbers" : {
         "reveal" : "Voir",
         "hide" : "Masquer",
         "failed" : "Échec du chargement des numéros de carte",
-        "imageAlt" : "Numéros de carte"
+        "imageAlt" : "Numéros de carte",
+        "unlockTitle" : "Saisissez votre mot de passe",
+        "passwordRequired" : "Mot de passe requis",
+        "passwordMismatch" : "Les mots de passe de correspondent pas",
+        "passwordIncorrect" : "Mot de passe incorrect",
+        "passwordUnavailable" : "Échec de la vérification du mot de passe",
+        "passwordCreateFailed" : "Échec de la configuration du mot de passe"
       }
     },
     "cardTransactions" : {
@@ -954,6 +993,31 @@
           "DECLINED" : "Refusée",
           "REVERTED" : "Annulée"
         }
+      },
+      "history" : {
+        "today" : "Aujourd’hui",
+        "yesterday" : "Hier",
+        "unknownDate" : "Date indisponible",
+        "columns" : {
+          "transaction" : "Transaction",
+          "cashback" : "Cashback",
+          "fundingSources" : "Sources",
+          "amount" : "Montant"
+        },
+        "paidWithAssets" : "Payé avec {{count}} actifs",
+        "goToPay" : "Accéder à Payer",
+        "signedOut" : {
+          "title" : "Connectez-vous pour voir les opérations de votre carte",
+          "description" : "Vos opérations par carte s’affichent ici une fois que vous êtes connecté(e)."
+        },
+        "empty" : {
+          "title" : "Aucune transaction par carte pour le moment",
+          "description" : "Revenez plus tard pour voir les opérations de votre carte."
+        },
+        "error" : {
+          "title" : "Échec du chargement des opérations de la carte",
+          "description" : "Veuillez vérifier votre connexion et réessayer."
+        }
       }
     },
     "cardOnboarding" : {
@@ -965,6 +1029,28 @@
         "title" : "Complétez votre carte",
         "stepComplete" : "Terminé",
         "gotIt" : "Compris"
+      },
+      "steps" : {
+        "createAccount" : {
+          "title" : "Créez votre compte",
+          "description" : "Vérifiez votre identité pour commencer."
+        },
+        "chooseCardType" : {
+          "title" : "Choisissez votre type de carte",
+          "description" : "Choisissez entre virtuel et physique."
+        },
+        "topUpCard" : {
+          "title" : "Approvisionnez votre carte",
+          "description" : "Alimentez-la avec des USDC, USDT, BTC et plus."
+        },
+        "firstPurchase" : {
+          "title" : "Effectuez votre premier achat",
+          "description" : "Payez en ligne ou en magasin."
+        },
+        "appleGooglePay" : {
+          "title" : "Ajoutez à Apple/Google Pay",
+          "description" : "Payez avec votre téléphone en magasin."
+        }
       }
     },
     "contacts" : {
@@ -2069,6 +2155,13 @@
     "details" : "Détails sur {{ currency }}",
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
     "extra" : {
+      "pltReject" : {
+        "title" : "Raison",
+        "nonExistentToken" : "Ce token n’existe pas sur Concordium.",
+        "recipientNotFound" : "Le compte bénéficiaire n’existe pas sur Concordium.",
+        "insufficientBalance" : "Le compte ne détenait pas assez de tokens.",
+        "rejected" : "Concordium a refusé cette opération."
+      },
       "frozenAmount" : "Montant gelé",
       "unfreezeAmount" : "Dégeler le montant",
       "votes" : "Votes ({{number}})",
@@ -7918,7 +8011,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "Ce compte ne peut pas envoyer ce token",
-      "description" : "L’émetteur du token limite les personnes autorisées à envoyer ce token, et ce compte n’y est pas autorisé. Veuillez contacter l’émetteur du token pour obtenir l’autorisation."
+      "description" : "L’émetteur du token impose des restrictions sur les envois. Veuillez contacter l’émetteur du token pour en savoir plus."
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "Ce compte n’a pas été autorisé à envoyer ce token",
+      "description" : "L’émetteur du token tient une liste d’expéditeurs approuvés, et ce compte n’y figure pas. L’approbation est gérée par l’émetteur du token, et non par Ledger."
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "Ce compte fait l’objet de restrictions pour envoyer ce token",
+      "description" : "L’émetteur du token a imposé des restrictions sur ce compte. Veuillez contacter l’émetteur pour en savoir plus."
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "Échec de la vérification des restrictions du token",
@@ -8171,6 +8272,30 @@
     },
     "AleoApiConfigurationResetError" : {
       "title" : "Le service d’indexation (records scanner) a été réinitialisé. Veuillez resynchroniser votre compte."
+    },
+    "AleoNoClaimableUnbondedFunds" : {
+      "title" : "Aucun ALEO délié à demander pour le moment",
+      "description" : "Les ALEO déliés peuvent être transférés une fois leur délai de sortie écoulé. Vous pourrez alors réaliser vos opérations."
+    },
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "Vous stakez déjà avec {{bondedValidator}}. Veuillez déstaker avant de changer de validateur.",
+      "description" : "Sur Aleo, seul un validateur par compte est autorisé. Veuillez déstaker de {{bondedValidator}} avant de staker avec un autre validateur."
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "Vous devez staker au moins {{minAmount}} en une opération.",
+      "description" : "Le montant minimum de staking est de {{minAmount}}."
+    },
+    "AleoClosedValidator" : {
+      "title" : "Ce validateur n’accepte pas de nouveaux délégateurs.",
+      "description" : "Ce validateur n’accepte pas de nouveaux délégateurs. Veuillez choisir un autre validateur pour continuer."
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "Un minimum de {{minAmount}} sont requis pour staker",
+      "description" : "Vous devez avoir au moins {{minAmount}} en staking au total."
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "Ce validateur est en cours de sortie.",
+      "description" : "Ce validateur retire ses actifs stakés : le réseau rejette toute nouvelle mise en staking vers celui-ci. Veuillez choisir un autre validateur pour continuer."
     },
     "BackupAppDataError" : {
       "title" : "Erreur de synchronisation des données de l’app"
@@ -9130,7 +9255,11 @@
     "opted_in" : {
       "title" : "Voyez plus grand",
       "description" : "Passez au niveau supérieur avec -{{discount}}%.",
-      "cta" : "Choisir mon Ledger"
+      "cta" : "Choisir mon Ledger",
+      "nanoS" : {
+        "title" : "Offre spéciale Ledger Nano S",
+        "description" : "Nouvel OS et sécurité boostée. Profitez de -{{discount}}%."
+      }
     },
     "opted_out" : {
       "title" : "Sécurité et contrôle renforcés",
@@ -9140,7 +9269,11 @@
     "profile" : {
       "title" : "Voyez plus grand",
       "description" : "Écran plus grand, sécurité boostée. Profitez de -{{discount}}%.",
-      "cta" : "Explorer"
+      "cta" : "Explorer",
+      "nanoS" : {
+        "title" : "Offre spéciale Ledger Nano S",
+        "description" : "Nouvel OS et sécurité boostée. Profitez de -{{discount}}%."
+      }
     }
   },
   "largeScreenUpsellModal" : {
@@ -9229,6 +9362,7 @@
     "unsupportedNetworkTooltip" : "Le réseau {{network}} n’est pas encore pris en charge.",
     "notAvailableYet" : "Pas encore disponible",
     "selectAccount" : "Sélectionner un compte",
+    "selectAccountToPayFrom" : "Sélectionnez le compte à débiter",
     "selectAccountPerpsTitle" : "Sélectionner un compte Hyperliquid",
     "selectAccountPerpsDescription" : "Sélectionnez un compte sur lequel déposer des actifs pour trader.",
     "selectAccountPerpsEmptyDescription" : "Pour accéder aux marchés perpétuels, vous avez besoin d’un compte Hyperliquid. Ajoutez-en un pour continuer.",
@@ -9662,10 +9796,70 @@
         "lastSync" : "Dernière synchro : {{date}}"
       }
     },
+    "stake" : {
+      "table" : {
+        "header" : "Staking",
+        "status" : "Statut",
+        "validator" : "Validateur",
+        "amount" : "Montant",
+        "staked" : "Staké",
+        "rate" : "Taux de récomp. estimé",
+        "completion" : "Finalisation",
+        "source" : "Source",
+        "estimatedRate" : "{{rate}}% est.",
+        "unknownValidator" : "Validateur inconnu",
+        "manage" : "Gérer"
+      },
+      "status" : {
+        "earningTooltip" : "Cette position génère des récompenses.",
+        "unknown" : "Statut indisponible"
+      },
+      "stakedBalance" : "Staké",
+      "stakedBalanceTooltip" : "Solde lié auprès d’un validateur. La colonne Statut indique s’il génère des récompenses.",
+      "unstakingBalance" : "Déstaking",
+      "unstakingBalanceTooltip" : "Solde en cours de sortie et ne pouvant pas encore être demandé.",
+      "claimableBalance" : "À demander",
+      "claimableBalanceTooltip" : "Solde n’étant plus lié et pouvant être transféré vers votre solde disponible.",
+      "nonEarning" : {
+        "fullCommission" : "Ce validateur prélève 100% de commission, vous ne conservez donc rien.",
+        "overConcentrated" : "Ce validateur détient plus de 25% de tous les ALEO stakés. Le protocole ne lui verse rien au-delà de ce plafond, vous ne gagnez donc rien.",
+        "leftCommittee" : "Ce validateur ne fait plus partie du comité, votre montant staké ne génère plus de récompenses. Déstakez et liez vos actifs auprès d’un autre validateur pour recommencer à gagner des récompenses.",
+        "ownStakeBelowMinimum" : "Le montant total que vous stakez auprès de ce validateur n’atteint pas le seuil minimal de 10 000 ALEO. Il ne génère donc aucune récompense. Augmentez votre solde staké pour recommencer à gagner des récompenses."
+      },
+      "unstaking" : {
+        "header" : "Déstaking",
+        "headerTooltip" : "Le transfert d’ALEO déliés peut être demandé une fois que la blockchain atteint le bloc de sortie de liaison.",
+        "sourceTooltip" : "Les ALEO déliés sont immobilisés par le protocole jusqu’à ce qu’ils soient transférables, et non par un validateur. La blockchain n’enregistre pas de quel validateur ils proviennent.",
+        "pendingTooltip" : "Sortie de la liaison en cours : actifs toujours immobilisés.",
+        "claimableTooltip" : "Le délai de sortie est terminé.  Vous pouvez demander ces actifs.",
+        "settling" : "Vous y êtes presque...",
+        "settlingTooltip" : "Le délai de sortie est terminé. Actualisation de votre solde : les actifs seront libérés dans un instant.",
+        "claimPending" : "Demande en cours...",
+        "claimPendingTooltip" : "Votre demande a été envoyée et est en attente de confirmation. Ces actifs arriveront bientôt sur votre solde disponible.",
+        "unbondPending" : "Déstaking...",
+        "unbondPendingTooltip" : "Une opération de déstaking a été envoyée et est en attente de confirmation. Elle modifie cette même position de sortie, il n’est donc pas possible d’effectuer une demande tant qu’elle n’a pas abouti."
+      },
+      "claim" : "Demander",
+      "claimableAtTooltip" : "Peut être demandée au bloc {{height}} (bloc actuel : {{current}})",
+      "blocksRemaining_one" : "~{{count}} bloc restant",
+      "blocksRemaining_other" : "~{{count}} blocs restants",
+      "bondPendingTooltip" : "Une mise en staking a été envoyée et est en attente de confirmation. Sur Aleo, une seule position de staking est possible par compte. Le staking n’est donc pas disponible tant que l’opération n’a pas abouti.",
+      "emptyState" : {
+        "description" : "Vous pouvez gagner des récompenses en stakant vos {{name}}.",
+        "earnRewards" : "Gagnez des récompenses"
+      }
+    },
     "operations" : {
       "type" : {
         "public" : "Public",
         "private" : "Privé"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "Validateur",
+        "bondedAmount" : "Montant staké",
+        "unbondedAmount" : "Montant déstaké"
       }
     },
     "send" : {
@@ -9683,6 +9877,9 @@
         "errorTitle" : "Échec de la synchronisation",
         "errorDesc" : "Une erreur est survenue, veuillez réessayer."
       }
+    },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "Demander"
     },
     "bond" : {
       "flow" : {
@@ -9727,7 +9924,6 @@
     "manage" : {
       "headerAction" : "Gagner",
       "title" : "Gérer le staking",
-      "comingSoonTooltip" : "Bientôt disponible",
       "bond" : {
         "title" : "Lier",
         "description" : "Liez vos ALEO à un validateur pour obtenir des récompenses."
@@ -9740,7 +9936,10 @@
         "title" : "Demander",
         "description" : "Récupérez vos ALEO déliés, sur votre solde disponible."
       },
-      "unbondPendingTooltip" : "Une opération de déstaking est en attente de confirmation. Aleo suit une seule position de sortie de liaison à la fois. Il n’est donc pas possible de délier tant que l’opération n’a pas abouti."
+      "unbondPendingTooltip" : "Une opération de déstaking est en attente de confirmation. Aleo suit une seule position de sortie de liaison à la fois. Il n’est donc pas possible de les délier et les demander tant que l’opération n’a pas abouti.",
+      "claimPendingTooltip" : "Une opération de demande est en attente de confirmation. Aleo suit une seule position de sortie de liaison à la fois. Il n’est donc pas possible de les délier et les demander tant que l’opération n’a pas abouti.",
+      "stillUnbondingTooltip" : "Vos ALEO déliés sont toujours dans leur délai de sortie. Vous pouvez les demander au terme de celui-ci.",
+      "nothingToClaimTooltip" : "Vous n’avez aucun ALEO délié à demander. Veuillez délier d’abord une partie de vos actifs stakés."
     },
     "unbond" : {
       "flow" : {
@@ -9765,6 +9964,30 @@
           }
         }
       }
+    },
+    "claim" : {
+      "flow" : {
+        "title" : "Demander des ALEO",
+        "steps" : {
+          "summary" : {
+            "title" : "Récapitulatif",
+            "info" : "Cette opération demande et renvoie sur votre compte tous les ALEO pour lesquels le délai de sortie est écoulé.",
+            "claimableAmountLabel" : "Montant à demander"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Demande envoyée",
+              "text" : "Votre demande a été diffusée.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Votre transaction de demande a été signée, mais n’a pas pu être diffusée."
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9772,26 +9995,6 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "Erreur lors de la mise à jour. Réessayer",
     "installAndRelaunch" : "Nouvelle mise à jour. Installer et relancer"
-  },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "Un vue plus claire de votre portefeuille",
-        "description" : "Consultez votre solde total d’un coup d’œil, et appuyez sur « Aujourd’hui » pour plus d’informations."
-      },
-      "navigation" : {
-        "title" : "Accédez instantanément aux actions clés",
-        "description" : "Accédez aux fonctions Recevoir, Acheter, Vendre et Envoyer en un instant."
-      },
-      "actions" : {
-        "title" : "Suivez l’évolution des marchés",
-        "description" : "Visualisez les tendances au sein de votre portefeuille et agissez sans attendre."
-      }
-    },
-    "cta" : {
-      "continue" : "Continuer",
-      "explore" : "Explorer"
-    }
   },
   "q2Tour" : {
     "slides" : {
@@ -9890,6 +10093,8 @@
   },
   "history" : {
     "title" : "Historique des opérations",
+    "cardScope" : "Carte",
+    "cardAssetScope" : "Carte · {{assetName}}",
     "pending" : "Transaction en attente",
     "pending_other" : "Transactions en attente",
     "columns" : {
@@ -9905,6 +10110,11 @@
     "emptyState" : {
       "title" : "Aucune transaction pour le moment",
       "description" : "Revenez plus tard pour voir vos transactions."
+    },
+    "tabs" : {
+      "crypto" : "Cryptos",
+      "card" : "Carte",
+      "accessibilityLabel" : "Type d’historique des opérations"
     },
     "actionsBar" : {
       "csv" : "Exporter",
