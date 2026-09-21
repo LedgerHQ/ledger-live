@@ -71,6 +71,11 @@ export class SyncOnboardingPage extends AppPage {
     await expect(this.newSeedStep).toBeVisible();
   }
 
+  @step("Expect the restore-seed path to be shown")
+  async expectRestoreSeedPath() {
+    await expect(this.restoreSeedStep).toBeVisible();
+  }
+
   /**
    * An already-initialised device keeps the PIN and seed it came with, so the companion
    * advances past the seed step without ever rendering either seed path.

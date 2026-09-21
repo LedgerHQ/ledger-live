@@ -79,3 +79,53 @@ test.describe(`Connect an already initialised device`, () => {
     },
   );
 });
+
+test.describe(`Restore a seed from a configured Ledger Live`, () => {
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    userdata: "1AccountBTC1AccountETH",
+    mockDeviceParams: { onboarded: false },
+  });
+
+  test(
+    `Device is restored from an existing seed without losing the Live configuration`,
+    {
+      tag: ["@onboarding", ...deviceWithScreenTags()],
+      annotation: { type: "TMS", description: "B2CQA-1867" },
+    },
+    async ({ app, mockDevice, mockServer }) => {
+      await app.portfolio.expectBalanceVisibility();
+
+      await app.mainNavigation.openSettings();
+      await app.settings.goToHelpTab();
+      await app.settings.launchOnboarding();
+      await app.onboarding.selectDevice(mockDevice.modelId);
+      await app.syncOnboarding.expectCompanionReached(mockDevice.modelId);
+
+      await app.syncOnboarding.runGenuineCheck();
+      await app.syncOnboarding.expectDeviceGenuine();
+      await app.syncOnboarding.expectOsUpToDate();
+
+      await mockServer.pinOnboardingStep(ONBOARDING_STEP.restoreSeed);
+      await app.syncOnboarding.continueToSetup();
+      await app.syncOnboarding.expectRestoreSeedPath();
+      await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true);
+
+      await app.syncOnboarding.skipWalletSync();
+      await app.syncOnboarding.expectSetupComplete();
+
+      await app.syncOnboarding.expectAppInstallOffered();
+      await app.syncOnboarding.declineAppInstall();
+      await app.syncOnboarding.expectCompletionScreen(mockDevice.modelId);
+
+      await app.portfolio.expectBalanceVisibility();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.expectAccountsCount(6);
+      await app.accounts.expectCryptoAccountRowVisible("Bitcoin 1 (legacy)");
+      await app.accounts.expectCryptoAccountRowVisible("Ethereum 1");
+
+      await app.accounts.navigateToAccountByName("Ethereum 1");
+      await app.account.expectAccountVisibility("Ethereum 1");
+    },
+  );
+});
