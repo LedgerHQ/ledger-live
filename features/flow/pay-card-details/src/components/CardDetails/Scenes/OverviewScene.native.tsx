@@ -16,7 +16,7 @@ import type { OverviewSceneProps } from "./types";
 
 type OverviewActionsProps = Omit<
   OverviewSceneProps,
-  "cardVisual" | "onTransactionPress" | "onAddToWalletPress" | "formatters"
+  "cardVisual" | "assetsViewModel" | "onTransactionPress" | "onAddToWalletPress" | "formatters"
 > &
   Readonly<{
     reveal: RevealViewModel;
