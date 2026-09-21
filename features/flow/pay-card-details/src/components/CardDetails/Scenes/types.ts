@@ -6,7 +6,16 @@ import type {
 } from "@features/flow-pay-card-transactions";
 import type { CardVisualProps, FreezeViewModel } from "../../../types";
 import type { MoreViewModel, MoreViewProps } from "../../More/types";
-import type { CardDetailsRoute } from "./navigation";
+
+export type CardDetailsRoute =
+  | { name: "overview" }
+  | { name: "freeze" }
+  | { name: "more" }
+  | { name: "transaction"; transaction: PayCardTransaction }
+  | { name: "assetDetails" }
+  | { name: "assetWithdraw" }
+  | { name: "assetsManage" }
+  | { name: "assetTransaction"; transaction: CardTransactionItem };
 
 export type OverviewSceneProps = Readonly<{
   cardVisual?: CardVisualProps;
@@ -16,7 +25,6 @@ export type OverviewSceneProps = Readonly<{
   onFreezePress: () => void;
   onMorePress: () => void;
   onTransactionPress: (transaction: PayCardTransaction) => void;
-  onAddToWalletPress: () => void;
   onShowMore?: () => void;
   formatters?: CardTransactionFormatters;
 }>;
@@ -32,10 +40,6 @@ export type MoreSceneProps = Readonly<{
 export type TransactionSceneProps = Readonly<{
   transaction: PayCardTransaction;
   formatters?: CardTransactionFormatters;
-}>;
-
-export type AddToWalletSceneProps = Readonly<{
-  onDone: () => void;
 }>;
 
 export type AssetDetailsSceneProps = Readonly<{
@@ -64,7 +68,6 @@ export type CardDetailsSceneProps = Readonly<{
   overview: OverviewSceneProps;
   freeze: FreezeSceneProps;
   more: MoreSceneProps | null;
-  addToWallet: AddToWalletSceneProps;
   transaction: TransactionSceneProps | null;
   assetDetails: AssetDetailsSceneProps | null;
   assetWithdraw: CardAssetsViewModel | null;
