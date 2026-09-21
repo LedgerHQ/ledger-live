@@ -316,6 +316,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadBridgeApi: () => import("../families/near/bridge/api").then(m => m.default),
     loadSigner: () => import("../families/near/signer").then(m => m.default),
     loadAccountRawAssign: () => import("../families/near/accountRawAssign").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/near/bridgeExtensions").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-near/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-near/deviceTransactionConfig").then(m => m.default),
