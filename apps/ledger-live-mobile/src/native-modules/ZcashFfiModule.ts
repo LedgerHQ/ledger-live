@@ -59,7 +59,53 @@ interface ZcashFfiNativeModule {
 
   /** Diagnostic — see {@link runThreadProbe}. */
   threadProbe(ufvk: string, iterations: number): Promise<string>;
+
+  /** Scans a block range — see {@link syncRange}. Resolves with JSON. */
+  syncRange(
+    ufvk: string,
+    grpcUrl: string,
+    network: string,
+    startHeight: number,
+    endHeight: number,
+  ): Promise<string>;
 }
+
+/** One decrypted note belonging to this account. */
+export type ZcashNote = {
+  amount: number;
+  pool: "sapling" | "orchard" | "ironwood";
+  transfer_type: "incoming" | "outgoing" | "internal";
+  memo: string;
+  nullifier: string | null;
+  position: number | null;
+  is_spent: boolean;
+};
+
+/** A matched, fully-decrypted shielded transaction. */
+export type ZcashShieldedTransaction = {
+  txid: string;
+  block_height: number;
+  block_time: number;
+  fee_zatoshis: number;
+  /** Raw transaction bytes, hex. Large — do not persist. */
+  hex: string;
+  sapling_notes: ZcashNote[];
+  orchard_notes: ZcashNote[];
+  ironwood_notes: ZcashNote[];
+};
+
+/** What a scan reports back. Mirrors `SyncResult` in `zcash-sync`. */
+export type ZcashSyncResult = {
+  transactions: ZcashShieldedTransaction[];
+  blocks_scanned: number;
+  elapsed_ms: number;
+  bytes_downloaded: number;
+  trial_decrypt_ms: number;
+  get_transaction_ms: number;
+  full_decrypt_ms: number;
+  stream_wait_ms: number;
+  spent_known_nullifiers: string[];
+};
 
 /** What the engine reports back from a threading probe. */
 export type ZcashThreadProbe = {
@@ -115,7 +161,6 @@ export async function deriveOrchardAddress(ufvk: string): Promise<string> {
     throw new ZcashFfiError(isKnownCode(code) ? code : "ZCASH_FFI_UNKNOWN", message);
   }
 }
-
 /**
  * Diagnostic: measure whether the Rust layer gets real parallelism here.
  *
@@ -140,6 +185,42 @@ export async function runThreadProbe(ufvk: string, iterations = 200): Promise<Zc
   } catch (error) {
     const code = (error as { code?: unknown })?.code;
     const message = error instanceof Error ? error.message : "Zcash FFI probe failed";
+    throw new ZcashFfiError(isKnownCode(code) ? code : "ZCASH_FFI_UNKNOWN", message);
+  }
+}
+
+/**
+ * Scans `startHeight..=endHeight` for notes belonging to this viewing key.
+ *
+ * **Blocking on the native side, and all-or-nothing.** The promise settles
+ * once, when the whole range is done: no progress, no cancellation, and a
+ * failure at the last block discards everything scanned before it. The JS
+ * thread stays free throughout — it is a native worker thread that blocks —
+ * so the UI is unaffected, but keep the range small. A full history needs the
+ * streaming design, not this call.
+ *
+ * As everywhere in this module, the UFVK must never reach a log.
+ */
+export async function syncRange(
+  ufvk: string,
+  grpcUrl: string,
+  network: "mainnet" | "testnet",
+  startHeight: number,
+  endHeight: number,
+): Promise<ZcashSyncResult> {
+  if (!nativeModule) {
+    throw new ZcashFfiError(
+      "ZCASH_FFI_UNAVAILABLE",
+      "The Zcash native library is not linked into this build",
+    );
+  }
+
+  try {
+    const json = await nativeModule.syncRange(ufvk, grpcUrl, network, startHeight, endHeight);
+    return JSON.parse(json) as ZcashSyncResult;
+  } catch (error) {
+    const code = (error as { code?: unknown })?.code;
+    const message = error instanceof Error ? error.message : "Zcash FFI sync failed";
     throw new ZcashFfiError(isKnownCode(code) ? code : "ZCASH_FFI_UNKNOWN", message);
   }
 }

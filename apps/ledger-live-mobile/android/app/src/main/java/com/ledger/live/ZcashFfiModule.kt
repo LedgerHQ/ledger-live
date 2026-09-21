@@ -116,7 +116,59 @@ class ZcashFfiModule(
         }
     }
 
+    /**
+     * Scans a block range and resolves with the serialised result.
+     *
+     * Blocking for the whole range, hence the dispatcher: there is no progress
+     * and no cancellation, so keep the range small. A full history belongs to
+     * the streaming design, not to this call.
+     */
+    @ReactMethod
+    fun syncRange(
+        ufvk: String,
+        grpcUrl: String,
+        network: String,
+        startHeight: Int,
+        endHeight: Int,
+        promise: Promise
+    ) {
+        coroutineScope.launch {
+            if (!libraryLoaded) {
+                promise.reject(CODE_UNAVAILABLE, MESSAGE_UNAVAILABLE)
+                return@launch
+            }
+
+            val status = IntArray(1)
+
+            val value =
+                try {
+                    nativeSyncRange(ufvk, grpcUrl, network, startHeight, endHeight, status)
+                } catch (error: UnsatisfiedLinkError) {
+                    // The engine was built without the `sync` feature, so
+                    // JNI_OnLoad never registered this method.
+                    promise.reject(CODE_UNAVAILABLE, MESSAGE_UNAVAILABLE)
+                    return@launch
+                }
+
+            when {
+                value == null ->
+                    promise.reject(errorCode(status[0]), "Zcash FFI returned no value")
+                status[0] == ZCASH_OK -> promise.resolve(value)
+                else -> promise.reject(errorCode(status[0]), value)
+            }
+        }
+    }
+
     private external fun nativeDeriveOrchardAddress(ufvk: String, outStatus: IntArray): String?
+
+    private external fun nativeSyncRange(
+        ufvk: String,
+        grpcUrl: String,
+        network: String,
+        startHeight: Int,
+        endHeight: Int,
+        outStatus: IntArray
+    ): String?
 
     private external fun nativeThreadProbe(
         ufvk: String,
