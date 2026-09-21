@@ -10922,12 +10922,13 @@
       },
       "emptyState": {
         "description": "You can earn rewards by staking your {{name}}.",
-        "cta": "Earn rewards"
+        "cta": "Earn rewards",
+        "bondPending": "A stake has been sent and is waiting to be confirmed. Aleo holds one staked position per account, so staking is unavailable until it has gone through."
       },
       "unstakingRow": {
-        "settling": "Almost there\u2026",
-        "claimPending": "Claiming\u2026",
-        "unbondPending": "Unstaking\u2026",
+        "settling": "Almost there...",
+        "claimPending": "Claiming...",
+        "unbondPending": "Unstaking...",
         "blocksRemaining_one": "~{{count}} block left",
         "blocksRemaining_other": "~{{count}} blocks left"
       }

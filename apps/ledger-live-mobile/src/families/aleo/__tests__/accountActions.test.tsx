@@ -132,7 +132,7 @@ describe("accountActions.getMainActions and the enableStaking flag", () => {
     expect(action?.disabled).toBe(false);
   });
 
-  it("disables the stake action while a bond is pending, without the zero-balance modal", () => {
+  it("disables the stake action while a first bond is pending, without the zero-balance modal", () => {
     mockStakingEnabled(true);
     const funded = makeAleoAccount({ transparentBalance: new BigNumber(2_000_000) });
 
@@ -143,6 +143,22 @@ describe("accountActions.getMainActions and the enableStaking flag", () => {
 
     expect(action?.disabled).toBe(true);
     expect(action?.modalOnDisabledClick).toBeUndefined();
+  });
+
+  it("keeps the stake action open for a top-up while another bond is pending", () => {
+    mockStakingEnabled(true);
+    const bonded = makeAleoAccount({
+      transparentBalance: new BigNumber(2_000_000),
+      bondedBalance: new BigNumber(10_000_000),
+      bondedValidator: "aleo1validator",
+    });
+
+    const action = findStake({
+      ...bonded,
+      pendingOperations: [{ type: "BOND" } as Operation],
+    });
+
+    expect(action?.disabled).toBe(false);
   });
 
   describe("on a token account", () => {

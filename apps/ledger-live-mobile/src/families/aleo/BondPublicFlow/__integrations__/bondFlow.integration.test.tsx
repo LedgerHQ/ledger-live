@@ -52,6 +52,7 @@ jest.mock("~/datadog", () => ({
 }));
 
 const mockUseAleoValidators = jest.fn();
+const mockRefetch = jest.fn();
 jest.mock("@ledgerhq/live-common/families/aleo/react", () => ({
   useAleoValidators: (...args: unknown[]) => mockUseAleoValidators(...args),
 }));
@@ -145,6 +146,7 @@ const renderAmountStep = (account: AleoAccount = FUNDED_ACCOUNT) =>
 
 describe("Aleo bond flow (integration)", () => {
   beforeEach(() => {
+    mockRefetch.mockClear();
     resetAleoBridgeMock({
       transaction: BOND_TRANSACTION,
       operationType: "STAKE",
@@ -153,7 +155,9 @@ describe("Aleo bond flow (integration)", () => {
     mockUseAleoValidators.mockReturnValue({
       validators: MOCK_VALIDATORS,
       loading: false,
+      fetching: false,
       error: null,
+      refetch: mockRefetch,
     });
   });
 
@@ -193,7 +197,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [],
         loading: true,
+        fetching: true,
         error: null,
+        refetch: mockRefetch,
       });
 
       renderSelectValidatorStep();
@@ -214,7 +220,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [{ ...MOCK_VALIDATORS[0], name: undefined }],
         loading: false,
+        fetching: false,
         error: null,
+        refetch: mockRefetch,
       });
 
       renderSelectValidatorStep();
@@ -234,7 +242,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [{ ...MOCK_VALIDATORS[0], isOpen: false }, SECOND_VALIDATOR],
         loading: false,
+        fetching: false,
         error: null,
+        refetch: mockRefetch,
       });
 
       const { user } = renderSelectValidatorStep();
@@ -254,7 +264,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [MOCK_VALIDATORS[0], SECOND_VALIDATOR],
         loading: false,
+        fetching: false,
         error: null,
+        refetch: mockRefetch,
       });
       const bonded = makeAleoAccount({
         transparentBalance: new BigNumber(50_000 * CREDIT),
@@ -282,7 +294,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [SECOND_VALIDATOR],
         loading: false,
+        fetching: false,
         error: null,
+        refetch: mockRefetch,
       });
       const bonded = makeAleoAccount({
         transparentBalance: new BigNumber(50_000 * CREDIT),
@@ -306,7 +320,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [],
         loading: false,
+        fetching: false,
         error: new Error("boom"),
+        refetch: mockRefetch,
       });
       const bonded = makeAleoAccount({
         transparentBalance: new BigNumber(50_000 * CREDIT),
@@ -330,7 +346,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [],
         loading: false,
+        fetching: false,
         error: new Error("boom"),
+        refetch: mockRefetch,
       });
       const bonded = makeAleoAccount({
         transparentBalance: new BigNumber(50_000 * CREDIT),
@@ -351,7 +369,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [MOCK_VALIDATORS[0]],
         loading: false,
+        fetching: false,
         error: new Error("boom"),
+        refetch: mockRefetch,
       });
       const bonded = makeAleoAccount({
         transparentBalance: new BigNumber(50_000 * CREDIT),
@@ -369,7 +389,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [],
         loading: true,
+        fetching: true,
         error: null,
+        refetch: mockRefetch,
       });
       const bonded = makeAleoAccount({
         transparentBalance: new BigNumber(50_000 * CREDIT),
@@ -387,7 +409,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: MOCK_VALIDATORS,
         loading: false,
+        fetching: false,
         error: new Error("boom"),
+        refetch: mockRefetch,
       });
 
       const { user } = renderSelectValidatorStep();
@@ -404,7 +428,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [{ ...MOCK_VALIDATORS[0], isOpen: false }, SECOND_VALIDATOR],
         loading: false,
+        fetching: false,
         error: null,
+        refetch: mockRefetch,
       });
 
       renderSelectValidatorStep();
@@ -419,7 +445,9 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [],
         loading: false,
+        fetching: false,
         error: new Error("boom"),
+        refetch: mockRefetch,
       });
 
       const { user } = renderSelectValidatorStep();
@@ -429,21 +457,18 @@ describe("Aleo bond flow (integration)", () => {
       );
       expect(screen.UNSAFE_queryAllByType(TextInput)).toHaveLength(0);
 
-      mockUseAleoValidators.mockReturnValue({
-        validators: MOCK_VALIDATORS,
-        loading: false,
-        error: null,
-      });
       await user.press(screen.getByText(/retry/i));
 
-      await waitFor(() => expect(screen.getByText("Figment")).toBeVisible());
+      expect(mockRefetch).toHaveBeenCalledTimes(1);
     });
 
     it("filters the list by name, by address fragment, and shows nothing on a miss", async () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [MOCK_VALIDATORS[0], SECOND_VALIDATOR],
         loading: false,
+        fetching: false,
         error: null,
+        refetch: mockRefetch,
       });
 
       const { user } = renderSelectValidatorStep();

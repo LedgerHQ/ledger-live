@@ -1068,6 +1068,9 @@ export function getUnbondingDisplayState({
 export const hasPendingOperationType = (account: AleoAccount, type: OperationType): boolean =>
   (account.pendingOperations ?? []).some(op => op.type === type);
 
+export const isFirstBondPending = (account: AleoAccount): boolean =>
+  !account.aleoResources?.bondedValidator && hasPendingOperationType(account, "BOND");
+
 /**
  * Returns the spendable balance for a given Aleo transaction mode.
  *

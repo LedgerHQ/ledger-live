@@ -48,14 +48,13 @@ import type {
   AleoValidator,
   SigningStrategy,
 } from "./types";
-import { getValidators } from "@ledgerhq/coin-aleo/logic";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
 import {
   MANDATORY_SYNC_POLLING_DELAY,
   PROGRESS_THROTTLE_INTERVAL_MS,
   UNBONDING_SYNC_PRIORITY,
 } from "./constants";
-import { useGetLastBlockHeightQuery } from "./state-manager/api";
+import { useGetLastBlockHeightQuery, useGetValidatorsQuery } from "./state-manager/api";
 
 const QUICK_AMOUNT_STRATEGIES: SigningStrategy[] = ["fast", "balanced", "full"];
 
@@ -595,49 +594,32 @@ export const useAleoPrivateSync = ({
   return { isSyncing, progress, error, start, stop };
 };
 
-const lastSeenValidators: Record<string, AleoValidator[]> = {};
-
 export interface UseAleoValidatorsResult {
   validators: AleoValidator[];
   loading: boolean;
+  fetching: boolean;
   error: Error | null;
+  refetch: () => void;
 }
 
 export function useAleoValidators(currency: CryptoCurrency): UseAleoValidatorsResult {
-  const currencyId = currency.id;
-  const [validators, setValidators] = useState<AleoValidator[]>(() => [
-    ...(lastSeenValidators[currencyId] ?? []),
-  ]);
-  const [loading, setLoading] = useState(() => lastSeenValidators[currencyId] === undefined);
-  const [error, setError] = useState<Error | null>(null);
+  // Not `data`: it sticks to the previous network's committee across a currency switch.
+  const { currentData, isFetching, error, refetch } = useGetValidatorsQuery(currency.id, {
+    // `getValidators` is LRU-cached on the same TTL, so refetching on mount re-reads that cache
+    refetchOnMountOrArgChange: true,
+  });
+  const hasNoData = currentData === undefined;
 
-  useEffect(() => {
-    let cancelled = false;
+  // RTK Query freezes what it caches, so a picker sorting in place would throw on `currentData`.
+  const validators = useMemo(() => (currentData ? [...currentData] : []), [currentData]);
 
-    const seed = lastSeenValidators[currencyId];
-    setValidators([...(seed ?? [])]);
-    setLoading(seed === undefined);
-    setError(null);
-
-    getValidators(currencyId)
-      .then(next => {
-        if (cancelled) return;
-        lastSeenValidators[currencyId] = next;
-        setValidators([...next]);
-        setLoading(false);
-      })
-      .catch((err: Error) => {
-        if (cancelled) return;
-        setError(err);
-        setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [currencyId]);
-
-  return { validators, loading, error };
+  return {
+    validators,
+    loading: hasNoData && isFetching,
+    fetching: isFetching,
+    error: hasNoData && error instanceof Error ? error : null,
+    refetch,
+  };
 }
 
 type AleoChainTipOptions = {

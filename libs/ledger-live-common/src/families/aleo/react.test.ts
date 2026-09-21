@@ -84,12 +84,6 @@ jest.mock("../../bridge/react", () => ({
 const { useFeature } = jest.requireMock("@features/platform-feature-flags");
 const { getViewKeyExec } = jest.requireMock("./hw/getViewKey/index");
 
-// `useAleoValidators` keeps a module-level render seed per currency id, so every test needs
-// its own id or it would be handed the previous test's seed instead of loading.
-let currencyIdCounter = 0;
-const freshCurrency = () =>
-  ({ id: `aleo_test_${currencyIdCounter++}`, type: "CryptoCurrency" }) as CryptoCurrency;
-
 /** One successful chain-tip read, which is what a poll of the shared query resolves to. */
 const chainAt = (height: number) =>
   jest
@@ -1437,109 +1431,146 @@ describe("useAleoValidators", () => {
     estimatedYearlyRewardsRate: 0.07,
   };
 
+  let wrapper: ReturnType<typeof createWrapper>;
+
   beforeEach(() => {
     jest.mocked(getValidators).mockReset();
+    // A store per test, so one test's cached committee is never another's starting point.
+    wrapper = createWrapper(createTestStore([aleoApi], { disableSerializableCheck: true }));
   });
+
+  const validatorsOf = (currency: CryptoCurrency) =>
+    renderHook(() => useAleoValidators(currency), { wrapper });
 
   it("starts loading with an empty list, then resolves to the fetched committee", async () => {
     jest.mocked(getValidators).mockResolvedValue([validator]);
-    const currency = freshCurrency();
 
-    const { result } = renderHook(() => useAleoValidators(currency));
+    const { result } = validatorsOf(mockCurrency);
 
-    expect(result.current).toEqual({ validators: [], loading: true, error: null });
+    expect(result.current).toEqual({
+      validators: [],
+      loading: true,
+      fetching: true,
+      error: null,
+      refetch: expect.any(Function),
+    });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(result.current).toEqual({ validators: [validator], loading: false, error: null });
+    expect(result.current).toEqual({
+      validators: [validator],
+      loading: false,
+      fetching: false,
+      error: null,
+      refetch: expect.any(Function),
+    });
   });
 
-  it("seeds a remount with the last-seen list so the picker does not flash empty", async () => {
+  it("serves a second mount from the cache, so the picker does not flash empty", async () => {
     jest.mocked(getValidators).mockResolvedValue([validator]);
-    const currency = freshCurrency();
 
-    const first = renderHook(() => useAleoValidators(currency));
+    const first = validatorsOf(mockCurrency);
     await waitFor(() => expect(first.result.current.loading).toBe(false));
     first.unmount();
 
-    const second = renderHook(() => useAleoValidators(currency));
+    const second = validatorsOf(mockCurrency);
 
     expect(second.result.current).toEqual({
       validators: [validator],
       loading: false,
+      fetching: true,
       error: null,
+      refetch: expect.any(Function),
     });
 
-    // Let the background refetch settle inside act, so its setState does not
-    // land after the test has finished.
+    // Let the on-mount refetch settle inside act, so its dispatch does not land
+    // after the test has finished.
     await act(async () => {});
   });
 
-  it("hands each mount its own list, so a picker sorting in place cannot corrupt the cache", async () => {
-    const second = { ...validator, address: "aleo1second" };
-    const arrayHeldByTheCoinModuleCache = [validator, second];
-    // A separate snapshot: asserting against the array under mutation would pass
-    // whether or not the hook copies.
-    const expectedOrder = [validator, second];
-    jest.mocked(getValidators).mockResolvedValue(arrayHeldByTheCoinModuleCache);
-    const currency = freshCurrency();
+  it("clears `fetching` once the background refetch lands, so the spinner goes away", async () => {
+    jest.mocked(getValidators).mockResolvedValue([validator]);
 
-    const first = renderHook(() => useAleoValidators(currency));
+    const first = validatorsOf(mockCurrency);
     await waitFor(() => expect(first.result.current.loading).toBe(false));
-
-    first.result.current.validators.reverse();
     first.unmount();
 
-    const remount = renderHook(() => useAleoValidators(currency));
+    const second = validatorsOf(mockCurrency);
+    expect(second.result.current.fetching).toBe(true);
 
-    expect(remount.result.current.validators).toEqual(expectedOrder);
-
-    await act(async () => {});
-    expect(remount.result.current.validators).toEqual(expectedOrder);
+    await waitFor(() => expect(second.result.current.fetching).toBe(false));
   });
 
-  it("surfaces a fetch failure as an empty list when there is no seed to fall back on", async () => {
+  it("hands out a mutable copy, so a picker sorting in place does not throw on the frozen cache", async () => {
+    const second = { ...validator, address: "aleo1second" };
+    jest.mocked(getValidators).mockResolvedValue([validator, second]);
+
+    const { result } = validatorsOf(mockCurrency);
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(() => result.current.validators.reverse()).not.toThrow();
+  });
+
+  it("surfaces a fetch failure as an empty list when there is nothing cached to fall back on", async () => {
     const error = new Error("offline");
     jest.mocked(getValidators).mockRejectedValue(error);
-    const currency = freshCurrency();
 
-    const { result } = renderHook(() => useAleoValidators(currency));
+    const { result } = validatorsOf(mockCurrency);
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.error).toBe(error);
     expect(result.current.validators).toEqual([]);
   });
 
-  it("keeps the last-seen list when a later refetch fails, so offline degrades to stale", async () => {
-    const error = new Error("offline");
+  it("keeps the cached list when a later refetch fails, so offline degrades to stale", async () => {
     jest.mocked(getValidators).mockResolvedValue([validator]);
-    const currency = freshCurrency();
 
-    const first = renderHook(() => useAleoValidators(currency));
+    const first = validatorsOf(mockCurrency);
     await waitFor(() => expect(first.result.current.loading).toBe(false));
     first.unmount();
 
-    jest.mocked(getValidators).mockRejectedValue(error);
-    const second = renderHook(() => useAleoValidators(currency));
+    jest.mocked(getValidators).mockRejectedValue(new Error("offline"));
+    const second = validatorsOf(mockCurrency);
 
-    await waitFor(() => expect(second.result.current.error).toBe(error));
+    await waitFor(() => expect(getValidators).toHaveBeenCalledTimes(2));
     expect(second.result.current.validators).toEqual([validator]);
+    expect(second.result.current.error).toBeNull();
     expect(second.result.current.loading).toBe(false);
+  });
+
+  it("refetches on retry, which is what clears an error the first load left behind", async () => {
+    jest.mocked(getValidators).mockRejectedValue(new Error("offline"));
+
+    const { result } = validatorsOf(mockCurrency);
+    await waitFor(() => expect(result.current.error).toBeTruthy());
+
+    jest.mocked(getValidators).mockResolvedValue([validator]);
+    await act(async () => {
+      result.current.refetch();
+    });
+
+    await waitFor(() => expect(result.current.validators).toEqual([validator]));
+    expect(result.current.error).toBeNull();
   });
 
   it("refetches and never shows the previous network's committee on a currency switch", async () => {
     const testnetValidator = { ...validator, address: "aleo1testnet" };
+    const testnetCurrency = { id: "aleo_testnet", type: "CryptoCurrency" } as CryptoCurrency;
     jest.mocked(getValidators).mockResolvedValue([validator]);
 
     const { result, rerender } = renderHook(({ currency }) => useAleoValidators(currency), {
-      initialProps: { currency: freshCurrency() },
+      initialProps: { currency: mockCurrency },
+      wrapper,
     });
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     jest.mocked(getValidators).mockResolvedValue([testnetValidator]);
-    rerender({ currency: freshCurrency() });
+    rerender({ currency: testnetCurrency });
 
     expect(result.current.validators).toEqual([]);
+    expect(result.current.loading).toBe(true);
+
     await waitFor(() => expect(result.current.validators).toEqual([testnetValidator]));
+    expect(result.current.loading).toBe(false);
   });
 });
 
@@ -1963,9 +1994,11 @@ describe("useAleoStakingPosition", () => {
       extra: {},
     }) as unknown as Operation;
 
+  let wrapper: ReturnType<typeof createWrapper>;
+
   const positionFor = async (pendingOperations: Operation[]) => {
     const account = accountWith({ pendingOperations });
-    const { result } = renderHook(() => useAleoStakingPosition(account));
+    const { result } = renderHook(() => useAleoStakingPosition(account), { wrapper });
     await act(async () => {});
     return result.current;
   };
@@ -1973,13 +2006,15 @@ describe("useAleoStakingPosition", () => {
   const accountWith = (overrides: Partial<AleoAccount>) =>
     ({
       ...ALEO_ACCOUNT_1,
-      currency: freshCurrency(),
+      currency: mockCurrency,
       pendingOperations: [],
       ...overrides,
     }) as AleoAccount;
 
   beforeEach(() => {
-    jest.mocked(getValidators).mockResolvedValue([]);
+    jest.mocked(getValidators).mockReset().mockResolvedValue([]);
+    // A store per test, so one test's cached committee is never another's starting point.
+    wrapper = createWrapper(createTestStore([aleoApi], { disableSerializableCheck: true }));
   });
 
   // `unbond_public` and `claim_unbond_public` share one `unbonding` slot on chain.
@@ -2034,7 +2069,7 @@ describe("useAleoStakingPosition", () => {
           bondedValidator: VALIDATOR_ADDRESS,
         } as AleoAccount["aleoResources"],
       });
-      return renderHook(() => useAleoStakingPosition(account));
+      return renderHook(() => useAleoStakingPosition(account), { wrapper });
     };
 
     beforeEach(() => {
@@ -2109,10 +2144,11 @@ describe("useAleoStakingPosition", () => {
 
       const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
 
-      await act(async () => {});
+      // The rejection has to reach the store before "blames no one" means anything.
+      await waitFor(() => expect(result.current.validatorsError).toBe(error));
+
       expect(result.current.nonEarningReason).toBeUndefined();
       expect(result.current.validatorsLoading).toBe(false);
-      expect(result.current.validatorsError).toBe(error);
     });
 
     it("reports the fetch as loading so views can skeleton instead of guessing", () => {
@@ -2130,9 +2166,8 @@ describe("useAleoStakingPosition", () => {
 
       const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
 
-      await act(async () => {});
+      await waitFor(() => expect(result.current.validatorsError).toBe(error));
       expect(result.current.validatorsLoading).toBe(false);
-      expect(result.current.validatorsError).toBe(error);
     });
   });
 

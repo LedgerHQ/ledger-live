@@ -62,6 +62,7 @@ import type {
   AleoPublicTransaction,
   AleoTokenType,
   ProvableApi,
+  AleoAccount,
 } from "../types";
 import {
   estimateGrossRate,
@@ -133,6 +134,7 @@ import {
   isAleoOperationExtraRaw,
   getMinBondAmount,
   isValidatorBondable,
+  isFirstBondPending,
 } from "./utils";
 
 jest.mock("../config");
@@ -3805,5 +3807,33 @@ describe("isValidatorBondable", () => {
 
   it("rejects an over-concentrated validator", () => {
     expect(isValidatorBondable({ ...bondable, nonEarningReason: "overConcentrated" })).toBe(false);
+  });
+});
+
+describe("isFirstBondPending", () => {
+  const withPendingBond = (overrides: Partial<AleoAccount["aleoResources"]> = {}) =>
+    getMockedAccount({
+      pendingOperations: [getMockedOperation({ type: "BOND" })],
+      aleoResources: { ...mockAleoResources, ...overrides },
+    });
+
+  it("flags a pending bond on an account that holds no position", () => {
+    expect(isFirstBondPending(withPendingBond({ bondedValidator: null }))).toBe(true);
+  });
+
+  it("clears once a position exists, since the flow then locks the picker to its validator", () => {
+    expect(isFirstBondPending(withPendingBond({ bondedValidator: "aleo1validator" }))).toBe(false);
+  });
+
+  it("clears when nothing is pending", () => {
+    expect(isFirstBondPending(getMockedAccount({ pendingOperations: [] }))).toBe(false);
+  });
+
+  it("ignores a pending operation of another type", () => {
+    expect(
+      isFirstBondPending(
+        getMockedAccount({ pendingOperations: [getMockedOperation({ type: "UNBOND" })] }),
+      ),
+    ).toBe(false);
   });
 });

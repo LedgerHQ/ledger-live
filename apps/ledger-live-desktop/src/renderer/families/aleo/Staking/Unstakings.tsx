@@ -51,7 +51,7 @@ const Unstakings = ({ account, position }: Props) => {
   );
 
   // One decision for both the status icon and the completion cell, so the two cannot contradict
-  // each other — a green "you can claim these funds" next to "Claiming…" is unrepresentable.
+  // each other — a green "you can claim these funds" next to "Claiming..." is unrepresentable.
   const status = getUnbondingStatus({ pendingKind, isClaimable, isSettling });
   const amountIsSynced = unbondingBalance.gt(0);
 
@@ -124,11 +124,11 @@ const Unstakings = ({ account, position }: Props) => {
       <Wrapper>
         <Column strong>
           <Box mr={2}>
-            <FirstLetterIcon label={account.currency.name} />
+            <FirstLetterIcon label={unit.name} />
           </Box>
           <Box style={{ minWidth: 0 }}>
             <ToolTip content={t("aleo.stake.unstaking.sourceTooltip")}>
-              <Ellipsis>{account.currency.name}</Ellipsis>
+              <Ellipsis>{unit.name}</Ellipsis>
             </ToolTip>
           </Box>
         </Column>

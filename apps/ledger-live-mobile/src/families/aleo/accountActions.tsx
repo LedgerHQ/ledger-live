@@ -7,7 +7,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
-import { hasPendingOperationType } from "@ledgerhq/live-common/families/aleo/utils";
+import { isFirstBondPending } from "@ledgerhq/live-common/families/aleo/utils";
 import { NavigatorName, ScreenName } from "~/const";
 import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import ZeroBalanceDisabledModalContent from "~/components/FabActions/modals/ZeroBalanceDisabledModalContent";
@@ -25,7 +25,6 @@ const getMainActions = ({
   const mainAccount = getMainAccount<AleoAccount>(account, parentAccount);
   const transparentBalance = mainAccount.aleoResources?.transparentBalance;
   const hasNoPublicFunds = !transparentBalance || transparentBalance.isZero();
-  const hasPendingBond = hasPendingOperationType(mainAccount, "BOND");
   const config = getAleoCurrencyConfigById(mainAccount.currency.id);
   const stakeLabel = getStakeLabelLocaleBased();
   const showStakingAction = !!config?.enableStaking && account.type === "Account";
@@ -39,7 +38,7 @@ const getMainActions = ({
             Icon: IconsLegacy.CoinsMedium,
             event: "button_clicked",
             eventProperties: { button: "stake", currency: "ALEO", page: "Account Page" },
-            disabled: hasNoPublicFunds || hasPendingBond,
+            disabled: hasNoPublicFunds || isFirstBondPending(mainAccount),
             ...(hasNoPublicFunds && {
               modalOnDisabledClick: { component: ZeroBalanceDisabledModalContent },
             }),
