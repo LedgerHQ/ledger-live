@@ -64,4 +64,19 @@ describe("buildTopUpPath", () => {
   ])("names no app when the US app id is %s", (_case, usAppId) => {
     expect(buildTopUpPath(usAppId)).toBe("/topup");
   });
+
+  it("pre-selects the currency the caller names", () => {
+    expect(buildTopUpPath(null, "btc")).toBe("/topup?currency=btc");
+  });
+
+  it("names the US app and the currency together", () => {
+    expect(buildTopUpPath("LEDGERUS", "btc")).toBe("/topup?app_id=LEDGERUS&currency=btc");
+  });
+
+  it.each([
+    ["null", null],
+    ["an empty value", ""],
+  ])("pre-selects no currency when it is %s", (_case, currency) => {
+    expect(buildTopUpPath(null, currency)).toBe("/topup");
+  });
 });

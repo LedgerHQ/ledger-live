@@ -1,4 +1,5 @@
 ---
+"@features/flow-pay-card-assets": minor
 "@features/flow-pay-card-auth": minor
 "@features/flow-pay-card-details": minor
 "@features/flow-pay-card-widget": minor
@@ -13,3 +14,4 @@ Open the provider's top up page from the card on desktop.
 - Desktop opens `/topup` on the hosted live app manifest, the way the signup page already opens.
 - A US card holder gets the US `app_id` on the query, so the page reaches the US tenant.
 - Desktop ends the provider session in the webview on each entry of the Pay tab, so a session left behind by a top up cannot sign the previous holder back in. The login and the signup drop their own wipe: every one of them starts from an entry of the Pay tab.
+- The top up button in the asset details dialog opens the same page, with the asset pre-selected on the query.

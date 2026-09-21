@@ -1,6 +1,7 @@
 import React from "react";
 import { MemoryRouter } from "react-router";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
+import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { readCardUsEnv } from "@features/platform-card";
 import { getEnvDefault, setEnv } from "@shared/env";
 import { act, renderHook } from "tests/testSetup";
@@ -130,6 +131,18 @@ describe("useCardViewModel", () => {
 
     expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?app_id=LEDGERUS");
   });
+
+  it("pre-selects the asset the user topped up from", async () => {
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      result.current.assets?.onTopUp?.({ currency: "btc" } as CardAssetRow);
+    });
+
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?currency=btc");
+  });
+
   it("opens card history with a back path to Pay", () => {
     const { result } = renderCardViewModel(null);
 

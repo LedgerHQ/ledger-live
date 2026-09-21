@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { buildTopUpPath } from "@features/flow-pay-card-auth";
+import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import { readCardUsEnv } from "@features/platform-card";
 import useEnv from "@features/platform-env";
 import { useSelector } from "LLD/hooks/redux";
@@ -117,14 +118,19 @@ export function useCardViewModel(): CardViewModel {
 
   const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
 
-  const onTopUp = useCallback(async () => {
-    try {
-      const isUsCardHolder = await readCardUsEnv(usAppId);
-      await openHostedPage(buildTopUpPath(isUsCardHolder ? usAppId : null));
-    } catch (error) {
-      logger.warn("[card] the top up page did not open", error);
-    }
-  }, [openHostedPage, usAppId]);
+  const openTopUpPage = useCallback(
+    async (currency?: string) => {
+      try {
+        const isUsCardHolder = await readCardUsEnv(usAppId);
+        await openHostedPage(buildTopUpPath(isUsCardHolder ? usAppId : null, currency));
+      } catch (error) {
+        logger.warn("[card] the top up page did not open", error);
+      }
+    },
+    [openHostedPage, usAppId],
+  );
+
+  const onTopUp = useCallback(() => openTopUpPage(), [openTopUpPage]);
 
   useWipeHostedSession();
 
@@ -160,9 +166,13 @@ export function useCardViewModel(): CardViewModel {
   );
 
   const payCardAssets = usePayCardAssets();
-  const assets = useMemo(
-    () => ({ ...payCardAssets, onShowHistory: onShowAssetHistory }),
-    [onShowAssetHistory, payCardAssets],
+  const assets: CardAssetsProps = useMemo(
+    () => ({
+      ...payCardAssets,
+      onShowHistory: onShowAssetHistory,
+      onTopUp: asset => void openTopUpPage(asset.currency),
+    }),
+    [onShowAssetHistory, openTopUpPage, payCardAssets],
   );
 
   return {
