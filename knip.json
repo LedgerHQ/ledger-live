@@ -39,6 +39,14 @@
     "**/.eslintrc.tailwind.js"
   ],
   "workspaces": {
+    "./support/lint-tools": {
+      "entry": ["oxlint.config.mts", "bin/*.mjs"],
+      "project": ["**/*.{mts,mjs,js}"]
+    },
+    "./support/jest-domain": {
+      "entry": ["index.js"],
+      "project": ["**/*.js"]
+    },
     "./support/fmt-base": {
       "entry": ["oxlint.config.mts", "oxfmt.config.mts", "bin/*.mjs", "runner.mjs", "src/*.js"],
       "project": ["**/*.{mts,mjs,js}"]

@@ -40,6 +40,7 @@ oxlint configuration.
 | Package | Applies to |
 | --- | --- |
 | [`fmt-base`](./fmt-base) | every migrated layer — the repo's single oxfmt preset |
+| [`jest-domain`](./jest-domain) | `domain/entity/*`, `domain/api/*` - node logic packages |
 | [`jest-devtools`](./jest-devtools) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
 | [`jest-features-flow`](./jest-features-flow) | `features/flow/*` — dual web/native jest preset plus Lumen passthrough stubs |
 | [`jest-shared`](./jest-shared) | `shared/*` — flat node preset for logic packages, dual web/native and native-only presets for UI packages |
@@ -51,6 +52,7 @@ oxlint configuration.
 | [`lint-libs`](./lint-libs) | the 50 `libs/*` packages that used `libs/oxc-live-libs` |
 | [`lint-shared`](./lint-shared) | `shared/*` |
 | [`lint-support`](./lint-support) | `support/*` |
+| [`lint-tools`](./lint-tools) | `tools/*`, including `tools/actions/*` |
 | [`msw-features-flow-pay-card`](./msw-features-flow-pay-card) | `features/flow/pay-card-*` — MSW + RTK Query test store and server |
 | [`ts-base`](./ts-base) | the root of the tsconfig chain; `tsconfig.base.json` is a shim over it |
 | [`ts-devtools`](./ts-devtools) | `devtools/*` |

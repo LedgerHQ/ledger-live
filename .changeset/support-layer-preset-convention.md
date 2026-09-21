@@ -7,7 +7,9 @@
 "@support/lint-libs": minor
 "@support/lint-shared": minor
 "@support/lint-support": minor
+"@support/lint-tools": minor
 "@support/fmt-base": minor
+"@support/jest-domain": minor
 "@support/ts-base": minor
 "@support/ts-devtools": minor
 "@support/ts-domain": minor
@@ -32,6 +34,9 @@ Give `support/` one naming axis, the layer, and apply it to oxlint, oxfmt and ts
   `@support/fmt-base`.
 - `tsconfig.base.json` becomes a shim over `@support/ts-base`, so `apps/`, `libs/`, `tools/` and
   `e2e/` keep exactly the options they have today.
+- `tools/` and the 27 `domain/*` jest configs join too: `tools/.oxlintrc.json` named nothing that
+  `lint-base` did not already say, and the domain jest configs were three distinct contents with
+  21 byte-identical copies.
 
 No rule becomes fatal anywhere: lint gains 61 previously-unlinted packages and 663 warnings, and the
 set of packages exiting non-zero is unchanged. `tools/scripts/lint-diagnostics-snapshot.mjs` and

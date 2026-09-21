@@ -80,6 +80,7 @@ tools/nx-plugins/generators/                             @ledgerhq/platform
 # Platform — support
 support/fmt-base/                                        @ledgerhq/platform
 support/jest-devtools/                                   @ledgerhq/platform
+support/jest-domain/                                     @ledgerhq/platform
 support/jest-features-flow/                              @ledgerhq/platform
 support/jest-shared/                                     @ledgerhq/platform
 support/lint-base/                                       @ledgerhq/platform
@@ -90,6 +91,7 @@ support/lint-features-platform/                          @ledgerhq/platform
 support/lint-libs/                                       @ledgerhq/platform
 support/lint-shared/                                     @ledgerhq/platform
 support/lint-support/                                    @ledgerhq/platform
+support/lint-tools/                                      @ledgerhq/platform
 support/test-quarantine/                                 @ledgerhq/platform
 support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
 
