@@ -899,6 +899,7 @@
     },
     "card" : {
       "title" : "Kripto kartı",
+      "topUp" : "Bakiye yükle",
       "balanceLabel" : "Bakiye",
       "freeze" : "Dondur",
       "unfreeze" : "Çöz",
@@ -918,11 +919,49 @@
         "description" : "Bir hata oluştu. Lütfen tekrar deneyin.",
         "retry" : "Tekrar deneyin"
       },
+      "assets" : {
+        "title" : "Varlıklar",
+        "empty" : "Henüz varlık yok",
+        "error" : "Varlıklar yüklenemedi",
+        "info" : "Kartınız, harcamalarınızda bu varlıkları kullanır. Sırasıyla hangi varlıkların harcanacağını belirleyin veya daha fazla varlık ekleyin.",
+        "manage" : "Yönet",
+        "manageDialog" : {
+          "title" : "Varlıkları yönetin",
+          "description" : "Harcama sırasını belirlemek için sürükleyin. Bir varlığın bakiyesi yetersiz kalırsa otomatik olarak sıradaki varlık kullanılır.",
+          "addAssetCaption" : "Varlık eklemek için Baanx'in sayfasına yönlendirileceksiniz.",
+          "addAsset" : "Varlık ekle"
+        },
+        "details" : {
+          "topUp" : "Bakiye yükle",
+          "withdraw" : "Çek",
+          "transactions" : "İşlemler"
+        },
+        "withdraw" : {
+          "title" : "Baanx'e yönlendirileceksiniz",
+          "description" : "Baanx hesabınızdan Ledger cüzdan adresinize bakiye çekin.",
+          "continue" : "Devam"
+        },
+        "history" : {
+          "columns" : {
+            "amount" : "Tutar",
+            "value" : "Değer"
+          }
+        }
+      },
+      "reward" : {
+        "title" : "Toplam para iadesi"
+      },
       "numbers" : {
         "reveal" : "Görüntüle",
         "hide" : "Gizle",
         "failed" : "Kart numaraları yüklenemedi",
-        "imageAlt" : "Kart numaraları"
+        "imageAlt" : "Kart numaraları",
+        "unlockTitle" : "Parolanızı girin",
+        "passwordRequired" : "Parola gerekli",
+        "passwordMismatch" : "Parolalar eşleşmiyor",
+        "passwordIncorrect" : "Yanlış parola",
+        "passwordUnavailable" : "Parolanızı kontrol edemedik",
+        "passwordCreateFailed" : "Parolanızı belirleyemedik"
       }
     },
     "cardTransactions" : {
@@ -954,6 +993,31 @@
           "DECLINED" : "Reddedildi",
           "REVERTED" : "Geri döndürüldü"
         }
+      },
+      "history" : {
+        "today" : "Bugün",
+        "yesterday" : "Dün",
+        "unknownDate" : "Tarih mevcut değil",
+        "columns" : {
+          "transaction" : "İşlem",
+          "cashback" : "Para iadesi",
+          "fundingSources" : "Fonlama kaynağı",
+          "amount" : "Tutar"
+        },
+        "paidWithAssets" : "{{count}} varlık ile ödendi",
+        "goToPay" : "Ödemeye Git",
+        "signedOut" : {
+          "title" : "Kart işlemlerinizi görmek için giriş yapın",
+          "description" : "Giriş yaptığınızda kart hareketleriniz burada görünür."
+        },
+        "empty" : {
+          "title" : "Henüz kart işlemi yok",
+          "description" : "Kart işlemlerinizi görmek için daha sonra geri dönün."
+        },
+        "error" : {
+          "title" : "Kart işlemleri yüklenemedi",
+          "description" : "Bağlantınızı kontrol edin ve tekrar deneyin."
+        }
       }
     },
     "cardOnboarding" : {
@@ -965,6 +1029,28 @@
         "title" : "Kart kurulumunu tamamlayın",
         "stepComplete" : "Tamamlandı",
         "gotIt" : "Anladım"
+      },
+      "steps" : {
+        "createAccount" : {
+          "title" : "Hesabınızı oluşturun",
+          "description" : "Başlamak için kimliğinizi doğrulayın"
+        },
+        "chooseCardType" : {
+          "title" : "Kart türünüzü seçin",
+          "description" : "Sanal veya fiziksel arasından seçim yapın"
+        },
+        "topUpCard" : {
+          "title" : "Kartınıza bakiye yükleyin",
+          "description" : "USDC, USDT, BTC veya daha fazlasını kullanarak bakiye ekleyin"
+        },
+        "firstPurchase" : {
+          "title" : "İlk satın alımınızı gerçekleştirin",
+          "description" : "İnternette veya mağazada ödeme yapın"
+        },
+        "appleGooglePay" : {
+          "title" : "Apple Pay/Google Pay'e ekleyin",
+          "description" : "Mağazada telefonunuzla ödeyin"
+        }
       }
     },
     "contacts" : {
@@ -2069,6 +2155,13 @@
     "details" : "{{ currency }} ayrıntıları",
     "multipleAddresses" : "Neden birden fazla adres var?",
     "extra" : {
+      "pltReject" : {
+        "title" : "Neden",
+        "nonExistentToken" : "Bu token Concordium'da bulunmuyor.",
+        "recipientNotFound" : "Alıcı hesabı Concordium'da bulunmuyor.",
+        "insufficientBalance" : "Hesapta yeterli miktarda token bulunmuyordu.",
+        "rejected" : "Concordium bu işlemi reddetti."
+      },
       "frozenAmount" : "Dondurulan tutar",
       "unfreezeAmount" : "Çözülen tutar",
       "votes" : "Oylar ({{number}})",
@@ -7918,7 +8011,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "Bu hesap bu token'ı gönderemez",
-      "description" : "Token ihraççısı bu token'ı kimlerin gönderebileceğini kısıtlıyor ve bu hesaba izin verilmiyor. Erişim için token ihraççısıyla iletişime geçin."
+      "description" : "Token ihraççısı, bunu kimlerin gönderebileceğini kısıtlıyor. Ayrıntılar için token ihraççısıyla iletişime geçin."
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "Bu hesabın bu token'ı göndermek için onayı bulunmuyor",
+      "description" : "Token ihraççısı onaylı gönderenlerin bir listesini tutuyor ve bu hesap ilgili listede yer almıyor. Onay, Ledger tarafından değil, ihraççı tarafından yönetilir."
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "Bu hesabın bu token'ı göndermesi kısıtlandı",
+      "description" : "Token ihraççısı bu hesabı kısıtladı. Ayrıntılar için ihraççıyla iletişime geçin."
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "Token kısıtlamaları doğrulanamadı",
@@ -8171,6 +8272,30 @@
     },
     "AleoApiConfigurationResetError" : {
       "title" : "Tarayıcı yapılandırması sıfırlandı, lütfen hesabınızı tekrar eşitleyin."
+    },
+    "AleoNoClaimableUnbondedFunds" : {
+      "title" : "Henüz talep edebileceğiniz çözülmüş ALEO yok",
+      "description" : "Çözülmüş ALEO, çözülme süresi dolduğunda alınabilir hâle gelir. Süre dolduğunda tekrar deneyin."
+    },
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "{{bondedValidator}} ile zaten staking yapıyorsunuz. Doğrulayıcıyı değiştirmeden önce stake etmeyi durdurun.",
+      "description" : "Aleo, hesap başına bir doğrulayıcıya izin verir. Başka bir yerde staking yapmadan önce {{bondedValidator}} üzerinden stake etmeyi durdurun."
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "Tek seferde en az {{minAmount}} stake etmeniz gerekir.",
+      "description" : "Minimum staking tutarı: {{minAmount}}."
+    },
+    "AleoClosedValidator" : {
+      "title" : "Bu doğrulayıcı, yeni yetki devreden kabul etmiyor.",
+      "description" : "Bu doğrulayıcı, yeni yetki devreden kabul etmiyor. Devam etmek için açık bir doğrulayıcı seçin."
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "Stake etmek için toplamda en az {{minAmount}} gerekir.",
+      "description" : "Toplamda en az {{minAmount}} tutarında staking yapmış olmanız gerekir."
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "Bu doğrulayıcının bağı çözülüyor.",
+      "description" : "Bu doğrulayıcı kendi stake varlıklarını geri çekiyor, bu nedenle ağ söz konusu doğrulayıcıya yönelik yeni stake işlemlerini reddediyor. Devam etmek için başka bir doğrulayıcı seçin."
     },
     "BackupAppDataError" : {
       "title" : "Uygulama verileri yedeklenirken hata oluştu"
@@ -9130,7 +9255,11 @@
     "opted_in" : {
       "title" : "Daha iyi görerek imzalayın",
       "description" : "Model yükseltin ve %{{discount}} indirim kazanın.",
-      "cta" : "Ledger modelimi yükselt"
+      "cta" : "Ledger modelimi yükselt",
+      "nanoS" : {
+        "title" : "Ledger Nano S Model Yükseltme Programı",
+        "description" : "Yeni işletim sistemine ve güvenlik özelliklerine erişin. %{{discount}} indirimden faydalanın."
+      }
     },
     "opted_out" : {
       "title" : "Daha fazla güvenlik ve kontrol",
@@ -9140,7 +9269,11 @@
     "profile" : {
       "title" : "Cihazınızı Yükseltin",
       "description" : "Daha büyük ekran, daha iyi güvenlik. %{{discount}} indirimi kaçırmayın.",
-      "cta" : "Keşfet"
+      "cta" : "Keşfet",
+      "nanoS" : {
+        "title" : "Ledger Nano S Model Yükseltme Programı",
+        "description" : "Yeni işletim sistemine ve güvenlik özelliklerine erişin. %{{discount}} indirimden faydalanın."
+      }
     }
   },
   "largeScreenUpsellModal" : {
@@ -9229,6 +9362,7 @@
     "unsupportedNetworkTooltip" : "{{network}} ağı henüz desteklenmiyor",
     "notAvailableYet" : "Henüz mevcut değil",
     "selectAccount" : "Hesap seçin",
+    "selectAccountToPayFrom" : "Ödeme için kaynak hesabı seçin",
     "selectAccountPerpsTitle" : "Hyperliquid hesabı seçin",
     "selectAccountPerpsDescription" : "İşlemlerinizi gerçekleştirmek için bakiye yatırmak istediğiniz hesabı seçin",
     "selectAccountPerpsEmptyDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
@@ -9662,10 +9796,70 @@
         "lastSync" : "Son senkronizasyon: {{date}}"
       }
     },
+    "stake" : {
+      "table" : {
+        "header" : "Staking",
+        "status" : "Durum",
+        "validator" : "Doğrulayıcı",
+        "amount" : "Tutar",
+        "staked" : "Stake edildi",
+        "rate" : "Tahm. ödül kuru",
+        "completion" : "Tamamlama",
+        "source" : "Kaynak",
+        "estimatedRate" : "Tahmini %{{rate}}",
+        "unknownValidator" : "Bilinmeyen doğrulayıcı",
+        "manage" : "Yönet"
+      },
+      "status" : {
+        "earningTooltip" : "Bu pozisyon ödül kazanıyor.",
+        "unknown" : "Durum kullanılamıyor"
+      },
+      "stakedBalance" : "Stake edildi",
+      "stakedBalanceTooltip" : "Bir doğrulayıcıya bağlı olan bakiye. Durum sütununda, ödül kazanıp kazanmadığı gösterilir.",
+      "unstakingBalance" : "Stake durduruluyor",
+      "unstakingBalanceTooltip" : "Çözülmekte olan ve henüz alınamayan bakiye",
+      "claimableBalance" : "Talep edilebilir",
+      "claimableBalanceTooltip" : "Çözülmesi tamamlanan ve mevcut bakiyenize geri talep edilebilecek bakiye",
+      "nonEarning" : {
+        "fullCommission" : "Bu doğrulayıcı %100 komisyon alır; bu nedenle size hiçbir şey kalmaz.",
+        "overConcentrated" : "Bu doğrulayıcı, stake edilen tüm ALEO'ların %25'inden fazlasını elinde bulunduruyor. Protokol bu üst sınırın üzerinde ona hiçbir ödeme yapmaz, bu yüzden hiçbir şey kazanamazsınız.",
+        "leftCommittee" : "Bu doğrulayıcı artık komitede değil; bu nedenle stake ettiğiniz varlıklar ödül kazandırmaz. Yeniden ödül kazanmaya başlamak için stake etmeyi durdurun ve başka bir doğrulayıcıya bağlayın.",
+        "ownStakeBelowMinimum" : "Bu doğrulayıcıdaki toplam stake miktarınız minimum 10.000 ALEO sınırının altında olduğundan ödül kazandırmaz. Yeniden kazanmaya başlamak için stake miktarınızı artırın."
+      },
+      "unstaking" : {
+        "header" : "Stake durduruluyor",
+        "headerTooltip" : "Çözülmüş ALEO varlıkları, zincir çözülme blok yüksekliğine ulaştığında alınabilir hâle gelir.",
+        "sourceTooltip" : "Çözülmüş ALEO, bir doğrulayıcı tarafından değil, talep edilebilir hâle gelene kadar protokol tarafından tutulur. Zincir, varlıkların hangi doğrulayıcıdan geldiğini kaydetmez.",
+        "pendingTooltip" : "Bağ çözme devam ediyor: henüz talep edilemez.",
+        "claimableTooltip" : "Bağ çözme tamamlandı. Bu fonları talep edebilirsiniz.",
+        "settling" : "Çok az kaldı...",
+        "settlingTooltip" : "Çözülme süresi sona erdi. Bakiyeniz yenileniyor: talep birazdan kullanılabilir olacaktır.",
+        "claimPending" : "Talep ediliyor...",
+        "claimPendingTooltip" : "Talebiniz gönderildi ve onay bekliyor. Bu fonlar kısa süre içinde mevcut bakiyenize geçecektir.",
+        "unbondPending" : "Stake durduruluyor...",
+        "unbondPendingTooltip" : "Stake durdurma işlemi gönderildi ve onay bekliyor. Bu işlem aynı kilit açma pozisyonunu değiştirir, bu nedenle söz konusu işlem tamamlanana kadar talep etme özelliği kullanılamaz."
+      },
+      "claim" : "Ödülleri topla",
+      "claimableAtTooltip" : "{{height}}. blokta talep edilebilir (mevcut blok: {{current}})",
+      "blocksRemaining_one" : "~{{count}} blok kaldı",
+      "blocksRemaining_other" : "~{{count}} blok kaldı",
+      "bondPendingTooltip" : "Bir stake gönderildi ve onaylanması bekleniyor. Aleo, hesap başına bir staking pozisyonu destekler; bu nedenle, bu işlem gerçekleşene kadar staking kullanılamaz.",
+      "emptyState" : {
+        "description" : "{{name}} stake ederek ödül kazanabilirsiniz.",
+        "earnRewards" : "Ödüller kazanın"
+      }
+    },
     "operations" : {
       "type" : {
         "public" : "Açık",
         "private" : "Gizli"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "Doğrulayıcı",
+        "bondedAmount" : "Stake edilmiş tutar",
+        "unbondedAmount" : "Stake’i durdurulan tutar"
       }
     },
     "send" : {
@@ -9683,6 +9877,9 @@
         "errorTitle" : "Gizli bakiye senkronizasyonu başarısız oldu.",
         "errorDesc" : "Bir şeyler yanlış gitti, lütfen tekrar deneyin."
       }
+    },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "Ödülleri topla"
     },
     "bond" : {
       "flow" : {
@@ -9727,7 +9924,6 @@
     "manage" : {
       "headerAction" : "Kazan",
       "title" : "Stake'inizi yönetin",
-      "comingSoonTooltip" : "Çok yakında",
       "bond" : {
         "title" : "Bağla",
         "description" : "Ödül kazanmak için ALEO'nuzu bir doğrulayıcıya bağlayın."
@@ -9740,7 +9936,10 @@
         "title" : "Ödülleri topla",
         "description" : "Çözülmüş ALEO varlıklarınızı kullanılabilir bakiyenize geri aktarmak için talep edin."
       },
-      "unbondPendingTooltip" : "Stake durdurma onay bekliyor. Aleo aynı anda yalnızca bir bağ çözme pozisyonunu takip eder; bu nedenle, bu işlem gerçekleşene kadar bağ çözme işlemi kullanılamaz."
+      "unbondPendingTooltip" : "Bir stake durdurma talebi onaylanmayı bekliyor. Aleo aynı anda yalnızca bir bağ çözme pozisyonunu takip eder; bu nedenle, bu işlem gerçekleşene kadar bağ çözme ve talep etme işlemleri kullanılamaz.",
+      "claimPendingTooltip" : "Bir talep onay bekliyor. Aleo aynı anda yalnızca bir bağ çözme pozisyonunu takip eder; bu nedenle, bu işlem gerçekleşene kadar bağ çözme ve talep etme işlemleri kullanılamaz.",
+      "stillUnbondingTooltip" : "Çözülmüş ALEO'nuz hâlâ çözülme dönemindedir. Süre dolduktan sonra bunu talep edebilirsiniz.",
+      "nothingToClaimTooltip" : "Talep edebileceğiniz çözülmüş ALEO'nuz yok. Önce stake'inizin bir kısmını çözün."
     },
     "unbond" : {
       "flow" : {
@@ -9765,6 +9964,30 @@
           }
         }
       }
+    },
+    "claim" : {
+      "flow" : {
+        "title" : "ALEO talep edin",
+        "steps" : {
+          "summary" : {
+            "title" : "Özet",
+            "info" : "Bu işlem, bağ çözme süresi dolmuş olan tüm ALEO'ları hesabınıza geri talep eder.",
+            "claimableAmountLabel" : "Talep edilebilir tutar"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Talep gönderildi",
+              "text" : "Talebiniz yayınlandı.",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "Talep işleminiz imzalandı ancak yayımlanamadı."
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9772,26 +9995,6 @@
     "downloadProgress" : "%{{progress}}",
     "errorTryAgain" : "Güncelleme sırasında bir hata oluştu. Tekrar deneyin",
     "installAndRelaunch" : "Yeni güncelleme. Yükleyip yeniden başlatın"
-  },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "Portföyünüz şimdi daha net",
-        "description" : "Toplam bakiyenizi ilk bakışta görün ve detaylı bilgiler için \"Bugün\" seçeneğine dokunun."
-      },
-      "navigation" : {
-        "title" : "Temel eylemlere daha hızlı erişin",
-        "description" : "Transfer alma, gönderme, satın alma ve satma işlemlerine anında erişin."
-      },
-      "actions" : {
-        "title" : "Piyasa trendlerini anında görün",
-        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hızlıca görün ve içgörüleri eyleme dönüştürün."
-      }
-    },
-    "cta" : {
-      "continue" : "Devam",
-      "explore" : "Yeni portföyü keşfet"
-    }
   },
   "q2Tour" : {
     "slides" : {
@@ -9890,6 +10093,8 @@
   },
   "history" : {
     "title" : "İşlem geçmişi",
+    "cardScope" : "Kart",
+    "cardAssetScope" : "Kart · {{assetName}}",
     "pending" : "Bekleyen işlem",
     "pending_other" : "Bekleyen İşlemler",
     "columns" : {
@@ -9905,6 +10110,11 @@
     "emptyState" : {
       "title" : "Henüz işlem yok",
       "description" : "İşlemlerinizi görmek için daha sonra geri dönün."
+    },
+    "tabs" : {
+      "crypto" : "Kripto",
+      "card" : "Kart",
+      "accessibilityLabel" : "İşlem geçmişi türü"
     },
     "actionsBar" : {
       "csv" : "Dışa aktar",
