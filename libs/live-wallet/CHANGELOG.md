@@ -1,5 +1,15 @@
 # @ledgerhq/live-wallet
 
+## 1.1.3
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/types-live@6.124.0
+  - @domain/entity-contact@0.9.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0
+  - @shared/cloud-sync-module@0.4.0
+
 ## 1.1.3-next.0
 
 ### Patch Changes

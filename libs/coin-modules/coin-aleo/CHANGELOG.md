@@ -1,5 +1,38 @@
 # @ledgerhq/coin-aleo
 
+## 2.4.0
+
+### Minor Changes
+
+- [#21653](https://github.com/LedgerHQ/ledger-live/pull/21653) [`269d6d4`](https://github.com/LedgerHQ/ledger-live/commit/269d6d404779439d0e98beb2ed3cef82805612ae) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - feat(aleo): add the bond public staking flow
+
+- [#21729](https://github.com/LedgerHQ/ledger-live/pull/21729) [`4c64bdc`](https://github.com/LedgerHQ/ledger-live/commit/4c64bdc31d29b21c9ea31732ade8f6ba277b9107) Thanks [@0xMM-L](https://github.com/0xMM-L)! - feat: craft unbond_public and claim_unbond_public staking transactions — the two backend wire
+  intents, the staker guard, their credits.aleo function names, the shared staking mode →
+  operation-type table, fee-valued optimistic operations for all three staking modes, and no Amount
+  row on a claim's device confirmation. No user-reachable behaviour yet: nothing can construct a
+  transaction in either mode until the bridge transaction mode union is extended.
+
+- [#21753](https://github.com/LedgerHQ/ledger-live/pull/21753) [`452041f`](https://github.com/LedgerHQ/ledger-live/commit/452041f8123bc887534048ed94167c81ca54c2b6) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - Persist the Aleo staking position on the account. Each public sync now reads the `credits.aleo` `bonded` and `unbonding` mappings and stores `bondedBalance`, `bondedValidator`, `unbondingBalance` and `unbondingHeight` on `aleoResources`, so a staked position survives serialization and is readable without an extra fetch.
+
+- [#21804](https://github.com/LedgerHQ/ledger-live/pull/21804) [`81456c8`](https://github.com/LedgerHQ/ledger-live/commit/81456c8a3c1e4359f4697cced7c89e9be744f3f6) Thanks [@0xMM-L](https://github.com/0xMM-L)! - feat: prepare bond_public, unbond_public and claim_unbond_public transactions — the two missing
+  bridge transaction mode arms and their raw form, per-mode fee lookup, per-mode amount resolution,
+  and the withdrawal and recipient addresses pinned to the account's own address so a caller cannot
+  choose them. Because an unbond and a claim are therefore self-referential, a self-send is now
+  allowed for those two modes while staying rejected for every transfer mode. Also fixes a bond being
+  relabelled as a public transfer, and so priced at the transfer fee, on its way through the bridge.
+  No user-reachable behaviour yet: the staking flows remain behind the disabled staking configuration
+  flag.
+
+- [#21927](https://github.com/LedgerHQ/ledger-live/pull/21927) [`95b4e92`](https://github.com/LedgerHQ/ledger-live/commit/95b4e92bd6ba76987e0f1b540d21312a37c015b0) Thanks [@0xMM-L](https://github.com/0xMM-L)! - feat(aleo): validate bond, unbond and claim transactions in `getTransactionStatus`
+
+- [#21852](https://github.com/LedgerHQ/ledger-live/pull/21852) [`f6dc62f`](https://github.com/LedgerHQ/ledger-live/commit/f6dc62f7f23be9f46812fc13f00ddc373e5ca1af) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - feat(aleo): add the unbond staking flow
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/types-live@6.124.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0
+
 ## 2.4.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,25 @@
 # @ledgerhq/coin-internet_computer
 
+## 1.30.0
+
+### Minor Changes
+
+- [#20774](https://github.com/LedgerHQ/ledger-live/pull/20774) [`0c413f3`](https://github.com/LedgerHQ/ledger-live/commit/0c413f3dcf65071bf963933f446fc24c9711a996) Thanks [@amaslakov](https://github.com/amaslakov)! - Fix seven defects in the Internet Computer neuron implementation.
+
+  Operation history: governance calls were typed `FEES` and filed as a fee that was never charged, with an explorer link that always 404s, and now stay out of history entirely; a settled stake read as a plain send until a device-signed `list_neurons` arrived; retyping a transfer left the stale copy beside the new one; and the stored operation count climbed without bound instead of tracking the account.
+
+  Both rejection paths threw a bare `Error`, so the apps said "Something went wrong" about a request the network had answered — `ICPGovernanceRejected` and `ICPCallRejected` are now distinct and quote the network's own wording, and a `list_neurons` read that came back empty raises `ICPNeuronsNotRead` rather than reporting success. Voting power subtracts a neuron's accrued rejection fees, matching the canister's `stake_e8s`. And the operation extra is converted when an account is serialized, so a neuron snapshot riding on an operation cannot break persistence.
+
+- [#20774](https://github.com/LedgerHQ/ledger-live/pull/20774) [`c6a569d`](https://github.com/LedgerHQ/ledger-live/commit/c6a569d5848e6c0fd7973cb5ab7241b39d47f77b) Thanks [@amaslakov](https://github.com/amaslakov)! - Add the ICP neuron management and voting-power confirmation flows on Desktop, with the periodic-confirmation decode and neuron helpers they run on.
+
+  An accepted command is reflected as soon as the network accepts it, without waiting for a device-signed refresh, and the account re-syncs after a stake. A command the device has already signed is offered for retry only when the network says nothing ran. Actions a neuron cannot take are not offered — Increase stake without a recoverable stake nonce, Increase dissolve delay with under a day of room, a followee list that changes nothing. Staked maturity counts toward the account's Total Maturity, and a rejected input names the bound it broke rather than an error class name.
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/types-live@6.124.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0
+
 ## 1.30.0-next.0
 
 ### Minor Changes

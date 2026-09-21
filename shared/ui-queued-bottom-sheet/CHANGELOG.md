@@ -1,5 +1,11 @@
 # @shared/ui-queued-bottom-sheet
 
+## 0.4.0
+
+### Minor Changes
+
+- [#21681](https://github.com/LedgerHQ/ledger-live/pull/21681) [`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add freeze/unfreeze confirmation error handling with retry
+
 ## 0.4.0-next.0
 
 ### Minor Changes

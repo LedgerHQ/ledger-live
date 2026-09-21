@@ -1,5 +1,18 @@
 # @ledgerhq/coin-celo
 
+## 3.2.0
+
+### Minor Changes
+
+- [#21884](https://github.com/LedgerHQ/ledger-live/pull/21884) [`d1a8cb2`](https://github.com/LedgerHQ/ledger-live/commit/d1a8cb2403bbe6771dfee3e43fbc4c4df61d4c7c) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-celo): move `stakingSupported` to `BridgeApi`
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/types-live@6.124.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0
+  - @ledgerhq/hw-app-eth@7.8.19
+
 ## 3.2.0-next.0
 
 ### Minor Changes

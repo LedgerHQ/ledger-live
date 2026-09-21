@@ -1,5 +1,39 @@
 # @features/platform-card
 
+## 0.5.0
+
+### Minor Changes
+
+- [#21920](https://github.com/LedgerHQ/ledger-live/pull/21920) [`b49d5b5`](https://github.com/LedgerHQ/ledger-live/commit/b49d5b573e84bd63ac460ae398657f1035613141) Thanks [@ysitbon](https://github.com/ysitbon)! - Give each dual-platform feature package its own web and native TypeScript project
+
+  These packages keep `.web.*` and `.native.*` sources side by side but typechecked both
+  in a single program, so `tsc` resolved suffix-free imports without knowing which
+  platform it was checking. Each package now carries a solution-style `tsconfig.json`
+  that owns no files and references one project per platform it targets, as described in
+  `docs/tsconfig-in-ddd.md`. The web project sets `moduleSuffixes: [".web", ""]` and
+  excludes the native sources, the native project does the reverse and also excludes the
+  unsuffixed web barrel, and `typecheck` runs both passes. `@features/flow-large-screen-upsell`
+  is web-only and gets a web project on its own.
+
+  Separating the two programs surfaced cross-platform leaks that a single program could
+  not see, so this also fixes them. Barrels that hard-pinned one platform's file, in the
+  Contacts button and the Market banner, now import suffix-free and let `moduleSuffixes`
+  choose, which makes their parallel `index.native.ts` barrels redundant. The three
+  packages whose web entry was `src/web.ts` now expose it as `src/index.ts`, so a native
+  program resolving the package can find the `index.native.ts` beside it instead of
+  falling through to the web barrel and dragging web components into the native program.
+  `@features/platform-style` gives its web implementations the `.web` suffix they were
+  missing, which stops its native program from typechecking web code against native
+  components. One web test reached for `require`, which only resolved because React
+  Native's global typings were leaking in from the native files sharing its program, and
+  now imports normally.
+
+### Patch Changes
+
+- Updated dependencies [[`8f62cdb`](https://github.com/LedgerHQ/ledger-live/commit/8f62cdbb6d93e207efd7e551af65a41953d28242), [`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf), [`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438), [`e37413b`](https://github.com/LedgerHQ/ledger-live/commit/e37413b588873a1a2a028ebf4c1971e4fa92ed2a), [`9e61582`](https://github.com/LedgerHQ/ledger-live/commit/9e61582edfcbb98046d0f74111ccf4061ec44bb3), [`3f34609`](https://github.com/LedgerHQ/ledger-live/commit/3f34609edecc5ae85a9a9ac1b76ab47e30a9c66e), [`c6f7bfe`](https://github.com/LedgerHQ/ledger-live/commit/c6f7bfead8593c148fe6e3d177ff8dd734728f5a), [`fcc2ac4`](https://github.com/LedgerHQ/ledger-live/commit/fcc2ac4c5ed270fb63df4c0079068ad6dac94612), [`eddc89e`](https://github.com/LedgerHQ/ledger-live/commit/eddc89e7b86a13aeedfc0ae4956c2dcd08494e5f), [`37f5759`](https://github.com/LedgerHQ/ledger-live/commit/37f57595f11d40562914794645cb3c7f6e55dc8b), [`a2a0288`](https://github.com/LedgerHQ/ledger-live/commit/a2a028844dbfbfa019f1f971bf6fdbed9005b9ec), [`8b3320d`](https://github.com/LedgerHQ/ledger-live/commit/8b3320d7aab0ff25eeb8930dafa536fb94962c79), [`e65a6b3`](https://github.com/LedgerHQ/ledger-live/commit/e65a6b3e67e271343b7029613498176b1da2d7d2), [`9d0b721`](https://github.com/LedgerHQ/ledger-live/commit/9d0b721dbfd8b71d32d2d16db22ad8e54f45f541)]:
+  - @domain/api-card-management@0.6.0
+  - @shared/api-services@0.7.0
+
 ## 0.5.0-next.0
 
 ### Minor Changes

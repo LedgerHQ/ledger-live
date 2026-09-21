@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-btc
 
+## 0.5.0
+
+### Minor Changes
+
+- [#21950](https://github.com/LedgerHQ/ledger-live/pull/21950) [`30828c2`](https://github.com/LedgerHQ/ledger-live/commit/30828c22cc44c9929d7eda782e9d559a9e0145c3) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore(deps): source @noble/curves and @noble/hashes from the pnpm catalog
+
 ## 0.5.0-next.0
 
 ### Minor Changes

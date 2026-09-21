@@ -1,5 +1,30 @@
 # @ledgerhq/coin-hedera
 
+## 2.4.0
+
+### Minor Changes
+
+- [#21703](https://github.com/LedgerHQ/ledger-live/pull/21703) [`2706dda`](https://github.com/LedgerHQ/ledger-live/commit/2706ddad88ea10d117093bba8775b6aef655fbda) Thanks [@ysitbon](https://github.com/ysitbon)! - Restore lazy runtime read of the countervalues API endpoint.
+
+  PR #21659 dropped the live-countervalues dependency and inlined the CVS spot-price call.
+  In doing so it replaced the per-call `getEnv("LEDGER_COUNTERVALUES_API")` with a
+  module-level `process.env` constant evaluated once at import time. The default URL was
+  always correct, but the mobile debug staging toggle (`CountervaluesStagingRow`) calls
+  `setEnv("LEDGER_COUNTERVALUES_API", ...)` at runtime; with a const that write is silently
+  ignored and Hedera fee estimation stays on production rates while every other CVS caller
+  follows the toggle.
+
+  Fix: read `getEnv("LEDGER_COUNTERVALUES_API")` inline at request time and re-add
+  `@ledgerhq/live-env` as a runtime dependency.
+
+- [#21659](https://github.com/LedgerHQ/ledger-live/pull/21659) [`c6df5b6`](https://github.com/LedgerHQ/ledger-live/commit/c6df5b65aa66f44d8dff124e4e1d089d53e1d1a6) Thanks [@ysitbon](https://github.com/ysitbon)! - Fetch the HBAR/USD spot rate directly from the countervalues service instead of through `@ledgerhq/live-countervalues`, removing that runtime dependency. Rate values, caching, and the fallback to the default fee estimate are unchanged.
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/types-live@6.124.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0
+
 ## 2.4.0-next.0
 
 ### Minor Changes

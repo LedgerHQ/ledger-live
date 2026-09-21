@@ -1,5 +1,13 @@
 # @devtools/registry
 
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies [[`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438), [`41f7dc9`](https://github.com/LedgerHQ/ledger-live/commit/41f7dc963ac7329e5ec07236c85e322a56476be7), [`fbfdc3f`](https://github.com/LedgerHQ/ledger-live/commit/fbfdc3f5767a4dfbbf79de16fe9bcc61f9b5b941), [`cef83ae`](https://github.com/LedgerHQ/ledger-live/commit/cef83ae58ffc5529bebda292737502e78e3b7522), [`fcc2ac4`](https://github.com/LedgerHQ/ledger-live/commit/fcc2ac4c5ed270fb63df4c0079068ad6dac94612), [`eddc89e`](https://github.com/LedgerHQ/ledger-live/commit/eddc89e7b86a13aeedfc0ae4956c2dcd08494e5f)]:
+  - @devtools/pay-card@0.6.0
+  - @devtools/feature-flags@0.9.2
+
 ## 0.4.3-next.0
 
 ### Patch Changes

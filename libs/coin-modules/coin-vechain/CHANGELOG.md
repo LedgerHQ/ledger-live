@@ -1,5 +1,23 @@
 # @ledgerhq/coin-evm
 
+## 4.2.0
+
+### Minor Changes
+
+- [#21818](https://github.com/LedgerHQ/ledger-live/pull/21818) [`92c97cf`](https://github.com/LedgerHQ/ledger-live/commit/92c97cf5ee26cbac54f0db25fcdc19336c2318a2) Thanks [@may01](https://github.com/may01)! - listOperations no longer advertises a next cursor, and honours the requested order
+
+  A page already covers every operation up to the current head, so the cursor it returned (the head
+  block, and the caller's own cursor on an empty page) never led to more results — a client paging
+  until `next` is falsy looped forever. The page is now returned without `next`.
+
+  `order` was accepted and ignored: `asc` and `desc` both returned newest-first. Operations are now
+  sorted in the requested order, `desc` remaining the default.
+
+### Patch Changes
+
+- Updated dependencies [[`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/ledger-wallet-framework@3.4.0
+
 ## 4.2.0-next.0
 
 ### Minor Changes

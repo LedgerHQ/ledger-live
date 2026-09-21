@@ -1,5 +1,17 @@
 # @domain/entity-contact
 
+## 0.9.0
+
+### Minor Changes
+
+- [#21775](https://github.com/LedgerHQ/ledger-live/pull/21775) [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Reject Latin diacritics in contact names so device add-address does not fail on unsupported glyphs, while still allowing letters from other scripts.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/cloud-sync-module@0.4.0
+  - @shared/schema-primitives@0.5.0
+
 ## 0.9.0-next.0
 
 ### Minor Changes

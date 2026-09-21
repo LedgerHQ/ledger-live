@@ -1,5 +1,45 @@
 # @shared/feature-flags
 
+## 0.23.0
+
+### Minor Changes
+
+- [#21706](https://github.com/LedgerHQ/ledger-live/pull/21706) [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add excludedCurrencyIds param to lwdContacts and lwmContacts feature flags to exclude specific currencies from Contacts
+
+- [#21656](https://github.com/LedgerHQ/ledger-live/pull/21656) [`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36) Thanks [@sarneijim](https://github.com/sarneijim)! - Add the Q3 Wallet V4 Tour feature flag, persisted seen state, mobile debug setup, and Segment wallet40Attributes.q3Tour
+
+- [#21802](https://github.com/LedgerHQ/ledger-live/pull/21802) [`7e44af4`](https://github.com/LedgerHQ/ledger-live/commit/7e44af495eccab1fac4b0808d6729a595b610c69) Thanks [@ysitbon](https://github.com/ysitbon)! - fix(feature-flags): let the middleware prime from a device-local flag cache
+
+  `createFeatureFlagsMiddleware` accepts two new optional callbacks:
+
+  - `readCachedFlags`, read before the first `fetchRemoteFlags` and without any network, so boot
+    resolves on the last values the backend actually sent rather than on compiled defaults. The
+    prime changes which values boot resolves on, not when readiness is announced: that stays
+    with the first fetch settling, so the boot gates keep the meaning they already had. The one
+    exception is a middleware given a cache reader and no fetcher, where nothing else would ever
+    settle: there the prime re-resolves once and arms the gate itself.
+  - `onRemoteFlagsError`, invoked once per failed read with its stage, attempt number and whether
+    any values are held yet. Purely observational: the return value is ignored and a throwing
+    handler cannot stop the poll loop. Failed fetches used to be swallowed silently.
+
+  Both are opt-in. A middleware configured without `readCachedFlags` behaves exactly as before.
+
+- [#21802](https://github.com/LedgerHQ/ledger-live/pull/21802) [`7050652`](https://github.com/LedgerHQ/ledger-live/commit/70506520dafbccca4e014ac30d75647a5b7fe7d0) Thanks [@ysitbon](https://github.com/ysitbon)! - refactor(feature-flags): split the middleware body into named helpers
+
+  `createFeatureFlagsMiddleware` now assembles a handful of small module-private helpers instead of
+  inlining them, so its body reads as: build the collaborators, pick one of the two start-ups,
+  return the middleware. `pollRemoteFlags` takes a deps object rather than seven positional
+  arguments. Behaviour and public API are unchanged.
+
+- [#21751](https://github.com/LedgerHQ/ledger-live/pull/21751) [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb) Thanks [@sarneijim](https://github.com/sarneijim)! - Add releaseTour and gate Q2/Q3 tours with it, dropping q2Tour/q3Tour from Wallet 4.0
+
+- [#21628](https://github.com/LedgerHQ/ledger-live/pull/21628) [`903c180`](https://github.com/LedgerHQ/ledger-live/commit/903c1802ea5d4cc3fe1bfe5609b8cf3871152cf0) Thanks [@ishaba](https://github.com/ishaba)! - feat(tron): add gasSponsorship feature flag
+
+- [#21791](https://github.com/LedgerHQ/ledger-live/pull/21791) [`a6a7a94`](https://github.com/LedgerHQ/ledger-live/commit/a6a7a946b1c1dbdda1cfa2c049f536f7235ddde2) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Complete the Card login on desktop. The provider's page opens in the Discover webview, and the
+  manifest of the live app owns its origin. The `lwdPayTab` flag carries `baanx_login_manifest_id`
+  and `baanx_hosted_manifest_id`, which default to the staging manifests. A redirect that echoes no
+  attempt id now passes the callback guards, so the app's own deep link completes the login.
+
 ## 0.23.0-next.0
 
 ### Minor Changes

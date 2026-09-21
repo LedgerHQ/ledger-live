@@ -1,5 +1,15 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.52.1
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`30828c2`](https://github.com/LedgerHQ/ledger-live/commit/30828c22cc44c9929d7eda782e9d559a9e0145c3), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/types-live@6.124.0
+  - @ledgerhq/wallet-btc@0.5.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0
+  - @ledgerhq/live-signer-zcash@0.10.0
+
 ## 0.52.1-next.0
 
 ### Patch Changes

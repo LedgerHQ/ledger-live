@@ -1,5 +1,12 @@
 # @features/platform-device-action-content
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`b49d5b5`](https://github.com/LedgerHQ/ledger-live/commit/b49d5b573e84bd63ac460ae398657f1035613141)]:
+  - @features/platform-style@0.4.0
+
 ## 0.2.1-next.0
 
 ### Patch Changes

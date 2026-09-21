@@ -1,6 +1,6 @@
 {
   "name": "@shared/analytics",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Client agnostic analytics package",
   "main": "src/index.ts",
