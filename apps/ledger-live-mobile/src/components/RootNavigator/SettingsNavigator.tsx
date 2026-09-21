@@ -93,6 +93,7 @@ import {
 import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMoverLandingPage";
 import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDebug";
 import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
+import { DebugStorageProbe } from "~/screens/Settings/Debug/Debugging/StorageProbe";
 import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 import ProductTourScreenDebug from "LLM/features/ProductTour/Debug";
@@ -460,6 +461,13 @@ export default function SettingsNavigator() {
         component={DebugStorageMigration}
         options={{
           title: "Storage migration",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugStorageProbe}
+        component={DebugStorageProbe}
+        options={{
+          title: "Storage probe",
         }}
       />
       <Stack.Screen

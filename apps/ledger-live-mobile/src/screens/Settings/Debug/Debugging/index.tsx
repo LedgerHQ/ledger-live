@@ -57,6 +57,12 @@ export default function Debugging() {
           onPress={() => navigation.navigate(ScreenName.DebugStorageMigration)}
         />
       </FeatureToggle>
+      <SettingsRow
+        title="Storage probe"
+        desc="Key count, hashes and sizes for AsyncStorage — never the values"
+        iconLeft={<IconsLegacy.FullnodeMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugStorageProbe)}
+      />
     </SettingsNavigationScrollView>
   );
 }
