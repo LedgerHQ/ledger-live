@@ -9,7 +9,7 @@
 //   node tools/scripts/validate-lint-presets.mjs
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -88,6 +88,56 @@ for (const [layer, bin] of Object.entries(MIGRATED)) {
       );
     }
   }
+}
+
+// A package whose script goes through a preset bin passes `-c`, which disables config discovery.
+// Any tool config still sitting next to it is dead weight that silently stops being applied, so it
+// is worth reporting wherever it appears, not only inside the layers listed above.
+function walk(dir) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
+    const abs = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      walk(abs);
+      continue;
+    }
+    if (entry.name !== "package.json") continue;
+    let pkg;
+    try {
+      pkg = JSON.parse(readFileSync(abs, "utf8"));
+    } catch {
+      continue;
+    }
+    const scripts = pkg.scripts ?? {};
+    const viaLint = /^lint-[\w-]+(\s|$)/.test(scripts.lint ?? "");
+    const viaFmt = /^fmt-[\w-]+(\s|$)/.test(scripts.format ?? "");
+    const rel = relative(repoRoot, dir) || ".";
+    for (const [config, active] of [
+      [".oxlintrc.json", viaLint],
+      [".oxfmtrc.json", viaFmt],
+    ]) {
+      if (active && existsSync(join(dir, config))) {
+        problems.push(
+          `${rel}/${config}: dead config - the script passes -c, so this file is ignored`,
+        );
+      }
+    }
+  }
+}
+for (const top of [
+  "apps",
+  "devtools",
+  "domain",
+  "e2e",
+  "features",
+  "libs",
+  "shared",
+  "support",
+  "tests",
+  "tools",
+]) {
+  const abs = join(repoRoot, top);
+  if (existsSync(abs)) walk(abs);
 }
 
 if (problems.length > 0) {
