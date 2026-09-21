@@ -8,6 +8,7 @@ import { act, renderHook } from "tests/testSetup";
 import { useCardViewModel } from "../useCardViewModel";
 
 const mockNavigate = jest.fn();
+const mockOpenURL = jest.fn();
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -23,6 +24,10 @@ jest.mock("@features/platform-card", () => ({
   readCardUsEnv: jest.fn(),
 }));
 
+jest.mock("~/renderer/linking", () => ({
+  openURL: (...args: unknown[]) => mockOpenURL(...args),
+}));
+
 const HOSTED_MANIFEST = { id: "baanx-hosted-url", url: "https://ledger.baanxapi.test" };
 
 const mockedManifest = jest.mocked(useLiveAppManifest);
@@ -32,7 +37,6 @@ function topUpUrlFrom(navigateMock: jest.Mock): string {
   const [, options] = navigateMock.mock.calls[0];
   return (options as { state: { goToURL: string } }).state.goToURL;
 }
-
 // The harness router takes a path only, and this view model reads router state.
 function atPayTabWith(state: unknown) {
   return function Wrapper({ children }: { children: React.ReactNode }) {
@@ -52,6 +56,7 @@ function renderCardViewModel(state: unknown) {
 describe("useCardViewModel", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
+    mockOpenURL.mockClear();
     mockedReadCardUsEnv.mockResolvedValue(false);
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     mockedManifest.mockReturnValue(HOSTED_MANIFEST as ReturnType<typeof useLiveAppManifest>);
@@ -173,5 +178,48 @@ describe("useCardViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/history?tab=card&asset=usdc", {
       state: { historyBackPath: "/paytab" },
     });
+  });
+
+  it("opens the manage PIN hosted page on the hosted manifest", async () => {
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => result.current.cardSettingsActions?.onManagePin?.());
+
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/dashboard/card/details");
+  });
+
+  it("opens the access Baanx hosted page on the hosted manifest", async () => {
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => result.current.cardSettingsActions?.onAccessBaanx?.());
+
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/");
+  });
+
+  it("names the US app on the access Baanx hosted page for a US card holder", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => result.current.cardSettingsActions?.onAccessBaanx?.());
+
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/?app_id=LEDGERUS");
+  });
+
+  it("opens the card help center article externally", () => {
+    const { result } = renderCardViewModel(null);
+
+    act(() => result.current.cardSettingsActions?.onHelp?.());
+
+    expect(mockOpenURL).toHaveBeenCalledWith("https://support.ledger.com/article/5283612250653-zd");
+  });
+
+  it("keeps the same cardSettingsActions reference across re-renders", () => {
+    const { result, rerender } = renderCardViewModel(null);
+
+    const first = result.current.cardSettingsActions;
+    rerender();
+
+    expect(result.current.cardSettingsActions).toBe(first);
   });
 });
