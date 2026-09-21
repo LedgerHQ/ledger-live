@@ -43,13 +43,13 @@ export function CloudSync(props: CloudSyncDevToolProps) {
       <div className="px-16 py-8 border-b border-base flex items-center gap-8 body-3 text-muted">
         {vm.isReady ? (
           <>
-            <span className="w-8 h-8 rounded-full bg-success inline-block" />
+            <span className="w-8 h-8 rounded-full bg-success-transparent inline-block" />
             <span>Connected</span>
             {vm.version ? <code className="bg-muted rounded px-6 py-1">v{vm.version}</code> : null}
           </>
         ) : (
           <>
-            <span className="w-8 h-8 rounded-full bg-error inline-block" />
+            <span className="w-8 h-8 rounded-full bg-error-transparent inline-block" />
             <span>No trustchain — open the Trustchain tool first</span>
           </>
         )}

@@ -10,7 +10,7 @@ export function WarningBanner() {
         gap: "s8",
         paddingHorizontal: "s16",
         paddingVertical: "s6",
-        backgroundColor: "warning",
+        backgroundColor: "warningTransparent",
       }}
     >
       <Box
