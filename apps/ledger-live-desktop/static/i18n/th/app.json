@@ -926,7 +926,7 @@
       }
     },
     "cardTransactions" : {
-      "title" : "Transactions",
+      "title" : "ธุรกรรม",
       "categories" : {
         "SUBSCRIPTIONS" : "การสมัครสมาชิก",
         "FOOD" : "อาหาร",
@@ -938,21 +938,21 @@
         "MISC" : "อื่น ๆ"
       },
       "detail" : {
-        "amount" : "Amount",
-        "status" : "Status",
-        "card" : "Card",
-        "cardInfo" : "The last four digits of the card used for this payment.",
-        "fundingSource" : "Funding source",
-        "transactionId" : "Transaction ID",
-        "copyTransactionId" : "Copy transaction ID",
-        "today" : "Today {{time}}",
-        "yesterday" : "Yesterday {{time}}",
+        "amount" : "จำนวน",
+        "status" : "สถานะ",
+        "card" : "บัตร",
+        "cardInfo" : "หมายเลข 4 ตัวสุดท้ายของบัตรที่ใช้จ่ายธุรกรรมนี้",
+        "fundingSource" : "แหล่งเงินทุน",
+        "transactionId" : "ID ธุรกรรม",
+        "copyTransactionId" : "คัดลอก ID ธุรกรรม",
+        "today" : "วันนี้ตอน {{time}}",
+        "yesterday" : "เมื่อวานตอน {{time}}",
         "dateTime" : "{{date}} {{time}}",
         "statusValues" : {
-          "CONFIRMED" : "Confirmed",
-          "PENDING" : "Pending",
-          "DECLINED" : "Declined",
-          "REVERTED" : "Reverted"
+          "CONFIRMED" : "ยืนยันแล้ว",
+          "PENDING" : "รอดำเนินการ",
+          "DECLINED" : "ไม่สำเร็จ",
+          "REVERTED" : "ยกเลิก"
         }
       }
     },
@@ -1050,15 +1050,15 @@
     "cardLogin" : {
       "title" : "บัตรคริปโต",
       "beforeIntro" : {
-        "title" : "Get your crypto card",
+        "title" : "สมัครบัตรคริปโต",
         "description" : "รับเครดิตเงินคืน 1% ทุกครั้งที่ใช้จ่าย",
         "action" : "สมัครบัตร",
         "alreadyHaveCard" : "ฉันมีบัตรอยู่แล้ว"
       },
       "afterIntro" : {
-        "title" : "Log in to access your Card",
-        "description" : "You’ve been logged out for security",
-        "action" : "Log in"
+        "title" : "เข้าสู่ระบบเพื่อดูข้อมูลบัตรของคุณ",
+        "description" : "มีการล็อกเอาต์เพื่อความปลอดภัย",
+        "action" : "เข้าสู่ระบบ"
       },
       "errors" : {
         "pkce_failed" : "ไม่สามารถเข้าสู่ระบบได้ โปรดลองอีกครั้ง",
@@ -2143,7 +2143,7 @@
         "provider" : "ตรวจสอบรายละเอียดการสวอป (Swap) บนอุปกรณ์ของคุณก่อนส่งธุรกรรม"
       },
       "confirm" : "ยืนยันธุรกรรม Swap",
-      "confirmSwap" : "ยืนยันการดำเนินการสวอป (Swap) บนอุปกรณ์",
+      "confirmSwap" : "ยืนยันการดำเนินการสวอปบนอุปกรณ์",
       "amountSent" : "จำนวนที่จะส่ง",
       "amountReceived" : "จำนวนที่จะได้รับ",
       "amountReceivedFloat" : "จำนวนที่จะได้รับก่อนคิดค่าบริการ",
@@ -2662,7 +2662,7 @@
         "amount" : "จำนวน",
         "fees" : "ค่าธรรมเนียมเครือข่าย",
         "maxFees" : "ค่าธรรมเนียมเครือข่ายสูงสุด",
-        "maxFeesInfo" : "คือค่าธรรมเนียมสูงสุดที่คุณต้องจ่ายสำหรับธุรกรรมนี้ ส่วนต่างระหว่างค่าธรรมเนียมเครือข่ายสูงสุดและค่าธรรมเนียมที่เกิดขึ้นจริงจะได้รับคืน",
+        "maxFeesInfo" : "คือค่าธรรมเนียมสูงสุดที่คุณต้องจ่ายสำหรับธุรกรรมนี้ โดยคุณจะได้รับส่วนต่างระหว่างค่าธรรมเนียมเครือข่ายสูงสุดกับค่าธรรมเนียมจริงคืน",
         "useMax" : "ใช้สูงสุด",
         "sendMax" : "ส่งจำนวนสูงสุด",
         "rippleTag" : "แท็ก",
@@ -2799,7 +2799,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "ป้อน {{memoLabel}}",
-      "description" : "จำเป็นต้องมี {{memoLabel}} เมื่อส่ง {{currency}} ไปยังตลาดซื้อขายคริปโต นี่คือฟีเจอร์ที่ใช้ระบุตัวผู้รับของธุรกรรม หากไม่ใส่ Memo {{memoLabel}} อาจทำให้สูญเสียเงินทุนได้"
+      "description" : "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} may result in a loss of funds."
     },
     "networkFeesInFiat" : "ค่าธรรมเนียมเครือข่ายในรูปแบบ {{currency}}",
     "feesAmount" : "ยอดค่าธรรมเนียม {{unit}}",
@@ -2878,7 +2878,7 @@
       }
     },
     "balanceType" : {
-      "title" : "Select balance",
+      "title" : "เลือกยอดคงเหลือในบัญชี",
       "transparent" : {
         "title" : "ยอดคงเหลือสาธารณะ",
         "subtitle" : "แบบสาธารณะ (Transparent)"
@@ -2886,7 +2886,7 @@
       "shielded" : {
         "title" : "ยอดคงเหลือส่วนตัว",
         "subtitle" : "แบบส่วนตัว (Shielded)",
-        "pendingNoticeTitle" : "Funds maturing",
+        "pendingNoticeTitle" : "เงินทุนกำลังจะครบกำหนด",
         "pendingNotice" : "เงินแบบส่วนตัวบางส่วนของคุณยังไม่ครบกำหนด และอาจยังไม่สามารถนำมาใช้จ่ายได้ในขณะนี้"
       },
       "zeroBalance" : {
@@ -6939,6 +6939,9 @@
     },
     "xrp" : {
       "memo" : "แท็ก"
+    },
+    "zcash" : {
+      "memoTooltip" : "A {{memoLabel}} is optional when sending {{currency}}. It is encrypted and only the recipient can read it. Some exchanges require one to identify your transaction."
     }
   },
   "errors" : {
@@ -7497,12 +7500,12 @@
       "title" : "จำนวนนี้ใหญ่เกินไปที่จะส่งในธุรกรรมเดียว ลองแบ่งส่งเป็นจำนวนย่อยหลายครั้งแทน"
     },
     "ZcashShieldedKeyMissing" : {
-      "title" : "Activate your private balance first",
-      "description" : "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+      "title" : "เปิดใช้งานยอดคงเหลือส่วนตัวของคุณก่อน",
+      "description" : "การโอนนี้ต้องใช้ Viewing Key จากอุปกรณ์ของคุณ เปิดใช้งานยอดคงเหลือส่วนตัวของคุณเพื่อเริ่มใช้งาน"
     },
     "ZcashNotesNotYetSpendable" : {
-      "title" : "These funds are not spendable yet",
-      "description" : "Please try again in a few minutes"
+      "title" : "เงินทุนเหล่านี้ยังไม่สามารถใช้จ่ายได้",
+      "description" : "โปรดลองอีกครั้งในอีกไม่กี่นาที"
     },
     "InvalidNonce" : {
       "title" : "จำเป็นต้องมีตัวเลข Nonce"
@@ -8454,8 +8457,8 @@
       "description" : "ป้อนจำนวนเต็มระหว่าง 1 ถึง 100"
     },
     "CurrencyRegionRestrictedError" : {
-      "title" : "{{currencyName}} is not available in your region",
-      "description" : "Access to {{currencyName}} is restricted in your region."
+      "title" : "ไม่สามารถใช้งาน {{currencyName}} ได้ในประเทศของคุณ",
+      "description" : "มีการจำกัดการเข้าถึง {{currencyName}} ในประเทศของคุณ"
     }
   },
   "cryptoOrg" : {
@@ -9260,9 +9263,9 @@
     }
   },
   "perpsAccountBanner" : {
-    "title" : "About Hyperliquid account",
-    "description" : "This account is related to Perpetual trading. Transactional actions are not supported for this account",
-    "cta" : "Open Perps"
+    "title" : "เกี่ยวกับบัญชี Hyperliquid",
+    "description" : "บัญชีนี้เกี่ยวข้องกับการเทรดสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perpetuals) ไม่สามารถดำเนินการธุรกรรมด้วยบัญชีนี้ได้",
+    "cta" : "เปิดสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps)"
   },
   "portfolio" : {
     "title" : "หน้าหลัก",
@@ -9503,9 +9506,6 @@
           "toPublic" : "โอนด้วยตัวเองไปยังยอดคงเหลือสาธารณะ",
           "unavailable" : "ที่อยู่คริปโตส่วนตัวของคุณจะพร้อมใช้งานหลังเปิดใช้งาน Shielded สำหรับบัญชีของคุณ",
           "privacyWarning" : "การส่งธุรกรรมนี้จะเชื่อมโยงเงินทุนที่ได้รับการปกป้องของคุณเข้ากับ Public Address ของบัญชีคุณ ซึ่งทุกคนสามารถมองเห็นได้ การส่งไปยังที่อยู่คริปโตภายนอกที่เป็นส่วนตัวจะช่วยป้องกันไม่ให้มีการเชื่อมโยงกับบัญชีสาธารณะของคุณ"
-        },
-        "confirm" : {
-          "privateTransaction" : "Private transaction — verify amount on your device"
         }
       },
       "state" : {
@@ -10034,7 +10034,7 @@
       "ensDisclaimer" : "ชื่อ ENS สามารถเปลี่ยนแปลงที่อยู่ได้เสมอ",
       "ensDisclaimerDescription" : "ชื่อ ENS เดียวกันนี้อาจชี้ไปยังที่อยู่ที่แตกต่างกันไปตามช่วงเวลาที่ผ่านไป เราได้ทำการบันทึกที่อยู่จริงที่อยู่เบื้องหลัง ENS ไว้แล้ว เพื่อให้มั่นใจว่าเงินของคุณจะถูกส่งถึงเฉพาะที่อยู่คริปโตที่คุณได้ทำการยืนยันไว้เท่านั้น",
       "duplicateAddress" : "ที่อยู่คริปโตนี้มีการผูกไว้กับ {{contactName}} เรียบร้อยแล้ว",
-      "privacyPolicy" : "Learn more about Ledger's Privacy Policy."
+      "privacyPolicy" : "เรียนรู้เพิ่มเติมเกี่ยวกับนโยบายความเป็นส่วนตัวของ Ledger"
     },
     "addAddressName" : {
       "inputLabel" : "ชื่อที่อยู่",
