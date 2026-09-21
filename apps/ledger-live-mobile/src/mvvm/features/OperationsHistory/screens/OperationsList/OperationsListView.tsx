@@ -157,8 +157,4 @@ const rootStyle: LumenViewStyle = {
 };
 
 const listStyle = { flex: 1 } as const;
-const contentContainerStyle = {
-  flexGrow: 1,
-  paddingHorizontal: 16,
-  paddingTop: 8,
-} as const;
+const contentContainerStyle = { flexGrow: 1, paddingHorizontal: 16, paddingTop: 8 } as const;

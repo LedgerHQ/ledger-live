@@ -98,7 +98,7 @@ describe("OperationsList", () => {
     mockSetOptions.mockClear();
   });
 
-  it("should track the OperationsList screen when it receives focus", () => {
+  it("tracks the OperationsList screen on focus", () => {
     render(<MockNavigator />);
     expect(screen).toHaveBeenCalledWith(
       undefined,
@@ -111,7 +111,7 @@ describe("OperationsList", () => {
     );
   });
 
-  it("should not register the options menu when dust filtering is disabled", () => {
+  it("does not register the transaction history options menu when the dust filter feature flag is disabled", () => {
     renderOperationsListWithNavigation({ setOptions: mockSetOptions });
 
     expect(mockSetOptions).toHaveBeenCalledWith(
@@ -123,7 +123,7 @@ describe("OperationsList", () => {
     );
   });
 
-  it("should register the options menu when dust filtering is enabled", () => {
+  it("registers the transaction history options menu in the navigation bar when the dust filter feature flag is enabled", () => {
     renderOperationsListWithNavigation(
       { setOptions: mockSetOptions },
       {
@@ -144,7 +144,7 @@ describe("OperationsList", () => {
     );
   });
 
-  it("should show Card history without crypto controls when Card is selected", async () => {
+  it("shows card history without crypto-only controls when the Card tab is selected", async () => {
     const { getByTestId, queryByTestId, user } = renderOperationsListWithNavigation(
       { setOptions: mockSetOptions, dispatch: jest.fn() },
       {
@@ -166,8 +166,8 @@ describe("OperationsList", () => {
       page: "OperationsList",
     });
     expect(getByTestId("card-history-signed-out-state")).toBeVisible();
-    expect(queryByTestId("operations-list-section-list")).not.toBeOnTheScreen();
-    expect(queryByTestId("bottom-fade-gradient")).not.toBeOnTheScreen();
+    expect(queryByTestId("operations-list-section-list")).toBeNull();
+    expect(queryByTestId("bottom-fade-gradient")).toBeNull();
     await waitFor(() =>
       expect(mockSetOptions).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -277,17 +277,17 @@ describe("OperationsList", () => {
   });
 
   describe("when the list is empty", () => {
-    it("should render the empty state when no operations exist", () => {
+    it("renders the empty state", () => {
       const { getByTestId } = render(<MockNavigator />);
       expect(getByTestId("operations-empty-state")).toBeVisible();
     });
 
-    it("should block scrolling when no operations exist", () => {
+    it("blocks the swipe", () => {
       const { getByTestId } = render(<MockNavigator />);
       expect(getByTestId("operations-list-section-list")).toHaveProp("scrollEnabled", false);
     });
 
-    it("should hide the bottom fade when no operations exist", () => {
+    it("doesn't render the bottom fade gradient", () => {
       const { queryByTestId } = render(<MockNavigator />);
       expect(queryByTestId("bottom-fade-gradient")).not.toBeVisible();
     });
@@ -295,11 +295,9 @@ describe("OperationsList", () => {
 
   describe("when the list is not empty", () => {
     const renderWithOperations = () =>
-      render(<MockNavigator />, {
-        overrideInitialState: stateWithAccountsAndOperations,
-      });
+      render(<MockNavigator />, { overrideInitialState: stateWithAccountsAndOperations });
 
-    it("should render the operation list when operations exist", () => {
+    it("renders the list with correct components", () => {
       const { getByTestId, queryByTestId, getAllByTestId } = renderWithOperations();
       expect(getByTestId("operations-list-section-list")).toBeVisible();
       expect(queryByTestId("operations-empty-state")).not.toBeVisible();
@@ -307,12 +305,12 @@ describe("OperationsList", () => {
       expect(getAllByTestId("operations-section-header")).toHaveLength(2);
     });
 
-    it("should render every operation when operations exist", () => {
+    it("renders five items", () => {
       const { getAllByTestId } = renderWithOperations();
       expect(getAllByTestId("operations-list-item")).toHaveLength(5);
     });
 
-    it("should track and navigate when an operation is pressed", async () => {
+    it("triggers analytics and navigation when an item is pressed", async () => {
       mockNavigate.mockClear();
       const { queryAllByTestId, user } = renderWithOperations();
       const operationItems = queryAllByTestId("operations-list-item");

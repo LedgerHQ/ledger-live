@@ -77,10 +77,7 @@ export function usePayTabViewModel() {
   const callback: CardProps["login"]["callback"] = useMemo(
     () =>
       params?.code
-        ? {
-            code: params.code,
-            ...(params.app_id ? { appId: params.app_id } : {}),
-          }
+        ? { code: params.code, ...(params.app_id ? { appId: params.app_id } : {}) }
         : null,
     [params?.code, params?.app_id],
   );
