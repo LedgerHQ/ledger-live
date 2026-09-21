@@ -129,6 +129,26 @@
     "ldmkEnabled" : "เปิดใช้งาน LDMK Transport แล้ว"
   },
   "errors" : {
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "มีการสเตคกิ้งกับ {{bondedValidator}} อยู่แล้ว ยกเลิกการสเตคก่อนทำการเปลี่ยนผู้ตรวจสอบ",
+      "description" : "Aleo อนุญาตให้มีผู้ตรวจสอบหนึ่งรายต่อหนึ่งบัญชี กรุณายกเลิกการสเตคกับ {{bondedValidator}} ก่อนที่จะทำการสเตคกับที่อื่น"
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "คุณต้องสเตคอย่างน้อย {{minAmount}} ในแต่ละครั้ง",
+      "description" : "จำนวนสเตคกิ้งขั้นต่ำคือ {{minAmount}}"
+    },
+    "AleoClosedValidator" : {
+      "title" : "ผู้ตรวจสอบรายนี้ไม่รับผู้สเตครายใหม่",
+      "description" : "ผู้ตรวจสอบรายนี้ไม่รับผู้สเตครายใหม่ เลือกผู้ตรวจสอบรายอื่นเพื่อดำเนินการต่อ"
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "การสเตคกิ้งต้องมียอดรวมอย่างน้อย {{minAmount}}",
+      "description" : "คุณต้องมียอดสเตครวมอย่างน้อย {{minAmount}}"
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "ผู้ตรวจสอบนี้อยู่ระหว่างการยกเลิกการผูกมัด",
+      "description" : "ผู้ตรวจสอบรายนี้กำลังถอนสเตคของตัวเอง เครือข่ายจึงปฏิเสธสเตคใหม่ที่ส่งไปยังผู้ตรวจสอบรายนี้ เลือกผู้ตรวจสอบรายอื่นเพื่อดำเนินการต่อ"
+    },
     "ZcashMemoTooLong" : {
       "title" : "Memo ต้องไม่เกิน {{maxBytes}} ไบต์"
     },
@@ -244,7 +264,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "บัญชีนี้ไม่สามารถส่งโทเคนนี้ได้",
-      "description" : "ผู้ออกโทเคนได้จำกัดสิทธิ์ว่าใครสามารถส่งได้บ้าง และบัญชีนี้ไม่ได้รับอนุญาตให้ทำเช่นนั้น กรุณาติดต่อผู้ออกโทเคนเพื่อขอสิทธิ์"
+      "description" : "ผู้ออกโทเคนมีการจำกัดสิทธิ์ว่าใครสามารถส่งได้บ้าง กรุณาติดต่อผู้ออกโทเคนเพื่อขอรายละเอียด"
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "บัญชีนี้ยังไม่ได้รับการอนุมัติให้ส่งโทเคนนี้ได้",
+      "description" : "ผู้ออกโทเคนมีอำนาจอนุมัติผู้ที่จะสามารถส่งได้ และบัญชีนี้ไม่อยู่ในรายชื่อดังกล่าว การอนุมัติทั้งหมดได้รับการจัดการโดยผู้ออกโทเคน ไม่ใช่โดย Ledger"
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "บัญชีนี้ไม่สามารถส่งโทเคนนี้ได้",
+      "description" : "ผู้ออกโทเคนได้จำกัดบัญชีนี้ กรุณาติดต่อผู้ออกโทเคนเพื่อขอรายละเอียดเพิ่มเติม"
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "ไม่สามารถทำการยืนยันข้อจำกัดของโทเคนนี้ได้",
@@ -1425,6 +1453,9 @@
     "AccountCreationFeeWarning" : {
       "title" : "ธุรกรรมนี้จะมีค่าธรรมเนียมการสร้างบัญชี {{fee}}"
     },
+    "AmountRequired" : {
+      "title" : "ป้อนจำนวนเพื่อดำเนินการต่อ"
+    },
     "AmountTooSmall" : {
       "title" : "จำนวนขั้นต่ำที่กำหนดสำหรับธุรกรรมนี้คือ {{amount}}"
     },
@@ -1611,6 +1642,49 @@
       "mismatch" : "รหัสผ่านไม่ตรงกัน",
       "saveFailed" : "เราไม่สามารถบันทึกรหัสผ่านของคุณได้ โปรดลองอีกครั้ง",
       "cta" : "ยืนยัน"
+    },
+    "unlock" : {
+      "wrongPassword" : "รหัสผ่านไม่ถูกต้อง",
+      "forgotPassword" : "ลืมรหัสผ่าน?",
+      "retryBiometrics" : "ใช้ไบโอเมตริกซ์",
+      "unlockCta" : "Unlock Ledger Wallet",
+      "failed" : "เราไม่สามารถตรวจสอบรหัสผ่านของคุณได้ โปรดลองอีกครั้ง",
+      "cta" : "ยืนยัน",
+      "biometricsPrompt" : "ปลดล็อกแอป Ledger Wallet",
+      "forgotPasswordSheet" : {
+        "title" : "Forgot password",
+        "description" : "If you’ve lost your password, reinstall the app and restore your wallet.",
+        "cta" : "Got it"
+      }
+    },
+    "enableProtection" : {
+      "biometrics" : {
+        "title" : "Enable {{biometricsType}}",
+        "description" : "The crypto card requires {{biometricsType}}. You'll use it each time you open the app.",
+        "cta" : "Enable {{biometricsType}}"
+      },
+      "password" : {
+        "title" : "Create a password",
+        "description" : "The crypto card requires a password. You'll use it each time you open the app.",
+        "cta" : "Create password"
+      }
+    },
+    "protectionEnabled" : {
+      "biometrics" : {
+        "title" : "{{biometricsType}} enabled"
+      },
+      "password" : {
+        "title" : "Password created"
+      },
+      "description" : "You can now sign up to get a card",
+      "cta" : "Continue"
+    },
+    "biometrics" : {
+      "title" : "{{biometricsType}}",
+      "desc" : "ปลดล็อกแอปด้วย {{biometricsType}}",
+      "prompt" : "ยืนยัน {{biometricsType}} เพื่อใช้ในการปลดล็อก",
+      "disablePrompt" : "ยืนยันเลิกใช้ {{biometricsType}} ในการปลดล็อก",
+      "useDeviceCredential" : "ใช้ PIN"
     },
     "deactivatePassword" : {
       "title" : "ปิดใช้งานรหัสผ่าน",
@@ -3201,6 +3275,13 @@
       "UPDATE_ACCOUNT" : "บัญชีที่อัปเดต"
     }
   },
+  "history" : {
+    "tabs" : {
+      "crypto" : "คริปโต",
+      "card" : "บัตร",
+      "accessibilityLabel" : "ประเภทของประวัติธุรกรรม"
+    }
+  },
   "operationsList" : {
     "to" : "ไปยัง",
     "from" : "จาก",
@@ -3240,6 +3321,13 @@
     },
     "details" : "รายละเอียด {{ currency }}",
     "extra" : {
+      "pltReject" : {
+        "title" : "สาเหตุ",
+        "nonExistentToken" : "ไม่มีโทเคนนี้บน Concordium",
+        "recipientNotFound" : "ไม่มีบัญชีผู้รับนี้บน Concordium",
+        "insufficientBalance" : "บัญชีนี้มีโทเคนไม่เพียงพอ",
+        "rejected" : "Concordium ปฏิเสธการดำเนินการนี้"
+      },
       "transferId" : "ID การโอน (Memo)",
       "resource" : "ทรัพยากร",
       "validator" : "ผู้ตรวจสอบ",
@@ -4099,6 +4187,7 @@
         "copyAdress" : "คัดลอก Address",
         "addressCopied" : "คัดลอก Address แล้ว!",
         "addressVerified" : "ตรวจสอบ Address แล้ว",
+        "qrCode" : "QR Code สำหรับที่อยู่รับเงินของคุณ",
         "verifyAddress" : "ตรวจสอบ Address ของคุณ",
         "adviceVerify" : "เราขอแนะนำให้ยืนยัน Address ของคุณด้วยอุปกรณ์ Ledger เสมอ",
         "sendWarning" : "ส่งเฉพาะโทเคนจากเครือข่าย {{network}} การส่งจากเครือข่ายอื่นอาจส่งผลให้สูญเสียโทเคนของคุณถาวร",
@@ -4743,11 +4832,11 @@
         "walletNotExist" : "ไม่พบวอลเล็ตนี้"
       },
       "skipMemo" : {
-        "title" : "ต้องการข้ามการเพิ่ม {{tag}}?",
-        "warning" : "สินทรัพย์อาจหายไป หากผู้รับต้องการ {{tag}} ในการรับ",
-        "notRequired" : "ผู้รับไม่จำเป็นต้องมี {{tag}} ใช่หรือไม่?",
-        "confirm" : "ใช่! ข้ามขั้นตอนนี้",
-        "neverAskAgain" : "ไม่ต้องแสดงการแจ้งเตือนนี้อีก"
+        "title" : "ต้องการส่งโดยไม่มี {{tag}} หรือไม่?",
+        "description" : "สินทรัพย์ของคุณอาจสูญหายได้หากผู้รับกำหนดให้ต้องมี {{tag}}",
+        "confirm" : "ใช่! ส่งโดยไม่มี {{tag}}",
+        "cancel" : "ไม่! ย้อนกลับ",
+        "neverAskAgain" : "ไม่ต้องถามอีก"
       },
       "tagHelp" : {
         "title" : "{{tag}} คืออะไร?",
@@ -10273,27 +10362,6 @@
       "iHaveACard" : "ฉันมีบัตรอยู่แล้ว"
     }
   },
-  "walletV4Tour" : {
-    "title" : "ดูพอร์ตการลงทุนใหม่ของคุณ",
-    "slides" : {
-      "portfolio" : {
-        "title" : "เห็นภาพพอร์ตการลงทุนชัดเจนขึ้น",
-        "description" : "ดูมูลค่าสินทรัพย์ทั้งหมดได้ทันที และแตะ “วันนี้” เพื่อดูรายละเอียดเพิ่มเติม"
-      },
-      "navigation" : {
-        "title" : "ใช้งานฟังก์ชันหลักได้ง่ายขึ้น",
-        "description" : "ทำการสวอป โอน และซื้อได้ทันที ดูส่วน 'สร้างรายได้' และ 'การ์ด' ของคุณได้ที่ด้านล่าง"
-      },
-      "actions" : {
-        "title" : "วิเคราะห์แนวโน้มตลาดแบบเรียลไทม์",
-        "description" : "เห็นสินทรัพย์ที่กำลังมาแรงในพอร์ตการลงทุนอย่างรวดเร็ว และนำข้อมูลไปตัดสินใจได้ทันที"
-      }
-    },
-    "cta" : {
-      "continue" : "ถัดไป",
-      "explore" : "ค้นหาผู้ให้บริการใหม่ ๆ"
-    }
-  },
   "mainNavigation" : {
     "home" : "หน้าหลัก",
     "swap" : "สวอป",
@@ -10344,9 +10412,34 @@
       }
     },
     "card" : {
+      "balanceLabel" : "ยอดคงเหลือในบัญชี",
+      "assets" : {
+        "title" : "Assets",
+        "empty" : "No assets yet",
+        "error" : "Couldn't load assets",
+        "info" : "These assets fund your card. Set the order they're charged in, or add more.",
+        "manage" : "Manage",
+        "manageDialog" : {
+          "title" : "Manage assets",
+          "description" : "Your assets are listed in funding order. If one asset runs low, the next one is used automatically.",
+          "addAssetCaption" : "You'll be redirected to Baanx's page to add asset.",
+          "addAsset" : "Add asset"
+        },
+        "details" : {
+          "topUp" : "Top up",
+          "withdraw" : "Withdraw",
+          "transactions" : "Transactions"
+        },
+        "withdraw" : {
+          "title" : "You'll be redirected to Baanx",
+          "description" : "Withdraw funds from your Baanx account to your Ledger wallet address.",
+          "continue" : "Continue"
+        }
+      },
       "title" : "บัตรคริปโต",
-      "placeholder" : "เร็ว ๆ นี้",
+      "topUp" : "Top up",
       "details" : "รายละเอียด",
+      "addToWallet" : "Add to {{wallet}} Pay",
       "freeze" : "ระงับบัตรชั่วคราว",
       "unfreeze" : "ยกเลิกการระงับบัตร",
       "goBack" : "ย้อนกลับ",
@@ -10364,6 +10457,15 @@
       "confirmError" : {
         "description" : "มีบางอย่างผิดปกติ โปรดลองอีกครั้ง",
         "retry" : "ลองอีกครั้ง"
+      },
+      "numbers" : {
+        "reveal" : "ดูหมายเลขบัตร",
+        "hide" : "ซ่อนหมายเลขบัตร",
+        "failed" : "โหลดหมายเลขบัตรไม่ได้",
+        "imageAlt" : "หมายเลขบัตร"
+      },
+      "reward" : {
+        "title" : "Total cashback"
       }
     },
     "cardTransactions" : {
@@ -10394,6 +10496,30 @@
           "PENDING" : "รอดำเนินการ",
           "DECLINED" : "ไม่สำเร็จ",
           "REVERTED" : "ยกเลิก"
+        }
+      },
+      "history" : {
+        "today" : "วันนี้",
+        "yesterday" : "เมื่อวาน",
+        "unknownDate" : "ไม่มีวันที่ให้แสดง",
+        "columns" : {
+          "transaction" : "ธุรกรรม",
+          "fundingSources" : "แหล่งเงินทุน",
+          "amount" : "จำนวน"
+        },
+        "paidWithAssets" : "ชำระเงินด้วยสินทรัพย์ {{count}} รายการ",
+        "goToPay" : "ไปที่ 'จ่ายเงิน'",
+        "signedOut" : {
+          "title" : "เข้าสู่ระบบเพื่อดูธุรกรรมบัตร",
+          "description" : "ประวัติธุรกรรมจะแสดงที่นี่เมื่อคุณเข้าสู่ระบบ"
+        },
+        "empty" : {
+          "title" : "ยังไม่มีธุรกรรมผ่านบัตร",
+          "description" : "โปรดกลับมาดูธุรกรรมผ่านบัตรของคุณในภายหลัง"
+        },
+        "error" : {
+          "title" : "โหลดธุรกรรมผ่านบัตรไม่ได้",
+          "description" : "ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง"
         }
       }
     },
@@ -10554,9 +10680,56 @@
         "stepComplete" : "เสร็จเรียบร้อย",
         "gotIt" : "เข้าใจแล้ว"
       },
-      "walletStep" : {
-        "title" : "เพิ่มบัตรเข้าไปใน Apple หรือ Google Pay",
-        "description" : "ใช้จ่ายผ่านโทรศัพท์ของคุณในร้านค้า"
+      "steps" : {
+        "createAccount" : {
+          "title" : "สร้างบัญชีของคุณ",
+          "description" : "ตรวจสอบตัวตนของคุณเพื่อเริ่มใช้งาน"
+        },
+        "chooseCardType" : {
+          "title" : "เลือกประเภทบัตรของคุณ",
+          "description" : "เลือกได้ระหว่างบัตรเสมือนหรือบัตรจริง"
+        },
+        "topUpCard" : {
+          "title" : "เติมเงินในบัตรของคุณ",
+          "description" : "เติมเงินด้วย USDC, USDT, BTC หรืออื่น ๆ"
+        },
+        "firstPurchase" : {
+          "title" : "ทำการซื้อครั้งแรก",
+          "description" : "จ่ายเงินออนไลน์หรือในร้านค้า"
+        },
+        "appleGooglePay" : {
+          "title" : "Add to {{wallet}} Pay",
+          "description" : "ใช้จ่ายผ่านโทรศัพท์ของคุณในร้านค้า"
+        }
+      },
+      "addToWallet" : {
+        "ios" : {
+          "title" : "Add to Apple Pay",
+          "step1" : "Go to Apple Wallet app and tap add (+)",
+          "step2" : "Select Debit or Credit Card",
+          "step3" : "Follow the instructions",
+          "cta" : "Go to Apple Wallet",
+          "error" : {
+            "title" : "Apple Wallet couldn’t be opened",
+            "description" : "Make sure Apple Pay is available on this device, then try again.",
+            "action" : "Try again"
+          }
+        },
+        "android" : {
+          "title" : "Add to Google Pay",
+          "step1" : "Go to Google Wallet app and tap add.",
+          "step2" : "Choose Payment card, then select New Credit or Debit Card.",
+          "step3" : "Follow the instructions.",
+          "cta" : "Go to Google Wallet",
+          "error" : {
+            "title" : "Google Wallet couldn’t be opened",
+            "description" : "Google Wallet may not be installed or may be disabled.",
+            "action" : "Open Google Play"
+          }
+        },
+        "error" : {
+          "back" : "Back to instructions"
+        }
       }
     }
   },
@@ -10707,6 +10880,79 @@
     "accountActions" : {
       "publicToPrivate" : "สวอป"
     },
+    "bond" : {
+      "stepperHeader" : {
+        "validator" : "เลือกผู้ตรวจสอบ",
+        "stepRange" : "{{currentStep}} จาก {{totalSteps}}",
+        "amount" : "จำนวน",
+        "selectDevice" : "เลือกอุปกรณ์",
+        "connectDevice" : "เชื่อมต่ออุปกรณ์"
+      },
+      "selectValidator" : {
+        "fetchError" : "โหลดผู้ตรวจสอบไม่สำเร็จ โปรดลองอีกครั้ง",
+        "metadataError" : "ไม่สามารถโหลด Metadata ของผู้ตรวจสอบได้ แต่คุณยังสามารถเพิ่มสเตคของคุณได้",
+        "lockedHint" : "Aleo อนุญาตให้มีผู้ตรวจสอบหนึ่งรายต่อหนึ่งบัญชีเท่านั้น คุณสามารถเพิ่มยอดสเตคของคุณกับผู้ตรวจสอบนี้ หรือยกเลิกการสเตคก่อนเพื่อเลือกผู้ตรวจสอบรายอื่น",
+        "closed" : "ผู้ตรวจสอบรายนี้ได้ปิดรับสเตคใหม่แล้ว",
+        "unbonding" : "ผู้ตรวจสอบอยู่ระหว่างการยกเลิกการผูกมัด",
+        "totalStake" : "ยอดสเตคทั้งหมด",
+        "rateAndCommission" : "ประมาณ {{rate}}% · คอมมิชชัน {{commission}}%",
+        "commissionOnly" : "คอมมิชชัน {{commission}}%",
+        "earnsNothing" : "ผู้ตรวจสอบรายนี้ไม่ได้รับรางวัลใด ๆ"
+      },
+      "amount" : {
+        "available" : "ใช้ได้:",
+        "max" : "สูงสุด",
+        "stakingAlert" : "ยอดสเตครวมของคุณกับผู้ตรวจสอบรายนี้ต้องมีอย่างน้อย <minimum/> จึงจะได้รับรางวัล เฉพาะ ALEO ในบัญชีสาธารณะเท่านั้นที่สามารถนำไปสเตคได้ แปลงยอดคงเหลือส่วนตัวของคุณให้เป็นสาธารณะก่อนหากคุณต้องการสเตค",
+        "minimumLabel" : "จำนวนผูกมัดขั้นต่ำ",
+        "minimumTopUp" : "เพิ่มอย่างน้อย <missing/> เพื่อให้ถึงยอดสเตครวม <total/> ที่จำเป็นในการรับรางวัล",
+        "belowMinimum" : "ยอดคงเหลือในบัญชีสาธารณะของคุณยังขาดอีก <missing/> จึงจะถึงยอดผูกมัดขั้นต่ำ <minimum/> เติมยอดคงเหลือสาธารณะของคุณก่อนสเตค",
+        "changeValidator" : "เลือกผู้ตรวจสอบอื่น"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "ส่งการผูกมัดแล้ว",
+          "description" : "กำลังประมวลผลธุรกรรมการผูกมัดของคุณบนเครือข่าย Aleo"
+        }
+      }
+    },
+    "stake" : {
+      "sectionTitle" : "Staking",
+      "staked" : "Staked",
+      "unstaking" : "Unstaking",
+      "claimable" : "Claimable",
+      "estimatedRate" : "{{rate}}% est.",
+      "fallbackValidator" : "Aleo",
+      "status" : {
+        "earning" : "Earning rewards",
+        "unknown" : "Status unavailable"
+      },
+      "nonEarning" : {
+        "fullCommission" : "This validator takes 100% commission, so you keep nothing.",
+        "overConcentrated" : "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so you earn nothing.",
+        "leftCommittee" : "This validator is no longer in the committee, so your stake earns nothing. Unstake and bond to another validator to start earning again.",
+        "ownStakeBelowMinimum" : "Your stake is below the 10,000 ALEO minimum, so it earns nothing. Add to it to start earning again."
+      },
+      "emptyState" : {
+        "description" : "You can earn rewards by staking your {{name}}.",
+        "cta" : "Earn rewards",
+        "bondPending" : "A stake has been sent and is waiting to be confirmed. Aleo holds one staked position per account, so staking is unavailable until it has gone through."
+      },
+      "unstakingRow" : {
+        "settling" : "Almost there...",
+        "claimPending" : "Claiming...",
+        "unbondPending" : "Unstaking...",
+        "blocksRemaining_one" : "~{{count}} block left",
+        "blocksRemaining_other" : "~{{count}} blocks left"
+      }
+    },
+    "manage" : {
+      "bond" : "Bond",
+      "status" : "Status",
+      "estimatedRate" : "Est. rewards rate",
+      "unbondPendingInfo" : "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "claimPendingInfo" : "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "unlockBlock" : "Unlocks at block"
+    },
     "send" : {
       "balanceSelection" : {
         "title" : "เลือกยอดคงเหลือในบัญชี",
@@ -10751,6 +10997,10 @@
     },
     "balancesSection" : "ยอดคงเหลือในบัญชี",
     "info" : {
+      "available" : {
+        "title" : "Available balance",
+        "description" : "The balance you can spend right now: transparent funds plus any private records already synced. Staked and unstaking amounts are not included."
+      },
       "transparent" : {
         "title" : "ยอดคงเหลือสาธารณะ",
         "description" : "ยอดคงเหลือในบัญชีที่มองเห็นได้แบบสาธารณะบนเครือข่าย Aleo ซึ่งสามารถส่งหรือรับได้โดยตรงและทุกคนสามารถมองเห็นยอดดังกล่าวได้"
@@ -10758,6 +11008,18 @@
       "private" : {
         "title" : "ยอดคงเหลือส่วนตัว",
         "description" : "ยอดคงเหลือในบัญชีที่ได้รับการปกปิดบนเครือข่าย Aleo ยอดคงเหลือในบัญชีนี้จะมองเห็นได้เฉพาะคุณเท่านั้น และต้องมีการยืนยันเพิ่มเติมในการทำธุรกรรม"
+      },
+      "staked" : {
+        "title" : "Staked",
+        "description" : "The amount currently bonded to a validator. It earns rewards but cannot be spent until you unstake it and the unbonding period ends."
+      },
+      "unstaking" : {
+        "title" : "Unstaking",
+        "description" : "The amount you have unstaked that is still locked. It stops earning rewards immediately and becomes claimable once the unbonding period ends."
+      },
+      "claimable" : {
+        "title" : "Claimable",
+        "description" : "The unstaked amount whose unbonding period has ended. Claim it to move it back to your available balance."
       }
     },
     "account" : {
