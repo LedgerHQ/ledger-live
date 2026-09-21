@@ -1,7 +1,7 @@
 import { getLnsUpsellCopyKeys } from "./getLnsUpsellCopyKeys";
 
 describe("getLnsUpsellCopyKeys", () => {
-  it("should keep opted-out keys for every surface and model", () => {
+  it("should use nanoS opted-out keys", () => {
     expect(
       getLnsUpsellCopyKeys({
         tracking: "opted_out",
@@ -9,10 +9,24 @@ describe("getLnsUpsellCopyKeys", () => {
         deviceModelId: "nanoS",
       }),
     ).toEqual({
-      title: "lnsUpsell.opted_out.title",
-      description: "lnsUpsell.opted_out.description",
+      title: "lnsUpsell.opted_out.nanoS.title",
+      description: "lnsUpsell.opted_out.nanoS.description",
       cta: "lnsUpsell.opted_out.cta",
     });
+    expect(
+      getLnsUpsellCopyKeys({
+        tracking: "opted_out",
+        surface: "profile",
+        deviceModelId: "nanoS",
+      }),
+    ).toEqual({
+      title: "lnsUpsell.opted_out.nanoS.title",
+      description: "lnsUpsell.opted_out.nanoS.description",
+      cta: "lnsUpsell.profile.cta",
+    });
+  });
+
+  it("should keep shared opted-out keys for other models", () => {
     expect(
       getLnsUpsellCopyKeys({
         tracking: "opted_out",

@@ -52,6 +52,13 @@ describe("LNUpsellBanner", () => {
       expect(screen.getByText(t(`lnsUpsell.opted_in.cta`))).toBeVisible();
     });
 
+    it("should render the signed-off Nano S copy for opted-in users", () => {
+      renderBanner();
+
+      expect(screen.getByText("Ledger Nano S Upgrade Program")).toBeVisible();
+      expect(screen.getByText("Unlock new OS and security features. Get 20% off.")).toBeVisible();
+    });
+
     it("should not render when the tracking params are missing", () => {
       renderBanner({ hasTrackingParams: false });
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
@@ -99,6 +106,8 @@ describe("LNUpsellBanner", () => {
           devicesModelList: [deviceModelId],
           onboardingDate: "2026-06-06T12:00:00.000Z",
         });
+        expect(screen.getByText(t("lnsUpsell.opted_in.title"))).toBeVisible();
+        expect(screen.queryByText("Ledger Nano S Upgrade Program")).toBeNull();
         fireEvent.press(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
 
         expect(track).toHaveBeenCalledWith(
@@ -171,6 +180,8 @@ describe("LNUpsellBanner", () => {
 
     it("should render the banner for opted out users", () => {
       renderBanner({ isOptIn: false });
+      expect(screen.getByText("More Security. More Control")).toBeVisible();
+      expect(screen.getByText("Learn more about latest OS and security features.")).toBeVisible();
       fireEvent.press(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
 
       expect(Linking.openURL).toHaveBeenCalledTimes(1);
@@ -261,6 +272,8 @@ describe("LNUpsellBanner", () => {
     it("should fire a Profile page event when the banner is shown", () => {
       renderBanner({});
 
+      expect(screen.getByText("Ledger Nano S Upgrade Program")).toBeVisible();
+      expect(screen.getByText("Unlock new OS and security features. Get 20% off.")).toBeVisible();
       expect(jest.mocked(analyticsScreen)).toHaveBeenCalledWith(
         "Profile",
         undefined,
@@ -343,6 +356,8 @@ describe("LNUpsellBanner", () => {
 
     it("should render the banner for opted out users with none offerType", () => {
       renderBanner({ isOptIn: false });
+      expect(screen.getByText("More Security. More Control")).toBeVisible();
+      expect(screen.getByText("Learn more about latest OS and security features.")).toBeVisible();
       fireEvent.press(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
 
       expect(Linking.openURL).toHaveBeenCalledTimes(1);
