@@ -46,6 +46,7 @@ const MOCK_REWARD_WALLET_ID = "44444444-4444-4444-8444-444444444444";
 export type PayCardMockWalletAsset = "usdc" | "btc" | "sol";
 
 let internalWalletsOverride: readonly PayCardInternalWallet[] | undefined;
+let linkedPrioritiesOverride: ReadonlyMap<string, number> | undefined;
 
 /** The join keys balances to linked wallets by id, so both answers describe the same wallets. */
 export function mockPayCardInternalWallets(funded: boolean): readonly PayCardInternalWallet[] {
@@ -67,8 +68,42 @@ export function mockPayCardLinkedWallets(): readonly PayCardLinkedWalletResponse
     address,
     currency,
     network,
-    priority: index,
-  }));
+    priority: linkedPrioritiesOverride?.get(id) ?? index,
+  })).sort((a, b) => a.priority - b.priority);
+}
+
+/**
+ * Rewrites the charging order the linked answer reports, and only the order.
+ *
+ * The balances live in the internal answer and are keyed by wallet id, so the written order is
+ * kept apart from the wallets themselves: rebuilding the linked answer out of a priority-only
+ * payload would lose the ids the join reads amounts by, and every row would come back with a
+ * ticker and no amount.
+ *
+ * Answers whether the order was accepted, which is what the provider reports through `success`.
+ */
+export function reorderPayCardLinkedWalletsMock(
+  wallets: readonly { readonly addressId: string; readonly priority: number }[],
+): boolean {
+  const priorities = new Map<string, number>();
+
+  for (const { addressId, priority } of wallets) {
+    // A wallet is named for the link by its `addressId`, but a dragged row carries the wallet's
+    // own id, so either name finds the same wallet here.
+    const wallet = MOCK_WALLETS.find(
+      candidate => candidate.addressId === addressId || candidate.id === addressId,
+    );
+    if (wallet === undefined) return false;
+
+    priorities.set(wallet.id, priority);
+  }
+
+  // The provider is given the whole order or none of it, so a partial one is refused rather than
+  // merged into the order already held.
+  if (priorities.size !== MOCK_WALLETS.length) return false;
+
+  linkedPrioritiesOverride = priorities;
+  return true;
 }
 
 export function mockPayCardRewardWallet(): PayCardRewardWallet {
@@ -111,4 +146,5 @@ export function fundPayCardWalletMock(asset: PayCardMockWalletAsset): void {
 /** Hands both wallet endpoints back to the provider or mock session. */
 export function clearPayCardWalletsMock(): void {
   internalWalletsOverride = undefined;
+  linkedPrioritiesOverride = undefined;
 }

@@ -18,12 +18,19 @@ import {
   mockPayCardLinkedWallets,
   mockPayCardRewardWallet,
   readPayCardWalletsMock,
+  reorderPayCardLinkedWalletsMock,
 } from "@domain/api-card-management/mock/card-wallets";
 import { createCardMockState } from "./state";
 
 const state = createCardMockState();
 
 const SLOW_MS = 5_000;
+
+/**
+ * Long enough for the reordering row to hold its spinner rather than flash it: a mocked write
+ * answers within the same frame the drag ends, which a real provider never does.
+ */
+const REORDER_MS = 200;
 
 const MOCK_USER = {
   id: "6f1c9a52-3d4e-4b7a-9c81-2f0d5e7a1b34",
@@ -89,6 +96,14 @@ async function answerTokenRequest(id: string, serial: number) {
     default:
       return passthrough();
   }
+}
+
+/** The order write answers for every session the linked answer itself is mocked for. */
+function servesMockedLinkedWallets(request: Request): boolean {
+  if (readPayCardWalletsMock() !== undefined) return true;
+
+  const { walletFunded } = readCardOnboardingStatusMock();
+  return walletFunded !== undefined || isMockCardRequest(request);
 }
 
 const handlers = [
@@ -181,16 +196,29 @@ const handlers = [
       : passthrough();
   }),
 
-  http.get("*/v1/wallet/internal/card_linked", ({ request }) => {
-    if (readPayCardWalletsMock() !== undefined) {
-      return HttpResponse.json(mockPayCardLinkedWallets());
+  http.get("*/v1/wallet/internal/card_linked", ({ request }) =>
+    servesMockedLinkedWallets(request)
+      ? HttpResponse.json(mockPayCardLinkedWallets())
+      : passthrough(),
+  ),
+
+  http.put("*/v1/wallet/internal/card_linked/priority", async ({ request }) => {
+    if (!servesMockedLinkedWallets(request)) {
+      return passthrough();
     }
 
-    const { walletFunded } = readCardOnboardingStatusMock();
+    const body = (await request
+      .clone()
+      .json()
+      .catch(() => ({}))) as {
+      wallets?: readonly { addressId: string; priority: number }[];
+    };
 
-    return walletFunded === undefined && !isMockCardRequest(request)
-      ? passthrough()
-      : HttpResponse.json(mockPayCardLinkedWallets());
+    await delay(REORDER_MS);
+
+    // Only the order is written. The balances answered by `/v1/wallet/internal` are left as they
+    // are, so the rows the refetch rebuilds keep the amounts they were showing before the drag.
+    return HttpResponse.json({ success: reorderPayCardLinkedWalletsMock(body.wallets ?? []) });
   }),
 
   http.get("*/v1/wallet/reward", ({ request }) =>
