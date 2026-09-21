@@ -29,7 +29,7 @@ export function getRecipientHeaderPresentation({
   const matchedContact =
     isContactsFeatureEnabled && address && currencyId
       ? findMatchedContact(contacts, address, currencyId, undefined, {
-          preferredContactId: recipient.contactId,
+          preferredContactId: recipient?.contactId,
         })
       : undefined;
 
