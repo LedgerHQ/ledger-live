@@ -250,34 +250,34 @@ libs/coin-modules/coin-solana/                                           @ledger
 libs/coin-modules/coin-tron/                                             @ledgerhq/coin-integration
 
 ## Blockchain support 1
-libs/coin-modules/coin-aptos/                                            @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-near/                                             @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-vechain/                                          @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-filecoin/                                         @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-mina/                                             @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-stacks/                                           @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-kaspa/                                            @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-zcash/                                            @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-aptos/                                            @ledgerhq/blockchain-support @ledgerhq/blockchain-support-1 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-near/                                             @ledgerhq/blockchain-support @ledgerhq/blockchain-support-1 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-vechain/                                          @ledgerhq/blockchain-support @ledgerhq/blockchain-support-1 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-filecoin/                                         @ledgerhq/blockchain-support @ledgerhq/blockchain-support-1 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-mina/                                             @ledgerhq/blockchain-support @ledgerhq/blockchain-support-1 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-stacks/                                           @ledgerhq/blockchain-support @ledgerhq/blockchain-support-1 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-kaspa/                                            @ledgerhq/blockchain-support @ledgerhq/blockchain-support-1 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-zcash/                                            @ledgerhq/blockchain-support @ledgerhq/blockchain-support-1 @ledgerhq/ledger-third-party-leads
 
 ## Blockchain support 2
-libs/coin-modules/coin-hedera/                                           @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-aleo/                                             @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-xrp/                                              @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-algorand/                                         @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-icon/                                             @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-multiversx/                                       @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-casper/                                           @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-hedera/                                           @ledgerhq/ledger-partner-blockydevs @ledgerhq/blockchain-support-2 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-aleo/                                             @ledgerhq/ledger-partner-blockydevs @ledgerhq/blockchain-support-2 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-xrp/                                              @ledgerhq/ledger-partner-blockydevs @ledgerhq/blockchain-support-2 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-algorand/                                         @ledgerhq/ledger-partner-blockydevs @ledgerhq/blockchain-support-2 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-icon/                                             @ledgerhq/ledger-partner-blockydevs @ledgerhq/blockchain-support-2 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-multiversx/                                       @ledgerhq/ledger-partner-blockydevs @ledgerhq/blockchain-support-2 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-casper/                                           @ledgerhq/ledger-partner-blockydevs @ledgerhq/blockchain-support-2 @ledgerhq/ledger-third-party-leads
 
 ## Blockchain support 3
-libs/coin-modules/coin-sui/                                              @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-canton/                                           @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-concordium/                                       @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-tezos/                                            @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-cardano/                                          @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-celo/                                             @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-internet_computer/                                @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-ton/                                              @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
-libs/concordium-core/                                                    @ledgerhq/ledger-partner-hoodies
+libs/coin-modules/coin-sui/                                              @ledgerhq/ledger-partner-hoodies @ledgerhq/blockchain-support-3 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-canton/                                           @ledgerhq/ledger-partner-hoodies @ledgerhq/blockchain-support-3 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-concordium/                                       @ledgerhq/ledger-partner-hoodies @ledgerhq/blockchain-support-3 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-tezos/                                            @ledgerhq/ledger-partner-hoodies @ledgerhq/blockchain-support-3 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-cardano/                                          @ledgerhq/ledger-partner-hoodies @ledgerhq/blockchain-support-3 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-celo/                                             @ledgerhq/ledger-partner-hoodies @ledgerhq/blockchain-support-3 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-internet_computer/                                @ledgerhq/ledger-partner-hoodies @ledgerhq/blockchain-support-3 @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-ton/                                              @ledgerhq/ledger-partner-hoodies @ledgerhq/blockchain-support-3 @ledgerhq/ledger-third-party-leads
+libs/concordium-core/                                                    @ledgerhq/ledger-partner-hoodies @ledgerhq/blockchain-support-3
 
 # PTX team
 libs/transaction-observability/                                           @ledgerhq/ptx
