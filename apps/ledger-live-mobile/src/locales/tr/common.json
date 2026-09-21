@@ -129,6 +129,26 @@
     "ldmkEnabled" : "LDMK taşıma etkinleştirildi"
   },
   "errors" : {
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "{{bondedValidator}} ile zaten staking yapıyorsunuz. Doğrulayıcıyı değiştirmeden önce stake etmeyi durdurun.",
+      "description" : "Aleo, hesap başına bir doğrulayıcıya izin verir. Başka bir yerde staking yapmadan önce {{bondedValidator}} üzerinden stake etmeyi durdurun."
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "Tek seferde en az {{minAmount}} stake etmeniz gerekir.",
+      "description" : "Minimum staking tutarı: {{minAmount}}."
+    },
+    "AleoClosedValidator" : {
+      "title" : "Bu doğrulayıcı, yeni yetki devreden kabul etmiyor.",
+      "description" : "Bu doğrulayıcı, yeni yetki devreden kabul etmiyor. Devam etmek için açık bir doğrulayıcı seçin."
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "Stake etmek için toplamda en az {{minAmount}} gerekir.",
+      "description" : "Toplamda en az {{minAmount}} tutarında staking yapmış olmanız gerekir."
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "Bu doğrulayıcının bağı çözülüyor.",
+      "description" : "Bu doğrulayıcı kendi stake varlıklarını geri çekiyor, bu nedenle ağ söz konusu doğrulayıcıya yönelik yeni stake işlemlerini reddediyor. Devam etmek için başka bir doğrulayıcı seçin."
+    },
     "ZcashMemoTooLong" : {
       "title" : "Memo {{maxBytes}} baytı aşmamalıdır"
     },
@@ -244,7 +264,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "Bu hesap bu token'ı gönderemez",
-      "description" : "Token ihraççısı bu token'ı kimlerin gönderebileceğini kısıtlıyor ve bu hesaba izin verilmiyor. Erişim için token ihraççısıyla iletişime geçin."
+      "description" : "Token ihraççısı, bunu kimlerin gönderebileceğini kısıtlıyor. Ayrıntılar için token ihraççısıyla iletişime geçin."
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "Bu hesabın bu token'ı göndermek için onayı bulunmuyor",
+      "description" : "Token ihraççısı onaylı gönderenlerin bir listesini tutuyor ve bu hesap ilgili listede yer almıyor. Onay, Ledger tarafından değil, ihraççı tarafından yönetilir."
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "Bu hesabın bu token'ı göndermesi kısıtlandı",
+      "description" : "Token ihraççısı bu hesabı kısıtladı. Ayrıntılar için ihraççıyla iletişime geçin."
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "Token kısıtlamaları doğrulanamadı",
@@ -1425,6 +1453,9 @@
     "AccountCreationFeeWarning" : {
       "title" : "Bu işlem için {{fee}} tutarında bir hesap oluşturma ücreti alınacaktır"
     },
+    "AmountRequired" : {
+      "title" : "Devam etmek için bir tutar girin."
+    },
     "AmountTooSmall" : {
       "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
     },
@@ -1611,6 +1642,49 @@
       "mismatch" : "Parolalar eşleşmiyor",
       "saveFailed" : "Parolanızı kaydedemedik. Lütfen tekrar deneyin.",
       "cta" : "Onayla"
+    },
+    "unlock" : {
+      "wrongPassword" : "Yanlış parola",
+      "forgotPassword" : "Parolanızı mı unuttunuz?",
+      "retryBiometrics" : "Biyometrik giriş kullanın",
+      "unlockCta" : "Ledger Wallet'ın Kilidini Aç",
+      "failed" : "Parolanızı kontrol edemedik. Lütfen tekrar deneyin.",
+      "cta" : "Onayla",
+      "biometricsPrompt" : "Ledger Wallet'ın Kilidini Aç",
+      "forgotPasswordSheet" : {
+        "title" : "Şifrenizi mi unuttunuz?",
+        "description" : "Parolanızı kaybettiyseniz uygulamayı yeniden yükleyin ve cüzdanınızı geri yükleyin.",
+        "cta" : "Anladım"
+      }
+    },
+    "enableProtection" : {
+      "biometrics" : {
+        "title" : "{{biometricsType}} girişini etkinleştir",
+        "description" : "Kripto kartı {{biometricsType}} gerektirir. Uygulamayı her açtığınızda kullanılır.",
+        "cta" : "{{biometricsType}} girişini etkinleştir"
+      },
+      "password" : {
+        "title" : "Parola oluşturun",
+        "description" : "Kripto kartı bir parola gerektirir. Uygulamayı her açtığınızda kullanılır.",
+        "cta" : "Parola oluştur"
+      }
+    },
+    "protectionEnabled" : {
+      "biometrics" : {
+        "title" : "{{biometricsType}} etkinleştirildi"
+      },
+      "password" : {
+        "title" : "Parola oluşturuldu"
+      },
+      "description" : "Artık bir kart almak için kaydolabilirsiniz",
+      "cta" : "Devam"
+    },
+    "biometrics" : {
+      "title" : "{{biometricsType}}",
+      "desc" : "Uygulamanın kilidini {{biometricsType}} ile açın.",
+      "prompt" : "Kilidi açmak için kullanmak üzere {{biometricsType}} girişini onaylayın",
+      "disablePrompt" : "Kilidi açmak amacıyla kullanmayı durdurmak için {{biometricsType}} girişini onaylayın",
+      "useDeviceCredential" : "PIN Kullan"
     },
     "deactivatePassword" : {
       "title" : "Parolayı devre dışı bırakın",
@@ -3201,6 +3275,13 @@
       "UPDATE_ACCOUNT" : "Güncellenmiş hesap"
     }
   },
+  "history" : {
+    "tabs" : {
+      "crypto" : "Kripto",
+      "card" : "Kart",
+      "accessibilityLabel" : "İşlem geçmişi türü"
+    }
+  },
   "operationsList" : {
     "to" : "Alıcı",
     "from" : "Gönderici",
@@ -3240,6 +3321,13 @@
     },
     "details" : "{{ currency }} ayrıntıları",
     "extra" : {
+      "pltReject" : {
+        "title" : "Neden",
+        "nonExistentToken" : "Bu token Concordium'da bulunmuyor.",
+        "recipientNotFound" : "Alıcı hesabı Concordium'da bulunmuyor.",
+        "insufficientBalance" : "Hesapta yeterli miktarda token bulunmuyordu.",
+        "rejected" : "Concordium bu işlemi reddetti."
+      },
       "transferId" : "Transfer Kimliği (Memo)",
       "resource" : "Kaynak",
       "validator" : "Doğrulayıcı",
@@ -4099,6 +4187,7 @@
         "copyAdress" : "Adresi kopyala",
         "addressCopied" : "Adres kopyalandı!",
         "addressVerified" : "Adres doğrulandı",
+        "qrCode" : "Alıcı adresiniz için karekod",
         "verifyAddress" : "Adresinizi doğrulayın",
         "adviceVerify" : "Adresinizi daima Ledger cihazınız ile doğrulamanızı öneririz",
         "sendWarning" : "Sadece {{network}} ağındaki token'ları gönderin. Başka bir ağdan gönderirseniz token'ları kalıcı olarak kaybedebilirsiniz.",
@@ -4743,11 +4832,11 @@
         "walletNotExist" : "Böyle bir cüzdan yok"
       },
       "skipMemo" : {
-        "title" : "Bir {{tag}} ekleme atlansın mı?",
-        "warning" : "Alıcı bir {{tag}} gerektiriyorsa varlığınız kaybolabilir.",
-        "notRequired" : "Alıcı tarafından {{tag}} gerekli kılınmamış mı?",
-        "confirm" : "Evet, atla",
-        "neverAskAgain" : "Bu uyarıyı tekrar gösterme"
+        "title" : "Bir {{tag}} olmadan göndermek istiyor musunuz?",
+        "description" : "Alıcı bir {{tag}} gerektiriyorsa varlığınız kaybolabilir.",
+        "confirm" : "Evet, {{tag}} olmadan gönder",
+        "cancel" : "Hayır, geri dön",
+        "neverAskAgain" : "Bir daha sorma"
       },
       "tagHelp" : {
         "title" : "{{tag}} nedir?",
@@ -10273,27 +10362,6 @@
       "iHaveACard" : "Kartım var"
     }
   },
-  "walletV4Tour" : {
-    "title" : "Yeni portföyü keşfet",
-    "slides" : {
-      "portfolio" : {
-        "title" : "Portföyünüz şimdi daha net",
-        "description" : "Toplam bakiyenizi ilk bakışta görün ve detaylı bilgiler için \"Bugün\" seçeneğine dokunun."
-      },
-      "navigation" : {
-        "title" : "Temel eylemlere daha hızlı erişin",
-        "description" : "Takas, Transfer ve Satın Al işlevlerine anında erişin. Kazan bölümünü ve Kartınızı alt gezinti menüsünde bulabilirsiniz."
-      },
-      "actions" : {
-        "title" : "Piyasa trendlerini anında görün",
-        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hızlıca görün ve içgörüleri eyleme dönüştürün."
-      }
-    },
-    "cta" : {
-      "continue" : "İleri",
-      "explore" : "Yeni portföyü keşfet"
-    }
-  },
   "mainNavigation" : {
     "home" : "Ana Sayfa",
     "swap" : "Takas et",
@@ -10344,9 +10412,34 @@
       }
     },
     "card" : {
+      "balanceLabel" : "Bakiye",
+      "assets" : {
+        "title" : "Varlıklar",
+        "empty" : "Henüz varlık yok",
+        "error" : "Varlıklar yüklenemedi",
+        "info" : "Kartınız, harcamalarınızda bu varlıkları kullanır. Sırasıyla hangi varlıkların harcanacağını belirleyin veya daha fazla varlık ekleyin.",
+        "manage" : "Yönet",
+        "manageDialog" : {
+          "title" : "Varlıkları yönetin",
+          "description" : "Varlıklarınız harcama sırasına göre listelenir. Bir varlığın bakiyesi yetersiz kalırsa otomatik olarak sıradaki varlık kullanılır.",
+          "addAssetCaption" : "Varlık eklemek için Baanx'in sayfasına yönlendirileceksiniz.",
+          "addAsset" : "Varlık ekle"
+        },
+        "details" : {
+          "topUp" : "Bakiye yükle",
+          "withdraw" : "Çek",
+          "transactions" : "İşlemler"
+        },
+        "withdraw" : {
+          "title" : "Baanx'e yönlendirileceksiniz",
+          "description" : "Baanx hesabınızdan Ledger cüzdan adresinize bakiye çekin.",
+          "continue" : "Devam"
+        }
+      },
       "title" : "Kripto kartı",
-      "placeholder" : "Çok yakında",
+      "topUp" : "Bakiye yükle",
       "details" : "Ayrıntılar",
+      "addToWallet" : "{{wallet}} Pay'e Ekle",
       "freeze" : "Dondur",
       "unfreeze" : "Çöz",
       "goBack" : "Geri dön",
@@ -10364,6 +10457,15 @@
       "confirmError" : {
         "description" : "Bir hata oluştu. Lütfen tekrar deneyin.",
         "retry" : "Tekrar deneyin"
+      },
+      "numbers" : {
+        "reveal" : "Görüntüle",
+        "hide" : "Gizle",
+        "failed" : "Kart numaraları yüklenemedi",
+        "imageAlt" : "Kart numaraları"
+      },
+      "reward" : {
+        "title" : "Toplam para iadesi"
       }
     },
     "cardTransactions" : {
@@ -10394,6 +10496,30 @@
           "PENDING" : "Beklemede",
           "DECLINED" : "Reddedildi",
           "REVERTED" : "Geri döndürüldü"
+        }
+      },
+      "history" : {
+        "today" : "Bugün",
+        "yesterday" : "Dün",
+        "unknownDate" : "Tarih mevcut değil",
+        "columns" : {
+          "transaction" : "İşlem",
+          "fundingSources" : "Fonlama kaynağı",
+          "amount" : "Tutar"
+        },
+        "paidWithAssets" : "{{count}} varlık ile ödendi",
+        "goToPay" : "Ödemeye git",
+        "signedOut" : {
+          "title" : "Kart işlemlerinizi görmek için giriş yapın",
+          "description" : "Giriş yaptığınızda kart hareketleriniz burada görünür."
+        },
+        "empty" : {
+          "title" : "Henüz kart işlemi yok",
+          "description" : "Kart işlemlerinizi görmek için daha sonra geri dönün."
+        },
+        "error" : {
+          "title" : "Kart işlemleri yüklenemedi",
+          "description" : "Bağlantınızı kontrol edin ve tekrar deneyin."
         }
       }
     },
@@ -10554,9 +10680,56 @@
         "stepComplete" : "Tamamlandı",
         "gotIt" : "Anladım"
       },
-      "walletStep" : {
-        "title" : "Apple Pay/Google Pay'e ekleyin",
-        "description" : "Mağazada telefonunuzla ödeyin"
+      "steps" : {
+        "createAccount" : {
+          "title" : "Hesabınızı oluşturun",
+          "description" : "Başlamak için kimliğinizi doğrulayın"
+        },
+        "chooseCardType" : {
+          "title" : "Kart türünüzü seçin",
+          "description" : "Sanal veya fiziksel arasından seçim yapın"
+        },
+        "topUpCard" : {
+          "title" : "Kartınıza bakiye yükleyin",
+          "description" : "USDC, USDT, BTC veya daha fazlasını kullanarak bakiye ekleyin"
+        },
+        "firstPurchase" : {
+          "title" : "İlk satın alımınızı gerçekleştirin",
+          "description" : "İnternette veya mağazada ödeme yapın"
+        },
+        "appleGooglePay" : {
+          "title" : "{{wallet}} Pay'e Ekle",
+          "description" : "Mağazada telefonunuzla ödeyin"
+        }
+      },
+      "addToWallet" : {
+        "ios" : {
+          "title" : "Apple Pay'e Ekle",
+          "step1" : "Apple Wallet uygulamasına gidin ve ekle (+) simgesine dokunun",
+          "step2" : "Banka veya kredi kartı seçin",
+          "step3" : "Yönergeleri uygulayın",
+          "cta" : "Apple Cüzdan'a git",
+          "error" : {
+            "title" : "Apple Cüzdan açılamadı",
+            "description" : "Apple Pay'in bu cihazda kullanılabilir olduğundan emin olun, ardından tekrar deneyin.",
+            "action" : "Tekrar deneyin"
+          }
+        },
+        "android" : {
+          "title" : "Google Pay'e Ekle",
+          "step1" : "Google Cüzdan uygulamasına gidin ve ekle seçeneğine dokunun.",
+          "step2" : "Ödeme kartını seçin, ardından Yeni Kredi Kartı veya Banka Kartı seçeneğini belirleyin.",
+          "step3" : "Yönergeleri uygulayın.",
+          "cta" : "Google Cüzdan'a git",
+          "error" : {
+            "title" : "Google Cüzdan açılamadı",
+            "description" : "Google Cüzdan yüklenmemiş veya devre dışı bırakılmış olabilir.",
+            "action" : "Google Play'i Aç"
+          }
+        },
+        "error" : {
+          "back" : "Talimatlara geri dön"
+        }
       }
     }
   },
@@ -10707,6 +10880,79 @@
     "accountActions" : {
       "publicToPrivate" : "Takas et"
     },
+    "bond" : {
+      "stepperHeader" : {
+        "validator" : "Doğrulayıcı seçin",
+        "stepRange" : "{{currentStep}} of {{totalSteps}}",
+        "amount" : "Tutar",
+        "selectDevice" : "Cihaz Seç",
+        "connectDevice" : "Cihazı Bağlayın"
+      },
+      "selectValidator" : {
+        "fetchError" : "Doğrulayıcılar yüklenemedi. Lütfen tekrar deneyin.",
+        "metadataError" : "Doğrulayıcı metaverileri yüklenemedi. Hâlâ stake'inize ekleme yapabilirsiniz.",
+        "lockedHint" : "Aleo, hesap başına bir doğrulayıcıya izin verir. Bu doğrulayıcıdaki stake miktarınızı artırabilir veya farklı birini seçmek için önce stake etmeyi durdurabilirsiniz.",
+        "closed" : "Doğrulayıcı yeni stake işlemlerine kapalı",
+        "unbonding" : "Doğrulayıcının bağı çözülüyor",
+        "totalStake" : "Toplam stake",
+        "rateAndCommission" : "Tahmini %{{rate}} · %{{commission}} komisyon",
+        "commissionOnly" : "%{{commission}} komisyon",
+        "earnsNothing" : "Doğrulayıcı ödül kazanmaz"
+      },
+      "amount" : {
+        "available" : "Mevcut:",
+        "max" : "Maks.",
+        "stakingAlert" : "Ödül kazanmak için bu doğrulayıcıdaki toplam stake miktarınızın en az <minimum/> seviyesine ulaşması gerekir. Yalnızca herkese açık ALEO ile staking yapılabilir: stake etmek istiyorsanız önce gizli bakiyenizi herkese açık bakiyeye dönüştürün.",
+        "minimumLabel" : "Minimum bağlama tutarı",
+        "minimumTopUp" : "Ödül kazanmak için gereken toplam stake tutarına <missing/> ulaşmak için en az <total/> ekleyin.",
+        "belowMinimum" : "Herkese açık <missing/> bakiyeniz, <minimum/> olan minimum bağlama tutarından eksik. Staking yapmadan önce açık bakiyenize yükleme yapın.",
+        "changeValidator" : "Başka bir doğrulayıcı seçin"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "Bağlama İşlemi Gönderildi",
+          "description" : "Bağlama işleminiz Aleo ağında gerçekleştiriliyor."
+        }
+      }
+    },
+    "stake" : {
+      "sectionTitle" : "Staking",
+      "staked" : "Stake edildi",
+      "unstaking" : "Stake durduruluyor",
+      "claimable" : "Talep edilebilir",
+      "estimatedRate" : "Tahmini %{{rate}}",
+      "fallbackValidator" : "Aleo",
+      "status" : {
+        "earning" : "Ödül kazanıyor",
+        "unknown" : "Durum mevcut değil"
+      },
+      "nonEarning" : {
+        "fullCommission" : "Bu doğrulayıcı %100 komisyon alır, bu nedenle size hiçbir şey kalmaz.",
+        "overConcentrated" : "Bu doğrulayıcı, stake edilen tüm ALEO'ların %25'inden fazlasını elinde tutuyor. Protokol, bu sınırın üzerinde ödeme yapmadığı için hiçbir şey kazanamazsınız.",
+        "leftCommittee" : "Bu doğrulayıcı artık komitede yer almıyor; bu nedenle stake ettiğiniz tutar hiçbir şey kazandırmaz. Stake etmeyi durdurmak ve yeniden kazanmaya başlamak için varlıklarınızı başka bir doğrulayıcıya bağlayın.",
+        "ownStakeBelowMinimum" : "Stake miktarınız 10.000 ALEO alt sınırının altında olduğundan hiçbir şey kazandırmaz. Yeniden kazanmaya başlamak için ekleme yapın."
+      },
+      "emptyState" : {
+        "description" : "{{name}} varlığınızı stake ederek ödül kazanabilirsiniz.",
+        "cta" : "Ödüller kazanın",
+        "bondPending" : "Bir stake gönderildi ve onaylanması bekleniyor. Aleo, hesap başına bir staking pozisyonu destekler; bu nedenle, bu işlem gerçekleşene kadar staking kullanılamaz."
+      },
+      "unstakingRow" : {
+        "settling" : "Çok az kaldı...",
+        "claimPending" : "Talep ediliyor...",
+        "unbondPending" : "Stake durduruluyor...",
+        "blocksRemaining_one" : "~{{count}} blok kaldı",
+        "blocksRemaining_other" : "~{{count}} blok kaldı"
+      }
+    },
+    "manage" : {
+      "bond" : "Bağla",
+      "status" : "Durum",
+      "estimatedRate" : "Tahmini ödül oranı",
+      "unbondPendingInfo" : "Bir stake durdurma talebi onaylanmayı bekliyor. Aleo aynı anda yalnızca bir bağ çözme pozisyonunu takip eder; bu nedenle, bu işlem gerçekleşene kadar bağ çözme ve talep etme işlemleri kullanılamaz.",
+      "claimPendingInfo" : "Bir talep onay bekliyor. Aleo aynı anda yalnızca bir bağ çözme pozisyonunu takip eder; bu nedenle, bu işlem gerçekleşene kadar bağ çözme ve talep etme işlemleri kullanılamaz.",
+      "unlockBlock" : "Kilidin açılacağı blok"
+    },
     "send" : {
       "balanceSelection" : {
         "title" : "Bakiye seçin",
@@ -10751,6 +10997,10 @@
     },
     "balancesSection" : "Bakiyeler",
     "info" : {
+      "available" : {
+        "title" : "Mevcut bakiye",
+        "description" : "Şu anda harcayabileceğiniz bakiye: Şeffaf fonlar ile senkronizasyonu tamamlanmış gizli kayıtların toplamıdır. Stake edilen ve kilit açma sürecinde olan tutarlar bu hesaplamaya dahil değildir."
+      },
       "transparent" : {
         "title" : "Şeffaf bakiye",
         "description" : "Aleo ağında herkese açık olarak görülebilen bakiye. Bu tutar doğrudan gönderilebilir veya alınabilir ve herkes tarafından görülebilir."
@@ -10758,6 +11008,18 @@
       "private" : {
         "title" : "Gizli bakiye",
         "description" : "Aleo ağındaki korumalı bakiye. Bu bakiyeyi yalnızca siz görebilirsiniz; gizli işlemler için kanıt oluşturulması gerekir."
+      },
+      "staked" : {
+        "title" : "Stake edildi",
+        "description" : "Şu anda bir doğrulayıcıya bağlı olan tutar. Ödül kazandırır ancak siz stake işlemini sonlandırana ve kilit açma süresi bitene kadar harcanamaz."
+      },
+      "unstaking" : {
+        "title" : "Stake durduruluyor",
+        "description" : "Stake işlemi sonlandırılmış ancak halen kilitli olan tutar. Bu bakiye anında ödül kazandırmayı durdurur ve kilit açma süresi sona erdiğinde talep edilebilir hâle gelir."
+      },
+      "claimable" : {
+        "title" : "Talep edilebilir",
+        "description" : "Stake işlemi sonlandırılmış ve kilit açma süresi dolmuş tutar. Bu varlıkları kullanılabilir bakiyenize geri taşımak için talep edin."
       }
     },
     "account" : {
