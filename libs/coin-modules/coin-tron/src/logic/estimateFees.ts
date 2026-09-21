@@ -374,6 +374,24 @@ const readRentalParam = (
   return fallback;
 };
 
+// extraTrxNum's wire contract is discontinuous — 0 (no top-up) or a value in [0.8, 500] — which
+// readRentalParam's single `>= min` can't express, so an override of 0.1 or 600 would reach the API
+// and fail the order. Validate the exact range; fall back to the default (logged) on a misconfig.
+const readExtraTrx = (logger: Logger, value: unknown): number => {
+  if (value === undefined) return DEFAULT_TRONIFY_RENTAL_EXTRA_TRX;
+  if (
+    typeof value === "number" &&
+    Number.isFinite(value) &&
+    (value === 0 || (value >= 0.8 && value <= 500))
+  ) {
+    return value;
+  }
+  logger("tron/estimateFees", "ignoring invalid coin-config rentalExtraTrx, using default", {
+    value,
+  });
+  return DEFAULT_TRONIFY_RENTAL_EXTRA_TRX;
+};
+
 /**
  * Estimate fees for the Tronify energy-rent option.
  *
@@ -413,13 +431,7 @@ export async function estimateTronifyFees(
     1,
     "rentalDurationSeconds",
   );
-  const extraTrx = readRentalParam(
-    logger,
-    tronifyConfig?.rentalExtraTrx,
-    DEFAULT_TRONIFY_RENTAL_EXTRA_TRX,
-    0,
-    "rentalExtraTrx",
-  );
+  const extraTrx = readExtraTrx(logger, tronifyConfig?.rentalExtraTrx);
 
   // computeFeesRaw does not catch — any chain-params failure propagates here (no silent fallback
   // on originalValue, per ADR-050 Option 3). Both calls are independent once energyNeeded is
@@ -481,6 +493,11 @@ export async function estimateTronifyFees(
   };
 }
 
+// The two context-free entry points below are reached without a framework Context (the app-side
+// sponsored seam), so they log through a no-op sink: coin-tron is dropping @ledgerhq/logs (PR #21897)
+// and there is no injected logger here. The framework estimateFees/craftTransaction path still logs.
+const contextFreeLogger: Logger = () => {};
+
 /**
  * Context-free Tronify fee quote for the app-side savings display: the Tronify rental cost
  * (`value`), the standard TRX burn it replaces (`originalValue`), and the delta (`savings`) — all
@@ -493,7 +510,11 @@ export async function estimateSponsoredFeeQuote(
   intent: TronIntent,
 ): Promise<{ value: bigint; originalValue: bigint; savings: bigint }> {
   const config = coinConfig.getCoinConfig();
-  const { value, originalValue, savings } = await estimateTronifyFees(config, intent);
+  const { value, originalValue, savings } = await estimateTronifyFees(
+    contextFreeLogger,
+    config,
+    intent,
+  );
   return { value, originalValue: originalValue ?? value, savings: savings ?? 0n };
 }
 
@@ -515,18 +536,14 @@ export async function buildEnergyRentRequest(intent: TronIntent): Promise<Energy
   const config = coinConfig.getCoinConfig();
   const tronifyConfig = config.energyRent?.tronify;
   const durationSeconds = readRentalParam(
+    contextFreeLogger,
     tronifyConfig?.rentalDurationSeconds,
     DEFAULT_TRONIFY_RENTAL_DURATION_SECONDS,
     1,
     "rentalDurationSeconds",
   );
-  const extraTrx = readRentalParam(
-    tronifyConfig?.rentalExtraTrx,
-    DEFAULT_TRONIFY_RENTAL_EXTRA_TRX,
-    0,
-    "rentalExtraTrx",
-  );
-  const energyNeeded = await estimateEnergy(config, intent);
+  const extraTrx = readExtraTrx(contextFreeLogger, tronifyConfig?.rentalExtraTrx);
+  const energyNeeded = await estimateEnergy(contextFreeLogger, config, intent);
   const request: EnergyRentRequest = {
     payerAddress: intent.sender,
     receiverAddress: intent.sender,
@@ -539,6 +556,21 @@ export async function buildEnergyRentRequest(intent: TronIntent): Promise<Energy
   // params; both calls share this one request (and so toOrderParams), leaving price as the only
   // thing that can differ. A quote failure propagates: crafting without a ceiling is the unbounded
   // case the ceiling guards against, and the very next step calls the same backend anyway.
-  const quote = await getEnergyRentQuote(request);
-  return { ...request, maxPayCoinAmt: quote.payCoinAmt, maxPayCoinCode: quote.payCoinCode };
+  const quote = await getEnergyRentQuote(contextFreeLogger, request);
+  // Only TRX-denominated rent is supported (Flow 1); reject a non-TRX quote before it reaches the
+  // ceiling and signing. Normalize the code so the ceiling compare (assertOrderWithinApprovedCost) is exact.
+  const payCoinCode = quote.payCoinCode;
+  if (typeof payCoinCode !== "string" || payCoinCode.toUpperCase() !== "TRX") {
+    throw new Error(
+      `Tronify returned unsupported payCoinCode: ${String(payCoinCode)}; only TRX is supported`,
+    );
+  }
+  // maxPayCoinAmt is the signing ceiling and assertOrderWithinApprovedCost skips its check when the
+  // value is undefined, so a payCoinAmt that arrives unvalidated from the provider is rejected here
+  // rather than reaching the device as an unbounded order.
+  const maxPayCoinAmt = new BigNumber(quote.payCoinAmt);
+  if (!maxPayCoinAmt.isFinite() || maxPayCoinAmt.isNegative()) {
+    throw new Error(`Tronify returned an invalid payCoinAmt: ${String(quote.payCoinAmt)}`);
+  }
+  return { ...request, maxPayCoinAmt: quote.payCoinAmt, maxPayCoinCode: payCoinCode.toUpperCase() };
 }

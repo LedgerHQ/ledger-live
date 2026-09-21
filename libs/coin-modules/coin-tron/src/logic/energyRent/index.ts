@@ -11,6 +11,7 @@ import {
   ENERGY_RENT_POLL_MAX_CONSECUTIVE_ERRORS,
   ENERGY_RENT_POLL_TIMEOUT_MS,
 } from "../constants";
+import { getTronifyConfig } from "../../network/tronify";
 import { tronifyProvider } from "./tronify";
 import type {
   EnergyProvider,
@@ -31,6 +32,9 @@ export function getEnergyProvider(): EnergyProvider {
     throw new EnergyRentProviderNotConfigured("No energy-rent provider configured");
   }
   if (energyRent.provider === "tronify") {
+    // Name alone is not proof of configuration: this gate opens raw-signing (craftRawTransaction), so
+    // reject an under-configured provider here — getTronifyConfig throws unless url + sourceFlag exist.
+    getTronifyConfig();
     return tronifyProvider;
   }
   // `provider` comes from remote coin-config, so guard against an unknown value at runtime.
@@ -64,7 +68,10 @@ function assertOrderWithinApprovedCost(request: EnergyRentRequest, order: Energy
       `Energy-rent cost ceiling "${maxPayCoinAmt}" has no approved coin code to compare against`,
     );
   }
-  if (order.payCoinCode !== maxPayCoinCode) {
+  // Case-insensitive: the approved code is normalized to upper case at the ceiling's source
+  // (buildEnergyRentRequest), so a differently-cased order code from the provider must not
+  // false-mismatch a genuinely matching denomination.
+  if (String(order.payCoinCode).toUpperCase() !== maxPayCoinCode.toUpperCase()) {
     throw new TronifyApiError(
       `Energy-rent order is priced in ${String(order.payCoinCode)}, but ${maxPayCoinCode} was approved`,
     );
@@ -111,8 +118,9 @@ export function getEnergyRentStatus(
 
 const delay = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
 
-/** Rejection marker for a poll that outlived the hard deadline; never escapes this module. */
-const POLL_DEADLINE_REACHED = Symbol("energy-rent-poll-deadline");
+/** Rejection marker for a poll that outlived the hard deadline; caught by identity below and never
+ * escapes this module. An Error instance so it is a valid Promise rejection reason. */
+const POLL_DEADLINE_REACHED = new Error("energy-rent-poll-deadline");
 
 /**
  * The deadline is enforced even while the request is in flight — a hung status call would otherwise
@@ -179,10 +187,11 @@ export async function awaitEnergyDeliveryWith(
   }
 }
 
-/** Bound form: polls `getEnergyRentStatus(ref)` until delivery. */
+/** Bound form: polls `getEnergyRentStatus(logger, ref)` until delivery. */
 export function awaitEnergyDelivery(
+  logger: Logger,
   ref: EnergyRentOrderRef,
   opts?: { intervalMs?: number; timeoutMs?: number; paymentTxId?: string },
 ): Promise<void> {
-  return awaitEnergyDeliveryWith(() => getEnergyRentStatus(ref), opts);
+  return awaitEnergyDeliveryWith(() => getEnergyRentStatus(logger, ref), opts);
 }

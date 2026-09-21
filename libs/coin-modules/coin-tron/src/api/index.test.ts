@@ -91,6 +91,16 @@ describe("createApi", () => {
     expect(craftRawTransaction).not.toHaveBeenCalled();
   });
 
+  it("craftRawTransaction refuses an unsupported provider (unvalidated remote config must not open raw-signing)", async () => {
+    withEnergyRentConfigured({ provider: "rogue-provider" });
+    const impl = createApi();
+
+    await expect(
+      impl.craftRawTransaction(context, "0a02abcd220812345678", "TSender", "pubkey", 0n),
+    ).rejects.toThrow(/unsupported energy-rent provider/i);
+    expect(craftRawTransaction).not.toHaveBeenCalled();
+  });
+
   const mockTronConfig: TronCoinConfig = {
     explorer: { url: "iamaurl" },
     status: { type: "active" },

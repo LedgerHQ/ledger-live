@@ -858,10 +858,10 @@ describe("Send Flow Integration", () => {
 
     /**
      * Navigates AMOUNT -> FEE_PAYMENT (select Tronify) -> AMOUNT -> review -> SPONSORED_RENT_SIGNATURE.
-     * The mocked orchestration (see sendFlowTestUtils' useSponsoredSendOrchestration mock) starts in
-     * RENT_SIGNING with no order, so the screen's craft-on-entry effect fires actions.craftRent()
-     * (our spy) exactly once and the screen renders observably mid-craft (isCrafting=true, no
-     * DeviceAction mounted yet) until the test pushes an order in via setMockOrchestrationState.
+     * The mocked orchestration (see sendFlowTestUtils' useSponsoredSendOrchestration mock) starts at
+     * IDLE with no order, so the screen's craft-on-entry effect fires actions.craftRent() (our spy)
+     * exactly once and the screen renders observably mid-craft (isCrafting=true, no DeviceAction
+     * mounted yet) until the test pushes an order in via setMockOrchestrationState.
      */
     async function navigateToRentSignature(user: ReturnType<typeof renderSendFlow>["user"]) {
       await navigateToAmountScreen(user, VALID_TRON_RECIPIENT);
@@ -873,7 +873,15 @@ describe("Send Flow Integration", () => {
       await user.click(screen.getByTestId("send-fee-payment-option-tronify"));
       expect(await screen.findByTestId("send-amount-step")).toBeVisible();
 
-      await user.click(screen.getByTestId("send-review-button"));
+      // Selecting Tronify changes the transaction, which null-clears the sponsored intent and kicks
+      // SponsoredSendContext's async rebuild. onReview no-ops while !intentReady, and the real Review
+      // button shows a loading spinner with an empty label until the rebuild settles; user.click
+      // bypasses that gate, so wait for the button to leave loading (its label returns) before
+      // clicking, or the flow never enters rent-signing.
+      const reviewButton = await screen.findByTestId("send-review-button");
+      await waitFor(() => expect(reviewButton).toHaveTextContent(/\S/));
+
+      await user.click(reviewButton);
       expect(await screen.findByTestId("send-sponsored-rent-signature")).toBeVisible();
     }
 

@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 
 function formatElapsed(totalSeconds: number): string {
@@ -20,14 +18,12 @@ export type SponsoredPollingViewModel = Readonly<{
  * View model for the floating SPONSORED_POLLING step: a pure view over the shared orchestration's
  * `state.phase` while Tronify delivers the rented energy. Starts no orchestration of its own --
  * the polling itself runs inside useSponsoredSendOrchestration, kicked off by
- * SPONSORED_RENT_SIGNATURE's startRentPayment. Navigation away follows the phase (TRANSFER -> the
- * existing SIGNATURE step, where TX-C the real USDT transfer is signed; FAILED -> SPONSORED_FAILURE),
- * guarded the same way as SPONSORED_RENT_SIGNATURE's own phase->navigation effect (lastNavigatedPhaseRef)
- * so a same-phase re-render never re-dispatches.
+ * SPONSORED_RENT_SIGNATURE's startRentPayment. Navigation away (TRANSFER -> the existing SIGNATURE
+ * step where TX-C the real USDT transfer is signed; FAILED -> SPONSORED_FAILURE) is driven by the
+ * shared useSponsoredPhaseNavigator, not this screen.
  */
 export function useSponsoredPollingViewModel(): SponsoredPollingViewModel {
   const { t } = useTranslation();
-  const { navigation } = useFlowWizard<SendFlowStep>();
   const { state } = useSponsoredSend();
 
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -41,18 +37,6 @@ export function useSponsoredPollingViewModel(): SponsoredPollingViewModel {
     }, 1000);
     return () => clearInterval(intervalId);
   }, [state.phase]);
-
-  const lastNavigatedPhaseRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (state.phase === lastNavigatedPhaseRef.current) return;
-    if (state.phase === SPONSORED_PHASE.TRANSFER) {
-      lastNavigatedPhaseRef.current = state.phase;
-      navigation.goToStep(SEND_FLOW_STEP.SIGNATURE);
-    } else if (state.phase === SPONSORED_PHASE.FAILED) {
-      lastNavigatedPhaseRef.current = state.phase;
-      navigation.goToStep(SEND_FLOW_STEP.SPONSORED_FAILURE);
-    }
-  }, [state.phase, navigation]);
 
   return {
     waitingLabel: t("newSendFlow.sponsoredPolling.waiting"),
