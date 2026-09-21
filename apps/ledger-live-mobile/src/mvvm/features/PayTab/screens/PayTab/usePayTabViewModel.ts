@@ -32,15 +32,17 @@ import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
 export function usePayTabViewModel() {
+  const analytics = usePayAnalyticsContext();
   const { top, bottom } = useNavigationBarHeights();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
-  const balance = usePayCardBalance();
+  const balance = usePayCardBalance(analytics.trackEvent);
   const deposit = usePayTabDepositOptions(balance.onTrackEvent);
   const request = usePayTabRequestReceive();
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
@@ -178,5 +180,6 @@ export function usePayTabViewModel() {
     bankTransferIntro: deposit.bankTransferIntro,
     onShowMore,
     cardSettingsActions,
+    trackRecipientAddressSelection: isContactsEnabled && payment.contactAddressPicker.isOpen,
   };
 }

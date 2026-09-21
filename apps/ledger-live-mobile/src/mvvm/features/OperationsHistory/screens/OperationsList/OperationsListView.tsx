@@ -106,7 +106,9 @@ export function OperationsListView({
 
   return (
     <Box lx={rootStyle}>
-      <TrackScreen name="OperationsList" has_pending_operations={hasPendingOperations} />
+      {!isCardTab ? (
+        <TrackScreen name="OperationsList" has_pending_operations={hasPendingOperations} />
+      ) : null}
       {showHistoryTypeSwitcher ? (
         <HistoryTypeSwitcher selectedTab={historyTab} onTabChange={onHistoryTabChange} />
       ) : null}
