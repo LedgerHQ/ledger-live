@@ -1050,15 +1050,15 @@
     "cardLogin" : {
       "title" : "Krypto-Karte",
       "beforeIntro" : {
-        "title" : "Get your crypto card",
+        "title" : "Hol dir deine Krypto-Karte",
         "description" : "Sichere dir bei jeder Zahlung 1 % Cashback",
         "action" : "Karte bestellen",
         "alreadyHaveCard" : "Ich habe bereits eine Karte"
       },
       "afterIntro" : {
-        "title" : "Log in to access your Card",
-        "description" : "You’ve been logged out for security",
-        "action" : "Log in"
+        "title" : "Logge dich ein, um auf deine Karte zuzugreifen",
+        "description" : "Du wurdest aus Sicherheitsgründen abgemeldet",
+        "action" : "Anmeldename"
       },
       "errors" : {
         "pkce_failed" : "Die Anmeldung konnte nicht gestartet werden. Bitte versuche es erneut.",
@@ -2799,7 +2799,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "{{memoLabel}} eingeben",
-      "description" : "Ein {{memoLabel}} wird beim Senden von {{currency}} an eine Krypto-Börse benötigt. Dadurch kann der Empfänger der Transaktion identifiziert werden. Das Fehlen eines {{memoLabel}}-Memo kann zum Verlust von Guthaben führen."
+      "description" : "Ein {{memoLabel}} wird beim Senden von {{currency}} an eine Krypto-Börse benötigt. Dadurch kann der Empfänger der Transaktion identifiziert werden. Ist kein {{memoLabel}} angegeben, dann kann dies zum Verlust der Assets führen."
     },
     "networkFeesInFiat" : "Netzwerkgebühren in {{currency}}",
     "feesAmount" : "Gebührenbetrag ({{unit}})",
@@ -2878,7 +2878,7 @@
       }
     },
     "balanceType" : {
-      "title" : "Select balance",
+      "title" : "Kontostand auswählen",
       "transparent" : {
         "title" : "Öffentlicher Kontostand",
         "subtitle" : "Transparent"
@@ -2886,7 +2886,7 @@
       "shielded" : {
         "title" : "Privater Kontostand",
         "subtitle" : "Abgeschirmt",
-        "pendingNoticeTitle" : "Funds maturing",
+        "pendingNoticeTitle" : "Fällig werdendes Guthaben",
         "pendingNotice" : "Einige geschützte Notes reifen noch und können eventuell noch nicht ausgegeben werden"
       },
       "zeroBalance" : {
@@ -6939,6 +6939,9 @@
     },
     "xrp" : {
       "memo" : "Tag"
+    },
+    "zcash" : {
+      "memoTooltip" : "Ein {{memoLabel}} ist beim Senden von {{currency}} optional. Es ist verschlüsselt und nur der Empfänger kann es lesen. Einige Börsen benötigen dies, um deine Transaktion zu identifizieren."
     }
   },
   "errors" : {
@@ -7497,12 +7500,12 @@
       "title" : "Dieser Betrag ist zu groß, um in einer einzigen Transaktion gesendet zu werden: versuche, ihn in kleineren Beträgen zu senden"
     },
     "ZcashShieldedKeyMissing" : {
-      "title" : "Activate your private balance first",
-      "description" : "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+      "title" : "Aktiviere zuerst deinen privaten Kontostand",
+      "description" : "Diese Transaktion benötigt den Viewing-Key von deinem Gerät. Aktiviere deinen privaten Kontostand, um dies freizuschalten."
     },
     "ZcashNotesNotYetSpendable" : {
-      "title" : "These funds are not spendable yet",
-      "description" : "Please try again in a few minutes"
+      "title" : "Dieses Guthaben kann noch nicht ausgegeben werden",
+      "description" : "Bitte versuche es in einigen Minuten erneut"
     },
     "InvalidNonce" : {
       "title" : "Nonce ist erforderlich"
@@ -9503,9 +9506,6 @@
           "toPublic" : "Selbstüberweisung auf den öffentlichen Kontostand",
           "unavailable" : "Deine private Adresse ist verfügbar, sobald Shielded für dein Konto aktiviert ist.",
           "privacyWarning" : "Dies verknüpft dein geschütztes Guthaben mit der öffentlichen Adresse deines Kontos, die für jeden sichtbar ist. Durch das Senden an eine externe private Adresse bleiben diese unverknüpft."
-        },
-        "confirm" : {
-          "privateTransaction" : "Private Transaktion – Betrag auf deinem Gerät bestätigen"
         }
       },
       "state" : {
