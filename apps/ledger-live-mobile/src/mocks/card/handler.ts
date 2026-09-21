@@ -15,11 +15,11 @@ import {
 } from "@domain/api-card-management/mock/card-onboarding-status";
 import {
   applyPayCardWalletPrioritiesMock,
-  mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
   mockPayCardRewardWallet,
   readPayCardReorderMockEnabled,
   readPayCardWalletsMock,
+  resolvePayCardInternalWalletsMock,
 } from "@domain/api-card-management/mock/card-wallets";
 import { createCardMockState } from "./state";
 
@@ -180,25 +180,10 @@ const handlers = [
   ),
 
   http.get("*/v1/wallet/internal", ({ request }) => {
-    const devtoolWallets = readPayCardWalletsMock();
-    if (devtoolWallets !== undefined) {
-      return HttpResponse.json(devtoolWallets);
-    }
-
-    if (readPayCardReorderMockEnabled()) {
-      return HttpResponse.json(mockPayCardInternalWallets(true));
-    }
-
     const { walletFunded } = readCardOnboardingStatusMock();
-    if (walletFunded !== undefined) {
-      return HttpResponse.json(mockPayCardInternalWallets(walletFunded));
-    }
+    const wallets = resolvePayCardInternalWalletsMock(walletFunded, isMockCardRequest(request));
 
-    // A mock session has no provider behind it, so answer as an empty wallet rather than send a
-    // mock bearer token to Baanx and collect a 401.
-    return isMockCardRequest(request)
-      ? HttpResponse.json(mockPayCardInternalWallets(false))
-      : passthrough();
+    return wallets === undefined ? passthrough() : HttpResponse.json(wallets);
   }),
 
   http.get("*/v1/wallet/internal/card_linked", ({ request }) =>
@@ -226,7 +211,7 @@ const handlers = [
     // Only the order is written. The balances answered by `/v1/wallet/internal` are left as they
     // are, so the rows the refetch rebuilds keep the amounts they were showing before the drag.
     return HttpResponse.json({
-      success: applyPayCardWalletPrioritiesMock({ wallets: body?.wallets ?? [] }),
+      success: applyPayCardWalletPrioritiesMock({ wallets: [...(body?.wallets ?? [])] }),
     });
   }),
 

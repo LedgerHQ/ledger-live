@@ -16,6 +16,7 @@ import {
   readPayCardReorderMockEnabled,
   readPayCardWalletsMock,
   reorderPayCardLinkedWalletsMock,
+  resolvePayCardInternalWalletsMock,
   setPayCardReorderMockEnabled,
 } from "./cardWallets.mock";
 
@@ -98,6 +99,28 @@ describe("the mocked wallet responses", () => {
 
     clearPayCardWalletsMock();
     expect(readPayCardWalletsMock()).toBeUndefined();
+  });
+
+  it("resolves the internal-wallet answer in devtool, reorder, onboarding and session order", () => {
+    expect(resolvePayCardInternalWalletsMock(undefined, false)).toBeUndefined();
+    expect(
+      resolvePayCardInternalWalletsMock(undefined, true)?.every(
+        ({ balance }) => balance === "0.00",
+      ),
+    ).toBe(true);
+    expect(
+      resolvePayCardInternalWalletsMock(true, false)?.every(({ balance }) => Number(balance) > 0),
+    ).toBe(true);
+
+    setPayCardReorderMockEnabled(true);
+    expect(
+      resolvePayCardInternalWalletsMock(false, false)?.every(({ balance }) => Number(balance) > 0),
+    ).toBe(true);
+
+    emptyPayCardWalletsMock();
+    expect(
+      resolvePayCardInternalWalletsMock(true, true)?.every(({ balance }) => balance === "0.00"),
+    ).toBe(true);
   });
 
   it("keeps every linked wallet's balance when the charging order is rewritten", () => {

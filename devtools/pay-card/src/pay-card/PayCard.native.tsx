@@ -26,6 +26,7 @@ import { Interaction } from "../components/Interaction/Interaction";
 import { BalanceScreen } from "../components/Balance/Balance";
 import { CardOnboardingScreen } from "../components/CardOnboarding/CardOnboarding";
 import { CurrencyMappingScreen } from "../components/CurrencyMapping/CurrencyMapping";
+import { ReorderMock } from "../components/ReorderMock/ReorderMock";
 import { TransactionsScreen } from "../components/Transactions/Transactions";
 import { AuthSection } from "./AuthSection";
 import { ResultToast } from "./ResultToast";
@@ -218,14 +219,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
         {reorder.available ? (
           <>
             <Divider />
-            <Section title="MSW">
-              <ToggleRow
-                label="Allow wallet reorder"
-                description="PUT /v1/wallet/internal/card_linked/priority"
-                checked={reorder.enabled}
-                onChange={reorder.setEnabled}
-              />
-            </Section>
+            <ReorderMock {...reorder} />
           </>
         ) : null}
 
