@@ -251,20 +251,20 @@
       "description" : "이 토큰의 전송 규칙을 읽을 수 없어 전송 허용 여부를 확인할 수 없습니다. 계정을 다시 동기화한 후 다시 시도해 주세요."
     },
     "ConcordiumRecipientNotAllowed" : {
-      "title" : "This address can't receive {{ticker}}",
-      "description" : "It hasn't been approved by the token issuer. Approval is managed by the issuer, not by Ledger."
+      "title" : "이 주소로는 {{ticker}} 수령이 불가능합니다.",
+      "description" : "토큰 발행자의 승인을 받지 않은 주소입니다. 승인 권한은 Ledger가 아닌 토큰 발행자에게 있습니다."
     },
     "ConcordiumRecipientDenied" : {
-      "title" : "This address is restricted from receiving {{ticker}}",
-      "description" : "The token issuer has restricted this address. Contact the issuer for details."
+      "title" : "이 주소로는 {{ticker}} 수령이 제한되어 있습니다.",
+      "description" : "토큰 발행자가 제한한 주소입니다. 자세한 내용은 발행자에게 문의해 주세요."
     },
     "ConcordiumRecipientRestrictionsUnverified" : {
-      "title" : "{{ticker}} restrictions could not be verified",
-      "description" : "Whether this address may receive {{ticker}} could not be checked, so the transfer cannot be confirmed as allowed. Please check your connection and try again."
+      "title" : "{{ticker}} 관련 제한 사항을 확인할 수 없습니다",
+      "description" : "이 주소의 {{ticker}} 수령 가능 여부를 확인할 수 없어 전송을 진행할 수 없습니다. 네트워크 연결 상태를 확인한 후 다시 시도해 주세요."
     },
     "ConcordiumRecipientNotFound" : {
-      "title" : "This address doesn't exist on Concordium",
-      "description" : "Check the address and try again. Sending to an address that was never created fails on the network and still costs a fee."
+      "title" : "Concordium 네트워크에 존재하지 않는 주소입니다",
+      "description" : "주소를 확인하고 다시 시도하세요. 생성되지 않은 주소로 전송을 시도하면 네트워크에서 처리가 실패하며 수수료가 부과됩니다."
     },
     "ConcordiumUnsupportedTokenDecimals" : {
       "title" : "이 토큰은 사용자의 Ledger 장치에서 서명할 수 없습니다",
@@ -1439,8 +1439,8 @@
       "title" : "UTXO 제한을 초과하는 수량입니다."
     },
     "CurrencyRegionRestrictedError" : {
-      "title" : "{{currencyName}} is not available in your region",
-      "description" : "Access to {{currencyName}} is restricted in your region."
+      "title" : "귀하의 지역에서는 {{currencyName}} 사용이 지원되지 않습니다",
+      "description" : "귀하의 지역에서는 {{currencyName}} 액세스가 제한됩니다."
     }
   },
   "crash" : {
@@ -1613,11 +1613,11 @@
       "cta" : "확인"
     },
     "deactivatePassword" : {
-      "title" : "Deactivate password",
-      "description" : "Enter your password to deactivate it.",
-      "wrongPassword" : "Incorrect password",
-      "failed" : "We couldn't deactivate your password. Please try again.",
-      "cta" : "Confirm"
+      "title" : "패스워드 비활성화",
+      "description" : "비활성화하려면 패스워드를 입력하세요.",
+      "wrongPassword" : "잘못된 패스워드",
+      "failed" : "패스워드를 비활성화하지 못했습니다. 다시 시도하세요.",
+      "cta" : "확인"
     }
   },
   "auth" : {
@@ -2988,9 +2988,9 @@
     }
   },
   "perpsAccountBanner" : {
-    "title" : "About Hyperliquid account",
-    "description" : "This account is related to Perpetual trading. Transactional actions are not supported for this account",
-    "cta" : "Open Perps"
+    "title" : "Hyperliquid 계정 소개",
+    "description" : "무기한 선물 거래 전용 계정입니다. 이 계정에서는 일반 트랜잭션(입출금 및 전송 등) 기능이 지원되지 않습니다.",
+    "cta" : "무기한 선물 열기"
   },
   "portfolio" : {
     "totalBalance" : "총 잔액",
@@ -10367,33 +10367,33 @@
       }
     },
     "cardTransactions" : {
-      "title" : "Transactions",
+      "title" : "트랜잭션",
       "categories" : {
-        "SUBSCRIPTIONS" : "Subscriptions",
-        "FOOD" : "Food",
-        "TRAVEL" : "Travel",
-        "ENTERTAINMENT" : "Entertainment",
-        "HEALTH" : "Health",
+        "SUBSCRIPTIONS" : "구독",
+        "FOOD" : "푸드",
+        "TRAVEL" : "여행",
+        "ENTERTAINMENT" : "엔터테인먼트",
+        "HEALTH" : "건강",
         "ATM" : "ATM",
-        "UTILITIES" : "Utilities",
-        "MISC" : "Other"
+        "UTILITIES" : "유틸리티",
+        "MISC" : "기타"
       },
       "detail" : {
-        "amount" : "Amount",
-        "status" : "Status",
-        "card" : "Card",
-        "cardInfo" : "The last four digits of the card used for this payment.",
-        "fundingSource" : "Funding source",
-        "transactionId" : "Transaction ID",
-        "copyTransactionId" : "Copy transaction ID",
-        "today" : "Today {{time}}",
-        "yesterday" : "Yesterday {{time}}",
+        "amount" : "수량",
+        "status" : "상태",
+        "card" : "카드",
+        "cardInfo" : "이 결제에 사용된 카드의 마지막 4자리 숫자.",
+        "fundingSource" : "자금 출처",
+        "transactionId" : "트랜잭션 ID",
+        "copyTransactionId" : "트랜잭션 ID 복사",
+        "today" : "오늘 {{time}}",
+        "yesterday" : "어제 {{time}}",
         "dateTime" : "{{date}} {{time}}",
         "statusValues" : {
-          "CONFIRMED" : "Confirmed",
-          "PENDING" : "Pending",
-          "DECLINED" : "Declined",
-          "REVERTED" : "Reverted"
+          "CONFIRMED" : "확인됨",
+          "PENDING" : "대기 중",
+          "DECLINED" : "거절됨",
+          "REVERTED" : "실행 취소"
         }
       }
     },
@@ -10484,12 +10484,12 @@
     "cardLogin" : {
       "title" : "크립토 카드",
       "beforeIntro" : {
-        "title" : "Get your crypto card",
+        "title" : "크립토 카드 발급받기",
         "description" : "결제할 때마다 1% 캐시백 혜택이 지급됩니다",
         "action" : "카드 발급받기"
       },
       "afterIntro" : {
-        "title" : "Log in to access your Card",
+        "title" : "카드에 액세스하려면 로그인하세요",
         "description" : "카드에 액세스하려면 로그인하세요",
         "action" : "로그인"
       },
@@ -10842,7 +10842,7 @@
         "description" : "이 주소는 위험이 감지된 주소로 분류되어 Ledger는 해당 주소로의 전송을 허용하지 않습니다.",
         "learnMore" : "자세히 알아보기"
       },
-      "duplicateAddress" : "This address is already used for {{contactName}}."
+      "duplicateAddress" : "이미 주소록에서 {{contactName}}의 주소로 등록되어 있습니다."
     },
     "addAddressName" : {
       "title" : "주소 별칭 설정",
@@ -10852,7 +10852,7 @@
       "invalidLabel" : "특수 문자는 허용되지 않습니다.",
       "duplicateLabel" : "해당 연락처에서 이미 사용 중인 주소 별칭입니다.",
       "labelTooLong" : "주소명이 길이 제한을 초과합니다.",
-      "privacyPolicy" : "Learn more about Ledger's Privacy Policy."
+      "privacyPolicy" : "Ledger 개인정보 보호정책 자세히 알아보기"
     },
     "addAddressReview" : {
       "title" : "주소 검토",

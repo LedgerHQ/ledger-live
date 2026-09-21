@@ -1050,15 +1050,15 @@
     "cardLogin" : {
       "title" : "Cartão cripto",
       "beforeIntro" : {
-        "title" : "Get your crypto card",
+        "title" : "Obtenha seu cartão cripto",
         "description" : "Receba 1% de cashback sempre que gastar",
         "action" : "Obter cartão",
         "alreadyHaveCard" : "Já tenho um cartão"
       },
       "afterIntro" : {
-        "title" : "Log in to access your Card",
-        "description" : "You’ve been logged out for security",
-        "action" : "Log in"
+        "title" : "Faça login para acessar seu cartão",
+        "description" : "Você foi desconectado por segurança",
+        "action" : "Entrar"
       },
       "errors" : {
         "pkce_failed" : "Não foi possível iniciar o login. Tente novamente.",
@@ -2799,7 +2799,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "Inserir {{memoLabel}}",
-      "description" : "Uma {{memoLabel}} é necessária ao enviar {{currency}} para uma corretora de criptomoedas. É um recursos usado para identificar o recipiente da transação. Não incluir a memo {{memoLabel}} pode resultar em perda de fundos."
+      "description" : "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} may result in a loss of funds."
     },
     "networkFeesInFiat" : "Taxas de rede em {{currency}}",
     "feesAmount" : "Quantia da taxa ({{unit}})",
@@ -2878,7 +2878,7 @@
       }
     },
     "balanceType" : {
-      "title" : "Select balance",
+      "title" : "Selecionar saldo",
       "transparent" : {
         "title" : "Saldo público",
         "subtitle" : "Transparente"
@@ -2886,7 +2886,7 @@
       "shielded" : {
         "title" : "Saldo privado",
         "subtitle" : "Blindado",
-        "pendingNoticeTitle" : "Funds maturing",
+        "pendingNoticeTitle" : "Fundos em maturação",
         "pendingNotice" : "Algumas notas protegidas ainda estão em maturação e podem ainda não estar disponíveis para serem usada."
       },
       "zeroBalance" : {
@@ -6939,6 +6939,9 @@
     },
     "xrp" : {
       "memo" : "Etiqueta"
+    },
+    "zcash" : {
+      "memoTooltip" : "A {{memoLabel}} is optional when sending {{currency}}. It is encrypted and only the recipient can read it. Some exchanges require one to identify your transaction."
     }
   },
   "errors" : {
@@ -7497,12 +7500,12 @@
       "title" : "Esta quantia é grande demais para ser enviada em uma única transação: tente enviar em quantias menores"
     },
     "ZcashShieldedKeyMissing" : {
-      "title" : "Activate your private balance first",
-      "description" : "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+      "title" : "Ative seu saldo privado primeiro",
+      "description" : "Esta transferência precisa da chave de visualização do seu dispositivo. Ative seu saldo privado para habilitá-lo."
     },
     "ZcashNotesNotYetSpendable" : {
-      "title" : "These funds are not spendable yet",
-      "description" : "Please try again in a few minutes"
+      "title" : "Esses fundos ainda não podem ser gastos",
+      "description" : "Por favor, tente novamente em alguns minutos"
     },
     "InvalidNonce" : {
       "title" : "Requer o nonce"
@@ -9503,9 +9506,6 @@
           "toPublic" : "Auto transferir para o saldo público",
           "unavailable" : "Seu endereço privado estará disponível assim que o Shielded for ativado em sua conta.",
           "privacyWarning" : "Isso vincula seus fundos protegidos ao endereço público da sua conta, que qualquer pessoa pode ver. Enviar para um endereço privado externo os mantém desvinculados."
-        },
-        "confirm" : {
-          "privateTransaction" : "Private transaction — verify amount on your device"
         }
       },
       "state" : {

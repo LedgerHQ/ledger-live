@@ -938,21 +938,21 @@
         "MISC" : "其他"
       },
       "detail" : {
-        "amount" : "Amount",
-        "status" : "Status",
-        "card" : "Card",
-        "cardInfo" : "The last four digits of the card used for this payment.",
-        "fundingSource" : "Funding source",
-        "transactionId" : "Transaction ID",
-        "copyTransactionId" : "Copy transaction ID",
-        "today" : "Today {{time}}",
-        "yesterday" : "Yesterday {{time}}",
+        "amount" : "数额",
+        "status" : "状态",
+        "card" : "卡",
+        "cardInfo" : "用于此笔付款的卡的后四位数字。",
+        "fundingSource" : "资金来源",
+        "transactionId" : "交易 ID",
+        "copyTransactionId" : "复制交易 ID",
+        "today" : "今天 {{time}}",
+        "yesterday" : "昨天 {{time}}",
         "dateTime" : "{{date}} {{time}}",
         "statusValues" : {
-          "CONFIRMED" : "Confirmed",
-          "PENDING" : "Pending",
-          "DECLINED" : "Declined",
-          "REVERTED" : "Reverted"
+          "CONFIRMED" : "已确认",
+          "PENDING" : "待处理",
+          "DECLINED" : "已拒绝",
+          "REVERTED" : "已撤销"
         }
       }
     },
@@ -1050,15 +1050,15 @@
     "cardLogin" : {
       "title" : "加密货币卡",
       "beforeIntro" : {
-        "title" : "Get your crypto card",
+        "title" : "获取您的加密货币卡",
         "description" : "每次消费均可获得 1% 返现",
         "action" : "获取卡",
         "alreadyHaveCard" : "我已经有一张卡"
       },
       "afterIntro" : {
-        "title" : "Log in to access your Card",
-        "description" : "You’ve been logged out for security",
-        "action" : "Log in"
+        "title" : "登录以访问您的卡",
+        "description" : "出于安全考虑，您已退出登录",
+        "action" : "登录"
       },
       "errors" : {
         "pkce_failed" : "无法开始登录。请重试。",
@@ -2799,7 +2799,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "输入备忘标签 {{memoLabel}}",
-      "description" : "向加密货币交易所发送 {{currency}} 时，需要输入备注 {{memoLabel}}。这是用于识别交易接收人的功能。不包含备注 {{memoLabel}} 可能会导致资金损失。"
+      "description" : "向加密货币交易所发送 {{currency}} 时，需要填写备忘标签 {{memoLabel}}。这是用于识别交易接收人的功能。不填写备忘标签 {{memoLabel}} 可能会导致资金损失。"
     },
     "networkFeesInFiat" : "网络费用为 {{currency}}",
     "feesAmount" : "费用数额 ({{unit}})",
@@ -2878,7 +2878,7 @@
       }
     },
     "balanceType" : {
-      "title" : "Select balance",
+      "title" : "选择余额",
       "transparent" : {
         "title" : "公开余额",
         "subtitle" : "透明"
@@ -2886,7 +2886,7 @@
       "shielded" : {
         "title" : "私密余额",
         "subtitle" : "隐蔽",
-        "pendingNoticeTitle" : "Funds maturing",
+        "pendingNoticeTitle" : "资金到期中",
         "pendingNotice" : "部分隐蔽资金尚未成熟，暂时可能无法支出。"
       },
       "zeroBalance" : {
@@ -6939,6 +6939,9 @@
     },
     "xrp" : {
       "memo" : "标签"
+    },
+    "zcash" : {
+      "memoTooltip" : "发送 {{currency}} 时，备忘标签 {{memoLabel}} 是可选的。该信息已加密，只有接收者才能阅读。某些交易所需要此信息来识别您的交易。"
     }
   },
   "errors" : {
@@ -7497,12 +7500,12 @@
       "title" : "此数额过大，无法在单笔交易中发送：请尝试分批以较小数额发送"
     },
     "ZcashShieldedKeyMissing" : {
-      "title" : "Activate your private balance first",
-      "description" : "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+      "title" : "请先激活您的私密余额",
+      "description" : "此笔转账需要来自您设备的查看密钥。请激活您的私密余额以启用。"
     },
     "ZcashNotesNotYetSpendable" : {
-      "title" : "These funds are not spendable yet",
-      "description" : "Please try again in a few minutes"
+      "title" : "这些资金目前尚无法支出",
+      "description" : "请在几分钟后重试"
     },
     "InvalidNonce" : {
       "title" : "需要 Nonce"
@@ -7922,20 +7925,20 @@
       "description" : "无法读取此代币的转账规则，因此无法确认是否允许该转账。请重新同步您的账户并重试。"
     },
     "ConcordiumRecipientNotAllowed" : {
-      "title" : "This address can't receive {{ticker}}",
-      "description" : "It hasn't been approved by the token issuer. Approval is managed by the issuer, not by Ledger."
+      "title" : "此地址无法接收 {{ticker}}",
+      "description" : "该地址尚未获得代币发行方的批准。批准由发行方管理，而非 Ledger。"
     },
     "ConcordiumRecipientDenied" : {
-      "title" : "This address is restricted from receiving {{ticker}}",
-      "description" : "The token issuer has restricted this address. Contact the issuer for details."
+      "title" : "此地址被限制接收 {{ticker}}",
+      "description" : "代币发行方已限制此地址。请联系发行方了解详情。"
     },
     "ConcordiumRecipientRestrictionsUnverified" : {
-      "title" : "{{ticker}} restrictions could not be verified",
-      "description" : "Whether this address may receive {{ticker}} could not be checked, so the transfer cannot be confirmed as allowed. Please check your connection and try again."
+      "title" : "无法验证 {{ticker}} 限制",
+      "description" : "无法检查此地址是否可以接收 {{ticker}}，因此无法确认该转账是否被允许。请检查您的连接并重试。"
     },
     "ConcordiumRecipientNotFound" : {
-      "title" : "This address doesn't exist on Concordium",
-      "description" : "Check the address and try again. Sending to an address that was never created fails on the network and still costs a fee."
+      "title" : "此地址在 Concordium 上不存在。",
+      "description" : "请检查地址并重试。向从未创建的地址发送交易会在网络上失败，且仍会产生费用。"
     },
     "ConcordiumUnsupportedTokenDecimals" : {
       "title" : "此代币无法在您的 Ledger 设备上签署",
@@ -8394,32 +8397,32 @@
       "description" : "原始神经元和新神经元都必须保持质押至少 1 ICP，外加所转移数额的网络费用。"
     },
     "ICPSpawnNotAllowed" : {
-      "title" : "Cannot spawn from this neuron",
-      "description" : "A neuron that is already spawning cannot spawn again, and the maturity spawned has to leave at least 1 ICP after the network's maturity adjustment. Sync your neurons to see their current state."
+      "title" : "无法从该神经元生成",
+      "description" : "正在进行衍生的神经元无法再次进行衍生，且在网络成熟度调整后，所衍生的成熟度必须保留至少 1 ICP。请同步您的神经元以查看其当前状态。"
     },
     "ICPStakeMaturityNotAllowed" : {
-      "title" : "Cannot stake this neuron's maturity",
-      "description" : "Maturity cannot be staked while the neuron is spawning, once it has fully dissolved, or when the neuron has none. Sync your neurons to see their current state."
+      "title" : "无法质押此神经元的成熟度",
+      "description" : "在神经元生成期间、完全溶解后，或该神经元没有成熟度时，无法质押成熟度。请同步您的神经元以查看其当前状态。"
     },
     "ICPFollowTopicNotAllowed" : {
-      "title" : "This topic cannot be followed",
-      "description" : "The Internet Computer has retired this topic, or the Ledger Internet Computer app cannot yet sign following on it. Choose another topic."
+      "title" : "无法关注此主题",
+      "description" : "互联网计算机已停用此主题，或者 Ledger 互联网计算机应用程序尚无法对其关注操作进行签署。请选择其他主题。"
     },
     "ICPDisburseNotAllowed" : {
-      "title" : "Cannot disburse this neuron",
-      "description" : "A neuron can be disbursed once it has fully dissolved and its stake is more than the network fee. Sync your neurons to see their current state."
+      "title" : "无法提取该神经元",
+      "description" : "一旦神经元完全溶解且其质押大于网络费用，即可分发该神经元。请同步您的神经元以查看其当前状态。"
     },
     "ICPTooManyHotKeys" : {
-      "title" : "Hot key limit reached",
-      "description" : "A neuron can hold at most {{max}} hot keys. Remove one to add another."
+      "title" : "已达到热键限制",
+      "description" : "一个神经元最多可持有 {{max}} 个热键。请移除一个以添加另一个。"
     },
     "ICPTopUpBelowMinimumStake" : {
-      "title" : "Top-up too small",
-      "description" : "A neuron's balance has to reach 1 ICP after a top-up. As of the last sync this neuron needs at least {{missing}} ICP more. A smaller transfer settles in the neuron's account but is not counted until a later top-up reaches the minimum."
+      "title" : "充值金额过小",
+      "description" : "充值后，神经元的余额必须达到 1 ICP。截至上一次同步，该神经元还需要至少 {{missing}} 个 ICP。较小金额的转账会结算至该神经元的账户，但在随后的充值达到最低限额之前，不会被计入。"
     },
     "ICPStakeNotRefreshed" : {
-      "title" : "Stake transferred, neuron not updated",
-      "description" : "The ICP was transferred to the neuron's account, but Internet Computer governance refused to update the neuron from it. {{reason}} Nothing is lost: the amount stays in the neuron's account and counts toward the next top-up that brings the balance to at least 1 ICP. Ledger Live cannot see it there yet, so the amount field still asks for the full shortfall the last sync shows."
+      "title" : "质押已转移，神经元未更新",
+      "description" : "ICP 已转入该神经元的账户，但互联网计算机治理拒绝据此更新该神经元。{{reason}} 无任何损失：数额将保留在该神经元的账户中，并计入下一次使余额达到至少 1 ICP 的充值。Ledger Wallet 尚无法在此处看到该交易，因此数额字段仍要求补足上一次同步显示的全部差额。"
     },
     "ICPStakeMemoNotRecoverable" : {
       "title" : "无法为该神经元充值",
@@ -9260,9 +9263,9 @@
     }
   },
   "perpsAccountBanner" : {
-    "title" : "About Hyperliquid account",
-    "description" : "This account is related to Perpetual trading. Transactional actions are not supported for this account",
-    "cta" : "Open Perps"
+    "title" : "关于 Hyperliquid 账户",
+    "description" : "此账户与永续合约交易相关。此账户不支持交易操作",
+    "cta" : "打开永续合约 (Perps)"
   },
   "portfolio" : {
     "title" : "首页",
@@ -9503,9 +9506,6 @@
           "toPublic" : "自转账至公开余额",
           "unavailable" : "一旦您的账户启用了屏蔽功能，您的私密地址即可使用。",
           "privacyWarning" : "此操作会将您的屏蔽资金与您账户的公开地址相关联，任何人均可查看该公开地址。发送至外部私密地址可使其保持未关联状态。"
-        },
-        "confirm" : {
-          "privateTransaction" : "Private transaction — verify amount on your device"
         }
       },
       "state" : {
@@ -9686,39 +9686,39 @@
     },
     "bond" : {
       "flow" : {
-        "title" : "Bond ALEO",
+        "title" : "绑定 ALEO",
         "steps" : {
           "validator" : {
-            "title" : "Validator",
-            "fetchError" : "The validator list could not be loaded.",
-            "totalStake" : "Total stake",
-            "rateAndCommission" : "{{rate}}% est. · {{commission}}% commission",
-            "commissionOnly" : "{{commission}}% commission",
-            "rowSubtitleClosed" : "Validator is closed to new stake",
-            "rowSubtitleUnbonding" : "Validator is unbonding",
-            "unbondingTooltip" : "This validator is withdrawing its own stake. The network rejects every new stake to it until that withdrawal is claimed.",
-            "rowSubtitleEarnsNothing" : "Validator earns no rewards",
+            "title" : "验证者",
+            "fetchError" : "验证者列表无法加载。",
+            "totalStake" : "质押总额",
+            "rateAndCommission" : "预计 {{rate}}%· {{commission}}% 佣金",
+            "commissionOnly" : "{{commission}}% 佣金",
+            "rowSubtitleClosed" : "验证者已关闭新质押",
+            "rowSubtitleUnbonding" : "验证者正在解除绑定",
+            "unbondingTooltip" : "该验证者正在提取其自身的质押。在认领该笔提取之前，网络将拒绝向其进行的所有新质押。",
+            "rowSubtitleEarnsNothing" : "验证者未赚取奖励",
             "nonEarning" : {
-              "fullCommission" : "This validator takes 100% commission, so delegators keep nothing.",
-              "overConcentrated" : "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so delegators earn nothing."
+              "fullCommission" : "该验证者收取 100% 的佣金，因此委托人无法获得任何收益。",
+              "overConcentrated" : "该验证者持有超过所有已质押 ALEO 的 25%。对于超出该上限的部分，协议不会向其支付任何费用，因此委托人无法赚取任何收益。"
             },
-            "topUpOnly" : "Aleo allows one validator per account. You can add to your stake with this validator, or unstake first to choose a different one."
+            "topUpOnly" : "Aleo 允许每个账户拥有一个验证者。您可以增加在此验证者中的质押，或先解除质押以选择其他验证者。"
           },
           "amount" : {
-            "title" : "Amount",
-            "minimum" : "Your total stake with this validator must reach at least 10,000 ALEO to earn rewards. Only public ALEO can be staked - convert your private balance to public first if you want to stake it."
+            "title" : "数额",
+            "minimum" : "您在此验证者中的总质押量必须达到至少 10,000 ALEO 才能赚取奖励。只有公开 ALEO 可以被质押——如果您想进行质押，请先将您的私密余额转换为公开余额。"
           },
           "connectDevice" : {
-            "title" : "Device",
-            "validatorLabel" : "Validator"
+            "title" : "设备",
+            "validatorLabel" : "验证者"
           },
           "confirmation" : {
-            "title" : "Confirmation",
-            "broadcastError" : "Your bond could not be sent.",
+            "title" : "确认",
+            "broadcastError" : "您的绑定交易无法发送。",
             "success" : {
-              "title" : "Bond sent",
-              "text" : "Your bond is being processed.",
-              "cta" : "View details"
+              "title" : "绑定已发送",
+              "text" : "您的绑定正在处理中。",
+              "cta" : "查看详情"
             }
           }
         }
@@ -10631,7 +10631,7 @@
       "NodeAdmin" : "节点管理",
       "ParticipantManagement" : "参与管理",
       "SubnetManagement" : "子网管理",
-      "NetworkCanisterManagement" : "Application canister management",
+      "NetworkCanisterManagement" : "应用容器管理",
       "Kyc" : "客户身份核实 (KYC)",
       "NodeProviderRewards" : "节点提供方奖励",
       "SnsDecentralizationSale" : "SNS 去中心化销售",

@@ -2878,7 +2878,7 @@
       }
     },
     "balanceType" : {
-      "title" : "Select balance",
+      "title" : "Выберите баланс",
       "transparent" : {
         "title" : "Публичный баланс",
         "subtitle" : "Прозрачная"
@@ -2886,7 +2886,7 @@
       "shielded" : {
         "title" : "Приватный баланс",
         "subtitle" : "Экранированная",
-        "pendingNoticeTitle" : "Funds maturing",
+        "pendingNoticeTitle" : "Созревание средств",
         "pendingNotice" : "Некоторые экранированные записи всë ещë созревают, и их пока нельзя потратить."
       },
       "zeroBalance" : {
@@ -6939,6 +6939,9 @@
     },
     "xrp" : {
       "memo" : "Тег"
+    },
+    "zcash" : {
+      "memoTooltip" : "Указывать {{memoLabel}} при отправке {{currency}} необязательно. Он зашифрован, и только получатель сможет его прочитать. Некоторые биржи требуют его для идентификации вашей транзакции."
     }
   },
   "errors" : {
@@ -7497,12 +7500,12 @@
       "title" : "Эта сумма слишком велика для отправки одной транзакцией: попробуйте отправить её более мелкими суммами."
     },
     "ZcashShieldedKeyMissing" : {
-      "title" : "Activate your private balance first",
-      "description" : "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+      "title" : "Сначала активируйте приватный баланс",
+      "description" : "Для этого перевода необходим ключ просмотра с вашего устройства. Активируйте ваш приватный баланс, чтобы включить его."
     },
     "ZcashNotesNotYetSpendable" : {
-      "title" : "These funds are not spendable yet",
-      "description" : "Please try again in a few minutes"
+      "title" : "Эти средства пока нельзя потратить",
+      "description" : "Пожалуйста, повторите попытку через несколько минут"
     },
     "InvalidNonce" : {
       "title" : "Требуется нонс"
@@ -9503,9 +9506,6 @@
           "toPublic" : "Перевод себе на публичный баланс",
           "unavailable" : "Ваш приватный адрес станет доступен, как только для вашего счёта будет включено экранирование.",
           "privacyWarning" : "Это свяжет ваши защищённые средства с публичным адресом вашего счёта, который виден всем. При отправке на внешний приватный адрес они остаются несвязанными."
-        },
-        "confirm" : {
-          "privateTransaction" : "Приватная транзакция — подтвердите сумму на устройстве"
         }
       },
       "state" : {

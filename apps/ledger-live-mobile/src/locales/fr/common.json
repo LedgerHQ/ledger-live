@@ -1076,7 +1076,7 @@
       "title" : "Votre solde lié doit être d’au moins {{minimumBondBalance}}."
     },
     "PolkadotMaxUnbonding" : {
-      "title" : "Vous avez dépassé la limite autorisée pour l’arrêt de liaison."
+      "title" : "Vous avez dépassé la limite autorisée pour la sortie de liaison"
     },
     "PolkadotValidatorsRequired" : {
       "title" : "Sélectionnez au moins un validateur."
@@ -6782,7 +6782,7 @@
       },
       "undelegating" : {
         "title" : "Retraits en attente",
-        "description" : "Les actifs déstakés sont soumis à une période de fin de liaison de 10 jours, avant de pouvoir être retirés."
+        "description" : "Les actifs déstakés sont soumis à un délai de sortie de 10 jours, avant de pouvoir être retirés."
       },
       "delegationUnavailable" : {
         "title" : "Délégation indisponible",
@@ -7495,7 +7495,7 @@
   },
   "polkadot" : {
     "lockedBalance" : "Solde lié",
-    "unlockingBalance" : "Solde en fin de liaison",
+    "unlockingBalance" : "Solde en cours de sortie",
     "unlockedBalance" : "Solde délié",
     "networkFees" : "Les frais de réseau sont automatiquement définis par le consensus de Polkadot. Vous ne pourrez pas les voir sur votre appareil.",
     "bondedBalanceBelowMinimum" : "Un minimum de {{minimumBondBalance}} est requis pour pouvoir nommer des validateurs.",
@@ -7509,8 +7509,8 @@
         "description" : "Les actifs doivent être liés aux validateurs nommés avant de gagner des récompenses."
       },
       "unlocking" : {
-        "title" : "Actifs en fin de liaison",
-        "description" : "Les actifs en fin de liaison restent immobilisés pendant 28 jours avant de pouvoir être retirés."
+        "title" : "Actifs en cours de sortie",
+        "description" : "Les actifs en cours de sortie restent immobilisés pendant 28 jours avant de pouvoir être retirés."
       },
       "unlocked" : {
         "title" : "Actifs déliés",
@@ -7558,11 +7558,11 @@
       "showInactiveNominations" : "Afficher toutes les nominations ({{count}})",
       "hideInactiveNominations" : "Afficher uniquement les nominations actives",
       "noActiveNominations" : "Il n’y a aucune nomination active.",
-      "showAllUnlockings" : "Afficher tous les montants en fin de liaison ({{count}})",
-      "hideAllUnlockings" : "Masquer les montants en fin de liaison"
+      "showAllUnlockings" : "Afficher tous les montants en cours de sortie ({{count}})",
+      "hideAllUnlockings" : "Masquer les montants en cours de sortie"
     },
     "unlockings" : {
-      "header" : "En fin de liaison",
+      "header" : "En cours de sortie",
       "withdrawUnbonded" : "Retirer le montant délié",
       "rebond" : "Lier à nouveau"
     },
@@ -7574,7 +7574,7 @@
       },
       "unbond" : {
         "title" : "Délier",
-        "description" : "Pour libérer un montant lié, vous devez d’abord le délier. Vous pourrez le retirer après la période de fin de liaison de 28 jours."
+        "description" : "Pour libérer un montant lié, vous devez d’abord le délier. Vous pourrez le retirer après le délai de sortie de 28 jours."
       },
       "withdrawUnbonded" : {
         "title" : "Retirer le montant délié",
@@ -7635,7 +7635,7 @@
       "steps" : {
         "starter" : {
           "description" : "Vous pouvez gagner des récompenses en liant vos actifs, puis en nommant vos validateurs.",
-          "bullet" : ["Vous gardez la propriété de vos actifs liés.", "Nommez en utilisant votre appareil Ledger.", "Vos actifs seront à nouveau disponibles 28 jours après avoir mis fin à la liaison."],
+          "bullet" : ["Vous gardez la propriété de vos actifs liés.", "Nommez en utilisant votre appareil Ledger.", "Vos actifs seront à nouveau disponibles au terme d’un délai de sortie de 28 jours."],
           "help" : "Fonctionnement des nominations",
           "warning" : "Choisissez vos validateurs judicieusement : une partie de vos actifs liés peut être perdue si un validateur ne se comporte pas correctement."
         },
@@ -7644,7 +7644,7 @@
           "maxLabel" : "Max"
         },
         "confirm" : {
-          "info" : "Les actifs liés peuvent être déliés à tout moment, mais la période de fin de liaison est de 28 jours."
+          "info" : "Les actifs liés peuvent être déliés à tout moment, mais le délai de sortie est de 28 jours."
         },
         "validation" : {
           "success" : {
@@ -7670,7 +7670,7 @@
       },
       "steps" : {
         "amount" : {
-          "availableLabel" : "En fin de liaison",
+          "availableLabel" : "En cours de sortie",
           "maxLabel" : "Max"
         },
         "confirm" : {
@@ -7697,11 +7697,11 @@
           "maxLabel" : "Max"
         },
         "confirm" : {
-          "info" : "Les actifs déliés peuvent être retirés après la période de fin de liaison de 28 jours."
+          "info" : "Les actifs déliés peuvent être retirés après le délai de sortie de 28 jours."
         },
         "validation" : {
           "success" : {
-            "title" : "Transaction de fin de liaison bien envoyée",
+            "title" : "Transaction de sortie de liaison bien envoyée",
             "description" : "Les actifs déliés peuvent être retirés après 28 jours."
           }
         }
@@ -10848,7 +10848,7 @@
       "title" : "Donner un nom à cette adresse",
       "inputLabel" : "Nom de l’adresse",
       "namingDisclaimer" : "Ce nom s’affiche sur votre appareil Ledger lorsque vous effectuez un envoi vers cette adresse. Il vous permet de la retrouver facilement.",
-      "continueToReview" : "Continuer la vérification",
+      "continueToReview" : "Continuer et vérifier",
       "invalidLabel" : "Les caractères spéciaux ne sont pas pris en charge.",
       "duplicateLabel" : "Ce nom est déjà utilisé pour ce contact.",
       "labelTooLong" : "Ce nom d’adresse est trop long.",
