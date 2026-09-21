@@ -383,6 +383,7 @@ describe("useCustomFeesViewModel - EIP-1559 Validation", () => {
     // Find the maxFeePerGas input and check for error
     const maxFeeInput = result.current.inputs.find(input => input.key === "maxFeePerGas");
     expect(maxFeeInput?.error).toBe("Max fee must be greater than or equal to max priority fee");
+    expect(maxFeeInput?.errorId).toBe("newSendFlow.customFees.maxFeeBelowPriorityFee");
   });
 
   it("should enable confirm when maxFeePerGas equals maxPriorityFeePerGas", () => {
@@ -516,6 +517,7 @@ describe("useCustomFeesViewModel - EIP-1559 Validation", () => {
 
     expect(maxPriorityInput?.error).toBeNull();
     expect(maxFeeInput?.error).toBe("newSendFlow.insufficientBalanceFees");
+    expect(maxFeeInput?.errorId).toBe("newSendFlow.insufficientBalanceFees");
   });
 
   it("should prefer customGasLimit over gasLimit for local fee validation", () => {
