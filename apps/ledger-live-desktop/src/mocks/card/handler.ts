@@ -13,11 +13,11 @@ import {
 } from "@domain/api-card-management/mock/card-onboarding-status";
 import {
   applyPayCardWalletPrioritiesMock,
-  mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
   mockPayCardRewardWallet,
   readPayCardReorderMockEnabled,
   readPayCardWalletsMock,
+  resolvePayCardInternalWalletsMock,
 } from "@domain/api-card-management/mock/card-wallets";
 
 const REORDER_MS = 200;
@@ -56,23 +56,10 @@ const handlers = [
   ),
 
   http.get("*/v1/wallet/internal", ({ request }) => {
-    const devtoolWallets = readPayCardWalletsMock();
-    if (devtoolWallets !== undefined) {
-      return HttpResponse.json(devtoolWallets);
-    }
-
-    if (readPayCardReorderMockEnabled()) {
-      return HttpResponse.json(mockPayCardInternalWallets(true));
-    }
-
     const { walletFunded } = readCardOnboardingStatusMock();
-    if (walletFunded !== undefined) {
-      return HttpResponse.json(mockPayCardInternalWallets(walletFunded));
-    }
+    const wallets = resolvePayCardInternalWalletsMock(walletFunded, isMockCardRequest(request));
 
-    return isMockCardRequest(request)
-      ? HttpResponse.json(mockPayCardInternalWallets(false))
-      : passthrough();
+    return wallets === undefined ? passthrough() : HttpResponse.json(wallets);
   }),
 
   http.get("*/v1/wallet/internal/card_linked", ({ request }) => {

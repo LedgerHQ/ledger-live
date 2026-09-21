@@ -9,12 +9,14 @@ import {
   emptyPayCardWalletsMock,
   setPayCardReorderMockEnabled,
 } from "@domain/api-card-management/mock/card-wallets";
+import { MOCK_CARD_ACCESS_TOKEN } from "@domain/api-card-management/mock/card-session";
 import handlers from "./handler";
 
 const API_URL = "https://card.test";
+const MOCK_SESSION_HEADERS = { authorization: `Bearer ${MOCK_CARD_ACCESS_TOKEN}` };
 
-async function getJson(path: string) {
-  const response = await fetch(`${API_URL}${path}`);
+async function getJson(path: string, headers?: HeadersInit) {
+  const response = await fetch(`${API_URL}${path}`, { headers });
   expect(response.ok).toBe(true);
   return response.json();
 }
@@ -109,5 +111,36 @@ describe("mobile Card mock handlers", () => {
 
     expect(transactions).toHaveLength(1);
     expect(transactions[0].fundingSources).toEqual([expect.objectContaining({ currency: "btc" })]);
+  });
+
+  it("should serve the default transaction fixture to a mock session", async () => {
+    const transactions = await getJson("/v1/card/transactions", MOCK_SESSION_HEADERS);
+
+    expect(transactions.length).toBeGreaterThan(1);
+  });
+
+  it("should reject reorder writes when its mock is disabled", async () => {
+    const response = await fetch(`${API_URL}/v1/wallet/internal/card_linked/priority`, {
+      method: "PUT",
+      headers: { ...MOCK_SESSION_HEADERS, "content-type": "application/json" },
+      body: JSON.stringify({ wallets: [] }),
+    });
+
+    expect(response.status).toBe(501);
+  });
+
+  it("should reject a malformed charging order", async () => {
+    jest.useRealTimers();
+    setPayCardReorderMockEnabled(true);
+
+    const response = await fetch(`${API_URL}/v1/wallet/internal/card_linked/priority`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: "{",
+    });
+
+    expect(response.ok).toBe(true);
+    await expect(response.json()).resolves.toEqual({ success: false });
+    jest.useFakeTimers();
   });
 });

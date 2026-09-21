@@ -122,6 +122,16 @@ export function readPayCardWalletsMock(): readonly PayCardInternalWallet[] | und
   return internalWalletsOverride;
 }
 
+export function resolvePayCardInternalWalletsMock(
+  walletFunded: boolean | undefined,
+  isMockSession: boolean,
+): readonly PayCardInternalWallet[] | undefined {
+  if (internalWalletsOverride !== undefined) return internalWalletsOverride;
+  if (reorderEnabled) return mockPayCardInternalWallets(true);
+  if (walletFunded !== undefined) return mockPayCardInternalWallets(walletFunded);
+  return isMockSession ? mockPayCardInternalWallets(false) : undefined;
+}
+
 /** Gives every linked asset the representative balance already defined by this shared fixture. */
 export function fillPayCardWalletsMock(): void {
   internalWalletsOverride = mockPayCardInternalWallets(true);
