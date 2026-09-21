@@ -938,21 +938,21 @@
         "MISC" : "Otros"
       },
       "detail" : {
-        "amount" : "Amount",
-        "status" : "Status",
-        "card" : "Card",
-        "cardInfo" : "The last four digits of the card used for this payment.",
-        "fundingSource" : "Funding source",
-        "transactionId" : "Transaction ID",
-        "copyTransactionId" : "Copy transaction ID",
-        "today" : "Today {{time}}",
-        "yesterday" : "Yesterday {{time}}",
+        "amount" : "Importe",
+        "status" : "Estado",
+        "card" : "Tarjeta",
+        "cardInfo" : "Los últimos cuatro dígitos de la tarjeta utilizada para este pago.",
+        "fundingSource" : "Origen de los fondos",
+        "transactionId" : "ID de la transacción",
+        "copyTransactionId" : "Copiar ID de la transacción",
+        "today" : "Hoy {{time}}",
+        "yesterday" : "Ayer {{time}}",
         "dateTime" : "{{date}} {{time}}",
         "statusValues" : {
-          "CONFIRMED" : "Confirmed",
-          "PENDING" : "Pending",
-          "DECLINED" : "Declined",
-          "REVERTED" : "Reverted"
+          "CONFIRMED" : "Confirmada",
+          "PENDING" : "Pendiente",
+          "DECLINED" : "Rechazada",
+          "REVERTED" : "Revertida"
         }
       }
     },
@@ -1050,15 +1050,15 @@
     "cardLogin" : {
       "title" : "Tarjeta cripto",
       "beforeIntro" : {
-        "title" : "Get your crypto card",
+        "title" : "Obtén la tarjeta cripto",
         "description" : "Obtén un 1% de devolución en efectivo cada vez que gastes",
         "action" : "Obtener tarjeta",
         "alreadyHaveCard" : "Ya tengo una tarjeta"
       },
       "afterIntro" : {
-        "title" : "Log in to access your Card",
-        "description" : "You’ve been logged out for security",
-        "action" : "Log in"
+        "title" : "Inicia sesión para acceder a la tarjeta",
+        "description" : "Se ha cerrado la sesión por seguridad",
+        "action" : "Inicia sesión"
       },
       "errors" : {
         "pkce_failed" : "No fue posible realizar el inicio de sesión. Inténtalo de nuevo.",
@@ -2799,7 +2799,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "Ingresar {{memoLabel}}",
-      "description" : "Cuando envías {{currency}} a un exchange cripto, es necesaria una {{memoLabel}}. Es una función utilizada para identificar al receptor de la transacción. Si no incluyes la {{memoLabel}} memo, es posible que se pierdan los fondos."
+      "description" : "Cuando envías {{currency}} a un exchange cripto, es necesaria una {{memoLabel}}. Es una función utilizada para identificar al receptor de la transacción. Si no incluyes la {{memoLabel}}, es posible que se pierdan los fondos."
     },
     "networkFeesInFiat" : "Tarifas de red en {{currency}}",
     "feesAmount" : "Monto de la tarifa ({{unit}})",
@@ -2878,7 +2878,7 @@
       }
     },
     "balanceType" : {
-      "title" : "Select balance",
+      "title" : "Seleccionar saldo",
       "transparent" : {
         "title" : "Saldo público",
         "subtitle" : "Transparente"
@@ -2886,7 +2886,7 @@
       "shielded" : {
         "title" : "Saldo privado",
         "subtitle" : "Blindado",
-        "pendingNoticeTitle" : "Funds maturing",
+        "pendingNoticeTitle" : "Maduración de fondos",
         "pendingNotice" : "Algunas notas blindadas aún están madurando y es posible que todavía no se puedan gastar"
       },
       "zeroBalance" : {
@@ -6939,6 +6939,9 @@
     },
     "xrp" : {
       "memo" : "Etiqueta"
+    },
+    "zcash" : {
+      "memoTooltip" : "Una {{memoLabel}} es opcional al enviar {{currency}}. Está cifrada y solo el receptor puede leerla. Algunos exchanges requieren una para identificar la transacción."
     }
   },
   "errors" : {
@@ -7497,12 +7500,12 @@
       "title" : "Esta cantidad es demasiado grande para enviarla en una sola transacción: Intenta enviarla en cantidades más pequeñas"
     },
     "ZcashShieldedKeyMissing" : {
-      "title" : "Activate your private balance first",
-      "description" : "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+      "title" : "Activa primero el saldo privado",
+      "description" : "Esta transferencia requiere la clave de visualización del dispositivo. Activa el saldo privado para habilitarlo."
     },
     "ZcashNotesNotYetSpendable" : {
-      "title" : "These funds are not spendable yet",
-      "description" : "Please try again in a few minutes"
+      "title" : "Estos fondos aún no se pueden gastar",
+      "description" : "Inténtalo de nuevo en unos minutos"
     },
     "InvalidNonce" : {
       "title" : "Es obligatorio añadir un nonce"
@@ -9260,9 +9263,9 @@
     }
   },
   "perpsAccountBanner" : {
-    "title" : "About Hyperliquid account",
-    "description" : "This account is related to Perpetual trading. Transactional actions are not supported for this account",
-    "cta" : "Open Perps"
+    "title" : "Acerca de la cuenta de Hyperliquid",
+    "description" : "Esta cuenta está relacionada con las operaciones de perpetuos. No se admiten acciones transaccionales para esta cuenta",
+    "cta" : "Abrir perpetuos"
   },
   "portfolio" : {
     "title" : "Inicio",
@@ -9503,9 +9506,6 @@
           "toPublic" : "Autotransferencia al saldo público",
           "unavailable" : "Tu dirección privada estará disponible una vez que se active Blindado para tu cuenta.",
           "privacyWarning" : "Esto vincula tus fondos blindados con la dirección pública de tu cuenta, que cualquiera puede ver. Enviar a una dirección privada externa los mantiene desvinculados."
-        },
-        "confirm" : {
-          "privateTransaction" : "Private transaction — verify amount on your device"
         }
       },
       "state" : {
@@ -10034,7 +10034,7 @@
       "ensDisclaimer" : "Los nombres ENS pueden cambiar",
       "ensDisclaimerDescription" : "Los nombres ENS pueden apuntar a diferentes direcciones a lo largo del tiempo. Guardamos la dirección subyacente ahora para garantizar que los fondos solo lleguen a la dirección que verifiques.",
       "duplicateAddress" : "Esta dirección ya está en uso para {{contactName}}.",
-      "privacyPolicy" : "Learn more about Ledger's Privacy Policy."
+      "privacyPolicy" : "Más información sobre la Política de privacidad de Ledger."
     },
     "addAddressName" : {
       "inputLabel" : "Nombre de la dirección",
