@@ -42,13 +42,10 @@ export function stepsWithIds(...ids: CardOnboardingStepId[]): CardOnboardingStep
 }
 
 export function createRenderWidget(render: RenderWidget) {
-  return function renderWidget({
-    hasCompletedOnboarding = false,
-    hasAddedCardToWallet = false,
-  } = {}) {
+  return function renderWidget({ hasCompletedOnboarding = false } = {}) {
     const store = configureStore({
       reducer: { payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer },
-      preloadedState: { payCardOnboardingWidget: { hasCompletedOnboarding, hasAddedCardToWallet } },
+      preloadedState: { payCardOnboardingWidget: { hasCompletedOnboarding } },
     });
     const wrapper: FC<{ children: ReactNode }> = ({ children }) => (
       <Provider store={store}>

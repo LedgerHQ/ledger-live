@@ -1,8 +1,6 @@
 import { useMemo } from "react";
-import { useDispatch } from "react-redux";
 import { useTranslation } from "@shared/i18n";
 import type { CardOnboardingStepWithCopy } from "../CardOnboardingWidget/useOnboardingSteps";
-import { markCardAddedToWallet } from "../../state";
 import { getStepIconId } from "./getStepIconId";
 import type {
   CardOnboardingOptionViewProps,
@@ -21,6 +19,7 @@ const STEP_ACTIONS: Record<string, () => void> = {
   "create-account": noop,
   "choose-card-type": noop,
   "top-up-card": noop,
+  "apple-google-pay": noop,
   "first-purchase": noop,
 };
 
@@ -56,14 +55,8 @@ export function useCardOnboardingDialogViewModel({
   handleGotIt,
 }: Params): CardOnboardingDialogViewProps {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const dialogTitle = t("payTab.cardOnboarding.dialog.title");
   const gotItLabel = t("payTab.cardOnboarding.dialog.gotIt");
-
-  const stepActions = useMemo<Record<string, () => void>>(
-    () => ({ ...STEP_ACTIONS, "apple-google-pay": () => dispatch(markCardAddedToWallet()) }),
-    [dispatch],
-  );
 
   const options = useMemo<CardOnboardingOptionViewProps[]>(() => {
     const firstUndoneIndex = steps.findIndex(s => !s.isDone);
@@ -77,10 +70,10 @@ export function useCardOnboardingDialogViewModel({
           : step.description,
         status,
         iconId: getStepIconId(step.id),
-        onAction: stepActions[step.id] ?? noop,
+        onAction: STEP_ACTIONS[step.id] ?? noop,
       };
     });
-  }, [steps, t, stepActions]);
+  }, [steps, t]);
 
   return {
     isOpen,

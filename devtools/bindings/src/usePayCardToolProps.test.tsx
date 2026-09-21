@@ -371,19 +371,7 @@ describe("usePayCardToolProps", () => {
       });
     });
 
-    it("keeps the phone wallet step on the device, because no endpoint answers it", () => {
-      const store = buildStore();
-      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
-
-      act(() => {
-        result.current.cardOnboarding.setStepDone("apple-google-pay", true);
-      });
-
-      expect(store.getState().payCardOnboardingWidget.hasAddedCardToWallet).toBe(true);
-      expect(readCardOnboardingStatusMock()).toEqual({});
-    });
-
-    it("writes the phone wallet answer to the mock while mocking is on, not to the device", () => {
+    it("writes the phone wallet answer to the mock while mocking is on", () => {
       process.env.MSW_ENABLED = "true";
       const store = buildStore();
       const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
@@ -393,7 +381,6 @@ describe("usePayCardToolProps", () => {
       });
 
       expect(readCardOnboardingStatusMock()).toEqual({ cardAddedToDigitalWallet: true });
-      expect(store.getState().payCardOnboardingWidget.hasAddedCardToWallet).toBe(false);
     });
 
     it("writes an explicit no for the phone wallet step, which is not the same as clearing it", () => {
@@ -439,8 +426,7 @@ describe("usePayCardToolProps", () => {
       const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
       expect(result.current.cardOnboarding.isMockingEnabled).toBe(false);
-      // Every step this project lists is answered by a request: the phone wallet step, which is
-      // answered on the device instead, is mobile-only and this project resolves the web hook.
+      // Every step is answered by a request, so with nothing intercepted there is nothing to write.
       expect(result.current.cardOnboarding.steps.every(({ canToggle }) => !canToggle)).toBe(true);
     });
 

@@ -111,10 +111,7 @@ describe("CardOnboardingWidget (integration)", () => {
     expect(screen.queryByText(CARD_ONBOARDING_COPY.dialogTitle)).toBeNull();
   });
 
-  it("should mark the wallet step done in the store once it is pressed", async () => {
-    // useCardOnboardingStatus is mocked statically for this suite (see setQuery), so pressing the
-    // step cannot be observed via a re-render here; that reactivity is covered by
-    // useCardOnboardingStatus.native.test.ts. This only checks the dispatch the dialog wires up.
+  it("should write nothing when the wallet step is pressed, since only the provider answers it", async () => {
     const user = userEvent.setup();
     const steps = stepsWithIds("top-up-card", "apple-google-pay", "first-purchase").map(step => ({
       ...step,
@@ -126,13 +123,13 @@ describe("CardOnboardingWidget (integration)", () => {
 
     await user.press(screen.getByTestId("pay-card-onboarding-step-apple-google-pay"));
 
-    expect(store.getState().payCardOnboardingWidget.hasAddedCardToWallet).toBe(true);
+    expect(store.getState().payCardOnboardingWidget).toEqual({ hasCompletedOnboarding: false });
   });
 
   it("should hide the widget after got-it completes onboarding", async () => {
     const user = userEvent.setup();
     setQuery({ data: { steps: stepsWith(true) } });
-    renderWidget({ hasAddedCardToWallet: true });
+    renderWidget();
 
     expect(screen.getByTestId("pay-card-onboarding-widget-card").props.title).toBe(
       CARD_ONBOARDING_COPY.widgetAllDone,

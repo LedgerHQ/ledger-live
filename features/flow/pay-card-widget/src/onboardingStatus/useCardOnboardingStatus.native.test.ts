@@ -9,11 +9,8 @@ jest.mock("@features/flow-pay-card-wallets", () => ({
   useCardLinkedWallets: jest.fn(),
 }));
 
-jest.mock("react-redux", () => ({ useSelector: jest.fn() }));
-
 import { useGetCardStatusQuery, useGetUserQuery } from "@domain/api-card-management";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
-import { useSelector } from "react-redux";
 import { useCardOnboardingStatus } from "./useCardOnboardingStatus.native";
 
 const refetchUser = jest.fn();
@@ -21,14 +18,9 @@ const refetchCardStatus = jest.fn();
 const refetchWallets = jest.fn();
 
 function setupMocks({
-  hasAddedCardToWallet = false,
   verified = false,
   cardAddedToDigitalWallet,
-}: {
-  hasAddedCardToWallet?: boolean;
-  verified?: boolean;
-  cardAddedToDigitalWallet?: boolean;
-} = {}) {
+}: { verified?: boolean; cardAddedToDigitalWallet?: boolean } = {}) {
   jest.mocked(useGetUserQuery).mockReturnValue({
     refetch: refetchUser,
     data: { verificationState: verified ? "VERIFIED" : "PENDING" },
@@ -49,13 +41,6 @@ function setupMocks({
     isFetching: false,
     isError: false,
   } as unknown as ReturnType<typeof useCardLinkedWallets>);
-
-  // Run the real selector, so the state shape it reads stays covered.
-  jest.mocked(useSelector).mockImplementation(selector =>
-    (selector as (state: unknown) => unknown)({
-      payCardOnboardingWidget: { hasCompletedOnboarding: false, hasAddedCardToWallet },
-    }),
-  );
 }
 
 describe("useCardOnboardingStatus (native)", () => {
@@ -77,13 +62,13 @@ describe("useCardOnboardingStatus (native)", () => {
   });
 
   it.each([true, false])(
-    "reads the phone wallet step from what the device remembers: %s",
-    hasAddedCardToWallet => {
-      setupMocks({ hasAddedCardToWallet });
+    "reads the phone wallet step from the provider's answer: %s",
+    cardAddedToDigitalWallet => {
+      setupMocks({ cardAddedToDigitalWallet });
       const { result } = renderHook(() => useCardOnboardingStatus());
 
       const walletStep = result.current.data.steps.find(({ id }) => id === "apple-google-pay");
-      expect(walletStep?.isDone).toBe(hasAddedCardToWallet);
+      expect(walletStep?.isDone).toBe(cardAddedToDigitalWallet);
     },
   );
 
@@ -121,31 +106,19 @@ describe("useCardOnboardingStatus (native)", () => {
   });
 
   it("counts the phone wallet step like any other", () => {
-    setupMocks({ hasAddedCardToWallet: true, verified: true });
+    setupMocks({ cardAddedToDigitalWallet: true, verified: true });
     const { result } = renderHook(() => useCardOnboardingStatus());
 
-    expect(result.current.data.completedCount).toBe(2);
+    // Three: the account is verified, the wallet step is answered, and a status carrying that
+    // answer is itself a card, so the card step reads as done too.
+    expect(result.current.data.completedCount).toBe(3);
   });
 
-  it.each([
-    [true, false],
-    [false, true],
-  ])(
-    "takes the provider's answer for the phone wallet step over the device's: %s",
-    (cardAddedToDigitalWallet, hasAddedCardToWallet) => {
-      setupMocks({ cardAddedToDigitalWallet, hasAddedCardToWallet });
-      const { result } = renderHook(() => useCardOnboardingStatus());
-
-      const walletStep = result.current.data.steps.find(({ id }) => id === "apple-google-pay");
-      expect(walletStep?.isDone).toBe(cardAddedToDigitalWallet);
-    },
-  );
-
-  it("falls back to the device for a tenant that does not answer for the flag", () => {
-    setupMocks({ hasAddedCardToWallet: true });
+  it("leaves the phone wallet step undone for a tenant that does not answer for the flag", () => {
+    setupMocks();
     const { result } = renderHook(() => useCardOnboardingStatus());
 
     const walletStep = result.current.data.steps.find(({ id }) => id === "apple-google-pay");
-    expect(walletStep?.isDone).toBe(true);
+    expect(walletStep?.isDone).toBe(false);
   });
 });

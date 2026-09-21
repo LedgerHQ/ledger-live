@@ -28,8 +28,6 @@ import {
   selectPayCardHasSeenLoginIntro,
 } from "@features/flow-pay-card-auth/state";
 import {
-  markCardAddedToWallet,
-  resetCardAddedToWallet,
   resetCardOnboardingCompleted,
   selectHasCompletedCardOnboarding,
 } from "@features/flow-pay-card-widget/state";
@@ -105,8 +103,6 @@ function toCombinedWallet({
 
   return ledgerId === undefined ? row : { ...row, ledgerId };
 }
-
-const WALLET_STEP_ID = "apple-google-pay";
 
 function describeError(error: unknown): string {
   if (error === undefined || error === null) return "";
@@ -197,19 +193,13 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const setDerivedStepDone = useCallback(
     (id: string, done: boolean) => {
-      // Without mocking there is no answer to write, so the wallet step stays on the device.
-      if (id === WALLET_STEP_ID && !isRequestMockingEnabled()) {
-        dispatch(done ? markCardAddedToWallet() : resetCardAddedToWallet());
-        return;
-      }
-
       const answer = STEP_ANSWERS[id];
       if (answer === undefined) return;
 
       setCardOnboardingStatusMock(answer, done);
       refreshCardOnboarding();
     },
-    [dispatch, refreshCardOnboarding],
+    [refreshCardOnboarding],
   );
 
   const clearCardOnboardingMocks = useCallback(() => {
@@ -224,7 +214,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       steps: derivedOnboarding.steps.map(step => ({
         id: step.id,
         isDone: step.isDone,
-        canToggle: step.id === WALLET_STEP_ID || (isMockingEnabled && step.id in STEP_ANSWERS),
+        canToggle: isMockingEnabled && step.id in STEP_ANSWERS,
       })),
       completedCount: derivedOnboarding.completedCount,
       isFetching: onboardingStatus.isLoading,
