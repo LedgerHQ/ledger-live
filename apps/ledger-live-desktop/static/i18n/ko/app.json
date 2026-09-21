@@ -9130,7 +9130,11 @@
     "opted_in" : {
       "title" : "더 명확하게, 더 안전하게",
       "description" : "업그레이드 시 {{discount}}% 할인",
-      "cta" : "내 Ledger 업그레이드"
+      "cta" : "내 Ledger 업그레이드",
+      "nanoS" : {
+        "title" : "Ledger Nano S 업그레이드 프로그램",
+        "description" : "새로운 OS와 보안 기능, {{discount}}% 할인까지!"
+      }
     },
     "opted_out" : {
       "title" : "더 안전하게, 더 자유롭게",
@@ -9140,7 +9144,11 @@
     "profile" : {
       "title" : "장치 업그레이드",
       "description" : "더 큰 화면, 더 강력한 보안. {{discount}}% 혜택까지.",
-      "cta" : "탐색"
+      "cta" : "탐색",
+      "nanoS" : {
+        "title" : "Ledger Nano S 업그레이드 프로그램",
+        "description" : "새로운 OS와 보안 기능, {{discount}}% 할인까지!"
+      }
     }
   },
   "largeScreenUpsellModal" : {
