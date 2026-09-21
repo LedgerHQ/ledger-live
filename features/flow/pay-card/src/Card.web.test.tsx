@@ -9,7 +9,6 @@ let mockStatus: PayCardAuthStatus = "unknown";
 let receivedDetailsFormatters: CardTransactionFormatters | undefined;
 const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError: false }));
 let receivedTransactionFormatters: CardTransactionFormatters | undefined;
-let receivedTransactionTracker: CardProps["login"]["onTrackEvent"];
 let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
@@ -57,17 +56,14 @@ jest.mock("@features/flow-pay-card-assets", () => ({
 }));
 
 jest.mock("@features/flow-pay-card-transactions", () => ({
-  CardTransactions: ({
-    formatters,
-    onTrackEvent,
-  }: {
-    formatters?: CardTransactionFormatters;
-    onTrackEvent?: CardProps["login"]["onTrackEvent"];
-  }) => {
+  CardTransactions: ({ formatters }: { formatters?: CardTransactionFormatters }) => {
     receivedTransactionFormatters = formatters;
-    receivedTransactionTracker = onTrackEvent;
     return <div data-testid="card-transactions" />;
   },
+}));
+
+jest.mock("./useCardLifecycleTracking", () => ({
+  useCardLifecycleTracking: jest.fn(),
 }));
 
 import { Card } from "./Card";
@@ -102,7 +98,6 @@ describe("Card (web)", () => {
     mockStatus = "unknown";
     receivedDetailsFormatters = undefined;
     receivedTransactionFormatters = undefined;
-    receivedTransactionTracker = undefined;
     receivedCardSettingsActions = undefined;
   });
 
@@ -277,14 +272,6 @@ describe("Card (web)", () => {
       renderCard(<Card login={{ oauthConfig }} formatters={{ transactionAmount }} />);
 
       expect(receivedDetailsFormatters?.amount).toBe(transactionAmount);
-    });
-
-    it("hands the host tracker to the transactions list", () => {
-      const onTrackEvent = jest.fn();
-
-      renderCard(<Card login={{ oauthConfig, onTrackEvent }} />);
-
-      expect(receivedTransactionTracker).toBe(onTrackEvent);
     });
 
     it("opens the top up from the button the host wired", () => {

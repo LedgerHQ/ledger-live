@@ -11,7 +11,9 @@ const CARD_REWARD_WALLET_URL = `${getEnv("CARD_BAANX_API_URL")}/v1/wallet/reward
 
 const [subscription] = mockPayCardTransactions();
 
-const signedIn = { payCardAuth: { hasCard: true, status: "signedIn" as const } };
+const signedIn = {
+  payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const },
+};
 
 const onTransactionsRequest = jest.fn();
 

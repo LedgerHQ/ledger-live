@@ -1,12 +1,12 @@
 import React from "react";
 import { CardTransactionDetail } from "../CardTransactions/components/Detail";
-import { useCardTransactionDetailDialog } from "../CardTransactions/useCardTransactionDetailDialog";
+import { useTrackedCardTransactionDetailDialog } from "../CardTransactions/useCardTransactionDetailDialog";
 import { CardTransactionHistoryView } from "./CardTransactionHistoryView";
 import { useCardTransactionHistoryViewModel } from "./useCardTransactionHistoryViewModel";
 import type { CardTransactionHistoryProps } from "./types";
 
 export function CardTransactionHistory(props: CardTransactionHistoryProps) {
-  const detail = useCardTransactionDetailDialog({
+  const detail = useTrackedCardTransactionDetailDialog({
     onTrackEvent: props.onTrackEvent,
     page: "History",
   });

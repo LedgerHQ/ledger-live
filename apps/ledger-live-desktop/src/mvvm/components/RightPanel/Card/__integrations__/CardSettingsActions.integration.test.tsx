@@ -7,7 +7,9 @@ import { http, HttpResponse, server } from "tests/server";
 import { render, screen } from "tests/testSetup";
 import { Card } from "../Card";
 
-const signedIn = { payCardAuth: { hasCard: true, status: "signedIn" as const } };
+const signedIn = {
+  payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const },
+};
 
 const mockOpenHostedPage = jest.fn().mockResolvedValue(undefined);
 const mockOpenURL = jest.fn();

@@ -1,6 +1,7 @@
 import React, { type FC, type ReactElement, type ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
+import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import type { CardOnboardingStep, CardOnboardingStepId } from "../../../onboardingStatus";
 import { useCardOnboardingStatus } from "../../../onboardingStatus";
 import { I18nWrapper } from "../../../__tests__/i18nWrapper";
@@ -48,11 +49,19 @@ export function createRenderWidget(render: RenderWidget) {
   }: { hasCompletedOnboarding?: boolean; onTopUp?: () => void } = {}) {
     const store = configureStore({
       reducer: { payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer },
-      preloadedState: { payCardOnboardingWidget: { hasCompletedOnboarding } },
+      preloadedState: {
+        payCardOnboardingWidget: {
+          hasCompletedOnboarding,
+          analyticsCardId: null,
+          reportedAnalyticsMilestones: [],
+        },
+      },
     });
     const wrapper: FC<{ children: ReactNode }> = ({ children }) => (
       <Provider store={store}>
-        <I18nWrapper>{children}</I18nWrapper>
+        <PayAnalyticsProvider adapter={{ track: jest.fn() }}>
+          <I18nWrapper>{children}</I18nWrapper>
+        </PayAnalyticsProvider>
       </Provider>
     );
 
