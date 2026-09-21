@@ -129,6 +129,26 @@
     "ldmkEnabled" : "LDMKトランスポート有効"
   },
   "errors" : {
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "既に{{bondedValidator}}でステーキングしています。バリデーターを変更する前にステーキング解除してください。",
+      "description" : "Aleoでは、1アカウントにつき1つのバリデーターのみが許可されています。他の場所でステーキングを行う前に、{{bondedValidator}}のステーキング解除を行ってください。"
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "一度に少なくとも{{minAmount}}をステーキングする必要があります。",
+      "description" : "最小ステーキング数量は{{minAmount}}です。"
+    },
+    "AleoClosedValidator" : {
+      "title" : "このバリデーターは新規デリゲーターを受け付けていません。",
+      "description" : "このバリデーターは新規デリゲーターを受け付けていません。続行するには、オープンなバリデーターを選択してください。"
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "ステーキングには合計で少なくとも{{minAmount}}が必要です。",
+      "description" : "合計で少なくとも{{minAmount}}をステーキングしている必要があります。"
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "このバリデーターはボンド解除中です。",
+      "description" : "このバリデーターは自身のステーキングを出金しているため、ネットワークはこのバリデーターへの新規ステーキングを拒否します。続行するには、別のバリデーターを選択してください。"
+    },
     "ZcashMemoTooLong" : {
       "title" : "メモは{{maxBytes}}バイトを超えることはできません"
     },
@@ -244,7 +264,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "このアカウントではこのトークンを送信できません",
-      "description" : "トークン発行者が送信者を制限しているため、このアカウントは許可されていません。アクセスについては、トークン発行者にお問い合わせください。"
+      "description" : "トークン発行元が送信者を制限しています。詳細については、トークン発行元にお問い合わせください。"
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "このアカウントは、このトークンの送信を承認されていません",
+      "description" : "トークン発行元は承認済みの送信者リストを管理していますが、このアカウントはそのリストに含まれていません。承認はLedgerではなく、発行元によって管理されています。"
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "このアカウントは、このトークンの送信が制限されています",
+      "description" : "トークン発行元がこのアカウントを制限しています。詳細は発行元にお問い合わせください。"
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "トークンの制限を認証できませんでした",
@@ -1425,6 +1453,9 @@
     "AccountCreationFeeWarning" : {
       "title" : "このトランザクションには、{{fee}}のアカウント作成手数料が発生します"
     },
+    "AmountRequired" : {
+      "title" : "続行するには数量を入力してください。"
+    },
     "AmountTooSmall" : {
       "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
     },
@@ -1611,6 +1642,49 @@
       "mismatch" : "パスワードが一致しません",
       "saveFailed" : "パスワードを保存できませんでした。もう一度お試しください。",
       "cta" : "確認"
+    },
+    "unlock" : {
+      "wrongPassword" : "パスワードが間違っています。",
+      "forgotPassword" : "パスワードをお忘れですか？",
+      "retryBiometrics" : "生体認証を使用する",
+      "unlockCta" : "Unlock Ledger Wallet",
+      "failed" : "パスワードを確認できませんでした。もう一度お試しください。",
+      "cta" : "確認",
+      "biometricsPrompt" : "Ledger Walletのロック解除",
+      "forgotPasswordSheet" : {
+        "title" : "パスワードをお忘れですか？",
+        "description" : "パスワードを紛失した場合は、アプリを再インストールしてウォレットを復元してください。",
+        "cta" : "了解"
+      }
+    },
+    "enableProtection" : {
+      "biometrics" : {
+        "title" : "Enable {{biometricsType}}",
+        "description" : "The crypto card requires {{biometricsType}}. You'll use it each time you open the app.",
+        "cta" : "Enable {{biometricsType}}"
+      },
+      "password" : {
+        "title" : "Create a password",
+        "description" : "The crypto card requires a password. You'll use it each time you open the app.",
+        "cta" : "Create password"
+      }
+    },
+    "protectionEnabled" : {
+      "biometrics" : {
+        "title" : "{{biometricsType}} enabled"
+      },
+      "password" : {
+        "title" : "Password created"
+      },
+      "description" : "You can now sign up to get a card",
+      "cta" : "Continue"
+    },
+    "biometrics" : {
+      "title" : "{{biometricsType}}",
+      "desc" : "{{biometricsType}}でアプリのロックを解除します。",
+      "prompt" : "ロック解除に使用するには、{{biometricsType}}を確認してください",
+      "disablePrompt" : "ロック解除への使用を停止するには、{{biometricsType}}を確認してください",
+      "useDeviceCredential" : "PINコードを使用"
     },
     "deactivatePassword" : {
       "title" : "パスワードを無効化",
@@ -3201,6 +3275,13 @@
       "UPDATE_ACCOUNT" : "アカウント更新"
     }
   },
+  "history" : {
+    "tabs" : {
+      "crypto" : "暗号資産",
+      "card" : "カード",
+      "accessibilityLabel" : "トランザクション履歴のタイプ"
+    }
+  },
   "operationsList" : {
     "to" : "送付先",
     "from" : "送付元",
@@ -3240,6 +3321,13 @@
     },
     "details" : "{{ currency }} 詳細",
     "extra" : {
+      "pltReject" : {
+        "title" : "理由",
+        "nonExistentToken" : "このトークンはConcordium上に存在しません。",
+        "recipientNotFound" : "受取人のアカウントはConcordium上に存在しません。",
+        "insufficientBalance" : "アカウントに十分なトークンが保有されていませんでした。",
+        "rejected" : "Concordiumがこの操作を拒否しました。"
+      },
       "transferId" : "送金ID（メモ）",
       "resource" : "リソース",
       "validator" : "バリデータ",
@@ -4099,6 +4187,7 @@
         "copyAdress" : "アドレスをコピー",
         "addressCopied" : "アドレスをコピーしました！",
         "addressVerified" : "認証済みアドレス",
+        "qrCode" : "受け取りアドレスのQRコード",
         "verifyAddress" : "アドレスを認証する",
         "adviceVerify" : "当社では常にLedgerデバイスでアドレス認証することを推奨しています",
         "sendWarning" : "トークンの送信は必ず{{network}}から行ってください。他のネットワークから送信した場合、トークンが永久に失われる可能性があります。",
@@ -4743,11 +4832,11 @@
         "walletNotExist" : "ウォレットが存在しません"
       },
       "skipMemo" : {
-        "title" : "{{tag}}の追加をスキップしますか？",
-        "warning" : "受取人が{{tag}}を要求した場合、資産が失われる可能性があります",
-        "notRequired" : "受取人は{{tag}}を不要としていますか？",
-        "confirm" : "はい、スキップします",
-        "neverAskAgain" : "今後この警告を表示しない"
+        "title" : "{{tag}}なしで送信しますか？",
+        "description" : "受取人が{{tag}}を要求した場合、資産が失われる可能性があります。",
+        "confirm" : "はい、{{tag}}なしで送信します",
+        "cancel" : "いいえ、戻る",
+        "neverAskAgain" : "次回から確認しない"
       },
       "tagHelp" : {
         "title" : "{{tag}}とは何ですか？",
@@ -10273,27 +10362,6 @@
       "iHaveACard" : "すでにカードをお持ちの方"
     }
   },
-  "walletV4Tour" : {
-    "title" : "新しくなったポートフォリオ",
-    "slides" : {
-      "portfolio" : {
-        "title" : "ポートフォリオがさらに見やすく",
-        "description" : "総残高を一目で確認。「今日」をタップすると、さらに詳細を見ることができます。"
-      },
-      "navigation" : {
-        "title" : "主要な機能へすばやくアクセス",
-        "description" : "スワップ、送付・受取、購入をスムーズに。報酬獲得やカードには、下部メニューからアクセスできます。"
-      },
-      "actions" : {
-        "title" : "市場のトレンドをすばやくチェック",
-        "description" : "ポートフォリオからトレンドを直接確認。市場の動きをチェックして、すぐに次のアクションを起こせます。"
-      }
-    },
-    "cta" : {
-      "continue" : "次へ",
-      "explore" : "新しいポートフォリオを見る"
-    }
-  },
   "mainNavigation" : {
     "home" : "ホーム",
     "swap" : "スワップ",
@@ -10344,9 +10412,34 @@
       }
     },
     "card" : {
+      "balanceLabel" : "残高",
+      "assets" : {
+        "title" : "資産",
+        "empty" : "まだ資産はありません",
+        "error" : "資産を読み込めませんでした。",
+        "info" : "These assets fund your card. Set the order they're charged in, or add more.",
+        "manage" : "Manage",
+        "manageDialog" : {
+          "title" : "Manage assets",
+          "description" : "Your assets are listed in funding order. If one asset runs low, the next one is used automatically.",
+          "addAssetCaption" : "You'll be redirected to Baanx's page to add asset.",
+          "addAsset" : "Add asset"
+        },
+        "details" : {
+          "topUp" : "チャージ",
+          "withdraw" : "出金",
+          "transactions" : "トランザクション"
+        },
+        "withdraw" : {
+          "title" : "Baanxにリダイレクトされます。",
+          "description" : "BaanxアカウントからLedgerウォレットのアドレスに資金を出金します。",
+          "continue" : "続行"
+        }
+      },
       "title" : "暗号資産カード",
-      "placeholder" : "近日公開",
+      "topUp" : "チャージ",
       "details" : "詳細",
+      "addToWallet" : "{{wallet}} Payに追加",
       "freeze" : "凍結",
       "unfreeze" : "凍結解除",
       "goBack" : "戻る",
@@ -10364,6 +10457,15 @@
       "confirmError" : {
         "description" : "何か問題が発生しました。もう一度お試しください。",
         "retry" : "再試行"
+      },
+      "numbers" : {
+        "reveal" : "表示",
+        "hide" : "隠す",
+        "failed" : "カード番号を読み込めませんでした。",
+        "imageAlt" : "カード番号"
+      },
+      "reward" : {
+        "title" : "キャッシュバック合計"
       }
     },
     "cardTransactions" : {
@@ -10394,6 +10496,30 @@
           "PENDING" : "保留中",
           "DECLINED" : "拒否されました",
           "REVERTED" : "取り消されました"
+        }
+      },
+      "history" : {
+        "today" : "今日",
+        "yesterday" : "昨日",
+        "unknownDate" : "日付は利用できません",
+        "columns" : {
+          "transaction" : "トランザクション",
+          "fundingSources" : "資金源",
+          "amount" : "数量"
+        },
+        "paidWithAssets" : "{{count}}資産で支払いました",
+        "goToPay" : "支払いへ進む",
+        "signedOut" : {
+          "title" : "カードのトランザクションを確認するにはログインしてください",
+          "description" : "ログインすると、ここにカードのアクティビティが表示されます。"
+        },
+        "empty" : {
+          "title" : "まだカードのトランザクションがありません",
+          "description" : "後ほど、カードのトランザクションをご確認ください。"
+        },
+        "error" : {
+          "title" : "カードのトランザクションを読み込めませんでした。",
+          "description" : "接続を確認して、もう一度やり直してください。"
         }
       }
     },
@@ -10554,9 +10680,56 @@
         "stepComplete" : "完了",
         "gotIt" : "了解"
       },
-      "walletStep" : {
-        "title" : "Apple/Google Payに追加",
-        "description" : "店舗でスマートフォンで支払う"
+      "steps" : {
+        "createAccount" : {
+          "title" : "アカウントを作成",
+          "description" : "開始するには本人認証を行ってください"
+        },
+        "chooseCardType" : {
+          "title" : "カードの種類を選択してください",
+          "description" : "バーチャルまたは物理カードから選択"
+        },
+        "topUpCard" : {
+          "title" : "カードにチャージ",
+          "description" : "USDC、USDT、BTCなどを使用して資金を追加してください"
+        },
+        "firstPurchase" : {
+          "title" : "暗号資産を初めての購入",
+          "description" : "オンラインや実店舗での支払い"
+        },
+        "appleGooglePay" : {
+          "title" : "{{wallet}} Payに追加",
+          "description" : "店舗でスマートフォンで支払う"
+        }
+      },
+      "addToWallet" : {
+        "ios" : {
+          "title" : "Apple Payに追加",
+          "step1" : "Appleウォレットアプリを開き、追加（+）をタップしてください。",
+          "step2" : "デビットカードまたはクレジットカードを選択",
+          "step3" : "指示に従ってください。",
+          "cta" : "Appleウォレットに移動する",
+          "error" : {
+            "title" : "Apple Wallet couldn’t be opened",
+            "description" : "Make sure Apple Pay is available on this device, then try again.",
+            "action" : "Try again"
+          }
+        },
+        "android" : {
+          "title" : "Google Payに追加",
+          "step1" : "Googleウォレットアプリを開き、「追加」をタップします。",
+          "step2" : "「支払いカード」を選択し、次に「新しいクレジットカードまたはデビットカード」を選択してください。",
+          "step3" : "指示に従ってください。",
+          "cta" : "Googleウォレットに移動",
+          "error" : {
+            "title" : "Google Wallet couldn’t be opened",
+            "description" : "Google Wallet may not be installed or may be disabled.",
+            "action" : "Open Google Play"
+          }
+        },
+        "error" : {
+          "back" : "Back to instructions"
+        }
       }
     }
   },
@@ -10707,6 +10880,79 @@
     "accountActions" : {
       "publicToPrivate" : "両替"
     },
+    "bond" : {
+      "stepperHeader" : {
+        "validator" : "バリデータを選択",
+        "stepRange" : "{{totalSteps}}の{{currentStep}}",
+        "amount" : "数量",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続"
+      },
+      "selectValidator" : {
+        "fetchError" : "バリデーターの読み込みに失敗しました。もう一度お試しください。",
+        "metadataError" : "バリデーターのメタデータを読み込めませんでした。引き続きステーキングを追加できます。",
+        "lockedHint" : "Aleoでは、1アカウントにつき1つのバリデーターのみが許可されています。このバリデーターへのステーキングを追加するか、先にステーキング解除を行って別のバリデーターを選択することができます。",
+        "closed" : "バリデーターは新規のステーキングを受け付けていません。",
+        "unbonding" : "バリデーターはボンド解除中です。",
+        "totalStake" : "合計ステーキング量",
+        "rateAndCommission" : "{{rate}}％（推定）。・ {{commission}}％の手数料",
+        "commissionOnly" : "{{commission}}％の手数料",
+        "earnsNothing" : "バリデーターは報酬を獲得しません。"
+      },
+      "amount" : {
+        "available" : "利用可能",
+        "max" : "最大",
+        "stakingAlert" : "報酬を獲得するには、このバリデーターへのステーキング総額が少なくとも<minimum/>に達する必要があります。ステーキングできるのはパブリックのALEOのみです。ステーキングする場合は、まずプライベート残高をパブリックに変換してください。",
+        "minimumLabel" : "最小ボンド数量",
+        "minimumTopUp" : "<missing/><total/>報酬の獲得に必要な総ステーキング額 に達するには、少なくとも を追加してください。",
+        "belowMinimum" : "公開残高が、最小ボンド額に対して<missing/>不足<minimum/>しています。ステーキングを行う前に、公開残高を追加してください。",
+        "changeValidator" : "別のバリデーターを選択"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "債権が送信されました",
+          "description" : "Aleoネットワークで債権トランザクションを処理中です。"
+        }
+      }
+    },
+    "stake" : {
+      "sectionTitle" : "ステーキング",
+      "staked" : "ステーキング済み",
+      "unstaking" : "ステーキング解除",
+      "claimable" : "獲得可能",
+      "estimatedRate" : "{{rate}}％（推定）。",
+      "fallbackValidator" : "Aleo",
+      "status" : {
+        "earning" : "報酬を獲得中",
+        "unknown" : "ステータス利用不可"
+      },
+      "nonEarning" : {
+        "fullCommission" : "このバリデーターは100％のコミッションを徴収するため、お客様の取り分はありません。",
+        "overConcentrated" : "このバリデーターは、ステーキングされたすべてのALEOの25％を超える量を保有しています。プロトコルはその上限を超える分に対して支払わないため、報酬を獲得できません。",
+        "leftCommittee" : "このバリデーターはもう委員会に所属していないため、ステーキング報酬を獲得できません。ステーキングを解除し、別のバリデーターにボンド（預入れ）して、再び報酬の獲得を開始します。",
+        "ownStakeBelowMinimum" : "ステーキング額が最小の10,000 ALEOを下回っているため、報酬は発生しません。追加して、再び報酬の獲得を開始してください。"
+      },
+      "emptyState" : {
+        "description" : "{{name}}をステーキングすることで報酬を獲得できます。",
+        "cta" : "報酬を獲得する",
+        "bondPending" : "A stake has been sent and is waiting to be confirmed. Aleo holds one staked position per account, so staking is unavailable until it has gone through."
+      },
+      "unstakingRow" : {
+        "settling" : "Almost there...",
+        "claimPending" : "Claiming...",
+        "unbondPending" : "Unstaking...",
+        "blocksRemaining_one" : "残り約{{count}}ブロック",
+        "blocksRemaining_other" : "残り約{{count}}ブロック"
+      }
+    },
+    "manage" : {
+      "bond" : "ボンド",
+      "status" : "ステータス",
+      "estimatedRate" : "推定報酬レート",
+      "unbondPendingInfo" : "ステーキング解除の承認待ちです。Aleoは一度に1つのボンド解除ポジションのみをチェックするため、処理が完了するまでボンド解除と請求はどちらもご利用いただけません。",
+      "claimPendingInfo" : "請求の承認待ちです。Aleoは一度に1つのボンド解除ポジションのみをチェックするため、処理が完了するまでボンド解除と請求はどちらもご利用いただけません。",
+      "unlockBlock" : "ブロックでロック解除"
+    },
     "send" : {
       "balanceSelection" : {
         "title" : "残高を選択",
@@ -10751,6 +10997,10 @@
     },
     "balancesSection" : "残高",
     "info" : {
+      "available" : {
+        "title" : "利用可能残高",
+        "description" : "現在使用可能な残高：トランスペアレント資金に、すでに同期済みのプライベートレコードを加えたものです。ステーキングおよびステーキング解除中の数量は含まれません。"
+      },
       "transparent" : {
         "title" : "トランスペアレント残高",
         "description" : "Aleoネットワーク上で公開されている残高。この数量は直接送るか受け取ることができ、誰でも見ることができます。"
@@ -10758,6 +11008,18 @@
       "private" : {
         "title" : "プライベート残高",
         "description" : "Aleoネットワーク上のシールドされた残高。この残高はあなたにのみ表示され、プライベートトランザクションには証明の生成が必要です。"
+      },
+      "staked" : {
+        "title" : "ステーキング済み",
+        "description" : "現在バリデーターにボンド中の数量。報酬を獲得できますが、ステーキング解除をしてボンド解除期間が終了するまで使用することはできません。"
+      },
+      "unstaking" : {
+        "title" : "ステーキング解除",
+        "description" : "ステーキングを解除した数量のうち、まだロックされているもの。すぐに報酬の獲得が停止し、アンボンディング期間が終了すると申請可能になります。"
+      },
+      "claimable" : {
+        "title" : "獲得可能",
+        "description" : "アンボンディング期間が終了した、ステーキング解除済みの数量。請求して利用可能残高に戻します。"
       }
     },
     "account" : {
