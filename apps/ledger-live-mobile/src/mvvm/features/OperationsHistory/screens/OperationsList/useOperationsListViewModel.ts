@@ -25,6 +25,7 @@ import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useOperationsSections } from "./hooks/useOperationsSections";
 import {
   HISTORY_DUST_FILTER_THRESHOLD_USD,
+  HISTORY_TAB_CARD,
   HISTORY_TAB_CRYPTO,
   type HistoryTab,
 } from "LLM/features/OperationsHistory/constants";
@@ -43,15 +44,31 @@ const OP_COUNT_INCREMENT = 50;
 export function useOperationsListViewModel(
   accountIds?: string[],
   initialHistoryTab: HistoryTab = HISTORY_TAB_CRYPTO,
+  cardAsset?: string,
 ) {
   const dispatch = useDispatch();
   const allAccounts = useSelector(shallowAccountsSelector);
   const allFlattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
   const [isOptionsSheetOpen, setOptionsSheetOpen] = useState(false);
-  const [historyTab, setHistoryTab] = useState<HistoryTab>(initialHistoryTab);
+  const [historyTabSelection, setHistoryTabSelection] = useState<{
+    initial: HistoryTab;
+    selected: HistoryTab;
+  }>();
+  const selectedHistoryTab =
+    historyTabSelection?.initial === initialHistoryTab
+      ? historyTabSelection.selected
+      : initialHistoryTab;
+  // Only card history is ever asset scoped, and the switcher is hidden then: the route has to win
+  // over an earlier switcher pick, or the same screen instance would keep showing crypto.
+  const requestedHistoryTab = cardAsset ? HISTORY_TAB_CARD : selectedHistoryTab;
   const isPayTabEnabled = !!useFeature("lwmPayTab")?.enabled;
-  const showHistoryTypeSwitcher = isPayTabEnabled && !accountIds?.length;
+  // Without an asset scope, a deep link or stale param must not reach the Card API outside the
+  // Pay tab, nor on account-scoped routes where card history has no meaning.
+  const canShowCardHistory = Boolean(cardAsset) || (isPayTabEnabled && !accountIds?.length);
+  const isCardTab = requestedHistoryTab === HISTORY_TAB_CARD && canShowCardHistory;
+  const historyTab: HistoryTab = isCardTab ? HISTORY_TAB_CARD : HISTORY_TAB_CRYPTO;
+  const showHistoryTypeSwitcher = isPayTabEnabled && !accountIds?.length && !cardAsset;
   const { isEnabled: isDustFilterFeatureEnabled } = useDustFilteringFeature("mobile");
   const userHideSmallValueTokenOperations = useSelector(
     hideSmallValueTokenOperationsEnabledSelector,
@@ -175,13 +192,16 @@ export function useOperationsListViewModel(
     }
   }, [isDustFilterFeatureEnabled]);
   const closeOptionsSheet = useCallback(() => setOptionsSheetOpen(false), []);
-  const onHistoryTabChange = useCallback((tab: HistoryTab) => {
-    track("button_clicked", {
-      button: tab,
-      page: "OperationsList",
-    });
-    setHistoryTab(tab);
-  }, []);
+  const onHistoryTabChange = useCallback(
+    (tab: HistoryTab) => {
+      track("button_clicked", {
+        button: tab,
+        page: "OperationsList",
+      });
+      setHistoryTabSelection({ initial: initialHistoryTab, selected: tab });
+    },
+    [initialHistoryTab],
+  );
 
   const onToggleHideSmallValueTokenOperations = useCallback(() => {
     if (!isDustFilterFeatureEnabled) return;
@@ -215,6 +235,7 @@ export function useOperationsListViewModel(
     onToggleHideSmallValueTokenOperations,
     showHistoryTypeSwitcher,
     historyTab,
+    isCardTab,
     onHistoryTabChange,
   };
 }

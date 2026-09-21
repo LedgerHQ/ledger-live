@@ -76,6 +76,23 @@ const renderOperationsListWithNavigation = (
     options,
   );
 
+const renderOperationsListWithParams = (
+  params: NonNullable<OperationsListProps["route"]["params"]>,
+  options?: Parameters<typeof render>[1],
+) =>
+  render(
+    <OperationsList
+      route={{ ...operationsListRoute, params } as OperationsListProps["route"]}
+      navigation={
+        {
+          setOptions: mockSetOptions,
+          dispatch: jest.fn(),
+        } as unknown as OperationsListProps["navigation"]
+      }
+    />,
+    options,
+  );
+
 describe("OperationsList", () => {
   beforeEach(() => {
     mockSetOptions.mockClear();
@@ -160,6 +177,103 @@ describe("OperationsList", () => {
         }),
       ),
     );
+  });
+
+  it("should scope the existing Card history when an asset is provided", async () => {
+    const route = {
+      ...operationsListRoute,
+      params: { historyTab: "card", asset: "usdc" },
+    } as OperationsListProps["route"];
+
+    const { getByTestId, queryByTestId } = render(
+      <OperationsList
+        route={route}
+        navigation={
+          {
+            setOptions: mockSetOptions,
+            dispatch: jest.fn(),
+          } as unknown as OperationsListProps["navigation"]
+        }
+      />,
+      {
+        overrideInitialState: withFlagOverrides({
+          lwmPayTab: { enabled: true },
+        }),
+      },
+    );
+
+    await waitFor(() =>
+      expect(mockSetOptions).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          lumenNavBar: expect.objectContaining({
+            description: "Card · USDC",
+            navBarDescriptionProps: { testID: "card-history-asset-scope" },
+          }),
+        }),
+      ),
+    );
+    expect(getByTestId("card-history-signed-out-state")).toBeVisible();
+    expect(queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
+  });
+
+  it("should show scoped Card history when navigation updates an existing history screen", async () => {
+    const navigation = {
+      setOptions: mockSetOptions,
+      dispatch: jest.fn(),
+    } as unknown as OperationsListProps["navigation"];
+    const view = render(<OperationsList route={operationsListRoute} navigation={navigation} />, {
+      overrideInitialState: withFlagOverrides({
+        lwmPayTab: { enabled: true },
+      }),
+    });
+    const cardRoute = {
+      ...operationsListRoute,
+      params: { historyTab: "card", asset: "usdc" },
+    } as OperationsListProps["route"];
+
+    view.rerender(<OperationsList route={cardRoute} navigation={navigation} />);
+
+    await waitFor(() => expect(view.getByTestId("card-history-signed-out-state")).toBeVisible());
+    expect(view.queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
+  });
+
+  describe("card history access", () => {
+    it("should show crypto history when a card param arrives while the Pay tab is disabled", () => {
+      const { getByTestId, queryByTestId } = renderOperationsListWithParams(
+        { historyTab: "card" },
+        { overrideInitialState: stateWithAccountsAndOperations },
+      );
+
+      expect(getByTestId("operations-list-section-list")).toBeVisible();
+      expect(queryByTestId("card-history-signed-out-state")).not.toBeOnTheScreen();
+      expect(queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
+    });
+
+    it("should show Card history when an asset scopes the route while the Pay tab is disabled", async () => {
+      const { getByTestId, queryByTestId } = renderOperationsListWithParams({
+        historyTab: "card",
+        asset: "usdc",
+      });
+
+      await waitFor(() => expect(getByTestId("card-history-signed-out-state")).toBeVisible());
+      expect(queryByTestId("operations-list-section-list")).not.toBeOnTheScreen();
+    });
+
+    it("should show crypto history when an account-scoped route carries a card param", () => {
+      const { getByTestId, queryByTestId } = renderOperationsListWithParams(
+        { historyTab: "card", accountIds: [accountWithOperations.id] },
+        {
+          overrideInitialState: withFlagOverrides(
+            { lwmPayTab: { enabled: true } },
+            stateWithAccountsAndOperations,
+          ),
+        },
+      );
+
+      expect(getByTestId("operations-list-section-list")).toBeVisible();
+      expect(queryByTestId("card-history-signed-out-state")).not.toBeOnTheScreen();
+      expect(queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
+    });
   });
 
   describe("when the list is empty", () => {

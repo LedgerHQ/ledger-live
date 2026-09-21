@@ -34,6 +34,7 @@ import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayme
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
 import { track } from "~/analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
+import type { CardAssetRow } from "@features/flow-pay-card-assets";
 
 export function usePayTabViewModel() {
   const { top, bottom } = useNavigationBarHeights();
@@ -136,6 +137,15 @@ export function usePayTabViewModel() {
     [onManagePin, onAccessBaanx, onHelp],
   );
 
+  const onShowAssetHistory = useCallback(
+    (asset: CardAssetRow) => {
+      // Match desktop: the route carries only the provider asset code. History resolves the
+      // current display name itself, so navigation cannot leave a stale name behind.
+      navigateToCardHistory(navigation, asset.currency);
+    },
+    [navigation],
+  );
+
   const featureTour: FeatureTourProps = useMemo(
     () => ({
       onTrackScreen: (page: string) => track(page),
@@ -144,7 +154,11 @@ export function usePayTabViewModel() {
     [],
   );
 
-  const cardAssets = usePayCardAssets();
+  const cardAssetsViewModel = usePayCardAssets();
+  const cardAssets = useMemo(
+    () => ({ ...cardAssetsViewModel, onShowHistory: onShowAssetHistory }),
+    [cardAssetsViewModel, onShowAssetHistory],
+  );
 
   // Without a countervalue formatter the flow shows the bare artwork instead of the card's balance.
   const formatCountervalue = useCountervalueFormatter();

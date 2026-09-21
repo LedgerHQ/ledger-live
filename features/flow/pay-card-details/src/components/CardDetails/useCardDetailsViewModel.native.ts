@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { PayCardTransaction } from "@domain/api-card-management";
 import { useCardAssetsViewModel, type CardAssetRow } from "@features/flow-pay-card-assets";
+import type { CardTransactionItem } from "@features/flow-pay-card-transactions";
 import { transactionClickedProperties } from "@features/flow-pay-card-transactions";
 import { useTranslation } from "@shared/i18n";
 import { useFreezeCardViewModel } from "../Freeze/useFreezeCardViewModel";
@@ -54,6 +55,10 @@ export function useCardDetailsViewModel({
     goTo({ name: "assetWithdraw" });
   };
 
+  const onAssetTransactionPress = (transaction: CardTransactionItem) => {
+    goTo({ name: "assetTransaction", transaction });
+  };
+
   const onAssetHistoryPress = () => {
     assetsViewModel.onShowHistoryPress();
     goBack();
@@ -83,6 +88,11 @@ export function useCardDetailsViewModel({
 
   const onSceneBack = () => {
     if (route.name === "assetWithdraw") {
+      goTo({ name: "assetDetails" });
+      return;
+    }
+
+    if (route.name === "assetTransaction") {
       goTo({ name: "assetDetails" });
       return;
     }
@@ -133,9 +143,22 @@ export function useCardDetailsViewModel({
     addToWallet: { onDone: goBack },
     transaction:
       route.name === "transaction" ? { transaction: route.transaction, formatters } : null,
-    assetDetails: route.name === "assetDetails" ? { viewModel: assetSceneViewModel } : null,
+    assetDetails:
+      route.name === "assetDetails"
+        ? {
+            viewModel: assetSceneViewModel,
+            onTransactionPress: onAssetTransactionPress,
+          }
+        : null,
     assetWithdraw: route.name === "assetWithdraw" ? assetSceneViewModel : null,
     assetsManage: route.name === "assetsManage" ? { viewModel: assetSceneViewModel } : null,
+    assetTransaction:
+      route.name === "assetTransaction"
+        ? {
+            transaction: route.transaction,
+            formatters: assetsViewModel.formatters,
+          }
+        : null,
   };
 
   return {

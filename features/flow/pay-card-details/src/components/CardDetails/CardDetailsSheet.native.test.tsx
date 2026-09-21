@@ -70,6 +70,7 @@ function buildScene({ route, confirmState }: SheetOverrides): CardDetailsScenePr
     assetDetails: null,
     assetWithdraw: null,
     assetsManage: null,
+    assetTransaction: null,
   };
 }
 

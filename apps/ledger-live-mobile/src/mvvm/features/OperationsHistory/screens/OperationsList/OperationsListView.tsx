@@ -7,7 +7,6 @@ import { CardArtwork } from "@features/flow-pay-card-details";
 import { CardTransactionHistory } from "@features/flow-pay-card-transactions";
 import { TrackScreen } from "~/analytics";
 import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
-import { HISTORY_TAB_CARD } from "LLM/features/OperationsHistory/constants";
 import { HistoryTypeSwitcher } from "./components/HistoryTypeSwitcher";
 import { OperationsEmptyState } from "./components/OperationsEmptyState";
 import { OperationsHistoryOptionsSheet } from "./components/OperationsHistoryOptionsSheet";
@@ -21,6 +20,7 @@ import type { OperationsListSection, OperationsListViewModel } from "./useOperat
 type OperationsListViewProps = Readonly<{
   viewModel: OperationsListViewModel;
   cardHistoryViewModel: CardHistoryViewModel;
+  cardAsset?: string;
   bottomInset: number;
 }>;
 
@@ -31,6 +31,7 @@ function keyExtractor(item: Operation) {
 export function OperationsListView({
   viewModel,
   cardHistoryViewModel,
+  cardAsset,
   bottomInset,
 }: OperationsListViewProps) {
   const {
@@ -50,9 +51,9 @@ export function OperationsListView({
     onToggleHideSmallValueTokenOperations,
     showHistoryTypeSwitcher,
     historyTab,
+    isCardTab,
     onHistoryTabChange,
   } = viewModel;
-  const isCardTab = showHistoryTypeSwitcher && historyTab === HISTORY_TAB_CARD;
 
   const listContentStyle = useMemo(
     () => ({
@@ -111,6 +112,7 @@ export function OperationsListView({
       ) : null}
       {isCardTab ? (
         <CardTransactionHistory
+          asset={cardAsset}
           formatters={cardHistoryViewModel.formatters}
           formatDay={cardHistoryViewModel.formatDay}
           onTrackEvent={cardHistoryViewModel.onTrackEvent}
