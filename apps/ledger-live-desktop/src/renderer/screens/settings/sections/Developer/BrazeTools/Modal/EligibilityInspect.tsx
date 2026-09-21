@@ -51,6 +51,36 @@ const inspectCardStatus = (
   return { kind: "eligible" };
 };
 
+const InspectCardStatusLine = ({ status }: { status: InspectCardStatus }) => {
+  const { t } = useTranslation();
+  if (status.kind === "blocked") {
+    return (
+      <Text variant="small" color="error.c50">
+        {t("settings.developer.brazeTools.modal.inspect.blockedBy", {
+          blockedBy: status.blockedBy,
+          reason: status.reason,
+        })}
+      </Text>
+    );
+  }
+  if (status.kind === "eligible") {
+    return (
+      <Text variant="small" color="success.c70">
+        {t("settings.developer.brazeTools.modal.inspect.eligibleStatus")}
+      </Text>
+    );
+  }
+  const statusKey =
+    status.kind === "missing-id"
+      ? "settings.developer.brazeTools.modal.inspect.missingIdStatus"
+      : "settings.developer.brazeTools.modal.inspect.unevaluatedStatus";
+  return (
+    <Text variant="small" color="neutral.c70">
+      {t(statusKey)}
+    </Text>
+  );
+};
+
 export const EligibilityInspect: React.FC = () => {
   const { t } = useTranslation();
   const { lastFetchedCards, eligibilityEvaluations, eligibilityContext, injectDebugContentCard } =
@@ -183,26 +213,7 @@ export const EligibilityInspect: React.FC = () => {
                     ? evaluation.requiredStates.join("; ")
                     : t("settings.developer.brazeTools.modal.inspect.none")}
                 </Text>
-                {status.kind === "blocked" ? (
-                  <Text variant="small" color="error.c50">
-                    {t("settings.developer.brazeTools.modal.inspect.blockedBy", {
-                      blockedBy: status.blockedBy,
-                      reason: status.reason,
-                    })}
-                  </Text>
-                ) : status.kind === "eligible" ? (
-                  <Text variant="small" color="success.c70">
-                    {t("settings.developer.brazeTools.modal.inspect.eligibleStatus")}
-                  </Text>
-                ) : (
-                  <Text variant="small" color="neutral.c70">
-                    {t(
-                      status.kind === "missing-id"
-                        ? "settings.developer.brazeTools.modal.inspect.missingIdStatus"
-                        : "settings.developer.brazeTools.modal.inspect.unevaluatedStatus",
-                    )}
-                  </Text>
-                )}
+                <InspectCardStatusLine status={status} />
               </Flex>
             );
           })
