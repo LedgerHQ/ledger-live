@@ -620,8 +620,8 @@ export class SwapPage extends WebViewAppPage {
   // Non-critical panel: failures are reported, not thrown.
   @step("Check landing page Trending Assets and Stablecoins panel")
   async checkLandingPageTrendingAssets() {
-    await this.runPanelCheckSoftly(() => this.checkTrendingAssetsUnsafe());
-    await this.runPanelCheckSoftly(() => this.checkStablecoinsUnsafe());
+    await this.runPanelCheckSoftly(() => this.checkTrendingAssetsPanel());
+    await this.runPanelCheckSoftly(() => this.checkStablecoinsPanel());
   }
 
   private async runPanelCheckSoftly(check: () => Promise<void>) {
@@ -635,7 +635,8 @@ export class SwapPage extends WebViewAppPage {
     }
   }
 
-  private async checkTrendingAssetsUnsafe() {
+  @step("Check Trending Assets panel")
+  private async checkTrendingAssetsPanel() {
     const webview = await this.getWebView();
 
     const topGainersRows = webview.locator(this.topGainersItemsSelector);
@@ -684,7 +685,8 @@ export class SwapPage extends WebViewAppPage {
     });
   }
 
-  private async checkStablecoinsUnsafe() {
+  @step("Check Stablecoins panel")
+  private async checkStablecoinsPanel() {
     const webview = await this.getWebView();
 
     const topStablecoinsRows = webview.locator(this.topStablecoinsItemsSelector);
