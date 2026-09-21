@@ -622,7 +622,7 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleContactAddressSelect(contact.addresses[1], 2));
     expect(clearSelectedContact).toHaveBeenCalledTimes(1);
-    expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined, true);
+    expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined, true, undefined, undefined);
     expect(setRecipientResolution).toHaveBeenCalledWith("contact address match", "contact");
   });
 
@@ -735,7 +735,13 @@ describe("useRecipientAddressModalViewModel", () => {
 
     result.current.handleAddressSelect("new_address", "ens_name");
 
-    expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name", true);
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "new_address",
+      "ens_name",
+      true,
+      undefined,
+      undefined,
+    );
   });
 
   it("does not advance when a family notice blocks the recipient step", () => {
@@ -775,7 +781,13 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleAddressSelect("new_address", "ens_name"));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name");
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "new_address",
+      "ens_name",
+      undefined,
+      undefined,
+      undefined,
+    );
     expect(goToStep).toHaveBeenCalledWith("SKIP_MEMO_CONFIRMATION");
   });
 
@@ -795,10 +807,16 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleAddressSelect("new_address"));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("new_address", undefined, true, {
-      value: "",
-      type: "NO_MEMO",
-    });
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "new_address",
+      undefined,
+      true,
+      {
+        value: "",
+        type: "NO_MEMO",
+      },
+      undefined,
+    );
   });
 
   it("passes the current transaction to address validation", () => {
