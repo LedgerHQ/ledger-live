@@ -9,7 +9,7 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
-import type { CardAssetsManageContentProps } from "./types";
+import type { CardAssetRow, CardAssetsManageContentProps } from "./types";
 
 type CardAssetsManageDrawerProps = Pick<CardAssetsManageContentProps, "rows" | "onAddAsset">;
 
