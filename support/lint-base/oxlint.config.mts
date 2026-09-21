@@ -15,7 +15,8 @@ export default defineConfig({
   env: { browser: true, es6: true, node: true },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
   jsPlugins: [fileURLToPath(new URL("./src/suffix-imports.js", import.meta.url))],
-  ignorePatterns: ["*.js", "*.cjs", "*.mjs", "node_modules"],
+  // `ignorePatterns` cannot live here: oxlint anchors it to this file's directory, so from
+  // support/ it matches nothing and fails silently. Patterns go through the bin instead.
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   rules: {
     // Named by four or more layers today, at the value the majority chose. `no-explicit-any` is

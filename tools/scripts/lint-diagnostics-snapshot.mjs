@@ -16,39 +16,55 @@ import { fileURLToPath } from "node:url";
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const oxlintCli = join(repoRoot, "node_modules", "oxlint", "bin", "oxlint");
 
-const WORKSPACE_DIRS = [
-  "apps",
-  "devtools",
-  "domain/api",
-  "domain/entity",
-  "e2e",
-  "features/flow",
-  "features/platform",
-  "libs",
-  "libs/coin-modules",
-  "libs/coin-tester-modules",
-  "libs/ledger-services",
-  "libs/ledgerjs/packages",
-  "libs/ui/packages",
-  "shared",
-  "support",
-  "tests",
-  "tools",
-];
+// Package roots are derived from pnpm-workspace.yaml rather than hardcoded, because a hardcoded
+// list silently misses nested workspaces: `tools/**` covers tools/actions/* two levels down.
+function workspaceGlobs() {
+  const yaml = readFileSync(join(repoRoot, "pnpm-workspace.yaml"), "utf8");
+  const globs = [];
+  for (const line of yaml.split("\n")) {
+    const m = line.match(/^\s*-\s*"([^"]+)"\s*$/);
+    if (!m) continue;
+    if (line.startsWith("  -") || line.startsWith("- ")) globs.push(m[1]);
+    if (globs.length > 0 && !/^\s*-/.test(line)) break;
+  }
+  return globs;
+}
 
-function listPackages() {
-  const out = [];
-  for (const dir of WORKSPACE_DIRS) {
-    const abs = join(repoRoot, dir);
-    if (!existsSync(abs)) continue;
-    for (const entry of readdirSync(abs)) {
-      const pkgDir = join(abs, entry);
-      if (!statSync(pkgDir).isDirectory()) continue;
-      const manifest = join(pkgDir, "package.json");
-      if (!existsSync(manifest)) continue;
-      out.push({ rel: `${dir}/${entry}`, dir: pkgDir, manifest });
+function matches(rel, globs) {
+  for (const g of globs) {
+    if (g.endsWith("/**")) {
+      const base = g.slice(0, -3);
+      if (rel === base || rel.startsWith(`${base}/`)) return true;
+    } else {
+      const rx = new RegExp(
+        `^${g
+          .split("*")
+          .map(x => x.replace(/[.+?^${}()|[\]\\]/g, "\\$&"))
+          .join("[^/]*")}$`,
+      );
+      if (rx.test(rel)) return true;
     }
   }
+  return false;
+}
+
+function listPackages() {
+  const globs = workspaceGlobs();
+  const out = [];
+  const SKIP = new Set(["node_modules", ".git", ".nx", "dist", "build", "lib", "lib-es"]);
+  const walk = (dir, rel) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (!entry.isDirectory() || SKIP.has(entry.name) || entry.name.startsWith(".")) continue;
+      const childRel = rel ? `${rel}/${entry.name}` : entry.name;
+      const childDir = join(dir, entry.name);
+      const manifest = join(childDir, "package.json");
+      if (existsSync(manifest) && matches(childRel, globs)) {
+        out.push({ rel: childRel, dir: childDir, manifest });
+      }
+      walk(childDir, childRel);
+    }
+  };
+  walk(repoRoot, "");
   return out;
 }
 

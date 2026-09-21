@@ -3,7 +3,6 @@ import base from "@support/lint-base";
 
 export default defineConfig({
   extends: [base],
-  ignorePatterns: ["*.js", "*.cjs", "*.mjs", "node_modules"],
   rules: {
     // devtools is the only layer on the automatic JSX runtime: 104 of its 109 JSX files carry no
     // React import. Everywhere else the rule stays on, because those layers still need one.

@@ -9,7 +9,6 @@ import base from "@support/lint-base";
 export default defineConfig({
   extends: [base],
   categories: { correctness: "off", suspicious: "off", pedantic: "off" },
-  ignorePatterns: ["*.min.js", "node_modules"],
   globals: { Atomics: "readonly", SharedArrayBuffer: "readonly" },
   settings: { react: { version: "19.0.0" } },
   rules: {
