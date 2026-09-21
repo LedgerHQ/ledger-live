@@ -145,10 +145,13 @@ function InputCurrency(props: Props) {
 
   // Reformat the display when the value/unit prop changes.
   useLayoutEffect(() => {
+    // A focused field must stay ungrouped: sanitizeValueString reads "," as a decimal point.
+    const isFocused = !!innerRef.current && innerRef.current === document.activeElement;
+
     setState(prev => {
       // An external value change (ratio preset, "send max") must win even while
       // focused; only an echo of what the user just typed preserves their edit.
-      if (prev.isFocused && prev.rawValue && !disabled) {
+      if (isFocused && prev.rawValue && !disabled) {
         const isEcho =
           lastTypedRef.current != null &&
           value != null &&
@@ -161,11 +164,11 @@ function InputCurrency(props: Props) {
           ? ""
           : format(unit, value, {
               locale,
-              isFocused: false,
+              isFocused,
               showAllDigits,
               subMagnitude,
             });
-      return { ...prev, isFocused: false, rawValue: "", displayValue };
+      return { ...prev, isFocused, rawValue: "", displayValue };
     });
   }, [value, unit, showAllDigits, subMagnitude, locale, disabled]);
 
