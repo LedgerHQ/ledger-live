@@ -22,6 +22,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import { getAccountBridgeByFamily } from "../bridge/impl";
 import { resolveSerializationFamily } from "../bridge/zcashRouting";
+import { checkAccountSupported } from "./support";
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -82,6 +83,15 @@ export async function toAccountRaw(
   account: Account,
   userData?: AccountUserData,
 ): Promise<AccountRaw> {
+  // getAccountBridge() ran this same check before resolving the bridge; preserve it here
+  // now that the bridge is resolved via resolveSerializationFamily instead, so an
+  // unregistered coin module or unsupported derivation mode still rejects on save as it
+  // did before, for every currency (not just Zcash).
+  const supportedError = checkAccountSupported(account);
+  if (supportedError) {
+    throw supportedError;
+  }
+
   const bridge = await getAccountBridgeByFamily(
     resolveSerializationFamily(account.currency),
     account.id,
