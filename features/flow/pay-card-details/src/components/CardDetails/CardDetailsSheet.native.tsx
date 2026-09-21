@@ -84,8 +84,10 @@ export function CardDetailsSheet({
 }
 
 function SheetContent({ scene }: Readonly<{ scene: CardDetailsSceneProps }>) {
+  const [isAssetDragging, setIsAssetDragging] = useState(false);
+
   return (
-    <BottomSheetScrollView>
+    <BottomSheetScrollView scrollEnabled={!isAssetDragging} testID="card-details-sheet-scroll-view">
       <Box lx={{ paddingBottom: "s24" }}>
         <BottomSheetHeader
           density="compact"
@@ -96,7 +98,7 @@ function SheetContent({ scene }: Readonly<{ scene: CardDetailsSceneProps }>) {
             It wraps the whole scene, so a scene's own call to action transitions with its content
             instead of snapping into place on its own. */}
         <Animated.View key={scene.route.name} entering={FadeIn.duration(SCENE_ENTER_MS)}>
-          <CardDetailsScene {...scene} />
+          <CardDetailsScene {...scene} onAssetDragActiveChange={setIsAssetDragging} />
         </Animated.View>
       </Box>
     </BottomSheetScrollView>

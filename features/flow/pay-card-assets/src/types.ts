@@ -65,6 +65,8 @@ export type CardAssetsManageContentProps = Readonly<{
   rows: readonly CardAssetRow[];
   onAddAsset?: () => void;
   onReorder: (draggedId: string, targetId: string) => Promise<void>;
+  /** Native only: lets the sheet freeze its scroll while a row follows the finger. */
+  onDragActiveChange?: (isDragging: boolean) => void;
   reorderingAssetId: string | null;
 }>;
 

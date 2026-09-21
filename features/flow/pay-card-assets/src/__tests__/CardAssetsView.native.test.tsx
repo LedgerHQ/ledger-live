@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { fireEvent, render, screen, userEvent } from "@testing-library/react-native";
 import { CardAssetsManageDrawer } from "../CardAssetsManageDrawer.native";
 import { CardAssetsView } from "../CardAssetsView.native";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
@@ -146,9 +146,15 @@ describe("CardAssetsView (native)", () => {
   it("should show managed assets and add another asset", async () => {
     const user = userEvent.setup();
     const onAddAsset = jest.fn();
-    render(<CardAssetsManageDrawer rows={ready.rows} onAddAsset={onAddAsset} />, {
-      wrapper: I18nWrapper,
-    });
+    render(
+      <CardAssetsManageDrawer
+        rows={ready.rows}
+        onAddAsset={onAddAsset}
+        onReorder={ready.onReorderAssets}
+        reorderingAssetId={null}
+      />,
+      { wrapper: I18nWrapper },
+    );
 
     expect(screen.getByText(CARD_ASSETS_COPY.manageDialogTitle)).toBeVisible();
     expect(screen.getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
@@ -160,8 +166,79 @@ describe("CardAssetsView (native)", () => {
     expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
 
+  it("should reorder assets with the whole native row", () => {
+    const onReorder = jest.fn(async () => {});
+    const usdt = { ...usdc, id: "w-usdt", name: "Tether", ticker: "USDT" };
+    render(
+      <CardAssetsManageDrawer rows={[usdc, usdt]} onReorder={onReorder} reorderingAssetId={null} />,
+      { wrapper: I18nWrapper },
+    );
+
+    const row = screen.getByTestId("card-asset-drag-row-w-usdc");
+    fireEvent(row, "panStart");
+    fireEvent(row, "panUpdate", { translationY: 64 });
+    fireEvent(row, "panEnd", { translationY: 64 });
+
+    expect(onReorder).toHaveBeenCalledWith("w-usdc", "w-usdt");
+  });
+
+  it("should report when the row drag owns scrolling", () => {
+    const onDragActiveChange = jest.fn();
+    render(
+      <CardAssetsManageDrawer
+        rows={ready.rows}
+        onReorder={ready.onReorderAssets}
+        onDragActiveChange={onDragActiveChange}
+        reorderingAssetId={null}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    const row = screen.getByTestId("card-asset-drag-row-w-usdc");
+    fireEvent(row, "panStart");
+    expect(onDragActiveChange).toHaveBeenLastCalledWith(true);
+
+    fireEvent(row, "panFinalize");
+    expect(onDragActiveChange).toHaveBeenLastCalledWith(false);
+  });
+
+  it("should preserve accessible row reordering", () => {
+    const onReorder = jest.fn(async () => {});
+    const usdt = { ...usdc, id: "w-usdt", name: "Tether", ticker: "USDT" };
+    render(
+      <CardAssetsManageDrawer rows={[usdc, usdt]} onReorder={onReorder} reorderingAssetId={null} />,
+      { wrapper: I18nWrapper },
+    );
+
+    fireEvent(screen.getByTestId("card-asset-drag-row-w-usdc"), "accessibilityAction", {
+      nativeEvent: { actionName: "increment" },
+    });
+
+    expect(onReorder).toHaveBeenCalledWith("w-usdc", "w-usdt");
+  });
+
+  it("should show a spinner on the row whose priority is updating", () => {
+    render(
+      <CardAssetsManageDrawer
+        rows={ready.rows}
+        onReorder={ready.onReorderAssets}
+        reorderingAssetId="w-usdc"
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    expect(screen.getByTestId("card-asset-reorder-spinner-w-usdc")).toBeVisible();
+  });
+
   it("should hide the add asset action when the host does not provide it", () => {
-    render(<CardAssetsManageDrawer rows={ready.rows} />, { wrapper: I18nWrapper });
+    render(
+      <CardAssetsManageDrawer
+        rows={ready.rows}
+        onReorder={ready.onReorderAssets}
+        reorderingAssetId={null}
+      />,
+      { wrapper: I18nWrapper },
+    );
 
     expect(screen.queryByText(CARD_ASSETS_COPY.addAssetCaption)).not.toBeOnTheScreen();
     expect(screen.queryByText(CARD_ASSETS_COPY.addAsset)).not.toBeOnTheScreen();

@@ -26,6 +26,7 @@ const nativeMocks = {
   // Mapped here (not jest.mock in a setup file) so it also intercepts react-native imports
   // from inside @testing-library/react-native.
   "^react-native$": path.join(__dirname, "mocks/react-native.js"),
+  "^react-native-gesture-handler$": path.join(__dirname, "mocks/gesture-handler.js"),
   "^react-native-reanimated$": path.join(__dirname, "mocks/reanimated.js"),
   "^react-native-svg(/.*)?$": path.join(__dirname, "mocks/react-native-svg.js"),
   "^react-native-safe-area-context$": path.join(__dirname, "mocks/safe-area-context.js"),

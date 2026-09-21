@@ -1,5 +1,5 @@
 import React, { type PropsWithChildren } from "react";
-import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
+import { cleanup, fireEvent, render, screen, userEvent } from "@testing-library/react-native";
 import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
@@ -7,6 +7,7 @@ import {
   listenToCardApi,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
+import type { CardAssetsViewModel } from "@features/flow-pay-card-assets";
 import { ADD_TO_WALLET_COPY, CARD_COPY, I18nWrapper, MORE_COPY } from "../../__tests__/i18nWrapper";
 import { buildMoreViewProps } from "../More/fixtures";
 import type { CardDetailsRoute, CardDetailsSceneProps } from "./Scenes/types";
@@ -19,7 +20,11 @@ jest.mock("@features/flow-pay-card-assets", () => {
     CardAssetDetailsDrawer: () => <View testID="card-asset-details-drawer" />,
     CardAssetDetailsWithdrawDrawer: () => <View testID="card-asset-withdraw-drawer" />,
     CardAssetTransactionDetailDrawer: () => <View testID="card-asset-transaction-detail-drawer" />,
-    CardAssetsManageDrawer: () => <View testID="card-assets-manage-drawer" />,
+    CardAssetsManageDrawer: ({
+      onDragActiveChange,
+    }: {
+      onDragActiveChange?: (isDragging: boolean) => void;
+    }) => <View testID="card-assets-manage-drawer" onDragActiveChange={onDragActiveChange} />,
   };
 });
 
@@ -74,7 +79,16 @@ function buildScene({ route, confirmState }: SheetOverrides): CardDetailsScenePr
     transaction: route?.name === "transaction" ? { transaction: route.transaction } : null,
     assetDetails: null,
     assetWithdraw: null,
-    assetsManage: null,
+    assetsManage:
+      route?.name === "assetsManage"
+        ? {
+            viewModel: {
+              rows: [],
+              onReorderAssets: jest.fn(),
+              reorderingAssetId: null,
+            } as unknown as CardAssetsViewModel,
+          }
+        : null,
     assetTransaction: null,
   };
 }
@@ -130,6 +144,27 @@ describe("CardDetailsSheet (native)", () => {
     renderSheet();
 
     expect(screen.getByTestId("card-details-sheet").props.accessibilityState.expanded).toBe(true);
+  });
+
+  it("should leave vertical manage gestures to the reorder row", () => {
+    renderSheet({ route: { name: "assetsManage" } });
+
+    expect(screen.getByTestId("card-details-sheet")).toHaveAccessibilityValue({
+      text: "content-panning-disabled",
+    });
+  });
+
+  it("should stop sheet scrolling while a manage row is dragged", () => {
+    renderSheet({ route: { name: "assetsManage" } });
+    const scrollView = screen.getByTestId("card-details-sheet-scroll-view");
+
+    expect(scrollView).toHaveProp("scrollEnabled", true);
+
+    fireEvent(screen.getByTestId("card-assets-manage-drawer"), "dragActiveChange", true);
+    expect(scrollView).toHaveProp("scrollEnabled", false);
+
+    fireEvent(screen.getByTestId("card-assets-manage-drawer"), "dragActiveChange", false);
+    expect(scrollView).toHaveProp("scrollEnabled", true);
   });
 
   it("should show freeze and more when the sheet is open", () => {
