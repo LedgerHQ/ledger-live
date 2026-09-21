@@ -2799,7 +2799,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "{{memoLabel}}を入力してください",
-      "description" : "{{currency}} を暗号通貨取引所に送信する場合は、{{memoLabel}} が必要です。これは、取引の受信者を識別するために使用される機能です。{{memoLabel}}メモを含めないと資金が失われる可能性があります。"
+      "description" : "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} may result in a loss of funds."
     },
     "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
     "feesAmount" : "手数料金額 ({{unit}})",
@@ -2878,7 +2878,7 @@
       }
     },
     "balanceType" : {
-      "title" : "Select balance",
+      "title" : "残高を選択",
       "transparent" : {
         "title" : "公開残高",
         "subtitle" : "透明性"
@@ -2886,7 +2886,7 @@
       "shielded" : {
         "title" : "プライベート残高",
         "subtitle" : "シールド",
-        "pendingNoticeTitle" : "Funds maturing",
+        "pendingNoticeTitle" : "満期を迎える資金",
         "pendingNotice" : "一部のシールドノートはまだ成熟中のため、使用できない可能性があります。"
       },
       "zeroBalance" : {
@@ -6939,6 +6939,9 @@
     },
     "xrp" : {
       "memo" : "タグ"
+    },
+    "zcash" : {
+      "memoTooltip" : "A {{memoLabel}} is optional when sending {{currency}}. It is encrypted and only the recipient can read it. Some exchanges require one to identify your transaction."
     }
   },
   "errors" : {
@@ -7497,12 +7500,12 @@
       "title" : "この数量は1回のトランザクションで送信するには大きすぎます。より少ない数量に分割して送信をお試しください。"
     },
     "ZcashShieldedKeyMissing" : {
-      "title" : "Activate your private balance first",
-      "description" : "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+      "title" : "まずプライベート残高を有効にしてください",
+      "description" : "この送金にはデバイスの閲覧キーが必要です。有効にするには、プライベート残高を有効化してください。"
     },
     "ZcashNotesNotYetSpendable" : {
-      "title" : "These funds are not spendable yet",
-      "description" : "Please try again in a few minutes"
+      "title" : "これらの資金はまだ使用できません",
+      "description" : "数分後にもう一度お試しください"
     },
     "InvalidNonce" : {
       "title" : "ナンスは必須です"
@@ -9503,9 +9506,6 @@
           "toPublic" : "パブリック残高への自己送金",
           "unavailable" : "アカウントでシールドが有効になると、プライベートアドレスが利用可能になります。",
           "privacyWarning" : "これにより、シールドされた資金が、誰でも閲覧可能なアカウントのパブリックアドレスに紐付けられます。外部のプライベートアドレスに送信することで、これらは紐付けられないままになります。"
-        },
-        "confirm" : {
-          "privateTransaction" : "Private transaction — verify amount on your device"
         }
       },
       "state" : {
