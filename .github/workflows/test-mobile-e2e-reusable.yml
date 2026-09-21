@@ -217,6 +217,7 @@ permissions:
 
 env:
   cache-bucket: ll-nx-cache
+  WALLET_SYNC_ENVIRONMENT: ${{ inputs.production_firebase == true && 'PROD' || 'STAGING' }}
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-x86_64-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
@@ -412,11 +413,11 @@ jobs:
           if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
-          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/.env.mock.prerelease') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/.env.mock.prerelease', 'pnpm-workspace.yaml') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           HEAD_SHA=$(git rev-parse HEAD)
-          echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
-          echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
+          echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios-${{ inputs.production_firebase == true && 'prod' || 'staging' }}" >> $GITHUB_OUTPUT
+          echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android-${{ inputs.production_firebase == true && 'prod' || 'staging' }}" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           # QAA-1509: this cache carries /usr/local/lib/android/sdk/emulator/, so the
@@ -541,7 +542,7 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: ./.github/workflows/test-mobile-build-ios-reusable.yml
     permissions:
       id-token: write
       contents: read
@@ -571,7 +572,7 @@ jobs:
     name: "Android Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: ./.github/workflows/test-mobile-build-android-reusable.yml
     permissions:
       id-token: write
       contents: read

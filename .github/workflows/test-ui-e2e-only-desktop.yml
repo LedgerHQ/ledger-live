@@ -147,6 +147,7 @@ permissions:
 env:
   E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+  WALLET_SYNC_ENVIRONMENT: ${{ inputs.build_type == 'js' && 'PROD' || 'STAGING' }}
   # Broadcast on explicit request, or on the Monday nightly (see the schedule above).
   E2E_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 1 * * 1' }}
 

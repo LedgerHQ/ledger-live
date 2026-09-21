@@ -59,6 +59,7 @@ permissions:
 env:
   SMOKE_SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:v0.26.5
   SMOKE_SPECULOS_FIRMWARE_VERSION: 1.6.1
+  WALLET_SYNC_ENVIRONMENT: STAGING
 
 jobs:
   speculos-e2e-tests-linux:

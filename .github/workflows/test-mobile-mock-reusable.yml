@@ -110,6 +110,7 @@ permissions:
 
 env:
   cache-bucket: ll-nx-cache
+  WALLET_SYNC_ENVIRONMENT: STAGING
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
@@ -177,8 +178,8 @@ jobs:
           if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
-          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}-detox-native-android-3" >> $GITHUB_OUTPUT
+          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios', 'apps/ledger-live-mobile/.env.mock') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/.env.mock', 'pnpm-workspace.yaml') }}-detox-native-android-3" >> $GITHUB_OUTPUT
           HEAD_SHA=$(git rev-parse HEAD)
           echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
@@ -300,7 +301,7 @@ jobs:
   build-ios:
     name: "iOS Build"
     needs: [determine-builds]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: ./.github/workflows/test-mobile-build-ios-reusable.yml
     permissions:
       id-token: write
       contents: read
@@ -328,7 +329,7 @@ jobs:
   build-android:
     name: "Android Build"
     needs: [determine-builds]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: ./.github/workflows/test-mobile-build-android-reusable.yml
     permissions:
       id-token: write
       contents: read

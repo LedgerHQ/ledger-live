@@ -151,6 +151,9 @@
         "env": "ENVFILE"
       },
       {
+        "env": "WALLET_SYNC_ENVIRONMENT"
+      },
+      {
         "env": "MY_APP_BUNDLE_ID"
       },
       {
