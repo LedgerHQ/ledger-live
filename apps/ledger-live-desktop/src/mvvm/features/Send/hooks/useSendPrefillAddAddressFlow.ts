@@ -44,7 +44,7 @@ import {
   type AddNewContactHeaderState,
 } from "../context/AddNewContactHeaderContext";
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
-import { getSendFlowTrackingProperties } from "../utils/tracking";
+import { useSendFlowTrackingProperties } from "./useSendFlowTrackingProperties";
 import { track, trackPage } from "~/renderer/analytics/segment";
 
 export type SendPrefillAddAddressPhase = Readonly<{
@@ -113,14 +113,15 @@ export function useSendPrefillAddAddressFlow({
     otherContactsAddresses: allContactsAddresses,
   });
   const isAddressPhase = isPrefillAddAddressFlowOpen(addressFlowState);
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
   const trackingProperties = useMemo(
     () => ({
-      ...getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+      ...sendFlowTrackingProperties,
       ...buildContactsGlobalProperties({
         contacts,
       }),
     }),
-    [contacts, state.account.account, state.account.parentAccount],
+    [contacts, sendFlowTrackingProperties],
   );
 
   const trackedAddressPhaseRef = useRef("");

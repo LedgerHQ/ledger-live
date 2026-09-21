@@ -21,7 +21,7 @@ import { SendStepConfig } from "../types";
 import BigNumber from "bignumber.js";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { track, trackPage } from "~/renderer/analytics/segment";
-import { getSendFlowTrackingProperties } from "../utils/tracking";
+import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { useRecipientScanner } from "../context/RecipientScannerContext";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
 import { useAddNewContactHeaderState } from "../context/AddNewContactHeaderContext";
@@ -145,10 +145,7 @@ export function useSendHeaderModel({
     isRecipientAddressComplete,
   );
 
-  const trackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
-    [state.account.account, state.account.parentAccount],
-  );
+  const trackingProperties = useSendFlowTrackingProperties();
 
   const hasFiredMemoPageViewRef = useRef(false);
   if (showMemoControls && !hasFiredMemoPageViewRef.current) {

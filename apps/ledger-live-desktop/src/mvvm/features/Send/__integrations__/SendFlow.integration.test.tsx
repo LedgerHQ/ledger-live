@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import {
   createBitcoinAccount,
@@ -61,7 +62,7 @@ describe("Send Flow Integration", () => {
       const { user } = renderSendFlow(ethereumAccount, {
         recipient: VALID_EVM_RECIPIENT,
         skipRecipientStep: true,
-        source: "Pay",
+        source: SEND_FLOW_SOURCE.PAY,
       });
 
       expect(await screen.findByTestId("send-amount-step")).toBeVisible();
@@ -85,7 +86,7 @@ describe("Send Flow Integration", () => {
     });
 
     it("should keep the recipient step when Pay has no recipient", async () => {
-      renderSendFlow(ethereumAccount, { source: "Pay" });
+      renderSendFlow(ethereumAccount, { source: SEND_FLOW_SOURCE.PAY });
 
       expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
       expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
@@ -95,7 +96,7 @@ describe("Send Flow Integration", () => {
       const { user } = renderSendFlow(rippleAccount, {
         recipient: VALID_XRP_RECIPIENT,
         skipRecipientStep: true,
-        source: "Pay",
+        source: SEND_FLOW_SOURCE.PAY,
       });
 
       expect(await screen.findByTestId("send-amount-step")).toBeVisible();

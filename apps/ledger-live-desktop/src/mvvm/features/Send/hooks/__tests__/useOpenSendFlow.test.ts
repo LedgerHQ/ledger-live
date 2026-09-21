@@ -1,6 +1,7 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AssetCategory } from "@domain/api-aggregated-assets";
+import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import {
   isZcashShieldedEnabled,
   setZcashShieldedEnabled,
@@ -69,13 +70,13 @@ describe("useOpenSendFlow", () => {
     });
 
     result.current({
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
       categories: [AssetCategory.Stablecoins],
     });
 
     expect(store.getState().modularDialog.isOpen).toBe(true);
     expect(store.getState().modularDialog.flow).toBe("send");
-    expect(store.getState().modularDialog.source).toBe("Pay");
+    expect(store.getState().modularDialog.source).toBe(SEND_FLOW_SOURCE.PAY);
     expect(store.getState().modularDialog.dialogParams?.categories).toEqual([
       AssetCategory.Stablecoins,
     ]);
@@ -86,7 +87,7 @@ describe("useOpenSendFlow", () => {
     expect(store.getState().sendFlow.isOpen).toBe(true);
     expect(store.getState().sendFlow.data?.params).not.toHaveProperty("categories");
     expect(store.getState().sendFlow.data?.params).toEqual(
-      expect.objectContaining({ source: "Pay" }),
+      expect.objectContaining({ source: SEND_FLOW_SOURCE.PAY }),
     );
   });
 
@@ -109,12 +110,12 @@ describe("useOpenSendFlow", () => {
 
     result.current({
       account,
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
     });
 
     expect(store.getState().sendFlow.isOpen).toBe(true);
     expect(store.getState().sendFlow.data?.params).toEqual(
-      expect.objectContaining({ account, source: "Pay" }),
+      expect.objectContaining({ account, source: SEND_FLOW_SOURCE.PAY }),
     );
   });
 
@@ -136,7 +137,7 @@ describe("useOpenSendFlow", () => {
     });
 
     result.current({
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
       currencyIds: ["bitcoin"],
       recipient,
       skipRecipientStep: true,
@@ -151,7 +152,7 @@ describe("useOpenSendFlow", () => {
         account,
         recipient,
         skipRecipientStep: true,
-        source: "Pay",
+        source: SEND_FLOW_SOURCE.PAY,
       }),
     );
   });
@@ -192,7 +193,7 @@ describe("useOpenSendFlow", () => {
       }),
     );
     expect(store.getState().sendFlow.data?.params).not.toEqual(
-      expect.objectContaining({ source: "Pay" }),
+      expect.objectContaining({ source: SEND_FLOW_SOURCE.PAY }),
     );
   });
 
@@ -213,7 +214,7 @@ describe("useOpenSendFlow", () => {
     });
 
     result.current({
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
       currencyIds: ["bitcoin"],
       recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
     });

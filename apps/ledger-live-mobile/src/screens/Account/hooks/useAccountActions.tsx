@@ -27,7 +27,7 @@ import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/i
 import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { useOpenSwap } from "LLM/features/Swap";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { getSendFlowTrackingProperties } from "LLM/features/Send/utils/tracking";
 
 type Props = {
   account: AccountLike;
