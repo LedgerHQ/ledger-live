@@ -5,13 +5,22 @@ type ContactWithAddresses = Readonly<{
   addresses: readonly Readonly<{ currencyId: string }>[];
 }>;
 
+type FilterContactsByNetworkOptions = Readonly<{
+  includeMe?: boolean;
+}>;
+
 export function filterContactsByNetwork<TContact extends ContactWithAddresses>(
   contacts: readonly TContact[],
   currencyId: string,
+  { includeMe = false }: FilterContactsByNetworkOptions = {},
 ): TContact[] {
   const networkId = resolveRecipientNetworkId(currencyId);
 
   return contacts.reduce<TContact[]>((matchingContacts, contact) => {
+    if (!includeMe && contact.isMe) {
+      return matchingContacts;
+    }
+
     const addresses = contact.addresses.filter(
       address => resolveRecipientNetworkId(address.currencyId) === networkId,
     );

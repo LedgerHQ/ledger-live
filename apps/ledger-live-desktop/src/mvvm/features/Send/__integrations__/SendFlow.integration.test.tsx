@@ -3,7 +3,7 @@ import { fireEvent } from "tests/testSetup";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
+import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import {
   createBitcoinAccount,
   createEthereumAccount,
@@ -156,6 +156,30 @@ describe("Send Flow Integration", () => {
 
       await user.click(screen.getByTestId("contacts-compact-row-contact-vincent"));
       expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+    });
+
+    it("shows Me first when it has an address on the recipient network", async () => {
+      setMockContacts([
+        mockContact({
+          id: "contact-vincent",
+          name: "Vincent",
+          addresses: [mockContactAddress({ currencyId: "ethereum" })],
+        }),
+        mockMeContact({
+          addresses: [
+            mockContactAddress({
+              id: "address-me-eth",
+              currencyId: "ethereum",
+              address: VALID_EVM_RECIPIENT,
+            }),
+          ],
+        }),
+      ]);
+      renderSendFlow(ethereumAccount);
+
+      const rows = await screen.findAllByTestId(/contacts-compact-row-/);
+      expect(rows[0]).toHaveAttribute("data-testid", "contacts-compact-row-contact-me");
+      expect(rows[1]).toHaveAttribute("data-testid", "contacts-compact-row-contact-vincent");
     });
 
     it("replaces the Pay contact shown in the recipient bar after selecting another contact", async () => {
