@@ -4,6 +4,7 @@ export const urls = {
   faq: "https://support.ledger.com/",
   chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
   contact: "https://support.ledger.com/",
+  cardHelpCenter: "https://support.ledger.com/article/5283612250653-zd",
   terms: {
     en: "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
     fr: "https://shop.ledger.com/fr/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",

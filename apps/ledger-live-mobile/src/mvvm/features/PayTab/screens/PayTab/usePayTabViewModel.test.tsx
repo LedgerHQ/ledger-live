@@ -1,18 +1,28 @@
 import React from "react";
-import { Pressable, Text } from "react-native";
+import { Linking, Pressable, Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { openHostedLoginInSecureBrowser } from "@features/flow-pay-card-auth";
-import { readCardUsEnv } from "@features/platform-card";
-import { act, render, screen, fireEvent, waitFor } from "@tests/test-renderer";
+import { act, fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import { getEnv, getEnvDefault, setEnv } from "@shared/env";
+import {
+  buildHostedUrl,
+  MANAGE_PIN_PATH,
+  buildAccessBaanxPath,
+  openHostedLoginInSecureBrowser,
+  openHostedPageInSecureBrowser,
+} from "@features/flow-pay-card-auth";
+import { readCardUsEnv } from "@features/platform-card";
 import { ScreenName } from "~/const";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import type { PayTabNavigatorParamList } from "../../types";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
+// ledger-live-mobile does not depend on expo-web-browser directly — only
+// @features/flow-pay-card-auth does, wrapping it behind openHostedPageInSecureBrowser. Importing
+// expo-web-browser here would fail typecheck since the app has no types for it.
 jest.mock("@features/flow-pay-card-auth", () => ({
   ...jest.requireActual("@features/flow-pay-card-auth"),
   openHostedLoginInSecureBrowser: jest.fn(() => Promise.resolve({ type: "dismissed" })),
+  openHostedPageInSecureBrowser: jest.fn(() => Promise.resolve()),
 }));
 
 jest.mock("@features/platform-card", () => ({
@@ -24,9 +34,10 @@ const Stack = createNativeStackNavigator<PayTabNavigatorParamList>();
 
 const mockedOpenSecureBrowser = jest.mocked(openHostedLoginInSecureBrowser);
 const mockedReadCardUsEnv = jest.mocked(readCardUsEnv);
+const mockedOpenHostedPage = jest.mocked(openHostedPageInSecureBrowser);
 
 function PayTabViewModelProbe() {
-  const { login, onTopUp } = usePayTabViewModel();
+  const { login, onTopUp, cardSettingsActions } = usePayTabViewModel();
   const { oauthConfig, callback } = login;
 
   return (
@@ -38,6 +49,15 @@ function PayTabViewModelProbe() {
       <Text testID="oauth-deeplink">{oauthConfig.deepLink}</Text>
       <Text testID="oauth-callback">{JSON.stringify(callback)}</Text>
       <Pressable testID="top-up" onPress={onTopUp} />
+      <Text testID="has-manage-pin">
+        {String(typeof cardSettingsActions?.onManagePin === "function")}
+      </Text>
+      <Text testID="has-access-baanx">
+        {String(typeof cardSettingsActions?.onAccessBaanx === "function")}
+      </Text>
+      <Pressable testID="press-help" onPress={cardSettingsActions?.onHelp} />
+      <Pressable testID="press-manage-pin" onPress={cardSettingsActions?.onManagePin} />
+      <Pressable testID="press-access-baanx" onPress={cardSettingsActions?.onAccessBaanx} />
     </>
   );
 }
@@ -57,6 +77,7 @@ function renderViewModel(params?: PayTabNavigatorParamList[typeof ScreenName.Pay
 describe("usePayTabViewModel", () => {
   beforeEach(() => {
     mockedOpenSecureBrowser.mockClear();
+    mockedOpenHostedPage.mockClear();
     mockedReadCardUsEnv.mockResolvedValue(false);
   });
 
@@ -152,5 +173,73 @@ describe("usePayTabViewModel", () => {
     renderViewModel(params);
 
     expect(screen.getByTestId("oauth-callback")).toHaveTextContent("null");
+  });
+
+  it("should expose the manage PIN and access Baanx redirect actions", () => {
+    renderViewModel();
+
+    expect(screen.getByTestId("has-manage-pin")).toHaveTextContent("true");
+    expect(screen.getByTestId("has-access-baanx")).toHaveTextContent("true");
+  });
+
+  it("should open the card help center article externally", () => {
+    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    renderViewModel();
+
+    fireEvent.press(screen.getByTestId("press-help"));
+
+    expect(openURL).toHaveBeenCalledWith("https://support.ledger.com/article/5283612250653-zd");
+
+    openURL.mockRestore();
+  });
+
+  it("should open the manage PIN hosted page in the secure browser", async () => {
+    renderViewModel();
+
+    fireEvent.press(screen.getByTestId("press-manage-pin"));
+
+    await waitFor(() =>
+      expect(mockedOpenHostedPage).toHaveBeenCalledWith(
+        buildHostedUrl(getEnv("CARD_BAANX_HOSTED_UI"), MANAGE_PIN_PATH),
+      ),
+    );
+  });
+
+  it("should open the access Baanx hosted page in the secure browser", async () => {
+    renderViewModel();
+
+    fireEvent.press(screen.getByTestId("press-access-baanx"));
+
+    await waitFor(() =>
+      expect(mockedOpenHostedPage).toHaveBeenCalledWith(
+        buildHostedUrl(getEnv("CARD_BAANX_HOSTED_UI"), buildAccessBaanxPath(null)),
+      ),
+    );
+  });
+
+  it("should name the US app on the access Baanx hosted page for a US card holder", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    renderViewModel();
+
+    fireEvent.press(screen.getByTestId("press-access-baanx"));
+
+    await waitFor(() =>
+      expect(mockedOpenHostedPage).toHaveBeenCalledWith(
+        buildHostedUrl(getEnv("CARD_BAANX_HOSTED_UI"), buildAccessBaanxPath("LEDGERUS")),
+      ),
+    );
+  });
+
+  it("should report a warning instead of throwing when the hosted page fails to open", async () => {
+    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+    mockedOpenHostedPage.mockRejectedValueOnce(new Error("could not open browser"));
+    renderViewModel();
+
+    fireEvent.press(screen.getByTestId("press-manage-pin"));
+
+    await waitFor(() => expect(warn).toHaveBeenCalledWith("[card] manage pin page did not open"));
+
+    warn.mockRestore();
   });
 });
