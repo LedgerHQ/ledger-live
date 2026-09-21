@@ -14,6 +14,7 @@ const { promptBiometrics } = jest.requireMock("@features/platform-app-lock");
 
 const FIELD = "app-lock-unlock-field";
 const SCREEN = "app-lock-unlock-screen";
+const RETRY = "app-lock-unlock-retry-biometrics";
 
 const protectedBy = (protection: Partial<State["appLock"]>) => (state: State) => ({
   ...state,
@@ -60,10 +61,35 @@ describe("unlocking with biometrics", () => {
     await waitFor(() => expect(promptBiometrics).toHaveBeenCalledTimes(1));
     expect(screen.queryByTestId(FIELD)).toBeNull();
 
-    await user.press(screen.getByTestId(SCREEN));
+    await user.press(await screen.findByTestId(RETRY));
 
     await waitFor(() => expect(promptBiometrics).toHaveBeenCalledTimes(2));
     expect(screen.queryByTestId(FIELD)).toBeNull();
+  });
+
+  // Their face went unread and there is no field, no menu and no prompt coming back by itself:
+  // without this the screen is a logo on black and the app cannot be opened at all.
+  it("offers the prompt again to a user left looking at the bare screen", async () => {
+    promptBiometrics.mockResolvedValue({ status: "failed" });
+
+    render(<UnlockScreen />, {
+      overrideInitialState: protectedBy({ hasPassword: false, biometricsEnabled: true }),
+    });
+
+    expect(await screen.findByText("Unlock Ledger Wallet")).toBeVisible();
+  });
+
+  it("keeps the screen bare while the prompt is up, which would otherwise cover the button", async () => {
+    promptBiometrics.mockReturnValue(new Promise(() => {}));
+
+    render(<UnlockScreen />, {
+      overrideInitialState: protectedBy({ hasPassword: false, biometricsEnabled: true }),
+    });
+
+    await screen.findByTestId(SCREEN);
+    await waitFor(() => expect(promptBiometrics).toHaveBeenCalledTimes(1));
+
+    expect(screen.queryByTestId(RETRY)).toBeNull();
   });
 
   it("asks for nothing when only a password protects the app", async () => {
