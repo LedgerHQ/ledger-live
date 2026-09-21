@@ -999,6 +999,7 @@
         "unknownDate": "Date unavailable",
         "columns": {
           "transaction": "Transaction",
+          "cashback": "Cashback",
           "fundingSources": "Funding sources",
           "amount": "Amount"
         },
@@ -10128,6 +10129,8 @@
   },
   "history": {
     "title": "Transaction history",
+    "cardScope": "Card",
+    "cardAssetScope": "Card · {{assetName}}",
     "pending": "Pending transaction",
     "pending_other": "Pending transactions",
     "columns": {

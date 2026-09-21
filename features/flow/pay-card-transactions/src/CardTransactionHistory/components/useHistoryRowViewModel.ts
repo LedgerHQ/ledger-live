@@ -11,6 +11,7 @@ import {
 import type { HistoryRowViewProps } from "./types";
 
 const UNSUCCESSFUL_STATUSES = new Set<PayCardTransaction["status"]>(["DECLINED", "REVERTED"]);
+const NO_CASHBACK = "—";
 
 function statusLabelToneFor(
   status: PayCardTransaction["status"],
@@ -34,6 +35,7 @@ export function useHistoryRowViewModel(
     const fundingSources = transaction.fundingSources;
     const fundingAll = formatFundingSources(fundingSources, formatters?.amount);
     const hasMultipleFundingSources = (fundingSources?.length ?? 0) > 1;
+    const cashback = transaction.cashback;
 
     return {
       id: transaction.id,
@@ -44,6 +46,10 @@ export function useHistoryRowViewModel(
       time: timeLabel,
       statusLabel: isUnsuccessful ? statusLabel : undefined,
       statusLabelTone: isUnsuccessful ? statusLabelToneFor(transaction.status) : undefined,
+      cashback: cashback
+        ? (formatters?.amount?.(cashback.amount, cashback.currency, "crypto") ??
+          `${cashback.amount} ${cashback.currency}`)
+        : NO_CASHBACK,
       fundingLabel: hasMultipleFundingSources
         ? t("payTab.cardTransactions.history.paidWithAssets", { count: fundingSources?.length })
         : fundingAll,
@@ -53,5 +59,5 @@ export function useHistoryRowViewModel(
         : undefined,
       amount: formatSignedAmount(transaction, formatters?.amount),
     };
-  }, [categoryLabel, formatters?.amount, t, transaction]);
+  }, [categoryLabel, formatters, t, transaction]);
 }

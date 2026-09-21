@@ -19,6 +19,7 @@ import {
 import type { Virtualizer } from "@tanstack/react-virtual";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { useCardAssetName } from "./useCardAssetName";
 import { useHistoryOperations } from "./useHistoryOperations";
 import { useHistoryTable } from "./useHistoryTable";
 import { useHistoryVirtualization } from "./useHistoryVirtualization";
@@ -52,6 +53,8 @@ export type HistoryViewModel = {
   contact?: Contact;
   showHistoryTypeSwitcher: boolean;
   historyTab: HistoryTab;
+  cardAsset?: string;
+  cardAssetName?: string;
   onHistoryTabChange: (tab: HistoryTab) => void;
 };
 
@@ -63,11 +66,17 @@ export function useHistoryViewModel(): HistoryViewModel {
   const [searchParams, setSearchParams] = useSearchParams();
   const isPayTabEnabled = !!useFeature("lwdPayTab")?.enabled;
   const hasCryptoHistoryFilter = searchParams.has("accountIds") || searchParams.has("contactId");
-  const showHistoryTypeSwitcher = isPayTabEnabled && !hasCryptoHistoryFilter;
+  const hasCardAssetFilter =
+    searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD &&
+    Boolean(searchParams.get("asset"));
+  const showHistoryTypeSwitcher = isPayTabEnabled && !hasCryptoHistoryFilter && !hasCardAssetFilter;
   const historyTab: HistoryTab =
-    showHistoryTypeSwitcher && searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD
+    isPayTabEnabled && searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD
       ? HISTORY_TAB_CARD
       : HISTORY_TAB_CRYPTO;
+  const cardAsset =
+    historyTab === HISTORY_TAB_CARD ? searchParams.get("asset") || undefined : undefined;
+  const cardAssetName = useCardAssetName(cardAsset);
 
   useEffect(() => {
     return () => {
@@ -177,6 +186,8 @@ export function useHistoryViewModel(): HistoryViewModel {
     contact,
     showHistoryTypeSwitcher,
     historyTab,
+    cardAsset,
+    cardAssetName,
     onHistoryTabChange,
   };
 }

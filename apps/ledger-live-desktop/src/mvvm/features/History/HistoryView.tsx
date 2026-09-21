@@ -28,6 +28,8 @@ export function HistoryView({
   contact,
   showHistoryTypeSwitcher,
   historyTab,
+  cardAsset,
+  cardAssetName,
   onHistoryTabChange,
   cardHistoryViewModel,
 }: HistoryViewProps) {
@@ -50,13 +52,15 @@ export function HistoryView({
         dustFilterThreshold={dustFilterThreshold}
         onToggleHideSmallValueTokenOperations={onToggleHideSmallValueTokenOperations}
         contact={isCardTab ? undefined : contact}
+        isCardHistory={isCardTab}
+        cardAssetName={cardAssetName}
       />
       {showHistoryTypeSwitcher ? (
         <HistoryTypeSwitcher selectedTab={historyTab} onTabChange={onHistoryTabChange} />
       ) : null}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         {isCardTab ? (
-          <CardHistory {...cardHistoryViewModel} />
+          <CardHistory {...cardHistoryViewModel} asset={cardAsset} />
         ) : (
           <HistoryList
             table={table}
