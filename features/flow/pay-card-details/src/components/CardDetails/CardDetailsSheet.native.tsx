@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { BottomSheetHeader, BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
+import { AddToWalletCta } from "@features/flow-pay-card-widget/native";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { CardTopUpButton } from "../CardTopUp";
 import { CardDetailsScene } from "./Scenes/CardDetailsScene";
@@ -67,7 +68,14 @@ export function CardDetailsSheet({
       hasBackButton={canGoBack}
       onBack={canGoBack ? onBack : undefined}
       {...sizingProps}
-      footer={isOpen && isOverview && onTopUp ? <CardTopUpButton onTopUp={onTopUp} /> : null}
+      footer={
+        isOpen && isOverview ? (
+          <>
+            <AddToWalletCta onPress={scene.overview.onAddToWalletPress} />
+            {onTopUp ? <CardTopUpButton onTopUp={onTopUp} /> : null}
+          </>
+        ) : null
+      }
       testID="card-details-sheet"
     >
       {hasOpened || isOpen ? <SheetContent scene={scene} /> : null}
