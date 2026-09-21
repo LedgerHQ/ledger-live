@@ -7,12 +7,16 @@ import {
   listenToCardApi,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
-import { CARD_COPY, I18nWrapper, MORE_COPY } from "../../__tests__/i18nWrapper";
+import { ADD_TO_WALLET_COPY, CARD_COPY, I18nWrapper, MORE_COPY } from "../../__tests__/i18nWrapper";
 import { buildMoreViewProps } from "../More/fixtures";
 import type { CardDetailsRoute } from "./Scenes/navigation";
 import type { CardDetailsSceneProps } from "./Scenes/types";
 import type { ConfirmState, FreezeViewModel } from "../../types";
 import { CardDetailsSheet } from "./CardDetailsSheet";
+
+jest.mock("@features/flow-pay-card-auth", () => ({
+  useIsCardSignedIn: () => true,
+}));
 
 listenToCardApi(signedInCardApiHandlers);
 
@@ -33,6 +37,9 @@ type SheetOverrides = Readonly<{
   confirmState?: ConfirmState;
 }>;
 
+const onAddToWalletPress = jest.fn();
+const onAddToWalletDone = jest.fn();
+
 function buildScene({ route, confirmState }: SheetOverrides): CardDetailsSceneProps {
   const viewModel: FreezeViewModel = {
     status: "ACTIVE",
@@ -46,16 +53,23 @@ function buildScene({ route, confirmState }: SheetOverrides): CardDetailsScenePr
 
   return {
     route: route ?? { name: "overview" },
+    header: {},
     overview: {
+      assetsViewModel: null,
       freezeViewModel: viewModel,
       moreViewModel: more,
       onFreezePress: jest.fn(),
       onMorePress: jest.fn(),
       onTransactionPress: jest.fn(),
+      onAddToWalletPress,
     },
     freeze: { viewModel },
     more: { viewModel: more },
+    addToWallet: { onDone: onAddToWalletDone },
     transaction: route?.name === "transaction" ? { transaction: route.transaction } : null,
+    assetDetails: null,
+    assetWithdraw: null,
+    assetsManage: null,
   };
 }
 
@@ -79,6 +93,8 @@ function renderSheet(overrides: SheetOverrides = {}) {
     onBack,
     pressDismiss: () => user.press(screen.getByTestId("card-details-sheet-dismiss")),
     pressBack: () => user.press(screen.getByTestId("card-details-sheet-back")),
+    pressAddToWallet: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta-entry")),
+    pressAddToWalletDone: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta")),
     goTo: (next: SheetOverrides) => view.rerender(sheet(next)),
   };
 }
@@ -110,6 +126,47 @@ describe("CardDetailsSheet (native)", () => {
     expect(screen.getByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 
+  it("should float the add-to-wallet CTA over the overview", () => {
+    renderSheet();
+
+    expect(screen.getByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
+  });
+
+  it("should keep the add-to-wallet CTA off the scenes it would cover", () => {
+    renderSheet({ route: { name: "transaction", transaction } });
+
+    expect(screen.queryByTestId("pay-card-add-to-wallet-cta-entry")).toBeNull();
+  });
+
+  it("should send the add-to-wallet CTA to its own scene rather than stacking a sheet", async () => {
+    const { pressAddToWallet } = renderSheet();
+
+    await pressAddToWallet();
+
+    expect(onAddToWalletPress).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId("pay-card-add-to-wallet-sheet-content")).toBeNull();
+  });
+
+  it("should show the add-to-wallet instructions with a way back to the overview", async () => {
+    const { onBack, pressBack } = renderSheet({ route: { name: "addToWallet" } });
+
+    expect(screen.getByTestId("card-details-add-to-wallet-content")).toBeVisible();
+    expect(screen.getByText(ADD_TO_WALLET_COPY.title)).toBeVisible();
+    expect(screen.getByText(ADD_TO_WALLET_COPY.step1)).toBeVisible();
+
+    await pressBack();
+
+    expect(onBack).toHaveBeenCalledTimes(1);
+  });
+
+  it("should leave the add-to-wallet scene once the card is on its way to the wallet", async () => {
+    const { pressAddToWalletDone } = renderSheet({ route: { name: "addToWallet" } });
+
+    await pressAddToWalletDone();
+
+    expect(onAddToWalletDone).toHaveBeenCalledTimes(1);
+  });
+
   it("should show the scene the route selects, not one derived from the view models", () => {
     renderSheet({ route: { name: "more" } });
 
@@ -135,6 +192,15 @@ describe("CardDetailsSheet (native)", () => {
     const { onBack, onClose, pressBack } = renderSheet({
       route: { name: "transaction", transaction },
     });
+
+    await pressBack();
+
+    expect(onBack).toHaveBeenCalledTimes(1);
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("should offer a way back to the overview from more", async () => {
+    const { onBack, onClose, pressBack } = renderSheet({ route: { name: "more" } });
 
     await pressBack();
 
@@ -174,7 +240,10 @@ describe("CardDetailsSheet (native)", () => {
   });
 
   it("should ignore dismiss while freeze is pending", async () => {
-    const { onClose, pressDismiss } = renderSheet({ confirmState: "pending" });
+    const { onClose, pressDismiss } = renderSheet({
+      route: { name: "freeze" },
+      confirmState: "pending",
+    });
 
     await pressDismiss();
 

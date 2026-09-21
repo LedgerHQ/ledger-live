@@ -97,6 +97,7 @@ libs/wallet-pnl/                                         @ledgerhq/wallet-xp
 libs/wallet-analytics/                                   @ledgerhq/wallet-xp
 libs/live-wallet/                                        @ledgerhq/wallet-xp
 libs/live-wallet/src/walletsync/                         @ledgerhq/platform
+shared/linking/                                          @ledgerhq/wallet-xp
 libs/ledger-live-common/src/featureFlags/walletFeaturesConfig/ @ledgerhq/wallet-xp
 libs/ledger-live-common/src/modularDrawer/               @ledgerhq/wallet-xp
 libs/ledger-live-common/src/cg-client/                   @ledgerhq/wallet-xp
@@ -141,6 +142,7 @@ features/flow/pay-bank-transfer/                         @ledgerhq/wallet-xp
 features/flow/pay-feature-tour/                          @ledgerhq/wallet-xp
 features/flow/pay-request/                               @ledgerhq/wallet-xp
 features/flow/pay-card-details/                          @ledgerhq/wallet-xp
+features/flow/pay-card-assets/                           @ledgerhq/wallet-xp
 features/flow/pay-card-wallets/                          @ledgerhq/wallet-xp
 features/flow/pay-card-widget/                           @ledgerhq/wallet-xp
 features/flow/pay-card-transactions/                       @ledgerhq/wallet-xp
@@ -504,7 +506,6 @@ apps/ledger-live-desktop/src/mvvm/features/FinishOnboarding/                    
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/AnalyticsConsentOptInDevTool/  @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/GenericAwarenessModalDevTool/  @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/LargeScreenUpsellDevTool/  @ledgerhq/engagement
-apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/Q2Tour/                                      @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/Q3Tour/                                      @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/components/ReleaseTour/                               @ledgerhq/engagement
@@ -546,7 +547,6 @@ apps/ledger-live-mobile/src/mvvm/features/GenericAwarenessModal/                
 apps/ledger-live-mobile/src/mvvm/features/LandingPages/                                        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/NotificationsPrompt/                                 @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/AnalyticsConsentDrawer/                              @ledgerhq/engagement
-apps/ledger-live-mobile/src/mvvm/features/WalletV4Tour/                                        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/ProductTour/                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Q2WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Q3WalletV4Tour/                                       @ledgerhq/engagement

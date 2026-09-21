@@ -1,16 +1,29 @@
 import { useCallback, useEffect, useMemo } from "react";
-import BigNumber from "bignumber.js";
 import { useLocation, useNavigate } from "react-router";
-import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import type { FormattedValue } from "@features/flow-pay-card-details";
+import {
+  buildTopUpPath,
+  buildAccessBaanxPath,
+  MANAGE_PIN_PATH,
+  openHostedPageSafely,
+} from "@features/flow-pay-card-auth";
+import type { CardAssetsProps } from "@features/flow-pay-card-assets";
+import { readCardUsEnv } from "@features/platform-card";
 import useEnv from "@features/platform-env";
+import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { useSelector } from "LLD/hooks/redux";
-import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import { localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
+import { useCountervalueFormatter } from "LLD/hooks/useCountervalueFormatter";
+import logger from "~/renderer/logger";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
+import { HISTORY_TAB_CARD, HISTORY_TAB_SEARCH_PARAM } from "LLD/features/History/constants";
+import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
-import { useWipeHostedSessionOnSignInChange } from "./useWipeHostedSession";
+import { usePayCardAssets } from "./usePayCardAssets";
+import { useWipeHostedSession } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
@@ -36,18 +49,22 @@ function readCallbackState(state: unknown): string | undefined {
 }
 const CARD_TRANSACTION_DATE_FORMAT: Intl.DateTimeFormatOptions = { dateStyle: "medium" };
 
+/** The provider app the redirect named, carried the same way as the code. */
+function readCallbackAppId(state: unknown): string | undefined {
+  if (typeof state !== "object" || state === null) {
+    return undefined;
+  }
+
+  const appId = (state as { appId?: unknown }).appId;
+
+  return typeof appId === "string" && appId !== "" ? appId : undefined;
+}
+
 export function useCardViewModel(): CardViewModel {
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const locale = useSelector(localeSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const unit = counterValueCurrency.units[0];
-
-  const formatCountervalue = useCallback(
-    (value: number): FormattedValue =>
-      formatCurrencyUnitFragment(unit, new BigNumber(value), { locale, showCode: true }),
-    [unit, locale],
-  );
+  const formatCountervalue = useCountervalueFormatter();
 
   const formatTransactionAmount = useCallback<
     NonNullable<CardViewModel["formatters"]["transactionAmount"]>
@@ -71,6 +88,7 @@ export function useCardViewModel(): CardViewModel {
   const apiUrl = useEnv("CARD_BAANX_API_URL");
   const clientId = useEnv("CARD_BAANX_CLIENT_KEY");
   const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
+  const usAppId = useEnv("CARD_BAANX_US_APP_ID");
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
   const oauthConfig: CardViewModel["login"]["oauthConfig"] = useMemo(
@@ -86,11 +104,15 @@ export function useCardViewModel(): CardViewModel {
 
   // The code is what the exchange needs: PKCE ties it to the verifier the attempt store still holds.
   // The state, when the redirect carried one, only lets the flow recognize its own attempt's redirect.
+  // The app id names the provider tenant every later request has to reach.
   const callback: CardViewModel["login"]["callback"] = useMemo(() => {
     const code = readCallbackCode(state);
     const oauthState = readCallbackState(state);
+    const appId = readCallbackAppId(state);
 
-    return code ? { code, ...(oauthState ? { state: oauthState } : {}) } : null;
+    return code
+      ? { code, ...(oauthState ? { state: oauthState } : {}), ...(appId ? { appId } : {}) }
+      : null;
   }, [state]);
 
   useEffect(() => {
@@ -104,7 +126,21 @@ export function useCardViewModel(): CardViewModel {
 
   const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
 
-  useWipeHostedSessionOnSignInChange();
+  const openTopUpPage = useCallback(
+    async (currency?: string) => {
+      try {
+        const isUsCardHolder = await readCardUsEnv(usAppId);
+        await openHostedPage(buildTopUpPath(isUsCardHolder ? usAppId : null, currency));
+      } catch (error) {
+        logger.warn("[card] the top up page did not open", error);
+      }
+    },
+    [openHostedPage, usAppId],
+  );
+
+  const onTopUp = useCallback(() => openTopUpPage(), [openTopUpPage]);
+
+  useWipeHostedSession();
 
   const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
     track(event, params);
@@ -115,13 +151,71 @@ export function useCardViewModel(): CardViewModel {
     [oauthConfig, callback, openHostedLogin, openHostedPage, onTrackEvent],
   );
 
-  // Nothing gates the reveal yet, so it authorizes every holder. The gate replaces this body, not
-  // its callers: the flow already treats a `false` as "the holder declined" and stays hidden.
-  const unlock = useCallback(() => Promise.resolve(true), []);
+  const onShowMore = useCallback(() => {
+    navigate(
+      `/history?${HISTORY_TAB_SEARCH_PARAM}=${HISTORY_TAB_CARD}`,
+      buildNavigationBackState("historyBackPath", pathname),
+    );
+  }, [navigate, pathname]);
+
+  const onShowAssetHistory = useCallback<
+    NonNullable<NonNullable<CardViewModel["assets"]>["onShowHistory"]>
+  >(
+    asset => {
+      // Only the asset code travels: History resolves the display name from it, so the URL cannot
+      // carry a name that contradicts the one the asset row shows.
+      const searchParams = new URLSearchParams({
+        [HISTORY_TAB_SEARCH_PARAM]: HISTORY_TAB_CARD,
+        asset: asset.currency,
+      });
+      navigate(`/history?${searchParams}`, buildNavigationBackState("historyBackPath", pathname));
+    },
+    [navigate, pathname],
+  );
+
+  const payCardAssets = usePayCardAssets();
+  const assets: CardAssetsProps = useMemo(
+    () => ({
+      ...payCardAssets,
+      onShowHistory: onShowAssetHistory,
+      onTopUp: asset => void openTopUpPage(asset.currency),
+    }),
+    [onShowAssetHistory, openTopUpPage, payCardAssets],
+  );
+
+  const onManagePin = useCallback(
+    () =>
+      openHostedPageSafely(openHostedPage, MANAGE_PIN_PATH, error =>
+        logger.warn("[card] manage pin page did not open", error),
+      ),
+    [openHostedPage],
+  );
+
+  const onAccessBaanx = useCallback(async () => {
+    const isUsCardHolder = await readCardUsEnv(usAppId);
+
+    await openHostedPageSafely(
+      openHostedPage,
+      buildAccessBaanxPath(isUsCardHolder ? usAppId : null),
+      error => logger.warn("[card] baanx page did not open", error),
+    );
+  }, [openHostedPage, usAppId]);
+
+  const onHelp = useCallback(() => {
+    openURL(urls.cardHelpCenter);
+  }, []);
+
+  const cardSettingsActions: CardSettingsActions = useMemo(
+    () => ({ onManagePin, onAccessBaanx, onHelp }),
+    [onManagePin, onAccessBaanx, onHelp],
+  );
 
   return {
     formatters,
+    assets,
     login,
-    unlock,
+    onShowMore,
+    onTopUp,
+    cardSettingsActions,
   };
 }

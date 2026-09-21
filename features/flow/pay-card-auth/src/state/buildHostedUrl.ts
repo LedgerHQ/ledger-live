@@ -17,3 +17,16 @@ export function buildHostedUrl(baseUrl: string | undefined, path: string): strin
 
   return url.toString();
 }
+
+const TOP_UP_PATH = "/topup";
+
+export function buildTopUpPath(usAppId?: string | null, currency?: string | null): string {
+  const query = new URLSearchParams();
+
+  if (usAppId) query.set("app_id", usAppId);
+  if (currency) query.set("currency", currency);
+
+  const search = query.toString();
+
+  return search ? `${TOP_UP_PATH}?${search}` : TOP_UP_PATH;
+}

@@ -1,13 +1,16 @@
 import type { ReactNode } from "react";
 import type { PayCardStatus } from "@domain/api-card-management";
+import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
 import type { CardDetailsSceneProps } from "./components/CardDetails/Scenes/types";
+import type { CardSettingsActions } from "./components/More/types";
+
+export type { CardSettingsActions };
 
 export type { FormattedValue };
 
 export type CardTrackEvent = (event: string, params: Record<string, unknown>) => void;
-export type UnlockForReveal = () => Promise<boolean>;
 
 export type CardVisualProps = Readonly<{
   balance: number;
@@ -24,15 +27,18 @@ export type CardVisualViewProps = CardVisualProps &
 export type CardDetailsProps = Readonly<{
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   cardVisual?: CardVisualProps;
-  /** Native only: the Details sheet overview lists the card's transactions. */
+  /** Native only: funding assets shown and navigated inside the card details drawer. */
+  assets?: CardAssetsProps;
+  /** Formats the reward wallet amount, and, natively, the transactions the overview lists. */
   formatters?: CardTransactionFormatters;
   onTrackEvent?: CardTrackEvent;
-  unlock?: UnlockForReveal;
+  onShowMore?: () => void;
+  onTopUp?: () => void;
+  cardSettingsActions?: CardSettingsActions;
 }>;
 
 export type CardDetailsViewProps = CardDetailsProps &
   Readonly<{
-    placeholderLabel: string;
     detailsLabel: string;
     isSheetOpen: boolean;
     scene: CardDetailsSceneProps;
@@ -44,6 +50,7 @@ export type CardDetailsViewProps = CardDetailsProps &
 export type CardDetailsSheetProps = Readonly<{
   isOpen: boolean;
   scene: CardDetailsSceneProps;
+  onTopUp?: () => void;
   onClose: () => void;
   /** Returns to the overview from a scene the registry gives a back button. */
   onBack: () => void;
@@ -98,18 +105,17 @@ export type RevealStatus = "idle" | "loading" | "revealed" | "failed";
 export type RevealViewModel = Readonly<{
   status: RevealStatus;
   isRevealed: boolean;
+  canHide: boolean;
   imageUrl: string | undefined;
   onReveal: () => Promise<void>;
   onHide: () => void;
+  onImageLoad: () => void;
   onImageError: () => void;
 }>;
 
-export type RevealTileProps = Pick<
-  RevealViewModel,
-  "status" | "isRevealed" | "onReveal" | "onHide"
->;
+export type RevealTileProps = Pick<RevealViewModel, "status" | "canHide" | "onReveal" | "onHide">;
 
 export type CardFlipProps = Readonly<{
-  reveal: Pick<RevealViewModel, "isRevealed" | "imageUrl" | "onImageError"> | null;
+  reveal: Pick<RevealViewModel, "isRevealed" | "imageUrl" | "onImageLoad" | "onImageError"> | null;
   cardFace: ReactNode;
 }>;

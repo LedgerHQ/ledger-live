@@ -1,6 +1,6 @@
 import {
   findAccountTokenEntry,
-  getAccountListStatus,
+  getAccountListVerdict,
   getListVerdict,
   isDecodedPltState,
   isPltRejectReason,
@@ -59,57 +59,58 @@ describe("isDecodedPltState", () => {
   });
 });
 
-describe("getAccountListStatus", () => {
+describe("getAccountListVerdict", () => {
   it("allows when the token declares no list", () => {
-    expect(getAccountListStatus(accountToken({ name: "Token" }))).toBe("allowed");
+    expect(getAccountListVerdict(accountToken({ name: "Token" }))).toBe("allowed");
   });
 
   it("allows an account absent from a deny list", () => {
-    expect(getAccountListStatus(accountToken({ denyList: true }, {}))).toBe("allowed");
+    expect(getAccountListVerdict(accountToken({ denyList: true }, {}))).toBe("allowed");
   });
 
   it("allows a deny-list token when the account has no state at all", () => {
-    expect(getAccountListStatus(accountToken({ denyList: true }))).toBe("allowed");
+    expect(getAccountListVerdict(accountToken({ denyList: true }))).toBe("allowed");
   });
 
-  it("blocks an account on a deny list", () => {
-    expect(getAccountListStatus(accountToken({ denyList: true }, { denyList: true }))).toBe(
-      "blocked",
+  // Named rather than folded: the cause is what the send path reports.
+  it("reports denied for an account on a deny list", () => {
+    expect(getAccountListVerdict(accountToken({ denyList: true }, { denyList: true }))).toBe(
+      "denied",
     );
   });
 
-  it("blocks an account absent from an allow list", () => {
-    expect(getAccountListStatus(accountToken({ allowList: true }, {}))).toBe("blocked");
+  it("reports notAllowed for an account absent from an allow list", () => {
+    expect(getAccountListVerdict(accountToken({ allowList: true }, {}))).toBe("notAllowed");
   });
 
-  it("blocks an allow-list token when the account has no state, since membership requires a write", () => {
-    expect(getAccountListStatus(accountToken({ allowList: true }))).toBe("blocked");
+  it("reports notAllowed for an allow-list token when the account has no state, since membership requires a write", () => {
+    expect(getAccountListVerdict(accountToken({ allowList: true }))).toBe("notAllowed");
   });
 
   it("allows an account on an allow list", () => {
-    expect(getAccountListStatus(accountToken({ allowList: true }, { allowList: true }))).toBe(
+    expect(getAccountListVerdict(accountToken({ allowList: true }, { allowList: true }))).toBe(
       "allowed",
     );
   });
 
   it("ignores an account-level flag the token does not declare", () => {
-    expect(getAccountListStatus(accountToken({}, { denyList: true }))).toBe("allowed");
+    expect(getAccountListVerdict(accountToken({}, { denyList: true }))).toBe("allowed");
   });
 
   it("reports unknown when the module state is undecodable", () => {
-    expect(getAccountListStatus(accountToken("a1", { denyList: true }))).toBe("unknown");
+    expect(getAccountListVerdict(accountToken("a1", { denyList: true }))).toBe("unknown");
   });
 
   it("reports unknown when a listed token's account state is undecodable", () => {
-    expect(getAccountListStatus(accountToken({ allowList: true }, "a1"))).toBe("unknown");
+    expect(getAccountListVerdict(accountToken({ allowList: true }, "a1"))).toBe("unknown");
   });
 
   it("reports unknown for a deny-list token with an undecodable account state", () => {
-    expect(getAccountListStatus(accountToken({ denyList: true }, "a1"))).toBe("unknown");
+    expect(getAccountListVerdict(accountToken({ denyList: true }, "a1"))).toBe("unknown");
   });
 
   it("does not report unknown when the token declares no list, whatever the account state", () => {
-    expect(getAccountListStatus(accountToken({}, "a1"))).toBe("allowed");
+    expect(getAccountListVerdict(accountToken({}, "a1"))).toBe("allowed");
   });
 });
 

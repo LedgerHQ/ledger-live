@@ -3,7 +3,7 @@ import { useGetUserQuery } from "@domain/api-card-management";
 import type { PayCardUser } from "@domain/api-card-management";
 import { useTranslation } from "@shared/i18n";
 import { useIsCardSignedIn, useCardLogout } from "@features/flow-pay-card-auth/hooks";
-import type { MoreRow, MoreRowId, MoreViewModel } from "./types";
+import type { CardSettingsActions, MoreRow, MoreRowId, MoreViewModel } from "./types";
 
 const ROW_ORDER: readonly MoreRowId[] = ["managePin", "accessBaanx", "help", "logout"];
 
@@ -58,7 +58,8 @@ export function mapUserToViewModel({
   };
 }
 
-export function useMoreViewModel(): MoreViewModel {
+export function useMoreViewModel(actions: CardSettingsActions = {}): MoreViewModel {
+  const { onManagePin, onAccessBaanx, onHelp } = actions;
   const { t } = useTranslation();
   const isSignedIn = useIsCardSignedIn();
   const logout = useCardLogout();
@@ -91,7 +92,12 @@ export function useMoreViewModel(): MoreViewModel {
     },
   };
 
-  const handlers: MoreHandlers = { logout: onLogoutPress };
+  const handlers: MoreHandlers = {
+    managePin: onManagePin,
+    accessBaanx: onAccessBaanx,
+    help: onHelp,
+    logout: onLogoutPress,
+  };
 
   return mapUserToViewModel({
     isSignedIn,

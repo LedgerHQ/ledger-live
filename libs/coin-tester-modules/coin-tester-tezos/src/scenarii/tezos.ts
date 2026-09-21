@@ -2,7 +2,6 @@ import { BigNumber } from "bignumber.js";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { Account } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
-import coinConfig from "@ledgerhq/coin-tezos/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { makeAccount, ALICE_BAKER_ADDRESS, RECIPIENT, TEZOS, TZKT_MOCK_URL } from "../fixtures";
@@ -157,7 +156,6 @@ export const scenarioTezosTz1: Scenario<GenericTransaction, Account> = {
       },
     };
 
-    coinConfig.setCoinConfig(() => localConfig);
     LiveConfig.setConfig({
       config_currency_tezos: {
         type: "object",
@@ -248,7 +246,6 @@ export const scenarioTezosTz2: Scenario<GenericTransaction, Account> = {
       },
     };
 
-    coinConfig.setCoinConfig(() => localConfig);
     LiveConfig.setConfig({
       config_currency_tezos: {
         type: "object",

@@ -1,32 +1,59 @@
 import React from "react";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { CardFormatters, CardProps } from "./Card.types";
 import { CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
 
 let mockStatus: PayCardAuthStatus = "unknown";
+let receivedDetailsFormatters: CardTransactionFormatters | undefined;
+const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError: false }));
 let receivedTransactionFormatters: CardTransactionFormatters | undefined;
 let receivedTransactionTracker: CardProps["login"]["onTrackEvent"];
+let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
   useCardAuthStatus: () => mockStatus,
+  useIsCardSignedIn: () => mockStatus === "signedIn",
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
   CardVisual: () => <div data-testid="card-visual" />,
-  CardDetails: ({ cardVisual, unlock }: { cardVisual?: unknown; unlock?: unknown }) => (
-    <div
-      data-testid={cardVisual ? "card-details-with-visual" : "card-details"}
-      data-unlock={unlock ? "granted" : "none"}
-    />
-  ),
+  CardDetails: ({
+    cardVisual,
+    formatters,
+    cardSettingsActions,
+  }: {
+    cardVisual?: { balance: number };
+    formatters?: CardTransactionFormatters;
+    cardSettingsActions?: CardProps["cardSettingsActions"];
+  }) => {
+    receivedDetailsFormatters = formatters;
+    receivedCardSettingsActions = cardSettingsActions;
+    return (
+      <div
+        data-testid={cardVisual ? "card-details-with-visual" : "card-details"}
+        data-balance={cardVisual?.balance}
+      />
+    );
+  },
+  CardTopUpButton: ({ onTopUp }: { onTopUp?: () => void }) =>
+    onTopUp ? (
+      <button type="button" data-testid="card-top-up" onClick={onTopUp}>
+        Top up
+      </button>
+    ) : null,
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
   CardOnboardingWidget: () => <div data-testid="card-onboarding-widget" />,
+}));
+
+jest.mock("@features/flow-pay-card-assets", () => ({
+  CardAssets: () => <div data-testid="card-assets" />,
+  useCardWalletsTotal: () => mockUseWalletsTotal(),
 }));
 
 jest.mock("@features/flow-pay-card-transactions", () => ({
@@ -73,8 +100,10 @@ describe("Card (web)", () => {
 
   beforeEach(() => {
     mockStatus = "unknown";
+    receivedDetailsFormatters = undefined;
     receivedTransactionFormatters = undefined;
     receivedTransactionTracker = undefined;
+    receivedCardSettingsActions = undefined;
   });
 
   it("always shows the card title", () => {
@@ -117,10 +146,16 @@ describe("Card (web)", () => {
       expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
     });
 
-    it("does not mount the card details even when unlock is passed", () => {
-      renderCard(<Card login={{ oauthConfig }} unlock={jest.fn()} />);
+    it("does not mount the card details", () => {
+      renderCard(<Card login={{ oauthConfig }} />);
 
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
+    });
+
+    it("shows no top up button, even when the host wires one", () => {
+      renderCard(<Card login={{ oauthConfig }} onTopUp={jest.fn()} />);
+
+      expect(screen.queryByTestId("card-top-up")).not.toBeInTheDocument();
     });
   });
 
@@ -137,14 +172,91 @@ describe("Card (web)", () => {
       expect(screen.getByTestId("card-transactions")).toBeVisible();
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-assets")).not.toBeInTheDocument();
+    });
+
+    it("shows the assets list as soon as the host provides the section", () => {
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          assets={{
+            currencies: new Map(),
+            priceWallet: () => null,
+            formatCountervalue: String,
+          }}
+        />,
+      );
+
+      expect(screen.getByTestId("card-assets")).toBeVisible();
     });
 
     it("hands the card visual to the details block once the host provides a formatter", () => {
-      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          formatters={formatters}
+          assets={{
+            currencies: new Map(),
+            priceWallet: () => null,
+            formatCountervalue: String,
+          }}
+        />,
+      );
 
       expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
+    });
+
+    it("shows what the funding wallets are worth on the card face", () => {
+      mockUseWalletsTotal.mockReturnValue({ total: 2500, isLoading: false, isError: false });
+
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          formatters={formatters}
+          assets={{
+            currencies: new Map(),
+            priceWallet: () => null,
+            formatCountervalue: String,
+          }}
+        />,
+      );
+
+      // The summed worth of the wallets, as the assets package priced them.
+      expect(screen.getByTestId("card-details-with-visual")).toHaveAttribute(
+        "data-balance",
+        "2500",
+      );
+    });
+
+    it("shows the bare artwork rather than a zero when the wallets could not be read", () => {
+      mockUseWalletsTotal.mockReturnValue({ total: 0, isLoading: false, isError: true });
+
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          formatters={formatters}
+          assets={{
+            currencies: new Map(),
+            priceWallet: () => null,
+            formatCountervalue: String,
+          }}
+        />,
+      );
+
+      // A formatted zero would read as a real balance; the Assets list is what reports the failure.
+      expect(screen.getByTestId("card-details")).toBeVisible();
+      expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
+    });
+
+    it("shows the bare artwork for a host that lists no assets to sum", () => {
+      mockUseWalletsTotal.mockReturnValue({ total: 0, isLoading: false, isError: false });
+
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+
+      expect(screen.getByTestId("card-details")).toBeVisible();
+      expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
     });
 
     it("hands the transaction formatters to the transactions list", () => {
@@ -159,6 +271,14 @@ describe("Card (web)", () => {
       expect(receivedTransactionFormatters?.date).toBe(transactionDate);
     });
 
+    it("hands the amount formatter to the details block, for the reward balance", () => {
+      const transactionAmount = jest.fn();
+
+      renderCard(<Card login={{ oauthConfig }} formatters={{ transactionAmount }} />);
+
+      expect(receivedDetailsFormatters?.amount).toBe(transactionAmount);
+    });
+
     it("hands the host tracker to the transactions list", () => {
       const onTrackEvent = jest.fn();
 
@@ -167,16 +287,31 @@ describe("Card (web)", () => {
       expect(receivedTransactionTracker).toBe(onTrackEvent);
     });
 
-    it("leaves the details block without an unlock when the host omits one", () => {
-      renderCard(<Card login={{ oauthConfig }} />);
+    it("opens the top up from the button the host wired", () => {
+      const onTopUp = jest.fn();
 
-      expect(screen.getByTestId("card-details")).toHaveAttribute("data-unlock", "none");
+      renderCard(<Card login={{ oauthConfig }} onTopUp={onTopUp} />);
+      fireEvent.click(screen.getByTestId("card-top-up"));
+
+      expect(onTopUp).toHaveBeenCalledTimes(1);
     });
 
-    it("hands the unlock to the details block when the host passes one", () => {
-      renderCard(<Card login={{ oauthConfig }} unlock={jest.fn()} />);
+    it("shows no top up button when the host wires none", () => {
+      renderCard(<Card login={{ oauthConfig }} />);
 
-      expect(screen.getByTestId("card-details")).toHaveAttribute("data-unlock", "granted");
+      expect(screen.queryByTestId("card-top-up")).not.toBeInTheDocument();
+    });
+
+    it("hands the settings actions to the details block", () => {
+      const cardSettingsActions: CardProps["cardSettingsActions"] = {
+        onManagePin: jest.fn(),
+        onAccessBaanx: jest.fn(),
+        onHelp: jest.fn(),
+      };
+
+      renderCard(<Card login={{ oauthConfig }} cardSettingsActions={cardSettingsActions} />);
+
+      expect(receivedCardSettingsActions).toEqual(cardSettingsActions);
     });
   });
 });

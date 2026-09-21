@@ -24,6 +24,7 @@
     "knip-check": "pnpm knip --directory ../.. -W libs/device-onboarding"
   },
   "dependencies": {
+    "semver": "catalog:",
     "xstate": "catalog:"
   },
   "devDependencies": {
@@ -33,6 +34,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@types/semver": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

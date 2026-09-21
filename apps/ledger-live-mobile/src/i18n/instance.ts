@@ -6,8 +6,8 @@ import { DEFAULT_LANGUAGE_LOCALE, locales } from "../languages";
  * The app's translation engine.
  *
  * An explicit instance, never the i18next global singleton: it is what lets `@shared/i18n` hand
- * one engine to the DDD packages, and what will let a future module-federation remote own its own
- * without namespaces clobbering each other.
+ * one engine to `features/*` and `domain/*`, and what will let a future module-federation remote
+ * own its own without namespaces clobbering each other.
  *
  * This module is a leaf on purpose — it pulls in the locale resources and nothing else — so the
  * non-React call sites that need `i18n.t` can import it without dragging in `~/context/Locale`

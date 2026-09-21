@@ -1,11 +1,32 @@
 import type { ConnectedDevice, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import type { OsUpdate } from "@ledgerhq/dmk-ledger-wallet";
 import { createActor } from "xstate";
+import {
+  OsUpdatesOrchestratorStateMachineEventType,
+  type OsUpdatesOrchestratorStateMachineContext,
+} from "../../internal/orchestrator/types";
+import { CreateBackupStateType } from "../model/CreateBackupState";
+import type { OsUpdatesProgress } from "../model/OsUpdatesProgress";
 import { OsUpdatesSteps } from "../model/OsUpdatesSteps";
 import { PreChecksStateType } from "../model/PreChecksState";
-import type { OsUpdatesProgress } from "../model/OsUpdatesProgress";
-import { OsUpdatesOrchestratorStateMachineEventType } from "../../internal/orchestrator/types";
 import { OsUpdatesOrchestratorUseCase } from "./OsUpdatesOrchestratorUseCase";
+
+type StepContext = Pick<OsUpdatesOrchestratorStateMachineContext, "currentStep" | "currentState">;
+
+const LOADING_CONTEXT: StepContext = {
+  currentStep: OsUpdatesSteps.PRE_CHECKS,
+  currentState: { type: PreChecksStateType.LOADING },
+};
+
+const DEVICE_LOCKED_CONTEXT: StepContext = {
+  currentStep: OsUpdatesSteps.PRE_CHECKS,
+  currentState: { type: PreChecksStateType.DEVICE_LOCKED },
+};
+
+const CREATE_BACKUP_CONTEXT: StepContext = {
+  currentStep: OsUpdatesSteps.CREATE_BACKUP,
+  currentState: { type: CreateBackupStateType.LOADING },
+};
 
 const LOADING_PROGRESS: OsUpdatesProgress = {
   step: OsUpdatesSteps.PRE_CHECKS,
@@ -19,7 +40,7 @@ const DEVICE_LOCKED_PROGRESS: OsUpdatesProgress = {
 
 const CONNECTED_DEVICE = { id: "device-id", sessionId: "session-id" } as ConnectedDevice;
 
-type Snapshot = { context: { currentState: OsUpdatesProgress } };
+type Snapshot = { context: StepContext };
 type SnapshotObserver = {
   next?: (snapshot: Snapshot) => void;
   error?: (error: unknown) => void;
@@ -43,6 +64,7 @@ describe("OsUpdatesOrchestratorUseCase", () => {
   let send: jest.Mock;
   let onStop: jest.Mock;
   let snapshotObserver: SnapshotObserver | undefined;
+  let snapshotContext: StepContext;
   let unsubscribe: jest.Mock;
 
   const execute = () =>
@@ -50,7 +72,7 @@ describe("OsUpdatesOrchestratorUseCase", () => {
       dmk: {} as DeviceManagementKit,
       connectedDevice: CONNECTED_DEVICE,
       osUpdates: [{} as OsUpdate],
-      storage: { getBackup: jest.fn() },
+      storage: { getBackup: jest.fn(), saveBackup: jest.fn() },
       onStop,
     });
 
@@ -60,13 +82,14 @@ describe("OsUpdatesOrchestratorUseCase", () => {
     send = jest.fn();
     unsubscribe = jest.fn();
     snapshotObserver = undefined;
+    snapshotContext = DEVICE_LOCKED_CONTEXT;
     createActorMock.mockReturnValue({
       start,
       send,
-      getSnapshot: () => ({ context: { currentState: DEVICE_LOCKED_PROGRESS } }),
+      getSnapshot: () => ({ context: snapshotContext }),
       subscribe: (observer: SnapshotObserver) => {
         snapshotObserver = observer;
-        observer.next?.({ context: { currentState: LOADING_PROGRESS } });
+        observer.next?.({ context: LOADING_CONTEXT });
         return {
           unsubscribe: () => {
             snapshotObserver = undefined;
@@ -125,7 +148,7 @@ describe("OsUpdatesOrchestratorUseCase", () => {
       orchestrator.subscribe(listener);
       listener.mockClear();
 
-      snapshotObserver?.next?.({ context: { currentState: DEVICE_LOCKED_PROGRESS } });
+      snapshotObserver?.next?.({ context: DEVICE_LOCKED_CONTEXT });
 
       expect(listener).toHaveBeenCalledWith(DEVICE_LOCKED_PROGRESS);
     });
@@ -137,7 +160,7 @@ describe("OsUpdatesOrchestratorUseCase", () => {
       listener.mockClear();
 
       unsubscribeListener();
-      snapshotObserver?.next?.({ context: { currentState: DEVICE_LOCKED_PROGRESS } });
+      snapshotObserver?.next?.({ context: DEVICE_LOCKED_CONTEXT });
 
       expect(unsubscribe).toHaveBeenCalledTimes(1);
       expect(listener).not.toHaveBeenCalled();
@@ -154,9 +177,27 @@ describe("OsUpdatesOrchestratorUseCase", () => {
       snapshotObserver?.error?.(new Error("actor crashed"));
 
       expect(listener).toHaveBeenCalledWith({
-        step: DEVICE_LOCKED_PROGRESS.step,
+        step: OsUpdatesSteps.PRE_CHECKS,
         state: {
           type: PreChecksStateType.UNEXPECTED_ERROR,
+          cancel: expect.any(Function),
+        },
+      });
+    });
+
+    it("should notify the create-backup UNEXPECTED_ERROR when the actor errors on that step", () => {
+      const listener = jest.fn();
+      const orchestrator = execute();
+      orchestrator.subscribe(listener);
+      listener.mockClear();
+      snapshotContext = CREATE_BACKUP_CONTEXT;
+
+      snapshotObserver?.error?.(new Error("actor crashed"));
+
+      expect(listener).toHaveBeenCalledWith({
+        step: OsUpdatesSteps.CREATE_BACKUP,
+        state: {
+          type: CreateBackupStateType.UNEXPECTED_ERROR,
           cancel: expect.any(Function),
         },
       });

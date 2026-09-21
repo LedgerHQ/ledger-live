@@ -37,10 +37,32 @@ const BUTTON_ROW_STYLE = {
 } as const;
 const PANEL_STYLE = { flex: 1 } as const;
 
+type SubScreenName = "interaction" | "balance" | "onboarding" | "mapping";
+
+function SubScreen({
+  screen,
+  interaction,
+  balance,
+  cardOnboarding,
+  currencyMapping,
+  onBack,
+}: Readonly<{
+  screen: SubScreenName;
+  interaction: PayCardToolProps["interaction"];
+  balance: PayCardToolProps["balance"];
+  cardOnboarding: PayCardToolProps["cardOnboarding"];
+  currencyMapping: PayCardToolProps["currencyMapping"];
+  onBack: () => void;
+}>) {
+  if (screen === "interaction") return <Interaction {...interaction} onBack={onBack} />;
+  if (screen === "balance") return <BalanceScreen {...balance} onBack={onBack} />;
+  if (screen === "onboarding") return <CardOnboardingScreen {...cardOnboarding} onBack={onBack} />;
+  return <CurrencyMappingScreen rows={currencyMapping} onBack={onBack} />;
+}
+
 export function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
-    onboarding,
     cardOnboarding,
     interaction,
     balance,
@@ -66,24 +88,19 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPaySuccess ||
     onNavigateToSendSuccess,
   );
-  const [screen, setScreen] = useState<
-    "tool" | "interaction" | "balance" | "onboarding" | "mapping"
-  >("tool");
+  const [screen, setScreen] = useState<"tool" | SubScreenName>("tool");
 
-  if (screen === "interaction") {
-    return <Interaction {...interaction} onBack={() => setScreen("tool")} />;
-  }
-
-  if (screen === "balance") {
-    return <BalanceScreen {...balance} onBack={() => setScreen("tool")} />;
-  }
-
-  if (screen === "onboarding") {
-    return <CardOnboardingScreen {...cardOnboarding} onBack={() => setScreen("tool")} />;
-  }
-
-  if (screen === "mapping") {
-    return <CurrencyMappingScreen rows={currencyMapping} onBack={() => setScreen("tool")} />;
+  if (screen !== "tool") {
+    return (
+      <SubScreen
+        screen={screen}
+        interaction={interaction}
+        balance={balance}
+        cardOnboarding={cardOnboarding}
+        currencyMapping={currencyMapping}
+        onBack={() => setScreen("tool")}
+      />
+    );
   }
 
   return (
@@ -118,7 +135,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
             <ListItemLeading>
               <Spot appearance="icon" icon={CoinsCrypto} />
               <ListItemContent>
-                <ListItemTitle>Balance</ListItemTitle>
+                <ListItemTitle>Balance & Wallets</ListItemTitle>
               </ListItemContent>
             </ListItemLeading>
             <ListItemTrailing>
@@ -177,38 +194,6 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
             checked={flags.ptxCardEnabled}
             onChange={flags.setPtxCardEnabled}
           />
-        </Section>
-
-        <Divider />
-
-        <Section title="Onboarding">
-          <Box lx={{ flexDirection: "column", gap: "s8" }}>
-            {onboarding.steps.map(step => (
-              <ToggleRow
-                key={step.id}
-                label={step.label}
-                checked={step.done}
-                onChange={() => onboarding.setStepDone(step.id, !step.done)}
-              />
-            ))}
-          </Box>
-        </Section>
-
-        <Divider />
-
-        <Section title="Reset onboarding">
-          <Box style={BUTTON_ROW_STYLE}>
-            <Button appearance="gray" size="sm" onPress={() => onboarding.setStepDone("all", true)}>
-              Set all done
-            </Button>
-            <Button
-              appearance="gray"
-              size="sm"
-              onPress={() => onboarding.setStepDone("all", false)}
-            >
-              Reset all
-            </Button>
-          </Box>
         </Section>
 
         <Divider />

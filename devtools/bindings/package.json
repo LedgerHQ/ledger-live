@@ -24,6 +24,7 @@
     "@devtools/registry": "workspace:*",
     "@domain/api-card-management": "workspace:*",
     "@domain/entity-card-asset-mapping": "workspace:*",
+    "@domain/entity-currency": "workspace:^",
     "@features/flow-pay-card-auth": "workspace:*",
     "@features/flow-pay-card-wallets": "workspace:*",
     "@features/flow-pay-card-widget": "workspace:*",

@@ -437,9 +437,13 @@ describe("Contacts integration", () => {
   it("should render populated Me detail on load when populated contacts are persisted", () => {
     renderContactsScreen(populatedContactsPageState);
 
-    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses");
     expect(
-      within(screen.getByTestId("contacts-detail-screen")).getByText("3 addresses"),
+      within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+        "contacts-detail-name",
+      ),
+    ).toHaveTextContent("My addresses");
+    expect(
+      within(screen.getByTestId("contacts-detail-address-list")).getByText("3 addresses"),
     ).toBeVisible();
     expect(screen.getByTestId("contacts-detail-address-list")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-network-group-arbitrum")).toBeVisible();
@@ -467,7 +471,11 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
     await user.click(screen.getByTestId("contacts-me-row"));
 
-    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses");
+    expect(
+      within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+        "contacts-detail-name",
+      ),
+    ).toHaveTextContent("My addresses");
     expect(screen.queryByText("No saved addresses for Ada")).not.toBeInTheDocument();
   });
 
@@ -598,7 +606,7 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
       expect(
-        within(screen.getByTestId("contacts-detail-screen")).getByText("1 address"),
+        within(screen.getByTestId("contacts-detail-address-list")).getByText("1 address"),
       ).toBeVisible();
       expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
       expect(
@@ -850,7 +858,9 @@ describe("Contacts integration", () => {
 
     const detailScreen = screen.getByTestId("contacts-detail-screen");
     expect(detailScreen).toBeVisible();
-    expect(within(detailScreen).getByText("2 addresses")).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("contacts-detail-address-list")).getByText("2 addresses"),
+    ).toBeInTheDocument();
     expect(screen.getByTestId("contacts-detail-address-list")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-detail-network-group-polygon")).toBeInTheDocument();
@@ -894,14 +904,20 @@ describe("Contacts integration", () => {
 
     const detailScreen = screen.getByTestId("contacts-detail-screen");
     expect(detailScreen).toBeVisible();
-    expect(within(detailScreen).getByText("2 addresses")).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("contacts-detail-address-list")).getByText("2 addresses"),
+    ).toBeInTheDocument();
     expect(screen.queryByText("No saved addresses for Ada")).not.toBeInTheDocument();
   });
 
   it("should render edit action for Me and edit/delete actions for saved contacts", async () => {
     const { user } = renderContactsScreen(populatedContactsPageState);
 
-    expect(screen.getByTestId("contacts-detail-edit-action")).toBeVisible();
+    expect(
+      within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+        "contacts-detail-edit-action",
+      ),
+    ).toBeVisible();
     expect(screen.queryByTestId("contacts-detail-delete-action")).not.toBeInTheDocument();
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
@@ -938,7 +954,11 @@ describe("Contacts integration", () => {
     const { user } = renderContactsScreen(populatedContactsPageState);
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
-    await user.click(screen.getByTestId("contacts-detail-edit-action"));
+    await user.click(
+      within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+        "contacts-detail-edit-action",
+      ),
+    );
 
     expect(screen.getByTestId("contacts-rename-contact-dialog")).toBeVisible();
     expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
@@ -968,7 +988,11 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-delete-contact-dialog")).not.toBeInTheDocument();
       expect(screen.queryByTestId("contacts-saved-row-contact-ada")).not.toBeInTheDocument();
-      expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses");
+      expect(
+        within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+          "contacts-detail-name",
+        ),
+      ).toHaveTextContent("My addresses");
     });
   });
 
@@ -1015,8 +1039,9 @@ describe("Contacts integration", () => {
       expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
     });
 
-    const detailScreen = screen.getByTestId("contacts-detail-screen");
-    expect(within(detailScreen).getByText("1 address")).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("contacts-detail-address-list")).getByText("1 address"),
+    ).toBeInTheDocument();
     expect(
       screen.queryByTestId("contacts-detail-address-row-address-ethereum"),
     ).not.toBeInTheDocument();

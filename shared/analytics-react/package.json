@@ -26,7 +26,8 @@
     "unimported": "pnpm knip --directory ../.. -W shared/analytics-react"
   },
   "dependencies": {
-    "@shared/analytics": "workspace:*"
+    "@shared/analytics": "workspace:*",
+    "lodash": "catalog:"
   },
   "peerDependencies": {
     "@react-navigation/native": "catalog:",
@@ -52,6 +53,7 @@
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
+    "@types/lodash": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",

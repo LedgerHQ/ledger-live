@@ -21,7 +21,9 @@ export function usePayTabViewModel() {
     request.open,
     newPayment.open,
   );
-  const { contacts, ledgerSyncIntroduction, contactAddressPicker } = usePayTabContacts();
+  const { contacts, ledgerSyncIntroduction, contactAddressPicker } = usePayTabContacts(
+    newPayment.payFromAddress,
+  );
   const { isEnabled: isContactsEnabled } = useContactsFeature("desktop");
 
   return {

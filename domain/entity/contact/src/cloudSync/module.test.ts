@@ -204,6 +204,17 @@ describe("contactsSyncModule.resolveIncrementalUpdate", () => {
     }
   });
 
+  it("should ignore a wire contact name containing an apostrophe instead of crashing", async () => {
+    const incoming = {
+      me: { name: "Me", addresses: [] },
+      contactGroups: [{ id: "contact-ada", name: "O'Connor", addresses: [] }],
+    };
+
+    await expect(
+      contactsSyncModule.resolveIncrementalUpdate(populatedContacts, null, incoming),
+    ).resolves.toEqual({ hasChanges: false });
+  });
+
   it("should reject reserved local role fields in the distant document", async () => {
     const rawMeId = {
       me: { id: "contact-me", name: "Me", addresses: [] },

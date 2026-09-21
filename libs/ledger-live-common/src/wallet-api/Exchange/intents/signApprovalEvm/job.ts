@@ -1,10 +1,11 @@
 import { concat, defer, from, of, type Observable } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { craftTransaction } from "@ledgerhq/coin-evm/logic/craftTransaction";
-import { createContext } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { DeviceConnectionResult, Job } from "@features/platform-device-intent";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { buildContext } from "../../../../bridge/generic-coin-framework/api/context";
 import { runSignTransactionEvm } from "../shared/signTransactionEvm";
 import type { QuoteApprovalTransaction } from "../../quotes/types";
 import type { SignApprovalEvmIntentInput, SignApprovalEvmJobState } from "./types";
@@ -24,30 +25,34 @@ async function buildUnsignedApprovalTxHex(
   const calldataHex = approvalTransaction.calldata.replace(/^0x/, "");
   const data = calldataHex.length > 0 ? Buffer.from(calldataHex, "hex") : Buffer.alloc(0);
 
-  const { transaction } = await craftTransaction(createContext(), currency.id, {
-    // The intent shape comes from `@ledgerhq/coin-module-framework`; use
-    // the craftTransaction parameter type rather than adding a direct dep.
-    transactionIntent: {
-      intentType: "transaction",
-      type: "send-legacy",
-      // `craftTransaction` derives the nonce from `transactionIntent.sender`
-      // (see coin-evm/logic/craftTransaction.ts). Use the signing account's
-      // address rather than the quote-blob `from` so a stale quote / account
-      // switch can't desync the nonce from the actual signer.
-      sender: senderAddress,
-      recipient: approvalTransaction.to,
-      amount: BigInt(approvalTransaction.value || "0"),
-      asset: { type: "native" },
-      data: { type: "buffer", value: data },
-    } satisfies Parameters<typeof craftTransaction>[2]["transactionIntent"],
-    customFees: {
-      value: 0n,
-      parameters: {
-        gasLimit: BigInt(approvalTransaction.gasLimit || "100000"),
-        gasPrice: BigInt(approvalTransaction.gasPrice),
+  const { transaction } = await craftTransaction(
+    buildContext<EvmConfigInfo>(currency.id),
+    currency.id,
+    {
+      // The intent shape comes from `@ledgerhq/coin-module-framework`; use
+      // the craftTransaction parameter type rather than adding a direct dep.
+      transactionIntent: {
+        intentType: "transaction",
+        type: "send-legacy",
+        // `craftTransaction` derives the nonce from `transactionIntent.sender`
+        // (see coin-evm/logic/craftTransaction.ts). Use the signing account's
+        // address rather than the quote-blob `from` so a stale quote / account
+        // switch can't desync the nonce from the actual signer.
+        sender: senderAddress,
+        recipient: approvalTransaction.to,
+        amount: BigInt(approvalTransaction.value || "0"),
+        asset: { type: "native" },
+        data: { type: "buffer", value: data },
+      } satisfies Parameters<typeof craftTransaction>[2]["transactionIntent"],
+      customFees: {
+        value: 0n,
+        parameters: {
+          gasLimit: BigInt(approvalTransaction.gasLimit || "100000"),
+          gasPrice: BigInt(approvalTransaction.gasPrice),
+        },
       },
     },
-  });
+  );
 
   return transaction;
 }

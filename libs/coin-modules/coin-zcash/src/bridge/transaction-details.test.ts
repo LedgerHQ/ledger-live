@@ -38,9 +38,13 @@ describe("resolveTransactionDetails", () => {
   it("replaces a fee inflated by value that entered the shielded pool", async () => {
     const resolve = resolvesTo({ txid: "76ec3b38", fee: priced, payees: [] });
 
-    const { transactions } = await resolveTransactionDetails([shieldingSend], resolve);
+    const { transactions, shieldingTxIds } = await resolveTransactionDetails(
+      [shieldingSend],
+      resolve,
+    );
 
     expect(transactions[0].fees).toBe(55_000);
+    expect(shieldingTxIds).toEqual(new Set(["76ec3b38"]));
   });
 
   it("reports the shielded payee, which no transparent output names", async () => {

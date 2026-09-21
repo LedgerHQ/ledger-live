@@ -518,18 +518,20 @@ export async function buildComputeUnitInstruction(
 
 export function buildCreateAssociatedTokenAccountInstruction(
   api: ChainAPI,
-  { mint, owner, associatedTokenAccountAddress }: TokenCreateATACommand,
+  { mint, owner, associatedTokenAccountAddress, tokenProgram }: TokenCreateATACommand,
 ): Promise<TransactionInstruction[]> {
   const ownerPubKey = new PublicKey(owner);
   const mintPubkey = new PublicKey(mint);
   const associatedTokenAccPubkey = new PublicKey(associatedTokenAccountAddress);
 
   const instructions: TransactionInstruction[] = [
+    // The address was derived with this program, so the ATA program would reject a PDA mismatch.
     createAssociatedTokenAccountInstruction(
       ownerPubKey,
       associatedTokenAccPubkey,
       ownerPubKey,
       mintPubkey,
+      getTokenAccountProgramId(tokenProgram),
     ),
   ];
 

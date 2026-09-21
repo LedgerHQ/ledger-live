@@ -30,6 +30,41 @@ describe("mockPayCardTransactions", () => {
     expect(transactions.some(({ fundingSources }) => fundingSources.length > 1)).toBe(true);
   });
 
+  it("covers every status, so each one can be seen in a list", () => {
+    const statuses = mockPayCardTransactions().map(({ status }) => status);
+
+    expect(new Set(statuses)).toEqual(new Set(["CONFIRMED", "PENDING", "DECLINED", "REVERTED"]));
+  });
+
+  it("explains why the declined one was declined", () => {
+    const declined = mockPayCardTransactions().filter(({ status }) => status === "DECLINED");
+
+    expect(declined).toHaveLength(1);
+    expect(declined[0].declineReason).not.toBe("");
+  });
+
+  it("pairs every settled charge with the cashback it earned", () => {
+    const settled = mockPayCardTransactions().filter(
+      ({ status }) => status !== "DECLINED" && status !== "REVERTED",
+    );
+
+    expect(settled.length).toBeGreaterThan(1);
+    for (const { cashback } of settled) {
+      expect(cashback).toMatchObject({ currency: "BXX", status: "EARNED" });
+      expect(Number(cashback?.amount)).toBeGreaterThan(0);
+      expect(Number(cashback?.fiatAmount)).toBeGreaterThan(0);
+    }
+  });
+
+  it("leaves a charge that never settled without a cashback", () => {
+    const unearned = mockPayCardTransactions().filter(
+      ({ status }) => status === "DECLINED" || status === "REVERTED",
+    );
+
+    expect(unearned).toHaveLength(2);
+    expect(unearned.every(({ cashback }) => cashback === undefined)).toBe(true);
+  });
+
   it("keeps the provider's documented charge as the miscellaneous one", () => {
     const misc = mockPayCardTransactions().find(({ mccCategory }) => mccCategory === "MISC");
 

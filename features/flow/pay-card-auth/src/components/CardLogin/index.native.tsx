@@ -11,6 +11,7 @@ export function CardLogin({
   openHostedLogin,
   openHostedPage,
   onTrackEvent,
+  requestProtection,
 }: CardLoginProps) {
   const login = useCardLoginViewModel({
     openHostedLogin: openHostedLogin ?? openHostedLoginInSecureBrowser,
@@ -19,6 +20,7 @@ export function CardLogin({
     oauthConfig,
     callback,
     onTrackEvent,
+    requestProtection,
   });
 
   return login ? <CardLoginView {...login} /> : null;

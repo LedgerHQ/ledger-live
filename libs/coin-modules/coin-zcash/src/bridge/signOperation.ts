@@ -8,6 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Transaction, ZcashAccount, BtcInputRef, ZcashOperationExtra } from "../types/bridge";
+import { isShieldedTransfer } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import {
   ZcashNotesNotYetSpendable,
@@ -220,6 +221,7 @@ export const buildSignOperation =
           date: new Date(),
           extra: {
             zcashShielded: true,
+            ...(isShieldedTransfer(transaction) && { zcashPrivate: true }),
             ...(ironwoodNullifiers.length > 0 && { shieldedNullifiers: ironwoodNullifiers }),
             ...(inputRefs.length > 0 && {
               inputs: inputRefs.map(r => `${r.hash}-${r.outputIndex}`),

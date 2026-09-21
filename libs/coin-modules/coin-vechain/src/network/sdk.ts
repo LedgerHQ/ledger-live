@@ -12,6 +12,7 @@ import {
   mapVetTransfersToOperations,
   mapTokenTransfersToOperations,
   padAddress,
+  VIP180_TRANSFER_TOPIC,
 } from "../common-logic";
 import { getNodeUrl, type VechainCurrencyConfig } from "../config";
 
@@ -93,9 +94,6 @@ const fetchRangeOfTokenOperations = async (
 ): Promise<Operation[]> => {
   const paddedAddress = padAddress(addr);
 
-  const TransferEventSignature =
-    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
-
   const query: TokenTxsQuery = {
     range: {
       unit: "block",
@@ -105,12 +103,12 @@ const fetchRangeOfTokenOperations = async (
     criteriaSet: [
       {
         address: tokenAddr,
-        topic0: TransferEventSignature,
+        topic0: VIP180_TRANSFER_TOPIC,
         topic1: paddedAddress,
       },
       {
         address: tokenAddr,
-        topic0: TransferEventSignature,
+        topic0: VIP180_TRANSFER_TOPIC,
         topic2: paddedAddress,
       },
     ],

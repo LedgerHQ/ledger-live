@@ -2,7 +2,7 @@
 
 > [!WARNING]
 > **Status: DEPRECATED** — This package is now private and will not receive further npm releases.
-> It is being replaced by `@domain/` packages as part of the Ledger Live DDD migration.
+> It is being replaced by `@domain/` packages.
 > In-repo consumers continue to work; all new code should target the domain packages once available.
 
 `@ledgerhq/live-countervalues` manages fiat (and cross-crypto) exchange rate fetching, caching, and portfolio valuation for Ledger Live. It fetches rates from Ledger's countervalues API and exposes pure functions to convert crypto amounts to fiat at any point in time.

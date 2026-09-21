@@ -28,6 +28,7 @@ const combinedWallets = [
     priority: 0,
     ledgerId: "ethereum/erc20/usd__coin",
     balance: "125.40",
+    ledgerCurrencyId: "ethereum/erc20/usd__coin",
   },
   {
     id: "w-sol",
@@ -36,6 +37,7 @@ const combinedWallets = [
     network: "solana",
     priority: 1,
     balance: null,
+    ledgerCurrencyId: null,
   },
 ];
 
@@ -48,16 +50,6 @@ function buildProps(): PayCardToolProps {
       setPayTabEnabled: jest.fn(),
       setCardParam: jest.fn(),
       setPtxCardEnabled: jest.fn(),
-    },
-    onboarding: {
-      steps: [
-        {
-          id: "step1",
-          label: "Step 1",
-          done: false,
-        },
-      ],
-      setStepDone: jest.fn(),
     },
     cardOnboarding: {
       steps: [],
@@ -105,7 +97,6 @@ describe("PayCard (web)", () => {
   it("renders every section", () => {
     render(<PayCard {...buildProps()} />);
     expect(screen.getByText("Feature flags")).toBeDefined();
-    expect(screen.getByText("Onboarding")).toBeDefined();
     expect(screen.getByText("Feature tour")).toBeDefined();
     expect(screen.getByText("Request verify hint")).toBeDefined();
     expect(screen.getByText("Card login intro")).toBeDefined();
@@ -167,15 +158,6 @@ describe("PayCard (web)", () => {
     expect(props.resetPayCardFeatureTourSeen).not.toHaveBeenCalled();
   });
 
-  it("wires onboarding actions", () => {
-    const props = buildProps();
-    render(<PayCard {...props} />);
-
-    // Label is display-only; ToggleRow wires onChange on the Switch.
-    const switches = screen.getAllByRole("switch");
-    fireEvent.click(switches[switches.length - 1]!);
-    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("step1", true);
-  });
   it("lists the same Card Debug entries the mobile tool lists", () => {
     render(<PayCard {...buildProps()} />);
 
@@ -248,9 +230,10 @@ describe("PayCard (web)", () => {
     // A link the catalog does not cover says so rather than showing an empty currency.
     expect(screen.getAllByText("undefined — this pair is not mapped").length).toBe(2);
     // And a link with no Baanx wallet behind it says that too.
-    expect(
-      screen.getByText("null — still reading, or no Baanx wallet matched"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("null — still reading, or no Baanx wallet matched")).toBeVisible();
+    // The linked response, the joined row's ledgerId, and the currency resolved from it.
+    expect(screen.getAllByText("ethereum/erc20/usd__coin")).toHaveLength(3);
+    expect(screen.getByText("null — unmapped asset, or CAL has not answered")).toBeVisible();
   });
 
   it("refreshes the wallets from the screen, and returns to the tool", () => {

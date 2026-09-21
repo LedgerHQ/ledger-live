@@ -9,18 +9,19 @@ export function CardFlip({ reveal, cardFace }: CardFlipProps) {
     return <>{cardFace}</>;
   }
 
-  const { isRevealed, imageUrl, onImageError } = reveal;
+  const { isRevealed, imageUrl, onImageLoad, onImageError } = reveal;
   const details = imageUrl ? (
-    <DetailsImage imageUrl={imageUrl} onImageError={onImageError} />
+    <DetailsImage imageUrl={imageUrl} onImageLoad={onImageLoad} onImageError={onImageError} />
   ) : null;
 
   return (
     <div data-testid="card-flip" className="[perspective:1000px]">
       <div
         className={cn(
-          "relative h-[195px] w-full transition-transform duration-500 [transform-style:preserve-3d] motion-reduce:transition-none",
+          "relative h-[195px] w-full transition-transform duration-300 [transform-style:preserve-3d] motion-reduce:transition-none",
           isRevealed ? "[transform:rotateY(180deg)]" : "[transform:rotateY(0deg)]",
         )}
+        data-testid="card-flip-face"
       >
         <div className="absolute inset-0 [backface-visibility:hidden]" aria-hidden={isRevealed}>
           {cardFace}
@@ -38,16 +39,18 @@ export function CardFlip({ reveal, cardFace }: CardFlipProps) {
 
 function DetailsImage({
   imageUrl,
+  onImageLoad,
   onImageError,
 }: {
   readonly imageUrl: string;
+  readonly onImageLoad: () => void;
   readonly onImageError: () => void;
 }) {
   const { t } = useTranslation();
 
   return (
     <div
-      className="size-full h-[195px] w-full overflow-hidden rounded-lg border border-muted-subtle"
+      className="size-full h-[195px] w-full overflow-hidden rounded-lg border border-muted p-2"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <img
@@ -57,7 +60,8 @@ function DetailsImage({
         height={193}
         referrerPolicy="no-referrer"
         decoding="async"
-        className="size-full object-cover"
+        className="size-full object-contain"
+        onLoad={onImageLoad}
         onError={onImageError}
       />
     </div>

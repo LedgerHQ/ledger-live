@@ -1,5 +1,4 @@
 import { http, HttpResponse, passthrough } from "msw";
-import { getMockCardOnboardingStatus } from "@domain/api-card-management/mock";
 import {
   MOCK_CARD_DETAILS_IMAGE_URL,
   mockCardDetailsImage,
@@ -8,12 +7,15 @@ import {
 import { isMockCardRequest } from "@domain/api-card-management/mock/card-session";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
-  mockPayCardInternalWallets,
-  mockPayCardLinkedWallets,
   mockPayCardStatus,
   mockPayCardUser,
   readCardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
+import {
+  mockPayCardInternalWallets,
+  mockPayCardLinkedWallets,
+  mockPayCardRewardWallet,
+} from "@domain/api-card-management/mock/card-wallets";
 
 const handlers = [
   http.get("*/v1/user", ({ request }) => {
@@ -35,10 +37,6 @@ const handlers = [
 
     return isMockCardRequest(request) ? HttpResponse.json(mockPayCardStatus()) : passthrough();
   }),
-
-  http.get("*/v1/card/onboarding-status", ({ request }) =>
-    isMockCardRequest(request) ? HttpResponse.json(getMockCardOnboardingStatus()) : passthrough(),
-  ),
 
   http.get("*/v1/card/transactions", ({ request }) =>
     isMockCardRequest(request) ? HttpResponse.json(mockPayCardTransactions()) : passthrough(),
@@ -70,6 +68,10 @@ const handlers = [
       ? passthrough()
       : HttpResponse.json(mockPayCardLinkedWallets());
   }),
+
+  http.get("*/v1/wallet/reward", ({ request }) =>
+    isMockCardRequest(request) ? HttpResponse.json(mockPayCardRewardWallet()) : passthrough(),
+  ),
 
   // Never let a fake bearer reach an unmocked provider endpoint.
   http.all("*/v1/*", ({ request }) =>

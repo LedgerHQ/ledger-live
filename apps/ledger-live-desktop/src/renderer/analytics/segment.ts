@@ -8,6 +8,17 @@ import {
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@shared/env";
+import {
+  publishAnalyticsEvent,
+  setAnalytics,
+  setEnabledFn,
+  setExtraPropsFn,
+  setMandatoryExtraPropsFn,
+  setPropsFilter,
+  track as sharedTrack,
+  trackPage as sharedTrackPage,
+} from "@shared/analytics";
+import type { EventType } from "@shared/analytics";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import { selectContacts } from "@domain/entity-contact";
 import { buildContactsGlobalProperties } from "@features/platform-contacts";
@@ -16,7 +27,6 @@ import { idsToLanguage } from "@ledgerhq/types-live";
 import type { Feature, FeatureId, Features } from "@shared/feature-flags";
 import invariant from "invariant";
 import type * as Redux from "redux";
-import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
@@ -41,7 +51,6 @@ import {
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
 import { accountsSelector } from "../reducers/accounts";
-import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { shouldIncludeSegmentIdentity } from "./segmentIdentity";
 import {
   onboardingIsSyncFlowSelector,
@@ -406,6 +415,25 @@ const extraProperties = (store: ReduxStore) => {
   };
 };
 
+setAnalytics({
+  track: async (event, props) => {
+    if (!analyticsInstance) {
+      return "skipped_no_client";
+    }
+    await analyticsInstance.track(event, props, { context: getContext() });
+  },
+  log: (type: EventType, event, props) => {
+    switch (type) {
+      case "page":
+        logger.analyticsPage(event, props);
+        break;
+      case "track":
+        logger.analyticsTrack(event, props);
+        break;
+    }
+  },
+});
+
 function initializeSegment() {
   if (analyticsInstance) return;
 
@@ -432,6 +460,11 @@ export const startAnalytics = async (store: ReduxStore) => {
   if (!store || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
   storeInstance = store;
 
+  setEnabledFn(() => trackingEnabledSelector(store.getState()));
+  setExtraPropsFn(() => extraProperties(store));
+  setMandatoryExtraPropsFn(() => getMandatoryProperties(store));
+  setPropsFilter(confidentialityFilter);
+
   const canBeTracked = trackingEnabledSelector(store.getState());
   if (!canBeTracked) return;
 
@@ -451,22 +484,12 @@ export const startAnalytics = async (store: ReduxStore) => {
   logger.analyticsStart(id, allProperties);
   identifyAndLogOverlay(analytics, id, allProperties);
 };
-type Properties = Error | Record<string, unknown> | null;
-export type LoggableEvent = {
-  eventName: string;
-  eventProperties?: Properties;
-  eventPropertiesWithoutExtra?: Properties;
-  date: Date;
-};
-export const trackSubject = new ReplaySubject<LoggableEvent>(30);
-
 const publishIdentifyOverlay = (userIdPresent: boolean, failed: boolean) => {
   const overlayProperties = failed ? { userIdPresent, failed: true } : { userIdPresent };
-  trackSubject.next({
+  publishAnalyticsEvent({
     eventName: "[Identify]",
     eventProperties: overlayProperties,
     eventPropertiesWithoutExtra: overlayProperties,
-    date: new Date(),
   });
 };
 
@@ -486,14 +509,6 @@ const identifyAndLogOverlay = (
       () => publishIdentifyOverlay(Boolean(id), true),
     );
 };
-
-function sendTrack(event: string, properties: object | undefined | null) {
-  const analytics = getAnalytics();
-  if (!analytics) return;
-  analytics.track(event, properties ?? undefined, {
-    context: getContext(),
-  });
-}
 
 const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
   const { account, parentAccount, page, source } = properties || {};
@@ -571,29 +586,7 @@ export const track = (
   properties?: Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
-  if (!storeInstance || (!mandatory && !trackingEnabledSelector(storeInstance.getState()))) {
-    return;
-  }
-
-  const eventPropertiesWithoutExtra = {
-    page: currentRouteNameRef.current,
-    ...properties,
-  };
-
-  const allProperties = {
-    ...eventPropertiesWithoutExtra,
-    ...(mandatory ? getMandatoryProperties(storeInstance) : extraProperties(storeInstance)),
-    ...confidentialityFilter(properties),
-  };
-
-  logger.analyticsTrack(eventName, allProperties);
-  sendTrack(eventName, allProperties);
-  trackSubject.next({
-    eventName,
-    eventProperties: allProperties,
-    eventPropertiesWithoutExtra,
-    date: new Date(),
-  });
+  sharedTrack(eventName, properties, { mandatory: !!mandatory });
 };
 
 /**
@@ -636,33 +629,12 @@ export const trackPage = (
    */
   mandatory?: boolean,
 ) => {
-  if (!storeInstance || (!mandatory && !trackingEnabledSelector(storeInstance.getState()))) {
-    return;
-  }
-
-  const fullScreenName = category + (name ? ` ${name}` : "");
-  if (updateRoutes) {
-    previousRouteNameRef.current = currentRouteNameRef.current;
-    if (refreshSource) {
-      currentRouteNameRef.current = fullScreenName;
-    }
-  }
-  const eventName = `Page ${fullScreenName}`;
-
-  const eventPropertiesWithoutExtra = {
-    source: previousRouteNameRef.current ?? undefined,
-    ...confidentialityFilter(properties),
-  };
-  const allProperties = {
-    ...eventPropertiesWithoutExtra,
-    ...(mandatory ? getMandatoryProperties(storeInstance) : extraProperties(storeInstance)),
-  };
-  logger.analyticsPage(category, name, allProperties);
-  sendTrack(eventName, allProperties);
-  trackSubject.next({
-    eventName,
-    eventProperties: allProperties,
-    eventPropertiesWithoutExtra,
-    date: new Date(),
-  });
+  sharedTrackPage(
+    { category, name, props: properties },
+    {
+      updateRoutes: !!updateRoutes,
+      refreshSource: !!refreshSource,
+      mandatory: !!mandatory,
+    },
+  );
 };

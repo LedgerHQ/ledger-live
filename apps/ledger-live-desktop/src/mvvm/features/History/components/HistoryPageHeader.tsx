@@ -14,6 +14,8 @@ type Props = Readonly<{
   dustFilterThreshold: string;
   onToggleHideSmallValueTokenOperations: () => void;
   contact?: Contact;
+  isCardHistory: boolean;
+  cardAssetName?: string;
 }>;
 
 export default function HistoryPageHeader({
@@ -24,16 +26,25 @@ export default function HistoryPageHeader({
   dustFilterThreshold,
   onToggleHideSmallValueTokenOperations,
   contact,
+  isCardHistory,
+  cardAssetName,
 }: Props) {
   const { t } = useTranslation();
   const [isExportDialogOpen, setExportDialogOpen] = useState(false);
+  const cardScope = isCardHistory ? (
+    <span className="body-1 text-muted" data-testid="history-card-scope">
+      {cardAssetName
+        ? t("history.cardAssetScope", { assetName: cardAssetName })
+        : t("history.cardScope")}
+    </span>
+  ) : undefined;
 
   return (
     <>
       <HistoryExportDialog open={isExportDialogOpen} onOpenChange={setExportDialogOpen} />
       <PageHeader
         title={t("history.title")}
-        extra={contact ? <HistoryContactScope contact={contact} /> : undefined}
+        extra={cardScope ?? (contact ? <HistoryContactScope contact={contact} /> : undefined)}
         onBack={onBack}
         trailing={
           <ActionsMenu

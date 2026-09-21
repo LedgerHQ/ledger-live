@@ -25,6 +25,9 @@ permissions:
 jobs:
   create-rollback:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
     env:
       RELEASE_NOTES: "This release includes small security improvements and minor bug fixes."
       REPO: "ledger-live"

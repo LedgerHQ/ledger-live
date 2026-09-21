@@ -2,6 +2,7 @@ packages:
   - "apps/*"
   - "apps/wallet-cli/npm/*"
   - "e2e/*"
+  - "e2e/tooling/*"
   - "features/flow/*"
   - "features/platform/*"
   - "libs/*"
@@ -57,10 +58,10 @@ catalog:
   "@ledgerhq/live-network": 3.1.0
   "@ledgerhq/live-promise": 0.4.0
   "@ledgerhq/psbtv2": 0.6.0
-  "@ledgerhq/lumen-design-core": 0.1.28
-  "@ledgerhq/lumen-ui-react": 0.1.58
-  "@ledgerhq/lumen-ui-rnative": 0.1.61
-  "@ledgerhq/lumen-utils-shared": 0.1.12
+  "@ledgerhq/lumen-design-core": 0.1.29
+  "@ledgerhq/lumen-ui-react": 0.1.59
+  "@ledgerhq/lumen-ui-rnative": 0.1.62
+  "@ledgerhq/lumen-utils-shared": 0.1.13
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.15.3
   "@ledgerhq/wallet-api-client-react": 1.4.34
@@ -136,6 +137,7 @@ catalog:
   babel-jest: 30.5.0
   bs58: ^4.0.1
   bs58check: ^2.1.2
+  buffer: 6.0.3
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   electron: 43.1.1
@@ -169,7 +171,9 @@ catalog:
   react: 19.1.4
   react-dom: 19.1.4
   react-i18next: 16.5.0
+  react-native-biometrics: 3.0.1
   react-native-config: 1.5.3
+  react-native-fast-crypto: "3"
   react-native-keychain: 10.0.0
   react-native-reanimated: 4.3.0
   react-native-worklets: 0.8.1
@@ -190,7 +194,8 @@ catalog:
   ws: 8.18.3
   qrcode: 1.5.4
   "@types/qrcode": 1.5.5
-  zod: 4.3.6
+  otpauth: 9.5.1
+  zod: 4.4.3
   semver: 7.7.3
   "@types/semver": 7.7.1
   "@types/ws": ^8.5.10
@@ -213,19 +218,19 @@ catalog:
   allure-js-commons: 3.9.0
   nx: 22.7.8
   "@nx/devkit": 22.7.8
+  detox: 20.51.3
   # pnpm -D skips optionalDependencies; declare here so the CI filtered install picks up the Linux x64 native binding
   "@nx/nx-linux-x64-gnu": 22.7.8
   "@nx/s3-cache": 5.0.7
   oxlint: 1.82.0
   oxfmt: 0.67.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 5.3.6
-  "@ledgerhq/coin-hypercore": 2.0.1
+  "@ledgerhq/coin-evm": 5.4.0
+  "@ledgerhq/coin-hypercore": 3.0.0
   "@ledgerhq/coin-module-framework": 9.1.0
-  "@ledgerhq/coin-stellar": 9.6.1
-  "@ledgerhq/coin-tezos": 10.2.6
-  "@ledgerhq/coin-xrp": 10.1.1
-  detox: 20.51.3
+  "@ledgerhq/coin-stellar": 10.0.0
+  "@ledgerhq/coin-tezos": 12.0.1
+  "@ledgerhq/coin-xrp": 11.0.0
 
 overrides:
   node-abi: ^4.9.0

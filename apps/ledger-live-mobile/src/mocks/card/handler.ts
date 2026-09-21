@@ -1,5 +1,4 @@
 import { http, HttpResponse, passthrough, delay } from "msw";
-import { getMockCardOnboardingStatus } from "@domain/api-card-management/mock";
 import {
   isMockCardRequest,
   MOCK_CARD_ACCESS_TOKEN_PREFIX,
@@ -7,12 +6,15 @@ import {
 import { mockPayCardDetailsToken } from "@domain/api-card-management/mock/card-details-token";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
-  mockPayCardInternalWallets,
-  mockPayCardLinkedWallets,
   mockPayCardStatus,
   mockPayCardUser,
   readCardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
+import {
+  mockPayCardInternalWallets,
+  mockPayCardLinkedWallets,
+  mockPayCardRewardWallet,
+} from "@domain/api-card-management/mock/card-wallets";
 import { createCardMockState } from "./state";
 
 const state = createCardMockState();
@@ -140,9 +142,6 @@ const handlers = [
     return HttpResponse.json(MOCK_CARD_STATUS);
   }),
 
-  http.get("*/v1/card/onboarding-status", ({ request }) =>
-    isMockCardRequest(request) ? HttpResponse.json(getMockCardOnboardingStatus()) : passthrough(),
-  ),
   http.get("*/v1/card/transactions", ({ request }) =>
     isMockCardRequest(request) ? HttpResponse.json(mockPayCardTransactions()) : passthrough(),
   ),
@@ -173,6 +172,10 @@ const handlers = [
       ? passthrough()
       : HttpResponse.json(mockPayCardLinkedWallets());
   }),
+
+  http.get("*/v1/wallet/reward", ({ request }) =>
+    isMockCardRequest(request) ? HttpResponse.json(mockPayCardRewardWallet()) : passthrough(),
+  ),
 ];
 
 export default handlers;

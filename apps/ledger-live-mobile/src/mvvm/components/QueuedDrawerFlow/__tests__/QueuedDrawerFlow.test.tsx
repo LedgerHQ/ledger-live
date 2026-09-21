@@ -148,4 +148,35 @@ describe("QueuedDrawerFlow", () => {
       }),
     );
   });
+
+  it("should hand the drawer only the current screen's footer", () => {
+    const screensWithFooter = {
+      ...screens,
+      asset: {
+        ...screens.asset,
+        footer: <Text>Asset footer</Text>,
+      },
+    } satisfies Parameters<typeof QueuedDrawerFlow<TestStep>>[0]["screens"];
+    const { rerender } = render(
+      <QueuedDrawerFlow
+        currentStep="asset"
+        isOpen
+        onClose={jest.fn()}
+        screens={screensWithFooter}
+      />,
+    );
+
+    expect(mockDrawerProps?.footer).toEqual(<Text>Asset footer</Text>);
+
+    rerender(
+      <QueuedDrawerFlow
+        currentStep="address"
+        isOpen
+        onClose={jest.fn()}
+        screens={screensWithFooter}
+      />,
+    );
+
+    expect(mockDrawerProps?.footer).toBeUndefined();
+  });
 });

@@ -4,6 +4,9 @@ import { secureStore } from "./internals/secureStore.web";
 /** Web and desktop: the Card session lives in renderer memory for the life of the process. */
 export const {
   cardSession,
+  setCardProviderAppId,
+  isCardUsEnv,
+  readCardUsEnv,
   getCardSessionToken,
   readCardSession,
   isCardSessionCurrent,

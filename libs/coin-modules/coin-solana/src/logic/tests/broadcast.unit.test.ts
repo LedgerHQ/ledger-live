@@ -3,7 +3,10 @@ import {
   BlockhashWithExpiryBlockHeight,
   TransactionError,
   VersionedTransaction,
+  TransactionExpiredBlockheightExceededError,
+  TransactionExpiredTimeoutError,
 } from "@solana/web3.js";
+import { SolanaTxConfirmationTimeout } from "../../errors";
 import type { ChainAPI } from "../../network";
 import { broadcast } from "../broadcast";
 
@@ -127,5 +130,23 @@ describe("broadcast", () => {
 
     await expectInvalidTransactionError(broadcast(api, txBase64), message);
     expect(sendRawTransaction).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["a timeout", () => new TransactionExpiredTimeoutError("sig", 30)],
+    ["an exceeded block height", () => new TransactionExpiredBlockheightExceededError("sig")],
+  ])("maps %s to SolanaTxConfirmationTimeout", async (_name, makeError) => {
+    const { api, sendRawTransaction } = buildApi({ simulateValues: [{ err: null }] });
+    sendRawTransaction.mockRejectedValueOnce(makeError());
+
+    await expect(broadcast(api, txBase64)).rejects.toThrow(SolanaTxConfirmationTimeout);
+  });
+
+  it("lets any other broadcast failure through untouched", async () => {
+    const { api, sendRawTransaction } = buildApi({ simulateValues: [{ err: null }] });
+    const original = new Error("node unreachable");
+    sendRawTransaction.mockRejectedValueOnce(original);
+
+    await expect(broadcast(api, txBase64)).rejects.toBe(original);
   });
 });

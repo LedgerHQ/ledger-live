@@ -1,7 +1,7 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account, AnyMessage, DeviceId } from "@ledgerhq/types-live";
 import type { Curve, TezosSigner } from "./types";
-import { convertSecp256k1DERToRaw } from "@ledgerhq/coin-tezos/utils";
+import { convertSecp256k1DERToRaw } from "@ledgerhq/coin-tezos/logic-public";
 
 // Curve tag (matching hw-app-tezos `TezosCurves`) from the implicit-address prefix.
 function curveForAddress(address: string): Curve {

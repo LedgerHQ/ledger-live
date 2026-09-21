@@ -3,6 +3,7 @@ import type { GetOsVersionResponse } from "@ledgerhq/device-management-kit";
 export type OsVersionResponseOptions = {
   isBootloader?: boolean;
   isOsu?: boolean;
+  seVersion?: string;
   isOnboarded?: boolean;
   isInRecoveryMode?: boolean;
   isSecureConnectionAllowed?: boolean;
@@ -10,6 +11,8 @@ export type OsVersionResponseOptions = {
   numberOfWords?: number;
   currentWordIndex?: number;
 };
+
+export const defaultSeVersion = "1.4.0";
 
 /**
  * Builds a `GetOsVersionCommand` response holding only the fields the actors read. The onboarding
@@ -19,6 +22,7 @@ export type OsVersionResponseOptions = {
 export function createOsVersionResponse({
   isBootloader = false,
   isOsu = false,
+  seVersion = defaultSeVersion,
   isOnboarded = false,
   isInRecoveryMode = false,
   isSecureConnectionAllowed = false,
@@ -27,6 +31,7 @@ export function createOsVersionResponse({
   return {
     isBootloader,
     isOsu,
+    seVersion,
     secureElementFlags: {
       isOnboarded,
       isInRecoveryMode,

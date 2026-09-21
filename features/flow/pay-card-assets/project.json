@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-pay-card-assets",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

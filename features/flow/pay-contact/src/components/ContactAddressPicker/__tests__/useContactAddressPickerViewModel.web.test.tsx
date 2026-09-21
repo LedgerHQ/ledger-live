@@ -73,6 +73,18 @@ describe("useContactAddressPickerViewModel", () => {
     expect(result.current.contactAddressPicker.groups).toEqual([]);
   });
 
+  it("closes after an address is selected", () => {
+    const onSelectAddress = jest.fn();
+    const address = contact.addresses[0];
+    const { result } = renderViewModel({ onSelectAddress });
+
+    act(() => result.current.open(contact));
+    act(() => result.current.contactAddressPicker.onSelectAddress(address));
+
+    expect(onSelectAddress).toHaveBeenCalledWith(address);
+    expect(result.current.contactAddressPicker.isOpen).toBe(false);
+  });
+
   it("binds onAddNewAddress to the open contact", () => {
     const onAddNewAddress = jest.fn();
     const { result } = renderViewModel({ onAddNewAddress });

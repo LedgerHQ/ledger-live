@@ -8,22 +8,36 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { Subject } from "rxjs";
 import BigNumber from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Transaction } from "../../generated/types";
 import type { AleoAccount, AleoUnspentRecord } from "./types";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
-import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "./constants";
+import {
+  MANDATORY_SYNC_POLLING_DELAY,
+  MIN_DELEGATOR_STAKE_MICROCREDITS,
+  PROGRESS_THROTTLE_INTERVAL_MS,
+  UNBONDING_SYNC_PRIORITY,
+} from "./constants";
 import {
   useAleoViewKeyApproval,
   buildAccountsWithViewKeys,
+  useAleoLiveBlockHeight,
   useAleoPrivateSync,
   useAleoQuickAmountSelector,
+  useAleoStakingPosition,
+  useAleoUnbondingState,
   useAleoValidators,
+  useSyncOnUnbondingComplete,
+  type AleoStakingPositionView,
 } from "./react";
-import { getValidators } from "@ledgerhq/coin-aleo/logic";
+import { getValidators, lastBlock } from "@ledgerhq/coin-aleo/logic";
+import { getCurrencyConfiguration } from "../../config/index";
+import { getSyncSkipUnderPriority, useAccountSyncState, useBridgeSync } from "../../bridge/react";
+import { createTestStore, createWrapper } from "../../__tests__/test-helpers/testUtils";
+import { aleoApi } from "./state-manager/api";
 import { ALEO_ACCOUNT_1, makeAleoAccount } from "./__mocks__/account.mock";
 
 const mockCreateAction = jest.fn();
@@ -53,10 +67,30 @@ jest.mock("./utils", () => ({
   })),
 }));
 
-jest.mock("@ledgerhq/coin-aleo/logic", () => ({ getValidators: jest.fn() }));
+jest.mock("@ledgerhq/coin-aleo/logic", () => ({ getValidators: jest.fn(), lastBlock: jest.fn() }));
+
+jest.mock("../../config/index", () => ({
+  ...jest.requireActual("../../config/index"),
+  getCurrencyConfiguration: jest.fn(),
+}));
+
+// `useSyncOnUnbondingComplete` pulls this in; the heavy BridgeSync tree is not under test here.
+jest.mock("../../bridge/react", () => ({
+  useBridgeSync: jest.fn(),
+  getSyncSkipUnderPriority: jest.fn(),
+  useAccountSyncState: jest.fn(),
+}));
 
 const { useFeature } = jest.requireMock("@features/platform-feature-flags");
 const { getViewKeyExec } = jest.requireMock("./hw/getViewKey/index");
+
+/** One successful chain-tip read, which is what a poll of the shared query resolves to. */
+const chainAt = (height: number) =>
+  jest
+    .mocked(lastBlock)
+    .mockResolvedValue({ height, hash: `hash-${height}`, time: new Date(0) } as Awaited<
+      ReturnType<typeof lastBlock>
+    >);
 
 const mockDevice = { deviceId: "test-device" } as never;
 const mockCurrency = { id: "aleo", type: "CryptoCurrency" } as CryptoCurrency;
@@ -1397,114 +1431,768 @@ describe("useAleoValidators", () => {
     estimatedYearlyRewardsRate: 0.07,
   };
 
-  // The hook keeps a module-level render seed per currency id, so every test needs
-  // its own id or it would be handed the previous test's seed instead of loading.
-  let currencyIdCounter = 0;
-  const freshCurrency = () =>
-    ({ id: `aleo_test_${currencyIdCounter++}`, type: "CryptoCurrency" }) as CryptoCurrency;
+  let wrapper: ReturnType<typeof createWrapper>;
 
   beforeEach(() => {
     jest.mocked(getValidators).mockReset();
+    // A store per test, so one test's cached committee is never another's starting point.
+    wrapper = createWrapper(createTestStore([aleoApi], { disableSerializableCheck: true }));
   });
+
+  const validatorsOf = (currency: CryptoCurrency) =>
+    renderHook(() => useAleoValidators(currency), { wrapper });
 
   it("starts loading with an empty list, then resolves to the fetched committee", async () => {
     jest.mocked(getValidators).mockResolvedValue([validator]);
-    const currency = freshCurrency();
 
-    const { result } = renderHook(() => useAleoValidators(currency));
+    const { result } = validatorsOf(mockCurrency);
 
-    expect(result.current).toEqual({ validators: [], loading: true, error: null });
+    expect(result.current).toEqual({
+      validators: [],
+      loading: true,
+      fetching: true,
+      error: null,
+      refetch: expect.any(Function),
+    });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(result.current).toEqual({ validators: [validator], loading: false, error: null });
+    expect(result.current).toEqual({
+      validators: [validator],
+      loading: false,
+      fetching: false,
+      error: null,
+      refetch: expect.any(Function),
+    });
   });
 
-  it("seeds a remount with the last-seen list so the picker does not flash empty", async () => {
+  it("serves a second mount from the cache, so the picker does not flash empty", async () => {
     jest.mocked(getValidators).mockResolvedValue([validator]);
-    const currency = freshCurrency();
 
-    const first = renderHook(() => useAleoValidators(currency));
+    const first = validatorsOf(mockCurrency);
     await waitFor(() => expect(first.result.current.loading).toBe(false));
     first.unmount();
 
-    const second = renderHook(() => useAleoValidators(currency));
+    const second = validatorsOf(mockCurrency);
 
     expect(second.result.current).toEqual({
       validators: [validator],
       loading: false,
+      fetching: true,
       error: null,
+      refetch: expect.any(Function),
     });
 
-    // Let the background refetch settle inside act, so its setState does not
-    // land after the test has finished.
+    // Let the on-mount refetch settle inside act, so its dispatch does not land
+    // after the test has finished.
     await act(async () => {});
   });
 
-  it("hands each mount its own list, so a picker sorting in place cannot corrupt the cache", async () => {
-    const second = { ...validator, address: "aleo1second" };
-    const arrayHeldByTheCoinModuleCache = [validator, second];
-    // A separate snapshot: asserting against the array under mutation would pass
-    // whether or not the hook copies.
-    const expectedOrder = [validator, second];
-    jest.mocked(getValidators).mockResolvedValue(arrayHeldByTheCoinModuleCache);
-    const currency = freshCurrency();
+  it("clears `fetching` once the background refetch lands, so the spinner goes away", async () => {
+    jest.mocked(getValidators).mockResolvedValue([validator]);
 
-    const first = renderHook(() => useAleoValidators(currency));
+    const first = validatorsOf(mockCurrency);
     await waitFor(() => expect(first.result.current.loading).toBe(false));
-
-    first.result.current.validators.reverse();
     first.unmount();
 
-    const remount = renderHook(() => useAleoValidators(currency));
+    const second = validatorsOf(mockCurrency);
+    expect(second.result.current.fetching).toBe(true);
 
-    expect(remount.result.current.validators).toEqual(expectedOrder);
-
-    await act(async () => {});
-    expect(remount.result.current.validators).toEqual(expectedOrder);
+    await waitFor(() => expect(second.result.current.fetching).toBe(false));
   });
 
-  it("surfaces a fetch failure as an empty list when there is no seed to fall back on", async () => {
+  it("hands out a mutable copy, so a picker sorting in place does not throw on the frozen cache", async () => {
+    const second = { ...validator, address: "aleo1second" };
+    jest.mocked(getValidators).mockResolvedValue([validator, second]);
+
+    const { result } = validatorsOf(mockCurrency);
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(() => result.current.validators.reverse()).not.toThrow();
+  });
+
+  it("surfaces a fetch failure as an empty list when there is nothing cached to fall back on", async () => {
     const error = new Error("offline");
     jest.mocked(getValidators).mockRejectedValue(error);
-    const currency = freshCurrency();
 
-    const { result } = renderHook(() => useAleoValidators(currency));
+    const { result } = validatorsOf(mockCurrency);
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.error).toBe(error);
     expect(result.current.validators).toEqual([]);
   });
 
-  it("keeps the last-seen list when a later refetch fails, so offline degrades to stale", async () => {
-    const error = new Error("offline");
+  it("keeps the cached list when a later refetch fails, so offline degrades to stale", async () => {
     jest.mocked(getValidators).mockResolvedValue([validator]);
-    const currency = freshCurrency();
 
-    const first = renderHook(() => useAleoValidators(currency));
+    const first = validatorsOf(mockCurrency);
     await waitFor(() => expect(first.result.current.loading).toBe(false));
     first.unmount();
 
-    jest.mocked(getValidators).mockRejectedValue(error);
-    const second = renderHook(() => useAleoValidators(currency));
+    jest.mocked(getValidators).mockRejectedValue(new Error("offline"));
+    const second = validatorsOf(mockCurrency);
 
-    await waitFor(() => expect(second.result.current.error).toBe(error));
+    await waitFor(() => expect(getValidators).toHaveBeenCalledTimes(2));
     expect(second.result.current.validators).toEqual([validator]);
+    expect(second.result.current.error).toBeNull();
     expect(second.result.current.loading).toBe(false);
+  });
+
+  it("refetches on retry, which is what clears an error the first load left behind", async () => {
+    jest.mocked(getValidators).mockRejectedValue(new Error("offline"));
+
+    const { result } = validatorsOf(mockCurrency);
+    await waitFor(() => expect(result.current.error).toBeTruthy());
+
+    jest.mocked(getValidators).mockResolvedValue([validator]);
+    await act(async () => {
+      result.current.refetch();
+    });
+
+    await waitFor(() => expect(result.current.validators).toEqual([validator]));
+    expect(result.current.error).toBeNull();
   });
 
   it("refetches and never shows the previous network's committee on a currency switch", async () => {
     const testnetValidator = { ...validator, address: "aleo1testnet" };
+    const testnetCurrency = { id: "aleo_testnet", type: "CryptoCurrency" } as CryptoCurrency;
     jest.mocked(getValidators).mockResolvedValue([validator]);
 
     const { result, rerender } = renderHook(({ currency }) => useAleoValidators(currency), {
-      initialProps: { currency: freshCurrency() },
+      initialProps: { currency: mockCurrency },
+      wrapper,
     });
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     jest.mocked(getValidators).mockResolvedValue([testnetValidator]);
-    rerender({ currency: freshCurrency() });
+    rerender({ currency: testnetCurrency });
 
     expect(result.current.validators).toEqual([]);
+    expect(result.current.loading).toBe(true);
+
     await waitFor(() => expect(result.current.validators).toEqual([testnetValidator]));
+    expect(result.current.loading).toBe(false);
+  });
+});
+
+describe("aleo chain-tip hooks", () => {
+  const POLL_MS = 10_000;
+  /** Deliberately not the hook's own fallback, so a test can tell the two apart. */
+  const MAX_ATTEMPTS = 2;
+
+  let wrapper: ReturnType<typeof createWrapper>;
+  let sync: jest.Mock;
+
+  beforeEach(() => {
+    // Fake timers drive the query's polling, so a poll happens when a test asks for one.
+    jest.useFakeTimers();
+    jest.mocked(lastBlock).mockReset();
+    sync = jest.fn();
+    jest.mocked(useBridgeSync).mockReturnValue(sync);
+    jest.mocked(getSyncSkipUnderPriority).mockReturnValue(-1);
+    jest.mocked(useAccountSyncState).mockReturnValue({ pending: false, error: null });
+    jest.mocked(getCurrencyConfiguration).mockReturnValue({
+      liveBlockHeightPollMs: POLL_MS,
+      maxUnbondingSyncAttempts: MAX_ATTEMPTS,
+    } as unknown as ReturnType<typeof getCurrencyConfiguration>);
+    wrapper = createWrapper(createTestStore([aleoApi], { disableSerializableCheck: true }));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  const nextPoll = () =>
+    act(async () => {
+      jest.advanceTimersByTime(POLL_MS);
+    });
+
+  describe("useAleoLiveBlockHeight", () => {
+    const FALLBACK = 1_000;
+
+    const heightOf = (options: { fallbackHeight: number; enabled: boolean; paused?: boolean }) =>
+      renderHook(() => useAleoLiveBlockHeight("aleo", options), { wrapper });
+
+    it("returns the account's height until the chain tip lands", async () => {
+      chainAt(FALLBACK + 50);
+
+      const { result } = heightOf({ fallbackHeight: FALLBACK, enabled: true });
+
+      expect(result.current).toBe(FALLBACK);
+      await waitFor(() => expect(result.current).toBe(FALLBACK + 50));
+    });
+
+    it("does not read the chain while disabled", async () => {
+      chainAt(FALLBACK + 50);
+
+      const { result } = heightOf({ fallbackHeight: FALLBACK, enabled: false });
+
+      await nextPoll();
+      expect(result.current).toBe(FALLBACK);
+      expect(lastBlock).not.toHaveBeenCalled();
+    });
+
+    it("never reports a tip below the account's height, so a lagging node cannot grow the countdown", async () => {
+      chainAt(FALLBACK - 200);
+
+      const { result } = heightOf({ fallbackHeight: FALLBACK, enabled: true });
+
+      await waitFor(() => expect(lastBlock).toHaveBeenCalledTimes(1));
+      expect(result.current).toBe(FALLBACK);
+    });
+
+    it("keeps the last good tip when a poll fails", async () => {
+      chainAt(FALLBACK + 50);
+
+      const { result } = heightOf({ fallbackHeight: FALLBACK, enabled: true });
+      await waitFor(() => expect(result.current).toBe(FALLBACK + 50));
+
+      jest.mocked(lastBlock).mockRejectedValue(new Error("offline"));
+      await nextPoll();
+
+      expect(lastBlock).toHaveBeenCalledTimes(2);
+      expect(result.current).toBe(FALLBACK + 50);
+    });
+
+    it("re-reads the chain tip on every poll interval", async () => {
+      chainAt(FALLBACK + 50);
+
+      const { result } = heightOf({ fallbackHeight: FALLBACK, enabled: true });
+      await waitFor(() => expect(result.current).toBe(FALLBACK + 50));
+
+      chainAt(FALLBACK + 120);
+      await nextPoll();
+
+      await waitFor(() => expect(result.current).toBe(FALLBACK + 120));
+    });
+
+    // What every mount before the coin config loads gets: `getCurrencyConfiguration` throws for a
+    // currency it has no entry for yet, in the query and in the polling interval alike.
+    it("stays on the account's height when the coin config cannot be read", async () => {
+      jest.mocked(getCurrencyConfiguration).mockImplementation(() => {
+        throw new Error("No currency configuration available for aleo");
+      });
+      chainAt(FALLBACK + 50);
+
+      const { result } = heightOf({ fallbackHeight: FALLBACK, enabled: true });
+      await nextPoll();
+
+      expect(result.current).toBe(FALLBACK);
+    });
+
+    it("drops the polled height once disabled", async () => {
+      chainAt(FALLBACK + 50);
+
+      const { result, rerender } = renderHook(
+        ({ enabled }: { enabled: boolean }) =>
+          useAleoLiveBlockHeight("aleo", { fallbackHeight: FALLBACK, enabled }),
+        { wrapper, initialProps: { enabled: true } },
+      );
+      await waitFor(() => expect(result.current).toBe(FALLBACK + 50));
+
+      rerender({ enabled: false });
+
+      expect(result.current).toBe(FALLBACK);
+    });
+
+    describe("paused", () => {
+      const pausedHeight = (initialPaused: boolean) =>
+        renderHook(
+          ({ paused }: { paused: boolean }) =>
+            useAleoLiveBlockHeight("aleo", {
+              fallbackHeight: FALLBACK,
+              enabled: true,
+              paused,
+            }),
+          { wrapper, initialProps: { paused: initialPaused } },
+        );
+
+      it("stops the ticker but keeps the polled height", async () => {
+        chainAt(FALLBACK + 50);
+
+        const { result, rerender } = pausedHeight(false);
+        await waitFor(() => expect(result.current).toBe(FALLBACK + 50));
+
+        jest.mocked(lastBlock).mockClear();
+        rerender({ paused: true });
+        await nextPoll();
+        await nextPoll();
+
+        expect(lastBlock).not.toHaveBeenCalled();
+        expect(result.current).toBe(FALLBACK + 50);
+      });
+
+      it("reads the tip on resume instead of waiting out a whole interval", async () => {
+        chainAt(FALLBACK + 50);
+
+        const { result, rerender } = pausedHeight(true);
+        await waitFor(() => expect(result.current).toBe(FALLBACK + 50));
+
+        jest.mocked(lastBlock).mockClear();
+        chainAt(FALLBACK + 60);
+        rerender({ paused: false });
+        await waitFor(() => expect(result.current).toBe(FALLBACK + 60));
+        expect(lastBlock).toHaveBeenCalledTimes(1);
+
+        chainAt(FALLBACK + 70);
+        await nextPoll();
+
+        await waitFor(() => expect(result.current).toBe(FALLBACK + 70));
+      });
+    });
+  });
+
+  describe("useSyncOnUnbondingComplete", () => {
+    const ACCOUNT_ID = "js:2:aleo:addr:";
+
+    beforeEach(() => {
+      chainAt(1);
+    });
+
+    const renderSync = (settling: boolean, paused?: boolean) =>
+      renderHook(
+        ({ enabled }: { enabled: boolean }) =>
+          useSyncOnUnbondingComplete(ACCOUNT_ID, "aleo", enabled, { paused }),
+        { wrapper, initialProps: { enabled: settling } },
+      );
+
+    const pollPastTheCap = async () => {
+      for (let poll = 0; poll < MAX_ATTEMPTS + 2; poll++) await nextPoll();
+    };
+
+    it("syncs as soon as the unbonding height is behind the chain, without waiting for a poll", () => {
+      renderSync(true);
+
+      expect(sync).toHaveBeenCalledTimes(1);
+      expect(sync).toHaveBeenCalledWith({
+        type: "SYNC_ONE_ACCOUNT",
+        accountId: ACCOUNT_ID,
+        priority: UNBONDING_SYNC_PRIORITY,
+        reason: "aleo-unbonding-complete",
+      });
+    });
+
+    it("reads neither the chain nor the bridge while the countdown is still running", async () => {
+      renderSync(false);
+
+      await nextPoll();
+
+      expect(sync).not.toHaveBeenCalled();
+      expect(lastBlock).not.toHaveBeenCalled();
+    });
+
+    it("retries once per fresh chain tip and gives up after the coin config's attempt cap", async () => {
+      renderSync(true);
+
+      await pollPastTheCap();
+
+      expect(sync).toHaveBeenCalledTimes(MAX_ATTEMPTS);
+    });
+
+    it("re-arms the attempts when a later unbonding starts settling", async () => {
+      const { rerender } = renderSync(true);
+      await pollPastTheCap();
+      expect(sync).toHaveBeenCalledTimes(MAX_ATTEMPTS);
+
+      rerender({ enabled: false });
+      rerender({ enabled: true });
+
+      expect(sync).toHaveBeenCalledTimes(MAX_ATTEMPTS + 1);
+    });
+
+    it("does not spend an attempt on a tick that arrives while the account is still syncing", async () => {
+      const { rerender } = renderSync(true);
+      expect(sync).toHaveBeenCalledTimes(1);
+
+      jest.mocked(useAccountSyncState).mockReturnValue({ pending: true, error: null });
+      rerender({ enabled: true });
+      await nextPoll();
+      await nextPoll();
+      expect(sync).toHaveBeenCalledTimes(1);
+
+      jest.mocked(useAccountSyncState).mockReturnValue({ pending: false, error: null });
+      await nextPoll();
+
+      expect(sync).toHaveBeenCalledTimes(2);
+    });
+
+    it("skips its tick while a device flow holds a higher skip priority, keeping its attempts", async () => {
+      jest.mocked(getSyncSkipUnderPriority).mockReturnValue(100);
+
+      renderSync(true);
+      await pollPastTheCap();
+      expect(sync).not.toHaveBeenCalled();
+
+      jest.mocked(getSyncSkipUnderPriority).mockReturnValue(-1);
+      await nextPoll();
+
+      expect(sync).toHaveBeenCalledTimes(1);
+    });
+
+    it("lets go of the chain tip once the attempts are spent, holding no poll it cannot use", async () => {
+      renderSync(true);
+      await pollPastTheCap();
+      expect(sync).toHaveBeenCalledTimes(MAX_ATTEMPTS);
+
+      jest.mocked(lastBlock).mockClear();
+      await nextPoll();
+
+      expect(lastBlock).not.toHaveBeenCalled();
+    });
+
+    it("syncs the account a reused instance is handed, without waiting for the next chain tip", async () => {
+      const OTHER_ACCOUNT_ID = "js:2:aleo:other:";
+      jest.mocked(getCurrencyConfiguration).mockReturnValue({
+        liveBlockHeightPollMs: POLL_MS,
+        maxUnbondingSyncAttempts: 5,
+      } as unknown as ReturnType<typeof getCurrencyConfiguration>);
+      const { rerender } = renderHook(
+        ({ accountId }: { accountId: string }) =>
+          useSyncOnUnbondingComplete(accountId, "aleo", true),
+        { wrapper, initialProps: { accountId: ACCOUNT_ID } },
+      );
+
+      // The shared tip has landed and this instance has taken it, so only the key tells the
+      // next account's first chance apart from one already spent.
+      await waitFor(() => expect(sync).toHaveBeenCalledTimes(2));
+
+      rerender({ accountId: OTHER_ACCOUNT_ID });
+
+      expect(sync).toHaveBeenCalledTimes(3);
+      expect(sync).toHaveBeenLastCalledWith(
+        expect.objectContaining({ accountId: OTHER_ACCOUNT_ID }),
+      );
+    });
+
+    it("forwards `paused` so it doesn't hold the shared query's polling loop open", async () => {
+      renderSync(true, true);
+
+      await nextPoll();
+      await nextPoll();
+
+      expect(lastBlock).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("useAleoUnbondingState", () => {
+    const SYNCED_HEIGHT = 1_000;
+    const UNBONDING_HEIGHT = 1_030;
+
+    const account = {
+      ...ALEO_ACCOUNT_1,
+      blockHeight: SYNCED_HEIGHT,
+      pendingOperations: [],
+    } as AleoAccount;
+
+    const positionWith = (overrides: Partial<AleoStakingPositionView>): AleoStakingPositionView =>
+      ({
+        unbondingHeight: UNBONDING_HEIGHT,
+        claimableBalance: new BigNumber(0),
+        hasUnbonding: true,
+        ...overrides,
+      }) as AleoStakingPositionView;
+
+    const stateOf = (position: AleoStakingPositionView, paused?: boolean) =>
+      renderHook(() => useAleoUnbondingState(account, position, { paused }), {
+        wrapper,
+      });
+
+    it("counts the remaining blocks down against the live chain tip", async () => {
+      chainAt(UNBONDING_HEIGHT - 4);
+
+      const { result } = stateOf(positionWith({}));
+
+      const blocksLeftAtSyncedHeight = UNBONDING_HEIGHT - SYNCED_HEIGHT;
+      expect(result.current).toMatchObject({
+        isCountingDown: true,
+        blocksLeft: blocksLeftAtSyncedHeight,
+      });
+      await waitFor(() => expect(result.current.blocksLeft).toBe(4));
+      expect(result.current.isSettling).toBe(false);
+    });
+
+    it("reports settling and asks the bridge to catch up once the chain passed the height", async () => {
+      chainAt(UNBONDING_HEIGHT + 2);
+
+      const { result } = stateOf(positionWith({}));
+      await waitFor(() => expect(result.current.isSettling).toBe(true));
+
+      expect(result.current.blocksLeft).toBe(0);
+      expect(sync).toHaveBeenCalledTimes(1);
+      expect(sync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          accountId: account.id,
+          reason: "aleo-unbonding-complete",
+        }),
+      );
+    });
+
+    it("neither polls nor syncs when the unbonding entry has nothing left in it", async () => {
+      chainAt(UNBONDING_HEIGHT + 2);
+
+      const { result } = stateOf(
+        positionWith({
+          hasUnbonding: false,
+          unbondingHeight: SYNCED_HEIGHT - 5,
+        }),
+      );
+      await nextPoll();
+
+      expect(result.current.isSettling).toBe(true);
+      expect(sync).not.toHaveBeenCalled();
+      expect(lastBlock).not.toHaveBeenCalled();
+    });
+
+    it("does not read the chain once the balance is claimable", async () => {
+      chainAt(UNBONDING_HEIGHT + 2);
+
+      const { result } = stateOf(positionWith({ claimableBalance: new BigNumber(5_000) }));
+
+      await nextPoll();
+
+      expect(result.current).toMatchObject({
+        isClaimable: true,
+        isCountingDown: false,
+      });
+      expect(lastBlock).not.toHaveBeenCalled();
+    });
+
+    it("passes the caller's pause through to the chain-tip poll", async () => {
+      chainAt(UNBONDING_HEIGHT - 4);
+      const position = positionWith({});
+
+      const { result, rerender } = renderHook(
+        ({ paused }: { paused: boolean }) => useAleoUnbondingState(account, position, { paused }),
+        { wrapper, initialProps: { paused: false } },
+      );
+      await waitFor(() => expect(result.current.blocksLeft).toBe(4));
+
+      jest.mocked(lastBlock).mockClear();
+      rerender({ paused: true });
+      await nextPoll();
+      await nextPoll();
+
+      expect(lastBlock).not.toHaveBeenCalled();
+      expect(result.current.blocksLeft).toBe(4);
+    });
+  });
+});
+
+describe("useAleoStakingPosition", () => {
+  const pendingOperation = (type: OperationType): Operation =>
+    ({
+      id: `pending-${type}`,
+      hash: "",
+      type,
+      value: new BigNumber(1),
+      fee: new BigNumber(1),
+      senders: [],
+      recipients: [],
+      accountId: ALEO_ACCOUNT_1.id,
+      date: new Date(),
+      blockHash: null,
+      blockHeight: null,
+      extra: {},
+    }) as unknown as Operation;
+
+  let wrapper: ReturnType<typeof createWrapper>;
+
+  const positionFor = async (pendingOperations: Operation[]) => {
+    const account = accountWith({ pendingOperations });
+    const { result } = renderHook(() => useAleoStakingPosition(account), { wrapper });
+    await act(async () => {});
+    return result.current;
+  };
+
+  const accountWith = (overrides: Partial<AleoAccount>) =>
+    ({
+      ...ALEO_ACCOUNT_1,
+      currency: mockCurrency,
+      pendingOperations: [],
+      ...overrides,
+    }) as AleoAccount;
+
+  beforeEach(() => {
+    jest.mocked(getValidators).mockReset().mockResolvedValue([]);
+    // A store per test, so one test's cached committee is never another's starting point.
+    wrapper = createWrapper(createTestStore([aleoApi], { disableSerializableCheck: true }));
+  });
+
+  // `unbond_public` and `claim_unbond_public` share one `unbonding` slot on chain.
+  describe("hasPendingUnbondingChange", () => {
+    it("is false with nothing pending", async () => {
+      expect((await positionFor([])).hasPendingUnbondingChange).toBe(false);
+    });
+
+    it("is true for a pending unbond", async () => {
+      const position = await positionFor([pendingOperation("UNBOND")]);
+
+      expect(position.hasPendingUnbondingChange).toBe(true);
+      expect(position.hasPendingUnbond).toBe(true);
+      expect(position.hasPendingClaim).toBe(false);
+    });
+
+    it("is true for a pending claim", async () => {
+      const position = await positionFor([pendingOperation("WITHDRAW_UNBONDED")]);
+
+      expect(position.hasPendingUnbondingChange).toBe(true);
+      expect(position.hasPendingClaim).toBe(true);
+      expect(position.hasPendingUnbond).toBe(false);
+    });
+
+    it("ignores a pending bond, which writes the bonded mapping and not unbonding", async () => {
+      expect((await positionFor([pendingOperation("BOND")])).hasPendingUnbondingChange).toBe(false);
+    });
+
+    it("ignores an unrelated pending operation", async () => {
+      expect((await positionFor([pendingOperation("OUT")])).hasPendingUnbondingChange).toBe(false);
+    });
+  });
+
+  describe("nonEarningReason", () => {
+    const VALIDATOR_ADDRESS = "aleo1validator";
+
+    const earningValidator = {
+      address: VALIDATOR_ADDRESS,
+      name: "Validator One",
+      stakeMicrocredits: 0,
+      isOpen: true,
+      isUnbonding: false,
+      commissionPercent: 5,
+      estimatedYearlyRewardsRate: 0.07,
+    };
+
+    const bondedPosition = (bondedBalance: BigNumber) => {
+      const account = accountWith({
+        aleoResources: {
+          ...(ALEO_ACCOUNT_1 as AleoAccount).aleoResources,
+          bondedBalance,
+          bondedValidator: VALIDATOR_ADDRESS,
+        } as AleoAccount["aleoResources"],
+      });
+      return renderHook(() => useAleoStakingPosition(account), { wrapper });
+    };
+
+    beforeEach(() => {
+      jest
+        .mocked(getValidators)
+        .mockResolvedValue([earningValidator] as Awaited<ReturnType<typeof getValidators>>);
+    });
+
+    it("is undefined for a healthy position", async () => {
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
+
+      await waitFor(() => expect(result.current.validatorLabel).toBe("Validator One"));
+      expect(result.current.nonEarningReason).toBeUndefined();
+      expect(result.current.estimatedRate).toBe(0.07);
+    });
+
+    it("is ownStakeBelowMinimum below the delegator minimum", async () => {
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS).minus(1));
+
+      await waitFor(() => expect(result.current.nonEarningReason).toBe("ownStakeBelowMinimum"));
+      expect(result.current.estimatedRate).toBe(0);
+    });
+
+    it("keeps the validator's own reason over the delegator minimum", async () => {
+      jest
+        .mocked(getValidators)
+        .mockResolvedValue([{ ...earningValidator, nonEarningReason: "fullCommission" }] as Awaited<
+          ReturnType<typeof getValidators>
+        >);
+
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS).minus(1));
+
+      await waitFor(() => expect(result.current.nonEarningReason).toBe("fullCommission"));
+    });
+
+    it("is leftCommittee when the bonded validator is no longer in the committee", async () => {
+      jest.mocked(getValidators).mockResolvedValue([]);
+
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
+
+      await waitFor(() => expect(result.current.nonEarningReason).toBe("leftCommittee"));
+      expect(result.current.estimatedRate).toBe(0);
+    });
+
+    // The label is a name or nothing. Coalescing it to the bonded address would hand every view a
+    // string that looks like a name, leaving each of them to detect the address a second time.
+    it("leaves the label empty for a validator the committee does not name", async () => {
+      jest.mocked(getValidators).mockResolvedValue([]);
+
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
+
+      await waitFor(() => expect(result.current.nonEarningReason).toBe("leftCommittee"));
+      expect(result.current.validatorLabel).toBeNull();
+      expect(result.current.bondedValidator).toBe(VALIDATOR_ADDRESS);
+    });
+
+    // `nonEarningReason` and `estimatedRate` are both `undefined` here because nothing is known,
+    // not because the position is healthy — so the list's own state has to travel with them.
+    it("blames no one while the committee is still loading, and says it is loading", () => {
+      jest.mocked(getValidators).mockReturnValue(new Promise(() => {}));
+
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
+
+      expect(result.current.nonEarningReason).toBeUndefined();
+      expect(result.current.validatorsLoading).toBe(true);
+      expect(result.current.validatorsError).toBeNull();
+    });
+
+    it("blames no one when the committee could not be fetched at all, and reports the error", async () => {
+      const error = new Error("offline");
+      jest.mocked(getValidators).mockRejectedValue(error);
+
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
+
+      // The rejection has to reach the store before "blames no one" means anything.
+      await waitFor(() => expect(result.current.validatorsError).toBe(error));
+
+      expect(result.current.nonEarningReason).toBeUndefined();
+      expect(result.current.validatorsLoading).toBe(false);
+    });
+
+    it("reports the fetch as loading so views can skeleton instead of guessing", () => {
+      jest.mocked(getValidators).mockReturnValue(new Promise(() => {}));
+
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
+
+      expect(result.current.validatorsLoading).toBe(true);
+      expect(result.current.validatorsError).toBeNull();
+    });
+
+    it("hands the fetch error to views so they can stop claiming a status", async () => {
+      const error = new Error("offline");
+      jest.mocked(getValidators).mockRejectedValue(error);
+
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
+
+      await waitFor(() => expect(result.current.validatorsError).toBe(error));
+      expect(result.current.validatorsLoading).toBe(false);
+    });
+  });
+
+  describe("pendingKind", () => {
+    it("is null with nothing pending", async () => {
+      expect((await positionFor([])).pendingKind).toBeNull();
+    });
+
+    it("names the unbond for a pending unbond", async () => {
+      expect((await positionFor([pendingOperation("UNBOND")])).pendingKind).toBe("unbond");
+    });
+
+    it("names the claim for a pending claim", async () => {
+      expect((await positionFor([pendingOperation("WITHDRAW_UNBONDED")])).pendingKind).toBe(
+        "claim",
+      );
+    });
+
+    it("names the claim when both are pending, since a claim can only follow an unbond", async () => {
+      const position = await positionFor([
+        pendingOperation("UNBOND"),
+        pendingOperation("WITHDRAW_UNBONDED"),
+      ]);
+
+      expect(position.pendingKind).toBe("claim");
+    });
   });
 });

@@ -1,4 +1,10 @@
 import React from "react";
+import {
+  CardAssetDetailsDrawer,
+  CardAssetDetailsWithdrawDrawer,
+  CardAssetsManageDrawer,
+} from "@features/flow-pay-card-assets";
+import { AddToWalletScene } from "./AddToWalletScene";
 import { FreezeScene } from "./FreezeScene";
 import { MoreScene } from "./MoreScene";
 import { OverviewScene } from "./OverviewScene";
@@ -10,15 +16,48 @@ export function CardDetailsScene({
   overview,
   freeze,
   more,
+  addToWallet,
   transaction,
+  assetDetails,
+  assetWithdraw,
+  assetsManage,
 }: CardDetailsSceneProps) {
   switch (route.name) {
     case "freeze":
       return <FreezeScene {...freeze} />;
     case "more":
       return more ? <MoreScene {...more} /> : null;
+    case "addToWallet":
+      return <AddToWalletScene {...addToWallet} />;
     case "transaction":
       return transaction ? <TransactionScene {...transaction} /> : null;
+    case "assetDetails":
+      return assetDetails?.viewModel.selectedAsset ? (
+        <CardAssetDetailsDrawer
+          asset={assetDetails.viewModel.selectedAsset}
+          transactions={assetDetails.viewModel.selectedAssetTransactions}
+          copy={assetDetails.viewModel.dialogCopy}
+          formatBalance={assetDetails.viewModel.formatBalance}
+          formatters={assetDetails.viewModel.formatters}
+          onTopUp={assetDetails.viewModel.onTopUpPress}
+          onWithdraw={assetDetails.viewModel.onWithdrawPress}
+          onShowHistory={assetDetails.viewModel.onShowHistoryPress}
+        />
+      ) : null;
+    case "assetWithdraw":
+      return assetWithdraw ? (
+        <CardAssetDetailsWithdrawDrawer
+          copy={assetWithdraw.dialogCopy}
+          onContinue={assetWithdraw.onWithdrawContinue}
+        />
+      ) : null;
+    case "assetsManage":
+      return assetsManage ? (
+        <CardAssetsManageDrawer
+          rows={assetsManage.viewModel.rows}
+          onAddAsset={assetsManage.viewModel.onAddAssetPress}
+        />
+      ) : null;
     case "overview":
       return <OverviewScene {...overview} />;
   }

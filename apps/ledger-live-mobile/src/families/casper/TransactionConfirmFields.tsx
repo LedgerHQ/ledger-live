@@ -1,12 +1,12 @@
 import invariant from "invariant";
 import React from "react";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/casper/types";
 import { ExtraDeviceTransactionField } from "@ledgerhq/coin-casper/deviceTransactionConfig";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { TextValueField } from "~/components/ValidateOnDeviceDataRow";
-import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import { DataRowUnitValue } from "~/components/ValidateOnDeviceDataRow";
 
 interface FieldProps {
   account: Account;
@@ -20,15 +20,10 @@ function CasperExtendedAmountField({ account, field, transaction }: FieldProps) 
   invariant(transaction.family === "casper", "casper transaction");
 
   return (
-    <TextValueField
+    <DataRowUnitValue
       label={field.label}
-      value={
-        <CurrencyUnitValue
-          unit={currency.units[1]}
-          value={(field as ExtraDeviceTransactionField).value}
-          disableRounding
-        />
-      }
+      unit={currency.units[1]}
+      value={new BigNumber((field as ExtraDeviceTransactionField).value)}
     />
   );
 }

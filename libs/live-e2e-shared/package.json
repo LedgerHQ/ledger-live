@@ -18,6 +18,7 @@
   "dependencies": {
     "@domain/entity-currency-crypto": "workspace:*",
     "@features/platform-wallet-sync": "workspace:^",
+    "@ledgerhq/coin-zcash": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/devices": "catalog:",

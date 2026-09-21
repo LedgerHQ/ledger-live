@@ -30,6 +30,7 @@ const CONTACTS_USERDATA = "contacts";
 
 const CONTACT_NAME = generateContactName();
 const RENAMED_CONTACT_NAME = generateContactName();
+
 // i18n `contacts.addressCount_zero`.
 const NO_ADDRESS_LABEL = "0 address";
 

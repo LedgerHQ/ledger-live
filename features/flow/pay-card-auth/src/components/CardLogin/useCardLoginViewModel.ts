@@ -70,7 +70,11 @@ export function mapSnapshotToViewModel(
   return {
     ...copy,
     // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
-    isLoading: value !== "idle" && value !== "error" && value !== "awaitingCallback",
+    isLoading:
+      value !== "idle" &&
+      value !== "authError" &&
+      value !== "userFetchError" &&
+      value !== "awaitingCallback",
     errorMessage,
     onLoginPress,
     onAlreadyHaveCardPress,
@@ -85,6 +89,7 @@ export function useCardLoginViewModel({
   oauthConfig,
   callback,
   onTrackEvent,
+  requestProtection,
 }: CardLoginViewModelParams): CardLoginViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch<CardLoginDispatch>();
@@ -104,14 +109,20 @@ export function useCardLoginViewModel({
 
   const callbackCode = callback?.code;
   const callbackState = callback?.state;
+  const callbackAppId = callback?.appId;
 
   useEffect(() => {
     // A redirect that arrives while the screen is already open. The machine ignores it unless it is
     // waiting for one, so a repeat is harmless: the first callback wins.
     if (callbackCode) {
-      send({ type: "CALLBACK_RECEIVED", code: callbackCode, state: callbackState });
+      send({
+        type: "CALLBACK_RECEIVED",
+        code: callbackCode,
+        state: callbackState,
+        appId: callbackAppId,
+      });
     }
-  }, [callbackCode, callbackState, send]);
+  }, [callbackCode, callbackState, callbackAppId, send]);
 
   useEffect(() => {
     // `More` ended the session. `ready` raises the flag on entry, so a lowered flag while the
@@ -121,17 +132,37 @@ export function useCardLoginViewModel({
     }
   }, [isSignedIn, snapshot.value, send]);
 
-  const isIntroOpen = isIntroRequested && (snapshot.value === "idle" || snapshot.value === "error");
+  const isIntroOpen =
+    isIntroRequested &&
+    (snapshot.value === "idle" ||
+      snapshot.value === "authError" ||
+      snapshot.value === "userFetchError");
+
+  // Both ways to Baanx go through here: signing up and logging in alike need the app protected
+  // first, and a host that declines leaves the card where it was rather than carrying on.
+  const whenProtected = useCallback(
+    async () => !requestProtection || (await requestProtection()),
+    [requestProtection],
+  );
 
   const startLogin = useCallback(() => {
     setHasSignupFailed(false);
-    send({ type: "LOGIN" });
-  }, [send]);
+
+    void (async () => {
+      if (await whenProtected()) {
+        send({ type: "LOGIN" });
+      }
+    })();
+  }, [send, whenProtected]);
 
   const openSignup = useCallback(() => {
     setHasSignupFailed(false);
 
     void (async () => {
+      if (!(await whenProtected())) {
+        return;
+      }
+
       try {
         if (openHostedPage) {
           await openHostedPage(SIGNUP_PATH);
@@ -142,7 +173,7 @@ export function useCardLoginViewModel({
         setHasSignupFailed(true);
       }
     })();
-  }, [openHostedPage, openHostedLogin, oauthConfig]);
+  }, [openHostedPage, openHostedLogin, oauthConfig, whenProtected]);
 
   const trackCta = useCallback(
     (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {

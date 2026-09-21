@@ -315,7 +315,7 @@ implementation guide for adding a new intent.
    owned by a `features/` package keeps everything in one directory instead.
    Read more:
    [Recommended file organization](#recommended-file-organization),
-   [Intents living in the DDD structure](#intents-living-in-the-ddd-structure),
+   [Intents living in a `features/` package](#intents-living-in-a-features-package),
    [`IntentDefinition`](#1-intentdefinition----shared-cross-platform-logic),
    [`IntentPlatformDefinition`](#2-intentplatformdefinition----platform-specific-ui).
 
@@ -901,7 +901,7 @@ inside a single platform package or app first, then move `types.ts`, `job.ts`,
 and `intentDefinition.ts` into a shared lib later without changing the platform
 file naming.
 
-#### Intents living in the DDD structure
+#### Intents living in a `features/` package
 
 > [!WARNING]
 > **Not ready yet — do not follow this layout.** It only holds for an intent whose

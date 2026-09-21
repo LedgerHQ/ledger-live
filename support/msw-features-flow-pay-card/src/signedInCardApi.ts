@@ -1,10 +1,12 @@
 import { http, HttpResponse } from "msw";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
+import { mockPayCardRewardWallet } from "@domain/api-card-management/mock/card-wallets";
 import { CARD_API_BASE_URL } from "@support/msw-features-flow-pay-card";
 
 export const CARD_STATUS_URL = `${CARD_API_BASE_URL}/v1/card/status`;
 export const CARD_USER_URL = `${CARD_API_BASE_URL}/v1/user`;
 export const CARD_TRANSACTIONS_URL = `${CARD_API_BASE_URL}/v1/card/transactions`;
+export const CARD_REWARD_WALLET_URL = `${CARD_API_BASE_URL}/v1/wallet/reward`;
 
 export const CARD_STATUS = {
   id: "000000000050277836",
@@ -25,4 +27,5 @@ export const signedInCardApiHandlers = [
   http.get(CARD_STATUS_URL, () => HttpResponse.json(CARD_STATUS)),
   http.get(CARD_USER_URL, () => HttpResponse.json(CARD_USER)),
   http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(mockPayCardTransactions())),
+  http.get(CARD_REWARD_WALLET_URL, () => HttpResponse.json(mockPayCardRewardWallet())),
 ];

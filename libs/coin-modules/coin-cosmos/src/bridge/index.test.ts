@@ -2,6 +2,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
+import cryptoFactory from "../chain/chain";
 import cosmosCoinConfig, { cosmosConfig } from "../config";
 import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
 import { CosmosCurrencyConfig, CosmosValidatorItem } from "../types";
@@ -60,6 +61,22 @@ describe("hydrate", () => {
       mockCurrency.id,
       asSafeCosmosPreloadData(data),
     );
+  });
+
+  it("should hydrate a zero-gas chain instead of treating the zero as a missing config", () => {
+    // Regression test: `minGasPrice: 0` is legitimate on a fee-less chain (e.g. gonka) and must
+    // not be mistaken for an absent config by the falsy guard in preload.ts.
+    const zeroGasConfig = { lcd: "http://lcd-endpoint", minGasPrice: 0 } as CosmosCurrencyConfig;
+    const data = { config: zeroGasConfig, validators: mockValidators };
+    hydrate(data, mockCurrency);
+
+    expect(CosmosValidatorsManager).toHaveBeenCalledWith(getCryptoCurrencyById(mockCurrency.id));
+    expect(setCosmosPreloadData).toHaveBeenCalledWith(
+      mockCurrency.id,
+      asSafeCosmosPreloadData(data),
+    );
+    expect(cryptoFactory(mockCurrency.id).lcd).toBe("http://lcd-endpoint");
+    expect(cryptoFactory(mockCurrency.id).minGasPrice).toBe(0);
   });
 
   it("should return undefined if config is invalid", () => {

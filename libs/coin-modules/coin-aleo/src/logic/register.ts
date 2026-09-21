@@ -6,8 +6,9 @@ import type { AleoCoinConfig, AleoRegistration } from "../types";
 /**
  * Enrolls a view key into the Provable record scanner and returns its `provableId` handle.
  *
- * Not idempotent: each call enrolls again, so the caller persists the `provableId` and only
- * registers when it is missing.
+ * Idempotent for the same view key: Provable returns the same scanner UUID.
+ * Confirmation:
+ * https://ledger-slack-connect.slack.com/archives/C08J397T83V/p1789465392640909
  */
 export async function register(config: AleoCoinConfig, viewKey: string): Promise<AleoRegistration> {
   invariant(viewKey, "aleo/register: a view key is required to register with the Provable scanner");

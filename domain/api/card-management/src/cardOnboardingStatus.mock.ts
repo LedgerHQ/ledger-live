@@ -1,9 +1,4 @@
-import type {
-  PayCardInternalWallet,
-  PayCardLinkedWallet,
-  PayCardStatus,
-  PayCardUser,
-} from "./types";
+import type { PayCardStatus, PayCardUser } from "./types";
 
 /**
  * What the Card endpoints should answer, so onboarding can be put into a given state.
@@ -19,7 +14,7 @@ export type CardOnboardingStatusMock = {
   readonly accountVerified?: boolean;
   /** `GET /v1/card/status`: whether a card is answered with at all. */
   readonly hasCard?: boolean;
-  /** `GET /v1/wallet/internal(/card_linked)`: whether the linked wallet holds anything. */
+  /** `GET /v1/wallet/internal(/card_linked)`: whether the linked wallets hold anything. */
   readonly walletFunded?: boolean;
 };
 
@@ -52,8 +47,6 @@ export function clearCardOnboardingStatusMock(): void {
   answers = {};
 }
 
-const MOCK_WALLET_ID = "11111111-1111-4111-8111-111111111111";
-
 export function mockPayCardUser(verified: boolean): PayCardUser {
   return {
     id: "00000000-0000-4000-8000-000000000000",
@@ -71,29 +64,4 @@ export function mockPayCardStatus(): PayCardStatus {
     type: "VIRTUAL",
     orderedAt: "2026-01-01T00:00:00.000Z",
   };
-}
-
-/** The join keys balances to linked wallets by id, so both answers describe the same wallet. */
-export function mockPayCardInternalWallets(funded: boolean): readonly PayCardInternalWallet[] {
-  return [
-    {
-      id: MOCK_WALLET_ID,
-      balance: funded ? "125.40" : "0.00",
-      currency: "usdc",
-      address: "0x0000000000000000000000000000000000000000",
-      addressMemo: null,
-    },
-  ];
-}
-
-export function mockPayCardLinkedWallets(): readonly PayCardLinkedWallet[] {
-  return [
-    {
-      id: MOCK_WALLET_ID,
-      address: "0x0000000000000000000000000000000000000000",
-      currency: "usdc",
-      network: "ethereum",
-      priority: 1,
-    },
-  ];
 }

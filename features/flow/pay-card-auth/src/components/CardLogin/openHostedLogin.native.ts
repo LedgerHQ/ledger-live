@@ -1,4 +1,4 @@
-import { openAuthSessionAsync } from "expo-web-browser";
+import { openAuthSessionAsync, openBrowserAsync } from "expo-web-browser";
 import type { HostedLoginResult } from "../../state/types";
 
 /**
@@ -21,4 +21,12 @@ export async function openHostedLoginInSecureBrowser(
   const result = await openAuthSessionAsync(loginUrl, deepLink);
 
   return result.type === "success" ? { type: "success", url: result.url } : { type: "dismissed" };
+}
+
+/**
+ * Opens a hosted page the holder browses and closes on their own — unlike the login above, nothing
+ * redirects back into the app, so there is no result to report.
+ */
+export async function openHostedPageInSecureBrowser(url: string): Promise<void> {
+  await openBrowserAsync(url);
 }

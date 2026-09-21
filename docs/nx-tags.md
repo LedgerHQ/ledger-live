@@ -6,7 +6,7 @@ Workspace packages get **inferred tags** from their path (and a few well-known p
 
 | Tag | Meaning |
 | --- | --- |
-| `scope:libs` | Under `libs/` |
+| `scope:libs` | Under `libs/` — the [legacy](./monorepo-architecture.md#legacy-libs) side of the repo |
 | `scope:libs-non-ui` | Under `libs/` but not `libs/ui/` |
 | `scope:libs-ui` | Under `libs/ui/` |
 | `scope:libs-ledgerjs` | Under `libs/ledgerjs/` |
@@ -17,6 +17,7 @@ Workspace packages get **inferred tags** from their path (and a few well-known p
 | `scope:devtools` | Under `devtools/` |
 | `scope:apps` | Desktop, mobile, CLI, web-tools, or Playwright/Detox E2E app projects (see type tags) |
 | `scope:e2e` | Under `e2e/` |
+| `scope:e2e-tooling` | Under `e2e/tooling/` |
 | `scope:tools` | Under `tools/` |
 | `scope:no-apps` | Project root is not under `apps/` (includes libs, features, tools, e2e, tests, root package, etc.) |
 

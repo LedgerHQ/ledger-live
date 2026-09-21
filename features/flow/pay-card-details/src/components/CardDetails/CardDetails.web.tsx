@@ -3,11 +3,12 @@ import { CardActions } from "../CardActions/CardActions";
 import { CardArtwork } from "../CardArtwork/CardArtwork";
 import { CardFlip } from "../CardFlip/CardFlip";
 import { CardVisual } from "../CardVisual/CardVisual";
+import { Reward } from "../Reward/Reward";
 import { useRevealViewModel } from "../Reveal/useRevealViewModel";
 import type { CardDetailsProps } from "../../types";
 
-export function CardDetails({ cardVisual, unlock }: CardDetailsProps) {
-  const reveal = useRevealViewModel({ unlock });
+export function CardDetails({ cardVisual, formatters, cardSettingsActions }: CardDetailsProps) {
+  const reveal = useRevealViewModel();
 
   return (
     <div className="flex flex-col gap-16">
@@ -15,7 +16,8 @@ export function CardDetails({ cardVisual, unlock }: CardDetailsProps) {
         reveal={reveal}
         cardFace={cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
       />
-      <CardActions reveal={reveal} />
+      <CardActions reveal={reveal} cardSettingsActions={cardSettingsActions} />
+      <Reward formatters={formatters} />
     </div>
   );
 }

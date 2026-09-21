@@ -11,7 +11,13 @@ import type { AppLockState, AuthenticationType } from "./types";
 
 function state(overrides: Partial<AppLockState> = {}): { appLock: AppLockState } {
   return {
-    appLock: { hasPassword: false, biometricsEnabled: false, isLocked: false, ...overrides },
+    appLock: {
+      isHydrated: false,
+      hasPassword: false,
+      biometricsEnabled: false,
+      isLocked: false,
+      ...overrides,
+    },
   };
 }
 

@@ -225,6 +225,9 @@ export class Account {
 
   static readonly MINA_1 = new Account(Currency.MINA, "Mina 1", 0, "44'/12586'/0'/0/0");
   static readonly MINA_2 = new Account(Currency.MINA, "Mina 2", 1, "44'/12586'/1'/0/0");
+  static readonly MINA_3 = new Account(Currency.MINA, "Mina 3", 2, "44'/12586'/2'/0/0");
+  static readonly MINA_4 = new Account(Currency.MINA, "Mina 4", 3, "44'/12586'/3'/0/0");
+  static readonly MINA_5 = new Account(Currency.MINA, "Mina 5", 4, "44'/12586'/4'/0/0");
 
   static readonly MULTIVERS_X_1 = new Account(
     Currency.MULTIVERS_X,

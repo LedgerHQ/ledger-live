@@ -55,7 +55,6 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/live-network": "catalog:",
-    "@ledgerhq/logs": "catalog:",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",

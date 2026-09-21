@@ -29,8 +29,10 @@
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:^",
+    "@domain/entity-card-asset-mapping": "workspace:^",
     "@features/flow-pay-card-auth": "workspace:*",
-    "@shared/i18n": "workspace:*"
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",

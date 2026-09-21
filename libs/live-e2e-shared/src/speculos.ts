@@ -629,6 +629,19 @@ export async function waitFor(
   );
 }
 
+/**
+ * Waits for the device to return to its app-ready screen after a status page
+ * that answers a command and then draws its own screen -- during that
+ * window, the app's own APDU loop can drop an incoming command instead of
+ * queuing it (LIVE-37178). The default maxAttempts (9 x the 500ms poll
+ * interval = 4.5s) is an upper bound on that screen's own duration, not a
+ * guess about CI load. "${name} app is ready" matches how these screens
+ * render today (confirmed on Zcash and Exchange, see EXCHANGE_APP_IS_READY).
+ */
+export async function waitForAppReady(speculosApp: AppInfos, maxAttempts = 9): Promise<string> {
+  return waitFor(`${speculosApp.name} app is ready`, maxAttempts);
+}
+
 const SWAP_INIT_STALL_HINT =
   `\nHint: The device Exchange app is ready but Ledger Live never ` +
   `delivered the swap payload, so "Review transaction" was never reached.\nSee the ` +

@@ -14,12 +14,22 @@ export const CARD_COPY = {
   unfreezeErrorTitle: "Unfreeze failed",
   errorDescription: "Something went wrong. Please try again.",
   retry: "Try again",
-  placeholder: "Coming soon",
+  topUp: "Top up",
   details: "Details",
   numbersReveal: "View",
   numbersHide: "Hide",
   numbersFailed: "Couldn't load card numbers",
   numbersImageAlt: "Card numbers",
+  reward: "Total cashback",
+} as const;
+
+export const ADD_TO_WALLET_COPY = {
+  entry: "Add to {{wallet}} Pay",
+  title: "Add to Apple Pay",
+  step1: "Go to Apple Wallet app and tap add (+)",
+  step2: "Select Debit or Credit Card",
+  step3: "Follow the instructions",
+  cta: "Go to Apple Wallet",
 } as const;
 
 export const MORE_COPY = {
@@ -73,7 +83,7 @@ export const CARD_RESOURCES = {
           freeze: CARD_COPY.freeze,
           unfreeze: CARD_COPY.unfreeze,
           goBack: CARD_COPY.goBack,
-          placeholder: CARD_COPY.placeholder,
+          topUp: CARD_COPY.topUp,
           details: CARD_COPY.details,
           freezeConfirm: {
             title: CARD_COPY.freezeTitle,
@@ -95,6 +105,21 @@ export const CARD_RESOURCES = {
             hide: CARD_COPY.numbersHide,
             failed: CARD_COPY.numbersFailed,
             imageAlt: CARD_COPY.numbersImageAlt,
+          },
+          reward: {
+            title: CARD_COPY.reward,
+          },
+          addToWallet: ADD_TO_WALLET_COPY.entry,
+        },
+        cardOnboarding: {
+          addToWallet: {
+            ios: {
+              title: ADD_TO_WALLET_COPY.title,
+              step1: ADD_TO_WALLET_COPY.step1,
+              step2: ADD_TO_WALLET_COPY.step2,
+              step3: ADD_TO_WALLET_COPY.step3,
+              cta: ADD_TO_WALLET_COPY.cta,
+            },
           },
         },
         cardMore: {

@@ -46,7 +46,8 @@ export default class ContactsPage {
   @Step("Add the contact {{0}}")
   async addContact(name: string) {
     await this.openAddContactDrawer();
-    await typeTextByElement(this.addContactNameInput(), name);
+    // LIVE-37168 - save button should remain interactable when the keyboard is open
+    await typeTextByElement(this.addContactNameInput(), name, false);
     await tapByElement(this.addContactSaveButton());
   }
 

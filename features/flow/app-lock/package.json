@@ -24,7 +24,9 @@
   },
   "dependencies": {
     "@features/platform-app-lock": "workspace:*",
-    "@shared/i18n": "workspace:*"
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-info-state": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

@@ -418,6 +418,7 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
       mint: mint,
       owner: mainAccount.freshAddress,
       associatedTokenAccountAddress,
+      tokenProgram,
     },
     warnings: {},
     errors,

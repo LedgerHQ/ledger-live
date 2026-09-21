@@ -42,6 +42,7 @@ import { NewSendModal } from "tests/page/modal/new.send.modal";
 import { PrivateBalanceModal } from "tests/page/modal/private.balance.modal";
 import { HistoryPage } from "tests/page/history.page";
 import { MainNavigationPage } from "tests/page/mainNavigation.page";
+import { PayTabPage } from "tests/page/payTab.page";
 import { SwapTransactionStatusDialog } from "tests/page/dialog/swap.transaction.status.dialog";
 import { TezosStakeModal } from "tests/page/modal/tezos.stake.modal";
 import { TezosEarningChoiceModal } from "tests/page/modal/tezos.earning.choice.modal";
@@ -51,6 +52,7 @@ import { UndelegateModal } from "tests/page/modal/undelegate.modal";
 import { MarketCoinPage } from "tests/page/marketCoin.page";
 import { CryptoAssetsPage } from "tests/page/cryptoAssets.page";
 import { TopBarSearch } from "tests/page/topBarSearch.page";
+import { ContactsPage } from "tests/page/contacts.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -92,6 +94,7 @@ export class Application extends PageHolder {
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public marketBanner = new MarketBannerPage(this.page);
   public myWallet = new MyWalletPage(this.page);
+  public contacts = new ContactsPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);
   public swapTransactionStatusDialog = new SwapTransactionStatusDialog(this.page);
   private trustchainPage: TrustchainPage | undefined;
@@ -110,6 +113,7 @@ export class Application extends PageHolder {
   }
   public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
+  public payTab = new PayTabPage(this.page);
   public tezosStake = new TezosStakeModal(this.page);
   public tezosEarningChoice = new TezosEarningChoiceModal(this.page);
   public tezosUnstake = new TezosUnstakeModal(this.page);

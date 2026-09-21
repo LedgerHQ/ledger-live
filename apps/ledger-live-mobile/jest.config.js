@@ -165,6 +165,11 @@ module.exports = {
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^react-native-gesture-handler$": "<rootDir>/node_modules/react-native-gesture-handler",
     "^react-native-gesture-handler/(.*)$": "<rootDir>/node_modules/react-native-gesture-handler/$1",
+    // Pin to a single instance so the jest-setup mock covers workspace packages too
+    // (e.g. @shared/ui-queued-bottom-sheet, which resolves its own pnpm copy otherwise and
+    // would then reach the real useBottomSheetInternal from inside a mocked sheet).
+    "^@gorhom/bottom-sheet$": "<rootDir>/node_modules/@gorhom/bottom-sheet",
+    "^@gorhom/bottom-sheet/(.*)$": "<rootDir>/node_modules/@gorhom/bottom-sheet/$1",
     // Pin to a single instance so components rendered from workspace packages
     // (e.g. @shared/ui-queued-bottom-sheet) share the app's SafeAreaProvider context
     // instead of resolving a second pnpm copy (duplicate context = "No safe
@@ -184,6 +189,8 @@ module.exports = {
     // packages it renders separate copies; map both to one stub.
     "^expo-crypto$": "<rootDir>/__mocks__/expo-crypto.ts",
     "^expo-web-browser$": "<rootDir>/__mocks__/expo-web-browser.ts",
+    // react-native-fast-crypto ships ESM and needs a native runtime; one stub for every copy.
+    "^react-native-fast-crypto$": "<rootDir>/__mocks__/react-native-fast-crypto.ts",
     // Redirect to mock for pre-compiled dependencies (like @ledgerhq/native-ui)
     "^react-native-worklets$": "<rootDir>/__mocks__/react-native-worklets.js",
     // Global mock for .lottie (dotLottie) files

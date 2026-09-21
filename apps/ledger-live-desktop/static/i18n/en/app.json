@@ -899,6 +899,7 @@
     },
     "card": {
       "title": "Crypto card",
+      "topUp": "Top up",
       "balanceLabel": "Balance",
       "freeze": "Freeze",
       "unfreeze": "Unfreeze",
@@ -918,11 +919,49 @@
         "description": "Something went wrong. Please try again.",
         "retry": "Try again"
       },
+      "assets": {
+        "title": "Assets",
+        "empty": "No assets yet",
+        "error": "Couldn't load assets",
+        "info": "These assets fund your card. Set the order they're charged in, or add more.",
+        "manage": "Manage",
+        "manageDialog": {
+          "title": "Manage assets",
+          "description": "Drag to set your funding order. If one asset runs low, the next one is used automatically.",
+          "addAssetCaption": "You'll be redirected to Baanx's page to add asset.",
+          "addAsset": "Add asset"
+        },
+        "details": {
+          "topUp": "Top up",
+          "withdraw": "Withdraw",
+          "transactions": "Transactions"
+        },
+        "withdraw": {
+          "title": "You'll be redirected to Baanx",
+          "description": "Withdraw funds from your Baanx account to your Ledger wallet address.",
+          "continue": "Continue"
+        },
+        "history": {
+          "columns": {
+            "amount": "Amount",
+            "value": "Value"
+          }
+        }
+      },
+      "reward": {
+        "title": "Total cashback"
+      },
       "numbers": {
         "reveal": "View",
         "hide": "Hide",
         "failed": "Couldn't load card numbers",
-        "imageAlt": "Card numbers"
+        "imageAlt": "Card numbers",
+        "unlockTitle": "Enter your password",
+        "passwordRequired": "Password required",
+        "passwordMismatch": "Passwords don't match",
+        "passwordIncorrect": "Incorrect password",
+        "passwordUnavailable": "Couldn't check your password",
+        "passwordCreateFailed": "Couldn't set your password"
       }
     },
     "cardTransactions": {
@@ -954,6 +993,31 @@
           "DECLINED": "Declined",
           "REVERTED": "Reverted"
         }
+      },
+      "history": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "unknownDate": "Date unavailable",
+        "columns": {
+          "transaction": "Transaction",
+          "cashback": "Cashback",
+          "fundingSources": "Funding sources",
+          "amount": "Amount"
+        },
+        "paidWithAssets": "Paid with {{count}} assets",
+        "goToPay": "Go to Pay",
+        "signedOut": {
+          "title": "Log in to see your card transactions",
+          "description": "Your card activity appears here once you’re logged in."
+        },
+        "empty": {
+          "title": "No card transactions yet",
+          "description": "Come back later to see your card transactions."
+        },
+        "error": {
+          "title": "Couldn't load card transactions",
+          "description": "Check your connection and try again."
+        }
       }
     },
     "cardOnboarding": {
@@ -965,6 +1029,28 @@
         "title": "Complete your card",
         "stepComplete": "Completed",
         "gotIt": "Got it"
+      },
+      "steps": {
+        "createAccount": {
+          "title": "Create your account",
+          "description": "Verify your identity to get started"
+        },
+        "chooseCardType": {
+          "title": "Choose your card type",
+          "description": "Pick between virtual and physical"
+        },
+        "topUpCard": {
+          "title": "Top up your card",
+          "description": "Add funds using USDC, USDT, BTC or more"
+        },
+        "firstPurchase": {
+          "title": "Make your first purchase",
+          "description": "Pay online or in store"
+        },
+        "appleGooglePay": {
+          "title": "Add to Apple/Google Pay",
+          "description": "Pay with your phone in store"
+        }
       }
     },
     "contacts": {
@@ -2069,6 +2155,13 @@
     "details": "{{ currency }} details",
     "multipleAddresses": "Why multiple addresses?",
     "extra": {
+      "pltReject": {
+        "title": "Reason",
+        "nonExistentToken": "This token doesn't exist on Concordium.",
+        "recipientNotFound": "The recipient account doesn't exist on Concordium.",
+        "insufficientBalance": "The account didn't hold enough of the token.",
+        "rejected": "Concordium refused this operation."
+      },
       "frozenAmount": "Frozen amount",
       "unfreezeAmount": "Unfreeze amount",
       "votes": "Votes ({{number}})",
@@ -3055,9 +3148,7 @@
           "validator": {
             "title": "Staking Providers"
           },
-          "connectDevice": {
-            "title": "Device"
-          },
+          "connectDevice": { "title": "Device" },
           "confirmation": {
             "title": "Confirmation",
             "success": {
@@ -7954,7 +8045,15 @@
     },
     "ConcordiumTokenTransferNotPermitted": {
       "title": "This account cannot send this token",
-      "description": "The token issuer restricts who may send it, and this account is not permitted. Contact the token issuer for access."
+      "description": "The token issuer restricts who may send it. Contact the token issuer for details."
+    },
+    "ConcordiumAccountNotAllowed": {
+      "title": "This account hasn't been approved to send this token",
+      "description": "The token issuer keeps a list of approved senders, and this account is not on it. Approval is managed by the issuer, not by Ledger."
+    },
+    "ConcordiumAccountDenied": {
+      "title": "This account is restricted from sending this token",
+      "description": "The token issuer has restricted this account. Contact the issuer for details."
     },
     "ConcordiumTokenRestrictionsUnverified": {
       "title": "Token restrictions could not be verified",
@@ -8207,6 +8306,30 @@
     },
     "AleoApiConfigurationResetError": {
       "title": "Record scanner configuration was reset, please sync your account again."
+    },
+    "AleoNoClaimableUnbondedFunds": {
+      "title": "No unbonded ALEO to claim yet",
+      "description": "Unbonded ALEO becomes claimable once its unbonding period has elapsed. Come back once it has."
+    },
+    "AleoAlreadyBondedElsewhere": {
+      "title": "Already staking with {{bondedValidator}}. Unstake before changing validator.",
+      "description": "Aleo allows one validator per account. Unstake from {{bondedValidator}} before staking elsewhere."
+    },
+    "AleoBondAmountTooLow": {
+      "title": "You must stake at least {{minAmount}} at a time.",
+      "description": "The minimum staking amount is {{minAmount}}."
+    },
+    "AleoClosedValidator": {
+      "title": "This validator is not accepting new delegators.",
+      "description": "This validator is not accepting new delegators. Choose an open validator to continue."
+    },
+    "AleoStakeAmountTooLow": {
+      "title": "Staking requires a total of at least {{minAmount}}.",
+      "description": "You must have at least {{minAmount}} staked in total."
+    },
+    "AleoUnbondingValidator": {
+      "title": "This validator is unbonding.",
+      "description": "This validator is withdrawing its own stake, so the network rejects new stake to it. Choose another validator to continue."
     },
     "BackupAppDataError": {
       "title": "Error during app data backup"
@@ -9273,6 +9396,7 @@
     "unsupportedNetworkTooltip": "{{network}} network is not supported yet",
     "notAvailableYet": "Not available yet",
     "selectAccount": "Select account",
+    "selectAccountToPayFrom": "Select account to pay from",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
     "selectAccountPerpsDescription": "Select an account you want to deposit funds into to place your trades",
     "selectAccountPerpsEmptyDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
@@ -9711,10 +9835,70 @@
         "lastSync": "Last synced: {{date}}"
       }
     },
+    "stake": {
+      "table": {
+        "header": "Staking",
+        "status": "Status",
+        "validator": "Validator",
+        "amount": "Amount",
+        "staked": "Staked",
+        "rate": "Est. rewards rate",
+        "completion": "Completion",
+        "source": "Source",
+        "estimatedRate": "{{rate}}% est.",
+        "unknownValidator": "Unknown validator",
+        "manage": "Manage"
+      },
+      "status": {
+        "earningTooltip": "This position is earning rewards.",
+        "unknown": "Status unavailable"
+      },
+      "stakedBalance": "Staked",
+      "stakedBalanceTooltip": "Balance that is bonded to a validator. The status column says whether it is earning.",
+      "unstakingBalance": "Unstaking",
+      "unstakingBalanceTooltip": "Balance that is unbonding and not yet claimable",
+      "claimableBalance": "Claimable",
+      "claimableBalanceTooltip": "Balance that has finished unbonding and can be claimed back to your available balance",
+      "nonEarning": {
+        "fullCommission": "This validator takes 100% commission, so you keep nothing.",
+        "overConcentrated": "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so you earn nothing.",
+        "leftCommittee": "This validator is no longer in the committee, so your stake earns nothing. Unstake and bond to another validator to start earning again.",
+        "ownStakeBelowMinimum": "Your total stake with this validator is below the 10,000 ALEO minimum, so it earns nothing. Add to your stake to start earning again."
+      },
+      "unstaking": {
+        "header": "Unstaking",
+        "headerTooltip": "Unbonded ALEO becomes claimable once the chain reaches the unbonding block height.",
+        "sourceTooltip": "Unbonded ALEO is held by the protocol until it is claimable, not by a validator. The chain does not record which validator it came from.",
+        "pendingTooltip": "Still unbonding - not yet claimable.",
+        "claimableTooltip": "Unbonding is complete. You can claim these funds.",
+        "settling": "Almost there...",
+        "settlingTooltip": "The unbonding period is over. Refreshing your balance - the claim will be available in a moment.",
+        "claimPending": "Claiming...",
+        "claimPendingTooltip": "Your claim has been sent and is waiting to be confirmed. These funds will land in your available balance shortly.",
+        "unbondPending": "Unstaking...",
+        "unbondPendingTooltip": "An unstake has been sent and is waiting to be confirmed. It changes this same unbonding position, so claiming is unavailable until it has gone through."
+      },
+      "claim": "Claim",
+      "claimableAtTooltip": "Claimable at block {{height}} (current block: {{current}})",
+      "blocksRemaining_one": "~{{count}} block left",
+      "blocksRemaining_other": "~{{count}} blocks left",
+      "bondPendingTooltip": "A stake has been sent and is waiting to be confirmed. Aleo holds one staked position per account, so staking is unavailable until it has gone through.",
+      "emptyState": {
+        "description": "You can earn rewards by staking your {{name}}.",
+        "earnRewards": "Earn rewards"
+      }
+    },
     "operations": {
       "type": {
         "public": "Public",
         "private": "Private"
+      }
+    },
+    "operationDetails": {
+      "extra": {
+        "validator": "Validator",
+        "bondedAmount": "Staked amount",
+        "unbondedAmount": "Unstaked amount"
       }
     },
     "send": {
@@ -9732,6 +9916,9 @@
         "errorTitle": "Private sync failed",
         "errorDesc": "Something went wrong, please try again"
       }
+    },
+    "operationTypes": {
+      "WITHDRAW_UNBONDED": "Claim"
     },
     "bond": {
       "flow": {
@@ -9776,7 +9963,6 @@
     "manage": {
       "headerAction": "Earn",
       "title": "Manage staking",
-      "comingSoonTooltip": "Coming soon.",
       "bond": {
         "title": "Bond",
         "description": "Bond your ALEO to a validator to earn rewards."
@@ -9789,7 +9975,10 @@
         "title": "Claim",
         "description": "Claim your unbonded ALEO back to your available balance."
       },
-      "unbondPendingTooltip": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding is unavailable until it has gone through."
+      "unbondPendingTooltip": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "claimPendingTooltip": "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "stillUnbondingTooltip": "Your unbonded ALEO is still in its unbonding period. You can claim it once the period has elapsed.",
+      "nothingToClaimTooltip": "You have no unbonded ALEO to claim. Unbond some of your stake first."
     },
     "unbond": {
       "flow": {
@@ -9800,7 +9989,9 @@
             "unbondableBanner": "Maximum unbondable amount is",
             "belowMinimum": "If unbonding would leave less than {{minAmount}} bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met."
           },
-          "connectDevice": { "title": "Device" },
+          "connectDevice": {
+            "title": "Device"
+          },
           "confirmation": {
             "title": "Confirmation",
             "success": {
@@ -9812,6 +10003,28 @@
           }
         }
       }
+    },
+    "claim": {
+      "flow": {
+        "title": "Claim ALEO",
+        "steps": {
+          "summary": {
+            "title": "Summary",
+            "info": "This claims all ALEO whose unbonding period has elapsed back to your account.",
+            "claimableAmountLabel": "Claimable amount"
+          },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Claim submitted",
+              "text": "Your claim has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your claim transaction was signed but could not be broadcast."
+          }
+        }
+      }
     }
   },
   "updater": {
@@ -9819,26 +10032,6 @@
     "downloadProgress": "{{progress}}%",
     "errorTryAgain": "Error during update. Try again",
     "installAndRelaunch": "New update. Install and relaunch"
-  },
-  "walletV4Tour": {
-    "slides": {
-      "portfolio": {
-        "title": "A clearer view of your portfolio",
-        "description": "See your total balance at a glance, and tap \"Today\" to dive deeper."
-      },
-      "navigation": {
-        "title": "Access key actions faster",
-        "description": "Access Receive, Buy, Sell, and Send actions instantly."
-      },
-      "actions": {
-        "title": "View market trends instantly",
-        "description": "Quickly see what's trending directly in your portfolio, and move from insights to action."
-      }
-    },
-    "cta": {
-      "continue": "Continue",
-      "explore": "Explore my new portfolio"
-    }
   },
   "q2Tour": {
     "slides": {
@@ -9937,6 +10130,8 @@
   },
   "history": {
     "title": "Transaction history",
+    "cardScope": "Card",
+    "cardAssetScope": "Card · {{assetName}}",
     "pending": "Pending transaction",
     "pending_other": "Pending transactions",
     "columns": {
@@ -9952,6 +10147,11 @@
     "emptyState": {
       "title": "No transactions yet",
       "description": "Come back later to see your transactions."
+    },
+    "tabs": {
+      "crypto": "Crypto",
+      "card": "Card",
+      "accessibilityLabel": "Transaction history type"
     },
     "actionsBar": {
       "csv": "Export",

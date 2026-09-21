@@ -12,16 +12,15 @@ services:
     environment:
       NETWORK_PASSPHRASE: "Public Global Stellar Network ; September 2015"
     command: ["--local"]
-    # Friendbot's supervisor starts ~10s after Horizon, so probing /friendbot
-    # is sufficient: when it returns a 2xx/4xx, Horizon is already serving.
-    # Without this, `compose up --wait` returns as soon as the container
-    # starts and the first friendbot call races nginx's 502.
+    # Gate readiness on Horizon having ingested a ledger, not just being
+    # reachable: the /friendbot probe greenlights the moment nginx is up, well
+    # before Core produces a ledger, so the first stellar-sdk history read
+    # races a 503/404. Horizon's root exposes `history_latest_ledger`, which
+    # flips from 0 to >= 1 once ingestion is live (friendbot is already up by
+    # then). The `.` matches the field's closing quote without also matching
+    # `history_latest_ledger_closed_at`.
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/friendbot | grep -qE '^[24]'",
-        ]
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:8000/ | grep -qE 'history_latest_ledger.: [1-9]'"]
       interval: 5s
       timeout: 10s
       retries: 60

@@ -13,6 +13,7 @@ import { Card } from "@features/flow-pay-card";
 
 <Card
   login={{ oauthConfig, callback }}
+  assets={{ currencies, priceWallet, formatCountervalue }}
   formatters={{ countervalue, transactionAmount, transactionDate }}
   balanceLabel={balanceLabel}
 />;
@@ -23,12 +24,20 @@ import { Card } from "@features/flow-pay-card";
 - The card face from [`@features/flow-pay-card-details`](../pay-card-details/README.md): `CardVisual`
   once the host provides a countervalue formatter and a balance label, the bare `CardArtwork`
   otherwise. Freeze and More also come from that package (`CardDetails` on both platforms).
+- The funding wallets, when the host passes `assets`. Rendered by
+  [`@features/flow-pay-card-assets`](../pay-card-assets/README.md). A row carries the currency's icon,
+  its name and ticker, what the wallet holds and what that is worth. Pricing needs the countervalues
+  state, which the two apps reach differently, so the host passes the resolved currencies, a
+  `priceWallet` and a `formatCountervalue` (which returns the display string) rather than this package
+  reaching for rates. Omit `assets` and the list is not rendered.
 - `CardLogin` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md) — it shows while
   nobody is signed in, and `useCardLogout` ends the session from the More menu.
 - `CardTransactions` from [`@features/flow-pay-card-transactions`](../pay-card-transactions/README.md)
   on web once signed in (the first page of card transactions, or nothing when the list is empty).
 
-The flow owns the (currently mocked) card balance, so hosts no longer assemble the visual themselves.
+The balance on the card face is what the funding wallets are worth: the provider reports no total,
+so the flow sums the wallets it could price. A wallet nothing could price adds nothing, so the
+balance can understate what the card holds.
 They pass a `formatters` object for what only the app knows: `countervalue` (locale and
 counter-value currency), and on web `transactionAmount` / `transactionDate` so the history uses the
 same amount and date formatters as the rest of the app (`useDateFormatter` on Desktop). `balanceLabel`
@@ -56,6 +65,8 @@ imported directly when an app needs a single piece or its Redux state:
 - Other Pay Card surfaces (`Balance`, `DepositOptions`, `RequestReceive`, `FeatureTour`) remain
   independent `@features/flow-pay-card-*` leaves that the app assembles on its Pay tab; they are not
   pulled into this orchestrator.
+- [`CardAssets`](../pay-card-assets/README.md) is composed here when the host passes `assets`. Import
+  the leaf directly if you need the list without the rest of `Card`.
 
 ## Platform resolution
 

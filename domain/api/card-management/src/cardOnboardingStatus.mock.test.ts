@@ -1,13 +1,6 @@
-import {
-  PayCardInternalWalletsResponseSchema,
-  PayCardLinkedWalletsResponseSchema,
-  PayCardStatusResponseSchema,
-  PayCardUserResponseSchema,
-} from "./schema";
+import { PayCardStatusResponseSchema, PayCardUserResponseSchema } from "./schema";
 import {
   clearCardOnboardingStatusMock,
-  mockPayCardInternalWallets,
-  mockPayCardLinkedWallets,
   mockPayCardStatus,
   mockPayCardUser,
   readCardOnboardingStatusMock,
@@ -59,28 +52,10 @@ describe("the mocked responses", () => {
     expect(PayCardUserResponseSchema.safeParse(mockPayCardUser(true)).success).toBe(true);
     expect(PayCardUserResponseSchema.safeParse(mockPayCardUser(false)).success).toBe(true);
     expect(PayCardStatusResponseSchema.safeParse(mockPayCardStatus()).success).toBe(true);
-    expect(
-      PayCardInternalWalletsResponseSchema.safeParse(mockPayCardInternalWallets(true)).success,
-    ).toBe(true);
-    expect(PayCardLinkedWalletsResponseSchema.safeParse(mockPayCardLinkedWallets()).success).toBe(
-      true,
-    );
   });
 
   it("verifies the account only when asked to", () => {
     expect(mockPayCardUser(true).verificationState).toBe("VERIFIED");
     expect(mockPayCardUser(false).verificationState).not.toBe("VERIFIED");
-  });
-
-  it("describes the same wallet in both answers, because the join keys them by id", () => {
-    const [internal] = mockPayCardInternalWallets(true);
-    const [linked] = mockPayCardLinkedWallets();
-
-    expect(internal?.id).toBe(linked?.id);
-  });
-
-  it("funds the wallet only when asked to, and empties it otherwise", () => {
-    expect(Number(mockPayCardInternalWallets(true)[0]?.balance)).toBeGreaterThan(0);
-    expect(Number(mockPayCardInternalWallets(false)[0]?.balance)).toBe(0);
   });
 });

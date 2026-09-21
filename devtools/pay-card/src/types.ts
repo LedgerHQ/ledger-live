@@ -7,17 +7,6 @@ export interface PayCardFlagsProps {
   readonly setPtxCardEnabled: (value: boolean) => void;
 }
 
-export interface OnboardingStep {
-  readonly id: string;
-  readonly label: string;
-  readonly done: boolean;
-}
-
-export interface PayCardOnboardingProps {
-  readonly steps: readonly OnboardingStep[];
-  readonly setStepDone: (id: string, done: boolean) => void;
-}
-
 export interface PayCardSessionSnapshot {
   readonly accessToken: string;
   readonly refreshToken: string;
@@ -135,6 +124,8 @@ export interface PayCardCombinedWallet {
   readonly ledgerId?: string;
   /** `null` when no Baanx wallet matched this link, and while they are still being read. */
   readonly balance: string | null;
+  /** The resolved Ledger currency's id. `null` while unresolved or when the asset is unmapped. */
+  readonly ledgerCurrencyId: string | null;
 }
 
 /** One row of the Card asset catalog: what the provider calls an asset, and what Ledger calls it. */
@@ -185,7 +176,6 @@ export interface PayCardOnboardingStatusProps {
 
 export interface PayCardToolProps {
   readonly flags: PayCardFlagsProps;
-  readonly onboarding: PayCardOnboardingProps;
   readonly cardOnboarding: PayCardOnboardingStatusProps;
   readonly interaction: PayCardInteractionProps;
   readonly balance: PayCardBalanceProps;

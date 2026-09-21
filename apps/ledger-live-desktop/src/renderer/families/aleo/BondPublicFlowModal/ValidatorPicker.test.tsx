@@ -5,6 +5,7 @@ import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
 import type { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { ALEO_MAIN_ACCOUNT } from "../__mocks__/account.mock";
+import { aleoValidator } from "../__mocks__/validator.mock";
 import ValidatorPicker from "./ValidatorPicker";
 
 jest.mock("@ledgerhq/live-common/families/aleo/react", () => ({
@@ -14,60 +15,54 @@ jest.mock("@ledgerhq/live-common/families/aleo/react", () => ({
 
 const mockUseAleoValidators = jest.mocked(useAleoValidators);
 
-const FIGMENT: AleoValidator = {
-  address: "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t",
-  name: "Figment",
-  stakeMicrocredits: 63_051_013_000_000,
-  isOpen: true,
-  isUnbonding: false,
-  commissionPercent: 10,
-  estimatedYearlyRewardsRate: 0.062,
-} as AleoValidator;
+const DEFAULT_VALIDATOR = aleoValidator();
 
-const OTHER: AleoValidator = {
-  ...FIGMENT,
+const OTHER = aleoValidator({
   address: "aleo1vfukg8ky2mhfprw63000000000000000000000000000000000000000q",
   name: "Other Validator",
   stakeMicrocredits: 162_243_084_000_000,
-} as AleoValidator;
+});
+
+const refetch = jest.fn();
 
 const setValidators = (
   validators: AleoValidator[],
-  extra: { loading?: boolean; error?: Error | null } = {},
+  extra: { loading?: boolean; fetching?: boolean; error?: Error | null } = {},
 ) =>
   mockUseAleoValidators.mockReturnValue({
     validators,
     loading: false,
+    fetching: false,
     error: null,
+    refetch,
     ...extra,
   });
 
 beforeEach(() => {
+  refetch.mockClear();
   mockDomMeasurements();
-  setValidators([FIGMENT, OTHER]);
+  setValidators([DEFAULT_VALIDATOR, OTHER]);
 });
 
 function setup(props: Partial<React.ComponentProps<typeof ValidatorPicker>> = {}) {
   const onSelect = jest.fn();
-  const onRetry = jest.fn();
   const utils = render(
     <ValidatorPicker
       currency={ALEO_MAIN_ACCOUNT.currency}
-      selected={FIGMENT.address}
+      selected={DEFAULT_VALIDATOR.address}
       lockedTo={null}
       onSelect={onSelect}
-      onRetry={onRetry}
       {...props}
     />,
     { initialState: { settings: AFTER_ONBOARDING_STATE } },
   );
 
-  return { ...utils, onSelect, onRetry };
+  return { ...utils, onSelect };
 }
 
 describe("ValidatorPicker — list states", () => {
   it("spins while the first load is still in flight", () => {
-    setValidators([], { loading: true });
+    setValidators([], { loading: true, fetching: true });
 
     setup();
 
@@ -75,28 +70,37 @@ describe("ValidatorPicker — list states", () => {
     expect(screen.queryByTestId("validator-list")).not.toBeInTheDocument();
   });
 
-  it("shows the list rather than the spinner once a stale list exists", () => {
-    setValidators([FIGMENT], { loading: true });
+  it("spins over a stale list while refetching", () => {
+    setValidators([DEFAULT_VALIDATOR], { fetching: true });
 
     setup();
 
-    expect(screen.queryByTestId("validator-list-loading")).not.toBeInTheDocument();
-    expect(screen.getByTestId("validator-list")).toBeInTheDocument();
+    expect(screen.getByTestId("validator-list-loading")).toBeInTheDocument();
+    expect(screen.queryByTestId("validator-list")).not.toBeInTheDocument();
   });
 
   it("offers a retry when the fetch failed with nothing to show", async () => {
     setValidators([], { error: new Error("boom") });
 
-    const { onRetry } = setup();
+    setup();
 
     expect(screen.getByTestId("validator-fetch-error")).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Retry" }));
-    expect(onRetry).toHaveBeenCalledTimes(1);
+    expect(refetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("spins rather than staying on the error screen once the retry is in flight", () => {
+    setValidators([], { fetching: true, error: new Error("boom") });
+
+    setup();
+
+    expect(screen.getByTestId("validator-list-loading")).toBeInTheDocument();
+    expect(screen.queryByTestId("validator-fetch-error")).not.toBeInTheDocument();
   });
 
   // A stale list is more useful than an error screen, so an error alongside one is ignored.
   it("keeps showing a stale list when the refresh failed", () => {
-    setValidators([FIGMENT], { error: new Error("boom") });
+    setValidators([DEFAULT_VALIDATOR], { error: new Error("boom") });
 
     setup();
 
@@ -178,7 +182,7 @@ describe("ValidatorPicker — locked to a bonded validator", () => {
   });
 
   it("does not auto-move off a locked validator that is unpickable", () => {
-    setValidators([{ ...OTHER, isUnbonding: true }, FIGMENT]);
+    setValidators([{ ...OTHER, isUnbonding: true }, DEFAULT_VALIDATOR]);
 
     const { onSelect } = setup({ lockedTo: OTHER.address, selected: OTHER.address });
 

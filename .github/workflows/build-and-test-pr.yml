@@ -329,6 +329,7 @@ jobs:
     permissions:
       security-events: write
       contents: read
+      id-token: write
 
   test-mobile-e2e-lint:
     name: "Mobile E2E Lint & Typecheck"
@@ -374,6 +375,22 @@ jobs:
     needs: determine-affected
     if: ${{ (contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')) && !github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/rsdoctor-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-e2e-tooling:
+    name: "E2E Tooling Checks"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/tooling')}}
+    uses: ./.github/workflows/test-e2e-tooling-reusable.yml
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -444,6 +461,7 @@ jobs:
       - test-additional
       - test-mobile-e2e-lint
       - test-desktop-e2e-lint
+      - test-e2e-tooling
       - determine-affected
     runs-on: ubuntu-22.04
     if: always() && !cancelled() && needs.determine-affected.result == 'success'

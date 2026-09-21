@@ -3,6 +3,7 @@ import type { RecordPickingStrategy, TransactionType } from "./logic";
 
 export type AleoConfig = {
   networkType: "mainnet" | "testnet";
+  defaultValidator?: string | null;
   apiUrls: {
     node: string;
     sdk: string;
@@ -14,6 +15,8 @@ export type AleoConfig = {
   enableStaking: boolean;
   useEncryptedProve: boolean;
   recordPickingStrategy: RecordPickingStrategy;
+  liveBlockHeightPollMs: number;
+  maxUnbondingSyncAttempts: number;
 };
 
 export type AleoCoinConfig = CurrencyConfig & AleoConfig;

@@ -24,7 +24,8 @@
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
-    "@features/platform-contacts": "workspace:^"
+    "@features/platform-contacts": "workspace:^",
+    "@shared/ui-queued-bottom-sheet": "workspace:^"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

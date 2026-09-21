@@ -2,18 +2,21 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
 import {
   liveDataCommand,
   liveDataWithAddressCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import {
+  MINA_DELEGATION_PAIR,
+  MINA_PAIR_SYNC_TIMEOUT_MS,
+  pickMinaAccountToUndelegate,
+} from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { buildTags } from "tests/utils/tagsUtils";
+import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
 
 const suiAccount = new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG");
-// Mina undelegates the whole balance, so the flow carries no amount. A mina delegation is
-// all-or-nothing, so one account cannot serve both flows: `Mina 2` stays delegated so this spec
-// always has a position to open, while `Mina 1` stays undelegated for the delegate spec.
-const minaAccount = new Delegate(Account.MINA_2, "N/A", "Kraken");
 
 test.describe("Undelegate", () => {
   test.use({
@@ -54,31 +57,41 @@ test.describe("Undelegate", () => {
 });
 
 test.describe("Undelegate - MINA", () => {
+  test.slow();
+  skipSharedAccountOnSecondaryLeg("Mina undelegate");
+
+  // Broadcasting is left to the nightly policy: this flow frees the delegated account of the pair,
+  // which the delegate flow stakes back.
   test.use({
-    teamOwner: delegateTeamOwner(minaAccount.account.currency.id),
+    teamOwner: delegateTeamOwner(Currency.MINA.id),
     userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: minaAccount.account.currency.speculosApp,
-    // The device review renders the account's own address, which the speculos helper asserts.
-    cliCommands: [liveDataWithAddressCommand(minaAccount.account)],
-    // Broadcasting would clear the delegation this spec depends on.
-    env: { DISABLE_TRANSACTION_BROADCAST: "1" },
+    speculosApp: Currency.MINA.speculosApp,
+    // Either account of the pair can be the delegated one, so both are seeded. Seeding also
+    // resolves their address, which the picker reads back and the device renders when signing.
+    cliCommands: MINA_DELEGATION_PAIR.map(account => liveDataWithAddressCommand(account)),
   });
 
   test(
-    `[${minaAccount.account.currency.testLabel}] - Undelegate`,
+    `[${Currency.MINA.testLabel}] - Undelegate`,
     {
       // The Nano S build of the Mina app stops at 1.4.2, before the delegation flow.
-      tag: buildTags({ currencyId: minaAccount.account.currency.id, skipLNS: true }),
-      annotation: { type: "TMS", description: "B2CQA-387" },
+      tag: buildTags({ currencyId: Currency.MINA.id, skipLNS: true }),
+      annotation: { type: "TMS", description: "B2CQA-6628" },
     },
     async ({ app }) => {
+      // Undelegating is a delegation to the account itself, so the account's own address is the
+      // target the device renders and the speculos helper asserts against.
+      const { account, address } = await pickMinaAccountToUndelegate();
+      const delegation = new Delegate(account, "N/A", "N/A", address);
+
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(minaAccount.account.accountName);
+      await app.accounts.navigateToAccountByName(account.accountName);
 
+      await app.layout.waitForSyncButtonToBeEnabled({ timeout: MINA_PAIR_SYNC_TIMEOUT_MS });
       // Mina holds a single delegation, so its row is not indexed.
-      await app.undelegate.openFromManageMenu(minaAccount.account.currency.id);
+      await app.undelegate.openFromManageMenu(Currency.MINA.id);
 
-      await app.speculos.signDelegationTransaction(minaAccount);
+      await app.speculos.signDelegationTransaction(delegation);
       await app.undelegate.verifySuccessMessage();
       // Both mina staking flows share a single confirmation step, whose CTA is the generic one.
       await app.delegate.clickViewDetailsButton();
@@ -86,9 +99,9 @@ test.describe("Undelegate - MINA", () => {
       await app.drawer.waitForDrawerToBeVisible();
       await app.delegateDrawer.verifyTxTypeIsVisible();
       await app.delegateDrawer.verifyTxTypeIs("Undelegated");
-      await app.delegateDrawer.verifyAccountName(minaAccount.account.accountName);
+      await app.delegateDrawer.verifyAccountName(account.accountName);
       // Undelegating moves no value either: the drawer amount is the fee.
-      await app.delegateDrawer.amountValueIsVisible(minaAccount.account.currency.ticker);
+      await app.delegateDrawer.amountValueIsVisible(Currency.MINA.ticker);
       await app.drawer.closeDrawer();
     },
   );

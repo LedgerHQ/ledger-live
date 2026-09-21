@@ -225,6 +225,7 @@
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/pnpm-utils": "workspace:*",
+    "@nx/devkit": "catalog:",
     "@nx/nx-linux-x64-gnu": "catalog:",
     "@nx/s3-cache": "catalog:",
     "@react-native/babel-plugin-codegen": "catalog:",

@@ -20,10 +20,10 @@ function bytesToBigInt(bytes: Uint8Array): bigint {
 let impl: Secp256k1Instance = {
   publicKeyTweakAdd: (publicKey, tweak) => {
     try {
-      const point = secp256k1.ProjectivePoint.fromHex(publicKey);
+      const point = secp256k1.Point.fromBytes(publicKey);
       const scalar = bytesToBigInt(tweak);
-      const tweakedPoint = point.add(secp256k1.ProjectivePoint.BASE.multiply(scalar));
-      return Promise.resolve(tweakedPoint.toRawBytes(point.toRawBytes().length === 33));
+      const tweakedPoint = point.add(secp256k1.Point.BASE.multiply(scalar));
+      return Promise.resolve(tweakedPoint.toBytes(true));
     } catch (error) {
       return Promise.reject(error);
     }

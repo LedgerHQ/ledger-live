@@ -12,6 +12,7 @@ import { shareViewKeyCommand } from "@ledgerhq/live-e2e-shared/families/aleo";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { FF_NEW_SEND_FLOW_DISABLED } from "tests/utils/featureFlagUtils";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
+import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
 
 const transactionsAmountInvalid = [
   {
@@ -304,16 +305,24 @@ const transactionE2E = [
     postSeedHook: shareViewKeyCommand(Account.ALEO_1),
   },
   {
-    transaction: new Transaction(Account.MINA_1, Account.MINA_2, "0.01"),
+    // Mina 4 and Mina 5 are kept out of the staking pool, so a broadcasting night never sends two
+    // transactions from one account. Mobile sends the other way around, to share the fees.
+    transaction: new Transaction(Account.MINA_4, Account.MINA_5, "0.01"),
     xrayTicket: "B2CQA-4778",
-    disableBroadcast: true,
     teamOwner: Team.BST,
+    sharedAccountAcrossLegs: true,
   },
 ];
 
 test.describe("Send", () => {
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
+      if ((transaction as { sharedAccountAcrossLegs?: boolean }).sharedAccountAcrossLegs) {
+        skipSharedAccountOnSecondaryLeg(
+          `${transaction.transaction.accountToDebit.currency.testLabel} send`,
+        );
+      }
+
       test.use({
         teamOwner: (transaction as { teamOwner?: Team }).teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",

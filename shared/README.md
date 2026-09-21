@@ -1,6 +1,6 @@
 # shared/
 
-> Part of the [DDD monorepo architecture](../docs/ddd-monorepo-architecture.md).
+> Part of the [monorepo architecture](../docs/monorepo-architecture.md).
 
 Cross-cutting concern packages that don't belong to a specific business domain. Each subdirectory is an independent pnpm workspace package.
 
@@ -22,6 +22,7 @@ Cross-cutting concern packages that don't belong to a specific business domain. 
 - `package.json` must have `"private": true`
 - Mock and test files are not re-exported from the barrel
 - Shared packages should have **no dependencies** on `domain/` packages (dependency flows one way: domain -> shared is allowed if needed, but shared -> domain is not)
+- No dependency on legacy `libs/*` — declare the interface locally and let the app inject the implementation ([how](../docs/monorepo-architecture.md#crossing-the-frontier))
 
 ## Internal Structure
 

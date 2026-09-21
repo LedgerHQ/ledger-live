@@ -3,7 +3,6 @@ import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { MemoTypeSelect } from "./MemoTypeSelect";
 import { MemoValueInput } from "./MemoValueInput";
-import { SkipMemoSection } from "./SkipMemoSection";
 import type { useMemoViewModel } from "./hooks/useMemoViewModel";
 
 type MemoControlsProps = Readonly<{
@@ -43,15 +42,6 @@ export function MemoControls({ vm }: MemoControlsProps) {
           memoMaxValue={vm.uiConfig.memoMaxValue}
           transactionError={vm.memoError}
           onChange={vm.onMemoValueChange}
-        />
-      )}
-
-      {vm.showSkipMemo && !vm.memoError && (
-        <SkipMemoSection
-          memoLabel={vm.memoLabel}
-          state={vm.skipMemoState}
-          onRequestConfirm={vm.onSkipMemoRequestConfirm}
-          onConfirm={vm.onSkipMemoConfirm}
         />
       )}
     </Box>

@@ -129,6 +129,26 @@
     "ldmkEnabled": "LDMK transport enabled"
   },
   "errors": {
+    "AleoAlreadyBondedElsewhere": {
+      "title": "Already staking with {{bondedValidator}}. Unstake before changing validator.",
+      "description": "Aleo allows one validator per account. Unstake from {{bondedValidator}} before staking elsewhere."
+    },
+    "AleoBondAmountTooLow": {
+      "title": "You must stake at least {{minAmount}} at a time.",
+      "description": "The minimum staking amount is {{minAmount}}."
+    },
+    "AleoClosedValidator": {
+      "title": "This validator is not accepting new delegators.",
+      "description": "This validator is not accepting new delegators. Choose an open validator to continue."
+    },
+    "AleoStakeAmountTooLow": {
+      "title": "Staking requires a total of at least {{minAmount}}.",
+      "description": "You must have at least {{minAmount}} staked in total."
+    },
+    "AleoUnbondingValidator": {
+      "title": "This validator is unbonding.",
+      "description": "This validator is withdrawing its own stake, so the network rejects new stake to it. Choose another validator to continue."
+    },
     "ZcashMemoTooLong": {
       "title": "Memo must not exceed {{maxBytes}} bytes"
     },
@@ -244,7 +264,15 @@
     },
     "ConcordiumTokenTransferNotPermitted": {
       "title": "This account cannot send this token",
-      "description": "The token issuer restricts who may send it, and this account is not permitted. Contact the token issuer for access."
+      "description": "The token issuer restricts who may send it. Contact the token issuer for details."
+    },
+    "ConcordiumAccountNotAllowed": {
+      "title": "This account hasn't been approved to send this token",
+      "description": "The token issuer keeps a list of approved senders, and this account is not on it. Approval is managed by the issuer, not by Ledger."
+    },
+    "ConcordiumAccountDenied": {
+      "title": "This account is restricted from sending this token",
+      "description": "The token issuer has restricted this account. Contact the issuer for details."
     },
     "ConcordiumTokenRestrictionsUnverified": {
       "title": "Token restrictions could not be verified",
@@ -1425,6 +1453,9 @@
     "AccountCreationFeeWarning": {
       "title": "This transaction will incur an account creation fee of {{fee}}"
     },
+    "AmountRequired": {
+      "title": "Enter an amount to continue."
+    },
     "AmountTooSmall": {
       "title": "Minimum required amount for this transaction is {{amount}}"
     },
@@ -1611,6 +1642,49 @@
       "mismatch": "Passwords don't match",
       "saveFailed": "We couldn't save your password. Please try again.",
       "cta": "Confirm"
+    },
+    "unlock": {
+      "wrongPassword": "Incorrect password",
+      "forgotPassword": "Forgot your password?",
+      "retryBiometrics": "Use biometrics",
+      "unlockCta": "Unlock Ledger Wallet",
+      "failed": "We couldn't check your password. Please try again.",
+      "cta": "Confirm",
+      "biometricsPrompt": "Unlock Ledger Wallet",
+      "forgotPasswordSheet": {
+        "title": "Forgot password",
+        "description": "If you’ve lost your password, reinstall the app and restore your wallet.",
+        "cta": "Got it"
+      }
+    },
+    "enableProtection": {
+      "biometrics": {
+        "title": "Enable {{biometricsType}}",
+        "description": "The crypto card requires {{biometricsType}}. You'll use it each time you open the app.",
+        "cta": "Enable {{biometricsType}}"
+      },
+      "password": {
+        "title": "Create a password",
+        "description": "The crypto card requires a password. You'll use it each time you open the app.",
+        "cta": "Create password"
+      }
+    },
+    "protectionEnabled": {
+      "biometrics": {
+        "title": "{{biometricsType}} enabled"
+      },
+      "password": {
+        "title": "Password created"
+      },
+      "description": "You can now sign up to get a card",
+      "cta": "Continue"
+    },
+    "biometrics": {
+      "title": "{{biometricsType}}",
+      "desc": "Unlock the app with {{biometricsType}}.",
+      "prompt": "Confirm {{biometricsType}} to use it for unlocking",
+      "disablePrompt": "Confirm {{biometricsType}} to stop using it for unlocking",
+      "useDeviceCredential": "Use PIN"
     },
     "deactivatePassword": {
       "title": "Deactivate password",
@@ -3201,6 +3275,13 @@
       "UPDATE_ACCOUNT": "Updated account"
     }
   },
+  "history": {
+    "tabs": {
+      "crypto": "Crypto",
+      "card": "Card",
+      "accessibilityLabel": "Transaction history type"
+    }
+  },
   "operationsList": {
     "to": "To",
     "from": "From",
@@ -3240,6 +3321,13 @@
     },
     "details": "{{ currency }} details",
     "extra": {
+      "pltReject": {
+        "title": "Reason",
+        "nonExistentToken": "This token doesn't exist on Concordium.",
+        "recipientNotFound": "The recipient account doesn't exist on Concordium.",
+        "insufficientBalance": "The account didn't hold enough of the token.",
+        "rejected": "Concordium refused this operation."
+      },
       "transferId": "Transfer ID (Memo)",
       "resource": "Resource",
       "validator": "Validator",
@@ -4099,6 +4187,7 @@
         "copyAdress": "Copy address",
         "addressCopied": "Address copied!",
         "addressVerified": "Address verified",
+        "qrCode": "QR code for your receive address",
         "verifyAddress": "Verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
         "sendWarning": "Send only tokens from {{network}} network. Sending from another network may result in permanent loss of your tokens.",
@@ -4743,11 +4832,11 @@
         "walletNotExist": "Wallet doesn’t exist"
       },
       "skipMemo": {
-        "title": "Skip adding a {{tag}}?",
-        "warning": "Your asset may be lost if a {{tag}} is required by your recipient",
-        "notRequired": "{{tag}} not required by recipient?",
-        "confirm": "Yes, skip",
-        "neverAskAgain": "Don’t show this warning again"
+        "title": "Do you want to send without a {{tag}}?",
+        "description": "Your asset may be lost if a {{tag}} is required by your recipient.",
+        "confirm": "Yes, send without a {{tag}}",
+        "cancel": "No, go back",
+        "neverAskAgain": "Don't ask again"
       },
       "tagHelp": {
         "title": "What’s a {{tag}}?",
@@ -10279,27 +10368,6 @@
       "iHaveACard": "I have a card"
     }
   },
-  "walletV4Tour": {
-    "title": "Discover your new portfolio",
-    "slides": {
-      "portfolio": {
-        "title": "A clearer view of your portfolio",
-        "description": "See your total balance at a glance, and tap “Today” to dive deeper."
-      },
-      "navigation": {
-        "title": "Access key actions faster",
-        "description": "Access Swap, Transfer, and Buy instantly. Find Earn and your Card in the bottom navigation."
-      },
-      "actions": {
-        "title": "View market trends instantly",
-        "description": "Quickly see what’s trending directly in your portfolio, and move from insights to action."
-      }
-    },
-    "cta": {
-      "continue": "Next",
-      "explore": "Discover my new portfolio"
-    }
-  },
   "mainNavigation": {
     "home": "Home",
     "swap": "Swap",
@@ -10350,9 +10418,34 @@
       }
     },
     "card": {
+      "balanceLabel": "Balance",
+      "assets": {
+        "title": "Assets",
+        "empty": "No assets yet",
+        "error": "Couldn't load assets",
+        "info": "These assets fund your card. Set the order they're charged in, or add more.",
+        "manage": "Manage",
+        "manageDialog": {
+          "title": "Manage assets",
+          "description": "Your assets are listed in funding order. If one asset runs low, the next one is used automatically.",
+          "addAssetCaption": "You'll be redirected to Baanx's page to add asset.",
+          "addAsset": "Add asset"
+        },
+        "details": {
+          "topUp": "Top up",
+          "withdraw": "Withdraw",
+          "transactions": "Transactions"
+        },
+        "withdraw": {
+          "title": "You'll be redirected to Baanx",
+          "description": "Withdraw funds from your Baanx account to your Ledger wallet address.",
+          "continue": "Continue"
+        }
+      },
       "title": "Crypto card",
-      "placeholder": "Coming soon",
+      "topUp": "Top up",
       "details": "Details",
+      "addToWallet": "Add to {{wallet}} Pay",
       "freeze": "Freeze",
       "unfreeze": "Unfreeze",
       "goBack": "Go back",
@@ -10370,6 +10463,15 @@
       "confirmError": {
         "description": "Something went wrong. Please try again.",
         "retry": "Try again"
+      },
+      "numbers": {
+        "reveal": "View",
+        "hide": "Hide",
+        "failed": "Couldn't load card numbers",
+        "imageAlt": "Card numbers"
+      },
+      "reward": {
+        "title": "Total cashback"
       }
     },
     "cardTransactions": {
@@ -10400,6 +10502,30 @@
           "PENDING": "Pending",
           "DECLINED": "Declined",
           "REVERTED": "Reverted"
+        }
+      },
+      "history": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "unknownDate": "Date unavailable",
+        "columns": {
+          "transaction": "Transaction",
+          "fundingSources": "Funding sources",
+          "amount": "Amount"
+        },
+        "paidWithAssets": "Paid with {{count}} assets",
+        "goToPay": "Go to Pay",
+        "signedOut": {
+          "title": "Log in to see your card transactions",
+          "description": "Your card activity appears here once you’re logged in."
+        },
+        "empty": {
+          "title": "No card transactions yet",
+          "description": "Come back later to see your card transactions."
+        },
+        "error": {
+          "title": "Couldn't load card transactions",
+          "description": "Check your connection and try again."
         }
       }
     },
@@ -10560,9 +10686,56 @@
         "stepComplete": "Complete",
         "gotIt": "Got it"
       },
-      "walletStep": {
-        "title": "Add to Apple/Google Pay",
-        "description": "Pay with your phone in store"
+      "steps": {
+        "createAccount": {
+          "title": "Create your account",
+          "description": "Verify your identity to get started"
+        },
+        "chooseCardType": {
+          "title": "Choose your card type",
+          "description": "Pick between virtual and physical"
+        },
+        "topUpCard": {
+          "title": "Top up your card",
+          "description": "Add funds using USDC, USDT, BTC or more"
+        },
+        "firstPurchase": {
+          "title": "Make your first purchase",
+          "description": "Pay online or in store"
+        },
+        "appleGooglePay": {
+          "title": "Add to {{wallet}} Pay",
+          "description": "Pay with your phone in store"
+        }
+      },
+      "addToWallet": {
+        "ios": {
+          "title": "Add to Apple Pay",
+          "step1": "Go to Apple Wallet app and tap add (+)",
+          "step2": "Select Debit or Credit Card",
+          "step3": "Follow the instructions",
+          "cta": "Go to Apple Wallet",
+          "error": {
+            "title": "Apple Wallet couldn’t be opened",
+            "description": "Make sure Apple Pay is available on this device, then try again.",
+            "action": "Try again"
+          }
+        },
+        "android": {
+          "title": "Add to Google Pay",
+          "step1": "Go to Google Wallet app and tap add.",
+          "step2": "Choose Payment card, then select New Credit or Debit Card.",
+          "step3": "Follow the instructions.",
+          "cta": "Go to Google Wallet",
+          "error": {
+            "title": "Google Wallet couldn’t be opened",
+            "description": "Google Wallet may not be installed or may be disabled.",
+            "action": "Open Google Play"
+          }
+        },
+        "error": {
+          "back": "Back to instructions"
+        }
       }
     }
   },
@@ -10718,6 +10891,79 @@
     "accountActions": {
       "publicToPrivate": "Convert"
     },
+    "bond": {
+      "stepperHeader": {
+        "validator": "Select validator",
+        "stepRange": "{{currentStep}} of {{totalSteps}}",
+        "amount": "Amount",
+        "selectDevice": "Select Device",
+        "connectDevice": "Connect Device"
+      },
+      "selectValidator": {
+        "fetchError": "Failed to load validators. Please try again.",
+        "metadataError": "We couldn't load validators metadata. You can still add to your stake.",
+        "lockedHint": "Aleo allows one validator per account. You can add to your stake with this validator, or unstake first to choose a different one.",
+        "closed": "Validator is closed to new stake",
+        "unbonding": "Validator is unbonding",
+        "totalStake": "Total stake",
+        "rateAndCommission": "{{rate}}% est. · {{commission}}% commission",
+        "commissionOnly": "{{commission}}% commission",
+        "earnsNothing": "Validator earns no rewards"
+      },
+      "amount": {
+        "available": "Available:",
+        "max": "Max",
+        "stakingAlert": "Your total stake with this validator must reach at least <minimum/> to earn rewards. Only public ALEO can be staked - convert your private balance to public first if you want to stake it.",
+        "minimumLabel": "Minimum bond amount",
+        "minimumTopUp": "Add at least <missing/> to reach the <total/> total stake needed to earn rewards.",
+        "belowMinimum": "Your public balance is <missing/> short of the <minimum/> minimum bond. Top up your public balance before staking.",
+        "changeValidator": "Choose another validator"
+      },
+      "validation": {
+        "success": {
+          "title": "Bond Submitted",
+          "description": "Your bond transaction is being processed on the Aleo network."
+        }
+      }
+    },
+    "stake": {
+      "sectionTitle": "Staking",
+      "staked": "Staked",
+      "unstaking": "Unstaking",
+      "claimable": "Claimable",
+      "estimatedRate": "{{rate}}% est.",
+      "fallbackValidator": "Aleo",
+      "status": {
+        "earning": "Earning rewards",
+        "unknown": "Status unavailable"
+      },
+      "nonEarning": {
+        "fullCommission": "This validator takes 100% commission, so you keep nothing.",
+        "overConcentrated": "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so you earn nothing.",
+        "leftCommittee": "This validator is no longer in the committee, so your stake earns nothing. Unstake and bond to another validator to start earning again.",
+        "ownStakeBelowMinimum": "Your stake is below the 10,000 ALEO minimum, so it earns nothing. Add to it to start earning again."
+      },
+      "emptyState": {
+        "description": "You can earn rewards by staking your {{name}}.",
+        "cta": "Earn rewards",
+        "bondPending": "A stake has been sent and is waiting to be confirmed. Aleo holds one staked position per account, so staking is unavailable until it has gone through."
+      },
+      "unstakingRow": {
+        "settling": "Almost there...",
+        "claimPending": "Claiming...",
+        "unbondPending": "Unstaking...",
+        "blocksRemaining_one": "~{{count}} block left",
+        "blocksRemaining_other": "~{{count}} blocks left"
+      }
+    },
+    "manage": {
+      "bond": "Bond",
+      "status": "Status",
+      "estimatedRate": "Est. rewards rate",
+      "unbondPendingInfo": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "claimPendingInfo": "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "unlockBlock": "Unlocks at block"
+    },
     "send": {
       "balanceSelection": {
         "title": "Select balance",
@@ -10762,6 +11008,10 @@
     },
     "balancesSection": "Balances",
     "info": {
+      "available": {
+        "title": "Available balance",
+        "description": "The balance you can spend right now: transparent funds plus any private records already synced. Staked and unstaking amounts are not included."
+      },
       "transparent": {
         "title": "Transparent balance",
         "description": "The publicly visible balance on the Aleo network. This amount can be sent or received directly and is visible to anyone."
@@ -10769,6 +11019,18 @@
       "private": {
         "title": "Private balance",
         "description": "The shielded balance on the Aleo network. This balance is only visible to you and requires proof generation for private transactions."
+      },
+      "staked": {
+        "title": "Staked",
+        "description": "The amount currently bonded to a validator. It earns rewards but cannot be spent until you unstake it and the unbonding period ends."
+      },
+      "unstaking": {
+        "title": "Unstaking",
+        "description": "The amount you have unstaked that is still locked. It stops earning rewards immediately and becomes claimable once the unbonding period ends."
+      },
+      "claimable": {
+        "title": "Claimable",
+        "description": "The unstaked amount whose unbonding period has ended. Claim it to move it back to your available balance."
       }
     },
     "account": {

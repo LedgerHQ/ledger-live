@@ -27,8 +27,8 @@ export async function trackEvent({ kind, eventName, props, mandatory = false }: 
   } catch {
     publishEvent({
       eventName,
-      eventProps: filteredProps,
-      eventPropsWithoutExtra: filteredProps,
+      eventProperties: filteredProps,
+      eventPropertiesWithoutExtra: filteredProps,
       deliveryStatus: "failed_enrichment",
     });
     return;
@@ -46,7 +46,7 @@ export async function trackEvent({ kind, eventName, props, mandatory = false }: 
   await deliver({
     type: kind,
     eventName,
-    eventProps: filteredExtras,
-    eventPropsWithoutExtra: filteredProps,
+    eventProperties: filteredExtras,
+    eventPropertiesWithoutExtra: filteredProps,
   });
 }

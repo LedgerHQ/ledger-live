@@ -233,6 +233,9 @@ export function useSendHeaderModel({
     // Per-step state cleanup that runs regardless of whether navigation uses backTarget
     // or goToPreviousStep, so floating steps and regular steps are treated uniformly
     if (currentStep === SEND_FLOW_STEP.AMOUNT) {
+      // Memo reset first: it writes a whole transaction derived from the one captured at
+      // render time, so running it after the amount reset would restore the old amount.
+      resetViewState();
       // Reset amount-related fields so they don't persist when the screen remounts
       transaction.updateTransaction(tx => ({
         ...tx,
@@ -240,7 +243,6 @@ export function useSendHeaderModel({
         useAllAmount: false,
         feesStrategy: null,
       }));
-      resetViewState();
     } else if (currentStep === SEND_FLOW_STEP.COIN_CONTROL) {
       // Reset UTXO exclusions so the selection doesn't bleed into the next visit
       transaction.updateTransaction(tx => {
@@ -289,12 +291,21 @@ export function useSendHeaderModel({
   const recipientHeader = useMemo(
     () =>
       getRecipientHeaderPresentation({
-        recipient: state.recipient,
+        recipient:
+          state.recipient ??
+          (recipientSearch.value.trim() ? { address: recipientSearch.value.trim() } : null),
         contacts,
         currencyId: state.account.currency?.id,
         isContactsFeatureEnabled: isContactsFeatureEnabled && isAmountStep,
       }),
-    [contacts, isAmountStep, isContactsFeatureEnabled, state.account.currency?.id, state.recipient],
+    [
+      contacts,
+      isAmountStep,
+      isContactsFeatureEnabled,
+      recipientSearch.value,
+      state.account.currency?.id,
+      state.recipient,
+    ],
   );
 
   const addressInputValue = useMemo(() => {

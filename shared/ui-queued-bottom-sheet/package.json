@@ -11,6 +11,10 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./keyboard": {
+      "react-native": "./src/keyboard.native.ts",
+      "default": "./src/keyboard.ts"
+    },
     "./testing": "./src/testing/index.ts",
     "./testing/module-mock": "./src/testing/moduleMock.ts",
     "./package.json": "./package.json"
@@ -30,11 +34,15 @@
   "peerDependencies": {
     "react": "catalog:",
     "react-native": "catalog:",
+    "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react-native-safe-area-context": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
+      "optional": true
+    },
+    "@gorhom/bottom-sheet": {
       "optional": true
     },
     "@ledgerhq/lumen-ui-rnative": {
@@ -45,6 +53,7 @@
     }
   },
   "devDependencies": {
+    "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

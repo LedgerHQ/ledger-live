@@ -48,8 +48,8 @@ describe("ContactSchema", () => {
   });
 
   it("accepts international contact names with numbers", () => {
-    expect(ContactNameInputSchema.parse(" Jean-Luc ")).toBe("Jean-Luc");
-    expect(ContactNameSchema.parse("Jean-Luc O'Connor")).toBe("Jean-Luc O'Connor");
+    expect(ContactNameInputSchema.parse(" Jean Luc ")).toBe("Jean Luc");
+    expect(ContactNameSchema.parse("Jean Luc")).toBe("Jean Luc");
     expect(ContactNameSchema.parse("Coinbase 1")).toBe("Coinbase 1");
     expect(ContactNameSchema.parse("Web3")).toBe("Web3");
     expect(ContactNameSchema.parse("Алексей")).toBe("Алексей");
@@ -67,6 +67,10 @@ describe("ContactSchema", () => {
     expect(() => ContactNameSchema.parse("Olive@2")).toThrow();
     expect(() => ContactNameSchema.parse("Olive 💎")).toThrow();
     expect(() => ContactNameSchema.parse("Olive@")).toThrow();
+    expect(() => ContactNameSchema.parse("aaa'")).toThrow();
+    expect(() => ContactNameSchema.parse("O'Connor")).toThrow();
+    expect(() => ContactNameSchema.parse("O’Connor")).toThrow();
+    expect(() => ContactNameSchema.parse("Jean-Luc")).toThrow();
   });
 
   it("rejects contact names longer than the domain limit", () => {

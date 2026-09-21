@@ -66,6 +66,30 @@ export function buildDotEnvDefine(envPath: string): Record<string, string> {
 }
 
 /**
+ * Env vars the app reads through `@shared/env` (getEnv/useEnv) instead of as a literal
+ * `process.env.X` expression. DefinePlugin cannot reach those, so they travel as one object
+ * that src/renderer/env.ts merges into `process.env` at boot.
+ */
+const BUILD_ENV_NAMES = [
+  "CARD_BAANX_API_URL",
+  "CARD_BAANX_CLIENT_KEY",
+  "CARD_BAANX_HOSTED_UI",
+  "CARD_BAANX_US_APP_ID",
+  "CARD_BAANX_LOGIN_MANIFEST_ID",
+  "CARD_BAANX_HOSTED_MANIFEST_ID",
+  "CARD_OAUTH_REDIRECT_URI",
+];
+
+function buildEnvsDefine(): string {
+  const envs: Record<string, string> = {};
+  for (const name of BUILD_ENV_NAMES) {
+    const value = process.env[name];
+    if (value) envs[name] = value;
+  }
+  return JSON.stringify(envs);
+}
+
+/**
  * Build environment defines for main process
  */
 export function buildMainEnv(
@@ -108,6 +132,7 @@ export function buildRendererEnv(mode: "development" | "production"): Record<str
     __DATADOG_ENV__: JSON.stringify(DATADOG_ENV || null),
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
+    __BUILD_ENVS__: buildEnvsDefine(),
     "process.env.NODE_ENV": JSON.stringify(mode),
   };
 }

@@ -7,11 +7,11 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./mock": "./src/onboardingStatus.mock.ts",
     "./mock/card-details-token": "./src/cardDetailsToken.mock.ts",
     "./mock/card-onboarding-status": "./src/cardOnboardingStatus.mock.ts",
     "./mock/card-session": "./src/cardMockSession.mock.ts",
     "./mock/card-transactions": "./src/cardTransactions.mock.ts",
+    "./mock/card-wallets": "./src/cardWallets.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
