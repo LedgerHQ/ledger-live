@@ -38,9 +38,9 @@ export function useCardAssetsViewModel({
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [assetOrder, setAssetOrder] = useState<readonly string[]>([]);
+  const [reorderingAssetId, setReorderingAssetId] = useState<string | null>(null);
   const isSignedIn = useIsCardSignedIn();
-  const [updateCardWalletPriorities, { isLoading: isReorderingAssets }] =
-    useUpdateCardWalletPrioritiesMutation();
+  const [updateCardWalletPriorities] = useUpdateCardWalletPrioritiesMutation();
   const { transactions } = useCardTransactionsViewModel();
   const { wallets, isLoading, isError } = useCardLinkedWallets({
     currencies,
@@ -147,7 +147,7 @@ export function useCardAssetsViewModel({
 
   const onReorderAssets = useCallback(
     async (draggedId: string, targetId: string) => {
-      if (draggedId === targetId || isReorderingAssets) return;
+      if (draggedId === targetId || reorderingAssetId !== null) return;
 
       const draggedIndex = rows.findIndex(row => row.id === draggedId);
       const targetIndex = rows.findIndex(row => row.id === targetId);
@@ -157,6 +157,7 @@ export function useCardAssetsViewModel({
       const reorderedRows = [...rows];
       const [draggedRow] = reorderedRows.splice(draggedIndex, 1);
       reorderedRows.splice(targetIndex, 0, draggedRow);
+      setReorderingAssetId(draggedId);
       setAssetOrder(reorderedRows.map(row => row.id));
 
       try {
@@ -170,9 +171,11 @@ export function useCardAssetsViewModel({
         if (!result.success) setAssetOrder(previousOrder);
       } catch {
         setAssetOrder(previousOrder);
+      } finally {
+        setReorderingAssetId(null);
       }
     },
-    [isReorderingAssets, rows, updateCardWalletPriorities],
+    [reorderingAssetId, rows, updateCardWalletPriorities],
   );
 
   return useMemo(
@@ -203,7 +206,7 @@ export function useCardAssetsViewModel({
       onManagePress,
       onAddAssetPress,
       onReorderAssets,
-      isReorderingAssets,
+      reorderingAssetId,
     }),
     [
       isSignedIn,
@@ -225,7 +228,7 @@ export function useCardAssetsViewModel({
       onManagePress,
       onAddAssetPress,
       onReorderAssets,
-      isReorderingAssets,
+      reorderingAssetId,
     ],
   );
 }

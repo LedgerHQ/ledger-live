@@ -104,7 +104,7 @@ export function CardAssetsView({
   onManagePress,
   onAddAssetPress,
   onReorderAssets,
-  isReorderingAssets,
+  reorderingAssetId,
 }: CardAssetsViewModel) {
   const { t } = useTranslation();
   const title = t("payTab.card.assets.title");
@@ -161,7 +161,7 @@ export function CardAssetsView({
         onClose={onDialogClose}
         onAddAsset={onAddAssetPress}
         onReorder={onReorderAssets}
-        isReordering={isReorderingAssets}
+        reorderingAssetId={reorderingAssetId}
       />
     </>
   );

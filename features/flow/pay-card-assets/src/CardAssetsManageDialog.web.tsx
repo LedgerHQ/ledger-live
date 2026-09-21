@@ -10,6 +10,7 @@ import {
   ListItemLeading,
   ListItemTrailing,
   ListItemTitle,
+  Spinner,
 } from "@ledgerhq/lumen-ui-react";
 import { MenuBurger } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "@shared/i18n";
@@ -21,7 +22,7 @@ type CardAssetsManageDialogProps = Readonly<{
   onClose: () => void;
   onAddAsset: () => void;
   onReorder: (draggedId: string, targetId: string) => Promise<void>;
-  isReordering: boolean;
+  reorderingAssetId: string | null;
 }>;
 
 export function CardAssetsManageDialog({
@@ -30,7 +31,7 @@ export function CardAssetsManageDialog({
   onClose,
   onAddAsset,
   onReorder,
-  isReordering,
+  reorderingAssetId,
 }: CardAssetsManageDialogProps) {
   const { t } = useTranslation();
   const [draggedId, setDraggedId] = useState<string | null>(null);
@@ -68,17 +69,21 @@ export function CardAssetsManageDialog({
                     </ListItemContent>
                   </ListItemLeading>
                   <ListItemTrailing>
-                    <button
-                      type="button"
-                      draggable={!isReordering}
-                      disabled={isReordering}
-                      aria-label={`Drag ${row.name}`}
-                      className="cursor-grab text-muted active:cursor-grabbing"
-                      onDragStart={() => setDraggedId(row.id)}
-                      onDragEnd={() => setDraggedId(null)}
-                    >
-                      <MenuBurger size={24} />
-                    </button>
+                    {reorderingAssetId === row.id ? (
+                      <Spinner size={24} data-testid={`card-asset-reorder-spinner-${row.id}`} />
+                    ) : (
+                      <button
+                        type="button"
+                        draggable={reorderingAssetId === null}
+                        disabled={reorderingAssetId !== null}
+                        aria-label={`Drag ${row.name}`}
+                        className="cursor-grab text-muted active:cursor-grabbing"
+                        onDragStart={() => setDraggedId(row.id)}
+                        onDragEnd={() => setDraggedId(null)}
+                      >
+                        <MenuBurger size={24} />
+                      </button>
+                    )}
                   </ListItemTrailing>
                 </ListItem>
               </div>

@@ -41,7 +41,7 @@ const ready: CardAssetsViewModel = {
   onManagePress: jest.fn(),
   onAddAssetPress: jest.fn(),
   onReorderAssets: jest.fn(),
-  isReorderingAssets: false,
+  reorderingAssetId: null,
 };
 
 describe("CardAssetsView (native)", () => {
