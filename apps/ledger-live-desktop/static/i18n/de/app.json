@@ -9130,7 +9130,11 @@
     "opted_in" : {
       "title" : "Mehr anzeigen. Sicherer signieren",
       "description" : "Upgrade und {{discount}}% Rabatt erhalten.",
-      "cta" : "Ledger-Upgrade durchführen"
+      "cta" : "Ledger-Upgrade durchführen",
+      "nanoS" : {
+        "title" : "Ledger Nano S Upgrade-Programm",
+        "description" : "Schalte neue Betriebssystem- und Sicherheitsfunktionen frei. Sichere dir {{discount}}% Rabatt."
+      }
     },
     "opted_out" : {
       "title" : "Mehr Sicherheit. Mehr Kontrolle",
@@ -9140,7 +9144,11 @@
     "profile" : {
       "title" : "Upgrade deines Geräts",
       "description" : "Größerer Bildschirm, bessere Sicherheit. Sichere dir {{discount}}%.",
-      "cta" : "Entdecken"
+      "cta" : "Entdecken",
+      "nanoS" : {
+        "title" : "Ledger Nano S Upgrade-Programm",
+        "description" : "Schalte neue Betriebssystem- und Sicherheitsfunktionen frei. Sichere dir {{discount}}% Rabatt."
+      }
     }
   },
   "largeScreenUpsellModal" : {
