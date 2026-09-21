@@ -1,6 +1,13 @@
 module.exports = {
   testEnvironment: "node",
+  testEnvironmentOptions: {
+    customExportConditions: ["@ledgerhq/source"],
+  },
   testPathIgnorePatterns: ["lib/", "lib-es/"],
+  // @ledgerhq packages (e.g. live-dmk-shared) resolve to their TS source via the
+  // condition above, so swc must transform them even inside node_modules;
+  // everything else there stays ignored.
+  transformIgnorePatterns: ["/node_modules/.pnpm/(?!@ledgerhq\\+)"],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup", "@ledgerhq/test-quarantine/jest-retries"],
   transform: {
     "^.+\\.(ts|tsx)?$": [

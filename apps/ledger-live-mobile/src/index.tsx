@@ -40,6 +40,7 @@ import DebugTheme from "~/components/DebugTheme";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
 import EvmAddressBookSetup from "~/components/EvmAddressBookSetup";
+import TronAddressBookSetup from "~/components/TronAddressBookSetup";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
@@ -403,6 +404,7 @@ export default class Root extends Component {
               <SetEnvsFromSettings />
               <SegmentSetup />
               <EvmAddressBookSetup />
+              <TronAddressBookSetup />
               <BrazeContentCardsProvider>
                 <HookNotifications />
                 <HookDevTools />
