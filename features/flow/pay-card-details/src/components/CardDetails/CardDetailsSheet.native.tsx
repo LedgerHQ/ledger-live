@@ -70,7 +70,7 @@ export function CardDetailsSheet({
               <CardDetailsScene {...scene} />
             </Box>
           </BottomSheetScrollView>
-          {onTopUp && scene.route.name === "overview" ? (
+          {onTopUp && isOverview ? (
             <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s24" }}>
               <CardTopUpButton onTopUp={onTopUp} />
             </Box>
