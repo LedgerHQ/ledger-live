@@ -10,6 +10,7 @@ import {
   openHostedLoginInSecureBrowser,
   openHostedPageInSecureBrowser,
 } from "@features/flow-pay-card-auth";
+import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { readCardUsEnv } from "@features/platform-card";
 import { ScreenName } from "~/const";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
@@ -36,8 +37,20 @@ const mockedOpenSecureBrowser = jest.mocked(openHostedLoginInSecureBrowser);
 const mockedReadCardUsEnv = jest.mocked(readCardUsEnv);
 const mockedOpenHostedPage = jest.mocked(openHostedPageInSecureBrowser);
 
+const CARD_ASSET: CardAssetRow = {
+  id: "wallet-btc",
+  currency: "btc",
+  network: "bitcoin",
+  name: "Bitcoin",
+  ticker: "BTC",
+  ledgerId: "bitcoin",
+  cryptoAmount: "0.1 BTC",
+  countervalue: "$100.00",
+  countervalueAmount: 100,
+};
+
 function PayTabViewModelProbe() {
-  const { login, onTopUp, cardSettingsActions } = usePayTabViewModel();
+  const { login, onTopUp, cardAssets, cardSettingsActions } = usePayTabViewModel();
   const { oauthConfig, callback } = login;
 
   return (
@@ -49,6 +62,8 @@ function PayTabViewModelProbe() {
       <Text testID="oauth-deeplink">{oauthConfig.deepLink}</Text>
       <Text testID="oauth-callback">{JSON.stringify(callback)}</Text>
       <Pressable testID="top-up" onPress={onTopUp} />
+      <Pressable testID="asset-top-up" onPress={() => cardAssets.onTopUp?.(CARD_ASSET)} />
+      <Pressable testID="asset-withdraw" onPress={() => cardAssets.onWithdraw?.(CARD_ASSET)} />
       <Text testID="has-manage-pin">
         {String(typeof cardSettingsActions?.onManagePin === "function")}
       </Text>
@@ -126,6 +141,36 @@ describe("usePayTabViewModel", () => {
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
         "https://hosted.test/topup",
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should pre-select the asset the holder tops up from", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    renderViewModel();
+
+    fireEvent.press(screen.getByTestId("asset-top-up"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/topup?currency=btc",
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should open the withdrawal page of the hosted UI for the asset", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    renderViewModel();
+
+    fireEvent.press(screen.getByTestId("asset-withdraw"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/withdrawal?app_id=LEDGERUS&currency=btc",
         PAY_TAB_DEEP_LINK,
       ),
     );

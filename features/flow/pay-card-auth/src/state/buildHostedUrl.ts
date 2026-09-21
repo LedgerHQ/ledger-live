@@ -19,8 +19,11 @@ export function buildHostedUrl(baseUrl: string | undefined, path: string): strin
 }
 
 const TOP_UP_PATH = "/topup";
+const WITHDRAWAL_PATH = "/withdrawal";
 
-export function buildTopUpPath(usAppId?: string | null, currency?: string | null): string {
+export type CardAssetPathBuilder = (usAppId?: string | null, currency?: string | null) => string;
+
+function buildAssetPath(page: string, usAppId?: string | null, currency?: string | null): string {
   const query = new URLSearchParams();
 
   if (usAppId) query.set("app_id", usAppId);
@@ -28,5 +31,11 @@ export function buildTopUpPath(usAppId?: string | null, currency?: string | null
 
   const search = query.toString();
 
-  return search ? `${TOP_UP_PATH}?${search}` : TOP_UP_PATH;
+  return search ? `${page}?${search}` : page;
 }
+
+export const buildTopUpPath: CardAssetPathBuilder = (usAppId, currency) =>
+  buildAssetPath(TOP_UP_PATH, usAppId, currency);
+
+export const buildWithdrawalPath: CardAssetPathBuilder = (usAppId, currency) =>
+  buildAssetPath(WITHDRAWAL_PATH, usAppId, currency);

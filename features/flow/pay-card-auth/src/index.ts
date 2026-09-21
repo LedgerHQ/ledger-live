@@ -1,7 +1,7 @@
 export { CardLogin } from "./components/CardLogin";
 export type { CardLoginProps, PayCardLoginTrackEvent } from "./components/CardLogin/types";
 export { buildHostedPageUrl } from "./state/buildHostedPageUrl";
-export { buildHostedUrl, buildTopUpPath } from "./state/buildHostedUrl";
+export * from "./state/buildHostedUrl";
 export { SIGNUP_PATH } from "./state/buildSignupUrl";
 export * from "./state/cardSettingsPaths";
 export * from "./state/openHostedPageSafely";

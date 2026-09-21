@@ -148,6 +148,21 @@ describe("useCardViewModel", () => {
     expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?currency=btc");
   });
 
+  it("opens the withdrawal page for the asset the user withdraws from", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      result.current.assets?.onWithdraw?.({ currency: "btc" } as CardAssetRow);
+    });
+
+    expect(topUpUrlFrom(mockNavigate)).toBe(
+      "https://ledger.baanxapi.test/withdrawal?app_id=LEDGERUS&currency=btc",
+    );
+  });
+
   it("opens card history with a back path to Pay", () => {
     const { result } = renderCardViewModel(null);
 
