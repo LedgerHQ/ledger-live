@@ -24,6 +24,7 @@ import {
   solanaStakesToStakingResources,
   withdrawableFromStake,
 } from "./logic";
+import { epochOnce, toSolanaTokenAccExtensions } from "./logic/tokenAccountShapes";
 import { estimateTxFee } from "./logic/estimateFees";
 import { ChainAPI } from "./network";
 import { tryParseAsMintAccount } from "./network/chain/account";
@@ -34,7 +35,6 @@ import { PARSED_PROGRAMS } from "./network/chain/program/constants";
 import { getStakeAccounts, StakeAccount } from "./network/chain/stake-activation/rpc";
 import {
   getAccountMinimumBalanceForRentExemption,
-  getTokenAccruedInterestDelta,
   getTransactions,
   toTokenAccountWithInfo,
   TransactionDescriptor,
@@ -45,7 +45,6 @@ import {
   SolanaOperationExtra,
   SolanaStake,
   SolanaTokenAccount,
-  SolanaTokenAccountExtensions,
   SolanaTokenProgram,
 } from "./types";
 import { isSignaturesForAddressResponse } from "./utils";
@@ -455,7 +454,7 @@ async function newSubAcc({
 
   const extensions =
     mintExtensions || assocTokenAcc.info.extensions
-      ? await toSolanaTokenAccExtensions(api, assocTokenAcc, mintExtensions)
+      ? await toSolanaTokenAccExtensions(api, assocTokenAcc, epochOnce(api), mintExtensions)
       : undefined;
 
   return {
@@ -496,7 +495,7 @@ async function patchedSubAcc({
   const totalOps = mergeOps(subAcc.operations, newOps);
   const extensions =
     mintExtensions || assocTokenAcc.info.extensions
-      ? await toSolanaTokenAccExtensions(api, assocTokenAcc, mintExtensions)
+      ? await toSolanaTokenAccExtensions(api, assocTokenAcc, epochOnce(api), mintExtensions)
       : undefined;
 
   return {
@@ -507,64 +506,6 @@ async function patchedSubAcc({
     state: assocTokenAcc.info.state,
     extensions,
   };
-}
-
-async function toSolanaTokenAccExtensions(
-  api: ChainAPI,
-  assocTokenAcc: ParsedOnChainTokenAccountWithInfo,
-  mintExtensions?: MintExtensions,
-) {
-  const extensions = [...(mintExtensions || []), ...(assocTokenAcc.info.extensions || [])];
-  return extensions.reduce<Promise<SolanaTokenAccountExtensions>>(async (prevPromise, tokenExt) => {
-    const acc = await prevPromise;
-    switch (tokenExt.extension) {
-      case "interestBearingConfig": {
-        const delta = await getTokenAccruedInterestDelta(
-          api,
-          BigNumber(assocTokenAcc.info.tokenAmount.amount),
-          assocTokenAcc.info.tokenAmount.decimals,
-          assocTokenAcc.info.mint.toBase58(),
-          assocTokenAcc.info.owner.toBase58(),
-        );
-        return {
-          ...acc,
-          interestRate: {
-            rateBps: tokenExt.state.currentRate,
-            accruedDelta: delta?.toNumber(),
-          },
-        };
-      }
-      case "nonTransferable":
-        return { ...acc, nonTransferable: true };
-      case "permanentDelegate":
-        return {
-          ...acc,
-          permanentDelegate: { delegateAddress: tokenExt.state?.delegate?.toBase58() },
-        };
-      case "memoTransfer":
-        return { ...acc, requiredMemoOnTransfer: !!tokenExt.state.requireIncomingTransferMemos };
-      case "transferFeeConfig": {
-        const { epoch } = await api.getEpochInfo();
-        const { newerTransferFee, olderTransferFee } = tokenExt.state;
-        const transferFee = epoch >= newerTransferFee.epoch ? newerTransferFee : olderTransferFee;
-        return {
-          ...acc,
-          transferFee: {
-            feeBps: transferFee.transferFeeBasisPoints,
-            maxFee: transferFee.maximumFee,
-          },
-        };
-      }
-      case "transferHook": {
-        return {
-          ...acc,
-          transferHook: { programAddress: tokenExt.state?.programId?.toBase58() },
-        };
-      }
-      default:
-        return acc;
-    }
-  }, Promise.resolve({}));
 }
 
 function txToMainAccOperation(
