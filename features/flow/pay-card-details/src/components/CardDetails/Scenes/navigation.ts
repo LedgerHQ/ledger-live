@@ -8,7 +8,8 @@ export type CardDetailsRoute =
   | { name: "addToWallet" }
   | { name: "transaction"; transaction: PayCardTransaction }
   | { name: "assetDetails" }
-  | { name: "assetWithdraw" };
+  | { name: "assetWithdraw" }
+  | { name: "assetsManage" };
 
 export type CardDetailsNavigation = Readonly<{
   route: CardDetailsRoute;

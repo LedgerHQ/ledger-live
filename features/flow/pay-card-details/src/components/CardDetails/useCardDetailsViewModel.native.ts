@@ -44,6 +44,11 @@ export function useCardDetailsViewModel({
     goTo({ name: "assetDetails" });
   };
 
+  const onManageAssetsPress = () => {
+    assetsViewModel.onManagePress();
+    goTo({ name: "assetsManage" });
+  };
+
   const onAssetWithdrawPress = () => {
     assetsViewModel.onWithdrawPress();
     goTo({ name: "assetWithdraw" });
@@ -82,7 +87,7 @@ export function useCardDetailsViewModel({
       return;
     }
 
-    if (route.name === "assetDetails") {
+    if (route.name === "assetDetails" || route.name === "assetsManage") {
       assetsViewModel.onDialogClose();
     }
 
@@ -92,6 +97,7 @@ export function useCardDetailsViewModel({
   const assetSceneViewModel = {
     ...assetsViewModel,
     onAssetPress,
+    onManagePress: onManageAssetsPress,
     onWithdrawPress: onAssetWithdrawPress,
     onShowHistoryPress: onAssetHistoryPress,
     onWithdrawContinue: onAssetWithdrawContinue,
@@ -129,6 +135,7 @@ export function useCardDetailsViewModel({
       route.name === "transaction" ? { transaction: route.transaction, formatters } : null,
     assetDetails: route.name === "assetDetails" ? { viewModel: assetSceneViewModel } : null,
     assetWithdraw: route.name === "assetWithdraw" ? assetSceneViewModel : null,
+    assetsManage: route.name === "assetsManage" ? { viewModel: assetSceneViewModel } : null,
   };
 
   return {

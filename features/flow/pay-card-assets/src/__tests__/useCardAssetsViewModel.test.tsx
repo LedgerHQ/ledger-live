@@ -287,7 +287,7 @@ describe("useCardAssetsViewModel", () => {
       { wrapper: I18nWrapper },
     );
 
-    act(() => result.current.onAddAssetPress());
+    act(() => result.current.onAddAssetPress?.());
 
     expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
@@ -316,5 +316,11 @@ describe("useCardAssetsViewModel", () => {
 
     expect(onTopUp).toHaveBeenCalledWith(expect.objectContaining({ currency: "usdc" }));
     expect(result.current.dialogState).toBe("closed");
+  });
+
+  it("should omit the add asset action when the host does not provide one", () => {
+    const { result } = renderViewModel();
+
+    expect(result.current.onAddAssetPress).toBeUndefined();
   });
 });

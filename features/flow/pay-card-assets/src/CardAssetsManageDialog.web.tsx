@@ -15,7 +15,7 @@ type CardAssetsManageDialogProps = Readonly<{
   isOpen: boolean;
   rows: readonly CardAssetRow[];
   onClose: () => void;
-  onAddAsset: () => void;
+  onAddAsset?: () => void;
   onReorder: (draggedId: string, targetId: string) => Promise<void>;
   reorderingAssetId: string | null;
 }>;
@@ -64,17 +64,19 @@ export function CardAssetsManageDialog({
             ))}
           </div>
         </DialogBody>
-        <DialogFooter
-          className="flex shrink-0 flex-col gap-12 text-center"
-          data-testid="card-assets-manage-footer"
-        >
-          <p className="body-4 text-muted">
-            {t("payTab.card.assets.manageDialog.addAssetCaption")}
-          </p>
-          <Button appearance="base" size="lg" isFull onClick={onAddAsset}>
-            {t("payTab.card.assets.manageDialog.addAsset")}
-          </Button>
-        </DialogFooter>
+        {onAddAsset ? (
+          <DialogFooter
+            className="flex shrink-0 flex-col gap-12 text-center"
+            data-testid="card-assets-manage-footer"
+          >
+            <p className="body-4 text-muted">
+              {t("payTab.card.assets.manageDialog.addAssetCaption")}
+            </p>
+            <Button appearance="base" size="lg" isFull onClick={onAddAsset}>
+              {t("payTab.card.assets.manageDialog.addAsset")}
+            </Button>
+          </DialogFooter>
+        ) : null}
       </DialogContent>
     </Dialog>
   );

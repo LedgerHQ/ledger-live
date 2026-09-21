@@ -2,6 +2,7 @@ import React from "react";
 import {
   CardAssetDetailsDrawer,
   CardAssetDetailsWithdrawDrawer,
+  CardAssetsManageDrawer,
 } from "@features/flow-pay-card-assets";
 import { AddToWalletScene } from "./AddToWalletScene";
 import { FreezeScene } from "./FreezeScene";
@@ -19,6 +20,7 @@ export function CardDetailsScene({
   transaction,
   assetDetails,
   assetWithdraw,
+  assetsManage,
 }: CardDetailsSceneProps) {
   switch (route.name) {
     case "freeze":
@@ -47,6 +49,13 @@ export function CardDetailsScene({
         <CardAssetDetailsWithdrawDrawer
           copy={assetWithdraw.dialogCopy}
           onContinue={assetWithdraw.onWithdrawContinue}
+        />
+      ) : null;
+    case "assetsManage":
+      return assetsManage ? (
+        <CardAssetsManageDrawer
+          rows={assetsManage.viewModel.rows}
+          onAddAsset={assetsManage.viewModel.onAddAssetPress}
         />
       ) : null;
     case "overview":

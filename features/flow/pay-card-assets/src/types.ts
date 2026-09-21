@@ -75,7 +75,7 @@ export type CardAssetsViewModel = Readonly<{
   onShowHistoryPress: () => void;
   onWithdrawContinue: () => void;
   onManagePress: () => void;
-  onAddAssetPress: () => void;
+  onAddAssetPress?: () => void;
   onReorderAssets: (draggedId: string, targetId: string) => Promise<void>;
   reorderingAssetId: string | null;
 }>;
