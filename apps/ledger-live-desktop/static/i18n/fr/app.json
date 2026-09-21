@@ -2878,7 +2878,7 @@
       }
     },
     "balanceType" : {
-      "title" : "Select balance",
+      "title" : "Sélectionner un solde",
       "transparent" : {
         "title" : "Solde public",
         "subtitle" : "Transparent"
@@ -2886,7 +2886,7 @@
       "shielded" : {
         "title" : "Solde privé",
         "subtitle" : "Protégé (shielded)",
-        "pendingNoticeTitle" : "Funds maturing",
+        "pendingNoticeTitle" : "Actifs arrivant à maturité",
         "pendingNotice" : "Certaines notes shielded sont encore en cours de maturation et peuvent ne pas encore être transférables."
       },
       "zeroBalance" : {
@@ -2990,7 +2990,7 @@
       "availableBalance" : "Solde disponible",
       "delegatedAssetsTooltip" : "Les actifs délégués sont utilisés indirectement par le prestataire de service de staking pour faire fonctionner les nœuds de validation, traiter les transactions et sécuriser le réseau, participant ainsi au mécanisme de consensus.",
       "delegatedAssets" : "Actifs délégués",
-      "undelegatingTooltip" : "Les actifs retirés de la délégation sont disponibles au retrait après une période de 10 jours.",
+      "undelegatingTooltip" : "Les actifs retirés de la délégation sont disponibles au retrait après un délai de 10 jours.",
       "undelegating" : "Retraits en attente"
     },
     "account" : {
@@ -3104,7 +3104,7 @@
     },
     "undelegation" : {
       "header" : "Délégations arrêtées",
-      "headerTooltip" : "Disponible au terme de la période de fin de liaison de 10 jours.",
+      "headerTooltip" : "Disponible au terme du délai de sortie de 10 jours.",
       "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
       "withdraw" : {
         "cta" : "Finaliser le retrait"
@@ -3115,7 +3115,7 @@
           "amount" : {
             "title" : "Montant",
             "subtitle" : "L’interruption de délégation est finalisée après <0>10 jours</0>.",
-            "warning" : "Les récompenses seront demandées automatiquement. L’interruption de délégation est un processus en 2 étapes : demande d’interruption, suivie d’une <0>période de fin de liaison de 10 jours</0> après laquelle vous pourrez finaliser le retrait. Ce montant sera alors transféré sur votre solde disponible.",
+            "warning" : "Les récompenses seront demandées automatiquement. L’interruption de délégation est un processus en 2 étapes : demande d’interruption, suivie d’un <0>délai de sortie de 10 jours</0> après lequel vous pourrez finaliser le retrait. Ce montant sera alors transféré sur votre solde disponible.",
             "fields" : {
               "validator" : "Prestataire de staking",
               "amount" : "Montant à arrêter"
@@ -3845,8 +3845,8 @@
   "polkadot" : {
     "lockedBalance" : "Lié",
     "lockedTooltip" : "Les actifs doivent être liés aux validateurs nommés avant de gagner des récompenses.",
-    "unlockingBalance" : "En fin de liaison",
-    "unlockingTooltip" : "Les actifs en fin de liaison restent immobilisés pendant 28 jours avant de pouvoir être retirés.",
+    "unlockingBalance" : "En cours de sortie",
+    "unlockingTooltip" : "Les actifs en cours de sortie restent immobilisés pendant 28 jours avant de pouvoir être retirés.",
     "unlockedBalance" : "Délié",
     "unlockedTooltip" : "Les actifs déliés peuvent maintenant être déplacés en utilisant l’opération de retrait.",
     "networkFees" : "Les frais de réseau sont automatiquement définis par le consensus de Polkadot. Vous ne pourrez pas les voir sur votre appareil.",
@@ -3886,12 +3886,12 @@
       "showInactiveNominations" : "Afficher toutes les nominations ({{count}})",
       "hideInactiveNominations" : "Afficher uniquement les nominations actives",
       "noActiveNominations" : "Il n’y a aucune nomination active.",
-      "showAllUnlockings" : "Afficher tous les montants en fin de liaison ({{count}})",
-      "hideAllUnlockings" : "Masquer les montants en fin de liaison"
+      "showAllUnlockings" : "Afficher tous les montants en cours de sortie ({{count}})",
+      "hideAllUnlockings" : "Masquer les montants en cours de sortie"
     },
     "unlockings" : {
-      "header" : "En fin de liaison",
-      "headerTooltip" : "Disponible à la fin de la période de verrouillage de 28 jours",
+      "header" : "En cours de sortie",
+      "headerTooltip" : "Disponible à la fin du délai de sortie de 28 jours",
       "withdrawUnbonded" : "Retirer ({{amount}})",
       "withdrawTooltip" : "Le montant délié sera crédité sur votre solde disponible.",
       "noUnlockedWarning" : "Aucun solde délié à retirer pour le moment",
@@ -3906,7 +3906,7 @@
       },
       "unbond" : {
         "title" : "Délier",
-        "description" : "Pour libérer un montant lié, vous devez d’abord le délier. Vous pourrez le retirer après la période de fin de liaison de 28 jours."
+        "description" : "Pour libérer un montant lié, vous devez d’abord le délier. Vous pourrez le retirer après le délai de sortie de 28 jours."
       },
       "withdrawUnbonded" : {
         "title" : "Retirer",
@@ -3961,7 +3961,7 @@
       "steps" : {
         "starter" : {
           "description" : "Vous pouvez gagner des récompenses en liant vos actifs, puis en nommant vos validateurs.",
-          "bullet" : ["Vous gardez la propriété de vos actifs liés.", "Nommez en utilisant votre appareil Ledger.", "Vos actifs seront à nouveau disponibles 28 jours après avoir mis fin à la liaison."],
+          "bullet" : ["Vous gardez la propriété de vos actifs liés.", "Nommez en utilisant votre appareil Ledger.", "Vos actifs seront à nouveau disponibles au terme d’un délai de sortie de 28 jours."],
           "help" : "Fonctionnement des nominations",
           "warning" : "Choisissez votre validateur judicieusement : une partie de vos actifs liés peut être perdue si le validateur ne se comporte pas correctement."
         },
@@ -3970,7 +3970,7 @@
           "amountLabel" : "Montant à lier",
           "availableLabel" : "Disponible",
           "maxLabel" : "Max",
-          "info" : "Les actifs liés peuvent être déliés à tout moment, mais la période de fin de liaison est de 28 jours.",
+          "info" : "Les actifs liés peuvent être déliés à tout moment, mais le délai de sortie est de 28 jours.",
           "learnMore" : "En savoir plus"
         },
         "connectDevice" : {
@@ -4002,7 +4002,7 @@
         "amount" : {
           "title" : "Montant",
           "amountLabel" : "Montant à relier",
-          "availableLabel" : "En fin de liaison",
+          "availableLabel" : "En cours de sortie",
           "maxLabel" : "Max",
           "info" : "Les actifs reliés sont immédiatement ajoutés au montant lié.",
           "learnMore" : "En savoir plus"
@@ -4033,7 +4033,7 @@
           "amountLabel" : "Montant à délier",
           "availableLabel" : "Lié",
           "maxLabel" : "Max",
-          "info" : "Les actifs déliés peuvent être retirés après la période de fin de liaison de 28 jours.",
+          "info" : "Les actifs déliés peuvent être retirés après le délai de sortie de 28 jours.",
           "learnMore" : "En savoir plus"
         },
         "connectDevice" : {
@@ -4043,12 +4043,12 @@
           "title" : "Confirmation",
           "label" : "Confirmation",
           "success" : {
-            "title" : "Transaction de fin de liaison bien envoyée",
+            "title" : "Transaction de sortie de liaison bien envoyée",
             "text" : "Les actifs déliés peuvent être retirés après 28 jours.",
             "cta" : "Voir les détails"
           },
           "pending" : {
-            "title" : "Fin de liaison de vos actifs en cours..."
+            "title" : "Actifs en cours de sortie de liaison..."
           },
           "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
         }
@@ -4058,7 +4058,7 @@
       "modes" : {
         "withdrawUnbonded" : {
           "title" : "Retirer",
-          "description" : "Après la période de fin de liaison de 28 jours, vous pouvez retirer vos actifs déliés.",
+          "description" : "Après le délai de sortie de 28 jours, vous pouvez retirer vos actifs déliés.",
           "info" : "Vous pouvez ensuite retirer vos actifs déliés et les verser sur votre solde disponible."
         },
         "chill" : {
@@ -6939,6 +6939,9 @@
     },
     "xrp" : {
       "memo" : "Tag"
+    },
+    "zcash" : {
+      "memoTooltip" : "Un {{memoLabel}} est facultatif lors de l’envoi de {{currency}}. Il est chiffré et seul le bénéficiaire peut le lire. Certaines plateformes d’échange l’exigent pour identifier votre transaction."
     }
   },
   "errors" : {
@@ -7497,12 +7500,12 @@
       "title" : "Montant trop élevé pour une seule transaction : essayez d’effectuer plusieurs petits envois"
     },
     "ZcashShieldedKeyMissing" : {
-      "title" : "Activate your private balance first",
-      "description" : "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+      "title" : "Activez d’abord votre solde privé",
+      "description" : "Ce transfert nécessite la clé de consultation de votre appareil. Veuillez activer votre solde privé."
     },
     "ZcashNotesNotYetSpendable" : {
-      "title" : "These funds are not spendable yet",
-      "description" : "Please try again in a few minutes"
+      "title" : "Ces actifs ne peuvent pas encore être transférés",
+      "description" : "Veuillez réessayer dans quelques minutes."
     },
     "InvalidNonce" : {
       "title" : "Nonce requis"
@@ -7791,7 +7794,7 @@
       "title" : "Votre solde lié doit être d’au moins {{minimumBondBalance}}."
     },
     "PolkadotMaxUnbonding" : {
-      "title" : "Vous avez dépassé la limite autorisée pour l’arrêt de liaison."
+      "title" : "Vous avez dépassé la limite autorisée pour la sortie de liaison"
     },
     "PolkadotValidatorsRequired" : {
       "title" : "Sélectionnez au moins un validateur."
@@ -9503,9 +9506,6 @@
           "toPublic" : "Transfert interne vers le solde public",
           "unavailable" : "Votre adresse privée sera disponible une fois que la fonctionnalité shielded sera activée pour votre compte.",
           "privacyWarning" : "Vos actifs shielded seront alors associés à l’adresse publique de votre compte, visible de tous. Un envoi vers une adresse privée externe les maintient dissociés."
-        },
-        "confirm" : {
-          "privateTransaction" : "Transaction privée : vérifiez le montant sur votre appareil"
         }
       },
       "state" : {
@@ -9695,8 +9695,8 @@
             "rateAndCommission" : "{{rate}}% est. · {{commission}}% de commission",
             "commissionOnly" : "{{commission}}% de commission",
             "rowSubtitleClosed" : "Validateur fermé aux nouvelles mises en staking",
-            "rowSubtitleUnbonding" : "Fin de liaison en cours pour ce validateur",
-            "unbondingTooltip" : "Ce validateur retire ses actifs stakés. Le réseau rejette tout nouvelle mise en staking vers celui-ci tant que ce retrait n’est pas finalisé.",
+            "rowSubtitleUnbonding" : "Sortie de liaison en cours pour ce validateur",
+            "unbondingTooltip" : "Ce validateur retire ses actifs stakés. Le réseau rejette toute nouvelle mise en staking vers celui-ci tant que ce retrait n’est pas finalisé.",
             "rowSubtitleEarnsNothing" : "Ce validateur ne gagne aucune récompense",
             "nonEarning" : {
               "fullCommission" : "Ce validateur prélève 100% de commission, les délégateurs ne reçoivent donc rien.",
@@ -9734,13 +9734,13 @@
       },
       "unbond" : {
         "title" : "Délier",
-        "description" : "Déliez vos ALEO liés. Ils seront disponibles après la période de fin de liaison."
+        "description" : "Déliez vos ALEO liés. Ils seront disponibles après le délai de sortie."
       },
       "claim" : {
         "title" : "Demander",
         "description" : "Récupérez vos ALEO déliés, sur votre solde disponible."
       },
-      "unbondPendingTooltip" : "Une opération de déstaking est en attente de confirmation. Aleo suit une seule position d’arrêt de liaison à la fois. Il n’est donc pas possible de délier tant que l’opération n’a pas abouti."
+      "unbondPendingTooltip" : "Une opération de déstaking est en attente de confirmation. Aleo suit une seule position de sortie de liaison à la fois. Il n’est donc pas possible de délier tant que l’opération n’a pas abouti."
     },
     "unbond" : {
       "flow" : {
@@ -9749,7 +9749,7 @@
           "amount" : {
             "title" : "Montant",
             "unbondableBanner" : "Le montant maximum pouvant être délié est",
-            "belowMinimum" : "Si l’arrêt de liaison laisse moins de {{minAmount}} liés, l’intégralité de votre solde lié est délié, car le minimum à staker ne serait plus atteint."
+            "belowMinimum" : "Si la sortie de liaison laisse moins de {{minAmount}} liés, l’intégralité de votre solde lié est délié, car le minimum à staker ne serait plus atteint."
           },
           "connectDevice" : {
             "title" : "Appareil"
@@ -9757,11 +9757,11 @@
           "confirmation" : {
             "title" : "Confirmation",
             "success" : {
-              "title" : "Arrêt de liaison envoyé",
-              "text" : "Votre demande d’arrêt de liaison a été diffusée.",
+              "title" : "Sortie de liaison envoyée",
+              "text" : "Votre demande de sortie de liaison a été diffusée.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Votre transaction d’arrêt de liaison a été signée, mais n’a pas pu être diffusée."
+            "broadcastError" : "Votre transaction de sortie de liaison a été signée, mais n’a pas pu être diffusée."
           }
         }
       }
@@ -10020,7 +10020,7 @@
     "addAddressEntry" : {
       "title" : "Entrer l’adresse",
       "addressPlaceholder" : "Adresse ou ENS",
-      "confirmAddress" : "Continuer la vérification",
+      "confirmAddress" : "Continuer et vérifier",
       "validatingAddress" : "Validation de l’adresse",
       "validAddress" : "Adresse valide",
       "invalidAddress" : "Format d’adresse incorrect.",
@@ -10040,7 +10040,7 @@
       "inputLabel" : "Nom de l’adresse",
       "namingDisclaimer" : "Ce nom s’affiche sur votre appareil Ledger lorsque vous effectuez un envoi vers cette adresse. Il vous permet de la retrouver facilement.",
       "namingDisclaimerAccessibilityLabel" : "Informations sur le nom de l’adresse",
-      "continueToReview" : "Continuer la vérification",
+      "continueToReview" : "Continuer et vérifier",
       "invalidLabel" : "Les caractères spéciaux ne sont pas pris en charge.",
       "duplicateLabel" : "Ce nom est déjà utilisé pour ce contact.",
       "tooLongLabel" : "Les noms d’adresse ne doivent pas dépasser 32 caractères."
