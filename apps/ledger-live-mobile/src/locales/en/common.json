@@ -10674,14 +10674,27 @@
           "step1": "Go to Apple Wallet app and tap add (+)",
           "step2": "Select Debit or Credit Card",
           "step3": "Follow the instructions",
-          "cta": "Go to Apple Wallet"
+          "cta": "Go to Apple Wallet",
+          "error": {
+            "title": "Apple Wallet couldn’t be opened",
+            "description": "Make sure Apple Pay is available on this device, then try again.",
+            "action": "Try again"
+          }
         },
         "android": {
           "title": "Add to Google Pay",
           "step1": "Go to Google Wallet app and tap add.",
           "step2": "Choose Payment card, then select New Credit or Debit Card.",
           "step3": "Follow the instructions.",
-          "cta": "Go to Google Wallet"
+          "cta": "Go to Google Wallet",
+          "error": {
+            "title": "Google Wallet couldn’t be opened",
+            "description": "Google Wallet may not be installed or may be disabled.",
+            "action": "Open Google Play"
+          }
+        },
+        "error": {
+          "back": "Back to instructions"
         }
       }
     }

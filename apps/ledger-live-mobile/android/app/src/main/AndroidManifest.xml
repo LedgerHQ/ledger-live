@@ -37,18 +37,10 @@
         android:required="true" />
 
     <queries>
+        <package android:name="com.google.android.apps.walletnfcrel" />
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="concordiumidapp" />
-        </intent>
-        <!-- Linking.sendIntent resolves the activity before starting it, which package visibility
-             filters out unless the action is declared here. Used to reach the wallet/contactless
-             payment settings when the Google Wallet app cannot be opened. -->
-        <intent>
-            <action android:name="android.settings.NFC_PAYMENT_SETTINGS" />
-        </intent>
-        <intent>
-            <action android:name="android.settings.NFC_SETTINGS" />
         </intent>
     </queries>
 
