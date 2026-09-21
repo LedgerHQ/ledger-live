@@ -5,7 +5,7 @@ import getTrustchainApi, {
 } from "@ledgerhq/ledger-key-ring-protocol/api";
 import { getCloudSyncApi, StatusAPIResponse as CloudSyncStatus } from "@shared/cloud-sync";
 import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 
 export function useLedgerSyncStatus() {
   const featureWalletSync = useFeature("llmWalletSync");

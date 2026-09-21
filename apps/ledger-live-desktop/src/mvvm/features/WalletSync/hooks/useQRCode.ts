@@ -12,7 +12,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { track } from "~/renderer/analytics/segment";
 import { QueryKey } from "./type.hooks";

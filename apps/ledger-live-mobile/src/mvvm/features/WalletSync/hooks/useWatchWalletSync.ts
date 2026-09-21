@@ -39,7 +39,7 @@ import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { bridgeCache } from "~/bridge/cache";
 import { replaceAccounts } from "~/actions/accounts";
 import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 import logger from "~/logger";
 
 type DistantState = DistantDocument;

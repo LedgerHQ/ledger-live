@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 
 // `useLedgerSyncInfo` (mounted by the WalletSync Manage screen) calls `GET /_info` on the
 // trustchain and cloud-sync backends. The resolved environment depends on whether the

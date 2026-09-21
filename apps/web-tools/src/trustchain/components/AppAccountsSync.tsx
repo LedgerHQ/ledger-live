@@ -15,6 +15,7 @@ import {
 import { createAggregator } from "@shared/cloud-sync-module";
 import {
   createWalletSyncWatchLoop,
+  getWalletSyncEnvironmentParams,
   makeSaveNewUpdate,
   makeLocalIncrementalUpdate,
 } from "@features/platform-wallet-sync";
@@ -42,7 +43,6 @@ import { Tick } from "./Tick";
 import { State } from "./types";
 import { Actionable } from "./Actionable";
 import { createContact, ContactsSync } from "./ContactsSync";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
 const latestWalletStateSelector = (s: State): WSState => s.walletState.walletSyncState;
 

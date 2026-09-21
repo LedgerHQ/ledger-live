@@ -5,7 +5,7 @@ import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 import { useStore } from "~/context/hooks";
 import { useInstanceName } from "./useInstanceName";
 

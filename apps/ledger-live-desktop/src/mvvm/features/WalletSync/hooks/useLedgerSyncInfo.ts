@@ -5,7 +5,7 @@ import getTrustchainApi, {
 } from "@ledgerhq/ledger-key-ring-protocol/api";
 import { getCloudSyncApi, StatusAPIResponse as CloudSyncStatus } from "@shared/cloud-sync";
 import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";

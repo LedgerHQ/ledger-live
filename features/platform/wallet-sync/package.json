@@ -20,6 +20,7 @@
   "dependencies": {
     "@shared/cloud-sync": "workspace:^",
     "@shared/cloud-sync-module": "workspace:^",
+    "@shared/env": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

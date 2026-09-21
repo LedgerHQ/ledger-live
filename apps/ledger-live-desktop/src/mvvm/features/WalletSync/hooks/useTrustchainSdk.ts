@@ -8,7 +8,7 @@ import { useStore } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 import { useInstanceName } from "./useInstanceName";
 
 let sdkInstance: TrustchainSDK | null = null;

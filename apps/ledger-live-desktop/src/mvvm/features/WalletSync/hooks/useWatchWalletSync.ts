@@ -39,7 +39,7 @@ import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
 import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 import logger from "~/renderer/logger";
 
 type DistantState = DistantDocument;

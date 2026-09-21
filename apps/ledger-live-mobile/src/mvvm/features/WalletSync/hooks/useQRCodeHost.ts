@@ -16,7 +16,7 @@ import { Options, Steps } from "../types/Activation";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
 import { useInstanceName } from "./useInstanceName";
