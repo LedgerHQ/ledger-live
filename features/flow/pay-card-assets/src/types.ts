@@ -7,6 +7,8 @@ import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 
 export type CardAssetRow = Readonly<{
   id: string;
+  /** Provider address identifier used to mutate the linked wallet. */
+  addressId?: string;
   /** Provider asset code used by card transaction funding sources. */
   currency: string;
   /** Provider network paired with `currency` by the existing asset catalog. */
@@ -40,9 +42,10 @@ export type CardAssetsProps = Readonly<{
   onTopUp?: (asset: CardAssetRow) => void;
   onWithdraw?: (asset: CardAssetRow) => void;
   onShowHistory?: (asset: CardAssetRow) => void;
+  onAddAsset?: () => void;
 }>;
 
-export type CardAssetDialogState = "closed" | "details" | "withdraw";
+export type CardAssetDialogState = "closed" | "details" | "withdraw" | "manage";
 
 export type CardAssetDialogCopy = Readonly<{
   topUp: string;
@@ -71,4 +74,8 @@ export type CardAssetsViewModel = Readonly<{
   onWithdrawClose: () => void;
   onShowHistoryPress: () => void;
   onWithdrawContinue: () => void;
+  onManagePress: () => void;
+  onAddAssetPress: () => void;
+  onReorderAssets: (draggedId: string, targetId: string) => Promise<void>;
+  reorderingAssetId: string | null;
 }>;

@@ -4,6 +4,7 @@ import { I18nTestProvider } from "@shared/i18n/testing";
 export const CARD_ASSETS_COPY = {
   title: "Assets",
   info: "These assets fund your card. Set the order they're charged in, or add more.",
+  manage: "Manage",
   empty: "No assets yet",
   error: "Couldn't load assets",
   topUp: "Top up",
@@ -13,6 +14,11 @@ export const CARD_ASSETS_COPY = {
   withdrawTitle: "You'll be redirected to Baanx",
   withdrawDescription: "Withdraw funds from your Baanx account to your Ledger wallet address.",
   continue: "Continue",
+  manageDialogTitle: "Manage assets",
+  manageDialogDescription:
+    "Drag to set your funding order. If one asset runs low, the next one is used automatically.",
+  addAssetCaption: "You'll be redirected to Baanx's page to add asset.",
+  addAsset: "Add asset",
 } as const;
 
 export const CARD_ASSETS_RESOURCES = {
@@ -23,6 +29,7 @@ export const CARD_ASSETS_RESOURCES = {
           assets: {
             title: CARD_ASSETS_COPY.title,
             info: CARD_ASSETS_COPY.info,
+            manage: CARD_ASSETS_COPY.manage,
             empty: CARD_ASSETS_COPY.empty,
             error: CARD_ASSETS_COPY.error,
             details: {
@@ -34,6 +41,12 @@ export const CARD_ASSETS_RESOURCES = {
               title: CARD_ASSETS_COPY.withdrawTitle,
               description: CARD_ASSETS_COPY.withdrawDescription,
               continue: CARD_ASSETS_COPY.continue,
+            },
+            manageDialog: {
+              title: CARD_ASSETS_COPY.manageDialogTitle,
+              description: CARD_ASSETS_COPY.manageDialogDescription,
+              addAssetCaption: CARD_ASSETS_COPY.addAssetCaption,
+              addAsset: CARD_ASSETS_COPY.addAsset,
             },
           },
         },

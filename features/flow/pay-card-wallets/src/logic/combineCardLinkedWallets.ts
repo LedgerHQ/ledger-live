@@ -13,7 +13,7 @@ export function combineCardLinkedWallets({
   internal,
   currencies,
 }: CombineCardLinkedWalletsParams): CardLinkedWallets {
-  const balanceById = new Map(internal.map(wallet => [wallet.id, wallet.balance]));
+  const internalById = new Map(internal.map(wallet => [wallet.id, wallet]));
 
   const wallets: CardLinkedWalletBalance[] = linked
     // `linked` is the cache entry: never sort it in place.
@@ -21,9 +21,11 @@ export function combineCardLinkedWallets({
     .sort((a, b) => a.priority - b.priority)
     .map(({ id, address, currency, network, priority, ledgerId }) => {
       const ledgerCurrency = ledgerId === undefined ? undefined : currencies.get(ledgerId);
+      const internalWallet = internalById.get(id);
 
       return {
         id,
+        ...(internalWallet?.addressId === undefined ? {} : { addressId: internalWallet.addressId }),
         address,
         currency,
         network,
@@ -31,7 +33,7 @@ export function combineCardLinkedWallets({
         // Left off rather than held as `undefined`: an unmapped asset has no `ledgerId` at all.
         ...(ledgerId === undefined ? {} : { ledgerId }),
         ...(ledgerCurrency === undefined ? {} : { ledgerCurrency }),
-        balance: balanceById.get(id) ?? null,
+        balance: internalWallet?.balance ?? null,
       };
     });
 

@@ -2,6 +2,8 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export type CardLinkedWalletBalance = Readonly<{
   id: string;
+  /** Provider address identifier required by card wallet mutation endpoints. */
+  addressId?: string;
   address: string;
   currency: string;
   network: string;

@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useUpdateCardWalletPrioritiesMutation } from "@domain/api-card-management";
 import { useTranslation } from "@shared/i18n";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import {
@@ -31,25 +32,30 @@ export function useCardAssetsViewModel({
   onTopUp,
   onWithdraw,
   onShowHistory,
+  onAddAsset,
 }: CardAssetsProps): CardAssetsViewModel {
   const { t } = useTranslation();
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
+  const [assetOrder, setAssetOrder] = useState<readonly string[]>([]);
+  const [reorderingAssetId, setReorderingAssetId] = useState<string | null>(null);
   const isSignedIn = useIsCardSignedIn();
+  const [updateCardWalletPriorities] = useUpdateCardWalletPrioritiesMutation();
   const { transactions } = useCardTransactionsViewModel();
   const { wallets, isLoading, isError } = useCardLinkedWallets({
     currencies,
     skip: !isSignedIn,
   });
 
-  const rows = useMemo<readonly CardAssetRow[]>(
+  const unorderedRows = useMemo<readonly CardAssetRow[]>(
     () =>
-      wallets.map(({ id, balance, currency, network, ledgerId, ledgerCurrency }) => {
+      wallets.map(({ id, addressId, balance, currency, network, ledgerId, ledgerCurrency }) => {
         const countervalue =
           ledgerCurrency && balance !== null ? priceWallet(ledgerCurrency, balance) : null;
 
         return {
           id,
+          ...(addressId === undefined ? {} : { addressId }),
           currency,
           network,
           name: ledgerCurrency?.name ?? currency.toUpperCase(),
@@ -62,6 +68,18 @@ export function useCardAssetsViewModel({
       }),
     [wallets, priceWallet, formatCountervalue],
   );
+
+  const rows = useMemo<readonly CardAssetRow[]>(() => {
+    const rowsById = new Map(unorderedRows.map(row => [row.id, row]));
+    const orderedRows = assetOrder.flatMap(id => {
+      const row = rowsById.get(id);
+      if (!row) return [];
+      rowsById.delete(id);
+      return [row];
+    });
+
+    return [...orderedRows, ...rowsById.values()];
+  }, [assetOrder, unorderedRows]);
 
   const selectedAsset = useMemo(
     () => rows.find(asset => asset.id === selectedAssetId) ?? null,
@@ -120,6 +138,53 @@ export function useCardAssetsViewModel({
     onDialogClose();
   }, [onDialogClose, onWithdraw, selectedAsset]);
 
+  const onManagePress = useCallback(() => {
+    setDialogState("manage");
+  }, []);
+
+  const onAddAssetPress = useCallback(() => {
+    onAddAsset?.();
+  }, [onAddAsset]);
+
+  const onReorderAssets = useCallback(
+    async (draggedId: string, targetId: string) => {
+      if (draggedId === targetId || reorderingAssetId !== null) return;
+
+      const draggedIndex = rows.findIndex(row => row.id === draggedId);
+      const targetIndex = rows.findIndex(row => row.id === targetId);
+      if (draggedIndex < 0 || targetIndex < 0) return;
+
+      const previousOrder = rows.map(row => row.id);
+      const reorderedRows = [...rows];
+      const [draggedRow] = reorderedRows.splice(draggedIndex, 1);
+      reorderedRows.splice(targetIndex, 0, draggedRow);
+      setReorderingAssetId(draggedId);
+      setAssetOrder(reorderedRows.map(row => row.id));
+
+      try {
+        const result = await updateCardWalletPriorities({
+          wallets: reorderedRows.map((row, index) => {
+            if (row.addressId === undefined) {
+              throw new Error(`Missing address id for card wallet ${row.id}`);
+            }
+
+            return {
+              addressId: row.addressId,
+              priority: index + 1,
+            };
+          }),
+        }).unwrap();
+
+        if (!result.success) setAssetOrder(previousOrder);
+      } catch {
+        setAssetOrder(previousOrder);
+      } finally {
+        setReorderingAssetId(null);
+      }
+    },
+    [reorderingAssetId, rows, updateCardWalletPriorities],
+  );
+
   return useMemo(
     () => ({
       isVisible: isSignedIn,
@@ -145,6 +210,10 @@ export function useCardAssetsViewModel({
       onWithdrawClose,
       onShowHistoryPress,
       onWithdrawContinue,
+      onManagePress,
+      onAddAssetPress,
+      onReorderAssets,
+      reorderingAssetId,
     }),
     [
       isSignedIn,
@@ -163,6 +232,10 @@ export function useCardAssetsViewModel({
       onWithdrawClose,
       onShowHistoryPress,
       onWithdrawContinue,
+      onManagePress,
+      onAddAssetPress,
+      onReorderAssets,
+      reorderingAssetId,
     ],
   );
 }

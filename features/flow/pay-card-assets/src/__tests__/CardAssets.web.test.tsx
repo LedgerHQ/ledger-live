@@ -1,9 +1,19 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 import { CardAssets } from "../CardAssets";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
+
+const mockUnwrapUpdate = jest.fn();
+const mockUpdateCardWalletPriorities = jest.fn(() => ({ unwrap: mockUnwrapUpdate }));
+
+jest.mock("@domain/api-card-management", () => ({
+  useUpdateCardWalletPrioritiesMutation: () => [
+    mockUpdateCardWalletPriorities,
+    { isLoading: false },
+  ],
+}));
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   useIsCardSignedIn: () => true,
@@ -78,11 +88,19 @@ jest.mock("@features/flow-pay-card-wallets", () => {
       wallets: [
         {
           id: "w-usdc",
+          addressId: "address-usdc",
           balance: "4000",
           currency: "usdc",
           network: "ethereum",
           ledgerId: "ethereum/erc20/usd__coin",
           ledgerCurrency,
+        },
+        {
+          id: "w-usdt",
+          addressId: "address-usdt",
+          balance: "20",
+          currency: "usdt",
+          network: "ethereum",
         },
       ],
       isLoading: false,
@@ -113,13 +131,19 @@ const formatBalance = (value: number) => ({
 });
 
 describe("CardAssets (web)", () => {
-  function renderCardAssets() {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUnwrapUpdate.mockResolvedValue({ success: true });
+  });
+
+  function renderCardAssets(onAddAsset?: () => void) {
     render(
       <CardAssets
         currencies={new Map([[USDC.id, USDC]])}
         priceWallet={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
         formatBalance={formatBalance}
+        onAddAsset={onAddAsset}
       />,
       { wrapper: I18nWrapper },
     );
@@ -214,5 +238,80 @@ describe("CardAssets (web)", () => {
       expect(screen.queryByTestId("card-asset-withdraw-dialog")).not.toBeInTheDocument(),
     );
     expect(await screen.findByTestId("card-asset-details-dialog")).toBeVisible();
+  });
+
+  it("should open the manage dialog with linked assets", async () => {
+    const user = userEvent.setup();
+    renderCardAssets();
+
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
+
+    const dialog = screen.getByTestId("card-assets-manage-dialog");
+    expect(
+      within(dialog).getByRole("heading", { name: CARD_ASSETS_COPY.manageDialogTitle }),
+    ).toBeVisible();
+    expect(within(dialog).getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
+    expect(within(dialog).getByText("USD Coin")).toBeVisible();
+    const footer = within(dialog).getByTestId("card-assets-manage-footer");
+    const addAssetButton = within(dialog).getByRole("button", {
+      name: CARD_ASSETS_COPY.addAsset,
+    });
+    expect(footer).toContainElement(addAssetButton);
+    expect(within(footer).getByText(CARD_ASSETS_COPY.addAssetCaption)).toBeVisible();
+  });
+
+  it("should reorder assets with the drag handle and send every linked wallet", async () => {
+    let finishUpdate: (result: { success: boolean }) => void = () => {};
+    mockUnwrapUpdate.mockReturnValue(
+      new Promise(resolve => {
+        finishUpdate = resolve;
+      }),
+    );
+    const user = userEvent.setup();
+    renderCardAssets();
+
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
+    fireEvent.dragStart(screen.getByRole("button", { name: "Drag USDT" }));
+    fireEvent.drop(screen.getByTestId("card-asset-order-w-usdc"));
+
+    expect(screen.getByTestId("card-asset-reorder-spinner-w-usdt")).toBeVisible();
+    await waitFor(() =>
+      expect(mockUpdateCardWalletPriorities).toHaveBeenCalledWith({
+        wallets: [
+          { addressId: "address-usdt", priority: 1 },
+          { addressId: "address-usdc", priority: 2 },
+        ],
+      }),
+    );
+    await act(() => {
+      finishUpdate({ success: true });
+    });
+    await waitFor(() =>
+      expect(screen.queryByTestId("card-asset-reorder-spinner-w-usdt")).not.toBeInTheDocument(),
+    );
+  });
+
+  it("should return to the asset list when the manage dialog closes", async () => {
+    const user = userEvent.setup();
+    renderCardAssets();
+
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
+    await user.click(screen.getByRole("button", { name: /close/i }));
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("card-assets-manage-dialog")).not.toBeInTheDocument(),
+    );
+    expect(screen.getByTestId("card-assets")).toBeVisible();
+  });
+
+  it("should ask the host to add an asset", async () => {
+    const user = userEvent.setup();
+    const onAddAsset = jest.fn();
+    renderCardAssets(onAddAsset);
+
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.addAsset }));
+
+    expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
 });

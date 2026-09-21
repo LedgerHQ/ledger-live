@@ -6,6 +6,15 @@ import { formatCardAssetCryptoAmount, useCardAssetsViewModel } from "../useCardA
 
 const mockUseIsCardSignedIn = jest.fn();
 const mockUseCardLinkedWallets = jest.fn();
+const mockUpdateCardWalletPriorities = jest.fn();
+const mockUnwrapUpdate = jest.fn();
+
+jest.mock("@domain/api-card-management", () => ({
+  useUpdateCardWalletPrioritiesMutation: () => [
+    mockUpdateCardWalletPriorities,
+    { isLoading: false },
+  ],
+}));
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   useIsCardSignedIn: () => mockUseIsCardSignedIn(),
@@ -23,7 +32,7 @@ function stubWallets(
   overrides: Partial<{
     wallets: readonly Pick<
       CardLinkedWalletBalance,
-      "id" | "balance" | "currency" | "network" | "ledgerId" | "ledgerCurrency"
+      "id" | "addressId" | "balance" | "currency" | "network" | "ledgerId" | "ledgerCurrency"
     >[];
     isLoading: boolean;
     isError: boolean;
@@ -73,6 +82,8 @@ describe("formatCardAssetCryptoAmount", () => {
 describe("useCardAssetsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUpdateCardWalletPriorities.mockReturnValue({ unwrap: mockUnwrapUpdate });
+    mockUnwrapUpdate.mockResolvedValue({ success: true });
     mockUseIsCardSignedIn.mockReturnValue(true);
     stubWallets();
   });
@@ -127,6 +138,7 @@ describe("useCardAssetsViewModel", () => {
       wallets: [
         {
           id: "w-usdc",
+          addressId: "address-usdc",
           balance: "125.40",
           currency: "usdc",
           network: "ethereum",
@@ -143,6 +155,7 @@ describe("useCardAssetsViewModel", () => {
     expect(result.current.rows).toEqual([
       {
         id: "w-usdc",
+        addressId: "address-usdc",
         currency: "usdc",
         network: "ethereum",
         name: "USD Coin",
@@ -175,6 +188,7 @@ describe("useCardAssetsViewModel", () => {
       wallets: [
         {
           id: "w-usdc",
+          addressId: "address-usdc",
           balance: "125.40",
           currency: "usdc",
           network: "ethereum",
@@ -201,5 +215,73 @@ describe("useCardAssetsViewModel", () => {
     rerender();
 
     expect(result.current.selectedAsset?.cryptoAmount).toBe("250.80 USDC");
+  });
+
+  it("should open the manage dialog when manage is pressed", () => {
+    const { result } = renderViewModel();
+
+    act(() => result.current.onManagePress());
+
+    expect(result.current.dialogState).toBe("manage");
+  });
+
+  it("should send every linked wallet in its new order when an asset is reordered", async () => {
+    stubWallets({
+      wallets: [
+        {
+          id: "w-usdc",
+          addressId: "address-usdc",
+          balance: "125.40",
+          currency: "usdc",
+          network: "ethereum",
+          ledgerId: "ethereum/erc20/usd__coin",
+          ledgerCurrency: USDC,
+        },
+        {
+          id: "w-usdt",
+          addressId: "address-usdt",
+          balance: "75",
+          currency: "usdt",
+          network: "ethereum",
+        },
+        {
+          id: "w-btc",
+          addressId: "address-btc",
+          balance: "1",
+          currency: "btc",
+          network: "bitcoin",
+        },
+      ],
+    });
+    const { result } = renderViewModel();
+
+    await act(() => result.current.onReorderAssets("w-btc", "w-usdc"));
+
+    expect(result.current.rows.map(row => row.id)).toEqual(["w-btc", "w-usdc", "w-usdt"]);
+    expect(mockUpdateCardWalletPriorities).toHaveBeenCalledWith({
+      wallets: [
+        { addressId: "address-btc", priority: 1 },
+        { addressId: "address-usdc", priority: 2 },
+        { addressId: "address-usdt", priority: 3 },
+      ],
+    });
+  });
+
+  it("should hand add asset through to the host", () => {
+    const onAddAsset = jest.fn();
+    const { result } = renderHook(
+      () =>
+        useCardAssetsViewModel({
+          currencies: CURRENCIES,
+          priceWallet,
+          formatCountervalue,
+          onAddAsset,
+        }),
+      { wrapper: I18nWrapper },
+    );
+
+    act(() => result.current.onAddAssetPress());
+
+    expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
 });
