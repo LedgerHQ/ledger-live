@@ -129,6 +129,26 @@
     "ldmkEnabled" : "Transporte LDMK habilitado"
   },
   "errors" : {
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "Já fazendo staking com {{bondedValidator}}. Desaplicar antes de mudar de validador.",
+      "description" : "A Aleo permite um validador por conta. Desaplique de {{bondedValidator}} antes de fazer staking em outro lugar."
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "Você deve fazer staking de pelo menos {{minAmount}} por vez.",
+      "description" : "A quantia mínima de staking é {{minAmount}}."
+    },
+    "AleoClosedValidator" : {
+      "title" : "Este validador não está aceitando novos delegadores.",
+      "description" : "Este validador não está aceitando novos delegadores. Escolha um validador aberto para continuar."
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "O staking requer um total de pelo menos {{minAmount}}.",
+      "description" : "Você deve ter pelo menos {{minAmount}} aplicado no total."
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "Este validador está se desvinculando.",
+      "description" : "Este validador está sacando a sua própria aplicação, por isso a rede rejeita novas aplicações para ele. Escolha outro validador para continuar."
+    },
     "ZcashMemoTooLong" : {
       "title" : "O memo não deve exceder {{maxBytes}} bytes"
     },
@@ -244,7 +264,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "Esta conta não pode enviar este token",
-      "description" : "O emissor do token restringe quem pode enviá-lo, e esta conta não tem permissão. Entre em contato com o emissor do token para obter acesso."
+      "description" : "O emissor do token restringe quem pode enviá-lo. Entre em contato com o emissor do token para obter detalhes."
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "Esta conta não foi aprovada para enviar este token",
+      "description" : "O emissor do token possui uma lista de remetentes aprovados e esta conta não consta lá. A aprovação é gerenciada pelo emissor, não pela Ledger."
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "Esta conta está impedida de enviar este token",
+      "description" : "O emissor do token restringiu esta conta. Entre em contato com o emissor para obter detalhes."
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "Não foi possível verificar as restrições do token",
@@ -1425,6 +1453,9 @@
     "AccountCreationFeeWarning" : {
       "title" : "Esta transação incorrerá em uma taxa de criação de conta de {{fee}}"
     },
+    "AmountRequired" : {
+      "title" : "Insira uma quantia para continuar."
+    },
     "AmountTooSmall" : {
       "title" : "A quantia mínima exigida para esta transação é {{amount}}"
     },
@@ -1611,6 +1642,49 @@
       "mismatch" : "As senhas não correspondem",
       "saveFailed" : "Não foi possível salvar sua senha. Tente Novamente.",
       "cta" : "Confirmar"
+    },
+    "unlock" : {
+      "wrongPassword" : "Senha incorreta",
+      "forgotPassword" : "Esqueceu sua senha?",
+      "retryBiometrics" : "Usar biometria",
+      "unlockCta" : "Unlock Ledger Wallet",
+      "failed" : "Não foi possível verificar sua senha. Tente novamente.",
+      "cta" : "Confirmar",
+      "biometricsPrompt" : "Desbloquear Ledger Wallet",
+      "forgotPasswordSheet" : {
+        "title" : "Esqueceu a senha?",
+        "description" : "Se você perdeu sua senha, reinstale o aplicativo e restaure sua carteira.",
+        "cta" : "Entendi"
+      }
+    },
+    "enableProtection" : {
+      "biometrics" : {
+        "title" : "Habilitar {{biometricsType}}",
+        "description" : "O cartão cripto requer {{biometricsType}}. Você o usará sempre que abrir o aplicativo.",
+        "cta" : "Habilitar {{biometricsType}}"
+      },
+      "password" : {
+        "title" : "Criar uma senha",
+        "description" : "O cartão cripto requer uma senha. Você o usará sempre que abrir o aplicativo.",
+        "cta" : "Criar senha"
+      }
+    },
+    "protectionEnabled" : {
+      "biometrics" : {
+        "title" : "{{biometricsType}} ativado"
+      },
+      "password" : {
+        "title" : "Senha criada"
+      },
+      "description" : "Agora você pode se cadastrar para obter um cartão",
+      "cta" : "Continuar"
+    },
+    "biometrics" : {
+      "title" : "{{biometricsType}}",
+      "desc" : "Desbloqueie o aplicativo com {{biometricsType}}.",
+      "prompt" : "Confirme para usar {{biometricsType}} no desbloqueio",
+      "disablePrompt" : "Confirme para parar de usar {{biometricsType}} no desbloqueio",
+      "useDeviceCredential" : "Usar PIN"
     },
     "deactivatePassword" : {
       "title" : "Desativar senha",
@@ -3201,6 +3275,13 @@
       "UPDATE_ACCOUNT" : "Conta atualizada"
     }
   },
+  "history" : {
+    "tabs" : {
+      "crypto" : "Cripto",
+      "card" : "Cartão",
+      "accessibilityLabel" : "Tipo de histórico de transações"
+    }
+  },
   "operationsList" : {
     "to" : "Para",
     "from" : "De",
@@ -3240,6 +3321,13 @@
     },
     "details" : "Detalhes de {{ currency }}",
     "extra" : {
+      "pltReject" : {
+        "title" : "Motivo",
+        "nonExistentToken" : "Este token não existe na Concordium.",
+        "recipientNotFound" : "A conta do destinatário não existe na Concordium.",
+        "insufficientBalance" : "A conta não possuía saldo suficiente do token.",
+        "rejected" : "A Concordium recusou esta operação."
+      },
       "transferId" : "ID da Transferência (Memo)",
       "resource" : "Recurso",
       "validator" : "Validador",
@@ -4099,6 +4187,7 @@
         "copyAdress" : "Copiar endereço",
         "addressCopied" : "Endereço copiado!",
         "addressVerified" : "Endereço Verificado",
+        "qrCode" : "QR code para o seu endereço de recebimento",
         "verifyAddress" : "Verificar seu endereço",
         "adviceVerify" : "Recomendamos que você sempre verifique seu endereço com seu dispositivo Ledger",
         "sendWarning" : "Enviar somente tokens pela rede {{network}}. Enviar por outra rede pode resultar na perda permanente de seus tokens.",
@@ -4743,11 +4832,11 @@
         "walletNotExist" : "A carteira não existe"
       },
       "skipMemo" : {
-        "title" : "Pular a adição de {{tag}}?",
-        "warning" : "O seu ativo pode ser perdido se a {{tag}} for um requisito do seu recipiente",
-        "notRequired" : "O {{tag}} não é exigido pelo destinatário?",
-        "confirm" : "Sim, pular",
-        "neverAskAgain" : "Não mostrar este aviso novamente"
+        "title" : "Deseja enviar sem {{tag}}?",
+        "description" : "O seu ativo pode ser perdido se a {{tag}} for um requisito do seu recipiente",
+        "confirm" : "Sim, enviar sem {{tag}}",
+        "cancel" : "Não, voltar",
+        "neverAskAgain" : "Não perguntar novamente"
       },
       "tagHelp" : {
         "title" : "O que é uma {{tag}}?",
@@ -10273,27 +10362,6 @@
       "iHaveACard" : "Tenho um cartão"
     }
   },
-  "walletV4Tour" : {
-    "title" : "Descubra o seu novo portfólio",
-    "slides" : {
-      "portfolio" : {
-        "title" : "Uma visão mais clara do seu portfólio",
-        "description" : "Veja seu saldo total rapidamente e toque em “Hoje” para obter mais detalhes."
-      },
-      "navigation" : {
-        "title" : "Acesse as ações principais mais rapidamente",
-        "description" : "Acesse Trocar, Transferir e Comprar instantaneamente. Encontre Ganhar e Cartão no menu de navegação inferior."
-      },
-      "actions" : {
-        "title" : "Veja as tendências do mercado instantaneamente",
-        "description" : "Veja rapidamente as tendências diretamente em seu portfólio e passe da análise para a ação."
-      }
-    },
-    "cta" : {
-      "continue" : "Próximo",
-      "explore" : "Descobrir meu novo portfólio"
-    }
-  },
   "mainNavigation" : {
     "home" : "Início",
     "swap" : "Trocar",
@@ -10344,9 +10412,34 @@
       }
     },
     "card" : {
+      "balanceLabel" : "Saldo",
+      "assets" : {
+        "title" : "Ativos",
+        "empty" : "Nenhum ativo ainda",
+        "error" : "Não foi possível carregar os ativos",
+        "info" : "Estes ativos fornecem fundos para o seu cartão. Defina a ordem em que eles são cobrados ou adicione mais.",
+        "manage" : "Gerenciar",
+        "manageDialog" : {
+          "title" : "Gerenciar Ativos",
+          "description" : "Seus ativos estão listados por ordem de financiamento. Se um ativo estiver com saldo baixo, o próximo será usado automaticamente.",
+          "addAssetCaption" : "Você será redirecionado à página da Baanx para adicionar ativos.",
+          "addAsset" : "Adicionar Ativo"
+        },
+        "details" : {
+          "topUp" : "Recarregar",
+          "withdraw" : "Sacar",
+          "transactions" : "Transações"
+        },
+        "withdraw" : {
+          "title" : "Você será redirecionado para a Baanx",
+          "description" : "Saque fundos da sua conta Baanx para o endereço da sua carteira Ledger.",
+          "continue" : "Continuar"
+        }
+      },
       "title" : "Cartão cripto",
-      "placeholder" : "Em breve",
+      "topUp" : "Recarregar",
       "details" : "Detalhes",
+      "addToWallet" : "Adicionar ao {{wallet}} Pay",
       "freeze" : "Congelar",
       "unfreeze" : "Descongelar",
       "goBack" : "Voltar",
@@ -10364,6 +10457,15 @@
       "confirmError" : {
         "description" : "Algo deu errado. Tente novamente.",
         "retry" : "Tentar novamente"
+      },
+      "numbers" : {
+        "reveal" : "Ver",
+        "hide" : "Ocultar",
+        "failed" : "Não foi possível carregar os números do cartão",
+        "imageAlt" : "Números do cartão"
+      },
+      "reward" : {
+        "title" : "Total de cashback"
       }
     },
     "cardTransactions" : {
@@ -10394,6 +10496,30 @@
           "PENDING" : "Pendente",
           "DECLINED" : "Recusado",
           "REVERTED" : "Revertido"
+        }
+      },
+      "history" : {
+        "today" : "Hoje",
+        "yesterday" : "Ontem",
+        "unknownDate" : "Data indisponível",
+        "columns" : {
+          "transaction" : "Transação",
+          "fundingSources" : "Fonte de recursos",
+          "amount" : "Quantia"
+        },
+        "paidWithAssets" : "Pago com {{count}} ativos",
+        "goToPay" : "Ir para pagar",
+        "signedOut" : {
+          "title" : "Faça login para ver as transações do seu cartão",
+          "description" : "A atividade do seu cartão aparecerá aqui assim que você fizer login."
+        },
+        "empty" : {
+          "title" : "Nenhuma transação com cartão ainda",
+          "description" : "Volte mais tarde para ver as transações do seu cartão."
+        },
+        "error" : {
+          "title" : "Não foi possível carregar as transações do cartão",
+          "description" : "Verifique sua conexão e tente novamente."
         }
       }
     },
@@ -10554,9 +10680,56 @@
         "stepComplete" : "Concluir",
         "gotIt" : "Entendi"
       },
-      "walletStep" : {
-        "title" : "Adicione ao Apple/Google Pay",
-        "description" : "Pague com seu smartphone em lojas"
+      "steps" : {
+        "createAccount" : {
+          "title" : "Crie sua conta",
+          "description" : "Verifique sua identidade para começar"
+        },
+        "chooseCardType" : {
+          "title" : "Escolha o tipo do seu cartão",
+          "description" : "Escolha entre virtual e físico"
+        },
+        "topUpCard" : {
+          "title" : "Recarregue seu cartão",
+          "description" : "Adicione fundos usando USDC, USDT, BTC ou mais"
+        },
+        "firstPurchase" : {
+          "title" : "Faça sua primeira compra",
+          "description" : "Pague online ou na loja"
+        },
+        "appleGooglePay" : {
+          "title" : "Adicionar ao {{wallet}} Pay",
+          "description" : "Pague com seu smartphone em lojas"
+        }
+      },
+      "addToWallet" : {
+        "ios" : {
+          "title" : "Adicionar ao Apple Pay",
+          "step1" : "Vá para o aplicativo Apple Wallet e toque em adicionar (+)",
+          "step2" : "Selecione cartão de débito ou crédito",
+          "step3" : "Siga as instruções",
+          "cta" : "Vá para a Apple Wallet",
+          "error" : {
+            "title" : "Não foi possível abrir a Apple Wallet",
+            "description" : "Certifique-se de que o Apple Pay esteja disponível neste dispositivo e tente novamente.",
+            "action" : "Tentar novamente"
+          }
+        },
+        "android" : {
+          "title" : "Adicionar ao Google Pay",
+          "step1" : "Vá para o aplicativo Google Wallet e toque em adicionar.",
+          "step2" : "Escolha cartão para pagamento e selecione Novo Cartão de Crédito ou Débito.",
+          "step3" : "Siga as instruções.",
+          "cta" : "Vá para a Google Wallet",
+          "error" : {
+            "title" : "Não foi possível abrir a Google Wallet",
+            "description" : "A Google Wallet pode não estar instalada ou pode estar desativada.",
+            "action" : "Abrir o Google Play"
+          }
+        },
+        "error" : {
+          "back" : "Voltar às instruções"
+        }
       }
     }
   },
@@ -10707,6 +10880,79 @@
     "accountActions" : {
       "publicToPrivate" : "Converter"
     },
+    "bond" : {
+      "stepperHeader" : {
+        "validator" : "Selecionar Validador",
+        "stepRange" : "{{currentStep}} de {{totalSteps}}",
+        "amount" : "Quantia",
+        "selectDevice" : "Selecione o dispositivo",
+        "connectDevice" : "Conectar dispositivo"
+      },
+      "selectValidator" : {
+        "fetchError" : "Falha ao carregar os validadores. Tente novamente.",
+        "metadataError" : "Não foi possível carregar os metadados dos validadores. Você ainda pode adicionar à sua aplicação.",
+        "lockedHint" : "A Aleo permite um validador por conta. Você pode adicionar à sua aplicação com este validador ou desaplicar primeiro para escolher outro.",
+        "closed" : "O validador está fechado para novas aplicações",
+        "unbonding" : "O validador está desvinculando",
+        "totalStake" : "Aplicação Total",
+        "rateAndCommission" : "{{rate}}% est. · {{commission}}% de comissão",
+        "commissionOnly" : "{{commission}}% de comissão",
+        "earnsNothing" : "O validador não ganha recompensas"
+      },
+      "amount" : {
+        "available" : "Disponível:",
+        "max" : "Máximo",
+        "stakingAlert" : "Sua aplicação total com este validador deve atingir pelo menos <minimum/> para ganhar recompensas. Apenas ALEO público pode ser aplicado — converta seu saldo privado em público primeiro se quiser aplicá-lo.",
+        "minimumLabel" : "Quantia mínima de vinculação",
+        "minimumTopUp" : "Adicione pelo menos <missing/> para atingir o total de <total/> em stake necessário para ganhar recompensas.",
+        "belowMinimum" : "Seu saldo público está <missing/> abaixo do vínculo mínimo de <minimum/>. Recarregue seu saldo público antes de fazer staking.",
+        "changeValidator" : "Escolha outro validador"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "Obrigação enviada",
+          "description" : "A sua transação de vinculação está sendo processada na rede Aleo."
+        }
+      }
+    },
+    "stake" : {
+      "sectionTitle" : "Staking",
+      "staked" : "Aplicado",
+      "unstaking" : "Desaplicando",
+      "claimable" : "Reivindicável",
+      "estimatedRate" : "{{rate}}% est.",
+      "fallbackValidator" : "Aleo",
+      "status" : {
+        "earning" : "Receber recompensas",
+        "unknown" : "Status indisponível"
+      },
+      "nonEarning" : {
+        "fullCommission" : "Este validador cobra 100% de comissão, então você não fica com nada.",
+        "overConcentrated" : "Este validador detém mais de 25% de todo o ALEO em staking. O protocolo não paga nada a ele acima desse limite, então você não ganha nada.",
+        "leftCommittee" : "Este validador não está mais no comitê, então sua aplicação não ganha nada. Desaplique e vincule a outro validador para começar a ganhar novamente.",
+        "ownStakeBelowMinimum" : "Sua aplicação está abaixo do mínimo de 10.000 ALEO, então ela não vai render. Adicione mais para começar a ganhar novamente."
+      },
+      "emptyState" : {
+        "description" : "Você pode ganhar recompensas fazendo staking do seu {{name}}.",
+        "cta" : "Ganhe Recompensas",
+        "bondPending" : "Uma aplicação foi enviada e está aguardando ser confirmada. A Aleo mantém uma posição de staking por conta, portanto, o staking fica indisponível até que seja concluído."
+      },
+      "unstakingRow" : {
+        "settling" : "Quase lá…",
+        "claimPending" : "Resgatando…",
+        "unbondPending" : "Desdelegando…",
+        "blocksRemaining_one" : "~{{count}} bloco restante",
+        "blocksRemaining_other" : "~{{count}} blocos restantes"
+      }
+    },
+    "manage" : {
+      "bond" : "Vincular",
+      "status" : "Status",
+      "estimatedRate" : "Taxa est. de recompensas",
+      "unbondPendingInfo" : "Uma desaplicação está aguardando ser confirmada. A Aleo rastreia uma posição de desvinculação por vez, portanto, a desvinculação e o resgate ficam indisponíveis até que ela seja concluída.",
+      "claimPendingInfo" : "Um resgate está aguardando confirmação. A Aleo rastreia uma posição de desvinculação por vez, portanto, a desvinculação e o resgate ficam indisponíveis até que ela seja concluída.",
+      "unlockBlock" : "Liberada no bloco"
+    },
     "send" : {
       "balanceSelection" : {
         "title" : "Selecionar saldo",
@@ -10751,6 +10997,10 @@
     },
     "balancesSection" : "Saldos",
     "info" : {
+      "available" : {
+        "title" : "Saldo Disponível",
+        "description" : "O saldo que você pode gastar agora: fundos transparentes mais quaisquer registros privados já sincronizados. Quantias Staking e desdelegação não estão incluídas."
+      },
       "transparent" : {
         "title" : "Saldo transparente",
         "description" : "O saldo publicamente visível na rede Aleo. Essa quantia pode ser enviada ou recebida diretamente e é visível a qualquer pessoa."
@@ -10758,6 +11008,18 @@
       "private" : {
         "title" : "Saldo privado",
         "description" : "O saldo blindado na rede Aleo. Este saldo é visível apenas para você e exige a geração de prova para transações privadas."
+      },
+      "staked" : {
+        "title" : "Aplicado",
+        "description" : "A quantia atualmente vinculada a um validador. Gera recompensas, mas não pode ser gasta até que você a desaplique e o período de desvinculação termine."
+      },
+      "unstaking" : {
+        "title" : "Desaplicando",
+        "description" : "A quantia que você retirou de staking que ainda está bloqueada. Para de gerar recompensas imediatamente e poderá ser resgatado assim que o período de desvinculação terminar."
+      },
+      "claimable" : {
+        "title" : "Reivindicável",
+        "description" : "A quantia desaplicada cujo período de desvinculação já terminou. Resgate-a para movê-la de volta para o seu saldo disponível."
       }
     },
     "account" : {
