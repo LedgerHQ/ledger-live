@@ -3,9 +3,30 @@ import { combineCardLinkedWallets } from "../logic/combineCardLinkedWallets";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 
 const internal: PayCardInternalWallet[] = [
-  { id: "w-usdc", balance: "125.40", currency: "usdc", address: "0xusdc", addressMemo: null },
-  { id: "w-usdt", balance: "10.00", currency: "usdt", address: "0xusdt", addressMemo: null },
-  { id: "w-sol", balance: "2.5", currency: "sol", address: "sol-addr", addressMemo: null },
+  {
+    id: "w-usdc",
+    balance: "125.40",
+    currency: "usdc",
+    address: "0xusdc",
+    addressMemo: null,
+    addressId: "address-usdc",
+  },
+  {
+    id: "w-usdt",
+    balance: "10.00",
+    currency: "usdt",
+    address: "0xusdt",
+    addressMemo: null,
+    addressId: "address-usdt",
+  },
+  {
+    id: "w-sol",
+    balance: "2.5",
+    currency: "sol",
+    address: "sol-addr",
+    addressMemo: null,
+    addressId: "address-sol",
+  },
   {
     id: "w-unlinked",
     balance: "999.99",
@@ -67,6 +88,7 @@ describe("combineCardLinkedWallets", () => {
 
     expect(wallets[0]).toEqual({
       id: "w-usdc",
+      addressId: "address-usdc",
       address: "0xusdc",
       currency: "usdc",
       network: "ethereum",

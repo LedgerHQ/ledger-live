@@ -49,12 +49,13 @@ export function useCardAssetsViewModel({
 
   const unorderedRows = useMemo<readonly CardAssetRow[]>(
     () =>
-      wallets.map(({ id, balance, currency, network, ledgerId, ledgerCurrency }) => {
+      wallets.map(({ id, addressId, balance, currency, network, ledgerId, ledgerCurrency }) => {
         const countervalue =
           ledgerCurrency && balance !== null ? priceWallet(ledgerCurrency, balance) : null;
 
         return {
           id,
+          ...(addressId === undefined ? {} : { addressId }),
           currency,
           network,
           name: ledgerCurrency?.name ?? currency.toUpperCase(),
@@ -162,10 +163,16 @@ export function useCardAssetsViewModel({
 
       try {
         const result = await updateCardWalletPriorities({
-          wallets: reorderedRows.map((row, index) => ({
-            addressId: row.id,
-            priority: index + 1,
-          })),
+          wallets: reorderedRows.map((row, index) => {
+            if (row.addressId === undefined) {
+              throw new Error(`Missing address id for card wallet ${row.id}`);
+            }
+
+            return {
+              addressId: row.addressId,
+              priority: index + 1,
+            };
+          }),
         }).unwrap();
 
         if (!result.success) setAssetOrder(previousOrder);

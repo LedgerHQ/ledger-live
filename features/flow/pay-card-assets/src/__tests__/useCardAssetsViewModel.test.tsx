@@ -32,7 +32,7 @@ function stubWallets(
   overrides: Partial<{
     wallets: readonly Pick<
       CardLinkedWalletBalance,
-      "id" | "balance" | "currency" | "network" | "ledgerId" | "ledgerCurrency"
+      "id" | "addressId" | "balance" | "currency" | "network" | "ledgerId" | "ledgerCurrency"
     >[];
     isLoading: boolean;
     isError: boolean;
@@ -138,6 +138,7 @@ describe("useCardAssetsViewModel", () => {
       wallets: [
         {
           id: "w-usdc",
+          addressId: "address-usdc",
           balance: "125.40",
           currency: "usdc",
           network: "ethereum",
@@ -154,6 +155,7 @@ describe("useCardAssetsViewModel", () => {
     expect(result.current.rows).toEqual([
       {
         id: "w-usdc",
+        addressId: "address-usdc",
         currency: "usdc",
         network: "ethereum",
         name: "USD Coin",
@@ -186,6 +188,7 @@ describe("useCardAssetsViewModel", () => {
       wallets: [
         {
           id: "w-usdc",
+          addressId: "address-usdc",
           balance: "125.40",
           currency: "usdc",
           network: "ethereum",
@@ -227,14 +230,27 @@ describe("useCardAssetsViewModel", () => {
       wallets: [
         {
           id: "w-usdc",
+          addressId: "address-usdc",
           balance: "125.40",
           currency: "usdc",
           network: "ethereum",
           ledgerId: "ethereum/erc20/usd__coin",
           ledgerCurrency: USDC,
         },
-        { id: "w-usdt", balance: "75", currency: "usdt", network: "ethereum" },
-        { id: "w-btc", balance: "1", currency: "btc", network: "bitcoin" },
+        {
+          id: "w-usdt",
+          addressId: "address-usdt",
+          balance: "75",
+          currency: "usdt",
+          network: "ethereum",
+        },
+        {
+          id: "w-btc",
+          addressId: "address-btc",
+          balance: "1",
+          currency: "btc",
+          network: "bitcoin",
+        },
       ],
     });
     const { result } = renderViewModel();
@@ -244,9 +260,9 @@ describe("useCardAssetsViewModel", () => {
     expect(result.current.rows.map(row => row.id)).toEqual(["w-btc", "w-usdc", "w-usdt"]);
     expect(mockUpdateCardWalletPriorities).toHaveBeenCalledWith({
       wallets: [
-        { addressId: "w-btc", priority: 1 },
-        { addressId: "w-usdc", priority: 2 },
-        { addressId: "w-usdt", priority: 3 },
+        { addressId: "address-btc", priority: 1 },
+        { addressId: "address-usdc", priority: 2 },
+        { addressId: "address-usdt", priority: 3 },
       ],
     });
   });

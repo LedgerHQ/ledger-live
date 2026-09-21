@@ -88,6 +88,7 @@ jest.mock("@features/flow-pay-card-wallets", () => {
       wallets: [
         {
           id: "w-usdc",
+          addressId: "address-usdc",
           balance: "4000",
           currency: "usdc",
           network: "ethereum",
@@ -96,6 +97,7 @@ jest.mock("@features/flow-pay-card-wallets", () => {
         },
         {
           id: "w-usdt",
+          addressId: "address-usdt",
           balance: "20",
           currency: "usdt",
           network: "ethereum",
@@ -271,8 +273,8 @@ describe("CardAssets (web)", () => {
     await waitFor(() =>
       expect(mockUpdateCardWalletPriorities).toHaveBeenCalledWith({
         wallets: [
-          { addressId: "w-usdt", priority: 1 },
-          { addressId: "w-usdc", priority: 2 },
+          { addressId: "address-usdt", priority: 1 },
+          { addressId: "address-usdc", priority: 2 },
         ],
       }),
     );
