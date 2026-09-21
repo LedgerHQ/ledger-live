@@ -80,6 +80,7 @@ interface Window {
     addDevice: (device: Device) => void;
     removeDevice: (device: Device) => void;
     resetDevices: () => void;
+    getMockServerSessionToken: () => string | undefined;
   };
 
   // used for the analytics, initialized in the index.html
