@@ -59,6 +59,11 @@ function buildProps(): PayCardToolProps {
       receive: jest.fn(),
       clear: jest.fn(),
     },
+    reorder: {
+      available: true,
+      enabled: false,
+      setEnabled: jest.fn(),
+    },
     currencyMapping: [{ key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" }],
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
@@ -111,6 +116,8 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("Balance & Wallets")).toBeTruthy();
     expect(screen.getByText("Transactions")).toBeTruthy();
     expect(screen.getByText("Feature flags")).toBeTruthy();
+    expect(screen.getByText("MSW")).toBeTruthy();
+    expect(screen.getByText("Allow wallet reorder")).toBeTruthy();
     expect(screen.getByText("Feature tour")).toBeTruthy();
     expect(screen.getByText("Request verify hint")).toBeTruthy();
     expect(screen.getByText("Card login intro")).toBeTruthy();

@@ -164,6 +164,12 @@ export interface PayCardBalanceProps {
 
 export type PayCardMockTransactionAsset = "usdc" | "btc" | "eth";
 
+export interface PayCardReorderMockProps {
+  readonly available: boolean;
+  readonly enabled: boolean;
+  readonly setEnabled: (value: boolean) => void;
+}
+
 export interface PayCardTransactionsMockProps {
   /** Request interception is required for these controls to affect the Card endpoint. */
   readonly available: boolean;
@@ -205,6 +211,7 @@ export interface PayCardToolProps {
   readonly interaction: PayCardInteractionProps;
   readonly balance: PayCardBalanceProps;
   readonly transactions: PayCardTransactionsMockProps;
+  readonly reorder: PayCardReorderMockProps;
   /** The whole Card asset catalog, so a mapping gap can be read against it. */
   readonly currencyMapping: readonly PayCardCurrencyMappingRow[];
   /** Whether the user has already seen the Pay feature tour. */

@@ -28,7 +28,9 @@ import {
 } from "@domain/api-card-management/mock/card-transactions";
 import {
   clearPayCardWalletsMock,
+  readPayCardReorderMockEnabled,
   readPayCardWalletsMock,
+  setPayCardReorderMockEnabled,
 } from "@domain/api-card-management/mock/card-wallets";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
@@ -126,6 +128,7 @@ describe("usePayCardToolProps", () => {
   beforeEach(() => {
     clearPayCardTransactionsMock();
     clearPayCardWalletsMock();
+    setPayCardReorderMockEnabled(false);
     store = buildStore();
   });
 
@@ -176,6 +179,19 @@ describe("usePayCardToolProps", () => {
       ["sol", false],
     ]);
     expect(result.current.balance.mock.isOverridden).toBe(true);
+  });
+
+  it("should enable the wallet reorder handler from the tool", () => {
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
+
+    act(() => {
+      result.current.reorder.setEnabled(true);
+    });
+
+    expect(readPayCardReorderMockEnabled()).toBe(true);
+    expect(result.current.reorder.enabled).toBe(true);
   });
 
   it("setPayTabEnabled overrides lwdPayTab on web", () => {

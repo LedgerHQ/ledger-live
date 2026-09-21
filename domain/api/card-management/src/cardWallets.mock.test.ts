@@ -5,6 +5,7 @@ import {
 } from "./schema";
 import { transformPayCardLinkedWallets } from "./transforms";
 import {
+  applyPayCardWalletPrioritiesMock,
   clearPayCardWalletsMock,
   emptyPayCardWalletsMock,
   fillPayCardWalletsMock,
@@ -12,12 +13,17 @@ import {
   mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
   mockPayCardRewardWallet,
+  readPayCardReorderMockEnabled,
   readPayCardWalletsMock,
   reorderPayCardLinkedWalletsMock,
+  setPayCardReorderMockEnabled,
 } from "./cardWallets.mock";
 
 describe("the mocked wallet responses", () => {
-  afterEach(clearPayCardWalletsMock);
+  afterEach(() => {
+    clearPayCardWalletsMock();
+    setPayCardReorderMockEnabled(false);
+  });
 
   it("answers as the provider is parsed, or the query would reject them", () => {
     expect(
@@ -121,6 +127,41 @@ describe("the mocked wallet responses", () => {
     expect(reorderPayCardLinkedWalletsMock([{ addressId: "not-a-wallet", priority: 0 }])).toBe(
       false,
     );
+    expect(mockPayCardLinkedWallets().map(({ priority }) => priority)).toEqual([0, 1, 2]);
+  });
+
+  it("should persist a new charging order when reorder is enabled", () => {
+    const wallets = mockPayCardLinkedWallets();
+    setPayCardReorderMockEnabled(true);
+
+    expect(
+      applyPayCardWalletPrioritiesMock({
+        wallets: [
+          { addressId: wallets[2]!.id, priority: 1 },
+          { addressId: wallets[0]!.id, priority: 2 },
+          { addressId: wallets[1]!.id, priority: 3 },
+        ],
+      }),
+    ).toBe(true);
+    expect(mockPayCardLinkedWallets().map(({ id, priority }) => [id, priority])).toEqual([
+      [wallets[2]!.id, 1],
+      [wallets[0]!.id, 2],
+      [wallets[1]!.id, 3],
+    ]);
+  });
+
+  it("should refuse a new charging order until the reorder handler is enabled", () => {
+    const [first, second] = mockPayCardLinkedWallets();
+
+    expect(
+      applyPayCardWalletPrioritiesMock({
+        wallets: [
+          { addressId: first!.id, priority: 1 },
+          { addressId: second!.id, priority: 2 },
+        ],
+      }),
+    ).toBe(false);
+    expect(readPayCardReorderMockEnabled()).toBe(false);
     expect(mockPayCardLinkedWallets().map(({ priority }) => priority)).toEqual([0, 1, 2]);
   });
 

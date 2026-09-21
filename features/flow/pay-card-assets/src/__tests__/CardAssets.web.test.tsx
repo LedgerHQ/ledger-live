@@ -257,7 +257,7 @@ describe("CardAssets (web)", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("should reorder assets with the drag handle and send every linked wallet", async () => {
+  it("should reorder assets by dragging a list item and send every linked wallet", async () => {
     let finishUpdate: (result: { success: boolean }) => void = () => {};
     mockUnwrapUpdate.mockReturnValue(
       new Promise(resolve => {
@@ -268,7 +268,7 @@ describe("CardAssets (web)", () => {
     renderCardAssets();
 
     await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
-    fireEvent.dragStart(screen.getByRole("button", { name: "Drag USDT" }));
+    fireEvent.dragStart(screen.getByTestId("card-asset-order-w-usdt"));
     fireEvent.drop(screen.getByTestId("card-asset-order-w-usdc"));
 
     expect(screen.getByTestId("card-asset-reorder-spinner-w-usdt")).toBeVisible();

@@ -110,6 +110,11 @@ function buildProps(): PayCardToolProps {
       receive: jest.fn(),
       clear: jest.fn(),
     },
+    reorder: {
+      available: true,
+      enabled: false,
+      setEnabled: jest.fn(),
+    },
     currencyMapping: [{ key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" }],
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
@@ -126,9 +131,26 @@ describe("PayCard (web)", () => {
   it("renders every section", () => {
     render(<PayCard {...buildProps()} />);
     expect(screen.getByText("Feature flags")).toBeDefined();
+    expect(screen.getByText("MSW")).toBeDefined();
+    expect(screen.getByText("Allow wallet reorder")).toBeDefined();
     expect(screen.getByText("Feature tour")).toBeDefined();
     expect(screen.getByText("Request verify hint")).toBeDefined();
     expect(screen.getByText("Card login intro")).toBeDefined();
+  });
+
+  it("should enable the wallet reorder handler from the MSW switch", () => {
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    fireEvent.click(screen.getByRole("switch", { name: "Allow wallet reorder" }));
+    expect(props.reorder.setEnabled).toHaveBeenCalledWith(true);
+  });
+
+  it("should hide the MSW switch when request mocking is unavailable", () => {
+    const props = buildProps();
+    render(<PayCard {...props} reorder={{ ...props.reorder, available: false }} />);
+
+    expect(screen.queryByText("Allow wallet reorder")).toBeNull();
   });
 
   it("resets the feature tour", () => {
