@@ -1613,11 +1613,11 @@
       "cta" : "Confirmar"
     },
     "deactivatePassword" : {
-      "title" : "Deactivate password",
-      "description" : "Enter your password to deactivate it.",
-      "wrongPassword" : "Incorrect password",
-      "failed" : "We couldn't deactivate your password. Please try again.",
-      "cta" : "Confirm"
+      "title" : "Desactivar contraseña",
+      "description" : "Ingresa tu contraseña para desactivarla.",
+      "wrongPassword" : "Contraseña incorrecta",
+      "failed" : "No hemos podido desactivar tu contraseña. Inténtalo de nuevo.",
+      "cta" : "Confirmar"
     }
   },
   "auth" : {
@@ -2988,9 +2988,9 @@
     }
   },
   "perpsAccountBanner" : {
-    "title" : "About Hyperliquid account",
-    "description" : "This account is related to Perpetual trading. Transactional actions are not supported for this account",
-    "cta" : "Open Perps"
+    "title" : "Acerca de la cuenta de Hyperliquid",
+    "description" : "Esta cuenta está relacionada con las operaciones de perpetuos. No se admiten acciones transaccionales para esta cuenta",
+    "cta" : "Abrir perpetuos"
   },
   "portfolio" : {
     "totalBalance" : "Saldo total",
@@ -10379,21 +10379,21 @@
         "MISC" : "Otros"
       },
       "detail" : {
-        "amount" : "Amount",
-        "status" : "Status",
-        "card" : "Card",
-        "cardInfo" : "The last four digits of the card used for this payment.",
-        "fundingSource" : "Funding source",
-        "transactionId" : "Transaction ID",
-        "copyTransactionId" : "Copy transaction ID",
-        "today" : "Today {{time}}",
-        "yesterday" : "Yesterday {{time}}",
+        "amount" : "Importe",
+        "status" : "Estado",
+        "card" : "Tarjeta",
+        "cardInfo" : "Los últimos cuatro dígitos de la tarjeta utilizada para este pago.",
+        "fundingSource" : "Origen de los fondos",
+        "transactionId" : "ID de la transacción",
+        "copyTransactionId" : "Copiar ID de la transacción",
+        "today" : "Hoy {{time}}",
+        "yesterday" : "Ayer {{time}}",
         "dateTime" : "{{date}} {{time}}",
         "statusValues" : {
-          "CONFIRMED" : "Confirmed",
-          "PENDING" : "Pending",
-          "DECLINED" : "Declined",
-          "REVERTED" : "Reverted"
+          "CONFIRMED" : "Confirmada",
+          "PENDING" : "Pendiente",
+          "DECLINED" : "Rechazada",
+          "REVERTED" : "Revertida"
         }
       }
     },
@@ -10484,12 +10484,12 @@
     "cardLogin" : {
       "title" : "Tarjeta cripto",
       "beforeIntro" : {
-        "title" : "Get your crypto card",
+        "title" : "Obtén la tarjeta cripto",
         "description" : "Obtén un 1% de devolución en efectivo cada vez que gastes",
         "action" : "Obtener tarjeta"
       },
       "afterIntro" : {
-        "title" : "Log in to access your Card",
+        "title" : "Inicia sesión para acceder a la tarjeta",
         "description" : "Inicia sesión para acceder a la tarjeta",
         "action" : "Inicio de sesión"
       },
@@ -10852,7 +10852,7 @@
       "invalidLabel" : "No se permiten caracteres especiales.",
       "duplicateLabel" : "Este nombre de dirección ya está en uso para este contacto.",
       "labelTooLong" : "Este nombre de dirección es demasiado largo.",
-      "privacyPolicy" : "Learn more about Ledger's Privacy Policy."
+      "privacyPolicy" : "Más información sobre la Política de privacidad de Ledger."
     },
     "addAddressReview" : {
       "title" : "Revisar dirección",
