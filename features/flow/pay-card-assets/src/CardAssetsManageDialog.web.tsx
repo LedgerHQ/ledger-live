@@ -4,16 +4,11 @@ import {
   Dialog,
   DialogBody,
   DialogContent,
+  DialogFooter,
   DialogHeader,
-  ListItem,
-  ListItemContent,
-  ListItemLeading,
-  ListItemTrailing,
-  ListItemTitle,
-  Spinner,
 } from "@ledgerhq/lumen-ui-react";
-import { MenuBurger } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "@shared/i18n";
+import { CardAssetsManageRow } from "./CardAssetsManageRow.web";
 import type { CardAssetRow } from "./types";
 
 type CardAssetsManageDialogProps = Readonly<{
@@ -53,51 +48,33 @@ export function CardAssetsManageDialog({
           </div>
           <div className="min-h-0 overflow-x-hidden overflow-y-auto rounded-md bg-surface px-12">
             {rows.map(row => (
-              <div
+              <CardAssetsManageRow
                 key={row.id}
-                data-testid={`card-asset-order-${row.id}`}
+                row={row}
+                isReordering={reorderingAssetId === row.id}
+                isReorderDisabled={reorderingAssetId !== null}
+                onDragStart={() => setDraggedId(row.id)}
+                onDragEnd={() => setDraggedId(null)}
                 onDragOver={event => draggedId && event.preventDefault()}
                 onDrop={() => {
                   if (draggedId) void onReorder(draggedId, row.id);
                   setDraggedId(null);
                 }}
-              >
-                <ListItem className="bg-surface">
-                  <ListItemLeading>
-                    <ListItemContent>
-                      <ListItemTitle className="body-2-semi-bold">{row.name}</ListItemTitle>
-                    </ListItemContent>
-                  </ListItemLeading>
-                  <ListItemTrailing>
-                    {reorderingAssetId === row.id ? (
-                      <Spinner size={24} data-testid={`card-asset-reorder-spinner-${row.id}`} />
-                    ) : (
-                      <button
-                        type="button"
-                        draggable={reorderingAssetId === null}
-                        disabled={reorderingAssetId !== null}
-                        aria-label={`Drag ${row.name}`}
-                        className="cursor-grab text-muted active:cursor-grabbing"
-                        onDragStart={() => setDraggedId(row.id)}
-                        onDragEnd={() => setDraggedId(null)}
-                      >
-                        <MenuBurger size={24} />
-                      </button>
-                    )}
-                  </ListItemTrailing>
-                </ListItem>
-              </div>
+              />
             ))}
           </div>
-          <div className="mt-auto flex shrink-0 flex-col gap-12 pt-16 text-center">
-            <p className="body-4 text-muted">
-              {t("payTab.card.assets.manageDialog.addAssetCaption")}
-            </p>
-            <Button appearance="base" size="lg" isFull onClick={onAddAsset}>
-              {t("payTab.card.assets.manageDialog.addAsset")}
-            </Button>
-          </div>
         </DialogBody>
+        <DialogFooter
+          className="flex shrink-0 flex-col gap-12 text-center"
+          data-testid="card-assets-manage-footer"
+        >
+          <p className="body-4 text-muted">
+            {t("payTab.card.assets.manageDialog.addAssetCaption")}
+          </p>
+          <Button appearance="base" size="lg" isFull onClick={onAddAsset}>
+            {t("payTab.card.assets.manageDialog.addAsset")}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

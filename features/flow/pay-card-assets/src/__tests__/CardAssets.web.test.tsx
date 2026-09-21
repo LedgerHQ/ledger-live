@@ -252,7 +252,12 @@ describe("CardAssets (web)", () => {
     ).toBeVisible();
     expect(within(dialog).getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
     expect(within(dialog).getByText("USD Coin")).toBeVisible();
-    expect(within(dialog).getByRole("button", { name: CARD_ASSETS_COPY.addAsset })).toBeVisible();
+    const footer = within(dialog).getByTestId("card-assets-manage-footer");
+    const addAssetButton = within(dialog).getByRole("button", {
+      name: CARD_ASSETS_COPY.addAsset,
+    });
+    expect(footer).toContainElement(addAssetButton);
+    expect(within(footer).getByText(CARD_ASSETS_COPY.addAssetCaption)).toBeVisible();
   });
 
   it("should reorder assets with the drag handle and send every linked wallet", async () => {
