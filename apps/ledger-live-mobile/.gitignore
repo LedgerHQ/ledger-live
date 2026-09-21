@@ -112,6 +112,11 @@ src/generated/
 /ios/.podhash.json
 /vendor/bundle/
 
+# Prebuilt Zcash engine, fetched by scripts/sync-zcash-ffi.sh (see its header)
+/ios/ZcashFfiBridge/ZcashFfiMobile.xcframework/
+/android/app/src/main/jniLibs/
+/android/app/src/main/cpp/include/
+
 # jest
 coverage/
 **/__snapshots__/

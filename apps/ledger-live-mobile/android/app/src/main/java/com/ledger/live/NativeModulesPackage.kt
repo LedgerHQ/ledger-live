@@ -17,9 +17,17 @@ class NativeModulesPackage : ReactPackage {
 
     override fun createNativeModules(
         reactContext: ReactApplicationContext
-    ): MutableList<NativeModule> = listOf(
-        BluetoothHelperModule(reactContext),
-        LocationHelperModule(reactContext, coroutineDispatcher = Dispatchers.Default),
-        MeasureTransformModule(reactContext)
-    ).toMutableList()
+    ): MutableList<NativeModule> = buildList {
+        add(BluetoothHelperModule(reactContext))
+        add(LocationHelperModule(reactContext, coroutineDispatcher = Dispatchers.Default))
+        add(MeasureTransformModule(reactContext))
+
+        // Registered unconditionally, and deliberately so: the previous
+        // availability probe called System.loadLibrary during bridge
+        // initialisation on every launch, whether or not anything Zcash was
+        // used. Instantiating the module is free; the library loads on the
+        // first actual call, and a build without the engine rejects with
+        // ZCASH_FFI_UNAVAILABLE, which the JS layer already handles.
+        add(ZcashFfiModule(reactContext))
+    }.toMutableList()
 }

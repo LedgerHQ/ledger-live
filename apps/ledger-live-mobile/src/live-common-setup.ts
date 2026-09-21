@@ -20,6 +20,7 @@ import {
 } from "@domain/entity-currency-crypto";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import "./experimental";
+import { logZcashFfiSmokeCheck, logZcashSyncProbe } from "./native-modules/zcashFfiSmokeCheck";
 import logger, { ConsoleLogger } from "./logger";
 import BigNumber from "bignumber.js";
 
@@ -67,6 +68,13 @@ bridgeEnvToNetworkState();
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));
+
+// Development-only probe of the optional Zcash native engine. Deliberately not
+// awaited -- startup does not depend on it, and it never rejects.
+if (__DEV__) {
+  void logZcashFfiSmokeCheck();
+  void logZcashSyncProbe();
+}
 
 const BIG_NUMBER_DECIMAL_PLACES = 40;
 
