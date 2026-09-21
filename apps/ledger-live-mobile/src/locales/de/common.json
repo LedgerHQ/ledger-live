@@ -10484,12 +10484,12 @@
     "cardLogin" : {
       "title" : "Krypto-Karte",
       "beforeIntro" : {
-        "title" : "Get your crypto card",
+        "title" : "Hol dir deine Krypto-Karte",
         "description" : "Erhalte bei jedem Einkauf 1 % Cashback",
         "action" : "Karte bestellen"
       },
       "afterIntro" : {
-        "title" : "Log in to access your Card",
+        "title" : "Logge dich ein, um auf deine Karte zuzugreifen",
         "description" : "Melde dich an, um auf deine Karte zuzugreifen",
         "action" : "Login"
       },
