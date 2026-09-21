@@ -3253,8 +3253,6 @@
     }
   },
   "history": {
-    "cardScope": "Card",
-    "cardAssetScope": "Card · {{assetName}}",
     "tabs": {
       "crypto": "Crypto",
       "card": "Card",
@@ -10419,12 +10417,6 @@
           "title": "You'll be redirected to Baanx",
           "description": "Withdraw funds from your Baanx account to your Ledger wallet address.",
           "continue": "Continue"
-        },
-        "history": {
-          "columns": {
-            "amount": "Amount",
-            "value": "Value"
-          }
         }
       },
       "title": "Crypto card",
