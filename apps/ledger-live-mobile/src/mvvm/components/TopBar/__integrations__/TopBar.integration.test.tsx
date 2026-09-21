@@ -139,6 +139,7 @@ describe("TopBar navigation", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.OperationsHistory, {
       screen: ScreenName.OperationsList,
+      params: { scope: { kind: "crypto" } },
     });
 
     expect(track).toHaveBeenCalledWith("button_clicked", {

@@ -192,7 +192,7 @@ describe("useTransactionsViewModel", () => {
 
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.OperationsHistory, {
         screen: ScreenName.OperationsList,
-        params: { accountIds: accounts.map(a => a.id) },
+        params: { scope: { kind: "account", accountIds: accounts.map(a => a.id) } },
       });
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Transactions",
@@ -220,7 +220,7 @@ describe("useTransactionsViewModel", () => {
 
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.OperationsHistory, {
         screen: ScreenName.OperationsList,
-        params: { accountIds: [usdc.id] },
+        params: { scope: { kind: "account", accountIds: [usdc.id] } },
       });
     });
   });

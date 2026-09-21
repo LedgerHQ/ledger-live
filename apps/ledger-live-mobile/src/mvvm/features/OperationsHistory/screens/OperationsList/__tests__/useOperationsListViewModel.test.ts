@@ -7,7 +7,11 @@ import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { Account } from "@ledgerhq/types-live";
 import { track } from "~/analytics";
 import type { State } from "~/reducers/types";
-import { useOperationsListViewModel } from "../useOperationsListViewModel";
+import type { CardAssetRow } from "@features/flow-pay-card-assets";
+import {
+  resolveHistoryPresentation,
+  useOperationsListViewModel,
+} from "../useOperationsListViewModel";
 
 // ─── Hook behaviours — mock needed because useOperationsV1 uses selectors ───
 
@@ -24,6 +28,49 @@ jest.mock("@ledgerhq/live-countervalues/logic", () => ({
 
 const mockedCalculate = jest.mocked(calculate);
 const mockedTrack = jest.mocked(track);
+const cardAsset: CardAssetRow = {
+  id: "usdc",
+  currency: "usdc",
+  network: "ethereum",
+  name: "USD Coin",
+  ticker: "USDC",
+  ledgerId: "ethereum/erc20/usd__coin",
+  cryptoAmount: "100 USDC",
+  countervalue: "$100.00",
+  countervalueAmount: 100,
+};
+
+describe("resolveHistoryPresentation", () => {
+  it("allows user-selected Card history only in a Pay scope with the feature enabled", () => {
+    expect(resolveHistoryPresentation({ kind: "pay" }, true, "card")).toEqual({
+      tab: "card",
+      showSwitcher: true,
+      cardAsset: undefined,
+    });
+    expect(resolveHistoryPresentation({ kind: "pay" }, false, "card")).toEqual({
+      tab: "crypto",
+      showSwitcher: false,
+      cardAsset: undefined,
+    });
+    expect(
+      resolveHistoryPresentation({ kind: "account", accountIds: ["account-id"] }, true, "card"),
+    ).toEqual({
+      tab: "crypto",
+      showSwitcher: false,
+      cardAsset: undefined,
+    });
+  });
+
+  it("always presents an asset-scoped Card history without the switcher", () => {
+    expect(
+      resolveHistoryPresentation({ kind: "cardAsset", asset: cardAsset }, false, "crypto"),
+    ).toEqual({
+      tab: "card",
+      showSwitcher: false,
+      cardAsset,
+    });
+  });
+});
 
 describe("useOperationsListViewModel", () => {
   beforeEach(() => {
@@ -33,24 +80,24 @@ describe("useOperationsListViewModel", () => {
   });
 
   it("isEmpty is true when completed with no sections", () => {
-    const { result } = renderHook(() => useOperationsListViewModel());
+    const { result } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }));
     expect(result.current.isEmpty).toBe(true);
   });
 
   it("isEmpty is false when not completed", () => {
     mockUseOperationsV1.mockReturnValue({ sections: [], completed: false });
-    const { result } = renderHook(() => useOperationsListViewModel());
+    const { result } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }));
     expect(result.current.isEmpty).toBe(false);
   });
 
   it("hasPendingOperations is false when there are no pending sections", () => {
-    const { result } = renderHook(() => useOperationsListViewModel());
+    const { result } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }));
     expect(result.current.hasPendingOperations).toBe(false);
   });
 
   it("onEndReached increments the operation count when not completed", () => {
     mockUseOperationsV1.mockReturnValue({ sections: [], completed: false });
-    const { result } = renderHook(() => useOperationsListViewModel());
+    const { result } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }));
     const firstCallCount = mockUseOperationsV1.mock.calls.length;
 
     act(() => result.current.onEndReached());
@@ -61,7 +108,7 @@ describe("useOperationsListViewModel", () => {
   });
 
   it("onEndReached does nothing when already completed", () => {
-    const { result } = renderHook(() => useOperationsListViewModel());
+    const { result } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }));
     const callsBefore = mockUseOperationsV1.mock.calls.length;
 
     act(() => result.current.onEndReached());
@@ -71,7 +118,7 @@ describe("useOperationsListViewModel", () => {
 
   describe("markOperationsAsSeen on unmount", () => {
     it("sets lastSeenOperationDate in store when the hook unmounts", () => {
-      const { unmount, store } = renderHook(() => useOperationsListViewModel());
+      const { unmount, store } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }));
 
       expect(store.getState().history.lastSeenOperationDate).toBeNull();
 
@@ -85,7 +132,7 @@ describe("useOperationsListViewModel", () => {
 
   describe("dust filtering options", () => {
     it("hides and disables the dust filter option when the feature flag is disabled", () => {
-      const { result, store } = renderHook(() => useOperationsListViewModel(), {
+      const { result, store } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }), {
         overrideInitialState: (state: State) => ({
           ...state,
           settings: {
@@ -113,7 +160,7 @@ describe("useOperationsListViewModel", () => {
     });
 
     it("starts disabled and toggles the setting from the options sheet when the feature flag is enabled", () => {
-      const { result, store } = renderHook(() => useOperationsListViewModel(), {
+      const { result, store } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }), {
         overrideInitialState: withFlagOverrides({
           lwmDustFiltering: {
             enabled: true,
@@ -152,7 +199,7 @@ describe("useOperationsListViewModel", () => {
     });
 
     it("tracks the dust filter toggle as disabled when showing dust transactions again", () => {
-      const { result, store } = renderHook(() => useOperationsListViewModel(), {
+      const { result, store } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }), {
         overrideInitialState: withFlagOverrides(
           {
             lwmDustFiltering: {
@@ -189,7 +236,7 @@ describe("useOperationsListViewModel", () => {
     it("adds the converted USD threshold in parentheses when the countervalue is not USD", () => {
       mockedCalculate.mockReturnValue(0.92);
 
-      const { result } = renderHook(() => useOperationsListViewModel(), {
+      const { result } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }), {
         overrideInitialState: withFlagOverrides(
           {
             lwmDustFiltering: {
@@ -218,7 +265,7 @@ describe("useOperationsListViewModel", () => {
     });
 
     it("hides and disables the dust filter option when only the desktop flag param is enabled", () => {
-      const { result } = renderHook(() => useOperationsListViewModel(), {
+      const { result } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }), {
         overrideInitialState: withFlagOverrides({
           lwdDustFiltering: {
             enabled: true,
@@ -239,12 +286,15 @@ describe("useOperationsListViewModel", () => {
       const ethAccount = genAccount("eth-filter", { currency: ethereum });
       const btcAccount = genAccount("btc-filter", { currency: bitcoin });
 
-      const { result } = renderHook(() => useOperationsListViewModel([btcAccount.id]), {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          accounts: { ...state.accounts, active: [ethAccount, btcAccount] },
-        }),
-      });
+      const { result } = renderHook(
+        () => useOperationsListViewModel({ kind: "account", accountIds: [btcAccount.id] }),
+        {
+          overrideInitialState: (state: State) => ({
+            ...state,
+            accounts: { ...state.accounts, active: [ethAccount, btcAccount] },
+          }),
+        },
+      );
 
       expect(result.current.accounts).toHaveLength(1);
       expect(result.current.accounts[0].id).toBe(btcAccount.id);
@@ -257,7 +307,7 @@ describe("useOperationsListViewModel", () => {
       const ethAccount = genAccount("eth-nofilter", { currency: ethereum });
       const btcAccount = genAccount("btc-nofilter", { currency: bitcoin });
 
-      const { result } = renderHook(() => useOperationsListViewModel(), {
+      const { result } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }), {
         overrideInitialState: (state: State) => ({
           ...state,
           accounts: { ...state.accounts, active: [ethAccount, btcAccount] },
@@ -277,12 +327,15 @@ describe("useOperationsListViewModel", () => {
       const matic = genTokenAccount(1, ethRoot, maticEth);
       const ethTree: Account = { ...ethRoot, subAccounts: [usdc, matic] };
 
-      const { result } = renderHook(() => useOperationsListViewModel([usdc.id]), {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          accounts: { ...state.accounts, active: [ethTree] },
-        }),
-      });
+      const { result } = renderHook(
+        () => useOperationsListViewModel({ kind: "account", accountIds: [usdc.id] }),
+        {
+          overrideInitialState: (state: State) => ({
+            ...state,
+            accounts: { ...state.accounts, active: [ethTree] },
+          }),
+        },
+      );
 
       expect(result.current.accounts).toHaveLength(1);
       expect(result.current.accounts[0].id).toBe(ethTree.id);
@@ -317,7 +370,7 @@ describe("useOperationsListViewModel", () => {
         freshAddress: sharedAddress,
       };
 
-      const { result } = renderHook(() => useOperationsListViewModel(), {
+      const { result } = renderHook(() => useOperationsListViewModel({ kind: "crypto" }), {
         overrideInitialState: (state: State) => ({
           ...state,
           accounts: { ...state.accounts, active: [ethAccount, btcAccount] },

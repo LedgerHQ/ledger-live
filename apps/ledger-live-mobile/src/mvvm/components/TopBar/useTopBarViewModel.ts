@@ -115,6 +115,7 @@ export function useTopBarViewModel(
     track(BUTTON_CLICKED_EVENT, { button: "operation_list", page });
     navigation.navigate(NavigatorName.OperationsHistory, {
       screen: ScreenName.OperationsList,
+      params: { scope: { kind: "crypto" } },
     });
   }, [navigation, page]);
 

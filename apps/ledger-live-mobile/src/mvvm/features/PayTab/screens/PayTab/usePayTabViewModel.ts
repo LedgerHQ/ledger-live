@@ -139,9 +139,7 @@ export function usePayTabViewModel() {
 
   const onShowAssetHistory = useCallback(
     (asset: CardAssetRow) => {
-      // Match desktop: the route carries only the provider asset code. History resolves the
-      // current display name itself, so navigation cannot leave a stale name behind.
-      navigateToCardHistory(navigation, asset.currency);
+      navigateToCardHistory(navigation, asset);
     },
     [navigation],
   );

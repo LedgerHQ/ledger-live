@@ -95,7 +95,7 @@ export function useTransactionsViewModel(
     });
     navigation.navigate(NavigatorName.OperationsHistory, {
       screen: ScreenName.OperationsList,
-      params: { accountIds: Array.from(allowedIds) },
+      params: { scope: { kind: "account", accountIds: Array.from(allowedIds) } },
     });
   }, [navigation, currency?.id, allowedIds]);
 

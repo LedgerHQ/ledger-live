@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import type { IconProps } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
+import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { addExtraSessionTrackingPair } from "~/actions/general";
 import { setHideSmallValueTokenOperations } from "~/actions/settings";
 import { track } from "~/analytics";
@@ -29,6 +30,7 @@ import {
   HISTORY_TAB_CRYPTO,
   type HistoryTab,
 } from "LLM/features/OperationsHistory/constants";
+import type { HistoryScope } from "LLM/features/OperationsHistory/types";
 
 export type { OperationsListSection } from "./hooks/useOperationsSections";
 
@@ -41,34 +43,34 @@ export type OperationsHistoryDustFilterOption = Readonly<{
 const INITIAL_OP_COUNT = 50;
 const OP_COUNT_INCREMENT = 50;
 
-export function useOperationsListViewModel(
-  accountIds?: string[],
-  initialHistoryTab: HistoryTab = HISTORY_TAB_CRYPTO,
-  cardAsset?: string,
-) {
+export function resolveHistoryPresentation(
+  scope: HistoryScope,
+  payTabEnabled: boolean,
+  userTab: HistoryTab | undefined,
+): Readonly<{
+  tab: HistoryTab;
+  showSwitcher: boolean;
+  cardAsset: CardAssetRow | undefined;
+}> {
+  if (scope.kind === "cardAsset") {
+    return { tab: HISTORY_TAB_CARD, showSwitcher: false, cardAsset: scope.asset };
+  }
+
+  const canShowCard = scope.kind === "pay" && payTabEnabled;
+  const tab = canShowCard && userTab === HISTORY_TAB_CARD ? HISTORY_TAB_CARD : HISTORY_TAB_CRYPTO;
+  return { tab, showSwitcher: canShowCard, cardAsset: undefined };
+}
+
+export function useOperationsListViewModel(scope: HistoryScope) {
   const dispatch = useDispatch();
   const allAccounts = useSelector(shallowAccountsSelector);
   const allFlattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
   const [isOptionsSheetOpen, setOptionsSheetOpen] = useState(false);
-  const [historyTabSelection, setHistoryTabSelection] = useState<{
-    initial: HistoryTab;
-    selected: HistoryTab;
-  }>();
-  const selectedHistoryTab =
-    historyTabSelection?.initial === initialHistoryTab
-      ? historyTabSelection.selected
-      : initialHistoryTab;
-  // Only card history is ever asset scoped, and the switcher is hidden then: the route has to win
-  // over an earlier switcher pick, or the same screen instance would keep showing crypto.
-  const requestedHistoryTab = cardAsset ? HISTORY_TAB_CARD : selectedHistoryTab;
+  const [userTab, setUserTab] = useState<HistoryTab>();
   const isPayTabEnabled = !!useFeature("lwmPayTab")?.enabled;
-  // Without an asset scope, a deep link or stale param must not reach the Card API outside the
-  // Pay tab, nor on account-scoped routes where card history has no meaning.
-  const canShowCardHistory = Boolean(cardAsset) || (isPayTabEnabled && !accountIds?.length);
-  const isCardTab = requestedHistoryTab === HISTORY_TAB_CARD && canShowCardHistory;
-  const historyTab: HistoryTab = isCardTab ? HISTORY_TAB_CARD : HISTORY_TAB_CRYPTO;
-  const showHistoryTypeSwitcher = isPayTabEnabled && !accountIds?.length && !cardAsset;
+  const historyPresentation = resolveHistoryPresentation(scope, isPayTabEnabled, userTab);
+  const accountIds = scope.kind === "account" ? scope.accountIds : undefined;
   const { isEnabled: isDustFilterFeatureEnabled } = useDustFilteringFeature("mobile");
   const userHideSmallValueTokenOperations = useSelector(
     hideSmallValueTokenOperationsEnabledSelector,
@@ -194,13 +196,15 @@ export function useOperationsListViewModel(
   const closeOptionsSheet = useCallback(() => setOptionsSheetOpen(false), []);
   const onHistoryTabChange = useCallback(
     (tab: HistoryTab) => {
+      if (scope.kind !== "pay") return;
+
       track("button_clicked", {
         button: tab,
         page: "OperationsList",
       });
-      setHistoryTabSelection({ initial: initialHistoryTab, selected: tab });
+      setUserTab(tab);
     },
-    [initialHistoryTab],
+    [scope.kind],
   );
 
   const onToggleHideSmallValueTokenOperations = useCallback(() => {
@@ -233,9 +237,9 @@ export function useOperationsListViewModel(
     isDustFilterFeatureEnabled,
     dustFilterOption,
     onToggleHideSmallValueTokenOperations,
-    showHistoryTypeSwitcher,
-    historyTab,
-    isCardTab,
+    showHistoryTypeSwitcher: historyPresentation.showSwitcher,
+    historyTab: historyPresentation.tab,
+    cardAsset: historyPresentation.cardAsset,
     onHistoryTabChange,
   };
 }

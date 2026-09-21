@@ -1,13 +1,13 @@
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
+import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { NavigatorName, ScreenName } from "~/const";
-import { HISTORY_TAB_CARD } from "LLM/features/OperationsHistory/constants";
 
 export function navigateToCardHistory(
   navigation: Pick<NavigationProp<ParamListBase>, "navigate">,
-  asset?: string,
+  asset?: CardAssetRow,
 ): void {
   navigation.navigate(NavigatorName.OperationsHistory, {
     screen: ScreenName.OperationsList,
-    params: { historyTab: HISTORY_TAB_CARD, ...(asset ? { asset } : {}) },
+    params: { scope: asset ? { kind: "cardAsset", asset } : { kind: "pay" } },
   });
 }

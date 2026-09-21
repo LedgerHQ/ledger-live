@@ -5,6 +5,7 @@ import { render, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { screen, track } from "~/analytics";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
+import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import type { State } from "~/reducers/types";
 import { ScreenName } from "~/const/navigation";
 import OperationsList from "../index";
@@ -52,7 +53,11 @@ const Stack = createNativeStackNavigator<OperationsHistoryNavigatorParamsList>()
 
 const MockNavigator = () => (
   <Stack.Navigator>
-    <Stack.Screen name={ScreenName.OperationsList} component={OperationsList} />
+    <Stack.Screen
+      name={ScreenName.OperationsList}
+      component={OperationsList}
+      initialParams={{ scope: { kind: "crypto" } }}
+    />
   </Stack.Navigator>
 );
 
@@ -61,8 +66,20 @@ type OperationsListProps = React.ComponentProps<typeof OperationsList>;
 const operationsListRoute = {
   key: ScreenName.OperationsList,
   name: ScreenName.OperationsList,
-  params: undefined,
+  params: { scope: { kind: "crypto" } },
 } as OperationsListProps["route"];
+
+const cardAsset: CardAssetRow = {
+  id: "usdc",
+  currency: "usdc",
+  network: "ethereum",
+  name: "USD Coin",
+  ticker: "USDC",
+  ledgerId: "ethereum/erc20/usd__coin",
+  cryptoAmount: "100 USDC",
+  countervalue: "$100.00",
+  countervalueAmount: 100,
+};
 
 const renderOperationsListWithNavigation = (
   navigation: Partial<OperationsListProps["navigation"]>,
@@ -145,8 +162,8 @@ describe("OperationsList", () => {
   });
 
   it("shows card history without crypto-only controls when the Card tab is selected", async () => {
-    const { getByTestId, queryByTestId, user } = renderOperationsListWithNavigation(
-      { setOptions: mockSetOptions, dispatch: jest.fn() },
+    const { getByTestId, queryByTestId, user } = renderOperationsListWithParams(
+      { scope: { kind: "pay" } },
       {
         overrideInitialState: withFlagOverrides(
           {
@@ -182,7 +199,7 @@ describe("OperationsList", () => {
   it("should scope the existing Card history when an asset is provided", async () => {
     const route = {
       ...operationsListRoute,
-      params: { historyTab: "card", asset: "usdc" },
+      params: { scope: { kind: "cardAsset", asset: cardAsset } },
     } as OperationsListProps["route"];
 
     const { getByTestId, queryByTestId } = render(
@@ -206,7 +223,7 @@ describe("OperationsList", () => {
       expect(mockSetOptions).toHaveBeenLastCalledWith(
         expect.objectContaining({
           lumenNavBar: expect.objectContaining({
-            description: "Card · USDC",
+            description: "Card · USD Coin",
             navBarDescriptionProps: { testID: "card-history-asset-scope" },
           }),
         }),
@@ -228,7 +245,7 @@ describe("OperationsList", () => {
     });
     const cardRoute = {
       ...operationsListRoute,
-      params: { historyTab: "card", asset: "usdc" },
+      params: { scope: { kind: "cardAsset", asset: cardAsset } },
     } as OperationsListProps["route"];
 
     view.rerender(<OperationsList route={cardRoute} navigation={navigation} />);
@@ -238,9 +255,9 @@ describe("OperationsList", () => {
   });
 
   describe("card history access", () => {
-    it("should show crypto history when a card param arrives while the Pay tab is disabled", () => {
+    it("should show crypto history when the Pay scope arrives while the Pay tab is disabled", () => {
       const { getByTestId, queryByTestId } = renderOperationsListWithParams(
-        { historyTab: "card" },
+        { scope: { kind: "pay" } },
         { overrideInitialState: stateWithAccountsAndOperations },
       );
 
@@ -251,17 +268,16 @@ describe("OperationsList", () => {
 
     it("should show Card history when an asset scopes the route while the Pay tab is disabled", async () => {
       const { getByTestId, queryByTestId } = renderOperationsListWithParams({
-        historyTab: "card",
-        asset: "usdc",
+        scope: { kind: "cardAsset", asset: cardAsset },
       });
 
       await waitFor(() => expect(getByTestId("card-history-signed-out-state")).toBeVisible());
       expect(queryByTestId("operations-list-section-list")).not.toBeOnTheScreen();
     });
 
-    it("should show crypto history when an account-scoped route carries a card param", () => {
+    it("should show crypto history without a switcher for an account scope", () => {
       const { getByTestId, queryByTestId } = renderOperationsListWithParams(
-        { historyTab: "card", accountIds: [accountWithOperations.id] },
+        { scope: { kind: "account", accountIds: [accountWithOperations.id] } },
         {
           overrideInitialState: withFlagOverrides(
             { lwmPayTab: { enabled: true } },

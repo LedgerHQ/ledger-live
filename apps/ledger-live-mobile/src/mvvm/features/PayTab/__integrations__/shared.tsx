@@ -32,6 +32,7 @@ import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import PayTabNavigator from "LLM/features/PayTab";
 import { PayTabRequestReceiveScreen } from "LLM/features/PayTab/screens/RequestReceive";
 import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator";
+import type { HistoryScope } from "LLM/features/OperationsHistory/types";
 import SendWorkflow from "LLM/features/Send";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
@@ -104,7 +105,7 @@ type TestStackParamList = {
   [NavigatorName.OperationsHistory]:
     | {
         screen: ScreenName.OperationsList;
-        params?: { historyTab?: string; asset?: string };
+        params: { scope: HistoryScope };
       }
     | undefined;
 };
