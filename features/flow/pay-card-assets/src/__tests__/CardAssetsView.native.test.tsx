@@ -171,11 +171,4 @@ describe("CardAssetsView (native)", () => {
 
     expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
-
-  it("should hide the add asset action when the host does not provide it", () => {
-    render(<CardAssetsManageDrawer rows={ready.rows} />, { wrapper: I18nWrapper });
-
-    expect(screen.queryByText(CARD_ASSETS_COPY.addAssetCaption)).not.toBeOnTheScreen();
-    expect(screen.queryByText(CARD_ASSETS_COPY.addAsset)).not.toBeOnTheScreen();
-  });
 });

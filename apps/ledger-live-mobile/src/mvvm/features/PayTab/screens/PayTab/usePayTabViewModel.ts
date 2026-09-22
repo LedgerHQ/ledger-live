@@ -147,8 +147,9 @@ export function usePayTabViewModel() {
       onShowHistory: onShowAssetHistory,
       onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
       onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
+      onAddAsset: onAccessBaanx,
     }),
-    [payCardAssets, onShowAssetHistory, openAssetPage],
+    [payCardAssets, onShowAssetHistory, openAssetPage, onAccessBaanx],
   );
 
   // Without a countervalue formatter the flow shows the bare artwork instead of the card's balance.

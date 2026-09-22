@@ -24,6 +24,7 @@ const RECENT_TRANSACTIONS_SHOWN = 3;
 const EMPTY_CURRENCIES = new Map();
 const NO_PRICE: CardAssetsProps["priceWallet"] = () => null;
 const NO_COUNTERVALUE: CardAssetsProps["formatCountervalue"] = () => "";
+const NOOP = () => {};
 
 export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
   const ticker = currency.toUpperCase();
@@ -40,7 +41,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     onTopUp,
     onWithdraw,
     onShowHistory,
-    onAddAsset,
+    onAddAsset = NOOP,
   } = props ?? {};
   const { t } = useTranslation();
   const { trackButtonClicked, trackDebitOrderChanged } = usePayAnalyticsContext();
@@ -163,7 +164,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   }, [rows, trackButtonClicked]);
 
   const onAddAssetPress = useCallback(() => {
-    onAddAsset?.();
+    onAddAsset();
   }, [onAddAsset]);
 
   const onReorderAssets = useCallback(
@@ -231,7 +232,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
-      onAddAssetPress: onAddAsset ? onAddAssetPress : undefined,
+      onAddAssetPress,
       onReorderAssets,
       reorderingAssetId,
     }),
@@ -254,7 +255,6 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
-      onAddAsset,
       onAddAssetPress,
       onReorderAssets,
       reorderingAssetId,

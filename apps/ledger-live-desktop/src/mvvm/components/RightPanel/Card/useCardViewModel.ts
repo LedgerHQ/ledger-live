@@ -171,17 +171,6 @@ export function useCardViewModel(): CardViewModel {
     [navigate, pathname],
   );
 
-  const payCardAssets = usePayCardAssets();
-  const assets: CardAssetsProps = useMemo(
-    () => ({
-      ...payCardAssets,
-      onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
-      onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
-    }),
-    [onShowAssetHistory, openAssetPage, payCardAssets],
-  );
-
   const onManagePin = useCallback(
     () =>
       openHostedPath(buildManagePinPath, error =>
@@ -196,6 +185,18 @@ export function useCardViewModel(): CardViewModel {
         logger.warn("[card] baanx page did not open", error),
       ),
     [openHostedPath],
+  );
+
+  const payCardAssets = usePayCardAssets();
+  const assets: CardAssetsProps = useMemo(
+    () => ({
+      ...payCardAssets,
+      onShowHistory: onShowAssetHistory,
+      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
+      onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
+      onAddAsset: onAccessBaanx,
+    }),
+    [onAccessBaanx, onShowAssetHistory, openAssetPage, payCardAssets],
   );
 
   const cardSettingsActions: CardSettingsActions = useMemo(
