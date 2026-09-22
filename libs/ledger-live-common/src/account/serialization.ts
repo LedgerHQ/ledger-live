@@ -68,7 +68,7 @@ export const fromOperationRaw = async (
 export async function fromAccountRaw(rawAccount: AccountRaw): Promise<Account> {
   const currency = getCryptoCurrencyById(rawAccount.currencyId);
   const bridge = await getAccountBridgeByFamily(
-    resolveSerializationFamily(currency),
+    resolveSerializationFamily(currency, rawAccount.id),
     rawAccount.id,
   );
 
@@ -93,7 +93,7 @@ export async function toAccountRaw(
   }
 
   const bridge = await getAccountBridgeByFamily(
-    resolveSerializationFamily(account.currency),
+    resolveSerializationFamily(account.currency, account.id),
     account.id,
   );
 

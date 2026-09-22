@@ -1,4 +1,5 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { isCoinModuleRegistered } from "../coin-modules/registry";
 
 // Which module serves a Zcash account: the standalone @ledgerhq/coin-zcash, or
@@ -32,25 +33,35 @@ export function resolveFamily(currency: CryptoCurrency): string {
 }
 
 /**
- * Bridge family whose raw<->live assign hooks carry `currency`'s persisted account data,
- * in both directions. Always `zcash` for Zcash, whatever the flag says, for two reasons:
- * coin-zcash's hooks round-trip coin-bitcoin's transparent shape as well as the shielded
- * `privateInfo` coin-bitcoin knows nothing about, so they are the safe endpoint in either
- * routing state; and accounts are deserialized at app startup, before the host app has
- * mirrored the flag here, so a flag-gated answer would read `false` and silently drop
- * `privateInfo`.
+ * Bridge family whose raw<->live assign hooks carry `currency`'s persisted account data, in
+ * both directions. For a real (non-`mock:`) account id this is always `currency.family`
+ * ("bitcoin" for Zcash): coin-bitcoin's real bridge round-trips `privateInfo` unconditionally
+ * via its Zcash chain-adapter's own `assignFromAccountRaw`/`assignToAccountRaw`
+ * (`coin-bitcoin/src/chain-adapters/zcash/index.ts`), flag-independent by design, so nothing
+ * is lost by staying on it -- and staying on it means a real Zcash account never eager-loads
+ * the standalone `@ledgerhq/coin-zcash` module (and its DMK signer) merely by being
+ * deserialized.
  *
- * Both `toAccountRaw` and `fromAccountRaw` must use this rather than `resolveFamily`:
- * routing a save through coin-bitcoin drops what the load restored -- and with `MOCK=true`
- * it drops the transparent `bitcoinResources` too, since coin-bitcoin's mock bridge
- * declares no assign hooks at all.
+ * A `mock:` account id is the one case that needs `zcash`: `getAccountBridgeByFamily` special-
+ * cases mock ids to the mock bridge of whatever family it's given regardless of `MOCK`, and
+ * coin-bitcoin's mock bridge (`families/bitcoin/bridge/mock.ts`) declares no assign hooks at
+ * all -- so routing a mock Zcash account through `bitcoin` would silently drop both
+ * `privateInfo` and the transparent `bitcoinResources`. Routing it to `zcash` instead reaches
+ * the standalone module's mock bridge, which does define them.
+ *
+ * Both `toAccountRaw` and `fromAccountRaw` must use this rather than `resolveFamily`, whose
+ * answer is gated on the flag: accounts are deserialized at app startup, before the host app
+ * has mirrored the flag, so a flag-gated router reads `false` there regardless.
  *
  * Hosts that register a reduced set of coin modules (wallet-cli registers bitcoin, evm and
- * solana only) have no `zcash` family to route to, so they fall back to `currency.family`
- * and keep coin-bitcoin's adapter instead of failing with `CurrencyNotSupported`. Unlike the
- * feature flag, the registry is populated at host startup before any account is
+ * solana only) have no `zcash` family to route a mock id to, so they fall back to
+ * `currency.family` and keep coin-bitcoin's adapter instead of failing with
+ * `CurrencyNotSupported` -- exactly what a real account id already does unconditionally.
+ * Unlike the feature flag, the registry is populated at host startup before any account is
  * deserialized, so this stays a safe thing to read here.
  */
-export function resolveSerializationFamily(currency: CryptoCurrency): string {
-  return isZcash(currency) && isCoinModuleRegistered("zcash") ? "zcash" : currency.family;
+export function resolveSerializationFamily(currency: CryptoCurrency, accountId: string): string {
+  if (!isZcash(currency)) return currency.family;
+  const { type } = decodeAccountId(accountId);
+  return type === "mock" && isCoinModuleRegistered("zcash") ? "zcash" : currency.family;
 }
