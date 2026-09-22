@@ -242,7 +242,9 @@ describe("useCardViewModel", () => {
 
     await act(async () => result.current.assets?.onAddAsset());
 
-    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/dashboard/accounts/crypto");
+    expect(topUpUrlFrom(mockNavigate)).toBe(
+      "https://ledger.baanxapi.test/dashboard/accounts/crypto",
+    );
   });
 
   it("keeps the same cardSettingsActions reference across re-renders", () => {
