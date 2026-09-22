@@ -258,7 +258,7 @@ describe("PayTab integration", () => {
 
       await waitFor(() => {
         expect(jest.mocked(trackPage)).toHaveBeenCalledWith(
-          { category: "Pay", name: undefined, props: { balance_filter: "all" } },
+          { category: "Pay", name: undefined, props: { balanceFilter: "all" } },
           { updateRoutes: true, refreshSource: true, avoidDuplicates: false, mandatory: false },
         );
       });
