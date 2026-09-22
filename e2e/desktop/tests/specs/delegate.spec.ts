@@ -561,6 +561,7 @@ test.describe("Delegate", () => {
   );
 });
 
+// Tests are skipped while waiting for LIVE-37757 to be done
 test.describe.skip("Delegate - MINA", () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina delegate");
@@ -617,6 +618,7 @@ test.describe.skip("Delegate - MINA", () => {
   );
 });
 
+// Tests are skipped while waiting for LIVE-37757 to be done
 test.describe.skip("Redelegate - MINA", () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina redelegate");

@@ -56,6 +56,7 @@ test.describe("Undelegate", () => {
   );
 });
 
+// Tests are skipped while waiting for LIVE-37757 to be done
 test.describe.skip("Undelegate - MINA", () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina undelegate");
