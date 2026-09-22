@@ -13,11 +13,12 @@ turning accounts into pairs to track lives in the app layer.
 - `schema.ts` — the Zod schemas. `CounterValuesState` and its serialized twin
   `CounterValuesStateRaw`, `RateMap`, `TrackingPair`, `CountervaluesSettings`,
   `PairRateMapCache` and `RateMapStats`.
-- `types.ts` — the types inferred from them, plus `BatchStrategySolver`.
+- `types.ts` — the types inferred from them.
 - `helpers.ts` — `pairId`, the `YYYY-MM-DD` / `YYYY-MM-DDTHH` date keys the rate maps are keyed by,
   `magFromTo` and `inferCurrencyAPIID`.
 - `logic.ts` — `calculate` and `calculateMany`, the `lenseRate*` lookups, `initialState`,
-  `importCountervalues` / `exportCountervalues` and the tracking-pair resolution.
+  `importCountervalues` / `exportCountervalues`, the tracking-pair resolution, and `generateCache`,
+  which `loadCountervalues` calls from `@domain/api-market-countervalues`.
 
 Currencies come from `@domain/entity-currency`; only `type`, `id`, `ticker` and
 `units[0].magnitude` are ever read.
