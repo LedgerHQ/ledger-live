@@ -42,7 +42,7 @@ const ready: CardAssetsViewModel = {
   onManagePress: jest.fn(),
   onAddAssetPress: jest.fn(),
   onMoveAsset: jest.fn(),
-  reorderingAssetId: null,
+  reorderingAssetIds: new Set(),
 };
 
 describe("CardAssetsView (native)", () => {
@@ -163,7 +163,7 @@ describe("CardAssetsView (native)", () => {
         rows={ready.rows}
         onAddAsset={onAddAsset}
         onMoveAsset={jest.fn()}
-        reorderingAssetId={null}
+        reorderingAssetIds={new Set()}
       />,
       { wrapper: I18nWrapper },
     );
@@ -183,7 +183,7 @@ describe("CardAssetsView (native)", () => {
       <CardAssetsManageDrawer
         rows={ready.rows}
         onMoveAsset={jest.fn()}
-        reorderingAssetId={null}
+        reorderingAssetIds={new Set()}
       />,
       { wrapper: I18nWrapper },
     );
@@ -200,7 +200,7 @@ describe("CardAssetsView (native)", () => {
         rows={[usdc, bitcoin]}
         onAddAsset={jest.fn()}
         onMoveAsset={onMoveAsset}
-        reorderingAssetId={null}
+        reorderingAssetIds={new Set()}
       />,
       { wrapper: I18nWrapper },
     );

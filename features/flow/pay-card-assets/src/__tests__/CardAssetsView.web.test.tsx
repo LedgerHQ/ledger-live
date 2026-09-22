@@ -50,7 +50,7 @@ const ready: CardAssetsViewModel = {
   onManagePress: jest.fn(),
   onAddAssetPress: jest.fn(),
   onMoveAsset: jest.fn(),
-  reorderingAssetId: null,
+  reorderingAssetIds: new Set(),
 };
 
 const detailsOpen: CardAssetsViewModel = {

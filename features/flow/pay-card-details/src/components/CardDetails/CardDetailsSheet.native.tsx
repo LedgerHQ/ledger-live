@@ -1,5 +1,10 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { BottomSheetHeader, BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
+import {
+  BottomSheetHeader,
+  BottomSheetScrollView,
+  BottomSheetView,
+  Box,
+} from "@ledgerhq/lumen-ui-rnative";
 import { AddToWalletCta } from "@features/flow-pay-card-widget/native";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { CardTopUpButton } from "../CardTopUp";
@@ -18,6 +23,11 @@ export function CardDetailsSheet({
   const isPending =
     scene.route.name === "freeze" && scene.freeze.viewModel.confirmState === "pending";
   const isOverview = scene.route.name === "overview";
+  // react-native-draggable-flatlist owns its own scrolling FlatList — nesting it inside the
+  // shared BottomSheetScrollView below is the classic FlatList-in-a-ScrollView anti-pattern
+  // (virtualization + gesture conflicts), so this one scene gets a plain, non-scrolling
+  // container instead and lets the list scroll itself.
+  const isAssetsManage = scene.route.name === "assetsManage";
   const { sizing, hasBackButton } = CARD_DETAILS_SCENES[scene.route.name];
   const canGoBack = hasBackButton && !isPending;
   const sizingProps =
@@ -63,17 +73,31 @@ export function CardDetailsSheet({
       testID="card-details-sheet"
     >
       {isOpen ? (
-        <BottomSheetScrollView>
-          <Box lx={{ paddingBottom: "s24" }}>
-            <BottomSheetHeader
-              density="compact"
-              spacing
-              title={scene.header.title}
-              description={scene.header.description}
-            />
-            <CardDetailsScene {...scene} />
-          </Box>
-        </BottomSheetScrollView>
+        isAssetsManage ? (
+          <BottomSheetView style={{ flex: 1 }}>
+            <Box lx={{ flex: 1, paddingBottom: "s24" }}>
+              <BottomSheetHeader
+                density="compact"
+                spacing
+                title={scene.header.title}
+                description={scene.header.description}
+              />
+              <CardDetailsScene {...scene} />
+            </Box>
+          </BottomSheetView>
+        ) : (
+          <BottomSheetScrollView>
+            <Box lx={{ paddingBottom: "s24" }}>
+              <BottomSheetHeader
+                density="compact"
+                spacing
+                title={scene.header.title}
+                description={scene.header.description}
+              />
+              <CardDetailsScene {...scene} />
+            </Box>
+          </BottomSheetScrollView>
+        )
       ) : null}
     </QueuedBottomSheet>
   );

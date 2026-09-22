@@ -100,7 +100,7 @@ describe("CardDetails (native)", () => {
       onManagePress: jest.fn(),
       onAddAssetPress: jest.fn(),
       onMoveAsset: jest.fn(),
-      reorderingAssetId: null,
+      reorderingAssetIds: new Set(),
     } satisfies CardAssetsViewModel;
     mockUseCardAssetsViewModel.mockReturnValue(viewModel);
   });

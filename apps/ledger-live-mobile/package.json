@@ -270,6 +270,7 @@
     "react-native-ble-plx": "3.5.1",
     "react-native-config": "catalog:",
     "react-native-device-info": "11.1.0",
+    "react-native-draggable-flatlist": "4.0.3",
     "react-native-easy-markdown": "2.0.0",
     "react-native-fast-crypto": "catalog:",
     "react-native-fast-image": "8.6.3",

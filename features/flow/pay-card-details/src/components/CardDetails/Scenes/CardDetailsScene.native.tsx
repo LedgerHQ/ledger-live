@@ -60,7 +60,7 @@ export function CardDetailsScene({
           rows={assetsManage.viewModel.rows}
           onAddAsset={assetsManage.viewModel.onAddAssetPress}
           onMoveAsset={assetsManage.viewModel.onMoveAsset}
-          reorderingAssetId={assetsManage.viewModel.reorderingAssetId}
+          reorderingAssetIds={assetsManage.viewModel.reorderingAssetIds}
         />
       ) : null;
     case "assetTransaction":

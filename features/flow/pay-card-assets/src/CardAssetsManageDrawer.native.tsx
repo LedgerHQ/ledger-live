@@ -1,7 +1,11 @@
-import React, { useMemo } from "react";
-import { View, type ViewProps } from "react-native";
-import { GestureDetector } from "react-native-gesture-handler";
-import Animated, { useAnimatedStyle, withTiming, type SharedValue } from "react-native-reanimated";
+import React, { useCallback, useState } from "react";
+import { Pressable } from "react-native";
+import DraggableFlatList, {
+  ScaleDecorator,
+  ShadowDecorator,
+  type DragEndParams,
+  type RenderItemParams,
+} from "react-native-draggable-flatlist";
 import {
   Box,
   Button,
@@ -15,71 +19,68 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { MenuBurger } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
-import { useListReorder } from "@shared/ui-list-reorder/native";
 import type { CardAssetRow } from "./types";
 
-type ReorderableRowProps = ViewProps &
-  Readonly<{
-    index: number;
-    total: number;
-    translationY: SharedValue<number>;
-    activeOriginalIndex: SharedValue<number>;
-    rowHeight: SharedValue<number>;
-    isActive: boolean;
-  }>;
+type AssetRowProps = Readonly<{
+  row: CardAssetRow;
+  showHandle: boolean;
+  isReordering: boolean;
+  reorderLabel: string;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  onDrag: () => void;
+}>;
 
-function ReorderableRow({
-  index,
-  total,
-  translationY,
-  activeOriginalIndex,
-  rowHeight,
-  isActive,
-  style,
-  children,
-  ...props
-}: ReorderableRowProps) {
-  // Runs entirely on the UI thread: every frame of the drag re-evaluates from `translationY` and
-  // `activeOriginalIndex` directly, so the whole preview (the dragged row tracking the finger,
-  // every sibling shifting out of its way) never touches React state or the JS thread.
-  // oxlint-disable react-hooks/exhaustive-deps
-  const animatedStyle = useAnimatedStyle(() => {
-    const from = activeOriginalIndex.value;
-    const dragging = from !== -1;
-    const isSelf = dragging && index === from;
-
-    let shift = 0;
-    if (dragging && !isSelf) {
-      const steps = Math.round(translationY.value / rowHeight.value);
-      const toIndex = Math.max(0, Math.min(total - 1, from + steps));
-      if (toIndex > from && index > from && index <= toIndex) shift = -1;
-      else if (toIndex < from && index >= toIndex && index < from) shift = 1;
-    }
-
-    return {
-      transform: [
-        { translateY: isSelf ? translationY.value : withTiming(shift * rowHeight.value) },
-        { scale: isActive ? 1.03 : 1 },
-      ],
-      zIndex: isActive ? 1 : 0,
-      shadowOpacity: isActive ? 0.16 : 0,
-      shadowRadius: 12,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: isActive ? 6 : 0,
-    };
-    // `translationY`/`activeOriginalIndex` are shared values: reading `.value` inside the worklet
-    // body above is what makes this reactive to them. Putting `.value` in this array instead
-    // would capture a stale render-time snapshot, not the live UI-thread value.
-  }, [index, total, isActive]);
-  // oxlint-enable react-hooks/exhaustive-deps
-
+function AssetRow({
+  row,
+  showHandle,
+  isReordering,
+  reorderLabel,
+  onMoveUp,
+  onMoveDown,
+  onDrag,
+}: AssetRowProps) {
   return (
-    <Animated.View {...props} style={[style, animatedStyle]}>
-      {/* The row relies on the list container's own rounded corners + clipping while flush with
-          its siblings; once it lifts above them it needs its own, or it looks like a bare
-          rectangle floating outside the card. */}
-      <Box lx={{ borderRadius: "md", overflow: "hidden" }}>{children}</Box>
-    </Animated.View>
+    // Scale/shadow give the lifted row the "picked up" feel; both fade back to flat the moment
+    // it's dropped since they're driven by the library's own active-cell animation, not state.
+    <ScaleDecorator activeScale={1.03}>
+      <ShadowDecorator opacity={0.16} radius={12} elevation={6}>
+        <Box lx={{ backgroundColor: "surface", borderRadius: "sm", overflow: "hidden" }}>
+          <ListItem lx={{ backgroundColor: "surface" }}>
+            <ListItemLeading>
+              <ListItemContent>
+                <ListItemTitle>{row.name}</ListItemTitle>
+              </ListItemContent>
+            </ListItemLeading>
+            {showHandle ? (
+              <ListItemTrailing>
+                {isReordering ? (
+                  <Spinner size={24} testID={`card-asset-reorder-spinner-${row.id}`} />
+                ) : (
+                  <Pressable
+                    accessible
+                    accessibilityRole="button"
+                    accessibilityLabel={reorderLabel}
+                    accessibilityActions={[
+                      { name: "decrement", label: "Move up" },
+                      { name: "increment", label: "Move down" },
+                    ]}
+                    onAccessibilityAction={event => {
+                      if (event.nativeEvent.actionName === "decrement") onMoveUp();
+                      if (event.nativeEvent.actionName === "increment") onMoveDown();
+                    }}
+                    onLongPress={onDrag}
+                    testID={`card-asset-reorder-handle-${row.id}`}
+                  >
+                    <MenuBurger size={24} />
+                  </Pressable>
+                )}
+              </ListItemTrailing>
+            ) : null}
+          </ListItem>
+        </Box>
+      </ShadowDecorator>
+    </ScaleDecorator>
   );
 }
 
@@ -87,26 +88,73 @@ type CardAssetsManageDrawerProps = Readonly<{
   rows: readonly CardAssetRow[];
   onAddAsset?: () => void;
   onMoveAsset: (id: string, toIndex: number) => Promise<void>;
-  reorderingAssetId: string | null;
+  reorderingAssetIds: ReadonlySet<string>;
 }>;
 
 export function CardAssetsManageDrawer({
   rows,
   onAddAsset,
   onMoveAsset,
-  reorderingAssetId,
+  reorderingAssetIds,
 }: CardAssetsManageDrawerProps) {
   const { t } = useTranslation();
-  const rowsById = useMemo(() => new Map(rows.map(row => [row.id, row])), [rows]);
-  const ids = useMemo(() => rows.map(row => row.id), [rows]);
-  const reorder = useListReorder({
-    ids,
-    onMove: (id, toIndex) => void onMoveAsset(id, toIndex),
-    disabled: reorderingAssetId !== null,
-  });
+  // DraggableFlatList only calls `onDragEnd` once its own settle-spring animation finishes, well
+  // after the finger actually lifts, and clears once `onMoveAsset` fully settles (not right on
+  // drop): `reorderingAssetIds` (from the view model) takes a render to catch up, so clearing
+  // this immediately would leave a one-frame gap with no spinner showing at all.
+  const [releasedId, setReleasedId] = useState<string | null>(null);
+
+  const moveByOffset = useCallback(
+    (id: string, offset: number) => {
+      const fromIndex = rows.findIndex(row => row.id === id);
+      const toIndex = Math.max(0, Math.min(rows.length - 1, fromIndex + offset));
+      if (fromIndex >= 0 && fromIndex !== toIndex) void onMoveAsset(id, toIndex);
+    },
+    [rows, onMoveAsset],
+  );
+
+  const renderItem = useCallback(
+    ({ item, drag }: RenderItemParams<CardAssetRow>) => (
+      <AssetRow
+        row={item}
+        showHandle={rows.length > 1}
+        isReordering={reorderingAssetIds.has(item.id) || releasedId === item.id}
+        reorderLabel={t("payTab.card.assets.manageDialog.reorder", { asset: item.name })}
+        onMoveUp={() => moveByOffset(item.id, -1)}
+        onMoveDown={() => moveByOffset(item.id, 1)}
+        onDrag={drag}
+      />
+    ),
+    [rows.length, reorderingAssetIds, releasedId, t, moveByOffset],
+  );
+
+  // A stable reference matters here: the library keys its internal per-cell position/measurement
+  // tracking off this function's identity in a few places, so a fresh inline arrow every render
+  // (as this used to be) made it redo that bookkeeping on every render instead of only when the
+  // extraction logic itself changes.
+  const keyExtractor = useCallback((row: CardAssetRow) => row.id, []);
+
+  const handleRelease = useCallback(
+    (index: number) => {
+      setReleasedId(rows[index]?.id ?? null);
+    },
+    [rows],
+  );
+
+  const handleDragEnd = useCallback(
+    ({ data, from, to }: DragEndParams<CardAssetRow>) => {
+      const moved = from !== to ? data[to] : undefined;
+      if (!moved) {
+        setReleasedId(null);
+        return;
+      }
+      void onMoveAsset(moved.id, to).finally(() => setReleasedId(null));
+    },
+    [onMoveAsset],
+  );
 
   return (
-    <Box lx={{ gap: "s24", paddingBottom: "s24" }}>
+    <Box lx={{ gap: "s24", paddingBottom: "s24", flex: 1 }}>
       <Box lx={{ gap: "s8" }}>
         <Text typography="heading3SemiBold" lx={{ color: "base" }}>
           {t("payTab.card.assets.manageDialog.title")}
@@ -116,53 +164,18 @@ export function CardAssetsManageDrawer({
         </Text>
       </Box>
       <Box
-        lx={{
-          backgroundColor: "surface",
-          borderRadius: "md",
-          paddingHorizontal: "s12",
-        }}
+        lx={{ backgroundColor: "surface", borderRadius: "md", paddingHorizontal: "s12", flex: 1 }}
       >
-        {reorder.order.flatMap(id => {
-          const row = rowsById.get(id);
-          if (!row) return [];
-          const handleProps = reorder.getHandleProps(row.id);
-          return (
-            <ReorderableRow key={row.id} {...reorder.getRowProps(row.id)}>
-              <ListItem lx={{ backgroundColor: "surface" }}>
-                <ListItemLeading>
-                  <ListItemContent>
-                    <ListItemTitle>{row.name}</ListItemTitle>
-                  </ListItemContent>
-                </ListItemLeading>
-                <ListItemTrailing>
-                  {reorderingAssetId === row.id ? (
-                    <Spinner size={24} testID={`card-asset-reorder-spinner-${row.id}`} />
-                  ) : (
-                    <GestureDetector gesture={handleProps.gesture}>
-                      <View
-                        accessible
-                        accessibilityRole="button"
-                        accessibilityLabel={t("payTab.card.assets.manageDialog.reorder", {
-                          asset: row.name,
-                        })}
-                        accessibilityActions={[...handleProps.accessibilityActions]}
-                        accessibilityState={handleProps.accessibilityState}
-                        onAccessibilityAction={handleProps.onAccessibilityAction}
-                        testID={`card-asset-reorder-handle-${row.id}`}
-                      >
-                        <MenuBurger size={24} />
-                      </View>
-                    </GestureDetector>
-                  )}
-                </ListItemTrailing>
-              </ListItem>
-            </ReorderableRow>
-          );
-        })}
+        <DraggableFlatList
+          data={rows as CardAssetRow[]}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          onDragEnd={handleDragEnd}
+          onRelease={handleRelease}
+          containerStyle={{ flex: 1 }}
+          ItemSeparatorComponent={() => <Box lx={{ paddingTop: "s2" }} />}
+        />
       </Box>
-      <Text accessibilityLiveRegion="polite" lx={{ position: "absolute", opacity: 0 }}>
-        {reorder.announcement}
-      </Text>
       {onAddAsset ? (
         <Box lx={{ alignItems: "center", gap: "s12", paddingTop: "s16" }}>
           <Text typography="body4" lx={{ color: "muted", textAlign: "center" }}>
