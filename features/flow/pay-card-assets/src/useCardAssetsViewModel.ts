@@ -24,7 +24,6 @@ const RECENT_TRANSACTIONS_SHOWN = 3;
 const EMPTY_CURRENCIES = new Map();
 const NO_PRICE: CardAssetsProps["priceWallet"] = () => null;
 const NO_COUNTERVALUE: CardAssetsProps["formatCountervalue"] = () => "";
-const NOOP = () => {};
 
 export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
   const ticker = currency.toUpperCase();
@@ -41,7 +40,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     onTopUp,
     onWithdraw,
     onShowHistory,
-    onAddAsset = NOOP,
+    onAddAsset,
   } = props ?? {};
   const { t } = useTranslation();
   const { trackButtonClicked, trackDebitOrderChanged } = usePayAnalyticsContext();
@@ -164,6 +163,9 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   }, [rows, trackButtonClicked]);
 
   const onAddAssetPress = useCallback(() => {
+    if (!onAddAsset) {
+      throw new Error("Cannot add a card asset without card assets props");
+    }
     onAddAsset();
   }, [onAddAsset]);
 
