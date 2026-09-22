@@ -196,7 +196,8 @@ export function useOperationsListViewModel(
     (tab: HistoryTab) => {
       track("button_clicked", {
         button: tab,
-        page: "OperationsList",
+        buttonLocation: "history tabs",
+        page: "History",
       });
       setHistoryTabSelection({ initial: initialHistoryTab, selected: tab });
     },

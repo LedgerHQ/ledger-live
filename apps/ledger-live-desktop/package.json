@@ -123,6 +123,7 @@
     "@features/platform-device-intent": "workspace:^",
     "@features/platform-env": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
+    "@features/platform-pay-analytics": "workspace:^",
     "@features/platform-style": "workspace:^",
     "@features/platform-verify-address-intent": "workspace:^",
     "@features/platform-wallet-sync": "workspace:^",

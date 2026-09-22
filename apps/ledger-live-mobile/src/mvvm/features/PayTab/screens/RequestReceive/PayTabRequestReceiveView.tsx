@@ -29,6 +29,12 @@ export function PayTabRequestReceiveView({
     <SafeAreaView isFlex style={{ backgroundColor: theme.colors.bg.base }}>
       {requestReceive.address ? (
         <>
+          <TrackScreen
+            category="Request complete"
+            flow="request"
+            asset={requestReceive.asset.ticker}
+            network={requestReceive.network}
+          />
           {verifyAddress.phase === "intro" ? <TrackScreen category={verifyAddress.page} /> : null}
           <RequestReceive {...requestReceive} />
           <VerifyAddress {...verifyAddress} />

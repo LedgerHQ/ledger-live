@@ -15,7 +15,7 @@ import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemand
 
 const NO_IDS: readonly string[] = [];
 
-export function usePayCardAssets(): CardAssetsProps {
+export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
   // Nothing to price until the card is signed in, and the lookups and the polled pairs would be

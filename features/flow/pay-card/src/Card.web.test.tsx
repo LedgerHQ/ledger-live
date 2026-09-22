@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { CardFormatters, CardProps } from "./Card.types";
-import { CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
+import { CARD_DISCLAIMER, CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
 
 let mockStatus: PayCardAuthStatus = "unknown";
 let receivedDetailsFormatters: CardTransactionFormatters | undefined;
@@ -107,6 +107,12 @@ describe("Card (web)", () => {
     expect(screen.getByText(title)).toBeVisible();
   });
 
+  it("always shows the disclaimer", () => {
+    renderCard(<Card login={{ oauthConfig }} />);
+
+    expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
+  });
+
   describe("while resolving the session", () => {
     it("shows only the bare artwork, holding back the widget and the card details", () => {
       renderCard(<Card login={{ oauthConfig }} />);
@@ -129,6 +135,8 @@ describe("Card (web)", () => {
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.getByTestId("card-login")).toBeVisible();
+      expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
+      expect(screen.getByTestId("pay-card-disclaimer")).toHaveClass("mt-auto");
       expect(screen.queryByTestId("card-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
@@ -165,6 +173,8 @@ describe("Card (web)", () => {
       expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("card-details")).toBeVisible();
       expect(screen.getByTestId("card-transactions")).toBeVisible();
+      expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
+      expect(screen.getByTestId("pay-card-disclaimer")).not.toHaveClass("mt-auto");
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-assets")).not.toBeInTheDocument();
@@ -178,6 +188,8 @@ describe("Card (web)", () => {
             currencies: new Map(),
             priceWallet: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -194,6 +206,8 @@ describe("Card (web)", () => {
             currencies: new Map(),
             priceWallet: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -214,6 +228,8 @@ describe("Card (web)", () => {
             currencies: new Map(),
             priceWallet: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -236,6 +252,8 @@ describe("Card (web)", () => {
             currencies: new Map(),
             priceWallet: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -281,6 +299,17 @@ describe("Card (web)", () => {
       fireEvent.click(screen.getByTestId("card-top-up"));
 
       expect(onTopUp).toHaveBeenCalledTimes(1);
+    });
+
+    it("shows the disclaimer above the top up button", () => {
+      renderCard(<Card login={{ oauthConfig }} onTopUp={jest.fn()} />);
+
+      const disclaimer = screen.getByTestId("pay-card-disclaimer");
+      const topUp = screen.getByTestId("card-top-up");
+
+      expect(
+        disclaimer.compareDocumentPosition(topUp) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
     });
 
     it("shows no top up button when the host wires none", () => {

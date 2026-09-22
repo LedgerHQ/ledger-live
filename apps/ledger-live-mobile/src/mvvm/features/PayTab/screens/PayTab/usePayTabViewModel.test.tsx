@@ -11,6 +11,9 @@ import { NavigatorName, ScreenName } from "~/const";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import type { PayTabNavigatorParamList } from "../../types";
 import { usePayTabViewModel } from "./usePayTabViewModel";
+import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+
+const payAnalyticsAdapter = { track: () => undefined };
 
 // ledger-live-mobile does not depend on expo-web-browser directly — only
 // @features/flow-pay-card-auth does, and importing it here would fail typecheck since the app has
@@ -51,8 +54,9 @@ const CARD_ASSET: CardAssetRow = {
 };
 
 function PayTabViewModelProbe() {
-  const { login, onTopUp, cardAssets, cardSettingsActions } = usePayTabViewModel();
+  const { login, onTopUp, cardAssets, cardSettingsActions, cardFormatters } = usePayTabViewModel();
   const { oauthConfig, callback } = login;
+  const formatted = cardFormatters?.countervalue?.(1250);
 
   return (
     <>
@@ -62,6 +66,8 @@ function PayTabViewModelProbe() {
       <Text testID="oauth-redirect">{oauthConfig.redirectUri}</Text>
       <Text testID="oauth-deeplink">{oauthConfig.deepLink}</Text>
       <Text testID="oauth-callback">{JSON.stringify(callback)}</Text>
+      <Text testID="countervalue-integer">{formatted?.integerPart}</Text>
+      <Text testID="countervalue-decimal">{formatted?.decimalPart}</Text>
       <Pressable testID="top-up" onPress={onTopUp} />
       <Pressable testID="asset-top-up" onPress={() => cardAssets.onTopUp?.(CARD_ASSET)} />
       <Pressable testID="asset-withdraw" onPress={() => cardAssets.onWithdraw?.(CARD_ASSET)} />
@@ -73,6 +79,7 @@ function PayTabViewModelProbe() {
       </Text>
       <Pressable testID="press-manage-pin" onPress={cardSettingsActions?.onManagePin} />
       <Pressable testID="press-access-baanx" onPress={cardSettingsActions?.onAccessBaanx} />
+      <Pressable testID="press-add-asset" onPress={cardAssets.onAddAsset} />
     </>
   );
 }
@@ -98,14 +105,16 @@ function renderViewModel(
   options?: Parameters<typeof render>[1],
 ) {
   return render(
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        name={ScreenName.PayTab}
-        component={PayTabViewModelProbe}
-        initialParams={params}
-      />
-      <Stack.Screen name={NavigatorName.Base} component={BaseNavigatorProbe} />
-    </Stack.Navigator>,
+    <PayAnalyticsProvider adapter={payAnalyticsAdapter}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name={ScreenName.PayTab}
+          component={PayTabViewModelProbe}
+          initialParams={params}
+        />
+        <Stack.Screen name={NavigatorName.Base} component={BaseNavigatorProbe} />
+      </Stack.Navigator>
+    </PayAnalyticsProvider>,
     options,
   );
 }
@@ -149,6 +158,8 @@ describe("usePayTabViewModel", () => {
       getEnv("CARD_OAUTH_REDIRECT_URI"),
     );
     expect(screen.getByTestId("oauth-deeplink")).toHaveTextContent(PAY_TAB_DEEP_LINK);
+    expect(screen.getByTestId("countervalue-integer")).toHaveTextContent("12");
+    expect(screen.getByTestId("countervalue-decimal")).toHaveTextContent("50");
   });
 
   it("should follow a change of the Card env vars", () => {
@@ -291,6 +302,26 @@ describe("usePayTabViewModel", () => {
     await user.press(screen.getByTestId("press-access-baanx"));
 
     await expectHostedPage("https://ledger.baanxapi.test/?app_id=LEDGERUS");
+  });
+
+  it("should open the add asset hosted crypto dashboard", async () => {
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("press-add-asset"));
+
+    await expectHostedPage("https://ledger.baanxapi.test/dashboard/accounts/crypto");
+  });
+
+  it("should name the US app on the add asset hosted crypto dashboard", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("press-add-asset"));
+
+    await expectHostedPage(
+      "https://ledger.baanxapi.test/dashboard/accounts/crypto?app_id=LEDGERUS",
+    );
   });
 
   it("should report a warning instead of throwing when the hosted page fails to open", async () => {

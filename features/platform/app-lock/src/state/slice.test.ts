@@ -82,6 +82,25 @@ describe("appLockSlice", () => {
     expect(afterLateRead.isHydrated).toBe(true);
   });
 
+  // The prompt is owed on a boot the user unlocks with biometrics, which never sees a password.
+  it("restores the mark read back from the keychain", () => {
+    const hydrated = reduce(
+      undefined,
+      hydrateAppLock({ hasPassword: true, biometricsEnabled: true, needsLongerPassword: true }),
+    );
+
+    expect(hydrated.needsLongerPassword).toBe(true);
+  });
+
+  it("reads a hydration without the mark as nothing owed", () => {
+    const hydrated = reduce(
+      undefined,
+      hydrateAppLock({ hasPassword: true, biometricsEnabled: false }),
+    );
+
+    expect(hydrated.needsLongerPassword).toBe(false);
+  });
+
   it("restores biometrics read back from the keychain", () => {
     const hydrated = reduce(
       undefined,

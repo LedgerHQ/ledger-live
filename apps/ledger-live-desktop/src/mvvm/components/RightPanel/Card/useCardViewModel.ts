@@ -5,6 +5,7 @@ import {
   buildWithdrawalPath,
   buildAccessBaanxPath,
   buildManagePinPath,
+  buildAddAssetPath,
   openHostedCardPathSafely,
   type CardAssetPathBuilder,
 } from "@features/flow-pay-card-auth";
@@ -187,17 +188,6 @@ export function useCardViewModel(): CardViewModel {
     [navigate, pathname],
   );
 
-  const payCardAssets = usePayCardAssets();
-  const assets: CardAssetsProps = useMemo(
-    () => ({
-      ...payCardAssets,
-      onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openTopUp(asset.currency),
-      onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
-    }),
-    [onShowAssetHistory, openAssetPage, openTopUp, payCardAssets],
-  );
-
   const onManagePin = useCallback(
     () =>
       openHostedPath(buildManagePinPath, error =>
@@ -214,11 +204,30 @@ export function useCardViewModel(): CardViewModel {
     [openHostedPath],
   );
 
+  const onAddAsset = useCallback(
+    () =>
+      openHostedPath(buildAddAssetPath, error =>
+        logger.warn("[card] add asset page did not open", error),
+      ),
+    [openHostedPath],
+  );
+
+  const payCardAssets = usePayCardAssets();
+  const assets: CardAssetsProps = useMemo(
+    () => ({
+      ...payCardAssets,
+      onShowHistory: onShowAssetHistory,
+      onTopUp: asset => void openTopUp(asset.currency),
+      onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
+      onAddAsset,
+    }),
+    [onAddAsset, onShowAssetHistory, openAssetPage, openTopUp, payCardAssets],
+  );
+
   const cardSettingsActions: CardSettingsActions = useMemo(
     () => ({ onManagePin, onAccessBaanx }),
     [onManagePin, onAccessBaanx],
   );
-
   return {
     formatters,
     assets,

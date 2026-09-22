@@ -42,7 +42,7 @@ export type CardAssetsProps = Readonly<{
   onTopUp?: (asset: CardAssetRow) => void;
   onWithdraw?: (asset: CardAssetRow) => void;
   onShowHistory?: (asset: CardAssetRow) => void;
-  onAddAsset?: () => void;
+  onAddAsset: () => void;
 }>;
 
 export type CardAssetDialogState = "closed" | "details" | "withdraw" | "manage";
@@ -75,7 +75,7 @@ export type CardAssetsViewModel = Readonly<{
   onShowHistoryPress: () => void;
   onWithdrawContinue: () => void;
   onManagePress: () => void;
-  onAddAssetPress?: () => void;
+  onAddAssetPress: () => void;
   onReorderAssets: (draggedId: string, targetId: string) => Promise<void>;
   reorderingAssetId: string | null;
 }>;

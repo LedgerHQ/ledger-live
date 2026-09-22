@@ -134,6 +134,17 @@ describe("trackPage", () => {
     expect(getCurrentTrackingPage()).toBe("Page Portfolio");
   });
 
+  it("does update routes when tracking is disabled", () => {
+    register();
+    setEnabledFn(() => false);
+
+    trackPage({ category: "Page 1" }, { updateRoutes: true, refreshSource: true });
+    trackPage({ category: "Page 2" }, { updateRoutes: true, refreshSource: true });
+
+    expect(getPreviousTrackingPage()).toBe("Page 1");
+    expect(getCurrentTrackingPage()).toBe("Page 2");
+  });
+
   it("injects source from the previous tracking page", () => {
     register();
     previousRouteNameRef.current = "Page Portfolio";

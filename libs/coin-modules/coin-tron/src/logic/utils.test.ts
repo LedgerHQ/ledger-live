@@ -1,19 +1,7 @@
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
 import { decodeTransaction, getTronResources } from "./utils";
 
 describe("decodeTransaction", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      explorer: {
-        url: "http://localhost",
-      },
-    }));
-  });
-
   it("creates a TRX transaction in TronWeb format", async () => {
     const result = await decodeTransaction(
       "0a020ee522082e5fc67747a428af40f0e2ace4d3325a66080112620a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412310a1541fd49eda0f23ff7ec1d03b52c3a45991c24cd440e12154198927ffb9f554dc4a453c64b2e553a02d6df514b18e80770fd9ca9e4d332",

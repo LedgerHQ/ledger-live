@@ -64,19 +64,17 @@ export function CardAssetsManageDialog({
             ))}
           </div>
         </DialogBody>
-        {onAddAsset ? (
-          <DialogFooter
-            className="flex shrink-0 flex-col gap-12 text-center"
-            data-testid="card-assets-manage-footer"
-          >
-            <p className="body-4 text-muted">
-              {t("payTab.card.assets.manageDialog.addAssetCaption")}
-            </p>
-            <Button appearance="base" size="lg" isFull onClick={onAddAsset}>
-              {t("payTab.card.assets.manageDialog.addAsset")}
-            </Button>
-          </DialogFooter>
-        ) : null}
+        <DialogFooter
+          className="flex shrink-0 flex-col gap-12 text-center"
+          data-testid="card-assets-manage-footer"
+        >
+          <p className="body-4 text-muted">
+            {t("payTab.card.assets.manageDialog.addAssetCaption")}
+          </p>
+          <Button appearance="base" size="lg" isFull onClick={onAddAsset}>
+            {t("payTab.card.assets.manageDialog.addAsset")}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

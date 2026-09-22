@@ -63,7 +63,7 @@ jobs:
       id-token: write
       contents: read
     if: ${{ inputs.build-web-tools != 'false' }}
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-4cpu-aws-public
     outputs:
       deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
     steps:
@@ -83,6 +83,12 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      # Before the Vercel build so both npx and Vercel's own install resolve through JFrog.
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Build and Deploy
         id: build-deploy
