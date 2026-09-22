@@ -163,10 +163,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   }, [rows, trackButtonClicked]);
 
   const onAddAssetPress = useCallback(() => {
-    if (!onAddAsset) {
-      throw new Error("Cannot add a card asset without card assets props");
-    }
-    onAddAsset();
+    onAddAsset?.();
   }, [onAddAsset]);
 
   const onReorderAssets = useCallback(

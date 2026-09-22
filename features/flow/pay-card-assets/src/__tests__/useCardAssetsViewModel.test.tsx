@@ -319,11 +319,9 @@ describe("useCardAssetsViewModel", () => {
     expect(result.current.dialogState).toBe("closed");
   });
 
-  it("should fail explicitly if the add asset action is called without assets props", () => {
+  it("should ignore the unreachable add asset action without assets props", () => {
     const { result } = renderHook(() => useCardAssetsViewModel(), { wrapper: I18nWrapper });
 
-    expect(() => result.current.onAddAssetPress()).toThrow(
-      "Cannot add a card asset without card assets props",
-    );
+    expect(() => result.current.onAddAssetPress()).not.toThrow();
   });
 });
