@@ -28,7 +28,10 @@ wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is int
 | `ring init`                           | One-time provisioning of your Ledger Key Ring (LKRP) via the device. Prompts for a password unless `--unsecure-no-password`.                                                                                     |
 | `ring encrypt` / `ring decrypt`       | AES-256-GCM encrypt/decrypt of files (`-i`/`-o`) or text (stdin/stdout) under a named key (`--key`). **No device** after `init`; requires network to restore the trustchain.                                     |
 | `ring keys` / `ring destroy`          | List the keys this machine has used, or tear down the ring (local credentials + remote LKRP application).                                                                                                        |
-| `agent-intent enroll`                 | Create a pending Agent Intent profile and print its signed enrollment URL + public-key fingerprint. **No device** required — the profile is a local software identity, but a working OS keychain is (on Linux: a Secret Service provider such as gnome-keyring). **Separate trust model from `ring`** — see the [ledger-wallet-cli skill](../../.agents/skills/ledger-wallet-cli/SKILL.md#agent-intent). |
+| `ledger-sync enroll`                  | Enroll/restore Ledger Sync on this machine (device required). **Separate trust model from `ring` and `agent-intent`** — see the [ledger-wallet-cli skill](../../.agents/skills/ledger-wallet-cli/references/business-logic.md#ledger-sync).                    |
+| `ledger-sync import`                  | Explicitly pull Ledger Sync's synchronized accounts and merge them into the session (additive, idempotent). Does not run automatically.                                                                          |
+| `ledger-sync destroy`                 | Deactivate Ledger Sync for this machine and wipe local member credentials, without touching `ring`.                                                                                                                |
+| `agent-intent enroll`                 | Create a pending Agent Intent profile and print its signed enrollment URL + public-key fingerprint. **No device** required — the profile is a local software identity, but a working OS keychain is (on Linux: a Secret Service provider such as gnome-keyring). **Separate trust model from `ring` and `ledger-sync`** — see the [ledger-wallet-cli skill](../../.agents/skills/ledger-wallet-cli/SKILL.md#agent-intent). |
 | `agent-intent complete`               | Validate the completion JSON from the Agent Intent frontend against the enrolled public key and save its Trustchain ID. Reads `--payload` or stdin. **No device** required.                                     |
 | `agent-intent list` / `agent-intent show` | List local Agent Intent profiles, or show one profile's detail (fingerprint, status, environment). Never reveals the secret key. **No device** required.                                                    |
 | `skill list` / `skill retrieve`       | List the agent skills shipped inside the binary, or print one to stdout. **No device** required.                                                                                                                |
@@ -60,6 +63,9 @@ pnpm wallet-cli start -- ring encrypt --help
 pnpm wallet-cli start -- ring decrypt --help
 pnpm wallet-cli start -- skill install --help
 pnpm wallet-cli start -- skill doctor --help
+pnpm wallet-cli start -- ledger-sync enroll --help
+pnpm wallet-cli start -- ledger-sync import --help
+pnpm wallet-cli start -- ledger-sync destroy --help
 pnpm wallet-cli start -- agent-intent enroll --help
 pnpm wallet-cli start -- agent-intent complete --help
 pnpm wallet-cli start -- agent-intent list --help

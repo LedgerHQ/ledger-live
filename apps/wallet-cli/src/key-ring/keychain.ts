@@ -1,11 +1,7 @@
-import { Entry } from "@napi-rs/keyring";
-import { createHash } from "node:crypto";
-import { stateDir } from "@bunli/utils";
-import { APP_NAME } from "../session/session-store";
 import { pubkeyFromPrivatekey, encryptData, decryptData, hexToBytes } from "./crypto";
+import { keychainEntry, deleteKeychainEntry, hasKeychainEntry, splitKeychainLines } from "./keychain-entry";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 
-const SERVICE = APP_NAME;
 const ENC_PREFIX = "ENC:";
 
 /**
@@ -22,17 +18,8 @@ export class PasswordRequiredError extends Error {}
  */
 export class CorruptKeychainError extends Error {}
 
-/**
- * Keychain account name, hashed from the state dir (the same source that locates session.yaml). Binds
- * the key to its profile so distinct profiles and parallel test workers never cross-read entries.
- */
-function keychainAccount(): string {
-  const digest = createHash("sha256").update(stateDir(APP_NAME)).digest("hex").slice(0, 16);
-  return `member-private-key-${digest}`;
-}
-
 function getEntry() {
-  return new Entry(SERVICE, keychainAccount());
+  return keychainEntry("member-private-key");
 }
 
 /**
@@ -67,9 +54,7 @@ export async function loadMemberCredentials(
   }
   if (!stored) return null;
 
-  // Split CRLF-tolerantly: a keychain entry written on Windows uses \r\n, and trim() only strips the
-  // string's outer ends, so a bare split("\n") would leave a trailing \r on the private-key line.
-  const lines = stored.trim().split(/\r?\n/);
+  const lines = splitKeychainLines(stored);
   const firstLine = lines[0];
   if (!firstLine) return null;
 
@@ -114,23 +99,10 @@ export async function loadMemberCredentials(
   return { privatekey, pubkey };
 }
 
-export function deletePrivateKey(): boolean {
-  try {
-    // "deleted" and "already absent" both satisfy the postcondition (no key remains), so collapse
-    // them to true; only a thrown backend error (key may persist) returns false, which callers use
-    // to keep the ring metadata so destroy can be re-run.
-    getEntry().deletePassword();
-    return true;
-  } catch {
-    return false;
-  }
-}
+// "Deleted" and "already absent" both satisfy the postcondition (no key remains); callers use a
+// `false` result (a thrown backend error, key may persist) to keep the ring metadata so destroy
+// can be re-run.
+export const deletePrivateKey = (): boolean => deleteKeychainEntry(getEntry());
 
 /** Whether a member private key is present in the OS keychain for this state dir. */
-export function hasStoredKey(): boolean {
-  try {
-    return getEntry().getPassword() != null;
-  } catch {
-    return false;
-  }
-}
+export const hasStoredKey = (): boolean => hasKeychainEntry(getEntry());
