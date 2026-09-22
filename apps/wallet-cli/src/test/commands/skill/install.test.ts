@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach } from "bun:test";
 import { access, mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { runCli } from "../../helpers/cli-runner";
+import { runCli } from "../../../testing/cli-runner";
 import { SIDECAR_FILENAME } from "../../../skills/registry";
 
 const SKILL_NAME = "wallet-cli-usage";

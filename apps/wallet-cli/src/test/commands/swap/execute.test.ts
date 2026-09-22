@@ -1,5 +1,5 @@
-import { ETH_SYNC_ROUTES } from "../../helpers/eth-sync-routes";
-import { MockServer } from "../../helpers/mock-server";
+import { ETH_SYNC_ROUTES } from "../../../testing/eth-sync-routes";
+import { MockServer } from "../../../testing/mock-server";
 import "../../../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { BigNumber } from "bignumber.js";
@@ -14,8 +14,8 @@ import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-co
 import { installOutputCapture } from "../../../shared/ui";
 import { CliProcessExitError } from "../../../cli-process-exit-error";
 import type { AccountDescriptor } from "../../../wallet/models";
-import { MOCK_ETH_DESCRIPTOR } from "../../../test/helpers/constants";
-import { USDT_CONTRACT } from "../../helpers/cal-fixtures";
+import { MOCK_ETH_DESCRIPTOR } from "../../../testing/constants";
+import { USDT_CONTRACT } from "../../../testing/cal-fixtures";
 import { executeSwapCommand, type SwapExecuteFlags } from "../../../commands/swap/execute";
 
 import type { FullSwapPipelineInput } from "../../../commands/swap/cli-swap-pipeline";

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { runCli } from "../../helpers/cli-runner";
+import { runCli } from "../../../testing/cli-runner";
 
 const SKILL_NAME = "wallet-cli-usage";
 const LEGACY_SKILL_NAME = "ledger-wallet-cli";

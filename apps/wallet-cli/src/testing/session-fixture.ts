@@ -2,8 +2,8 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { YAML } from "bun";
-import { APP_NAME } from "../../session/session-store";
-import type { SessionEntry } from "../../session/session-store";
+import { APP_NAME } from "../session/session-store";
+import type { SessionEntry } from "../session/session-store";
 
 const SESSION_FILE = "session.yaml";
 

@@ -11,7 +11,7 @@ import {
 } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { runCli } from "../../helpers/cli-runner";
+import { runCli } from "../../../testing/cli-runner";
 import { getSkill, SIDECAR_FILENAME } from "../../../skills/registry";
 import { hashOne, hashSkillFiles } from "../../../skills/hash";
 

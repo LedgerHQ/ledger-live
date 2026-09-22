@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { Readable } from "node:stream";
 import { YAML } from "bun";
-import { runCli, type RunResult } from "../helpers/cli-runner";
+import { runCli, type RunResult } from "../../testing/cli-runner";
 
 function runCliWithStdin(
   args: string[],

@@ -22,8 +22,8 @@
  */
 
 import path from "node:path";
-import { getCliProcessExitCode } from "../../cli-process-exit-error";
-import { installOutputCapture } from "../../shared/ui";
+import { getCliProcessExitCode } from "../cli-process-exit-error";
+import { installOutputCapture } from "../shared/ui";
 
 // ---------------------------------------------------------------------------
 // Lazy CLI loader — deferred until first runCliInProcess() call
@@ -51,8 +51,8 @@ async function getCliModules(): Promise<{
     // These imports load the full CLI module graph (live-common-setup, commands.gen, etc.).
     // They run once per Bun test-worker; the module system caches the result.
     const [cliMod, dmkMod] = await Promise.all([
-      import("../../cli"),
-      import("../../device/register-dmk-transport"),
+      import("../cli"),
+      import("../device/register-dmk-transport"),
     ]);
     _runMain = cliMod.runMain;
     _setTestDmkTransport = dmkMod._setTestDmkTransport as SetTestDmkTransportFn;
@@ -225,8 +225,8 @@ async function setupDmkMock(
     : {};
 
   const [{ MockDeviceManagementKit }, { WalletCliDmkTransport }] = await Promise.all([
-    import("../../device/mock-dmk"),
-    import("../../device/wallet-cli-dmk-transport"),
+    import("../device/mock-dmk"),
+    import("../device/wallet-cli-dmk-transport"),
   ]);
 
   const mock = new MockDeviceManagementKit({ initialState: stateEnv, appResults });

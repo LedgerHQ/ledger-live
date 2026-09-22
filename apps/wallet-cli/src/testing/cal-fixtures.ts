@@ -1,4 +1,4 @@
-import type { TokenInfo } from "../../wallet/models";
+import type { TokenInfo } from "../wallet/models";
 
 export const USDT_CONTRACT = "0xdac17f958d2ee523a2206206994597c13d831ec7";
 

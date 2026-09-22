@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from "bun:test";
-import { runCli } from "../../helpers/cli-runner";
-import { makeSessionDir } from "../../helpers/session-fixture";
+import { runCli } from "../../../testing/cli-runner";
+import { makeSessionDir } from "../../../testing/session-fixture";
 
 const SAMPLE_ENTRIES = [
   {
