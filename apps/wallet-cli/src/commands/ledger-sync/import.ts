@@ -52,7 +52,7 @@ export default defineCommand({
         );
       }
 
-      const sdk = createLkrpSdk(undefined, LEDGER_SYNC_APPLICATION_ID, environment);
+      const sdk = createLkrpSdk({ applicationId: LEDGER_SYNC_APPLICATION_ID, environment });
 
       const importSpin = out.spin("Restoring Ledger Sync encryption key…");
       let restored;
@@ -105,7 +105,7 @@ export default defineCommand({
         // Remote data was deleted: per NTTVS-728's additive-only rule, remote absence never deletes a
         // local account — just clear the version cache so a future push (out of this ticket's scope)
         // starts clean, and report nothing to merge.
-        session.setLedgerSyncVersion(0);
+        session.clearLedgerSyncVersion();
         session.write();
         out.ledgerSyncImport({ imported: [], unchanged: [], skipped: [], invalid: [] });
         return;
