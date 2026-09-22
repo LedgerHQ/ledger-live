@@ -108,8 +108,8 @@ export function usePayTabViewModel() {
         const isUsCardHolder = await readCardUsEnv(usAppId);
 
         await openHostedPage(buildPath(isUsCardHolder ? usAppId : null, currency));
-      } catch {
-        console.warn("[card] the hosted asset page did not open");
+      } catch (error) {
+        console.warn("[card] the hosted asset page did not open", error);
       }
     },
     [openHostedPage, usAppId],
