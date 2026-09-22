@@ -39,7 +39,7 @@ export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
     addExtraSessionTrackingPairs(pairs);
   }, [currencies, counterValueCurrency]);
 
-  const priceWallet = useCallback(
+  const getCounterValue = useCallback(
     (currency: CryptoOrTokenCurrency, balance: string): number | null => {
       const unit = currency.units[0];
       if (!unit) return null;
@@ -65,7 +65,7 @@ export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
   );
 
   return useMemo(
-    () => ({ currencies, priceWallet, formatCountervalue, formatBalance, formatters }),
-    [currencies, priceWallet, formatCountervalue, formatBalance, formatters],
+    () => ({ currencies, getCounterValue, formatCountervalue, formatBalance, formatters }),
+    [currencies, getCounterValue, formatCountervalue, formatBalance, formatters],
   );
 }

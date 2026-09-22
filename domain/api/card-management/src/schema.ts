@@ -396,3 +396,12 @@ export const PayCardLinkedWalletCanonicalSchema = PayCardLinkedWalletSchema.exte
 });
 
 export const PayCardLinkedWalletsCanonicalSchema = z.array(PayCardLinkedWalletCanonicalSchema);
+
+/**
+ * The wire reward wallet plus the Ledger currency its asset resolves to, so a consumer prices it
+ * the way it prices a linked wallet. Optional for the same reason: the catalog does not cover
+ * every asset the provider may pay a reward in.
+ */
+export const PayCardRewardWalletCanonicalSchema = PayCardRewardWalletResponseSchema.extend({
+  ledgerId: z.string().min(1).optional(),
+});

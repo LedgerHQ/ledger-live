@@ -138,7 +138,7 @@ describe("Card (native)", () => {
           formatters={formatters}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
             onWithdraw: jest.fn(),
             onAddAsset: jest.fn(),
@@ -157,7 +157,7 @@ describe("Card (native)", () => {
           login={{ oauthConfig }}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
             onWithdraw: jest.fn(),
             onAddAsset: jest.fn(),

@@ -3,6 +3,7 @@ import { CARD_MANAGEMENT_TAGS, OAUTH2_TOKEN_PATH } from "./constants";
 import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
+  PayCardRewardWalletCanonicalSchema,
   PayCardRewardWalletResponseSchema,
   PayCardLinkWalletRequestSchema,
   PayCardLinkWalletResponseSchema,
@@ -27,7 +28,11 @@ import {
   PayCardWalletHistoryResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
-import { transformPayCardLinkedWallets, transformPayCardSessionResponse } from "./transforms";
+import {
+  transformPayCardLinkedWallets,
+  transformPayCardRewardWallet,
+  transformPayCardSessionResponse,
+} from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
   PayCardFreezeStateResult,
@@ -268,7 +273,9 @@ export const cardManagementApi = cardApi
           url: "/v1/wallet/reward",
           method: "GET",
         }),
-        responseSchema: PayCardRewardWalletResponseSchema,
+        rawResponseSchema: PayCardRewardWalletResponseSchema,
+        transformResponse: transformPayCardRewardWallet,
+        responseSchema: PayCardRewardWalletCanonicalSchema,
       }),
 
       getCardLinkedWallets: build.query<PayCardLinkedWallet[], void>({

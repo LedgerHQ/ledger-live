@@ -186,7 +186,7 @@ describe("Card (web)", () => {
           login={{ oauthConfig }}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
             onWithdraw: jest.fn(),
             onAddAsset: jest.fn(),
@@ -204,7 +204,7 @@ describe("Card (web)", () => {
           formatters={formatters}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
             onWithdraw: jest.fn(),
             onAddAsset: jest.fn(),
@@ -226,7 +226,7 @@ describe("Card (web)", () => {
           formatters={formatters}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
             onWithdraw: jest.fn(),
             onAddAsset: jest.fn(),
@@ -250,7 +250,7 @@ describe("Card (web)", () => {
           formatters={formatters}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
             onWithdraw: jest.fn(),
             onAddAsset: jest.fn(),

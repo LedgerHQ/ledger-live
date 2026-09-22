@@ -136,6 +136,7 @@ export function useCardDetailsViewModel({
     overview: {
       cardVisual,
       assetsViewModel: assets ? assetSceneViewModel : null,
+      assets,
       freezeViewModel,
       moreViewModel,
       onFreezePress,

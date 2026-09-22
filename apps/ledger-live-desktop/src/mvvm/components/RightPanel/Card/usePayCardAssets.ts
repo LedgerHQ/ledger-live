@@ -27,7 +27,7 @@ export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
   const cardCurrencies = useMemo(() => [...currencies.values()], [currencies]);
   useOnDemandCurrenciesCountervalues(cardCurrencies, counterValueCurrency);
 
-  const priceWallet = useCallback(
+  const getCounterValue = useCallback(
     (currency: CryptoOrTokenCurrency, balance: string): number | null => {
       const unit = currency.units[0];
       if (!unit) return null;
@@ -47,7 +47,7 @@ export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
   const formatBalance = useCountervalueFormatter();
 
   return useMemo(
-    () => ({ currencies, priceWallet, formatCountervalue, formatBalance }),
-    [currencies, priceWallet, formatCountervalue, formatBalance],
+    () => ({ currencies, getCounterValue, formatCountervalue, formatBalance }),
+    [currencies, getCounterValue, formatCountervalue, formatBalance],
   );
 }
