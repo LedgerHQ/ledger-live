@@ -92,8 +92,8 @@ export function PayTabView({
           <BankTransferIntro {...bankTransferIntro} />
 
           <Text
-            typography="body4"
-            lx={{ color: "muted", textAlign: "center", marginTop: "s32" }}
+            typography="body3"
+            lx={{ color: "muted", textAlign: "center", marginTop: "s16" }}
             testID="pay-disclaimer"
           >
             {disclaimer}

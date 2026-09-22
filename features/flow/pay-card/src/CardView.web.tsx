@@ -54,7 +54,7 @@ export function CardView({
       )}
       <p
         className={
-          isSignedIn ? "body-4 text-center text-muted" : "mt-auto body-4 text-center text-muted"
+          isSignedIn ? "body-3 text-center text-muted" : "mt-auto body-3 text-center text-muted"
         }
         data-testid="pay-card-disclaimer"
       >
