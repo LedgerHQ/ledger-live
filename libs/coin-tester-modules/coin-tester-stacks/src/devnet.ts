@@ -8,6 +8,9 @@ import chalk from "chalk";
 // turn matches `@stacks/network`'s `HIRO_MOCKNET_DEFAULT`/`StacksDevnet` default URL — a
 // reassuring cross-check, not a coincidence this package relies on.
 export const STACKS_DEVNET_URL = "http://127.0.0.1:3999";
+// Matches Clarinet's own default `stacks_node_rpc_port` (left unset in `settings/Devnet.toml`), the
+// stacks-node's RPC port that `clarinet` also publishes on the host.
+const STACKS_NODE_RPC_URL = "http://127.0.0.1:20443";
 
 // Matches `Clarinet.toml`'s `[project].name` + `settings/Devnet.toml`'s `[network].name` --
 // Clarinet's own naming convention for the Docker network it creates for its sibling containers
@@ -193,6 +196,34 @@ async function waitUntilReady(timeoutMs: number): Promise<void> {
 }
 
 /**
+ * Resolves once the stacks-node answers `/v2/info`, i.e. its RPC server is up. That is the moment
+ * `startBitcoinMiningWorkaround` must start, no earlier and no later -- see `spawnDevnet`.
+ */
+async function waitForStacksNodeRpc(deadline: number): Promise<void> {
+  while (Date.now() < deadline) {
+    if (
+      clarinetProcess &&
+      (clarinetProcess.exitCode !== null || clarinetProcess.signalCode !== null)
+    ) {
+      throw new Error(
+        `coin-tester-stacks: clarinet process exited (code=${clarinetProcess.exitCode}, signal=${clarinetProcess.signalCode}) before the stacks-node came up -- see the clarinet output above for the actual boot failure`,
+      );
+    }
+    try {
+      const res = await fetch(`${STACKS_NODE_RPC_URL}/v2/info`);
+      if (res.ok) return;
+    } catch {
+      // stacks-node container not started yet, or its RPC server still binding.
+    }
+    await new Promise(resolve => setTimeout(resolve, 3000));
+  }
+
+  throw new Error(
+    `coin-tester-stacks: stacks-node never answered ${STACKS_NODE_RPC_URL}/v2/info before the boot deadline`,
+  );
+}
+
+/**
  * The devnet's own genesis deployment plan (`deployments/default.devnet-plan.yaml`) publishes
  * this package's `contracts/sip-010-test-token.clar` a handful of blocks after the chain boots
  * (batch 1, epoch 3.0) — stacks-api reporting "ready" only means the API/Postgres pair is up, not
@@ -272,9 +303,42 @@ export async function spawnDevnet(): Promise<void> {
   // CI's shared runner is markedly slower/more resource-constrained than a local machine at
   // booting bitcoind + stacks-node + stacks-signer + the bundled stacks-blockchain-api/Postgres
   // pair -- verified failing at 5 min there twice in a row while consistently ready well within
-  // that budget locally. 15 min matches waitForContractDeployment's own budget below.
-  await waitUntilReady(15 * 60 * 1000);
+  // that budget locally. 15 min matches waitForContractDeployment's own budget below, and is
+  // shared by both waits so a boot can't take twice that before failing.
+  const bootDeadline = Date.now() + 15 * 60 * 1000;
+
+  // The mining workaround starts as soon as the stacks-node's RPC is up -- and that exact moment
+  // is load-bearing in both directions:
+  //
+  // - Not later (previously it started only after `waitUntilReady`): `stacks-blockchain-api`
+  //   >= 9.3.0 (`ensurePoxConstants` in its `src/index.ts`) refuses to start its HTTP server until
+  //   the node answers `GET /v2/pox`, and stacks-core 4.0.1 only does once a first Stacks block
+  //   exists (`Failed to load PoX info: DBError(Overflow)`, HTTP 500, until then). That block needs
+  //   a Bitcoin block past #101, and with Clarinet's own scheduler stalled (see
+  //   `startBitcoinMiningWorkaround`) only this process mines it. Waiting for the API before
+  //   starting the miner is therefore a circular wait -- verified against
+  //   `stacks-blockchain-api:latest` (9.3.0): frozen at burn height 101 / Stacks tip 0 for 4+
+  //   minutes, then ready within 2.5 minutes of starting the miner by hand.
+  // - Not earlier (starting it right after spawning `clarinet` was tried and broke the chain):
+  //   Clarinet publishes `Devnet.toml`'s `pox_stacking_orders` exactly once, when it observes
+  //   Bitcoin block #110 (`DEFAULT_FIRST_BURN_HEADER_HEIGHT + 10`, `pox_cycle_position == 10` in
+  //   `chains_coordinator.rs`'s `publish_stacking_orders`), and reads the node's `/v2/pox` first.
+  //   A miner racing ahead from #101 reaches #110 before the node has its first Stacks block, that
+  //   read fails (`unable to parse pox info`), the orders are silently dropped, cycle 1 gets no
+  //   stackers, cycle 2 no signer set, and the node dies at the Nakamoto transition
+  //   (`FATAL: Signer sets are empty in a reward set that will be used in nakamoto`). Started at
+  //   node-RPC-up instead, the burn height is still Clarinet's seeded #101 and the node mines its
+  //   first block on the very next Bitcoin block, well before #110.
+  await waitForStacksNodeRpc(bootDeadline);
   startBitcoinMiningWorkaround();
+
+  try {
+    await waitUntilReady(bootDeadline - Date.now());
+  } catch (error) {
+    bitcoinMinerProcess?.kill("SIGTERM");
+    bitcoinMinerProcess = null;
+    throw error;
+  }
   console.log(chalk.bgBlueBright(" -  STACKS DEVNET READY ✅  - "));
 }
 
