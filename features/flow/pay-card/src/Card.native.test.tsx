@@ -138,6 +138,8 @@ describe("Card (native)", () => {
             currencies: new Map(),
             priceWallet: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -155,6 +157,8 @@ describe("Card (native)", () => {
             currencies: new Map(),
             priceWallet: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );

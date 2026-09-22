@@ -136,7 +136,7 @@ describe("CardAssets (web)", () => {
     mockUnwrapUpdate.mockResolvedValue({ success: true });
   });
 
-  function renderCardAssets(onAddAsset?: () => void) {
+  function renderCardAssets(onAddAsset = jest.fn()) {
     render(
       <CardAssets
         currencies={new Map([[USDC.id, USDC]])}
@@ -165,6 +165,7 @@ describe("CardAssets (web)", () => {
         currencies={new Map([[USDC.id, USDC]])}
         priceWallet={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
+        onAddAsset={jest.fn()}
       />,
       { wrapper: I18nWrapper },
     );
@@ -211,6 +212,7 @@ describe("CardAssets (web)", () => {
         priceWallet={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
         onShowHistory={onShowHistory}
+        onAddAsset={jest.fn()}
       />,
       { wrapper: I18nWrapper },
     );
@@ -252,9 +254,7 @@ describe("CardAssets (web)", () => {
     ).toBeVisible();
     expect(within(dialog).getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
     expect(within(dialog).getByText("USD Coin")).toBeVisible();
-    expect(
-      within(dialog).queryByRole("button", { name: CARD_ASSETS_COPY.addAsset }),
-    ).not.toBeInTheDocument();
+    expect(within(dialog).getByRole("button", { name: CARD_ASSETS_COPY.addAsset })).toBeVisible();
   });
 
   it("should reorder assets by dragging a list item and send every linked wallet", async () => {

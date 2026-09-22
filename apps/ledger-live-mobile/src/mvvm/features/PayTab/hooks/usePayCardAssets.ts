@@ -17,7 +17,7 @@ import { useFiatFormatter } from "./useFiatFormatter";
 
 const NO_IDS: readonly string[] = [];
 
-export function usePayCardAssets(): CardAssetsProps {
+export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
   const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
