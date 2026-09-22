@@ -464,6 +464,9 @@ apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/recover.hand
 
 shared/feature-flags/src/lazyOnboardingBanner.ts                                              @ledgerhq/engagement
 
+## Devtools
+devtools/device-onboarding/                                                                    @ledgerhq/engagement
+
 ## Desktop
 apps/ledger-live-desktop/src/renderer/analytics/                                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/SyncOnboarding/                               @ledgerhq/engagement

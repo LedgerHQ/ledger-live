@@ -7,6 +7,7 @@
     { "path": "./pay-card" },
     { "path": "./trustchain" },
     { "path": "./cloud-sync" },
+    { "path": "./device-onboarding" },
     { "path": "./registry" },
     { "path": "./transport" },
     { "path": "./transport-panel" },
