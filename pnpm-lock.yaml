@@ -5335,9 +5335,6 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../currency-token
-      '@jest/globals':
-        specifier: 'catalog:'
-        version: 30.5.0
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
