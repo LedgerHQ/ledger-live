@@ -676,20 +676,18 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
     publishAnalyticsEvent({
       eventName: "[Identify]",
       eventProperties: overlayProperties,
-      deliveryStatus: "failed" as DeliveryStatus,
+      deliveryStatus: "failed_tracking",
     });
   }
 };
 
 type Properties = Error | Record<string, unknown> | null;
-export type AnalyticsDeliveryStatus = DeliveryStatus | "failed" | "flushed";
 export type LoggableEvent = Omit<
   SharedLoggableEvent,
-  "eventProperties" | "eventPropertiesWithoutExtra" | "deliveryStatus"
+  "eventProperties" | "eventPropertiesWithoutExtra"
 > & {
   eventProperties?: Properties;
   eventPropertiesWithoutExtra?: Properties;
-  deliveryStatus?: AnalyticsDeliveryStatus;
 };
 export const trackSubject = analyticsEvents$;
 
@@ -703,7 +701,7 @@ const wrapSegmentClientFlush = (client: SegmentClient) => {
     publishAnalyticsEvent({
       eventName: "[Flush]",
       eventProperties: { pendingEvents },
-      deliveryStatus: "flushed" as DeliveryStatus,
+      deliveryStatus: "flushed",
     });
   };
 };

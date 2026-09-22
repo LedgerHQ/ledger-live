@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Pressable } from "react-native";
 import { Text, Flex } from "@ledgerhq/native-ui";
-import type { AnalyticsDeliveryStatus } from "../../analytics";
+import type { DeliveryStatus } from "@shared/analytics";
 import { LoggableEventRenderable } from "./types";
 
 type Props = LoggableEventRenderable & {
@@ -9,13 +9,12 @@ type Props = LoggableEventRenderable & {
   isLast?: boolean;
 };
 
-const deliveryStatusColor: Record<AnalyticsDeliveryStatus, string> = {
+const deliveryStatusColor: Record<DeliveryStatus, string> = {
   enqueued: "black",
   flushed: "purple",
   skipped_no_token: "red",
   skipped_no_client: "red",
   skipped_no_store: "red",
-  failed: "red",
   failed_tracking: "red",
   failed_enrichment: "red",
   failed_filter: "red",
