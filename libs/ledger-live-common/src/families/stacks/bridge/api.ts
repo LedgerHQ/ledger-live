@@ -60,5 +60,6 @@ export default function stacksBridge(currency: CryptoCurrency): BridgeApi {
     getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     buildIntentData,
+    usesStakingPositions: true,
   };
 }
