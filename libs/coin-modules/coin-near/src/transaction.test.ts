@@ -95,8 +95,11 @@ describe("fromTransactionRaw", () => {
     expect(restored.nonce?.toFixed()).toBe("126857085000047");
   });
 
-  it("leaves the nonce key absent when the raw transaction carries none", () => {
-    expect("nonce" in fromTransactionRaw(raw())).toBe(false);
+  it("defaults a missing nonce to zero so signing does not fall into getNextSequence", () => {
+    const restored = fromTransactionRaw(raw());
+
+    expect(BigNumber.isBigNumber(restored.nonce)).toBe(true);
+    expect(restored.nonce?.toFixed()).toBe("0");
   });
 
   it("carries family, mode and the common fields across", () => {
@@ -159,13 +162,23 @@ describe("round trip", () => {
     expect(restored.nonce?.toFixed()).toBe(original.nonce?.toFixed());
   });
 
-  it("restores an unestimated transaction without inventing a fee or a nonce", () => {
+  it("restores an unestimated transaction without inventing a fee", () => {
     const restored = fromTransactionRaw(
       JSON.parse(JSON.stringify(toTransactionRaw(tx()))) as TransactionRaw,
     );
 
     expect(restored.fees).toBeNull();
-    expect("nonce" in restored).toBe(false);
+    expect(restored.nonce?.toFixed()).toBe("0");
+  });
+
+  it("revives a legacy raw that predates the nonce field into a signable transaction", () => {
+    const legacyRaw = { ...raw(), fees: "15000000000000000000000" } as Partial<TransactionRaw>;
+    delete legacyRaw.nonce;
+
+    const restored = fromTransactionRaw(legacyRaw as TransactionRaw);
+
+    expect(restored.nonce?.toFixed()).toBe("0");
+    expect(toTransactionRaw(restored).nonce).toBe("0");
   });
 
   it("round-trips a zero nonce", () => {
