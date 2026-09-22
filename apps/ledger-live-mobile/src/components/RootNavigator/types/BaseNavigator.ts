@@ -49,6 +49,7 @@ import type { EvmClaimRewardsFlowParamList } from "../../../families/evm/ClaimRe
 import type { EvmWithdrawFlowParamList } from "../../../families/evm/WithdrawFlow/types";
 import type { BitcoinEditTransactionParamList } from "../../../families/bitcoin/EditTransactionFlow/EditTransactionParamList";
 import type { AleoBondPublicFlowParamList } from "../../../families/aleo/BondPublicFlow/types";
+import type { AleoClaimUnbondFlowParamList } from "../../../families/aleo/ClaimUnbondFlow/types";
 import type { PolkadotBondFlowParamList } from "../../../families/polkadot/BondFlow/types";
 import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
 import type { PolkadotRebondFlowParamList } from "../../../families/polkadot/RebondFlow/type";
@@ -274,6 +275,7 @@ export type BaseNavigatorStackParamList = {
 
   // Aleo
   [NavigatorName.AleoBondPublicFlow]: NavigatorScreenParams<AleoBondPublicFlowParamList>;
+  [NavigatorName.AleoClaimUnbondFlow]: NavigatorScreenParams<AleoClaimUnbondFlowParamList>;
 
   // Polkadot
   [NavigatorName.PolkadotSimpleOperationFlow]: NavigatorScreenParams<PolkadotSimpleOperationFlowParamList>;

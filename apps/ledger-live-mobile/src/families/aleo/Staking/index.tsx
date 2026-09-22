@@ -53,6 +53,14 @@ function Staking({ account }: Readonly<{ account: AleoAccount }>) {
     onStake();
   }, [onStake]);
 
+  const onClaim = useCallback(() => {
+    setOpenDrawer(null);
+    navigation.navigate(NavigatorName.AleoClaimUnbondFlow, {
+      screen: ScreenName.AleoClaimUnbondAmount,
+      params: { accountId: account.id },
+    });
+  }, [navigation, account.id]);
+
   if (!position.hasBonded && !position.hasUnbonding) {
     const hasFirstBondPending = isFirstBondPending(account);
 
@@ -156,6 +164,7 @@ function Staking({ account }: Readonly<{ account: AleoAccount }>) {
         unbonding={unbonding}
         isOpen={openDrawer === "unstaking"}
         onClose={onCloseDrawer}
+        onClaim={onClaim}
       />
     </Flex>
   );

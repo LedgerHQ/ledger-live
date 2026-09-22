@@ -136,6 +136,19 @@ function bondedAccount(
   });
 }
 
+async function pressClaim(overrides: Partial<AleoAccount>) {
+  mockGetValidators.mockResolvedValue([makeValidator()]);
+  const account = bondedAccount(
+    { unbondingBalance: new BigNumber(5_000_000), unbondingHeight: 10_000 },
+    overrides,
+  );
+
+  render(<Staking account={account} />);
+
+  fireEvent.press(screen.getByTestId("aleo-unstaking-row"));
+  fireEvent.press(await screen.findByText("Claim"));
+}
+
 describe("Staking section", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -386,6 +399,36 @@ describe("Staking section", () => {
     expect(await screen.findByTestId("aleo-unstaking-status")).toHaveTextContent("~50 blocks left");
     expect(screen.getByTestId("aleo-unstaking-unlock-block")).toHaveTextContent("10000");
     expect(screen.queryByTestId("aleo-unstaking-claimable")).toBeNull();
+  });
+
+  it("opens the claim flow from the unstaking drawer claim action", async () => {
+    liveHeight = 10_000;
+
+    await pressClaim({ blockHeight: 10_000 });
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AleoClaimUnbondFlow, {
+      screen: ScreenName.AleoClaimUnbondAmount,
+      params: { accountId: ALEO_ACCOUNT_1.id },
+    });
+  });
+
+  it("disables the unstaking drawer's Claim action while the unbonding period is still running", async () => {
+    liveHeight = 9_950;
+
+    await pressClaim({ blockHeight: 9_900 });
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("disables the unstaking drawer's Claim action while a claim is in flight", async () => {
+    liveHeight = 10_000;
+
+    await pressClaim({
+      blockHeight: 10_000,
+      pendingOperations: [pendingOperation("WITHDRAW_UNBONDED")],
+    });
+
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it("explains why unbonding is unavailable while an unbond is in flight", async () => {
