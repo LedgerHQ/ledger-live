@@ -11,16 +11,23 @@
 #         attribute a failed result for the spec and finish in the same second,
 #         which is the candidate fix. <hold-seconds> defaults to 120.
 #
-# Targeting: the freeze must hit a worker that is actually RUNNING a spec. An
-# idle sibling worker looks identical to `pgrep`, and freezing the idle one does
-# nothing (measured). Detox's WorkerAssignReporter logs "<spec> is assigned to
-# <UDID>" prefixed with the emitting worker's pid, but at info level, and CI runs
-# detox with --loglevel warn — that line does not appear in real CI logs (0
-# occurrences in the 2026-09-14 shard log). So CPU time is the primary signal: a
-# worker executing a spec accumulates seconds, a spawned-but-idle one does not.
+# Targeting. The freeze must hit a worker that is STILL RUNNING a spec; freezing
+# an idle one does nothing (measured twice — locally, and in run 35756645919,
+# where the pick landed 0.5s after two of the three specs had already passed).
+# Three lessons are baked in below:
 #
-# Candidates are restricted to descendants of <root-pid>, because these are
-# shared self-hosted runners and another job's jest workers must never be touched.
+#   1. Cumulative CPU is the wrong signal: the worker with the most CPU is the
+#      one that has done the most work, i.e. most likely already finished. Use
+#      the CPU *delta* over a short window, which only a working worker has.
+#   2. Log markers are unusable in CI: "com.ledger.live launched", "<spec> is
+#      assigned to <UDID>" and "[E2E Bridge Server]" are info level and CI runs
+#      detox with --loglevel warn — all three occur 0 times in the real
+#      2026-09-14 shard log. Only "Detox Memory Usage" survives.
+#   3. Freeze early. Specs take ~49-65s in CI, so the window closes fast; the
+#      default settle is deliberately short.
+#
+# Candidates are restricted to descendants of <root-pid>: these are shared
+# self-hosted runners and another job's jest workers must never be touched.
 
 set -uo pipefail
 
@@ -30,8 +37,9 @@ ROOT="${3:?root pid whose descendants may be frozen}"
 HOLD="${4:-120}"
 
 START_TIMEOUT="${START_TIMEOUT_SECONDS:-360}" # app launch takes 40-95s, slower under load
-SETTLE="${SETTLE_SECONDS:-45}"                # let the spec body get going before freezing
-MIN_CPU="${MIN_CPU_SECONDS:-2}"               # CPU seconds that mark a worker as working
+SETTLE="${SETTLE_SECONDS:-15}"                # short: specs finish in ~49-65s in CI
+SAMPLE="${SAMPLE_SECONDS:-3}"                 # CPU sampling window
+MIN_DELTA="${MIN_DELTA_SECONDS:-0.2}"         # CPU seconds burned in that window
 
 note() { echo "::notice::QAA-1365 probe: $*"; }
 warn() { echo "::warning::QAA-1365 probe: $*"; }
@@ -44,55 +52,65 @@ descendants() {
   done
 }
 
-# Pick our busiest jest worker, in CPU seconds, or print nothing.
-busiest_worker() {
+our_workers() {
   local mine workers
   mine=" $(descendants "$ROOT" | tr '\n' ' ') "
-  workers=$(pgrep -d, -f "jest-worker/build/processChild" 2>/dev/null) || return 0
-  [ -n "$workers" ] || return 0
-  ps -o pid=,time= -p "$workers" 2>/dev/null | awk -v mine="$mine" -v min="$MIN_CPU" '
-    {
-      if (index(mine, " " $1 " ") == 0) next            # not ours - never touch it
-      n = split($2, t, /[:.]/)                          # M:SS.ss or H:MM:SS.ss
-      s = (n >= 3 ? t[n-2] * 60 + t[n-1] : $2 + 0)
-      if (s >= min && s > best) { best = s; p = $1 }
-    }
-    END { if (p) printf "%s", p }'
+  workers=$(pgrep -f "jest-worker/build/processChild" 2>/dev/null) || return 0
+  for w in $workers; do
+    case "$mine" in *" $w "*) echo "$w" ;; esac
+  done
 }
 
-# Wait until one of our workers is genuinely executing a spec. Deliberately not
-# keyed on a log line: the launch markers ("com.ledger.live launched", "<spec> is
-# assigned to <UDID>", "[E2E Bridge Server]") are all info level and none of them
-# appear in real CI logs under --loglevel warn (all 0 in the 2026-09-14 shard log,
-# where only "Detox Memory Usage" survives). CPU burn is the signal that works
-# everywhere.
-for _ in $(seq 1 $((START_TIMEOUT / 2))); do
-  [ -n "$(busiest_worker)" ] && break
-  sleep 2
+# The worker burning the most CPU right now, else the least-progressed one.
+# Both are printed as "<pid> <delta> <cumulative>" for the run log.
+pick_worker() {
+  local workers first second
+  workers=$(our_workers | tr '\n' ',')
+  workers="${workers%,}"
+  [ -n "$workers" ] || return 0
+  first=$(ps -o pid=,time= -p "$workers" 2>/dev/null)
+  sleep "$SAMPLE"
+  second=$(ps -o pid=,time= -p "$workers" 2>/dev/null)
+  awk -v min="$MIN_DELTA" '
+    function secs(x) { n = split(x, t, /[:.]/); return (n >= 3 ? t[n-2] * 60 + t[n-1] + t[n] / 100 : x + 0) }
+    NR == FNR { before[$1] = secs($2); next }
+    {
+      now = secs($2); d = now - before[$1]
+      if (d >= min && d > bestd) { bestd = d; busy = $1; busyc = now }
+      if (least == "" || now < leastc) { least = $1; leastc = now }
+    }
+    END {
+      if (busy) printf "%s %.2f %.2f", busy, bestd, busyc
+      else if (least) printf "%s 0 %.2f", least, leastc
+    }' <(echo "$first") <(echo "$second")
+}
+
+# Wait until one of our workers is executing a spec (CPU is the only signal that
+# works at CI log levels), then freeze quickly, before any spec can finish.
+for _ in $(seq 1 $((START_TIMEOUT / SAMPLE))); do
+  [ -n "$(pick_worker)" ] && break
 done
 sleep "$SETTLE"
 
-mine=" $(descendants "$ROOT" | tr '\n' ' ') "
+read -r victim delta cpu <<<"$(pick_worker)"
 
-# Preferred: the worker pid Detox itself named (present only at info level).
-victim=$(grep "is assigned to" "$LOG" 2>/dev/null | sed -E 's/.*detox\[([0-9]+)\].*/\1/' | tail -1)
-if [ -n "$victim" ] && [ "${mine#* $victim }" = "$mine" ]; then
-  warn "logged worker $victim is not ours; ignoring it"
-  victim=""
-fi
-
-# Fallback: our busiest jest worker by CPU time.
-if [ -z "$victim" ]; then
-  victim=$(busiest_worker)
-  note "no info-level marker (loglevel warn); picked our busiest worker ${victim:-<none>}"
-fi
-
-if [ -z "$victim" ] || ! ps -o command= -p "$victim" 2>/dev/null | grep -q processChild; then
+if [ -z "${victim:-}" ] || ! ps -o command= -p "$victim" 2>/dev/null | grep -q processChild; then
   warn "no live jest worker of this shard found; nothing frozen"
   exit 0
 fi
 
-note "SIGSTOP jest worker $victim ($(ps -o time= -p "$victim" | tr -d ' ') CPU) at $(date -u +%H:%M:%S)"
+# grep -c prints 0 and exits 1 on no match, so take the first line only.
+done_specs=$(grep -cE "^(PASS|FAIL) " "$LOG" 2>/dev/null | head -1)
+done_specs="${done_specs:-0}"
+[ "$done_specs" -gt 0 ] 2>/dev/null && warn "late: $done_specs spec(s) already finished before the freeze"
+
+if [ "$delta" = "0" ]; then
+  warn "no worker was actively burning CPU; freezing the least-progressed one ($victim, ${cpu}s CPU) — it may be idle, in which case the shard will NOT hang"
+else
+  note "worker $victim is active (+${delta}s CPU in ${SAMPLE}s, ${cpu}s total)"
+fi
+
+note "SIGSTOP jest worker $victim at $(date -u +%H:%M:%S), after $done_specs of the shard's specs finished"
 kill -STOP "$victim" || { warn "SIGSTOP failed on $victim"; exit 0; }
 
 if [ "$MODE" = "kill" ]; then
