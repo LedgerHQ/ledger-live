@@ -1,4 +1,4 @@
-import type { RatesResponse, RawRatesResponse } from "../schema";
+import type { RatesResponse, RawRatesResponse } from "./schema";
 
 /**
  * Keeps the numeric entries of a rates payload and drops the rest.

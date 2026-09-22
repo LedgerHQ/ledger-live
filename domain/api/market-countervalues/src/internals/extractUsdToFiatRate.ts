@@ -1,4 +1,4 @@
-import type { SpotSimpleResponse } from "../schema";
+import type { SpotSimpleResponse } from "./schema";
 
 /** Reads the USD spot rate out of a `/v3/spot/simple?froms=usd&to=<to>` payload. */
 export function extractUsdToFiatRate(res: SpotSimpleResponse): number | null {
