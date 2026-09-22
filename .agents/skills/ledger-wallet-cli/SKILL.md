@@ -375,3 +375,20 @@ Get the Solana `--stake-account` address from `earn positions <account>` (its `s
 | `[object Object]` or garbled APDU output                                                              | two device commands running in parallel (contention)                                                                                                   | Run device-touching commands sequentially — never in parallel tool calls.                                                                                                                                                                                                                                                                                                             |
 | `[✖] Ledger not detected. Plug in, unlock, retry.` (exit code 3)                                     | device powered off or unplugged                                                                                                                        | Ask the user to power on the device, unlock it, and connect via USB, then re-run the command.                                                                                                                                                                                                                                                                                         |
 | `device-state … awaiting_approval … reason: unlock` (JSON stream)                                     | device locked                                                                                                                                          | Keep the command running — the CLI resumes automatically once unlocked. Ask the user to unlock the device with their PIN.                                                                                                                                                                                                                                                             |
+
+---
+
+## Troubleshooting
+
+**Sandbox blocks raw HID access on `ring` commands.** Running a `ring` command against a plugged-in, unlocked Nano can fail at device *open* time — the device is discovered fine, then refused. On macOS the underlying OS-level error is:
+
+```
+hid_open_path: failed to open IOHIDDevice from mach entry:
+(0xE00002E2) (iokit/common) not permitted
+```
+
+This is the agent sandbox's IOHIDDevice entitlement restriction, not a device or app problem — the identical command works first try when run outside the sandbox. **HID-dependent CLI commands must be run outside the agent sandbox** (`dangerouslyDisableSandbox: true`, per the sandbox note at the top of this file).
+
+**DMK errors are tagged objects, not plain `Error`s — log `_tag` and `originalError`.** When device open fails, DMK rejects with something shaped like `{ _tag: 'ConnectionOpeningError', originalError: ... }`. Both `err.message` and `err.code` come back `undefined` on these, so a caller doing `err.code ?? 'DEVICE_UNAVAILABLE'` (or similar fallback logic) discards the only informative part of the error. If the CLI or a calling agent hits an unexplained `DEVICE_UNAVAILABLE`-style failure, inspect and log the raw rejection's `_tag` and `originalError` fields instead of just `message`/`code`.
+
+**Don't confuse this with the Ledger Wallet desktop app holding the HID handle** — that also blocks device open and looks similar from the outside, but quitting the desktop app does nothing for the sandbox permission error above. Check which cause applies before telling the user what to do: desktop-app contention needs the app quit; sandbox entitlement denial needs the sandbox bypassed.
