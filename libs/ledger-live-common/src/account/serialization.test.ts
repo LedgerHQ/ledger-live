@@ -70,23 +70,17 @@ describe("serialization", () => {
   });
 
   // getAccountBridge() rejected on an unsupported account before the bridge was resolved via
-  // resolveSerializationFamily instead; toAccountRaw re-runs that same check up front so an
-  // unregistered coin module still rejects on save rather than resolving a bridge that isn't
-  // there.
-  test("toAccountRaw rejects when the account's family has no registered coin module", async () => {
-    const acc: any = genAccount("mocked-account-unsupported-family", { currency: Solana });
+  // resolveSerializationFamily instead; toAccountRaw re-runs that same check up front. An
+  // unregistered family isn't a discriminating case for this: getAccountBridgeByFamily ->
+  // loadSetupForFamily -> the registry's own getLoader() throws the identical "No coin module
+  // registered" message independently, so that scenario passes with or without this guard. The
+  // guard's only reachable-nowhere-else branch is an unsupported derivation mode on an
+  // otherwise-registered family, so that's what has to be under test.
+  test("toAccountRaw rejects on an unsupported derivation mode even though the family is registered", async () => {
+    const acc: any = genAccount("mocked-account-bad-derivation-mode", { currency: Solana });
+    acc.derivationMode = "not-a-real-derivation-mode";
 
-    resetCoinModulesForTests();
-    registerCoinModules(coinModuleLoaders.filter(l => l.family !== "solana"));
-    clearBridgeCache();
-
-    try {
-      await expect(toAccountRaw(acc)).rejects.toThrow(/No coin module registered/);
-    } finally {
-      resetCoinModulesForTests();
-      registerAllCoins();
-      clearBridgeCache();
-    }
+    await expect(toAccountRaw(acc)).rejects.toThrow(/derivation not supported/);
   });
 
   // Zcash declares `family: "bitcoin"`, and coin-bitcoin's real bridge already round-trips
@@ -166,13 +160,8 @@ describe("serialization", () => {
       expect(reserializedRaw.bitcoinResources).toEqual(initialRaw.bitcoinResources);
     });
 
-    // wallet-cli registers bitcoin, evm and solana only, so there is no "zcash" family to
-    // route a mock id to; the account has to keep coin-bitcoin's adapter rather than fail
-    // resolution. A real (non-mock) account id already takes the bitcoin family unconditionally
-    // (resolveSerializationFamily only ever escalates a mock id to "zcash"), so it is the one
-    // that shows this fallback preserves data rather than just not throwing -- a mock id here
-    // would exercise coin-bitcoin's *mock* bridge, which has no assign hooks at all and drops
-    // both fields regardless of which family answers.
+    // wallet-cli registers bitcoin, evm and solana only, so there is no "zcash" family
+    // registered here.
     describe("on a host without the standalone zcash module", () => {
       beforeEach(() => {
         resetCoinModulesForTests();
@@ -186,7 +175,11 @@ describe("serialization", () => {
         clearBridgeCache();
       });
 
-      test("deserializes through the bitcoin family with privateInfo and bitcoinResources intact", async () => {
+      // A real (non-mock) account id already takes the bitcoin family unconditionally --
+      // resolveSerializationFamily only ever reads isCoinModuleRegistered for a mock id -- so
+      // this doesn't exercise that guard, only the (already-correct) real-id path: it shows
+      // coin-bitcoin's real chain-adapter preserves both fields on a reduced-registry host.
+      test("a real account id deserializes through the bitcoin family with privateInfo and bitcoinResources intact", async () => {
         const raw = { ...zcashAccountRaw(), id: "js:2:zcash:xpub6zcashtest:" };
 
         const account: any = await fromAccountRaw(raw);
@@ -194,6 +187,18 @@ describe("serialization", () => {
         expect(account.currency.id).toBe("zcash");
         expect(account.privateInfo?.ufvk).toBe("uview1test");
         expect(account.bitcoinResources?.utxos).toHaveLength(1);
+      });
+
+      // This is the guard `isCoinModuleRegistered("zcash")` actually covers: a *mock* id has
+      // nowhere to fall but coin-bitcoin's mock bridge, which declares no assign hooks at all.
+      // The fallback keeps resolution from throwing `CurrencyNotSupported` -- it does not
+      // preserve the shielded state, unlike the real-id case above.
+      test("a mock account id deserializes through the bitcoin family without throwing, though shielded data is lost", async () => {
+        const account: any = await fromAccountRaw(zcashAccountRaw());
+
+        expect(account.currency.id).toBe("zcash");
+        expect(account.privateInfo).toBeUndefined();
+        expect(account.bitcoinResources).toBeUndefined();
       });
     });
   });
