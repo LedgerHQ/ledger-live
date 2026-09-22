@@ -67,7 +67,11 @@ interface ZcashFfiNativeModule {
     network: string,
     startHeight: number,
     endHeight: number,
+    knownNullifiers: string,
   ): Promise<string>;
+
+  /** Current chain tip — see {@link chainTip}. Resolves with a decimal string. */
+  chainTip(grpcUrl: string): Promise<string>;
 }
 
 /** One decrypted note belonging to this account. */
@@ -207,6 +211,7 @@ export async function syncRange(
   network: "mainnet" | "testnet",
   startHeight: number,
   endHeight: number,
+  knownNullifiers: readonly string[] = [],
 ): Promise<ZcashSyncResult> {
   if (!nativeModule) {
     throw new ZcashFfiError(
@@ -216,11 +221,43 @@ export async function syncRange(
   }
 
   try {
-    const json = await nativeModule.syncRange(ufvk, grpcUrl, network, startHeight, endHeight);
+    const json = await nativeModule.syncRange(
+      ufvk,
+      grpcUrl,
+      network,
+      startHeight,
+      endHeight,
+      // Newline-separated across the C ABI: nullifiers are hex, so there is
+      // nothing to escape and nothing to parse.
+      knownNullifiers.join("\n"),
+    );
     return JSON.parse(json) as ZcashSyncResult;
   } catch (error) {
     const code = (error as { code?: unknown })?.code;
     const message = error instanceof Error ? error.message : "Zcash FFI sync failed";
+    throw new ZcashFfiError(isKnownCode(code) ? code : "ZCASH_FFI_UNKNOWN", message);
+  }
+}
+
+/**
+ * Current chain tip height.
+ *
+ * The chunked scan needs it to know where to stop, and only the engine can
+ * ask — there is no gRPC client on the JavaScript side.
+ */
+export async function chainTip(grpcUrl: string): Promise<number> {
+  if (!nativeModule) {
+    throw new ZcashFfiError(
+      "ZCASH_FFI_UNAVAILABLE",
+      "The Zcash native library is not linked into this build",
+    );
+  }
+
+  try {
+    return Number(await nativeModule.chainTip(grpcUrl));
+  } catch (error) {
+    const code = (error as { code?: unknown })?.code;
+    const message = error instanceof Error ? error.message : "Zcash FFI chain tip failed";
     throw new ZcashFfiError(isKnownCode(code) ? code : "ZCASH_FFI_UNKNOWN", message);
   }
 }

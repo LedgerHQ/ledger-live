@@ -130,6 +130,7 @@ class ZcashFfiModule(
         network: String,
         startHeight: Int,
         endHeight: Int,
+        knownNullifiers: String,
         promise: Promise
     ) {
         coroutineScope.launch {
@@ -142,7 +143,15 @@ class ZcashFfiModule(
 
             val value =
                 try {
-                    nativeSyncRange(ufvk, grpcUrl, network, startHeight, endHeight, status)
+                    nativeSyncRange(
+                        ufvk,
+                        grpcUrl,
+                        network,
+                        startHeight,
+                        endHeight,
+                        knownNullifiers,
+                        status
+                    )
                 } catch (error: UnsatisfiedLinkError) {
                     // The engine was built without the `sync` feature, so
                     // JNI_OnLoad never registered this method.
@@ -161,14 +170,45 @@ class ZcashFfiModule(
 
     private external fun nativeDeriveOrchardAddress(ufvk: String, outStatus: IntArray): String?
 
+    /** Current chain tip, so the chunk loop knows where to stop. */
+    @ReactMethod
+    fun chainTip(grpcUrl: String, promise: Promise) {
+        coroutineScope.launch {
+            if (!libraryLoaded) {
+                promise.reject(CODE_UNAVAILABLE, MESSAGE_UNAVAILABLE)
+                return@launch
+            }
+
+            val status = IntArray(1)
+
+            val value =
+                try {
+                    nativeChainTip(grpcUrl, status)
+                } catch (error: UnsatisfiedLinkError) {
+                    promise.reject(CODE_UNAVAILABLE, MESSAGE_UNAVAILABLE)
+                    return@launch
+                }
+
+            when {
+                value == null ->
+                    promise.reject(errorCode(status[0]), "Zcash FFI returned no value")
+                status[0] == ZCASH_OK -> promise.resolve(value)
+                else -> promise.reject(errorCode(status[0]), value)
+            }
+        }
+    }
+
     private external fun nativeSyncRange(
         ufvk: String,
         grpcUrl: String,
         network: String,
         startHeight: Int,
         endHeight: Int,
+        knownNullifiers: String,
         outStatus: IntArray
     ): String?
+
+    private external fun nativeChainTip(grpcUrl: String, outStatus: IntArray): String?
 
     private external fun nativeThreadProbe(
         ufvk: String,

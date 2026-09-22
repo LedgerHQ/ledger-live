@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { createMMKV } from "react-native-mmkv";
+import { runChunkedSync, readPersistedSync, accountIdForUfvk } from "./zcashChunkedSync";
 import {
   deriveOrchardAddress,
   isZcashFfiAvailable,
@@ -11,14 +11,7 @@ import {
 // Ironwood activation on mainnet. Nothing shielded exists before it for a
 // Ledger account, so it is the earliest height worth scanning.
 const IRONWOOD_ACTIVATION = 3_428_143;
-const PROBE_BLOCKS = 1_000;
 const MAINNET_INDEXER = "https://zec-indexer.coin.ledger-test.com";
-
-// A store of its own, so a proof of concept cannot collide with app state.
-// NOTE: MMKV is unencrypted at rest and, on iOS, is included in iCloud backup
-// by default. Persist counts and identifiers only -- never memos, nullifiers,
-// note randomness, or raw transaction bytes.
-const syncStore = createMMKV({ id: "zcash-sync-poc" });
 
 // Proves the Zcash Rust engine actually runs inside the app: it derives a known
 // address and compares it against the expected value. Nothing in the wallet
@@ -40,6 +33,20 @@ const TEST_UFVK =
 
 const EXPECTED_ADDRESS =
   "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
+
+// By default the probe scans with the public test vector, which owns nothing —
+// so the matched-transaction path (GetTransaction, full decryption) never runs.
+// To exercise it, point the probe at a key that actually holds notes:
+//
+//   read -rs ZCASH_PROBE_UFVK && export ZCASH_PROBE_UFVK
+//   ZCASH_PROBE_START=3428143 pnpm start --reset-cache
+//
+// `read -rs` keeps it out of shell history, and it is never logged below. Be
+// aware that Babel inlines process.env at bundle time, so the value does reach
+// Metro's on-disk transform cache — re-run with --reset-cache afterwards, and
+// do not do this on a shared machine.
+const PROBE_UFVK = process.env.ZCASH_PROBE_UFVK || TEST_UFVK;
+const PROBE_START = Number(process.env.ZCASH_PROBE_START ?? IRONWOOD_ACTIVATION);
 
 /**
  * Derives a known address through the native binding and logs the outcome.
@@ -100,56 +107,37 @@ export async function logZcashFfiSmokeCheck(): Promise<void> {
  * full-history scale -- which is the point this probe exists to make concrete.
  */
 export async function logZcashSyncProbe(): Promise<void> {
-  const start = IRONWOOD_ACTIVATION;
-  const end = start + PROBE_BLOCKS - 1;
+  log(
+    ZCASH_FFI_LOG_TYPE,
+    `sync probe: from ${PROBE_START}, key=${
+      PROBE_UFVK === TEST_UFVK ? "public test vector" : "supplied via env"
+    }`,
+  );
 
   try {
-    const result = await syncRange(TEST_UFVK, MAINNET_INDEXER, "mainnet", start, end);
+    const accountId = accountIdForUfvk(PROBE_UFVK);
 
-    const notes = result.transactions.flatMap(tx => [
-      ...tx.sapling_notes,
-      ...tx.orchard_notes,
-      ...tx.ironwood_notes,
-    ]);
+    const summary = await runChunkedSync({
+      accountId,
+      ufvk: PROBE_UFVK,
+      grpcUrl: MAINNET_INDEXER,
+      network: "mainnet",
+      birthdayHeight: PROBE_START,
+    });
 
     log(
       ZCASH_FFI_LOG_TYPE,
-      `sync OK: ${result.blocks_scanned} blocks in ${result.elapsed_ms}ms, ` +
-        `${result.transactions.length} txs, ${notes.length} notes, ` +
-        `${(result.bytes_downloaded / 1024).toFixed(0)} KiB downloaded ` +
-        `(decrypt ${result.trial_decrypt_ms}ms, getTx ${result.get_transaction_ms}ms)`,
+      `sync OK: ${summary.chunks} chunks, ${summary.blocksScanned} blocks in ` +
+        `${summary.elapsedMs}ms, ${summary.transactions} txs, ${summary.notes} notes, ` +
+        `${(summary.bytesDownloaded / 1024).toFixed(0)} KiB, cursor ${summary.cursor}`,
     );
 
-    // A reduced record on purpose -- see the note on syncStore above.
-    syncStore.set("cursor", String(end));
-    syncStore.set(
-      "summary",
-      JSON.stringify({
-        scannedTo: end,
-        blocks: result.blocks_scanned,
-        txs: result.transactions.length,
-        notes: notes.length,
-        bytesDownloaded: result.bytes_downloaded,
-        elapsedMs: result.elapsed_ms,
-      }),
+    const persisted = readPersistedSync(accountId);
+    log(
+      ZCASH_FFI_LOG_TYPE,
+      `MMKV holds ${persisted.transactions.length} txs, cursor ${persisted.cursor}, ` +
+        `state ${persisted.state}`,
     );
-    syncStore.set(
-      "txs",
-      JSON.stringify(
-        result.transactions.map(tx => ({
-          txid: tx.txid,
-          height: tx.block_height,
-          time: tx.block_time,
-          notes: [...tx.sapling_notes, ...tx.orchard_notes, ...tx.ironwood_notes].map(n => ({
-            amount: n.amount,
-            pool: n.pool,
-            spent: n.is_spent,
-          })),
-        })),
-      ),
-    );
-
-    log(ZCASH_FFI_LOG_TYPE, `persisted to MMKV, cursor now ${end}`);
   } catch (error) {
     log(ZCASH_FFI_LOG_TYPE, "sync failed", {
       code: error instanceof ZcashFfiError ? error.code : "unknown",
