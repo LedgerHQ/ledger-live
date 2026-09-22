@@ -1,7 +1,7 @@
 ---
 "@ledgerhq/coin-cosmos": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 feat(coin-cosmos): add the Gonka currency configuration

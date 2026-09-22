@@ -140,18 +140,4 @@
 - Updated dependencies []:
   - @ledgerhq/device-core@0.11.7
 
-## 0.6.10-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.11.7-next.0
-
-## 0.6.9
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.11.6
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

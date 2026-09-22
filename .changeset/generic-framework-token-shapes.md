@@ -1,7 +1,7 @@
 ---
 "@ledgerhq/live-common": minor
 "@ledgerhq/ledger-wallet-framework": minor
-"@ledgerhq/asset-aggregation": patch
+"@ledgerhq/asset-aggregation": minor
 ---
 
 Casper fee estimation now names a valid dummy recipient, which a new test asserts for every family enabled on the generic coin framework.

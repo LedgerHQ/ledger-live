@@ -1,7 +1,7 @@
 ---
 "@domain/entity-card-asset-mapping": minor
-"live-mobile": patch
-"ledger-live-desktop": patch
+"live-mobile": minor
+"ledger-live-desktop": minor
 ---
 
 Map Baanx's EUROC to its Ledger currency.

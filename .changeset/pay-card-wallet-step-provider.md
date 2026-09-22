@@ -1,8 +1,8 @@
 ---
 "@features/flow-pay-card-widget": minor
-"@domain/api-card-management": patch
-"@devtools/bindings": patch
-"live-mobile": patch
+"@domain/api-card-management": minor
+"@devtools/bindings": minor
+"live-mobile": minor
 ---
 
 Answer the phone wallet step from the provider alone.

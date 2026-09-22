@@ -1,10 +1,10 @@
 ---
-"live-mobile": patch
-"ledger-live-desktop": patch
-"@ledgerhq/live-common": patch
-"@ledgerhq/types-live": patch
-"@shared/feature-flags": patch
-"@features/platform-feature-flags": patch
+"live-mobile": minor
+"ledger-live-desktop": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/types-live": minor
+"@shared/feature-flags": minor
+"@features/platform-feature-flags": minor
 ---
 
 Remove the obsolete original Wallet V4 tour

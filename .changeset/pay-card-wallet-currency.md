@@ -4,7 +4,7 @@
 "@domain/entity-card-asset-mapping": minor
 "@devtools/pay-card": minor
 "@devtools/bindings": minor
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 Carry each card wallet's Ledger currency, so the app can price it.

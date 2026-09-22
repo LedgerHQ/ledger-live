@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/ledger-key-ring-protocol": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/ledger-key-ring-protocol": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Enforce the QR code pairing sequence on both sides of the handshake

@@ -1,11 +1,11 @@
 ---
-"@domain/api-card-management": patch
+"@domain/api-card-management": minor
 "@features/flow-pay-balance": minor
 "@features/flow-pay-card": minor
-"@features/flow-pay-card-assets": patch
+"@features/flow-pay-card-assets": minor
 "@features/flow-pay-card-auth": minor
-"@features/flow-pay-card-details": patch
-"@features/flow-pay-card-transactions": patch
+"@features/flow-pay-card-details": minor
+"@features/flow-pay-card-transactions": minor
 "@features/flow-pay-card-widget": minor
 "@features/flow-pay-feature-tour": minor
 "@features/flow-pay-request": minor

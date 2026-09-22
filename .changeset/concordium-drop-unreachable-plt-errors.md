@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/coin-concordium": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/coin-concordium": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 fix(concordium): drop the PLT error surface nothing can reach

@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/ledger-wallet-framework": patch
+"@ledgerhq/ledger-wallet-framework": minor
 ---
 
 chore: align the zod catalog on 4.4.3

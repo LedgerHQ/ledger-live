@@ -1,6 +1,6 @@
 ---
-"@features/flow-contacts": patch
-"@features/flow-contacts-list": patch
+"@features/flow-contacts": minor
+"@features/flow-contacts-list": minor
 ---
 
 Fix contacts detail pane header shaking on address list scroll

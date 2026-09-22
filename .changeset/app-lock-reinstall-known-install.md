@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 Let a reinstall actually clear an app-lock password, as it is meant to.

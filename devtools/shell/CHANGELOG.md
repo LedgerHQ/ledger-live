@@ -172,18 +172,4 @@
 - Updated dependencies []:
   - @devtools/registry@0.1.7-next.0
 
-## 0.5.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.6
-
-## 0.5.1-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.6-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

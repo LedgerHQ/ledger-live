@@ -1,6 +1,6 @@
 ---
-"live-mobile": patch
-"@features/flow-app-lock": patch
+"live-mobile": minor
+"@features/flow-app-lock": minor
 ---
 
 Give a user protected by biometrics alone a way back when their face goes unread.

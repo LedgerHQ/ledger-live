@@ -224,17 +224,4 @@
 
 - [#16796](https://github.com/LedgerHQ/ledger-live/pull/16796) [`00d692c`](https://github.com/LedgerHQ/ledger-live/commit/00d692ce539ebde1a3f7d623e91eca63a5278dfa) Thanks [@bigspider](https://github.com/bigspider)! - Use protocol version 1 of the Bitcoin application, supported since version 2.1.0.
 
-## 11.0.0-next.0
-
-### Major Changes
-
-- [#16796](https://github.com/LedgerHQ/ledger-live/pull/16796) [`00d692c`](https://github.com/LedgerHQ/ledger-live/commit/00d692ce539ebde1a3f7d623e91eca63a5278dfa) Thanks [@bigspider](https://github.com/bigspider)! - Use protocol version 1 of the Bitcoin application, supported since version 2.1.0.
-
-## 10.22.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.2
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

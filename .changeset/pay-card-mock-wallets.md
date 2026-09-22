@@ -1,5 +1,5 @@
 ---
-"@domain/api-card-management": patch
+"@domain/api-card-management": minor
 ---
 
 Answer the mocked wallet endpoints with three linked wallets, so the combined data carries three card assets.

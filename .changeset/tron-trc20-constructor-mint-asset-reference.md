@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tron": patch
+"@ledgerhq/coin-tron": minor
 ---
 
 fix(tron): resolve the TRC20 contract address of a transfer minted by a contract creation

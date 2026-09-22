@@ -4,7 +4,7 @@
 "@features/flow-contacts-add-contact": minor
 "@features/flow-contacts-edit-contact": minor
 "@features/flow-contacts-edit-address": minor
-"@features/flow-contacts-add-address": patch
+"@features/flow-contacts-add-address": minor
 "live-mobile": minor
 ---
 
