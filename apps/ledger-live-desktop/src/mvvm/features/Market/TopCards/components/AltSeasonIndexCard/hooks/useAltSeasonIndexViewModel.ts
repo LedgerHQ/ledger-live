@@ -1,4 +1,4 @@
-import { useGetAltcoinSeasonIndexLatestQuery } from "@domain/api-altcoins-sentiment";
+import { useGetAltcoinSeasonIndexLatestQuery } from "@domain/api-market-index-altcoin-season";
 import { track } from "~/renderer/analytics/segment";
 import { ALT_SEASON_INDEX_REFRESH_INTERVAL_MS } from "../constants";
 

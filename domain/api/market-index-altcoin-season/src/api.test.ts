@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { coinMarketCapApiExtra, coinMarketCapApi } from "@shared/api-services";
-import { altcoinsSentimentApi, useGetAltcoinSeasonIndexLatestQuery } from "./api";
+import { altcoinSeasonApi, useGetAltcoinSeasonIndexLatestQuery } from "./api";
 
 const rawResponse = {
   data: { altcoin_index: 42, altcoin_marketcap: 1234567890 },
@@ -14,19 +14,19 @@ const rawResponse = {
   },
 };
 
-describe("altcoinsSentimentApi configuration", () => {
+describe("altcoinSeasonApi configuration", () => {
   it("is the CoinMarketCap service api, mutated in place by injectEndpoints", () => {
-    expect(altcoinsSentimentApi).toBe(coinMarketCapApi);
-    expect(altcoinsSentimentApi.reducerPath).toBe("coinMarketCapApi");
+    expect(altcoinSeasonApi).toBe(coinMarketCapApi);
+    expect(altcoinSeasonApi.reducerPath).toBe("coinMarketCapApi");
   });
 
   it("exposes the getAltcoinSeasonIndexLatest endpoint and its hook", () => {
-    expect(altcoinsSentimentApi.endpoints.getAltcoinSeasonIndexLatest).toBeDefined();
+    expect(altcoinSeasonApi.endpoints.getAltcoinSeasonIndexLatest).toBeDefined();
     expect(useGetAltcoinSeasonIndexLatestQuery).toBeDefined();
   });
 });
 
-describe("altcoinsSentimentApi requests", () => {
+describe("altcoinSeasonApi requests", () => {
   let fetchSpy: jest.SpyInstance;
 
   // Wired the way the apps wire it: the store registers the *service api*, and the endpoint only
@@ -58,7 +58,7 @@ describe("altcoinsSentimentApi requests", () => {
     const store = makeStore();
 
     const result = await store.dispatch(
-      altcoinsSentimentApi.endpoints.getAltcoinSeasonIndexLatest.initiate(),
+      altcoinSeasonApi.endpoints.getAltcoinSeasonIndexLatest.initiate(),
     );
 
     const request = fetchSpy.mock.calls[0][0] as Request;
