@@ -1,21 +1,30 @@
-import { http, HttpResponse, passthrough } from "msw";
+import { delay, http, HttpResponse, passthrough } from "msw";
 import {
   MOCK_CARD_DETAILS_IMAGE_URL,
   mockCardDetailsImage,
   mockPayCardDetailsToken,
 } from "@domain/api-card-management/mock/card-details-token";
 import { isMockCardRequest } from "@domain/api-card-management/mock/card-session";
-import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
+import {
+  mockPayCardTransactions,
+  readPayCardTransactionsMock,
+} from "@domain/api-card-management/mock/card-transactions";
 import {
   mockPayCardStatus,
   mockPayCardUser,
   readCardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
 import {
-  mockPayCardInternalWallets,
+  applyPayCardWalletPrioritiesMock,
   mockPayCardLinkedWallets,
   mockPayCardRewardWallet,
+  readPayCardReorderMockEnabled,
+  readPayCardWalletsMock,
+  resolvePayCardInternalWalletsMock,
 } from "@domain/api-card-management/mock/card-wallets";
+
+const REORDER_MS = 200;
+const TRANSACTIONS_PAGE_SIZE = 10;
 
 const handlers = [
   http.get("*/v1/user", ({ request }) => {
@@ -38,9 +47,16 @@ const handlers = [
     return isMockCardRequest(request) ? HttpResponse.json(mockPayCardStatus()) : passthrough();
   }),
 
-  http.get("*/v1/card/transactions", ({ request }) =>
-    isMockCardRequest(request) ? HttpResponse.json(mockPayCardTransactions()) : passthrough(),
-  ),
+  http.get("*/v1/card/transactions", ({ request }) => {
+    const override = readPayCardTransactionsMock();
+    if (override === undefined && !isMockCardRequest(request)) return passthrough();
+
+    const transactions = override ?? mockPayCardTransactions();
+    const page = Number(new URL(request.url).searchParams.get("page") ?? 0);
+    const start = page * TRANSACTIONS_PAGE_SIZE;
+
+    return HttpResponse.json(transactions.slice(start, start + TRANSACTIONS_PAGE_SIZE));
+  }),
 
   http.post("*/v1/card/details/token", ({ request }) =>
     isMockCardRequest(request) ? HttpResponse.json(mockPayCardDetailsToken()) : passthrough(),
@@ -52,21 +68,39 @@ const handlers = [
 
   http.get("*/v1/wallet/internal", ({ request }) => {
     const { walletFunded } = readCardOnboardingStatusMock();
-    if (walletFunded !== undefined) {
-      return HttpResponse.json(mockPayCardInternalWallets(walletFunded));
-    }
+    const wallets = resolvePayCardInternalWalletsMock(walletFunded, isMockCardRequest(request));
 
-    return isMockCardRequest(request)
-      ? HttpResponse.json(mockPayCardInternalWallets(false))
-      : passthrough();
+    return wallets === undefined ? passthrough() : HttpResponse.json(wallets);
   }),
 
   http.get("*/v1/wallet/internal/card_linked", ({ request }) => {
+    if (readPayCardWalletsMock() !== undefined || readPayCardReorderMockEnabled()) {
+      return HttpResponse.json(mockPayCardLinkedWallets());
+    }
+
     const { walletFunded } = readCardOnboardingStatusMock();
 
     return walletFunded === undefined && !isMockCardRequest(request)
       ? passthrough()
       : HttpResponse.json(mockPayCardLinkedWallets());
+  }),
+
+  http.put("*/v1/wallet/internal/card_linked/priority", async ({ request }) => {
+    if (!readPayCardReorderMockEnabled()) {
+      return isMockCardRequest(request)
+        ? HttpResponse.json({ message: "wallet reorder is not mocked" }, { status: 501 })
+        : passthrough();
+    }
+
+    const body = (await request.json().catch(() => null)) as {
+      wallets?: { addressId: string; priority: number }[];
+    } | null;
+
+    await delay(REORDER_MS);
+
+    return HttpResponse.json({
+      success: applyPayCardWalletPrioritiesMock({ wallets: body?.wallets ?? [] }),
+    });
   }),
 
   http.get("*/v1/wallet/reward", ({ request }) =>

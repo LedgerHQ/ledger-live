@@ -4,22 +4,35 @@ import {
   MOCK_CARD_ACCESS_TOKEN_PREFIX,
 } from "@domain/api-card-management/mock/card-session";
 import { mockPayCardDetailsToken } from "@domain/api-card-management/mock/card-details-token";
-import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
+import {
+  mockPayCardTransactions,
+  readPayCardTransactionsMock,
+} from "@domain/api-card-management/mock/card-transactions";
 import {
   mockPayCardStatus,
   mockPayCardUser,
   readCardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
 import {
-  mockPayCardInternalWallets,
+  applyPayCardWalletPrioritiesMock,
   mockPayCardLinkedWallets,
   mockPayCardRewardWallet,
+  readPayCardReorderMockEnabled,
+  readPayCardWalletsMock,
+  resolvePayCardInternalWalletsMock,
 } from "@domain/api-card-management/mock/card-wallets";
 import { createCardMockState } from "./state";
 
 const state = createCardMockState();
 
 const SLOW_MS = 5_000;
+
+/**
+ * Long enough for the reordering row to hold its spinner rather than flash it: a mocked write
+ * answers within the same frame the drag ends, which a real provider never does.
+ */
+const REORDER_MS = 200;
+const TRANSACTIONS_PAGE_SIZE = 10;
 
 const MOCK_USER = {
   id: "6f1c9a52-3d4e-4b7a-9c81-2f0d5e7a1b34",
@@ -87,6 +100,14 @@ async function answerTokenRequest(id: string, serial: number) {
   }
 }
 
+/** The order write answers for every session the linked answer itself is mocked for. */
+function servesMockedLinkedWallets(request: Request): boolean {
+  if (readPayCardWalletsMock() !== undefined || readPayCardReorderMockEnabled()) return true;
+
+  const { walletFunded } = readCardOnboardingStatusMock();
+  return walletFunded !== undefined || isMockCardRequest(request);
+}
+
 const handlers = [
   http.post("*/v1/auth/oauth2/token", async ({ request }) => {
     const body = (await request
@@ -145,9 +166,18 @@ const handlers = [
     return HttpResponse.json(MOCK_CARD_STATUS);
   }),
 
-  http.get("*/v1/card/transactions", ({ request }) =>
-    isMockCardRequest(request) ? HttpResponse.json(mockPayCardTransactions()) : passthrough(),
-  ),
+  http.get("*/v1/card/transactions", ({ request }) => {
+    const devtoolTransactions = readPayCardTransactionsMock();
+    if (devtoolTransactions !== undefined) {
+      const page = Number(new URL(request.url).searchParams.get("page") ?? 0);
+      const start = page * TRANSACTIONS_PAGE_SIZE;
+      return HttpResponse.json(devtoolTransactions.slice(start, start + TRANSACTIONS_PAGE_SIZE));
+    }
+
+    return isMockCardRequest(request)
+      ? HttpResponse.json(mockPayCardTransactions())
+      : passthrough();
+  }),
 
   // The image the token points at is not mocked here: RN loads it through native networking, which
   // these interceptors never see. It stays unread until LWM grows its own reveal UI.
@@ -157,23 +187,38 @@ const handlers = [
 
   http.get("*/v1/wallet/internal", ({ request }) => {
     const { walletFunded } = readCardOnboardingStatusMock();
-    if (walletFunded !== undefined) {
-      return HttpResponse.json(mockPayCardInternalWallets(walletFunded));
-    }
+    const wallets = resolvePayCardInternalWalletsMock(walletFunded, isMockCardRequest(request));
 
-    // A mock session has no provider behind it, so answer as an empty wallet rather than send a
-    // mock bearer token to Baanx and collect a 401.
-    return isMockCardRequest(request)
-      ? HttpResponse.json(mockPayCardInternalWallets(false))
-      : passthrough();
+    return wallets === undefined ? passthrough() : HttpResponse.json(wallets);
   }),
 
-  http.get("*/v1/wallet/internal/card_linked", ({ request }) => {
-    const { walletFunded } = readCardOnboardingStatusMock();
+  http.get("*/v1/wallet/internal/card_linked", ({ request }) =>
+    servesMockedLinkedWallets(request)
+      ? HttpResponse.json(mockPayCardLinkedWallets())
+      : passthrough(),
+  ),
 
-    return walletFunded === undefined && !isMockCardRequest(request)
-      ? passthrough()
-      : HttpResponse.json(mockPayCardLinkedWallets());
+  http.put("*/v1/wallet/internal/card_linked/priority", async ({ request }) => {
+    if (!readPayCardReorderMockEnabled()) {
+      return isMockCardRequest(request)
+        ? HttpResponse.json({ message: "wallet reorder is not mocked" }, { status: 501 })
+        : passthrough();
+    }
+
+    const body = (await request
+      .clone()
+      .json()
+      .catch(() => ({}))) as {
+      wallets?: readonly { addressId: string; priority: number }[];
+    };
+
+    await delay(REORDER_MS);
+
+    // Only the order is written. The balances answered by `/v1/wallet/internal` are left as they
+    // are, so the rows the refetch rebuilds keep the amounts they were showing before the drag.
+    return HttpResponse.json({
+      success: applyPayCardWalletPrioritiesMock({ wallets: [...(body?.wallets ?? [])] }),
+    });
   }),
 
   http.get("*/v1/wallet/reward", ({ request }) =>

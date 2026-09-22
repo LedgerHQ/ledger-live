@@ -140,14 +140,45 @@ export interface PayCardBalanceError {
   readonly detail: string;
 }
 
+export type PayCardMockWalletAsset = "usdc" | "btc" | "sol";
+
+export interface PayCardBalancesMockProps {
+  readonly available: boolean;
+  readonly isOverridden: boolean;
+  readonly fill: () => void;
+  readonly empty: () => void;
+  readonly fund: (asset: PayCardMockWalletAsset) => void;
+  readonly clear: () => void;
+}
+
 export interface PayCardBalanceProps {
   readonly baanxWallets: readonly PayCardBaanxWallet[];
   readonly linkedWallets: readonly PayCardLinkedWallet[];
   readonly combinedWallets: readonly PayCardCombinedWallet[];
   readonly isFetching: boolean;
   readonly errors: readonly PayCardBalanceError[];
+  readonly mock: PayCardBalancesMockProps;
   readonly load: () => void;
   readonly refresh: () => void;
+}
+
+export type PayCardMockTransactionAsset = "usdc" | "btc" | "eth";
+
+export interface PayCardReorderMockProps {
+  readonly available: boolean;
+  readonly enabled: boolean;
+  readonly setEnabled: (value: boolean) => void;
+}
+
+export interface PayCardTransactionsMockProps {
+  /** Request interception is required for these controls to affect the Card endpoint. */
+  readonly available: boolean;
+  readonly isOverridden: boolean;
+  readonly count: number;
+  readonly fill: () => void;
+  readonly empty: () => void;
+  readonly receive: (asset: PayCardMockTransactionAsset) => void;
+  readonly clear: () => void;
 }
 
 export type PayCardOpenSecureBrowser = (url: string) => Promise<string>;
@@ -179,6 +210,8 @@ export interface PayCardToolProps {
   readonly cardOnboarding: PayCardOnboardingStatusProps;
   readonly interaction: PayCardInteractionProps;
   readonly balance: PayCardBalanceProps;
+  readonly transactions: PayCardTransactionsMockProps;
+  readonly reorder: PayCardReorderMockProps;
   /** The whole Card asset catalog, so a mapping gap can be read against it. */
   readonly currencyMapping: readonly PayCardCurrencyMappingRow[];
   /** Whether the user has already seen the Pay feature tour. */
