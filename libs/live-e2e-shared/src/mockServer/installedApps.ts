@@ -26,28 +26,29 @@ async function appsByName(model: DeviceModelId): Promise<Map<string, MockServerA
 }
 
 /**
- * Resolves apps to seed onto a mocked device, carrying the install hash the manager API
- * publishes for this model and firmware.
+ * Fills in the install hash of every app that does not pin one, reading it from the
+ * manager API for this model and firmware. An app declared without a hash reads as
+ * sideloaded and is never reported as installed (DSDK-1475), and the catalog is keyed on
+ * target id and firmware, so a hash cannot be carried from one model to another.
  *
- * The hash is what makes an app show up as installed: Ledger Live matches installed apps
- * against the catalog by exact hash, and an app declared without one reads as sideloaded
- * (DSDK-1475). Because the catalog is keyed on target id and firmware, a hash cannot be
- * carried from one model to another — it has to be looked up per device under test.
+ * An app that already carries a hash is passed through untouched.
  */
-export async function resolveInstalledApps(
+export async function withInstallHashes(
   model: DeviceModelId,
-  appNames: string[],
+  apps: MockServerApp[],
 ): Promise<MockServerApp[]> {
-  if (!appNames.length) return [];
+  if (apps.every(app => app.hash)) return apps;
   const catalog = await appsByName(model);
 
-  return appNames.map(name => {
-    const app = catalog.get(name);
-    if (!app) {
+  return apps.map(app => {
+    if (app.hash) return app;
+
+    const resolved = catalog.get(app.name);
+    if (!resolved) {
       throw new Error(
-        `App "${name}" is not in the ${model} catalog. Available: ${[...catalog.keys()].slice(0, 12).join(", ")}…`,
+        `App "${app.name}" is not in the ${model} catalog. Available: ${[...catalog.keys()].slice(0, 12).join(", ")}…`,
       );
     }
-    return app;
+    return resolved;
   });
 }

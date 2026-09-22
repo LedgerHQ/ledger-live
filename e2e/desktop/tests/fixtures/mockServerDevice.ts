@@ -1,8 +1,7 @@
 import { expect } from "@playwright/test";
 import { type MockServerDevice } from "@ledgerhq/live-e2e-shared/mockServer/types";
 import { deviceUnderTest } from "@ledgerhq/live-e2e-shared/mockServer/devices";
-import { resolveInstalledApps } from "@ledgerhq/live-e2e-shared/mockServer/installedApps";
-import { type AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { withInstallHashes } from "@ledgerhq/live-e2e-shared/mockServer/installedApps";
 import { mockServerEnv } from "@ledgerhq/live-e2e-shared/mockServer/launchEnv";
 import {
   assertMockServerReachable,
@@ -17,7 +16,6 @@ type MockServerFixtures = {
   mockDevice: MockServerDevice;
   mockDeviceParams: Partial<MockServerDevice>;
   mockServer: MockServerSessionHandle;
-  installedApps: AppInfos[];
 };
 
 /**
@@ -27,8 +25,6 @@ type MockServerFixtures = {
  */
 export const test = base.extend<MockServerFixtures>({
   mockDeviceParams: [{}, { option: true }],
-
-  installedApps: [[], { option: true }],
 
   mockDevice: async ({ mockDeviceParams }, use) => {
     await use({ ...deviceUnderTest(), ...mockDeviceParams });
@@ -45,22 +41,16 @@ export const test = base.extend<MockServerFixtures>({
     await use(attachMockServerSession(token));
   },
 
-  env: async ({ mockDevice, installedApps }, use) => {
+  env: async ({ mockDevice }, use) => {
     await assertMockServerReachable();
 
-    // Install hashes are published per target id and firmware, so they are looked up
-    // for the device under test — a seeded session then follows SPECULOS_DEVICE.
-    const devices = installedApps.length
-      ? [
-          {
-            ...mockDevice,
-            apps: await resolveInstalledApps(
-              mockDevice.modelId,
-              installedApps.map(({ name }) => name),
-            ),
-          },
-        ]
-      : [mockDevice];
+    // `apps` entries that do not pin a hash get one looked up for the device under test,
+    // so a seeded session still follows SPECULOS_DEVICE.
+    const devices = [
+      mockDevice.apps?.length
+        ? { ...mockDevice, apps: await withInstallHashes(mockDevice.modelId, mockDevice.apps) }
+        : mockDevice,
+    ];
 
     await use(await mockServerEnv({ devices }));
   },

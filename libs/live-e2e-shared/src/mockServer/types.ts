@@ -1,7 +1,7 @@
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 
 /** An app on a mocked device. Without `hash` it reads as sideloaded (DSDK-1475). */
-export type MockServerApp = { name: string; version: string; hash?: string };
+export type MockServerApp = { name: string; version?: string; hash?: string };
 
 /** A device as the mock server's `/import` endpoint expects it. */
 export type MockServerDevice = {

@@ -9,7 +9,7 @@ test.describe("My Ledger — installed apps, any device", () => {
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
     teamOwner: Team.WALLET_XP,
-    installedApps: [AppInfos.BITCOIN],
+    mockDeviceParams: { apps: [{ name: AppInfos.BITCOIN.name }] },
   });
 
   test(
