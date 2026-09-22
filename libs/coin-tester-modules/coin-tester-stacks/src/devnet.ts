@@ -210,10 +210,14 @@ async function waitForStacksNodeRpc(deadline: number): Promise<void> {
       );
     }
     try {
-      const res = await fetch(`${STACKS_NODE_RPC_URL}/v2/info`);
+      const res = await fetch(`${STACKS_NODE_RPC_URL}/v2/info`, {
+        signal: AbortSignal.timeout(2_000),
+      });
+      // Body unused on every path; release the socket (undici won't reuse one with an unread body).
+      await res.body?.cancel();
       if (res.ok) return;
     } catch {
-      // stacks-node container not started yet, or its RPC server still binding.
+      // stacks-node container not started yet, its RPC server still binding, or the probe timed out.
     }
     await new Promise(resolve => setTimeout(resolve, 3000));
   }
