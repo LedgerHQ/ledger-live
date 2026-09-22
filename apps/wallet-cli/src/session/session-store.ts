@@ -9,6 +9,7 @@ import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { serializeV1 } from "../shared/accountDescriptor";
 import { writeSecureFile } from "../shared/secure-file";
 import { PASSWORD_SALT_RE } from "../key-ring/crypto";
+import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../agent-intent/profile-format";
 
 export const APP_NAME = "ledger-wallet-cli";
 const SESSION_FILE = "session.yaml";
@@ -31,34 +32,34 @@ const DomainEntrySchema = z.object({
   firstUsed: z.string(),
 });
 
-// Tied to the SDK's own type at compile time: if it ever adds a third environment, this array (and
-// every zod enum built from it below) fails to compile instead of silently dropping any profile
-// already persisted with that value on next session load (see `ringFields.agentIntentProfiles`'s
-// `.catch(() => [])` below).
-export const AGENT_INTENT_ENVIRONMENTS = [
-  "staging",
-  "production",
-] as const satisfies readonly AgentIntentEnvironment[];
+// `satisfies readonly AgentIntentEnvironment[]` only proves every listed value belongs to the
+// union — it does NOT prove the union has no further members, so it would not catch the SDK adding
+// a third environment. The assertion below checks that missing direction: it fails to compile if
+// `AgentIntentEnvironment` ever includes a value this array doesn't list, instead of silently
+// dropping any profile already persisted with that value on next session load (see
+// `ringFields.agentIntentProfiles`'s `.catch(() => [])` below).
+export const AGENT_INTENT_ENVIRONMENTS = ["staging", "production"] as const;
+// Assignability check only, never read — `""` is never a real AgentIntentEnvironment value.
+const _agentIntentEnvironmentsExhaustive: (typeof AGENT_INTENT_ENVIRONMENTS)[number] =
+  "" as AgentIntentEnvironment;
+void _agentIntentEnvironmentsExhaustive;
 
 // Non-secret Agent Intent profile metadata only (NTTVS-745). The profile's private key never lives
 // here — it is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`).
 const AgentIntentProfileSchema = z.object({
-  profileId: z
-    .string()
-    .min(1)
-    .max(63)
-    .regex(
-      /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/,
-      "Profile id must not contain ':' or other special characters",
-    ),
+  profileId: z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE),
   displayName: z.string().min(1).max(80),
   description: z.string().min(1).max(280),
   source: z.enum(SUPPORTED_AGENT_SOURCES),
   environment: z.enum(AGENT_INTENT_ENVIRONMENTS),
   bffBaseUrl: z.string(),
-  keycloakBaseUrl: z.string().optional(),
-  publicKey: z.string().regex(/^[0-9a-f]{66}$|^[0-9a-f]{130}$/i),
+  // SEC1-prefixed: 02/03 + 32-byte x-coordinate (compressed) or 04 + 64-byte x/y (uncompressed) —
+  // not just any 66/130-char hex string, matching what secp256k1.getPublicKey() actually produces.
+  publicKey: z.string().regex(/^0[23][0-9a-f]{64}$|^04[0-9a-f]{128}$/i),
   trustchainId: z.string().optional(),
+  // Signed into the enrollment request and enforced by the frontend — persisted so `list`/`show`
+  // can report "expired" instead of leaving a dead link marked `pending` forever.
+  enrollmentExpiresAt: z.string(),
   createdAt: z.string(),
 });
 
@@ -220,7 +221,13 @@ export class Session {
     // non-object root (bare scalar/array) salvages nothing.
     const root = typeof raw === "object" && !Array.isArray(raw) ? raw : {};
     const ring = RingFieldsSalvageSchema.parse(root);
-    return new Session([], ring.trustchain, ring.domains, ring.passwordSalt, ring.agentIntentProfiles);
+    return new Session(
+      [],
+      ring.trustchain,
+      ring.domains,
+      ring.passwordSalt,
+      ring.agentIntentProfiles,
+    );
   }
 
   get accounts(): ReadonlyArray<SessionEntry> {

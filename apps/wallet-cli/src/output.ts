@@ -32,7 +32,7 @@ import {
 import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from "./wallet/models";
 import { APP_NAME } from "./session/session-store";
 import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
-import { redactUrlCredentials } from "./agent-intent/profile-format";
+import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 import type {
   EarnDepositResult,
@@ -220,7 +220,11 @@ export interface CommandOutput {
   agentIntentProfileShow(profile: AgentIntentProfileMeta): void;
   /** Output the result of `agent-intent enroll` (human: URL + fingerprint to compare against the
    * device; json: envelope). Never includes the secret key. */
-  agentIntentEnroll(result: { profileId: string; enrollmentUrl: string; fingerprint: string }): void;
+  agentIntentEnroll(result: {
+    profileId: string;
+    enrollmentUrl: string;
+    fingerprint: string;
+  }): void;
   /** Output the result of `agent-intent complete` (human: confirmation line; json: envelope). */
   agentIntentComplete(result: { profileId: string; trustchainId: string }): void;
 }
@@ -648,31 +652,43 @@ class HumanCommandOutput implements CommandOutput {
         `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}`,
     );
     for (const p of profiles) {
-      const status = p.trustchainId ? "enrolled" : "pending";
       writeStdout(
-        `${p.profileId.padEnd(w)}  ${p.displayName}  ${p.source}  ${p.environment}  ${status}`,
+        `${p.profileId.padEnd(w)}  ${p.displayName}  ${p.source}  ${p.environment}  ` +
+          agentIntentProfileStatus(p),
       );
     }
   }
 
   agentIntentProfileShow(profile: AgentIntentProfileMeta): void {
+    const labels = [
+      "Profile",
+      "Name",
+      "Description",
+      "Source",
+      "Environment",
+      "Status",
+      "Public key",
+      "BFF URL",
+      "Trustchain ID",
+      "Created",
+    ];
+    const labelWidth = Math.max(...labels.map(l => l.length)) + 1; // +1 for the trailing ":"
+    const line = (label: string, value: string): string =>
+      `${(label + ":").padEnd(labelWidth)} ${value}`;
     writeStdout(
       [
-        `Profile:      ${profile.profileId}`,
-        `Name:         ${profile.displayName}`,
-        `Description:  ${profile.description}`,
-        `Source:       ${profile.source}`,
-        `Environment:  ${profile.environment}`,
-        `Status:       ${profile.trustchainId ? "enrolled" : "pending"}`,
-        `Public key:   ${profile.publicKey}`,
-        `BFF URL:      ${redactUrlCredentials(profile.bffBaseUrl)}`,
-        ...(profile.keycloakBaseUrl === undefined
-          ? []
-          : [`Keycloak URL: ${redactUrlCredentials(profile.keycloakBaseUrl)}`]),
+        line("Profile", profile.profileId),
+        line("Name", profile.displayName),
+        line("Description", profile.description),
+        line("Source", profile.source),
+        line("Environment", profile.environment),
+        line("Status", agentIntentProfileStatus(profile)),
+        line("Public key", profile.publicKey),
+        line("BFF URL", redactUrlCredentials(profile.bffBaseUrl)),
         ...(profile.trustchainId === undefined
           ? []
-          : [`Trustchain ID: ${profile.trustchainId}`]),
-        `Created:      ${profile.createdAt}`,
+          : [line("Trustchain ID", profile.trustchainId)]),
+        line("Created", profile.createdAt),
       ].join("\n"),
     );
   }
@@ -690,7 +706,9 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout("");
     writeStdout(`Public key fingerprint: ${fingerprint}`);
     writeStdout(
-      colors.dim("Compare this fingerprint with the one shown on your Ledger device before approving."),
+      colors.dim(
+        "Compare this fingerprint with the one shown on your Ledger device before approving.",
+      ),
     );
     writeStdout(
       colors.dim(
@@ -699,12 +717,17 @@ class HumanCommandOutput implements CommandOutput {
     );
   }
 
-  agentIntentComplete({ profileId, trustchainId }: { profileId: string; trustchainId: string }): void {
+  agentIntentComplete({
+    profileId,
+    trustchainId,
+  }: {
+    profileId: string;
+    trustchainId: string;
+  }): void {
     writeStdout(
       `${colors.green("✔")} Agent Intent profile "${profileId}" enrolled. Trustchain ID: ${trustchainId}`,
     );
   }
-
 }
 
 // ---------------------------------------------------------------------------
@@ -1041,35 +1064,37 @@ class JsonCommandOutput implements CommandOutput {
   agentIntentProfiles(profiles: readonly AgentIntentProfileMeta[]): void {
     this._writeNdjson(
       this._envelope({
-        // `profileStatus`, not `status` — the envelope already uses `status` for success/error.
         profiles: profiles.map(p => ({
           ...p,
           bffBaseUrl: redactUrlCredentials(p.bffBaseUrl),
-          keycloakBaseUrl:
-            p.keycloakBaseUrl === undefined ? undefined : redactUrlCredentials(p.keycloakBaseUrl),
-          profileStatus: p.trustchainId ? "enrolled" : "pending",
+          // `profileStatus`, not `status` — the envelope already uses `status` for success/error.
+          profileStatus: agentIntentProfileStatus(p),
         })),
       }),
     );
   }
 
   agentIntentProfileShow(profile: AgentIntentProfileMeta): void {
+    // Nested under `profile`, matching `agentIntentProfiles`'s `profiles` — spreading the profile's
+    // own fields into the envelope (as this used to) would silently collide with envelope fields of
+    // the same name (`makeEnvelope` applies `...data` after `status`/`account`/etc., so a future
+    // profile field named e.g. `account` would overwrite it without warning).
     this._writeNdjson(
       this._envelope({
-        // `profileStatus`, not `status` — spreading `status` here would silently overwrite the
-        // envelope's own success/error `status` field (see makeEnvelope: `...data` applies after it).
-        ...profile,
-        bffBaseUrl: redactUrlCredentials(profile.bffBaseUrl),
-        keycloakBaseUrl:
-          profile.keycloakBaseUrl === undefined
-            ? undefined
-            : redactUrlCredentials(profile.keycloakBaseUrl),
-        profileStatus: profile.trustchainId ? "enrolled" : "pending",
+        profile: {
+          ...profile,
+          bffBaseUrl: redactUrlCredentials(profile.bffBaseUrl),
+          profileStatus: agentIntentProfileStatus(profile),
+        },
       }),
     );
   }
 
-  agentIntentEnroll(result: { profileId: string; enrollmentUrl: string; fingerprint: string }): void {
+  agentIntentEnroll(result: {
+    profileId: string;
+    enrollmentUrl: string;
+    fingerprint: string;
+  }): void {
     this._writeNdjson(
       this._envelope({
         profileId: result.profileId,
@@ -1088,7 +1113,6 @@ class JsonCommandOutput implements CommandOutput {
       }),
     );
   }
-
 }
 
 // ---------------------------------------------------------------------------
