@@ -190,6 +190,9 @@ const EditDeviceName: React.FC<Props> = ({
             ) : (
               <Button
                 variant="main"
+                data-testid={
+                  completed ? "close-device-rename-button" : "submit-device-rename-button"
+                }
                 onClick={completed ? onCloseDrawer : onSubmit}
                 disabled={!!disableButton}
               >

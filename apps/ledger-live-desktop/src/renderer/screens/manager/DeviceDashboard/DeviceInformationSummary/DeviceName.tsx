@@ -78,7 +78,10 @@ const DeviceName: React.FC<Props> = ({
 
   return (
     <Flex alignItems="center">
-      <Flex onClick={editEnabled ? openDeviceRename : undefined}>
+      <Flex
+        onClick={editEnabled ? openDeviceRename : undefined}
+        data-testid="manager-device-rename-button"
+      >
         <Flex mb={2} alignItems="center">
           <Text variant="large" fontWeight="semiBold" mr={3}>
             {name || deviceInfo.version}
