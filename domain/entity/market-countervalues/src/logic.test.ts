@@ -12,12 +12,23 @@ import {
   exportCountervalues,
   filterSupportedTrackingPairs,
   hasNewCountervaluesToExport,
+  historyKey,
   importCountervalues,
   resolveTrackingPairs,
   trackingPairIds,
 } from "./logic";
-import type { CounterValuesState, CountervaluesSettings, TrackingPair } from "./types";
-import { datapointRetention, formatCounterValueDay, formatCounterValueHour } from "./helpers";
+import type {
+  CounterValuesState,
+  CountervaluesSettings,
+  RateMapStats,
+  TrackingPair,
+} from "./types";
+import {
+  datapointRetention,
+  formatCounterValueDay,
+  formatCounterValueHour,
+  pairId,
+} from "./helpers";
 
 describe("filterSupportedTrackingPairs", () => {
   const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -489,5 +500,79 @@ describe("resolveTrackingPairs", () => {
     ]);
 
     expect(trackingPairIds(resolved)).toEqual(["USD bitcoin", "USD ethereum"]);
+  });
+});
+
+describe("historyKey", () => {
+  const bitcoin = getCryptoCurrencyById("bitcoin");
+  const usd = getFiatCurrencyByTicker("USD");
+  const eur = getFiatCurrencyByTicker("EUR");
+  const stableDate = new Date("2024-06-01T00:00:00.000Z");
+
+  function stateWithStats(stats: Partial<RateMapStats>): CounterValuesState {
+    return {
+      data: {},
+      status: {},
+      cache: {
+        [pairId({ from: bitcoin, to: usd })]: {
+          map: new Map(),
+          fallback: 0,
+          stats: {
+            oldest: undefined,
+            earliest: undefined,
+            oldestDate: null,
+            earliestDate: null,
+            earliestStableDate: null,
+            ...stats,
+          },
+        },
+      },
+    };
+  }
+
+  test("short-circuits to identity when both sides share an API id", () => {
+    expect(historyKey(stateWithStats({}), usd, usd, null)).toBe("identity");
+  });
+
+  test("returns noCV when the pair is absent from the cache", () => {
+    expect(historyKey(stateWithStats({}), bitcoin, eur, null)).toBe("noCV");
+  });
+
+  test("joins oldest, earliestStableDate and the relevant earliest with a pipe", () => {
+    const state = stateWithStats({
+      oldest: "2024-01-01",
+      earliest: "2024-05-01",
+      earliestStableDate: stableDate,
+    });
+
+    expect(
+      historyKey(state, bitcoin, usd, new Date("2024-07-01T00:00:00.000Z")).split("|"),
+    ).toEqual(["2024-01-01", String(stableDate), "2024-05-01"]);
+  });
+
+  test("substitutes an underscore for a missing oldest or earliestStableDate", () => {
+    expect(historyKey(stateWithStats({}), bitcoin, usd, null)).toBe("_|_|");
+  });
+
+  test("drops earliest when it is newer than the last operation's day", () => {
+    const state = stateWithStats({ oldest: "2024-01-01", earliest: "2024-12-01" });
+
+    expect(historyKey(state, bitcoin, usd, new Date("2024-07-01T00:00:00.000Z"))).toBe(
+      "2024-01-01|_|",
+    );
+  });
+
+  test("treats a null last operation date as the zero bucket, dropping earliest", () => {
+    const state = stateWithStats({ oldest: "2024-01-01", earliest: "2024-05-01" });
+
+    expect(historyKey(state, bitcoin, usd, null)).toBe("2024-01-01|_|");
+  });
+
+  test("keeps earliest when it falls exactly on the last operation's day", () => {
+    const state = stateWithStats({ oldest: "2024-01-01", earliest: "2024-07-01" });
+
+    expect(historyKey(state, bitcoin, usd, new Date("2024-07-01T12:00:00.000Z"))).toBe(
+      "2024-01-01|_|2024-07-01",
+    );
   });
 });

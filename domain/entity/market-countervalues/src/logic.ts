@@ -148,6 +148,27 @@ export function lenseRate(
   return map.get(hour) || map.get(day) || fallback;
 }
 
+/**
+ * Fingerprint of the rate history that is relevant to a (from, to) pair up to `lastOpDate`.
+ *
+ * Two states sharing this key produce the same conversions for that pair over that span, so
+ * consumers can memoise derived results against it. Changing the format invalidates their caches.
+ */
+export function historyKey(
+  state: CounterValuesState,
+  from: Currency,
+  to: Currency,
+  lastOpDate: Date | null,
+): string {
+  if (inferCurrencyAPIID(from) === inferCurrencyAPIID(to)) return "identity";
+  const pairCache = lenseRateMap(state, { from, to });
+  if (!pairCache) return "noCV";
+  const { oldest, earliest, earliestStableDate } = pairCache.stats;
+  const bucket = lastOpDate ? formatCounterValueDay(lastOpDate) : "0";
+  const earliestRelevant = earliest && earliest <= bucket ? earliest : "";
+  return `${oldest ?? "_"}|${earliestStableDate ?? "_"}|${earliestRelevant}`;
+}
+
 export function calculate(
   state: CounterValuesState,
   initialQuery: {
