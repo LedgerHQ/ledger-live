@@ -4,6 +4,7 @@ import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/
 import { NavigatorName, ScreenName } from "~/const";
 
 export type AccountKey =
+  | "aleo"
   | "algorand"
   | "cardano"
   | "celo"
@@ -41,6 +42,9 @@ export type StakePromptCase = {
 export type MobileFamilyFlowExport = StakePromptCase["familyExportKey"];
 
 export const accountsByKey = {
+  aleo: genAccount("notifications-prompt-aleo", {
+    currency: getCryptoCurrencyById("aleo"),
+  }),
   algorand: genAccount("notifications-prompt-algorand", {
     currency: getCryptoCurrencyById("algorand"),
   }),
@@ -96,6 +100,21 @@ export const createOperation = (accountId: string, type: string) => ({
 
 export const stakePromptSource = { name: "NotificationsPromptStakeFlow" };
 export const stakePromptCases: StakePromptCase[] = [
+  {
+    label: "Aleo claim unbond",
+    bucket: "revoke/claim/lifecycle",
+    flowName: NavigatorName.AleoClaimUnbondFlow,
+    familyExportKey: "AleoClaimUnbondFlow",
+    successScreenName: ScreenName.AleoClaimUnbondValidationSuccess,
+    errorScreenName: ScreenName.AleoClaimUnbondValidationError,
+    accountKey: "aleo",
+    operationType: "WITHDRAW_UNBONDED",
+    transaction: {
+      family: "aleo",
+      mode: "claim_unbond_public",
+      recipient: accountsByKey.aleo.freshAddress,
+    },
+  },
   {
     label: "Algorand claim rewards",
     bucket: "revoke/claim/lifecycle",

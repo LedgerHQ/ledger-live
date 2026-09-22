@@ -141,6 +141,10 @@
       "title": "This validator is not accepting new delegators.",
       "description": "This validator is not accepting new delegators. Choose an open validator to continue."
     },
+    "AleoNoClaimableUnbondedFunds": {
+      "title": "No unbonded ALEO to claim yet",
+      "description": "Unbonded ALEO becomes claimable once its unbonding period has elapsed. Come back once it has."
+    },
     "AleoStakeAmountTooLow": {
       "title": "Staking requires a total of at least {{minAmount}}.",
       "description": "You must have at least {{minAmount}} staked in total."
@@ -10935,6 +10939,23 @@
         }
       }
     },
+    "claim": {
+      "stepperHeader": {
+        "amount": "Claim ALEO",
+        "selectDevice": "Select Device",
+        "connectDevice": "Connect Device"
+      },
+      "amount": {
+        "info": "This claims all ALEO whose unbonding period has elapsed back to your account.",
+        "claimableLabel": "Claimable amount"
+      },
+      "validation": {
+        "success": {
+          "title": "Claim submitted",
+          "description": "Your claim has been broadcast."
+        }
+      }
+    },
     "stake": {
       "sectionTitle": "Staking",
       "staked": "Staked",
@@ -10967,6 +10988,7 @@
     },
     "manage": {
       "bond": "Bond",
+      "claim": "Claim",
       "status": "Status",
       "estimatedRate": "Est. rewards rate",
       "unbondPendingInfo": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
