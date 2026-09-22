@@ -1,6 +1,7 @@
 import { option } from "@bunli/core";
 import { z } from "zod";
 import { resolve } from "node:path";
+import { createInterface } from "node:readline";
 import { DEFAULT_DEVICE_TIMEOUT_MS } from "../device/connect-ledger-app";
 import { OutputFormatSchema, parseAccountDescriptor } from "../wallet/models";
 import type { AccountDescriptor } from "../wallet/models";
@@ -84,3 +85,19 @@ export async function resolveAccountDescriptor(input: string): Promise<AccountDe
 export async function resolveAccountDescriptorV1(input: string): Promise<AccountDescriptorV1> {
   return parseV1(await resolveAccountInput(input));
 }
+
+/** Prompts on stderr for a typed confirmation word (e.g. `"destroy"`) before a destructive command
+ * proceeds. Shared by `ring destroy` and `ledger-sync destroy` so their confirmation gate can't
+ * drift independently. */
+export async function confirmTyped(word: string): Promise<boolean> {
+  const rl = createInterface({ input: process.stdin, output: process.stderr });
+  const answer = await new Promise<string>(resolvePromise => {
+    rl.question(`Type "${word}" to confirm: `, ans => {
+      rl.close();
+      resolvePromise(ans.trim());
+    });
+  });
+  return answer === word;
+}
+
+export { errMessage } from "../shared/error-message";

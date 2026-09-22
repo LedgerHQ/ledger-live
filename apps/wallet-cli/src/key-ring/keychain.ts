@@ -61,7 +61,9 @@ export async function loadMemberCredentials(
     firstLine,
     wrappingKey,
     () => {
-      throw new PasswordRequiredError("Private key is password-protected but no password provided.");
+      throw new PasswordRequiredError(
+        "Private key is password-protected but no password provided.",
+      );
     },
     () => {
       // A non-hex payload is corruption, not a wrong password — don't send the user retrying passwords.

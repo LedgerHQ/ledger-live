@@ -1,7 +1,13 @@
-import { accountDescriptorSchema, type AccountDescriptor } from "@ledgerhq/live-wallet/accounts";
-import { CloudSyncSDK, type UpdateEvent } from "@shared/cloud-sync";
-import type { Trustchain, MemberCredentials, TrustchainSDK } from "@shared/cloud-sync";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  CloudSyncSDK,
+  type UpdateEvent,
+  type Trustchain,
+  type MemberCredentials,
+  type TrustchainSDK,
+} from "@shared/cloud-sync";
 import { getEnv } from "@shared/env";
+import { errMessage } from "../shared/error-message";
 import type { LedgerSyncEnvironment } from "../key-ring/constants";
 import {
   toV1,
@@ -9,8 +15,10 @@ import {
   UnsupportedFamilyError,
   UnknownNetworkError,
   AccountDescriptorV1Schema,
+  AccountDescriptorV0Schema,
   type AccountDescriptorV0,
 } from "../shared/accountDescriptor";
+import { SUPPORTED_TRANSACTION_FAMILIES } from "../wallet/intents";
 import { Session } from "../session/session-store";
 
 /** Ledger Sync's Cloud Sync "slug" for the account-list document — matches Desktop/Mobile's
@@ -91,8 +99,6 @@ type UnchangedEntry = { status: "unchanged"; label: string; network: string };
 type SkippedEntry = { status: "skipped"; id: string; reason: string };
 type InvalidEntry = { status: "invalid"; id: string; reason: string };
 
-export type LedgerSyncImportEntry = ImportedEntry | UnchangedEntry | SkippedEntry | InvalidEntry;
-
 export type LedgerSyncImportReport = {
   imported: ImportedEntry[];
   unchanged: UnchangedEntry[];
@@ -111,6 +117,12 @@ function entryId(raw: unknown): string {
   return "<unknown>";
 }
 
+// wallet-cli only knows how to build send intents for these families (see
+// `wallet/intents/families/*.ts`) — anything else converts to a valid AccountDescriptorV1 just fine
+// (toV1() only fails for a currency the derivation-mode registry itself can't resolve, which is a
+// much smaller set) but would be unusable the moment any other command tried to act on it.
+const SUPPORTED_FAMILIES = new Set<string>(SUPPORTED_TRANSACTION_FAMILIES);
+
 /**
  * Convert Ledger Sync's raw synced account list into wallet-cli's own AccountDescriptorV1 and
  * merge it idempotently into `session` via `Session.addDescriptor` (deterministic, non-conflicting
@@ -127,7 +139,7 @@ export function mergeSyncedAccounts(
   const report = emptyReport();
 
   for (const raw of rawAccounts) {
-    const parsed = accountDescriptorSchema.safeParse(raw);
+    const parsed = AccountDescriptorV0Schema.safeParse(raw);
     if (!parsed.success) {
       report.invalid.push({
         status: "invalid",
@@ -137,10 +149,32 @@ export function mergeSyncedAccounts(
       continue;
     }
 
-    const descriptor: AccountDescriptor = parsed.data;
+    const descriptor: AccountDescriptorV0 = parsed.data;
+
+    // Checked before toV1() rather than relying on it to throw: toV1() only fails for a currency
+    // the derivation-mode registry can't resolve at all, not for one wallet-cli simply has no
+    // transaction-family support for (e.g. Cardano/Polkadot/Tezos convert to a perfectly valid
+    // AccountDescriptorV1 and would otherwise be silently `imported`).
+    let family: string | undefined;
+    try {
+      family = getCryptoCurrencyById(descriptor.currencyId).family;
+    } catch {
+      family = undefined; // Unresolvable currencyId — let toV1() below classify it as before.
+    }
+    if (family !== undefined && !SUPPORTED_FAMILIES.has(family)) {
+      report.skipped.push({
+        status: "skipped",
+        id: descriptor.id,
+        reason:
+          `Currency family "${family}" is not supported by wallet-cli (supported: ` +
+          `${[...SUPPORTED_FAMILIES].join(", ")}).`,
+      });
+      continue;
+    }
+
     let v1;
     try {
-      v1 = toV1(descriptor as AccountDescriptorV0);
+      v1 = toV1(descriptor);
     } catch (e) {
       if (e instanceof UnsupportedFamilyError || e instanceof UnknownNetworkError) {
         report.skipped.push({ status: "skipped", id: descriptor.id, reason: e.message });
@@ -148,7 +182,7 @@ export function mergeSyncedAccounts(
         report.invalid.push({
           status: "invalid",
           id: descriptor.id,
-          reason: e instanceof Error ? e.message : String(e),
+          reason: errMessage(e),
         });
       }
       continue;

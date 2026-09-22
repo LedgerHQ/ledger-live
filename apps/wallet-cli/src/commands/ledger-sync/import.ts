@@ -57,7 +57,10 @@ export default defineCommand({
       const importSpin = out.spin("Restoring Ledger Sync encryption key…");
       let restored;
       try {
-        restored = await sdk.restoreTrustchain(trustchainFromMeta(trustchainMeta), memberCredentials);
+        restored = await sdk.restoreTrustchain(
+          trustchainFromMeta(trustchainMeta),
+          memberCredentials,
+        );
       } catch (e) {
         importSpin?.error("Restore failed");
         if ((e as { name?: string })?.name === "TrustchainEjected") {
@@ -112,7 +115,14 @@ export default defineCommand({
       }
 
       const report = mergeSyncedAccounts(session, pulled.accounts);
-      session.setLedgerSyncVersion(pulled.version);
+      // Only advance the cached version when nothing came back `invalid` — an invalid entry usually
+      // means a real bug (or transient corruption) in the synced data, and bumping the version here
+      // would make the next `import` see "up-to-date" and never hand back these raw accounts again,
+      // permanently losing the chance to recover once whatever caused it is fixed. `skipped` entries
+      // are a stable, intentional classification (an unsupported currency family) and don't block it.
+      if (report.invalid.length === 0) {
+        session.setLedgerSyncVersion(pulled.version);
+      }
       session.write();
       out.ledgerSyncImport(report);
     });

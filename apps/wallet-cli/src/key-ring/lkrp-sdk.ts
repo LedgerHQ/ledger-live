@@ -24,7 +24,9 @@ export function createLkrpSdk(options?: {
     {
       applicationId,
       name: memberName,
-      apiBaseUrl: getEnv(environment === "staging" ? "TRUSTCHAIN_API_STAGING" : "TRUSTCHAIN_API_PROD"),
+      apiBaseUrl: getEnv(
+        environment === "staging" ? "TRUSTCHAIN_API_STAGING" : "TRUSTCHAIN_API_PROD",
+      ),
     },
     withDevice,
   );
