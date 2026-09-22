@@ -1,4 +1,4 @@
-import { openAuthSessionAsync, openBrowserAsync } from "expo-web-browser";
+import { openAuthSessionAsync } from "expo-web-browser";
 import type { HostedLoginResult } from "../../state/types";
 
 /**
@@ -14,19 +14,11 @@ import type { HostedLoginResult } from "../../state/types";
  * The session's own answer carries the redirect, so it is the fastest of the two callback routes. The
  * app's deep link is the other one, and whichever arrives first wins.
  */
-export async function openHostedLoginInSecureBrowser(
-  loginUrl: string,
+export async function openHostedUrlInSecureBrowser(
+  hostedUrl: string,
   deepLink?: string,
 ): Promise<HostedLoginResult> {
-  const result = await openAuthSessionAsync(loginUrl, deepLink);
+  const result = await openAuthSessionAsync(hostedUrl, deepLink);
 
   return result.type === "success" ? { type: "success", url: result.url } : { type: "dismissed" };
-}
-
-/**
- * Opens a hosted page the holder browses and closes on their own — unlike the login above, nothing
- * redirects back into the app, so there is no result to report.
- */
-export async function openHostedPageInSecureBrowser(url: string): Promise<void> {
-  await openBrowserAsync(url);
 }

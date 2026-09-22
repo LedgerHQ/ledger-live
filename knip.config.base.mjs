@@ -6,6 +6,10 @@ const rootConfig = require("./knip.json");
 /**
  * Creates a Knip configuration for one platform of a dual-platform package.
  *
+ * Why the split exists, when each option is needed, and the resolution facts behind it:
+ * `.agents/skills/knip-migration/SKILL.md`. Consumers of this helper carry no comments of their
+ * own, so read that section before adding an option here.
+ *
  * @param {{
  *   packagePath: string;
  *   platform: "native" | "web";
@@ -13,12 +17,13 @@ const rootConfig = require("./knip.json");
  *   additionalProjectExcludes?: string[];
  *   additionalIgnoreDependencies?: string[];
  * }} options
+ * `entry` is `[]` unless `package.json` cannot yield the entry point.
  * `additionalProjectExcludes` values must omit the leading `!`.
  * @example
  * createDualPlatformKnipConfig({
  *   packagePath: "features/flow/example",
  *   platform: "web",
- *   entry: ["src/index.ts"],
+ *   entry: [],
  * });
  */
 export function createDualPlatformKnipConfig({

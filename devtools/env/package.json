@@ -18,7 +18,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "unimported": "pnpm knip --directory ../.. -c devtools/env/knip.web.config.mjs -W devtools/env --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/env/knip.native.config.mjs -W devtools/env --tsConfig tsconfig.native.json"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

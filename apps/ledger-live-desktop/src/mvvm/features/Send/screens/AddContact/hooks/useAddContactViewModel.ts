@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
-import { useSendFlowData } from "../../../context/SendFlowContext";
-import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { track, trackPage } from "~/renderer/analytics/segment";
 
 type AddContactViewModel = Readonly<{
@@ -12,11 +11,7 @@ type AddContactViewModel = Readonly<{
 
 export function useAddContactViewModel(): AddContactViewModel {
   const { navigation } = useFlowWizard<SendFlowStep>();
-  const { state } = useSendFlowData();
-  const trackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
-    [state.account.account, state.account.parentAccount],
-  );
+  const trackingProperties = useSendFlowTrackingProperties();
 
   useEffect(() => {
     trackPage("Modal send - add contact options", null, trackingProperties);

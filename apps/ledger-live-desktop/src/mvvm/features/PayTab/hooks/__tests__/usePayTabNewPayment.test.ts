@@ -5,6 +5,7 @@ import {
   mockContactWithAddress,
   mockContactWithMultipleAddresses,
 } from "@domain/entity-contact/schema.mock";
+import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { usePayTabNewPayment } from "../usePayTabNewPayment";
 
@@ -25,7 +26,7 @@ describe("usePayTabNewPayment", () => {
     act(() => result.current.open());
 
     expect(mockOpenSendFlow).toHaveBeenCalledWith({
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
       categories: [AssetCategory.Stablecoins],
     });
   });
@@ -37,7 +38,7 @@ describe("usePayTabNewPayment", () => {
     act(() => result.current.payFromAddress(address));
 
     expect(mockOpenSendFlow).toHaveBeenCalledWith({
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
       currencyIds: [address.currencyId],
       recipient: address.address,
       skipRecipientStep: true,
@@ -52,7 +53,7 @@ describe("usePayTabNewPayment", () => {
     act(() => result.current.open(contact));
 
     expect(mockOpenSendFlow).toHaveBeenCalledWith({
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
       currencyIds: [address.currencyId],
       recipient: address.address,
       skipRecipientStep: true,
@@ -68,7 +69,7 @@ describe("usePayTabNewPayment", () => {
     act(() => result.current.open(contact));
 
     expect(mockOpenSendFlow).toHaveBeenCalledWith({
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
       categories: [AssetCategory.Stablecoins],
     });
   });

@@ -2,12 +2,13 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
 import {
   buildTopUpPath,
+  buildWithdrawalPath,
   buildAccessBaanxPath,
-  MANAGE_PIN_PATH,
-  openHostedPageSafely,
+  buildManagePinPath,
+  openHostedCardPathSafely,
+  type CardAssetPathBuilder,
 } from "@features/flow-pay-card-auth";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
-import { readCardUsEnv } from "@features/platform-card";
 import useEnv from "@features/platform-env";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { useSelector } from "LLD/hooks/redux";
@@ -126,19 +127,23 @@ export function useCardViewModel(): CardViewModel {
 
   const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
 
-  const openTopUpPage = useCallback(
-    async (currency?: string) => {
-      try {
-        const isUsCardHolder = await readCardUsEnv(usAppId);
-        await openHostedPage(buildTopUpPath(isUsCardHolder ? usAppId : null, currency));
-      } catch (error) {
-        logger.warn("[card] the top up page did not open", error);
-      }
-    },
+  const openHostedPath = useCallback(
+    (buildPath: CardAssetPathBuilder, onError: (error: unknown) => void, currency?: string) =>
+      openHostedCardPathSafely(openHostedPage, usAppId, buildPath, onError, currency),
     [openHostedPage, usAppId],
   );
 
-  const onTopUp = useCallback(() => openTopUpPage(), [openTopUpPage]);
+  const openAssetPage = useCallback(
+    (buildPath: CardAssetPathBuilder, currency?: string) =>
+      openHostedPath(
+        buildPath,
+        error => logger.warn("[card] the hosted asset page did not open", error),
+        currency,
+      ),
+    [openHostedPath],
+  );
+
+  const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
 
   useWipeHostedSession();
 
@@ -178,28 +183,27 @@ export function useCardViewModel(): CardViewModel {
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openTopUpPage(asset.currency),
+      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
+      onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
     }),
-    [onShowAssetHistory, openTopUpPage, payCardAssets],
+    [onShowAssetHistory, openAssetPage, payCardAssets],
   );
 
   const onManagePin = useCallback(
     () =>
-      openHostedPageSafely(openHostedPage, MANAGE_PIN_PATH, error =>
+      openHostedPath(buildManagePinPath, error =>
         logger.warn("[card] manage pin page did not open", error),
       ),
-    [openHostedPage],
+    [openHostedPath],
   );
 
-  const onAccessBaanx = useCallback(async () => {
-    const isUsCardHolder = await readCardUsEnv(usAppId);
-
-    await openHostedPageSafely(
-      openHostedPage,
-      buildAccessBaanxPath(isUsCardHolder ? usAppId : null),
-      error => logger.warn("[card] baanx page did not open", error),
-    );
-  }, [openHostedPage, usAppId]);
+  const onAccessBaanx = useCallback(
+    () =>
+      openHostedPath(buildAccessBaanxPath, error =>
+        logger.warn("[card] baanx page did not open", error),
+      ),
+    [openHostedPath],
+  );
 
   const onHelp = useCallback(() => {
     openURL(urls.cardHelpCenter);

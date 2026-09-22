@@ -120,7 +120,7 @@ describe("craftTransaction — partner-built transaction", () => {
     recipient: "",
     amount: 0n,
     asset: { type: "native" },
-    data: { type: "solana", raw: PREBUILT_TX },
+    data: { type: "buffer", value: Buffer.from(PREBUILT_TX, "base64") },
   } as unknown as TransactionIntent;
 
   beforeEach(() => {
@@ -170,7 +170,7 @@ describe("craftTransaction — partner-built transaction", () => {
     await expect(
       craftTransaction(api, {
         ...intent,
-        data: { type: "solana", raw: "bm90LWEtdHJhbnNhY3Rpb24=" },
+        data: { type: "buffer", value: Buffer.from("bm90LWEtdHJhbnNhY3Rpb24=", "base64") },
       } as unknown as TransactionIntent),
     ).rejects.toThrow("Invalid or unsupported raw transaction");
   });

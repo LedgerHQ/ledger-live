@@ -160,12 +160,6 @@ export function rewriteIndexRegistry(tree: Tree, tools: toolMeta[]) {
       tools!.map(t => `export * from "./${names(t.toolName).fileName}";`).join("\n") + "\n";
     tree.write(`${REGISTRY_META}/${team}/index.ts`, content);
   }
-  const teamContent =
-    Object.keys(teamTools)
-      .map(team => `export * from "./${team}";`)
-      .join("\n") + "\n";
-
-  tree.write(`${REGISTRY_META}/index.ts`, teamContent);
 }
 
 // Only for reformat script, not used in this file

@@ -1,6 +1,4 @@
 import React from "react";
-import { configureStore } from "@reduxjs/toolkit";
-import { Provider } from "react-redux";
 import { act, renderHook } from "@testing-library/react-native";
 import { Platform } from "react-native";
 
@@ -9,29 +7,22 @@ jest.mock("./openWalletApp", () => ({
   openWalletApp: jest.fn(),
 }));
 
+jest.mock("@domain/api-card-management", () => ({ useGetCardStatusQuery: jest.fn() }));
+
+import { useGetCardStatusQuery } from "@domain/api-card-management";
 import { CARD_ONBOARDING_ADD_TO_WALLET_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
-import { payCardOnboardingWidgetSlice, selectHasAddedCardToWallet } from "../../state";
 import { openGoogleWalletStore, openWalletApp } from "./openWalletApp";
 import {
   type AddToWalletInstructionsViewProps,
   useAddToWalletInstructionsViewModel,
 } from "./useAddToWalletInstructionsViewModel";
 
-function renderViewModel(onDone = jest.fn()) {
-  const store = configureStore({
-    reducer: { payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer },
-  });
+const refetchCardStatus = jest.fn();
 
-  return {
-    store,
-    ...renderHook(() => useAddToWalletInstructionsViewModel({ onDone }), {
-      wrapper: ({ children }) => (
-        <Provider store={store}>
-          <I18nWrapper>{children}</I18nWrapper>
-        </Provider>
-      ),
-    }),
-  };
+function renderViewModel(onDone = jest.fn()) {
+  return renderHook(() => useAddToWalletInstructionsViewModel({ onDone }), {
+    wrapper: ({ children }) => <I18nWrapper>{children}</I18nWrapper>,
+  });
 }
 
 function getScene<TScene extends AddToWalletInstructionsViewProps["scene"]>(
@@ -45,6 +36,10 @@ function getScene<TScene extends AddToWalletInstructionsViewProps["scene"]>(
 describe("useAddToWalletInstructionsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(useGetCardStatusQuery).mockReturnValue({
+      refetch: refetchCardStatus,
+      data: undefined,
+    } as unknown as ReturnType<typeof useGetCardStatusQuery>);
     jest.mocked(openWalletApp).mockResolvedValue(true);
     jest.mocked(openGoogleWalletStore).mockResolvedValue(true);
     Platform.OS = "ios";
@@ -75,13 +70,13 @@ describe("useAddToWalletInstructionsViewModel", () => {
     expect(instructions.ctaLabel).toBe(CARD_ONBOARDING_ADD_TO_WALLET_COPY.android.cta);
   });
 
-  it("dispatches and tells the host it is done once the wallet opened", async () => {
+  it("re-asks the provider and tells the host it is done once the wallet opened", async () => {
     const onDone = jest.fn();
-    const { store, result } = renderViewModel(onDone);
+    const { result } = renderViewModel(onDone);
 
     await act(getScene(result.current, "instructions").onPressCta);
 
-    expect(selectHasAddedCardToWallet(store.getState())).toBe(true);
+    expect(refetchCardStatus).toHaveBeenCalledTimes(1);
     expect(openWalletApp).toHaveBeenCalledTimes(1);
     expect(onDone).toHaveBeenCalledTimes(1);
   });
@@ -89,11 +84,11 @@ describe("useAddToWalletInstructionsViewModel", () => {
   it("shows the iOS error scene when Apple Wallet could not be opened", async () => {
     jest.mocked(openWalletApp).mockResolvedValue(false);
     const onDone = jest.fn();
-    const { store, result } = renderViewModel(onDone);
+    const { result } = renderViewModel(onDone);
 
     await act(getScene(result.current, "instructions").onPressCta);
 
-    expect(selectHasAddedCardToWallet(store.getState())).toBe(false);
+    expect(refetchCardStatus).not.toHaveBeenCalled();
     expect(onDone).not.toHaveBeenCalled();
     expect(getScene(result.current, "error").title).toBe(
       CARD_ONBOARDING_ADD_TO_WALLET_COPY.ios.error.title,
@@ -103,13 +98,13 @@ describe("useAddToWalletInstructionsViewModel", () => {
   it("retries Apple Wallet from the iOS error scene", async () => {
     jest.mocked(openWalletApp).mockResolvedValueOnce(false).mockResolvedValueOnce(true);
     const onDone = jest.fn();
-    const { store, result } = renderViewModel(onDone);
+    const { result } = renderViewModel(onDone);
 
     await act(getScene(result.current, "instructions").onPressCta);
     await act(getScene(result.current, "error").onPressAction);
 
     expect(openWalletApp).toHaveBeenCalledTimes(2);
-    expect(selectHasAddedCardToWallet(store.getState())).toBe(true);
+    expect(refetchCardStatus).toHaveBeenCalledTimes(1);
     expect(onDone).toHaveBeenCalledTimes(1);
   });
 
@@ -117,13 +112,13 @@ describe("useAddToWalletInstructionsViewModel", () => {
     Platform.OS = "android";
     jest.mocked(openWalletApp).mockResolvedValue(false);
     const onDone = jest.fn();
-    const { store, result } = renderViewModel(onDone);
+    const { result } = renderViewModel(onDone);
 
     await act(getScene(result.current, "instructions").onPressCta);
     await act(getScene(result.current, "error").onPressAction);
 
     expect(openGoogleWalletStore).toHaveBeenCalledTimes(1);
-    expect(selectHasAddedCardToWallet(store.getState())).toBe(false);
+    expect(refetchCardStatus).not.toHaveBeenCalled();
     expect(onDone).not.toHaveBeenCalled();
 
     act(getScene(result.current, "error").onBack);

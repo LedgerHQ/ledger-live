@@ -4,6 +4,7 @@ import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { screen, waitFor, within } from "@tests/test-renderer";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
 import { AssetCategory } from "@domain/api-aggregated-assets";
+import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { screen as trackScreen } from "~/analytics/segment";
@@ -612,7 +613,7 @@ describe("PayTab integration", () => {
       expect(store.getState().modularDrawer).toMatchObject({
         isOpen: true,
         flow: "send",
-        source: "Pay",
+        source: SEND_FLOW_SOURCE.PAY,
         preselectedCurrencies: [address.currencyId],
       });
     });
@@ -651,7 +652,7 @@ describe("PayTab integration", () => {
       expect(store.getState().modularDrawer).toMatchObject({
         isOpen: true,
         flow: "send",
-        source: "Pay",
+        source: SEND_FLOW_SOURCE.PAY,
         uiUseCase: "pay",
         preselectedCurrencies: [address.currencyId],
       });

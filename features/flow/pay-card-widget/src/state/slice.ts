@@ -3,7 +3,6 @@ import type { PayCardOnboardingWidgetState } from "./types";
 
 export const payCardOnboardingWidgetInitialState: PayCardOnboardingWidgetState = {
   hasCompletedOnboarding: false,
-  hasAddedCardToWallet: false,
 };
 
 export const payCardOnboardingWidgetSlice = createSlice({
@@ -16,22 +15,13 @@ export const payCardOnboardingWidgetSlice = createSlice({
     resetCardOnboardingCompleted: state => {
       state.hasCompletedOnboarding = false;
     },
-    resetCardAddedToWallet: state => {
-      state.hasAddedCardToWallet = false;
-    },
-    markCardAddedToWallet: state => {
-      state.hasAddedCardToWallet = true;
-    },
     restorePayCardOnboardingWidget: (
       state,
       action: PayloadAction<Partial<PayCardOnboardingWidgetState> | undefined>,
     ) => {
-      const { hasCompletedOnboarding, hasAddedCardToWallet } = action.payload ?? {};
+      const { hasCompletedOnboarding } = action.payload ?? {};
       if (typeof hasCompletedOnboarding === "boolean") {
         state.hasCompletedOnboarding = hasCompletedOnboarding;
-      }
-      if (typeof hasAddedCardToWallet === "boolean") {
-        state.hasAddedCardToWallet = hasAddedCardToWallet;
       }
     },
   },
@@ -40,7 +30,5 @@ export const payCardOnboardingWidgetSlice = createSlice({
 export const {
   markCardOnboardingCompleted,
   resetCardOnboardingCompleted,
-  markCardAddedToWallet,
-  resetCardAddedToWallet,
   restorePayCardOnboardingWidget,
 } = payCardOnboardingWidgetSlice.actions;

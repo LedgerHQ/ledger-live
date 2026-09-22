@@ -5,7 +5,7 @@ export function MarketBanner() {
   return (
     <Box
       lx={{
-        backgroundColor: "error",
+        backgroundColor: "errorTransparent",
         borderRadius: "md",
         padding: "s16",
         flexDirection: "row",

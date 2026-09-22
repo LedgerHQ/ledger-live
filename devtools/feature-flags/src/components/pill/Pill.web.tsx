@@ -11,7 +11,7 @@ export interface PillProps {
 }
 
 const PALETTE: Record<PillVariant, string> = {
-  success: "bg-success text-success",
+  success: "bg-success-transparent text-success",
   muted: "bg-muted text-muted",
   active: "bg-active-subtle text-active",
   black: "bg-black text-white",

@@ -9,8 +9,8 @@ export interface SectionProps {
 
 const TINTS = {
   activeSubtle: "bg-active-subtle",
-  warning: "bg-warning",
-  success: "bg-success",
+  warning: "bg-warning-transparent",
+  success: "bg-success-transparent",
 } as const;
 
 export function Section({ title, backgroundColor, children }: SectionProps) {

@@ -76,6 +76,10 @@ const mockRecipientSearch = {
   clear: jest.fn(),
 };
 
+const mockSendFlowState = {
+  account: { account: mockAccount, parentAccount: null, currency: mockAccount.currency },
+};
+
 const idleResult: AddressSearchResult = {
   status: "idle",
   error: null,
@@ -104,7 +108,7 @@ describe("useRecipientScreenView", () => {
     mockedUseClipboardRecipient.mockReturnValue({ clipboardAddress: null });
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
     mockedUseAddressValidation.mockReturnValue({
@@ -198,7 +202,7 @@ describe("useRecipientScreenView", () => {
   it("tracks a settled recipient result without exposing the raw query", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "0x123" },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
     mockedUseAddressValidation.mockReturnValue({
@@ -235,7 +239,7 @@ describe("useRecipientScreenView", () => {
     let searchValue = "0x123";
     mockedUseSendFlowData.mockImplementation(() => ({
       recipientSearch: { ...mockRecipientSearch, value: searchValue },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     }));
     mockedUseAddressValidation.mockReturnValue({
@@ -532,7 +536,7 @@ describe("useRecipientScreenView", () => {
     mockedUseContacts.mockReturnValue([contact]);
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "benoit" },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
 
@@ -553,7 +557,7 @@ describe("useRecipientScreenView", () => {
   it("shows search results when search value is provided", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "some_address" },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
 
@@ -723,6 +727,7 @@ describe("useRecipientScreenView", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
       state: {
+        ...mockSendFlowState,
         recipient: {
           address: "same_address",
           memo: { type: "MEMO", value: "note-1" },
@@ -752,6 +757,7 @@ describe("useRecipientScreenView", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
       state: {
+        ...mockSendFlowState,
         recipient: {
           address: "address_a",
           memo: { type: "MEMO", value: "note-1" },
@@ -799,7 +805,7 @@ describe("useRecipientScreenView", () => {
   it("shows sanctioned banner when address is sanctioned", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "sanctioned_address" },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
 
@@ -825,7 +831,7 @@ describe("useRecipientScreenView", () => {
   it("shows address validation error for incorrect format", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "invalid_address" },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
 
@@ -851,7 +857,7 @@ describe("useRecipientScreenView", () => {
   it("shows matched address when validation is valid", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "valid_address" },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
 
@@ -881,7 +887,7 @@ describe("useRecipientScreenView", () => {
   it("identifies self-transfer error correctly", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "source_address" },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
 
@@ -912,7 +918,7 @@ describe("useRecipientScreenView", () => {
   it("treats InvalidAddress as incorrect format for domain-like strings", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "invalid.eth" },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
 
@@ -942,7 +948,7 @@ describe("useRecipientScreenView", () => {
   it("shows empty state when no matches and not complete", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "searching" },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
 
@@ -1010,7 +1016,7 @@ describe("useRecipientScreenView", () => {
   it("keeps the contact resolution when the step hands the recipient to the amount step", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "Alice" },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
     const contact = mockContact({
@@ -1041,7 +1047,7 @@ describe("useRecipientScreenView", () => {
     // emptying the field to start a new lookup.
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "" },
-      state: {} as never,
+      state: mockSendFlowState as never,
       uiConfig: {} as never,
     });
     rerender(undefined);

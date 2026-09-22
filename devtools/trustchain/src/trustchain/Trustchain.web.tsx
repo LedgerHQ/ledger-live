@@ -10,7 +10,7 @@ import { DestroyTrustchain } from "../components/sdk/DestroyTrustchain";
 import { useTrustchainViewModel } from "./useTrustchainViewModel";
 import type { TrustchainDevToolProps } from "../types";
 
-export function Trustchain(props: TrustchainDevToolProps) {
+function Trustchain(props: TrustchainDevToolProps) {
   const vm = useTrustchainViewModel(props);
 
   return (

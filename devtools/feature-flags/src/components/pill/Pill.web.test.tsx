@@ -8,7 +8,7 @@ describe("Pill", () => {
   });
 
   it.each([
-    ["success", "bg-success", "text-success"],
+    ["success", "bg-success-transparent", "text-success"],
     ["muted", "bg-muted", "text-muted"],
     ["active", "bg-active-subtle", "text-active"],
   ] as const)("applies palette classes for variant %s", (variant, bg, text) => {

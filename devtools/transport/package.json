@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "unimported": "pnpm knip --directory ../.. -W devtools/transport"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",

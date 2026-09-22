@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "unimported": "pnpm knip --directory ../.. -W devtools/wire"
   },
   "dependencies": {
     "@devtools/protocols": "workspace:*",

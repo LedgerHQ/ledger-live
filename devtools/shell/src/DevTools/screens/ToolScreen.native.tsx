@@ -10,5 +10,3 @@ export function ToolScreen(props: ToolScreenProps) {
 
   return <ToolShell tool={tool} />;
 }
-
-export default ToolScreen;

@@ -1,7 +1,17 @@
 import { PAY_CARD_TRANSACTION_CATEGORIES, PayCardTransactionsResponseSchema } from "./schema";
-import { documentedPayCardTransaction, mockPayCardTransactions } from "./cardTransactions.mock";
+import {
+  clearPayCardTransactionsMock,
+  documentedPayCardTransaction,
+  emptyPayCardTransactionsMock,
+  fillPayCardTransactionsMock,
+  mockPayCardTransactions,
+  readPayCardTransactionsMock,
+  receivePayCardTransactionMock,
+} from "./cardTransactions.mock";
 
 describe("mockPayCardTransactions", () => {
+  afterEach(clearPayCardTransactionsMock);
+
   it("answers a page the transaction schema accepts", () => {
     expect(PayCardTransactionsResponseSchema.parse(mockPayCardTransactions())).toHaveLength(
       PAY_CARD_TRANSACTION_CATEGORIES.length,
@@ -12,6 +22,29 @@ describe("mockPayCardTransactions", () => {
     const categories = mockPayCardTransactions().map(({ mccCategory }) => mccCategory);
 
     expect([...categories].sort()).toEqual([...PAY_CARD_TRANSACTION_CATEGORIES].sort());
+  });
+
+  it("can hold empty and full endpoint answers for QA", () => {
+    emptyPayCardTransactionsMock();
+    expect(readPayCardTransactionsMock()).toEqual([]);
+
+    fillPayCardTransactionsMock();
+    expect(readPayCardTransactionsMock()).toHaveLength(mockPayCardTransactions().length);
+
+    clearPayCardTransactionsMock();
+    expect(readPayCardTransactionsMock()).toBeUndefined();
+  });
+
+  it("receives newest transactions scoped to the selected funding asset", () => {
+    receivePayCardTransactionMock("usdc");
+    receivePayCardTransactionMock("btc");
+
+    const mocked = readPayCardTransactionsMock();
+    expect(mocked).toHaveLength(2);
+    expect(
+      mocked?.map(transaction => (transaction.fundingSources ?? []).map(source => source.currency)),
+    ).toEqual([["btc"], ["usdc"]]);
+    expect(mocked?.[0]?.id).toMatch(/^devtool-btc-/);
   });
 
   it("covers different fiat and funding asset amounts for visual testing", () => {

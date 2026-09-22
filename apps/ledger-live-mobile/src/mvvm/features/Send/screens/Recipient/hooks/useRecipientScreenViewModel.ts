@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { screen } from "~/analytics";
 import { ScreenName } from "~/const";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import type { SendFlowNavigationProp } from "../../../types";
 
@@ -55,6 +55,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     () => state.account.currency ?? (account ? getAccountCurrency(account) : null),
     [state.account.currency, account],
   );
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
   const trackingProperties = useMemo(() => {
     const contactsOnNetwork =
       isContactsFeatureEnabled &&
@@ -63,18 +64,17 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
         : [];
 
     return {
-      ...getSendFlowTrackingProperties(account, parentAccount),
+      ...sendFlowTrackingProperties,
       hasContacts: contactsOnNetwork.length > 0,
       contactsCount: contactsOnNetwork.length,
     };
   }, [
-    account,
+    sendFlowTrackingProperties,
     contacts,
     currency,
     eligibleAddressFamilies,
     excludedCurrencyIds,
     isContactsFeatureEnabled,
-    parentAccount,
   ]);
 
   const hasTrackedRef = useRef(false);

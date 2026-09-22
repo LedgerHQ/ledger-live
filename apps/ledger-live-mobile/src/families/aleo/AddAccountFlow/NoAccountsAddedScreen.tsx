@@ -30,7 +30,10 @@ export default function NoAccountsAddedScreen() {
     <SafeAreaView edges={["left", "right", "bottom", "top"]} isFlex>
       <TrackScreen category="AleoAddAccountFlow" name="No accounts added" />
       <VerticalGradientBackground stopColor={statusColor} />
-      <Box lx={{ backgroundColor: "warning", marginTop: "s96" }} style={styles.iconWrapper}>
+      <Box
+        lx={{ backgroundColor: "warningTransparent", marginTop: "s96" }}
+        style={styles.iconWrapper}
+      >
         <WarningFill size={40} color="warning" />
       </Box>
       <Box

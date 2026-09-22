@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import type { EnvDevToolProps, EnvVarEntry } from "../types";
 
-export function Env({ envVars, onOverride, onReset }: EnvDevToolProps) {
+function Env({ envVars, onOverride, onReset }: EnvDevToolProps) {
   const [query, setQuery] = useState("");
 
   const filtered = query.trim()

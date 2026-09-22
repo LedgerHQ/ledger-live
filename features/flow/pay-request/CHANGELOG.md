@@ -1,5 +1,37 @@
 # @features/flow-pay-request
 
+## 0.5.0
+
+### Minor Changes
+
+- [#21710](https://github.com/LedgerHQ/ledger-live/pull/21710) [`4ac2794`](https://github.com/LedgerHQ/ledger-live/commit/4ac2794b8244b094f2e91563bb7ad8a220d6cba5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Align request-receive with Figma. Mobile Share sends the rounded card PNG plus the address as text. Desktop Save writes one PNG.
+
+- [#21668](https://github.com/LedgerHQ/ledger-live/pull/21668) [`2edc7c8`](https://github.com/LedgerHQ/ledger-live/commit/2edc7c8d47b1ac8b49194155be8f8b3722574d39) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Keep the Pay Request receive QR scannable in light on mobile (white card, black modules) and use base color for Pay tab contact names (LIVE-37096).
+
+- [#22023](https://github.com/LedgerHQ/ledger-live/pull/22023) [`0f4b55e`](https://github.com/LedgerHQ/ledger-live/commit/0f4b55e46459492e880a8e5e118b570a934ce4d7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Polish Pay tab UI: square network icons, verify-address icon size, deposit dialog inset, header/balance spacing, and move card title/balance copy into the flow.
+
+### Patch Changes
+
+- Updated dependencies [[`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf)]:
+  - @shared/ui-queued-bottom-sheet@0.4.0
+  - @shared/ui-qr-code@0.4.0
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#21710](https://github.com/LedgerHQ/ledger-live/pull/21710) [`4ac2794`](https://github.com/LedgerHQ/ledger-live/commit/4ac2794b8244b094f2e91563bb7ad8a220d6cba5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Align request-receive with Figma. Mobile Share sends the rounded card PNG plus the address as text. Desktop Save writes one PNG.
+
+- [#21668](https://github.com/LedgerHQ/ledger-live/pull/21668) [`2edc7c8`](https://github.com/LedgerHQ/ledger-live/commit/2edc7c8d47b1ac8b49194155be8f8b3722574d39) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Keep the Pay Request receive QR scannable in light on mobile (white card, black modules) and use base color for Pay tab contact names (LIVE-37096).
+
+- [#22023](https://github.com/LedgerHQ/ledger-live/pull/22023) [`0f4b55e`](https://github.com/LedgerHQ/ledger-live/commit/0f4b55e46459492e880a8e5e118b570a934ce4d7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Polish Pay tab UI: square network icons, verify-address icon size, deposit dialog inset, header/balance spacing, and move card title/balance copy into the flow.
+
+### Patch Changes
+
+- Updated dependencies [[`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf)]:
+  - @shared/ui-queued-bottom-sheet@0.4.0-next.0
+  - @shared/ui-qr-code@0.4.0
+
 ## 0.4.0
 
 ### Minor Changes

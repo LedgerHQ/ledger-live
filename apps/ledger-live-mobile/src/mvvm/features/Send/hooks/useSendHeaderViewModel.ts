@@ -6,7 +6,7 @@ import { useMaybeAccountName } from "~/reducers/wallet";
 import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { track } from "~/analytics";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
@@ -123,10 +123,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const canGoBack =
     isSelectingContactAddress || Boolean(currentStepConfig?.canGoBack && navigation.canGoBack());
   const showRecipientInput = Boolean(currentStepConfig?.addressInput) && !isSelectingContactAddress;
-  const trackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
-    [state.account.account, state.account.parentAccount],
-  );
+  const trackingProperties = useSendFlowTrackingProperties();
 
   useEffect(() => {
     if (!isSelectingContactAddress) {

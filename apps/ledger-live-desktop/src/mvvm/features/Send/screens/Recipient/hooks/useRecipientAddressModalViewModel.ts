@@ -25,7 +25,7 @@ import { useAddressValidation } from "./useAddressValidation";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
 import { track, trackPage } from "~/renderer/analytics/segment";
-import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
@@ -70,10 +70,7 @@ export function useRecipientAddressModalViewModel({
     currency,
     excludedCurrencyIds,
   );
-  const sendFlowTrackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(account, parentAccount),
-    [account, parentAccount],
-  );
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const { result, isLoading } = useAddressValidation({
     searchValue: recipientSearch.value,

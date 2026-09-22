@@ -260,6 +260,7 @@ export const cardManagementApi = cardApi
           method: "GET",
         }),
         responseSchema: PayCardInternalWalletsResponseSchema,
+        providesTags: ["InternalWallets"],
       }),
 
       getRewardWallet: build.query<PayCardRewardWallet, void>({

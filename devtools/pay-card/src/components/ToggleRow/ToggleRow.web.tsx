@@ -14,7 +14,7 @@ export function ToggleRow({ label, description, checked, onChange }: ToggleRowPr
         <span className="body-3 text-base">{label}</span>
         {description ? <span className="body-4 text-muted font-mono">{description}</span> : null}
       </div>
-      <Switch selected={checked} onChange={onChange} />
+      <Switch selected={checked} onChange={onChange} aria-label={label} />
     </div>
   );
 }

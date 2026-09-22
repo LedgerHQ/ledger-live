@@ -1,5 +1,23 @@
 # @ledgerhq/transaction-observability
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb)]:
+  - @ledgerhq/types-live@6.124.0
+  - @shared/env@0.7.0
+  - @ledgerhq/evm-tools@1.14.3
+
+## 0.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb)]:
+  - @ledgerhq/types-live@6.124.0-next.0
+  - @shared/env@0.7.0-next.0
+  - @ledgerhq/evm-tools@1.14.3
+
 ## 0.3.0
 
 ### Minor Changes

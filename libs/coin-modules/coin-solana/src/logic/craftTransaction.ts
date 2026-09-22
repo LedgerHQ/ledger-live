@@ -52,7 +52,7 @@ import type {
   TransferCommand,
   Transaction,
   SolanaTokenProgram,
-  SolanaTxData,
+  SolanaTransactionIntentData,
 } from "../types";
 import { assertUnreachable, DUMMY_SIGNATURE, ZERO_FILLED_DUMMY_SIGNATURE } from "../utils";
 
@@ -62,20 +62,17 @@ import { assertUnreachable, DUMMY_SIGNATURE, ZERO_FILLED_DUMMY_SIGNATURE } from 
 
 export async function craftTransaction(
   api: ChainAPI,
-  intent: (TransactionIntent<StringMemo | MemoNotSupported> | StakingTransactionIntent) & {
-    data?: { type: string };
-  },
+  intent:
+    | TransactionIntent<StringMemo | MemoNotSupported, SolanaTransactionIntentData>
+    | StakingTransactionIntent<StringMemo | MemoNotSupported, SolanaTransactionIntentData>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
   if (!isValidBase58Address(intent.sender)) {
     throw new Error("Invalid sender address");
   }
 
-  if (intent.data?.type === "solana") {
-    const data = intent.data as SolanaTxData;
-    if (data.raw) {
-      return craftPrebuiltTransaction(api, { ...data, raw: data.raw }, intent.sender, customFees);
-    }
+  if ("data" in intent && intent.data.type === "buffer") {
+    return craftPrebuiltTransaction(api, intent.data.value, intent.sender, customFees);
   }
 
   if (intent.type === "stake.withdraw") {
@@ -119,13 +116,13 @@ export async function craftTransaction(
 
 async function craftPrebuiltTransaction(
   api: ChainAPI,
-  data: SolanaTxData & { raw: string },
+  raw: Buffer,
   sender: string,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
   let transaction: VersionedTransaction;
   try {
-    transaction = VersionedTransaction.deserialize(Buffer.from(data.raw, "base64"));
+    transaction = VersionedTransaction.deserialize(raw);
   } catch {
     throw new Error("Invalid or unsupported raw transaction");
   }
@@ -573,9 +570,11 @@ function resolveNativeTransferCommand(intent: TransactionIntent, memo?: string):
   };
 }
 
-export function stakeAccountSeedOfIntent(intent: unknown): string | undefined {
-  const data = (intent as { data?: SolanaTxData } | undefined)?.data;
-  return data?.type === "solana" ? data.stakeAccountSeed : undefined;
+export function stakeAccountSeedOfIntent(
+  intent: TransactionIntent<StringMemo | MemoNotSupported, SolanaTransactionIntentData>,
+): string | undefined {
+  if (!("data" in intent) || intent.data.type !== "stakeAccountSeed") return undefined;
+  return intent.data.value;
 }
 
 function getTokenMintAddress(intent: TransactionIntent): string | undefined {

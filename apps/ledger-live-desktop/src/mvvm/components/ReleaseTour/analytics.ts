@@ -1,11 +1,14 @@
 import { track, trackPage } from "~/renderer/analytics/segment";
 import type { ReleaseTourAnalytics, ReleaseTourAnalyticsContext } from "./types";
 
+type CtaPosition = "primary" | "secondary";
+
 type CreateReleaseTourAnalyticsParams = {
   readonly page: string;
   readonly contentId: string;
   readonly totalSteps: number;
   readonly variant?: string;
+  readonly ctaPosition?: CtaPosition;
 };
 
 const withVariant = <T extends object>(properties: T, variant?: string) =>
@@ -16,6 +19,7 @@ export const createReleaseTourAnalytics = ({
   contentId,
   totalSteps,
   variant,
+  ctaPosition = "secondary",
 }: CreateReleaseTourAnalyticsParams): ReleaseTourAnalytics => {
   const getContext = (slideIndex: number, stepName: string): ReleaseTourAnalyticsContext =>
     withVariant(
@@ -63,7 +67,7 @@ export const createReleaseTourAnalytics = ({
       track("button_clicked", {
         button: "continue",
         ...getInteractionProperties(context),
-        ctaPosition: "secondary",
+        ctaPosition,
       });
     },
     trackCloseClick: context => {

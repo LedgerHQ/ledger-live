@@ -14,9 +14,11 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/gener
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { createMockAccount } from "../../../Recipient/__integrations__/__fixtures__/accounts";
+import { useSendFlowTrackingProperties } from "../../../../hooks/useSendFlowTrackingProperties";
 
 jest.mock("@ledgerhq/live-common/bridge/impl");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
+jest.mock("../../../../hooks/useSendFlowTrackingProperties");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/registry", () => ({
   getSendDescriptor: jest.fn(),
 }));
@@ -105,6 +107,7 @@ const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
 const mockedUseTranslatedBridgeError = jest.mocked(useTranslatedBridgeError);
+const mockedUseSendFlowTrackingProperties = jest.mocked(useSendFlowTrackingProperties);
 
 function createNamedError(name: string): Error {
   const err = new Error("");
@@ -120,6 +123,13 @@ describe("useAmountScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    mockedUseSendFlowTrackingProperties.mockReturnValue({
+      flow: "send",
+      newSendFlow: true,
+      blockchain: "bitcoin",
+      currency: "BTC",
+      currency_id: "bitcoin",
+    });
     jest.mocked(sendFeatures.getBalanceTypeConfig).mockReturnValue(null);
 
     mockedGetAccountBridge.mockReturnValue({

@@ -1,5 +1,3 @@
-// The package still imports suffix-less `./ContactAvatar` and `./ContactNameInput`, so knip
-// must run once per platform or it flags every `.web.tsx` / `.native.tsx` twin as unused.
 import { createDualPlatformKnipConfig } from "../../../knip.config.base.mjs";
 
 export default createDualPlatformKnipConfig({

@@ -20,8 +20,7 @@ import {
   type SendPrefillAddAddressPhase,
 } from "LLM/features/Send/hooks/useSendPrefillAddAddressFlow";
 import { useAddToExistingContactViewModel } from "LLM/features/Send/screens/AddToExistingContact/hooks/useAddToExistingContactViewModel";
-import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowTrackingProperties } from "LLM/features/Send/hooks/useSendFlowTrackingProperties";
 import { screen, track } from "~/analytics";
 import { useDispatch } from "~/context/hooks";
 import { resolveKeyboardBottomOffset, useKeyboardVisible } from "~/logic/keyboardVisible";
@@ -110,7 +109,6 @@ function getDrawerTrackingPage(
 export function useAddNewContactViewModel(): AddNewContactViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { state } = useSendFlowData();
   const contacts = useContacts();
   const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
     eventTiming: Platform.OS === "ios" ? "will" : "did",
@@ -122,14 +120,15 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
     version: Platform.Version,
   });
   const [drawerOrigin, setDrawerOrigin] = useState<AddContactDrawerOrigin | null>(null);
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
   const trackingProperties = useMemo(
     () => ({
-      ...getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+      ...sendFlowTrackingProperties,
       ...buildContactsGlobalProperties({
         contacts,
       }),
     }),
-    [contacts, state.account.account, state.account.parentAccount],
+    [contacts, sendFlowTrackingProperties],
   );
   const closeAfterSave = useCallback(() => {
     setDrawerOrigin(null);

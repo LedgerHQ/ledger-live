@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import type { KeyboardAvoidingViewProps } from "react-native";
 import { Platform } from "react-native";
 import { track } from "~/analytics";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { shouldUseKeyboardAvoidance } from "~/logic/keyboardVisible";
 import { useMemoViewModel } from "../../../components/Memo/hooks/useMemoViewModel";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
@@ -48,12 +48,13 @@ export function useRecipientScreenContentViewModel({
     recipientSupportsDomain,
   });
   const { setRecipientResolution } = useSendFlowTracking();
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
   const trackingProperties = useMemo(
     () => ({
-      ...getSendFlowTrackingProperties(account, parentAccount),
+      ...sendFlowTrackingProperties,
       page: "step recipient",
     }),
-    [account, parentAccount],
+    [sendFlowTrackingProperties],
   );
 
   const resolvedAddress = recipient.result.resolvedAddress ?? recipient.searchValue;

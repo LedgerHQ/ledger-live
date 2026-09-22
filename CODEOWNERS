@@ -147,6 +147,7 @@ features/flow/pay-card-wallets/                          @ledgerhq/wallet-xp
 features/flow/pay-card-widget/                           @ledgerhq/wallet-xp
 features/flow/pay-card-transactions/                       @ledgerhq/wallet-xp
 features/flow/pay-contact/                               @ledgerhq/wallet-xp
+features/platform/pay-analytics/                         @ledgerhq/wallet-xp
 
 # Wallet — Intents
 features/platform/verify-address-intent/                 @ledgerhq/wallet-xp

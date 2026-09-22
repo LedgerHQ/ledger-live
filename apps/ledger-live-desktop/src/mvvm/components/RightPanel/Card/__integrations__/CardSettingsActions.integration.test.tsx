@@ -49,7 +49,7 @@ describe("Card settings actions", () => {
     await user.click(await screen.findByTestId("more-tile"));
     await user.click(await screen.findByTestId("more-row-managePin"));
 
-    expect(mockOpenHostedPage).toHaveBeenCalledWith("/dashboard/card/details");
+    expect(mockOpenHostedPage).toHaveBeenCalledWith("/set-pin");
   });
 
   it("forwards the access Baanx action from CardView into the rendered More menu", async () => {

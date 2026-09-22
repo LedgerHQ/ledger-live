@@ -15,7 +15,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { screen, track } from "~/analytics";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useSendFlowData } from "../../../context/SendFlowContext";
@@ -79,10 +79,7 @@ export function useRecipientScreenView({
     currency,
     excludedCurrencyIds,
   );
-  const sendFlowTrackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(account, parentAccount),
-    [account, parentAccount],
-  );
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const { result, isLoading } = useAddressValidation({
     searchValue: recipientSearch.value,
