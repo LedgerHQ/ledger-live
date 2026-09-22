@@ -252,6 +252,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
+      onAddAsset,
       onAddAssetPress,
       onMoveAsset,
       reorderingAssetId,

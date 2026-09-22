@@ -288,7 +288,7 @@ describe("useCardAssetsViewModel", () => {
       { wrapper: I18nWrapper },
     );
 
-    act(() => result.current.onAddAssetPress());
+    act(() => result.current.onAddAssetPress?.());
 
     expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
@@ -319,9 +319,9 @@ describe("useCardAssetsViewModel", () => {
     expect(result.current.dialogState).toBe("closed");
   });
 
-  it("should ignore the unreachable add asset action without assets props", () => {
+  it("should omit the add asset action without assets props", () => {
     const { result } = renderHook(() => useCardAssetsViewModel(), { wrapper: I18nWrapper });
 
-    expect(() => result.current.onAddAssetPress()).not.toThrow();
+    expect(result.current.onAddAssetPress).toBeUndefined();
   });
 });
