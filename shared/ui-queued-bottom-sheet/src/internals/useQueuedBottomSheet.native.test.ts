@@ -146,6 +146,7 @@ describe("useQueuedBottomSheet", () => {
     );
 
     signalOpen();
+    signalClose();
 
     act(() => {
       result.current.handleDismiss();
@@ -365,7 +366,7 @@ describe("useQueuedBottomSheet", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("calls onClose via handleDismiss when user swipes to dismiss (bypassing handleClose)", () => {
+  it("calls onClose via handleDismiss for a dismiss it asked for that skipped the animation", () => {
     const onClose = jest.fn();
     const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
@@ -377,6 +378,9 @@ describe("useQueuedBottomSheet", () => {
     );
 
     signalOpen();
+    act(() => {
+      result.current.handleBackdropPress();
+    });
     expect(onClose).not.toHaveBeenCalled();
 
     act(() => {
@@ -423,6 +427,7 @@ describe("useQueuedBottomSheet", () => {
     signalOpen();
     onModalHide = secondOnModalHide;
     rerender(undefined);
+    signalClose();
 
     act(() => {
       result.current.handleDismiss();
@@ -488,6 +493,110 @@ describe("useQueuedBottomSheet", () => {
 
     expect(onHeaderClosePressed).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("leaves the header close to Lumen instead of adding a dismiss of its own", () => {
+    const { signalOpen } = setupBottomSheetStateCapture();
+
+    const { result } = renderHook(() => {
+      const [isOpen, setIsOpen] = useState(true);
+      return useQueuedBottomSheet({
+        isRequestingToBeOpened: isOpen,
+        onClose: () => setIsOpen(false),
+      });
+    });
+
+    signalOpen();
+
+    act(() => {
+      result.current.handleHeaderClosePressed();
+    });
+
+    expect(mockDismiss).not.toHaveBeenCalled();
+  });
+
+  it("does not ask a sheet it has already dismissed to dismiss again", () => {
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+
+    renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+    signalOpen();
+    signalClose();
+    expect(mockDismiss).toHaveBeenCalledTimes(1);
+
+    signalClose();
+
+    expect(mockDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  // Otherwise a consumer that renders its content only while it asks for the sheet is left with an
+  // empty one on screen, with no close button to get out of.
+  it("presents a sheet again when a dismissal it never asked for lands on it", () => {
+    const onClose = jest.fn();
+    const { signalOpen } = setupBottomSheetStateCapture();
+
+    const { result } = renderHook(() =>
+      useQueuedBottomSheet({ isRequestingToBeOpened: true, onClose }),
+    );
+
+    signalOpen();
+
+    act(() => {
+      result.current.handleDismiss();
+    });
+
+    expect(onClose).not.toHaveBeenCalled();
+    expect(mockPresent).toHaveBeenCalledTimes(2);
+    expect(mockRemoveBottomSheetFromQueue).not.toHaveBeenCalled();
+  });
+
+  it("gives up on a presentation it has already put back on screen once", () => {
+    const onClose = jest.fn();
+    const { signalOpen } = setupBottomSheetStateCapture();
+
+    const { result } = renderHook(() =>
+      useQueuedBottomSheet({ isRequestingToBeOpened: true, onClose }),
+    );
+
+    signalOpen();
+
+    act(() => {
+      result.current.handleDismiss();
+    });
+    act(() => {
+      result.current.handleDismiss();
+    });
+
+    expect(mockPresent).toHaveBeenCalledTimes(2);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(mockRemoveBottomSheetFromQueue).toHaveBeenCalledTimes(1);
+  });
+
+  // gorhom ignores a dismiss for a sheet that has not finished presenting, so the sheet arrives on
+  // screen showing a consumer that has already been told to hide its content.
+  it("dismisses a sheet that arrives on screen after being settled as closed", () => {
+    jest.useFakeTimers();
+    try {
+      const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+
+      const { result } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+      signalOpen();
+      signalClose();
+      expect(mockDismiss).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+
+      act(() => {
+        result.current.handleAnimate(-1, 0);
+      });
+
+      expect(mockDismiss).toHaveBeenCalledTimes(2);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it("does not clear consumer state on open or snap-point animations", () => {
