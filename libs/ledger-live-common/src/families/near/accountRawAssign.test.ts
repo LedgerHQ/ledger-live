@@ -97,6 +97,46 @@ describe("near accountRawAssign", () => {
       expect(revived.amount.toFixed()).toBe("2902170000000000000000000");
     });
 
+    it("revives the optional deposited and rewarded amounts as BigNumber", () => {
+      const account = {} as Account;
+      const raw = {
+        stakingPositions: [
+          {
+            ...position("active", "v.near", "1"),
+            amount: "300",
+            amountDeposited: "200",
+            amountRewarded: "100",
+          },
+        ],
+      } as unknown as AccountRaw;
+
+      assignFromAccountRaw(raw, account);
+
+      const [revived] = (
+        account as Account & {
+          stakingPositions: { amountDeposited: BigNumber; amountRewarded: BigNumber }[];
+        }
+      ).stakingPositions;
+      expect(BigNumber.isBigNumber(revived.amountDeposited)).toBe(true);
+      expect(revived.amountDeposited.toFixed()).toBe("200");
+      expect(BigNumber.isBigNumber(revived.amountRewarded)).toBe(true);
+      expect(revived.amountRewarded.toFixed()).toBe("100");
+    });
+
+    it("leaves the optional amounts absent when the raw position has none", () => {
+      const account = {} as Account;
+      const raw = {
+        stakingPositions: [position("active", "v.near", "1")],
+      } as unknown as AccountRaw;
+
+      assignFromAccountRaw(raw, account);
+
+      const [revived] = (account as Account & { stakingPositions: Record<string, unknown>[] })
+        .stakingPositions;
+      expect("amountDeposited" in revived).toBe(false);
+      expect("amountRewarded" in revived).toBe(false);
+    });
+
     it("keeps an explicitly persisted empty list", () => {
       const account = {} as Account;
 
