@@ -263,6 +263,56 @@ describe("ring-field resilience", () => {
     expect(session.domains.map(d => d.domain)).toEqual(["good-key"]);
   });
 
+  it("drops only malformed agentIntentProfiles entries, keeping the valid ones", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [
+          {
+            profileId: "good-profile",
+            displayName: "Good",
+            description: "A valid profile.",
+            source: "openclaw",
+            environment: "staging",
+            bffBaseUrl: "https://example.com",
+            publicKey: "0".repeat(66),
+            createdAt: "2026-01-01T00:00:00.000Z",
+          },
+          { profileId: "missing-fields" }, // malformed — must not nuke the whole list
+        ],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.agentIntentProfiles.map(p => p.profileId)).toEqual(["good-profile"]);
+  });
+
+  it("readForReset preserves agentIntentProfiles even when the file is otherwise corrupt", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [{ label: "bad label with spaces", descriptor: 42 }], // fails schema
+        agentIntentProfiles: [
+          {
+            profileId: "trading-bot",
+            displayName: "Trading Bot",
+            description: "Proposes EVM payments for review.",
+            source: "openclaw",
+            environment: "staging",
+            bffBaseUrl: "https://example.com",
+            publicKey: "0".repeat(66),
+            createdAt: "2026-01-01T00:00:00.000Z",
+          },
+        ],
+      }),
+    );
+    const session = await Session.readForReset();
+    expect(session.accounts).toHaveLength(0);
+    expect(session.agentIntentProfiles.map(p => p.profileId)).toEqual(["trading-bot"]);
+  });
+
   it("still loads accounts when trustchain/domains are malformed (no whole-file failure)", async () => {
     useTmpState();
     writeFileSync(
@@ -298,6 +348,47 @@ describe("ring-field resilience", () => {
     expect(session.accounts).toHaveLength(0);
     expect(session.trustchain).toEqual({ rootId: "root-abc", applicationPath: "m/0'/17'/0'" });
     expect(session.passwordSalt).toBe("0".repeat(32));
+  });
+});
+
+describe("Session.agentIntentProfiles", () => {
+  const profile = {
+    profileId: "trading-bot",
+    displayName: "Trading Bot",
+    description: "Proposes EVM payments for review.",
+    source: "openclaw" as const,
+    environment: "staging" as const,
+    bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
+    publicKey: "0".repeat(66),
+    createdAt: "2026-01-01T00:00:00.000Z",
+  };
+
+  it("addAgentIntentProfile records a new profile", () => {
+    const session = Session.from([]);
+    session.addAgentIntentProfile(profile);
+    expect(session.agentIntentProfiles).toEqual([profile]);
+    expect(session.getAgentIntentProfile("trading-bot")).toEqual(profile);
+  });
+
+  it("addAgentIntentProfile refuses to overwrite an existing profileId", () => {
+    const session = Session.from([]);
+    session.addAgentIntentProfile(profile);
+    expect(() => session.addAgentIntentProfile(profile)).toThrow("already exists");
+  });
+
+  it("updateAgentIntentProfile merges a patch (e.g. setting trustchainId after complete)", () => {
+    const session = Session.from([]);
+    session.addAgentIntentProfile(profile);
+    const updated = session.updateAgentIntentProfile("trading-bot", { trustchainId: "tc-123" });
+    expect(updated.trustchainId).toBe("tc-123");
+    expect(session.getAgentIntentProfile("trading-bot")?.trustchainId).toBe("tc-123");
+  });
+
+  it("updateAgentIntentProfile throws for an unknown profileId", () => {
+    const session = Session.from([]);
+    expect(() => session.updateAgentIntentProfile("missing", { trustchainId: "tc" })).toThrow(
+      'No Agent Intent profile named "missing"',
+    );
   });
 });
 
