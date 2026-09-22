@@ -69,11 +69,33 @@ describe("serialization", () => {
     expect(deserializedAcc.readiness).toBeUndefined();
   });
 
-  // Zcash declares `family: "bitcoin"`, and coin-bitcoin's hooks know nothing about the
-  // shielded `privateInfo`. Both directions therefore have to go through coin-zcash even
-  // with the shielded flag off: accounts are deserialized at startup, before the host app
-  // mirrors the flag, so a flag-gated router would drop the viewing key on every boot --
-  // and re-serializing through coin-bitcoin would drop it again on the next save.
+  // getAccountBridge() rejected on an unsupported account before the bridge was resolved via
+  // resolveSerializationFamily instead; toAccountRaw re-runs that same check up front so an
+  // unregistered coin module still rejects on save rather than resolving a bridge that isn't
+  // there.
+  test("toAccountRaw rejects when the account's family has no registered coin module", async () => {
+    const acc: any = genAccount("mocked-account-unsupported-family", { currency: Solana });
+
+    resetCoinModulesForTests();
+    registerCoinModules(coinModuleLoaders.filter(l => l.family !== "solana"));
+    clearBridgeCache();
+
+    try {
+      await expect(toAccountRaw(acc)).rejects.toThrow(/No coin module registered/);
+    } finally {
+      resetCoinModulesForTests();
+      registerAllCoins();
+      clearBridgeCache();
+    }
+  });
+
+  // Zcash declares `family: "bitcoin"`, and coin-bitcoin's real bridge already round-trips
+  // the shielded `privateInfo` unconditionally via its Zcash chain-adapter, flag-independent
+  // by design (accounts are deserialized at startup, before the host app mirrors the flag, so
+  // a flag-gated router would drop the viewing key on every boot regardless). Only a `mock:`
+  // account id needs special routing: coin-bitcoin's *mock* bridge declares no assign hooks at
+  // all, so a mock id has to go through the standalone zcash module's mock bridge instead, or
+  // both `privateInfo` and `bitcoinResources` are dropped.
   describe("zcash with the shielded flag off", () => {
     const zcashAccountRaw = (): any => ({
       id: "mock:1:zcash:zcash_1:",
@@ -105,7 +127,8 @@ describe("serialization", () => {
         estimatedTimeRemaining: { hours: 0, minutes: 0 },
         ufvk: "uview1test",
         birthday: null,
-        shieldedAddress: "u1shielded",
+        shieldedAddress:
+          "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9",
         lastSyncTimestamp: 1700000000000,
         lastProcessedBlock: 3450000,
         transactions: [],
@@ -144,7 +167,12 @@ describe("serialization", () => {
     });
 
     // wallet-cli registers bitcoin, evm and solana only, so there is no "zcash" family to
-    // route to; the account has to keep coin-bitcoin's adapter rather than fail resolution.
+    // route a mock id to; the account has to keep coin-bitcoin's adapter rather than fail
+    // resolution. A real (non-mock) account id already takes the bitcoin family unconditionally
+    // (resolveSerializationFamily only ever escalates a mock id to "zcash"), so it is the one
+    // that shows this fallback preserves data rather than just not throwing -- a mock id here
+    // would exercise coin-bitcoin's *mock* bridge, which has no assign hooks at all and drops
+    // both fields regardless of which family answers.
     describe("on a host without the standalone zcash module", () => {
       beforeEach(() => {
         resetCoinModulesForTests();
@@ -158,10 +186,14 @@ describe("serialization", () => {
         clearBridgeCache();
       });
 
-      test("deserializes through the bitcoin family instead of throwing", async () => {
-        const account: any = await fromAccountRaw(zcashAccountRaw());
+      test("deserializes through the bitcoin family with privateInfo and bitcoinResources intact", async () => {
+        const raw = { ...zcashAccountRaw(), id: "js:2:zcash:xpub6zcashtest:" };
+
+        const account: any = await fromAccountRaw(raw);
 
         expect(account.currency.id).toBe("zcash");
+        expect(account.privateInfo?.ufvk).toBe("uview1test");
+        expect(account.bitcoinResources?.utxos).toHaveLength(1);
       });
     });
   });

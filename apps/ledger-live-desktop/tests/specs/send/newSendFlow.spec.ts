@@ -147,10 +147,7 @@ test.describe("New Send Flow", () => {
   // and then never gets dismissed, since nothing is re-checking. Polling in short slices, and
   // dismissing between them, means they get closed whichever side of the race they land.
   async function goToAccountsDismissingBlockingModals(page: Page) {
-    const accountsButton = page
-      .getByTestId("sidebar-navigation")
-      .getByRole("button", { name: "accounts" })
-      .or(page.getByTestId("drawer-accounts-button"));
+    const accountsButton = new Layout(page).drawerAccountsButton;
 
     for (let attempt = 0; attempt < 20; attempt++) {
       await dismissReleaseTourIfPresent(page);
@@ -158,11 +155,12 @@ test.describe("New Send Flow", () => {
       await dismissAnalyticsConsentDialogIfPresent(page);
       try {
         await accountsButton.waitFor({ state: "visible", timeout: 3000 });
-        await accountsButton.click();
-        return;
       } catch {
         // Not visible yet within this slice; loop back to re-check the modal and retry.
+        continue;
       }
+      await accountsButton.click();
+      return;
     }
     // Final attempt with the default timeout, so a genuine failure still surfaces its real error.
     await dismissReleaseTourIfPresent(page);
@@ -1517,7 +1515,12 @@ test.describe("New Send Flow", () => {
             await reachRecipientStepViaBalanceType(app, page, ACCOUNT_NAMES.zcash, poolOptionId);
             await app.newSendFlow.reachAmountStep(TEST_ADDRESSES.zcashTransparent);
             await app.newSendFlow.fillCryptoAmount("0.001");
+            // Anchor: the fees row itself must be mounted, so the following absence
+            // assertions are checked against a rendered step rather than one not there yet.
+            await expect(page.getByTestId("send-network-fees-row")).toBeVisible();
             await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
+            await expect(app.newSendFlow.customFeesMenuItem).toBeHidden();
+            await expect(app.newSendFlow.coinControlFeesMenuItem).toBeHidden();
             await app.newSendFlow.closeButton.click();
           });
         }
