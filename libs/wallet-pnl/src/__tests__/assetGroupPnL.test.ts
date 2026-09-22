@@ -15,7 +15,7 @@ import {
   USDC_BSC_UNIT,
 } from "../scenarios/currencies";
 import { buy, resetOperationIdCounter } from "../scenarios/operations";
-import { buildMultiCV } from "../scenarios/countervalues";
+import { buildMultiCV } from "@domain/entity-market-countervalues/mock";
 import { expectBN } from "./helpers/bn";
 
 const FIAT_MAJOR_TO_MINOR = new BigNumber(100);

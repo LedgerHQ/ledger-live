@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { applyBalanceReconciliation, detectBalanceGap } from "../costBasisReconciliation";
 import { initialCostBasisState } from "../costBasis";
 import { ETH, USD, WEI } from "../scenarios/currencies";
-import { buildCV, dailyHistory } from "../scenarios/countervalues";
+import { buildCV, dailyHistory } from "@domain/entity-market-countervalues/mock";
 import type { CostBasisState } from "../types";
 import { expectBN } from "./helpers/bn";
 

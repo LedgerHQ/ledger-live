@@ -1,8 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { getRateLookup } from "./rateLookup";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import { getCostBasis } from "./costBasisCache";
 import { applyBalanceReconciliation, detectBalanceGap } from "./costBasisReconciliation";
@@ -12,7 +11,7 @@ const ZERO = new BigNumber(0);
 
 export function computeAssetPnL(
   account: AccountLike,
-  countervalues: CounterValuesState,
+  countervalues: unknown,
   fiat: Currency,
   options?: ComputePnLOptions,
 ): AssetPnL | null {
@@ -49,7 +48,7 @@ export function computeAssetPnL(
 
   let unrealisedPnL = ZERO;
   if (hasBalance) {
-    const latestCV = calculate(countervalues, {
+    const latestCV = getRateLookup().calculate(countervalues, {
       value: account.balance.toNumber(),
       from: asset,
       to: fiat,
