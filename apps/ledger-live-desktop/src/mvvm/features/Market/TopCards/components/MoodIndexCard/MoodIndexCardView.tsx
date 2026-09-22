@@ -1,5 +1,5 @@
 import React from "react";
-import type { FearAndGreedIndex } from "@domain/entity-market-sentiment";
+import type { FearAndGreedIndex } from "@domain/entity-market-index-fear-and-greed";
 import { getFearAndGreedTranslationKey } from "@features/flow-fear-and-greed";
 import {
   Card,

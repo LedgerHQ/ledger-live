@@ -1,4 +1,4 @@
-import type { FearAndGreedIndex } from "@domain/entity-market-sentiment";
+import type { FearAndGreedIndex } from "@domain/entity-market-index-fear-and-greed";
 import { FearAndGreedResponseSchema } from "./schema";
 
 /** Validates the raw CMC response and maps it to the canonical {@link FearAndGreedIndex}. */
