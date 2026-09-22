@@ -7,13 +7,12 @@ import {
   buildTopUpPath,
   buildWithdrawalPath,
   buildAccessBaanxPath,
+  buildManagePinPath,
   openHostedUrlInSecureBrowser,
-  MANAGE_PIN_PATH,
-  openHostedPageSafely,
+  openHostedCardPathSafely,
   type CardAssetPathBuilder,
   type OpenCardHostedPage,
 } from "@features/flow-pay-card-auth";
-import { readCardUsEnv } from "@features/platform-card";
 import useEnv from "@features/platform-env";
 import { useContactsFeature } from "@features/platform-contacts";
 import type { CardAssetRow, CardAssetsProps } from "@features/flow-pay-card-assets";
@@ -92,9 +91,6 @@ export function usePayTabViewModel() {
     navigateToCardHistory(navigation);
   }, [navigation]);
 
-  // Adapts the secure-browser opener to the same OpenCardHostedPage shape desktop's
-  // useCardHostedPageOpeners already exposes, so both platforms share openHostedPageSafely below
-  // instead of each hand-rolling its own try/catch.
   const openHostedPage: OpenCardHostedPage = useCallback(
     async path => {
       await openHostedUrlInSecureBrowser(buildHostedUrl(hostedUiUrl, path), PAY_TAB_DEEP_LINK);
@@ -102,38 +98,35 @@ export function usePayTabViewModel() {
     [hostedUiUrl],
   );
 
-  const openAssetPage = useCallback(
-    async (buildPath: CardAssetPathBuilder, currency?: string) => {
-      try {
-        const isUsCardHolder = await readCardUsEnv(usAppId);
-
-        await openHostedPage(buildPath(isUsCardHolder ? usAppId : null, currency));
-      } catch (error) {
-        console.warn("[card] the hosted asset page did not open", error);
-      }
-    },
+  const openHostedPath = useCallback(
+    (buildPath: CardAssetPathBuilder, onError: (error: unknown) => void, currency?: string) =>
+      openHostedCardPathSafely(openHostedPage, usAppId, buildPath, onError, currency),
     [openHostedPage, usAppId],
+  );
+
+  const openAssetPage = useCallback(
+    (buildPath: CardAssetPathBuilder, currency?: string) =>
+      openHostedPath(
+        buildPath,
+        error => console.warn("[card] the hosted asset page did not open", error),
+        currency,
+      ),
+    [openHostedPath],
   );
 
   const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
 
   const onManagePin = useCallback(
     () =>
-      openHostedPageSafely(openHostedPage, MANAGE_PIN_PATH, () =>
-        console.warn("[card] manage pin page did not open"),
-      ),
-    [openHostedPage],
+      openHostedPath(buildManagePinPath, () => console.warn("[card] manage pin page did not open")),
+    [openHostedPath],
   );
 
-  const onAccessBaanx = useCallback(async () => {
-    const isUsCardHolder = await readCardUsEnv(usAppId);
-
-    await openHostedPageSafely(
-      openHostedPage,
-      buildAccessBaanxPath(isUsCardHolder ? usAppId : null),
-      () => console.warn("[card] baanx page did not open"),
-    );
-  }, [openHostedPage, usAppId]);
+  const onAccessBaanx = useCallback(
+    () =>
+      openHostedPath(buildAccessBaanxPath, () => console.warn("[card] baanx page did not open")),
+    [openHostedPath],
+  );
 
   const onHelp = useCallback(() => {
     Linking.openURL(urls.cardHelpCenter);
