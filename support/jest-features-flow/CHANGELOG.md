@@ -1,5 +1,11 @@
 # @support/jest-features-flow
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#21741](https://github.com/LedgerHQ/ledger-live/pull/21741) [`250c1c0`](https://github.com/LedgerHQ/ledger-live/commit/250c1c0e4cd081a67f46b37e852291a32e02b05b) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add a mobile card-numbers View/Hide control that flips to the provider numbers image
+
 ## 0.5.0
 
 ### Minor Changes

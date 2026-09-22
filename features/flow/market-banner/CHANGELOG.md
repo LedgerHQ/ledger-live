@@ -1,5 +1,11 @@
 # @features/market-banner
 
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#22306](https://github.com/LedgerHQ/ledger-live/pull/22306) [`845ac4a`](https://github.com/LedgerHQ/ledger-live/commit/845ac4a101b405b6c93333e335115ef1105ef824) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Restore translucent status backgrounds with the Lumen `-transparent` tokens after status colors became solid.
+
 ## 0.11.0
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # @features/flow-large-screen-upsell
 
+## 2.2.0-next.0
+
+### Minor Changes
+
+- [#22164](https://github.com/LedgerHQ/ledger-live/pull/22164) [`386710a`](https://github.com/LedgerHQ/ledger-live/commit/386710a6893f7e17a781b36f29ebe2e08f9b5b20) Thanks [@sarneijim](https://github.com/sarneijim)! - Share Nano S Touchscreen Upgrade Program banner copy keys so Desktop and Mobile can reuse the same model-specific lookup
+
+- [#22312](https://github.com/LedgerHQ/ledger-live/pull/22312) [`319fbe4`](https://github.com/LedgerHQ/ledger-live/commit/319fbe464cbf256b7b3ee57113b6abd6c52ccd55) Thanks [@sarneijim](https://github.com/sarneijim)! - Show the signed-off Touchscreen Upgrade Program copy only to Nano S users
+
+### Patch Changes
+
+- Updated dependencies [[`c48d6d7`](https://github.com/LedgerHQ/ledger-live/commit/c48d6d71b7ec0318cfec3277c119284a88d652f7), [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629)]:
+  - @shared/feature-flags@0.24.0-next.0
+  - @features/platform-feature-flags@0.8.0-next.0
+
 ## 2.1.0
 
 ### Minor Changes

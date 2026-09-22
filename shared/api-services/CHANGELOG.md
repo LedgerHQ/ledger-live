@@ -1,5 +1,11 @@
 # @shared/api-services
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#22003](https://github.com/LedgerHQ/ledger-live/pull/22003) [`40d296b`](https://github.com/LedgerHQ/ledger-live/commit/40d296b822381cc5d05616acafa1bca61e500dce) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Record the provider app the Card login redirect names, and send x-us-env on every Card request of a US holder
+
 ## 0.7.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/live-signer-concordium
 
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#22043](https://github.com/LedgerHQ/ledger-live/pull/22043) [`a304cfe`](https://github.com/LedgerHQ/ledger-live/commit/a304cfe5d6ea2ad27e0a4cb1fd6bc5761b951585) Thanks [@amaslakov](https://github.com/amaslakov)! - Mark the package as private so changeset publish stops releasing it to npm. Its only consumer, live-common, is private too
+
+### Patch Changes
+
+- Updated dependencies [[`ea94dd0`](https://github.com/LedgerHQ/ledger-live/commit/ea94dd00d64bae6b7fd9c792da77ffba751a9f01), [`736a0d5`](https://github.com/LedgerHQ/ledger-live/commit/736a0d5ba692e2342df4fc503056524359d35d65), [`7848066`](https://github.com/LedgerHQ/ledger-live/commit/7848066f6ba1b803b5a8d3df02ce6d35e46b370e), [`1648042`](https://github.com/LedgerHQ/ledger-live/commit/164804200fcd3486d9f364a31b065cb7f7d2a170), [`eb2a2a5`](https://github.com/LedgerHQ/ledger-live/commit/eb2a2a598787555cc05ed7ae105dd1648fbe43f5), [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68)]:
+  - @ledgerhq/coin-concordium@1.4.0-next.0
+  - @ledgerhq/concordium-core@0.8.0-next.0
+
 ## 0.8.0
 
 ### Minor Changes

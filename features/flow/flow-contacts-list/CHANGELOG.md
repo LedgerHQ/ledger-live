@@ -1,5 +1,19 @@
 # @features/flow-contacts-list
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#21923](https://github.com/LedgerHQ/ledger-live/pull/21923) [`5649787`](https://github.com/LedgerHQ/ledger-live/commit/56497875407fe63148b6dfbf266b778748972c01) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add desktop E2E for creating, renaming and deleting a contact without an address (LIVE-35043).
+
+- [#22067](https://github.com/LedgerHQ/ledger-live/pull/22067) [`6996290`](https://github.com/LedgerHQ/ledger-live/commit/6996290580691788820aabd70367655f2283ac20) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix contacts detail pane header shaking on address list scroll
+
+### Patch Changes
+
+- Updated dependencies [[`871e485`](https://github.com/LedgerHQ/ledger-live/commit/871e4854284a0b21e31b53ff0ac312010093d914), [`33e92e8`](https://github.com/LedgerHQ/ledger-live/commit/33e92e8f074ff73a6a3e338c8313ba8bc9066ccf), [`0651158`](https://github.com/LedgerHQ/ledger-live/commit/0651158a2f03f819c2e2770ef4179901768c3c6c)]:
+  - @features/platform-contacts@0.8.0-next.0
+  - @domain/entity-contact@0.10.0-next.0
+
 ## 0.7.0
 
 ### Minor Changes

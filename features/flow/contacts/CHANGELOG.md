@@ -1,5 +1,24 @@
 # @features/flow-contacts
 
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#22067](https://github.com/LedgerHQ/ledger-live/pull/22067) [`6996290`](https://github.com/LedgerHQ/ledger-live/commit/6996290580691788820aabd70367655f2283ac20) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix contacts detail pane header shaking on address list scroll
+
+### Patch Changes
+
+- Updated dependencies [[`5649787`](https://github.com/LedgerHQ/ledger-live/commit/56497875407fe63148b6dfbf266b778748972c01), [`871e485`](https://github.com/LedgerHQ/ledger-live/commit/871e4854284a0b21e31b53ff0ac312010093d914), [`6996290`](https://github.com/LedgerHQ/ledger-live/commit/6996290580691788820aabd70367655f2283ac20), [`98e3038`](https://github.com/LedgerHQ/ledger-live/commit/98e303872684da47feca343c0db7d83fcce857b2), [`33e92e8`](https://github.com/LedgerHQ/ledger-live/commit/33e92e8f074ff73a6a3e338c8313ba8bc9066ccf), [`0651158`](https://github.com/LedgerHQ/ledger-live/commit/0651158a2f03f819c2e2770ef4179901768c3c6c)]:
+  - @features/flow-contacts-list@0.8.0-next.0
+  - @features/platform-contacts@0.8.0-next.0
+  - @features/flow-contacts-add-contact@0.7.0-next.0
+  - @features/flow-contacts-edit-contact@0.6.0-next.0
+  - @features/flow-contacts-edit-address@0.4.0-next.0
+  - @domain/entity-currency-crypto@0.13.0-next.0
+  - @domain/entity-contact@0.10.0-next.0
+  - @features/flow-contacts-delete-contact@0.2.3-next.0
+  - @features/flow-contacts-introduction@1.2.0
+
 ## 0.11.0
 
 ### Minor Changes

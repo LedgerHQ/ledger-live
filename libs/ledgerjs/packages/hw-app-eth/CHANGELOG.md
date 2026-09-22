@@ -1,5 +1,20 @@
 # @ledgerhq/hw-app-eth
 
+## 7.9.0-next.0
+
+### Minor Changes
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
+- [#22225](https://github.com/LedgerHQ/ledger-live/pull/22225) [`d6739d7`](https://github.com/LedgerHQ/ledger-live/commit/d6739d7fdc0b02ea26d2a29f6512f28b45c4ac38) Thanks [@amaslakov](https://github.com/amaslakov)! - Fall back to the CAL signatures when a caller-provided ERC20 signatures blob has no entry for the contract.
+
+### Patch Changes
+
+- Updated dependencies [[`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26), [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629)]:
+  - @ledgerhq/evm-tools@1.15.0-next.0
+  - @ledgerhq/types-live@6.125.0-next.0
+  - @ledgerhq/domain-service@1.8.20-next.0
+
 ## 7.8.19
 
 ### Patch Changes

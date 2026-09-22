@@ -1,5 +1,13 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.40.0-next.0
+
+### Minor Changes
+
+- [#22079](https://github.com/LedgerHQ/ledger-live/pull/22079) [`7396e53`](https://github.com/LedgerHQ/ledger-live/commit/7396e5378ba6692318de27ebdcb9b1a37aecac4c) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add desktop and mobile E2E coverage for browsing and searching contacts (B2CQA-6240).
+
+- [#22221](https://github.com/LedgerHQ/ledger-live/pull/22221) [`90efc9b`](https://github.com/LedgerHQ/ledger-live/commit/90efc9b1613408f73f90977d929f832a93ad0298) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Keep Ethereum blind signing off in the mobile borrow open-loan spec so deposit and borrow must clear-sign.
+
 ## 0.39.0
 
 ### Minor Changes

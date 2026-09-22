@@ -1,5 +1,74 @@
 # @ledgerhq/coin-concordium
 
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#22129](https://github.com/LedgerHQ/ledger-live/pull/22129) [`ea94dd0`](https://github.com/LedgerHQ/ledger-live/commit/ea94dd00d64bae6b7fd9c792da77ffba751a9f01) Thanks [@lysyi3m](https://github.com/lysyi3m)! - fix(concordium): drop the PLT error surface nothing can reach
+
+  `mapPltRejectReason` turned a chain reject reason into a typed `Error` and had no
+  caller. It could not gain one: an `Error` is what the pre-send checks return and
+  what the signer throws, and neither ever sees a reject reason. A reject reason
+  exists only on the wallet-proxy history response, and history renders an
+  `Operation`, which carries `failed: true` and no cause. Surfacing the cause means
+  a code in `Operation.extra` and a renderer for it, not this function.
+
+  Removed with it: `ConcordiumNonExistentTokenId` and `ConcordiumPltTransferRejected`,
+  whose only producer it was, and `ConcordiumAccountNotAllowed` and
+  `ConcordiumAccountDenied`, which never had one — `getAccountListStatus` folds both
+  list verdicts into one, so reporting the cause means widening the stored
+  `transferStatus` first.
+
+  A test in each app now pins that every PLT error a producer can raise has copy of
+  its own, so the next one added without it fails rather than reaching a user as a
+  class name.
+
+- [#22087](https://github.com/LedgerHQ/ledger-live/pull/22087) [`736a0d5`](https://github.com/LedgerHQ/ledger-live/commit/736a0d5ba692e2342df4fc503056524359d35d65) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Carry a PLT memo as CBOR, the way a CCD memo already is
+
+  A PLT memo went on chain as raw UTF-8 while a CCD memo went as a CBOR text
+  string. The chain types them identically — a CBOR value in `Memo` under one
+  256-byte cap — and only the envelope differs, so the codec is now shared.
+
+  `encodePltMemo` emits `tag 24(byte string(CBOR text string))`; tag 24 declares
+  the content to be CBOR, which the previous untagged bytes denied. Both paths
+  bound the memo with `MAX_MEMO_LENGTH` (254), leaving room for the CBOR header;
+  `PLT_MAX_MEMO_SIZE` is gone. The device app's PLT screen does not decode the
+  content yet, so the wallet side lands first and the two ship together.
+
+  `decodeMemoFromCbor` now requires the value to fill the buffer and reads
+  integers as well as text strings. Without the first, `616263` decoded to `"b"`.
+
+  PLT reads try CBOR and fall back to printable text, since the node strips the
+  tag and the proxy reports bare bytes either way — so earlier memos still
+  display. Integers are excluded there: `"0"` through `"7"` are `0x30`-`0x37`,
+  CBOR major type 1, so a single-digit reference would read as `-17` through
+  `-24`. The reverse holds for the rarer case, a negative integer reading as its
+  printable head byte. Nothing separates the two, and text is what senders write.
+
+- [#22139](https://github.com/LedgerHQ/ledger-live/pull/22139) [`7848066`](https://github.com/LedgerHQ/ledger-live/commit/7848066f6ba1b803b5a8d3df02ce6d35e46b370e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - feat(concordium): show why the chain rejected a PLT transfer
+
+  A rejected PLT transfer read as a failed row with no explanation. Operation
+  details now name the cause, on desktop and mobile.
+
+- [#22147](https://github.com/LedgerHQ/ledger-live/pull/22147) [`1648042`](https://github.com/LedgerHQ/ledger-live/commit/164804200fcd3486d9f364a31b065cb7f7d2a170) Thanks [@lysyi3m](https://github.com/lysyi3m)! - fix(concordium): say which list refused a PLT sender
+
+  A blocked sender was told to contact the issuer for access, which is wrong for a
+  deny list. The send flow now reports the two causes separately.
+
+  Removes the unused `PltListStatus` type.
+
+- [#22186](https://github.com/LedgerHQ/ledger-live/pull/22186) [`eb2a2a5`](https://github.com/LedgerHQ/ledger-live/commit/eb2a2a598787555cc05ed7ae105dd1648fbe43f5) Thanks [@lysyi3m](https://github.com/lysyi3m)! - feat(concordium): surface PLT pause and sender restrictions
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
+### Patch Changes
+
+- Updated dependencies [[`736a0d5`](https://github.com/LedgerHQ/ledger-live/commit/736a0d5ba692e2342df4fc503056524359d35d65), [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b), [`5d2f40f`](https://github.com/LedgerHQ/ledger-live/commit/5d2f40f470f859960e43a2a08755a962796f6beb), [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26), [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629), [`e2134f5`](https://github.com/LedgerHQ/ledger-live/commit/e2134f5cffe4669ff5896e2b52904fe22218461b)]:
+  - @ledgerhq/concordium-core@0.8.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.5.0-next.0
+  - @ledgerhq/types-live@6.125.0-next.0
+  - @ledgerhq/live-env@4.1.0-next.0
+
 ## 1.3.0
 
 ### Minor Changes

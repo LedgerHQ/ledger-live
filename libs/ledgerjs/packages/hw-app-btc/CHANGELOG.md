@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-btc
 
+## 11.6.0-next.0
+
+### Minor Changes
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
+- [#22143](https://github.com/LedgerHQ/ledger-live/pull/22143) [`29ce771`](https://github.com/LedgerHQ/ledger-live/commit/29ce7712ce93cd27afa97eda2d14a0ff066551fb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - refactor(noble-curves): replace the APIs @noble/curves 2.x renames away
+
 ## 11.5.0
 
 ### Minor Changes

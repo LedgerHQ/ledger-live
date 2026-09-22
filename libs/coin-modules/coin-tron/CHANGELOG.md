@@ -1,5 +1,26 @@
 # @ledgerhq/coin-tron
 
+## 9.0.0-next.0
+
+### Major Changes
+
+- [#21897](https://github.com/LedgerHQ/ledger-live/pull/21897) [`3ad1c58`](https://github.com/LedgerHQ/ledger-live/commit/3ad1c58b2d2da192b8178e17c759a9d4e1558c4f) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-tron): promote `context.logger` and drop `@ledgerhq/logs` dependency
+
+### Minor Changes
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
+- [#22161](https://github.com/LedgerHQ/ledger-live/pull/22161) [`809cf40`](https://github.com/LedgerHQ/ledger-live/commit/809cf40a737cd79ee0da09fcc8c541955b11eb66) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(tron): resolve the TRC20 contract address of a transfer minted by a contract creation
+
+  A TRC20 minted from a contract's constructor was reported without its contract address: TronGrid
+  has no `token_info` for a contract created in that very transaction, and a `CreateSmartContract`
+  carries no `contract_address` parameter, so the operation shipped a `trc20` asset with no
+  `assetReference`. Both `listOperations` and `getBlock` now take the token from the transaction's
+  own `Transfer` event logs, under one rule: a token transfer is reported only when the logs name
+  its token, otherwise no token asset is emitted at all — `listOperations` drops the operation and
+  `getBlock` reports a plain contract operation. `getBlock` also reports these constructor mints as
+  transfers now, instead of omitting them.
+
 ## 8.1.0
 
 ### Minor Changes

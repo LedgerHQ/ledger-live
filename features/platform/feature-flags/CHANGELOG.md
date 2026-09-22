@@ -1,5 +1,16 @@
 # @features/platform-feature-flags
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#21967](https://github.com/LedgerHQ/ledger-live/pull/21967) [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove the obsolete original Wallet V4 tour
+
+### Patch Changes
+
+- Updated dependencies [[`c48d6d7`](https://github.com/LedgerHQ/ledger-live/commit/c48d6d71b7ec0318cfec3277c119284a88d652f7), [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629)]:
+  - @shared/feature-flags@0.24.0-next.0
+
 ## 0.7.0
 
 ### Minor Changes

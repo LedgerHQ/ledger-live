@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#22143](https://github.com/LedgerHQ/ledger-live/pull/22143) [`29ce771`](https://github.com/LedgerHQ/ledger-live/commit/29ce7712ce93cd27afa97eda2d14a0ff066551fb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - refactor(noble-curves): replace the APIs @noble/curves 2.x renames away
+
 ## 0.12.0
 
 ### Minor Changes

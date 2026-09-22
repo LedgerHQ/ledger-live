@@ -1,5 +1,74 @@
 # @domain/api-card-management
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#22149](https://github.com/LedgerHQ/ledger-live/pull/22149) [`4d1d640`](https://github.com/LedgerHQ/ledger-live/commit/4d1d64049a0bb0562a1a0c8ad2555fe967acdd7f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add card reward wallet endpoint and mobile reward balance view
+
+- [#22077](https://github.com/LedgerHQ/ledger-live/pull/22077) [`72367fc`](https://github.com/LedgerHQ/ledger-live/commit/72367fcf2343fa488008236f1005da589e6e3054) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Wire the card onboarding widget to real, derived onboarding data and remove the unused stub endpoint and legacy devtool mock path it replaces
+
+- [#22061](https://github.com/LedgerHQ/ledger-live/pull/22061) [`233e44e`](https://github.com/LedgerHQ/ledger-live/commit/233e44e3dd724cc9d4f14a02c7e62e39d2e9079b) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Link a custodial wallet to the card as a funding source.
+
+  - `linkWalletToCard` posts the wallet's `addressId` to `/v1/wallet/internal/card_linked`.
+  - `getInternalWallets` now answers `addressId`, optional, which is what the link is made by.
+  - `getCardLinkedWallets` gains a `CardLinkedWallets` tag the link invalidates, and only a made link invalidates it: neither an error nor a `success: false` answer changed the set.
+
+- [#21986](https://github.com/LedgerHQ/ledger-live/pull/21986) [`6741356`](https://github.com/LedgerHQ/ledger-live/commit/67413566f84b895e6f4ae2b5d646bfc2e82c6926) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Read the wallet the card's rewards are paid into.
+
+  - `getRewardWallet` calls `GET /v1/wallet/reward` and answers the holder's single reward wallet: id, balance, currency and whether the funds can be withdrawn.
+  - The balance stays a string, so a decimal that survived the wire is not rounded on the way in.
+  - `type` is dropped: the endpoint always answers `"REWARD"`, so it says nothing a caller could use.
+
+- [#22204](https://github.com/LedgerHQ/ledger-live/pull/22204) [`dafadf0`](https://github.com/LedgerHQ/ledger-live/commit/dafadf005a54007d5430203c11b8718c1636a6e4) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Read the cashback a card transaction earned.
+
+  - `PayCardTransactionSchema` gains an optional `cashback`: the reward-token `amount`/`currency`, its `fiatAmount`/`fiatCurrency`, the `ratePercent` behind them, and a `status`.
+  - Amounts stay strings; `status` is a plain string, not an enum, while the provider's values are being confirmed.
+  - Optional and caught, so a charge that earned nothing is still a transaction worth listing.
+  - The mocked page pairs every settled charge with a cashback and leaves the declined and reverted ones without one.
+
+- [#21495](https://github.com/LedgerHQ/ledger-live/pull/21495) [`9652494`](https://github.com/LedgerHQ/ledger-live/commit/96524949cbf8fa1d102a0156f40004ff12a30475) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add `unlinkWalletFromCard` for `DELETE /v1/wallet/internal/card_linked`.
+
+  - Identifies the wallet by `addressId`, and reuses the link request/response schemas.
+  - Invalidates `CardLinkedWallets` only on `success: true`, matching `linkWalletToCard`.
+
+- [#22062](https://github.com/LedgerHQ/ledger-live/pull/22062) [`5492648`](https://github.com/LedgerHQ/ledger-live/commit/5492648988e327c8e3e6e7d5ead1e0fa2bd9929e) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Rewrite the order the card's linked wallets are charged in.
+
+  - `updateCardWalletPriorities` puts the whole order to `/v1/wallet/internal/card_linked/priority`, each wallet named by its `addressId`.
+  - Duplicate priorities and a repeated wallet are rejected before the request is sent, as is an empty order.
+  - Only a written order invalidates the `CardLinkedWallets` tag: neither an error nor a `success: false` answer changed the order.
+
+- [#22118](https://github.com/LedgerHQ/ledger-live/pull/22118) [`a915d4a`](https://github.com/LedgerHQ/ledger-live/commit/a915d4a577dfe7bb778364c4b0269bc61203075a) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Read the two flags the card status response gained.
+
+  - `cardAddedToDigitalWallet`: whether the card sits in Apple/Google Wallet.
+  - `isFreezable`: whether the card may be frozen, which `status` does not say.
+  - Both optional, so a tenant that answers for neither still parses. They were being dropped: zod strips what the schema does not declare.
+  - The dev tool's Card Status probe prints the parsed response, so both show there.
+
+- [#22136](https://github.com/LedgerHQ/ledger-live/pull/22136) [`eb06f77`](https://github.com/LedgerHQ/ledger-live/commit/eb06f77c9548a2e4641c37da90c34b4fcffba667) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Answer the mocked wallet endpoints with three linked wallets, so the combined data carries three card assets.
+
+  - `GET /v1/wallet/internal` and `/card_linked` now describe three wallets on three chains (usdc/ethereum, btc/bitcoin, sol/solana) instead of one.
+  - All three pairs are in the Baanx catalog, so each row resolves to its own Ledger currency.
+  - Every wallet is linked, so the join matches all three and the balance screen has rows that price differently.
+  - Unfunded empties the balances rather than dropping the wallets.
+
+- [#22121](https://github.com/LedgerHQ/ledger-live/pull/22121) [`287f042`](https://github.com/LedgerHQ/ledger-live/commit/287f04286e4933e31e31952a3ac6485e145e34f2) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Answer the phone wallet step from the provider alone.
+
+  - Mobile reads `cardAddedToDigitalWallet` from the card status for the onboarding step.
+  - The device answer is gone: `hasAddedCardToWallet`, its two actions and its selector leave the widget state. The Add-to-Wallet CTA now hides on the provider's answer, and the instructions scene re-asks the card status instead of recording a local yes.
+  - A tenant that does not send the flag leaves the step undone and keeps offering the CTA.
+  - The onboarding mock gained `cardAddedToDigitalWallet`, so the dev tool's wallet toggle drives the mocked endpoint and follows request mocking like every other step.
+
+- [#22301](https://github.com/LedgerHQ/ledger-live/pull/22301) [`6fe6efb`](https://github.com/LedgerHQ/ledger-live/commit/6fe6efb9f2c9211d6002dd17f4369f90390021bf) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Consume the shared Pay analytics provider across card flows.
+
+- [#22236](https://github.com/LedgerHQ/ledger-live/pull/22236) [`43e1a21`](https://github.com/LedgerHQ/ledger-live/commit/43e1a21f2060d53875256b001e054cf0b1f7b86a) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add Pay Card devtools controls for transaction and wallet balance fixtures, and answer the mocked wallet reorder with the order alone so linked assets keep the amounts they were showing while the reordered row shows its spinner.
+
+### Patch Changes
+
+- Updated dependencies [[`40d296b`](https://github.com/LedgerHQ/ledger-live/commit/40d296b822381cc5d05616acafa1bca61e500dce), [`8e556b1`](https://github.com/LedgerHQ/ledger-live/commit/8e556b198bdf546968458347b0cad3e954ed4adb), [`91531f2`](https://github.com/LedgerHQ/ledger-live/commit/91531f29e71e4e186375a5e2908ddca0c351c0ac)]:
+  - @shared/api-services@0.8.0-next.0
+  - @domain/entity-card-asset-mapping@0.7.0-next.0
+
 ## 0.6.0
 
 ### Minor Changes

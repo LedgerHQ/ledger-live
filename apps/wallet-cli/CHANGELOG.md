@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-cli
 
+## 2.7.0-next.0
+
+### Minor Changes
+
+- [#21841](https://github.com/LedgerHQ/ledger-live/pull/21841) [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(cosmos): migrate account resources to shared staking aggregate
+
 ## 2.6.0
 
 ### Minor Changes

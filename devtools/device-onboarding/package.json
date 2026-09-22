@@ -1,6 +1,6 @@
 {
   "name": "@devtools/device-onboarding",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Run the shared device onboarding flow against a real device.",
   "main": "src/index.ts",

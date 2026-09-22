@@ -1,5 +1,20 @@
 # @shared/env
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#22003](https://github.com/LedgerHQ/ledger-live/pull/22003) [`40d296b`](https://github.com/LedgerHQ/ledger-live/commit/40d296b822381cc5d05616acafa1bca61e500dce) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Record the provider app the Card login redirect names, and send x-us-env on every Card request of a US holder
+
+- [#22006](https://github.com/LedgerHQ/ledger-live/pull/22006) [`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Point the deprecation notices at `docs/configuration.md`, which is now the single guide for where a configuration value belongs and how to take one out of the env registry. `libs/env/MIGRATION.md` and `shared/env/MIGRATION.md` are removed — their content lives there, next to the app `.env` and build-secret mechanics it was already linking to. Comments and docs only.
+
+- [#22038](https://github.com/LedgerHQ/ledger-live/pull/22038) [`c48d6d7`](https://github.com/LedgerHQ/ledger-live/commit/c48d6d71b7ec0318cfec3277c119284a88d652f7) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - feat(pay-card): read the Baanx login and hosted manifest ids from the env, not from the `lwdPayTab` flag params
+
+### Patch Changes
+
+- Updated dependencies [[`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b)]:
+  - @ledgerhq/live-env@4.1.0-next.0
+
 ## 0.7.0
 
 ### Minor Changes

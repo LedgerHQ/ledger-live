@@ -1,5 +1,44 @@
 # @ledgerhq/coin-evm
 
+## 4.3.0-next.0
+
+### Minor Changes
+
+- [#21951](https://github.com/LedgerHQ/ledger-live/pull/21951) [`f1cd6f5`](https://github.com/LedgerHQ/ledger-live/commit/f1cd6f5c5b4b8c5da27f5603ef564c6a819de9f2) Thanks [@may01](https://github.com/may01)! - Report VTHO transfers and both sides of every transfer in `getBlock`
+
+  `getBlock` mapped only `output.transfers` from Thor's expanded block, which holds native VET clause
+  transfers. A VTHO (VIP-180) movement is an ABI-encoded log in `output.events` instead, so every
+  token transfer came back with an empty `operations` array even though `listOperations` reported it
+  for the same transaction — on recent mainnet blocks that silently dropped the majority of
+  transactions. VIP-180 `Transfer` logs emitted by the VTHO contract are now decoded from the same
+  expanded-block payload, so no extra request is made.
+
+  Each transfer also produced a single operation, for the recipient only. `BlockOperation.amount` is
+  the signed impact on `address`, so a transfer is now reported once per side — negative for the
+  sender, positive for the recipient — and an outgoing VET or VTHO transfer is no longer invisible to
+  a block-based consumer.
+
+  Native operations now carry the same `NATIVE_ASSET` (`{ type: "native", name: "VET" }`) that
+  `getBalance` and `listOperations` already use, instead of a bare `{ type: "native" }`, so an asset
+  is identified consistently across the module's outputs.
+
+  **Consumer impact** — `getBlock` output changes shape for callers that were already consuming it,
+  hence the minor rather than patch bump:
+
+  - A transfer now yields two operations instead of one. Code that sums `operations[].amount` to get a
+    block's net flow now gets ~0, because each credit is cancelled by the matching debit; filter by
+    `address` (or by `amount > 0n`) before summing.
+  - Blocks whose transactions are VTHO-only now report operations where they previously reported none,
+    so per-block operation counts increase.
+  - Grouping native operations by structural asset equality must expect `name: "VET"` to be present.
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
+### Patch Changes
+
+- Updated dependencies [[`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`5d2f40f`](https://github.com/LedgerHQ/ledger-live/commit/5d2f40f470f859960e43a2a08755a962796f6beb), [`e2134f5`](https://github.com/LedgerHQ/ledger-live/commit/e2134f5cffe4669ff5896e2b52904fe22218461b)]:
+  - @ledgerhq/ledger-wallet-framework@3.5.0-next.0
+
 ## 4.2.0
 
 ### Minor Changes
