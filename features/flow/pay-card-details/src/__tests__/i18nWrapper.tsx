@@ -2,6 +2,8 @@ import React from "react";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { LinkingProvider } from "@shared/linking";
 
+export const CARD_DISCLAIMER = "Disclaimer placeholder";
+
 export const CARD_COPY = {
   freeze: "Freeze",
   unfreeze: "Unfreeze",
@@ -81,6 +83,7 @@ export const CARD_RESOURCES = {
   en: {
     translation: {
       payTab: {
+        disclaimer: CARD_DISCLAIMER,
         card: {
           freeze: CARD_COPY.freeze,
           unfreeze: CARD_COPY.unfreeze,

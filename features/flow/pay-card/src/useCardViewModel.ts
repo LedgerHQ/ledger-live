@@ -30,6 +30,7 @@ export function useCardViewModel({
 
   return {
     title: t("payTab.card.title"),
+    disclaimer: t("payTab.disclaimer"),
     login,
     displayState,
     cardVisual,

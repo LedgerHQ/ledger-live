@@ -17,7 +17,12 @@ import type { OverviewSceneProps } from "./types";
 
 type OverviewActionsProps = Omit<
   OverviewSceneProps,
-  "cardVisual" | "assetsViewModel" | "onTransactionPress" | "onAddToWalletPress" | "formatters"
+  | "cardVisual"
+  | "assetsViewModel"
+  | "onTransactionPress"
+  | "onAddToWalletPress"
+  | "formatters"
+  | "disclaimer"
 > &
   Readonly<{
     reveal: RevealViewModel;
@@ -82,6 +87,7 @@ export function OverviewScene({
   onTransactionPress,
   onShowMore,
   formatters,
+  disclaimer,
 }: OverviewSceneProps) {
   const reveal = useRevealViewModel();
 
@@ -107,6 +113,14 @@ export function OverviewScene({
         onTransactionPress={item => onTransactionPress(item.transaction)}
         onShowMore={onShowMore}
       />
+
+      <Text
+        typography="body4"
+        lx={{ color: "muted", textAlign: "center" }}
+        testID="card-details-overview-disclaimer"
+      >
+        {disclaimer}
+      </Text>
     </Box>
   );
 }

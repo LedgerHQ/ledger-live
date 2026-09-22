@@ -19,6 +19,7 @@ export type OverviewSceneProps = Readonly<{
   onAddToWalletPress: () => void;
   onShowMore?: () => void;
   formatters?: CardTransactionFormatters;
+  disclaimer: string;
 }>;
 
 export type FreezeSceneProps = Readonly<{

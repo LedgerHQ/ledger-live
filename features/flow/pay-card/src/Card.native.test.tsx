@@ -104,6 +104,7 @@ describe("Card (native)", () => {
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.getByTestId("card-login")).toBeVisible();
       expect(screen.queryByTestId("card-details")).toBeNull();
+      expect(screen.queryByTestId("pay-card-disclaimer")).toBeNull();
     });
 
     it("never builds the balance overlay, even when the host provides a formatter", () => {
@@ -127,6 +128,7 @@ describe("Card (native)", () => {
       expect(screen.getByTestId("card-add-to-wallet-cta")).toBeVisible();
       expect(screen.queryByTestId("card-login")).toBeNull();
       expect(screen.queryByTestId("card-artwork")).toBeNull();
+      expect(screen.queryByTestId("pay-card-disclaimer")).toBeNull();
     });
 
     it("hands the card visual to the details block once the host provides a formatter", () => {
