@@ -101,6 +101,10 @@ pnpm start -- <command> [args]
 - In `apps/wallet-cli`: `pnpm build` (Bunli native bundle → `dist/`)
 - From repo root: `pnpm build:wallet-cli`
 
+## Tests
+
+`pnpm test` in `apps/wallet-cli`. Tests sit next to the code they validate; the naming convention and the shared helpers are described in [`src/testing/README.md`](src/testing/README.md).
+
 ## Environment
 
 If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`env-setup.ts`).
