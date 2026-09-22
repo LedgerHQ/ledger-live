@@ -3,7 +3,7 @@ import "../src/live-common-set-supported-currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/ports";
+import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import {
@@ -34,9 +34,6 @@ setFrameworkCryptoAssetsStore({
   getTokensSyncHash: () => Promise.resolve(""),
 });
 
-// asset-aggregation and wallet-analytics declare their own countervalues interface and
-// throw when it is unset, so fill it globally rather than in every suite that renders a
-// balance. Suites needing specific rates override with their own setRateLookup.
 setAssetAggregationRateLookup({ calculate });
 setWalletAnalyticsRateLookup({ calculate });
 import "@jest/globals";

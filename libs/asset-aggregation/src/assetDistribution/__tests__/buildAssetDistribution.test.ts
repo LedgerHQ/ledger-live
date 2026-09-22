@@ -3,7 +3,7 @@ import type { AssetsDataLike, BuildAssetDistributionOpts } from "../types";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
-import { resetRateLookup, setRateLookup } from "../../ports";
+import { resetRateLookup, setRateLookup } from "../../rateLookup";
 
 const mockFindCryptoCurrencyById = jest.fn();
 

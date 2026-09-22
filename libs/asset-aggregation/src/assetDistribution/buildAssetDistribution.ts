@@ -3,7 +3,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Currency } from "@domain/entity-currency";
-import { getRateLookup, type RateSnapshot } from "../ports";
+import { getRateLookup, type RateSnapshot } from "../rateLookup";
 import BigNumber from "bignumber.js";
 import { toSlug } from "./toSlug";
 import type {

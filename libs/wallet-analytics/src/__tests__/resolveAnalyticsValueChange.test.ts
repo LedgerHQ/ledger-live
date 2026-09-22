@@ -1,6 +1,6 @@
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { resolveAnalyticsValueChange } from "../resolveAnalyticsValueChange";
-import { resetRateLookup, setRateLookup } from "../ports";
+import { resetRateLookup, setRateLookup } from "../rateLookup";
 
 const mockCounterValue = getFiatCurrencyByTicker("USD");
 const mockCvState = { data: {}, status: {}, cache: {} };

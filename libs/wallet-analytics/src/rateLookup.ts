@@ -1,6 +1,3 @@
-// Countervalues access, injected by the host app at startup. Declaring the
-// interface here is what lets this package carry no countervalues dependency.
-
 import type { Currency } from "@domain/entity-currency";
 
 /**
@@ -28,7 +25,7 @@ let lookup: RateLookup | undefined;
 
 /**
  * Register the countervalues lookup. Should be called once during application
- * initialization, before any asset aggregation or distribution is computed.
+ * initialization, before any analytics value change is computed.
  */
 export function setRateLookup(impl: RateLookup): void {
   lookup = impl;

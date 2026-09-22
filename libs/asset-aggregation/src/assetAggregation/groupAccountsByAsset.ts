@@ -1,7 +1,7 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
-import { getRateLookup, type RateSnapshot } from "../ports";
+import { getRateLookup, type RateSnapshot } from "../rateLookup";
 
 export type GroupedAccount = {
   totalBalance: BigNumber;

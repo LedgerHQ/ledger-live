@@ -4,7 +4,7 @@ import { CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById } from "@domain/enti
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
-import { resetRateLookup, setRateLookup } from "../../ports";
+import { resetRateLookup, setRateLookup } from "../../rateLookup";
 
 describe("groupAccountsByAsset", () => {
   beforeEach(() => {

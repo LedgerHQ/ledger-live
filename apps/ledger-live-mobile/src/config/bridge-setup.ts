@@ -1,6 +1,6 @@
 import { buildCryptoAssetsStore } from "@features/platform-currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/ports";
+import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";

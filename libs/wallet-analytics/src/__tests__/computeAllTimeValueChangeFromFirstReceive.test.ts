@@ -4,7 +4,7 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { computeAllTimeValueChangeFromFirstReceive } from "../computeAllTimeValueChangeFromFirstReceive";
-import { resetRateLookup, setRateLookup } from "../ports";
+import { resetRateLookup, setRateLookup } from "../rateLookup";
 
 const mockCalculate = jest.fn();
 

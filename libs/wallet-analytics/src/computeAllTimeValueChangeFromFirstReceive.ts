@@ -4,7 +4,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getOperationAmountNumber } from "@ledgerhq/ledger-wallet-framework/operation";
 import { meaningfulPercentage } from "./meaningfulPercentage";
-import { getRateLookup, type RateSnapshot } from "./ports";
+import { getRateLookup, type RateSnapshot } from "./rateLookup";
 import type { Currency } from "@domain/entity-currency";
 import type { AccountLike, ValueChange } from "@ledgerhq/types-live";
 

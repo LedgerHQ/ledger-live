@@ -1,7 +1,7 @@
 import type { Currency } from "@domain/entity-currency";
 import type { AccountLike, Portfolio, PortfolioRange, ValueChange } from "@ledgerhq/types-live";
 import { computeAllTimeValueChangeFromFirstReceive } from "./computeAllTimeValueChangeFromFirstReceive";
-import type { RateSnapshot } from "./ports";
+import type { RateSnapshot } from "./rateLookup";
 
 export function resolveAnalyticsValueChange({
   selectedTimeRange,
