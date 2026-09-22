@@ -1756,9 +1756,6 @@ importers:
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
-      '@domain/entity-altcoins-sentiment':
-        specifier: workspace:^
-        version: link:../../domain/entity/altcoins-sentiment
       '@domain/entity-analytics-consent':
         specifier: workspace:*
         version: link:../../domain/entity/analytics-consent
@@ -1789,6 +1786,9 @@ importers:
       '@domain/entity-interest-rate':
         specifier: workspace:*
         version: link:../../domain/entity/interest-rate
+      '@domain/entity-market-index-altcoin-season':
+        specifier: workspace:^
+        version: link:../../domain/entity/market-index-altcoin-season
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment
@@ -4505,9 +4505,9 @@ importers:
 
   domain/api/altcoins-sentiment:
     dependencies:
-      '@domain/entity-altcoins-sentiment':
+      '@domain/entity-market-index-altcoin-season':
         specifier: workspace:*
-        version: link:../../entity/altcoins-sentiment
+        version: link:../../entity/market-index-altcoin-season
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
@@ -4967,34 +4967,6 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
-  domain/entity/altcoins-sentiment:
-    dependencies:
-      zod:
-        specifier: 'catalog:'
-        version: 4.4.3
-    devDependencies:
-      '@jest/globals':
-        specifier: 'catalog:'
-        version: 30.5.0
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../../support/test-quarantine
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.0
-      typescript:
-        specifier: 'catalog:'
-        version: '@typescript/typescript6@6.0.2'
-
   domain/entity/analytics-consent:
     dependencies:
       '@shared/schema-primitives':
@@ -5340,6 +5312,34 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../currency-token
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/market-index-altcoin-season:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -23532,7 +23532,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -64183,9 +64182,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
