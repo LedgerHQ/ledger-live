@@ -6,7 +6,7 @@ import { WalletCliDeviceError } from "../../device/wallet-cli-device-error";
 const ROOT = path.resolve(import.meta.dir, "../../..");
 const HUMAN_DEVICE_ERROR_EXIT = path.resolve(
   import.meta.dir,
-  "../helpers/human-device-error-exit.ts",
+  "../../testing/human-device-error-exit.ts",
 );
 
 describe("output command handling", () => {

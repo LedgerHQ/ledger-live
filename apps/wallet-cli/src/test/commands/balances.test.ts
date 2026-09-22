@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
-import { MockServer } from "../helpers/mock-server";
-import { runCli } from "../helpers/cli-runner";
-import { makeSessionDir } from "../helpers/session-fixture";
-import { ETH_DESCRIPTOR, ETH_ADDRESS } from "../helpers/constants";
+import { MockServer } from "../../testing/mock-server";
+import { runCli } from "../../testing/cli-runner";
+import { makeSessionDir } from "../../testing/session-fixture";
+import { ETH_DESCRIPTOR, ETH_ADDRESS } from "../../testing/constants";
 
 // 1.5 ETH in wei
 const ETH_BALANCE_WEI = "1500000000000000000";

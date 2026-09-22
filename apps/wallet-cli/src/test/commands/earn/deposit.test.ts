@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
-import { MockServer } from "../../helpers/mock-server";
-import type { Route } from "../../helpers/mock-server";
-import { runCli } from "../../helpers/cli-runner";
-import { makeSessionDir } from "../../helpers/session-fixture";
-import { ETH_SYNC_ROUTES } from "../../helpers/eth-sync-routes";
+import { MockServer } from "../../../testing/mock-server";
+import type { Route } from "../../../testing/mock-server";
+import { runCli } from "../../../testing/cli-runner";
+import { makeSessionDir } from "../../../testing/session-fixture";
+import { ETH_SYNC_ROUTES } from "../../../testing/eth-sync-routes";
 import {
   MOCK_ETH_DESCRIPTOR,
   MOCK_ETH_ADDRESS,
   MOCK_ETH_PUBKEY,
   MOCK_BTC_DESCRIPTOR,
-} from "../../helpers/constants";
+} from "../../../testing/constants";
 
 // One Kiln ERC-4626 vault, mirroring the eth-vault-pipeline unit test fixture. The `earn deposit`
 // command resolves the vault from GET /v1/defi/products and converts the amount with the vault's

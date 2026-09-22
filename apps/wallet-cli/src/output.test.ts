@@ -446,7 +446,7 @@ describe("HumanCommandOutput", () => {
 
   it("token() writes the formatted token info to stdout", async () => {
     const { installOutputCapture } = await import("./shared/ui");
-    const { USDT_TOKEN_INFO } = await import("./test/helpers/cal-fixtures");
+    const { USDT_TOKEN_INFO } = await import("./testing/cal-fixtures");
     const writes: string[] = [];
     const restore = installOutputCapture({
       stdout: chunk => {

@@ -1,7 +1,7 @@
-import "../../live-common-setup";
-import { createCommandOutput } from "../../output";
-import { getCliProcessExitCode } from "../../cli-process-exit-error";
-import { WalletCliDeviceError } from "../../device/wallet-cli-device-error";
+import "../live-common-setup";
+import { createCommandOutput } from "../output";
+import { getCliProcessExitCode } from "../cli-process-exit-error";
+import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 
 const out = createCommandOutput("human", {
   command: "test-human-device-error-exit",

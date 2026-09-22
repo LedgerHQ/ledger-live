@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
-import { MockServer } from "../../helpers/mock-server";
-import { runCli } from "../../helpers/cli-runner";
-import { makeSessionDir } from "../../helpers/session-fixture";
-import { MOCK_ETH_DESCRIPTOR, ETH_DESCRIPTOR } from "../../helpers/constants";
+import { MockServer } from "../../../testing/mock-server";
+import { runCli } from "../../../testing/cli-runner";
+import { makeSessionDir } from "../../../testing/session-fixture";
+import { MOCK_ETH_DESCRIPTOR, ETH_DESCRIPTOR } from "../../../testing/constants";
 
 // `earn yields` needs no device (read-only API), so no DMK mock is installed. Every route the
 // command can reach is served by pathname: the cli-runner redirects non-local hosts to the mock,

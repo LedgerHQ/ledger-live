@@ -1,8 +1,8 @@
 import { describe, it, expect, afterEach } from "bun:test";
-import { MockServer } from "../../helpers/mock-server";
-import { runCli } from "../../helpers/cli-runner";
-import { makeSessionDir } from "../../helpers/session-fixture";
-import { MOCK_ETH_DESCRIPTOR, MOCK_ETH_ADDRESS } from "../../helpers/constants";
+import { MockServer } from "../../../testing/mock-server";
+import { runCli } from "../../../testing/cli-runner";
+import { makeSessionDir } from "../../../testing/session-fixture";
+import { MOCK_ETH_DESCRIPTOR, MOCK_ETH_ADDRESS } from "../../../testing/constants";
 
 // `earn positions` needs no device for ethereum (no Solana stake-account enrichment), so no DMK
 // mock is installed.
