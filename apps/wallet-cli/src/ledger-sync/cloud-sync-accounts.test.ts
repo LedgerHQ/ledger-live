@@ -36,6 +36,18 @@ const UNSUPPORTED_RAW = {
 // without affecting any other entry in the same import.
 const MALFORMED_RAW = { id: "not-a-real-descriptor" };
 
+// Passes accountDescriptorSchema (seedIdentifier has no .min(1) there) but produces a structurally
+// invalid V1 descriptor (empty `address`) once toV1() copies it verbatim — real data seen from a
+// live Ledger Sync pull. Must be isolated as "invalid", never silently written into the session.
+const EMPTY_ADDRESS_RAW = {
+  id: "js:2:ethereum::ethM",
+  currencyId: "ethereum",
+  freshAddress: "",
+  seedIdentifier: "",
+  derivationMode: "ethM",
+  index: 0,
+};
+
 describe("mergeSyncedAccounts", () => {
   it("imports a new, supported account and adds it to the session", () => {
     const session = Session.from([]);
@@ -89,6 +101,18 @@ describe("mergeSyncedAccounts", () => {
     expect(report.invalid[0]?.id).toBe("not-a-real-descriptor");
     expect(report.imported).toHaveLength(2);
     expect(session.accounts).toHaveLength(2);
+  });
+
+  it("isolates a toV1() output that fails the V1 schema (empty address) as invalid, never persisting it", () => {
+    const session = Session.from([]);
+    const report = mergeSyncedAccounts(session, [EMPTY_ADDRESS_RAW, ETH_RAW]);
+
+    expect(report.invalid).toHaveLength(1);
+    expect(report.invalid[0]?.id).toBe(EMPTY_ADDRESS_RAW.id);
+    expect(report.imported).toHaveLength(1);
+    expect(session.accounts).toHaveLength(1);
+    // The one persisted entry must be resolvable again — confirms no invalid descriptor slipped in.
+    expect(session.accounts[0]?.descriptor).not.toContain("::");
   });
 
   it("returns an empty report and touches nothing for an empty pull", () => {

@@ -7,6 +7,7 @@ import {
   serializeNetwork,
   UnsupportedFamilyError,
   UnknownNetworkError,
+  AccountDescriptorV1Schema,
   type AccountDescriptorV0,
 } from "../shared/accountDescriptor";
 import { Session } from "../session/session-store";
@@ -154,7 +155,23 @@ export function mergeSyncedAccounts(
       continue;
     }
 
-    const { label, added } = session.addDescriptor(v1);
+    // toV1() copies the raw source's seedIdentifier/address verbatim and never itself validates its
+    // output — a synced entry with a schema-valid-but-empty seedIdentifier (accountDescriptorSchema's
+    // `seedIdentifier` has no `.min(1)`) silently produced a structurally invalid V1 descriptor
+    // (e.g. an empty `address`) that looked fine in `session view` but threw on the next `parseV1()`
+    // (every later command resolving this account by label). Validate here, once, so that class of
+    // entry is isolated as `invalid` instead of corrupting the session.
+    const v1Validation = AccountDescriptorV1Schema.safeParse(v1);
+    if (!v1Validation.success) {
+      report.invalid.push({
+        status: "invalid",
+        id: descriptor.id,
+        reason: v1Validation.error.issues.map(i => i.message).join("; "),
+      });
+      continue;
+    }
+
+    const { label, added } = session.addDescriptor(v1Validation.data);
     const network = serializeNetwork(v1.network);
     if (added) {
       report.imported.push({ status: "imported", label, network });
