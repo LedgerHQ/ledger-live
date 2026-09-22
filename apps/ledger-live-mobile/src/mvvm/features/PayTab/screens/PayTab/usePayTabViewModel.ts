@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import { Linking } from "react-native";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -19,7 +18,6 @@ import type { CardAssetRow, CardAssetsProps } from "@features/flow-pay-card-asse
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
-import { urls } from "~/utils/urls";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
 import { useCountervalueFormatter } from "../../hooks/useCountervalueFormatter";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
@@ -128,13 +126,9 @@ export function usePayTabViewModel() {
     [openHostedPath],
   );
 
-  const onHelp = useCallback(() => {
-    Linking.openURL(urls.cardHelpCenter);
-  }, []);
-
   const cardSettingsActions: CardSettingsActions = useMemo(
-    () => ({ onManagePin, onAccessBaanx, onHelp }),
-    [onManagePin, onAccessBaanx, onHelp],
+    () => ({ onManagePin, onAccessBaanx }),
+    [onManagePin, onAccessBaanx],
   );
 
   const onShowAssetHistory = useCallback(

@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
-import { I18nWrapper } from "../../__tests__/i18nWrapper";
+import { I18nWrapper, openExternalMock } from "../../__tests__/i18nWrapper";
+import { urls } from "../../urls";
 import { useMoreViewModel } from "./useMoreViewModel";
 import type { CardSettingsActions } from "./types";
 
@@ -61,6 +62,7 @@ describe("useMoreViewModel", () => {
       "managePin",
       "accessBaanx",
       "help",
+      "legal",
       "logout",
     ]);
   });
@@ -118,7 +120,7 @@ describe("useMoreViewModel", () => {
     signIn(true);
 
     expect(result.current?.moreLabel).toBe("More");
-    expect(result.current?.rows).toHaveLength(4);
+    expect(result.current?.rows).toHaveLength(5);
   });
 
   it("forgets an open sheet when the session ends", () => {
@@ -134,16 +136,23 @@ describe("useMoreViewModel", () => {
   it("calls the host action wired to each redirect row", () => {
     const onManagePin = jest.fn();
     const onAccessBaanx = jest.fn();
-    const onHelp = jest.fn();
-    const { result } = renderWith({}, { onManagePin, onAccessBaanx, onHelp });
+    const { result } = renderWith({}, { onManagePin, onAccessBaanx });
 
     act(() => result.current?.rows.find(row => row.id === "managePin")?.onPress());
     act(() => result.current?.rows.find(row => row.id === "accessBaanx")?.onPress());
-    act(() => result.current?.rows.find(row => row.id === "help")?.onPress());
 
     expect(onManagePin).toHaveBeenCalledTimes(1);
     expect(onAccessBaanx).toHaveBeenCalledTimes(1);
-    expect(onHelp).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens the help center and legal agreement links directly, without a host action", () => {
+    const { result } = renderWith();
+
+    act(() => result.current?.rows.find(row => row.id === "help")?.onPress());
+    act(() => result.current?.rows.find(row => row.id === "legal")?.onPress());
+
+    expect(openExternalMock).toHaveBeenCalledWith(urls.helpCenter);
+    expect(openExternalMock).toHaveBeenCalledWith(urls.legalAgreement);
   });
 
   it("presses a redirect row safely when the host wired none", () => {

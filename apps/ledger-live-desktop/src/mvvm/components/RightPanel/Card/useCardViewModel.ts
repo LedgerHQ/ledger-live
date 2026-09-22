@@ -19,8 +19,6 @@ import logger from "~/renderer/logger";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { HISTORY_TAB_CARD, HISTORY_TAB_SEARCH_PARAM } from "LLD/features/History/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
-import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { usePayCardAssets } from "./usePayCardAssets";
@@ -205,13 +203,9 @@ export function useCardViewModel(): CardViewModel {
     [openHostedPath],
   );
 
-  const onHelp = useCallback(() => {
-    openURL(urls.cardHelpCenter);
-  }, []);
-
   const cardSettingsActions: CardSettingsActions = useMemo(
-    () => ({ onManagePin, onAccessBaanx, onHelp }),
-    [onManagePin, onAccessBaanx, onHelp],
+    () => ({ onManagePin, onAccessBaanx }),
+    [onManagePin, onAccessBaanx],
   );
 
   return {

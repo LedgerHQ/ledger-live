@@ -36,6 +36,7 @@
     "@features/flow-pay-card-widget": "workspace:*",
     "@ledgerhq/lumen-utils-shared": "catalog:",
     "@shared/i18n": "workspace:*",
+    "@shared/linking": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {

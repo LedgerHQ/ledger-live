@@ -8,7 +8,6 @@ import { act, renderHook } from "tests/testSetup";
 import { useCardViewModel } from "../useCardViewModel";
 
 const mockNavigate = jest.fn();
-const mockOpenURL = jest.fn();
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -22,10 +21,6 @@ jest.mock("@ledgerhq/live-common/wallet-api/useLiveAppManifest", () => ({
 jest.mock("@features/platform-card", () => ({
   ...jest.requireActual("@features/platform-card"),
   readCardUsEnv: jest.fn(),
-}));
-
-jest.mock("~/renderer/linking", () => ({
-  openURL: (...args: unknown[]) => mockOpenURL(...args),
 }));
 
 const HOSTED_MANIFEST = { id: "baanx-hosted-url", url: "https://ledger.baanxapi.test" };
@@ -56,7 +51,6 @@ function renderCardViewModel(state: unknown) {
 describe("useCardViewModel", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
-    mockOpenURL.mockClear();
     mockedReadCardUsEnv.mockResolvedValue(false);
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     mockedManifest.mockReturnValue(HOSTED_MANIFEST as ReturnType<typeof useLiveAppManifest>);
@@ -229,14 +223,6 @@ describe("useCardViewModel", () => {
     await act(async () => result.current.cardSettingsActions?.onAccessBaanx?.());
 
     expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/?app_id=LEDGERUS");
-  });
-
-  it("opens the card help center article externally", () => {
-    const { result } = renderCardViewModel(null);
-
-    act(() => result.current.cardSettingsActions?.onHelp?.());
-
-    expect(mockOpenURL).toHaveBeenCalledWith("https://support.ledger.com/article/5283612250653-zd");
   });
 
   it("keeps the same cardSettingsActions reference across re-renders", () => {

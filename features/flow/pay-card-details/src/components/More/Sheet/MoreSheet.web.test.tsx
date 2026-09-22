@@ -7,6 +7,7 @@ const onPress = {
   managePin: jest.fn(),
   accessBaanx: jest.fn(),
   help: jest.fn(),
+  legal: jest.fn(),
   logout: jest.fn(),
 };
 
@@ -37,11 +38,17 @@ describe("MoreSheet (Web)", () => {
     expect(screen.getByText("More")).toBeVisible();
   });
 
-  it("renders the four rows in the design order", () => {
+  it("renders the five rows in the design order", () => {
     render(<MoreSheet {...defaultProps} />);
 
     expect(screen.getAllByTestId(/^more-row-/).map(row => row.getAttribute("data-testid"))).toEqual(
-      ["more-row-managePin", "more-row-accessBaanx", "more-row-help", "more-row-logout"],
+      [
+        "more-row-managePin",
+        "more-row-accessBaanx",
+        "more-row-help",
+        "more-row-legal",
+        "more-row-logout",
+      ],
     );
   });
 
@@ -54,6 +61,7 @@ describe("MoreSheet (Web)", () => {
     expect(onPress.managePin).not.toHaveBeenCalled();
     expect(onPress.accessBaanx).not.toHaveBeenCalled();
     expect(onPress.help).not.toHaveBeenCalled();
+    expect(onPress.legal).not.toHaveBeenCalled();
   });
 
   it("calls onClose once when the header close also notifies Dialog", () => {
