@@ -54,10 +54,15 @@ export function CardDetailsSheet({
     setHasOpened(true);
   }, []);
 
+  const handleModalHide = useCallback(() => {
+    setHasOpened(false);
+  }, []);
+
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onOpened={handleOpened}
+      onModalHide={handleModalHide}
       onClose={handleClose}
       noCloseButton={isPending}
       preventBackdropClick={isPending}

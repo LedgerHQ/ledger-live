@@ -1,5 +1,5 @@
 import React, { type PropsWithChildren } from "react";
-import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
+import { act, cleanup, render, screen, userEvent } from "@testing-library/react-native";
 import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
@@ -12,6 +12,21 @@ import { buildMoreViewProps } from "../More/fixtures";
 import type { CardDetailsRoute, CardDetailsSceneProps } from "./Scenes/types";
 import type { ConfirmState, FreezeViewModel } from "../../types";
 import { CardDetailsSheet } from "./CardDetailsSheet";
+
+let mockOnModalHide: (() => void) | undefined;
+
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const React = jest.requireActual<typeof import("react")>("react");
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet/testing/module-mock");
+
+  return {
+    ...actual,
+    QueuedBottomSheet: (props: import("@shared/ui-queued-bottom-sheet").QueuedBottomSheetProps) => {
+      mockOnModalHide = props.onModalHide;
+      return React.createElement(actual.QueuedBottomSheet, props);
+    },
+  };
+});
 
 jest.mock("@features/flow-pay-card-assets", () => {
   const { View } = jest.requireActual("react-native");
@@ -109,6 +124,7 @@ describe("CardDetailsSheet (native)", () => {
   afterEach(() => {
     cleanup();
     jest.clearAllMocks();
+    mockOnModalHide = undefined;
   });
 
   it("should keep the sheet content hidden when the sheet is closed", () => {
@@ -124,6 +140,17 @@ describe("CardDetailsSheet (native)", () => {
     goTo({ isOpen: false, route: { name: "overview" } });
 
     expect(screen.getByTestId("card-details-overview")).toBeVisible();
+  });
+
+  it("should unmount the content only after the sheet is fully hidden", () => {
+    const { goTo } = renderSheet({ route: { name: "more" } });
+
+    goTo({ isOpen: false, route: { name: "overview" } });
+    expect(screen.getByTestId("card-details-overview")).toBeVisible();
+
+    act(() => mockOnModalHide?.());
+
+    expect(screen.queryByTestId("card-details-overview")).toBeNull();
   });
 
   it("should report the open flag when the sheet is open", () => {

@@ -13,7 +13,6 @@ import {
   mockPayCardLinkedWallets,
 } from "@domain/api-card-management/mock/card-wallets";
 import { ADD_TO_WALLET_COPY, CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
-import { FLIP_MS } from "../Reveal/useRevealViewModel";
 import { CardDetails } from "./CardDetails";
 import type { CardDetailsProps, CardVisualProps } from "../../types";
 
