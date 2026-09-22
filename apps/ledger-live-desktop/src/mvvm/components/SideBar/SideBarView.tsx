@@ -18,7 +18,8 @@ import {
   Chart5,
   Chart5Fill,
   Compass,
-  DollarConvert,
+  DollarFill,
+  Dollar,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { FeatureToggle } from "@features/platform-feature-flags";
 import React from "react";
@@ -85,8 +86,8 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
             {viewModel.isPayTabEnabled ? (
               <SideBarItem
                 value="paytab"
-                icon={DollarConvert}
-                activeIcon={DollarConvert}
+                icon={Dollar}
+                activeIcon={DollarFill}
                 label={t("sidebar.paytab")}
               />
             ) : (
