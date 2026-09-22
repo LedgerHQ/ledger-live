@@ -1,5 +1,4 @@
 import { z } from "zod";
-import type { Currency } from "@domain/entity-currency";
 import type {
   CounterValuesStateRawSchema,
   CounterValuesStateSchema,
@@ -33,9 +32,3 @@ export type CounterValuesState = z.infer<typeof CounterValuesStateSchema>;
 export type CounterValuesStateRaw = z.infer<typeof CounterValuesStateRawSchema>;
 /** User configuration, inferred from {@link CountervaluesSettingsSchema}. */
 export type CountervaluesSettings = z.infer<typeof CountervaluesSettingsSchema>;
-
-// Behaviour rather than data: the latest-rate fetch asks it which pairs to batch.
-// Nothing validates it at a boundary, so it carries no schema.
-export type BatchStrategySolver = {
-  shouldBatchCurrencyFrom: (from: Currency) => boolean;
-};

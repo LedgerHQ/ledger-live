@@ -28,11 +28,6 @@ export const incrementPerGranularity: Record<RateGranularity, number> = {
   hourly: HOUR,
 };
 
-export const datapointLimits: Record<RateGranularity, number> = {
-  daily: 9999 * DAY,
-  hourly: 7 * DAY, // we fetch at MOST a week of hourly. after that there are too much data...
-};
-
 export const datapointRetention: Record<Extract<RateGranularity, "hourly">, number> = {
   hourly: 7 * DAY, // we keep hourly data for 7 days
 };
@@ -74,11 +69,6 @@ export function parseFormattedDate(str: string): Date {
   full += ":00.000Z";
   return new Date(full);
 }
-
-export const formatPerGranularity: Record<RateGranularity, (arg0: Date) => string> = {
-  daily: formatCounterValueDay,
-  hourly: formatCounterValueHour,
-};
 
 /** Hash identifying a pair of currencies. Internal use only, never sent to the API. */
 export function pairId({ from, to }: { from: Currency; to: Currency }): string {
