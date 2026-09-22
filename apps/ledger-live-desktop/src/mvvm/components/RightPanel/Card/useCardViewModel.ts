@@ -2,9 +2,11 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
 import {
   buildTopUpPath,
+  buildWithdrawalPath,
   buildAccessBaanxPath,
   MANAGE_PIN_PATH,
   openHostedPageSafely,
+  type CardAssetPathBuilder,
 } from "@features/flow-pay-card-auth";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import { readCardUsEnv } from "@features/platform-card";
@@ -126,19 +128,19 @@ export function useCardViewModel(): CardViewModel {
 
   const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
 
-  const openTopUpPage = useCallback(
-    async (currency?: string) => {
+  const openAssetPage = useCallback(
+    async (buildPath: CardAssetPathBuilder, currency?: string) => {
       try {
         const isUsCardHolder = await readCardUsEnv(usAppId);
-        await openHostedPage(buildTopUpPath(isUsCardHolder ? usAppId : null, currency));
+        await openHostedPage(buildPath(isUsCardHolder ? usAppId : null, currency));
       } catch (error) {
-        logger.warn("[card] the top up page did not open", error);
+        logger.warn("[card] the hosted asset page did not open", error);
       }
     },
     [openHostedPage, usAppId],
   );
 
-  const onTopUp = useCallback(() => openTopUpPage(), [openTopUpPage]);
+  const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
 
   useWipeHostedSession();
 
@@ -178,9 +180,10 @@ export function useCardViewModel(): CardViewModel {
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openTopUpPage(asset.currency),
+      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
+      onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
     }),
-    [onShowAssetHistory, openTopUpPage, payCardAssets],
+    [onShowAssetHistory, openAssetPage, payCardAssets],
   );
 
   const onManagePin = useCallback(

@@ -5,16 +5,18 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   buildHostedUrl,
   buildTopUpPath,
+  buildWithdrawalPath,
   buildAccessBaanxPath,
-  openHostedLoginInSecureBrowser,
+  openHostedUrlInSecureBrowser,
   MANAGE_PIN_PATH,
-  openHostedPageInSecureBrowser,
   openHostedPageSafely,
+  type CardAssetPathBuilder,
   type OpenCardHostedPage,
 } from "@features/flow-pay-card-auth";
 import { readCardUsEnv } from "@features/platform-card";
 import useEnv from "@features/platform-env";
 import { useContactsFeature } from "@features/platform-contacts";
+import type { CardAssetRow, CardAssetsProps } from "@features/flow-pay-card-assets";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
@@ -34,7 +36,6 @@ import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayme
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
 import { track } from "~/analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
-import type { CardAssetRow } from "@features/flow-pay-card-assets";
 
 export function usePayTabViewModel() {
   const { top, bottom } = useNavigationBarHeights();
@@ -82,17 +83,6 @@ export function usePayTabViewModel() {
     [params?.code, params?.app_id],
   );
 
-  const onTopUp = useCallback(async () => {
-    try {
-      const isUsCardHolder = await readCardUsEnv(usAppId);
-      const topUpUrl = buildHostedUrl(hostedUiUrl, buildTopUpPath(isUsCardHolder ? usAppId : null));
-
-      await openHostedLoginInSecureBrowser(topUpUrl, PAY_TAB_DEEP_LINK);
-    } catch {
-      console.warn("[card] the top up page did not open");
-    }
-  }, [hostedUiUrl, usAppId]);
-
   const login: CardProps["login"] = useMemo(
     () => ({ oauthConfig, callback, onTrackEvent: balance.onTrackEvent, requestProtection }),
     [oauthConfig, callback, balance.onTrackEvent, requestProtection],
@@ -106,9 +96,26 @@ export function usePayTabViewModel() {
   // useCardHostedPageOpeners already exposes, so both platforms share openHostedPageSafely below
   // instead of each hand-rolling its own try/catch.
   const openHostedPage: OpenCardHostedPage = useCallback(
-    path => openHostedPageInSecureBrowser(buildHostedUrl(hostedUiUrl, path)),
+    async path => {
+      await openHostedUrlInSecureBrowser(buildHostedUrl(hostedUiUrl, path), PAY_TAB_DEEP_LINK);
+    },
     [hostedUiUrl],
   );
+
+  const openAssetPage = useCallback(
+    async (buildPath: CardAssetPathBuilder, currency?: string) => {
+      try {
+        const isUsCardHolder = await readCardUsEnv(usAppId);
+
+        await openHostedPage(buildPath(isUsCardHolder ? usAppId : null, currency));
+      } catch (error) {
+        console.warn("[card] the hosted asset page did not open", error);
+      }
+    },
+    [openHostedPage, usAppId],
+  );
+
+  const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
 
   const onManagePin = useCallback(
     () =>
@@ -154,10 +161,15 @@ export function usePayTabViewModel() {
     [],
   );
 
-  const cardAssetsViewModel = usePayCardAssets();
-  const cardAssets = useMemo(
-    () => ({ ...cardAssetsViewModel, onShowHistory: onShowAssetHistory }),
-    [cardAssetsViewModel, onShowAssetHistory],
+  const payCardAssets = usePayCardAssets();
+  const cardAssets: CardAssetsProps = useMemo(
+    () => ({
+      ...payCardAssets,
+      onShowHistory: onShowAssetHistory,
+      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
+      onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
+    }),
+    [payCardAssets, onShowAssetHistory, openAssetPage],
   );
 
   // Without a countervalue formatter the flow shows the bare artwork instead of the card's balance.
