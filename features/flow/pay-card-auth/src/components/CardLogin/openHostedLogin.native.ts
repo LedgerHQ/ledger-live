@@ -15,10 +15,10 @@ import type { HostedLoginResult } from "../../state/types";
  * app's deep link is the other one, and whichever arrives first wins.
  */
 export async function openHostedUrlInSecureBrowser(
-  loginUrl: string,
+  hostedUrl: string,
   deepLink?: string,
 ): Promise<HostedLoginResult> {
-  const result = await openAuthSessionAsync(loginUrl, deepLink);
+  const result = await openAuthSessionAsync(hostedUrl, deepLink);
 
   return result.type === "success" ? { type: "success", url: result.url } : { type: "dismissed" };
 }
