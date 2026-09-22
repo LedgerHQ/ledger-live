@@ -1901,6 +1901,9 @@ importers:
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags
+      '@features/platform-pay-analytics':
+        specifier: workspace:^
+        version: link:../../features/platform/pay-analytics
       '@features/platform-style':
         specifier: workspace:^
         version: link:../../features/platform/style

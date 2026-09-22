@@ -6,6 +6,7 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { PayRequestTrackEvent, RequestReceiveProps } from "@features/flow-pay-request";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import {
   markReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
@@ -18,19 +19,16 @@ import { usePayTabVerifyAddress } from "LLM/features/PayTab/hooks/usePayTabVerif
 import type { PayTabNavigatorParamList } from "../../types";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
 import type { PayTabRequestReceiveViewProps } from "./PayTabRequestReceiveView";
 
-const REQUEST_PAGE = "Pay";
+const REQUEST_PAGE = "Request complete";
 const VERIFY_HINT = "verify";
-
-const onTrackEvent: PayRequestTrackEvent = (event, params) => {
-  void track(event, params);
-};
 
 export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProps {
   useHideTabBar();
 
+  const analytics = usePayAnalyticsContext();
+  const onTrackEvent: PayRequestTrackEvent = analytics.trackEvent;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasSeenReceiveVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
@@ -92,22 +90,24 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   }, [addListener, hasSeenReceiveVerifyHint]);
 
   const onHintShown = useCallback(() => {
-    track("hint_impression", {
+    onTrackEvent("hint_impression", {
       hint: VERIFY_HINT,
       buttonLocation: "request",
       page: REQUEST_PAGE,
+      flow: "request",
     });
-  }, []);
+  }, [onTrackEvent]);
 
   const onGotIt = useCallback(() => {
-    track("button_clicked", {
+    onTrackEvent("button_clicked", {
       button: "got it",
       hint: VERIFY_HINT,
       buttonLocation: "request",
       page: REQUEST_PAGE,
+      flow: "request",
     });
     markHintSeen();
-  }, [markHintSeen]);
+  }, [markHintSeen, onTrackEvent]);
 
   const onVerify = useCallback(() => {
     if (!account) return;
@@ -169,6 +169,7 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
       t,
       onGotIt,
       onHintShown,
+      onTrackEvent,
     ],
   );
 

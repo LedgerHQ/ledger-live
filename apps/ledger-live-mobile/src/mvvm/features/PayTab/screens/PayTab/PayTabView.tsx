@@ -31,6 +31,7 @@ type PayTabViewProps = {
   readonly bankTransferIntro: BankTransferIntroProps;
   readonly onShowMore: () => void;
   readonly cardSettingsActions: CardProps["cardSettingsActions"];
+  readonly trackRecipientAddressSelection: boolean;
 };
 
 export function PayTabView({
@@ -49,6 +50,7 @@ export function PayTabView({
   bankTransferIntro,
   onShowMore,
   cardSettingsActions,
+  trackRecipientAddressSelection,
 }: PayTabViewProps) {
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
@@ -58,9 +60,19 @@ export function PayTabView({
         contentContainerStyle={{ flexGrow: 1, paddingTop: top, paddingBottom: bottom }}
       >
         <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
-          <TrackScreen category="Pay" balance_filter={balance.filter} />
+          <TrackScreen
+            category="Pay"
+            balanceFilter={
+              balance.filterOptions
+                .find(option => option.id === balance.filter)
+                ?.ticker?.toLowerCase() ?? balance.filter
+            }
+          />
           <Balance {...balance} actionTiles={actionTiles} />
           {isContactsEnabled && <Contacts {...contacts} />}
+          {trackRecipientAddressSelection && (
+            <TrackScreen category="Recipient address selection" refreshSource={false} />
+          )}
           <ContactAddressPicker {...contactAddressPicker} />
           <Card
             login={login}

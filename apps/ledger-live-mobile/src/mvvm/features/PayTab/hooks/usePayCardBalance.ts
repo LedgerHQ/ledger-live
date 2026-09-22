@@ -9,15 +9,15 @@ import {
   type BalanceData,
   type BalanceFilter,
 } from "@features/flow-pay-balance";
+import type { PayAnalyticsHelper } from "@features/platform-pay-analytics";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { localeSelector } from "~/reducers/settings";
-import { track } from "~/analytics";
 import { usePayStablecoins } from "./usePayStablecoins";
 import { useCountervalueFormatter } from "./useCountervalueFormatter";
 import { useFiatFormatter } from "./useFiatFormatter";
 
-export function usePayCardBalance(): BalanceData {
+export function usePayCardBalance(onTrackEvent?: PayAnalyticsHelper["trackEvent"]): BalanceData {
   const dispatch = useDispatch();
   const locale = useSelector(localeSelector);
   const filter = useSelector(selectPayCardBalanceFilter);
@@ -44,10 +44,6 @@ export function usePayCardBalance(): BalanceData {
   const onResetFilter = useCallback(() => {
     dispatch(setPayCardBalanceFilter(PAY_CARD_BALANCE_FILTER_ALL));
   }, [dispatch]);
-
-  const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
-    track(event, params);
-  }, []);
 
   return useBalanceData({
     stablecoins,
