@@ -22,15 +22,18 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { useRecipientContactSelection } from "../../../../context/RecipientContactSelectionContext";
+import { useRecipientContinuation } from "../../../../context/RecipientContinuationContext";
 import { useContactsFeatureIntroductionViewModel } from "../useContactsFeatureIntroductionViewModel";
 import { useDoNotAskAgainSkipMemo } from "../../../../hooks/useDoNotAskAgainSkipMemo";
 import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
 import { trackPage } from "~/renderer/analytics/segment";
+import { useSendFlowTrackingProperties } from "../../../../hooks/useSendFlowTrackingProperties";
 
 jest.mock("../useAddressValidation");
 jest.mock("../useAddressMatchedSectionViewModel");
 jest.mock("../../../../context/SendFlowContext");
+jest.mock("../../../../hooks/useSendFlowTrackingProperties");
 jest.mock("../../../../../FlowWizard/FlowWizardContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
@@ -42,6 +45,7 @@ jest.mock("@features/platform-contacts", () => ({
   useContactsFeature: jest.fn(),
 }));
 jest.mock("../../../../context/RecipientContactSelectionContext");
+jest.mock("../../../../context/RecipientContinuationContext");
 jest.mock("../../../../context/SendFlowTrackingContext");
 jest.mock("../useContactsFeatureIntroductionViewModel");
 jest.mock("../../../../hooks/useDoNotAskAgainSkipMemo");
@@ -63,7 +67,9 @@ const mockedSendFeatures = jest.mocked(sendFeatures);
 const mockedUseContacts = jest.mocked(useContacts);
 const mockedUseContactsFeature = jest.mocked(useContactsFeature);
 const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelection);
+const mockedUseRecipientContinuation = jest.mocked(useRecipientContinuation);
 const mockedUseSendFlowTracking = jest.mocked(useSendFlowTracking);
+const mockedUseSendFlowTrackingProperties = jest.mocked(useSendFlowTrackingProperties);
 const mockedUseContactsFeatureIntroductionViewModel = jest.mocked(
   useContactsFeatureIntroductionViewModel,
 );
@@ -140,6 +146,10 @@ describe("useRecipientAddressModalViewModel", () => {
       selectContact: jest.fn(),
       clearSelectedContact: jest.fn(),
     });
+    mockedUseRecipientContinuation.mockReturnValue({
+      isFamilyRecipientBlocked: false,
+      setFamilyRecipientBlocked: jest.fn(),
+    });
     mockedUseSendFlowTracking.mockReturnValue({
       inputMethod: "manual",
       resultType: null,
@@ -148,6 +158,13 @@ describe("useRecipientAddressModalViewModel", () => {
       setInputMethod: jest.fn(),
       setRecipientResolution,
       markContactSaved: jest.fn(),
+    });
+    mockedUseSendFlowTrackingProperties.mockReturnValue({
+      flow: "send",
+      newSendFlow: true,
+      blockchain: "ethereum",
+      currency: "ETH",
+      currency_id: "ethereum",
     });
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
@@ -701,6 +718,28 @@ describe("useRecipientAddressModalViewModel", () => {
     result.current.handleAddressSelect("new_address", "ens_name");
 
     expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name", true);
+  });
+
+  it("does not advance when a family notice blocks the recipient step", () => {
+    const onAddressSelected = jest.fn();
+    mockedUseRecipientContinuation.mockReturnValue({
+      isFamilyRecipientBlocked: true,
+      setFamilyRecipientBlocked: jest.fn(),
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleAddressSelect("new_address", "ens_name"));
+
+    expect(onAddressSelected).not.toHaveBeenCalled();
+    expect(goToStep).not.toHaveBeenCalled();
   });
 
   it("asks for confirmation before sending without a memo", () => {

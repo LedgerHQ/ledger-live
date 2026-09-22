@@ -12,24 +12,27 @@ Session teardown uses `useCardLogout` from [`@features/flow-pay-card-auth`](../p
 
 ## Usage
 
-Web hosts lay freeze and More next to the card with `CardActions`:
+Every host mounts a single `CardDetails`. On web the holder can reveal the card numbers from View
+with no host gate — the package fetches the details image itself:
 
 ```tsx
-import { CardVisual, CardActions } from "@features/flow-pay-card-details";
+import { CardDetails } from "@features/flow-pay-card-details";
 
-<CardVisual balance={100} formatCountervalue={format} balanceLabel="Balance" />
-<CardActions />
+<CardDetails cardVisual={cardVisual} />
 ```
 
 Native hosts mount a single `CardDetails`. Two buttons — a disabled placeholder and **Details** —
 sit over the bottom of the card face, above a gradient that fades the artwork out behind them.
-Pressing Details opens one bottom sheet. Its card overview uses the full-height snap point, while
-the `Freeze` confirmation and `More` menu resize to their content. These scenes replace each other
-within that sheet so they do not compete for the global bottom-sheet queue.
+Pressing Details opens one bottom sheet. Its card overview and the selected transaction use the
+full-height snap point, while the `Freeze` confirmation and `More` menu resize to their content.
+These scenes replace each other within that sheet so they do not compete for the global
+bottom-sheet queue. Selecting a transaction also emits the injected tracking-plan
+`transaction_clicked` event.
 
 Each scene is a self-contained screen. The view model owns a single current `route` and drives it
 through a small navigation contract (`goTo` / `goBack`, in `Scenes/navigation.ts`); the
-sheet is a dumb shell that only renders the route it is given and sizes itself from `Scenes/registry.ts`.
+sheet is a dumb shell that only renders the route it is given, sizing itself and showing its header
+back button from `Scenes/registry.ts`.
 Navigation is classic (one scene at a time, back to overview) but the same contract is deliberately
 thin: adding a scene (transactions, assets) is a new route plus a tile that calls `goTo`, and the
 scenes can later be mounted in a stack or as full pages without being rewritten.
@@ -40,10 +43,22 @@ import { CardDetails } from "@features/flow-pay-card-details";
 <CardDetails cardVisual={cardVisual} />;
 ```
 
+Native hosts can also pass `assets`: whatever it holds is rendered in the sheet's overview, between
+the card actions and the transactions, which is where the design lists the card's funding wallets.
+The node comes from the host because the list itself lives in
+[`@features/flow-pay-card`](../pay-card/README.md), above this package.
+
 `CardVisual` composes the `CardArtwork` (card face) with the balance overlay. `CardArtwork` is also
 exported on its own for consumers that only need the card face. Hosts mount `CardDetails` and pass
-`cardVisual` to overlay the balance, or omit it for the bare artwork. On web that keeps freeze and
-More inline; on native they live in the Details bottom sheet.
+`cardVisual` to overlay the balance, or omit it for the bare artwork. On web that keeps freeze, More,
+and View inline; on native freeze and More live in the Details bottom sheet.
+
+On web `CardDetails` owns one reveal view model and passes it to `CardFlip` and `CardActions`.
+Mobile confirm for View is a later sheet; the shared reveal view model has no password unlock.
+
+Hide only drops the status, not the image URL. The card takes a flip to turn back, and clearing
+the URL there would empty the face the moment the rotation starts; the next reveal clears it
+before minting a fresh token.
 
 The frozen state is not a host prop: `useCardVisualViewModel` reads the same `CardStatus` query the
 freeze tile uses, so the card face and the tile can never disagree. A frozen card fades out and
@@ -92,23 +107,29 @@ pay-card-details/
     │   │   ├── CardVisualView.web.test.tsx
     │   │   └── CardVisualView.native.test.tsx
     │   ├── CardActions/
-    │   │   └── CardActions.web.tsx            # Freeze + More in one row (web)
+    │   │   └── CardActions.web.tsx            # Optional Reveal + Freeze + More in one row (web)
     │   ├── CardDetails/                       # Card block: web inline, native Details sheet
-    │   │   ├── CardDetails.web.tsx            # Visual + CardActions
+    │   │   ├── CardDetails.web.tsx            # Reveal VM passed to CardFlip and CardActions
     │   │   ├── CardDetails.native.tsx         # View-model + view
     │   │   ├── useCardDetailsViewModel.ts     # Details, Freeze and More state
     │   │   ├── CardDetailsView.native.tsx     # Overlay actions on the card face + fade
     │   │   ├── CardDetailsSheet.native.tsx    # Adaptive sheet navigation and lifecycle
     │   │   ├── Scenes/                        # Self-contained sheet scenes (screens)
     │   │   │   ├── navigation.ts              # Route union + goTo / goBack contract
-    │   │   │   ├── registry.ts                # Per-scene sheet sizing
+    │   │   │   ├── registry.native.ts         # Per-scene sheet sizing and back button
     │   │   │   ├── CardDetailsScene.native.tsx # Router: renders the current route
     │   │   │   ├── OverviewScene.native.tsx   # Card face + composable actions row
+    │   │   │   ├── TransactionScene.native.tsx
     │   │   │   ├── FreezeScene.native.tsx
     │   │   │   └── MoreScene.native.tsx
     │   │   ├── CardDetails.web.test.tsx
     │   │   ├── CardDetails.native.test.tsx
     │   │   └── CardDetailsSheet.native.test.tsx
+    │   ├── CardFlip/
+    │   │   └── CardFlip.web.tsx               # Flip the card face to the PAN/CVV image
+    │   ├── Reveal/
+    │   │   ├── Reveal.web.tsx                 # View / Hide tile
+    │   │   └── useRevealViewModel.ts          # Unlock, mint the token, hold the image URL
     │   ├── Freeze/
     │   │   ├── Freeze.web.tsx                 # Tile + confirmation, wired to the view model
     │   │   ├── Freeze.native.tsx              # Tile only; confirmation is a CardDetails scene
@@ -130,8 +151,8 @@ pay-card-details/
     │       ├── Tile/
     │       └── Sheet/
     ├── types.ts                               # Public props / view-model types
-    ├── exports.web.ts                         # Public surface, with the web-only CardActions
-    ├── exports.native.ts                      # Public surface, without CardActions
+    ├── exports.web.ts                         # Public surface
+    ├── exports.native.ts                      # Public surface
     ├── index.ts                              # Public API barrel → ./exports
     └── index.native.ts                       # Public API barrel → ./exports
 ```

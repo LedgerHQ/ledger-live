@@ -42,6 +42,7 @@ const ScanAccounts = ({
   const {
     creatableAccounts,
     error,
+    isRegionRestricted,
     handleConfirm,
     handleDeselectAll,
     handleSelectAll,
@@ -86,6 +87,8 @@ const ScanAccounts = ({
     },
     [colors.opacityDefault.c05, formatAccount, handleToggle, selectedIds],
   );
+
+  if (isRegionRestricted) return null;
 
   if (error) {
     return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;

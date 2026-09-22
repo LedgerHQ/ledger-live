@@ -18,7 +18,7 @@ import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
-import { sendEVM, approveToken, signTypedMessage } from "./families/evm";
+import { sendEVM } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -629,6 +629,19 @@ export async function waitFor(
   );
 }
 
+/**
+ * Waits for the device to return to its app-ready screen after a status page
+ * that answers a command and then draws its own screen -- during that
+ * window, the app's own APDU loop can drop an incoming command instead of
+ * queuing it (LIVE-37178). The default maxAttempts (9 x the 500ms poll
+ * interval = 4.5s) is an upper bound on that screen's own duration, not a
+ * guess about CI load. "${name} app is ready" matches how these screens
+ * render today (confirmed on Zcash and Exchange, see EXCHANGE_APP_IS_READY).
+ */
+export async function waitForAppReady(speculosApp: AppInfos, maxAttempts = 9): Promise<string> {
+  return waitFor(`${speculosApp.name} app is ready`, maxAttempts);
+}
+
 const SWAP_INIT_STALL_HINT =
   `\nHint: The device Exchange app is ready but Ledger Live never ` +
   `delivered the swap payload, so "Review transaction" was never reached.\nSee the ` +
@@ -679,6 +692,29 @@ export async function getDeviceLabelCoordinates(
   }
 
   return { x: event.x, y: event.y };
+}
+
+async function pressFirstLabelFoundOnScreen(labels: string[]): Promise<string> {
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  const speculosAddress = getSpeculosAddress();
+  const response = await retryAxiosRequest(() =>
+    axios.get<ResponseData>(
+      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    ),
+  );
+
+  for (const label of labels) {
+    const action = response.data.events.find(e =>
+      e.text.toLowerCase().startsWith(label.toLowerCase()),
+    );
+    if (action) {
+      await pressAndRelease(action.text, action.x, action.y);
+      return action.text;
+    }
+  }
+
+  const shown = response.data.events.map(e => e.text).join(" | ");
+  throw new Error(`No action among [${labels.join(", ")}] on screen. It showed: ${shown}`);
 }
 
 export async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
@@ -888,6 +924,54 @@ export const activateContractData = withDeviceController(({ getButtonsController
   await buttons.both();
   await waitFor(DeviceLabels.CONTRACT_DATA);
   await buttons.both();
+});
+
+/** Every app's idle screen reads "<app> is ready", so this matches without naming the app. */
+const IDLE_SCREEN_LABEL = "is ready";
+
+/**
+ * Turns on the Ethereum app's "Blind signing" setting, without which the app answers `6a80` to
+ * calldata it cannot describe. Reads the toggle before pressing it, and ends back on the idle
+ * screen where a review can arrive.
+ *
+ * Menu verified against Ethereum 1.22.3 on nanos+ 1.6.1.
+ */
+export const enableBlindSigning = withDeviceController(({ getButtonsController }) => async () => {
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  const isEnabled = async () => /Enabled/.test(await fetchCurrentScreenTexts(speculosApiPort));
+
+  if (isTouchDevice()) {
+    await goToSettings();
+    await waitFor(DeviceLabels.BLIND_SIGNING);
+
+    if (!(await isEnabled())) {
+      const toggle = getDeviceCoordinates("settingsToggle1");
+      await pressAndRelease(DeviceLabels.SETTINGS_TOGGLE_1, toggle.x, toggle.y);
+    }
+
+    const back = getDeviceCoordinates("arrowBack");
+    await pressAndRelease(DeviceLabels.BACK, back.x, back.y);
+    await waitFor(IDLE_SCREEN_LABEL);
+    return;
+  }
+
+  const buttons = getButtonsController();
+
+  await pressUntilTextFound(DeviceLabels.APP_SETTINGS);
+  await buttons.both();
+  await waitFor(DeviceLabels.BLIND_SIGNING);
+
+  if (!(await isEnabled())) {
+    await buttons.both();
+  }
+
+  await pressUntilTextFound(DeviceLabels.BACK);
+  await buttons.both();
+  // "Back" lands on the App settings entry of the top-level menu, one step short of idle.
+  await buttons.left();
+  // Parked in the menu the app stops answering sign APDUs, which surfaces much later as an
+  // opaque transport error, so a navigation that drifted is reported here instead.
+  await waitFor(IDLE_SCREEN_LABEL);
 });
 
 export const goToSettings = withDeviceController(({ getButtonsController }) => async () => {
@@ -1234,41 +1318,73 @@ export const shareViewKey = withDeviceController(({ getButtonsController }) => a
   }
 });
 
+const OPT_IN_SCREEN_MAX_ATTEMPTS = Math.ceil(30_000 / SCREEN_POLL_INTERVAL_MS);
+
+/**
+ * Whether `label` is the screen the device settled on, giving up as soon as one of
+ * `labelsShownLater` proves it was never coming.
+ */
+async function waitForOptInScreen(
+  label: DeviceLabels,
+  labelsShownLater: DeviceLabels[],
+): Promise<boolean> {
+  const port = getEnv("SPECULOS_API_PORT");
+  const wanted = label.toLowerCase();
+  const tooLate = labelsShownLater.map(shown => shown.toLowerCase());
+
+  for (let attempt = 0; attempt < OPT_IN_SCREEN_MAX_ATTEMPTS; attempt++) {
+    const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
+    if (texts.includes(wanted)) return true;
+    if (tooLate.some(shown => texts.includes(shown))) return false;
+    await sleep(SCREEN_POLL_INTERVAL_MS);
+  }
+  return false;
+}
+
 export const acceptEnableTransactionCheck = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
-      const buttons = getButtonsController();
-
-      // Wait for loading to finish: poll until either the Transaction Check prompt
-      // or the next (review transaction) screen is displayed. If the prompt never
-      // shows up, skip this step instead of waiting for it to appear.
-      const port = getEnv("SPECULOS_API_PORT");
-      const enableLabel = DeviceLabels.ENABLE_TRANSACTION_CHECK.toLowerCase();
-      const reviewLabel = DeviceLabels.REVIEW_TRANSACTION.toLowerCase();
-      let isTransactionCheckDisplayed = false;
-      for (let attempt = 0; attempt < 60; attempt++) {
-        const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
-        if (texts.includes(enableLabel)) {
-          isTransactionCheckDisplayed = true;
-          break;
-        }
-        if (texts.includes(reviewLabel)) {
-          break;
-        }
-        await sleep(500);
-      }
-
-      if (!isTransactionCheckDisplayed) {
-        return;
-      }
+      const displayed = await waitForOptInScreen(DeviceLabels.ENABLE_TRANSACTION_CHECK, [
+        DeviceLabels.REVIEW_TRANSACTION,
+        DeviceLabels.BLIND_SIGNING_AHEAD,
+      ]);
+      if (!displayed) return;
 
       if (isTouchDevice()) {
         await pressAndRelease(DeviceLabels.YES_ENABLE);
-      } else {
-        await pressUntilTextFound(DeviceLabels.CONFIRM);
-        await buttons.both();
+        return;
       }
+      await pressUntilTextFound(DeviceLabels.CONFIRM);
+      await getButtonsController().both();
     },
 );
 
-export { approveToken, signTypedMessage };
+const BLIND_SIGNING_WARNING_ACTIONS = [
+  DeviceLabels.ACCEPT_RISK,
+  DeviceLabels.CONTINUE_ANYWAY,
+  DeviceLabels.CONFIRM,
+];
+
+/**
+ * Clears the "Blind signing ahead" warning, which the app raises only once blind signing is
+ * enabled — the second half of [[enableBlindSigning]].
+ *
+ * No-ops when the warning is not the current screen.
+ */
+export const acceptBlindSigningWarning = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      const displayed = await waitForOptInScreen(DeviceLabels.BLIND_SIGNING_AHEAD, [
+        DeviceLabels.REVIEW_TRANSACTION,
+      ]);
+      if (!displayed) return;
+
+      if (isTouchDevice()) {
+        await pressFirstLabelFoundOnScreen(BLIND_SIGNING_WARNING_ACTIONS);
+        return;
+      }
+      await getButtonsController().both();
+    },
+);
+
+export { approveToken, approveContractTransaction, signTypedMessage } from "./families/evm";

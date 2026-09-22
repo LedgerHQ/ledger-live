@@ -10,7 +10,7 @@ import {
 } from "./api";
 
 const getAccountInfoMock = jest.fn();
-jest.mock("@ledgerhq/coin-tezos/api/index", () => ({
+jest.mock("@ledgerhq/coin-tezos/api", () => ({
   createApi: () => ({ getAccountInfo: getAccountInfoMock }),
 }));
 jest.mock("../../../config", () => ({

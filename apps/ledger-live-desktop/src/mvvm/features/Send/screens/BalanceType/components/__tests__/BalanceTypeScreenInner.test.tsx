@@ -103,5 +103,9 @@ describe("BalanceTypeScreenInner", () => {
     );
 
     expect(screen.getByTestId("balance-type-private-pending-notice")).toBeVisible();
+    expect(screen.getByText("Funds maturing")).toBeVisible();
+    expect(
+      screen.getByText("Some shielded notes are still maturing and may not be spendable yet"),
+    ).toBeVisible();
   });
 });

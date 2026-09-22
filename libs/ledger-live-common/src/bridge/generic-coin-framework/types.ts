@@ -112,6 +112,8 @@ export type GenericTransaction = TransactionCommon & {
   additionalFees?: BigNumber | null;
   gasOptions?: GasOptions;
   transferFee?: TransferFee;
+  stakeAccountRent?: BigNumber;
+  ownerTokenAccount?: string;
   sponsored?: boolean;
   valAddress?: string;
   valId?: string;

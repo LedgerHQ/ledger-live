@@ -15,8 +15,10 @@ import {
   approveToken,
   signTypedMessage as signTypedMessageDevice,
   acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
+  waitForAppReady,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 
@@ -88,6 +90,11 @@ export class SpeculosPage extends AppPage {
   @step("Export UFVK")
   async exportUfvk(account: Account) {
     await exportUfvk(account);
+  }
+
+  @step("Wait for the device to return to its app-ready screen")
+  async waitForAppReady(speculosApp: AppInfos) {
+    await waitForAppReady(speculosApp);
   }
 
   @step("Share view key")

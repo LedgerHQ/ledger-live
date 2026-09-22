@@ -17,13 +17,15 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "unimported": "pnpm knip --directory ../.. -c devtools/bindings/knip.web.config.mjs -W devtools/bindings --tsConfig tsconfig.json && pnpm knip --directory ../.. -c devtools/bindings/knip.native.config.mjs -W devtools/bindings --tsConfig tsconfig.json"
   },
   "dependencies": {
     "@devtools/env": "workspace:*",
     "@devtools/registry": "workspace:*",
     "@domain/api-card-management": "workspace:*",
     "@domain/entity-card-asset-mapping": "workspace:*",
+    "@domain/entity-currency": "workspace:^",
     "@features/flow-pay-card-auth": "workspace:*",
     "@features/flow-pay-card-wallets": "workspace:*",
     "@features/flow-pay-card-widget": "workspace:*",

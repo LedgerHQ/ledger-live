@@ -21,6 +21,7 @@ type UseAddressMatchedSectionViewModelProps = Readonly<{
   isContactsFeatureEnabled?: boolean;
   hasAddressBook?: boolean;
   addressBookFamilyName?: string;
+  isBlocked?: boolean;
 }>;
 
 type AddressListItemSuggestion = Readonly<{
@@ -58,7 +59,35 @@ export type AddressMatchedSectionViewModel = Readonly<{
   showFirstInteractionWarning: boolean;
 }>;
 
-export function useAddressMatchedSectionViewModel({
+/**
+ * Applies a family-imposed block (e.g. Zcash shielded sync not complete) to a
+ * computed view model: the recipient can still see the matched address, but its
+ * send/select actions are disabled so they can't advance until the block clears.
+ */
+function applyRecipientBlock(
+  viewModel: AddressMatchedSectionViewModel,
+  isBlocked: boolean,
+): AddressMatchedSectionViewModel {
+  if (!isBlocked || !viewModel.suggestion) {
+    return viewModel;
+  }
+
+  const suggestion =
+    viewModel.suggestion.kind === "recipient-card"
+      ? { ...viewModel.suggestion, isReady: false }
+      : { ...viewModel.suggestion, disabled: true, onSelect: undefined };
+
+  return { ...viewModel, suggestion };
+}
+
+export function useAddressMatchedSectionViewModel(
+  props: UseAddressMatchedSectionViewModelProps,
+): AddressMatchedSectionViewModel {
+  const viewModel = useAddressMatchedSectionViewModelInternal(props);
+  return applyRecipientBlock(viewModel, props.isBlocked ?? false);
+}
+
+function useAddressMatchedSectionViewModelInternal({
   searchResult,
   searchValue,
   onSelect,
@@ -112,6 +141,7 @@ export function useAddressMatchedSectionViewModel({
     isAddressComplete,
     hasBridgeError,
     isContactsFeatureEnabled,
+    matchedAccountAddress: searchResult.resolvedAddress,
   });
 
   if (!presentation) {

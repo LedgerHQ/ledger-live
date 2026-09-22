@@ -13,11 +13,13 @@
     },
     "./onboarding-status": "./src/onboardingStatus/index.ts",
     "./state": "./src/state/index.ts",
+    "./native": "./src/nativeExports.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "dependencies": {
     "@domain/api-card-management": "workspace:^",
+    "@domain/entity-currency": "workspace:^",
     "@features/flow-pay-card-wallets": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "@shared/i18n": "workspace:*",

@@ -3,11 +3,28 @@ import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-t
 import {
   formatCardTransactionDate,
   formatFundingSources,
+  formatHistoryDayLabel,
+  formatMaskedPanLast4,
   formatMerchantName,
   formatSignedAmount,
+  formatTransactionDetailDateTime,
 } from "./formatCardTransactionItem";
 
 const transaction = PayCardTransactionSchema.parse(mockPayCardTransactions()[0]);
+
+const TIMESTAMP = "2024-10-14T10:44:36.276Z";
+
+function formatLocale(locale: string) {
+  return (date: Date) => new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date);
+}
+
+function translateHistoryDay(key: "today" | "yesterday" | "unknownDate") {
+  return key;
+}
+
+function formatHistoryDay() {
+  return "formatted";
+}
 
 describe("formatCardTransactionItem", () => {
   it("prefixes a debit with a minus and a credit with a plus", () => {
@@ -26,17 +43,60 @@ describe("formatCardTransactionItem", () => {
     expect(formatMerchantName("LEDGER")).toBe("LEDGER");
   });
 
-  it("formats the provider timestamp as a medium date", () => {
-    expect(formatCardTransactionDate("2024-10-14T10:44:36.276Z", "en-US")).toBe("Oct 14, 2024");
-  });
-
-  it("formats the timestamp in the locale it was given", () => {
-    const inEnglish = formatCardTransactionDate("2024-10-14T10:44:36.276Z", "en-US");
-
-    expect(formatCardTransactionDate("2024-10-14T10:44:36.276Z", "fr-FR")).not.toBe(inEnglish);
+  it("uses the host date formatter", () => {
+    expect(formatCardTransactionDate(TIMESTAMP, formatLocale("en-US"))).toBe("Oct 14, 2024");
+    expect(formatCardTransactionDate(TIMESTAMP, formatLocale("en-GB"))).toBe("14 Oct 2024");
+    expect(formatCardTransactionDate(TIMESTAMP, () => "14/10/2024")).toBe("14/10/2024");
   });
 
   it("keeps an unparseable timestamp as it was sent", () => {
-    expect(formatCardTransactionDate("not-a-date", "en-US")).toBe("not-a-date");
+    expect(formatCardTransactionDate("not-a-date", formatLocale("en-US"))).toBe("not-a-date");
+  });
+
+  it("masks the last four PAN digits", () => {
+    expect(formatMaskedPanLast4("3328")).toBe("***3328");
+  });
+
+  it("labels a same-day timestamp as today plus the time of day", () => {
+    const now = new Date(2024, 9, 14, 15, 0, 0);
+    const dateTime = new Date(2024, 9, 14, 12, 32, 0).toISOString();
+    const translate = jest.fn(
+      (key: "today" | "yesterday" | "dateTime", options: { time: string }) =>
+        `${key}:${options.time}`,
+    );
+
+    formatTransactionDetailDateTime(dateTime, translate, undefined, now);
+
+    expect(translate).toHaveBeenCalledWith("today", { time: expect.any(String) });
+  });
+
+  it("labels the previous calendar day as yesterday plus the time of day", () => {
+    const now = new Date(2024, 9, 15, 9, 0, 0);
+    const dateTime = new Date(2024, 9, 14, 12, 32, 0).toISOString();
+    const translate = jest.fn(
+      (key: "today" | "yesterday" | "dateTime", options: { time: string }) =>
+        `${key}:${options.time}`,
+    );
+
+    formatTransactionDetailDateTime(dateTime, translate, undefined, now);
+
+    expect(translate).toHaveBeenCalledWith("yesterday", { time: expect.any(String) });
+  });
+
+  it("formats card history day labels consistently", () => {
+    const now = new Date(2024, 9, 15, 9, 0, 0);
+
+    expect(formatHistoryDayLabel(undefined, translateHistoryDay, formatHistoryDay, now)).toBe(
+      "unknownDate",
+    );
+    expect(
+      formatHistoryDayLabel(new Date(2024, 9, 15), translateHistoryDay, formatHistoryDay, now),
+    ).toBe("today");
+    expect(
+      formatHistoryDayLabel(new Date(2024, 9, 14), translateHistoryDay, formatHistoryDay, now),
+    ).toBe("yesterday");
+    expect(
+      formatHistoryDayLabel(new Date(2024, 9, 13), translateHistoryDay, formatHistoryDay, now),
+    ).toBe("formatted");
   });
 });

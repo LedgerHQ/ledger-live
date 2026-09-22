@@ -73,7 +73,6 @@ export function genAccountLegacy(id: number | string, opts: GenAccountOptions = 
             delegatedBalance: new BigNumber(0),
             pendingRewardsBalance: new BigNumber(0),
             unbondingBalance: new BigNumber(0),
-            withdrawAddress: address,
             sequence: 0,
             publicKey: "",
           };

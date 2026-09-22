@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Button, Link } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
-import { useLocalizedUrl, useOpenLink } from "@shared/platform-linking";
+import { useLocalizedUrl, useOpenLink } from "@shared/linking";
 import { DialogFlow, type DialogFlowScreenRegistry } from "LLD/components/DialogFlow";
 import { ModularDialogFlow } from "LLD/features/ModularDialog/ModularDialogFlow";
 import {

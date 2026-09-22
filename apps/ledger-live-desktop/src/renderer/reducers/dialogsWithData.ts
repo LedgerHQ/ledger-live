@@ -3,11 +3,15 @@ import type { SwapTransactionStatusParams } from "@ledgerhq/live-common/exchange
 import type { Reducer } from "redux";
 import type { State } from "~/renderer/reducers";
 
-export const DIALOGS_WITH_DATA_IDS = ["SWAP_TRANSACTION_STATUS"] as const;
+export const DIALOGS_WITH_DATA_IDS = [
+  "SWAP_TRANSACTION_STATUS",
+  "CURRENCY_REGION_RESTRICTED",
+] as const;
 export type DialogWithDataId = (typeof DIALOGS_WITH_DATA_IDS)[number];
 
 export type DialogWithDataPayloadById = {
   SWAP_TRANSACTION_STATUS: SwapTransactionStatusParams;
+  CURRENCY_REGION_RESTRICTED: { currencyName: string };
 };
 
 type DialogWithDataEntry<Id extends DialogWithDataId> = {
@@ -31,6 +35,10 @@ const initialState: DialogsWithDataState = {
     isOpen: false,
     data: null,
   },
+  CURRENCY_REGION_RESTRICTED: {
+    isOpen: false,
+    data: null,
+  },
 };
 
 const dialogsWithDataSlice = createSlice({
@@ -38,10 +46,10 @@ const dialogsWithDataSlice = createSlice({
   initialState,
   reducers: {
     openDialogWithData: (state, action: PayloadAction<DialogWithDataOpenPayload>) => {
-      state[action.payload.id] = {
-        isOpen: true,
-        data: action.payload.data,
-      };
+      const { id, data } = action.payload;
+      const entry = state[id];
+      entry.isOpen = true;
+      (entry as { data: unknown }).data = data;
     },
     closeDialogWithData: (state, action: PayloadAction<DialogWithDataId>) => {
       state[action.payload].isOpen = false;

@@ -40,6 +40,7 @@ export const urls = {
     "https://support.ledger.com/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
   chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
   ledgerStatus: "https://status.ledger.com/",
+  cardHelpCenter: "https://support.ledger.com/article/5283612250653-zd",
   syncErrors: "https://support.ledger.com/article/360012207759-zd",
   terms:
     "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",

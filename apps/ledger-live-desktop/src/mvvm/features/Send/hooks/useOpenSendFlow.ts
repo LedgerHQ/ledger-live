@@ -9,6 +9,8 @@ import { openSendFlowDialog, type SendFlowParams } from "~/renderer/reducers/sen
 import { useNewSendFlowFeature } from "./useNewSendFlowFeature";
 import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { hasDirectRecipient, SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
+import { PAY_ACCOUNT_UI_USE_CASE } from "LLD/features/ModularDialog/types";
 import {
   closeDialog,
   openDialog,
@@ -82,6 +84,10 @@ export function useOpenSendFlow() {
                 currencies: currencyIds ? [...currencyIds] : [],
                 categories,
                 areCurrenciesFiltered: Boolean(currencyIds?.length),
+                uiUseCase:
+                  flowParams.source === SEND_FLOW_SOURCE.PAY && hasDirectRecipient(flowParams)
+                    ? PAY_ACCOUNT_UI_USE_CASE
+                    : undefined,
                 dialogConfiguration: SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION,
                 onAccountSelected: (account: AccountLike, parentAccount?: Account) => {
                   dispatch(closeDialog());
@@ -90,7 +96,12 @@ export function useOpenSendFlow() {
                     button: "send",
                     buttonLocation: "quick_action",
                     page: "MAD",
-                    ...getSendFlowTrackingProperties(account, parentAccount, shouldUseNewFlow),
+                    ...getSendFlowTrackingProperties(
+                      account,
+                      parentAccount,
+                      shouldUseNewFlow,
+                      flowParams.source,
+                    ),
                   });
                   openSendFlowImpl({
                     ...flowParams,

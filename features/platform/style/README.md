@@ -3,7 +3,7 @@
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
-Single source of truth for the React theme provider across Ledger Live apps, following the DDD `features/platform` architecture.
+Single source of truth for the React theme provider across Ledger Live apps, following the `features/platform` architecture.
 
 ## What it provides
 
@@ -17,11 +17,13 @@ The package uses the standard React Native file extension convention:
 
 | File | Used by |
 |---|---|
-| `StyleProvider.tsx` | Web (desktop, web-tools) |
+| `StyleProvider.web.tsx` | Web (desktop, web-tools) |
 | `StyleProvider.native.tsx` | Mobile (React Native) |
-| `useTheme.ts` | Web |
+| `useTheme.web.ts` | Web |
 | `useTheme.native.ts` | Mobile |
-| `withStyleProvider.tsx` | Web |
+| `useThemeVariant.web.ts` | Web |
+| `useThemeVariant.native.ts` | Mobile |
+| `withStyleProvider.web.tsx` | Web |
 | `withStyleProvider.native.tsx` | Mobile |
 
 ## Boundary

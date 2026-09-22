@@ -15,6 +15,7 @@ import {
   classifyZcashRecipient,
   decodeUnifiedAddressTypecodes,
   deriveZcashTransferType,
+  isZcashShieldedAddress,
   readCompactSize,
   TYPECODE_ORCHARD,
   TYPECODE_SAPLING,
@@ -157,6 +158,49 @@ describe("classifyZcashRecipient — transparent-only Unified Address", () => {
     expect(typecodes).toContain(TYPECODE_P2PKH);
     expect(typecodes).not.toContain(TYPECODE_ORCHARD);
     expect(typecodes).not.toContain(TYPECODE_SAPLING);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// isZcashShieldedAddress — what may be displayed in the clear
+// ---------------------------------------------------------------------------
+
+describe("isZcashShieldedAddress", () => {
+  it("reports a unified address as shielded", () => {
+    expect(isZcashShieldedAddress(UA_ORCHARD_ONLY)).toBe(true);
+  });
+
+  it("reports a Sapling address as shielded", () => {
+    expect(
+      isZcashShieldedAddress(
+        "zs1z7rejlpsa98s2rrrfkwmaxu53e4ue0ulcrw0h4x5g8jl04tak0d3mm47vdtahatqrlkngh9slya",
+      ),
+    ).toBe(true);
+  });
+
+  it("reports a transparent address as not shielded", () => {
+    expect(isZcashShieldedAddress(T1_ADDRESS)).toBe(false);
+    expect(isZcashShieldedAddress("t3fJZ5jYsyxDtvNrWBeoMbvJaQCj4JJgbgX")).toBe(false);
+  });
+
+  it("reports an address of another currency as not shielded", () => {
+    expect(isZcashShieldedAddress("bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4")).toBe(false);
+    expect(isZcashShieldedAddress("")).toBe(false);
+  });
+
+  // Fail closed: a string that merely looks shielded is hidden all the same,
+  // rather than displayed because it failed to decode.
+  it("reports a malformed unified address as shielded", () => {
+    expect(isZcashShieldedAddress("u1invalidsuffixnotbech32")).toBe(true);
+  });
+
+  // The other question -- what a send to it would be -- calls this one public.
+  it("reports a transparent-only unified address as shielded", () => {
+    expect(isZcashShieldedAddress(UA_TRANSPARENT_ONLY)).toBe(true);
+  });
+
+  it("reads the prefix case-insensitively", () => {
+    expect(isZcashShieldedAddress(UA_ORCHARD_ONLY.toUpperCase())).toBe(true);
   });
 });
 

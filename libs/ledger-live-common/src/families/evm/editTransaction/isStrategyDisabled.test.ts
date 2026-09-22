@@ -1,17 +1,7 @@
 import BigNumber from "bignumber.js";
-import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 import { isStrategyDisabled } from "./isStrategyDisabled";
 
-jest.mock("@ledgerhq/coin-evm/config");
-const mockGetConfig = jest.mocked(getCoinConfig);
-
 describe("isStrategyDisabled", () => {
-  beforeEach(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return { info: {} };
-    });
-  });
-
   describe("EIP1559 transaction (type 2)", () => {
     it("should return true if the strategy's fees are lower than the minimum fees", () => {
       const transaction = {

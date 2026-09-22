@@ -17,11 +17,6 @@ on:
         description: Ref to checkout
         required: false
         type: string
-      skip-bundle-size-reporting:
-        description: Whether to skip the bundle size reporting
-        required: false
-        type: boolean
-        default: false
       max-shards:
         description: Max number of shards to use for detox tests (both ios and android)
         required: false
@@ -59,8 +54,6 @@ on:
       CARD_OAUTH_REDIRECT_URI:
         required: false
       GH_BOT_APP_ID:
-        required: true
-      GH_BOT_CLIENT_ID:
         required: true
       GH_BOT_PRIVATE_KEY:
         required: true
@@ -116,11 +109,9 @@ permissions:
   contents: read
 
 env:
-  SHOULD_UPLOAD: ${{ (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
   cache-bucket: ll-nx-cache
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
-  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
   # Android AVD configuration (shared by determine-builds cache key + Detox Android job)
@@ -133,7 +124,6 @@ env:
   AVD_RAM_SIZE: 5120
   AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
-  MOBILE_ARTIFACTS_ROOT: apps/ledger-live-mobile/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
 
@@ -361,40 +351,6 @@ jobs:
       CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
       NX_KEY: ${{ secrets.NX_KEY }}
 
-  report-bundle-sizes:
-    name: "Build Mobile > Report Bundle Sizes"
-    runs-on: [ubuntu-22.04]
-    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != ''
-    needs: [build-ios, build-android]
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
-          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-          permission-contents: read
-          permission-pull-requests: write
-      - name: Create mobile metafile
-        run: |
-          echo "{
-              \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
-              \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
-          }" > mobile.metafile.json
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
-        if: ${{ !inputs.skip-bundle-size-reporting }}
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
-          baseBranch: ${{ 'develop' }}
-          prNumber: ${{ github.event.number}}
-          mode: mobile
-      - name: Upload mobile metafile
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: mobile.metafile.json
-          path: mobile.metafile.json
-          overwrite: true
-
   detox-ui-e2e-android:
     name: "Android UI E2E Smoke Tests"
     permissions:
@@ -419,7 +375,6 @@ jobs:
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:latest
       SPECULOS_FIRMWARE_VERSION: 2.7.1
       SPECULOS_DEVICE: nanoX
-      COINAPPS: ${{ github.workspace }}/coin-apps
       USERDATA_CACHE_ENABLED: "true"
       E2E_GENERATED_USERDATA_DIR: ${{ format('{0}/e2e/userdata/generated', github.workspace) }}
     outputs:
@@ -450,7 +405,7 @@ jobs:
       - name: setup Android SDK
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
         with:
-          packages: "tools platform-tools"
+          packages: "platform-tools"
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -494,7 +449,7 @@ jobs:
       - name: Prepare APK
         run: |
           mkdir -p /tmp/apk/assets
-          mkdir /home/runner/.android/
+          mkdir -p /home/runner/.android/
           mv ${{ env.ANDROID_JSBUNDLE_PATH }} /tmp/apk/assets/index.android.bundle
           mv ${{ env.ANDROID_APK_PATH }} /tmp/apk/tmp.apk
           (cd /tmp/apk/; zip -r tmp.apk assets/index.android.bundle)
@@ -508,7 +463,11 @@ jobs:
           sudo udevadm trigger --name-match=kvm
 
       - name: Fix emulator directory permissions
-        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
+        run: |
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-$HOME/.android/sdk}}"
+          if [ -d "$SDK/emulator" ]; then
+            sudo chown -R $(whoami):$(id -ng) "$SDK/emulator"
+          fi
 
       - name: Install dependencies
         run: |
@@ -610,14 +569,6 @@ jobs:
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
 
-      - name: Setup Speculos image and Coin Apps
-        id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
-        with:
-          coinapps_path: ${{ env.COINAPPS }}
-          bot_id: ${{ secrets.GH_BOT_APP_ID }}
-          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-
       - name: Compute userdata cache key date
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         id: userdata-meta
@@ -677,6 +628,8 @@ jobs:
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
+          REMOTE_SPECULOS: "true"
           INPUT_E2E: "true"
           INPUTS_TEST_FILTER: "@smoke"
 

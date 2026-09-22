@@ -6,9 +6,12 @@ import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
 import { A4Client } from "./a4/client/index";
 import { deriveA4AccountId } from "./a4/client/accountId";
+import { fetchA4Operations } from "./a4/client/operations";
 import { ensureA4Registered } from "./a4/client/registration";
 import { toA4Network, resolveA4BaseUrl } from "./a4/client/utils";
+import { toA4HttpError } from "./a4/client/errors";
 import { resolveA4ChainConfig } from "./a4/config";
+import { logA4 } from "./a4/log";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
@@ -34,6 +37,8 @@ import type {
   TokenAccount,
 } from "@ledgerhq/types-live";
 import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
+import { CurrencyRegionRestrictedError } from "../../errors";
+import { isRegionRestrictedFailure } from "./regionRestriction";
 
 function isNftCoreOp(operation: Operation): boolean {
   return (
@@ -358,6 +363,10 @@ function buildParentOperations(
   return result;
 }
 
+// A4 being intentionally off for a chain is a per-chain steady-state config fact, not a per-sync
+// event: logged once per chain per process, same reasoning as loggedReadDecisions below.
+const loggedRegisterOffChains = new Set<string>();
+
 async function registerWithA4(currencyId: string, address: string): Promise<void> {
   const a4Network = toA4Network(currencyId);
   if (a4Network === null) {
@@ -366,13 +375,46 @@ async function registerWithA4(currencyId: string, address: string): Promise<void
 
   const { register, environment } = resolveA4ChainConfig(a4Network);
   if (!register) {
+    if (!loggedRegisterOffChains.has(a4Network)) {
+      loggedRegisterOffChains.add(a4Network);
+      logA4({
+        level: "info",
+        message: "A4 registration is off for this chain",
+        decision: "register_off_intentional",
+        chain: a4Network,
+      });
+    }
     return;
   }
 
-  const a4AccountId = deriveA4AccountId(address);
-  const url = resolveA4BaseUrl(environment);
-  const client = new A4Client(url, a4Network);
-  return ensureA4Registered(client, a4AccountId, [address]);
+  try {
+    const a4AccountId = deriveA4AccountId(address);
+    const url = resolveA4BaseUrl(environment);
+    const client = new A4Client(url, a4Network);
+    await ensureA4Registered(client, a4AccountId, [address], a4Network);
+  } catch (e) {
+    logA4({
+      level: "error",
+      message: `A4 registration setup failed unexpectedly: ${e instanceof Error ? e.message : String(e)}`,
+      decision: "register_setup_error",
+      chain: a4Network,
+      error: e,
+    });
+  }
+}
+
+// Read-vs-delegate is a per-chain steady-state fact, not a per-sync event: logging it every sync
+// (syncs run frequently) would violate the "not spammy for common paths" requirement, so it's
+// logged once per chain per process instead.
+const loggedReadDecisions = new Set<string>();
+
+function logReadDecisionOnce(chain: string, decision: string, message: string): void {
+  const key = `${chain}:${decision}`;
+  if (loggedReadDecisions.has(key)) {
+    return;
+  }
+  loggedReadDecisions.add(key);
+  logA4({ level: "info", message, decision, chain });
 }
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
@@ -411,11 +453,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       derivationMode,
     });
 
-    void registerWithA4(currency.id, address).catch(e => {
-      log("generic-coin-framework", "a4 registration error", {
-        error: e instanceof Error ? e.message : String(e),
-      });
-    });
+    void registerWithA4(currency.id, address);
     const validatorsPromise = bridgeApi.stakingSupported
       ? coinModuleApi
           .getValidators(context)
@@ -443,7 +481,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const balancePromise = coinModuleApi
       .getBalance(context, address, bridgeApi.balanceOptions)
-      .catch(err => {
+      .catch(async err => {
+        // The config rejects when the currency has none, which is not a region restriction.
+        const config = await context.config().catch(() => undefined);
+        if (isRegionRestrictedFailure(err, config)) {
+          throw new CurrencyRegionRestrictedError(currency.name, err);
+        }
         throw new UnexpectedGetBalanceError("", err);
       });
 
@@ -607,22 +650,66 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // documents its own as volatile). Only the cursor varies from page to page below.
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
 
-    const newCoreOps = await paginateOperations(cursor =>
-      coinModuleApi.listOperations(context, address, {
-        minHeight,
-        cursor,
-        order: "desc",
-      }),
-    );
-    // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation ends
-    // up in the shape a restored one has — the family's `fromOperationExtraRaw` is the single
-    // definition of it. Loaded per sync rather than per operation; the registry caches the import.
-    const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
-    const newOps = newCoreOps
-      .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
-      .map(op =>
-        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
-      ) as OperationCommon[];
+    const a4Network = toA4Network(currency.id);
+    const a4ChainConfig = a4Network ? resolveA4ChainConfig(a4Network) : null;
+
+    // delegateNewOps is lazy: getAccountRawAssignHooks is only awaited when the coin-module path is taken
+    const delegateNewOps = async (): Promise<OperationCommon[]> => {
+      const coreOps = await paginateOperations(cursor =>
+        coinModuleApi.listOperations(context, address, { minHeight, cursor, order: "desc" }),
+      );
+      // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation
+      // ends up in the shape a restored one has — the family's `fromOperationExtraRaw` is the
+      // single definition of it. Loaded per sync rather than per operation; the registry caches the import.
+      const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
+      // Coin module returns NFT and failed-incoming ops; exclude them (A4 adapter handles this internally)
+      return coreOps
+        .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
+        .map(op =>
+          adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
+        ) as OperationCommon[];
+    };
+
+    let newOps: OperationCommon[];
+
+    if (a4Network && a4ChainConfig?.read) {
+      try {
+        const url = resolveA4BaseUrl(a4ChainConfig.environment);
+        const a4Client = new A4Client(url, a4Network);
+        const a4AccountId = deriveA4AccountId(address);
+        // NFT and failed-incoming filtering is handled inside adaptA4OperationToLiveOperation (returns [])
+        newOps = (await fetchA4Operations(
+          a4Client,
+          a4AccountId,
+          accountId,
+          address,
+          a4Network,
+          minHeight,
+          a4ChainConfig.maxDcRoamRetries,
+        )) as OperationCommon[];
+        logReadDecisionOnce(a4Network, "read_served_by_a4", "A4 is serving reads for this chain");
+      } catch (e) {
+        const status = toA4HttpError(e).status;
+        logA4({
+          level: "warn",
+          message: `A4 read failed, falling back to delegate: ${e instanceof Error ? e.message : String(e)}`,
+          decision: "read_failover_to_delegate",
+          chain: a4Network,
+          status,
+          error: e,
+        });
+        newOps = await delegateNewOps();
+      }
+    } else {
+      if (a4Network) {
+        logReadDecisionOnce(
+          a4Network,
+          "read_off_intentional",
+          "A4 read is off for this chain, delegate is used",
+        );
+      }
+      newOps = await delegateNewOps();
+    }
 
     const newAssetOperations = newOps.filter(
       operation =>
@@ -638,12 +725,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       else newNonInternalOperations.push(op);
     }
 
+    const familyShapes = await bridgeApi.buildTokenAccountShapes?.(address);
     const newSubAccounts = await buildSubAccounts({
       accountId,
       allTokenAssetsBalances,
       syncConfig,
       operations: newAssetOperations,
       getTokenFromAsset: bridgeApi.getTokenFromAsset,
+      familyShapes,
     });
     const subAccounts = syncFromScratch
       ? newSubAccounts

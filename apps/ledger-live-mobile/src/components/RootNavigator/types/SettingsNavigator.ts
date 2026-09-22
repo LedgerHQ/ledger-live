@@ -50,6 +50,7 @@ export type SettingsNavigatorStackParamList = {
         pairedDevice?: Device | null;
       }
     | undefined;
+  [ScreenName.DebugStartTour]: undefined;
   [ScreenName.DebugConnectivity]: undefined;
   [ScreenName.DebugGenerators]: undefined;
   [ScreenName.DebugContentCards]: undefined;
@@ -101,7 +102,6 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugSwipe]: undefined;
   [ScreenName.DebugModularAssetDrawer]: undefined;
   [ScreenName.DebugTooltip]: undefined;
-  [ScreenName.DebugWalletV4Tour]: undefined;
   [ScreenName.DebugProductTour]: undefined;
   [ScreenName.DebugQ2WalletV4Tour]: undefined;
   [ScreenName.DebugQ3WalletV4Tour]: undefined;

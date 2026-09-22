@@ -72,6 +72,8 @@ export type BtcOperationExtra = {
 
 export type ZcashOperationExtra = BtcOperationExtra & {
   zcashShielded?: boolean;
+  /** The operation moved value through a shielded pool. */
+  zcashPrivate?: boolean;
   /**
    * Hex nullifiers of the Ironwood notes spent by this operation.
    * Mirrors the transparent inputs/inputRefs fields for shielded sends.

@@ -60,6 +60,19 @@ id = "generic-api-key"
         '''libs/coin-tester-modules/coin-tester-stacks/src/fixtures\.ts''',
     ]
 
+    [[rules.allowlists]]
+    condition = "AND"
+    description = "Ignore the public Baanx OAuth client keys of the app build env files. The build bakes a client key into the distributed binary, so it is public by construction -- matched by exact value, not by path alone, so a real secret added to these files would still be caught."
+    regexTarget = "match"
+    regexes = [
+        '''dc16bbda-eb1b-487c-be60-1a90ca7c9dd6''',
+        '''5d12926a-f70a-47e4-bc7e-a0955a114efc''',
+    ]
+    paths = [
+        '''apps/ledger-live-desktop/\.env\..+''',
+        '''apps/ledger-live-mobile/\.env\..+''',
+    ]
+
 [[rules]]
 id = "jwt"
 

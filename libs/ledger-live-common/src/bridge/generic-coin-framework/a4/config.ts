@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { log } from "@ledgerhq/logs";
+import { logA4 } from "./log";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
 
@@ -13,6 +13,7 @@ export type A4ChainEntry = {
 
 export type A4Config = {
   environment: A4Environment;
+  maxDcRoamRetries: number;
   chains: Record<string, A4ChainEntry>;
 };
 
@@ -20,6 +21,7 @@ export type A4ChainResolution = {
   read: boolean;
   register: boolean;
   environment: A4Environment;
+  maxDcRoamRetries: number;
 };
 
 const A4EnvironmentSchema = z.enum(["stg", "ppr", "prd"]).catch("prd");
@@ -32,6 +34,7 @@ const A4ChainEntrySchema = z.object({
 
 const A4ConfigSchema = z.object({
   environment: A4EnvironmentSchema.default("prd"),
+  maxDcRoamRetries: z.number().int().min(0).catch(5).default(5),
   chains: z.record(z.string(), A4ChainEntrySchema).default({}),
 });
 
@@ -100,6 +103,7 @@ export const A4_SUPPORTED_NETWORKS: ReadonlyArray<string> = [
 
 const DEFAULT_A4_CONFIG: A4Config = {
   environment: "prd",
+  maxDcRoamRetries: 5,
   chains: Object.fromEntries(
     A4_SUPPORTED_NETWORKS.map(id => [
       id,
@@ -119,6 +123,7 @@ const A4_OFF: A4ChainResolution = Object.freeze({
   read: false,
   register: false,
   environment: "prd",
+  maxDcRoamRetries: 5,
 });
 
 let warnedConfigMissing = false;
@@ -130,20 +135,25 @@ export function resolveA4ChainConfig(network: string): A4ChainResolution {
     const parsed = A4ConfigSchema.safeParse(raw);
     if (!parsed.success) return A4_OFF;
 
-    const { environment: globalEnv, chains } = parsed.data;
+    const { environment: globalEnv, maxDcRoamRetries, chains } = parsed.data;
     const entry = chains[network];
 
     if (!entry) return A4_OFF;
 
     const environment = entry.environment ?? globalEnv;
 
-    if (entry.enabled) return { read: true, register: true, environment };
-    if (entry.registerOnly) return { read: false, register: true, environment };
+    if (entry.enabled) return { read: true, register: true, environment, maxDcRoamRetries };
+    if (entry.registerOnly) return { read: false, register: true, environment, maxDcRoamRetries };
     return A4_OFF;
   } catch {
     if (warnedConfigMissing) return A4_OFF;
     warnedConfigMissing = true;
-    log("a4", "config_generic_a4 not set in LiveConfig - A4 disabled");
+    logA4({
+      level: "warn",
+      message: "config_generic_a4 not set in LiveConfig - A4 disabled",
+      decision: "config_missing_disabled",
+      chain: network,
+    });
     return A4_OFF;
   }
 }

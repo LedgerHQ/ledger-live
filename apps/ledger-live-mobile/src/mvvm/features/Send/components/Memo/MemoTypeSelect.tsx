@@ -2,12 +2,12 @@ import {
   BottomSheet,
   BottomSheetHeader,
   BottomSheetView,
-  OptionList,
-  OptionListContent,
-  OptionListItem,
-  OptionListItemContent,
-  OptionListItemText,
-  OptionListTrigger,
+  SelectList,
+  SelectListContent,
+  SelectListItem,
+  SelectListItemContent,
+  SelectListItemText,
+  SelectListTrigger,
   Text,
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
@@ -52,28 +52,28 @@ function MemoTypeSelectComponent({ currencyId, options, value, onChange }: MemoT
 
   return (
     <>
-      <OptionListTrigger testID="send-memo-type-select" onPress={handleOpenSheet}>
+      <SelectListTrigger testID="send-memo-type-select" onPress={handleOpenSheet}>
         {selectedItem != null && (
           <Text typography="body1" lx={{ color: "base" }}>
             {selectedItem.label}
           </Text>
         )}
-      </OptionListTrigger>
+      </SelectListTrigger>
       <BottomSheet ref={bottomSheetRef} enableDynamicSizing snapPoints={null}>
         <BottomSheetView>
           <BottomSheetHeader title={t("send.newSendFlow.memo.transactionIdentifier")} />
-          <OptionList items={items} value={value ?? null} onValueChange={handleValueChange}>
-            <OptionListContent
+          <SelectList items={items} value={value ?? null} onValueChange={handleValueChange}>
+            <SelectListContent
               lx={{ marginBottom: "s24" }}
               renderItem={item => (
-                <OptionListItem testID={`send-memo-type-option-${item.value}`} value={item.value}>
-                  <OptionListItemContent>
-                    <OptionListItemText>{item.label}</OptionListItemText>
-                  </OptionListItemContent>
-                </OptionListItem>
+                <SelectListItem testID={`send-memo-type-option-${item.value}`} value={item.value}>
+                  <SelectListItemContent>
+                    <SelectListItemText>{item.label}</SelectListItemText>
+                  </SelectListItemContent>
+                </SelectListItem>
               )}
             />
-          </OptionList>
+          </SelectList>
         </BottomSheetView>
       </BottomSheet>
     </>

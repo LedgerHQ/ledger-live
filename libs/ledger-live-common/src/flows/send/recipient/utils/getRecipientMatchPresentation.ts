@@ -8,6 +8,7 @@ type GetRecipientMatchPresentationArgs = Readonly<{
   isAddressComplete?: boolean;
   hasBridgeError?: boolean;
   isContactsFeatureEnabled?: boolean;
+  matchedAccountAddress?: string;
 }>;
 
 type RecipientCardMatchPresentation = Readonly<{
@@ -82,6 +83,7 @@ export function getRecipientMatchPresentation({
   isAddressComplete = false,
   hasBridgeError = false,
   isContactsFeatureEnabled = false,
+  matchedAccountAddress,
 }: GetRecipientMatchPresentationArgs): RecipientMatchPresentation | null {
   const {
     accountName,
@@ -99,7 +101,7 @@ export function getRecipientMatchPresentation({
   const hasRecentMatch = !!matchedRecentAddress;
   const hasMatch = hasMatchedAccounts || hasMatchedContact || hasENS || hasRecentMatch;
   const hasExactMatchedAccount = matchedAccounts.some(({ account }) =>
-    addressesMatch(account.freshAddress, recipientAddress),
+    addressesMatch(matchedAccountAddress ?? account.freshAddress, recipientAddress),
   );
   const hasExactRecentMatch =
     !!matchedRecentAddress && addressesMatch(matchedRecentAddress.address, recipientAddress);

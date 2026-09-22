@@ -29,10 +29,13 @@ const nativeMocks = {
   "^react-native-reanimated$": path.join(__dirname, "mocks/reanimated.js"),
   "^react-native-svg(/.*)?$": path.join(__dirname, "mocks/react-native-svg.js"),
   "^react-native-safe-area-context$": path.join(__dirname, "mocks/safe-area-context.js"),
+  "^react-native-fast-crypto$": path.join(__dirname, "mocks/fast-crypto.js"),
+  "^@react-native-clipboard/clipboard$": path.join(__dirname, "mocks/clipboard.js"),
   "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "mocks/passthrough-native.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-native.js"),
   "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),
   "^@shared/ui-queued-bottom-sheet$": "@shared/ui-queued-bottom-sheet/testing/module-mock",
+  "^@shared/ui-queued-bottom-sheet/keyboard$": "@shared/ui-queued-bottom-sheet/testing/module-mock",
 };
 
 /**

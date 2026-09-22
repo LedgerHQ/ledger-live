@@ -2,7 +2,7 @@ import type {
   PayCardTransaction,
   PayCardTransactionFundingSource,
 } from "@domain/api-card-management";
-import type { FormatCardTransactionAmount } from "../../../types";
+import type { FormatCardTransactionAmount, FormatCardTransactionDate } from "../../../types";
 
 function signedValue(value: string, sign: "DEBIT" | "CREDIT"): string {
   return `${sign === "DEBIT" ? "-" : "+"}${value}`;
@@ -44,12 +44,93 @@ export function formatMerchantName(merchantNameLocation: string): string {
   return merchantName || merchantNameLocation;
 }
 
-export function formatCardTransactionDate(dateTime: string, locale: string): string {
+function defaultFormatDate(date: Date): string {
+  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(date);
+}
+
+export function formatCardTransactionDate(
+  dateTime: string,
+  formatDate: FormatCardTransactionDate = defaultFormatDate,
+): string {
+  const date = parseCardTransactionDate(dateTime);
+
+  return date ? formatDate(date) : dateTime;
+}
+
+export function formatMaskedPanLast4(panLast4: string): string {
+  return `***${panLast4}`;
+}
+
+export function parseCardTransactionDate(dateTime: string): Date | undefined {
   const date = new Date(dateTime);
 
-  if (Number.isNaN(date.getTime())) {
-    return dateTime;
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
+export function formatCardTransactionTime(dateTime: string): string {
+  const date = parseCardTransactionDate(dateTime);
+
+  return date ? formatTimeOfDay(date) : dateTime;
+}
+
+export function isSameCalendarDay(left: Date, right: Date): boolean {
+  return (
+    left.getFullYear() === right.getFullYear() &&
+    left.getMonth() === right.getMonth() &&
+    left.getDate() === right.getDate()
+  );
+}
+
+export type TranslateHistoryDay = (key: "today" | "yesterday" | "unknownDate") => string;
+
+export function formatHistoryDayLabel(
+  day: Date | undefined,
+  translate: TranslateHistoryDay,
+  formatDay: (date: Date) => string = defaultFormatDate,
+  now: Date = new Date(),
+): string {
+  if (!day) return translate("unknownDate");
+  if (isSameCalendarDay(day, now)) return translate("today");
+
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (isSameCalendarDay(day, yesterday)) return translate("yesterday");
+
+  return formatDay(day);
+}
+
+function formatTimeOfDay(date: Date): string {
+  return new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+}
+
+export type TranslateTransactionDetailDate = (
+  key: "today" | "yesterday" | "dateTime",
+  options: Readonly<{ time: string; date?: string }>,
+) => string;
+
+export function formatTransactionDetailDateTime(
+  dateTime: string,
+  translate: TranslateTransactionDetailDate,
+  formatDate: FormatCardTransactionDate = defaultFormatDate,
+  now: Date = new Date(),
+): string {
+  const date = parseCardTransactionDate(dateTime);
+  if (!date) return dateTime;
+
+  const time = formatTimeOfDay(date);
+  if (isSameCalendarDay(date, now)) {
+    return translate("today", { time });
   }
 
-  return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date);
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (isSameCalendarDay(date, yesterday)) {
+    return translate("yesterday", { time });
+  }
+
+  return translate("dateTime", { date: formatDate(date), time });
 }

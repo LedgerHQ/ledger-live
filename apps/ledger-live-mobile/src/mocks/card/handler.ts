@@ -1,17 +1,20 @@
 import { http, HttpResponse, passthrough, delay } from "msw";
-import { getMockCardOnboardingStatus } from "@domain/api-card-management/mock";
 import {
   isMockCardRequest,
   MOCK_CARD_ACCESS_TOKEN_PREFIX,
 } from "@domain/api-card-management/mock/card-session";
+import { mockPayCardDetailsToken } from "@domain/api-card-management/mock/card-details-token";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
-  mockPayCardInternalWallets,
-  mockPayCardLinkedWallets,
   mockPayCardStatus,
   mockPayCardUser,
   readCardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
+import {
+  mockPayCardInternalWallets,
+  mockPayCardLinkedWallets,
+  mockPayCardRewardWallet,
+} from "@domain/api-card-management/mock/card-wallets";
 import { createCardMockState } from "./state";
 
 const state = createCardMockState();
@@ -124,13 +127,16 @@ const handlers = [
   }),
 
   http.get("*/v1/card/status", ({ request }) => {
-    const { hasCard } = readCardOnboardingStatusMock();
-    if (hasCard !== undefined) {
-      // No card is an absent one, not an empty one: the step reads "has the provider answered with
-      // a card at all", and a 404 is how it answers that it has not.
-      return hasCard
-        ? HttpResponse.json(mockPayCardStatus())
-        : HttpResponse.json({ message: "No card ordered" }, { status: 404 });
+    const { hasCard, cardAddedToDigitalWallet } = readCardOnboardingStatusMock();
+    // No card is an absent one, not an empty one: the step reads "has the provider answered with
+    // a card at all", and a 404 is how it answers that it has not.
+    if (hasCard === false) {
+      return HttpResponse.json({ message: "No card ordered" }, { status: 404 });
+    }
+
+    // Also mocked for the wallet answer alone, so that step can be held without holding the card.
+    if (hasCard === true || cardAddedToDigitalWallet !== undefined) {
+      return HttpResponse.json(mockPayCardStatus(cardAddedToDigitalWallet));
     }
 
     if (!isMockCardRequest(request)) {
@@ -139,12 +145,16 @@ const handlers = [
     return HttpResponse.json(MOCK_CARD_STATUS);
   }),
 
-  http.get("*/v1/card/onboarding-status", ({ request }) =>
-    isMockCardRequest(request) ? HttpResponse.json(getMockCardOnboardingStatus()) : passthrough(),
-  ),
   http.get("*/v1/card/transactions", ({ request }) =>
     isMockCardRequest(request) ? HttpResponse.json(mockPayCardTransactions()) : passthrough(),
   ),
+
+  // The image the token points at is not mocked here: RN loads it through native networking, which
+  // these interceptors never see. It stays unread until LWM grows its own reveal UI.
+  http.post("*/v1/card/details/token", ({ request }) =>
+    isMockCardRequest(request) ? HttpResponse.json(mockPayCardDetailsToken()) : passthrough(),
+  ),
+
   http.get("*/v1/wallet/internal", ({ request }) => {
     const { walletFunded } = readCardOnboardingStatusMock();
     if (walletFunded !== undefined) {
@@ -165,6 +175,10 @@ const handlers = [
       ? passthrough()
       : HttpResponse.json(mockPayCardLinkedWallets());
   }),
+
+  http.get("*/v1/wallet/reward", ({ request }) =>
+    isMockCardRequest(request) ? HttpResponse.json(mockPayCardRewardWallet()) : passthrough(),
+  ),
 ];
 
 export default handlers;

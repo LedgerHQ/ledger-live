@@ -23,8 +23,6 @@ import {
 import { isEthAddress } from "@ledgerhq/coin-evm/utils";
 import { getGasLimit } from "../utils";
 import { getTypedTransaction } from "../transaction";
-import { getCurrencyConfiguration } from "../../../config";
-import { EvmConfigInfo, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { validateAddress } from "../../../bridge/validateAddress";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 
@@ -148,16 +146,6 @@ const prepareTransaction = async (_a, t) => {
   });
 };
 
-let isConfigLoaded = false;
-const loadCoinConfig = () => {
-  if (!isConfigLoaded) {
-    setCoinConfig(currencyId => {
-      isConfigLoaded = true;
-      return { info: getCurrencyConfiguration<EvmConfigInfo>(currencyId) };
-    });
-  }
-};
-
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
@@ -183,5 +171,4 @@ const currencyBridge: CurrencyBridge = {
 export default {
   currencyBridge,
   accountBridge,
-  loadCoinConfig,
 };

@@ -12,14 +12,69 @@ permissions:
   contents: read
 
 jobs:
+  # Inlined rather than calling nx-affected-reusable.yml: that workflow runs on a self-hosted
+  # runner and authenticates to JFrog over OIDC, and neither is available to a fork. Fork tokens
+  # are downgraded to read-only, and untrusted code must not run on our own runners.
   determine-affected:
     name: "Nx Affected"
     if: ${{github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
-    with:
-      head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
-      base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
-      skip_nx_cache: true
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    env:
+      NX_SKIP_NX_CACHE: true
+    outputs:
+      packages: ${{ steps.nx-affected.outputs.packages }}
+      paths: ${{ steps.nx-affected.outputs.paths }}
+    steps:
+      - name: Checkout head branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Fetch base branch
+        env:
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
+        run: |
+          git fetch --depth=1 origin -- "$BASE_BRANCH"
+
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        id: clean-refs
+        env:
+          HEAD_BRANCH_INPUT: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
+          BASE_BRANCH_INPUT: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
+        with:
+          script: |
+            const head_branch = process.env.HEAD_BRANCH_INPUT;
+            const base_branch = process.env.BASE_BRANCH_INPUT;
+
+            const newHeadBranch = head_branch.replace("refs/heads/", "");
+            const newBaseBranch = base_branch.replace("refs/heads/", "");
+
+            core.exportVariable("head_branch", newHeadBranch);
+            core.exportVariable("base_branch", newBaseBranch);
+            core.setOutput("base_ref", "origin/" + newBaseBranch);
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 10.24.0
+
+      - name: Install dev dependencies for root workspace
+        run: pnpm i --frozen-lockfile -D -F "ledger-live" --ignore-scripts
+
+      - name: Setup nx config
+        run: pnpm nx:write-cache-config
+
+      - name: Get affected packages and paths
+        id: nx-affected
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
+        with:
+          base: ${{ steps.clean-refs.outputs.base_ref }}
+          head: HEAD
 
   # External from Fork branches
   build-desktop-external:

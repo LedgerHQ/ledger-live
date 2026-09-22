@@ -30,7 +30,6 @@ import {
 import { accountsSelector } from "~/reducers/accounts";
 import { rebootIdSelector } from "~/reducers/appstate";
 import LocaleProvider, { i18n } from "~/context/Locale";
-import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { store } from "~/state-manager/configureStore";
@@ -396,8 +395,8 @@ export default class Root extends Component {
                 <TermsAndConditionMigrateLegacyData />
                 <QueuedBottomSheetsProvider>
                   {/* Two providers, one instance: `I18nextProvider` serves the app's own
-                    react-i18next call sites, `I18nProvider` serves the DDD packages through
-                    `@shared/i18n`. */}
+                    react-i18next call sites, `I18nProvider` serves `features/*` and `domain/*`
+                    through `@shared/i18n`. */}
                   <LinkingProviderWrapper>
                     <I18nextProvider i18n={i18n}>
                       <I18nProvider i18n={i18n}>
@@ -408,21 +407,19 @@ export default class Root extends Component {
                               <StylesProvider>
                                 <StyledStatusBar />
                                 <NavBarColorHandler />
-                                <AuthPass>
-                                  <GestureHandlerRootView style={styles.root}>
-                                    <WaitForAppReady currencyInitialized={currencyInitialized}>
-                                      <AppProviders initialCountervalues={initialCountervalues}>
-                                        <AppGeoBlocker>
-                                          <AppVersionBlocker>
-                                            <BridgeSyncProvider>
-                                              <App />
-                                            </BridgeSyncProvider>
-                                          </AppVersionBlocker>
-                                        </AppGeoBlocker>
-                                      </AppProviders>
-                                    </WaitForAppReady>
-                                  </GestureHandlerRootView>
-                                </AuthPass>
+                                <GestureHandlerRootView style={styles.root}>
+                                  <WaitForAppReady currencyInitialized={currencyInitialized}>
+                                    <AppProviders initialCountervalues={initialCountervalues}>
+                                      <AppGeoBlocker>
+                                        <AppVersionBlocker>
+                                          <BridgeSyncProvider>
+                                            <App />
+                                          </BridgeSyncProvider>
+                                        </AppVersionBlocker>
+                                      </AppGeoBlocker>
+                                    </AppProviders>
+                                  </WaitForAppReady>
+                                </GestureHandlerRootView>
                               </StylesProvider>
                             </SafeAreaProvider>
                           </PlatformAppProviderWrapper>

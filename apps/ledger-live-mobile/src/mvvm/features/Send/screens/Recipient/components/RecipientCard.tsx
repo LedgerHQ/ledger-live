@@ -8,6 +8,8 @@ import {
   CardContent,
   CardContentDescription,
   CardContentTitle,
+  CardFooter,
+  CardFooterActions,
   CardHeader,
   CardLeading,
   Spot,
@@ -15,6 +17,7 @@ import {
 import { Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
 import React from "react";
 import { AddContactAction } from "./AddContactAction";
+import { equalCardActionWidth } from "./equalCardActionWidth";
 
 type RecipientCardProps = Readonly<{
   recipient: string;
@@ -77,36 +80,33 @@ export function RecipientCard({
       </CardHeader>
 
       {showActions && (
-        <Box
-          lx={{
-            flexDirection: "row",
-            gap: "s8",
-            paddingHorizontal: "s16",
-            paddingBottom: "s16",
-          }}
-        >
-          {!contact && (
-            <AddContactAction
-              hasAddressBook={hasAddressBook}
-              label={addContactLabel}
-              unsupportedTitle={addressBookUnsupportedTitle}
-              unsupportedDescription={addressBookUnsupportedDescription}
-              onAddContact={onAddContact}
-              onUnsupportedNetwork={onUnsupportedNetwork}
-              onDismissUnsupportedNetwork={onDismissUnsupportedNetwork}
-            />
-          )}
-          <Button
-            appearance="base"
-            size="sm"
-            onPress={onSend}
-            disabled={!isReady}
-            testID="send-recipient-card-send"
-            lx={{ flex: 1 }}
-          >
-            {sendLabel}
-          </Button>
-        </Box>
+        <CardFooter appearance="no-background">
+          <CardFooterActions lx={{ width: "full" }}>
+            {!contact && (
+              <AddContactAction
+                hasAddressBook={hasAddressBook}
+                label={addContactLabel}
+                unsupportedTitle={addressBookUnsupportedTitle}
+                unsupportedDescription={addressBookUnsupportedDescription}
+                onAddContact={onAddContact}
+                onUnsupportedNetwork={onUnsupportedNetwork}
+                onDismissUnsupportedNetwork={onDismissUnsupportedNetwork}
+              />
+            )}
+            <Box lx={{ flex: 1 }} style={equalCardActionWidth}>
+              <Button
+                appearance="base"
+                size="sm"
+                onPress={onSend}
+                disabled={!isReady}
+                testID="send-recipient-card-send"
+                isFull
+              >
+                {sendLabel}
+              </Button>
+            </Box>
+          </CardFooterActions>
+        </CardFooter>
       )}
     </Card>
   );

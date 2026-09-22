@@ -39,7 +39,7 @@ export function RequestReceiveSummary({
               ticker={networkIcon.ticker}
               network={networkIcon.network}
               size={NETWORK_ICON_SIZE}
-              shape="circle"
+              shape="square"
             />
           ) : null}
           <span className="body-2 text-muted">{networkLabel}</span>

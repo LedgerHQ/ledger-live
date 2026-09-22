@@ -24,7 +24,7 @@ export const setCosmosLdmkEnabled = (enabled: boolean): void => {
   _cosmosLdmkFFEnabled = enabled;
 };
 
-const createSigner: CreateSigner<CosmosSigner> = (transport: Transport) => {
+export const createSigner: CreateSigner<CosmosSigner> = (transport: Transport) => {
   if (isDmkTransport(transport) && _cosmosLdmkFFEnabled) {
     return new DmkSignerCosmos(transport.dmk, transport.sessionId);
   }

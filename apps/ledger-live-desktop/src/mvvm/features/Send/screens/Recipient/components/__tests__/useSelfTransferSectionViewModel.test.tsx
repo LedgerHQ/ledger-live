@@ -5,6 +5,7 @@ import React, { forwardRef, useImperativeHandle } from "react";
 import { render, cleanup } from "tests/testSetup";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { BalanceTypeSelfTransferTarget } from "@ledgerhq/live-common/bridge/descriptor/types";
+import { useRecipientContinuation } from "../../../../context/RecipientContinuationContext";
 import { useSelfTransferSectionViewModel } from "../useSelfTransferSectionViewModel";
 
 const mockGoToNextStep = jest.fn();
@@ -29,6 +30,13 @@ jest.mock("../../../../context/SendFlowContext", () => ({
   })),
 }));
 
+jest.mock("../../../../context/RecipientContinuationContext", () => ({
+  useRecipientContinuation: jest.fn(() => ({
+    isFamilyRecipientBlocked: false,
+    setFamilyRecipientBlocked: jest.fn(),
+  })),
+}));
+
 // The send descriptor is the only source of the destination pool; the view model must
 // never derive it from a coin-module.
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
@@ -36,6 +44,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
 }));
 
 const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
+const mockedUseRecipientContinuation = jest.mocked(useRecipientContinuation);
 
 const SHIELDED_TARGET: BalanceTypeSelfTransferTarget = {
   address: "u1shielded",
@@ -71,6 +80,10 @@ describe("useSelfTransferSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     stubBalanceTypeConfig(SHIELDED_TARGET);
+    mockedUseRecipientContinuation.mockReturnValue({
+      isFamilyRecipientBlocked: false,
+      setFamilyRecipientBlocked: jest.fn(),
+    });
 
     mockState = {
       account: { account: { id: "zcash-acc", type: "Account", currency: { id: "zcash" } } },
@@ -130,5 +143,17 @@ describe("useSelfTransferSectionViewModel", () => {
     renderViewModel()?.onSelfTransfer("Private balance");
 
     expect(mockGoToNextStep).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not advance when a family notice blocks the recipient step", () => {
+    mockedUseRecipientContinuation.mockReturnValue({
+      isFamilyRecipientBlocked: true,
+      setFamilyRecipientBlocked: jest.fn(),
+    });
+
+    renderViewModel()?.onSelfTransfer("Private balance");
+
+    expect(mockSetRecipient).not.toHaveBeenCalled();
+    expect(mockGoToNextStep).not.toHaveBeenCalled();
   });
 });

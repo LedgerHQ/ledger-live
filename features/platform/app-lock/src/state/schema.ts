@@ -8,7 +8,9 @@ export const AuthenticationTypeSchema = z.enum([
 ]);
 
 export const AppLockStateSchema = z.object({
+  isHydrated: z.boolean(),
   hasPassword: z.boolean(),
   biometricsEnabled: z.boolean(),
   isLocked: z.boolean(),
+  needsLongerPassword: z.boolean(),
 });

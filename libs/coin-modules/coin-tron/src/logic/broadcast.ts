@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import { broadcastHexTron, broadcastTron } from "../network";
 
@@ -8,6 +9,7 @@ type TxObject = {
 };
 
 export async function broadcast(
+  logger: Logger,
   config: TronCoinConfig,
   transaction: string | TxObject,
 ): Promise<string> {
@@ -15,9 +17,9 @@ export async function broadcast(
     const { rawTx, signature } = extractTxAndSignature(transaction);
     // Broadcast the signed bytes verbatim: a protobuf round-trip of `raw_data` is lossy
     // for TRC10/TRC20 contracts and would invalidate the signature.
-    return broadcastHexTron(config, buildSignedTransactionHex(rawTx, signature));
+    return broadcastHexTron(logger, config, buildSignedTransactionHex(rawTx, signature));
   } else {
-    return broadcastTron(config, transaction);
+    return broadcastTron(logger, config, transaction);
   }
 }
 

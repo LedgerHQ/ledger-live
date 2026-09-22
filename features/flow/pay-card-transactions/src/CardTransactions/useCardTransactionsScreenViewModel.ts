@@ -1,26 +1,24 @@
 import { useTranslation } from "@shared/i18n";
 import { useCardTransactionsViewModel } from "../hooks/useCardTransactionsViewModel";
+import { resolveCardTransactionsDisplayState } from "../logic/cardTransactionsDisplayState";
 import type { CardTransactionsProps, CardTransactionsScreenViewProps } from "./types";
 
-export function useCardTransactionsScreenViewModel({
-  formatAmount,
-}: CardTransactionsProps = {}): CardTransactionsScreenViewProps {
+export function useCardTransactionsScreenViewModel(
+  props: CardTransactionsProps = {},
+): CardTransactionsScreenViewProps {
   const { t } = useTranslation();
   const { transactions, isLoading, isError } = useCardTransactionsViewModel();
   const title = t("payTab.cardTransactions.title");
-
-  if (isLoading) {
-    return { displayMode: "loading", title, transactions, formatAmount };
-  }
-
-  if (isError) {
-    return { displayMode: "error", title, transactions, formatAmount };
-  }
+  const displayState = resolveCardTransactionsDisplayState({
+    isLoading,
+    isError,
+    hasTransactions: transactions.length > 0,
+  });
 
   return {
-    displayMode: transactions.length === 0 ? "empty" : "list",
+    ...props,
+    displayState,
     title,
     transactions,
-    formatAmount,
   };
 }

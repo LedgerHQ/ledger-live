@@ -34,9 +34,13 @@ what joins the two. Mobile passes `PAY_TAB_DEEP_LINK`; desktop passes none, beca
 browser reports nothing back (LIVE-34740).
 
 `callback` carries the OAuth redirect, when the app already has one. The app's router owns the deep
-link, so it hands over the `code` and `state` it parsed. On mobile that is
-`ledgerlive://paytab?code=…&state=…`, which react-navigation turns into route params. Desktop does not
-pass it yet (LIVE-34740).
+link, so it hands over the `code`, the `state` and the `appId` it parsed. On mobile that is
+`ledgerlive://paytab?code=…&state=…&app_id=…`, which react-navigation turns into route params, under
+the provider's own spelling `app_id`. Desktop does not pass it yet (LIVE-34740).
+
+`appId` names the provider app the holder belongs to, and the redirect is the only place that says
+it. The flow records it beside the session, and the Card API compares it with `CARD_BAANX_US_APP_ID`
+on every request to decide whether to send `x-us-env` (LIVE-34972).
 
 ## The login
 
@@ -80,9 +84,10 @@ App composition and DevTools consume shared Pay Card entity state through
 | `payCardAuth` | `hasCard` and `isSignedIn` | **No.** It is runtime state, so it stays out of every persisted blob. |
 | `payCardLoginIntro` | `hasSeenLoginIntro` | **Yes**, in the shared `payCard` blob, beside the balance filter and the feature-tour flag. |
 
-`hasSeenLoginIntro` says whether the card holder has already seen the login intro sheet. The flag
-goes up only when a login this session started reaches `ready`, so neither a hydrated session nor a
-reset from the Pay Card devtool raises it. Other Pay Card UI state is owned by the flow it belongs
+`hasSeenLoginIntro` says whether the card holder has already logged in once. The machine raises the
+flag on entry to `persistingSession`, and only a code exchange reaches that state, so neither a
+hydrated session nor a reset from the Pay Card devtool raises it. A session that cannot be stored
+leaves the flag up, because the exchange already proved the holder has an account. Other Pay Card UI state is owned by the flow it belongs
 to: the balance filter by `@features/flow-pay-balance` and the feature-tour flag by
 `@features/flow-pay-feature-tour`.
 
@@ -90,10 +95,16 @@ The flag also picks what the login block says, from the app's `payTab.cardLogin.
 is `Crypto Card` either way, and on mobile it is a Lumen `Subheader` under the card face — the Pay
 Card flow no longer draws a section title of its own there:
 
-| `hasSeenLoginIntro` | Subtitle | Button | The press |
-| --- | --- | --- | --- |
-| Down | Get 1% cashback every time you spend | `Get card` | Opens the intro sheet |
-| Up | Log in to access your card | `Login` | Starts the login |
+| `hasSeenLoginIntro` | Headline | Subtitle | Button | The press |
+| --- | --- | --- | --- | --- |
+| Down, desktop | Get your crypto card | Get 1% cashback every time you spend | `Get card` | Opens the intro sheet |
+| Up, desktop | Log in to access your Card | You’ve been logged out for security | `Log in` | Starts the login |
+| Down, mobile | — | Get 1% cashback every time you spend | `Get card` | Opens the intro sheet |
+| Up, mobile | — | Log in to access your card | `Login` | Starts the login |
+
+`CardLoginView.web` draws the headline as an `h2`. `CardLoginView.native` drops it, so the mobile
+screen keeps its own two lines. Both locales still carry every `payTab.cardLogin.<stage>.title` key,
+because the view model resolves the key on both platforms.
 
 One press, one handler: `onLoginPress` reads the flag and either opens the sheet or sends `LOGIN`,
 and the sheet's own buttons send the same `LOGIN` afterwards.
@@ -133,7 +144,7 @@ import { CardLoginView } from "./CardLoginView";
 
 ## Structure
 
-This package follows the [Structure & Flow ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117/Guideline+Monorepo+DDD+Re-architecture+Structure+Flow). Add optional directories only when the flow needs them; do not keep empty scaffolding.
+This package follows the [Structure & Flow ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117). Add optional directories only when the flow needs them; do not keep empty scaffolding.
 
 ```text
 pay-card-auth/

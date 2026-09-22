@@ -30,10 +30,14 @@ export type PayCardStoredAttempt = Readonly<{
  * What the provider sends back on the redirect. PKCE binds the code to the verifier on disk, so this
  * is not a CSRF check. `state` only lets the app recognize a redirect from an attempt it has already
  * abandoned, when the source it arrived through can supply it.
+ *
+ * `appId` names the provider app the holder belongs to. The provider runs one app per region, and
+ * this is the only place it says which one, so the flow records it for the Card API to route on.
  */
 export type PayCardAuthCallback = Readonly<{
   code: string;
   state?: string;
+  appId?: string;
 }>;
 
 /**
@@ -111,6 +115,14 @@ export type CardLoginPorts = Readonly<{
    * `More` reads that flag to decide whether it belongs on screen.
    */
   setSignedIn: (isSignedIn: boolean) => void;
+  /** Records that the card holder has logged in once, so the intro is never sold to them again. */
+  markIntroSeen: () => void;
+  /**
+   * Records the provider app the redirect named, so the Card API can route every later request. It
+   * is kept beside the session, whose lifetime it shares, and the comparison with the US app id
+   * belongs to the API layer, which reads the env on every request.
+   */
+  setProviderAppId: (appId: string | null) => void;
   openHostedLogin: OpenHostedLogin;
 }>;
 
@@ -168,7 +180,7 @@ export type CardLoginEvent =
   | { type: "LOGIN" }
   | { type: "RETRY" }
   | { type: "SESSION_ENDED" }
-  | { type: "CALLBACK_RECEIVED"; code: string; state?: string };
+  | { type: "CALLBACK_RECEIVED"; code: string; state?: string; appId?: string };
 
 /* --- Redux ----------------------------------------------------------------------------------- */
 

@@ -1,8 +1,14 @@
 import React, { useRef } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { HISTORY_TAB_CARD } from "./constants";
 import HistoryPageHeader from "./components/HistoryPageHeader";
+import { HistoryTypeSwitcher } from "./components/HistoryTypeSwitcher";
+import { CardHistory } from "./components/CardHistory";
 import { HistoryList } from "./screens/HistoryList";
 import type { HistoryViewModel } from "./hooks/useHistoryViewModel";
+import type { CardHistoryViewModel } from "./components/CardHistory/types";
+
+type HistoryViewProps = Readonly<HistoryViewModel & { cardHistoryViewModel: CardHistoryViewModel }>;
 
 export function HistoryView({
   showBackButton,
@@ -20,9 +26,16 @@ export function HistoryView({
   dustFilterThreshold,
   onToggleHideSmallValueTokenOperations,
   contact,
-}: Readonly<HistoryViewModel>) {
+  showHistoryTypeSwitcher,
+  historyTab,
+  cardAsset,
+  cardAssetName,
+  onHistoryTabChange,
+  cardHistoryViewModel,
+}: HistoryViewProps) {
   const operationsCountRef = useRef(operationsCount);
   const hasPendingOperationsRef = useRef(hasPendingOperations);
+  const isCardTab = historyTab === HISTORY_TAB_CARD;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-24" data-testid="history-page">
@@ -38,16 +51,25 @@ export function HistoryView({
         hideSmallValueTokenOperations={hideSmallValueTokenOperations}
         dustFilterThreshold={dustFilterThreshold}
         onToggleHideSmallValueTokenOperations={onToggleHideSmallValueTokenOperations}
-        contact={contact}
+        contact={isCardTab ? undefined : contact}
+        isCardHistory={isCardTab}
+        cardAssetName={cardAssetName}
       />
+      {showHistoryTypeSwitcher ? (
+        <HistoryTypeSwitcher selectedTab={historyTab} onTabChange={onHistoryTabChange} />
+      ) : null}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <HistoryList
-          table={table}
-          parentRef={parentRef}
-          rowVirtualizer={rowVirtualizer}
-          flatItems={flatItems}
-          onRowClick={onRowClick}
-        />
+        {isCardTab ? (
+          <CardHistory {...cardHistoryViewModel} asset={cardAsset} />
+        ) : (
+          <HistoryList
+            table={table}
+            parentRef={parentRef}
+            rowVirtualizer={rowVirtualizer}
+            flatItems={flatItems}
+            onRowClick={onRowClick}
+          />
+        )}
       </div>
     </div>
   );

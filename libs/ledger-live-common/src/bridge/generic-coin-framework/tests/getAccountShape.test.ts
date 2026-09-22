@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
+import { CurrencyRegionRestrictedError } from "../../../errors";
 import type { StakingResources } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "../getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -31,6 +32,11 @@ jest.mock("../api", () => ({
     getAccountInfo: (...a: any[]) => getAccountInfoMock(...a),
   }),
 }));
+let mockRegionRestricted = false;
+jest.mock("../regionRestriction", () => ({
+  isRegionRestrictedFailure: () => mockRegionRestricted,
+}));
+
 const getBridgeApiMock = jest.fn();
 jest.mock("../bridge", () => ({
   getBridgeApi: (...a: any[]) => getBridgeApiMock(...a),
@@ -172,6 +178,25 @@ describe("genericGetAccountShape", () => {
 
       expect(err).toBeInstanceOf(UnexpectedGetBalanceError);
       expect(err).toMatchObject({ cause });
+    });
+
+    test("rejects with CurrencyRegionRestrictedError when the backend geo-blocks the region", async () => {
+      const currency = { id: "hypercore", name: "Hyperliquid", family: "hypercore" };
+      const network = "mainnet";
+      const cause = Object.assign(new Error("LedgerAPI4xx"), { name: "LedgerAPI4xx", status: 405 });
+      mockRegionRestricted = true;
+      getBalanceMock.mockRejectedValue(cause);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const err = await getShape(
+        { address: "rTest", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} },
+      ).catch((e: unknown) => e);
+
+      expect(err).toBeInstanceOf(CurrencyRegionRestrictedError);
+      expect(err).toMatchObject({ currencyName: currency.name, cause });
+      mockRegionRestricted = false;
     });
   });
 
@@ -2975,6 +3000,51 @@ describe("genericGetAccountShape", () => {
           },
         ],
       });
+    });
+  });
+
+  describe("family token account shapes", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    test("awaits buildTokenAccountShapes and hands the result to buildSubAccounts", async () => {
+      const shapes = { "0xmint": { frozen: true } };
+      const buildTokenAccountShapes = jest.fn(async () => shapes);
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        buildTokenAccountShapes,
+      }));
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: "tz1shapes", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(buildTokenAccountShapes).toHaveBeenCalledWith("tz1shapes");
+      expect(buildSubAccountsMock.mock.calls[0][0].familyShapes).toEqual(shapes);
+    });
+
+    test("passes no shapes when the bridge has no buildTokenAccountShapes hook", async () => {
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: "tz1noshapes", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(buildSubAccountsMock.mock.calls[0][0].familyShapes).toBeUndefined();
     });
   });
 });

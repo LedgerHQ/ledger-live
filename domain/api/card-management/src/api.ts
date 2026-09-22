@@ -3,15 +3,23 @@ import { CARD_MANAGEMENT_TAGS, OAUTH2_TOKEN_PATH } from "./constants";
 import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
+  PayCardRewardWalletResponseSchema,
+  PayCardLinkWalletRequestSchema,
+  PayCardLinkWalletResponseSchema,
   PayCardLinkedWalletsResponseSchema,
   PayCardLinkedWalletsCanonicalSchema,
+  PayCardWalletPrioritiesRequestSchema,
+  PayCardWalletPrioritiesResponseSchema,
   PayCardLogoutResponseSchema,
-  PayCardOnboardingStatusResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
+  PayCardPinCssSchema,
+  PayCardPinTokenResponseSchema,
+  PayCardSetPinTokenRequestSchema,
+  PayCardSetPinTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardTransactionsRequestSchema,
   PayCardTransactionsResponseSchema,
@@ -24,14 +32,22 @@ import type {
   PayCardAuthorizationCodeRequest,
   PayCardFreezeStateResult,
   PayCardInternalWallet,
+  PayCardLinkWalletRequest,
+  PayCardLinkWalletResult,
   PayCardLinkedWallet,
+  PayCardRewardWallet,
+  PayCardWalletPrioritiesRequest,
+  PayCardWalletPrioritiesResult,
   PayCardLogoutResult,
-  PayCardOnboardingStatus,
   PayCardOrderResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
   PayCardDetailsCss,
   PayCardDetailsToken,
+  PayCardPinCss,
+  PayCardPinToken,
+  PayCardSetPinToken,
+  PayCardSetPinTokenRequest,
   PayCardStatus,
   PayCardTransaction,
   PayCardTransactionsRequest,
@@ -178,6 +194,42 @@ export const cardManagementApi = cardApi
         responseSchema: PayCardDetailsTokenResponseSchema,
       }),
 
+      /**
+       * The card's PIN, rendered by the provider as an image: the digits never reach the app as a
+       * value, so nothing here can log or store them.
+       *
+       * A mutation, and retained, for the same reasons as `createCardDetailsToken`: the token is
+       * spent once the image has been read, so the answer must never come from a cache, and
+       * `state.cardApi.mutations` keeps a tracked result. Dispatch with `{ track: false }`, or
+       * reset as soon as the image has loaded.
+       */
+      createCardPinToken: build.mutation<PayCardPinToken, PayCardPinCss | void>({
+        query: customCss => ({
+          url: "/v1/card/pin/token",
+          method: "POST",
+          ...(customCss ? { body: { customCss } } : {}),
+        }),
+        argSchema: PayCardPinCssSchema.optional(),
+        responseSchema: PayCardPinTokenResponseSchema,
+      }),
+
+      /**
+       * Mints the URL of the provider's hosted page for setting or changing the card's PIN.
+       *
+       * A mutation for the same reasons as `createCardDetailsToken`: the token is spent when the
+       * page is opened, so the answer must never be served from a cache. The URL carries the token,
+       * so dispatch with `{ track: false }` or reset once the page has been opened.
+       */
+      createCardSetPinToken: build.mutation<PayCardSetPinToken, PayCardSetPinTokenRequest | void>({
+        query: request => ({
+          url: "/v1/card/set-pin/token",
+          method: "POST",
+          ...(request ? { body: request } : {}),
+        }),
+        argSchema: PayCardSetPinTokenRequestSchema,
+        responseSchema: PayCardSetPinTokenResponseSchema,
+      }),
+
       freezeCard: build.mutation<PayCardFreezeStateResult, void>({
         query: () => ({
           url: "/v1/card/freeze",
@@ -210,6 +262,14 @@ export const cardManagementApi = cardApi
         responseSchema: PayCardInternalWalletsResponseSchema,
       }),
 
+      getRewardWallet: build.query<PayCardRewardWallet, void>({
+        query: () => ({
+          url: "/v1/wallet/reward",
+          method: "GET",
+        }),
+        responseSchema: PayCardRewardWalletResponseSchema,
+      }),
+
       getCardLinkedWallets: build.query<PayCardLinkedWallet[], void>({
         query: () => ({
           url: "/v1/wallet/internal/card_linked",
@@ -218,15 +278,75 @@ export const cardManagementApi = cardApi
         rawResponseSchema: PayCardLinkedWalletsResponseSchema,
         transformResponse: transformPayCardLinkedWallets,
         responseSchema: PayCardLinkedWalletsCanonicalSchema,
+        providesTags: ["CardLinkedWallets"],
       }),
 
-      getCardOnboardingStatus: build.query<PayCardOnboardingStatus, void>({
-        query: () => ({
-          url: "/v1/card/onboarding-status",
-          method: "GET",
+      /**
+       * Links one custodial wallet to the card as a funding source.
+       *
+       * Answers a `success` flag, which a caller has to read: a refusal arrives as
+       * `success: false` on a 200 rather than as an error.
+       */
+      linkWalletToCard: build.mutation<PayCardLinkWalletResult, PayCardLinkWalletRequest>({
+        query: request => ({
+          url: "/v1/wallet/internal/card_linked",
+          method: "POST",
+          body: request,
         }),
-        responseSchema: PayCardOnboardingStatusResponseSchema,
-        providesTags: ["CardOnboardingStatus"],
+        argSchema: PayCardLinkWalletRequestSchema,
+        responseSchema: PayCardLinkWalletResponseSchema,
+        // Only a made link invalidates. RTK Query invalidates a rejected mutation's tags too,
+        // and a `success: false` answer is not rejected at all, yet neither changed the linked
+        // set. `result` is undefined on an error, so this covers both. Unlike the freeze pair,
+        // nothing here was patched optimistically, so there is no local guess to resync.
+        invalidatesTags: result => (result?.success ? ["CardLinkedWallets"] : []),
+      }),
+
+      /**
+       * Drops one custodial wallet as a funding source.
+       *
+       * Answers a `success` flag, which a caller has to read: a refusal arrives as
+       * `success: false` on a 200 rather than as an error.
+       */
+      unlinkWalletFromCard: build.mutation<PayCardLinkWalletResult, PayCardLinkWalletRequest>({
+        query: request => ({
+          url: "/v1/wallet/internal/card_linked",
+          method: "DELETE",
+          body: request,
+        }),
+        argSchema: PayCardLinkWalletRequestSchema,
+        responseSchema: PayCardLinkWalletResponseSchema,
+        // Same reasoning as the link above: only a dropped link invalidates.
+        invalidatesTags: result => (result?.success ? ["CardLinkedWallets"] : []),
+      }),
+
+      /**
+       * Rewrites the order the linked wallets are charged in.
+       *
+       * Takes every linked wallet, not the ones being moved: the provider expects a priority for
+       * each, and this package holds no linked set to check that against, so a partial order is
+       * refused only once it is sent.
+       *
+       * Answers a `success` flag, which a caller has to read: a refusal arrives as
+       * `success: false` on a 200 rather than as an error.
+       */
+      updateCardWalletPriorities: build.mutation<
+        PayCardWalletPrioritiesResult,
+        PayCardWalletPrioritiesRequest
+      >({
+        query: request => ({
+          url: "/v1/wallet/internal/card_linked/priority",
+          method: "PUT",
+          body: request,
+        }),
+        argSchema: PayCardWalletPrioritiesRequestSchema,
+        responseSchema: PayCardWalletPrioritiesResponseSchema,
+        // Only a written order invalidates. RTK Query invalidates a rejected mutation's tags
+        // too, and a `success: false` answer is not rejected at all, yet neither changed the
+        // order. `result` is undefined on an error, so this covers both. The freeze pair
+        // invalidates unconditionally on purpose: both patch the status optimistically, so a
+        // refetch is what resyncs that guess. Nothing is patched here.
+        invalidatesTags: result => (result?.success ? ["CardLinkedWallets"] : []),
       }),
     }),
   });
@@ -250,12 +370,17 @@ export const {
   useGetWalletHistoryQuery,
   useLazyGetWalletHistoryQuery,
   useCreateCardDetailsTokenMutation,
+  useCreateCardPinTokenMutation,
+  useCreateCardSetPinTokenMutation,
   useLazyGetCardStatusQuery,
   useFreezeCardMutation,
   useUnfreezeCardMutation,
   useGetInternalWalletsQuery,
+  useGetRewardWalletQuery,
   useGetCardLinkedWalletsQuery,
-  useGetCardOnboardingStatusQuery,
+  useLinkWalletToCardMutation,
+  useUnlinkWalletFromCardMutation,
+  useUpdateCardWalletPrioritiesMutation,
 } = cardManagementApi;
 
 async function patchCardStatus(

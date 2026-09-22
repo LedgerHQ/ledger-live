@@ -19,7 +19,7 @@ their Ledger device (unlock, continue in an app, etc.).
 
 This package never imports `DeviceModelId` from `@ledgerhq/types-devices` — that's a legacy
 `libs/` type forbidden in `features/`, `domain/`, and `shared/` (see
-[docs/ddd-monorepo-architecture.md](../../../docs/ddd-monorepo-architecture.md)). Callers convert
+[docs/monorepo-architecture.md](../../../docs/monorepo-architecture.md)). Callers convert
 their `DeviceModelId` with `toDeviceActionModelId` before passing it in.
 
 The light/dark asset is picked from the style provider both apps already mount, via

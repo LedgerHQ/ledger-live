@@ -3,7 +3,7 @@
 Catalog of every external network service contacted by **Ledger Live Desktop (LLD)** and **Ledger Live Mobile (LLM)** — plus services whose domain is baked into a third-party SDK we ship.
 
 > [!IMPORTANT]
-> **Keep this file up to date.** Whenever a service is added, removed, or its domain/management changes (new entry in [`libs/env/src/env.ts`](/libs/env/src/env.ts), a new hardcoded endpoint, a coin-module config change, or a new SDK dependency that phones home), add/update its row in the matching **scope** section below. See [Maintenance](#maintenance).
+> **Keep this file up to date.** Whenever a service is added, removed, or its domain/management changes (a new endpoint, a coin-module config change, or a new SDK dependency that phones home), add/update its row in the matching **scope** section below. See [Maintenance](#maintenance).
 
 ## How to read this doc
 
@@ -21,7 +21,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 
 | Keyword        | Meaning                                                                           |
 | -------------- | --------------------------------------------------------------------------------- |
-| `env`          | Defined in [`libs/env/src/env.ts`](/libs/env/src/env.ts), overridable at runtime. |
+| `env`          | Defined in the deprecated env registry, see [configuration](/docs/configuration.md). |
 | `coin-config`  | Default in a coin/family config, overridable via Firebase remote config.          |
 | `feature-flag` | Gated/configured by a Firebase feature flag.                                      |
 | `code`         | Literal in our source.                                                            |
@@ -89,7 +89,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Concordium                                                                                          | `ccd-node-mainnet.coin.ledger.com`, `ccd-wallet-proxy-mainnet.coin.ledger.com`                                                                                                 | [code](/libs/ledger-live-common/src/families/concordium/config.ts)                      | prod           |
 | XRP node                                                                                            | `xrp.coin.ledger.com`                                                                                                                                                          | [code](/libs/ledger-live-common/src/families/xrp/config.ts)                             | prod           |
 | Zcash (Zaino)                                                                                       | `zec-indexer.coin.ledger-test.com`<br>_⚠️ only staging found; prod status unknown_                                                                                             | [code](/libs/coin-modules/coin-bitcoin/src/chain-adapters/zcash/constants.ts)           | staging        |
-| Cosmos LCDs (Ledger-hosted)                                                                         | `axelar`, `cosmoshub4`, `dydx`, `osmo`, `coreum`, `injective`, `babylon` `.coin.ledger.com`                                                                                    | [code](/libs/coin-modules/coin-cosmos/src/config.ts)                                    | prod           |
+| Cosmos LCDs (Ledger-hosted)                                                                         | `axelar`, `cosmoshub4`, `dydx`, `osmo`, `coreum`, `injective`, `babylon`, `gonka` `.coin.ledger.com`                                                                           | [code](/libs/coin-modules/coin-cosmos/src/config.ts)                                    | prod           |
 | **PTX**                                                                                             |                                                                                                                                                                                |                                                                                         |                |
 | Buy API                                                                                             | `buy.api.live.ledger.com`                                                                                                                                                      | [env](/libs/env/src/env.ts)                                                             | prod           |
 | Sell API                                                                                            | `buy.api.live.ledger.com`                                                                                                                                                      | [env](/libs/env/src/env.ts)                                                             | prod           |
@@ -130,7 +130,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Live App manifest catalog                                                                           | `live-app-catalog.ledger.com`                                                                                                                                                  | [env](/libs/env/src/env.ts)                                                             | prod           |
 | Platform global catalog                                                                             | `cdn.live.ledger.com`                                                                                                                                                          | [env](/libs/env/src/env.ts)                                                             | prod           |
 | dApp browser                                                                                        | `dapp-browser.apps.ledger.com`<br>_+ `platform.apps`, `debug.apps` (dev)_                                                                                                      | code                                                                                    | prod           |
-| Card backend API                                                                                    | `card.api.live.ledger.com`<br>_`CARD_BAANX_API_URL`; every request sends Baanx `x-client-key` from `CARD_BAANX_CLIENT_KEY`_                                                     | [env](/shared/env/src/definitions/team-wallet-xp/index.ts)                              | prod           |
+| Card backend API                                                                                    | `card.api.live.ledger.com`<br>_`CARD_BAANX_API_URL`; every request sends Baanx `x-client-key` from `CARD_BAANX_CLIENT_KEY`, and `x-us-env: true` while the login redirect named the app id in `CARD_BAANX_US_APP_ID` (US tenant routing)_                                                     | [env](/shared/env/src/definitions/team-wallet-xp/index.ts)                              | prod           |
 | Card hosted UI                                                                                      | `ledger-ew1uat.baanxapi.com`<br>_`CARD_BAANX_HOSTED_UI`; the login intro opens its `/onboarding/signup` page in the browser_                                                   | [env](/shared/env/src/definitions/team-wallet-xp/index.ts)                              | dev            |
 | **Ledger Sync**                                                                                     |                                                                                                                                                                                |                                                                                         |                |
 | Cloud Sync backend                                                                                  | `cloud-sync.api.live.ledger.com`                                                                                                                                               | [env](/libs/env/src/env.ts)                                                             | prod           |
@@ -171,6 +171,8 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | LLD prerelease update feed   | `lw-prerelease-sigs.s3.eu-west-1.amazonaws.com`<br>_Electron auto-updater; only when `UPDATE_CHECK_FEED` env is set (prerelease / dev builds)_                                                                                                                          | [code](/apps/ledger-live-desktop/src/main/updater/init.ts)                     | dev            |
 | **Wallet XP**                |                                                                                                                                                                                                                                                                         |                                                                                |                |
 | WalletConnect                | `relay.walletconnect.org`<br>_[@walletconnect/sign-client](https://www.npmjs.com/package/@walletconnect/sign-client); also verify/echo/pulse_                                                                                                                           | [SDK](https://www.npmjs.com/package/@walletconnect/sign-client)                | prod           |
+| Card backend API (non-prod)  | `dev.api.baanx.com`<br>_`CARD_BAANX_API_URL` on staging / testing / nightly; Baanx-operated, so outside Ledger monitoring_                                                                                                                                              | [env](/shared/env/src/definitions/team-wallet-xp/index.ts)                     | dev            |
+| Baanx sandbox API (test-only) | `dev.api.baanx.com`<br>_`BAANX_TEST_API_URL`; Baanx auth (`/v1/auth/login` + OTP) by `@ledgerhq/baanx-test-client`, to mint E2E tokens. **Not contacted by the shipped apps** — the apps reach Baanx only through the Card backend_                                   | [code](/e2e/tooling/baanx-test-client/src/types.ts)                                     | dev            |
 
 ---
 
@@ -198,10 +200,9 @@ URLs the app hands to the OS browser (`openURL` / `Linking.openURL`) — **not**
 
 ## Maintenance
 
-This catalog is **inferred from the codebase** ([`libs/env/src/env.ts`](/libs/env/src/env.ts), coin/family configs, hardcoded endpoints, SDK defaults) and must be kept current:
+This catalog is **inferred from the codebase** (the env registry, coin/family configs, hardcoded endpoints, SDK defaults) and must be kept current:
 
-- **New env service** in [`libs/env/src/env.ts`](/libs/env/src/env.ts) → add a row in the matching scope section, under the owning team's separator.
-- **New hardcoded endpoint** (coin module, family config, app) → add a row linking the source.
+- **New endpoint** (coin module, family config, app, service config) → add a row in the matching scope section, under the owning team's separator, linking the source. [/docs/configuration.md](/docs/configuration.md) says where the value itself belongs.
 - **New SDK dependency** that contacts a fixed domain → add it under Third-party, mark `SDK`.
 - **Removed/renamed service** → remove or update the row.
 

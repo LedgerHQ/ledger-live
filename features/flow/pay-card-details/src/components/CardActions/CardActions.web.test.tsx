@@ -1,37 +1,47 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import { WebTestWrapper } from "../../__tests__/webTestWrapper";
+import { screen } from "@testing-library/react";
+import {
+  cardApiWrapper,
+  listenToCardApi,
+  signedInCardApiHandlers,
+} from "@support/msw-features-flow-pay-card";
+import { CARD_COPY, MORE_COPY } from "../../__tests__/i18nWrapper";
+import { renderWeb } from "../../__tests__/renderWeb";
+import type { RevealTileProps } from "../../types";
 import { CardActions } from "./CardActions";
-import { useFreezeCardViewModel } from "../Freeze/useFreezeCardViewModel";
-import { useMoreViewModel } from "../More/useMoreViewModel";
-import { buildMoreViewProps } from "../More/fixtures";
-import type { FreezeViewModel } from "../../types";
 
-jest.mock("../Freeze/useFreezeCardViewModel", () => ({ useFreezeCardViewModel: jest.fn() }));
-jest.mock("../More/useMoreViewModel", () => ({ useMoreViewModel: jest.fn() }));
+listenToCardApi(signedInCardApiHandlers);
 
-const freeze: FreezeViewModel = {
-  status: "ACTIVE",
-  isActionDisabled: false,
-  confirmState: "closed",
-  onOpenConfirm: jest.fn(),
-  onClose: jest.fn(),
-  onConfirm: jest.fn(),
+const Wrapper = cardApiWrapper({ signedIn: true });
+
+const reveal: RevealTileProps = {
+  status: "idle",
+  canHide: false,
+  onReveal: jest.fn(),
+  onHide: jest.fn(),
 };
 
-const more = buildMoreViewProps();
-
 describe("CardActions (web)", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    jest.mocked(useFreezeCardViewModel).mockReturnValue(freeze);
-    jest.mocked(useMoreViewModel).mockReturnValue(more);
+  it("should line up Reveal, Freeze and More when a reveal is passed in", async () => {
+    renderWeb(
+      <Wrapper>
+        <CardActions reveal={reveal} />
+      </Wrapper>,
+    );
+
+    expect(screen.getByRole("button", { name: CARD_COPY.numbersReveal })).toBeVisible();
+    expect(await screen.findByRole("button", { name: CARD_COPY.freeze })).toBeVisible();
+    expect(await screen.findByRole("button", { name: MORE_COPY.tile })).toBeVisible();
   });
 
-  it("renders Freeze and More on the same row", () => {
-    render(<CardActions />, { wrapper: WebTestWrapper });
+  it("should leave Reveal out of the row when no reveal is passed in", async () => {
+    renderWeb(
+      <Wrapper>
+        <CardActions />
+      </Wrapper>,
+    );
 
-    expect(screen.getByRole("button", { name: "Freeze" })).toBeVisible();
-    expect(screen.getByRole("button", { name: "More" })).toBeVisible();
+    expect(await screen.findByRole("button", { name: CARD_COPY.freeze })).toBeVisible();
+    expect(screen.queryByRole("button", { name: CARD_COPY.numbersReveal })).not.toBeInTheDocument();
   });
 });

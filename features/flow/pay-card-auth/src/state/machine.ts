@@ -9,8 +9,8 @@ import {
   prepareAttempt,
   validateCallback,
 } from "./actors";
-import { clearErrorKind, failPkce, forgetAttempt } from "./actions";
-import { isUnauthorizedError } from "./errors";
+import { clearErrorKind, failPkce, forgetAttempt, publishProviderAppId } from "./actions";
+import { isStaleRequestError, isUnauthorizedError } from "./errors";
 import { hasErrorKind, shouldResumeAuthenticated } from "./guards";
 import type { CardLoginContext, CardLoginEvent, CardLoginMachineInput } from "./types";
 
@@ -45,12 +45,18 @@ export const cardLoginMachine = setup({
     forgetAttempt,
     clearErrorKind,
     failPkce,
+    publishProviderAppId,
     /**
      * `More` is a separate component with no machine, so it cannot read this snapshot. These two
      * publish the answer it needs through a port, on entry, which keeps the flag and the state in step.
      */
     publishSignedIn: ({ context }) => context.ports.setSignedIn(true),
     publishSignedOut: ({ context }) => context.ports.setSignedIn(false),
+    /**
+     * Only a code exchange reaches this, so a resumed session never raises the flag. It runs in the
+     * transition, not in an effect: `ready` signs the holder in, which unmounts CardLogin at once.
+     */
+    markIntroSeen: ({ context }) => context.ports.markIntroSeen(),
   },
 }).createMachine({
   id: "cardLogin",
@@ -96,7 +102,7 @@ export const cardLoginMachine = setup({
         // arrives one render after mount can never overtake the disk read.
         CALLBACK_RECEIVED: {
           actions: assign({
-            callback: ({ event }) => ({ code: event.code }),
+            callback: ({ event }) => ({ code: event.code, appId: event.appId }),
           }),
         },
       },
@@ -166,7 +172,7 @@ export const cardLoginMachine = setup({
             isRedirectForCurrentAttempt(event.state, context.attemptState),
           target: "validatingCallback",
           actions: assign({
-            callback: ({ event }) => ({ code: event.code }),
+            callback: ({ event }) => ({ code: event.code, appId: event.appId }),
           }),
         },
       },
@@ -181,7 +187,7 @@ export const cardLoginMachine = setup({
             isRedirectForCurrentAttempt(event.state, context.attemptState),
           target: "validatingCallback",
           actions: assign({
-            callback: ({ event }) => ({ code: event.code }),
+            callback: ({ event }) => ({ code: event.code, appId: event.appId }),
           }),
         },
         // The redirect may never arrive, so a second press mints a fresh attempt instead of wedging.
@@ -194,7 +200,13 @@ export const cardLoginMachine = setup({
         src: "validateCallback",
         input: ({ context }) => ({ ports: context.ports, callback: context.callback }),
         onDone: [
-          { guard: ({ event }) => event.output.kind === null, target: "exchangingCode" },
+          {
+            guard: ({ event }) => event.output.kind === null,
+            target: "exchangingCode",
+            // On the transition, not on entry: a transition action runs before the target state
+            // spawns its actor, so the exchange itself already carries the tenant.
+            actions: "publishProviderAppId",
+          },
           {
             target: "clearingAttempt",
             actions: assign({ errorKind: ({ event }) => event.output.kind }),
@@ -226,6 +238,7 @@ export const cardLoginMachine = setup({
     },
 
     persistingSession: {
+      entry: "markIntroSeen",
       invoke: {
         src: "persistSession",
         input: ({ context }) => ({ ports: context.ports, session: context.session }),
@@ -256,8 +269,12 @@ export const cardLoginMachine = setup({
             target: "clearingAttempt",
             actions: assign({ clearSession: true }),
           },
+          {
+            guard: ({ event }) => isStaleRequestError(event.error),
+            target: "idle",
+          },
           // Network or backend trouble. The session stays, so a retry does not force a new login.
-          { target: "error", actions: assign({ errorKind: "fetch_user_failed" }) },
+          { target: "userFetchError", actions: assign({ errorKind: "fetch_user_failed" }) },
         ],
       },
     },
@@ -267,18 +284,26 @@ export const cardLoginMachine = setup({
         src: "clearAttempt",
         input: ({ context }) => ({ ports: context.ports, clearSession: context.clearSession }),
         onDone: [
-          { guard: "hasErrorKind", target: "error" },
+          { guard: "hasErrorKind", target: "authError" },
           { guard: "shouldResumeAuthenticated", target: "authenticated" },
           { target: "idle" },
         ],
       },
     },
 
-    error: {
+    authError: {
       entry: ["forgetAttempt", "publishSignedOut"],
       on: {
         LOGIN: { target: "preparingAttempt" },
         RETRY: { target: "preparingAttempt" },
+      },
+    },
+
+    userFetchError: {
+      entry: "forgetAttempt",
+      on: {
+        LOGIN: { target: "preparingAttempt" },
+        RETRY: { target: "fetchingUser", actions: "clearErrorKind" },
       },
     },
 

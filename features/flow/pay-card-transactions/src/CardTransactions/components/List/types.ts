@@ -1,6 +1,7 @@
-import type { CardTransactionItem, FormatCardTransactionAmount } from "../../../types";
+import type { CardTransactionItem, CardTransactionFormatters } from "../../../types";
 
 export type ListProps = Readonly<{
   transactions: readonly CardTransactionItem[];
-  formatAmount?: FormatCardTransactionAmount;
+  formatters?: CardTransactionFormatters;
+  onTransactionPress?: (item: CardTransactionItem) => void;
 }>;

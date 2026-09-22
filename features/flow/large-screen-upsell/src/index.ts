@@ -5,6 +5,7 @@ export * from "./decision/getLargeScreenUpsellEligibility";
 export * from "./hooks/useLargeScreenUpsellDecision";
 export * from "./utils/upsellCta";
 export * from "./utils/upsellContent";
+export * from "./utils/getLnsUpsellCopyKeys";
 export * from "./utils/mapDevicesModelListToUpsellInputs";
 export * from "./utils/getNanoOnlyDeviceModel";
 export * from "./utils/isNanoSOnlyWallet";

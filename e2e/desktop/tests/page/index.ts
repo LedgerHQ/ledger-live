@@ -22,7 +22,9 @@ import { OperationDrawer } from "tests/page/drawer/operation.drawer";
 import { PageHolder } from "tests/page/abstractClasses";
 import { PasswordlockModal } from "tests/page/modal/passwordlock.modal";
 import { PortfolioPage } from "tests/page/portfolio.page";
+import { OnboardingPage } from "tests/page/onboarding.page";
 import { PostOnboardingPage } from "tests/page/postOnboarding.page";
+import { SyncOnboardingPage } from "tests/page/syncOnboarding.page";
 import { ReceiveModal } from "tests/page/modal/receive.modal";
 import { Redux } from "tests/utils/redux";
 import { SendDrawer } from "tests/page/drawer/send.drawer";
@@ -42,6 +44,7 @@ import { NewSendModal } from "tests/page/modal/new.send.modal";
 import { PrivateBalanceModal } from "tests/page/modal/private.balance.modal";
 import { HistoryPage } from "tests/page/history.page";
 import { MainNavigationPage } from "tests/page/mainNavigation.page";
+import { PayTabPage } from "tests/page/payTab.page";
 import { SwapTransactionStatusDialog } from "tests/page/dialog/swap.transaction.status.dialog";
 import { TezosStakeModal } from "tests/page/modal/tezos.stake.modal";
 import { TezosEarningChoiceModal } from "tests/page/modal/tezos.earning.choice.modal";
@@ -51,6 +54,7 @@ import { UndelegateModal } from "tests/page/modal/undelegate.modal";
 import { MarketCoinPage } from "tests/page/marketCoin.page";
 import { CryptoAssetsPage } from "tests/page/cryptoAssets.page";
 import { TopBarSearch } from "tests/page/topBarSearch.page";
+import { ContactsPage } from "tests/page/contacts.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -78,7 +82,9 @@ export class Application extends PageHolder {
   public operationDrawer = new OperationDrawer(this.page);
   public password = new PasswordlockModal(this.page);
   public portfolio = new PortfolioPage(this.page);
+  public onboarding = new OnboardingPage(this.page);
   public postOnboarding = new PostOnboardingPage(this.page);
+  public syncOnboarding = new SyncOnboardingPage(this.page);
   public receive = new ReceiveModal(this.page);
   public privateBalance = new PrivateBalanceModal(this.page);
   public redux = new Redux(this.page);
@@ -92,6 +98,7 @@ export class Application extends PageHolder {
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public marketBanner = new MarketBannerPage(this.page);
   public myWallet = new MyWalletPage(this.page);
+  public contacts = new ContactsPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);
   public swapTransactionStatusDialog = new SwapTransactionStatusDialog(this.page);
   private trustchainPage: TrustchainPage | undefined;
@@ -110,6 +117,7 @@ export class Application extends PageHolder {
   }
   public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
+  public payTab = new PayTabPage(this.page);
   public tezosStake = new TezosStakeModal(this.page);
   public tezosEarningChoice = new TezosEarningChoiceModal(this.page);
   public tezosUnstake = new TezosUnstakeModal(this.page);

@@ -1,5 +1,5 @@
 import { ReplaySubject } from "rxjs";
-import type { DeliveryStatus, LoggableEvent, Props } from "../types";
+import type { AnalyticsEvent, LoggableEvent } from "../types";
 
 const eventLog = new ReplaySubject<LoggableEvent>(30);
 
@@ -7,20 +7,15 @@ export const analyticsEvents$ = eventLog.asObservable();
 
 export function publishEvent({
   eventName,
-  eventProps = {},
-  eventPropsWithoutExtra = {},
+  eventProperties = {},
+  eventPropertiesWithoutExtra = {},
   deliveryStatus,
-}: {
-  eventName: string;
-  eventProps?: Props;
-  eventPropsWithoutExtra?: Props;
-  deliveryStatus: DeliveryStatus;
-}): void {
+}: AnalyticsEvent): void {
   eventLog.next({
     eventName,
-    eventProps,
-    eventPropsWithoutExtra,
+    eventProperties,
+    eventPropertiesWithoutExtra,
     date: new Date(),
-    deliveryStatus,
+    ...(deliveryStatus !== undefined ? { deliveryStatus } : {}),
   });
 }

@@ -15,9 +15,8 @@ import { useTranslation } from "~/context/Locale";
 import { BottomSheetInfoGradient } from "LLM/components/BottomSheetGradient";
 import { InfoState } from "@shared/ui-info-state";
 import type { FeeSelectorOptionKind, NetworkFeesViewModel } from "../types";
-import { useSendFlowData } from "../context/SendFlowContext";
 import { track } from "~/analytics";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 
 type NetworkFeesRowProps = Readonly<{
   viewModel: NetworkFeesViewModel;
@@ -77,16 +76,15 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
     [],
   );
 
-  const { state } = useSendFlowData();
-  const { account, parentAccount } = state.account;
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const trackingProperties = useMemo(() => {
     return {
-      ...getSendFlowTrackingProperties(account, parentAccount),
+      ...sendFlowTrackingProperties,
       page: "step amount",
       flow: "send",
     };
-  }, [account, parentAccount]);
+  }, [sendFlowTrackingProperties]);
 
   const handleOpenInfo = useCallback(() => {
     infoBottomSheetRef.current?.present();

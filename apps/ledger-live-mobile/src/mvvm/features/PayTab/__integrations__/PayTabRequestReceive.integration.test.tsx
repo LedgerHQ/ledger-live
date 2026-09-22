@@ -251,7 +251,7 @@ describe("PayTab RequestReceive integration", () => {
     expect(screen.queryByText(REQUEST_TITLE)).not.toBeOnTheScreen();
   });
 
-  it("should share a picture of the request card when Share is pressed", async () => {
+  it("should share the request card image and the address as text when Share is pressed", async () => {
     const { user } = renderRequestReceive();
 
     await user.press(await screen.findByRole("button", { name: "Share" }));

@@ -7,6 +7,13 @@ import type {
 
 export type PayCardLoginTrackEvent = (event: string, params: Record<string, unknown>) => void;
 
+/**
+ * Asks the host to make sure the app is protected, resolving true once it is. The card is the
+ * reason the mobile app lock exists, so neither path to Baanx runs while it is unprotected. Only
+ * the native entry passes this: desktop has no app lock, leaves it out, and carries on as before.
+ */
+export type RequestAppProtection = () => Promise<boolean>;
+
 export type CardLoginProps = {
   readonly oauthConfig: CardLoginOauthConfig;
   /**
@@ -17,6 +24,7 @@ export type CardLoginProps = {
   readonly openHostedLogin?: OpenHostedLogin;
   readonly openHostedPage?: OpenCardHostedPage;
   readonly onTrackEvent?: PayCardLoginTrackEvent;
+  readonly requestProtection?: RequestAppProtection;
 };
 
 export type MobileWallet = "applePay" | "googlePay" | "both";
@@ -54,6 +62,8 @@ export type CardLoginIntroViewProps = Readonly<{
 
 export type CardLoginCopy = Readonly<{
   title: string;
+  /** The heading the login block carries itself, under the host heading. */
+  headline: string;
   description: string;
   loginLabel: string;
   /** `null` once the intro has been seen, because the login action is the login by then. */

@@ -1,15 +1,18 @@
-import React, { useState, useCallback } from "react";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { Switch } from "@ledgerhq/native-ui";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { AppLockBiometricsRow } from "LLM/features/AppLock/components/BiometricsRow";
+import { AppLockPasswordRow } from "LLM/features/AppLock/components/PasswordRow";
+import { useAppLockScheme } from "LLM/features/AppLock/hooks/useAppLockScheme";
+import React, { useCallback, useState } from "react";
+import { track } from "~/analytics";
+import SettingsRow from "~/components/SettingsRow";
+import { NavigatorName, ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
-import { Switch } from "@ledgerhq/native-ui";
-import { NavigatorName, ScreenName } from "~/const";
 import { privacySelector } from "~/reducers/settings";
-import SettingsRow from "~/components/SettingsRow";
 import BiometricsRow from "./BiometricsRow";
-import { track } from "~/analytics";
 
-export default function AuthSecurityToggle() {
+function LegacyAuthSecurityToggle() {
   const { t } = useTranslation();
 
   const privacy = useSelector(privacySelector);
@@ -43,14 +46,32 @@ export default function AuthSecurityToggle() {
       : t("settings.display.passwordDesc");
 
   return (
+    <SettingsRow
+      event="AuthSecurityToggle"
+      title={t("settings.display.password")}
+      desc={getPasswordDesc()}
+    >
+      <Switch checked={isToggleOn} onChange={onValueChange} testID="password-settings-switch" />
+    </SettingsRow>
+  );
+}
+
+export default function AuthSecurityToggle() {
+  const scheme = useAppLockScheme();
+
+  if (scheme === undefined) {
+    return null;
+  }
+
+  // Both rows move together: the legacy biometrics row is disabled until a password exists.
+  return scheme === "revamped" ? (
     <>
-      <SettingsRow
-        event="AuthSecurityToggle"
-        title={t("settings.display.password")}
-        desc={getPasswordDesc()}
-      >
-        <Switch checked={isToggleOn} onChange={onValueChange} testID="password-settings-switch" />
-      </SettingsRow>
+      <AppLockPasswordRow />
+      <AppLockBiometricsRow />
+    </>
+  ) : (
+    <>
+      <LegacyAuthSecurityToggle />
       <BiometricsRow />
     </>
   );

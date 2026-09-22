@@ -165,7 +165,7 @@ export const test = base.extend<TestFixtures>({
     const handle: SpeculosFixtureHandle = {
       get current(): SpeculosDevice {
         if (!currentDevice) {
-          throw new Error("[E2E] speculos fixture: no device (missing speculosApp?)");
+          base.abort("[E2E] speculos fixture: no device (missing speculosApp?)");
         }
         return currentDevice;
       },

@@ -66,7 +66,7 @@
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/psbtv2": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
-    "@noble/curves": "1.9.7",
+    "@noble/curves": "catalog:",
     "bignumber.js": "^9.1.2",
     "bip32": "^4.0.0",
     "bip39": "^3.1.0",

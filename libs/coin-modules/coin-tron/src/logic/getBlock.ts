@@ -1,10 +1,10 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type {
   Block,
   BlockInfo,
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../config";
 import {
@@ -13,19 +13,23 @@ import {
   getTransactionInfoByBlockNum,
 } from "../network";
 import { encode58Check } from "../network/format";
-import { inferAssetInfo } from "../network/trongrid/trongrid-adapters";
+import { hasUnresolvedTokenReference, inferAssetInfo } from "../network/trongrid/trongrid-adapters";
 import type { BlockTransactionAPI, TransactionInfoByBlockNumAPI } from "../network/types";
-import { abiDecodeTrc20Transfer } from "../network/utils";
+import { abiDecodeTrc20Transfer, decodeTrc20TransferLog } from "../network/utils";
 import type { TrongridTxInfo, TrongridTxType } from "../types";
 
 type BlockTxInfo = TrongridTxInfo;
 
-export async function getBlockInfo(config: TronCoinConfig, height: number): Promise<BlockInfo> {
+export async function getBlockInfo(
+  logger: Logger,
+  config: TronCoinConfig,
+  height: number,
+): Promise<BlockInfo> {
   if (!Number.isSafeInteger(height) || height <= 0) {
     throw new Error(`Invalid block height: ${height}`);
   }
 
-  const block = await networkGetBlock(config, height);
+  const block = await networkGetBlock(logger, config, height);
   return {
     height: block.height,
     hash: block.hash,
@@ -33,15 +37,19 @@ export async function getBlockInfo(config: TronCoinConfig, height: number): Prom
   };
 }
 
-export async function getBlock(config: TronCoinConfig, height: number): Promise<Block> {
+export async function getBlock(
+  logger: Logger,
+  config: TronCoinConfig,
+  height: number,
+): Promise<Block> {
   if (!Number.isSafeInteger(height) || height <= 0) {
     throw new Error(`Invalid block height: ${height}`);
   }
 
   const [data, txInfos] = await Promise.all([
-    getBlockWithTransactions(config, height),
-    getTransactionInfoByBlockNum(config, height).catch(error => {
-      log("tron/getBlock", "Failed to fetch transaction info, falling back to ret fees", {
+    getBlockWithTransactions(logger, config, height),
+    getTransactionInfoByBlockNum(logger, config, height).catch(error => {
+      logger("tron/getBlock", "Failed to fetch transaction info, falling back to ret fees", {
         height,
         error,
       });
@@ -65,7 +73,7 @@ export async function getBlock(config: TronCoinConfig, height: number): Promise<
   const txInfoById = buildTxInfoMap(txInfos);
 
   const transactions: BlockTransaction[] = rawTxs
-    .map(tx => toBlockTransaction(tx, blockTimestamp, info.height, txInfoById))
+    .map(tx => toBlockTransaction(logger, tx, blockTimestamp, info.height, txInfoById))
     .filter((tx): tx is BlockTransaction => tx !== null);
 
   return { info, transactions };
@@ -78,27 +86,35 @@ function buildTxInfoMap(
 }
 
 function toBlockTransaction(
+  logger: Logger,
   tx: BlockTransactionAPI,
   blockTimestamp: number,
   blockHeight: number,
   txInfoById: Map<string, TransactionInfoByBlockNumAPI>,
 ): BlockTransaction | null {
-  const txInfo = formatBlockTransaction(tx, blockTimestamp, blockHeight);
+  const txDetail = txInfoById.get(tx.txID);
+  const txInfo = formatBlockTransaction(logger, tx, blockTimestamp, blockHeight);
   if (!txInfo) return null;
 
-  const txDetail = txInfoById.get(tx.txID);
   const fee = txDetail?.fee ?? tx.ret?.[0]?.fee ?? 0;
+
+  // A contract deployment can mint TRC20 from its constructor. Those transfers are nowhere in
+  // `raw_data` — `new_contract` holds no address and no call data — so they are read from the
+  // receipt's events instead, which is the same evidence `listOperations` resolves them from.
+  const mintOperations =
+    txInfo.type === "CreateSmartContract" ? toConstructorMintOperations(txDetail) : [];
 
   return {
     hash: txInfo.txID,
     failed: txInfo.hasFailed,
     fees: BigInt(fee),
     feesPayer: txInfo.from,
-    operations: toBlockOperations(txInfo),
+    operations: mintOperations.length > 0 ? mintOperations : toBlockOperations(txInfo),
   };
 }
 
 function formatBlockTransaction(
+  logger: Logger,
   tx: BlockTransactionAPI,
   blockTimestamp: number,
   blockHeight: number,
@@ -136,11 +152,10 @@ function formatBlockTransaction(
       value = params.amount ? new BigNumber(params.amount) : new BigNumber(0);
     }
 
-    const tokenId = isTrc10
-      ? decodeHexAssetName(params.asset_name)
-      : isTrc20 && params.contract_address
-        ? encode58Check(params.contract_address)
-        : undefined;
+    const tokenAddress =
+      isTrc20 && params.contract_address ? encode58Check(params.contract_address) : undefined;
+
+    const tokenId = isTrc10 ? decodeHexAssetName(params.asset_name) : tokenAddress;
 
     return {
       txID: tx.txID,
@@ -148,8 +163,7 @@ function formatBlockTransaction(
       type,
       tokenId,
       tokenType,
-      tokenAddress:
-        isTrc20 && params.contract_address ? encode58Check(params.contract_address) : undefined,
+      tokenAddress,
       from,
       to,
       value,
@@ -157,7 +171,7 @@ function formatBlockTransaction(
       hasFailed,
     };
   } catch (error) {
-    log("tron/getBlock", "formatBlockTransaction error", {
+    logger("tron/getBlock", "formatBlockTransaction error", {
       txId: tx.txID,
       error,
     });
@@ -165,7 +179,44 @@ function formatBlockTransaction(
   }
 }
 
+/**
+ * Every `Transfer` event a TRC20 deployment emits from its constructor, as the debit/credit pair a
+ * plain transfer produces. All of them are reported, not just the first: a mint that
+ * `listOperations` returns to one of the parties must show up here too, whatever else the same
+ * deployment moved. A deployment emitting no decodable transfer yields nothing, and the
+ * transaction stays a plain contract-creation operation.
+ */
+function toConstructorMintOperations(
+  txDetail: TransactionInfoByBlockNumAPI | undefined,
+): BlockOperation[] {
+  return (txDetail?.log ?? [])
+    .map(decodeTrc20TransferLog)
+    .filter(transfer => transfer !== null)
+    .flatMap(transfer => {
+      if (transfer.amount.isZero() || !transfer.amount.isFinite()) return [];
+
+      const asset = {
+        type: "trc20",
+        assetReference: encode58Check(transfer.contractAddress),
+      };
+      const from = encode58Check(transfer.from);
+      const to = encode58Check(transfer.to);
+      const amount = BigInt(transfer.amount.integerValue().toFixed(0));
+
+      return [
+        { type: "transfer" as const, address: from, peer: to, asset, amount: -amount },
+        { type: "transfer" as const, address: to, peer: from, asset, amount },
+      ];
+    });
+}
+
 function toBlockOperations(txInfo: BlockTxInfo): BlockOperation[] {
+  // An asset typed `trc10`/`trc20` with no reference names no token at all, so such a transfer is
+  // reported as a plain contract operation rather than shipped with a half-populated asset.
+  if (hasUnresolvedTokenReference(txInfo)) {
+    return [{ type: "other", operationType: "NONE", contractType: txInfo.type }];
+  }
+
   if (isTransfer(txInfo) && txInfo.to && txInfo.value && !txInfo.value.isZero()) {
     const asset = inferAssetInfo(txInfo);
     const value = txInfo.value;
@@ -187,7 +238,7 @@ function isTransfer(txInfo: TrongridTxInfo): boolean {
   return (
     txInfo.type === "TransferContract" ||
     txInfo.type === "TransferAssetContract" ||
-    (txInfo.type === "TriggerSmartContract" && txInfo.tokenType === "trc20")
+    txInfo.tokenType === "trc20"
   );
 }
 

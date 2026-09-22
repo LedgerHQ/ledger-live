@@ -108,7 +108,7 @@
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
-    "@noble/hashes": "1.8.0",
+    "@noble/hashes": "catalog:",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "got": "11.8.5",

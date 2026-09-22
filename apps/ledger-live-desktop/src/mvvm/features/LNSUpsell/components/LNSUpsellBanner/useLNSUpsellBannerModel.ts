@@ -3,6 +3,7 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   LARGE_SCREEN_UPSELL_UTM,
   buildLargeScreenUpsellCtaLink,
+  getLnsUpsellCopyKeys,
   type LargeScreenUpsellUtmContent,
 } from "@features/flow-large-screen-upsell";
 import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell/hooks/useLNSUpsellBannerState";
@@ -105,12 +106,18 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
   }, [analyticsPage, ctaLink, location, sharedAnalyticsProps]);
 
   const variant = getVariant(location, state);
+  const copyKeys = getLnsUpsellCopyKeys({
+    tracking,
+    surface: location === "profile" ? "profile" : "banner",
+    deviceModelId,
+  });
 
   return {
     location,
     variant,
     discount,
     tracking,
+    copyKeys,
     handleCTAClick,
     imageUrl,
     shouldUseLumenMediaBanner: shouldDisplayBrazePlacement,

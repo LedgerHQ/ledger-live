@@ -16,6 +16,7 @@ const intro: CardLoginIntroViewProps = {
 
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   title: "Crypto Card",
+  headline: "Get your crypto card",
   description: "Log in to access your card",
   loginLabel: "Login",
   alreadyHaveCardLabel: null,
@@ -52,6 +53,15 @@ describe("CardLoginView (Web)", () => {
 
     expect(screen.queryByRole("heading", { name: "Crypto Card" })).toBeNull();
   });
+
+  it.each(["Get your crypto card", "Log in to access your Card"])(
+    "should render the %s headline",
+    headline => {
+      renderCardLoginView({ headline });
+
+      expect(screen.getByRole("heading", { name: headline })).toBeVisible();
+    },
+  );
 
   it("should render the login link when the copy carries one", () => {
     const onAlreadyHaveCardPress = jest.fn();

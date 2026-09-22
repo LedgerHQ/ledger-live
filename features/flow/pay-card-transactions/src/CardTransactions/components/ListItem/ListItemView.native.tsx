@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Box,
   ListItem as LumenListItem,
   ListItemContent,
   ListItemDescription,
@@ -8,10 +7,8 @@ import {
   ListItemTitle,
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
-import { useCategoryVisual } from "./useCategoryVisual";
+import { CategoryIcon } from "../CategoryIcon";
 import type { ListItemViewProps } from "./types";
-
-const CATEGORY_ICON_SIZE = 24;
 
 export function ListItemView({
   id,
@@ -21,25 +18,12 @@ export function ListItemView({
   fiatAmount,
   assetAmount,
   dateLabel,
+  onPress,
 }: ListItemViewProps) {
-  const { Icon, backgroundColor, iconColor } = useCategoryVisual(category);
-
   return (
-    <LumenListItem testID={`card-transactions-item-${id}`}>
+    <LumenListItem onPress={onPress} testID={`card-transactions-item-${id}`}>
       <ListItemLeading>
-        <Box
-          accessibilityLabel={categoryLabel}
-          lx={{
-            width: "s48",
-            height: "s48",
-            borderRadius: "full",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          style={{ backgroundColor }}
-        >
-          <Icon size={CATEGORY_ICON_SIZE} color={iconColor} />
-        </Box>
+        <CategoryIcon category={category} categoryLabel={categoryLabel} />
         <ListItemContent>
           <ListItemTitle>{merchant}</ListItemTitle>
           <ListItemDescription>{dateLabel}</ListItemDescription>

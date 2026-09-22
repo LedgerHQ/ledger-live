@@ -27,7 +27,7 @@ export function DepositOptionsView({
     <Dialog open onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader density="expanded" title={title} onClose={onClose} />
-        <DialogBody className="flex flex-col gap-8">
+        <DialogBody className="flex flex-col gap-8 -mx-8">
           <div className="flex flex-col gap-8" data-testid="pay-card-deposit-options">
             {options.map(option => (
               <DepositOptionRow key={option.id} option={option} onSelect={onSelectOption} />

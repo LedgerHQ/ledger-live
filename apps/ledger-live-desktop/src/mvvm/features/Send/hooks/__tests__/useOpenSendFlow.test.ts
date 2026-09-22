@@ -1,6 +1,7 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AssetCategory } from "@domain/api-aggregated-assets";
+import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import {
   isZcashShieldedEnabled,
   setZcashShieldedEnabled,
@@ -69,23 +70,24 @@ describe("useOpenSendFlow", () => {
     });
 
     result.current({
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
       categories: [AssetCategory.Stablecoins],
     });
 
     expect(store.getState().modularDialog.isOpen).toBe(true);
     expect(store.getState().modularDialog.flow).toBe("send");
-    expect(store.getState().modularDialog.source).toBe("Pay");
+    expect(store.getState().modularDialog.source).toBe(SEND_FLOW_SOURCE.PAY);
     expect(store.getState().modularDialog.dialogParams?.categories).toEqual([
       AssetCategory.Stablecoins,
     ]);
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBeUndefined();
 
     store.getState().modularDialog.dialogParams?.onAccountSelected?.(account);
 
     expect(store.getState().sendFlow.isOpen).toBe(true);
     expect(store.getState().sendFlow.data?.params).not.toHaveProperty("categories");
     expect(store.getState().sendFlow.data?.params).toEqual(
-      expect.objectContaining({ source: "Pay" }),
+      expect.objectContaining({ source: SEND_FLOW_SOURCE.PAY }),
     );
   });
 
@@ -108,12 +110,12 @@ describe("useOpenSendFlow", () => {
 
     result.current({
       account,
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
     });
 
     expect(store.getState().sendFlow.isOpen).toBe(true);
     expect(store.getState().sendFlow.data?.params).toEqual(
-      expect.objectContaining({ account, source: "Pay" }),
+      expect.objectContaining({ account, source: SEND_FLOW_SOURCE.PAY }),
     );
   });
 
@@ -135,10 +137,52 @@ describe("useOpenSendFlow", () => {
     });
 
     result.current({
+      source: SEND_FLOW_SOURCE.PAY,
       currencyIds: ["bitcoin"],
       recipient,
       skipRecipientStep: true,
     });
+
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBe("pay");
+
+    store.getState().modularDialog.dialogParams?.onAccountSelected?.(account);
+
+    expect(store.getState().sendFlow.data?.params).toEqual(
+      expect.objectContaining({
+        account,
+        recipient,
+        skipRecipientStep: true,
+        source: SEND_FLOW_SOURCE.PAY,
+      }),
+    );
+  });
+
+  it("should not use the Pay account header when another flow prefills the recipient", () => {
+    const account = genAccount("send-contacts-account-selection", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const { result, store } = renderHook(() => useOpenSendFlow(), {
+      initialState: {
+        ...withFlagOverrides({
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["bitcoin"], excludedCurrencyIds: [] },
+          },
+        }),
+        accounts: [account],
+      },
+    });
+
+    const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+    result.current({
+      currencyIds: ["bitcoin"],
+      recipient,
+      skipRecipientStep: true,
+    });
+
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBeUndefined();
+
     store.getState().modularDialog.dialogParams?.onAccountSelected?.(account);
 
     expect(store.getState().sendFlow.data?.params).toEqual(
@@ -148,6 +192,34 @@ describe("useOpenSendFlow", () => {
         skipRecipientStep: true,
       }),
     );
+    expect(store.getState().sendFlow.data?.params).not.toEqual(
+      expect.objectContaining({ source: SEND_FLOW_SOURCE.PAY }),
+    );
+  });
+
+  it("should not use the Pay account header when Pay has a recipient but does not skip", () => {
+    const account = genAccount("send-pay-recipient-no-skip", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const { result, store } = renderHook(() => useOpenSendFlow(), {
+      initialState: {
+        ...withFlagOverrides({
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["bitcoin"], excludedCurrencyIds: [] },
+          },
+        }),
+        accounts: [account],
+      },
+    });
+
+    result.current({
+      source: SEND_FLOW_SOURCE.PAY,
+      currencyIds: ["bitcoin"],
+      recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+    });
+
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBeUndefined();
   });
 
   describe("balance-type routing override", () => {

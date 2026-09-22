@@ -10,6 +10,7 @@ export const hypercoreConfig: CurrencyLiveConfigDefinition = {
         features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: "https://perps.live.ledger.com/proxy/perps",
-    } as HypercoreCoinConfig,
+      checkRegionRestriction: true,
+    } satisfies HypercoreCoinConfig,
   },
 };

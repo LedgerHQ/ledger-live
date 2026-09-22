@@ -1,4 +1,5 @@
 import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "@shared/i18n";
 import React from "react";
 import { PasswordField } from "../../components/PasswordField";
 import type { ConfirmPasswordViewProps } from "./types";
@@ -10,11 +11,17 @@ export function ConfirmPasswordView({
   isSaving,
   onPasswordChange,
   onConfirm,
-  labels,
-  errorText,
+  hasSaveFailed = false,
   keyboardHeight = 0,
 }: ConfirmPasswordViewProps): React.JSX.Element {
-  const helperText = errorText ?? (hasMismatch ? labels.mismatchError : labels.minLengthHelper);
+  const { t } = useTranslation();
+
+  let helperText = t("appLock.field.minLength");
+  if (hasSaveFailed) {
+    helperText = t("appLock.confirmPassword.saveFailed");
+  } else if (hasMismatch) {
+    helperText = t("appLock.confirmPassword.mismatch");
+  }
 
   return (
     <Box
@@ -24,9 +31,8 @@ export function ConfirmPasswordView({
       <PasswordField
         value={password}
         onChangeText={onPasswordChange}
-        labels={labels}
         helperText={helperText}
-        hasError={hasMismatch || errorText !== undefined}
+        hasError={hasMismatch || hasSaveFailed}
         autoFocus
         onSubmitEditing={onConfirm}
         testID="app-lock-confirm-password-field"
@@ -39,7 +45,7 @@ export function ConfirmPasswordView({
         onPress={onConfirm}
         testID="app-lock-confirm-password-confirm"
       >
-        {labels.confirmLabel}
+        {t("appLock.confirmPassword.cta")}
       </Button>
     </Box>
   );

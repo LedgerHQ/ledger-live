@@ -1,19 +1,23 @@
 import React from "react";
-import { CardArtwork } from "../CardArtwork/CardArtwork";
-import { CardVisual } from "../CardVisual/CardVisual";
 import { CardActions } from "../CardActions/CardActions";
+import { CardArtwork } from "../CardArtwork/CardArtwork";
+import { CardFlip } from "../CardFlip/CardFlip";
+import { CardVisual } from "../CardVisual/CardVisual";
+import { Reward } from "../Reward/Reward";
+import { useRevealViewModel } from "../Reveal/useRevealViewModel";
 import type { CardDetailsProps } from "../../types";
 
-/**
- * Web keeps the card face and the actions inline on the page, so `CardDetails` is a thin composition
- * of the visual and {@link CardActions}. The native side, by contrast, moves the actions into a
- * Details bottom sheet.
- */
-export function CardDetails({ cardVisual }: CardDetailsProps) {
+export function CardDetails({ cardVisual, formatters, cardSettingsActions }: CardDetailsProps) {
+  const reveal = useRevealViewModel();
+
   return (
     <div className="flex flex-col gap-16">
-      {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
-      <CardActions />
+      <CardFlip
+        reveal={reveal}
+        cardFace={cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
+      />
+      <CardActions reveal={reveal} cardSettingsActions={cardSettingsActions} />
+      <Reward formatters={formatters} />
     </div>
   );
 }

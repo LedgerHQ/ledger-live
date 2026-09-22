@@ -1,9 +1,10 @@
 import type { PayCardTransactionCategory } from "@domain/api-card-management";
-import type { CardTransactionItem, FormatCardTransactionAmount } from "../../../types";
+import type { CardTransactionItem, CardTransactionFormatters } from "../../../types";
 
 export type ListItemProps = Readonly<{
   item: CardTransactionItem;
-  formatAmount?: FormatCardTransactionAmount;
+  formatters?: CardTransactionFormatters;
+  onPress?: () => void;
 }>;
 
 export type ListItemViewProps = Readonly<{
@@ -14,4 +15,5 @@ export type ListItemViewProps = Readonly<{
   fiatAmount: string;
   assetAmount?: string;
   dateLabel: string;
+  onPress?: () => void;
 }>;

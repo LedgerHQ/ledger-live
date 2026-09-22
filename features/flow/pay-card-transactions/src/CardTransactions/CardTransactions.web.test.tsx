@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse, type JsonBodyType } from "msw";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { listenToCardApi } from "@support/msw-features-flow-pay-card";
@@ -53,5 +53,53 @@ describe("CardTransactions", () => {
     expect(screen.getByTestId("card-transactions-subheader")).toBeVisible();
     expect(screen.getByText(SECTION_TITLE)).toBeVisible();
     expect(screen.getByText("NETFLIX.COM")).toBeVisible();
+    expect(screen.getAllByTestId(/^card-transactions-item-/)).toHaveLength(page.length);
+  });
+
+  it("shows only the preview and calls onShowMore from the subheader", async () => {
+    const page = mockPayCardTransactions();
+    const onShowMore = jest.fn();
+    server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
+
+    render(<CardTransactions onShowMore={onShowMore} />, {
+      wrapper: cardApiWrapper({ signedIn: true }),
+    });
+
+    await waitFor(() => expect(screen.getByTestId("card-transactions-list")).toBeVisible());
+    expect(screen.getAllByTestId(/^card-transactions-item-/)).toHaveLength(3);
+
+    fireEvent.click(screen.getByTestId("card-transactions-subheader"));
+
+    expect(onShowMore).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens a transaction dialog from a row and tracks the click", async () => {
+    const page = mockPayCardTransactions();
+    const onTrackEvent = jest.fn();
+    server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
+
+    render(<CardTransactions onTrackEvent={onTrackEvent} />, {
+      wrapper: cardApiWrapper({ signedIn: true }),
+    });
+
+    fireEvent.click(await screen.findByText("NETFLIX.COM"));
+
+    expect(screen.getByTestId("card-transaction-detail-dialog")).toBeVisible();
+    expect(onTrackEvent).toHaveBeenCalledWith("transaction_clicked", {
+      category: "card",
+      transaction: "out",
+      page: "Pay",
+      cardFundSourceAsset: "USDC",
+    });
+  });
+
+  it("closes the selected transaction dialog", async () => {
+    server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(mockPayCardTransactions())));
+    render(<CardTransactions />, { wrapper: cardApiWrapper({ signedIn: true }) });
+
+    fireEvent.click(await screen.findByText("NETFLIX.COM"));
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+
+    expect(screen.queryByTestId("card-transaction-detail-dialog")).not.toBeInTheDocument();
   });
 });

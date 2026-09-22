@@ -1,14 +1,25 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
+import { AddToWalletCta } from "@features/flow-pay-card-widget/native";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { CardTopUpButton } from "../CardTopUp";
 import { CardDetailsScene } from "./Scenes/CardDetailsScene";
 import { CARD_DETAILS_SCENES } from "./Scenes/registry";
 import type { CardDetailsSheetProps } from "../../types";
 
-export function CardDetailsSheet({ isOpen, scene, onClose }: CardDetailsSheetProps) {
+export function CardDetailsSheet({
+  isOpen,
+  scene,
+  onTopUp,
+  onClose,
+  onBack,
+}: CardDetailsSheetProps) {
   const dismissed = useRef(false);
-  const isPending = scene.freeze.viewModel.confirmState === "pending";
-  const sizing = CARD_DETAILS_SCENES[scene.route.name].sizing;
+  const isPending =
+    scene.route.name === "freeze" && scene.freeze.viewModel.confirmState === "pending";
+  const isOverview = scene.route.name === "overview";
+  const { sizing, hasBackButton } = CARD_DETAILS_SCENES[scene.route.name];
+  const canGoBack = hasBackButton && !isPending;
   const sizingProps =
     sizing === "full"
       ? ({ snapPoints: "fullWithOffset" } as const)
@@ -35,16 +46,34 @@ export function CardDetailsSheet({ isOpen, scene, onClose }: CardDetailsSheetPro
       noCloseButton={isPending}
       preventBackdropClick={isPending}
       enablePanDownToClose={!isPending}
+      // Show more leaves for the host's transaction history, and the sheet is expected back when
+      // the user returns: a screen losing focus must not read as the user closing the sheet.
+      restoreOnFocus
+      hasBackButton={canGoBack}
+      onBack={canGoBack ? onBack : undefined}
       {...sizingProps}
+      footer={
+        isOpen && isOverview ? (
+          <>
+            <AddToWalletCta onPress={scene.overview.onAddToWalletPress} />
+            {onTopUp ? <CardTopUpButton onTopUp={onTopUp} /> : null}
+          </>
+        ) : null
+      }
       testID="card-details-sheet"
     >
       {isOpen ? (
-        <BottomSheetView>
+        <BottomSheetScrollView>
           <Box lx={{ paddingBottom: "s24" }}>
-            <BottomSheetHeader density="compact" spacing />
+            <BottomSheetHeader
+              density="compact"
+              spacing
+              title={scene.header.title}
+              description={scene.header.description}
+            />
             <CardDetailsScene {...scene} />
           </Box>
-        </BottomSheetView>
+        </BottomSheetScrollView>
       ) : null}
     </QueuedBottomSheet>
   );

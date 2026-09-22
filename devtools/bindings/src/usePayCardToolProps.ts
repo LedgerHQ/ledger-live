@@ -1,16 +1,15 @@
 import { useCallback, useMemo, useState } from "react";
 import {
-  cardManagementApi,
   useGetCardLinkedWalletsQuery,
   useGetInternalWalletsQuery,
   useLazyGetCardStatusQuery,
   useCreateCardDetailsTokenMutation,
 } from "@domain/api-card-management";
 import { BAANX_ASSET_LEDGER_IDS } from "@domain/entity-card-asset-mapping";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
   useCardLinkedWallets,
   type CardLinkedWalletBalance,
-  type ResolveWalletCounterValue,
 } from "@features/flow-pay-card-wallets";
 import { useDispatch, useSelector } from "react-redux";
 import { setOverride } from "@shared/feature-flags";
@@ -29,8 +28,6 @@ import {
   selectPayCardHasSeenLoginIntro,
 } from "@features/flow-pay-card-auth/state";
 import {
-  markCardAddedToWallet,
-  resetCardAddedToWallet,
   resetCardOnboardingCompleted,
   selectHasCompletedCardOnboarding,
 } from "@features/flow-pay-card-widget/state";
@@ -40,13 +37,11 @@ import {
   setCardOnboardingStatusMock,
   type CardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
-import { setMockOnboardingStepDone } from "@domain/api-card-management/mock";
 import type { DevToolsConfig } from "@devtools/registry";
 import { isRequestMockingEnabled } from "./isRequestMockingEnabled";
 import { usePayCardAuthProps } from "./usePayCardAuthProps";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
-type OnboardingStep = PayCardToolProps["onboarding"]["steps"][number];
 
 type PayCardProbe = PayCardToolProps["interaction"]["probes"][number];
 
@@ -54,38 +49,17 @@ export type UsePayCardToolPropsOptions = {
   readonly platform?: "web" | "native";
   readonly openPayTab?: () => void;
   readonly openSecureBrowser?: PayCardToolProps["openSecureBrowser"];
+  /** Resolves each wallet's Ledger id to a currency; the catalog is the app's. */
+  readonly currencies?: ReadonlyMap<string, CryptoOrTokenCurrency>;
 };
 
-const LEADING_ONBOARDING_STEPS: readonly OnboardingStep[] = [
-  { id: "create-account", label: "Create account", done: true },
-  { id: "choose-card-type", label: "Choose card type", done: false },
-  { id: "top-up-card", label: "Top up card", done: false },
-];
-
-const NATIVE_ONLY_STEP: OnboardingStep = {
-  id: "apple-google-pay",
-  label: "Apple/Google Pay",
-  done: false,
-};
-
-const PURCHASE_STEP: OnboardingStep = {
-  id: "first-purchase",
-  label: "First purchase",
-  done: false,
-};
-
-function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
-  return platform === "native"
-    ? [...LEADING_ONBOARDING_STEPS, NATIVE_ONLY_STEP, PURCHASE_STEP]
-    : [...LEADING_ONBOARDING_STEPS, PURCHASE_STEP];
-}
-
-const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
+const NO_CURRENCIES: ReadonlyMap<string, CryptoOrTokenCurrency> = new Map();
 
 const STEP_ANSWERS: Readonly<Partial<Record<string, keyof CardOnboardingStatusMock>>> = {
   "create-account": "accountVerified",
   "choose-card-type": "hasCard",
   "top-up-card": "walletFunded",
+  "apple-google-pay": "cardAddedToDigitalWallet",
 };
 
 /**
@@ -115,13 +89,20 @@ function toCombinedWallet({
   priority,
   ledgerId,
   balance,
+  ledgerCurrency,
 }: CardLinkedWalletBalance): PayCardCombinedWallet {
-  const row = { id, address, currency, network, priority, balance };
+  const row = {
+    id,
+    address,
+    currency,
+    network,
+    priority,
+    balance,
+    ledgerCurrencyId: ledgerCurrency?.id ?? null,
+  };
 
   return ledgerId === undefined ? row : { ...row, ledgerId };
 }
-
-const WALLET_STEP_ID = "apple-google-pay";
 
 function describeError(error: unknown): string {
   if (error === undefined || error === null) return "";
@@ -134,8 +115,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const payTabKey = platform === "native" ? "lwmPayTab" : "lwdPayTab";
   const payTab = useFeature(payTabKey);
   const ptxCard = useFeature("ptxCard");
-
-  const [steps, setSteps] = useState<readonly OnboardingStep[]>(() => initialSteps(platform));
 
   const payTabEnabled = !!payTab?.enabled;
   const cardParam = !!payTab?.params?.card;
@@ -186,22 +165,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     dispatch(resetCardOnboardingCompleted());
   }, [dispatch]);
 
-  const setStepDone = useCallback(
-    (id: string, done: boolean) => {
-      setSteps(current => {
-        if (id === "all") {
-          return current.map(step => (step.done === done ? step : { ...step, done }));
-        }
-        return current.map(step =>
-          step.id === id && step.done !== done ? { ...step, done } : step,
-        );
-      });
-      setMockOnboardingStepDone(id, done);
-      dispatch(cardManagementApi.util.invalidateTags(["CardOnboardingStatus"]));
-    },
-    [dispatch],
-  );
-
   const flags = useMemo(
     () => ({
       payTabEnabled,
@@ -214,26 +177,29 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     [payTabEnabled, cardParam, ptxCardEnabled, setPayTabEnabled, setCardParam, setPtxCardEnabled],
   );
 
-  const onboarding = useMemo(() => ({ steps, setStepDone }), [steps, setStepDone]);
-
   const auth = usePayCardAuthProps({ openPayTab: options.openPayTab });
-  const onboardingStatus = useCardOnboardingStatus({ skip: platform !== "native" });
-  const { data: derivedOnboarding, refresh: refreshCardOnboarding } = onboardingStatus;
+  // Read when the screen asks for it, not when the tool mounts: these are Card endpoints, and a
+  // developer who opened DevTools for something else should not have a session sent to them. Both
+  // hosts mock them, so the screen works on either once it has asked.
+  const [onboardingRequested, setOnboardingRequested] = useState(false);
+  const onboardingStatus = useCardOnboardingStatus({ skip: !onboardingRequested });
+  const { data: derivedOnboarding, refresh: refreshStatus } = onboardingStatus;
+
+  const refreshCardOnboarding = useCallback(() => {
+    // The first call starts the reads by lifting the skip; `refresh` only re-asks once they exist.
+    setOnboardingRequested(true);
+    refreshStatus();
+  }, [refreshStatus]);
 
   const setDerivedStepDone = useCallback(
     (id: string, done: boolean) => {
-      if (id === WALLET_STEP_ID) {
-        dispatch(done ? markCardAddedToWallet() : resetCardAddedToWallet());
-        return;
-      }
-
       const answer = STEP_ANSWERS[id];
       if (answer === undefined) return;
 
       setCardOnboardingStatusMock(answer, done);
       refreshCardOnboarding();
     },
-    [dispatch, refreshCardOnboarding],
+    [refreshCardOnboarding],
   );
 
   const clearCardOnboardingMocks = useCallback(() => {
@@ -248,7 +214,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       steps: derivedOnboarding.steps.map(step => ({
         id: step.id,
         isDone: step.isDone,
-        canToggle: step.id === WALLET_STEP_ID || (isMockingEnabled && step.id in STEP_ANSWERS),
+        canToggle: isMockingEnabled && step.id in STEP_ANSWERS,
       })),
       completedCount: derivedOnboarding.completedCount,
       isFetching: onboardingStatus.isLoading,
@@ -315,7 +281,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const skipWallets = !walletsRequested;
 
   const linkedWallets = useCardLinkedWallets({
-    resolveCounterValue: NO_COUNTER_VALUE,
+    currencies: options.currencies ?? NO_CURRENCIES,
     skip: skipWallets,
   });
 
@@ -349,7 +315,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     () => ({
       baanxWallets: internal ?? [],
       linkedWallets: linked ?? [],
-      // Without the counter value, which this tool does not price.
       combinedWallets: linkedWallets.wallets.map(toCombinedWallet),
       isFetching: linkedWallets.isFetching,
       errors,
@@ -362,7 +327,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   return useMemo(
     () => ({
       flags,
-      onboarding,
       cardOnboarding,
       interaction,
       balance,
@@ -380,7 +344,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     }),
     [
       flags,
-      onboarding,
       cardOnboarding,
       interaction,
       balance,

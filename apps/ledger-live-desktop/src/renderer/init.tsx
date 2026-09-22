@@ -23,6 +23,7 @@ import { reload, getKey } from "~/renderer/storage";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { bootstrapMockServerTransport } from "~/renderer/mockServerTransport";
+import { getMockServerSessionToken } from "@ledgerhq/live-dmk-desktop";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
@@ -36,6 +37,7 @@ import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
+import { bootstrapCardSession } from "./bootstrapCardSession";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
@@ -193,6 +195,10 @@ async function init() {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (window as Window & { __STORE__?: ReduxStore }).__STORE__ = store;
   }
+
+  // Dev and E2E only; packaged builds honor it only when launched with PLAYWRIGHT_RUN.
+  await bootstrapCardSession(dispatch);
+
   await initIdentities(store);
   let deepLinkUrl; // Nb In some cases `fetchSettings` runs after this, voiding the deep link.
   if (process.env.LEDGER_LIVE_DEEPLINK) {
@@ -457,6 +463,7 @@ async function init() {
     resetDevices: () => {
       store.dispatch(resetDevices());
     },
+    getMockServerSessionToken,
   };
 }
 const root = rootNode ? createRoot(rootNode) : null;

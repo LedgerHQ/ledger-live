@@ -261,7 +261,7 @@
     "https": false
   },
   "dependencies": {
-    "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "^8.0.0",
     "@domain/api-aggregated-assets": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
     "@domain/api-swap-quotes": "workspace:^",
@@ -370,8 +370,8 @@
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@ledgerhq/wallet-api-server": "catalog:",
     "@ledgerhq/wallet-btc": "workspace:^",
-    "@noble/curves": "^1.9.7",
-    "@noble/hashes": "1.8.0",
+    "@noble/curves": "catalog:",
+    "@noble/hashes": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:^",
@@ -450,7 +450,7 @@
     "@types/react": "catalog:",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
-    "buffer": "6.0.3",
+    "buffer": "catalog:",
     "camelcase": "^6.2.1",
     "cross-env": "^7.0.3",
     "env-cmd": "*",

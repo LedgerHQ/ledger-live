@@ -51,8 +51,8 @@
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "knip-check": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-zcash",
-    "test": "jest",
-    "coverage": "jest --coverage",
+    "test": "jest --selectProjects unit",
+    "coverage": "jest --coverage --selectProjects unit",
     "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {
@@ -67,8 +67,8 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-btc": "workspace:^",
     "@ledgerhq/zcash-utils": "catalog:",
-    "@noble/curves": "1.9.7",
-    "@noble/hashes": "1.8.0",
+    "@noble/curves": "catalog:",
+    "@noble/hashes": "catalog:",
     "bignumber.js": "^9.1.2",
     "bip39": "^3.1.0",
     "bs58": "catalog:",

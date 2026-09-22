@@ -1,4 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { TokenAccount } from "@ledgerhq/types-live";
@@ -24,8 +25,8 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   const navigate = useNavigate();
   const mainAccount = getMainAccount(account, parentAccount);
   const { cosmosResources } = mainAccount;
-  const earnRewardEnabled = canDelegate(mainAccount);
-  const hasDelegations = cosmosResources.delegations.length > 0;
+  const earnRewardEnabled = canDelegate(mainAccount) && !!cosmosResources;
+  const hasDelegations = (cosmosResources?.delegations.length ?? 0) > 0;
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
 
   const onClickStakekit = useCallback(() => {
@@ -73,6 +74,19 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
     }
   }, [account, earnRewardEnabled, hasDelegations, dispatch, parentAccount, source]);
   if (parentAccount) return null;
+  // A chain whose runtime rejects delegation must not offer a staking entry point. A currency with
+  // no config entry keeps the previous behaviour rather than throwing: getCurrencyConfiguration
+  // throws on an absent key, and this decorator also feeds the stake modal and the receive staking
+  // step, where nothing else would catch it.
+  let delegationDisabled = false;
+  try {
+    const coinConfig = getCurrencyConfiguration(mainAccount.currency.id);
+    delegationDisabled = "disableDelegation" in coinConfig && coinConfig.disableDelegation === true;
+  } catch (err) {
+    console.warn(err);
+  }
+  if (delegationDisabled) return [];
+
   const disabledLabel = earnRewardEnabled ? "" : t("cosmos.delegation.minSafeWarning");
   return [
     {

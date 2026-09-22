@@ -1,11 +1,32 @@
 import type { PayCardInternalWallet, PayCardLinkedWallet } from "@domain/api-card-management";
 import { combineCardLinkedWallets } from "../logic/combineCardLinkedWallets";
-import type { ResolveWalletCounterValue } from "../types";
+import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 
 const internal: PayCardInternalWallet[] = [
-  { id: "w-usdc", balance: "125.40", currency: "usdc", address: "0xusdc", addressMemo: null },
-  { id: "w-usdt", balance: "10.00", currency: "usdt", address: "0xusdt", addressMemo: null },
-  { id: "w-sol", balance: "2.5", currency: "sol", address: "sol-addr", addressMemo: null },
+  {
+    id: "w-usdc",
+    balance: "125.40",
+    currency: "usdc",
+    address: "0xusdc",
+    addressMemo: null,
+    addressId: "address-usdc",
+  },
+  {
+    id: "w-usdt",
+    balance: "10.00",
+    currency: "usdt",
+    address: "0xusdt",
+    addressMemo: null,
+    addressId: "address-usdt",
+  },
+  {
+    id: "w-sol",
+    balance: "2.5",
+    currency: "sol",
+    address: "sol-addr",
+    addressMemo: null,
+    addressId: "address-sol",
+  },
   {
     id: "w-unlinked",
     balance: "999.99",
@@ -34,36 +55,52 @@ const linked: PayCardLinkedWallet[] = [
   },
 ];
 
-const rates: Record<string, number> = { usdc: 1, usdt: 1, sol: 150 };
-const resolveCounterValue: ResolveWalletCounterValue = ({ currency }, balance) => {
-  const rate = rates[currency];
-  return rate === undefined ? null : Number(balance) * rate;
-};
+function erc20(id: string, ticker: string) {
+  return CryptoOrTokenCurrencySchema.parse({
+    type: "TokenCurrency",
+    id,
+    parentCurrencyId: "ethereum",
+    contractAddress: "0x0000000000000000000000000000000000000000",
+    tokenType: "erc20",
+    name: ticker,
+    ticker,
+    units: [{ name: ticker, code: ticker, magnitude: 6 }],
+  });
+}
+
+const usdc = erc20("ethereum/erc20/usd__coin", "USDC");
+const usdt = erc20("ethereum/erc20/usd_tether__erc20_", "USDT");
+
+const currencies = new Map([
+  [usdc.id, usdc],
+  [usdt.id, usdt],
+]);
 
 describe("combineCardLinkedWallets", () => {
   it("returns the linked wallets in charging order, lowest priority first", () => {
-    const { wallets } = combineCardLinkedWallets({ linked, internal, resolveCounterValue });
+    const { wallets } = combineCardLinkedWallets({ linked, internal, currencies });
 
     expect(wallets.map(({ id }) => id)).toEqual(["w-usdc", "w-usdt"]);
   });
 
   it("joins each link to its balance on id", () => {
-    const { wallets } = combineCardLinkedWallets({ linked, internal, resolveCounterValue });
+    const { wallets } = combineCardLinkedWallets({ linked, internal, currencies });
 
     expect(wallets[0]).toEqual({
       id: "w-usdc",
+      addressId: "address-usdc",
       address: "0xusdc",
       currency: "usdc",
       network: "ethereum",
       priority: 1,
       ledgerId: "ethereum/erc20/usd__coin",
       balance: "125.40",
-      counterValue: 125.4,
+      ledgerCurrency: usdc,
     });
   });
 
   it("carries the Ledger currency each link already resolved to", () => {
-    const { wallets } = combineCardLinkedWallets({ linked, internal, resolveCounterValue });
+    const { wallets } = combineCardLinkedWallets({ linked, internal, currencies });
 
     // The next consumer prices on this, so dropping it here would read as a missing rate.
     expect(wallets.map(({ ledgerId }) => ledgerId)).toEqual([
@@ -80,126 +117,36 @@ describe("combineCardLinkedWallets", () => {
       internal: [
         { id: "w-bxx", balance: "5.00", currency: "bxx", address: "0xbxx", addressMemo: null },
       ],
-      resolveCounterValue,
+      currencies,
     });
 
     // Absent, not `undefined`: the wallet has no Ledger currency, it does not hold one called that.
     expect(wallets[0] && "ledgerId" in wallets[0]).toBe(false);
   });
 
-  it("totals the counter-values, not the raw balances", () => {
-    const { total, isPartialTotal } = combineCardLinkedWallets({
-      linked: [
-        ...linked,
-        { id: "w-sol", address: "sol-addr", currency: "sol", network: "solana", priority: 3 },
-      ],
-      internal,
-      resolveCounterValue,
-    });
-
-    expect(total).toBe(510.4);
-    expect(isPartialTotal).toBe(false);
-  });
-
   it("leaves out a custodial wallet that funds nothing", () => {
-    const { wallets, total } = combineCardLinkedWallets({ linked, internal, resolveCounterValue });
+    const { wallets } = combineCardLinkedWallets({ linked, internal, currencies });
 
     expect(wallets.map(({ id }) => id)).not.toContain("w-unlinked");
-    expect(total).toBe(135.4);
   });
 
   it("does not mutate the linked list it was handed", () => {
     const cacheEntry: PayCardLinkedWallet[] = [...linked];
 
-    combineCardLinkedWallets({ linked: cacheEntry, internal, resolveCounterValue });
+    combineCardLinkedWallets({ linked: cacheEntry, internal, currencies });
 
     expect(cacheEntry.map(({ id }) => id)).toEqual(["w-usdt", "w-usdc"]);
   });
 
-  it("keeps a link with no matching balance, and says the total is partial", () => {
-    const { wallets, total, isPartialTotal } = combineCardLinkedWallets({
-      linked: [
-        ...linked,
-        { id: "w-missing", address: "0xmissing", currency: "usdc", network: "base", priority: 4 },
-      ],
-      internal,
-      resolveCounterValue,
-    });
-
-    expect(wallets.at(-1)).toMatchObject({ id: "w-missing", balance: null, counterValue: null });
-    expect(total).toBe(135.4);
-    expect(isPartialTotal).toBe(true);
-  });
-
-  it("says the total is partial when a rate is missing, rather than counting the asset as zero", () => {
-    const { total, isPartialTotal } = combineCardLinkedWallets({
-      linked: [
-        ...linked,
-        { id: "w-sol", address: "sol-addr", currency: "sol", network: "solana", priority: 3 },
-      ],
-      internal,
-      resolveCounterValue: ({ currency }, balance) => (currency === "sol" ? null : Number(balance)),
-    });
-
-    expect(total).toBe(135.4);
-    expect(isPartialTotal).toBe(true);
-  });
-
-  it("treats a NaN counter-value as missing, so the total stays a usable number", () => {
-    const { wallets, total, isPartialTotal } = combineCardLinkedWallets({
-      linked,
-      internal,
-      resolveCounterValue: ({ currency }, balance) =>
-        currency === "usdt" ? Number.NaN : Number(balance),
-    });
-
-    expect(wallets.find(({ id }) => id === "w-usdt")?.counterValue).toBeNull();
-    expect(total).toBe(125.4);
-    expect(isPartialTotal).toBe(true);
-  });
-
-  it("treats an infinite counter-value as missing", () => {
-    const { total, isPartialTotal } = combineCardLinkedWallets({
-      linked,
-      internal,
-      resolveCounterValue: ({ currency }, balance) =>
-        currency === "usdt" ? Number.POSITIVE_INFINITY : Number(balance),
-    });
-
-    expect(total).toBe(125.4);
-    expect(isPartialTotal).toBe(true);
-  });
-
-  it("reads a card with nothing linked as an empty list and a zero total", () => {
-    expect(combineCardLinkedWallets({ linked: [], internal, resolveCounterValue })).toEqual({
-      wallets: [],
-      total: 0,
-      isPartialTotal: false,
-    });
-  });
-
-  it("does not resolve a rate for a wallet whose balance never arrived", () => {
-    const resolve = jest.fn<number | null, [{ currency: string; network: string }, string]>();
-
-    combineCardLinkedWallets({
-      linked: [{ id: "w-missing", address: "0x", currency: "usdc", network: "base", priority: 1 }],
-      internal: [],
-      resolveCounterValue: resolve,
-    });
-
-    expect(resolve).not.toHaveBeenCalled();
-  });
-
   it("keeps a zero balance distinct from a missing one", () => {
-    const { wallets, isPartialTotal } = combineCardLinkedWallets({
+    const { wallets } = combineCardLinkedWallets({
       linked: [linked[1]],
       internal: [
         { id: "w-usdc", balance: "0.00", currency: "usdc", address: "0xusdc", addressMemo: null },
       ],
-      resolveCounterValue,
+      currencies,
     });
 
-    expect(wallets[0]).toMatchObject({ balance: "0.00", counterValue: 0 });
-    expect(isPartialTotal).toBe(false);
+    expect(wallets[0]).toMatchObject({ balance: "0.00" });
   });
 });

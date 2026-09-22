@@ -70,15 +70,22 @@ export class MarketPage extends AppPage {
     await this.listData.or(this.coinRow("btc")).first().waitFor({ state: "visible" });
 
     // Mid-cap rows mount only once scrolled into range, so scroll until the row appears.
-    for (let attempt = 0; attempt < 40; attempt++) {
-      if ((await row.count()) > 0) {
-        await row.scrollIntoViewIfNeeded();
-        await expect(row).toBeVisible();
-      } else {
-        await this.scrollMarketListBy(600);
-        await this.page.waitForTimeout(150);
-      }
-    }
+    await expect
+      .poll(
+        async () => {
+          if ((await row.count()) > 0) return true;
+          await this.scrollMarketListBy(600);
+          return false;
+        },
+        {
+          timeout: 30_000,
+          intervals: [150],
+          message: `Market row "${ticker}" never mounted while scrolling the list.`,
+        },
+      )
+      .toBe(true);
+
+    await row.scrollIntoViewIfNeeded();
     await expect(row).toBeVisible();
   }
 

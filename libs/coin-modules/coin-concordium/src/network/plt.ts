@@ -2,7 +2,6 @@ import type {
   PltAccountModuleState,
   PltAccountToken,
   PltEncodedState,
-  PltListStatus,
   PltListVerdict,
   PltModuleState,
   PltRejectReason,
@@ -144,23 +143,22 @@ export function getListVerdict(
 /**
  * Checks whether the token's own lists block this account from transacting.
  *
- * Folds {@link getListVerdict} down to the three states that survive being
- * persisted on the account: which rule refused is dropped, because only the
- * verdict is stored and a stored cause could not be trusted to still hold.
+ * Returns {@link getListVerdict}'s answer unfolded: which rule refused is what
+ * the send path reports, and this value is persisted, so dropping the cause here
+ * would lose it for good.
  *
  * Takes an existing entry. An account that never touched the token has no entry
  * at all, which callers must handle separately — {@link getListVerdict} takes
  * that case directly.
  */
-export function getAccountListStatus(entry: PltAccountToken): PltListStatus {
+export function getAccountListVerdict(entry: PltAccountToken): PltListVerdict {
   // Reads its own argument, unlike the recipient path, because sync hands this
   // one straight off the wire.
   const readable = readAccountTokenEntry(entry);
   const moduleState = readable && readPltState(readable.token.tokenState?.moduleState);
   if (!readable || !moduleState) return "unknown";
 
-  const verdict = getListVerdict(moduleState, readable);
-  return verdict === "allowed" || verdict === "unknown" ? verdict : "blocked";
+  return getListVerdict(moduleState, readable);
 }
 
 /** Finds one token's entry among entries {@link readAccountTokens} has read. */

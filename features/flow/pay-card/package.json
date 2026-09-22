@@ -27,16 +27,15 @@
     "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card/knip.web.config.mjs -W features/flow/pay-card --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card/knip.native.config.mjs -W features/flow/pay-card --tsConfig tsconfig.native.json"
   },
   "dependencies": {
+    "@features/flow-pay-card-assets": "workspace:^",
     "@features/flow-pay-card-auth": "workspace:^",
     "@features/flow-pay-card-details": "workspace:^",
     "@features/flow-pay-card-transactions": "workspace:^",
-    "@features/flow-pay-card-wallets": "workspace:^",
     "@features/flow-pay-card-widget": "workspace:^",
     "@shared/i18n": "workspace:*"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
-    "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

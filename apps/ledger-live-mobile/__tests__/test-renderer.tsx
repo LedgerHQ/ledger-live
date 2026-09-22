@@ -29,6 +29,7 @@ import { INITIAL_STATE as ACCOUNTS_INITIAL_STATE } from "~/reducers/accounts";
 import { INITIAL_STATE as APP_STATE_INITIAL_STATE } from "~/reducers/appstate";
 import { INITIAL_STATE as BLE_INITIAL_STATE } from "~/reducers/ble";
 import { INITIAL_STATE as BORROW_INITIAL_STATE } from "~/reducers/borrow";
+import { INITIAL_STATE as CURRENCY_REGION_RESTRICTED_DRAWER_INITIAL_STATE } from "~/reducers/currencyRegionRestrictedDrawer";
 import { INITIAL_STATE as COUNTERVALUES_INITIAL_STATE } from "~/reducers/countervalues";
 import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/reducers/dynamicContent";
 import { INITIAL_STATE as EARN_INITIAL_STATE } from "~/reducers/earn";
@@ -57,8 +58,8 @@ import { INITIAL_STATE as RECOVER_STATE_INITIAL_STATE } from "~/reducers/recover
 import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
 import { getEnv } from "@shared/env";
-import { coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
-import { LinkingProvider } from "@shared/platform-linking";
+import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
+import { LinkingProvider } from "@shared/linking";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
@@ -82,6 +83,7 @@ const INITIAL_STATE: State = {
   modularDrawer: MODULAR_DRAWER_INITIAL_STATE,
   receiveOptionsDrawer: RECEIVE_OPTIONS_DRAWER_INITIAL_STATE,
   rebornBuyDeviceDrawer: REBORN_BUY_DEVICE_DRAWER_INITIAL_STATE,
+  currencyRegionRestrictedDrawer: CURRENCY_REGION_RESTRICTED_DRAWER_INITIAL_STATE,
   transferDrawer: TRANSFER_DRAWER_INITIAL_STATE,
   notifications: NOTIFICATIONS_INITIAL_STATE,
   postOnboarding: POST_ONBOARDING_INITIAL_STATE,
@@ -149,6 +151,10 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
           immutableCheck: false,
           thunk: {
             extraArgument: {
+              ...calApiExtra({
+                calServiceUrl: getEnv("CAL_SERVICE_URL"),
+                ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+              }),
               ...cvsApiExtra({ countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API") }),
               ...coinMarketCapApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
             },

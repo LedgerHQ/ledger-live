@@ -1,4 +1,4 @@
-import { getQ3TourConfig } from "./const";
+import { getQ3TourConfig, resolveQ3TourVariant } from "./const";
 
 describe("getQ3TourConfig", () => {
   it("should return Contacts and Pay with card for q3_a", () => {
@@ -40,5 +40,15 @@ describe("getQ3TourConfig", () => {
       "pay",
       "yield",
     ]);
+  });
+});
+
+describe("resolveQ3TourVariant", () => {
+  it("should keep Q3 variants and fall back to q3_a", () => {
+    expect(resolveQ3TourVariant("q3_a")).toBe("q3_a");
+    expect(resolveQ3TourVariant("q3_b")).toBe("q3_b");
+    expect(resolveQ3TourVariant("q3_b2")).toBe("q3_b2");
+    expect(resolveQ3TourVariant("q2")).toBe("q3_a");
+    expect(resolveQ3TourVariant(undefined)).toBe("q3_a");
   });
 });

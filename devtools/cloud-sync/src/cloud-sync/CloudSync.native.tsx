@@ -26,7 +26,7 @@ const ACTIONS_LX = {
 const DOC_LX = { padding: "s16", gap: "s8" } as const;
 const ENV_BTN_LX = { flexDirection: "row", gap: "s4" } as const;
 
-export function CloudSync(props: CloudSyncDevToolProps) {
+function CloudSync(props: CloudSyncDevToolProps) {
   const vm = useCloudSyncViewModel(props);
   const { theme } = useTheme();
 

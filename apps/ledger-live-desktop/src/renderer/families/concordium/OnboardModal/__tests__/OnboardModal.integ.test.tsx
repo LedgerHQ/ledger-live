@@ -14,9 +14,8 @@ import {
   createInitialState,
   createMockDevice,
   SESSION_TOPIC,
-  T,
-  WAIT_OPTS,
 } from "./testUtils";
+import { EMIT_DELAY, WAIT_OPTS } from "./timing";
 
 // HTTP (submitCredential) and WebSocket (WC relay) are mocked via tests/handlers/concordium.ts.
 // SignClient is auto-mocked via __mocks__/@walletconnect/sign-client.js because WC protocol
@@ -29,6 +28,14 @@ const {
   __mockPairingGetAll: mockPairingGetAll,
   __mockPairingDelete: mockPairingDelete,
 } = require("@walletconnect/sign-client");
+
+// Production debounces each step transition by 1500ms, which is also what holds the
+// transient screens asserted below on screen — so this can come down, but not to zero.
+// A hoisted factory cannot close over an import, so it reads the shared value through
+// requireActual; ./timing is dependency-free precisely so that is safe.
+jest.mock("../constants", () => ({
+  STEP_TRANSITION_TIMEOUT: jest.requireActual("./timing").STEP_TRANSITION_TIMEOUT_TEST,
+}));
 
 jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
   withDevice: jest.fn(() => (job: (transport: unknown) => unknown) => job({})),
@@ -51,7 +58,7 @@ jest.mock(
     DmkSignerConcordium: jest.fn(() => ({
       getPublicKey: jest.fn().mockResolvedValue("aa".repeat(32)),
       signCredentialDeployment: jest.fn(
-        () => new Promise(resolve => setTimeout(() => resolve("bb".repeat(64)), T + 200)),
+        () => new Promise(resolve => setTimeout(() => resolve("bb".repeat(64)), EMIT_DELAY)),
       ),
       getAddress: jest.fn().mockResolvedValue({
         publicKey: "aa".repeat(32),
@@ -110,7 +117,7 @@ function setupSuccessfulPairing() {
     approval: jest.fn(
       () =>
         new Promise(resolve => {
-          setTimeout(() => resolve(session), T + 200);
+          setTimeout(() => resolve(session), EMIT_DELAY);
         }),
     ),
   });
@@ -130,7 +137,7 @@ function setupSuccessfulAccountCreation() {
 
   mockGetPublicKey.mockResolvedValue("aa".repeat(32));
   mockSignCredentialDeployment.mockImplementation(
-    () => new Promise(resolve => setTimeout(() => resolve("bb".repeat(64)), T + 200)),
+    () => new Promise(resolve => setTimeout(() => resolve("bb".repeat(64)), EMIT_DELAY)),
   );
 }
 
@@ -212,15 +219,12 @@ describe("OnboardModal Integration", () => {
     // SIGN screen not asserted: the success emit cancels its still pending
     // setStateWithTimeout transition — a wider waitFor budget (LIVE-34490) does not
     // help. MSW intercepts submitCredential.
-    await waitFor(
-      () => {
-        expect(
-          screen.getByText(/your concordium account has been created successfully/i),
-        ).toBeTruthy();
-      },
-      { timeout: 8000 },
-    );
-  }, 25_000);
+    await waitFor(() => {
+      expect(
+        screen.getByText(/your concordium account has been created successfully/i),
+      ).toBeTruthy();
+    }, WAIT_OPTS);
+  });
 
   it("should show error when pairing fails", async () => {
     setupFailedPairing(new Error("Connection failed"));
@@ -233,7 +237,7 @@ describe("OnboardModal Integration", () => {
       expect(screen.getByText(/failed to onboard new account/i)).toBeVisible();
     });
     expect(screen.getByRole("button", { name: /try again/i })).toBeVisible();
-  }, 10_000);
+  });
 
   it("should show error when account creation fails", async () => {
     setupSuccessfulPairing();
@@ -253,5 +257,5 @@ describe("OnboardModal Integration", () => {
       expect(screen.getByText(/failed to create account/i)).toBeVisible();
     });
     expect(screen.getByRole("button", { name: /try again/i })).toBeVisible();
-  }, 15_000);
+  });
 });

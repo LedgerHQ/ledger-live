@@ -18,8 +18,10 @@ import { ScrollView } from "react-native";
 type PayTabViewProps = {
   readonly top: number;
   readonly bottom: number;
-  readonly cardTitle: string;
   readonly login: CardProps["login"];
+  readonly cardAssets: CardProps["assets"];
+  readonly cardFormatters: CardProps["formatters"];
+  readonly onTopUp: () => Promise<void>;
   readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
@@ -28,14 +30,17 @@ type PayTabViewProps = {
   readonly isContactsEnabled: boolean;
   readonly depositOptions: DepositOptionsProps;
   readonly bankTransferIntro: BankTransferIntroProps;
+  readonly onShowMore: () => void;
+  readonly cardSettingsActions: CardProps["cardSettingsActions"];
 };
 
 export function PayTabView({
   top,
-  cardTitle,
   bottom,
   login,
-  featureTour,
+  cardAssets,
+  cardFormatters,
+  onTopUp,
   balance,
   actionTiles,
   contacts,
@@ -43,6 +48,9 @@ export function PayTabView({
   isContactsEnabled,
   depositOptions,
   bankTransferIntro,
+  featureTour,
+  onShowMore,
+  cardSettingsActions,
 }: PayTabViewProps) {
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
@@ -56,7 +64,14 @@ export function PayTabView({
           <Balance {...balance} actionTiles={actionTiles} />
           {isContactsEnabled && <Contacts {...contacts} />}
           <ContactAddressPicker {...contactAddressPicker} />
-          <Card title={cardTitle} login={login} />
+          <Card
+            login={login}
+            assets={cardAssets}
+            formatters={cardFormatters}
+            onTopUp={onTopUp}
+            onShowMore={onShowMore}
+            cardSettingsActions={cardSettingsActions}
+          />
           <FeatureTour {...featureTour} />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />

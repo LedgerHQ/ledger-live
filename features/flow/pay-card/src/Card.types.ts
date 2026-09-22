@@ -1,19 +1,30 @@
 import type { CardLoginProps } from "@features/flow-pay-card-auth";
-import type { CardVisualProps, FormattedValue } from "@features/flow-pay-card-details";
-import type { FormatCardTransactionAmount } from "@features/flow-pay-card-transactions";
+import type {
+  CardSettingsActions,
+  CardVisualProps,
+  FormattedValue,
+} from "@features/flow-pay-card-details";
+import type {
+  FormatCardTransactionAmount,
+  FormatCardTransactionDate,
+} from "@features/flow-pay-card-transactions";
+import type { CardAssetsProps } from "@features/flow-pay-card-assets";
+
+export type CardFormatters = Readonly<{
+  countervalue?: (value: number) => FormattedValue;
+  transactionAmount?: FormatCardTransactionAmount;
+  transactionDate?: FormatCardTransactionDate;
+}>;
 
 /** Host input for the Pay Card flow. */
 export type CardProps = {
-  readonly title: string;
   readonly login: CardLoginProps;
-  /**
-   * Turns the (flow-owned) card balance into a value `AmountDisplay` can render. This is the one bit
-   * the flow cannot build itself: it needs the app's locale and counter-value currency. Omit it and
-   * the card falls back to the bare artwork.
-   */
-  readonly formatCountervalue?: (value: number) => FormattedValue;
-  readonly formatTransactionAmount?: FormatCardTransactionAmount;
-  readonly balanceLabel?: string;
+  /** The funding wallets, priced by the host. Omitted where the host does not list them. */
+  readonly assets?: CardAssetsProps;
+  readonly formatters?: CardFormatters;
+  readonly onShowMore?: () => void;
+  readonly onTopUp?: () => void;
+  readonly cardSettingsActions?: CardSettingsActions;
 };
 
 /**
@@ -32,5 +43,9 @@ export type CardViewProps = {
   /** Which face to show. The children are mutually exclusive, so the view switches on this. */
   readonly displayState: CardDisplayState;
   readonly cardVisual?: CardVisualProps;
-  readonly formatTransactionAmount?: FormatCardTransactionAmount;
+  readonly assets?: CardAssetsProps;
+  readonly formatters?: CardFormatters;
+  readonly onShowMore?: () => void;
+  readonly onTopUp?: () => void;
+  readonly cardSettingsActions?: CardSettingsActions;
 };

@@ -57,16 +57,13 @@
     "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-stellar"
   },
   "dependencies": {
-    "@ledgerhq/coin-stellar": "catalog:",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
-    "@ledgerhq/live-network": "catalog:",
-    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
-    "@noble/curves": "^1.9.7",
-    "@noble/hashes": "^1.8.0",
+    "@noble/curves": "catalog:",
+    "@noble/hashes": "catalog:",
     "@stellar/stellar-sdk": "^14.0.0",
     "bignumber.js": "^9.1.2",
     "chalk": "^4.1.2",

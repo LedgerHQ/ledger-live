@@ -83,9 +83,13 @@ const Q3_TOUR_CONFIGS: Record<Q3TourVariant, ReleaseTourConfig> = {
   },
 };
 
-export function getQ3TourConfig(variant: ReleaseTourVariant | undefined): ReleaseTourConfig {
+export function resolveQ3TourVariant(variant: ReleaseTourVariant | undefined): Q3TourVariant {
   if (variant === "q3_b" || variant === "q3_b2") {
-    return Q3_TOUR_CONFIGS[variant];
+    return variant;
   }
-  return Q3_TOUR_CONFIGS.q3_a;
+  return "q3_a";
+}
+
+export function getQ3TourConfig(variant: ReleaseTourVariant | undefined): ReleaseTourConfig {
+  return Q3_TOUR_CONFIGS[resolveQ3TourVariant(variant)];
 }

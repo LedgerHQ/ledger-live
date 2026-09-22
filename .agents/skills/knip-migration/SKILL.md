@@ -74,6 +74,78 @@ Start with leaf / low-dependency packages; `ledger-live-common` (largest surface
 - Unifying the script / nx-target name (`unimported` → `knip-check`) is tracked separately, so
   matching the surrounding package's existing script name is fine.
 
+## Dual-platform packages run knip once per platform
+
+knip has no notion of `moduleSuffixes`. A suffix-less `./Tool` specifier therefore resolves to
+nothing when only `Tool.web.tsx` and `Tool.native.tsx` exist, and **both twins are reported as
+unused files** (`files` is an `error` rule). Naming the suffix in the barrel fixes it for packages
+that may do so, but not under `devtools/`, where `suffix-imports/no-platform-suffix` makes a
+suffixed specifier a lint error.
+
+So a package with platform twins gets two passes, through the shared helper
+[`knip.config.base.mjs`](../../../knip.config.base.mjs):
+
+```js
+// <pkg>/knip.web.config.mjs — and the `native` mirror
+import { createDualPlatformKnipConfig } from "../../knip.config.base.mjs";
+
+export default createDualPlatformKnipConfig({
+  packagePath: "devtools/shell",
+  platform: "web",
+  entry: [],
+});
+```
+
+```jsonc
+// <pkg>/package.json — the hop in `--directory` is the depth back to the repo root
+"unimported": "pnpm knip --directory ../.. -c devtools/shell/knip.web.config.mjs -W devtools/shell --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/shell/knip.native.config.mjs -W devtools/shell --tsConfig tsconfig.native.json"
+```
+
+Name the file `knip.<platform>.config.mjs`. The root `ignore` list matches `**/*.config.*`, so that
+name keeps knip from reporting its own config as unused. A `.ts` config does not match and needs a
+Sonar exclusion to compensate.
+
+**These configs carry no comments.** This section is the single source for why they look as they do;
+the three options below are the only reasons a config should differ from the snippet above.
+
+### `entry` is `[]` unless `package.json` cannot yield the entry
+
+knip derives entries from `package.json` (every `exports` condition, `main`, and specifiers in
+`scripts`), and reports an `entry` it already has as a *redundant entry pattern*. Name one only
+when that derivation misses a real entry point:
+
+- the package declares no `react-native` condition, so only the web barrel is derived
+  (`devtools/env`, and `devtools/feature-flags` / `devtools/pay-card`, which have no `exports` at
+  all). Name `src/index.native.ts` in the native config.
+- a platform file is reachable only through resolution. `devtools/bindings` pairs
+  `isMockSessionSupported.ts` with a `.native.ts` override and no `.web` twin, and knip resolves
+  the unsuffixed sibling first, so the native config names `src/isMockSessionSupported.native.ts`.
+  Such an entry goes stale when the override is deleted; knip then reports *Refine entry pattern
+  (no match)*, so treat that hint as "the pair is gone, drop the entry".
+
+### `additionalProjectExcludes` is for an *unsuffixed* barrel
+
+The platform glob the helper applies (`!src/**/*.native.*` on web, `!src/**/*.web.*` on native)
+only matches suffixed files. A web barrel named `src/index.ts` is not excluded from the native pass
+and becomes an unused file there, so the native config names it. A package whose web barrel is
+`src/index.web.ts` (`devtools/transport-panel`) needs nothing.
+
+### `additionalIgnoreDependencies` is a last resort
+
+A dependency reached only from the excluded platform's files reads as unused, and `dependencies` is
+an `error` rule. Confirm the dependency is genuinely unreachable in that platform before reaching
+for this.
+
+### Two resolution facts that look like bugs
+
+- **An unsuffixed sibling beats the compiler extension.** With `{"web.ts": passThrough}` registered,
+  `./foo` still resolves to `foo.ts` when both `foo.ts` and `foo.web.ts` exist.
+- **Compilers resolve file suffixes, not directory `index` suffixes.** `from "../hooks"` never
+  reaches `hooks/index.web.ts`. Import the module itself (`../hooks/useDevToolsStorage`).
+
+A `jest/**` helper sits outside the `project` glob, so knip cannot see it importing a barrel export.
+Only `typecheck` catches that, which is why it runs before trusting a clean knip report.
+
 ## Reviewing
 
 For a **new** package, flag either of these and point here:

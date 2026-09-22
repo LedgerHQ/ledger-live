@@ -1,14 +1,18 @@
-import type { CardTransactionItem, FormatCardTransactionAmount } from "../types";
-
-export type CardTransactionsDisplayMode = "loading" | "error" | "empty" | "list";
+import type { CardTransactionsDisplayState } from "../logic/cardTransactionsDisplayState";
+import type { CardTransactionItem, CardTransactionFormatters } from "../types";
 
 export type CardTransactionsProps = Readonly<{
-  formatAmount?: FormatCardTransactionAmount;
+  formatters?: CardTransactionFormatters;
+  onTransactionPress?: (item: CardTransactionItem) => void;
+  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
+  onShowMore?: () => void;
 }>;
 
 export type CardTransactionsScreenViewProps = Readonly<{
-  displayMode: CardTransactionsDisplayMode;
+  displayState: CardTransactionsDisplayState;
   title: string;
   transactions: readonly CardTransactionItem[];
-  formatAmount?: FormatCardTransactionAmount;
+  formatters?: CardTransactionFormatters;
+  onTransactionPress?: (item: CardTransactionItem) => void;
+  onShowMore?: () => void;
 }>;

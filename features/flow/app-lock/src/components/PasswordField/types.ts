@@ -1,16 +1,17 @@
-export type PasswordFieldLabels = Readonly<{
-  fieldLabel: string;
-  revealPassword: string;
-  hidePassword: string;
-}>;
+import type { BiometricsKind } from "@features/platform-app-lock";
+import type React from "react";
+import type { TextInput } from "react-native";
 
 export type PasswordFieldProps = Readonly<{
+  inputRef?: React.Ref<TextInput>;
   value: string;
   onChangeText: (value: string) => void;
-  labels: PasswordFieldLabels;
   helperText?: string;
   hasError?: boolean;
   autoFocus?: boolean;
+  canReveal?: boolean;
   onSubmitEditing?: () => void;
+  onBiometrics?: () => void;
+  biometricsKind?: BiometricsKind;
   testID?: string;
 }>;

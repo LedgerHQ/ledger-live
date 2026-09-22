@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useMachine } from "@xstate/react";
 import type { SnapshotFrom } from "xstate";
 import { useTranslation } from "@shared/i18n";
-import { buildSignupUrl, SIGNUP_PATH } from "../../state/buildSignupUrl";
+import { buildSignupUrl } from "../../state/buildSignupUrl";
+import { SIGNUP_PATH } from "../../state/hostedPaths";
 import { createCardLoginPorts, type CardLoginDispatch } from "../../state/createCardLoginPorts";
 import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
 import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors";
-import { markPayCardLoginIntroSeen } from "../../state/loginIntroSlice";
 import { selectIsSignedIn } from "../../state/selectors";
 import type {
   CardLoginCopy,
@@ -71,7 +71,11 @@ export function mapSnapshotToViewModel(
   return {
     ...copy,
     // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
-    isLoading: value !== "idle" && value !== "error" && value !== "awaitingCallback",
+    isLoading:
+      value !== "idle" &&
+      value !== "authError" &&
+      value !== "userFetchError" &&
+      value !== "awaitingCallback",
     errorMessage,
     onLoginPress,
     onAlreadyHaveCardPress,
@@ -86,13 +90,13 @@ export function useCardLoginViewModel({
   oauthConfig,
   callback,
   onTrackEvent,
+  requestProtection,
 }: CardLoginViewModelParams): CardLoginViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch<CardLoginDispatch>();
   const isSignedIn = useSelector(selectIsSignedIn);
   const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
   const [isIntroRequested, setIsIntroRequested] = useState(false);
-  const [hasStartedLogin, setHasStartedLogin] = useState(false);
   const [hasSignupFailed, setHasSignupFailed] = useState(false);
 
   const ports = useMemo(
@@ -104,13 +108,22 @@ export function useCardLoginViewModel({
     input: { ports, oauthConfig, callback },
   });
 
+  const callbackCode = callback?.code;
+  const callbackState = callback?.state;
+  const callbackAppId = callback?.appId;
+
   useEffect(() => {
     // A redirect that arrives while the screen is already open. The machine ignores it unless it is
     // waiting for one, so a repeat is harmless: the first callback wins.
-    if (callback) {
-      send({ type: "CALLBACK_RECEIVED", code: callback.code, state: callback.state });
+    if (callbackCode) {
+      send({
+        type: "CALLBACK_RECEIVED",
+        code: callbackCode,
+        state: callbackState,
+        appId: callbackAppId,
+      });
     }
-  }, [callback, send]);
+  }, [callbackCode, callbackState, callbackAppId, send]);
 
   useEffect(() => {
     // `More` ended the session. `ready` raises the flag on entry, so a lowered flag while the
@@ -120,24 +133,37 @@ export function useCardLoginViewModel({
     }
   }, [isSignedIn, snapshot.value, send]);
 
-  useEffect(() => {
-    if (snapshot.value === "ready" && hasStartedLogin) {
-      dispatch(markPayCardLoginIntroSeen());
-    }
-  }, [snapshot.value, hasStartedLogin, dispatch]);
+  const isIntroOpen =
+    isIntroRequested &&
+    (snapshot.value === "idle" ||
+      snapshot.value === "authError" ||
+      snapshot.value === "userFetchError");
 
-  const isIntroOpen = isIntroRequested && (snapshot.value === "idle" || snapshot.value === "error");
+  // Both ways to Baanx go through here: signing up and logging in alike need the app protected
+  // first, and a host that declines leaves the card where it was rather than carrying on.
+  const whenProtected = useCallback(
+    async () => !requestProtection || (await requestProtection()),
+    [requestProtection],
+  );
 
   const startLogin = useCallback(() => {
     setHasSignupFailed(false);
-    setHasStartedLogin(true);
-    send({ type: "LOGIN" });
-  }, [send]);
+
+    void (async () => {
+      if (await whenProtected()) {
+        send({ type: "LOGIN" });
+      }
+    })();
+  }, [send, whenProtected]);
 
   const openSignup = useCallback(() => {
     setHasSignupFailed(false);
 
     void (async () => {
+      if (!(await whenProtected())) {
+        return;
+      }
+
       try {
         if (openHostedPage) {
           await openHostedPage(SIGNUP_PATH);
@@ -148,7 +174,7 @@ export function useCardLoginViewModel({
         setHasSignupFailed(true);
       }
     })();
-  }, [openHostedPage, openHostedLogin, oauthConfig]);
+  }, [openHostedPage, openHostedLogin, oauthConfig, whenProtected]);
 
   const trackCta = useCallback(
     (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
@@ -228,6 +254,7 @@ export function useCardLoginViewModel({
 
     return {
       title: t(`${LOGIN_KEY_PREFIX}.title`),
+      headline: t(`${LOGIN_KEY_PREFIX}.${stage}.title`),
       description: t(`${LOGIN_KEY_PREFIX}.${stage}.description`),
       loginLabel: t(`${LOGIN_KEY_PREFIX}.${stage}.action`),
       alreadyHaveCardLabel: hasSeenLoginIntro

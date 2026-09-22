@@ -19,6 +19,8 @@ import {
   encodeCborTag,
   encodeCborTextString,
   encodeCborUnsigned,
+  encodeMemoToCbor,
+  MAX_MEMO_LENGTH,
   PLT_CBOR_MAX_SIZE,
 } from "./cbor";
 
@@ -30,7 +32,9 @@ const CBOR_TAG_DECIMAL_FRACTION = 4;
 
 /**
  * CBOR tag marking a byte string as embedded CBOR (RFC 8949 §3.4.5.1).
- * CIS-7 allows a memo to be tagged with it, or left as a bare byte string.
+ *
+ * The chain's `CborMemo` is discriminated by it: tagged means the byte string
+ * holds CBOR, untagged means it holds raw bytes. See {@link encodePltMemo}.
  */
 const CBOR_TAG_EMBEDDED_CBOR = 24;
 
@@ -52,18 +56,6 @@ const CCD_COIN_TYPE = 919;
 
 /** Largest significand a token amount can carry: an unsigned 64-bit integer. */
 const MAX_SIGNIFICAND = 2n ** 64n - 1n;
-
-/**
- * Largest PLT memo, in bytes.
- *
- * The chain caps this independently of the CBOR budget, so the 512-byte budget
- * is not a sufficient check: a 400-byte memo fits it and still fails on chain.
- *
- * The device signs the full length. `app_sizes.h` sizes `APP_PLT_CBOR_MAX` for
- * "~260B memo (4B header + 256B payload)" and its PLT handler rejects no memo
- * for its length, so this is the only cap that applies.
- */
-export const PLT_MAX_MEMO_SIZE = 256;
 
 /**
  * Largest number of decimals a PLT amount may carry.
@@ -103,10 +95,15 @@ export interface PltTransfer {
    */
   decimals: number;
   /**
-   * Optional memo, as raw bytes, at most 256. Distinct from the CCD memo, which
-   * is a CBOR text string — do not use `encodeMemoToCbor` here.
+   * Optional memo, as the text the user typed, at most {@link MAX_MEMO_LENGTH}
+   * bytes of UTF-8. Encoded exactly as a CCD memo is — see
+   * {@link encodePltMemo} for the envelope the two do not share.
+   *
+   * Absent and empty are distinct: omitting the field emits no memo, while `""`
+   * emits an empty text string. Callers that treat empty as absent must omit
+   * the field.
    */
-  memo?: Buffer;
+  memo?: string;
   /**
    * Emit the optional coin info alongside the recipient address. Off by default:
    * its absence means "a Concordium address" to both the chain and the device,
@@ -167,23 +164,30 @@ export function encodePltAddress(address: AccountAddress, includeCoinInfo = fals
 }
 
 /**
- * Encodes a CIS-7 memo, as a bare byte string or wrapped in tag 24.
+ * Encodes a CIS-7 memo: `tag 24(byte string(CBOR text string))`.
  *
- * The chain's `TaggableMemo` accepts either and strips the tag; the device
- * accepts either too. The untagged form is the default because it is two bytes
- * shorter and is what the device's own fixtures use.
+ * The chain models this field as `CborMemo`, a two-variant union discriminated
+ * by the tag — an untagged byte string declares that its content is *not* CBOR,
+ * and tag 24 (RFC 8949 "encoded CBOR data item") declares that it is. The
+ * content here is a CBOR text string, so the tag is required rather than
+ * optional: emitting the same bytes untagged would claim the opposite.
  *
- * @throws If the memo exceeds the chain's 256-byte limit
+ * The content is produced by {@link encodeMemoToCbor}, the same function the CCD
+ * path uses. Both carry a CBOR-encoded value in the chain's `Memo` type under
+ * the same 256-byte cap; only the envelope differs, which is why this wrapper
+ * exists and the codec does not.
+ *
+ * The cap measures that value, not this envelope: a full-length memo encodes to
+ * 256 bytes of text string and 261 with the wrapper, and the node checks the
+ * former. Those 5 bytes count against {@link PLT_CBOR_MAX_SIZE} instead.
+ *
+ * The device app unwraps the tag but does not yet decode the content, so its
+ * signing screen renders these bytes rather than the text until it does.
+ *
+ * @throws If the memo exceeds {@link MAX_MEMO_LENGTH} bytes of UTF-8
  */
-export function encodePltMemo(memo: Buffer, tagged = false): Buffer {
-  if (memo.length > PLT_MAX_MEMO_SIZE) {
-    throw new Error(
-      `PLT memo is ${memo.length} bytes, exceeding the chain limit of ${PLT_MAX_MEMO_SIZE}`,
-    );
-  }
-
-  const encoded = encodeCborByteString(memo);
-  return tagged ? encodeCborTag(CBOR_TAG_EMBEDDED_CBOR, encoded) : encoded;
+export function encodePltMemo(memo: string): Buffer {
+  return encodeCborTag(CBOR_TAG_EMBEDDED_CBOR, encodeCborByteString(encodeMemoToCbor(memo)));
 }
 
 /**
@@ -219,9 +223,10 @@ export function encodePltTransferOperations(transfer: PltTransfer): Buffer {
     ]),
   ]);
 
-  // Unreachable while `transfer` is the only operation and the memo is capped at
-  // 256: the worst case lands near 350 bytes. Kept as a backstop for future
-  // operation types, which is why it is excluded from coverage.
+  // Unreachable while `transfer` is the only operation and the memo is capped
+  // at MAX_MEMO_LENGTH: the worst case — longest memo, widest amount, coin info
+  // included — measures 355 of the 512. Kept as a backstop for future operation
+  // types, hence excluded from coverage.
   /* istanbul ignore next */
   if (operations.length > PLT_CBOR_MAX_SIZE) {
     throw new Error(

@@ -3,6 +3,7 @@ import { useGetCardStatusQuery, useGetUserQuery } from "@domain/api-card-managem
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
 import { hasPositiveBalance, type CardOnboardingSignals } from "./deriveCardOnboardingStatus";
 import type { CardOnboardingProviderStepId } from "./steps";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export type CardOnboardingSourcesParams = {
   /**
@@ -14,12 +15,18 @@ export type CardOnboardingSourcesParams = {
 
 export type CardOnboardingSources = {
   readonly signals: CardOnboardingSignals<CardOnboardingProviderStepId>;
+  /**
+   * Whether the card sits in the phone's wallet, or `undefined` from a tenant that does not answer
+   * for it. Not a signal: a step nothing answered is for the platform to decide, and only mobile
+   * lists this one.
+   */
+  readonly cardAddedToDigitalWallet: boolean | undefined;
   readonly isLoading: boolean;
   readonly isError: boolean;
   readonly refresh: () => void;
 };
 
-const NO_COUNTER_VALUE = () => null;
+const NO_CURRENCIES: ReadonlyMap<string, CryptoOrTokenCurrency> = new Map();
 
 /**
  * Asks the Card endpoints what they can answer about onboarding.
@@ -33,7 +40,7 @@ export function useCardOnboardingSources({
 }: CardOnboardingSourcesParams = {}): CardOnboardingSources {
   const user = useGetUserQuery(undefined, { skip });
   const cardStatus = useGetCardStatusQuery(undefined, { skip });
-  const linkedWallets = useCardLinkedWallets({ resolveCounterValue: NO_COUNTER_VALUE, skip });
+  const linkedWallets = useCardLinkedWallets({ currencies: NO_CURRENCIES, skip });
 
   const signals = useMemo(
     () => ({
@@ -65,6 +72,7 @@ export function useCardOnboardingSources({
 
   return {
     signals,
+    cardAddedToDigitalWallet: cardStatus.data?.cardAddedToDigitalWallet,
     refresh,
     // `isFetching` on all three, not `isLoading`: a query reports `isLoading` only while it has no
     // data, so after the first read a refetch would have looked idle.

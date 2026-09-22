@@ -9,6 +9,7 @@ import {
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { SIDEBAR_VALUE_TO_PATH } from "LLD/components/SideBar/utils";
 import { useCardHostedManifests } from "./useCardHostedManifests";
+import { whenHostedSessionWiped } from "./useWipeHostedSession";
 
 export type CardHostedPageOpeners = {
   readonly openHostedLogin: OpenHostedLogin;
@@ -35,6 +36,8 @@ export function useCardHostedPageOpeners(): CardHostedPageOpeners {
     async loginUrl => {
       const manifest = requireManifest(login);
 
+      await whenHostedSessionWiped();
+
       navigate(manifestRoute(manifest), {
         state: { goToURL: buildHostedPageUrl(String(manifest.url), loginUrl) },
       });
@@ -47,6 +50,8 @@ export function useCardHostedPageOpeners(): CardHostedPageOpeners {
   const openHostedPage = useCallback<OpenCardHostedPage>(
     async path => {
       const manifest = requireManifest(hosted);
+
+      await whenHostedSessionWiped();
 
       navigate(manifestRoute(manifest), {
         state: { goToURL: buildHostedUrl(String(manifest.url), path) },

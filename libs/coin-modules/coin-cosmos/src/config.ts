@@ -119,7 +119,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_coreum: {
     type: "object",
     default: {
-      lcd: "https://coreum.coin.ledger.com",
+      lcd: "https://rest-coreum.ecostake.com",
       minGasPrice: 0.1,
       status: {
         type: "active",
@@ -186,6 +186,22 @@ export const cosmosConfig: CosmosConfig = {
       minGasPrice: 0.002, // source: https://www.mintscan.io/babylon/parameters
       status: {
         type: "active",
+      },
+      disableDelegation: true,
+    },
+  },
+  config_currency_gonka: {
+    type: "object",
+    default: {
+      // The chain's FeeParams.MinGasPriceNgonka consensus parameter is 0; the family default
+      // of 0.0025 would price transfers the chain never charges.
+      lcd: "https://gonka.coin.ledger.com",
+      minGasPrice: 0,
+      status: {
+        type: "active",
+        // Declares the supported set: transfers only. The runtime rejects delegation messages,
+        // so staking is absent here and gated in the UI by `disableDelegation` below.
+        features: [{ id: "blockchain_txs", type: "active" }],
       },
       disableDelegation: true,
     },

@@ -3,6 +3,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import React, { useEffect } from "react";
 import { useSendFlowActions } from "../../../context/SendFlowContext";
+import { useRecipientContinuation } from "../../../context/RecipientContinuationContext";
 import { useRecipientAddressModalViewModel } from "../hooks/useRecipientAddressModalViewModel";
 import { RecipientAddressModalView } from "./RecipientAddressModalView";
 
@@ -29,6 +30,7 @@ export function RecipientAddressModal({
   recipientSupportsDomain = false,
 }: RecipientAddressModalProps) {
   const { setIsRecipientAddressComplete } = useSendFlowActions();
+  const { isFamilyRecipientBlocked } = useRecipientContinuation();
   const { isAddressValid, ...viewModel } = useRecipientAddressModalViewModel({
     account,
     parentAccount,
@@ -37,9 +39,12 @@ export function RecipientAddressModal({
     recipientSupportsDomain,
   });
 
+  // A family notice (e.g. Zcash shielded sync not complete) can block the step even
+  // when the address itself is valid, so the recipient is only complete when both
+  // hold.
   useEffect(() => {
-    setIsRecipientAddressComplete(isAddressValid);
-  }, [isAddressValid, setIsRecipientAddressComplete]);
+    setIsRecipientAddressComplete(isAddressValid && !isFamilyRecipientBlocked);
+  }, [isAddressValid, isFamilyRecipientBlocked, setIsRecipientAddressComplete]);
 
   return <RecipientAddressModalView {...viewModel} />;
 }

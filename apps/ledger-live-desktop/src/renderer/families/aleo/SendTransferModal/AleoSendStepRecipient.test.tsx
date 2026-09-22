@@ -3,8 +3,8 @@ import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
+import { trackPage } from "@shared/analytics";
 import i18n from "~/renderer/i18n/init";
-import { trackPage } from "~/renderer/analytics/segment";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import { AleoSendStepRecipient } from "./AleoSendStepRecipient";
@@ -112,12 +112,12 @@ describe("AleoSendStepRecipient", () => {
     render(<AleoSendStepRecipient {...defaultProps} />);
 
     expect(trackPage).toHaveBeenCalledWith(
-      "Aleo Send Flow",
-      "Step Recipient",
-      expect.objectContaining({ currencyName: "Aleo" }),
-      true,
-      true,
-      false,
+      {
+        category: "Aleo Send Flow",
+        name: "Step Recipient",
+        props: { currencyName: "Aleo" },
+      },
+      { mandatory: false, refreshSource: true, updateRoutes: true },
     );
   });
 

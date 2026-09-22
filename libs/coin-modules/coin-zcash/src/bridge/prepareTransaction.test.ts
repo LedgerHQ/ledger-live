@@ -249,9 +249,11 @@ describe("prepareTransaction, note-spending flows", () => {
     });
   });
 
-  // Change worth less than one action costs more to spend than it holds, so it
-  // goes to the fee instead of becoming a note nobody can use.
-  it("absorbs dust change into the fee rather than leaving an unspendable note", async () => {
+  // A change note worth less than one action is still a valid change note; the
+  // native PCZT builder requires the fee to equal the ZIP-317 fee for the final
+  // layout *exactly*, so a small residual must stay as change rather than being
+  // folded into the fee (which the strict Ironwood builder would then reject).
+  it("keeps a small residual as change rather than inflating the fee", async () => {
     const prepared = await prepareTransaction(
       account({ ironwoodNotes: [40_000] }),
       transaction({
@@ -262,8 +264,8 @@ describe("prepareTransaction, note-spending flows", () => {
     );
 
     expect(prepared).toMatchObject({
-      zcashFee: new BigNumber(12_000),
-      changeAmount: new BigNumber(0),
+      zcashFee: new BigNumber(10_000),
+      changeAmount: new BigNumber(2_000),
     });
   });
 

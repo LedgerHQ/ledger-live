@@ -49,6 +49,7 @@ export async function getMinimumSwapAmount(
     const requestConfig: AxiosRequestConfig = {
       method: "GET",
       url: SWAP_QUOTE_URL,
+      timeout: 10_000,
       params: {
         from: accountFrom.currency.id,
         to: accountTo.currency.id,

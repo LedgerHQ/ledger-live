@@ -1,5 +1,5 @@
 import React, { type PropsWithChildren } from "react";
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
@@ -21,7 +21,34 @@ import {
   clearCardOnboardingStatusMock,
   readCardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
+import { cardManagementApi } from "@domain/api-card-management";
 import { usePayCardToolProps } from "./usePayCardToolProps";
+import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
+
+const LINKED_WALLETS = [
+  { id: "w-usdc", address: "0xusdc", currency: "usdc", network: "ethereum", priority: 0 },
+  { id: "w-bxx", address: "0xbxx", currency: "bxx", network: "ethereum", priority: 1 },
+];
+
+const INTERNAL_WALLETS = [
+  { id: "w-usdc", balance: "125.40", currency: "usdc", address: "0xusdc", addressMemo: null },
+  { id: "w-bxx", balance: "5.00", currency: "bxx", address: "0xbxx", addressMemo: null },
+];
+
+/** Seeds both wallet reads: one asset the catalog covers, one it does not. */
+async function seedWallets(store: ReturnType<typeof buildStore>) {
+  await store.dispatch(
+    cardManagementApi.util.upsertQueryData("getCardLinkedWallets", undefined, LINKED_WALLETS),
+  );
+  await store.dispatch(
+    cardManagementApi.util.upsertQueryData("getInternalWallets", undefined, INTERNAL_WALLETS),
+  );
+  store.dispatch(
+    cardManagementApi.util.updateQueryData("getCardLinkedWallets", undefined, draft => {
+      draft[0]!.ledgerId = "ethereum/erc20/usd__coin";
+    }),
+  );
+}
 
 function buildStore() {
   return configureStore({
@@ -45,6 +72,22 @@ function withStore(store: ReturnType<typeof buildStore>) {
   return ({ children }: PropsWithChildren) => <Provider store={store}>{children}</Provider>;
 }
 
+const CURRENCIES = new Map([
+  [
+    "ethereum/erc20/usd__coin",
+    CryptoOrTokenCurrencySchema.parse({
+      type: "TokenCurrency",
+      id: "ethereum/erc20/usd__coin",
+      parentCurrencyId: "ethereum",
+      contractAddress: "0x0000000000000000000000000000000000000000",
+      tokenType: "erc20",
+      name: "USD Coin",
+      ticker: "USDC",
+      units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+    }),
+  ],
+]);
+
 describe("usePayCardToolProps", () => {
   let store: ReturnType<typeof buildStore>;
 
@@ -52,31 +95,11 @@ describe("usePayCardToolProps", () => {
     store = buildStore();
   });
 
-  it("exposes desktop onboarding steps and default flag values", () => {
+  it("exposes default flag values", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
-    expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "create-account",
-      "choose-card-type",
-      "top-up-card",
-      "first-purchase",
-    ]);
     expect(result.current.flags.payTabEnabled).toBe(false);
     expect(result.current.flags.ptxCardEnabled).toBe(false);
-  });
-
-  it("includes apple-google-pay step when platform is native", () => {
-    const { result } = renderHook(() => usePayCardToolProps({ platform: "native" }), {
-      wrapper: withStore(store),
-    });
-
-    expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "create-account",
-      "choose-card-type",
-      "top-up-card",
-      "apple-google-pay",
-      "first-purchase",
-    ]);
   });
 
   it("setPayTabEnabled overrides lwdPayTab on web", () => {
@@ -148,22 +171,6 @@ describe("usePayCardToolProps", () => {
     expect(result.current.flags.ptxCardEnabled).toBe(true);
   });
 
-  it("setStepDone toggles a single step and supports resetting all", () => {
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
-
-    act(() => {
-      result.current.onboarding.setStepDone("choose-card-type", true);
-    });
-    expect(result.current.onboarding.steps.find(step => step.id === "choose-card-type")?.done).toBe(
-      true,
-    );
-
-    act(() => {
-      result.current.onboarding.setStepDone("all", false);
-    });
-    expect(result.current.onboarding.steps.every(step => !step.done)).toBe(true);
-  });
-
   it("reports no balance until the screen asks for one", () => {
     const store = buildStore();
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
@@ -184,6 +191,42 @@ describe("usePayCardToolProps", () => {
     act(() => result.current.balance.load());
 
     expect(result.current.balance.isFetching).toBe(true);
+  });
+
+  it("hands the tool a row per joined wallet, with the currency the host resolved", async () => {
+    const store = buildStore();
+    await act(() => seedWallets(store));
+    const { result } = renderHook(() => usePayCardToolProps({ currencies: CURRENCIES }), {
+      wrapper: withStore(store),
+    });
+
+    act(() => result.current.balance.load());
+    await waitFor(() => expect(result.current.balance.combinedWallets).toHaveLength(2));
+
+    expect(result.current.balance.combinedWallets[0]).toEqual({
+      id: "w-usdc",
+      address: "0xusdc",
+      currency: "usdc",
+      network: "ethereum",
+      priority: 0,
+      ledgerId: "ethereum/erc20/usd__coin",
+      balance: "125.40",
+      ledgerCurrencyId: "ethereum/erc20/usd__coin",
+    });
+  });
+
+  it("leaves the Ledger currency off a row the catalog does not cover", async () => {
+    const store = buildStore();
+    await act(() => seedWallets(store));
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => result.current.balance.load());
+    await waitFor(() => expect(result.current.balance.combinedWallets).toHaveLength(2));
+
+    const [, unmapped] = result.current.balance.combinedWallets;
+    // Absent, not `undefined`.
+    expect(unmapped && "ledgerId" in unmapped).toBe(false);
+    expect(unmapped?.ledgerCurrencyId).toBeNull();
   });
 
   it("reads the wallets on a refresh, even as the first thing the screen does", () => {
@@ -300,6 +343,19 @@ describe("usePayCardToolProps", () => {
       delete process.env.MSW_ENABLED;
     });
 
+    it("reads the status on either host, once the screen asks for it", async () => {
+      const store = buildStore();
+      // No platform: the desktop tool, which is where the read used to be skipped outright.
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      // Nothing is asked for until the screen opens, so DevTools does not send a session anywhere.
+      expect(result.current.cardOnboarding.isFetching).toBe(false);
+
+      act(() => result.current.cardOnboarding.refresh());
+
+      await waitFor(() => expect(result.current.cardOnboarding.isFetching).toBe(true));
+    });
+
     it("sets the answer behind a step rather than the step itself", () => {
       const store = buildStore();
       const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
@@ -315,7 +371,8 @@ describe("usePayCardToolProps", () => {
       });
     });
 
-    it("keeps the phone wallet step on the device, because no endpoint answers it", () => {
+    it("writes the phone wallet answer to the mock while mocking is on", () => {
+      process.env.MSW_ENABLED = "true";
       const store = buildStore();
       const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
@@ -323,8 +380,19 @@ describe("usePayCardToolProps", () => {
         result.current.cardOnboarding.setStepDone("apple-google-pay", true);
       });
 
-      expect(store.getState().payCardOnboardingWidget.hasAddedCardToWallet).toBe(true);
-      expect(readCardOnboardingStatusMock()).toEqual({});
+      expect(readCardOnboardingStatusMock()).toEqual({ cardAddedToDigitalWallet: true });
+    });
+
+    it("writes an explicit no for the phone wallet step, which is not the same as clearing it", () => {
+      process.env.MSW_ENABLED = "true";
+      const store = buildStore();
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      act(() => {
+        result.current.cardOnboarding.setStepDone("apple-google-pay", false);
+      });
+
+      expect(readCardOnboardingStatusMock()).toEqual({ cardAddedToDigitalWallet: false });
     });
 
     it("ignores a step nothing answers, so the purchase step cannot be forced", () => {
@@ -358,8 +426,7 @@ describe("usePayCardToolProps", () => {
       const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
       expect(result.current.cardOnboarding.isMockingEnabled).toBe(false);
-      // Every step this project lists is answered by a request: the phone wallet step, which is
-      // answered on the device instead, is mobile-only and this project resolves the web hook.
+      // Every step is answered by a request, so with nothing intercepted there is nothing to write.
       expect(result.current.cardOnboarding.steps.every(({ canToggle }) => !canToggle)).toBe(true);
     });
 

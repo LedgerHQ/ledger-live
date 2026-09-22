@@ -1,13 +1,23 @@
 import React from "react";
 import { Text } from "react-native";
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
 import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
-import { render, renderWithReactQuery, screen, withFlagOverrides } from "@tests/test-renderer";
+import {
+  createStore,
+  render,
+  renderWithReactQuery,
+  screen,
+  withFlagOverrides,
+} from "@tests/test-renderer";
 import { server, http, HttpResponse, delay } from "@tests/server";
 import { mockData } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stablecoins";
+import { cardApiExtra } from "@shared/api-services";
+import { getEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
@@ -21,9 +31,12 @@ import type { Contact } from "@domain/entity-contact";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import PayTabNavigator from "LLM/features/PayTab";
 import { PayTabRequestReceiveScreen } from "LLM/features/PayTab/screens/RequestReceive";
+import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator";
 import SendWorkflow from "LLM/features/Send";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
+import reducers from "~/reducers";
+import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 
 export const EMPTY_TITLE = "Pay and get paid";
 export const EMPTY_DESCRIPTION = "Start by depositing stablecoin to your wallet";
@@ -88,6 +101,12 @@ type TestStackParamList = {
         };
       }
     | undefined;
+  [NavigatorName.OperationsHistory]:
+    | {
+        screen: ScreenName.OperationsList;
+        params?: { historyTab?: string; asset?: string };
+      }
+    | undefined;
 };
 
 const Stack = createNativeStackNavigator<TestStackParamList>();
@@ -147,6 +166,7 @@ type RenderPayTabOptions = Readonly<{
   cryptoOnly?: boolean;
   contacts?: Contact[];
   contactsEnabled?: boolean;
+  signedInCard?: boolean;
 }>;
 
 function withUsdcHoldings(state: State): State {
@@ -236,7 +256,7 @@ export function mockFullAssetCatalog() {
   server.use(...DADA_URLS.map(url => http.get(url, () => HttpResponse.json(mockData))));
 }
 
-export function renderPayTab({
+function getPayTabRenderInput({
   hasSeenFeatureTour = true,
   holdsUsdc = false,
   holdsEmptyUsdc = false,
@@ -244,8 +264,9 @@ export function renderPayTab({
   cryptoOnly = false,
   contacts,
   contactsEnabled = false,
+  signedInCard = false,
 }: RenderPayTabOptions = {}) {
-  return renderWithReactQuery(
+  const content = (
     <>
       <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
         <Stack.Screen name="PayTabTest" component={PayTabNavigator} />
@@ -253,39 +274,78 @@ export function renderPayTab({
         <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletContactsScreen} />
         <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsScreen} />
         <Stack.Screen name={NavigatorName.SendFlow} component={SendWorkflow} />
+        <Stack.Screen
+          name={NavigatorName.OperationsHistory}
+          component={OperationsHistoryNavigator}
+        />
       </Stack.Navigator>
       <ModularDrawerWrapper />
-    </>,
+    </>
+  );
+  const overrideInitialState = withFlagOverrides(
     {
-      overrideInitialState: withFlagOverrides(
-        {
-          llmModularDrawer: {
-            enabled: true,
-            params: { enableModularization: true, searchDebounceTime: 0 },
-          },
-          newSendFlow: {
-            enabled: true,
-            params: { families: ["evm"], excludedCurrencyIds: [] },
-          },
-          ...(contactsEnabled
-            ? { lwmContacts: { enabled: true, params: { newBadge: false } } }
-            : {}),
-        },
-        state => {
-          const next: State = {
-            ...state,
-            payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour },
-            ...(contacts ? { contacts: { contacts } } : {}),
-          };
-          if (holdsUsdc) return withUsdcHoldings(next);
-          if (holdsEmptyUsdc) return withEmptyUsdcHoldings(next);
-          if (holdsUni) return withUniHoldings(next);
-          if (cryptoOnly) return withCryptoOnly(next);
-          return next;
-        },
-      ),
+      llmModularDrawer: {
+        enabled: true,
+        params: { enableModularization: true, searchDebounceTime: 0 },
+      },
+      newSendFlow: {
+        enabled: true,
+        params: { families: ["evm"], excludedCurrencyIds: [] },
+      },
+      ...(contactsEnabled ? { lwmContacts: { enabled: true, params: { newBadge: false } } } : {}),
+    },
+    state => {
+      const next: State = {
+        ...state,
+        payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour },
+        ...(signedInCard ? { payCardAuth: { hasCard: true, status: "signedIn" as const } } : {}),
+        ...(contacts ? { contacts: { contacts } } : {}),
+      };
+      if (holdsUsdc) return withUsdcHoldings(next);
+      if (holdsEmptyUsdc) return withEmptyUsdcHoldings(next);
+      if (holdsUni) return withUniHoldings(next);
+      if (cryptoOnly) return withCryptoOnly(next);
+      return next;
     },
   );
+
+  return { content, overrideInitialState };
+}
+
+export function renderPayTab(options: RenderPayTabOptions = {}) {
+  const { content, overrideInitialState } = getPayTabRenderInput(options);
+  return renderWithReactQuery(content, { overrideInitialState });
+}
+
+export function renderPayTabWithCardApi() {
+  const { content, overrideInitialState } = getPayTabRenderInput({ signedInCard: true });
+  const initialStore = createStore({ overrideInitialState });
+  const store = configureStore({
+    reducer: reducers,
+    middleware: getDefaultMiddleware =>
+      applyLlmRTKApiMiddlewares(
+        getDefaultMiddleware({
+          serializableCheck: false,
+          immutableCheck: false,
+          thunk: {
+            extraArgument: cardApiExtra({
+              getCardApiBaseUrl: () => getEnv("CARD_BAANX_API_URL"),
+              getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
+              isCardUsEnv: () => false,
+              readCardSession: () => Promise.resolve({ token: "session-token", sessionId: 1 }),
+              isCardSessionCurrent: () => true,
+              refreshCardSession: () => Promise.resolve({ kind: "session-replaced" as const }),
+            }),
+          },
+        }),
+      ),
+    preloadedState: initialStore.getState(),
+    devTools: false,
+  });
+  const result = renderWithReactQuery(<Provider store={store}>{content}</Provider>, {
+    overrideInitialState,
+  });
+  return { ...result, store };
 }
 
 export async function selectUsdcOnEthereum(user: Awaited<ReturnType<typeof renderPayTab>>["user"]) {

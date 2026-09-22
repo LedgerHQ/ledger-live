@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { track } from "~/analytics";
+import { withOptionalVariant } from "../analytics";
 import type { WalletV4TourDrawerViewModel } from "../types";
 
 type UseWalletV4TourDrawerViewModelParams = {
@@ -7,6 +8,7 @@ type UseWalletV4TourDrawerViewModelParams = {
   readonly hasSeenTour: boolean;
   readonly markTourAsSeen: () => void;
   readonly page: string;
+  readonly variant?: string;
 };
 
 export const useWalletV4TourDrawerViewModel = ({
@@ -14,6 +16,7 @@ export const useWalletV4TourDrawerViewModel = ({
   hasSeenTour,
   markTourAsSeen,
   page,
+  variant,
 }: UseWalletV4TourDrawerViewModelParams): WalletV4TourDrawerViewModel => {
   const currentIndexRef = useRef(0);
   const isClosingRef = useRef(false);
@@ -48,23 +51,35 @@ export const useWalletV4TourDrawerViewModel = ({
     if (isClosingRef.current) {
       return;
     }
-    track("button_clicked", {
-      button: "Close",
-      page,
-      card: currentIndexRef.current + 1,
-    });
+    track(
+      "button_clicked",
+      withOptionalVariant(
+        {
+          button: "Close",
+          page,
+          card: currentIndexRef.current + 1,
+        },
+        variant,
+      ),
+    );
     handleCloseDrawer();
-  }, [handleCloseDrawer, page]);
+  }, [handleCloseDrawer, page, variant]);
 
   const onSlideChange = useCallback(
     (index: number) => {
       currentIndexRef.current = index;
-      track("product_tour_card", {
-        page,
-        card: index + 1,
-      });
+      track(
+        "product_tour_card",
+        withOptionalVariant(
+          {
+            page,
+            card: index + 1,
+          },
+          variant,
+        ),
+      );
     },
-    [page],
+    [page, variant],
   );
 
   return {

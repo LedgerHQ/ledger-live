@@ -1,9 +1,16 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React from "react";
-import { act, render, screen, userEvent } from "tests/testSetup";
+import { act, render, screen, userEvent, waitFor } from "tests/testSetup";
+import { trackPage } from "@shared/analytics";
+import {
+  selectCurrencyRegionRestrictedDialogParams,
+  selectIsCurrencyRegionRestrictedDialogOpen,
+} from "LLD/features/CurrencyRegionRestrictedDialog/currencyRegionRestrictedDialog";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { CurrencyRegionRestrictedError } from "@ledgerhq/live-common/errors";
 import { openModal } from "~/renderer/actions/modals";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track } from "~/renderer/analytics/segment";
 import { State } from "~/renderer/reducers";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { ARB_ACCOUNT, BTC_ACCOUNT, HEDERA_ACCOUNT } from "../../__mocks__/accounts.mock";
@@ -11,6 +18,7 @@ import {
   arbitrumCurrency,
   bitcoinCurrency,
   hederaCurrency,
+  hypercoreCurrency,
 } from "../../__mocks__/useSelectAssetFlow.mock";
 import { mockDomMeasurements } from "../../__tests__/shared";
 import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
@@ -41,6 +49,7 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
 
 let triggerNext: (account: Account) => void = () => null;
 let triggerComplete: () => void = () => null;
+let triggerError: (error: Error) => void = () => null;
 
 const mockAccountBridge = {
   assignToAccountRaw: () => {},
@@ -63,6 +72,7 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => {
         new Observable((subscriber: any) => {
           triggerNext = (account: Account) => subscriber.next({ account });
           triggerComplete = () => subscriber.complete();
+          triggerError = (error: Error) => subscriber.error(error);
           return () => {};
         }),
       preload: () => Promise.resolve(true),
@@ -158,10 +168,15 @@ jest.mock("~/renderer/actions/modals", () => ({
   openModal: jest.fn().mockReturnValue({ type: "" }),
 }));
 
+jest.mock("~/renderer/drawers/Provider", () => ({
+  __esModule: true,
+  ...jest.requireActual("~/renderer/drawers/Provider"),
+  setDrawer: jest.fn(),
+}));
+
 jest.mock("~/renderer/analytics/segment", () => ({
   ...jest.requireActual("~/renderer/analytics/segment"),
   track: jest.fn(),
-  trackPage: jest.fn(),
 }));
 
 const setup = (currency = arbitrumCurrency, state?: Partial<State>) => {
@@ -186,12 +201,8 @@ function expectTrackPage(
 ) {
   expect(trackPage).toHaveBeenNthCalledWith(
     n,
-    page,
-    undefined,
-    { ...props, source },
-    true,
-    true,
-    false,
+    { category: page, name: undefined, props: { ...props, source } },
+    { mandatory: false, refreshSource: true, updateRoutes: true },
   );
 }
 
@@ -376,6 +387,21 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
 
     expect(screen.getByText(NEW_NAME)).toBeInTheDocument();
+  });
+
+  it("should hand a region-restricted scan over to the dedicated dialog", async () => {
+    const { store } = setup(hypercoreCurrency);
+
+    await act(async () => {});
+    await act(() => triggerError(new CurrencyRegionRestrictedError("Hyperliquid")));
+
+    await waitFor(() =>
+      expect(selectIsCurrencyRegionRestrictedDialogOpen(store.getState())).toBe(true),
+    );
+    expect(selectCurrencyRegionRestrictedDialogParams(store.getState())).toEqual({
+      currencyName: "Hyperliquid",
+    });
+    expect(setDrawer).toHaveBeenCalled();
   });
 
   it("should error on a Hedera account with no associated accounts", async () => {
