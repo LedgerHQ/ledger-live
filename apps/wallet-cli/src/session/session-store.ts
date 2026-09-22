@@ -30,6 +30,28 @@ const DomainEntrySchema = z.object({
   firstUsed: z.string(),
 });
 
+// Non-secret Agent Intent profile metadata only (NTTVS-745). The profile's private key never lives
+// here — it is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`).
+const AgentIntentProfileSchema = z.object({
+  profileId: z
+    .string()
+    .min(1)
+    .max(63)
+    .regex(
+      /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/,
+      "Profile id must not contain ':' or other special characters",
+    ),
+  displayName: z.string().min(1).max(80),
+  description: z.string().min(1).max(280),
+  source: z.enum(["openclaw", "hermes"]),
+  environment: z.enum(["staging", "production"]),
+  bffBaseUrl: z.string(),
+  keycloakBaseUrl: z.string().optional(),
+  publicKey: z.string().regex(/^[0-9a-f]{66}$|^[0-9a-f]{130}$/i),
+  trustchainId: z.string().optional(),
+  createdAt: z.string(),
+});
+
 // Ring fields, defined once. Each `.catch`es to a default so one corrupt field never throws the
 // whole parse (which would brick every command and could orphan the keychain key on reset).
 // `domains` uses a factory `() => []`, not a literal `[]`: Zod reuses one literal instance across
@@ -44,6 +66,12 @@ const ringFields = {
     )
     .catch(() => []),
   passwordSalt: z.string().regex(PASSWORD_SALT_RE).optional().catch(undefined),
+  agentIntentProfiles: z
+    .preprocess(
+      v => (Array.isArray(v) ? v.filter(e => AgentIntentProfileSchema.safeParse(e).success) : []),
+      z.array(AgentIntentProfileSchema),
+    )
+    .catch(() => []),
 };
 
 const SessionDataSchema = z.object({
@@ -58,6 +86,7 @@ const RingFieldsSalvageSchema = z.object(ringFields);
 export type SessionEntry = z.infer<typeof SessionEntrySchema>;
 export type TrustchainMeta = z.infer<typeof TrustchainMetaSchema>;
 export type DomainEntry = z.infer<typeof DomainEntrySchema>;
+export type AgentIntentProfileMeta = z.infer<typeof AgentIntentProfileSchema>;
 
 export function getSessionPath(): string {
   return join(stateDir(APP_NAME), SESSION_FILE);
@@ -140,6 +169,7 @@ export class Session {
     private _trustchain: TrustchainMeta | undefined,
     private _domains: DomainEntry[],
     private _passwordSalt: string | undefined,
+    private _agentIntentProfiles: AgentIntentProfileMeta[],
   ) {}
 
   static async read(): Promise<Session> {
@@ -147,16 +177,22 @@ export class Session {
   }
 
   private static fromData(data: z.infer<typeof SessionDataSchema>): Session {
-    return new Session(data.accounts, data.trustchain, data.domains, data.passwordSalt);
+    return new Session(
+      data.accounts,
+      data.trustchain,
+      data.domains,
+      data.passwordSalt,
+      data.agentIntentProfiles,
+    );
   }
 
   /**
    * Build an account-only session. WARNING: it has no ring state, so `write()` wipes any
-   * trustchain/domains/passwordSalt on disk. To reset accounts while keeping the ring, go through
-   * `read()`/`readForReset()` then `clear()`.
+   * trustchain/domains/passwordSalt/agentIntentProfiles on disk. To reset accounts while keeping
+   * that state, go through `read()`/`readForReset()` then `clear()`.
    */
   static from(entries: SessionEntry[]): Session {
-    return new Session([...entries], undefined, [], undefined);
+    return new Session([...entries], undefined, [], undefined, []);
   }
 
   /**
@@ -174,7 +210,7 @@ export class Session {
     // non-object root (bare scalar/array) salvages nothing.
     const root = typeof raw === "object" && !Array.isArray(raw) ? raw : {};
     const ring = RingFieldsSalvageSchema.parse(root);
-    return new Session([], ring.trustchain, ring.domains, ring.passwordSalt);
+    return new Session([], ring.trustchain, ring.domains, ring.passwordSalt, ring.agentIntentProfiles);
   }
 
   get accounts(): ReadonlyArray<SessionEntry> {
@@ -215,6 +251,34 @@ export class Session {
     this._passwordSalt = undefined;
   }
 
+  get agentIntentProfiles(): ReadonlyArray<AgentIntentProfileMeta> {
+    return this._agentIntentProfiles;
+  }
+
+  getAgentIntentProfile(profileId: string): AgentIntentProfileMeta | undefined {
+    return this._agentIntentProfiles.find(p => p.profileId === profileId);
+  }
+
+  /** Throws if `profileId` is already recorded — enrollment must never silently overwrite a profile. */
+  addAgentIntentProfile(profile: AgentIntentProfileMeta): void {
+    if (this.getAgentIntentProfile(profile.profileId)) {
+      throw new Error(`Agent Intent profile "${profile.profileId}" already exists.`);
+    }
+    this._agentIntentProfiles.push(profile);
+  }
+
+  /** Merge a partial update (e.g. setting `trustchainId` after `complete`) into an existing profile. */
+  updateAgentIntentProfile(
+    profileId: string,
+    patch: Partial<Omit<AgentIntentProfileMeta, "profileId">>,
+  ): AgentIntentProfileMeta {
+    const index = this._agentIntentProfiles.findIndex(p => p.profileId === profileId);
+    if (index === -1) throw new Error(`No Agent Intent profile named "${profileId}".`);
+    const updated = { ...this._agentIntentProfiles[index], ...patch };
+    this._agentIntentProfiles[index] = updated;
+    return updated;
+  }
+
   clear(): number {
     const count = this.entries.length;
     this.entries = [];
@@ -249,6 +313,7 @@ export class Session {
     if (this._trustchain) data.trustchain = this._trustchain;
     if (this._domains.length > 0) data.domains = this._domains;
     if (this._passwordSalt) data.passwordSalt = this._passwordSalt;
+    if (this._agentIntentProfiles.length > 0) data.agentIntentProfiles = this._agentIntentProfiles;
     writeSessionData(data);
   }
 }

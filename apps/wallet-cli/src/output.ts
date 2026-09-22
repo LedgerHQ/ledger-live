@@ -31,7 +31,8 @@ import {
 } from "./output/earn";
 import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from "./wallet/models";
 import { APP_NAME } from "./session/session-store";
-import type { SessionEntry } from "./session/session-store";
+import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
+import { redactUrlCredentials } from "./agent-intent/profile-format";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 import type {
   EarnDepositResult,
@@ -209,6 +210,19 @@ export interface CommandOutput {
   ringEncrypt(result: { dest: string; bytes: number }): void;
   /** Output decrypt-to-file result (human: ✔ line; json: envelope with output path). */
   ringDecrypt(result: { dest: string }): void;
+
+  // ---- Agent Intent ----
+
+  /** Output agent-intent profiles (human: table or empty message; json: envelope with `profiles`). */
+  agentIntentProfiles(profiles: readonly AgentIntentProfileMeta[]): void;
+  /** Output one agent-intent profile's detail (human: labeled lines; json: envelope). Never includes
+   * the profile's secret key (not part of AgentIntentProfileMeta) or a fingerprint (NTTVS-767). */
+  agentIntentProfileShow(profile: AgentIntentProfileMeta): void;
+  /** Output the result of `agent-intent enroll` (human: URL + fingerprint to compare against the
+   * device; json: envelope). Never includes the secret key. */
+  agentIntentEnroll(result: { profileId: string; enrollmentUrl: string; fingerprint: string }): void;
+  /** Output the result of `agent-intent complete` (human: confirmation line; json: envelope). */
+  agentIntentComplete(result: { profileId: string; trustchainId: string }): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -622,6 +636,75 @@ class HumanCommandOutput implements CommandOutput {
   ringDecrypt({ dest }: { dest: string }): void {
     writeStdout(`${colors.green("✔")} Written to ${dest}`);
   }
+
+  agentIntentProfiles(profiles: readonly AgentIntentProfileMeta[]): void {
+    if (profiles.length === 0) {
+      writeStdout(colors.dim("No Agent Intent profiles. Run `agent-intent enroll` first."));
+      return;
+    }
+    const w = Math.max(7, ...profiles.map(p => p.profileId.length));
+    writeStdout(
+      `${colors.bold("PROFILE".padEnd(w))}  ${colors.bold("NAME")}  ${colors.bold("SOURCE")}  ` +
+        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}`,
+    );
+    for (const p of profiles) {
+      const status = p.trustchainId ? "enrolled" : "pending";
+      writeStdout(
+        `${p.profileId.padEnd(w)}  ${p.displayName}  ${p.source}  ${p.environment}  ${status}`,
+      );
+    }
+  }
+
+  agentIntentProfileShow(profile: AgentIntentProfileMeta): void {
+    writeStdout(
+      [
+        `Profile:      ${profile.profileId}`,
+        `Name:         ${profile.displayName}`,
+        `Description:  ${profile.description}`,
+        `Source:       ${profile.source}`,
+        `Environment:  ${profile.environment}`,
+        `Status:       ${profile.trustchainId ? "enrolled" : "pending"}`,
+        `Public key:   ${profile.publicKey}`,
+        `BFF URL:      ${redactUrlCredentials(profile.bffBaseUrl)}`,
+        ...(profile.keycloakBaseUrl === undefined
+          ? []
+          : [`Keycloak URL: ${redactUrlCredentials(profile.keycloakBaseUrl)}`]),
+        ...(profile.trustchainId === undefined
+          ? []
+          : [`Trustchain ID: ${profile.trustchainId}`]),
+        `Created:      ${profile.createdAt}`,
+      ].join("\n"),
+    );
+  }
+
+  agentIntentEnroll({
+    profileId,
+    enrollmentUrl,
+    fingerprint,
+  }: {
+    profileId: string;
+    enrollmentUrl: string;
+    fingerprint: string;
+  }): void {
+    writeStdout(enrollmentUrl);
+    writeStdout("");
+    writeStdout(`Public key fingerprint: ${fingerprint}`);
+    writeStdout(
+      colors.dim("Compare this fingerprint with the one shown on your Ledger device before approving."),
+    );
+    writeStdout(
+      colors.dim(
+        `Profile "${profileId}" saved. After approval, run \`agent-intent complete --profile ${profileId}\`.`,
+      ),
+    );
+  }
+
+  agentIntentComplete({ profileId, trustchainId }: { profileId: string; trustchainId: string }): void {
+    writeStdout(
+      `${colors.green("✔")} Agent Intent profile "${profileId}" enrolled. Trustchain ID: ${trustchainId}`,
+    );
+  }
+
 }
 
 // ---------------------------------------------------------------------------
@@ -954,6 +1037,58 @@ class JsonCommandOutput implements CommandOutput {
   ringDecrypt({ dest }: { dest: string }): void {
     this._writeNdjson(this._envelope({ output: dest }));
   }
+
+  agentIntentProfiles(profiles: readonly AgentIntentProfileMeta[]): void {
+    this._writeNdjson(
+      this._envelope({
+        // `profileStatus`, not `status` — the envelope already uses `status` for success/error.
+        profiles: profiles.map(p => ({
+          ...p,
+          bffBaseUrl: redactUrlCredentials(p.bffBaseUrl),
+          keycloakBaseUrl:
+            p.keycloakBaseUrl === undefined ? undefined : redactUrlCredentials(p.keycloakBaseUrl),
+          profileStatus: p.trustchainId ? "enrolled" : "pending",
+        })),
+      }),
+    );
+  }
+
+  agentIntentProfileShow(profile: AgentIntentProfileMeta): void {
+    this._writeNdjson(
+      this._envelope({
+        // `profileStatus`, not `status` — spreading `status` here would silently overwrite the
+        // envelope's own success/error `status` field (see makeEnvelope: `...data` applies after it).
+        ...profile,
+        bffBaseUrl: redactUrlCredentials(profile.bffBaseUrl),
+        keycloakBaseUrl:
+          profile.keycloakBaseUrl === undefined
+            ? undefined
+            : redactUrlCredentials(profile.keycloakBaseUrl),
+        profileStatus: profile.trustchainId ? "enrolled" : "pending",
+      }),
+    );
+  }
+
+  agentIntentEnroll(result: { profileId: string; enrollmentUrl: string; fingerprint: string }): void {
+    this._writeNdjson(
+      this._envelope({
+        profileId: result.profileId,
+        enrollmentUrl: result.enrollmentUrl,
+        fingerprint: result.fingerprint,
+      }),
+    );
+  }
+
+  agentIntentComplete(result: { profileId: string; trustchainId: string }): void {
+    this._writeNdjson(
+      this._envelope({
+        profileId: result.profileId,
+        trustchainId: result.trustchainId,
+        completed: true,
+      }),
+    );
+  }
+
 }
 
 // ---------------------------------------------------------------------------
