@@ -32,8 +32,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "axios": "catalog:",
-    "jest": "catalog:",
-    "prando": "6"
+    "jest": "catalog:"
   },
   "scripts": {
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
@@ -48,7 +47,6 @@
     "./logic": "./src/logic.ts",
     "./helpers": "./src/helpers.ts",
     "./mock": "./src/mock.ts",
-    "./api": "./src/api/index.ts",
     "./package.json": "./package.json"
   }
 }
