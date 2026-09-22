@@ -202,6 +202,10 @@ export function CardAssetsManageDrawer({
           onPlaceholderIndexChange={setDropTargetIndex}
           onDragEnd={handleDragEnd}
           onRelease={handleRelease}
+          // The card can hold at most 5 linked assets, which always fit the sheet without
+          // scrolling — disabling it here avoids the list's own scroll gesture competing with
+          // the drag gesture.
+          scrollEnabled={false}
           containerStyle={{ flex: 1 }}
           ItemSeparatorComponent={() => <Box lx={{ paddingTop: "s2" }} />}
         />
