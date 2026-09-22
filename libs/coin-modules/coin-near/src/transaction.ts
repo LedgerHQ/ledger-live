@@ -43,7 +43,11 @@ export const fromTransactionRaw = (transactionRaw: TransactionRaw): Transaction 
     family: transactionRaw.family,
     mode: transactionRaw.mode,
     fees: transactionRaw.fees ? new BigNumber(transactionRaw.fees) : null,
-    ...(transactionRaw.nonce ? { nonce: new BigNumber(transactionRaw.nonce) } : {}),
+    // Zero, not absent, when the raw carries no nonce: the generic `createTransaction` seeds NEAR
+    // with a synthetic zero so `signOperation` can skip `getNextSequence`, and `transactionToIntent`
+    // leaves `sequence` undefined for a nullish nonce. A transaction persisted by the legacy bridge,
+    // or built by an external caller, has no nonce and would otherwise revive into that throwing path.
+    nonce: transactionRaw.nonce ? new BigNumber(transactionRaw.nonce) : new BigNumber(0),
   };
 };
 
