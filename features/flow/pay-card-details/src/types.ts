@@ -10,8 +10,6 @@ export type { CardSettingsActions };
 
 export type { FormattedValue };
 
-export type CardTrackEvent = (event: string, params: Record<string, unknown>) => void;
-
 export type CardVisualProps = Readonly<{
   balance: number;
   formatCountervalue: (value: number) => FormattedValue;
@@ -31,7 +29,6 @@ export type CardDetailsProps = Readonly<{
   assets?: CardAssetsProps;
   /** Formats the reward wallet amount, and, natively, the transactions the overview lists. */
   formatters?: CardTransactionFormatters;
-  onTrackEvent?: CardTrackEvent;
   onShowMore?: () => void;
   onTopUp?: () => void;
   cardSettingsActions?: CardSettingsActions;

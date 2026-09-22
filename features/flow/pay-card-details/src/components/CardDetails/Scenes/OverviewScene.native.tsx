@@ -4,6 +4,7 @@ import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
 import { CardAssetsView } from "@features/flow-pay-card-assets";
 import { CardTransactions } from "@features/flow-pay-card-transactions";
+import { PayTrackPage } from "@features/platform-pay-analytics";
 import { CardArtwork } from "../../CardArtwork/CardArtwork";
 import { CardVisual } from "../../CardVisual/CardVisual";
 import { FreezeAction } from "../../Freeze/Tile/FreezeAction";
@@ -86,6 +87,7 @@ export function OverviewScene({
 
   return (
     <Box lx={{ gap: "s16" }} testID="card-details-overview">
+      {reveal.isRevealed ? <PayTrackPage page="Card digits" /> : null}
       <CardFlip reveal={reveal} cardFace={<CardFace cardVisual={cardVisual} />} />
 
       <OverviewActions

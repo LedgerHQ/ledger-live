@@ -227,14 +227,14 @@ describe("PayTab integration", () => {
       expect(screen.getByText("Request")).toBeVisible();
     });
 
-    it("should track button_clicked with quick_action location when an action tile is pressed", async () => {
+    it("should track button_clicked with quick action location when an action tile is pressed", async () => {
       const { user } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-deposit"));
 
       expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
         button: "deposit",
-        buttonLocation: "quick_action",
+        buttonLocation: "quick action",
         page: "Pay",
       });
 
@@ -242,7 +242,7 @@ describe("PayTab integration", () => {
 
       expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
         button: "request",
-        buttonLocation: "quick_action",
+        buttonLocation: "quick action",
         page: "Pay",
       });
     });
@@ -274,7 +274,8 @@ describe("PayTab integration", () => {
 
       expect(await screen.findByTestId("pay-card-balance-filter-picker")).toBeVisible();
       expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "balance_filter",
+        button: "balance filter",
+        page: "Pay",
       });
     });
 
@@ -294,8 +295,9 @@ describe("PayTab integration", () => {
       expect(within(pill).getByText("USDC")).toBeVisible();
 
       expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "confirm_balance_filter",
+        button: "confirm balance filter",
         asset: "USDC",
+        page: "Pay",
       });
     });
   });

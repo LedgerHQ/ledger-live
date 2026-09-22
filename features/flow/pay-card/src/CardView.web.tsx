@@ -38,7 +38,6 @@ export function CardView({
               amount: formatters?.transactionAmount,
               date: formatters?.transactionDate,
             }}
-            onTrackEvent={login.onTrackEvent}
             onShowMore={onShowMore}
           />
           {onTopUp ? (

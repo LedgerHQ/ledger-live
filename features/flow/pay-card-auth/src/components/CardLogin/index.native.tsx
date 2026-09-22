@@ -10,7 +10,6 @@ export function CardLogin({
   callback,
   openHostedLogin,
   openHostedPage,
-  onTrackEvent,
   requestProtection,
 }: CardLoginProps) {
   const login = useCardLoginViewModel({
@@ -19,7 +18,6 @@ export function CardLogin({
     mobileWallet,
     oauthConfig,
     callback,
-    onTrackEvent,
     requestProtection,
   });
 

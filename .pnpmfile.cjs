@@ -112,9 +112,6 @@ function readPackage(pkg, context) {
       addPeerDependencies("asyncstorage-down", {
         "@react-native-async-storage/async-storage": "*",
       }),
-      addDependencies("documentation", {
-        micromark: "*",
-      }),
       addDependencies("@react-native-community/cli-tools", {
         execa: "5.0.0",
       }),

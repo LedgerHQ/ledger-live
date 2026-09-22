@@ -298,7 +298,9 @@ function getPayTabRenderInput({
       const next: State = {
         ...state,
         payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour },
-        ...(signedInCard ? { payCardAuth: { hasCard: true, status: "signedIn" as const } } : {}),
+        ...(signedInCard
+          ? { payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const } }
+          : {}),
         ...(contacts ? { contacts: { contacts } } : {}),
       };
       if (holdsUsdc) return withUsdcHoldings(next);

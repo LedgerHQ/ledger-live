@@ -880,9 +880,10 @@
       "tile": "More",
       "title": "More",
       "rows": {
-        "managePin": "Manage PIN Code",
+        "managePin": "Card PIN",
         "accessBaanx": "Access to Baanx",
         "help": "Help",
+        "legal": "Legal agreement",
         "logout": "Logout"
       }
     },
@@ -5440,6 +5441,29 @@
           "title": "Generate Local Braze Card",
           "add": "Add",
           "dismiss": "Dismiss all cards",
+          "inspect": {
+            "tab": "Inspect",
+            "snapshot": "Local eligibility",
+            "funnel": "Pipeline",
+            "fetched": "Fetched from Braze: {{count}}",
+            "removedEligibility": "Removed (local eligibility): {{count}}",
+            "eligible": "Eligible: {{count}}",
+            "yes": "yes",
+            "no": "no",
+            "injectTitle": "Inject into fetch cache",
+            "inject": "Inject into fetch cache",
+            "location": "Location",
+            "requiredStates": "requiredStates",
+            "cards": "Fetched cards",
+            "empty": "No fetched cards.",
+            "none": "none",
+            "blockedBy": "blockedBy: {{blockedBy}} ({{reason}})",
+            "eligibleStatus": "eligible",
+            "unevaluated": "Unevaluated: {{count}}",
+            "unevaluatedStatus": "unevaluated",
+            "missingId": "missing id",
+            "missingIdStatus": "unevaluated (missing id)"
+          },
           "fields": {
             "notification": "Notification Content Card",
             "action": "Action Content Card",
@@ -9298,7 +9322,11 @@
     "opted_out": {
       "title": "More security. More control",
       "description": "Learn more about security features.",
-      "cta": "Learn more"
+      "cta": "Learn more",
+      "nanoS": {
+        "title": "More Security. More Control",
+        "description": "Learn more about latest OS and security features."
+      }
     },
     "profile": {
       "title": "Upgrade your Device",

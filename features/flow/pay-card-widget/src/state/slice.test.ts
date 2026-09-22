@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import {
+  markAnalyticsMilestonesReported,
   markCardOnboardingCompleted,
   payCardOnboardingWidgetInitialState,
   payCardOnboardingWidgetPersistedSelector,
   payCardOnboardingWidgetSlice,
   resetCardOnboardingCompleted,
   restorePayCardOnboardingWidget,
+  setAnalyticsCardId,
   selectHasCompletedCardOnboarding,
 } from "./index";
 
@@ -55,7 +57,10 @@ describe("payCardOnboardingWidgetSlice", () => {
         hasAddedCardToWallet: true,
       } as unknown as RestorePayload),
     );
-    expect(store.persisted()).toEqual({ hasCompletedOnboarding: true });
+    expect(store.persisted()).toEqual({
+      ...payCardOnboardingWidgetInitialState,
+      hasCompletedOnboarding: true,
+    });
   });
 
   it.each<[string, RestorePayload]>([
@@ -72,6 +77,25 @@ describe("payCardOnboardingWidgetSlice", () => {
   it("exposes the flag to persist", () => {
     const store = makeStore();
     store.dispatch(markCardOnboardingCompleted());
-    expect(store.persisted()).toEqual({ hasCompletedOnboarding: true });
+    store.dispatch(
+      markAnalyticsMilestonesReported(["card-onboarding-in-progress", "card-onboarding-completed"]),
+    );
+    expect(store.persisted()).toEqual({
+      hasCompletedOnboarding: true,
+      analyticsCardId: null,
+      reportedAnalyticsMilestones: ["card-onboarding-completed"],
+    });
+  });
+
+  it("clears reported milestones when the card account changes", () => {
+    const store = makeStore();
+    store.dispatch(setAnalyticsCardId("card-1"));
+    store.dispatch(markAnalyticsMilestonesReported(["card-claimed"]));
+    store.dispatch(setAnalyticsCardId("card-2"));
+
+    expect(store.persisted()).toEqual({
+      ...payCardOnboardingWidgetInitialState,
+      analyticsCardId: "card-2",
+    });
   });
 });

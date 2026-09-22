@@ -362,6 +362,13 @@ export function initiatePayCardLogout(accessToken: string | null) {
 
 export type CardManagementApi = typeof cardManagementApi;
 
+/**
+ * The slice of root state `cardManagementApi`'s cache lives under, for plain (non-hook) selectors.
+ */
+export type CardApiStateRoot = {
+  cardApi: ReturnType<typeof cardManagementApi.reducer>;
+};
+
 export const {
   useGetUserQuery,
   useOrderCardMutation,

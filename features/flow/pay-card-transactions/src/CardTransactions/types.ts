@@ -4,7 +4,6 @@ import type { CardTransactionItem, CardTransactionFormatters } from "../types";
 export type CardTransactionsProps = Readonly<{
   formatters?: CardTransactionFormatters;
   onTransactionPress?: (item: CardTransactionItem) => void;
-  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
   onShowMore?: () => void;
 }>;
 

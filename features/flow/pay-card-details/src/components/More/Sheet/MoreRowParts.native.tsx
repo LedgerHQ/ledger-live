@@ -1,6 +1,12 @@
 import React from "react";
 import { ListItem, Spot } from "@ledgerhq/lumen-ui-rnative";
-import { Asterisk, ExitLogout, Question, Settings } from "@ledgerhq/lumen-ui-rnative/symbols";
+import {
+  Asterisk,
+  ExitLogout,
+  Information,
+  Question,
+  Settings,
+} from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { MoreRowId } from "../types";
 
 export { ListItemContent, ListItemLeading, ListItemTitle } from "@ledgerhq/lumen-ui-rnative";
@@ -11,6 +17,7 @@ const ROW_ICONS: Readonly<Record<MoreRowId, SpotIcon>> = {
   managePin: Asterisk,
   accessBaanx: Settings,
   help: Question,
+  legal: Information,
   logout: ExitLogout,
 };
 

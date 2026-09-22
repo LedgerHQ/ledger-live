@@ -26,9 +26,10 @@ export function useVerifyAddressViewModel({
 
   const handleVerify = useCallback(() => {
     onTrackEvent?.("button_clicked", {
-      button: "verify address",
+      button: "verify",
       buttonLocation: TRACK_LOCATION,
       page,
+      flow: "request",
     });
     onVerify();
   }, [onVerify, onTrackEvent, page]);
@@ -38,6 +39,7 @@ export function useVerifyAddressViewModel({
       button: "got it",
       buttonLocation: TRACK_LOCATION,
       page,
+      flow: "request",
     });
     onGotIt();
   }, [onGotIt, onTrackEvent, page]);

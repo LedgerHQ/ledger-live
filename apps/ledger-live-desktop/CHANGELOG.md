@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 4.21.1
+
+### Patch Changes
+
+- [#22339](https://github.com/LedgerHQ/ledger-live/pull/22339) [`d97a9f6`](https://github.com/LedgerHQ/ledger-live/commit/d97a9f6592a971e39daeb8bfd71b536e7b5842b1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - LWD 4.21.1 release notes
+
+## 4.21.1-hotfix.0
+
+### Patch Changes
+
+- [#22339](https://github.com/LedgerHQ/ledger-live/pull/22339) [`d97a9f6`](https://github.com/LedgerHQ/ledger-live/commit/d97a9f6592a971e39daeb8bfd71b536e7b5842b1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - LWD 4.21.1 release notes
+
 ## 4.21.0
 
 ### Minor Changes

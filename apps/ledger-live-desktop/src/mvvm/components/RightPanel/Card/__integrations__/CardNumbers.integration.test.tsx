@@ -6,7 +6,9 @@ import { act, render, screen } from "tests/testSetup";
 import { Card } from "../Card";
 
 const CARD_DETAILS_TOKEN_URL = `${getEnv("CARD_BAANX_API_URL")}/v1/card/details/token`;
-const signedIn = { payCardAuth: { hasCard: true, status: "signedIn" as const } };
+const signedIn = {
+  payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const },
+};
 
 async function finishCardNumbersReveal() {
   const image = await screen.findByRole("img", { name: "Card numbers", hidden: true });

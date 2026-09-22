@@ -1,5 +1,5 @@
 import React from "react";
-import { Linking, Pressable, Text } from "react-native";
+import { Pressable, Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { getEnv, getEnvDefault, setEnv } from "@shared/env";
@@ -67,7 +67,6 @@ function PayTabViewModelProbe() {
       <Text testID="has-access-baanx">
         {String(typeof cardSettingsActions?.onAccessBaanx === "function")}
       </Text>
-      <Pressable testID="press-help" onPress={cardSettingsActions?.onHelp} />
       <Pressable testID="press-manage-pin" onPress={cardSettingsActions?.onManagePin} />
       <Pressable testID="press-access-baanx" onPress={cardSettingsActions?.onAccessBaanx} />
     </>
@@ -269,17 +268,6 @@ describe("usePayTabViewModel", () => {
 
     expect(screen.getByTestId("has-manage-pin")).toHaveTextContent("true");
     expect(screen.getByTestId("has-access-baanx")).toHaveTextContent("true");
-  });
-
-  it("should open the card help center article externally", async () => {
-    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-    const { user } = renderViewModel();
-
-    await user.press(screen.getByTestId("press-help"));
-
-    expect(openURL).toHaveBeenCalledWith("https://support.ledger.com/article/5283612250653-zd");
-
-    openURL.mockRestore();
   });
 
   it("should open the manage PIN hosted page in the secure browser", async () => {
