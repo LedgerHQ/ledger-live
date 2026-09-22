@@ -8,14 +8,14 @@ import {
   selectHasSeenReceiveVerifyHint,
 } from "@features/flow-pay-request/state";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { track } from "~/renderer/analytics/segment";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useCopyToClipboard } from "../../../hooks/useCopyToClipboard";
 import { useOpenAssetAndAccount } from "../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { deriveRequestReceiveData } from "./deriveRequestReceiveData";
 import { useSaveRequestReceive } from "./useSaveRequestReceive";
 import type { PayVerifySelection } from "./usePayTabVerifyAddress";
 
-const REQUEST_PAGE = "Pay";
+const REQUEST_PAGE = "Request complete";
 const VERIFY_HINT = "verify";
 
 // Card top-ups only support stablecoins; filter MAD server-side by category so the
@@ -42,6 +42,8 @@ export function usePayTabRequestReceive(
   const { openAssetAndAccount } = useOpenAssetAndAccount();
 
   const open = useCallback(() => {
+    dispatch(setFlowValue("request"));
+    dispatch(setSourceValue("pay"));
     openAssetAndAccount({
       categories: REQUEST_CATEGORIES,
       onSuccess: (account, parentAccount) => {
@@ -49,7 +51,7 @@ export function usePayTabRequestReceive(
         setIsOpen(true);
       },
     });
-  }, [openAssetAndAccount]);
+  }, [dispatch, openAssetAndAccount]);
 
   const onClose = useCallback(() => setIsOpen(false), []);
 
@@ -62,22 +64,24 @@ export function usePayTabRequestReceive(
   }, [dispatch]);
 
   const onHintShown = useCallback(() => {
-    track("hint_impression", {
+    onTrackEvent?.("hint_impression", {
       hint: VERIFY_HINT,
       buttonLocation: "request",
       page: REQUEST_PAGE,
+      flow: "request",
     });
-  }, []);
+  }, [onTrackEvent]);
 
   const onGotIt = useCallback(() => {
-    track("button_clicked", {
+    onTrackEvent?.("button_clicked", {
       button: "got it",
       hint: VERIFY_HINT,
       buttonLocation: "request",
       page: REQUEST_PAGE,
+      flow: "request",
     });
     markHintSeen();
-  }, [markHintSeen]);
+  }, [markHintSeen, onTrackEvent]);
 
   const handleVerify = useCallback(() => {
     if (!selection) return;

@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact } from "@domain/entity-contact";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -12,6 +13,7 @@ export function usePaySelectContactViewModel() {
   useHideTabBar();
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const { trackButtonClicked } = usePayAnalyticsContext();
   const { open, contactAddressPicker } = usePayTabNewPayment();
   const title = t("payTab.contacts.seeAllTitle");
 
@@ -25,14 +27,20 @@ export function usePaySelectContactViewModel() {
         return;
       }
 
+      trackButtonClicked({
+        button: "send to contact",
+        buttonLocation: "contacts",
+        page: "Pay",
+      });
       open(contact);
     },
-    [navigation, open],
+    [navigation, open, trackButtonClicked],
   );
 
   return {
     title,
     onSelectContact,
     contactAddressPicker,
+    trackRecipientAddressSelection: contactAddressPicker.isOpen,
   };
 }

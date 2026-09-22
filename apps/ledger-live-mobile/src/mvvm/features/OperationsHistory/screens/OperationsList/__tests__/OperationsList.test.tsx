@@ -8,6 +8,7 @@ import type { OperationsHistoryNavigatorParamsList } from "LLM/features/Operatio
 import type { State } from "~/reducers/types";
 import { ScreenName } from "~/const/navigation";
 import OperationsList from "../index";
+import { HISTORY_TAB_CARD } from "LLM/features/OperationsHistory/constants";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 function withTwoCalendarDaySections(account: Account): Account {
@@ -96,6 +97,7 @@ const renderOperationsListWithParams = (
 describe("OperationsList", () => {
   beforeEach(() => {
     mockSetOptions.mockClear();
+    jest.mocked(screen).mockClear();
   });
 
   it("tracks the OperationsList screen on focus", () => {
@@ -109,6 +111,25 @@ describe("OperationsList", () => {
       false,
       false,
     );
+  });
+
+  it("does not track OperationsList when the card tab is shown", () => {
+    render(
+      <Stack.Navigator>
+        <Stack.Screen
+          name={ScreenName.OperationsList}
+          component={OperationsList}
+          initialParams={{ historyTab: HISTORY_TAB_CARD }}
+        />
+      </Stack.Navigator>,
+      {
+        overrideInitialState: withFlagOverrides({
+          lwmPayTab: { enabled: true },
+        }),
+      },
+    );
+
+    expect(screen).not.toHaveBeenCalled();
   });
 
   it("does not register the transaction history options menu when the dust filter feature flag is disabled", () => {
@@ -163,7 +184,8 @@ describe("OperationsList", () => {
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "card",
-      page: "OperationsList",
+      buttonLocation: "history tabs",
+      page: "History",
     });
     expect(getByTestId("card-history-signed-out-state")).toBeVisible();
     expect(queryByTestId("operations-list-section-list")).toBeNull();

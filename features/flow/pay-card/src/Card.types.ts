@@ -39,6 +39,7 @@ export type CardDisplayState = "resolving" | "signedOut" | "signedIn";
 
 export type CardViewProps = {
   readonly title: string;
+  readonly disclaimer: string;
   readonly login: CardLoginProps;
   /** Which face to show. The children are mutually exclusive, so the view switches on this. */
   readonly displayState: CardDisplayState;

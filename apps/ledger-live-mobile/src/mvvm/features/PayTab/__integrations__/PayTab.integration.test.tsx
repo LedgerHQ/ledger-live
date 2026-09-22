@@ -120,6 +120,13 @@ describe("PayTab integration", () => {
       expect(screen.getByTestId("paytab-screen")).toBeVisible();
       expect(screen.queryByText(FEATURE_TOUR_ROW)).toBeNull();
     });
+
+    it("should show the disclaimer at the bottom of the screen", () => {
+      renderPayTab();
+
+      expect(screen.getByTestId("pay-disclaimer")).toBeVisible();
+      expect(screen.getByText("Disclaimer placeholder")).toBeVisible();
+    });
   });
 
   describe("balance", () => {
@@ -232,19 +239,25 @@ describe("PayTab integration", () => {
 
       await user.press(await screen.findByTestId("action-tile-deposit"));
 
-      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "deposit",
-        buttonLocation: "quick action",
-        page: "Pay",
-      });
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "deposit",
+          buttonLocation: "quick action",
+          page: "Pay",
+        }),
+      );
 
       await user.press(screen.getByTestId("action-tile-request"));
 
-      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "request",
-        buttonLocation: "quick action",
-        page: "Pay",
-      });
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "request",
+          buttonLocation: "quick action",
+          page: "Pay",
+        }),
+      );
     });
 
     it("should track the Pay page with the active balance filter on view", async () => {
@@ -253,7 +266,7 @@ describe("PayTab integration", () => {
       await waitFor(() => {
         const [category, , properties] = jest.mocked(trackScreen).mock.calls[0] ?? [];
         expect(category).toBe("Pay");
-        expect(properties).toEqual(expect.objectContaining({ balance_filter: "all" }));
+        expect(properties).toEqual(expect.objectContaining({ balanceFilter: "all" }));
       });
     });
 
@@ -273,10 +286,10 @@ describe("PayTab integration", () => {
       await user.press(pill);
 
       expect(await screen.findByTestId("pay-card-balance-filter-picker")).toBeVisible();
-      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "balance filter",
-        page: "Pay",
-      });
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({ button: "balance filter", page: "Pay" }),
+      );
     });
 
     it("should persist the selected stablecoin, update the hero pill and track the confirmation", async () => {
@@ -294,11 +307,14 @@ describe("PayTab integration", () => {
       const pill = screen.getByTestId("pay-card-balance-filter-pill");
       expect(within(pill).getByText("USDC")).toBeVisible();
 
-      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "confirm balance filter",
-        asset: "USDC",
-        page: "Pay",
-      });
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "confirm balance filter",
+          asset: "USDC",
+          page: "Pay",
+        }),
+      );
     });
   });
 
@@ -356,12 +372,18 @@ describe("PayTab integration", () => {
 
       await openBankTransferIntro(user);
 
-      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "bank transfer",
-        buttonLocation: "deposit",
-        page: "Pay",
-      });
-      expect(jest.mocked(track)).toHaveBeenCalledWith("Page cash to stable", { flow: "C2S" });
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "bank transfer",
+          buttonLocation: "deposit",
+          page: "Pay",
+        }),
+      );
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "Page cash to stable",
+        expect.objectContaining({ flow: "C2S" }),
+      );
     });
 
     it("should open Noah when Create an account is pressed", async () => {
@@ -371,16 +393,22 @@ describe("PayTab integration", () => {
       await user.press(screen.getByRole("button", { name: "Create an account" }));
 
       expect(await screen.findByText(`${ScreenName.ReceiveProvider}:noah`)).toBeVisible();
-      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "create an account",
-        flow: "C2S",
-        page: "cash to stable",
-      });
-      expect(jest.mocked(track)).not.toHaveBeenCalledWith("button_clicked", {
-        button: "close",
-        flow: "C2S",
-        page: "cash to stable",
-      });
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "create an account",
+          flow: "C2S",
+          page: "cash to stable",
+        }),
+      );
+      expect(jest.mocked(track)).not.toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "close",
+          flow: "C2S",
+          page: "cash to stable",
+        }),
+      );
     });
 
     it("should open Noah when Log in to Noah is pressed", async () => {
@@ -390,11 +418,14 @@ describe("PayTab integration", () => {
       await user.press(screen.getByRole("button", { name: "Log in to Noah" }));
 
       expect(await screen.findByText(`${ScreenName.ReceiveProvider}:noah`)).toBeVisible();
-      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "log in to noah",
-        flow: "C2S",
-        page: "cash to stable",
-      });
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "log in to noah",
+          flow: "C2S",
+          page: "cash to stable",
+        }),
+      );
     });
   });
 
@@ -408,7 +439,7 @@ describe("PayTab integration", () => {
         expect(store.getState().modularDrawer).toMatchObject({
           isOpen: true,
           flow: "request",
-          source: "Pay",
+          source: "pay",
           categories: [AssetCategory.Stablecoins],
           enableAccountSelection: true,
         });
@@ -507,7 +538,7 @@ describe("PayTab integration", () => {
       expect(store.getState().modularDrawer).toMatchObject({
         isOpen: true,
         flow: "send",
-        source: "Pay",
+        source: "pay",
         preselectedCurrencies: [address.currencyId],
       });
 

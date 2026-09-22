@@ -2,11 +2,13 @@ import React from "react";
 import { I18nTestProvider } from "@shared/i18n/testing";
 
 export const CARD_TITLE = "Crypto card";
+export const CARD_DISCLAIMER = "Disclaimer placeholder";
 
 const CARD_RESOURCES = {
   en: {
     translation: {
       payTab: {
+        disclaimer: CARD_DISCLAIMER,
         card: {
           title: CARD_TITLE,
           balanceLabel: "Balance",

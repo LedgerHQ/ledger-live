@@ -13,6 +13,7 @@ import {
   buildWithdrawalPath,
   buildAccessBaanxPath,
   buildManagePinPath,
+  buildAddAssetPath,
   openHostedUrlInSecureBrowser,
   openHostedCardPathSafely,
   type CardAssetPathBuilder,
@@ -21,6 +22,7 @@ import {
 import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
 import { useContactsFeature } from "@features/platform-contacts";
+import { useTranslation } from "@shared/i18n";
 import type { CardAssetRow, CardAssetsProps } from "@features/flow-pay-card-assets";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { NavigatorName, ScreenName } from "~/const";
@@ -38,15 +40,18 @@ import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
 export function usePayTabViewModel() {
+  const analytics = usePayAnalyticsContext();
+  const { t } = useTranslation();
   const { top, bottom } = useNavigationBarHeights();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
-  const balance = usePayCardBalance();
+  const balance = usePayCardBalance(analytics.trackEvent);
   const deposit = usePayTabDepositOptions(balance.onTrackEvent);
   const request = usePayTabRequestReceive();
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
@@ -152,6 +157,12 @@ export function usePayTabViewModel() {
     [openHostedPath],
   );
 
+  const onAddAsset = useCallback(
+    () =>
+      openHostedPath(buildAddAssetPath, () => console.warn("[card] add asset page did not open")),
+    [openHostedPath],
+  );
+
   const cardSettingsActions: CardSettingsActions = useMemo(
     () => ({ onManagePin, onAccessBaanx }),
     [onManagePin, onAccessBaanx],
@@ -173,8 +184,9 @@ export function usePayTabViewModel() {
       onShowHistory: onShowAssetHistory,
       onTopUp: asset => void openTopUp(asset.currency),
       onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
+      onAddAsset,
     }),
-    [payCardAssets, onShowAssetHistory, openAssetPage, openTopUp],
+    [payCardAssets, onShowAssetHistory, openAssetPage, openTopUp, onAddAsset],
   );
 
   // Without a countervalue formatter the flow shows the bare artwork instead of the card's balance.
@@ -200,5 +212,7 @@ export function usePayTabViewModel() {
     bankTransferIntro: deposit.bankTransferIntro,
     onShowMore,
     cardSettingsActions,
+    trackRecipientAddressSelection: isContactsEnabled && payment.contactAddressPicker.isOpen,
+    disclaimer: t("payTab.disclaimer"),
   };
 }

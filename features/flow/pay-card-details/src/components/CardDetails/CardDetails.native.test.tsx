@@ -30,6 +30,7 @@ const assets = {
   currencies: new Map(),
   priceWallet: () => 125.4,
   formatCountervalue: (value: number) => `$${value}`,
+  onAddAsset: jest.fn(),
 };
 let track = jest.fn();
 

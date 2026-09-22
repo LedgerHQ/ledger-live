@@ -299,7 +299,13 @@ function getPayTabRenderInput({
         ...state,
         payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour },
         ...(signedInCard
-          ? { payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const } }
+          ? {
+              payCardAuth: {
+                hasCard: true,
+                pendingLoginType: null,
+                status: "signedIn" as const,
+              },
+            }
           : {}),
         ...(contacts ? { contacts: { contacts } } : {}),
       };

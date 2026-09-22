@@ -8,6 +8,7 @@ import type { CardViewProps } from "./Card.types";
 
 export function CardView({
   title,
+  disclaimer,
   login,
   displayState,
   cardVisual,
@@ -17,10 +18,12 @@ export function CardView({
   onTopUp,
   cardSettingsActions,
 }: CardViewProps) {
+  const isSignedIn = displayState === "signedIn";
+
   return (
     <section aria-label={title} className="flex min-h-full flex-col gap-16">
       <p className="heading-5-semi-bold text-base">{title}</p>
-      {displayState === "signedIn" ? (
+      {isSignedIn ? (
         <>
           <CardOnboardingWidget onTopUp={onTopUp} />
           <CardDetails
@@ -40,11 +43,6 @@ export function CardView({
             }}
             onShowMore={onShowMore}
           />
-          {onTopUp ? (
-            <div className="sticky bottom-0 mt-auto bg-canvas py-16">
-              <CardTopUpButton onTopUp={onTopUp} />
-            </div>
-          ) : null}
         </>
       ) : (
         <>
@@ -53,6 +51,19 @@ export function CardView({
           <CardLogin key={login.oauthConfig.apiUrl} {...login} />
         </>
       )}
+      <p
+        className={
+          isSignedIn ? "body-4 text-center text-muted" : "mt-auto body-4 text-center text-muted"
+        }
+        data-testid="pay-card-disclaimer"
+      >
+        {disclaimer}
+      </p>
+      {isSignedIn && onTopUp ? (
+        <div className="sticky bottom-0 mt-auto py-16">
+          <CardTopUpButton onTopUp={onTopUp} />
+        </div>
+      ) : null}
     </section>
   );
 }

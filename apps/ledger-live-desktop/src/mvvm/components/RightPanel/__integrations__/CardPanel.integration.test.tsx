@@ -40,6 +40,7 @@ describe("RightPanel card integration", () => {
     const panel = screen.getByRole("region", { name: "Crypto card" });
     expect(panel).toContainElement(item);
     expect(panel.parentElement).toHaveClass("overflow-y-auto");
+    expect(within(panel).getByText("Disclaimer placeholder")).toBeVisible();
   });
 
   it("should format the transaction amounts with the Desktop formatter", async () => {
