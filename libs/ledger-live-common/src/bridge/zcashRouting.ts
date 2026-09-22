@@ -53,12 +53,15 @@ export function resolveFamily(currency: CryptoCurrency): string {
  * answer is gated on the flag: accounts are deserialized at app startup, before the host app
  * has mirrored the flag, so a flag-gated router reads `false` there regardless.
  *
- * Hosts that register a reduced set of coin modules (wallet-cli registers bitcoin, evm and
- * solana only) have no `zcash` family to route a mock id to, so they fall back to
- * `currency.family` and keep coin-bitcoin's adapter instead of failing with
- * `CurrencyNotSupported` -- exactly what a real account id already does unconditionally.
- * Unlike the feature flag, the registry is populated at host startup before any account is
- * deserialized, so this stays a safe thing to read here.
+ * A mock id on a host that registers a reduced set of coin modules (wallet-cli registers
+ * bitcoin, evm and solana only) has no `zcash` family to route to either, so it falls back to
+ * `currency.family` too -- but that fallback does *not* carry the same guarantee a real
+ * account id gets from staying on `currency.family`: `getAccountBridgeByFamily` still treats it
+ * as a mock id and resolves coin-bitcoin's *mock* bridge, which (as above) declares no assign
+ * hooks at all. So this combination only avoids throwing `CurrencyNotSupported`; it does not
+ * preserve `privateInfo` or `bitcoinResources`. No real host is known to combine mock ids with
+ * a reduced registry (mock mode is a dev/test path that registers every coin module), so this
+ * is a defensive fallback rather than a supported data-preserving path.
  */
 export function resolveSerializationFamily(currency: CryptoCurrency, accountId: string): string {
   if (!isZcash(currency)) return currency.family;
