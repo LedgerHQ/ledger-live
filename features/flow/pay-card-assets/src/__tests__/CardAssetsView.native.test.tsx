@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { fireEvent, render, screen, userEvent } from "@testing-library/react-native";
 import { CardAssetsManageDrawer } from "../CardAssetsManageDrawer.native";
 import { CardAssetsView } from "../CardAssetsView.native";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
@@ -158,9 +158,15 @@ describe("CardAssetsView (native)", () => {
   it("should show managed assets and add another asset", async () => {
     const user = userEvent.setup();
     const onAddAsset = jest.fn();
-    render(<CardAssetsManageDrawer rows={ready.rows} onAddAsset={onAddAsset} />, {
-      wrapper: I18nWrapper,
-    });
+    render(
+      <CardAssetsManageDrawer
+        rows={ready.rows}
+        onAddAsset={onAddAsset}
+        onMoveAsset={jest.fn()}
+        reorderingAssetId={null}
+      />,
+      { wrapper: I18nWrapper },
+    );
 
     expect(screen.getByText(CARD_ASSETS_COPY.manageDialogTitle)).toBeVisible();
     expect(screen.getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
@@ -170,5 +176,39 @@ describe("CardAssetsView (native)", () => {
     await user.press(screen.getByText(CARD_ASSETS_COPY.addAsset));
 
     expect(onAddAsset).toHaveBeenCalledTimes(1);
+  });
+
+  it("should hide the add asset action when the host does not provide it", () => {
+    render(
+      <CardAssetsManageDrawer
+        rows={ready.rows}
+        onMoveAsset={jest.fn()}
+        reorderingAssetId={null}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    expect(screen.queryByText(CARD_ASSETS_COPY.addAssetCaption)).not.toBeOnTheScreen();
+    expect(screen.queryByText(CARD_ASSETS_COPY.addAsset)).not.toBeOnTheScreen();
+  });
+
+  it("should expose native move actions on each reorder handle", () => {
+    const onMoveAsset = jest.fn();
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(
+      <CardAssetsManageDrawer
+        rows={[usdc, bitcoin]}
+        onAddAsset={jest.fn()}
+        onMoveAsset={onMoveAsset}
+        reorderingAssetId={null}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    fireEvent(screen.getByTestId("card-asset-reorder-handle-w-btc"), "accessibilityAction", {
+      nativeEvent: { actionName: "decrement" },
+    });
+
+    expect(onMoveAsset).toHaveBeenCalledWith("w-btc", 0);
   });
 });
