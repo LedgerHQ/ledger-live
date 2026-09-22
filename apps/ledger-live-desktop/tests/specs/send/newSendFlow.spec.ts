@@ -1510,7 +1510,7 @@ test.describe("New Send Flow", () => {
         });
       });
 
-      test("should not show fee-selection, custom-fee, or coin-control affordances in any pool selection", async ({
+      test("should render a fixed fee row with no fee-selection affordance in any pool selection", async ({
         app,
         page,
       }) => {
@@ -1519,12 +1519,13 @@ test.describe("New Send Flow", () => {
             await reachRecipientStepViaBalanceType(app, page, ACCOUNT_NAMES.zcash, poolOptionId);
             await app.newSendFlow.reachAmountStep(TEST_ADDRESSES.zcashTransparent);
             await app.newSendFlow.fillCryptoAmount("0.001");
-            // Anchor: the fees row itself must be mounted, so the following absence
-            // assertions are checked against a rendered step rather than one not there yet.
-            await expect(page.getByTestId("send-network-fees-row")).toBeVisible();
-            await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
-            await expect(app.newSendFlow.customFeesMenuItem).toBeHidden();
-            await expect(app.newSendFlow.coinControlFeesMenuItem).toBeHidden();
+            const feesRow = page.getByTestId("send-network-fees-row");
+            await expect(feesRow).toBeVisible();
+            // ZIP-317 has one conventional fee, not a menu: assert the row itself renders no
+            // button descendant, rather than only that its trigger is hidden -- that alone
+            // would pass just as well on a Bitcoin account that simply never opened the menu,
+            // since custom-fee/coin-control items only mount once the menu is open.
+            await expect(feesRow.getByRole("button")).toHaveCount(0);
             await app.newSendFlow.closeButton.click();
           });
         }
