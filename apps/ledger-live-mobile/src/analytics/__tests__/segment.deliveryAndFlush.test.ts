@@ -332,7 +332,7 @@ describe("segment analytics delivery", () => {
         expect.objectContaining({
           eventName: "[Identify]",
           eventProperties: { userIdPresent: expect.any(Boolean) },
-          deliveryStatus: "failed",
+          deliveryStatus: "failed_tracking",
         }),
       ]);
     });

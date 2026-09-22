@@ -16,7 +16,6 @@ import snakeCase from "lodash/snakeCase";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { FeatureId, Features } from "@shared/feature-flags";
 import {
-  analyticsEvents$,
   flush as sharedFlush,
   publishAnalyticsEvent,
   setAnalytics,
@@ -26,7 +25,6 @@ import {
   track as sharedTrack,
   trackPage as sharedTrackPage,
 } from "@shared/analytics";
-import type { DeliveryStatus, LoggableEvent as SharedLoggableEvent } from "@shared/analytics";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import {
@@ -681,15 +679,8 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
   }
 };
 
-type Properties = Error | Record<string, unknown> | null;
-export type LoggableEvent = Omit<
-  SharedLoggableEvent,
-  "eventProperties" | "eventPropertiesWithoutExtra"
-> & {
-  eventProperties?: Properties;
-  eventPropertiesWithoutExtra?: Properties;
-};
-export const trackSubject = analyticsEvents$;
+export type { LoggableEvent } from "@shared/analytics";
+export { analyticsEvents$ as trackSubject } from "@shared/analytics";
 
 const wrapSegmentClientFlush = (client: SegmentClient) => {
   const originalFlush = client.flush.bind(client);
