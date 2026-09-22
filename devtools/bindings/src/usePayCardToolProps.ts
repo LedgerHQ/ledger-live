@@ -4,7 +4,26 @@ import {
   useGetInternalWalletsQuery,
   useLazyGetCardStatusQuery,
   useCreateCardDetailsTokenMutation,
+  cardManagementApi,
 } from "@domain/api-card-management";
+import {
+  clearPayCardTransactionsMock,
+  emptyPayCardTransactionsMock,
+  fillPayCardTransactionsMock,
+  readPayCardTransactionsMock,
+  receivePayCardTransactionMock,
+  type PayCardMockTransactionAsset,
+} from "@domain/api-card-management/mock/card-transactions";
+import {
+  clearPayCardWalletsMock,
+  emptyPayCardWalletsMock,
+  fillPayCardWalletsMock,
+  fundPayCardWalletMock,
+  readPayCardReorderMockEnabled,
+  readPayCardWalletsMock,
+  setPayCardReorderMockEnabled,
+  type PayCardMockWalletAsset,
+} from "@domain/api-card-management/mock/card-wallets";
 import { BAANX_ASSET_LEDGER_IDS } from "@domain/entity-card-asset-mapping";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
@@ -134,7 +153,12 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const setCardParam = useCallback(
     (card: boolean) => {
       const params = { card, legacyTopUp: legacyTopUpParam };
-      dispatch(setOverride({ key: payTabKey, value: { enabled: payTabEnabled, params } }));
+      dispatch(
+        setOverride({
+          key: payTabKey,
+          value: { enabled: payTabEnabled, params },
+        }),
+      );
     },
     [dispatch, legacyTopUpParam, payTabEnabled, payTabKey],
   );
@@ -185,7 +209,9 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   // developer who opened DevTools for something else should not have a session sent to them. Both
   // hosts mock them, so the screen works on either once it has asked.
   const [onboardingRequested, setOnboardingRequested] = useState(false);
-  const onboardingStatus = useCardOnboardingStatus({ skip: !onboardingRequested });
+  const onboardingStatus = useCardOnboardingStatus({
+    skip: !onboardingRequested,
+  });
   const { data: derivedOnboarding, refresh: refreshStatus } = onboardingStatus;
 
   const refreshCardOnboarding = useCallback(() => {
@@ -281,6 +307,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   );
 
   const [walletsRequested, setWalletsRequested] = useState(false);
+  const [, setMockVersion] = useState(0);
   const skipWallets = !walletsRequested;
 
   const linkedWallets = useCardLinkedWallets({
@@ -296,6 +323,24 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     refetchWallets();
   }, [refetchWallets]);
 
+  const updateWallets = useCallback(
+    (update: () => void) => {
+      update();
+      setWalletsRequested(true);
+      setMockVersion(version => version + 1);
+      dispatch(cardManagementApi.util.invalidateTags(["InternalWallets", "CardLinkedWallets"]));
+    },
+    [dispatch],
+  );
+  const walletMock = {
+    available: isRequestMockingEnabled(),
+    isOverridden: readPayCardWalletsMock() !== undefined,
+    fill: () => updateWallets(fillPayCardWalletsMock),
+    empty: () => updateWallets(emptyPayCardWalletsMock),
+    fund: (asset: PayCardMockWalletAsset) => updateWallets(() => fundPayCardWalletMock(asset)),
+    clear: () => updateWallets(clearPayCardWalletsMock),
+  };
+
   const { data: linked, error: linkedError } = useGetCardLinkedWalletsQuery(undefined, {
     skip: skipWallets,
   });
@@ -310,7 +355,10 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
         { endpoint: "GET /v1/wallet/internal", error: internalError },
       ]
         .filter(({ error }) => error !== undefined)
-        .map(({ endpoint, error }) => ({ endpoint, detail: describeError(error) })),
+        .map(({ endpoint, error }) => ({
+          endpoint,
+          detail: describeError(error),
+        })),
     [linkedError, internalError],
   );
 
@@ -321,11 +369,46 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       combinedWallets: linkedWallets.wallets.map(toCombinedWallet),
       isFetching: linkedWallets.isFetching,
       errors,
+      mock: walletMock,
       load: loadWallets,
       refresh: refreshWallets,
     }),
-    [internal, linked, linkedWallets, errors, loadWallets, refreshWallets],
+    [internal, linked, linkedWallets, errors, walletMock, loadWallets, refreshWallets],
   );
+
+  const updateTransactions = useCallback(
+    (update: () => void) => {
+      update();
+      setMockVersion(version => version + 1);
+      dispatch(cardManagementApi.util.invalidateTags(["CardTransactions"]));
+    },
+    [dispatch],
+  );
+  const setReorderEnabled = useCallback(
+    (enabled: boolean) => {
+      setPayCardReorderMockEnabled(enabled);
+      setMockVersion(version => version + 1);
+      dispatch(cardManagementApi.util.invalidateTags(["CardLinkedWallets"]));
+    },
+    [dispatch],
+  );
+  const reorder = {
+    available: isRequestMockingEnabled(),
+    enabled: readPayCardReorderMockEnabled(),
+    setEnabled: setReorderEnabled,
+  };
+
+  const mockedTransactions = readPayCardTransactionsMock();
+  const transactions = {
+    available: isRequestMockingEnabled(),
+    isOverridden: mockedTransactions !== undefined,
+    count: mockedTransactions?.length ?? 0,
+    fill: () => updateTransactions(fillPayCardTransactionsMock),
+    empty: () => updateTransactions(emptyPayCardTransactionsMock),
+    receive: (asset: PayCardMockTransactionAsset) =>
+      updateTransactions(() => receivePayCardTransactionMock(asset)),
+    clear: () => updateTransactions(clearPayCardTransactionsMock),
+  };
 
   return useMemo(
     () => ({
@@ -333,6 +416,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       cardOnboarding,
       interaction,
       balance,
+      transactions,
+      reorder,
       currencyMapping: CURRENCY_MAPPING_ROWS,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
@@ -350,6 +435,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       cardOnboarding,
       interaction,
       balance,
+      transactions,
+      reorder,
       hasSeenFeatureTour,
       resetFeatureTour,
       hasSeenReceiveVerifyHint,

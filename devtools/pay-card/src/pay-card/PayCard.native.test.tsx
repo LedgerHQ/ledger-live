@@ -39,8 +39,30 @@ function buildProps(): PayCardToolProps {
       combinedWallets: [],
       isFetching: false,
       errors: [],
+      mock: {
+        available: true,
+        isOverridden: false,
+        fill: jest.fn(),
+        empty: jest.fn(),
+        fund: jest.fn(),
+        clear: jest.fn(),
+      },
       load: jest.fn(),
       refresh: jest.fn(),
+    },
+    transactions: {
+      available: true,
+      isOverridden: false,
+      count: 0,
+      fill: jest.fn(),
+      empty: jest.fn(),
+      receive: jest.fn(),
+      clear: jest.fn(),
+    },
+    reorder: {
+      available: true,
+      enabled: false,
+      setEnabled: jest.fn(),
     },
     currencyMapping: [{ key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" }],
     hasSeenFeatureTour: false,
@@ -56,7 +78,10 @@ function buildProps(): PayCardToolProps {
 
 function buildAuth(): NonNullable<PayCardToolProps["auth"]> {
   return {
-    session: { accessToken: "at_fake_access_token", refreshToken: "rt_fake_refresh_token" },
+    session: {
+      accessToken: "at_fake_access_token",
+      refreshToken: "rt_fake_refresh_token",
+    },
     sessionError: null,
     busy: false,
     lastResult: { id: 1, message: "clear → cleared", failed: false },
@@ -89,10 +114,39 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("Card Debug")).toBeTruthy();
     expect(screen.getByText("Card interaction")).toBeTruthy();
     expect(screen.getByText("Balance & Wallets")).toBeTruthy();
+    expect(screen.getByText("Transactions")).toBeTruthy();
     expect(screen.getByText("Feature flags")).toBeTruthy();
+    expect(screen.getByText("MSW")).toBeTruthy();
+    expect(screen.getByText("Allow wallet reorder")).toBeTruthy();
     expect(screen.getByText("Feature tour")).toBeTruthy();
     expect(screen.getByText("Request verify hint")).toBeTruthy();
     expect(screen.getByText("Card login intro")).toBeTruthy();
+  });
+
+  it("receives a transaction for the selected asset", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    await user.press(screen.getByText("Transactions"));
+    await user.press(screen.getByText("Receive USDC"));
+
+    expect(props.transactions.receive).toHaveBeenCalledWith("usdc");
+  });
+
+  it("switches between full, empty, and provider transaction answers", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    await user.press(screen.getByText("Transactions"));
+    await user.press(screen.getByText("Full fixture"));
+    await user.press(screen.getByText("Empty list"));
+    await user.press(screen.getByText("Use provider"));
+
+    expect(props.transactions.fill).toHaveBeenCalledTimes(1);
+    expect(props.transactions.empty).toHaveBeenCalledTimes(1);
+    expect(props.transactions.clear).toHaveBeenCalledTimes(1);
   });
 
   it("resets the feature tour", async () => {
@@ -248,7 +302,13 @@ describe("PayCard (native)", () => {
       ledgerId: "ethereum/erc20/usd__coin",
     },
     // Resolved to nothing, so the screen has to say the pair is unmapped rather than blank.
-    { id: "w-sol", address: "sol-addr", currency: "sol", network: "solana", priority: 1 },
+    {
+      id: "w-sol",
+      address: "sol-addr",
+      currency: "sol",
+      network: "solana",
+      priority: 1,
+    },
   ];
 
   const combinedWallets = [
@@ -284,13 +344,44 @@ describe("PayCard (native)", () => {
     expect(load).toHaveBeenCalledTimes(1);
   });
 
+  it("funds one asset from the balance devtool", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+
+    render(<PayCard {...props} />);
+    await user.press(screen.getByText("Balance & Wallets"));
+    await user.press(screen.getByText("Fund USDC"));
+
+    expect(props.balance.mock.fund).toHaveBeenCalledWith("usdc");
+  });
+
+  it("switches between full, empty, and provider wallet balances", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+
+    render(<PayCard {...props} />);
+    await user.press(screen.getByText("Balance & Wallets"));
+    await user.press(screen.getByText("Fund all"));
+    await user.press(screen.getByText("Empty balances"));
+    await user.press(screen.getByText("Use provider"));
+
+    expect(props.balance.mock.fill).toHaveBeenCalledTimes(1);
+    expect(props.balance.mock.empty).toHaveBeenCalledTimes(1);
+    expect(props.balance.mock.clear).toHaveBeenCalledTimes(1);
+  });
+
   it("shows the two responses and the join under a section each", async () => {
     const user = userEvent.setup();
     const props = buildProps();
     render(
       <PayCard
         {...props}
-        balance={{ ...props.balance, baanxWallets, linkedWallets, combinedWallets }}
+        balance={{
+          ...props.balance,
+          baanxWallets,
+          linkedWallets,
+          combinedWallets,
+        }}
       />,
     );
 
@@ -336,7 +427,10 @@ describe("PayCard (native)", () => {
     render(
       <PayCard
         {...props}
-        balance={{ ...props.balance, baanxWallets: [{ ...withoutMemo, id: "w-nomemo" }] }}
+        balance={{
+          ...props.balance,
+          baanxWallets: [{ ...withoutMemo, id: "w-nomemo" }],
+        }}
       />,
     );
 
@@ -472,7 +566,10 @@ describe("PayCard (native)", () => {
     const { rerender } = render(
       <PayCard
         {...props}
-        interaction={{ ...props.interaction, details: { ...props.interaction.details, request } }}
+        interaction={{
+          ...props.interaction,
+          details: { ...props.interaction.details, request },
+        }}
       />,
     );
 
@@ -513,7 +610,10 @@ describe("PayCard (native)", () => {
     render(
       <PayCard
         {...props}
-        interaction={{ ...props.interaction, details: { ...props.interaction.details, clear } }}
+        interaction={{
+          ...props.interaction,
+          details: { ...props.interaction.details, clear },
+        }}
       />,
     );
 
@@ -567,7 +667,11 @@ describe("PayCard (native)", () => {
     render(
       <PayCard
         {...props}
-        cardOnboarding={{ ...props.cardOnboarding, steps: onboardingSteps, completedCount: 2 }}
+        cardOnboarding={{
+          ...props.cardOnboarding,
+          steps: onboardingSteps,
+          completedCount: 2,
+        }}
       />,
     );
 
@@ -586,7 +690,11 @@ describe("PayCard (native)", () => {
     render(
       <PayCard
         {...props}
-        cardOnboarding={{ ...props.cardOnboarding, steps: onboardingSteps, setStepDone }}
+        cardOnboarding={{
+          ...props.cardOnboarding,
+          steps: onboardingSteps,
+          setStepDone,
+        }}
       />,
     );
 
@@ -617,11 +725,18 @@ describe("PayCard (native)", () => {
   it("says so when the host is not intercepting requests, rather than offering a dead toggle", async () => {
     const user = userEvent.setup();
     const props = buildProps();
-    const steps = onboardingSteps.map(step => ({ ...step, canToggle: false }));
+    const steps = onboardingSteps.map(step => ({
+      ...step,
+      canToggle: false,
+    }));
     render(
       <PayCard
         {...props}
-        cardOnboarding={{ ...props.cardOnboarding, steps, isMockingEnabled: false }}
+        cardOnboarding={{
+          ...props.cardOnboarding,
+          steps,
+          isMockingEnabled: false,
+        }}
       />,
     );
 

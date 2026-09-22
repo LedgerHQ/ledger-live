@@ -257,7 +257,7 @@ describe("CardAssets (web)", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("should reorder assets with the drag handle and send every linked wallet", async () => {
+  it("should reorder assets by dragging a list item and send every linked wallet", async () => {
     let finishUpdate: (result: { success: boolean }) => void = () => {};
     mockUnwrapUpdate.mockReturnValue(
       new Promise(resolve => {

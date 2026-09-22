@@ -24,6 +24,7 @@ import { BalanceScreen } from "../components/Balance/Balance";
 import { CardOnboardingScreen } from "../components/CardOnboarding/CardOnboarding";
 import { CurrencyMappingScreen } from "../components/CurrencyMapping/CurrencyMapping";
 import { Interaction } from "../components/Interaction/Interaction";
+import { ReorderMock } from "../components/ReorderMock/ReorderMock";
 import { AuthSection } from "./AuthSection";
 
 function PayCard(props: Readonly<PayCardToolProps>) {
@@ -33,6 +34,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
     interaction,
     balance,
     currencyMapping,
+    reorder,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
     hasSeenReceiveVerifyHint,
@@ -163,6 +165,13 @@ function PayCard(props: Readonly<PayCardToolProps>) {
           onChange={flags.setPtxCardEnabled}
         />
       </Section>
+
+      {reorder.available ? (
+        <>
+          <Divider />
+          <ReorderMock {...reorder} />
+        </>
+      ) : null}
 
       <Divider />
 
