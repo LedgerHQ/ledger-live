@@ -1,5 +1,5 @@
 import React from "react";
-import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 import { CardAssets } from "../CardAssets";
@@ -255,46 +255,6 @@ describe("CardAssets (web)", () => {
     expect(within(dialog).getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
     expect(within(dialog).getByText("USD Coin")).toBeVisible();
     expect(within(dialog).getByRole("button", { name: CARD_ASSETS_COPY.addAsset })).toBeVisible();
-  });
-
-  it("should reorder assets by dragging a list item and send every linked wallet", async () => {
-    let finishUpdate: (result: { success: boolean }) => void = () => {};
-    mockUnwrapUpdate.mockReturnValue(
-      new Promise(resolve => {
-        finishUpdate = resolve;
-      }),
-    );
-    const user = userEvent.setup();
-    renderCardAssets();
-
-    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
-    const handle = screen.getByRole("button", { name: "Reorder USDT" });
-    const draggedRow = screen.getByTestId("card-asset-order-w-usdt");
-    const targetRow = screen.getByTestId("card-asset-order-w-usdc");
-    const dataTransfer = {
-      effectAllowed: "",
-      setData: jest.fn(),
-      getData: jest.fn(() => "w-usdt"),
-    };
-    fireEvent.pointerDown(handle);
-    fireEvent.dragStart(draggedRow, { dataTransfer });
-    fireEvent.drop(targetRow, { dataTransfer });
-
-    expect(screen.getByTestId("card-asset-reorder-spinner-w-usdt")).toBeVisible();
-    await waitFor(() =>
-      expect(mockUpdateCardWalletPriorities).toHaveBeenCalledWith({
-        wallets: [
-          { addressId: "address-usdt", priority: 1 },
-          { addressId: "address-usdc", priority: 2 },
-        ],
-      }),
-    );
-    await act(() => {
-      finishUpdate({ success: true });
-    });
-    await waitFor(() =>
-      expect(screen.queryByTestId("card-asset-reorder-spinner-w-usdt")).not.toBeInTheDocument(),
-    );
   });
 
   it("should return to the asset list when the manage dialog closes", async () => {

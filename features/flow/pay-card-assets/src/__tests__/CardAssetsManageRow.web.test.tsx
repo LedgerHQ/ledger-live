@@ -1,5 +1,7 @@
 import React from "react";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
+import { DndContext } from "@dnd-kit/core";
+import { SortableContext } from "@dnd-kit/sortable";
 import { CardAssetsManageRow } from "../CardAssetsManageRow.web";
 
 const row = {
@@ -15,72 +17,41 @@ const row = {
   countervalueAmount: 125.4,
 };
 
+function renderRow(props: Partial<React.ComponentProps<typeof CardAssetsManageRow>> = {}) {
+  return render(
+    <DndContext>
+      <SortableContext items={[row.id]}>
+        <CardAssetsManageRow
+          row={row}
+          showHandle
+          isReordering={false}
+          reorderLabel="Reorder USD Coin"
+          {...props}
+        />
+      </SortableContext>
+    </DndContext>,
+  );
+}
+
 describe("CardAssetsManageRow", () => {
   afterEach(cleanup);
 
-  it("should forward drag interactions from the asset row", () => {
-    const onDragStart = jest.fn();
-    const onDragEnd = jest.fn();
-    const onDragOver = jest.fn();
-    const onDrop = jest.fn();
-    const onPointerDown = jest.fn();
-
-    render(
-      <CardAssetsManageRow
-        row={row}
-        isReordering={false}
-        isReorderDisabled={false}
-        reorderLabel="Reorder USD Coin"
-        rowProps={{
-          "data-list-reorder-id": row.id,
-          draggable: true,
-          onDragStart,
-          onDragEnd,
-          onDragOver,
-          onDrop,
-        }}
-        handleProps={{ "aria-pressed": false, onKeyDown: jest.fn(), onPointerDown }}
-      />,
-    );
-
-    const handle = screen.getByRole("button", { name: "Reorder USD Coin" });
-    const assetRow = screen.getByTestId("card-asset-order-wallet-usdc");
-    fireEvent.pointerDown(handle);
-    fireEvent.dragStart(assetRow);
-    fireEvent.dragOver(assetRow);
-    fireEvent.drop(assetRow);
-    fireEvent.dragEnd(assetRow);
+  it("should show a drag handle labeled for the asset", () => {
+    renderRow();
 
     expect(screen.getByText("USD Coin")).toBeVisible();
-    expect(onPointerDown).toHaveBeenCalledTimes(1);
-    expect(onDragStart).toHaveBeenCalledTimes(1);
-    expect(onDragOver).toHaveBeenCalledTimes(1);
-    expect(onDrop).toHaveBeenCalledTimes(1);
-    expect(onDragEnd).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "Reorder USD Coin" })).toBeVisible();
+  });
+
+  it("should hide the handle for a single-asset list", () => {
+    renderRow({ showHandle: false });
+
+    expect(screen.queryByRole("button", { name: "Reorder USD Coin" })).not.toBeInTheDocument();
+    expect(screen.queryByTestId("card-asset-reorder-spinner-wallet-usdc")).not.toBeInTheDocument();
   });
 
   it("should replace the dragged row handle with its progress spinner", () => {
-    render(
-      <CardAssetsManageRow
-        row={row}
-        isReordering
-        isReorderDisabled
-        reorderLabel="Reorder USD Coin"
-        rowProps={{
-          "data-list-reorder-id": row.id,
-          draggable: false,
-          onDragStart: jest.fn(),
-          onDragEnd: jest.fn(),
-          onDragOver: jest.fn(),
-          onDrop: jest.fn(),
-        }}
-        handleProps={{
-          "aria-pressed": false,
-          onKeyDown: jest.fn(),
-          onPointerDown: jest.fn(),
-        }}
-      />,
-    );
+    renderRow({ isReordering: true });
 
     expect(screen.getByTestId("card-asset-reorder-spinner-wallet-usdc")).toBeVisible();
     expect(screen.queryByRole("button", { name: "Reorder USD Coin" })).not.toBeInTheDocument();

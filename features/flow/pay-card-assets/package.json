@@ -39,6 +39,9 @@
     "@shared/ui-list-reorder": "workspace:*"
   },
   "devDependencies": {
+    "@dnd-kit/core": "6.3.1",
+    "@dnd-kit/sortable": "10.0.0",
+    "@dnd-kit/utilities": "3.2.2",
     "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
@@ -74,6 +77,9 @@
     "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
+    "@dnd-kit/core": "6.3.1",
+    "@dnd-kit/sortable": "10.0.0",
+    "@dnd-kit/utilities": "3.2.2",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
@@ -87,6 +93,15 @@
       "optional": true
     },
     "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "@dnd-kit/core": {
+      "optional": true
+    },
+    "@dnd-kit/sortable": {
+      "optional": true
+    },
+    "@dnd-kit/utilities": {
       "optional": true
     }
   }
