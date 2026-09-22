@@ -44,12 +44,8 @@ export default function CosmosBridgeTransaction({ navigation, route }: Props) {
           account,
           transaction: bridge.updateTransaction(t, {
             mode: "undelegate",
-            validators: [
-              {
-                address: validator?.validatorAddress ?? "",
-                amount: BigNumber(0),
-              },
-            ],
+            valAddress: validator?.validatorAddress ?? "",
+            amount: BigNumber(0),
             recipient: mainAccount.freshAddress,
           }),
         };
@@ -58,7 +54,6 @@ export default function CosmosBridgeTransaction({ navigation, route }: Props) {
         account,
         transaction: bridge.updateTransaction(t, {
           mode: "redelegate",
-          validators: [],
         }),
       };
     }
