@@ -16,6 +16,8 @@ export type CardOnboardingStatusMock = {
   readonly hasCard?: boolean;
   /** `GET /v1/wallet/internal(/card_linked)`: whether the linked wallets hold anything. */
   readonly walletFunded?: boolean;
+  /** `GET /v1/card/status`: whether the card reads as added to Apple/Google Wallet. */
+  readonly cardAddedToDigitalWallet?: boolean;
 };
 
 let answers: CardOnboardingStatusMock = {};
@@ -42,7 +44,7 @@ export function setCardOnboardingStatusMock<Key extends keyof CardOnboardingStat
   answers = next;
 }
 
-/** Drops every answer, so all four endpoints answer from the provider again. */
+/** Drops every answer, so every endpoint answers from the provider again. */
 export function clearCardOnboardingStatusMock(): void {
   answers = {};
 }
@@ -54,7 +56,7 @@ export function mockPayCardUser(verified: boolean): PayCardUser {
   };
 }
 
-export function mockPayCardStatus(): PayCardStatus {
+export function mockPayCardStatus(cardAddedToDigitalWallet?: boolean): PayCardStatus {
   return {
     id: "card-mock",
     holderName: "Mock Holder",
@@ -63,5 +65,7 @@ export function mockPayCardStatus(): PayCardStatus {
     status: "ACTIVE",
     type: "VIRTUAL",
     orderedAt: "2026-01-01T00:00:00.000Z",
+    // Left off when unset, so the app reads it as a tenant that does not answer for the flag.
+    ...(cardAddedToDigitalWallet === undefined ? {} : { cardAddedToDigitalWallet }),
   };
 }

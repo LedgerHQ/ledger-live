@@ -1,9 +1,8 @@
 import { useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useTranslation } from "@shared/i18n";
 import { Android, Apple } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useGetCardStatusQuery } from "@domain/api-card-management";
 import { getWalletPlatform } from "../getWalletPlatform.native";
-import { markCardAddedToWallet } from "../../state";
 import { openGoogleWalletStore, openWalletApp } from "./openWalletApp";
 
 type WalletPlatformIcon = typeof Apple;
@@ -41,7 +40,7 @@ export function useAddToWalletInstructionsViewModel({
   onDone,
 }: Params): AddToWalletInstructionsViewProps {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const { refetch } = useGetCardStatusQuery();
   const [scene, setScene] = useState<"instructions" | "error">("instructions");
   const [isPending, setIsPending] = useState(false);
 
@@ -58,9 +57,11 @@ export function useAddToWalletInstructionsViewModel({
       return;
     }
 
-    dispatch(markCardAddedToWallet());
+    // Opening the wallet app is not the card being added: only the provider answers that, so ask
+    // it again rather than recording a yes here. Its answer may lag the holder finishing.
+    refetch();
     onDone();
-  }, [dispatch, onDone]);
+  }, [refetch, onDone]);
 
   const openStore = useCallback(async () => {
     setIsPending(true);
