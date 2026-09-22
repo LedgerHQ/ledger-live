@@ -17,18 +17,27 @@ export function PayTabView({
   depositOptions,
   bankTransferIntro,
   requestReceive,
-  verifyPhase,
   verifyAddress,
   deviceIntent,
   contacts,
   ledgerSyncIntroduction,
   contactAddressPicker,
   isContactsEnabled,
+  trackRequestAddressVerification,
+  trackRecipientAddressSelection,
 }: Readonly<PayTabViewModel>) {
   return (
     <div className="flex flex-col">
       <TrackPage category="Pay" balance_filter={balance.filter} />
-      {verifyPhase === "intro" && <TrackPage category="Request Address Verification" />}
+      {requestReceive.isOpen && requestReceive.address ? (
+        <TrackPage
+          category="Request complete"
+          flow="request"
+          asset={requestReceive.asset.ticker}
+          network={requestReceive.network}
+        />
+      ) : null}
+      {trackRequestAddressVerification && <TrackPage category="Request Address Verification" />}
       <div className="flex flex-col gap-24">
         <PayTabHeader />
         <Balance {...balance} actionTiles={actionTiles} />
@@ -37,6 +46,9 @@ export function PayTabView({
       {isContactsEnabled && (
         <>
           <Contacts {...contacts} />
+          {trackRecipientAddressSelection && (
+            <TrackPage category="Recipient address selection" refreshSource={false} />
+          )}
           <ContactAddressPicker {...contactAddressPicker} />
           <ContactsLedgerSyncIntroductionDialog {...ledgerSyncIntroduction} />
         </>
@@ -52,6 +64,7 @@ export function PayTabView({
           selection={deviceIntent.selection}
           onReady={deviceIntent.onReady}
           onExit={deviceIntent.onExit}
+          onTrackEvent={verifyAddress.onTrackEvent}
         />
       )}
       <FeatureTour />

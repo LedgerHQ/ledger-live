@@ -13,8 +13,7 @@ import { useNavigate } from "react-router";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
 import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecutor";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
-import { trackPage } from "@shared/analytics";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
 import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import PayTab from "LLD/features/PayTab";
@@ -47,6 +46,12 @@ const mockNavigate = jest.fn();
 
 jest.mock("../hooks/usePayStablecoins", () => ({
   usePayStablecoins: jest.fn(),
+}));
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 
 jest.mock("react-router", () => ({
@@ -226,10 +231,10 @@ describe("PayTab integration", () => {
     const dialog = await screen.findByTestId("pay-card-balance-filter-picker");
     expect(dialog).toHaveTextContent("USD Coin");
     expect(dialog).toHaveTextContent("Tether USD");
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "balance filter",
-      page: "Pay",
-    });
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "balance filter", page: "Pay" }),
+    );
   });
 
   it("should open the deposit options dialog from the deposit action tile", async () => {
@@ -265,12 +270,18 @@ describe("PayTab integration", () => {
   it("should track the deposit row and the cash-to-stable page when Bank transfer is selected", async () => {
     await openBankTransferIntro();
 
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "bank transfer",
-      buttonLocation: "deposit",
-      page: "Pay",
-    });
-    expect(mockedTrack).toHaveBeenCalledWith("Page cash to stable", { flow: "C2S" });
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "bank transfer",
+        buttonLocation: "deposit",
+        page: "Pay",
+      }),
+    );
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "Page cash to stable",
+      expect.objectContaining({ flow: "C2S" }),
+    );
   });
 
   it("should navigate to Noah when Create an account is clicked", async () => {
@@ -281,16 +292,22 @@ describe("PayTab integration", () => {
       pathname: "/bank",
       search: "?noahAuth=createAccount",
     });
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "create an account",
-      flow: "C2S",
-      page: "cash to stable",
-    });
-    expect(mockedTrack).not.toHaveBeenCalledWith("button_clicked", {
-      button: "close",
-      flow: "C2S",
-      page: "cash to stable",
-    });
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "create an account",
+        flow: "C2S",
+        page: "cash to stable",
+      }),
+    );
+    expect(mockedTrack).not.toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "close",
+        flow: "C2S",
+        page: "cash to stable",
+      }),
+    );
   });
 
   it("should navigate to Noah when Log in to Noah is clicked", async () => {
@@ -301,11 +318,14 @@ describe("PayTab integration", () => {
       pathname: "/bank",
       search: "?noahAuth=logIn",
     });
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "log in to noah",
-      flow: "C2S",
-      page: "cash to stable",
-    });
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "log in to noah",
+        flow: "C2S",
+        page: "cash to stable",
+      }),
+    );
   });
 
   it("should open the stablecoin-filtered send account selection from the new payment action tile", async () => {
@@ -353,11 +373,14 @@ describe("PayTab integration", () => {
     const pill = screen.getByTestId("pay-card-balance-filter-pill");
     expect(within(pill).getByText("USDC")).toBeVisible();
 
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "confirm balance filter",
-      asset: "USDC",
-      page: "Pay",
-    });
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "confirm balance filter",
+        asset: "USDC",
+        page: "Pay",
+      }),
+    );
   });
 
   it("should mount the DIE on verify and restore the request card once the address is confirmed", async () => {
@@ -425,21 +448,29 @@ describe("PayTab integration", () => {
       flushHintTimers();
 
       expect(screen.getByText(VERIFY_HINT_COPY)).toBeInTheDocument();
-      expect(mockedTrack).toHaveBeenCalledWith("hint_impression", {
-        hint: "verify",
-        buttonLocation: "request",
-        page: "Pay",
-      });
+      expect(mockedTrack).toHaveBeenCalledWith(
+        "hint_impression",
+        expect.objectContaining({
+          hint: "verify",
+          buttonLocation: "request",
+          flow: "request",
+          page: "Request complete",
+        }),
+      );
 
       await user.click(screen.getByRole("button", { name: "Got it" }));
 
       expect(screen.queryByText(VERIFY_HINT_COPY)).not.toBeInTheDocument();
-      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-        button: "got it",
-        hint: "verify",
-        buttonLocation: "request",
-        page: "Pay",
-      });
+      expect(mockedTrack).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "got it",
+          hint: "verify",
+          buttonLocation: "request",
+          flow: "request",
+          page: "Request complete",
+        }),
+      );
 
       await user.click(screen.getByRole("button", { name: /close/i }));
       await openRequestReceiveNow(user);

@@ -1,4 +1,5 @@
 import { useContactsFeature } from "@features/platform-contacts";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { usePayCardBalance } from "./hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "./hooks/usePayTabActionTiles";
 import { usePayTabContacts } from "./hooks/usePayTabContacts";
@@ -8,7 +9,8 @@ import { usePayTabNewPayment } from "./hooks/usePayTabNewPayment";
 import { usePayTabVerifyAddress } from "./hooks/usePayTabVerifyAddress";
 
 export function usePayTabViewModel() {
-  const balance = usePayCardBalance();
+  const analytics = usePayAnalyticsContext();
+  const balance = usePayCardBalance(analytics.trackEvent);
   const deposit = usePayTabDepositOptions(balance.onTrackEvent);
   const verify = usePayTabVerifyAddress(balance.onTrackEvent);
   const request = usePayTabRequestReceive(balance.onTrackEvent, verify.openIntro);
@@ -37,6 +39,8 @@ export function usePayTabViewModel() {
     ledgerSyncIntroduction,
     contactAddressPicker,
     isContactsEnabled,
+    trackRequestAddressVerification: verify.phase === "intro",
+    trackRecipientAddressSelection: isContactsEnabled && contactAddressPicker.isOpen,
   };
 }
 
