@@ -63,9 +63,9 @@ export function CardAssetsManageDialog({
               />
             ))}
           </div>
-          <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          <output className="sr-only" aria-live="polite" aria-atomic="true">
             {reorder.announcement}
-          </div>
+          </output>
         </DialogBody>
         <DialogFooter
           className="flex shrink-0 flex-col gap-12 text-center"
