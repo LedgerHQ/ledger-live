@@ -1,5 +1,4 @@
 import { defineCommand } from "@bunli/core";
-import { createInterface } from "node:readline";
 import { Session, trustchainFromMeta } from "../../session/session-store";
 import {
   loadLedgerSyncMemberCredentials,
@@ -9,19 +8,8 @@ import {
 } from "../../ledger-sync/keychain";
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
 import { LEDGER_SYNC_APPLICATION_ID } from "../../key-ring/constants";
-import { outputOption, resolveOutputFormat } from "../inputs";
+import { outputOption, resolveOutputFormat, confirmTyped } from "../inputs";
 import { createCommandOutput } from "../../output";
-
-async function confirmDestroy(): Promise<boolean> {
-  const rl = createInterface({ input: process.stdin, output: process.stderr });
-  const answer = await new Promise<string>(resolve => {
-    rl.question('Type "destroy" to confirm: ', ans => {
-      rl.close();
-      resolve(ans.trim());
-    });
-  });
-  return answer === "destroy";
-}
 
 export default defineCommand({
   name: "destroy",
@@ -48,7 +36,7 @@ export default defineCommand({
         // Stray keychain key with no session metadata (e.g. after `session reset` on a corrupt
         // file): no remote to authenticate against, so local-wipe only — mirrors ring destroy's
         // recovery path.
-        if (!(await confirmDestroy())) {
+        if (!(await confirmTyped("destroy"))) {
           out.ledgerSyncDestroyCancelled();
           return;
         }
@@ -61,7 +49,7 @@ export default defineCommand({
         return;
       }
 
-      if (!(await confirmDestroy())) {
+      if (!(await confirmTyped("destroy"))) {
         out.ledgerSyncDestroyCancelled();
         return;
       }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { Session } from "../session/session-store";
 import { mergeSyncedAccounts } from "./cloud-sync-accounts";
+import { parseV1 } from "../shared/accountDescriptor";
 import { XPUB, ETH_ADDR } from "../shared/accountDescriptor/test-fixtures";
 
 const BTC_RAW = {
@@ -32,6 +33,19 @@ const UNSUPPORTED_RAW = {
   index: 0,
 };
 
+// A real, known currencyId (verified against @domain/entity-currency-crypto: resolves with
+// family "polkadot") whose family wallet-cli simply has no transaction-family support for.
+// Distinct from UNSUPPORTED_RAW above: this one *would* convert to a valid AccountDescriptorV1
+// (toV1 would not throw), so it must be caught by the family allowlist before ever reaching toV1().
+const UNSUPPORTED_FAMILY_RAW = {
+  id: "js:2:polkadot:5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty:polkadotbip44",
+  currencyId: "polkadot",
+  freshAddress: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+  seedIdentifier: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+  derivationMode: "polkadotbip44",
+  index: 0,
+};
+
 // Fails accountDescriptorSchema itself (missing required fields) — must be isolated as "invalid"
 // without affecting any other entry in the same import.
 const MALFORMED_RAW = { id: "not-a-real-descriptor" };
@@ -53,11 +67,12 @@ describe("mergeSyncedAccounts", () => {
     const session = Session.from([]);
     const report = mergeSyncedAccounts(session, [ETH_RAW]);
 
-    expect(report.imported).toHaveLength(1);
-    expect(report.imported[0]?.network).toBe("ethereum:main");
-    expect(report.unchanged).toHaveLength(0);
-    expect(report.skipped).toHaveLength(0);
-    expect(report.invalid).toHaveLength(0);
+    expect(report.imported).toEqual([
+      expect.objectContaining({ status: "imported", network: "ethereum:main" }),
+    ]);
+    expect(report.unchanged).toEqual([]);
+    expect(report.skipped).toEqual([]);
+    expect(report.invalid).toEqual([]);
     expect(session.accounts).toHaveLength(1);
   });
 
@@ -69,9 +84,10 @@ describe("mergeSyncedAccounts", () => {
     const second = mergeSyncedAccounts(session, [ETH_RAW]);
 
     expect(session.accounts).toHaveLength(1);
-    expect(second.imported).toHaveLength(0);
-    expect(second.unchanged).toHaveLength(1);
-    expect(second.unchanged[0]?.label).toBe(firstLabel);
+    expect(second.imported).toEqual([]);
+    expect(second.unchanged).toEqual([
+      expect.objectContaining({ status: "unchanged", label: firstLabel }),
+    ]);
   });
 
   it("is additive: importing a second account never removes the first", () => {
@@ -82,14 +98,28 @@ describe("mergeSyncedAccounts", () => {
     expect(session.accounts).toHaveLength(2);
   });
 
-  it("reports an unsupported currency family as skipped, not invalid, without dropping other entries", () => {
+  it("reports an unresolvable currencyId as skipped, not invalid, without dropping other entries", () => {
     const session = Session.from([]);
     const report = mergeSyncedAccounts(session, [UNSUPPORTED_RAW, ETH_RAW]);
 
-    expect(report.skipped).toHaveLength(1);
-    expect(report.skipped[0]?.id).toBe(UNSUPPORTED_RAW.id);
-    expect(report.invalid).toHaveLength(0);
-    expect(report.imported).toHaveLength(1);
+    expect(report.skipped).toEqual([
+      expect.objectContaining({ status: "skipped", id: UNSUPPORTED_RAW.id }),
+    ]);
+    expect(report.invalid).toEqual([]);
+    expect(report.imported).toEqual([expect.objectContaining({ status: "imported" })]);
+    expect(session.accounts).toHaveLength(1);
+  });
+
+  it("reports a resolvable but wallet-cli-unsupported currency family as skipped, before toV1()", () => {
+    const session = Session.from([]);
+    const report = mergeSyncedAccounts(session, [UNSUPPORTED_FAMILY_RAW, ETH_RAW]);
+
+    expect(report.skipped).toEqual([
+      expect.objectContaining({ status: "skipped", id: UNSUPPORTED_FAMILY_RAW.id }),
+    ]);
+    expect(report.skipped[0]?.reason).toContain("polkadot");
+    expect(report.invalid).toEqual([]);
+    expect(report.imported).toEqual([expect.objectContaining({ status: "imported" })]);
     expect(session.accounts).toHaveLength(1);
   });
 
@@ -97,8 +127,9 @@ describe("mergeSyncedAccounts", () => {
     const session = Session.from([]);
     const report = mergeSyncedAccounts(session, [MALFORMED_RAW, ETH_RAW, BTC_RAW]);
 
-    expect(report.invalid).toHaveLength(1);
-    expect(report.invalid[0]?.id).toBe("not-a-real-descriptor");
+    expect(report.invalid).toEqual([
+      expect.objectContaining({ status: "invalid", id: "not-a-real-descriptor" }),
+    ]);
     expect(report.imported).toHaveLength(2);
     expect(session.accounts).toHaveLength(2);
   });
@@ -107,22 +138,24 @@ describe("mergeSyncedAccounts", () => {
     const session = Session.from([]);
     const report = mergeSyncedAccounts(session, [EMPTY_ADDRESS_RAW, ETH_RAW]);
 
-    expect(report.invalid).toHaveLength(1);
-    expect(report.invalid[0]?.id).toBe(EMPTY_ADDRESS_RAW.id);
-    expect(report.imported).toHaveLength(1);
+    expect(report.invalid).toEqual([
+      expect.objectContaining({ status: "invalid", id: EMPTY_ADDRESS_RAW.id }),
+    ]);
+    expect(report.imported).toEqual([expect.objectContaining({ status: "imported" })]);
     expect(session.accounts).toHaveLength(1);
-    // The one persisted entry must be resolvable again — confirms no invalid descriptor slipped in.
-    expect(session.accounts[0]?.descriptor).not.toContain("::");
+    // The one persisted entry must round-trip through parseV1() — this is the exact invariant the
+    // empty-address bug violated (a descriptor that looked fine in `session view` but threw here).
+    expect(() => parseV1(session.accounts[0]!.descriptor)).not.toThrow();
   });
 
   it("returns an empty report and touches nothing for an empty pull", () => {
     const session = Session.from([]);
     const report = mergeSyncedAccounts(session, []);
 
-    expect(report.imported).toHaveLength(0);
-    expect(report.unchanged).toHaveLength(0);
-    expect(report.skipped).toHaveLength(0);
-    expect(report.invalid).toHaveLength(0);
+    expect(report.imported).toEqual([]);
+    expect(report.unchanged).toEqual([]);
+    expect(report.skipped).toEqual([]);
+    expect(report.invalid).toEqual([]);
     expect(session.accounts).toHaveLength(0);
   });
 });
