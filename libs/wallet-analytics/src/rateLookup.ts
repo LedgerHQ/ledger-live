@@ -1,12 +1,5 @@
 import type { Currency } from "@domain/entity-currency";
 
-/**
- * Countervalues state, opaque to this package. Callers supply it and it is
- * forwarded unread to {@link RateLookup.calculate}, so its concrete shape stays
- * a concern of whoever produces it.
- */
-export type RateSnapshot = unknown;
-
 export type RateQuery = {
   value: number;
   from: Currency;
@@ -18,7 +11,11 @@ export type RateQuery = {
 
 /** Countervalues operations this package needs. The host app supplies the implementation. */
 export interface RateLookup {
-  calculate(snapshot: RateSnapshot, query: RateQuery): number | null | undefined;
+  /**
+   * @param snapshot Countervalues state. Opaque to this package: callers supply it and it is
+   * forwarded unread, so its concrete shape stays a concern of whoever produces it.
+   */
+  calculate(snapshot: unknown, query: RateQuery): number | null | undefined;
 }
 
 let lookup: RateLookup | undefined;

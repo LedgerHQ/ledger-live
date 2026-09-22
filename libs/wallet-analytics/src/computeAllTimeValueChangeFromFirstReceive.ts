@@ -4,14 +4,14 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getOperationAmountNumber } from "@ledgerhq/ledger-wallet-framework/operation";
 import { meaningfulPercentage } from "./meaningfulPercentage";
-import { getRateLookup, type RateSnapshot } from "./rateLookup";
+import { getRateLookup } from "./rateLookup";
 import type { Currency } from "@domain/entity-currency";
 import type { AccountLike, ValueChange } from "@ledgerhq/types-live";
 
 export function computeAllTimeValueChangeFromFirstReceive(
   accounts: AccountLike[],
   currentBalance: number,
-  cvState: RateSnapshot,
+  cvState: unknown,
   cvCurrency: Currency,
 ): ValueChange {
   let firstReceiveDate: Date | undefined;
