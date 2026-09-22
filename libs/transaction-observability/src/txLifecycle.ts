@@ -148,27 +148,20 @@ export function toTxLifecyclePayload(
 const TX_LIFECYCLE_PATH = "/v1/tx/lifecycle";
 const DEFAULT_EARN_API_BASE_URL = "https://earn.api.live.ledger.com";
 
-/**
- * Read through `globalThis` rather than the `process` global: the build config compiles this
- * package with `types: []`, and a host that has no `process` at all must fall back to the
- * default instead of throwing.
- */
-function readEnv(name: string): string | undefined {
-  return (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.[
-    name
-  ];
-}
-
-/**
- * `@shared/env` is being sunset, so the endpoint follows the `process.env` override convention
- * wallet-cli already uses for this same backend (`wallet/earn/config.ts`) rather than adding a
- * registry entry. Staging is reachable by setting the variable at boot.
- */
-function earnApiBaseUrl(): string {
-  const base = readEnv("EARN_API_BASE_URL") || DEFAULT_EARN_API_BASE_URL;
+function withoutTrailingSlashes(base: string): string {
   let end = base.length;
   while (end > 0 && base[end - 1] === "/") end--;
   return base.slice(0, end);
+}
+
+let earnApiBaseUrl = DEFAULT_EARN_API_BASE_URL;
+
+/**
+ * Hosts resolve public configuration through their own build systems:
+ * desktop uses a literal `process.env` replacement and mobile uses `react-native-config`.
+ */
+export function setTxLifecycleBaseUrl(baseUrl: string | undefined): void {
+  earnApiBaseUrl = withoutTrailingSlashes(baseUrl || DEFAULT_EARN_API_BASE_URL);
 }
 
 const pendingLifecycle = new Map<string, TxLifecyclePayloadBase>();
@@ -207,11 +200,8 @@ function sameLifecycleBase(left: TxLifecyclePayloadBase, right: TxLifecyclePaylo
 }
 
 function postTxLifecycle(payload: TxLifecyclePayload): void {
-  const baseUrl = earnApiBaseUrl();
-  if (!baseUrl) return;
-
   try {
-    void fetch(`${baseUrl}${TX_LIFECYCLE_PATH}`, {
+    void fetch(`${earnApiBaseUrl}${TX_LIFECYCLE_PATH}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -291,7 +281,8 @@ export function startDappTxLifecycle(
 
   // Every host sets this alongside the `LEDGER_CLIENT_VERSION` env read the sign events carry, so
   // the placeholder intent reports the same string as the terminal that closes it.
-  const appVersion = readEnv("LEDGER_CLIENT_VERSION");
+  const appVersion = (globalThis as { process?: { env?: { LEDGER_CLIENT_VERSION?: string } } })
+    .process?.env?.LEDGER_CLIENT_VERSION;
   sendTxLifecycle(
     {
       schema_version: 1,

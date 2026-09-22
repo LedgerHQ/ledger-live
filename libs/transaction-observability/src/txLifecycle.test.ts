@@ -10,6 +10,7 @@ import {
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
   sendTxLifecycle,
+  setTxLifecycleBaseUrl,
   startDappTxLifecycle,
   toTxLifecyclePayload,
   type TxLifecyclePayload,
@@ -161,7 +162,7 @@ describe("sendTxLifecycle", () => {
   beforeEach(() => {
     clearPendingTxLifecycle("desktop");
     clearPendingTxLifecycle("mobile");
-    process.env.EARN_API_BASE_URL = "https://earn.example.test/";
+    setTxLifecycleBaseUrl("https://earn.example.test/");
     process.env.LEDGER_CLIENT_VERSION = "ll/test";
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null));
   });
@@ -169,8 +170,8 @@ describe("sendTxLifecycle", () => {
   afterEach(() => {
     clearPendingTxLifecycle("desktop");
     clearPendingTxLifecycle("mobile");
+    setTxLifecycleBaseUrl(undefined);
     fetchSpy.mockRestore();
-    delete process.env.EARN_API_BASE_URL;
     delete process.env.LEDGER_CLIENT_VERSION;
   });
 

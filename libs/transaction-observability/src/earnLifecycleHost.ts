@@ -5,6 +5,7 @@ import {
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
   sendTxLifecycle,
+  setTxLifecycleBaseUrl,
   startDappTxLifecycle,
   toTxLifecyclePayload,
   type TxLifecyclePlatform,
@@ -91,10 +92,18 @@ export function installEarnLifecycleHost<F extends StakeProgramsFeature>(config:
   readStakePrograms: () => F | null | undefined;
   resolveVersionedRedirects: (feature: F, appVersion: string) => F;
   readAppVersion: () => string;
+  apiBaseUrl?: string;
 }): () => void {
-  const { platform, readEnabled, readStakePrograms, resolveVersionedRedirects, readAppVersion } =
-    config;
+  const {
+    platform,
+    readEnabled,
+    readStakePrograms,
+    resolveVersionedRedirects,
+    readAppVersion,
+    apiBaseUrl,
+  } = config;
 
+  setTxLifecycleBaseUrl(apiBaseUrl);
   setEarnTxLifecycleFlagReader(readEnabled);
   setStakeProgramAppsReader(() => {
     const stakePrograms = readStakePrograms();

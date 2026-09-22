@@ -168,6 +168,7 @@ async function init() {
       readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
       resolveVersionedRedirects: getVersionedRedirects,
       readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+      apiBaseUrl: process.env.EARN_API_BASE_URL,
     }),
   );
 

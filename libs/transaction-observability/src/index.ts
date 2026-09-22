@@ -58,6 +58,7 @@ export {
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
   sendTxLifecycle,
+  setTxLifecycleBaseUrl,
   startDappTxLifecycle,
   toTxLifecyclePayload,
   type TxLifecycleFailureClass,

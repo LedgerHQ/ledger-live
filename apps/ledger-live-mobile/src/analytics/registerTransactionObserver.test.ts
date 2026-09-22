@@ -13,6 +13,7 @@ import {
   clearPendingTxLifecycle,
   emitTransactionEvent,
   setEarnTxLifecycleFlagReader,
+  setTxLifecycleBaseUrl,
   TransactionDataSource,
   TransactionPathway,
   TransactionStage,
@@ -49,7 +50,7 @@ describe("mobile transaction observer", () => {
   beforeEach(() => {
     track.mockClear();
     mockFetch.mockClear();
-    process.env.EARN_API_BASE_URL = "https://earn.example.test";
+    setTxLifecycleBaseUrl("https://earn.example.test");
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     global.fetch = mockFetch as unknown as typeof fetch;
     lifecycleEnabled = true;
@@ -58,7 +59,7 @@ describe("mobile transaction observer", () => {
   });
   afterEach(() => {
     setEarnTxLifecycleFlagReader(null);
-    delete process.env.EARN_API_BASE_URL;
+    setTxLifecycleBaseUrl(undefined);
   });
 
   it("forwards a staking outcome to Segment", () => {

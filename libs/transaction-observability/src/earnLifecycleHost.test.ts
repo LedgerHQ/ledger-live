@@ -5,7 +5,7 @@ import {
   startDappLifecycleMonitoring,
 } from "./earnLifecycleHost";
 import { setStakeProgramAppsReader } from "./stakingApps";
-import { clearPendingTxLifecycle } from "./txLifecycle";
+import { clearPendingTxLifecycle, setTxLifecycleBaseUrl } from "./txLifecycle";
 
 describe("earn lifecycle host wiring", () => {
   let fetchSpy: jest.SpiedFunction<typeof fetch>;
@@ -13,7 +13,7 @@ describe("earn lifecycle host wiring", () => {
   beforeEach(() => {
     clearPendingTxLifecycle("desktop");
     clearPendingTxLifecycle("mobile");
-    process.env.EARN_API_BASE_URL = "https://earn.example.test";
+    setTxLifecycleBaseUrl("https://earn.example.test");
     process.env.LEDGER_CLIENT_VERSION = "ll/test";
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null));
     setEarnTxLifecycleFlagReader(() => true);
@@ -24,8 +24,8 @@ describe("earn lifecycle host wiring", () => {
     clearPendingTxLifecycle("mobile");
     setEarnTxLifecycleFlagReader(null);
     setStakeProgramAppsReader(null);
+    setTxLifecycleBaseUrl(undefined);
     fetchSpy.mockRestore();
-    delete process.env.EARN_API_BASE_URL;
     delete process.env.LEDGER_CLIENT_VERSION;
   });
 
@@ -80,12 +80,14 @@ describe("earn lifecycle host wiring", () => {
         params: { redirects: { ethereum: { platform: "future-stake-app" } } },
       }),
       readAppVersion: () => "2.0.0",
+      apiBaseUrl: "https://staging.example.test/earn/",
     });
 
     expect(isEarnTxLifecycleMonitoringEnabled()).toBe(true);
     // Only the injected reader makes this remote-config app eligible for monitoring.
     const close = startDappLifecycleMonitoring("desktop", "future-stake-app", true, true);
     expect(bodies()).toHaveLength(1);
+    expect(fetchSpy.mock.calls[0][0]).toBe("https://staging.example.test/earn/v1/tx/lifecycle");
     fetchSpy.mockClear();
 
     enabled = false;

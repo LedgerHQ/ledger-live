@@ -137,6 +137,7 @@ store.subscribe(
     readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
     resolveVersionedRedirects: getVersionedRedirects,
     readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+    apiBaseUrl: Config.EARN_API_BASE_URL,
   }),
 );
 

@@ -73,10 +73,12 @@ describe("transaction device action — sign-prompt abandonment", () => {
     events = [];
     setTransactionObserver(e => events.push(e));
     signEvents = new Subject<SignOperationEvent>();
+    signOperation.mockClear();
     signOperation.mockReturnValue(
       new Observable<SignOperationEvent>(subscriber => signEvents.subscribe(subscriber)),
     );
     rawSignEvents = new Subject<SignOperationEvent>();
+    signRawOperation.mockClear();
     signRawOperation.mockReturnValue(
       new Observable<SignOperationEvent>(subscriber => rawSignEvents.subscribe(subscriber)),
     );
@@ -298,10 +300,11 @@ describe("transaction device action — sign-prompt abandonment", () => {
     expect(events).toEqual([]);
   });
 
-  it("does not turn a raw-sign effect resubscription into a dismissal", async () => {
+  it("preserves the raw-sign subscription when the device object identity changes", async () => {
     const { rerender, unmount } = renderRaw();
     await flush();
     act(() => rawSignEvents.next({ type: "device-signature-requested" }));
+    expect(signRawOperation).toHaveBeenCalledTimes(1);
 
     appState.current = {
       ...READY,
@@ -313,8 +316,16 @@ describe("transaction device action — sign-prompt abandonment", () => {
     });
 
     expect(events).toEqual([]);
+    expect(signRawOperation).toHaveBeenCalledTimes(1);
+
+    act(() =>
+      rawSignEvents.next({
+        type: "signed",
+        signedOperation: { signature: "sig", operation: {} },
+      } as SignOperationEvent),
+    );
     unmount();
-    expect(events).toHaveLength(1);
+    expect(events).toEqual([]);
   });
 
   it("keeps token attribution on raw-sign abandonment", async () => {

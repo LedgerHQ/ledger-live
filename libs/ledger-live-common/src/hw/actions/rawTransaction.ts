@@ -158,6 +158,8 @@ export const createAction = (
       requireLatestFirmware,
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
+    const deviceId = device?.deviceId;
+    const deviceModelId = device?.modelId;
     const [state, setState] = useState(initialState);
 
     const {
@@ -187,7 +189,7 @@ export const createAction = (
     const attemptRequestKeyRef = useRef<string | null>(null);
 
     useEffect(() => {
-      if (!device || !opened || inWrongDeviceForAccount || error) {
+      if (!deviceId || !deviceModelId || !opened || inWrongDeviceForAccount || error) {
         failInterruptedAttempt(interruptionErrorOf(inWrongDeviceForAccount, error));
         setState(initialState);
         resetAttempt();
@@ -197,9 +199,14 @@ export const createAction = (
 
       let cancelled = false;
       let sub: { unsubscribe: () => void } | undefined;
-      const requestKey = [mainAccountId, transaction, broadcast ? "1" : "0", manifestId ?? ""].join(
-        "\0",
-      );
+      const requestKey = [
+        mainAccountId,
+        transaction,
+        broadcast ? "1" : "0",
+        manifestId ?? "",
+        deviceId,
+        deviceModelId,
+      ].join("\0");
       (async () => {
         const signingAccount = mainAccountRef.current;
         const bridge = await getAccountBridge(signingAccount);
@@ -218,8 +225,8 @@ export const createAction = (
           return bridge.signRawOperation({
             account: signingAccount,
             transaction,
-            deviceId: device.deviceId,
-            deviceModelId: device.modelId,
+            deviceId,
+            deviceModelId,
             broadcast,
           });
         };
@@ -267,7 +274,8 @@ export const createAction = (
         sub?.unsubscribe();
       };
     }, [
-      device,
+      deviceId,
+      deviceModelId,
       abandonAttempt,
       failInterruptedAttempt,
       mainAccountId,
