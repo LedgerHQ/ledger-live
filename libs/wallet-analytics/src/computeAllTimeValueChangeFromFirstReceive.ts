@@ -3,16 +3,15 @@ import {
   flattenAccounts,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getOperationAmountNumber } from "@ledgerhq/ledger-wallet-framework/operation";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { meaningfulPercentage } from "./meaningfulPercentage";
+import { getRateLookup, type RateSnapshot } from "./ports";
 import type { Currency } from "@domain/entity-currency";
 import type { AccountLike, ValueChange } from "@ledgerhq/types-live";
 
 export function computeAllTimeValueChangeFromFirstReceive(
   accounts: AccountLike[],
   currentBalance: number,
-  cvState: CounterValuesState,
+  cvState: RateSnapshot,
   cvCurrency: Currency,
 ): ValueChange {
   let firstReceiveDate: Date | undefined;
@@ -34,7 +33,7 @@ export function computeAllTimeValueChangeFromFirstReceive(
     return { value: 0, percentage: null };
   }
 
-  const firstReceiveCountervalue = calculate(cvState, {
+  const firstReceiveCountervalue = getRateLookup().calculate(cvState, {
     from: firstReceiveCurrency,
     to: cvCurrency,
     value: firstReceiveAmount,

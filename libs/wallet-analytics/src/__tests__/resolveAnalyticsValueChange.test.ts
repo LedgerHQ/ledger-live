@@ -1,9 +1,9 @@
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { resolveAnalyticsValueChange } from "../resolveAnalyticsValueChange";
+import { resetRateLookup, setRateLookup } from "../ports";
 
 const mockCounterValue = getFiatCurrencyByTicker("USD");
-const mockCvState = { data: {}, status: {}, cache: {} } as CounterValuesState;
+const mockCvState = { data: {}, status: {}, cache: {} };
 
 const defaultPortfolio = {
   balanceHistory: [],
@@ -19,6 +19,14 @@ const defaultPortfolio = {
 };
 
 describe("resolveAnalyticsValueChange", () => {
+  beforeEach(() => {
+    setRateLookup({ calculate: () => undefined });
+  });
+
+  afterAll(() => {
+    resetRateLookup();
+  });
+
   it("uses the selected portfolio range change for non-all ranges", () => {
     const result = resolveAnalyticsValueChange({
       selectedTimeRange: "week",

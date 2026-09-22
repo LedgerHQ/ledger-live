@@ -21,6 +21,7 @@ jest.mock("@rozenite/redux-devtools-plugin", () => ({
 
 jest.mock("~/config/bridge-setup", () => ({
   setupCryptoAssetsStore: jest.fn(),
+  setupRateLookups: jest.fn(),
 }));
 
 jest.mock("@domain/entity-recent-addresses", () => ({
