@@ -98,6 +98,15 @@ describe("CardLoginIntroView (Native)", () => {
     expect(screen.getByText("Card provided by Baanx")).toBeTruthy();
   });
 
+  it("keeps the hero at the aspect ratio of the artwork", () => {
+    renderIntro();
+
+    // The Lumen native stub passes `lx` straight through, so it carries the resolved style here.
+    expect(screen.getByTestId("pay-card-login-intro-hero").props.lx).toEqual(
+      expect.objectContaining({ aspectRatio: 1028 / 576 }),
+    );
+  });
+
   it("renders one row per icon", () => {
     renderIntro();
 
