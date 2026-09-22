@@ -49,6 +49,7 @@ oxlint configuration.
 | [`lint-domain`](./lint-domain) | `domain/entity/*`, `domain/api/*` |
 | [`lint-features-flow`](./lint-features-flow) | `features/flow/*` |
 | [`lint-features-platform`](./lint-features-platform) | `features/platform/*` |
+| [`lint-libs-coin-tester`](./lint-libs-coin-tester) | `libs/coin-tester-modules/*` - keeps the correctness category the coin testers always had |
 | [`lint-libs`](./lint-libs) | the 50 `libs/*` packages that used `libs/oxc-live-libs` |
 | [`lint-shared`](./lint-shared) | `shared/*` |
 | [`lint-support`](./lint-support) | `support/*` |

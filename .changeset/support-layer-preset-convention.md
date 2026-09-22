@@ -5,6 +5,7 @@
 "@support/lint-features-flow": minor
 "@support/lint-features-platform": minor
 "@support/lint-libs": minor
+"@support/lint-libs-coin-tester": minor
 "@support/lint-shared": minor
 "@support/lint-support": minor
 "@support/lint-tools": minor

@@ -35,8 +35,6 @@ const LAYERS = {
 const OWN_CONFIG_ALLOWED = new Set([
   "libs/coin-modules",
   "libs/coin-modules/coin-bitcoin",
-  "libs/coin-tester",
-  "libs/coin-tester-modules",
   "libs/ledger-live-common",
   "libs/ledger-services",
   "libs/ledgerjs/packages",

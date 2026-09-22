@@ -1,0 +1,8 @@
+{
+  "name": "@support/lint-libs-coin-tester",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

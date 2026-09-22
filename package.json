@@ -236,6 +236,7 @@
     "@support/lint-features-flow": "workspace:*",
     "@support/lint-features-platform": "workspace:*",
     "@support/lint-libs": "workspace:*",
+    "@support/lint-libs-coin-tester": "workspace:*",
     "@support/lint-shared": "workspace:*",
     "@support/lint-support": "workspace:*",
     "@support/lint-tools": "workspace:*",

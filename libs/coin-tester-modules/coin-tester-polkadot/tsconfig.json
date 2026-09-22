@@ -1,21 +1,12 @@
 {
   "extends": "@support/ts-libs",
   "compilerOptions": {
-    "lib": [
-      "es2022",
-      "dom"
-    ],
+    "lib": ["es2022", "dom"],
     "outDir": "lib",
     "rootDir": "src",
-    "types": [
-      "node",
-      "jest"
-    ],
+    "types": ["node", "jest"],
     "exactOptionalPropertyTypes": true,
     "composite": true
   },
-  "include": [
-    "src/**/*",
-    "src/**/*.json"
-  ]
+  "include": ["src/**/*", "src/**/*.json"]
 }

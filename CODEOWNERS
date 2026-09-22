@@ -89,6 +89,7 @@ support/lint-domain/                                     @ledgerhq/platform
 support/lint-features-flow/                              @ledgerhq/platform
 support/lint-features-platform/                          @ledgerhq/platform
 support/lint-libs/                                       @ledgerhq/platform
+support/lint-libs-coin-tester/                           @ledgerhq/platform
 support/lint-shared/                                     @ledgerhq/platform
 support/lint-support/                                    @ledgerhq/platform
 support/lint-tools/                                      @ledgerhq/platform

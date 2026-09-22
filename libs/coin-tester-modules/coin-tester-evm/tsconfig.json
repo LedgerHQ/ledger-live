@@ -3,24 +3,12 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "bundler",
-    "lib": [
-      "es2022",
-      "dom"
-    ],
+    "lib": ["es2022", "dom"],
     "outDir": "lib",
     "rootDir": "src",
-    "types": [
-      "node",
-      "jest"
-    ],
-    "typeRoots": [
-      "node_modules/@types",
-      "../../../../node_modules/@types"
-    ],
+    "types": ["node", "jest"],
+    "typeRoots": ["node_modules/@types", "../../../../node_modules/@types"],
     "composite": true
   },
-  "include": [
-    "src/**/*",
-    "src/**/*.json"
-  ]
+  "include": ["src/**/*", "src/**/*.json"]
 }

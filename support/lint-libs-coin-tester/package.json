@@ -1,0 +1,16 @@
+{
+  "name": "@support/lint-libs-coin-tester",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Lint preset for libs/coin-tester-modules/* packages",
+  "exports": {
+    ".": "./oxlint.config.mts",
+    "./oxlint.config": "./oxlint.config.mts",
+    "./package.json": "./package.json"
+  },
+  "devDependencies": {
+    "@support/lint-libs": "workspace:*",
+    "oxlint": "catalog:"
+  }
+}
