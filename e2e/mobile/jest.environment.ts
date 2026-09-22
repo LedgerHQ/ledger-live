@@ -42,6 +42,7 @@ import type { ServerData } from "~/e2e/bridge/types";
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 import { withTimeout } from "@e2e/utils/withTimeout";
+import { markHeartbeat, startHeartbeat, stopHeartbeat } from "@e2e/helpers/stallHeartbeat";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
@@ -165,10 +166,15 @@ function installSpeculosTerminationHandlers() {
 
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
+  /** Set by Detox's environment constructor, relative to cwd. */
+  declare readonly testPath: string;
 
   async setup() {
     const workerId = Number(process.env.JEST_WORKER_ID ?? "1");
     if (workerId > 1) this.setupDeviceForSecondaryWorker(workerId);
+    // Before super.setup(): device allocation and app install happen in there, and
+    // a stall during them must be visible to the watchdog too (QAA-1365).
+    startHeartbeat(this.testPath ?? "<unknown spec>");
     await super.setup();
 
     setupEnvironment();
@@ -301,6 +307,12 @@ export default class TestEnvironment extends DetoxEnvironment {
   }
 
   async teardown() {
+    // Keep beating through teardown: in the 2026-09-14 occurrence the silence began
+    // after the last spec had already reported, so the freeze may well be in here.
+    // Everything below is async, so a healthy teardown keeps the ticker running no
+    // matter how slow it is, and only a frozen loop trips the watchdog.
+    markHeartbeat("teardown");
+
     try {
       await withTimeout(cleanupAllSpeculos(), SLOW_DIAGNOSTIC_TIMEOUT_MS, "cleanupAllSpeculos");
     } catch (error) {
@@ -336,9 +348,14 @@ export default class TestEnvironment extends DetoxEnvironment {
     }
 
     await super.teardown();
+    stopHeartbeat();
   }
 
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
+    // Test boundaries are what "progress" means for the watchdog's slower rule.
+    if (event.name === "test_start") markHeartbeat(`test: ${event.test.name}`);
+    else if (event.name === "test_done") markHeartbeat(`done: ${event.test.name}`);
+
     if (event.name === "hook_failure") {
       this.global.IS_FAILED = true;
       await captureFailureDiagnostics(this.global.mergedFeatureFlags);

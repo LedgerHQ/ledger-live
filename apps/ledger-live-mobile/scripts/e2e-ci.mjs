@@ -1,5 +1,6 @@
 #!/usr/bin/env zx
-import { basename } from "path";
+import { basename, join } from "path";
+import { spawn } from "node:child_process";
 
 let platform, test, build, bundle, bundleSize;
 let testType = "mock";
@@ -14,6 +15,46 @@ $.verbose = true; // everything works like in v7
 if (os.platform() === "win32") {
   usePowerShell();
 }
+
+/**
+ * A jest worker whose event loop freezes hangs the whole shard until CI's
+ * `timeout-minutes` kills it (QAA-1365): every timeout that could end the run
+ * lives on that same loop. The watchdog watches the heartbeats written by
+ * e2e/mobile/helpers/stallHeartbeat.ts and SIGKILLs a frozen worker, after which
+ * jest attributes the failure to that spec and Detox retries it.
+ *
+ * It runs beside Detox rather than in the workflow so local runs are covered too.
+ * Set E2E_STALL_WATCHDOG=0 to disable it.
+ */
+const startStallWatchdog = repoRoot => {
+  if (process.env.E2E_STALL_WATCHDOG === "0") return undefined;
+
+  const heartbeatDir = join(repoRoot, "e2e/mobile/artifacts/.heartbeats");
+  // Exported so the jest workers, which inherit this environment, agree on the path.
+  process.env.E2E_HEARTBEAT_DIR = heartbeatDir;
+
+  try {
+    const child = spawn(
+      process.execPath,
+      [
+        join(repoRoot, "e2e/mobile/scripts/stall-watchdog.mjs"),
+        "--dir",
+        heartbeatDir,
+        // Only workers descending from this process may ever be killed: these are
+        // shared self-hosted runners.
+        "--root-pid",
+        String(process.pid),
+      ],
+      { stdio: "inherit" },
+    );
+    child.unref();
+    return child;
+  } catch (error) {
+    // Never let the watchdog be the reason a shard does not run.
+    console.warn(`[stall-watchdog] could not start: ${error}`);
+    return undefined;
+  }
+};
 
 const usage = (exitCode = 1) => {
   console.log(
@@ -203,6 +244,11 @@ within(async () => {
     await getTasksFrom[platform].bundleSize();
   }
   if (test) {
-    await getTasksFrom[platform].test();
+    const watchdog = startStallWatchdog(process.cwd());
+    try {
+      await getTasksFrom[platform].test();
+    } finally {
+      watchdog?.kill("SIGTERM");
+    }
   }
 });
