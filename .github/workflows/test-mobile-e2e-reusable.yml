@@ -103,6 +103,20 @@ on:
         required: false
         type: string
         default: ""
+      stall_probe:
+        description: "QAA-1365 probe: freeze one jest worker mid-shard. stop = reproduce the hang; kill = SIGKILL it after 2min and see whether the shard recovers"
+        required: false
+        type: choice
+        options:
+          - "off"
+          - stop
+          - kill
+        default: "off"
+      ios_timeout_override:
+        description: "QAA-1365 probe: override the iOS shard timeout-minutes (blank = computed, which has a 30min floor). Keep it small when probing."
+        required: false
+        type: string
+        default: ""
 
   workflow_call:
     inputs:
@@ -774,7 +788,7 @@ jobs:
 
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
-        timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
+        timeout-minutes: ${{ fromJSON(inputs.ios_timeout_override != '' && inputs.ios_timeout_override || needs.determine-builds.outputs.ios_timeout) }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
@@ -789,7 +803,35 @@ jobs:
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
-        run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+        run: |
+          if [ "${{ inputs.stall_probe || 'off' }}" != "off" ]; then
+            # QAA-1365 probe. jest.environment.ts logs "<spec> is assigned to <UDID>"
+            # prefixed by the emitting worker's own pid, which is the only reliable way
+            # to target a worker that is actually running a spec: an idle sibling worker
+            # is indistinguishable from a frozen one via pgrep, and freezing the idle one
+            # does nothing (measured locally).
+            (
+              for _ in $(seq 1 180); do
+                grep -q "is assigned to" "$RUNNER_TEMP/shard.log" 2>/dev/null && break
+                sleep 2
+              done
+              sleep 45
+              pid=$(grep "is assigned to" "$RUNNER_TEMP/shard.log" 2>/dev/null | sed -E 's/.*detox\[([0-9]+)\].*/\1/' | tail -1)
+              if [ -n "$pid" ] && ps -o command= -p "$pid" 2>/dev/null | grep -q processChild; then
+                echo "::notice::QAA-1365 probe: SIGSTOP jest worker $pid"
+                kill -STOP "$pid"
+                if [ "${{ inputs.stall_probe || 'off' }}" = "kill" ]; then
+                  sleep 120
+                  echo "::notice::QAA-1365 probe: SIGKILL jest worker $pid"
+                  kill -KILL "$pid"
+                fi
+              else
+                echo "::warning::QAA-1365 probe: no live jest worker found; nothing frozen"
+              fi
+            ) &
+          fi
+          set -o pipefail
+          pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json 2>&1 | tee "$RUNNER_TEMP/shard.log"
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')

@@ -24,6 +24,10 @@ on:
   push:
     branches:
       - "support/qaa1365-stall-probe*"
+    # Only when the probe itself changes, so unrelated pushes to the branch
+    # (e.g. editing the mobile workflow) do not re-run it.
+    paths:
+      - ".github/workflows/debug-e2e-stall-probe.yml"
   workflow_dispatch:
     inputs:
       mode:
