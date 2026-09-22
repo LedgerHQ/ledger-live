@@ -25,7 +25,7 @@ import { useContactsFeature } from "@features/platform-contacts";
 import type { CardAssetRow, CardAssetsProps } from "@features/flow-pay-card-assets";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { NavigatorName, ScreenName } from "~/const";
-import { CL_CARD_APP_ID, CL_CARD_APP_NAME } from "LLM/features/Card";
+import { CL_CARD_APP_ID } from "LLM/features/Card";
 import type { CardProps } from "@features/flow-pay-card";
 import { urls } from "~/utils/urls";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
@@ -132,7 +132,7 @@ export function usePayTabViewModel() {
       if (isLegacyTopUp) {
         navigation.navigate(NavigatorName.Base, {
           screen: ScreenName.PlatformApp,
-          params: { platform: CL_CARD_APP_ID, name: CL_CARD_APP_NAME },
+          params: { platform: CL_CARD_APP_ID },
         });
         return;
       }

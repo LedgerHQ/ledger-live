@@ -93,13 +93,12 @@ const LooseStack = createNativeStackNavigator();
 function BaseNavigatorProbe({
   route,
 }: {
-  route: { params?: { screen?: string; params?: { platform?: string; name?: string } } };
+  route: { params?: { screen?: string; params?: { platform?: string } } };
 }) {
   return (
     <>
       <Text testID="base-screen">{String(route.params?.screen)}</Text>
       <Text testID="base-platform">{String(route.params?.params?.platform)}</Text>
-      <Text testID="base-name">{String(route.params?.params?.name)}</Text>
     </>
   );
 }
@@ -193,7 +192,6 @@ describe("usePayTabViewModel", () => {
 
     await waitFor(() => expect(screen.getByTestId("base-screen")).toHaveTextContent("PlatformApp"));
     expect(screen.getByTestId("base-platform")).toHaveTextContent("cl-card");
-    expect(screen.getByTestId("base-name")).toHaveTextContent("CL Card Powered by Ledger");
     expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
   });
 
