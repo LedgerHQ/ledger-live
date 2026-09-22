@@ -27,7 +27,7 @@ import { getMockServerSessionToken } from "@ledgerhq/live-dmk-desktop";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
-import { setupCryptoAssetsStore } from "~/config/bridge-setup";
+import { setupCryptoAssetsStore, setupRateLookups } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
@@ -146,6 +146,7 @@ async function init() {
   setupListeners(store.dispatch);
   connectRecentAddressesStore(store, recentAddressesSelector);
   setupCryptoAssetsStore(store);
+  setupRateLookups();
   setSwapQuotesStore(store.dispatch);
 
   // Feature flags: install the LiveConfig provider (serves non-feature `config_*` keys) and

@@ -1,8 +1,7 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { getRateLookup } from "../rateLookup";
 
 export type GroupedAccount = {
   totalBalance: BigNumber;
@@ -13,7 +12,7 @@ export type GroupedAccount = {
 
 export const groupAccountsByAsset = (
   accounts: AccountLike[],
-  counterValuesState: CounterValuesState,
+  counterValuesState: unknown,
   targetCurrency: Currency,
 ): Record<string, GroupedAccount> => {
   const initialGroupedAccounts: Record<string, GroupedAccount> = {};
@@ -46,16 +45,12 @@ export const groupAccountsByAsset = (
   }, initialGroupedAccounts);
 };
 
-function calculateFiatValue(
-  account: AccountLike,
-  state: CounterValuesState,
-  toCurrency: Currency,
-): number {
+function calculateFiatValue(account: AccountLike, state: unknown, toCurrency: Currency): number {
   const currency = account.type === "Account" ? account.currency : account.token;
 
   const balanceNumber = account.balance.toNumber();
 
-  const fiatValue = calculate(state, {
+  const fiatValue = getRateLookup().calculate(state, {
     from: currency,
     to: toCurrency,
     value: balanceNumber,

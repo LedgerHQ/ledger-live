@@ -3,8 +3,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Currency } from "@domain/entity-currency";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { getRateLookup } from "../rateLookup";
 import BigNumber from "bignumber.js";
 import { toSlug } from "./toSlug";
 import type {
@@ -98,7 +97,7 @@ const EMPTY_DISTRIBUTION: AssetsDistribution = Object.freeze({
  */
 export function buildAssetDistribution(
   topAccounts: Account[],
-  cvState: CounterValuesState,
+  cvState: unknown,
   to: Currency,
   assetsData: AssetsDataLike,
   opts?: BuildAssetDistributionOpts,
@@ -170,7 +169,11 @@ export function buildAssetDistribution(
     let groupCountervalue = 0;
     for (const network of group.networks.values()) {
       const countervalue =
-        calculate(cvState, { value: network.amount, from: network.currency, to }) ?? 0;
+        getRateLookup().calculate(cvState, {
+          value: network.amount,
+          from: network.currency,
+          to,
+        }) ?? 0;
       network.countervalue = countervalue;
       groupCountervalue += countervalue;
     }
