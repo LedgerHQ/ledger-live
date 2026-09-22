@@ -200,6 +200,14 @@ export const scenarioStacks: Scenario<GenericTransaction, Account> = {
  * `current-cycle`), so the live `current_burnchain_block_height` captured once at setup time is
  * safe to reuse for the whole scenario -- there's no cycle-boundary wait involved.
  */
+// `genericGetAccountShape` writes `stakingPositions` onto the account when the family's
+// `BridgeApi` sets `usesStakingPositions: true` -- the type is local to that file and not
+// exported on `@ledgerhq/types-live`'s `Account`, so access it via this cast, same pattern as
+// `families/near/react.ts`'s `FrameworkAccount`.
+type FrameworkAccount = {
+  stakingPositions?: Array<{ delegate?: string; state: string; amount: BigNumber }>;
+};
+
 function makeStakingTransactions(valAddress: string, startBurnHt: number): StakingTx[] {
   const STAKE_FEE = new BigNumber(20_000);
   const STAKE_AMOUNT = new BigNumber(5_000_000); // 5 STX (6 decimals)
@@ -231,6 +239,16 @@ function makeStakingTransactions(valAddress: string, startBurnHt: number): Staki
       // exact locked-funds arithmetic isn't otherwise exercised by this package's existing tests.
       expect(curr.balance).toStrictEqual(prev.balance.minus(latestOp.fee));
       expect(curr.spendableBalance.lt(prev.spendableBalance.minus(STAKE_AMOUNT))).toBe(true);
+      // After sync, an active pox-5 stake must be reflected as a staking position on the
+      // account -- exercised here against the real coin-stacks `getBalance`/`getStakes`
+      // wiring (no mocks), not just the generic framework's own chain-agnostic mechanism tests.
+      const { stakingPositions } = curr as unknown as FrameworkAccount;
+      expect(stakingPositions).toBeDefined();
+      expect(stakingPositions).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ delegate: valAddress, state: "active" }),
+        ]),
+      );
     },
   };
 
