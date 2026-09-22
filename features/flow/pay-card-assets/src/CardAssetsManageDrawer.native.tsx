@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { View, type LayoutChangeEvent, type ViewProps } from "react-native";
+import { View, type ViewProps } from "react-native";
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, withTiming, type SharedValue } from "react-native-reanimated";
 import {
