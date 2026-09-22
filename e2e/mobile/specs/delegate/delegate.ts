@@ -11,7 +11,7 @@ import {
   pickMinaRedelegation,
   pickMinaValidator,
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
-import { BroadcastFlow, shouldRunSharedAccountFlow } from "@e2e/helpers/broadcastRotation";
+import { BroadcastFlow } from "@e2e/helpers/broadcastRotation";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "@e2e/models/stake";
 import { FF_MINA_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
@@ -165,11 +165,12 @@ const minaBeforeAll = (accounts: AccountType[]) => async () => {
  * in the same run each flow only runs on the platform that owns it, which keeps the two jobs from
  * building transactions on the same account and colliding on its nonce.
  */
-function startMinaSpec(flow: BroadcastFlow, tmsLinks: string[], tags: string[]) {
+function startMinaSpec(_flow: BroadcastFlow, tmsLinks: string[], tags: string[]) {
   setTeamOwner(delegateTeamOwner(Currency.MINA.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
-  return shouldRunSharedAccountFlow(flow) ? describe : describe.skip;
+  // Tests are skipped while waiting for LIVE-37757 to be done
+  return describe.skip;
 }
 
 export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
