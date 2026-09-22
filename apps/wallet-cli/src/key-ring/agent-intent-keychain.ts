@@ -1,7 +1,10 @@
-import { encryptData, decryptData, hexToBytes } from "./crypto";
-import { keychainEntry, deleteKeychainEntry, hasKeychainEntry } from "./keychain-entry";
-
-const ENC_PREFIX = "ENC:";
+import {
+  keychainEntry,
+  deleteKeychainEntry,
+  hasKeychainEntry,
+  wrapSecret,
+  unwrapSecret,
+} from "./keychain-entry";
 
 /**
  * Thrown when a stored Agent Intent secret key is password-protected (`ENC:`) but no wrapping key
@@ -29,16 +32,12 @@ export async function saveAgentIntentSecretKey(
   secretKeyHex: string,
   wrappingKey?: CryptoKey,
 ): Promise<void> {
-  let payload: string;
-  if (wrappingKey) {
-    const ct = await encryptData(wrappingKey, new TextEncoder().encode(secretKeyHex));
-    payload = `${ENC_PREFIX}${Buffer.from(ct).toString("hex")}`;
-  } else {
-    payload = secretKeyHex;
-  }
+  const payload = await wrapSecret(secretKeyHex, wrappingKey);
   getEntry(profileId).setPassword(payload);
 }
 
+// Not yet called anywhere in this package — NTTVS-746 (create/send intents) will load the secret
+// key to sign with; NTTVS-749 (cancel) is the eventual caller for `deleteAgentIntentSecretKey` below.
 export async function loadAgentIntentSecretKey(
   profileId: string,
   wrappingKey?: CryptoKey,
@@ -52,27 +51,20 @@ export async function loadAgentIntentSecretKey(
   if (!stored) return null;
 
   // CRLF-tolerant trim: a keychain entry written on Windows may carry a trailing \r.
-  const trimmed = stored.trim();
-  if (!trimmed.startsWith(ENC_PREFIX)) return trimmed;
-
-  if (!wrappingKey) {
-    throw new AgentIntentPasswordRequiredError(
-      `Agent Intent profile "${profileId}" is password-protected but no password was provided.`,
-    );
-  }
-  let ct: Uint8Array<ArrayBuffer>;
-  try {
-    ct = hexToBytes(trimmed.slice(ENC_PREFIX.length));
-  } catch {
-    throw new AgentIntentCorruptKeychainError(
-      `Corrupt keychain entry for Agent Intent profile "${profileId}": stored key is not valid hex.`,
-    );
-  }
-  try {
-    return new TextDecoder().decode(await decryptData(wrappingKey, ct));
-  } catch {
-    throw new Error(`Wrong password: failed to decrypt Agent Intent profile "${profileId}".`);
-  }
+  return unwrapSecret(
+    stored.trim(),
+    wrappingKey,
+    () => {
+      throw new AgentIntentPasswordRequiredError(
+        `Agent Intent profile "${profileId}" is password-protected but no password was provided.`,
+      );
+    },
+    () => {
+      throw new AgentIntentCorruptKeychainError(
+        `Corrupt keychain entry for Agent Intent profile "${profileId}": stored key is not valid hex.`,
+      );
+    },
+  );
 }
 
 // "Deleted" and "already absent" both satisfy the postcondition (no key remains).

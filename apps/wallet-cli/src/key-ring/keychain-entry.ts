@@ -2,8 +2,10 @@ import { Entry } from "@napi-rs/keyring";
 import { createHash } from "node:crypto";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
+import { encryptData, decryptData, hexToBytes } from "./crypto";
 
 const SERVICE = APP_NAME;
+const ENC_PREFIX = "ENC:";
 
 /**
  * A namespaced OS-keychain entry, shared by every credential kind wallet-cli stores (`ring`'s
@@ -52,4 +54,42 @@ export function hasKeychainEntry(entry: Entry): boolean {
  */
 export function splitKeychainLines(stored: string): string[] {
   return stored.trim().split(/\r?\n/);
+}
+
+/**
+ * Encrypt-and-`ENC:`-prefix a secret when a `wrappingKey` is given, otherwise return it verbatim.
+ * Shared by every keychain module (`ring`, Agent Intent, Ledger Sync) so their on-disk wrap format
+ * never drifts between applications.
+ */
+export async function wrapSecret(secretHex: string, wrappingKey?: CryptoKey): Promise<string> {
+  if (!wrappingKey) return secretHex;
+  const ct = await encryptData(wrappingKey, new TextEncoder().encode(secretHex));
+  return `${ENC_PREFIX}${Buffer.from(ct).toString("hex")}`;
+}
+
+/**
+ * Reverse of `wrapSecret`. `stored` must already be a single trimmed line (callers split multi-line
+ * entries themselves — see `splitKeychainLines`). Callers pass their own `() => never` for the two
+ * distinct failure modes so `instanceof` checks elsewhere keep resolving to each application's own
+ * error classes instead of one shared one.
+ */
+export async function unwrapSecret(
+  stored: string,
+  wrappingKey: CryptoKey | undefined,
+  onPasswordRequired: () => never,
+  onCorrupt: () => never,
+): Promise<string> {
+  if (!stored.startsWith(ENC_PREFIX)) return stored;
+  if (!wrappingKey) onPasswordRequired();
+  let ct: Uint8Array<ArrayBuffer>;
+  try {
+    ct = hexToBytes(stored.slice(ENC_PREFIX.length));
+  } catch {
+    onCorrupt();
+  }
+  try {
+    return new TextDecoder().decode(await decryptData(wrappingKey, ct));
+  } catch {
+    throw new Error("Wrong password: failed to decrypt the stored secret.");
+  }
 }

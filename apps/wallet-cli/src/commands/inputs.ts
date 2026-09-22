@@ -45,6 +45,11 @@ export const accountOption = option(z.string().min(1).optional(), {
   short: "a",
 });
 
+/** Shared by every `agent-intent` command that takes a `--profile` id. */
+export const PROFILE_ID_RE = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,62}$/;
+export const PROFILE_ID_MESSAGE =
+  "Profile id must contain only letters, numbers, dots, underscores, and dashes.";
+
 export function resolveAccountArg(
   account: string | undefined,
   positional: readonly string[],
