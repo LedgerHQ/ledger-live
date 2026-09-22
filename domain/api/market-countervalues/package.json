@@ -31,6 +31,8 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-fiat": "workspace:*",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
@@ -40,6 +42,7 @@
     "jest": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
+    "timemachine": "^0.3.2",
     "typescript": "catalog:"
   }
 }

@@ -3,13 +3,15 @@ import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { countervaluesApi } from "@shared/api-services";
 import {
   CounterValueIdsSortedByMarketCapSchema,
-  RatesResponseSchema,
+  RawRatesResponseSchema,
   SpotSimpleResponseSchema,
   type CounterValueIdsSortedByMarketCap,
   type RatesResponse,
+  type RawRatesResponse,
   type SpotSimpleResponse,
 } from "./schema";
 import { extractUsdToFiatRate } from "./internals/extractUsdToFiatRate";
+import { pickNumericRates } from "./internals/rates";
 import { rateFetchRetryOptions } from "./internals/retry";
 import type { HistoricalRatesArgs, SpotRatesArgs } from "./types";
 
@@ -61,7 +63,8 @@ export const marketCountervaluesApi = countervaluesApi
           url: `/v3/historical/${granularity}/simple`,
           params: { from, to, start, end },
         }),
-        responseSchema: RatesResponseSchema,
+        rawResponseSchema: RawRatesResponseSchema,
+        transformResponse: (raw: RawRatesResponse) => pickNumericRates(raw),
         catchSchemaFailure: describeSchemaFailure,
         extraOptions: rateFetchRetryOptions,
         keepUnusedDataFor: 0,
@@ -72,7 +75,8 @@ export const marketCountervaluesApi = countervaluesApi
           url: "/v3/spot/simple",
           params: { to, froms: froms.join(",") },
         }),
-        responseSchema: RatesResponseSchema,
+        rawResponseSchema: RawRatesResponseSchema,
+        transformResponse: (raw: RawRatesResponse) => pickNumericRates(raw),
         catchSchemaFailure: describeSchemaFailure,
         extraOptions: rateFetchRetryOptions,
         keepUnusedDataFor: 0,

@@ -1,25 +1,20 @@
 import { z } from "zod";
 
 /**
- * A rates payload: keys are date stamps for a historical window, or currency API ids for a spot
- * batch; values are rates.
+ * A rates payload as received: keys are date stamps for a historical window, or currency API ids
+ * for a spot batch.
  *
- * Non-numeric entries are dropped rather than rejected. The fetch path had no validation before
- * this package existed, and a single bad entry rejecting the whole batch would lose every other
- * rate in it. A dropped key reads back as a missing rate, which the callers already handle.
+ * Values are `unknown` here and filtered afterwards rather than validated in place. The fetch path
+ * had no validation before this package existed, and one bad entry rejecting the whole response
+ * would lose every other rate in the same batch. See `pickNumericRates`.
  */
-export const RatesResponseSchema = z
-  .record(z.string(), z.unknown())
-  .transform(raw =>
-    Object.fromEntries(
-      Object.entries(raw).filter(
-        (entry): entry is [string, number] => typeof entry[1] === "number",
-      ),
-    ),
-  );
+export const RawRatesResponseSchema = z.record(z.string(), z.unknown());
 
-/** A rates payload, inferred from {@link RatesResponseSchema}. */
-export type RatesResponse = z.infer<typeof RatesResponseSchema>;
+/** A rates payload as received, inferred from {@link RawRatesResponseSchema}. */
+export type RawRatesResponse = z.infer<typeof RawRatesResponseSchema>;
+
+/** Rates keyed by date stamp or by currency API id. */
+export type RatesResponse = Record<string, number>;
 
 /** Supported crypto API ids, most valuable first. */
 export const CounterValueIdsSortedByMarketCapSchema = z.array(z.string().min(1));
