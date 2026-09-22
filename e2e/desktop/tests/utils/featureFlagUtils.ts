@@ -167,6 +167,7 @@ export const FF_LWD_PAY_TAB = {
     enabled: true,
     params: {
       card: true,
+      legacyTopUp: false,
     },
   },
 } satisfies PartialFeatures;

@@ -1,6 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
-import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  type NavigationProp,
+  type ParamListBase,
+  type RouteProp,
+} from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   buildHostedUrl,
@@ -15,10 +21,12 @@ import {
 } from "@features/flow-pay-card-auth";
 import { readCardUsEnv } from "@features/platform-card";
 import useEnv from "@features/platform-env";
+import { useFeature } from "@features/platform-feature-flags";
 import { useContactsFeature } from "@features/platform-contacts";
 import type { CardAssetRow, CardAssetsProps } from "@features/flow-pay-card-assets";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
-import type { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
+import { CL_CARD_APP_ID, CL_CARD_APP_NAME } from "LLM/features/Card";
 import type { CardProps } from "@features/flow-pay-card";
 import { urls } from "~/utils/urls";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
@@ -40,7 +48,7 @@ import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 export function usePayTabViewModel() {
   const { top, bottom } = useNavigationBarHeights();
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
   const balance = usePayCardBalance();
@@ -115,7 +123,27 @@ export function usePayTabViewModel() {
     [openHostedPage, usAppId],
   );
 
-  const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
+  const isLegacyTopUp = !!useFeature("lwmPayTab")?.params?.legacyTopUp;
+
+  // The legacy live app has its own top-up flow and its own login. It opens as every other live
+  // app does, in the Discover webview, and never in the secure browser. It takes no currency, so
+  // the fallback opens it at its root from every top-up entry point.
+  const openTopUp = useCallback(
+    async (currency?: string) => {
+      if (isLegacyTopUp) {
+        navigation.navigate(NavigatorName.Base, {
+          screen: ScreenName.PlatformApp,
+          params: { platform: CL_CARD_APP_ID, name: CL_CARD_APP_NAME },
+        });
+        return;
+      }
+
+      await openAssetPage(buildTopUpPath, currency);
+    },
+    [isLegacyTopUp, navigation, openAssetPage],
+  );
+
+  const onTopUp = useCallback(() => openTopUp(), [openTopUp]);
 
   const onManagePin = useCallback(
     () =>
@@ -166,10 +194,10 @@ export function usePayTabViewModel() {
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
+      onTopUp: asset => void openTopUp(asset.currency),
       onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
     }),
-    [payCardAssets, onShowAssetHistory, openAssetPage],
+    [payCardAssets, onShowAssetHistory, openAssetPage, openTopUp],
   );
 
   // Without a countervalue formatter the flow shows the bare artwork instead of the card's balance.

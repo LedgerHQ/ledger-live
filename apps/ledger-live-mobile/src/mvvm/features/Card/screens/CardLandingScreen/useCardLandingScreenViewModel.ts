@@ -6,7 +6,7 @@ import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import type { CardLandingCta } from "../../types";
 import { CARD_LANDING_TEST_IDS } from "../../testIds";
-import { PAGE_NAME, CARD_APP_ID, CL_CARD_APP_ID } from "../../constants";
+import { PAGE_NAME, CARD_APP_ID, CL_CARD_APP_ID, CL_CARD_APP_NAME } from "../../constants";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/core";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
@@ -67,7 +67,7 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
       screen: ScreenName.Card,
       params: {
         platform: CL_CARD_APP_ID,
-        name: "CL Card Powered by Ledger",
+        name: CL_CARD_APP_NAME,
       },
     });
   }, [navigation]);

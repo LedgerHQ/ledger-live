@@ -4,7 +4,7 @@ import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppM
 import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { readCardUsEnv } from "@features/platform-card";
 import { getEnvDefault, setEnv } from "@shared/env";
-import { act, renderHook } from "tests/testSetup";
+import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { useCardViewModel } from "../useCardViewModel";
 
 const mockNavigate = jest.fn();
@@ -50,6 +50,14 @@ function renderCardViewModel(state: unknown) {
   return renderHook(() => useCardViewModel(), {
     skipRouter: true,
     wrapper: atPayTabWith(state),
+  });
+}
+
+function renderCardViewModelWithLegacyTopUp() {
+  return renderHook(() => useCardViewModel(), {
+    skipRouter: true,
+    wrapper: atPayTabWith(null),
+    initialState: withFlagOverrides({ lwdPayTab: { params: { legacyTopUp: true } } }),
   });
 }
 
@@ -146,6 +154,27 @@ describe("useCardViewModel", () => {
     });
 
     expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?currency=btc");
+  });
+
+  it("opens the legacy card live app on top up when the legacyTopUp param is on", async () => {
+    const { result } = renderCardViewModelWithLegacyTopUp();
+
+    await act(async () => {
+      await result.current.onTopUp();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith("/platform/cl-card?returnTo=%2Fpaytab");
+  });
+
+  it("opens the legacy card live app from an asset too, and drops its currency", async () => {
+    const { result } = renderCardViewModelWithLegacyTopUp();
+
+    await act(async () => {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      result.current.assets?.onTopUp?.({ currency: "btc" } as CardAssetRow);
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith("/platform/cl-card?returnTo=%2Fpaytab");
   });
 
   it("opens the withdrawal page for the asset the user withdraws from", async () => {

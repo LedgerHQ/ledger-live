@@ -11,6 +11,7 @@ import {
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import { readCardUsEnv } from "@features/platform-card";
 import useEnv from "@features/platform-env";
+import { useFeature } from "@features/platform-feature-flags";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -126,7 +127,8 @@ export function useCardViewModel(): CardViewModel {
     }
   }, [callback, navigate, pathname]);
 
-  const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
+  const { openHostedLogin, openHostedPage, openLegacyCardApp } = useCardHostedPageOpeners();
+  const isLegacyTopUp = !!useFeature("lwdPayTab")?.params?.legacyTopUp;
 
   const openAssetPage = useCallback(
     async (buildPath: CardAssetPathBuilder, currency?: string) => {
@@ -140,7 +142,21 @@ export function useCardViewModel(): CardViewModel {
     [openHostedPage, usAppId],
   );
 
-  const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
+  // The legacy live app has its own top-up flow and its own login. It takes no currency, so the
+  // fallback opens it at its root from every top-up entry point.
+  const openTopUp = useCallback(
+    async (currency?: string) => {
+      if (isLegacyTopUp) {
+        openLegacyCardApp();
+        return;
+      }
+
+      await openAssetPage(buildTopUpPath, currency);
+    },
+    [isLegacyTopUp, openLegacyCardApp, openAssetPage],
+  );
+
+  const onTopUp = useCallback(() => openTopUp(), [openTopUp]);
 
   useWipeHostedSession();
 
@@ -180,10 +196,10 @@ export function useCardViewModel(): CardViewModel {
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
+      onTopUp: asset => void openTopUp(asset.currency),
       onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
     }),
-    [onShowAssetHistory, openAssetPage, payCardAssets],
+    [onShowAssetHistory, openAssetPage, openTopUp, payCardAssets],
   );
 
   const onManagePin = useCallback(
