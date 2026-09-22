@@ -16,6 +16,16 @@ pnpm i
 pnpm dummy-wallet-app start # Start development server
 ```
 
+### HTTPS (self-signed) dev server
+
+To test the mobile app's `allowsUnsecureHttps` WebView patch against a real self-signed certificate:
+
+```sh
+pnpm dummy-wallet-app start:https # Serves over HTTPS with an auto-generated self-signed cert
+```
+
+Then, manually load `manifest.https.json` (next to `manifest.json`) in Ledger Wallet, and set `IGNORE_CERTIFICATE_ERRORS=1` in the mobile app's env so the patched WebView accepts the untrusted cert.
+
 ## E2E Usage
 
 Use the maintained E2E setup docs for environment prerequisites:

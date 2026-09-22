@@ -2,6 +2,8 @@ const path = require("path");
 const rspack = require("@rspack/core");
 
 const isDev = process.env.NODE_ENV !== "production";
+const useHttps = process.env.HTTPS === "true";
+const port = Number(process.env.PORT) || 3000;
 
 /** @type {import('@rspack/core').Configuration} */
 module.exports = {
@@ -86,7 +88,8 @@ module.exports = {
     }),
   ],
   devServer: {
-    port: 3000,
+    port,
+    ...(useHttps ? { server: "https" } : {}),
     hot: true,
     historyApiFallback: true,
     static: {
