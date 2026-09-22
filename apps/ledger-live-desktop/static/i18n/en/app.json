@@ -880,9 +880,10 @@
       "tile": "More",
       "title": "More",
       "rows": {
-        "managePin": "Manage PIN Code",
+        "managePin": "Card PIN",
         "accessBaanx": "Access to Baanx",
         "help": "Help",
+        "legal": "Legal agreement",
         "logout": "Logout"
       }
     },

@@ -306,7 +306,6 @@ describe("Card (web)", () => {
       const cardSettingsActions: CardProps["cardSettingsActions"] = {
         onManagePin: jest.fn(),
         onAccessBaanx: jest.fn(),
-        onHelp: jest.fn(),
       };
 
       renderCard(<Card login={{ oauthConfig }} cardSettingsActions={cardSettingsActions} />);

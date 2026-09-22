@@ -1,5 +1,6 @@
 import React from "react";
 import { I18nTestProvider } from "@shared/i18n/testing";
+import { LinkingProvider } from "@shared/linking";
 
 export const CARD_COPY = {
   freeze: "Freeze",
@@ -36,9 +37,10 @@ export const MORE_COPY = {
   tile: "More",
   title: "More",
   rows: {
-    managePin: "Manage PIN Code",
+    managePin: "Card PIN",
     accessBaanx: "Access to Baanx",
     help: "Help",
+    legal: "Legal agreement",
     logout: "Logout",
   },
 } as const;
@@ -133,6 +135,12 @@ export const CARD_RESOURCES = {
   },
 };
 
+export const openExternalMock = jest.fn();
+
 export function I18nWrapper({ children }: { children: React.ReactNode }) {
-  return <I18nTestProvider resources={CARD_RESOURCES}>{children}</I18nTestProvider>;
+  return (
+    <I18nTestProvider resources={CARD_RESOURCES}>
+      <LinkingProvider config={{ openExternal: openExternalMock }}>{children}</LinkingProvider>
+    </I18nTestProvider>
+  );
 }
