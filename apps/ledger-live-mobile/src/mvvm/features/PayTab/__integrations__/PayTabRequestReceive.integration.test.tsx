@@ -15,7 +15,7 @@ import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
-import { screen as trackScreen } from "~/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import type { State } from "~/reducers/types";
 import PayTabNavigator from "LLM/features/PayTab";
 import { PayTabRequestReceiveScreen } from "LLM/features/PayTab/screens/RequestReceive";
@@ -276,14 +276,9 @@ describe("PayTab RequestReceive integration", () => {
 
     expect(await screen.findByText(VERIFY_INTRO)).toBeVisible();
     await waitFor(() => {
-      expect(jest.mocked(trackScreen)).toHaveBeenCalledWith(
-        "Request Address Verification",
-        undefined,
-        expect.anything(),
-        true,
-        true,
-        false,
-        false,
+      expect(jest.mocked(trackPage)).toHaveBeenCalledWith(
+        { category: "Request Address Verification", name: undefined, props: expect.anything() },
+        { updateRoutes: true, refreshSource: true, avoidDuplicates: false, mandatory: false },
       );
     });
     expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
