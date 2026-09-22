@@ -8,6 +8,7 @@ import {
   buildAccessBaanxPath,
   buildManagePinPath,
   buildAddAssetPath,
+  buildOrderCardPath,
   openHostedUrlInSecureBrowser,
   openHostedCardPathSafely,
   type CardAssetPathBuilder,
@@ -117,6 +118,8 @@ export function usePayTabViewModel() {
 
   const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
 
+  const onChooseCardType = useCallback(() => openAssetPage(buildOrderCardPath), [openAssetPage]);
+
   const onManagePin = useCallback(
     () =>
       openHostedPath(buildManagePinPath, () => console.warn("[card] manage pin page did not open")),
@@ -175,6 +178,7 @@ export function usePayTabViewModel() {
     cardAssets,
     cardFormatters,
     onTopUp,
+    onChooseCardType,
     balance,
     actionTiles,
     contacts,

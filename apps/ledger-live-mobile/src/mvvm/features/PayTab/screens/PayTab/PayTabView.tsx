@@ -22,6 +22,7 @@ type PayTabViewProps = {
   readonly cardAssets: CardProps["assets"];
   readonly cardFormatters: CardProps["formatters"];
   readonly onTopUp: () => Promise<void>;
+  readonly onChooseCardType: () => Promise<void>;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
   readonly contacts: ContactsNativeProps;
@@ -42,6 +43,7 @@ export function PayTabView({
   cardAssets,
   cardFormatters,
   onTopUp,
+  onChooseCardType,
   balance,
   actionTiles,
   contacts,
@@ -81,6 +83,7 @@ export function PayTabView({
             assets={cardAssets}
             formatters={cardFormatters}
             onTopUp={onTopUp}
+            onChooseCardType={onChooseCardType}
             onShowMore={onShowMore}
             cardSettingsActions={cardSettingsActions}
           />

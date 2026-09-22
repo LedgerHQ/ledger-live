@@ -46,7 +46,12 @@ export function createRenderWidget(render: RenderWidget) {
   return function renderWidget({
     hasCompletedOnboarding = false,
     onTopUp,
-  }: { hasCompletedOnboarding?: boolean; onTopUp?: () => void } = {}) {
+    onChooseCardType,
+  }: {
+    hasCompletedOnboarding?: boolean;
+    onTopUp?: () => void;
+    onChooseCardType?: () => void;
+  } = {}) {
     const store = configureStore({
       reducer: { payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer },
       preloadedState: {
@@ -65,6 +70,11 @@ export function createRenderWidget(render: RenderWidget) {
       </Provider>
     );
 
-    return { ...render(<CardOnboardingWidget onTopUp={onTopUp} />, { wrapper }), store };
+    return {
+      ...render(<CardOnboardingWidget onTopUp={onTopUp} onChooseCardType={onChooseCardType} />, {
+        wrapper,
+      }),
+      store,
+    };
   };
 }

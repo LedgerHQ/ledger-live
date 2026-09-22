@@ -16,6 +16,7 @@ export function CardView({
   formatters,
   onShowMore,
   onTopUp,
+  onChooseCardType,
   cardSettingsActions,
 }: CardViewProps) {
   const isSignedIn = displayState === "signedIn";
@@ -25,7 +26,7 @@ export function CardView({
       <p className="heading-5-semi-bold text-base">{title}</p>
       {isSignedIn ? (
         <>
-          <CardOnboardingWidget onTopUp={onTopUp} />
+          <CardOnboardingWidget onTopUp={onTopUp} onChooseCardType={onChooseCardType} />
           <CardDetails
             cardVisual={cardVisual}
             formatters={{ amount: formatters?.transactionAmount }}

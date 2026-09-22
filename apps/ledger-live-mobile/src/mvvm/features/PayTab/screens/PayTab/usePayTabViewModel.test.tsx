@@ -49,7 +49,8 @@ const CARD_ASSET: CardAssetRow = {
 };
 
 function PayTabViewModelProbe() {
-  const { login, onTopUp, cardAssets, cardSettingsActions, cardFormatters } = usePayTabViewModel();
+  const { login, onTopUp, onChooseCardType, cardAssets, cardSettingsActions, cardFormatters } =
+    usePayTabViewModel();
   const { oauthConfig, callback } = login;
   const formatted = cardFormatters?.countervalue?.(1250);
 
@@ -64,6 +65,7 @@ function PayTabViewModelProbe() {
       <Text testID="countervalue-integer">{formatted?.integerPart}</Text>
       <Text testID="countervalue-decimal">{formatted?.decimalPart}</Text>
       <Pressable testID="top-up" onPress={onTopUp} />
+      <Pressable testID="choose-card-type" onPress={onChooseCardType} />
       <Pressable testID="asset-top-up" onPress={() => cardAssets.onTopUp?.(CARD_ASSET)} />
       <Pressable testID="asset-withdraw" onPress={() => cardAssets.onWithdraw?.(CARD_ASSET)} />
       <Text testID="has-manage-pin">
@@ -146,6 +148,36 @@ describe("usePayTabViewModel", () => {
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
         "https://hosted.test/topup",
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should open the choose card type page of the hosted UI in the secure browser", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("choose-card-type"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/order-card",
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should name the US app on the choose card type page for a US card holder", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("choose-card-type"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/order-card?app_id=LEDGERUS",
         PAY_TAB_DEEP_LINK,
       ),
     );

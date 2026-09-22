@@ -90,6 +90,21 @@ describe("CardOnboardingWidget (integration)", () => {
     expect(screen.queryByText(/Apple\/Google Pay/)).not.toBeInTheDocument();
   });
 
+  it("should open the choose-card-type page from the active step", () => {
+    const onChooseCardType = jest.fn();
+    setQuery({ data: { steps: stepsWith(true, false, false) } });
+    renderWidget({ onChooseCardType });
+    openWidget();
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: new RegExp(CARD_ONBOARDING_STEP_COPY["choose-card-type"].title),
+      }),
+    );
+
+    expect(onChooseCardType).toHaveBeenCalledTimes(1);
+  });
+
   it("should open the top up page from the active top-up step", () => {
     const onTopUp = jest.fn();
     setQuery({ data: { steps: stepsWith(true, true, false) } });
