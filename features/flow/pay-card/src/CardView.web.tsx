@@ -42,7 +42,7 @@ export function CardView({
             onShowMore={onShowMore}
           />
           {onTopUp ? (
-            <div className="sticky bottom-0 mt-auto bg-canvas py-16">
+            <div className="sticky bottom-0 mt-auto py-16">
               <CardTopUpButton onTopUp={onTopUp} />
             </div>
           ) : null}
