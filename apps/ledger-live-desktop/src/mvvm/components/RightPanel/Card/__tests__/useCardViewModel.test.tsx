@@ -229,7 +229,17 @@ describe("useCardViewModel", () => {
 
     await act(async () => result.current.cardSettingsActions?.onManagePin?.());
 
-    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/dashboard/card/details");
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/set-pin");
+  });
+
+  it("names the US app on the manage PIN hosted page for a US card holder", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => result.current.cardSettingsActions?.onManagePin?.());
+
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/set-pin?app_id=LEDGERUS");
   });
 
   it("opens the access Baanx hosted page on the hosted manifest", async () => {

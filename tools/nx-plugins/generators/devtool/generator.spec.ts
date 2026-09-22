@@ -186,13 +186,18 @@ describe("rewriteIndexRegistry", () => {
     tree = createTreeWithEmptyWorkspace();
   });
 
-  it("writes a team index and the metadata root index", () => {
+  it("writes a team index", () => {
     rewriteIndexRegistry(tree, [mockTool()]);
 
     expect(tree.read(`${REGISTRY_META}/platform/index.ts`, "utf-8")).toContain(
       `export * from "./feature-flags"`,
     );
-    expect(tree.read(`${REGISTRY_META}/index.ts`, "utf-8")).toContain(`export * from "./platform"`);
+  });
+
+  it("writes no metadata root barrel, since the registry imports each team directly", () => {
+    rewriteIndexRegistry(tree, [mockTool()]);
+
+    expect(tree.exists(`${REGISTRY_META}/index.ts`)).toBe(false);
   });
 
   it("removes a stale team index when that team has no remaining tools", () => {
@@ -213,15 +218,18 @@ describe("rewriteIndexRegistry", () => {
     expect(content).toContain("feature-flags");
   });
 
-  it("writes one entry per team in the root metadata index", () => {
+  it("writes one index per team", () => {
     const tools = [
       mockTool({ toolName: "feature-flags", team: "platform" }),
       mockTool({ toolName: "pay-card", team: "ptx" }),
     ];
     rewriteIndexRegistry(tree, tools);
 
-    const root = tree.read(`${REGISTRY_META}/index.ts`, "utf-8")!;
-    expect(root).toContain(`export * from "./platform"`);
-    expect(root).toContain(`export * from "./ptx"`);
+    expect(tree.read(`${REGISTRY_META}/platform/index.ts`, "utf-8")).toContain(
+      `export * from "./feature-flags"`,
+    );
+    expect(tree.read(`${REGISTRY_META}/ptx/index.ts`, "utf-8")).toContain(
+      `export * from "./pay-card"`,
+    );
   });
 });

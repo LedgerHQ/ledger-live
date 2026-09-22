@@ -28,10 +28,12 @@ import { useDoNotAskAgainSkipMemo } from "../../../../hooks/useDoNotAskAgainSkip
 import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
 import { trackPage } from "~/renderer/analytics/segment";
+import { useSendFlowTrackingProperties } from "../../../../hooks/useSendFlowTrackingProperties";
 
 jest.mock("../useAddressValidation");
 jest.mock("../useAddressMatchedSectionViewModel");
 jest.mock("../../../../context/SendFlowContext");
+jest.mock("../../../../hooks/useSendFlowTrackingProperties");
 jest.mock("../../../../../FlowWizard/FlowWizardContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
@@ -67,6 +69,7 @@ const mockedUseContactsFeature = jest.mocked(useContactsFeature);
 const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelection);
 const mockedUseRecipientContinuation = jest.mocked(useRecipientContinuation);
 const mockedUseSendFlowTracking = jest.mocked(useSendFlowTracking);
+const mockedUseSendFlowTrackingProperties = jest.mocked(useSendFlowTrackingProperties);
 const mockedUseContactsFeatureIntroductionViewModel = jest.mocked(
   useContactsFeatureIntroductionViewModel,
 );
@@ -155,6 +158,13 @@ describe("useRecipientAddressModalViewModel", () => {
       setInputMethod: jest.fn(),
       setRecipientResolution,
       markContactSaved: jest.fn(),
+    });
+    mockedUseSendFlowTrackingProperties.mockReturnValue({
+      flow: "send",
+      newSendFlow: true,
+      blockchain: "ethereum",
+      currency: "ETH",
+      currency_id: "ethereum",
     });
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,

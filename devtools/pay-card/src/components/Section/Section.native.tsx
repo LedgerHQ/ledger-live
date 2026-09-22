@@ -11,9 +11,21 @@ export interface SectionProps {
 const CONTAINER_LX = { gap: "s12", padding: "s16" } as const;
 const CONTENT_LX = { gap: "s8" } as const;
 
+const TINTS = {
+  activeSubtle: "activeSubtle",
+  warning: "warningTransparent",
+  success: "successTransparent",
+} as const;
+
 export function Section({ title, backgroundColor, children }: SectionProps) {
   return (
-    <Box lx={backgroundColor === undefined ? CONTAINER_LX : { ...CONTAINER_LX, backgroundColor }}>
+    <Box
+      lx={
+        backgroundColor === undefined
+          ? CONTAINER_LX
+          : { ...CONTAINER_LX, backgroundColor: TINTS[backgroundColor] }
+      }
+    >
       <Text typography="body2" lx={{ color: "base" }}>
         {title}
       </Text>

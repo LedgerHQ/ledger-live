@@ -1,11 +1,11 @@
 import React from "react";
 import { Linking, Pressable, Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { act, fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { getEnv, getEnvDefault, setEnv } from "@shared/env";
 import {
   buildHostedUrl,
-  MANAGE_PIN_PATH,
+  buildManagePinPath,
   buildAccessBaanxPath,
   openHostedUrlInSecureBrowser,
 } from "@features/flow-pay-card-auth";
@@ -160,9 +160,9 @@ describe("usePayTabViewModel", () => {
 
   it("should open the top up page of the hosted UI in the secure browser", async () => {
     setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
-    renderViewModel();
+    const { user } = renderViewModel();
 
-    fireEvent.press(screen.getByTestId("top-up"));
+    await user.press(screen.getByTestId("top-up"));
 
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
@@ -174,9 +174,9 @@ describe("usePayTabViewModel", () => {
 
   it("should pre-select the asset the holder tops up from", async () => {
     setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
-    renderViewModel();
+    const { user } = renderViewModel();
 
-    fireEvent.press(screen.getByTestId("asset-top-up"));
+    await user.press(screen.getByTestId("asset-top-up"));
 
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
@@ -187,9 +187,9 @@ describe("usePayTabViewModel", () => {
   });
 
   it("should open the legacy card live app on top up when the legacyTopUp param is on", async () => {
-    renderViewModelWithLegacyTopUp();
+    const { user } = renderViewModelWithLegacyTopUp();
 
-    fireEvent.press(screen.getByTestId("top-up"));
+    await user.press(screen.getByTestId("top-up"));
 
     await waitFor(() => expect(screen.getByTestId("base-screen")).toHaveTextContent("PlatformApp"));
     expect(screen.getByTestId("base-platform")).toHaveTextContent("cl-card");
@@ -198,9 +198,9 @@ describe("usePayTabViewModel", () => {
   });
 
   it("should open the legacy card live app from an asset too, and drop its currency", async () => {
-    renderViewModelWithLegacyTopUp();
+    const { user } = renderViewModelWithLegacyTopUp();
 
-    fireEvent.press(screen.getByTestId("asset-top-up"));
+    await user.press(screen.getByTestId("asset-top-up"));
 
     await waitFor(() => expect(screen.getByTestId("base-platform")).toHaveTextContent("cl-card"));
     expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
@@ -210,9 +210,9 @@ describe("usePayTabViewModel", () => {
     setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
     setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
     mockedReadCardUsEnv.mockResolvedValue(true);
-    renderViewModel();
+    const { user } = renderViewModel();
 
-    fireEvent.press(screen.getByTestId("asset-withdraw"));
+    await user.press(screen.getByTestId("asset-withdraw"));
 
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
@@ -226,9 +226,9 @@ describe("usePayTabViewModel", () => {
     setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
     setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
     mockedReadCardUsEnv.mockResolvedValue(true);
-    renderViewModel();
+    const { user } = renderViewModel();
 
-    fireEvent.press(screen.getByTestId("top-up"));
+    await user.press(screen.getByTestId("top-up"));
 
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
@@ -273,11 +273,11 @@ describe("usePayTabViewModel", () => {
     expect(screen.getByTestId("has-access-baanx")).toHaveTextContent("true");
   });
 
-  it("should open the card help center article externally", () => {
+  it("should open the card help center article externally", async () => {
     const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-    renderViewModel();
+    const { user } = renderViewModel();
 
-    fireEvent.press(screen.getByTestId("press-help"));
+    await user.press(screen.getByTestId("press-help"));
 
     expect(openURL).toHaveBeenCalledWith("https://support.ledger.com/article/5283612250653-zd");
 
@@ -285,22 +285,37 @@ describe("usePayTabViewModel", () => {
   });
 
   it("should open the manage PIN hosted page in the secure browser", async () => {
-    renderViewModel();
+    const { user } = renderViewModel();
 
-    fireEvent.press(screen.getByTestId("press-manage-pin"));
+    await user.press(screen.getByTestId("press-manage-pin"));
 
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
-        buildHostedUrl(getEnv("CARD_BAANX_HOSTED_UI"), MANAGE_PIN_PATH),
+        buildHostedUrl(getEnv("CARD_BAANX_HOSTED_UI"), buildManagePinPath(null)),
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should name the US app on the manage PIN hosted page for a US card holder", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("press-manage-pin"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        buildHostedUrl(getEnv("CARD_BAANX_HOSTED_UI"), buildManagePinPath("LEDGERUS")),
         PAY_TAB_DEEP_LINK,
       ),
     );
   });
 
   it("should open the access Baanx hosted page in the secure browser", async () => {
-    renderViewModel();
+    const { user } = renderViewModel();
 
-    fireEvent.press(screen.getByTestId("press-access-baanx"));
+    await user.press(screen.getByTestId("press-access-baanx"));
 
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
@@ -313,9 +328,9 @@ describe("usePayTabViewModel", () => {
   it("should name the US app on the access Baanx hosted page for a US card holder", async () => {
     setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
     mockedReadCardUsEnv.mockResolvedValue(true);
-    renderViewModel();
+    const { user } = renderViewModel();
 
-    fireEvent.press(screen.getByTestId("press-access-baanx"));
+    await user.press(screen.getByTestId("press-access-baanx"));
 
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
@@ -328,9 +343,9 @@ describe("usePayTabViewModel", () => {
   it("should report a warning instead of throwing when the hosted page fails to open", async () => {
     const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
     mockedOpenSecureBrowser.mockRejectedValueOnce(new Error("could not open browser"));
-    renderViewModel();
+    const { user } = renderViewModel();
 
-    fireEvent.press(screen.getByTestId("press-manage-pin"));
+    await user.press(screen.getByTestId("press-manage-pin"));
 
     await waitFor(() => expect(warn).toHaveBeenCalledWith("[card] manage pin page did not open"));
 

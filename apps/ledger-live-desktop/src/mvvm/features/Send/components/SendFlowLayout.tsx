@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { cn } from "LLD/utils/cn";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
@@ -14,7 +14,7 @@ import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
 import { AnimatedHeight } from "./AnimatedHeight";
 import { track } from "~/renderer/analytics/segment";
-import { getSendFlowTrackingProperties } from "../utils/tracking";
+import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
 import { getSendFlowTrackingPage } from "../utils/contactTracking";
@@ -34,10 +34,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
 
   const currentStepConfig = wizard.currentStepConfig;
   const StepComponent = wizard.currentStepRenderer;
-  const sendFlowTrackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
-    [state.account.account, state.account.parentAccount],
-  );
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const handleDialogOpenChange = useCallback(
     (open: boolean) => {

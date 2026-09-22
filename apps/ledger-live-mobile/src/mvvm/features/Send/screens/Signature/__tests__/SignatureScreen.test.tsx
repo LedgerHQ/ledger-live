@@ -60,6 +60,10 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => ({
   },
 }));
 
+jest.mock("../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: jest.fn(() => ({ flow: "send" })),
+}));
+
 jest.mock("../hooks/useSignatureViewModel", () => ({
   useSignatureViewModel: jest.fn(),
 }));
