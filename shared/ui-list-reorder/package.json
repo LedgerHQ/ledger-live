@@ -25,10 +25,22 @@
   },
   "peerDependencies": {
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-native-gesture-handler": "2.28.0",
+    "react-native-reanimated": "catalog:",
+    "react-native-worklets": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
+      "optional": true
+    },
+    "react-native-gesture-handler": {
+      "optional": true
+    },
+    "react-native-reanimated": {
+      "optional": true
+    },
+    "react-native-worklets": {
       "optional": true
     }
   },
@@ -50,6 +62,9 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-native-gesture-handler": "2.28.0",
+    "react-native-reanimated": "catalog:",
+    "react-native-worklets": "catalog:",
     "typescript": "catalog:"
   }
 }
