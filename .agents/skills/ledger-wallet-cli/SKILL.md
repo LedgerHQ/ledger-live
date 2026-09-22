@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive`, `send`, `genuine-check`, `swap execute`, `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring keys`, `ring destroy` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead. `ring keys` needs neither: it only reads the local session file, so it runs without the bypass.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -74,7 +74,7 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `session view`       | No     | No           | No          | No      |
 | `session reset`      | No     | No           | No          | No      |
 | `account discover`   | Yes    | **Required** | No          | Yes     |
-| `receive`            | Yes    | **Required** | No          | No      |
+| `receive`            | Yes\*  | **Required** | No          | No      |
 | `send`               | Yes\*  | **Required** | No          | Yes     |
 | `genuine-check`      | Yes    | **Required** | No          | Yes     |
 | `balances`           | No     | No           | No          | Yes     |
@@ -91,10 +91,10 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `ring init`          | Yes    | **Required** | Required‡   | Yes     |
 | `ring encrypt`       | No     | **Required** | No          | Yes     |
 | `ring decrypt`       | No     | **Required** | No          | Yes     |
-| `ring keys`          | No     | **Required** | No          | No      |
+| `ring keys`          | No     | No           | No          | No      |
 | `ring destroy`       | No     | **Required** | Required‡‡  | Yes     |
 
-\*`send`, `earn deposit`, and `earn withdraw` with `--dry-run` need no device and no sandbox bypass.
+\*`receive` with `--no-verify`, `send` with `--dry-run`, and `earn deposit`/`earn withdraw` with `--dry-run` need no device and no sandbox bypass.
 
 †TTY: whether the command requires an interactive terminal for user input.
 
