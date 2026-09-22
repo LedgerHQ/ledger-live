@@ -24,6 +24,7 @@ export type CardProps = {
   readonly formatters?: CardFormatters;
   readonly onShowMore?: () => void;
   readonly onTopUp?: () => void;
+  readonly onChooseCardType?: () => void;
   readonly cardSettingsActions?: CardSettingsActions;
 };
 
@@ -48,5 +49,6 @@ export type CardViewProps = {
   readonly formatters?: CardFormatters;
   readonly onShowMore?: () => void;
   readonly onTopUp?: () => void;
+  readonly onChooseCardType?: () => void;
   readonly cardSettingsActions?: CardSettingsActions;
 };
