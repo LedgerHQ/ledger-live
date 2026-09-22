@@ -982,6 +982,9 @@ importers:
       '@domain/entity-interest-rate':
         specifier: workspace:*
         version: link:../../domain/entity/interest-rate
+      '@domain/entity-market-countervalues':
+        specifier: workspace:^
+        version: link:../../domain/entity/market-countervalues
       '@domain/entity-market-index-fear-and-greed':
         specifier: workspace:^
         version: link:../../domain/entity/market-index-fear-and-greed
@@ -1824,6 +1827,9 @@ importers:
       '@domain/entity-interest-rate':
         specifier: workspace:*
         version: link:../../domain/entity/interest-rate
+      '@domain/entity-market-countervalues':
+        specifier: workspace:^
+        version: link:../../domain/entity/market-countervalues
       '@domain/entity-market-index-altcoin-season':
         specifier: workspace:^
         version: link:../../domain/entity/market-index-altcoin-season
@@ -2974,6 +2980,9 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:^
         version: link:../../domain/entity/currency-token
+      '@domain/entity-market-countervalues':
+        specifier: workspace:^
+        version: link:../../domain/entity/market-countervalues
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses
@@ -17945,12 +17954,12 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../../domain/entity/currency-token
+      '@domain/entity-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/entity/market-countervalues
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:*
         version: link:../ledger-wallet-framework
-      '@ledgerhq/live-countervalues':
-        specifier: workspace:*
-        version: link:../live-countervalues
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../types-live
@@ -23718,7 +23727,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
