@@ -76,7 +76,7 @@ export default defineCommand({
       }
 
       const memberName = flags.name ?? defaultMemberName();
-      const sdk = createLkrpSdk(memberName);
+      const sdk = createLkrpSdk({ memberName });
 
       const memberCredentials = await out.withActivity(
         "Generating member credentials…",

@@ -2,6 +2,7 @@ import { accountDescriptorSchema, type AccountDescriptor } from "@ledgerhq/live-
 import { CloudSyncSDK, type UpdateEvent } from "@shared/cloud-sync";
 import type { Trustchain, MemberCredentials, TrustchainSDK } from "@shared/cloud-sync";
 import { getEnv } from "@shared/env";
+import type { LedgerSyncEnvironment } from "../key-ring/constants";
 import {
   toV1,
   serializeNetwork,
@@ -15,8 +16,6 @@ import { Session } from "../session/session-store";
 /** Ledger Sync's Cloud Sync "slug" for the account-list document — matches Desktop/Mobile's
  * `liveSlug` (see docs/ledger-sync/04-cloud-sync-sdk.md and useWatchWalletSync.ts). */
 const LIVE_SLUG = "live";
-
-export type LedgerSyncEnvironment = "staging" | "production";
 
 function cloudSyncApiBaseUrl(environment: LedgerSyncEnvironment): string {
   return environment === "production"
@@ -171,8 +170,9 @@ export function mergeSyncedAccounts(
       continue;
     }
 
-    const { label, added } = session.addDescriptor(v1Validation.data);
-    const network = serializeNetwork(v1.network);
+    const validated = v1Validation.data;
+    const { label, added } = session.addDescriptor(validated);
+    const network = serializeNetwork(validated.network);
     if (added) {
       report.imported.push({ status: "imported", label, network });
     } else {

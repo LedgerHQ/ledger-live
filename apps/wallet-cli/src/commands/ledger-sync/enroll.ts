@@ -3,7 +3,11 @@ import { z } from "zod";
 import os from "node:os";
 import { Session } from "../../session/session-store";
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
-import { LEDGER_SYNC_APPLICATION_ID, MEMBER_NAME_MAX_LENGTH } from "../../key-ring/constants";
+import {
+  LEDGER_SYNC_APPLICATION_ID,
+  LEDGER_SYNC_ENVIRONMENTS,
+  MEMBER_NAME_MAX_LENGTH,
+} from "../../key-ring/constants";
 import {
   saveLedgerSyncMemberCredentials,
   hasLedgerSyncMemberCredentials,
@@ -28,7 +32,7 @@ export default defineCommand({
       description: `Member name (default: hostname + platform, max ${MEMBER_NAME_MAX_LENGTH} chars)`,
       short: "n",
     }),
-    environment: option(z.enum(["staging", "production"]).default("production"), {
+    environment: option(z.enum(LEDGER_SYNC_ENVIRONMENTS).default("production"), {
       description:
         "Ledger Sync backend environment. Recorded on this profile and reused automatically by " +
         "every later `import`/`destroy` — not asked again.",
@@ -58,7 +62,11 @@ export default defineCommand({
       }
 
       const memberName = flags.name ?? defaultMemberName();
-      const sdk = createLkrpSdk(memberName, LEDGER_SYNC_APPLICATION_ID, flags.environment);
+      const sdk = createLkrpSdk({
+        memberName,
+        applicationId: LEDGER_SYNC_APPLICATION_ID,
+        environment: flags.environment,
+      });
 
       const memberCredentials = await out.withActivity(
         "Generating member credentials…",
