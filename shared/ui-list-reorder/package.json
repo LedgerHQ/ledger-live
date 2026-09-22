@@ -2,35 +2,20 @@
   "name": "@shared/ui-list-reorder",
   "version": "0.1.0",
   "private": true,
-  "description": "Cross-platform list reorder contracts and bindings",
-  "main": "src/index.web.ts",
-  "react-native": "src/index.native.ts",
-  "types": "src/index.web.ts",
+  "description": "Reorder a list by index — shared by native (react-native-draggable-flatlist) and web (dnd-kit) drag-and-drop.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.web.ts"
-    },
-    "./native": "./src/index.native.ts",
-    "./web": "./src/index.web.ts",
+    ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
-    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "jest",
     "test:watch": "jest --watch"
-  },
-  "peerDependencies": {
-    "react": "catalog:",
-    "react-native": "catalog:"
-  },
-  "peerDependenciesMeta": {
-    "react-native": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -39,17 +24,11 @@
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
-    "@testing-library/react": "catalog:",
-    "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:",
-    "react-native": "catalog:",
     "typescript": "catalog:"
   }
 }
