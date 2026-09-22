@@ -13,6 +13,7 @@ export function ConfirmPasswordView({
   onConfirm,
   hasSaveFailed = false,
   keyboardHeight = 0,
+  bottomInset = 0,
 }: ConfirmPasswordViewProps): React.JSX.Element {
   const { t } = useTranslation();
 
@@ -26,7 +27,9 @@ export function ConfirmPasswordView({
   return (
     <Box
       lx={{ flex: 1, paddingHorizontal: "s16", gap: "s24" }}
-      style={{ paddingBottom: keyboardHeight + 16 }}
+      style={{
+        paddingBottom: keyboardHeight > 0 ? keyboardHeight + 16 : Math.max(bottomInset, 16),
+      }}
     >
       <PasswordField
         value={password}

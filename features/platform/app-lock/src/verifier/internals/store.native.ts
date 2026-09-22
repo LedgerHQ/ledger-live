@@ -16,6 +16,13 @@ type SerialisedVerifier = Readonly<{
   scrypt: ScryptParams;
   salt: string;
   digest: string;
+  needsLongerPassword?: boolean;
+}>;
+
+/** The verifier and what is known about the password behind it, in one record. */
+export type StoredPassword = Readonly<{
+  verifier: PasswordVerifier;
+  needsLongerPassword: boolean;
 }>;
 
 function toBase64(bytes: Uint8Array): string {
@@ -26,12 +33,13 @@ function fromBase64(value: string): Uint8Array {
   return new Uint8Array(Buffer.from(value, "base64"));
 }
 
-export function serialisePasswordVerifier(verifier: PasswordVerifier): string {
+export function serialisePasswordVerifier(stored: StoredPassword): string {
   const serialised: SerialisedVerifier = {
-    version: verifier.version,
-    scrypt: verifier.scrypt,
-    salt: toBase64(verifier.salt),
-    digest: toBase64(verifier.digest),
+    version: stored.verifier.version,
+    scrypt: stored.verifier.scrypt,
+    salt: toBase64(stored.verifier.salt),
+    digest: toBase64(stored.verifier.digest),
+    needsLongerPassword: stored.needsLongerPassword,
   };
 
   return JSON.stringify(serialised);
@@ -52,7 +60,7 @@ function toScryptParams(value: unknown): ScryptParams | null {
     : null;
 }
 
-export function deserialisePasswordVerifier(raw: string): PasswordVerifier | null {
+export function deserialisePasswordVerifier(raw: string): StoredPassword | null {
   try {
     const parsed: unknown = JSON.parse(raw);
 
@@ -60,7 +68,8 @@ export function deserialisePasswordVerifier(raw: string): PasswordVerifier | nul
       return null;
     }
 
-    const { version, scrypt, salt, digest } = parsed as Partial<SerialisedVerifier>;
+    const { version, scrypt, salt, digest, needsLongerPassword } =
+      parsed as Partial<SerialisedVerifier>;
     const params = toScryptParams(scrypt);
 
     if (
@@ -80,17 +89,31 @@ export function deserialisePasswordVerifier(raw: string): PasswordVerifier | nul
       return null;
     }
 
-    return { version, scrypt: params, salt: fromBase64(salt), digest: digestBytes };
+    return {
+      verifier: { version, scrypt: params, salt: fromBase64(salt), digest: digestBytes },
+      // Unset is a record from before the mark existed; the next password unlock corrects it.
+      needsLongerPassword: needsLongerPassword === true,
+    };
   } catch {
     return null;
   }
 }
 
-export async function writePasswordVerifier(verifier: PasswordVerifier): Promise<void> {
-  await Keychain.setGenericPassword(USERNAME, serialisePasswordVerifier(verifier), writeOptions);
+export async function writePasswordVerifier(stored: StoredPassword): Promise<void> {
+  const written = await Keychain.setGenericPassword(
+    USERNAME,
+    serialisePasswordVerifier(stored),
+    writeOptions,
+  );
+
+  // Both platforms reject a refusal today, but the typed API allows one, and a password the
+  // keychain never took must not be reported as set: the old verifier still opens the app.
+  if (!written) {
+    throw new Error("app lock: the keychain refused to store the password verifier");
+  }
 }
 
-export async function readPasswordVerifier(): Promise<PasswordVerifier | null> {
+export async function readStoredPassword(): Promise<StoredPassword | null> {
   const credentials = await Keychain.getGenericPassword({ service: SERVICE });
 
   return credentials ? deserialisePasswordVerifier(credentials.password) : null;

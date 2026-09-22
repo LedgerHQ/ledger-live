@@ -8,14 +8,20 @@ jest.mock("@features/platform-app-lock", () => ({
   ...jest.requireActual("@features/platform-app-lock"),
   hasPasswordVerifier: jest.fn(async () => false),
   hasBiometricsMarker: jest.fn(async () => false),
+  needsLongerStoredPassword: jest.fn(async () => false),
   clearStoredPassword: jest.fn(async () => undefined),
   clearBiometricsMarker: jest.fn(async () => undefined),
   checkPassword: jest.fn(async () => ({ status: "incorrect" })),
   promptBiometrics: jest.fn(async () => ({ status: "failed" })),
 }));
 
-const { hasPasswordVerifier, hasBiometricsMarker, clearStoredPassword, checkPassword } =
-  jest.requireMock("@features/platform-app-lock");
+const {
+  hasPasswordVerifier,
+  hasBiometricsMarker,
+  needsLongerStoredPassword,
+  clearStoredPassword,
+  checkPassword,
+} = jest.requireMock("@features/platform-app-lock");
 
 const dismissAll = jest.fn();
 
@@ -69,6 +75,7 @@ beforeEach(() => {
   // previous one last set on these two reads.
   hasPasswordVerifier.mockResolvedValue(false);
   hasBiometricsMarker.mockResolvedValue(false);
+  needsLongerStoredPassword.mockResolvedValue(false);
   hasKnownInstall.mockResolvedValue(true);
   Object.assign(AppState, { currentState: "active" });
 });

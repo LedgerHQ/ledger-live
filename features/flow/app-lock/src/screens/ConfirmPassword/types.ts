@@ -15,4 +15,5 @@ export type ConfirmPasswordViewProps = ConfirmPasswordViewModel &
   Readonly<{
     hasSaveFailed?: boolean;
     keyboardHeight?: number;
+    bottomInset?: number;
   }>;
