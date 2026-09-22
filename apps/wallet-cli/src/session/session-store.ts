@@ -3,6 +3,7 @@ import { stateDir } from "@bunli/utils";
 import { join } from "node:path";
 import { chmodSync, mkdirSync } from "node:fs";
 import { z } from "zod";
+import { SUPPORTED_AGENT_SOURCES, type AgentIntentEnvironment } from "@ledgerhq/agent-intent-sdk";
 import type { Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { serializeV1 } from "../shared/accountDescriptor";
@@ -30,6 +31,15 @@ const DomainEntrySchema = z.object({
   firstUsed: z.string(),
 });
 
+// Tied to the SDK's own type at compile time: if it ever adds a third environment, this array (and
+// every zod enum built from it below) fails to compile instead of silently dropping any profile
+// already persisted with that value on next session load (see `ringFields.agentIntentProfiles`'s
+// `.catch(() => [])` below).
+export const AGENT_INTENT_ENVIRONMENTS = [
+  "staging",
+  "production",
+] as const satisfies readonly AgentIntentEnvironment[];
+
 // Non-secret Agent Intent profile metadata only (NTTVS-745). The profile's private key never lives
 // here — it is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`).
 const AgentIntentProfileSchema = z.object({
@@ -43,8 +53,8 @@ const AgentIntentProfileSchema = z.object({
     ),
   displayName: z.string().min(1).max(80),
   description: z.string().min(1).max(280),
-  source: z.enum(["openclaw", "hermes"]),
-  environment: z.enum(["staging", "production"]),
+  source: z.enum(SUPPORTED_AGENT_SOURCES),
+  environment: z.enum(AGENT_INTENT_ENVIRONMENTS),
   bffBaseUrl: z.string(),
   keycloakBaseUrl: z.string().optional(),
   publicKey: z.string().regex(/^[0-9a-f]{66}$|^[0-9a-f]{130}$/i),

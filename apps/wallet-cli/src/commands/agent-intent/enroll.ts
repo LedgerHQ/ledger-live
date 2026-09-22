@@ -5,18 +5,23 @@ import {
   createAgentEnrollmentUrl,
   createSoftwareAgentIdentity,
   formatAgentPublicKeyFingerprint,
+  SUPPORTED_AGENT_SOURCES,
 } from "@ledgerhq/agent-intent-sdk";
-import { Session } from "../../session/session-store";
+import { Session, AGENT_INTENT_ENVIRONMENTS } from "../../session/session-store";
 import {
   hasAgentIntentSecretKey,
   saveAgentIntentSecretKey,
 } from "../../key-ring/agent-intent-keychain";
-import { outputOption, resolveOutputFormat } from "../inputs";
+import { outputOption, resolveOutputFormat, PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../inputs";
 import { createCommandOutput } from "../../output";
 
-const PROFILE_ID_RE = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,62}$/;
 const DURATION_RE = /^(\d+)(s|m|h|d)$/;
-const DURATION_UNITS_MS = { s: 1_000, m: 60_000, h: 3_600_000, d: 86_400_000 } as const;
+const DURATION_UNITS_MS: Record<string, number> = {
+  s: 1_000,
+  m: 60_000,
+  h: 3_600_000,
+  d: 86_400_000,
+};
 
 // Verified against agent-intent-frontend's argocd/{stg,prd}/values.yaml BFF_BASE_URL (2026-09-22),
 // same host/path the reference agent-intent.mjs CLI defaults to.
@@ -31,7 +36,7 @@ function parseDurationMs(value: string): number {
   if (!match) {
     throw new Error(`--expires-in "${value}" is invalid; use e.g. 45s, 30m, 2h, or 1d.`);
   }
-  return Number(match[1]) * DURATION_UNITS_MS[match[2] as keyof typeof DURATION_UNITS_MS];
+  return Number(match[1]) * DURATION_UNITS_MS[match[2]];
 }
 
 export default defineCommand({
@@ -39,15 +44,9 @@ export default defineCommand({
   description:
     "Create a new Agent Intent profile and print its signed enrollment URL (no device required).",
   options: {
-    profile: option(
-      z
-        .string()
-        .regex(
-          PROFILE_ID_RE,
-          "Profile id must contain only letters, numbers, dots, underscores, and dashes.",
-        ),
-      { description: "Local profile id used to store and reference this agent's credentials." },
-    ),
+    profile: option(z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE), {
+      description: "Local profile id used to store and reference this agent's credentials.",
+    }),
     name: option(z.string().min(1).max(80), {
       description: "Agent display name shown to the human reviewer, 1-80 characters.",
     }),
@@ -59,7 +58,7 @@ export default defineCommand({
         .default("Remote agent that proposes intents for review."),
       { description: "Agent description shown to the human reviewer, 1-280 characters." },
     ),
-    source: option(z.enum(["openclaw", "hermes"]).default("openclaw"), {
+    source: option(z.enum(SUPPORTED_AGENT_SOURCES).default("openclaw"), {
       description: "Declared agent source.",
     }),
     "app-url": option(z.string().url(), {
@@ -68,7 +67,7 @@ export default defineCommand({
     "expires-in": option(z.string().default("30m"), {
       description: "Enrollment link validity: 45s, 30m, 2h, or 1d (default: 30m).",
     }),
-    environment: option(z.enum(["staging", "production"]).default("staging"), {
+    environment: option(z.enum(AGENT_INTENT_ENVIRONMENTS).default("staging"), {
       description: "Agent Intent environment.",
     }),
     "bff-url": option(z.string().url().optional(), {
@@ -91,7 +90,7 @@ export default defineCommand({
       if (session.getAgentIntentProfile(flags.profile)) {
         throw new Error(
           `Agent Intent profile "${flags.profile}" already exists. Choose a different --profile id, ` +
-            `or run \`wallet-cli agent-intent profiles show ${flags.profile}\`.`,
+            `or run \`wallet-cli agent-intent show ${flags.profile}\`.`,
         );
       }
       if (hasAgentIntentSecretKey(flags.profile)) {
