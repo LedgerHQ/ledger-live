@@ -25,6 +25,7 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:*",
     "@ledgerhq/live-hooks": "workspace:*",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:*",
     "bignumber.js": "9"
   },

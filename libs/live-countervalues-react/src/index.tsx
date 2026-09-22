@@ -5,6 +5,7 @@ import {
   importCountervalues,
 } from "@ledgerhq/live-countervalues/logic";
 import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
+import { log } from "@ledgerhq/logs";
 import { inferCurrencyAPIID } from "@ledgerhq/live-countervalues/helpers";
 import type {
   CounterValuesState,
@@ -156,6 +157,9 @@ function Effect({
       rates: bridge.rates,
       batchStrategySolver,
       granularitiesRates: filteredUserSettings.granularitiesRates,
+      // The api package takes no logging dependency, so the caller supplies one. This keeps the
+      // diagnostics the fetch loop emitted before it moved.
+      log,
     }).then(
       s => {
         bridge.setState(s);

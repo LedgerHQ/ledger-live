@@ -1,47 +1,21 @@
-import type { NamedSchemaError } from "@reduxjs/toolkit/query";
-import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { countervaluesApi } from "@shared/api-services";
 import {
   CounterValueIdsSortedByMarketCapSchema,
   RawRatesResponseSchema,
   SpotSimpleResponseSchema,
-  type CounterValueIdsSortedByMarketCap,
   type RatesResponse,
   type RawRatesResponse,
   type SpotSimpleResponse,
-} from "./schema";
+} from "./internals/schema";
+import type { CounterValueIdsSortedByMarketCap } from "./schema";
 import { extractUsdToFiatRate } from "./internals/extractUsdToFiatRate";
 import { pickNumericRates } from "./internals/rates";
 import { rateFetchRetryOptions } from "./internals/retry";
+import { COUNTERVALUES_TAGS, describeSchemaFailure } from "./internals/describeSchemaFailure";
 import type { HistoricalRatesArgs, SpotRatesArgs } from "./types";
 
 const THIRTY_MINUTES = 30 * 60;
 const ONE_MINUTE = 60;
-
-/** RTK Query cache tags owned by the countervalues use case. */
-export const COUNTERVALUES_TAGS = ["CounterValueIdsSortedByMarketCap", "UsdToFiatRate"] as const;
-
-/**
- * Turns a rejected response schema into a typed error instead of logging it.
- *
- * This package injects into a shared api and takes no logging dependency, so it has nowhere to log
- * from: `SchemaFailureInfo` carries only `endpoint`, `arg`, `type` and `queryCacheKey`, never the
- * thunk `extraArgument`. Surfacing the issues on the error is what `@shared/api-services`' Card
- * service does for the same reason, and it puts the detail where the caller can act on it.
- */
-export function describeSchemaFailure(error: NamedSchemaError): FetchBaseQueryError {
-  const issues = error.issues
-    .map(issue => {
-      const path = issue.path?.map(String).join(".");
-      return path ? `${path}: ${issue.message}` : issue.message;
-    })
-    .join("; ");
-
-  return {
-    status: "CUSTOM_ERROR",
-    error: `${error.schemaName} rejected the response — ${issues}`,
-  };
-}
 
 /**
  * Countervalues endpoints, injected into the shared Countervalues Service api.

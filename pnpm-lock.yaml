@@ -15656,6 +15656,9 @@ importers:
       '@ledgerhq/live-hooks':
         specifier: workspace:*
         version: link:../live-hooks
+      '@ledgerhq/logs':
+        specifier: 'catalog:'
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../types-live

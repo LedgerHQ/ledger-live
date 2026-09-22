@@ -1,10 +1,10 @@
 import { countervaluesApi } from "@shared/api-services";
 import {
   marketCountervaluesApi,
-  describeSchemaFailure,
   useGetCounterValueIdsSortedByMarketCapQuery,
   useGetUsdToFiatRateQuery,
 } from "./api";
+import { describeSchemaFailure } from "./internals/describeSchemaFailure";
 
 describe("marketCountervaluesApi configuration", () => {
   test("is the shared Countervalues service api, mutated in place by injectEndpoints", () => {
