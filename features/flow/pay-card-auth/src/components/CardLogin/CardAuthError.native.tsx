@@ -1,5 +1,6 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
+import { NetworkWarning } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { InfoState } from "@shared/ui-info-state";
@@ -19,7 +20,8 @@ export function CardAuthError({ error }: CardAuthErrorProps) {
         <BottomSheetHeader />
         {error ? (
           <InfoState
-            preset="error"
+            preset="spot"
+            spotProps={{ icon: NetworkWarning }}
             size="hug"
             title={error.title}
             description={error.description}
