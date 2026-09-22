@@ -67,6 +67,14 @@ describe("createApi", () => {
         }) as unknown as TronCoinConfig,
     );
 
+  // craftRawTransaction resolves the energy-rent provider from `await context.config()`, so this
+  // context must read the same singleton withEnergyRentConfigured seeds (unlike `context` below,
+  // whose `config()` is a fixed mock unrelated to the singleton).
+  const rawTxContext: TronContext = {
+    logger: jest.fn(),
+    config: async () => coinConfig.getCoinConfig(),
+  };
+
   it("craftRawTransaction delegates the pre-built Tronify payment tx through to the logic layer", async () => {
     withEnergyRentConfigured({
       provider: "tronify",
@@ -76,7 +84,7 @@ describe("createApi", () => {
     const rawDataHex = "0a02abcd220812345678";
 
     await expect(
-      impl.craftRawTransaction(context, rawDataHex, "TSender", "pubkey", 0n),
+      impl.craftRawTransaction(rawTxContext, rawDataHex, "TSender", "pubkey", 0n),
     ).resolves.toEqual({ transaction: rawDataHex });
     expect(craftRawTransaction).toHaveBeenCalledWith(rawDataHex);
   });
@@ -86,7 +94,7 @@ describe("createApi", () => {
     const impl = createApi();
 
     await expect(
-      impl.craftRawTransaction(context, "0a02abcd220812345678", "TSender", "pubkey", 0n),
+      impl.craftRawTransaction(rawTxContext, "0a02abcd220812345678", "TSender", "pubkey", 0n),
     ).rejects.toThrow(/energy-rent/i);
     expect(craftRawTransaction).not.toHaveBeenCalled();
   });
@@ -96,7 +104,7 @@ describe("createApi", () => {
     const impl = createApi();
 
     await expect(
-      impl.craftRawTransaction(context, "0a02abcd220812345678", "TSender", "pubkey", 0n),
+      impl.craftRawTransaction(rawTxContext, "0a02abcd220812345678", "TSender", "pubkey", 0n),
     ).rejects.toThrow(/unsupported energy-rent provider/i);
     expect(craftRawTransaction).not.toHaveBeenCalled();
   });
@@ -284,7 +292,11 @@ test("createApi does not carry the energy-rent seam methods (they live in create
 });
 
 test("createSponsoredSendApi exposes the energy-rent seam methods", () => {
-  const seam = createSponsoredSendApi() as unknown as Record<string, unknown>;
+  const seamContext: TronContext = {
+    logger: jest.fn(),
+    config: async () => coinConfig.getCoinConfig(),
+  };
+  const seam = createSponsoredSendApi(seamContext) as unknown as Record<string, unknown>;
   expect(typeof seam.listFeeOptions).toBe("function");
   expect(typeof seam.craftEnergyRentTransaction).toBe("function");
   expect(typeof seam.submitEnergyRentPayment).toBe("function");

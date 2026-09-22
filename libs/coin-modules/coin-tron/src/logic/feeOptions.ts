@@ -58,7 +58,7 @@ export async function listFeeOptions(
     // getEnergyProvider dispatches on (provider name + required url/sourceFlag). A malformed energyRent
     // block (missing url/sourceFlag, unknown provider) degrades to standard-only here instead of
     // advertising an option that only fails later in estimate/craft.
-    getEnergyProvider();
+    getEnergyProvider(config);
 
     // Offer Tronify only when the standard path would burn TRX. The standard estimate folds energy,
     // bandwidth and activation into one value; `value === 0n` means the sender covers the transfer

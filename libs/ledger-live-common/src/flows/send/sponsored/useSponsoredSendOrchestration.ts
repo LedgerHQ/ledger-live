@@ -44,7 +44,7 @@ type Action =
   | { type: "CRAFT_FAILURE"; error: Error }
   | { type: "SUBMIT_FAILURE"; error: Error }
   | { type: "POLLING_START"; paymentTxId?: string }
-  | { type: "DELIVERY_SUCCESS" }
+  | { type: "DELIVERY_SUCCESS"; paymentTxId?: string }
   | { type: "DELIVERY_TIMEOUT"; error: Error & { paymentTxId?: string } }
   | { type: "DELIVERY_FAILURE"; error: Error; paymentTxId?: string }
   | { type: "TRANSFER_SUCCESS" }
@@ -83,7 +83,13 @@ function reducer(state: SponsoredState, action: Action): SponsoredState {
         paymentTxId: action.paymentTxId ?? state.paymentTxId,
       };
     case "DELIVERY_SUCCESS":
-      return { ...state, phase: SPONSORED_PHASE.TRANSFER };
+      // Carry the payment id so a submit rejection reconciled straight to "already delivered" (which
+      // skips POLLING_START) still lands it on state — the native-TRX rent reservation keys off it.
+      return {
+        ...state,
+        phase: SPONSORED_PHASE.TRANSFER,
+        paymentTxId: action.paymentTxId ?? state.paymentTxId,
+      };
     case "TRANSFER_SUCCESS":
       return {
         ...state,
@@ -214,7 +220,7 @@ async function reconcileSubmitFailure(
       fundsMayHaveMoved = true;
     }
   }
-  if (status === "delivered") return { type: "DELIVERY_SUCCESS" };
+  if (status === "delivered") return { type: "DELIVERY_SUCCESS", paymentTxId: ctx.paymentTxId };
   return fundsMayHaveMoved
     ? { type: "DELIVERY_FAILURE", error, paymentTxId: ctx.paymentTxId }
     : { type: "SUBMIT_FAILURE", error };

@@ -13,7 +13,7 @@ import {
   Block,
   AddressValidationCurrencyParameters,
 } from "@ledgerhq/coin-module-framework/api/index";
-import coinConfig, { type TronContext, type TronCoinConfig } from "../config";
+import type { TronContext, TronCoinConfig } from "../config";
 import {
   broadcast,
   buildEnergyRentRequest,
@@ -83,10 +83,9 @@ export function createApi() {
     // throws EnergyRentProviderNotConfigured for a missing OR unknown provider — remote config is
     // unvalidated and could name an unsupported one, which must not leave raw-signing open. Checked per
     // call rather than at construction (which would let the method be omitted, so `supports()` read
-    // false) because `getCoinConfig()` throws when the config singleton is unset and `createApi()`
-    // resolves lazily with no ordering guarantee against `setCoinConfig`.
-    craftRawTransaction: async (_context, transaction, _sender, _publicKey, _sequence) => {
-      getEnergyProvider();
+    // false) because `context.config()` resolves lazily and can throw when the config isn't ready yet.
+    craftRawTransaction: async (context, transaction, _sender, _publicKey, _sequence) => {
+      getEnergyProvider(await context.config());
       return craftRawTransaction(transaction);
     },
     craftTransaction: async (context, transactionIntent, options?) => {
@@ -172,37 +171,29 @@ export function createApi() {
  * `listFeeOptions` is repeated here (it is also the generic-contract method in `createApi`) so the
  * seam is self-contained for the app's sponsored fee picker; both delegate to the same logic layer.
  */
-export function createSponsoredSendApi() {
-  // The app consumes this seam without a framework Context (useSponsoredFee can't build one), so
-  // synthesize the Context the logic layer now requires: config from the coin-config singleton (the
-  // same source listFeeOptions/estimateTronifyFees already read) and a no-op logger — coin-tron is
-  // dropping @ledgerhq/logs (PR #21897) and there is no injected sink on this path, so app-side
-  // quote/nudge diagnostics are dropped here while the real send still logs through the framework path.
-  const context: TronContext = {
-    logger: () => {},
-    config: async () => coinConfig.getCoinConfig(),
-  };
+export function createSponsoredSendApi(context: TronContext) {
   return {
     listFeeOptions: (intent: TransactionIntent<TronMemo, TronTxData>) =>
       listFeeOptionsLogic(context, intent),
     // Context-free savings quote for the app-side fee nudge (no framework Context to build one).
-    estimateSponsoredFeeQuote: (intent: TransactionIntent<TronMemo, TronTxData>) =>
-      estimateSponsoredFeeQuote(intent),
+    estimateSponsoredFeeQuote: async (intent: TransactionIntent<TronMemo, TronTxData>) =>
+      estimateSponsoredFeeQuote(context.logger, await context.config(), intent),
     // Context-free builder so the app hands a ready EnergyRentRequest to craftEnergyRentTransaction
     // without estimating energy or reading coin-config itself.
-    buildEnergyRentRequest: (intent: TransactionIntent<TronMemo, TronTxData>) =>
-      buildEnergyRentRequest(intent),
-    craftEnergyRentTransaction: (request: EnergyRentRequest) =>
-      craftEnergyRentTransaction(context.logger, request),
-    submitEnergyRentPayment: (payment: {
+    buildEnergyRentRequest: async (intent: TransactionIntent<TronMemo, TronTxData>) =>
+      buildEnergyRentRequest(context.logger, await context.config(), intent),
+    craftEnergyRentTransaction: async (request: EnergyRentRequest) =>
+      craftEnergyRentTransaction(context.logger, await context.config(), request),
+    submitEnergyRentPayment: async (payment: {
       orderId: string;
       signedTransaction: EnergyRentSignedTransaction;
-    }) => broadcastEnergyRentTransaction(context.logger, payment),
-    getEnergyRentStatus: (ref: EnergyRentOrderRef) => getEnergyRentStatus(context.logger, ref),
-    awaitEnergyDelivery: (
+    }) => broadcastEnergyRentTransaction(context.logger, await context.config(), payment),
+    getEnergyRentStatus: async (ref: EnergyRentOrderRef) =>
+      getEnergyRentStatus(context.logger, await context.config(), ref),
+    awaitEnergyDelivery: async (
       ref: EnergyRentOrderRef,
       opts?: { intervalMs?: number; timeoutMs?: number; paymentTxId?: string },
-    ) => awaitEnergyDelivery(context.logger, ref, opts),
+    ) => awaitEnergyDelivery(context.logger, await context.config(), ref, opts),
   };
 }
 

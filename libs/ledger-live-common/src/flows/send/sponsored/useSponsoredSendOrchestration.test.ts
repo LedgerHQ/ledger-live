@@ -210,10 +210,13 @@ test("submit failure but the provider reports delivered -> proceeds to TRANSFER 
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment({});
+    await result.current.actions.startRentPayment({}, "tx-A-delivered");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
+  // This path skips POLLING_START, so the payment id must ride DELIVERY_SUCCESS onto state — the
+  // native-TRX rent reservation keys off it and would otherwise never lock this paid rental.
+  expect(result.current.state.paymentTxId).toBe("tx-A-delivered");
 });
 
 test("submit-path DELIVERY_FAILED carries the caller's paymentTxId for the support screen", async () => {

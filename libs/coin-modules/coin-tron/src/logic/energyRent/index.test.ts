@@ -6,6 +6,8 @@ import {
   queryPreorderInfo,
   uploadHash,
 } from "../../network/tronify";
+import { decode58Check } from "../../network/format";
+import { decodeTransaction } from "../utils";
 import {
   EnergyDelegationTimeoutError,
   EnergyRentProviderNotConfigured,
@@ -31,10 +33,18 @@ jest.mock("../../network/tronify", () => ({
   myPayOrder: jest.fn(),
 }));
 
+// craftEnergyRentTransaction decodes raw_data_hex to verify the signed bytes, so mock the decoder
+// to drive the decoded shape without constructing real TRON tx bytes.
+jest.mock("../utils", () => ({
+  ...jest.requireActual("../utils"),
+  decodeTransaction: jest.fn(),
+}));
+
 const mockedQueryPreorderInfo = queryPreorderInfo as jest.MockedFunction<typeof queryPreorderInfo>;
 const mockedAddTronRentRecord = addTronRentRecord as jest.MockedFunction<typeof addTronRentRecord>;
 const mockedUploadHash = uploadHash as jest.MockedFunction<typeof uploadHash>;
 const mockedMyPayOrder = myPayOrder as jest.MockedFunction<typeof myPayOrder>;
+const mockedDecodeTransaction = decodeTransaction as jest.MockedFunction<typeof decodeTransaction>;
 
 const mockLogger: Logger = jest.fn();
 
@@ -54,15 +64,21 @@ const purchaseOrder = (overrides: Record<string, unknown>) => ({
   ...overrides,
 });
 
-const enableTronify = () =>
-  coinConfig.setCoinConfig(() => ({
+const tronifyConfig = (): TronCoinConfig =>
+  ({
     status: { type: "active" },
     explorer: { url: "https://tron.coin.ledger.com" },
     energyRent: {
       provider: "tronify",
       tronify: { url: "https://open.tronify.io", sourceFlag: "ll" },
     },
-  }));
+  }) as unknown as TronCoinConfig;
+
+const enableTronify = (): TronCoinConfig => {
+  const cfg = tronifyConfig();
+  coinConfig.setCoinConfig(() => cfg);
+  return cfg;
+};
 
 const request = {
   payerAddress: "TKghVbeEzvrV8GLK3YE1gRrjVHSf8rGB6k",
@@ -71,23 +87,50 @@ const request = {
   durationSeconds: 600,
 };
 
+// A decoded native-TRX TransferContract from the payer for `amount` sun — the shape
+// craftEnergyRentTransaction's signed-bytes check expects. Overridable to drive the negative cases.
+const decodedTransfer = (
+  overrides: { type?: string; owner_address?: string; amount?: number } = {},
+) => ({
+  txID: "abc",
+  raw_data_hex: "abcd",
+  raw_data: {
+    contract: [
+      {
+        type: overrides.type ?? "TransferContract",
+        parameter: {
+          value: {
+            owner_address: overrides.owner_address ?? decode58Check(request.payerAddress),
+            to_address: decode58Check(request.receiverAddress),
+            amount: overrides.amount ?? 100,
+          },
+        },
+      },
+    ],
+  },
+});
+
 describe("energyRent provider switch", () => {
+  let config: TronCoinConfig;
+
   beforeEach(() => {
     jest.clearAllMocks();
-    enableTronify();
+    config = enableTronify();
+    mockedDecodeTransaction.mockResolvedValue(decodedTransfer());
   });
 
   describe("getEnergyProvider", () => {
     it("returns the tronify provider when selected", () => {
-      expect(getEnergyProvider().id).toBe("tronify");
+      expect(getEnergyProvider(config).id).toBe("tronify");
     });
 
     it("throws when no provider is configured", () => {
-      coinConfig.setCoinConfig(() => ({
+      config = {
         status: { type: "active" },
         explorer: { url: "https://tron.coin.ledger.com" },
-      }));
-      expect(() => getEnergyProvider()).toThrow(EnergyRentProviderNotConfigured);
+      } as unknown as TronCoinConfig;
+      coinConfig.setCoinConfig(() => config);
+      expect(() => getEnergyProvider(config)).toThrow(EnergyRentProviderNotConfigured);
     });
 
     // Remote coin-config is unvalidated: a provider named "tronify" whose nested settings are absent
@@ -98,15 +141,13 @@ describe("energyRent provider switch", () => {
       ["the url is missing", { sourceFlag: "ll" }],
       ["the sourceFlag is missing", { url: "https://open.tronify.io" }],
     ])("throws when %s", (_label, tronify) => {
-      coinConfig.setCoinConfig(
-        () =>
-          ({
-            status: { type: "active" },
-            explorer: { url: "https://tron.coin.ledger.com" },
-            energyRent: { provider: "tronify", tronify },
-          }) as unknown as TronCoinConfig,
-      );
-      expect(() => getEnergyProvider()).toThrow(EnergyRentProviderNotConfigured);
+      config = {
+        status: { type: "active" },
+        explorer: { url: "https://tron.coin.ledger.com" },
+        energyRent: { provider: "tronify", tronify },
+      } as unknown as TronCoinConfig;
+      coinConfig.setCoinConfig(() => config);
+      expect(() => getEnergyProvider(config)).toThrow(EnergyRentProviderNotConfigured);
     });
   });
 
@@ -122,7 +163,7 @@ describe("energyRent provider switch", () => {
         activeAccountFee: "0",
       } as never);
 
-      const quote = await getEnergyRentQuote(mockLogger, request);
+      const quote = await getEnergyRentQuote(mockLogger, config, request);
 
       expect(quote).toEqual({
         energy: 32000n,
@@ -137,11 +178,15 @@ describe("energyRent provider switch", () => {
       mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 32000 } as never);
 
       // 2h is not a window Tronify sells — it must be quoted (and priced) as the 3h one.
-      const quote = await getEnergyRentQuote(mockLogger, { ...request, durationSeconds: 2 * 3600 });
+      const quote = await getEnergyRentQuote(mockLogger, config, {
+        ...request,
+        durationSeconds: 2 * 3600,
+      });
 
       expect(quote.durationSeconds).toBe(3 * 3600);
       expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(
         mockLogger,
+        config,
         expect.objectContaining({ pledgeDay: "0", pledgeHour: "3", pledgeMinute: "0" }),
       );
     });
@@ -149,9 +194,9 @@ describe("energyRent provider switch", () => {
     it("maps a 10-minute duration to the fastTrade window and defaults extraTrxNum to 0", async () => {
       mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 32000 } as never);
 
-      await getEnergyRentQuote(mockLogger, request);
+      await getEnergyRentQuote(mockLogger, config, request);
 
-      expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(mockLogger, {
+      expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(mockLogger, config, {
         fromAddress: request.payerAddress,
         pledgeAddress: request.receiverAddress,
         pledgeNum: 32000,
@@ -165,7 +210,7 @@ describe("energyRent provider switch", () => {
     it("rounds a duration past the hour windows up to whole days, capped at Tronify's 30", async () => {
       mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 32000 } as never);
 
-      const quote = await getEnergyRentQuote(mockLogger, {
+      const quote = await getEnergyRentQuote(mockLogger, config, {
         ...request,
         durationSeconds: 40 * 86_400,
       });
@@ -173,6 +218,7 @@ describe("energyRent provider switch", () => {
       expect(quote.durationSeconds).toBe(30 * 86_400);
       expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(
         mockLogger,
+        config,
         expect.objectContaining({ pledgeDay: "30", pledgeHour: "0", pledgeMinute: "0" }),
       );
     });
@@ -180,11 +226,15 @@ describe("energyRent provider switch", () => {
     it("rounds a sub-day duration past 3h up to a single day", async () => {
       mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 32000 } as never);
 
-      const quote = await getEnergyRentQuote(mockLogger, { ...request, durationSeconds: 4 * 3600 });
+      const quote = await getEnergyRentQuote(mockLogger, config, {
+        ...request,
+        durationSeconds: 4 * 3600,
+      });
 
       expect(quote.durationSeconds).toBe(86_400);
       expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(
         mockLogger,
+        config,
         expect.objectContaining({ pledgeDay: "1", pledgeHour: "0", pledgeMinute: "0" }),
       );
     });
@@ -192,10 +242,11 @@ describe("energyRent provider switch", () => {
     it("forwards extraTrx as a string", async () => {
       mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 1 } as never);
 
-      await getEnergyRentQuote(mockLogger, { ...request, extraTrx: 0.8 });
+      await getEnergyRentQuote(mockLogger, config, { ...request, extraTrx: 0.8 });
 
       expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(
         mockLogger,
+        config,
         expect.objectContaining({ extraTrxNum: "0.8" }),
       );
     });
@@ -215,7 +266,7 @@ describe("energyRent provider switch", () => {
         activeAccountFee: "0",
       });
 
-      const order = await craftEnergyRentTransaction(mockLogger, request);
+      const order = await craftEnergyRentTransaction(mockLogger, config, request);
 
       expect(order).toEqual({
         orderId: "order-1",
@@ -239,7 +290,7 @@ describe("energyRent provider switch", () => {
     it("accepts an order at or under the approved ceiling", async () => {
       mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("12.50"));
 
-      const order = await craftEnergyRentTransaction(mockLogger, {
+      const order = await craftEnergyRentTransaction(mockLogger, config, {
         ...request,
         maxPayCoinAmt: "12.5",
         maxPayCoinCode: "TRX",
@@ -252,7 +303,7 @@ describe("energyRent provider switch", () => {
       mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("99.9"));
 
       await expect(
-        craftEnergyRentTransaction(mockLogger, {
+        craftEnergyRentTransaction(mockLogger, config, {
           ...request,
           maxPayCoinAmt: "12.5",
           maxPayCoinCode: "TRX",
@@ -264,7 +315,7 @@ describe("energyRent provider switch", () => {
       mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0", "USDT"));
 
       await expect(
-        craftEnergyRentTransaction(mockLogger, {
+        craftEnergyRentTransaction(mockLogger, config, {
           ...request,
           maxPayCoinAmt: "12.5",
           maxPayCoinCode: "TRX",
@@ -276,7 +327,7 @@ describe("energyRent provider switch", () => {
       mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("not-a-number"));
 
       await expect(
-        craftEnergyRentTransaction(mockLogger, {
+        craftEnergyRentTransaction(mockLogger, config, {
           ...request,
           maxPayCoinAmt: "12.5",
           maxPayCoinCode: "TRX",
@@ -288,7 +339,7 @@ describe("energyRent provider switch", () => {
       mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0", "USDT"));
 
       await expect(
-        craftEnergyRentTransaction(mockLogger, { ...request, maxPayCoinAmt: "12.5" }),
+        craftEnergyRentTransaction(mockLogger, config, { ...request, maxPayCoinAmt: "12.5" }),
       ).rejects.toBeInstanceOf(TronifyApiError);
     });
 
@@ -313,9 +364,64 @@ describe("energyRent provider switch", () => {
     ])("rejects an order with %s (no signable payment)", async (_label, malformed) => {
       mockedAddTronRentRecord.mockResolvedValueOnce(malformed as never);
 
-      await expect(craftEnergyRentTransaction(mockLogger, request)).rejects.toBeInstanceOf(
+      await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toBeInstanceOf(
         TronifyApiError,
       );
+    });
+
+    describe("signed-bytes verification", () => {
+      it("accepts a native TRX TransferContract from the payer within the approved amount", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("12.50"));
+        mockedDecodeTransaction.mockResolvedValueOnce(decodedTransfer({ amount: 12_500_000 }));
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, {
+            ...request,
+            maxPayCoinAmt: "12.5",
+            maxPayCoinCode: "TRX",
+          }),
+        ).resolves.toMatchObject({ orderId: "order-1" });
+      });
+
+      it("rejects when the signed bytes are not a native TRX TransferContract", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+        mockedDecodeTransaction.mockResolvedValueOnce(
+          decodedTransfer({ type: "TriggerSmartContract" }),
+        );
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, request),
+        ).rejects.toBeInstanceOf(TronifyApiError);
+      });
+
+      it("rejects when the signed bytes spend from a different owner than the payer", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+        mockedDecodeTransaction.mockResolvedValueOnce(
+          decodedTransfer({ owner_address: decode58Check(request.receiverAddress) }),
+        );
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, request),
+        ).rejects.toBeInstanceOf(TronifyApiError);
+      });
+
+      it("rejects when the signed amount exceeds the approved cost", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+        mockedDecodeTransaction.mockResolvedValueOnce(decodedTransfer({ amount: 1_000_001 }));
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, request),
+        ).rejects.toBeInstanceOf(TronifyApiError);
+      });
+
+      it("rejects when the payment transaction cannot be decoded", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+        mockedDecodeTransaction.mockRejectedValueOnce(new Error("bad protobuf"));
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, request),
+        ).rejects.toBeInstanceOf(TronifyApiError);
+      });
     });
   });
 
@@ -330,9 +436,12 @@ describe("energyRent provider switch", () => {
         signature: ["sig"],
       };
 
-      await broadcastEnergyRentTransaction(mockLogger, { orderId: "order-1", signedTransaction });
+      await broadcastEnergyRentTransaction(mockLogger, config, {
+        orderId: "order-1",
+        signedTransaction,
+      });
 
-      expect(mockedUploadHash).toHaveBeenCalledWith(mockLogger, {
+      expect(mockedUploadHash).toHaveBeenCalledWith(mockLogger, config, {
         orderId: "order-1",
         fromHash: "abc",
         signedData: signedTransaction,
@@ -349,7 +458,7 @@ describe("energyRent provider switch", () => {
 
     const statusOf = (orderStatus: string) => {
       respondWith([purchaseOrder({ orderStatus })]);
-      return getEnergyRentStatus(mockLogger, {
+      return getEnergyRentStatus(mockLogger, config, {
         orderId: "order-1",
         payerAddress: request.payerAddress,
       });
@@ -358,12 +467,12 @@ describe("energyRent provider switch", () => {
     it("looks the order up by the payer address, requesting every order", async () => {
       respondWith([]);
 
-      await getEnergyRentStatus(mockLogger, {
+      await getEnergyRentStatus(mockLogger, config, {
         orderId: "order-1",
         payerAddress: request.payerAddress,
       });
 
-      expect(mockedMyPayOrder).toHaveBeenCalledWith(mockLogger, {
+      expect(mockedMyPayOrder).toHaveBeenCalledWith(mockLogger, config, {
         fromAddress: request.payerAddress,
         orderType: "2",
         page: 1,
@@ -383,7 +492,7 @@ describe("energyRent provider switch", () => {
     it("returns 'unknown' when the order is not in the payer's records", async () => {
       respondWith([purchaseOrder({ orderId: "another-order" })]);
 
-      const status = await getEnergyRentStatus(mockLogger, {
+      const status = await getEnergyRentStatus(mockLogger, config, {
         orderId: "order-1",
         payerAddress: request.payerAddress,
       });

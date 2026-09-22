@@ -2,9 +2,11 @@ import {
   createApi as createTronApi,
   createSponsoredSendApi as createTronSponsoredApi,
 } from "@ledgerhq/coin-tron/api/index";
+import type { TronCoinConfig } from "@ledgerhq/coin-tron/config";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { SponsoredCoinApi } from "../../bridge/generic-coin-framework/sponsored";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 
 /**
  * Cast to `CoinModuleApi<any, any>` to match the heterogeneous `coinModuleLoaders` registry
@@ -24,6 +26,8 @@ export function createLocalTronApi(_currencyId: string): CoinModuleApi<any, any>
  * because coin-tron types the methods against its own `TronTxData`/energy-rent shapes, which the
  * repo-local `SponsoredCoinApi` interface mirrors structurally without importing.
  */
-export function createLocalTronSponsoredApi(_currencyId: string): SponsoredCoinApi {
-  return createTronSponsoredApi() as unknown as SponsoredCoinApi;
+export function createLocalTronSponsoredApi(currencyId: string): SponsoredCoinApi {
+  return createTronSponsoredApi(
+    buildContext<TronCoinConfig>(currencyId),
+  ) as unknown as SponsoredCoinApi;
 }

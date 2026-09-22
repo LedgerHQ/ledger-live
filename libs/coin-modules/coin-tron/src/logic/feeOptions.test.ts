@@ -29,9 +29,9 @@ const notActivatedConfig = {
 } as unknown as TronCoinConfig;
 
 const mockLogger: Logger = jest.fn();
-// listFeeOptions reads config from two seams that must agree — context.config() (feeds estimateFees)
-// and the coinConfig singleton getEnergyProvider/getTronifyConfig read — so drive both from the real
-// singleton (as production does, where context.config === getCoinConfig).
+// listFeeOptions resolves config once via context.config() and threads it into both estimateFees
+// and getEnergyProvider, so a single seed (the coinConfig singleton) drives both — matching
+// production, where context.config === getCoinConfig.
 const setConfig = (config: TronCoinConfig) => coinConfig.setCoinConfig(() => config);
 const mockContext = {
   logger: mockLogger,
