@@ -6,9 +6,7 @@ type CardAssetsManageFooterProps = Readonly<{
   onAddAsset?: () => void;
 }>;
 
-// Rendered through the bottom sheet's own `footer` slot (see CardDetailsSheet.native.tsx) rather
-// than as regular scrollable content, so it gets the sheet's sticky-footer chrome: background,
-// bottom safe-area inset and keyboard avoidance, and stays pinned below the reorder list.
+// Rendered via the bottom sheet's own footer slot (see CardDetailsSheet.native.tsx).
 export function CardAssetsManageFooter({ onAddAsset }: CardAssetsManageFooterProps) {
   const { t } = useTranslation();
 

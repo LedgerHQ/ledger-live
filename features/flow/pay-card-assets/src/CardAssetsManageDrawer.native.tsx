@@ -40,13 +40,9 @@ function AssetRow({
   onDrag,
 }: AssetRowProps) {
   return (
-    // The gutter lives on this outer box, outside the scale/shadow: the library renders the
-    // active cell as a free-floating overlay uninset by the list container's own padding, so
-    // without its own gutter here it would jump edge-to-edge the moment it lifts.
-    <Box lx={{ paddingHorizontal: "s12" }}>
-      {/* Scale/shadow give the lifted row the "picked up" feel; both fade back to flat the
-          moment it's dropped since they're driven by the library's own active-cell animation,
-          not state. */}
+    // Gutter + gap outside the scale/shadow: the dragged cell renders full-bleed otherwise.
+    <Box lx={{ paddingHorizontal: "s12", paddingBottom: "s2" }}>
+      {/* Active look comes from the library's own drag animation, not our state. */}
       <ScaleDecorator activeScale={1.03}>
         <ShadowDecorator opacity={0.16} radius={12} elevation={6}>
           <Box lx={{ backgroundColor: "surface", borderRadius: "sm", overflow: "hidden" }}>
@@ -59,8 +55,7 @@ function AssetRow({
               {showHandle ? (
                 <ListItemTrailing>
                   {isReordering ? (
-                    // Matches the handle's own padding below so swapping between the two doesn't
-                    // shift the icon's position.
+                    // Matches the handle's padding so the icon doesn't shift on swap.
                     <Box lx={{ padding: "s8" }}>
                       <Spinner size={24} testID={`card-asset-reorder-spinner-${row.id}`} />
                     </Box>
@@ -80,8 +75,7 @@ function AssetRow({
                       onLongPress={onDrag}
                       testID={`card-asset-reorder-handle-${row.id}`}
                     >
-                      {/* Padding grows the actual touch target, not just its hit slop, so the
-                          bigger area is what long-presses to start a drag. */}
+                      {/* Bigger touch target for the long-press-to-drag gesture. */}
                       <Box lx={{ padding: "s8" }}>
                         <MenuBurger size={24} />
                       </Box>
@@ -109,15 +103,9 @@ export function CardAssetsManageDrawer({
   reorderingAssetIds,
 }: CardAssetsManageDrawerProps) {
   const { t } = useTranslation();
-  // DraggableFlatList only calls `onDragEnd` once its own settle-spring animation finishes, well
-  // after the finger actually lifts, and clears once `onMoveAsset` fully settles (not right on
-  // drop): `reorderingAssetIds` (from the view model) takes a render to catch up, so clearing
-  // this immediately would leave a one-frame gap with no spinner showing at all.
+  // Bridges the gap between drop and reorderingAssetIds catching up a render later.
   const [releasedId, setReleasedId] = useState<string | null>(null);
-  // `onRelease` always fires with the drag's *start* index, before the settle spring resolves
-  // where it lands — this tracks the live drop target (seeded by `onDragBegin`, updated by
-  // `onPlaceholderIndexChange` as the drag moves) so release can tell a real move from a drop
-  // back in the same spot.
+  // onRelease fires with the drag's *start* index; this tracks where it's landing.
   const dropTargetIndexRef = useRef<number | null>(null);
 
   const moveByOffset = useCallback(
@@ -144,10 +132,7 @@ export function CardAssetsManageDrawer({
     [rows.length, reorderingAssetIds, releasedId, t, moveByOffset],
   );
 
-  // A stable reference matters here: the library keys its internal per-cell position/measurement
-  // tracking off this function's identity in a few places, so a fresh inline arrow every render
-  // (as this used to be) made it redo that bookkeeping on every render instead of only when the
-  // extraction logic itself changes.
+  // Stable identity: the library keys its per-cell tracking off this function.
   const keyExtractor = useCallback((row: CardAssetRow) => row.id, []);
 
   const setDropTargetIndex = useCallback((index: number) => {
@@ -169,16 +154,7 @@ export function CardAssetsManageDrawer({
         setReleasedId(null);
         return;
       }
-      // The library nulls its own `activeKey` the instant `data` changes shape, but defers
-      // resetting the shared values that drive cell position to its own `InteractionManager`
-      // call — updating `data` (via `onMoveAsset`) synchronously here would race that reset and
-      // snap the list to a stale layout for a frame. Yielding a tick is enough to land after it
-      // without this row's commit getting stuck behind some *other*, unrelated interaction handle
-      // left open elsewhere in the app (InteractionManager waits for every handle, not just this
-      // list's).
-      setTimeout(() => {
-        void onMoveAsset(moved.id, to).finally(() => setReleasedId(null));
-      }, 0);
+      void onMoveAsset(moved.id, to).finally(() => setReleasedId(null));
     },
     [onMoveAsset],
   );
@@ -202,12 +178,7 @@ export function CardAssetsManageDrawer({
           onPlaceholderIndexChange={setDropTargetIndex}
           onDragEnd={handleDragEnd}
           onRelease={handleRelease}
-          // The card can hold at most 5 linked assets, which always fit the sheet without
-          // scrolling — disabling it here avoids the list's own scroll gesture competing with
-          // the drag gesture.
-          scrollEnabled={false}
           containerStyle={{ flex: 1 }}
-          ItemSeparatorComponent={() => <Box lx={{ paddingTop: "s2" }} />}
         />
       </Box>
     </Box>

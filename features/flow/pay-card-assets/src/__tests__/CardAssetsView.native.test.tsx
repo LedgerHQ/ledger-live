@@ -6,12 +6,6 @@ import { CardAssetsView } from "../CardAssetsView.native";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 import type { CardAssetsViewModel } from "../types";
 
-// Waits past a requestAnimationFrame tick, for assertions that depend on work the drawer
-// defers to the next frame (see CardAssetsManageDrawer.native.tsx's handleDragEnd).
-function flushMicrotasks() {
-  return new Promise(resolve => setTimeout(resolve, 20));
-}
-
 const usdc = {
   id: "w-usdc",
   currency: "usdc",
@@ -196,7 +190,7 @@ describe("CardAssetsView (native)", () => {
     expect(onMoveAsset).toHaveBeenCalledWith("w-btc", 0);
   });
 
-  it("should move a wallet to where a drag was dropped", async () => {
+  it("should move a wallet to where a drag was dropped", () => {
     const onMoveAsset = jest.fn().mockResolvedValue(undefined);
     const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
     render(
@@ -212,11 +206,10 @@ describe("CardAssetsView (native)", () => {
       screen.UNSAFE_getByType(DraggableFlatList).props;
 
     // The user picks up USDC (index 0), drags it past Bitcoin, and drops it at index 1.
-    await act(async () => {
+    act(() => {
       onDragBegin(0);
       onPlaceholderIndexChange(1);
       onDragEnd({ data: [bitcoin, usdc], from: 0, to: 1 });
-      await flushMicrotasks();
     });
 
     expect(onMoveAsset).toHaveBeenCalledWith("w-usdc", 1);
