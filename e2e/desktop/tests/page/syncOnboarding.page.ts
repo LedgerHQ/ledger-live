@@ -14,9 +14,13 @@ async function appeared<T extends string>(locator: Locator, outcome: T) {
 }
 
 export class SyncOnboardingPage extends AppPage {
-  private readonly genuineCheckButton = this.page.getByRole("button", { name: /^Check Ledger/i });
-  private readonly genuineCheckSuccess = this.page.getByText(/is genuine$/i);
-  private readonly osUpToDate = this.page.getByText(/Ledger OS is up to date/i);
+  private readonly genuineCheckButton = this.page.getByRole("button", {
+    name: /^Check Ledger/i,
+  });
+  private readonly genuineCheckSuccess = this.page.getByTestId(
+    "sync-onboarding-genuine-check-completed",
+  );
+  private readonly osUpToDate = this.page.getByTestId("sync-onboarding-os-check-completed");
   private readonly continueToSetupButton = this.page.getByRole("button", {
     name: /Continue to setup/i,
   });
@@ -25,21 +29,15 @@ export class SyncOnboardingPage extends AppPage {
   private readonly successStep = this.page.getByTestId("sync-onboarding-success-step");
   private readonly fundNewSeed = this.page.getByTestId("onboarding-fund-new-seed");
   private readonly syncStepCta = this.page.getByTestId("onboarding-sync");
-  private readonly syncSkipLink = this.page
-    .locator('*:has(> [data-testid="onboarding-sync"])')
-    .getByTestId("skip-cta-button");
+  private readonly syncSkipLink = this.page.getByTestId("onboarding-sync-skip");
   private readonly confirmSkipSyncButton = this.page.getByTestId(
     "onboarding-sync-skip-confirmSkip",
   );
-  private readonly maybeLaterButton = this.page
-    .locator('*:has(> [data-testid="onboarding-fund-new-seed"])')
-    .getByTestId("skip-cta-button");
+  private readonly maybeLaterButton = this.page.getByTestId("onboarding-fund-new-seed-skip");
   private readonly installAppsButton = this.page.getByTestId("install-cta-button");
   private readonly restoreAppsPanel = this.page.getByTestId("install-set-of-apps-restore-body");
   private readonly installingText = this.page.getByTestId("installing-text");
-  private readonly skipAppsLink = this.page
-    .locator('*:has(> [data-testid="install-cta-button"])')
-    .getByTestId("skip-cta-button");
+  private readonly skipAppsLink = this.page.getByTestId("install-skip-cta-button");
   private readonly completionView = (device: DeviceModelId) =>
     this.page.getByTestId(`${device}-completion-view`);
 

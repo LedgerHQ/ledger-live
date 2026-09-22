@@ -17,10 +17,10 @@ export class OnboardingPage extends AppPage {
     "v3-tutorial-continue-secondary",
   );
   private readonly pinCodeCheckbox = this.page.getByTestId("v3-private-pin-code-checkbox");
-  private readonly pinCodeDrawer = this.page.getByTestId("v3-pin-code-drawer");
+  private readonly pinCodeDrawerNext = this.page.getByTestId("v3-pin-code-drawer");
   private readonly recoveryPhraseCheckbox = this.page.getByTestId("v3-recovery-phrase-checkbox");
-  private readonly recoverySeedDrawer = this.page.getByTestId("v3-seed-drawer");
-  private readonly hideSeedDrawer = this.page.getByTestId("v3-hide-seed-drawer");
+  private readonly recoverySeedDrawerNext = this.page.getByTestId("v3-seed-drawer");
+  private readonly hideSeedDrawerNext = this.page.getByTestId("v3-hide-seed-drawer");
   private readonly quizStartButton = this.page.getByTestId("v3-quiz-start-button");
   private readonly quizAnswerTop = this.page.getByTestId("v3-quiz-answer-0");
   private readonly quizAnswerBottom = this.page.getByTestId("v3-quiz-answer-1");
@@ -40,7 +40,6 @@ export class OnboardingPage extends AppPage {
     await this.getStartedButton.click();
   }
 
-  @step("Select device $0")
   @step("Expect the device selection screen")
   async expectDeviceSelectionScreen() {
     await expect(this.page).toHaveURL(/\/onboarding\/select-device$/);
@@ -52,6 +51,7 @@ export class OnboardingPage extends AppPage {
     await expect(this.setupNewDeviceOption).toBeVisible();
   }
 
+  @step("Select device $0")
   async selectDevice(device: DeviceModelId) {
     const tile = this.deviceTile(device);
     await expect(tile).toBeVisible();
@@ -84,9 +84,9 @@ export class OnboardingPage extends AppPage {
     await this.pinCodeCheckbox.click();
   }
 
-  @step("Dismiss the PIN drawer")
+  @step("Continue past the PIN drawer")
   async continuePinDrawer() {
-    await this.pinCodeDrawer.click();
+    await this.pinCodeDrawerNext.click();
   }
 
   @step("Acknowledge the recovery phrase warning")
@@ -94,16 +94,16 @@ export class OnboardingPage extends AppPage {
     await this.recoveryPhraseCheckbox.click();
   }
 
-  @step("Dismiss the recovery phrase drawer")
+  @step("Continue past the recovery phrase drawer")
   async continueRecoverySeedDrawer() {
-    await expect(this.recoverySeedDrawer).toBeVisible();
-    await this.recoverySeedDrawer.click({ position: { x: 20, y: 20 } });
+    await expect(this.recoverySeedDrawerNext).toBeVisible();
+    await this.recoverySeedDrawerNext.click();
   }
 
-  @step("Dismiss the hide-seed drawer")
+  @step("Continue past the hide-seed drawer")
   async continueHideSeedDrawer() {
-    await expect(this.hideSeedDrawer).toBeVisible();
-    await this.hideSeedDrawer.click();
+    await expect(this.hideSeedDrawerNext).toBeVisible();
+    await this.hideSeedDrawerNext.click();
   }
 
   @step("Complete the security quiz")

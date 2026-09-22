@@ -62,5 +62,5 @@ export const MOCK_DEVICES: MockServerDevice[] = [
 
 export const deviceUnderTest = (): MockServerDevice => {
   const speculosModel = getSpeculosModel();
-  return MOCK_DEVICES.find(({ modelId }) => modelId === speculosModel) || MOCK_DEVICES[0];
+  return MOCK_DEVICES.find(({ modelId }) => modelId === speculosModel) || MOCK_NANOSP;
 };

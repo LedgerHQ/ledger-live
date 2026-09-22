@@ -64,6 +64,7 @@ const SoftwareCheckContent = ({
       <Bullet
         mb={8}
         bulletText="1"
+        testId="sync-onboarding-genuine-check"
         status={genuineCheckStatus}
         title={
           genuineCheckStatus === SoftwareCheckStatus.completed
@@ -104,6 +105,7 @@ const SoftwareCheckContent = ({
       </Bullet>
       <Bullet
         bulletText="2"
+        testId="sync-onboarding-os-check"
         status={firmwareUpdateStatus}
         title={
           firmwareUpdateStatus === SoftwareCheckStatus.completed

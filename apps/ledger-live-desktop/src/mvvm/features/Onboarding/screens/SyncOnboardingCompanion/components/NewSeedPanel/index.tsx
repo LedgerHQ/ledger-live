@@ -72,7 +72,13 @@ const NewSeedPanel = ({
         {t("syncOnboarding.manual.secureCrypto.description")}
       </Text>
       <Flex pt={8} pb={2} justifyContent="space-between">
-        <Button variant="shade" outline flex={1} onClick={handleSkip} data-testid="skip-cta-button">
+        <Button
+          variant="shade"
+          outline
+          flex={1}
+          onClick={handleSkip}
+          data-testid="onboarding-fund-new-seed-skip"
+        >
           {t("syncOnboarding.manual.secureCrypto.skipButton")}
         </Button>
         <Flex px={2} />
