@@ -285,6 +285,7 @@ describe("DeviceManagementKitBLETransport", () => {
         new Observable(subscriber => {
           subscriber.next([
             {
+              id: "device-1",
               deviceModel: {
                 model: "flex",
               },
@@ -300,14 +301,45 @@ describe("DeviceManagementKitBLETransport", () => {
       // then
       expect(observer.next).toHaveBeenCalledWith({
         type: "add",
-        descriptor: "",
+        descriptor: "device-1",
         device: {
+          id: "device-1",
           deviceModel: {
             model: "flex",
           },
         },
         deviceModel: getDeviceModel(DeviceModelId.europa),
       });
+    });
+    it("should emit each discovered device's own id as descriptor, not an empty string", async () => {
+      // given
+      // DONJON-1409: previously every device shared the same hardcoded "" descriptor,
+      // making devices indistinguishable to consumers relying on it for identity.
+      const staticTransport = DeviceManagementKitBLETransport;
+      const observer = new Subject();
+      const dmk = getDeviceManagementKit();
+      jest.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
+        new Observable(subscriber => {
+          subscriber.next([
+            { id: "device-1", deviceModel: { model: "flex" } },
+            { id: "device-2", deviceModel: { model: "flex" } },
+          ] as DiscoveredDevice[]);
+        }),
+      );
+      jest.spyOn(observer, "next");
+
+      // when
+      subscription = staticTransport.listen(observer);
+
+      // then
+      expect(observer.next).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ type: "add", descriptor: "device-1" }),
+      );
+      expect(observer.next).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ type: "add", descriptor: "device-2" }),
+      );
     });
     it("should call stopDiscovering if unsubscribed", async () => {
       // given
