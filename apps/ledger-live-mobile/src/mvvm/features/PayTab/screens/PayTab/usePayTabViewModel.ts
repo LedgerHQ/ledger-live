@@ -8,15 +8,12 @@ import {
 } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  buildHostedUrl,
   buildTopUpPath,
   buildWithdrawalPath,
   buildAccessBaanxPath,
   buildManagePinPath,
-  openHostedUrlInSecureBrowser,
   openHostedCardPathSafely,
   type CardAssetPathBuilder,
-  type OpenCardHostedPage,
 } from "@features/flow-pay-card-auth";
 import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
@@ -26,6 +23,7 @@ import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { NavigatorName, ScreenName } from "~/const";
 import { CL_CARD_APP_ID } from "LLM/features/Card";
 import type { CardProps } from "@features/flow-pay-card";
+import { useCardHostedPageOpener } from "../../hooks/useCardHostedPageOpener";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
 import { useCountervalueFormatter } from "../../hooks/useCountervalueFormatter";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
@@ -86,21 +84,18 @@ export function usePayTabViewModel() {
     [params?.code, params?.app_id],
   );
 
+  // Every hosted page now opens on the Baanx manifest in the Discover webview, as desktop does.
+  const openHostedPage = useCardHostedPageOpener();
+
+  // The signup page rides the same opener the hosted pages use, so it lands in the webview too.
   const login: CardProps["login"] = useMemo(
-    () => ({ oauthConfig, callback, requestProtection }),
-    [oauthConfig, callback, requestProtection],
+    () => ({ oauthConfig, callback, requestProtection, openHostedPage }),
+    [oauthConfig, callback, requestProtection, openHostedPage],
   );
 
   const onShowMore = useCallback(() => {
     navigateToCardHistory(navigation);
   }, [navigation]);
-
-  const openHostedPage: OpenCardHostedPage = useCallback(
-    async path => {
-      await openHostedUrlInSecureBrowser(buildHostedUrl(hostedUiUrl, path), PAY_TAB_DEEP_LINK);
-    },
-    [hostedUiUrl],
-  );
 
   const openHostedPath = useCallback(
     (buildPath: CardAssetPathBuilder, onError: (error: unknown) => void, currency?: string) =>
