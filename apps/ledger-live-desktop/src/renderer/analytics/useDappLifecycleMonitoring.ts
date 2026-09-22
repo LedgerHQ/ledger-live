@@ -7,6 +7,24 @@ import {
 } from "@ledgerhq/transaction-observability";
 import { isEarnTxLifecycleMonitoringEnabled } from "./earnTxLifecycleFlag";
 
+type StakeRedirectParams = { accountId?: string; yieldId?: string };
+
+export function hasStakeRedirectParams(
+  routeState: StakeRedirectParams | null,
+  search: string,
+  internalParams: StakeRedirectParams,
+): boolean {
+  const searchParams = new URLSearchParams(search);
+  return Boolean(
+    routeState?.accountId ||
+    routeState?.yieldId ||
+    searchParams.get("accountId") ||
+    searchParams.get("yieldId") ||
+    internalParams.accountId ||
+    internalParams.yieldId,
+  );
+}
+
 export function useDappLifecycleMonitoring(
   manifestId: string | undefined,
   isStakeRedirect: boolean,

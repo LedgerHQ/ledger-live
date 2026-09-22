@@ -34,11 +34,13 @@ jest.mock("./app", () => ({
 }));
 
 const signOperation = jest.fn();
+const signRawOperation = jest.fn();
 jest.mock("../../bridge", () => ({
-  getAccountBridge: async () => ({ signOperation }),
+  getAccountBridge: async () => ({ signOperation, signRawOperation }),
 }));
 
 import { createAction } from "./transaction";
+import { createAction as createRawAction } from "./rawTransaction";
 import {
   ErrorCategory,
   resetTransactionObservers,
@@ -63,6 +65,7 @@ const txRequest = {
 describe("transaction device action — sign-prompt abandonment", () => {
   let events: LogEvent[];
   let signEvents: Subject<SignOperationEvent>;
+  let rawSignEvents: Subject<SignOperationEvent>;
 
   beforeEach(() => {
     appState.current = READY;
@@ -73,10 +76,24 @@ describe("transaction device action — sign-prompt abandonment", () => {
     signOperation.mockReturnValue(
       new Observable<SignOperationEvent>(subscriber => signEvents.subscribe(subscriber)),
     );
+    rawSignEvents = new Subject<SignOperationEvent>();
+    signRawOperation.mockReturnValue(
+      new Observable<SignOperationEvent>(subscriber => rawSignEvents.subscribe(subscriber)),
+    );
   });
   afterEach(() => resetTransactionObservers());
 
   const render = () => renderHook(() => createAction(jest.fn() as never).useHook(null, txRequest));
+  const renderRaw = () =>
+    renderHook(() =>
+      createRawAction(jest.fn() as never).useHook(null, {
+        account,
+        parentAccount: null,
+        transaction: "{}",
+        manifestId: "stakekit",
+        manifestName: "StakeKit",
+      }),
+    );
 
   const flush = async () => {
     await act(async () => {
@@ -246,5 +263,105 @@ describe("transaction device action — sign-prompt abandonment", () => {
     await flush();
 
     expect(capturedManifestId).toBe("stakekit");
+  });
+
+  it("reports raw-sign prompt dismissal as an abandoned dapp attempt", async () => {
+    const { unmount } = renderRaw();
+    await flush();
+
+    act(() => rawSignEvents.next({ type: "device-signature-requested" }));
+    unmount();
+
+    expect(events).toEqual([
+      expect.objectContaining({
+        status: "failure",
+        manifestId: "stakekit",
+        errorCategory: ErrorCategory.UserModalDismissed,
+        abandoned: true,
+        operationalOnly: false,
+      }),
+    ]);
+  });
+
+  it("does not abandon a completed raw signature", async () => {
+    const { unmount } = renderRaw();
+    await flush();
+
+    act(() =>
+      rawSignEvents.next({
+        type: "signed",
+        signedOperation: { signature: "sig", operation: {} },
+      } as SignOperationEvent),
+    );
+    unmount();
+
+    expect(events).toEqual([]);
+  });
+
+  it("does not turn a raw-sign effect resubscription into a dismissal", async () => {
+    const { rerender, unmount } = renderRaw();
+    await flush();
+    act(() => rawSignEvents.next({ type: "device-signature-requested" }));
+
+    appState.current = {
+      ...READY,
+      device: { deviceId: "device", modelId: "nanoX" },
+    };
+    await act(async () => {
+      rerender();
+      await Promise.resolve();
+    });
+
+    expect(events).toEqual([]);
+    unmount();
+    expect(events).toHaveLength(1);
+  });
+
+  it("keeps token attribution on raw-sign abandonment", async () => {
+    const tokenAccount = {
+      id: "token-acc",
+      type: "TokenAccount",
+      parentId: "acc",
+      token: { id: "ethereum/erc20/usdc", ticker: "USDC" },
+    } as never;
+    const { unmount } = renderHook(() =>
+      createRawAction(jest.fn() as never).useHook(null, {
+        account: tokenAccount,
+        parentAccount: account,
+        transaction: "{}",
+        manifestId: "stakekit",
+      }),
+    );
+    await flush();
+    act(() => rawSignEvents.next({ type: "device-signature-requested" }));
+    unmount();
+
+    expect(events[0]).toMatchObject({
+      tokenId: "ethereum/erc20/usdc",
+      tokenTicker: "USDC",
+      currencyId: "cardano",
+    });
+  });
+
+  it("classifies an interrupted raw-sign attempt as a device error", async () => {
+    const { rerender, unmount } = renderRaw();
+    await flush();
+    act(() => rawSignEvents.next({ type: "device-signature-requested" }));
+
+    appState.current = DEVICE_GONE;
+    await act(async () => {
+      rerender();
+      await Promise.resolve();
+    });
+    unmount();
+
+    expect(events).toEqual([
+      expect.objectContaining({
+        status: "failure",
+        manifestId: "stakekit",
+        errorCategory: ErrorCategory.DeviceDisconnected,
+        operationalOnly: true,
+      }),
+    ]);
   });
 });

@@ -38,6 +38,14 @@ const STAKE_PROGRAM_APPS = new Set(["kiln-widget", "stakekit"]);
 type StakeProgramAppsReader = () => readonly string[];
 let readStakeProgramApps: StakeProgramAppsReader | null = null;
 
+type StakeProgramRedirect = { platform: string };
+
+export function stakeProgramAppIds(
+  redirects: Record<string, StakeProgramRedirect> | undefined,
+): string[] {
+  return Object.values(redirects ?? {}).map(redirect => redirect.platform);
+}
+
 /**
  * Injects the host's resolved remote-config list. The built-in entries keep older hosts safe;
  * injected entries let operators add a stake program without waiting for a client release.

@@ -4,7 +4,7 @@ import {
   clearPendingDappTxLifecycle,
   startDappTxLifecycle,
 } from "@ledgerhq/transaction-observability";
-import { useDappLifecycleMonitoring } from "./useDappLifecycleMonitoring";
+import { hasStakeRedirectParams, useDappLifecycleMonitoring } from "./useDappLifecycleMonitoring";
 import { setEarnTxLifecycleFlagReader } from "./earnTxLifecycleFlag";
 
 jest.mock("@ledgerhq/transaction-observability", () => ({
@@ -18,6 +18,18 @@ const mockStart = jest.mocked(startDappTxLifecycle);
 const mockAbandon = jest.mocked(abandonPendingDappTxLifecycle);
 const mockClear = jest.mocked(clearPendingDappTxLifecycle);
 let lifecycleEnabled = true;
+
+describe("hasStakeRedirectParams", () => {
+  it("accepts stake CTA parameters from every router input", () => {
+    expect(hasStakeRedirectParams({ accountId: "account" }, "", {})).toBe(true);
+    expect(hasStakeRedirectParams(null, "?yieldId=ethereum-staking", {})).toBe(true);
+    expect(hasStakeRedirectParams(null, "", { accountId: "account" })).toBe(true);
+  });
+
+  it("rejects a plain Discover open", () => {
+    expect(hasStakeRedirectParams(null, "", {})).toBe(false);
+  });
+});
 
 describe("useDappLifecycleMonitoring", () => {
   beforeEach(() => {

@@ -111,8 +111,10 @@ boundary; opening the same manifest from Discover is not an attempt. The redirec
 posts an enriched intent with the real family before the terminal, making per-family counters
 joinable while preserving pre-sign abandonment measurement.
 
-Hosts inject the resolved `stakePrograms.list` reader at boot, so remote-config additions are
-eligible immediately; the built-in redirect ids remain as compatibility fallbacks.
+Hosts inject manifest ids from `stakePrograms.redirects` (including versioned redirects) at boot,
+so remote-config additions are eligible immediately; the built-in redirect ids remain as
+compatibility fallbacks. `stakePrograms.list` contains currency ids and is deliberately not used
+as a manifest allow-list.
 
 One thing to know if you ever reach for it: the hosts' `track(event, properties, mandatory)`
 takes a third argument that bypasses the consent check and swaps in a reduced property set. It

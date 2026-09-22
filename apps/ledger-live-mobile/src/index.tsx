@@ -67,10 +67,13 @@ import { updateIdentify } from "./analytics";
 import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
 import { setEarnTxLifecycleFlagReader } from "~/analytics/earnTxLifecycleFlag";
+import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import {
   clearPendingTxLifecycle,
   setStakeProgramAppsReader,
+  stakeProgramAppIds,
 } from "@ledgerhq/transaction-observability";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
@@ -134,9 +137,16 @@ setAnalyticsFeatureFlagMethod(
 const readEarnTxLifecycleFlag = () =>
   selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false;
 setEarnTxLifecycleFlagReader(readEarnTxLifecycleFlag);
-setStakeProgramAppsReader(
-  () => selectFeature(store.getState(), "stakePrograms")?.params?.list ?? [],
-);
+setStakeProgramAppsReader(() => {
+  const stakePrograms = selectFeature(store.getState(), "stakePrograms");
+  if (!stakePrograms?.enabled) return [];
+
+  const resolvedStakePrograms = getVersionedRedirects(
+    stakePrograms,
+    LiveConfig.instance.appVersion || "0.0.0",
+  );
+  return stakeProgramAppIds(resolvedStakePrograms.params?.redirects);
+});
 
 let wasEarnTxLifecycleEnabled = readEarnTxLifecycleFlag();
 store.subscribe(() => {

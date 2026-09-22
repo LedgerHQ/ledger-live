@@ -9,6 +9,7 @@ import {
   isEarnMonitoringApp,
   isStakingApp,
   setStakeProgramAppsReader,
+  stakeProgramAppIds,
   stakingMethodOf,
 } from "./stakingApps";
 import type { TransactionLike } from "./transactionShape";
@@ -122,6 +123,15 @@ describe("Earn lifecycle manifest guards", () => {
 
     expect(isEarnMonitoringApp("future-stake-app")).toBe(true);
     expect(isStakingApp("future-stake-app")).toBe(false);
+  });
+
+  it("reads manifest ids from resolved redirects, not the currency list", () => {
+    expect(
+      stakeProgramAppIds({
+        ethereum: { platform: "stakekit" },
+        bitcoin: { platform: "future-stake-app" },
+      }),
+    ).toEqual(["stakekit", "future-stake-app"]);
   });
 });
 

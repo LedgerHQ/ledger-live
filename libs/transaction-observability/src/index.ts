@@ -23,6 +23,7 @@ export {
   isStakingApp,
   knownStakingApps,
   setStakeProgramAppsReader,
+  stakeProgramAppIds,
   stakingMethodOf,
   type StakingMethod,
 } from "./stakingApps";
