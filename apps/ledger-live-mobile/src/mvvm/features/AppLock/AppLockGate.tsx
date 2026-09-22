@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { useAppLockHydration } from "./hooks/useAppLockHydration";
 import { useAppLockScheme } from "./hooks/useAppLockScheme";
 import { useLegacyPasswordMigration } from "./hooks/useLegacyPasswordMigration";
+import { LongerPasswordGate } from "./LongerPasswordGate";
+import { useLongerPasswordGateViewModel } from "./LongerPasswordGate/useLongerPasswordGateViewModel";
 import { UnlockScreen } from "./screens/Unlock";
 
 export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -23,6 +25,7 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
   const protection = useSelector(selectAppLock);
   const isLocked = useSelector(selectIsLocked);
   const { dismissAll } = useBottomSheetModal();
+  const longerPassword = useLongerPasswordGateViewModel();
   const [hasDecidedInitialLock, setHasDecidedInitialLock] = useState(false);
 
   const lockIfConfigured = useCallback(() => {
@@ -67,15 +70,20 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
     return <View style={styles.cover} />;
   }
 
+  // `accessibilityViewIsModal` hides nothing from TalkBack, so whatever covers the app has to take
+  // the screen reader with it, or a mandatory prompt can be reached around.
+  const isCovered = isLocked || longerPassword.isHolding;
+
   return (
     <>
       <View
         style={styles.children}
-        importantForAccessibility={isLocked ? "no-hide-descendants" : "auto"}
-        accessibilityElementsHidden={isLocked}
+        importantForAccessibility={isCovered ? "no-hide-descendants" : "auto"}
+        accessibilityElementsHidden={isCovered}
       >
         {children}
       </View>
+      <LongerPasswordGate {...longerPassword} />
       {isLocked ? (
         <View style={styles.overlay} accessibilityViewIsModal>
           <UnlockScreen />

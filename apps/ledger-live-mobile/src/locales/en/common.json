@@ -1643,6 +1643,23 @@
       "saveFailed": "We couldn't save your password. Please try again.",
       "cta": "Confirm"
     },
+    "longerPassword": {
+      "prompt": {
+        "title": "Change your password",
+        "description": "For better security, enter a password of at least 6 characters.",
+        "cta": "Change password"
+      },
+      "enter": {
+        "title": "Enter new password"
+      },
+      "confirm": {
+        "title": "Confirm new password"
+      },
+      "changed": {
+        "title": "Password changed",
+        "cta": "Got it"
+      }
+    },
     "unlock": {
       "wrongPassword": "Incorrect password",
       "forgotPassword": "Forgot your password?",

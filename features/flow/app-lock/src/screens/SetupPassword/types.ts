@@ -9,4 +9,5 @@ export type UseSetupPasswordViewModelOptions = Readonly<{
   onValid: () => void;
 }>;
 
-export type SetupPasswordViewProps = SetupPasswordViewModel & Readonly<{ keyboardHeight?: number }>;
+export type SetupPasswordViewProps = SetupPasswordViewModel &
+  Readonly<{ keyboardHeight?: number; bottomInset?: number }>;
