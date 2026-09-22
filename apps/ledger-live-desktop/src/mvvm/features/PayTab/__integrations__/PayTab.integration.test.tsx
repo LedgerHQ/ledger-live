@@ -226,7 +226,10 @@ describe("PayTab integration", () => {
     const dialog = await screen.findByTestId("pay-card-balance-filter-picker");
     expect(dialog).toHaveTextContent("USD Coin");
     expect(dialog).toHaveTextContent("Tether USD");
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", { button: "balance_filter" });
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "balance filter",
+      page: "Pay",
+    });
   });
 
   it("should open the deposit options dialog from the deposit action tile", async () => {
@@ -351,8 +354,9 @@ describe("PayTab integration", () => {
     expect(within(pill).getByText("USDC")).toBeVisible();
 
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "confirm_balance_filter",
+      button: "confirm balance filter",
       asset: "USDC",
+      page: "Pay",
     });
   });
 

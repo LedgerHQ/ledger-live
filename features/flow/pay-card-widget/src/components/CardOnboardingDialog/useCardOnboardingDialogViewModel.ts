@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import type { CardOnboardingStepWithCopy } from "../CardOnboardingWidget/useOnboardingSteps";
+import { getWalletPlatform } from "../getWalletPlatform";
 import { getStepIcon } from "./getStepIcon";
 import type {
   CardOnboardingOptionViewProps,
@@ -57,6 +59,7 @@ export function useCardOnboardingDialogViewModel({
   onTopUp,
 }: Params): CardOnboardingDialogViewProps {
   const { t } = useTranslation();
+  const { trackButtonClicked } = usePayAnalyticsContext();
   const dialogTitle = t("payTab.cardOnboarding.dialog.title");
   const gotItLabel = t("payTab.cardOnboarding.dialog.gotIt");
 
@@ -71,9 +74,15 @@ export function useCardOnboardingDialogViewModel({
     () => ({
       ...STEP_ACTIONS,
       "top-up-card": onTopUp ?? noop,
-      "apple-google-pay": () => setIsAddToWalletSceneOpen(true),
+      "apple-google-pay": () => {
+        trackButtonClicked({
+          button: `add to ${getWalletPlatform().brand.toLowerCase()} pay`,
+          page: "Pay",
+        });
+        setIsAddToWalletSceneOpen(true);
+      },
     }),
-    [onTopUp],
+    [onTopUp, trackButtonClicked],
   );
 
   const options = useMemo<CardOnboardingOptionViewProps[]>(() => {

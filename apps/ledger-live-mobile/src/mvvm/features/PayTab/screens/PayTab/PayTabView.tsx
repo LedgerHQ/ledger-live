@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, type CardProps } from "@features/flow-pay-card";
-import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-feature-tour";
+import { FeatureTour } from "@features/flow-pay-feature-tour";
 import { Balance, type ActionTilesProps, type BalanceData } from "@features/flow-pay-balance";
 import { BankTransferIntro, type BankTransferIntroProps } from "@features/flow-pay-bank-transfer";
 import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
@@ -22,7 +22,6 @@ type PayTabViewProps = {
   readonly cardAssets: CardProps["assets"];
   readonly cardFormatters: CardProps["formatters"];
   readonly onTopUp: () => Promise<void>;
-  readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
   readonly contacts: ContactsNativeProps;
@@ -48,7 +47,6 @@ export function PayTabView({
   isContactsEnabled,
   depositOptions,
   bankTransferIntro,
-  featureTour,
   onShowMore,
   cardSettingsActions,
 }: PayTabViewProps) {
@@ -72,7 +70,7 @@ export function PayTabView({
             onShowMore={onShowMore}
             cardSettingsActions={cardSettingsActions}
           />
-          <FeatureTour {...featureTour} />
+          <FeatureTour />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />
         </Box>

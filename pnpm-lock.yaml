@@ -6997,6 +6997,9 @@ importers:
 
   features/flow/pay-card:
     dependencies:
+      '@domain/api-card-management':
+        specifier: workspace:^
+        version: link:../../../domain/api/card-management
       '@features/flow-pay-card-assets':
         specifier: workspace:^
         version: link:../pay-card-assets
@@ -7012,6 +7015,9 @@ importers:
       '@features/flow-pay-card-widget':
         specifier: workspace:^
         version: link:../pay-card-widget
+      '@features/platform-pay-analytics':
+        specifier: workspace:^
+        version: link:../../platform/pay-analytics
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -7070,6 +7076,9 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
@@ -7094,6 +7103,9 @@ importers:
       '@features/flow-pay-card-wallets':
         specifier: workspace:^
         version: link:../pay-card-wallets
+      '@features/platform-pay-analytics':
+        specifier: workspace:^
+        version: link:../../platform/pay-analytics
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.6(@ledgerhq/lumen-design-core@0.1.29)(@ledgerhq/lumen-ui-react@0.1.59(@ledgerhq/lumen-design-core@0.1.29)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-ui-rnative@0.1.62(@ledgerhq/lumen-design-core@0.1.29)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -7204,6 +7216,9 @@ importers:
       '@features/platform-card':
         specifier: workspace:*
         version: link:../../platform/card
+      '@features/platform-pay-analytics':
+        specifier: workspace:^
+        version: link:../../platform/pay-analytics
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -7359,6 +7374,9 @@ importers:
       '@features/flow-pay-card-widget':
         specifier: workspace:*
         version: link:../pay-card-widget
+      '@features/platform-pay-analytics':
+        specifier: workspace:^
+        version: link:../../platform/pay-analytics
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.13(react@19.1.4)
@@ -7499,6 +7517,9 @@ importers:
       '@features/flow-pay-card-auth':
         specifier: workspace:*
         version: link:../pay-card-auth
+      '@features/platform-pay-analytics':
+        specifier: workspace:^
+        version: link:../../platform/pay-analytics
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -7682,6 +7703,9 @@ importers:
       '@features/flow-pay-card-wallets':
         specifier: workspace:^
         version: link:../pay-card-wallets
+      '@features/platform-pay-analytics':
+        specifier: workspace:^
+        version: link:../../platform/pay-analytics
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -8015,6 +8039,9 @@ importers:
 
   features/flow/pay-feature-tour:
     dependencies:
+      '@features/platform-pay-analytics':
+        specifier: workspace:^
+        version: link:../../platform/pay-analytics
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)

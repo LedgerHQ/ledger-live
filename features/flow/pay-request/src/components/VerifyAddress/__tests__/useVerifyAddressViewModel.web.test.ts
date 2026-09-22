@@ -59,9 +59,10 @@ describe("useVerifyAddressViewModel", () => {
     result.current.onVerify();
 
     expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
-      button: "verify address",
+      button: "verify",
       buttonLocation: "verify address",
       page: "Pay",
+      flow: "request",
     });
     expect(props.onVerify).toHaveBeenCalledTimes(1);
   });
@@ -75,6 +76,7 @@ describe("useVerifyAddressViewModel", () => {
       button: "got it",
       buttonLocation: "verify address",
       page: "Pay",
+      flow: "request",
     });
     expect(props.onGotIt).toHaveBeenCalledTimes(1);
   });

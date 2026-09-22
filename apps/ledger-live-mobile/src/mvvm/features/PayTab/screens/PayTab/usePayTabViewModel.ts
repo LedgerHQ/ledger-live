@@ -21,7 +21,6 @@ import type { CardProps } from "@features/flow-pay-card";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
 import { useCountervalueFormatter } from "../../hooks/useCountervalueFormatter";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
-import type { FeatureTourProps } from "@features/flow-pay-feature-tour";
 import { navigateToCardHistory } from "LLM/features/OperationsHistory/utils/navigateToCardHistory";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { useAppProtectionPrompt } from "LLM/features/AppLock/AppProtectionPrompt";
@@ -31,7 +30,6 @@ import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
-import { track } from "~/analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
 export function usePayTabViewModel() {
@@ -81,8 +79,8 @@ export function usePayTabViewModel() {
   );
 
   const login: CardProps["login"] = useMemo(
-    () => ({ oauthConfig, callback, onTrackEvent: balance.onTrackEvent, requestProtection }),
-    [oauthConfig, callback, balance.onTrackEvent, requestProtection],
+    () => ({ oauthConfig, callback, requestProtection }),
+    [oauthConfig, callback, requestProtection],
   );
 
   const onShowMore = useCallback(() => {
@@ -140,14 +138,6 @@ export function usePayTabViewModel() {
     [navigation],
   );
 
-  const featureTour: FeatureTourProps = useMemo(
-    () => ({
-      onTrackScreen: (page: string) => track(page),
-      onTrackEvent: (event: string, params: Record<string, unknown>) => track(event, params),
-    }),
-    [],
-  );
-
   const payCardAssets = usePayCardAssets();
   const cardAssets: CardAssetsProps = useMemo(
     () => ({
@@ -173,7 +163,6 @@ export function usePayTabViewModel() {
     cardAssets,
     cardFormatters,
     onTopUp,
-    featureTour,
     balance,
     actionTiles,
     contacts,

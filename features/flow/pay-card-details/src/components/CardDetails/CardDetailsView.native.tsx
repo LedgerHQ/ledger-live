@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Button, LinearGradient } from "@ledgerhq/lumen-ui-rnative";
+import { PayTrackPage } from "@features/platform-pay-analytics";
 import { CardArtwork } from "../CardArtwork/CardArtwork";
 import { CardVisual } from "../CardVisual/CardVisual";
 import { CardTopUpButton } from "../CardTopUp";
@@ -26,6 +27,7 @@ export function CardDetailsView({
 }: CardDetailsViewProps) {
   return (
     <Box>
+      {isSheetOpen ? <PayTrackPage page="Card details" /> : null}
       <Box lx={{ position: "relative" }}>
         {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
 

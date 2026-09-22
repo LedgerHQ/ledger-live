@@ -1,6 +1,7 @@
 import React, { type PropsWithChildren } from "react";
 import { act, render, screen, userEvent } from "@testing-library/react-native";
 import type { CardAssetRow, CardAssetsViewModel } from "@features/flow-pay-card-assets";
+import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import {
   cardApiWrapper,
   listenToCardApi,
@@ -30,11 +31,14 @@ const assets = {
   priceWallet: () => 125.4,
   formatCountervalue: (value: number) => `$${value}`,
 };
+let track = jest.fn();
 
 function Wrapper({ children }: PropsWithChildren) {
   return (
     <StoreWrapper>
-      <I18nWrapper>{children}</I18nWrapper>
+      <PayAnalyticsProvider adapter={{ track }}>
+        <I18nWrapper>{children}</I18nWrapper>
+      </PayAnalyticsProvider>
     </StoreWrapper>
   );
 }
@@ -46,10 +50,11 @@ function renderCardDetails({
   onTrackEvent?: jest.Mock;
   onTopUp?: () => void;
 } = {}) {
+  track = onTrackEvent;
   return {
     user: userEvent.setup(),
     onTrackEvent,
-    ...render(<CardDetails onTrackEvent={onTrackEvent} onTopUp={onTopUp} />, { wrapper: Wrapper }),
+    ...render(<CardDetails onTopUp={onTopUp} />, { wrapper: Wrapper }),
   };
 }
 
@@ -144,7 +149,7 @@ describe("CardDetails (native)", () => {
         currencyPosition: "start",
       }),
     };
-    render(<CardDetails onTrackEvent={jest.fn()} cardVisual={cardVisual} />, { wrapper: Wrapper });
+    render(<CardDetails cardVisual={cardVisual} />, { wrapper: Wrapper });
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
 
@@ -291,6 +296,9 @@ describe("CardDetails (native)", () => {
     await user.press(await screen.findByText("NETFLIX.COM"));
 
     expect(screen.getByTestId("card-details-transaction-content")).toBeVisible();
+    expect(
+      onTrackEvent.mock.calls.filter(([event]) => event === "transaction_clicked"),
+    ).toHaveLength(1);
     expect(onTrackEvent).toHaveBeenCalledWith("transaction_clicked", {
       category: "card",
       transaction: "out",

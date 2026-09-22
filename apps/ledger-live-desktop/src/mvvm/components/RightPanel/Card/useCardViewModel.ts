@@ -13,7 +13,6 @@ import useEnv from "@features/platform-env";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
 import { useCountervalueFormatter } from "LLD/hooks/useCountervalueFormatter";
 import logger from "~/renderer/logger";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
@@ -145,13 +144,9 @@ export function useCardViewModel(): CardViewModel {
 
   useWipeHostedSession();
 
-  const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
-    track(event, params);
-  }, []);
-
   const login: CardViewModel["login"] = useMemo(
-    () => ({ oauthConfig, callback, openHostedLogin, openHostedPage, onTrackEvent }),
-    [oauthConfig, callback, openHostedLogin, openHostedPage, onTrackEvent],
+    () => ({ oauthConfig, callback, openHostedLogin, openHostedPage }),
+    [oauthConfig, callback, openHostedLogin, openHostedPage],
   );
 
   const onShowMore = useCallback(() => {

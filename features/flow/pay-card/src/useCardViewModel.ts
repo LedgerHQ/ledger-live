@@ -3,6 +3,7 @@ import { useCardAuthStatus } from "@features/flow-pay-card-auth";
 import { useTranslation } from "@shared/i18n";
 import { useCardWalletsTotal } from "@features/flow-pay-card-assets";
 import type { CardDisplayState, CardProps, CardViewProps } from "./Card.types";
+import { useCardLifecycleTracking } from "./useCardLifecycleTracking";
 
 export function useCardViewModel({
   login,
@@ -13,22 +14,16 @@ export function useCardViewModel({
   cardSettingsActions,
 }: CardProps): CardViewProps {
   const { t } = useTranslation();
+  useCardLifecycleTracking();
   const status = useCardAuthStatus();
   const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
   const isSignedIn = status === "signedIn";
   const formatCountervalue = formatters?.countervalue;
   const balanceLabel = t("payTab.card.balanceLabel");
-  // The card's balance is what its funding wallets are worth; the provider reports no total.
   const { total, isLoading, isError } = useCardWalletsTotal(assets, isSignedIn);
 
   const cardVisual = useMemo<CardViewProps["cardVisual"]>(() => {
-    if (!isSignedIn || !formatCountervalue) return undefined;
-    // No wallets to sum, or a read that failed: the bare artwork rather than a zero that reads as
-    // a real balance. The Assets list is what says the read failed.
-    if (assets === undefined || isError) return undefined;
-
-    // No wallets to sum, or a read that failed: the bare artwork rather than a zero that reads as
-    // a real balance. The Assets list is what says the read failed.
+    if (!isSignedIn || !formatCountervalue || assets === undefined || isError) return undefined;
 
     return { balance: total, formatCountervalue, balanceLabel, isLoading };
   }, [isSignedIn, formatCountervalue, balanceLabel, assets, total, isLoading, isError]);

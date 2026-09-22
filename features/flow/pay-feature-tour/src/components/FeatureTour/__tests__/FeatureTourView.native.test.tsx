@@ -1,5 +1,7 @@
 import React from "react";
+import { Text } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
+import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import { FeatureTourView } from "../FeatureTourView.native";
 
 const defaultProps: React.ComponentProps<typeof FeatureTourView> = {
@@ -14,33 +16,39 @@ const defaultProps: React.ComponentProps<typeof FeatureTourView> = {
       description: "Use your balance around the world",
     },
   ],
-  onShown: jest.fn(),
   onDismiss: jest.fn(),
 };
+
+function renderView(props: Partial<React.ComponentProps<typeof FeatureTourView>> = {}) {
+  return render(
+    <PayAnalyticsProvider
+      adapter={{ track: jest.fn() }}
+      renderPage={page => <Text testID="pay-track-page">{page}</Text>}
+    >
+      <FeatureTourView {...defaultProps} {...props} />
+    </PayAnalyticsProvider>,
+  );
+}
 
 describe("FeatureTourView (Native)", () => {
   afterEach(() => {
     cleanup();
   });
 
-  it("signals it was shown once across re-renders", () => {
-    const onShown = jest.fn();
-    const { rerender } = render(<FeatureTourView {...defaultProps} onShown={onShown} />);
+  it("tracks the page while visible", () => {
+    renderView();
 
-    rerender(<FeatureTourView {...defaultProps} onShown={onShown} />);
-
-    expect(onShown).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("pay-track-page")).toHaveTextContent("card feature intro");
   });
 
-  it("does not signal it was shown while hidden", () => {
-    const onShown = jest.fn();
-    render(<FeatureTourView {...defaultProps} isVisible={false} onShown={onShown} />);
+  it("does not track the page while hidden", () => {
+    renderView({ isVisible: false });
 
-    expect(onShown).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("pay-track-page")).toBeNull();
   });
 
   it("keeps the sheet mounted but hides its content while not visible", () => {
-    render(<FeatureTourView {...defaultProps} isVisible={false} />);
+    renderView({ isVisible: false });
 
     const sheet = screen.getByTestId("pay-feature-tour-sheet");
     expect(sheet).toBeVisible();
@@ -49,7 +57,7 @@ describe("FeatureTourView (Native)", () => {
   });
 
   it("requests the sheet to open and renders its content when visible", () => {
-    render(<FeatureTourView {...defaultProps} />);
+    renderView();
 
     const sheet = screen.getByTestId("pay-feature-tour-sheet");
     expect(sheet.props.accessibilityState.expanded).toBe(true);
@@ -59,7 +67,7 @@ describe("FeatureTourView (Native)", () => {
 
   it("dismisses once even if the CTA is pressed repeatedly", () => {
     const onDismiss = jest.fn();
-    render(<FeatureTourView {...defaultProps} onDismiss={onDismiss} />);
+    renderView({ onDismiss });
 
     const cta = screen.getByLabelText("Explore Pay");
     fireEvent.press(cta);
@@ -69,7 +77,7 @@ describe("FeatureTourView (Native)", () => {
   });
 
   it("hides its content after being dismissed", () => {
-    render(<FeatureTourView {...defaultProps} />);
+    renderView();
 
     fireEvent.press(screen.getByLabelText("Explore Pay"));
 
