@@ -6,6 +6,7 @@ import {
   Box,
 } from "@ledgerhq/lumen-ui-rnative";
 import { AddToWalletCta } from "@features/flow-pay-card-widget/native";
+import { CardAssetsManageFooter } from "@features/flow-pay-card-assets";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { CardTopUpButton } from "../CardTopUp";
 import { CardDetailsScene } from "./Scenes/CardDetailsScene";
@@ -68,6 +69,8 @@ export function CardDetailsSheet({
             <AddToWalletCta onPress={scene.overview.onAddToWalletPress} />
             {onTopUp ? <CardTopUpButton onTopUp={onTopUp} /> : null}
           </>
+        ) : isOpen && isAssetsManage ? (
+          <CardAssetsManageFooter onAddAsset={scene.assetsManage?.viewModel.onAddAssetPress} />
         ) : null
       }
       testID="card-details-sheet"

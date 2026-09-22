@@ -6,6 +6,12 @@ import { CardAssetsView } from "../CardAssetsView.native";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 import type { CardAssetsViewModel } from "../types";
 
+// Waits past a requestAnimationFrame tick, for assertions that depend on work the drawer
+// defers to the next frame (see CardAssetsManageDrawer.native.tsx's handleDragEnd).
+function flushMicrotasks() {
+  return new Promise(resolve => setTimeout(resolve, 20));
+}
+
 const usdc = {
   id: "w-usdc",
   currency: "usdc",
@@ -156,13 +162,10 @@ describe("CardAssetsView (native)", () => {
     expect(onManagePress).toHaveBeenCalledTimes(1);
   });
 
-  it("should show managed assets and add another asset", async () => {
-    const user = userEvent.setup();
-    const onAddAsset = jest.fn();
+  it("should show managed assets", () => {
     render(
       <CardAssetsManageDrawer
         rows={ready.rows}
-        onAddAsset={onAddAsset}
         onMoveAsset={jest.fn()}
         reorderingAssetIds={new Set()}
       />,
@@ -172,34 +175,14 @@ describe("CardAssetsView (native)", () => {
     expect(screen.getByText(CARD_ASSETS_COPY.manageDialogTitle)).toBeVisible();
     expect(screen.getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
     expect(screen.getByText("USD Coin")).toBeVisible();
-    expect(screen.getByText(CARD_ASSETS_COPY.addAssetCaption)).toBeVisible();
-
-    await user.press(screen.getByText(CARD_ASSETS_COPY.addAsset));
-
-    expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
 
-  it("should hide the add asset action when the host does not provide it", () => {
-    render(
-      <CardAssetsManageDrawer
-        rows={ready.rows}
-        onMoveAsset={jest.fn()}
-        reorderingAssetIds={new Set()}
-      />,
-      { wrapper: I18nWrapper },
-    );
-
-    expect(screen.queryByText(CARD_ASSETS_COPY.addAssetCaption)).not.toBeOnTheScreen();
-    expect(screen.queryByText(CARD_ASSETS_COPY.addAsset)).not.toBeOnTheScreen();
-  });
-
-  it("should expose native move actions on each reorder handle", () => {
+  it("should move a wallet up in funding order via the handle's accessibility action", () => {
     const onMoveAsset = jest.fn();
     const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
     render(
       <CardAssetsManageDrawer
         rows={[usdc, bitcoin]}
-        onAddAsset={jest.fn()}
         onMoveAsset={onMoveAsset}
         reorderingAssetIds={new Set()}
       />,
@@ -211,6 +194,32 @@ describe("CardAssetsView (native)", () => {
     });
 
     expect(onMoveAsset).toHaveBeenCalledWith("w-btc", 0);
+  });
+
+  it("should move a wallet to where a drag was dropped", async () => {
+    const onMoveAsset = jest.fn().mockResolvedValue(undefined);
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(
+      <CardAssetsManageDrawer
+        rows={[usdc, bitcoin]}
+        onMoveAsset={onMoveAsset}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    const { onDragBegin, onPlaceholderIndexChange, onDragEnd } =
+      screen.UNSAFE_getByType(DraggableFlatList).props;
+
+    // The user picks up USDC (index 0), drags it past Bitcoin, and drops it at index 1.
+    await act(async () => {
+      onDragBegin(0);
+      onPlaceholderIndexChange(1);
+      onDragEnd({ data: [bitcoin, usdc], from: 0, to: 1 });
+      await flushMicrotasks();
+    });
+
+    expect(onMoveAsset).toHaveBeenCalledWith("w-usdc", 1);
   });
 
   it("should not flash the spinner when a drag settles back where it started", () => {

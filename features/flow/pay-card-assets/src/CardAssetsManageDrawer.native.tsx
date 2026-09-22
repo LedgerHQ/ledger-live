@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react";
-import { InteractionManager, Pressable } from "react-native";
+import { Pressable } from "react-native";
 import DraggableFlatList, {
   ScaleDecorator,
   ShadowDecorator,
@@ -8,7 +8,6 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import {
   Box,
-  Button,
   ListItem,
   ListItemContent,
   ListItemLeading,
@@ -41,59 +40,71 @@ function AssetRow({
   onDrag,
 }: AssetRowProps) {
   return (
-    // Scale/shadow give the lifted row the "picked up" feel; both fade back to flat the moment
-    // it's dropped since they're driven by the library's own active-cell animation, not state.
-    <ScaleDecorator activeScale={1.03}>
-      <ShadowDecorator opacity={0.16} radius={12} elevation={6}>
-        <Box lx={{ backgroundColor: "surface", borderRadius: "sm", overflow: "hidden" }}>
-          <ListItem lx={{ backgroundColor: "surface" }}>
-            <ListItemLeading>
-              <ListItemContent>
-                <ListItemTitle>{row.name}</ListItemTitle>
-              </ListItemContent>
-            </ListItemLeading>
-            {showHandle ? (
-              <ListItemTrailing>
-                {isReordering ? (
-                  <Spinner size={24} testID={`card-asset-reorder-spinner-${row.id}`} />
-                ) : (
-                  <Pressable
-                    accessible
-                    accessibilityRole="button"
-                    accessibilityLabel={reorderLabel}
-                    accessibilityActions={[
-                      { name: "decrement", label: "Move up" },
-                      { name: "increment", label: "Move down" },
-                    ]}
-                    onAccessibilityAction={event => {
-                      if (event.nativeEvent.actionName === "decrement") onMoveUp();
-                      if (event.nativeEvent.actionName === "increment") onMoveDown();
-                    }}
-                    onLongPress={onDrag}
-                    testID={`card-asset-reorder-handle-${row.id}`}
-                  >
-                    <MenuBurger size={24} />
-                  </Pressable>
-                )}
-              </ListItemTrailing>
-            ) : null}
-          </ListItem>
-        </Box>
-      </ShadowDecorator>
-    </ScaleDecorator>
+    // The gutter lives on this outer box, outside the scale/shadow: the library renders the
+    // active cell as a free-floating overlay uninset by the list container's own padding, so
+    // without its own gutter here it would jump edge-to-edge the moment it lifts.
+    <Box lx={{ paddingHorizontal: "s12" }}>
+      {/* Scale/shadow give the lifted row the "picked up" feel; both fade back to flat the
+          moment it's dropped since they're driven by the library's own active-cell animation,
+          not state. */}
+      <ScaleDecorator activeScale={1.03}>
+        <ShadowDecorator opacity={0.16} radius={12} elevation={6}>
+          <Box lx={{ backgroundColor: "surface", borderRadius: "sm", overflow: "hidden" }}>
+            <ListItem lx={{ backgroundColor: "surface" }}>
+              <ListItemLeading>
+                <ListItemContent>
+                  <ListItemTitle>{row.name}</ListItemTitle>
+                </ListItemContent>
+              </ListItemLeading>
+              {showHandle ? (
+                <ListItemTrailing>
+                  {isReordering ? (
+                    // Matches the handle's own padding below so swapping between the two doesn't
+                    // shift the icon's position.
+                    <Box lx={{ padding: "s8" }}>
+                      <Spinner size={24} testID={`card-asset-reorder-spinner-${row.id}`} />
+                    </Box>
+                  ) : (
+                    <Pressable
+                      accessible
+                      accessibilityRole="button"
+                      accessibilityLabel={reorderLabel}
+                      accessibilityActions={[
+                        { name: "decrement", label: "Move up" },
+                        { name: "increment", label: "Move down" },
+                      ]}
+                      onAccessibilityAction={event => {
+                        if (event.nativeEvent.actionName === "decrement") onMoveUp();
+                        if (event.nativeEvent.actionName === "increment") onMoveDown();
+                      }}
+                      onLongPress={onDrag}
+                      testID={`card-asset-reorder-handle-${row.id}`}
+                    >
+                      {/* Padding grows the actual touch target, not just its hit slop, so the
+                          bigger area is what long-presses to start a drag. */}
+                      <Box lx={{ padding: "s8" }}>
+                        <MenuBurger size={24} />
+                      </Box>
+                    </Pressable>
+                  )}
+                </ListItemTrailing>
+              ) : null}
+            </ListItem>
+          </Box>
+        </ShadowDecorator>
+      </ScaleDecorator>
+    </Box>
   );
 }
 
 type CardAssetsManageDrawerProps = Readonly<{
   rows: readonly CardAssetRow[];
-  onAddAsset?: () => void;
   onMoveAsset: (id: string, toIndex: number) => Promise<void>;
   reorderingAssetIds: ReadonlySet<string>;
 }>;
 
 export function CardAssetsManageDrawer({
   rows,
-  onAddAsset,
   onMoveAsset,
   reorderingAssetIds,
 }: CardAssetsManageDrawerProps) {
@@ -104,9 +115,9 @@ export function CardAssetsManageDrawer({
   // this immediately would leave a one-frame gap with no spinner showing at all.
   const [releasedId, setReleasedId] = useState<string | null>(null);
   // `onRelease` always fires with the drag's *start* index, before the settle spring resolves
-  // where it lands — these track the live drop target (from `onPlaceholderIndexChange`, updated
-  // throughout the drag) so release can tell a real move from a drop back in the same spot.
-  const dragStartIndexRef = useRef<number | null>(null);
+  // where it lands — this tracks the live drop target (seeded by `onDragBegin`, updated by
+  // `onPlaceholderIndexChange` as the drag moves) so release can tell a real move from a drop
+  // back in the same spot.
   const dropTargetIndexRef = useRef<number | null>(null);
 
   const moveByOffset = useCallback(
@@ -139,20 +150,14 @@ export function CardAssetsManageDrawer({
   // extraction logic itself changes.
   const keyExtractor = useCallback((row: CardAssetRow) => row.id, []);
 
-  const handleDragBegin = useCallback((index: number) => {
-    dragStartIndexRef.current = index;
-    dropTargetIndexRef.current = index;
-  }, []);
-
-  const handlePlaceholderIndexChange = useCallback((index: number) => {
+  const setDropTargetIndex = useCallback((index: number) => {
     dropTargetIndexRef.current = index;
   }, []);
 
   const handleRelease = useCallback(
     (index: number) => {
-      const willMove = dropTargetIndexRef.current !== dragStartIndexRef.current;
+      const willMove = dropTargetIndexRef.current !== index;
       setReleasedId(willMove ? (rows[index]?.id ?? null) : null);
-      dragStartIndexRef.current = null;
     },
     [rows],
   );
@@ -165,13 +170,15 @@ export function CardAssetsManageDrawer({
         return;
       }
       // The library nulls its own `activeKey` the instant `data` changes shape, but defers
-      // resetting the shared values that drive cell position to `InteractionManager` — updating
-      // `data` (via `onMoveAsset`) synchronously here would race that reset and snap the list to
-      // a stale layout for a frame. Queuing behind the same interaction handle lets its reset run
-      // first.
-      InteractionManager.runAfterInteractions(() => {
+      // resetting the shared values that drive cell position to its own `InteractionManager`
+      // call — updating `data` (via `onMoveAsset`) synchronously here would race that reset and
+      // snap the list to a stale layout for a frame. Yielding a tick is enough to land after it
+      // without this row's commit getting stuck behind some *other*, unrelated interaction handle
+      // left open elsewhere in the app (InteractionManager waits for every handle, not just this
+      // list's).
+      setTimeout(() => {
         void onMoveAsset(moved.id, to).finally(() => setReleasedId(null));
-      });
+      }, 0);
     },
     [onMoveAsset],
   );
@@ -186,31 +193,19 @@ export function CardAssetsManageDrawer({
           {t("payTab.card.assets.manageDialog.description")}
         </Text>
       </Box>
-      <Box
-        lx={{ backgroundColor: "surface", borderRadius: "md", paddingHorizontal: "s12", flex: 1 }}
-      >
+      <Box lx={{ backgroundColor: "surface", borderRadius: "md", flex: 1 }}>
         <DraggableFlatList
           data={rows as CardAssetRow[]}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
-          onDragBegin={handleDragBegin}
-          onPlaceholderIndexChange={handlePlaceholderIndexChange}
+          onDragBegin={setDropTargetIndex}
+          onPlaceholderIndexChange={setDropTargetIndex}
           onDragEnd={handleDragEnd}
           onRelease={handleRelease}
           containerStyle={{ flex: 1 }}
           ItemSeparatorComponent={() => <Box lx={{ paddingTop: "s2" }} />}
         />
       </Box>
-      {onAddAsset ? (
-        <Box lx={{ alignItems: "center", gap: "s12", paddingTop: "s16" }}>
-          <Text typography="body4" lx={{ color: "muted", textAlign: "center" }}>
-            {t("payTab.card.assets.manageDialog.addAssetCaption")}
-          </Text>
-          <Button appearance="base" size="lg" isFull onPress={onAddAsset} testID="card-assets-add">
-            {t("payTab.card.assets.manageDialog.addAsset")}
-          </Button>
-        </Box>
-      ) : null}
     </Box>
   );
 }
