@@ -50,17 +50,8 @@ function readPackage(pkg, context) {
         mkdirp: "*",
       }),
 
-      addPeerDependencies("@react-native-community/cli", {
-        "metro-resolver": "*",
-      }),
-      addPeerDependencies("@react-native-community/cli-tools", {
-        "find-up": "*",
-      }),
       addPeerDependencies("metro-config", {
         "metro-transform-worker": "*",
-      }),
-      addPeerDependencies("metro-transform-worker", {
-        "metro-minify-terser": "*",
       }),
 
       /* Other packages */
@@ -70,23 +61,8 @@ function readPackage(pkg, context) {
         "jest-circus": "*",
       }),
       addPeerDependencies("@svgr/core", { "@svgr/plugin-svgo": "*" }),
-      addDependencies("postcss-loader", {
-        "postcss-flexbugs-fixes": "*",
-        "postcss-preset-env": "*",
-        "postcss-normalize": "*",
-      }),
-      addPeerDependencies("@cspotcode/source-map-support", {
-        "source-map-support": "*",
-      }),
-      addPeerDependencies("react-lottie", {
-        "prop-types": "*",
-      }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
 
-      addPeerDependencies("expo", {
-        "expo-modules-autolinking": "*",
-        "expo-modules-core": "*",
-      }),
       addPeerDependencies(/^expo-/, {
         "expo-modules-core": "*",
         "expo-constants": "*",
@@ -112,12 +88,6 @@ function readPackage(pkg, context) {
       }),
       addPeerDependencies("asyncstorage-down", {
         "@react-native-async-storage/async-storage": "*",
-      }),
-      addDependencies("@react-native-community/cli-tools", {
-        execa: "5.0.0",
-      }),
-      addDependencies("@react-native-community/cli-platform-ios", {
-        execa: "5.0.0",
       }),
       // TODO:
       // Tron missing deps
