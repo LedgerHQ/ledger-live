@@ -84,14 +84,9 @@ import {
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { installLiveConfigProvider } from "~/firebase/remoteConfig";
 import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
-import { setEarnTxLifecycleFlagReader } from "~/renderer/analytics/earnTxLifecycleFlag";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
-import {
-  clearPendingTxLifecycle,
-  setStakeProgramAppsReader,
-  stakeProgramAppIds,
-} from "@ledgerhq/transaction-observability";
+import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
 
 const rootNode = document.getElementById("react-root");
 
@@ -165,26 +160,16 @@ async function init() {
       typeof setAnalyticsFeatureFlagMethod
     >[0],
   );
-  const readEarnTxLifecycleFlag = () =>
-    selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false;
-  setEarnTxLifecycleFlagReader(readEarnTxLifecycleFlag);
-  setStakeProgramAppsReader(() => {
-    const stakePrograms = selectFeature(store.getState(), "stakePrograms");
-    if (!stakePrograms?.enabled) return [];
-
-    const resolvedStakePrograms = getVersionedRedirects(
-      stakePrograms,
-      LiveConfig.instance.appVersion || "0.0.0",
-    );
-    return stakeProgramAppIds(resolvedStakePrograms.params?.redirects);
-  });
-
-  let wasEarnTxLifecycleEnabled = readEarnTxLifecycleFlag();
-  store.subscribe(() => {
-    const enabled = readEarnTxLifecycleFlag();
-    if (wasEarnTxLifecycleEnabled && !enabled) clearPendingTxLifecycle("desktop");
-    wasEarnTxLifecycleEnabled = enabled;
-  });
+  store.subscribe(
+    installEarnLifecycleHost({
+      platform: "desktop",
+      readEnabled: () =>
+        selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false,
+      readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
+      resolveVersionedRedirects: getVersionedRedirects,
+      readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+    }),
+  );
 
   // Hydrate persisted crypto assets tokens from app.json
   // Cross-caching is automatic: tokens are cached under both ID and address lookups

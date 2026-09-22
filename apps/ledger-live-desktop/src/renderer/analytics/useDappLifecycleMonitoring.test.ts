@@ -1,23 +1,13 @@
 import { renderHook, withFlagOverrides } from "tests/testSetup";
-import {
-  abandonPendingDappTxLifecycle,
-  clearPendingDappTxLifecycle,
-  startDappTxLifecycle,
-} from "@ledgerhq/transaction-observability";
+import { startDappLifecycleMonitoring } from "@ledgerhq/transaction-observability";
 import { hasStakeRedirectParams, useDappLifecycleMonitoring } from "./useDappLifecycleMonitoring";
-import { setEarnTxLifecycleFlagReader } from "./earnTxLifecycleFlag";
 
 jest.mock("@ledgerhq/transaction-observability", () => ({
   ...jest.requireActual("@ledgerhq/transaction-observability"),
-  startDappTxLifecycle: jest.fn(),
-  abandonPendingDappTxLifecycle: jest.fn(),
-  clearPendingDappTxLifecycle: jest.fn(),
+  startDappLifecycleMonitoring: jest.fn(),
 }));
 
-const mockStart = jest.mocked(startDappTxLifecycle);
-const mockAbandon = jest.mocked(abandonPendingDappTxLifecycle);
-const mockClear = jest.mocked(clearPendingDappTxLifecycle);
-let lifecycleEnabled = true;
+const mockStart = jest.mocked(startDappLifecycleMonitoring);
 
 describe("hasStakeRedirectParams", () => {
   it("accepts stake CTA parameters from every router input", () => {
@@ -32,47 +22,36 @@ describe("hasStakeRedirectParams", () => {
 });
 
 describe("useDappLifecycleMonitoring", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    lifecycleEnabled = true;
-    setEarnTxLifecycleFlagReader(() => lifecycleEnabled);
-  });
-  afterEach(() => setEarnTxLifecycleFlagReader(null));
+  beforeEach(() => jest.clearAllMocks());
 
-  it("starts and abandons a desktop dapp lifecycle", () => {
+  it("monitors a desktop dapp attempt and closes it on unmount", () => {
+    const cleanup = jest.fn();
+    mockStart.mockReturnValue(cleanup);
+
     const { unmount } = renderHook(() => useDappLifecycleMonitoring("stakekit", true), {
       initialState: withFlagOverrides({ earnTxLifecycleMonitoring: { enabled: true } }),
     });
 
-    expect(mockStart).toHaveBeenCalledWith("desktop", "stakekit");
+    expect(mockStart).toHaveBeenCalledWith("desktop", "stakekit", true, true);
 
     unmount();
 
-    expect(mockAbandon).toHaveBeenCalledWith("desktop", "stakekit");
+    expect(cleanup).toHaveBeenCalledTimes(1);
   });
 
-  it("does not emit and clears pending state when disabled", () => {
-    lifecycleEnabled = false;
-    const { unmount } = renderHook(() => useDappLifecycleMonitoring("stakekit", true), {
+  it("passes the kill-switch state down, so the library can drop pending attempts", () => {
+    renderHook(() => useDappLifecycleMonitoring("stakekit", true), {
       initialState: withFlagOverrides({ earnTxLifecycleMonitoring: { enabled: false } }),
     });
 
-    expect(mockStart).not.toHaveBeenCalled();
-    expect(mockClear).toHaveBeenCalledWith("desktop", "stakekit");
-
-    unmount();
-
-    expect(mockAbandon).not.toHaveBeenCalled();
+    expect(mockStart).toHaveBeenCalledWith("desktop", "stakekit", true, false);
   });
 
-  it("ignores a catalog open that is not a stake redirect", () => {
-    const { unmount } = renderHook(() => useDappLifecycleMonitoring("stakekit", false), {
+  it("reports a catalog open that is not a stake redirect", () => {
+    renderHook(() => useDappLifecycleMonitoring("stakekit", false), {
       initialState: withFlagOverrides({ earnTxLifecycleMonitoring: { enabled: true } }),
     });
 
-    expect(mockStart).not.toHaveBeenCalled();
-    expect(mockClear).not.toHaveBeenCalled();
-    unmount();
-    expect(mockAbandon).not.toHaveBeenCalled();
+    expect(mockStart).toHaveBeenCalledWith("desktop", "stakekit", false, true);
   });
 });

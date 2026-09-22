@@ -1,11 +1,8 @@
 import {
-  clearPendingTxLifecycle,
-  sendTxLifecycle,
+  registerTxLifecycleObserver,
   setTransactionObserver,
   toSegmentTrackEvent,
-  toTxLifecyclePayload,
 } from "@ledgerhq/transaction-observability";
-import { isEarnTxLifecycleMonitoringEnabled } from "./earnTxLifecycleFlag";
 import { track } from "./segment";
 
 /**
@@ -21,20 +18,7 @@ setTransactionObserver(event => {
   if (mapped) track(mapped.event, mapped.properties);
 });
 
-setTransactionObserver(event => {
-  if (!isEarnTxLifecycleMonitoringEnabled()) {
-    clearPendingTxLifecycle("desktop");
-    return;
-  }
-  const payload = toTxLifecyclePayload(event, "desktop");
-  if (!payload) return;
-
-  if (event.manifestId) {
-    sendTxLifecycle(payload, event.manifestId);
-  } else {
-    sendTxLifecycle(payload);
-  }
-});
+registerTxLifecycleObserver("desktop");
 
 // Dev-only: makes the whole seam visible locally, across every staking route and coin.
 if (process.env.NODE_ENV !== "production") {

@@ -23,7 +23,6 @@ export {
   isStakingApp,
   knownStakingApps,
   setStakeProgramAppsReader,
-  stakeProgramAppIds,
   stakingMethodOf,
   type StakingMethod,
 } from "./stakingApps";
@@ -43,6 +42,14 @@ export {
   resetTransactionObservers,
   setTransactionObserver,
 } from "./observer";
+
+export {
+  installEarnLifecycleHost,
+  isEarnTxLifecycleMonitoringEnabled,
+  registerTxLifecycleObserver,
+  setEarnTxLifecycleFlagReader,
+  startDappLifecycleMonitoring,
+} from "./earnLifecycleHost";
 
 export { toSegmentTrackEvent, type SegmentTrackEvent } from "./segmentEvent";
 

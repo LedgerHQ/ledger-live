@@ -66,15 +66,10 @@ import { useTrackFundsReceived } from "LLM/features/Analytics/hooks/useTrackFund
 import { updateIdentify } from "./analytics";
 import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
-import { setEarnTxLifecycleFlagReader } from "~/analytics/earnTxLifecycleFlag";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import {
-  clearPendingTxLifecycle,
-  setStakeProgramAppsReader,
-  stakeProgramAppIds,
-} from "@ledgerhq/transaction-observability";
+import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -134,26 +129,16 @@ setAnalyticsFeatureFlagMethod(
     typeof setAnalyticsFeatureFlagMethod
   >[0],
 );
-const readEarnTxLifecycleFlag = () =>
-  selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false;
-setEarnTxLifecycleFlagReader(readEarnTxLifecycleFlag);
-setStakeProgramAppsReader(() => {
-  const stakePrograms = selectFeature(store.getState(), "stakePrograms");
-  if (!stakePrograms?.enabled) return [];
-
-  const resolvedStakePrograms = getVersionedRedirects(
-    stakePrograms,
-    LiveConfig.instance.appVersion || "0.0.0",
-  );
-  return stakeProgramAppIds(resolvedStakePrograms.params?.redirects);
-});
-
-let wasEarnTxLifecycleEnabled = readEarnTxLifecycleFlag();
-store.subscribe(() => {
-  const enabled = readEarnTxLifecycleFlag();
-  if (wasEarnTxLifecycleEnabled && !enabled) clearPendingTxLifecycle("mobile");
-  wasEarnTxLifecycleEnabled = enabled;
-});
+store.subscribe(
+  installEarnLifecycleHost({
+    platform: "mobile",
+    readEnabled: () =>
+      selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false,
+    readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
+    resolveVersionedRedirects: getVersionedRedirects,
+    readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+  }),
+);
 
 const styles = StyleSheet.create({
   root: {

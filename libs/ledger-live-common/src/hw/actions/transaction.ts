@@ -2,14 +2,7 @@ import { of, Observable } from "rxjs";
 import { scan, catchError, tap } from "rxjs/operators";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { log } from "@ledgerhq/logs";
-import {
-  buildSignCommonEvent,
-  buildTransactionAbandonedEvent,
-  buildTransactionFailureEvent,
-  emitTransactionEvent,
-  TransactionPathway,
-  TransactionStage,
-} from "@ledgerhq/transaction-observability";
+import { buildSignCommonEvent, TransactionPathway } from "@ledgerhq/transaction-observability";
 import type { Transaction, TransactionStatus } from "../../coin-modules/transaction-types";
 import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
@@ -19,6 +12,7 @@ import type { Action, Device } from "./types";
 import type { AppRequest, AppState } from "./app";
 import { createAction as createAppAction } from "./app";
 import { interruptionErrorOf } from "./interruptionError";
+import { useSignAttemptObservability } from "./signAttemptObservability";
 import type {
   Account,
   AccountLike,
@@ -164,76 +158,41 @@ export const createAction = (
     const { device, opened, inWrongDeviceForAccount, error } = appState;
     const [state, setState] = useState(initialState);
 
-    /**
-     * Transaction observability: the sign-attempt drop-off. Failures and broadcast outcomes
-     * are captured wide at the bridge seam, but a user closing the modal is an unsubscribe
-     * rather than an error, so the bridge cannot see it — only this layer can.
-     */
-    const attemptStartedRef = useRef(false);
-    const promptShownRef = useRef(false);
-    const settledRef = useRef(false);
-    useEffect(() => {
-      if (state.deviceSignatureRequested) promptShownRef.current = true;
-    }, [state.deviceSignatureRequested]);
-
-    const buildCommon = useCallback(
-      () =>
-        buildSignCommonEvent({
-          // The signing account, which may be a TokenAccount — that is where the token id and
-          // ticker come from. `mainAccount` supplies the chain and family.
-          account: txRequest.account,
-          mainAccount,
-          pathway: manifestId
-            ? TransactionPathway.WalletApiSignAndBroadcast
-            : TransactionPathway.Send,
-          manifestId,
-          transaction,
-        }),
-      [txRequest.account, mainAccount, manifestId, transaction],
-    );
-    const buildCommonRef = useRef(buildCommon);
-    buildCommonRef.current = buildCommon;
+    const { beginAttempt, failInterruptedAttempt, noteSettled, notePromptShown, resetAttempt } =
+      useSignAttemptObservability(
+        useCallback(
+          () =>
+            buildSignCommonEvent({
+              // The signing account, which may be a TokenAccount — that is where the token id
+              // and ticker come from. `mainAccount` supplies the chain and family.
+              account: txRequest.account,
+              mainAccount,
+              pathway: manifestId
+                ? TransactionPathway.WalletApiSignAndBroadcast
+                : TransactionPathway.Send,
+              manifestId,
+              transaction,
+            }),
+          [txRequest.account, mainAccount, manifestId, transaction],
+        ),
+      );
 
     useEffect(() => {
-      if (state.signedOperation || state.transactionSignError) settledRef.current = true;
-    }, [state.signedOperation, state.transactionSignError]);
+      if (state.deviceSignatureRequested) notePromptShown();
+    }, [state.deviceSignatureRequested, notePromptShown]);
 
-    const abandonAttempt = useCallback(() => {
-      if (attemptStartedRef.current && !settledRef.current) {
-        settledRef.current = true;
-        emitTransactionEvent(
-          buildTransactionAbandonedEvent(buildCommonRef.current(), {
-            operationalOnly: !promptShownRef.current,
-          }),
-        );
-      }
-    }, []);
-
-    const failInterruptedAttempt = useCallback((interruptionError: Error) => {
-      if (!attemptStartedRef.current || settledRef.current) return;
-
-      settledRef.current = true;
-      emitTransactionEvent({
-        ...buildTransactionFailureEvent(buildCommonRef.current(), {
-          stage: TransactionStage.Sign,
-          error: interruptionError,
-        }),
-        operationalOnly: true,
-      });
-    }, []);
-
-    useEffect(() => () => abandonAttempt(), [abandonAttempt]);
+    useEffect(() => {
+      if (state.signedOperation || state.transactionSignError) noteSettled();
+    }, [state.signedOperation, state.transactionSignError, noteSettled]);
 
     useEffect(() => {
       if (!device || !opened || inWrongDeviceForAccount || error) {
         failInterruptedAttempt(interruptionErrorOf(inWrongDeviceForAccount, error));
         setState(initialState);
         // The attempt ended without the user dismissing anything — the device went away, or was
-        // the wrong one. Clearing the refs stops that being reported later as a dismissal, and
+        // the wrong one. Forgetting it stops that being reported later as a dismissal, and
         // leaves a retry on the same screen starting from a clean slate.
-        attemptStartedRef.current = false;
-        promptShownRef.current = false;
-        settledRef.current = false;
+        resetAttempt();
         return;
       }
 
@@ -245,9 +204,7 @@ export const createAction = (
         if (cancelled) return;
         const signOperation = () => {
           if (cancelled) return undefined;
-          attemptStartedRef.current = true;
-          promptShownRef.current = false;
-          settledRef.current = false;
+          beginAttempt();
           return bridge.signOperation({
             account: signingAccount,
             transaction,
@@ -268,7 +225,7 @@ export const createAction = (
               }),
             ),
             tap((e: Event) => {
-              if (e.type === "signed" || e.type === "error") settledRef.current = true;
+              if (e.type === "signed" || e.type === "error") noteSettled();
               log("actions-transaction-event", e.type, e);
             }),
             scan(reducer, initialState),
@@ -288,6 +245,9 @@ export const createAction = (
       inWrongDeviceForAccount,
       error,
       manifestId,
+      beginAttempt,
+      noteSettled,
+      resetAttempt,
     ]);
     return {
       ...appState,

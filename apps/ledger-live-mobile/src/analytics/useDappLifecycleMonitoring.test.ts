@@ -1,66 +1,45 @@
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
-import {
-  abandonPendingDappTxLifecycle,
-  clearPendingDappTxLifecycle,
-  startDappTxLifecycle,
-} from "@ledgerhq/transaction-observability";
+import { startDappLifecycleMonitoring } from "@ledgerhq/transaction-observability";
 import { useDappLifecycleMonitoring } from "./useDappLifecycleMonitoring";
-import { setEarnTxLifecycleFlagReader } from "./earnTxLifecycleFlag";
 
 jest.mock("@ledgerhq/transaction-observability", () => ({
   ...jest.requireActual("@ledgerhq/transaction-observability"),
-  startDappTxLifecycle: jest.fn(),
-  abandonPendingDappTxLifecycle: jest.fn(),
-  clearPendingDappTxLifecycle: jest.fn(),
+  startDappLifecycleMonitoring: jest.fn(),
 }));
 
-const mockStart = jest.mocked(startDappTxLifecycle);
-const mockAbandon = jest.mocked(abandonPendingDappTxLifecycle);
-const mockClear = jest.mocked(clearPendingDappTxLifecycle);
-let lifecycleEnabled = true;
+const mockStart = jest.mocked(startDappLifecycleMonitoring);
 
 describe("useDappLifecycleMonitoring", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    lifecycleEnabled = true;
-    setEarnTxLifecycleFlagReader(() => lifecycleEnabled);
-  });
-  afterEach(() => setEarnTxLifecycleFlagReader(null));
+  beforeEach(() => jest.clearAllMocks());
 
-  it("starts and abandons a mobile dapp lifecycle", () => {
+  it("monitors a mobile dapp attempt and closes it on unmount", () => {
+    const cleanup = jest.fn();
+    mockStart.mockReturnValue(cleanup);
+
     const { unmount } = renderHook(() => useDappLifecycleMonitoring("kiln-widget", true), {
       overrideInitialState: withFlagOverrides({ earnTxLifecycleMonitoring: { enabled: true } }),
     });
 
-    expect(mockStart).toHaveBeenCalledWith("mobile", "kiln-widget");
+    expect(mockStart).toHaveBeenCalledWith("mobile", "kiln-widget", true, true);
 
     unmount();
 
-    expect(mockAbandon).toHaveBeenCalledWith("mobile", "kiln-widget");
+    expect(cleanup).toHaveBeenCalledTimes(1);
   });
 
-  it("does not emit and clears pending state when disabled", () => {
-    lifecycleEnabled = false;
-    const { unmount } = renderHook(() => useDappLifecycleMonitoring("kiln-widget", true), {
+  it("passes the kill-switch state down, so the library can drop pending attempts", () => {
+    renderHook(() => useDappLifecycleMonitoring("kiln-widget", true), {
       overrideInitialState: withFlagOverrides({ earnTxLifecycleMonitoring: { enabled: false } }),
     });
 
-    expect(mockStart).not.toHaveBeenCalled();
-    expect(mockClear).toHaveBeenCalledWith("mobile", "kiln-widget");
-
-    unmount();
-
-    expect(mockAbandon).not.toHaveBeenCalled();
+    expect(mockStart).toHaveBeenCalledWith("mobile", "kiln-widget", true, false);
   });
 
-  it("ignores a catalog open that is not a stake redirect", () => {
-    const { unmount } = renderHook(() => useDappLifecycleMonitoring("kiln-widget", false), {
+  it("reports a catalog open that is not a stake redirect", () => {
+    renderHook(() => useDappLifecycleMonitoring("kiln-widget", false), {
       overrideInitialState: withFlagOverrides({ earnTxLifecycleMonitoring: { enabled: true } }),
     });
 
-    expect(mockStart).not.toHaveBeenCalled();
-    expect(mockClear).not.toHaveBeenCalled();
-    unmount();
-    expect(mockAbandon).not.toHaveBeenCalled();
+    expect(mockStart).toHaveBeenCalledWith("mobile", "kiln-widget", false, true);
   });
 });

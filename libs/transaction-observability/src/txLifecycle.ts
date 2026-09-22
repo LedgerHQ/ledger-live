@@ -166,7 +166,9 @@ function readEnv(name: string): string | undefined {
  */
 function earnApiBaseUrl(): string {
   const base = readEnv("EARN_API_BASE_URL") || DEFAULT_EARN_API_BASE_URL;
-  return base.replace(/\/+$/, "");
+  let end = base.length;
+  while (end > 0 && base[end - 1] === "/") end--;
+  return base.slice(0, end);
 }
 
 const pendingLifecycle = new Map<string, TxLifecyclePayloadBase>();

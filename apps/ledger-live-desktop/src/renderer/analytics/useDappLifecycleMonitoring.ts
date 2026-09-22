@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { useFeature } from "@features/platform-feature-flags";
-import {
-  abandonPendingDappTxLifecycle,
-  clearPendingDappTxLifecycle,
-  startDappTxLifecycle,
-} from "@ledgerhq/transaction-observability";
-import { isEarnTxLifecycleMonitoringEnabled } from "./earnTxLifecycleFlag";
+import { startDappLifecycleMonitoring } from "@ledgerhq/transaction-observability";
 
 type StakeRedirectParams = { accountId?: string; yieldId?: string };
 
+/**
+ * A stake CTA always carries the account or yield it redirects to, which is what separates it
+ * from browsing the same app through Discover. The router hands those over through three
+ * different channels depending on the entry point, so all three are read.
+ */
 export function hasStakeRedirectParams(
   routeState: StakeRedirectParams | null,
   search: string,
@@ -31,19 +31,8 @@ export function useDappLifecycleMonitoring(
 ): void {
   const enabled = useFeature("earnTxLifecycleMonitoring")?.enabled ?? false;
 
-  useEffect(() => {
-    if (!manifestId || !isStakeRedirect) return;
-
-    if (!enabled) {
-      clearPendingDappTxLifecycle("desktop", manifestId);
-      return;
-    }
-
-    startDappTxLifecycle("desktop", manifestId);
-    return () => {
-      if (isEarnTxLifecycleMonitoringEnabled()) {
-        abandonPendingDappTxLifecycle("desktop", manifestId);
-      }
-    };
-  }, [enabled, isStakeRedirect, manifestId]);
+  useEffect(
+    () => startDappLifecycleMonitoring("desktop", manifestId, isStakeRedirect, enabled),
+    [enabled, isStakeRedirect, manifestId],
+  );
 }

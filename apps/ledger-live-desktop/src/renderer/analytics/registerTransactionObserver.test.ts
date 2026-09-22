@@ -4,26 +4,25 @@
  * would otherwise fail silently in production rather than in CI.
  */
 const track = jest.fn();
-const mockSendTxLifecycle = jest.fn();
 jest.mock("./segment", () => ({ track: (...args: unknown[]) => track(...args) }));
-jest.mock("@ledgerhq/transaction-observability", () => ({
-  ...jest.requireActual("@ledgerhq/transaction-observability"),
-  sendTxLifecycle: (...args: unknown[]) => mockSendTxLifecycle(...args),
-}));
 
 import {
+  clearPendingTxLifecycle,
   emitTransactionEvent,
+  setEarnTxLifecycleFlagReader,
   TransactionDataSource,
   TransactionPathway,
   TransactionStage,
   type LogEvent,
 } from "@ledgerhq/transaction-observability";
 
-import { setEarnTxLifecycleFlagReader } from "./earnTxLifecycleFlag";
-
 import "./registerTransactionObserver";
 
+const mockFetch = jest.fn().mockResolvedValue(undefined);
 let lifecycleEnabled = true;
+
+const lifecycleBodies = () =>
+  mockFetch.mock.calls.map(([, init]) => JSON.parse(init.body as string));
 
 const stakingEvent = (over: Partial<Record<string, unknown>> = {}) =>
   ({
@@ -46,13 +45,18 @@ const stakingEvent = (over: Partial<Record<string, unknown>> = {}) =>
 describe("desktop transaction observer", () => {
   beforeEach(() => {
     track.mockClear();
-    mockSendTxLifecycle.mockClear();
+    mockFetch.mockClear();
+    process.env.EARN_API_BASE_URL = "https://earn.example.test";
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    global.fetch = mockFetch as unknown as typeof fetch;
     lifecycleEnabled = true;
     setEarnTxLifecycleFlagReader(() => lifecycleEnabled);
+    clearPendingTxLifecycle("desktop");
     jest.spyOn(console, "log").mockImplementation(() => {});
   });
   afterEach(() => {
     setEarnTxLifecycleFlagReader(null);
+    delete process.env.EARN_API_BASE_URL;
     jest.restoreAllMocks();
   });
 
@@ -75,7 +79,8 @@ describe("desktop transaction observer", () => {
     emitTransactionEvent(stakingEvent({ status: "intent", stage: TransactionStage.Sign }));
     emitTransactionEvent(stakingEvent());
 
-    expect(mockSendTxLifecycle).toHaveBeenLastCalledWith({
+    expect(mockFetch.mock.calls[0][0]).toBe("https://earn.example.test/v1/tx/lifecycle");
+    expect(lifecycleBodies().at(-1)).toEqual({
       schema_version: 1,
       event: "tx_terminal",
       path: "native",
@@ -88,7 +93,7 @@ describe("desktop transaction observer", () => {
     });
   });
 
-  it("forwards the manifest only as local dapp correlation context", () => {
+  it("keeps the manifest as local dapp correlation context only", () => {
     emitTransactionEvent(
       stakingEvent({
         status: "intent",
@@ -98,11 +103,8 @@ describe("desktop transaction observer", () => {
       }),
     );
 
-    expect(mockSendTxLifecycle).toHaveBeenCalledWith(
-      expect.objectContaining({ event: "tx_intent", path: "dapp" }),
-      "stakekit",
-    );
-    expect(mockSendTxLifecycle.mock.calls[0][0]).not.toHaveProperty("manifestId");
+    expect(lifecycleBodies()[0]).toMatchObject({ event: "tx_intent", path: "dapp" });
+    expect(lifecycleBodies()[0]).not.toHaveProperty("manifestId");
   });
 
   it("keeps Segment independent when lifecycle monitoring is disabled", () => {
@@ -111,7 +113,7 @@ describe("desktop transaction observer", () => {
     emitTransactionEvent(stakingEvent());
 
     expect(track).toHaveBeenCalledTimes(1);
-    expect(mockSendTxLifecycle).not.toHaveBeenCalled();
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 
   /**
@@ -129,13 +131,13 @@ describe("desktop transaction observer", () => {
     emitTransactionEvent(stakingEvent({ earnTransactionType: undefined }));
 
     expect(track).not.toHaveBeenCalled();
-    expect(mockSendTxLifecycle).not.toHaveBeenCalled();
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 
   it("sends nothing for the Earn live-app, which emits these events itself", () => {
     emitTransactionEvent(stakingEvent({ manifestId: "earn" }));
 
     expect(track).not.toHaveBeenCalled();
-    expect(mockSendTxLifecycle).not.toHaveBeenCalled();
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 });

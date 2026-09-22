@@ -2,14 +2,7 @@ import { of, Observable } from "rxjs";
 import { scan, catchError, tap } from "rxjs/operators";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { log } from "@ledgerhq/logs";
-import {
-  buildSignCommonEvent,
-  buildTransactionAbandonedEvent,
-  buildTransactionFailureEvent,
-  emitTransactionEvent,
-  TransactionPathway,
-  TransactionStage,
-} from "@ledgerhq/transaction-observability";
+import { buildSignCommonEvent, TransactionPathway } from "@ledgerhq/transaction-observability";
 import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
@@ -18,6 +11,7 @@ import type { Action, Device } from "./types";
 import type { AppRequest, AppState } from "./app";
 import { createAction as createAppAction } from "./app";
 import { interruptionErrorOf } from "./interruptionError";
+import { useSignAttemptObservability } from "./signAttemptObservability";
 import { withLiveAppContext } from "../../wallet-api/blindSigningContext";
 import type {
   Account,
@@ -166,66 +160,37 @@ export const createAction = (
     const { device, opened, inWrongDeviceForAccount, error } = appState;
     const [state, setState] = useState(initialState);
 
-    const pathway = manifestId
-      ? TransactionPathway.WalletApiSignAndBroadcast
-      : TransactionPathway.Send;
-    const buildCommon = useCallback(
-      () =>
-        buildSignCommonEvent({
-          account,
-          mainAccount: mainAccountRef.current,
-          pathway,
-          manifestId,
-        }),
-      [account, manifestId, pathway],
+    const {
+      abandonAttempt,
+      beginAttempt,
+      failInterruptedAttempt,
+      isSettled,
+      noteSettled,
+      notePromptShown,
+      resetAttempt,
+    } = useSignAttemptObservability(
+      useCallback(
+        () =>
+          buildSignCommonEvent({
+            account,
+            mainAccount: mainAccountRef.current,
+            pathway: manifestId
+              ? TransactionPathway.WalletApiSignAndBroadcast
+              : TransactionPathway.Send,
+            manifestId,
+          }),
+        [account, manifestId],
+      ),
     );
-    const buildCommonRef = useRef(buildCommon);
-    buildCommonRef.current = buildCommon;
-
-    const attemptStartedRef = useRef(false);
-    const promptShownRef = useRef(false);
-    const settledRef = useRef(false);
-    const attemptCommonRef = useRef<ReturnType<typeof buildSignCommonEvent> | null>(null);
+    // A raw sign has no structured transaction to key an attempt on, so the request itself is
+    // the identity: the same one resubscribing is the same attempt, a different one is a new.
     const attemptRequestKeyRef = useRef<string | null>(null);
-
-    const abandonAttempt = useCallback(() => {
-      if (!attemptStartedRef.current || settledRef.current) return;
-
-      settledRef.current = true;
-      const common = attemptCommonRef.current;
-      if (!common) return;
-      emitTransactionEvent(
-        buildTransactionAbandonedEvent(common, {
-          operationalOnly: !promptShownRef.current,
-        }),
-      );
-    }, []);
-
-    const failInterruptedAttempt = useCallback((interruptionError: Error) => {
-      if (!attemptStartedRef.current || settledRef.current) return;
-
-      settledRef.current = true;
-      const common = attemptCommonRef.current;
-      if (!common) return;
-      emitTransactionEvent({
-        ...buildTransactionFailureEvent(common, {
-          stage: TransactionStage.Sign,
-          error: interruptionError,
-        }),
-        operationalOnly: true,
-      });
-    }, []);
-
-    useEffect(() => () => abandonAttempt(), [abandonAttempt]);
 
     useEffect(() => {
       if (!device || !opened || inWrongDeviceForAccount || error) {
         failInterruptedAttempt(interruptionErrorOf(inWrongDeviceForAccount, error));
         setState(initialState);
-        attemptStartedRef.current = false;
-        promptShownRef.current = false;
-        settledRef.current = false;
-        attemptCommonRef.current = null;
+        resetAttempt();
         attemptRequestKeyRef.current = null;
         return;
       }
@@ -244,27 +209,11 @@ export const createAction = (
           if (cancelled) return undefined;
 
           if (attemptRequestKeyRef.current === requestKey) {
-            if (settledRef.current) return undefined;
+            if (isSettled()) return undefined;
           } else {
             abandonAttempt();
             attemptRequestKeyRef.current = requestKey;
-            attemptStartedRef.current = true;
-            promptShownRef.current = false;
-            settledRef.current = false;
-            try {
-              attemptCommonRef.current = buildCommonRef.current();
-            } catch {
-              try {
-                attemptCommonRef.current = buildSignCommonEvent({
-                  account: signingAccount,
-                  mainAccount: signingAccount,
-                  pathway,
-                  manifestId,
-                });
-              } catch {
-                attemptCommonRef.current = null;
-              }
-            }
+            beginAttempt();
           }
           return bridge.signRawOperation({
             account: signingAccount,
@@ -281,7 +230,7 @@ export const createAction = (
             ? await withLiveAppContext({ id: manifestId }, async () => signRawOperation())
             : signRawOperation();
         } catch (signingError) {
-          settledRef.current = true;
+          noteSettled();
           if (!cancelled) {
             setState(
               reducer(initialState, {
@@ -305,8 +254,8 @@ export const createAction = (
               }),
             ),
             tap((e: Event) => {
-              if (e.type === "device-signature-requested") promptShownRef.current = true;
-              if (e.type === "signed" || e.type === "error") settledRef.current = true;
+              if (e.type === "device-signature-requested") notePromptShown();
+              if (e.type === "signed" || e.type === "error") noteSettled();
               log("actions-transaction-event", e.type, e);
             }),
             scan(reducer, initialState),
@@ -328,7 +277,11 @@ export const createAction = (
       inWrongDeviceForAccount,
       error,
       manifestId,
-      pathway,
+      beginAttempt,
+      isSettled,
+      notePromptShown,
+      noteSettled,
+      resetAttempt,
     ]);
     return {
       ...appState,

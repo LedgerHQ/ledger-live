@@ -111,10 +111,16 @@ boundary; opening the same manifest from Discover is not an attempt. The redirec
 posts an enriched intent with the real family before the terminal, making per-family counters
 joinable while preserving pre-sign abandonment measurement.
 
-Hosts inject manifest ids from `stakePrograms.redirects` (including versioned redirects) at boot,
-so remote-config additions are eligible immediately; the built-in redirect ids remain as
+The monitored manifest ids come from `stakePrograms.redirects`, resolved for the running client
+version, so remote-config additions are eligible immediately; the built-in redirect ids remain as
 compatibility fallbacks. `stakePrograms.list` contains currency ids and is deliberately not used
 as a manifest allow-list.
+
+Desktop and mobile differ only in the flag slice they read and the version resolver they own, so
+the wiring lives here rather than twice in the hosts: `installEarnLifecycleHost` takes those
+readers and returns the store listener that drops pending attempts when the kill-switch goes off,
+`registerTxLifecycleObserver` installs the observer, and `startDappLifecycleMonitoring` is the
+body of each host's dApp effect.
 
 One thing to know if you ever reach for it: the hosts' `track(event, properties, mandatory)`
 takes a third argument that bypasses the consent check and swaps in a reduced property set. It
