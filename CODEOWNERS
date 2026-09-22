@@ -439,6 +439,7 @@ libs/live-signer-zcash/                                            @ledgerhq/liv
 libs/live-signer-celo/                                             @ledgerhq/live-devices
 libs/live-signer-cosmos/                                           @ledgerhq/live-devices
 libs/live-signer-hyperliquid/                                      @ledgerhq/live-devices
+libs/live-signer-polkadot/                                         @ledgerhq/live-devices
 libs/live-signer-xrp/                                              @ledgerhq/live-devices
 libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
