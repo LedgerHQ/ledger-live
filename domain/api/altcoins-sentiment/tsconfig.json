@@ -6,8 +6,7 @@
       "DOM"
     ],
     "types": [
-      "jest",
-      "node"
+      "jest"
     ]
   }
 }

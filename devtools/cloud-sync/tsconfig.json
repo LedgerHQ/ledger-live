@@ -2,7 +2,6 @@
   "extends": "@support/ts-devtools",
   "compilerOptions": {
     "types": [
-      "node",
       "jest"
     ]
   },

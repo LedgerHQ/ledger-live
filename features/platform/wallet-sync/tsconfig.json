@@ -10,8 +10,7 @@
       ]
     },
     "types": [
-      "jest",
-      "node"
+      "jest"
     ]
   },
   "include": [

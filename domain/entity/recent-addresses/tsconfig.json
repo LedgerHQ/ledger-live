@@ -2,8 +2,7 @@
   "extends": "@support/ts-domain",
   "compilerOptions": {
     "types": [
-      "jest",
-      "node"
+      "jest"
     ]
   }
 }

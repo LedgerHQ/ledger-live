@@ -2,8 +2,7 @@
   "extends": "@support/ts-shared",
   "compilerOptions": {
     "types": [
-      "jest",
-      "node"
+      "jest"
     ]
   },
   "include": [

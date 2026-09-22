@@ -1,9 +1,5 @@
-import { readFileSync } from "fs";
-import { join } from "path";
+import exportRules from "../../export-rules.json";
 import * as idsModule from "./index";
-
-const exportRulesPath = join(__dirname, "../../export-rules.json");
-const exportRules = JSON.parse(readFileSync(exportRulesPath, "utf-8"));
 
 interface IdTestConfig {
   name: string;

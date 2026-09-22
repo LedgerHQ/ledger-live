@@ -2,8 +2,7 @@
   "extends": "@support/ts-features-platform",
   "compilerOptions": {
     "types": [
-      "jest",
-      "node"
+      "jest"
     ]
   },
   "references": [
