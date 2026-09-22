@@ -4,7 +4,7 @@ import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import useExportLogs from "~/components/useExportLogs";
 import { screen } from "~/analytics";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendSignature } from "../../../context/SendSignatureContext";
@@ -19,12 +19,13 @@ export function useConfirmationViewModel() {
   const { recipientType, savedContactDuringFlow } = useSendFlowTracking();
   const { account, parentAccount } = state.account;
   const onSaveLogs = useExportLogs();
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
   const trackingProperties = useMemo(
     () => ({
-      ...getSendFlowTrackingProperties(account, parentAccount),
+      ...sendFlowTrackingProperties,
       recipientType,
     }),
-    [account, parentAccount, recipientType],
+    [sendFlowTrackingProperties, recipientType],
   );
 
   const optimisticOperation = state.operation.optimisticOperation;

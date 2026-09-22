@@ -29,7 +29,7 @@ export const SEND_FLOW_COMPLETION = {
 export type SendFlowCompletion = (typeof SEND_FLOW_COMPLETION)[keyof typeof SEND_FLOW_COMPLETION];
 
 export const SEND_FLOW_SOURCE = {
-  PAY: "Pay",
+  PAY: "pay",
 } as const;
 
 export type BaseSendStepConfig = FlowStepConfig<SendFlowStep> &

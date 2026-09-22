@@ -15,8 +15,8 @@ jest.mock("../../../../components/Memo/hooks/useMemoViewModel");
 jest.mock("../useRecipientScreenView");
 jest.mock("../useAddressMatchedSectionViewModel");
 jest.mock("../useSettleRecipientInputFocus");
-jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
-  getSendFlowTrackingProperties: jest.fn(() => ({ currency: "bitcoin" })),
+jest.mock("../../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: jest.fn(() => ({ currency: "bitcoin" })),
 }));
 jest.mock("~/logic/keyboardVisible", () => ({
   shouldUseKeyboardAvoidance: jest.fn(() => true),

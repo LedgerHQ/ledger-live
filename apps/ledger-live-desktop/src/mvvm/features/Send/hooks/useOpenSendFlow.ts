@@ -96,7 +96,12 @@ export function useOpenSendFlow() {
                     button: "send",
                     buttonLocation: "quick_action",
                     page: "MAD",
-                    ...getSendFlowTrackingProperties(account, parentAccount, shouldUseNewFlow),
+                    ...getSendFlowTrackingProperties(
+                      account,
+                      parentAccount,
+                      shouldUseNewFlow,
+                      flowParams.source,
+                    ),
                   });
                   openSendFlowImpl({
                     ...flowParams,

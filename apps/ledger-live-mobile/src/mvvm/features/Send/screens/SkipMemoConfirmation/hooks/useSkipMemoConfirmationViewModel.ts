@@ -1,7 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { Linking } from "react-native";
 import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
@@ -23,10 +23,7 @@ export function useSkipMemoConfirmationViewModel({
   const [, setDoNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
   const [doNotAskAgain, setDoNotAskAgain] = useState(false);
 
-  const trackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
-    [state.account.account, state.account.parentAccount],
-  );
+  const trackingProperties = useSendFlowTrackingProperties();
   const memoCurrencyId = getMemoFamilyCurrencyId(state.account.currency);
   const memoLabel = t([
     `send.newSendFlow.memoLabel.${memoCurrencyId ?? ""}`,

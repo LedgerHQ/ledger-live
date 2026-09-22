@@ -10,6 +10,7 @@ import {
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { useContactsLedgerSyncStatus } from "LLM/features/Contacts/hooks/useContactsLedgerSyncStatus";
 import { PaySelectContactScreen } from "LLM/features/PayTab/screens/PaySelectContact";
@@ -148,7 +149,7 @@ describe("Pay select contact", () => {
     expect(store.getState().modularDrawer).toMatchObject({
       isOpen: true,
       flow: "send",
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
       preselectedCurrencies: [address.currencyId],
     });
     expect(
@@ -168,7 +169,7 @@ describe("Pay select contact", () => {
     expect(store.getState().modularDrawer).toMatchObject({
       isOpen: true,
       flow: "send",
-      source: "Pay",
+      source: SEND_FLOW_SOURCE.PAY,
       preselectedCurrencies: [address.currencyId],
     });
     expect(

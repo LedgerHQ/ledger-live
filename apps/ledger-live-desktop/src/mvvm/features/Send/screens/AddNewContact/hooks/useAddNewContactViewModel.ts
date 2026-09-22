@@ -19,8 +19,7 @@ import {
   useSendPrefillAddAddressFlow,
   type SendPrefillAddAddressPhase,
 } from "LLD/features/Send/hooks/useSendPrefillAddAddressFlow";
-import { useSendFlowData } from "../../../context/SendFlowContext";
-import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { track, trackPage } from "~/renderer/analytics/segment";
 
 export type AddNewContactAddressPhase = SendPrefillAddAddressPhase;
@@ -34,20 +33,20 @@ export type AddNewContactViewModel = AddContactDialogViewModel &
 export function useAddNewContactViewModel(): AddNewContactViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { state } = useSendFlowData();
   const contacts = useContacts();
   const { addressPhase, isOpeningAddressFlow, startForContact } = useSendPrefillAddAddressFlow({
     idleHeaderState: DEFAULT_ADD_NEW_CONTACT_HEADER_STATE,
     contactType: "new",
   });
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
   const trackingProperties = useMemo(
     () => ({
-      ...getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+      ...sendFlowTrackingProperties,
       ...buildContactsGlobalProperties({
         contacts,
       }),
     }),
-    [contacts, state.account.account, state.account.parentAccount],
+    [contacts, sendFlowTrackingProperties],
   );
   const contactCreation = useMemo(
     () => createContactCreationPort({ dispatch, generateId: uuid }),
