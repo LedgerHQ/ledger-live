@@ -9870,12 +9870,20 @@
     "opted_in": {
       "title": "See more. Sign safer",
       "description": "Upgrade and get 20% off.",
-      "cta": "Upgrade my Ledger"
+      "cta": "Upgrade my Ledger",
+      "nanoS": {
+        "title": "Ledger Nano S Upgrade Program",
+        "description": "Unlock new OS and security features. Get 20% off."
+      }
     },
     "opted_out": {
       "title": "More security. More control",
       "description": "Learn more about security features.",
-      "cta": "Learn more"
+      "cta": "Learn more",
+      "nanoS": {
+        "title": "More Security. More Control",
+        "description": "Learn more about latest OS and security features."
+      }
     }
   },
   "lazyOnboardingBanner": {
