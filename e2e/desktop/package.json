@@ -18,6 +18,7 @@
     "allure": "pnpm run allure:generate && pnpm run allure:open"
   },
   "dependencies": {
+    "@ledgerhq/device-mockserver-client": "catalog:",
     "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",

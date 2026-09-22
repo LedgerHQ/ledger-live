@@ -1,6 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getNanoAppCatalog, getDeviceFirmwareVersion } from "../speculosAppVersion";
-import type { MockServerApp } from "./types";
+export type MockServerApp = { name: string; version?: string; hash?: string };
 
 /** Catalogs are per target id and firmware, so cache on both. */
 const catalogCache = new Map<string, Promise<Map<string, MockServerApp>>>();

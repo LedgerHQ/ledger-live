@@ -1,66 +1,68 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getSpeculosModel } from "../speculosAppVersion";
-import type { MockServerDevice } from "./types";
+import type { DeviceConfig } from "@ledgerhq/device-mockserver-client";
+import type { MockServerApp } from "./installedApps";
 
-export const MOCK_STAX: MockServerDevice = {
+export type MockDevice = Omit<DeviceConfig, "apps"> & {
+  modelId: DeviceModelId;
+  apps?: MockServerApp[];
+};
+
+export const MOCK_STAX: DeviceConfig = {
   name: "Ledger Stax",
   device_type: "stax",
   connectivity_type: "USB",
   onboarded: true,
-  modelId: DeviceModelId.stax,
 };
 
-export const MOCK_FLEX: MockServerDevice = {
+export const MOCK_FLEX: DeviceConfig = {
   name: "Ledger Flex",
   device_type: "flex",
   connectivity_type: "USB",
   onboarded: true,
-  modelId: DeviceModelId.europa,
 };
 
-export const MOCK_NANO_GEN_5: MockServerDevice = {
+export const MOCK_NANO_GEN_5: DeviceConfig = {
   name: "Ledger Nano Gen5",
   device_type: "apexp",
   connectivity_type: "USB",
   masks: [0x33400000],
   onboarded: true,
-  modelId: DeviceModelId.apex,
 };
 
-export const MOCK_NANOX: MockServerDevice = {
+export const MOCK_NANOX: DeviceConfig = {
   name: "Ledger Nano X",
   device_type: "nanoX",
   connectivity_type: "USB",
   onboarded: true,
-  modelId: DeviceModelId.nanoX,
 };
 
-export const MOCK_NANOSP: MockServerDevice = {
+export const MOCK_NANOSP: DeviceConfig = {
   name: "Ledger Nano S Plus",
   device_type: "nanoSP",
   connectivity_type: "USB",
   onboarded: true,
-  modelId: DeviceModelId.nanoSP,
 };
 
-export const MOCK_NANOS: MockServerDevice = {
+export const MOCK_NANOS: DeviceConfig = {
   name: "Ledger Nano S",
   device_type: "nanoS",
   connectivity_type: "USB",
   onboarded: true,
-  modelId: DeviceModelId.nanoS,
 };
 
-export const MOCK_DEVICES: MockServerDevice[] = [
-  MOCK_NANOSP,
-  MOCK_NANOX,
-  MOCK_NANOS,
-  MOCK_STAX,
-  MOCK_FLEX,
-  MOCK_NANO_GEN_5,
-];
+const MOCK_DEVICES: Partial<Record<DeviceModelId, DeviceConfig>> = {
+  [DeviceModelId.nanoS]: MOCK_NANOS,
+  [DeviceModelId.nanoSP]: MOCK_NANOSP,
+  [DeviceModelId.nanoX]: MOCK_NANOX,
+  [DeviceModelId.stax]: MOCK_STAX,
+  [DeviceModelId.europa]: MOCK_FLEX,
+  [DeviceModelId.apex]: MOCK_NANO_GEN_5,
+};
 
-export const deviceUnderTest = (): MockServerDevice => {
-  const speculosModel = getSpeculosModel();
-  return MOCK_DEVICES.find(({ modelId }) => modelId === speculosModel) || MOCK_NANOSP;
+export const deviceUnderTest = (): MockDevice => {
+  const modelId = getSpeculosModel();
+  const device = MOCK_DEVICES[modelId];
+  if (!device) throw new Error(`No mock server device for ${modelId}`);
+  return { modelId, ...device };
 };

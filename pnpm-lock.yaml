@@ -5536,6 +5536,9 @@ importers:
 
   e2e/desktop:
     dependencies:
+      '@ledgerhq/device-mockserver-client':
+        specifier: 'catalog:'
+        version: 1.3.0
       '@ledgerhq/live-cli':
         specifier: workspace:^
         version: link:../../apps/cli/dist
@@ -15942,6 +15945,9 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.9.1(rxjs@7.8.2)
+      '@ledgerhq/device-mockserver-client':
+        specifier: 'catalog:'
+        version: 1.3.0(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -45769,6 +45775,10 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  '@ledgerhq/device-mockserver-client@1.3.0':
+    dependencies:
+      purify-ts: 2.1.0
 
   '@ledgerhq/device-mockserver-client@1.3.0(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2))':
     dependencies:

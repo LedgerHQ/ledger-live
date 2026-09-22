@@ -40,7 +40,7 @@ test.describe(`Onboarding a new Nano (mock server)`, () => {
       await app.onboarding.continueTutorialSecondary(); // skip funding
       await app.onboarding.continueTutorial();
 
-      await app.portfolio.waitForPortfolioEmptyState();
+      await app.portfolio.expectPortfolioEmptyState();
     },
   );
 });

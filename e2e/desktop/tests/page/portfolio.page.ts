@@ -233,11 +233,11 @@ export class PortfolioPage extends AppPage {
   }
 
   /**
-   * Synchronisation gate before add-account: waits until the empty-portfolio shell is ready.
-   * Prefer this over {@link checkNoBalanceTitleVisibility} in specs so Allure shows a readiness step, not a product assertion.
+   * Zero balance / no funds. Auto-retrying, so specs also use it as the synchronisation
+   * point before add-account: it only resolves once the empty-portfolio shell is ready.
    */
-  @step("Wait until portfolio empty state is ready")
-  async waitForPortfolioEmptyState() {
+  @step("Expect the portfolio empty state")
+  async expectPortfolioEmptyState() {
     await expect(this.noBalanceTitle).toBeVisible();
   }
 

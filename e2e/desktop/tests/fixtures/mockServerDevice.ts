@@ -1,6 +1,5 @@
 import { expect } from "@playwright/test";
-import { type MockServerDevice } from "@ledgerhq/live-e2e-shared/mockServer/types";
-import { deviceUnderTest } from "@ledgerhq/live-e2e-shared/mockServer/devices";
+import { deviceUnderTest, type MockDevice } from "@ledgerhq/live-e2e-shared/mockServer/devices";
 import { withInstallHashes } from "@ledgerhq/live-e2e-shared/mockServer/installedApps";
 import { mockServerEnv } from "@ledgerhq/live-e2e-shared/mockServer/launchEnv";
 import {
@@ -13,8 +12,8 @@ import base from "tests/fixtures/common";
 const SESSION_TOKEN_TIMEOUT_MS = 30_000;
 
 type MockServerFixtures = {
-  mockDevice: MockServerDevice;
-  mockDeviceParams: Partial<MockServerDevice>;
+  mockDevice: MockDevice;
+  mockDeviceParams: Partial<MockDevice>;
   mockServer: MockServerDevicePage;
 };
 

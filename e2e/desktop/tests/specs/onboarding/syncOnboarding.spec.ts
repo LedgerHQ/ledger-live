@@ -37,7 +37,7 @@ test.describe(`Onboarding (mock server)`, () => {
 
       await app.syncOnboarding.declineFunding();
       await app.syncOnboarding.expectCompletionScreen(mockDevice.modelId);
-      await app.portfolio.waitForPortfolioEmptyState();
+      await app.portfolio.expectPortfolioEmptyState();
     },
   );
 });
@@ -75,7 +75,7 @@ test.describe(`Connect an already initialised device`, () => {
       await app.syncOnboarding.declineAppInstall();
 
       await app.syncOnboarding.expectCompletionScreen(mockDevice.modelId);
-      await app.portfolio.waitForPortfolioEmptyState();
+      await app.portfolio.expectPortfolioEmptyState();
     },
   );
 });

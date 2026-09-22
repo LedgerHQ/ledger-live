@@ -3,6 +3,8 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 
+const MAX_PEDAGOGY_SCREENS = 10;
+
 export class OnboardingPage extends AppPage {
   private readonly getStartedButton = this.page.getByRole("button", { name: "Get Started" });
   private readonly welcomeTitle = this.page.getByTestId("onbording-welcome-title");
@@ -68,10 +70,18 @@ export class OnboardingPage extends AppPage {
   @step("Complete the pedagogy screens")
   async completePedagogy() {
     await expect(this.pedagogyModal).toBeVisible();
-    while (!(await this.stepperEnd.isVisible())) {
+
+    for (let screen = 0; screen < MAX_PEDAGOGY_SCREENS; screen++) {
+      if (await this.stepperEnd.isVisible()) {
+        await this.stepperEnd.click();
+        return;
+      }
       await this.stepperContinue.click();
     }
-    await this.stepperEnd.click();
+
+    throw new Error(
+      `Pedagogy did not reach its last screen within ${MAX_PEDAGOGY_SCREENS} screens`,
+    );
   }
 
   @step("Continue the tutorial")
@@ -96,13 +106,11 @@ export class OnboardingPage extends AppPage {
 
   @step("Continue past the recovery phrase drawer")
   async continueRecoverySeedDrawer() {
-    await expect(this.recoverySeedDrawerNext).toBeVisible();
     await this.recoverySeedDrawerNext.click();
   }
 
   @step("Continue past the hide-seed drawer")
   async continueHideSeedDrawer() {
-    await expect(this.hideSeedDrawerNext).toBeVisible();
     await this.hideSeedDrawerNext.click();
   }
 
