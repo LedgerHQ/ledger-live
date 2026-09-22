@@ -23,27 +23,36 @@ describe("CardAssetsManageRow", () => {
     const onDragEnd = jest.fn();
     const onDragOver = jest.fn();
     const onDrop = jest.fn();
+    const onPointerDown = jest.fn();
 
     render(
       <CardAssetsManageRow
         row={row}
         isReordering={false}
         isReorderDisabled={false}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onDragOver={onDragOver}
-        onDrop={onDrop}
+        reorderLabel="Reorder USD Coin"
+        rowProps={{
+          "data-list-reorder-id": row.id,
+          draggable: true,
+          onDragStart,
+          onDragEnd,
+          onDragOver,
+          onDrop,
+        }}
+        handleProps={{ "aria-pressed": false, onKeyDown: jest.fn(), onPointerDown }}
       />,
     );
 
-    const handle = screen.getByRole("button", { name: "Drag USD Coin" });
+    const handle = screen.getByRole("button", { name: "Reorder USD Coin" });
     const assetRow = screen.getByTestId("card-asset-order-wallet-usdc");
-    fireEvent.dragStart(handle);
+    fireEvent.pointerDown(handle);
+    fireEvent.dragStart(assetRow);
     fireEvent.dragOver(assetRow);
     fireEvent.drop(assetRow);
-    fireEvent.dragEnd(handle);
+    fireEvent.dragEnd(assetRow);
 
     expect(screen.getByText("USD Coin")).toBeVisible();
+    expect(onPointerDown).toHaveBeenCalledTimes(1);
     expect(onDragStart).toHaveBeenCalledTimes(1);
     expect(onDragOver).toHaveBeenCalledTimes(1);
     expect(onDrop).toHaveBeenCalledTimes(1);
@@ -56,14 +65,24 @@ describe("CardAssetsManageRow", () => {
         row={row}
         isReordering
         isReorderDisabled
-        onDragStart={jest.fn()}
-        onDragEnd={jest.fn()}
-        onDragOver={jest.fn()}
-        onDrop={jest.fn()}
+        reorderLabel="Reorder USD Coin"
+        rowProps={{
+          "data-list-reorder-id": row.id,
+          draggable: false,
+          onDragStart: jest.fn(),
+          onDragEnd: jest.fn(),
+          onDragOver: jest.fn(),
+          onDrop: jest.fn(),
+        }}
+        handleProps={{
+          "aria-pressed": false,
+          onKeyDown: jest.fn(),
+          onPointerDown: jest.fn(),
+        }}
       />,
     );
 
     expect(screen.getByTestId("card-asset-reorder-spinner-wallet-usdc")).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Drag USD Coin" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Reorder USD Coin" })).not.toBeInTheDocument();
   });
 });

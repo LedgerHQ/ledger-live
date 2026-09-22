@@ -263,7 +263,7 @@ describe("useCardAssetsViewModel", () => {
     });
     const { result } = renderViewModel();
 
-    await act(() => result.current.onReorderAssets("w-btc", "w-usdc"));
+    await act(() => result.current.onMoveAsset("w-btc", 0));
 
     expect(result.current.rows.map(row => row.id)).toEqual(["w-btc", "w-usdc", "w-usdt"]);
     expect(mockUpdateCardWalletPriorities).toHaveBeenCalledWith({

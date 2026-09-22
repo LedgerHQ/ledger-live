@@ -1,4 +1,4 @@
-import React, { type DragEventHandler } from "react";
+import React from "react";
 import {
   ListItem,
   ListItemContent,
@@ -8,29 +8,28 @@ import {
   Spinner,
 } from "@ledgerhq/lumen-ui-react";
 import { MenuBurger } from "@ledgerhq/lumen-ui-react/symbols";
+import type { ListReorderBindings } from "@shared/ui-list-reorder";
 import type { CardAssetRow } from "./types";
 
 type CardAssetsManageRowProps = Readonly<{
   row: CardAssetRow;
   isReordering: boolean;
   isReorderDisabled: boolean;
-  onDragStart: () => void;
-  onDragEnd: () => void;
-  onDragOver: DragEventHandler<HTMLDivElement>;
-  onDrop: () => void;
+  rowProps: ReturnType<ListReorderBindings["getRowProps"]>;
+  handleProps: ReturnType<ListReorderBindings["getHandleProps"]>;
+  reorderLabel: string;
 }>;
 
 export function CardAssetsManageRow({
   row,
   isReordering,
   isReorderDisabled,
-  onDragStart,
-  onDragEnd,
-  onDragOver,
-  onDrop,
+  rowProps,
+  handleProps,
+  reorderLabel,
 }: CardAssetsManageRowProps) {
   return (
-    <div data-testid={`card-asset-order-${row.id}`} onDragOver={onDragOver} onDrop={onDrop}>
+    <div data-testid={`card-asset-order-${row.id}`} {...rowProps}>
       <ListItem className="bg-surface">
         <ListItemLeading>
           <ListItemContent>
@@ -43,12 +42,10 @@ export function CardAssetsManageRow({
           ) : (
             <button
               type="button"
-              draggable={!isReorderDisabled}
               disabled={isReorderDisabled}
-              aria-label={`Drag ${row.name}`}
+              aria-label={reorderLabel}
               className="cursor-grab text-muted active:cursor-grabbing"
-              onDragStart={onDragStart}
-              onDragEnd={onDragEnd}
+              {...handleProps}
             >
               <MenuBurger size={24} />
             </button>

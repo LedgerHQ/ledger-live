@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Button,
   Dialog,
@@ -8,6 +8,7 @@ import {
   DialogHeader,
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
+import { useListReorder } from "@shared/ui-list-reorder";
 import { CardAssetsManageRow } from "./CardAssetsManageRow.web";
 import type { CardAssetRow } from "./types";
 
@@ -16,7 +17,7 @@ type CardAssetsManageDialogProps = Readonly<{
   rows: readonly CardAssetRow[];
   onClose: () => void;
   onAddAsset?: () => void;
-  onReorder: (draggedId: string, targetId: string) => Promise<void>;
+  onMoveAsset: (id: string, toIndex: number) => Promise<void>;
   reorderingAssetId: string | null;
 }>;
 
@@ -25,11 +26,14 @@ export function CardAssetsManageDialog({
   rows,
   onClose,
   onAddAsset,
-  onReorder,
+  onMoveAsset,
   reorderingAssetId,
 }: CardAssetsManageDialogProps) {
   const { t } = useTranslation();
-  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const reorder = useListReorder({
+    onMove: (id, toIndex) => void onMoveAsset(id, toIndex),
+    disabled: reorderingAssetId !== null,
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()} height="fixed">
@@ -53,15 +57,14 @@ export function CardAssetsManageDialog({
                 row={row}
                 isReordering={reorderingAssetId === row.id}
                 isReorderDisabled={reorderingAssetId !== null}
-                onDragStart={() => setDraggedId(row.id)}
-                onDragEnd={() => setDraggedId(null)}
-                onDragOver={event => draggedId && event.preventDefault()}
-                onDrop={() => {
-                  if (draggedId) void onReorder(draggedId, row.id);
-                  setDraggedId(null);
-                }}
+                rowProps={reorder.getRowProps(row.id)}
+                handleProps={reorder.getHandleProps(row.id)}
+                reorderLabel={t("payTab.card.assets.manageDialog.reorder", { asset: row.name })}
               />
             ))}
+          </div>
+          <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+            {reorder.announcement}
           </div>
         </DialogBody>
         <DialogFooter

@@ -7118,6 +7118,9 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
+      '@shared/ui-list-reorder':
+        specifier: workspace:*
+        version: link:../../../shared/ui-list-reorder
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'

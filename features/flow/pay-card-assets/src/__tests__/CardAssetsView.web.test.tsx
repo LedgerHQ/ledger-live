@@ -17,6 +17,14 @@ const usdc = {
   countervalueAmount: 125.4,
 };
 
+const formatBalance = (value: number) => ({
+  integerPart: String(Math.trunc(value)),
+  decimalPart: "00",
+  currencyText: "$",
+  decimalSeparator: "." as const,
+  currencyPosition: "start" as const,
+});
+
 const ready: CardAssetsViewModel = {
   isVisible: true,
   status: "ready",
@@ -41,17 +49,9 @@ const ready: CardAssetsViewModel = {
   onWithdrawContinue: jest.fn(),
   onManagePress: jest.fn(),
   onAddAssetPress: jest.fn(),
-  onReorderAssets: jest.fn(),
+  onMoveAsset: jest.fn(),
   reorderingAssetId: null,
 };
-
-const formatBalance = (value: number) => ({
-  integerPart: String(Math.trunc(value)),
-  decimalPart: "00",
-  currencyText: "$",
-  decimalSeparator: "." as const,
-  currencyPosition: "start" as const,
-});
 
 const detailsOpen: CardAssetsViewModel = {
   ...ready,
@@ -195,5 +195,28 @@ describe("CardAssetsView (web)", () => {
     await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
 
     expect(onManagePress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should reorder managed assets with the keyboard", async () => {
+    const user = userEvent.setup();
+    const onMoveAsset = jest.fn();
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(
+      <CardAssetsView
+        {...ready}
+        dialogState="manage"
+        rows={[usdc, bitcoin]}
+        onMoveAsset={onMoveAsset}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    const handle = screen.getByRole("button", { name: "Reorder Bitcoin" });
+    await user.click(handle);
+    await user.keyboard(" ");
+    await user.keyboard("{ArrowUp}");
+
+    expect(onMoveAsset).toHaveBeenCalledWith("w-btc", 0);
+    expect(screen.getByRole("status")).toHaveTextContent("Moved item to position 1.");
   });
 });

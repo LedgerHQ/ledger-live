@@ -35,7 +35,8 @@
     "@features/flow-pay-card-wallets": "workspace:^",
     "@features/platform-pay-analytics": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
-    "@shared/i18n": "workspace:*"
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-list-reorder": "workspace:*"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
