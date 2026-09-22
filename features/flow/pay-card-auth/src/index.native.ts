@@ -3,8 +3,7 @@ export type { CardLoginProps, PayCardLoginTrackEvent } from "./components/CardLo
 export * from "./components/CardLogin/openHostedLogin.native";
 export { buildHostedPageUrl } from "./state/buildHostedPageUrl";
 export * from "./state/buildHostedUrl";
-export { SIGNUP_PATH } from "./state/buildSignupUrl";
-export * from "./state/cardSettingsPaths";
+export * from "./state/hostedPaths";
 export * from "./state/openHostedPageSafely";
 export type { OpenCardHostedPage, OpenHostedLogin, HostedLoginResult } from "./state/types";
 export type { CardLoginOauthConfig, PayCardAuthCallback } from "./state/types";
