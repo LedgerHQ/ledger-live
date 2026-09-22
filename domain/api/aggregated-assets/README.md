@@ -27,7 +27,7 @@ RTK Query endpoints. It does not own UI or app composition.
 shapes. `AssetsData` — the transformed aggregate — is this package's return contract, composed of
 those entities.
 
-This mirrors `domain/api/market-sentiment` + `domain/entity/market-index-fear-and-greed`, where
+This mirrors `domain/api/market-index-fear-and-greed` + `domain/entity/market-index-fear-and-greed`, where
 the entity owns the canonical schema and the API owns the wire schema plus `transforms.ts`.
 
 ## `markets` is deliberately loosely typed

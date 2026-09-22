@@ -1,4 +1,4 @@
-# @domain/api-market-sentiment
+# @domain/api-market-index-fear-and-greed
 
 > [!CAUTION]
 > **Status: UNSTABLE** — Under active development.

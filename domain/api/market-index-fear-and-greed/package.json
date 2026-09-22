@@ -1,5 +1,5 @@
 {
-  "name": "@domain/api-market-sentiment",
+  "name": "@domain/api-market-index-fear-and-greed",
   "version": "0.3.5",
   "private": true,
   "description": "Domain API client for market sentiment (CMC Crypto Fear & Greed): RTK Query endpoint typed on @domain/entity-market-index-fear-and-greed",
@@ -16,7 +16,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/market-sentiment"
+    "unimported": "pnpm knip --directory ../../.. -W domain/api/market-index-fear-and-greed"
   },
   "dependencies": {
     "@shared/api-services": "workspace:*",

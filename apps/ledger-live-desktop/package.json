@@ -76,7 +76,7 @@
     "@domain/api-card-management": "workspace:^",
     "@domain/api-currency-fiat": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
-    "@domain/api-market-sentiment": "workspace:^",
+    "@domain/api-market-index-fear-and-greed": "workspace:^",
     "@domain/api-push-devices": "workspace:*",
     "@domain/entity-account": "workspace:^",
     "@domain/entity-account-alias": "workspace:^",

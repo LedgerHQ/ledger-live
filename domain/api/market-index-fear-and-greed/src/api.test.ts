@@ -1,21 +1,21 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { coinMarketCapApiExtra, coinMarketCapApi } from "@shared/api-services";
-import { marketSentimentApi, useGetFearAndGreedLatestQuery } from "./api";
+import { fearAndGreedApi, useGetFearAndGreedLatestQuery } from "./api";
 import { mockFearAndGreedLatest } from "./fearAndGreed.mock";
 
-describe("marketSentimentApi configuration", () => {
+describe("fearAndGreedApi configuration", () => {
   it("is the CoinMarketCap service api, mutated in place by injectEndpoints", () => {
-    expect(marketSentimentApi).toBe(coinMarketCapApi);
-    expect(marketSentimentApi.reducerPath).toBe("coinMarketCapApi");
+    expect(fearAndGreedApi).toBe(coinMarketCapApi);
+    expect(fearAndGreedApi.reducerPath).toBe("coinMarketCapApi");
   });
 
   it("exposes the getFearAndGreedLatest endpoint and its hook", () => {
-    expect(marketSentimentApi.endpoints.getFearAndGreedLatest).toBeDefined();
+    expect(fearAndGreedApi.endpoints.getFearAndGreedLatest).toBeDefined();
     expect(useGetFearAndGreedLatestQuery).toBeDefined();
   });
 });
 
-describe("marketSentimentApi requests", () => {
+describe("fearAndGreedApi requests", () => {
   let fetchSpy: jest.SpyInstance;
 
   // Wired the way the apps wire it: the store registers the *service api*, and the endpoint only
@@ -46,9 +46,7 @@ describe("marketSentimentApi requests", () => {
     );
     const store = makeStore();
 
-    const result = await store.dispatch(
-      marketSentimentApi.endpoints.getFearAndGreedLatest.initiate(),
-    );
+    const result = await store.dispatch(fearAndGreedApi.endpoints.getFearAndGreedLatest.initiate());
 
     const request = fetchSpy.mock.calls[0][0] as Request;
     expect(request.url).toContain("https://cmc.test/fear-and-greed/latest");
