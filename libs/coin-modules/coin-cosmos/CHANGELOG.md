@@ -1,5 +1,73 @@
 # @ledgerhq/coin-cosmos
 
+## 1.3.0
+
+### Minor Changes
+
+- [#21924](https://github.com/LedgerHQ/ledger-live/pull/21924) [`cdb273b`](https://github.com/LedgerHQ/ledger-live/commit/cdb273b068df78cd5a0dbd4281fb79f22e0a7506) Thanks [@qperrot](https://github.com/qperrot)! - Fix account view crash when cosmos `cosmosResources` is undefined by handling missing resources gracefully in the delegation hook and account UI components
+
+- [#20869](https://github.com/LedgerHQ/ledger-live/pull/20869) [`54fce77`](https://github.com/LedgerHQ/ledger-live/commit/54fce77bfa46c3d42d3e39b80804258a91d910f2) Thanks [@henri-ly](https://github.com/henri-ly)! - Stop discarding a cosmos transaction history when one page of it fails.
+
+  `CosmosAPI.fetchAllTransactions` pages until the accumulated tx count reaches the response's `total`. Any page that failed propagated to the surrounding catch, which returned an empty array — so a single bad page reported the account as having no history at all. Two causes are live on mainnet today: a page past the last one, when a node serves fewer transactions than its `total` counts (`failed to search for txs: page should be within [1, N] range`), and a transaction the node can no longer decode (`unable to resolve type URL /tendermint.liquidity.v1beta1.MsgDepositWithinBatch: tx parse error`, permanent on cosmoshub for accounts holding pre-removal liquidity-module txs). Both are answered as HTTP 500 and retried twice by the network layer. A failing page now ends the walk and keeps the pages already fetched.
+
+  Also in `fetchTransactions`: an empty result serialized as `null` instead of `[]` is read as an empty list, and `total` is coerced to a number — the endpoint returns the uint64 as a string, while the declared type said `number`.
+
+  The loop also stops on an empty page. It only advances on the transactions it receives, so a node that answers 200 with an empty page while still counting more in `total` — rather than the 500 above — never reached the exit condition and paged that node indefinitely.
+
+- [#21719](https://github.com/LedgerHQ/ledger-live/pull/21719) [`bb2f03e`](https://github.com/LedgerHQ/ledger-live/commit/bb2f03e41b96b8f95f239acea75428657cdd64fe) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - fix(cosmos): add the gonka chain and always send the HRP to the signer
+
+  Adds the Gonka chain to the Cosmos coin module's chain factory. Fixes the Cosmos
+  signer to send the chain's address prefix to the device on every coin type
+  instead of only coin type 60 — the gate was safe while 118 was the only other
+  option, but a chain on any other coin type (Gonka is on 1200) could not sign
+  through the DMK signer. Chains whose device app is not app-cosmos opt out via
+  the new `signWithPrefix` chain parameter: `crypto_org` and `crypto_org_croeseid`
+  run the separate "Cronos POS Chain" app on coin type 394 and keep omitting the
+  field, so no shipping chain's sign APDU changes. Renames `CosmosSigner.sign`'s
+  third parameter from `transactionType` to `hrp`, matching what it actually
+  carries. Also treats a zero fee as loaded rather than missing on the send path,
+  so a zero-fee chain can send a transaction and use its full spendable balance.
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/types-live@6.124.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0
+
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#21924](https://github.com/LedgerHQ/ledger-live/pull/21924) [`cdb273b`](https://github.com/LedgerHQ/ledger-live/commit/cdb273b068df78cd5a0dbd4281fb79f22e0a7506) Thanks [@qperrot](https://github.com/qperrot)! - Fix account view crash when cosmos `cosmosResources` is undefined by handling missing resources gracefully in the delegation hook and account UI components
+
+- [#20869](https://github.com/LedgerHQ/ledger-live/pull/20869) [`54fce77`](https://github.com/LedgerHQ/ledger-live/commit/54fce77bfa46c3d42d3e39b80804258a91d910f2) Thanks [@henri-ly](https://github.com/henri-ly)! - Stop discarding a cosmos transaction history when one page of it fails.
+
+  `CosmosAPI.fetchAllTransactions` pages until the accumulated tx count reaches the response's `total`. Any page that failed propagated to the surrounding catch, which returned an empty array — so a single bad page reported the account as having no history at all. Two causes are live on mainnet today: a page past the last one, when a node serves fewer transactions than its `total` counts (`failed to search for txs: page should be within [1, N] range`), and a transaction the node can no longer decode (`unable to resolve type URL /tendermint.liquidity.v1beta1.MsgDepositWithinBatch: tx parse error`, permanent on cosmoshub for accounts holding pre-removal liquidity-module txs). Both are answered as HTTP 500 and retried twice by the network layer. A failing page now ends the walk and keeps the pages already fetched.
+
+  Also in `fetchTransactions`: an empty result serialized as `null` instead of `[]` is read as an empty list, and `total` is coerced to a number — the endpoint returns the uint64 as a string, while the declared type said `number`.
+
+  The loop also stops on an empty page. It only advances on the transactions it receives, so a node that answers 200 with an empty page while still counting more in `total` — rather than the 500 above — never reached the exit condition and paged that node indefinitely.
+
+- [#21719](https://github.com/LedgerHQ/ledger-live/pull/21719) [`bb2f03e`](https://github.com/LedgerHQ/ledger-live/commit/bb2f03e41b96b8f95f239acea75428657cdd64fe) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - fix(cosmos): add the gonka chain and always send the HRP to the signer
+
+  Adds the Gonka chain to the Cosmos coin module's chain factory. Fixes the Cosmos
+  signer to send the chain's address prefix to the device on every coin type
+  instead of only coin type 60 — the gate was safe while 118 was the only other
+  option, but a chain on any other coin type (Gonka is on 1200) could not sign
+  through the DMK signer. Chains whose device app is not app-cosmos opt out via
+  the new `signWithPrefix` chain parameter: `crypto_org` and `crypto_org_croeseid`
+  run the separate "Cronos POS Chain" app on coin type 394 and keep omitting the
+  field, so no shipping chain's sign APDU changes. Renames `CosmosSigner.sign`'s
+  third parameter from `transactionType` to `hrp`, matching what it actually
+  carries. Also treats a zero fee as loaded rather than missing on the send path,
+  so a zero-fee chain can send a transaction and use its full spendable balance.
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/types-live@6.124.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
+
 ## 1.2.0
 
 ### Minor Changes
@@ -370,51 +438,5 @@
   - @ledgerhq/types-cryptoassets@7.39.0
   - @ledgerhq/devices@8.17.0
   - @ledgerhq/live-network@2.6.7
-
-## 0.38.0-next.0
-
-### Minor Changes
-
-- [#19238](https://github.com/LedgerHQ/ledger-live/pull/19238) [`3cb6159`](https://github.com/LedgerHQ/ledger-live/commit/3cb615918166922059304724f560c566d2671ac3) Thanks [@amaslakov](https://github.com/amaslakov)! - Persist the per-account compressed secp256k1 public key (hex) in `cosmosResources`, captured from the device at scan, and expose it via the Wallet API `account.getPublicKey` resolver for the cosmos family. Enables WalletConnect `cosmos_getAccounts`. Accounts synced before this change return no public key until re-synced.
-
-- [#19100](https://github.com/LedgerHQ/ledger-live/pull/19100) [`c5763f6`](https://github.com/LedgerHQ/ledger-live/commit/c5763f6171f49d2b9e679b982804e68843800450) Thanks [@amaslakov](https://github.com/amaslakov)! - Implement `signRawOperation` for Cosmos: sign an externally-built amino `StdSignDoc` (e.g. from WalletConnect `cosmos_signAmino`) verbatim and return the detached 64-byte secp256k1 signature, without broadcasting. Previously a throwing stub.
-
-- [#19145](https://github.com/LedgerHQ/ledger-live/pull/19145) [`1e17c12`](https://github.com/LedgerHQ/ledger-live/commit/1e17c127178a871b665b25d6f4208d4613826dd1) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the per-coin `cli.ts` / `cli-transaction.ts` / `test/cli.ts` (`makeCliTools`) contract from coin families and the `cliTools` field of `FamilySetup`. The only consumer was the `apps/cli` `send` command, and the only e2e path that used it was the EVM ERC20 token approval. That flow is now a dedicated, self-contained `tokenApproval` CLI command; the generic `send` command keeps the cross-family options only.
-
-- [#17781](https://github.com/LedgerHQ/ledger-live/pull/17781) [`607b032`](https://github.com/LedgerHQ/ledger-live/commit/607b03228d5e648a0611c316c6ab71a60365f349) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-cosmos): use correct query params when fetching transactions
-
-### Patch Changes
-
-- Updated dependencies [[`6df2017`](https://github.com/LedgerHQ/ledger-live/commit/6df20171a84b54e5b67eabefc938a98d7e3c3e43), [`a2621e2`](https://github.com/LedgerHQ/ledger-live/commit/a2621e2c6c6369c7109af72e1cb59df2448951ff), [`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11), [`8b6614e`](https://github.com/LedgerHQ/ledger-live/commit/8b6614eaff423aaeb50b7eb44ba5916a941a573d), [`38728f9`](https://github.com/LedgerHQ/ledger-live/commit/38728f9d9ac879c276def56ce88c5e49549e4b9d), [`86ca231`](https://github.com/LedgerHQ/ledger-live/commit/86ca231ea9e0ec5996258b1abfa9742a7df3f9ec), [`6400154`](https://github.com/LedgerHQ/ledger-live/commit/6400154daa131b225c6ec62c9134f1cd06370729), [`9f8ab96`](https://github.com/LedgerHQ/ledger-live/commit/9f8ab9672ababc02909e7553d433ee326c37762e), [`e6566ff`](https://github.com/LedgerHQ/ledger-live/commit/e6566ff55d95ff36832d5f77899d67d80842f418), [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63), [`addef52`](https://github.com/LedgerHQ/ledger-live/commit/addef52ed445008c16e3f94d66f46222c8c535f7), [`81373c1`](https://github.com/LedgerHQ/ledger-live/commit/81373c1ca46cf2094cfd4f98958eff2114f02cea), [`7fe5f11`](https://github.com/LedgerHQ/ledger-live/commit/7fe5f1129d6ac218ad274f2187a1a3dd83b8855a), [`7c39ea3`](https://github.com/LedgerHQ/ledger-live/commit/7c39ea39ca8999bcb8ce2294f4884430b6d1b2dc), [`d686e93`](https://github.com/LedgerHQ/ledger-live/commit/d686e93f8a548ff4e9ab3c877ad1f815510b35d9), [`f495213`](https://github.com/LedgerHQ/ledger-live/commit/f495213e811477c99d62f0d93cc7c513b951a303), [`f495213`](https://github.com/LedgerHQ/ledger-live/commit/f495213e811477c99d62f0d93cc7c513b951a303), [`c8b4ee7`](https://github.com/LedgerHQ/ledger-live/commit/c8b4ee77c03ca2117cbad039331b7b52e50d9620), [`e820e40`](https://github.com/LedgerHQ/ledger-live/commit/e820e402fb57d52b31dcd6de26f8d31d9564e2a4), [`0e30cdc`](https://github.com/LedgerHQ/ledger-live/commit/0e30cdc29d7fb3cab5bf1f2ef7c24cf0a152516e), [`b10ca6a`](https://github.com/LedgerHQ/ledger-live/commit/b10ca6ab5e80889b24805b460f81eff5748f0170), [`df96477`](https://github.com/LedgerHQ/ledger-live/commit/df964774bdaccd897e5e7414c172e9c26ff21f67), [`cf3aad1`](https://github.com/LedgerHQ/ledger-live/commit/cf3aad160bd9d2002a3154fbc70018fb1f7a6171), [`df6ca42`](https://github.com/LedgerHQ/ledger-live/commit/df6ca422fa70171162974ea71519da5c5eeb55d8), [`b3ffa2f`](https://github.com/LedgerHQ/ledger-live/commit/b3ffa2f4bf735f2cfeed2a8028ea92d4bc3588e3), [`376915c`](https://github.com/LedgerHQ/ledger-live/commit/376915ca520ecc1708090ed9b3eba1ff7e780540), [`5aada6f`](https://github.com/LedgerHQ/ledger-live/commit/5aada6f1a72df070770f4b67112f51b5ced58cff), [`69b201e`](https://github.com/LedgerHQ/ledger-live/commit/69b201e2b1e01b2c6bfb6eaf9e0aa60088f175fc), [`3da6b44`](https://github.com/LedgerHQ/ledger-live/commit/3da6b4439d61a7ad7f06e04be12aa1e92b9cdb55), [`f9411d1`](https://github.com/LedgerHQ/ledger-live/commit/f9411d1e2a06b031555cda9e26ecba37b4cf045e), [`6eea36b`](https://github.com/LedgerHQ/ledger-live/commit/6eea36bfafeba265672a96b37981e2c7e629ef33), [`35d4af9`](https://github.com/LedgerHQ/ledger-live/commit/35d4af90e7bee849814cd98358c80e20ef4e4f2a)]:
-  - @ledgerhq/cryptoassets@13.54.0-next.0
-  - @ledgerhq/types-live@6.114.0-next.0
-  - @ledgerhq/live-env@2.41.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.3.0-next.0
-  - @ledgerhq/types-cryptoassets@7.39.0-next.0
-  - @ledgerhq/devices@8.17.0-next.0
-  - @ledgerhq/live-network@2.6.7-next.0
-
-## 0.37.0
-
-### Minor Changes
-
-- [#18631](https://github.com/LedgerHQ/ledger-live/pull/18631) [`64b8071`](https://github.com/LedgerHQ/ledger-live/commit/64b8071125821693ef325a32a9437c75ecbe2f06) Thanks [@amaslakov](https://github.com/amaslakov)! - Build Babylon (BABY) staking transactions by wrapping delegate/undelegate/redelegate messages in the x/epoching MsgWrapped\* envelope (amino + proto). Chain-specific staking message types now live on the chain classes (Babylon, Zenrock) instead of inline currency-id checks.
-
-- [#18687](https://github.com/LedgerHQ/ledger-live/pull/18687) [`9dc9a1f`](https://github.com/LedgerHQ/ledger-live/commit/9dc9a1f6e9767a3056d88d63a36d5e20bc305f48) Thanks [@amaslakov](https://github.com/amaslakov)! - Parse babylon x/epoching wrapped staking messages (MsgWrapped\*) so delegate, undelegate and redelegate operations appear in account history
-
-- [#18574](https://github.com/LedgerHQ/ledger-live/pull/18574) [`e93a936`](https://github.com/LedgerHQ/ledger-live/commit/e93a9367e61d8f060849782c7b5b95371979faf2) Thanks [@amaslakov](https://github.com/amaslakov)! - Show pending (epoch-queued) Babylon staking positions by merging the x/epoching message queue into staking positions during sync
-
-- [#18520](https://github.com/LedgerHQ/ledger-live/pull/18520) [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Move the dummy fee-estimation recipient out of `@ledgerhq/cryptoassets` (`abandonseed.ts`, now deleted) into each coin family. Every account bridge now exposes a required `getEstimationRecipient(account)` returning a valid recipient (or throwing for an unmapped currency, like the former `getAbandonSeedAddress`), and the swap layer dispatches through it instead of the central address map.
-
-### Patch Changes
-
-- Updated dependencies [[`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`b8a0765`](https://github.com/LedgerHQ/ledger-live/commit/b8a0765d7ac1ac1a60456f9c604e7a694e38bd84), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`ebda9d8`](https://github.com/LedgerHQ/ledger-live/commit/ebda9d88805501f4c2c03fef0fe24f116a8a2a6c), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
-  - @ledgerhq/types-live@6.113.0
-  - @ledgerhq/errors@6.37.0
-  - @ledgerhq/live-env@2.40.0
-  - @ledgerhq/cryptoassets@13.53.0
-  - @ledgerhq/devices@8.16.0
-  - @ledgerhq/ledger-wallet-framework@2.2.1
-  - @ledgerhq/live-network@2.6.6
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->
