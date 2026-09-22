@@ -941,6 +941,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
+      '@domain/api-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/api/market-countervalues
       '@domain/api-market-index-altcoin-season':
         specifier: workspace:^
         version: link:../../domain/api/market-index-altcoin-season
@@ -1786,6 +1789,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
+      '@domain/api-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/api/market-countervalues
       '@domain/api-market-index-altcoin-season':
         specifier: workspace:^
         version: link:../../domain/api/market-index-altcoin-season
@@ -2948,6 +2954,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:*
         version: link:../../domain/api/currency-token
+      '@domain/api-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/api/market-countervalues
       '@domain/entity-account':
         specifier: workspace:^
         version: link:../../domain/entity/account
@@ -4734,6 +4743,9 @@ importers:
       '@domain/entity-currency-fiat':
         specifier: workspace:*
         version: link:../../entity/currency-fiat
+      '@domain/entity-currency-token':
+        specifier: workspace:*
+        version: link:../../entity/currency-token
       '@jest/globals':
         specifier: 'catalog:'
         version: 30.5.0
@@ -13644,6 +13656,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
+      '@domain/api-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/api/market-countervalues
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
@@ -15629,6 +15644,9 @@ importers:
 
   libs/live-countervalues-react:
     dependencies:
+      '@domain/api-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/api/market-countervalues
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework

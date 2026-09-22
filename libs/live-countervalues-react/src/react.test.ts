@@ -2,7 +2,8 @@ import React from "react";
 import { CountervaluesProvider, type CountervaluesBridge } from ".";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { render, waitFor } from "@testing-library/react";
-import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
+import { initialState } from "@ledgerhq/live-countervalues/logic";
+import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
 import type {
   CountervaluesSettings,
   CounterValuesState,
@@ -18,10 +19,16 @@ import {
   TokenCurrencyIdSchema,
 } from "@ledgerhq/ledger-wallet-framework/types";
 
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
+jest.mock("@domain/api-market-countervalues", () => ({
+  ...jest.requireActual("@domain/api-market-countervalues"),
   loadCountervalues: jest.fn(),
 }));
+
+// The provider only forwards this; it never calls it, because loadCountervalues is mocked.
+const rates: RateSource = {
+  fetchHistorical: jest.fn(),
+  fetchLatest: jest.fn(),
+};
 
 const usd: FiatCurrency = {
   type: "FiatCurrency",
@@ -98,9 +105,11 @@ describe("CountervaluesProvider", () => {
     // filterSupportedTrackingPairs resolves assethub_polkadot → polkadot, so the pair is kept
     expect(mockLoadCountervalues.mock.calls[0][1].trackingPairs).toHaveLength(1);
     // shouldBatchCurrencyFrom must also resolve to "polkadot" (rank 0, ≤ marketCapBatchingAfterRank 20) → not batched
-    expect(mockLoadCountervalues.mock.calls[0][2]?.shouldBatchCurrencyFrom(assethubPolkadot)).toBe(
-      false,
-    );
+    expect(
+      mockLoadCountervalues.mock.calls[0][2]?.batchStrategySolver?.shouldBatchCurrencyFrom(
+        assethubPolkadot,
+      ),
+    ).toBe(false);
   });
 });
 
@@ -124,6 +133,7 @@ function createBridge({
   const state: CounterValuesState = initialState;
 
   return {
+    rates,
     setPollingIsPolling: jest.fn(),
     setPollingTriggerLoad: jest.fn(),
     setState: jest.fn(),

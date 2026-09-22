@@ -24,12 +24,14 @@ export type SpotRatesArgs = {
 };
 
 /**
- * What one rate request resolves to. This is RTK Query's `{ data } | { error }` envelope verbatim,
- * so an app fetcher is the `initiate` dispatch and nothing else.
+ * What one rate request resolves to: RTK Query's `{ data, error }` envelope, kept loose enough
+ * that a `dispatch(endpoint.initiate(...))` result is assignable as-is. An app fetcher is that
+ * dispatch and nothing else.
  */
-export type RateQueryResult<T> =
-  | { data: T; error?: undefined }
-  | { data?: undefined; error: FetchBaseQueryError | SerializedError };
+export type RateQueryResult<T> = {
+  data?: T;
+  error?: FetchBaseQueryError | SerializedError;
+};
 
 /**
  * The promise `dispatch(endpoint.initiate(...))` returns. `unsubscribe` is optional so a test can

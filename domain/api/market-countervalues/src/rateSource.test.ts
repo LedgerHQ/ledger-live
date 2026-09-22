@@ -147,7 +147,9 @@ describe("fetchLatest", () => {
       fetchHistoricalWindow: jest.fn(),
       fetchSpotBatch: args => {
         calls.push(args);
-        return resolved(args.to === "USD" ? { bitcoin: 9000 } : { ethereum: 500 });
+        return resolved<Record<string, number>>(
+          args.to === "USD" ? { bitcoin: 9000 } : { ethereum: 500 },
+        );
       },
     });
 

@@ -1,3 +1,11 @@
+import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
+import { getEnv } from "@shared/env";
+import {
+  createRateSource,
+  marketCountervaluesApi,
+  type RateSource,
+} from "@domain/api-market-countervalues";
+import { createMockRateSource } from "@domain/api-market-countervalues/mock";
 import {
   exportCountervalues,
   hasNewCountervaluesToExport,
@@ -24,11 +32,40 @@ import {
   useCountervaluesUserSettings,
 } from "../reducers/countervalues";
 
+/**
+ * Builds the rate source the countervalues provider fetches through.
+ *
+ * The choice between real and mocked rates is made here, at composition time, rather than inside
+ * the fetch path: `@domain/api-market-countervalues` reads no environment, so what used to be a
+ * hidden `MOCK_COUNTERVALUES` dispatcher two layers down is now one visible branch.
+ */
+function useRateSource(dispatch: ThunkDispatch<unknown, unknown, UnknownAction>): RateSource {
+  return useMemo(() => {
+    if (getEnv("MOCK_COUNTERVALUES")) return createMockRateSource(getEnv("MOCK"));
+
+    return createRateSource({
+      // Dispatch with `forceRefetch` and without `subscribe: false`; see the RateFetchers docs.
+      fetchHistoricalWindow: args =>
+        dispatch(
+          marketCountervaluesApi.endpoints.getHistoricalRates.initiate(args, {
+            forceRefetch: true,
+          }),
+        ),
+      fetchSpotBatch: args =>
+        dispatch(
+          marketCountervaluesApi.endpoints.getSpotRates.initiate(args, { forceRefetch: true }),
+        ),
+    });
+  }, [dispatch]);
+}
+
 export function useCountervaluesBridge() {
   const dispatch = useDispatch();
+  const rates = useRateSource(dispatch);
 
   return useMemo(
     (): CountervaluesBridge => ({
+      rates,
       ...bindActionCreators(
         {
           setPollingIsPolling: countervaluesActions.COUNTERVALUES_POLLING_SET_IS_POLLING,
@@ -48,7 +85,7 @@ export function useCountervaluesBridge() {
       useStatePending: useCountervaluesStatePending,
       useUserSettings: useCountervaluesUserSettings,
     }),
-    [dispatch],
+    [dispatch, rates],
   );
 }
 
