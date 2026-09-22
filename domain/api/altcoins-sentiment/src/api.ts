@@ -1,4 +1,4 @@
-import type { AltcoinSeasonIndex } from "@domain/entity-altcoins-sentiment";
+import type { AltcoinSeasonIndex } from "@domain/entity-market-index-altcoin-season";
 import { coinMarketCapApi } from "@shared/api-services";
 import { transformAltcoinSeasonIndexResponse } from "./transforms";
 

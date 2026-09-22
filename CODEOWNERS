@@ -225,7 +225,7 @@ features/flow/lazy-onboarding-banner/                    @ledgerhq/engagement
 
 ### ... market/altcoins sentiment => @ledgerhq/wallet-xp ... ###
 domain/entity/market-sentiment/                          @ledgerhq/wallet-xp
-domain/entity/altcoins-sentiment/                        @ledgerhq/wallet-xp
+domain/entity/market-index-altcoin-season/               @ledgerhq/wallet-xp
 domain/api/market-sentiment/                             @ledgerhq/wallet-xp
 domain/api/altcoins-sentiment/                           @ledgerhq/wallet-xp
 features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
