@@ -235,7 +235,7 @@ describe("useCardViewModel", () => {
     );
   });
 
-  it("opens the same add asset hosted crypto dashboard for a US card holder", async () => {
+  it("names the US app on the add asset hosted crypto dashboard", async () => {
     setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
     mockedReadCardUsEnv.mockResolvedValue(true);
     const { result } = renderCardViewModel(null);
@@ -243,7 +243,7 @@ describe("useCardViewModel", () => {
     await act(async () => result.current.assets?.onAddAsset());
 
     expect(topUpUrlFrom(mockNavigate)).toBe(
-      "https://ledger.baanxapi.test/dashboard/accounts/crypto",
+      "https://ledger.baanxapi.test/dashboard/accounts/crypto?app_id=LEDGERUS",
     );
   });
 

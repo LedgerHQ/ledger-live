@@ -10,7 +10,6 @@ import {
   buildAddAssetPath,
   openHostedUrlInSecureBrowser,
   openHostedCardPathSafely,
-  openHostedPageSafely,
   type CardAssetPathBuilder,
   type OpenCardHostedPage,
 } from "@features/flow-pay-card-auth";
@@ -130,10 +129,8 @@ export function usePayTabViewModel() {
 
   const onAddAsset = useCallback(
     () =>
-      openHostedPageSafely(openHostedPage, buildAddAssetPath(), () =>
-        console.warn("[card] add asset page did not open"),
-      ),
-    [openHostedPage],
+      openHostedPath(buildAddAssetPath, () => console.warn("[card] add asset page did not open")),
+    [openHostedPath],
   );
 
   const cardSettingsActions: CardSettingsActions = useMemo(

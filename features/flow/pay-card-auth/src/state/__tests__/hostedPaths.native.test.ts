@@ -62,6 +62,17 @@ describe("buildAddAssetPath", () => {
   it("addresses the hosted crypto accounts dashboard", () => {
     expect(buildAddAssetPath()).toBe("/dashboard/accounts/crypto");
   });
+
+  it("names the US app when the holder belongs to it", () => {
+    expect(buildAddAssetPath("LEDGERUS")).toBe("/dashboard/accounts/crypto?app_id=LEDGERUS");
+  });
+
+  it.each([
+    ["null", null],
+    ["an empty value", ""],
+  ])("names no app when the US app id is %s", (_case, usAppId) => {
+    expect(buildAddAssetPath(usAppId)).toBe("/dashboard/accounts/crypto");
+  });
 });
 
 describe("buildAccessBaanxPath", () => {

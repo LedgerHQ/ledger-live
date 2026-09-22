@@ -7,7 +7,6 @@ import {
   buildManagePinPath,
   buildAddAssetPath,
   openHostedCardPathSafely,
-  openHostedPageSafely,
   type CardAssetPathBuilder,
 } from "@features/flow-pay-card-auth";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
@@ -191,10 +190,10 @@ export function useCardViewModel(): CardViewModel {
 
   const onAddAsset = useCallback(
     () =>
-      openHostedPageSafely(openHostedPage, buildAddAssetPath(), error =>
+      openHostedPath(buildAddAssetPath, error =>
         logger.warn("[card] add asset page did not open", error),
       ),
-    [openHostedPage],
+    [openHostedPath],
   );
 
   const payCardAssets = usePayCardAssets();

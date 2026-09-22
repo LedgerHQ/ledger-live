@@ -34,6 +34,6 @@ export function buildManagePinPath(usAppId?: string | null): string {
   return buildHostedPath(MANAGE_PIN_PATH, usAppId);
 }
 
-export function buildAddAssetPath(): string {
-  return ADD_ASSET_PATH;
+export function buildAddAssetPath(usAppId?: string | null): string {
+  return buildHostedPath(ADD_ASSET_PATH, usAppId);
 }

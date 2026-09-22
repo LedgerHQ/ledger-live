@@ -302,7 +302,7 @@ describe("usePayTabViewModel", () => {
     );
   });
 
-  it("should open the same add asset hosted crypto dashboard for a US card holder", async () => {
+  it("should name the US app on the add asset hosted crypto dashboard", async () => {
     setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
     setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
     mockedReadCardUsEnv.mockResolvedValue(true);
@@ -312,7 +312,7 @@ describe("usePayTabViewModel", () => {
 
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
-        "https://hosted.test/dashboard/accounts/crypto",
+        "https://hosted.test/dashboard/accounts/crypto?app_id=LEDGERUS",
         PAY_TAB_DEEP_LINK,
       ),
     );
