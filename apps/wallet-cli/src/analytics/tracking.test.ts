@@ -1,6 +1,6 @@
 import { describe, expect, it, mock } from "bun:test";
-import { WalletCliDeviceError } from "../../device/wallet-cli-device-error";
-import { redactAddresses, trackErrorInfo, withTracking } from "../../analytics/tracking";
+import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
+import { redactAddresses, trackErrorInfo, withTracking } from "./tracking";
 
 const EVM_ADDRESS = "0x1111111111111111111111111111111111111111";
 // A representative Solana base58 public key (32 bytes -> 44 base58 chars).

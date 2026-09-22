@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { collectSkillFiles } from "../../../scripts/collect-skill-files.mjs";
+import { collectSkillFiles } from "./collect-skill-files.mjs";
 
 // The walker feeds two public artifacts, so a symlink escaping the tree would
 // publish content nobody reviewed. These tests pin that boundary.
