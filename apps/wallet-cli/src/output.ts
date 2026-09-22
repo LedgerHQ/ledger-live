@@ -34,6 +34,7 @@ import { APP_NAME } from "./session/session-store";
 import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
 import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
+import type { LedgerSyncImportReport } from "./ledger-sync/cloud-sync-accounts";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 import type {
   EarnDepositResult,
@@ -65,6 +66,10 @@ export type RingDestroyResult = {
   // was destroyed remotely), so the remote is already gone. Only meaningful alongside remoteSucceeded.
   memberEjected?: boolean;
 };
+
+/** Outcome of `ledger-sync destroy` (NTTVS-728) — same shape as RingDestroyResult, kept separate
+ * because the two applications (`ring` vs Ledger Sync) must never be conflated. */
+export type LedgerSyncDestroyResult = RingDestroyResult;
 
 export interface CommandOutput {
   /** Wrap an async operation with an activity indicator (spinner in human mode, silent in json). */
@@ -238,6 +243,18 @@ export interface CommandOutput {
   agentIntentRecoveryPending(result: AgentIntentRecoveryPending): void;
   /** Final `agent-intent recover` result once the relayed completion is verified and saved. */
   agentIntentRecovered(result: AgentIntentRecovered): void;
+
+  // ---- Ledger Sync (NTTVS-728) ----
+
+  /** Output the result of `ledger-sync enroll` (human: member/root lines; json: envelope). */
+  ledgerSyncEnroll(result: { memberName: string; rootId: string }): void;
+  /** Output the result of `ledger-sync import` (human: grouped lines; json: envelope with the four
+   * imported/unchanged/skipped/invalid arrays). */
+  ledgerSyncImport(report: LedgerSyncImportReport): void;
+  /** Output `ledger-sync destroy` result (human: colored message; json: envelope). */
+  ledgerSyncDestroy(result: LedgerSyncDestroyResult): void;
+  /** User cancelled the destroy confirmation (human: stderr line; json: envelope with cancelled:true). */
+  ledgerSyncDestroyCancelled(): void;
 }
 
 export type AgentIntentEnrollmentPending = {
@@ -834,6 +851,63 @@ class HumanCommandOutput implements CommandOutput {
         `${trustchainId} (account access: ${accountAccessEnvironment})`,
     );
   }
+
+  ledgerSyncEnroll({ memberName, rootId }: { memberName: string; rootId: string }): void {
+    writeStdout("");
+    writeStdout(`${colors.bold("Member:")}  ${memberName}`);
+    writeStdout(`${colors.bold("Root ID:")} ${rootId}`);
+    writeStdout(colors.dim("Import accounts with: wallet-cli ledger-sync import"));
+  }
+
+  ledgerSyncImport(report: LedgerSyncImportReport): void {
+    const { imported, unchanged, skipped, invalid } = report;
+    if (imported.length + unchanged.length + skipped.length + invalid.length === 0) {
+      writeStdout(colors.dim("Up to date. Nothing to import."));
+      return;
+    }
+    if (imported.length > 0) {
+      writeStdout(colors.bold(`Imported (${imported.length}):`));
+      for (const e of imported) writeStdout(`  ${e.label}  ${colors.dim(e.network)}`);
+    }
+    if (unchanged.length > 0) {
+      writeStdout(colors.dim(`Unchanged (${unchanged.length}): ${unchanged.map(e => e.label).join(", ")}`));
+    }
+    if (skipped.length > 0) {
+      writeStdout(colors.bold(`Skipped (${skipped.length}, unsupported):`));
+      for (const e of skipped) writeStdout(`  ${e.id}: ${e.reason}`);
+    }
+    if (invalid.length > 0) {
+      writeStdout(colors.bold(`Invalid (${invalid.length}):`));
+      for (const e of invalid) writeStdout(`  ${e.id}: ${e.reason}`);
+    }
+  }
+
+  ledgerSyncDestroy({
+    remoteSucceeded,
+    trustchainDestroyed,
+    localWiped,
+    memberEjected,
+  }: LedgerSyncDestroyResult): void {
+    if (trustchainDestroyed) {
+      writeStdout(`${colors.green("✔")} Ledger Sync destroyed.`);
+    } else if (remoteSucceeded && memberEjected) {
+      writeStdout(
+        `${colors.green("✔")} wallet-cli is no longer a Ledger Sync member — it was removed, or Ledger Sync was deactivated remotely.`,
+      );
+    } else if (remoteSucceeded) {
+      writeStdout(`${colors.green("✔")} Ledger Sync deactivated for this machine.`);
+    } else if (localWiped) {
+      writeStdout(
+        `${colors.green("✔")} Ledger Sync local credentials wiped (remote teardown skipped or failed).`,
+      );
+    } else {
+      writeStdout(`${colors.yellow("⚠")} Local credentials could not be removed.`);
+    }
+  }
+
+  ledgerSyncDestroyCancelled(): void {
+    writeStderr("Cancelled.\n");
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1226,6 +1300,34 @@ class JsonCommandOutput implements CommandOutput {
 
   agentIntentRecovered(result: AgentIntentRecovered): void {
     this._writeNdjson(this._envelope({ ...result, recovered: true }));
+  }
+
+  ledgerSyncEnroll({ memberName, rootId }: { memberName: string; rootId: string }): void {
+    this._writeNdjson(this._envelope({ member: memberName, root_id: rootId }));
+  }
+
+  ledgerSyncImport(report: LedgerSyncImportReport): void {
+    this._writeNdjson(this._envelope({ ...report }));
+  }
+
+  ledgerSyncDestroy({
+    remoteSucceeded,
+    trustchainDestroyed,
+    localWiped,
+    memberEjected,
+  }: LedgerSyncDestroyResult): void {
+    this._writeNdjson(
+      this._envelope({
+        destroyed: trustchainDestroyed,
+        remote_succeeded: remoteSucceeded,
+        local_wiped: localWiped,
+        member_ejected: remoteSucceeded && !!memberEjected,
+      }),
+    );
+  }
+
+  ledgerSyncDestroyCancelled(): void {
+    this._writeNdjson(this._envelope({ cancelled: true }));
   }
 }
 
