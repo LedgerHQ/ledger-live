@@ -72,54 +72,61 @@ export type RingDestroyResult = {
 export type LedgerSyncDestroyResult = RingDestroyResult;
 
 /**
- * `ring destroy` and `ledger-sync destroy` share the exact same 4-way outcome branching (only the
- * wording differs per application) — shared here once so the two never drift independently. Callers
- * own any additional, application-specific messaging (e.g. `ring`'s extra local-wipe-failed warning).
+ * `ring destroy` and `ledger-sync destroy` reduce to the exact same 5-way outcome (only the wording
+ * differs per application) — modeled as a state, not scattered booleans, so a future 6th case is a
+ * compile error at every `switch` below instead of a silently-missed `if` branch.
  */
-function selectDestroyMessage(
-  { remoteSucceeded, trustchainDestroyed, localWiped, memberEjected }: RingDestroyResult,
-  messages: {
-    destroyed: string;
-    ejected: string;
-    deactivated: string;
-    localWipedOnly: string;
-    neitherSucceeded: string;
-  },
-): string {
-  if (trustchainDestroyed) return messages.destroyed;
-  if (remoteSucceeded && memberEjected) return messages.ejected;
-  if (remoteSucceeded) return messages.deactivated;
-  if (localWiped) return messages.localWipedOnly;
-  return messages.neitherSucceeded;
-}
+type DestroyOutcome = "destroyed" | "ejected" | "deactivated" | "local-wiped-only" | "nothing-done";
 
-/** Json envelope fields for a destroy result — identical for `ring` and Ledger Sync. */
-function destroyResultEnvelopeData({
+function destroyOutcome({
   remoteSucceeded,
   trustchainDestroyed,
   localWiped,
   memberEjected,
-}: RingDestroyResult): Record<string, unknown> {
+}: RingDestroyResult): DestroyOutcome {
+  if (trustchainDestroyed) return "destroyed";
+  if (remoteSucceeded && memberEjected) return "ejected";
+  if (remoteSucceeded) return "deactivated";
+  if (localWiped) return "local-wiped-only";
+  return "nothing-done";
+}
+
+/** Json envelope fields for a destroy result — identical for `ring` and Ledger Sync. */
+function destroyResultEnvelopeData(result: RingDestroyResult): {
+  destroyed: boolean;
+  remote_succeeded: boolean;
+  local_wiped: boolean;
+  member_ejected: boolean;
+} {
   return {
-    destroyed: trustchainDestroyed,
-    remote_succeeded: remoteSucceeded,
-    local_wiped: localWiped,
-    member_ejected: remoteSucceeded && !!memberEjected,
+    destroyed: result.trustchainDestroyed,
+    remote_succeeded: result.remoteSucceeded,
+    local_wiped: result.localWiped,
+    member_ejected: result.remoteSucceeded && !!result.memberEjected,
   };
 }
 
 /** Json envelope fields for an enroll/init result — identical for `ring` and Ledger Sync. */
-function memberInfoEnvelopeData(memberName: string, rootId: string): Record<string, unknown> {
+function memberInfoEnvelopeData(
+  memberName: string,
+  rootId: string,
+): { member: string; root_id: string } {
   return { member: memberName, root_id: rootId };
 }
 
 /** Human rendering for an enroll/init result — identical for `ring` and Ledger Sync bar the closing
- * next-step hint. */
-function renderMemberInfo(memberName: string, rootId: string, nextStepHint: string): void {
+ * next-step hint. An options object, not positional strings, so a future third caller can't
+ * transpose `memberName`/`rootId`/`nextStepHint` past the type checker (same reasoning as
+ * `createLkrpSdk`'s options object in `key-ring/lkrp-sdk.ts`). */
+function renderMemberInfo(args: {
+  memberName: string;
+  rootId: string;
+  nextStepHint: string;
+}): void {
   writeStdout("");
-  writeStdout(`${colors.bold("Member:")}  ${memberName}`);
-  writeStdout(`${colors.bold("Root ID:")} ${rootId}`);
-  writeStdout(colors.dim(nextStepHint));
+  writeStdout(`${colors.bold("Member:")}  ${args.memberName}`);
+  writeStdout(`${colors.bold("Root ID:")} ${args.rootId}`);
+  writeStdout(colors.dim(args.nextStepHint));
 }
 
 export interface CommandOutput {
@@ -669,7 +676,11 @@ class HumanCommandOutput implements CommandOutput {
   }
 
   ringInit({ memberName, rootId }: { memberName: string; rootId: string }): void {
-    renderMemberInfo(memberName, rootId, "Encrypt/decrypt with: wallet-cli ring encrypt --key <name>");
+    renderMemberInfo({
+      memberName,
+      rootId,
+      nextStepHint: "Encrypt/decrypt with: wallet-cli ring encrypt --key <name>",
+    });
   }
 
   ringKeys(domains: ReadonlyArray<{ domain: string; firstUsed: string }>): void {
@@ -688,18 +699,34 @@ class HumanCommandOutput implements CommandOutput {
   ringDestroy(result: RingDestroyResult): void {
     // Report the remote outcome first so a successful teardown is never hidden by a local-wipe
     // failure, then append the local-credentials warning when the keychain delete did not succeed.
-    writeStdout(
-      selectDestroyMessage(result, {
-        destroyed: `${colors.green("✔")} Ledger Key Ring destroyed.`,
-        ejected: `${colors.green("✔")} wallet-cli is no longer a member of this Ledger Key Ring — it was removed, or the ring was destroyed remotely.`,
-        deactivated: `${colors.green("✔")} wallet-cli application deactivated (Ledger Key Ring kept for other apps).`,
-        localWipedOnly: `${colors.green("✔")} Ledger Key Ring local credentials wiped (remote teardown skipped or failed).`,
-        // Reaching here means the remote teardown never ran (creds unusable, or a stray key with no
-        // live ring) and the local wipe also failed — so nothing was removed. Without this line the
-        // command would emit only the keychain warning below, leaving the overall outcome ambiguous.
-        neitherSucceeded: `${colors.red("✖")} Ledger Key Ring not destroyed — remote teardown did not run.`,
-      }),
-    );
+    switch (destroyOutcome(result)) {
+      case "destroyed":
+        writeStdout(`${colors.green("✔")} Ledger Key Ring destroyed.`);
+        break;
+      case "ejected":
+        writeStdout(
+          `${colors.green("✔")} wallet-cli is no longer a member of this Ledger Key Ring — it was removed, or the ring was destroyed remotely.`,
+        );
+        break;
+      case "deactivated":
+        writeStdout(
+          `${colors.green("✔")} wallet-cli application deactivated (Ledger Key Ring kept for other apps).`,
+        );
+        break;
+      case "local-wiped-only":
+        writeStdout(
+          `${colors.green("✔")} Ledger Key Ring local credentials wiped (remote teardown skipped or failed).`,
+        );
+        break;
+      case "nothing-done":
+        // Remote teardown never ran (creds unusable, or a stray key with no live ring) and the local
+        // wipe also failed — nothing was removed. Without this line the command would emit only the
+        // keychain warning below, leaving the overall outcome ambiguous.
+        writeStdout(
+          `${colors.red("✖")} Ledger Key Ring not destroyed — remote teardown did not run.`,
+        );
+        break;
+    }
     if (!result.localWiped) {
       writeStdout(
         `${colors.yellow("⚠")} Could not remove local credentials from the OS keychain — delete the "member-private-key-…" account under the "${APP_NAME}" service manually.`,
@@ -811,7 +838,11 @@ class HumanCommandOutput implements CommandOutput {
   }
 
   ledgerSyncEnroll({ memberName, rootId }: { memberName: string; rootId: string }): void {
-    renderMemberInfo(memberName, rootId, "Import accounts with: wallet-cli ledger-sync import");
+    renderMemberInfo({
+      memberName,
+      rootId,
+      nextStepHint: "Import accounts with: wallet-cli ledger-sync import",
+    });
   }
 
   ledgerSyncImport(report: LedgerSyncImportReport): void {
@@ -825,7 +856,9 @@ class HumanCommandOutput implements CommandOutput {
       for (const e of imported) writeStdout(`  ${e.label}  ${colors.dim(e.network)}`);
     }
     if (unchanged.length > 0) {
-      writeStdout(colors.dim(`Unchanged (${unchanged.length}): ${unchanged.map(e => e.label).join(", ")}`));
+      writeStdout(
+        colors.dim(`Unchanged (${unchanged.length}): ${unchanged.map(e => e.label).join(", ")}`),
+      );
     }
     if (skipped.length > 0) {
       writeStdout(colors.bold(`Skipped (${skipped.length}, unsupported):`));
@@ -838,15 +871,37 @@ class HumanCommandOutput implements CommandOutput {
   }
 
   ledgerSyncDestroy(result: LedgerSyncDestroyResult): void {
-    writeStdout(
-      selectDestroyMessage(result, {
-        destroyed: `${colors.green("✔")} Ledger Sync destroyed.`,
-        ejected: `${colors.green("✔")} wallet-cli is no longer a Ledger Sync member — it was removed, or Ledger Sync was deactivated remotely.`,
-        deactivated: `${colors.green("✔")} Ledger Sync deactivated for this machine.`,
-        localWipedOnly: `${colors.green("✔")} Ledger Sync local credentials wiped (remote teardown skipped or failed).`,
-        neitherSucceeded: `${colors.yellow("⚠")} Local credentials could not be removed.`,
-      }),
-    );
+    const outcome = destroyOutcome(result);
+    switch (outcome) {
+      case "destroyed":
+        writeStdout(`${colors.green("✔")} Ledger Sync destroyed.`);
+        break;
+      case "ejected":
+        writeStdout(
+          `${colors.green("✔")} wallet-cli is no longer a Ledger Sync member — it was removed, or Ledger Sync was deactivated remotely.`,
+        );
+        break;
+      case "deactivated":
+        writeStdout(`${colors.green("✔")} Ledger Sync deactivated for this machine.`);
+        break;
+      case "local-wiped-only":
+        writeStdout(
+          `${colors.green("✔")} Ledger Sync local credentials wiped (remote teardown skipped or failed).`,
+        );
+        break;
+      case "nothing-done":
+        // Already communicates the local-wipe failure — the trailing warning below would be redundant.
+        writeStdout(`${colors.yellow("⚠")} Local credentials could not be removed.`);
+        break;
+    }
+    // A remote success (destroyed/ejected/deactivated) can still leave localWiped false — without
+    // this, that combination silently reports a clean "✔" while a keychain entry lingers.
+    if (!result.localWiped && outcome !== "nothing-done") {
+      writeStdout(
+        `${colors.yellow("⚠")} Could not remove local Ledger Sync credentials from the OS keychain — ` +
+          `delete the "ledger-sync-member-key-…" account under the "${APP_NAME}" service manually.`,
+      );
+    }
   }
 
   ledgerSyncDestroyCancelled(): void {
