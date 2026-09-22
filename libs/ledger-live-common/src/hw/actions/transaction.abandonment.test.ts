@@ -328,6 +328,23 @@ describe("transaction device action — sign-prompt abandonment", () => {
     expect(events).toEqual([]);
   });
 
+  it("signs with a mock device, whose id is an empty string", async () => {
+    appState.current = { ...READY, device: { deviceId: "", modelId: "nanoX" } };
+    const { unmount } = renderRaw();
+    await flush();
+
+    expect(signRawOperation).toHaveBeenCalledWith(expect.objectContaining({ deviceId: "" }));
+
+    act(() =>
+      rawSignEvents.next({
+        type: "signed",
+        signedOperation: { signature: "sig", operation: {} },
+      } as SignOperationEvent),
+    );
+    unmount();
+    expect(events).toEqual([]);
+  });
+
   it("keeps token attribution on raw-sign abandonment", async () => {
     const tokenAccount = {
       id: "token-acc",

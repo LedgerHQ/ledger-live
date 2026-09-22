@@ -158,6 +158,9 @@ export const createAction = (
       requireLatestFirmware,
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
+    // Kept as primitives: a rerender that hands over an equivalent device object must not
+    // resubscribe and ask the user to sign again. Mock and Speculos devices carry an empty
+    // `deviceId`, so presence is `undefined` vs defined, never truthiness.
     const deviceId = device?.deviceId;
     const deviceModelId = device?.modelId;
     const [state, setState] = useState(initialState);
@@ -189,7 +192,13 @@ export const createAction = (
     const attemptRequestKeyRef = useRef<string | null>(null);
 
     useEffect(() => {
-      if (!deviceId || !deviceModelId || !opened || inWrongDeviceForAccount || error) {
+      if (
+        deviceId === undefined ||
+        deviceModelId === undefined ||
+        !opened ||
+        inWrongDeviceForAccount ||
+        error
+      ) {
         failInterruptedAttempt(interruptionErrorOf(inWrongDeviceForAccount, error));
         setState(initialState);
         resetAttempt();
