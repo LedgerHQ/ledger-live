@@ -17,7 +17,7 @@ import {
   rewriteReferenceFile,
   rewriteSkillFile,
   rewriteSkillMd,
-} from "../../../scripts/standalone-skill-transform.mjs";
+} from "./standalone-skill-transform.mjs";
 
 /** A minimal but structurally faithful stand-in for the canonical SKILL.md. */
 function sourceSkillMd(

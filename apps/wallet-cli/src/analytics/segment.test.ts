@@ -30,8 +30,7 @@ mock.module("@segment/analytics-node", () => ({
   Analytics: MockAnalytics,
 }));
 
-const { WALLET_CLI_USER_ID, startAnalytics, track, updateIdentify, disposeAnalytics } =
-  await import("../../analytics/segment");
+const { WALLET_CLI_USER_ID, startAnalytics, track, disposeAnalytics } = await import("./segment");
 
 describe("wallet-cli analytics privacy", () => {
   beforeEach(() => {

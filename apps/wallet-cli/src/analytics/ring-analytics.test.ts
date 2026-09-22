@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
-import * as segment from "../../analytics/segment";
+import * as segment from "./segment";
 import {
   trackRingInitStarted,
   trackRingInitCompleted,
@@ -9,9 +9,9 @@ import {
   trackRingDestroyStarted,
   trackRingDestroyCompleted,
   trackRingDestroyCancelled,
-} from "../../analytics/ring-analytics";
+} from "./ring-analytics";
 
-// Spy on the real `track` export rather than mock.module("../../analytics/segment"): mock.module is
+// Spy on the real `track` export rather than mock.module("./segment"): mock.module is
 // global and persists across test files, so mocking the segment module here would replace the real
 // `track` used by segment.test.ts. A spyOn is restored in afterEach and stays local to this file.
 type TrackCall = [event: string, properties?: Record<string, unknown> | null];

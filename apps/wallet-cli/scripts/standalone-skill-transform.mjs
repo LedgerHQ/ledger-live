@@ -16,7 +16,7 @@
 // examples for several releases while the published copy was correct, and the two
 // disagreed on the skill's own name. Keep this module the only implementation; it is
 // deliberately pure (no fs, no process) so both callers and the unit tests in
-// src/test/skills/standalone-skill-transform.test.ts exercise the same code.
+// scripts/standalone-skill-transform.test.ts exercise the same code.
 
 /** Skill name of the canonical monorepo source — also its directory name. */
 export const MONOREPO_SKILL_NAME = "ledger-wallet-cli";
