@@ -78,6 +78,10 @@ async function run<T>(promise: RateQueryPromise<T>): Promise<T> {
   try {
     const { data, error } = await promise;
     if (error) throw new RateFetchError(error);
+    // A fulfilled query always carries data; guard the envelope rather than cast it away.
+    if (data === undefined) {
+      throw new RateFetchError({ status: "CUSTOM_ERROR", error: "empty rate response" });
+    }
     return data;
   } finally {
     promise.unsubscribe?.();

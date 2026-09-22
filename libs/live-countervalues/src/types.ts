@@ -71,15 +71,18 @@ export type CounterValuesStatus = Record<
     oldestDateRequested?: string;
   }
 >;
+// Keys are optional so this stays interchangeable with the Zod-inferred twin in
+// @domain/entity-market-countervalues, which infers `.nullish()` as an optional key. Readers
+// already handled `undefined`, so only assignability changes.
 export type RateMapStats = {
-  oldest: string | null | undefined;
-  earliest: string | null | undefined;
+  oldest?: string | null | undefined;
+  earliest?: string | null | undefined;
   // oldest datapoint
-  oldestDate: Date | null | undefined;
+  oldestDate?: Date | null | undefined;
   // most recent datapoint
-  earliestDate: Date | null | undefined;
+  earliestDate?: Date | null | undefined;
   // most recent datapoint before the first "hole"
-  earliestStableDate: Date | null | undefined;
+  earliestStableDate?: Date | null | undefined;
 };
 export type PairRateMapCache = {
   fallback?: number;

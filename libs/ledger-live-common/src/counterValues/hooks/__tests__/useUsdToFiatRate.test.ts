@@ -3,15 +3,15 @@
  */
 import { renderHook } from "@testing-library/react";
 import { createTestStore, createWrapper } from "@tests/test-helpers/testUtils";
-import { counterValuesApi as api } from "../../state-manager/api";
+import { marketCountervaluesApi as api } from "@domain/api-market-countervalues";
 import { useUsdToFiatRate } from "../useUsdToFiatRate";
 
 const mockUseQuery = jest
   .fn()
   .mockReturnValue({ data: undefined, isLoading: false, isError: false });
 
-jest.mock("../../state-manager/api", () => ({
-  ...jest.requireActual("../../state-manager/api"),
+jest.mock("@domain/api-market-countervalues", () => ({
+  ...jest.requireActual("@domain/api-market-countervalues"),
   useGetUsdToFiatRateQuery: (...args: unknown[]) => mockUseQuery(...args),
 }));
 

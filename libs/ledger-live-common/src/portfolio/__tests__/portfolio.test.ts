@@ -1,7 +1,9 @@
 import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./currencies";
-import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
+import { initialState } from "@ledgerhq/live-countervalues/logic";
+import { loadCountervalues } from "@domain/api-market-countervalues";
+import { createMockRateSource } from "@domain/api-market-countervalues/mock";
 import { inferTrackingPairForAccounts } from "../trackingPairs";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import {
@@ -30,7 +32,9 @@ import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currenc
 import type { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 
 setEnv("MOCK", "1");
-setEnv("MOCK_COUNTERVALUES", "1");
+
+// Rates are injected now, so the test picks the mock source rather than flipping an env switch.
+const rates = createMockRateSource("1");
 
 // Mirror live-countervalues's jest-setup: restrict genAccount to only bitcoin+ethereum
 // so the seeded RNG picks the same currency as when the snapshots were generated.
@@ -507,12 +511,16 @@ function genAccountBitcoin(id = "bitcoin_1") {
 async function loadCV(a: Account | Account[], cvTicker = "USD") {
   const to = getFiatCurrencyByTicker(cvTicker);
   const accounts = Array.isArray(a) ? a : [a];
-  const state = await loadCountervalues(initialState, {
-    trackingPairs: inferTrackingPairForAccounts(accounts, to),
-    autofillGaps: true,
-    refreshRate: 60000,
-    marketCapBatchingAfterRank: 20,
-  });
+  const state = await loadCountervalues(
+    initialState,
+    {
+      trackingPairs: inferTrackingPairForAccounts(accounts, to),
+      autofillGaps: true,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
+    },
+    { rates },
+  );
   return {
     state,
     to,

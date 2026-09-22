@@ -1,8 +1,10 @@
 import type { SpotSimpleResponse } from "../schema";
 
-/** Picks the USD rate out of a spot payload, tolerating either casing. Null when absent or junk. */
+/** Reads the USD spot rate out of a `/v3/spot/simple?froms=usd&to=<to>` payload. */
 export function extractUsdToFiatRate(res: SpotSimpleResponse): number | null {
-  const raw = res.USD ?? res.usd;
-  if (typeof raw !== "number" || !Number.isFinite(raw)) return null;
-  return raw;
+  if (!res) return null;
+
+  const rate = Object.entries(res).find(([key]) => key.toLowerCase() === "usd")?.[1];
+
+  return typeof rate === "number" && Number.isFinite(rate) ? rate : null;
 }

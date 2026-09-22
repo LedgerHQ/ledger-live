@@ -3,14 +3,18 @@
  */
 import { renderHook } from "@testing-library/react";
 import { createTestStore, createWrapper } from "@tests/test-helpers/testUtils";
-import { counterValuesApi as api } from "./api";
-import { defaultCounterValueIdsSortedByMarketCap, idsMock } from "./schema";
+import {
+  marketCountervaluesApi as api,
+  defaultCounterValueIdsSortedByMarketCap,
+} from "@domain/api-market-countervalues";
 import { useGetCounterValueIdsPolling } from "./useGetCounterValueIdsPolling";
+
+const idsMock = ["bitcoin", "ethereum"];
 
 const mockUseQuery = jest.fn().mockReturnValue({ data: undefined });
 
-jest.mock("./api", () => ({
-  ...jest.requireActual("./api"),
+jest.mock("@domain/api-market-countervalues", () => ({
+  ...jest.requireActual("@domain/api-market-countervalues"),
   useGetCounterValueIdsSortedByMarketCapQuery: (...args: unknown[]) => mockUseQuery(...args),
 }));
 
