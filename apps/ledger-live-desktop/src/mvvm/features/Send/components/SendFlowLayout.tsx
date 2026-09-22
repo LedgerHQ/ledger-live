@@ -19,6 +19,7 @@ import { useRecipientContactSelection } from "../context/RecipientContactSelecti
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
 import { getSendFlowTrackingPage } from "../utils/contactTracking";
 import { useSponsoredPhaseNavigator } from "../hooks/useSponsoredPhaseNavigator";
+import { useSponsoredRentReservation } from "../hooks/useSponsoredRentReservation";
 
 type SendFlowLayoutProps = Readonly<{
   isOpen: boolean;
@@ -30,6 +31,9 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
   // Owns phase -> step navigation for the sponsored send from one persistent mount; inert for an
   // ordinary send (phase stays IDLE).
   useSponsoredPhaseNavigator();
+  // Locks the rent payment (TX-A) against the payer's native balance once it is submitted; inert for
+  // an ordinary send (phase stays IDLE).
+  useSponsoredRentReservation();
   const { state } = useSendFlowData();
   const { recipientType } = useSendFlowTracking();
   const { selectedContact } = useRecipientContactSelection();

@@ -1,7 +1,7 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
-import coinConfig, { type TronCoinConfig } from "../config";
+import type { TronCoinConfig } from "../config";
 import {
   fetchTronAccount,
   getChainParameters,
@@ -421,9 +421,8 @@ export async function estimateTronifyFees(
   const energyNeeded = await estimateEnergy(logger, config, intent);
 
   // Rental params are remote-configurable via coin-config (energyRent.tronify), so they can be
-  // tuned without a release; fall back to the defaults when unset. Read from the coinConfig
-  // singleton — the same source the energyRent provider selection uses (network/tronify, energyRent).
-  const tronifyConfig = coinConfig.getCoinConfig().energyRent?.tronify;
+  // tuned without a release; fall back to the defaults when unset.
+  const tronifyConfig = config.energyRent?.tronify;
   const durationSeconds = readRentalParam(
     logger,
     tronifyConfig?.rentalDurationSeconds,
@@ -436,12 +435,9 @@ export async function estimateTronifyFees(
   // computeFeesRaw does not catch — any chain-params failure propagates here (no silent fallback
   // on originalValue, per ADR-050 Option 3). Both calls are independent once energyNeeded is
   // known, so they run in parallel to keep pricing latency minimal.
-  // getEnergyRentQuote resolves its provider through the coinConfig singleton (not `config`); this
-  // is the shared design of the energyRent module — the provider is selected via remote coin-config.
-  // TODO(LIVE-34996): align energyRent config threading with the injected `config` pattern.
   const [{ value: originalValue, networkInfo }, quote] = await Promise.all([
     computeFeesRaw(logger, config, intent, energyNeeded),
-    getEnergyRentQuote(logger, {
+    getEnergyRentQuote(logger, config, {
       payerAddress: intent.sender,
       receiverAddress: intent.sender, // energy is delegated to the sender (they call the contract)
       energy: BigInt(energyNeeded),
@@ -493,57 +489,52 @@ export async function estimateTronifyFees(
   };
 }
 
-// The two context-free entry points below are reached without a framework Context (the app-side
-// sponsored seam), so they log through a no-op sink: coin-tron is dropping @ledgerhq/logs (PR #21897)
-// and there is no injected logger here. The framework estimateFees/craftTransaction path still logs.
-const contextFreeLogger: Logger = () => {};
-
 /**
  * Context-free Tronify fee quote for the app-side savings display: the Tronify rental cost
  * (`value`), the standard TRX burn it replaces (`originalValue`), and the delta (`savings`) — all
- * TRX-denominated. Reads the coin-config singleton exactly like `listFeeOptions`, so an app can
- * quote the savings nudge without constructing a framework `Context` (the seam the desktop/mobile
- * `useSponsoredFee` hook consumes). Propagates `estimateTronifyFees`' throw on unavailability — the
- * caller has already gated on `listFeeOptions` and renders "no savings" if this rejects.
+ * TRX-denominated. So an app can quote the savings nudge without constructing a framework `Context`
+ * (the seam the desktop/mobile `useSponsoredFee` hook consumes). Propagates `estimateTronifyFees`'
+ * throw on unavailability — the caller has already gated on `listFeeOptions` and renders "no
+ * savings" if this rejects.
  */
 export async function estimateSponsoredFeeQuote(
+  logger: Logger,
+  config: TronCoinConfig,
   intent: TronIntent,
 ): Promise<{ value: bigint; originalValue: bigint; savings: bigint }> {
-  const config = coinConfig.getCoinConfig();
-  const { value, originalValue, savings } = await estimateTronifyFees(
-    contextFreeLogger,
-    config,
-    intent,
-  );
+  const { value, originalValue, savings } = await estimateTronifyFees(logger, config, intent);
   return { value, originalValue: originalValue ?? value, savings: savings ?? 0n };
 }
 
 /**
  * Build the energy-rent request for a TRC-20 send, so the app can hand it straight to
- * `craftEnergyRentTransaction` without computing energy or reading coin-config itself. Context-free
- * (reads the coin-config singleton, like `listFeeOptions`): the energy is simulated on-chain, the
- * energy is delegated to the sender (they call the contract), and the rental window / extra-TRX come
- * from remote coin-config with defaults. Mirrors the request `estimateTronifyFees` prices internally.
- * Throws on a non-TRC-20 or recipient-less intent — the caller has already gated on `listFeeOptions`.
+ * `craftEnergyRentTransaction` without computing energy or reading coin-config itself. The energy
+ * is simulated on-chain, the energy is delegated to the sender (they call the contract), and the
+ * rental window / extra-TRX come from remote coin-config with defaults. Mirrors the request
+ * `estimateTronifyFees` prices internally. Throws on a non-TRC-20 or recipient-less intent — the
+ * caller has already gated on `listFeeOptions`.
  */
-export async function buildEnergyRentRequest(intent: TronIntent): Promise<EnergyRentRequest> {
+export async function buildEnergyRentRequest(
+  logger: Logger,
+  config: TronCoinConfig,
+  intent: TronIntent,
+): Promise<EnergyRentRequest> {
   if (intent.type !== "send" || intent.asset.type !== "trc20") {
     throw new Error("Energy rent is only available for TRC-20 send intents");
   }
   if (!intent.recipient) {
     throw new Error("Energy rent requires a recipient");
   }
-  const config = coinConfig.getCoinConfig();
   const tronifyConfig = config.energyRent?.tronify;
   const durationSeconds = readRentalParam(
-    contextFreeLogger,
+    logger,
     tronifyConfig?.rentalDurationSeconds,
     DEFAULT_TRONIFY_RENTAL_DURATION_SECONDS,
     1,
     "rentalDurationSeconds",
   );
-  const extraTrx = readExtraTrx(contextFreeLogger, tronifyConfig?.rentalExtraTrx);
-  const energyNeeded = await estimateEnergy(contextFreeLogger, config, intent);
+  const extraTrx = readExtraTrx(logger, tronifyConfig?.rentalExtraTrx);
+  const energyNeeded = await estimateEnergy(logger, config, intent);
   const request: EnergyRentRequest = {
     payerAddress: intent.sender,
     receiverAddress: intent.sender,
@@ -556,7 +547,7 @@ export async function buildEnergyRentRequest(intent: TronIntent): Promise<Energy
   // params; both calls share this one request (and so toOrderParams), leaving price as the only
   // thing that can differ. A quote failure propagates: crafting without a ceiling is the unbounded
   // case the ceiling guards against, and the very next step calls the same backend anyway.
-  const quote = await getEnergyRentQuote(contextFreeLogger, request);
+  const quote = await getEnergyRentQuote(logger, config, request);
   // Only TRX-denominated rent is supported (Flow 1); reject a non-TRX quote before it reaches the
   // ceiling and signing. Normalize the code so the ceiling compare (assertOrderWithinApprovedCost) is exact.
   const payCoinCode = quote.payCoinCode;

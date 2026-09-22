@@ -1,6 +1,6 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import BigNumber from "bignumber.js";
-import coinConfig from "../../config";
+import type { TronCoinConfig } from "../../config";
 import {
   EnergyDelegationTimeoutError,
   EnergyRentProviderNotConfigured,
@@ -12,6 +12,8 @@ import {
   ENERGY_RENT_POLL_TIMEOUT_MS,
 } from "../constants";
 import { getTronifyConfig } from "../../network/tronify";
+import { decode58Check } from "../../network/format";
+import { decodeTransaction } from "../utils";
 import { tronifyProvider } from "./tronify";
 import type {
   EnergyProvider,
@@ -26,15 +28,15 @@ import type {
 export * from "./types";
 
 /** Resolve the energy-rent provider selected in coin-config (the single provider dispatch point). */
-export function getEnergyProvider(): EnergyProvider {
-  const energyRent = coinConfig.getCoinConfig().energyRent;
+export function getEnergyProvider(config: TronCoinConfig): EnergyProvider {
+  const energyRent = config.energyRent;
   if (!energyRent) {
     throw new EnergyRentProviderNotConfigured("No energy-rent provider configured");
   }
   if (energyRent.provider === "tronify") {
     // Name alone is not proof of configuration: this gate opens raw-signing (craftRawTransaction), so
     // reject an under-configured provider here — getTronifyConfig throws unless url + sourceFlag exist.
-    getTronifyConfig();
+    getTronifyConfig(config);
     return tronifyProvider;
   }
   // `provider` comes from remote coin-config, so guard against an unknown value at runtime.
@@ -45,9 +47,10 @@ export function getEnergyProvider(): EnergyProvider {
 
 export function getEnergyRentQuote(
   logger: Logger,
+  config: TronCoinConfig,
   request: EnergyRentRequest,
 ): Promise<EnergyRentQuote> {
-  return getEnergyProvider().getQuote(logger, request);
+  return getEnergyProvider(config).getQuote(logger, config, request);
 }
 
 /**
@@ -93,27 +96,101 @@ function assertOrderWithinApprovedCost(request: EnergyRentRequest, order: Energy
   }
 }
 
+/** Sun per TRX — a TransferContract's `amount` is native TRX expressed in sun. */
+const SUN_PER_TRX = 1_000_000;
+
+/**
+ * Verify the bytes the device will actually sign encode the approved TRX rent payment.
+ * `assertOrderWithinApprovedCost` checks only the provider-declared `payCoinAmt`/`payCoinCode`
+ * metadata, not the `raw_data_hex` that `craftRawTransaction` hands to the signer verbatim, so
+ * decode the bytes and bind them to the approved request here.
+ *
+ * coin-tron supports only TRX-denominated rent (estimateTronifyFees/buildEnergyRentRequest reject a
+ * non-TRX quote), so the payment must be exactly one native-TRX `TransferContract`, spending from
+ * the approved payer, for no more TRX than the approved cost. Anything else fails closed.
+ */
+async function assertSignableTransferMatchesRequest(
+  request: EnergyRentRequest,
+  order: EnergyRentOrder,
+): Promise<void> {
+  const rawDataHex = order.transaction?.raw_data_hex;
+  if (typeof rawDataHex !== "string" || rawDataHex.length === 0) {
+    throw new TronifyApiError(
+      "Energy-rent order carries no raw transaction to verify before signing",
+    );
+  }
+
+  type DecodedContract = { type?: string; parameter?: { value?: Record<string, unknown> } };
+  let contracts: DecodedContract[];
+  try {
+    const decoded = await decodeTransaction(rawDataHex);
+    contracts = (decoded.raw_data?.contract as DecodedContract[] | undefined) ?? [];
+  } catch {
+    throw new TronifyApiError(
+      "Could not decode the energy-rent payment transaction for verification",
+    );
+  }
+
+  if (contracts.length !== 1 || contracts[0]?.type !== "TransferContract") {
+    const shape =
+      contracts.length === 1 ? String(contracts[0]?.type) : `${contracts.length} contract(s)`;
+    throw new TronifyApiError(
+      `Energy-rent payment must be a single native TRX transfer, but the signed bytes carry ${shape}`,
+    );
+  }
+
+  const value = contracts[0].parameter?.value ?? {};
+  // The signed bytes must spend from the approved payer. `decode58Check` and the decoder both yield
+  // lower-case hex (with the 0x41 prefix), so compare directly.
+  const signedOwner = String(value.owner_address ?? "").toLowerCase();
+  const approvedOwner = decode58Check(request.payerAddress).toLowerCase();
+  if (signedOwner !== approvedOwner) {
+    throw new TronifyApiError(
+      "Energy-rent payment is signed from a different owner than the approved payer",
+    );
+  }
+
+  // …and move no more TRX than approved. `order.payCoinAmt` is already bounded by the request
+  // ceiling (assertOrderWithinApprovedCost); this binds the actual signed sun amount to it.
+  const signedSun = new BigNumber(String(value.amount ?? ""));
+  const approvedSun = new BigNumber(order.payCoinAmt).multipliedBy(SUN_PER_TRX);
+  if (!signedSun.isFinite() || signedSun.isNegative() || !approvedSun.isFinite()) {
+    throw new TronifyApiError(
+      `Cannot verify energy-rent payment amount: signed "${String(value.amount)}", approved "${order.payCoinAmt}"`,
+    );
+  }
+  if (signedSun.isGreaterThan(approvedSun)) {
+    throw new TronifyApiError(
+      `Energy-rent payment moves ${signedSun.toFixed()} sun, above the approved ${approvedSun.toFixed()} sun`,
+    );
+  }
+}
+
 export async function craftEnergyRentTransaction(
   logger: Logger,
+  config: TronCoinConfig,
   request: EnergyRentRequest,
 ): Promise<EnergyRentOrder> {
-  const order = await getEnergyProvider().createOrder(logger, request);
+  const order = await getEnergyProvider(config).createOrder(logger, config, request);
   assertOrderWithinApprovedCost(request, order);
+  await assertSignableTransferMatchesRequest(request, order);
   return order;
 }
 
 export function broadcastEnergyRentTransaction(
   logger: Logger,
+  config: TronCoinConfig,
   payment: { orderId: string; signedTransaction: EnergyRentSignedTransaction },
 ): Promise<void> {
-  return getEnergyProvider().submitPayment(logger, payment);
+  return getEnergyProvider(config).submitPayment(logger, config, payment);
 }
 
 export function getEnergyRentStatus(
   logger: Logger,
+  config: TronCoinConfig,
   order: EnergyRentOrderRef,
 ): Promise<EnergyRentStatus> {
-  return getEnergyProvider().getOrderStatus(logger, order);
+  return getEnergyProvider(config).getOrderStatus(logger, config, order);
 }
 
 const delay = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
@@ -187,11 +264,12 @@ export async function awaitEnergyDeliveryWith(
   }
 }
 
-/** Bound form: polls `getEnergyRentStatus(logger, ref)` until delivery. */
+/** Bound form: polls `getEnergyRentStatus(logger, config, ref)` until delivery. */
 export function awaitEnergyDelivery(
   logger: Logger,
+  config: TronCoinConfig,
   ref: EnergyRentOrderRef,
   opts?: { intervalMs?: number; timeoutMs?: number; paymentTxId?: string },
 ): Promise<void> {
-  return awaitEnergyDeliveryWith(() => getEnergyRentStatus(logger, ref), opts);
+  return awaitEnergyDeliveryWith(() => getEnergyRentStatus(logger, config, ref), opts);
 }

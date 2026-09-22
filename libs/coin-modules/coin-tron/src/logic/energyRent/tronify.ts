@@ -83,9 +83,9 @@ function toOrderParams(request: EnergyRentRequest): TronifyEnergyOrderParams {
 export const tronifyProvider: EnergyProvider = {
   id: "tronify",
 
-  async getQuote(logger, request) {
+  async getQuote(logger, config, request) {
     const params = toOrderParams(request);
-    const data = await queryPreorderInfo(logger, params);
+    const data = await queryPreorderInfo(logger, config, params);
     return {
       energy: BigInt(data.pledgeNum),
       durationSeconds: durationToSeconds(params),
@@ -100,8 +100,8 @@ export const tronifyProvider: EnergyProvider = {
     };
   },
 
-  async createOrder(logger, request) {
-    const data = await addTronRentRecord(logger, toOrderParams(request));
+  async createOrder(logger, config, request) {
+    const data = await addTronRentRecord(logger, config, toOrderParams(request));
     assertSignableOrder(data);
     return {
       orderId: data.orderId,
@@ -111,17 +111,17 @@ export const tronifyProvider: EnergyProvider = {
     };
   },
 
-  async submitPayment(logger, { orderId, signedTransaction }) {
-    await uploadHash(logger, {
+  async submitPayment(logger, config, { orderId, signedTransaction }) {
+    await uploadHash(logger, config, {
       orderId,
       fromHash: signedTransaction.txID,
       signedData: signedTransaction,
     });
   },
 
-  async getOrderStatus(logger, { orderId, payerAddress }) {
+  async getOrderStatus(logger, config, { orderId, payerAddress }) {
     // `mypayorder` has no orderId filter, so we page through the payer's orders and match.
-    const { data } = await myPayOrder(logger, {
+    const { data } = await myPayOrder(logger, config, {
       fromAddress: payerAddress,
       orderType: ALL_ORDERS,
       page: 1,

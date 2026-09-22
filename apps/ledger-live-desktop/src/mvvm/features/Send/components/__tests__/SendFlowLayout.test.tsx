@@ -27,11 +27,14 @@ jest.mock("../../context/RecipientContactSelectionContext", () => ({
 jest.mock("../../context/RecipientScannerContext", () => ({
   RecipientScannerProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
-// The layout mounts the sponsored phase navigator, which reads SponsoredSendContext; this suite
-// renders SendFlowLayout without that provider and only exercises close tracking, so stub the
-// navigator (its routing has its own suite: hooks/__tests__/useSponsoredPhaseNavigator.test.tsx).
+// The layout mounts the sponsored phase navigator and rent reservation, both of which read
+// SponsoredSendContext; this suite renders SendFlowLayout without that provider and only exercises
+// close tracking, so stub them (their behaviour has its own suites under hooks/__tests__).
 jest.mock("../../hooks/useSponsoredPhaseNavigator", () => ({
   useSponsoredPhaseNavigator: jest.fn(),
+}));
+jest.mock("../../hooks/useSponsoredRentReservation", () => ({
+  useSponsoredRentReservation: jest.fn(),
 }));
 jest.mock("../SendHeader", () => ({ SendHeader: () => null }));
 jest.mock("~/renderer/analytics/segment", () => ({
