@@ -1,18 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { AccessibilityActionEvent, AccessibilityActionInfo } from "react-native";
+import type {
+  AccessibilityActionEvent,
+  AccessibilityActionInfo,
+  LayoutChangeEvent,
+} from "react-native";
 import { Gesture, type PanGesture } from "react-native-gesture-handler";
 import { scheduleOnRN } from "react-native-worklets";
 import { useSharedValue, withTiming, type SharedValue } from "react-native-reanimated";
 import { reorderByIndex } from "./reorderByIndex";
 import type { ListReorderOptions, ListReorderState } from "./types";
 
-// Lumen's ListItem at default ("expanded") density is `t.sizes.s64` — 64px — not 48. Every
-// step/shift calc here has to match the row's actual rendered height or the projected drop index
-// (and the residual left over after committing it) comes out wrong.
-const ROW_HEIGHT = 64;
 const LONG_PRESS_ACTIVATION_MS = 350;
 const NO_ACTIVE_INDEX = -1;
 const SETTLE_TIMING = { duration: 120 };
+// Only used until the first row reports its real measured height via `onRowLayout` — a
+// reasonable single-frame fallback, not a value anything's step math should rely on afterwards.
+const FALLBACK_ROW_HEIGHT = 64;
 
 const accessibilityActions: readonly AccessibilityActionInfo[] = [
   { name: "decrement", label: "Move up" },
@@ -23,9 +26,14 @@ function sameIds(a: readonly string[], b: readonly string[]): boolean {
   return a.length === b.length && a.every((id, index) => id === b[index]);
 }
 
-function projectIndex(from: number, translationY: number, total: number): number {
+function projectIndex(
+  from: number,
+  translationY: number,
+  total: number,
+  rowHeight: number,
+): number {
   "worklet";
-  const steps = Math.round(translationY / ROW_HEIGHT);
+  const steps = Math.round(translationY / rowHeight);
   return Math.max(0, Math.min(total - 1, from + steps));
 }
 
@@ -54,7 +62,13 @@ type RowProps = Readonly<{
    * row so each one's own animated style can derive its shift purely on the UI thread — no React
    * re-render happens until the drag actually drops. */
   activeOriginalIndex: SharedValue<number>;
+  /** The real measured row height (see `onRowLayout`), or a fallback before any row has reported
+   * one. Every step/shift calculation reads this instead of a hardcoded constant. */
+  rowHeight: SharedValue<number>;
   isActive: boolean;
+  /** Wire to each row's `onLayout` so the hook always has the actual rendered height to work
+   * with, instead of guessing at whatever the design system's density happens to render at. */
+  onLayout: (event: LayoutChangeEvent) => void;
 }>;
 
 export type ListReorderBindings = ListReorderState &
@@ -79,6 +93,15 @@ export function useListReorder({
   const [keyboardPickedUpId, setKeyboardPickedUpId] = useState<string | null>(null);
   const translationY = useSharedValue(0);
   const activeOriginalIndex = useSharedValue(NO_ACTIVE_INDEX);
+  const rowHeight = useSharedValue(FALLBACK_ROW_HEIGHT);
+
+  const onRowLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const measured = event.nativeEvent.layout.height;
+      if (measured > 0) rowHeight.value = measured;
+    },
+    [rowHeight],
+  );
 
   // Only follows the source of truth while nothing is being dragged: a drag commits into `order`
   // once, on drop (see handleDragEnd) — never mid-gesture, so there's nothing to reconcile here
@@ -115,12 +138,17 @@ export function useListReorder({
       if (activeId.current !== id) return;
       const from = activeOriginalIndex.value;
       if (from < 0) return;
-      const toIndex = projectIndex(from, translationYValue, orderRef.current.length);
+      const toIndex = projectIndex(
+        from,
+        translationYValue,
+        orderRef.current.length,
+        rowHeight.value,
+      );
       if (toIndex === lastAnnouncedIndex.current) return;
       lastAnnouncedIndex.current = toIndex;
       setAnnouncement(`Moved item to position ${toIndex + 1}.`);
     },
-    [activeOriginalIndex],
+    [activeOriginalIndex, rowHeight],
   );
 
   const handleDragEnd = useCallback(
@@ -132,7 +160,12 @@ export function useListReorder({
       setAnnouncement("Item dropped.");
 
       if (from < 0) return;
-      const toIndex = projectIndex(from, translationYValue, orderRef.current.length);
+      const toIndex = projectIndex(
+        from,
+        translationYValue,
+        orderRef.current.length,
+        rowHeight.value,
+      );
 
       if (from === toIndex) {
         activeOriginalIndex.value = NO_ACTIVE_INDEX;
@@ -148,11 +181,11 @@ export function useListReorder({
       // shift math — including this one, now pointed at its real new index — already reads as
       // settled. No frame-timing guess needed (an earlier version deferred this reset to the next
       // animation frame; it raced React's commit and the row visibly snapped back beforehand).
-      translationY.value = translationYValue - (toIndex - from) * ROW_HEIGHT;
+      translationY.value = translationYValue - (toIndex - from) * rowHeight.value;
       activeOriginalIndex.value = toIndex;
       translationY.value = withTiming(0, SETTLE_TIMING);
     },
-    [onMove, activeOriginalIndex, translationY],
+    [onMove, activeOriginalIndex, translationY, rowHeight],
   );
 
   const handleDragReset = useCallback(
@@ -240,9 +273,11 @@ export function useListReorder({
       total: orderRef.current.length,
       translationY,
       activeOriginalIndex,
+      rowHeight,
       isActive: keyboardPickedUpId === id,
+      onLayout: onRowLayout,
     }),
-    [translationY, activeOriginalIndex, keyboardPickedUpId],
+    [translationY, activeOriginalIndex, rowHeight, keyboardPickedUpId, onRowLayout],
   );
 
   return { order, getHandleProps, getRowProps, announcement, keyboardPickedUpId };

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { View, type ViewProps } from "react-native";
+import { View, type LayoutChangeEvent, type ViewProps } from "react-native";
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, withTiming, type SharedValue } from "react-native-reanimated";
 import {
@@ -18,16 +18,13 @@ import { useTranslation } from "@shared/i18n";
 import { useListReorder } from "@shared/ui-list-reorder/native";
 import type { CardAssetRow } from "./types";
 
-// Must match useListReorder's own ROW_HEIGHT: Lumen's ListItem at default ("expanded") density is
-// `t.sizes.s64` — 64px, not 48.
-const ROW_HEIGHT = 64;
-
 type ReorderableRowProps = ViewProps &
   Readonly<{
     index: number;
     total: number;
     translationY: SharedValue<number>;
     activeOriginalIndex: SharedValue<number>;
+    rowHeight: SharedValue<number>;
     isActive: boolean;
   }>;
 
@@ -36,6 +33,7 @@ function ReorderableRow({
   total,
   translationY,
   activeOriginalIndex,
+  rowHeight,
   isActive,
   style,
   children,
@@ -44,6 +42,7 @@ function ReorderableRow({
   // Runs entirely on the UI thread: every frame of the drag re-evaluates from `translationY` and
   // `activeOriginalIndex` directly, so the whole preview (the dragged row tracking the finger,
   // every sibling shifting out of its way) never touches React state or the JS thread.
+  // oxlint-disable react-hooks/exhaustive-deps
   const animatedStyle = useAnimatedStyle(() => {
     const from = activeOriginalIndex.value;
     const dragging = from !== -1;
@@ -51,7 +50,7 @@ function ReorderableRow({
 
     let shift = 0;
     if (dragging && !isSelf) {
-      const steps = Math.round(translationY.value / ROW_HEIGHT);
+      const steps = Math.round(translationY.value / rowHeight.value);
       const toIndex = Math.max(0, Math.min(total - 1, from + steps));
       if (toIndex > from && index > from && index <= toIndex) shift = -1;
       else if (toIndex < from && index >= toIndex && index < from) shift = 1;
@@ -59,7 +58,7 @@ function ReorderableRow({
 
     return {
       transform: [
-        { translateY: isSelf ? translationY.value : withTiming(shift * ROW_HEIGHT) },
+        { translateY: isSelf ? translationY.value : withTiming(shift * rowHeight.value) },
         { scale: isActive ? 1.03 : 1 },
       ],
       zIndex: isActive ? 1 : 0,
@@ -68,7 +67,11 @@ function ReorderableRow({
       shadowOffset: { width: 0, height: 4 },
       elevation: isActive ? 6 : 0,
     };
-  }, [index, total, isActive, activeOriginalIndex.value, translationY.value]);
+    // `translationY`/`activeOriginalIndex` are shared values: reading `.value` inside the worklet
+    // body above is what makes this reactive to them. Putting `.value` in this array instead
+    // would capture a stale render-time snapshot, not the live UI-thread value.
+  }, [index, total, isActive]);
+  // oxlint-enable react-hooks/exhaustive-deps
 
   return (
     <Animated.View {...props} style={[style, animatedStyle]}>
