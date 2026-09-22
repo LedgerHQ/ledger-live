@@ -3,13 +3,25 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { getEnv } from "@shared/env";
 import { LKRP_APPLICATION_ID } from "./constants";
 
-export function createLkrpSdk(memberName = "wallet-cli") {
+export type LkrpEnvironment = "staging" | "production";
+
+/** `applicationId` defaults to wallet-cli's own `ring` application (17). Ledger Sync (NTTVS-728)
+ * passes `LEDGER_SYNC_APPLICATION_ID` (16) instead so the two never share a trustchain application.
+ * `environment` defaults to "production" — `ring` never passes it (it has no staging support), only
+ * Ledger Sync does, always deriving it from the session's persisted `ledgerSyncEnvironment` rather
+ * than a fresh per-call flag, so the LKRP/Trustchain backend here and the Cloud Sync backend in
+ * `ledger-sync/cloud-sync-accounts.ts` can never point at different environments. */
+export function createLkrpSdk(
+  memberName = "wallet-cli",
+  applicationId: number = LKRP_APPLICATION_ID,
+  environment: LkrpEnvironment = "production",
+) {
   return getSdk(
     process.env.WALLET_CLI_MOCK === "1",
     {
-      applicationId: LKRP_APPLICATION_ID,
+      applicationId,
       name: memberName,
-      apiBaseUrl: getEnv("TRUSTCHAIN_API_PROD"),
+      apiBaseUrl: getEnv(environment === "staging" ? "TRUSTCHAIN_API_STAGING" : "TRUSTCHAIN_API_PROD"),
     },
     withDevice,
   );

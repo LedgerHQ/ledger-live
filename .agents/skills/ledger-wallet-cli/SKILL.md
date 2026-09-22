@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/complete/list/show — enroll a remote agent's software identity, no device required, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), Ledger Sync (ledger-sync enroll/import/destroy — hardware-assisted account sync, a separate trust model from `ring`), and Agent Intent (agent-intent enroll/complete/list/show — enroll a remote agent's software identity, no device required, a third trust model separate from both `ring` and Ledger Sync). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead. `ring keys` needs neither, and neither does `agent-intent complete`/`list`/`show`: they only read/write the local session file, so they run without the bypass.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `ledger-sync enroll`, `ledger-sync import`, `ledger-sync destroy`, `agent-intent enroll` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead. `ring keys` needs neither, and neither does `agent-intent complete`/`list`/`show`: they only read/write the local session file, so they run without the bypass.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -44,6 +44,9 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "encrypt this file / these env vars / publish tokens", "GPG alternative", "secret manager", "decrypt anywhere with my Ledger" | `ring init` -> `ring encrypt --key <name>` / `ring decrypt --key <name>` |
 | "what keys do I have on my ring", "list domains/projects I've encrypted under"       | `ring keys`                                                  |
 | "wipe my key ring", "destroy the ring", "tear down LKRP membership"                 | `ring destroy`                                               |
+| "set up Ledger Sync", "restore my synced accounts", "connect Ledger Sync"            | `ledger-sync enroll`                                          |
+| "pull my synced accounts", "import from Ledger Sync", "sync accounts from my phone" | `ledger-sync import`                                          |
+| "turn off Ledger Sync", "deactivate Ledger Sync on this machine"                     | `ledger-sync destroy`                                         |
 | "enroll this agent", "let an agent propose intents", "set up Agent Intent for a bot" | `agent-intent enroll --profile <id> --name <name>` (no device) |
 | "approve the agent's enrollment", "finish enrolling the agent"                       | `agent-intent complete --profile <id> --payload '<json>'`     |
 | "what agents are enrolled", "list agent profiles"                                    | `agent-intent list`                                            |
@@ -97,6 +100,9 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `ring decrypt`       | No     | **Required** | No          | Yes     |
 | `ring keys`          | No     | No           | No          | No      |
 | `ring destroy`       | No     | **Required** | Required‡‡  | Yes     |
+| `ledger-sync enroll` | Yes    | **Required** | No          | Yes     |
+| `ledger-sync import` | No     | **Required** | No          | Yes     |
+| `ledger-sync destroy`| No     | **Required** | Required§   | Yes     |
 
 \*`receive` with `--no-verify`, `send` with `--dry-run`, and `earn deposit`/`earn withdraw` with `--dry-run` need no device and no sandbox bypass.
 
@@ -105,6 +111,8 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 ‡`ring init` requires a password to protect the ring. `WALLET_PASS` must already be provided in the environment by the developer/user before the command runs — the agent never sets or injects it (see [Non-TTY password injection](#ring--ledger-key-ring-lkrp)).
 
 ‡‡`ring destroy` prompts for typed confirmation (`"destroy"`). Pipe it in non-interactive shells: `echo "destroy" | wallet-cli ring destroy`. If a password was set, `WALLET_PASS` must already be present in the environment (provided by the developer, not the agent).
+
+§`ledger-sync destroy` prompts for typed confirmation (`"destroy"`). Pipe it in non-interactive shells: `echo "destroy" | wallet-cli ledger-sync destroy`. Unlike `ring destroy`, Ledger Sync has no password layer at all — `WALLET_PASS` is never required or read for this command.
 
 ### session view / reset
 
@@ -295,10 +303,55 @@ pnpm --silent wallet-cli start ring destroy
 
 ---
 
+## Ledger Sync
+
+> **Separate trust model from `ring` and Agent Intent.** Ledger Sync, `ring`, and Agent Intent each
+> enroll as a **different LKRP application** on the same physical device — Ledger Sync is
+> application id 16, `ring` is 17 — so they never share a trustchain, member credentials, or
+> keychain entry. Enrolling in one grants **no** access to either of the others: Ledger Sync
+> enrollment never receives Agent Intent's Trustchain ID, and Agent Intent enrollment never receives
+> Ledger Sync's `walletSyncEncryptionKey` (it cannot decrypt synced account data). `ledger-sync
+> destroy` uses `destroyApplication`, which closes only the Ledger Sync stream — it never wipes
+> `ring` or Agent Intent state, even though all three can share the same underlying trustchain root.
+
+Ledger Sync downloads the accounts synchronized from your other Ledger Wallet instances (desktop,
+mobile) and merges them into the local wallet-cli session so they can be referenced by label — e.g.
+so an Agent Intent profile can send from an Ethereum account you only ever discovered on your phone.
+
+```bash
+# One-time enroll or restore (device required). --environment is recorded here and reused
+# automatically by every later `import`/`destroy` — it is never asked again:
+pnpm --silent wallet-cli start ledger-sync enroll
+pnpm --silent wallet-cli start ledger-sync enroll --name my-laptop --environment staging
+
+# Explicit pull + merge (no device; does NOT run automatically on every invocation):
+pnpm --silent wallet-cli start ledger-sync import
+pnpm --silent wallet-cli start ledger-sync import --output json
+
+# Deactivate Ledger Sync for this machine only (ring is untouched):
+pnpm --silent wallet-cli start ledger-sync destroy
+```
+
+**Additive only:** `ledger-sync import` never deletes a local account, even one no longer present in
+the synced list — it only adds new accounts and reports unchanged/skipped/invalid ones. It never
+uploads wallet-cli-only accounts back to Ledger Sync.
+
+**Repeat imports are idempotent:** re-running `ledger-sync import` with no server-side change reports
+nothing to import; a previously-imported account is reported as `unchanged`, never re-labeled or
+duplicated.
+
+**Unsupported/malformed entries are isolated, not fatal:** an account for a currency wallet-cli
+doesn't support (only bitcoin/ethereum/solana are) is reported as `skipped`; a structurally malformed
+entry is reported as `invalid` — either way the rest of the import still proceeds.
+
+---
+
 ## Agent Intent
 
-> **Separate trust model from `ring`.** Agent Intent enrolls as its own software identity (not an
-> LKRP application on the physical device) and never receives `ring`'s domain keys.
+> **Separate trust model from `ring` and Ledger Sync.** See the callout under [Ledger
+> Sync](#ledger-sync) above — Agent Intent enrolls as its own software identity (not an LKRP
+> application on the physical device) and never receives Ledger Sync's `walletSyncEncryptionKey` or
+> `ring`'s domain keys.
 
 Agent Intent enrolls a remote agent (a bot proposing transaction intents for human review) as a
 software identity local to this machine — **no device required for enroll/complete/list/show**. Each
