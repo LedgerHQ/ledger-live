@@ -1,0 +1,31 @@
+{
+  "extends": "@support/ts-base",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "jsx": "react-jsx",
+    "moduleSuffixes": [
+      ".web",
+      ""
+    ],
+    "types": [
+      "jest",
+      "@testing-library/jest-dom"
+    ]
+  },
+  "include": [
+    "${configDir}/src/**/*",
+    "${configDir}/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "${configDir}/src/**/*.native.*",
+    "${configDir}/src/**/native.ts"
+  ]
+}

@@ -242,6 +242,7 @@
     "@support/lint-tools": "workspace:*",
     "@support/ts-base": "workspace:*",
     "@support/ts-libs": "workspace:*",
+    "@support/ts-preset": "workspace:*",
     "@ton/crypto": "^3.3.0",
     "@typescript-eslint/parser": "catalog:",
     "@typescript/native": "catalog:",

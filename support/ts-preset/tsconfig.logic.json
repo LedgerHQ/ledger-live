@@ -1,0 +1,23 @@
+{
+  "extends": "@support/ts-base",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "lib": [
+      "ES2022"
+    ],
+    "types": [
+      "jest"
+    ]
+  },
+  "include": [
+    "${configDir}/src/**/*",
+    "${configDir}/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "${configDir}/lib"
+  ]
+}

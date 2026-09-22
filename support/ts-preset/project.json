@@ -1,0 +1,8 @@
+{
+  "name": "@support/ts-preset",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
