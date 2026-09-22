@@ -9130,7 +9130,11 @@
     "opted_in" : {
       "title" : "Más datos. Firma de forma más segura",
       "description" : "Renueva y obtén un {{discount}}% de descuento.",
-      "cta" : "Renovar mi Ledger"
+      "cta" : "Renovar mi Ledger",
+      "nanoS" : {
+        "title" : "Programa de renovación del Ledger Nano S",
+        "description" : "Desbloquea nuevas características de seguridad y del SO. Obtén un {{discount}}% de descuento."
+      }
     },
     "opted_out" : {
       "title" : "Más seguridad. Más control",
@@ -9140,7 +9144,11 @@
     "profile" : {
       "title" : "Renueva tu dispositivo",
       "description" : "Pantalla más grande, mayor seguridad. Disfruta de un {{discount}}%.",
-      "cta" : "Explorar"
+      "cta" : "Explorar",
+      "nanoS" : {
+        "title" : "Programa de renovación del Ledger Nano S",
+        "description" : "Desbloquea nuevas características de seguridad y del SO. Obtén un {{discount}}% de descuento."
+      }
     }
   },
   "largeScreenUpsellModal" : {

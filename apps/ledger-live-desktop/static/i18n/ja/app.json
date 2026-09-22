@@ -2799,7 +2799,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "{{memoLabel}}を入力してください",
-      "description" : "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} may result in a loss of funds."
+      "description" : "{{currency}}を暗号通貨取引所に送信する場合は、{{memoLabel}}が必要です。これは、取引の受信者を識別するために使用される機能です。{{memoLabel}}のメモを入力しないと、資産を失う可能性があります。"
     },
     "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
     "feesAmount" : "手数料金額 ({{unit}})",
@@ -6941,7 +6941,7 @@
       "memo" : "タグ"
     },
     "zcash" : {
-      "memoTooltip" : "A {{memoLabel}} is optional when sending {{currency}}. It is encrypted and only the recipient can read it. Some exchanges require one to identify your transaction."
+      "memoTooltip" : "{{currency}}を送信する際、{{memoLabel}}は任意です。これは暗号化されており、受取人のみが閲覧できます。一部の取引所では、トランザクションを識別するためにこれが必要となります。"
     }
   },
   "errors" : {
@@ -9130,7 +9130,11 @@
     "opted_in" : {
       "title" : "詳細を表示。より安全に署名。",
       "description" : "アップグレードで{{discount}}%OFF。",
-      "cta" : "Ledgerをアップグレード"
+      "cta" : "Ledgerをアップグレード",
+      "nanoS" : {
+        "title" : "Ledger Nano S アップグレードプログラム",
+        "description" : "新しいOSとセキュリティ機能を使いましょう。{{discount}}％OFFをゲット。"
+      }
     },
     "opted_out" : {
       "title" : "さらなるセキュリティ。より確実なコントロール",
@@ -9140,7 +9144,11 @@
     "profile" : {
       "title" : "デバイスをアップグレード",
       "description" : "大画面、より優れたセキュリティ。{{discount}}％をお楽しみください。",
-      "cta" : "探索"
+      "cta" : "探索",
+      "nanoS" : {
+        "title" : "Ledger Nano S アップグレードプログラム",
+        "description" : "新しいOSとセキュリティ機能を使いましょう。{{discount}}％OFFをゲット。"
+      }
     }
   },
   "largeScreenUpsellModal" : {
