@@ -1,0 +1,148 @@
+---
+name: "[DEBUG] - E2E Stall Probe - Manual"
+run-name: >
+  @Stall probe • ${{ inputs.mode || 'hang' }} • step timeout ${{ inputs.step_timeout_minutes || '3' }}m • ${{ github.ref_name }} • ${{ github.actor }}
+
+# QAA-1365 experiment rig. Reproduces the shard hang WITHOUT an iOS build, a
+# simulator or Speculos: a frozen jest worker is the mechanism behind the CI
+# stall, and that reproduces on any runner in ~1 minute.
+#
+# It answers, in real CI:
+#   - how GitHub ends a hung step, and the exact annotation text it leaves
+#   - whether the steps after the killed step still run (artifacts, results)
+#   - whether jest attributes a result for a spec whose worker was SIGKILLed,
+#     and whether it still writes --outputFile  (mode: kill-worker)
+#
+# Use it to iterate on a watchdog design cheaply, then confirm once on the real
+# mobile workflow. NB: the freeze stands in for whatever wedges the loop in CI;
+# that trigger is still unknown. An unresponsive app alone does NOT reproduce it.
+
+on:
+  # workflow_dispatch only becomes available once this file is on the default
+  # branch, so the push trigger below is what lets the probe run from a branch.
+  # A push carries no inputs, hence the `|| default` fallback on every one.
+  push:
+    branches:
+      - "support/qaa1365-stall-probe*"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "hang = let it stall until the step timeout | kill-worker = SIGKILL the frozen worker and see if jest recovers | control = no freeze (sanity check)"
+        type: choice
+        options:
+          - hang
+          - kill-worker
+          - control
+        default: hang
+      step_timeout_minutes:
+        description: "Step timeout, standing in for the shard's timeout-minutes. Keep it small."
+        type: string
+        default: "3"
+      freeze_hold_seconds:
+        description: "kill-worker mode only: seconds to stay frozen before the SIGKILL."
+        type: string
+        default: "45"
+
+# run_id keeps every dispatch in its own group, so experiments never queue
+# behind or cancel each other.
+concurrency:
+  group: debug-stall-probe-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: Stall probe (${{ inputs.mode || 'hang' }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20 # outer guard; the step timeout below is the one under test
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Install jest only
+        run: |
+          mkdir -p "$RUNNER_TEMP/probe" && cd "$RUNNER_TEMP/probe"
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund jest@30 >/dev/null
+          node -v && npx jest --version
+
+      - name: Write the probe project
+        run: |
+          cd "$RUNNER_TEMP/probe"
+          cat > jest.config.js <<'CFG'
+          module.exports = {
+            rootDir: __dirname,
+            testMatch: ["<rootDir>/*.test.js"],
+            maxWorkers: 2,     // >1 keeps the parent alive while one worker freezes
+            testTimeout: 5000, // deliberately tiny: a frozen loop cannot fire it
+            verbose: true,
+          };
+          CFG
+          cat > ok.test.js <<'OK'
+          const fs = require("fs");
+          test("healthy spec finishes normally", async () => {
+            await new Promise(r => setTimeout(r, 1500));
+            fs.writeFileSync(`${__dirname}/ok.done`, new Date().toISOString());
+            expect(1).toBe(1);
+          });
+          OK
+          if [ "${{ inputs.mode || 'hang' }}" != "control" ]; then
+            cat > stall.test.js <<'STALL'
+          const fs = require("fs");
+          test("frozen worker: blocks the event loop forever", () => {
+            // Publish this worker's pid: an IDLE sibling worker is indistinguishable
+            // from the frozen one via pgrep, and killing the idle one changes nothing.
+            fs.writeFileSync(`${__dirname}/stall.pid`, String(process.pid));
+            // Same class as the CI stall: the worker's event loop stops turning,
+            // so jest's own testTimeout can never fire.
+            const lock = new Int32Array(new SharedArrayBuffer(4));
+            Atomics.wait(lock, 0, 0);
+          });
+          STALL
+          fi
+          ls -1
+
+      # THIS is the step under test. Its timeout-minutes stands in for the iOS
+      # shard's, and its kill is what we want to observe.
+      - name: Run probe (killed by timeout-minutes when it hangs)
+        id: probe
+        timeout-minutes: ${{ fromJSON(inputs.step_timeout_minutes || '3') }}
+        run: |
+          cd "$RUNNER_TEMP/probe"
+          if [ "${{ inputs.mode || 'hang' }}" = "kill-worker" ]; then
+            # Background killer: wait for the frozen worker to publish its pid, hold,
+            # then SIGKILL ONLY that process. Does jest attribute a result and finish?
+            (
+              for _ in $(seq 1 60); do [ -f stall.pid ] && break; sleep 1; done
+              sleep ${{ fromJSON(inputs.freeze_hold_seconds || '45') }}
+              pid=$(cat stall.pid 2>/dev/null)
+              echo "::notice::SIGKILL frozen jest worker ${pid:-<none>}"
+              [ -n "$pid" ] && kill -KILL "$pid"
+            ) &
+          fi
+          npx jest --config jest.config.js --forceExit --json --outputFile=results.json
+          echo "jest exited $?"
+
+      # Everything below runs even after the step above is killed, which is how
+      # the real workflow still uploads shard artifacts. Confirm that here.
+      - name: What survived the kill
+        if: always()
+        run: |
+          cd "$RUNNER_TEMP/probe"
+          echo "probe step outcome: ${{ steps.probe.outcome }}"
+          echo "--- healthy spec sentinel ---"
+          cat ok.done 2>/dev/null || echo "NEVER written"
+          echo "--- jest --outputFile ---"
+          if [ -f results.json ]; then
+            node -e 'const r=require("./results.json");console.log("numTotalTests",r.numTotalTests,"failed",r.numFailedTests,"passed",r.numPassedTests);for(const t of r.testResults)console.log(" ",t.status,t.name.split("/").pop(),JSON.stringify(t.message||"").slice(0,120))'
+          else
+            echo "NOT written (lost, exactly as the shard's e2e-test-results-*.json is)"
+          fi
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: stall-probe-${{ inputs.mode || 'hang' }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/probe/results.json
+          retention-days: 3
+          if-no-files-found: warn
