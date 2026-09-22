@@ -598,7 +598,7 @@ overrides:
 
 packageExtensionsChecksum: sha256-URDZkX/cZOxeA5EuBamAG/cwb/sXOIcYg7e9jJO2gm8=
 
-pnpmfileChecksum: sha256-ep6kyjkdxRSHeItMkGOktpLELjkReRFKoNSAJsBeVxo=
+pnpmfileChecksum: sha256-JxX6kBQIzlTYoKxoLYdzmun4DfKWG6i8SwSB1DhcYYU=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
