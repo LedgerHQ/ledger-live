@@ -118,22 +118,25 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const payTabEnabled = !!payTab?.enabled;
   const cardParam = !!payTab?.params?.card;
+  const legacyTopUpParam = !!payTab?.params?.legacyTopUp;
   const ptxCardEnabled = !!ptxCard?.enabled;
 
+  // An override replaces every param default, so each setter has to carry the params it does not
+  // change. Otherwise a toggle here silently resets them.
   const setPayTabEnabled = useCallback(
     (enabled: boolean) => {
-      const params = { card: cardParam };
+      const params = { card: cardParam, legacyTopUp: legacyTopUpParam };
       dispatch(setOverride({ key: payTabKey, value: { enabled, params } }));
     },
-    [cardParam, dispatch, payTabKey],
+    [cardParam, legacyTopUpParam, dispatch, payTabKey],
   );
 
   const setCardParam = useCallback(
     (card: boolean) => {
-      const params = { card };
+      const params = { card, legacyTopUp: legacyTopUpParam };
       dispatch(setOverride({ key: payTabKey, value: { enabled: payTabEnabled, params } }));
     },
-    [dispatch, payTabEnabled, payTabKey],
+    [dispatch, legacyTopUpParam, payTabEnabled, payTabKey],
   );
 
   const setPtxCardEnabled = useCallback(

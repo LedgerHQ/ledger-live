@@ -2,7 +2,10 @@ import React, { type PropsWithChildren } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
+import featureFlagsReducer, {
+  createFeatureFlagsMiddleware,
+  setOverride,
+} from "@shared/feature-flags";
 import {
   payCardFeatureTourSlice,
   markPayCardFeatureTourSeen,
@@ -158,6 +161,27 @@ describe("usePayCardToolProps", () => {
     expect(store.getState().featureFlags.overrides.lwmPayTab?.params?.card).toBe(false);
     expect(store.getState().featureFlags.overrides.lwdPayTab).toBeUndefined();
     expect(result.current.flags.cardParam).toBe(false);
+  });
+
+  it("keeps the legacyTopUp param when a setter changes another one", () => {
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => {
+      store.dispatch(
+        setOverride({
+          key: "lwdPayTab",
+          value: { enabled: true, params: { card: true, legacyTopUp: true } },
+        }),
+      );
+    });
+    act(() => {
+      result.current.flags.setCardParam(false);
+    });
+
+    expect(store.getState().featureFlags.overrides.lwdPayTab?.params).toEqual({
+      card: false,
+      legacyTopUp: true,
+    });
   });
 
   it("setPtxCardEnabled overrides ptxCard", () => {
