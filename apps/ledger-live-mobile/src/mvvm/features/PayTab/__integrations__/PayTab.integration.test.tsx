@@ -120,6 +120,13 @@ describe("PayTab integration", () => {
       expect(screen.getByTestId("paytab-screen")).toBeVisible();
       expect(screen.queryByText(FEATURE_TOUR_ROW)).toBeNull();
     });
+
+    it("should show the disclaimer at the bottom of the screen", () => {
+      renderPayTab();
+
+      expect(screen.getByTestId("pay-disclaimer")).toBeVisible();
+      expect(screen.getByText("Disclaimer placeholder")).toBeVisible();
+    });
   });
 
   describe("balance", () => {

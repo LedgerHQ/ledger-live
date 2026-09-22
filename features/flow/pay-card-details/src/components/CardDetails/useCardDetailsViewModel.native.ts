@@ -144,6 +144,7 @@ export function useCardDetailsViewModel({
       onAddToWalletPress,
       onShowMore,
       formatters,
+      disclaimer: t("payTab.disclaimer"),
     },
     freeze: { viewModel: freezeViewModel },
     more: moreViewModel ? { viewModel: moreViewModel } : null,

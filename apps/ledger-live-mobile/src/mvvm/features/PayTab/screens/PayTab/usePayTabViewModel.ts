@@ -14,6 +14,7 @@ import {
 } from "@features/flow-pay-card-auth";
 import useEnv from "@features/platform-env";
 import { useContactsFeature } from "@features/platform-contacts";
+import { useTranslation } from "@shared/i18n";
 import type { CardAssetRow, CardAssetsProps } from "@features/flow-pay-card-assets";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import type { ScreenName } from "~/const";
@@ -35,6 +36,7 @@ import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
 export function usePayTabViewModel() {
   const analytics = usePayAnalyticsContext();
+  const { t } = useTranslation();
   const { top, bottom } = useNavigationBarHeights();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
@@ -175,5 +177,6 @@ export function usePayTabViewModel() {
     onShowMore,
     cardSettingsActions,
     trackRecipientAddressSelection: isContactsEnabled && payment.contactAddressPicker.isOpen,
+    disclaimer: t("payTab.disclaimer"),
   };
 }

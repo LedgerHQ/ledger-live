@@ -10,7 +10,7 @@ import {
   type ContactAddressPickerProps,
   type ContactsNativeProps,
 } from "@features/flow-pay-contact";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Wallet40Background } from "LLM/components/Wallet40Background";
 import { TrackScreen } from "~/analytics";
 import { ScrollView } from "react-native";
@@ -32,6 +32,7 @@ type PayTabViewProps = {
   readonly onShowMore: () => void;
   readonly cardSettingsActions: CardProps["cardSettingsActions"];
   readonly trackRecipientAddressSelection: boolean;
+  readonly disclaimer: string;
 };
 
 export function PayTabView({
@@ -51,13 +52,14 @@ export function PayTabView({
   onShowMore,
   cardSettingsActions,
   trackRecipientAddressSelection,
+  disclaimer,
 }: PayTabViewProps) {
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
       <Wallet40Background type="pay" />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1, paddingTop: top, paddingBottom: bottom }}
+        contentContainerStyle={{ flexGrow: 1, paddingTop: top, paddingBottom: bottom + 16 }}
       >
         <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
           <TrackScreen
@@ -85,6 +87,14 @@ export function PayTabView({
           <FeatureTour />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />
+
+          <Text
+            typography="body4"
+            lx={{ color: "muted", textAlign: "center", marginTop: "s32" }}
+            testID="pay-disclaimer"
+          >
+            {disclaimer}
+          </Text>
         </Box>
       </ScrollView>
     </Box>
