@@ -1,7 +1,8 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { Session } from "../../session/session-store";
-import { outputOption, resolveOutputFormat, PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../inputs";
+import { outputOption, resolveOutputFormat } from "../inputs";
+import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
 import { createCommandOutput } from "../../output";
 
 export default defineCommand({

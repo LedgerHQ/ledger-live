@@ -1,8 +1,12 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import { parseAgentEnrollmentCompletion } from "@ledgerhq/agent-intent-sdk";
+import {
+  parseAgentEnrollmentCompletion,
+  AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION,
+} from "@ledgerhq/agent-intent-sdk";
 import { Session } from "../../session/session-store";
-import { outputOption, resolveOutputFormat, PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../inputs";
+import { outputOption, resolveOutputFormat } from "../inputs";
+import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
 import { createCommandOutput } from "../../output";
 
 export default defineCommand({
@@ -49,6 +53,15 @@ export default defineCommand({
       }
 
       const completion = parseAgentEnrollmentCompletion(payload, profile.publicKey);
+      if (
+        completion.version === AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION &&
+        completion.accountAccess.environment !== profile.environment
+      ) {
+        throw new Error(
+          `Completion is for the ${completion.accountAccess.environment} environment but profile ` +
+            `"${flags.profile}" was enrolled against ${profile.environment}.`,
+        );
+      }
       session.updateAgentIntentProfile(flags.profile, { trustchainId: completion.trustchainId });
       session.write();
 

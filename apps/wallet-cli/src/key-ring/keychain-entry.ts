@@ -8,15 +8,12 @@ const SERVICE = APP_NAME;
 const ENC_PREFIX = "ENC:";
 
 /**
- * A namespaced OS-keychain entry, shared by every credential kind wallet-cli stores (`ring`'s
- * member key, Agent Intent profile keys, Ledger Sync member credentials). `hashParts` are hashed
- * together with the state dir so distinct profiles/namespaces/parallel test workers never
- * cross-read each other's entries; `accountPrefix` only affects the human-readable account name,
- * never the hash.
+ * A namespaced OS-keychain entry. `hashParts` are hashed together with the state dir so distinct
+ * profiles/namespaces/parallel test workers never cross-read each other's entries; `accountPrefix`
+ * only affects the human-readable account name, never the hash.
  *
- * The exact `(accountPrefix, hashParts)` pairing for each existing caller is preserved byte-for-byte
- * from before this was factored out — changing either would silently orphan already-stored
- * keychain entries, so treat both as load-bearing, not cosmetic.
+ * Once a caller starts using a given `(accountPrefix, hashParts)` pairing, that pairing becomes
+ * load-bearing for it — changing either would silently orphan that caller's already-stored entries.
  */
 export function keychainEntry(accountPrefix: string, ...hashParts: string[]): Entry {
   const digest = createHash("sha256")
@@ -58,8 +55,9 @@ export function splitKeychainLines(stored: string): string[] {
 
 /**
  * Encrypt-and-`ENC:`-prefix a secret when a `wrappingKey` is given, otherwise return it verbatim.
- * Shared by every keychain module (`ring`, Agent Intent, Ledger Sync) so their on-disk wrap format
- * never drifts between applications.
+ * This is the shared keychain-wrap home for wallet-cli's credential stores — Agent Intent's profile
+ * keys use it here; `ring`'s `keychain.ts` and Ledger Sync's `keychain.ts` adopt the same functions
+ * in NTTVS-728, so all three never drift onto different wrap formats.
  */
 export async function wrapSecret(secretHex: string, wrappingKey?: CryptoKey): Promise<string> {
   if (!wrappingKey) return secretHex;

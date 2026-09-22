@@ -78,6 +78,23 @@ const ethGoerli: AccountDescriptorV1 = {
   path: "m/44h/60h/0h/0/0",
 };
 
+// `02` + 64 hex chars, a structurally valid compressed secp256k1 public key (the SEC1 prefix a real
+// key from `createSoftwareAgentIdentity()` always has) — not just any 66-char hex string.
+function makeAgentIntentProfile(overrides: Partial<Record<string, unknown>> = {}) {
+  return {
+    profileId: "trading-bot",
+    displayName: "Trading Bot",
+    description: "Proposes EVM payments for review.",
+    source: "openclaw" as const,
+    environment: "staging" as const,
+    bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
+    publicKey: `02${"0".repeat(64)}`,
+    enrollmentExpiresAt: "2026-06-01T00:00:00.000Z",
+    createdAt: "2026-01-01T00:00:00.000Z",
+    ...overrides,
+  };
+}
+
 describe("generateLabel", () => {
   it("bitcoin mainnet native segwit → bitcoin-native-1", () => {
     expect(generateLabel(btcNative, new Set())).toBe("bitcoin-native-1");
@@ -270,16 +287,7 @@ describe("ring-field resilience", () => {
       YAML.stringify({
         accounts: [],
         agentIntentProfiles: [
-          {
-            profileId: "good-profile",
-            displayName: "Good",
-            description: "A valid profile.",
-            source: "openclaw",
-            environment: "staging",
-            bffBaseUrl: "https://example.com",
-            publicKey: "0".repeat(66),
-            createdAt: "2026-01-01T00:00:00.000Z",
-          },
+          makeAgentIntentProfile({ profileId: "good-profile", displayName: "Good" }),
           { profileId: "missing-fields" }, // malformed — must not nuke the whole list
         ],
       }),
@@ -294,18 +302,7 @@ describe("ring-field resilience", () => {
       getSessionPath(),
       YAML.stringify({
         accounts: [{ label: "bad label with spaces", descriptor: 42 }], // fails schema
-        agentIntentProfiles: [
-          {
-            profileId: "trading-bot",
-            displayName: "Trading Bot",
-            description: "Proposes EVM payments for review.",
-            source: "openclaw",
-            environment: "staging",
-            bffBaseUrl: "https://example.com",
-            publicKey: "0".repeat(66),
-            createdAt: "2026-01-01T00:00:00.000Z",
-          },
-        ],
+        agentIntentProfiles: [makeAgentIntentProfile()],
       }),
     );
     const session = await Session.readForReset();
@@ -352,16 +349,7 @@ describe("ring-field resilience", () => {
 });
 
 describe("Session.agentIntentProfiles", () => {
-  const profile = {
-    profileId: "trading-bot",
-    displayName: "Trading Bot",
-    description: "Proposes EVM payments for review.",
-    source: "openclaw" as const,
-    environment: "staging" as const,
-    bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
-    publicKey: "0".repeat(66),
-    createdAt: "2026-01-01T00:00:00.000Z",
-  };
+  const profile = makeAgentIntentProfile();
 
   it("addAgentIntentProfile records a new profile", () => {
     const session = Session.from([]);
