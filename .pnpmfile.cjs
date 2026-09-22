@@ -17,6 +17,7 @@ const {
   addPeerDependencies,
   removeDependencies,
 } = require("./tools/pnpm-utils");
+const { assertDependencyChecks } = require("./tools/dependency-checks/validate");
 
 function readPackage(pkg, context) {
   /*
@@ -144,8 +145,14 @@ function readPackage(pkg, context) {
   return pkg;
 }
 
+function afterAllResolved(lockfile) {
+  assertDependencyChecks(lockfile);
+  return lockfile;
+}
+
 module.exports = {
   hooks: {
+    afterAllResolved,
     readPackage,
   },
 };
