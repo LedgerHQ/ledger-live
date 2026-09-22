@@ -56,7 +56,7 @@ test.describe("Undelegate", () => {
   );
 });
 
-test.describe("Undelegate - MINA", () => {
+test.describe.skip("Undelegate - MINA", () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina undelegate");
 

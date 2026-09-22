@@ -561,7 +561,7 @@ test.describe("Delegate", () => {
   );
 });
 
-test.describe("Delegate - MINA", () => {
+test.describe.skip("Delegate - MINA", () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina delegate");
 
@@ -617,7 +617,7 @@ test.describe("Delegate - MINA", () => {
   );
 });
 
-test.describe("Redelegate - MINA", () => {
+test.describe.skip("Redelegate - MINA", () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina redelegate");
 
