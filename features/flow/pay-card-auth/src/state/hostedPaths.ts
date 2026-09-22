@@ -1,10 +1,10 @@
 const SIGNUP_PATH = "/onboarding/signup";
 const TOP_UP_PATH = "/topup";
 const WITHDRAWAL_PATH = "/withdrawal";
-const MANAGE_PIN_PATH = "/dashboard/card/details";
+const MANAGE_PIN_PATH = "/set-pin";
 const ACCESS_BAANX_PATH = "/";
 
-export { SIGNUP_PATH, MANAGE_PIN_PATH };
+export { SIGNUP_PATH };
 
 export type CardAssetPathBuilder = (usAppId?: string | null, currency?: string | null) => string;
 
@@ -27,4 +27,8 @@ export const buildWithdrawalPath: CardAssetPathBuilder = (usAppId, currency) =>
 
 export function buildAccessBaanxPath(usAppId?: string | null): string {
   return buildHostedPath(ACCESS_BAANX_PATH, usAppId);
+}
+
+export function buildManagePinPath(usAppId?: string | null): string {
+  return buildHostedPath(MANAGE_PIN_PATH, usAppId);
 }
