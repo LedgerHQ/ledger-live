@@ -1,5 +1,6 @@
 import React from "react";
-import { fireEvent, render, screen, userEvent } from "@testing-library/react-native";
+import { act, fireEvent, render, screen, userEvent } from "@testing-library/react-native";
+import DraggableFlatList from "react-native-draggable-flatlist";
 import { CardAssetsManageDrawer } from "../CardAssetsManageDrawer.native";
 import { CardAssetsView } from "../CardAssetsView.native";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
@@ -210,5 +211,49 @@ describe("CardAssetsView (native)", () => {
     });
 
     expect(onMoveAsset).toHaveBeenCalledWith("w-btc", 0);
+  });
+
+  it("should not flash the spinner when a drag settles back where it started", () => {
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(
+      <CardAssetsManageDrawer
+        rows={[usdc, bitcoin]}
+        onMoveAsset={jest.fn()}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    const { onDragBegin, onRelease } = screen.UNSAFE_getByType(DraggableFlatList).props;
+
+    act(() => {
+      onDragBegin(0);
+      onRelease(0);
+    });
+
+    expect(screen.queryByTestId("card-asset-reorder-spinner-w-usdc")).not.toBeOnTheScreen();
+  });
+
+  it("should show the spinner as soon as a drag is released onto a different row", () => {
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(
+      <CardAssetsManageDrawer
+        rows={[usdc, bitcoin]}
+        onMoveAsset={() => new Promise(() => {})}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    const { onDragBegin, onPlaceholderIndexChange, onRelease } =
+      screen.UNSAFE_getByType(DraggableFlatList).props;
+
+    act(() => {
+      onDragBegin(0);
+      onPlaceholderIndexChange(1);
+      onRelease(0);
+    });
+
+    expect(screen.getByTestId("card-asset-reorder-spinner-w-usdc")).toBeVisible();
   });
 });

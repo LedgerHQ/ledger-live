@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react";
-import { Pressable } from "react-native";
+import React, { useCallback, useRef, useState } from "react";
+import { InteractionManager, Pressable } from "react-native";
 import DraggableFlatList, {
   ScaleDecorator,
   ShadowDecorator,
@@ -103,6 +103,11 @@ export function CardAssetsManageDrawer({
   // drop): `reorderingAssetIds` (from the view model) takes a render to catch up, so clearing
   // this immediately would leave a one-frame gap with no spinner showing at all.
   const [releasedId, setReleasedId] = useState<string | null>(null);
+  // `onRelease` always fires with the drag's *start* index, before the settle spring resolves
+  // where it lands — these track the live drop target (from `onPlaceholderIndexChange`, updated
+  // throughout the drag) so release can tell a real move from a drop back in the same spot.
+  const dragStartIndexRef = useRef<number | null>(null);
+  const dropTargetIndexRef = useRef<number | null>(null);
 
   const moveByOffset = useCallback(
     (id: string, offset: number) => {
@@ -134,9 +139,20 @@ export function CardAssetsManageDrawer({
   // extraction logic itself changes.
   const keyExtractor = useCallback((row: CardAssetRow) => row.id, []);
 
+  const handleDragBegin = useCallback((index: number) => {
+    dragStartIndexRef.current = index;
+    dropTargetIndexRef.current = index;
+  }, []);
+
+  const handlePlaceholderIndexChange = useCallback((index: number) => {
+    dropTargetIndexRef.current = index;
+  }, []);
+
   const handleRelease = useCallback(
     (index: number) => {
-      setReleasedId(rows[index]?.id ?? null);
+      const willMove = dropTargetIndexRef.current !== dragStartIndexRef.current;
+      setReleasedId(willMove ? (rows[index]?.id ?? null) : null);
+      dragStartIndexRef.current = null;
     },
     [rows],
   );
@@ -148,7 +164,14 @@ export function CardAssetsManageDrawer({
         setReleasedId(null);
         return;
       }
-      void onMoveAsset(moved.id, to).finally(() => setReleasedId(null));
+      // The library nulls its own `activeKey` the instant `data` changes shape, but defers
+      // resetting the shared values that drive cell position to `InteractionManager` — updating
+      // `data` (via `onMoveAsset`) synchronously here would race that reset and snap the list to
+      // a stale layout for a frame. Queuing behind the same interaction handle lets its reset run
+      // first.
+      InteractionManager.runAfterInteractions(() => {
+        void onMoveAsset(moved.id, to).finally(() => setReleasedId(null));
+      });
     },
     [onMoveAsset],
   );
@@ -170,6 +193,8 @@ export function CardAssetsManageDrawer({
           data={rows as CardAssetRow[]}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
+          onDragBegin={handleDragBegin}
+          onPlaceholderIndexChange={handlePlaceholderIndexChange}
           onDragEnd={handleDragEnd}
           onRelease={handleRelease}
           containerStyle={{ flex: 1 }}
