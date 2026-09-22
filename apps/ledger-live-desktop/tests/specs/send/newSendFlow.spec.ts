@@ -155,12 +155,16 @@ test.describe("New Send Flow", () => {
       await dismissAnalyticsConsentDialogIfPresent(page);
       try {
         await accountsButton.waitFor({ state: "visible", timeout: 3000 });
+        // Bounded to the same short slice as the wait above: a modal can still mount in the
+        // gap between the wait resolving and the click landing, intercepting it -- this keeps
+        // that case retrying quickly too, rather than hanging on the suite's default action
+        // timeout for a single attempt.
+        await accountsButton.click({ timeout: 3000 });
+        return;
       } catch {
-        // Not visible yet within this slice; loop back to re-check the modal and retry.
-        continue;
+        // Not visible yet, or the click was intercepted, within this slice; loop back to
+        // re-check the modals and retry.
       }
-      await accountsButton.click();
-      return;
     }
     // Final attempt with the default timeout, so a genuine failure still surfaces its real error.
     await dismissReleaseTourIfPresent(page);
