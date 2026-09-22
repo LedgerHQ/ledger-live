@@ -331,7 +331,6 @@ describe("PayTab RequestReceive integration", () => {
       buttonLocation: "verify address",
       flow: "request",
       page: "Request Address Verification",
-      flow: "request",
     });
 
     act(() => {
