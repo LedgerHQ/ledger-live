@@ -1,8 +1,13 @@
-import { pubkeyFromPrivatekey, encryptData, decryptData, hexToBytes } from "./crypto";
-import { keychainEntry, deleteKeychainEntry, hasKeychainEntry, splitKeychainLines } from "./keychain-entry";
+import { pubkeyFromPrivatekey } from "./crypto";
+import {
+  keychainEntry,
+  deleteKeychainEntry,
+  hasKeychainEntry,
+  splitKeychainLines,
+  wrapSecret,
+  unwrapSecret,
+} from "./keychain-entry";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
-
-const ENC_PREFIX = "ENC:";
 
 /**
  * Thrown when the stored key is password-protected (`ENC:`) but no wrapping key was supplied, so
@@ -32,13 +37,7 @@ export async function savePrivateKey(
   pubkey?: string,
   wrappingKey?: CryptoKey,
 ): Promise<void> {
-  let firstLine: string;
-  if (wrappingKey) {
-    const ct = await encryptData(wrappingKey, new TextEncoder().encode(privatekey));
-    firstLine = `${ENC_PREFIX}${Buffer.from(ct).toString("hex")}`;
-  } else {
-    firstLine = privatekey;
-  }
+  const firstLine = await wrapSecret(privatekey, wrappingKey);
   const entry = getEntry();
   entry.setPassword(pubkey ? `${firstLine}\n${pubkey}` : firstLine);
 }
@@ -58,30 +57,20 @@ export async function loadMemberCredentials(
   const firstLine = lines[0];
   if (!firstLine) return null;
 
-  let privatekey: string;
-  if (firstLine.startsWith(ENC_PREFIX)) {
-    if (!wrappingKey)
-      throw new PasswordRequiredError(
-        "Private key is password-protected but no password provided.",
-      );
-    let ct: Uint8Array<ArrayBuffer>;
-    try {
-      ct = hexToBytes(firstLine.slice(ENC_PREFIX.length));
-    } catch {
+  const privatekey = await unwrapSecret(
+    firstLine,
+    wrappingKey,
+    () => {
+      throw new PasswordRequiredError("Private key is password-protected but no password provided.");
+    },
+    () => {
       // A non-hex payload is corruption, not a wrong password — don't send the user retrying passwords.
       throw new CorruptKeychainError(
         "Corrupt keychain entry: the stored key is not valid hex. " +
           "Run `wallet-cli ring destroy` then `wallet-cli ring init` to reset.",
       );
-    }
-    try {
-      privatekey = new TextDecoder().decode(await decryptData(wrappingKey, ct));
-    } catch {
-      throw new Error("Wrong password: failed to decrypt private key.");
-    }
-  } else {
-    privatekey = firstLine;
-  }
+    },
+  );
 
   let pubkey = lines[1];
   if (!pubkey) {

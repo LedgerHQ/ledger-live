@@ -5,3 +5,8 @@ export const LKRP_APPLICATION_ID = 17;
 export const LEDGER_SYNC_APPLICATION_ID = 16;
 
 export const MEMBER_NAME_MAX_LENGTH = 64;
+
+/** Shared by `lkrp-sdk.ts` and `ledger-sync/cloud-sync-accounts.ts` so the LKRP/Trustchain backend
+ * and the Cloud Sync backend always agree on the same environment union — one name, one place. */
+export const LEDGER_SYNC_ENVIRONMENTS = ["staging", "production"] as const;
+export type LedgerSyncEnvironment = (typeof LEDGER_SYNC_ENVIRONMENTS)[number];

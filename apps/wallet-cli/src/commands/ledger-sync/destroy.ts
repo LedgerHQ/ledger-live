@@ -86,7 +86,7 @@ export default defineCommand({
       let memberEjected = false;
 
       if (memberCredentials) {
-        const sdk = createLkrpSdk(undefined, LEDGER_SYNC_APPLICATION_ID, environment);
+        const sdk = createLkrpSdk({ applicationId: LEDGER_SYNC_APPLICATION_ID, environment });
         const destroySpin = out.spin("Deactivating Ledger Sync…");
         try {
           // destroyApplication closes only this application's stream (or destroys the whole

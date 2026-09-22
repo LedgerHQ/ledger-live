@@ -11,6 +11,7 @@ import { writeSecureFile } from "../shared/secure-file";
 import { PASSWORD_SALT_RE } from "../key-ring/crypto";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../agent-intent/profile-format";
 import { withFileLock } from "../shared/file-lock";
+import { LEDGER_SYNC_ENVIRONMENTS, type LedgerSyncEnvironment } from "../key-ring/constants";
 
 export const APP_NAME = "ledger-wallet-cli";
 const SESSION_FILE = "session.yaml";
@@ -129,7 +130,7 @@ const ledgerSyncFields = {
   // every later `import`/`destroy` so the LKRP/Trustchain backend (key-ring/lkrp-sdk.ts) and the
   // Cloud Sync backend (ledger-sync/cloud-sync-accounts.ts) can never end up pointed at different
   // environments.
-  ledgerSyncEnvironment: z.enum(["staging", "production"]).optional().catch(undefined),
+  ledgerSyncEnvironment: z.enum(LEDGER_SYNC_ENVIRONMENTS).optional().catch(undefined),
 };
 
 const SessionDataSchema = z.object({
@@ -267,7 +268,7 @@ export class Session {
     private readonly _invalidAgentIntentProfileRaws: unknown[] = [],
     private _ledgerSyncTrustchain: TrustchainMeta | undefined = undefined,
     private _ledgerSyncVersion: number | undefined = undefined,
-    private _ledgerSyncEnvironment: "staging" | "production" | undefined = undefined,
+    private _ledgerSyncEnvironment: LedgerSyncEnvironment | undefined = undefined,
   ) {}
 
   static async read(): Promise<Session> {
@@ -416,7 +417,7 @@ export class Session {
 
   /** `environment` is required alongside the trustchain metadata (not a separate call) so it's never
    * possible to record a Ledger Sync trustchain without also knowing which backend it belongs to. */
-  setLedgerSyncTrustchain(t: TrustchainMeta, environment: "staging" | "production"): void {
+  setLedgerSyncTrustchain(t: TrustchainMeta, environment: LedgerSyncEnvironment): void {
     this._ledgerSyncTrustchain = t;
     this._ledgerSyncEnvironment = environment;
   }
@@ -430,10 +431,17 @@ export class Session {
     this._ledgerSyncVersion = version;
   }
 
+  /** Distinct from `setLedgerSyncVersion(0)`: `undefined` means "no cached version" (next import
+   * starts fresh), not "version 0" — the two aren't interchangeable even though the shared Cloud
+   * Sync SDK currently treats both as falsy. Used when the remote account list was deleted. */
+  clearLedgerSyncVersion(): void {
+    this._ledgerSyncVersion = undefined;
+  }
+
   /** The environment this trustchain was enrolled against (set once at enroll time via
    * `setLedgerSyncTrustchain`), reused by `import`/`destroy` so they never guess or default to the
    * wrong backend. `undefined` when Ledger Sync has not been enrolled. */
-  get ledgerSyncEnvironment(): "staging" | "production" | undefined {
+  get ledgerSyncEnvironment(): LedgerSyncEnvironment | undefined {
     return this._ledgerSyncEnvironment;
   }
 
