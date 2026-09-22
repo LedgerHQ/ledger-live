@@ -1,7 +1,7 @@
-import { createDualPlatformKnipConfig } from "../../../knip.config.base.mjs";
+import { createDualPlatformKnipConfig } from "../../knip.config.base.mjs";
 
 export default createDualPlatformKnipConfig({
-  packagePath: "features/flow/pay-card-details",
+  packagePath: "devtools/cloud-sync",
   platform: "native",
   entry: [],
   additionalProjectExcludes: ["src/index.ts"],

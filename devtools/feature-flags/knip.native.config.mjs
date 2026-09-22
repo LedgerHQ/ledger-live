@@ -1,7 +1,8 @@
 import { createDualPlatformKnipConfig } from "../../knip.config.base.mjs";
 
 export default createDualPlatformKnipConfig({
-  packagePath: "shared/ui-info-state",
+  packagePath: "devtools/feature-flags",
   platform: "native",
-  entry: [],
+  entry: ["src/index.native.ts"],
+  additionalProjectExcludes: ["src/index.ts"],
 });

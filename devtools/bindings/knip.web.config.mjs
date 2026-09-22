@@ -1,7 +1,7 @@
 import { createDualPlatformKnipConfig } from "../../knip.config.base.mjs";
 
 export default createDualPlatformKnipConfig({
-  packagePath: "shared/ui-info-state",
+  packagePath: "devtools/bindings",
   platform: "web",
   entry: [],
 });

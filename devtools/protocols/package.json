@@ -5,7 +5,8 @@
   "description": "Shared WebSocket message contracts for DevTools host ⇄ tool communication",
   "sideEffects": false,
   "exports": {
-    "./*": "./src/*/index.ts",
+    "./copyStore": "./src/copyStore/index.ts",
+    "./retrieve-connected-devices": "./src/retrieve-connected-devices/index.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -14,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "coverage": "jest --config jest.config.js --coverage",
     "test": "jest --config jest.config.js",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "unimported": "pnpm knip --directory ../.. -W devtools/protocols"
   },
   "dependencies": {
     "@devtools/transport": "workspace:*",

@@ -26,7 +26,7 @@ import { CurrencyMappingScreen } from "../components/CurrencyMapping/CurrencyMap
 import { Interaction } from "../components/Interaction/Interaction";
 import { AuthSection } from "./AuthSection";
 
-export function PayCard(props: Readonly<PayCardToolProps>) {
+function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
     cardOnboarding,

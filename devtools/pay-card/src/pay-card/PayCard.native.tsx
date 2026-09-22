@@ -60,7 +60,7 @@ function SubScreen({
   return <CurrencyMappingScreen rows={currencyMapping} onBack={onBack} />;
 }
 
-export function PayCard(props: Readonly<PayCardToolProps>) {
+function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
     cardOnboarding,

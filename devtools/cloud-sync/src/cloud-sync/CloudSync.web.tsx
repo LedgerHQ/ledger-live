@@ -3,7 +3,7 @@ import { Button } from "@ledgerhq/lumen-ui-react";
 import { useCloudSyncViewModel } from "./useCloudSyncViewModel";
 import type { CloudSyncDevToolProps } from "../types";
 
-export function CloudSync(props: CloudSyncDevToolProps) {
+function CloudSync(props: CloudSyncDevToolProps) {
   const vm = useCloudSyncViewModel(props);
 
   const [pullError, setPullError] = useState<string | null>(null);
