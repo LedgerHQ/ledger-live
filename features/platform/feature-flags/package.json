@@ -19,8 +19,8 @@
     "unimported": "pnpm knip --directory ../../.. -W features/platform/feature-flags",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix",
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check"
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@shared/feature-flags": "workspace:^",
@@ -33,7 +33,6 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/ts-features-platform": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

@@ -15,14 +15,13 @@
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix",
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check"
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "devDependencies": {
     "@jest/reporters": "catalog:",
     "@jest/test-result": "catalog:",
     "@playwright/test": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@types/node": "catalog:",
     "jest": "catalog:",
     "typescript": "catalog:"

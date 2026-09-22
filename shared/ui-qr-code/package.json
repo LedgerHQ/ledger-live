@@ -20,8 +20,8 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../.. -W shared/ui-qr-code",
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix"
   },
@@ -48,7 +48,6 @@
   "devDependencies": {
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/fmt-base": "workspace:*",
     "@support/jest-shared": "workspace:*",
     "@support/ts-shared": "workspace:*",
     "@swc/core": "catalog:",

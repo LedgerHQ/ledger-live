@@ -12,8 +12,8 @@
   "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
@@ -60,7 +60,6 @@
     "react-dom": "catalog:",
     "react-redux": "catalog:",
     "typescript": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   }
 }

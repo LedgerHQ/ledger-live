@@ -15,8 +15,8 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "lint": "oxlint src && pnpm lint:tailwind",
     "lint:ci": "oxlint src --quiet && pnpm lint:tailwind",
@@ -38,7 +38,6 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@react-native-clipboard/clipboard": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/jest-features-flow": "workspace:*",
     "@support/msw-features-flow-pay-card": "workspace:*",
     "@support/ts-features-flow": "workspace:*",

@@ -10,8 +10,8 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "format": "fmt-base src jest.config.js",
-    "format:check": "fmt-base src jest.config.js --check",
+    "format": "oxfmt src jest.config.js",
+    "format:check": "oxfmt src jest.config.js --check",
     "typecheck": "tsc --noEmit",
     "coverage": "jest --config jest.config.js --coverage",
     "test": "jest --config jest.config.js",
@@ -30,7 +30,6 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   }
 }

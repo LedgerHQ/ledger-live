@@ -15,8 +15,8 @@
     "unimported": "pnpm knip --directory ../../.. -W features/platform/env",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix",
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check"
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@shared/env": "workspace:*"
@@ -25,7 +25,6 @@
     "react": ">=19.0.0"
   },
   "devDependencies": {
-    "@support/fmt-base": "workspace:*",
     "@support/ts-features-platform": "workspace:*",
     "@types/react": "catalog:",
     "react": "catalog:",

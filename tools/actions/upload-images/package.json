@@ -9,14 +9,13 @@
     "build": "rslib build",
     "lint": "oxlint ./",
     "lint:fix": "oxlint ./ --fix",
-    "format": "fmt-base . '!**/build/**'",
-    "format:check": "fmt-base . '!**/build/**' --check"
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check"
   },
   "devDependencies": {
     "@actions/core": "1.10.1",
     "@actions/github": "6.0.0",
     "@aws-sdk/client-s3": "3.540.0",
-    "@rslib/core": "catalog:",
-    "@support/fmt-base": "workspace:*"
+    "@rslib/core": "catalog:"
   }
 }

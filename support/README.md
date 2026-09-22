@@ -83,6 +83,9 @@ script it always had and needs no dependency on the preset:
 ```
 
 > [!IMPORTANT]
+> No preset is invoked through a `bin`. Both oxlint and oxfmt discover configuration by walking up,
+> and a preset reached any other way is invisible to the editor.
+>
 > A preset must **not** be invoked through a `bin` with `oxlint -c`. It works on the command line
 > and leaves the editor blind: with no config to walk up to, the extension falls back to oxlint's
 > built-in defaults. Measured on this repository, that was 96 rules in the editor against 219 in
@@ -92,8 +95,10 @@ A one-rule deviation goes on the command line rather than into a new config file
 `oxlint ./src -A no-console` or `oxlint ./src -D import/no-cycle`. A package that needs more than
 that should get its own layer.
 
-Formatting still goes through a bin, because oxfmt has no config discovery to hook into:
-`fmt-base src`, with extra excludes as `!` positionals such as `fmt-base src '!src/generated/**'`.
+Formatting works the same way: a layer `oxfmt.config.mts` names `@support/fmt-base`, and the
+consumer script is a plain `oxfmt src`. Note that oxfmt refuses to start if it finds both
+`.oxfmtrc.json` and `oxfmt.config.mts` in one directory, so the old file goes when the layer config
+arrives.
 
 tsconfig needs a file per package, because that is how TypeScript is told where the preset is:
 

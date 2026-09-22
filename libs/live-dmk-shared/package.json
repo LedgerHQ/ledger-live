@@ -31,8 +31,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "format": "fmt-base ./src",
-    "format:check": "fmt-base ./src --check"
+    "format": "oxfmt ./src",
+    "format:check": "oxfmt ./src --check"
   },
   "dependencies": {
     "@ledgerhq/context-module": "catalog:",
@@ -49,7 +49,6 @@
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/fmt-base": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

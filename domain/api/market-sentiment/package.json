@@ -19,8 +19,8 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/api/market-sentiment",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix",
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check"
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@shared/api-services": "workspace:*",
@@ -35,7 +35,6 @@
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/fmt-base": "workspace:*",
     "@support/jest-domain": "workspace:*",
     "@support/ts-domain": "workspace:*",
     "@swc/core": "catalog:",

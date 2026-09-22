@@ -7,8 +7,8 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "add-tool": "nx g @ledgerhq/generators:devtool && oxfmt src",
     "reformat": "nx g @ledgerhq/generators:reformat-devtool-registry && oxfmt src",
     "typecheck": "tsc --noEmit",
@@ -33,7 +33,6 @@
     "react": "catalog:",
     "typescript": "catalog:",
     "@ledgerhq/generators": "workspace:*",
-    "@support/fmt-base": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   }
 }

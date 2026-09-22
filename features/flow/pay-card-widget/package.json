@@ -26,8 +26,8 @@
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "scripts": {
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
     "lint:fix": "oxlint src --fix",
@@ -40,7 +40,6 @@
   "devDependencies": {
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/jest-features-flow": "workspace:*",
     "@support/ts-features-flow": "workspace:*",
     "@swc/core": "catalog:",

@@ -16,8 +16,8 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "lint": "oxlint src && pnpm lint:tailwind",
     "lint:ci": "oxlint src --quiet && pnpm lint:tailwind",
     "lint:fix": "oxlint src --fix && pnpm lint:tailwind",
@@ -41,7 +41,6 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/jest-features-flow": "workspace:*",
     "@support/ts-features-flow": "workspace:*",
     "@swc/core": "catalog:",

@@ -17,8 +17,8 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -76,7 +76,6 @@
     "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-tooltip": "catalog:",
     "@reduxjs/toolkit": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/jest-features-flow": "workspace:*",
     "@support/ts-features-flow": "workspace:*",
     "@swc/core": "catalog:",

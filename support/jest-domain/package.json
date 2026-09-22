@@ -13,10 +13,7 @@
     "index.js"
   ],
   "scripts": {
-    "format": "fmt-base index.js",
-    "format:check": "fmt-base index.js --check"
-  },
-  "devDependencies": {
-    "@support/fmt-base": "workspace:*"
+    "format": "oxfmt index.js",
+    "format:check": "oxfmt index.js --check"
   }
 }

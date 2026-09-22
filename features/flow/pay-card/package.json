@@ -15,8 +15,8 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "lint": "oxlint src && pnpm lint:tailwind",
     "lint:fix": "oxlint src --fix && pnpm lint:tailwind",
@@ -55,7 +55,6 @@
     "react-native": "catalog:",
     "react-test-renderer": "catalog:",
     "typescript": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/ts-features-flow": "workspace:*"
   },
   "peerDependencies": {

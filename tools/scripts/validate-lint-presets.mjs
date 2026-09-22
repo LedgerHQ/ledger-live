@@ -42,7 +42,7 @@ const OWN_CONFIG_ALLOWED = new Set([
   "libs/wallet-btc",
 ]);
 
-const CONFIG_FILES = [".oxlintrc.json", ".oxlintrc.jsonc"];
+const CONFIG_FILES = [".oxlintrc.json", ".oxlintrc.jsonc", ".oxfmtrc.json", ".oxfmtrc.jsonc"];
 const problems = [];
 
 for (const [layer, preset] of Object.entries(LAYERS)) {
@@ -56,6 +56,18 @@ for (const [layer, preset] of Object.entries(LAYERS)) {
   const body = readFileSync(config, "utf8");
   if (!body.includes(`@support/${preset}/oxlint.config`)) {
     problems.push(`${layer}/oxlint.config.mts does not name @support/${preset}/oxlint.config`);
+  }
+
+  // A sub-layer inherits formatting from the layer above; only settings differ per layer, and none
+  // of the sub-layers change them.
+  if (layer.includes("/") && layer.startsWith("libs/")) continue;
+  const fmt = join(repoRoot, layer, "oxfmt.config.mts");
+  if (!existsSync(fmt)) {
+    problems.push(
+      `${layer}/oxfmt.config.mts is missing; every package below it formats with oxfmt's defaults`,
+    );
+  } else if (!readFileSync(fmt, "utf8").includes("@support/fmt-base/oxfmt.config")) {
+    problems.push(`${layer}/oxfmt.config.mts does not name @support/fmt-base/oxfmt.config`);
   }
 }
 

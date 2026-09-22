@@ -9,9 +9,6 @@
     "./package.json": "./package.json",
     "./oxfmt.config": "./oxfmt.config.mts"
   },
-  "bin": {
-    "fmt-base": "./bin/fmt-base.mjs"
-  },
   "devDependencies": {
     "oxfmt": "catalog:"
   }

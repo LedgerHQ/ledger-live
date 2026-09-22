@@ -12,8 +12,8 @@
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
     "lint": "oxlint src",
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "unimported": "pnpm knip --directory ../.. -W devtools/relay",
     "lint:fix": "oxlint src --fix"
   },
@@ -35,7 +35,6 @@
     "oxfmt": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   }
 }

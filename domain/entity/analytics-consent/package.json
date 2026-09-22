@@ -19,8 +19,8 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/analytics-consent",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix",
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check"
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@shared/schema-primitives": "workspace:*",
@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/fmt-base": "workspace:*",
     "@support/jest-domain": "workspace:*",
     "@support/ts-domain": "workspace:*",
     "@swc/core": "catalog:",

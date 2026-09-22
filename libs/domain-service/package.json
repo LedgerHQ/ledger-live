@@ -66,8 +66,8 @@
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint ./src",
     "lint:fix": "oxlint ./src --fix",
-    "format": "fmt-base ./src",
-    "format:check": "fmt-base ./src --check",
+    "format": "oxfmt ./src",
+    "format:check": "oxfmt ./src --check",
     "test": "cross-env TZ=America/New_York jest",
     "unimported": "unimported",
     "coverage": "jest --coverage"
@@ -82,7 +82,6 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/fmt-base": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

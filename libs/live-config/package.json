@@ -27,15 +27,14 @@
     "lint:fix": "oxlint ./src --fix",
     "test": "jest",
     "coverage": "jest --coverage",
-    "format": "fmt-base ./src",
-    "format:check": "fmt-base ./src --check"
+    "format": "oxfmt ./src",
+    "format:check": "oxfmt ./src --check"
   },
   "dependencies": {
     "lodash": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/fmt-base": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

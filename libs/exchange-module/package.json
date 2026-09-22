@@ -32,8 +32,8 @@
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint ./src",
     "lint:fix": "oxlint ./src --fix",
-    "format": "fmt-base ./src",
-    "format:check": "fmt-base ./src --check"
+    "format": "oxfmt ./src",
+    "format:check": "oxfmt ./src --check"
   },
   "dependencies": {
     "@ledgerhq/wallet-api-client": "catalog:",
@@ -41,7 +41,6 @@
     "bignumber.js": "9.1.2"
   },
   "devDependencies": {
-    "@support/fmt-base": "workspace:*",
     "@types/node": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"

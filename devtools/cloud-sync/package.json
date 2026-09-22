@@ -15,8 +15,8 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "pnpm run test:web && pnpm run test:native",
     "test:web": "jest --config jest.config.js",
@@ -70,7 +70,6 @@
     "clsx": "catalog:",
     "tailwind-merge": "catalog:",
     "react-test-renderer": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   },
   "peerDependencies": {

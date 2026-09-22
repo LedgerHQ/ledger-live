@@ -23,7 +23,6 @@
   "dependencies": {},
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/fmt-base": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
@@ -39,8 +38,8 @@
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint ./src",
     "lint:fix": "oxlint ./src --fix",
-    "format": "fmt-base ./src",
-    "format:check": "fmt-base ./src --check",
+    "format": "oxfmt ./src",
+    "format:check": "oxfmt ./src --check",
     "test": "jest",
     "coverage": "jest --coverage",
     "typecheck": "tsc --noEmit --customConditions node",

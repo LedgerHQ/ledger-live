@@ -7,8 +7,8 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "format": "fmt-base src jest.config.js",
-    "format:check": "fmt-base src jest.config.js --check",
+    "format": "oxfmt src jest.config.js",
+    "format:check": "oxfmt src jest.config.js --check",
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
@@ -23,7 +23,6 @@
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "typescript": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   }
 }

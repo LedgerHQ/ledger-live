@@ -15,8 +15,8 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "fmt-base src jest",
-    "format:check": "fmt-base src jest --check",
+    "format": "oxfmt src jest",
+    "format:check": "oxfmt src jest --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "pnpm run test:web && pnpm run test:native",
     "test:web": "jest --config jest.config.js",
@@ -75,7 +75,6 @@
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "tailwind-merge": "catalog:",
-    "@support/fmt-base": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   },
   "peerDependencies": {
