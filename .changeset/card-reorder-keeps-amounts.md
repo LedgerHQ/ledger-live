@@ -1,5 +1,6 @@
 ---
 "@domain/api-card-management": patch
+"ledger-live-desktop": patch
 "live-mobile": patch
 ---
 

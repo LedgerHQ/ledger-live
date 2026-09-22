@@ -268,7 +268,7 @@ describe("CardAssets (web)", () => {
     renderCardAssets();
 
     await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
-    fireEvent.dragStart(screen.getByTestId("card-asset-order-w-usdt"));
+    fireEvent.dragStart(screen.getByRole("button", { name: "Drag USDT" }));
     fireEvent.drop(screen.getByTestId("card-asset-order-w-usdc"));
 
     expect(screen.getByTestId("card-asset-reorder-spinner-w-usdt")).toBeVisible();

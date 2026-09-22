@@ -113,6 +113,22 @@ describe("mobile Card mock handlers", () => {
     expect(transactions[0].fundingSources).toEqual([expect.objectContaining({ currency: "btc" })]);
   });
 
+  it("should paginate a devtool transaction history", async () => {
+    emptyPayCardTransactionsMock();
+    for (let index = 0; index < 11; index += 1) {
+      receivePayCardTransactionMock("usdc");
+    }
+
+    const firstPage = await getJson("/v1/card/transactions?page=0");
+    const secondPage = await getJson("/v1/card/transactions?page=1");
+    const exhaustedPage = await getJson("/v1/card/transactions?page=2");
+
+    expect(firstPage).toHaveLength(10);
+    expect(secondPage).toHaveLength(1);
+    expect(exhaustedPage).toEqual([]);
+    expect(new Set([...firstPage, ...secondPage].map(({ id }) => id)).size).toBe(11);
+  });
+
   it("should serve the default transaction fixture to a mock session", async () => {
     const transactions = await getJson("/v1/card/transactions", MOCK_SESSION_HEADERS);
 

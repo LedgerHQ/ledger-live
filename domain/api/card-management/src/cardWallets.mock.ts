@@ -159,6 +159,7 @@ export function fundPayCardWalletMock(asset: PayCardMockWalletAsset): void {
 export function clearPayCardWalletsMock(): void {
   internalWalletsOverride = undefined;
   linkedPrioritiesOverride = undefined;
+  reorderEnabled = false;
 }
 
 export function readPayCardReorderMockEnabled(): boolean {

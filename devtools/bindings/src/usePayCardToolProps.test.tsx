@@ -194,6 +194,21 @@ describe("usePayCardToolProps", () => {
     expect(result.current.reorder.enabled).toBe(true);
   });
 
+  it("should disable reorder when the wallet mock uses the provider", () => {
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
+
+    act(() => {
+      result.current.reorder.setEnabled(true);
+      result.current.balance.mock.clear();
+    });
+
+    expect(readPayCardReorderMockEnabled()).toBe(false);
+    expect(result.current.balance.mock.isOverridden).toBe(false);
+    expect(result.current.reorder.enabled).toBe(false);
+  });
+
   it("setPayTabEnabled overrides lwdPayTab on web", () => {
     const { result } = renderHook(() => usePayCardToolProps(), {
       wrapper: withStore(store),

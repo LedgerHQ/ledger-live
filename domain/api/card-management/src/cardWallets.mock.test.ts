@@ -101,6 +101,15 @@ describe("the mocked wallet responses", () => {
     expect(readPayCardWalletsMock()).toBeUndefined();
   });
 
+  it("disables reorder when handing wallet endpoints back to the provider", () => {
+    setPayCardReorderMockEnabled(true);
+
+    clearPayCardWalletsMock();
+
+    expect(readPayCardReorderMockEnabled()).toBe(false);
+    expect(resolvePayCardInternalWalletsMock(undefined, false)).toBeUndefined();
+  });
+
   it("resolves the internal-wallet answer in devtool, reorder, onboarding and session order", () => {
     expect(resolvePayCardInternalWalletsMock(undefined, false)).toBeUndefined();
     expect(

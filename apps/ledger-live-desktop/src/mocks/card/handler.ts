@@ -5,7 +5,10 @@ import {
   mockPayCardDetailsToken,
 } from "@domain/api-card-management/mock/card-details-token";
 import { isMockCardRequest } from "@domain/api-card-management/mock/card-session";
-import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
+import {
+  mockPayCardTransactions,
+  readPayCardTransactionsMock,
+} from "@domain/api-card-management/mock/card-transactions";
 import {
   mockPayCardStatus,
   mockPayCardUser,
@@ -21,6 +24,7 @@ import {
 } from "@domain/api-card-management/mock/card-wallets";
 
 const REORDER_MS = 200;
+const TRANSACTIONS_PAGE_SIZE = 10;
 
 const handlers = [
   http.get("*/v1/user", ({ request }) => {
@@ -43,9 +47,16 @@ const handlers = [
     return isMockCardRequest(request) ? HttpResponse.json(mockPayCardStatus()) : passthrough();
   }),
 
-  http.get("*/v1/card/transactions", ({ request }) =>
-    isMockCardRequest(request) ? HttpResponse.json(mockPayCardTransactions()) : passthrough(),
-  ),
+  http.get("*/v1/card/transactions", ({ request }) => {
+    const override = readPayCardTransactionsMock();
+    if (override === undefined && !isMockCardRequest(request)) return passthrough();
+
+    const transactions = override ?? mockPayCardTransactions();
+    const page = Number(new URL(request.url).searchParams.get("page") ?? 0);
+    const start = page * TRANSACTIONS_PAGE_SIZE;
+
+    return HttpResponse.json(transactions.slice(start, start + TRANSACTIONS_PAGE_SIZE));
+  }),
 
   http.post("*/v1/card/details/token", ({ request }) =>
     isMockCardRequest(request) ? HttpResponse.json(mockPayCardDetailsToken()) : passthrough(),

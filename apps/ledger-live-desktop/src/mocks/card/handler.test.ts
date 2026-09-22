@@ -1,6 +1,11 @@
 import { setupServer } from "msw/node";
 import { MOCK_CARD_ACCESS_TOKEN } from "@domain/api-card-management/mock/card-session";
 import {
+  clearPayCardTransactionsMock,
+  emptyPayCardTransactionsMock,
+  receivePayCardTransactionMock,
+} from "@domain/api-card-management/mock/card-transactions";
+import {
   clearPayCardWalletsMock,
   fillPayCardWalletsMock,
   setPayCardReorderMockEnabled,
@@ -16,8 +21,24 @@ afterAll(() => server.close());
 
 describe("desktop Card mock handlers", () => {
   beforeEach(() => {
+    clearPayCardTransactionsMock();
     clearPayCardWalletsMock();
     setPayCardReorderMockEnabled(false);
+  });
+
+  it("should paginate a devtool transaction history", async () => {
+    emptyPayCardTransactionsMock();
+    for (let index = 0; index < 11; index += 1) {
+      receivePayCardTransactionMock("usdc");
+    }
+
+    const firstPage = await fetch(`${API_URL}/v1/card/transactions?page=0`);
+    const secondPage = await fetch(`${API_URL}/v1/card/transactions?page=1`);
+    const exhaustedPage = await fetch(`${API_URL}/v1/card/transactions?page=2`);
+
+    await expect(firstPage.json()).resolves.toHaveLength(10);
+    await expect(secondPage.json()).resolves.toHaveLength(1);
+    await expect(exhaustedPage.json()).resolves.toEqual([]);
   });
 
   it("should serve the devtool wallet balances and linked wallets", async () => {
