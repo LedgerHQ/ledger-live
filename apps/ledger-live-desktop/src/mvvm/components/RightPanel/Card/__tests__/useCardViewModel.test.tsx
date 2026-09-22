@@ -225,6 +225,26 @@ describe("useCardViewModel", () => {
     expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/?app_id=LEDGERUS");
   });
 
+  it("opens the add asset hosted crypto dashboard", async () => {
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => result.current.assets?.onAddAsset());
+
+    expect(topUpUrlFrom(mockNavigate)).toBe(
+      "https://ledger.baanxapi.test/dashboard/accounts/crypto",
+    );
+  });
+
+  it("opens the same add asset hosted crypto dashboard for a US card holder", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => result.current.assets?.onAddAsset());
+
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/dashboard/accounts/crypto");
+  });
+
   it("keeps the same cardSettingsActions reference across re-renders", () => {
     const { result, rerender } = renderCardViewModel(null);
 

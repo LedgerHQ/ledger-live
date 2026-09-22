@@ -165,6 +165,7 @@ describe("CardAssets (web)", () => {
         currencies={new Map([[USDC.id, USDC]])}
         priceWallet={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
+        onAddAsset={jest.fn()}
       />,
       { wrapper: I18nWrapper },
     );
@@ -211,6 +212,7 @@ describe("CardAssets (web)", () => {
         priceWallet={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
         onShowHistory={onShowHistory}
+        onAddAsset={jest.fn()}
       />,
       { wrapper: I18nWrapper },
     );

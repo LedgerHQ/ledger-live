@@ -5,7 +5,9 @@ import {
   buildWithdrawalPath,
   buildAccessBaanxPath,
   buildManagePinPath,
+  buildAddAssetPath,
   openHostedCardPathSafely,
+  openHostedPageSafely,
   type CardAssetPathBuilder,
 } from "@features/flow-pay-card-auth";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
@@ -187,6 +189,14 @@ export function useCardViewModel(): CardViewModel {
     [openHostedPath],
   );
 
+  const onAddAsset = useCallback(
+    () =>
+      openHostedPageSafely(openHostedPage, buildAddAssetPath(), error =>
+        logger.warn("[card] add asset page did not open", error),
+      ),
+    [openHostedPage],
+  );
+
   const payCardAssets = usePayCardAssets();
   const assets: CardAssetsProps = useMemo(
     () => ({
@@ -194,9 +204,9 @@ export function useCardViewModel(): CardViewModel {
       onShowHistory: onShowAssetHistory,
       onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
       onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
-      onAddAsset: onAccessBaanx,
+      onAddAsset,
     }),
-    [onAccessBaanx, onShowAssetHistory, openAssetPage, payCardAssets],
+    [onAddAsset, onShowAssetHistory, openAssetPage, payCardAssets],
   );
 
   const cardSettingsActions: CardSettingsActions = useMemo(

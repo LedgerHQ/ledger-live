@@ -7,8 +7,10 @@ import {
   buildWithdrawalPath,
   buildAccessBaanxPath,
   buildManagePinPath,
+  buildAddAssetPath,
   openHostedUrlInSecureBrowser,
   openHostedCardPathSafely,
+  openHostedPageSafely,
   type CardAssetPathBuilder,
   type OpenCardHostedPage,
 } from "@features/flow-pay-card-auth";
@@ -126,6 +128,14 @@ export function usePayTabViewModel() {
     [openHostedPath],
   );
 
+  const onAddAsset = useCallback(
+    () =>
+      openHostedPageSafely(openHostedPage, buildAddAssetPath(), () =>
+        console.warn("[card] add asset page did not open"),
+      ),
+    [openHostedPage],
+  );
+
   const cardSettingsActions: CardSettingsActions = useMemo(
     () => ({ onManagePin, onAccessBaanx }),
     [onManagePin, onAccessBaanx],
@@ -147,9 +157,9 @@ export function usePayTabViewModel() {
       onShowHistory: onShowAssetHistory,
       onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
       onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
-      onAddAsset: onAccessBaanx,
+      onAddAsset,
     }),
-    [payCardAssets, onShowAssetHistory, openAssetPage, onAccessBaanx],
+    [payCardAssets, onShowAssetHistory, openAssetPage, onAddAsset],
   );
 
   // Without a countervalue formatter the flow shows the bare artwork instead of the card's balance.

@@ -1,4 +1,9 @@
-import { buildAccessBaanxPath, buildTopUpPath, buildWithdrawalPath } from "../hostedPaths";
+import {
+  buildAccessBaanxPath,
+  buildAddAssetPath,
+  buildTopUpPath,
+  buildWithdrawalPath,
+} from "../hostedPaths";
 
 describe("buildTopUpPath", () => {
   it("addresses the top up page", () => {
@@ -50,6 +55,12 @@ describe("buildWithdrawalPath", () => {
     ["an empty value", ""],
   ])("names no app and no currency when both are %s", (_case, value) => {
     expect(buildWithdrawalPath(value, value)).toBe("/withdrawal");
+  });
+});
+
+describe("buildAddAssetPath", () => {
+  it("addresses the hosted crypto accounts dashboard", () => {
+    expect(buildAddAssetPath()).toBe("/dashboard/accounts/crypto");
   });
 });
 

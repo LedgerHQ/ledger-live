@@ -70,6 +70,7 @@ function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
         currencies: CURRENCIES,
         priceWallet,
         formatCountervalue,
+        onAddAsset: jest.fn(),
         ...overrides,
       }),
     { wrapper: I18nWrapper },

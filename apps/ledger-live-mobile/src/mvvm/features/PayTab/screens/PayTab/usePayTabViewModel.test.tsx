@@ -74,6 +74,7 @@ function PayTabViewModelProbe() {
       </Text>
       <Pressable testID="press-manage-pin" onPress={cardSettingsActions?.onManagePin} />
       <Pressable testID="press-access-baanx" onPress={cardSettingsActions?.onAccessBaanx} />
+      <Pressable testID="press-add-asset" onPress={cardAssets.onAddAsset} />
     </>
   );
 }
@@ -282,6 +283,36 @@ describe("usePayTabViewModel", () => {
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
         buildHostedUrl(getEnv("CARD_BAANX_HOSTED_UI"), buildAccessBaanxPath("LEDGERUS")),
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should open the add asset hosted crypto dashboard", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("press-add-asset"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/dashboard/accounts/crypto",
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should open the same add asset hosted crypto dashboard for a US card holder", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("press-add-asset"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/dashboard/accounts/crypto",
         PAY_TAB_DEEP_LINK,
       ),
     );
