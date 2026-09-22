@@ -32,6 +32,10 @@ ${mode.toUpperCase()} ${
 // makes `fromTransactionRaw(toTransactionRaw(t))` differ from `t` — and a lost nonce sends
 // `signOperation` into `getNextSequence`, which this module does not implement. Same shape as the
 // other generic-route families (tezos, xrp).
+//
+// `toFixed`, not `toString`, on the way out: BigNumber switches to exponential notation above 1e21
+// and a NEAR fee is denominated in yocto, so every estimated fee clears that. `toString` persisted
+// "1.5e+22" instead of the digits, which `BigInt` cannot parse.
 export const fromTransactionRaw = (transactionRaw: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(transactionRaw);
   return {
@@ -49,8 +53,8 @@ export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
     ...common,
     family: transaction.family,
     mode: transaction.mode,
-    fees: transaction.fees ? transaction.fees.toString() : null,
-    ...(transaction.nonce ? { nonce: transaction.nonce.toString() } : {}),
+    fees: transaction.fees ? transaction.fees.toFixed() : null,
+    ...(transaction.nonce ? { nonce: transaction.nonce.toFixed() } : {}),
   };
 
   return transactionRaw;
