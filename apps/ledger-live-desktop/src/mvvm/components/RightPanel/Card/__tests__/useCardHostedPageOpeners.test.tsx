@@ -44,7 +44,7 @@ function manifestsFrom(catalog: Record<string, unknown>) {
 function renderOpeners() {
   return renderHook(() => useCardHostedPageOpeners(), {
     initialState: withFlagOverrides({
-      lwdPayTab: { enabled: true, params: { card: true } },
+      lwdPayTab: { enabled: true, params: { card: true, legacyTopUp: false } },
     }),
   });
 }
@@ -57,7 +57,7 @@ function renderOpenersWithWipe() {
     },
     {
       initialState: withFlagOverrides({
-        lwdPayTab: { enabled: true, params: { card: true } },
+        lwdPayTab: { enabled: true, params: { card: true, legacyTopUp: false } },
       }),
     },
   );

@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { act, render, screen, waitFor } from "@tests/test-renderer";
+import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { getEnv, getEnvDefault, setEnv } from "@shared/env";
 import {
   buildHostedUrl,
@@ -11,7 +11,7 @@ import {
 } from "@features/flow-pay-card-auth";
 import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { readCardUsEnv } from "@features/platform-card";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import type { PayTabNavigatorParamList } from "../../types";
 import { usePayTabViewModel } from "./usePayTabViewModel";
@@ -92,6 +92,35 @@ function renderViewModel(params?: PayTabNavigatorParamList[typeof ScreenName.Pay
         />
       </Stack.Navigator>
     </PayAnalyticsProvider>,
+  );
+}
+
+// The legacy top-up leaves the Pay tab for the Discover live app, which lives under the Base
+// navigator. A stub screen of that name reports the route the view model asked for.
+const LooseStack = createNativeStackNavigator();
+
+function BaseNavigatorProbe({
+  route,
+}: {
+  route: { params?: { screen?: string; params?: { platform?: string } } };
+}) {
+  return (
+    <>
+      <Text testID="base-screen">{String(route.params?.screen)}</Text>
+      <Text testID="base-platform">{String(route.params?.params?.platform)}</Text>
+    </>
+  );
+}
+
+function renderViewModelWithLegacyTopUp() {
+  return render(
+    <LooseStack.Navigator screenOptions={{ headerShown: false }}>
+      <LooseStack.Screen name={ScreenName.PayTab} component={PayTabViewModelProbe} />
+      <LooseStack.Screen name={NavigatorName.Base} component={BaseNavigatorProbe} />
+    </LooseStack.Navigator>,
+    {
+      overrideInitialState: withFlagOverrides({ lwmPayTab: { params: { legacyTopUp: true } } }),
+    },
   );
 }
 
@@ -195,6 +224,25 @@ describe("usePayTabViewModel", () => {
         PAY_TAB_DEEP_LINK,
       ),
     );
+  });
+
+  it("should open the legacy card live app on top up when the legacyTopUp param is on", async () => {
+    const { user } = renderViewModelWithLegacyTopUp();
+
+    await user.press(screen.getByTestId("top-up"));
+
+    await waitFor(() => expect(screen.getByTestId("base-screen")).toHaveTextContent("PlatformApp"));
+    expect(screen.getByTestId("base-platform")).toHaveTextContent("cl-card");
+    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
+  });
+
+  it("should open the legacy card live app from an asset too, and drop its currency", async () => {
+    const { user } = renderViewModelWithLegacyTopUp();
+
+    await user.press(screen.getByTestId("asset-top-up"));
+
+    await waitFor(() => expect(screen.getByTestId("base-platform")).toHaveTextContent("cl-card"));
+    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
   });
 
   it("should open the withdrawal page of the hosted UI for the asset", async () => {
