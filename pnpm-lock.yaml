@@ -5323,6 +5323,43 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  domain/entity/market-countervalues:
+    dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../currency
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../currency-fiat
+      '@domain/entity-currency-token':
+        specifier: workspace:*
+        version: link:../currency-token
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   domain/entity/market-sentiment:
     dependencies:
       zod:

@@ -14,7 +14,8 @@ const renderPage = (page: string) => <TrackPage category={page} />;
 const payAnalyticsAdapter = { track };
 
 export const CardView = ({ viewModel }: CardViewProps) => {
-  const { formatters, assets, login, onShowMore, onTopUp, cardSettingsActions } = viewModel;
+  const { formatters, assets, login, onShowMore, onTopUp, onChooseCardType, cardSettingsActions } =
+    viewModel;
 
   return (
     <PayAnalyticsProvider adapter={payAnalyticsAdapter} renderPage={renderPage}>
@@ -27,6 +28,7 @@ export const CardView = ({ viewModel }: CardViewProps) => {
               formatters={formatters}
               onShowMore={onShowMore}
               onTopUp={onTopUp}
+              onChooseCardType={onChooseCardType}
               cardSettingsActions={cardSettingsActions}
             />
           </div>
