@@ -1,8 +1,4 @@
-import buildCoinConfig, {
-  type CoinConfig,
-  type Context,
-  type CurrencyConfig,
-} from "@ledgerhq/coin-module-framework/config";
+import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
 /** Settings for the Tronify energy-rent provider. */
 export type TronifyProviderConfig = {
@@ -50,10 +46,3 @@ export type TronCoinConfig = CurrencyConfig & TronConfig;
 
 /** The {@link Context} threaded through the coin-tron API layer (ADR-019). */
 export type TronContext = Context<TronCoinConfig>;
-
-const coinConfig: {
-  setCoinConfig: (config: CoinConfig<TronCoinConfig>) => void;
-  getCoinConfig: (currencyId?: string) => TronCoinConfig;
-} = buildCoinConfig<TronCoinConfig>();
-
-export default coinConfig;

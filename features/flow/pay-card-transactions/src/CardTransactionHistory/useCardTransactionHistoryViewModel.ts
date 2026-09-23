@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth/hooks";
 import { useCardTransactionsViewModel } from "../hooks/useCardTransactionsViewModel";
 import { isCardTransactionFundedBy } from "../logic/isCardTransactionFundedBy";
@@ -12,11 +12,13 @@ export function useCardTransactionHistoryViewModel({
   onRowClick,
   formatDay,
   onGoToPay,
+  onTrackEvent,
   cardVisual,
 }: CardTransactionHistoryProps &
   Pick<CardTransactionHistoryViewProps, "onRowClick">): CardTransactionHistoryViewProps {
   const isSignedIn = useIsCardSignedIn();
-  const { transactions, isLoading, isError } = useCardTransactionsViewModel();
+  const { transactions, isLoading, isError, loadMore, isLoadingMore } =
+    useCardTransactionsViewModel();
   const scopedTransactions = useMemo(
     () =>
       asset ? transactions.filter(item => isCardTransactionFundedBy(item, asset)) : transactions,
@@ -33,13 +35,19 @@ export function useCardTransactionHistoryViewModel({
       }),
     [groups, isError, isLoading, isSignedIn],
   );
+  const handleGoToPay = useCallback(() => {
+    onTrackEvent?.("button_clicked", { button: "card banner", page: "History" });
+    onGoToPay?.();
+  }, [onGoToPay, onTrackEvent]);
 
   return {
     displayState,
     formatters,
     formatDay,
     onRowClick,
-    onGoToPay,
+    onGoToPay: onGoToPay ? handleGoToPay : undefined,
     cardVisual,
+    onLoadMore: loadMore,
+    isLoadingMore,
   };
 }

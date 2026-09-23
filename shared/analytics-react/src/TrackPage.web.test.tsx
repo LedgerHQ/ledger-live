@@ -150,17 +150,11 @@ describe("TrackPage", () => {
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
     });
-    expect(track).toHaveBeenCalledWith("Page Analytics Consent Mandatory", {
-      flow: "test-flow",
-    });
-  });
-
-  it("does not update route refs when consent is refused", () => {
-    setEnabledFn(() => false);
-
-    render(<TrackPage category="Portfolio" />);
-
-    expect(track).not.toHaveBeenCalled();
-    expect(currentRouteNameRef.current).toBeUndefined();
+    expect(track).toHaveBeenCalledWith(
+      "Page Analytics Consent Mandatory",
+      expect.objectContaining({
+        flow: "test-flow",
+      }),
+    );
   });
 });

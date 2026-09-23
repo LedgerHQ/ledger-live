@@ -1,5 +1,4 @@
 import { act, renderHook, waitFor } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { usePayCardBalance } from "../usePayCardBalance";
 import type { PayStablecoins } from "../usePayStablecoins";
@@ -9,7 +8,6 @@ import { USDC, USDT, makeItem } from "./fixtures";
 jest.mock("../usePayStablecoins", () => ({ usePayStablecoins: jest.fn() }));
 
 const mockedUsePayStablecoins = jest.mocked(usePayStablecoins);
-const mockedTrack = jest.mocked(track);
 
 const initialState = { settings: { ...AFTER_ONBOARDING_STATE, counterValue: "USD" } };
 
@@ -63,11 +61,12 @@ describe("usePayCardBalance", () => {
     await waitFor(() => expect(store.getState().payCardBalance.balanceFilter).toBe(USDC.id));
   });
 
-  it("should forward tracking events to analytics", () => {
-    const { result } = renderHook(() => usePayCardBalance(), { initialState });
+  it("should forward tracking events to the injected callback", () => {
+    const onTrackEvent = jest.fn();
+    const { result } = renderHook(() => usePayCardBalance(onTrackEvent), { initialState });
 
     act(() => result.current.onTrackEvent?.("button_clicked", { button: "balance_filter" }));
 
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", { button: "balance_filter" });
+    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", { button: "balance_filter" });
   });
 });

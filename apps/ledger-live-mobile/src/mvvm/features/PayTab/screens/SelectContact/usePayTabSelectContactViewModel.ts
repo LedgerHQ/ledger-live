@@ -4,6 +4,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
 import { useContacts } from "@features/platform-contacts";
 import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
 import { useHideTabBar } from "LLM/hooks/useTabBarVisibility";
@@ -24,18 +25,24 @@ export function usePayTabSelectContactViewModel(): PayTabSelectContactViewModel 
   useHideTabBar();
   const navigation = useNavigation<NativeStackNavigationProp<PayTabNavigatorParamList>>();
   const storedContacts = useContacts();
-  const { handleOpenSendFlow } = useOpenSendFlow({ sourceScreenName: "Pay" });
+  const { handleOpenSendFlow } = useOpenSendFlow({ sourceScreenName: "pay" });
+  const { trackButtonClicked } = usePayAnalyticsContext();
   const [searchValue, setSearchValue] = useState("");
 
   const payFromAddress = useCallback(
     (address: ContactAddress) => {
+      trackButtonClicked({
+        button: "send to contact",
+        buttonLocation: "contacts",
+        page: "Pay",
+      });
       handleOpenSendFlow({
         currencyIds: [address.currencyId],
         recipient: address.address,
         skipRecipientStep: true,
       });
     },
-    [handleOpenSendFlow],
+    [handleOpenSendFlow, trackButtonClicked],
   );
   const { open: openPicker, contactAddressPicker } = useContactAddressPicker({
     onSelectAddress: payFromAddress,

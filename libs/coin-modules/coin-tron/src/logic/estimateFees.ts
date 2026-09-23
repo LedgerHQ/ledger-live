@@ -1,7 +1,7 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
-import coinConfig, { type TronCoinConfig } from "../config";
+import type { TronCoinConfig } from "../config";
 import {
   fetchTronAccount,
   getChainParameters,
@@ -402,9 +402,8 @@ export async function estimateTronifyFees(
   const energyNeeded = await estimateEnergy(logger, config, intent);
 
   // Rental params are remote-configurable via coin-config (energyRent.tronify), so they can be
-  // tuned without a release; fall back to the defaults when unset. Read from the coinConfig
-  // singleton — the same source the energyRent provider selection uses (network/tronify, energyRent).
-  const tronifyConfig = coinConfig.getCoinConfig().energyRent?.tronify;
+  // tuned without a release; fall back to the defaults when unset.
+  const tronifyConfig = config.energyRent?.tronify;
   const durationSeconds = readRentalParam(
     logger,
     tronifyConfig?.rentalDurationSeconds,
@@ -423,12 +422,9 @@ export async function estimateTronifyFees(
   // computeFeesRaw does not catch — any chain-params failure propagates here (no silent fallback
   // on originalValue, per ADR-050 Option 3). Both calls are independent once energyNeeded is
   // known, so they run in parallel to keep pricing latency minimal.
-  // getEnergyRentQuote resolves its provider through the coinConfig singleton (not `config`); this
-  // is the shared design of the energyRent module — the provider is selected via remote coin-config.
-  // TODO(LIVE-34996): align energyRent config threading with the injected `config` pattern.
   const [{ value: originalValue, networkInfo }, quote] = await Promise.all([
     computeFeesRaw(logger, config, intent, energyNeeded),
-    getEnergyRentQuote(logger, {
+    getEnergyRentQuote(logger, config, {
       payerAddress: intent.sender,
       receiverAddress: intent.sender, // energy is delegated to the sender (they call the contract)
       energy: BigInt(energyNeeded),

@@ -46,16 +46,14 @@ export function CardAssetsManageDrawer({ rows, onAddAsset }: CardAssetsManageDra
           </ListItem>
         ))}
       </Box>
-      {onAddAsset ? (
-        <Box lx={{ alignItems: "center", gap: "s12", paddingTop: "s16" }}>
-          <Text typography="body4" lx={{ color: "muted", textAlign: "center" }}>
-            {t("payTab.card.assets.manageDialog.addAssetCaption")}
-          </Text>
-          <Button appearance="base" size="lg" isFull onPress={onAddAsset} testID="card-assets-add">
-            {t("payTab.card.assets.manageDialog.addAsset")}
-          </Button>
-        </Box>
-      ) : null}
+      <Box lx={{ alignItems: "center", gap: "s12", paddingTop: "s16" }}>
+        <Text typography="body4" lx={{ color: "muted", textAlign: "center" }}>
+          {t("payTab.card.assets.manageDialog.addAssetCaption")}
+        </Text>
+        <Button appearance="base" size="lg" isFull onPress={onAddAsset} testID="card-assets-add">
+          {t("payTab.card.assets.manageDialog.addAsset")}
+        </Button>
+      </Box>
     </Box>
   );
 }

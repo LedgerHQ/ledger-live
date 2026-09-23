@@ -15,8 +15,6 @@ function setup(overrides: { verifyHint?: RequestReceiveVerifyHint } = {}) {
           ? overrides.verifyHint
           : {
               open: true,
-              message: "Verify your address",
-              gotItLabel: "Got it",
               onGotIt,
             },
     }),

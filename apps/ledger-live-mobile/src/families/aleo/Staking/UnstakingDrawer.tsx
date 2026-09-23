@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Text } from "@ledgerhq/native-ui";
+import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "~/context/Locale";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import type {
@@ -7,13 +8,29 @@ import type {
   AleoUnbondingDisplayState,
 } from "@ledgerhq/live-common/families/aleo/types";
 import type { AleoStakingPositionView } from "@ledgerhq/live-common/families/aleo/react";
-import DelegationDrawer, { type Action, type FieldType } from "~/components/DelegationDrawer";
+import DelegationDrawer, {
+  type Action,
+  type FieldType,
+  type IconProps,
+} from "~/components/DelegationDrawer";
+import Circle from "~/components/Circle";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import ClaimRewardIcon from "~/icons/ClaimReward";
+import { rgba } from "~/colors";
 import { makeValidatorImage } from "./ValidatorImage";
 import { getUnbondingStatusLabel } from "./utils";
 
-/** Claim arrives with its own flow in LIVE-32812. */
-const NO_ACTIONS: Action[] = [];
+function makeClaimIcon(disabled: boolean) {
+  return function ClaimIcon(props: Readonly<IconProps>) {
+    const { colors } = useTheme();
+
+    return (
+      <Circle {...props} bg={disabled ? colors.lightFog : rgba(colors.yellow, 0.2)}>
+        <ClaimRewardIcon color={disabled ? colors.grey : colors.yellow} />
+      </Circle>
+    );
+  };
+}
 
 type Props = Readonly<{
   account: AleoAccount;
@@ -21,15 +38,40 @@ type Props = Readonly<{
   unbonding: AleoUnbondingDisplayState;
   isOpen: boolean;
   onClose: () => void;
+  onClaim: () => void;
 }>;
 
-export default function UnstakingDrawer({ account, position, unbonding, isOpen, onClose }: Props) {
+export default function UnstakingDrawer({
+  account,
+  position,
+  unbonding,
+  isOpen,
+  onClose,
+  onClaim,
+}: Props) {
   const { t } = useTranslation();
   const unit = useAccountUnit(account);
-  const { unbondingBalance, unbondingHeight, claimableBalance } = position;
+  const { unbondingBalance, unbondingHeight, claimableBalance, hasPendingUnbondingChange } =
+    position;
 
   // unbonding funds aren't tied to a validator anymore
   const ValidatorImage = useMemo(() => makeValidatorImage(unit.name), [unit.name]);
+
+  // Aleo tracks one unbonding position at a time, so a pending unbond or claim locks the next one.
+  const canClaim = claimableBalance.gt(0) && !hasPendingUnbondingChange;
+
+  const actions = useMemo<Action[]>(
+    () => [
+      {
+        label: t("aleo.manage.claim"),
+        Icon: makeClaimIcon(!canClaim),
+        event: "AleoManageClaim",
+        disabled: !canClaim,
+        onPress: onClaim,
+      },
+    ],
+    [t, canClaim, onClaim],
+  );
 
   const data = useMemo<FieldType[]>(() => {
     const fields: FieldType[] = [
@@ -77,7 +119,7 @@ export default function UnstakingDrawer({ account, position, unbonding, isOpen, 
       amount={unbondingBalance}
       ValidatorImage={ValidatorImage}
       data={data}
-      actions={NO_ACTIONS}
+      actions={actions}
     />
   );
 }

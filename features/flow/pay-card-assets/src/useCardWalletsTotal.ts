@@ -1,23 +1,17 @@
 import { useMemo } from "react";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { selectCardWalletsTotal } from "./selectors/selectCardWalletsTotal";
 import type { CardAssetsProps } from "./types";
 
 const NO_CURRENCIES: ReadonlyMap<string, CryptoOrTokenCurrency> = new Map();
 
 export type CardWalletsTotal = Readonly<{
-  /** Every wallet that could be priced, summed, in the counter-value currency's smallest unit. */
   total: number;
   isLoading: boolean;
   isError: boolean;
 }>;
 
-/**
- * What the card's funding wallets are worth altogether, for the balance on the card face.
- *
- * The provider answers no total, so it is summed here. The Assets list prices the same wallets for
- * its rows; both read one wallets query, which RTK Query serves from a single cache entry.
- */
 export function useCardWalletsTotal(
   assets: CardAssetsProps | undefined,
   isSignedIn: boolean,
@@ -27,16 +21,11 @@ export function useCardWalletsTotal(
     skip: !isSignedIn || assets === undefined,
   });
 
-  const priceWallet = assets?.priceWallet;
+  const getCounterValue = assets?.getCounterValue;
 
   return useMemo(() => {
-    // A wallet nothing could price adds nothing, so the total can understate what the card holds.
-    const total = wallets.reduce((sum, { balance, ledgerCurrency }) => {
-      if (priceWallet === undefined || !ledgerCurrency || balance === null) return sum;
-
-      return sum + (priceWallet(ledgerCurrency, balance) ?? 0);
-    }, 0);
+    const total = selectCardWalletsTotal({ wallets, getCounterValue });
 
     return { total, isLoading, isError };
-  }, [wallets, priceWallet, isLoading, isError]);
+  }, [wallets, getCounterValue, isLoading, isError]);
 }

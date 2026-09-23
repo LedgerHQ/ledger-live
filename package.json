@@ -13,9 +13,6 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "resolutions": {
-    "node-abi": "^4.9.0"
-  },
   "scripts": {
     "nx:write-cache-config": "node tools/nx/write-nx-cache-config.mjs",
     "postinstall": "pnpm run nx:write-cache-config",
@@ -53,7 +50,6 @@
     "build-ci:llm:ios": "nx run-many -t ios:ci:adhoc -p live-mobile",
     "build-ci:llm:android": "nx run-many -t android:apk -p live-mobile",
     "clean:ljs": "nx run-many -t clean -p \"@ledgerhq/hw-*,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
-    "doc:ljs": "nx run-many -t doc -p \"@ledgerhq/hw-*,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
     "watch:coin": "nx run-many -t watch -p \"@ledgerhq/coin-*\" --parallel=20",
     "watch:es:coin": "nx run-many -t watch:es -p \"@ledgerhq/coin-*\" --parallel=20",
     "watch:ljs": "nx run-many -t watch -p \"@ledgerhq/hw-*,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
@@ -87,6 +83,7 @@
     "validate:renovate": "npx --yes --package renovate -- renovate-config-validator",
     "knip-check": "nx run-many -t knip-check",
     "unimported": "nx run-many -t unimported",
+    "deadcode": "nx run-many -t unimported -t knip-check",
     "desktop": "pnpm --filter ledger-live-desktop",
     "e2e:desktop": "pnpm --filter ledger-live-desktop-e2e-tests",
     "e2e-cli": "pnpm --filter @ledgerhq/live-e2e-shared e2e-cli",

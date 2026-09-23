@@ -2,6 +2,7 @@ import { renderHook } from "@testing-library/react";
 
 jest.mock("@domain/api-card-management", () => ({
   useGetCardStatusQuery: jest.fn(),
+  useGetCardTransactionsInfiniteQuery: jest.fn(),
   useGetUserQuery: jest.fn(),
 }));
 
@@ -9,7 +10,11 @@ jest.mock("@features/flow-pay-card-wallets", () => ({
   useCardLinkedWallets: jest.fn(),
 }));
 
-import { useGetCardStatusQuery, useGetUserQuery } from "@domain/api-card-management";
+import {
+  useGetCardStatusQuery,
+  useGetCardTransactionsInfiniteQuery,
+  useGetUserQuery,
+} from "@domain/api-card-management";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
 import { useCardOnboardingStatus } from "./useCardOnboardingStatus";
 
@@ -17,6 +22,7 @@ type Verification = "UNVERIFIED" | "PENDING" | "VERIFIED" | "REJECTED";
 
 const refetchUser = jest.fn();
 const refetchCardStatus = jest.fn();
+const refetchTransactions = jest.fn();
 const refetchWallets = jest.fn();
 
 function setupMocks({
@@ -25,10 +31,14 @@ function setupMocks({
   hasCard = true,
   cardStatus = "ACTIVE",
   balances = [] as (string | null)[],
+  transactions = [] as { status: "CONFIRMED" | "PENDING" | "DECLINED" | "REVERTED" }[],
   isUserFetching = false,
   isCardStatusFetching = false,
+  areTransactionsFetching = false,
   areWalletsFetching = false,
   isUserError = false,
+  isCardStatusError = false,
+  areTransactionsError = false,
   areWalletsError = false,
 } = {}) {
   jest.mocked(useGetUserQuery).mockReturnValue({
@@ -42,8 +52,15 @@ function setupMocks({
     refetch: refetchCardStatus,
     data: hasCard ? { status: cardStatus } : undefined,
     isFetching: isCardStatusFetching,
-    isError: false,
+    isError: isCardStatusError,
   } as unknown as ReturnType<typeof useGetCardStatusQuery>);
+
+  jest.mocked(useGetCardTransactionsInfiniteQuery).mockReturnValue({
+    refetch: refetchTransactions,
+    data: { pages: [transactions], pageParams: [0] },
+    isFetching: areTransactionsFetching,
+    isError: areTransactionsError,
+  } as unknown as ReturnType<typeof useGetCardTransactionsInfiniteQuery>);
 
   jest.mocked(useCardLinkedWallets).mockReturnValue({
     refetch: refetchWallets,
@@ -126,12 +143,21 @@ describe("useCardOnboardingStatus", () => {
     );
   });
 
-  it("leaves the purchase step not done, because nothing reads the transactions yet", () => {
-    setupMocks({ verificationState: "VERIFIED", hasCard: true, balances: ["12.50"] });
+  describe("the first purchase step", () => {
+    it("is done once a confirmed card transaction exists", () => {
+      setupMocks({ transactions: [{ status: "CONFIRMED" }] });
 
-    const steps = stepsById();
-    expect(steps.isDone("first-purchase")).toBe(false);
-    expect(steps.completedCount).toBe(3);
+      expect(stepsById().isDone("first-purchase")).toBe(true);
+    });
+
+    it.each(["PENDING", "DECLINED", "REVERTED"] as const)(
+      "is not done when the only transaction is %s",
+      status => {
+        setupMocks({ transactions: [{ status }] });
+
+        expect(stepsById().isDone("first-purchase")).toBe(false);
+      },
+    );
   });
 
   it("counts nothing done for a holder who has only signed up", () => {
@@ -141,7 +167,7 @@ describe("useCardOnboardingStatus", () => {
   });
 
   describe("re-asking", () => {
-    it("re-asks all three sources", () => {
+    it("re-asks all four sources", () => {
       setupMocks();
       const { result } = renderHook(() => useCardOnboardingStatus());
 
@@ -149,6 +175,7 @@ describe("useCardOnboardingStatus", () => {
 
       expect(refetchUser).toHaveBeenCalledTimes(1);
       expect(refetchCardStatus).toHaveBeenCalledTimes(1);
+      expect(refetchTransactions).toHaveBeenCalledTimes(1);
       expect(refetchWallets).toHaveBeenCalledTimes(1);
     });
 
@@ -160,6 +187,7 @@ describe("useCardOnboardingStatus", () => {
 
       expect(refetchUser).not.toHaveBeenCalled();
       expect(refetchCardStatus).not.toHaveBeenCalled();
+      expect(refetchTransactions).not.toHaveBeenCalled();
       expect(refetchWallets).not.toHaveBeenCalled();
     });
   });
@@ -171,6 +199,9 @@ describe("useCardOnboardingStatus", () => {
 
       expect(jest.mocked(useGetUserQuery)).toHaveBeenCalledWith(undefined, { skip: true });
       expect(jest.mocked(useGetCardStatusQuery)).toHaveBeenCalledWith(undefined, { skip: true });
+      expect(jest.mocked(useGetCardTransactionsInfiniteQuery)).toHaveBeenCalledWith(undefined, {
+        skip: true,
+      });
       expect(jest.mocked(useCardLinkedWallets)).toHaveBeenCalledWith(
         expect.objectContaining({ skip: true }),
       );
@@ -188,6 +219,7 @@ describe("useCardOnboardingStatus", () => {
     it.each([
       ["the account", { isUserFetching: true }],
       ["the card", { isCardStatusFetching: true }],
+      ["the transactions", { areTransactionsFetching: true }],
       ["the wallets", { areWalletsFetching: true }],
     ])("is loading while %s is in flight, refetches included", (_source, fetching) => {
       setupMocks(fetching);
@@ -212,6 +244,7 @@ describe("useCardOnboardingStatus", () => {
 
       const steps = stepsById();
       expect(steps.status.isError).toBe(false);
+      expect(steps.status.hasSourceError).toBe(true);
       expect(steps.isDone("top-up-card")).toBe(false);
     });
   });

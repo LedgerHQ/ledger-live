@@ -1,4 +1,6 @@
-import React, { type DragEventHandler } from "react";
+import React from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   ListItem,
   ListItemContent,
@@ -12,48 +14,57 @@ import type { CardAssetRow } from "./types";
 
 type CardAssetsManageRowProps = Readonly<{
   row: CardAssetRow;
+  showHandle: boolean;
   isReordering: boolean;
-  isReorderDisabled: boolean;
-  onDragStart: () => void;
-  onDragEnd: () => void;
-  onDragOver: DragEventHandler<HTMLDivElement>;
-  onDrop: () => void;
+  reorderLabel: string;
 }>;
 
 export function CardAssetsManageRow({
   row,
+  showHandle,
   isReordering,
-  isReorderDisabled,
-  onDragStart,
-  onDragEnd,
-  onDragOver,
-  onDrop,
+  reorderLabel,
 }: CardAssetsManageRowProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: row.id,
+    disabled: isReordering,
+  });
+
   return (
-    <div data-testid={`card-asset-order-${row.id}`} onDragOver={onDragOver} onDrop={onDrop}>
+    <div
+      ref={setNodeRef}
+      data-testid={`card-asset-order-${row.id}`}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.6 : 1,
+        zIndex: isDragging ? 1 : undefined,
+      }}
+    >
       <ListItem className="bg-surface">
         <ListItemLeading>
           <ListItemContent>
             <ListItemTitle className="body-2-semi-bold">{row.name}</ListItemTitle>
           </ListItemContent>
         </ListItemLeading>
-        <ListItemTrailing>
-          {isReordering ? (
-            <Spinner size={24} data-testid={`card-asset-reorder-spinner-${row.id}`} />
-          ) : (
-            <button
-              type="button"
-              draggable={!isReorderDisabled}
-              disabled={isReorderDisabled}
-              aria-label={`Drag ${row.name}`}
-              className="cursor-grab text-muted active:cursor-grabbing"
-              onDragStart={onDragStart}
-              onDragEnd={onDragEnd}
-            >
-              <MenuBurger size={24} />
-            </button>
-          )}
-        </ListItemTrailing>
+        {showHandle ? (
+          <ListItemTrailing>
+            {isReordering ? (
+              <Spinner size={24} data-testid={`card-asset-reorder-spinner-${row.id}`} />
+            ) : (
+              <button
+                type="button"
+                aria-label={reorderLabel}
+                className="cursor-grab text-muted active:cursor-grabbing"
+                data-testid={`card-asset-reorder-handle-${row.id}`}
+                {...attributes}
+                {...listeners}
+              >
+                <MenuBurger size={24} />
+              </button>
+            )}
+          </ListItemTrailing>
+        ) : null}
       </ListItem>
     </div>
   );

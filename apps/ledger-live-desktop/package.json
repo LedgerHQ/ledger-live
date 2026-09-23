@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "4.20.0",
+  "version": "4.21.1",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development TS_NODE_PROJECT=tools/rspack/tsconfig.json node --require ts-node/register ./tools/main-rspack.ts",
@@ -61,6 +61,10 @@
   },
   "dependencies": {
     "@braze/web-sdk": "6.4.0",
+    "@dnd-kit/core": "catalog:",
+    "@dnd-kit/modifiers": "catalog:",
+    "@dnd-kit/sortable": "catalog:",
+    "@dnd-kit/utilities": "catalog:",
     "@datadog/browser-logs": "6.30.1",
     "@datadog/browser-rum": "6.30.1",
     "@devtools/bindings": "workspace:*",
@@ -123,6 +127,7 @@
     "@features/platform-device-intent": "workspace:^",
     "@features/platform-env": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
+    "@features/platform-pay-analytics": "workspace:^",
     "@features/platform-style": "workspace:^",
     "@features/platform-verify-address-intent": "workspace:^",
     "@features/platform-wallet-sync": "workspace:^",

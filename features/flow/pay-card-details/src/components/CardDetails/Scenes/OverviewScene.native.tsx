@@ -4,6 +4,7 @@ import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
 import { CardAssetsView } from "@features/flow-pay-card-assets";
 import { CardTransactions } from "@features/flow-pay-card-transactions";
+import { PayTrackPage } from "@features/platform-pay-analytics";
 import { CardArtwork } from "../../CardArtwork/CardArtwork";
 import { CardVisual } from "../../CardVisual/CardVisual";
 import { FreezeAction } from "../../Freeze/Tile/FreezeAction";
@@ -16,7 +17,12 @@ import type { OverviewSceneProps } from "./types";
 
 type OverviewActionsProps = Omit<
   OverviewSceneProps,
-  "cardVisual" | "assetsViewModel" | "onTransactionPress" | "onAddToWalletPress" | "formatters"
+  | "cardVisual"
+  | "assetsViewModel"
+  | "onTransactionPress"
+  | "onAddToWalletPress"
+  | "formatters"
+  | "disclaimer"
 > &
   Readonly<{
     reveal: RevealViewModel;
@@ -74,6 +80,7 @@ function OverviewActions({
 export function OverviewScene({
   cardVisual,
   assetsViewModel,
+  assets,
   freezeViewModel,
   moreViewModel,
   onFreezePress,
@@ -81,11 +88,13 @@ export function OverviewScene({
   onTransactionPress,
   onShowMore,
   formatters,
+  disclaimer,
 }: OverviewSceneProps) {
   const reveal = useRevealViewModel();
 
   return (
     <Box lx={{ gap: "s16" }} testID="card-details-overview">
+      {reveal.isRevealed ? <PayTrackPage page="Card digits" /> : null}
       <CardFlip reveal={reveal} cardFace={<CardFace cardVisual={cardVisual} />} />
 
       <OverviewActions
@@ -98,13 +107,26 @@ export function OverviewScene({
 
       {assetsViewModel ? <CardAssetsView {...assetsViewModel} /> : null}
 
-      <Reward formatters={formatters} />
+      <Reward
+        formatters={formatters}
+        currencies={assets?.currencies}
+        getCounterValue={assets?.getCounterValue}
+        formatCountervalue={assets?.formatCountervalue}
+      />
 
       <CardTransactions
         formatters={formatters}
         onTransactionPress={item => onTransactionPress(item.transaction)}
         onShowMore={onShowMore}
       />
+
+      <Text
+        typography="body3"
+        lx={{ color: "muted", textAlign: "center" }}
+        testID="card-details-overview-disclaimer"
+      >
+        {disclaimer}
+      </Text>
     </Box>
   );
 }

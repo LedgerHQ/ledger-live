@@ -1,5 +1,5 @@
 export { CardLogin } from "./components/CardLogin/index.native";
-export type { CardLoginProps, PayCardLoginTrackEvent } from "./components/CardLogin/types";
+export type { CardLoginProps } from "./components/CardLogin/types";
 export * from "./components/CardLogin/openHostedLogin.native";
 export { buildHostedPageUrl } from "./state/buildHostedPageUrl";
 export * from "./state/buildHostedUrl";

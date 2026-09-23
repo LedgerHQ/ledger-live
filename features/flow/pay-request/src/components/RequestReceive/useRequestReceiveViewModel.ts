@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "@shared/i18n";
 import type {
   RequestReceiveActionId,
   RequestReceiveViewModel,
@@ -8,7 +9,7 @@ import { splitAddress } from "../../utils/splitAddress";
 
 const TRACK_BUTTON: Readonly<Record<RequestReceiveActionId, string>> = {
   share: "share",
-  copy: "copy address",
+  copy: "copy",
   save: "save",
   verify: "verify",
 };
@@ -24,6 +25,7 @@ export function useRequestReceiveViewModel({
   onVerify,
   onTrackEvent,
 }: RequestReceiveViewModelParams): RequestReceiveViewModel {
+  const { t } = useTranslation();
   const addressParts = useMemo(() => splitAddress(address), [address]);
 
   const runAction = useCallback(
@@ -35,6 +37,7 @@ export function useRequestReceiveViewModel({
         button: TRACK_BUTTON[id],
         buttonLocation: "request",
         page,
+        flow: "request",
       });
       callback(address);
     },
@@ -47,6 +50,8 @@ export function useRequestReceiveViewModel({
   const handleVerify = useCallback(() => runAction("verify", onVerify), [runAction, onVerify]);
 
   return {
+    title: t("payTab.request.title", { asset: asset.name }),
+    networkLabel: t("payTab.request.networkLabel", { network }),
     asset,
     network,
     address,

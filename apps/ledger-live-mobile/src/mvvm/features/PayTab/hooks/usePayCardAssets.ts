@@ -17,7 +17,7 @@ import { useFiatFormatter } from "./useFiatFormatter";
 
 const NO_IDS: readonly string[] = [];
 
-export function usePayCardAssets(): CardAssetsProps {
+export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
   const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
@@ -39,7 +39,7 @@ export function usePayCardAssets(): CardAssetsProps {
     addExtraSessionTrackingPairs(pairs);
   }, [currencies, counterValueCurrency]);
 
-  const priceWallet = useCallback(
+  const getCounterValue = useCallback(
     (currency: CryptoOrTokenCurrency, balance: string): number | null => {
       const unit = currency.units[0];
       if (!unit) return null;
@@ -65,7 +65,7 @@ export function usePayCardAssets(): CardAssetsProps {
   );
 
   return useMemo(
-    () => ({ currencies, priceWallet, formatCountervalue, formatBalance, formatters }),
-    [currencies, priceWallet, formatCountervalue, formatBalance, formatters],
+    () => ({ currencies, getCounterValue, formatCountervalue, formatBalance, formatters }),
+    [currencies, getCounterValue, formatCountervalue, formatBalance, formatters],
   );
 }

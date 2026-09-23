@@ -9,7 +9,7 @@ export type PayGlobalPropertiesSource = Readonly<{
   accountTickers: readonly string[];
   internalWalletBalances?: readonly string[];
   cardStatus?: Readonly<{ cardAddedToDigitalWallet?: boolean }>;
-  cardTransactions?: readonly unknown[];
+  hasCardTransactions?: boolean;
   cardWallets?: readonly Readonly<{ priority: number; currency: string }>[];
   rewardWallet?: Readonly<{ balance: string; currency: string }>;
 }>;
@@ -25,7 +25,7 @@ export function toPayGlobalProperties({
   accountTickers,
   internalWalletBalances,
   cardStatus,
-  cardTransactions,
+  hasCardTransactions,
   cardWallets,
   rewardWallet,
 }: PayGlobalPropertiesSource): PayGlobalProperties {
@@ -43,7 +43,7 @@ export function toPayGlobalProperties({
     hasCard,
     cardLoggedIn: isSignedIn,
     hasFundsOnCard: (internalWalletBalances ?? []).some(balance => Number(balance) > 0),
-    has_tx: Boolean(cardTransactions?.length),
+    has_tx: hasCardTransactions ?? false,
     cardAddedToOsWallet: cardStatus?.cardAddedToDigitalWallet ?? false,
     cardDebitOrder,
     cardRewardsAvailable: Number(rewardWallet?.balance ?? 0) > 0,

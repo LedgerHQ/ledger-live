@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useDispatch, useSelector } from "react-redux";
 import { useMachine } from "@xstate/react";
 import type { SnapshotFrom } from "xstate";
@@ -10,6 +11,7 @@ import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
 import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors";
 import { selectIsSignedIn } from "../../state/selectors";
+import { setPendingLoginType } from "../../state/slice";
 import type {
   CardLoginCopy,
   CardLoginIntroActionId,
@@ -42,10 +44,10 @@ export const CARD_LOGIN_INTRO_FLOW = "card";
 
 const TRACK_BUTTON = {
   getCard: "get card",
-  alreadyHaveCard: "i already have a card",
-  login: "login",
-  createAccount: "create an account",
-  logIn: "log in to baanx",
+  alreadyHaveCard: "signin",
+  login: "signin",
+  createAccount: "signup",
+  logIn: "signin",
   close: "close",
 } as const;
 
@@ -89,10 +91,10 @@ export function useCardLoginViewModel({
   mobileWallet,
   oauthConfig,
   callback,
-  onTrackEvent,
   requestProtection,
 }: CardLoginViewModelParams): CardLoginViewModel {
   const { t } = useTranslation();
+  const { trackButtonClicked, trackEvent } = usePayAnalyticsContext();
   const dispatch = useDispatch<CardLoginDispatch>();
   const isSignedIn = useSelector(selectIsSignedIn);
   const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
@@ -148,13 +150,14 @@ export function useCardLoginViewModel({
 
   const startLogin = useCallback(() => {
     setHasSignupFailed(false);
+    dispatch(setPendingLoginType("signin"));
 
     void (async () => {
       if (await whenProtected()) {
         send({ type: "LOGIN" });
       }
     })();
-  }, [send, whenProtected]);
+  }, [dispatch, send, whenProtected]);
 
   const openSignup = useCallback(() => {
     setHasSignupFailed(false);
@@ -163,6 +166,8 @@ export function useCardLoginViewModel({
       if (!(await whenProtected())) {
         return;
       }
+
+      dispatch(setPendingLoginType("signup"));
 
       try {
         if (openHostedPage) {
@@ -174,17 +179,17 @@ export function useCardLoginViewModel({
         setHasSignupFailed(true);
       }
     })();
-  }, [openHostedPage, openHostedLogin, oauthConfig, whenProtected]);
+  }, [dispatch, openHostedPage, openHostedLogin, oauthConfig, whenProtected]);
 
   const trackCta = useCallback(
     (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
-      onTrackEvent?.("button_clicked", {
+      trackButtonClicked({
         button,
         flow: CARD_LOGIN_INTRO_FLOW,
         page: CARD_LOGIN_INTRO_PAGE,
       });
     },
-    [onTrackEvent],
+    [trackButtonClicked],
   );
 
   const onLoginPress = useCallback(() => {
@@ -194,9 +199,9 @@ export function useCardLoginViewModel({
       return;
     }
     trackCta(TRACK_BUTTON.getCard);
-    onTrackEvent?.(CARD_LOGIN_INTRO_PAGE_EVENT, { flow: CARD_LOGIN_INTRO_FLOW });
+    trackEvent(CARD_LOGIN_INTRO_PAGE_EVENT, { flow: CARD_LOGIN_INTRO_FLOW });
     setIsIntroRequested(true);
-  }, [hasSeenLoginIntro, onTrackEvent, snapshot.value, startLogin, trackCta]);
+  }, [hasSeenLoginIntro, snapshot.value, startLogin, trackCta, trackEvent]);
 
   const onAlreadyHaveCardPress = useCallback(() => {
     trackCta(TRACK_BUTTON.alreadyHaveCard);

@@ -1,5 +1,9 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useUpdateCardWalletPrioritiesMutation } from "@domain/api-card-management";
+import {
+  toPayDebitOrderProperties,
+  usePayAnalyticsContext,
+} from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import {
@@ -7,6 +11,7 @@ import {
   useCardTransactionsViewModel,
 } from "@features/flow-pay-card-transactions";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
+import { reorderByIndex } from "@shared/ui-list-reorder";
 import type {
   CardAssetDialogState,
   CardAssetRow,
@@ -18,7 +23,7 @@ import type {
 const KEY_PREFIX = "payTab.card.assets";
 const RECENT_TRANSACTIONS_SHOWN = 3;
 const EMPTY_CURRENCIES = new Map();
-const NO_PRICE: CardAssetsProps["priceWallet"] = () => null;
+const NO_PRICE: CardAssetsProps["getCounterValue"] = () => null;
 const NO_COUNTERVALUE: CardAssetsProps["formatCountervalue"] = () => "";
 
 export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
@@ -29,7 +34,7 @@ export function formatCardAssetCryptoAmount(balance: string | null, currency: st
 export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewModel {
   const {
     currencies = EMPTY_CURRENCIES,
-    priceWallet = NO_PRICE,
+    getCounterValue = NO_PRICE,
     formatCountervalue = NO_COUNTERVALUE,
     formatBalance,
     formatters,
@@ -39,10 +44,12 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     onAddAsset,
   } = props ?? {};
   const { t } = useTranslation();
+  const { trackButtonClicked, trackDebitOrderChanged } = usePayAnalyticsContext();
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [assetOrder, setAssetOrder] = useState<readonly string[]>([]);
   const [reorderingAssetId, setReorderingAssetId] = useState<string | null>(null);
+  const manageInitialOrder = useRef<readonly string[] | null>(null);
   const isSignedIn = useIsCardSignedIn();
   const [updateCardWalletPriorities] = useUpdateCardWalletPrioritiesMutation();
   const { transactions } = useCardTransactionsViewModel();
@@ -55,7 +62,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     () =>
       wallets.map(({ id, addressId, balance, currency, network, ledgerId, ledgerCurrency }) => {
         const countervalue =
-          ledgerCurrency && balance !== null ? priceWallet(ledgerCurrency, balance) : null;
+          ledgerCurrency && balance !== null ? getCounterValue(ledgerCurrency, balance) : null;
 
         return {
           id,
@@ -70,7 +77,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
           countervalueAmount: countervalue,
         };
       }),
-    [wallets, priceWallet, formatCountervalue],
+    [wallets, getCounterValue, formatCountervalue],
   );
 
   const rows = useMemo<readonly CardAssetRow[]>(() => {
@@ -115,9 +122,17 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   }, []);
 
   const onDialogClose = useCallback(() => {
+    if (
+      dialogState === "manage" &&
+      manageInitialOrder.current &&
+      manageInitialOrder.current.join() !== rows.map(row => row.currency).join()
+    ) {
+      trackDebitOrderChanged(toPayDebitOrderProperties(rows.map(row => row.currency)));
+    }
+    manageInitialOrder.current = null;
     setDialogState("closed");
     setSelectedAssetId(null);
-  }, []);
+  }, [dialogState, rows, trackDebitOrderChanged]);
 
   const onTopUpPress = useCallback(() => {
     if (selectedAsset) onTopUp?.(selectedAsset);
@@ -132,7 +147,6 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     setDialogState("details");
   }, []);
 
-  // History is a host route, not a dialog: hand the asset over and leave the dialogs closed.
   const onShowHistoryPress = useCallback(() => {
     if (selectedAsset) onShowHistory?.(selectedAsset);
     onDialogClose();
@@ -144,26 +158,25 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   }, [onDialogClose, onWithdraw, selectedAsset]);
 
   const onManagePress = useCallback(() => {
+    manageInitialOrder.current = rows.map(row => row.currency);
+    trackButtonClicked({ button: "debit order", page: "Card details" });
     setDialogState("manage");
-  }, []);
+  }, [rows, trackButtonClicked]);
 
   const onAddAssetPress = useCallback(() => {
     onAddAsset?.();
   }, [onAddAsset]);
 
-  const onReorderAssets = useCallback(
-    async (draggedId: string, targetId: string) => {
-      if (draggedId === targetId || reorderingAssetId !== null) return;
+  const onMoveAsset = useCallback(
+    async (id: string, toIndex: number) => {
+      if (reorderingAssetId !== null) return;
 
-      const draggedIndex = rows.findIndex(row => row.id === draggedId);
-      const targetIndex = rows.findIndex(row => row.id === targetId);
-      if (draggedIndex < 0 || targetIndex < 0) return;
+      const fromIndex = rows.findIndex(row => row.id === id);
+      if (fromIndex < 0 || toIndex < 0 || toIndex >= rows.length || fromIndex === toIndex) return;
 
       const previousOrder = rows.map(row => row.id);
-      const reorderedRows = [...rows];
-      const [draggedRow] = reorderedRows.splice(draggedIndex, 1);
-      reorderedRows.splice(targetIndex, 0, draggedRow);
-      setReorderingAssetId(draggedId);
+      const reorderedRows = reorderByIndex(rows, fromIndex, toIndex);
+      setReorderingAssetId(id);
       setAssetOrder(reorderedRows.map(row => row.id));
 
       try {
@@ -217,7 +230,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onWithdrawContinue,
       onManagePress,
       onAddAssetPress: onAddAsset ? onAddAssetPress : undefined,
-      onReorderAssets,
+      onMoveAsset,
       reorderingAssetId,
     }),
     [
@@ -241,7 +254,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onManagePress,
       onAddAsset,
       onAddAssetPress,
-      onReorderAssets,
+      onMoveAsset,
       reorderingAssetId,
     ],
   );

@@ -1,5 +1,9 @@
 import { useCallback, useMemo } from "react";
-import { useGetCardStatusQuery, useGetUserQuery } from "@domain/api-card-management";
+import {
+  useGetCardStatusQuery,
+  useGetCardTransactionsInfiniteQuery,
+  useGetUserQuery,
+} from "@domain/api-card-management";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
 import { hasPositiveBalance, type CardOnboardingSignals } from "./deriveCardOnboardingStatus";
 import type { CardOnboardingProviderStepId } from "./steps";
@@ -23,6 +27,7 @@ export type CardOnboardingSources = {
   readonly cardAddedToDigitalWallet: boolean | undefined;
   readonly isLoading: boolean;
   readonly isError: boolean;
+  readonly hasSourceError: boolean;
   readonly refresh: () => void;
 };
 
@@ -40,6 +45,7 @@ export function useCardOnboardingSources({
 }: CardOnboardingSourcesParams = {}): CardOnboardingSources {
   const user = useGetUserQuery(undefined, { skip });
   const cardStatus = useGetCardStatusQuery(undefined, { skip });
+  const transactions = useGetCardTransactionsInfiniteQuery(undefined, { skip });
   const linkedWallets = useCardLinkedWallets({ currencies: NO_CURRENCIES, skip });
 
   const signals = useMemo(
@@ -49,14 +55,18 @@ export function useCardOnboardingSources({
       // and reading it as "no card" would send the holder back to choosing a type.
       "choose-card-type": cardStatus.data !== undefined,
       "top-up-card": linkedWallets.wallets.some(({ balance }) => hasPositiveBalance(balance)),
-      // Nothing reads the provider's transactions yet.
-      "first-purchase": false,
+      // Every page read, not just the first: the newest page can hold nothing but pending or
+      // declined attempts while an older charge did settle.
+      "first-purchase": (transactions.data?.pages ?? []).some(page =>
+        page.some(({ status }) => status === "CONFIRMED"),
+      ),
     }),
-    [user.data, cardStatus.data, linkedWallets.wallets],
+    [user.data, cardStatus.data, linkedWallets.wallets, transactions.data],
   );
 
   const { refetch: refetchUser } = user;
   const { refetch: refetchCardStatus } = cardStatus;
+  const { refetch: refetchTransactions } = transactions;
   const { refetch: refetchWallets } = linkedWallets;
 
   const refresh = useCallback(() => {
@@ -67,18 +77,25 @@ export function useCardOnboardingSources({
 
     refetchUser();
     refetchCardStatus();
+    refetchTransactions();
     refetchWallets();
-  }, [skip, refetchUser, refetchCardStatus, refetchWallets]);
+  }, [skip, refetchUser, refetchCardStatus, refetchTransactions, refetchWallets]);
 
   return {
     signals,
     cardAddedToDigitalWallet: cardStatus.data?.cardAddedToDigitalWallet,
     refresh,
-    // `isFetching` on all three, not `isLoading`: a query reports `isLoading` only while it has no
+    // `isFetching` on all four, not `isLoading`: a query reports `isLoading` only while it has no
     // data, so after the first read a refetch would have looked idle.
-    isLoading: user.isFetching || cardStatus.isFetching || linkedWallets.isFetching,
+    isLoading:
+      user.isFetching ||
+      cardStatus.isFetching ||
+      transactions.isFetching ||
+      linkedWallets.isFetching,
     // A step that cannot be answered is reported as not done, so only a failure the holder can do
     // nothing about is surfaced: the account read itself.
     isError: user.isError,
+    hasSourceError:
+      user.isError || cardStatus.isError || transactions.isError || linkedWallets.isError,
   };
 }

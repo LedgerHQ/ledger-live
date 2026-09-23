@@ -29,8 +29,11 @@ export type CardAssetsStatus = "loading" | "error" | "empty" | "ready";
 
 export type CardAssetsProps = Readonly<{
   currencies: ReadonlyMap<string, CryptoOrTokenCurrency>;
-  /** Prices one wallet. The rates are the app's, so the host owns this. */
-  priceWallet: (currency: CryptoOrTokenCurrency, balance: string) => number | null;
+  /**
+   * An amount of the given currency, in the counter-value currency's smallest unit, or `null`
+   * when no rate covers it. The rates are the app's, so the host owns this.
+   */
+  getCounterValue: (currency: CryptoOrTokenCurrency, balance: string) => number | null;
   formatCountervalue: (value: number) => string;
   /**
    * Same formatter the card face AmountDisplay uses (`formatCurrencyUnitFragment`).
@@ -42,7 +45,7 @@ export type CardAssetsProps = Readonly<{
   onTopUp?: (asset: CardAssetRow) => void;
   onWithdraw?: (asset: CardAssetRow) => void;
   onShowHistory?: (asset: CardAssetRow) => void;
-  onAddAsset?: () => void;
+  onAddAsset: () => void;
 }>;
 
 export type CardAssetDialogState = "closed" | "details" | "withdraw" | "manage";
@@ -76,6 +79,6 @@ export type CardAssetsViewModel = Readonly<{
   onWithdrawContinue: () => void;
   onManagePress: () => void;
   onAddAssetPress?: () => void;
-  onReorderAssets: (draggedId: string, targetId: string) => Promise<void>;
+  onMoveAsset: (id: string, toIndex: number) => Promise<void>;
   reorderingAssetId: string | null;
 }>;

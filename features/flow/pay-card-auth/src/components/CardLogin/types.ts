@@ -5,8 +5,6 @@ import type {
   PayCardAuthCallback,
 } from "../../state/types";
 
-export type PayCardLoginTrackEvent = (event: string, params: Record<string, unknown>) => void;
-
 /**
  * Asks the host to make sure the app is protected, resolving true once it is. The card is the
  * reason the mobile app lock exists, so neither path to Baanx runs while it is unprotected. Only
@@ -23,7 +21,6 @@ export type CardLoginProps = {
   readonly callback?: PayCardAuthCallback | null;
   readonly openHostedLogin?: OpenHostedLogin;
   readonly openHostedPage?: OpenCardHostedPage;
-  readonly onTrackEvent?: PayCardLoginTrackEvent;
   readonly requestProtection?: RequestAppProtection;
 };
 

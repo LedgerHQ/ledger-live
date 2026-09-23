@@ -1,4 +1,5 @@
 import { renderHook } from "@testing-library/react";
+import { i18nWrapper, REQUEST_RESOURCES } from "../../../__tests__/i18nWrapper";
 import type { RequestReceiveViewModelParams } from "../../../types";
 import { useRequestReceiveViewModel } from "../useRequestReceiveViewModel";
 
@@ -17,14 +18,18 @@ function setup(overrides: Partial<RequestReceiveViewModelParams> = {}) {
     onTrackEvent: jest.fn(),
     ...overrides,
   };
-  const { result } = renderHook(() => useRequestReceiveViewModel(props));
+  const { result } = renderHook(() => useRequestReceiveViewModel(props), {
+    wrapper: i18nWrapper(REQUEST_RESOURCES),
+  });
   return { props, result };
 }
 
 describe("useRequestReceiveViewModel", () => {
-  it("exposes asset, network, address, address parts and QR payload", () => {
+  it("exposes translated title, network label, address, address parts and QR payload", () => {
     const { result } = setup();
 
+    expect(result.current.title).toBe("Request Ethereum");
+    expect(result.current.networkLabel).toBe("Ethereum network");
     expect(result.current.asset).toEqual({ name: "Ethereum", ticker: "ETH" });
     expect(result.current.network).toBe("Ethereum");
     expect(result.current.address).toBe(ADDRESS);
@@ -38,7 +43,7 @@ describe("useRequestReceiveViewModel", () => {
 
   it.each([
     ["onShare", "share"],
-    ["onCopy", "copy address"],
+    ["onCopy", "copy"],
     ["onSave", "save"],
     ["onVerify", "verify"],
   ] as const)("tracks then invokes the injected callback for %s", (handler, button) => {
@@ -50,6 +55,7 @@ describe("useRequestReceiveViewModel", () => {
       button,
       buttonLocation: "request",
       page: "Pay",
+      flow: "request",
     });
     expect(props[handler]).toHaveBeenCalledWith(ADDRESS);
   });

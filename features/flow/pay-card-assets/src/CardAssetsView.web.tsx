@@ -103,7 +103,7 @@ export function CardAssetsView({
   onWithdrawContinue,
   onManagePress,
   onAddAssetPress,
-  onReorderAssets,
+  onMoveAsset,
   reorderingAssetId,
 }: CardAssetsViewModel) {
   const { t } = useTranslation();
@@ -160,7 +160,7 @@ export function CardAssetsView({
         rows={rows}
         onClose={onDialogClose}
         onAddAsset={onAddAssetPress}
-        onReorder={onReorderAssets}
+        onMoveAsset={onMoveAsset}
         reorderingAssetId={reorderingAssetId}
       />
     </>

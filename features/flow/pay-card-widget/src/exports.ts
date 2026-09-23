@@ -1,1 +1,1 @@
-export { CardOnboardingWidget } from "./components/CardOnboardingWidget/CardOnboardingWidget";
+export * from "./components/CardOnboardingWidget/CardOnboardingWidget";

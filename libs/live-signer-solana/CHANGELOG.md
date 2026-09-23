@@ -1,5 +1,27 @@
 # @ledgerhq/live-signer-solana
 
+## 0.21.3
+
+### Patch Changes
+
+- Updated dependencies [[`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/hw-app-solana@7.11.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0
+  - @ledgerhq/coin-solana@2.1.1
+  - @ledgerhq/ledger-cal-service@1.19.6
+  - @ledgerhq/ledger-trust-service@0.8.17
+
+## 0.21.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/hw-app-solana@7.11.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
+  - @ledgerhq/coin-solana@2.1.1-next.0
+  - @ledgerhq/ledger-cal-service@1.19.6-next.0
+  - @ledgerhq/ledger-trust-service@0.8.17-next.0
+
 ## 0.21.2
 
 ### Patch Changes
@@ -226,23 +248,5 @@
   - @ledgerhq/coin-solana@0.59.0-next.0
   - @ledgerhq/ledger-cal-service@1.18.5-next.0
   - @ledgerhq/ledger-trust-service@0.8.10-next.0
-
-## 0.17.1
-
-### Patch Changes
-
-- Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f), [`cd43e66`](https://github.com/LedgerHQ/ledger-live/commit/cd43e6689983aefdc3548ac6dcfb86521a1535ff), [`dcacbc9`](https://github.com/LedgerHQ/ledger-live/commit/dcacbc9b7a21ba36f54c1f9872918cd374b0e4e3)]:
-  - @ledgerhq/coin-solana@0.58.0
-  - @ledgerhq/ledger-cal-service@1.18.4
-  - @ledgerhq/ledger-trust-service@0.8.9
-
-## 0.17.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f), [`cd43e66`](https://github.com/LedgerHQ/ledger-live/commit/cd43e6689983aefdc3548ac6dcfb86521a1535ff), [`dcacbc9`](https://github.com/LedgerHQ/ledger-live/commit/dcacbc9b7a21ba36f54c1f9872918cd374b0e4e3)]:
-  - @ledgerhq/coin-solana@0.58.0-next.0
-  - @ledgerhq/ledger-cal-service@1.18.4-next.0
-  - @ledgerhq/ledger-trust-service@0.8.9-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

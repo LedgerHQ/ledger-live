@@ -1,5 +1,5 @@
 import React from "react";
-import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 import { CardAssets } from "../CardAssets";
@@ -136,11 +136,11 @@ describe("CardAssets (web)", () => {
     mockUnwrapUpdate.mockResolvedValue({ success: true });
   });
 
-  function renderCardAssets(onAddAsset?: () => void) {
+  function renderCardAssets(onAddAsset = jest.fn()) {
     render(
       <CardAssets
         currencies={new Map([[USDC.id, USDC]])}
-        priceWallet={() => 4000}
+        getCounterValue={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
         formatBalance={formatBalance}
         onAddAsset={onAddAsset}
@@ -163,8 +163,9 @@ describe("CardAssets (web)", () => {
     render(
       <CardAssets
         currencies={new Map([[USDC.id, USDC]])}
-        priceWallet={() => 4000}
+        getCounterValue={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
+        onAddAsset={jest.fn()}
       />,
       { wrapper: I18nWrapper },
     );
@@ -208,9 +209,10 @@ describe("CardAssets (web)", () => {
     render(
       <CardAssets
         currencies={new Map([[USDC.id, USDC]])}
-        priceWallet={() => 4000}
+        getCounterValue={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
         onShowHistory={onShowHistory}
+        onAddAsset={jest.fn()}
       />,
       { wrapper: I18nWrapper },
     );
@@ -252,40 +254,7 @@ describe("CardAssets (web)", () => {
     ).toBeVisible();
     expect(within(dialog).getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
     expect(within(dialog).getByText("USD Coin")).toBeVisible();
-    expect(
-      within(dialog).queryByRole("button", { name: CARD_ASSETS_COPY.addAsset }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("should reorder assets with the drag handle and send every linked wallet", async () => {
-    let finishUpdate: (result: { success: boolean }) => void = () => {};
-    mockUnwrapUpdate.mockReturnValue(
-      new Promise(resolve => {
-        finishUpdate = resolve;
-      }),
-    );
-    const user = userEvent.setup();
-    renderCardAssets();
-
-    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
-    fireEvent.dragStart(screen.getByRole("button", { name: "Drag USDT" }));
-    fireEvent.drop(screen.getByTestId("card-asset-order-w-usdc"));
-
-    expect(screen.getByTestId("card-asset-reorder-spinner-w-usdt")).toBeVisible();
-    await waitFor(() =>
-      expect(mockUpdateCardWalletPriorities).toHaveBeenCalledWith({
-        wallets: [
-          { addressId: "address-usdt", priority: 1 },
-          { addressId: "address-usdc", priority: 2 },
-        ],
-      }),
-    );
-    await act(() => {
-      finishUpdate({ success: true });
-    });
-    await waitFor(() =>
-      expect(screen.queryByTestId("card-asset-reorder-spinner-w-usdt")).not.toBeInTheDocument(),
-    );
+    expect(within(dialog).getByRole("button", { name: CARD_ASSETS_COPY.addAsset })).toBeVisible();
   });
 
   it("should return to the asset list when the manage dialog closes", async () => {

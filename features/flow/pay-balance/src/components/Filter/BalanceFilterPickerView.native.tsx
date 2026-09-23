@@ -26,6 +26,7 @@ export function BalanceFilterPickerView({
       onClose={onClose}
       snapPoints="fullWithOffset"
       testID="pay-card-balance-filter-sheet"
+      enableDynamicSizing
     >
       {isOpen ? (
         <>

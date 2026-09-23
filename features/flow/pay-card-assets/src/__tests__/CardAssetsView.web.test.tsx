@@ -17,6 +17,14 @@ const usdc = {
   countervalueAmount: 125.4,
 };
 
+const formatBalance = (value: number) => ({
+  integerPart: String(Math.trunc(value)),
+  decimalPart: "00",
+  currencyText: "$",
+  decimalSeparator: "." as const,
+  currencyPosition: "start" as const,
+});
+
 const ready: CardAssetsViewModel = {
   isVisible: true,
   status: "ready",
@@ -41,17 +49,9 @@ const ready: CardAssetsViewModel = {
   onWithdrawContinue: jest.fn(),
   onManagePress: jest.fn(),
   onAddAssetPress: jest.fn(),
-  onReorderAssets: jest.fn(),
+  onMoveAsset: jest.fn(),
   reorderingAssetId: null,
 };
-
-const formatBalance = (value: number) => ({
-  integerPart: String(Math.trunc(value)),
-  decimalPart: "00",
-  currencyText: "$",
-  decimalSeparator: "." as const,
-  currencyPosition: "start" as const,
-});
 
 const detailsOpen: CardAssetsViewModel = {
   ...ready,
@@ -195,5 +195,19 @@ describe("CardAssetsView (web)", () => {
     await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
 
     expect(onManagePress).toHaveBeenCalledTimes(1);
+  });
+
+  // dnd-kit owns the actual drag/keyboard-reorder mechanics (and its own accessibility
+  // announcements) once a row's handle is rendered — simulating its real pointer/keyboard
+  // geometry in jsdom would just be re-testing the library, not our code. This only checks that
+  // every row gets a properly labeled handle to hand off to it.
+  it("should give every managed asset a labeled reorder handle", () => {
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(<CardAssetsView {...ready} dialogState="manage" rows={[usdc, bitcoin]} />, {
+      wrapper: I18nWrapper,
+    });
+
+    expect(screen.getByRole("button", { name: "Reorder USD Coin" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Reorder Bitcoin" })).toBeVisible();
   });
 });

@@ -15,7 +15,7 @@ import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemand
 
 const NO_IDS: readonly string[] = [];
 
-export function usePayCardAssets(): CardAssetsProps {
+export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
   // Nothing to price until the card is signed in, and the lookups and the polled pairs would be
@@ -27,7 +27,7 @@ export function usePayCardAssets(): CardAssetsProps {
   const cardCurrencies = useMemo(() => [...currencies.values()], [currencies]);
   useOnDemandCurrenciesCountervalues(cardCurrencies, counterValueCurrency);
 
-  const priceWallet = useCallback(
+  const getCounterValue = useCallback(
     (currency: CryptoOrTokenCurrency, balance: string): number | null => {
       const unit = currency.units[0];
       if (!unit) return null;
@@ -47,7 +47,7 @@ export function usePayCardAssets(): CardAssetsProps {
   const formatBalance = useCountervalueFormatter();
 
   return useMemo(
-    () => ({ currencies, priceWallet, formatCountervalue, formatBalance }),
-    [currencies, priceWallet, formatCountervalue, formatBalance],
+    () => ({ currencies, getCounterValue, formatCountervalue, formatBalance }),
+    [currencies, getCounterValue, formatCountervalue, formatBalance],
   );
 }

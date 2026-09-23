@@ -2,6 +2,7 @@ import { renderHook } from "@testing-library/react-native";
 
 jest.mock("@domain/api-card-management", () => ({
   useGetCardStatusQuery: jest.fn(),
+  useGetCardTransactionsInfiniteQuery: jest.fn(),
   useGetUserQuery: jest.fn(),
 }));
 
@@ -9,12 +10,17 @@ jest.mock("@features/flow-pay-card-wallets", () => ({
   useCardLinkedWallets: jest.fn(),
 }));
 
-import { useGetCardStatusQuery, useGetUserQuery } from "@domain/api-card-management";
+import {
+  useGetCardStatusQuery,
+  useGetCardTransactionsInfiniteQuery,
+  useGetUserQuery,
+} from "@domain/api-card-management";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
 import { useCardOnboardingStatus } from "./useCardOnboardingStatus.native";
 
 const refetchUser = jest.fn();
 const refetchCardStatus = jest.fn();
+const refetchTransactions = jest.fn();
 const refetchWallets = jest.fn();
 
 function setupMocks({
@@ -34,6 +40,13 @@ function setupMocks({
     isFetching: false,
     isError: false,
   } as unknown as ReturnType<typeof useGetCardStatusQuery>);
+
+  jest.mocked(useGetCardTransactionsInfiniteQuery).mockReturnValue({
+    refetch: refetchTransactions,
+    data: { pages: [[]], pageParams: [0] },
+    isFetching: false,
+    isError: false,
+  } as unknown as ReturnType<typeof useGetCardTransactionsInfiniteQuery>);
 
   jest.mocked(useCardLinkedWallets).mockReturnValue({
     refetch: refetchWallets,
@@ -78,12 +91,15 @@ describe("useCardOnboardingStatus (native)", () => {
 
     expect(jest.mocked(useGetUserQuery)).toHaveBeenCalledWith(undefined, { skip: true });
     expect(jest.mocked(useGetCardStatusQuery)).toHaveBeenCalledWith(undefined, { skip: true });
+    expect(jest.mocked(useGetCardTransactionsInfiniteQuery)).toHaveBeenCalledWith(undefined, {
+      skip: true,
+    });
     expect(jest.mocked(useCardLinkedWallets)).toHaveBeenCalledWith(
       expect.objectContaining({ skip: true }),
     );
   });
 
-  it("re-asks all three sources", () => {
+  it("re-asks all four sources", () => {
     setupMocks();
     const { result } = renderHook(() => useCardOnboardingStatus());
 
@@ -91,6 +107,7 @@ describe("useCardOnboardingStatus (native)", () => {
 
     expect(refetchUser).toHaveBeenCalledTimes(1);
     expect(refetchCardStatus).toHaveBeenCalledTimes(1);
+    expect(refetchTransactions).toHaveBeenCalledTimes(1);
     expect(refetchWallets).toHaveBeenCalledTimes(1);
   });
 
@@ -102,6 +119,7 @@ describe("useCardOnboardingStatus (native)", () => {
 
     expect(refetchUser).not.toHaveBeenCalled();
     expect(refetchCardStatus).not.toHaveBeenCalled();
+    expect(refetchTransactions).not.toHaveBeenCalled();
     expect(refetchWallets).not.toHaveBeenCalled();
   });
 

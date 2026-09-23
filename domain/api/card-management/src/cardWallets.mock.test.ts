@@ -5,12 +5,27 @@ import {
 } from "./schema";
 import { transformPayCardLinkedWallets } from "./transforms";
 import {
+  applyPayCardWalletPrioritiesMock,
+  clearPayCardWalletsMock,
+  emptyPayCardWalletsMock,
+  fillPayCardWalletsMock,
+  fundPayCardWalletMock,
   mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
   mockPayCardRewardWallet,
+  readPayCardReorderMockEnabled,
+  readPayCardWalletsMock,
+  reorderPayCardLinkedWalletsMock,
+  resolvePayCardInternalWalletsMock,
+  setPayCardReorderMockEnabled,
 } from "./cardWallets.mock";
 
 describe("the mocked wallet responses", () => {
+  afterEach(() => {
+    clearPayCardWalletsMock();
+    setPayCardReorderMockEnabled(false);
+  });
+
   it("answers as the provider is parsed, or the query would reject them", () => {
     expect(
       PayCardInternalWalletsResponseSchema.safeParse(mockPayCardInternalWallets(true)).success,
@@ -73,5 +88,124 @@ describe("the mocked wallet responses", () => {
     const linkedIds = new Set(mockPayCardLinkedWallets().map(({ id }) => id));
 
     expect(linkedIds.has(mockPayCardRewardWallet().id)).toBe(false);
+  });
+
+  it("switches between funded, empty and provider wallet answers", () => {
+    fillPayCardWalletsMock();
+    expect(readPayCardWalletsMock()?.every(wallet => Number(wallet.balance) > 0)).toBe(true);
+
+    emptyPayCardWalletsMock();
+    expect(readPayCardWalletsMock()?.every(wallet => Number(wallet.balance) === 0)).toBe(true);
+
+    clearPayCardWalletsMock();
+    expect(readPayCardWalletsMock()).toBeUndefined();
+  });
+
+  it("disables reorder when handing wallet endpoints back to the provider", () => {
+    setPayCardReorderMockEnabled(true);
+
+    clearPayCardWalletsMock();
+
+    expect(readPayCardReorderMockEnabled()).toBe(false);
+    expect(resolvePayCardInternalWalletsMock(undefined, false)).toBeUndefined();
+  });
+
+  it("resolves the internal-wallet answer in devtool, reorder, onboarding and session order", () => {
+    expect(resolvePayCardInternalWalletsMock(undefined, false)).toBeUndefined();
+    expect(
+      resolvePayCardInternalWalletsMock(undefined, true)?.every(
+        ({ balance }) => balance === "0.00",
+      ),
+    ).toBe(true);
+    expect(
+      resolvePayCardInternalWalletsMock(true, false)?.every(({ balance }) => Number(balance) > 0),
+    ).toBe(true);
+
+    setPayCardReorderMockEnabled(true);
+    expect(
+      resolvePayCardInternalWalletsMock(false, false)?.every(({ balance }) => Number(balance) > 0),
+    ).toBe(true);
+
+    emptyPayCardWalletsMock();
+    expect(
+      resolvePayCardInternalWalletsMock(true, true)?.every(({ balance }) => balance === "0.00"),
+    ).toBe(true);
+  });
+
+  it("keeps every linked wallet's balance when the charging order is rewritten", () => {
+    fillPayCardWalletsMock();
+    const [usdc, btc, sol] = mockPayCardLinkedWallets();
+
+    expect(
+      reorderPayCardLinkedWalletsMock([
+        { addressId: sol.id, priority: 0 },
+        { addressId: usdc.id, priority: 1 },
+        { addressId: btc.id, priority: 2 },
+      ]),
+    ).toBe(true);
+
+    const reordered = mockPayCardLinkedWallets();
+    expect(reordered.map(({ currency }) => currency)).toEqual(["sol", "usdc", "btc"]);
+
+    // The join reads an amount from the internal answer by wallet id, so a reorder that dropped a
+    // wallet from it, renamed one or zeroed one leaves the row with a ticker and no amount.
+    const balanceById = new Map(
+      (readPayCardWalletsMock() ?? []).map(({ id, balance }) => [id, balance]),
+    );
+    expect(reordered.every(({ id }) => Number(balanceById.get(id)) > 0)).toBe(true);
+  });
+
+  it("refuses an order that names a wallet it does not link, and keeps the one it holds", () => {
+    expect(reorderPayCardLinkedWalletsMock([{ addressId: "not-a-wallet", priority: 0 }])).toBe(
+      false,
+    );
+    expect(mockPayCardLinkedWallets().map(({ priority }) => priority)).toEqual([0, 1, 2]);
+  });
+
+  it("should persist a new charging order when reorder is enabled", () => {
+    const wallets = mockPayCardLinkedWallets();
+    setPayCardReorderMockEnabled(true);
+
+    expect(
+      applyPayCardWalletPrioritiesMock({
+        wallets: [
+          { addressId: wallets[2]!.id, priority: 1 },
+          { addressId: wallets[0]!.id, priority: 2 },
+          { addressId: wallets[1]!.id, priority: 3 },
+        ],
+      }),
+    ).toBe(true);
+    expect(mockPayCardLinkedWallets().map(({ id, priority }) => [id, priority])).toEqual([
+      [wallets[2]!.id, 1],
+      [wallets[0]!.id, 2],
+      [wallets[1]!.id, 3],
+    ]);
+  });
+
+  it("should refuse a new charging order until the reorder handler is enabled", () => {
+    const [first, second] = mockPayCardLinkedWallets();
+
+    expect(
+      applyPayCardWalletPrioritiesMock({
+        wallets: [
+          { addressId: first!.id, priority: 1 },
+          { addressId: second!.id, priority: 2 },
+        ],
+      }),
+    ).toBe(false);
+    expect(readPayCardReorderMockEnabled()).toBe(false);
+    expect(mockPayCardLinkedWallets().map(({ priority }) => priority)).toEqual([0, 1, 2]);
+  });
+
+  it("can fund one linked asset without funding its neighbours", () => {
+    fundPayCardWalletMock("btc");
+
+    expect(
+      readPayCardWalletsMock()?.map(wallet => [wallet.currency, Number(wallet.balance) > 0]),
+    ).toEqual([
+      ["usdc", false],
+      ["btc", true],
+      ["sol", false],
+    ]);
   });
 });

@@ -5,23 +5,32 @@ import {
   hasPasswordVerifier,
   hydrateAppLock,
   isProtectionStale,
+  needsLongerStoredPassword,
 } from "@features/platform-app-lock";
 import { useEffect } from "react";
 import { useDispatch } from "~/context/hooks";
 import { hasKnownInstall, writeInstallMarker } from "../adapters/installMarker";
 
-type Protection = Readonly<{ hasPassword: boolean; biometricsEnabled: boolean }>;
+type Protection = Readonly<{
+  hasPassword: boolean;
+  biometricsEnabled: boolean;
+  needsLongerPassword?: boolean;
+}>;
 
 async function readProtection(): Promise<Protection> {
   // A read that fails counts as protected: the app would otherwise open itself on a keychain
   // error, and one unreadable protection must not hide the other.
-  const [verifier, biometrics, install] = await Promise.allSettled([
+  const [verifier, biometrics, install, longer] = await Promise.allSettled([
     hasPasswordVerifier(),
     hasBiometricsMarker(),
     hasKnownInstall(),
+    needsLongerStoredPassword(),
   ]);
 
   const hasPassword = verifier.status === "fulfilled" ? verifier.value : true;
+  // Unlike the protections, a failed read here counts as compliant: holding someone in a mandatory
+  // password change over a transient error is worse than asking again after the next unlock.
+  const needsLongerPassword = longer.status === "fulfilled" ? longer.value : false;
   const biometricsEnabled = biometrics.status === "fulfilled" ? biometrics.value : true;
   // Unreadable app storage counts as this install's: the opposite would delete a live protection
   // over a transient error.
@@ -37,7 +46,7 @@ async function readProtection(): Promise<Protection> {
   await Promise.allSettled([writeInstallMarker()]);
 
   if (!stale) {
-    return { hasPassword, biometricsEnabled };
+    return { hasPassword, biometricsEnabled, needsLongerPassword };
   }
 
   await Promise.allSettled([clearStoredPassword(), clearBiometricsMarker()]);

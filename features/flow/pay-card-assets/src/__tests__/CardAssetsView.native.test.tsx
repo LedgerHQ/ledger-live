@@ -41,7 +41,7 @@ const ready: CardAssetsViewModel = {
   onWithdrawContinue: jest.fn(),
   onManagePress: jest.fn(),
   onAddAssetPress: jest.fn(),
-  onReorderAssets: jest.fn(),
+  onMoveAsset: jest.fn(),
   reorderingAssetId: null,
 };
 
@@ -170,12 +170,5 @@ describe("CardAssetsView (native)", () => {
     await user.press(screen.getByText(CARD_ASSETS_COPY.addAsset));
 
     expect(onAddAsset).toHaveBeenCalledTimes(1);
-  });
-
-  it("should hide the add asset action when the host does not provide it", () => {
-    render(<CardAssetsManageDrawer rows={ready.rows} />, { wrapper: I18nWrapper });
-
-    expect(screen.queryByText(CARD_ASSETS_COPY.addAssetCaption)).not.toBeOnTheScreen();
-    expect(screen.queryByText(CARD_ASSETS_COPY.addAsset)).not.toBeOnTheScreen();
   });
 });

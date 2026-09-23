@@ -31,7 +31,13 @@ export const appLockSlice = createSlice({
     // Ignored once hydrated: a read that resolves after a setup must not undo it.
     hydrateAppLock: (
       state,
-      action: PayloadAction<Readonly<{ hasPassword: boolean; biometricsEnabled: boolean }>>,
+      action: PayloadAction<
+        Readonly<{
+          hasPassword: boolean;
+          biometricsEnabled: boolean;
+          needsLongerPassword?: boolean;
+        }>
+      >,
     ) => {
       if (state.isHydrated) {
         return;
@@ -40,6 +46,7 @@ export const appLockSlice = createSlice({
       state.isHydrated = true;
       state.hasPassword = action.payload.hasPassword;
       state.biometricsEnabled = action.payload.biometricsEnabled;
+      state.needsLongerPassword = action.payload.needsLongerPassword === true;
     },
     setNeedsLongerPassword: (state, action: PayloadAction<boolean>) => {
       state.needsLongerPassword = action.payload;

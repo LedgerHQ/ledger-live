@@ -1,5 +1,17 @@
 # @support/jest-shared
 
+## 0.4.0
+
+### Minor Changes
+
+- [#21848](https://github.com/LedgerHQ/ledger-live/pull/21848) [`0caf4f9`](https://github.com/LedgerHQ/ledger-live/commit/0caf4f998525a28ed5a918923c3575183b9e3e81) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix unstable Proxy component references and enable userEvent.press on Lumen natives
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#21848](https://github.com/LedgerHQ/ledger-live/pull/21848) [`0caf4f9`](https://github.com/LedgerHQ/ledger-live/commit/0caf4f998525a28ed5a918923c3575183b9e3e81) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix unstable Proxy component references and enable userEvent.press on Lumen natives
+
 ## 0.3.0
 
 ### Minor Changes

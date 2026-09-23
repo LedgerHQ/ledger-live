@@ -33,8 +33,16 @@ function Q3WalletV4TourScreenDebug() {
   const selectedVariant: Q3Variant = isQ3Variant(releaseTour?.params?.variant)
     ? releaseTour.params.variant
     : "q3_a";
-  const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer, closeDrawer, onSlideChange } =
-    useQ3WalletV4TourDrawerViewModel();
+  const {
+    isDrawerOpen,
+    handleOpenDrawer,
+    handleCloseDrawer,
+    closeDrawer,
+    onSlideChange,
+    onHeaderClosePressed,
+    dismissDrawer,
+    onContinueClick,
+  } = useQ3WalletV4TourDrawerViewModel();
   const canOpenDrawer = isQ3TourEnabled && !hasSeenQ3WalletV4Tour;
 
   const handleToggleQ3TourEnabled = useCallback(() => {
@@ -169,6 +177,9 @@ function Q3WalletV4TourScreenDebug() {
         handleCloseDrawer={handleCloseDrawer}
         closeDrawer={closeDrawer}
         onSlideChange={onSlideChange}
+        onHeaderClosePressed={onHeaderClosePressed}
+        dismissDrawer={dismissDrawer}
+        onContinueClick={onContinueClick}
         source="Debug"
       />
     </>

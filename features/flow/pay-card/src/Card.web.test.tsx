@@ -3,13 +3,12 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { CardFormatters, CardProps } from "./Card.types";
-import { CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
+import { CARD_DISCLAIMER, CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
 
 let mockStatus: PayCardAuthStatus = "unknown";
 let receivedDetailsFormatters: CardTransactionFormatters | undefined;
 const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError: false }));
 let receivedTransactionFormatters: CardTransactionFormatters | undefined;
-let receivedTransactionTracker: CardProps["login"]["onTrackEvent"];
 let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
@@ -57,17 +56,14 @@ jest.mock("@features/flow-pay-card-assets", () => ({
 }));
 
 jest.mock("@features/flow-pay-card-transactions", () => ({
-  CardTransactions: ({
-    formatters,
-    onTrackEvent,
-  }: {
-    formatters?: CardTransactionFormatters;
-    onTrackEvent?: CardProps["login"]["onTrackEvent"];
-  }) => {
+  CardTransactions: ({ formatters }: { formatters?: CardTransactionFormatters }) => {
     receivedTransactionFormatters = formatters;
-    receivedTransactionTracker = onTrackEvent;
     return <div data-testid="card-transactions" />;
   },
+}));
+
+jest.mock("./useCardLifecycleTracking", () => ({
+  useCardLifecycleTracking: jest.fn(),
 }));
 
 import { Card } from "./Card";
@@ -102,7 +98,6 @@ describe("Card (web)", () => {
     mockStatus = "unknown";
     receivedDetailsFormatters = undefined;
     receivedTransactionFormatters = undefined;
-    receivedTransactionTracker = undefined;
     receivedCardSettingsActions = undefined;
   });
 
@@ -110,6 +105,12 @@ describe("Card (web)", () => {
     renderCard(<Card login={{ oauthConfig }} />);
 
     expect(screen.getByText(title)).toBeVisible();
+  });
+
+  it("always shows the disclaimer", () => {
+    renderCard(<Card login={{ oauthConfig }} />);
+
+    expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
   });
 
   describe("while resolving the session", () => {
@@ -134,6 +135,8 @@ describe("Card (web)", () => {
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.getByTestId("card-login")).toBeVisible();
+      expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
+      expect(screen.getByTestId("pay-card-disclaimer")).toHaveClass("mt-auto");
       expect(screen.queryByTestId("card-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
@@ -170,6 +173,8 @@ describe("Card (web)", () => {
       expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("card-details")).toBeVisible();
       expect(screen.getByTestId("card-transactions")).toBeVisible();
+      expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
+      expect(screen.getByTestId("pay-card-disclaimer")).not.toHaveClass("mt-auto");
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-assets")).not.toBeInTheDocument();
@@ -181,8 +186,10 @@ describe("Card (web)", () => {
           login={{ oauthConfig }}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -197,8 +204,10 @@ describe("Card (web)", () => {
           formatters={formatters}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -217,8 +226,10 @@ describe("Card (web)", () => {
           formatters={formatters}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -239,8 +250,10 @@ describe("Card (web)", () => {
           formatters={formatters}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -279,14 +292,6 @@ describe("Card (web)", () => {
       expect(receivedDetailsFormatters?.amount).toBe(transactionAmount);
     });
 
-    it("hands the host tracker to the transactions list", () => {
-      const onTrackEvent = jest.fn();
-
-      renderCard(<Card login={{ oauthConfig, onTrackEvent }} />);
-
-      expect(receivedTransactionTracker).toBe(onTrackEvent);
-    });
-
     it("opens the top up from the button the host wired", () => {
       const onTopUp = jest.fn();
 
@@ -294,6 +299,17 @@ describe("Card (web)", () => {
       fireEvent.click(screen.getByTestId("card-top-up"));
 
       expect(onTopUp).toHaveBeenCalledTimes(1);
+    });
+
+    it("shows the disclaimer above the top up button", () => {
+      renderCard(<Card login={{ oauthConfig }} onTopUp={jest.fn()} />);
+
+      const disclaimer = screen.getByTestId("pay-card-disclaimer");
+      const topUp = screen.getByTestId("card-top-up");
+
+      expect(
+        disclaimer.compareDocumentPosition(topUp) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
     });
 
     it("shows no top up button when the host wires none", () => {
@@ -306,7 +322,6 @@ describe("Card (web)", () => {
       const cardSettingsActions: CardProps["cardSettingsActions"] = {
         onManagePin: jest.fn(),
         onAccessBaanx: jest.fn(),
-        onHelp: jest.fn(),
       };
 
       renderCard(<Card login={{ oauthConfig }} cardSettingsActions={cardSettingsActions} />);

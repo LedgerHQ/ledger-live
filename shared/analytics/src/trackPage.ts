@@ -37,14 +37,20 @@ export function trackPage(
     avoidDuplicates = false,
   }: TrackPageOptions = {},
 ): void | Promise<void> {
-  if (!(mandatory || isEnabled())) {
+  const fullScreenName = buildFullScreenName(category, name);
+  const eventName = buildPageEventName(fullScreenName);
+
+  if (!mandatory && !isEnabled()) {
+    if (updateRoutes) {
+      previousRouteNameRef.current = currentRouteNameRef.current;
+      if (refreshSource) {
+        currentRouteNameRef.current = fullScreenName;
+      }
+    }
     return;
   }
 
-  const fullScreenName = buildFullScreenName(category, name);
-  const eventName = buildPageEventName(fullScreenName);
   const shouldSkip = shouldSkipDuplicatePageEvent(eventName, avoidDuplicates);
-
   if (shouldSkip) {
     return;
   }

@@ -1,5 +1,5 @@
 import type { PayCardTransaction } from "@domain/api-card-management";
-import type { CardAssetsViewModel } from "@features/flow-pay-card-assets";
+import type { CardAssetsProps, CardAssetsViewModel } from "@features/flow-pay-card-assets";
 import type {
   CardTransactionFormatters,
   CardTransactionItem,
@@ -11,6 +11,8 @@ import type { CardDetailsRoute } from "./navigation";
 export type OverviewSceneProps = Readonly<{
   cardVisual?: CardVisualProps;
   assetsViewModel: CardAssetsViewModel | null;
+  /** The host's pricing, which the reward banner needs for a counter-value. */
+  assets?: CardAssetsProps;
   freezeViewModel: FreezeViewModel;
   moreViewModel: MoreViewModel;
   onFreezePress: () => void;
@@ -19,6 +21,7 @@ export type OverviewSceneProps = Readonly<{
   onAddToWalletPress: () => void;
   onShowMore?: () => void;
   formatters?: CardTransactionFormatters;
+  disclaimer: string;
 }>;
 
 export type FreezeSceneProps = Readonly<{

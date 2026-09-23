@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-widget",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Card widget flow for Pay tab in Ledger Wallet",
   "main": "src/index.ts",
@@ -21,6 +21,7 @@
     "@domain/api-card-management": "workspace:^",
     "@domain/entity-currency": "workspace:^",
     "@features/flow-pay-card-wallets": "workspace:^",
+    "@features/platform-pay-analytics": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"

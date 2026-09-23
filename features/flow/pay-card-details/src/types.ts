@@ -10,8 +10,6 @@ export type { CardSettingsActions };
 
 export type { FormattedValue };
 
-export type CardTrackEvent = (event: string, params: Record<string, unknown>) => void;
-
 export type CardVisualProps = Readonly<{
   balance: number;
   formatCountervalue: (value: number) => FormattedValue;
@@ -27,11 +25,13 @@ export type CardVisualViewProps = CardVisualProps &
 export type CardDetailsProps = Readonly<{
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   cardVisual?: CardVisualProps;
-  /** Native only: funding assets shown and navigated inside the card details drawer. */
+  /**
+   * The host's card assets: its pricing is used on both platforms, for the reward banner's
+   * counter-value. Natively it also renders the funding assets inside the card details drawer.
+   */
   assets?: CardAssetsProps;
   /** Formats the reward wallet amount, and, natively, the transactions the overview lists. */
   formatters?: CardTransactionFormatters;
-  onTrackEvent?: CardTrackEvent;
   onShowMore?: () => void;
   onTopUp?: () => void;
   cardSettingsActions?: CardSettingsActions;

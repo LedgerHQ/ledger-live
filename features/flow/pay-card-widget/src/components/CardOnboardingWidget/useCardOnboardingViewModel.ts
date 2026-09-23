@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { markCardOnboardingCompleted, selectHasCompletedCardOnboarding } from "../../state";
 import { useCardOnboardingStatus } from "../../onboardingStatus";
 import { useOnboardingSteps, type CardOnboardingStepWithCopy } from "./useOnboardingSteps";
@@ -20,6 +21,7 @@ export type CardOnboardingViewModelResult = {
 
 export function useCardOnboardingViewModel(): CardOnboardingViewModelResult {
   const [isOpen, setIsOpen] = useState(false);
+  const { trackCardOnboardingWidgetToggled } = usePayAnalyticsContext();
   const { data, isLoading, isError } = useCardOnboardingStatus();
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(selectHasCompletedCardOnboarding);
@@ -28,13 +30,39 @@ export function useCardOnboardingViewModel(): CardOnboardingViewModelResult {
   const completedCount = data.completedCount;
   const totalCount = data.steps.length;
   const onboardingCompleted = totalCount > 0 && completedCount === totalCount;
+  const stepDone = useCallback(
+    (id: string) => data.steps.find(step => step.id === id)?.isDone ?? false,
+    [data.steps],
+  );
+  const trackingProperties = useMemo(
+    () => ({
+      page: "Pay",
+      cardClaimed: stepDone("choose-card-type"),
+      addedToOsWallet: stepDone("apple-google-pay"),
+      cardTopUp: stepDone("top-up-card"),
+      firstPurchaseCompleted: stepDone("first-purchase"),
+    }),
+    [stepDone],
+  );
 
-  const handleOpen = useCallback(() => setIsOpen(true), []);
-  const handleClose = useCallback(() => setIsOpen(false), []);
+  const handleOpen = useCallback(() => {
+    trackCardOnboardingWidgetToggled({
+      opened: true,
+      ...trackingProperties,
+    });
+    setIsOpen(true);
+  }, [trackCardOnboardingWidgetToggled, trackingProperties]);
+  const handleClose = useCallback(() => {
+    trackCardOnboardingWidgetToggled({
+      opened: false,
+      ...trackingProperties,
+    });
+    setIsOpen(false);
+  }, [trackCardOnboardingWidgetToggled, trackingProperties]);
   const handleGotIt = useCallback(() => {
     dispatch(markCardOnboardingCompleted());
-    setIsOpen(false);
-  }, [dispatch]);
+    handleClose();
+  }, [dispatch, handleClose]);
 
   return useMemo(
     () => ({

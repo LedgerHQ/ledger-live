@@ -2,6 +2,7 @@ import React, { type PropsWithChildren } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
+import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { payCardAuthSlice, setSignedIn } from "../../../state/slice";
 import {
@@ -169,10 +170,12 @@ function buildStore() {
   });
 }
 
-function withProviders(store: ReturnType<typeof buildStore>) {
+function withProviders(store: ReturnType<typeof buildStore>, track = jest.fn()) {
   return ({ children }: PropsWithChildren) => (
     <Provider store={store}>
-      <I18nTestProvider resources={CARD_LOGIN_INTRO_RESOURCES}>{children}</I18nTestProvider>
+      <PayAnalyticsProvider adapter={{ track }}>
+        <I18nTestProvider resources={CARD_LOGIN_INTRO_RESOURCES}>{children}</I18nTestProvider>
+      </PayAnalyticsProvider>
     </Provider>
   );
 }
@@ -180,7 +183,7 @@ function withProviders(store: ReturnType<typeof buildStore>) {
 async function renderIdleLogin(
   store: ReturnType<typeof buildStore>,
   mobileWallet: MobileWallet = "both",
-  onTrackEvent?: jest.Mock,
+  track = jest.fn(),
   openHostedPage?: jest.Mock,
   requestProtection?: jest.Mock,
 ) {
@@ -191,10 +194,9 @@ async function renderIdleLogin(
         openHostedPage,
         mobileWallet,
         oauthConfig,
-        onTrackEvent,
         requestProtection,
       }),
-    { wrapper: withProviders(store) },
+    { wrapper: withProviders(store, track) },
   );
 
   await waitFor(() => expect(rendered.result.current?.isLoading).toBe(false));
@@ -266,7 +268,7 @@ describe("useCardLoginViewModel intro", () => {
     await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
     expect(result.current?.intro.isOpen).toBe(false);
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
-      button: "i already have a card",
+      button: "signin",
       flow: CARD_LOGIN_INTRO_FLOW,
       page: CARD_LOGIN_INTRO_PAGE,
     });
@@ -563,7 +565,7 @@ describe("useCardLoginViewModel intro", () => {
     act(() => result.current?.onLoginPress());
 
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
-      button: "login",
+      button: "signin",
       flow: CARD_LOGIN_INTRO_FLOW,
       page: CARD_LOGIN_INTRO_PAGE,
     });
@@ -571,8 +573,8 @@ describe("useCardLoginViewModel intro", () => {
   });
 
   it.each([
-    ["createAccount", "create an account"],
-    ["logIn", "log in to baanx"],
+    ["createAccount", "signup"],
+    ["logIn", "signin"],
   ] as const)("tracks the %s intro action", async (id, button) => {
     const onTrackEvent = jest.fn();
     const { result } = await renderIdleLogin(store, "both", onTrackEvent);

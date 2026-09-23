@@ -6,11 +6,11 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { PayRequestTrackEvent, RequestReceiveProps } from "@features/flow-pay-request";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import {
   markReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
 } from "@features/flow-pay-request/state";
-import { useTranslation } from "@shared/i18n";
 import { useHideTabBar } from "LLM/hooks/useTabBarVisibility";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { deriveRequestReceiveData } from "LLM/features/PayTab/hooks/deriveRequestReceiveData";
@@ -18,20 +18,16 @@ import { usePayTabVerifyAddress } from "LLM/features/PayTab/hooks/usePayTabVerif
 import type { PayTabNavigatorParamList } from "../../types";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
 import type { PayTabRequestReceiveViewProps } from "./PayTabRequestReceiveView";
 
-const REQUEST_PAGE = "Pay";
+const REQUEST_PAGE = "Request complete";
 const VERIFY_HINT = "verify";
-
-const onTrackEvent: PayRequestTrackEvent = (event, params) => {
-  void track(event, params);
-};
 
 export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProps {
   useHideTabBar();
 
-  const { t } = useTranslation();
+  const analytics = usePayAnalyticsContext();
+  const onTrackEvent: PayRequestTrackEvent = analytics.trackEvent;
   const dispatch = useDispatch();
   const hasSeenReceiveVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
   const { goBack, addListener, setOptions } =
@@ -92,43 +88,30 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   }, [addListener, hasSeenReceiveVerifyHint]);
 
   const onHintShown = useCallback(() => {
-    track("hint_impression", {
+    onTrackEvent("hint_impression", {
       hint: VERIFY_HINT,
       buttonLocation: "request",
       page: REQUEST_PAGE,
+      flow: "request",
     });
-  }, []);
+  }, [onTrackEvent]);
 
   const onGotIt = useCallback(() => {
-    track("button_clicked", {
+    onTrackEvent("button_clicked", {
       button: "got it",
       hint: VERIFY_HINT,
       buttonLocation: "request",
       page: REQUEST_PAGE,
+      flow: "request",
     });
     markHintSeen();
-  }, [markHintSeen]);
+  }, [markHintSeen, onTrackEvent]);
 
   const onVerify = useCallback(() => {
     if (!account) return;
     markHintSeen();
     openIntro();
   }, [account, markHintSeen, openIntro]);
-
-  const labels = useMemo(
-    () => ({
-      title: t("payTab.request.title", { asset: data?.asset.name ?? "" }),
-      networkLabel: t("payTab.request.networkLabel", { network: data?.network ?? "" }),
-      actions: {
-        share: t("payTab.request.actions.share"),
-        copy: t("payTab.request.actions.copy"),
-        copied: t("payTab.request.actions.copied"),
-        save: t("payTab.request.actions.save"),
-        verify: t("payTab.request.actions.verify"),
-      },
-    }),
-    [t, data],
-  );
 
   const requestReceive = useMemo<RequestReceiveProps>(
     () => ({
@@ -137,7 +120,6 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
       asset: data?.asset ?? { name: "", ticker: "" },
       network: data?.network ?? "",
       page: REQUEST_PAGE,
-      labels,
       assetIcon: data?.assetIcon ?? { ledgerId: "", ticker: "" },
       networkIcon: data?.networkIcon,
       cardRef,
@@ -151,24 +133,21 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
         ? undefined
         : {
             open: hasNavigationSettled,
-            message: t("payTab.request.verifyHint.message"),
-            gotItLabel: t("payTab.request.verifyHint.gotIt"),
             onGotIt,
             onShown: onHintShown,
           },
     }),
     [
       data,
-      labels,
       onShare,
       onCopy,
       onVerify,
       goBack,
       hasSeenReceiveVerifyHint,
       hasNavigationSettled,
-      t,
       onGotIt,
       onHintShown,
+      onTrackEvent,
     ],
   );
 
