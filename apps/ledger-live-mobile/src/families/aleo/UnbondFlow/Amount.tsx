@@ -9,11 +9,13 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { isAleoAccount } from "@ledgerhq/live-common/families/aleo/utils";
 import { useAleoStakingPosition } from "@ledgerhq/live-common/families/aleo/react";
+import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import type { Transaction as AleoTransaction } from "@ledgerhq/live-common/families/aleo/types";
 import SafeAreaView from "~/components/SafeAreaView";
 import Skeleton from "~/components/Skeleton";
 import { Trans, useTranslation } from "~/context/Locale";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { TrackScreen } from "~/analytics";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import TranslatedError from "~/components/TranslatedError";
@@ -82,7 +84,7 @@ export default function Amount({ navigation, route }: Props) {
   );
 
   const mainAccount = getMainAccount(account, parentAccount ?? null);
-  const unit = account.currency.units[0];
+  const unit = useAccountUnit(account);
   const bondedBalance = account.aleoResources?.bondedBalance ?? new BigNumber(0);
   const position = useAleoStakingPosition(account);
 
@@ -90,11 +92,9 @@ export default function Amount({ navigation, route }: Props) {
 
   const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(bridge, () => {
     const created = bridge.createTransaction(mainAccount);
-    // Full unbond only: there is no partial-amount input, the transaction always
-    // unbonds the entire bonded position back to the account itself.
+    // Full unbond only: there is no partial-amount input.
     const prepared = bridge.updateTransaction(created, {
-      mode: "unbond_public",
-      recipient: mainAccount.freshAddress,
+      mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
       useAllAmount: true,
     });
 
@@ -112,6 +112,7 @@ export default function Amount({ navigation, route }: Props) {
       parentId: route.params.parentId,
       transaction,
       status,
+      source: route.params.source,
     });
   }, [navigation, route.params, status, transaction]);
 

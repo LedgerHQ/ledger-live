@@ -29,24 +29,16 @@ function BondIcon(props: Readonly<IconProps>) {
   );
 }
 
-function UnbondIcon(props: Readonly<IconProps>) {
-  const { colors } = useTheme();
+function makeUnbondIcon(disabled: boolean) {
+  return function UnbondIcon(props: Readonly<IconProps>) {
+    const { colors } = useTheme();
 
-  return (
-    <Circle {...props} bg={rgba(colors.alert, 0.2)}>
-      <UndelegateIcon color={colors.alert} />
-    </Circle>
-  );
-}
-
-function UnbondIconDisabled(props: Readonly<IconProps>) {
-  const { colors } = useTheme();
-
-  return (
-    <Circle {...props} bg={colors.lightFog}>
-      <UndelegateIcon color={colors.grey} />
-    </Circle>
-  );
+    return (
+      <Circle {...props} bg={disabled ? colors.lightFog : rgba(colors.alert, 0.2)}>
+        <UndelegateIcon color={disabled ? colors.grey : colors.alert} />
+      </Circle>
+    );
+  };
 }
 
 type Props = Readonly<{
@@ -94,7 +86,7 @@ export default function StakedDrawer({
       },
       {
         label: t("aleo.manage.unbond"),
-        Icon: canUnstake ? UnbondIcon : UnbondIconDisabled,
+        Icon: makeUnbondIcon(!canUnstake),
         event: "AleoManageUnstake",
         disabled: !canUnstake,
         onPress: onUnstake,

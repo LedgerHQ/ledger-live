@@ -4,10 +4,15 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import type { AleoAccount, AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
 import { NotEnoughBalance, AmountRequired } from "@ledgerhq/ledger-wallet-framework/errors";
+import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import { NavigatorName, ScreenName } from "~/const";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { makeAleoAccount, withFreshCurrencyId } from "../../__mocks__/account.mock";
-import { mockTransactionStatus, resetAleoBridgeMock } from "../../__mocks__/bridge.mock";
+import {
+  aleoAccountBridge,
+  mockTransactionStatus,
+  resetAleoBridgeMock,
+} from "../../__mocks__/bridge.mock";
 import { component as UnbondFlowNavigator } from "../index";
 
 jest.mock(
@@ -60,15 +65,6 @@ const CREDIT = 1_000_000;
 
 const VALIDATOR_ADDRESS = "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t";
 
-const UNBOND_TRANSACTION = {
-  family: "aleo" as const,
-  mode: "unbond_public",
-  amount: new BigNumber(12_000 * CREDIT),
-  recipient: "",
-  useAllAmount: true,
-  subAccountId: undefined,
-};
-
 const Stack = createNativeStackNavigator();
 
 function UnbondFlowHarness() {
@@ -111,7 +107,6 @@ function renderFlowAt(account: AleoAccount) {
 describe("Aleo unbond flow (integration)", () => {
   beforeEach(() => {
     resetAleoBridgeMock({
-      transaction: UNBOND_TRANSACTION,
       operationType: "UNBOND",
     });
     mockGetValidators.mockResolvedValue([]);
@@ -125,6 +120,12 @@ describe("Aleo unbond flow (integration)", () => {
     );
     const continueButton = screen.getByTestId("aleo-unbond-amount-continue");
     await waitFor(() => expect(continueButton).toBeEnabled());
+
+    expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(expect.anything(), {
+      mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
+      useAllAmount: true,
+    });
+
     await user.press(continueButton);
 
     await user.press(await screen.findByTestId("device-item-mock"));
@@ -147,11 +148,14 @@ describe("Aleo unbond flow (integration)", () => {
   it("makes clear re-staking with another validator does not require claiming first", async () => {
     renderFlowAt(BONDED_ACCOUNT);
 
-    await waitFor(() => expect(screen.getByTestId("aleo-unbond-restake-alert")).toBeVisible());
-    expect(screen.queryByText(/must claim/i)).toBeNull();
+    await waitFor(() =>
+      expect(screen.getByTestId("aleo-unbond-restake-alert")).toHaveTextContent(
+        /stake again with a different validator right away/i,
+      ),
+    );
   });
 
-  it("disables Continue and shows no bonded position when there is nothing to unbond", async () => {
+  it("disables Continue when there is nothing to unbond", async () => {
     mockTransactionStatus({
       amount: new BigNumber(0),
       errors: { amount: new AmountRequired() },

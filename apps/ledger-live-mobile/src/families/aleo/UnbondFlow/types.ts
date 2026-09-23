@@ -8,6 +8,7 @@ export type AleoUnbondFlowParamList = {
   [ScreenName.AleoUnbondAmount]: {
     accountId: string;
     parentId?: string;
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.AleoUnbondSelectDevice]: {
     accountId: string;
