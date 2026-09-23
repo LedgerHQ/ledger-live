@@ -83,7 +83,9 @@ export default function StepAmount({
         label={<Trans i18nKey="near.withdraw.flow.steps.amount.fields.amount" />}
       />
       <Box mb={1} />
-      {notEnoughFundsError ? <NotEnoughFundsToUnstake account={account} onClose={onClose} /> : null}
+      {notEnoughFundsError ? (
+        <NotEnoughFundsToUnstake account={account} onClose={onClose} page="WithdrawingFlowModal" />
+      ) : null}
     </Box>
   );
 }

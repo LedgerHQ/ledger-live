@@ -1,5 +1,6 @@
 ---
 "@ledgerhq/coin-near": patch
+"@ledgerhq/coin-tester-near": patch
 "ledger-live-desktop": patch
 ---
 
@@ -22,3 +23,7 @@ Unstake and withdraw are validated against the balance left above storage stakin
 the chain checks, instead of the spendable balance that also subtracts the minimum-balance
 reserve. The withdraw flow gains the NotEnoughFundsToUnstake banner the unstake flow already
 shows, so a real shortfall is explained with the available balance and Buy/Swap/Deposit actions.
+
+The NEAR coin-tester scenario's withdraw step now requires the withdrawn amount itself to have
+landed before the send-max step sizes its amount: the pool pays out through a Transfer receipt
+that lands a block after the call, and the smaller gas refund alone used to satisfy the step.
