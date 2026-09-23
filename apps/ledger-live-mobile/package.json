@@ -106,7 +106,7 @@
     "@domain/entity-currency-unit": "workspace:^",
     "@domain/entity-interest-rate": "workspace:*",
     "@domain/entity-market-index-altcoin-season": "workspace:^",
-    "@domain/entity-market-sentiment": "workspace:^",
+    "@domain/entity-market-index-fear-and-greed": "workspace:^",
     "@domain/entity-recent-addresses": "workspace:^",
     "@domain/entity-starred-account": "workspace:^",
     "@domain/entity-wallet-sync": "workspace:^",
