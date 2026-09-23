@@ -21,7 +21,7 @@ async function findProvidersOwningSwapId(
     return raw
       .filter(isSwapKnownToProvider)
       .map(s => s.provider)
-      .sort();
+      .sort((a, b) => a.localeCompare(b));
   } catch (e) {
     walletCliDebug(`swap status: provider lookup for swapId=${swapId} failed: ${String(e)}`);
     return [];
