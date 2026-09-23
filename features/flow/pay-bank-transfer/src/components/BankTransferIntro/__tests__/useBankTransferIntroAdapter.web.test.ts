@@ -29,7 +29,6 @@ describe("useBankTransferIntroAdapter", () => {
       () =>
         useBankTransferIntroAdapter({
           heroImage: 7,
-          bottomInset: 34,
           onBankTransfer,
           onTrackEvent,
         }),
@@ -38,7 +37,6 @@ describe("useBankTransferIntroAdapter", () => {
 
     const { bankTransferIntro } = result.current;
     expect(bankTransferIntro.heroImage).toBe(7);
-    expect(bankTransferIntro.bottomInset).toBe(34);
     expect(bankTransferIntro.onBankTransfer).toBe(onBankTransfer);
     expect(bankTransferIntro.onTrackEvent).toBe(onTrackEvent);
   });

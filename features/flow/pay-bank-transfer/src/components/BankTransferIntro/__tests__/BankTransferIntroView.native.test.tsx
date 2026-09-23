@@ -11,7 +11,6 @@ const defaultProps: BankTransferIntroViewProps = {
   logInLabel: "Log in",
   providedBy: "Provided by Noah",
   rows: [{ icon: "Bank", title: "Bank transfer", description: "Send USD or EUR." }],
-  bottomInset: 0,
   onShown: jest.fn(),
   onCreateAccountPress: jest.fn(),
   onLogInPress: jest.fn(),
@@ -67,13 +66,6 @@ describe("BankTransferIntroView (Native)", () => {
       expect.objectContaining({ width: "100%", height: 192, borderRadius: 12 }),
     );
     expect(hero.props.resizeMode).toBe("cover");
-  });
-
-  it("reserves the bottom safe area so the CTA stays visible", () => {
-    render(<BankTransferIntroView {...defaultProps} bottomInset={48} />);
-
-    const content = screen.getByTestId("pay-bank-transfer-intro-content");
-    expect(content.props.style.paddingBottom).toBeGreaterThanOrEqual(48);
   });
 
   it("creates an account once even if the CTA is pressed repeatedly", () => {

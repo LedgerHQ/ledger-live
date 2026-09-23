@@ -28,7 +28,6 @@ const TRACK_BUTTON = {
 export function useBankTransferIntroViewModel({
   isOpen,
   heroImage,
-  bottomInset = 0,
   onBankTransfer,
   onClose,
   onTrackEvent,
@@ -95,7 +94,6 @@ export function useBankTransferIntroViewModel({
     providedBy: t(`${KEY_PREFIX}.providedBy`),
     heroImage,
     rows,
-    bottomInset,
     onShown,
     onCreateAccountPress,
     onLogInPress,

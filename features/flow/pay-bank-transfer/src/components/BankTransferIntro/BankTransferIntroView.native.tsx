@@ -13,7 +13,7 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import type { BankTransferIntroViewProps } from "../../types";
 
 export function BankTransferIntroView({
@@ -25,7 +25,6 @@ export function BankTransferIntroView({
   providedBy,
   heroImage,
   rows,
-  bottomInset,
   onShown,
   onCreateAccountPress,
   onLogInPress,
@@ -76,10 +75,7 @@ export function BankTransferIntroView({
       testID="pay-bank-transfer-intro-sheet"
     >
       {isOpen ? (
-        <BottomSheetView
-          style={{ paddingBottom: bottomInset + 16 }}
-          testID="pay-bank-transfer-intro-content"
-        >
+        <BankTransferIntroContent>
           <BottomSheetHeader density="expanded" />
           <Box lx={{ gap: "s16" }}>
             {heroImage ? (
@@ -147,8 +143,21 @@ export function BankTransferIntroView({
               </Button>
             </Box>
           </Box>
-        </BottomSheetView>
+        </BankTransferIntroContent>
       ) : null}
     </QueuedBottomSheet>
+  );
+}
+
+function BankTransferIntroContent({ children }: Readonly<{ children: React.ReactNode }>) {
+  const bottomInset = useBottomSheetBottomInset();
+
+  return (
+    <BottomSheetView
+      style={{ paddingBottom: bottomInset + 24 }}
+      testID="pay-bank-transfer-intro-content"
+    >
+      {children}
+    </BottomSheetView>
   );
 }

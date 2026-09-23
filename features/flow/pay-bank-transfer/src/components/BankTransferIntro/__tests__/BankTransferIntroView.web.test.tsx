@@ -11,7 +11,6 @@ const defaultProps: BankTransferIntroViewProps = {
   logInLabel: "Log in",
   providedBy: "Provided by Noah",
   rows: [{ icon: "Bank", title: "Bank transfer", description: "Send USD or EUR." }],
-  bottomInset: 0,
   onShown: jest.fn(),
   onCreateAccountPress: jest.fn(),
   onLogInPress: jest.fn(),
