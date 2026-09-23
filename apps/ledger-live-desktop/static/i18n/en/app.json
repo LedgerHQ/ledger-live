@@ -5063,8 +5063,7 @@
           },
           "validator": {
             "title": "Validators",
-            "ledgerByBitwiseTC": "Ledger by Bitwise T&Cs",
-            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
+            "ledgerByBitwiseTC": "Ledger by Bitwise T&Cs"
           },
           "connectDevice": {
             "title": "Device"
