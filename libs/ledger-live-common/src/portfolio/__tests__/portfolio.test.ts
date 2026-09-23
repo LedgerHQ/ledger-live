@@ -33,7 +33,6 @@ import type { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live"
 
 setEnv("MOCK", "1");
 
-// Rates are injected now, so the test picks the mock source rather than flipping an env switch.
 const rates = createMockRateSource("1");
 
 // Mirror live-countervalues's jest-setup: restrict genAccount to only bitcoin+ethereum

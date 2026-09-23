@@ -17,7 +17,6 @@ setCryptoAssetsStore({
 });
 setEnv("MOCK", "1");
 
-// Rates are injected now, so the test picks the mock source rather than flipping an env switch.
 const rates = createMockRateSource("1");
 test("export CSV", async () => {
   const fiatCurrency = getFiatCurrencyByTicker("USD");
