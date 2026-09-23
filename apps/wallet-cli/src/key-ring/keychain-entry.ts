@@ -56,8 +56,8 @@ export function splitKeychainLines(stored: string): string[] {
 /**
  * Encrypt-and-`ENC:`-prefix a secret when a `wrappingKey` is given, otherwise return it verbatim.
  * This is the shared keychain-wrap home for wallet-cli's credential stores — Agent Intent's profile
- * keys use it here; `ring`'s `keychain.ts` and Ledger Sync's `keychain.ts` adopt the same functions
- * in NTTVS-728, so all three never drift onto different wrap formats.
+ * keys use it here; `ring`'s and Ledger Sync's keychain modules are meant to adopt the same
+ * functions too, so none of them drift onto a different wrap format.
  */
 export async function wrapSecret(secretHex: string, wrappingKey?: CryptoKey): Promise<string> {
   if (!wrappingKey) return secretHex;

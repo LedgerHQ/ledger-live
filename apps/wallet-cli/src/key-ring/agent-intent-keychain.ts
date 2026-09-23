@@ -36,8 +36,6 @@ export async function saveAgentIntentSecretKey(
   getEntry(profileId).setPassword(payload);
 }
 
-// Not yet called anywhere in this package — NTTVS-746 (create/send intents) will load the secret
-// key to sign with; NTTVS-749 (cancel) is the eventual caller for `deleteAgentIntentSecretKey` below.
 export async function loadAgentIntentSecretKey(
   profileId: string,
   wrappingKey?: CryptoKey,

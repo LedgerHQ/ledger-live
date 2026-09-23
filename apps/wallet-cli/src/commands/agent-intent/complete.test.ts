@@ -2,14 +2,6 @@ import "../../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { installOutputCapture } from "../../shared/ui";
 
-/**
- * `agent-intent complete` validates the frontend's completion JSON against the profile that was
- * enrolled locally. Two checks matter beyond happy-path parsing: it must refuse to re-complete an
- * already-enrolled profile, and (NTTVS-745 fix) it must refuse a completion issued for a different
- * Agent Intent environment than the one the profile was enrolled against — otherwise a profile
- * enrolled for staging could silently end up holding a production Trustchain ID.
- */
-
 const AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION = 1;
 
 let storedProfile: Record<string, unknown> | undefined;

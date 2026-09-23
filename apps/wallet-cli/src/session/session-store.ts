@@ -44,8 +44,8 @@ const _agentIntentEnvironmentsExhaustive: (typeof AGENT_INTENT_ENVIRONMENTS)[num
   "" as AgentIntentEnvironment;
 void _agentIntentEnvironmentsExhaustive;
 
-// Non-secret Agent Intent profile metadata only (NTTVS-745). The profile's private key never lives
-// here — it is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`).
+// Non-secret Agent Intent profile metadata only. The profile's private key never lives here — it
+// is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`).
 const AgentIntentProfileSchema = z.object({
   profileId: z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE),
   displayName: z.string().min(1).max(80),
