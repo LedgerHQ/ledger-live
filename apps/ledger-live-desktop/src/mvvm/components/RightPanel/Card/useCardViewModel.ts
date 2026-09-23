@@ -6,6 +6,7 @@ import {
   buildAccessBaanxPath,
   buildManagePinPath,
   buildAddAssetPath,
+  buildOrderCardPath,
   openHostedCardPathSafely,
   type CardAssetPathBuilder,
 } from "@features/flow-pay-card-auth";
@@ -159,6 +160,14 @@ export function useCardViewModel(): CardViewModel {
 
   const onTopUp = useCallback(() => openTopUp(), [openTopUp]);
 
+  const onChooseCardType = useCallback(
+    () =>
+      openHostedPath(buildOrderCardPath, error =>
+        logger.warn("[card] order card page did not open", error),
+      ),
+    [openHostedPath],
+  );
+
   useWipeHostedSession();
 
   const login: CardViewModel["login"] = useMemo(
@@ -234,6 +243,7 @@ export function useCardViewModel(): CardViewModel {
     login,
     onShowMore,
     onTopUp,
+    onChooseCardType,
     cardSettingsActions,
   };
 }

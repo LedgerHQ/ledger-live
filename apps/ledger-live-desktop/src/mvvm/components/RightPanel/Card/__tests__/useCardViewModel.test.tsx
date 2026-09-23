@@ -139,6 +139,30 @@ describe("useCardViewModel", () => {
     expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?app_id=LEDGERUS");
   });
 
+  it("opens the order card page on the hosted manifest", async () => {
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => {
+      await result.current.onChooseCardType();
+    });
+
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/order-card");
+  });
+
+  it("names the US app on the order card page for a US card holder", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => {
+      await result.current.onChooseCardType();
+    });
+
+    expect(topUpUrlFrom(mockNavigate)).toBe(
+      "https://ledger.baanxapi.test/order-card?app_id=LEDGERUS",
+    );
+  });
+
   it("pre-selects the asset the user topped up from", async () => {
     const { result } = renderCardViewModel(null);
 

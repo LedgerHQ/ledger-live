@@ -54,7 +54,8 @@ const CARD_ASSET: CardAssetRow = {
 };
 
 function PayTabViewModelProbe() {
-  const { login, onTopUp, cardAssets, cardSettingsActions, cardFormatters } = usePayTabViewModel();
+  const { login, onTopUp, onChooseCardType, cardAssets, cardSettingsActions, cardFormatters } =
+    usePayTabViewModel();
   const { oauthConfig, callback } = login;
   const formatted = cardFormatters?.countervalue?.(1250);
 
@@ -69,6 +70,7 @@ function PayTabViewModelProbe() {
       <Text testID="countervalue-integer">{formatted?.integerPart}</Text>
       <Text testID="countervalue-decimal">{formatted?.decimalPart}</Text>
       <Pressable testID="top-up" onPress={onTopUp} />
+      <Pressable testID="choose-card-type" onPress={onChooseCardType} />
       <Pressable testID="asset-top-up" onPress={() => cardAssets.onTopUp?.(CARD_ASSET)} />
       <Pressable testID="asset-withdraw" onPress={() => cardAssets.onWithdraw?.(CARD_ASSET)} />
       <Text testID="has-manage-pin">
@@ -184,6 +186,25 @@ describe("usePayTabViewModel", () => {
 
     await expectHostedPage("https://ledger.baanxapi.test/topup");
     expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
+  });
+
+  it("should open the choose card type page of the hosted UI on the Baanx manifest", async () => {
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("choose-card-type"));
+
+    await expectHostedPage("https://ledger.baanxapi.test/order-card");
+    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
+  });
+
+  it("should name the US app on the choose card type page for a US card holder", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("choose-card-type"));
+
+    await expectHostedPage("https://ledger.baanxapi.test/order-card?app_id=LEDGERUS");
   });
 
   it("should pre-select the asset the holder tops up from", async () => {

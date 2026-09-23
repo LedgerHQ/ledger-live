@@ -11,6 +11,7 @@ export function useCardViewModel({
   formatters,
   onShowMore,
   onTopUp,
+  onChooseCardType,
   cardSettingsActions,
 }: CardProps): CardViewProps {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ export function useCardViewModel({
     formatters,
     onShowMore,
     onTopUp,
+    onChooseCardType,
     cardSettingsActions,
   };
 }

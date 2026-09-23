@@ -16,6 +16,7 @@ export function CardView({
   formatters,
   onShowMore,
   onTopUp,
+  onChooseCardType,
   cardSettingsActions,
 }: CardViewProps) {
   const isSignedIn = displayState === "signedIn";
@@ -25,7 +26,7 @@ export function CardView({
       <p className="heading-5-semi-bold text-base">{title}</p>
       {isSignedIn ? (
         <>
-          <CardOnboardingWidget onTopUp={onTopUp} />
+          <CardOnboardingWidget onTopUp={onTopUp} onChooseCardType={onChooseCardType} />
           <CardDetails
             cardVisual={cardVisual}
             formatters={{ amount: formatters?.transactionAmount }}
@@ -53,7 +54,7 @@ export function CardView({
       )}
       <p
         className={
-          isSignedIn ? "body-4 text-center text-muted" : "mt-auto body-4 text-center text-muted"
+          isSignedIn ? "body-3 text-center text-muted" : "mt-auto body-3 text-center text-muted"
         }
         data-testid="pay-card-disclaimer"
       >

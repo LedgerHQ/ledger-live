@@ -13,6 +13,7 @@ import {
   buildAccessBaanxPath,
   buildManagePinPath,
   buildAddAssetPath,
+  buildOrderCardPath,
   openHostedCardPathSafely,
   type CardAssetPathBuilder,
 } from "@features/flow-pay-card-auth";
@@ -140,6 +141,8 @@ export function usePayTabViewModel() {
 
   const onTopUp = useCallback(() => openTopUp(), [openTopUp]);
 
+  const onChooseCardType = useCallback(() => openAssetPage(buildOrderCardPath), [openAssetPage]);
+
   const onManagePin = useCallback(
     () =>
       openHostedPath(buildManagePinPath, () => console.warn("[card] manage pin page did not open")),
@@ -198,6 +201,7 @@ export function usePayTabViewModel() {
     cardAssets,
     cardFormatters,
     onTopUp,
+    onChooseCardType,
     balance,
     actionTiles,
     contacts,

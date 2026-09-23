@@ -115,7 +115,7 @@ export function OverviewScene({
       />
 
       <Text
-        typography="body4"
+        typography="body3"
         lx={{ color: "muted", textAlign: "center" }}
         testID="card-details-overview-disclaimer"
       >
