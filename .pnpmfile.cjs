@@ -41,9 +41,6 @@ function readPackage(pkg, context) {
         Feel free to make PRs if you feel like it :).
       */
       addDependencies("jest-allure2-reporter", { tslib: "*" }),
-      removeDependencies("@zondax/ledger-cosmos-js", ["crypto"], {
-        kind: "dependencies",
-      }),
       /* React Native and Metro bundler packages */
       // react-native does not declare mkdirp; removing it has broken the iOS build before /!\
       addDependencies("react-native", {
@@ -86,21 +83,6 @@ function readPackage(pkg, context) {
       }),
       addPeerDependencies("asyncstorage-down", {
         "@react-native-async-storage/async-storage": "*",
-      }),
-      // TODO:
-      // Tron missing deps
-      // They are also added to live-common dependencies
-      // Is there another way without adding them explicitly ?
-      addDependencies("tronweb", {
-        "aes-js": "*",
-        "@noble/hashes": "*",
-        "@noble/secp256k1": "*",
-        "@ethersproject/bytes": "*",
-        "@ethersproject/bignumber": "*",
-        "@ethersproject/keccak256": "*",
-        "@ethersproject/properties": "*",
-        "@ethersproject/strings": "*",
-        "@ethersproject/logger": "*",
       }),
       addDependencies("@actions/github", {
         undici: "*",

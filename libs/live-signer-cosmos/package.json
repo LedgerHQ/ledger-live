@@ -32,7 +32,7 @@
     "@ledgerhq/device-signer-kit-cosmos": "catalog:",
     "@ledgerhq/hw-app-cosmos": "workspace:^",
     "@ledgerhq/hw-transport": "catalog:",
-    "@zondax/ledger-cosmos-js": "3.0.3",
+    "@zondax/ledger-cosmos-js": "4.2.0",
     "rxjs": "catalog:"
   },
   "scripts": {

@@ -338,11 +338,6 @@
           "tslib": "*"
         }
       },
-      "tronweb": {
-        "dependencies": {
-          "tslib": "*"
-        }
-      },
       "detox": {
         "dependencies": {
           "expect": "*"

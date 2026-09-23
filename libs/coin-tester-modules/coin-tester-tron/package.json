@@ -70,7 +70,7 @@
     "chalk": "^4.1.2",
     "docker-compose": "^1",
     "msw": "catalog:",
-    "tronweb": "6.2.0"
+    "tronweb": "6.5.1"
   },
   "devDependencies": {
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
