@@ -13,7 +13,9 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import heroImage from "./payCardLoginIntro.webp";
 import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 
-const FILL_STYLE = { flex: 1 } as const;
+const FILL_STYLE = { width: "100%", height: "100%" } as const;
+
+const HERO_ASPECT_RATIO = 1028 / 576;
 
 const ROW_ICONS: Record<CardLoginIntroRowIcon, typeof CreditCard> = {
   CoinsAddPlus,
@@ -47,13 +49,19 @@ export function CardLoginIntroView({
           >
             <Box lx={{ gap: "s16" }}>
               <Box
-                lx={{ width: "full", height: "s192", borderRadius: "xl", overflow: "hidden" }}
+                lx={{
+                  width: "full",
+                  aspectRatio: HERO_ASPECT_RATIO,
+                  borderRadius: "xl",
+                  overflow: "hidden",
+                }}
                 testID="pay-card-login-intro-hero"
               >
                 <Image
                   source={heroImage as unknown as ImageSourcePropType}
                   resizeMode="cover"
                   style={FILL_STYLE}
+                  testID="pay-card-login-intro-hero-image"
                 />
               </Box>
               <Text accessibilityRole="header" typography="heading3SemiBold" lx={{ color: "base" }}>

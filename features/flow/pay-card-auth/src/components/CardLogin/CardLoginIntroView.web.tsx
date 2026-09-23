@@ -66,7 +66,7 @@ export function CardLoginIntroView({
             <img
               src={heroImage}
               alt=""
-              className="h-[192px] w-full rounded-xl object-cover"
+              className="aspect-1028/576 w-full rounded-xl object-cover"
               data-testid="pay-card-login-intro-hero"
               draggable={false}
             />
@@ -80,7 +80,7 @@ export function CardLoginIntroView({
                     className="flex items-center gap-12"
                     data-testid={`pay-card-login-intro-row-${row.icon}`}
                   >
-                    {RowIcon ? <RowIcon size={24} className="shrink-0" /> : null}
+                    {RowIcon ? <RowIcon size={24} className="shrink-0 text-base" /> : null}
                     <div className="flex min-w-0 flex-col gap-4">
                       <p className="body-2-semi-bold text-base">{row.title}</p>
                       <p className="body-3 text-muted">{row.description}</p>

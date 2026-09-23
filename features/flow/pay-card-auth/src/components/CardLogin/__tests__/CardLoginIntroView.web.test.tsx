@@ -68,12 +68,28 @@ describe("CardLoginIntroView (Web)", () => {
     );
   });
 
+  it("keeps the hero at the aspect ratio of the artwork", () => {
+    renderIntro();
+
+    expect(screen.getByTestId("pay-card-login-intro-hero")).toHaveClass("aspect-1028/576");
+  });
+
   it("renders one row per icon", () => {
     renderIntro();
 
     expect(screen.getByTestId("pay-card-login-intro-row-CoinsAddPlus")).toBeVisible();
     expect(screen.getByTestId("pay-card-login-intro-row-CreditCard")).toBeVisible();
     expect(screen.getByTestId("pay-card-login-intro-row-LedgerLogo")).toBeVisible();
+  });
+
+  it("paints every row icon with the theme text color", () => {
+    renderIntro();
+
+    for (const icon of ["CoinsAddPlus", "CreditCard", "LedgerLogo"]) {
+      expect(screen.getByTestId(`pay-card-login-intro-row-${icon}`).firstElementChild).toHaveClass(
+        "text-base",
+      );
+    }
   });
 
   it("renders both buttons, in the order the actions arrive", () => {

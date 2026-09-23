@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
 import { CardLoginIntroView } from "../CardLoginIntroView.native";
 
@@ -96,6 +96,23 @@ describe("CardLoginIntroView (Native)", () => {
     expect(screen.getByText("Every transfer approved with your Ledger signer.")).toBeTruthy();
     expect(screen.getByTestId("pay-card-login-intro-provided-by")).toBeTruthy();
     expect(screen.getByText("Card provided by Baanx")).toBeTruthy();
+  });
+
+  it("keeps the hero at the aspect ratio of the artwork", () => {
+    renderIntro();
+
+    // The Lumen native stub passes `lx` straight through, so it carries the resolved style here.
+    expect(screen.getByTestId("pay-card-login-intro-hero").props.lx).toEqual(
+      expect.objectContaining({ aspectRatio: 1028 / 576 }),
+    );
+  });
+
+  it("fits the hero image to the hero instead of its intrinsic size", () => {
+    renderIntro();
+
+    expect(
+      StyleSheet.flatten(screen.getByTestId("pay-card-login-intro-hero-image").props.style),
+    ).toEqual(expect.objectContaining({ width: "100%", height: "100%" }));
   });
 
   it("renders one row per icon", () => {
