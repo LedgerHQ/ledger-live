@@ -18,5 +18,5 @@ module.exports = {
     ...(process.env.CI ? ["github-actions"] : []),
     "@ledgerhq/test-quarantine/jest",
   ],
-  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
+  setupFilesAfterEnv: ["<rootDir>/jest-setup.js", "@ledgerhq/test-quarantine/jest-retries"],
 };
