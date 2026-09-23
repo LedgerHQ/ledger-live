@@ -21,6 +21,7 @@ import {
   PAY_CARD_TRANSACTION_CATEGORIES,
   PayCardTransactionSchema,
   PayCardTransactionsRequestSchema,
+  PayCardTransactionsPageRequestSchema,
   PayCardTransactionsResponseSchema,
   PayCardWalletHistoryEntrySchema,
   PayCardWalletHistoryRequestSchema,
@@ -822,10 +823,6 @@ describe("PayCardTransactionsRequestSchema", () => {
     expect(PayCardTransactionsRequestSchema.parse(undefined)).toBeUndefined();
   });
 
-  it("takes a page on its own", () => {
-    expect(PayCardTransactionsRequestSchema.parse({ page: 2 })).toEqual({ page: 2 });
-  });
-
   it("takes both dates together", () => {
     const range = { dateFrom: "2026-01-01", dateTo: "2026-01-31" };
 
@@ -839,8 +836,43 @@ describe("PayCardTransactionsRequestSchema", () => {
     },
   );
 
-  it("rejects a negative page", () => {
-    expect(() => PayCardTransactionsRequestSchema.parse({ page: -1 })).toThrow();
+  it("takes a search key on its own", () => {
+    expect(PayCardTransactionsRequestSchema.parse({ searchKey: "starbucks" })).toEqual({
+      searchKey: "starbucks",
+    });
+  });
+
+  it("has no page of its own: the page belongs to the infinite query, not to the filters", () => {
+    expect(PayCardTransactionsRequestSchema.parse({ page: 2 })).toEqual({});
+  });
+});
+
+describe("PayCardTransactionsPageRequestSchema", () => {
+  it("takes a page with no filters at all", () => {
+    expect(
+      PayCardTransactionsPageRequestSchema.parse({ queryArg: undefined, pageParam: 0 }),
+    ).toEqual({ queryArg: undefined, pageParam: 0 });
+  });
+
+  it("takes a page alongside the filters", () => {
+    const request = { queryArg: { mccCategories: "FOOD" }, pageParam: 3 };
+
+    expect(PayCardTransactionsPageRequestSchema.parse(request)).toEqual(request);
+  });
+
+  it.each([-1, 1.5])("rejects %s as a page number", pageParam => {
+    expect(() =>
+      PayCardTransactionsPageRequestSchema.parse({ queryArg: undefined, pageParam }),
+    ).toThrow();
+  });
+
+  it("still requires the dates to come as a pair", () => {
+    expect(() =>
+      PayCardTransactionsPageRequestSchema.parse({
+        queryArg: { dateFrom: "2026-01-01" },
+        pageParam: 0,
+      }),
+    ).toThrow();
   });
 });
 

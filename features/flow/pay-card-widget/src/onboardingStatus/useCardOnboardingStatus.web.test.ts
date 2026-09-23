@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react";
 
 jest.mock("@domain/api-card-management", () => ({
   useGetCardStatusQuery: jest.fn(),
-  useGetCardTransactionsQuery: jest.fn(),
+  useGetCardTransactionsInfiniteQuery: jest.fn(),
   useGetUserQuery: jest.fn(),
 }));
 
@@ -12,7 +12,7 @@ jest.mock("@features/flow-pay-card-wallets", () => ({
 
 import {
   useGetCardStatusQuery,
-  useGetCardTransactionsQuery,
+  useGetCardTransactionsInfiniteQuery,
   useGetUserQuery,
 } from "@domain/api-card-management";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
@@ -55,12 +55,12 @@ function setupMocks({
     isError: isCardStatusError,
   } as unknown as ReturnType<typeof useGetCardStatusQuery>);
 
-  jest.mocked(useGetCardTransactionsQuery).mockReturnValue({
+  jest.mocked(useGetCardTransactionsInfiniteQuery).mockReturnValue({
     refetch: refetchTransactions,
-    data: transactions,
+    data: { pages: [transactions], pageParams: [0] },
     isFetching: areTransactionsFetching,
     isError: areTransactionsError,
-  } as unknown as ReturnType<typeof useGetCardTransactionsQuery>);
+  } as unknown as ReturnType<typeof useGetCardTransactionsInfiniteQuery>);
 
   jest.mocked(useCardLinkedWallets).mockReturnValue({
     refetch: refetchWallets,
@@ -199,7 +199,7 @@ describe("useCardOnboardingStatus", () => {
 
       expect(jest.mocked(useGetUserQuery)).toHaveBeenCalledWith(undefined, { skip: true });
       expect(jest.mocked(useGetCardStatusQuery)).toHaveBeenCalledWith(undefined, { skip: true });
-      expect(jest.mocked(useGetCardTransactionsQuery)).toHaveBeenCalledWith(undefined, {
+      expect(jest.mocked(useGetCardTransactionsInfiniteQuery)).toHaveBeenCalledWith(undefined, {
         skip: true,
       });
       expect(jest.mocked(useCardLinkedWallets)).toHaveBeenCalledWith(
