@@ -8,6 +8,7 @@ import {
   MAX_DISSOLVE_DELAY_BONUS,
   MAX_HOT_KEYS_PER_NEURON,
   MAX_NEURON_AGE_FOR_AGE_BONUS,
+  MAX_NEURON_ID,
   MIN_NEURON_STAKE,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MATURITY_MODULATION_WORST_CASE_FACTOR,
@@ -20,7 +21,7 @@ import {
   SECONDS_IN_MONTH,
   SECONDS_IN_YEAR,
 } from "../consts";
-import type { Transaction } from "../types/common";
+import type { ICPTransactionType, Transaction } from "../types/common";
 import {
   ICPNeuron,
   ListNeuronsResponse,
@@ -98,6 +99,23 @@ export const toNeuronsData = (
     toICPNeuron(raw, first(raw.id) ? infoById.get(first(raw.id)!.id) : undefined),
   );
   return new NeuronsData(neurons, lastUpdatedMSecs);
+};
+
+// ---- neuron ids --------------------------------------------------------------------------------
+
+export type NeuronIdReading =
+  | { id: string; issue?: undefined }
+  | { id?: undefined; issue: "notANeuronId" | "outOfRange" };
+
+/**
+ * Decimal digits only, as the builder requires, and between 1 and MAX_NEURON_ID. The id comes back
+ * canonical, since `0123` and `123` are the same neuron.
+ */
+export const parseNeuronId = (text: string): NeuronIdReading => {
+  if (!/^\d+$/.test(text)) return { issue: "notANeuronId" };
+  const value = BigInt(text);
+  if (value === 0n || value > MAX_NEURON_ID) return { issue: "outOfRange" };
+  return { id: value.toString() };
 };
 
 // ---- state / dissolve --------------------------------------------------------------------------
@@ -325,6 +343,55 @@ export const neuronsNeedSync = (neurons: NeuronsData, nowMSecs: number = Date.no
  */
 export const isDeviceControlledNeuron = (neuron: ICPNeuron, principal: string): boolean =>
   neuron.controller === principal;
+
+// ---- retry safety ------------------------------------------------------------------------------
+
+/**
+ * Errors that say the command did not take effect: the canister refused it, the replica refused the
+ * message before the canister saw it, or the node never took the message at all. Nothing ran, so
+ * re-signing repeats nothing.
+ */
+const NOTHING_EXECUTED = new Set(["ICPGovernanceRejected", "ICPCallRejected", "ICPNodeRefused"]);
+
+/**
+ * Commands a second execution leaves in the same state as the first, so re-signing one is safe even
+ * when the first may already have run.
+ *
+ * The dissolve-delay commands are the counter-example and the reason this is a whitelist: both land
+ * on the canister's `increase_dissolve_delay`, which *adds* to the delay the neuron already has, so
+ * a second one that executes doubles the change. Split, spawn, disburse and stake_maturity each
+ * move funds or mint a neuron, and are equally not repeatable.
+ */
+const IDEMPOTENT_COMMANDS = new Set<ICPTransactionType>([
+  "list_neurons",
+  "refresh_voting_power",
+  "start_dissolving",
+  "stop_dissolving",
+  "add_hot_key",
+  "remove_hot_key",
+  "auto_stake_maturity",
+  "follow",
+]);
+
+/**
+ * Three ways a retry is safe: the signature never left the device, so nothing was sent; the network
+ * answered that the command did not run; or running it twice makes no difference.
+ *
+ * Everything else is a request that may already be executing, and a retry cannot be a redelivery —
+ * the expiry is minted when the call is built, so re-signing produces a new request id and the IC's
+ * own de-duplication no longer covers it. Both copies can then take effect, which for an additive
+ * command like increase_dissolve_delay means the change applies twice.
+ */
+export const canRetryNeuronCommand = ({
+  signed,
+  errorName,
+  command,
+}: {
+  signed: boolean;
+  errorName: string;
+  command?: ICPTransactionType | null;
+}): boolean =>
+  !signed || NOTHING_EXECUTED.has(errorName) || (!!command && IDEMPOTENT_COMMANDS.has(command));
 
 // ---- optimistic command application -------------------------------------------------------------
 

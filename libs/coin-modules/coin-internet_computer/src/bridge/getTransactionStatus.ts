@@ -18,6 +18,7 @@ import {
   neuronCanSpawn,
   neuronCanStakeMaturity,
   neuronStake,
+  parseNeuronId,
 } from "../common-logic/neuron";
 import {
   E8S_PER_ICP,
@@ -184,15 +185,6 @@ const validateRemoveHotKey = (
   return undefined;
 };
 
-// A neuron id is a Nat64, and the canister never assigns 0 to a new neuron.
-const MAX_NEURON_ID = 2n ** 64n - 1n;
-
-const isNeuronId = (id: string): boolean => {
-  if (!/^\d+$/.test(id)) return false;
-  const value = BigInt(id);
-  return value > 0n && value <= MAX_NEURON_ID;
-};
-
 // The pickers offer FOLLOWABLE_TOPICS only, so what this refuses is a transaction assembled some
 // other way. Either kind of excluded topic spends the signature for nothing: a retired one is refused
 // by the canister after signing, one past the Ledger ICP app's cap is refused on the device.
@@ -210,12 +202,13 @@ const validateFollow = (
     return new ICPTooManyFollowees("", { max: MAX_FOLLOWEES_PER_TOPIC });
   }
   const seen = new Set<string>();
-  for (const id of followeesIds) {
-    if (!isNeuronId(id)) return new ICPInvalidFolloweeId("", { id });
-    const canonical = BigInt(id).toString();
-    if (seen.has(canonical)) return new ICPDuplicateFollowee("", { id: canonical });
-    if (canonical === neuron.id?.toString()) return new ICPFolloweeIsSelf();
-    seen.add(canonical);
+  for (const entry of followeesIds) {
+    const parsed = parseNeuronId(entry);
+    if (parsed.issue) return new ICPInvalidFolloweeId("", { id: entry });
+    const { id } = parsed;
+    if (seen.has(id)) return new ICPDuplicateFollowee("", { id });
+    if (id === neuron.id?.toString()) return new ICPFolloweeIsSelf();
+    seen.add(id);
   }
   return undefined;
 };
