@@ -4,6 +4,7 @@ import { Session, withSessionLock } from "../../session/session-store";
 import { loadDomainKey, resolveWrappingKey } from "../../key-ring/load-key-ring";
 import { outputOption, resolveOutputFormat, resolveUserPath } from "../inputs";
 import { writeSecureFile } from "../../shared/secure-file";
+import { writeStderr } from "../../shared/ui";
 import { createCommandOutput, type CommandOutput } from "../../output";
 
 export type RingCryptoOptions = {
@@ -112,8 +113,17 @@ export async function runRingCrypto(opts: RingCryptoOptions): Promise<{ newlyTra
       fresh.trustchain.applicationPath === expectedTrustchain.applicationPath;
     // The ring was destroyed, rotated again, or re-initialized since this command started: don't
     // track a domain key against a ring this operation no longer matches (it could belong to a
-    // completely different one now, or none).
-    if (!stillSameRing) return false;
+    // completely different one now, or none). The transform+output above already ran with the OLD
+    // ring's key by this point — that can't be undone, only surfaced, since holding the lock across
+    // the whole fetch+transform+output (a network round-trip plus arbitrarily large file I/O) would
+    // block every other wallet-cli command for that entire duration.
+    if (!stillSameRing) {
+      writeStderr(
+        "⚠ Ledger Key Ring changed while this operation was running — the output above was produced " +
+          "with a key from the ring as it was before that change. Verify it's still the one you expect.\n",
+      );
+      return false;
+    }
     const tracked = fresh.trackDomain(key);
     if (tracked) fresh.write();
     return tracked;

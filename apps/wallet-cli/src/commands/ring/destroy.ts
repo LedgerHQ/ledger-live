@@ -226,6 +226,25 @@ export default defineCommand({
       let memberEjected = false;
 
       if (creds.status === "ok") {
+        // Re-verify against a fresh read immediately before the remote side effect: confirmDestroy
+        // and (for a password-protected ring) the password prompt above can wait an arbitrary amount
+        // of time on a human, during which a concurrent `ring init` on the same device seed reuses
+        // the same rootId for a new application stream (see load-key-ring.ts). Destroying the old
+        // stream's application could then tear down that concurrently-created one too. This narrows
+        // — it cannot eliminate, since the remote call below still isn't atomic with this check —
+        // the window from "the whole confirm+password prompt" down to essentially nothing.
+        const preflight = await Session.read();
+        if (
+          !preflight.trustchain ||
+          preflight.trustchain.rootId !== trustchainMeta.rootId ||
+          preflight.trustchain.applicationPath !== trustchainMeta.applicationPath
+        ) {
+          throw new Error(
+            "Ledger Key Ring changed locally while this destroy was waiting for confirmation/password " +
+              "— nothing was changed. Re-run `wallet-cli ring destroy` if you still want to tear down " +
+              "the current one.",
+          );
+        }
         const destroySpin = out.spin("Tearing down your Ledger Key Ring…");
         ({ remoteSucceeded, trustchainDestroyed, memberEjected } = await performRemoteDestroy(
           trustchainMeta,
