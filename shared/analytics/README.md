@@ -105,7 +105,9 @@ Use `avoidDuplicates: true` when a screen component may remount and emit the sam
 
 ### Async and await
 
-`track` can be fire-and-forget – async enrichment and delivery will run inside the package. The final delivery status is published on `analyticsEvents$`.
+`track` can be fire-and-forget. When extras or `Analytics.track` are async, that work continues inside the package after `track()` returns. The final delivery status is published on `analyticsEvents$`.
+
+When extras and `Analytics.track` are both synchronous, the vendor client is called before `track()` returns.
 
 When you need to wait until an event is enqueued, await the call, e.g.
 
@@ -114,7 +116,7 @@ await track("My Crucial Event", { foo: "bar" });
 await trackPage({ category: "Market" });
 ```
 
-`deliver` **awaits** the registered `Analytics.track`. Return its promise (or `async`/`await` the vendor SDK). Discarding that promise makes every call look `enqueued` and leaves SDK rejections unobserved.
+If `Analytics.track` returns a promise, `deliver` awaits it. Return that promise (or `async`/`await` the vendor SDK). A synchronous `void` result is treated as `enqueued`. Discarding the SDK promise (returning `void` while the SDK is still in flight) makes the call look `enqueued` and leaves SDK rejections unobserved.
 
 - no registered client → `skipped_no_client`
 - return `"skipped_no_client"` when the SDK instance is missing

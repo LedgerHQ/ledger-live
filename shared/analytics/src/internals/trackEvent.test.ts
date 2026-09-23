@@ -1,9 +1,11 @@
 import {
   setAnalytics,
+  setEnabledFn,
   setExtraPropsFn,
   setMandatoryExtraPropsFn,
   setPropsFilter,
 } from "../registry";
+import { track } from "../track";
 import type { Analytics, LoggableEvent, Props } from "../types";
 import { analyticsEvents$ } from "./eventLog";
 import { trackEvent } from "./trackEvent";
@@ -37,6 +39,7 @@ const scrubSensitive = (props: Props): Props => {
 beforeEach(() => {
   events.length = 0;
   setAnalytics(undefined);
+  setEnabledFn(undefined);
   setExtraPropsFn(undefined);
   setMandatoryExtraPropsFn(undefined);
   setPropsFilter(undefined);
@@ -52,6 +55,20 @@ describe("trackEvent", () => {
       await trackEvent({ kind: "track", eventName: "Sync Event", props: {} });
 
       expect(analyticsClient.track).toHaveBeenCalledWith("Sync Event", {
+        appVersion: "1.2.3",
+      });
+    });
+
+    it("calls analytics.track before track() returns when extras and transport are sync", () => {
+      const analyticsClient = createAnalyticsClient();
+      setEnabledFn(() => true);
+      setAnalytics(analyticsClient);
+      setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
+
+      track("Sync Event", { foo: "bar" });
+
+      expect(analyticsClient.track).toHaveBeenCalledWith("Sync Event", {
+        foo: "bar",
         appVersion: "1.2.3",
       });
     });

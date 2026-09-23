@@ -1,6 +1,7 @@
 import { getAnalytics } from "../registry";
 import type { DeliveryStatus, EventType, Props } from "../types";
 import { publishEvent } from "./eventLog";
+import { isThenable } from "./isThenable";
 
 type Delivery = {
   type: EventType;
@@ -34,7 +35,12 @@ export async function deliver({
   } catch {}
 
   try {
-    const status = await analytics.track(eventName, eventProperties);
+    const status = analytics.track(eventName, eventProperties);
+    if (isThenable(status)) {
+      const resolved = await status;
+      publish(resolved ?? "enqueued");
+      return;
+    }
     publish(status ?? "enqueued");
   } catch {
     publish("failed_tracking");

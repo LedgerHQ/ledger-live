@@ -2,6 +2,7 @@ import { applyPropsFilter, resolveExtraProps } from "../registry";
 import type { EventType, Props } from "../types";
 import { deliver } from "./deliver";
 import { publishEvent } from "./eventLog";
+import { isThenable } from "./isThenable";
 
 type TrackEvent = {
   kind: EventType;
@@ -23,7 +24,8 @@ export async function trackEvent({ kind, eventName, props, mandatory = false }: 
   let extraProps: Props;
 
   try {
-    extraProps = (await resolveExtraProps(mandatory)) ?? {};
+    const extras = resolveExtraProps(mandatory);
+    extraProps = (isThenable(extras) ? await extras : extras) ?? {};
   } catch {
     publishEvent({
       eventName,
