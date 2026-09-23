@@ -223,8 +223,8 @@ domain/entity/analytics-consent/                         @ledgerhq/engagement
 features/flow/analytics-consent/                         @ledgerhq/engagement
 features/flow/lazy-onboarding-banner/                    @ledgerhq/engagement
 
-### ... market/altcoins sentiment => @ledgerhq/wallet-xp ... ###
-domain/entity/market-sentiment/                          @ledgerhq/wallet-xp
+### ... market indices => @ledgerhq/wallet-xp ... ###
+domain/entity/market-index-fear-and-greed/               @ledgerhq/wallet-xp
 domain/entity/market-index-altcoin-season/               @ledgerhq/wallet-xp
 domain/api/market-sentiment/                             @ledgerhq/wallet-xp
 domain/api/altcoins-sentiment/                           @ledgerhq/wallet-xp

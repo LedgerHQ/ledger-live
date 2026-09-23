@@ -6,4 +6,13 @@ describe("supportedFeatures", () => {
     expect(blockchainTxs).toBeInstanceOf(Array);
     expect(blockchainTxs.length).toBeGreaterThan(0);
   });
+
+  it("exports all staking_txs modes", () => {
+    expect(supportedFeatures.staking_txs).toEqual([
+      "delegate",
+      "undelegate",
+      "redelegate",
+      "claimReward",
+    ]);
+  });
 });

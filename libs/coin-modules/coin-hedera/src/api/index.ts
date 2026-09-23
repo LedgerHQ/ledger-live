@@ -75,7 +75,6 @@ export function createApi(currencyId: string) {
     },
     combine: (_context, tx, signature, options?) => combine(tx, signature, options?.pubkey),
     craftTransaction: async (context: HederaContext, txIntent, options?) => {
-      invariant(!txIntent.useAllAmount, "useAllAmount is not supported");
       const coinConfig = await context.config();
       const { serializedTx } = await craftTransaction({
         configOrCurrencyId: coinConfig,

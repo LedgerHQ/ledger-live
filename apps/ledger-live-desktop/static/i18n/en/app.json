@@ -952,7 +952,7 @@
         }
       },
       "reward": {
-        "title": "Total cashback"
+        "title": "Total cashback · {{ratePercent}}% in {{ticker}}"
       },
       "numbers": {
         "reveal": "View",
@@ -1081,7 +1081,7 @@
         "addAddress": "Add address"
       },
       "paySuccess": {
-        "title": "You paid ({{recipient}})",
+        "title": "You paid {{recipient}}",
         "amount": "Amount",
         "estimatedTime": "Est. time",
         "from": "From",
@@ -5063,8 +5063,7 @@
           },
           "validator": {
             "title": "Validators",
-            "ledgerByBitwiseTC": "Ledger by Bitwise T&Cs",
-            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
+            "ledgerByBitwiseTC": "Ledger by Bitwise T&Cs"
           },
           "connectDevice": {
             "title": "Device"

@@ -9,8 +9,8 @@ export type HgraphResponse<Data> =
       }[];
     };
 
-export interface LatestIndexedConsensusTimestamp {
-  consensus_timestamp: number;
+export interface ErcWatermark {
+  last_processed_ns: number;
 }
 
 export interface ERC20TokenAccount {
@@ -36,7 +36,7 @@ export interface ERC20TokenTransfer {
 }
 
 export type HgraphLatestIndexedConsensusTimestampResponse = HgraphResponse<{
-  ethereum_transaction: LatestIndexedConsensusTimestamp[];
+  erc_watermark: ErcWatermark[];
 }>;
 
 export type HgraphErcTokenAccountResponse = HgraphResponse<{

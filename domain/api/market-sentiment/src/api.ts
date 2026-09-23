@@ -1,4 +1,4 @@
-import type { FearAndGreedIndex } from "@domain/entity-market-sentiment";
+import type { FearAndGreedIndex } from "@domain/entity-market-index-fear-and-greed";
 import { coinMarketCapApi } from "@shared/api-services";
 import { transformFearAndGreedResponse } from "./transforms";
 

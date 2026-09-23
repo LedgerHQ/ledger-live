@@ -1,5 +1,5 @@
 {
-  "name": "@domain/entity-market-sentiment",
+  "name": "@domain/entity-market-index-fear-and-greed",
   "targets": {
     "build": {
       "executor": "nx:noop"

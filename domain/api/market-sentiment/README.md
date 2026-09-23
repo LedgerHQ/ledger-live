@@ -4,8 +4,8 @@
 > **Status: UNSTABLE** — Under active development.
 
 Domain API client for **market sentiment**, backed by the CoinMarketCap Crypto Fear & Greed endpoint.
-RTK Query endpoint typed on the canonical `@domain/entity-market-sentiment` entity. Owns no
-env/config/logging dependency.
+RTK Query endpoint typed on the canonical `@domain/entity-market-index-fear-and-greed` entity.
+Owns no env/config/logging dependency.
 
 - `schema.ts` — Zod schema for the raw CMC `/fear-and-greed/latest` response
   (`FearAndGreedResponseSchema`) and the `extraArgument` contract (`MarketSentimentApiExtraSchema`).

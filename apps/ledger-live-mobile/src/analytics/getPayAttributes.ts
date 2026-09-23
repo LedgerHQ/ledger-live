@@ -39,6 +39,6 @@ export function getPayAttributes(
       queryData(cardManagementApi.endpoints.getCardTransactions.select(undefined), state)?.pages,
     ),
     cardWallets: queryData(cardManagementApi.endpoints.getCardLinkedWallets.select(), state),
-    rewardWallet: queryData(cardManagementApi.endpoints.getRewardWallet.select(), state),
+    cashback: queryData(cardManagementApi.endpoints.getCardCashback.select(), state),
   });
 }

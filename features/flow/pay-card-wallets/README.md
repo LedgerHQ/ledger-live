@@ -4,7 +4,7 @@
 > **Status: UNSTABLE** — Under active development.
 
 The custodial wallets funding the Pay card: which ones are linked, what they hold, and which Ledger
-currency each one is.
+currency each one is. It also carries the cashback the card has earned, resolved the same way.
 
 Two Baanx endpoints have to be read together, because neither answers the question alone:
 
@@ -19,6 +19,24 @@ this package owns the join and the ordering.
 - `combineCardLinkedWallets` — pure. Takes both lists and a map of Ledger id to currency, and
   returns the linked wallets in charging order, each carrying the currency its asset resolved to.
 - `useCardLinkedWallets` — runs both reads in parallel and memoizes the join.
+
+## Cashback
+
+`GET /v1/card/cashback` answers one object rather than a list: what the card has earned so far,
+the asset it is paid in, and the rate it earns at. The asset is a `currency` and a `network`, either
+of which may be absent or `null`; without a currency the reward banner stays hidden.
+
+```json
+{ "amount": "0.00294697", "currency": "BTC", "network": "bitcoin", "ratePercent": "1" }
+```
+
+- `useCardCashback` — reads it and attaches the resolved currency. It takes the same
+  `currencies` map as the linked wallets, since the cashback is paid in one of the card's
+  supported assets, and a `skip` flag for a signed-out holder.
+
+It returns `cashback` (absent until the read lands, and on a failed read), `isLoading` and
+`isError`. `amount` and `ratePercent` stay the strings the provider sent; `ledgerId` and
+`ledgerCurrency` follow the same rules as a linked wallet's, below.
 
 ## Pricing happens outside this package
 

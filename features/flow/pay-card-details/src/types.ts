@@ -30,7 +30,7 @@ export type CardDetailsProps = Readonly<{
    * counter-value. Natively it also renders the funding assets inside the card details drawer.
    */
   assets?: CardAssetsProps;
-  /** Formats the reward wallet amount, and, natively, the transactions the overview lists. */
+  /** Formats the cashback amount, and, natively, the transactions the overview lists. */
   formatters?: CardTransactionFormatters;
   onShowMore?: () => void;
   onTopUp?: () => void;
