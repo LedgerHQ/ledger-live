@@ -57,19 +57,15 @@ export type OutputContext = {
   account?: string;
 };
 
-/** Outcome of `ring destroy`, shared by the interface, both output impls, and the producer. */
-export type RingDestroyResult = {
+/** Outcome of `ring destroy` and `ledger-sync destroy` (same shape for both LKRP applications). */
+export type DestroyResult = {
   remoteSucceeded: boolean;
   trustchainDestroyed: boolean;
   localWiped: boolean;
-  // Remote teardown hit TrustchainEjected: this member is no longer on the ring (removed, or the ring
-  // was destroyed remotely), so the remote is already gone. Only meaningful alongside remoteSucceeded.
+  // Remote teardown hit TrustchainEjected: this member is no longer on the trustchain (removed, or
+  // it was destroyed remotely), so the remote is already gone. Only meaningful alongside remoteSucceeded.
   memberEjected?: boolean;
 };
-
-/** Outcome of `ledger-sync destroy` — same shape as RingDestroyResult, kept separate
- * because the two applications (`ring` vs Ledger Sync) must never be conflated. */
-export type LedgerSyncDestroyResult = RingDestroyResult;
 
 /**
  * `ring destroy` and `ledger-sync destroy` reduce to the exact same 5-way outcome (only the wording
@@ -83,7 +79,7 @@ function destroyOutcome({
   trustchainDestroyed,
   localWiped,
   memberEjected,
-}: RingDestroyResult): DestroyOutcome {
+}: DestroyResult): DestroyOutcome {
   if (trustchainDestroyed) return "destroyed";
   if (remoteSucceeded && memberEjected) return "ejected";
   if (remoteSucceeded) return "deactivated";
@@ -92,7 +88,7 @@ function destroyOutcome({
 }
 
 /** Json envelope fields for a destroy result — identical for `ring` and Ledger Sync. */
-function destroyResultEnvelopeData(result: RingDestroyResult): {
+function destroyResultEnvelopeData(result: DestroyResult): {
   destroyed: boolean;
   remote_succeeded: boolean;
   local_wiped: boolean;
@@ -276,7 +272,7 @@ export interface CommandOutput {
   /** Output key names table (human: table or empty message; json: envelope with keys array). */
   ringKeys(domains: ReadonlyArray<{ domain: string; firstUsed: string }>): void;
   /** Output ring destroy result (human: colored message; json: envelope). */
-  ringDestroy(result: RingDestroyResult): void;
+  ringDestroy(result: DestroyResult): void;
   /** User cancelled destroy confirmation (human: stderr line; json: envelope with cancelled:true). */
   ringDestroyCancelled(): void;
   /** Output encrypt-to-file result (human: ✔ line; json: envelope with output path + bytes). */
@@ -310,7 +306,7 @@ export interface CommandOutput {
    * imported/unchanged/skipped/invalid arrays). */
   ledgerSyncImport(report: LedgerSyncImportReport): void;
   /** Output `ledger-sync destroy` result (human: colored message; json: envelope). */
-  ledgerSyncDestroy(result: LedgerSyncDestroyResult): void;
+  ledgerSyncDestroy(result: DestroyResult): void;
   /** User cancelled the destroy confirmation (human: stderr line; json: envelope with cancelled:true). */
   ledgerSyncDestroyCancelled(): void;
 }
@@ -737,7 +733,7 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  ringDestroy(result: RingDestroyResult): void {
+  ringDestroy(result: DestroyResult): void {
     // Report the remote outcome first so a successful teardown is never hidden by a local-wipe
     // failure, then append the local-credentials warning when the keychain delete did not succeed.
     switch (destroyOutcome(result)) {
@@ -945,7 +941,7 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  ledgerSyncDestroy(result: LedgerSyncDestroyResult): void {
+  ledgerSyncDestroy(result: DestroyResult): void {
     const outcome = destroyOutcome(result);
     switch (outcome) {
       case "destroyed":
@@ -1294,7 +1290,7 @@ class JsonCommandOutput implements CommandOutput {
     );
   }
 
-  ringDestroy(result: RingDestroyResult): void {
+  ringDestroy(result: DestroyResult): void {
     this._writeNdjson(this._envelope(destroyResultEnvelopeData(result)));
   }
 
@@ -1372,7 +1368,7 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(this._envelope({ ...report }));
   }
 
-  ledgerSyncDestroy(result: LedgerSyncDestroyResult): void {
+  ledgerSyncDestroy(result: DestroyResult): void {
     this._writeNdjson(this._envelope(destroyResultEnvelopeData(result)));
   }
 

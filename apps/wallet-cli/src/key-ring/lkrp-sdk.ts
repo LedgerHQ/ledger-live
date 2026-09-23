@@ -2,11 +2,11 @@ import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import type { WithDevice } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { AgentIntentEnvironment } from "@ledgerhq/agent-intent-sdk";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { getEnv } from "@shared/env";
 import {
   AGENT_INTENT_TRUSTCHAIN_URLS,
   LEDGER_SYNC_APPLICATION_ID,
   LKRP_APPLICATION_ID,
+  TRUSTCHAIN_API_URLS,
   type LedgerSyncEnvironment,
 } from "./constants";
 
@@ -31,9 +31,7 @@ export function createLkrpSdk(options?: {
     {
       applicationId,
       name: memberName,
-      apiBaseUrl: getEnv(
-        environment === "staging" ? "TRUSTCHAIN_API_STAGING" : "TRUSTCHAIN_API_PROD",
-      ),
+      apiBaseUrl: TRUSTCHAIN_API_URLS[environment],
     },
     withDevice,
   );

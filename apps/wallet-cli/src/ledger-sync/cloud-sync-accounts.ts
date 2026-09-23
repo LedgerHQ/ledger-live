@@ -6,9 +6,8 @@ import {
   type MemberCredentials,
   type TrustchainSDK,
 } from "@shared/cloud-sync";
-import { getEnv } from "@shared/env";
 import { errMessage } from "../shared/error-message";
-import type { LedgerSyncEnvironment } from "../key-ring/constants";
+import { CLOUD_SYNC_API_URLS, type LedgerSyncEnvironment } from "../key-ring/constants";
 import {
   toV1,
   serializeNetwork,
@@ -17,6 +16,7 @@ import {
   AccountDescriptorV1Schema,
   AccountDescriptorV0Schema,
   type AccountDescriptorV0,
+  type AccountDescriptorV1,
 } from "../shared/accountDescriptor";
 import { SUPPORTED_TRANSACTION_FAMILIES } from "../wallet/intents";
 import { Session } from "../session/session-store";
@@ -24,12 +24,6 @@ import { Session } from "../session/session-store";
 /** Ledger Sync's Cloud Sync "slug" for the account-list document — matches Desktop/Mobile's
  * `liveSlug` (see docs/ledger-sync/04-cloud-sync-sdk.md and useWatchWalletSync.ts). */
 const LIVE_SLUG = "live";
-
-function cloudSyncApiBaseUrl(environment: LedgerSyncEnvironment): string {
-  return environment === "production"
-    ? getEnv("CLOUD_SYNC_API_PROD")
-    : getEnv("CLOUD_SYNC_API_STAGING");
-}
 
 // ---------------------------------------------------------------------------
 // Pulling the raw synced document (network + auth)
@@ -46,6 +40,7 @@ const createCloudSyncSdk: CreateCloudSyncSdk = options => new CloudSyncSDK(optio
 
 export type PullResult =
   | { status: "new-data"; accounts: unknown[]; version: number }
+  | { status: "malformed"; reason: string }
   | { status: "up-to-date" }
   | { status: "deleted" };
 
@@ -73,15 +68,15 @@ export async function pullSyncedAccounts(
       return;
     }
     const rawAccounts = event.data.accounts;
-    result = {
-      status: "new-data",
-      accounts: Array.isArray(rawAccounts) ? rawAccounts : [],
-      version: event.version,
-    };
+    // Not an empty list: reporting it as `new-data` would let `import` cache this version and
+    // treat every later pull as up to date, so the accounts would never come back once fixed.
+    result = Array.isArray(rawAccounts)
+      ? { status: "new-data", accounts: rawAccounts, version: event.version }
+      : { status: "malformed", reason: "the synced document has no `accounts` list" };
   };
 
   const sdk = createSdk({
-    apiBaseUrl: cloudSyncApiBaseUrl(environment),
+    apiBaseUrl: CLOUD_SYNC_API_URLS[environment],
     slug: LIVE_SLUG,
     trustchainSdk,
     getCurrentVersion,
@@ -133,6 +128,69 @@ function entryId(raw: unknown): string {
 // much smaller set) but would be unusable the moment any other command tried to act on it.
 const SUPPORTED_FAMILIES = new Set<string>(SUPPORTED_TRANSACTION_FAMILIES);
 
+function issues(error: { issues: ReadonlyArray<{ message: string }> }): string {
+  return error.issues.map(i => i.message).join("; ");
+}
+
+/** The family name when wallet-cli can't act on this currency, else undefined (including for an
+ * unresolvable currencyId, which toV1() classifies instead). */
+function unsupportedFamily(currencyId: string): string | undefined {
+  let family: string;
+  try {
+    family = getCryptoCurrencyById(currencyId).family;
+  } catch {
+    return undefined;
+  }
+  return SUPPORTED_FAMILIES.has(family) ? undefined : family;
+}
+
+/** Validates and converts one synced entry, isolating any failure to that entry. */
+function convertSyncedAccount(
+  raw: unknown,
+): SkippedEntry | InvalidEntry | { status: "converted"; descriptor: AccountDescriptorV1 } {
+  const parsed = AccountDescriptorV0Schema.safeParse(raw);
+  if (!parsed.success) {
+    return { status: "invalid", id: entryId(raw), reason: issues(parsed.error) };
+  }
+  const descriptor: AccountDescriptorV0 = parsed.data;
+
+  // Checked before toV1() rather than relying on it to throw: toV1() only fails for a currency the
+  // derivation-mode registry can't resolve at all, not for one wallet-cli simply has no
+  // transaction-family support for (e.g. Cardano/Polkadot/Tezos convert to a perfectly valid
+  // AccountDescriptorV1 and would otherwise be silently `imported`).
+  const family = unsupportedFamily(descriptor.currencyId);
+  if (family) {
+    return {
+      status: "skipped",
+      id: descriptor.id,
+      reason:
+        `Currency family "${family}" is not supported by wallet-cli (supported: ` +
+        `${[...SUPPORTED_FAMILIES].join(", ")}).`,
+    };
+  }
+
+  let v1: unknown;
+  try {
+    v1 = toV1(descriptor);
+  } catch (e) {
+    return e instanceof UnsupportedFamilyError || e instanceof UnknownNetworkError
+      ? { status: "skipped", id: descriptor.id, reason: e.message }
+      : { status: "invalid", id: descriptor.id, reason: errMessage(e) };
+  }
+
+  // toV1() copies the raw source's seedIdentifier/address verbatim and never itself validates its
+  // output — a synced entry with a schema-valid-but-empty seedIdentifier (accountDescriptorSchema's
+  // `seedIdentifier` has no `.min(1)`) silently produced a structurally invalid V1 descriptor (e.g.
+  // an empty `address`) that looked fine in `session view` but threw on the next `parseV1()`.
+  // Validate here, once, so that class of entry is isolated as `invalid` instead of corrupting the
+  // session.
+  const validated = AccountDescriptorV1Schema.safeParse(v1);
+  if (!validated.success) {
+    return { status: "invalid", id: descriptor.id, reason: issues(validated.error) };
+  }
+  return { status: "converted", descriptor: validated.data };
+}
+
 /**
  * Convert Ledger Sync's raw synced account list into wallet-cli's own AccountDescriptorV1 and
  * merge it idempotently into `session` via `Session.addDescriptor` (deterministic, non-conflicting
@@ -149,78 +207,16 @@ export function mergeSyncedAccounts(
   const report = emptyReport();
 
   for (const raw of rawAccounts) {
-    const parsed = AccountDescriptorV0Schema.safeParse(raw);
-    if (!parsed.success) {
-      report.invalid.push({
-        status: "invalid",
-        id: entryId(raw),
-        reason: parsed.error.issues.map(i => i.message).join("; "),
-      });
-      continue;
-    }
-
-    const descriptor: AccountDescriptorV0 = parsed.data;
-
-    // Checked before toV1() rather than relying on it to throw: toV1() only fails for a currency
-    // the derivation-mode registry can't resolve at all, not for one wallet-cli simply has no
-    // transaction-family support for (e.g. Cardano/Polkadot/Tezos convert to a perfectly valid
-    // AccountDescriptorV1 and would otherwise be silently `imported`).
-    let family: string | undefined;
-    try {
-      family = getCryptoCurrencyById(descriptor.currencyId).family;
-    } catch {
-      family = undefined; // Unresolvable currencyId — let toV1() below classify it as before.
-    }
-    if (family !== undefined && !SUPPORTED_FAMILIES.has(family)) {
-      report.skipped.push({
-        status: "skipped",
-        id: descriptor.id,
-        reason:
-          `Currency family "${family}" is not supported by wallet-cli (supported: ` +
-          `${[...SUPPORTED_FAMILIES].join(", ")}).`,
-      });
-      continue;
-    }
-
-    let v1;
-    try {
-      v1 = toV1(descriptor);
-    } catch (e) {
-      if (e instanceof UnsupportedFamilyError || e instanceof UnknownNetworkError) {
-        report.skipped.push({ status: "skipped", id: descriptor.id, reason: e.message });
-      } else {
-        report.invalid.push({
-          status: "invalid",
-          id: descriptor.id,
-          reason: errMessage(e),
-        });
-      }
-      continue;
-    }
-
-    // toV1() copies the raw source's seedIdentifier/address verbatim and never itself validates its
-    // output — a synced entry with a schema-valid-but-empty seedIdentifier (accountDescriptorSchema's
-    // `seedIdentifier` has no `.min(1)`) silently produced a structurally invalid V1 descriptor
-    // (e.g. an empty `address`) that looked fine in `session view` but threw on the next `parseV1()`
-    // (every later command resolving this account by label). Validate here, once, so that class of
-    // entry is isolated as `invalid` instead of corrupting the session.
-    const v1Validation = AccountDescriptorV1Schema.safeParse(v1);
-    if (!v1Validation.success) {
-      report.invalid.push({
-        status: "invalid",
-        id: descriptor.id,
-        reason: v1Validation.error.issues.map(i => i.message).join("; "),
-      });
-      continue;
-    }
-
-    const validated = v1Validation.data;
-    const { label, added } = session.addDescriptor(validated);
-    const network = serializeNetwork(validated.network);
-    if (added) {
-      report.imported.push({ status: "imported", label, network });
+    const converted = convertSyncedAccount(raw);
+    if (converted.status === "skipped") {
+      report.skipped.push(converted);
+    } else if (converted.status === "invalid") {
+      report.invalid.push(converted);
     } else {
-      report.unchanged.push({ status: "unchanged", label, network });
+      const { label, added } = session.addDescriptor(converted.descriptor);
+      const network = serializeNetwork(converted.descriptor.network);
+      if (added) report.imported.push({ status: "imported", label, network });
+      else report.unchanged.push({ status: "unchanged", label, network });
     }
   }
 
