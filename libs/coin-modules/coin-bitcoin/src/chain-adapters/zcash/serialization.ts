@@ -9,12 +9,18 @@ import type {
 
 // Persistence of the shielded `privateInfo` (its unified full viewing key,
 // balances and decrypted notes) for a Zcash account served by the bitcoin
-// family bridge. This is flag-independent on purpose: accounts are decoded at
-// app startup, before the host has mirrored the `zcashShielded` flag, so the
-// bitcoin bridge is always the one that reads a persisted Zcash account back.
-// Without this the ufvk is dropped on every load and then erased on the next
-// save. The standalone @ledgerhq/coin-zcash module writes the same raw shape
-// when the flag is on, so the two round-trip interchangeably.
+// family bridge. This is flag-independent on purpose: ledger-live-common's
+// `bridge/zcashRouting.ts#resolveSerializationFamily` only ever escalates
+// persistence to the standalone `zcash` family for a `mock:` account id, so a
+// real account id always resolves here, whatever the `zcashShielded` flag
+// says -- this is the one place that reads and writes a real account's ufvk.
+// The standalone @ledgerhq/coin-zcash module writes the same raw shape for its
+// own (mock-only) persistence path, so the two round-trip interchangeably.
+//
+// The mapping below is therefore a deliberate duplicate of coin-zcash's
+// bridge/serialization.ts. The two modules do not import each other (owner
+// decision, see the "Option D" note in coin-zcash/src/types/bridge.ts), so this
+// file carries a `sonar.cpd.exclusions` entry that must be dropped along with it.
 //
 // TODO: remove this module once the `zcashShielded` feature flag is retired and
 // Zcash is served by @ledgerhq/coin-zcash by default. At that point set the
@@ -78,6 +84,10 @@ export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoR
     estimatedTimeRemaining: info.estimatedTimeRemaining,
     birthday: info.birthday,
     lastProcessedBlock: info.lastProcessedBlock,
+    // Written out only when known: undefined can't be assigned to an optional
+    // field directly under exactOptionalPropertyTypes, so the key is omitted
+    // entirely rather than written as undefined.
+    ...(info.lastSyncError !== undefined && { lastSyncError: info.lastSyncError }),
     transactions: info.transactions.map(({ fee, transparentOut, decryptedData, ...tx }) => ({
       ...tx,
       fee: fee.toString(),
@@ -111,6 +121,8 @@ export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivate
     estimatedTimeRemaining: info.estimatedTimeRemaining,
     birthday: info.birthday,
     lastProcessedBlock: info.lastProcessedBlock,
+    // Guard accounts persisted before this field was added.
+    lastSyncError: info.lastSyncError ?? null,
     transactions: info.transactions.map(({ fee, transparentOut, decryptedData, ...tx }) => ({
       ...tx,
       fee: new BigNumber(fee),

@@ -19,6 +19,17 @@ export class NewSendModal extends Modal {
   readonly recipientInput = this.dialog.getByTestId("send-recipient-input");
   readonly editRecipientButton = this.dialog.getByTestId("send-edit-recipient-button");
 
+  // ========== BALANCE TYPE STEP ==========
+  readonly balanceTypeScreen = this.dialog.getByTestId("balance-type-screen");
+  balanceTypeOption(optionId: "public" | "private") {
+    return this.dialog.getByTestId(`balance-type-${optionId}`);
+  }
+
+  @step("Select balance type: $0")
+  async selectBalanceType(optionId: "public" | "private") {
+    await this.balanceTypeOption(optionId).click();
+  }
+
   // ========== RECIPIENT STEP ==========
   readonly addressMatchedTitle = this.dialog.getByTestId("send-address-matched-title");
   readonly introCard = this.dialog.getByTestId("send-recipient-intro-card");
