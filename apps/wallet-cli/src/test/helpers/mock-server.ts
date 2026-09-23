@@ -29,12 +29,12 @@ export class MockServer {
               : route.match.test(pathAndQuery);
 
           if (matches && (!route.method || route.method === req.method)) {
-            const body =
+            const responseBody =
               "respond" in route
                 ? await route.respond(await req.json().catch(() => undefined))
                 : route.response;
-            if (body instanceof Response) return body;
-            return Response.json(body, {
+            if (responseBody instanceof Response) return responseBody;
+            return Response.json(responseBody, {
               status: route.status ?? 200,
               headers: { "Content-Type": "application/json", ...(route.headers ?? {}) },
             });
