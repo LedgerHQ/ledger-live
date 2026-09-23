@@ -45,21 +45,6 @@ export type TrackingPair = {
   startDate: Date;
 };
 
-export type BatchStrategySolver = {
-  shouldBatchCurrencyFrom: (from: Currency) => boolean;
-};
-
-export type CounterValuesAPI = {
-  fetchHistorical: (
-    granularity: RateGranularity,
-    pair: TrackingPair,
-    granularitiesRates?: Record<RateGranularity, number>,
-  ) => Promise<Record<string, number>>;
-  fetchLatest: (
-    pairs: TrackingPair[],
-    batchStrategySolver?: BatchStrategySolver,
-  ) => Promise<Array<number | null | undefined>>;
-};
 export type CounterValuesStatus = Record<
   string,
   {

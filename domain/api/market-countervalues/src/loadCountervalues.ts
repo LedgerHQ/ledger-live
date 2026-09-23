@@ -10,14 +10,14 @@ import {
 } from "@domain/entity-market-countervalues";
 import { datapointLimits, formatPerGranularity } from "./internals/granularity";
 import { promiseAllBatched } from "./internals/promiseAllBatched";
-import type { CountervaluesLogger, LoadCountervaluesOptions } from "./types";
+import type { LoadCountervaluesOptions } from "./types";
 
 const MAX_RETRY_DELAY = 7 * incrementPerGranularity.daily;
 
 /** How many historical windows are fetched at once. */
 const HISTORICAL_CONCURRENCY = 10;
 
-const noopLog: CountervaluesLogger = () => {};
+function noopLog(): void {}
 
 /**
  * Synchronizes all countervalues incrementally, returning the next state.
