@@ -1,12 +1,11 @@
-import { renderHook, withFlagOverrides } from "tests/testSetup";
+import { renderHook } from "tests/testSetup";
 import { useEnforceSupportedLanguage } from "./useEnforceSupportedLanguage";
 import { languageSelector } from "../reducers/settings";
 
 describe("useEnforceSupportedLanguage", () => {
-  it("useEnforceSupportedLanguage should keep language to th if thai is enabled", async () => {
+  it("useEnforceSupportedLanguage should keep language to th", async () => {
     const { store } = renderHook(() => useEnforceSupportedLanguage(), {
       initialState: {
-        ...withFlagOverrides({ lldThai: { enabled: true } }),
         settings: {
           language: "th",
         },
@@ -16,12 +15,11 @@ describe("useEnforceSupportedLanguage", () => {
     expect(languageSelector(store.getState())).toEqual("th");
   });
 
-  it("useEnforceSupportedLanguage should set language to en if in th and thai is disabled", async () => {
+  it("useEnforceSupportedLanguage should set language to en if the language is not supported", async () => {
     const { store } = renderHook(() => useEnforceSupportedLanguage(), {
       initialState: {
-        ...withFlagOverrides({ lldThai: { enabled: false } }),
         settings: {
-          language: "th",
+          language: "xx",
         },
       },
     });
