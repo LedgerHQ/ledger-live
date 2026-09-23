@@ -331,6 +331,12 @@ with or sent to the wrong agent.
 and separately refuses if a keychain entry for that id exists without a matching session record
 (an inconsistent state you must clear manually before re-enrolling under the same id).
 
+**Keychain required:** `enroll` needs a working OS keychain — macOS Keychain, Windows Credential
+Manager, or on Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an
+unlocked collection. Without one (headless Linux, containers, some CI runners) `enroll` fails with
+`Could not store the agent's secret key in the OS keychain (…)` and saves nothing — fix the keychain
+and re-run the same command; there is no file-based fallback by design.
+
 **Environment isolation:** each profile records the environment (`staging`/`production`) it was
 enrolled against. `complete` rejects a completion whose `accountAccess.environment` doesn't match the
 profile's own environment, so a profile enrolled for staging can never end up holding a production
@@ -338,7 +344,9 @@ Trustchain ID.
 
 **Status is derived, not stored:** `list`/`show` compute `pending` / `enrolled` / `expired` from
 `trustchainId` (set by `complete`) and `enrollmentExpiresAt` — an expired, never-completed enrollment
-link is surfaced as `expired` rather than staying `pending` forever.
+link is surfaced as `expired` rather than staying `pending` forever. `complete` still accepts a
+matching completion after that time: the frontend refuses expired links, so a valid completion means
+the human approved on the device before expiry, and rejecting it would orphan an authorized agent.
 
 ---
 

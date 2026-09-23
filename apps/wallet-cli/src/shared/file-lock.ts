@@ -80,6 +80,35 @@ function tryPublishLock(lockPath: string, tmpPath: string, token: string): boole
   }
 }
 
+const RESTORE_ATTEMPTS = 20;
+
+function sleepSync(ms: number): void {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+/** Puts a live holder's lock (captured by mistake in `reclaimAbandonedLock`) back at `lockPath`.
+ * Only `EEXIST` means there is nothing to put back; transient Windows contention is retried, and any
+ * other failure is surfaced as a non-retryable error — dropping a live lock silently would let a
+ * second process into the critical section alongside its real holder. */
+function restoreLiveLock(claimPath: string, lockPath: string): void {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      linkSync(claimPath, lockPath);
+      return;
+    } catch (e) {
+      if (errorCode(e) === "EEXIST") return;
+      if (!isTransientWindowsContention(e) || attempt >= RESTORE_ATTEMPTS) {
+        throw new Error(
+          `Could not restore another process's lock at ${lockPath} (it was left at ${claimPath}). ` +
+            `Wait for other wallet-cli commands to finish, then rename it back or delete it.`,
+          { cause: e },
+        );
+      }
+      sleepSync(RETRY_INTERVAL_MS);
+    }
+  }
+}
+
 /**
  * `lockPath` currently holds a token judged abandoned — tries to clear it so the next acquire
  * attempt can succeed. Renaming it away is the atomic claim (only one racing stealer can rename a
@@ -99,11 +128,7 @@ function reclaimAbandonedLock(
   if (readToken(claimPath) !== judgedDeadToken) {
     // The file we renamed away wasn't the dead lock we judged — a fresh, live one was recreated
     // here between our check and the rename. Put it back for its real holder.
-    try {
-      linkSync(claimPath, lockPath);
-    } catch {
-      // Someone else's fresh lock already occupies `lockPath` again — nothing to put back.
-    }
+    restoreLiveLock(claimPath, lockPath);
   }
   try {
     unlinkSync(claimPath);

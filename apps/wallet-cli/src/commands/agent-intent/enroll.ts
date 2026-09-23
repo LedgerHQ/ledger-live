@@ -147,7 +147,18 @@ export default defineCommand({
         const session = await Session.read();
         assertProfileAvailable(session, flags.profile);
 
-        await saveAgentIntentSecretKey(flags.profile, identity.exportSecretKey());
+        try {
+          await saveAgentIntentSecretKey(flags.profile, identity.exportSecretKey());
+        } catch (e) {
+          throw new Error(
+            `Could not store the agent's secret key in the OS keychain (` +
+              `${e instanceof Error ? e.message : String(e)}). Agent Intent needs a working OS ` +
+              "keychain: macOS Keychain, Windows Credential Manager, or on Linux a running Secret " +
+              "Service provider (e.g. gnome-keyring or KeePassXC) with an unlocked collection. " +
+              "Nothing was saved.",
+            { cause: e },
+          );
+        }
         try {
           session.addAgentIntentProfile({
             profileId: flags.profile,
