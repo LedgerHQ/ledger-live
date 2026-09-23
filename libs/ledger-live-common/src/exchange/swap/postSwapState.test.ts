@@ -197,3 +197,56 @@ describe("postSwapCancelled app versions", () => {
     expect(request.data).not.toHaveProperty("signingAppVersion");
   });
 });
+
+describe("postSwapCancelled NotEnoughGas diagnostics", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedSha256.mockReturnValue(Buffer.from("fakehash"));
+  });
+
+  it("sends EVM NotEnoughGas fee diagnostics when provided", async () => {
+    await postSwapCancelled({
+      provider: "changelly",
+      swapId: "swap-id",
+      nativeBalance: "1000000000000000000",
+      nativeCurrency: "POL",
+      totalFees: "210000000000000",
+      gasLimit: "21000",
+      maxFeePerGas: "10000000000",
+      maxPriorityFeePerGas: "1000000000",
+    });
+
+    const request = mockedNetwork.mock.calls[0][0] as {
+      data: Record<string, unknown>;
+    };
+    expect(request.data.nativeBalance).toBe("1000000000000000000");
+    expect(request.data.nativeCurrency).toBe("POL");
+    expect(request.data.totalFees).toBe("210000000000000");
+    expect(request.data.gasLimit).toBe("21000");
+    expect(request.data.gasPrice).toBeUndefined();
+    expect(request.data.maxFeePerGas).toBe("10000000000");
+    expect(request.data.maxPriorityFeePerGas).toBe("1000000000");
+    expect(request.data.balance).toBeUndefined();
+    expect(request.data.spendableBalance).toBeUndefined();
+    expect(request.data.pendingOperationsCount).toBeUndefined();
+  });
+
+  it("sends balance diagnostics when a NotEnoughBalance cancel provides them", async () => {
+    await postSwapCancelled({
+      provider: "changelly",
+      swapId: "swap-id",
+      balance: "5000000",
+      spendableBalance: "2000000",
+      pendingOperationsCount: "2",
+    });
+
+    const request = mockedNetwork.mock.calls[0][0] as {
+      data: Record<string, unknown>;
+    };
+    expect(request.data.balance).toBe("5000000");
+    expect(request.data.spendableBalance).toBe("2000000");
+    expect(request.data.pendingOperationsCount).toBe("2");
+    expect(request.data.nativeBalance).toBeUndefined();
+    expect(request.data.totalFees).toBeUndefined();
+  });
+});
