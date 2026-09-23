@@ -48,8 +48,13 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [assetOrder, setAssetOrder] = useState<readonly string[]>([]);
-  const [reorderingAssetId, setReorderingAssetId] = useState<string | null>(null);
   const manageInitialOrder = useRef<readonly string[] | null>(null);
+  const [reorderingAssetIds, setReorderingAssetIds] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
+  // Only the most recently issued move's failure gets to roll the order back: an older request
+  // resolving after a newer one has already applied would otherwise stomp that newer change.
+  const latestMoveRequestId = useRef(0);
   const isSignedIn = useIsCardSignedIn();
   const [updateCardWalletPriorities] = useUpdateCardWalletPrioritiesMutation();
   const { transactions } = useCardTransactionsViewModel();
@@ -169,14 +174,14 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
 
   const onMoveAsset = useCallback(
     async (id: string, toIndex: number) => {
-      if (reorderingAssetId !== null) return;
-
       const fromIndex = rows.findIndex(row => row.id === id);
       if (fromIndex < 0 || toIndex < 0 || toIndex >= rows.length || fromIndex === toIndex) return;
 
       const previousOrder = rows.map(row => row.id);
       const reorderedRows = reorderByIndex(rows, fromIndex, toIndex);
-      setReorderingAssetId(id);
+      const requestId = ++latestMoveRequestId.current;
+
+      setReorderingAssetIds(current => new Set(current).add(id));
       setAssetOrder(reorderedRows.map(row => row.id));
 
       try {
@@ -193,14 +198,20 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
           }),
         }).unwrap();
 
-        if (!result.success) setAssetOrder(previousOrder);
+        if (!result.success && latestMoveRequestId.current === requestId) {
+          setAssetOrder(previousOrder);
+        }
       } catch {
-        setAssetOrder(previousOrder);
+        if (latestMoveRequestId.current === requestId) setAssetOrder(previousOrder);
       } finally {
-        setReorderingAssetId(null);
+        setReorderingAssetIds(current => {
+          const next = new Set(current);
+          next.delete(id);
+          return next;
+        });
       }
     },
-    [reorderingAssetId, rows, updateCardWalletPriorities],
+    [rows, updateCardWalletPriorities],
   );
 
   return useMemo(
@@ -231,7 +242,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onManagePress,
       onAddAssetPress: onAddAsset ? onAddAssetPress : undefined,
       onMoveAsset,
-      reorderingAssetId,
+      reorderingAssetIds,
     }),
     [
       props,
@@ -255,7 +266,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onAddAsset,
       onAddAssetPress,
       onMoveAsset,
-      reorderingAssetId,
+      reorderingAssetIds,
     ],
   );
 }

@@ -80,5 +80,7 @@ export type CardAssetsViewModel = Readonly<{
   onManagePress: () => void;
   onAddAssetPress?: () => void;
   onMoveAsset: (id: string, toIndex: number) => Promise<void>;
-  reorderingAssetId: string | null;
+  /** Wallets with an in-flight priority update. Multiple moves can be in flight at once — each
+   * drop is issued independently rather than waiting for the previous one to settle. */
+  reorderingAssetIds: ReadonlySet<string>;
 }>;

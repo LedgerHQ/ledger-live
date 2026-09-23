@@ -32,7 +32,7 @@ type CardAssetsManageDialogProps = Readonly<{
   onClose: () => void;
   onAddAsset?: () => void;
   onMoveAsset: (id: string, toIndex: number) => Promise<void>;
-  reorderingAssetId: string | null;
+  reorderingAssetIds: ReadonlySet<string>;
 }>;
 
 export function CardAssetsManageDialog({
@@ -41,7 +41,7 @@ export function CardAssetsManageDialog({
   onClose,
   onAddAsset,
   onMoveAsset,
-  reorderingAssetId,
+  reorderingAssetIds,
 }: CardAssetsManageDialogProps) {
   const { t } = useTranslation();
   const sensors = useSensors(
@@ -89,7 +89,7 @@ export function CardAssetsManageDialog({
                     key={row.id}
                     row={row}
                     showHandle={rows.length > 1}
-                    isReordering={reorderingAssetId === row.id}
+                    isReordering={reorderingAssetIds.has(row.id)}
                     reorderLabel={t("payTab.card.assets.manageDialog.reorder", {
                       asset: row.name,
                     })}

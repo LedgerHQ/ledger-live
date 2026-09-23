@@ -498,9 +498,15 @@ catalogs:
     react-native-config:
       specifier: 1.5.3
       version: 1.5.3
+    react-native-draggable-flatlist:
+      specifier: 4.0.3
+      version: 4.0.3
     react-native-fast-crypto:
       specifier: '3'
       version: 3.0.0
+    react-native-gesture-handler:
+      specifier: 2.28.0
+      version: 2.28.0
     react-native-keychain:
       specifier: 10.0.0
       version: 10.0.0
@@ -2305,6 +2311,9 @@ importers:
       react-native-device-info:
         specifier: 11.1.0
         version: 11.1.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
+      react-native-draggable-flatlist:
+        specifier: 'catalog:'
+        version: 4.0.3(3afd4df64423263ad8b47effdb24abbd)
       react-native-easy-markdown:
         specifier: 2.0.0
         version: 2.0.0(prop-types@15.8.1)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
@@ -2321,7 +2330,7 @@ importers:
         specifier: 0.1.1
         version: 0.1.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       react-native-gesture-handler:
-        specifier: 2.28.0
+        specifier: 'catalog:'
         version: 2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       react-native-get-random-values:
         specifier: 1.11.0
@@ -7174,7 +7183,7 @@ importers:
         version: link:../../platform/pay-analytics
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(@ledgerhq/lumen-design-core@0.1.29)(@ledgerhq/lumen-ui-react@0.1.59(@ledgerhq/lumen-design-core@0.1.29)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-ui-rnative@0.1.62(@ledgerhq/lumen-design-core@0.1.29)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+        version: 2.0.6(2a3c6898e3e1a475f8c5bfaa0e66b3b6)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -7199,7 +7208,7 @@ importers:
         version: 0.1.59(@ledgerhq/lumen-design-core@0.1.29)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.62(@ledgerhq/lumen-design-core@0.1.29)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+        version: 0.1.62(@ledgerhq/lumen-design-core@0.1.29)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native-gesture-handler@2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native-reanimated@4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
@@ -7266,6 +7275,15 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
+      react-native-draggable-flatlist:
+        specifier: 'catalog:'
+        version: 4.0.3(react-native-gesture-handler@2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native-reanimated@4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
+      react-native-gesture-handler:
+        specifier: 'catalog:'
+        version: 2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-reanimated:
+        specifier: 'catalog:'
+        version: 4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
@@ -18478,21 +18496,12 @@ importers:
       '@testing-library/jest-dom':
         specifier: 'catalog:'
         version: 6.9.1
-      '@testing-library/react':
-        specifier: 'catalog:'
-        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@testing-library/user-event':
-        specifier: 'catalog:'
-        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -18502,15 +18511,6 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
-      react-dom:
-        specifier: 19.1.4
-        version: 19.1.4(react@19.1.4)
-      react-native:
-        specifier: 'catalog:'
-        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -23574,7 +23574,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -37319,6 +37318,13 @@ packages:
     peerDependencies:
       react-native: '*'
 
+  react-native-draggable-flatlist@4.0.3:
+    resolution: {integrity: sha512-2F4x5BFieWdGq9SetD2nSAR7s7oQCSgNllYgERRXXtNfSOuAGAVbDb/3H3lP0y5f7rEyNwabKorZAD/SyyNbDw==}
+    peerDependencies:
+      react-native: '>=0.64.0'
+      react-native-gesture-handler: '>=2.0.0'
+      react-native-reanimated: '>=2.8.0'
+
   react-native-easy-markdown@2.0.0:
     resolution: {integrity: sha512-vGK41pZj/4lM9q8/Bqox/2qqfJVrSxLugBWDBNLuOqvxpBw/b3q4aUxCpP8nyBWv5BifrD8+OcdhC27bRvEFIw==}
     peerDependencies:
@@ -42617,7 +42623,7 @@ snapshots:
     dependencies:
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-compilation-targets': 7.27.2
-      '@babel/helper-globals': 7.28.0
+      '@babel/helper-globals': 7.29.7
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-replace-supers': 7.27.1
       '@babel/traverse': 7.29.8
@@ -42629,7 +42635,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-compilation-targets': 7.27.2
-      '@babel/helper-globals': 7.28.0
+      '@babel/helper-globals': 7.29.7
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
       '@babel/traverse': 7.29.8
@@ -47064,6 +47070,16 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  '@ledgerhq/crypto-icons@2.0.6(2a3c6898e3e1a475f8c5bfaa0e66b3b6)':
+    dependencies:
+      react: 19.1.4
+    optionalDependencies:
+      '@ledgerhq/lumen-design-core': 0.1.29
+      '@ledgerhq/lumen-ui-react': 0.1.59(@ledgerhq/lumen-design-core@0.1.29)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@ledgerhq/lumen-ui-rnative': 0.1.62(@ledgerhq/lumen-design-core@0.1.29)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native-gesture-handler@2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native-reanimated@4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-dom: 19.1.4(react@19.1.4)
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
+
   '@ledgerhq/crypto-icons@2.0.6(@ledgerhq/lumen-design-core@0.1.29)(@ledgerhq/lumen-ui-react@0.1.59(@ledgerhq/lumen-design-core@0.1.29)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
       react: 19.1.4
@@ -47728,6 +47744,25 @@ snapshots:
       react-i18next: 14.1.3(i18next@23.10.1)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
       react-native-safe-area-context: 5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+    transitivePeerDependencies:
+      - react-dom
+
+  '@ledgerhq/lumen-ui-rnative@0.1.62(@ledgerhq/lumen-design-core@0.1.29)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native-gesture-handler@2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native-reanimated@4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
+    dependencies:
+      '@ledgerhq/lumen-design-core': 0.1.29
+      '@ledgerhq/lumen-utils-shared': 0.1.13(react@19.1.4)
+      '@types/d3-scale': 4.0.9
+      '@types/d3-shape': 3.2.0
+      '@types/react': 19.0.14
+      d3-scale: 4.0.2
+      d3-shape: 3.2.0
+      i18next: 23.10.1
+      react: 19.1.4
+      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
+      react-native-reanimated: 4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+    optionalDependencies:
+      react-native-gesture-handler: 2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
     transitivePeerDependencies:
       - react-dom
 
@@ -66680,6 +66715,26 @@ snapshots:
     dependencies:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
 
+  react-native-draggable-flatlist@4.0.3(3afd4df64423263ad8b47effdb24abbd):
+    dependencies:
+      '@babel/preset-typescript': 7.28.5(@babel/core@7.28.5)
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+      react-native-gesture-handler: 2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-reanimated: 4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+    transitivePeerDependencies:
+      - '@babel/core'
+      - supports-color
+
+  react-native-draggable-flatlist@4.0.3(react-native-gesture-handler@2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native-reanimated@4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)):
+    dependencies:
+      '@babel/preset-typescript': 7.28.5
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
+      react-native-gesture-handler: 2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-reanimated: 4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+    transitivePeerDependencies:
+      - '@babel/core'
+      - supports-color
+
   react-native-easy-markdown@2.0.0(prop-types@15.8.1)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)):
     dependencies:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
@@ -66720,6 +66775,14 @@ snapshots:
       invariant: 2.2.4
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+
+  react-native-gesture-handler@2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
+    dependencies:
+      '@egjs/hammerjs': 2.0.17
+      hoist-non-react-statics: 3.3.2
+      invariant: 2.2.4
+      react: 19.1.4
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
 
   react-native-get-random-values@1.11.0:
     dependencies:
