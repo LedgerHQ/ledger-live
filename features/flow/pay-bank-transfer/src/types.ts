@@ -21,7 +21,6 @@ export type BankTransferIntroProps = Readonly<{
   isOpen: boolean;
   /** Host-bundled image source. Re.pack only resolves assets required from the app. */
   heroImage?: BankTransferIntroHeroImage;
-  bottomInset?: number;
   /** Host-owned partner handoff (Noah / Trading). This package never navigates. */
   onBankTransfer: (handoff: BankTransferHandoff) => void;
   onClose: () => void;
@@ -37,7 +36,6 @@ export type BankTransferIntroViewModel = Readonly<{
   providedBy: string;
   heroImage?: BankTransferIntroHeroImage;
   rows: readonly BankTransferIntroRow[];
-  bottomInset: number;
   onShown: () => void;
   onCreateAccountPress: () => void;
   onLogInPress: () => void;

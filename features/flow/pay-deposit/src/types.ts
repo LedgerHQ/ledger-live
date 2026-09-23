@@ -10,7 +10,6 @@ export type DepositOptionContent = Readonly<{
 export type DepositOptionsProps = Readonly<{
   isOpen: boolean;
   page: string;
-  bottomInset?: number;
   onClose: () => void;
   /** Host-owned navigation intent for the pressed option. Navigation stays in the app. */
   onSelect: (id: DepositOptionId) => void;
@@ -29,7 +28,6 @@ export type DepositOptionsViewProps = Readonly<{
   isOpen: boolean;
   title: string;
   options: readonly DepositOption[];
-  bottomInset?: number;
   onClose: () => void;
   onSelectOption: (id: DepositOptionId) => void;
 }>;

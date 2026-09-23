@@ -1,9 +1,7 @@
 import { useCallback } from "react";
-import { Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AssetCategory } from "@domain/api-aggregated-assets";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   useBankTransferIntroAdapter,
   type BankTransferHandoff,
@@ -37,8 +35,6 @@ export function usePayTabDepositOptions(
   onTrackEvent: PayCardTrackEvent | undefined,
 ): UsePayTabDepositOptions {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const { bottom } = useSafeAreaInsets();
-  const bottomInset = Platform.OS === "ios" ? bottom : 0;
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     categories: DEPOSIT_CATEGORIES,
@@ -64,7 +60,6 @@ export function usePayTabDepositOptions(
 
   const { open: openBankTransferIntro, bankTransferIntro } = useBankTransferIntroAdapter({
     heroImage: BANK_TRANSFER_INTRO_HERO_IMAGE,
-    bottomInset,
     onBankTransfer,
     onTrackEvent,
   });
@@ -95,5 +90,5 @@ export function usePayTabDepositOptions(
     onTrackEvent,
   });
 
-  return { open, depositOptions: { ...depositOptions, bottomInset: bottom }, bankTransferIntro };
+  return { open, depositOptions, bankTransferIntro };
 }

@@ -88,4 +88,13 @@ describe("ContactsView (Web)", () => {
     expect(onViewContact).toHaveBeenCalledTimes(1);
     expect(onViewContact).toHaveBeenCalledWith(contact);
   });
+
+  it("should hide the addresses and transactions columns below xl", () => {
+    const contact = mockContact({ id: "contact-ada", name: "Ada" });
+    renderView({ isEmpty: false, rows: [{ contact, transactionCount: 0 }] });
+
+    expect(screen.getByText("Addresses")).toHaveAttribute("hideBelow", "xl");
+    expect(screen.getByText("Transactions")).toHaveAttribute("hideBelow", "xl");
+    expect(screen.getByText("0 transaction")).toHaveAttribute("hideBelow", "xl");
+  });
 });
