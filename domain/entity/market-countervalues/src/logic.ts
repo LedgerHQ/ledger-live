@@ -153,6 +153,8 @@ export function lenseRate(
  *
  * Two states sharing this key produce the same conversions for that pair over that span, so
  * consumers can memoise derived results against it. Changing the format invalidates their caches.
+ * `earliestStableDate` is interpolated as a `Date`, so the key depends on the process timezone:
+ * compare keys only within one process.
  */
 export function historyKey(
   state: CounterValuesState,
