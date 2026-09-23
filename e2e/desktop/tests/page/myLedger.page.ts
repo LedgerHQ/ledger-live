@@ -3,6 +3,9 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import type { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 
+type CatalogFilter = "all" | "not_installed" | "supported";
+type CatalogSort = "marketcap_desc" | "name_asc" | "name_desc";
+
 export class MyLedgerPage extends AppPage {
   private readonly storageCard = this.page.getByTestId("device-storage-card");
   private readonly deviceOptions = this.page.getByTestId("device-options-container");
@@ -12,6 +15,14 @@ export class MyLedgerPage extends AppPage {
   private readonly noAppsEmptyState = this.page.getByTestId("manager-no-apps-empty-state");
   private readonly catalogSearch = this.page.getByPlaceholder("Search app in catalog...");
   private readonly installedSearch = this.page.getByPlaceholder("Search installed apps...");
+
+  private readonly filterButton = this.page.getByTestId("manager-filter-button");
+  private readonly filterOption = (key: CatalogFilter) =>
+    this.page.getByTestId(`manager-filter-option-${key}`);
+  private readonly sortButton = this.page.getByTestId("manager-sort-button");
+  private readonly sortOption = (key: CatalogSort) =>
+    this.page.getByTestId(`manager-sort-option-${key}`);
+  private readonly appRows = this.page.locator('[id^="managerAppsList-"]');
 
   private readonly installButton = (app: AppInfos) =>
     this.page.getByTestId(`manager-install-${app.name}-app-button`);
@@ -66,6 +77,29 @@ export class MyLedgerPage extends AppPage {
   @step("Search the installed apps for $0")
   async searchInstalledApps(query: string) {
     await this.installedSearch.fill(query);
+  }
+
+  /** The dropdown closing is what confirms the option was taken, not just clicked. */
+  @step("Filter the catalog by $0")
+  async filterCatalogBy(key: CatalogFilter) {
+    await this.filterButton.click();
+    await this.filterOption(key).click();
+    await expect(this.filterOption(key)).toBeHidden();
+  }
+
+  @step("Sort the catalog by $0")
+  async sortCatalogBy(key: CatalogSort) {
+    await this.sortButton.click();
+    await this.sortOption(key).click();
+    await expect(this.sortOption(key)).toBeHidden();
+  }
+
+  /** Row ids are the only DOM-ordered handle the list exposes. */
+  @step("Read the listed app names")
+  async listedAppNames(): Promise<string[]> {
+    return this.appRows.evaluateAll(rows =>
+      rows.map(row => row.id.replace("managerAppsList-", "")),
+    );
   }
 
   @step("Expect $0 to be listed in the catalog")
