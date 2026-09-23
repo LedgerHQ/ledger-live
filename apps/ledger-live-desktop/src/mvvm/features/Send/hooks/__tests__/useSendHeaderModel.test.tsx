@@ -59,6 +59,7 @@ jest.mock("../../context/SendFlowTrackingContext", () => ({
     setInputMethod: jest.fn(),
     setRecipientResolution: jest.fn(),
     markContactSaved: jest.fn(),
+    trackMessage: jest.fn(),
   })),
 }));
 

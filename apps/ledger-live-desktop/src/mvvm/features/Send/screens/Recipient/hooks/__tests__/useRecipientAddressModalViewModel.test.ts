@@ -158,6 +158,12 @@ describe("useRecipientAddressModalViewModel", () => {
       setInputMethod: jest.fn(),
       setRecipientResolution,
       markContactSaved: jest.fn(),
+      flowSessionId: "flow-session-id",
+      trackMessage: jest.fn(),
+      scheduleMessage: jest.fn(),
+      flushMessage: jest.fn(),
+      clearPendingMessage: jest.fn(),
+      endSession: jest.fn(),
     });
     mockedUseSendFlowTrackingProperties.mockReturnValue({
       flow: "send",
@@ -954,7 +960,10 @@ describe("useRecipientAddressModalViewModel", () => {
     });
 
     mockedUseAddressValidation.mockReturnValue({
-      result: createAddressSearchResult({ status: "idle", hasBridgeValidationResult: false }),
+      result: createAddressSearchResult({
+        status: "idle",
+        hasBridgeValidationResult: false,
+      }),
       isLoading: true,
       validateAddress: jest.fn(),
     });
@@ -983,7 +992,10 @@ describe("useRecipientAddressModalViewModel", () => {
     });
 
     mockedUseAddressValidation.mockReturnValue({
-      result: createAddressSearchResult({ status: "idle", hasBridgeValidationResult: false }),
+      result: createAddressSearchResult({
+        status: "idle",
+        hasBridgeValidationResult: false,
+      }),
       isLoading: true,
       validateAddress: jest.fn(),
     });

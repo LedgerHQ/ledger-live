@@ -34,7 +34,7 @@ export function CustomFeesScreenInner({
   const currency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
   const stableTransaction = useStableGasOptions(transaction);
 
-  useFlowEffects({
+  const flowEffects = useFlowEffects({
     account,
     parentAccount,
     transaction,
@@ -51,6 +51,7 @@ export function CustomFeesScreenInner({
       currency={currency}
       transactionActions={transactionActions}
       onConfirm={onConfirm}
+      isFlowEffectLoading={flowEffects.loading}
     />
   );
 }

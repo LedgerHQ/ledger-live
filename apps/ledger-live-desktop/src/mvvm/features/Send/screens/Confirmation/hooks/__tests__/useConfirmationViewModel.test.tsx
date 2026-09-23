@@ -25,10 +25,13 @@ jest.mock("../../../../context/SendFlowTrackingContext", () => ({
     inputMethod: "manual",
     resultType: "unknown address",
     recipientType: "external address",
+    flowSessionId: "flow-session-id",
     savedContactDuringFlow: false,
     setInputMethod: jest.fn(),
     setRecipientResolution: jest.fn(),
     markContactSaved: jest.fn(),
+    endSession: jest.fn(),
+    trackMessage: jest.fn(),
   })),
 }));
 
@@ -398,12 +401,15 @@ describe("useConfirmationViewModel", () => {
 
     expect(trackPage).toHaveBeenCalledWith("Modal send - transaction sent", null, {
       flow: "send",
+      flow_session_id: "flow-session-id",
       recipientType: "external address",
       savedContactDuringFlow: false,
       blockchain: "",
       currency: "",
       currency_id: "",
       newSendFlow: true,
+      active_warnings: [],
+      active_warnings_count: 0,
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "close",

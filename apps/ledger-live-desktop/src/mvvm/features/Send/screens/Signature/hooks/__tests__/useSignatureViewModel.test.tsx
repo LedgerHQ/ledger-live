@@ -73,6 +73,14 @@ jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowData: jest.fn(() => ({ state: mockState, source: mockSource })),
 }));
 
+jest.mock("../../../../context/SendFlowTrackingContext", () => ({
+  useSendFlowTracking: jest.fn(() => ({
+    endSession: jest.fn(),
+    flowSessionId: "flow-session-id",
+    trackMessage: jest.fn(),
+  })),
+}));
+
 // eslint-disable-next-line
 jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
   useBroadcast: jest.fn(() => broadcastFn),
@@ -230,8 +238,7 @@ describe("useSignatureViewModel", () => {
     const ref = React.createRef<HookApi>();
     render(<Harness ref={ref} />);
 
-    // @ts-expect-error - providing minimal stub for SignedOperation in tests
-    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" }, device: {} });
+    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" } as never, device: {} });
 
     await waitFor(() => {
       expect(mockOperation.onSigned).toHaveBeenCalledTimes(1);
@@ -241,8 +248,7 @@ describe("useSignatureViewModel", () => {
     });
 
     // idempotent: second call shouldn't trigger again
-    // @ts-expect-error - providing minimal stub for SignedOperation in tests
-    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig2" }, device: {} });
+    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig2" } as never, device: {} });
     expect(mockOperation.onOperationBroadcasted).toHaveBeenCalledTimes(1);
     expect(mockStatus.setSuccess).toHaveBeenCalledTimes(1);
     expect(mockNavigation.goToNextStep).toHaveBeenCalledTimes(1);
@@ -256,8 +262,7 @@ describe("useSignatureViewModel", () => {
     const ref = React.createRef<HookApi>();
     render(<Harness ref={ref} />);
 
-    // @ts-expect-error - providing minimal stub for SignedOperation in tests
-    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" }, device: {} });
+    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" } as never, device: {} });
 
     await waitFor(() => {
       expect(mockOperation.onSigned).toHaveBeenCalledTimes(1);
@@ -274,8 +279,7 @@ describe("useSignatureViewModel", () => {
     const ref = React.createRef<HookApi>();
     render(<Harness ref={ref} />);
 
-    // @ts-expect-error - providing minimal stub for SignedOperation in tests
-    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" }, device: {} });
+    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" } as never, device: {} });
 
     await waitFor(() => {
       expect(mockOperation.onTransactionError).toHaveBeenCalledTimes(1);
@@ -314,8 +318,7 @@ describe("useSignatureViewModel", () => {
     const ref = React.createRef<HookApi>();
     render(<Harness ref={ref} />);
 
-    // @ts-expect-error - providing minimal stub for SignedOperation in tests
-    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" }, device: {} });
+    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" } as never, device: {} });
 
     await waitFor(() => {
       expect(mockStatus.setSuccess).toHaveBeenCalledTimes(1);
@@ -331,8 +334,7 @@ describe("useSignatureViewModel", () => {
     const ref = React.createRef<HookApi>();
     render(<Harness ref={ref} />);
 
-    // @ts-expect-error - providing minimal stub for SignedOperation in tests
-    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" }, device: {} });
+    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" } as never, device: {} });
 
     await waitFor(() => {
       expect(mockStatus.setSuccess).toHaveBeenCalledTimes(1);
