@@ -34,26 +34,38 @@ describe("assignToAccountRaw", () => {
     jest.resetAllMocks();
   });
 
-  it("should correctly map generic account", () => {
-    const account = { stakingResources: {} } as unknown as Account;
-    const accountRaw = {} as unknown as AccountRaw;
-    assignToAccountRaw(account, accountRaw);
-
-    expect(mockedGenericAssignToAccountRaw).toHaveBeenCalledTimes(1);
-    expect(mockedGenericAssignToAccountRaw).toHaveBeenCalledWith(account, accountRaw);
-
-    expect(mockedCosmosAssignToAccountRaw).not.toHaveBeenCalled();
-  });
-
-  it("should correctly map legacy cosmos account", () => {
-    const account = { cosmosResources: {} } as unknown as Account;
+  it("maps both the legacy cosmos shape and the generic staking shape", () => {
+    const account = { cosmosResources: {}, stakingResources: {} } as unknown as Account;
     const accountRaw = {} as unknown as AccountRaw;
     assignToAccountRaw(account, accountRaw);
 
     expect(mockedCosmosAssignToAccountRaw).toHaveBeenCalledTimes(1);
     expect(mockedCosmosAssignToAccountRaw).toHaveBeenCalledWith(account, accountRaw);
 
-    expect(mockedGenericAssignToAccountRaw).not.toHaveBeenCalled();
+    expect(mockedGenericAssignToAccountRaw).toHaveBeenCalledTimes(1);
+    expect(mockedGenericAssignToAccountRaw).toHaveBeenCalledWith(account, accountRaw);
+  });
+
+  it("preserves sequence/publicKey when the generic step overwrites stakingResources", () => {
+    mockedCosmosAssignToAccountRaw.mockImplementation((_acc, raw) => {
+      (raw as unknown as { stakingResources: unknown }).stakingResources = {
+        delegations: [],
+        sequence: 42,
+        publicKey: "0xpub",
+      };
+    });
+    mockedGenericAssignToAccountRaw.mockImplementation((_acc, raw) => {
+      (raw as unknown as { stakingResources: unknown }).stakingResources = { delegations: [] };
+    });
+
+    const account = { cosmosResources: {}, stakingResources: {} } as unknown as Account;
+    const accountRaw = {} as unknown as AccountRaw;
+    assignToAccountRaw(account, accountRaw);
+
+    expect(
+      (accountRaw as unknown as { stakingResources: { sequence: number; publicKey: string } })
+        .stakingResources,
+    ).toEqual({ delegations: [], sequence: 42, publicKey: "0xpub" });
   });
 });
 
@@ -67,25 +79,76 @@ describe("assignFromAccountRaw", () => {
     jest.resetAllMocks();
   });
 
-  it("should correctly map generic raw account", () => {
+  it("maps both the legacy cosmos shape and the generic staking shape", () => {
     const account = {} as unknown as Account;
-    const accountRaw = { stakingResources: {} } as unknown as AccountRaw;
-    assignFromAccountRaw(accountRaw, account);
-
-    expect(mockedGenericAssignFromAccountRaw).toHaveBeenCalledTimes(1);
-    expect(mockedGenericAssignFromAccountRaw).toHaveBeenCalledWith(accountRaw, account);
-
-    expect(mockedCosmosAssignFromAccountRaw).not.toHaveBeenCalled();
-  });
-
-  it("should correctly map legacy cosmos raw account", () => {
-    const account = {} as unknown as Account;
-    const accountRaw = { cosmosResources: {} } as unknown as AccountRaw;
+    const accountRaw = { cosmosResources: {}, stakingResources: {} } as unknown as AccountRaw;
     assignFromAccountRaw(accountRaw, account);
 
     expect(mockedCosmosAssignFromAccountRaw).toHaveBeenCalledTimes(1);
     expect(mockedCosmosAssignFromAccountRaw).toHaveBeenCalledWith(accountRaw, account);
 
-    expect(mockedGenericAssignFromAccountRaw).not.toHaveBeenCalled();
+    expect(mockedGenericAssignFromAccountRaw).toHaveBeenCalledTimes(1);
+    expect(mockedGenericAssignFromAccountRaw).toHaveBeenCalledWith(accountRaw, account);
+  });
+
+  it("revives stakingResources from cosmosResources when the persisted raw predates the migration", () => {
+    const cosmosResources = { delegations: [], redelegations: [], unbondings: [] };
+    mockedCosmosAssignFromAccountRaw.mockImplementation((_raw, acc) => {
+      (acc as unknown as { cosmosResources: unknown }).cosmosResources = cosmosResources;
+    });
+    mockedGenericAssignFromAccountRaw.mockImplementation(() => {});
+
+    const account = {} as unknown as Account;
+    const accountRaw = { cosmosResources } as unknown as AccountRaw;
+
+    assignFromAccountRaw(accountRaw, account);
+
+    expect((account as unknown as { stakingResources: unknown }).stakingResources).toBe(
+      cosmosResources,
+    );
+  });
+
+  it("does not override stakingResources when the raw already has the generic shape", () => {
+    const stakingResources = { delegations: [] };
+    mockedCosmosAssignFromAccountRaw.mockImplementation((_raw, acc) => {
+      (acc as unknown as { cosmosResources: unknown }).cosmosResources = {
+        delegations: ["legacy value that must not win"],
+      };
+    });
+    mockedGenericAssignFromAccountRaw.mockImplementation((_raw, acc) => {
+      (acc as unknown as { stakingResources: unknown }).stakingResources = stakingResources;
+    });
+
+    const account = {} as unknown as Account;
+    const accountRaw = { stakingResources } as unknown as AccountRaw;
+
+    assignFromAccountRaw(accountRaw, account);
+
+    expect((account as unknown as { stakingResources: unknown }).stakingResources).toBe(
+      stakingResources,
+    );
+  });
+
+  it("preserves sequence/publicKey when the generic step overwrites stakingResources", () => {
+    mockedCosmosAssignFromAccountRaw.mockImplementation((_raw, acc) => {
+      (acc as unknown as { stakingResources: unknown }).stakingResources = {
+        delegations: [],
+        sequence: 42,
+        publicKey: "0xpub",
+      };
+    });
+    mockedGenericAssignFromAccountRaw.mockImplementation((_raw, acc) => {
+      (acc as unknown as { stakingResources: unknown }).stakingResources = { delegations: [] };
+    });
+
+    const account = {} as unknown as Account;
+    const accountRaw = { stakingResources: {} } as unknown as AccountRaw;
+
+    assignFromAccountRaw(accountRaw, account);
+
+    expect(
+      (account as unknown as { stakingResources: { sequence: number; publicKey: string } })
+        .stakingResources,
+    ).toEqual({ delegations: [], sequence: 42, publicKey: "0xpub" });
   });
 });

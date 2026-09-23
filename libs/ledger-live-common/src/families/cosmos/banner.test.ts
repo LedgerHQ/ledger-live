@@ -2,7 +2,13 @@
 
 import { getAccountBannerState } from "./banner";
 import * as preloadedData from "@ledgerhq/coin-cosmos/preloadedData";
-import type { CosmosAccount, CosmosValidatorItem } from "./types";
+import type {
+  CosmosAccount,
+  CosmosDelegation,
+  CosmosRedelegation,
+  CosmosUnbonding,
+  CosmosValidatorItem,
+} from "./types";
 import data from "@ledgerhq/coin-cosmos/preloadedData.mock";
 import { BigNumber } from "bignumber.js";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -32,6 +38,20 @@ const expensiveValidator: CosmosValidatorItem | undefined = data.validators.find
 const cheapValidator: CosmosValidatorItem | undefined = data.validators.find(
   x => x.validatorAddress === "cosmosvaloper1qaa9zej9a0ge3ugpx3pxyx602lxh3ztqgfnp42",
 );
+
+const delegations: CosmosDelegation[] = [
+  {
+    amount: new BigNumber("50000"),
+    status: "bonded",
+    pendingRewards: new BigNumber("112"),
+    validatorAddress: "cosmosvaloper1c4k24jzduc365kywrsvf5ujz4ya6mwympnc4en",
+  },
+];
+const redelegations: CosmosRedelegation[] = [];
+const unbondings: CosmosUnbonding[] = [];
+const delegatedBalance = new BigNumber("0");
+const pendingRewardsBalance = new BigNumber("0");
+const unbondingBalance = new BigNumber("0");
 
 const account: CosmosAccount = {
   type: "Account",
@@ -79,21 +99,22 @@ const account: CosmosAccount = {
   },
   xpub: "cosmos1f9y7wdychcdhwvyrhff3zvs3gy3qxcu2th4g8u",
   cosmosResources: {
-    delegations: [
-      {
-        amount: new BigNumber("50000"),
-        status: "bonded",
-        pendingRewards: new BigNumber("112"),
-        validatorAddress: "cosmosvaloper1c4k24jzduc365kywrsvf5ujz4ya6mwympnc4en",
-      },
-    ],
-    redelegations: [],
-    unbondings: [],
-    delegatedBalance: new BigNumber("0"),
-    pendingRewardsBalance: new BigNumber("0"),
-    unbondingBalance: new BigNumber("0"),
+    delegations,
+    redelegations,
+    unbondings,
+    delegatedBalance,
+    pendingRewardsBalance,
+    unbondingBalance,
     sequence: 0,
     publicKey: "",
+  },
+  stakingResources: {
+    delegations,
+    redelegations,
+    unbondings,
+    delegatedBalance,
+    pendingRewardsBalance,
+    unbondingBalance,
   },
 };
 

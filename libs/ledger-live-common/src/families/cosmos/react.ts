@@ -1,5 +1,9 @@
 import invariant from "invariant";
 import { useEffect, useMemo, useState } from "react";
+import {
+  resolveSourceValidator,
+  resolveTransactionValidators,
+} from "@ledgerhq/coin-cosmos/buildTransaction";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import {
   getCosmosPreloadDataUpdates,
@@ -8,7 +12,6 @@ import {
 import { getAccountCurrency } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import { searchFilter as defaultSearchFilter, mapDelegations } from "./logic";
-import { getCosmosResources } from "./types";
 import type {
   CosmosAccount,
   CosmosDelegationInfo,
@@ -46,10 +49,10 @@ export function useCosmosFamilyMappedDelegations(
   const currencyId = account.currency.id;
   const { validators } = useCosmosFamilyPreloadData(currencyId);
 
-  const delegations = getCosmosResources(account)?.delegations;
+  const { delegations } = account.stakingResources;
   const unit = getAccountCurrency(account).units[0];
   return useMemo(() => {
-    const mappedDelegations = mapDelegations(delegations || [], validators, unit);
+    const mappedDelegations = mapDelegations(delegations, validators, unit);
     return mode === "claimReward"
       ? mappedDelegations.filter(({ pendingRewards }) => pendingRewards.gt(0))
       : mappedDelegations;
@@ -72,14 +75,14 @@ export function useCosmosFamilyDelegationsQuerySelector(
     () => delegations.filter(delegationSearchFilter(query)),
     [query, delegations, delegationSearchFilter],
   );
-  const selectedValidator = transaction.validators && transaction.validators[0];
+  const selectedValidator = resolveTransactionValidators(transaction)[0];
   const value = useMemo(() => {
     switch (transaction.mode) {
-      case "redelegate":
-        invariant(transaction.sourceValidator, "cosmos: sourceValidator is required");
-        return options.find(
-          ({ validatorAddress }) => validatorAddress === transaction.sourceValidator,
-        );
+      case "redelegate": {
+        const sourceValidator = resolveSourceValidator(transaction);
+        invariant(sourceValidator, "cosmos: sourceValidator is required");
+        return options.find(({ validatorAddress }) => validatorAddress === sourceValidator);
+      }
 
       default:
         return (

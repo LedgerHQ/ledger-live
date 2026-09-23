@@ -42,7 +42,7 @@ export const calculateFees: CacheRes<
         : ""
     }_${transaction.memo ? transaction.memo.toString() : ""}_${
       transaction.sourceValidator ? transaction.sourceValidator : ""
-    }`,
+    }_${transaction.valAddress ?? ""}_${transaction.dstValAddress ?? ""}`,
   {
     ttl: 1000 * 10, // 10 sec
   },

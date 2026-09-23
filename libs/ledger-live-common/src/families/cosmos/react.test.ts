@@ -78,15 +78,15 @@ describe("cosmos/react", () => {
       );
     });
 
-    it("should return an empty list when cosmosResources is undefined instead of throwing", async () => {
+    it("should return an empty list when there are no delegations instead of throwing", async () => {
       const { account, prepare } = await setup();
       await prepare();
-      const accountWithoutResources = {
+      const accountWithoutDelegations: CosmosAccount = {
         ...account,
-        cosmosResources: undefined,
-      } as unknown as CosmosAccount;
+        stakingResources: { ...account.stakingResources, delegations: [] },
+      };
       const { result } = renderHook(() =>
-        hooks.useCosmosFamilyMappedDelegations(accountWithoutResources),
+        hooks.useCosmosFamilyMappedDelegations(accountWithoutDelegations),
       );
       expect(result.current).toEqual([]);
     });

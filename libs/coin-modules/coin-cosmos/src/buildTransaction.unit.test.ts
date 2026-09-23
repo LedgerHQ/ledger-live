@@ -904,6 +904,102 @@ describe("txToMessages", () => {
   });
 });
 
+describe("txToMessages — generic shape (valAddress/dstValAddress/compoundReward)", () => {
+  const account: CosmosAccount = {
+    freshAddress: "accAddress",
+    currency: { units: [{ code: "atom" }, { code: "uatom" }] },
+  } as CosmosAccount;
+
+  it("delegate: valAddress carries the accepted mode and a set validator with a non-zero amount", () => {
+    const transaction = {
+      mode: "delegate",
+      amount: new BigNumber(1000),
+      valAddress: "realAddressTrustMe",
+    } as Transaction;
+    const params = messageParamsFromTransaction(account, transaction);
+    expect(params.mode).toEqual("delegate");
+    expect(params.validators).toEqual([
+      { address: "realAddressTrustMe", amount: transaction.amount },
+    ]);
+    const { aminoMsgs } = txToMessages(params, cosmos);
+    const [message] = aminoMsgs;
+    expect(message.type).toContain("MsgDelegate");
+    expect(message.value.validator_address).toEqual("realAddressTrustMe");
+    expect(message.value.amount?.amount).toEqual("1000");
+  });
+
+  it("undelegate: valAddress + top-level amount produce the undelegate message", () => {
+    const transaction = {
+      mode: "undelegate",
+      amount: new BigNumber(500),
+      valAddress: "realAddressTrustMe",
+    } as Transaction;
+    const { aminoMsgs } = txToMessages(messageParamsFromTransaction(account, transaction), cosmos);
+    const [message] = aminoMsgs;
+    expect(message.type).toContain("MsgUndelegate");
+    expect(message.value.validator_address).toEqual("realAddressTrustMe");
+    expect(message.value.amount?.amount).toEqual("500");
+  });
+
+  it("redelegate: valAddress is the source, dstValAddress is the destination — not inverted", () => {
+    const transaction = {
+      mode: "redelegate",
+      amount: new BigNumber(700),
+      valAddress: "sourceValidatorAddress",
+      dstValAddress: "destinationValidatorAddress",
+    } as Transaction;
+    const params = messageParamsFromTransaction(account, transaction);
+    expect(params.sourceValidator).toEqual("sourceValidatorAddress");
+    expect(params.validators).toEqual([
+      { address: "destinationValidatorAddress", amount: transaction.amount },
+    ]);
+    const { aminoMsgs } = txToMessages(params, cosmos);
+    const [message] = aminoMsgs;
+    expect(message.type).toContain("MsgBeginRedelegate");
+    expect(message.value.validator_src_address).toEqual("sourceValidatorAddress");
+    expect(message.value.validator_dst_address).toEqual("destinationValidatorAddress");
+    expect(message.value.amount.amount).toEqual("700");
+  });
+
+  it("claimReward: valAddress alone is enough, amount isn't required", () => {
+    const transaction = {
+      mode: "claimReward",
+      amount: new BigNumber(0),
+      valAddress: "iAmAValidatorAddress",
+    } as Transaction;
+    const { aminoMsgs } = txToMessages(messageParamsFromTransaction(account, transaction), cosmos);
+    const [message] = aminoMsgs;
+    expect(message.type).toContain("MsgWithdrawDelegationReward");
+    expect(message.value.validator_address).toEqual("iAmAValidatorAddress");
+  });
+
+  it("compoundReward: mode normalizes to claimRewardCompound, and amount must be the pending rewards (not 0) or compound produces no messages", () => {
+    const transaction = {
+      mode: "compoundReward",
+      amount: new BigNumber(1000),
+      valAddress: "iAmAValidatorAddress",
+    } as Transaction;
+    const params = messageParamsFromTransaction(account, transaction);
+    expect(params.mode).toEqual("claimRewardCompound");
+    const { aminoMsgs } = txToMessages(params, cosmos);
+    const [withdrawMessage, delegateMessage] = aminoMsgs;
+    expect(withdrawMessage.type).toContain("MsgWithdrawDelegationReward");
+    expect(delegateMessage.type).toContain("MsgDelegate");
+    expect(delegateMessage.value.validator_address).toEqual("iAmAValidatorAddress");
+    expect(delegateMessage.value.amount.amount).toEqual("1000");
+  });
+
+  it("compoundReward: a zero amount silently produces no messages — the trap this shape must avoid", () => {
+    const transaction = {
+      mode: "compoundReward",
+      amount: new BigNumber(0),
+      valAddress: "iAmAValidatorAddress",
+    } as Transaction;
+    const { aminoMsgs } = txToMessages(messageParamsFromTransaction(account, transaction), cosmos);
+    expect(aminoMsgs.length).toEqual(0);
+  });
+});
+
 describe("txToMessages — babylon epoching wrapping", () => {
   const babylon = new Babylon();
   const delegatorAddress = "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n";

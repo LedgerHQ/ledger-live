@@ -1,12 +1,17 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import {
+  canRedelegate,
+  canUndelegate,
+  COSMOS_MAX_REDELEGATIONS,
+  COSMOS_MAX_UNBONDINGS,
   getCosmosDummyRecipient,
+  getRedelegation,
   isCompoundRewardSupported,
   mapUnbondings,
   resolveClaimRewardMode,
 } from "./logic";
-import type { CosmosUnbonding } from "./types";
+import type { CosmosAccount, CosmosUnbonding } from "./types";
 
 const unit = getCryptoCurrencyById("cosmos").units[0];
 
@@ -87,5 +92,87 @@ describe("getCosmosDummyRecipient", () => {
     expect(getCosmosDummyRecipient("crypto_org_croeseid")).toBe(
       getCosmosDummyRecipient("crypto_org"),
     );
+  });
+});
+
+const makeAccount = (stakingResources: Partial<CosmosAccount["stakingResources"]>): CosmosAccount =>
+  ({
+    stakingResources: {
+      delegations: [],
+      redelegations: [],
+      unbondings: [],
+      delegatedBalance: new BigNumber(0),
+      pendingRewardsBalance: new BigNumber(0),
+      unbondingBalance: new BigNumber(0),
+      ...stakingResources,
+    },
+  }) as unknown as CosmosAccount;
+
+describe("canUndelegate", () => {
+  it("returns true when unbondings are below the max", () => {
+    const account = makeAccount({ unbondings: [] });
+    expect(canUndelegate(account)).toBe(true);
+  });
+
+  it("returns false once unbondings reach COSMOS_MAX_UNBONDINGS", () => {
+    const unbondings = Array.from({ length: COSMOS_MAX_UNBONDINGS }).map((_, i) => ({
+      validatorAddress: `validator-${i}`,
+      amount: new BigNumber(1),
+      completionDate: new Date(),
+    }));
+    const account = makeAccount({ unbondings });
+    expect(canUndelegate(account)).toBe(false);
+  });
+});
+
+describe("canRedelegate", () => {
+  it("returns true when below the max and no pending redelegation targets this validator", () => {
+    const account = makeAccount({ redelegations: [] });
+    expect(canRedelegate(account, { validatorAddress: "validator-1" })).toBe(true);
+  });
+
+  it("returns false when the account already has the maximum number of redelegations", () => {
+    const redelegations = Array.from({ length: COSMOS_MAX_REDELEGATIONS }).map((_, i) => ({
+      validatorSrcAddress: "validator-src",
+      validatorDstAddress: `validator-dst-${i}`,
+      amount: new BigNumber(1),
+      completionDate: new Date(),
+    }));
+    const account = makeAccount({ redelegations });
+    expect(canRedelegate(account, { validatorAddress: "validator-1" })).toBe(false);
+  });
+
+  it("returns false when the target validator already has a pending redelegation", () => {
+    const account = makeAccount({
+      redelegations: [
+        {
+          validatorSrcAddress: "validator-src",
+          validatorDstAddress: "validator-1",
+          amount: new BigNumber(1),
+          completionDate: new Date(),
+        },
+      ],
+    });
+    expect(canRedelegate(account, { validatorAddress: "validator-1" })).toBe(false);
+  });
+});
+
+describe("getRedelegation", () => {
+  it("finds the redelegation targeting the given delegation's validator", () => {
+    const redelegation = {
+      validatorSrcAddress: "validator-src",
+      validatorDstAddress: "validator-1",
+      amount: new BigNumber(1),
+      completionDate: new Date(),
+    };
+    const account = makeAccount({ redelegations: [redelegation] });
+    expect(getRedelegation(account, { validatorAddress: "validator-1" } as never)).toEqual(
+      redelegation,
+    );
+  });
+
+  it("returns undefined when there is no matching redelegation", () => {
+    const account = makeAccount({ redelegations: [] });
+    expect(getRedelegation(account, { validatorAddress: "validator-1" } as never)).toBeUndefined();
   });
 });

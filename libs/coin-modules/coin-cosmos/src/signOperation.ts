@@ -8,11 +8,34 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { buildTransaction, messageParamsFromTransaction, txToMessages } from "./buildTransaction";
+import {
+  buildTransaction,
+  messageParamsFromTransaction,
+  resolveSourceValidator,
+  resolveTransactionValidators,
+  txToMessages,
+} from "./buildTransaction";
 import cryptoFactory from "./chain/chain";
 import { CosmosAPI } from "./network/Cosmos";
-import { CosmosAccount, RETURN_CODES, Transaction } from "./types";
+import { CosmosAccount, CosmosOperationMode, RETURN_CODES, Transaction } from "./types";
 import { CosmosSignatureSdk, CosmosSigner } from "./types/signer";
+
+function resolveOperationType(mode: CosmosOperationMode): OperationType {
+  switch (mode) {
+    case "undelegate":
+      return "UNDELEGATE";
+    case "delegate":
+      return "DELEGATE";
+    case "redelegate":
+      return "REDELEGATE";
+    case "claimReward":
+    case "claimRewardCompound":
+    case "compoundReward":
+      return "REWARD";
+    default:
+      return "OUT";
+  }
+}
 
 export const buildSignOperation =
   (
@@ -116,16 +139,7 @@ export const buildSignOperation =
         const fee = transaction.fees || new BigNumber(0);
         const extra = {};
 
-        const type: OperationType =
-          transaction.mode === "undelegate"
-            ? "UNDELEGATE"
-            : transaction.mode === "delegate"
-              ? "DELEGATE"
-              : transaction.mode === "redelegate"
-                ? "REDELEGATE"
-                : ["claimReward", "claimRewardCompound"].includes(transaction.mode)
-                  ? "REWARD"
-                  : "OUT";
+        const type: OperationType = resolveOperationType(transaction.mode);
 
         const senders: string[] = [];
         const recipients: string[] = [];
@@ -137,13 +151,13 @@ export const buildSignOperation =
 
         if (transaction.mode === "redelegate") {
           Object.assign(extra, {
-            sourceValidator: transaction.sourceValidator,
+            sourceValidator: resolveSourceValidator(transaction),
           });
         }
 
         if (transaction.mode !== "send") {
           Object.assign(extra, {
-            validators: transaction.validators,
+            validators: resolveTransactionValidators(transaction),
           });
         }
 

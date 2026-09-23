@@ -33,7 +33,9 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   if (optimisticOperation) {
-    const validator = transaction && transaction.validators ? transaction.validators[0] : null;
+    const validator = transaction?.valAddress
+      ? { address: transaction.valAddress, amount: transaction.amount }
+      : null;
     const v =
       validator &&
       validators.find(({ validatorAddress }) => validatorAddress === validator.address);

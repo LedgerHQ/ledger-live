@@ -1,13 +1,15 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type {
+  StakingDelegation,
+  StakingRedelegation,
+  StakingUnbonding,
+} from "@ledgerhq/types-live";
 import * as bech32 from "bech32";
 import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
 import cryptoFactory from "./chain/chain";
 import {
-  getCosmosResources,
   type CosmosAccount,
-  type CosmosDelegation,
   type CosmosDelegationInfo,
   type CosmosMappedDelegation,
   type CosmosMappedDelegationInfo,
@@ -16,7 +18,6 @@ import {
   type CosmosOperationMode,
   type CosmosRedelegation,
   type CosmosSearchFilter,
-  type CosmosUnbonding,
   type CosmosValidatorItem,
   type Transaction,
 } from "./types";
@@ -51,7 +52,7 @@ export const resolveClaimRewardMode = (
   mode === "claimRewardCompound" && !isCompoundRewardSupported(currencyId) ? "claimReward" : mode;
 
 export function mapDelegations(
-  delegations: CosmosDelegation[],
+  delegations: StakingDelegation[],
   validators: CosmosValidatorItem[],
   unit: Unit,
 ): CosmosMappedDelegation[] {
@@ -76,7 +77,7 @@ export function mapDelegations(
   });
 }
 export function mapUnbondings(
-  unbondings: CosmosUnbonding[],
+  unbondings: StakingUnbonding[],
   validators: CosmosValidatorItem[],
   unit: Unit,
 ): CosmosMappedUnbonding[] {
@@ -97,7 +98,7 @@ export function mapUnbondings(
     });
 }
 export function mapRedelegations(
-  redelegations: CosmosRedelegation[],
+  redelegations: StakingRedelegation[],
   validators: CosmosValidatorItem[],
   unit: Unit,
 ): CosmosMappedRedelegation[] {
@@ -157,13 +158,8 @@ export const getMaxEstimatedBalance = (
   account: CosmosAccount,
   estimatedFees: BigNumber,
 ): BigNumber => {
-  const cosmosResources = getCosmosResources(account);
-  let blockBalance = new BigNumber(0);
-
-  if (cosmosResources) {
-    blockBalance = cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance);
-  }
-
+  const { unbondingBalance, delegatedBalance } = account.stakingResources;
+  const blockBalance = unbondingBalance.plus(delegatedBalance);
   const amount = account.balance.minus(estimatedFees).minus(blockBalance);
 
   // If the fees are greater than the balance we will have a negative amount
@@ -176,9 +172,7 @@ export const getMaxEstimatedBalance = (
 };
 
 export function canUndelegate(account: CosmosAccount): boolean {
-  const cosmosResources = getCosmosResources(account);
-  invariant(cosmosResources, "cosmosResources should exist");
-  return !!cosmosResources?.unbondings && cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS;
+  return account.stakingResources.unbondings.length < COSMOS_MAX_UNBONDINGS;
 }
 
 export function canDelegate(account: CosmosAccount): boolean {
@@ -188,16 +182,12 @@ export function canDelegate(account: CosmosAccount): boolean {
 
 export function canRedelegate(
   account: CosmosAccount,
-  delegation: CosmosDelegation | CosmosValidatorItem,
+  delegation: { validatorAddress: string },
 ): boolean {
-  const cosmosResources = getCosmosResources(account);
-  invariant(cosmosResources, "cosmosResources should exist");
+  const { redelegations } = account.stakingResources;
   return (
-    !!cosmosResources?.redelegations &&
-    cosmosResources.redelegations.length < COSMOS_MAX_REDELEGATIONS &&
-    !cosmosResources.redelegations.some(
-      rd => rd.validatorDstAddress === delegation.validatorAddress,
-    )
+    redelegations.length < COSMOS_MAX_REDELEGATIONS &&
+    !redelegations.some(rd => rd.validatorDstAddress === delegation.validatorAddress)
   );
 }
 
@@ -205,12 +195,8 @@ export function getRedelegation(
   account: CosmosAccount,
   delegation: CosmosMappedDelegation,
 ): CosmosRedelegation | null | undefined {
-  const cosmosResources = getCosmosResources(account);
-  const redelegations = cosmosResources?.redelegations ?? [];
-  const currentRedelegation = redelegations.find(
-    r => r.validatorDstAddress === delegation.validatorAddress,
-  );
-  return currentRedelegation;
+  const { redelegations } = account.stakingResources;
+  return redelegations.find(r => r.validatorDstAddress === delegation.validatorAddress);
 }
 
 export function getRedelegationCompletionDate(
