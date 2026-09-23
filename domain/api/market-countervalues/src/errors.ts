@@ -7,8 +7,8 @@ import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
  * The distinction the countervalues backoff rests on is already in that envelope: an HTTP response
  * gives a numeric status, a dead connection gives `"FETCH_ERROR"`. `loadCountervalues` counts a
  * failure only for a numeric status and wipes a pair's cache only on 422, so translating these
- * into a coarser taxonomy — as `remapRtkQueryError` does, collapsing every 4xx together — would
- * silently lose both behaviours. Nothing is mapped here on purpose.
+ * into a coarser taxonomy would silently lose both behaviours. `remapRtkQueryError` does exactly
+ * that, collapsing every 4xx together. Nothing is mapped here on purpose.
  */
 export class RateFetchError extends Error {
   readonly status?: number | string;

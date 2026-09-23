@@ -25,8 +25,8 @@ one countervalues slice rather than two.
 The base URL arrives through the app's existing `cvsApiExtra` on the thunk `extraArgument`, so this
 package owns no configuration.
 
-The two rate endpoints set `keepUnusedDataFor: 0`. The countervalues rate store *is* the cache —
-one merged time series per pair, continuously extended — and a second RTK-keyed cache beside it
+The two rate endpoints set `keepUnusedDataFor: 0`. The countervalues rate store *is* the cache,
+one merged time series per pair, continuously extended, and a second RTK-keyed cache beside it
 would be a second source of truth for the same rates.
 
 They also override the shared base query's retry. See `internals/retry.ts`: the policy mirrors what
