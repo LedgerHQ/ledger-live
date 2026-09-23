@@ -12,6 +12,7 @@ export function SignatureDeviceActionScreen() {
     selectedDevice,
     setSelectedDevice,
     onDeviceActionResultCompleted,
+    onSignatureError,
     onUserCancel,
   } = useSignatureDeviceActionViewModel();
 
@@ -28,6 +29,7 @@ export function SignatureDeviceActionScreen() {
       selectedDevice={selectedDevice}
       setSelectedDevice={setSelectedDevice}
       onDeviceActionResultCompleted={onDeviceActionResultCompleted}
+      onSignatureError={onSignatureError}
       onUserCancel={onUserCancel}
     />
   );

@@ -118,6 +118,7 @@ function buildDeviceActionViewModel(
     selectedDevice: null,
     setSelectedDevice: jest.fn(),
     onDeviceActionResultCompleted: jest.fn(),
+    onSignatureError: jest.fn(),
     onUserCancel: jest.fn(),
     ...overrides,
   };
@@ -214,6 +215,7 @@ describe("SignatureScreen", () => {
         selectedDevice: viewModel.selectedDevice,
         setSelectedDevice: viewModel.setSelectedDevice,
         onDeviceActionResultCompleted: viewModel.onDeviceActionResultCompleted,
+        onSignatureError: viewModel.onSignatureError,
         onUserCancel: viewModel.onUserCancel,
       }),
     );

@@ -11,7 +11,7 @@ function isNamedError(value: unknown): value is Error {
   return value instanceof Error || (typeof value === "object" && value !== null && "name" in value);
 }
 
-export function getStableMessageId(error: Error, fallbackId: string): string {
+function getMessageId(error: Error, fallbackId: string): string {
   return error.name && error.name !== "Error" ? error.name : fallbackId;
 }
 
@@ -21,21 +21,17 @@ export function getMessageIds(
 ): string[] {
   return Object.entries(record ?? {})
     .filter((entry): entry is [string, Error] => isNamedError(entry[1]))
-    .map(([key, error]) => getStableMessageId(error, `${messageType}:${key}`));
+    .map(([key, error]) => getMessageId(error, `${messageType}:${key}`));
 }
 
-function getStatusMessageId(
-  status: StatusMessages,
-  error: Error,
-  fallbackId: string,
-): string {
+function getStatusMessageId(status: StatusMessages, error: Error): string {
   const errorEntry = Object.entries(status.errors ?? {}).find(([, value]) => value === error);
-  if (errorEntry) return getStableMessageId(error, `error:${errorEntry[0]}`);
+  if (errorEntry) return getMessageId(error, `error:${errorEntry[0]}`);
 
   const warningEntry = Object.entries(status.warnings ?? {}).find(([, value]) => value === error);
-  if (warningEntry) return getStableMessageId(error, `warning:${warningEntry[0]}`);
+  if (warningEntry) return getMessageId(error, `warning:${warningEntry[0]}`);
 
-  return getStableMessageId(error, fallbackId);
+  return getMessageId(error, "Error");
 }
 
 export function getSuppressedMessageIds(
@@ -74,9 +70,8 @@ export function createTrackedMessage(
   messageType: SendFlowTrackedMessage["messageType"],
   status: StatusMessages,
   additionalSuppressedIds: readonly string[] = [],
-  fallbackId = "error:unknown",
 ): SendFlowTrackedMessage {
-  const messageId = getStatusMessageId(status, error, fallbackId);
+  const messageId = getStatusMessageId(status, error);
   return {
     messageId,
     messageType,
