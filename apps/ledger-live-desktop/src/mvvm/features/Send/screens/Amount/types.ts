@@ -71,6 +71,7 @@ type ReviewProps = Readonly<{
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
   reviewLoading: boolean;
+  sponsoredFeeError: string | null;
   onReview: () => void;
   onGetFunds?: () => void;
 }>;
