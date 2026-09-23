@@ -2,6 +2,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { createAction } from "redux-actions";
 import { Data as CompleteExchangeData } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
+import type { StartExchangeSuccessResult } from "@ledgerhq/live-common/hw/actions/startExchange";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
 
 export const openInformationCenter = createAction(
@@ -38,7 +39,7 @@ export const openExchangeDrawer = createAction(
         fromAccountId?: string;
         toAccountId?: string;
         tokenCurrency?: string;
-        onResult: (result: { nonce: string; device: Device }) => void;
+        onResult: (result: StartExchangeSuccessResult) => void;
         onCancel: (cancelResult: { error: Error; device: Device }) => void;
       }
     | ({

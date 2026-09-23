@@ -375,6 +375,11 @@ export function useCustomExchangeHandlers({
                     onSuccess(
                       result.startExchangeResult.nonce,
                       result.startExchangeResult.device || result.device,
+                      {
+                        exchangeAppVersion: result.startExchangeResult.exchangeAppVersion,
+                        signingAppName: result.startExchangeResult.signingAppName,
+                        signingAppVersion: result.startExchangeResult.signingAppVersion,
+                      },
                     );
                   }
                   navigation.pop();

@@ -26,12 +26,7 @@ import { buildApplicationDependency } from "../device/buildApplicationDependency
 import isUpdateAvailable from "./isUpdateAvailable";
 import { LockedDeviceEvent } from "./actions/types";
 import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
-import {
-  type ApplicationDependency,
-  type ApplicationConstraint,
-  type ApplicationVersionConstraint,
-  DeviceModelId,
-} from "@ledgerhq/device-management-kit";
+import type { ApplicationDependency } from "@ledgerhq/device-management-kit";
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
 import { DeviceId } from "@domain/entity-client-identity";
@@ -147,6 +142,10 @@ export type ConnectAppEvent =
   | {
       type: "listed-apps";
       installQueue: string[];
+    }
+  | {
+      type: "installed-app-versions";
+      apps: { name: string; version: string }[];
     }
   | {
       type: "dependencies-resolved";
