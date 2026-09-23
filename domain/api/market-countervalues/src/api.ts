@@ -3,11 +3,13 @@ import {
   CounterValueIdsSortedByMarketCapSchema,
   RawRatesResponseSchema,
   SpotSimpleResponseSchema,
-  type RatesResponse,
-  type RawRatesResponse,
-  type SpotSimpleResponse,
 } from "./internals/schema";
-import type { CounterValueIdsSortedByMarketCap } from "./schema";
+import type {
+  CounterValueIdsSortedByMarketCap,
+  RatesResponse,
+  RawRatesResponse,
+  SpotSimpleResponse,
+} from "./schema";
 import { extractUsdToFiatRate } from "./internals/extractUsdToFiatRate";
 import { pickNumericRates } from "./internals/rates";
 import { rateFetchRetryOptions } from "./internals/retry";

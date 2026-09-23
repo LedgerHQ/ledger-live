@@ -10,17 +10,8 @@ import { z } from "zod";
  */
 export const RawRatesResponseSchema = z.record(z.string(), z.unknown());
 
-/** A rates payload as received, inferred from {@link RawRatesResponseSchema}. */
-export type RawRatesResponse = z.infer<typeof RawRatesResponseSchema>;
-
-/** Rates keyed by date stamp or by currency API id. */
-export type RatesResponse = Record<string, number>;
-
 /** Supported crypto API ids, most valuable first. */
 export const CounterValueIdsSortedByMarketCapSchema = z.array(z.string().min(1));
 
 /** Raw `/v3/spot/simple` payload, before the USD rate is picked out of it. */
 export const SpotSimpleResponseSchema = z.record(z.string(), z.number());
-
-/** A spot payload, inferred from {@link SpotSimpleResponseSchema}. */
-export type SpotSimpleResponse = z.infer<typeof SpotSimpleResponseSchema>;
