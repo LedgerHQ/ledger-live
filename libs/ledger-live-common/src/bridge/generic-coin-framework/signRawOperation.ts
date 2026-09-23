@@ -27,8 +27,11 @@ export const genericSignRawOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
-        const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
-        const context = buildContext(account.currency.id);
+        // Resolve by `network` (the parent chain id), not `account.currency.id`: for a TokenAccount the
+        // latter is the token id (e.g. tron/trc20/usdt), which misses the parent coin-module and its
+        // raw-sign capability. Every sibling bridge method resolves by `network`; this one must match.
+        const coinModuleApi = await getCoinModuleApi(network, kind);
+        const context = buildContext(network);
         const bridgeApi = await getBridgeApi(account.currency, network);
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
