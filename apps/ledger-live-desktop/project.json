@@ -61,13 +61,13 @@
       },
       "configurations": {
         "nightly": {
-          "command": "node ./tools/dist pack --nightly"
+          "args": "--nightly"
         },
         "pre": {
-          "command": "node ./tools/dist pack --pre"
+          "args": "--pre"
         },
         "release": {
-          "command": "node ./tools/dist pack --release"
+          "args": "--release"
         }
       }
     },
@@ -80,13 +80,13 @@
       },
       "configurations": {
         "nightly": {
-          "command": "node ./tools/dist sign --nightly"
+          "args": "--nightly"
         },
         "pre": {
-          "command": "node ./tools/dist sign --pre"
+          "args": "--pre"
         },
         "release": {
-          "command": "node ./tools/dist sign --release"
+          "args": "--release"
         }
       }
     }
