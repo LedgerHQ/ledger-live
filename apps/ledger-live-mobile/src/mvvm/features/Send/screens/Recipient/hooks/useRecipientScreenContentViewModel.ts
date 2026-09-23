@@ -3,6 +3,7 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useCallback, useEffect, useMemo } from "react";
 import type { KeyboardAvoidingViewProps } from "react-native";
 import { Platform } from "react-native";
@@ -11,6 +12,13 @@ import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackin
 import { shouldUseKeyboardAvoidance } from "~/logic/keyboardVisible";
 import { useMemoViewModel } from "../../../components/Memo/hooks/useMemoViewModel";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { useSendFlowMessageTracking } from "../../../hooks/useSendFlowMessageTracking";
+import { getActiveWarningsTrackingProperties } from "../../../utils/tracking";
+import {
+  getAddressValidationMessageId,
+  getMessageIds,
+  getSuppressedMessageIds,
+} from "../../../utils/messageTracking";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { useRecipientScreenView } from "./useRecipientScreenView";
 import { useSettleRecipientInputFocus } from "./useSettleRecipientInputFocus";
@@ -47,7 +55,7 @@ export function useRecipientScreenContentViewModel({
     onAddressSelected,
     recipientSupportsDomain,
   });
-  const { setRecipientResolution } = useSendFlowTracking();
+  const { flowSessionId, setRecipientResolution } = useSendFlowTracking();
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
   const trackingProperties = useMemo(
     () => ({
@@ -66,6 +74,13 @@ export function useRecipientScreenContentViewModel({
   });
   const hasMemoValidationError = hasMemo && Boolean(memo.memoError);
   const showMatched = recipient.showMatchedAddress && !hasMemoValidationError;
+  const activeWarningsTrackingProperties = useMemo(
+    () =>
+      getActiveWarningsTrackingProperties(
+        getMessageIds(recipient.result.bridgeWarnings, "warning"),
+      ),
+    [recipient.result.bridgeWarnings],
+  );
 
   const handleAddressSelect = recipient.handleAddressSelect;
   const handleMatchedAddress = useCallback(
@@ -75,6 +90,8 @@ export function useRecipientScreenContentViewModel({
         button: "send",
         resultType: recipient.recipientResolution.resultType,
         recipientType: recipient.recipientResolution.recipientType,
+        flow_session_id: flowSessionId,
+        ...activeWarningsTrackingProperties,
       });
       setRecipientResolution(
         recipient.recipientResolution.resultType,
@@ -83,12 +100,93 @@ export function useRecipientScreenContentViewModel({
       handleAddressSelect(address, ensName);
     },
     [
+      activeWarningsTrackingProperties,
+      flowSessionId,
       handleAddressSelect,
       recipient.recipientResolution,
       setRecipientResolution,
       trackingProperties,
     ],
   );
+
+  const messageTrackingRequest = useMemo(() => {
+    const transactionError = hasMemoValidationError ? memo.memoError : undefined;
+    const addressValidationMessageId = getAddressValidationMessageId(
+      recipient.addressValidationErrorType,
+    );
+
+    const candidates = [
+      transactionError ? { messageId: transactionError.name, messageType: "error" as const } : null,
+      recipient.showAddressValidationError && addressValidationMessageId
+        ? { messageId: addressValidationMessageId, messageType: "error" as const }
+        : null,
+      recipient.showBridgeSenderError && recipient.bridgeSenderError
+        ? { messageId: recipient.bridgeSenderError.name, messageType: "error" as const }
+        : null,
+      recipient.showSanctionedBanner
+        ? { messageId: "sanctioned", messageType: "error" as const }
+        : null,
+      recipient.showBridgeRecipientError && recipient.bridgeRecipientError
+        ? { messageId: recipient.bridgeRecipientError.name, messageType: "error" as const }
+        : null,
+      recipient.showBridgeRecipientWarning && recipient.bridgeRecipientWarning
+        ? { messageId: recipient.bridgeRecipientWarning.name, messageType: "warning" as const }
+        : null,
+    ].filter(candidate => candidate !== null);
+
+    const primary = candidates[0];
+    if (!primary) return null;
+
+    return {
+      account,
+      parentAccount,
+      step: SEND_FLOW_STEP.RECIPIENT,
+      message: {
+        ...primary,
+        suppressedErrors: getSuppressedMessageIds(
+          {
+            errors: recipient.result.bridgeErrors ?? {},
+            warnings: recipient.result.bridgeWarnings ?? {},
+          },
+          primary.messageId,
+          candidates.slice(1).map(candidate => candidate.messageId),
+        ),
+      },
+      metadata: {
+        recipientType: recipient.recipientResolution.recipientType,
+        recipientLength: recipient.searchValue.length,
+        memoLength: showMemo ? memo.memo.value.length : 0,
+        memoType: showMemo ? memo.memo.type : null,
+      },
+    };
+  }, [
+    account,
+    hasMemoValidationError,
+    memo.memo.type,
+    memo.memo.value.length,
+    memo.memoError,
+    parentAccount,
+    recipient.addressValidationErrorType,
+    recipient.bridgeRecipientError,
+    recipient.bridgeRecipientWarning,
+    recipient.bridgeSenderError,
+    recipient.recipientResolution.recipientType,
+    recipient.result.bridgeErrors,
+    recipient.result.bridgeWarnings,
+    recipient.searchValue.length,
+    recipient.showAddressValidationError,
+    recipient.showBridgeRecipientError,
+    recipient.showBridgeRecipientWarning,
+    recipient.showBridgeSenderError,
+    recipient.showSanctionedBanner,
+    showMemo,
+  ]);
+  useSendFlowMessageTracking({
+    step: SEND_FLOW_STEP.RECIPIENT,
+    request: messageTrackingRequest,
+    isTransient: recipient.isLoading,
+    immediate: messageTrackingRequest?.message.messageId === "sanctioned",
+  });
 
   const handleAddContact = useCallback(() => {
     track("button_clicked", {

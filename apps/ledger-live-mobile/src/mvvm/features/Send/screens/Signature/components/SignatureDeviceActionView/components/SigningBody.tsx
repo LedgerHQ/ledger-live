@@ -17,6 +17,7 @@ type SigningBodyProps = Readonly<{
   action: SignatureDeviceActionViewModel["action"];
   request: NonNullable<SignatureDeviceActionViewModel["request"]>;
   onResult: SignatureDeviceActionViewModel["onDeviceActionResultCompleted"];
+  onError: SignatureDeviceActionViewModel["onSignatureError"];
   onClose: () => void;
   trackingProperties: ReturnType<typeof getSendFlowTrackingProperties>;
   recipientType: RecipientType | null;
@@ -27,6 +28,7 @@ export function SigningBody({
   action,
   request,
   onResult,
+  onError,
   onClose,
   trackingProperties,
   recipientType,
@@ -56,6 +58,10 @@ export function SigningBody({
       recipientType,
     });
   }, [isUserRefused, recipientType, trackingProperties]);
+
+  useEffect(() => {
+    if (signError) onError(signError);
+  }, [onError, signError]);
 
   if (signError) {
     return isUserRefused ? (

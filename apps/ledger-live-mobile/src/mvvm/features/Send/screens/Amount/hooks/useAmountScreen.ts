@@ -13,6 +13,8 @@ import type { SendFlowNavigationProp } from "../../../types";
 import { useSendSignature } from "../../../context/SendSignatureContext";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { getActiveWarningsTrackingProperties } from "../../../utils/tracking";
+import { getActiveWarningIds } from "../../../utils/messageTracking";
 import { screen, track } from "~/analytics";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 
@@ -43,7 +45,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { transaction: transactionActions, close } = useSendFlowActions();
   const navigation = useNavigation<SendFlowNavigationProp>();
   const { startSigning } = useSendSignature();
-  const { recipientType } = useSendFlowTracking();
+  const { flowSessionId, recipientType } = useSendFlowTracking();
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const { account, parentAccount } = state.account;
@@ -65,6 +67,10 @@ export function useAmountScreen(): AmountScreenViewModel {
     void screen("Modal send - step amount", undefined, trackingProperties);
   }, [trackingProperties]);
   const { displayMode: inputMode } = useSendAmountDisplayMode();
+  const activeWarningsTrackingProperties = useMemo(
+    () => getActiveWarningsTrackingProperties(status ? getActiveWarningIds(status) : []),
+    [status],
+  );
 
   const onReview = useCallback(() => {
     track("button_clicked", {
@@ -72,9 +78,19 @@ export function useAmountScreen(): AmountScreenViewModel {
       button: "review",
       page: "step amount",
       input_mode: inputMode,
+      flow_session_id: flowSessionId,
+      ...activeWarningsTrackingProperties,
     });
     startSigning(() => navigation.navigate(getSendSuccessScreenName(source)));
-  }, [startSigning, navigation, trackingProperties, inputMode, source]);
+  }, [
+    activeWarningsTrackingProperties,
+    flowSessionId,
+    startSigning,
+    navigation,
+    trackingProperties,
+    inputMode,
+    source,
+  ]);
 
   const onSelectCoinControl = useCallback(() => {
     navigation.navigate(ScreenName.SendFlowCoinControl);

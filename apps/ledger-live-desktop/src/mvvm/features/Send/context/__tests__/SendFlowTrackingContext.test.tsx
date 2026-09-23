@@ -97,6 +97,53 @@ describe("SendFlowTrackingContext", () => {
     expect(track).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps pending messages independent per step", () => {
+    const { result } = renderHook(() => useSendFlowTracking(), { wrapper });
+
+    act(() => {
+      result.current.scheduleMessage({
+        account: null,
+        step: "AMOUNT",
+        message: {
+          messageId: "NotEnoughBalance",
+          messageType: "error",
+        },
+      });
+      jest.advanceTimersByTime(200);
+      result.current.scheduleMessage({
+        account: null,
+        step: "RECIPIENT",
+        message: {
+          messageId: "InvalidAddress",
+          messageType: "error",
+        },
+      });
+      jest.advanceTimersByTime(300);
+    });
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith(
+      "error_displayed",
+      expect.objectContaining({
+        step: "AMOUNT",
+        message_id: "NotEnoughBalance",
+      }),
+    );
+
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
+
+    expect(track).toHaveBeenCalledTimes(2);
+    expect(track).toHaveBeenLastCalledWith(
+      "error_displayed",
+      expect.objectContaining({
+        step: "RECIPIENT",
+        message_id: "InvalidAddress",
+      }),
+    );
+  });
+
   it("tracks immediate messages and keeps the session stable across rerenders", () => {
     const { result, rerender } = renderHook(() => useSendFlowTracking(), {
       wrapper,
