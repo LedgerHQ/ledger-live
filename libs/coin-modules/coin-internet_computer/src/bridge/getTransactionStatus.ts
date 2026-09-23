@@ -62,29 +62,8 @@ import {
 } from "../errors";
 import { validateAddress } from "../logic/validation";
 import { validateMemo } from "../logic/validateMemo";
-import {
-  ICPAccount,
-  ICPNeuron,
-  ICPTransactionType,
-  TRANSFER_TYPES,
-  Transaction,
-  TransactionStatus,
-} from "../types";
+import { ICPAccount, ICPNeuron, TRANSFER_TYPES, Transaction, TransactionStatus } from "../types";
 import { getAddress } from "./bridgeHelpers/addresses";
-
-// Governance ops that act on an existing neuron and therefore require a resolvable neuronId.
-// `send` and `list_neurons` also reach the switch default but need no neuron.
-const NEURON_REQUIRED_OPS = new Set<ICPTransactionType>([
-  "start_dissolving",
-  "stop_dissolving",
-  "disburse",
-  "spawn_neuron",
-  "spawn_neuron_from_maturity",
-  "stake_maturity",
-  "auto_stake_maturity",
-  "refresh_voting_power",
-  "follow",
-]);
 
 const isValidPrincipal = (text?: string): boolean => {
   if (!text) return false;
@@ -355,10 +334,11 @@ const validateNeuronOp = (transaction: Transaction, neuron?: ICPNeuron): NeuronO
       return opResult(validateStartDissolving(neuron));
     case "stop_dissolving":
       return opResult(validateStopDissolving(neuron));
+    case "auto_stake_maturity":
+    case "refresh_voting_power":
+      return opResult(neuron ? undefined : new ICPNeuronNotFound());
     default:
-      return NEURON_REQUIRED_OPS.has(transaction.type) && !neuron
-        ? opResult(new ICPNeuronNotFound())
-        : opResult();
+      return opResult();
   }
 };
 

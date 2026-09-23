@@ -635,10 +635,13 @@ describe("getTransactionStatus", () => {
       });
     });
 
-    it("rejects a governance op with no neuronId", async () => {
-      const status = await getTransactionStatus(accountWith(), tx({ type: "start_dissolving" }));
-      expect(status.errors.transaction).toBeInstanceOf(ICPNeuronNotFound);
-    });
+    it.each(["start_dissolving", "auto_stake_maturity", "refresh_voting_power"] as const)(
+      "rejects %s with no neuronId",
+      async type => {
+        const status = await getTransactionStatus(accountWith(), tx({ type }));
+        expect(status.errors.transaction).toBeInstanceOf(ICPNeuronNotFound);
+      },
+    );
 
     it("charges no ledger fee for a governance operation", async () => {
       const status = await getTransactionStatus(
