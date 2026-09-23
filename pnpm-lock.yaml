@@ -7404,6 +7404,9 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:*
         version: link:../../../domain/api/card-management
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency
       '@features/flow-pay-card-assets':
         specifier: workspace:*
         version: link:../pay-card-assets
@@ -7413,6 +7416,9 @@ importers:
       '@features/flow-pay-card-transactions':
         specifier: workspace:*
         version: link:../pay-card-transactions
+      '@features/flow-pay-card-wallets':
+        specifier: workspace:*
+        version: link:../pay-card-wallets
       '@features/flow-pay-card-widget':
         specifier: workspace:*
         version: link:../pay-card-widget
@@ -64177,7 +64183,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:

@@ -22,7 +22,7 @@ import type {
 const KEY_PREFIX = "payTab.card.assets";
 const RECENT_TRANSACTIONS_SHOWN = 3;
 const EMPTY_CURRENCIES = new Map();
-const NO_PRICE: CardAssetsProps["priceWallet"] = () => null;
+const NO_PRICE: CardAssetsProps["getCounterValue"] = () => null;
 const NO_COUNTERVALUE: CardAssetsProps["formatCountervalue"] = () => "";
 
 export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
@@ -33,7 +33,7 @@ export function formatCardAssetCryptoAmount(balance: string | null, currency: st
 export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewModel {
   const {
     currencies = EMPTY_CURRENCIES,
-    priceWallet = NO_PRICE,
+    getCounterValue = NO_PRICE,
     formatCountervalue = NO_COUNTERVALUE,
     formatBalance,
     formatters,
@@ -61,7 +61,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     () =>
       wallets.map(({ id, addressId, balance, currency, network, ledgerId, ledgerCurrency }) => {
         const countervalue =
-          ledgerCurrency && balance !== null ? priceWallet(ledgerCurrency, balance) : null;
+          ledgerCurrency && balance !== null ? getCounterValue(ledgerCurrency, balance) : null;
 
         return {
           id,
@@ -76,7 +76,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
           countervalueAmount: countervalue,
         };
       }),
-    [wallets, priceWallet, formatCountervalue],
+    [wallets, getCounterValue, formatCountervalue],
   );
 
   const rows = useMemo<readonly CardAssetRow[]>(() => {

@@ -60,7 +60,7 @@ const USDC = CryptoOrTokenCurrencySchema.parse({
   units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
 });
 const CURRENCIES = new Map([["ethereum/erc20/usd__coin", USDC]]);
-const priceWallet = jest.fn(() => 12540);
+const getCounterValue = jest.fn(() => 12540);
 const formatCountervalue = jest.fn((value: number) => `$${value}`);
 
 function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
@@ -68,7 +68,7 @@ function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
     () =>
       useCardAssetsViewModel({
         currencies: CURRENCIES,
-        priceWallet,
+        getCounterValue,
         formatCountervalue,
         onAddAsset: jest.fn(),
         ...overrides,
@@ -187,8 +187,8 @@ describe("useCardAssetsViewModel", () => {
         countervalueAmount: null,
       },
     ]);
-    expect(priceWallet).toHaveBeenCalledWith(USDC, "125.40");
-    expect(priceWallet).toHaveBeenCalledTimes(1);
+    expect(getCounterValue).toHaveBeenCalledWith(USDC, "125.40");
+    expect(getCounterValue).toHaveBeenCalledTimes(1);
   });
 
   it("should refresh the selected asset when its wallet balance changes", () => {
@@ -281,7 +281,7 @@ describe("useCardAssetsViewModel", () => {
       () =>
         useCardAssetsViewModel({
           currencies: CURRENCIES,
-          priceWallet,
+          getCounterValue,
           formatCountervalue,
           onAddAsset,
         }),

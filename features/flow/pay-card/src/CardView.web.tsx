@@ -29,6 +29,7 @@ export function CardView({
           <CardOnboardingWidget onTopUp={onTopUp} onChooseCardType={onChooseCardType} />
           <CardDetails
             cardVisual={cardVisual}
+            assets={assets}
             formatters={{ amount: formatters?.transactionAmount }}
             cardSettingsActions={cardSettingsActions}
           />

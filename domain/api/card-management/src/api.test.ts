@@ -894,7 +894,28 @@ describe("cardManagementApi requests", () => {
       const result = await readRewardWallet();
 
       expectSessionRequest("GET", REWARD_WALLET_PATH);
-      expect(result.data).toEqual(rewardWallet);
+      // The wire fields, plus the Ledger currency the reward's asset resolves to.
+      expect(result.data).toEqual({ ...rewardWallet, ledgerId: expect.any(String) });
+    });
+
+    it("resolves the reward to its Ledger currency, so no consumer has to map it again", async () => {
+      provider.get(REWARD_WALLET_PATH, () => jsonResponse(rewardWalletOnTheWire));
+
+      const result = await readRewardWallet();
+
+      // The reward names no network, so the catalog pair is completed by repeating the currency.
+      expect(result.data?.ledgerId).toBe("ethereum/erc20/usd__coin");
+    });
+
+    it("leaves the currency unresolved for an asset the catalog does not cover", async () => {
+      provider.get(REWARD_WALLET_PATH, () =>
+        jsonResponse({ ...rewardWalletOnTheWire, currency: "doge" }),
+      );
+
+      const result = await readRewardWallet();
+
+      expect(result.data?.ledgerId).toBeUndefined();
+      expect(result.data?.balance).toBe(rewardWallet.balance);
     });
 
     it("keeps the balance a string, so its precision survives", async () => {

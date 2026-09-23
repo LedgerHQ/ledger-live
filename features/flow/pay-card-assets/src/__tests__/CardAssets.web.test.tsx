@@ -140,7 +140,7 @@ describe("CardAssets (web)", () => {
     render(
       <CardAssets
         currencies={new Map([[USDC.id, USDC]])}
-        priceWallet={() => 4000}
+        getCounterValue={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
         formatBalance={formatBalance}
         onAddAsset={onAddAsset}
@@ -163,7 +163,7 @@ describe("CardAssets (web)", () => {
     render(
       <CardAssets
         currencies={new Map([[USDC.id, USDC]])}
-        priceWallet={() => 4000}
+        getCounterValue={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
         onAddAsset={jest.fn()}
       />,
@@ -209,7 +209,7 @@ describe("CardAssets (web)", () => {
     render(
       <CardAssets
         currencies={new Map([[USDC.id, USDC]])}
-        priceWallet={() => 4000}
+        getCounterValue={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
         onShowHistory={onShowHistory}
         onAddAsset={jest.fn()}
