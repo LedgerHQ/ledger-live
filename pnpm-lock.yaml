@@ -15604,18 +15604,6 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
-      '@ledgerhq/live-env':
-        specifier: 'catalog:'
-        version: 4.1.0
-      '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
-      '@ledgerhq/live-promise':
-        specifier: 'catalog:'
-        version: 0.4.0
-      '@ledgerhq/logs':
-        specifier: 'catalog:'
-        version: 6.19.0
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*

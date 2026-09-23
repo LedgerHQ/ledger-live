@@ -18,11 +18,7 @@
   "types": "src/types.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/logs": "catalog:",
-    "@ledgerhq/live-network": "catalog:",
-    "@ledgerhq/live-promise": "catalog:",
-    "@ledgerhq/live-env": "catalog:"
+    "@ledgerhq/ledger-wallet-framework": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
