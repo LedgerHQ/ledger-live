@@ -57,10 +57,15 @@ export function SendFlowTrackingProvider({ children }: Readonly<{ children: Reac
   const [flowSessionId] = useState(uuid);
   const trackedMessagesRef = useRef(new Set<string>());
   const sessionEndedRef = useRef(false);
-  const pendingMessageRef = useRef<{
-    request: SendFlowMessageTrackingRequest;
-    timeout: ReturnType<typeof setTimeout>;
-  } | null>(null);
+  const pendingMessagesRef = useRef(
+    new Map<
+      SendFlowStep,
+      {
+        request: SendFlowMessageTrackingRequest;
+        timeout: ReturnType<typeof setTimeout>;
+      }
+    >(),
+  );
   const [state, setState] = useState<SendFlowTrackingState>({
     inputMethod: "manual",
     resultType: null,
@@ -84,9 +89,10 @@ export function SendFlowTrackingProvider({ children }: Readonly<{ children: Reac
   }, []);
 
   const clearPendingMessage = useCallback((step: SendFlowStep) => {
-    if (pendingMessageRef.current?.request.step !== step) return;
-    clearTimeout(pendingMessageRef.current.timeout);
-    pendingMessageRef.current = null;
+    const pending = pendingMessagesRef.current.get(step);
+    if (!pending) return;
+    clearTimeout(pending.timeout);
+    pendingMessagesRef.current.delete(step);
   }, []);
 
   const trackMessage = useCallback(
@@ -114,36 +120,33 @@ export function SendFlowTrackingProvider({ children }: Readonly<{ children: Reac
 
   const scheduleMessage = useCallback(
     (request: SendFlowMessageTrackingRequest) => {
-      if (pendingMessageRef.current) {
-        clearTimeout(pendingMessageRef.current.timeout);
-        pendingMessageRef.current = null;
-      }
+      clearPendingMessage(request.step);
 
       const timeout = setTimeout(() => {
-        pendingMessageRef.current = null;
+        pendingMessagesRef.current.delete(request.step);
         trackMessage(request);
       }, 500);
 
-      pendingMessageRef.current = { request, timeout };
+      pendingMessagesRef.current.set(request.step, { request, timeout });
     },
-    [trackMessage],
+    [clearPendingMessage, trackMessage],
   );
 
   const flushMessage = useCallback(
     (step: SendFlowStep) => {
-      if (pendingMessageRef.current?.request.step !== step) return;
-      const request = pendingMessageRef.current.request;
+      const pending = pendingMessagesRef.current.get(step);
+      if (!pending) return;
       clearPendingMessage(step);
-      trackMessage(request);
+      trackMessage(pending.request);
     },
     [clearPendingMessage, trackMessage],
   );
 
   const endSession = useCallback(() => {
-    if (pendingMessageRef.current) {
-      clearTimeout(pendingMessageRef.current.timeout);
-      pendingMessageRef.current = null;
-    }
+    pendingMessagesRef.current.forEach(pending => {
+      clearTimeout(pending.timeout);
+    });
+    pendingMessagesRef.current.clear();
     sessionEndedRef.current = true;
   }, []);
 
@@ -155,12 +158,13 @@ export function SendFlowTrackingProvider({ children }: Readonly<{ children: Reac
   }, [endSession]);
 
   useEffect(() => {
-    const flushPendingMessage = () => {
-      const step = pendingMessageRef.current?.request.step;
-      if (step) flushMessage(step);
+    const flushPendingMessages = () => {
+      [...pendingMessagesRef.current.keys()].forEach(step => {
+        flushMessage(step);
+      });
     };
-    document.addEventListener("focusout", flushPendingMessage);
-    return () => document.removeEventListener("focusout", flushPendingMessage);
+    document.addEventListener("focusout", flushPendingMessages);
+    return () => document.removeEventListener("focusout", flushPendingMessages);
   }, [flushMessage]);
 
   const value = useMemo(

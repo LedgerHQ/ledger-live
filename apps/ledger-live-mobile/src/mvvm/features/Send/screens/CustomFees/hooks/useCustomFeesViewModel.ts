@@ -8,6 +8,7 @@ import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/sen
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
   useCustomFeesViewModelCore,
+  type CustomFeeInputState,
   type CustomFeesViewModel,
   type CustomFeesViewModelLabels,
 } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
@@ -16,6 +17,11 @@ import {
   getCustomFeeHelperLabelKey,
 } from "@ledgerhq/live-common/flows/send/customFees/utils/customFeeUtils";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
+
+type TrackedCustomFeesViewModel = Omit<CustomFeesViewModel, "inputs"> &
+  Readonly<{
+    inputs: readonly (CustomFeeInputState & { errorId?: string | null })[];
+  }>;
 
 type UseCustomFeesViewModelParams = Readonly<{
   account: AccountLike;
@@ -27,7 +33,9 @@ type UseCustomFeesViewModelParams = Readonly<{
   onConfirm: () => void;
 }>;
 
-export function useCustomFeesViewModel(params: UseCustomFeesViewModelParams): CustomFeesViewModel {
+export function useCustomFeesViewModel(
+  params: UseCustomFeesViewModelParams,
+): TrackedCustomFeesViewModel {
   const { t } = useTranslation();
   const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -54,7 +62,7 @@ export function useCustomFeesViewModel(params: UseCustomFeesViewModelParams): Cu
     [t],
   );
 
-  return useCustomFeesViewModelCore({
+  const viewModel = useCustomFeesViewModelCore({
     ...params,
     locale,
     discreet,
@@ -62,4 +70,25 @@ export function useCustomFeesViewModel(params: UseCustomFeesViewModelParams): Cu
     calculateCountervalue,
     labels,
   });
+
+  return useMemo(
+    () => ({
+      ...viewModel,
+      inputs: viewModel.inputs.map(input => ({
+        ...input,
+        errorId: getErrorId(input.error, labels),
+      })),
+    }),
+    [labels, viewModel],
+  );
+}
+
+function getErrorId(error: string | null, labels: CustomFeesViewModelLabels): string | null {
+  if (!error) return null;
+  if (error === labels.invalidValue) return "newSendFlow.customFees.invalidValue";
+  if (error === labels.maxFeeBelowPriorityFee) {
+    return "newSendFlow.customFees.maxFeeBelowPriorityFee";
+  }
+  if (error === labels.insufficientBalanceFees) return "newSendFlow.insufficientBalanceFees";
+  return "newSendFlow.customFees.belowMinimum";
 }
