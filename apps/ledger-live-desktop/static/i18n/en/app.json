@@ -8661,6 +8661,10 @@
       "title": "Request not accepted",
       "description": "The Internet Computer rejected the request before it ran, so nothing changed. Please try again. {{reason}}"
     },
+    "ICPNodeRefused": {
+      "title": "Request not sent",
+      "description": "The Internet Computer did not take the request, so nothing was sent and nothing changed. Please try again. {{reason}}"
+    },
     "ICPInvalidPercentage": {
       "title": "Percentage out of range",
       "description": "Enter a whole number between 1 and 100."

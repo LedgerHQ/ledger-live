@@ -36,6 +36,7 @@ const REACHABLE_ERRORS = [
   "ICPNeuronsNotRead",
   "ICPGovernanceRejected",
   "ICPCallRejected",
+  "ICPNodeRefused",
   "ICPInvalidPercentage",
   // getTransactionStatus assigns these to `warnings.staking`, a slot the generic send flow does not
   // read. The family's own SendAmountFields renders it, which is what makes them reachable.
@@ -137,9 +138,9 @@ describe("internet_computer error translations", () => {
     },
   );
 
-  // Both are thrown with the network's own text in `reason`. Dropping the placeholder would lose the
+  // All are thrown with the network's own text in `reason`. Dropping the placeholder would lose the
   // only part of the message that says what actually went wrong.
-  it.each(["ICPGovernanceRejected", "ICPCallRejected", "ICPStakeNotRefreshed"])(
+  it.each(["ICPGovernanceRejected", "ICPCallRejected", "ICPNodeRefused", "ICPStakeNotRefreshed"])(
     "%s passes the network's own wording through",
     name => {
       expect(errors[name]?.description).toContain("{{reason}}");

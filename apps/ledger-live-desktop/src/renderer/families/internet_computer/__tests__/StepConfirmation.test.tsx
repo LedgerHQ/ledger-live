@@ -289,6 +289,12 @@ describe("StepConfirmationFooter retry after signing", () => {
     },
   );
 
+  it("still offers a retry after ICPNodeRefused, since the node never took the request", () => {
+    render(<StepConfirmationFooter {...failedAfterSigning("split_neuron", "ICPNodeRefused")} />);
+
+    expect(screen.getByText("Retry")).toBeInTheDocument();
+  });
+
   // The gate used to key on this error name alone, which left every other post-signature failure —
   // an HTTP error from the call endpoint, a throw inside the read-state poll — offering a retry.
   it.each(["ICPCallUnconfirmed", "Error", "NetworkDown"])(
