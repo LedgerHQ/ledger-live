@@ -176,3 +176,14 @@ export class EnergyRentProviderNotConfigured extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/** Energy delivery was not observed on-chain before the rental poll timed out. Carries the rental
+ * payment txid for the support/refund message. */
+export class EnergyDelegationTimeoutError extends Error {
+  override name = "EnergyDelegationTimeoutError";
+  paymentTxId?: string;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "EnergyDelegationTimeoutError");
+    if (fields) Object.assign(this, fields);
+  }
+}
