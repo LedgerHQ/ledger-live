@@ -8,6 +8,7 @@ import {
 } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
+  buildHostedUrl,
   buildTopUpPath,
   buildWithdrawalPath,
   buildAccessBaanxPath,
@@ -15,7 +16,9 @@ import {
   buildAddAssetPath,
   buildOrderCardPath,
   openHostedCardPathSafely,
+  openHostedUrlInSecureBrowser,
   type CardAssetPathBuilder,
+  type OpenCardHostedPage,
 } from "@features/flow-pay-card-auth";
 import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
@@ -93,29 +96,45 @@ export function usePayTabViewModel() {
     [params?.code, params?.app_id],
   );
 
-  // Every hosted page now opens on the Baanx manifest in the Discover webview, as desktop does.
-  const openHostedPage = useCardHostedPageOpener();
+  const openInSecureBrowser: OpenCardHostedPage = useCallback(
+    async path => {
+      await openHostedUrlInSecureBrowser(buildHostedUrl(hostedUiUrl, path), PAY_TAB_DEEP_LINK);
+    },
+    [hostedUiUrl],
+  );
 
-  // The signup page rides the same opener the hosted pages use, so it lands in the webview too.
+  const openInDiscover = useCardHostedPageOpener();
+
   const login: CardProps["login"] = useMemo(
-    () => ({ oauthConfig, callback, requestProtection, openHostedPage }),
-    [oauthConfig, callback, requestProtection, openHostedPage],
+    () => ({ oauthConfig, callback, requestProtection }),
+    [oauthConfig, callback, requestProtection],
   );
 
   const onShowMore = useCallback(() => {
     navigateToCardHistory(navigation);
   }, [navigation]);
 
-  const openHosted = useCallback(
-    (buildPath: CardAssetPathBuilder, failedToOpen: string, currency?: string) =>
+  const openHostedWith = useCallback(
+    (
+      openPage: OpenCardHostedPage,
+      buildPath: CardAssetPathBuilder,
+      failedToOpen: string,
+      currency?: string,
+    ) =>
       openHostedCardPathSafely(
-        openHostedPage,
+        openPage,
         usAppId,
         buildPath,
         error => console.warn(`[card] ${failedToOpen}`, error),
         currency,
       ),
-    [openHostedPage, usAppId],
+    [usAppId],
+  );
+
+  const openHosted = useCallback(
+    (buildPath: CardAssetPathBuilder, failedToOpen: string, currency?: string) =>
+      openHostedWith(openInSecureBrowser, buildPath, failedToOpen, currency),
+    [openHostedWith, openInSecureBrowser],
   );
 
   const isLegacyTopUp = !!useFeature("lwmPayTab")?.params?.legacyTopUp;
@@ -133,9 +152,14 @@ export function usePayTabViewModel() {
         return;
       }
 
-      await openHosted(buildTopUpPath, "the hosted asset page did not open", currency);
+      await openHostedWith(
+        openInDiscover,
+        buildTopUpPath,
+        "the hosted asset page did not open",
+        currency,
+      );
     },
-    [isLegacyTopUp, navigation, openHosted],
+    [isLegacyTopUp, navigation, openHostedWith, openInDiscover],
   );
 
   const onTopUp = useCallback(() => openTopUp(), [openTopUp]);
