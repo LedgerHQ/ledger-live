@@ -16,6 +16,9 @@ export type InfoStateCta = Readonly<{
 
   /** Whether the button is disabled. */
   disabled?: boolean;
+
+  /** Shows the button's spinner while its action runs. */
+  loading?: boolean;
 }>;
 
 /** Lumen banner displayed between content and actions. */

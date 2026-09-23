@@ -28,6 +28,7 @@ const renderSheet = (overrides: Partial<EnableProtectionSheetProps> = {}) => {
         isOpen
         variant="biometrics"
         biometricsKind="FaceID"
+        isConfirming={false}
         onConfirm={onConfirm}
         onClose={jest.fn()}
         {...overrides}
