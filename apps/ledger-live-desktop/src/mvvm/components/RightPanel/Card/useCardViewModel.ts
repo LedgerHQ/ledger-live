@@ -7,6 +7,7 @@ import {
   buildManagePinPath,
   buildAddAssetPath,
   buildOrderCardPath,
+  buildCashbackPath,
   openHostedCardPathSafely,
   type CardAssetPathBuilder,
 } from "@features/flow-pay-card-auth";
@@ -167,6 +168,11 @@ export function useCardViewModel(): CardViewModel {
     [openHosted],
   );
 
+  const onViewRewards = useCallback(
+    () => openHosted(buildCashbackPath, "cashback page did not open"),
+    [openHosted],
+  );
+
   useWipeHostedSession();
 
   const login: CardViewModel["login"] = useMemo(
@@ -234,6 +240,7 @@ export function useCardViewModel(): CardViewModel {
     onShowMore,
     onTopUp,
     onChooseCardType,
+    onViewRewards,
     cardSettingsActions,
   };
 }

@@ -13,6 +13,7 @@ export function CardDetails({
   assets,
   formatters,
   cardSettingsActions,
+  onViewRewards,
 }: CardDetailsProps) {
   const reveal = useRevealViewModel();
 
@@ -30,6 +31,7 @@ export function CardDetails({
         currencies={assets?.currencies}
         getCounterValue={assets?.getCounterValue}
         formatCountervalue={assets?.formatCountervalue}
+        onViewRewards={onViewRewards}
       />
     </div>
   );

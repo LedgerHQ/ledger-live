@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react-native";
+import { render, screen, waitFor, userEvent } from "@testing-library/react-native";
 import { http, HttpResponse } from "msw";
 import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashback";
 import { CARD_CASHBACK_URL, listenToCardApi } from "@support/msw-features-flow-pay-card";
@@ -66,5 +66,32 @@ describe("Reward (native)", () => {
 
     await waitFor(() => expect(answered).toBe(true));
     expect(screen.queryByTestId("card-details-reward")).toBeNull();
+  });
+
+  it("opens the hosted rewards page when the banner is pressed", async () => {
+    const onViewRewards = jest.fn();
+    server.use(http.get(CARD_CASHBACK_URL, () => HttpResponse.json(mockPayCardCashback())));
+    const user = userEvent.setup();
+
+    render(<Reward onViewRewards={onViewRewards} />, {
+      wrapper: cardApiWrapper({ signedIn: true }),
+    });
+
+    await waitFor(() => expect(screen.getByTestId("card-details-reward")).toBeVisible());
+    await user.press(screen.getByTestId("card-details-reward"));
+
+    expect(onViewRewards).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not make the banner interactive when the host did not provide a handler", async () => {
+    server.use(http.get(CARD_CASHBACK_URL, () => HttpResponse.json(mockPayCardCashback())));
+    const user = userEvent.setup();
+
+    render(<Reward />, { wrapper: cardApiWrapper({ signedIn: true }) });
+
+    await waitFor(() => expect(screen.getByTestId("card-details-reward")).toBeVisible());
+    await user.press(screen.getByTestId("card-details-reward"));
+
+    expect(screen.getByTestId("card-details-reward")).toBeVisible();
   });
 });

@@ -61,6 +61,7 @@ function PayTabViewModelProbe() {
     login,
     onTopUp,
     onChooseCardType,
+    onViewRewards,
     assets: cardAssets,
     cardSettingsActions,
     formatters,
@@ -80,6 +81,7 @@ function PayTabViewModelProbe() {
       <Text testID="countervalue-decimal">{formatted?.decimalPart}</Text>
       <Pressable testID="top-up" onPress={onTopUp} />
       <Pressable testID="choose-card-type" onPress={onChooseCardType} />
+      <Pressable testID="view-rewards" onPress={onViewRewards} />
       <Pressable testID="asset-top-up" onPress={() => cardAssets?.onTopUp?.(CARD_ASSET)} />
       <Pressable testID="asset-withdraw" onPress={() => cardAssets?.onWithdraw?.(CARD_ASSET)} />
       <Text testID="has-manage-pin">
@@ -220,6 +222,24 @@ describe("usePayTabViewModel", () => {
     await user.press(screen.getByTestId("choose-card-type"));
 
     await expectSecureBrowser("https://hosted.test/order-card?app_id=LEDGERUS");
+  });
+
+  it("should open the cashback page of the hosted UI in the secure browser", async () => {
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("view-rewards"));
+
+    await expectSecureBrowser("https://hosted.test/cashback");
+  });
+
+  it("should name the US app on the cashback page for a US card holder", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("view-rewards"));
+
+    await expectSecureBrowser("https://hosted.test/cashback?app_id=LEDGERUS");
   });
 
   it("should leave signup to the secure browser of the login flow", () => {
