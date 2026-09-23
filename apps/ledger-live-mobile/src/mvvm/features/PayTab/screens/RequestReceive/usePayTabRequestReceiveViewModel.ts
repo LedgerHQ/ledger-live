@@ -11,7 +11,6 @@ import {
   markReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
 } from "@features/flow-pay-request/state";
-import { useTranslation } from "@shared/i18n";
 import { useHideTabBar } from "LLM/hooks/useTabBarVisibility";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { deriveRequestReceiveData } from "LLM/features/PayTab/hooks/deriveRequestReceiveData";
@@ -29,7 +28,6 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
 
   const analytics = usePayAnalyticsContext();
   const onTrackEvent: PayRequestTrackEvent = analytics.trackEvent;
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasSeenReceiveVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
   const { goBack, addListener, setOptions } =
@@ -115,21 +113,6 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
     openIntro();
   }, [account, markHintSeen, openIntro]);
 
-  const labels = useMemo(
-    () => ({
-      title: t("payTab.request.title", { asset: data?.asset.name ?? "" }),
-      networkLabel: t("payTab.request.networkLabel", { network: data?.network ?? "" }),
-      actions: {
-        share: t("payTab.request.actions.share"),
-        copy: t("payTab.request.actions.copy"),
-        copied: t("payTab.request.actions.copied"),
-        save: t("payTab.request.actions.save"),
-        verify: t("payTab.request.actions.verify"),
-      },
-    }),
-    [t, data],
-  );
-
   const requestReceive = useMemo<RequestReceiveProps>(
     () => ({
       isOpen: true,
@@ -137,7 +120,6 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
       asset: data?.asset ?? { name: "", ticker: "" },
       network: data?.network ?? "",
       page: REQUEST_PAGE,
-      labels,
       assetIcon: data?.assetIcon ?? { ledgerId: "", ticker: "" },
       networkIcon: data?.networkIcon,
       cardRef,
@@ -151,22 +133,18 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
         ? undefined
         : {
             open: hasNavigationSettled,
-            message: t("payTab.request.verifyHint.message"),
-            gotItLabel: t("payTab.request.verifyHint.gotIt"),
             onGotIt,
             onShown: onHintShown,
           },
     }),
     [
       data,
-      labels,
       onShare,
       onCopy,
       onVerify,
       goBack,
       hasSeenReceiveVerifyHint,
       hasNavigationSettled,
-      t,
       onGotIt,
       onHintShown,
       onTrackEvent,

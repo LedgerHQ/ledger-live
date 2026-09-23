@@ -1,12 +1,11 @@
 import React from "react";
 import { Box, TileButton } from "@ledgerhq/lumen-ui-rnative";
 import { useRequestReceiveActions } from "./useRequestReceiveActions.native";
-import type { RequestReceiveActionId, RequestReceiveActionLabels } from "../../types";
+import type { RequestReceiveActionId } from "../../types";
 
 const VERIFY_LAYER = 2;
 
 type RequestReceiveActionsProps = Readonly<{
-  labels: RequestReceiveActionLabels;
   visibleActions: readonly RequestReceiveActionId[];
   hasCopied: boolean;
   onShare: () => void;

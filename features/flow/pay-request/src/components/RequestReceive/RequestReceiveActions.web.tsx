@@ -4,12 +4,10 @@ import { useRequestReceiveActions } from "./useRequestReceiveActions.web";
 import { RequestReceiveVerifyHint } from "./RequestReceiveVerifyHint.web";
 import type {
   RequestReceiveActionId,
-  RequestReceiveActionLabels,
   RequestReceiveVerifyHint as RequestReceiveVerifyHintProps,
 } from "../../types";
 
 type RequestReceiveActionsProps = Readonly<{
-  labels: RequestReceiveActionLabels;
   visibleActions: readonly RequestReceiveActionId[];
   hasCopied: boolean;
   onShare: () => void;

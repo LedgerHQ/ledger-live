@@ -126,30 +126,29 @@ export function useCardViewModel(): CardViewModel {
 
   const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
 
-  const openHostedPath = useCallback(
-    (buildPath: CardAssetPathBuilder, onError: (error: unknown) => void, currency?: string) =>
-      openHostedCardPathSafely(openHostedPage, usAppId, buildPath, onError, currency),
+  const openHosted = useCallback(
+    (buildPath: CardAssetPathBuilder, failedToOpen: string, currency?: string) =>
+      openHostedCardPathSafely(
+        openHostedPage,
+        usAppId,
+        buildPath,
+        error => logger.warn(`[card] ${failedToOpen}`, error),
+        currency,
+      ),
     [openHostedPage, usAppId],
   );
 
   const openAssetPage = useCallback(
     (buildPath: CardAssetPathBuilder, currency?: string) =>
-      openHostedPath(
-        buildPath,
-        error => logger.warn("[card] the hosted asset page did not open", error),
-        currency,
-      ),
-    [openHostedPath],
+      openHosted(buildPath, "the hosted asset page did not open", currency),
+    [openHosted],
   );
 
   const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
 
   const onChooseCardType = useCallback(
-    () =>
-      openHostedPath(buildOrderCardPath, error =>
-        logger.warn("[card] order card page did not open", error),
-      ),
-    [openHostedPath],
+    () => openHosted(buildOrderCardPath, "order card page did not open"),
+    [openHosted],
   );
 
   useWipeHostedSession();
@@ -182,27 +181,18 @@ export function useCardViewModel(): CardViewModel {
   );
 
   const onManagePin = useCallback(
-    () =>
-      openHostedPath(buildManagePinPath, error =>
-        logger.warn("[card] manage pin page did not open", error),
-      ),
-    [openHostedPath],
+    () => openHosted(buildManagePinPath, "manage pin page did not open"),
+    [openHosted],
   );
 
   const onAccessBaanx = useCallback(
-    () =>
-      openHostedPath(buildAccessBaanxPath, error =>
-        logger.warn("[card] baanx page did not open", error),
-      ),
-    [openHostedPath],
+    () => openHosted(buildAccessBaanxPath, "baanx page did not open"),
+    [openHosted],
   );
 
   const onAddAsset = useCallback(
-    () =>
-      openHostedPath(buildAddAssetPath, error =>
-        logger.warn("[card] add asset page did not open", error),
-      ),
-    [openHostedPath],
+    () => openHosted(buildAddAssetPath, "add asset page did not open"),
+    [openHosted],
   );
 
   const payCardAssets = usePayCardAssets();
