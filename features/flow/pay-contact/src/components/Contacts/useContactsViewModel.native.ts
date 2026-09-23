@@ -18,10 +18,9 @@ export function useContactsViewModel({
   const { t } = useTranslation();
   const contacts = useContacts();
   const sortedContacts = useMemo(() => {
-    const savedContacts = contacts.filter(contact => !contact.isMe);
-    const summaries = summarizeOutgoingOperationsByContact(savedContacts, outgoingOperations);
+    const summaries = summarizeOutgoingOperationsByContact(contacts, outgoingOperations);
 
-    return sortContactsByLastSentThenLastAdded(savedContacts, summaries);
+    return sortContactsByLastSentThenLastAdded(contacts, summaries);
   }, [contacts, outgoingOperations]);
 
   const hasMore = sortedContacts.length > MAX_CONTACTS_DISPLAYED;

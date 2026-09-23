@@ -60,9 +60,9 @@ export function usePayTabSelectContactViewModel(): PayTabSelectContactViewModel 
   );
 
   const query = searchValue.trim().toLowerCase();
-  const contacts = storedContacts
-    .filter(contact => !contact.isMe)
-    .filter(contact => !query || contact.name.toLowerCase().includes(query));
+  const contacts = storedContacts.filter(
+    contact => !query || contact.name.toLowerCase().includes(query),
+  );
   const showSearchNoResults = query.length > 0 && contacts.length === 0;
 
   return {
