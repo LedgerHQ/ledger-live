@@ -21,6 +21,12 @@ const REACHABLE_ERRORS = [
   "ICPSpawnNotAllowed",
   "ICPStakeMaturityNotAllowed",
   "ICPFollowTopicNotAllowed",
+  "ICPTooManyFollowees",
+  "ICPInvalidFolloweeId",
+  "ICPDuplicateFollowee",
+  "ICPFolloweeIsSelf",
+  "ICPStartDissolvingNotAllowed",
+  "ICPStopDissolvingNotAllowed",
   "ICPDisburseNotAllowed",
   "ICPTooManyHotKeys",
   "ICPTopUpBelowMinimumStake",
@@ -79,6 +85,10 @@ describe("internet_computer error translations", () => {
     "ICPHotKeyIsController",
     "ICPTooManyHotKeys",
     "ICPTopUpBelowMinimumStake",
+    "ICPTooManyFollowees",
+    "ICPInvalidFolloweeId",
+    "ICPDuplicateFollowee",
+    "ICPFolloweeIsSelf",
   ])("%s explains how to correct the value", name => {
     expect(descriptionOf(name)).toBeTruthy();
   });
@@ -86,9 +96,17 @@ describe("internet_computer error translations", () => {
   it.each([
     ["ICPTooManyHotKeys", "{{max}}"],
     ["ICPTopUpBelowMinimumStake", "{{missing}}"],
+    ["ICPTooManyFollowees", "{{max}}"],
   ])("%s quotes the figure the bridge computed", (name, placeholder) => {
     expect(descriptionOf(name)).toContain(placeholder);
   });
+
+  it.each(["ICPInvalidFolloweeId", "ICPDuplicateFollowee"])(
+    "%s names the followee to remove",
+    name => {
+      expect(descriptionOf(name)).toContain("{{id}}");
+    },
+  );
 
   // The transfer has settled by the time governance refuses the refresh, so copy that reads as a
   // failed transaction would tell the user their ICP is gone.
