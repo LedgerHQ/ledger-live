@@ -51,10 +51,14 @@ export default function FollowTopic({ navigation, route }: Props) {
           ? current
           : bridge.updateTransaction(current, {
               followTopic,
-              followeesIds: (
-                neuron?.followees.find(f => f.topic === KNOWN_TOPICS[followTopic])?.followeeIds ??
-                []
-              ).map(id => id.toString()),
+              followeesIds: Array.from(
+                new Set(
+                  (
+                    neuron?.followees.find(f => f.topic === KNOWN_TOPICS[followTopic])
+                      ?.followeeIds ?? []
+                  ).map(id => id.toString()),
+                ),
+              ),
             });
       navigation.navigate(ScreenName.InternetComputerNeuronFollowees, {
         ...route.params,

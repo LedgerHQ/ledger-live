@@ -457,6 +457,21 @@ describe("StepFollowTopic", () => {
     expect(patched).toMatchObject({ followTopic: "Governance", followeesIds: ["9", "8"] });
   });
 
+  // Seeded twice, the bridge refused the untouched list, and Remove took out both copies of the id.
+  it("seeds a followee the neuron lists twice only once", async () => {
+    const neuron = makeHealthyNeuron({
+      id: 5n,
+      followees: [{ topic: KNOWN_TOPICS.Governance, followeeIds: [9n, 9n, 8n] }],
+    });
+    const props = makeStepProps({ neurons: [neuron], selectedNeuronId: "5" });
+    const { user } = render(<StepFollowTopic {...props} />);
+
+    await user.click(screen.getByTestId("icp-follow-topic-Governance"));
+
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    expect(patched.followeesIds).toEqual(["9", "8"]);
+  });
+
   /*
    * The regression this whole arrangement exists for. The topic used to live in flow state while the
    * transaction was seeded once, guarded on the followee list being absent — and an empty list is
