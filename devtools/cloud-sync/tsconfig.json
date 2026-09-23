@@ -1,5 +1,5 @@
 {
-  "extends": "@support/ts-devtools",
+  "extends": "@support/ts-preset/dual",
   "compilerOptions": {
     "types": [
       "jest"

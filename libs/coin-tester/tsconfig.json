@@ -1,12 +1,10 @@
 {
-  "extends": "@support/ts-libs",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
     "lib": [
       "es2020",
       "dom"
     ],
-    "outDir": "lib",
-    "rootDir": "src",
     "typeRoots": [
       "./types",
       "./node_modules/@types"

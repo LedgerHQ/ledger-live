@@ -1,13 +1,10 @@
 {
-  "extends": "@support/ts-features-platform",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
     "types": [
       "jest"
     ]
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules"
   ]

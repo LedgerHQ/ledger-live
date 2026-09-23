@@ -1,6 +1,11 @@
 {
   "extends": [
     "./tsconfig.json",
-    "@support/ts-devtools/native"
-  ]
+    "@support/ts-preset/native"
+  ],
+  "compilerOptions": {
+    "types": [
+      "jest"
+    ]
+  }
 }

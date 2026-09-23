@@ -13,19 +13,14 @@
     "moduleSuffixes": [
       ".native",
       ""
-    ],
-    "types": [
-      "jest"
     ]
   },
   "include": [
-    "${configDir}/src/**/*",
-    "${configDir}/**/*.d.ts"
+    "${configDir}/src/**/*"
   ],
   "exclude": [
     "node_modules",
     "${configDir}/src/**/*.web.*",
-    "${configDir}/src/**/web.ts",
-    "${configDir}/src/index.ts"
+    "${configDir}/src/**/web.ts"
   ]
 }

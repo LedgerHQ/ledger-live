@@ -43,7 +43,6 @@
     "react-dom": "catalog:",
     "react-native": "catalog:",
     "typescript": "catalog:",
-    "@support/fmt-base": "workspace:*",
-    "@support/ts-devtools": "workspace:*"
+    "@support/fmt-base": "workspace:*"
   }
 }

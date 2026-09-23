@@ -1,15 +1,16 @@
 {
-  "extends": "@support/ts-features-platform",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
     "paths": {
       "*": [
         "./*"
       ]
-    }
+    },
+    "types": [
+      "jest",
+      "@testing-library/jest-dom"
+    ]
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules",
     "lib"

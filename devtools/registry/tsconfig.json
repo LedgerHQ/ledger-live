@@ -1,15 +1,8 @@
 {
-  "extends": "@support/ts-devtools",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
-    "moduleSuffixes": [
-      ".web",
-      ""
-    ],
     "types": []
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules"
   ]

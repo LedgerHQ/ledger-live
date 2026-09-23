@@ -54,8 +54,7 @@
     "react-dom": "catalog:",
     "react-native": "catalog:",
     "react-test-renderer": "catalog:",
-    "typescript": "catalog:",
-    "@support/ts-features-flow": "workspace:*"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",

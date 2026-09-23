@@ -1,15 +1,15 @@
 {
-  "extends": "@support/ts-shared",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
     "paths": {
       "@ledgerhq/live-env": [
         "../../libs/env/src/index.ts"
       ]
-    }
+    },
+    "types": [
+      "jest"
+    ]
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules"
   ]

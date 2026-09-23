@@ -1,8 +1,10 @@
 {
-  "extends": "@support/ts-shared",
-  "include": [
-    "src/**/*"
-  ],
+  "extends": "@support/ts-preset/web",
+  "compilerOptions": {
+    "types": [
+      "jest"
+    ]
+  },
   "exclude": [
     "node_modules"
   ]

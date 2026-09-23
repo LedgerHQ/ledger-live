@@ -13,15 +13,10 @@
     "moduleSuffixes": [
       ".web",
       ""
-    ],
-    "types": [
-      "jest",
-      "@testing-library/jest-dom"
     ]
   },
   "include": [
-    "${configDir}/src/**/*",
-    "${configDir}/**/*.d.ts"
+    "${configDir}/src/**/*"
   ],
   "exclude": [
     "node_modules",

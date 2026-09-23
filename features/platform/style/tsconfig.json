@@ -1,11 +1,15 @@
 {
-  "extends": "@support/ts-features-platform",
+  "extends": "@support/ts-preset/dual",
   "compilerOptions": {
     "paths": {
       "*": [
         "./*"
       ]
-    }
+    },
+    "types": [
+      "jest",
+      "@testing-library/jest-dom"
+    ]
   },
   "references": [
     {

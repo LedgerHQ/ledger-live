@@ -1,8 +1,0 @@
-{
-  "name": "@support/ts-features-platform",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

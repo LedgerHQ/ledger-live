@@ -1,5 +1,5 @@
 {
-  "extends": "@support/ts-features-platform",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
     "lib": [
       "ES2022"
@@ -13,9 +13,6 @@
       "jest"
     ]
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules",
     "lib"

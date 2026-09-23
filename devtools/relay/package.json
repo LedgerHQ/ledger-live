@@ -34,7 +34,6 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "tsx": "catalog:",
-    "typescript": "catalog:",
-    "@support/ts-devtools": "workspace:*"
+    "typescript": "catalog:"
   }
 }

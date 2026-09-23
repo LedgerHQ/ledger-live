@@ -149,7 +149,6 @@
     "react-test-renderer": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:",
-    "jest-sonar": "0.2.16",
-    "@support/ts-devtools": "workspace:*"
+    "jest-sonar": "0.2.16"
   }
 }

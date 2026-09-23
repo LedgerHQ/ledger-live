@@ -1,8 +1,6 @@
 {
-  "extends": "@support/ts-libs",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
-    "outDir": "lib",
-    "rootDir": "src",
     "types": [
       "node",
       "jest"

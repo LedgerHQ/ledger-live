@@ -1,15 +1,11 @@
 {
-  "extends": "@support/ts-devtools",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
     "target": "ESNext",
-    "moduleSuffixes": [
-      ".web",
-      ""
+    "types": [
+      "jest"
     ]
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules"
   ]

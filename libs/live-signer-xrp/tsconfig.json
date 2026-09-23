@@ -1,13 +1,11 @@
 {
-  "extends": "@support/ts-libs",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
     "noImplicitAny": false,
     "noImplicitThis": false,
     "lib": [
       "es2020",
       "dom"
-    ],
-    "outDir": "lib",
-    "rootDir": "src"
+    ]
   }
 }

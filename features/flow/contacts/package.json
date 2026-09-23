@@ -77,7 +77,6 @@
     "@radix-ui/react-tooltip": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@support/jest-features-flow": "workspace:*",
-    "@support/ts-features-flow": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@tanstack/react-table": "catalog:",

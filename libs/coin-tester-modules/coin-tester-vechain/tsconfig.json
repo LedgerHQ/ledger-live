@@ -1,11 +1,14 @@
 {
-  "extends": "@support/ts-libs",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
-    "lib": ["ES2022", "dom"],
-    "outDir": "lib",
-    "rootDir": "src",
     "composite": true,
-    "types": ["node", "jest"]
+    "types": [
+      "node",
+      "jest"
+    ]
   },
-  "include": ["src/**/*", "src/**/*.json"]
+  "include": [
+    "src/**/*",
+    "src/**/*.json"
+  ]
 }

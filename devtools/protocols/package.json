@@ -29,7 +29,6 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "jest": "catalog:",
-    "@support/ts-devtools": "workspace:*"
+    "jest": "catalog:"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "extends": "@support/ts-features-flow",
+  "extends": "@support/ts-preset/dual",
   "compilerOptions": {
     "types": [
       "jest"

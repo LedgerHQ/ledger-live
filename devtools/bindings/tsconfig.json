@@ -1,11 +1,7 @@
 {
-  "extends": "@support/ts-devtools",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
     "module": "ES2022",
-    "moduleSuffixes": [
-      ".web",
-      ""
-    ],
     "paths": {
       "*": [
         "./*"
@@ -16,9 +12,6 @@
       "@testing-library/jest-dom"
     ]
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules",
     "lib"

@@ -1,5 +1,5 @@
 {
-  "extends": "@support/ts-libs",
+  "extends": "@support/ts-preset/lib-react",
   "compilerOptions": {
     "noImplicitAny": false,
     "noImplicitThis": false,
@@ -7,9 +7,6 @@
       "es2020",
       "dom"
     ],
-    "jsx": "react",
-    "outDir": "lib",
-    "rootDir": "src",
     "types": [
       "node"
     ]

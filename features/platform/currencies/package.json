@@ -39,7 +39,6 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/feature-flags": "workspace:^",
-    "@support/ts-features-platform": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

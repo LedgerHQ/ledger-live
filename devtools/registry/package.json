@@ -32,7 +32,6 @@
     "@types/react": "catalog:",
     "react": "catalog:",
     "typescript": "catalog:",
-    "@ledgerhq/generators": "workspace:*",
-    "@support/ts-devtools": "workspace:*"
+    "@ledgerhq/generators": "workspace:*"
   }
 }

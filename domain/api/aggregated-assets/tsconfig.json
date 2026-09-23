@@ -1,10 +1,6 @@
 {
-  "extends": "@support/ts-domain",
+  "extends": "@support/ts-preset/client",
   "compilerOptions": {
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
     "types": [
       "jest"
     ]

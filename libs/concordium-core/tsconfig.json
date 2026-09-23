@@ -1,11 +1,9 @@
 {
-  "extends": "@support/ts-libs",
+  "extends": "@support/ts-preset/lib-node",
   "compilerOptions": {
     "lib": [
       "es2020"
     ],
-    "outDir": "lib",
-    "rootDir": "src",
     "types": [
       "node",
       "jest"

@@ -56,12 +56,7 @@ oxlint configuration.
 | [`lint-tools`](./lint-tools) | `tools/*`, including `tools/actions/*` |
 | [`msw-features-flow-pay-card`](./msw-features-flow-pay-card) | `features/flow/pay-card-*` — MSW + RTK Query test store and server |
 | [`ts-base`](./ts-base) | the root of the tsconfig chain; `tsconfig.base.json` is a shim over it |
-| [`ts-devtools`](./ts-devtools) | `devtools/*` |
-| [`ts-domain`](./ts-domain) | `domain/entity/*`, `domain/api/*` |
-| [`ts-features-flow`](./ts-features-flow) | `features/flow/*` |
-| [`ts-libs`](./ts-libs) | `libs/*` - packages that emit and publish; `./build` drops tests and resets `customConditions` |
-| [`ts-features-platform`](./ts-features-platform) | `features/platform/*` |
-| [`ts-shared`](./ts-shared) | `shared/*` |
+| [`ts-preset`](./ts-preset) | one entry point per project archetype: `./logic`, `./client`, `./web`, `./native`, `./dual`, `./lib`, `./lib-react`, `./lib-node`, `./lib/build` |
 
 ## How a consumer uses them
 
@@ -104,10 +99,19 @@ tsconfig needs a file per package, because that is how TypeScript is told where 
 
 ```jsonc
 // tsconfig.json
-{ "extends": "@support/ts-features-flow", "references": [{ "path": "./tsconfig.web.json" }] }
+{ "extends": "@support/ts-preset/dual", "references": [{ "path": "./tsconfig.web.json" }] }
 // tsconfig.web.json - package root first, platform layer over it
-{ "extends": ["./tsconfig.json", "@support/ts-features-flow/web"] }
+{ "extends": ["./tsconfig.json", "@support/ts-preset/web"] }
 ```
+
+A package picks its archetype by what it structurally is, not by which directory it lives in: the
+directory does not predict the config, and three of the six layer presets this replaced covered
+mixed project shapes, which is why their consumers kept overriding them.
+
+Two properties stay in the package and will not move. `types` has no defensible default, since
+naming `@testing-library/jest-dom` breaks the 9 packages without the dependency and omitting it
+breaks the 16 that need it; it states which ambient types a package may see, which is a per-package
+decision. `references` is not inherited through `extends` by TypeScript at all.
 
 Order matters: the platform layer must come **last** so its `moduleSuffixes`, `include` and
 `exclude` win, and the package's own root must come **first** so its deviations survive.

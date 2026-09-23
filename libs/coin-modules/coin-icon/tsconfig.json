@@ -1,5 +1,5 @@
 {
-  "extends": "@support/ts-libs",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -10,8 +10,6 @@
     "types": [
       "node",
       "jest"
-    ],
-    "outDir": "lib",
-    "rootDir": "src"
+    ]
   }
 }

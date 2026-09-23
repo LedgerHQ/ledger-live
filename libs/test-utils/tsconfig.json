@@ -1,7 +1,3 @@
 {
-  "extends": "@support/ts-libs",
-  "compilerOptions": {
-    "outDir": "lib",
-    "rootDir": "src"
-  }
+  "extends": "@support/ts-preset/lib"
 }

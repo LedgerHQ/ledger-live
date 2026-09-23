@@ -8,10 +8,6 @@
     "lib": [
       "ES2022",
       "DOM"
-    ],
-    "types": [
-      "jest",
-      "node"
     ]
   },
   "include": [

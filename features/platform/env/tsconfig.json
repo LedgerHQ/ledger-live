@@ -1,5 +1,5 @@
 {
-  "extends": "@support/ts-features-platform",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
     "paths": {
       "*": [
@@ -8,9 +8,6 @@
     },
     "types": []
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules"
   ]

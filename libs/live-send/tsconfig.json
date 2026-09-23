@@ -1,14 +1,9 @@
 {
-  "extends": "@support/ts-libs",
+  "extends": "@support/ts-preset/lib-node",
   "compilerOptions": {
     "target": "ES2022",
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "lib": [
-      "ES2022"
-    ],
-    "outDir": "lib",
-    "rootDir": "src",
     "types": [
       "node",
       "jest"

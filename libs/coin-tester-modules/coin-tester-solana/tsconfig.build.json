@@ -1,8 +1,14 @@
 {
-  "extends": ["./tsconfig.json", "@support/ts-libs/build"],
+  "extends": [
+    "./tsconfig.json",
+    "@support/ts-preset/lib/build"
+  ],
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "types": ["node", "jest"]
+    "types": [
+      "node",
+      "jest"
+    ]
   }
 }

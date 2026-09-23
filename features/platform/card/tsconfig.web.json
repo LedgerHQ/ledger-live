@@ -1,6 +1,11 @@
 {
   "extends": [
     "./tsconfig.json",
-    "@support/ts-features-platform/web"
-  ]
+    "@support/ts-preset/web"
+  ],
+  "compilerOptions": {
+    "types": [
+      "jest"
+    ]
+  }
 }

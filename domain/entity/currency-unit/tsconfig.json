@@ -1,10 +1,13 @@
 {
-  "extends": "@support/ts-domain",
+  "extends": "@support/ts-preset/logic",
   "compilerOptions": {
     "paths": {
       "*": [
         "./*"
       ]
-    }
+    },
+    "types": [
+      "jest"
+    ]
   }
 }

@@ -8,14 +8,10 @@
     "lib": [
       "ES2022",
       "DOM"
-    ],
-    "types": [
-      "jest"
     ]
   },
   "include": [
-    "${configDir}/src/**/*",
-    "${configDir}/**/*.d.ts"
+    "${configDir}/src/**/*"
   ],
   "exclude": [
     "node_modules",

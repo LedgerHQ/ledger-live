@@ -741,9 +741,6 @@ importers:
       '@support/ts-base':
         specifier: workspace:*
         version: link:support/ts-base
-      '@support/ts-libs':
-        specifier: workspace:*
-        version: link:support/ts-libs
       '@support/ts-preset':
         specifier: workspace:*
         version: link:support/ts-preset
@@ -3311,9 +3308,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -3393,9 +3387,6 @@ importers:
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -3489,9 +3480,6 @@ importers:
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -3583,9 +3571,6 @@ importers:
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -3721,9 +3706,6 @@ importers:
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -3818,9 +3800,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -3861,9 +3840,6 @@ importers:
       '@ledgerhq/generators':
         specifier: workspace:*
         version: link:../../tools/nx-plugins/generators
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.14
@@ -3892,9 +3868,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -3983,9 +3956,6 @@ importers:
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4082,9 +4052,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4146,9 +4113,6 @@ importers:
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4272,9 +4236,6 @@ importers:
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4366,9 +4327,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@support/ts-devtools':
-        specifier: workspace:*
-        version: link:../../support/ts-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4424,9 +4382,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4476,9 +4431,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4528,9 +4480,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4583,9 +4532,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4644,9 +4590,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4699,9 +4642,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4748,9 +4688,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4800,9 +4737,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4840,9 +4774,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4880,9 +4811,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4926,9 +4854,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4963,9 +4888,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4997,9 +4919,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5031,9 +4950,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5061,9 +4977,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5104,9 +5017,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5156,9 +5066,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5199,9 +5106,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5236,9 +5140,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5276,9 +5177,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5316,9 +5214,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5347,9 +5242,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5384,9 +5276,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5418,9 +5307,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5455,9 +5341,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5498,9 +5381,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5532,9 +5412,6 @@ importers:
       '@support/jest-domain':
         specifier: workspace:*
         version: link:../../../support/jest-domain
-      '@support/ts-domain':
-        specifier: workspace:*
-        version: link:../../../support/ts-domain
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5868,9 +5745,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5917,9 +5791,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6023,9 +5894,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6113,9 +5981,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6168,9 +6033,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6247,9 +6109,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6332,9 +6191,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6411,9 +6267,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6484,9 +6337,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6557,9 +6407,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6642,9 +6489,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6724,9 +6568,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6781,9 +6622,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6835,9 +6673,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6963,9 +6798,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7067,9 +6899,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7180,9 +7009,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7411,9 +7237,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7554,9 +7377,6 @@ importers:
       '@support/msw-features-flow-pay-card':
         specifier: workspace:*
         version: link:../../../support/msw-features-flow-pay-card
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7685,9 +7505,6 @@ importers:
       '@support/msw-features-flow-pay-card':
         specifier: workspace:*
         version: link:../../../support/msw-features-flow-pay-card
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7776,9 +7593,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7871,9 +7685,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7990,9 +7801,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8106,9 +7914,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8216,9 +8021,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8335,9 +8137,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-flow':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8454,9 +8253,6 @@ importers:
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8527,9 +8323,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8570,9 +8363,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8643,9 +8433,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8728,9 +8515,6 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8786,9 +8570,6 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8871,9 +8652,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8926,9 +8704,6 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/env
     devDependencies:
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.14
@@ -8954,9 +8729,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -9057,9 +8829,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -9109,9 +8878,6 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.9.0(rxjs@7.8.2)
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -9149,9 +8915,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@support/ts-features-platform':
-        specifier: workspace:*
-        version: link:../../../support/ts-features-platform
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -17978,9 +17741,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18024,9 +17784,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18103,9 +17860,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18146,9 +17900,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18207,9 +17958,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18250,9 +17998,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18287,9 +18032,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18330,9 +18072,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18370,9 +18109,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18427,9 +18163,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18472,9 +18205,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18509,9 +18239,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18552,9 +18279,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18625,9 +18349,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18704,9 +18425,6 @@ importers:
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../support/jest-shared
-      '@support/ts-shared':
-        specifier: workspace:*
-        version: link:../../support/ts-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -18963,43 +18681,7 @@ importers:
 
   support/ts-base: {}
 
-  support/ts-devtools:
-    devDependencies:
-      '@support/ts-base':
-        specifier: workspace:*
-        version: link:../ts-base
-
-  support/ts-domain:
-    devDependencies:
-      '@support/ts-base':
-        specifier: workspace:*
-        version: link:../ts-base
-
-  support/ts-features-flow:
-    devDependencies:
-      '@support/ts-base':
-        specifier: workspace:*
-        version: link:../ts-base
-
-  support/ts-features-platform:
-    devDependencies:
-      '@support/ts-base':
-        specifier: workspace:*
-        version: link:../ts-base
-
-  support/ts-libs:
-    devDependencies:
-      '@support/ts-base':
-        specifier: workspace:*
-        version: link:../ts-base
-
   support/ts-preset:
-    devDependencies:
-      '@support/ts-base':
-        specifier: workspace:*
-        version: link:../ts-base
-
-  support/ts-shared:
     devDependencies:
       '@support/ts-base':
         specifier: workspace:*

@@ -1,5 +1,5 @@
 {
-  "extends": "@support/ts-libs",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
     "noImplicitAny": true,
     "noImplicitThis": true,
@@ -7,8 +7,6 @@
       "es2020",
       "dom"
     ],
-    "outDir": "lib",
-    "rootDir": "src",
     "types": [
       "node",
       "jest"

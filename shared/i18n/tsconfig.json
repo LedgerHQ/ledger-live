@@ -1,5 +1,5 @@
 {
-  "extends": "@support/ts-shared",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
     "paths": {
       "*": [
@@ -11,9 +11,6 @@
       "@testing-library/jest-dom"
     ]
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules",
     "lib"

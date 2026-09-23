@@ -26,7 +26,6 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
-    "typescript": "catalog:",
-    "@support/ts-devtools": "workspace:*"
+    "typescript": "catalog:"
   }
 }

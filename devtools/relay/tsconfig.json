@@ -1,5 +1,5 @@
 {
-  "extends": "@support/ts-devtools",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
     "target": "ESNext",
     "types": [
@@ -7,9 +7,6 @@
       "jest"
     ]
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules"
   ]

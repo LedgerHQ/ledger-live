@@ -1,13 +1,13 @@
 {
-  "extends": "@support/ts-shared",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
     "lib": [
       "ES2022"
+    ],
+    "types": [
+      "jest"
     ]
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules",
     "lib"

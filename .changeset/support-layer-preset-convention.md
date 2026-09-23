@@ -12,12 +12,7 @@
 "@support/fmt-base": minor
 "@support/jest-domain": minor
 "@support/ts-base": minor
-"@support/ts-libs": minor
-"@support/ts-devtools": minor
-"@support/ts-domain": minor
-"@support/ts-features-flow": minor
-"@support/ts-features-platform": minor
-"@support/ts-shared": minor
+"@support/ts-preset": minor
 ---
 
 Give `support/` one naming axis, the layer, and apply it to oxlint, oxfmt and tsconfig.
@@ -37,10 +32,10 @@ Give `support/` one naming axis, the layer, and apply it to oxlint, oxfmt and ts
   `@support/fmt-base`.
 - `tsconfig.base.json` becomes a shim over `@support/ts-base`, so `apps/`, `libs/`, `tools/` and
   `e2e/` keep exactly the options they have today.
-- `@support/ts-libs` carries the shape of a package that emits and publishes, which 53 of the 54
-  tsconfigs under `libs/` already had: `declaration`, `declarationMap`, `outDir`, `rootDir`. Its
-  `./build` subpath carries the eleven test-exclude globs and the `customConditions` reset that
-  121 `tsconfig.build.json` files repeated, 110 of which differed only in `types`.
+- `@support/ts-preset` groups tsconfig by what a package structurally is rather than by which
+  directory it lives in, with one entry point per archetype. The directory does not predict the
+  config: three of the six layer presets it replaces covered mixed project shapes, which is why
+  their consumers kept overriding them. 331 configs moved with an identical resolved program.
 - `tools/` and the 27 `domain/*` jest configs join too: `tools/.oxlintrc.json` named nothing that
   `lint-base` did not already say, and the domain jest configs were three distinct contents with
   21 byte-identical copies.

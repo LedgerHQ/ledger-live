@@ -1,16 +1,10 @@
 {
-  "extends": "@support/ts-libs",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "lib": [
-      "es2022",
-      "dom"
-    ],
     "types": [
       "node"
-    ],
-    "outDir": "lib",
-    "rootDir": "src"
+    ]
   }
 }

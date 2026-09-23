@@ -55,8 +55,8 @@ function resolveNodeModule(startDir: string, packageName: string, subPath: strin
   return null;
 }
 
-/** Splits "@support/ts-features-flow/web" into
- *  { pkg: "@support/ts-features-flow", sub: "tsconfig.web.json" }. The bare `./web` and `./native`
+/** Splits "@support/ts-preset/web" into
+ *  { pkg: "@support/ts-preset", sub: "tsconfig.web.json" }. The bare `./web` and `./native`
  *  export names are the ones consumers actually write; the full file names still resolve. */
 function parseExtendsSpecifier(specifier: string): { pkg: string; sub: string } {
   const parts = specifier.split("/");
