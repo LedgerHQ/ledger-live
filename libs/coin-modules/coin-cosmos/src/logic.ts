@@ -1,27 +1,26 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  type StakingDelegation,
+  type StakingRedelegation,
+  type StakingUnbonding,
+} from "@ledgerhq/types-live";
 import * as bech32 from "bech32";
 import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
 import cryptoFactory from "./chain/chain";
-import {
-  getCosmosResources,
-  type CosmosAccount,
-  type CosmosDelegation,
-  type CosmosDelegationInfo,
-  type CosmosMappedDelegation,
-  type CosmosMappedDelegationInfo,
-  type CosmosMappedRedelegation,
-  type CosmosMappedUnbonding,
-  type CosmosOperationMode,
-  type CosmosRedelegation,
-  type CosmosSearchFilter,
-  type CosmosUnbonding,
-  type CosmosValidatorItem,
-  type Transaction,
+import type {
+  CosmosAccount,
+  CosmosDelegationInfo,
+  CosmosMappedDelegation,
+  CosmosMappedDelegationInfo,
+  CosmosMappedRedelegation,
+  CosmosMappedUnbonding,
+  CosmosOperationMode,
+  CosmosRedelegation,
+  CosmosSearchFilter,
+  CosmosValidatorItem,
+  Transaction,
 } from "./types";
-
-type Account = Parameters<typeof getCosmosResources>[0];
 
 export const COSMOS_MAX_REDELEGATIONS = 7;
 export const COSMOS_MAX_UNBONDINGS = 7;
@@ -54,7 +53,7 @@ export const resolveClaimRewardMode = (
   mode === "claimRewardCompound" && !isCompoundRewardSupported(currencyId) ? "claimReward" : mode;
 
 export function mapDelegations(
-  delegations: CosmosDelegation[],
+  delegations: StakingDelegation[],
   validators: CosmosValidatorItem[],
   unit: Unit,
 ): CosmosMappedDelegation[] {
@@ -79,7 +78,7 @@ export function mapDelegations(
   });
 }
 export function mapUnbondings(
-  unbondings: CosmosUnbonding[],
+  unbondings: StakingUnbonding[],
   validators: CosmosValidatorItem[],
   unit: Unit,
 ): CosmosMappedUnbonding[] {
@@ -100,7 +99,7 @@ export function mapUnbondings(
     });
 }
 export function mapRedelegations(
-  redelegations: CosmosRedelegation[],
+  redelegations: StakingRedelegation[],
   validators: CosmosValidatorItem[],
   unit: Unit,
 ): CosmosMappedRedelegation[] {
@@ -142,11 +141,11 @@ export const formatValue = (value: BigNumber, unit: Unit): number =>
     .toNumber();
 export const searchFilter: CosmosSearchFilter =
   query =>
-  ({ validator }) => {
-    const terms = `${validator?.name ?? ""} ${validator?.validatorAddress ?? ""}`;
-    return terms.toLowerCase().includes(query.toLowerCase().trim());
-  };
-export function getMaxDelegationAvailable(account: Account, validatorsLength: number): BigNumber {
+    ({ validator }) => {
+      const terms = `${validator?.name ?? ""} ${validator?.validatorAddress ?? ""}`;
+      return terms.toLowerCase().includes(query.toLowerCase().trim());
+    };
+export function getMaxDelegationAvailable(account: CosmosAccount, validatorsLength: number): BigNumber {
   const numberOfDelegations = Math.min(COSMOS_MAX_DELEGATIONS, validatorsLength || 1);
   const { spendableBalance } = account;
   return spendableBalance
@@ -157,13 +156,8 @@ export const getMaxEstimatedBalance = (
   account: CosmosAccount,
   estimatedFees: BigNumber,
 ): BigNumber => {
-  const cosmosResources = getCosmosResources(account);
-  let blockBalance = new BigNumber(0);
-
-  if (cosmosResources) {
-    blockBalance = cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance);
-  }
-
+  const { unbondingBalance, delegatedBalance } = account.stakingResources;
+  const blockBalance = unbondingBalance.plus(delegatedBalance);
   const amount = account.balance.minus(estimatedFees).minus(blockBalance);
 
   // If the fees are greater than the balance we will have a negative amount
@@ -175,47 +169,36 @@ export const getMaxEstimatedBalance = (
   return amount;
 };
 
-export function canUndelegate(account: Account): boolean {
-  const cosmosResources = getCosmosResources(account);
-  invariant(cosmosResources, "cosmosResources should exist");
-  return !!cosmosResources?.unbondings && cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS;
+export function canUndelegate(account: CosmosAccount): boolean {
+  return account.stakingResources.unbondings.length < COSMOS_MAX_UNBONDINGS;
 }
 
-export function canDelegate(account: Account): boolean {
+export function canDelegate(account: CosmosAccount): boolean {
   const maxSpendableBalance = getMaxDelegationAvailable(account, 1);
   return maxSpendableBalance.gt(0);
 }
 
 export function canRedelegate(
-  account: Account,
-  delegation: CosmosDelegation | CosmosValidatorItem,
+  account: CosmosAccount,
+  delegation: { validatorAddress: string },
 ): boolean {
-  const cosmosResources = getCosmosResources(account);
-  invariant(cosmosResources, "cosmosResources should exist");
-  const now = new Date();
-  const activeRedelegations =
-    cosmosResources?.redelegations.filter(rd => rd.completionDate > now) ?? [];
+  const { redelegations } = account.stakingResources;
   return (
-    activeRedelegations.length < COSMOS_MAX_REDELEGATIONS &&
-    !activeRedelegations.some(rd => rd.validatorDstAddress === delegation.validatorAddress)
+    redelegations.length < COSMOS_MAX_REDELEGATIONS &&
+    !redelegations.some(rd => rd.validatorDstAddress === delegation.validatorAddress)
   );
 }
 
 export function getRedelegation(
-  account: Account,
+  account: CosmosAccount,
   delegation: CosmosMappedDelegation,
 ): CosmosRedelegation | null | undefined {
-  const cosmosResources = getCosmosResources(account);
-  const redelegations = cosmosResources?.redelegations ?? [];
-  const now = new Date();
-  const currentRedelegation = redelegations.find(
-    r => r.validatorDstAddress === delegation.validatorAddress && r.completionDate > now,
-  );
-  return currentRedelegation;
+  const { redelegations } = account.stakingResources;
+  return redelegations.find(r => r.validatorDstAddress === delegation.validatorAddress);
 }
 
 export function getRedelegationCompletionDate(
-  account: Account,
+  account: CosmosAccount,
   delegation: CosmosMappedDelegation,
 ): Date | null | undefined {
   const currentRedelegation = getRedelegation(account, delegation);

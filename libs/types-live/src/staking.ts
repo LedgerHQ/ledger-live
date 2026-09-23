@@ -1,4 +1,4 @@
-import type { BigNumber } from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import type { Account, AccountRaw } from "./account";
 import type { OperationExtra, OperationExtraRaw } from "./operation";
 
@@ -103,6 +103,17 @@ export type StakingResources = {
   validators?: StakingValidatorItem[];
   // Balance held back to cover the fees of staking actions, e.g. Solana's unstake reserve
   actionFeeReserve?: BigNumber;
+};
+
+export function createEmptyStakingResources(): StakingResources {
+  return {
+    delegations: [],
+    redelegations: [],
+    unbondings: [],
+    delegatedBalance: BigNumber(0),
+    pendingRewardsBalance: BigNumber(0),
+    unbondingBalance: BigNumber(0),
+  }
 };
 
 export type StakingResourcesRaw = {

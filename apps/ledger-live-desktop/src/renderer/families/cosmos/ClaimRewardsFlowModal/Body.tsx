@@ -1,3 +1,4 @@
+import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import { compose } from "redux";
@@ -23,10 +24,10 @@ import StepClaimRewards, { StepClaimRewardsFooter } from "./steps/StepClaimRewar
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import type {
-  CosmosAccount,
-  Transaction as CosmosTransaction,
-} from "@ledgerhq/coin-cosmos/types/index";
+import {
+  type CosmosAccount,
+  type Transaction as CosmosTransaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 
 export type Data = {
   account: CosmosAccount;
@@ -89,22 +90,19 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgePending,
   } = useBridgeTransaction(bridge, () => {
     const { account, validatorAddress } = params;
-    invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
+    invariant(account, "cosmos: account required");
 
     // preselect validator either one from params or the first one available on the list
-    const validators = account.cosmosResources.delegations
-      .filter(d =>
-        validatorAddress ? d.validatorAddress === validatorAddress : d.pendingRewards.gt(0),
-      )
-      .slice(0, 1)
-      .map(({ validatorAddress, pendingRewards }) => ({
-        address: validatorAddress,
-        amount: pendingRewards,
-      }));
+    const preselected = account.stakingResources.delegations.find(delegation =>
+      validatorAddress
+        ? delegation.validatorAddress === validatorAddress
+        : delegation.pendingRewards.gt(0),
+    );
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "claimReward",
-      validators,
+      valAddress: preselected?.validatorAddress,
+      amount: preselected?.pendingRewards ?? new BigNumber(0),
     });
     return {
       account,
