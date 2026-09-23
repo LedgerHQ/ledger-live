@@ -1,5 +1,6 @@
 ---
 "@features/flow-pay-contact": minor
+"ledger-live-desktop": minor
 "live-mobile": minor
 ---
 
