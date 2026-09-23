@@ -1,9 +1,10 @@
 import React from "react";
-import { Skeleton, Spot, Table, TableRoot } from "@ledgerhq/lumen-ui-react";
+import { Skeleton, Spinner, Spot, Table, TableRoot } from "@ledgerhq/lumen-ui-react";
 import { CreditCard } from "@ledgerhq/lumen-ui-react/symbols";
 import { HistoryTableBody } from "./components/HistoryTableBody";
 import { HistoryTableHeader } from "./components/HistoryTableHeader";
 import { StatusMessage, type StatusMessageProps } from "./components/StatusMessage";
+import { useLoadMoreOnScroll } from "./useLoadMoreOnScroll";
 import type { CardTransactionHistoryViewProps } from "./types";
 
 function createPayCta(
@@ -22,7 +23,11 @@ export function CardTransactionHistoryView({
   onRowClick,
   onGoToPay,
   cardVisual,
+  onLoadMore,
+  isLoadingMore,
 }: CardTransactionHistoryViewProps) {
+  const attachSentinel = useLoadMoreOnScroll(onLoadMore);
+
   switch (displayState.kind) {
     case "signedOut":
       return (
@@ -86,6 +91,23 @@ export function CardTransactionHistoryView({
                 onRowClick={onRowClick}
               />
             </Table>
+            {onLoadMore ? (
+              <div
+                ref={attachSentinel}
+                aria-hidden="true"
+                className="pointer-events-none h-px"
+                data-testid="card-history-load-more-sentinel"
+              />
+            ) : null}
+            {isLoadingMore ? (
+              <div
+                aria-live="polite"
+                className="flex justify-center p-16"
+                data-testid="card-history-loading-more"
+              >
+                <Spinner size={20} />
+              </div>
+            ) : null}
           </div>
         </TableRoot>
       );

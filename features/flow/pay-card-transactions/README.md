@@ -21,8 +21,11 @@ session is live, and answers one item per transaction:
 
 The first page arrives on its own. `loadMore` reads the next one and appends it, and is `undefined`
 once the provider has none left; `isLoadingMore` is true while one is on its way. No surface calls
-it yet — that control belongs with the full history, not with this summary. Where the list ends is
-the API package's to work out, and it is not obvious: see
+it yet; the full history does. `CardTransactionHistory` reads on as the reader scrolls — natively
+through the section list's `onEndReached`, on web through an observer on a sentinel at the end of
+the table — and shows a spinner while a page is in flight. A failed read stops the next page being
+offered, so a scroll-driven caller cannot turn one failure into a request loop. Where the list ends
+is the API package's to work out, and it is not obvious: see
 [Paging the transaction history](../../../domain/api/card-management/README.md#paging-the-transaction-history).
 
 A page that fails after earlier ones landed leaves the list as it was rather than blanking it, so
