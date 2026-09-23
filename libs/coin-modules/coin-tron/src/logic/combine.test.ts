@@ -1,4 +1,4 @@
-import { combine } from "./combine";
+import { combine, recoverDeviceSignature } from "./combine";
 import { decodeTransaction } from "./utils";
 
 describe("combine", () => {
@@ -17,6 +17,24 @@ describe("combine", () => {
     expect(result.slice(4, txLength + 4)).toEqual(rawTx);
     expect(result.slice(4 + txLength).length).toEqual(64);
     expect(result.slice(4 + txLength)).toEqual(signature);
+  });
+
+  it("throws when the tx is too long to fit the length prefix", () => {
+    const signature = "0B7E480C202D77F02E84C4E86A4CEF2D44623E670F455558C6FA8F09F5715E66";
+    // 0x10000 hex chars — one past what the 4-digit prefix can encode; would otherwise mis-slice on recovery.
+    const oversizedTx = "0".repeat(0x10000);
+
+    expect(() => combine(oversizedTx, [signature])).toThrow(/too long to length-prefix/);
+  });
+});
+
+describe("recoverDeviceSignature", () => {
+  it("recovers the raw device signature from a combined string (inverse of combine)", () => {
+    const rawTx =
+      "0a020ee522082e5fc67747a428af40f0e2ace4d3325a66080112620a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412310a1541fd49eda0f23ff7ec1d03b52c3a45991c24cd440e12154198927ffb9f554dc4a453c64b2e553a02d6df514b18e80770fd9ca9e4d332";
+    const signature = "0B7E480C202D77F02E84C4E86A4CEF2D44623E670F455558C6FA8F09F5715E66";
+
+    expect(recoverDeviceSignature(rawTx, combine(rawTx, [signature]))).toEqual(signature);
   });
 });
 
