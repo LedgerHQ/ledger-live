@@ -16,7 +16,7 @@ const FIFTEEN_MINUTES_IN_SECONDS = 15 * 60;
  * middleware and cache with every other CoinMarketCap use case, while only this one is typed with the
  * endpoint below.
  */
-export const altcoinsSentimentApi = coinMarketCapApi
+export const altcoinSeasonApi = coinMarketCapApi
   .enhanceEndpoints({ addTagTypes: ALTCOIN_SEASON_INDEX_TAGS })
   .injectEndpoints({
     endpoints: build => ({
@@ -29,6 +29,6 @@ export const altcoinsSentimentApi = coinMarketCapApi
     }),
   });
 
-export const { useGetAltcoinSeasonIndexLatestQuery } = altcoinsSentimentApi;
+export const { useGetAltcoinSeasonIndexLatestQuery } = altcoinSeasonApi;
 
-export type AltcoinsSentimentApi = typeof altcoinsSentimentApi;
+export type AltcoinSeasonApi = typeof altcoinSeasonApi;

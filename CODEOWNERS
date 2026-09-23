@@ -227,7 +227,7 @@ features/flow/lazy-onboarding-banner/                    @ledgerhq/engagement
 domain/entity/market-index-fear-and-greed/               @ledgerhq/wallet-xp
 domain/entity/market-index-altcoin-season/               @ledgerhq/wallet-xp
 domain/api/market-index-fear-and-greed/                  @ledgerhq/wallet-xp
-domain/api/altcoins-sentiment/                           @ledgerhq/wallet-xp
+domain/api/market-index-altcoin-season/                  @ledgerhq/wallet-xp
 features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
