@@ -86,6 +86,7 @@ export function buildRecipientForMemoChange(
       address: previousAddress ?? searchValue,
       ensName: previousEnsName,
       displayLabel: previousRecipient?.displayLabel,
+      contactId: previousRecipient?.contactId,
       memo,
     };
   }

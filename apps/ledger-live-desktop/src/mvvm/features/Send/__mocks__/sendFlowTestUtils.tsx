@@ -408,10 +408,12 @@ export const createRippleAccount = (overrides?: Partial<Account>): Account => {
 export const renderSendFlow = (
   account: Account,
   params: Omit<NonNullable<React.ComponentProps<typeof SendWorkflow>["params"]>, "account"> = {},
+  contacts: readonly Contact[] = [],
 ) =>
   render(<SendWorkflow isOpen onClose={jest.fn()} params={{ account, ...params }} />, {
     initialState: {
       accounts: [account],
+      contacts: { contacts: [...contacts] },
       settings: {
         counterValue: "USD",
         counterValueExchange: "BINANCE",
