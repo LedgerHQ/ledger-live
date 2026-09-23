@@ -1,22 +1,15 @@
 import { renderHook } from "@testing-library/react";
+import {
+  i18nWrapper,
+  REQUEST_RESOURCES,
+  VERIFY_ADDRESS_COPY,
+} from "../../../__tests__/i18nWrapper";
 import { useVerifyAddressViewModel } from "../useVerifyAddressViewModel";
-import type { VerifyAddressLabels, VerifyAddressProps } from "../../../types";
-
-const LABELS: VerifyAddressLabels = {
-  introTitle: "Verify your address",
-  introDescription: "To protect against address replacement attacks, verify your address.",
-  verifyCta: "Verify address",
-  successTitle: "Address displayed on the device's Secure Screen",
-  nextStepsLabel: "Next steps",
-  nextStepShare: "Share your address via your desired app",
-  nextStepMatch: "Ensure the shared address matches the one on your Ledger Device.",
-  gotItCta: "Got it",
-};
+import type { VerifyAddressProps } from "../../../types";
 
 function setup(overrides: Partial<VerifyAddressProps> = {}) {
   const props: VerifyAddressProps = {
     phase: "intro",
-    labels: LABELS,
     page: "Pay",
     onVerify: jest.fn(),
     onGotIt: jest.fn(),
@@ -24,7 +17,9 @@ function setup(overrides: Partial<VerifyAddressProps> = {}) {
     onTrackEvent: jest.fn(),
     ...overrides,
   };
-  const { result } = renderHook(() => useVerifyAddressViewModel(props));
+  const { result } = renderHook(() => useVerifyAddressViewModel(props), {
+    wrapper: i18nWrapper(REQUEST_RESOURCES),
+  });
   return { props, result };
 }
 
@@ -44,12 +39,12 @@ describe("useVerifyAddressViewModel", () => {
     });
   });
 
-  it("builds the two ordered next steps from the labels", () => {
+  it("builds the two ordered next steps from translations", () => {
     const { result } = setup();
 
     expect(result.current.nextSteps).toEqual([
-      { index: 1, label: LABELS.nextStepShare },
-      { index: 2, label: LABELS.nextStepMatch },
+      { index: 1, label: VERIFY_ADDRESS_COPY.nextStepShare },
+      { index: 2, label: VERIFY_ADDRESS_COPY.nextStepMatch },
     ]);
   });
 

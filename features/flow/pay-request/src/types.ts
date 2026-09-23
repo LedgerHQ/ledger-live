@@ -14,23 +14,12 @@ export type VerifyAddressNextStep = Readonly<{
 }>;
 
 /**
- * User-facing copy injected by the host app. This package stays i18n-agnostic: the app
- * resolves translations and passes the strings in.
+ * Copy is resolved inside this package through `@shared/i18n`; the host only injects phase,
+ * analytics, and device-intent callbacks. Keys live under `payTab.request.verifyAddress.*`
+ * in each app's default namespace.
  */
-export type VerifyAddressLabels = Readonly<{
-  introTitle: string;
-  introDescription: string;
-  verifyCta: string;
-  successTitle: string;
-  nextStepsLabel: string;
-  nextStepShare: string;
-  nextStepMatch: string;
-  gotItCta: string;
-}>;
-
 export type VerifyAddressProps = Readonly<{
   phase: VerifyAddressPhase;
-  labels: VerifyAddressLabels;
   page: string;
   /** Host starts the device intent (DIE lives in the app, not in this package). */
   onVerify: () => void;
@@ -45,7 +34,13 @@ export type VerifyAddressProps = Readonly<{
 export type VerifyAddressViewModel = Readonly<{
   isIntroOpen: boolean;
   isSuccessOpen: boolean;
+  introTitle: string;
+  introDescription: string;
+  verifyCta: string;
+  successTitle: string;
+  nextStepsLabel: string;
   nextSteps: readonly VerifyAddressNextStep[];
+  gotItCta: string;
   onVerify: () => void;
   onGotIt: () => void;
   onClose: () => void;
@@ -99,6 +94,8 @@ export type RequestReceiveViewModelParams = RequestActionCallbacks &
   }>;
 
 export type RequestReceiveViewModel = Readonly<{
+  title: string;
+  networkLabel: string;
   asset: RequestReceiveAsset;
   network: string;
   address: string;
@@ -113,27 +110,11 @@ export type RequestReceiveViewModel = Readonly<{
 export type RequestReceiveActionId = "share" | "copy" | "save" | "verify";
 
 /**
- * User-facing copy injected by the host app. Copy stays i18n-agnostic; `copied` is the transient
- * label shown right after the address is copied.
+ * Host-owned verify-hint state. Copy is resolved in this package under
+ * `payTab.request.verifyHint.*`.
  */
-export type RequestReceiveActionLabels = Readonly<{
-  share: string;
-  copy: string;
-  copied: string;
-  save: string;
-  verify: string;
-}>;
-
-export type RequestReceiveLabels = Readonly<{
-  title: string;
-  networkLabel: string;
-  actions: RequestReceiveActionLabels;
-}>;
-
 export type RequestReceiveVerifyHint = Readonly<{
   open: boolean;
-  message: string;
-  gotItLabel: string;
   onGotIt: () => void;
   onShown?: () => void;
 }>;
@@ -148,7 +129,6 @@ export type RequestReceiveIconProps = Readonly<{
 /** Presentation inputs shared by the container props and the view props. */
 type RequestReceiveShell = Readonly<{
   isOpen: boolean;
-  labels: RequestReceiveLabels;
   assetIcon: RequestReceiveIconProps;
   networkIcon?: RequestReceiveIconProps;
   /** Actions rendered, in order. Desktop uses `["save", "copy", "verify"]`. */
@@ -163,5 +143,13 @@ export type RequestReceiveProps = RequestReceiveViewModelParams & RequestReceive
 export type RequestReceiveViewProps = RequestReceiveShell &
   Pick<
     RequestReceiveViewModel,
-    "address" | "addressParts" | "qrPayload" | "onShare" | "onCopy" | "onSave" | "onVerify"
+    | "title"
+    | "networkLabel"
+    | "address"
+    | "addressParts"
+    | "qrPayload"
+    | "onShare"
+    | "onCopy"
+    | "onSave"
+    | "onVerify"
   >;

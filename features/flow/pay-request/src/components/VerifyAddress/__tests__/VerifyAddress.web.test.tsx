@@ -1,24 +1,13 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { i18nWrapper, REQUEST_RESOURCES } from "../../../__tests__/i18nWrapper";
 import { VerifyAddress } from "../VerifyAddress";
-import type { VerifyAddressLabels, VerifyAddressProps } from "../../../types";
-
-const LABELS: VerifyAddressLabels = {
-  introTitle: "Verify your address",
-  introDescription: "To protect against address replacement attacks, verify your address.",
-  verifyCta: "Verify address",
-  successTitle: "Address displayed on the device's Secure Screen",
-  nextStepsLabel: "Next steps",
-  nextStepShare: "Share your address via your desired app",
-  nextStepMatch: "Ensure the shared address matches the one on your Ledger Device.",
-  gotItCta: "Got it",
-};
+import type { VerifyAddressProps } from "../../../types";
 
 function renderVerifyAddress(overrides: Partial<VerifyAddressProps> = {}) {
   const props: VerifyAddressProps = {
     phase: "intro",
-    labels: LABELS,
     page: "Pay",
     onVerify: jest.fn(),
     onGotIt: jest.fn(),
@@ -26,7 +15,10 @@ function renderVerifyAddress(overrides: Partial<VerifyAddressProps> = {}) {
     onTrackEvent: jest.fn(),
     ...overrides,
   };
-  return { props, ...render(<VerifyAddress {...props} />) };
+  return {
+    props,
+    ...render(<VerifyAddress {...props} />, { wrapper: i18nWrapper(REQUEST_RESOURCES) }),
+  };
 }
 
 describe("VerifyAddress (Web)", () => {

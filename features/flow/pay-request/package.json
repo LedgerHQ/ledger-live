@@ -31,6 +31,7 @@
   "dependencies": {
     "@ledgerhq/crypto-icons": "catalog:",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/i18n": "workspace:*",
     "@shared/ui-qr-code": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },

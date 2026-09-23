@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import type { PayRequestTrackEvent, RequestReceiveProps } from "@features/flow-pay-request";
@@ -33,7 +32,6 @@ export function usePayTabRequestReceive(
   onTrackEvent: PayRequestTrackEvent | undefined,
   onVerify: (selection: PayVerifySelection, onDone: () => void) => void,
 ): UsePayTabRequestReceive {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasSeenReceiveVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
   const [isOpen, setIsOpen] = useState(false);
@@ -97,21 +95,6 @@ export function usePayTabRequestReceive(
 
   const saveCard = useSaveRequestReceive(data?.asset.ticker ?? "");
 
-  const labels = useMemo(
-    () => ({
-      title: t("payTab.request.title", { asset: data?.asset.name ?? "" }),
-      networkLabel: t("payTab.request.networkLabel", { network: data?.network ?? "" }),
-      actions: {
-        share: t("payTab.request.actions.share"),
-        copy: t("payTab.request.actions.copy"),
-        copied: t("payTab.request.actions.copied"),
-        save: t("payTab.request.actions.save"),
-        verify: t("payTab.request.actions.verify"),
-      },
-    }),
-    [t, data],
-  );
-
   const requestReceive = useMemo<RequestReceiveProps>(
     () => ({
       isOpen,
@@ -119,7 +102,6 @@ export function usePayTabRequestReceive(
       asset: data?.asset ?? { name: "", ticker: "" },
       network: data?.network ?? "",
       page: REQUEST_PAGE,
-      labels,
       assetIcon: data?.assetIcon ?? { ledgerId: "", ticker: "" },
       networkIcon: data?.networkIcon,
       visibleActions: ["save", "copy", "verify"],
@@ -132,8 +114,6 @@ export function usePayTabRequestReceive(
         ? undefined
         : {
             open: true,
-            message: t("payTab.request.verifyHint.message"),
-            gotItLabel: t("payTab.request.verifyHint.gotIt"),
             onGotIt,
             onShown: onHintShown,
           },
@@ -141,14 +121,12 @@ export function usePayTabRequestReceive(
     [
       isOpen,
       data,
-      labels,
       onCopy,
       saveCard,
       handleVerify,
       onClose,
       onTrackEvent,
       hasSeenReceiveVerifyHint,
-      t,
       onGotIt,
       onHintShown,
     ],

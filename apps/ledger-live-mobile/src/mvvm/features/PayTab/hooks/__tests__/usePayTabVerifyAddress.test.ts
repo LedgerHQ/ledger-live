@@ -2,12 +2,10 @@ import { act, renderHook } from "@tests/test-renderer";
 import { usePayTabVerifyAddress } from "../usePayTabVerifyAddress";
 
 describe("usePayTabVerifyAddress", () => {
-  it("should start hidden with resolved copy", () => {
+  it("should start hidden", () => {
     const { result } = renderHook(() => usePayTabVerifyAddress());
 
     expect(result.current.verifyAddress.phase).toBe("hidden");
-    expect(result.current.verifyAddress.labels.introTitle).toBe("Verify your address");
-    expect(result.current.verifyAddress.labels.verifyCta).toBe("Verify address");
     expect(result.current.dieActive).toBe(false);
   });
 

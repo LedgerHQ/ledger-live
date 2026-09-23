@@ -13,8 +13,6 @@ function setup(overrides: { isOpen?: boolean; verifyHint?: RequestReceiveVerifyH
       onCopy,
       verifyHint: overrides.verifyHint ?? {
         open: true,
-        message: "Verify your address",
-        gotItLabel: "Got it",
         onGotIt,
       },
     }),
@@ -65,8 +63,6 @@ describe("useRequestReceiveView", () => {
     const { result, onClose } = setup({
       verifyHint: {
         open: false,
-        message: "Verify your address",
-        gotItLabel: "Got it",
         onGotIt,
       },
     });
