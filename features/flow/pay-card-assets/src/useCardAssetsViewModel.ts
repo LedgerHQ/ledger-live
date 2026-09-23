@@ -11,6 +11,7 @@ import {
   useCardTransactionsViewModel,
 } from "@features/flow-pay-card-transactions";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
+import { reorderByIndex } from "@shared/ui-list-reorder";
 import type {
   CardAssetDialogState,
   CardAssetRow,
@@ -166,19 +167,16 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     onAddAsset?.();
   }, [onAddAsset]);
 
-  const onReorderAssets = useCallback(
-    async (draggedId: string, targetId: string) => {
-      if (draggedId === targetId || reorderingAssetId !== null) return;
+  const onMoveAsset = useCallback(
+    async (id: string, toIndex: number) => {
+      if (reorderingAssetId !== null) return;
 
-      const draggedIndex = rows.findIndex(row => row.id === draggedId);
-      const targetIndex = rows.findIndex(row => row.id === targetId);
-      if (draggedIndex < 0 || targetIndex < 0) return;
+      const fromIndex = rows.findIndex(row => row.id === id);
+      if (fromIndex < 0 || toIndex < 0 || toIndex >= rows.length || fromIndex === toIndex) return;
 
       const previousOrder = rows.map(row => row.id);
-      const reorderedRows = [...rows];
-      const [draggedRow] = reorderedRows.splice(draggedIndex, 1);
-      reorderedRows.splice(targetIndex, 0, draggedRow);
-      setReorderingAssetId(draggedId);
+      const reorderedRows = reorderByIndex(rows, fromIndex, toIndex);
+      setReorderingAssetId(id);
       setAssetOrder(reorderedRows.map(row => row.id));
 
       try {
@@ -231,8 +229,8 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
-      onAddAssetPress,
-      onReorderAssets,
+      onAddAssetPress: onAddAsset ? onAddAssetPress : undefined,
+      onMoveAsset,
       reorderingAssetId,
     }),
     [
@@ -254,8 +252,9 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
+      onAddAsset,
       onAddAssetPress,
-      onReorderAssets,
+      onMoveAsset,
       reorderingAssetId,
     ],
   );

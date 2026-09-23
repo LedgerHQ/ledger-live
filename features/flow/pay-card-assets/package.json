@@ -35,9 +35,14 @@
     "@features/flow-pay-card-wallets": "workspace:^",
     "@features/platform-pay-analytics": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
-    "@shared/i18n": "workspace:*"
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-list-reorder": "workspace:*"
   },
   "devDependencies": {
+    "@dnd-kit/core": "catalog:",
+    "@dnd-kit/modifiers": "catalog:",
+    "@dnd-kit/sortable": "catalog:",
+    "@dnd-kit/utilities": "catalog:",
     "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
@@ -73,6 +78,10 @@
     "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
+    "@dnd-kit/core": "catalog:",
+    "@dnd-kit/modifiers": "catalog:",
+    "@dnd-kit/sortable": "catalog:",
+    "@dnd-kit/utilities": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
@@ -86,6 +95,18 @@
       "optional": true
     },
     "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "@dnd-kit/core": {
+      "optional": true
+    },
+    "@dnd-kit/modifiers": {
+      "optional": true
+    },
+    "@dnd-kit/sortable": {
+      "optional": true
+    },
+    "@dnd-kit/utilities": {
       "optional": true
     }
   }

@@ -1,4 +1,19 @@
-import React, { useState } from "react";
+import React, { useCallback } from "react";
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { restrictToParentElement, restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   Button,
   Dialog,
@@ -16,7 +31,7 @@ type CardAssetsManageDialogProps = Readonly<{
   rows: readonly CardAssetRow[];
   onClose: () => void;
   onAddAsset?: () => void;
-  onReorder: (draggedId: string, targetId: string) => Promise<void>;
+  onMoveAsset: (id: string, toIndex: number) => Promise<void>;
   reorderingAssetId: string | null;
 }>;
 
@@ -25,11 +40,23 @@ export function CardAssetsManageDialog({
   rows,
   onClose,
   onAddAsset,
-  onReorder,
+  onMoveAsset,
   reorderingAssetId,
 }: CardAssetsManageDialogProps) {
   const { t } = useTranslation();
-  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = useCallback(
+    ({ active, over }: DragEndEvent) => {
+      if (!over || active.id === over.id) return;
+      const toIndex = rows.findIndex(row => row.id === over.id);
+      if (toIndex >= 0) void onMoveAsset(String(active.id), toIndex);
+    },
+    [rows, onMoveAsset],
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()} height="fixed">
@@ -47,21 +74,29 @@ export function CardAssetsManageDialog({
             <p className="body-2 text-muted">{t("payTab.card.assets.manageDialog.description")}</p>
           </div>
           <div className="min-h-0 overflow-x-hidden overflow-y-auto rounded-md bg-surface px-12">
-            {rows.map(row => (
-              <CardAssetsManageRow
-                key={row.id}
-                row={row}
-                isReordering={reorderingAssetId === row.id}
-                isReorderDisabled={reorderingAssetId !== null}
-                onDragStart={() => setDraggedId(row.id)}
-                onDragEnd={() => setDraggedId(null)}
-                onDragOver={event => draggedId && event.preventDefault()}
-                onDrop={() => {
-                  if (draggedId) void onReorder(draggedId, row.id);
-                  setDraggedId(null);
-                }}
-              />
-            ))}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={rows.map(row => row.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {rows.map(row => (
+                  <CardAssetsManageRow
+                    key={row.id}
+                    row={row}
+                    showHandle={rows.length > 1}
+                    isReordering={reorderingAssetId === row.id}
+                    reorderLabel={t("payTab.card.assets.manageDialog.reorder", {
+                      asset: row.name,
+                    })}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           </div>
         </DialogBody>
         <DialogFooter

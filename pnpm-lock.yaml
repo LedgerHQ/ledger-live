@@ -24,6 +24,18 @@ catalogs:
     '@commitlint/types':
       specifier: 21.2.0
       version: 21.2.0
+    '@dnd-kit/core':
+      specifier: 6.3.1
+      version: 6.3.1
+    '@dnd-kit/modifiers':
+      specifier: 9.0.0
+      version: 9.0.0
+    '@dnd-kit/sortable':
+      specifier: 10.0.0
+      version: 10.0.0
+    '@dnd-kit/utilities':
+      specifier: 3.2.2
+      version: 3.2.2
     '@gorhom/bottom-sheet':
       specifier: 5.2.6
       version: 5.2.6
@@ -884,6 +896,18 @@ importers:
       '@devtools/wire':
         specifier: workspace:*
         version: link:../../devtools/wire
+      '@dnd-kit/core':
+        specifier: 'catalog:'
+        version: 6.3.1(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@dnd-kit/modifiers':
+        specifier: 'catalog:'
+        version: 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(react@19.1.4)
+      '@dnd-kit/sortable':
+        specifier: 'catalog:'
+        version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(react@19.1.4)
+      '@dnd-kit/utilities':
+        specifier: 'catalog:'
+        version: 3.2.2(react@19.1.4)
       '@domain/api-aggregated-assets':
         specifier: workspace:*
         version: link:../../domain/api/aggregated-assets
@@ -7154,7 +7178,22 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
+      '@shared/ui-list-reorder':
+        specifier: workspace:*
+        version: link:../../../shared/ui-list-reorder
     devDependencies:
+      '@dnd-kit/core':
+        specifier: 'catalog:'
+        version: 6.3.1(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@dnd-kit/modifiers':
+        specifier: 'catalog:'
+        version: 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(react@19.1.4)
+      '@dnd-kit/sortable':
+        specifier: 'catalog:'
+        version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(react@19.1.4)
+      '@dnd-kit/utilities':
+        specifier: 'catalog:'
+        version: 3.2.2(react@19.1.4)
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.1.59(@ledgerhq/lumen-design-core@0.1.29)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
