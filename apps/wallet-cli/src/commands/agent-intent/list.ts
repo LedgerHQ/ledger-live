@@ -2,6 +2,8 @@ import { defineCommand } from "@bunli/core";
 import { Session } from "../../session/session-store";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput } from "../../output";
+import { writeStderr } from "../../shared/ui";
+import { formatInvalidAgentIntentProfilesWarning } from "../../agent-intent/profile-format";
 
 export default defineCommand({
   name: "list",
@@ -16,6 +18,8 @@ export default defineCommand({
     });
     await out.run(async () => {
       const session = await Session.read();
+      const warning = formatInvalidAgentIntentProfilesWarning(session.invalidAgentIntentProfileIds);
+      if (warning) writeStderr(warning);
       out.agentIntentProfiles(session.agentIntentProfiles);
     });
   },

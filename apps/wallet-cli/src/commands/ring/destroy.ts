@@ -2,7 +2,12 @@ import { defineCommand } from "@bunli/core";
 import { createInterface } from "node:readline";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { Spinner } from "yocto-spinner";
-import { Session, trustchainFromMeta, type TrustchainMeta } from "../../session/session-store";
+import {
+  Session,
+  trustchainFromMeta,
+  withSessionLock,
+  type TrustchainMeta,
+} from "../../session/session-store";
 import {
   loadMemberCredentials,
   deletePrivateKey,
@@ -138,7 +143,7 @@ async function performRemoteDestroy(
 
 // No trustchain but a stray keychain key (e.g. after `session reset` on a corrupt file): no remote
 // to authenticate, so local-wipe — the recovery path `ring init` points here for.
-async function destroyStrayKey(session: Session, out: CommandOutput): Promise<void> {
+async function destroyStrayKey(out: CommandOutput): Promise<void> {
   if (!hasStoredKey()) {
     throw new Error("Nothing to destroy — Ledger Key Ring is not initialized.");
   }
@@ -148,11 +153,25 @@ async function destroyStrayKey(session: Session, out: CommandOutput): Promise<vo
     return;
   }
   trackRingDestroyStarted({ passwordProtected: false });
-  const localWiped = deletePrivateKey();
-  if (localWiped) {
-    session.wipeRing();
-    session.write();
-  }
+  const localWiped = await withSessionLock(async () => {
+    const session = await Session.read();
+    // Re-verify against a fresh read: the confirmation prompt above waited on a human, and another
+    // process could have run `ring init` in that window — wiping now would then destroy a real,
+    // freshly-created ring's only local pointer, not the stray key this command was about.
+    if (session.trustchain) {
+      throw new Error(
+        "Ledger Key Ring was initialized by another process while this destroy was waiting for " +
+          "confirmation. Nothing was changed — re-run `wallet-cli ring destroy` if you still want " +
+          "to tear it down.",
+      );
+    }
+    const wiped = deletePrivateKey();
+    if (wiped) {
+      session.wipeRing();
+      session.write();
+    }
+    return wiped;
+  });
   out.ringDestroy({ remoteSucceeded: false, trustchainDestroyed: false, localWiped });
   trackRingDestroyCompleted({
     remoteSucceeded: false,
@@ -177,7 +196,7 @@ export default defineCommand({
       const session = await Session.read();
       const trustchainMeta = session.trustchain;
       if (!trustchainMeta) {
-        await destroyStrayKey(session, out);
+        await destroyStrayKey(out);
         return;
       }
 
@@ -236,13 +255,35 @@ export default defineCommand({
         );
       }
 
-      const localWiped = deletePrivateKey();
-      // Clear the session pointer only once the key is actually gone; if its removal failed, keep the
-      // metadata so the user can re-run destroy (a stale pointer is harmless by comparison).
-      if (localWiped) {
-        session.wipeRing();
-        session.write();
-      }
+      const localWiped = await withSessionLock(async () => {
+        const fresh = await Session.read();
+        // Re-verify against a fresh read: the remote teardown above took a network round-trip, and
+        // another process could have changed the local ring pointer in that window. Re-initializing
+        // with the SAME device reuses the same rootId (LKRP finds the seed's existing root
+        // trustchain rather than minting a new one) but can still get a different applicationPath
+        // (e.g. a reopened stream on the next index) — so both fields must match, not just rootId,
+        // or wiping now would silently adopt/erase a ring state that isn't the one we just tore down.
+        if (
+          fresh.trustchain &&
+          (fresh.trustchain.rootId !== trustchainMeta.rootId ||
+            fresh.trustchain.applicationPath !== trustchainMeta.applicationPath)
+        ) {
+          throw new Error(
+            "Ledger Key Ring changed locally (re-initialized or rotated) while this destroy was " +
+              "running. The remote teardown above completed, but the local pointer was left " +
+              "untouched since it no longer matches what this destroy started with — nothing local " +
+              "was changed.",
+          );
+        }
+        const wiped = deletePrivateKey();
+        // Clear the session pointer only once the key is actually gone; if its removal failed, keep
+        // the metadata so the user can re-run destroy (a stale pointer is harmless by comparison).
+        if (wiped) {
+          fresh.wipeRing();
+          fresh.write();
+        }
+        return wiped;
+      });
       out.ringDestroy({ remoteSucceeded, trustchainDestroyed, localWiped, memberEjected });
       trackRingDestroyCompleted({
         remoteSucceeded,

@@ -4,10 +4,30 @@ import {
   parseAgentEnrollmentCompletion,
   AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION,
 } from "@ledgerhq/agent-intent-sdk";
-import { Session } from "../../session/session-store";
+import { Session, withSessionLock, type AgentIntentProfileMeta } from "../../session/session-store";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
 import { createCommandOutput } from "../../output";
+
+/** Checked once (fast) before blocking on stdin — a stale `--profile` must fail fast rather than
+ * hang waiting for a payload that will never help — and again (authoritative, against a fresh read)
+ * inside the lock right before writing. */
+function assertCompletableProfile(session: Session, profileId: string): AgentIntentProfileMeta {
+  const profile = session.getAgentIntentProfile(profileId);
+  if (!profile) {
+    throw new Error(
+      `No Agent Intent profile named "${profileId}". Run \`wallet-cli agent-intent enroll ` +
+        `--profile ${profileId} ...\` first.`,
+    );
+  }
+  if (profile.trustchainId) {
+    throw new Error(
+      `Agent Intent profile "${profileId}" is already enrolled (Trustchain ID: ` +
+        `${profile.trustchainId}).`,
+    );
+  }
+  return profile;
+}
 
 export default defineCommand({
   name: "complete",
@@ -32,40 +52,35 @@ export default defineCommand({
         throw new Error("No completion JSON: pass --payload '<json>' or pipe it to stdin.");
       }
 
-      const session = await Session.read();
-      const profile = session.getAgentIntentProfile(flags.profile);
-      if (!profile) {
-        throw new Error(
-          `No Agent Intent profile named "${flags.profile}". Run \`wallet-cli agent-intent enroll ` +
-            `--profile ${flags.profile} ...\` first.`,
-        );
-      }
-      if (profile.trustchainId) {
-        throw new Error(
-          `Agent Intent profile "${flags.profile}" is already enrolled (Trustchain ID: ` +
-            `${profile.trustchainId}).`,
-        );
-      }
+      // Fast, unlocked precheck — see assertCompletableProfile's doc comment.
+      assertCompletableProfile(await Session.read(), flags.profile);
 
       const payload = (flags.payload ?? (await Bun.stdin.text())).trim();
       if (!payload) {
         throw new Error("Completion JSON is empty. Pass --payload '<json>' or pipe it to stdin.");
       }
 
-      const completion = parseAgentEnrollmentCompletion(payload, profile.publicKey);
-      if (
-        completion.version === AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION &&
-        completion.accountAccess.environment !== profile.environment
-      ) {
-        throw new Error(
-          `Completion is for the ${completion.accountAccess.environment} environment but profile ` +
-            `"${flags.profile}" was enrolled against ${profile.environment}.`,
-        );
-      }
-      session.updateAgentIntentProfile(flags.profile, { trustchainId: completion.trustchainId });
-      session.write();
+      const result = await withSessionLock(async () => {
+        const session = await Session.read();
+        const profile = assertCompletableProfile(session, flags.profile);
 
-      out.agentIntentComplete({ profileId: flags.profile, trustchainId: completion.trustchainId });
+        const completion = parseAgentEnrollmentCompletion(payload, profile.publicKey);
+        if (
+          completion.version === AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION &&
+          completion.accountAccess.environment !== profile.environment
+        ) {
+          throw new Error(
+            `Completion is for the ${completion.accountAccess.environment} environment but profile ` +
+              `"${flags.profile}" was enrolled against ${profile.environment}.`,
+          );
+        }
+
+        session.updateAgentIntentProfile(flags.profile, { trustchainId: completion.trustchainId });
+        session.write();
+        return { profileId: flags.profile, trustchainId: completion.trustchainId };
+      });
+
+      out.agentIntentComplete(result);
     });
   },
 });

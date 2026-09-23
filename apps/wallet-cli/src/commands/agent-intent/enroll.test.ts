@@ -3,9 +3,14 @@ import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { installOutputCapture } from "../../shared/ui";
 
 let existingProfile: { profileId: string } | undefined;
+// Set only by the race test below: lets the precheck (1st Session.read) and the locked, authoritative
+// recheck (2nd Session.read) see different state, the way a real concurrent enroll would — every
+// other test leaves this undefined, so both reads keep seeing the same `existingProfile`.
+let existingProfileOnRecheck: { profileId: string } | undefined | "same-as-precheck";
 let keychainHasEntry: boolean;
 let addAgentIntentProfileImpl: (profile: Record<string, unknown>) => void;
 let writeImpl: () => void;
+let sessionReadCalls: number;
 
 const savedSecretKeys = new Set<string>();
 const deletedSecretKeyCalls: string[] = [];
@@ -14,12 +19,23 @@ const realSessionStore = await import("../../session/session-store");
 mock.module("../../session/session-store", () => ({
   ...realSessionStore,
   Session: {
-    read: async () => ({
-      getAgentIntentProfile: (_profileId: string) => existingProfile,
-      addAgentIntentProfile: (profile: Record<string, unknown>) => addAgentIntentProfileImpl(profile),
-      write: () => writeImpl(),
-    }),
+    read: async () => {
+      sessionReadCalls++;
+      const profile =
+        sessionReadCalls === 1 || existingProfileOnRecheck === "same-as-precheck"
+          ? existingProfile
+          : existingProfileOnRecheck;
+      return {
+        getAgentIntentProfile: (_profileId: string) => profile,
+        addAgentIntentProfile: (profile: Record<string, unknown>) =>
+          addAgentIntentProfileImpl(profile),
+        write: () => writeImpl(),
+      };
+    },
   },
+  // Real implementation calls mkdirSync + a real file lock — irrelevant to what these tests check
+  // (the checks/rollback logic), so make it a no-op instead of exercising real file I/O.
+  withSessionLock: async <T>(fn: () => Promise<T> | T) => fn(),
 }));
 
 mock.module("../../key-ring/agent-intent-keychain", () => ({
@@ -55,7 +71,6 @@ type EnrollFlags = {
   "app-url"?: string;
   "expires-in": string;
   environment: "staging" | "production";
-  "bff-url"?: string;
   output?: "human" | "json";
 };
 
@@ -79,6 +94,8 @@ describe("agent-intent enroll", () => {
 
   beforeEach(() => {
     existingProfile = undefined;
+    existingProfileOnRecheck = "same-as-precheck";
+    sessionReadCalls = 0;
     keychainHasEntry = false;
     savedSecretKeys.clear();
     deletedSecretKeyCalls.length = 0;
@@ -99,7 +116,9 @@ describe("agent-intent enroll", () => {
   it("refuses to enroll when a keychain entry already exists but isn't recorded in the session", async () => {
     keychainHasEntry = true;
 
-    await expect(runEnroll()).rejects.toThrow(/keychain entry for profile "test-agent" already exists/);
+    await expect(runEnroll()).rejects.toThrow(
+      /keychain entry for profile "test-agent" already exists/,
+    );
   });
 
   it("rejects an invalid --expires-in before touching the keychain or session", async () => {
@@ -107,6 +126,7 @@ describe("agent-intent enroll", () => {
       /--expires-in "not-a-duration" is invalid/,
     );
     expect(savedSecretKeys.size).toBe(0);
+    expect(sessionReadCalls).toBe(0);
   });
 
   it("rejects an --expires-in beyond the 30 day maximum", async () => {
@@ -155,16 +175,24 @@ describe("agent-intent enroll", () => {
     });
   });
 
-  it("uses the --bff-url override instead of the environment default when given", async () => {
-    let persistedProfile: Record<string, unknown> | undefined;
-    addAgentIntentProfileImpl = profile => {
-      persistedProfile = profile;
-    };
+  it("catches a same-profile race at the locked recheck even though the precheck passed", async () => {
+    // Simulates: nothing existed when this enroll's fast precheck ran, but a concurrent enroll of
+    // the same profile id won the race and landed first — by the time the lock is held and the
+    // authoritative recheck runs, the profile is there. This is the exact race the two-phase
+    // (precheck + locked recheck) design in enroll.ts exists to catch; without it, this test would
+    // pass by not asserting anything meaningful, since a mock returning the same object twice can
+    // never disagree with itself.
+    existingProfileOnRecheck = { profileId: "test-agent" };
 
-    await runEnroll({ "bff-url": "https://custom.example.com/agent-intent" });
+    await expect(runEnroll()).rejects.toThrow(/already exists/);
+    expect(savedSecretKeys.has("test-agent")).toBe(false);
+    expect(sessionReadCalls).toBe(2); // precheck + locked recheck, proving both actually ran
+  });
 
-    expect(persistedProfile).toMatchObject({
-      bffBaseUrl: "https://custom.example.com/agent-intent",
-    });
+  it("rejects an --app-url carrying URL credentials before it could leak into the enrollment URL", async () => {
+    await expect(runEnroll({ "app-url": "https://user:secret@example.com/agent" })).rejects.toThrow(
+      /--app-url must not contain URL credentials/,
+    );
+    expect(savedSecretKeys.size).toBe(0);
   });
 });

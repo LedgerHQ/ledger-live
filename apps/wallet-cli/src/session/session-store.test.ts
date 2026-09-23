@@ -3,7 +3,7 @@ import { YAML } from "bun";
 import { statSync, mkdtempSync, mkdirSync, writeFileSync, chmodSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
-import { generateLabel, getSessionPath, Session } from "./session-store";
+import { generateLabel, getSessionPath, Session, withSessionLock } from "./session-store";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 
 const btcNative: AccountDescriptorV1 = {
@@ -294,6 +294,7 @@ describe("ring-field resilience", () => {
     );
     const session = await Session.read();
     expect(session.agentIntentProfiles.map(p => p.profileId)).toEqual(["good-profile"]);
+    expect(session.invalidAgentIntentProfileIds).toEqual(["missing-fields"]);
   });
 
   it("readForReset preserves agentIntentProfiles even when the file is otherwise corrupt", async () => {
@@ -308,6 +309,23 @@ describe("ring-field resilience", () => {
     const session = await Session.readForReset();
     expect(session.accounts).toHaveLength(0);
     expect(session.agentIntentProfiles.map(p => p.profileId)).toEqual(["trading-bot"]);
+  });
+
+  it("readForReset also reports invalid agentIntentProfiles ids on the ring-salvage path", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [{ label: "bad label with spaces", descriptor: 42 }], // fails schema, forces salvage
+        agentIntentProfiles: [
+          makeAgentIntentProfile({ profileId: "good-profile" }),
+          { profileId: "orphaned-by-corruption" }, // malformed
+        ],
+      }),
+    );
+    const session = await Session.readForReset();
+    expect(session.agentIntentProfiles.map(p => p.profileId)).toEqual(["good-profile"]);
+    expect(session.invalidAgentIntentProfileIds).toEqual(["orphaned-by-corruption"]);
   });
 
   it("still loads accounts when trustchain/domains are malformed (no whole-file failure)", async () => {
@@ -418,5 +436,53 @@ describe("Session.write() permissions", () => {
 
     expect(statSync(stateDirectory).mode & 0o777).toBe(0o700);
     expect(statSync(getSessionPath()).mode & 0o777).toBe(0o600);
+  });
+});
+
+describe("withSessionLock", () => {
+  let tmpDir: string | undefined;
+  let savedEnv: string | undefined;
+
+  afterEach(() => {
+    if (savedEnv === undefined) delete process.env.XDG_STATE_HOME;
+    else process.env.XDG_STATE_HOME = savedEnv;
+    if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("creates the state directory itself on a machine that has never written a session", async () => {
+    savedEnv = process.env.XDG_STATE_HOME;
+    // Deliberately NOT pre-created (unlike useTmpState() elsewhere in this file) — this is the
+    // "fresh machine" precondition: nothing has ever written here, so the app's own directory
+    // under it doesn't exist yet either. NOTE: on win32, stateDir() resolves via LOCALAPPDATA, not
+    // XDG_STATE_HOME (a known, separately-tracked gap — see session-fixture.ts) — so on that
+    // platform this doesn't actually exercise the fresh-machine path, only the assertions below,
+    // against whatever LOCALAPPDATA already has. The real fresh-machine case is exercised in CI
+    // (Linux), where XDG_STATE_HOME is honored.
+    tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-fresh-"));
+    process.env.XDG_STATE_HOME = tmpDir;
+
+    const result = await withSessionLock(() => "ran");
+
+    expect(result).toBe("ran");
+    expect(statSync(dirname(getSessionPath())).isDirectory()).toBe(true);
+  });
+
+  it("serializes two concurrent calls", async () => {
+    savedEnv = process.env.XDG_STATE_HOME;
+    tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-fresh-"));
+    process.env.XDG_STATE_HOME = tmpDir;
+
+    const events: string[] = [];
+    const first = withSessionLock(async () => {
+      events.push("first-start");
+      await new Promise(resolve => setTimeout(resolve, 100));
+      events.push("first-end");
+    });
+    const second = withSessionLock(() => {
+      events.push("second-start");
+    });
+
+    await Promise.all([first, second]);
+    expect(events).toEqual(["first-start", "first-end", "second-start"]);
   });
 });
