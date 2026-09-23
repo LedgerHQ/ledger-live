@@ -6,7 +6,6 @@ type CardAssetsManageFooterProps = Readonly<{
   onAddAsset?: () => void;
 }>;
 
-// Rendered via the bottom sheet's own footer slot (see CardDetailsSheet.native.tsx).
 export function CardAssetsManageFooter({ onAddAsset }: CardAssetsManageFooterProps) {
   const { t } = useTranslation();
 
@@ -15,7 +14,7 @@ export function CardAssetsManageFooter({ onAddAsset }: CardAssetsManageFooterPro
   }
 
   return (
-    <Box lx={{ alignItems: "center", gap: "s12" }}>
+    <Box lx={{ alignItems: "center", gap: "s12", paddingTop: "s16" }}>
       <Text typography="body4" lx={{ color: "muted", textAlign: "center" }}>
         {t("payTab.card.assets.manageDialog.addAssetCaption")}
       </Text>

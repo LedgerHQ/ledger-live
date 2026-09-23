@@ -18,6 +18,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { MenuBurger } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
+import { CardAssetsManageFooter } from "./CardAssetsManageFooter.native";
 import type { CardAssetRow } from "./types";
 
 type AssetRowProps = Readonly<{
@@ -93,12 +94,14 @@ function AssetRow({
 
 type CardAssetsManageDrawerProps = Readonly<{
   rows: readonly CardAssetRow[];
+  onAddAsset?: () => void;
   onMoveAsset: (id: string, toIndex: number) => Promise<void>;
   reorderingAssetIds: ReadonlySet<string>;
 }>;
 
 export function CardAssetsManageDrawer({
   rows,
+  onAddAsset,
   onMoveAsset,
   reorderingAssetIds,
 }: CardAssetsManageDrawerProps) {
@@ -160,7 +163,7 @@ export function CardAssetsManageDrawer({
   );
 
   return (
-    <Box lx={{ gap: "s24", paddingBottom: "s24", flex: 1 }}>
+    <Box lx={{ gap: "s24", paddingBottom: "s24" }}>
       <Box lx={{ gap: "s8" }}>
         <Text typography="heading3SemiBold" lx={{ color: "base" }}>
           {t("payTab.card.assets.manageDialog.title")}
@@ -169,7 +172,7 @@ export function CardAssetsManageDrawer({
           {t("payTab.card.assets.manageDialog.description")}
         </Text>
       </Box>
-      <Box lx={{ backgroundColor: "surface", borderRadius: "md", flex: 1 }}>
+      <Box lx={{ backgroundColor: "surface", borderRadius: "md" }}>
         <DraggableFlatList
           data={rows as CardAssetRow[]}
           keyExtractor={keyExtractor}
@@ -178,9 +181,9 @@ export function CardAssetsManageDrawer({
           onPlaceholderIndexChange={setDropTargetIndex}
           onDragEnd={handleDragEnd}
           onRelease={handleRelease}
-          containerStyle={{ flex: 1 }}
         />
       </Box>
+      <CardAssetsManageFooter onAddAsset={onAddAsset} />
     </Box>
   );
 }

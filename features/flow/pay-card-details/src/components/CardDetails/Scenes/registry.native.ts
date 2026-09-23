@@ -13,6 +13,6 @@ export const CARD_DETAILS_SCENES: Record<
   transaction: { sizing: "full", hasBackButton: true },
   assetDetails: { sizing: "full", hasBackButton: true },
   assetWithdraw: { sizing: "dynamic", hasBackButton: true },
-  assetsManage: { sizing: "full", hasBackButton: true },
+  assetsManage: { sizing: "dynamic", hasBackButton: true },
   assetTransaction: { sizing: "full", hasBackButton: true },
 };

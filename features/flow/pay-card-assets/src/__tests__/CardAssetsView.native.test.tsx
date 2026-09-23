@@ -156,10 +156,13 @@ describe("CardAssetsView (native)", () => {
     expect(onManagePress).toHaveBeenCalledTimes(1);
   });
 
-  it("should show managed assets", () => {
+  it("should show managed assets and add another asset", async () => {
+    const user = userEvent.setup();
+    const onAddAsset = jest.fn();
     render(
       <CardAssetsManageDrawer
         rows={ready.rows}
+        onAddAsset={onAddAsset}
         onMoveAsset={jest.fn()}
         reorderingAssetIds={new Set()}
       />,
@@ -169,6 +172,25 @@ describe("CardAssetsView (native)", () => {
     expect(screen.getByText(CARD_ASSETS_COPY.manageDialogTitle)).toBeVisible();
     expect(screen.getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
     expect(screen.getByText("USD Coin")).toBeVisible();
+    expect(screen.getByText(CARD_ASSETS_COPY.addAssetCaption)).toBeVisible();
+
+    await user.press(screen.getByText(CARD_ASSETS_COPY.addAsset));
+
+    expect(onAddAsset).toHaveBeenCalledTimes(1);
+  });
+
+  it("should hide the add asset action when the host does not provide it", () => {
+    render(
+      <CardAssetsManageDrawer
+        rows={ready.rows}
+        onMoveAsset={jest.fn()}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    expect(screen.queryByText(CARD_ASSETS_COPY.addAssetCaption)).not.toBeOnTheScreen();
+    expect(screen.queryByText(CARD_ASSETS_COPY.addAsset)).not.toBeOnTheScreen();
   });
 
   it("should move a wallet up in funding order via the handle's accessibility action", () => {
