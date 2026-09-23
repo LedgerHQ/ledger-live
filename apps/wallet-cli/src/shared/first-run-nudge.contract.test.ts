@@ -3,8 +3,8 @@ import { existsSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { runCli } from "../../testing/cli-runner";
-import { APP_NAME } from "../../session/session-store";
+import { runCli } from "../testing/cli-runner";
+import { APP_NAME } from "../session/session-store";
 
 let tmpDir: string | undefined;
 afterEach(async () => {

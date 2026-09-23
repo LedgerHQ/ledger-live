@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
-import { MockServer } from "../../../testing/mock-server";
-import type { Route } from "../../../testing/mock-server";
-import { runCli } from "../../../testing/cli-runner";
-import { makeSessionDir } from "../../../testing/session-fixture";
-import { ETH_SYNC_ROUTES } from "../../../testing/eth-sync-routes";
+import { MockServer } from "../../testing/mock-server";
+import type { Route } from "../../testing/mock-server";
+import { runCli } from "../../testing/cli-runner";
+import { makeSessionDir } from "../../testing/session-fixture";
+import { ETH_SYNC_ROUTES } from "../../testing/eth-sync-routes";
 import {
   MOCK_ETH_DESCRIPTOR,
   MOCK_ETH_ADDRESS,
@@ -11,7 +11,7 @@ import {
   MOCK_SOL_DESCRIPTOR,
   MOCK_SOL_ADDRESS,
   MOCK_BTC_DESCRIPTOR,
-} from "../../../testing/constants";
+} from "../../testing/constants";
 
 const VAULT = {
   id: "usdc-vault",

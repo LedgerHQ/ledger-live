@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from "bun:test";
-import { MockServer } from "../../../testing/mock-server";
-import { runCli } from "../../../testing/cli-runner";
-import { makeSessionDir } from "../../../testing/session-fixture";
-import { ETH_DESCRIPTOR } from "../../../testing/constants";
+import { MockServer } from "../../testing/mock-server";
+import { runCli } from "../../testing/cli-runner";
+import { makeSessionDir } from "../../testing/session-fixture";
+import { ETH_DESCRIPTOR } from "../../testing/constants";
 
 /** Minimal `RawQuote` row for `/quote` — enough for `normalizeQuote` + `buildQuoteDetails`. */
 const MOCK_QUOTE_ROW = {
