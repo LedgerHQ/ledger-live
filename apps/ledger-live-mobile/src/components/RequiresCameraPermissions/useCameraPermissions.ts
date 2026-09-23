@@ -5,8 +5,11 @@ import { AppState, Linking } from "react-native";
 
 export default function useCameraPermissions() {
   const { hasPermission, requestPermission: requestVisionPermission } = useCameraPermission();
-  const [firstAutomaticRequestCompleted, setFirstAutomaticRequestCompleted] =
-    useState<boolean>(false);
+  // Android opens the system permission screen even for a granted permission, which some devices
+  // show over the whole app.
+  const [firstAutomaticRequestCompleted, setFirstAutomaticRequestCompleted] = useState(
+    () => Camera.getCameraPermissionStatus() === "granted",
+  );
   const [permissionStatus, setPermissionStatus] = useState<{
     granted: boolean;
     canAskAgain: boolean;
@@ -36,7 +39,9 @@ export default function useCameraPermissions() {
   }, [requestVisionPermission, isMounted]);
 
   useEffect(() => {
-    requestPermission().then(() => setFirstAutomaticRequestCompleted(true));
+    if (!firstAutomaticRequestCompleted) {
+      requestPermission().then(() => setFirstAutomaticRequestCompleted(true));
+    }
     // only run this once on mount
   }, []); // oxlint-disable-line react-hooks/exhaustive-deps
 

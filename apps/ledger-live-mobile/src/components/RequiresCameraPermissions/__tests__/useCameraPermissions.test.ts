@@ -32,12 +32,31 @@ describe("useCameraPermissions", () => {
     jest.mocked(Camera.getCameraPermissionStatus).mockReturnValue("granted");
   });
 
-  it("should request permission on mount", async () => {
+  it("should request permission on mount when it is not granted", async () => {
+    jest.mocked(Camera.getCameraPermissionStatus).mockReturnValue("not-determined");
+    const requestPermission = jest.fn(() => Promise.resolve(true));
+    jest.mocked(useCameraPermission).mockReturnValue({ hasPermission: false, requestPermission });
+
     const { result } = renderHook(() => useCameraPermissions());
 
     await waitFor(() => {
       expect(result.current.firstAutomaticRequestCompleted).toBe(true);
     });
+    expect(requestPermission).toHaveBeenCalledTimes(1);
+    expect(result.current.permission.granted).toBe(true);
+  });
+
+  it("should not request permission on mount when it is already granted", async () => {
+    const requestPermission = jest.fn(() => Promise.resolve(true));
+    jest.mocked(useCameraPermission).mockReturnValue({ hasPermission: true, requestPermission });
+
+    const { result } = renderHook(() => useCameraPermissions());
+
+    await waitFor(() => {
+      expect(result.current.firstAutomaticRequestCompleted).toBe(true);
+    });
+    expect(requestPermission).not.toHaveBeenCalled();
+    expect(result.current.permission.granted).toBe(true);
   });
 
   it("should return permission state", async () => {
@@ -121,6 +140,7 @@ describe("useCameraPermissions", () => {
   });
 
   it("should handle permission denied on request", async () => {
+    jest.mocked(Camera.getCameraPermissionStatus).mockReturnValue("denied");
     jest.mocked(useCameraPermission).mockReturnValue({
       hasPermission: false,
       requestPermission: jest.fn(() => Promise.resolve(false)),
@@ -205,6 +225,7 @@ describe("useCameraPermissions", () => {
   });
 
   it("should use hasPermission fallback when permissionStatus is null initially", () => {
+    jest.mocked(Camera.getCameraPermissionStatus).mockReturnValue("not-determined");
     jest.mocked(useCameraPermission).mockReturnValue({
       hasPermission: false,
       requestPermission: jest.fn(() => new Promise(() => {})),
@@ -217,6 +238,7 @@ describe("useCameraPermissions", () => {
   });
 
   it("should return contextValue with null permissionGranted when permission is false", async () => {
+    jest.mocked(Camera.getCameraPermissionStatus).mockReturnValue("denied");
     jest.mocked(useCameraPermission).mockReturnValue({
       hasPermission: false,
       requestPermission: jest.fn(() => Promise.resolve(false)),
