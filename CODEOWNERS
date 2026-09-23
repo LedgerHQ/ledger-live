@@ -342,7 +342,6 @@ apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioPerpsEnt
 # wallet-cli
 apps/wallet-cli/                                                              @ledgerhq/agentic-core
 apps/wallet-cli/src/commands/swap/                                            @ledgerhq/ptx @ledgerhq/agentic-core
-apps/wallet-cli/src/test/commands/swap/                                       @ledgerhq/ptx @ledgerhq/agentic-core
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
