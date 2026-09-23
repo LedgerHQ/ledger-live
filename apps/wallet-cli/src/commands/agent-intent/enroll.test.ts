@@ -2,14 +2,6 @@ import "../../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { installOutputCapture } from "../../shared/ui";
 
-/**
- * `agent-intent enroll` writes to two places that must stay consistent: the OS keychain (secret
- * key) and the session file (profile metadata). If the session write fails after the keychain
- * write already succeeded, the keychain entry must be rolled back — otherwise a retry with the
- * same --profile id hits "keychain entry exists but isn't recorded in the session" forever. This
- * rollback (added after the Opus review pass) previously had zero test coverage.
- */
-
 let existingProfile: { profileId: string } | undefined;
 let keychainHasEntry: boolean;
 let addAgentIntentProfileImpl: (profile: Record<string, unknown>) => void;
