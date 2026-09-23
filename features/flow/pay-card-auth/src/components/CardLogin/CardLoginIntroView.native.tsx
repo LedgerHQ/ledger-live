@@ -13,7 +13,7 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import heroImage from "./payCardLoginIntro.webp";
 import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 
-const FILL_STYLE = { flex: 1 } as const;
+const FILL_STYLE = { width: "100%", height: "100%" } as const;
 
 const HERO_ASPECT_RATIO = 1028 / 576;
 
@@ -61,6 +61,7 @@ export function CardLoginIntroView({
                   source={heroImage as unknown as ImageSourcePropType}
                   resizeMode="cover"
                   style={FILL_STYLE}
+                  testID="pay-card-login-intro-hero-image"
                 />
               </Box>
               <Text accessibilityRole="header" typography="heading3SemiBold" lx={{ color: "base" }}>

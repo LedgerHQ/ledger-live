@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
 import { CardLoginIntroView } from "../CardLoginIntroView.native";
 
@@ -105,6 +105,14 @@ describe("CardLoginIntroView (Native)", () => {
     expect(screen.getByTestId("pay-card-login-intro-hero").props.lx).toEqual(
       expect.objectContaining({ aspectRatio: 1028 / 576 }),
     );
+  });
+
+  it("fits the hero image to the hero instead of its intrinsic size", () => {
+    renderIntro();
+
+    expect(
+      StyleSheet.flatten(screen.getByTestId("pay-card-login-intro-hero-image").props.style),
+    ).toEqual(expect.objectContaining({ width: "100%", height: "100%" }));
   });
 
   it("renders one row per icon", () => {
