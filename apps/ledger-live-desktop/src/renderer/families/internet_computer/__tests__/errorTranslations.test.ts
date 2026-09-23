@@ -1,48 +1,13 @@
+import * as icpErrors from "@ledgerhq/live-common/families/internet_computer/errors";
 import en from "../../../../../static/i18n/en/app.json";
 
 /**
- * Every error the ICP bridge can put on a transaction status, plus the ones broadcast throws.
+ * Every error the ICP coin module exports can reach the user, so each needs copy of its own.
  *
  * TranslatedError falls back to `errors.generic`, whose title is `"{{message}}"` — so a missing key
- * does not fail loudly, it shows the class name to the user. Mirrors `coin-internet_computer/errors.ts`.
+ * does not fail loudly, it shows the class name to the user.
  */
-const REACHABLE_ERRORS = [
-  "InvalidMemoICP",
-  "NotEnoughTransferAmount",
-  "ICPDissolveDelayLTMin",
-  "ICPDissolveDelayGTMax",
-  "ICPDissolveDelayLTCurrent",
-  "ICPInvalidDissolveDelayIncrease",
-  "ICPNeuronNotFound",
-  "ICPInvalidHotKey",
-  "ICPHotKeyAlreadyExists",
-  "ICPHotKeyIsController",
-  "ICPSplitNotAllowed",
-  "ICPSpawnNotAllowed",
-  "ICPStakeMaturityNotAllowed",
-  "ICPFollowTopicNotAllowed",
-  "ICPTooManyFollowees",
-  "ICPInvalidFolloweeId",
-  "ICPDuplicateFollowee",
-  "ICPFolloweeIsSelf",
-  "ICPStartDissolvingNotAllowed",
-  "ICPStopDissolvingNotAllowed",
-  "ICPDisburseNotAllowed",
-  "ICPTooManyHotKeys",
-  "ICPTopUpBelowMinimumStake",
-  "ICPStakeNotRefreshed",
-  "ICPStakeMemoNotRecoverable",
-  "ICPCallUnconfirmed",
-  "ICPNeuronsNotRead",
-  "ICPGovernanceRejected",
-  "ICPCallRejected",
-  "ICPNodeRefused",
-  "ICPInvalidPercentage",
-  // getTransactionStatus assigns these to `warnings.staking`, a slot the generic send flow does not
-  // read. The family's own SendAmountFields renders it, which is what makes them reachable.
-  "ICPCreateNeuronWarning",
-  "ICPIncreaseStakeWarning",
-];
+const REACHABLE_ERRORS = Object.values(icpErrors).map(ErrorClass => new ErrorClass().name);
 
 // Through `unknown` because the block is not uniform: a few entries carry a null description, and
 // others nest an object under `list`.
