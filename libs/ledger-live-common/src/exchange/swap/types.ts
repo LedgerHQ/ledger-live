@@ -211,6 +211,9 @@ type SwapStateRequest = {
   payoutAddress?: string;
   sponsored?: boolean;
   flags?: FeatureFlags;
+  exchangeAppVersion?: string;
+  signingAppName?: string;
+  signingAppVersion?: string;
 }>;
 
 export type SwapStateAcceptedRequest = SwapStateRequest & {

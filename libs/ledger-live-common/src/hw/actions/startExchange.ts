@@ -1,5 +1,5 @@
 import { Observable, of, concat } from "rxjs";
-import { scan, tap } from "rxjs/operators";
+import { map, scan, tap } from "rxjs/operators";
 import { useEffect, useState, useMemo } from "react";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import type { Action, Device } from "./types";
@@ -14,6 +14,9 @@ import { isSwapDisableAppsInstall } from "../../exchange/swap/utils/isIntegratio
 export type StartExchangeSuccessResult = {
   nonce: string;
   device: Device;
+  exchangeAppVersion?: string;
+  signingAppName?: string;
+  signingAppVersion?: string;
 };
 
 export type StartExchangeErrorResult = {
@@ -77,10 +80,7 @@ const reducer = (state: State, e: ExchangeRequestEvent) => {
     case "start-exchange-result":
       return {
         ...state,
-        startExchangeResult: {
-          nonce: e.startExchangeResult.nonce,
-          device: e.startExchangeResult.device,
-        },
+        startExchangeResult: e.startExchangeResult,
         isLoading: false,
       };
   }
@@ -160,7 +160,11 @@ export const createAction = (
 
     const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
 
-    const { device, opened, error, appAndVersion } = appState;
+    const { device, opened, error, appAndVersion, installedAppVersions } = appState;
+    const signingAppName = mainFromAccount?.currency?.managerAppName || undefined;
+    const signingAppVersion = signingAppName
+      ? installedAppVersions?.find(app => app.name === signingAppName)?.version
+      : undefined;
 
     const hasError = error || state.error;
     useEffect(() => {
@@ -182,6 +186,21 @@ export const createAction = (
         }),
       )
         .pipe(
+          map(event =>
+            event.type === "start-exchange-result"
+              ? {
+                  ...event,
+                  startExchangeResult: {
+                    ...event.startExchangeResult,
+                    ...(appAndVersion?.version
+                      ? { exchangeAppVersion: appAndVersion.version }
+                      : {}),
+                    ...(signingAppName ? { signingAppName } : {}),
+                    ...(signingAppVersion ? { signingAppVersion } : {}),
+                  },
+                }
+              : event,
+          ),
           tap(e => {
             log("actions-startExchange-event", JSON.stringify(e));
           }),
@@ -191,7 +210,17 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [exchange, device, opened, exchangeType, hasError, appAndVersion, provider]);
+    }, [
+      exchange,
+      device,
+      opened,
+      exchangeType,
+      hasError,
+      appAndVersion,
+      provider,
+      signingAppName,
+      signingAppVersion,
+    ]);
 
     return {
       ...appState,

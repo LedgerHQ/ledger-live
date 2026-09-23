@@ -49,6 +49,14 @@ function createSwapIntentHashes({
 const getWallet40Header = (flags?: FeatureFlags): Record<string, string> =>
   flags?.wallet40Ux ? { "x-ledger-client-v4-ux": "true" } : {};
 
+function definedStringFields(fields: Record<string, string | undefined>): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(fields)) {
+    if (value) result[key] = value;
+  }
+  return result;
+}
+
 export const postSwapAccepted: PostSwapAccepted = async ({
   provider,
   swapId = "",
@@ -112,6 +120,9 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   payoutAddress,
   data,
   flags,
+  exchangeAppVersion,
+  signingAppName,
+  signingAppVersion,
   ...rest
 }) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
@@ -153,6 +164,11 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       fromAccountAddress,
       maybeSeedMatch: seedIdFrom === seedIdTo, // Only true if both accounts are from the same seed and from the same chain type
       data,
+      ...definedStringFields({
+        exchangeAppVersion,
+        signingAppName,
+        signingAppVersion,
+      }),
       ...rest,
     };
 

@@ -195,7 +195,11 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                 ...exchangeParams,
                 exchangeType: ExchangeType[exchangeParams.exchangeType],
                 onResult: result => {
-                  onSuccess(result.nonce, result.device);
+                  onSuccess(result.nonce, result.device, {
+                    exchangeAppVersion: result.exchangeAppVersion,
+                    signingAppName: result.signingAppName,
+                    signingAppVersion: result.signingAppVersion,
+                  });
                 },
                 onCancel: cancelResult => {
                   onCancel(cancelResult.error, cancelResult.device);

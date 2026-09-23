@@ -121,13 +121,20 @@ export async function executeSwap(
       ? toParentAccount.freshAddress
       : (toAccount as Account).freshAddress;
 
+    let exchangeAppVersion: string | undefined;
+    let signingAppName: string | undefined;
+    let signingAppVersion: string | undefined;
+
     // Step 1: Open the drawer and open exchange app
     const startExchange = async () => {
       return new Promise<{ transactionId: string; device?: ExchangeStartResult["device"] }>(
         (resolve, reject) => {
           uiExchangeStart({
             exchangeParams: exchangeStartParams,
-            onSuccess: (nonce, device) => {
+            onSuccess: (nonce, device, meta) => {
+              exchangeAppVersion = meta?.exchangeAppVersion;
+              signingAppName = meta?.signingAppName;
+              signingAppVersion = meta?.signingAppVersion;
               tracking.startExchangeSuccess(trackingParams);
               resolve({ transactionId: nonce, device });
             },
@@ -312,6 +319,9 @@ export async function executeSwap(
             fromAccountAddress,
             toAccountAddress,
             fromAmount,
+            exchangeAppVersion,
+            signingAppName,
+            signingAppVersion,
             flags,
           });
 
@@ -353,6 +363,9 @@ export async function executeSwap(
             refundAddress,
             payoutAddress,
             fromAmount,
+            exchangeAppVersion,
+            signingAppName,
+            signingAppVersion,
             seedIdFrom: mainFromAccount.seedIdentifier,
             seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
             data: (transaction as EvmTransaction).data

@@ -159,3 +159,41 @@ describe("postSwapState sends computed hashes when sha256 works", () => {
     expect(request.data.swapIntentWithoutProvider).toBe(expectedHex);
   });
 });
+
+describe("postSwapCancelled app versions", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedSha256.mockReturnValue(Buffer.from("fakehash"));
+  });
+
+  it("sends exchange and signing app versions when provided", async () => {
+    await postSwapCancelled({
+      provider: "changelly",
+      swapId: "swap-id",
+      exchangeAppVersion: "3.5.0",
+      signingAppName: "Ethereum",
+      signingAppVersion: "1.12.4",
+    });
+
+    const request = mockedNetwork.mock.calls[0][0] as {
+      data: Record<string, unknown>;
+    };
+    expect(request.data.exchangeAppVersion).toBe("3.5.0");
+    expect(request.data.signingAppName).toBe("Ethereum");
+    expect(request.data.signingAppVersion).toBe("1.12.4");
+  });
+
+  it("omits exchange and signing app fields when unavailable", async () => {
+    await postSwapCancelled({
+      provider: "changelly",
+      swapId: "swap-id",
+    });
+
+    const request = mockedNetwork.mock.calls[0][0] as {
+      data: Record<string, unknown>;
+    };
+    expect(request.data).not.toHaveProperty("exchangeAppVersion");
+    expect(request.data).not.toHaveProperty("signingAppName");
+    expect(request.data).not.toHaveProperty("signingAppVersion");
+  });
+});
