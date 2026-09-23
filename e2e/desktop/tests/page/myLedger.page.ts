@@ -102,15 +102,15 @@ export class MyLedgerPage extends AppPage {
     );
   }
 
+  /** Row ids, not the action buttons: an installed app in the catalog renders neither. */
   @step("Expect $0 to be listed in the catalog")
   async expectAppInCatalog(app: AppInfos) {
-    await expect(this.installButton(app).or(this.uninstallButton(app))).toBeVisible();
+    await expect.poll(() => this.listedAppNames()).toContain(app.name);
   }
 
   @step("Expect $0 not to be listed")
   async expectAppNotListed(app: AppInfos) {
-    await expect(this.installButton(app)).toBeHidden();
-    await expect(this.uninstallButton(app)).toBeHidden();
+    await expect.poll(() => this.listedAppNames()).not.toContain(app.name);
   }
 
   @step("Install $0")

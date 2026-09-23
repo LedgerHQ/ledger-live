@@ -32,9 +32,9 @@ test.describe("My Ledger — app catalog", () => {
       await app.myLedger.searchCatalog("");
 
       await app.myLedger.filterCatalogBy("not_installed");
-      expect(await app.myLedger.listedAppNames()).not.toContain(AppInfos.BITCOIN.name);
+      await app.myLedger.expectAppNotListed(AppInfos.BITCOIN);
       await app.myLedger.filterCatalogBy("all");
-      expect(await app.myLedger.listedAppNames()).toContain(AppInfos.BITCOIN.name);
+      await app.myLedger.expectAppInCatalog(AppInfos.BITCOIN);
 
       await app.myLedger.sortCatalogBy("name_asc");
       const ascending = await app.myLedger.listedAppNames();
