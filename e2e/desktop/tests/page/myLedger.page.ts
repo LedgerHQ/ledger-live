@@ -6,6 +6,18 @@ import type { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 type CatalogFilter = "all" | "not_installed" | "supported";
 type CatalogSort = "marketcap_desc" | "name_asc" | "name_desc";
 
+const FILTER_LABEL: Record<CatalogFilter, string> = {
+  all: "All",
+  not_installed: "Not installed",
+  supported: "Ledger Wallet supported",
+};
+
+const SORT_LABEL: Record<CatalogSort, string> = {
+  marketcap_desc: "Market cap",
+  name_asc: "Name A-Z",
+  name_desc: "Name Z-A",
+};
+
 export class MyLedgerPage extends AppPage {
   private readonly storageCard = this.page.getByTestId("device-storage-card");
   private readonly deviceOptions = this.page.getByTestId("device-options-container");
@@ -79,19 +91,19 @@ export class MyLedgerPage extends AppPage {
     await this.installedSearch.fill(query);
   }
 
-  /** The dropdown closing is what confirms the option was taken, not just clicked. */
+  /** The trigger shows the committed value, so this waits out the 100ms debounce on the list. */
   @step("Filter the catalog by $0")
   async filterCatalogBy(key: CatalogFilter) {
     await this.filterButton.click();
     await this.filterOption(key).click();
-    await expect(this.filterOption(key)).toBeHidden();
+    await expect(this.filterButton).toContainText(FILTER_LABEL[key]);
   }
 
   @step("Sort the catalog by $0")
   async sortCatalogBy(key: CatalogSort) {
     await this.sortButton.click();
     await this.sortOption(key).click();
-    await expect(this.sortOption(key)).toBeHidden();
+    await expect(this.sortButton).toContainText(SORT_LABEL[key]);
   }
 
   /** Row ids are the only DOM-ordered handle the list exposes. */
