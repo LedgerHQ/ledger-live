@@ -15703,6 +15703,15 @@ importers:
         specifier: 'catalog:'
         version: 6.19.0
     devDependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-fiat
+      '@domain/entity-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/entity/market-countervalues
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -64316,9 +64325,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
