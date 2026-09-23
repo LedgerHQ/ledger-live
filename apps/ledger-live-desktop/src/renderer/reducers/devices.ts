@@ -7,7 +7,7 @@ import { createSelector } from "@reduxjs/toolkit";
 
 // Maps the SPECULOS_DEVICE env var to a device model when running against a Speculos simulator.
 // Kept local so production code does not depend on E2E test-support packages.
-function getSpeculosModel(): DeviceModelId {
+export function getSpeculosModel(): DeviceModelId {
   switch (process.env.SPECULOS_DEVICE) {
     case "nanoS":
       return DeviceModelId.nanoS;

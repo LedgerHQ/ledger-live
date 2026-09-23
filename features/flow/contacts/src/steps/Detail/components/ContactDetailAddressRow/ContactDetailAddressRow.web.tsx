@@ -42,8 +42,12 @@ export function ContactDetailAddressRow({
           shape="circle"
         />
         <ListItemContent>
-          <ListItemTitle>{row.label}</ListItemTitle>
-          <ListItemDescription>{truncateContactAddress(row.address)}</ListItemDescription>
+          <ListItemTitle data-testid={`contacts-detail-address-${row.addressId}-label`}>
+            {row.label}
+          </ListItemTitle>
+          <ListItemDescription data-testid={`contacts-detail-address-${row.addressId}-value`}>
+            {truncateContactAddress(row.address)}
+          </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>

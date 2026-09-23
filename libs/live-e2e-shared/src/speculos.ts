@@ -922,8 +922,29 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   }
 });
 
+/**
+ * The Ethereum app only draws a contact review from its idle screen. Right on
+ * "Ethereum app is ready" opens Settings, and the registration APDU is dropped.
+ */
+async function waitUntilScreenLeavesIdle(maxAttempts = 60): Promise<void> {
+  const port = getEnv("SPECULOS_API_PORT");
+  let texts = "";
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    texts = await fetchCurrentScreenTexts(port);
+    if (!texts.toLowerCase().includes("is ready")) {
+      return;
+    }
+    await sleep(SCREEN_POLL_INTERVAL_MS);
+  }
+
+  throw new Error(
+    `Device stayed on "${texts}" after ${maxAttempts} attempts. The contact review never started.`,
+  );
+}
+
 export const confirmContactAction = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
+  await waitUntilScreenLeavesIdle();
   await pressUntilTextFound(DeviceLabels.CONFIRM);
 
   if (isTouchDevice()) {

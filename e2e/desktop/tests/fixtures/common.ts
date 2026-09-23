@@ -188,9 +188,21 @@ export const test = base.extend<TestFixtures>({
       unregisterAllTransportModules();
 
       if (cliCommandsOnApp?.length) {
+        const commandsByApp = new Map<string, { app: AppInfos; cmds: CliCommand[] }>();
         for (const { app, cmd } of cliCommandsOnApp) {
+          const existing = commandsByApp.get(app.name);
+          if (existing) {
+            existing.cmds.push(cmd);
+          } else {
+            commandsByApp.set(app.name, { app, cmds: [cmd] });
+          }
+        }
+
+        for (const { app, cmds } of commandsByApp.values()) {
           currentDevice = await launchSpeculos(app.name, testInfo.title);
-          await executeCliCommand(cmd, userdataDestinationPath);
+          for (const cmd of cmds) {
+            await executeCliCommand(cmd, userdataDestinationPath);
+          }
           await cleanSpeculos(currentDevice);
         }
       }
