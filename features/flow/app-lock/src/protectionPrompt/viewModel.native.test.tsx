@@ -1,5 +1,5 @@
 import type { BiometricsAvailability } from "@features/platform-app-lock";
-import { renderHook } from "@testing-library/react-native";
+import { act, renderHook } from "@testing-library/react-native";
 import { useProtectionPromptViewModel } from "./viewModel";
 import type { UseProtectionPromptViewModelOptions } from "./types";
 
@@ -83,5 +83,46 @@ describe("asking a user to protect the app", () => {
 
     expect(onCreatePassword).toHaveBeenCalledTimes(1);
     expect(onEnableBiometrics).not.toHaveBeenCalled();
+  });
+
+  it("reports the enable as in progress until the system prompt settles", async () => {
+    let finish: () => void = () => undefined;
+    const onEnableBiometrics = jest.fn(
+      () =>
+        new Promise<void>(resolve => {
+          finish = resolve;
+        }),
+    );
+    const { result } = renderViewModel({ onEnableBiometrics });
+
+    expect(result.current.isConfirming).toBe(false);
+
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    expect(result.current.isConfirming).toBe(true);
+
+    await act(async () => {
+      finish();
+    });
+
+    expect(result.current.isConfirming).toBe(false);
+  });
+
+  it("opens a single system prompt however many times it is pressed meanwhile", async () => {
+    const onEnableBiometrics = jest.fn(() => new Promise<void>(() => undefined));
+    const { result } = renderViewModel({ onEnableBiometrics });
+
+    act(() => {
+      result.current.onConfirm();
+      result.current.onConfirm();
+    });
+
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    expect(onEnableBiometrics).toHaveBeenCalledTimes(1);
   });
 });

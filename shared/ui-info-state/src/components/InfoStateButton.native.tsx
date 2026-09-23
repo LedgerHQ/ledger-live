@@ -16,6 +16,7 @@ export function InfoStateButton({
       lx={{ width: "full" }}
       onPress={cta.onPress}
       disabled={cta.disabled}
+      loading={cta.loading}
       testID={cta.testID}
     >
       {cta.label}
