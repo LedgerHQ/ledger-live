@@ -1,5 +1,6 @@
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import type { StakingResources } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { isAccountEmpty } from "./helpers";
 import { txToOps } from "./logic/history/txToOps";
@@ -58,6 +59,15 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     publicKey: rest?.publicKey ?? initialAccount?.cosmosResources?.publicKey ?? "",
   };
 
+  const stakingResources: StakingResources = {
+    delegations,
+    redelegations,
+    unbondings,
+    delegatedBalance,
+    pendingRewardsBalance,
+    unbondingBalance,
+  };
+
   const shape = {
     id: accountId,
     xpub: address,
@@ -66,6 +76,7 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     operationsCount: operations.length,
     blockHeight,
     cosmosResources,
+    stakingResources,
     used: !isAccountEmpty({ balance, cosmosResources }),
   };
 

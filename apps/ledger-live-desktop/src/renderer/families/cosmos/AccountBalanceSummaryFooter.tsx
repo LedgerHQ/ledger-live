@@ -11,9 +11,9 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { CosmosAPI } from "@ledgerhq/coin-cosmos/network/Cosmos";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import { type CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { CosmosAPI } from "@ledgerhq/live-common/families/cosmos/network";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
@@ -85,11 +85,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   const unit = useAccountUnit(account);
   if (account.type !== "Account") return null;
-  const { spendableBalance: _spendableBalance, cosmosResources } = account;
-  const {
-    delegatedBalance: _delegatedBalance = new BigNumber(0),
-    unbondingBalance: _unbondingBalance = new BigNumber(0),
-  } = cosmosResources || {};
   const formatConfig = {
     disableRounding: false,
     alwaysShowSign: false,
@@ -97,9 +92,17 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     discreet,
     locale,
   };
-  const spendableBalance = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
-  const delegatedBalance = formatCurrencyUnit(unit, _delegatedBalance, formatConfig);
-  const unbondingBalance = formatCurrencyUnit(unit, _unbondingBalance, formatConfig);
+  const spendableBalance = formatCurrencyUnit(unit, account.spendableBalance, formatConfig);
+  const delegatedBalance = formatCurrencyUnit(
+    unit,
+    account.stakingResources.delegatedBalance,
+    formatConfig,
+  );
+  const unbondingBalance = formatCurrencyUnit(
+    unit,
+    account.stakingResources.unbondingBalance,
+    formatConfig,
+  );
   const dydxUsdcRewardsBalance = formatCurrencyUnit(usdcUnit, dydxUsdcRewards, formatConfig);
 
   const isDyDx = account.currency.id === "dydx";
@@ -154,7 +157,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           </AmountValue>
         </BalanceDetail>
       )}
-      {!disableDelegation && _unbondingBalance.gt(0) && (
+      {!disableDelegation && account.stakingResources.unbondingBalance.gt(0) && (
         <BalanceDetail>
           <ToolTip
             content={

@@ -17,9 +17,8 @@ import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { OpenModal, openModal } from "~/renderer/actions/modals";
-
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { BigNumber } from "bignumber.js";
 import Stepper from "~/renderer/components/Stepper";
 import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
@@ -27,8 +26,8 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
 import {
-  CosmosAccount,
-  Transaction as CosmosTransaction,
+  type CosmosAccount,
+  type Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 
 export type Data = {
@@ -100,16 +99,12 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(bridge, () => {
-    invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
+    invariant(account, "cosmos: account required");
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "delegate",
-      validators: [
-        {
-          address: cryptoFactory(account.currency.id).ledgerValidator ?? "",
-          amount: BigNumber(0),
-        },
-      ],
+      valAddress: cryptoFactory(account.currency.id).ledgerValidator ?? "",
+      amount: BigNumber(0),
       recipient: account.freshAddress,
     });
     return {

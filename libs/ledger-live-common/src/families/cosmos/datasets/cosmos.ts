@@ -14,7 +14,12 @@ import { CosmosTooManyRedelegations } from "@ledgerhq/coin-cosmos/errors";
 import { COSMOS_MAX_REDELEGATIONS } from "@ledgerhq/coin-cosmos/logic";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
+  FIXME_ignoreAccountFields: [
+    "cosmosResources",
+    "stakingResources",
+    "operationsCount",
+    "operations",
+  ],
   FIXME_ignorePreloadFields: ["validators"], // the APY of validators changes over time
   scanAccounts: [
     {

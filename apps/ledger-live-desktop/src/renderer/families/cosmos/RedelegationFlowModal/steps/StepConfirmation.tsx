@@ -35,7 +35,7 @@ function StepConfirmation({
   source,
   account,
 }: StepProps) {
-  const voteAccAddress = transaction?.validators[0]?.address;
+  const voteAccAddress = transaction?.dstValAddress;
   const currencyId = account.currency.id;
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId);
 

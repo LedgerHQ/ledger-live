@@ -18,7 +18,12 @@ import {
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import CosmosBase, { StakingMessageType } from "./chain/cosmosBase";
-import { CosmosDelegationInfo, CosmosOperationMode, Transaction } from "./types";
+import {
+  CosmosDelegationInfo,
+  CosmosLikeTransaction,
+  CosmosOperationMode,
+  Transaction,
+} from "./types";
 
 type ProtoMsg = {
   typeUrl: string;
@@ -276,6 +281,32 @@ export const txToMessages = (
   return { aminoMsgs, protoMsgs };
 };
 
+export function resolveTransactionValidators(
+  transaction: CosmosLikeTransaction,
+): CosmosDelegationInfo[] {
+  if (transaction.mode === "redelegate") {
+    return transaction.dstValAddress
+      ? [{ address: transaction.dstValAddress, amount: transaction.amount }]
+      : (transaction.validators ?? []);
+  }
+  return transaction.valAddress
+    ? [{ address: transaction.valAddress, amount: transaction.amount }]
+    : (transaction.validators ?? []);
+}
+
+export function resolveSourceValidator(
+  transaction: CosmosLikeTransaction,
+): string | null | undefined {
+  if (transaction.mode === "redelegate" && (transaction.valAddress || transaction.dstValAddress)) {
+    return transaction.valAddress;
+  }
+  return transaction.sourceValidator;
+}
+
+export function normalizeCosmosOperationMode(mode: CosmosOperationMode): CosmosOperationMode {
+  return mode === "compoundReward" ? "claimRewardCompound" : mode;
+}
+
 /**
  * Account/transaction-bridge adapter: derive {@link CosmosTransactionParams} from the `@types/live`
  * account/transaction the bridge holds, so `signOperation` / `prepareTransaction` keep feeding the
@@ -285,16 +316,17 @@ export function messageParamsFromTransaction(
   account: Account,
   transaction: Transaction,
 ): CosmosTransactionParams {
+  const sourceValidator = resolveSourceValidator(transaction);
   return {
-    mode: transaction.mode,
+    mode: normalizeCosmosOperationMode(transaction.mode),
     senderAddress: account.freshAddress,
     currencyId: account.currency.id,
     denom: account.currency.units[1].code,
     recipient: transaction.recipient,
     amount: transaction.amount,
     memo: transaction.memo || "",
-    validators: transaction.validators,
-    ...(transaction.sourceValidator ? { sourceValidator: transaction.sourceValidator } : {}),
+    validators: resolveTransactionValidators(transaction),
+    ...(sourceValidator ? { sourceValidator } : {}),
   };
 }
 

@@ -6,6 +6,7 @@ import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { renderHook } from "tests/testSetup";
 
 import AccountHeaderActions from "../AccountHeaderManageActions";
+import BigNumber from "bignumber.js";
 
 jest.mock("@ledgerhq/live-common/config/index", () => ({
   __esModule: true,
@@ -17,6 +18,14 @@ const currency = getCryptoCurrencyById("cosmos");
 const makeAccount = (): CosmosAccount =>
   ({
     ...genAccount("cosmos-test", { currency }),
+    stakingResources: {
+      delegations: [],
+      redelegations: [],
+      unbondings: [],
+      delegatedBalance: BigNumber(0),
+      pendingRewardsBalance: BigNumber(0),
+      unbondingBalance: BigNumber(0),
+    },
   }) as unknown as CosmosAccount;
 
 function mockGetCurrencyConfiguration(currencyConfig: Record<string, unknown>) {
