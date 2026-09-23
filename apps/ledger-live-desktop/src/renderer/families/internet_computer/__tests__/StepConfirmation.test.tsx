@@ -160,6 +160,19 @@ describe("StepConfirmationFooter", () => {
     expect(props.transitionTo).toHaveBeenCalledWith("manageAction");
   });
 
+  // The old status let Retry re-sign a stop dissolving the canister had just refused.
+  it("re-checks the transaction's status before a retry", async () => {
+    const props = makeStepProps({ error: new Error("boom"), lastAction: "stop_dissolving" });
+    const { user } = render(<StepConfirmationFooter {...props} />);
+
+    await user.click(screen.getByText("Retry"));
+
+    const [update] = (props.onUpdateTransaction as jest.Mock).mock.calls[0];
+    const transaction = { family: "internet_computer", type: "stop_dissolving" };
+    expect(update(transaction)).toEqual(transaction);
+    expect(update(transaction)).not.toBe(transaction);
+  });
+
   it("offers neither once the flow has neither succeeded nor failed", () => {
     render(<StepConfirmationFooter {...makeStepProps()} />);
 

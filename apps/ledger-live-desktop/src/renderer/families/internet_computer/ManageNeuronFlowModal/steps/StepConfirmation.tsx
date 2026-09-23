@@ -154,13 +154,16 @@ export const StepConfirmationFooter = ({
   lastAction,
   signed,
   transitionTo,
+  onUpdateTransaction,
 }: StepProps) => {
   const retryStep = (lastAction && RETRY_STEP[lastAction]) ?? "manageAction";
 
   const onRetryClick = useCallback(() => {
     resetAttempt();
+    // A new object: the bridge re-checks only a transaction it has not seen.
+    onUpdateTransaction(tx => ({ ...tx }));
     transitionTo(retryStep);
-  }, [resetAttempt, retryStep, transitionTo]);
+  }, [onUpdateTransaction, resetAttempt, retryStep, transitionTo]);
 
   // Back to the list rather than closing: the point of the flow is managing several neurons. The
   // attempt is discarded on the way out, because both list steps render an error in place of the
