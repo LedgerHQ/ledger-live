@@ -67,5 +67,24 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
 
       expect(liveTx).toEqual(expectedLiveTx);
     });
+
+    it("with a memo provided", () => {
+      const cosmosPlatformTx: WalletAPICosmosTransaction = {
+        family: "cosmos",
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+        mode: "send",
+        memo: "pay invoice 42",
+      };
+
+      const { liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: cosmosPlatformTx,
+        account: {} as Account,
+      });
+
+      expect(liveTx.memo).toBe("pay invoice 42");
+      expect(liveTx.memoType).toBe("text");
+      expect(liveTx.memoValue).toBe("pay invoice 42");
+    });
   });
 });

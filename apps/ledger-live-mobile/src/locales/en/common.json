@@ -632,6 +632,10 @@
       "title": "Something went wrong (Error #17)",
       "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
+    "CosmosMemoTooLong": {
+      "title": "Memo exceeds maximum length",
+      "description": "Your memo is {{memoLength}} bytes, but the maximum allowed is {{maxLength}} bytes. Please reduce the memo size."
+    },
     "DeviceAppVerifyNotSupported": {
       "title": "Open My Ledger to update this app",
       "description": "The app verification is not supported."
