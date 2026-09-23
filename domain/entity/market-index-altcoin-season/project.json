@@ -1,5 +1,5 @@
 {
-  "name": "@domain/entity-altcoins-sentiment",
+  "name": "@domain/entity-market-index-altcoin-season",
   "targets": {
     "build": {
       "executor": "nx:noop"

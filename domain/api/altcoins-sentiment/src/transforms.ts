@@ -1,4 +1,4 @@
-import type { AltcoinSeasonIndex } from "@domain/entity-altcoins-sentiment";
+import type { AltcoinSeasonIndex } from "@domain/entity-market-index-altcoin-season";
 import { AltcoinSeasonIndexResponseSchema } from "./schema";
 
 /** Validates the raw CMC response and maps it to the canonical {@link AltcoinSeasonIndex}. */

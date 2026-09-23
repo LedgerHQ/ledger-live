@@ -1,9 +1,9 @@
-# @domain/entity-altcoins-sentiment
+# @domain/entity-market-index-altcoin-season
 
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
-Domain entity for **altcoins sentiment**, backed by the CoinMarketCap Altcoin Season Index.
+Domain entity for the **CoinMarketCap Altcoin Season Index**.
 
 - `schema.ts` — `AltcoinSeasonIndexSchema` (canonical `{ value, altcoinMarketcap }`).
 - `types.ts` — the inferred `AltcoinSeasonIndex` type.
