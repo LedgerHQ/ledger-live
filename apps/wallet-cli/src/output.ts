@@ -108,6 +108,15 @@ export interface CommandOutput {
 
   /** Stream one discovered account (human: print immediately; json: buffer). */
   discoveredAccount(d: DiscoveredAccount): void;
+  /**
+   * Reconcile the labels printed/buffered during the scan with the authoritative ones assigned by
+   * the locked merge in `account discover` — a concurrent write during the (potentially long) device
+   * scan can shift what label a descriptor ends up with. `labels[i]` is the final label for the i-th
+   * account streamed via `discoveredAccount`, in that same order. Human: prints a correction notice
+   * for any label that changed. Json: patches the buffered accounts in place. Call before
+   * `flushDiscovery`.
+   */
+  reconcileDiscoveredLabels(labels: readonly string[]): void;
   /** Signal end of discovery stream. Json: flush buffered accounts as envelope. Human: noop. */
   flushDiscovery(): void;
   /** Note that N new accounts were persisted to session (human: dim footer; json: noop). */
@@ -236,6 +245,9 @@ export interface CommandOutput {
 
 class HumanCommandOutput implements CommandOutput {
   private _activeSpin: Spinner | null = null;
+  // Labels as printed live during the scan, in stream order — kept only to diff against the
+  // authoritative labels `reconcileDiscoveredLabels` receives after the locked merge.
+  private readonly _discoveredLabels: string[] = [];
 
   constructor(private readonly _fmt: HumanFormatter) {}
 
@@ -344,7 +356,22 @@ class HumanCommandOutput implements CommandOutput {
 
   discoveredAccount(d: DiscoveredAccount): void {
     this._activeSpin?.clear();
+    this._discoveredLabels.push(d.label);
     writeStdout(this._fmt.formatDiscoveredAccount(d));
+  }
+
+  reconcileDiscoveredLabels(labels: readonly string[]): void {
+    const corrections = labels
+      .map((label, i) => [this._discoveredLabels[i], label] as const)
+      .filter(([printed, final]) => printed !== undefined && printed !== final);
+    if (corrections.length === 0) return;
+    writeStdout(
+      colors.dim(
+        corrections
+          .map(([printed, final]) => `  label corrected: ${printed} -> ${final}`)
+          .join("\n"),
+      ),
+    );
   }
 
   flushDiscovery(): void {
@@ -870,6 +897,13 @@ class JsonCommandOutput implements CommandOutput {
 
   discoveredAccount(d: DiscoveredAccount): void {
     this._discoveredAccounts.push(d);
+  }
+
+  reconcileDiscoveredLabels(labels: readonly string[]): void {
+    labels.forEach((label, i) => {
+      const account = this._discoveredAccounts[i];
+      if (account) account.label = label;
+    });
   }
 
   flushDiscovery(): void {

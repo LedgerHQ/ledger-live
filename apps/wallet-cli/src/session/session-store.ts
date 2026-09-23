@@ -90,21 +90,27 @@ const ringFields = {
 };
 
 /**
- * Best-effort `profileId`s of `agentIntentProfiles` entries that failed schema validation and were
- * dropped by the preprocess above — e.g. a hand-edited field, or one a future schema change tightens
- * against an already-persisted value. Dropping is silent at the schema layer (by design, so one bad
- * entry never bricks every command); this is how a caller surfaces it instead of the profile just
- * vanishing without a trace on the next command that happens to call `write()` (see `agent-intent
- * list`'s use of this).
+ * `agentIntentProfiles` entries that failed schema validation and were dropped by the preprocess
+ * above — e.g. a hand-edited field, or one a future schema change tightens against an
+ * already-persisted value. Dropping is silent at the schema layer (by design, so one bad entry
+ * never bricks every command); returning the raw records (not just their ids) is what lets `write()`
+ * carry them forward unchanged instead of a subsequent write from ANY command (enroll, complete,
+ * reset, ring, discover — every one of them calls `write()`) silently erasing them from disk and
+ * orphaning their OS-keychain secret for good.
  */
-function invalidAgentIntentProfileIds(root: unknown): string[] {
+function invalidAgentIntentProfileRaws(root: unknown): unknown[] {
   const raw =
     typeof root === "object" && root !== null
       ? (root as { agentIntentProfiles?: unknown }).agentIntentProfiles
       : undefined;
   if (!Array.isArray(raw)) return [];
-  return raw
-    .filter(e => !AgentIntentProfileSchema.safeParse(e).success)
+  return raw.filter(e => !AgentIntentProfileSchema.safeParse(e).success);
+}
+
+/** Best-effort `profileId`s out of `invalidAgentIntentProfileRaws` — recoverable enough to name in a
+ * warning (see `agent-intent list`'s use of this), not enough to load. */
+function invalidAgentIntentProfileIds(rawInvalid: readonly unknown[]): string[] {
+  return rawInvalid
     .map(e =>
       typeof e === "object" && e !== null ? (e as { profileId?: unknown }).profileId : undefined,
     )
@@ -159,7 +165,7 @@ export function trustchainFromMeta(meta: TrustchainMeta): Trustchain {
 
 type ParsedSessionData = {
   data: z.infer<typeof SessionDataSchema>;
-  invalidAgentIntentProfileIds: string[];
+  invalidAgentIntentProfileRaws: unknown[];
 };
 
 function parseSessionData(raw: string): ParsedSessionData {
@@ -168,7 +174,7 @@ function parseSessionData(raw: string): ParsedSessionData {
     root = YAML.parse(raw) ?? {};
     return {
       data: SessionDataSchema.parse(root),
-      invalidAgentIntentProfileIds: invalidAgentIntentProfileIds(root),
+      invalidAgentIntentProfileRaws: invalidAgentIntentProfileRaws(root),
     };
   } catch {
     throw new Error(
@@ -189,7 +195,7 @@ async function readSessionContent(): Promise<string | null> {
 async function readData(): Promise<ParsedSessionData> {
   const content = await readSessionContent();
   return content === null
-    ? { data: SessionDataSchema.parse({}), invalidAgentIntentProfileIds: [] }
+    ? { data: SessionDataSchema.parse({}), invalidAgentIntentProfileRaws: [] }
     : parseSessionData(content);
 }
 
@@ -239,17 +245,17 @@ export class Session {
     private _domains: DomainEntry[],
     private _passwordSalt: string | undefined,
     private _agentIntentProfiles: AgentIntentProfileMeta[],
-    private readonly _invalidAgentIntentProfileIds: string[] = [],
+    private readonly _invalidAgentIntentProfileRaws: unknown[] = [],
   ) {}
 
   static async read(): Promise<Session> {
-    const { data, invalidAgentIntentProfileIds } = await readData();
-    return Session.fromData(data, invalidAgentIntentProfileIds);
+    const { data, invalidAgentIntentProfileRaws } = await readData();
+    return Session.fromData(data, invalidAgentIntentProfileRaws);
   }
 
   private static fromData(
     data: z.infer<typeof SessionDataSchema>,
-    invalidAgentIntentProfileIds: string[] = [],
+    invalidAgentIntentProfileRaws: unknown[] = [],
   ): Session {
     return new Session(
       data.accounts,
@@ -257,7 +263,7 @@ export class Session {
       data.domains,
       data.passwordSalt,
       data.agentIntentProfiles,
-      invalidAgentIntentProfileIds,
+      invalidAgentIntentProfileRaws,
     );
   }
 
@@ -280,7 +286,7 @@ export class Session {
     if (content === null) return Session.from([]);
     const raw = YAML.parse(content) ?? {}; // invalid YAML propagates to the caller
     const strict = SessionDataSchema.safeParse(raw);
-    if (strict.success) return Session.fromData(strict.data, invalidAgentIntentProfileIds(raw));
+    if (strict.success) return Session.fromData(strict.data, invalidAgentIntentProfileRaws(raw));
     // Corrupt-but-parseable file: keep the individually-valid ring fields, drop accounts. A
     // non-object root (bare scalar/array) salvages nothing.
     const root = typeof raw === "object" && !Array.isArray(raw) ? raw : {};
@@ -291,7 +297,7 @@ export class Session {
       ring.domains,
       ring.passwordSalt,
       ring.agentIntentProfiles,
-      invalidAgentIntentProfileIds(root),
+      invalidAgentIntentProfileRaws(root),
     );
   }
 
@@ -302,10 +308,12 @@ export class Session {
   /**
    * `profileId`s of `agentIntentProfiles` entries the last read dropped for failing schema
    * validation — recoverable enough to name, not enough to load. See `agent-intent list`'s use of
-   * this: each id's OS-keychain secret (if any) is now orphaned, since nothing else records it.
+   * this: each id's OS-keychain secret (if any) is orphaned only once nothing else records it —
+   * which, since `write()` now carries the raw record forward (see below), requires an explicit
+   * `session reset` rather than just any subsequent write.
    */
   get invalidAgentIntentProfileIds(): ReadonlyArray<string> {
-    return this._invalidAgentIntentProfileIds;
+    return invalidAgentIntentProfileIds(this._invalidAgentIntentProfileRaws);
   }
 
   get trustchain(): TrustchainMeta | undefined {
@@ -390,13 +398,14 @@ export class Session {
     return { label, added: true };
   }
 
-  /** Merge new descriptors in-place. Returns count of newly added entries. */
-  addDescriptors(descriptors: AccountDescriptorV1[]): number {
-    let added = 0;
-    for (const d of descriptors) {
-      if (this.addDescriptor(d).added) added++;
-    }
-    return added;
+  /**
+   * Merge new descriptors in-place. Returns one result per input descriptor, in the same order —
+   * each `label` is the authoritative one, which callers that displayed a provisional label earlier
+   * (e.g. `account discover`, live during a device scan) must reconcile against rather than trust
+   * what they already printed.
+   */
+  addDescriptors(descriptors: AccountDescriptorV1[]): Array<{ label: string; added: boolean }> {
+    return descriptors.map(d => this.addDescriptor(d));
   }
 
   write(): void {
@@ -404,7 +413,15 @@ export class Session {
     if (this._trustchain) data.trustchain = this._trustchain;
     if (this._domains.length > 0) data.domains = this._domains;
     if (this._passwordSalt) data.passwordSalt = this._passwordSalt;
-    if (this._agentIntentProfiles.length > 0) data.agentIntentProfiles = this._agentIntentProfiles;
+    // Invalid raws ride along unchanged (never re-validated, never mutated by anything in this
+    // class) so a write from ANY command — not just `agent-intent` ones — can't silently erase an
+    // entry the last read couldn't parse and orphan its OS-keychain secret. They keep failing
+    // validation on the next read, which is the intended outcome: recoverable-by-name, not adopted.
+    const agentIntentProfiles = [
+      ...this._agentIntentProfiles,
+      ...this._invalidAgentIntentProfileRaws,
+    ];
+    if (agentIntentProfiles.length > 0) data.agentIntentProfiles = agentIntentProfiles;
     writeSessionData(data);
   }
 }

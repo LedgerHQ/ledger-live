@@ -33,7 +33,10 @@ type DiscoverAccountsParams = {
  * `session` is used only to preview labels live as accounts stream in (existing-label collision
  * avoidance needs to know what's already there); the authoritative merge+write happens afterwards,
  * under the session lock, against a freshly re-read session (see the handler below) — the device
- * scan can take a while, and something else may have written in the meantime.
+ * scan can take a while, and something else may have written in the meantime, so a label previewed
+ * here is not guaranteed to be the one that actually gets saved. The caller is responsible for
+ * calling `out.reconcileDiscoveredLabels(...)` and `out.flushDiscovery()` once the authoritative
+ * labels are known — this function only streams the provisional ones.
  */
 async function discoverAccounts({
   wallet,
@@ -71,7 +74,6 @@ async function discoverAccounts({
   });
 
   scanSpin?.success(`Found ${count} account${count === 1 ? "" : "s"}`);
-  out.flushDiscovery();
   trackDiscoveryCompleted({ networks, accountsCount: count, device });
   return discovered;
 }
@@ -133,21 +135,30 @@ export default defineCommand({
               // talking to the device, and another command could have written in that window.
               // Merging the discovered descriptors into a fresh read (not `session`, which is now
               // stale) is what makes this safe against that.
-              const added = await withSessionLock(async () => {
+              const results = await withSessionLock(async () => {
                 const fresh = await Session.read();
-                const n = fresh.addDescriptors(discovered);
+                const r = fresh.addDescriptors(discovered);
                 fresh.write();
-                return n;
+                return r;
               });
-              out.sessionSaved(added);
+              // The labels streamed live above were previewed against the pre-scan `session` and can
+              // differ from what actually got saved if something else wrote in the meantime — patch/
+              // announce the authoritative ones before the discovery output is flushed.
+              out.reconcileDiscoveredLabels(results.map(r => r.label));
+              out.flushDiscovery();
+              out.sessionSaved(results.filter(r => r.added).length);
             } catch (e) {
-              // Non-fatal (discovery output is already flushed) but must not be silent: this can
-              // now also be the lock's own 10s acquire timeout (e.g. enroll or ring init holding it
-              // across a keychain/OS prompt), not just a disk error — either way, the user just
-              // spent time on the device and needs to know nothing was actually saved.
+              // Non-fatal but must not be silent: this can now also be the lock's own 10s acquire
+              // timeout (e.g. enroll or ring init holding it across a keychain/OS prompt), not just a
+              // disk error — either way, the user just spent time on the device and needs to know
+              // nothing was actually saved. The labels already streamed are the best we have, so flush
+              // them as-is (unreconciled) rather than silently dropping the discovery output too.
+              out.flushDiscovery();
               const message = e instanceof Error ? e.message : String(e);
               writeStderr(`⚠ Found accounts were NOT saved to the session: ${message}\n`);
             }
+          } else {
+            out.flushDiscovery();
           }
         },
         {

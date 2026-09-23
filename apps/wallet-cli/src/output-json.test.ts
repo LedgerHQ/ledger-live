@@ -499,4 +499,32 @@ describe("JsonCommandOutput", () => {
       completed: true,
     });
   });
+
+  it("reconcileDiscoveredLabels() patches buffered account labels before flushDiscovery emits them", () => {
+    const descriptor = {
+      purpose: "account",
+      version: "1",
+      type: "utxo",
+      network: { name: "bitcoin", env: "main" },
+      xpub: "xpub6BosfCnifzxcA",
+      path: "m/84h/0h/0h",
+    } as const;
+    const out = createCommandOutput("json", {
+      command: "account discover",
+      network: "bitcoin:main",
+    });
+
+    out.discoveredAccount({ descriptor, freshAddress: "bc1qfirst", label: "bitcoin-native-1" });
+    out.discoveredAccount({ descriptor, freshAddress: "bc1qsecond", label: "bitcoin-native-2" });
+    out.reconcileDiscoveredLabels(["bitcoin-native-1", "bitcoin-native-3"]);
+    out.flushDiscovery();
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      accounts: [
+        { label: "bitcoin-native-1", freshAddress: "bc1qfirst" },
+        { label: "bitcoin-native-3", freshAddress: "bc1qsecond" },
+      ],
+    });
+  });
 });

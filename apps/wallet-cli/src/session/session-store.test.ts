@@ -138,8 +138,8 @@ describe("generateLabel", () => {
 describe("Session.addDescriptors", () => {
   it("appends new descriptors with auto-labels", () => {
     const session = Session.from([]);
-    const added = session.addDescriptors([btcNative, ethMain]);
-    expect(added).toBe(2);
+    const results = session.addDescriptors([btcNative, ethMain]);
+    expect(results.filter(r => r.added)).toHaveLength(2);
     expect(session.accounts).toHaveLength(2);
     expect(session.accounts[0].label).toBe("bitcoin-native-1");
     expect(session.accounts[1].label).toBe("ethereum-1");
@@ -153,8 +153,8 @@ describe("Session.addDescriptors", () => {
       },
     ];
     const session = Session.from(existing);
-    const added = session.addDescriptors([btcNative]);
-    expect(added).toBe(0);
+    const results = session.addDescriptors([btcNative]);
+    expect(results.filter(r => r.added)).toHaveLength(0);
     expect(session.accounts).toHaveLength(1);
   });
 
@@ -295,6 +295,31 @@ describe("ring-field resilience", () => {
     const session = await Session.read();
     expect(session.agentIntentProfiles.map(p => p.profileId)).toEqual(["good-profile"]);
     expect(session.invalidAgentIntentProfileIds).toEqual(["missing-fields"]);
+  });
+
+  it("write() carries a malformed agentIntentProfiles entry forward instead of erasing it", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [
+          makeAgentIntentProfile({ profileId: "good-profile" }),
+          { profileId: "missing-fields" }, // malformed
+        ],
+      }),
+    );
+    // Simulate an unrelated command's read-modify-write (e.g. `account discover` adding an
+    // account) — it never touches agentIntentProfiles directly, but write() replaces the whole file.
+    const session = await Session.read();
+    session.addDescriptor(btcNative);
+    session.write();
+
+    const rewritten = await Session.read();
+    expect(rewritten.agentIntentProfiles.map(p => p.profileId)).toEqual(["good-profile"]);
+    // The malformed entry must still be there — recoverable, still flagged invalid — not silently
+    // gone, which would orphan its OS-keychain secret for good.
+    expect(rewritten.invalidAgentIntentProfileIds).toEqual(["missing-fields"]);
   });
 
   it("readForReset preserves agentIntentProfiles even when the file is otherwise corrupt", async () => {
