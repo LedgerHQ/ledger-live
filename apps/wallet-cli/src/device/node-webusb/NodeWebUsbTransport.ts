@@ -807,15 +807,24 @@ export class NodeWebUsbTransport implements Transport {
       data: { vendorId: idVendor, productId: idProduct },
     });
 
+    recordLedgerVendorSeen();
+    let web: WebUSBDevice;
     try {
-      const web = await this._platformBindings.createWebUsbDevice(native);
-      if (getVendorInterfaceNumber(web) === null) {
-        this._logger.debug("[handleDeviceConnection] No Ledger WebUSB interface", {
-          data: { vendorId: idVendor, productId: idProduct },
-        });
-        return;
-      }
+      web = await this._platformBindings.createWebUsbDevice(native);
+    } catch (e) {
+      recordUsbAccessFailure(e, nativeUsbDeviceKey(native));
+      this._logger.error("Error while handling WebUSB connection event", { data: { error: e } });
+      return;
+    }
 
+    if (getVendorInterfaceNumber(web) === null) {
+      this._logger.debug("[handleDeviceConnection] No Ledger WebUSB interface", {
+        data: { vendorId: idVendor, productId: idProduct },
+      });
+      return;
+    }
+
+    try {
       // Reconnection of any pending machines happens inside the rescan via
       // reconnectPendingMachines(), so the rescan is the single source of truth.
       await this.updateTransportDiscoveredDevices();

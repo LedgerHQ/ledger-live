@@ -637,22 +637,22 @@ describe("HumanCommandOutput", () => {
   });
 });
 
+/**
+ * `NO_COLOR` keeps the assertions free of escape codes, but Bun ignores it when `FORCE_COLOR` is
+ * also set and warns with a full stack trace on stderr — which agent shells and some CI runners
+ * would then turn into a test failure unrelated to the CLI's own output.
+ */
+function childEnv(): Record<string, string | undefined> {
+  const { FORCE_COLOR: _ignored, ...rest } = process.env;
+  return { ...rest, CLAUDECODE: "1", NO_COLOR: "1" };
+}
+
 describe("output command handling", () => {
   const ROOT = path.resolve(import.meta.dir, "..");
   const HUMAN_DEVICE_ERROR_EXIT = path.resolve(
     import.meta.dir,
     "./testing/human-device-error-exit.ts",
   );
-
-  /**
-   * `NO_COLOR` keeps the assertions free of escape codes, but Bun ignores it when `FORCE_COLOR` is
-   * also set and warns with a full stack trace on stderr — which agent shells and some CI runners
-   * would then turn into a test failure unrelated to the CLI's own output.
-   */
-  function childEnv(): Record<string, string | undefined> {
-    const { FORCE_COLOR: _ignored, ...rest } = process.env;
-    return { ...rest, CLAUDECODE: "1", NO_COLOR: "1" };
-  }
 
   it("human output exits with the WalletCliDeviceError exit code", async () => {
     const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_EXIT], {
