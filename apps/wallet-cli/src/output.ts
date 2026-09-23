@@ -33,6 +33,7 @@ import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from
 import { APP_NAME } from "./session/session-store";
 import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
 import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
+import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 import type {
   EarnDepositResult,
@@ -216,7 +217,7 @@ export interface CommandOutput {
   /** Output agent-intent profiles (human: table or empty message; json: envelope with `profiles`). */
   agentIntentProfiles(profiles: readonly AgentIntentProfileMeta[]): void;
   /** Output one agent-intent profile's detail (human: labeled lines; json: envelope). Never includes
-   * the profile's secret key (not part of AgentIntentProfileMeta) or a fingerprint (NTTVS-767). */
+   * the profile's secret key (not part of AgentIntentProfileMeta). */
   agentIntentProfileShow(profile: AgentIntentProfileMeta): void;
   /** Output the result of `agent-intent enroll` (human: URL + fingerprint to compare against the
    * device; json: envelope). Never includes the secret key. */
@@ -668,6 +669,7 @@ class HumanCommandOutput implements CommandOutput {
       "Environment",
       "Status",
       "Public key",
+      "Fingerprint",
       "BFF URL",
       "Trustchain ID",
       "Created",
@@ -684,6 +686,7 @@ class HumanCommandOutput implements CommandOutput {
         line("Environment", profile.environment),
         line("Status", agentIntentProfileStatus(profile)),
         line("Public key", profile.publicKey),
+        line("Fingerprint", formatAgentPublicKeyFingerprint(profile.publicKey)),
         line("BFF URL", redactUrlCredentials(profile.bffBaseUrl)),
         ...(profile.trustchainId === undefined
           ? []
@@ -1085,6 +1088,7 @@ class JsonCommandOutput implements CommandOutput {
           ...profile,
           bffBaseUrl: redactUrlCredentials(profile.bffBaseUrl),
           profileStatus: agentIntentProfileStatus(profile),
+          fingerprint: formatAgentPublicKeyFingerprint(profile.publicKey),
         },
       }),
     );
