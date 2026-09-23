@@ -125,7 +125,7 @@ describe("PayTab integration", () => {
       renderPayTab();
 
       expect(screen.getByTestId("pay-disclaimer")).toBeVisible();
-      expect(screen.getByText("Disclaimer placeholder")).toBeVisible();
+      expect(screen.getByText("Provided by Monavate Onchain")).toBeVisible();
     });
   });
 
