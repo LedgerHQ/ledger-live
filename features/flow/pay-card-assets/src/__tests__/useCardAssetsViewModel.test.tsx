@@ -34,17 +34,11 @@ jest.mock("@features/flow-pay-card-transactions", () => ({
 
 function stubWallets(
   overrides: Partial<{
-    wallets: readonly Pick<
+    wallets: readonly (Pick<
       CardLinkedWalletBalance,
-      | "id"
-      | "addressId"
-      | "address"
-      | "balance"
-      | "currency"
-      | "network"
-      | "ledgerId"
-      | "ledgerCurrency"
-    >[];
+      "id" | "addressId" | "balance" | "currency" | "network" | "ledgerId" | "ledgerCurrency"
+    > &
+      Partial<Pick<CardLinkedWalletBalance, "address">>)[];
     isLoading: boolean;
     isError: boolean;
   }> = {},

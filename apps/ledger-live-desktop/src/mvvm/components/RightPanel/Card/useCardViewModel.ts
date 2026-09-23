@@ -225,11 +225,19 @@ export function useCardViewModel(): CardViewModel {
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: onFundAsset,
+      onTopUp: asset => (isLegacyTopUp ? void openTopUp() : onFundAsset(asset)),
       onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
       onAddAsset,
     }),
-    [onAddAsset, onFundAsset, onShowAssetHistory, openAssetPage, payCardAssets],
+    [
+      isLegacyTopUp,
+      onAddAsset,
+      onFundAsset,
+      onShowAssetHistory,
+      openAssetPage,
+      openTopUp,
+      payCardAssets,
+    ],
   );
 
   const cardSettingsActions: CardSettingsActions = useMemo(
