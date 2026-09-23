@@ -1,12 +1,15 @@
 export const FALLBACK_STORAGE_AMOUNT_PER_BYTE = "10000000000000000000";
 /**
- * The protocol's minimum gas price, used until `preload()` reports the live one.
+ * The gas price to price staking against until `preload()` reports the live one.
  *
  * The generic-coin-framework bridge has no preload step, so on that route the cache keeps its
  * initial value for the whole session. Seeding this with zero made every fee estimate collapse to
- * zero, which let `canStake` offer staking to accounts that cannot cover it. The chain floors the
- * gas price here and it rarely moves off the floor, so it is a safe basis for a "can you afford
- * this?" heuristic — actual transaction pricing still uses the live value via `estimateFees`.
+ * zero, which let `canStake` offer staking to accounts that cannot cover it.
+ *
+ * This is the `gas_price` mainnet blocks report today — check with the `block` RPC method — and the
+ * protocol caps how fast it moves: `gas_price_adjustment_rate` is 1/100, so at most 1% per block.
+ * It cannot drift far within a session, which is enough for a "can you afford this?" heuristic.
+ * Actual transaction pricing still uses the live value via `estimateFees`.
  */
 export const FALLBACK_GAS_PRICE = "100000000";
 export const NEW_ACCOUNT_SIZE = 182;
