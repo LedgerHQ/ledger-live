@@ -1,7 +1,6 @@
 ---
 "@domain/api-card-funding": minor
 "@features/flow-pay-card-assets": minor
-"@shared/api-services": minor
 "ledger-live-desktop": minor
 ---
 

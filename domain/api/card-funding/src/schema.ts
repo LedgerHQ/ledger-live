@@ -1,40 +1,5 @@
 import { z } from "zod";
 
-export const CardFundRemitRequestSchema = z.object({
-  quoteId: z.string().min(1).optional(),
-  provider: z.string().min(1),
-  fromCurrency: z.string().min(1),
-  toCurrency: z.string().min(1),
-  refundAddress: z.string().min(1),
-  amountFrom: z.number().finite().positive(),
-  amountTo: z.number().finite().positive(),
-  nonce: z.string().min(1),
-});
-
-export const CardFundProviderSignatureSchema = z.object({
-  payload: z.string().min(1),
-  signature: z.string().min(1),
-});
-
-export const CardFundRemitResponseSchema = z.object({
-  sellId: z.string().min(1),
-  payinAddress: z.string().min(1),
-  providerSig: CardFundProviderSignatureSchema,
-});
-
-export const CardFundConfirmationSchema = z.object({
-  orderId: z.string().min(1),
-  provider: z.string().min(1),
-  transactionId: z.string().min(1),
-});
-
-export const CardFundCancellationSchema = z.object({
-  orderId: z.string().min(1),
-  provider: z.string().min(1),
-  statusCode: z.string().min(1),
-  errorMessage: z.string().min(1),
-});
-
 export const CardFundPayloadRequestSchema = z.object({
   apiBaseUrl: z.string().url(),
   /** The device nonce returned by the Fund `startExchange`. */

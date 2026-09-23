@@ -287,7 +287,6 @@ features/platform/card/                                                  @ledger
 domain/api/card-management/                                              @ledgerhq/ptx
 domain/api/card-funding/                                                 @ledgerhq/ptx
 /shared/api-services/src/services/card/                                  @ledgerhq/ptx
-/shared/api-services/src/services/exchange-transaction-manager/          @ledgerhq/ptx
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/       					@ledgerhq/ptx
