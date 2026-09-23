@@ -1,0 +1,213 @@
+import React, { useCallback } from "react";
+import { ScrollView, View } from "react-native";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
+import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { isAleoAccount } from "@ledgerhq/live-common/families/aleo/utils";
+import { useAleoStakingPosition } from "@ledgerhq/live-common/families/aleo/react";
+import type { Transaction as AleoTransaction } from "@ledgerhq/live-common/families/aleo/types";
+import SafeAreaView from "~/components/SafeAreaView";
+import Skeleton from "~/components/Skeleton";
+import { Trans, useTranslation } from "~/context/Locale";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { TrackScreen } from "~/analytics";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import TranslatedError from "~/components/TranslatedError";
+import Alert from "~/components/Alert";
+import { ScreenName } from "~/const";
+import { getFirstStatusError } from "../../helpers";
+import { getValidatorLabel } from "../Staking/utils";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { AleoUnbondFlowParamList } from "./types";
+
+type Props = BaseComposite<
+  StackNavigatorProps<AleoUnbondFlowParamList, ScreenName.AleoUnbondAmount>
+>;
+
+export default function Amount({ navigation, route }: Props) {
+  const { t } = useTranslation();
+  const { account, parentAccount } = useAccountScreen(route);
+  const styles = useStyleSheet(
+    theme => ({
+      root: {
+        flex: 1,
+      },
+      scroll: {
+        flex: 1,
+      },
+      content: {
+        flexGrow: 1,
+        paddingHorizontal: theme.spacings.s24,
+        paddingTop: theme.spacings.s16,
+      },
+      alert: {
+        marginBottom: theme.spacings.s16,
+      },
+      spacer: {
+        flexGrow: 1,
+      },
+      details: {
+        marginVertical: theme.spacings.s16,
+        paddingTop: theme.spacings.s12,
+        borderTopWidth: theme.borderWidth.s1,
+        borderTopColor: theme.colors.border.mutedSubtle,
+        gap: theme.spacings.s8,
+      },
+      detailsRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+      },
+      validatorSkeleton: {
+        width: 96,
+        height: 16,
+        borderRadius: 4,
+      },
+      footer: {
+        paddingHorizontal: theme.spacings.s16,
+        paddingBottom: theme.spacings.s16,
+        paddingTop: theme.spacings.s8,
+      },
+    }),
+    [],
+  );
+
+  invariant(
+    account && isAleoAccount(account) && account.type === "Account",
+    "aleo account required",
+  );
+
+  const mainAccount = getMainAccount(account, parentAccount ?? null);
+  const unit = account.currency.units[0];
+  const bondedBalance = account.aleoResources?.bondedBalance ?? new BigNumber(0);
+  const position = useAleoStakingPosition(account);
+
+  const bridge = useAccountBridge<AleoTransaction>(account, parentAccount);
+
+  const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(bridge, () => {
+    const created = bridge.createTransaction(mainAccount);
+    // Full unbond only: there is no partial-amount input, the transaction always
+    // unbonds the entire bonded position back to the account itself.
+    const prepared = bridge.updateTransaction(created, {
+      mode: "unbond_public",
+      recipient: mainAccount.freshAddress,
+      useAllAmount: true,
+    });
+
+    return {
+      account,
+      parentAccount: parentAccount ?? undefined,
+      transaction: prepared,
+    };
+  });
+
+  const onContinue = useCallback(() => {
+    if (!transaction) return;
+    navigation.navigate(ScreenName.AleoUnbondSelectDevice, {
+      accountId: route.params.accountId,
+      parentId: route.params.parentId,
+      transaction,
+      status,
+    });
+  }, [navigation, route.params, status, transaction]);
+
+  if (!transaction) return null;
+
+  const error = bridgePending ? null : getFirstStatusError(status, "errors");
+  const warning = getFirstStatusError(status, "warnings");
+  const continueDisabled = bridgePending || !!bridgeError || Object.keys(status.errors).length > 0;
+
+  return (
+    <SafeAreaView style={styles.root} edges={["bottom"]}>
+      <TrackScreen
+        category="UnbondFlow"
+        name="Amount"
+        flow="unbond"
+        action="unbonding"
+        currency="aleo"
+      />
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <View style={styles.alert}>
+          <Alert type="hint" testID="aleo-unbond-freeze-alert">
+            <Trans i18nKey="aleo.unbond.amount.freezeInfo" />
+          </Alert>
+        </View>
+        <View style={styles.alert}>
+          <Alert type="secondary" testID="aleo-unbond-restake-alert">
+            <Trans i18nKey="aleo.unbond.amount.restakeInfo" />
+          </Alert>
+        </View>
+        {(error || warning) && (
+          <View style={styles.alert}>
+            <Alert type={error ? "error" : "warning"} testID="aleo-unbond-status-alert">
+              <TranslatedError error={error ?? warning} field="description" />
+            </Alert>
+          </View>
+        )}
+        <View style={styles.spacer} />
+        <View style={styles.details}>
+          <View style={styles.detailsRow}>
+            <Text typography="body3" lx={{ color: "muted" }}>
+              <Trans i18nKey="aleo.unbond.amount.validator" />
+            </Text>
+            <Skeleton loading={position.validatorsLoading} style={styles.validatorSkeleton}>
+              <Text
+                typography="body3SemiBold"
+                lx={{ color: "base" }}
+                testID="aleo-unbond-amount-validator"
+              >
+                {getValidatorLabel(t, position)}
+              </Text>
+            </Skeleton>
+          </View>
+          <View style={styles.detailsRow}>
+            <Text typography="body3" lx={{ color: "muted" }}>
+              <Trans i18nKey="aleo.unbond.amount.bondedAmount" />
+            </Text>
+            <Text
+              typography="body3SemiBold"
+              lx={{ color: "base" }}
+              testID="aleo-unbond-amount-value"
+            >
+              <CurrencyUnitValue unit={unit} value={bondedBalance} showCode />
+            </Text>
+          </View>
+          <View style={styles.detailsRow}>
+            <Text typography="body3" lx={{ color: "muted" }}>
+              <Trans i18nKey="send.summary.fees" />
+            </Text>
+            <Text typography="body3SemiBold" lx={{ color: "base" }}>
+              {bridgePending ? (
+                "-"
+              ) : (
+                <CurrencyUnitValue unit={unit} value={status.estimatedFees} showCode />
+              )}
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+      <View style={styles.footer}>
+        {bridgeError && (
+          <Text typography="body3" lx={{ color: "error", textAlign: "center", marginBottom: "s8" }}>
+            <TranslatedError error={bridgeError} />
+          </Text>
+        )}
+        <Button
+          appearance="base"
+          size="lg"
+          isFull
+          onPress={onContinue}
+          disabled={continueDisabled}
+          loading={bridgePending}
+          testID="aleo-unbond-amount-continue"
+        >
+          {t("common.continue")}
+        </Button>
+      </View>
+    </SafeAreaView>
+  );
+}

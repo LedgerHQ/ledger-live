@@ -13,6 +13,7 @@ import DelegationDrawer, {
 import Circle from "~/components/Circle";
 import Skeleton from "~/components/Skeleton";
 import DelegateIcon from "~/icons/Delegate";
+import UndelegateIcon from "~/icons/Undelegate";
 import { rgba } from "~/colors";
 import { makeValidatorImage } from "./ValidatorImage";
 import { useValidatorFields } from "./useValidatorFields";
@@ -28,18 +29,56 @@ function BondIcon(props: Readonly<IconProps>) {
   );
 }
 
+function UnbondIcon(props: Readonly<IconProps>) {
+  const { colors } = useTheme();
+
+  return (
+    <Circle {...props} bg={rgba(colors.alert, 0.2)}>
+      <UndelegateIcon color={colors.alert} />
+    </Circle>
+  );
+}
+
+function UnbondIconDisabled(props: Readonly<IconProps>) {
+  const { colors } = useTheme();
+
+  return (
+    <Circle {...props} bg={colors.lightFog}>
+      <UndelegateIcon color={colors.grey} />
+    </Circle>
+  );
+}
+
 type Props = Readonly<{
   account: AleoAccount;
   position: AleoStakingPositionView;
   isOpen: boolean;
   onClose: () => void;
   onBond: () => void;
+  onUnstake: () => void;
 }>;
 
-export default function StakedDrawer({ account, position, isOpen, onClose, onBond }: Props) {
+export default function StakedDrawer({
+  account,
+  position,
+  isOpen,
+  onClose,
+  onBond,
+  onUnstake,
+}: Props) {
   const { t } = useTranslation();
-  const { bondedBalance, nonEarningReason, estimatedRate, pendingKind, validatorsLoading } =
-    position;
+  const {
+    bondedBalance,
+    nonEarningReason,
+    estimatedRate,
+    pendingKind,
+    validatorsLoading,
+    hasBonded,
+    hasPendingUnbondingChange,
+  } = position;
+  // A second unbond just resets Aleo's single unbonding slot to a fresh 360-block freeze, so
+  // only an unconfirmed pending unbond/claim blocks it — not an already-unbonding position.
+  const canUnstake = hasBonded && !hasPendingUnbondingChange;
 
   const validatorFields = useValidatorFields(account, position);
   const label = getValidatorLabel(t, position);
@@ -53,8 +92,15 @@ export default function StakedDrawer({ account, position, isOpen, onClose, onBon
         event: "AleoManageBond",
         onPress: onBond,
       },
+      {
+        label: t("aleo.manage.unbond"),
+        Icon: canUnstake ? UnbondIcon : UnbondIconDisabled,
+        event: "AleoManageUnstake",
+        disabled: !canUnstake,
+        onPress: onUnstake,
+      },
     ],
-    [t, onBond],
+    [t, onBond, onUnstake, canUnstake],
   );
 
   const data = useMemo<FieldType[]>(() => {

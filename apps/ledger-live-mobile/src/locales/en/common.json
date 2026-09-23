@@ -11361,11 +11361,31 @@
     "manage": {
       "bond": "Bond",
       "claim": "Claim",
+      "unbond": "Unbond",
       "status": "Status",
       "estimatedRate": "Est. rewards rate",
       "unbondPendingInfo": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
       "claimPendingInfo": "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
       "unlockBlock": "Unlocks at block"
+    },
+    "unbond": {
+      "stepperHeader": {
+        "amount": "Confirm unstake",
+        "selectDevice": "Select Device",
+        "connectDevice": "Connect Device"
+      },
+      "amount": {
+        "bondedAmount": "Amount to unstake",
+        "freezeInfo": "This amount will be frozen for about 360 blocks (~1 hour). Once the freeze ends, you'll need to claim it separately to make it spendable again.",
+        "restakeInfo": "You can stake again with a different validator right away - there is no need to wait or claim first.",
+        "validator": "Validator"
+      },
+      "validation": {
+        "success": {
+          "title": "Unstake Submitted",
+          "description": "Your unbond transaction is being processed on the Aleo network."
+        }
+      }
     },
     "send": {
       "balanceSelection": {

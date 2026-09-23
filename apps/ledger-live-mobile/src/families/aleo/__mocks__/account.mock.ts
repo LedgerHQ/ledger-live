@@ -43,3 +43,17 @@ export const makeAleoAccount = (
   },
   ...overrides,
 });
+
+let currencyIdCounter = 0;
+
+// `useAleoValidators` keeps a module-level render seed per currency id, so a test isolating a
+// committee fetch needs its own id or it would be handed a previous render's cached result.
+export function withFreshCurrencyId(account: AleoAccount): AleoAccount {
+  return {
+    ...account,
+    currency: {
+      ...account.currency,
+      id: `aleo_test_${currencyIdCounter++}` as AleoAccount["currency"]["id"],
+    },
+  };
+}
