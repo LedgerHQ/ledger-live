@@ -24,6 +24,8 @@ let loadCredentialsImpl: () => unknown;
 let destroyApplicationImpl: () => Promise<{ trustchainDestroyed: boolean }>;
 let destroyApplicationCalls: number;
 let stdout: string[];
+let environment: "staging" | "production" | undefined;
+let stderr: string[];
 
 beforeAll(() =>
   activateLedgerSyncMocks({
@@ -32,7 +34,7 @@ beforeAll(() =>
       sessionReadCalls++;
       return {
         ledgerSyncTrustchain: meta,
-        ledgerSyncEnvironment: "staging",
+        ledgerSyncEnvironment: environment,
         wipeLedgerSync: () => {
           wipeCalls += 1;
         },
@@ -102,7 +104,12 @@ describe("ledger-sync destroy", () => {
     destroyApplicationImpl = async () => ({ trustchainDestroyed: false });
     destroyApplicationCalls = 0;
     stdout = [];
-    restore = installOutputCapture({ stdout: chunk => stdout.push(chunk), stderr: () => {} });
+    stderr = [];
+    environment = "staging";
+    restore = installOutputCapture({
+      stdout: chunk => stdout.push(chunk),
+      stderr: chunk => stderr.push(chunk),
+    });
   });
 
   afterEach(() => restore());
@@ -212,6 +219,16 @@ describe("ledger-sync destroy", () => {
     expect(destroyApplicationCalls).toBe(1);
     expect(deleteCalls).toBe(0);
     expect(writeCalls).toBe(0);
+  });
+
+  it("wipes only locally when the session doesn't record a valid environment", async () => {
+    environment = undefined;
+
+    await runDestroy();
+
+    expect(destroyApplicationCalls).toBe(0);
+    expect(deleteCalls).toBe(1);
+    expect(lastEnvelope()).toMatchObject({ remote_succeeded: false, local_wiped: true });
   });
 
   it("keeps the session pointer when the keychain delete fails", async () => {

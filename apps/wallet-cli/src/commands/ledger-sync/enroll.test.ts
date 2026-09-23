@@ -19,6 +19,9 @@ let setLedgerSyncTrustchainCalls: Array<{ meta: unknown; environment: string }>;
 let savedCredentials: unknown[];
 let writeCalls: number;
 let createLkrpSdkOptions: unknown[];
+let writeImpl: () => void;
+let deletedCredentials: number;
+let deleteSucceeds: boolean;
 let deviceStep: () => Promise<unknown>;
 let initMemberCredentialsImpl: () => Promise<unknown>;
 let stderr: string[];
@@ -38,12 +41,17 @@ beforeAll(() =>
         },
         write: () => {
           writeCalls += 1;
+          writeImpl();
         },
       };
     },
     noopSessionLock: true,
     keychain: {
       hasLedgerSyncMemberCredentials: () => keychainHasEntry,
+      deleteLedgerSyncMemberCredentials: () => {
+        deletedCredentials += 1;
+        return deleteSucceeds;
+      },
       saveLedgerSyncMemberCredentials: (creds: unknown) => {
         savedCredentials.push(creds);
       },
@@ -101,6 +109,9 @@ describe("ledger-sync enroll", () => {
     savedCredentials = [];
     writeCalls = 0;
     createLkrpSdkOptions = [];
+    writeImpl = () => {};
+    deletedCredentials = 0;
+    deleteSucceeds = true;
     deviceStep = async () => ({ trustchain });
     initMemberCredentialsImpl = async () => memberCredentials;
     stdout = [];
@@ -137,6 +148,30 @@ describe("ledger-sync enroll", () => {
     expect(setLedgerSyncTrustchainCalls).toEqual([{ meta: trustchain, environment: "staging" }]);
     expect(writeCalls).toBe(1);
     expect(sessionReadCalls).toBe(2); // precheck + locked recheck
+  });
+
+  it("rolls back the keychain and names the orphaned member when saving locally fails", async () => {
+    writeImpl = () => {
+      throw new Error("disk full");
+    };
+
+    await expectFailure(
+      () => runEnroll({ name: "ci-box" }),
+      /registered "ci-box" as a member.*disk full.*Remove "ci-box" from Ledger Sync in Ledger Live/s,
+    );
+    expect(deletedCredentials).toBe(1);
+  });
+
+  it("says so when the keychain rollback itself fails", async () => {
+    writeImpl = () => {
+      throw new Error("disk full");
+    };
+    deleteSucceeds = false;
+
+    await expectFailure(
+      runEnroll,
+      /keychain entry could not be removed either.*ledger-sync destroy/s,
+    );
   });
 
   it("reports a lost race instead of overwriting a concurrent enrollment", async () => {
