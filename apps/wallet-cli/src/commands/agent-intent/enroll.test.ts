@@ -16,6 +16,7 @@ let addAgentIntentProfileImpl: (profile: Record<string, unknown>) => void;
 let writeImpl: () => void;
 let sessionReadCalls: number;
 let deleteSecretKeySucceeds: boolean;
+let saveSecretKeyError: Error | undefined;
 
 const savedSecretKeys = new Set<string>();
 const deletedSecretKeyCalls: string[] = [];
@@ -40,6 +41,7 @@ beforeAll(() =>
     keychain: {
       hasAgentIntentSecretKey: (_profileId: string) => keychainHasEntry,
       saveAgentIntentSecretKey: async (profileId: string, _secretKeyHex: string) => {
+        if (saveSecretKeyError) throw saveSecretKeyError;
         savedSecretKeys.add(profileId);
       },
       deleteAgentIntentSecretKey: (profileId: string) => {
@@ -97,6 +99,7 @@ describe("agent-intent enroll", () => {
     sessionReadCalls = 0;
     keychainHasEntry = false;
     deleteSecretKeySucceeds = true;
+    saveSecretKeyError = undefined;
     savedSecretKeys.clear();
     deletedSecretKeyCalls.length = 0;
     addAgentIntentProfileImpl = () => {};
@@ -158,6 +161,20 @@ describe("agent-intent enroll", () => {
     expect(deletedSecretKeyCalls).toEqual(["test-agent"]);
     // Rollback failed, so the (unrecorded) keychain entry is still there from the app's point of view.
     expect(savedSecretKeys.has("test-agent")).toBe(true);
+  });
+
+  it("reports an actionable error and saves no profile when the OS keychain is unavailable", async () => {
+    saveSecretKeyError = new Error("Platform secure storage failure: no Secret Service provider");
+    let profileAdded = false;
+    addAgentIntentProfileImpl = () => {
+      profileAdded = true;
+    };
+
+    await expect(runEnroll()).rejects.toThrow(
+      /Could not store the agent's secret key in the OS keychain \(Platform secure storage failure.*Secret Service provider.*Nothing was saved/s,
+    );
+    expect(profileAdded).toBe(false);
+    expect(deletedSecretKeyCalls).toEqual([]);
   });
 
   it("rolls back the keychain entry when addAgentIntentProfile itself throws", async () => {

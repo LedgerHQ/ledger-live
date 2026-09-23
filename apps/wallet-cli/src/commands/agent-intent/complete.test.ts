@@ -146,6 +146,23 @@ describe("agent-intent complete", () => {
     expect(writeCalled).toBe(true);
   });
 
+  it("still completes after the enrollment link expired, since the frontend only accepts unexpired links", async () => {
+    storedProfile = {
+      ...enrolledPendingProfile,
+      enrollmentExpiresAt: new Date(Date.now() - 60_000).toISOString(),
+    };
+    parseAgentEnrollmentCompletionMock.mockImplementationOnce(() => ({
+      version: AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION,
+      trustchainId: "tc-late",
+      accountAccess: { environment: "staging" },
+    }));
+
+    await runComplete({ profile: "test-agent", payload: '{"anything":"here"}' });
+
+    expect(updateCalls).toEqual([{ profileId: "test-agent", patch: { trustchainId: "tc-late" } }]);
+    expect(writeCalled).toBe(true);
+  });
+
   it("catches a concurrent completion at the locked recheck even though the precheck passed", async () => {
     // Simulates: the profile was still pending when this complete's fast precheck ran, but another
     // `complete` for the same profile won the race and landed first — by the time the lock is held
