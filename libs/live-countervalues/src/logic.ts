@@ -131,7 +131,10 @@ export const initialState: CounterValuesState = {
   cache: {},
 };
 
-const MAX_RETRY_DELAY = 7 * incrementPerGranularity.daily;
+// in seconds, to match secondsBetweenRetries below: incrementPerGranularity is in milliseconds,
+// so using it raw capped the backoff at 19 years instead of a week, and a pair that hit a run of
+// HTTP failures stopped refetching its history for good.
+const MAX_RETRY_DELAY = (7 * incrementPerGranularity.daily) / 1000;
 // synchronize all countervalues incrementally (async update of the countervalues state)
 export async function loadCountervalues(
   state: CounterValuesState,

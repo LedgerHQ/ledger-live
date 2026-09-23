@@ -65,27 +65,25 @@ const api: CounterValuesAPI = {
     // the batches preserve the ordering of "pairs" so the output returns the result in same orders
     // we essentially assume that pairs' to's field are not changing / are sorted
     const batches: Array<[Currency[], Currency]> = []; // array of [froms, to]
-    const first = pairs[0];
-    let batch: [Currency[], Currency] = [[first.from], first.to];
+    let batch: [Currency[], Currency] | null = null;
 
     // separately store all the pairs that can't be batched
     const singles: Array<[Currency[], Currency]> = [];
 
-    for (let i = 1; i < pairs.length; i++) {
-      const pair = pairs[i];
-      const inBatch = shouldBatchCurrencyFrom(pair.from);
-      if (!inBatch) {
+    // every pair goes through shouldBatchCurrencyFrom, including the first: seeding the batch
+    // with pairs[0] skipped the check for it, and since pairIds sort by "to" then "from", the
+    // first pair is bitcoin, which therefore lost its own spot request.
+    for (const pair of pairs) {
+      if (!shouldBatchCurrencyFrom(pair.from)) {
         singles.push([[pair.from], pair.to]);
+      } else if (!batch || pair.to !== batch[1] || batch[0].length >= LATEST_CHUNK) {
+        if (batch) batches.push(batch);
+        batch = [[pair.from], pair.to];
       } else {
-        if (pair.to !== batch[1] || batch[0].length >= LATEST_CHUNK) {
-          batches.push(batch);
-          batch = [[pair.from], pair.to];
-        } else {
-          batch[0].push(pair.from);
-        }
+        batch[0].push(pair.from);
       }
     }
-    batches.push(batch);
+    if (batch) batches.push(batch);
     const allBatches = batches.concat(singles);
 
     const map = new Map();

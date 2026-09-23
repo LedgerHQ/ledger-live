@@ -392,3 +392,46 @@ describe("checkHolesOnNextLoad", () => {
     expect(result.checkHolesOnNextLoad).toBe(false);
   });
 });
+
+describe("historical retry backoff", () => {
+  const bitcoin = getCryptoCurrencyById("bitcoin");
+  const usd = getFiatCurrencyByTicker("USD");
+  const DAY = 24 * 60 * 60 * 1000;
+  const settings = {
+    trackingPairs: [{ from: bitcoin, to: usd, startDate: new Date(Date.now() - 30 * DAY) }],
+    autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
+    disableAutoRecoverErrors: true,
+  };
+
+  function stateAfterFailures(timestamp: number): CounterValuesState {
+    return { ...initialState, status: { "USD bitcoin": { failures: 100, timestamp } } };
+  }
+
+  function spyOnApi() {
+    const api = require("./api");
+    jest.spyOn(api.default, "fetchLatest").mockResolvedValue([50000]);
+    return jest.spyOn(api.default, "fetchHistorical").mockResolvedValue({});
+  }
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test("holds off a pair that failed moments ago", async () => {
+    const fetchHistorical = spyOnApi();
+
+    await loadCountervalues(stateAfterFailures(Date.now() - 1000), settings);
+
+    expect(fetchHistorical).not.toHaveBeenCalled();
+  });
+
+  test("retries a long-failing pair once the seven day cap has elapsed", async () => {
+    const fetchHistorical = spyOnApi();
+
+    await loadCountervalues(stateAfterFailures(Date.now() - 8 * DAY), settings);
+
+    expect(fetchHistorical).toHaveBeenCalled();
+  });
+});
