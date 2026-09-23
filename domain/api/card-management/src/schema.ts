@@ -177,8 +177,9 @@ export const PayCardTransactionFundingSourceSchema = z.object({
  * survived the wire should not be rounded into a number on the way in. `ratePercent` is the rate
  * that produced them, so a caller can show the rate without recomputing it from the pair.
  *
- * `status` stays a plain string rather than an enum, so an accrual state this schema has not seen
- * arrives with its amounts intact instead of costing the whole cashback.
+ * `status`: `EARNED` is confirmed and unclaimed, `CLAIMED` paid out, `PENDING` still settling (the
+ * provider sends both amounts as zero, unchecked here), and `NOT_EARNED` declined or reverted. A
+ * status outside these four fails the whole cashback, which the transaction then drops.
  */
 export const PayCardTransactionCashbackSchema = z.object({
   amount: z.string().min(1),
@@ -186,7 +187,7 @@ export const PayCardTransactionCashbackSchema = z.object({
   fiatAmount: z.string().min(1),
   fiatCurrency: z.string().min(1),
   ratePercent: z.string().min(1),
-  status: z.string().min(1),
+  status: z.enum(["EARNED", "CLAIMED", "PENDING", "NOT_EARNED"]),
 });
 
 /**

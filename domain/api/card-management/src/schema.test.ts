@@ -725,12 +725,32 @@ describe("PayCardTransactionSchema", () => {
     ).toBeUndefined();
   });
 
-  it("reads a cashback status this schema does not name", () => {
-    const cashback = { ...documented.cashback, status: "REVERSED" };
+  it.each(["EARNED", "CLAIMED", "PENDING", "NOT_EARNED"])("reads a %s cashback", status => {
+    const cashback = { ...documented.cashback, status };
 
     expect(PayCardTransactionSchema.parse({ ...documented, cashback }).cashback?.status).toBe(
-      "REVERSED",
+      status,
     );
+  });
+
+  it("reads a pending cashback whose amounts are still zero", () => {
+    const cashback = { ...documented.cashback, amount: "0", fiatAmount: "0", status: "PENDING" };
+
+    expect(PayCardTransactionSchema.parse({ ...documented, cashback }).cashback).toMatchObject({
+      amount: "0",
+      fiatAmount: "0",
+      status: "PENDING",
+    });
+  });
+
+  it("drops a cashback whose status this schema does not name, without rejecting the transaction", () => {
+    const parsed = PayCardTransactionSchema.parse({
+      ...documented,
+      cashback: { ...documented.cashback, status: "REVERSED" },
+    });
+
+    expect(parsed.id).toBe(documented.id);
+    expect(parsed.cashback).toBeUndefined();
   });
 
   it("drops a cashback missing its amounts, without rejecting the transaction", () => {
