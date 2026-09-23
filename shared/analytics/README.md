@@ -105,11 +105,10 @@ Use `avoidDuplicates: true` when a screen component may remount and emit the sam
 
 ### Async and await
 
-`track` can be fire-and-forget – async enrichment and delivery will run inside the package. The final delivery status is published on `analyticsEvents$`.
-
-When you need to wait until an event is enqueued, await the call, e.g.
+`track` always returns `Promise<void>`. You can fire-and-forget (`track(...)`) and async enrichment and delivery still run inside the package, or `await track(...)` when you need to wait until delivery has finished. The final delivery status is published on `analyticsEvents$`.
 
 ```ts
+void track("My Event", { foo: "bar" });
 await track("My Crucial Event", { foo: "bar" });
 await trackPage({ category: "Market" });
 ```
