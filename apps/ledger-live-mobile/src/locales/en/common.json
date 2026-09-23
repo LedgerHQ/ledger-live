@@ -11376,8 +11376,8 @@
       },
       "amount": {
         "bondedAmount": "Amount to unstake",
-        "freezeInfo": "This amount will be frozen for about 360 blocks (~1 hour). Once the freeze ends, you'll need to claim it separately to make it spendable again.",
-        "restakeInfo": "You can stake again with a different validator right away - there is no need to wait or claim first.",
+        "belowMinimum": "This amount will be frozen for about 360 blocks (~1 hour). If unbonding would leave less than <minimum/> bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met.",
+        "max": "Max",
         "validator": "Validator"
       },
       "validation": {

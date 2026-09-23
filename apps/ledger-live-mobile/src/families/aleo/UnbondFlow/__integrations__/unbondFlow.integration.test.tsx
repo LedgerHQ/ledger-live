@@ -135,24 +135,41 @@ describe("Aleo unbond flow (integration)", () => {
     });
   });
 
-  it("explains the freeze period and that a separate claim is needed", async () => {
+  it("explains the freeze period and that unbonding below the minimum stake unbonds the full balance", async () => {
     renderFlowAt(BONDED_ACCOUNT);
 
     await waitFor(() =>
-      expect(screen.getByTestId("aleo-unbond-freeze-alert")).toHaveTextContent(
-        /360 blocks.*claim it separately/,
+      expect(screen.getByTestId("aleo-unbond-below-minimum-alert")).toHaveTextContent(
+        /frozen for about 360 blocks.*less than 10,000 ALEO bonded.*entire bonded balance is unbonded/,
       ),
     );
   });
 
-  it("makes clear re-staking with another validator does not require claiming first", async () => {
-    renderFlowAt(BONDED_ACCOUNT);
+  it("turns off Max to enable a partial amount, and back on to use the full bonded balance", async () => {
+    const { user } = renderFlowAt(BONDED_ACCOUNT);
+
+    const maxToggle = await screen.findByTestId("aleo-unbond-use-all-amount");
+    expect(screen.getByTestId("aleo-unbond-amount-input")).toBeDisabled();
+
+    await user.press(maxToggle);
 
     await waitFor(() =>
-      expect(screen.getByTestId("aleo-unbond-restake-alert")).toHaveTextContent(
-        /stake again with a different validator right away/i,
-      ),
+      expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(expect.anything(), {
+        amount: new BigNumber(0),
+        useAllAmount: false,
+      }),
     );
+    await waitFor(() => expect(screen.getByTestId("aleo-unbond-amount-input")).toBeEnabled());
+
+    await user.press(maxToggle);
+
+    await waitFor(() =>
+      expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(expect.anything(), {
+        amount: new BigNumber(0),
+        useAllAmount: true,
+      }),
+    );
+    await waitFor(() => expect(screen.getByTestId("aleo-unbond-amount-input")).toBeDisabled());
   });
 
   it("disables Continue when there is nothing to unbond", async () => {
