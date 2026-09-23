@@ -507,49 +507,33 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // documents its own as volatile). Only the cursor varies from page to page below.
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
 
-    // Assets the account is already known to hold, so the module can resume discovery from
-    // `fromHeight` instead of rewalking the whole history: a token whose last transfer predates
-    // the watermark is still balance-read because it is listed here.
+    // Assets this account already stores, so the module scans from the watermark instead of the
+    // whole history and still returns a balance for a token last moved below it.
     //
-    // The completeness `fromHeight` requires holds by induction, and `syncHash` is what makes it
-    // hold. This list is what the *caller* kept, which is a filtered view -- on the reference
-    // account, 134 sub-accounts for 2 847 contracts discovered, because the family's
-    // `includeAssets` keeps only CAL-resolvable tokens. That filter is hashed into `syncHash`
-    // (`getTokensSyncHash` over the currency's CAL list, plus the blacklist), so the day a token
-    // becomes listed -- or the user blacklists one -- the hash changes, `syncFromScratch` goes
-    // true, and the next sync rediscovers everything from height 0 with no `knownAssets`. Within
-    // one hash generation the kept set is therefore complete with respect to what this caller can
-    // ever store, which is exactly the guarantee the option asks for.
+    // This list is a filtered view -- the family's `includeAssets` keeps only CAL-resolvable
+    // tokens -- but that filter is hashed into `syncHash`, so the day a token becomes listed the
+    // hash changes, `syncFromScratch` goes true, and the next sync scans from 0 with no
+    // `knownAssets`. Completeness therefore holds by induction within one hash generation.
     const knownAssets = syncFromScratch
       ? undefined
       : ((initialAccount?.subAccounts ?? []) as TokenAccount[])
           .map(sub => bridgeApi.getAssetFromToken?.(sub.token, address))
           .filter((asset): asset is AssetInfo => asset !== undefined);
 
-    // Assigned onto a typed object rather than spread into the literal. A spread of a conditional
-    // object escapes excess-property checking, so the resume would compile against a coin module
-    // whose `BalanceOptions` has neither field and ship as a silent no-op -- verified, not feared.
-    // Written this way the compiler enforces the cross-repo ordering: this file does not build
-    // until a coin-module-framework carrying both options is in the catalog.
-    // `getBalance` is called with no options at all unless the family declares some. Several
-    // modules routed through this framework reject *any* options object outright -- coin-tron and
-    // coin-casper wrap their `getBalance` in `rejectBalanceOptions`, which throws on a truthy
-    // value, `{}` included -- so building an object unconditionally would fail their every sync.
-    // A family that declares `balanceOptions` accepts the parameter by construction, which makes
-    // it the one place the resume fields can be attached safely; today that is evm alone, the
-    // only family whose module reads them.
+    // No options at all unless the family declares some: coin-tron and coin-casper wrap their
+    // `getBalance` in `rejectBalanceOptions`, which throws on any truthy value, `{}` included.
+    // Declaring `balanceOptions` is what marks a family as accepting the parameter, and evm is
+    // today the only one whose module reads these two fields.
     //
-    // Assigned onto a typed object rather than spread into a literal. A spread of a conditional
-    // object escapes excess-property checking, so the resume would compile against a coin module
-    // whose `BalanceOptions` has neither field and ship as a silent no-op -- verified, not feared.
-    // Written this way the compiler enforces the cross-repo ordering: this file does not build
-    // until a coin-module-framework carrying both options is in the catalog.
+    // Assigned onto a typed object, never spread into a literal: a spread escapes
+    // excess-property checking, so this would compile against a framework without the fields and
+    // ship as a silent no-op.
     let balanceOptions: BalanceOptions | undefined = bridgeApi.balanceOptions;
     if (balanceOptions && knownAssets?.length) {
-      const resumed: BalanceOptions = { ...balanceOptions };
-      resumed.knownAssets = knownAssets;
-      resumed.fromHeight = minHeight;
-      balanceOptions = resumed;
+      const scoped: BalanceOptions = { ...balanceOptions };
+      scoped.knownAssets = knownAssets;
+      scoped.scanAssetsMinHeight = minHeight;
+      balanceOptions = scoped;
     }
 
     const balancePromise = coinModuleApi

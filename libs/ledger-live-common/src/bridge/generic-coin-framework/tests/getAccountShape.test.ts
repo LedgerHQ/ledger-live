@@ -3514,7 +3514,7 @@ describe("genericGetAccountShape", () => {
       });
 
       const options = getBalanceMock.mock.calls[0][2];
-      expect(options.fromHeight).toBe(43); // newest stored operation + 1, the same watermark the walk uses
+      expect(options.scanAssetsMinHeight).toBe(43); // newest stored operation + 1, the same watermark the walk uses
       expect(options.knownAssets).toEqual([
         { type: "erc20", assetReference: "ethereum/erc20/0xaaa" },
         { type: "erc20", assetReference: "ethereum/erc20/0xbbb" },
@@ -3522,7 +3522,7 @@ describe("genericGetAccountShape", () => {
     });
 
     it("resumes from nothing when the token list changed, so a newly listed token is still found", async () => {
-      // The completeness `fromHeight` demands is held by `syncHash`: it covers the currency's CAL
+      // The completeness `scanAssetsMinHeight` demands is held by `syncHash`: it covers the currency's CAL
       // list and the blacklist, so a token becoming listed invalidates the resume rather than
       // leaving it permanently undiscovered.
       await syncWith({
@@ -3534,7 +3534,7 @@ describe("genericGetAccountShape", () => {
       });
 
       const options = getBalanceMock.mock.calls[0][2];
-      expect(options.fromHeight).toBeUndefined();
+      expect(options.scanAssetsMinHeight).toBeUndefined();
       expect(options.knownAssets).toBeUndefined();
     });
 
@@ -3548,7 +3548,7 @@ describe("genericGetAccountShape", () => {
       });
 
       const options = getBalanceMock.mock.calls[0][2];
-      expect(options.fromHeight).toBeUndefined();
+      expect(options.scanAssetsMinHeight).toBeUndefined();
       expect(options.knownAssets).toBeUndefined();
     });
 
