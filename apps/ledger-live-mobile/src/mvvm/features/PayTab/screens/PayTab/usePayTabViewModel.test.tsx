@@ -56,10 +56,17 @@ const CARD_ASSET: CardAssetRow = {
 };
 
 function PayTabViewModelProbe() {
-  const { login, onTopUp, onChooseCardType, cardAssets, cardSettingsActions, cardFormatters } =
-    usePayTabViewModel();
+  const { card } = usePayTabViewModel();
+  const {
+    login,
+    onTopUp,
+    onChooseCardType,
+    assets: cardAssets,
+    cardSettingsActions,
+    formatters,
+  } = card;
   const { oauthConfig, callback } = login;
-  const formatted = cardFormatters?.countervalue?.(1250);
+  const formatted = formatters?.countervalue?.(1250);
 
   return (
     <>
@@ -73,8 +80,8 @@ function PayTabViewModelProbe() {
       <Text testID="countervalue-decimal">{formatted?.decimalPart}</Text>
       <Pressable testID="top-up" onPress={onTopUp} />
       <Pressable testID="choose-card-type" onPress={onChooseCardType} />
-      <Pressable testID="asset-top-up" onPress={() => cardAssets.onTopUp?.(CARD_ASSET)} />
-      <Pressable testID="asset-withdraw" onPress={() => cardAssets.onWithdraw?.(CARD_ASSET)} />
+      <Pressable testID="asset-top-up" onPress={() => cardAssets?.onTopUp?.(CARD_ASSET)} />
+      <Pressable testID="asset-withdraw" onPress={() => cardAssets?.onWithdraw?.(CARD_ASSET)} />
       <Text testID="has-manage-pin">
         {String(typeof cardSettingsActions?.onManagePin === "function")}
       </Text>
@@ -83,7 +90,7 @@ function PayTabViewModelProbe() {
       </Text>
       <Pressable testID="press-manage-pin" onPress={cardSettingsActions?.onManagePin} />
       <Pressable testID="press-access-baanx" onPress={cardSettingsActions?.onAccessBaanx} />
-      <Pressable testID="press-add-asset" onPress={cardAssets.onAddAsset} />
+      <Pressable testID="press-add-asset" onPress={cardAssets?.onAddAsset} />
       <Pressable testID="login-signup" onPress={() => void login.openHostedPage?.(SIGNUP_PATH)} />
     </>
   );
@@ -365,7 +372,9 @@ describe("usePayTabViewModel", () => {
 
     await user.press(screen.getByTestId("press-manage-pin"));
 
-    await waitFor(() => expect(warn).toHaveBeenCalledWith("[card] manage pin page did not open"));
+    await waitFor(() =>
+      expect(warn).toHaveBeenCalledWith("[card] manage pin page did not open", expect.any(Error)),
+    );
 
     warn.mockRestore();
   });
