@@ -41,6 +41,8 @@ const mockedReadCardUsEnv = jest.mocked(readCardUsEnv);
 
 const HOSTED_MANIFEST = { id: "baanx-hosted-url", url: "https://ledger.baanxapi.test" };
 
+const SIGNUP_PATH = "/onboarding/signup";
+
 const CARD_ASSET: CardAssetRow = {
   id: "wallet-btc",
   currency: "btc",
@@ -82,6 +84,7 @@ function PayTabViewModelProbe() {
       <Pressable testID="press-manage-pin" onPress={cardSettingsActions?.onManagePin} />
       <Pressable testID="press-access-baanx" onPress={cardSettingsActions?.onAccessBaanx} />
       <Pressable testID="press-add-asset" onPress={cardAssets.onAddAsset} />
+      <Pressable testID="login-signup" onPress={() => void login.openHostedPage?.(SIGNUP_PATH)} />
     </>
   );
 }
@@ -205,6 +208,15 @@ describe("usePayTabViewModel", () => {
     await user.press(screen.getByTestId("choose-card-type"));
 
     await expectHostedPage("https://ledger.baanxapi.test/order-card?app_id=LEDGERUS");
+  });
+
+  it("should hand the login flow the opener that sends signup to the Baanx manifest", async () => {
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("login-signup"));
+
+    await expectHostedPage("https://ledger.baanxapi.test/onboarding/signup");
+    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
   });
 
   it("should pre-select the asset the holder tops up from", async () => {
