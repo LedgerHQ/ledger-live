@@ -13,15 +13,12 @@ describe("getPayAttributes", () => {
   });
 
   it("should send Pay user properties when the Pay flag is on", () => {
-    expect(getPayAttributes(unsigned, true, ["USDC"])).toEqual(
-      expect.objectContaining({
-        featureFlagPay: true,
-        hasStable: true,
-        hasCard: false,
-        cardLoggedIn: false,
-        cardRewardCurrency: null,
-      }),
-    );
+    expect(getPayAttributes(unsigned, true, ["USDC"])).toEqual({
+      featureFlagPay: true,
+      hasStable: true,
+      hasCard: false,
+      cardLoggedIn: false,
+    });
   });
 
   it("counts the cached transactions, which the endpoint holds in pages", () => {

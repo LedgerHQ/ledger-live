@@ -381,6 +381,9 @@ describe("PayTab integration", () => {
         page: "Pay",
       }),
     );
+    expect(mockedTrackPage.mock.calls.filter(([event]) => event.category === "Pay")).toHaveLength(
+      1,
+    );
   });
 
   it("should mount the DIE on verify and restore the request card once the address is confirmed", async () => {

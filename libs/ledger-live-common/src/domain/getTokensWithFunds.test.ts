@@ -4,7 +4,7 @@ import { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import BigNumber from "bignumber.js";
-import { getTokensWithFunds } from "./getTokensWithFunds";
+import { getTickersWithFunds, getTokensWithFunds } from "./getTokensWithFunds";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Setup mock store for unit tests
@@ -128,5 +128,21 @@ describe("getTokensWithFunds", () => {
     const result = getTokensWithFunds([accounts]);
 
     expect(result).toEqual(["ETH on Ethereum", "ZRX on Ethereum", "REP on Ethereum"]);
+  });
+});
+
+describe("getTickersWithFunds", () => {
+  it("includes token tickers even when the parent account has no funds", () => {
+    const account = mockedAccounts[0];
+    const [zrxAccount] = account.subAccounts ?? [];
+    const parentEmpty = { ...account, balance: new BigNumber(0), subAccounts: [zrxAccount] };
+
+    expect(getTickersWithFunds([parentEmpty])).toEqual(["ZRX"]);
+  });
+
+  it("includes the parent ticker when the account itself is funded", () => {
+    expect(getTickersWithFunds(mockedAccounts)).toEqual(
+      expect.arrayContaining(["ETH", "ZRX", "REP"]),
+    );
   });
 });

@@ -34,6 +34,7 @@ export function useCardDetailsViewModel({
   };
 
   const onMorePress = () => {
+    trackButtonClicked({ button: "more", page: "Card details" });
     goTo({ name: "more" });
   };
 

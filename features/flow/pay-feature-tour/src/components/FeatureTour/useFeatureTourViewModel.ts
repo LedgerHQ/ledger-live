@@ -11,11 +11,12 @@ export type FeatureTourViewModel = Readonly<{
   description: string;
   rows: readonly FeatureTourRow[];
   ctaLabel: string;
-  onDismiss: () => void;
+  onClose: () => void;
+  onContinue: () => void;
 }>;
 
-export const FEATURE_TOUR_PAGE = "card feature intro";
-const TRACK_FLOW = "card";
+export const FEATURE_TOUR_PAGE = "Feature Intro";
+export const FEATURE_TOUR_FLOW = "pay";
 
 const KEY_PREFIX = "payTab.featureTour";
 
@@ -31,14 +32,19 @@ export function useFeatureTourViewModel(): FeatureTourViewModel {
   const { trackButtonClicked } = usePayAnalyticsContext();
   const hasSeenFeatureTour = useSelector(selectPayCardHasSeenFeatureTour);
 
-  const onDismiss = useCallback(() => {
-    dispatch(markPayCardFeatureTourSeen());
-    trackButtonClicked({
-      button: "got it",
-      flow: TRACK_FLOW,
-      page: FEATURE_TOUR_PAGE,
-    });
-  }, [dispatch, trackButtonClicked]);
+  const dismiss = useCallback(
+    (button: "close" | "continue") => {
+      dispatch(markPayCardFeatureTourSeen());
+      trackButtonClicked({
+        button,
+        flow: FEATURE_TOUR_FLOW,
+        page: FEATURE_TOUR_PAGE,
+      });
+    },
+    [dispatch, trackButtonClicked],
+  );
+  const onClose = useCallback(() => dismiss("close"), [dismiss]);
+  const onContinue = useCallback(() => dismiss("continue"), [dismiss]);
 
   const rows = useMemo(
     () =>
@@ -57,8 +63,9 @@ export function useFeatureTourViewModel(): FeatureTourViewModel {
       description: t(`${KEY_PREFIX}.description`),
       rows,
       ctaLabel: t(`${KEY_PREFIX}.cta`),
-      onDismiss,
+      onClose,
+      onContinue,
     }),
-    [hasSeenFeatureTour, t, rows, onDismiss],
+    [hasSeenFeatureTour, onClose, onContinue, rows, t],
   );
 }

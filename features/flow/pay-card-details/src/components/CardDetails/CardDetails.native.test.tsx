@@ -1,4 +1,5 @@
 import React, { type PropsWithChildren } from "react";
+import { Text } from "react-native";
 import { act, render, screen, userEvent } from "@testing-library/react-native";
 import type { CardAssetRow, CardAssetsViewModel } from "@features/flow-pay-card-assets";
 import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
@@ -37,7 +38,10 @@ let track = jest.fn();
 function Wrapper({ children }: PropsWithChildren) {
   return (
     <StoreWrapper>
-      <PayAnalyticsProvider adapter={{ track }}>
+      <PayAnalyticsProvider
+        adapter={{ track }}
+        renderPage={page => <Text testID="pay-track-page">{page}</Text>}
+      >
         <I18nWrapper>{children}</I18nWrapper>
       </PayAnalyticsProvider>
     </StoreWrapper>
@@ -225,8 +229,8 @@ describe("CardDetails (native)", () => {
     expect(screen.queryByTestId("card-asset-withdraw-drawer")).not.toBeOnTheScreen();
   });
 
-  it("should show the card numbers image after View", async () => {
-    const { user } = renderCardDetails();
+  it("should show and track the card numbers after View", async () => {
+    const { user, onTrackEvent } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
     await user.press(await screen.findByText(CARD_COPY.numbersReveal));
@@ -241,6 +245,13 @@ describe("CardDetails (native)", () => {
     expect(screen.getByLabelText(CARD_COPY.numbersImageAlt)).toBeVisible();
     expect(screen.getByText(CARD_COPY.numbersHide)).toBeVisible();
     expect(screen.queryByText(CARD_COPY.numbersReveal)).not.toBeOnTheScreen();
+    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+      button: "view_card_digits",
+      page: "Card details",
+    });
+    expect(
+      screen.getAllByTestId("pay-track-page").some(page => page.props.children === "Card digits"),
+    ).toBe(true);
 
     await user.press(screen.getByText(CARD_COPY.numbersHide));
 
@@ -249,13 +260,17 @@ describe("CardDetails (native)", () => {
   });
 
   it("should navigate to More without opening another sheet", async () => {
-    const { user } = renderCardDetails();
+    const { user, onTrackEvent } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
     await user.press(await screen.findByLabelText(MORE_COPY.tile));
 
     expect(screen.getByText(MORE_COPY.rows.managePin)).toBeVisible();
     expect(screen.getByTestId("card-details-more-content")).toBeVisible();
+    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+      button: "more",
+      page: "Card details",
+    });
   });
 
   it("should return to the overview when leaving More through back", async () => {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Card as PayCard } from "@features/flow-pay-card";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+import { PayAnalyticsProvider, type PayPageProperties } from "@features/platform-pay-analytics";
 import { track } from "@shared/analytics";
 import PayCardContainer from "LLD/features/PayTab/components/PayCardContainer";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -10,7 +10,9 @@ export interface CardViewProps {
   readonly viewModel: CardViewModel;
 }
 
-const renderPage = (page: string) => <TrackPage category={page} />;
+const renderPage = (page: string, properties?: PayPageProperties) => (
+  <TrackPage category={page} {...properties} />
+);
 const payAnalyticsAdapter = { track };
 
 export const CardView = ({ viewModel }: CardViewProps) => (

@@ -32,7 +32,10 @@ import {
   getBitcoinYieldSetting,
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
-import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import {
+  getTickersWithFunds,
+  getTokensWithFunds,
+} from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import { getEnv } from "@shared/env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
@@ -491,7 +494,7 @@ const extraProperties = async (store: AppStore) => {
   const payAttributes = getPayAttributes(
     state,
     analyticsFeatureFlagMethod?.("lwmPayTab")?.enabled ?? false,
-    accountsWithFunds,
+    getTickersWithFunds(accounts ?? []),
   );
 
   return {

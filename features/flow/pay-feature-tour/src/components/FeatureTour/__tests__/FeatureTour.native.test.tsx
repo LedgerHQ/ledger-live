@@ -21,7 +21,9 @@ function renderTour(store = makeStore(), adapter = { track: jest.fn() }) {
       <Provider store={store}>
         <PayAnalyticsProvider
           adapter={adapter}
-          renderPage={page => <Text testID="pay-track-page">{page}</Text>}
+          renderPage={(page, properties) => (
+            <Text testID="pay-track-page">{`${page}:${properties?.flow}`}</Text>
+          )}
         >
           <I18nTestProvider resources={FEATURE_TOUR_RESOURCES}>
             <FeatureTour />
@@ -47,7 +49,7 @@ describe("FeatureTour (Native)", () => {
   it("tracks the page when shown", () => {
     renderTour();
 
-    expect(screen.getByTestId("pay-track-page")).toHaveTextContent("card feature intro");
+    expect(screen.getByTestId("pay-track-page")).toHaveTextContent("Feature Intro:pay");
   });
 
   it("marks the tour as seen and emits the click event on the CTA", async () => {
@@ -58,9 +60,9 @@ describe("FeatureTour (Native)", () => {
 
     expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
     expect(adapter.track).toHaveBeenCalledWith("button_clicked", {
-      button: "got it",
-      flow: "card",
-      page: "card feature intro",
+      button: "continue",
+      flow: "pay",
+      page: "Feature Intro",
     });
   });
 

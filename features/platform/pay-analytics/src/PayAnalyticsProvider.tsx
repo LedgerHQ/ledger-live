@@ -1,11 +1,11 @@
 import React, { useMemo, type ReactNode } from "react";
 import { createPayAnalyticsHelper } from "./createPayAnalyticsHelper";
 import { PayAnalyticsContext } from "./context";
-import type { PayAnalyticsAdapter } from "./types";
+import type { PayAnalyticsAdapter, PayPageProperties } from "./types";
 
 export type PayAnalyticsProviderProps = Readonly<{
   adapter: PayAnalyticsAdapter;
-  renderPage?: (page: string) => ReactNode;
+  renderPage?: (page: string, properties?: PayPageProperties) => ReactNode;
   children: ReactNode;
 }>;
 

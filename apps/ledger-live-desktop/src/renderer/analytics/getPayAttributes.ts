@@ -21,6 +21,11 @@ export function getPayAttributes(
   featureFlagPay: boolean,
   accountTickers: readonly string[],
 ): PayGlobalProperties {
+  const transactionPages = queryData(
+    cardManagementApi.endpoints.getCardTransactions.select(undefined),
+    state,
+  )?.pages;
+
   return toPayGlobalProperties({
     featureFlagPay,
     hasCard: state.payCardAuth.hasCard,
@@ -31,9 +36,8 @@ export function getPayAttributes(
       state,
     )?.map(wallet => wallet.balance),
     cardStatus: queryData(cardManagementApi.endpoints.getCardStatus.select(), state),
-    hasCardTransactions: hasCardTransactions(
-      queryData(cardManagementApi.endpoints.getCardTransactions.select(undefined), state)?.pages,
-    ),
+    hasCardTransactions:
+      transactionPages === undefined ? undefined : hasCardTransactions(transactionPages),
     cardWallets: queryData(cardManagementApi.endpoints.getCardLinkedWallets.select(), state),
     cashback: queryData(cardManagementApi.endpoints.getCardCashback.select(), state),
   });

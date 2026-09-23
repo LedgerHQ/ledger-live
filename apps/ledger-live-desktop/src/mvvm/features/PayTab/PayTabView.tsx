@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Balance } from "@features/flow-pay-balance";
 import { Contacts, ContactAddressPicker } from "@features/flow-pay-contact";
 import { ContactsLedgerSyncIntroductionDialog } from "@features/flow-contacts-introduction";
@@ -26,9 +26,11 @@ export function PayTabView({
   trackRequestAddressVerification,
   trackRecipientAddressSelection,
 }: Readonly<PayTabViewModel>) {
+  const [initialBalanceFilter] = useState(balance.filter);
+
   return (
     <div className="flex flex-col pb-32">
-      <TrackPage category="Pay" balance_filter={balance.filter} />
+      <TrackPage category="Pay" balance_filter={initialBalanceFilter} />
       {requestReceive.isOpen && requestReceive.address ? (
         <TrackPage
           category="Request complete"

@@ -1,5 +1,8 @@
 import { AnalyticsBrowser } from "@segment/analytics-next";
-import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import {
+  getTickersWithFunds,
+  getTokensWithFunds,
+} from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import {
   getStablecoinYieldSetting,
   getBitcoinYieldSetting,
@@ -355,7 +358,7 @@ const extraProperties = (store: ReduxStore) => {
   const payAttributes = getPayAttributes(
     state,
     analyticsFeatureFlagMethod?.("lwdPayTab")?.enabled ?? false,
-    accountsWithFunds,
+    getTickersWithFunds(accounts ?? []),
   );
 
   return {

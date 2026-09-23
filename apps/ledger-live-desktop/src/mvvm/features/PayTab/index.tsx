@@ -1,11 +1,13 @@
 import React from "react";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+import { PayAnalyticsProvider, type PayPageProperties } from "@features/platform-pay-analytics";
 import { track } from "@shared/analytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { PayTabView } from "./PayTabView";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
-const renderPage = (page: string) => <TrackPage category={page} />;
+const renderPage = (page: string, properties?: PayPageProperties) => (
+  <TrackPage category={page} {...properties} />
+);
 const payAnalyticsAdapter = { track };
 
 function PayTabContent() {
