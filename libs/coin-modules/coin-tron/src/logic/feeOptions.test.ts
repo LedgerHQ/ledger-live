@@ -29,8 +29,16 @@ const notActivatedConfig = {
 } as unknown as TronCoinConfig;
 
 const mockLogger: Logger = jest.fn();
+// One mockConfig seed covers both consumers — listFeeOptions resolves config once and threads it
+// into estimateFees and getEnergyProvider.
 const mockConfig = jest.fn<Promise<TronCoinConfig>, []>();
 const mockContext = { logger: mockLogger, config: mockConfig } as unknown as TronContext;
+
+const malformedProviderConfig = {
+  explorer: { url: "https://explorer" },
+  status: { type: "active" },
+  energyRent: { provider: "tronify", tronify: {} },
+} as unknown as TronCoinConfig;
 
 const sendTrc20 = (recipient = RECIPIENT): TransactionIntent<TronMemo, TronTxData> => ({
   intentType: "transaction",
@@ -104,6 +112,12 @@ describe("listFeeOptions", () => {
 
   it("returns [standard] when Tronify is not activated in coin-config", async () => {
     mockConfig.mockResolvedValue(notActivatedConfig);
+    await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
+    expect(mockEstimateFees).not.toHaveBeenCalled();
+  });
+
+  it("returns [standard] when the Tronify provider is present but under-configured", async () => {
+    mockConfig.mockResolvedValue(malformedProviderConfig);
     await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
     expect(mockEstimateFees).not.toHaveBeenCalled();
   });
