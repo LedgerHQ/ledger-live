@@ -4,9 +4,26 @@ import { z } from "zod";
 import { walletCliDebug } from "../../shared/log";
 import { createCommandOutput } from "../../output";
 import { outputOption, resolveOutputFormat } from "../inputs";
-import { mapSwapStatusLine } from "./status-shared";
-import { resolveSwapProvider } from "./providers";
+import { SwapNotFoundForProviderError } from "../../errors";
+import { isSwapKnownToProvider, mapSwapStatusLine } from "./status-shared";
+import { resolveSwapProvider, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./providers";
 import { swapFlowId, trackSwapStatusPolled } from "../../analytics/swap-analytics";
+
+async function findProvidersOwningSwapId(
+  swapId: string,
+  excludedProvider: string,
+): Promise<string[]> {
+  const candidates = new Set(WALLET_CLI_DEFAULT_SWAP_PROVIDERS.map(resolveSwapProvider));
+  candidates.delete(excludedProvider);
+  try {
+    const raw = await getMultipleStatus([...candidates].map(provider => ({ provider, swapId })));
+    if (!Array.isArray(raw)) return [];
+    return raw.filter(isSwapKnownToProvider).map(s => s.provider);
+  } catch (e) {
+    walletCliDebug(`swap status: provider lookup for swapId=${swapId} failed: ${String(e)}`);
+    return [];
+  }
+}
 
 export default defineCommand({
   name: "status",
@@ -41,7 +58,12 @@ export default defineCommand({
           `No swap status found for swap id "${flags["swap-id"]}"${flags.provider ? ` and provider "${flags.provider}"` : ""}.`,
         );
       }
-      out.swapStatus(mapSwapStatusLine(raw[0], flags["swap-id"]));
+      const statusLine = mapSwapStatusLine(raw[0], flags["swap-id"]);
+      if (statusLine === undefined) {
+        const matchingProviders = await findProvidersOwningSwapId(flags["swap-id"], provider);
+        throw new SwapNotFoundForProviderError(flags["swap-id"], flags.provider, matchingProviders);
+      }
+      out.swapStatus(statusLine);
     });
   },
 });
