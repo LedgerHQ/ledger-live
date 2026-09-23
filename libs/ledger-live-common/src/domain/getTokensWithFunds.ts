@@ -47,21 +47,3 @@ export const getTokensWithFunds = (
 
   return Array.from(tokensMap.values(), ({ ticker, networkName }) => `${ticker} on ${networkName}`);
 };
-
-export function getTickersWithFunds(accounts: Account[]): string[] {
-  const tickers = new Set<string>();
-
-  for (const account of accounts) {
-    if (account?.balance?.gt(0) && account.currency?.ticker) {
-      tickers.add(account.currency.ticker);
-    }
-
-    account.subAccounts?.forEach(subAccount => {
-      if (subAccount?.balance?.gt(0) && subAccount.token?.ticker) {
-        tickers.add(subAccount.token.ticker);
-      }
-    });
-  }
-
-  return [...tickers];
-}

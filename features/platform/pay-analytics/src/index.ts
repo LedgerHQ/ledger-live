@@ -5,3 +5,4 @@ export * from "./PayAnalyticsProvider";
 export * from "./PayTrackPage";
 export * from "./toPayGlobalProperties";
 export * from "./toPayDebitOrderProperties";
+export * from "./getTickersWithFunds";
