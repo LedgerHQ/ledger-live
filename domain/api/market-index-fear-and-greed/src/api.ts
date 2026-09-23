@@ -16,7 +16,7 @@ const FIFTEEN_MINUTES_IN_SECONDS = 15 * 60;
  * middleware and cache with every other CoinMarketCap use case, while only this one is typed with the
  * endpoint below.
  */
-export const marketSentimentApi = coinMarketCapApi
+export const fearAndGreedApi = coinMarketCapApi
   .enhanceEndpoints({ addTagTypes: FEAR_AND_GREED_TAGS })
   .injectEndpoints({
     endpoints: build => ({
@@ -29,6 +29,6 @@ export const marketSentimentApi = coinMarketCapApi
     }),
   });
 
-export const { useGetFearAndGreedLatestQuery } = marketSentimentApi;
+export const { useGetFearAndGreedLatestQuery } = fearAndGreedApi;
 
-export type MarketSentimentApi = typeof marketSentimentApi;
+export type FearAndGreedApi = typeof fearAndGreedApi;

@@ -1,5 +1,5 @@
 {
-  "name": "@domain/api-market-sentiment",
+  "name": "@domain/api-market-index-fear-and-greed",
   "targets": {
     "build": {
       "executor": "nx:noop"

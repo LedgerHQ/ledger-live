@@ -10,4 +10,4 @@ User-facing Fear & Greed helpers shared across desktop and mobile.
 
 Pure, presentation-oriented logic (no UI components, no network). The canonical data model lives
 in `@domain/entity-market-index-fear-and-greed` and the RTK Query endpoint in
-`@domain/api-market-sentiment`.
+`@domain/api-market-index-fear-and-greed`.
