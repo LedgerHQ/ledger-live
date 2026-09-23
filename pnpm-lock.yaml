@@ -563,7 +563,6 @@ catalogs:
       version: 4.4.3
 
 overrides:
-  node-abi: ^4.9.0
   react: 19.1.4
   react-dom: 19.1.4
   csstype: 3.2.3
@@ -598,7 +597,7 @@ overrides:
 
 packageExtensionsChecksum: sha256-URDZkX/cZOxeA5EuBamAG/cwb/sXOIcYg7e9jJO2gm8=
 
-pnpmfileChecksum: sha256-guA7FVGJUkyzfyFOf1Brw4NU7VVsDKj/40Tldqvdmb0=
+pnpmfileChecksum: sha256-KB1i/ickHkAYU7F5ivQnN9MoIiEuCiPccvPUeAveT14=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
@@ -28940,11 +28939,8 @@ packages:
       dmg-builder: 26.0.1
       electron-builder-squirrel-windows: 26.0.1
       lodash: '*'
-      node-abi: ^4.9.0
     peerDependenciesMeta:
       lodash:
-        optional: true
-      node-abi:
         optional: true
 
   appdirsjs@1.2.7:
@@ -35733,9 +35729,9 @@ packages:
     resolution: {integrity: sha512-sJ9RNmCuYBqXDmGZZHgZ1D1441MqFOU4T5aeLGVGEB4OWI/2LM0mZlkfBQzQKdOfJypL+2nPPBugXKjixBn4kQ==}
     engines: {node: '>=18.20.0 <20 || >=20.12.1'}
 
-  node-abi@4.12.0:
-    resolution: {integrity: sha512-bPSN9a/qIEiURzVVO/I7P/8oPeYTSl+vnvVZBXM/8XerKOgA3dMAIUjl+a+lz9VwTowwSKS3EMsgz/vWDXOkuQ==}
-    engines: {node: '>=22.12.0'}
+  node-abi@3.96.0:
+    resolution: {integrity: sha512-rebQ/lz7i0EkoLzUVSrKRzA69zMkwLp95kKMWoMDkkM00Suxz0D7zEQPwRml5fQum24mj7bPvmlgLAmu2JCiYg==}
+    engines: {node: '>=10'}
 
   node-abort-controller@3.1.1:
     resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
@@ -44381,7 +44377,7 @@ snapshots:
       detect-libc: 2.1.2
       fs-extra: 10.1.0
       got: 11.8.5
-      node-abi: 4.12.0
+      node-abi: 3.96.0
       node-api-version: 0.2.1
       ora: 5.4.1
       read-binary-file-arch: 1.0.6
@@ -59060,7 +59056,6 @@ snapshots:
       - bluebird
       - electron-builder-squirrel-windows
       - lodash
-      - node-abi
       - supports-color
 
   dmg-license@1.0.11:
@@ -59271,7 +59266,6 @@ snapshots:
       - bluebird
       - electron-builder-squirrel-windows
       - lodash
-      - node-abi
       - supports-color
 
   electron-context-menu@4.1.1:
@@ -65018,7 +65012,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  node-abi@4.12.0:
+  node-abi@3.96.0:
     dependencies:
       semver: 7.8.1
 
@@ -66293,7 +66287,7 @@ snapshots:
       minimist: 1.2.8
       mkdirp-classic: 0.5.3
       napi-build-utils: 2.0.0
-      node-abi: 4.12.0
+      node-abi: 3.96.0
       pump: 3.0.0
       rc: 1.2.8
       simple-get: 4.0.1
