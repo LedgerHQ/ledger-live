@@ -118,7 +118,7 @@ function invalidAgentIntentProfileIds(rawInvalid: readonly unknown[]): string[] 
     .filter((id): id is string => typeof id === "string");
 }
 
-// Ledger Sync's own trustchain (NTTVS-728). Deliberately separate from `trustchain` above, which is
+// Ledger Sync's own trustchain. Deliberately separate from `trustchain` above, which is
 // wallet-cli's `ring` application (LKRP application id 17) — Ledger Sync uses application id 16, so
 // the two must never be conflated or wiped together (see key-ring/constants.ts).
 const ledgerSyncFields = {
@@ -409,7 +409,7 @@ export class Session {
     return updated;
   }
 
-  /** Ledger Sync's own trustchain metadata (NTTVS-728) — distinct from `trustchain` (the `ring`
+  /** Ledger Sync's own trustchain metadata — distinct from `trustchain` (the `ring`
    * application). `undefined` means Ledger Sync has not been enrolled/restored on this machine. */
   get ledgerSyncTrustchain(): TrustchainMeta | undefined {
     return this._ledgerSyncTrustchain;

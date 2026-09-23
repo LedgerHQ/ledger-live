@@ -1,5 +1,10 @@
 import { defineCommand } from "@bunli/core";
-import { Session, trustchainFromMeta } from "../../session/session-store";
+import {
+  Session,
+  trustchainFromMeta,
+  withSessionLock,
+  type TrustchainMeta,
+} from "../../session/session-store";
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
 import { LEDGER_SYNC_APPLICATION_ID } from "../../key-ring/constants";
 import {
@@ -10,6 +15,10 @@ import { pullSyncedAccounts, mergeSyncedAccounts } from "../../ledger-sync/cloud
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
+
+function sameTrustchain(a: TrustchainMeta | undefined, b: TrustchainMeta): boolean {
+  return a?.rootId === b.rootId && a.applicationPath === b.applicationPath;
+}
 
 export default defineCommand({
   name: "import",
@@ -75,18 +84,23 @@ export default defineCommand({
       }
       // Key rotation (e.g. a member was removed elsewhere): persist the new applicationPath so the
       // next import re-derives the current key instead of retrying the stale one.
+      const expectedTrustchain = {
+        rootId: trustchainMeta.rootId,
+        applicationPath: restored.applicationPath,
+      };
       if (restored.applicationPath !== trustchainMeta.applicationPath) {
         writeStderr(
           "⚠ Ledger Sync key rotated since last use — re-importing with the current key.\n",
         );
-        session.setLedgerSyncTrustchain(
-          {
-            rootId: trustchainMeta.rootId,
-            applicationPath: restored.applicationPath,
-          },
-          environment,
-        );
-        session.write();
+        await withSessionLock(async () => {
+          const fresh = await Session.read();
+          // Else something else already moved Ledger Sync (destroyed, rotated, re-enrolled) since this
+          // command started — this rotation update is stale, so skip it rather than clobber it.
+          if (sameTrustchain(fresh.ledgerSyncTrustchain, trustchainMeta)) {
+            fresh.setLedgerSyncTrustchain(expectedTrustchain, environment);
+            fresh.write();
+          }
+        });
       }
       importSpin?.success("Ledger Sync key ready");
 
@@ -104,26 +118,37 @@ export default defineCommand({
         out.ledgerSyncImport({ imported: [], unchanged: [], skipped: [], invalid: [] });
         return;
       }
-      if (pulled.status === "deleted") {
-        // Remote data was deleted: per NTTVS-728's additive-only rule, remote absence never deletes a
-        // local account — just clear the version cache so a future push (out of this ticket's scope)
-        // starts clean, and report nothing to merge.
-        session.clearLedgerSyncVersion();
-        session.write();
-        out.ledgerSyncImport({ imported: [], unchanged: [], skipped: [], invalid: [] });
-        return;
-      }
-
-      const report = mergeSyncedAccounts(session, pulled.accounts);
-      // Only advance the cached version when nothing came back `invalid` — an invalid entry usually
-      // means a real bug (or transient corruption) in the synced data, and bumping the version here
-      // would make the next `import` see "up-to-date" and never hand back these raw accounts again,
-      // permanently losing the chance to recover once whatever caused it is fixed. `skipped` entries
-      // are a stable, intentional classification (an unsupported currency family) and don't block it.
-      if (report.invalid.length === 0) {
-        session.setLedgerSyncVersion(pulled.version);
-      }
-      session.write();
+      // Merge against a fresh read under the lock: the key restore and pull above were network
+      // round-trips, and writing the session read at the start would clobber anything another
+      // command saved in the meantime (discovered accounts, Agent Intent profiles, ring state).
+      const report = await withSessionLock(async () => {
+        const fresh = await Session.read();
+        if (!sameTrustchain(fresh.ledgerSyncTrustchain, expectedTrustchain)) {
+          throw new Error(
+            "Ledger Sync changed locally (destroyed, re-enrolled or rotated) while this import was " +
+              "running — nothing was saved. Re-run `wallet-cli ledger-sync import`.",
+          );
+        }
+        if (pulled.status === "deleted") {
+          // Remote data was deleted: remote absence never deletes a local account (import is
+          // additive-only) — just clear the version cache so a future push starts clean.
+          fresh.clearLedgerSyncVersion();
+          fresh.write();
+          return { imported: [], unchanged: [], skipped: [], invalid: [] };
+        }
+        const merged = mergeSyncedAccounts(fresh, pulled.accounts);
+        // Only advance the cached version when nothing came back `invalid` — an invalid entry
+        // usually means a real bug (or transient corruption) in the synced data, and bumping the
+        // version here would make the next `import` see "up-to-date" and never hand back these raw
+        // accounts again, permanently losing the chance to recover once whatever caused it is fixed.
+        // `skipped` entries are a stable, intentional classification (an unsupported currency
+        // family) and don't block it.
+        if (merged.invalid.length === 0) {
+          fresh.setLedgerSyncVersion(pulled.version);
+        }
+        fresh.write();
+        return merged;
+      });
       out.ledgerSyncImport(report);
     });
   },

@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import os from "node:os";
-import { Session } from "../../session/session-store";
+import { Session, withSessionLock } from "../../session/session-store";
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
 import {
   LEDGER_SYNC_APPLICATION_ID,
@@ -82,15 +82,28 @@ export default defineCommand({
       );
       deviceSpin?.success("Ledger Sync ready");
 
-      saveLedgerSyncMemberCredentials(memberCredentials);
-      session.setLedgerSyncTrustchain(
-        {
-          rootId: trustchain.rootId,
-          applicationPath: trustchain.applicationPath,
-        },
-        flags.environment,
-      );
-      session.write();
+      await withSessionLock(async () => {
+        const fresh = await Session.read();
+        if (fresh.ledgerSyncTrustchain || hasLedgerSyncMemberCredentials()) {
+          // getOrCreateTrustchain above already registered this machine as a member remotely — that
+          // can't be undone here, so say so rather than a plain "already enrolled".
+          throw new Error(
+            "Lost the race: another process enrolled Ledger Sync while this device was being " +
+              "registered remotely. This machine was still added as a Ledger Sync member — remove it " +
+              "from Ledger Live if you don't want it listed, then re-run `wallet-cli ledger-sync " +
+              "enroll` if you still need it here.",
+          );
+        }
+        saveLedgerSyncMemberCredentials(memberCredentials);
+        fresh.setLedgerSyncTrustchain(
+          {
+            rootId: trustchain.rootId,
+            applicationPath: trustchain.applicationPath,
+          },
+          flags.environment,
+        );
+        fresh.write();
+      });
 
       out.ledgerSyncEnroll({ memberName, rootId: trustchain.rootId });
     });

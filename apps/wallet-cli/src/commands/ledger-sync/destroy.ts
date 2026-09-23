@@ -1,5 +1,5 @@
 import { defineCommand } from "@bunli/core";
-import { Session, trustchainFromMeta } from "../../session/session-store";
+import { Session, trustchainFromMeta, withSessionLock } from "../../session/session-store";
 import {
   loadLedgerSyncMemberCredentials,
   deleteLedgerSyncMemberCredentials,
@@ -40,11 +40,24 @@ export default defineCommand({
           out.ledgerSyncDestroyCancelled();
           return;
         }
-        const localWiped = deleteLedgerSyncMemberCredentials();
-        if (localWiped) {
-          session.wipeLedgerSync();
-          session.write();
-        }
+        const localWiped = await withSessionLock(async () => {
+          const fresh = await Session.read();
+          // The confirmation prompt waited on a human; another process could have run `ledger-sync
+          // enroll` meanwhile, and wiping now would delete that fresh enrollment's only credential.
+          if (fresh.ledgerSyncTrustchain) {
+            throw new Error(
+              "Ledger Sync was enrolled by another process while this destroy was waiting for " +
+                "confirmation. Nothing was changed — re-run `wallet-cli ledger-sync destroy` if you " +
+                "still want to tear it down.",
+            );
+          }
+          const wiped = deleteLedgerSyncMemberCredentials();
+          if (wiped) {
+            fresh.wipeLedgerSync();
+            fresh.write();
+          }
+          return wiped;
+        });
         out.ledgerSyncDestroy({ remoteSucceeded: false, trustchainDestroyed: false, localWiped });
         return;
       }
@@ -74,6 +87,19 @@ export default defineCommand({
       let memberEjected = false;
 
       if (memberCredentials) {
+        // Re-verify right before the remote side effect: the confirmation prompt can wait
+        // arbitrarily long, and a concurrent re-enroll could reuse this rootId for a new stream.
+        const preflight = await Session.read();
+        if (
+          preflight.ledgerSyncTrustchain?.rootId !== trustchainMeta.rootId ||
+          preflight.ledgerSyncTrustchain.applicationPath !== trustchainMeta.applicationPath
+        ) {
+          throw new Error(
+            "Ledger Sync changed locally while this destroy was waiting for confirmation — nothing " +
+              "was changed. Re-run `wallet-cli ledger-sync destroy` if you still want to tear down " +
+              "the current one.",
+          );
+        }
         const sdk = createLkrpSdk({ applicationId: LEDGER_SYNC_APPLICATION_ID, environment });
         const destroySpin = out.spin("Deactivating Ledger Sync…");
         try {
@@ -105,11 +131,28 @@ export default defineCommand({
         out.spin(reason)?.error(reason);
       }
 
-      const localWiped = deleteLedgerSyncMemberCredentials();
-      if (localWiped) {
-        session.wipeLedgerSync();
-        session.write();
-      }
+      const localWiped = await withSessionLock(async () => {
+        const fresh = await Session.read();
+        // The remote teardown above took a network round-trip; if the local pointer changed in that
+        // window it no longer describes what was just torn down, so leave it alone.
+        if (
+          fresh.ledgerSyncTrustchain &&
+          (fresh.ledgerSyncTrustchain.rootId !== trustchainMeta.rootId ||
+            fresh.ledgerSyncTrustchain.applicationPath !== trustchainMeta.applicationPath)
+        ) {
+          throw new Error(
+            "Ledger Sync changed locally (re-enrolled or rotated) while this destroy was running. " +
+              "The remote teardown above completed, but the local state was left untouched since it " +
+              "no longer matches what this destroy started with.",
+          );
+        }
+        const wiped = deleteLedgerSyncMemberCredentials();
+        if (wiped) {
+          fresh.wipeLedgerSync();
+          fresh.write();
+        }
+        return wiped;
+      });
       out.ledgerSyncDestroy({ remoteSucceeded, trustchainDestroyed, localWiped, memberEjected });
     });
   },
