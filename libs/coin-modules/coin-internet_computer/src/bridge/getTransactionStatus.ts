@@ -9,6 +9,7 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { Principal } from "@dfinity/principal";
 import BigNumber from "bignumber.js";
 import {
+  getNeuronActionPermissions,
   getNeuronDissolveDurationSeconds,
   minTopUpAmount,
   neuronCanAddHotKey,
@@ -22,6 +23,7 @@ import {
   E8S_PER_ICP,
   FOLLOWABLE_TOPICS,
   ICP_FEES,
+  MAX_FOLLOWEES_PER_TOPIC,
   MAX_HOT_KEYS_PER_NEURON,
   MIN_NEURON_STAKE,
   NNS_MAXIMUM_DISSOLVE_DELAY,
@@ -34,11 +36,14 @@ import {
   ICPDissolveDelayGTMax,
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
+  ICPDuplicateFollowee,
+  ICPFolloweeIsSelf,
   ICPFollowTopicNotAllowed,
   ICPHotKeyAlreadyExists,
   ICPHotKeyIsController,
   ICPIncreaseStakeWarning,
   ICPInvalidDissolveDelayIncrease,
+  ICPInvalidFolloweeId,
   ICPInvalidHotKey,
   ICPInvalidPercentage,
   ICPNeuronNotFound,
@@ -46,6 +51,9 @@ import {
   ICPSplitNotAllowed,
   ICPStakeMaturityNotAllowed,
   ICPStakeMemoNotRecoverable,
+  ICPStartDissolvingNotAllowed,
+  ICPStopDissolvingNotAllowed,
+  ICPTooManyFollowees,
   ICPTooManyHotKeys,
   ICPTopUpBelowMinimumStake,
   InvalidMemoICP,
@@ -176,17 +184,38 @@ const validateRemoveHotKey = (
   return undefined;
 };
 
+// A neuron id is a Nat64, and the canister never assigns 0 to a new neuron.
+const MAX_NEURON_ID = 2n ** 64n - 1n;
+
+const isNeuronId = (id: string): boolean => {
+  if (!/^\d+$/.test(id)) return false;
+  const value = BigInt(id);
+  return value > 0n && value <= MAX_NEURON_ID;
+};
+
 // The pickers offer FOLLOWABLE_TOPICS only, so what this refuses is a transaction assembled some
 // other way. Either kind of excluded topic spends the signature for nothing: a retired one is refused
 // by the canister after signing, one past the Ledger ICP app's cap is refused on the device.
 const validateFollow = (
   neuron: ICPNeuron | undefined,
   followTopic: Transaction["followTopic"],
+  followeesIds: readonly string[] = [],
 ): Error | undefined => {
   if (!neuron) return new ICPNeuronNotFound();
   // Absent is Unspecified, the default the builder applies.
   if (followTopic !== undefined && !(followTopic in FOLLOWABLE_TOPICS)) {
     return new ICPFollowTopicNotAllowed();
+  }
+  if (followeesIds.length > MAX_FOLLOWEES_PER_TOPIC) {
+    return new ICPTooManyFollowees("", { max: MAX_FOLLOWEES_PER_TOPIC });
+  }
+  const seen = new Set<string>();
+  for (const id of followeesIds) {
+    if (!isNeuronId(id)) return new ICPInvalidFolloweeId("", { id });
+    const canonical = BigInt(id).toString();
+    if (seen.has(canonical)) return new ICPDuplicateFollowee("", { id: canonical });
+    if (canonical === neuron.id?.toString()) return new ICPFolloweeIsSelf();
+    seen.add(canonical);
   }
   return undefined;
 };
@@ -197,6 +226,21 @@ const validateFollow = (
 const validateDisburse = (neuron: ICPNeuron | undefined): Error | undefined => {
   if (!neuron) return new ICPNeuronNotFound();
   return neuronCanDisburse(neuron, BigInt(ICP_FEES)) ? undefined : new ICPDisburseNotAllowed();
+};
+
+// The screens gate on these permissions at render, but a dissolving neuron dissolves on its own.
+const validateStartDissolving = (neuron: ICPNeuron | undefined): Error | undefined => {
+  if (!neuron) return new ICPNeuronNotFound();
+  return getNeuronActionPermissions(neuron).canStartDissolving
+    ? undefined
+    : new ICPStartDissolvingNotAllowed();
+};
+
+const validateStopDissolving = (neuron: ICPNeuron | undefined): Error | undefined => {
+  if (!neuron) return new ICPNeuronNotFound();
+  return getNeuronActionPermissions(neuron).canStopDissolving
+    ? undefined
+    : new ICPStopDissolvingNotAllowed();
 };
 
 // refresh_neuron refuses a balance under the minimum stake once the transfer has settled, leaving
@@ -311,9 +355,13 @@ const validateNeuronOp = (transaction: Transaction, neuron?: ICPNeuron): NeuronO
     case "stake_maturity":
       return validateStakeMaturity(neuron, transaction.percentageToStake);
     case "follow":
-      return opResult(validateFollow(neuron, transaction.followTopic));
+      return opResult(validateFollow(neuron, transaction.followTopic, transaction.followeesIds));
     case "disburse":
       return opResult(validateDisburse(neuron));
+    case "start_dissolving":
+      return opResult(validateStartDissolving(neuron));
+    case "stop_dissolving":
+      return opResult(validateStopDissolving(neuron));
     default:
       return NEURON_REQUIRED_OPS.has(transaction.type) && !neuron
         ? opResult(new ICPNeuronNotFound())
