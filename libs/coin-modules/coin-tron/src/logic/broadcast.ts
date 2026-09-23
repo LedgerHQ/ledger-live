@@ -1,6 +1,7 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import { broadcastHexTron, broadcastTron } from "../network";
+import { TX_LEN_PREFIX_HEX_WIDTH } from "./combine";
 
 type TxObject = {
   txID: string;
@@ -25,13 +26,13 @@ export async function broadcast(
 
 const isHex = (value: string): boolean => value.length % 2 === 0 && /^[0-9a-f]+$/i.test(value);
 
-// Parses the `combine` output: a 4-hex-char length prefix, the raw_data hex, then the signature hex.
-// Reject malformed input up front so a bad payload fails deterministically instead of being
-// silently truncated by Buffer.from(hex) and broadcast as garbage.
+// Parses the `combine` output: a TX_LEN_PREFIX_HEX_WIDTH-char length prefix, the raw_data hex, then
+// the signature hex. Reject malformed input up front so a bad payload fails deterministically instead
+// of being silently truncated by Buffer.from(hex) and broadcast as garbage.
 function extractTxAndSignature(transaction: string): { rawTx: string; signature: string } {
-  const txLength = parseInt(transaction.slice(0, 4), 16);
-  const rawTx = transaction.slice(4, txLength + 4);
-  const signature = transaction.slice(4 + txLength);
+  const txLength = parseInt(transaction.slice(0, TX_LEN_PREFIX_HEX_WIDTH), 16);
+  const rawTx = transaction.slice(TX_LEN_PREFIX_HEX_WIDTH, txLength + TX_LEN_PREFIX_HEX_WIDTH);
+  const signature = transaction.slice(TX_LEN_PREFIX_HEX_WIDTH + txLength);
   if (Number.isNaN(txLength) || rawTx.length !== txLength || !isHex(rawTx) || !isHex(signature)) {
     throw new Error("tron: malformed signed transaction payload");
   }
