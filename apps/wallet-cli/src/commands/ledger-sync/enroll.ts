@@ -1,21 +1,57 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import os from "node:os";
-import { Session, withSessionLock } from "../../session/session-store";
+import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { Session, withSessionLock, type TrustchainMeta } from "../../session/session-store";
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
 import {
   LEDGER_SYNC_APPLICATION_ID,
   LEDGER_SYNC_ENVIRONMENTS,
   MEMBER_NAME_MAX_LENGTH,
+  type LedgerSyncEnvironment,
 } from "../../key-ring/constants";
 import {
   saveLedgerSyncMemberCredentials,
+  deleteLedgerSyncMemberCredentials,
   hasLedgerSyncMemberCredentials,
 } from "../../ledger-sync/keychain";
+import { errMessage } from "../../shared/error-message";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../../device/register-dmk-transport";
 import { withLkrpDeviceSession } from "../../session/bridge-device-session";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput } from "../../output";
+
+/**
+ * Saves the enrollment locally. The device step has already registered this machine as a member
+ * remotely, so a failure here can't be undone: roll back the keychain entry (a retry then starts
+ * clean) and say which member was left on the remote side.
+ */
+function persistEnrollment(
+  session: Session,
+  memberCredentials: MemberCredentials,
+  trustchainMeta: TrustchainMeta,
+  environment: LedgerSyncEnvironment,
+  memberName: string,
+): void {
+  try {
+    saveLedgerSyncMemberCredentials(memberCredentials);
+    session.setLedgerSyncTrustchain(trustchainMeta, environment);
+    session.write();
+  } catch (e) {
+    const keychainCleared = deleteLedgerSyncMemberCredentials();
+    throw new Error(
+      `Ledger Sync registered "${memberName}" as a member, but saving the enrollment on this ` +
+        `machine failed (${errMessage(e)}). ` +
+        (keychainCleared
+          ? ""
+          : "Its keychain entry could not be removed either — run `wallet-cli ledger-sync " +
+            "destroy` to clear it. ") +
+        `Remove "${memberName}" from Ledger Sync in Ledger Live before re-running ` +
+        "`wallet-cli ledger-sync enroll`, or it stays listed as a member.",
+      { cause: e },
+    );
+  }
+}
 
 function defaultMemberName(): string {
   const raw = `${os.hostname()} (${os.platform()})`;
@@ -94,15 +130,13 @@ export default defineCommand({
               "enroll` if you still need it here.",
           );
         }
-        saveLedgerSyncMemberCredentials(memberCredentials);
-        fresh.setLedgerSyncTrustchain(
-          {
-            rootId: trustchain.rootId,
-            applicationPath: trustchain.applicationPath,
-          },
+        persistEnrollment(
+          fresh,
+          memberCredentials,
+          { rootId: trustchain.rootId, applicationPath: trustchain.applicationPath },
           flags.environment,
+          memberName,
         );
-        fresh.write();
       });
 
       out.ledgerSyncEnroll({ memberName, rootId: trustchain.rootId });

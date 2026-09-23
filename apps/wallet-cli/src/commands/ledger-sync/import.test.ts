@@ -115,6 +115,13 @@ describe("ledger-sync import", () => {
 
   afterEach(() => restore());
 
+  it("refuses to guess the environment when the session doesn't record a valid one", async () => {
+    sessionState.ledgerSyncEnvironment = undefined;
+
+    await expect(runImport()).rejects.toThrow(/doesn't record a valid Ledger Sync environment/);
+    expect(writeCalls).toBe(0);
+  });
+
   it("refuses to import before ledger-sync has been enrolled", async () => {
     sessionState.ledgerSyncTrustchain = undefined;
 
@@ -240,6 +247,22 @@ describe("ledger-sync import", () => {
 
     expect(clearLedgerSyncVersionCalls).toBe(1);
     expect(writeCalls).toBe(1);
+  });
+
+  it("reports a malformed remote document as invalid and never caches its version", async () => {
+    pullSyncedAccountsImpl = () => ({ status: "malformed", reason: "no accounts list" });
+    const stdoutWrites: string[] = [];
+    restore();
+    restore = installOutputCapture({ stdout: chunk => stdoutWrites.push(chunk), stderr: () => {} });
+
+    await runImport("json");
+
+    expect(JSON.parse(stdoutWrites.join("").trim())).toMatchObject({
+      invalid: [{ status: "invalid", id: "<account list>", reason: "no accounts list" }],
+    });
+    expect(setLedgerSyncVersionCalls).toEqual([]);
+    expect(mergedInto).toEqual([]);
+    expect(writeCalls).toBe(0);
   });
 
   it("does not write the session when already up to date", async () => {

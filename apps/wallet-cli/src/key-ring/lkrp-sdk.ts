@@ -1,7 +1,6 @@
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { getEnv } from "@shared/env";
-import { LKRP_APPLICATION_ID, type LedgerSyncEnvironment } from "./constants";
+import { LKRP_APPLICATION_ID, TRUSTCHAIN_API_URLS, type LedgerSyncEnvironment } from "./constants";
 
 /** `applicationId` defaults to wallet-cli's own `ring` application (17). Ledger Sync
  * passes `LEDGER_SYNC_APPLICATION_ID` (16) instead so the two never share a trustchain application.
@@ -24,9 +23,7 @@ export function createLkrpSdk(options?: {
     {
       applicationId,
       name: memberName,
-      apiBaseUrl: getEnv(
-        environment === "staging" ? "TRUSTCHAIN_API_STAGING" : "TRUSTCHAIN_API_PROD",
-      ),
+      apiBaseUrl: TRUSTCHAIN_API_URLS[environment],
     },
     withDevice,
   );

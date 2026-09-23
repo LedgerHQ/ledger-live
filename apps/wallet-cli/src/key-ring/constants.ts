@@ -10,3 +10,15 @@ export const MEMBER_NAME_MAX_LENGTH = 64;
  * and the Cloud Sync backend always agree on the same environment union — one name, one place. */
 export const LEDGER_SYNC_ENVIRONMENTS = ["staging", "production"] as const;
 export type LedgerSyncEnvironment = (typeof LEDGER_SYNC_ENVIRONMENTS)[number];
+
+// Public backend hosts per environment, kept inline because `@shared/env` is deprecated (see
+// docs/configuration.md). Same values as its TRUSTCHAIN_API_* / CLOUD_SYNC_API_* defaults.
+export const TRUSTCHAIN_API_URLS: Record<LedgerSyncEnvironment, string> = {
+  staging: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
+  production: "https://trustchain.api.live.ledger.com",
+};
+
+export const CLOUD_SYNC_API_URLS: Record<LedgerSyncEnvironment, string> = {
+  staging: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
+  production: "https://cloud-sync.api.live.ledger.com",
+};

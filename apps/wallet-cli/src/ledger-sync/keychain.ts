@@ -50,7 +50,7 @@ export function loadLedgerSyncMemberCredentials(
   const [privatekey, pubkey] = splitKeychainLines(stored);
   if (!privatekey || !pubkey) {
     throw new LedgerSyncCorruptKeychainError(
-      'Corrupt Ledger Sync keychain entry: expected "privatekey\\npubkey". ' +
+      String.raw`Corrupt Ledger Sync keychain entry: expected "privatekey\npubkey". ` +
         "Run `wallet-cli ledger-sync destroy` then `wallet-cli ledger-sync enroll` to reset.",
     );
   }

@@ -183,6 +183,11 @@ export function trustchainFromMeta(meta: TrustchainMeta): Trustchain {
   return { ...meta, walletSyncEncryptionKey: "" };
 }
 
+/** Whether `a` still points at the same trustchain application as `b` (root and stream). */
+export function sameTrustchainMeta(a: TrustchainMeta | undefined, b: TrustchainMeta): boolean {
+  return a?.rootId === b.rootId && a.applicationPath === b.applicationPath;
+}
+
 type ParsedSessionData = {
   data: z.infer<typeof SessionDataSchema>;
   invalidAgentIntentProfileRaws: unknown[];

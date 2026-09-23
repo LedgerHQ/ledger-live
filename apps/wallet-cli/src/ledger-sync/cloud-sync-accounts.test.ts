@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test";
 import { Session } from "../session/session-store";
-import { getEnv } from "@shared/env";
 import type { MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
 import {
   mergeSyncedAccounts,
@@ -240,20 +239,26 @@ describe("pullSyncedAccounts", () => {
     expect(result).toEqual({ status: "new-data", accounts: [ETH_RAW, MALFORMED_RAW], version: 7 });
   });
 
-  it("treats a non-array accounts field as an empty list rather than failing the pull", async () => {
-    const { createSdk } = fakeSdk([{ type: "new-data", data: { accounts: "nope" }, version: 2 }]);
+  it.each([
+    ["a non-array", "nope"],
+    ["a missing", undefined],
+  ])(
+    "reports %s accounts field as malformed, without a version to cache",
+    async (_label, accounts) => {
+      const { createSdk } = fakeSdk([{ type: "new-data", data: { accounts }, version: 2 }]);
 
-    const result = await pullSyncedAccounts(
-      trustchain,
-      memberCredentials,
-      trustchainSdk,
-      "production",
-      () => undefined,
-      createSdk,
-    );
+      const result = await pullSyncedAccounts(
+        trustchain,
+        memberCredentials,
+        trustchainSdk,
+        "production",
+        () => undefined,
+        createSdk,
+      );
 
-    expect(result).toEqual({ status: "new-data", accounts: [], version: 2 });
-  });
+      expect(result).toEqual({ status: "malformed", reason: expect.stringContaining("accounts") });
+    },
+  );
 
   it("swallows the TrustchainOutdated the SDK throws right after reporting deleted data", async () => {
     const { createSdk } = fakeSdk([{ type: "deleted-data" }], namedError("TrustchainOutdated"));
@@ -307,9 +312,14 @@ describe("pullSyncedAccounts", () => {
       staging.createSdk,
     );
 
-    expect(production.created[0]?.apiBaseUrl).toBe(getEnv("CLOUD_SYNC_API_PROD"));
-    expect(staging.created[0]?.apiBaseUrl).toBe(getEnv("CLOUD_SYNC_API_STAGING"));
-    expect(getEnv("CLOUD_SYNC_API_PROD")).not.toBe(getEnv("CLOUD_SYNC_API_STAGING"));
+    expect(production.created).toEqual([
+      expect.objectContaining({ apiBaseUrl: "https://cloud-sync.api.live.ledger.com" }),
+    ]);
+    expect(staging.created).toEqual([
+      expect.objectContaining({
+        apiBaseUrl: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
+      }),
+    ]);
   });
 
   it("passes the caller's cached version and the shared live slug to the SDK", async () => {
