@@ -1,11 +1,11 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { createPayAnalyticsHelper } from "./createPayAnalyticsHelper";
-import type { PayAnalyticsHelper } from "./types";
+import type { PayAnalyticsHelper, PayPageProperties } from "./types";
 
 export type PayAnalyticsContextValue = PayAnalyticsHelper &
   Readonly<{
     configured: boolean;
-    renderPage?: (page: string) => ReactNode;
+    renderPage?: (page: string, properties?: PayPageProperties) => ReactNode;
   }>;
 
 const fallbackValue = {

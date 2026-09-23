@@ -80,7 +80,7 @@ export function useMoreViewModel(actions: CardSettingsActions = {}): MoreViewMod
   const { data: user } = useGetUserQuery(undefined, { skip: !isSignedIn });
 
   const onMorePress = () => {
-    trackButtonClicked({ button: "settings", page: "Card details" });
+    trackButtonClicked({ button: "more", page: "Card details" });
     setSheetOpen(true);
   };
   const onSheetClose = () => setSheetOpen(false);

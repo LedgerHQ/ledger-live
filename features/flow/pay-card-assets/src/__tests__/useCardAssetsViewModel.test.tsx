@@ -1,5 +1,7 @@
+import React, { type PropsWithChildren } from "react";
 import { act, renderHook } from "@testing-library/react";
 import type { CardLinkedWalletBalance } from "@features/flow-pay-card-wallets";
+import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 import type { CardAssetsProps } from "../types";
 import { I18nWrapper } from "./i18nWrapper";
@@ -9,6 +11,7 @@ const mockUseIsCardSignedIn = jest.fn();
 const mockUseCardLinkedWallets = jest.fn();
 const mockUpdateCardWalletPriorities = jest.fn();
 const mockUnwrapUpdate = jest.fn();
+const track = jest.fn();
 
 jest.mock("@domain/api-card-management", () => ({
   useUpdateCardWalletPrioritiesMutation: () => [
@@ -63,6 +66,14 @@ const CURRENCIES = new Map([["ethereum/erc20/usd__coin", USDC]]);
 const getCounterValue = jest.fn(() => 12540);
 const formatCountervalue = jest.fn((value: number) => `$${value}`);
 
+function Wrapper({ children }: PropsWithChildren) {
+  return (
+    <PayAnalyticsProvider adapter={{ track }}>
+      <I18nWrapper>{children}</I18nWrapper>
+    </PayAnalyticsProvider>
+  );
+}
+
 function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
   return renderHook(
     () =>
@@ -73,7 +84,7 @@ function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
         onAddAsset: jest.fn(),
         ...overrides,
       }),
-    { wrapper: I18nWrapper },
+    { wrapper: Wrapper },
   );
 }
 
@@ -272,6 +283,40 @@ describe("useCardAssetsViewModel", () => {
         { addressId: "address-usdc", priority: 2 },
         { addressId: "address-usdt", priority: 3 },
       ],
+    });
+  });
+
+  it("should track the changed debit order when the manage dialog closes", async () => {
+    stubWallets({
+      wallets: [
+        {
+          id: "w-usdc",
+          addressId: "address-usdc",
+          balance: "125.40",
+          currency: "usdc",
+          network: "ethereum",
+        },
+        {
+          id: "w-usdt",
+          addressId: "address-usdt",
+          balance: "75",
+          currency: "usdt",
+          network: "ethereum",
+        },
+      ],
+    });
+    const { result } = renderViewModel();
+
+    act(() => result.current.onManagePress());
+    await act(() => result.current.onMoveAsset("w-usdt", 0));
+    act(() => result.current.onDialogClose());
+
+    expect(track).toHaveBeenCalledWith("debit_order_changed", {
+      asset1: "USDT",
+      asset2: "USDC",
+      asset3: null,
+      asset4: null,
+      asset5: null,
     });
   });
 

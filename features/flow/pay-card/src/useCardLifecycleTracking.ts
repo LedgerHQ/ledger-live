@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   joinCardTransactionsPages,
+  useGetCardCashbackQuery,
   useGetCardStatusQuery,
   useGetCardTransactionsInfiniteQuery,
 } from "@domain/api-card-management";
@@ -64,6 +65,7 @@ export function useCardLifecycleTracking() {
   const pendingLoginType = useSelector(selectPendingLoginType);
   const analytics = usePayAnalyticsContext();
   const { data: cardStatus } = useGetCardStatusQuery(undefined, { skip: !isSignedIn });
+  useGetCardCashbackQuery(undefined, { skip: !isSignedIn });
   const { data: transactionPages } = useGetCardTransactionsInfiniteQuery(undefined, {
     skip: !isSignedIn,
   });

@@ -33,20 +33,35 @@ export function toPayGlobalProperties({
     return { featureFlagPay: false };
   }
 
-  const cardDebitOrder = [...(cardWallets ?? [])]
-    .sort((a, b) => a.priority - b.priority)
-    .map(wallet => wallet.currency.toUpperCase());
-
-  return {
+  const properties: PayGlobalProperties = {
     featureFlagPay: true,
     hasStable: countHeldStablecoins(accountTickers) > 0,
     hasCard,
     cardLoggedIn: isSignedIn,
-    hasFundsOnCard: (internalWalletBalances ?? []).some(balance => Number(balance) > 0),
-    has_tx: hasCardTransactions ?? false,
-    cardAddedToOsWallet: cardStatus?.cardAddedToDigitalWallet ?? false,
-    cardDebitOrder,
-    cardRewardsAvailable: Number(cashback?.amount ?? 0) > 0,
-    cardRewardCurrency: cashback?.currency ?? null,
   };
+
+  if (internalWalletBalances !== undefined) {
+    properties.hasFundsOnCard = internalWalletBalances.some(balance => Number(balance) > 0);
+  }
+
+  if (hasCardTransactions !== undefined) {
+    properties.has_tx = hasCardTransactions;
+  }
+
+  if (cardStatus !== undefined) {
+    properties.cardAddedToOsWallet = cardStatus.cardAddedToDigitalWallet ?? false;
+  }
+
+  if (cardWallets !== undefined) {
+    properties.cardDebitOrder = [...cardWallets]
+      .sort((a, b) => a.priority - b.priority)
+      .map(wallet => wallet.currency.toUpperCase());
+  }
+
+  if (cashback !== undefined) {
+    properties.cardRewardsAvailable = Number(cashback.amount ?? 0) > 0;
+    properties.cardRewardCurrency = cashback.currency ?? null;
+  }
+
+  return properties;
 }

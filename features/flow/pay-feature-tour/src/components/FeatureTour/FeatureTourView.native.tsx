@@ -16,7 +16,11 @@ import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { PayTrackPage } from "@features/platform-pay-analytics";
 import heroImage from "./payTabTour.webp";
-import { FEATURE_TOUR_PAGE, type FeatureTourViewModel } from "./useFeatureTourViewModel";
+import {
+  FEATURE_TOUR_FLOW,
+  FEATURE_TOUR_PAGE,
+  type FeatureTourViewModel,
+} from "./useFeatureTourViewModel";
 
 type FeatureTourViewProps = FeatureTourViewModel;
 
@@ -26,7 +30,8 @@ export function FeatureTourView({
   description,
   rows,
   ctaLabel,
-  onDismiss,
+  onClose,
+  onContinue,
 }: FeatureTourViewProps) {
   const dismissed = useRef(false);
   const [isOpen, setIsOpen] = useState(isVisible);
@@ -38,25 +43,30 @@ export function FeatureTourView({
     }
   }, [isVisible]);
 
-  const handleDismiss = useCallback(() => {
-    if (dismissed.current) {
-      return;
-    }
+  const handleClose = useCallback(() => {
+    if (dismissed.current) return;
     dismissed.current = true;
     setIsOpen(false);
-    onDismiss();
-  }, [onDismiss]);
+    onClose();
+  }, [onClose]);
+
+  const handleContinue = useCallback(() => {
+    if (dismissed.current) return;
+    dismissed.current = true;
+    setIsOpen(false);
+    onContinue();
+  }, [onContinue]);
 
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
-      onClose={handleDismiss}
+      onClose={handleClose}
       enableDynamicSizing
       testID="pay-feature-tour-sheet"
     >
       {isOpen ? (
         <FeatureTourContent>
-          <PayTrackPage page={FEATURE_TOUR_PAGE} />
+          <PayTrackPage page={FEATURE_TOUR_PAGE} flow={FEATURE_TOUR_FLOW} />
           <BottomSheetHeader density="compact" />
           <Box lx={{ gap: "s16" }}>
             <Image
@@ -97,7 +107,7 @@ export function FeatureTourView({
               appearance="base"
               size="lg"
               isFull
-              onPress={handleDismiss}
+              onPress={handleContinue}
               accessibilityLabel={ctaLabel}
             >
               {ctaLabel}

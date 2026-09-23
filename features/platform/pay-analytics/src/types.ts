@@ -3,6 +3,7 @@ export interface PayAnalyticsAdapter {
 }
 
 export type PayGlobalProperties = Record<string, unknown>;
+export type PayPageProperties = Readonly<Record<string, unknown>>;
 
 export type PayDebitOrderProperties = Readonly<{
   asset1: string | null;

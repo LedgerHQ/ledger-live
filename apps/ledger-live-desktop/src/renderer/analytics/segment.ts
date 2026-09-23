@@ -358,7 +358,7 @@ const extraProperties = (store: ReduxStore) => {
   const payAttributes = getPayAttributes(
     state,
     analyticsFeatureFlagMethod?.("lwdPayTab")?.enabled ?? false,
-    accountsWithFunds,
+    accounts ?? [],
   );
 
   return {

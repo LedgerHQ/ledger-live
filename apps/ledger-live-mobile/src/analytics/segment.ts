@@ -494,7 +494,7 @@ const extraProperties = async (store: AppStore) => {
   const payAttributes = getPayAttributes(
     state,
     analyticsFeatureFlagMethod?.("lwmPayTab")?.enabled ?? false,
-    accountsWithFunds,
+    accounts ?? [],
   );
 
   return {

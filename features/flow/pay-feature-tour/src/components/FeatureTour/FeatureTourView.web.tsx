@@ -14,7 +14,11 @@ import {
 import * as Icons from "@ledgerhq/lumen-ui-react/symbols";
 import { PayTrackPage } from "@features/platform-pay-analytics";
 import heroImage from "./payTabTour.webp";
-import { FEATURE_TOUR_PAGE, type FeatureTourViewModel } from "./useFeatureTourViewModel";
+import {
+  FEATURE_TOUR_FLOW,
+  FEATURE_TOUR_PAGE,
+  type FeatureTourViewModel,
+} from "./useFeatureTourViewModel";
 
 type FeatureTourViewProps = FeatureTourViewModel;
 
@@ -24,25 +28,30 @@ export function FeatureTourView({
   description,
   rows,
   ctaLabel,
-  onDismiss,
+  onClose,
+  onContinue,
 }: FeatureTourViewProps) {
   const dismissed = useRef(false);
 
-  const handleDismiss = useCallback(() => {
-    if (dismissed.current) {
-      return;
-    }
+  const handleClose = useCallback(() => {
+    if (dismissed.current) return;
     dismissed.current = true;
-    onDismiss();
-  }, [onDismiss]);
+    onClose();
+  }, [onClose]);
+
+  const handleContinue = useCallback(() => {
+    if (dismissed.current) return;
+    dismissed.current = true;
+    onContinue();
+  }, [onContinue]);
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
       if (!open) {
-        handleDismiss();
+        handleClose();
       }
     },
-    [handleDismiss],
+    [handleClose],
   );
 
   if (!isVisible) {
@@ -51,9 +60,9 @@ export function FeatureTourView({
 
   return (
     <Dialog open onOpenChange={handleOpenChange}>
-      <PayTrackPage page={FEATURE_TOUR_PAGE} />
+      <PayTrackPage page={FEATURE_TOUR_PAGE} flow={FEATURE_TOUR_FLOW} />
       <DialogContent className="min-h-[696px]">
-        <DialogHeader density="compact" onClose={handleDismiss} />
+        <DialogHeader density="compact" onClose={handleClose} />
         <DialogBody className="flex flex-1 flex-col">
           <div className="flex min-h-[608px] w-full flex-1 flex-col justify-between gap-16">
             <div className="flex flex-col gap-16">
@@ -90,7 +99,7 @@ export function FeatureTourView({
                 </div>
               </div>
             </div>
-            <Button appearance="base" size="lg" className="w-full" onClick={handleDismiss}>
+            <Button appearance="base" size="lg" className="w-full" onClick={handleContinue}>
               {ctaLabel}
             </Button>
           </div>

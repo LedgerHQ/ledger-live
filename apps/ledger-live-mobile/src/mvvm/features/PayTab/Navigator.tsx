@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+import { PayAnalyticsProvider, type PayPageProperties } from "@features/platform-pay-analytics";
 import { ScreenName } from "~/const";
 import { TrackScreen, track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
@@ -16,7 +16,9 @@ import { PaySelectContactScreen } from "./screens/PaySelectContact";
 import type { PayTabNavigatorParamList } from "./types";
 
 const TabStack = createLumenNativeStackNavigator<PayTabNavigatorParamList>();
-const renderPage = (page: string) => <TrackScreen category={page} />;
+const renderPage = (page: string, properties?: PayPageProperties) => (
+  <TrackScreen category={page} {...properties} />
+);
 const payAnalyticsAdapter = { track };
 
 export default function PayTabNavigator() {

@@ -46,25 +46,19 @@ describe("toPayGlobalProperties", () => {
     });
   });
 
-  it("maps signed-out empty state onto the Pay tracking contract when the flag is on", () => {
+  it("omits card-backed fields when their sources have not been read yet", () => {
     expect(
       toPayGlobalProperties({
         featureFlagPay: true,
-        hasCard: false,
+        hasCard: true,
         isSignedIn: false,
         accountTickers: [],
       }),
     ).toEqual({
       featureFlagPay: true,
       hasStable: false,
-      hasCard: false,
+      hasCard: true,
       cardLoggedIn: false,
-      hasFundsOnCard: false,
-      has_tx: false,
-      cardAddedToOsWallet: false,
-      cardDebitOrder: [],
-      cardRewardsAvailable: false,
-      cardRewardCurrency: null,
     });
   });
 

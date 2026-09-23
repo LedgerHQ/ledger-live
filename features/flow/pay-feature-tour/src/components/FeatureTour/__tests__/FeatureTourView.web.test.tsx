@@ -15,14 +15,17 @@ const defaultProps: React.ComponentProps<typeof FeatureTourView> = {
       description: "Use your balance around the world",
     },
   ],
-  onDismiss: jest.fn(),
+  onClose: jest.fn(),
+  onContinue: jest.fn(),
 };
 
 function renderView(props: Partial<React.ComponentProps<typeof FeatureTourView>> = {}) {
   return render(
     <PayAnalyticsProvider
       adapter={{ track: jest.fn() }}
-      renderPage={page => <span data-testid="pay-track-page">{page}</span>}
+      renderPage={(page, properties) => (
+        <span data-testid="pay-track-page">{`${page}:${properties?.flow}`}</span>
+      )}
     >
       <FeatureTourView {...defaultProps} {...props} />
     </PayAnalyticsProvider>,
@@ -37,7 +40,7 @@ describe("FeatureTourView (Web)", () => {
   it("tracks the page while visible", () => {
     renderView();
 
-    expect(screen.getByTestId("pay-track-page")).toHaveTextContent("card feature intro");
+    expect(screen.getByTestId("pay-track-page")).toHaveTextContent("Feature Intro:pay");
   });
 
   it("does not track the page while hidden", () => {
@@ -47,12 +50,12 @@ describe("FeatureTourView (Web)", () => {
   });
 
   it("dismisses once even if the CTA is clicked repeatedly", () => {
-    const onDismiss = jest.fn();
-    renderView({ onDismiss });
+    const onContinue = jest.fn();
+    renderView({ onContinue });
 
     fireEvent.click(screen.getByText("Explore Pay"));
     fireEvent.click(screen.getByText("Explore Pay"));
 
-    expect(onDismiss).toHaveBeenCalledTimes(1);
+    expect(onContinue).toHaveBeenCalledTimes(1);
   });
 });

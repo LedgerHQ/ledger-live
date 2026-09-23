@@ -1,5 +1,9 @@
 import { cardManagementApi, hasCardTransactions } from "@domain/api-card-management";
-import { toPayGlobalProperties, type PayGlobalProperties } from "@features/platform-pay-analytics";
+import {
+  getTickersWithFunds,
+  toPayGlobalProperties,
+  type PayGlobalProperties,
+} from "@features/platform-pay-analytics";
 
 type PayCardAuthSlice = Readonly<{
   hasCard: boolean;
@@ -23,21 +27,25 @@ function queryData<State, Data>(
 export function getPayAttributes(
   state: PayAttributesState,
   featureFlagPay: boolean,
-  accountTickers: readonly string[],
+  accounts: Parameters<typeof getTickersWithFunds>[0],
 ): PayGlobalProperties {
+  const transactionPages = queryData(
+    cardManagementApi.endpoints.getCardTransactions.select(undefined),
+    state,
+  )?.pages;
+
   return toPayGlobalProperties({
     featureFlagPay,
     hasCard: state.payCardAuth.hasCard,
     isSignedIn: state.payCardAuth.status === "signedIn",
-    accountTickers,
+    accountTickers: getTickersWithFunds(accounts),
     internalWalletBalances: queryData(
       cardManagementApi.endpoints.getInternalWallets.select(),
       state,
     )?.map(wallet => wallet.balance),
     cardStatus: queryData(cardManagementApi.endpoints.getCardStatus.select(), state),
-    hasCardTransactions: hasCardTransactions(
-      queryData(cardManagementApi.endpoints.getCardTransactions.select(undefined), state)?.pages,
-    ),
+    hasCardTransactions:
+      transactionPages === undefined ? undefined : hasCardTransactions(transactionPages),
     cardWallets: queryData(cardManagementApi.endpoints.getCardLinkedWallets.select(), state),
     cashback: queryData(cardManagementApi.endpoints.getCardCashback.select(), state),
   });
