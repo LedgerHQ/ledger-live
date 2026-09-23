@@ -26,7 +26,7 @@ const trackingProperties = {
 
 type SigningBodyPropsForTest = React.ComponentProps<typeof SigningBody>;
 
-function renderSigningBody(status: Record<string, unknown>) {
+function renderSigningBody(status: Record<string, unknown>, onError = jest.fn()) {
   const action = {
     useHook: () => status,
     mapResult: () => null,
@@ -40,6 +40,7 @@ function renderSigningBody(status: Record<string, unknown>) {
       action={action}
       request={{} as SigningBodyPropsForTest["request"]}
       onResult={jest.fn()}
+      onError={onError}
       onClose={jest.fn()}
       trackingProperties={trackingProperties}
       recipientType="contact"
@@ -67,5 +68,14 @@ describe("SigningBody", () => {
       ...trackingProperties,
       recipientType: "contact",
     });
+  });
+
+  it("reports the displayed signature error", () => {
+    const onError = jest.fn();
+    const error = { name: "LockedDeviceError" };
+
+    renderSigningBody({ deviceSignatureRequested: false, error }, onError);
+
+    expect(onError).toHaveBeenCalledWith(error);
   });
 });

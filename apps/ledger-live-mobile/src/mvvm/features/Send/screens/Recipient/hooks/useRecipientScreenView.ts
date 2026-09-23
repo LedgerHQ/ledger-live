@@ -23,6 +23,8 @@ import { useSendMemoReset } from "../../../context/SendMemoResetContext";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { getRecipientResolution } from "../../../utils/contactTracking";
+import { getActiveWarningsTrackingProperties } from "../../../utils/tracking";
+import { getMessageIds } from "../../../utils/messageTracking";
 import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 import { useAddressValidation } from "./useAddressValidation";
@@ -63,8 +65,13 @@ export function useRecipientScreenView({
     excludedCurrencyIds,
   } = useContactsFeature("mobile");
   const { selectedContact } = useRecipientContactSelection();
-  const { inputMethod, setInputMethod, setRecipientResolution, resetRecipientResolution } =
-    useSendFlowTracking();
+  const {
+    flowSessionId,
+    inputMethod,
+    setInputMethod,
+    setRecipientResolution,
+    resetRecipientResolution,
+  } = useSendFlowTracking();
   const [doNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
   const { markMemoSkipped } = useSendMemoReset();
   // The address stays here instead of being written to the transaction so that cancelling the
@@ -271,6 +278,8 @@ export function useRecipientScreenView({
         asset: address.currencyId,
         // 1-based, to stay consistent with the rest of the send-flow ranks.
         addressRank: rowIndex + 1,
+        flow_session_id: flowSessionId,
+        ...getActiveWarningsTrackingProperties([]),
         ...sendFlowTrackingProperties,
       });
       setRecipientResolution(
@@ -280,6 +289,7 @@ export function useRecipientScreenView({
       handleAddressSelect(address.address);
     },
     [
+      flowSessionId,
       handleAddressSelect,
       mainAccount.currency.id,
       sendFlowTrackingProperties,
@@ -298,6 +308,8 @@ export function useRecipientScreenView({
         page: "step recipient",
         myContact: contact.isMe,
         addressCount: contact.addresses.length,
+        flow_session_id: flowSessionId,
+        ...getActiveWarningsTrackingProperties(getMessageIds(result.bridgeWarnings, "warning")),
         ...sendFlowTrackingProperties,
       });
       openPicker(contact);
@@ -307,7 +319,7 @@ export function useRecipientScreenView({
         myContact: contact.isMe,
       });
     },
-    [openPicker, sendFlowTrackingProperties],
+    [flowSessionId, openPicker, result.bridgeWarnings, sendFlowTrackingProperties],
   );
 
   const handleUnsupportedNetwork = useCallback(() => {
