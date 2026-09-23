@@ -1,5 +1,10 @@
 import { Transaction } from "../models/Transaction";
-import { pressUntilTextFound, expectSpeculosEventsContain, waitFor } from "../speculos";
+import {
+  pressUntilTextFound,
+  expectSpeculosEventsContain,
+  waitFor,
+  getSendEvents,
+} from "../speculos";
 import { getSpeculosModel, isTouchDevice } from "../speculosAppVersion";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
@@ -17,10 +22,8 @@ function validateTransactionData(tx: Transaction, events: string[]) {
 }
 
 async function sendCardanoTouchDevices(tx: Transaction) {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events = await pressUntilTextFound(DeviceLabels.AMOUNT);
+  const events = await getSendEvents(tx);
   validateTransactionData(tx, events);
-  await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
 
