@@ -59,19 +59,6 @@ export const track = (eventName: string, properties?: Record<string, unknown> | 
   });
 };
 
-export const updateIdentify = (traits?: Record<string, unknown>): void => {
-  if (!analytics) return;
-
-  analytics.identify({
-    userId: WALLET_CLI_USER_ID,
-    traits: {
-      ...extraProperties(),
-      ...(traits ?? {}),
-    },
-    context: getContext(),
-  });
-};
-
 export async function disposeAnalytics(): Promise<void> {
   const current = analytics;
   analytics = null;
