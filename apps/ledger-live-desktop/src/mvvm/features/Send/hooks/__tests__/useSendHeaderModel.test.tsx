@@ -100,6 +100,7 @@ const mockNavigation = (overrides?: {
 }) => {
   const goToStep = overrides?.goToStep ?? jest.fn();
   const goToPreviousStep = overrides?.goToPreviousStep ?? jest.fn();
+  const resetToStep = jest.fn();
   const canGoBack = overrides?.canGoBack ?? true;
   (useFlowWizard as jest.Mock).mockReturnValue({
     currentStep: SEND_FLOW_STEP.AMOUNT,
@@ -107,10 +108,11 @@ const mockNavigation = (overrides?: {
     navigation: {
       goToStep,
       goToPreviousStep,
+      resetToStep,
       canGoBack: () => canGoBack,
     },
   });
-  return { goToStep, goToPreviousStep };
+  return { goToStep, goToPreviousStep, resetToStep };
 };
 
 const mockActions = (overrides?: { updateTransaction?: jest.Mock }) => {
@@ -485,13 +487,14 @@ describe("useSendHeaderModel", () => {
   });
 
   it("opens recipient search from a Pay-launched amount step without closing", () => {
-    const { goToStep, goToPreviousStep } = mockNavigation({ canGoBack: false });
+    const { goToStep, goToPreviousStep, resetToStep } = mockNavigation({ canGoBack: false });
     const { close } = mockActions();
 
     renderHook();
     act(() => latestVM?.handleRecipientInputClick());
 
-    expect(goToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
+    expect(resetToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
+    expect(goToStep).not.toHaveBeenCalled();
     expect(goToPreviousStep).not.toHaveBeenCalled();
     expect(close).not.toHaveBeenCalled();
   });

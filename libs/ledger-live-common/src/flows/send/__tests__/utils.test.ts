@@ -164,7 +164,6 @@ describe("buildRecipientForMemoChange", () => {
       address: ADDRESS,
       ensName: "vitalik.eth",
       displayLabel: "Private balance",
-      contactId: undefined,
       memo,
     });
   });
