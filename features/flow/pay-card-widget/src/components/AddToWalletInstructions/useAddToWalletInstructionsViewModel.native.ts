@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AppState, type NativeEventSubscription } from "react-native";
 import { useTranslation } from "@shared/i18n";
 import { Android, Apple } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useGetCardStatusQuery } from "@domain/api-card-management";
@@ -43,9 +44,16 @@ export function useAddToWalletInstructionsViewModel({
   const { refetch } = useGetCardStatusQuery();
   const [scene, setScene] = useState<"instructions" | "error">("instructions");
   const [isPending, setIsPending] = useState(false);
+  const walletReturn = useRef<NativeEventSubscription | null>(null);
 
   const { i18nKey, icon } = getWalletPlatform();
   const ctaIcon = WALLET_CTA_ICON[icon];
+
+  useEffect(() => {
+    return () => {
+      walletReturn.current?.remove();
+    };
+  }, []);
 
   const openWallet = useCallback(async () => {
     setIsPending(true);
@@ -57,10 +65,25 @@ export function useAddToWalletInstructionsViewModel({
       return;
     }
 
-    // Opening the wallet app is not the card being added: only the provider answers that, so ask
-    // it again rather than recording a yes here. Its answer may lag the holder finishing.
     refetch();
-    onDone();
+
+    let hasLeftApp = AppState.currentState !== "active";
+    walletReturn.current?.remove();
+    walletReturn.current = AppState.addEventListener("change", nextState => {
+      if (nextState !== "active") {
+        hasLeftApp = true;
+        return;
+      }
+
+      if (!hasLeftApp) {
+        return;
+      }
+
+      walletReturn.current?.remove();
+      walletReturn.current = null;
+      refetch();
+      onDone();
+    });
   }, [refetch, onDone]);
 
   const openStore = useCallback(async () => {

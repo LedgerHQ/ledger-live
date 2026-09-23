@@ -1,5 +1,6 @@
 import React, { type PropsWithChildren } from "react";
-import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
+import { AppState, type AppStateStatus } from "react-native";
+import { act, cleanup, render, screen, userEvent } from "@testing-library/react-native";
 import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
@@ -45,6 +46,7 @@ type SheetOverrides = Readonly<{
 
 const onAddToWalletPress = jest.fn();
 const onAddToWalletDone = jest.fn();
+let appStateListener: ((state: AppStateStatus) => void) | undefined;
 
 function buildScene({ route, confirmState }: SheetOverrides): CardDetailsSceneProps {
   const viewModel: FreezeViewModel = {
@@ -102,12 +104,20 @@ function renderSheet(overrides: SheetOverrides = {}) {
     pressDismiss: () => user.press(screen.getByTestId("card-details-sheet-dismiss")),
     pressBack: () => user.press(screen.getByTestId("card-details-sheet-back")),
     pressAddToWallet: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta-entry")),
-    pressAddToWalletDone: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta")),
+    pressOpenWallet: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta")),
     goTo: (next: SheetOverrides) => view.rerender(sheet(next)),
   };
 }
 
 describe("CardDetailsSheet (native)", () => {
+  beforeEach(() => {
+    appStateListener = undefined;
+    jest.mocked(AppState.addEventListener).mockImplementation((_type, listener) => {
+      appStateListener = listener;
+      return { remove: jest.fn() };
+    });
+  });
+
   afterEach(() => {
     cleanup();
     jest.clearAllMocks();
@@ -180,10 +190,21 @@ describe("CardDetailsSheet (native)", () => {
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 
-  it("should leave the add-to-wallet scene once the card is on its way to the wallet", async () => {
-    const { pressAddToWalletDone } = renderSheet({ route: { name: "addToWallet" } });
+  it("should stay on the add-to-wallet scene while the user is in the wallet app", async () => {
+    const { pressOpenWallet } = renderSheet({ route: { name: "addToWallet" } });
 
-    await pressAddToWalletDone();
+    await pressOpenWallet();
+
+    expect(onAddToWalletDone).not.toHaveBeenCalled();
+  });
+
+  it("should leave the add-to-wallet scene once the user comes back from the wallet app", async () => {
+    const { pressOpenWallet } = renderSheet({ route: { name: "addToWallet" } });
+
+    await pressOpenWallet();
+
+    act(() => appStateListener?.("background"));
+    act(() => appStateListener?.("active"));
 
     expect(onAddToWalletDone).toHaveBeenCalledTimes(1);
   });

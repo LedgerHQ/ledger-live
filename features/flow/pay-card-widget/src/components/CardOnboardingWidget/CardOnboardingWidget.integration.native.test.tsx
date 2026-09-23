@@ -1,5 +1,5 @@
-import { Platform } from "react-native";
-import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
+import { AppState, type AppStateStatus, Platform } from "react-native";
+import { act, cleanup, render, screen, userEvent } from "@testing-library/react-native";
 import {
   CARD_ONBOARDING_ADD_TO_WALLET_COPY,
   CARD_ONBOARDING_COPY,
@@ -17,6 +17,7 @@ jest.mock("@domain/api-card-management", () => ({ useGetCardStatusQuery: jest.fn
 
 const refetchCardStatus = jest.fn();
 const renderWidget = createRenderWidget(render);
+let appStateListener: ((state: AppStateStatus) => void) | undefined;
 
 type User = ReturnType<typeof userEvent.setup>;
 
@@ -27,6 +28,11 @@ async function openWidget(user: User) {
 describe("CardOnboardingWidget (integration)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    appStateListener = undefined;
+    jest.mocked(AppState.addEventListener).mockImplementation((_type, listener) => {
+      appStateListener = listener;
+      return { remove: jest.fn() };
+    });
     jest.mocked(useGetCardStatusQuery).mockReturnValue({
       refetch: refetchCardStatus,
       data: undefined,
@@ -174,6 +180,12 @@ describe("CardOnboardingWidget (integration)", () => {
     await user.press(screen.getByTestId("pay-card-add-to-wallet-cta"));
 
     expect(refetchCardStatus).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("pay-card-add-to-wallet-instructions")).toBeVisible();
+
+    act(() => appStateListener?.("background"));
+    act(() => appStateListener?.("active"));
+
+    expect(refetchCardStatus).toHaveBeenCalledTimes(2);
     expect(screen.queryByTestId("pay-card-add-to-wallet-instructions")).toBeNull();
     expect(screen.getByText(CARD_ONBOARDING_COPY.dialogTitle)).toBeVisible();
   });
