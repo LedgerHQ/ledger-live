@@ -53,7 +53,13 @@ const StorageInfo: React.FC<Props> = ({ deviceModel, distribution, deviceInfo, i
         <Text variant="h5Inter" fontSize={4} color="neutral.c70">
           <Trans i18nKey="manager.deviceStorage.used" />
         </Text>
-        <Text variant="h5Inter" fontSize={4} color="neutral.c100" fontWeight="semiBold">
+        <Text
+          variant="h5Inter"
+          fontSize={4}
+          color="neutral.c100"
+          fontWeight="semiBold"
+          data-testid="device-storage-used"
+        >
           <ByteSize
             deviceModel={deviceModel}
             value={distribution.totalAppsBytes}
@@ -65,7 +71,13 @@ const StorageInfo: React.FC<Props> = ({ deviceModel, distribution, deviceInfo, i
         <Text variant="h5Inter" fontSize={4} color="neutral.c70">
           <Trans i18nKey="manager.deviceStorage.capacity" />
         </Text>
-        <Text variant="h5Inter" fontSize={4} color="neutral.c100" fontWeight="semiBold">
+        <Text
+          variant="h5Inter"
+          fontSize={4}
+          color="neutral.c100"
+          fontWeight="semiBold"
+          data-testid="device-storage-capacity"
+        >
           <ByteSize
             deviceModel={deviceModel}
             value={distribution.appsSpaceBytes}
@@ -77,14 +89,26 @@ const StorageInfo: React.FC<Props> = ({ deviceModel, distribution, deviceInfo, i
         <Text variant="h5Inter" fontSize={4} color="neutral.c70">
           <Trans i18nKey="manager.deviceStorage.installed" />
         </Text>
-        <Text variant="h5Inter" fontSize={4} color="neutral.c100" fontWeight="semiBold">
+        <Text
+          variant="h5Inter"
+          fontSize={4}
+          color="neutral.c100"
+          fontWeight="semiBold"
+          data-testid="device-storage-apps-count"
+        >
           {!isIncomplete ? distribution.apps.length : "—"}
         </Text>
       </div>
       <FreeInfo danger={shouldWarn}>
         {shouldWarn ? <IconTriangleWarning /> : ""}{" "}
         <Box paddingLeft={1}>
-          <Text variant="h5Inter" fontSize={4} color="neutral.c100" fontWeight="semiBold">
+          <Text
+            variant="h5Inter"
+            fontSize={4}
+            color="neutral.c100"
+            fontWeight="semiBold"
+            data-testid="device-storage-free"
+          >
             {isIncomplete ? (
               <Trans i18nKey="manager.deviceStorage.incomplete" />
             ) : distribution.freeSpaceBytes > 0 ? (
