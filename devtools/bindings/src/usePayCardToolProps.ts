@@ -246,7 +246,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
         canToggle: isMockingEnabled && step.id in STEP_ANSWERS,
       })),
       completedCount: derivedOnboarding.completedCount,
-      isFetching: onboardingStatus.isLoading,
+      isFetching: onboardingStatus.isFetching,
       error: onboardingStatus.isError ? "the account could not be read" : undefined,
       raw: JSON.stringify(derivedOnboarding, null, 2),
       refresh: refreshCardOnboarding,
@@ -256,7 +256,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     };
   }, [
     derivedOnboarding,
-    onboardingStatus.isLoading,
+    onboardingStatus.isFetching,
     onboardingStatus.isError,
     refreshCardOnboarding,
     setDerivedStepDone,

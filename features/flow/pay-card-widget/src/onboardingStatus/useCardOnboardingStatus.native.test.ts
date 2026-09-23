@@ -30,6 +30,7 @@ function setupMocks({
   jest.mocked(useGetUserQuery).mockReturnValue({
     refetch: refetchUser,
     data: { verificationState: verified ? "VERIFIED" : "PENDING" },
+    isLoading: false,
     isFetching: false,
     isError: false,
   } as unknown as ReturnType<typeof useGetUserQuery>);
@@ -37,6 +38,7 @@ function setupMocks({
   jest.mocked(useGetCardStatusQuery).mockReturnValue({
     refetch: refetchCardStatus,
     data: cardAddedToDigitalWallet === undefined ? undefined : { cardAddedToDigitalWallet },
+    isLoading: false,
     isFetching: false,
     isError: false,
   } as unknown as ReturnType<typeof useGetCardStatusQuery>);
@@ -44,6 +46,7 @@ function setupMocks({
   jest.mocked(useGetCardTransactionsInfiniteQuery).mockReturnValue({
     refetch: refetchTransactions,
     data: { pages: [[]], pageParams: [0] },
+    isLoading: false,
     isFetching: false,
     isError: false,
   } as unknown as ReturnType<typeof useGetCardTransactionsInfiniteQuery>);
@@ -51,6 +54,7 @@ function setupMocks({
   jest.mocked(useCardLinkedWallets).mockReturnValue({
     refetch: refetchWallets,
     wallets: [],
+    isLoading: false,
     isFetching: false,
     isError: false,
   } as unknown as ReturnType<typeof useCardLinkedWallets>);

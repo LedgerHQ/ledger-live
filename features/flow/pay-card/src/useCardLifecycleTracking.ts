@@ -103,7 +103,7 @@ export function useCardLifecycleTracking() {
       cardStatus,
       transactions,
       onboardingStatus:
-        onboarding.isLoading || onboarding.isError || onboarding.hasSourceError
+        onboarding.isFetching || onboarding.isError || onboarding.hasSourceError
           ? undefined
           : onboarding.data,
     }).filter(({ id }) => !reportedForCard.includes(id) && !attempted.current.has(id));
@@ -123,7 +123,7 @@ export function useCardLifecycleTracking() {
     onboarding.data,
     onboarding.hasSourceError,
     onboarding.isError,
-    onboarding.isLoading,
+    onboarding.isFetching,
     reported,
     transactions,
   ]);

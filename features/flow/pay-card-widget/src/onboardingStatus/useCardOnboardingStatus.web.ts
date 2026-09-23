@@ -11,9 +11,10 @@ import {
 export function useCardOnboardingStatus(
   params: CardOnboardingSourcesParams = {},
 ): UseCardOnboardingStatusResult {
-  const { signals, isLoading, isError, hasSourceError, refresh } = useCardOnboardingSources(params);
+  const { signals, isLoading, isFetching, isError, hasSourceError, refresh } =
+    useCardOnboardingSources(params);
 
   const data = useMemo(() => deriveCardOnboardingStatus(CARD_ONBOARDING_STEPS, signals), [signals]);
 
-  return { data, isLoading, isError, hasSourceError, refresh };
+  return { data, isLoading, isFetching, isError, hasSourceError, refresh };
 }
