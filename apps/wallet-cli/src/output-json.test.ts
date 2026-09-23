@@ -458,10 +458,14 @@ describe("JsonCommandOutput", () => {
       });
     });
 
-    it("omits code for a plain Error", () => {
-      expect(failWith(new Error("boom"))).toEqual({
+    it.each([
+      new Error("boom"),
+      new TypeError("cannot read properties of undefined"),
+      new RangeError("invalid array length"),
+    ])("omits code for a built-in $name", error => {
+      expect(failWith(error)).toEqual({
         ok: false,
-        error: { command: "swap execute", message: "boom" },
+        error: { command: "swap execute", message: error.message },
       });
     });
   });

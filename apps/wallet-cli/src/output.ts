@@ -633,6 +633,17 @@ class HumanCommandOutput implements CommandOutput {
 // JsonCommandOutput
 // ---------------------------------------------------------------------------
 
+const BUILT_IN_ERROR_NAMES = new Set([
+  "Error",
+  "TypeError",
+  "RangeError",
+  "ReferenceError",
+  "SyntaxError",
+  "EvalError",
+  "URIError",
+  "AggregateError",
+]);
+
 class JsonCommandOutput implements CommandOutput {
   private readonly _jsonFmt: JsonFormatter;
   private readonly _discoveredAccounts: DiscoveredAccount[] = [];
@@ -661,7 +672,7 @@ class JsonCommandOutput implements CommandOutput {
         },
       };
     }
-    const isTypedError = e instanceof Error && e.name !== "Error";
+    const isTypedError = e instanceof Error && !BUILT_IN_ERROR_NAMES.has(e.name);
     const httpStatus = isTypedError && "httpStatus" in e ? e.httpStatus : undefined;
     return {
       ok: false,
