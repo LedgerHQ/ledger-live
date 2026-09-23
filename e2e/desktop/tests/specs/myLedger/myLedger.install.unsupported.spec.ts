@@ -3,11 +3,13 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
-// Kaspa is in the catalog but its asset is not supported by Ledger Wallet.
+// Kaspa is in the catalog but its asset is not supported by Ledger Wallet. Support is derived
+// from the currency feature flag, so the flag is pinned off rather than left to the run's default.
 test.describe("My Ledger — install an app for an unsupported asset", () => {
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
     teamOwner: Team.WALLET_XP,
+    featureFlags: { currencyKaspa: { enabled: false } },
   });
 
   test(
