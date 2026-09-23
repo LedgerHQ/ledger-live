@@ -14,6 +14,7 @@ export default defineCommand({
       description:
         "Overwrite an unparseable session file with an empty one (any Agent Intent profiles in " +
         "it are lost).",
+      argumentKind: "flag",
     }),
     output: outputOption,
   },

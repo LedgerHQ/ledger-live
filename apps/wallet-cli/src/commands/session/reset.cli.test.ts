@@ -107,10 +107,15 @@ describe("session reset — corrupt file recovery", () => {
     cleanup = fixture.cleanup;
     const path = join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml");
     writeFileSync(path, ": : :\n\t- ["); // not valid YAML → exercises the catch-branch fallback
-    const { stderr, exitCode } = await runCli(["session", "reset"], fixture.env);
+    const { stdout, exitCode } = await runCli(
+      ["session", "reset", "--output", "json"],
+      fixture.env,
+    );
     expect(exitCode).not.toBe(0);
-    expect(stderr).toMatch(/Agent Intent profiles.*cannot be recovered/is);
-    expect(stderr).toMatch(/--force/);
+    const err = JSON.parse(stdout);
+    expect(err.ok).toBe(false);
+    expect(err.error.message).toMatch(/Agent Intent profiles.*cannot be recovered/is);
+    expect(err.error.message).toMatch(/--force/);
     expect(await Bun.file(path).text()).toBe(": : :\n\t- [");
   });
 
