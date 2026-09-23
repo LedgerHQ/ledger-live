@@ -3,6 +3,7 @@ import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type { AmountScreenViewProps } from "../types";
 import { AmountFooter } from "./AmountFooter";
 import { AmountInputSection } from "./AmountInputSection";
+import { AmountMessageText } from "./AmountMessageText";
 import { QuickActionsRow } from "./QuickActionsRow";
 
 export function AmountScreenView({
@@ -20,6 +21,7 @@ export function AmountScreenView({
   feesRowSecondaryValue,
   feesRowStrategyLabel,
   feeSelector,
+  sponsoredNudge,
   quickActions,
   showQuickActions,
   amountMessage,
@@ -27,6 +29,7 @@ export function AmountScreenView({
   reviewShowIcon,
   reviewDisabled,
   reviewLoading,
+  sponsoredFeeError,
   onReview,
   onGetFunds,
   onMessageLinkPress,
@@ -53,12 +56,17 @@ export function AmountScreenView({
         </div>
       </DialogBody>
 
+      {sponsoredFeeError ? (
+        <AmountMessageText message={{ type: "error", text: sponsoredFeeError }} />
+      ) : null}
+
       <AmountFooter
         feesRowLabel={feesRowLabel}
         feesRowValue={feesRowValue}
         feesRowSecondaryValue={feesRowSecondaryValue}
         feesRowStrategyLabel={feesRowStrategyLabel}
         feeSelector={feeSelector}
+        sponsoredNudge={sponsoredNudge}
         reviewLabel={reviewLabel}
         reviewShowIcon={reviewShowIcon}
         reviewDisabled={reviewDisabled}

@@ -22,6 +22,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { FeeSelectorOption } from "../../types";
+import { SponsoredFeeNudge, type SponsoredFeeNudgeProps } from "./SponsoredFeeNudge";
 
 type FeesDisplay = Readonly<{
   label: string;
@@ -40,9 +41,11 @@ type FeesSelector = Readonly<{
 type NetworkFeesMenuProps = Readonly<{
   display: FeesDisplay;
   feeSelector: FeesSelector;
+  // Absent on the coin-control fee footer, which has no sponsored path; the Amount screen supplies it.
+  sponsoredNudge?: SponsoredFeeNudgeProps;
 }>;
 
-export function NetworkFeesMenu({ display, feeSelector }: NetworkFeesMenuProps) {
+export function NetworkFeesMenu({ display, feeSelector, sponsoredNudge }: NetworkFeesMenuProps) {
   const {
     label: feesLabel,
     value: feesValue,
@@ -87,108 +90,114 @@ export function NetworkFeesMenu({ display, feeSelector }: NetworkFeesMenuProps) 
 
   if (!canOpen) {
     return (
+      <>
+        {sponsoredNudge ? <SponsoredFeeNudge {...sponsoredNudge} /> : null}
+        <div
+          className="flex w-full items-center justify-between mt-8 mb-12"
+          data-testid="send-network-fees-row"
+        >
+          <span className="flex items-center gap-8">
+            <span className="body-3">{feesLabel}</span>
+            {informationIcon}
+          </span>
+          <span className="flex items-center gap-4">
+            <span className="body-3 text-base">{feesValue}</span>
+            {feesSecondaryValue ? (
+              <span className="body-3 text-muted">{feesSecondaryValue}</span>
+            ) : null}
+          </span>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {sponsoredNudge ? <SponsoredFeeNudge {...sponsoredNudge} /> : null}
       <div
-        className="flex w-full items-center justify-between mt-8 mb-12"
+        className="flex w-full items-center justify-between mt-16 mb-12"
         data-testid="send-network-fees-row"
       >
         <span className="flex items-center gap-8">
           <span className="body-3">{feesLabel}</span>
           {informationIcon}
         </span>
-        <span className="flex items-center gap-4">
-          <span className="body-3 text-base">{feesValue}</span>
-          {feesSecondaryValue ? (
-            <span className="body-3 text-muted">{feesSecondaryValue}</span>
-          ) : null}
-        </span>
+        <Menu>
+          <MenuTrigger
+            render={
+              <button
+                type="button"
+                className="flex items-center gap-8 transition-colors hover:opacity-70  cursor-pointer"
+                data-testid="send-network-fees-menu-trigger"
+              >
+                <span className="body-3 text-base">
+                  {feesValue} • {feesStrategyLabel}
+                </span>
+                <ChevronUpDown size={16} className="text-muted" />
+              </button>
+            }
+          />
+          <MenuContent className="pointer-events-auto w-256" side="top">
+            <MenuGroup>
+              <MenuLabel>{feesLabel}</MenuLabel>
+              {strategyOptions.length > 0 ? (
+                <MenuRadioGroup
+                  value={selectedId}
+                  onValueChange={id => {
+                    const option = options.find(o => o.id === id);
+                    option?.onSelect();
+                  }}
+                >
+                  {strategyOptions.map(option => (
+                    <MenuRadioItem
+                      key={option.id}
+                      value={option.id}
+                      closeOnClick
+                      className="cursor-pointer"
+                      data-testid={`send-fees-preset-${option.id}`}
+                    >
+                      <div className="flex flex-col">
+                        <span className="text-base">{option.label}</span>
+                        {option.sublabel ? (
+                          <span className="body-3 text-muted">{option.sublabel}</span>
+                        ) : null}
+                      </div>
+                    </MenuRadioItem>
+                  ))}
+                </MenuRadioGroup>
+              ) : null}
+              {strategyOptions.length > 0 && (customOption || coinControlOption) ? (
+                <MenuSeparator />
+              ) : null}
+              {customOption ? (
+                <MenuItem
+                  className="cursor-pointer"
+                  data-testid="send-custom-fees-menu-item"
+                  onClick={() => {
+                    customOption.onSelect();
+                  }}
+                >
+                  <div className="flex w-full items-center justify-between">
+                    <span className="text-base">{customOption.label}</span>
+                    {customOption.selected ? <Check size={16} /> : null}
+                  </div>
+                </MenuItem>
+              ) : null}
+              {coinControlOption ? (
+                <MenuItem
+                  className="cursor-pointer"
+                  data-testid="send-coin-control-fees-menu-item"
+                  onClick={() => {
+                    coinControlOption.onSelect();
+                  }}
+                >
+                  {coinControlOption.label}
+                </MenuItem>
+              ) : null}
+            </MenuGroup>
+          </MenuContent>
+        </Menu>
       </div>
-    );
-  }
-
-  return (
-    <div
-      className="flex w-full items-center justify-between mt-16 mb-12"
-      data-testid="send-network-fees-row"
-    >
-      <span className="flex items-center gap-8">
-        <span className="body-3">{feesLabel}</span>
-        {informationIcon}
-      </span>
-      <Menu>
-        <MenuTrigger
-          render={
-            <button
-              type="button"
-              className="flex items-center gap-8 transition-colors hover:opacity-70  cursor-pointer"
-              data-testid="send-network-fees-menu-trigger"
-            >
-              <span className="body-3 text-base">
-                {feesValue} • {feesStrategyLabel}
-              </span>
-              <ChevronUpDown size={16} className="text-muted" />
-            </button>
-          }
-        />
-        <MenuContent className="pointer-events-auto w-256" side="top">
-          <MenuGroup>
-            <MenuLabel>{feesLabel}</MenuLabel>
-            {strategyOptions.length > 0 ? (
-              <MenuRadioGroup
-                value={selectedId}
-                onValueChange={id => {
-                  const option = options.find(o => o.id === id);
-                  option?.onSelect();
-                }}
-              >
-                {strategyOptions.map(option => (
-                  <MenuRadioItem
-                    key={option.id}
-                    value={option.id}
-                    closeOnClick
-                    className="cursor-pointer"
-                    data-testid={`send-fees-preset-${option.id}`}
-                  >
-                    <div className="flex flex-col">
-                      <span className="text-base">{option.label}</span>
-                      {option.sublabel ? (
-                        <span className="body-3 text-muted">{option.sublabel}</span>
-                      ) : null}
-                    </div>
-                  </MenuRadioItem>
-                ))}
-              </MenuRadioGroup>
-            ) : null}
-            {strategyOptions.length > 0 && (customOption || coinControlOption) ? (
-              <MenuSeparator />
-            ) : null}
-            {customOption ? (
-              <MenuItem
-                className="cursor-pointer"
-                data-testid="send-custom-fees-menu-item"
-                onClick={() => {
-                  customOption.onSelect();
-                }}
-              >
-                <div className="flex w-full items-center justify-between">
-                  <span className="text-base">{customOption.label}</span>
-                  {customOption.selected ? <Check size={16} /> : null}
-                </div>
-              </MenuItem>
-            ) : null}
-            {coinControlOption ? (
-              <MenuItem
-                className="cursor-pointer"
-                data-testid="send-coin-control-fees-menu-item"
-                onClick={() => {
-                  coinControlOption.onSelect();
-                }}
-              >
-                {coinControlOption.label}
-              </MenuItem>
-            ) : null}
-          </MenuGroup>
-        </MenuContent>
-      </Menu>
-    </div>
+    </>
   );
 }

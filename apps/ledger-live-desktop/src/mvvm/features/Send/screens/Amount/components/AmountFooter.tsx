@@ -4,6 +4,7 @@ import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import type { FeeSelectorOption } from "../types";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { NetworkFeesMenu } from "./Fees/NetworkFeesMenu";
+import type { SponsoredFeeNudgeProps } from "./Fees/SponsoredFeeNudge";
 
 type AmountFooterProps = Readonly<{
   feesRowLabel: string;
@@ -15,6 +16,7 @@ type AmountFooterProps = Readonly<{
     selectedId: string;
     canOpen: boolean;
   }>;
+  sponsoredNudge: SponsoredFeeNudgeProps;
   reviewLabel: string;
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
@@ -29,6 +31,7 @@ export function AmountFooter({
   feesRowSecondaryValue,
   feesRowStrategyLabel,
   feeSelector,
+  sponsoredNudge,
   reviewLabel,
   reviewShowIcon,
   reviewDisabled,
@@ -57,6 +60,7 @@ export function AmountFooter({
           strategyLabel: feesRowStrategyLabel,
         }}
         feeSelector={feeSelector}
+        sponsoredNudge={sponsoredNudge}
       />
       <Button
         appearance="base"

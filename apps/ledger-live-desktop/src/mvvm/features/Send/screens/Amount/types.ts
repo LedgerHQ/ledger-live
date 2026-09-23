@@ -3,6 +3,7 @@ import type {
   FeeSelectorOptionKind,
   FeeSelectorOption,
 } from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
+import type { SponsoredFeeNudgeProps } from "./components/Fees/SponsoredFeeNudge";
 
 export type { FeeSelectorOptionKind, FeeSelectorOption };
 
@@ -59,6 +60,7 @@ type FeesProps = Readonly<{
     selectedId: string;
     canOpen: boolean;
   }>;
+  sponsoredNudge: SponsoredFeeNudgeProps;
 }>;
 
 type QuickActionsProps = Readonly<{
@@ -71,6 +73,7 @@ type ReviewProps = Readonly<{
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
   reviewLoading: boolean;
+  sponsoredFeeError: string | null;
   onReview: () => void;
   onGetFunds?: () => void;
 }>;
