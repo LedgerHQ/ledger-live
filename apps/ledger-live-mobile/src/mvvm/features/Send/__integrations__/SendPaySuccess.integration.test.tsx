@@ -131,7 +131,7 @@ describe("Send Pay success", () => {
 
     await reviewSend(user);
 
-    expect(await screen.findByText(/You paid \(Ada\)/)).toBeVisible();
+    expect(await screen.findByText(/You paid Ada/)).toBeVisible();
     expect(screen.queryByTestId("send-confirmation-success")).not.toBeOnTheScreen();
   });
 
@@ -148,6 +148,6 @@ describe("Send Pay success", () => {
     await reviewSend(user);
 
     expect(await screen.findByTestId("send-confirmation-success")).toBeVisible();
-    expect(screen.queryByText(/You paid \(Ada\)/)).not.toBeOnTheScreen();
+    expect(screen.queryByText(/You paid Ada/)).not.toBeOnTheScreen();
   });
 });

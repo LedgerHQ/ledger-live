@@ -38,7 +38,7 @@ describe("DebugPayContactSuccess", () => {
     });
 
     expect(await screen.findByTestId("pay-success-step")).toBeVisible();
-    expect(screen.getByText(/You paid \(Ada\)/)).toBeVisible();
+    expect(screen.getByText(/You paid Ada/)).toBeVisible();
     expect(screen.getByText("Amount")).toBeVisible();
     expect(screen.getByText("Est. time")).toBeVisible();
     expect(screen.getByText("From")).toBeVisible();

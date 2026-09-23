@@ -11053,7 +11053,7 @@
         "addAddress": "Add address"
       },
       "paySuccess": {
-        "title": "You paid ({{recipient}})",
+        "title": "You paid {{recipient}}",
         "amount": "Amount",
         "estimatedTime": "Est. time",
         "from": "From",
