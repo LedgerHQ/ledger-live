@@ -6,6 +6,7 @@ import {
   fillPayCardTransactionsMock,
   MOCK_CARD_TRANSACTIONS_PAGE_SIZE,
   mockPayCardTransactions,
+  mockPayCardTransactionsHistory,
   mockPayCardTransactionsPage,
   readPayCardTransactionsMock,
   receivePayCardTransactionMock,
@@ -108,6 +109,15 @@ describe("mockPayCardTransactions", () => {
 });
 
 describe("mockPayCardTransactionsPage", () => {
+  // The history is dated relative to now, so two reads a millisecond apart would not compare equal.
+  beforeAll(() => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-03-04T09:00:00.000Z"));
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   const pageRequest = (page: string) =>
     new Request(`https://card.test/v1/card/transactions?page=${page}`);
 
@@ -115,11 +125,13 @@ describe("mockPayCardTransactionsPage", () => {
     const page = mockPayCardTransactionsPage(pageRequest("0"));
 
     expect(page).toHaveLength(MOCK_CARD_TRANSACTIONS_PAGE_SIZE);
-    expect(page).toEqual(mockPayCardTransactions().slice(0, MOCK_CARD_TRANSACTIONS_PAGE_SIZE));
+    expect(page).toEqual(
+      mockPayCardTransactionsHistory().slice(0, MOCK_CARD_TRANSACTIONS_PAGE_SIZE),
+    );
   });
 
   it("walks the whole history in pages, without repeating or dropping a transaction", () => {
-    const all = mockPayCardTransactions();
+    const all = mockPayCardTransactionsHistory();
     const pageCount = Math.ceil(all.length / MOCK_CARD_TRANSACTIONS_PAGE_SIZE);
     const walked = Array.from({ length: pageCount }, (_, page) =>
       mockPayCardTransactionsPage(pageRequest(String(page))),
@@ -129,7 +141,7 @@ describe("mockPayCardTransactionsPage", () => {
   });
 
   it("ends on a short page, which is how a caller learns the history stopped", () => {
-    const all = mockPayCardTransactions();
+    const all = mockPayCardTransactionsHistory();
     const lastPage = Math.ceil(all.length / MOCK_CARD_TRANSACTIONS_PAGE_SIZE) - 1;
 
     expect(mockPayCardTransactionsPage(pageRequest(String(lastPage))).length).toBeLessThan(
@@ -149,4 +161,143 @@ describe("mockPayCardTransactionsPage", () => {
       );
     },
   );
+});
+
+describe("mockPayCardTransactionsHistory", () => {
+  const now = new Date("2026-03-04T09:00:00.000Z");
+
+  it("pairs every settled charge with a cashback of its own size", () => {
+    const settled = mockPayCardTransactionsHistory(now).filter(
+      ({ status }) => status !== "DECLINED",
+    );
+
+    expect(settled.every(({ cashback }) => cashback !== undefined)).toBe(true);
+    for (const { cashback } of settled) {
+      expect(cashback).toMatchObject({ currency: "BXX" });
+    }
+  });
+
+  it("carries every cashback state, so each treatment can be seen without a funded card", () => {
+    const states = new Set(
+      mockPayCardTransactionsHistory(now).map(({ cashback }) => cashback?.status ?? "none"),
+    );
+
+    expect(states).toEqual(new Set(["EARNED", "CLAIMED", "PENDING", "NOT_EARNED", "none"]));
+  });
+
+  it("zeroes the reward on a charge that has not settled into one", () => {
+    // The provider sends both amounts as zero until the reward settles, and on one it never will.
+    const unsettled = mockPayCardTransactionsHistory(now)
+      .map(({ cashback }) => cashback)
+      .filter(cashback => cashback?.status === "PENDING" || cashback?.status === "NOT_EARNED");
+
+    expect(unsettled.length).toBeGreaterThan(0);
+    for (const cashback of unsettled) {
+      expect(cashback).toMatchObject({ amount: "0.000000", fiatAmount: "0.00" });
+    }
+  });
+
+  it("scales the cashback with the charge rather than repeating the documented one", () => {
+    // The builder spreads the documented transaction, which carries its own cashback. Without an
+    // explicit one per row, all forty would report the same 0.01 EUR.
+    const earned = new Set(
+      mockPayCardTransactionsHistory(now)
+        .map(({ cashback }) => cashback?.fiatAmount)
+        .filter(Boolean),
+    );
+
+    expect(earned.size).toBeGreaterThan(1);
+  });
+
+  it("earns nothing at all on a charge the provider declined", () => {
+    // The only rows with no cashback, which is what keeps the optional field exercised.
+    expect(
+      mockPayCardTransactionsHistory(now)
+        .filter(({ cashback }) => cashback === undefined)
+        .map(({ status }) => status),
+    ).toEqual(["DECLINED", "DECLINED"]);
+  });
+
+  it("is a history the schema accepts, whole", () => {
+    expect(
+      PayCardTransactionsResponseSchema.parse(mockPayCardTransactionsHistory(now)),
+    ).toHaveLength(mockPayCardTransactionsHistory(now).length);
+  });
+
+  it("holds enough charges to page through several times", () => {
+    const pages = mockPayCardTransactionsHistory(now).length / MOCK_CARD_TRANSACTIONS_PAGE_SIZE;
+
+    expect(pages).toBeGreaterThanOrEqual(4);
+  });
+
+  it("gives every transaction its own id", () => {
+    const ids = mockPayCardTransactionsHistory(now).map(({ id }) => id);
+
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("reads newest first, the order the provider sends", () => {
+    const times = mockPayCardTransactionsHistory(now).map(({ dateTime }) => Date.parse(dateTime));
+
+    expect(times).toEqual([...times].sort((left, right) => right - left));
+  });
+
+  it("dates itself against the moment it is asked, so today and yesterday keep rendering", () => {
+    const [newest] = mockPayCardTransactionsHistory(now);
+    const dayBefore = new Date(now).setDate(now.getDate() - 1);
+
+    expect(Date.parse(newest.dateTime)).toBeLessThanOrEqual(now.getTime());
+    expect(
+      mockPayCardTransactionsHistory(now).some(({ dateTime }) => {
+        const at = Date.parse(dateTime);
+        return at <= now.getTime() && at > dayBefore;
+      }),
+    ).toBe(true);
+  });
+
+  it("shows every status the detail sheet can badge", () => {
+    const statuses = new Set(mockPayCardTransactionsHistory(now).map(({ status }) => status));
+
+    expect(statuses).toEqual(new Set(["CONFIRMED", "PENDING", "DECLINED", "REVERTED"]));
+  });
+
+  it("gives a declined charge its reason, and a settled one none", () => {
+    const history = mockPayCardTransactionsHistory(now);
+    const declined = history.filter(({ status }) => status === "DECLINED");
+
+    expect(declined.length).toBeGreaterThan(0);
+    expect(declined.every(({ declineReason }) => declineReason !== "")).toBe(true);
+    expect(
+      history
+        .filter(({ status }) => status === "CONFIRMED")
+        .every(({ declineReason }) => declineReason === ""),
+    ).toBe(true);
+  });
+
+  it("has a refund, so the list is not all debits", () => {
+    expect(mockPayCardTransactionsHistory(now).some(({ sign }) => sign === "CREDIT")).toBe(true);
+  });
+
+  it("charges some purchases abroad, where the merchant's currency is not the card's", () => {
+    const abroad = mockPayCardTransactionsHistory(now).filter(
+      ({ originalCurrency, transactionCurrency }) => originalCurrency !== transactionCurrency,
+    );
+
+    expect(abroad.length).toBeGreaterThan(0);
+    expect(abroad.every(({ billingConversionRate }) => billingConversionRate !== "1")).toBe(true);
+  });
+
+  it("pays some charges from more than one wallet", () => {
+    expect(
+      mockPayCardTransactionsHistory(now).some(({ fundingSources }) => fundingSources.length > 1),
+    ).toBe(true);
+  });
+
+  it("funds nothing for a charge the provider declined", () => {
+    expect(
+      mockPayCardTransactionsHistory(now)
+        .filter(({ status }) => status === "DECLINED")
+        .every(({ fundingSources }) => fundingSources.length === 0),
+    ).toBe(true);
+  });
 });
