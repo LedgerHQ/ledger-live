@@ -21,7 +21,9 @@ describe("openHostedUrlInSecureBrowser", () => {
 
     await openHostedUrlInSecureBrowser(loginUrl, deepLink);
 
-    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledWith(loginUrl, deepLink);
+    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledWith(loginUrl, deepLink, {
+      createTask: false,
+    });
   });
 
   it("should report the redirect the session ended on", async () => {
