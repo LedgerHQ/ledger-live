@@ -2,7 +2,7 @@ import test from "tests/fixtures/mockServerDevice";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
-// The drawer keys options on the language id, while the trigger renders the localized label.
+// The drawer keys its options by the language id, while the trigger renders the localized label.
 const TARGET_LANGUAGE = "french";
 const TARGET_LABEL = "Français";
 const DEFAULT_LABEL = "English";
