@@ -11,8 +11,6 @@ export const useGetCounterValueIdsPolling = () => {
     refetchOnReconnect: true,
   });
 
-  // The api reports a rejected response as a typed error rather than logging it, since it injects
-  // into a shared service and holds no logging dependency. Reporting it is the consumer's job.
   useEffect(() => {
     if (error) log("countervaluesApi", `getCounterValueIdsSortedByMarketCap failed`, { error });
   }, [error]);

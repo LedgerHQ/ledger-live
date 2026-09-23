@@ -157,8 +157,6 @@ function Effect({
       rates: bridge.rates,
       batchStrategySolver,
       granularitiesRates: filteredUserSettings.granularitiesRates,
-      // The api package takes no logging dependency, so the caller supplies one. This keeps the
-      // diagnostics the fetch loop emitted before it moved.
       log,
     }).then(
       s => {
