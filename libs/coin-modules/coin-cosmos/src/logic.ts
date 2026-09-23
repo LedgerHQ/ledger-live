@@ -24,6 +24,7 @@ import {
 export const COSMOS_MAX_REDELEGATIONS = 7;
 export const COSMOS_MAX_UNBONDINGS = 7;
 export const COSMOS_MAX_DELEGATIONS = 5;
+export const COSMOS_MAX_MEMO_LENGTH = 256;
 export const COSMOS_MIN_SAFE = new BigNumber(100000); // 100000 uAtom
 
 export const COSMOS_MIN_FEES = new BigNumber(6000); // 6000 uAtom

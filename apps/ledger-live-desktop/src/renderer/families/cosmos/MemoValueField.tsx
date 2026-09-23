@@ -6,6 +6,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cosmos/types";
+import { cosmosMemoPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 const MemoValueField = ({
   onChange,
@@ -24,11 +25,7 @@ const MemoValueField = ({
   const bridge = useAccountBridge<Transaction>(account);
   const onMemoValueChange = useCallback(
     (memo: string) => {
-      onChange(
-        bridge.updateTransaction(transaction, {
-          memo,
-        }),
-      );
+      onChange(bridge.updateTransaction(transaction, cosmosMemoPatch(memo)));
     },
     [onChange, transaction, bridge],
   );

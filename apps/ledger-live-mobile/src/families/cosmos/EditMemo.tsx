@@ -5,6 +5,7 @@ import { useTranslation } from "~/context/Locale";
 import i18next from "~/i18n/instance";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
+import { cosmosMemoPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
@@ -29,9 +30,7 @@ function CosmosFamilyEditMemo({ navigation, route }: Props) {
     popToScreen(navigation, ScreenName.SendSummary, {
       ...route.params,
       accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        memo,
-      }),
+      transaction: bridge.updateTransaction(transaction, cosmosMemoPatch(memo)),
     });
   }, [navigation, route.params, account, bridge, memo]);
   return (

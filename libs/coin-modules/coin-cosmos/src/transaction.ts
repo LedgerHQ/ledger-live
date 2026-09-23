@@ -64,6 +64,8 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     validators: tr.validators
       ? tr.validators.map(v => ({ ...v, amount: new BigNumber(v.amount) }))
       : [],
+    ...(tr.memoType !== undefined ? { memoType: tr.memoType } : {}),
+    ...(tr.memoValue !== undefined ? { memoValue: tr.memoValue } : {}),
   };
 };
 
@@ -83,6 +85,8 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     memo: t.memo,
     sourceValidator: t.sourceValidator,
     validators: t.validators ? t.validators.map(v => ({ ...v, amount: v.amount.toString() })) : [],
+    ...(t.memoType !== undefined ? { memoType: t.memoType } : {}),
+    ...(t.memoValue !== undefined ? { memoValue: t.memoValue } : {}),
   };
 };
 
