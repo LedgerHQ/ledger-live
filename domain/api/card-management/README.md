@@ -32,8 +32,8 @@ shape and the reasons.
 | `createCardSetPinToken` | POST | `/v1/card/set-pin/token` | Mint a single-use token and URL for the hosted page that sets the PIN |
 | `freezeCard` | POST | `/v1/card/freeze` | Move an active card to `FROZEN` |
 | `unfreezeCard` | POST | `/v1/card/unfreeze` | Move a frozen card back to `ACTIVE` |
+| `getCardCashback` | GET | `/v1/card/cashback` | Read the cashback the card has earned and the rate it earns at |
 | `getInternalWallets` | GET | `/v1/wallet/internal` | Read every custodial wallet, with balances |
-| `getRewardWallet` | GET | `/v1/wallet/reward` | Read the wallet the card's rewards are paid into |
 | `getCardLinkedWallets` | GET | `/v1/wallet/internal/card_linked` | Read the wallets funding the card, in charging order |
 | `linkWalletToCard` | POST | `/v1/wallet/internal/card_linked` | Link a custodial wallet to the card as a funding source |
 | `unlinkWalletFromCard` | DELETE | `/v1/wallet/internal/card_linked` | Drop a wallet as a funding source, leaving it and its funds alone |

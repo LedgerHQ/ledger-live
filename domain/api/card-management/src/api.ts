@@ -1,10 +1,10 @@
 import { cardApi } from "@shared/api-services";
 import { CARD_MANAGEMENT_TAGS, OAUTH2_TOKEN_PATH } from "./constants";
 import {
+  PayCardCashbackCanonicalSchema,
+  PayCardCashbackResponseSchema,
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
-  PayCardRewardWalletCanonicalSchema,
-  PayCardRewardWalletResponseSchema,
   PayCardLinkWalletRequestSchema,
   PayCardLinkWalletResponseSchema,
   PayCardLinkedWalletsResponseSchema,
@@ -30,18 +30,18 @@ import {
 } from "./schema";
 import { FIRST_CARD_TRANSACTIONS_PAGE, nextCardTransactionsPage } from "./transactionsPaging";
 import {
+  transformPayCardCashback,
   transformPayCardLinkedWallets,
-  transformPayCardRewardWallet,
   transformPayCardSessionResponse,
 } from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
+  PayCardCashback,
   PayCardFreezeStateResult,
   PayCardInternalWallet,
   PayCardLinkWalletRequest,
   PayCardLinkWalletResult,
   PayCardLinkedWallet,
-  PayCardRewardWallet,
   PayCardWalletPrioritiesRequest,
   PayCardWalletPrioritiesResult,
   PayCardLogoutResult,
@@ -278,14 +278,14 @@ export const cardManagementApi = cardApi
         providesTags: ["InternalWallets"],
       }),
 
-      getRewardWallet: build.query<PayCardRewardWallet, void>({
+      getCardCashback: build.query<PayCardCashback, void>({
         query: () => ({
-          url: "/v1/wallet/reward",
+          url: "/v1/card/cashback",
           method: "GET",
         }),
-        rawResponseSchema: PayCardRewardWalletResponseSchema,
-        transformResponse: transformPayCardRewardWallet,
-        responseSchema: PayCardRewardWalletCanonicalSchema,
+        rawResponseSchema: PayCardCashbackResponseSchema,
+        transformResponse: transformPayCardCashback,
+        responseSchema: PayCardCashbackCanonicalSchema,
       }),
 
       getCardLinkedWallets: build.query<PayCardLinkedWallet[], void>({
@@ -400,7 +400,7 @@ export const {
   useFreezeCardMutation,
   useUnfreezeCardMutation,
   useGetInternalWalletsQuery,
-  useGetRewardWalletQuery,
+  useGetCardCashbackQuery,
   useGetCardLinkedWalletsQuery,
   useLinkWalletToCardMutation,
   useUnlinkWalletFromCardMutation,

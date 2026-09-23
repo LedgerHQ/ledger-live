@@ -11,7 +11,7 @@ export type PayGlobalPropertiesSource = Readonly<{
   cardStatus?: Readonly<{ cardAddedToDigitalWallet?: boolean }>;
   hasCardTransactions?: boolean;
   cardWallets?: readonly Readonly<{ priority: number; currency: string }>[];
-  rewardWallet?: Readonly<{ balance: string; currency: string }>;
+  cashback?: Readonly<{ amount: string; currency?: string | null }>;
 }>;
 
 function countHeldStablecoins(tickers: readonly string[]): number {
@@ -27,7 +27,7 @@ export function toPayGlobalProperties({
   cardStatus,
   hasCardTransactions,
   cardWallets,
-  rewardWallet,
+  cashback,
 }: PayGlobalPropertiesSource): PayGlobalProperties {
   if (!featureFlagPay) {
     return { featureFlagPay: false };
@@ -46,7 +46,7 @@ export function toPayGlobalProperties({
     has_tx: hasCardTransactions ?? false,
     cardAddedToOsWallet: cardStatus?.cardAddedToDigitalWallet ?? false,
     cardDebitOrder,
-    cardRewardsAvailable: Number(rewardWallet?.balance ?? 0) > 0,
-    cardRewardCurrency: rewardWallet?.currency ?? null,
+    cardRewardsAvailable: Number(cashback?.amount ?? 0) > 0,
+    cardRewardCurrency: cashback?.currency ?? null,
   };
 }

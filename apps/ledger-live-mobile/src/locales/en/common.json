@@ -10503,7 +10503,7 @@
         "imageAlt": "Card numbers"
       },
       "reward": {
-        "title": "Total cashback"
+        "title": "Total cashback · {{ratePercent}}% in {{ticker}}"
       }
     },
     "cardTransactions": {

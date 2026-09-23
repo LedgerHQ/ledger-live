@@ -15,7 +15,7 @@ describe("toPayGlobalProperties", () => {
           { priority: 2, currency: "usdt" },
           { priority: 1, currency: "usdc" },
         ],
-        rewardWallet: { balance: "1.5", currency: "USD" },
+        cashback: { amount: "1.5", currency: "USD" },
       }),
     ).toEqual({
       featureFlagPay: true,
@@ -39,7 +39,7 @@ describe("toPayGlobalProperties", () => {
         isSignedIn: true,
         accountTickers: ["USDC"],
         internalWalletBalances: ["10"],
-        rewardWallet: { balance: "1.5", currency: "USD" },
+        cashback: { amount: "1.5", currency: "USD" },
       }),
     ).toEqual({
       featureFlagPay: false,
@@ -66,5 +66,29 @@ describe("toPayGlobalProperties", () => {
       cardRewardsAvailable: false,
       cardRewardCurrency: null,
     });
+  });
+
+  it("reports the rewards without a currency when the provider names none", () => {
+    expect(
+      toPayGlobalProperties({
+        featureFlagPay: true,
+        hasCard: true,
+        isSignedIn: true,
+        accountTickers: [],
+        cashback: { amount: "1.5", currency: null },
+      }),
+    ).toEqual(expect.objectContaining({ cardRewardsAvailable: true, cardRewardCurrency: null }));
+  });
+
+  it("reports no rewards while the cashback amount is zero", () => {
+    expect(
+      toPayGlobalProperties({
+        featureFlagPay: true,
+        hasCard: true,
+        isSignedIn: true,
+        accountTickers: [],
+        cashback: { amount: "0.00", currency: "BTC" },
+      }),
+    ).toEqual(expect.objectContaining({ cardRewardsAvailable: false, cardRewardCurrency: "BTC" }));
   });
 });

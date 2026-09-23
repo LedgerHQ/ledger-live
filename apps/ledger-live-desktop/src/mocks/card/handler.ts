@@ -4,6 +4,7 @@ import {
   mockCardDetailsImage,
   mockPayCardDetailsToken,
 } from "@domain/api-card-management/mock/card-details-token";
+import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashback";
 import { isMockCardRequest } from "@domain/api-card-management/mock/card-session";
 import {
   mockPayCardTransactionsPage,
@@ -17,7 +18,6 @@ import {
 import {
   applyPayCardWalletPrioritiesMock,
   mockPayCardLinkedWallets,
-  mockPayCardRewardWallet,
   readPayCardReorderMockEnabled,
   readPayCardWalletsMock,
   resolvePayCardInternalWalletsMock,
@@ -99,8 +99,8 @@ const handlers = [
     });
   }),
 
-  http.get("*/v1/wallet/reward", ({ request }) =>
-    isMockCardRequest(request) ? HttpResponse.json(mockPayCardRewardWallet()) : passthrough(),
+  http.get("*/v1/card/cashback", ({ request }) =>
+    isMockCardRequest(request) ? HttpResponse.json(mockPayCardCashback()) : passthrough(),
   ),
 
   // Never let a fake bearer reach an unmocked provider endpoint.
