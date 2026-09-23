@@ -20,6 +20,7 @@ export type OverviewSceneProps = Readonly<{
   onTransactionPress: (transaction: PayCardTransaction) => void;
   onAddToWalletPress: () => void;
   onShowMore?: () => void;
+  onViewRewards?: () => void;
   formatters?: CardTransactionFormatters;
   disclaimer: string;
 }>;

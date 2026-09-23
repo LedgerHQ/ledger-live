@@ -7,5 +7,6 @@ export interface CardViewModel {
   readonly onShowMore: () => void;
   readonly onTopUp: () => Promise<void>;
   readonly onChooseCardType: () => Promise<void>;
+  readonly onViewRewards: () => Promise<void>;
   readonly cardSettingsActions: PayCardProps["cardSettingsActions"];
 }

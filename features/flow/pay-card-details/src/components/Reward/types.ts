@@ -15,6 +15,7 @@ export type RewardProps = Readonly<{
   getCounterValue?: (currency: CryptoOrTokenCurrency, amount: string) => number | null;
   /** Renders what {@link RewardProps.getCounterValue} answered, in the user's counter-value currency. */
   formatCountervalue?: (value: number) => string;
+  onViewRewards?: () => void;
 }>;
 
 export type RewardViewProps = Readonly<{
@@ -23,4 +24,5 @@ export type RewardViewProps = Readonly<{
   /** The same reward in the counter-value currency, or `null` when nothing could price it. */
   countervalue: string | null;
   subtitle: string;
+  onPress?: () => void;
 }>;

@@ -87,6 +87,7 @@ export function OverviewScene({
   onMorePress,
   onTransactionPress,
   onShowMore,
+  onViewRewards,
   formatters,
   disclaimer,
 }: OverviewSceneProps) {
@@ -112,6 +113,7 @@ export function OverviewScene({
         currencies={assets?.currencies}
         getCounterValue={assets?.getCounterValue}
         formatCountervalue={assets?.formatCountervalue}
+        onViewRewards={onViewRewards}
       />
 
       <CardTransactions

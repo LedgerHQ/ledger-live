@@ -17,6 +17,7 @@ export function CardView({
   onShowMore,
   onTopUp,
   onChooseCardType,
+  onViewRewards,
   cardSettingsActions,
 }: CardViewProps) {
   const isSignedIn = displayState === "signedIn";
@@ -32,6 +33,7 @@ export function CardView({
             assets={assets}
             formatters={{ amount: formatters?.transactionAmount }}
             cardSettingsActions={cardSettingsActions}
+            onViewRewards={onViewRewards}
           />
           {assets ? (
             <div className="mt-8">

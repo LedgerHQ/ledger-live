@@ -12,6 +12,7 @@ export function useCardViewModel({
   onShowMore,
   onTopUp,
   onChooseCardType,
+  onViewRewards,
   cardSettingsActions,
 }: CardProps): CardViewProps {
   const { t } = useTranslation();
@@ -40,6 +41,7 @@ export function useCardViewModel({
     onShowMore,
     onTopUp,
     onChooseCardType,
+    onViewRewards,
     cardSettingsActions,
   };
 }

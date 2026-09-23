@@ -34,6 +34,7 @@ export type CardDetailsProps = Readonly<{
   formatters?: CardTransactionFormatters;
   onShowMore?: () => void;
   onTopUp?: () => void;
+  onViewRewards?: () => void;
   cardSettingsActions?: CardSettingsActions;
 }>;
 

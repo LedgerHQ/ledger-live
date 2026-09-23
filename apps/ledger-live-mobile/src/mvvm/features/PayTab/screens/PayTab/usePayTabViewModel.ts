@@ -15,6 +15,7 @@ import {
   buildManagePinPath,
   buildAddAssetPath,
   buildOrderCardPath,
+  buildCashbackPath,
   openHostedCardPathSafely,
   openHostedUrlInSecureBrowser,
   type CardAssetPathBuilder,
@@ -169,6 +170,11 @@ export function usePayTabViewModel() {
     [openHosted],
   );
 
+  const onViewRewards = useCallback(
+    () => openHosted(buildCashbackPath, "cashback page did not open"),
+    [openHosted],
+  );
+
   const onManagePin = useCallback(
     () => openHosted(buildManagePinPath, "manage pin page did not open"),
     [openHosted],
@@ -219,6 +225,7 @@ export function usePayTabViewModel() {
       formatters: { countervalue: formatCountervalue },
       onTopUp,
       onChooseCardType,
+      onViewRewards,
       onShowMore,
       cardSettingsActions,
     }),
@@ -228,6 +235,7 @@ export function usePayTabViewModel() {
       formatCountervalue,
       onTopUp,
       onChooseCardType,
+      onViewRewards,
       onShowMore,
       cardSettingsActions,
     ],

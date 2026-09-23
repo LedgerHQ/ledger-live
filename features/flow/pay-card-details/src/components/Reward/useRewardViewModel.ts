@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth/hooks";
 import { useCardCashback } from "@features/flow-pay-card-wallets";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import type { RewardProps, RewardViewProps } from "./types";
 
@@ -12,13 +13,24 @@ export function useRewardViewModel({
   currencies = NO_CURRENCIES,
   getCounterValue,
   formatCountervalue,
+  onViewRewards,
 }: RewardProps): RewardViewProps | null {
   const { t } = useTranslation();
+  const { trackButtonClicked } = usePayAnalyticsContext();
   const isSignedIn = useIsCardSignedIn();
   const { cashback, isLoading, isError } = useCardCashback({
     currencies,
     skip: !isSignedIn,
   });
+
+  const handleViewRewards = useCallback(
+    function handleViewRewards() {
+      if (!onViewRewards) return;
+      trackButtonClicked({ button: "view reward currencies", page: "Card details" });
+      onViewRewards();
+    },
+    [onViewRewards, trackButtonClicked],
+  );
 
   return useMemo(() => {
     // An amount with no asset to name would read as a number of nothing, so the banner waits.
@@ -41,6 +53,7 @@ export function useRewardViewModel({
       amount,
       countervalue: value === null || !formatCountervalue ? null : formatCountervalue(value),
       subtitle: t("payTab.card.reward.title", { ratePercent, ticker }),
+      ...(onViewRewards ? { onPress: handleViewRewards } : {}),
     };
   }, [
     isSignedIn,
@@ -51,5 +64,7 @@ export function useRewardViewModel({
     getCounterValue,
     formatCountervalue,
     t,
+    onViewRewards,
+    handleViewRewards,
   ]);
 }

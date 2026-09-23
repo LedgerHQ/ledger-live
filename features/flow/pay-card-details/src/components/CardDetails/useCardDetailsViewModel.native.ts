@@ -18,6 +18,7 @@ export function useCardDetailsViewModel({
   formatters,
   onShowMore,
   onTopUp,
+  onViewRewards,
   cardSettingsActions,
 }: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
@@ -144,6 +145,7 @@ export function useCardDetailsViewModel({
       onTransactionPress,
       onAddToWalletPress,
       onShowMore,
+      onViewRewards,
       formatters,
       disclaimer: t("payTab.disclaimer"),
     },

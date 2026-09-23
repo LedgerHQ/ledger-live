@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from "@testing-library/react";
+import { renderHook, waitFor, act } from "@testing-library/react";
 import { http, HttpResponse, type JsonBodyType } from "msw";
 import { useGetCardCashbackQuery } from "@domain/api-card-management";
 import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashback";
@@ -39,8 +39,17 @@ function answerWith(body: JsonBodyType, status = 200) {
   return requests;
 }
 
-function renderViewModel({ signedIn = true, ...props }: { signedIn?: boolean } & RewardProps = {}) {
-  return renderHook(() => useRewardViewModel(props), { wrapper: cardApiWrapper({ signedIn }) });
+function renderViewModel({
+  signedIn = true,
+  track = jest.fn(),
+  ...props
+}: { signedIn?: boolean; track?: jest.Mock } & RewardProps = {}) {
+  return {
+    ...renderHook(() => useRewardViewModel(props), {
+      wrapper: cardApiWrapper({ signedIn, track }),
+    }),
+    track,
+  };
 }
 
 describe("useRewardViewModel", () => {
@@ -165,5 +174,32 @@ describe("useRewardViewModel", () => {
 
     expect(requests).toEqual([]);
     expect(result.current).toBeNull();
+  });
+
+  it("tracks the view-rewards press and hands it to the host", async () => {
+    answerWith(mockPayCardCashback());
+    const onViewRewards = jest.fn();
+
+    const { result, track } = renderViewModel({ onViewRewards });
+
+    await waitFor(() => expect(result.current).not.toBeNull());
+    act(() => {
+      result.current?.onPress?.();
+    });
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "view reward currencies",
+      page: "Card details",
+    });
+    expect(onViewRewards).toHaveBeenCalledTimes(1);
+  });
+
+  it("leaves the banner without a press handler when the host did not provide one", async () => {
+    answerWith(mockPayCardCashback());
+
+    const { result } = renderViewModel();
+
+    await waitFor(() => expect(result.current).not.toBeNull());
+    expect(result.current).not.toHaveProperty("onPress");
   });
 });

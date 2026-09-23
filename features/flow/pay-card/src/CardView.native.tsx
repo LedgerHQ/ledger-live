@@ -16,6 +16,7 @@ export function CardView({
   onShowMore,
   onTopUp,
   onChooseCardType,
+  onViewRewards,
   cardSettingsActions,
 }: CardViewProps) {
   return (
@@ -37,6 +38,7 @@ export function CardView({
             }}
             onShowMore={onShowMore}
             onTopUp={onTopUp}
+            onViewRewards={onViewRewards}
             cardSettingsActions={cardSettingsActions}
           />
 

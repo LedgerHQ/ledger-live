@@ -5,6 +5,7 @@ const MANAGE_PIN_PATH = "/set-pin";
 const ACCESS_BAANX_PATH = "/";
 const ADD_ASSET_PATH = "/dashboard/accounts/crypto";
 const ORDER_CARD_PATH = "/order-card";
+const CASHBACK_PATH = "/cashback";
 
 export { SIGNUP_PATH };
 
@@ -41,4 +42,8 @@ export function buildAddAssetPath(usAppId?: string | null): string {
 
 export function buildOrderCardPath(usAppId?: string | null): string {
   return buildHostedPath(ORDER_CARD_PATH, usAppId);
+}
+
+export function buildCashbackPath(usAppId?: string | null): string {
+  return buildHostedPath(CASHBACK_PATH, usAppId);
 }
