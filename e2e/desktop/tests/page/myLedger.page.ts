@@ -6,6 +6,8 @@ import type { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 export class MyLedgerPage extends AppPage {
   private readonly storageCard = this.page.getByTestId("device-storage-card");
   private readonly deviceOptions = this.page.getByTestId("device-options-container");
+  private readonly osVersion = this.page.getByTestId("device-os-version");
+  private readonly genuineBadge = this.page.getByTestId("device-genuine-badge");
 
   private readonly catalogTab = this.page.getByTestId("manager-app-catalog-tab");
   private readonly installedAppsTab = this.page.getByTestId("manager-installed-apps-tab");
@@ -45,6 +47,14 @@ export class MyLedgerPage extends AppPage {
   async waitForDashboard() {
     await expect(this.storageCard).toBeVisible();
     await expect(this.deviceOptions).toBeVisible();
+  }
+
+  /** The summary is read against the device under test, so it follows SPECULOS_DEVICE. */
+  @step("Expect the device summary to report $0")
+  async expectDeviceSummary(deviceName: string) {
+    await expect(this.storageCard).toContainText(deviceName);
+    await expect(this.osVersion).toContainText(/\d+\.\d+/);
+    await expect(this.genuineBadge).toBeVisible();
   }
 
   @step("Open the app catalog tab")
