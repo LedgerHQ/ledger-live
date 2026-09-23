@@ -42,6 +42,53 @@
           "env": "CI_OS"
         }
       ]
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false,
+      "inputs": [
+        "default",
+        "^default",
+        "desktopEnv",
+        "sharedEnv"
+      ],
+      "options": {
+        "cwd": "apps/ledger-live-desktop",
+        "command": "node ./tools/dist pack"
+      },
+      "configurations": {
+        "nightly": {
+          "command": "node ./tools/dist pack --nightly"
+        },
+        "pre": {
+          "command": "node ./tools/dist pack --pre"
+        },
+        "release": {
+          "command": "node ./tools/dist pack --release"
+        }
+      }
+    },
+    "sign": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "apps/ledger-live-desktop",
+        "command": "node ./tools/dist sign"
+      },
+      "configurations": {
+        "nightly": {
+          "command": "node ./tools/dist sign --nightly"
+        },
+        "pre": {
+          "command": "node ./tools/dist sign --pre"
+        },
+        "release": {
+          "command": "node ./tools/dist sign --release"
+        }
+      }
     }
   }
 }
