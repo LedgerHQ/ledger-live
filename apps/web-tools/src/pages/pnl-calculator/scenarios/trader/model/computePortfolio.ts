@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { buildMultiCV, resetOperationIdCounter, USD } from "@ledgerhq/wallet-pnl/scenarios";
+import { buildMultiCV } from "@domain/entity-market-countervalues/mock";
+import { resetOperationIdCounter, USD } from "@ledgerhq/wallet-pnl/scenarios";
 import { computeAssetPnL, computePortfolioPnL, invalidatePnLCache } from "@ledgerhq/wallet-pnl";
 import { toMajor, ZERO_ASSET_PNL, ZERO_PORTFOLIO_PNL } from "../../../shared/formatting";
 import {

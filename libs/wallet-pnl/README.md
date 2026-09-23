@@ -25,4 +25,17 @@
 
 ## Usage context
 
-Used by `apps/ledger-live-desktop` and `apps/ledger-live-mobile` to power the portfolio PnL view and per-asset detail screens. Depends on `@ledgerhq/live-countervalues` for fiat conversion and `@ledgerhq/types-live` for account/operation types.
+Used by `apps/ledger-live-desktop`, `apps/ledger-live-mobile` and the `apps/web-tools` pnl-calculator to power the portfolio PnL view and per-asset detail screens. Uses `@ledgerhq/types-live` for account/operation types.
+
+## Setup
+
+The package does not convert to fiat itself. It declares the countervalues operations it needs as a `RateLookup` ([`src/rateLookup.ts`](./src/rateLookup.ts)) and treats the countervalues state it receives as opaque. The host app registers an implementation once at startup, before any PnL is computed:
+
+```ts
+import { setRateLookup } from "@ledgerhq/wallet-pnl";
+import { calculate, historyKey, inferCurrencyAPIID } from "@domain/entity-market-countervalues";
+
+setRateLookup({ calculate, historyKey, currencyApiId: inferCurrencyAPIID });
+```
+
+Computing PnL before that throws `Rate lookup is not set`. The apps register it in their composition roots (`src/config/bridge-setup.ts` in desktop and mobile, `src/live-common-setup.ts` in web-tools), and each app's jest setup registers it for tests.
