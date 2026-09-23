@@ -282,18 +282,48 @@ describe("Portfolio", () => {
   });
   describe("getCurrentBalanceCountervalueChange", () => {
     const range: PortfolioRange = "day";
+    const HOURLY_WINDOW = 8 * 24;
+    const latestHour = () => startOfHour(new Date()).getTime();
+
     // Builds an account whose hourly balance history is flat (= current balance) over the range,
     // so getCurrencyPortfolio (historical balance) reduces to the same price-only change.
+    // genAccount seeds operations right up to "now", and those would have moved the balance
+    // during the window, so they are dropped: a flat series and operations inside the window
+    // describe two different accounts.
     function genFlatBalanceAccount(id = "bitcoin_1"): Account {
-      const account = genAccountBitcoin(id);
-      const balance = account.balance.toNumber();
+      const latestDate = latestHour();
+      const base = genAccountBitcoin(id);
+      const account = {
+        ...base,
+        operations: base.operations.filter(
+          op => op.date.getTime() < latestDate - HOURLY_WINDOW * 60 * 60 * 1000,
+        ),
+      };
       return {
         ...account,
         balanceHistoryCache: {
           ...account.balanceHistoryCache,
           HOUR: {
-            latestDate: startOfHour(new Date()).getTime(),
-            balances: new Array(8 * 24).fill(balance),
+            latestDate,
+            balances: new Array(HOURLY_WINDOW).fill(account.balance.toNumber()),
+          },
+        },
+      };
+    }
+
+    // The same flat account, except the cached series was written when the balance was 20% higher
+    // and never re-anchored. The balance is still constant across the range, so the change must
+    // still reduce to the price-only one. Only the final graph point reads account.balance, so a
+    // stale anchor makes it drop away from the rest as if value had left the account.
+    function genStaleAnchorAccount(id = "bitcoin_1"): Account {
+      const account = genFlatBalanceAccount(id);
+      return {
+        ...account,
+        balanceHistoryCache: {
+          ...account.balanceHistoryCache,
+          HOUR: {
+            ...account.balanceHistoryCache.HOUR,
+            balances: new Array(HOURLY_WINDOW).fill(account.balance.times(1.2).toNumber()),
           },
         },
       };
@@ -317,6 +347,14 @@ describe("Portfolio", () => {
     });
     it("matches the portfolio change when the balance is constant over the range", async () => {
       const account = genFlatBalanceAccount();
+      const { state, to } = await loadCV(account);
+      const portfolio = getCurrencyPortfolio([account], range, state, to);
+      const change = getCurrentBalanceCountervalueChange([account], range, state, to);
+      expect(typeof change.percentage).toBe("number");
+      expect(change.percentage).toBeCloseTo(portfolio.countervalueChange.percentage as number, 4);
+    });
+    it("matches the portfolio change when the cached history is anchored to a stale balance", async () => {
+      const account = genStaleAnchorAccount();
       const { state, to } = await loadCV(account);
       const portfolio = getCurrencyPortfolio([account], range, state, to);
       const change = getCurrentBalanceCountervalueChange([account], range, state, to);

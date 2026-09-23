@@ -70,13 +70,16 @@ function generateHistoryFromOperationsG(
   let { balance } = account;
   const operationsLength = account.operations.length;
   let date = latestDate;
+  let i = 0;
   const reference = account.balanceHistoryCache?.[g];
 
-  for (let i = 0; i < operationsLength;) {
-    if (
-      (partial && reference?.latestDate && date < reference.latestDate) ||
-      balances.length > maxDatapoints
-    ) {
+  // The window is defined by the granularity, not by how many operations the account has.
+  // Bounding this on the operation index left accounts with few or no operations holding a
+  // short series, which the portfolio graph then pads with zeros.
+  while (balances.length <= maxDatapoints) {
+    // Stop before re-emitting the slot the stored series already ends on, otherwise the
+    // concat below duplicates it and shifts every older slot by one increment.
+    if (partial && reference?.latestDate && date <= reference.latestDate) {
       break;
     }
 
@@ -112,6 +115,24 @@ export function generateHistoryFromOperations(account: AccountLike): BalanceHist
   };
 }
 
+// A stored series is anchored to account.balance: it is produced by rewinding that balance
+// through the operations. Once the balance moves without the series being regenerated, the two
+// no longer describe the same account, and the portfolio graph appends the live balance as its
+// final point, which renders as a cliff that reads like an outgoing transfer.
+function isAnchoredToBalance(account: AccountLike, cache: BalanceHistoryDataCache): boolean {
+  const { balances, latestDate } = cache;
+  if (!balances.length || !latestDate) return false;
+
+  // operations are newest first, so this walks at most the ones inside the latest slot
+  let balance = account.balance;
+  for (const operation of account.operations) {
+    if (operation.date.valueOf() <= latestDate) break;
+    balance = balance.minus(getOperationAmountNumberWithInternals(operation));
+  }
+
+  return balances[balances.length - 1] === Math.max(balance.toNumber(), 0);
+}
+
 /**
  * get the current balance history of the account. if possible from the cache.
  */
@@ -119,13 +140,15 @@ export function getAccountHistoryBalances(account: AccountLike, g: GranularityId
   const cacheData = account.balanceHistoryCache?.[g];
   const { startOf } = granularities[g];
   const now = startOf(new Date()).getTime();
+  const anchored = cacheData ? isAnchoredToBalance(account, cacheData) : false;
 
-  if (cacheData?.balances && cacheData.latestDate && cacheData.latestDate === now) {
+  if (anchored && cacheData?.latestDate === now) {
     return cacheData.balances;
   }
 
-  // account cache was not up to date or missing. recalculating on the fly
-  return generateHistoryFromOperationsG(account, g, true).balances;
+  // account cache was not up to date, missing, or anchored to a balance the account no longer
+  // has. Only extend it when it is still anchored, otherwise rebuild it from the live balance.
+  return generateHistoryFromOperationsG(account, g, anchored).balances;
 }
 
 /**
