@@ -238,6 +238,12 @@ jest.mock("~/analytics/segment", () => ({
   usePageNameFromRoute: jest.fn(() => "portfolio_navigator"),
 }));
 
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
+
 // Mock of Native Modules
 jest.mock("react-native-localize", () => mockLocalize);
 

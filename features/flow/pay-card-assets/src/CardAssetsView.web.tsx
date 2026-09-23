@@ -103,8 +103,8 @@ export function CardAssetsView({
   onWithdrawContinue,
   onManagePress,
   onAddAssetPress,
-  onReorderAssets,
-  reorderingAssetId,
+  onMoveAsset,
+  reorderingAssetIds,
 }: CardAssetsViewModel) {
   const { t } = useTranslation();
   const title = t("payTab.card.assets.title");
@@ -160,8 +160,8 @@ export function CardAssetsView({
         rows={rows}
         onClose={onDialogClose}
         onAddAsset={onAddAssetPress}
-        onReorder={onReorderAssets}
-        reorderingAssetId={reorderingAssetId}
+        onMoveAsset={onMoveAsset}
+        reorderingAssetIds={reorderingAssetIds}
       />
     </>
   );

@@ -9,6 +9,8 @@ type SharedParams = {
   broadcast?: boolean;
   appName?: string;
   dependencies?: string[];
+  manifestId?: string;
+  manifestName?: string;
   onSuccess: (signedOperation: SignedOperation) => void;
   onError: (err: Error) => void;
 };

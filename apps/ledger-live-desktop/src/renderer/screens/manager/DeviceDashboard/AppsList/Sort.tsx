@@ -61,6 +61,7 @@ const Sort = ({ onSortChange, sort }: Props) => {
         horizontal
         isActive={isActive}
         flow={2}
+        data-testid={`manager-sort-option-${item.key}`}
       >
         <Box grow alignItems="flex-start">
           <BoldToggle isBold={isActive}>{item.label}</BoldToggle>
@@ -80,7 +81,7 @@ const Sort = ({ onSortChange, sort }: Props) => {
     >
       {({ isOpen, value }) =>
         value ? (
-          <Box horizontal flow={1}>
+          <Box horizontal flow={1} data-testid="manager-sort-button">
             <Text color="neutral.c70" ff="Inter|SemiBold" fontSize={4}>
               <Trans i18nKey="manager.applist.sort.title" />
             </Text>

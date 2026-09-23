@@ -15,6 +15,7 @@ export function CardView({
   formatters,
   onShowMore,
   onTopUp,
+  onChooseCardType,
   cardSettingsActions,
 }: CardViewProps) {
   return (
@@ -26,7 +27,7 @@ export function CardView({
               <SubheaderTitle>{title}</SubheaderTitle>
             </SubheaderRow>
           </Subheader>
-          <CardOnboardingWidget onTopUp={onTopUp} />
+          <CardOnboardingWidget onTopUp={onTopUp} onChooseCardType={onChooseCardType} />
           <CardDetails
             cardVisual={cardVisual}
             assets={assets}
@@ -38,9 +39,8 @@ export function CardView({
             onTopUp={onTopUp}
             cardSettingsActions={cardSettingsActions}
           />
-          <Box lx={{ marginHorizontal: "s16" }}>
-            <AddToWalletCtaWithBottomSheet appearance="base" />
-          </Box>
+
+          <AddToWalletCtaWithBottomSheet appearance="base" />
         </>
       ) : (
         <>

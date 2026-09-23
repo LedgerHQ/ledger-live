@@ -1,4 +1,4 @@
-import { cardManagementApi } from "@domain/api-card-management";
+import { cardManagementApi, hasCardTransactions } from "@domain/api-card-management";
 import { toPayGlobalProperties, type PayGlobalProperties } from "@features/platform-pay-analytics";
 
 type PayCardAuthSlice = Readonly<{
@@ -35,9 +35,8 @@ export function getPayAttributes(
       state,
     )?.map(wallet => wallet.balance),
     cardStatus: queryData(cardManagementApi.endpoints.getCardStatus.select(), state),
-    cardTransactions: queryData(
-      cardManagementApi.endpoints.getCardTransactions.select(undefined),
-      state,
+    hasCardTransactions: hasCardTransactions(
+      queryData(cardManagementApi.endpoints.getCardTransactions.select(undefined), state)?.pages,
     ),
     cardWallets: queryData(cardManagementApi.endpoints.getCardLinkedWallets.select(), state),
     rewardWallet: queryData(cardManagementApi.endpoints.getRewardWallet.select(), state),

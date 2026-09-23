@@ -1,7 +1,7 @@
 import React from "react";
 import { BottomSheetView, Box, Button, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ShieldLock } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 
 type SheetIcon = typeof ShieldLock;
 
@@ -17,7 +17,6 @@ type VerifyAddressSheetProps = Readonly<{
   onCta: () => void;
   ctaTestId: string;
   children?: React.ReactNode;
-  bottomInset?: number;
 }>;
 
 export function VerifyAddressSheet({
@@ -32,7 +31,6 @@ export function VerifyAddressSheet({
   onCta,
   ctaTestId,
   children,
-  bottomInset = 0,
 }: VerifyAddressSheetProps) {
   return (
     <QueuedBottomSheet
@@ -42,7 +40,7 @@ export function VerifyAddressSheet({
       testID={sheetTestId}
     >
       {isOpen ? (
-        <BottomSheetView style={{ paddingHorizontal: 16, paddingBottom: bottomInset + 24 }}>
+        <VerifyAddressSheetContent>
           <Box lx={{ gap: "s24", paddingTop: "s24" }} testID={contentTestId}>
             <Box lx={{ alignItems: "center", gap: "s12" }}>
               <Spot appearance="icon" icon={icon} size={56} />
@@ -60,8 +58,18 @@ export function VerifyAddressSheet({
               {ctaLabel}
             </Button>
           </Box>
-        </BottomSheetView>
+        </VerifyAddressSheetContent>
       ) : null}
     </QueuedBottomSheet>
+  );
+}
+
+function VerifyAddressSheetContent({ children }: Readonly<{ children: React.ReactNode }>) {
+  const bottomInset = useBottomSheetBottomInset();
+
+  return (
+    <BottomSheetView style={{ paddingHorizontal: 16, paddingBottom: bottomInset + 24 }}>
+      {children}
+    </BottomSheetView>
   );
 }

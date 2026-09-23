@@ -1,5 +1,6 @@
 import React from "react";
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { act, fireEvent, render, screen, userEvent } from "@testing-library/react-native";
+import DraggableFlatList from "react-native-draggable-flatlist";
 import { CardAssetsManageDrawer } from "../CardAssetsManageDrawer.native";
 import { CardAssetsView } from "../CardAssetsView.native";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
@@ -41,8 +42,8 @@ const ready: CardAssetsViewModel = {
   onWithdrawContinue: jest.fn(),
   onManagePress: jest.fn(),
   onAddAssetPress: jest.fn(),
-  onReorderAssets: jest.fn(),
-  reorderingAssetId: null,
+  onMoveAsset: jest.fn(),
+  reorderingAssetIds: new Set(),
 };
 
 describe("CardAssetsView (native)", () => {
@@ -158,9 +159,15 @@ describe("CardAssetsView (native)", () => {
   it("should show managed assets and add another asset", async () => {
     const user = userEvent.setup();
     const onAddAsset = jest.fn();
-    render(<CardAssetsManageDrawer rows={ready.rows} onAddAsset={onAddAsset} />, {
-      wrapper: I18nWrapper,
-    });
+    render(
+      <CardAssetsManageDrawer
+        rows={ready.rows}
+        onAddAsset={onAddAsset}
+        onMoveAsset={jest.fn()}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
 
     expect(screen.getByText(CARD_ASSETS_COPY.manageDialogTitle)).toBeVisible();
     expect(screen.getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
@@ -170,5 +177,107 @@ describe("CardAssetsView (native)", () => {
     await user.press(screen.getByText(CARD_ASSETS_COPY.addAsset));
 
     expect(onAddAsset).toHaveBeenCalledTimes(1);
+  });
+
+  it("should hide the add asset action when the host does not provide it", () => {
+    render(
+      <CardAssetsManageDrawer
+        rows={ready.rows}
+        onMoveAsset={jest.fn()}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    expect(screen.queryByText(CARD_ASSETS_COPY.addAssetCaption)).not.toBeOnTheScreen();
+    expect(screen.queryByText(CARD_ASSETS_COPY.addAsset)).not.toBeOnTheScreen();
+  });
+
+  it("should move a wallet up in funding order via the handle's accessibility action", () => {
+    const onMoveAsset = jest.fn();
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(
+      <CardAssetsManageDrawer
+        rows={[usdc, bitcoin]}
+        onMoveAsset={onMoveAsset}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    fireEvent(screen.getByTestId("card-asset-reorder-handle-w-btc"), "accessibilityAction", {
+      nativeEvent: { actionName: "decrement" },
+    });
+
+    expect(onMoveAsset).toHaveBeenCalledWith("w-btc", 0);
+  });
+
+  it("should move a wallet to where a drag was dropped", () => {
+    const onMoveAsset = jest.fn().mockResolvedValue(undefined);
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(
+      <CardAssetsManageDrawer
+        rows={[usdc, bitcoin]}
+        onMoveAsset={onMoveAsset}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    const { onDragBegin, onPlaceholderIndexChange, onDragEnd } =
+      screen.UNSAFE_getByType(DraggableFlatList).props;
+
+    // The user picks up USDC (index 0), drags it past Bitcoin, and drops it at index 1.
+    act(() => {
+      onDragBegin(0);
+      onPlaceholderIndexChange(1);
+      onDragEnd({ data: [bitcoin, usdc], from: 0, to: 1 });
+    });
+
+    expect(onMoveAsset).toHaveBeenCalledWith("w-usdc", 1);
+  });
+
+  it("should not flash the spinner when a drag settles back where it started", () => {
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(
+      <CardAssetsManageDrawer
+        rows={[usdc, bitcoin]}
+        onMoveAsset={jest.fn()}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    const { onDragBegin, onRelease } = screen.UNSAFE_getByType(DraggableFlatList).props;
+
+    act(() => {
+      onDragBegin(0);
+      onRelease(0);
+    });
+
+    expect(screen.queryByTestId("card-asset-reorder-spinner-w-usdc")).not.toBeOnTheScreen();
+  });
+
+  it("should show the spinner as soon as a drag is released onto a different row", () => {
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(
+      <CardAssetsManageDrawer
+        rows={[usdc, bitcoin]}
+        onMoveAsset={() => new Promise(() => {})}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    const { onDragBegin, onPlaceholderIndexChange, onRelease } =
+      screen.UNSAFE_getByType(DraggableFlatList).props;
+
+    act(() => {
+      onDragBegin(0);
+      onPlaceholderIndexChange(1);
+      onRelease(0);
+    });
+
+    expect(screen.getByTestId("card-asset-reorder-spinner-w-usdc")).toBeVisible();
   });
 });

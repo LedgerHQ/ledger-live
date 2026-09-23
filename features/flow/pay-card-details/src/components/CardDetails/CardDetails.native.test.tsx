@@ -28,7 +28,7 @@ listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 const StoreWrapper = cardApiWrapper({ signedIn: true });
 const assets = {
   currencies: new Map(),
-  priceWallet: () => 125.4,
+  getCounterValue: () => 125.4,
   formatCountervalue: (value: number) => `$${value}`,
   onAddAsset: jest.fn(),
 };
@@ -99,8 +99,8 @@ describe("CardDetails (native)", () => {
       onWithdrawContinue: jest.fn(),
       onManagePress: jest.fn(),
       onAddAssetPress: jest.fn(),
-      onReorderAssets: jest.fn(),
-      reorderingAssetId: null,
+      onMoveAsset: jest.fn(),
+      reorderingAssetIds: new Set(),
     } satisfies CardAssetsViewModel;
     mockUseCardAssetsViewModel.mockReturnValue(viewModel);
   });

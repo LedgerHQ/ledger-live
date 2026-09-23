@@ -59,6 +59,8 @@ export function CardDetailsScene({
         <CardAssetsManageDrawer
           rows={assetsManage.viewModel.rows}
           onAddAsset={assetsManage.viewModel.onAddAssetPress}
+          onMoveAsset={assetsManage.viewModel.onMoveAsset}
+          reorderingAssetIds={assetsManage.viewModel.reorderingAssetIds}
         />
       ) : null;
     case "assetTransaction":

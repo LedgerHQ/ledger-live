@@ -11,6 +11,7 @@ import {
   useCardTransactionsViewModel,
 } from "@features/flow-pay-card-transactions";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
+import { reorderByIndex } from "@shared/ui-list-reorder";
 import type {
   CardAssetDialogState,
   CardAssetRow,
@@ -22,7 +23,7 @@ import type {
 const KEY_PREFIX = "payTab.card.assets";
 const RECENT_TRANSACTIONS_SHOWN = 3;
 const EMPTY_CURRENCIES = new Map();
-const NO_PRICE: CardAssetsProps["priceWallet"] = () => null;
+const NO_PRICE: CardAssetsProps["getCounterValue"] = () => null;
 const NO_COUNTERVALUE: CardAssetsProps["formatCountervalue"] = () => "";
 
 export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
@@ -33,7 +34,7 @@ export function formatCardAssetCryptoAmount(balance: string | null, currency: st
 export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewModel {
   const {
     currencies = EMPTY_CURRENCIES,
-    priceWallet = NO_PRICE,
+    getCounterValue = NO_PRICE,
     formatCountervalue = NO_COUNTERVALUE,
     formatBalance,
     formatters,
@@ -47,8 +48,13 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [assetOrder, setAssetOrder] = useState<readonly string[]>([]);
-  const [reorderingAssetId, setReorderingAssetId] = useState<string | null>(null);
   const manageInitialOrder = useRef<readonly string[] | null>(null);
+  const [reorderingAssetIds, setReorderingAssetIds] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
+  // Only the most recently issued move's failure gets to roll the order back: an older request
+  // resolving after a newer one has already applied would otherwise stomp that newer change.
+  const latestMoveRequestId = useRef(0);
   const isSignedIn = useIsCardSignedIn();
   const [updateCardWalletPriorities] = useUpdateCardWalletPrioritiesMutation();
   const { transactions } = useCardTransactionsViewModel();
@@ -61,7 +67,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     () =>
       wallets.map(({ id, addressId, balance, currency, network, ledgerId, ledgerCurrency }) => {
         const countervalue =
-          ledgerCurrency && balance !== null ? priceWallet(ledgerCurrency, balance) : null;
+          ledgerCurrency && balance !== null ? getCounterValue(ledgerCurrency, balance) : null;
 
         return {
           id,
@@ -76,7 +82,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
           countervalueAmount: countervalue,
         };
       }),
-    [wallets, priceWallet, formatCountervalue],
+    [wallets, getCounterValue, formatCountervalue],
   );
 
   const rows = useMemo<readonly CardAssetRow[]>(() => {
@@ -166,19 +172,16 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     onAddAsset?.();
   }, [onAddAsset]);
 
-  const onReorderAssets = useCallback(
-    async (draggedId: string, targetId: string) => {
-      if (draggedId === targetId || reorderingAssetId !== null) return;
-
-      const draggedIndex = rows.findIndex(row => row.id === draggedId);
-      const targetIndex = rows.findIndex(row => row.id === targetId);
-      if (draggedIndex < 0 || targetIndex < 0) return;
+  const onMoveAsset = useCallback(
+    async (id: string, toIndex: number) => {
+      const fromIndex = rows.findIndex(row => row.id === id);
+      if (fromIndex < 0 || toIndex < 0 || toIndex >= rows.length || fromIndex === toIndex) return;
 
       const previousOrder = rows.map(row => row.id);
-      const reorderedRows = [...rows];
-      const [draggedRow] = reorderedRows.splice(draggedIndex, 1);
-      reorderedRows.splice(targetIndex, 0, draggedRow);
-      setReorderingAssetId(draggedId);
+      const reorderedRows = reorderByIndex(rows, fromIndex, toIndex);
+      const requestId = ++latestMoveRequestId.current;
+
+      setReorderingAssetIds(current => new Set(current).add(id));
       setAssetOrder(reorderedRows.map(row => row.id));
 
       try {
@@ -195,14 +198,20 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
           }),
         }).unwrap();
 
-        if (!result.success) setAssetOrder(previousOrder);
+        if (!result.success && latestMoveRequestId.current === requestId) {
+          setAssetOrder(previousOrder);
+        }
       } catch {
-        setAssetOrder(previousOrder);
+        if (latestMoveRequestId.current === requestId) setAssetOrder(previousOrder);
       } finally {
-        setReorderingAssetId(null);
+        setReorderingAssetIds(current => {
+          const next = new Set(current);
+          next.delete(id);
+          return next;
+        });
       }
     },
-    [reorderingAssetId, rows, updateCardWalletPriorities],
+    [rows, updateCardWalletPriorities],
   );
 
   return useMemo(
@@ -231,9 +240,9 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
-      onAddAssetPress,
-      onReorderAssets,
-      reorderingAssetId,
+      onAddAssetPress: onAddAsset ? onAddAssetPress : undefined,
+      onMoveAsset,
+      reorderingAssetIds,
     }),
     [
       props,
@@ -254,9 +263,10 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
+      onAddAsset,
       onAddAssetPress,
-      onReorderAssets,
-      reorderingAssetId,
+      onMoveAsset,
+      reorderingAssetIds,
     ],
   );
 }

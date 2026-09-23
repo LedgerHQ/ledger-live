@@ -42,6 +42,8 @@ import { ScreenName } from "~/const";
 type SharedParams = {
   onSuccess: (signedOperation: SignedOperation) => void;
   onError: (err: Error) => void;
+  manifestId?: string;
+  manifestName?: string;
 };
 
 export type SignTransactionNavigatorParamList = {

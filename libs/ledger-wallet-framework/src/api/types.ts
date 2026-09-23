@@ -117,6 +117,19 @@ export type BridgeApi = {
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
   /**
+   * When true, `signOperation` forwards the last estimation's `FeeEstimation.parameters` (carried on
+   * `GenericTransaction.feeParameters`) into the `customFees.parameters` bag it hands
+   * `craftTransaction` — the way `getTransactionStatus` already does for `validateIntent`.
+   *
+   * Opt-in per family rather than always-on: that bag reaches `craftTransaction` on every send, so a
+   * family whose crafting reads a key its own estimation also emits would change behaviour with no
+   * type error. Needed where a chain field is a *ceiling* rather than a fee, which
+   * `FeeEstimation.value` cannot supply — `value` is the net fee, and pinning TRON's TRC-20
+   * `fee_limit` to it reverts OUT_OF_ENERGY once the sender's energy covers the transfer
+   * (LIVE-36865).
+   */
+  forwardsFeeParametersToCraft?: boolean;
+  /**
    * Whether the chain surfaces staking data through `getBalance`
    */
   stakingSupported?: boolean;

@@ -6,11 +6,13 @@ import {
   buildAccessBaanxPath,
   buildManagePinPath,
   buildAddAssetPath,
+  buildOrderCardPath,
   openHostedCardPathSafely,
   type CardAssetPathBuilder,
 } from "@features/flow-pay-card-auth";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import useEnv from "@features/platform-env";
+import { useFeature } from "@features/platform-feature-flags";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -123,25 +125,47 @@ export function useCardViewModel(): CardViewModel {
     }
   }, [callback, navigate, pathname]);
 
-  const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
+  const { openHostedLogin, openHostedPage, openLegacyCardApp } = useCardHostedPageOpeners();
+  const isLegacyTopUp = !!useFeature("lwdPayTab")?.params?.legacyTopUp;
 
-  const openHostedPath = useCallback(
-    (buildPath: CardAssetPathBuilder, onError: (error: unknown) => void, currency?: string) =>
-      openHostedCardPathSafely(openHostedPage, usAppId, buildPath, onError, currency),
+  const openHosted = useCallback(
+    (buildPath: CardAssetPathBuilder, failedToOpen: string, currency?: string) =>
+      openHostedCardPathSafely(
+        openHostedPage,
+        usAppId,
+        buildPath,
+        error => logger.warn(`[card] ${failedToOpen}`, error),
+        currency,
+      ),
     [openHostedPage, usAppId],
   );
 
   const openAssetPage = useCallback(
     (buildPath: CardAssetPathBuilder, currency?: string) =>
-      openHostedPath(
-        buildPath,
-        error => logger.warn("[card] the hosted asset page did not open", error),
-        currency,
-      ),
-    [openHostedPath],
+      openHosted(buildPath, "the hosted asset page did not open", currency),
+    [openHosted],
   );
 
-  const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
+  // The legacy live app has its own top-up flow and its own login. It takes no currency, so the
+  // fallback opens it at its root from every top-up entry point.
+  const openTopUp = useCallback(
+    async (currency?: string) => {
+      if (isLegacyTopUp) {
+        openLegacyCardApp();
+        return;
+      }
+
+      await openAssetPage(buildTopUpPath, currency);
+    },
+    [isLegacyTopUp, openLegacyCardApp, openAssetPage],
+  );
+
+  const onTopUp = useCallback(() => openTopUp(), [openTopUp]);
+
+  const onChooseCardType = useCallback(
+    () => openHosted(buildOrderCardPath, "order card page did not open"),
+    [openHosted],
+  );
 
   useWipeHostedSession();
 
@@ -173,27 +197,18 @@ export function useCardViewModel(): CardViewModel {
   );
 
   const onManagePin = useCallback(
-    () =>
-      openHostedPath(buildManagePinPath, error =>
-        logger.warn("[card] manage pin page did not open", error),
-      ),
-    [openHostedPath],
+    () => openHosted(buildManagePinPath, "manage pin page did not open"),
+    [openHosted],
   );
 
   const onAccessBaanx = useCallback(
-    () =>
-      openHostedPath(buildAccessBaanxPath, error =>
-        logger.warn("[card] baanx page did not open", error),
-      ),
-    [openHostedPath],
+    () => openHosted(buildAccessBaanxPath, "baanx page did not open"),
+    [openHosted],
   );
 
   const onAddAsset = useCallback(
-    () =>
-      openHostedPath(buildAddAssetPath, error =>
-        logger.warn("[card] add asset page did not open", error),
-      ),
-    [openHostedPath],
+    () => openHosted(buildAddAssetPath, "add asset page did not open"),
+    [openHosted],
   );
 
   const payCardAssets = usePayCardAssets();
@@ -201,11 +216,11 @@ export function useCardViewModel(): CardViewModel {
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
+      onTopUp: asset => void openTopUp(asset.currency),
       onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
       onAddAsset,
     }),
-    [onAddAsset, onShowAssetHistory, openAssetPage, payCardAssets],
+    [onAddAsset, onShowAssetHistory, openAssetPage, openTopUp, payCardAssets],
   );
 
   const cardSettingsActions: CardSettingsActions = useMemo(
@@ -218,6 +233,7 @@ export function useCardViewModel(): CardViewModel {
     login,
     onShowMore,
     onTopUp,
+    onChooseCardType,
     cardSettingsActions,
   };
 }

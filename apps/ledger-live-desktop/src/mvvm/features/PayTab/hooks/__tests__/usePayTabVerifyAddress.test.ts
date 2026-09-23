@@ -14,13 +14,11 @@ function renderVerifyAddress(ldmkEnabled = false) {
 }
 
 describe("usePayTabVerifyAddress", () => {
-  it("should start hidden with resolved copy", () => {
+  it("should start hidden", () => {
     const { result } = renderVerifyAddress();
 
     expect(result.current.phase).toBe("hidden");
     expect(result.current.verifyAddress.phase).toBe("hidden");
-    expect(result.current.verifyAddress.labels.introTitle).toBe("Verify your address");
-    expect(result.current.verifyAddress.labels.verifyCta).toBe("Verify address");
     expect(result.current.deviceIntent.active).toBe(false);
   });
 

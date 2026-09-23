@@ -13,9 +13,6 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "resolutions": {
-    "node-abi": "^4.9.0"
-  },
   "scripts": {
     "nx:write-cache-config": "node tools/nx/write-nx-cache-config.mjs",
     "postinstall": "pnpm run nx:write-cache-config",

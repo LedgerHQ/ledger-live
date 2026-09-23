@@ -1,7 +1,8 @@
 import { of, Observable } from "rxjs";
 import { scan, catchError, tap } from "rxjs/operators";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { log } from "@ledgerhq/logs";
+import { buildSignCommonEvent, TransactionPathway } from "@ledgerhq/transaction-observability";
 import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
@@ -9,6 +10,9 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import type { Action, Device } from "./types";
 import type { AppRequest, AppState } from "./app";
 import { createAction as createAppAction } from "./app";
+import { interruptionErrorOf } from "./interruptionError";
+import { useSignAttemptObservability } from "./signAttemptObservability";
+import { withLiveAppContext } from "../../wallet-api/blindSigningContext";
 import type {
   Account,
   AccountLike,
@@ -76,7 +80,7 @@ type Event =
       type: "error";
       error: Error;
     };
-const initialState = {
+const initialState: State = {
   signedOperation: null,
   deviceSignatureRequested: false,
   deviceStreamingProgress: null,
@@ -141,6 +145,12 @@ export const createAction = (
     }: RawTransactionRequest,
   ): RawTransactionState => {
     const mainAccount = getMainAccount(account, parentAccount);
+    const mainAccountRef = useRef(mainAccount);
+    useEffect(() => {
+      mainAccountRef.current = mainAccount;
+    }, [mainAccount]);
+    const mainAccountId = mainAccount.id;
+
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
       account: mainAccount,
       appName,
@@ -148,34 +158,122 @@ export const createAction = (
       requireLatestFirmware,
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
+    // Kept as primitives: a rerender that hands over an equivalent device object must not
+    // resubscribe and ask the user to sign again. Mock and Speculos devices carry an empty
+    // `deviceId`, so presence is `undefined` vs defined, never truthiness.
+    const deviceId = device?.deviceId;
+    const deviceModelId = device?.modelId;
     const [state, setState] = useState(initialState);
+
+    const {
+      abandonAttempt,
+      beginAttempt,
+      failInterruptedAttempt,
+      isSettled,
+      noteSettled,
+      notePromptShown,
+      resetAttempt,
+    } = useSignAttemptObservability(
+      useCallback(
+        () =>
+          buildSignCommonEvent({
+            account,
+            mainAccount: mainAccountRef.current,
+            pathway: manifestId
+              ? TransactionPathway.WalletApiSignAndBroadcast
+              : TransactionPathway.Send,
+            manifestId,
+          }),
+        [account, manifestId],
+      ),
+    );
+    // A raw sign has no structured transaction to key an attempt on, so the request itself is
+    // the identity: the same one resubscribing is the same attempt, a different one is a new.
+    const attemptRequestKeyRef = useRef<string | null>(null);
+
     useEffect(() => {
-      if (!device || !opened || inWrongDeviceForAccount || error) {
+      if (
+        deviceId === undefined ||
+        deviceModelId === undefined ||
+        !opened ||
+        inWrongDeviceForAccount ||
+        error
+      ) {
+        failInterruptedAttempt(interruptionErrorOf(inWrongDeviceForAccount, error));
         setState(initialState);
+        resetAttempt();
+        attemptRequestKeyRef.current = null;
         return;
       }
 
       let cancelled = false;
       let sub: { unsubscribe: () => void } | undefined;
+      const requestKey = [
+        mainAccountId,
+        transaction,
+        broadcast ? "1" : "0",
+        manifestId ?? "",
+        deviceId,
+        deviceModelId,
+      ].join("\0");
       (async () => {
-        const bridge = await getAccountBridge(mainAccount);
+        const signingAccount = mainAccountRef.current;
+        const bridge = await getAccountBridge(signingAccount);
         if (cancelled) return;
-        sub = bridge
-          .signRawOperation({
-            account: mainAccount,
+
+        const signRawOperation = () => {
+          if (cancelled) return undefined;
+
+          if (attemptRequestKeyRef.current === requestKey) {
+            if (isSettled()) return undefined;
+          } else {
+            abandonAttempt();
+            attemptRequestKeyRef.current = requestKey;
+            beginAttempt();
+          }
+          return bridge.signRawOperation({
+            account: signingAccount,
             transaction,
-            deviceId: device.deviceId,
-            deviceModelId: device.modelId,
+            deviceId,
+            deviceModelId,
             broadcast,
-          })
+          });
+        };
+
+        let signRawOperationObservable: Observable<SignOperationEvent> | undefined;
+        try {
+          signRawOperationObservable = manifestId
+            ? await withLiveAppContext({ id: manifestId }, async () => signRawOperation())
+            : signRawOperation();
+        } catch (signingError) {
+          noteSettled();
+          if (!cancelled) {
+            setState(
+              reducer(initialState, {
+                type: "error",
+                error:
+                  signingError instanceof Error ? signingError : new Error(String(signingError)),
+              }),
+            );
+          }
+          return;
+        }
+
+        if (cancelled) return;
+        if (!signRawOperationObservable) return;
+        sub = signRawOperationObservable
           .pipe(
-            catchError(error =>
+            catchError(signingError =>
               of<{ type: "error"; error: Error }>({
                 type: "error",
-                error,
+                error: signingError,
               }),
             ),
-            tap((e: Event) => log("actions-transaction-event", e.type, e)),
+            tap((e: Event) => {
+              if (e.type === "device-signature-requested") notePromptShown();
+              if (e.type === "signed" || e.type === "error") noteSettled();
+              log("actions-transaction-event", e.type, e);
+            }),
             scan(reducer, initialState),
           )
           .subscribe((x: any) => setState(x));
@@ -184,7 +282,24 @@ export const createAction = (
         cancelled = true;
         sub?.unsubscribe();
       };
-    }, [device, mainAccount, transaction, broadcast, opened, inWrongDeviceForAccount, error]);
+    }, [
+      deviceId,
+      deviceModelId,
+      abandonAttempt,
+      failInterruptedAttempt,
+      mainAccountId,
+      transaction,
+      broadcast,
+      opened,
+      inWrongDeviceForAccount,
+      error,
+      manifestId,
+      beginAttempt,
+      isSettled,
+      notePromptShown,
+      noteSettled,
+      resetAttempt,
+    ]);
     return {
       ...appState,
       ...state,

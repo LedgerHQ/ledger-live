@@ -30,7 +30,7 @@ export function ContactAddressPicker({
   return (
     <Dialog open onOpenChange={handleOpenChange}>
       <DialogContent>
-        <DialogHeader density="expanded" title={title} onClose={onClose} />
+        <DialogHeader density="expanded" title={title} onClose={onClose} className="break-all" />
         <DialogBody className="flex flex-col gap-24" data-testid="pay-contact-address-picker">
           {groups.map(group => (
             <ContactAddressPickerNetworkSection

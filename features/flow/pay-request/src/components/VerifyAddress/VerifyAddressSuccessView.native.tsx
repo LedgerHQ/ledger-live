@@ -12,7 +12,6 @@ export function VerifyAddressSuccessView({
   gotItCta,
   onGotIt,
   onClose,
-  bottomInset,
 }: VerifyAddressSuccessViewProps) {
   return (
     <VerifyAddressSheet
@@ -20,7 +19,6 @@ export function VerifyAddressSuccessView({
       onClose={onClose}
       sheetTestId="pay-card-verify-address-success-sheet"
       contentTestId="pay-card-verify-address-success"
-      bottomInset={bottomInset}
       icon={ShieldLock}
       title={title}
       ctaLabel={gotItCta}

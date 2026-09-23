@@ -3,13 +3,13 @@ import {
   IconButton,
   TableCell,
   TableCellContent,
-  TableCellContentTitle,
   TableCellItem,
   TableRow,
 } from "@ledgerhq/lumen-ui-react";
 import { Telegram } from "@ledgerhq/lumen-ui-react/symbols";
 import { ContactAvatar } from "@features/platform-contacts";
 import { ContactMoreMenu } from "../ContactMoreMenu/ContactMoreMenu.web";
+import { ContactName } from "./ContactName.web";
 import type { Contact } from "@domain/entity-contact";
 import type { ContactsTableLabels } from "../../types";
 
@@ -40,14 +40,20 @@ export function ContactTile({
     >
       <TableCell>
         <TableCellItem>
-          <ContactAvatar contactId={contact.id} name={contact.name} size="sm" ariaHidden />
+          <div className="shrink-0">
+            <ContactAvatar contactId={contact.id} name={contact.name} size="sm" ariaHidden />
+          </div>
           <TableCellContent>
-            <TableCellContentTitle>{contact.name}</TableCellContentTitle>
+            <ContactName name={contact.name} />
           </TableCellContent>
         </TableCellItem>
       </TableCell>
-      <TableCell align="end">{renderAddresses(contact.addresses)}</TableCell>
-      <TableCell align="end">{labels.formatTransactionCount(transactionCount)}</TableCell>
+      <TableCell align="end" hideBelow="xl">
+        {renderAddresses(contact.addresses)}
+      </TableCell>
+      <TableCell align="end" hideBelow="xl">
+        {labels.formatTransactionCount(transactionCount)}
+      </TableCell>
       <TableCell align="end">
         <div
           className="flex items-center justify-end gap-8"

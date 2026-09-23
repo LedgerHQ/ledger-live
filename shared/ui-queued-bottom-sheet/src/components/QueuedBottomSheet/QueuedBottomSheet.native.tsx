@@ -4,6 +4,7 @@ import { BottomSheetFooter, type BottomSheetFooterProps } from "@gorhom/bottom-s
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IsInBottomSheetProvider } from "../../contexts/IsInBottomSheetContext";
 import { BottomSheetBackgroundContext } from "../../contexts/BottomSheetBackgroundContext";
+import { BottomSheetBottomInsetContext } from "../../contexts/BottomSheetBottomInsetContext";
 import { BottomSheetFooterInsetContext } from "../../contexts/BottomSheetFooterInsetContext";
 import { useQueuedBottomSheet } from "../../internals/useQueuedBottomSheet";
 import { BottomSheetInstanceContext } from "../../internals/BottomSheetInstanceContext";
@@ -75,6 +76,7 @@ export function QueuedBottomSheet({
 
   const [footerHeight, setFooterHeight] = useState(0);
   const hasFooter = footer !== null && footer !== undefined;
+  const contentBottomInset = useContentBottomInset(hasFooter, enableDynamicSizing);
 
   const footerStoreRef = useRef<FooterContentStore | null>(null);
   if (footerStoreRef.current === null) {
@@ -123,7 +125,9 @@ export function QueuedBottomSheet({
       <BottomSheetInstanceContext.Provider value={sheetId}>
         <BottomSheetBackgroundContext.Provider value={backgroundContextValue}>
           <BottomSheetFooterInsetContext.Provider value={hasFooter ? footerHeight : 0}>
-            <IsInBottomSheetProvider>{children}</IsInBottomSheetProvider>
+            <BottomSheetBottomInsetContext.Provider value={contentBottomInset}>
+              <IsInBottomSheetProvider>{children}</IsInBottomSheetProvider>
+            </BottomSheetBottomInsetContext.Provider>
           </BottomSheetFooterInsetContext.Provider>
         </BottomSheetBackgroundContext.Provider>
       </BottomSheetInstanceContext.Provider>
@@ -156,4 +160,15 @@ function FooterSlot({
 function OnscreenNavigationSafeArea() {
   const insets = useSafeAreaInsets();
   return <View style={{ height: Platform.OS === "android" ? insets.bottom : 0 }} />;
+}
+
+/**
+ * A footer pads over the safe area itself, and `OnscreenNavigationSafeArea` covers it on Android —
+ * but only on a fixed-snap-point sheet, since dynamic sizing measures the content view alone and
+ * that spacer is its sibling. Whatever is left is the content's to reserve.
+ */
+function useContentBottomInset(hasFooter: boolean, enableDynamicSizing: boolean): number {
+  const insets = useSafeAreaInsets();
+  const spacerCoversInset = Platform.OS === "android" && !enableDynamicSizing;
+  return hasFooter || spacerCoversInset ? 0 : insets.bottom;
 }

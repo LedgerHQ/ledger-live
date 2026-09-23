@@ -60,7 +60,7 @@ const USDC = CryptoOrTokenCurrencySchema.parse({
   units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
 });
 const CURRENCIES = new Map([["ethereum/erc20/usd__coin", USDC]]);
-const priceWallet = jest.fn(() => 12540);
+const getCounterValue = jest.fn(() => 12540);
 const formatCountervalue = jest.fn((value: number) => `$${value}`);
 
 function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
@@ -68,7 +68,7 @@ function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
     () =>
       useCardAssetsViewModel({
         currencies: CURRENCIES,
-        priceWallet,
+        getCounterValue,
         formatCountervalue,
         onAddAsset: jest.fn(),
         ...overrides,
@@ -187,8 +187,8 @@ describe("useCardAssetsViewModel", () => {
         countervalueAmount: null,
       },
     ]);
-    expect(priceWallet).toHaveBeenCalledWith(USDC, "125.40");
-    expect(priceWallet).toHaveBeenCalledTimes(1);
+    expect(getCounterValue).toHaveBeenCalledWith(USDC, "125.40");
+    expect(getCounterValue).toHaveBeenCalledTimes(1);
   });
 
   it("should refresh the selected asset when its wallet balance changes", () => {
@@ -263,7 +263,7 @@ describe("useCardAssetsViewModel", () => {
     });
     const { result } = renderViewModel();
 
-    await act(() => result.current.onReorderAssets("w-btc", "w-usdc"));
+    await act(() => result.current.onMoveAsset("w-btc", 0));
 
     expect(result.current.rows.map(row => row.id)).toEqual(["w-btc", "w-usdc", "w-usdt"]);
     expect(mockUpdateCardWalletPriorities).toHaveBeenCalledWith({
@@ -281,14 +281,14 @@ describe("useCardAssetsViewModel", () => {
       () =>
         useCardAssetsViewModel({
           currencies: CURRENCIES,
-          priceWallet,
+          getCounterValue,
           formatCountervalue,
           onAddAsset,
         }),
       { wrapper: I18nWrapper },
     );
 
-    act(() => result.current.onAddAssetPress());
+    act(() => result.current.onAddAssetPress?.());
 
     expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
@@ -319,9 +319,9 @@ describe("useCardAssetsViewModel", () => {
     expect(result.current.dialogState).toBe("closed");
   });
 
-  it("should ignore the unreachable add asset action without assets props", () => {
+  it("should omit the add asset action without assets props", () => {
     const { result } = renderHook(() => useCardAssetsViewModel(), { wrapper: I18nWrapper });
 
-    expect(() => result.current.onAddAssetPress()).not.toThrow();
+    expect(result.current.onAddAssetPress).toBeUndefined();
   });
 });

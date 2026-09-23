@@ -1,6 +1,7 @@
 export * from "./buySellLoader";
 export * from "./buySellShortcut";
 export * from "./buySellUi";
+export * from "./earnTxLifecycleMonitoring";
 export * from "./ethStakingModalWithFilters";
 export * from "./ethStakingProviders";
 export * from "./lifiSolana";

@@ -18,4 +18,7 @@ export type CardTransactionHistoryViewProps = Readonly<{
   onRowClick: (item: CardTransactionItem) => void;
   onGoToPay?: () => void;
   cardVisual?: ReactNode;
+  /** Absent once the provider has no page left to read, and once a read has failed. */
+  onLoadMore?: () => void;
+  isLoadingMore: boolean;
 }>;

@@ -13,7 +13,7 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { PayTrackPage } from "@features/platform-pay-analytics";
 import heroImage from "./payTabTour.webp";
 import { FEATURE_TOUR_PAGE, type FeatureTourViewModel } from "./useFeatureTourViewModel";
@@ -55,10 +55,10 @@ export function FeatureTourView({
       testID="pay-feature-tour-sheet"
     >
       {isOpen ? (
-        <BottomSheetView>
+        <FeatureTourContent>
           <PayTrackPage page={FEATURE_TOUR_PAGE} />
           <BottomSheetHeader density="compact" />
-          <Box lx={{ paddingBottom: "s24", gap: "s16" }}>
+          <Box lx={{ gap: "s16" }}>
             <Image
               source={heroImage as unknown as ImageSourcePropType}
               resizeMode="cover"
@@ -103,8 +103,14 @@ export function FeatureTourView({
               {ctaLabel}
             </Button>
           </Box>
-        </BottomSheetView>
+        </FeatureTourContent>
       ) : null}
     </QueuedBottomSheet>
   );
+}
+
+function FeatureTourContent({ children }: Readonly<{ children: React.ReactNode }>) {
+  const bottomInset = useBottomSheetBottomInset();
+
+  return <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>{children}</BottomSheetView>;
 }

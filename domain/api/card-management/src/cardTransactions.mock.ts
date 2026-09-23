@@ -231,3 +231,24 @@ export function receivePayCardTransactionMock(asset: PayCardMockTransactionAsset
 export function clearPayCardTransactionsMock(): void {
   transactionOverride = undefined;
 }
+
+/**
+ * The page the mocked provider serves.
+ *
+ * Six rather than the ten #22236 sliced at, because ten exceeds the eight-charge fixture: the mock
+ * answered one page and never paged at all.
+ */
+export const MOCK_CARD_TRANSACTIONS_PAGE_SIZE = 6;
+
+/**
+ * One page of the mocked history, answering as the provider does: a numeric page past the end
+ * gives an empty array, while a missing or non-numeric one falls back to page 0.
+ */
+export function mockPayCardTransactionsPage(request: Request) {
+  const all = readPayCardTransactionsMock() ?? mockPayCardTransactions();
+  const requested = Number(new URL(request.url).searchParams.get("page"));
+  const page = Number.isInteger(requested) && requested >= 0 ? requested : 0;
+  const start = page * MOCK_CARD_TRANSACTIONS_PAGE_SIZE;
+
+  return all.slice(start, start + MOCK_CARD_TRANSACTIONS_PAGE_SIZE);
+}

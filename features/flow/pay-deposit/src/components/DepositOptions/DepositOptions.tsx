@@ -11,7 +11,6 @@ export function DepositOptions(props: DepositOptionsProps) {
       isOpen={props.isOpen}
       title={title}
       options={options}
-      bottomInset={props.bottomInset}
       onClose={props.onClose}
       onSelectOption={onSelectOption}
     />

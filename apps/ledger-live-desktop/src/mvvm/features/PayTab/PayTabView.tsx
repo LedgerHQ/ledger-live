@@ -27,7 +27,7 @@ export function PayTabView({
   trackRecipientAddressSelection,
 }: Readonly<PayTabViewModel>) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-32">
       <TrackPage category="Pay" balance_filter={balance.filter} />
       {requestReceive.isOpen && requestReceive.address ? (
         <TrackPage

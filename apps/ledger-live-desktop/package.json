@@ -61,6 +61,10 @@
   },
   "dependencies": {
     "@braze/web-sdk": "6.4.0",
+    "@dnd-kit/core": "catalog:",
+    "@dnd-kit/modifiers": "catalog:",
+    "@dnd-kit/sortable": "catalog:",
+    "@dnd-kit/utilities": "catalog:",
     "@datadog/browser-logs": "6.30.1",
     "@datadog/browser-rum": "6.30.1",
     "@devtools/bindings": "workspace:*",

@@ -103,6 +103,8 @@ type FailureLogEvent = {
   stage: TransactionStage;
   error: Error;
   errorCategory: ErrorCategory;
+  abandoned?: boolean;
+  operationalOnly?: boolean;
   /** Present only when signing succeeded (i.e. broadcast-stage failures). */
   txPayload?: {
     signature: string;
@@ -110,14 +112,19 @@ type FailureLogEvent = {
   };
 } & CommonLogEvent;
 
+type IntentLogEvent = {
+  status: "intent";
+  stage: TransactionStage.Sign;
+} & CommonLogEvent;
+
 type SuccessLogEvent = {
   status: "success";
   stage: TransactionStage.Broadcast;
 } & CommonLogEvent;
 
-export type LogEvent = SuccessLogEvent | FailureLogEvent;
+export type LogEvent = IntentLogEvent | SuccessLogEvent | FailureLogEvent;
 
-/** Injected by each host app to forward events to its analytics sink. */
+/** Injected by each host app to forward events to an observability sink. */
 export type TransactionLogger = (event: LogEvent) => void;
 
-export type { CommonLogEvent, FailureLogEvent, SuccessLogEvent };
+export type { CommonLogEvent, FailureLogEvent, IntentLogEvent, SuccessLogEvent };

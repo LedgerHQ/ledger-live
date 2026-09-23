@@ -70,9 +70,7 @@ function readPackage(pkg, context) {
         react: "*",
       }),
 
-      // node-abi is pinned to match the root "resolutions" entry
       addPeerDependencies("app-builder-lib", {
-        "node-abi": "4.9.0",
         lodash: "*",
       }),
 

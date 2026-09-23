@@ -118,11 +118,15 @@ const makeStore = (sessionToken: string | null = null, overrides: Partial<CardAp
       }).concat(cardApi.middleware),
   });
 
-function expectSessionRequest(method: "GET" | "POST" | "PUT" | "DELETE", path: string) {
+function expectSessionRequest(
+  method: "GET" | "POST" | "PUT" | "DELETE",
+  path: string,
+  search = "",
+) {
   const sent = provider.sent();
 
   expect(sent.method).toBe(method);
-  expect(sent.url).toBe(`${CARD_API_BASE_URL}${path}`);
+  expect(sent.url).toBe(`${CARD_API_BASE_URL}${path}${search}`);
   expect(sent.headers.get("authorization")).toBe("Bearer session-token");
   expect(sent.headers.get("x-client-key")).toBe("client-key");
 }
@@ -480,7 +484,11 @@ describe("cardManagementApi requests", () => {
     const TRANSACTIONS_PATH = "/v1/card/transactions";
     const transaction = PayCardTransactionSchema.parse(documentedPayCardTransaction);
 
-    it("reads the transactions with the bearer token and the client key", async () => {
+    function transactionsPage(ids: readonly string[]) {
+      return ids.map(id => ({ ...documentedPayCardTransaction, id }));
+    }
+
+    it("reads the first page with the bearer token and the client key", async () => {
       provider.get(TRANSACTIONS_PATH, () => jsonResponse([documentedPayCardTransaction]));
 
       const store = makeStore("session-token");
@@ -488,17 +496,25 @@ describe("cardManagementApi requests", () => {
         cardManagementApi.endpoints.getCardTransactions.initiate(undefined),
       );
 
-      expectSessionRequest("GET", TRANSACTIONS_PATH);
-      expect(result.data).toEqual([transaction]);
+      expectSessionRequest("GET", TRANSACTIONS_PATH, "?page=0");
+      expect(result.data?.pages).toEqual([[transaction]]);
     });
 
-    it("sends the filters as query parameters", async () => {
+    it("names the first page rather than letting the provider default it", async () => {
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardTransactions.initiate(undefined));
+
+      expect(new URL(provider.sent().url).searchParams.get("page")).toBe("0");
+    });
+
+    it("sends the filters alongside the page", async () => {
       provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
 
       const store = makeStore("session-token");
       await store.dispatch(
         cardManagementApi.endpoints.getCardTransactions.initiate({
-          page: 2,
           dateFrom: "2026-01-01",
           dateTo: "2026-01-31",
           mccCategories: "FOOD,TRAVEL",
@@ -506,10 +522,45 @@ describe("cardManagementApi requests", () => {
       );
 
       const { searchParams } = new URL(provider.sent().url);
-      expect(searchParams.get("page")).toBe("2");
+      expect(searchParams.get("page")).toBe("0");
       expect(searchParams.get("dateFrom")).toBe("2026-01-01");
       expect(searchParams.get("dateTo")).toBe("2026-01-31");
       expect(searchParams.get("mccCategories")).toBe("FOOD,TRAVEL");
+    });
+
+    it("reads on page by page until an empty one answers", async () => {
+      const pages = [transactionsPage(["a", "b"]), transactionsPage(["c"])];
+      provider.get(TRANSACTIONS_PATH, request =>
+        jsonResponse(pages[Number(new URL(request.url).searchParams.get("page"))] ?? []),
+      );
+
+      const readForward = () =>
+        store.dispatch(
+          cardManagementApi.endpoints.getCardTransactions.initiate(undefined, {
+            direction: "forward",
+          }),
+        );
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardTransactions.initiate(undefined));
+
+      // The short page is read past: no page size is documented, so a short page could still be a
+      // full one and only an empty answer ends the list.
+      await readForward();
+      const result = await readForward();
+
+      expect(result.data?.pages.map(page => page.map(({ id }) => id))).toEqual([
+        ["a", "b"],
+        ["c"],
+        [],
+      ]);
+      expect(result.data?.pageParams).toEqual([0, 1, 2]);
+
+      // The empty page ended the list, so asking forward again reads nothing further.
+      const afterTheEnd = await readForward();
+
+      expect(afterTheEnd.data?.pageParams).toEqual([0, 1, 2]);
+      expect(provider.sentTo(TRANSACTIONS_PATH)).toHaveLength(3);
     });
 
     it("rejects one date without the other before the request goes out", async () => {
@@ -527,7 +578,7 @@ describe("cardManagementApi requests", () => {
       expect(provider.requests()).toEqual([]);
     });
 
-    it("reads an empty history as an empty list, not as a failure", async () => {
+    it("reads an empty history as an empty first page, not as a failure", async () => {
       provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
 
       const store = makeStore("session-token");
@@ -535,7 +586,7 @@ describe("cardManagementApi requests", () => {
         cardManagementApi.endpoints.getCardTransactions.initiate(undefined),
       );
 
-      expect(result.data).toEqual([]);
+      expect(result.data?.pages).toEqual([[]]);
       expect(result.error).toBeUndefined();
     });
   });
@@ -894,7 +945,28 @@ describe("cardManagementApi requests", () => {
       const result = await readRewardWallet();
 
       expectSessionRequest("GET", REWARD_WALLET_PATH);
-      expect(result.data).toEqual(rewardWallet);
+      // The wire fields, plus the Ledger currency the reward's asset resolves to.
+      expect(result.data).toEqual({ ...rewardWallet, ledgerId: expect.any(String) });
+    });
+
+    it("resolves the reward to its Ledger currency, so no consumer has to map it again", async () => {
+      provider.get(REWARD_WALLET_PATH, () => jsonResponse(rewardWalletOnTheWire));
+
+      const result = await readRewardWallet();
+
+      // The reward names no network, so the catalog pair is completed by repeating the currency.
+      expect(result.data?.ledgerId).toBe("ethereum/erc20/usd__coin");
+    });
+
+    it("leaves the currency unresolved for an asset the catalog does not cover", async () => {
+      provider.get(REWARD_WALLET_PATH, () =>
+        jsonResponse({ ...rewardWalletOnTheWire, currency: "doge" }),
+      );
+
+      const result = await readRewardWallet();
+
+      expect(result.data?.ledgerId).toBeUndefined();
+      expect(result.data?.balance).toBe(rewardWallet.balance);
     });
 
     it("keeps the balance a string, so its precision survives", async () => {

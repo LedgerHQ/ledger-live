@@ -4,10 +4,6 @@ import { BankTransferIntro } from "../BankTransferIntro";
 import type { BankTransferIntroProps } from "../../../types";
 import { I18nWrapper } from "./i18nWrapper";
 
-jest.mock("@shared/ui-queued-bottom-sheet", () => ({
-  QueuedBottomSheet: ({ children }: { children: React.ReactNode }) => children,
-}));
-
 function renderIntro(overrides: Partial<BankTransferIntroProps> = {}) {
   const props: BankTransferIntroProps = {
     isOpen: true,

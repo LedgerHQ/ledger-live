@@ -29,8 +29,11 @@ export type CardAssetsStatus = "loading" | "error" | "empty" | "ready";
 
 export type CardAssetsProps = Readonly<{
   currencies: ReadonlyMap<string, CryptoOrTokenCurrency>;
-  /** Prices one wallet. The rates are the app's, so the host owns this. */
-  priceWallet: (currency: CryptoOrTokenCurrency, balance: string) => number | null;
+  /**
+   * An amount of the given currency, in the counter-value currency's smallest unit, or `null`
+   * when no rate covers it. The rates are the app's, so the host owns this.
+   */
+  getCounterValue: (currency: CryptoOrTokenCurrency, balance: string) => number | null;
   formatCountervalue: (value: number) => string;
   /**
    * Same formatter the card face AmountDisplay uses (`formatCurrencyUnitFragment`).
@@ -75,7 +78,9 @@ export type CardAssetsViewModel = Readonly<{
   onShowHistoryPress: () => void;
   onWithdrawContinue: () => void;
   onManagePress: () => void;
-  onAddAssetPress: () => void;
-  onReorderAssets: (draggedId: string, targetId: string) => Promise<void>;
-  reorderingAssetId: string | null;
+  onAddAssetPress?: () => void;
+  onMoveAsset: (id: string, toIndex: number) => Promise<void>;
+  /** Wallets with an in-flight priority update. Multiple moves can be in flight at once — each
+   * drop is issued independently rather than waiting for the previous one to settle. */
+  reorderingAssetIds: ReadonlySet<string>;
 }>;

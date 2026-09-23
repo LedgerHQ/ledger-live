@@ -10,6 +10,7 @@ import { UserIdPlugin } from "../UserIdPlugin";
 import { shouldIncludeSegmentIdentity } from "../segmentIdentity";
 
 jest.unmock("../segment");
+jest.unmock("@shared/analytics");
 
 const { _identifyMock: mockIdentify, _trackMock: mockTrack } =
   require("@segment/analytics-react-native") as {

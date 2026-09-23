@@ -9,7 +9,6 @@ import { useBankTransferIntroViewModel } from "./useBankTransferIntroViewModel";
 
 export type UseBankTransferIntroAdapterParams = Readonly<{
   heroImage?: BankTransferIntroProps["heroImage"];
-  bottomInset?: number;
   onBankTransfer: (handoff: BankTransferHandoff) => void;
   onTrackEvent?: PayCardTrackEvent;
 }>;
@@ -22,7 +21,6 @@ export type UseBankTransferIntroAdapter = Readonly<{
 
 export function useBankTransferIntroAdapter({
   heroImage,
-  bottomInset,
   onBankTransfer,
   onTrackEvent,
 }: UseBankTransferIntroAdapterParams): UseBankTransferIntroAdapter {
@@ -34,7 +32,6 @@ export function useBankTransferIntroAdapter({
   const bankTransferIntro: BankTransferIntroProps = {
     isOpen,
     heroImage,
-    bottomInset,
     onBankTransfer,
     onClose,
     onTrackEvent,

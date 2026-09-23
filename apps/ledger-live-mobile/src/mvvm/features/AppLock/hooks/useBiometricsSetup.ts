@@ -1,12 +1,12 @@
 import {
   clearBiometricsMarker,
-  promptBiometrics,
   setBiometricsEnabled,
   storeBiometricsMarker,
   type BiometricsPromptLabels,
 } from "@features/platform-app-lock";
 import { useCallback } from "react";
 import { useDispatch } from "~/context/hooks";
+import { promptBiometrics } from "../adapters/promptBiometrics";
 
 export type BiometricsSetup = Readonly<{
   enable: (labels: BiometricsPromptLabels) => Promise<boolean>;

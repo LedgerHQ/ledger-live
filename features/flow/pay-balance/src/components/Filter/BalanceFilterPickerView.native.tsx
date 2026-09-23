@@ -7,7 +7,7 @@ import {
   Box,
   Button,
 } from "@ledgerhq/lumen-ui-rnative";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import type { BalanceFilterPickerViewProps } from "../../types";
 import { BalanceFilterOptionRow } from "./BalanceFilterOptionRow";
 
@@ -26,6 +26,7 @@ export function BalanceFilterPickerView({
       onClose={onClose}
       snapPoints="fullWithOffset"
       testID="pay-card-balance-filter-sheet"
+      enableDynamicSizing
     >
       {isOpen ? (
         <>
@@ -52,7 +53,7 @@ export function BalanceFilterPickerView({
               <Banner appearance="info" title={labels.filterDialogBanner} />
             </Box>
           </BottomSheetScrollView>
-          <BottomSheetFooter lx={{ gap: "s16" }}>
+          <BalanceFilterPickerFooter>
             <Button
               appearance="base"
               size="lg"
@@ -63,9 +64,19 @@ export function BalanceFilterPickerView({
             >
               {labels.confirm}
             </Button>
-          </BottomSheetFooter>
+          </BalanceFilterPickerFooter>
         </>
       ) : null}
     </QueuedBottomSheet>
+  );
+}
+
+function BalanceFilterPickerFooter({ children }: Readonly<{ children: React.ReactNode }>) {
+  const bottomInset = useBottomSheetBottomInset();
+
+  return (
+    <BottomSheetFooter lx={{ gap: "s16" }} style={{ paddingBottom: bottomInset + 16 }}>
+      {children}
+    </BottomSheetFooter>
   );
 }

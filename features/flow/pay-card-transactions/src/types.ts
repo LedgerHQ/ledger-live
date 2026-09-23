@@ -23,7 +23,12 @@ export type CardTransactionItem = Readonly<{
 export type CardTransactionsViewModel = Readonly<{
   transactions: readonly CardTransactionItem[];
   isLoading: boolean;
+  /** True for any read in flight, a further page included. */
   isFetching: boolean;
   isError: boolean;
+  /** A further page is on its way; the first page has its own `isLoading`. */
+  isLoadingMore: boolean;
   refetch: () => void;
+  /** Absent once the provider has no page left to read, and once a read has failed. */
+  loadMore?: () => void;
 }>;

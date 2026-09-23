@@ -7,7 +7,7 @@ import { AssetCategory } from "@domain/api-aggregated-assets";
 import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
-import { screen as trackScreen } from "~/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import {
   mockContact,
   mockContactWithAddress,
@@ -125,7 +125,7 @@ describe("PayTab integration", () => {
       renderPayTab();
 
       expect(screen.getByTestId("pay-disclaimer")).toBeVisible();
-      expect(screen.getByText("Disclaimer placeholder")).toBeVisible();
+      expect(screen.getByText("Provided by Monavate Onchain")).toBeVisible();
     });
   });
 
@@ -264,9 +264,10 @@ describe("PayTab integration", () => {
       renderPayTab();
 
       await waitFor(() => {
-        const [category, , properties] = jest.mocked(trackScreen).mock.calls[0] ?? [];
-        expect(category).toBe("Pay");
-        expect(properties).toEqual(expect.objectContaining({ balanceFilter: "all" }));
+        expect(jest.mocked(trackPage)).toHaveBeenCalledWith(
+          { category: "Pay", name: undefined, props: { balanceFilter: "all" } },
+          { updateRoutes: true, refreshSource: true, avoidDuplicates: false, mandatory: false },
+        );
       });
     });
 

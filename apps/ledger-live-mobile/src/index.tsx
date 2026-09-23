@@ -66,7 +66,10 @@ import { useTrackFundsReceived } from "LLM/features/Analytics/hooks/useTrackFund
 import { updateIdentify } from "./analytics";
 import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
+import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -125,6 +128,17 @@ setAnalyticsFeatureFlagMethod(
   ((key: FeatureId) => selectFeature(store.getState(), key) ?? null) as Parameters<
     typeof setAnalyticsFeatureFlagMethod
   >[0],
+);
+store.subscribe(
+  installEarnLifecycleHost({
+    platform: "mobile",
+    readEnabled: () =>
+      selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false,
+    readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
+    resolveVersionedRedirects: getVersionedRedirects,
+    readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+    apiBaseUrl: Config.EARN_API_BASE_URL,
+  }),
 );
 
 const styles = StyleSheet.create({

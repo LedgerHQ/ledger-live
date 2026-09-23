@@ -12,7 +12,7 @@ export function CardTopUpButton({ onTopUp }: CardTopUpButtonProps) {
   }
 
   return (
-    <Button appearance="base" size="lg" isFull onPress={onTopUp} accessibilityLabel={label}>
+    <Button appearance="base" size="md" isFull onPress={onTopUp} accessibilityLabel={label}>
       {label}
     </Button>
   );

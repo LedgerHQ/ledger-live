@@ -4,8 +4,8 @@
 > **Status: UNSTABLE** — Under active development.
 
 Domain API client for **altcoins sentiment**, backed by the CoinMarketCap Altcoin Season Index
-endpoint. RTK Query endpoint typed on the canonical `@domain/entity-altcoins-sentiment` entity. Owns
-no env/config/logging dependency.
+endpoint. RTK Query endpoint typed on the canonical `@domain/entity-market-index-altcoin-season`
+entity. Owns no env/config/logging dependency.
 
 - `schema.ts` — Zod schema for the raw CMC `/altcoin-season-index/latest` response
   (`AltcoinSeasonIndexResponseSchema`) and the `extraArgument` contract

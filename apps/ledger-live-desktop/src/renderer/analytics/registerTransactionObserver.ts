@@ -1,4 +1,8 @@
-import { setTransactionObserver, toSegmentTrackEvent } from "@ledgerhq/transaction-observability";
+import {
+  registerTxLifecycleObserver,
+  setTransactionObserver,
+  toSegmentTrackEvent,
+} from "@ledgerhq/transaction-observability";
 import { track } from "./segment";
 
 /**
@@ -13,6 +17,8 @@ setTransactionObserver(event => {
   const mapped = toSegmentTrackEvent(event);
   if (mapped) track(mapped.event, mapped.properties);
 });
+
+registerTxLifecycleObserver("desktop");
 
 // Dev-only: makes the whole seam visible locally, across every staking route and coin.
 if (process.env.NODE_ENV !== "production") {

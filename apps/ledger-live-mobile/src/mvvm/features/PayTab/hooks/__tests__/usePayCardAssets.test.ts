@@ -87,29 +87,29 @@ describe("usePayCardAssets", () => {
     const { result } = renderAssets();
 
     // 12.5 USDC at 1:1 is 1250 cents, which is what `formatCurrencyUnit` takes.
-    expect(result.current.assets.priceWallet(usdc, "12.5")).toBe(1250);
-    expect(result.current.assets.priceWallet(BITCOIN, "1")).toBe(10_000_000);
+    expect(result.current.assets.getCounterValue(usdc, "12.5")).toBe(1250);
+    expect(result.current.assets.getCounterValue(BITCOIN, "1")).toBe(10_000_000);
   });
 
   it("leaves a balance nobody can read unpriced, rather than calling it zero", () => {
     const { result } = renderAssets();
 
     for (const balance of ["", "not a number", "Infinity"]) {
-      expect(result.current.assets.priceWallet(usdc, balance)).toBeNull();
+      expect(result.current.assets.getCounterValue(usdc, balance)).toBeNull();
     }
   });
 
   it("reads a comma as the decimal separator, as the parser does", () => {
     const { result } = renderAssets();
 
-    expect(result.current.assets.priceWallet(usdc, "12,5")).toBe(1250);
+    expect(result.current.assets.getCounterValue(usdc, "12,5")).toBe(1250);
   });
 
   it("reports no price when the rates have none for the currency", () => {
     const { result } = renderAssets();
     const litecoin = getCryptoCurrencyById("litecoin");
 
-    expect(result.current.assets.priceWallet(litecoin, "1")).toBeNull();
+    expect(result.current.assets.getCounterValue(litecoin, "1")).toBeNull();
   });
 
   it("registers every card currency against the counter value, so their rates are polled", () => {

@@ -10,7 +10,7 @@ describe("toPayGlobalProperties", () => {
         accountTickers: ["BTC", "USDC"],
         internalWalletBalances: ["1500"],
         cardStatus: { cardAddedToDigitalWallet: true },
-        cardTransactions: [{}],
+        hasCardTransactions: true,
         cardWallets: [
           { priority: 2, currency: "usdt" },
           { priority: 1, currency: "usdc" },
