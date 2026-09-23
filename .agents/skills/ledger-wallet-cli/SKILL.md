@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/complete/list/show — enroll a remote agent's software identity, no device required, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/complete/list/show/send — enroll a remote agent's software identity and propose EVM payments for human review, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead. `ring keys` needs neither, and neither does `agent-intent complete`/`list`/`show`: they only read/write the local session file, so they run without the bypass.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent send` (without `--dry-run`) never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead. `ring keys` needs neither, and neither does `agent-intent complete`/`list`/`show`: they only read/write the local session file, so they run without the bypass.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -48,6 +48,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "approve the agent's enrollment", "finish enrolling the agent"                       | `agent-intent complete --profile <id> --payload '<json>'`     |
 | "what agents are enrolled", "list agent profiles"                                    | `agent-intent list`                                            |
 | "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
+| "have the agent request a payment", "propose sending X to Y for approval"            | `agent-intent send --profile <id> --account <label> --to <address> --amount '<amount> <ticker>'` (no device, never broadcasts) |
 | "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
 
 ---
@@ -347,6 +348,42 @@ Trustchain ID.
 link is surfaced as `expired` rather than staying `pending` forever. `complete` still accepts a
 matching completion after that time: the frontend refuses expired links, so a valid completion means
 the human approved on the device before expiry, and rejecting it would orphan an authorized agent.
+
+### Proposing a payment (`agent-intent send`)
+
+`agent-intent send` **proposes** an Ethereum send for a human to review — it never signs or
+broadcasts anything and needs no device. It signs the proposal with the profile's key, submits it
+to the Agent Intent service, and prints a review link; the payment only happens if a human opens
+that link and approves it on their Ledger device.
+
+```bash
+# Native ETH, sender from a session label:
+pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethereum-1 \
+  --to 0xRecipient --amount '0.01 ETH' --description "Invoice #42"
+
+# ERC-20: pass the token contract; the ticker in --amount must match it:
+pnpm --silent wallet-cli start agent-intent send --profile my-bot --from 0xSender \
+  --to 0xRecipient --amount '25 USDC' --token 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+
+# Validate everything and print the proposal without submitting (no keychain, no sign-in):
+pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethereum-1 \
+  --to 0xRecipient --amount '0.01 ETH' --dry-run
+```
+
+- **Enrolled profile only** (`agent-intent complete` done). It uses the profile's environment,
+  and its key in the OS keychain.
+- **Ethereum mainnet only**, for both a `--account` label and a `--from` address. The Agent Intent
+  SDK has no testnet, so a staging profile also proposes an Ethereum mainnet transfer.
+- **Addresses:** `--from`, `--to` and `--token` must be `0x` + 40 hex characters. Mixed-case input
+  must pass its EIP-55 checksum, which catches a typo in a copied address.
+- **Amounts are exact and never rounded.** More decimals than the asset has, zero, or an amount
+  above uint256 is an error. JSON output gives `amount` in base units as a string.
+- **`--fee-strategy slow|medium|fast`** (default `medium`) is the fee level the human is asked to
+  approve. wallet-cli doesn't check the sender's balance; the human reviewing the intent is
+  responsible for that.
+- **Don't retry blindly.** If the service accepted the request (a timeout, or an unreadable link),
+  the intent may already exist. Check the frontend before re-running, or you'll propose a duplicate.
+  A service rejection is explained with a next step (for example, re-enroll after an issuer mismatch).
 
 ---
 

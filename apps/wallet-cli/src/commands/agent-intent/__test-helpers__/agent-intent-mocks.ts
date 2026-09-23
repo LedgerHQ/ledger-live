@@ -21,6 +21,7 @@ export type AgentIntentMockOverrides = {
   noopSessionLock?: boolean;
   sdk?: Partial<Record<(typeof SDK_KEYS)[number], AnyFn>>;
   keychain?: Partial<Record<(typeof KEYCHAIN_KEYS)[number], AnyFn>>;
+  tokenLookup?: Partial<Record<(typeof TOKEN_LOOKUP_KEYS)[number], AnyFn>>;
 };
 
 const SDK_KEYS = [
@@ -28,19 +29,29 @@ const SDK_KEYS = [
   "createAgentEnrollmentRequest",
   "createAgentEnrollmentUrl",
   "parseAgentEnrollmentCompletion",
+  "createAgentIntentClient",
 ] as const;
 
 const KEYCHAIN_KEYS = [
   "hasAgentIntentSecretKey",
   "saveAgentIntentSecretKey",
   "deleteAgentIntentSecretKey",
+  "loadAgentIntentSecretKey",
 ] as const;
+
+const TOKEN_LOOKUP_KEYS = ["findEthereumToken"] as const;
 
 // Snapshot the genuine exports into PLAIN objects before any mock is installed: `mock.module` re-binds
 // the live namespace to the mock, so a pass-through reading from the namespace would recurse forever.
 const realSessionStore = { ...(await import("../../../session/session-store")) };
 const realSdk = { ...(await import("@ledgerhq/agent-intent-sdk")) } as Record<string, unknown>;
+/** The genuine SDK, for tests that wrap a real SDK function (e.g. a real client over a fake fetch). */
+export const realAgentIntentSdk = { ...(await import("@ledgerhq/agent-intent-sdk")) };
 const realKeychain = { ...(await import("../../../key-ring/agent-intent-keychain")) } as Record<
+  string,
+  unknown
+>;
+const realTokenLookup = { ...(await import("../../../agent-intent/token-lookup")) } as Record<
   string,
   unknown
 >;
@@ -83,6 +94,14 @@ function installMocks(): void {
       realKeychain,
       KEYCHAIN_KEYS,
       key => active?.keychain?.[key as (typeof KEYCHAIN_KEYS)[number]],
+    ),
+  }));
+  mock.module("../../../agent-intent/token-lookup", () => ({
+    ...realTokenLookup,
+    ...gatedMembers(
+      realTokenLookup,
+      TOKEN_LOOKUP_KEYS,
+      key => active?.tokenLookup?.[key as (typeof TOKEN_LOOKUP_KEYS)[number]],
     ),
   }));
 }
