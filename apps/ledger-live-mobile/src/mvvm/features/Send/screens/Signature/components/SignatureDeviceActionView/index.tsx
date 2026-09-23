@@ -24,6 +24,7 @@ type SignatureDeviceActionViewProps = Pick<
   | "selectedDevice"
   | "setSelectedDevice"
   | "onDeviceActionResultCompleted"
+  | "onSignatureError"
   | "onUserCancel"
 >;
 
@@ -40,6 +41,7 @@ export function SignatureDeviceActionView({
   selectedDevice,
   setSelectedDevice,
   onDeviceActionResultCompleted,
+  onSignatureError,
   onUserCancel,
 }: SignatureDeviceActionViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -74,6 +76,7 @@ export function SignatureDeviceActionView({
               action={action}
               request={request}
               onResult={onDeviceActionResultCompleted}
+              onError={onSignatureError}
               onClose={onUserCancel}
               trackingProperties={trackingProperties}
               recipientType={recipientType}
