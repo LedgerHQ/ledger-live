@@ -23,7 +23,7 @@ const extraProperties = () => ({
 type IdentifyParams = Parameters<Analytics["identify"]>[0];
 type TrackParams = Parameters<Analytics["track"]>[0];
 
-export type AnalyticsClient = {
+type AnalyticsClient = {
   identify(params: IdentifyParams): void;
   track(params: TrackParams): void;
   closeAndFlush(): Promise<unknown>;
