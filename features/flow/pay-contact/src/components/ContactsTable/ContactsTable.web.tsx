@@ -2,6 +2,8 @@ import React from "react";
 import {
   Table,
   TableBody,
+  TableCol,
+  TableColGroup,
   TableHeader,
   TableHeaderCell,
   TableHeaderRow,
@@ -26,11 +28,21 @@ export function ContactsTable({
   return (
     <TableRoot appearance="plain" data-testid="pay-contacts-list">
       <Table>
+        <TableColGroup>
+          <TableCol />
+          <TableCol hideBelow="xl" />
+          <TableCol hideBelow="xl" />
+          <TableCol />
+        </TableColGroup>
         <TableHeader>
           <TableHeaderRow>
             <TableHeaderCell>{labels.name}</TableHeaderCell>
-            <TableHeaderCell align="end">{labels.addresses}</TableHeaderCell>
-            <TableHeaderCell align="end">{labels.transactions}</TableHeaderCell>
+            <TableHeaderCell align="end" hideBelow="xl">
+              {labels.addresses}
+            </TableHeaderCell>
+            <TableHeaderCell align="end" hideBelow="xl">
+              {labels.transactions}
+            </TableHeaderCell>
             <TableHeaderCell align="end" />
           </TableHeaderRow>
         </TableHeader>
