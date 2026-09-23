@@ -320,7 +320,8 @@ export function useSendHeaderModel({
       recipientSearch.setValue(prefillValue);
     }
 
-    navigation.goToStep(SEND_FLOW_STEP.RECIPIENT);
+    // Reset instead of push so Amount ⇄ Recipient round trips never stack in the back history.
+    navigation.resetToStep(SEND_FLOW_STEP.RECIPIENT);
   }, [isAmountStep, navigation, recipientSearch, state.recipient]);
 
   const showScanner = isScannerOpen && isRecipientStep;

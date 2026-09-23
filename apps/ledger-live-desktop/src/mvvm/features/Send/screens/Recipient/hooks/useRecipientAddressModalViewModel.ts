@@ -206,8 +206,7 @@ export function useRecipientAddressModalViewModel({
 
       if (hasMemo && !hasFilledMemo) {
         if (doNotAskAgainSkipMemo) {
-          const memo = { value: "", type: "NO_MEMO" };
-          onAddressSelected(address, ensName, true, memo, contactId);
+          onAddressSelected(address, ensName, true, { value: "", type: "NO_MEMO" }, contactId);
           return;
         }
 
