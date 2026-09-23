@@ -15,7 +15,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/currency-fiat"
+    "unimported": "pnpm knip --directory ../../.. -W domain/api/currency-fiat",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@shared/api-services": "workspace:*",
@@ -30,6 +34,7 @@
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-domain": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

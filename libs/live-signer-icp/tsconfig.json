@@ -1,15 +1,10 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/ts-preset/lib-react",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "lib": ["es2022", "dom"],
-    "jsx": "react",
-    "rootDir": "src",
-    "outDir": "lib",
-    "types": ["node"]
-  },
-  "include": ["src/**/*"]
+    "types": [
+      "node"
+    ]
+  }
 }

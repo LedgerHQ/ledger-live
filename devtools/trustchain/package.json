@@ -26,7 +26,8 @@
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
     "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/trustchain/knip.web.config.mjs -W devtools/trustchain --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/trustchain/knip.native.config.mjs -W devtools/trustchain --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../.. -c devtools/trustchain/knip.web.config.mjs -W devtools/trustchain --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/trustchain/knip.native.config.mjs -W devtools/trustchain --tsConfig tsconfig.native.json",
+    "lint:fix": "oxlint src --fix"
   },
   "devDependencies": {
     "@support/jest-devtools": "workspace:*",

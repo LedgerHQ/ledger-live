@@ -15,7 +15,7 @@
     "format:check": "oxfmt src --check",
     "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
-    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "lint:fix": "oxlint src --fix",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -25,6 +25,7 @@
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-domain": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

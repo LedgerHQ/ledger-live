@@ -16,7 +16,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/currency-fiat"
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/currency-fiat",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@domain/entity-currency-unit": "workspace:*",
@@ -26,6 +30,7 @@
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-domain": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

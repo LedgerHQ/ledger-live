@@ -16,7 +16,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/analytics-consent"
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/analytics-consent",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@shared/schema-primitives": "workspace:*",
@@ -24,6 +28,7 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-domain": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

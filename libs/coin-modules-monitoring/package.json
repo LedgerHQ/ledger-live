@@ -7,8 +7,8 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "rslib build && node scripts/postbuild.mjs",
-    "lint": "oxlint ./src",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint ./src -A no-console",
+    "lint:fix": "oxlint ./src -A no-console --fix",
     "test": "jest",
     "typecheck": "tsc --project ./tsconfig.json --noEmit --customConditions node",
     "start": "node lib/cli.js",

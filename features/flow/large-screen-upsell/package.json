@@ -20,7 +20,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/large-screen-upsell"
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/large-screen-upsell",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@features/platform-feature-flags": "workspace:*",

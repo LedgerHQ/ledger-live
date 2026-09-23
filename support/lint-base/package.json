@@ -1,0 +1,18 @@
+{
+  "name": "@support/lint-base",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Baseline oxlint preset and the repo's custom oxlint JS plugin",
+  "exports": {
+    ".": "./oxlint.config.mts",
+    "./src/*": "./src/*",
+    "./package.json": "./package.json",
+    "./oxlint.config": "./oxlint.config.mts"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

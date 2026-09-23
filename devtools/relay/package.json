@@ -2,7 +2,7 @@
   "name": "@devtools/relay",
   "version": "0.5.0",
   "private": true,
-  "description": "DevTools relay hub — localhost-only WebSocket forwarder (dev-only, never shipped)",
+  "description": "DevTools relay hub \u2014 localhost-only WebSocket forwarder (dev-only, never shipped)",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "sideEffects": false,
@@ -13,8 +13,9 @@
     "coverage": "jest --config jest.config.js --coverage",
     "lint": "oxlint src",
     "format": "oxfmt src",
-    "format:check": "oxfmt --check src",
-    "unimported": "pnpm knip --directory ../.. -W devtools/relay"
+    "format:check": "oxfmt src --check",
+    "unimported": "pnpm knip --directory ../.. -W devtools/relay",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@devtools/transport": "workspace:*",

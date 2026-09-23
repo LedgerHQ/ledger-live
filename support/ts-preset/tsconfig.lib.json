@@ -1,0 +1,16 @@
+{
+  "extends": "@support/ts-base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "${configDir}/lib",
+    "rootDir": "${configDir}/src",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ]
+  },
+  "include": [
+    "${configDir}/src/**/*"
+  ]
+}

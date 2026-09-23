@@ -8,7 +8,10 @@
       "{workspaceRoot}/tsconfig.base.json",
       "{workspaceRoot}/pnpm-lock.yaml",
       "{workspaceRoot}/package.json",
-      "{workspaceRoot}/pnpm-workspace.yaml"
+      "{workspaceRoot}/pnpm-workspace.yaml",
+      "{workspaceRoot}/support/**",
+      "{workspaceRoot}/*/oxlint.config.mts",
+      "{workspaceRoot}/*/*/oxlint.config.mts"
     ],
     "default": [
       "sharedGlobals",
@@ -355,7 +358,9 @@
   ],
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
         "{projectRoot}/dist/**",
         "{projectRoot}/lib/**",
@@ -379,13 +384,18 @@
     },
     "format:check": {
       "cache": true,
-      "inputs": ["default", "^default"]
+      "inputs": [
+        "default",
+        "^default"
+      ]
     },
     "check-export-rules": {
       "cache": false
     },
     "typecheck": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": true,
       "inputs": [
         "default",
@@ -396,7 +406,9 @@
       ]
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "cache": true,
       "inputs": [
         "default",
@@ -407,11 +419,15 @@
       ]
     },
     "start": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "start:msw": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "unimported": {
@@ -421,51 +437,110 @@
       "cache": false
     },
     "android:apk:local": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": true,
-      "inputs": ["default", "^default", "mobileEnv", "sharedEnv"]
+      "inputs": [
+        "default",
+        "^default",
+        "mobileEnv",
+        "sharedEnv"
+      ]
     },
     "android:apk": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": true,
-      "inputs": ["default", "^default", "mobileEnv", "sharedEnv"]
+      "inputs": [
+        "default",
+        "^default",
+        "mobileEnv",
+        "sharedEnv"
+      ]
     },
     "ios:local:ipa": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": true,
-      "inputs": ["default", "^default", "mobileEnv", "sharedEnv"]
+      "inputs": [
+        "default",
+        "^default",
+        "mobileEnv",
+        "sharedEnv"
+      ]
     },
     "ios:ci:adhoc": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": true,
-      "inputs": ["default", "^default", "mobileEnv", "sharedEnv"]
+      "inputs": [
+        "default",
+        "^default",
+        "mobileEnv",
+        "sharedEnv"
+      ]
     },
     "nightly": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false,
-      "inputs": ["default", "^default", "desktopEnv", "sharedEnv"]
+      "inputs": [
+        "default",
+        "^default",
+        "desktopEnv",
+        "sharedEnv"
+      ]
     },
     "pre-build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false,
-      "inputs": ["default", "^default", "desktopEnv", "sharedEnv"]
+      "inputs": [
+        "default",
+        "^default",
+        "desktopEnv",
+        "sharedEnv"
+      ]
     },
     "release": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false,
-      "inputs": ["default", "^default", "desktopEnv", "sharedEnv"]
+      "inputs": [
+        "default",
+        "^default",
+        "desktopEnv",
+        "sharedEnv"
+      ]
     },
     "watch": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "watch:es": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "coverage": {
-      "dependsOn": ["^build", "build"],
-      "inputs": ["default", "^default"],
+      "dependsOn": [
+        "^build",
+        "build"
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ],
       "outputs": [
         "{projectRoot}/coverage/lcov.info",
         "{projectRoot}/coverage/sonar-executionTests-report.xml"

@@ -26,10 +26,10 @@
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@types/node": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:"
   },
   "scripts": {
@@ -38,14 +38,14 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "pnpm knip --directory ../.. -W libs/live-currency-format",
     "test": "jest",
     "coverage": "jest --coverage",
-    "format": "pnpm exec oxfmt -c ../oxc-live-libs/.oxfmtrc.json ./src",
-    "format:check": "pnpm exec oxfmt -c ../oxc-live-libs/.oxfmtrc.json ./src --check"
+    "format": "oxfmt ./src",
+    "format:check": "oxfmt ./src --check"
   },
   "typesVersions": {
     "*": {

@@ -1,8 +1,8 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "customConditions": []
-  },
+  "extends": [
+    "./tsconfig.json",
+    "@support/ts-preset/lib/build"
+  ],
   "exclude": [
     "**/*.test.ts",
     "**/*.test.tsx",

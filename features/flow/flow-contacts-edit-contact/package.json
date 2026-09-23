@@ -21,7 +21,9 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/flow-contacts-edit-contact"
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/flow-contacts-edit-contact",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
@@ -49,10 +51,10 @@
     }
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@support/jest-features-flow": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

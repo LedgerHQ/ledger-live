@@ -17,16 +17,18 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/password-verifier"
+    "unimported": "pnpm knip --directory ../.. -W shared/password-verifier",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "typescript": "catalog:"
   }
 }

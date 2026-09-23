@@ -14,12 +14,14 @@ import {
   makeAccount,
 } from "../fixtures";
 import type { SolanaAccount, SolanaStakingPosition } from "@ledgerhq/coin-solana/types";
-import { listSolanaStakingPositions } from "@ledgerhq/coin-solana/logic";
+import {
+  listSolanaStakingPositions,
+  encodeAccountIdWithTokenAccountAddress,
+} from "@ledgerhq/coin-solana/logic";
 import BigNumber from "bignumber.js";
 import { setEnv } from "@shared/env";
 import { airdrop, killAgave, spawnAgave } from "../agave";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { encodeAccountIdWithTokenAccountAddress } from "@ledgerhq/coin-solana/logic";
 import {
   getAssociatedTokenAddressSync,
   TOKEN_PROGRAM_ID,

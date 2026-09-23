@@ -1,13 +1,8 @@
 {
-  "extends": "../../../tsconfig.base.json",
+  "extends": "@support/ts-preset/logic",
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "noEmit": true,
-    "types": ["jest"]
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+    "types": [
+      "jest"
+    ]
+  }
 }

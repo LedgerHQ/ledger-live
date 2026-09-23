@@ -1,20 +1,15 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "bundler",
-    "declaration": true,
-    "declarationMap": true,
-    "lib": [
-      "es2022",
-      "dom"
+    "types": [
+      "node",
+      "jest"
     ],
-    "outDir": "lib",
-    "rootDir": "src",
-    "types": ["node", "jest"],
-    "typeRoots": ["node_modules/@types", "../../node_modules/@types"]
-  },
-  "include": [
-    "src/**/*"
-  ]
+    "typeRoots": [
+      "node_modules/@types",
+      "../../node_modules/@types"
+    ]
+  }
 }

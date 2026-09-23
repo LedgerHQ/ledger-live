@@ -19,7 +19,9 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../.. -W shared/env",
     "format": "oxfmt src",
-    "format:check": "oxfmt --check src"
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@ledgerhq/live-env": "workspace:*"

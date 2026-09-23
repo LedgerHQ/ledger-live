@@ -22,7 +22,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-contact/knip.web.config.mjs -W features/flow/flow-contacts-add-contact --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-contact/knip.native.config.mjs -W features/flow/flow-contacts-add-contact --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-contact/knip.web.config.mjs -W features/flow/flow-contacts-add-contact --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-contact/knip.native.config.mjs -W features/flow/flow-contacts-add-contact --tsConfig tsconfig.native.json",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
@@ -51,10 +53,10 @@
     }
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@support/jest-features-flow": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

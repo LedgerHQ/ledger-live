@@ -12,7 +12,11 @@
   "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/env"
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/env",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@shared/env": "workspace:*"

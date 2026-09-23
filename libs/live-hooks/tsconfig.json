@@ -1,20 +1,26 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@support/ts-preset/lib-react",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "jsx": "react",
-    "lib": ["es2020", "dom"],
-    "outDir": "lib",
-    "rootDir": "src",
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "paths": {
-      "*": ["./*"],
-      "react": ["../../node_modules/@types/react"],
-      "@types/react": ["../../node_modules/@types/react"]
+      "*": [
+        "./*"
+      ],
+      "react": [
+        "../../node_modules/@types/react"
+      ],
+      "@types/react": [
+        "../../node_modules/@types/react"
+      ]
     },
-    "types": ["node", "jest"]
-  },
-  "include": ["src/**/*"]
+    "types": [
+      "node",
+      "jest"
+    ]
+  }
 }

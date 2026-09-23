@@ -13,8 +13,10 @@
   "scripts": {
     "test": "node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint ./",
-    "lint:fix": "oxlint ./ --fix --quiet"
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "devDependencies": {
     "@jest/reporters": "catalog:",

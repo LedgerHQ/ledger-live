@@ -23,16 +23,16 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.prod.json",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es --project tsconfig.test.json",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
     "coverage": "jest --coverage",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "format": "oxfmt src",
-    "format:check": "oxfmt --check src"
+    "format": "oxfmt ./src",
+    "format:check": "oxfmt ./src --check"
   },
   "dependencies": {
     "@ledgerhq/context-module": "catalog:",

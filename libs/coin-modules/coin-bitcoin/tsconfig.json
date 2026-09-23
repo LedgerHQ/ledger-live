@@ -1,14 +1,20 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "lib": ["es2021", "dom"],
-    "types": ["node", "jest", "coininfo", "bs58check/base"],
-    "outDir": "lib",
-    "rootDir": "src",
+    "lib": [
+      "es2021",
+      "dom"
+    ],
+    "types": [
+      "node",
+      "jest",
+      "coininfo",
+      "bs58check/base"
+    ],
     "exactOptionalPropertyTypes": true,
-    "typeRoots": ["./types", "./node_modules/@types"]
-  },
-  "include": ["src/**/*"]
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ]
+  }
 }

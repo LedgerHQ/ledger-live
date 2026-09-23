@@ -26,16 +26,16 @@
   "dependencies": {},
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@types/node": "catalog:",
-    "@types/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -43,8 +43,8 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "pnpm knip --directory ../.. -W libs/live-hooks",
     "test": "jest",

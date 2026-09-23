@@ -24,7 +24,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/lazy-onboarding-banner"
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/lazy-onboarding-banner",
+    "lint:fix": "oxlint src --fix"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

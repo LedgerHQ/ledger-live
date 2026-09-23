@@ -1,18 +1,20 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "bundler",
-    "lib": ["es2022", "dom"],
-    "outDir": "lib",
-    "rootDir": "src",
-    "types": ["node", "jest"],
-    "typeRoots": ["node_modules/@types", "../../../../node_modules/@types"],
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "resolveJsonModule": true
+    "types": [
+      "node",
+      "jest"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+      "../../../../node_modules/@types"
+    ],
+    "composite": true
   },
-  "include": ["src/**/*", "src/**/*.json"]
+  "include": [
+    "src/**/*",
+    "src/**/*.json"
+  ]
 }

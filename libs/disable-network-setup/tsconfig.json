@@ -1,11 +1,9 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
-    "declaration": true,
-    "outDir": "lib",
-    "rootDir": "src",
-    "strict": true,
-    "types": ["node", "jest"]
-  },
-  "include": ["src/**/*"]
+    "types": [
+      "node",
+      "jest"
+    ]
+  }
 }

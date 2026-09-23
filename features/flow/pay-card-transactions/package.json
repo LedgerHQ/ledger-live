@@ -20,7 +20,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "lint": "oxlint src && pnpm lint:tailwind",
     "lint:ci": "oxlint src --quiet && pnpm lint:tailwind",
-    "lint:fix": "oxfmt src && oxlint src --fix --quiet && pnpm lint:tailwind",
+    "lint:fix": "oxlint src --fix && pnpm lint:tailwind",
     "lint:tailwind": "eslint --no-eslintrc --no-error-on-unmatched-pattern -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -36,11 +36,11 @@
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
-    "@support/msw-features-flow-pay-card": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@react-native-clipboard/clipboard": "catalog:",
+    "@support/jest-features-flow": "workspace:*",
+    "@support/msw-features-flow-pay-card": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

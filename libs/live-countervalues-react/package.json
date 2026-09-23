@@ -30,20 +30,20 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
-    "@types/node": "catalog:",
-    "@types/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "scripts": {
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "coverage": "jest --coverage"

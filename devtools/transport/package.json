@@ -2,7 +2,7 @@
   "name": "@devtools/transport",
   "version": "0.6.0",
   "private": true,
-  "description": "Generic WebSocket transport for DevTools — connection, status, history, framing",
+  "description": "Generic WebSocket transport for DevTools \u2014 connection, status, history, framing",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "sideEffects": false,
@@ -13,7 +13,8 @@
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
     "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -W devtools/transport"
+    "unimported": "pnpm knip --directory ../.. -W devtools/transport",
+    "lint:fix": "oxlint src --fix"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",

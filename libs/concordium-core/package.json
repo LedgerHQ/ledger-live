@@ -15,10 +15,10 @@
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "coverage": "jest --coverage",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
-    "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
-    "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
+    "format": "oxfmt ./src",
+    "format:check": "oxfmt ./src --check",
     "unimported": "unimported"
   },
   "dependencies": {

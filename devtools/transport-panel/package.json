@@ -2,7 +2,7 @@
   "name": "@devtools/transport-panel",
   "version": "0.6.0",
   "private": true,
-  "description": "Ledger Live DevTools — transport status panel",
+  "description": "Ledger Live DevTools \u2014 transport status panel",
   "main": "src/index.web.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.web.ts",
@@ -26,7 +26,8 @@
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
     "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/transport-panel/knip.web.config.mjs -W devtools/transport-panel --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/transport-panel/knip.native.config.mjs -W devtools/transport-panel --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../.. -c devtools/transport-panel/knip.web.config.mjs -W devtools/transport-panel --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/transport-panel/knip.native.config.mjs -W devtools/transport-panel --tsConfig tsconfig.native.json",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@devtools/transport": "workspace:*"

@@ -1,15 +1,16 @@
 {
-  "extends": "../../../tsconfig.base.json",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "lib": ["ES2022", "DOM"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "moduleSuffixes": [".native", ""],
-    "noEmit": true,
-    "types": ["jest"]
+    "moduleSuffixes": [
+      ".native",
+      ""
+    ],
+    "types": [
+      "jest"
+    ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
 }

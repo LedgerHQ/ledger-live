@@ -17,7 +17,9 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../.. -W shared/feature-flags",
     "format": "oxfmt src",
-    "format:check": "oxfmt --check src"
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",

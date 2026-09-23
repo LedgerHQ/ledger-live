@@ -41,11 +41,11 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "test": "jest",
-    "format": "oxfmt src tests",
-    "format:check": "oxfmt --check src tests"
+    "format": "oxfmt ./src",
+    "format:check": "oxfmt ./src --check"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

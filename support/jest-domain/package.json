@@ -1,0 +1,19 @@
+{
+  "name": "@support/jest-domain",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared jest config for domain/* packages (node, logic only)",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "format": "oxfmt index.js",
+    "format:check": "oxfmt index.js --check"
+  }
+}

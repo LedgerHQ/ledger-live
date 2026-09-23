@@ -1,9 +1,17 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": [
+    "./tsconfig.json",
+    "@support/ts-preset/web"
+  ],
   "compilerOptions": {
-    "moduleSuffixes": [".web", ""],
-    "types": ["jest", "@testing-library/jest-dom"]
+    "types": [
+      "jest",
+      "@testing-library/jest-dom"
+    ]
   },
-  "include": ["src/**/*", "**/*.d.ts"],
-  "exclude": ["node_modules", "lib", "src/**/*.native.*"]
+  "exclude": [
+    "node_modules",
+    "lib",
+    "src/**/*.native.*"
+  ]
 }

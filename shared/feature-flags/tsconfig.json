@@ -1,14 +1,17 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/ts-preset/web",
   "compilerOptions": {
-    "lib": ["ES2022", "DOM"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "paths": { "*": ["./*"] },
-    "noEmit": true,
-    "types": ["jest"]
+    "paths": {
+      "*": [
+        "./*"
+      ]
+    },
+    "types": [
+      "jest"
+    ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
 }

@@ -11,6 +11,13 @@ import {
 type HealthyLocal = string[];
 type HealthyDistant = string[];
 
+// `console` is deliberately absent from this package's type surface: its lib is ES2022 with no DOM
+// and no node types, which is what stops the source reaching for it. The test below reaches for it
+// anyway, to prove the source does not, so it declares what it uses.
+declare const console: Record<
+  "error" | "warn" | "log" | "info" | "debug",
+  (...args: unknown[]) => void
+>;
 function makeHealthyModule(): CloudSyncDataManager<
   HealthyLocal,
   HealthyDistant,

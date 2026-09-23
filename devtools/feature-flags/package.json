@@ -19,7 +19,8 @@
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
     "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/feature-flags/knip.web.config.mjs -W devtools/feature-flags --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/feature-flags/knip.native.config.mjs -W devtools/feature-flags --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../.. -c devtools/feature-flags/knip.web.config.mjs -W devtools/feature-flags --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/feature-flags/knip.native.config.mjs -W devtools/feature-flags --tsConfig tsconfig.native.json",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@shared/feature-flags": "workspace:^"

@@ -20,7 +20,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/app-lock"
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/app-lock",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",

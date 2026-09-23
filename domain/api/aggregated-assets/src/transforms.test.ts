@@ -1,3 +1,4 @@
+import { getEnv } from "@shared/env";
 import { configureStore } from "@reduxjs/toolkit";
 import { assetsDataApi } from "./api";
 import type { RawApiResponse } from "./schema";
@@ -466,9 +467,7 @@ describe("getChunkedAssetsData", () => {
   });
 
   it("blocks a request to an untrusted host", async () => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { getEnv } = require("@shared/env");
-    getEnv.mockReturnValueOnce("https://evil.example.com/v1");
+    (getEnv as jest.Mock).mockReturnValueOnce("https://evil.example.com/v1");
 
     const result = await getChunked(["bitcoin"], []);
 

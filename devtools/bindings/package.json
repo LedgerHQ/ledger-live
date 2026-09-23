@@ -18,7 +18,8 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/bindings/knip.web.config.mjs -W devtools/bindings --tsConfig tsconfig.json && pnpm knip --directory ../.. -c devtools/bindings/knip.native.config.mjs -W devtools/bindings --tsConfig tsconfig.json"
+    "unimported": "pnpm knip --directory ../.. -c devtools/bindings/knip.web.config.mjs -W devtools/bindings --tsConfig tsconfig.json && pnpm knip --directory ../.. -c devtools/bindings/knip.native.config.mjs -W devtools/bindings --tsConfig tsconfig.json",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@devtools/env": "workspace:*",

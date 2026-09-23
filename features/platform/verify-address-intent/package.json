@@ -17,7 +17,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/verify-address-intent"
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/verify-address-intent",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@features/platform-device-intent": "workspace:^"

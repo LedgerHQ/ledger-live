@@ -2,7 +2,7 @@
   "name": "@ledgerhq/asset-detail",
   "version": "0.11.5",
   "private": true,
-  "description": "Ledger Live asset-detail shared module – market data hook, types and utils",
+  "description": "Ledger Live asset-detail shared module \u2013 market data hook, types and utils",
   "keywords": [
     "Ledger"
   ],
@@ -47,10 +47,10 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
-    "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
-    "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
+    "format": "oxfmt ./src",
+    "format:check": "oxfmt ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "coverage": "jest --coverage"

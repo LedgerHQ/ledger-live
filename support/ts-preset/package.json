@@ -1,0 +1,30 @@
+{
+  "name": "@support/ts-preset",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript config presets, one entry point per project archetype. Extends @support/ts-base.",
+  "exports": {
+    "./package.json": "./package.json",
+    "./logic": "./tsconfig.logic.json",
+    "./tsconfig.logic.json": "./tsconfig.logic.json",
+    "./client": "./tsconfig.client.json",
+    "./tsconfig.client.json": "./tsconfig.client.json",
+    "./web": "./tsconfig.web.json",
+    "./tsconfig.web.json": "./tsconfig.web.json",
+    "./native": "./tsconfig.native.json",
+    "./tsconfig.native.json": "./tsconfig.native.json",
+    "./dual": "./tsconfig.dual.json",
+    "./tsconfig.dual.json": "./tsconfig.dual.json",
+    "./lib": "./tsconfig.lib.json",
+    "./tsconfig.lib.json": "./tsconfig.lib.json",
+    "./lib-react": "./tsconfig.lib-react.json",
+    "./tsconfig.lib-react.json": "./tsconfig.lib-react.json",
+    "./lib-node": "./tsconfig.lib-node.json",
+    "./tsconfig.lib-node.json": "./tsconfig.lib-node.json",
+    "./lib/build": "./tsconfig.build.json",
+    "./tsconfig.build.json": "./tsconfig.build.json"
+  },
+  "devDependencies": {
+    "@support/ts-base": "workspace:*"
+  }
+}

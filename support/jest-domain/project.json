@@ -1,0 +1,4 @@
+{
+  "name": "@support/jest-domain",
+  "targets": { "build": { "executor": "nx:noop" } }
+}

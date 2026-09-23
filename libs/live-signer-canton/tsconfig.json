@@ -1,13 +1,11 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "lib": ["es2020", "dom"],
-    "outDir": "lib",
-    "rootDir": "src"
-  },
-  "include": ["src/**/*"]
+    "lib": [
+      "es2020",
+      "dom"
+    ]
+  }
 }

@@ -1,0 +1,60 @@
+name: "[Support] - Validate config presets"
+
+# Two checks over the support/ preset convention:
+#   - consumers of @support/ts-* do not re-declare compilerOptions their preset already sets
+#   - migrated layers carry no oxlint/oxfmt config file and call the preset bin, not the tool
+
+on:
+  pull_request:
+    paths:
+      - "**/tsconfig*.json"
+      - "**/package.json"
+      - "**/.oxlintrc.json"
+      - "**/.oxfmtrc.json"
+      - "support/**"
+      - "tools/scripts/validate-tsconfig-presets.mts"
+      - "tools/scripts/validate-lint-presets.mjs"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: "support preset compliance"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+
+      # `github.base_ref` and the file list reach the shell through the environment, never through
+      # template expansion: a branch name is attacker-controlled.
+      - name: Get changed tsconfig files
+        id: changed
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          CHANGED=$(git diff --name-only "origin/${BASE_REF}...HEAD" -- '**/tsconfig*.json' | tr '\n' ' ')
+          echo "files=${CHANGED}" >> "$GITHUB_OUTPUT"
+          if [ -n "${CHANGED}" ]; then
+            echo "Changed tsconfig files: ${CHANGED}"
+          else
+            echo "No tsconfig files changed."
+          fi
+
+      - name: Validate tsconfig preset compliance
+        if: steps.changed.outputs.files != ''
+        env:
+          CHANGED_FILES: ${{ steps.changed.outputs.files }}
+        run: |
+          # shellcheck disable=SC2086 # the list is intentionally word-split into argv
+          node --experimental-strip-types tools/scripts/validate-tsconfig-presets.mts ${CHANGED_FILES}
+
+      # Not gated on changed files: a package can drift by gaining a config file anywhere.
+      - name: Validate lint preset compliance
+        run: node tools/scripts/validate-lint-presets.mjs

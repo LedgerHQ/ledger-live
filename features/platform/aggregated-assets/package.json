@@ -15,7 +15,11 @@
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage --passWithNoTests",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/aggregated-assets"
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/aggregated-assets",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@domain/api-aggregated-assets": "workspace:*",

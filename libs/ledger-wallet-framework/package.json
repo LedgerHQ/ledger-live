@@ -135,7 +135,8 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "timemachine": "^0.3.2"
+    "timemachine": "^0.3.2",
+    "@support/fmt-base": "workspace:*"
   },
   "scripts": {
     "clean": "rm -rf lib lib-es",
@@ -145,10 +146,10 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "typecheck": "tsc --noEmit --customConditions node",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
-    "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
-    "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
+    "format": "oxfmt ./src",
+    "format:check": "oxfmt ./src --check",
     "test": "cross-env TZ=America/Paris jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "test:debug": "cross-env TZ=America/Paris node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",

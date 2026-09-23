@@ -15,7 +15,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/api-services"
+    "unimported": "pnpm knip --directory ../.. -W shared/api-services",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
@@ -29,6 +33,7 @@
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
@@ -36,7 +41,6 @@
     "jest": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
-    "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "typescript": "catalog:"
   }
 }

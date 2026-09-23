@@ -1,15 +1,14 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/ts-preset/lib-react",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "lib": ["es2020", "dom"],
-    "jsx": "react",
-    "outDir": "lib",
-    "rootDir": "src",
-    "types": ["node"]
-  },
-  "include": ["src/**/*"]
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "types": [
+      "node"
+    ]
+  }
 }

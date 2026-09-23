@@ -39,6 +39,50 @@
     "**/.eslintrc.tailwind.js"
   ],
   "workspaces": {
+    "./support/lint-tools": {
+      "entry": ["oxlint.config.mts", "bin/*.mjs"],
+      "project": ["**/*.{mts,mjs,js}"]
+    },
+    "./support/jest-domain": {
+      "entry": ["index.js"],
+      "project": ["**/*.js"]
+    },
+    "./support/fmt-base": {
+      "entry": ["oxlint.config.mts", "oxfmt.config.mts", "bin/*.mjs", "runner.mjs", "src/*.js"],
+      "project": ["**/*.{mts,mjs,js}"]
+    },
+    "./support/lint-base": {
+      "entry": ["oxlint.config.mts", "oxfmt.config.mts", "bin/*.mjs", "runner.mjs", "src/*.js"],
+      "project": ["**/*.{mts,mjs,js}"]
+    },
+    "./support/lint-devtools": {
+      "entry": ["oxlint.config.mts", "oxfmt.config.mts", "bin/*.mjs", "runner.mjs", "src/*.js"],
+      "project": ["**/*.{mts,mjs,js}"]
+    },
+    "./support/lint-domain": {
+      "entry": ["oxlint.config.mts", "oxfmt.config.mts", "bin/*.mjs", "runner.mjs", "src/*.js"],
+      "project": ["**/*.{mts,mjs,js}"]
+    },
+    "./support/lint-features-flow": {
+      "entry": ["oxlint.config.mts", "oxfmt.config.mts", "bin/*.mjs", "runner.mjs", "src/*.js"],
+      "project": ["**/*.{mts,mjs,js}"]
+    },
+    "./support/lint-features-platform": {
+      "entry": ["oxlint.config.mts", "oxfmt.config.mts", "bin/*.mjs", "runner.mjs", "src/*.js"],
+      "project": ["**/*.{mts,mjs,js}"]
+    },
+    "./support/lint-libs": {
+      "entry": ["oxlint.config.mts", "oxfmt.config.mts", "bin/*.mjs", "runner.mjs", "src/*.js"],
+      "project": ["**/*.{mts,mjs,js}"]
+    },
+    "./support/lint-shared": {
+      "entry": ["oxlint.config.mts", "oxfmt.config.mts", "bin/*.mjs", "runner.mjs", "src/*.js"],
+      "project": ["**/*.{mts,mjs,js}"]
+    },
+    "./support/lint-support": {
+      "entry": ["oxlint.config.mts", "oxfmt.config.mts", "bin/*.mjs", "runner.mjs", "src/*.js"],
+      "project": ["**/*.{mts,mjs,js}"]
+    },
     "./apps/ledger-live-desktop": {
       "entry": [
         "src/index.ts",

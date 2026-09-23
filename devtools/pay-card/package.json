@@ -19,7 +19,8 @@
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
     "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/pay-card/knip.web.config.mjs -W devtools/pay-card --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/pay-card/knip.native.config.mjs -W devtools/pay-card --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../.. -c devtools/pay-card/knip.web.config.mjs -W devtools/pay-card --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/pay-card/knip.native.config.mjs -W devtools/pay-card --tsConfig tsconfig.native.json",
+    "lint:fix": "oxlint src --fix"
   },
   "devDependencies": {
     "@support/jest-devtools": "workspace:*",

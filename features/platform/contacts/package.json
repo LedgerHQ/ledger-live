@@ -26,7 +26,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/platform/contacts/knip.web.config.mjs -W features/platform/contacts --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/contacts/knip.native.config.mjs -W features/platform/contacts --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../../.. -c features/platform/contacts/knip.web.config.mjs -W features/platform/contacts --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/contacts/knip.native.config.mjs -W features/platform/contacts --tsConfig tsconfig.native.json",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
@@ -61,20 +63,20 @@
     }
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/device-management-kit": "catalog:",
-    "@types/semver": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@reduxjs/toolkit": "catalog:",
+    "@support/jest-features-flow": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/jest": "catalog:",
-    "@types/react": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "@types/semver": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

@@ -17,7 +17,9 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/recent-addresses",
     "format": "oxfmt src",
-    "format:check": "oxfmt --check src"
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-domain": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

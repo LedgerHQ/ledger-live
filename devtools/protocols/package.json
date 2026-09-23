@@ -2,7 +2,7 @@
   "name": "@devtools/protocols",
   "version": "0.4.0",
   "private": true,
-  "description": "Shared WebSocket message contracts for DevTools host ⇄ tool communication",
+  "description": "Shared WebSocket message contracts for DevTools host \u21c4 tool communication",
   "sideEffects": false,
   "exports": {
     "./copyStore": "./src/copyStore/index.ts",
@@ -16,7 +16,8 @@
     "coverage": "jest --config jest.config.js --coverage",
     "test": "jest --config jest.config.js",
     "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -W devtools/protocols"
+    "unimported": "pnpm knip --directory ../.. -W devtools/protocols",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@devtools/transport": "workspace:*",

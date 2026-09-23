@@ -23,7 +23,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -c shared/ui-info-state/knip.web.config.mjs -W shared/ui-info-state --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c shared/ui-info-state/knip.native.config.mjs -W shared/ui-info-state --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../.. -c shared/ui-info-state/knip.web.config.mjs -W shared/ui-info-state --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c shared/ui-info-state/knip.native.config.mjs -W shared/ui-info-state --tsConfig tsconfig.native.json",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@shared/ui-queued-bottom-sheet": "workspace:*",

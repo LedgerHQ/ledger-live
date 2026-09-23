@@ -21,7 +21,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "xrpld server_info 2>/dev/null | grep -qE '\"server_state\" : \"(full|proposing|validating)\"'",
+          'xrpld server_info 2>/dev/null | grep -qE ''"server_state" : "(full|proposing|validating)"''',
         ]
       interval: 3s
       timeout: 5s

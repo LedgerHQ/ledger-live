@@ -25,7 +25,7 @@ code extracted from it goes to the layers above, not to a new `libs/*` package.
 - [ ] `scripts.test` and `scripts.coverage` — `jest` / `jest --coverage`
 - [ ] `scripts.format: "oxfmt src"` — required for the Nx `format` target; add `tests` if the package keeps tests outside `src/` (e.g. `"oxfmt src tests"`)
 - [ ] `scripts.format:check: "oxfmt --check src"` — CI dry-run counterpart; mirror the same paths as `scripts.format`
-- [ ] `scripts.lint: "oxlint -c <path-to>/.oxlintrc.json ./src"` — required for the Nx `lint` target; path to `.oxlintrc.json` depends on depth (e.g. `../../libs/oxc-live-libs/.oxlintrc.json` from `shared/`)
+- [ ] `scripts.lint: "<layer-preset> ./src"` — required for the Nx `lint` target. Add the matching `@support/lint-*` preset for the layer (e.g. `@support/lint-libs` under `libs/`, `@support/lint-shared` under `shared/`) to `devDependencies` as `workspace:*`; it links a bin of the same name. The package carries no lint config file of its own.
 
 **Additional files**
 - [ ] `README.md` — scope, problem solved, main exports (a few paragraphs); **must include a status marker** (see [README status marker](#readme-status-marker) below)

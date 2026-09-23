@@ -1,10 +1,8 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "declaration": true,
-    "declarationMap": true,
     "noImplicitAny": false,
     "lib": [
       "es2021",
@@ -14,14 +12,9 @@
       "node",
       "jest"
     ],
-    "outDir": "lib",
-    "rootDir": "src",
     "typeRoots": [
       "./types",
       "./node_modules/@types"
     ]
-  },
-  "include": [
-    "src/**/*"
-  ]
+  }
 }

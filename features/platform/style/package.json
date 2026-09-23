@@ -2,7 +2,7 @@
   "name": "@features/platform-style",
   "version": "0.4.0",
   "private": true,
-  "description": "Single source of truth for StyleProvider across Ledger Live apps — SC ThemeProvider + Lumen integration, layer-boundary-clean",
+  "description": "Single source of truth for StyleProvider across Ledger Live apps \u2014 SC ThemeProvider + Lumen integration, layer-boundary-clean",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -21,7 +21,11 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

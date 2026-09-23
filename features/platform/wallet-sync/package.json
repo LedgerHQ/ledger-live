@@ -15,7 +15,11 @@
     "unimported": "pnpm knip --directory ../../.. -W features/platform/wallet-sync",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@shared/cloud-sync": "workspace:^",

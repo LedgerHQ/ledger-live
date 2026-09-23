@@ -15,7 +15,7 @@
     "format:check": "oxfmt src --check",
     "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
-    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "lint:fix": "oxlint src --fix",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

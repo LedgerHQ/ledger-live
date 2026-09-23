@@ -1,13 +1,14 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/ts-preset/lib",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "lib": ["es2020", "dom"],
-    "types": ["node", "jest"],
-    "outDir": "lib",
-    "rootDir": "src",
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "types": [
+      "node",
+      "jest"
+    ],
     "exactOptionalPropertyTypes": true
-  },
-  "include": ["src/**/*"]
+  }
 }

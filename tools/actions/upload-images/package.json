@@ -8,7 +8,7 @@
   "scripts": {
     "build": "rslib build",
     "lint": "oxlint ./",
-    "lint:fix": "oxlint ./ --fix --quiet",
+    "lint:fix": "oxlint ./ --fix",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check"
   },
