@@ -672,13 +672,13 @@ class JsonCommandOutput implements CommandOutput {
         },
       };
     }
-    const isTypedError = e instanceof Error && !BUILT_IN_ERROR_NAMES.has(e.name);
-    const httpStatus = isTypedError && "httpStatus" in e ? e.httpStatus : undefined;
+    const hasCustomName = e instanceof Error && !BUILT_IN_ERROR_NAMES.has(e.name);
+    const httpStatus = hasCustomName && "httpStatus" in e ? e.httpStatus : undefined;
     return {
       ok: false,
       error: {
         command: this._ctx.command,
-        ...(isTypedError ? { code: e.name } : {}),
+        ...(hasCustomName ? { code: e.name } : {}),
         message: HumanFormatter.formatError(e),
         ...(typeof httpStatus === "number" ? { http_status: httpStatus } : {}),
       },
