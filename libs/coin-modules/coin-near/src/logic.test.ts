@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { STAKING_GAS } from "./constants";
 import {
+  canStake,
   getFeeAvailableBalance,
   getMaxAmount,
   getNearStakingPositions,
@@ -8,6 +9,7 @@ import {
   getStakingGas,
   getTotalSpent,
 } from "./logic";
+import { setNearPreloadData } from "./preload-data";
 import { NearAccount, Transaction } from "./types";
 
 describe("getMaxAmount", () => {
@@ -555,5 +557,43 @@ describe("getFeeAvailableBalance", () => {
     } as unknown as NearAccount;
 
     expect(getFeeAvailableBalance(bare).toFixed()).toBe("3180000000000000000000");
+  });
+});
+
+describe("canStake", () => {
+  // Mainnet-like preload: current price 10^8, floor 10^9. Three staking fees at the floor come
+  // to 3 x 55 TGas x 10^9 = 0.165 NEAR, the headroom a stake has to leave for the unstake and
+  // the withdraw that follow it.
+  beforeAll(() => {
+    setNearPreloadData({
+      storageCost: new BigNumber(0),
+      gasPrice: new BigNumber("100000000"),
+      minGasPurchasePrice: new BigNumber("1000000000"),
+      createAccountCostSend: new BigNumber(0),
+      createAccountCostExecution: new BigNumber(0),
+      transferCostSend: new BigNumber(0),
+      transferCostExecution: new BigNumber(0),
+      addKeyCostSend: new BigNumber(0),
+      addKeyCostExecution: new BigNumber(0),
+      receiptCreationSend: new BigNumber(0),
+      receiptCreationExecution: new BigNumber(0),
+      accountCreationCharge: new BigNumber(0),
+      validators: [],
+    });
+  });
+
+  const account = (spendableBalance: string) =>
+    ({
+      spendableBalance: new BigNumber(spendableBalance),
+      pendingOperations: [],
+      nearResources: { stakingPositions: [] },
+    }) as unknown as NearAccount;
+
+  it("allows staking when the spendable balance clears three floor-priced fees", () => {
+    expect(canStake(account("165000000000000000000001"))).toBe(true);
+  });
+
+  it("refuses staking when the spendable balance cannot fund the unstake and withdraw after it", () => {
+    expect(canStake(account("165000000000000000000000"))).toBe(false);
   });
 });

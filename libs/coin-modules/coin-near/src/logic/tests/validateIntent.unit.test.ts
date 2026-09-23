@@ -432,6 +432,19 @@ describe("validateIntent", () => {
       expect(result.errors.amount?.name).toBe("NotEnoughBalance");
     });
 
+    it("treats a sender the node does not know as unable to pay the fee", async () => {
+      (fetchAccountDetails as jest.Mock).mockResolvedValue(null);
+
+      const result = await validateIntent(
+        mockNearContext,
+        stakingIntent("withdraw"),
+        [nativeBalance(ONE_NEAR), stakeBalance(ABOVE_THRESHOLD, "withdrawable")],
+        FEES,
+      );
+
+      expect(result.errors.amount?.name).toBe("NotEnoughBalance");
+    });
+
     it("rejects an unstake the liquid balance cannot pay the fee for", async () => {
       (fetchAccountDetails as jest.Mock).mockResolvedValue({ amount: "1", storage_usage: 182 });
 
