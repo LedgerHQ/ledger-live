@@ -3,6 +3,7 @@ import { MockServer } from "../../helpers/mock-server";
 import "../../../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { BigNumber } from "bignumber.js";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type {
@@ -128,7 +129,7 @@ function makeAccount(descriptor: AccountDescriptor): Account {
     type: "Account",
     id: descriptor.id,
     freshAddress: descriptor.freshAddress,
-    currency: { id: descriptor.currencyId, family },
+    currency: { ...findCryptoCurrencyById(descriptor.currencyId), family },
     seedIdentifier: descriptor.seedIdentifier,
     derivationMode: descriptor.derivationMode,
     index: descriptor.index,
@@ -161,7 +162,31 @@ const integrateNewAccountDescriptorMock = mock(async (descriptor: AccountDescrip
   return makeAccount(descriptor);
 });
 
-const getAccountBridgeMockFn = mock(() => ({}));
+function bridgeError(name: string): Error {
+  return Object.assign(new Error(name), { name });
+}
+
+let transactionStatusErrors: Record<string, Error> = {};
+
+const prepareTransactionMock = mock(async (_account: Account, tx: Record<string, unknown>) => tx);
+
+const fakeBridge = {
+  createTransaction: () => ({ family: "evm", amount: new BigNumber(0), recipient: "" }),
+  updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
+    ...tx,
+    ...patch,
+  }),
+  prepareTransaction: prepareTransactionMock,
+  getTransactionStatus: async () => ({
+    errors: transactionStatusErrors,
+    warnings: {},
+    estimatedFees: new BigNumber("420000000000000"),
+    amount: new BigNumber(0),
+    totalSpent: new BigNumber(0),
+  }),
+};
+
+const getAccountBridgeMockFn = mock(() => fakeBridge);
 const getAccountBridgeMock = getAccountBridgeMockFn as unknown as typeof getLiveAccountBridge;
 
 const runFullSwapPipelineMock = mock((_input: FullSwapPipelineInput) =>
@@ -204,6 +229,31 @@ async function runExecuteSwapCommand(flags: SwapExecuteFlags = baseFlags) {
   return JSON.parse(writes.join("").trim());
 }
 
+async function runFailingExecuteSwapCommand(flags: SwapExecuteFlags) {
+  const writes: string[] = [];
+  const restoreCapture = installOutputCapture({
+    stdout: chunk => writes.push(chunk),
+  });
+  try {
+    await expect(
+      executeSwapCommand({
+        flags,
+        positional: [],
+        resolveAccountDescriptor: resolveAccountDescriptorMock,
+        integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
+        getAccountBridge: getAccountBridgeMock,
+        runFullSwapPipeline: runFullSwapPipelineMock,
+        runCliSwapDiePipeline: runCliSwapDiePipelineMock,
+        findTokenById: findTokenByIdMock,
+        getQuotes: getQuotesMock,
+      }),
+    ).rejects.toThrow(CliProcessExitError);
+  } finally {
+    restoreCapture();
+  }
+  return JSON.parse(writes.join("").trim());
+}
+
 describe("swap execute command", () => {
   const server = new MockServer(ETH_SYNC_ROUTES);
 
@@ -211,6 +261,8 @@ describe("swap execute command", () => {
     resolveAccountDescriptorMock.mockClear();
     integrateNewAccountDescriptorMock.mockClear();
     getAccountBridgeMockFn.mockClear();
+    prepareTransactionMock.mockClear();
+    transactionStatusErrors = {};
     runFullSwapPipelineMock.mockClear();
     runCliSwapDiePipelineMock.mockClear();
     getQuotesMock.mockClear();
@@ -379,6 +431,7 @@ describe("swap execute command", () => {
       expect(data.quoteId).toBe("die-quote-1");
       expect(data.approvalTxHash).toBe("0xapprovalhash");
       expect(data.swapTxHash).toBe("0xswaphash");
+      expect(data.balanceCheck).toEqual({ checked: true });
 
       expect(getQuotesMock).toHaveBeenCalledTimes(1);
       const quoteRequest = getQuotesMock.mock.calls[0][0];
@@ -450,34 +503,131 @@ describe("swap execute command", () => {
         errors: [],
       }));
 
-      const writes: string[] = [];
-      const restoreCapture = installOutputCapture({
-        stdout: chunk => writes.push(chunk),
-      });
-
-      try {
-        await expect(
-          executeSwapCommand({
-            flags: dieBaseFlags,
-            positional: [],
-            resolveAccountDescriptor: resolveAccountDescriptorMock,
-            integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
-            getAccountBridge: getAccountBridgeMock,
-            runFullSwapPipeline: runFullSwapPipelineMock,
-            runCliSwapDiePipeline: runCliSwapDiePipelineMock,
-            findTokenById: findTokenByIdMock,
-            getQuotes: getQuotesMock,
-          }),
-        ).rejects.toThrow(CliProcessExitError);
-      } finally {
-        restoreCapture();
-      }
-
-      const data = JSON.parse(writes.join("").trim());
+      const data = await runFailingExecuteSwapCommand(dieBaseFlags);
       expect(data.ok).toBe(false);
       expect(data.error.message).toBe("No quote from 'uniswap': uniswap: rate unavailable");
       expect(runCliSwapDiePipelineMock).not.toHaveBeenCalled();
       expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("balance pre-check", () => {
+    it("rejects with NotEnoughBalance before the swap API is called", async () => {
+      transactionStatusErrors = { amount: bridgeError("NotEnoughBalance") };
+
+      const data = await runFailingExecuteSwapCommand({ ...baseFlags, amount: "1" });
+
+      expect(data.ok).toBe(false);
+      expect(data.error.code).toBe("NotEnoughBalance");
+      expect(data.error.message).toBe(
+        "Insufficient balance: swapping 1 ETH plus 0.00042 ETH network fees exceeds the spendable 0 ETH.",
+      );
+      expect(data.error.message).not.toContain("status code");
+      expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
+    });
+
+    it("checks the amount the user asked to swap, in atomic units", async () => {
+      await runExecuteSwapCommand();
+
+      expect(prepareTransactionMock).toHaveBeenCalledTimes(1);
+      expect(prepareTransactionMock).toHaveBeenCalledWith(
+        expect.objectContaining({ id: fromDescriptor.id }),
+        expect.objectContaining({
+          amount: new BigNumber("1000000000000000"),
+          recipient: fromDescriptor.freshAddress,
+          feesStrategy: "medium",
+        }),
+      );
+    });
+
+    it("rejects with NotEnoughGas when the account cannot pay the network fees", async () => {
+      transactionStatusErrors = { gasPrice: bridgeError("NotEnoughGas") };
+
+      const data = await runFailingExecuteSwapCommand(baseFlags);
+
+      expect(data.error.code).toBe("NotEnoughGas");
+      expect(data.error.message).toBe(
+        "Not enough ETH to pay the 0.00042 ETH network fees for this swap.",
+      );
+      expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
+    });
+
+    it("leaves network fees out of the message when swapping a token", async () => {
+      const usdtAccount = {
+        type: "TokenAccount",
+        id: "js:2:ethereum:from:+usdt",
+        parentId: fromDescriptor.id,
+        token: usdtToken,
+        balance: new BigNumber(5_000_000),
+        spendableBalance: new BigNumber(5_000_000),
+      };
+      integrateNewAccountDescriptorMock.mockImplementationOnce(
+        async descriptor =>
+          ({ ...makeAccount(descriptor), subAccounts: [usdtAccount] }) as unknown as Account,
+      );
+      transactionStatusErrors = { amount: bridgeError("NotEnoughBalance") };
+
+      const data = await runFailingExecuteSwapCommand({
+        ...baseFlags,
+        from: USDT_TOKEN_ID,
+        amount: "100",
+      });
+
+      expect(data.error.message).toBe(
+        "Insufficient balance: swapping 100 USDT exceeds the spendable 5 USDT.",
+      );
+      expect(prepareTransactionMock).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ subAccountId: usdtAccount.id }),
+      );
+    });
+
+    it("rejects DEX providers before fetching a quote", async () => {
+      transactionStatusErrors = { amount: bridgeError("NotEnoughBalance") };
+
+      const data = await runFailingExecuteSwapCommand(dieBaseFlags);
+
+      expect(data.error.code).toBe("NotEnoughBalance");
+      expect(getQuotesMock).not.toHaveBeenCalled();
+      expect(runCliSwapDiePipelineMock).not.toHaveBeenCalled();
+    });
+
+    it("ignores recipient errors because the payin address is only known after the swap API call", async () => {
+      transactionStatusErrors = {
+        recipient: bridgeError("InvalidAddressBecauseDestinationIsAlsoSource"),
+      };
+
+      const data = await runExecuteSwapCommand();
+
+      expect(data.swapId).toBe("mock-swap-id");
+      expect(data.balanceCheck).toEqual({ checked: true });
+      expect(runFullSwapPipelineMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("lets the swap proceed when the pre-check itself cannot run", async () => {
+      prepareTransactionMock.mockImplementationOnce(async () => {
+        throw new Error("gas estimation RPC unavailable");
+      });
+
+      const data = await runExecuteSwapCommand();
+
+      expect(data.swapId).toBe("mock-swap-id");
+      expect(data.balanceCheck).toEqual({
+        checked: false,
+        reason: "gas estimation RPC unavailable",
+      });
+      expect(runFullSwapPipelineMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("keeps the bridge message for other blocking errors", async () => {
+      transactionStatusErrors = {
+        amount: Object.assign(new Error("Amount is below the dust limit"), { name: "DustLimit" }),
+      };
+
+      const data = await runFailingExecuteSwapCommand(baseFlags);
+
+      expect(data.error.code).toBe("DustLimit");
+      expect(data.error.message).toBe("Amount is below the dust limit");
     });
   });
 });
