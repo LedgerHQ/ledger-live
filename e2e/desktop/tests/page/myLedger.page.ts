@@ -84,6 +84,13 @@ export class MyLedgerPage extends AppPage {
     await this.installButton(app).click();
   }
 
+  /** Installing a child app opens the shared ConfirmModal, naming the parent it pulls in. */
+  @step("Install $0 together with the app it depends on")
+  async installAppWithDependency(app: AppInfos) {
+    await this.installButton(app).click();
+    await this.confirmModalButton.click();
+  }
+
   @step("Uninstall $0")
   async uninstallApp(app: AppInfos) {
     await this.uninstallButton(app).click();
