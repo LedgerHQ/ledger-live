@@ -14,11 +14,10 @@ import storage from "LLM/storage";
 import { I18nManager } from "react-native";
 import RNRestart from "react-native-restart";
 
-import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale } from "../languages";
+import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale, supportedLocales } from "../languages";
 import { setLanguage } from "~/actions/settings";
 import { useDispatch } from "~/context/hooks";
 import { useSettings } from "~/hooks";
-import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
 import { loadLocaleData } from "~/utils/localeLoader";
 
 try {
@@ -90,7 +89,6 @@ function getLocaleState(i18n: typeof i18next): LocaleState {
 const LocaleContext = React.createContext(getLocaleState(i18next));
 export default function LocaleProvider({ children }: Props) {
   const { language } = useSettings();
-  const supportedLocales = useSupportedLocales();
   const dispatch = useDispatch();
   const currentLanguage = supportedLocales.includes(language as SupportedLanguages)
     ? language

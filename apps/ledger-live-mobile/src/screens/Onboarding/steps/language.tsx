@@ -13,7 +13,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { CompositeScreenProps } from "@react-navigation/native";
-import { languages, localeIdToDeviceLanguage, Locale } from "../../../languages";
+import { languages, localeIdToDeviceLanguage, Locale, supportedLocales } from "../../../languages";
 import { ScreenName } from "~/const";
 import { setLanguage, setLastSeenDeviceInfo } from "~/actions/settings";
 import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "~/reducers/settings";
@@ -25,7 +25,6 @@ import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/O
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import Button from "~/components/Button";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
 import SafeAreaView from "~/components/SafeAreaView";
 
 type NavigationProps = CompositeScreenProps<
@@ -36,7 +35,6 @@ type NavigationProps = CompositeScreenProps<
 function OnboardingStepLanguage({ navigation }: NavigationProps) {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
-  const supportedLocales = useSupportedLocales();
 
   const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<boolean>(false);
   const [preventPromptBackdropClick, setPreventPromptBackdropClick] = useState<boolean>(false);
