@@ -28,12 +28,17 @@ export async function decodeTransaction(rawTx: string): Promise<{
   const transaction = Transaction.raw.deserializeBinary(Buffer.from(rawTx, "hex"));
 
   return {
-    txID: createHash("sha256")
-      .update(new Uint8Array(Buffer.from(rawTx, "hex")))
-      .digest("hex"),
+    txID: tronTxIdFromRawDataHex(rawTx),
     raw_data: convertTxFromRaw(transaction),
     raw_data_hex: rawTx,
   };
+}
+
+/** A Tron txID is the sha256 of the transaction's raw_data bytes (`raw_data_hex`). */
+export function tronTxIdFromRawDataHex(rawDataHex: string): string {
+  return createHash("sha256")
+    .update(new Uint8Array(Buffer.from(rawDataHex, "hex")))
+    .digest("hex");
 }
 
 /**
