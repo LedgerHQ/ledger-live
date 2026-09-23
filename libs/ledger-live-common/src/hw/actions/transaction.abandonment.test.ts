@@ -4,33 +4,39 @@
 import { Observable, Subject } from "rxjs";
 import { renderHook, act } from "@testing-library/react";
 import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
+import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 
 // The device-connection half is a whole state machine of its own; this test only cares that
-// the sign prompt appeared, so it is pinned to "device ready". The state object is a single
-// stable instance: `device` is a dependency of the signing effect, so a fresh object per
-// render would resubscribe on every render and drop events.
+// the sign prompt appeared, so it is pinned to "device ready".
 const READY = {
   device: { deviceId: "device", modelId: "nanoX" },
   opened: true,
   inWrongDeviceForAccount: null,
   error: null,
 };
-const DEVICE_GONE = { ...READY, opened: false };
-// Mutable so a test can take the device away mid-flow. Held as one object per state rather than
-// rebuilt per render: `device` is a dependency of the signing effect, so a fresh object each
-// render would resubscribe every render and drop events.
-const appState = { current: READY as typeof READY };
+type AppStateFixture = Omit<typeof READY, "inWrongDeviceForAccount"> & {
+  inWrongDeviceForAccount: { accountName: string } | null;
+};
+const DEVICE_GONE: AppStateFixture = { ...READY, opened: false };
+const WRONG_DEVICE: AppStateFixture = {
+  ...READY,
+  inWrongDeviceForAccount: { accountName: "Staking account" },
+};
+// Mutable so a test can take the device away mid-flow.
+const appState = { current: READY as AppStateFixture };
 
 jest.mock("./app", () => ({
   createAction: () => ({ useHook: () => appState.current, mapResult: () => null }),
 }));
 
 const signOperation = jest.fn();
+const signRawOperation = jest.fn();
 jest.mock("../../bridge", () => ({
-  getAccountBridge: async () => ({ signOperation }),
+  getAccountBridge: async () => ({ signOperation, signRawOperation }),
 }));
 
 import { createAction } from "./transaction";
+import { createAction as createRawAction } from "./rawTransaction";
 import {
   ErrorCategory,
   resetTransactionObservers,
@@ -55,6 +61,7 @@ const txRequest = {
 describe("transaction device action — sign-prompt abandonment", () => {
   let events: LogEvent[];
   let signEvents: Subject<SignOperationEvent>;
+  let rawSignEvents: Subject<SignOperationEvent>;
 
   beforeEach(() => {
     appState.current = READY;
@@ -62,13 +69,29 @@ describe("transaction device action — sign-prompt abandonment", () => {
     events = [];
     setTransactionObserver(e => events.push(e));
     signEvents = new Subject<SignOperationEvent>();
+    signOperation.mockClear();
     signOperation.mockReturnValue(
       new Observable<SignOperationEvent>(subscriber => signEvents.subscribe(subscriber)),
+    );
+    rawSignEvents = new Subject<SignOperationEvent>();
+    signRawOperation.mockClear();
+    signRawOperation.mockReturnValue(
+      new Observable<SignOperationEvent>(subscriber => rawSignEvents.subscribe(subscriber)),
     );
   });
   afterEach(() => resetTransactionObservers());
 
   const render = () => renderHook(() => createAction(jest.fn() as never).useHook(null, txRequest));
+  const renderRaw = () =>
+    renderHook(() =>
+      createRawAction(jest.fn() as never).useHook(null, {
+        account,
+        parentAccount: null,
+        transaction: "{}",
+        manifestId: "stakekit",
+        manifestName: "StakeKit",
+      }),
+    );
 
   const flush = async () => {
     await act(async () => {
@@ -88,6 +111,7 @@ describe("transaction device action — sign-prompt abandonment", () => {
       status: "failure",
       stage: TransactionStage.Sign,
       errorCategory: ErrorCategory.UserModalDismissed,
+      abandoned: true,
       earnTransactionType: "delegate",
       validators: ["pool1"],
     });
@@ -151,10 +175,7 @@ describe("transaction device action — sign-prompt abandonment", () => {
     });
   });
 
-  // A device unplugged after the prompt appeared is not the user declining. Reporting it as
-  // user_modal_dismissed would put a device failure in the wrong bucket, and the bridge seam
-  // already reports the transport error itself.
-  it("does not report a dismissal when the device became unavailable", async () => {
+  it("classifies an interrupted started attempt as a device error", async () => {
     const { rerender, unmount } = render();
     await flush();
 
@@ -167,15 +188,249 @@ describe("transaction device action — sign-prompt abandonment", () => {
     });
     unmount();
 
-    expect(events).toHaveLength(0);
+    expect(events).toEqual([
+      expect.objectContaining({
+        status: "failure",
+        errorCategory: ErrorCategory.DeviceDisconnected,
+        operationalOnly: true,
+      }),
+    ]);
   });
 
-  it("reports nothing when the prompt never appeared", async () => {
+  it("does not close a dapp or native attempt when the wrong account is connected before signing", async () => {
+    appState.current = WRONG_DEVICE;
+    const { unmount } = render();
+    await flush();
+    unmount();
+
+    expect(events).toEqual([]);
+  });
+
+  it("classifies a wrong account after signing starts as a device error", async () => {
+    const { rerender, unmount } = render();
+    await flush();
+
+    act(() => signEvents.next({ type: "device-signature-requested" }));
+
+    appState.current = WRONG_DEVICE;
+    await act(async () => {
+      rerender();
+      await Promise.resolve();
+    });
+    unmount();
+
+    expect(events).toEqual([
+      expect.objectContaining({
+        status: "failure",
+        errorCategory: ErrorCategory.DeviceWrongAccount,
+        operationalOnly: true,
+      }),
+    ]);
+  });
+
+  it("closes a started attempt even when the prompt never appeared", async () => {
     const { unmount } = render();
     await flush();
 
     unmount();
 
-    expect(events).toHaveLength(0);
+    expect(events).toEqual([
+      expect.objectContaining({
+        status: "failure",
+        errorCategory: ErrorCategory.UserModalDismissed,
+        abandoned: true,
+        operationalOnly: true,
+      }),
+    ]);
+  });
+
+  it("provides the live-app manifest to the deferred mobile sign call", async () => {
+    let capturedManifestId: string | null | undefined;
+    signOperation.mockImplementation(() => {
+      capturedManifestId = liveBlindSigningReporter.getContext().liveAppContext;
+      return signEvents;
+    });
+
+    renderHook(() =>
+      createAction(jest.fn() as never).useHook(null, {
+        ...(txRequest as unknown as Record<string, unknown>),
+        manifestId: "stakekit",
+        manifestName: "StakeKit",
+      } as never),
+    );
+    await flush();
+
+    expect(capturedManifestId).toBe("stakekit");
+  });
+
+  it("reports raw-sign prompt dismissal as an abandoned dapp attempt", async () => {
+    const { unmount } = renderRaw();
+    await flush();
+
+    act(() => rawSignEvents.next({ type: "device-signature-requested" }));
+    unmount();
+
+    expect(events).toEqual([
+      expect.objectContaining({
+        status: "failure",
+        manifestId: "stakekit",
+        errorCategory: ErrorCategory.UserModalDismissed,
+        abandoned: true,
+        operationalOnly: false,
+      }),
+    ]);
+  });
+
+  it("does not abandon a completed raw signature", async () => {
+    const { unmount } = renderRaw();
+    await flush();
+
+    act(() =>
+      rawSignEvents.next({
+        type: "signed",
+        signedOperation: { signature: "sig", operation: {} },
+      } as SignOperationEvent),
+    );
+    unmount();
+
+    expect(events).toEqual([]);
+  });
+
+  it("preserves the sign subscription when the device object identity changes", async () => {
+    const { rerender, unmount } = render();
+    await flush();
+    act(() => signEvents.next({ type: "device-signature-requested" }));
+    expect(signOperation).toHaveBeenCalledTimes(1);
+
+    appState.current = {
+      ...READY,
+      device: { deviceId: "device", modelId: "nanoX" },
+    };
+    await act(async () => {
+      rerender();
+      await Promise.resolve();
+    });
+
+    expect(events).toEqual([]);
+    expect(signOperation).toHaveBeenCalledTimes(1);
+
+    act(() =>
+      signEvents.next({
+        type: "signed",
+        signedOperation: { signature: "sig", operation: {} },
+      } as SignOperationEvent),
+    );
+    unmount();
+    expect(events).toEqual([]);
+  });
+
+  it("signs a structured transaction with a mock device, whose id is an empty string", async () => {
+    appState.current = { ...READY, device: { deviceId: "", modelId: "nanoX" } };
+    const { unmount } = render();
+    await flush();
+
+    expect(signOperation).toHaveBeenCalledWith(expect.objectContaining({ deviceId: "" }));
+
+    act(() =>
+      signEvents.next({
+        type: "signed",
+        signedOperation: { signature: "sig", operation: {} },
+      } as SignOperationEvent),
+    );
+    unmount();
+    expect(events).toEqual([]);
+  });
+
+  it("preserves the raw-sign subscription when the device object identity changes", async () => {
+    const { rerender, unmount } = renderRaw();
+    await flush();
+    act(() => rawSignEvents.next({ type: "device-signature-requested" }));
+    expect(signRawOperation).toHaveBeenCalledTimes(1);
+
+    appState.current = {
+      ...READY,
+      device: { deviceId: "device", modelId: "nanoX" },
+    };
+    await act(async () => {
+      rerender();
+      await Promise.resolve();
+    });
+
+    expect(events).toEqual([]);
+    expect(signRawOperation).toHaveBeenCalledTimes(1);
+
+    act(() =>
+      rawSignEvents.next({
+        type: "signed",
+        signedOperation: { signature: "sig", operation: {} },
+      } as SignOperationEvent),
+    );
+    unmount();
+    expect(events).toEqual([]);
+  });
+
+  it("signs with a mock device, whose id is an empty string", async () => {
+    appState.current = { ...READY, device: { deviceId: "", modelId: "nanoX" } };
+    const { unmount } = renderRaw();
+    await flush();
+
+    expect(signRawOperation).toHaveBeenCalledWith(expect.objectContaining({ deviceId: "" }));
+
+    act(() =>
+      rawSignEvents.next({
+        type: "signed",
+        signedOperation: { signature: "sig", operation: {} },
+      } as SignOperationEvent),
+    );
+    unmount();
+    expect(events).toEqual([]);
+  });
+
+  it("keeps token attribution on raw-sign abandonment", async () => {
+    const tokenAccount = {
+      id: "token-acc",
+      type: "TokenAccount",
+      parentId: "acc",
+      token: { id: "ethereum/erc20/usdc", ticker: "USDC" },
+    } as never;
+    const { unmount } = renderHook(() =>
+      createRawAction(jest.fn() as never).useHook(null, {
+        account: tokenAccount,
+        parentAccount: account,
+        transaction: "{}",
+        manifestId: "stakekit",
+      }),
+    );
+    await flush();
+    act(() => rawSignEvents.next({ type: "device-signature-requested" }));
+    unmount();
+
+    expect(events[0]).toMatchObject({
+      tokenId: "ethereum/erc20/usdc",
+      tokenTicker: "USDC",
+      currencyId: "cardano",
+    });
+  });
+
+  it("classifies an interrupted raw-sign attempt as a device error", async () => {
+    const { rerender, unmount } = renderRaw();
+    await flush();
+    act(() => rawSignEvents.next({ type: "device-signature-requested" }));
+
+    appState.current = DEVICE_GONE;
+    await act(async () => {
+      rerender();
+      await Promise.resolve();
+    });
+    unmount();
+
+    expect(events).toEqual([
+      expect.objectContaining({
+        status: "failure",
+        manifestId: "stakekit",
+        errorCategory: ErrorCategory.DeviceDisconnected,
+        operationalOnly: true,
+      }),
+    ]);
   });
 });

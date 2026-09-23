@@ -84,7 +84,9 @@ import {
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { installLiveConfigProvider } from "~/firebase/remoteConfig";
 import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
+import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
+import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
 
 const rootNode = document.getElementById("react-root");
 
@@ -158,6 +160,17 @@ async function init() {
     ((key: FeatureId) => selectFeature(store.getState(), key) ?? null) as Parameters<
       typeof setAnalyticsFeatureFlagMethod
     >[0],
+  );
+  store.subscribe(
+    installEarnLifecycleHost({
+      platform: "desktop",
+      readEnabled: () =>
+        selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false,
+      readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
+      resolveVersionedRedirects: getVersionedRedirects,
+      readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+      apiBaseUrl: process.env.EARN_API_BASE_URL,
+    }),
   );
 
   // Hydrate persisted crypto assets tokens from app.json

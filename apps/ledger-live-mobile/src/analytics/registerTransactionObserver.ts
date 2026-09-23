@@ -1,4 +1,8 @@
-import { setTransactionObserver, toSegmentTrackEvent } from "@ledgerhq/transaction-observability";
+import {
+  registerTxLifecycleObserver,
+  setTransactionObserver,
+  toSegmentTrackEvent,
+} from "@ledgerhq/transaction-observability";
 import { track } from "./segment";
 
 /**
@@ -10,3 +14,5 @@ setTransactionObserver(event => {
   const mapped = toSegmentTrackEvent(event);
   if (mapped) track(mapped.event, mapped.properties);
 });
+
+registerTxLifecycleObserver("mobile");

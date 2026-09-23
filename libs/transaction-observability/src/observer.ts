@@ -8,27 +8,26 @@ import type { LogEvent, TransactionLogger } from "./logEvent";
  * once at startup and the bridge emits into it — the same fire-and-forget pattern as
  * `@ledgerhq/logs` `listen`/`dispatch`.
  *
- * Multiple observers can coexist (e.g. a Segment sink plus a dev console sink), and each one
- * owns its own consent gate — see {@link setTransactionObserver}.
+ * Multiple observers can coexist (e.g. Segment, operational monitoring, and a dev console),
+ * and each one owns its applicable transmission policy — see {@link setTransactionObserver}.
  */
 const observers: TransactionLogger[] = [];
 
 /**
  * Register a transaction observer. Returns an unsubscribe function.
  *
- * **An observer is responsible for its own user consent.** Events are emitted from the bridge
- * seam unconditionally, because this package cannot read the host's settings — so nothing here
- * checks whether the user agreed to anything, and a sink that transmits without gating would
- * leak data.
+ * **An observer is responsible for its own transmission policy.** Events are emitted from the
+ * bridge seam unconditionally, because this package cannot read host settings. Analytics sinks
+ * must enforce analytics consent; approved count-only operational monitoring instead enforces
+ * its rollout flag and strict wire allow-list.
  *
  * There is no single gate to inherit, because sinks answer to different consents: Segment and
  * Mixpanel are governed by the analytics opt-in, while Datadog is governed by the separate
  * crash/error-reporting opt-in (plus its own feature flag). A user may accept one and decline
- * the other, so a Datadog sink must not assume the Segment sink's gate — and vice versa.
+ * the other, so one sink must not assume another sink's gate.
  *
- * In practice: forward through the host's own `track` (which self-gates) or read the relevant
- * consent selector before transmitting. Sinks that never leave the process — a dev console
- * logger — need no gate.
+ * In practice: forward analytics through the host's self-gated `track`, or apply the relevant
+ * operational policy before transmitting. Sinks that never leave the process need no gate.
  */
 export function setTransactionObserver(observer: TransactionLogger): () => void {
   observers.push(observer);

@@ -33,7 +33,8 @@ function ConnectDevice({ navigation, route }: SignRawTransactionConnectDevicePro
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
-  const { transaction, broadcast, appName, dependencies, onSuccess } = route.params;
+  const { transaction, broadcast, appName, dependencies, manifestId, manifestName, onSuccess } =
+    route.params;
   const mainAccount = getMainAccount(account, parentAccount);
   const handleTx = useCallback(
     (result: TransactionResult) => {
@@ -77,6 +78,8 @@ function ConnectDevice({ navigation, route }: SignRawTransactionConnectDevicePro
       transaction,
       broadcast,
       dependencies: connectAppDependencies,
+      manifestId,
+      manifestName,
       requireLatestFirmware: !swapSpeculosBypass,
     }),
     [
@@ -84,6 +87,8 @@ function ConnectDevice({ navigation, route }: SignRawTransactionConnectDevicePro
       appName,
       broadcast,
       connectAppDependencies,
+      manifestId,
+      manifestName,
       parentAccount,
       swapSpeculosBypass,
       transaction,
