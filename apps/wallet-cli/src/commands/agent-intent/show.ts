@@ -2,8 +2,13 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { Session } from "../../session/session-store";
 import { outputOption, resolveOutputFormat } from "../inputs";
-import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
+import {
+  PROFILE_ID_RE,
+  PROFILE_ID_MESSAGE,
+  formatInvalidAgentIntentProfilesWarning,
+} from "../../agent-intent/profile-format";
 import { createCommandOutput } from "../../output";
+import { writeStderr } from "../../shared/ui";
 
 export default defineCommand({
   name: "show",
@@ -24,8 +29,16 @@ export default defineCommand({
       const session = await Session.read();
       const profile = session.getAgentIntentProfile(flags.profile);
       if (!profile) {
+        if (session.invalidAgentIntentProfileIds.includes(flags.profile)) {
+          throw new Error(
+            `Agent Intent profile "${flags.profile}" failed to load (invalid session record) — ` +
+              "it isn't gone, but can't be shown until the record in session.yaml is fixed.",
+          );
+        }
         throw new Error(`No Agent Intent profile named "${flags.profile}".`);
       }
+      const warning = formatInvalidAgentIntentProfilesWarning(session.invalidAgentIntentProfileIds);
+      if (warning) writeStderr(warning);
       out.agentIntentProfileShow(profile);
     });
   },

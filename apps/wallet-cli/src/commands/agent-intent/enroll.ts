@@ -8,19 +8,53 @@ import {
   SUPPORTED_AGENT_SOURCES,
   AGENT_INTENT_FRONTEND_URLS,
 } from "@ledgerhq/agent-intent-sdk";
-import { Session, AGENT_INTENT_ENVIRONMENTS } from "../../session/session-store";
+import { Session, AGENT_INTENT_ENVIRONMENTS, withSessionLock } from "../../session/session-store";
 import {
   hasAgentIntentSecretKey,
   saveAgentIntentSecretKey,
   deleteAgentIntentSecretKey,
 } from "../../key-ring/agent-intent-keychain";
 import { outputOption, resolveOutputFormat } from "../inputs";
-import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
+import {
+  PROFILE_ID_RE,
+  PROFILE_ID_MESSAGE,
+  hasUrlCredentials,
+} from "../../agent-intent/profile-format";
 import { createCommandOutput } from "../../output";
+
+function assertNoUrlCredentials(value: string, flagName: string): void {
+  if (hasUrlCredentials(value)) {
+    throw new Error(
+      `--${flagName} must not contain URL credentials (user:pass@) — they would be persisted or ` +
+        "echoed back verbatim.",
+    );
+  }
+}
+
+/** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
+ * right before writing — a concurrent enroll of the same profile id could pass the first check and
+ * still lose the race to the second. */
+function assertProfileAvailable(session: Session, profileId: string): void {
+  if (session.getAgentIntentProfile(profileId)) {
+    throw new Error(
+      `Agent Intent profile "${profileId}" already exists. Choose a different --profile id, or ` +
+        `run \`wallet-cli agent-intent show --profile ${profileId}\`.`,
+    );
+  }
+  if (hasAgentIntentSecretKey(profileId)) {
+    throw new Error(
+      `A keychain entry for profile "${profileId}" already exists but is not recorded in the ` +
+        "session. Remove it manually (or choose a different --profile id) before re-enrolling.",
+    );
+  }
+}
 
 // Verified against agent-intent-frontend's argocd/{stg,prd}/values.yaml BFF_BASE_URL (2026-09-22),
 // same host/path the reference agent-intent.mjs CLI defaults to. The SDK has no default of its own
-// for bffBaseUrl (unlike AGENT_INTENT_FRONTEND_URLS for the app URL), so this stays local.
+// for bffBaseUrl (unlike AGENT_INTENT_FRONTEND_URLS for the app URL), so this stays local. No
+// override flag: nothing in this codebase yet calls the BFF with a profile's bffBaseUrl (that
+// client ships with NTTVS-746+), so a flag promising to redirect it would do nothing but look like
+// it works — add one once a real consumer exists to wire it into.
 const DEFAULT_BFF_BASE_URLS = {
   staging: "https://global.api.stg.ledger-test.com/agent-intent",
   production: "https://global.api.prd.ledger.com/agent-intent",
@@ -79,9 +113,6 @@ export default defineCommand({
     environment: option(z.enum(AGENT_INTENT_ENVIRONMENTS).default("staging"), {
       description: "Agent Intent environment.",
     }),
-    "bff-url": option(z.string().url().optional(), {
-      description: "Override the environment's default Agent Intent service base URL.",
-    }),
     output: outputOption,
   },
   handler: async ({ flags }) => {
@@ -92,23 +123,15 @@ export default defineCommand({
     await out.run(async () => {
       const expiresInMs = parseDurationMs(flags["expires-in"]);
 
-      const session = await Session.read();
-      if (session.getAgentIntentProfile(flags.profile)) {
-        throw new Error(
-          `Agent Intent profile "${flags.profile}" already exists. Choose a different --profile id, ` +
-            `or run \`wallet-cli agent-intent show --profile ${flags.profile}\`.`,
-        );
-      }
-      if (hasAgentIntentSecretKey(flags.profile)) {
-        throw new Error(
-          `A keychain entry for profile "${flags.profile}" already exists but is not recorded in the ` +
-            "session. Remove it manually (or choose a different --profile id) before re-enrolling.",
-        );
-      }
-
-      const bffBaseUrl = flags["bff-url"] ?? DEFAULT_BFF_BASE_URLS[flags.environment];
+      const bffBaseUrl = DEFAULT_BFF_BASE_URLS[flags.environment];
       const appUrl = flags["app-url"] ?? AGENT_INTENT_FRONTEND_URLS[flags.environment];
+      assertNoUrlCredentials(appUrl, "app-url");
       const enrollmentExpiresAt = new Date(Date.now() + expiresInMs).toISOString();
+
+      // Fast, unlocked precheck: fail on an obvious typo/duplicate before spending a keypair
+      // generation + signature on it. Not a substitute for the recheck below — a concurrent enroll
+      // of the same profile can still pass this one.
+      assertProfileAvailable(await Session.read(), flags.profile);
 
       const identity = createSoftwareAgentIdentity();
       const request = createAgentEnrollmentRequest(identity, {
@@ -118,26 +141,33 @@ export default defineCommand({
         expiresAt: enrollmentExpiresAt,
       });
 
-      await saveAgentIntentSecretKey(flags.profile, identity.exportSecretKey());
-      try {
-        session.addAgentIntentProfile({
-          profileId: flags.profile,
-          displayName: flags.name,
-          description: flags.description,
-          source: flags.source,
-          environment: flags.environment,
-          bffBaseUrl,
-          publicKey: identity.publicKey,
-          enrollmentExpiresAt,
-          createdAt: new Date().toISOString(),
-        });
-        session.write();
-      } catch (e) {
-        // Undo the keychain write so a retry doesn't hit "keychain entry exists but isn't recorded
-        // in the session" — this is the only place that failure can originate from.
-        deleteAgentIntentSecretKey(flags.profile);
-        throw e;
-      }
+      // Shared with every other command that mutates session.yaml (`complete`, `reset`, `account
+      // discover`, `ring init`/`destroy`/`encrypt`/`decrypt`) — see withSessionLock's own doc.
+      await withSessionLock(async () => {
+        const session = await Session.read();
+        assertProfileAvailable(session, flags.profile);
+
+        await saveAgentIntentSecretKey(flags.profile, identity.exportSecretKey());
+        try {
+          session.addAgentIntentProfile({
+            profileId: flags.profile,
+            displayName: flags.name,
+            description: flags.description,
+            source: flags.source,
+            environment: flags.environment,
+            bffBaseUrl,
+            publicKey: identity.publicKey,
+            enrollmentExpiresAt,
+            createdAt: new Date().toISOString(),
+          });
+          session.write();
+        } catch (e) {
+          // Undo the keychain write so a retry doesn't hit "keychain entry exists but isn't recorded
+          // in the session" — this is the only place that failure can originate from.
+          deleteAgentIntentSecretKey(flags.profile);
+          throw e;
+        }
+      });
 
       out.agentIntentEnroll({
         profileId: flags.profile,

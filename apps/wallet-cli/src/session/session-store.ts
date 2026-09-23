@@ -10,6 +10,7 @@ import { serializeV1 } from "../shared/accountDescriptor";
 import { writeSecureFile } from "../shared/secure-file";
 import { PASSWORD_SALT_RE } from "../key-ring/crypto";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../agent-intent/profile-format";
+import { withFileLock } from "../shared/file-lock";
 
 export const APP_NAME = "ledger-wallet-cli";
 const SESSION_FILE = "session.yaml";
@@ -85,6 +86,28 @@ const ringFields = {
     .catch(() => []),
 };
 
+/**
+ * Best-effort `profileId`s of `agentIntentProfiles` entries that failed schema validation and were
+ * dropped by the preprocess above — e.g. a hand-edited field, or one a future schema change tightens
+ * against an already-persisted value. Dropping is silent at the schema layer (by design, so one bad
+ * entry never bricks every command); this is how a caller surfaces it instead of the profile just
+ * vanishing without a trace on the next command that happens to call `write()` (see `agent-intent
+ * list`'s use of this).
+ */
+function invalidAgentIntentProfileIds(root: unknown): string[] {
+  const raw =
+    typeof root === "object" && root !== null
+      ? (root as { agentIntentProfiles?: unknown }).agentIntentProfiles
+      : undefined;
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter(e => !AgentIntentProfileSchema.safeParse(e).success)
+    .map(e =>
+      typeof e === "object" && e !== null ? (e as { profileId?: unknown }).profileId : undefined,
+    )
+    .filter((id): id is string => typeof id === "string");
+}
+
 const SessionDataSchema = z.object({
   accounts: z.array(SessionEntrySchema).default(() => []),
   ...ringFields,
@@ -103,6 +126,26 @@ export function getSessionPath(): string {
   return join(stateDir(APP_NAME), SESSION_FILE);
 }
 
+function getSessionLockPath(): string {
+  return join(stateDir(APP_NAME), ".session.lock");
+}
+
+/**
+ * Serializes a read-modify-write against `session.yaml` across every command that does one —
+ * `enroll`/`complete`/`reset`/`account discover`/`ring init`/`ring destroy`/`ring encrypt`/
+ * `ring decrypt` all route through this rather than locking their own scope, so none of them can
+ * silently overwrite another's write (`Session.write()` replaces the whole file). Computed lazily
+ * (not a module-level constant) so it always reflects the current `stateDir()`, including inside
+ * tests that set `XDG_STATE_HOME`/`LOCALAPPDATA` per-case. Also ensures the state directory exists
+ * first: on a machine that has never written a session, `stateDir()` returns a path nothing has
+ * created yet, and the lock file's own `open()` would otherwise fail with `ENOENT`.
+ */
+export async function withSessionLock<T>(fn: () => Promise<T> | T): Promise<T> {
+  const dir = stateDir(APP_NAME);
+  mkdirSync(dir, { recursive: true, mode: 0o700 });
+  return withFileLock(getSessionLockPath(), fn);
+}
+
 /**
  * Construct a Trustchain from persisted metadata. walletSyncEncryptionKey is empty (never persisted);
  * callers needing the real key must restoreTrustchain first — the empty key is only safe as its input.
@@ -111,9 +154,19 @@ export function trustchainFromMeta(meta: TrustchainMeta): Trustchain {
   return { ...meta, walletSyncEncryptionKey: "" };
 }
 
-function parseSessionData(raw: string): z.infer<typeof SessionDataSchema> {
+type ParsedSessionData = {
+  data: z.infer<typeof SessionDataSchema>;
+  invalidAgentIntentProfileIds: string[];
+};
+
+function parseSessionData(raw: string): ParsedSessionData {
+  let root: unknown;
   try {
-    return SessionDataSchema.parse(YAML.parse(raw) ?? {});
+    root = YAML.parse(raw) ?? {};
+    return {
+      data: SessionDataSchema.parse(root),
+      invalidAgentIntentProfileIds: invalidAgentIntentProfileIds(root),
+    };
   } catch {
     throw new Error(
       `Invalid session file at ${getSessionPath()}. Run \`wallet-cli session reset\` to clear it.`,
@@ -130,9 +183,11 @@ async function readSessionContent(): Promise<string | null> {
   }
 }
 
-async function readData(): Promise<z.infer<typeof SessionDataSchema>> {
+async function readData(): Promise<ParsedSessionData> {
   const content = await readSessionContent();
-  return content === null ? SessionDataSchema.parse({}) : parseSessionData(content);
+  return content === null
+    ? { data: SessionDataSchema.parse({}), invalidAgentIntentProfileIds: [] }
+    : parseSessionData(content);
 }
 
 function writeSessionData(data: Record<string, unknown>): void {
@@ -181,19 +236,25 @@ export class Session {
     private _domains: DomainEntry[],
     private _passwordSalt: string | undefined,
     private _agentIntentProfiles: AgentIntentProfileMeta[],
+    private _invalidAgentIntentProfileIds: string[] = [],
   ) {}
 
   static async read(): Promise<Session> {
-    return Session.fromData(await readData());
+    const { data, invalidAgentIntentProfileIds } = await readData();
+    return Session.fromData(data, invalidAgentIntentProfileIds);
   }
 
-  private static fromData(data: z.infer<typeof SessionDataSchema>): Session {
+  private static fromData(
+    data: z.infer<typeof SessionDataSchema>,
+    invalidAgentIntentProfileIds: string[] = [],
+  ): Session {
     return new Session(
       data.accounts,
       data.trustchain,
       data.domains,
       data.passwordSalt,
       data.agentIntentProfiles,
+      invalidAgentIntentProfileIds,
     );
   }
 
@@ -216,7 +277,7 @@ export class Session {
     if (content === null) return Session.from([]);
     const raw = YAML.parse(content) ?? {}; // invalid YAML propagates to the caller
     const strict = SessionDataSchema.safeParse(raw);
-    if (strict.success) return Session.fromData(strict.data);
+    if (strict.success) return Session.fromData(strict.data, invalidAgentIntentProfileIds(raw));
     // Corrupt-but-parseable file: keep the individually-valid ring fields, drop accounts. A
     // non-object root (bare scalar/array) salvages nothing.
     const root = typeof raw === "object" && !Array.isArray(raw) ? raw : {};
@@ -227,11 +288,21 @@ export class Session {
       ring.domains,
       ring.passwordSalt,
       ring.agentIntentProfiles,
+      invalidAgentIntentProfileIds(root),
     );
   }
 
   get accounts(): ReadonlyArray<SessionEntry> {
     return this.entries;
+  }
+
+  /**
+   * `profileId`s of `agentIntentProfiles` entries the last read dropped for failing schema
+   * validation — recoverable enough to name, not enough to load. See `agent-intent list`'s use of
+   * this: each id's OS-keychain secret (if any) is now orphaned, since nothing else records it.
+   */
+  get invalidAgentIntentProfileIds(): ReadonlyArray<string> {
+    return this._invalidAgentIntentProfileIds;
   }
 
   get trustchain(): TrustchainMeta | undefined {

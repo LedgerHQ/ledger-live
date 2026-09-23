@@ -102,14 +102,26 @@ describe("session reset — json", () => {
 });
 
 describe("session reset — corrupt file recovery", () => {
-  it("recovers an unreadable (non-YAML) session file into a clean empty session", async () => {
+  it("refuses to overwrite an unreadable (non-YAML) session file without --force", async () => {
+    const fixture = makeSessionDir([]);
+    cleanup = fixture.cleanup;
+    const path = join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml");
+    writeFileSync(path, ": : :\n\t- ["); // not valid YAML → exercises the catch-branch fallback
+    const { stderr, exitCode } = await runCli(["session", "reset"], fixture.env);
+    expect(exitCode).not.toBe(0);
+    expect(stderr).toMatch(/Agent Intent profiles.*cannot be recovered/is);
+    expect(stderr).toMatch(/--force/);
+    expect(await Bun.file(path).text()).toBe(": : :\n\t- [");
+  });
+
+  it("recovers an unreadable (non-YAML) session file into a clean empty session with --force", async () => {
     const fixture = makeSessionDir([]);
     cleanup = fixture.cleanup;
     writeFileSync(
       join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml"),
       ": : :\n\t- [", // not valid YAML → exercises the catch-branch fallback
     );
-    const { exitCode } = await runCli(["session", "reset"], fixture.env);
+    const { exitCode } = await runCli(["session", "reset", "--force"], fixture.env);
     expect(exitCode).toBe(0);
     const session = await readSessionFile(fixture.env.XDG_STATE_HOME);
     expect(session).toEqual({ accounts: [] });
