@@ -6,7 +6,11 @@ type RouteMatch = {
   headers?: Record<string, string>;
 };
 
-export type Route = RouteMatch & ({ response: unknown } | { respond: (body: unknown) => unknown });
+export type Route = RouteMatch &
+  (
+    | { response: unknown; respond?: never }
+    | { respond: (body: unknown) => unknown; response?: never }
+  );
 
 export class MockServer {
   private _server: ReturnType<typeof Bun.serve> | null = null;
@@ -29,10 +33,9 @@ export class MockServer {
               : route.match.test(pathAndQuery);
 
           if (matches && (!route.method || route.method === req.method)) {
-            const responseBody =
-              "respond" in route
-                ? await route.respond(await req.json().catch(() => undefined))
-                : route.response;
+            const responseBody = route.respond
+              ? await route.respond(await req.json().catch(() => undefined))
+              : route.response;
             if (responseBody instanceof Response) return responseBody;
             return Response.json(responseBody, {
               status: route.status ?? 200,
