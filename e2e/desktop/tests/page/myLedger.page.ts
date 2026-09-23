@@ -53,8 +53,9 @@ export class MyLedgerPage extends AppPage {
   @step("Expect the device summary to report $0")
   async expectDeviceSummary(deviceName: string) {
     await expect(this.storageCard).toContainText(deviceName);
+    await expect(this.osVersion).toContainText("OS version");
     await expect(this.osVersion).toContainText(/\d+\.\d+/);
-    await expect(this.genuineBadge).toBeVisible();
+    await expect(this.genuineBadge).toContainText("Ledger Genuine check");
   }
 
   @step("Open the app catalog tab")
