@@ -18,10 +18,10 @@ beforeEach(() => {
 });
 
 describe("track", () => {
-  it("delegates to trackEvent when tracking is enabled", () => {
+  it("delegates to trackEvent when tracking is enabled", async () => {
     register();
 
-    track("Analytics Event", { event: "props" });
+    await track("Analytics Event", { event: "props" });
 
     expect(trackEvent).toHaveBeenCalledWith({
       kind: "track",
@@ -31,20 +31,20 @@ describe("track", () => {
     });
   });
 
-  it("does not delegate when tracking is disabled", () => {
+  it("does not delegate when tracking is disabled", async () => {
     register();
     setEnabledFn(() => false);
 
-    track("Analytics Consent", { flow: "onboarding" });
+    await track("Analytics Consent", { flow: "onboarding" });
 
     expect(trackEvent).not.toHaveBeenCalled();
   });
 
-  it("delegates mandatory events even when tracking is disabled", () => {
+  it("delegates mandatory events even when tracking is disabled", async () => {
     register();
     setEnabledFn(() => false);
 
-    track("Analytics Consent", { flow: "onboarding" }, { mandatory: true });
+    await track("Analytics Consent", { flow: "onboarding" }, { mandatory: true });
 
     expect(trackEvent).toHaveBeenCalledWith({
       kind: "track",
@@ -68,7 +68,7 @@ describe("track", () => {
     const pending = track("Analytics Event", { event: "props" });
     expect(pending).toBeInstanceOf(Promise);
 
-    void pending?.then(() => {
+    void pending.then(() => {
       settled = true;
     });
     await Promise.resolve();
@@ -79,21 +79,19 @@ describe("track", () => {
     expect(settled).toBe(true);
   });
 
-  it("returns undefined when tracking is disabled and not mandatory", () => {
+  it("returns a resolved promise when tracking is disabled and not mandatory", async () => {
     register();
     setEnabledFn(() => false);
 
-    const result = track("Analytics Consent", { flow: "onboarding" });
-
-    expect(result).toBeUndefined();
+    await expect(track("Analytics Consent", { flow: "onboarding" })).resolves.toBeUndefined();
     expect(trackEvent).not.toHaveBeenCalled();
   });
 
-  it("injects the current tracking page if it has been set", () => {
+  it("injects the current tracking page if it has been set", async () => {
     register();
     currentRouteNameRef.current = "Page Market";
 
-    track("Analytics Event", { event: "props" });
+    await track("Analytics Event", { event: "props" });
 
     expect(trackEvent).toHaveBeenCalledWith({
       kind: "track",
@@ -103,11 +101,11 @@ describe("track", () => {
     });
   });
 
-  it("allows caller to override page prop", () => {
+  it("allows caller to override page prop", async () => {
     register();
     currentRouteNameRef.current = "Page from ref";
 
-    track("Analytics Event", { page: "Page from event", event: "props" });
+    await track("Analytics Event", { page: "Page from event", event: "props" });
 
     expect(trackEvent).toHaveBeenCalledWith({
       kind: "track",

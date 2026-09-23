@@ -22,16 +22,16 @@ import { getCurrentTrackingPage } from "./screenRefs";
 import { trackEvent } from "./internals/trackEvent";
 import type { Props, TrackOptions } from "./types";
 
-export function track(
+export async function track(
   event: string,
   props?: Error | Props | null,
   { mandatory = false }: TrackOptions = {},
-): void | Promise<void> {
+): Promise<void> {
   if (mandatory || isEnabled()) {
     const normalizedProps = normalizeProps(props);
     const page = getCurrentTrackingPage();
 
-    return trackEvent({
+    return await trackEvent({
       kind: "track",
       eventName: event,
       props: page ? { page, ...normalizedProps } : normalizedProps,
