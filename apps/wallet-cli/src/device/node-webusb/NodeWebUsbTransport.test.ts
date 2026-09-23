@@ -19,6 +19,7 @@ import { firstValueFrom, type Subscription } from "rxjs";
 import { NodeWebUsbTransport, nodeWebUsbTransportFactory } from "./NodeWebUsbTransport";
 import type { NodeWebUsbApduSenderDependencies } from "./NodeWebUsbApduSender";
 import { readUsbAccessDiagnostics, resetUsbAccessDiagnostics } from "../usb-access-diagnostics";
+import { resolveUsbTimeoutLikelyCause } from "../classify-device-error";
 
 function flushTasks(): Promise<void> {
   return new Promise(resolve => queueMicrotask(resolve));
@@ -3074,6 +3075,62 @@ describe("USB access diagnostics recording (LIVE-31394)", () => {
     expect(diagnostics.scanCompleted).toBe(true);
     expect(diagnostics.ledgerVendorSeen).toBe(false);
     expect(diagnostics.failure).toBeUndefined();
+
+    await transport.destroy();
+  });
+
+  it("does not blame a sandbox for a Ledger unplugged between enumeration and open", async () => {
+    let devices: unknown[] = [createNativeLedgerDevice()];
+    const transport = createTestTransport(
+      undefined,
+      undefined,
+      createPlatformBindings({
+        platform: "linux",
+        getDeviceList: () => devices as never[],
+        createWebUsbDevice: async () => {
+          devices = [];
+          throw new Error("LIBUSB_ERROR_NO_DEVICE");
+        },
+      }),
+    );
+
+    collectDeviceEmissions(transport);
+    await waitFor(() => {
+      expect(readUsbAccessDiagnostics().failure?.kind).toBe("device_unreachable");
+    });
+
+    await transport.handleDeviceDisconnection(createNativeLedgerDevice() as never);
+
+    await waitFor(() => {
+      expect(resolveUsbTimeoutLikelyCause()).toBe("device_not_present");
+    });
+
+    await transport.destroy();
+  });
+
+  it("records the refusal when a Ledger plugged in after the scan cannot be opened", async () => {
+    const transport = createTestTransport(
+      undefined,
+      undefined,
+      createPlatformBindings({
+        platform: "linux",
+        getDeviceList: () => [] as never[],
+        createWebUsbDevice: async () => {
+          throw new Error("initialize error: Error: LIBUSB_ERROR_ACCESS");
+        },
+      }),
+    );
+
+    collectDeviceEmissions(transport);
+    await waitFor(() => {
+      expect(readUsbAccessDiagnostics().scanCompleted).toBe(true);
+    });
+
+    await transport.handleDeviceConnection(createNativeLedgerDevice() as never);
+
+    const diagnostics = readUsbAccessDiagnostics();
+    expect(diagnostics.ledgerVendorSeen).toBe(true);
+    expect(diagnostics.failure?.kind).toBe("access_denied");
 
     await transport.destroy();
   });

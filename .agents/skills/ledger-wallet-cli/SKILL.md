@@ -20,8 +20,8 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 > `agent_hint` (present whenever the cause is host-side), `user_hint`, and `docs` (the link to this
 > skill). Read `likely_cause` before acting — it distinguishes "your sandbox is blocking USB" from
 > "the device is unplugged". It appears on both USB error codes: `error.code: "USB_TIMEOUT"` for a
-> device that never answered, and `error.code: "disconnected"` (exit 3) when no Ledger was found on
-> the bus at all. Note the NDJSON progress events (`{"type":"device-state",…}`) keep using the
+> device that never answered, and `error.code: "disconnected"` (exit 3) whenever the Ledger is not
+> on the bus. Note the NDJSON progress events (`{"type":"device-state",…}`) keep using the
 > internal code `"timeout"`; only the final `error.code` is `USB_TIMEOUT`.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.

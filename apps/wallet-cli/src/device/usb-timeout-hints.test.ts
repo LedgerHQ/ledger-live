@@ -20,12 +20,15 @@ describe("agentHintFor", () => {
   });
 
   it("is emitted without sniffing for an agent, so an undetected agent still gets it", () => {
-    const before = agentHintFor("sandbox_blocking_usb");
-    process.env.CLAUDECODE = "1";
+    const saved = process.env.CLAUDECODE;
     try {
+      delete process.env.CLAUDECODE;
+      const before = agentHintFor("sandbox_blocking_usb");
+      process.env.CLAUDECODE = "1";
       expect(agentHintFor("sandbox_blocking_usb")).toBe(before);
     } finally {
-      delete process.env.CLAUDECODE;
+      if (saved === undefined) delete process.env.CLAUDECODE;
+      else process.env.CLAUDECODE = saved;
     }
   });
 
