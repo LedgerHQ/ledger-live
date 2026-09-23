@@ -2,6 +2,7 @@ import type { PayCardTransaction } from "@domain/api-card-management";
 import { useTranslation } from "@shared/i18n";
 import { copyToClipboard } from "./copyToClipboard";
 import {
+  formatCashback,
   formatFundingSources,
   formatMaskedPanLast4,
   formatMerchantName,
@@ -55,6 +56,15 @@ export function useCardTransactionDetailViewModel({
       id: "fundingSource",
       label: t("payTab.cardTransactions.detail.fundingSource"),
       value: fundingSource,
+    });
+  }
+
+  const cashback = formatCashback(transaction.cashback, formatters?.amount);
+  if (cashback) {
+    rows.push({
+      id: "cashback",
+      label: t("payTab.cardTransactions.detail.cashback"),
+      value: cashback,
     });
   }
 

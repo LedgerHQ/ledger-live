@@ -1,5 +1,6 @@
 import type {
   PayCardTransaction,
+  PayCardTransactionCashback,
   PayCardTransactionFundingSource,
 } from "@domain/api-card-management";
 import type { FormatCardTransactionAmount, FormatCardTransactionDate } from "../../../types";
@@ -34,6 +35,15 @@ export function formatFundingSources(
       formatAmount(signedValue(amount, sign), currency, "crypto"),
     )
     .join(" · ");
+}
+
+export function formatCashback(
+  cashback: PayCardTransactionCashback | undefined,
+  formatAmount: FormatCardTransactionAmount = defaultFormatAmount,
+): string | undefined {
+  if (!cashback) return undefined;
+
+  return formatAmount(cashback.amount, cashback.currency, "crypto");
 }
 
 export function formatMerchantName(merchantNameLocation: string): string {

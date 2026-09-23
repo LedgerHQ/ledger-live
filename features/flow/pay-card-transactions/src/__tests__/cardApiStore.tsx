@@ -27,6 +27,7 @@ export const DETAIL_COPY = {
   card: "Card",
   cardInfo: "The last four digits of the card used for this payment.",
   fundingSource: "Funding source",
+  cashback: "Cashback",
   transactionId: "Transaction ID",
   copyTransactionId: "Copy transaction ID",
   today: "Today {{time}}",
