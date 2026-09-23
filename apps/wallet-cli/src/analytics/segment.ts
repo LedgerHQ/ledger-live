@@ -1,5 +1,6 @@
 import { Analytics } from "@segment/analytics-node";
 import os from "node:os";
+import { closeAndFlush, setAnalytics, setEnabledFn, track as sharedTrack } from "@shared/analytics";
 import pkg from "../../package.json" with { type: "json" };
 
 export const WALLET_CLI_USER_ID = "f3c373cd-c661-46bb-8577-3bc2bce98b5b";
@@ -28,56 +29,57 @@ export type AnalyticsClient = {
   closeAndFlush(): Promise<unknown>;
 };
 
-let analytics: AnalyticsClient | null = null;
+let client: AnalyticsClient | null = null;
+
+const unregisterAnalytics = (): void => {
+  client = null;
+  setAnalytics(undefined);
+  setEnabledFn(undefined);
+};
 
 export const startAnalytics = (): void => {
-  if (analytics) return;
+  if (client) return;
 
   try {
-    analytics = new Analytics({ writeKey: WALLET_CLI_WRITE_KEY });
-    analytics.identify({
+    const segmentClient = new Analytics({ writeKey: WALLET_CLI_WRITE_KEY });
+    client = segmentClient;
+    setEnabledFn(() => true);
+    setAnalytics({
+      track: (event, properties) =>
+        segmentClient.track({
+          userId: WALLET_CLI_USER_ID,
+          event,
+          properties: {
+            ...extraProperties(),
+            ...(properties ?? {}),
+          },
+          context: getContext(),
+        }),
+      closeAndFlush: async () => {
+        await segmentClient.closeAndFlush();
+      },
+    });
+    segmentClient.identify({
       userId: WALLET_CLI_USER_ID,
       traits: extraProperties(),
       context: getContext(),
     });
   } catch {
-    analytics = null;
+    unregisterAnalytics();
   }
 };
 
-export const track = (eventName: string, properties?: Record<string, unknown> | null): void => {
-  if (!analytics) return;
-
-  analytics.track({
-    userId: WALLET_CLI_USER_ID,
-    event: eventName,
-    properties: {
-      ...extraProperties(),
-      ...(properties ?? {}),
-    },
-    context: getContext(),
-  });
-};
-
-export const updateIdentify = (traits?: Record<string, unknown>): void => {
-  if (!analytics) return;
-
-  analytics.identify({
-    userId: WALLET_CLI_USER_ID,
-    traits: {
-      ...extraProperties(),
-      ...(traits ?? {}),
-    },
-    context: getContext(),
-  });
-};
+export const track = (
+  eventName: string,
+  properties?: Record<string, unknown> | null,
+): void | Promise<void> => sharedTrack(eventName, properties);
 
 export async function disposeAnalytics(): Promise<void> {
-  const current = analytics;
-  analytics = null;
   try {
-    await current?.closeAndFlush();
+    await closeAndFlush();
   } catch {
     // ignore
+  } finally {
+    unregisterAnalytics();
   }
 }
