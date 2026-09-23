@@ -24,6 +24,7 @@ export type AgentIntentMockOverrides = {
   completionAuth?: Partial<Record<(typeof COMPLETION_AUTH_KEYS)[number], AnyFn>>;
   lkrpSdk?: Partial<Record<(typeof LKRP_SDK_KEYS)[number], AnyFn>>;
   cloudSync?: Partial<Record<(typeof CLOUD_SYNC_KEYS)[number], AnyFn>>;
+  tokenLookup?: Partial<Record<(typeof TOKEN_LOOKUP_KEYS)[number], AnyFn>>;
 };
 
 const SDK_KEYS = [
@@ -33,6 +34,7 @@ const SDK_KEYS = [
   "createAgentEnrollmentChannelHost",
   "createAgentRecoveryRequest",
   "createAgentRecoveryUrl",
+  "createAgentIntentClient",
 ] as const;
 
 const COMPLETION_AUTH_KEYS = [
@@ -51,10 +53,14 @@ const LKRP_SDK_KEYS = ["createAgentLedgerSyncSdk"] as const;
 
 const CLOUD_SYNC_KEYS = ["pullSyncedAccounts", "mergeSyncedAccounts"] as const;
 
+const TOKEN_LOOKUP_KEYS = ["findEthereumToken"] as const;
+
 // Snapshot the genuine exports into PLAIN objects before any mock is installed: `mock.module` re-binds
 // the live namespace to the mock, so a pass-through reading from the namespace would recurse forever.
 const realSessionStore = { ...(await import("../../../session/session-store")) };
 const realSdk = { ...(await import("@ledgerhq/agent-intent-sdk")) } as Record<string, unknown>;
+/** The genuine SDK, for tests that wrap a real SDK function (e.g. a real client over a fake fetch). */
+export const realAgentIntentSdk = { ...(await import("@ledgerhq/agent-intent-sdk")) };
 const realKeychain = { ...(await import("../../../key-ring/agent-intent-keychain")) } as Record<
   string,
   unknown
@@ -64,6 +70,10 @@ const realCompletionAuth = {
 } as Record<string, unknown>;
 const realLkrpSdk = { ...(await import("../../../key-ring/lkrp-sdk")) } as Record<string, unknown>;
 const realCloudSync = { ...(await import("../../../ledger-sync/cloud-sync-accounts")) } as Record<
+  string,
+  unknown
+>;
+const realTokenLookup = { ...(await import("../../../agent-intent/token-lookup")) } as Record<
   string,
   unknown
 >;
@@ -130,6 +140,14 @@ function installMocks(): void {
       realCloudSync,
       CLOUD_SYNC_KEYS,
       key => active?.cloudSync?.[key as (typeof CLOUD_SYNC_KEYS)[number]],
+    ),
+  }));
+  mock.module("../../../agent-intent/token-lookup", () => ({
+    ...realTokenLookup,
+    ...gatedMembers(
+      realTokenLookup,
+      TOKEN_LOOKUP_KEYS,
+      key => active?.tokenLookup?.[key as (typeof TOKEN_LOOKUP_KEYS)[number]],
     ),
   }));
 }
