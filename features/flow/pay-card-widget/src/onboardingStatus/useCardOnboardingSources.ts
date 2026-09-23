@@ -25,7 +25,10 @@ export type CardOnboardingSources = {
    * lists this one.
    */
   readonly cardAddedToDigitalWallet: boolean | undefined;
+  /** The first read only: after it, every signal has an answer to show. */
   readonly isLoading: boolean;
+  /** Any read in flight, refetches included, so the signals may be stale. */
+  readonly isFetching: boolean;
   readonly isError: boolean;
   readonly hasSourceError: boolean;
   readonly refresh: () => void;
@@ -87,6 +90,13 @@ export function useCardOnboardingSources({
     refresh,
     isLoading:
       user.isLoading || cardStatus.isLoading || transactions.isLoading || linkedWallets.isLoading,
+    // Every read in flight, refetches included: a consumer acting on the signals has to wait for
+    // them to settle, while `isLoading` only covers the first read.
+    isFetching:
+      user.isFetching ||
+      cardStatus.isFetching ||
+      transactions.isFetching ||
+      linkedWallets.isFetching,
     // A step that cannot be answered is reported as not done, so only a failure the holder can do
     // nothing about is surfaced: the account read itself.
     isError: user.isError,

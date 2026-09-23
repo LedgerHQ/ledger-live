@@ -49,7 +49,7 @@ function setupMocks({
     refetch: refetchUser,
     data: verificationState === null ? undefined : { verificationState },
     isLoading: isUserLoading,
-    isFetching: isUserFetching,
+    isFetching: isUserLoading || isUserFetching,
     isError: isUserError,
   } as unknown as ReturnType<typeof useGetUserQuery>);
 
@@ -57,7 +57,7 @@ function setupMocks({
     refetch: refetchCardStatus,
     data: hasCard ? { status: cardStatus } : undefined,
     isLoading: isCardStatusLoading,
-    isFetching: isCardStatusFetching,
+    isFetching: isCardStatusLoading || isCardStatusFetching,
     isError: isCardStatusError,
   } as unknown as ReturnType<typeof useGetCardStatusQuery>);
 
@@ -65,7 +65,7 @@ function setupMocks({
     refetch: refetchTransactions,
     data: { pages: [transactions], pageParams: [0] },
     isLoading: areTransactionsLoading,
-    isFetching: areTransactionsFetching,
+    isFetching: areTransactionsLoading || areTransactionsFetching,
     isError: areTransactionsError,
   } as unknown as ReturnType<typeof useGetCardTransactionsInfiniteQuery>);
 
@@ -73,7 +73,7 @@ function setupMocks({
     refetch: refetchWallets,
     wallets: balances.map((balance, index) => ({ id: `w${index}`, balance })),
     isLoading: areWalletsLoading,
-    isFetching: areWalletsFetching,
+    isFetching: areWalletsLoading || areWalletsFetching,
     isError: areWalletsError,
   } as unknown as ReturnType<typeof useCardLinkedWallets>);
 }
@@ -229,16 +229,30 @@ describe("useCardOnboardingStatus", () => {
       ["the card", { isCardStatusLoading: true }],
       ["the transactions", { areTransactionsLoading: true }],
       ["the wallets", { areWalletsLoading: true }],
-    ])("is loading until %s has answered for the first time", (_source, loading) => {
+    ])("is loading while %s has its first read in flight", (_source, loading) => {
       setupMocks(loading);
 
       expect(stepsById().status.isLoading).toBe(true);
+      expect(stepsById().status.isFetching).toBe(true);
     });
 
-    it("is not loading once every source has answered", () => {
+    it.each([
+      ["the account", { isUserFetching: true }],
+      ["the card", { isCardStatusFetching: true }],
+      ["the transactions", { areTransactionsFetching: true }],
+      ["the wallets", { areWalletsFetching: true }],
+    ])("keeps its answers on screen while %s refetches", (_source, fetching) => {
+      setupMocks(fetching);
+
+      expect(stepsById().status.isLoading).toBe(false);
+      expect(stepsById().status.isFetching).toBe(true);
+    });
+
+    it("is neither loading nor fetching once every source has answered", () => {
       setupMocks();
 
       expect(stepsById().status.isLoading).toBe(false);
+      expect(stepsById().status.isFetching).toBe(false);
     });
 
     it("is not loading during a refetch", () => {
