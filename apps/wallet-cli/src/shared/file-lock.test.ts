@@ -82,7 +82,9 @@ describe("withFileLock", () => {
 
   it("steals a lock left behind by a dead process instead of waiting forever", async () => {
     const path = lockPath();
-    writeFileSync(path, `${deadPid()}:stale-token`);
+    // A validly-*shaped* token (this module's own 16-hex-char nonce format) — this test is about
+    // pid-liveness specifically, kept distinct from the malformed-token tests further down.
+    writeFileSync(path, `${deadPid()}:a1b2c3d4e5f60718`);
 
     const result = await withFileLock(path, () => "acquired");
     expect(result).toBe("acquired");
@@ -91,9 +93,10 @@ describe("withFileLock", () => {
   it("never steals a lock held by a live process, even if fn runs long", async () => {
     const path = lockPath();
     // A long-lived process, not this test's own pid (which withFileLock would treat as alive
-    // trivially — the point is proving liveness is checked by asking the OS, not assumed).
+    // trivially — the point is proving liveness is checked by asking the OS, not assumed). A
+    // validly-*shaped* token, same reasoning as the dead-process test above.
     const holder = Bun.spawn([process.execPath, "-e", "await new Promise(() => {})"]);
-    writeFileSync(path, `${holder.pid}:not-us`);
+    writeFileSync(path, `${holder.pid}:a1b2c3d4e5f60718`);
 
     try {
       // Short acquire timeout — this test is about the "give up and report" path, not about
@@ -121,6 +124,27 @@ describe("withFileLock", () => {
     // Written directly, not via withFileLock's own write-then-link — simulates hand corruption or a
     // foreign writer, not the empty-file-in-flight window that write-then-link exists to prevent.
     writeFileSync(path, "not a valid token at all");
+
+    const result = await withFileLock(path, () => "acquired");
+    expect(result).toBe("acquired");
+  });
+
+  it("treats a bare-pid token (no nonce) as abandoned even when that pid happens to be alive", async () => {
+    const path = lockPath();
+    // This test's own pid is guaranteed alive — proving a malformed token isn't treated as a real
+    // live holder just because its pid prefix happens to match some unrelated running process.
+    writeFileSync(path, `${process.pid}`);
+
+    const result = await withFileLock(path, () => "acquired");
+    expect(result).toBe("acquired");
+  });
+
+  it("treats a pid-plus-non-hex-trailer token as abandoned too, not just a bare pid", async () => {
+    const path = lockPath();
+    // A colon followed by *something* non-empty isn't enough to count as a real nonce — it must be
+    // this module's own 16-hex-char shape, or a value like this (this test's own, guaranteed-alive
+    // pid, plus an arbitrary trailer) would otherwise wrongly read as a live holder.
+    writeFileSync(path, `${process.pid}:not-a-nonce`);
 
     const result = await withFileLock(path, () => "acquired");
     expect(result).toBe("acquired");

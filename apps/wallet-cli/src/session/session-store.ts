@@ -40,10 +40,13 @@ const DomainEntrySchema = z.object({
 // dropping any profile already persisted with that value on next session load (see
 // `ringFields.agentIntentProfiles`'s `.catch(() => [])` below).
 export const AGENT_INTENT_ENVIRONMENTS = ["staging", "production"] as const;
-// Assignability check only, never read — `""` is never a real AgentIntentEnvironment value.
-const _agentIntentEnvironmentsExhaustive: (typeof AGENT_INTENT_ENVIRONMENTS)[number] =
-  "" as AgentIntentEnvironment;
-void _agentIntentEnvironmentsExhaustive;
+// Type-only assignability check, no runtime footprint: `AssertTrue<T>` only accepts `true` itself,
+// so this fails to compile unless every branch of the distributed conditional resolves to `true` —
+// i.e. unless every member of `AgentIntentEnvironment` is one this array lists.
+type AssertTrue<T extends true> = T;
+type _AgentIntentEnvironmentsExhaustive = AssertTrue<
+  AgentIntentEnvironment extends (typeof AGENT_INTENT_ENVIRONMENTS)[number] ? true : false
+>;
 
 // Non-secret Agent Intent profile metadata only. The profile's private key never lives here — it
 // is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`).
@@ -236,7 +239,7 @@ export class Session {
     private _domains: DomainEntry[],
     private _passwordSalt: string | undefined,
     private _agentIntentProfiles: AgentIntentProfileMeta[],
-    private _invalidAgentIntentProfileIds: string[] = [],
+    private readonly _invalidAgentIntentProfileIds: string[] = [],
   ) {}
 
   static async read(): Promise<Session> {

@@ -1,5 +1,12 @@
+// Matches literal `user:pass@` userinfo even when `value` isn't a well-formed URL `new URL()` can
+// parse — e.g. a truncated/hand-edited `session.yaml` entry like `https://user:secret@` (a real
+// example: WHATWG rejects that outright since it has no host). Fails closed rather than open: the
+// point of this pattern is to catch exactly the inputs `new URL()` can't.
+const USERINFO_PATTERN = /:\/\/[^/\s@]*@/;
+
 /** Strips `user:pass@` from a URL before it's ever displayed — `agent-intent list`/`show` must
- * never leak URL credentials. */
+ * never leak URL credentials, including from a value that isn't a well-formed URL at all (a
+ * corrupted or hand-edited session record isn't guaranteed to be one). */
 export function redactUrlCredentials(value: string): string {
   try {
     const url = new URL(value);
@@ -8,7 +15,7 @@ export function redactUrlCredentials(value: string): string {
     url.password = "";
     return url.toString();
   } catch {
-    return value;
+    return USERINFO_PATTERN.test(value) ? value.replace(USERINFO_PATTERN, "://") : value;
   }
 }
 
