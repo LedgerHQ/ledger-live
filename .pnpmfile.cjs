@@ -81,9 +81,6 @@ function readPackage(pkg, context) {
       addPeerDependencies("react-native-easy-markdown", {
         "prop-types": "*",
       }),
-      addPeerDependencies("asyncstorage-down", {
-        "@react-native-async-storage/async-storage": "*",
-      }),
       addDependencies("@actions/github", {
         undici: "*",
       }),
