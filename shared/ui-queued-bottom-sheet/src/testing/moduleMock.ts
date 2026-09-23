@@ -15,3 +15,4 @@ export { useBottomSheetBackgroundTone } from "../hooks/useBottomSheetBackgroundT
 export { useBottomSheetKeyboardAwareInputMock as useBottomSheetKeyboardAwareInput } from "./useBottomSheetKeyboardAwareInputMock";
 // The double renders the footer inline with the content, so nothing has to be reserved for it.
 export { useBottomSheetFooterInset } from "../contexts/BottomSheetFooterInsetContext";
+export { useBottomSheetBottomInset } from "../contexts/BottomSheetBottomInsetContext";
