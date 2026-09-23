@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { type MockServerDevice } from "@ledgerhq/live-e2e-shared/mockServer/types";
 import { deviceUnderTest } from "@ledgerhq/live-e2e-shared/mockServer/devices";
+import { withInstallHashes } from "@ledgerhq/live-e2e-shared/mockServer/installedApps";
 import { mockServerEnv } from "@ledgerhq/live-e2e-shared/mockServer/launchEnv";
 import {
   assertMockServerReachable,
@@ -42,7 +43,16 @@ export const test = base.extend<MockServerFixtures>({
 
   env: async ({ mockDevice }, use) => {
     await assertMockServerReachable();
-    await use(await mockServerEnv({ devices: [mockDevice] }));
+
+    // `apps` entries that do not pin a hash get one looked up for the device under test,
+    // so a seeded session still follows SPECULOS_DEVICE.
+    const devices = [
+      mockDevice.apps?.length
+        ? { ...mockDevice, apps: await withInstallHashes(mockDevice.modelId, mockDevice.apps) }
+        : mockDevice,
+    ];
+
+    await use(await mockServerEnv({ devices }));
   },
 });
 

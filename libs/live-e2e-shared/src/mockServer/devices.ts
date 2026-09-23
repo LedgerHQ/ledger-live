@@ -29,7 +29,7 @@ export const MOCK_NANO_GEN_5: MockServerDevice = {
 
 export const MOCK_NANOX: MockServerDevice = {
   name: "Ledger Nano X",
-  device_type: "nanox",
+  device_type: "nanoX",
   connectivity_type: "USB",
   onboarded: true,
   modelId: DeviceModelId.nanoX,
@@ -37,7 +37,7 @@ export const MOCK_NANOX: MockServerDevice = {
 
 export const MOCK_NANOSP: MockServerDevice = {
   name: "Ledger Nano S Plus",
-  device_type: "nanosp",
+  device_type: "nanoSP",
   connectivity_type: "USB",
   onboarded: true,
   modelId: DeviceModelId.nanoSP,
@@ -45,7 +45,7 @@ export const MOCK_NANOSP: MockServerDevice = {
 
 export const MOCK_NANOS: MockServerDevice = {
   name: "Ledger Nano S",
-  device_type: "nanos",
+  device_type: "nanoS",
   connectivity_type: "USB",
   onboarded: true,
   modelId: DeviceModelId.nanoS,
