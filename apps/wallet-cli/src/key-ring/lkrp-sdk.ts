@@ -10,7 +10,7 @@ import {
   type LedgerSyncEnvironment,
 } from "./constants";
 
-/** `applicationId` defaults to wallet-cli's own `ring` application (17). Ledger Sync (NTTVS-728)
+/** `applicationId` defaults to wallet-cli's own `ring` application (17). Ledger Sync
  * passes `LEDGER_SYNC_APPLICATION_ID` (16) instead so the two never share a trustchain application.
  * `environment` defaults to "production" — `ring` never passes it (it has no staging support), only
  * Ledger Sync does, always deriving it from the session's persisted `ledgerSyncEnvironment` rather

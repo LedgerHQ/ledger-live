@@ -67,7 +67,7 @@ export type RingDestroyResult = {
   memberEjected?: boolean;
 };
 
-/** Outcome of `ledger-sync destroy` (NTTVS-728) — same shape as RingDestroyResult, kept separate
+/** Outcome of `ledger-sync destroy` — same shape as RingDestroyResult, kept separate
  * because the two applications (`ring` vs Ledger Sync) must never be conflated. */
 export type LedgerSyncDestroyResult = RingDestroyResult;
 
@@ -302,7 +302,7 @@ export interface CommandOutput {
   /** Final `agent-intent recover` result once the relayed completion is verified and saved. */
   agentIntentRecovered(result: AgentIntentRecovered): void;
 
-  // ---- Ledger Sync (NTTVS-728) ----
+  // ---- Ledger Sync ----
 
   /** Output the result of `ledger-sync enroll` (human: member/root lines; json: envelope). */
   ledgerSyncEnroll(result: { memberName: string; rootId: string }): void;

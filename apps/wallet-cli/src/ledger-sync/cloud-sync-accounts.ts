@@ -32,8 +32,17 @@ function cloudSyncApiBaseUrl(environment: LedgerSyncEnvironment): string {
 }
 
 // ---------------------------------------------------------------------------
-// Pulling the raw synced document (network + auth; not unit-tested directly)
+// Pulling the raw synced document (network + auth)
 // ---------------------------------------------------------------------------
+
+type CloudSyncSdkOptions = ConstructorParameters<typeof CloudSyncSDK<Record<string, unknown>>>[0];
+
+/** The part of `CloudSyncSDK` a pull needs; injectable so the pull logic is testable offline. */
+export type CreateCloudSyncSdk = (options: CloudSyncSdkOptions) => {
+  pull: (trustchain: Trustchain, memberCredentials: MemberCredentials) => Promise<unknown>;
+};
+
+const createCloudSyncSdk: CreateCloudSyncSdk = options => new CloudSyncSDK(options);
 
 export type PullResult =
   | { status: "new-data"; accounts: unknown[]; version: number }
@@ -42,7 +51,7 @@ export type PullResult =
 
 /**
  * Pull the Ledger Sync account-list document for the given trustchain/member. Read-only: this
- * ticket (NTTVS-728) never pushes wallet-cli-local accounts back to Ledger Sync.
+ * never pushes wallet-cli-local accounts back to Ledger Sync.
  *
  * The envelope is intentionally NOT schema-validated as a whole here — a single malformed entry
  * inside `accounts` must never invalidate the rest of the document. Per-entry validation happens in
@@ -54,6 +63,7 @@ export async function pullSyncedAccounts(
   trustchainSdk: TrustchainSDK,
   environment: LedgerSyncEnvironment,
   getCurrentVersion: () => number | undefined,
+  createSdk: CreateCloudSyncSdk = createCloudSyncSdk,
 ): Promise<PullResult> {
   let result: PullResult = { status: "up-to-date" };
 
@@ -70,7 +80,7 @@ export async function pullSyncedAccounts(
     };
   };
 
-  const sdk = new CloudSyncSDK<Record<string, unknown>>({
+  const sdk = createSdk({
     apiBaseUrl: cloudSyncApiBaseUrl(environment),
     slug: LIVE_SLUG,
     trustchainSdk,
