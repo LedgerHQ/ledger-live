@@ -57,7 +57,6 @@ function readPackage(pkg, context) {
         "jest-environment-node": "*",
         "jest-circus": "*",
       }),
-      addPeerDependencies("@svgr/core", { "@svgr/plugin-svgo": "*" }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
 
       addPeerDependencies(/^expo-/, {

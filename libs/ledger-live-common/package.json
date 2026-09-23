@@ -436,7 +436,6 @@
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@shared/api-services": "workspace:^",
     "@solana/web3.js": "catalog:",
-    "@svgr/core": "^5.5.0",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@tanstack/react-query": "^5.28.9",
