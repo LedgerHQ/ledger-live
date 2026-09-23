@@ -18,7 +18,7 @@ export type RewardProps = Readonly<{
 }>;
 
 export type RewardViewProps = Readonly<{
-  /** The reward in its own asset, e.g. `10.32 USDC`. */
+  /** The reward in its own asset, e.g. `0.00294697 BTC`. */
   amount: string;
   /** The same reward in the counter-value currency, or `null` when nothing could price it. */
   countervalue: string | null;

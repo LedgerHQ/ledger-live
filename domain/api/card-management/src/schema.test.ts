@@ -7,7 +7,7 @@ import {
   PayCardLinkWalletResponseSchema,
   PayCardLinkedWalletSchema,
   PayCardLogoutResponseSchema,
-  PayCardRewardWalletResponseSchema,
+  PayCardCashbackResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardDetailsCssSchema,
@@ -595,45 +595,48 @@ describe("PayCardLinkedWalletSchema", () => {
   });
 });
 
-describe("PayCardRewardWalletResponseSchema", () => {
-  // The provider's own example response.
+describe("PayCardCashbackResponseSchema", () => {
   const documented = {
-    id: "098aeb90-e7f7-4f81-bc2e-4963330122c5",
-    balance: "45.75",
-    currency: "usdc",
-    isWithdrawable: true,
+    amount: "0",
+    currency: "BXX",
+    network: "ethereum",
+    ratePercent: "2",
   };
 
-  it("reads the documented wallet", () => {
-    expect(PayCardRewardWalletResponseSchema.parse(documented)).toEqual(documented);
+  it("reads the documented cashback", () => {
+    expect(PayCardCashbackResponseSchema.parse(documented)).toEqual(documented);
   });
 
-  it("keeps the balance a string, so its precision survives", () => {
-    const precise = { ...documented, balance: "9007199254740993.000001" };
+  it("keeps the amount a string, so its precision survives", () => {
+    const precise = { ...documented, amount: "9007199254740993.000001" };
 
-    expect(PayCardRewardWalletResponseSchema.parse(precise).balance).toBe(
-      "9007199254740993.000001",
-    );
+    expect(PayCardCashbackResponseSchema.parse(precise).amount).toBe("9007199254740993.000001");
   });
 
   it("drops the keys the wire contract does not declare", () => {
-    expect(PayCardRewardWalletResponseSchema.parse({ ...documented, type: "REWARD" })).toEqual(
+    expect(PayCardCashbackResponseSchema.parse({ ...documented, status: "EARNED" })).toEqual(
       documented,
     );
   });
 
-  it("rejects an answer that does not say whether the rewards can be withdrawn", () => {
-    const { isWithdrawable: _isWithdrawable, ...withoutFlag } = documented;
+  it.each(["currency", "network"] as const)("reads a cashback whose %s is absent or null", key => {
+    const { [key]: _omitted, ...withoutKey } = documented;
 
-    expect(() => PayCardRewardWalletResponseSchema.parse(withoutFlag)).toThrow();
+    expect(PayCardCashbackResponseSchema.parse(withoutKey)).toEqual(withoutKey);
+    expect(PayCardCashbackResponseSchema.parse({ ...documented, [key]: null })).toEqual({
+      ...documented,
+      [key]: null,
+    });
   });
 
-  it("rejects a wallet with no id, balance or currency", () => {
-    expect(() => PayCardRewardWalletResponseSchema.parse({ ...documented, id: "" })).toThrow();
-    expect(() => PayCardRewardWalletResponseSchema.parse({ ...documented, balance: "" })).toThrow();
-    expect(() =>
-      PayCardRewardWalletResponseSchema.parse({ ...documented, currency: "" }),
-    ).toThrow();
+  it("rejects an empty network", () => {
+    expect(() => PayCardCashbackResponseSchema.parse({ ...documented, network: "" })).toThrow();
+  });
+
+  it("rejects an empty amount, currency or rate", () => {
+    expect(() => PayCardCashbackResponseSchema.parse({ ...documented, amount: "" })).toThrow();
+    expect(() => PayCardCashbackResponseSchema.parse({ ...documented, currency: "" })).toThrow();
+    expect(() => PayCardCashbackResponseSchema.parse({ ...documented, ratePercent: "" })).toThrow();
   });
 });
 

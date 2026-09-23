@@ -23,8 +23,11 @@ export const CARD_COPY = {
   numbersHide: "Hide",
   numbersFailed: "Couldn't load card numbers",
   numbersImageAlt: "Card numbers",
-  reward: "Total cashback",
+  reward: "Total cashback · {{ratePercent}}% in {{ticker}}",
 } as const;
+
+/** {@link CARD_COPY.reward} as the banner renders it for the mocked cashback. */
+export const REWARD_SUBTITLE = "Total cashback · 1% in BTC";
 
 export const ADD_TO_WALLET_COPY = {
   entry: "Add to {{wallet}} Pay",

@@ -4,11 +4,11 @@ import {
   mockPayCardStatus,
   mockPayCardUser,
 } from "@domain/api-card-management/mock/card-onboarding-status";
+import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashback";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
   mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
-  mockPayCardRewardWallet,
 } from "@domain/api-card-management/mock/card-wallets";
 import { renderPayTabWithCardApi } from "./shared";
 
@@ -21,7 +21,7 @@ describe("Pay Card asset history integration", () => {
       http.get(/\/v1\/card\/status$/, () => HttpResponse.json(mockPayCardStatus())),
       http.get(/\/v1\/user$/, () => HttpResponse.json(mockPayCardUser(true))),
       http.get(/\/v1\/card\/transactions$/, () => HttpResponse.json(mockPayCardTransactions())),
-      http.get(/\/v1\/wallet\/reward$/, () => HttpResponse.json(mockPayCardRewardWallet())),
+      http.get(/\/v1\/card\/cashback$/, () => HttpResponse.json(mockPayCardCashback())),
       http.get(/\/v1\/wallet\/internal$/, () => HttpResponse.json(internalWallets)),
       http.get(/\/v1\/wallet\/internal\/card_linked$/, () => HttpResponse.json(linkedWallets)),
     );
