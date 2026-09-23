@@ -4,6 +4,7 @@ import { useTranslation } from "@shared/i18n";
 import type { CardTransactionFormatters, CardTransactionItem } from "../../types";
 import {
   formatCardTransactionTime,
+  formatCashback,
   formatFundingSources,
   formatMerchantName,
   formatSignedAmount,
@@ -35,7 +36,6 @@ export function useHistoryRowViewModel(
     const fundingSources = transaction.fundingSources;
     const fundingAll = formatFundingSources(fundingSources, formatters?.amount);
     const hasMultipleFundingSources = (fundingSources?.length ?? 0) > 1;
-    const cashback = transaction.cashback;
 
     return {
       id: transaction.id,
@@ -46,10 +46,7 @@ export function useHistoryRowViewModel(
       time: timeLabel,
       statusLabel: isUnsuccessful ? statusLabel : undefined,
       statusLabelTone: isUnsuccessful ? statusLabelToneFor(transaction.status) : undefined,
-      cashback: cashback
-        ? (formatters?.amount?.(cashback.amount, cashback.currency, "crypto") ??
-          `${cashback.amount} ${cashback.currency}`)
-        : NO_CASHBACK,
+      cashback: formatCashback(transaction.cashback, formatters?.amount) ?? NO_CASHBACK,
       fundingLabel: hasMultipleFundingSources
         ? t("payTab.cardTransactions.history.paidWithAssets", { count: fundingSources?.length })
         : fundingAll,

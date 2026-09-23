@@ -5,9 +5,10 @@ import { CATEGORY_LABELS, DETAIL_COPY, cardApiWrapper } from "../../../__tests__
 import { useCardTransactionDetailViewModel } from "./useCardTransactionDetailViewModel";
 
 const transaction = PayCardTransactionSchema.parse(mockPayCardTransactions()[0]);
+const CASHBACK = `${transaction.cashback?.amount} ${transaction.cashback?.currency}`;
 
 describe("useCardTransactionDetailViewModel", () => {
-  it("builds the amount, status, card, funding source and transaction id rows", () => {
+  it("builds the amount, status, card, funding source, cashback and transaction id rows", () => {
     const { result } = renderHook(() => useCardTransactionDetailViewModel({ transaction }), {
       wrapper: cardApiWrapper(),
     });
@@ -19,6 +20,7 @@ describe("useCardTransactionDetailViewModel", () => {
       "status",
       "card",
       "fundingSource",
+      "cashback",
       "transactionId",
     ]);
     expect(result.current.rows).toEqual(
@@ -46,6 +48,11 @@ describe("useCardTransactionDetailViewModel", () => {
           value: "-13.0214 USDC",
         }),
         expect.objectContaining({
+          id: "cashback",
+          label: DETAIL_COPY.cashback,
+          value: CASHBACK,
+        }),
+        expect.objectContaining({
           id: "transactionId",
           label: DETAIL_COPY.transactionId,
           value: transaction.transactionId,
@@ -63,6 +70,7 @@ describe("useCardTransactionDetailViewModel", () => {
             panLast4: undefined,
             transactionId: undefined,
             fundingSources: undefined,
+            cashback: undefined,
           },
         }),
       { wrapper: cardApiWrapper() },

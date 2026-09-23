@@ -7,7 +7,7 @@ export type CardTransactionDetailProps = Readonly<{
 }>;
 
 export type CardTransactionDetailRow = Readonly<{
-  id: "amount" | "status" | "card" | "fundingSource" | "transactionId";
+  id: "amount" | "status" | "card" | "fundingSource" | "cashback" | "transactionId";
   label: string;
   value: string;
   statusAppearance?: "success" | "gray" | "warning" | "error";

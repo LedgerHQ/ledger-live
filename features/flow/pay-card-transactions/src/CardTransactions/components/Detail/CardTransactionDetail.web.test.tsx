@@ -6,6 +6,7 @@ import { CardTransactionDetail } from "./CardTransactionDetail";
 import { CATEGORY_LABELS, DETAIL_COPY, cardApiWrapper } from "../../../__tests__/cardApiStore";
 
 const transaction = PayCardTransactionSchema.parse(mockPayCardTransactions()[0]);
+const CASHBACK = `${transaction.cashback?.amount} ${transaction.cashback?.currency}`;
 
 describe("CardTransactionDetail (web)", () => {
   beforeEach(() => {
@@ -29,6 +30,8 @@ describe("CardTransactionDetail (web)", () => {
     expect(screen.getByText(DETAIL_COPY.statusValues.CONFIRMED)).toBeVisible();
     expect(screen.getByText("***9189")).toBeVisible();
     expect(screen.getByText("-13.0214 USDC")).toBeVisible();
+    expect(screen.getByText(DETAIL_COPY.cashback)).toBeVisible();
+    expect(screen.getByText(CASHBACK)).toBeVisible();
     expect(screen.getByText(transaction.transactionId ?? "")).toBeVisible();
   });
 
