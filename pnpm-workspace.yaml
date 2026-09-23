@@ -28,6 +28,10 @@ catalog:
   "@commitlint/load": 21.2.2
   "@commitlint/prompt-cli": 21.2.0
   "@commitlint/types": 21.2.0
+  "@dnd-kit/core": 6.3.1
+  "@dnd-kit/modifiers": 9.0.0
+  "@dnd-kit/sortable": 10.0.0
+  "@dnd-kit/utilities": 3.2.2
   "@jest/globals": 30.5.0
   "@ledgerhq/context-module": 2.5.0
   "@ledgerhq/crypto-icons": "2.0.6"
