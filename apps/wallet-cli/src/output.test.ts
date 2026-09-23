@@ -468,6 +468,40 @@ describe("HumanCommandOutput", () => {
     expect(joined).toContain(USDT_TOKEN_INFO.contractAddress);
   });
 
+  it("reconcileDiscoveredLabels() prints a correction only for labels that actually changed", async () => {
+    const { installOutputCapture } = await import("./shared/ui");
+    const writes: string[] = [];
+    const restore = installOutputCapture({
+      stdout: chunk => {
+        writes.push(chunk);
+      },
+    });
+    const descriptor = {
+      purpose: "account",
+      version: "1",
+      type: "utxo",
+      network: { name: "bitcoin", env: "main" },
+      xpub: "xpub6BosfCnifzxcA",
+      path: "m/84h/0h/0h",
+    } as const;
+    try {
+      const out = createCommandOutput("human", {
+        command: "account discover",
+        network: "bitcoin:main",
+      });
+      out.discoveredAccount({ descriptor, freshAddress: "bc1qfirst", label: "bitcoin-native-1" });
+      out.discoveredAccount({ descriptor, freshAddress: "bc1qsecond", label: "bitcoin-native-2" });
+      writes.length = 0; // only assert on what reconcileDiscoveredLabels itself prints
+
+      out.reconcileDiscoveredLabels(["bitcoin-native-1", "bitcoin-native-3"]);
+    } finally {
+      restore();
+    }
+    const joined = writes.join("");
+    expect(joined).toContain("bitcoin-native-2 -> bitcoin-native-3");
+    expect(joined).not.toContain("bitcoin-native-1 -> bitcoin-native-1");
+  });
+
   it("swapExecuteFullResult() prints the display-unit amount without the decoded-payload wording", async () => {
     const { installOutputCapture } = await import("./shared/ui");
     const writes: string[] = [];
