@@ -71,7 +71,7 @@ function DetailsImage({
       style={[styles.imageFrame, { backgroundColor: CARD_GRADIENT_END }]}
     >
       <Image
-        source={{ uri: imageUrl, cache: "reload" }}
+        source={{ uri: imageUrl }}
         accessibilityLabel={t("payTab.card.numbers.imageAlt")}
         resizeMode="contain"
         onLoad={onImageLoad}

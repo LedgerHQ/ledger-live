@@ -39,7 +39,7 @@ export function useRevealViewModel(): RevealViewModel {
 
   const onImageError = useCallback(() => {
     setStatus(current => {
-      if (current !== "loading" && current !== "revealed") {
+      if (current !== "loading") {
         return current;
       }
       inFlight.current = false;

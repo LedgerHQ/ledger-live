@@ -221,9 +221,13 @@ describe("useRevealViewModel", () => {
     expect(reveal().isRevealed).toBe(false);
   });
 
-  it("sets failed when the details image errors", async () => {
-    const { reveal } = await renderRevealed();
-    await waitFor(() => expect(reveal().status).toBe("revealed"));
+  it("sets failed when the details image errors while loading", async () => {
+    const { reveal } = renderReveal();
+
+    await act(async () => {
+      await reveal().onReveal();
+    });
+    await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
 
     act(() => {
       reveal().onImageError();
@@ -231,5 +235,17 @@ describe("useRevealViewModel", () => {
 
     expect(reveal().status).toBe("failed");
     expect(reveal().imageUrl).toBeUndefined();
+  });
+
+  it("stays revealed if the details image errors after a successful load", async () => {
+    const { reveal } = await renderRevealed();
+
+    act(() => {
+      reveal().onImageError();
+    });
+
+    expect(reveal().status).toBe("revealed");
+    expect(reveal().isRevealed).toBe(true);
+    expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
   });
 });
