@@ -223,6 +223,29 @@ const normalizePackedMacOutput = args => {
   );
 };
 
+// Same file used for both `mac.entitlements` and `mac.entitlementsInherit`
+// in electron-builder.yml / -pre.yml / -nightly.yml for the regular (non-MAS)
+// channels — kept in sync with those files.
+const resolveMacEntitlements = args => {
+  const buildResourcesDir = args.pre ? "build-rc" : args.nightly ? "build-nightly" : "build";
+  return path.resolve(__dirname, rootFolder, buildResourcesDir, "mac", "entitlements.plist");
+};
+
+// electron-builder's `--prepackaged` mode only invokes real codesigning for
+// the MAS target (macPackager.js's pack() explicitly calls this.sign() for
+// mas); for the regular dmg/zip target it skips signing entirely (designed
+// for "you signed this app yourself" workflows), so we sign it ourselves
+// here before handing off to electron-builder just to wrap it into dmg/zip.
+const signMacAppIfNeeded = async (args, appPath) => {
+  if (process.platform !== "darwin" || args.mas) return;
+
+  const { default: signMacApp } = await import("../../scripts/sign-mac.js");
+  await signMacApp(appPath, { entitlements: resolveMacEntitlements(args) });
+
+  const { notarizeAppAtPath } = await import("../../scripts/notarize.js");
+  await notarizeAppAtPath(appPath);
+};
+
 const buildTasks = args => [
   compileAssetsTask(args),
   {
@@ -297,6 +320,8 @@ const signTasks = args => [
       ? "Signing and publishing the electron application"
       : "Signing the electron application",
     task: async () => {
+      await signMacAppIfNeeded(args, args.input);
+
       const { configArgs } = resolveElectronBuilderArgs(args);
       const commands = ["dist:internal", "--", "--prepackaged", args.input, ...configArgs];
       // MAS already forces --publish never via resolveElectronBuilderArgs.

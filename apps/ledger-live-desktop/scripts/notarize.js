@@ -14,7 +14,7 @@ const info = str => {
   console.log(chalk.blue(str));
 };
 
-async function notarizeApp(context) {
+export async function notarizeAppAtPath(path) {
   if (platform() !== "darwin") {
     info("OS is not mac, skipping notarization.");
     return;
@@ -25,10 +25,6 @@ async function notarizeApp(context) {
     info("Notarization skipped (SKIP_SIGNING=true)");
     return;
   }
-
-  info(
-    "Don't mind electron-builder error 'Cannot find module 'scripts/notarize.js', it definitively found me",
-  );
 
   const { APPLECONNECT_API_KEY_ID, APPLECONNECT_API_ISSUER_ID, APPLECONNECT_API_KEY_CONTENT } =
     process.env;
@@ -72,10 +68,6 @@ async function notarizeApp(context) {
     }
   }
 
-  const { appOutDir } = context;
-  const appName = context.packager.appInfo.productFilename;
-  const path = `${appOutDir}/${appName}.app`;
-
   try {
     await attemptNotarize(MAX_RETRIES, path);
   } catch (error) {
@@ -90,6 +82,17 @@ async function notarizeApp(context) {
   } finally {
     rmSync(keyDir, { recursive: true, force: true });
   }
+}
+
+// electron-builder's afterSign hook — still used by the coupled `build` /
+// `release` / `pre-build` commands.
+async function notarizeApp(context) {
+  info(
+    "Don't mind electron-builder error 'Cannot find module 'scripts/notarize.js', it definitively found me",
+  );
+  const { appOutDir } = context;
+  const appName = context.packager.appInfo.productFilename;
+  await notarizeAppAtPath(`${appOutDir}/${appName}.app`);
 }
 
 export default notarizeApp;
