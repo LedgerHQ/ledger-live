@@ -6,6 +6,12 @@ import type { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 export class MyLedgerPage extends AppPage {
   private readonly storageCard = this.page.getByTestId("device-storage-card");
   private readonly deviceOptions = this.page.getByTestId("device-options-container");
+  private readonly renameButton = this.page.getByTestId("manager-device-rename-button");
+  private readonly renameDrawer = this.page.getByTestId("device-rename-container");
+  private readonly renameInput = this.page.getByTestId("current-device-name-input");
+  private readonly submitRenameButton = this.page.getByTestId("submit-device-rename-button");
+  private readonly renameSuccess = this.page.getByTestId("device-renamed");
+  private readonly closeRenameButton = this.page.getByTestId("close-device-rename-button");
 
   private readonly catalogTab = this.page.getByTestId("manager-app-catalog-tab");
   private readonly installedAppsTab = this.page.getByTestId("manager-installed-apps-tab");
@@ -45,6 +51,22 @@ export class MyLedgerPage extends AppPage {
   async waitForDashboard() {
     await expect(this.storageCard).toBeVisible();
     await expect(this.deviceOptions).toBeVisible();
+  }
+
+  /** The submit button becomes the close button once the rename lands, so both are needed. */
+  @step("Rename the device to $0")
+  async renameDevice(name: string) {
+    await this.renameButton.click();
+    await expect(this.renameDrawer).toBeVisible();
+    await this.renameInput.fill(name);
+    await this.submitRenameButton.click();
+    await expect(this.renameSuccess).toBeVisible();
+    await this.closeRenameButton.click();
+  }
+
+  @step("Expect the device to be named $0")
+  async expectDeviceName(name: string) {
+    await expect(this.storageCard).toContainText(name);
   }
 
   @step("Open the app catalog tab")
