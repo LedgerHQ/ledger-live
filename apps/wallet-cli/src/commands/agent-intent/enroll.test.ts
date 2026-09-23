@@ -11,6 +11,7 @@ let keychainHasEntry: boolean;
 let addAgentIntentProfileImpl: (profile: Record<string, unknown>) => void;
 let writeImpl: () => void;
 let sessionReadCalls: number;
+let deleteSecretKeySucceeds: boolean;
 
 const savedSecretKeys = new Set<string>();
 const deletedSecretKeyCalls: string[] = [];
@@ -45,8 +46,8 @@ mock.module("../../key-ring/agent-intent-keychain", () => ({
   },
   deleteAgentIntentSecretKey: (profileId: string) => {
     deletedSecretKeyCalls.push(profileId);
-    savedSecretKeys.delete(profileId);
-    return true;
+    if (deleteSecretKeySucceeds) savedSecretKeys.delete(profileId);
+    return deleteSecretKeySucceeds;
   },
 }));
 
@@ -97,6 +98,7 @@ describe("agent-intent enroll", () => {
     existingProfileOnRecheck = "same-as-precheck";
     sessionReadCalls = 0;
     keychainHasEntry = false;
+    deleteSecretKeySucceeds = true;
     savedSecretKeys.clear();
     deletedSecretKeyCalls.length = 0;
     addAgentIntentProfileImpl = () => {};
@@ -143,6 +145,21 @@ describe("agent-intent enroll", () => {
 
     expect(savedSecretKeys.has("test-agent")).toBe(false);
     expect(deletedSecretKeyCalls).toEqual(["test-agent"]);
+  });
+
+  it("surfaces a combined error when the keychain rollback itself fails", async () => {
+    const sessionError = new Error("disk full");
+    writeImpl = () => {
+      throw sessionError;
+    };
+    deleteSecretKeySucceeds = false;
+
+    await expect(runEnroll()).rejects.toThrow(
+      /disk full.*Additionally, the keychain rollback.*failed.*remove that entry manually/s,
+    );
+    expect(deletedSecretKeyCalls).toEqual(["test-agent"]);
+    // Rollback failed, so the (unrecorded) keychain entry is still there from the app's point of view.
+    expect(savedSecretKeys.has("test-agent")).toBe(true);
   });
 
   it("rolls back the keychain entry when addAgentIntentProfile itself throws", async () => {

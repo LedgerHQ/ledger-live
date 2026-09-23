@@ -710,7 +710,8 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(`Public key fingerprint: ${fingerprint}`);
     writeStdout(
       colors.dim(
-        "Compare this fingerprint with the one shown on your Ledger device before approving.",
+        "Compare this fingerprint with the one shown when the enrollment link is opened, before " +
+          "approving — this step never touches a Ledger device.",
       ),
     );
     writeStdout(

@@ -60,7 +60,7 @@ const DEFAULT_BFF_BASE_URLS = {
   production: "https://global.api.prd.ledger.com/agent-intent",
 } as const;
 
-const DURATION_RE = /^([1-9]\d*)(s|m|h|d)$/;
+const DURATION_RE = /^([1-9]\d*)([smhd])$/;
 const DURATION_UNITS_MS = { s: 1_000, m: 60_000, h: 3_600_000, d: 86_400_000 } as const;
 const MAX_DURATION_MS = 30 * DURATION_UNITS_MS.d;
 
@@ -163,8 +163,18 @@ export default defineCommand({
           session.write();
         } catch (e) {
           // Undo the keychain write so a retry doesn't hit "keychain entry exists but isn't recorded
-          // in the session" — this is the only place that failure can originate from.
-          deleteAgentIntentSecretKey(flags.profile);
+          // in the session" — this is the only place that failure can originate from. If the
+          // rollback itself fails, that's exactly the state it would otherwise re-create silently:
+          // say so, so the user knows to remove the entry by hand instead of retrying forever.
+          const rolledBack = deleteAgentIntentSecretKey(flags.profile);
+          if (!rolledBack) {
+            throw new Error(
+              `${e instanceof Error ? e.message : String(e)} Additionally, the keychain rollback ` +
+                `for profile "${flags.profile}" failed — remove that entry manually before retrying, ` +
+                `or re-enrolling will refuse it as an orphaned duplicate.`,
+              { cause: e },
+            );
+          }
           throw e;
         }
       });

@@ -20,6 +20,12 @@ describe("redactUrlCredentials", () => {
   it("passes a non-URL string through unchanged (catch branch)", () => {
     expect(redactUrlCredentials("not a url")).toBe("not a url");
   });
+
+  it("still strips userinfo from a value new URL() rejects outright (truncated, no host)", () => {
+    // `new URL("https://user:secret@")` throws — WHATWG requires a host — but the credential is
+    // still right there in the string, so the catch branch must not return it unchanged.
+    expect(redactUrlCredentials("https://user:secret@")).toBe("https://");
+  });
 });
 
 describe("hasUrlCredentials", () => {
