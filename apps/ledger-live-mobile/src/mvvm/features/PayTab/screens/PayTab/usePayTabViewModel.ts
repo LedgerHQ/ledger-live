@@ -85,7 +85,10 @@ export function usePayTabViewModel() {
   const callback: CardProps["login"]["callback"] = useMemo(
     () =>
       params?.code
-        ? { code: params.code, ...(params.app_id ? { appId: params.app_id } : {}) }
+        ? {
+            code: params.code,
+            ...(params.app_id ? { appId: params.app_id } : {}),
+          }
         : null,
     [params?.code, params?.app_id],
   );
@@ -103,20 +106,16 @@ export function usePayTabViewModel() {
     navigateToCardHistory(navigation);
   }, [navigation]);
 
-  const openHostedPath = useCallback(
-    (buildPath: CardAssetPathBuilder, onError: (error: unknown) => void, currency?: string) =>
-      openHostedCardPathSafely(openHostedPage, usAppId, buildPath, onError, currency),
-    [openHostedPage, usAppId],
-  );
-
-  const openAssetPage = useCallback(
-    (buildPath: CardAssetPathBuilder, currency?: string) =>
-      openHostedPath(
+  const openHosted = useCallback(
+    (buildPath: CardAssetPathBuilder, failedToOpen: string, currency?: string) =>
+      openHostedCardPathSafely(
+        openHostedPage,
+        usAppId,
         buildPath,
-        error => console.warn("[card] the hosted asset page did not open", error),
+        error => console.warn(`[card] ${failedToOpen}`, error),
         currency,
       ),
-    [openHostedPath],
+    [openHostedPage, usAppId],
   );
 
   const isLegacyTopUp = !!useFeature("lwmPayTab")?.params?.legacyTopUp;
@@ -134,31 +133,31 @@ export function usePayTabViewModel() {
         return;
       }
 
-      await openAssetPage(buildTopUpPath, currency);
+      await openHosted(buildTopUpPath, "the hosted asset page did not open", currency);
     },
-    [isLegacyTopUp, navigation, openAssetPage],
+    [isLegacyTopUp, navigation, openHosted],
   );
 
   const onTopUp = useCallback(() => openTopUp(), [openTopUp]);
 
-  const onChooseCardType = useCallback(() => openAssetPage(buildOrderCardPath), [openAssetPage]);
+  const onChooseCardType = useCallback(
+    () => openHosted(buildOrderCardPath, "order card page did not open"),
+    [openHosted],
+  );
 
   const onManagePin = useCallback(
-    () =>
-      openHostedPath(buildManagePinPath, () => console.warn("[card] manage pin page did not open")),
-    [openHostedPath],
+    () => openHosted(buildManagePinPath, "manage pin page did not open"),
+    [openHosted],
   );
 
   const onAccessBaanx = useCallback(
-    () =>
-      openHostedPath(buildAccessBaanxPath, () => console.warn("[card] baanx page did not open")),
-    [openHostedPath],
+    () => openHosted(buildAccessBaanxPath, "baanx page did not open"),
+    [openHosted],
   );
 
   const onAddAsset = useCallback(
-    () =>
-      openHostedPath(buildAddAssetPath, () => console.warn("[card] add asset page did not open")),
-    [openHostedPath],
+    () => openHosted(buildAddAssetPath, "add asset page did not open"),
+    [openHosted],
   );
 
   const cardSettingsActions: CardSettingsActions = useMemo(
@@ -181,27 +180,39 @@ export function usePayTabViewModel() {
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
       onTopUp: asset => void openTopUp(asset.currency),
-      onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
+      onWithdraw: asset =>
+        void openHosted(buildWithdrawalPath, "the hosted asset page did not open", asset.currency),
       onAddAsset,
     }),
-    [payCardAssets, onShowAssetHistory, openAssetPage, openTopUp, onAddAsset],
+    [payCardAssets, onShowAssetHistory, openHosted, openTopUp, onAddAsset],
   );
 
-  // Without a countervalue formatter the flow shows the bare artwork instead of the card's balance.
   const formatCountervalue = useCountervalueFormatter();
-  const cardFormatters: CardProps["formatters"] = useMemo(
-    () => ({ countervalue: formatCountervalue }),
-    [formatCountervalue],
+  const card: CardProps = useMemo(
+    () => ({
+      login,
+      assets: cardAssets,
+      formatters: { countervalue: formatCountervalue },
+      onTopUp,
+      onChooseCardType,
+      onShowMore,
+      cardSettingsActions,
+    }),
+    [
+      login,
+      cardAssets,
+      formatCountervalue,
+      onTopUp,
+      onChooseCardType,
+      onShowMore,
+      cardSettingsActions,
+    ],
   );
 
   return {
     top,
     bottom: bottom + insets.bottom,
-    login,
-    cardAssets,
-    cardFormatters,
-    onTopUp,
-    onChooseCardType,
+    card,
     balance,
     actionTiles,
     contacts,
@@ -209,8 +220,6 @@ export function usePayTabViewModel() {
     isContactsEnabled,
     depositOptions: deposit.depositOptions,
     bankTransferIntro: deposit.bankTransferIntro,
-    onShowMore,
-    cardSettingsActions,
     trackRecipientAddressSelection: isContactsEnabled && payment.contactAddressPicker.isOpen,
     disclaimer: t("payTab.disclaimer"),
   };

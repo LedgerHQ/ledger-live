@@ -18,11 +18,7 @@ import { ScrollView } from "react-native";
 type PayTabViewProps = {
   readonly top: number;
   readonly bottom: number;
-  readonly login: CardProps["login"];
-  readonly cardAssets: CardProps["assets"];
-  readonly cardFormatters: CardProps["formatters"];
-  readonly onTopUp: () => Promise<void>;
-  readonly onChooseCardType: () => Promise<void>;
+  readonly card: CardProps;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
   readonly contacts: ContactsNativeProps;
@@ -30,8 +26,6 @@ type PayTabViewProps = {
   readonly isContactsEnabled: boolean;
   readonly depositOptions: DepositOptionsProps;
   readonly bankTransferIntro: BankTransferIntroProps;
-  readonly onShowMore: () => void;
-  readonly cardSettingsActions: CardProps["cardSettingsActions"];
   readonly trackRecipientAddressSelection: boolean;
   readonly disclaimer: string;
 };
@@ -39,11 +33,7 @@ type PayTabViewProps = {
 export function PayTabView({
   top,
   bottom,
-  login,
-  cardAssets,
-  cardFormatters,
-  onTopUp,
-  onChooseCardType,
+  card,
   balance,
   actionTiles,
   contacts,
@@ -51,8 +41,6 @@ export function PayTabView({
   isContactsEnabled,
   depositOptions,
   bankTransferIntro,
-  onShowMore,
-  cardSettingsActions,
   trackRecipientAddressSelection,
   disclaimer,
 }: PayTabViewProps) {
@@ -61,7 +49,11 @@ export function PayTabView({
       <Wallet40Background type="pay" />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1, paddingTop: top, paddingBottom: bottom + 16 }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingTop: top,
+          paddingBottom: bottom + 16,
+        }}
       >
         <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
           <TrackScreen
@@ -78,15 +70,7 @@ export function PayTabView({
             <TrackScreen category="Recipient address selection" refreshSource={false} />
           )}
           <ContactAddressPicker {...contactAddressPicker} />
-          <Card
-            login={login}
-            assets={cardAssets}
-            formatters={cardFormatters}
-            onTopUp={onTopUp}
-            onChooseCardType={onChooseCardType}
-            onShowMore={onShowMore}
-            cardSettingsActions={cardSettingsActions}
-          />
+          <Card {...card} />
           <FeatureTour />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />
