@@ -42,6 +42,7 @@ import ModularDrawer from "@e2e/page/drawer/modular.drawer";
 import SwapTransactionStatusDrawer from "@e2e/page/drawer/swapTransactionStatus.drawer";
 import UndelegatePage from "@e2e/page/trade/undelegate.page";
 import Wallet40DrawersPage from "@e2e/page/drawer/wallet40Drawers.drawer";
+import PayTabPage from "@e2e/page/paytab/paytab.page";
 
 import path from "path";
 import fs from "fs";
@@ -106,6 +107,7 @@ export class Application {
   private readonly wallet40DrawersPageInstance = lazyInit(Wallet40DrawersPage);
   private readonly topBarSearchPageInstance = lazyInit(TopBarSearchPage);
   private undelegatePageInstance = lazyInit(UndelegatePage);
+  private readonly payTabPageInstance = lazyInit(PayTabPage);
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
@@ -289,5 +291,9 @@ export class Application {
 
   public get undelegate() {
     return this.undelegatePageInstance();
+  }
+
+  public get payTab() {
+    return this.payTabPageInstance();
   }
 }

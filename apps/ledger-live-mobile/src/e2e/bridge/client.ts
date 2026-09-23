@@ -12,6 +12,11 @@ import {
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
+import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
+import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
+import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
+import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { saveAccounts } from "~/db";
 import { acceptGeneralTerms } from "~/logic/terms";
@@ -157,6 +162,15 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "importPostOnboarding": {
         store.dispatch(importPostOnboardingState({ newState: msg.payload }));
+        break;
+      }
+      case "importPayCard": {
+        // The same fan-out LedgerStore performs on the persisted blob: one payload, one slice each.
+        store.dispatch(restorePayCardFeatureTour(msg.payload));
+        store.dispatch(restoreReceiveVerifyHint(msg.payload));
+        store.dispatch(restorePayCardBalanceFilter(msg.payload));
+        store.dispatch(restorePayCardLoginIntro(msg.payload));
+        store.dispatch(restorePayCardOnboardingWidget(msg.payload));
         break;
       }
       case "overrideFeatureFlags": {

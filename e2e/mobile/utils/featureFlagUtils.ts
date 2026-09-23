@@ -88,6 +88,23 @@ export const FF_MINA_STAKING_ENABLED = {
   },
 } satisfies PartialFeatures;
 
+export const FF_CONTACTS_ENABLED = {
+  lwmContacts: {
+    enabled: true,
+    params: { newBadge: false, eligibleAddressFamilies: ["evm", "tron"] },
+  },
+} satisfies PartialFeatures;
+
+export const FF_PAY_TAB = {
+  lwmPayTab: {
+    enabled: true,
+    params: {
+      card: true,
+      legacyTopUp: false,
+    },
+  },
+} satisfies PartialFeatures;
+
 export const getMergedFeatureFlags = ({
   testFlags,
 }: { testFlags?: PartialFeatures } = {}): PartialFeatures => {

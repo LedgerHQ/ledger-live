@@ -59,6 +59,7 @@ export function CardDetailsView({
             lx={{ flex: 1 }}
             onPress={onDetailsPress}
             accessibilityLabel={detailsLabel}
+            testID="card-details-button"
           >
             {detailsLabel}
           </Button>
