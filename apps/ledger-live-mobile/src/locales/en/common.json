@@ -2052,6 +2052,17 @@
       "description": "You can now sign up to get a card",
       "cta": "Continue"
     },
+    "keepProtection": {
+      "password": {
+        "title": "You can't turn off your password",
+        "description": "You need a password or biometrics to protect your access to Ledger Wallet."
+      },
+      "biometrics": {
+        "title": "You can't turn off {{biometricsType}}",
+        "description": "You need {{biometricsType}} or a password to protect your access to Ledger Wallet."
+      },
+      "cta": "Got it"
+    },
     "biometrics": {
       "title": "{{biometricsType}}",
       "desc": "Unlock the app with {{biometricsType}}.",
