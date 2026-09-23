@@ -129,6 +129,12 @@ export class MyLedgerPage extends AppPage {
     await this.installLanguageButton.click();
   }
 
+  /** The trigger renders the installed language, so it doubles as the read back. */
+  @step("Expect the device language to read $0")
+  async expectDeviceLanguage(label: string) {
+    await expect(this.changeLanguageButton).toContainText(label);
+  }
+
   @step("Open the custom lock screen manager")
   async openCustomLockScreen() {
     await this.customImageButton.click();
