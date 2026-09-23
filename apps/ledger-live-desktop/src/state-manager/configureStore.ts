@@ -11,6 +11,7 @@ import {
   cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
+  exchangeTransactionManagerApiExtra,
   pushDevicesApiExtra,
   redactCardApiAction,
   redactCardApiState,
@@ -45,6 +46,10 @@ import {
   readCachedFlags as defaultReadCachedFlags,
 } from "~/firebase/remoteConfig";
 import { sleepingListener } from "./sleepingListener";
+
+const EXCHANGE_TRANSACTION_MANAGER_API_URL =
+  process.env.EXCHANGE_TRANSACTION_MANAGER_API_URL ?? "https://exchange-tx-manager.ledger.com";
+
 /**
  * Reports only the failures that actually degrade the session. A warm failure is routine: the
  * previously read values stay in place and the next poll retries. A cold one means the app is
@@ -113,6 +118,10 @@ const customCreateStore = ({
                 readCardSession,
                 isCardSessionCurrent,
                 refreshCardSession,
+              }),
+              ...exchangeTransactionManagerApiExtra({
+                exchangeTransactionManagerApiBaseUrl: EXCHANGE_TRANSACTION_MANAGER_API_URL,
+                ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
               }),
               ...pushDevicesApiExtra({
                 pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),

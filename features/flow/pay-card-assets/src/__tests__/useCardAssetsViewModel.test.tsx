@@ -36,7 +36,14 @@ function stubWallets(
   overrides: Partial<{
     wallets: readonly Pick<
       CardLinkedWalletBalance,
-      "id" | "addressId" | "balance" | "currency" | "network" | "ledgerId" | "ledgerCurrency"
+      | "id"
+      | "addressId"
+      | "address"
+      | "balance"
+      | "currency"
+      | "network"
+      | "ledgerId"
+      | "ledgerCurrency"
     >[];
     isLoading: boolean;
     isError: boolean;
@@ -343,6 +350,7 @@ describe("useCardAssetsViewModel", () => {
       wallets: [
         {
           id: "w-usdc",
+          address: "0x2222222222222222222222222222222222222222",
           balance: "125.40",
           currency: "usdc",
           network: "ethereum",
@@ -360,7 +368,12 @@ describe("useCardAssetsViewModel", () => {
 
     act(() => result.current.onTopUpPress());
 
-    expect(onTopUp).toHaveBeenCalledWith(expect.objectContaining({ currency: "usdc" }));
+    expect(onTopUp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currency: "usdc",
+        address: "0x2222222222222222222222222222222222222222",
+      }),
+    );
     expect(result.current.dialogState).toBe("closed");
   });
 

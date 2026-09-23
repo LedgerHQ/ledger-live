@@ -10,6 +10,7 @@ import {
   coinMarketCapApi,
   countervaluesApi,
   dadaApi,
+  exchangeTransactionManagerApi,
   pushDevicesApi,
   swapApi,
 } from "@shared/api-services";
@@ -26,6 +27,7 @@ const APIs = {
   [coinMarketCapApi.reducerPath]: coinMarketCapApi,
   [countervaluesApi.reducerPath]: countervaluesApi,
   [counterValuesApi.reducerPath]: counterValuesApi,
+  [exchangeTransactionManagerApi.reducerPath]: exchangeTransactionManagerApi,
   [marketApi.reducerPath]: marketApi,
   [cgApi.reducerPath]: cgApi,
   [hederaApi.reducerPath]: hederaApi,
