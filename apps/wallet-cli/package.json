@@ -57,6 +57,7 @@
     "@domain/entity-currency-token": "workspace:^",
     "@domain/entity-currency-unit": "workspace:^",
     "@features/platform-currencies": "workspace:^",
+    "@ledgerhq/agent-intent-sdk": "file:vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-evm": "catalog:",
     "@ledgerhq/coin-module-framework": "catalog:",
