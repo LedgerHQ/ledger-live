@@ -18,7 +18,10 @@ async function findProvidersOwningSwapId(
   try {
     const raw = await getMultipleStatus([...candidates].map(provider => ({ provider, swapId })));
     if (!Array.isArray(raw)) return [];
-    return raw.filter(isSwapKnownToProvider).map(s => s.provider);
+    return raw
+      .filter(isSwapKnownToProvider)
+      .map(s => s.provider)
+      .sort();
   } catch (e) {
     walletCliDebug(`swap status: provider lookup for swapId=${swapId} failed: ${String(e)}`);
     return [];
