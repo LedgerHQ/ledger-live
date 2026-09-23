@@ -3,16 +3,12 @@ import type { AssetsDataLike, BuildAssetDistributionOpts } from "../types";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { resetRateLookup, setRateLookup } from "../../rateLookup";
 
 const mockFindCryptoCurrencyById = jest.fn();
 
 jest.mock("@domain/entity-currency-crypto", () => ({
   findCryptoCurrencyById: (...args: unknown[]) => mockFindCryptoCurrencyById(...args),
-}));
-
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
-  calculate: jest.fn((_state, { value }: { value: number }) => value * 2),
 }));
 
 function makeCurrency(id: string, name = id, magnitude = 8): CryptoCurrency {
@@ -35,10 +31,18 @@ function makeAccount(id: string, currency: CryptoCurrency, balance: number): Acc
   } as unknown as Account;
 }
 
-const cvState = {} as CounterValuesState;
+const cvState = {};
 const usd = { type: "FiatCurrency", id: "usd", ticker: "USD" } as any;
 
 describe("buildAssetDistribution", () => {
+  beforeEach(() => {
+    setRateLookup({ calculate: (_snapshot, { value }) => value * 2 });
+  });
+
+  afterAll(() => {
+    resetRateLookup();
+  });
+
   const ethMainnet = makeCurrency("ethereum", "Ethereum");
   const ethArbitrum = makeCurrency("arbitrum", "Arbitrum");
   const ethBase = makeCurrency("base", "Base");

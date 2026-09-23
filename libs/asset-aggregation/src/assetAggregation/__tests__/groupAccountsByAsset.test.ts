@@ -4,16 +4,20 @@ import { CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById } from "@domain/enti
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
-  calculate: jest.fn((_state, { value }) => value),
-}));
+import { resetRateLookup, setRateLookup } from "../../rateLookup";
 
 describe("groupAccountsByAsset", () => {
+  beforeEach(() => {
+    setRateLookup({ calculate: (_snapshot, { value }) => value });
+  });
+
+  afterAll(() => {
+    resetRateLookup();
+  });
+
   const btcCurrency = cryptocurrenciesById["bitcoin"];
   const ethCurrency = cryptocurrenciesById["ethereum"];
-  const cvState: CounterValuesState = { data: {}, status: {}, cache: {} };
+  const cvState = { data: {}, status: {}, cache: {} };
 
   const usdcToken: TokenCurrency = {
     type: "TokenCurrency",
