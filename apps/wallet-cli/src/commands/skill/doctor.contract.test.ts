@@ -11,9 +11,9 @@ import {
 } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { runCli } from "../../../testing/cli-runner";
-import { getSkill, SIDECAR_FILENAME } from "../../../skills/registry";
-import { hashOne, hashSkillFiles } from "../../../skills/hash";
+import { runCli } from "../../testing/cli-runner";
+import { getSkill, SIDECAR_FILENAME } from "../../skills/registry";
+import { hashOne, hashSkillFiles } from "../../skills/hash";
 
 const SKILL_NAME = "wallet-cli-usage";
 const LEGACY_SKILL_NAME = "ledger-wallet-cli";

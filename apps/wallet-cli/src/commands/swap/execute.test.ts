@@ -1,6 +1,6 @@
-import { ETH_SYNC_ROUTES } from "../../../testing/eth-sync-routes";
-import { MockServer } from "../../../testing/mock-server";
-import "../../../live-common-setup";
+import { ETH_SYNC_ROUTES } from "../../testing/eth-sync-routes";
+import { MockServer } from "../../testing/mock-server";
+import "../../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
@@ -11,18 +11,15 @@ import type {
   Quote,
 } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
 import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { installOutputCapture } from "../../../shared/ui";
-import { CliProcessExitError } from "../../../cli-process-exit-error";
-import type { AccountDescriptor } from "../../../wallet/models";
-import { MOCK_ETH_DESCRIPTOR } from "../../../testing/constants";
-import { USDT_CONTRACT } from "../../../testing/cal-fixtures";
-import { executeSwapCommand, type SwapExecuteFlags } from "../../../commands/swap/execute";
+import { installOutputCapture } from "../../shared/ui";
+import { CliProcessExitError } from "../../cli-process-exit-error";
+import type { AccountDescriptor } from "../../wallet/models";
+import { MOCK_ETH_DESCRIPTOR } from "../../testing/constants";
+import { USDT_CONTRACT } from "../../testing/cal-fixtures";
+import { executeSwapCommand, type SwapExecuteFlags } from "./execute";
 
-import type { FullSwapPipelineInput } from "../../../commands/swap/cli-swap-pipeline";
-import type {
-  CliSwapDieInput,
-  CliSwapDieResult,
-} from "../../../commands/swap/cli-swap-die-pipeline";
+import type { FullSwapPipelineInput } from "./cli-swap-pipeline";
+import type { CliSwapDieInput, CliSwapDieResult } from "./cli-swap-die-pipeline";
 
 const mockPipelineResult = {
   transactionId: "mock-device-transaction-id",

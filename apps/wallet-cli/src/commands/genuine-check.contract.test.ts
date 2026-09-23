@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { Observable } from "rxjs";
 import type { GetGenuineCheckFromDeviceIdResult } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
-import { runCli } from "../../testing/cli-runner";
+import { runCli } from "../testing/cli-runner";
 
 let genuineCheckImpl: () => Observable<GetGenuineCheckFromDeviceIdResult>;
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { runCli } from "../../../testing/cli-runner";
+import { runCli } from "../../testing/cli-runner";
 
 describe("skill list — human", () => {
   it("lists the wallet-cli-usage skill with its description", async () => {

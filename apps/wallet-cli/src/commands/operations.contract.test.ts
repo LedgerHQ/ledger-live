@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
-import { MockServer } from "../../testing/mock-server";
-import { runCli } from "../../testing/cli-runner";
-import { makeSessionDir } from "../../testing/session-fixture";
-import { ETH_DESCRIPTOR, ETH_ADDRESS } from "../../testing/constants";
+import { MockServer } from "../testing/mock-server";
+import { runCli } from "../testing/cli-runner";
+import { makeSessionDir } from "../testing/session-fixture";
+import { ETH_DESCRIPTOR, ETH_ADDRESS } from "../testing/constants";
 
 const CURRENT_BLOCK = {
   hash: "0xblock1234567890abcdef1234567890abcdef1234567890abcdef1234567890",

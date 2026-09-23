@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
-import { MockServer } from "../../testing/mock-server";
-import { runCli } from "../../testing/cli-runner";
-import { makeSessionDir } from "../../testing/session-fixture";
-import { ETH_SYNC_ROUTES } from "../../testing/eth-sync-routes";
-import { MOCK_ETH_DESCRIPTOR, MOCK_ETH_ADDRESS, MOCK_ETH_PUBKEY } from "../../testing/constants";
+import { MockServer } from "../testing/mock-server";
+import { runCli } from "../testing/cli-runner";
+import { makeSessionDir } from "../testing/session-fixture";
+import { ETH_SYNC_ROUTES } from "../testing/eth-sync-routes";
+import { MOCK_ETH_DESCRIPTOR, MOCK_ETH_ADDRESS, MOCK_ETH_PUBKEY } from "../testing/constants";
 
 describe("receive --verify command (mock DMK)", () => {
   const server = new MockServer(ETH_SYNC_ROUTES);
