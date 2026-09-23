@@ -17,6 +17,11 @@ import type {
 // The standalone @ledgerhq/coin-zcash module writes the same raw shape for its
 // own (mock-only) persistence path, so the two round-trip interchangeably.
 //
+// The mapping below is therefore a deliberate duplicate of coin-zcash's
+// bridge/serialization.ts. The two modules do not import each other (owner
+// decision, see the "Option D" note in coin-zcash/src/types/bridge.ts), so this
+// file carries a `sonar.cpd.exclusions` entry that must be dropped along with it.
+//
 // TODO: remove this module once the `zcashShielded` feature flag is retired and
 // Zcash is served by @ledgerhq/coin-zcash by default. At that point set the
 // Zcash `currency.family` to "zcash" (see domain/entity/currency-crypto) and
