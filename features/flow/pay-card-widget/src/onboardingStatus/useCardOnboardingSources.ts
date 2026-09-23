@@ -85,13 +85,8 @@ export function useCardOnboardingSources({
     signals,
     cardAddedToDigitalWallet: cardStatus.data?.cardAddedToDigitalWallet,
     refresh,
-    // `isFetching` on all four, not `isLoading`: a query reports `isLoading` only while it has no
-    // data, so after the first read a refetch would have looked idle.
     isLoading:
-      user.isFetching ||
-      cardStatus.isFetching ||
-      transactions.isFetching ||
-      linkedWallets.isFetching,
+      user.isLoading || cardStatus.isLoading || transactions.isLoading || linkedWallets.isLoading,
     // A step that cannot be answered is reported as not done, so only a failure the holder can do
     // nothing about is surfaced: the account read itself.
     isError: user.isError,

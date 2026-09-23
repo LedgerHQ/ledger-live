@@ -32,6 +32,10 @@ function setupMocks({
   cardStatus = "ACTIVE",
   balances = [] as (string | null)[],
   transactions = [] as { status: "CONFIRMED" | "PENDING" | "DECLINED" | "REVERTED" }[],
+  isUserLoading = false,
+  isCardStatusLoading = false,
+  areTransactionsLoading = false,
+  areWalletsLoading = false,
   isUserFetching = false,
   isCardStatusFetching = false,
   areTransactionsFetching = false,
@@ -44,6 +48,7 @@ function setupMocks({
   jest.mocked(useGetUserQuery).mockReturnValue({
     refetch: refetchUser,
     data: verificationState === null ? undefined : { verificationState },
+    isLoading: isUserLoading,
     isFetching: isUserFetching,
     isError: isUserError,
   } as unknown as ReturnType<typeof useGetUserQuery>);
@@ -51,6 +56,7 @@ function setupMocks({
   jest.mocked(useGetCardStatusQuery).mockReturnValue({
     refetch: refetchCardStatus,
     data: hasCard ? { status: cardStatus } : undefined,
+    isLoading: isCardStatusLoading,
     isFetching: isCardStatusFetching,
     isError: isCardStatusError,
   } as unknown as ReturnType<typeof useGetCardStatusQuery>);
@@ -58,6 +64,7 @@ function setupMocks({
   jest.mocked(useGetCardTransactionsInfiniteQuery).mockReturnValue({
     refetch: refetchTransactions,
     data: { pages: [transactions], pageParams: [0] },
+    isLoading: areTransactionsLoading,
     isFetching: areTransactionsFetching,
     isError: areTransactionsError,
   } as unknown as ReturnType<typeof useGetCardTransactionsInfiniteQuery>);
@@ -65,6 +72,7 @@ function setupMocks({
   jest.mocked(useCardLinkedWallets).mockReturnValue({
     refetch: refetchWallets,
     wallets: balances.map((balance, index) => ({ id: `w${index}`, balance })),
+    isLoading: areWalletsLoading,
     isFetching: areWalletsFetching,
     isError: areWalletsError,
   } as unknown as ReturnType<typeof useCardLinkedWallets>);
@@ -217,18 +225,29 @@ describe("useCardOnboardingStatus", () => {
 
   describe("what it reports while asking", () => {
     it.each([
-      ["the account", { isUserFetching: true }],
-      ["the card", { isCardStatusFetching: true }],
-      ["the transactions", { areTransactionsFetching: true }],
-      ["the wallets", { areWalletsFetching: true }],
-    ])("is loading while %s is in flight, refetches included", (_source, fetching) => {
-      setupMocks(fetching);
+      ["the account", { isUserLoading: true }],
+      ["the card", { isCardStatusLoading: true }],
+      ["the transactions", { areTransactionsLoading: true }],
+      ["the wallets", { areWalletsLoading: true }],
+    ])("is loading until %s has answered for the first time", (_source, loading) => {
+      setupMocks(loading);
 
       expect(stepsById().status.isLoading).toBe(true);
     });
 
     it("is not loading once every source has answered", () => {
       setupMocks();
+
+      expect(stepsById().status.isLoading).toBe(false);
+    });
+
+    it("is not loading during a refetch", () => {
+      setupMocks({
+        isUserFetching: true,
+        isCardStatusFetching: true,
+        areTransactionsFetching: true,
+        areWalletsFetching: true,
+      });
 
       expect(stepsById().status.isLoading).toBe(false);
     });
