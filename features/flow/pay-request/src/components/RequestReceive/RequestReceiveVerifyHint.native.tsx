@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "@shared/i18n";
 import type { RequestReceiveVerifyHint as RequestReceiveVerifyHintProps } from "../../types";
 
 export const HINT_ENTER_MS = 220;
 
 export function RequestReceiveVerifyHint({
   open,
-  message,
-  gotItLabel,
   onGotIt,
   onShown,
 }: RequestReceiveVerifyHintProps) {
+  const { t } = useTranslation();
   useEffect(() => {
     if (open) onShown?.();
   }, [open, onShown]);
@@ -36,11 +36,11 @@ export function RequestReceiveVerifyHint({
         }}
       >
         <Text typography="body2" lx={{ color: "base" }}>
-          {message}
+          {t("payTab.request.verifyHint.message")}
         </Text>
         <Box lx={{ alignItems: "flex-end" }}>
           <Button size="sm" onPress={onGotIt}>
-            {gotItLabel}
+            {t("payTab.request.verifyHint.gotIt")}
           </Button>
         </Box>
       </Box>

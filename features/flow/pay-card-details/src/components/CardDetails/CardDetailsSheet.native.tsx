@@ -6,10 +6,11 @@ import {
   Box,
 } from "@ledgerhq/lumen-ui-rnative";
 import { AddToWalletCta } from "@features/flow-pay-card-widget/native";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetFooterInset } from "@shared/ui-queued-bottom-sheet";
 import { CardTopUpButton } from "../CardTopUp";
 import { CardDetailsScene } from "./Scenes/CardDetailsScene";
 import { CARD_DETAILS_SCENES } from "./Scenes/registry";
+import type { CardDetailsSceneProps } from "./Scenes/types";
 import type { CardDetailsSheetProps } from "../../types";
 
 export function CardDetailsSheet({
@@ -74,31 +75,51 @@ export function CardDetailsSheet({
     >
       {isOpen ? (
         isAssetsManage ? (
-          <BottomSheetView>
-            <Box lx={{ paddingBottom: "s24" }}>
-              <BottomSheetHeader
-                density="compact"
-                spacing
-                title={scene.header.title}
-                description={scene.header.description}
-              />
-              <CardDetailsScene {...scene} />
-            </Box>
-          </BottomSheetView>
+          <CardDetailsSheetNonScrollContent scene={scene} />
         ) : (
-          <BottomSheetScrollView>
-            <Box lx={{ paddingBottom: "s24" }}>
-              <BottomSheetHeader
-                density="compact"
-                spacing
-                title={scene.header.title}
-                description={scene.header.description}
-              />
-              <CardDetailsScene {...scene} />
-            </Box>
-          </BottomSheetScrollView>
+          <CardDetailsSheetContent scene={scene} />
         )
       ) : null}
     </QueuedBottomSheet>
+  );
+}
+
+function CardDetailsSheetNonScrollContent({ scene }: Readonly<{ scene: CardDetailsSceneProps }>) {
+  const footerInset = useBottomSheetFooterInset();
+
+  return (
+    <BottomSheetView>
+      <Box style={{ paddingBottom: footerInset }}>
+        <Box lx={{ paddingBottom: "s24" }}>
+          <BottomSheetHeader
+            density="compact"
+            spacing
+            title={scene.header.title}
+            description={scene.header.description}
+          />
+          <CardDetailsScene {...scene} />
+        </Box>
+      </Box>
+    </BottomSheetView>
+  );
+}
+
+function CardDetailsSheetContent({ scene }: Readonly<{ scene: CardDetailsSceneProps }>) {
+  const footerInset = useBottomSheetFooterInset();
+
+  return (
+    <BottomSheetScrollView>
+      <Box style={{ paddingBottom: footerInset }}>
+        <Box lx={{ paddingBottom: "s24" }}>
+          <BottomSheetHeader
+            density="compact"
+            spacing
+            title={scene.header.title}
+            description={scene.header.description}
+          />
+          <CardDetailsScene {...scene} />
+        </Box>
+      </Box>
+    </BottomSheetScrollView>
   );
 }

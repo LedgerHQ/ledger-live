@@ -80,6 +80,7 @@ function OverviewActions({
 export function OverviewScene({
   cardVisual,
   assetsViewModel,
+  assets,
   freezeViewModel,
   moreViewModel,
   onFreezePress,
@@ -106,7 +107,12 @@ export function OverviewScene({
 
       {assetsViewModel ? <CardAssetsView {...assetsViewModel} /> : null}
 
-      <Reward formatters={formatters} />
+      <Reward
+        formatters={formatters}
+        currencies={assets?.currencies}
+        getCounterValue={assets?.getCounterValue}
+        formatCountervalue={assets?.formatCountervalue}
+      />
 
       <CardTransactions
         formatters={formatters}
@@ -115,7 +121,7 @@ export function OverviewScene({
       />
 
       <Text
-        typography="body4"
+        typography="body3"
         lx={{ color: "muted", textAlign: "center" }}
         testID="card-details-overview-disclaimer"
       >

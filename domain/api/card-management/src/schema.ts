@@ -177,8 +177,9 @@ export const PayCardTransactionFundingSourceSchema = z.object({
  * survived the wire should not be rounded into a number on the way in. `ratePercent` is the rate
  * that produced them, so a caller can show the rate without recomputing it from the pair.
  *
- * `status` stays a plain string rather than an enum, so an accrual state this schema has not seen
- * arrives with its amounts intact instead of costing the whole cashback.
+ * `status`: `EARNED` is confirmed and unclaimed, `CLAIMED` paid out, `PENDING` still settling (the
+ * provider sends both amounts as zero, unchecked here), and `NOT_EARNED` declined or reverted. A
+ * status outside these four fails the whole cashback, which the transaction then drops.
  */
 export const PayCardTransactionCashbackSchema = z.object({
   amount: z.string().min(1),
@@ -186,7 +187,7 @@ export const PayCardTransactionCashbackSchema = z.object({
   fiatAmount: z.string().min(1),
   fiatCurrency: z.string().min(1),
   ratePercent: z.string().min(1),
-  status: z.string().min(1),
+  status: z.enum(["EARNED", "CLAIMED", "PENDING", "NOT_EARNED"]),
 });
 
 /**
@@ -225,8 +226,7 @@ export const PayCardTransactionSchema = z.object({
 
 export const PayCardTransactionsResponseSchema = z.array(PayCardTransactionSchema);
 
-const PayCardTransactionFiltersSchema = z.object({
-  page: z.number().int().nonnegative().optional(),
+const PayCardTransactionFilterFieldsSchema = z.object({
   searchKey: z.string().min(1).optional(),
   mccCategories: z.string().min(1).optional(),
 });
@@ -235,24 +235,40 @@ const PayCardTransactionFiltersSchema = z.object({
  * The provider requires `dateFrom` and `dateTo` together, so neither is useful alone: one without
  * the other is a filter the backend rejects.
  *
+ * `page` is not here: it is the infinite query's page param, not a filter a caller passes.
+ *
  * A union rather than a refinement, so the rule is in the inferred type as well: a caller cannot
  * write a filter that only fails once it is sent.
  */
-export const PayCardTransactionsRequestSchema = z
-  .union(
-    [
-      PayCardTransactionFiltersSchema.extend({
-        dateFrom: z.string().min(1),
-        dateTo: z.string().min(1),
-      }),
-      PayCardTransactionFiltersSchema.extend({
-        dateFrom: z.undefined().optional(),
-        dateTo: z.undefined().optional(),
-      }),
-    ],
-    { error: "dateFrom and dateTo go together" },
-  )
-  .optional();
+const PayCardTransactionsFilterSchema = z.union(
+  [
+    PayCardTransactionFilterFieldsSchema.extend({
+      dateFrom: z.string().min(1),
+      dateTo: z.string().min(1),
+    }),
+    PayCardTransactionFilterFieldsSchema.extend({
+      dateFrom: z.undefined().optional(),
+      dateTo: z.undefined().optional(),
+    }),
+  ],
+  { error: "dateFrom and dateTo go together" },
+);
+
+export const PayCardTransactionsRequestSchema = PayCardTransactionsFilterSchema.optional();
+
+/**
+ * What the transactions endpoint validates before a request goes out.
+ *
+ * An infinite query is handed the filters and the page it is reading as one pair, so the pair is
+ * what `argSchema` sees — validating the filters alone would reject every request.
+ *
+ * `queryArg` is a union with `undefined` rather than an optional key: RTK Query always sends the
+ * key, and a schema that makes it optional does not satisfy the type it is checked against.
+ */
+export const PayCardTransactionsPageRequestSchema = z.object({
+  queryArg: z.union([PayCardTransactionsFilterSchema, z.undefined()]),
+  pageParam: z.number().int().nonnegative(),
+});
 
 /**
  * One entry of a wallet's own history.
@@ -396,3 +412,12 @@ export const PayCardLinkedWalletCanonicalSchema = PayCardLinkedWalletSchema.exte
 });
 
 export const PayCardLinkedWalletsCanonicalSchema = z.array(PayCardLinkedWalletCanonicalSchema);
+
+/**
+ * The wire reward wallet plus the Ledger currency its asset resolves to, so a consumer prices it
+ * the way it prices a linked wallet. Optional for the same reason: the catalog does not cover
+ * every asset the provider may pay a reward in.
+ */
+export const PayCardRewardWalletCanonicalSchema = PayCardRewardWalletResponseSchema.extend({
+  ledgerId: z.string().min(1).optional(),
+});

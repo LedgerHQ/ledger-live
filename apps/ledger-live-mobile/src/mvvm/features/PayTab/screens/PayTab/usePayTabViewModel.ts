@@ -1,25 +1,32 @@
 import { useCallback, useMemo } from "react";
-import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  type NavigationProp,
+  type ParamListBase,
+  type RouteProp,
+} from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  buildHostedUrl,
   buildTopUpPath,
   buildWithdrawalPath,
   buildAccessBaanxPath,
   buildManagePinPath,
   buildAddAssetPath,
-  openHostedUrlInSecureBrowser,
+  buildOrderCardPath,
   openHostedCardPathSafely,
   type CardAssetPathBuilder,
-  type OpenCardHostedPage,
 } from "@features/flow-pay-card-auth";
 import useEnv from "@features/platform-env";
+import { useFeature } from "@features/platform-feature-flags";
 import { useContactsFeature } from "@features/platform-contacts";
 import { useTranslation } from "@shared/i18n";
 import type { CardAssetRow, CardAssetsProps } from "@features/flow-pay-card-assets";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
-import type { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
+import { CL_CARD_APP_ID } from "LLM/features/Card";
 import type { CardProps } from "@features/flow-pay-card";
+import { useCardHostedPageOpener } from "../../hooks/useCardHostedPageOpener";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
 import { useCountervalueFormatter } from "../../hooks/useCountervalueFormatter";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
@@ -40,7 +47,7 @@ export function usePayTabViewModel() {
   const { t } = useTranslation();
   const { top, bottom } = useNavigationBarHeights();
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
   const balance = usePayCardBalance(analytics.trackEvent);
@@ -83,21 +90,18 @@ export function usePayTabViewModel() {
     [params?.code, params?.app_id],
   );
 
+  // Every hosted page now opens on the Baanx manifest in the Discover webview, as desktop does.
+  const openHostedPage = useCardHostedPageOpener();
+
+  // The signup page rides the same opener the hosted pages use, so it lands in the webview too.
   const login: CardProps["login"] = useMemo(
-    () => ({ oauthConfig, callback, requestProtection }),
-    [oauthConfig, callback, requestProtection],
+    () => ({ oauthConfig, callback, requestProtection, openHostedPage }),
+    [oauthConfig, callback, requestProtection, openHostedPage],
   );
 
   const onShowMore = useCallback(() => {
     navigateToCardHistory(navigation);
   }, [navigation]);
-
-  const openHostedPage: OpenCardHostedPage = useCallback(
-    async path => {
-      await openHostedUrlInSecureBrowser(buildHostedUrl(hostedUiUrl, path), PAY_TAB_DEEP_LINK);
-    },
-    [hostedUiUrl],
-  );
 
   const openHostedPath = useCallback(
     (buildPath: CardAssetPathBuilder, onError: (error: unknown) => void, currency?: string) =>
@@ -115,7 +119,29 @@ export function usePayTabViewModel() {
     [openHostedPath],
   );
 
-  const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
+  const isLegacyTopUp = !!useFeature("lwmPayTab")?.params?.legacyTopUp;
+
+  // The legacy live app has its own top-up flow and its own login. It opens as every other live
+  // app does, in the Discover webview, and never in the secure browser. It takes no currency, so
+  // the fallback opens it at its root from every top-up entry point.
+  const openTopUp = useCallback(
+    async (currency?: string) => {
+      if (isLegacyTopUp) {
+        navigation.navigate(NavigatorName.Base, {
+          screen: ScreenName.PlatformApp,
+          params: { platform: CL_CARD_APP_ID },
+        });
+        return;
+      }
+
+      await openAssetPage(buildTopUpPath, currency);
+    },
+    [isLegacyTopUp, navigation, openAssetPage],
+  );
+
+  const onTopUp = useCallback(() => openTopUp(), [openTopUp]);
+
+  const onChooseCardType = useCallback(() => openAssetPage(buildOrderCardPath), [openAssetPage]);
 
   const onManagePin = useCallback(
     () =>
@@ -154,11 +180,11 @@ export function usePayTabViewModel() {
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
+      onTopUp: asset => void openTopUp(asset.currency),
       onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
       onAddAsset,
     }),
-    [payCardAssets, onShowAssetHistory, openAssetPage, onAddAsset],
+    [payCardAssets, onShowAssetHistory, openAssetPage, openTopUp, onAddAsset],
   );
 
   // Without a countervalue formatter the flow shows the bare artwork instead of the card's balance.
@@ -175,6 +201,7 @@ export function usePayTabViewModel() {
     cardAssets,
     cardFormatters,
     onTopUp,
+    onChooseCardType,
     balance,
     actionTiles,
     contacts,

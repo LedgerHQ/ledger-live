@@ -10,7 +10,8 @@ import { useRequestReceiveView } from "./useRequestReceiveView.native";
 import type { RequestReceiveViewProps } from "../../types";
 
 export function RequestReceiveView({
-  labels,
+  title,
+  networkLabel,
   assetIcon,
   networkIcon,
   visibleActions,
@@ -58,8 +59,8 @@ export function RequestReceiveView({
         }}
       >
         <RequestReceiveSummary
-          title={labels.title}
-          networkLabel={labels.networkLabel}
+          title={title}
+          networkLabel={networkLabel}
           assetIcon={assetIcon}
           networkIcon={networkIcon}
           addressParts={addressParts}
@@ -70,7 +71,6 @@ export function RequestReceiveView({
       <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s24" }}>
         {hint ? <RequestReceiveVerifyHint {...hint} /> : null}
         <RequestReceiveActions
-          labels={labels.actions}
           visibleActions={visibleActions}
           hasCopied={hasCopied}
           onShare={onShare}

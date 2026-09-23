@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "@shared/i18n";
 import type {
   RequestReceiveActionId,
   RequestReceiveViewModel,
@@ -24,6 +25,7 @@ export function useRequestReceiveViewModel({
   onVerify,
   onTrackEvent,
 }: RequestReceiveViewModelParams): RequestReceiveViewModel {
+  const { t } = useTranslation();
   const addressParts = useMemo(() => splitAddress(address), [address]);
 
   const runAction = useCallback(
@@ -48,6 +50,8 @@ export function useRequestReceiveViewModel({
   const handleVerify = useCallback(() => runAction("verify", onVerify), [runAction, onVerify]);
 
   return {
+    title: t("payTab.request.title", { asset: asset.name }),
+    networkLabel: t("payTab.request.networkLabel", { network }),
     asset,
     network,
     address,

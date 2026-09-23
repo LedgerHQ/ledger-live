@@ -3,6 +3,7 @@ import { CARD_MANAGEMENT_TAGS, OAUTH2_TOKEN_PATH } from "./constants";
 import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
+  PayCardRewardWalletCanonicalSchema,
   PayCardRewardWalletResponseSchema,
   PayCardLinkWalletRequestSchema,
   PayCardLinkWalletResponseSchema,
@@ -21,13 +22,18 @@ import {
   PayCardSetPinTokenRequestSchema,
   PayCardSetPinTokenResponseSchema,
   PayCardStatusResponseSchema,
-  PayCardTransactionsRequestSchema,
+  PayCardTransactionsPageRequestSchema,
   PayCardTransactionsResponseSchema,
   PayCardWalletHistoryRequestSchema,
   PayCardWalletHistoryResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
-import { transformPayCardLinkedWallets, transformPayCardSessionResponse } from "./transforms";
+import { FIRST_CARD_TRANSACTIONS_PAGE, nextCardTransactionsPage } from "./transactionsPaging";
+import {
+  transformPayCardLinkedWallets,
+  transformPayCardRewardWallet,
+  transformPayCardSessionResponse,
+} from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
   PayCardFreezeStateResult,
@@ -143,20 +149,29 @@ export const cardManagementApi = cardApi
       }),
 
       /**
-       * The card's own transactions, newest first.
+       * The card's own transactions, newest first, one provider page at a time.
        *
-       * Paged by number and nothing else: the provider answers with a bare array, so a short page
-       * is how a caller learns it has reached the end.
+       * An infinite query: the provider pages a bare array and answers a page past the end with an
+       * empty one, which is what stops the reading. `transactionsPaging.ts` holds that rule and the
+       * join that puts the pages back together.
        */
-      getCardTransactions: build.query<PayCardTransaction[], PayCardTransactionsRequest>({
-        query: filters => ({
+      getCardTransactions: build.infiniteQuery<
+        PayCardTransaction[],
+        PayCardTransactionsRequest,
+        number
+      >({
+        query: ({ pageParam, queryArg }) => ({
           url: "/v1/card/transactions",
           method: "GET",
-          params: filters,
+          params: { ...queryArg, page: pageParam },
         }),
-        argSchema: PayCardTransactionsRequestSchema,
+        argSchema: PayCardTransactionsPageRequestSchema,
         responseSchema: PayCardTransactionsResponseSchema,
         providesTags: ["CardTransactions"],
+        infiniteQueryOptions: {
+          initialPageParam: FIRST_CARD_TRANSACTIONS_PAGE,
+          getNextPageParam: nextCardTransactionsPage,
+        },
       }),
 
       /**
@@ -268,7 +283,9 @@ export const cardManagementApi = cardApi
           url: "/v1/wallet/reward",
           method: "GET",
         }),
-        responseSchema: PayCardRewardWalletResponseSchema,
+        rawResponseSchema: PayCardRewardWalletResponseSchema,
+        transformResponse: transformPayCardRewardWallet,
+        responseSchema: PayCardRewardWalletCanonicalSchema,
       }),
 
       getCardLinkedWallets: build.query<PayCardLinkedWallet[], void>({
@@ -373,8 +390,7 @@ export const {
   useGetUserQuery,
   useOrderCardMutation,
   useGetCardStatusQuery,
-  useGetCardTransactionsQuery,
-  useLazyGetCardTransactionsQuery,
+  useGetCardTransactionsInfiniteQuery,
   useGetWalletHistoryQuery,
   useLazyGetWalletHistoryQuery,
   useCreateCardDetailsTokenMutation,

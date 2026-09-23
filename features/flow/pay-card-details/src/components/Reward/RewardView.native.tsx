@@ -11,14 +11,14 @@ import {
 import { DollarConvert } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { RewardViewProps } from "./types";
 
-export function RewardView({ amount, subtitle }: RewardViewProps) {
+export function RewardView({ amount, countervalue, subtitle }: RewardViewProps) {
   return (
     <Card type="info" testID="card-details-reward">
       <CardHeader>
         <CardLeading>
           <Spot appearance="icon" icon={DollarConvert} size={48} />
           <CardContent>
-            <CardContentTitle>{amount}</CardContentTitle>
+            <CardContentTitle>{countervalue ?? amount}</CardContentTitle>
             <CardContentDescription>{subtitle}</CardContentDescription>
           </CardContent>
         </CardLeading>

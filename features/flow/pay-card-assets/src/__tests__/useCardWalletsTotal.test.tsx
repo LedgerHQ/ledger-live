@@ -37,7 +37,7 @@ const BITCOIN = CryptoOrTokenCurrencySchema.parse({
 });
 
 // Whole cents, so a sum reads at a glance: 12.50 USDC is 1250 and one BTC is 100_000.
-const priceWallet = jest.fn((currency: CryptoOrTokenCurrency): number | null =>
+const getCounterValue = jest.fn((currency: CryptoOrTokenCurrency): number | null =>
   currency.id === USDC.id ? 1250 : 100_000,
 );
 
@@ -46,7 +46,7 @@ const assets: CardAssetsProps = {
     [USDC.id, USDC],
     [BITCOIN.id, BITCOIN],
   ]),
-  priceWallet,
+  getCounterValue,
   formatCountervalue: String,
   onAddAsset: jest.fn(),
 };
@@ -83,7 +83,7 @@ describe("useCardWalletsTotal", () => {
   });
 
   it("should leave a wallet nothing could price out of the total, rather than guessing at it", () => {
-    priceWallet.mockReturnValueOnce(null);
+    getCounterValue.mockReturnValueOnce(null);
     stubWallets([
       { id: "w-usdc", balance: "12.50", ledgerCurrency: USDC },
       { id: "w-btc", balance: "1", ledgerCurrency: BITCOIN },
@@ -103,7 +103,7 @@ describe("useCardWalletsTotal", () => {
     const { result } = renderHook(() => useCardWalletsTotal(assets, true));
 
     expect(result.current.total).toBe(0);
-    expect(priceWallet).not.toHaveBeenCalled();
+    expect(getCounterValue).not.toHaveBeenCalled();
   });
 
   it("should skip the wallets query while nobody is signed in", () => {

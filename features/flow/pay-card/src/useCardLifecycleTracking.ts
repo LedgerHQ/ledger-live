@@ -1,6 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetCardStatusQuery, useGetCardTransactionsQuery } from "@domain/api-card-management";
+import {
+  joinCardTransactionsPages,
+  useGetCardStatusQuery,
+  useGetCardTransactionsInfiniteQuery,
+} from "@domain/api-card-management";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import { selectPendingLoginType, setPendingLoginType } from "@features/flow-pay-card-auth/state";
 import { usePayAnalyticsContext, type PayAnalyticsHelper } from "@features/platform-pay-analytics";
@@ -60,7 +64,15 @@ export function useCardLifecycleTracking() {
   const pendingLoginType = useSelector(selectPendingLoginType);
   const analytics = usePayAnalyticsContext();
   const { data: cardStatus } = useGetCardStatusQuery(undefined, { skip: !isSignedIn });
-  const { data: transactions } = useGetCardTransactionsQuery(undefined, { skip: !isSignedIn });
+  const { data: transactionPages } = useGetCardTransactionsInfiniteQuery(undefined, {
+    skip: !isSignedIn,
+  });
+  // Still `undefined` until a page lands: the milestones tell "no transactions yet" apart from
+  // "not read yet", and an empty array would report the first as the second.
+  const transactions = useMemo(
+    () => (transactionPages ? joinCardTransactionsPages(transactionPages.pages) : undefined),
+    [transactionPages],
+  );
   const onboarding = useCardOnboardingStatus({ skip: !isSignedIn });
 
   useEffect(() => {

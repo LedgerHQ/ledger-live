@@ -1,3 +1,5 @@
+import { cardManagementApi } from "@domain/api-card-management";
+import { documentedPayCardTransaction } from "@domain/api-card-management/mock/card-transactions";
 import { getPayAttributes } from "../getPayAttributes";
 
 describe("getPayAttributes", () => {
@@ -18,6 +20,26 @@ describe("getPayAttributes", () => {
         cardLoggedIn: false,
         cardRewardCurrency: null,
       }),
+    );
+  });
+
+  it("counts the cached transactions, which the endpoint holds in pages", () => {
+    // The endpoint is an infinite query, so its cache entry is `{ pages }`. Handing that straight
+    // to the analytics property counts no transactions at all and `has_tx` silently goes false.
+    const withOnePage = {
+      ...unsigned,
+      [cardManagementApi.reducerPath]: {
+        queries: {
+          "getCardTransactions(undefined)": {
+            status: "fulfilled",
+            data: { pages: [[documentedPayCardTransaction]], pageParams: [0] },
+          },
+        },
+      },
+    };
+
+    expect(getPayAttributes(withOnePage, true, ["USDC"])).toEqual(
+      expect.objectContaining({ has_tx: true }),
     );
   });
 });

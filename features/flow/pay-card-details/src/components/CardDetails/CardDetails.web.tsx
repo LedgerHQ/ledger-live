@@ -8,7 +8,12 @@ import { Reward } from "../Reward/Reward";
 import { useRevealViewModel } from "../Reveal/useRevealViewModel";
 import type { CardDetailsProps } from "../../types";
 
-export function CardDetails({ cardVisual, formatters, cardSettingsActions }: CardDetailsProps) {
+export function CardDetails({
+  cardVisual,
+  assets,
+  formatters,
+  cardSettingsActions,
+}: CardDetailsProps) {
   const reveal = useRevealViewModel();
 
   return (
@@ -20,7 +25,12 @@ export function CardDetails({ cardVisual, formatters, cardSettingsActions }: Car
         cardFace={cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
       />
       <CardActions reveal={reveal} cardSettingsActions={cardSettingsActions} />
-      <Reward formatters={formatters} />
+      <Reward
+        formatters={formatters}
+        currencies={assets?.currencies}
+        getCounterValue={assets?.getCounterValue}
+        formatCountervalue={assets?.formatCountervalue}
+      />
     </div>
   );
 }

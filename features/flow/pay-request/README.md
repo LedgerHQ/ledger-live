@@ -5,14 +5,17 @@
 
 Dual-platform flow package for the Pay tab **Request receive-screen** experience for Ledger Wallet:
 a shared view-model and receive-screen component (highlighted address, action tiles) consumed by
-the platform presentations on desktop and mobile. QR rendering and the shareable card are added
-separately (LIVE-36118 / LIVE-36121).
+the platform presentations on desktop and mobile.
+
+Copy is resolved inside this package through `@shared/i18n` (`payTab.request.*` in each app's
+default namespace). The host injects account primitives, icons, visible actions, and side-effect
+callbacks only.
 
 ## View-model
 
-`useRequestReceiveViewModel` is pure and platform-agnostic: no Redux, navigation, device I/O, i18n
-or domain dependencies. The host resolves the selected account into primitives and injects the
-action side effects; the view-model formats display data and wraps each action with tracking.
+`useRequestReceiveViewModel` formats display data (including title / network label) and wraps each
+action with tracking. The host resolves the selected account into primitives and injects the action
+side effects.
 
 ```tsx
 import { useRequestReceiveViewModel } from "@features/flow-pay-request";
@@ -28,9 +31,6 @@ const vm = useRequestReceiveViewModel({
   onVerify: verifyOnDevice,
   onTrackEvent: track,
 });
-
-// vm.asset, vm.network, vm.address, vm.addressParts, vm.qrPayload
-// vm.onShare(), vm.onCopy(), vm.onSave(), vm.onVerify()  ← argument-less, tracked
 ```
 
 The host owns the actual work behind each callback (clipboard, share sheet, card-to-image, device
@@ -42,16 +42,14 @@ without masking the middle.
 ### Tracking
 
 Each action emits `button_clicked { button, buttonLocation: "request", page }` via the injected
-`onTrackEvent`, where `button` is `share` | `copy address` | `save` | `verify`.
+`onTrackEvent`, where `button` is `share` | `copy` | `save` | `verify`.
 
 ## Components
 
 ### `RequestReceive`
 
 Receive dialog/screen for the Pay Request flow. It consumes `useRequestReceiveViewModel` and renders
-the asset icon, network row, highlighted address and the action tiles. The host injects copy,
-icons, the visible actions and the side-effect callbacks; the component stays i18n-, device- and
-navigation-agnostic.
+the asset icon, network row, highlighted address and the action tiles.
 
 > Native is a full screen (LIVE-35188). Branded QR uses `@shared/ui-qr-code`.
 
@@ -64,11 +62,6 @@ import { RequestReceive } from "@features/flow-pay-request";
   asset={{ name: "USD Coin", ticker: "USDC" }}
   network="Base"
   page="Pay"
-  labels={{
-    title: "Request USD Coin",
-    networkLabel: "Base network",
-    actions: { share: "Share", copy: "Copy", copied: "Copied", save: "Save", verify: "Verify" },
-  }}
   assetIcon={{ ledgerId: "usd_coin", ticker: "USDC", network: "base" }}
   networkIcon={{ ledgerId: "base", ticker: "ETH" }}
   visibleActions={["save", "copy", "verify"]}
@@ -82,19 +75,19 @@ import { RequestReceive } from "@features/flow-pay-request";
 ```
 
 `visibleActions` controls which tiles render, in order. Desktop uses `["save", "copy", "verify"]`;
-mobile uses `["share", "copy", "verify"]`. The Copy tile flips to the `copied` label briefly after use.
+mobile uses `["share", "copy", "verify"]`. The Copy tile flips to the `copied` label briefly after
+use.
 
 ### `VerifyAddress`
 
 On-device address-verification overlay used by the Pay Request receive screen. It renders two
-phases and stays i18n-, analytics- and device-agnostic — the host app injects copy, tracking and
-owns the device interaction:
+phases; the host owns tracking and the device interaction:
 
 - `intro` — "Verify your address" sheet/dialog with the **Verify address** CTA. Pressing it calls
-  `onVerify`, which the app wires to the shared `verifyAddressIntent` device intent (DIE lives in the
-  app, never in this package).
-- `success` — "Address displayed on the device's Secure Screen" with the numbered **Next steps** and
-  a **Got it** CTA (`onGotIt`).
+  `onVerify`, which the app wires to the shared `verifyAddressIntent` device intent (DIE lives in
+  the app, never in this package).
+- `success` — "Address displayed on the device's Secure Screen" with the numbered **Next steps**
+  and a **Got it** CTA (`onGotIt`).
 
 The `executing` device phase (connect / open app / waiting) is rendered by the app's own
 `DeviceIntentExecutor` host, not by this package. The host drives the `phase` prop
@@ -105,7 +98,6 @@ import { VerifyAddress } from "@features/flow-pay-request";
 
 <VerifyAddress
   phase={phase}
-  labels={labels}
   page="Pay"
   onVerify={startDeviceIntent}
   onGotIt={close}
@@ -135,14 +127,14 @@ pay-request/
     ├── index.ts                                # Public API barrel (web/default) → ./exports
     ├── index.native.ts                         # Native public API barrel → ./exports
     ├── exports.ts                              # Shared public surface (VM + component + utils + types)
-    ├── types.ts                                # VM params/return + props/labels contracts
+    ├── types.ts                                # VM params/return + props contracts
     ├── utils/
     │   ├── splitAddress.ts
     │   └── __tests__/
     └── components/
         ├── RequestReceive/
         │   ├── RequestReceive.tsx                 # Container (platform-agnostic)
-        │   ├── useRequestReceiveViewModel.ts      # pure VM: display data + tracked handlers
+        │   ├── useRequestReceiveViewModel.ts      # display data + tracked handlers
         │   ├── RequestReceiveView.web.tsx         # Dialog (LWD)
         │   ├── RequestReceiveView.native.tsx      # Full screen (LWM)
         │   └── __tests__/

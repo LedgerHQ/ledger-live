@@ -2,6 +2,8 @@ import { baanxAssetLedgerId } from "@domain/entity-card-asset-mapping";
 import type {
   PayCardLinkedWallet,
   PayCardLinkedWalletResponse,
+  PayCardRewardWallet,
+  PayCardRewardWalletResponse,
   PayCardSession,
   PayCardSessionResponse,
 } from "./types";
@@ -31,4 +33,19 @@ export function transformPayCardLinkedWallets(
     // wallet without one, not a wallet whose currency is the value `undefined`.
     return ledgerId === undefined ? { ...wallet } : { ...wallet, ledgerId };
   });
+}
+
+/**
+ * Resolves the reward wallet to its Ledger currency, so it prices like a linked wallet does.
+ *
+ * The reward names its asset by `currency` alone, while the catalog is keyed on the provider's
+ * `currency`/`network` pair, so the pair is completed by repeating the currency: that is the
+ * network-less form the catalog already lists. It resolves here, once, rather than in each view.
+ */
+export function transformPayCardRewardWallet(
+  response: PayCardRewardWalletResponse,
+): PayCardRewardWallet {
+  const ledgerId = baanxAssetLedgerId(response.currency, response.currency);
+
+  return ledgerId === undefined ? { ...response } : { ...response, ledgerId };
 }

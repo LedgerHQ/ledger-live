@@ -3,6 +3,7 @@ import {
   PayCardErrorResponseSchema,
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletSchema,
+  PayCardRewardWalletCanonicalSchema,
   PayCardRewardWalletResponseSchema,
   PayCardLinkWalletRequestSchema,
   PayCardLinkWalletResponseSchema,
@@ -118,7 +119,10 @@ export type PayCardLinkWalletRequest = z.infer<typeof PayCardLinkWalletRequestSc
 export type PayCardLinkWalletResult = z.infer<typeof PayCardLinkWalletResponseSchema>;
 
 /** The wallet the card's rewards are paid into. */
-export type PayCardRewardWallet = z.infer<typeof PayCardRewardWalletResponseSchema>;
+export type PayCardRewardWalletResponse = z.infer<typeof PayCardRewardWalletResponseSchema>;
+
+/** The reward wallet as the app uses it: the wire answer plus the Ledger currency it resolves to. */
+export type PayCardRewardWallet = z.infer<typeof PayCardRewardWalletCanonicalSchema>;
 
 /** One card-linked wallet exactly as the wire sent it. */
 export type PayCardLinkedWalletResponse = z.infer<typeof PayCardLinkedWalletSchema>;

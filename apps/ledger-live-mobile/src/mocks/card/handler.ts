@@ -5,7 +5,7 @@ import {
 } from "@domain/api-card-management/mock/card-session";
 import { mockPayCardDetailsToken } from "@domain/api-card-management/mock/card-details-token";
 import {
-  mockPayCardTransactions,
+  mockPayCardTransactionsPage,
   readPayCardTransactionsMock,
 } from "@domain/api-card-management/mock/card-transactions";
 import {
@@ -32,7 +32,6 @@ const SLOW_MS = 5_000;
  * answers within the same frame the drag ends, which a real provider never does.
  */
 const REORDER_MS = 200;
-const TRANSACTIONS_PAGE_SIZE = 10;
 
 const MOCK_USER = {
   id: "6f1c9a52-3d4e-4b7a-9c81-2f0d5e7a1b34",
@@ -167,16 +166,11 @@ const handlers = [
   }),
 
   http.get("*/v1/card/transactions", ({ request }) => {
-    const devtoolTransactions = readPayCardTransactionsMock();
-    if (devtoolTransactions !== undefined) {
-      const page = Number(new URL(request.url).searchParams.get("page") ?? 0);
-      const start = page * TRANSACTIONS_PAGE_SIZE;
-      return HttpResponse.json(devtoolTransactions.slice(start, start + TRANSACTIONS_PAGE_SIZE));
+    if (readPayCardTransactionsMock() === undefined && !isMockCardRequest(request)) {
+      return passthrough();
     }
 
-    return isMockCardRequest(request)
-      ? HttpResponse.json(mockPayCardTransactions())
-      : passthrough();
+    return HttpResponse.json(mockPayCardTransactionsPage(request));
   }),
 
   // The image the token points at is not mocked here: RN loads it through native networking, which

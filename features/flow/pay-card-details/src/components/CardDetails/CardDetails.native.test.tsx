@@ -28,7 +28,7 @@ listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 const StoreWrapper = cardApiWrapper({ signedIn: true });
 const assets = {
   currencies: new Map(),
-  priceWallet: () => 125.4,
+  getCounterValue: () => 125.4,
   formatCountervalue: (value: number) => `$${value}`,
   onAddAsset: jest.fn(),
 };
