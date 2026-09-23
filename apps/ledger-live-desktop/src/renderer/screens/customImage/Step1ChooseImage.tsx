@@ -100,6 +100,7 @@ const StepChooseImage: React.FC<Props> = props => {
               mt={10}
               onClick={onClickRemoveCustomImage}
               Icon={IconsLegacy.TrashMedium}
+              data-testid="remove-custom-image-button"
             >
               {t("removeCurrentPicture.cta")}
             </Link>
