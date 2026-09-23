@@ -205,6 +205,12 @@ async function installInterceptors(): Promise<void> {
   };
 }
 
+/** Redirects external `fetch` and `http(s).request` calls to `localhost:<port>`; `null` stops it. */
+export async function redirectHttpTo(port: number | null): Promise<void> {
+  if (port !== null) await installInterceptors();
+  currentMockPort = port;
+}
+
 // ---------------------------------------------------------------------------
 // DMK mock helpers
 // ---------------------------------------------------------------------------
@@ -296,8 +302,7 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
 
   // 1. HTTP interceptor: install once, update port per call
   if (mergedEnv.WALLET_CLI_MOCK_PORT) {
-    await installInterceptors();
-    currentMockPort = Number(mergedEnv.WALLET_CLI_MOCK_PORT);
+    await redirectHttpTo(Number(mergedEnv.WALLET_CLI_MOCK_PORT));
   }
 
   // 2. DMK mock: set before run (cleared in finally)
@@ -338,7 +343,7 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
 
     // Reset mock port if we set it
     if (mergedEnv.WALLET_CLI_MOCK_PORT) {
-      currentMockPort = null;
+      await redirectHttpTo(null);
     }
   }
 
