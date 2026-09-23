@@ -1,6 +1,10 @@
 import "../../live-common-setup";
-import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "../../shared/ui";
+import {
+  activateAgentIntentMocks,
+  deactivateAgentIntentMocks,
+} from "./__test-helpers__/agent-intent-mocks";
 
 let existingProfile: { profileId: string } | undefined;
 // Set only by the race test below: lets the precheck (1st Session.read) and the locked, authoritative
@@ -16,11 +20,9 @@ let deleteSecretKeySucceeds: boolean;
 const savedSecretKeys = new Set<string>();
 const deletedSecretKeyCalls: string[] = [];
 
-const realSessionStore = await import("../../session/session-store");
-mock.module("../../session/session-store", () => ({
-  ...realSessionStore,
-  Session: {
-    read: async () => {
+beforeAll(() =>
+  activateAgentIntentMocks({
+    sessionRead: async () => {
       sessionReadCalls++;
       const profile =
         sessionReadCalls === 1 || existingProfileOnRecheck === "same-as-precheck"
@@ -33,34 +35,30 @@ mock.module("../../session/session-store", () => ({
         write: () => writeImpl(),
       };
     },
-  },
-  // Real implementation calls mkdirSync + a real file lock — irrelevant to what these tests check
-  // (the checks/rollback logic), so make it a no-op instead of exercising real file I/O.
-  withSessionLock: async <T>(fn: () => Promise<T> | T) => fn(),
-}));
-
-mock.module("../../key-ring/agent-intent-keychain", () => ({
-  hasAgentIntentSecretKey: (_profileId: string) => keychainHasEntry,
-  saveAgentIntentSecretKey: async (profileId: string, _secretKeyHex: string) => {
-    savedSecretKeys.add(profileId);
-  },
-  deleteAgentIntentSecretKey: (profileId: string) => {
-    deletedSecretKeyCalls.push(profileId);
-    if (deleteSecretKeySucceeds) savedSecretKeys.delete(profileId);
-    return deleteSecretKeySucceeds;
-  },
-}));
-
-const realAgentIntentSdk = await import("@ledgerhq/agent-intent-sdk");
-mock.module("@ledgerhq/agent-intent-sdk", () => ({
-  ...realAgentIntentSdk,
-  createSoftwareAgentIdentity: () => ({
-    publicKey: "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076",
-    exportSecretKey: () => "deadbeef",
+    // The real lock does mkdirSync + a real file lock — irrelevant to these checks/rollback tests.
+    noopSessionLock: true,
+    keychain: {
+      hasAgentIntentSecretKey: (_profileId: string) => keychainHasEntry,
+      saveAgentIntentSecretKey: async (profileId: string, _secretKeyHex: string) => {
+        savedSecretKeys.add(profileId);
+      },
+      deleteAgentIntentSecretKey: (profileId: string) => {
+        deletedSecretKeyCalls.push(profileId);
+        if (deleteSecretKeySucceeds) savedSecretKeys.delete(profileId);
+        return deleteSecretKeySucceeds;
+      },
+    },
+    sdk: {
+      createSoftwareAgentIdentity: () => ({
+        publicKey: "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076",
+        exportSecretKey: () => "deadbeef",
+      }),
+      createAgentEnrollmentRequest: () => ({ signedRequest: "opaque" }),
+      createAgentEnrollmentUrl: (appUrl: string, _request: unknown) => `${appUrl}#request=opaque`,
+    },
   }),
-  createAgentEnrollmentRequest: () => ({ signedRequest: "opaque" }),
-  createAgentEnrollmentUrl: (appUrl: string, _request: unknown) => `${appUrl}#request=opaque`,
-}));
+);
+afterAll(() => deactivateAgentIntentMocks());
 
 const { default: enrollCommand } = await import("./enroll");
 
