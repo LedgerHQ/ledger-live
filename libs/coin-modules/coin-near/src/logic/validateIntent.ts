@@ -157,6 +157,31 @@ async function validateSend(
   return { errors, warnings, estimatedFees, amount, totalSpent };
 }
 
+/**
+ * The liquid balance gas can actually be paid from: what the account holds above the protocol's
+ * storage-staking floor.
+ *
+ * {@link spendable} also removes MIN_ACCOUNT_BALANCE_BUFFER, a reserve held on our side so an
+ * account keeps enough to operate with, because `locked` folds the two together. An unstake or a
+ * withdraw is the very operation that reserve exists for, so it may be priced against it, and the
+ * chain is read rather than the reserve added back: once `locked` exceeds the value it is capped,
+ * and adding a flat buffer to a capped figure would claim funds the account does not hold.
+ */
+async function feeAvailableBalance(config: NearConfig, sender: string): Promise<bigint> {
+  const details = await fetchAccountDetails(config, sender);
+
+  if (!details) {
+    return 0n;
+  }
+
+  const { storageCost } = await getActionCosts(config);
+  const usable = new BigNumber(details.amount).minus(
+    storageCost.multipliedBy(details.storage_usage),
+  );
+
+  return usable.gt(0) ? BigInt(usable.toFixed(0)) : 0n;
+}
+
 // The ceiling a staking op can move: unstake/withdraw move already-delegated funds (only the fee
 // comes out of the liquid balance), staking spends the liquid balance itself.
 async function maxStakingAmount(
@@ -203,7 +228,12 @@ async function validateStaking(
   const amount = intent.useAllAmount ? maxAmount : intent.amount;
   const totalSpent = mode === "stake" ? amount + estimatedFees : estimatedFees;
 
-  if (estimatedFees > available || (mode === "stake" && totalSpent > available)) {
+  const cannotAffordFees =
+    mode === "stake"
+      ? totalSpent > available
+      : estimatedFees > (await feeAvailableBalance(config, intent.sender));
+
+  if (cannotAffordFees) {
     errors.amount = new NotEnoughBalance();
   } else if (amount < threshold) {
     // The node reports a staked amount a yoctoNEAR short of what was staked, so the displayed

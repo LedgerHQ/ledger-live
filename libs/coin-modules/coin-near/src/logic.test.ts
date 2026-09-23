@@ -1,5 +1,13 @@
 import BigNumber from "bignumber.js";
-import { getMaxAmount, getNearStakingPositions, getStakingFees, getTotalSpent } from "./logic";
+import { STAKING_GAS } from "./constants";
+import {
+  getFeeAvailableBalance,
+  getMaxAmount,
+  getNearStakingPositions,
+  getStakingFees,
+  getStakingGas,
+  getTotalSpent,
+} from "./logic";
 import { NearAccount, Transaction } from "./types";
 
 describe("getMaxAmount", () => {
@@ -450,25 +458,102 @@ describe("getTotalSpent", () => {
 
 // Regression for LIVE-36138: the fee formula previously divided by 10, which caused a ~10x
 // underestimate and let users sign a withdraw transaction that the network then rejected.
+describe("getStakingGas", () => {
+  it("attaches a budget above what other wallets send on the restake path", () => {
+    // 30 TGas attached succeeds on the first-call-in-epoch path (Stake receipt plus the pool's
+    // 20 TGas on_stake_action callback), measured across five mainnet pools.
+    expect(getStakingGas().toFixed()).toBe(STAKING_GAS);
+    expect(getStakingGas().gte("30000000000000")).toBe(true);
+  });
+});
+
 describe("getStakingFees", () => {
-  // Typical NEAR gas price: 10^9 yoctoNEAR per gas unit.
-  const gasPrice = new BigNumber("1000000000");
+  // Mainnet at the time of writing: current price 10^8, floor 10^9 yoctoNEAR per gas unit.
+  const gasPrice = new BigNumber("100000000");
+  const minGasPurchasePrice = new BigNumber("1000000000");
 
-  it("estimates withdraw_all fee as (175 + 25) TGas × gasPrice with no divisor", () => {
-    // 175 TGas prepaid + 25 TGas buffer = 200 TGas
-    const expected = new BigNumber("200000000000000").multipliedBy(gasPrice);
+  it("buys the attached gas plus overhead at the min_gas_purchase_price floor", () => {
+    const expected = new BigNumber("55000000000000").multipliedBy(minGasPurchasePrice);
 
-    const fee = getStakingFees({ mode: "withdraw", useAllAmount: true }, gasPrice);
-
-    expect(fee).toEqual(expected);
+    expect(getStakingFees(gasPrice, minGasPurchasePrice)).toEqual(expected);
   });
 
-  it("estimates partial withdraw fee as (125 + 25) TGas × gasPrice with no divisor", () => {
-    // 125 TGas prepaid + 25 TGas buffer = 150 TGas
-    const expected = new BigNumber("150000000000000").multipliedBy(gasPrice);
+  it("stays above what the chain charges for this budget", () => {
+    // A real withdraw_all with 175 TGas attached was quoted 175918963510277000000000 yocto:
+    // 175 TGas at the floor plus 918963510277000000 of action overhead, which does not scale
+    // with the attached gas.
+    const overhead = new BigNumber("918963510277000000");
+    const chainCost = new BigNumber(STAKING_GAS).multipliedBy(minGasPurchasePrice).plus(overhead);
 
-    const fee = getStakingFees({ mode: "withdraw", useAllAmount: false }, gasPrice);
+    expect(getStakingFees(gasPrice, minGasPurchasePrice).gte(chainCost)).toBe(true);
+  });
 
-    expect(fee).toEqual(expected);
+  it("uses the current gas price when it has risen above the floor", () => {
+    const highGasPrice = new BigNumber("5000000000");
+    const expected = new BigNumber("55000000000000").multipliedBy(highGasPrice);
+
+    expect(getStakingFees(highGasPrice, minGasPurchasePrice)).toEqual(expected);
+  });
+});
+
+describe("getFeeAvailableBalance", () => {
+  const storageDeposit = new BigNumber("1820000000000000000000");
+  const reserve = new BigNumber("50000000000000000000000");
+  const inPool = new BigNumber("1000000000000000000000000");
+
+  const account = (liquidBalance: BigNumber, resources?: Partial<NearAccount["nearResources"]>) =>
+    ({
+      balance: liquidBalance.plus(inPool),
+      spendableBalance: BigNumber.max(
+        liquidBalance.minus(storageDeposit).minus(reserve),
+        new BigNumber(0),
+      ),
+      nearResources: {
+        stakedBalance: new BigNumber(0),
+        availableBalance: inPool,
+        pendingBalance: new BigNumber(0),
+        storageUsageBalance: storageDeposit.plus(reserve),
+        stakingPositions: [],
+        ...resources,
+      },
+    }) as unknown as NearAccount;
+
+  it("keeps our reserve available while holding back the storage deposit", () => {
+    const liquidBalance = new BigNumber("55000000000000000000000");
+
+    expect(getFeeAvailableBalance(account(liquidBalance)).toFixed()).toBe(
+      liquidBalance.minus(storageDeposit).toFixed(),
+    );
+  });
+
+  it("excludes every delegated bucket from the liquid balance", () => {
+    const liquidBalance = new BigNumber("55000000000000000000000");
+    const resources = {
+      stakedBalance: new BigNumber("2000000000000000000000000"),
+      availableBalance: inPool,
+      pendingBalance: new BigNumber("3000000000000000000000000"),
+    };
+    const staking = account(liquidBalance, resources);
+    staking.balance = liquidBalance
+      .plus(resources.stakedBalance)
+      .plus(resources.availableBalance)
+      .plus(resources.pendingBalance);
+
+    expect(getFeeAvailableBalance(staking).toFixed()).toBe(
+      liquidBalance.minus(storageDeposit).toFixed(),
+    );
+  });
+
+  it("floors at zero when the balance is below the storage deposit", () => {
+    expect(getFeeAvailableBalance(account(new BigNumber(1))).toFixed()).toBe("0");
+  });
+
+  it("falls back to the spendable balance when the account carries no resources", () => {
+    const bare = {
+      balance: new BigNumber("55000000000000000000000"),
+      spendableBalance: new BigNumber("3180000000000000000000"),
+    } as unknown as NearAccount;
+
+    expect(getFeeAvailableBalance(bare).toFixed()).toBe("3180000000000000000000");
   });
 });
