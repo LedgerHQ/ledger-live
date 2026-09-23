@@ -488,11 +488,21 @@ describe("useSendHeaderModel", () => {
 
   it("opens recipient search from a Pay-launched amount step without closing", () => {
     const { goToStep, goToPreviousStep, resetToStep } = mockNavigation({ canGoBack: false });
-    const { close } = mockActions();
+    const { close, updateTransaction } = mockActions();
+    const resetViewState = jest.fn();
 
-    renderHook();
+    renderHook("", resetViewState);
     act(() => latestVM?.handleRecipientInputClick());
 
+    const resetAmount = updateTransaction.mock.calls[0][0];
+    expect(
+      resetAmount({ amount: new BigNumber(5), useAllAmount: true, feesStrategy: "fast" }),
+    ).toEqual({
+      amount: new BigNumber(0),
+      useAllAmount: false,
+      feesStrategy: null,
+    });
+    expect(resetViewState).toHaveBeenCalled();
     expect(resetToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
     expect(goToStep).not.toHaveBeenCalled();
     expect(goToPreviousStep).not.toHaveBeenCalled();
