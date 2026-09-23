@@ -164,7 +164,7 @@ const validateRemoveHotKey = (
   return undefined;
 };
 
-// The pickers offer FOLLOWABLE_TOPICS only, so what this refuses is a transaction assembled some
+// The pickers offer FOLLOWABLE_TOPICS only, so a refused topic means a transaction assembled some
 // other way. Either kind of excluded topic spends the signature for nothing: a retired one is refused
 // by the canister after signing, one past the Ledger ICP app's cap is refused on the device.
 const validateFollow = (
@@ -186,7 +186,7 @@ const validateFollow = (
     if (parsed.issue) return new ICPInvalidFolloweeId("", { id: entry });
     const { id } = parsed;
     if (seen.has(id)) return new ICPDuplicateFollowee("", { id });
-    if (id === neuron.id?.toString()) return new ICPFolloweeIsSelf();
+    if (id === neuron.id?.toString()) return new ICPFolloweeIsSelf("", { id });
     seen.add(id);
   }
   return undefined;
@@ -200,7 +200,6 @@ const validateDisburse = (neuron: ICPNeuron | undefined): Error | undefined => {
   return neuronCanDisburse(neuron, BigInt(ICP_FEES)) ? undefined : new ICPDisburseNotAllowed();
 };
 
-// The screens gate on these permissions at render, but a dissolving neuron dissolves on its own.
 const validateStartDissolving = (neuron: ICPNeuron | undefined): Error | undefined => {
   if (!neuron) return new ICPNeuronNotFound();
   return getNeuronActionPermissions(neuron).canStartDissolving
@@ -208,6 +207,7 @@ const validateStartDissolving = (neuron: ICPNeuron | undefined): Error | undefin
     : new ICPStartDissolvingNotAllowed();
 };
 
+// The screens gate on this at render, but a dissolving neuron passes its unlock time on its own.
 const validateStopDissolving = (neuron: ICPNeuron | undefined): Error | undefined => {
   if (!neuron) return new ICPNeuronNotFound();
   return getNeuronActionPermissions(neuron).canStopDissolving

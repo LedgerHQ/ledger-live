@@ -122,6 +122,13 @@ describe("StepConfirmation", () => {
       expect(container.textContent).not.toContain("could not be sent");
     },
   );
+
+  it("still says a request the node refused could not be sent", () => {
+    const error = Object.assign(new Error("boom"), { name: "ICPNodeRefused" });
+    const { container } = render(<StepConfirmation {...makeStepProps({ error, signed: true })} />);
+
+    expect(container.textContent).toContain("could not be sent");
+  });
 });
 
 describe("StepConfirmationFooter", () => {

@@ -66,7 +66,7 @@ describe("internet_computer error translations", () => {
     expect(descriptionOf(name)).toContain(placeholder);
   });
 
-  it.each(["ICPInvalidFolloweeId", "ICPDuplicateFollowee"])(
+  it.each(["ICPInvalidFolloweeId", "ICPDuplicateFollowee", "ICPFolloweeIsSelf"])(
     "%s names the followee to remove",
     name => {
       expect(descriptionOf(name)).toContain("{{id}}");

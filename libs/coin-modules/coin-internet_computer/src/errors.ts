@@ -174,7 +174,8 @@ export class ICPDuplicateFollowee extends Error {
   }
 }
 
-// The neuron lists itself: accepted by the canister, but always an abstention in the tally.
+// The neuron lists itself ({ id }, canonical): accepted by the canister, but always an abstention
+// in the tally.
 export class ICPFolloweeIsSelf extends Error {
   override name = "ICPFolloweeIsSelf";
   [key: string]: unknown;
@@ -194,7 +195,7 @@ export class ICPStartDissolvingNotAllowed extends Error {
   }
 }
 
-// Only a dissolving neuron can stop dissolving (RequiresDissolving otherwise).
+// Only a dissolving neuron can stop dissolving (RequiresDissolving on a locked or dissolved one).
 export class ICPStopDissolvingNotAllowed extends Error {
   override name = "ICPStopDissolvingNotAllowed";
   [key: string]: unknown;

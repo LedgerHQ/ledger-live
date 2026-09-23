@@ -347,9 +347,8 @@ export const isDeviceControlledNeuron = (neuron: ICPNeuron, principal: string): 
 // ---- retry safety ------------------------------------------------------------------------------
 
 /**
- * Errors that say the command did not take effect: the canister refused it, the replica refused the
- * message before the canister saw it, or the node never took the message at all. Nothing ran, so
- * re-signing repeats nothing.
+ * Errors that say the command did not take effect: the canister refused it, the replica rejected
+ * it, or the node never took the message at all. Nothing ran, so re-signing repeats nothing.
  */
 const NOTHING_EXECUTED = new Set(["ICPGovernanceRejected", "ICPCallRejected", "ICPNodeRefused"]);
 

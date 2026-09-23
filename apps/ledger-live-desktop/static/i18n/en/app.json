@@ -8595,7 +8595,7 @@
     },
     "ICPTooManyFollowees": {
       "title": "Followee limit reached",
-      "description": "A topic can follow at most {{max}} neurons. Remove one to add another."
+      "description": "A topic can follow at most {{max}} neurons. Remove neurons until the list holds {{max}} or fewer."
     },
     "ICPInvalidFolloweeId": {
       "title": "Invalid neuron ID",
@@ -8607,7 +8607,7 @@
     },
     "ICPFolloweeIsSelf": {
       "title": "A neuron cannot follow itself",
-      "description": "Remove this neuron's own ID from the list."
+      "description": "{{id}} is this neuron's own ID. Remove it from the list."
     },
     "ICPStartDissolvingNotAllowed": {
       "title": "Cannot start dissolving this neuron",

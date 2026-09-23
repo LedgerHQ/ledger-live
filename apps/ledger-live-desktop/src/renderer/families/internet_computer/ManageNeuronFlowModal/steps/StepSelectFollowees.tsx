@@ -44,7 +44,7 @@ type DraftIssue = "notANeuronId" | "outOfRange" | "duplicate" | "self" | "unadde
  *
  * The draft is submitted as written, so it is validated rather than repaired: stripping non-digits
  * read `12a3` as neuron 123 and would delegate this neuron's voting power to a target the user never
- * typed. `follow` checks only the cap and that the topic exists, so nothing else catches any of it.
+ * typed.
  */
 const readDraft = (
   draft: string,

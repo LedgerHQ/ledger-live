@@ -565,8 +565,8 @@ describe("getTransactionStatus", () => {
         expect(past.errors.transaction).toMatchObject({ max: MAX_FOLLOWEES_PER_TOPIC });
       });
 
-      it.each(["0", "-1", "1.5", "12a3", "", String(2n ** 64n)])(
-        "refuses the followee id %p before Candid can",
+      it.each(["0", "-1", "1.5", "12a3", "0x10", " 5", "", String(2n ** 64n)])(
+        "refuses the followee id %p before signing",
         async id => {
           const status = await follow(["1", id]);
           expect(status.errors.transaction).toBeInstanceOf(ICPInvalidFolloweeId);
@@ -586,7 +586,9 @@ describe("getTransactionStatus", () => {
       });
 
       it.each(["7", "007"])("refuses the neuron itself as a followee, spelled %p", async id => {
-        expect((await follow(["1", id])).errors.transaction).toBeInstanceOf(ICPFolloweeIsSelf);
+        const status = await follow(["1", id]);
+        expect(status.errors.transaction).toBeInstanceOf(ICPFolloweeIsSelf);
+        expect(status.errors.transaction).toMatchObject({ id: "7" });
       });
 
       it("accepts an empty list, which clears the topic", async () => {
@@ -624,6 +626,11 @@ describe("getTransactionStatus", () => {
         expect(dissolved.errors.transaction).toBeInstanceOf(ICPStopDissolvingNotAllowed);
       });
 
+      it("refuses to stop dissolving a spawning neuron, which reads as dissolving", async () => {
+        const status = await submit("stop_dissolving", inState(NeuronState.Spawning));
+        expect(status.errors.transaction).toBeInstanceOf(ICPStopDissolvingNotAllowed);
+      });
+
       it("refuses to stop dissolving once the unlock time has passed", async () => {
         const stale = neuron({
           state: NeuronState.Dissolving,
@@ -635,13 +642,15 @@ describe("getTransactionStatus", () => {
       });
     });
 
-    it.each(["start_dissolving", "auto_stake_maturity", "refresh_voting_power"] as const)(
-      "rejects %s with no neuronId",
-      async type => {
-        const status = await getTransactionStatus(accountWith(), tx({ type }));
-        expect(status.errors.transaction).toBeInstanceOf(ICPNeuronNotFound);
-      },
-    );
+    it.each([
+      "start_dissolving",
+      "stop_dissolving",
+      "auto_stake_maturity",
+      "refresh_voting_power",
+    ] as const)("rejects %s with no neuronId", async type => {
+      const status = await getTransactionStatus(accountWith(), tx({ type }));
+      expect(status.errors.transaction).toBeInstanceOf(ICPNeuronNotFound);
+    });
 
     it("charges no ledger fee for a governance operation", async () => {
       const status = await getTransactionStatus(
