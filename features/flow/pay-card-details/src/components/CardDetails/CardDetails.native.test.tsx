@@ -2,6 +2,7 @@ import React, { type PropsWithChildren } from "react";
 import { act, render, screen, userEvent } from "@testing-library/react-native";
 import type { CardAssetRow, CardAssetsViewModel } from "@features/flow-pay-card-assets";
 import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+import { Spinner } from "@ledgerhq/lumen-ui-rnative";
 import {
   cardApiWrapper,
   listenToCardApi,
@@ -234,9 +235,13 @@ describe("CardDetails (native)", () => {
     const image = await screen.findByLabelText(CARD_COPY.numbersImageAlt, {
       includeHiddenElements: true,
     });
+    expect(screen.getByLabelText(CARD_COPY.numbersReveal).props.icon).toBe(Spinner);
+
     await act(() => {
       image.props.onLoad();
     });
+
+    expect(screen.getByLabelText(CARD_COPY.numbersHide).props.icon).not.toBe(Spinner);
 
     expect(screen.getByLabelText(CARD_COPY.numbersImageAlt)).toBeVisible();
     expect(screen.getByText(CARD_COPY.numbersHide)).toBeVisible();

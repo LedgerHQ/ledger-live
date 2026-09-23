@@ -5,6 +5,22 @@ import { CARD_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { Reveal } from "./Reveal";
 import type { RevealTileProps } from "../../types";
 
+jest.mock("@ledgerhq/lumen-ui-react", () => {
+  const { createElement } = jest.requireActual<typeof import("react")>("react");
+  return {
+    Eye: () => createElement("svg", { "data-testid": "reveal-eye" }),
+    Spinner: () => createElement("svg", { "data-testid": "reveal-spinner" }),
+    TileButton: ({
+      icon: Icon,
+      children,
+      ...props
+    }: {
+      icon: React.ComponentType;
+      children: React.ReactNode;
+    }) => createElement("button", { type: "button", ...props }, createElement(Icon), children),
+  };
+});
+
 function renderReveal(props: Partial<RevealTileProps> = {}) {
   const onReveal = jest.fn();
   const onHide = jest.fn();
@@ -41,6 +57,20 @@ describe("Reveal (web)", () => {
     renderReveal({ status: "loading" });
 
     expect(screen.getByRole("button", { name: CARD_COPY.numbersReveal })).toBeDisabled();
+  });
+
+  it("should show a spinner in place of the eye icon while loading", () => {
+    renderReveal({ status: "loading" });
+
+    expect(screen.getByTestId("reveal-spinner")).toBeInTheDocument();
+    expect(screen.queryByTestId("reveal-eye")).not.toBeInTheDocument();
+  });
+
+  it("should show the eye icon when not loading", () => {
+    renderReveal();
+
+    expect(screen.getByTestId("reveal-eye")).toBeInTheDocument();
+    expect(screen.queryByTestId("reveal-spinner")).not.toBeInTheDocument();
   });
 
   it("should show Hide when numbers are visible", () => {
