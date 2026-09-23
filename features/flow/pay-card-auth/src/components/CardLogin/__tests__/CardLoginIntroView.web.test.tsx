@@ -68,6 +68,12 @@ describe("CardLoginIntroView (Web)", () => {
     );
   });
 
+  it("keeps the hero at the aspect ratio of the artwork", () => {
+    renderIntro();
+
+    expect(screen.getByTestId("pay-card-login-intro-hero")).toHaveClass("aspect-1028/576");
+  });
+
   it("renders one row per icon", () => {
     renderIntro();
 
