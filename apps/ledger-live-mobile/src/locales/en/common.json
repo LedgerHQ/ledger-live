@@ -11450,6 +11450,13 @@
         "private": "Private"
       }
     },
+    "operationDetails": {
+      "extra": {
+        "validator": "Validator",
+        "bondedAmount": "Staked amount",
+        "unbondedAmount": "Unstaked amount"
+      }
+    },
     "shared": {
       "sponsoredByProvable": "Sponsored by Provable"
     }

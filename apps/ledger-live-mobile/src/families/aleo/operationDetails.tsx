@@ -1,22 +1,44 @@
 import React from "react";
 import { StyleSheet } from "react-native";
+import { BigNumber } from "bignumber.js";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Globe, ShieldLock } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getOperationDetailsExtraFields } from "@ledgerhq/live-common/families/aleo/utils";
-import type { AleoOperation, AleoTransactionType } from "@ledgerhq/live-common/families/aleo/types";
+import type {
+  AleoAccount,
+  AleoOperation,
+  AleoTransactionType,
+} from "@ledgerhq/live-common/families/aleo/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { useTranslation } from "~/context/Locale";
+import { useSelector } from "~/context/hooks";
+import { discreetModeSelector } from "~/reducers/settings";
+import { useSettings } from "~/hooks";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import Section from "~/screens/OperationDetails/Section";
 import OperationStatusIcon from "~/icons/OperationStatusIcon";
 
 interface OperationDetailsExtraProps {
   operation: AleoOperation;
+  account: AleoAccount;
+  type: OperationType;
 }
 
-const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
+const STAKED_AMOUNT_LABEL: Partial<Record<OperationType, string>> = {
+  BOND: "aleo.operationDetails.extra.bondedAmount",
+  UNBOND: "aleo.operationDetails.extra.unbondedAmount",
+};
+
+const OperationDetailsExtra = ({ operation, account, type }: OperationDetailsExtraProps) => {
   const { t } = useTranslation();
+  const discreet = useSelector(discreetModeSelector);
+  const { locale } = useSettings();
+  const unit = useAccountUnit(account);
 
   const extraFields = getOperationDetailsExtraFields(operation.extra);
+  const { validator, stakedAmount } = operation.extra;
+  const stakedAmountLabel = STAKED_AMOUNT_LABEL[type];
 
   return (
     <>
@@ -27,6 +49,25 @@ const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
           key={item.key}
         />
       ))}
+      {validator && (
+        <Section
+          title={t("aleo.operationDetails.extra.validator")}
+          value={validator}
+          testID="operationDetails-validator"
+        />
+      )}
+      {stakedAmount !== undefined && stakedAmountLabel && (
+        <Section
+          title={t(stakedAmountLabel)}
+          value={formatCurrencyUnit(unit, new BigNumber(stakedAmount), {
+            disableRounding: true,
+            showCode: true,
+            discreet,
+            locale,
+          })}
+          testID="operationDetails-stakedAmount"
+        />
+      )}
     </>
   );
 };
