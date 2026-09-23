@@ -1,20 +1,20 @@
 import "../../live-common-setup";
-import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "../../shared/ui";
+import {
+  activateAgentIntentMocks,
+  deactivateAgentIntentMocks,
+} from "./__test-helpers__/agent-intent-mocks";
 
 let profiles: Record<string, unknown>[];
 let invalidAgentIntentProfileIds: string[];
 
-const realSessionStore = await import("../../session/session-store");
-mock.module("../../session/session-store", () => ({
-  ...realSessionStore,
-  Session: {
-    read: async () => ({
-      agentIntentProfiles: profiles,
-      invalidAgentIntentProfileIds,
-    }),
-  },
-}));
+beforeAll(() =>
+  activateAgentIntentMocks({
+    sessionRead: async () => ({ agentIntentProfiles: profiles, invalidAgentIntentProfileIds }),
+  }),
+);
+afterAll(() => deactivateAgentIntentMocks());
 
 const { default: listCommand } = await import("./list");
 

@@ -1,8 +1,11 @@
 import "../../live-common-setup";
-import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, mock } from "bun:test";
+import { AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION } from "@ledgerhq/agent-intent-sdk";
 import { installOutputCapture } from "../../shared/ui";
-
-const AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION = 1;
+import {
+  activateAgentIntentMocks,
+  deactivateAgentIntentMocks,
+} from "./__test-helpers__/agent-intent-mocks";
 
 let storedProfile: Record<string, unknown> | undefined;
 // Set only by the race test below: lets the precheck (1st Session.read) and the locked,
@@ -13,13 +16,13 @@ let updateCalls: Array<{ profileId: string; patch: Record<string, unknown> }>;
 let writeCalled: boolean;
 let sessionReadCalls: number;
 
-// mock.module replaces the whole module namespace, and other modules (output.ts) import real
-// exports like `APP_NAME` from session-store — spread the real module so only `Session` changes.
-const realSessionStore = await import("../../session/session-store");
-mock.module("../../session/session-store", () => ({
-  ...realSessionStore,
-  Session: {
-    read: async () => {
+const parseAgentEnrollmentCompletionMock = mock((payload: string, _publicKey: string) =>
+  JSON.parse(payload),
+);
+
+beforeAll(() =>
+  activateAgentIntentMocks({
+    sessionRead: async () => {
       sessionReadCalls++;
       const profile =
         sessionReadCalls === 1 || storedProfileOnRecheck === "same-as-precheck"
@@ -35,22 +38,12 @@ mock.module("../../session/session-store", () => ({
         },
       };
     },
-  },
-  // Real implementation calls mkdirSync + a real file lock — irrelevant to what these tests check,
-  // so make it a no-op instead of exercising real file I/O.
-  withSessionLock: async <T>(fn: () => Promise<T> | T) => fn(),
-}));
-
-// Also spread here: output.ts separately imports `formatAgentPublicKeyFingerprint` from this SDK.
-const realAgentIntentSdk = await import("@ledgerhq/agent-intent-sdk");
-const parseAgentEnrollmentCompletionMock = mock((payload: string, _publicKey: string) =>
-  JSON.parse(payload),
+    // The real lock does mkdirSync + a real file lock — irrelevant to what these tests check.
+    noopSessionLock: true,
+    sdk: { parseAgentEnrollmentCompletion: parseAgentEnrollmentCompletionMock },
+  }),
 );
-mock.module("@ledgerhq/agent-intent-sdk", () => ({
-  ...realAgentIntentSdk,
-  parseAgentEnrollmentCompletion: parseAgentEnrollmentCompletionMock,
-  AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION,
-}));
+afterAll(() => deactivateAgentIntentMocks());
 
 const { default: completeCommand } = await import("./complete");
 
