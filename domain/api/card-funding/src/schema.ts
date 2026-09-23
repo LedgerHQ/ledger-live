@@ -1,11 +1,10 @@
 import { z } from "zod";
 
 export const CardFundPayloadRequestSchema = z.object({
-  apiBaseUrl: z.string().url(),
   /** The device nonce returned by the Fund `startExchange`. */
   transactionId: z.string().min(1),
-  /** Smallest unit of the funded currency (satoshis for BTC). */
-  inAmount: z.number().int().positive(),
+  /** Smallest unit of the funded currency (satoshis for BTC); must be exact as a JS number. */
+  inAmount: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
   /** Provider asset code, e.g. `btc`. */
   currency: z.string().min(1),
   inAddress: z.string().min(1),

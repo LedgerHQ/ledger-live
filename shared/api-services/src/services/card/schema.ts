@@ -13,6 +13,14 @@ export const CardApiExtraSchema = z.object({
    * the new value without a restart of the app.
    */
   getCardApiBaseUrl: z.custom<() => string>(isFunction, mustBeAFunction("getCardApiBaseUrl")),
+  /**
+   * The provider's CL Card API, for the few operations the Card API does not serve. An app that
+   * does not configure it cannot reach those operations: the Card session is never sent to a
+   * guessed host.
+   */
+  getCardLegacyApiBaseUrl: z
+    .custom<() => string | undefined>(isFunction, mustBeAFunction("getCardLegacyApiBaseUrl"))
+    .optional(),
   getCardBaanxClientKey: z.custom<() => string>(
     isFunction,
     mustBeAFunction("getCardBaanxClientKey"),

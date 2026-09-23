@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -16,7 +16,7 @@ import { useTransactionAction, useStartExchangeAction } from "~/renderer/hooks/u
 import { broadcastLogger } from "~/datadog/logs";
 import { useSelector } from "LLD/hooks/redux";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
-import { BAANX_FUND_PAYLOAD_API_URL, BAANX_FUND_PROVIDER } from "../constants";
+import { BAANX_FUND_PROVIDER } from "../constants";
 import { assertCardFundDestination } from "../utils/assertCardFundDestination";
 import { buildCardFundTransaction } from "../utils/buildCardFundTransaction";
 
@@ -74,6 +74,8 @@ export function useCardFundExecution({
   asset,
 }: UseCardFundExecutionParams) {
   const [deviceStep, setDeviceStep] = useState<CardFundDeviceStep>({ kind: "idle" });
+  const failActiveStep = useRef<((error: Error) => void) | null>(null);
+  const currentRun = useRef(0);
 
   const [requestCardFundPayload, { reset: forgetCardFundPayload }] =
     useRequestCardFundPayloadMutation();
@@ -99,20 +101,32 @@ export function useCardFundExecution({
     logger: broadcastLogger,
   });
 
-  const runDeviceStep = useCallback(
-    <R>(build: (onResult: (result: R) => void) => DevicePhase): Promise<R> =>
-      new Promise<R>(resolve => setDeviceStep(build(resolve))).finally(() =>
-        setDeviceStep({ kind: "processing" }),
-      ),
-    [],
-  );
-
   const onDeviceError = useCallback((error: Error) => {
-    setDeviceStep({ kind: "error", error: asError(error) });
+    const failure = asError(error);
+    if (failActiveStep.current) {
+      failActiveStep.current(failure);
+      return;
+    }
+    setDeviceStep({ kind: "error", error: failure });
   }, []);
 
   const execute = useCallback(
     async (amountText: string) => {
+      const run = ++currentRun.current;
+      const settle = (step: CardFundDeviceStep) => {
+        if (run === currentRun.current) setDeviceStep(step);
+      };
+      const runDeviceStep = <R>(build: (onResult: (result: R) => void) => DevicePhase) => {
+        let fail: ((error: Error) => void) | undefined;
+        return new Promise<R>((resolve, reject) => {
+          fail = reject;
+          failActiveStep.current = reject;
+          settle(build(resolve));
+        }).finally(() => {
+          if (failActiveStep.current === fail) failActiveStep.current = null;
+          settle({ kind: "processing" });
+        });
+      };
       setDeviceStep({ kind: "processing" });
 
       try {
@@ -129,6 +143,10 @@ export function useCardFundExecution({
         const amount = parseCurrencyUnit(unit, amountText);
         if (!amount.isGreaterThan(0) || amount.isGreaterThan(account.spendableBalance)) {
           throw new Error("Invalid Card Fund amount");
+        }
+        const inAmount = amount.toNumber();
+        if (!Number.isSafeInteger(inAmount)) {
+          throw new Error("This amount cannot be sent to the provider exactly");
         }
 
         const startResult = await runDeviceStep<StartExchangeResult>(onResult => ({
@@ -148,9 +166,8 @@ export function useCardFundExecution({
         if ("startExchangeError" in startResult) throw startResult.startExchangeError.error;
 
         const signed = await requestCardFundPayload({
-          apiBaseUrl: BAANX_FUND_PAYLOAD_API_URL,
           transactionId: startResult.startExchangeResult.nonce,
-          inAmount: amount.toNumber(),
+          inAmount,
           currency: asset.currency,
           inAddress: asset.address,
         })
@@ -208,9 +225,9 @@ export function useCardFundExecution({
 
         const operation = await broadcast(signResult.signedOperation);
 
-        setDeviceStep({ kind: "success", operationHash: operation.hash });
+        settle({ kind: "success", operationHash: operation.hash });
       } catch (error) {
-        setDeviceStep({ kind: "error", error: asError(error) });
+        settle({ kind: "error", error: asError(error) });
       }
     },
     [
@@ -225,13 +242,14 @@ export function useCardFundExecution({
       fromCurrency,
       parentAccount,
       requestCardFundPayload,
-      runDeviceStep,
       signAction,
       startAction,
     ],
   );
 
   const reset = useCallback(() => {
+    currentRun.current += 1;
+    failActiveStep.current?.(new Error("Card Fund was reset"));
     setDeviceStep({ kind: "idle" });
   }, []);
 

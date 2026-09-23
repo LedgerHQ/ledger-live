@@ -12,13 +12,13 @@ jest.mock("../../screens/CardFund/CardFundDialog", () => ({
 
 const asset: CardAssetRow = {
   id: "card-wallet",
-  address: "0x2222222222222222222222222222222222222222",
-  currency: "usdc",
-  network: "ethereum",
-  name: "USD Coin",
-  ticker: "USDC",
-  ledgerId: "ethereum/erc20/usd__coin",
-  cryptoAmount: "50 USDC",
+  address: "bc1qcardwallet",
+  currency: "btc",
+  network: "bitcoin",
+  name: "Bitcoin",
+  ticker: "BTC",
+  ledgerId: "bitcoin",
+  cryptoAmount: "0.001 BTC",
   countervalue: "$50.00",
   countervalueAmount: 50,
 };
@@ -62,10 +62,13 @@ it("hands the selected source account and linked destination to Fund", () => {
   });
 });
 
-it("does not open an account picker for an unmapped asset", () => {
+it.each([
+  ["an unmapped asset", ""],
+  ["an asset Fund is not verified for", "ethereum/erc20/usd__coin"],
+])("does not open an account picker for %s", (_, ledgerId) => {
   const { result } = renderHook(() => useCardFundEntryPoint());
 
-  act(() => result.current({ ...asset, ledgerId: "" }));
+  act(() => result.current({ ...asset, ledgerId }));
 
   expect(openAssetAndAccount).not.toHaveBeenCalled();
 });

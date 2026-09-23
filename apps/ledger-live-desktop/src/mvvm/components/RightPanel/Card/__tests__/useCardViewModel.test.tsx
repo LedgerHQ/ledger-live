@@ -195,13 +195,29 @@ describe("useCardViewModel", () => {
 
   it("starts the native Fund flow for the asset the user topped up from", () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const asset = { currency: "btc", address: "bc1qcardwallet" } as CardAssetRow;
+    const asset = {
+      currency: "btc",
+      ledgerId: "bitcoin",
+      address: "bc1qcardwallet",
+    } as CardAssetRow;
     const { result } = renderCardViewModel(null);
 
     act(() => result.current.assets?.onTopUp?.(asset));
 
     expect(mockFundAsset).toHaveBeenCalledWith(asset);
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("keeps the hosted top up page for an asset native Fund does not support yet", async () => {
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      result.current.assets?.onTopUp?.({ currency: "xrp", ledgerId: "ripple" } as CardAssetRow);
+    });
+
+    expect(mockFundAsset).not.toHaveBeenCalled();
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?currency=xrp");
   });
 
   it("opens the legacy card live app on top up when the legacyTopUp param is on", async () => {

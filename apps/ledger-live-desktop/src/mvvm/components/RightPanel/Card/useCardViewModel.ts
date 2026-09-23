@@ -23,6 +23,7 @@ import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { HISTORY_TAB_CARD, HISTORY_TAB_SEARCH_PARAM } from "LLD/features/History/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { useCardFundEntryPoint } from "LLD/features/PayCardFund/hooks/useCardFundEntryPoint";
+import { isCardFundSupported } from "LLD/features/PayCardFund/utils/isCardFundSupported";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { usePayCardAssets } from "./usePayCardAssets";
@@ -225,7 +226,13 @@ export function useCardViewModel(): CardViewModel {
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => (isLegacyTopUp ? void openTopUp() : onFundAsset(asset)),
+      onTopUp: asset => {
+        if (!isLegacyTopUp && isCardFundSupported(asset)) {
+          onFundAsset(asset);
+          return;
+        }
+        void openTopUp(asset.currency);
+      },
       onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
       onAddAsset,
     }),

@@ -70,6 +70,10 @@ const staleRequestResult: { error: FetchBaseQueryError } = {
   error: { status: "CUSTOM_ERROR", error: CARD_STALE_REQUEST },
 };
 
+const legacyApiUnconfiguredResult: { error: FetchBaseQueryError } = {
+  error: { status: "CUSTOM_ERROR", error: "The Card legacy API is not configured" },
+};
+
 function isUnauthorized(error: FetchBaseQueryError | undefined): boolean {
   return (
     error?.status === UNAUTHORIZED_STATUS ||
@@ -84,10 +88,16 @@ const cardBaseQuery: BaseQueryFn<
   CardBaseQueryExtraOptions
 > = async (args, api, extraOptions) => {
   const extra = getCardExtra(api);
+  const isLegacyApi = extraOptions?.api === "legacy";
+  const baseUrl = isLegacyApi ? extra.getCardLegacyApiBaseUrl?.() : extra.getCardApiBaseUrl();
+
+  if (isLegacyApi && !baseUrl) {
+    return legacyApiUnconfiguredResult;
+  }
 
   const send = async (token: string | null, isUsEnv: boolean) => {
     const answer = await fetchBaseQuery({
-      baseUrl: extra.getCardApiBaseUrl(),
+      baseUrl,
       prepareHeaders: headers => cardHeaders(extra, token, isUsEnv, headers),
     })(args, api, extraOptions);
 

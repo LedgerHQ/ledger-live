@@ -3,7 +3,6 @@ import { cardApi, cardApiExtra } from "@shared/api-services";
 import { cardFundPayloadApi } from "./payloadApi";
 
 const request = {
-  apiBaseUrl: "https://legacy.card.test",
   transactionId: "7dKAV87vBZW/TA8yCPdRZXoeuphDxa5Rl9qvwu/gQws=",
   inAmount: 30000,
   currency: "btc",
@@ -29,6 +28,7 @@ function createStore() {
         thunk: {
           extraArgument: cardApiExtra({
             getCardApiBaseUrl: () => "https://card.test",
+            getCardLegacyApiBaseUrl: () => "https://legacy.card.test",
             getCardBaanxClientKey: () => "client-key",
             isCardUsEnv: () => false,
             readCardSession: () => Promise.resolve({ token: "session-token", sessionId: 1 }),
@@ -46,7 +46,7 @@ afterEach(() => {
   fetchSpy.mockRestore();
 });
 
-it("asks the provider host for a payload on the Card session", async () => {
+it("asks the configured legacy host for a payload on the Card session", async () => {
   fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
     jsonResponse({
       binaryPayload: serializedBuffer([67, 104, 70]),
@@ -61,12 +61,7 @@ it("asks the provider host for a payload on the Card session", async () => {
   const sent = fetchSpy.mock.calls[0][0] as Request;
   expect(sent.url).toBe("https://legacy.card.test/iframe/api/v2/user/transactions/ledger");
   expect(sent.headers.get("authorization")).toBe("Bearer session-token");
-  expect(JSON.parse(await sent.clone().text())).toEqual({
-    transactionId: request.transactionId,
-    inAmount: 30000,
-    currency: "btc",
-    inAddress: "bc1qcardwallet",
-  });
+  expect(JSON.parse(await sent.clone().text())).toEqual(request);
   expect(result.data).toEqual({ payload: "ChF", signature: "27cb05" });
 });
 

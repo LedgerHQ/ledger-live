@@ -12,14 +12,11 @@ export const cardFundPayloadApi = cardApi.injectEndpoints({
      * rather than leaving it in `state.cardApi.mutations`.
      */
     requestCardFundPayload: build.mutation<CardFundSignedPayload, CardFundPayloadRequest>({
-      async queryFn({ apiBaseUrl, ...body }, _api, _extraOptions, baseQuery) {
-        const answer = await baseQuery({
-          url: `${apiBaseUrl}${CARD_FUND_PAYLOAD_PATH}`,
-          method: "POST",
-          body,
-        });
+      async queryFn(body, _api, _extraOptions, baseQuery) {
+        const answer = await baseQuery({ url: CARD_FUND_PAYLOAD_PATH, method: "POST", body });
         return answer.error ? { error: answer.error } : readCardFundPayload(answer.data);
       },
+      extraOptions: { api: "legacy" },
     }),
   }),
 });

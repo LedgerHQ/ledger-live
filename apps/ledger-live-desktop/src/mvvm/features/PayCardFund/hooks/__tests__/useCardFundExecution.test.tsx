@@ -126,7 +126,6 @@ it("signs the provider payload for the linked wallet and broadcasts it", async (
   await act(async () => execution);
 
   expect(requestCardFundPayload).toHaveBeenCalledWith({
-    apiBaseUrl: "https://ew1uat-ledger-ext.baanxapi.com",
     transactionId: "device-nonce",
     inAmount: 25_000_000,
     currency: "usdc",
@@ -199,6 +198,53 @@ it("shows the provider's refusal message", async () => {
     kind: "error",
     error: new Error("User not logged in"),
   });
+});
+
+it("ends the run when the device fails during a step, so a retry starts clean", async () => {
+  const { result } = renderHook(() =>
+    useCardFundExecution({ account: sourceAccount, parentAccount, asset }),
+  );
+
+  let execution!: Promise<void>;
+  act(() => {
+    execution = result.current.execute("25");
+  });
+  await waitFor(() => {
+    expect(result.current.deviceStep).toMatchObject({ kind: "device", stepId: "start" });
+  });
+
+  act(() => {
+    result.current.onDeviceError(new Error("Exchange app closed"));
+  });
+  await act(async () => execution);
+
+  expect(result.current.deviceStep).toMatchObject({
+    kind: "error",
+    error: new Error("Exchange app closed"),
+  });
+  expect(requestCardFundPayload).not.toHaveBeenCalled();
+
+  act(() => result.current.reset());
+  expect(result.current.deviceStep).toEqual({ kind: "idle" });
+});
+
+it("refuses an amount the provider cannot receive exactly, before the device", async () => {
+  const richAccount = {
+    ...sourceAccount,
+    balance: new BigNumber("1e30"),
+    spendableBalance: new BigNumber("1e30"),
+  };
+  const { result } = renderHook(() =>
+    useCardFundExecution({ account: richAccount, parentAccount, asset }),
+  );
+
+  await act(async () => result.current.execute("100000000000"));
+
+  expect(result.current.deviceStep).toMatchObject({
+    kind: "error",
+    error: new Error("This amount cannot be sent to the provider exactly"),
+  });
+  expect(requestCardFundPayload).not.toHaveBeenCalled();
 });
 
 it("shows the message from a serialized device error", () => {
