@@ -5,6 +5,8 @@ import {
   buildWithdrawalPath,
   buildAccessBaanxPath,
   buildManagePinPath,
+  buildAddAssetPath,
+  buildOrderCardPath,
   openHostedCardPathSafely,
   type CardAssetPathBuilder,
 } from "@features/flow-pay-card-auth";
@@ -13,14 +15,11 @@ import useEnv from "@features/platform-env";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
 import { useCountervalueFormatter } from "LLD/hooks/useCountervalueFormatter";
 import logger from "~/renderer/logger";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { HISTORY_TAB_CARD, HISTORY_TAB_SEARCH_PARAM } from "LLD/features/History/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
-import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { usePayCardAssets } from "./usePayCardAssets";
@@ -145,15 +144,19 @@ export function useCardViewModel(): CardViewModel {
 
   const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
 
+  const onChooseCardType = useCallback(
+    () =>
+      openHostedPath(buildOrderCardPath, error =>
+        logger.warn("[card] order card page did not open", error),
+      ),
+    [openHostedPath],
+  );
+
   useWipeHostedSession();
 
-  const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
-    track(event, params);
-  }, []);
-
   const login: CardViewModel["login"] = useMemo(
-    () => ({ oauthConfig, callback, openHostedLogin, openHostedPage, onTrackEvent }),
-    [oauthConfig, callback, openHostedLogin, openHostedPage, onTrackEvent],
+    () => ({ oauthConfig, callback, openHostedLogin, openHostedPage }),
+    [oauthConfig, callback, openHostedLogin, openHostedPage],
   );
 
   const onShowMore = useCallback(() => {
@@ -178,17 +181,6 @@ export function useCardViewModel(): CardViewModel {
     [navigate, pathname],
   );
 
-  const payCardAssets = usePayCardAssets();
-  const assets: CardAssetsProps = useMemo(
-    () => ({
-      ...payCardAssets,
-      onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
-      onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
-    }),
-    [onShowAssetHistory, openAssetPage, payCardAssets],
-  );
-
   const onManagePin = useCallback(
     () =>
       openHostedPath(buildManagePinPath, error =>
@@ -205,21 +197,37 @@ export function useCardViewModel(): CardViewModel {
     [openHostedPath],
   );
 
-  const onHelp = useCallback(() => {
-    openURL(urls.cardHelpCenter);
-  }, []);
-
-  const cardSettingsActions: CardSettingsActions = useMemo(
-    () => ({ onManagePin, onAccessBaanx, onHelp }),
-    [onManagePin, onAccessBaanx, onHelp],
+  const onAddAsset = useCallback(
+    () =>
+      openHostedPath(buildAddAssetPath, error =>
+        logger.warn("[card] add asset page did not open", error),
+      ),
+    [openHostedPath],
   );
 
+  const payCardAssets = usePayCardAssets();
+  const assets: CardAssetsProps = useMemo(
+    () => ({
+      ...payCardAssets,
+      onShowHistory: onShowAssetHistory,
+      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
+      onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
+      onAddAsset,
+    }),
+    [onAddAsset, onShowAssetHistory, openAssetPage, payCardAssets],
+  );
+
+  const cardSettingsActions: CardSettingsActions = useMemo(
+    () => ({ onManagePin, onAccessBaanx }),
+    [onManagePin, onAccessBaanx],
+  );
   return {
     formatters,
     assets,
     login,
     onShowMore,
     onTopUp,
+    onChooseCardType,
     cardSettingsActions,
   };
 }

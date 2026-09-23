@@ -16,7 +16,7 @@ jest.mock("./internals/digest.native", () => ({
 }));
 
 const legacy = { password: null as string | null };
-const stored = { verifier: null as unknown };
+const stored = { verifier: null as unknown, needsLongerPassword: false };
 
 jest.mock("./internals/legacyPassword.native", () => ({
   readLegacyPassword: jest.fn(async () => legacy.password),
@@ -29,10 +29,17 @@ jest.mock("./internals/legacyPassword.native", () => ({
 
 jest.mock("./internals/store.native", () => ({
   hasStoredVerifier: jest.fn(async () => stored.verifier !== null),
-  readPasswordVerifier: jest.fn(async () => stored.verifier),
-  writePasswordVerifier: jest.fn(async (verifier: unknown) => {
-    stored.verifier = verifier;
-  }),
+  readStoredPassword: jest.fn(async () =>
+    stored.verifier === null
+      ? null
+      : { verifier: stored.verifier, needsLongerPassword: stored.needsLongerPassword },
+  ),
+  writePasswordVerifier: jest.fn(
+    async (written: { verifier: unknown; needsLongerPassword: boolean }) => {
+      stored.verifier = written.verifier;
+      stored.needsLongerPassword = written.needsLongerPassword;
+    },
+  ),
   clearPasswordVerifier: jest.fn(async () => {
     stored.verifier = null;
   }),
@@ -44,6 +51,7 @@ const { writePasswordVerifier } = jest.requireMock("./internals/store.native");
 beforeEach(() => {
   legacy.password = null;
   stored.verifier = null;
+  stored.needsLongerPassword = false;
   jest.clearAllMocks();
 });
 
@@ -74,13 +82,26 @@ describe("migrating a legacy password", () => {
     });
   });
 
+  // Beside the verifier, not only in the result: the prompt is owed on every later unlock, and by
+  // then the plaintext this was read from is gone.
+  it.each([
+    ["one under the minimum", "1234", true],
+    ["a compliant one", "longenough", false],
+  ])("records %s in the record it writes", async (_case, password, expected) => {
+    legacy.password = password;
+
+    await migrateLegacyPassword(SALT, "ios");
+
+    expect(stored.needsLongerPassword).toBe(expected);
+  });
+
   it("destroys the legacy entry only once the verifier is proven to open", async () => {
     legacy.password = "longenough";
     const order: string[] = [];
 
-    writePasswordVerifier.mockImplementation(async (verifier: unknown) => {
+    writePasswordVerifier.mockImplementation(async (written: { verifier: unknown }) => {
       order.push("write");
-      stored.verifier = verifier;
+      stored.verifier = written.verifier;
     });
     clearLegacyPassword.mockImplementation(async () => {
       order.push("clearLegacy");

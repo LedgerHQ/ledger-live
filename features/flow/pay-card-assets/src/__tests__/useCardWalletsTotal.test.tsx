@@ -48,6 +48,7 @@ const assets: CardAssetsProps = {
   ]),
   priceWallet,
   formatCountervalue: String,
+  onAddAsset: jest.fn(),
 };
 
 function stubWallets(

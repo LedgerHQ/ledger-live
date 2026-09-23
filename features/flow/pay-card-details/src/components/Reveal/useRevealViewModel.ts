@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { cardManagementApi } from "@domain/api-card-management";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { DETAILS_IMAGE_CSS } from "../CardArtwork/cardColors";
 import type { RevealStatus, RevealViewModel } from "../../types";
 
@@ -14,6 +15,7 @@ const useCardApiDispatch =
 
 export function useRevealViewModel(): RevealViewModel {
   const dispatch = useCardApiDispatch();
+  const { trackButtonClicked } = usePayAnalyticsContext();
   const [status, setStatus] = useState<RevealStatus>("idle");
   const [imageUrl, setImageUrl] = useState<string>();
   const inFlight = useRef(false);
@@ -52,6 +54,7 @@ export function useRevealViewModel(): RevealViewModel {
     }
 
     inFlight.current = true;
+    trackButtonClicked({ button: "view_card_digits", page: "Card details" });
     const generationAtStart = generation.current;
     const isStale = () => generation.current !== generationAtStart;
     setStatus("loading");
@@ -80,7 +83,7 @@ export function useRevealViewModel(): RevealViewModel {
         inFlight.current = false;
       }
     }
-  }, [dispatch]);
+  }, [dispatch, trackButtonClicked]);
 
   return {
     status,

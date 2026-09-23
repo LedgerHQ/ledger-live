@@ -3,9 +3,10 @@ import type { MoreRow, MoreRowId, MoreViewProps } from "./types";
 const MORE_LABEL = "More";
 
 export const MORE_ROW_TITLES: Readonly<Record<MoreRowId, string>> = {
-  managePin: "Manage PIN Code",
+  managePin: "Card PIN",
   accessBaanx: "Access to Baanx",
   help: "Help",
+  legal: "Legal agreement",
   logout: "Logout",
 };
 
@@ -23,7 +24,7 @@ export const MORE_RESOURCES = {
   },
 };
 
-const ROW_ORDER: readonly MoreRowId[] = ["managePin", "accessBaanx", "help", "logout"];
+const ROW_ORDER: readonly MoreRowId[] = ["managePin", "accessBaanx", "help", "legal", "logout"];
 
 const noop = () => {};
 

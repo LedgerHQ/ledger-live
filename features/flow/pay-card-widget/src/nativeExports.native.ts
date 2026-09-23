@@ -1,3 +1,4 @@
+export * from "./components/getWalletPlatform.native";
 export * from "./components/AddToWalletBottomSheet/AddToWalletBottomSheet.native";
 export * from "./components/AddToWalletCta/AddToWalletCta.native";
 export * from "./components/AddToWalletCtaWithBottomSheet/AddToWalletCtaWithBottomSheet.native";

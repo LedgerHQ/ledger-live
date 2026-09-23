@@ -8,6 +8,7 @@ import {
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
+import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import { render, screen, waitFor, act } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
@@ -83,13 +84,15 @@ function renderRequestReceive(
   },
 ) {
   return render(
-    <RequestStack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <RequestStack.Screen
-        name={ScreenName.PayTabRequestReceive}
-        component={PayTabRequestReceiveScreen}
-        initialParams={params}
-      />
-    </RequestStack.Navigator>,
+    <PayAnalyticsProvider adapter={{ track }}>
+      <RequestStack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+        <RequestStack.Screen
+          name={ScreenName.PayTabRequestReceive}
+          component={PayTabRequestReceiveScreen}
+          initialParams={params}
+        />
+      </RequestStack.Navigator>
+    </PayAnalyticsProvider>,
     { overrideInitialState: withUsdcHoldings },
   );
 }
@@ -286,7 +289,8 @@ describe("PayTab RequestReceive integration", () => {
     expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
       button: "verify",
       buttonLocation: "request",
-      page: "Pay",
+      flow: "request",
+      page: "Request complete",
     });
     expect(screen.getByRole("button", { name: VERIFY_ADDRESS })).toBeVisible();
     expect(screen.queryByRole("button", { name: "Skip" })).not.toBeOnTheScreen();
@@ -323,8 +327,9 @@ describe("PayTab RequestReceive integration", () => {
 
     expect(capturedExecutor?.intent.input.expectedAddress).toBe(payTabEthAccount.freshAddress);
     expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-      button: "verify address",
+      button: "verify",
       buttonLocation: "verify address",
+      flow: "request",
       page: "Request Address Verification",
     });
 
@@ -338,6 +343,9 @@ describe("PayTab RequestReceive integration", () => {
     expect(await screen.findByText(REQUEST_TITLE)).toBeVisible();
     expect(screen.queryByText(DIE_LABEL)).not.toBeOnTheScreen();
     expect(jest.mocked(track)).toHaveBeenCalledWith("request_verification_complete", {
+      asset: "USDC",
+      flow: "request",
+      network: "ethereum",
       page: "Request Address Verification",
     });
   });
@@ -351,6 +359,9 @@ describe("PayTab RequestReceive integration", () => {
     expect(await screen.findByText(REQUEST_TITLE)).toBeVisible();
     expect(screen.queryByText(DIE_LABEL)).not.toBeOnTheScreen();
     expect(jest.mocked(track)).toHaveBeenCalledWith("request_verification_dismiss", {
+      asset: "USDC",
+      flow: "request",
+      network: "ethereum",
       page: "Request Address Verification",
     });
   });
@@ -373,9 +384,15 @@ describe("PayTab RequestReceive integration", () => {
       expect(await screen.findByText(REQUEST_TITLE)).toBeVisible();
       expect(screen.queryByText(DIE_LABEL)).not.toBeOnTheScreen();
       expect(jest.mocked(track)).toHaveBeenCalledWith(`request_verification_${type}`, {
+        asset: "USDC",
+        flow: "request",
+        network: "ethereum",
         page: "Request Address Verification",
       });
       expect(jest.mocked(track)).toHaveBeenCalledWith("request_verification_dismiss", {
+        asset: "USDC",
+        flow: "request",
+        network: "ethereum",
         page: "Request Address Verification",
       });
     },
@@ -396,6 +413,9 @@ describe("PayTab RequestReceive integration", () => {
 
     expect(screen.getByText(REQUEST_TITLE)).toBeVisible();
     expect(jest.mocked(track)).toHaveBeenCalledWith("request_verification_mismatch", {
+      asset: "USDC",
+      flow: "request",
+      network: "ethereum",
       page: "Request Address Verification",
     });
 
@@ -406,6 +426,9 @@ describe("PayTab RequestReceive integration", () => {
     });
     expect(screen.getByRole("button", { name: PAY_DEPOSIT })).toBeVisible();
     expect(jest.mocked(track)).toHaveBeenCalledWith("request_verification_dismiss", {
+      asset: "USDC",
+      flow: "request",
+      network: "ethereum",
       page: "Request Address Verification",
     });
   });

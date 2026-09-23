@@ -1,5 +1,6 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import { FeatureTourView } from "../FeatureTourView.web";
 
 const defaultProps: React.ComponentProps<typeof FeatureTourView> = {
@@ -14,34 +15,40 @@ const defaultProps: React.ComponentProps<typeof FeatureTourView> = {
       description: "Use your balance around the world",
     },
   ],
-  onShown: jest.fn(),
   onDismiss: jest.fn(),
 };
+
+function renderView(props: Partial<React.ComponentProps<typeof FeatureTourView>> = {}) {
+  return render(
+    <PayAnalyticsProvider
+      adapter={{ track: jest.fn() }}
+      renderPage={page => <span data-testid="pay-track-page">{page}</span>}
+    >
+      <FeatureTourView {...defaultProps} {...props} />
+    </PayAnalyticsProvider>,
+  );
+}
 
 describe("FeatureTourView (Web)", () => {
   afterEach(() => {
     cleanup();
   });
 
-  it("signals it was shown once across re-renders", () => {
-    const onShown = jest.fn();
-    const { rerender } = render(<FeatureTourView {...defaultProps} onShown={onShown} />);
+  it("tracks the page while visible", () => {
+    renderView();
 
-    rerender(<FeatureTourView {...defaultProps} onShown={onShown} />);
-
-    expect(onShown).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("pay-track-page")).toHaveTextContent("card feature intro");
   });
 
-  it("does not signal it was shown while hidden", () => {
-    const onShown = jest.fn();
-    render(<FeatureTourView {...defaultProps} isVisible={false} onShown={onShown} />);
+  it("does not track the page while hidden", () => {
+    renderView({ isVisible: false });
 
-    expect(onShown).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("pay-track-page")).toBeNull();
   });
 
   it("dismisses once even if the CTA is clicked repeatedly", () => {
     const onDismiss = jest.fn();
-    render(<FeatureTourView {...defaultProps} onDismiss={onDismiss} />);
+    renderView({ onDismiss });
 
     fireEvent.click(screen.getByText("Explore Pay"));
     fireEvent.click(screen.getByText("Explore Pay"));

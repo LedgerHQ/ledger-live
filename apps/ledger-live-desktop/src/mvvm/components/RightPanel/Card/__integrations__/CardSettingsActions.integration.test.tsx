@@ -7,10 +7,11 @@ import { http, HttpResponse, server } from "tests/server";
 import { render, screen } from "tests/testSetup";
 import { Card } from "../Card";
 
-const signedIn = { payCardAuth: { hasCard: true, status: "signedIn" as const } };
+const signedIn = {
+  payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const },
+};
 
 const mockOpenHostedPage = jest.fn().mockResolvedValue(undefined);
-const mockOpenURL = jest.fn();
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -24,10 +25,6 @@ jest.mock("../useCardHostedPageOpeners", () => ({
   }),
 }));
 
-jest.mock("~/renderer/linking", () => ({
-  openURL: (...args: unknown[]) => mockOpenURL(...args),
-}));
-
 jest.mock("@features/platform-card", () => ({
   ...jest.requireActual("@features/platform-card"),
   readCardUsEnv: jest.fn().mockResolvedValue(false),
@@ -36,7 +33,6 @@ jest.mock("@features/platform-card", () => ({
 describe("Card settings actions", () => {
   beforeEach(() => {
     mockOpenHostedPage.mockClear();
-    mockOpenURL.mockClear();
     server.use(
       http.get("*/v1/card/status", () => HttpResponse.json(mockPayCardStatus())),
       http.get("*/v1/user", () => HttpResponse.json(mockPayCardUser(true))),
@@ -59,14 +55,5 @@ describe("Card settings actions", () => {
     await user.click(await screen.findByTestId("more-row-accessBaanx"));
 
     expect(mockOpenHostedPage).toHaveBeenCalledWith("/");
-  });
-
-  it("forwards the help action from CardView into the rendered More menu", async () => {
-    const { user } = render(<Card />, { initialState: signedIn });
-
-    await user.click(await screen.findByTestId("more-tile"));
-    await user.click(await screen.findByTestId("more-row-help"));
-
-    expect(mockOpenURL).toHaveBeenCalledWith("https://support.ledger.com/article/5283612250653-zd");
   });
 });

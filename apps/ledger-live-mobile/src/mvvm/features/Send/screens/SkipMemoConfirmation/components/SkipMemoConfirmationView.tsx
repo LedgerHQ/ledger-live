@@ -30,7 +30,7 @@ export function SkipMemoConfirmationView({
   onLearnMore,
 }: SkipMemoConfirmationViewProps) {
   return (
-    <Box lx={{ gap: "s24" }}>
+    <Box testID="send-skip-memo-content" lx={{ gap: "s24" }}>
       <BottomSheetHeader density="expanded" title={title} />
       <Box lx={{ gap: "s16" }}>
         <Box lx={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: "s4" }}>

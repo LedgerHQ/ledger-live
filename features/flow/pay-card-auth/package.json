@@ -32,6 +32,7 @@
   "dependencies": {
     "@domain/api-card-management": "workspace:^",
     "@features/platform-card": "workspace:*",
+    "@features/platform-pay-analytics": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",

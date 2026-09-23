@@ -8,7 +8,6 @@ import { act, renderHook } from "tests/testSetup";
 import { useCardViewModel } from "../useCardViewModel";
 
 const mockNavigate = jest.fn();
-const mockOpenURL = jest.fn();
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -22,10 +21,6 @@ jest.mock("@ledgerhq/live-common/wallet-api/useLiveAppManifest", () => ({
 jest.mock("@features/platform-card", () => ({
   ...jest.requireActual("@features/platform-card"),
   readCardUsEnv: jest.fn(),
-}));
-
-jest.mock("~/renderer/linking", () => ({
-  openURL: (...args: unknown[]) => mockOpenURL(...args),
 }));
 
 const HOSTED_MANIFEST = { id: "baanx-hosted-url", url: "https://ledger.baanxapi.test" };
@@ -56,7 +51,6 @@ function renderCardViewModel(state: unknown) {
 describe("useCardViewModel", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
-    mockOpenURL.mockClear();
     mockedReadCardUsEnv.mockResolvedValue(false);
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     mockedManifest.mockReturnValue(HOSTED_MANIFEST as ReturnType<typeof useLiveAppManifest>);
@@ -135,6 +129,30 @@ describe("useCardViewModel", () => {
     });
 
     expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?app_id=LEDGERUS");
+  });
+
+  it("opens the order card page on the hosted manifest", async () => {
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => {
+      await result.current.onChooseCardType();
+    });
+
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/order-card");
+  });
+
+  it("names the US app on the order card page for a US card holder", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => {
+      await result.current.onChooseCardType();
+    });
+
+    expect(topUpUrlFrom(mockNavigate)).toBe(
+      "https://ledger.baanxapi.test/order-card?app_id=LEDGERUS",
+    );
   });
 
   it("pre-selects the asset the user topped up from", async () => {
@@ -231,12 +249,26 @@ describe("useCardViewModel", () => {
     expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/?app_id=LEDGERUS");
   });
 
-  it("opens the card help center article externally", () => {
+  it("opens the add asset hosted crypto dashboard", async () => {
     const { result } = renderCardViewModel(null);
 
-    act(() => result.current.cardSettingsActions?.onHelp?.());
+    await act(async () => result.current.assets?.onAddAsset());
 
-    expect(mockOpenURL).toHaveBeenCalledWith("https://support.ledger.com/article/5283612250653-zd");
+    expect(topUpUrlFrom(mockNavigate)).toBe(
+      "https://ledger.baanxapi.test/dashboard/accounts/crypto",
+    );
+  });
+
+  it("names the US app on the add asset hosted crypto dashboard", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => result.current.assets?.onAddAsset());
+
+    expect(topUpUrlFrom(mockNavigate)).toBe(
+      "https://ledger.baanxapi.test/dashboard/accounts/crypto?app_id=LEDGERUS",
+    );
   });
 
   it("keeps the same cardSettingsActions reference across re-renders", () => {

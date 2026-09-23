@@ -58,8 +58,9 @@ describe("useBalanceFilterPickerViewModel", () => {
 
     expect(onConfirmFilter).toHaveBeenCalledWith(USDC_ID);
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
-      button: "confirm_balance_filter",
+      button: "confirm balance filter",
       asset: "USDC",
+      page: "Pay",
     });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -73,8 +74,9 @@ describe("useBalanceFilterPickerViewModel", () => {
     act(() => result.current.onConfirm());
 
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
-      button: "confirm_balance_filter",
+      button: "confirm balance filter",
       asset: "all",
+      page: "Pay",
     });
   });
 });

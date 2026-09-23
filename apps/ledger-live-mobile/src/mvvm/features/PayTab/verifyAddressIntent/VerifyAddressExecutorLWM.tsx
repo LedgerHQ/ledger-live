@@ -99,17 +99,36 @@ export function VerifyAddressExecutorLWM({
       if (exitedRef.current) return;
       lastJobStateRef.current = jobState;
       const event = JOB_TRACK_EVENT[jobState.type];
-      if (event) onTrackEvent?.(event, { page });
+      if (event) {
+        onTrackEvent?.(event, {
+          page,
+          flow: "request",
+          asset: tokenCurrency?.ticker ?? mainAccount.currency.ticker,
+          network: mainAccount.currency.id,
+        });
+      }
       if (jobState.type === "verified") exit("verified");
     },
-    [exit, onTrackEvent, page],
+    [exit, mainAccount.currency.id, mainAccount.currency.ticker, onTrackEvent, page, tokenCurrency],
   );
 
   const onUserCancel = useCallback(() => {
     if (exitedRef.current) return;
-    onTrackEvent?.("request_verification_dismiss", { page });
+    onTrackEvent?.("request_verification_dismiss", {
+      page,
+      flow: "request",
+      asset: tokenCurrency?.ticker ?? mainAccount.currency.ticker,
+      network: mainAccount.currency.id,
+    });
     exit(outcomeFromLastState(lastJobStateRef.current));
-  }, [exit, onTrackEvent, page]);
+  }, [
+    exit,
+    mainAccount.currency.id,
+    mainAccount.currency.ticker,
+    onTrackEvent,
+    page,
+    tokenCurrency,
+  ]);
 
   const intent = useMemo(
     () =>

@@ -15,6 +15,7 @@ export function CardView({
   formatters,
   onShowMore,
   onTopUp,
+  onChooseCardType,
   cardSettingsActions,
 }: CardViewProps) {
   return (
@@ -26,7 +27,7 @@ export function CardView({
               <SubheaderTitle>{title}</SubheaderTitle>
             </SubheaderRow>
           </Subheader>
-          <CardOnboardingWidget onTopUp={onTopUp} />
+          <CardOnboardingWidget onTopUp={onTopUp} onChooseCardType={onChooseCardType} />
           <CardDetails
             cardVisual={cardVisual}
             assets={assets}
@@ -34,7 +35,6 @@ export function CardView({
               amount: formatters?.transactionAmount,
               date: formatters?.transactionDate,
             }}
-            onTrackEvent={login.onTrackEvent}
             onShowMore={onShowMore}
             onTopUp={onTopUp}
             cardSettingsActions={cardSettingsActions}

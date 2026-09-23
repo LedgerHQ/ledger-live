@@ -8,8 +8,9 @@ import {
   revealCardDetailsHandler,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
-import { CARD_COPY, MORE_COPY } from "../../__tests__/i18nWrapper";
+import { CARD_COPY, MORE_COPY, openExternalMock } from "../../__tests__/i18nWrapper";
 import { renderWeb } from "../../__tests__/renderWeb";
+import { urls } from "../../urls";
 import { CardDetails } from "./CardDetails";
 
 listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
@@ -17,6 +18,10 @@ listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 const Wrapper = cardApiWrapper({ signedIn: true });
 
 describe("CardDetails (web)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("shows the card face with the freeze and more actions", async () => {
     renderWeb(
       <Wrapper>
@@ -52,11 +57,10 @@ describe("CardDetails (web)", () => {
   it("wires the host's redirect actions to the More sheet's rows, with a single More tile", async () => {
     const onManagePin = jest.fn();
     const onAccessBaanx = jest.fn();
-    const onHelp = jest.fn();
 
     renderWeb(
       <Wrapper>
-        <CardDetails cardSettingsActions={{ onManagePin, onAccessBaanx, onHelp }} />
+        <CardDetails cardSettingsActions={{ onManagePin, onAccessBaanx }} />
       </Wrapper>,
     );
 
@@ -69,6 +73,21 @@ describe("CardDetails (web)", () => {
 
     expect(onManagePin).toHaveBeenCalledTimes(1);
     expect(onAccessBaanx).not.toHaveBeenCalled();
-    expect(onHelp).not.toHaveBeenCalled();
+  });
+
+  it("opens the help center and legal agreement links directly from the More sheet", async () => {
+    renderWeb(
+      <Wrapper>
+        <CardDetails />
+      </Wrapper>,
+    );
+
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: MORE_COPY.tile }));
+    await user.click(await screen.findByRole("button", { name: MORE_COPY.rows.help }));
+    expect(openExternalMock).toHaveBeenCalledWith(urls.helpCenter);
+
+    await user.click(await screen.findByRole("button", { name: MORE_COPY.rows.legal }));
+    expect(openExternalMock).toHaveBeenCalledWith(urls.legalAgreement);
   });
 });

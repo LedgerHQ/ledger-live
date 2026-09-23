@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import type { CardOnboardingStepWithCopy } from "../CardOnboardingWidget/useOnboardingSteps";
+import { getWalletPlatform } from "../getWalletPlatform";
 import { getStepIcon } from "./getStepIcon";
 import type {
   CardOnboardingOptionViewProps,
@@ -17,7 +19,6 @@ function toStepStatus(isDone: boolean, isFirstUndone: boolean): StepStatus {
 
 const STEP_ACTIONS: Record<string, () => void> = {
   "create-account": noop,
-  "choose-card-type": noop,
   "first-purchase": noop,
 };
 
@@ -30,6 +31,7 @@ type Params = {
   onboardingCompleted: boolean;
   handleGotIt: () => void;
   onTopUp?: () => void;
+  onChooseCardType?: () => void;
 };
 
 export type CardOnboardingDialogViewProps = {
@@ -55,8 +57,10 @@ export function useCardOnboardingDialogViewModel({
   onboardingCompleted,
   handleGotIt,
   onTopUp,
+  onChooseCardType,
 }: Params): CardOnboardingDialogViewProps {
   const { t } = useTranslation();
+  const { trackButtonClicked } = usePayAnalyticsContext();
   const dialogTitle = t("payTab.cardOnboarding.dialog.title");
   const gotItLabel = t("payTab.cardOnboarding.dialog.gotIt");
 
@@ -70,10 +74,17 @@ export function useCardOnboardingDialogViewModel({
   const stepActions = useMemo<Record<string, () => void>>(
     () => ({
       ...STEP_ACTIONS,
+      "choose-card-type": onChooseCardType ?? noop,
       "top-up-card": onTopUp ?? noop,
-      "apple-google-pay": () => setIsAddToWalletSceneOpen(true),
+      "apple-google-pay": () => {
+        trackButtonClicked({
+          button: `add to ${getWalletPlatform().brand.toLowerCase()} pay`,
+          page: "Pay",
+        });
+        setIsAddToWalletSceneOpen(true);
+      },
     }),
-    [onTopUp],
+    [onChooseCardType, onTopUp, trackButtonClicked],
   );
 
   const options = useMemo<CardOnboardingOptionViewProps[]>(() => {

@@ -26,7 +26,11 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
       payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
       payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
       payCardLoginIntro: { hasSeenLoginIntro: true },
-      payCardOnboardingWidget: { hasCompletedOnboarding: true },
+      payCardOnboardingWidget: {
+        hasCompletedOnboarding: true,
+        analyticsCardId: null,
+        reportedAnalyticsMilestones: [],
+      },
     } as unknown as State;
 
     const projected = payCardPersistedSelector(state);
@@ -37,6 +41,8 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
       balanceFilter: "ethereum/erc20/usd__coin",
       hasSeenLoginIntro: true,
       hasCompletedOnboarding: true,
+      analyticsCardId: null,
+      reportedAnalyticsMilestones: [],
     });
   });
 });

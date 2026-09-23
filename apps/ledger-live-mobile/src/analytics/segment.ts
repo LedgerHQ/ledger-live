@@ -30,6 +30,7 @@ import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBui
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import { selectContacts } from "@domain/entity-contact";
 import { buildContactsGlobalProperties } from "@features/platform-contacts";
+import { getPayAttributes } from "./getPayAttributes";
 import {
   analyticsEnabledSelector,
   trackingEnabledSelector,
@@ -322,16 +323,6 @@ const getLazyOnboardingBannerAttributes = () => {
   };
 };
 
-const getPayTabAttributes = () => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const payTab = analyticsFeatureFlagMethod("lwmPayTab");
-
-  return {
-    isEnabled: payTab?.enabled ?? false,
-    card: payTab?.params?.card ?? false,
-  };
-};
-
 const getLdmkAndSyncFlags = () => ({
   ldmkTransport: analyticsFeatureFlagMethod?.("ldmkTransport") ?? {
     enabled: false,
@@ -490,7 +481,11 @@ const extraProperties = async (store: AppStore) => {
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
   const lazyOnboardingBannerAttributes = getLazyOnboardingBannerAttributes();
-  const payTabAttributes = getPayTabAttributes();
+  const payAttributes = getPayAttributes(
+    state,
+    analyticsFeatureFlagMethod?.("lwmPayTab")?.enabled ?? false,
+    accountsWithFunds,
+  );
 
   return {
     ...mandatoryProperties,
@@ -543,7 +538,7 @@ const extraProperties = async (store: AppStore) => {
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
-    payTabAttributes,
+    ...payAttributes,
     quickActionsCtasVariant: quickActionsCtasVariantFlag?.enabled,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,

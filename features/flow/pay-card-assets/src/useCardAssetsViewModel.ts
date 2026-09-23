@@ -1,5 +1,9 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useUpdateCardWalletPrioritiesMutation } from "@domain/api-card-management";
+import {
+  toPayDebitOrderProperties,
+  usePayAnalyticsContext,
+} from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import {
@@ -39,10 +43,12 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     onAddAsset,
   } = props ?? {};
   const { t } = useTranslation();
+  const { trackButtonClicked, trackDebitOrderChanged } = usePayAnalyticsContext();
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [assetOrder, setAssetOrder] = useState<readonly string[]>([]);
   const [reorderingAssetId, setReorderingAssetId] = useState<string | null>(null);
+  const manageInitialOrder = useRef<readonly string[] | null>(null);
   const isSignedIn = useIsCardSignedIn();
   const [updateCardWalletPriorities] = useUpdateCardWalletPrioritiesMutation();
   const { transactions } = useCardTransactionsViewModel();
@@ -115,9 +121,17 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   }, []);
 
   const onDialogClose = useCallback(() => {
+    if (
+      dialogState === "manage" &&
+      manageInitialOrder.current &&
+      manageInitialOrder.current.join() !== rows.map(row => row.currency).join()
+    ) {
+      trackDebitOrderChanged(toPayDebitOrderProperties(rows.map(row => row.currency)));
+    }
+    manageInitialOrder.current = null;
     setDialogState("closed");
     setSelectedAssetId(null);
-  }, []);
+  }, [dialogState, rows, trackDebitOrderChanged]);
 
   const onTopUpPress = useCallback(() => {
     if (selectedAsset) onTopUp?.(selectedAsset);
@@ -132,7 +146,6 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     setDialogState("details");
   }, []);
 
-  // History is a host route, not a dialog: hand the asset over and leave the dialogs closed.
   const onShowHistoryPress = useCallback(() => {
     if (selectedAsset) onShowHistory?.(selectedAsset);
     onDialogClose();
@@ -144,8 +157,10 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   }, [onDialogClose, onWithdraw, selectedAsset]);
 
   const onManagePress = useCallback(() => {
+    manageInitialOrder.current = rows.map(row => row.currency);
+    trackButtonClicked({ button: "debit order", page: "Card details" });
     setDialogState("manage");
-  }, []);
+  }, [rows, trackButtonClicked]);
 
   const onAddAssetPress = useCallback(() => {
     onAddAsset?.();
@@ -216,7 +231,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
-      onAddAssetPress: onAddAsset ? onAddAssetPress : undefined,
+      onAddAssetPress,
       onReorderAssets,
       reorderingAssetId,
     }),
@@ -239,7 +254,6 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
-      onAddAsset,
       onAddAssetPress,
       onReorderAssets,
       reorderingAssetId,

@@ -20,6 +20,7 @@ export function makeCardApiStore({ signedIn = false }: { signedIn?: boolean } = 
     preloadedState: {
       payCardAuth: {
         hasCard: signedIn,
+        pendingLoginType: null,
         status: signedIn ? "signedIn" : "signedOut",
       } satisfies PayCardAuthState,
     },

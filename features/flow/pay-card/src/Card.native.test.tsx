@@ -48,6 +48,10 @@ jest.mock("@features/flow-pay-card-widget/native", () => ({
   AddToWalletCtaWithBottomSheet: () => <View testID="card-add-to-wallet-cta" />,
 }));
 
+jest.mock("./useCardLifecycleTracking", () => ({
+  useCardLifecycleTracking: jest.fn(),
+}));
+
 import { Card } from "./Card";
 
 function renderCard(card: React.ReactElement) {
@@ -100,6 +104,7 @@ describe("Card (native)", () => {
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.getByTestId("card-login")).toBeVisible();
       expect(screen.queryByTestId("card-details")).toBeNull();
+      expect(screen.queryByTestId("pay-card-disclaimer")).toBeNull();
     });
 
     it("never builds the balance overlay, even when the host provides a formatter", () => {
@@ -123,6 +128,7 @@ describe("Card (native)", () => {
       expect(screen.getByTestId("card-add-to-wallet-cta")).toBeVisible();
       expect(screen.queryByTestId("card-login")).toBeNull();
       expect(screen.queryByTestId("card-artwork")).toBeNull();
+      expect(screen.queryByTestId("pay-card-disclaimer")).toBeNull();
     });
 
     it("hands the card visual to the details block once the host provides a formatter", () => {
@@ -134,6 +140,8 @@ describe("Card (native)", () => {
             currencies: new Map(),
             priceWallet: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -151,6 +159,8 @@ describe("Card (native)", () => {
             currencies: new Map(),
             priceWallet: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -170,7 +180,6 @@ describe("Card (native)", () => {
       const cardSettingsActions: CardProps["cardSettingsActions"] = {
         onManagePin: jest.fn(),
         onAccessBaanx: jest.fn(),
-        onHelp: jest.fn(),
       };
 
       renderCard(<Card login={{ oauthConfig }} cardSettingsActions={cardSettingsActions} />);

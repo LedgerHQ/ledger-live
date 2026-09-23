@@ -7,7 +7,13 @@ import {
   listenToCardApi,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
-import { ADD_TO_WALLET_COPY, CARD_COPY, I18nWrapper, MORE_COPY } from "../../__tests__/i18nWrapper";
+import {
+  ADD_TO_WALLET_COPY,
+  CARD_COPY,
+  CARD_DISCLAIMER,
+  I18nWrapper,
+  MORE_COPY,
+} from "../../__tests__/i18nWrapper";
 import { buildMoreViewProps } from "../More/fixtures";
 import type { CardDetailsRoute } from "./Scenes/navigation";
 import type { CardDetailsSceneProps } from "./Scenes/types";
@@ -62,6 +68,7 @@ function buildScene({ route, confirmState }: SheetOverrides): CardDetailsScenePr
       onMorePress: jest.fn(),
       onTransactionPress: jest.fn(),
       onAddToWalletPress,
+      disclaimer: CARD_DISCLAIMER,
     },
     freeze: { viewModel },
     more: { viewModel: more },
@@ -131,6 +138,19 @@ describe("CardDetailsSheet (native)", () => {
     renderSheet();
 
     expect(screen.getByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
+  });
+
+  it("should show the disclaimer after transactions on the overview", () => {
+    renderSheet();
+
+    expect(screen.getByTestId("card-details-overview-disclaimer")).toBeVisible();
+    expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
+  });
+
+  it("should keep the disclaimer off the scenes it would cover", () => {
+    renderSheet({ route: { name: "transaction", transaction } });
+
+    expect(screen.queryByTestId("card-details-overview-disclaimer")).toBeNull();
   });
 
   it("should keep the add-to-wallet CTA off the scenes it would cover", () => {

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Tile, TileContent, TileTitle } from "@ledgerhq/lumen-ui-rnative";
+import { Tile, TileContent, TileDescription } from "@ledgerhq/lumen-ui-rnative";
 import { ContactAvatar } from "@features/platform-contacts";
 import type { Contact } from "@domain/entity-contact";
 
@@ -22,7 +22,7 @@ export function ContactTile({ contact, index, onPress }: ContactTileProps): Reac
     >
       <ContactAvatar contactId={contact.id} name={contact.name} size="lg" />
       <TileContent>
-        <TileTitle lx={{ color: "base" }}>{contact.name}</TileTitle>
+        <TileDescription>{contact.name}</TileDescription>
       </TileContent>
     </Tile>
   );

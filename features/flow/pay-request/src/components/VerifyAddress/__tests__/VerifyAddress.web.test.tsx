@@ -50,9 +50,10 @@ describe("VerifyAddress (Web)", () => {
     await user.click(screen.getByTestId("pay-card-verify-address-verify-cta"));
 
     expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
-      button: "verify address",
+      button: "verify",
       buttonLocation: "verify address",
       page: "Pay",
+      flow: "request",
     });
     expect(props.onVerify).toHaveBeenCalledTimes(1);
   });
@@ -69,6 +70,7 @@ describe("VerifyAddress (Web)", () => {
       button: "got it",
       buttonLocation: "verify address",
       page: "Pay",
+      flow: "request",
     });
     expect(props.onGotIt).toHaveBeenCalledTimes(1);
   });

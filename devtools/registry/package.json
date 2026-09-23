@@ -22,7 +22,8 @@
     "@devtools/env": "workspace:*",
     "@devtools/pay-card": "workspace:*",
     "@devtools/trustchain": "workspace:*",
-    "@devtools/cloud-sync": "workspace:*"
+    "@devtools/cloud-sync": "workspace:*",
+    "@devtools/device-onboarding": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"

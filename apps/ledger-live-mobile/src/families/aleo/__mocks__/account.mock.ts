@@ -28,7 +28,10 @@ export const ALEO_ACCOUNT_2: AleoAccount = {
   index: 1,
 };
 
-export const makeAleoAccount = (resources: Partial<AleoResources>): AleoAccount => ({
+export const makeAleoAccount = (
+  resources: Partial<AleoResources>,
+  overrides: Partial<AleoAccount> = {},
+): AleoAccount => ({
   ...ALEO_ACCOUNT_1,
   aleoResources: {
     transparentBalance: new BigNumber(0),
@@ -38,4 +41,5 @@ export const makeAleoAccount = (resources: Partial<AleoResources>): AleoAccount 
     lastPrivateSyncDate: null,
     ...resources,
   },
+  ...overrides,
 });

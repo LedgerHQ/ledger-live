@@ -39,11 +39,15 @@ export function HistoryView({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-24" data-testid="history-page">
-      <TrackPage
-        category="OperationList"
-        operationsCount={operationsCountRef.current}
-        has_pending_operations={hasPendingOperationsRef.current}
-      />
+      {isCardTab ? (
+        <TrackPage category="Card History" />
+      ) : (
+        <TrackPage
+          category="OperationList"
+          operationsCount={operationsCountRef.current}
+          has_pending_operations={hasPendingOperationsRef.current}
+        />
+      )}
       <HistoryPageHeader
         onBack={showBackButton ? navigateBack : undefined}
         onExportClick={onExportClick}

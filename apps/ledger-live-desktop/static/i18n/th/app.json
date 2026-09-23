@@ -638,8 +638,8 @@
       "txid" : "Swap ID",
       "status" : "สถานะ",
       "statusTooltips" : {
-        "expired" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อขอข้อมูลเพิ่มเติม",
-        "refunded" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อขอข้อมูลเพิ่มเติม",
+        "expired" : "โปรดติดต่อผู้ให้บริการสวอปพร้อม Swap ID ของคุณเพื่อขอข้อมูลเพิ่มเติม",
+        "refunded" : "โปรดติดต่อผู้ให้บริการสวอปพร้อม Swap ID ของคุณเพื่อขอข้อมูลเพิ่มเติม",
         "pending" : "โปรดรอสักครู่ ผู้ให้บริการ Swap กำลังประมวลผลธุรกรรม",
         "onhold" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อแก้ไขสถานการณ์",
         "finished" : "การทำ Swap ของคุณเสร็จสมบูรณ์แล้ว",
@@ -2799,7 +2799,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "ป้อน {{memoLabel}}",
-      "description" : "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} may result in a loss of funds."
+      "description" : "จำเป็นต้องมี {{memoLabel}} เมื่อส่ง {{currency}} ไปยัง Crypto Exchange นี่เป็นฟีเจอร์ที่ช่วยระบุตัวผู้รับของธุรกรรมนี้ได้ หากไม่ใส่ {{memoLabel}} อาจทำให้คุณสูญเสียสินทรัพย์ได้"
     },
     "networkFeesInFiat" : "ค่าธรรมเนียมเครือข่ายในรูปแบบ {{currency}}",
     "feesAmount" : "ยอดค่าธรรมเนียม {{unit}}",
@@ -6941,7 +6941,7 @@
       "memo" : "แท็ก"
     },
     "zcash" : {
-      "memoTooltip" : "A {{memoLabel}} is optional when sending {{currency}}. It is encrypted and only the recipient can read it. Some exchanges require one to identify your transaction."
+      "memoTooltip" : "{{memoLabel}} นั้นเป็นตัวเลือกเสริมเมื่อทำการส่ง {{currency}} Memo นี้ได้รับการเข้ารหัส และมีเฉพาะผู้รับเท่านั้นที่สามารถอ่านได้ Exchange บางแห่งกำหนดให้ต้องระบุ Memo เพื่อยืนยันตัวธุรกรรมของคุณ"
     }
   },
   "errors" : {
@@ -9130,7 +9130,11 @@
     "opted_in" : {
       "title" : "ดูเพิ่มเติม ลงนามได้ปลอดภัยยิ่งขึ้น",
       "description" : "อัปเกรดพร้อมรับส่วนลด {{discount}}%",
-      "cta" : "อัปเกรด My Ledger"
+      "cta" : "อัปเกรด My Ledger",
+      "nanoS" : {
+        "title" : "โปรแกรมอัปเกรด Ledger Nano S",
+        "description" : "อัปเกรดวันนี้เพื่อรับ OS และฟีเจอร์ความปลอดภัยใหม่ ๆ พร้อมรับส่วนลด {{discount}}%"
+      }
     },
     "opted_out" : {
       "title" : "ความปลอดภัยที่มากขึ้น ควบคุมได้มากขึ้น",
@@ -9140,7 +9144,11 @@
     "profile" : {
       "title" : "อัปเกรดอุปกรณ์ของคุณ",
       "description" : "หน้าจอใหญ่ขึ้น ความปลอดภัยมากขึ้น พร้อมส่วนลด {{discount}}%",
-      "cta" : "สำรวจ"
+      "cta" : "สำรวจ",
+      "nanoS" : {
+        "title" : "โปรแกรมอัปเกรด Ledger Nano S",
+        "description" : "อัปเกรดวันนี้เพื่อรับ OS และฟีเจอร์ความปลอดภัยใหม่ ๆ พร้อมรับส่วนลด {{discount}}%"
+      }
     }
   },
   "largeScreenUpsellModal" : {

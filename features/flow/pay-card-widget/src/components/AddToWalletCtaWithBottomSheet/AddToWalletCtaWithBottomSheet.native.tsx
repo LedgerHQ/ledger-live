@@ -1,12 +1,21 @@
 import React, { useCallback, useState } from "react";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { AddToWalletBottomSheet } from "../AddToWalletBottomSheet/AddToWalletBottomSheet.native";
 import { AddToWalletCta, type AddToWalletCtaProps } from "../AddToWalletCta/AddToWalletCta.native";
+import { getWalletPlatform } from "../getWalletPlatform.native";
 
 type Props = Pick<AddToWalletCtaProps, "appearance">;
 
 export function AddToWalletCtaWithBottomSheet({ appearance }: Props) {
+  const { trackButtonClicked } = usePayAnalyticsContext();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const openSheet = useCallback(() => setIsSheetOpen(true), []);
+  const openSheet = useCallback(() => {
+    trackButtonClicked({
+      button: `add to ${getWalletPlatform().brand.toLowerCase()} pay`,
+      page: "Pay",
+    });
+    setIsSheetOpen(true);
+  }, [trackButtonClicked]);
   const closeSheet = useCallback(() => setIsSheetOpen(false), []);
 
   return (

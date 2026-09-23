@@ -11,7 +11,9 @@ const CARD_REWARD_WALLET_URL = `${getEnv("CARD_BAANX_API_URL")}/v1/wallet/reward
 
 const [subscription] = mockPayCardTransactions();
 
-const signedIn = { payCardAuth: { hasCard: true, status: "signedIn" as const } };
+const signedIn = {
+  payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const },
+};
 
 const onTransactionsRequest = jest.fn();
 
@@ -38,6 +40,7 @@ describe("RightPanel card integration", () => {
     const panel = screen.getByRole("region", { name: "Crypto card" });
     expect(panel).toContainElement(item);
     expect(panel.parentElement).toHaveClass("overflow-y-auto");
+    expect(within(panel).getByText("Disclaimer placeholder")).toBeVisible();
   });
 
   it("should format the transaction amounts with the Desktop formatter", async () => {

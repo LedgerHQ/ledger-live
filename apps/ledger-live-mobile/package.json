@@ -123,6 +123,7 @@
     "@features/flow-fear-and-greed": "workspace:^",
     "@features/flow-large-screen-upsell": "workspace:^",
     "@features/flow-lazy-onboarding-banner": "workspace:^",
+    "@features/platform-pay-analytics": "workspace:^",
     "@features/flow-pay-balance": "workspace:^",
     "@features/flow-pay-bank-transfer": "workspace:^",
     "@features/flow-pay-card": "workspace:^",

@@ -17,9 +17,13 @@ import { getBrazeConfig } from "~/braze-setup";
 import { applyBrazeConsentTransition } from "LLD/features/DynamicContent/utils/applyBrazeConsentTransition";
 import { resolveDesktopBrazeUserId } from "LLD/features/DynamicContent/utils/brazeIdentity";
 import { requireBrazeLifecycleMethod } from "LLD/features/DynamicContent/utils/brazeWebSdkLifecycle";
-import { filterEligibleContentCards } from "LLD/features/DynamicContent/utils/filterEligibleContentCards";
+import {
+  filterEligibleContentCards,
+  type ContentCardEligibilityEvaluation,
+} from "LLD/features/DynamicContent/utils/filterEligibleContentCards";
 import { useBrazeEligibilityContext } from "LLD/features/DynamicContent/hooks/useBrazeEligibilityContext";
 import { publishDesktopContentCards } from "~/renderer/hooks/useBraze";
+import { Platform } from "~/types/dynamicContent";
 import {
   clearDismissedContentCards,
   purgeExpiredAnonymousUserNotifications,
@@ -30,6 +34,11 @@ import {
   dismissedContentCardsSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
+
+export type DebugBrazeContentCard = {
+  id?: string;
+  extras: Record<string, string>;
+};
 
 const userIdsMatch = (left: UserId, right: UserId): boolean => left.equals(right);
 const EMPTY_CONTENT_CARDS = {
@@ -69,6 +78,10 @@ export function useBrazeProviderViewModel() {
   const eligibilityContextRef = useRef(eligibilityContext);
   eligibilityContextRef.current = eligibilityContext;
   const lastFetchedCardsRef = useRef<braze.ContentCards | null>(null);
+  const [lastFetchedCards, setLastFetchedCards] = useState<braze.Card[] | null>(null);
+  const [eligibilityEvaluations, setEligibilityEvaluations] = useState<
+    ContentCardEligibilityEvaluation[]
+  >([]);
 
   const subscriptionIdRef = useRef<string | null>(null);
   const pendingRefreshRef = useRef<BrazePendingRefresh | null>(null);
@@ -83,15 +96,22 @@ export function useBrazeProviderViewModel() {
   const lifecycleGenerationRef = useRef(0);
   const [sdkReady, setSdkReady] = useState(false);
 
+  const clearFetchedCards = useCallback(() => {
+    lastFetchedCardsRef.current = null;
+    setLastFetchedCards(null);
+    setEligibilityEvaluations([]);
+  }, []);
+
   const publishEligibleCards = useCallback(
     (cards: braze.ContentCards, context: EligibilityContext) => {
       const dismissedCardIds = Object.keys(contentCardsDismissedRef.current ?? {});
-      const { eligibleCards } = filterEligibleContentCards(
+      const { eligibleCards, evaluations } = filterEligibleContentCards(
         cards.cards.filter(
           (card): card is braze.Card & { id: string } => typeof card.id === "string",
         ),
         context,
       );
+      setEligibilityEvaluations(evaluations);
       publishDesktopContentCards(
         dispatch,
         { ...cards, cards: eligibleCards } as braze.ContentCards,
@@ -109,6 +129,7 @@ export function useBrazeProviderViewModel() {
 
       try {
         lastFetchedCardsRef.current = cards;
+        setLastFetchedCards(cards.cards);
         publishEligibleCards(cards, eligibilityContextRef.current);
         pendingRefresh?.resolve();
       } catch (error) {
@@ -140,8 +161,8 @@ export function useBrazeProviderViewModel() {
     }
     pendingRefreshRef.current?.reject(new Error("Braze content cards refresh cancelled"));
     pendingRefreshRef.current = null;
-    lastFetchedCardsRef.current = null;
-  }, []);
+    clearFetchedCards();
+  }, [clearFetchedCards]);
 
   const ensureSessionStarted = useCallback(() => {
     if (sessionStartedRef.current) return;
@@ -178,6 +199,36 @@ export function useBrazeProviderViewModel() {
 
     return pendingRefresh.promise;
   }, [ensureSubscription]);
+
+  const injectDebugContentCard = useCallback(
+    (card: DebugBrazeContentCard) => {
+      const nextCard = {
+        id: card.id ?? `debug-${Date.now()}`,
+        extras: {
+          platform: Platform.Desktop,
+          ...card.extras,
+        },
+      };
+      const current = lastFetchedCardsRef.current;
+      const cards = current ? [...current.cards] : [];
+      const existingIndex = cards.findIndex(existing => String(existing.id) === nextCard.id);
+      const debugCard = nextCard as unknown as braze.Card;
+      if (existingIndex >= 0) {
+        cards[existingIndex] = debugCard;
+      } else {
+        cards.push(debugCard);
+      }
+      const nextCards = {
+        ...(current ?? EMPTY_CONTENT_CARDS),
+        cards,
+        lastUpdated: new Date(),
+      } as braze.ContentCards;
+      lastFetchedCardsRef.current = nextCards;
+      setLastFetchedCards(nextCards.cards);
+      publishEligibleCards(nextCards, eligibilityContextRef.current);
+    },
+    [publishEligibleCards],
+  );
 
   const syncBrazeIdentity = useCallback(() => {
     if (!sdkReady) {
@@ -326,5 +377,12 @@ export function useBrazeProviderViewModel() {
     }
   }, [dispatch, isTrackedUser]);
 
-  return { prepareForIdentityTransition, refreshContentCards };
+  return {
+    prepareForIdentityTransition,
+    refreshContentCards,
+    lastFetchedCards,
+    eligibilityEvaluations,
+    eligibilityContext,
+    injectDebugContentCard,
+  };
 }

@@ -7,6 +7,8 @@ export type DeliveryStatus =
   | "failed_tracking"
   | "failed_enrichment"
   | "failed_filter"
+  | "failed_identify"
+  | "flushed"
   | "skipped_no_client"
   | "skipped_no_store"
   | "skipped_no_token";

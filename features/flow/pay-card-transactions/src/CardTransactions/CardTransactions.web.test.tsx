@@ -78,8 +78,8 @@ describe("CardTransactions", () => {
     const onTrackEvent = jest.fn();
     server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
 
-    render(<CardTransactions onTrackEvent={onTrackEvent} />, {
-      wrapper: cardApiWrapper({ signedIn: true }),
+    render(<CardTransactions />, {
+      wrapper: cardApiWrapper({ signedIn: true, track: onTrackEvent }),
     });
 
     fireEvent.click(await screen.findByText("NETFLIX.COM"));

@@ -14,8 +14,9 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { PayTrackPage } from "@features/platform-pay-analytics";
 import heroImage from "./payTabTour.webp";
-import type { FeatureTourViewModel } from "./useFeatureTourViewModel";
+import { FEATURE_TOUR_PAGE, type FeatureTourViewModel } from "./useFeatureTourViewModel";
 
 type FeatureTourViewProps = FeatureTourViewModel;
 
@@ -25,19 +26,15 @@ export function FeatureTourView({
   description,
   rows,
   ctaLabel,
-  onShown,
   onDismiss,
 }: FeatureTourViewProps) {
   const dismissed = useRef(false);
-  const onShownRef = useRef(onShown);
-  onShownRef.current = onShown;
   const [isOpen, setIsOpen] = useState(isVisible);
 
   useEffect(() => {
     if (isVisible) {
       dismissed.current = false;
       setIsOpen(true);
-      onShownRef.current();
     }
   }, [isVisible]);
 
@@ -59,6 +56,7 @@ export function FeatureTourView({
     >
       {isOpen ? (
         <BottomSheetView>
+          <PayTrackPage page={FEATURE_TOUR_PAGE} />
           <BottomSheetHeader density="compact" />
           <Box lx={{ paddingBottom: "s24", gap: "s16" }}>
             <Image

@@ -1,5 +1,5 @@
 import React from "react";
-import { Linking, Pressable, Text } from "react-native";
+import { Pressable, Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { act, render, screen, waitFor } from "@tests/test-renderer";
 import { getEnv, getEnvDefault, setEnv } from "@shared/env";
@@ -15,6 +15,9 @@ import { ScreenName } from "~/const";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import type { PayTabNavigatorParamList } from "../../types";
 import { usePayTabViewModel } from "./usePayTabViewModel";
+import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+
+const payAnalyticsAdapter = { track: () => undefined };
 
 // ledger-live-mobile does not depend on expo-web-browser directly — only
 // @features/flow-pay-card-auth does, wrapping it behind openHostedUrlInSecureBrowser. Importing
@@ -28,7 +31,6 @@ jest.mock("@features/platform-card", () => ({
   ...jest.requireActual("@features/platform-card"),
   readCardUsEnv: jest.fn(),
 }));
-
 const Stack = createNativeStackNavigator<PayTabNavigatorParamList>();
 
 const mockedOpenSecureBrowser = jest.mocked(openHostedUrlInSecureBrowser);
@@ -47,8 +49,10 @@ const CARD_ASSET: CardAssetRow = {
 };
 
 function PayTabViewModelProbe() {
-  const { login, onTopUp, cardAssets, cardSettingsActions } = usePayTabViewModel();
+  const { login, onTopUp, onChooseCardType, cardAssets, cardSettingsActions, cardFormatters } =
+    usePayTabViewModel();
   const { oauthConfig, callback } = login;
+  const formatted = cardFormatters?.countervalue?.(1250);
 
   return (
     <>
@@ -58,7 +62,10 @@ function PayTabViewModelProbe() {
       <Text testID="oauth-redirect">{oauthConfig.redirectUri}</Text>
       <Text testID="oauth-deeplink">{oauthConfig.deepLink}</Text>
       <Text testID="oauth-callback">{JSON.stringify(callback)}</Text>
+      <Text testID="countervalue-integer">{formatted?.integerPart}</Text>
+      <Text testID="countervalue-decimal">{formatted?.decimalPart}</Text>
       <Pressable testID="top-up" onPress={onTopUp} />
+      <Pressable testID="choose-card-type" onPress={onChooseCardType} />
       <Pressable testID="asset-top-up" onPress={() => cardAssets.onTopUp?.(CARD_ASSET)} />
       <Pressable testID="asset-withdraw" onPress={() => cardAssets.onWithdraw?.(CARD_ASSET)} />
       <Text testID="has-manage-pin">
@@ -67,22 +74,24 @@ function PayTabViewModelProbe() {
       <Text testID="has-access-baanx">
         {String(typeof cardSettingsActions?.onAccessBaanx === "function")}
       </Text>
-      <Pressable testID="press-help" onPress={cardSettingsActions?.onHelp} />
       <Pressable testID="press-manage-pin" onPress={cardSettingsActions?.onManagePin} />
       <Pressable testID="press-access-baanx" onPress={cardSettingsActions?.onAccessBaanx} />
+      <Pressable testID="press-add-asset" onPress={cardAssets.onAddAsset} />
     </>
   );
 }
 
 function renderViewModel(params?: PayTabNavigatorParamList[typeof ScreenName.PayTab]) {
   return render(
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        name={ScreenName.PayTab}
-        component={PayTabViewModelProbe}
-        initialParams={params}
-      />
-    </Stack.Navigator>,
+    <PayAnalyticsProvider adapter={payAnalyticsAdapter}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name={ScreenName.PayTab}
+          component={PayTabViewModelProbe}
+          initialParams={params}
+        />
+      </Stack.Navigator>
+    </PayAnalyticsProvider>,
   );
 }
 
@@ -111,6 +120,8 @@ describe("usePayTabViewModel", () => {
       getEnv("CARD_OAUTH_REDIRECT_URI"),
     );
     expect(screen.getByTestId("oauth-deeplink")).toHaveTextContent(PAY_TAB_DEEP_LINK);
+    expect(screen.getByTestId("countervalue-integer")).toHaveTextContent("12");
+    expect(screen.getByTestId("countervalue-decimal")).toHaveTextContent("50");
   });
 
   it("should follow a change of the Card env vars", () => {
@@ -137,6 +148,36 @@ describe("usePayTabViewModel", () => {
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
         "https://hosted.test/topup",
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should open the choose card type page of the hosted UI in the secure browser", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("choose-card-type"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/order-card",
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should name the US app on the choose card type page for a US card holder", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("choose-card-type"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/order-card?app_id=LEDGERUS",
         PAY_TAB_DEEP_LINK,
       ),
     );
@@ -223,17 +264,6 @@ describe("usePayTabViewModel", () => {
     expect(screen.getByTestId("has-access-baanx")).toHaveTextContent("true");
   });
 
-  it("should open the card help center article externally", async () => {
-    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-    const { user } = renderViewModel();
-
-    await user.press(screen.getByTestId("press-help"));
-
-    expect(openURL).toHaveBeenCalledWith("https://support.ledger.com/article/5283612250653-zd");
-
-    openURL.mockRestore();
-  });
-
   it("should open the manage PIN hosted page in the secure browser", async () => {
     const { user } = renderViewModel();
 
@@ -285,6 +315,36 @@ describe("usePayTabViewModel", () => {
     await waitFor(() =>
       expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
         buildHostedUrl(getEnv("CARD_BAANX_HOSTED_UI"), buildAccessBaanxPath("LEDGERUS")),
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should open the add asset hosted crypto dashboard", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("press-add-asset"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/dashboard/accounts/crypto",
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should name the US app on the add asset hosted crypto dashboard", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("press-add-asset"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/dashboard/accounts/crypto?app_id=LEDGERUS",
         PAY_TAB_DEEP_LINK,
       ),
     );

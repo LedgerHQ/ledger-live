@@ -1,8 +1,10 @@
 import { useState } from "react";
 import type { PayCardTransaction } from "@domain/api-card-management";
 import { useCardAssetsViewModel, type CardAssetRow } from "@features/flow-pay-card-assets";
-import type { CardTransactionItem } from "@features/flow-pay-card-transactions";
 import { transactionClickedProperties } from "@features/flow-pay-card-transactions";
+import type { CardTransactionItem } from "@features/flow-pay-card-transactions";
+import { getWalletPlatform } from "@features/flow-pay-card-widget/native";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import { useFreezeCardViewModel } from "../Freeze/useFreezeCardViewModel";
 import { useMoreViewModel } from "../More/useMoreViewModel";
@@ -14,12 +16,12 @@ export function useCardDetailsViewModel({
   cardVisual,
   assets,
   formatters,
-  onTrackEvent,
   onShowMore,
   onTopUp,
   cardSettingsActions,
 }: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
+  const { trackButtonClicked, trackTransactionClicked } = usePayAnalyticsContext();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { route, goTo, goBack } = useCardDetailsNavigation();
   const assetsViewModel = useCardAssetsViewModel(assets);
@@ -36,7 +38,7 @@ export function useCardDetailsViewModel({
   };
 
   const onTransactionPress = (transaction: PayCardTransaction) => {
-    onTrackEvent?.("transaction_clicked", transactionClickedProperties(transaction));
+    trackTransactionClicked(transactionClickedProperties(transaction));
     goTo({ name: "transaction", transaction });
   };
 
@@ -70,10 +72,15 @@ export function useCardDetailsViewModel({
   };
 
   const onAddToWalletPress = () => {
+    trackButtonClicked({
+      button: `add to ${getWalletPlatform().brand.toLowerCase()} pay`,
+      page: "Card details",
+    });
     goTo({ name: "addToWallet" });
   };
 
   const openSheet = () => {
+    trackButtonClicked({ button: "card_details", page: "Pay" });
     goBack();
     setIsSheetOpen(true);
   };
@@ -137,6 +144,7 @@ export function useCardDetailsViewModel({
       onAddToWalletPress,
       onShowMore,
       formatters,
+      disclaimer: t("payTab.disclaimer"),
     },
     freeze: { viewModel: freezeViewModel },
     more: moreViewModel ? { viewModel: moreViewModel } : null,

@@ -191,9 +191,11 @@ export type CardLoginEvent =
  * before the machine hydrates.
  */
 export type PayCardAuthStatus = "unknown" | "signedOut" | "signedIn";
+export type PayCardLoginType = "signin" | "signup";
 
 export type PayCardAuthState = Readonly<{
   hasCard: boolean;
+  pendingLoginType: PayCardLoginType | null;
   /**
    * Where the Card session stands. The login machine owns the value, and every component outside it
    * reads this instead, because two machines would each hydrate and neither would agree.
