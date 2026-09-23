@@ -82,6 +82,16 @@ describe("CardLoginIntroView (Web)", () => {
     expect(screen.getByTestId("pay-card-login-intro-row-LedgerLogo")).toBeVisible();
   });
 
+  it("paints every row icon with the theme text color", () => {
+    renderIntro();
+
+    for (const icon of ["CoinsAddPlus", "CreditCard", "LedgerLogo"]) {
+      expect(screen.getByTestId(`pay-card-login-intro-row-${icon}`).firstElementChild).toHaveClass(
+        "text-base",
+      );
+    }
+  });
+
   it("renders both buttons, in the order the actions arrive", () => {
     renderIntro();
 

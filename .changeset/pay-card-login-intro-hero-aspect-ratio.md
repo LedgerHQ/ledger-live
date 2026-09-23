@@ -4,4 +4,4 @@
 "live-mobile": patch
 ---
 
-Keep the aspect ratio of the login intro hero image
+Keep the aspect ratio of the login intro hero image and theme the desktop row icons
