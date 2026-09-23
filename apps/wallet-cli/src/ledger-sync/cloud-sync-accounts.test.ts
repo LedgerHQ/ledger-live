@@ -1,6 +1,12 @@
 import { describe, expect, it } from "bun:test";
 import { Session } from "../session/session-store";
-import { mergeSyncedAccounts } from "./cloud-sync-accounts";
+import { getEnv } from "@shared/env";
+import type { MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
+import {
+  mergeSyncedAccounts,
+  pullSyncedAccounts,
+  type CreateCloudSyncSdk,
+} from "./cloud-sync-accounts";
 import { parseV1 } from "../shared/accountDescriptor";
 import { XPUB, ETH_ADDR } from "../shared/accountDescriptor/test-fixtures";
 
@@ -148,6 +154,19 @@ describe("mergeSyncedAccounts", () => {
     expect(() => parseV1(session.accounts[0]!.descriptor)).not.toThrow();
   });
 
+  it("gives a synced account a fresh label when its default one is taken by a different local account", () => {
+    const localOnly = { label: "ethereum-1", descriptor: "local-only-descriptor" };
+    const session = Session.from([localOnly]);
+
+    const report = mergeSyncedAccounts(session, [ETH_RAW]);
+
+    expect(report.imported).toEqual([
+      expect.objectContaining({ status: "imported", label: "ethereum-2" }),
+    ]);
+    expect(session.accounts[0]).toEqual(localOnly);
+    expect(session.accounts).toHaveLength(2);
+  });
+
   it("returns an empty report and touches nothing for an empty pull", () => {
     const session = Session.from([]);
     const report = mergeSyncedAccounts(session, []);
@@ -157,5 +176,156 @@ describe("mergeSyncedAccounts", () => {
     expect(report.skipped).toEqual([]);
     expect(report.invalid).toEqual([]);
     expect(session.accounts).toHaveLength(0);
+  });
+});
+
+function namedError(name: string): Error {
+  const err = new Error(name);
+  err.name = name;
+  return err;
+}
+
+describe("pullSyncedAccounts", () => {
+  const trustchain = { rootId: "root-abc" } as unknown as Trustchain;
+  const memberCredentials = { privatekey: "priv", pubkey: "pub" } as MemberCredentials;
+  const trustchainSdk = {} as TrustchainSDK;
+
+  type SdkOptions = Parameters<CreateCloudSyncSdk>[0];
+
+  /** A fake CloudSyncSDK whose pull() replays `events` through saveNewUpdate, then optionally throws. */
+  function fakeSdk(events: unknown[], thenThrow?: Error) {
+    const created: SdkOptions[] = [];
+    const createSdk: CreateCloudSyncSdk = options => {
+      created.push(options);
+      return {
+        pull: async () => {
+          for (const event of events) await options.saveNewUpdate(event as never);
+          if (thenThrow) throw thenThrow;
+        },
+      };
+    };
+    return { created, createSdk };
+  }
+
+  it("reports up-to-date when the pull delivers no update", async () => {
+    const { createSdk } = fakeSdk([]);
+
+    const result = await pullSyncedAccounts(
+      trustchain,
+      memberCredentials,
+      trustchainSdk,
+      "production",
+      () => 5,
+      createSdk,
+    );
+
+    expect(result).toEqual({ status: "up-to-date" });
+  });
+
+  it("returns the raw accounts and version of a new-data update", async () => {
+    const { createSdk } = fakeSdk([
+      { type: "new-data", data: { accounts: [ETH_RAW, MALFORMED_RAW] }, version: 7 },
+    ]);
+
+    const result = await pullSyncedAccounts(
+      trustchain,
+      memberCredentials,
+      trustchainSdk,
+      "production",
+      () => undefined,
+      createSdk,
+    );
+
+    // Not validated here: per-entry validation happens in mergeSyncedAccounts.
+    expect(result).toEqual({ status: "new-data", accounts: [ETH_RAW, MALFORMED_RAW], version: 7 });
+  });
+
+  it("treats a non-array accounts field as an empty list rather than failing the pull", async () => {
+    const { createSdk } = fakeSdk([{ type: "new-data", data: { accounts: "nope" }, version: 2 }]);
+
+    const result = await pullSyncedAccounts(
+      trustchain,
+      memberCredentials,
+      trustchainSdk,
+      "production",
+      () => undefined,
+      createSdk,
+    );
+
+    expect(result).toEqual({ status: "new-data", accounts: [], version: 2 });
+  });
+
+  it("swallows the TrustchainOutdated the SDK throws right after reporting deleted data", async () => {
+    const { createSdk } = fakeSdk([{ type: "deleted-data" }], namedError("TrustchainOutdated"));
+
+    const result = await pullSyncedAccounts(
+      trustchain,
+      memberCredentials,
+      trustchainSdk,
+      "production",
+      () => 3,
+      createSdk,
+    );
+
+    expect(result).toEqual({ status: "deleted" });
+  });
+
+  it("rethrows any other pull failure instead of reporting a partial result", async () => {
+    const failure = namedError("NetworkError");
+    const { createSdk } = fakeSdk([], failure);
+
+    await expect(
+      pullSyncedAccounts(
+        trustchain,
+        memberCredentials,
+        trustchainSdk,
+        "production",
+        () => 3,
+        createSdk,
+      ),
+    ).rejects.toBe(failure);
+  });
+
+  it("targets the Cloud Sync backend of the environment it was given, never the other one", async () => {
+    const production = fakeSdk([]);
+    const staging = fakeSdk([]);
+
+    await pullSyncedAccounts(
+      trustchain,
+      memberCredentials,
+      trustchainSdk,
+      "production",
+      () => 1,
+      production.createSdk,
+    );
+    await pullSyncedAccounts(
+      trustchain,
+      memberCredentials,
+      trustchainSdk,
+      "staging",
+      () => 1,
+      staging.createSdk,
+    );
+
+    expect(production.created[0]?.apiBaseUrl).toBe(getEnv("CLOUD_SYNC_API_PROD"));
+    expect(staging.created[0]?.apiBaseUrl).toBe(getEnv("CLOUD_SYNC_API_STAGING"));
+    expect(getEnv("CLOUD_SYNC_API_PROD")).not.toBe(getEnv("CLOUD_SYNC_API_STAGING"));
+  });
+
+  it("passes the caller's cached version and the shared live slug to the SDK", async () => {
+    const { created, createSdk } = fakeSdk([]);
+
+    await pullSyncedAccounts(
+      trustchain,
+      memberCredentials,
+      trustchainSdk,
+      "production",
+      () => 42,
+      createSdk,
+    );
+
+    expect(created[0]?.getCurrentVersion()).toBe(42);
+    expect(created[0]?.slug).toBe("live");
+    expect(created[0]?.trustchainSdk).toBe(trustchainSdk);
   });
 });
