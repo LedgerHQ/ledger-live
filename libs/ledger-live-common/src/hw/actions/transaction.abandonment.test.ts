@@ -7,9 +7,7 @@ import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 
 // The device-connection half is a whole state machine of its own; this test only cares that
-// the sign prompt appeared, so it is pinned to "device ready". The state object is a single
-// stable instance: `device` is a dependency of the signing effect, so a fresh object per
-// render would resubscribe on every render and drop events.
+// the sign prompt appeared, so it is pinned to "device ready".
 const READY = {
   device: { deviceId: "device", modelId: "nanoX" },
   opened: true,
@@ -24,9 +22,7 @@ const WRONG_DEVICE: AppStateFixture = {
   ...READY,
   inWrongDeviceForAccount: { accountName: "Staking account" },
 };
-// Mutable so a test can take the device away mid-flow. Held as one object per state rather than
-// rebuilt per render: `device` is a dependency of the signing effect, so a fresh object each
-// render would resubscribe every render and drop events.
+// Mutable so a test can take the device away mid-flow.
 const appState = { current: READY as AppStateFixture };
 
 jest.mock("./app", () => ({
@@ -297,6 +293,51 @@ describe("transaction device action — sign-prompt abandonment", () => {
     );
     unmount();
 
+    expect(events).toEqual([]);
+  });
+
+  it("preserves the sign subscription when the device object identity changes", async () => {
+    const { rerender, unmount } = render();
+    await flush();
+    act(() => signEvents.next({ type: "device-signature-requested" }));
+    expect(signOperation).toHaveBeenCalledTimes(1);
+
+    appState.current = {
+      ...READY,
+      device: { deviceId: "device", modelId: "nanoX" },
+    };
+    await act(async () => {
+      rerender();
+      await Promise.resolve();
+    });
+
+    expect(events).toEqual([]);
+    expect(signOperation).toHaveBeenCalledTimes(1);
+
+    act(() =>
+      signEvents.next({
+        type: "signed",
+        signedOperation: { signature: "sig", operation: {} },
+      } as SignOperationEvent),
+    );
+    unmount();
+    expect(events).toEqual([]);
+  });
+
+  it("signs a structured transaction with a mock device, whose id is an empty string", async () => {
+    appState.current = { ...READY, device: { deviceId: "", modelId: "nanoX" } };
+    const { unmount } = render();
+    await flush();
+
+    expect(signOperation).toHaveBeenCalledWith(expect.objectContaining({ deviceId: "" }));
+
+    act(() =>
+      signEvents.next({
+        type: "signed",
+        signedOperation: { signature: "sig", operation: {} },
+      } as SignOperationEvent),
+    );
+    unmount();
     expect(events).toEqual([]);
   });
 

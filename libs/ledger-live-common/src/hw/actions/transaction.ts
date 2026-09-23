@@ -156,6 +156,11 @@ export const createAction = (
       requireLatestFirmware,
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
+    // Kept as primitives: a rerender that hands over an equivalent device object must not
+    // resubscribe and ask the user to sign again. Mock and Speculos devices carry an empty
+    // `deviceId`, so presence is `undefined` vs defined, never truthiness.
+    const deviceId = device?.deviceId;
+    const deviceModelId = device?.modelId;
     const [state, setState] = useState(initialState);
 
     const { beginAttempt, failInterruptedAttempt, noteSettled, notePromptShown, resetAttempt } =
@@ -186,7 +191,13 @@ export const createAction = (
     }, [state.signedOperation, state.transactionSignError, noteSettled]);
 
     useEffect(() => {
-      if (!device || !opened || inWrongDeviceForAccount || error) {
+      if (
+        deviceId === undefined ||
+        deviceModelId === undefined ||
+        !opened ||
+        inWrongDeviceForAccount ||
+        error
+      ) {
         failInterruptedAttempt(interruptionErrorOf(inWrongDeviceForAccount, error));
         setState(initialState);
         // The attempt ended without the user dismissing anything — the device went away, or was
@@ -208,8 +219,8 @@ export const createAction = (
           return bridge.signOperation({
             account: signingAccount,
             transaction,
-            deviceId: device.deviceId,
-            deviceModelId: device.modelId,
+            deviceId,
+            deviceModelId,
           });
         };
         const signOperationObservable = manifestId
@@ -237,7 +248,8 @@ export const createAction = (
         sub?.unsubscribe();
       };
     }, [
-      device,
+      deviceId,
+      deviceModelId,
       failInterruptedAttempt,
       mainAccountId,
       transaction,
