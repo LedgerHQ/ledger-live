@@ -104,49 +104,54 @@ describe("createApi", () => {
   });
 
   describe("craftTransaction", () => {
-    it("should call craftTransaction from logic and return serializedTx", async () => {
-      // @ts-expect-error - partial mock
-      mockCraftTransaction.mockResolvedValue({ serializedTx: "serialized" });
-      // @ts-expect-error - partial intent
-      const txIntent: TransactionIntent<HederaMemo> = {
-        useAllAmount: false,
-        recipient: "0.0.1234",
-        amount: 100n,
-      };
+    it.each([false, true])(
+      "should pass the intent amount to craftTransaction from logic when useAllAmount=%s",
+      async useAllAmount => {
+        // @ts-expect-error - partial mock
+        mockCraftTransaction.mockResolvedValue({ serializedTx: "serialized" });
+        // @ts-expect-error - partial intent
+        const txIntent: TransactionIntent<HederaMemo> = {
+          useAllAmount,
+          recipient: "0.0.1234",
+          amount: 900n,
+        };
 
-      const result = await api.craftTransaction(mockContext, txIntent);
+        const result = await api.craftTransaction(mockContext, txIntent);
 
-      expect(mockCraftTransaction).toHaveBeenCalledTimes(1);
-      expect(result).toEqual({ transaction: "serialized" });
-    });
-
-    it("should throw when craftTransaction is called with useAllAmount", async () => {
-      // @ts-expect-error - testing unsupported useAllAmount
-      const txIntent: TransactionIntent<HederaMemo> = { useAllAmount: true };
-
-      await expect(api.craftTransaction(mockContext, txIntent)).rejects.toThrow(
-        "useAllAmount is not supported",
-      );
-    });
+        expect(mockCraftTransaction).toHaveBeenCalledTimes(1);
+        expect(mockCraftTransaction).toHaveBeenCalledWith(expect.objectContaining({ txIntent }));
+        expect(result).toEqual({ transaction: "serialized" });
+      },
+    );
   });
 
   describe("estimateFees", () => {
-    it("should call estimateFees from logic and return FeeEstimation for non-ContractCall", async () => {
-      // @ts-expect-error - testing with minimal required fields for TransactionIntent
-      mockMapIntentToSDKOperation.mockReturnValue("CRYPTOTRANSFER");
-      mockEstimateFees.mockResolvedValue({ tinybars: new BigNumber(5000) });
+    it.each([
+      { amount: 100n, useAllAmount: false },
+      { amount: 0n, useAllAmount: true },
+    ])(
+      "should estimate a non-ContractCall intent without forwarding it (%o)",
+      async ({ amount, useAllAmount }) => {
+        mockMapIntentToSDKOperation.mockReturnValue(HEDERA_OPERATION_TYPES.CryptoTransfer);
+        mockEstimateFees.mockResolvedValue({ tinybars: new BigNumber(5000) });
 
-      // @ts-expect-error - testing with minimal required fields for TransactionIntent
-      const txIntent: TransactionIntent<HederaMemo> = { recipient: "0.0.1234", amount: 100n };
+        // @ts-expect-error - testing with minimal required fields for TransactionIntent
+        const txIntent: TransactionIntent<HederaMemo> = {
+          recipient: "0.0.1234",
+          amount,
+          useAllAmount,
+        };
 
-      const result = await api.estimateFees(mockContext, txIntent);
+        const result = await api.estimateFees(mockContext, txIntent);
 
-      expect(result).toEqual({ value: BigInt("5000") });
-      expect(mockEstimateFees).toHaveBeenCalledTimes(1);
-      expect(mockEstimateFees).toHaveBeenCalledWith(
-        expect.objectContaining({ operationType: "CRYPTOTRANSFER" }),
-      );
-    });
+        expect(result).toEqual({ value: 5000n });
+        expect(mockEstimateFees).toHaveBeenCalledTimes(1);
+        expect(mockEstimateFees).toHaveBeenCalledWith({
+          currencyId: "hedera",
+          operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
+        });
+      },
+    );
 
     it("should pass txIntent in estimateFeesParams for ContractCall operation type", async () => {
       mockMapIntentToSDKOperation.mockReturnValue(HEDERA_OPERATION_TYPES.ContractCall);
