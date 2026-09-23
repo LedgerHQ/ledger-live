@@ -464,12 +464,13 @@ describe("JsonCommandOutput", () => {
       expect(error).not.toHaveProperty("agent_hint");
     });
 
-    it("leaves an ordinary disconnect undiagnosed rather than inventing a cause", () => {
+    it("defaults an unattributed disconnect to device_not_present rather than omitting the fields", () => {
       const error = failWith({ code: "disconnected" });
       expect(error.code).toBe("disconnected");
-      for (const field of ["likely_cause", "agent_hint", "user_hint", "docs"]) {
-        expect(error).not.toHaveProperty(field);
-      }
+      expect(error.likely_cause).toBe("device_not_present");
+      expect(error.user_hint).toContain("Plug the Ledger");
+      expect(error.docs).toBe(WALLET_CLI_SKILL_DOCS_URL);
+      expect(error).not.toHaveProperty("agent_hint");
     });
 
     it("leaks none of the diagnostic fields onto a non-USB device error", () => {

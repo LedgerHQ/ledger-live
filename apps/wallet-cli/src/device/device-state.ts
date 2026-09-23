@@ -170,13 +170,13 @@ export function renderDeviceState(state: DeviceState): {
 
 /**
  * The USB attribution a state carries, or `undefined` for states that carry none — which is what
- * `output.ts` gates the diagnostic fields on. A `timeout` always qualifies and defaults to
- * `unknown`; a `disconnected` qualifies only when the classifier attributed it, so ordinary
- * mid-operation disconnects are not dressed up as diagnoses.
+ * `output.ts` gates the diagnostic fields on. Both USB failure states always qualify: a `timeout`
+ * defaults to `unknown`, and a `disconnected` the classifier did not attribute defaults to
+ * `device_not_present`, which is what "Ledger not detected" already tells the human.
  */
 export function usbLikelyCauseOf(state: DeviceState): UsbTimeoutLikelyCause | undefined {
   if (state.code === "timeout") return state.likelyCause ?? "unknown";
-  if (state.code === "disconnected") return state.likelyCause;
+  if (state.code === "disconnected") return state.likelyCause ?? "device_not_present";
   return undefined;
 }
 

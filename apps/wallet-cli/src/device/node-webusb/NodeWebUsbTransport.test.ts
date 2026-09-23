@@ -3078,6 +3078,33 @@ describe("USB access diagnostics recording (LIVE-31394)", () => {
     await transport.destroy();
   });
 
+  it("records the refusal when a Ledger plugged in after the scan cannot be opened", async () => {
+    const transport = createTestTransport(
+      undefined,
+      undefined,
+      createPlatformBindings({
+        platform: "linux",
+        getDeviceList: () => [] as never[],
+        createWebUsbDevice: async () => {
+          throw new Error("initialize error: Error: LIBUSB_ERROR_ACCESS");
+        },
+      }),
+    );
+
+    collectDeviceEmissions(transport);
+    await waitFor(() => {
+      expect(readUsbAccessDiagnostics().scanCompleted).toBe(true);
+    });
+
+    await transport.handleDeviceConnection(createNativeLedgerDevice() as never);
+
+    const diagnostics = readUsbAccessDiagnostics();
+    expect(diagnostics.ledgerVendorSeen).toBe(true);
+    expect(diagnostics.failure?.kind).toBe("access_denied");
+
+    await transport.destroy();
+  });
+
   it("records a completed scan that saw no Ledger, without inventing a failure", async () => {
     const transport = createTestTransport(
       undefined,
