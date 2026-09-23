@@ -39,9 +39,8 @@ export function CardView({
             onTopUp={onTopUp}
             cardSettingsActions={cardSettingsActions}
           />
-          <Box lx={{ marginHorizontal: "s16" }}>
-            <AddToWalletCtaWithBottomSheet appearance="base" />
-          </Box>
+
+          <AddToWalletCtaWithBottomSheet appearance="base" />
         </>
       ) : (
         <>

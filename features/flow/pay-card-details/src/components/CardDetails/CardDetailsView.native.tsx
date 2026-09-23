@@ -44,7 +44,7 @@ export function CardDetailsView({
         />
 
         <Box
-          lx={{ flexDirection: "row", gap: "s8", padding: "s16", position: "absolute" }}
+          lx={{ flexDirection: "row", gap: "s8", position: "absolute" }}
           style={{ bottom: 0, left: 0, right: 0 }}
         >
           {onTopUp ? (
@@ -54,7 +54,7 @@ export function CardDetailsView({
           ) : null}
           <Button
             appearance="gray"
-            size="lg"
+            size="md"
             isFull
             lx={{ flex: 1 }}
             onPress={onDetailsPress}
