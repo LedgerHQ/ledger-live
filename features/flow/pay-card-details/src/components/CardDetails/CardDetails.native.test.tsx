@@ -8,6 +8,7 @@ import {
   cardApiWrapper,
   listenToCardApi,
   revealCardDetailsHandler,
+  revealCardDetailsImageHandler,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
 import { ADD_TO_WALLET_COPY, CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
@@ -25,7 +26,11 @@ jest.mock("@features/flow-pay-card-assets", () => ({
   useCardAssetsViewModel: (...args: unknown[]) => mockUseCardAssetsViewModel(...args),
 }));
 
-listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
+listenToCardApi([
+  ...signedInCardApiHandlers,
+  revealCardDetailsHandler,
+  revealCardDetailsImageHandler,
+]);
 
 const StoreWrapper = cardApiWrapper({ signedIn: true });
 const assets = {

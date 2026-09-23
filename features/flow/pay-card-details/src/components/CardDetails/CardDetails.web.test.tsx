@@ -2,10 +2,10 @@ import React from "react";
 import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
-  CARD_DETAILS_IMAGE_URL,
   cardApiWrapper,
   listenToCardApi,
   revealCardDetailsHandler,
+  revealCardDetailsImageHandler,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
 import { CARD_COPY, MORE_COPY, openExternalMock } from "../../__tests__/i18nWrapper";
@@ -13,7 +13,11 @@ import { renderWeb } from "../../__tests__/renderWeb";
 import { urls } from "../../urls";
 import { CardDetails } from "./CardDetails";
 
-listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
+listenToCardApi([
+  ...signedInCardApiHandlers,
+  revealCardDetailsHandler,
+  revealCardDetailsImageHandler,
+]);
 
 const Wrapper = cardApiWrapper({ signedIn: true });
 
@@ -45,7 +49,7 @@ describe("CardDetails (web)", () => {
     await user.click(screen.getByRole("button", { name: CARD_COPY.numbersReveal }));
 
     const image = await screen.findByRole("img", { name: CARD_COPY.numbersImageAlt, hidden: true });
-    expect(image).toHaveAttribute("src", CARD_DETAILS_IMAGE_URL);
+    expect(image.getAttribute("src")).toMatch(/^data:image\/png;base64,/);
     await act(async () => {
       image.dispatchEvent(new Event("load"));
     });

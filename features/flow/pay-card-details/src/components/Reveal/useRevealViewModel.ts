@@ -5,6 +5,7 @@ import { cardManagementApi } from "@domain/api-card-management";
 import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { DETAILS_IMAGE_CSS } from "../CardArtwork/cardColors";
 import type { RevealStatus, RevealViewModel } from "../../types";
+import { readDetailsImageForSession } from "./readDetailsImageForSession";
 
 type CardApiState = {
   [cardManagementApi.reducerPath]: ReturnType<typeof cardManagementApi.reducer>;
@@ -70,7 +71,7 @@ export function useRevealViewModel(): RevealViewModel {
       if (isStale()) {
         return;
       }
-      setImageUrl(details.imageUrl);
+      setImageUrl(await readDetailsImageForSession(details.imageUrl));
       waitForImage = true;
     } catch {
       if (isStale()) {

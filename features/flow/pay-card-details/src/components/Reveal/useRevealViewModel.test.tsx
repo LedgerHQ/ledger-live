@@ -11,13 +11,14 @@ import {
   makeCardApiStore,
   revealCardDetailsFailureHandler,
   revealCardDetailsHandler,
+  revealCardDetailsImageHandler,
 } from "@support/msw-features-flow-pay-card";
 import { useRevealViewModel } from "./useRevealViewModel";
 
 const server = listenToCardApi();
 
 beforeEach(() => {
-  server.use(revealCardDetailsHandler);
+  server.use(revealCardDetailsHandler, revealCardDetailsImageHandler);
 });
 
 function deferred<T>() {
@@ -49,7 +50,7 @@ async function renderRevealed() {
   await act(async () => {
     await rendered.reveal().onReveal();
   });
-  await waitFor(() => expect(rendered.reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
+  await waitFor(() => expect(rendered.reveal().imageUrl).toMatch(/^data:image\/png;base64,/));
   act(() => {
     rendered.reveal().onImageLoad();
   });
@@ -64,7 +65,7 @@ describe("useRevealViewModel", () => {
       await reveal().onReveal();
     });
 
-    await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
+    await waitFor(() => expect(reveal().imageUrl).toMatch(/^data:image\/png;base64,/));
     expect(reveal().status).toBe("loading");
     expect(reveal().isRevealed).toBe(false);
 
@@ -82,7 +83,7 @@ describe("useRevealViewModel", () => {
 
     expect(reveal().status).toBe("revealed");
     expect(reveal().isRevealed).toBe(true);
-    expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
+    expect(reveal().imageUrl).toMatch(/^data:image\/png;base64,/);
     const state = JSON.stringify(store.getState());
     expect(state).not.toContain(CARD_DETAILS_TOKEN);
     expect(state).not.toContain("details-image");
@@ -108,12 +109,27 @@ describe("useRevealViewModel", () => {
       tokenWait.resolve();
     });
 
-    await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
+    await waitFor(() => expect(reveal().imageUrl).toMatch(/^data:image\/png;base64,/));
     act(() => {
       reveal().onImageLoad();
     });
     expect(reveal().status).toBe("revealed");
-    expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
+    expect(reveal().imageUrl).toMatch(/^data:image\/png;base64,/);
+  });
+
+  it("sets failed when the details image cannot be read", async () => {
+    server.use(
+      revealCardDetailsHandler,
+      http.get(CARD_DETAILS_IMAGE_URL, () => HttpResponse.json({}, { status: 410 })),
+    );
+    const { reveal } = renderReveal();
+
+    await act(async () => {
+      await reveal().onReveal();
+    });
+
+    expect(reveal().status).toBe("failed");
+    expect(reveal().imageUrl).toBeUndefined();
   });
 
   it("sets failed when the token request fails", async () => {
@@ -137,7 +153,7 @@ describe("useRevealViewModel", () => {
 
     expect(reveal().status).toBe("idle");
     expect(reveal().isRevealed).toBe(false);
-    expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
+    expect(reveal().imageUrl).toMatch(/^data:image\/png;base64,/);
   });
 
   it("clears the spent image the moment the next reveal starts", async () => {
@@ -201,7 +217,7 @@ describe("useRevealViewModel", () => {
     });
 
     expect(reveal().status).toBe("idle");
-    expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
+    expect(reveal().imageUrl).toMatch(/^data:image\/png;base64,/);
   });
 
   it("ignores a late image load after hide", async () => {
@@ -210,7 +226,7 @@ describe("useRevealViewModel", () => {
     await act(async () => {
       await reveal().onReveal();
     });
-    await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
+    await waitFor(() => expect(reveal().imageUrl).toMatch(/^data:image\/png;base64,/));
 
     act(() => {
       reveal().onHide();
@@ -227,7 +243,7 @@ describe("useRevealViewModel", () => {
     await act(async () => {
       await reveal().onReveal();
     });
-    await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
+    await waitFor(() => expect(reveal().imageUrl).toMatch(/^data:image\/png;base64,/));
 
     act(() => {
       reveal().onImageError();
@@ -246,6 +262,6 @@ describe("useRevealViewModel", () => {
 
     expect(reveal().status).toBe("revealed");
     expect(reveal().isRevealed).toBe(true);
-    expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
+    expect(reveal().imageUrl).toMatch(/^data:image\/png;base64,/);
   });
 });
