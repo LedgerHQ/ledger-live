@@ -6,7 +6,7 @@ import { createMockAlgorandContext } from "../test/context";
 describe("Broadcast", () => {
   const mockAlgorandConfig = {
     status: { type: "active" },
-    node: "https://algorand.coin.ledger.com/ps2/v2",
+    infra: { API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: "https://algorand.coin.ledger.com" },
   };
 
   it("throws on insufficient funds", async () => {

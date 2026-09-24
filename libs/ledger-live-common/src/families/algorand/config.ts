@@ -8,6 +8,9 @@ export const algorandConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: {
+        API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: "https://algorand.coin.ledger.com",
+      },
     },
   },
 };

@@ -1,12 +1,13 @@
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
+import type { AlgorandCoinConfig } from "../config";
 import { createApi } from ".";
 
 describe("Algorand Api (mainnet)", () => {
   // Algorand Foundation address - a well-known address with transaction history
   const SENDER = "737777777777777777777777777777777777777777777777777UFEJ2CI";
-  const mainnetConfig: AlgorandConfig = {
-    node: "https://algorand.coin.ledger.com/ps2/v2",
-    indexer: "https://algorand.coin.ledger.com/idx2/v2",
+  const mainnetConfig: AlgorandCoinConfig = {
+    status: { type: "active" },
+    infra: { API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: "https://algorand.coin.ledger.com" },
   };
   const api = createApi();
   const context = { config: async () => mainnetConfig, logger: () => {} };
@@ -401,45 +402,6 @@ describe("Algorand Api (mainnet)", () => {
 
     it("getValidators throws not supported error", () => {
       expect(() => resolved.getValidators(context)).toThrow("getValidators is not supported");
-    });
-  });
-});
-
-describe("Algorand Api (testnet)", () => {
-  // Testnet endpoints from Algonode
-  const api = createApi();
-  const testnetConfig: AlgorandConfig = {
-    node: "https://testnet-api.algonode.cloud/v2",
-    indexer: "https://testnet-idx.algonode.cloud/v2",
-  };
-  const context = { config: async () => testnetConfig, logger: () => {} };
-  // Zero address - valid for testing
-  const TESTNET_ADDRESS = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
-
-  describe("lastBlock", () => {
-    it("returns last block info from testnet", async () => {
-      // When
-      const result = await api.lastBlock(context);
-
-      // Then
-      expect(result.height).toBeGreaterThan(0);
-    });
-  });
-
-  describe("estimateFees", () => {
-    it("returns minimum fee on testnet", async () => {
-      // When
-      const result = await api.estimateFees(context, {
-        intentType: "transaction",
-        asset: { type: "native" },
-        type: "send",
-        sender: TESTNET_ADDRESS,
-        amount: 1000000n,
-        recipient: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
-      });
-
-      // Then
-      expect(result.value).toBeGreaterThanOrEqual(1000n);
     });
   });
 });

@@ -5,8 +5,9 @@ import buildCoinConfig, {
 } from "@ledgerhq/coin-module-framework/config";
 
 export type AlgorandConfig = {
-  node: string;
-  indexer: string;
+  infra: {
+    API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: string;
+  };
 };
 
 export type AlgorandCoinConfig = CurrencyConfig & AlgorandConfig;

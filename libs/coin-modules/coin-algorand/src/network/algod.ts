@@ -12,7 +12,10 @@ import type {
   ExplorerBlock,
 } from "./types";
 
-const fullUrl = (config: AlgorandCoinConfig, route: string): string => `${config.node}${route}`;
+const NODE_PATH = "/ps2/v2";
+
+const fullUrl = (config: AlgorandCoinConfig, route: string): string =>
+  `${config.infra.API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT}${NODE_PATH}${route}`;
 
 export const getAccount = async (
   config: AlgorandCoinConfig,

@@ -9,8 +9,7 @@ const mockNetwork = network as jest.MockedFunction<typeof network>;
 
 const config = {
   status: { type: "active" },
-  node: "",
-  indexer: "https://algorand-indexer.example.com",
+  infra: { API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: "https://algorand.example.com" },
 } as AlgorandCoinConfig;
 
 describe("indexer", () => {

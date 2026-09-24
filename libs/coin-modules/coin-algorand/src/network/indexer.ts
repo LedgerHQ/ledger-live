@@ -11,6 +11,7 @@ import type {
 } from "./types";
 
 const LIMIT = 100;
+const INDEXER_PATH = "/idx2/v2";
 
 export type GetTransactionsOptions = {
   minRound?: number | undefined;
@@ -24,7 +25,8 @@ export const getAccountTransactions = async (
   options?: GetTransactionsOptions,
 ): Promise<{ transactions: AlgoTransaction[]; nextToken?: string }> => {
   const limit = options?.limit ?? LIMIT;
-  const url = `${config.indexer}/accounts/${address}/transactions?limit=${limit}`;
+  const baseUrl = `${config.infra.API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT}${INDEXER_PATH}`;
+  const url = `${baseUrl}/accounts/${address}/transactions?limit=${limit}`;
 
   let nextUrl: string = url;
   if (options?.minRound) {

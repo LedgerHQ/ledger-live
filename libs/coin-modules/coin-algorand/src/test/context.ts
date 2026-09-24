@@ -3,8 +3,7 @@ import type { AlgorandCoinConfig, AlgorandContext } from "../config";
 /** The resolved config every mocked endpoint points at. */
 export const mockAlgorandConfig: AlgorandCoinConfig = {
   status: { type: "active" },
-  node: "https://algo.test/ps2/v2",
-  indexer: "https://algo.test/idx2/v2",
+  infra: { API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: "https://algo.test" },
 };
 
 /** An {@link AlgorandContext} backed by the mocked config, for api/logic tests. */

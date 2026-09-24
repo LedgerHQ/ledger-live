@@ -22,11 +22,6 @@ const teamCoinIntegration = {
     parser: stringParser,
     desc: "A4 indexer base URL for production. No trailing network segment.",
   },
-  API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://algorand.coin.ledger.com",
-    parser: stringParser,
-    desc: "Node API endpoint for algorand",
-  },
   BITCOIN_STUCK_TRANSACTION_TIMEOUT: {
     def: 20 * 60 * 1000,
     parser: intParser,

@@ -19,8 +19,7 @@ jest.mock("../logic", () => ({
 }));
 
 const mockConfig: AlgorandCoinConfig = {
-  node: "https://testnet-api.algonode.cloud/v2",
-  indexer: "https://testnet-idx.algonode.cloud/v2",
+  infra: { API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: "https://algo.test" },
   status: { type: "active" },
 };
 

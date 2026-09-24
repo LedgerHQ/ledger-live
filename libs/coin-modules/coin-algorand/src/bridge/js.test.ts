@@ -70,8 +70,7 @@ describe("bridge/js", () => {
   const mockSignerContext = {} as SignerContext<AlgorandSigner>;
   const mockCoinConfig = (): AlgorandCoinConfig => ({
     status: { type: "active" },
-    node: "",
-    indexer: "",
+    infra: { API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: "" },
   });
 
   describe("buildCurrencyBridge", () => {

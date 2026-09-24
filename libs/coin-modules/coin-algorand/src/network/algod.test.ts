@@ -9,8 +9,7 @@ const mockNetwork = network as jest.MockedFunction<typeof network>;
 
 const config = {
   status: { type: "active" },
-  node: "https://algorand-node.example.com",
-  indexer: "",
+  infra: { API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: "https://algorand.example.com" },
 } as AlgorandCoinConfig;
 
 describe("algod", () => {
@@ -94,7 +93,7 @@ describe("algod", () => {
       await getAccount(config, "TEST_ADDRESS");
 
       expect(mockNetwork).toHaveBeenCalledWith({
-        url: "https://algorand-node.example.com/accounts/TEST_ADDRESS",
+        url: "https://algorand.example.com/ps2/v2/accounts/TEST_ADDRESS",
       });
     });
   });
@@ -153,7 +152,7 @@ describe("algod", () => {
       await getTransactionParams(config);
 
       expect(mockNetwork).toHaveBeenCalledWith({
-        url: "https://algorand-node.example.com/transactions/params",
+        url: "https://algorand.example.com/ps2/v2/transactions/params",
       });
     });
   });
@@ -180,7 +179,7 @@ describe("algod", () => {
 
       expect(mockNetwork).toHaveBeenCalledWith({
         method: "POST",
-        url: "https://algorand-node.example.com/transactions",
+        url: "https://algorand.example.com/ps2/v2/transactions",
         data: payload,
         headers: { "Content-Type": "application/x-binary" },
       });
