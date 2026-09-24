@@ -603,13 +603,13 @@ export const stakePromptCases: StakePromptCase[] = [
   },
 ];
 
-export const STAKE_PROMPT_CASES_PER_CHUNK = 20;
+// One chunk per NotificationsPromptStakeFlow.part-N.test.tsx file. Splitting by part count (not by
+// a fixed chunk size) keeps every case assigned to a part file as cases are added.
+const STAKE_PROMPT_PART_COUNT = 2;
+
+const casesPerChunk = Math.ceil(stakePromptCases.length / STAKE_PROMPT_PART_COUNT);
 
 export const stakePromptCaseChunks: StakePromptCase[][] = Array.from(
-  { length: Math.ceil(stakePromptCases.length / STAKE_PROMPT_CASES_PER_CHUNK) },
-  (_, index) =>
-    stakePromptCases.slice(
-      index * STAKE_PROMPT_CASES_PER_CHUNK,
-      (index + 1) * STAKE_PROMPT_CASES_PER_CHUNK,
-    ),
+  { length: STAKE_PROMPT_PART_COUNT },
+  (_, index) => stakePromptCases.slice(index * casesPerChunk, (index + 1) * casesPerChunk),
 );
