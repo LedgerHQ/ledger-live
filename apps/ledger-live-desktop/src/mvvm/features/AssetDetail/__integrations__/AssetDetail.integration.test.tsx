@@ -1129,8 +1129,8 @@ describe("AssetDetail integration", () => {
       });
     });
 
-    it("opens the detail dialog with the three return rows when the unrealised return card is clicked", async () => {
-      const { account } = setupBitcoinAsset("asset-detail-pnl-dialog-open");
+    it("opens the detail dialog with the three return rows from the unrealised return card and dismisses it on close", async () => {
+      const { account } = setupBitcoinAsset("asset-detail-pnl-dialog");
 
       const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
         initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
@@ -1146,20 +1146,8 @@ describe("AssetDetail integration", () => {
       expect(dialogScope.getByText("Total return")).toBeVisible();
       expect(dialogScope.getByText("Unrealised return")).toBeVisible();
       expect(dialogScope.getByText("Realised return")).toBeVisible();
-    });
 
-    it("dismisses the detail dialog when the close button is clicked", async () => {
-      const { account } = setupBitcoinAsset("asset-detail-pnl-dialog-close");
-
-      const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
-        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
-      });
-
-      const card = await screen.findByRole("button", { name: /unrealised return/i });
-      await user.click(card);
-
-      const dialog = await screen.findByRole("dialog");
-      await user.click(within(dialog).getByRole("button", { name: /close/i }));
+      await user.click(dialogScope.getByRole("button", { name: /close/i }));
 
       await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     });
