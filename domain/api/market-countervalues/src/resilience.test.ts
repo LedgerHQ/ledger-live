@@ -31,7 +31,9 @@ function makeStore() {
     middleware: gdm =>
       gdm({
         serializableCheck: false,
-        thunk: { extraArgument: cvsApiExtra({ countervaluesServiceUrl: "https://cvs.test" }) },
+        thunk: {
+          extraArgument: cvsApiExtra({ getCountervaluesServiceUrl: () => "https://cvs.test" }),
+        },
       }).concat(countervaluesApi.middleware),
   });
 }

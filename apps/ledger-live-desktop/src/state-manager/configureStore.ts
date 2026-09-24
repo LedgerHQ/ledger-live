@@ -100,7 +100,7 @@ const customCreateStore = ({
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
               }),
               ...cvsApiExtra({
-                countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API"),
+                getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API"),
               }),
               ...coinMarketCapApiExtra({
                 coinMarketCapApiUrl: getEnv("CMC_API_URL"),

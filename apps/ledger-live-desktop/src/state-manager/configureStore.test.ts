@@ -2,14 +2,15 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { WalletAuthMissingBaseUrlError } from "@ledgerhq/auth";
 import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
-import { setEnv } from "@shared/env";
+import { getEnv, setEnv } from "@shared/env";
+import { marketCountervaluesApi } from "@domain/api-market-countervalues";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { setOverride } from "@shared/feature-flags";
-import customCreateStore from "./configureStore";
+import customCreateStore, { type AppDispatch } from "./configureStore";
 
 describe("customCreateStore", () => {
   describe("auth provider flow", () => {
@@ -203,6 +204,41 @@ describe("customCreateStore", () => {
           }),
         }),
       );
+    });
+  });
+
+  describe("countervalues", () => {
+    it("sends rate requests to the url the developer staging toggle switches to", async () => {
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+      const store = customCreateStore({ fetchRemoteFlags: null });
+      const production = getEnv("LEDGER_COUNTERVALUES_API");
+      const requested: string[] = [];
+      const fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(input => {
+        requested.push((input as Request).url);
+        return Promise.resolve(
+          new Response(JSON.stringify({ bitcoin: 9000 }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      });
+
+      setEnv("LEDGER_COUNTERVALUES_API", "https://countervalues.staging.test");
+      try {
+        await (store.dispatch as AppDispatch)(
+          marketCountervaluesApi.endpoints.getSpotRates.initiate(
+            { to: "USD", froms: ["bitcoin"] },
+            { forceRefetch: true },
+          ),
+        );
+      } finally {
+        setEnv("LEDGER_COUNTERVALUES_API", production);
+        fetchSpy.mockRestore();
+      }
+
+      expect(requested).toEqual([
+        expect.stringContaining("https://countervalues.staging.test/v3/spot/simple"),
+      ]);
     });
   });
 });

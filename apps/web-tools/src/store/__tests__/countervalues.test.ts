@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { setEnv } from "@shared/env";
+import { getEnv, setEnv } from "@shared/env";
 import { marketCountervaluesApi } from "@domain/api-market-countervalues";
 
 // calApiExtra rejects an empty client version when the store is created, and its default is empty.
@@ -42,5 +42,36 @@ describe("web-tools store: countervalues", () => {
       "https://countervalues.live.ledger.com/v3/spot/simple",
     );
     fetchSpy.mockRestore();
+  });
+
+  it("follows a runtime switch of the service url, as the developer staging toggle does", async () => {
+    const production = getEnv("LEDGER_COUNTERVALUES_API");
+    const requested: string[] = [];
+    const fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(input => {
+      requested.push((input as Request).url);
+      return Promise.resolve(
+        new Response(JSON.stringify({ bitcoin: 9000 }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
+    });
+
+    setEnv("LEDGER_COUNTERVALUES_API", "https://countervalues.staging.test");
+    try {
+      await store.dispatch(
+        marketCountervaluesApi.endpoints.getSpotRates.initiate(
+          { to: "USD", froms: ["bitcoin"] },
+          { forceRefetch: true },
+        ),
+      );
+    } finally {
+      setEnv("LEDGER_COUNTERVALUES_API", production);
+      fetchSpy.mockRestore();
+    }
+
+    expect(requested).toEqual([
+      expect.stringContaining("https://countervalues.staging.test/v3/spot/simple"),
+    ]);
   });
 });
