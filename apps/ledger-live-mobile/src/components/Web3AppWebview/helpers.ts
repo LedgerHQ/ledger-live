@@ -27,8 +27,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { WebviewAPI, WebviewProps, WebviewState } from "./types";
 import prepareSignTransaction from "./liveSDKLogic";
-import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { closePlatformExchange } from "./closePlatformExchange";
 import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/settings";
 import storage from "LLM/storage";
 import { track } from "../../analytics";
@@ -764,10 +763,7 @@ export function useUiHook({
                 onSuccess(result.startExchangeResult.nonce);
               }
 
-              const n =
-                navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() ||
-                navigation;
-              n.pop();
+              closePlatformExchange(navigation);
             },
           },
         });
@@ -794,10 +790,7 @@ export function useUiHook({
                 onSuccess(result.operation.hash);
               }
               setDevice(undefined);
-              const n =
-                navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() ||
-                navigation;
-              n.pop();
+              closePlatformExchange(navigation);
             },
           },
         });
