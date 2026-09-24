@@ -114,12 +114,9 @@ describe("MarketScreen assets list (Block 3)", () => {
       overrideInitialState: enableAssetDiscoverability,
     });
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible();
-      },
-      { timeout: 5000 },
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible();
+    });
 
     expect(
       hasTestID(
@@ -148,12 +145,9 @@ describe("MarketScreen assets list (Block 3)", () => {
       overrideInitialState: enableAssetDiscoverability,
     });
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible();
-      },
-      { timeout: 5000 },
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible();
+    });
 
     act(() => {
       screen.getByTestId(MARKET_SCREEN_TEST_IDS.searchBar).props.onChangeText("e");
@@ -168,15 +162,12 @@ describe("MarketScreen assets list (Block 3)", () => {
       screen.getByTestId(MARKET_SCREEN_TEST_IDS.searchBar).props.onChangeText("");
     });
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.highlights)).toBeVisible();
-        expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsSubHeader)).toBeVisible();
-        expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher)).toBeVisible();
-        expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible();
-      },
-      { timeout: 5000 },
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.highlights)).toBeVisible();
+      expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsSubHeader)).toBeVisible();
+      expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher)).toBeVisible();
+      expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible();
+    });
   });
 
   it("renders the favorites empty state when no market coin is starred", async () => {
@@ -184,9 +175,7 @@ describe("MarketScreen assets list (Block 3)", () => {
       overrideInitialState: withStarredMarketCoins(),
     });
 
-    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
-      timeout: 5000,
-    });
+    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible());
 
     await user.press(
       screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-starred`),
@@ -204,20 +193,15 @@ describe("MarketScreen assets list (Block 3)", () => {
       overrideInitialState: withStarredMarketCoins(["bitcoin"]),
     });
 
-    await waitFor(() => expect(screen.getByTestId("marketItem-ethereum")).toBeVisible(), {
-      timeout: 5000,
-    });
+    await waitFor(() => expect(screen.getByTestId("marketItem-ethereum")).toBeVisible());
 
     await user.press(
       screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-starred`),
     );
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible();
-      },
-      { timeout: 5000 },
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible();
+    });
 
     expect(screen.queryByTestId("marketItem-ethereum")).toBeNull();
   });
@@ -239,17 +223,13 @@ describe("MarketScreen assets list (Block 3)", () => {
       overrideInitialState: withStarredMarketCoins(["dai"]),
     });
 
-    await waitFor(() => expect(screen.getByTestId("marketItem-dai")).toBeVisible(), {
-      timeout: 5000,
-    });
+    await waitFor(() => expect(screen.getByTestId("marketItem-dai")).toBeVisible());
 
     await user.press(
       screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-starred`),
     );
 
-    await waitFor(() => expect(screen.getByTestId("marketItem-dai")).toBeVisible(), {
-      timeout: 5000,
-    });
+    await waitFor(() => expect(screen.getByTestId("marketItem-dai")).toBeVisible());
     expect(marketRequests.some(url => new URL(url).searchParams.get("ids") === "dai")).toBe(true);
   });
 
@@ -262,21 +242,15 @@ describe("MarketScreen assets list (Block 3)", () => {
       overrideInitialState: enableAssetDiscoverability,
     });
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible();
-      },
-      { timeout: 5000 },
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible();
+    });
 
     fireEvent.press(screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-stocks`));
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("marketItem-tesla-xstock")).toBeVisible();
-      },
-      { timeout: 5000 },
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId("marketItem-tesla-xstock")).toBeVisible();
+    });
 
     const stockMarketRequest = marketRequests.find(
       url => new URL(url).searchParams.get("categories") === "tokenized-stock",
@@ -321,9 +295,7 @@ describe("MarketScreen assets list (Block 3)", () => {
       overrideInitialState: enableAssetDiscoverability,
     });
 
-    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
-      timeout: 5000,
-    });
+    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible());
 
     const trendingTab = await screen.findByTestId(
       `${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-infrastructure`,
@@ -332,9 +304,7 @@ describe("MarketScreen assets list (Block 3)", () => {
 
     await user.press(trendingTab);
 
-    await waitFor(() => expect(screen.getByTestId("marketItem-rif-token")).toBeVisible(), {
-      timeout: 5000,
-    });
+    await waitFor(() => expect(screen.getByTestId("marketItem-rif-token")).toBeVisible());
 
     const categoryRequest = marketRequests.find(
       url => new URL(url).searchParams.get("categories") === "infrastructure",
@@ -368,9 +338,7 @@ describe("MarketScreen assets list (Block 3)", () => {
       overrideInitialState: enableAssetDiscoverability,
     });
 
-    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
-      timeout: 5000,
-    });
+    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible());
     expect(screen.queryByTestId(MARKET_SCREEN_TEST_IDS.assetsFooterSpinner)).toBeNull();
 
     act(() => {
@@ -385,10 +353,13 @@ describe("MarketScreen assets list (Block 3)", () => {
       resolveSecondPage?.();
     });
 
+    // not.toBeOnTheScreen: a failing toBeNull() pretty-prints the whole host tree on every poll.
     await waitFor(() => {
-      expect(screen.queryByTestId(MARKET_SCREEN_TEST_IDS.assetsFooterSpinner)).toBeNull();
+      expect(
+        screen.queryByTestId(MARKET_SCREEN_TEST_IDS.assetsFooterSpinner),
+      ).not.toBeOnTheScreen();
     });
-  }, 30000);
+  });
 
   it("switches categories from the tabs, including back to All", async () => {
     const marketRequests: string[] = [];
@@ -399,20 +370,14 @@ describe("MarketScreen assets list (Block 3)", () => {
       overrideInitialState: enableAssetDiscoverability,
     });
 
-    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
-      timeout: 5000,
-    });
+    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible());
 
     await user.press(screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-stocks`));
-    await waitFor(() => expect(screen.getByTestId("marketItem-tesla-xstock")).toBeVisible(), {
-      timeout: 5000,
-    });
+    await waitFor(() => expect(screen.getByTestId("marketItem-tesla-xstock")).toBeVisible());
     expect(screen.queryByTestId("marketItem-bitcoin")).toBeNull();
 
     await user.press(screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-all`));
-    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
-      timeout: 5000,
-    });
+    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible());
     expect(screen.queryByTestId("marketItem-tesla-xstock")).toBeNull();
   });
 });

@@ -3,18 +3,25 @@ import * as React from "react";
 import { screen, waitFor, fireEvent, renderWithReactQuery } from "@tests/test-renderer";
 import { server, http, HttpResponse } from "@tests/server";
 import marketsMock from "@mocks/api/market/markets.json";
-import { MarketPages } from "./shared";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import type { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
+import { ScreenName } from "~/const";
+import MarketList from "../screens/MarketList";
+
+// Only the list screen is exercised: skip `MarketPages`, whose detail/currency screens add ~1s of imports.
+const Stack = createNativeStackNavigator<MarketNavigatorStackParamList>();
+
+function MarketPages() {
+  return (
+    <Stack.Navigator initialRouteName={ScreenName.MarketList}>
+      <Stack.Screen name={ScreenName.MarketList} component={MarketList} />
+    </Stack.Navigator>
+  );
+}
 
 describe("Market List Pagination Integration Test", () => {
-  it("Should load and display second page data when onEndReached is triggered", async () => {
+  it("Should append the second page to the existing list when onEndReached is triggered", async () => {
     renderWithReactQuery(<MarketPages />);
-
-    await waitFor(
-      () => {
-        expect(screen.getByText("Bitcoin (BTC)")).toBeOnTheScreen();
-      },
-      { timeout: 5000 },
-    );
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
     expect(await screen.findByText("Ethereum (ETH)")).toBeOnTheScreen();
@@ -26,36 +33,16 @@ describe("Market List Pagination Integration Test", () => {
 
     fireEvent(marketList, "onEndReached");
 
-    await waitFor(
-      () => {
-        expect(screen.getByText("Cardano (ADA)")).toBeOnTheScreen();
-        expect(screen.getByText("Shiba Inu (SHIB)")).toBeOnTheScreen();
-      },
-      { timeout: 5000 },
-    );
-
-    expect(screen.getByText("Bitcoin (BTC)")).toBeOnTheScreen();
-    expect(screen.getByText("Ethereum (ETH)")).toBeOnTheScreen();
-    expect(screen.getByText("Cardano (ADA)")).toBeOnTheScreen();
-    expect(screen.getByText("Shiba Inu (SHIB)")).toBeOnTheScreen();
-  });
-
-  it("Should maintain the correct order of items across pages", async () => {
-    renderWithReactQuery(<MarketPages />);
-
-    expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
-
-    const marketList = await screen.findByTestId("market-list");
-    fireEvent(marketList, "onEndReached");
-
     await waitFor(() => {
       expect(screen.getByText("Cardano (ADA)")).toBeOnTheScreen();
+      expect(screen.getByText("Shiba Inu (SHIB)")).toBeOnTheScreen();
     });
 
     expect(screen.getByText("Bitcoin (BTC)")).toBeOnTheScreen();
     expect(screen.getByText("Ethereum (ETH)")).toBeOnTheScreen();
     expect(screen.getByText("Cardano (ADA)")).toBeOnTheScreen();
     expect(screen.getByText("Shiba Inu (SHIB)")).toBeOnTheScreen();
+    expect(screen.getByText("Solana (SOL)")).toBeOnTheScreen();
   });
 
   it("Should handle rapid scrolling without duplicating items", async () => {
@@ -84,25 +71,6 @@ describe("Market List Pagination Integration Test", () => {
     expect(shibaInuElements).toHaveLength(1);
   });
 
-  it("Should correctly append new items to the existing list", async () => {
-    renderWithReactQuery(<MarketPages />);
-
-    expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
-    expect(await screen.findByText("Ethereum (ETH)")).toBeOnTheScreen();
-
-    const marketList = await screen.findByTestId("market-list");
-    fireEvent(marketList, "onEndReached");
-
-    await waitFor(() => {
-      expect(screen.getByText("Cardano (ADA)")).toBeOnTheScreen();
-    });
-
-    expect(screen.getByText("Bitcoin (BTC)")).toBeOnTheScreen();
-    expect(screen.getByText("Ethereum (ETH)")).toBeOnTheScreen();
-    expect(screen.getByText("Cardano (ADA)")).toBeOnTheScreen();
-    expect(screen.getByText("Solana (SOL)")).toBeOnTheScreen();
-  });
-
   it("Should not display the same item twice if it is returned in two different pages", async () => {
     const modifiedMarketsMock = [...marketsMock];
     modifiedMarketsMock[10] = { ...modifiedMarketsMock[9] };
@@ -110,8 +78,6 @@ describe("Market List Pagination Integration Test", () => {
     server.use(
       http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
         const searchParams = new URL(request.url).searchParams;
-        console.log("Market handler :", request.url, parseInt(searchParams.get("page") || "0"));
-
         const page = parseInt(searchParams.get("page") || "0");
         const pageSize = 10;
         const startIndex = page * pageSize;
