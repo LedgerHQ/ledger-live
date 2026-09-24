@@ -11373,11 +11373,30 @@
     "manage": {
       "bond": "Bond",
       "claim": "Claim",
+      "unbond": "Unbond",
       "status": "Status",
       "estimatedRate": "Est. rewards rate",
       "unbondPendingInfo": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
       "claimPendingInfo": "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
       "unlockBlock": "Unlocks at block"
+    },
+    "unbond": {
+      "stepperHeader": {
+        "amount": "Confirm unstake",
+        "selectDevice": "Select Device",
+        "connectDevice": "Connect Device"
+      },
+      "amount": {
+        "bondedAmount": "Amount to unstake",
+        "belowMinimum": "This amount will be frozen for about 360 blocks (~1 hour). If unbonding would leave less than <minimum/> bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met.",
+        "max": "Max"
+      },
+      "validation": {
+        "success": {
+          "title": "Unstake Submitted",
+          "description": "Your unbond transaction is being processed on the Aleo network."
+        }
+      }
     },
     "send": {
       "balanceSelection": {

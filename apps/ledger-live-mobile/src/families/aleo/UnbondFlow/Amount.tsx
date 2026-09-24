@@ -3,16 +3,20 @@ import { ScrollView, View } from "react-native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { useTheme } from "styled-components/native";
-import { Button, Switch, Text } from "@ledgerhq/native-ui";
+import { Switch, Text } from "@ledgerhq/native-ui";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getMinBondAmount, isAleoAccount } from "@ledgerhq/live-common/families/aleo/utils";
-import { MIN_DELEGATOR_STAKE_MICROCREDITS } from "@ledgerhq/live-common/families/aleo/constants";
+import { isAleoAccount } from "@ledgerhq/live-common/families/aleo/utils";
+import {
+  MIN_DELEGATOR_STAKE_MICROCREDITS,
+  TRANSACTION_TYPE,
+} from "@ledgerhq/live-common/families/aleo/constants";
 import type { Transaction as AleoTransaction } from "@ledgerhq/live-common/families/aleo/types";
 import SafeAreaView from "~/components/SafeAreaView";
-import { Trans, useTranslation } from "~/context/Locale";
+import { Trans } from "~/context/Locale";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { TrackScreen } from "~/analytics";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -22,14 +26,13 @@ import { getFirstStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { amountStyles as styles } from "../shared/amountStyles";
 import AmountContinueFooter from "../shared/AmountContinueFooter";
-import type { AleoBondPublicFlowParamList } from "./types";
+import type { AleoUnbondFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<AleoBondPublicFlowParamList, ScreenName.AleoBondPublicAmount>
+  StackNavigatorProps<AleoUnbondFlowParamList, ScreenName.AleoUnbondAmount>
 >;
 
 export default function Amount({ navigation, route }: Props) {
-  const { t } = useTranslation();
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
 
@@ -39,22 +42,16 @@ export default function Amount({ navigation, route }: Props) {
   );
 
   const mainAccount = getMainAccount(account, parentAccount ?? null);
-  const unit = account.currency.units[0];
-  const spendable = account.aleoResources?.transparentBalance ?? new BigNumber(0);
+  const unit = useAccountUnit(account);
   const bondedBalance = account.aleoResources?.bondedBalance ?? new BigNumber(0);
-  const minBondAmount = getMinBondAmount(bondedBalance);
-  const isTopUp = bondedBalance.gt(0) && bondedBalance.lt(MIN_DELEGATOR_STAKE_MICROCREDITS);
 
   const bridge = useAccountBridge<AleoTransaction>(account, parentAccount);
 
   const { transaction, updateTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(bridge, () => {
       const created = bridge.createTransaction(mainAccount);
-      // The withdrawal address is always the account itself and is never offered as a choice.
       const prepared = bridge.updateTransaction(created, {
-        mode: "bond_public",
-        recipient: route.params.validatorAddress,
-        withdrawal: mainAccount.freshAddress,
+        mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
       });
 
       return {
@@ -63,9 +60,6 @@ export default function Amount({ navigation, route }: Props) {
         transaction: prepared,
       };
     });
-
-  const effectiveSpendable = spendable.minus(status.estimatedFees);
-  const belowMinimum = effectiveSpendable.lt(minBondAmount);
 
   const onChange = useCallback(
     (amount: BigNumber) => {
@@ -84,21 +78,12 @@ export default function Amount({ navigation, route }: Props) {
     [bridge, updateTransaction],
   );
 
-  const onChangeValidator = useCallback(() => {
-    navigation.navigate(ScreenName.AleoBondPublicSelectValidator, {
-      accountId: route.params.accountId,
-      parentId: route.params.parentId,
-      validatorAddress: route.params.validatorAddress,
-      source: route.params.source,
-    });
-  }, [navigation, route.params]);
-
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.AleoBondPublicSelectDevice, {
+    if (!transaction) return;
+    navigation.navigate(ScreenName.AleoUnbondSelectDevice, {
       accountId: route.params.accountId,
       parentId: route.params.parentId,
-      // The screen renders nothing until the bridge transaction exists, so it is set here.
-      transaction: transaction as AleoTransaction,
+      transaction,
       status,
       source: route.params.source,
     });
@@ -108,14 +93,8 @@ export default function Amount({ navigation, route }: Props) {
 
   const { useAllAmount } = transaction;
   const { amount } = status;
-  // A recipient problem (already bonded elsewhere, closed/unbonding validator) is real
-  // regardless of the amount typed, so it is never suppressed by an untouched screen.
-  const recipientError = status.errors.recipient;
-  const showChangeValidator = !!recipientError;
   const untouchedAmount = amount.eq(0) && !useAllAmount;
-  const amountError =
-    untouchedAmount || bridgePending ? null : getFirstStatusError(status, "errors");
-  const error = recipientError ?? amountError;
+  const error = bridgePending || untouchedAmount ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
   const continueDisabled =
     bridgePending || !!bridgeError || amount.eq(0) || Object.keys(status.errors).length > 0;
@@ -123,10 +102,10 @@ export default function Amount({ navigation, route }: Props) {
   return (
     <SafeAreaView style={styles.root} edges={["bottom"]}>
       <TrackScreen
-        category="BondPublicFlow"
+        category="UnbondFlow"
         name="Amount"
-        flow="stake"
-        action="bond"
+        flow="unbond"
+        action="unbonding"
         currency="aleo"
       />
       <ScrollView
@@ -135,9 +114,9 @@ export default function Amount({ navigation, route }: Props) {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.alert}>
-          <Alert type="hint">
+          <Alert type="hint" testID="aleo-unbond-below-minimum-alert">
             <Trans
-              i18nKey="aleo.bond.amount.stakingAlert"
+              i18nKey="aleo.unbond.amount.belowMinimum"
               components={{
                 minimum: (
                   <CurrencyUnitValue
@@ -150,25 +129,6 @@ export default function Amount({ navigation, route }: Props) {
             />
           </Alert>
         </View>
-        {belowMinimum && (
-          <View style={styles.alert}>
-            <Alert type="warning">
-              <Trans
-                i18nKey="aleo.bond.amount.belowMinimum"
-                components={{
-                  missing: (
-                    <CurrencyUnitValue
-                      unit={unit}
-                      value={minBondAmount.minus(effectiveSpendable)}
-                      showCode
-                    />
-                  ),
-                  minimum: <CurrencyUnitValue unit={unit} value={minBondAmount} showCode />,
-                }}
-              />
-            </Alert>
-          </View>
-        )}
         <View style={styles.amountInputHeightGuard}>
           <AmountInput
             account={account}
@@ -177,36 +137,32 @@ export default function Amount({ navigation, route }: Props) {
             editable={!useAllAmount}
             error={error}
             warning={warning}
-            testID="aleo-bond-amount-input"
+            testID="aleo-unbond-amount-input"
           />
         </View>
-        {showChangeValidator && (
-          <Button
-            outline
-            type="main"
-            size="large"
-            onPress={onChangeValidator}
-            testID="aleo-bond-change-validator"
-          >
-            {t("aleo.bond.amount.changeValidator")}
-          </Button>
-        )}
         <View style={styles.spacer} />
         <View style={[styles.details, { borderTopColor: colors.neutral.c30 }]}>
           <View style={styles.detailsRow}>
             <Text variant="small" color="neutral.c70">
-              <Trans i18nKey="aleo.bond.amount.available" />{" "}
-              <CurrencyUnitValue unit={unit} value={spendable} showCode />
+              <Trans i18nKey="aleo.unbond.amount.bondedAmount" />{" "}
+              <Text
+                variant="small"
+                fontWeight="semiBold"
+                color="neutral.c100"
+                testID="aleo-unbond-amount-value"
+              >
+                <CurrencyUnitValue unit={unit} value={bondedBalance} showCode />
+              </Text>
             </Text>
             <View style={styles.switchRow}>
               <Text variant="small" color="neutral.c70" mr={3}>
-                <Trans i18nKey="aleo.bond.amount.max" />
+                <Trans i18nKey="aleo.unbond.amount.max" />
               </Text>
               <Switch
                 checked={!!useAllAmount}
                 onChange={setUseAllAmount}
                 disabled={bridgePending}
-                testID="aleo-bond-use-all-amount"
+                testID="aleo-unbond-use-all-amount"
               />
             </View>
           </View>
@@ -222,39 +178,6 @@ export default function Amount({ navigation, route }: Props) {
               )}
             </Text>
           </View>
-          {isTopUp ? (
-            <View>
-              <Text variant="small" color="neutral.c70">
-                <Trans
-                  i18nKey="aleo.bond.amount.minimumTopUp"
-                  components={{
-                    missing: <CurrencyUnitValue unit={unit} value={minBondAmount} showCode />,
-                    total: (
-                      <CurrencyUnitValue
-                        unit={unit}
-                        value={new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS)}
-                        showCode
-                      />
-                    ),
-                  }}
-                />
-              </Text>
-            </View>
-          ) : (
-            <View style={styles.detailsRow}>
-              <Text variant="small" color="neutral.c70">
-                <Trans i18nKey="aleo.bond.amount.minimumLabel" />
-              </Text>
-              <Text
-                variant="small"
-                fontWeight="semiBold"
-                color="neutral.c100"
-                testID="aleo-bond-minimum-value"
-              >
-                <CurrencyUnitValue unit={unit} value={minBondAmount} showCode />
-              </Text>
-            </View>
-          )}
         </View>
       </ScrollView>
       <AmountContinueFooter
@@ -262,7 +185,7 @@ export default function Amount({ navigation, route }: Props) {
         onContinue={onContinue}
         disabled={continueDisabled}
         pending={bridgePending}
-        testID="aleo-bond-amount-continue"
+        testID="aleo-unbond-amount-continue"
       />
     </SafeAreaView>
   );

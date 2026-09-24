@@ -11,39 +11,35 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import AleoValidationSuccess from "../shared/ValidationSuccess";
-import type { AleoBondPublicFlowParamList } from "./types";
+import type { AleoUnbondFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<AleoBondPublicFlowParamList, ScreenName.AleoBondPublicValidationSuccess>
+  StackNavigatorProps<AleoUnbondFlowParamList, ScreenName.AleoUnbondValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   const { ticker } = getAccountCurrency(account);
-  const validator = route.params.transaction.recipient;
   const source = route.params.source?.name ?? "unknown";
 
   useEffect(() => {
-    track("staking_completed", {
+    track("staking_unbond_completed", {
       currency: ticker,
-      validator,
       source,
-      // Aleo has a single delegation type: bonding to a validator.
-      delegation: "delegation",
-      flow: "stake",
+      flow: "unbond",
     });
-  }, [ticker, validator, source]);
+  }, [ticker, source]);
 
   return (
     <AleoValidationSuccess
       navigation={navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()}
       accountId={route.params.accountId}
       result={route.params.result}
-      category="BondPublicFlow"
-      flow="stake"
-      action="bond"
-      title={<Trans i18nKey="aleo.bond.validation.success.title" />}
-      description={<Trans i18nKey="aleo.bond.validation.success.description" />}
+      category="UnbondFlow"
+      flow="unbond"
+      action="unbonding"
+      title={<Trans i18nKey="aleo.unbond.validation.success.title" />}
+      description={<Trans i18nKey="aleo.unbond.validation.success.description" />}
     />
   );
 }

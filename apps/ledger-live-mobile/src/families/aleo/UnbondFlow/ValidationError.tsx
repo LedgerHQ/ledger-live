@@ -2,10 +2,10 @@ import React from "react";
 import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AleoValidationError from "../shared/ValidationError";
-import type { AleoBondPublicFlowParamList } from "./types";
+import type { AleoUnbondFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<AleoBondPublicFlowParamList, ScreenName.AleoBondPublicValidationError>
+  StackNavigatorProps<AleoUnbondFlowParamList, ScreenName.AleoUnbondValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
@@ -13,9 +13,9 @@ export default function ValidationError({ navigation, route }: Props) {
     <AleoValidationError
       navigation={navigation}
       error={route.params.error}
-      category="BondPublicFlow"
-      flow="stake"
-      action="bond"
+      category="UnbondFlow"
+      flow="unbond"
+      action="unbonding"
     />
   );
 }

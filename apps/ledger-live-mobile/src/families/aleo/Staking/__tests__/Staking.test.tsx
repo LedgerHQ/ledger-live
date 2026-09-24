@@ -354,6 +354,52 @@ describe("Staking section", () => {
     });
   });
 
+  it("starts the unbond flow from the manage drawer unbond action", async () => {
+    mockGetValidators.mockResolvedValue([makeValidator()]);
+
+    render(<Staking account={bondedAccount()} />);
+
+    await waitFor(() => expect(screen.getByText("Validator One")).toBeOnTheScreen());
+    fireEvent.press(screen.getByTestId("aleo-staked-row"));
+
+    fireEvent.press(await screen.findByText("Unbond"));
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AleoUnbondFlow, {
+      screen: ScreenName.AleoUnbondAmount,
+      params: { accountId: ALEO_ACCOUNT_1.id },
+    });
+  });
+
+  it("disables the manage drawer unbond action while an unbond is already in flight", async () => {
+    mockGetValidators.mockResolvedValue([makeValidator()]);
+    const account = bondedAccount(
+      { unbondingBalance: new BigNumber(5_000_000) },
+      { pendingOperations: [pendingOperation("UNBOND")] },
+    );
+
+    render(<Staking account={account} />);
+
+    await waitFor(() => expect(screen.getByTestId("aleo-staked-row")).toBeOnTheScreen());
+    fireEvent.press(screen.getByTestId("aleo-staked-row"));
+
+    expect(await screen.findByText("Unbond")).toBeDisabled();
+    fireEvent.press(screen.getByText("Unbond"));
+    expect(mockNavigate).not.toHaveBeenCalledWith(NavigatorName.AleoUnbondFlow, expect.any(Object));
+  });
+
+  it("keeps the manage drawer unbond action usable while re-bonded with an old unbonding still unclaimed", async () => {
+    mockGetValidators.mockResolvedValue([makeValidator()]);
+    const account = bondedAccount({ unbondingBalance: new BigNumber(5_000_000) });
+
+    render(<Staking account={account} />);
+
+    await waitFor(() => expect(screen.getByTestId("aleo-staked-row")).toBeOnTheScreen());
+    fireEvent.press(screen.getByTestId("aleo-staked-row"));
+
+    expect(await screen.findByText("Unbond")).toBeEnabled();
+    fireEvent.press(screen.getByText("Unbond"));
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AleoUnbondFlow, expect.any(Object));
+  });
+
   it("details the validator, its rate and status in the staked drawer", async () => {
     mockGetValidators.mockResolvedValue([makeValidator()]);
 
