@@ -10,6 +10,17 @@ import { ScreenName } from "~/const";
 
 export type { FeeSelectorOptionKind, FeeSelectorOption };
 
+export type TronifyFeesViewModel = Readonly<{
+  available: boolean;
+  selected: boolean;
+  discountedFeeFormatted: string | null;
+  originalFeeFormatted: string | null;
+  savingsFiatFormatted: string | null;
+  onSelectTronify: () => void;
+  onSelectStandard: () => void;
+  insufficientBalance: boolean;
+}>;
+
 export type SendStepConfig = ReactNativeFlowStepConfig<SendFlowStep> &
   Readonly<{
     addressInput?: boolean;
@@ -41,9 +52,14 @@ export type NetworkFeesViewModel = Readonly<{
    * editable, where the row is the user's only view of what the network will take.
    */
   secondaryValue: string | null;
+  /** When true, `secondaryValue` is rendered with line-through (used when Tronify is selected to
+   * show the original TRX fee as struck-through next to the discounted USDT fee). */
+  secondaryValueStrikethrough: boolean;
   strategyLabel: string;
   selectedFeeStrategy: string | null;
   displayOptions: readonly FeeSelectorOption[];
   canOpenSelector: boolean;
   networkFeesInfo: NetworkFeesInfo | null;
+  /** Non-null when the Tronify gas-sponsorship option is available for this send. */
+  tronify: TronifyFeesViewModel | null;
 }>;

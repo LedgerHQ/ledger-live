@@ -8,6 +8,7 @@ import { FLOW_STATUS, type FlowStatus } from "@ledgerhq/live-common/flows/wizard
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import type { SendFlowOperationResult, SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
@@ -38,6 +39,7 @@ export function useConfirmationViewModel() {
   const { close, status: statusActions, operation } = useSendFlowActions();
   const { state } = useSendFlowData();
   const { recipientType, savedContactDuringFlow } = useSendFlowTracking();
+  const { selectedFeeOptionId, state: sponsoredState, quote: sponsoredQuote, savingsFiatFormatted } = useSponsoredSend();
   const { account, parentAccount } = state.account;
   const sendFlowTrackingPropertiesBase = useSendFlowTrackingProperties();
   const sendFlowTrackingProperties = useMemo(
@@ -68,12 +70,23 @@ export function useConfirmationViewModel() {
           ...sendFlowTrackingProperties,
           savedContactDuringFlow,
         });
+        if (selectedFeeOptionId === "tronify") {
+          track("gas_sponsorship_send_success", {
+            provider: "tronify",
+            orderId: sponsoredState.order?.orderId,
+            feePaid: sponsoredState.order?.payCoinAmt,
+            feeCurrency: sponsoredState.order?.payCoinCode,
+            savings: sponsoredQuote?.savings?.toString(),
+            savingsFiat: savingsFiatFormatted,
+            ...sendFlowTrackingProperties,
+          });
+        }
         break;
       case FLOW_STATUS.IDLE:
         trackPage("Modal send - action rejected", null, sendFlowTrackingProperties);
         break;
     }
-  }, [savedContactDuringFlow, status, sendFlowTrackingProperties]);
+  }, [savedContactDuringFlow, status, sendFlowTrackingProperties, selectedFeeOptionId, sponsoredState.order, sponsoredQuote, savingsFiatFormatted]);
 
   const onViewDetails = useCallback(() => {
     close();

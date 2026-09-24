@@ -67,11 +67,13 @@ const baseViewModel: NetworkFeesViewModel = {
   label: "Network fees",
   value: "0 TRX",
   secondaryValue: null,
+  secondaryValueStrikethrough: false,
   strategyLabel: "",
   selectedFeeStrategy: null,
   displayOptions: [],
   canOpenSelector: false,
   networkFeesInfo: null,
+  tronify: null,
 };
 
 const editableViewModel: NetworkFeesViewModel = {

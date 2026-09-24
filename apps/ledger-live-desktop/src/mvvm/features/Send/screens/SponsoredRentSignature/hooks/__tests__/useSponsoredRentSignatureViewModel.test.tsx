@@ -1,0 +1,245 @@
+import { renderHook, act } from "tests/testSetup";
+import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import {
+  useSponsoredRentSignatureViewModel,
+  type SponsoredRentSignatureResult,
+} from "../useSponsoredRentSignatureViewModel";
+
+const mockTrack = jest.fn();
+const mockTrackPage = jest.fn();
+jest.mock("~/renderer/analytics/segment", () => ({
+  track: (...args: unknown[]) => mockTrack(...args),
+  trackPage: (...args: unknown[]) => mockTrackPage(...args),
+}));
+
+jest.mock("../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send", currency: "USDT" }),
+}));
+
+const mockAccount = { id: "acc_tron", type: "Account", currency: { id: "tron" } };
+
+const mockGoToStep = jest.fn();
+jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
+  useFlowWizard: () => ({ navigation: { goToStep: mockGoToStep } }),
+}));
+
+jest.mock("../../../../context/SendFlowContext", () => ({
+  useSendFlowData: () => ({
+    state: { account: { account: mockAccount, parentAccount: null } },
+  }),
+}));
+
+const mockCraftRent = jest.fn(() => Promise.resolve());
+const mockStartRentPayment = jest.fn(() => Promise.resolve());
+const mockSetContractDataFailure = jest.fn();
+const mockActions = {
+  craftRent: mockCraftRent,
+  startRentPayment: mockStartRentPayment,
+  setContractDataFailure: mockSetContractDataFailure,
+  onTransferSuccess: jest.fn(),
+  onTransferError: jest.fn(),
+  retry: jest.fn(),
+  reset: jest.fn(),
+};
+
+let mockSponsoredState: {
+  phase: string;
+  order: { orderId: string; transaction: unknown; payCoinCode: string; payCoinAmt: string } | null;
+  toSign: string | null;
+  paymentTxId: string | null;
+  failureKind: string | null;
+  failureError: Error | null;
+};
+
+jest.mock("../../../../context/SponsoredSendContext", () => ({
+  useSponsoredSend: () => ({
+    state: mockSponsoredState,
+    actions: mockActions,
+    quote: { savings: 5_000_000n },
+    savingsFiatFormatted: "$0.50",
+  }),
+}));
+
+jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
+  useRawTransactionAction: () => ({ fakeAction: true }),
+}));
+
+const rawDataHex = "0a02abcd";
+const orderTransaction = {
+  visible: true,
+  txID: "tx-a-id",
+  raw_data: {},
+  raw_data_hex: rawDataHex,
+};
+
+function makeOrder() {
+  return {
+    orderId: "order-1",
+    transaction: orderTransaction,
+    payCoinCode: "USDT",
+    payCoinAmt: "1.5",
+  };
+}
+
+describe("useSponsoredRentSignatureViewModel", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockSponsoredState = {
+      phase: "RENT_SIGNING",
+      order: null,
+      toSign: null,
+      paymentTxId: null,
+      failureKind: null,
+      failureError: null,
+    };
+  });
+
+  it("crafts the order on entry exactly once when phase is RENT_SIGNING and there is no order yet", () => {
+    renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(mockCraftRent).toHaveBeenCalledTimes(1);
+  });
+
+  it("crafts the order on entry exactly once when phase is IDLE and there is no order yet (AMOUNT navigated in without craftRent)", () => {
+    mockSponsoredState.phase = "IDLE";
+
+    renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(mockCraftRent).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not craft while an order is already present", () => {
+    mockSponsoredState.order = makeOrder();
+
+    renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(mockCraftRent).not.toHaveBeenCalled();
+  });
+
+  it("passes the combined device signature and the signed-against paymentTxId to startRentPayment", () => {
+    mockSponsoredState.order = makeOrder();
+    mockSponsoredState.toSign = rawDataHex;
+    mockSponsoredState.paymentTxId = "tx-a-id";
+    const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    const combinedSignature = "0008" + rawDataHex + "SIGHEX";
+    act(() => {
+      // Partial mocks: the view model only reads signedOperation.signature — a full
+      // SignedOperation/Device would be noise, so cast the deliberately-minimal result.
+      result.current.onResult({
+        signedOperation: { signature: combinedSignature },
+        device: {},
+      } as unknown as SponsoredRentSignatureResult);
+    });
+
+    expect(mockStartRentPayment).toHaveBeenCalledTimes(1);
+    expect(mockStartRentPayment).toHaveBeenCalledWith(combinedSignature, "tx-a-id");
+  });
+
+  it("routes a contract-data-disabled refusal to setContractDataFailure and never starts the rent payment", () => {
+    mockSponsoredState.order = makeOrder();
+    const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    const contractDataError = Object.assign(new Error("contract data disabled"), {
+      name: "TransportStatusError",
+      statusCode: 0x6a80,
+    });
+
+    act(() => {
+      result.current.onResult({ transactionSignError: contractDataError });
+    });
+
+    expect(mockSetContractDataFailure).toHaveBeenCalledTimes(1);
+    // paymentTxId is null in the initial state → undefined passed to let the reducer reject stale callbacks
+    expect(mockSetContractDataFailure).toHaveBeenCalledWith(contractDataError, undefined);
+    expect(mockStartRentPayment).not.toHaveBeenCalled();
+  });
+
+  it("passes the current paymentTxId to setContractDataFailure so stale sign errors are rejected", () => {
+    mockSponsoredState.order = makeOrder();
+    mockSponsoredState.paymentTxId = "tx-a-id";
+    const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    const contractDataError = Object.assign(new Error("contract data disabled"), {
+      name: "TransportStatusError",
+      statusCode: 0x6a80,
+    });
+
+    act(() => {
+      result.current.onResult({ transactionSignError: contractDataError });
+    });
+
+    expect(mockSetContractDataFailure).toHaveBeenCalledWith(contractDataError, "tx-a-id");
+  });
+
+  it("leaves any other sign error to DeviceAction's own retry UI (no contract-data failure, no rent payment)", () => {
+    mockSponsoredState.order = makeOrder();
+    const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    const userRejectedError = Object.assign(new Error("user refused"), {
+      name: "TransportStatusError",
+      statusCode: 0x6985,
+    });
+
+    act(() => {
+      result.current.onResult({ transactionSignError: userRejectedError });
+    });
+
+    expect(mockSetContractDataFailure).not.toHaveBeenCalled();
+    expect(mockStartRentPayment).not.toHaveBeenCalled();
+  });
+
+  it("navigates to SPONSORED_POLLING when the phase transitions to POLLING", () => {
+    mockSponsoredState.order = makeOrder();
+    const { rerender } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    mockSponsoredState = { ...mockSponsoredState, phase: "POLLING" };
+    rerender();
+
+    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.SPONSORED_POLLING);
+  });
+
+  it("navigates to SPONSORED_FAILURE when the phase transitions to FAILED", () => {
+    mockSponsoredState.order = makeOrder();
+    const { rerender } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    mockSponsoredState = { ...mockSponsoredState, phase: "FAILED", failureKind: "CONTRACT_DATA" };
+    rerender();
+
+    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.SPONSORED_FAILURE);
+  });
+
+  it("does not navigate while the phase stays RENT_SIGNING", () => {
+    renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(mockGoToStep).not.toHaveBeenCalled();
+  });
+
+  it("tracks the rent signature page on mount", () => {
+    renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(mockTrackPage).toHaveBeenCalledWith(
+      "Modal send - step sponsored rent signature",
+      null,
+      expect.objectContaining({ flow: "send" }),
+    );
+  });
+
+  it("emits gas_sponsorship_order_created once when the order first becomes available", () => {
+    const { rerender } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(mockTrack).not.toHaveBeenCalledWith("gas_sponsorship_order_created", expect.anything());
+
+    mockSponsoredState = { ...mockSponsoredState, order: makeOrder() };
+    rerender();
+
+    expect(mockTrack).toHaveBeenCalledWith(
+      "gas_sponsorship_order_created",
+      expect.objectContaining({ provider: "tronify", orderId: "order-1", feePaid: "1.5" }),
+    );
+
+    // Second rerender must not double-fire
+    rerender();
+    expect(mockTrack).toHaveBeenCalledTimes(1);
+  });
+});
