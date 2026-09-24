@@ -198,10 +198,10 @@ export default class CommonPage {
 
   // DOT's WS RPC connection keeps the JS looper intermittently busy, which stalls a synchronized tap.
   async withSynchronizationDisabledForDOT<T>(
-    currencyId: string | undefined,
+    currency: string | undefined,
     action: () => Promise<T>,
   ): Promise<T> {
-    if (currencyId !== Currency.DOT.id) return action();
+    if (currency !== Currency.DOT.id && !currency?.includes(Currency.DOT.name)) return action();
     await this.disableSynchronization();
     try {
       return await action();
