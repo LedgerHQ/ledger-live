@@ -23,63 +23,67 @@ beforeEach(() => {
 });
 
 describe("paginateOperations", () => {
-  it("drops the transaction the bound cut into, since its remaining rows sit on the page never fetched", async () => {
-    // `Page<T>` does not promise a transaction's rows stay inside one page. Keeping half of one
-    // would leave a hole the next watermark seals; dropping it is a contiguous truncation.
+  const at = (hash: string, height: number) =>
+    ({ tx: { hash, block: { height } } }) as unknown as Operation;
+  const heights = (items: Operation[]) =>
+    items.map(i => (i as unknown as { tx: { block: { height: number } } }).tx.block.height);
+  const blockOf = (item: Operation) =>
+    (item as unknown as { tx: { block?: { height: number } } }).tx.block?.height;
+
+  it("drops the lowest block when the bound stops the walk inside it", async () => {
     const items = await paginateOperations(
-      pages({ items: [op("a"), op("b"), op("b")], next: "c1" }),
-      2,
-      item => (item as unknown as { tx: { hash: string } }).tx.hash,
+      pages({ items: [at("a", 9), at("b", 9), at("c", 8), at("d", 8)], next: "c1" }),
+      3,
+      blockOf,
     );
 
-    expect(items.map(i => (i as unknown as { tx: { hash: string } }).tx.hash)).toEqual(["a"]);
+    expect(heights(items)).toEqual([9, 9]);
   });
 
-  it("drops the trailing transaction even when the page looks complete", async () => {
-    // There is no way to tell a complete trailing transaction from a truncated one: the cursor is
-    // truthy, so the page never fetched could hold more rows of `b`. One transaction per bounded
-    // sync is the price of never persisting half of one.
+  it("drops the whole lowest block, not just the last transaction in it", async () => {
+    // Two pages, bound 4: the walk stops after the second. Dropping only the last item's
+    // transaction would keep `d` and `e`, either of which can have a sibling on the page never
+    // fetched -- rows of one transaction interleave inside a block, since they share its date.
     const items = await paginateOperations(
-      pages({ items: [op("a"), op("b")], next: "c1" }),
-      2,
-      item => (item as unknown as { tx: { hash: string } }).tx.hash,
+      pages(
+        { items: [at("a", 9), at("b", 9), at("c", 9)], next: "c1" },
+        { items: [at("d", 8), at("e", 8), at("f", 8)], next: "c2" },
+      ),
+      4,
+      blockOf,
     );
 
-    expect(items.map(i => (i as unknown as { tx: { hash: string } }).tx.hash)).toEqual(["a"]);
+    expect(heights(items)).toEqual([9, 9, 9]);
   });
 
-  it("drops every row of the boundary transaction, including the ones that are not adjacent", async () => {
-    // Two transactions in one block share its date, so `mergeOps` can interleave their rows.
-    // Walking back over the trailing run alone would keep the leading `h1` and persist half of
-    // it; the cut is taken before its first row instead, and `h2` goes with it to keep the
-    // result a contiguous prefix.
+  it("returns nothing when the lowest block starts at the head", async () => {
+    // The bound is smaller than a single block; keeping part of it is the one thing that must
+    // not happen.
     const items = await paginateOperations(
-      pages({ items: [op("a"), op("h1"), op("h2"), op("h1")], next: "c1" }),
+      pages({ items: [at("a", 9), at("b", 9), at("c", 9)], next: "c1" }),
       2,
-      item => (item as unknown as { tx: { hash: string } }).tx.hash,
-    );
-
-    expect(items.map(i => (i as unknown as { tx: { hash: string } }).tx.hash)).toEqual(["a"]);
-  });
-
-  it("returns nothing when the boundary transaction starts at the head", async () => {
-    // The bound is smaller than a single transaction; keeping part of it is the one thing that
-    // must not happen.
-    const items = await paginateOperations(
-      pages({ items: [op("h1"), op("h2"), op("h1")], next: "c1" }),
-      2,
-      item => (item as unknown as { tx: { hash: string } }).tx.hash,
+      blockOf,
     );
 
     expect(items).toEqual([]);
   });
 
+  it("leaves the list untouched when the items carry no block height", async () => {
+    const items = await paginateOperations(
+      pages({ items: [op("a"), op("b"), op("b")], next: "c1" }),
+      2,
+      blockOf,
+    );
+
+    expect(items).toHaveLength(3);
+  });
+
   it("keeps every row when the walk ends on a falsy cursor, bound or not", async () => {
     // No next page exists, so nothing can be missing: the trailing transaction is whole.
     const items = await paginateOperations(
-      pages({ items: [op("a"), op("b"), op("b")], next: undefined }),
+      pages({ items: [at("a", 9), at("b", 8), at("c", 8)], next: undefined }),
       2,
-      item => (item as unknown as { tx: { hash: string } }).tx.hash,
+      blockOf,
     );
 
     expect(items).toHaveLength(3);
