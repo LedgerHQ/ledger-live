@@ -147,7 +147,7 @@ describe("describeStakeAmountError", () => {
       "solana",
     );
     expect(message).toContain("Solana requires at least 1 SOL per stake account");
-    expect(message).toContain("Requested 0.01 SOL.");
+    expect(message).toContain("Requested 0.01 SOL. Max stakeable is 0.04924326 SOL:");
   });
 
   it("breaks the max stakeable down into balance, rent and fee reserve", () => {
@@ -175,6 +175,10 @@ describe("describeStakeAmountError", () => {
       "0.01 SOL",
       limits({ spendableBalance: "0", maxStakeable: "0", feeReserve: "0" }),
       "solana",
+    );
+    expect(message).toContain(
+      "Max stakeable is 0 SOL: spendable balance 0 SOL does not cover the stake account rent " +
+        "0.00166624 SOL and network fees.",
     );
     expect(message).toContain(
       "This account cannot stake until it receives more than 1.00166624 SOL (minimum plus " +
