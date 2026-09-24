@@ -2,10 +2,12 @@ import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accou
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
+  FINALITY_MS,
   HARDCODED_BLOCK_HEIGHT,
   HEDERA_TRANSACTION_NAMES,
   MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE,
   STAKING_REWARD_ACCOUNT_ID,
+  SYNTHETIC_BLOCK_WINDOW_SECONDS,
 } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
@@ -40,7 +42,12 @@ function getCommonMirrorOperationData(
     : rawTx.transaction_hash;
   const fee = new BigNumber(rawTx.charged_tx_fee);
   const hasFailed = rawTx.result !== "SUCCESS";
-  const syntheticBlock = getSyntheticBlock(rawTx.consensus_timestamp);
+  const confirmableTimestamp = (
+    Number(rawTx.consensus_timestamp) -
+    FINALITY_MS / 1000 -
+    SYNTHETIC_BLOCK_WINDOW_SECONDS
+  ).toString();
+  const syntheticBlock = getSyntheticBlock(confirmableTimestamp);
   const memo = getMemoFromBase64(rawTx.memo_base64);
   const feesPayer = extractFeesPayer(rawTx);
   const extra: HederaOperationExtra = {
@@ -451,6 +458,7 @@ export async function listOperationsV2(
     skipFeesForTokenOperations,
     useEncodedHash,
     useSyntheticBlocks,
+    minTimestamp,
   }: {
     currencyId: string;
     address: string;
@@ -465,6 +473,7 @@ export async function listOperationsV2(
     skipFeesForTokenOperations: boolean;
     useEncodedHash: boolean;
     useSyntheticBlocks: boolean;
+    minTimestamp?: string;
   },
 ): Promise<{
   coinOperations: Operation<HederaOperationExtra>[];
@@ -482,32 +491,37 @@ export async function listOperationsV2(
     derivationMode: "hederaBip44",
   });
 
-  // fetch transactions from both sources in parallel
-  const [mirrorTransactions, enrichedERC20Transfers, latestHgraphIndexedTimestampNs] =
-    await Promise.all([
-      apiClient.getAccountTransactions({
-        configOrCurrencyId: config,
-        address,
-        order,
-        limit,
-        fetchAllPages,
-        pagingToken: cursor ?? null,
-      }),
-      hgraphClient
-        .getERC20Transfers({
-          configOrCurrencyId: config,
-          address,
-          order,
-          limit,
-          fetchAllPages,
-          tokenEvmAddresses,
-          ...(cursor && { timestamp: cursor }),
-        })
-        .then(erc20Transfers =>
-          enrichERC20Transfers({ configOrCurrencyId: config, erc20Transfers }),
-        ),
-      hgraphClient.getLatestIndexedConsensusTimestamp({ configOrCurrencyId: config }),
-    ]);
+  const [mirrorTransactions, latestHgraphIndexedTimestampNs] = await Promise.all([
+    apiClient.getAccountTransactions({
+      configOrCurrencyId: config,
+      address,
+      order,
+      limit,
+      fetchAllPages,
+      pagingToken: cursor ?? null,
+      ...(minTimestamp && { minTimestamp }),
+    }),
+    hgraphClient.getLatestIndexedConsensusTimestamp({ configOrCurrencyId: config }),
+  ]);
+
+  const pageFloor =
+    !fetchAllPages && order === "desc"
+      ? mirrorTransactions.transactions.at(-1)?.consensus_timestamp
+      : undefined;
+  const erc20Floor = pageFloor ?? minTimestamp;
+
+  const enrichedERC20Transfers = await hgraphClient
+    .getERC20Transfers({
+      configOrCurrencyId: config,
+      address,
+      order,
+      limit,
+      fetchAllPages,
+      tokenEvmAddresses,
+      ...(cursor && { timestamp: cursor }),
+      ...(erc20Floor && { minTimestamp: erc20Floor }),
+    })
+    .then(erc20Transfers => enrichERC20Transfers({ configOrCurrencyId: config, erc20Transfers }));
 
   // merge transactions, ensuring no duplicates, correct ordering and pagination handling
   const mergeResult = mergeTransactionsFromDifferentSources({

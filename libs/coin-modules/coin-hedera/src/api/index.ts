@@ -32,6 +32,7 @@ import {
 import {
   extractInitiator,
   getBlockHash,
+  getDateRangeFromBlockHeight,
   getOperationValue,
   mapIntentToSDKOperation,
 } from "../logic/utils";
@@ -122,8 +123,6 @@ export function createApi(currencyId: string) {
       address: string,
       { cursor, limit, order, minHeight }: ListOperationsOptions,
     ) => {
-      invariant(minHeight === 0, "minHeight is not supported");
-
       const coinConfig = await context.config();
       const evmAddress = await toEVMAddress({
         configOrCurrencyId: coinConfig,
@@ -135,6 +134,10 @@ export function createApi(currencyId: string) {
         getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
       ]);
 
+      const minTimestamp =
+        minHeight > 0
+          ? (getDateRangeFromBlockHeight(minHeight).start.getTime() / 1000).toString()
+          : undefined;
       const latestAccountOperations = await logicListOperationsV2(coinConfig, {
         currencyId,
         address,
@@ -143,6 +146,7 @@ export function createApi(currencyId: string) {
         ...(typeof cursor === "string" && { cursor }),
         ...(typeof limit === "number" && { limit }),
         ...(typeof order === "string" && { order }),
+        ...(minTimestamp && { minTimestamp }),
         tokenEvmAddresses: erc20TokenBalances.map(t => t.contractAddress.toLowerCase()),
         fetchAllPages: false,
         skipFeesForTokenOperations: true,
@@ -194,6 +198,8 @@ export function createApi(currencyId: string) {
             ? liveOp.hash.replace(STAKING_REWARD_HASH_SUFFIX, "")
             : liveOp.hash;
 
+        const { pagingToken, consensusTimestamp, transactionId, ...restExtra } = liveOp.extra;
+
         return {
           id: liveOp.id,
           type: liveOp.type,
@@ -202,11 +208,14 @@ export function createApi(currencyId: string) {
           value: getOperationValue({ asset, operation: liveOp }),
           asset,
           details: {
-            ...liveOp.extra,
+            ...restExtra,
             ledgerOpType: liveOp.type,
             ...(asset.type !== "native" && { assetAmount: liveOp.value.toFixed(0) }),
             ...(liveOp.extra.stakedAmount && {
               stakedAmount: BigInt(liveOp.extra.stakedAmount.toFixed(0)),
+            }),
+            ...((pagingToken || consensusTimestamp || transactionId) && {
+              familyExtra: { pagingToken, consensusTimestamp, transactionId },
             }),
           },
           tx: {

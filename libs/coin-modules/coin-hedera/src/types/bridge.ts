@@ -175,6 +175,11 @@ export type HederaOperationExtra = {
   targetStakingNodeId?: number | null;
   previousStakingNodeId?: number | null;
   stakedAmount?: BigNumber;
+  familyExtra?: {
+    pagingToken?: string;
+    consensusTimestamp?: string;
+    transactionId?: string;
+  };
 };
 
 export type HederaValidator = {

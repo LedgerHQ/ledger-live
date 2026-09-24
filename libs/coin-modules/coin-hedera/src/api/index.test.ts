@@ -21,6 +21,7 @@ jest.mock("../network/api");
 
 const mockExtractInitiator = jest.mocked(logicUtils.extractInitiator);
 const mockGetOperationValue = jest.mocked(logicUtils.getOperationValue);
+const mockGetDateRangeFromBlockHeight = jest.mocked(logicUtils.getDateRangeFromBlockHeight);
 const mockMapIntentToSDKOperation = jest.mocked(mapIntentToSDKOperation);
 const mockToEVMAddress = jest.mocked(networkUtils.toEVMAddress);
 const mockGetAccountTokens = jest.mocked(apiClient.getAccountTokens);
@@ -319,12 +320,110 @@ describe("createApi", () => {
       mockToEVMAddress.mockResolvedValue("0xabc");
       mockGetAccountTokens.mockResolvedValue([]);
       mockGetERC20BalancesForAccountV2.mockResolvedValue([]);
+      mockGetDateRangeFromBlockHeight.mockReturnValue({
+        start: new Date("2024-01-01T00:00:00Z"),
+        end: new Date("2024-01-01T00:00:10Z"),
+      });
     });
 
-    it("should throw when minHeight is not 0", async () => {
+    it("should not throw for a second sync's minHeight (lastKnownHeight + 1) — there is no chain of blocks to reject against", async () => {
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [mockOperation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
       await expect(
-        api.listOperations(mockContext, mockAddress, { ...mockOptions, minHeight: 5 }),
-      ).rejects.toThrow("minHeight is not supported");
+        api.listOperations(mockContext, mockAddress, {
+          ...mockOptions,
+          minHeight: HARDCODED_BLOCK_HEIGHT + 1,
+        }),
+      ).resolves.toBeDefined();
+    });
+
+    it("drives two syncs back to back (minHeight 0, then a stored account's lastKnownHeight + 1) without throwing, returning each page's operations untouched", async () => {
+      mockListOperationsV2.mockResolvedValueOnce({
+        coinOperations: [mockOperationOlder],
+        tokenOperations: [],
+        nextCursor: "1000.0",
+      });
+      mockListOperationsV2.mockResolvedValueOnce({
+        coinOperations: [mockOperationNewer],
+        tokenOperations: [],
+        nextCursor: "2000.0",
+      });
+
+      const firstSync = await api.listOperations(mockContext, mockAddress, mockOptions);
+      const secondSync = await api.listOperations(mockContext, mockAddress, {
+        ...mockOptions,
+        minHeight: HARDCODED_BLOCK_HEIGHT + 1,
+        cursor: firstSync.next ?? undefined,
+      });
+
+      expect(firstSync.items.map(op => op.id)).toEqual(["older"]);
+      expect(secondSync.items.map(op => op.id)).toEqual(["newer"]);
+      expect(new Set([...firstSync.items, ...secondSync.items].map(op => op.id)).size).toBe(2);
+    });
+
+    it("floors on minHeight rather than the cursor, so a desc page never replays the previous one", async () => {
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [mockOperation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+      mockGetDateRangeFromBlockHeight.mockReturnValue({
+        start: new Date(1000 * 1000),
+        end: new Date(1010 * 1000),
+      });
+
+      await api.listOperations(mockContext, mockAddress, {
+        ...mockOptions,
+        cursor: "1787236926.768102104",
+        minHeight: HARDCODED_BLOCK_HEIGHT + 1,
+      });
+
+      expect(mockListOperationsV2).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ cursor: "1787236926.768102104", minTimestamp: "1000" }),
+      );
+    });
+
+    it("falls back to minHeight's floor, converted to a timestamp, when no cursor is available", async () => {
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [mockOperation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+      mockGetDateRangeFromBlockHeight.mockReturnValue({
+        start: new Date(1000 * 1000),
+        end: new Date(1010 * 1000),
+      });
+
+      await api.listOperations(mockContext, mockAddress, {
+        ...mockOptions,
+        minHeight: HARDCODED_BLOCK_HEIGHT + 1,
+      });
+
+      expect(mockGetDateRangeFromBlockHeight).toHaveBeenCalledWith(HARDCODED_BLOCK_HEIGHT + 1);
+      expect(mockListOperationsV2).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ order: "desc", minTimestamp: "1000" }),
+      );
+    });
+
+    it("sets neither cursor nor minTimestamp on a from-scratch sync (minHeight 0, no cursor)", async () => {
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [mockOperation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      await api.listOperations(mockContext, mockAddress, mockOptions);
+
+      expect(mockListOperationsV2).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.not.objectContaining({ minTimestamp: expect.anything() }),
+      );
     });
 
     it("should return mapped coin-framework operations with correct shape", async () => {
@@ -371,6 +470,33 @@ describe("createApi", () => {
         assetReference: mockTokenOperation.contract,
         assetOwner: mockAddress,
       });
+    });
+
+    it("nests pagingToken under details.familyExtra instead of leaving it flat", async () => {
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [getMockedOperation({ extra: { pagingToken: "1234567890.000000001" } })],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
+
+      expect(result.items[0].details).toMatchObject({
+        familyExtra: { pagingToken: "1234567890.000000001" },
+      });
+      expect(result.items[0].details).not.toHaveProperty("pagingToken");
+    });
+
+    it("omits familyExtra entirely when the mirror transaction carries no pagingToken", async () => {
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [getMockedOperation({ extra: {} })],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
+
+      expect(result.items[0].details).not.toHaveProperty("familyExtra");
     });
 
     it("should include stakedAmount in details when present in extra", async () => {

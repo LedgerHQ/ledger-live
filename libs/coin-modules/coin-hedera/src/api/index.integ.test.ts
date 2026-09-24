@@ -27,7 +27,7 @@ import {
   HederaNoStakingRewardsError,
   HederaRedundantStakingNodeIdError,
 } from "../errors";
-import { getSyntheticBlock } from "../logic/utils";
+import { getDateRangeFromBlockHeight, getSyntheticBlock } from "../logic/utils";
 import { HEDERA_MAX_MEMO_SIZE } from "../logic/validateMemo";
 import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
@@ -942,19 +942,47 @@ describe("createApi", () => {
       expect(hasFeesOperationForSendToken).toBe(false);
       expect(hasTokenAssociateOperations).toBe(true);
       expect(operationWithMemo?.details).toMatchObject({
-        pagingToken: expect.any(String),
-        consensusTimestamp: expect.any(String),
         ledgerOpType: expect.any(String),
         memo: expect.any(String),
+        familyExtra: {
+          pagingToken: expect.any(String),
+          consensusTimestamp: expect.any(String),
+          transactionId: expect.any(String),
+        },
       });
       expect(firstTokenAssociateOperations?.details).toMatchObject({
-        pagingToken: expect.any(String),
-        consensusTimestamp: expect.any(String),
         ledgerOpType: expect.any(String),
         associatedTokenId: expect.any(String),
+        familyExtra: {
+          pagingToken: expect.any(String),
+          consensusTimestamp: expect.any(String),
+          transactionId: expect.any(String),
+        },
       });
+      expect(operationWithMemo?.details).not.toHaveProperty("pagingToken");
+      expect(operationWithMemo?.details).not.toHaveProperty("consensusTimestamp");
       // every transfer operation should have a fees payer
       expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
+    });
+
+    it("serves a second sync from the stored height without losing the newest operation", async () => {
+      const accountId = MAINNET_TEST_ACCOUNTS.withTokens.accountId;
+      const { items: firstSync } = await api.listOperations(context, accountId, {
+        minHeight: 0,
+        order: "desc",
+      });
+      const newestOp = firstSync[0];
+      const minHeight = newestOp.tx.block.height + 1;
+
+      const { items: secondSync } = await api.listOperations(context, accountId, {
+        minHeight,
+        order: "desc",
+      });
+
+      const floor = getDateRangeFromBlockHeight(minHeight).start;
+      expect(secondSync.map(op => op.id)).toContain(newestOp.id);
+      expect(secondSync.every(op => op.tx.date >= floor)).toBe(true);
+      expect(new Set(secondSync.map(op => op.id)).size).toBe(secondSync.length);
     });
 
     it("returns IN/OUT operations for mint and burn of amUSDC", async () => {

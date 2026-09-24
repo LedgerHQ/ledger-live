@@ -45,6 +45,7 @@ import {
   getBlockHash,
   isStakingTransaction,
   extractCompanyFromNodeDescription,
+  mapMirrorNodesToValidators,
   sortValidators,
   getDefaultValidator,
   getDelegationStatus,
@@ -64,7 +65,6 @@ import {
   resolveConfig,
   base64ToUrlSafeBase64,
   getHederaTransactionBodyBytes,
-  mapMirrorNodesToValidators,
 } from "./utils";
 
 jest.mock("../config");
@@ -359,6 +359,17 @@ describe("logic utils", () => {
 
       const newUrl = getTransactionExplorer(explorerView, mockedOperation);
       expect(newUrl).toBe("https://hashscan.io/mainnet/transaction/0.0.1234567-123-123");
+    });
+
+    it("reads consensus timestamp nested under familyExtra (generic bridge shape)", async () => {
+      const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
+
+      const mockedOperation = getMockedOperation({
+        extra: { familyExtra: { consensusTimestamp: "1.2.3.4" } },
+      });
+
+      const newUrl = getTransactionExplorer(explorerView, mockedOperation);
+      expect(newUrl).toBe("https://hashscan.io/mainnet/transaction/1.2.3.4");
     });
   });
 
