@@ -1,4 +1,4 @@
-import { EditType } from "@ledgerhq/coin-evm/types/editTransaction";
+import { EditType } from "@ledgerhq/coin-evm/types";
 import {
   Transaction as EvmTransaction,
   TransactionRaw,

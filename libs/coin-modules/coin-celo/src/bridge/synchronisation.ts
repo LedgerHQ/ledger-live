@@ -1,5 +1,5 @@
 import { electionABI, lockedGoldABI } from "@celo/abis";
-import { createApi } from "@ledgerhq/coin-evm/api/index";
+import { createApi } from "@ledgerhq/coin-evm/api";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { getCoinConfig } from "../config";
 import type { Operation } from "@ledgerhq/coin-module-framework/api/index";
@@ -7,7 +7,7 @@ import type { Context } from "@ledgerhq/coin-module-framework/config";
 
 type EvmContext = Context<EvmConfigInfo>;
 import { createSwapHistoryMap, mergeSubAccounts, getSyncHash } from "./syncHelpers";
-import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
+import { getNodeApi } from "@ledgerhq/coin-evm/network";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   encodeTokenAccountId,
@@ -271,8 +271,9 @@ const getSubAccounts = async ({
 
     return acc;
   }, tokensByKeys);
-
-  const nodeApi = getNodeApi(getCoinConfig(info.currency.id).info, info.currency.id);
+  const evmCtx = buildEvmContext(info.currency.id);
+  const config = await evmCtx.config();
+  const nodeApi = getNodeApi(config, info.currency.id, evmCtx.logger);
   const tokensList = Object.values(tokensByKeys);
   const tokensListWithBalance = await Promise.all(
     tokensList.map(async item => {
@@ -343,9 +344,9 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   const blacklistedTokenIds = config.blacklistedTokenIds || [];
   const syncHash = await getSyncHash(currency, blacklistedTokenIds);
 
-  const nodeApi = getNodeApi(configEvm, currency.id);
-  const api = createApi(currency.id);
   const evmCtx = buildEvmContext(currency.id);
+  const nodeApi = getNodeApi(configEvm, currency.id, evmCtx.logger);
+  const api = createApi(currency.id);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const blockInfo = await (api as any).lastBlock(evmCtx);
   const balance = await nodeApi.getCoinBalance(currency.id, address);

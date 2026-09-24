@@ -1,11 +1,11 @@
-import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
-import type { NodeApi } from "@ledgerhq/coin-evm/network/node/types";
+import { getNodeApi } from "@ledgerhq/coin-evm/network";
+import type { NodeApi } from "@ledgerhq/coin-evm/network";
 import type { Account } from "@ledgerhq/types-live";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { isTransactionConfirmed } from "./isTransactionConfirmed";
 
-jest.mock("@ledgerhq/coin-evm/network/node/index", () => ({
-  ...jest.requireActual("@ledgerhq/coin-evm/network/node/index"),
+jest.mock("@ledgerhq/coin-evm/network", () => ({
+  ...jest.requireActual("@ledgerhq/coin-evm/network"),
   getNodeApi: jest.fn(),
 }));
 

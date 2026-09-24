@@ -1,4 +1,4 @@
-import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/utils";
+import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/logic-public";
 import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
 import { Transaction } from "@ledgerhq/live-common/families/evm/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";

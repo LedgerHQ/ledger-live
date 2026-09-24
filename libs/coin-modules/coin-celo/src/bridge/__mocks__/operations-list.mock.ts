@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 
 export const mockCreateApi = jest.fn();
 
-jest.mock("@ledgerhq/coin-evm/api/index", () => {
+jest.mock("@ledgerhq/coin-evm/api", () => {
   return {
     createApi: () => mockCreateApi(),
   };

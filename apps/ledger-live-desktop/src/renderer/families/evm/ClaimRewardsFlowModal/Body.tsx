@@ -29,7 +29,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import { St, StepId, StepProps } from "./types";
 import { findDelegationByValidator } from "./utils";
 import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
-import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking";
 
 export type Data = {
   account: Account;
