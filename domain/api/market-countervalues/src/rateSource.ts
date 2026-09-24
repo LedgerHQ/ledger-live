@@ -51,7 +51,7 @@ export function createRateSource(fetchers: RateFetchers): RateSource {
         LATEST_CONCURRENCY,
         batchPairs(pairs, batchStrategySolver),
         async ([froms, to]) => {
-          const fromIds = froms.map(inferCurrencyAPIID);
+          const fromIds = froms.map(currency => inferCurrencyAPIID(currency));
           const data = await run(
             fetchers.fetchSpotBatch({ to: inferCurrencyAPIID(to), froms: fromIds }),
           );

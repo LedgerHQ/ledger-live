@@ -4,7 +4,6 @@ import type {
   CountervaluesSettings,
   TrackingPair,
   RateMap,
-  RateGranularity,
   PairRateMapCache,
   RateMapRaw,
   RateMapStats,

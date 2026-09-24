@@ -11,7 +11,7 @@ export async function promiseAllBatched<A, B>(
   items: Array<A>,
   fn: (arg0: A, arg1: number) => Promise<B>,
 ): Promise<B[]> {
-  const data = Array(items.length);
+  const data = new Array(items.length);
   const queue = items.map((item, index) => ({
     item,
     index,
@@ -28,10 +28,6 @@ export async function promiseAllBatched<A, B>(
   }
 
   // initially, we schedule <batch> items in parallel
-  await Promise.all(
-    Array(Math.min(batch, items.length))
-      .fill(() => undefined)
-      .map(step),
-  );
+  await Promise.all(new Array(Math.min(batch, items.length)).fill(() => undefined).map(step));
   return data;
 }
