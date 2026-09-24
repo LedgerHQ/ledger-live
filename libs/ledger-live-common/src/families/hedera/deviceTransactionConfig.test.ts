@@ -33,6 +33,13 @@ describe("getDeviceTransactionConfig", () => {
     ]);
   });
 
+  it("shows Associate Token and no amount row for a token association", async () => {
+    expect(await fieldsFor({ mode: "tokenAssociate" }, 10)).toEqual([
+      { type: "text", label: "Method", value: "Associate Token" },
+      { type: "fees", label: "Fees" },
+    ]);
+  });
+
   it.each([
     ["delegate", "Delegate"],
     ["redelegate", "Redelegate"],

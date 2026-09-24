@@ -156,6 +156,7 @@ describe("hedera bridge", () => {
     it.each([
       [undefined, "send"],
       ["send", "send"],
+      ["tokenAssociate", "token-associate"],
       ["delegate", "delegate"],
       ["undelegate", "undelegate"],
       ["redelegate", "redelegate"],
@@ -190,22 +191,24 @@ describe("hedera bridge", () => {
       });
     });
 
-    it.each(["send", "claimReward"])("sends no data for %s", mode => {
+    it.each(["send", "tokenAssociate", "claimReward"])("sends no data for %s", mode => {
       expect(buildIntentData({ mode })).toEqual({ type: "none" });
     });
   });
 
   describe("describeOptimisticOperation", () => {
-    it("returns undefined for a mode other than claimReward", () => {
-      expect(describeOptimisticOperation("send", {} as Account)).toBeUndefined();
+    it("returns undefined for a mode it does not describe", () => {
+      expect(describeOptimisticOperation("send", {} as Account, {})).toBeUndefined();
     });
 
     it("returns undefined for an account with no staking resources", () => {
-      expect(describeOptimisticOperation("claimReward", {} as Account)).toBeUndefined();
+      expect(describeOptimisticOperation("claimReward", {} as Account, {})).toBeUndefined();
       expect(
-        describeOptimisticOperation("claimReward", {
-          stakingResources: undefined,
-        } as unknown as Account),
+        describeOptimisticOperation(
+          "claimReward",
+          { stakingResources: undefined } as unknown as Account,
+          {},
+        ),
       ).toBeUndefined();
     });
 
@@ -214,9 +217,17 @@ describe("hedera bridge", () => {
         stakingResources: { pendingRewardsBalance: new BigNumber(42) },
       } as unknown as Account;
 
-      expect(describeOptimisticOperation("claimReward", account)).toEqual({
+      expect(describeOptimisticOperation("claimReward", account, {})).toEqual({
         value: new BigNumber(42),
       });
+    });
+
+    it("tags an association with its token id", () => {
+      expect(
+        describeOptimisticOperation("tokenAssociate", {} as Account, {
+          assetReference: "0.0.1234567",
+        }),
+      ).toEqual({ extra: { associatedTokenId: "0.0.1234567" } });
     });
   });
 
