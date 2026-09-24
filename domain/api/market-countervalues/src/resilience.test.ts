@@ -1,11 +1,20 @@
 // Degradation paths through the real endpoints: hung connections, malformed payloads, partial
-// batch failures, and the endpoints that must not retry.
+// batch failures, the endpoints that must not retry, and a currency the service stopped supporting.
 
 import { configureStore } from "@reduxjs/toolkit";
 import { countervaluesApi, cvsApiExtra } from "@shared/api-services";
+import type { Currency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import { initialState, pairId, type CounterValuesState } from "@domain/entity-market-countervalues";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
+import {
+  exportCountervalues,
+  importCountervalues,
+  initialState,
+  pairId,
+  type CounterValuesState,
+} from "@domain/entity-market-countervalues";
 import { marketCountervaluesApi } from "./api";
 import { RATE_REQUEST_TIMEOUT_MS } from "./internals/retry";
 import { loadCountervalues } from "./loadCountervalues";
@@ -154,6 +163,23 @@ describe("a malformed response", () => {
     expect(after.status[key]?.failures).toBeUndefined();
     expect(after.data[key]?.get("2018-03-01")).toBe(9000);
   });
+
+  test("a supported-crypto list that is not a list of ids is rejected with the schema detail", async () => {
+    fetchSpy = jest
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(() => Promise.resolve(json({ error: "maintenance" })));
+
+    const result = await makeStore().dispatch(
+      marketCountervaluesApi.endpoints.getCounterValueIdsSortedByMarketCap.initiate(),
+    );
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(result.data).toBeUndefined();
+    expect(result.error).toMatchObject({
+      status: "CUSTOM_ERROR",
+      error: expect.stringContaining("responseSchema rejected the response"),
+    });
+  });
 });
 
 describe("a partial batch failure", () => {
@@ -206,5 +232,157 @@ describe("endpoints moved from live-common's client", () => {
     );
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("a currency the service no longer supports", () => {
+  // Measured against the live service: the history of an id it dropped answers
+  // 422 {"type":"UNSUPPORTED_CURRENCY"}, and a spot batch answers 0 for it and real rates for the rest.
+  const DROPPED_ID = "ethereum/erc20/not_a_real_token_zz";
+  const HISTORY_DAY = "2026-05-20";
+  const T0 = Date.parse("2026-06-01T12:00:00.000Z");
+  const dropped = mockTokenCurrency({ id: TokenCurrencyIdSchema.parse(DROPPED_ID), ticker: "ZZ" });
+  const droppedKey = pairId({ from: dropped, to: usd });
+
+  function tracking(...froms: Currency[]) {
+    return {
+      ...settings,
+      trackingPairs: froms.map(from => ({ from, to: usd, startDate: new Date(T0 - 30 * DAY) })),
+    };
+  }
+
+  /** The live service, with `droppedIds` removed from its catalogue. */
+  function service(
+    droppedIds: readonly string[],
+    history: Record<string, number> = { [HISTORY_DAY]: 9000 },
+  ) {
+    return jest.spyOn(globalThis, "fetch").mockImplementation(input => {
+      const url = new URL((input as Request).url);
+      if (url.pathname.startsWith("/v3/historical/")) {
+        return Promise.resolve(
+          droppedIds.includes(url.searchParams.get("from") ?? "")
+            ? json({ type: "UNSUPPORTED_CURRENCY" }, 422)
+            : json(history),
+        );
+      }
+      const froms = url.searchParams.get("froms")?.split(",") ?? [];
+      return Promise.resolve(
+        json(Object.fromEntries(froms.map(id => [id, droppedIds.includes(id) ? 0 : 83065]))),
+      );
+    });
+  }
+
+  function historyRequestsFor(id: string): number {
+    return fetchSpy.mock.calls.filter(([input]) => {
+      const url = new URL((input as Request).url);
+      return url.pathname.startsWith("/v3/historical/") && url.searchParams.get("from") === id;
+    }).length;
+  }
+
+  /** When the backoff lets a pair be asked again: e^(failures / 2) seconds after its last try. */
+  function retryAt(lastTry: number, failures: number): number {
+    return lastTry + 1000 * Math.exp(failures / 2);
+  }
+
+  // Only the clock and the timers are simulated; response bodies still read through real microtasks.
+  beforeEach(() =>
+    jest.useFakeTimers({ now: T0, doNotFake: ["nextTick", "setImmediate", "queueMicrotask"] }),
+  );
+
+  test("a 422 counts twice against the pair, and the next load does not ask for its history", async () => {
+    fetchSpy = service([DROPPED_ID]);
+    const rates = makeRates(makeStore());
+    const only = tracking(dropped);
+
+    const failed = await loadCountervalues(initialState, only, { rates });
+
+    // daily and hourly, each asked once: a 422 is not retried
+    expect(historyRequestsFor(DROPPED_ID)).toBe(2);
+    expect(failed.status[droppedKey]).toMatchObject({ failures: 2, timestamp: T0 });
+
+    await loadCountervalues(failed, only, { rates });
+    expect(historyRequestsFor(DROPPED_ID)).toBe(2);
+  });
+
+  test("the backoff holds the pair until e^(failures / 2) seconds after its last try", async () => {
+    fetchSpy = service([DROPPED_ID]);
+    const rates = makeRates(makeStore());
+    const only = tracking(dropped);
+    let state = await loadCountervalues(initialState, only, { rates });
+    let lastTry = T0;
+
+    for (const failures of [2, 4, 6]) {
+      expect(state.status[droppedKey]).toMatchObject({ failures, timestamp: lastTry });
+      const next = retryAt(lastTry, failures);
+      const asked = historyRequestsFor(DROPPED_ID);
+
+      jest.setSystemTime(Math.floor(next));
+      state = await loadCountervalues(state, only, { rates });
+      expect(historyRequestsFor(DROPPED_ID)).toBe(asked);
+
+      lastTry = Math.ceil(next);
+      jest.setSystemTime(lastTry);
+      state = await loadCountervalues(state, only, { rates });
+      expect(historyRequestsFor(DROPPED_ID)).toBe(asked + 2);
+    }
+  });
+
+  test("the backoff survives an export and an import, so a restart does not ask again", async () => {
+    fetchSpy = service([DROPPED_ID]);
+    const rates = makeRates(makeStore());
+    const only = tracking(dropped);
+    const failed = await loadCountervalues(initialState, only, { rates });
+
+    const persisted = JSON.parse(JSON.stringify(exportCountervalues(failed, only.trackingPairs)));
+    const restored = importCountervalues(persisted, only);
+    expect(restored.status[droppedKey]).toEqual(failed.status[droppedKey]);
+
+    await loadCountervalues(restored, only, { rates });
+    expect(historyRequestsFor(DROPPED_ID)).toBe(2);
+  });
+
+  test("a spot batch in the service's real shape reads 0 for the dropped id and keeps the rest", async () => {
+    // history answers for both pairs here, so only the spot batch is under test
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(input => {
+      if ((input as Request).url.includes("/v3/historical/")) {
+        return Promise.resolve(json({ [HISTORY_DAY]: 9000 }));
+      }
+      return Promise.resolve(json({ bitcoin: 83065, [DROPPED_ID]: 0 }));
+    });
+
+    const state = await loadCountervalues(initialState, tracking(btc, dropped), {
+      rates: makeRates(makeStore()),
+    });
+
+    const spotRequests = fetchSpy.mock.calls.filter(([input]) =>
+      (input as Request).url.includes("/v3/spot/"),
+    );
+    expect(spotRequests).toHaveLength(1);
+    expect(state.data[key]?.get("latest")).toBe(83065);
+    expect(state.data[droppedKey]?.get("latest")).toBe(0);
+    expect(state.status[key]?.failures).toBeUndefined();
+    expect(state.status[droppedKey]?.failures).toBeUndefined();
+  });
+
+  test("two pairs, one dropped: the other pair keeps its data and counts no failure", async () => {
+    const rates = makeRates(makeStore());
+    const both = tracking(btc, dropped);
+    fetchSpy = service([]);
+    const seeded = await loadCountervalues(initialState, both, { rates });
+    expect(seeded.data[droppedKey]?.get(HISTORY_DAY)).toBe(9000);
+    fetchSpy.mockRestore();
+
+    // the next day, the service only sends the new day, and has dropped the token
+    jest.setSystemTime(T0 + DAY);
+    fetchSpy = service([DROPPED_ID], { "2026-05-21": 9100 });
+    const after = await loadCountervalues(seeded, both, { rates });
+
+    expect(after.data[key]?.get(HISTORY_DAY)).toBe(9000);
+    expect(after.data[key]?.get("2026-05-21")).toBe(9100);
+    expect(after.data[key]?.get("latest")).toBe(83065);
+    expect(after.status[key]?.failures).toBeUndefined();
+    // only the dropped pair loses its history and counts the failures
+    expect(after.data[droppedKey]?.get(HISTORY_DAY)).toBeUndefined();
+    expect(after.status[droppedKey]?.failures).toBe(2);
   });
 });
