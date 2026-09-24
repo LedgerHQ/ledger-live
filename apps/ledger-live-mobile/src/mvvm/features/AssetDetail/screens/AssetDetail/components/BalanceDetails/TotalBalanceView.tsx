@@ -1,8 +1,10 @@
 import React from "react";
-import { AmountDisplay, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { TransferVertical } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { AmountDisplay } from "LLM/components/AmountDisplay";
+import { AmountDisplay as OriginalAmountDisplay } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 
@@ -29,6 +31,14 @@ export function TotalBalanceView({
         <Text typography="body3" lx={{ color: "muted" }}>
           {t("assetDetail.balanceDetails.totalBalance")}
         </Text>
+        {counterValue != null && (
+          <OriginalAmountDisplay
+            value={counterValue}
+            formatter={counterValueFormatter}
+            hidden={discreet}
+            size="sm"
+          />
+        )}
         {counterValue != null && (
           <AmountDisplay
             value={counterValue}

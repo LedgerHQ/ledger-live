@@ -1,8 +1,10 @@
 import React from "react";
-import { AmountDisplay, Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ArrowDown } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { AmountDisplay } from "LLM/components/AmountDisplay";
+import { AmountDisplay as OriginalAmountDisplay } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { TrendSection } from "LLM/components/TrendSection";
 import { LineChart } from "LLM/components/LineChart";
@@ -173,6 +175,14 @@ export function BalanceGraphView({
 
           {(hasMarketData || isScrubbing) && (
             <>
+            <View style={{ flexDirection: "column", alignItems: "center", gap: 8 }}>
+              <OriginalAmountDisplay
+                value={price}
+                formatter={priceFormatter}
+                animate={!isScrubbing}
+                size="md"
+                testID={ASSET_DETAIL_TEST_IDS.marketPrice}
+              />
               <AmountDisplay
                 value={price}
                 formatter={priceFormatter}
@@ -180,6 +190,7 @@ export function BalanceGraphView({
                 size="md"
                 testID={ASSET_DETAIL_TEST_IDS.marketPrice}
               />
+            </View>
 
               <TrendSection
                 percentage={priceChangePercentage}

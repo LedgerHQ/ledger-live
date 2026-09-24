@@ -23,12 +23,10 @@ jest.mock("LLM/components/LineChart", () => ({
 // odometer that is awkward to assert against).
 let mockAmountDisplayAnimate: boolean | undefined;
 let mockAmountDisplaySize: "sm" | "md" | undefined;
-jest.mock("@ledgerhq/lumen-ui-rnative", () => {
-  const actual = jest.requireActual("@ledgerhq/lumen-ui-rnative");
+jest.mock("LLM/components/AmountDisplay", () => {
   const ReactActual = jest.requireActual("react");
   const { Text } = jest.requireActual("react-native");
   return {
-    ...actual,
     AmountDisplay: ({
       value,
       animate,
