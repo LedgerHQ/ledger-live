@@ -282,6 +282,35 @@ describe("Aptos sync logic", () => {
       expect(result).toHaveLength(0);
     });
 
+    it("should skip transactions with a non-function payload (e.g. script payload)", async () => {
+      const address = "0x11";
+      const id = "test_id";
+      const txs: AptosTransaction[] = [
+        {
+          hash: "0x123",
+          sender: "0x11",
+          gas_used: "200",
+          gas_unit_price: "100",
+          success: true,
+          payload: {
+            type: "script_payload",
+            code: { bytecode: "0x", abi: undefined },
+            type_arguments: [],
+            arguments: [],
+          },
+          events: [],
+          changes: [],
+          block: { hash: "0xabc", height: 1 },
+          timestamp: "1000000",
+          sequence_number: "1",
+        } as unknown as AptosTransaction,
+      ];
+
+      const [result] = await txsToOps({ address }, id, txs);
+
+      expect(result).toHaveLength(0);
+    });
+
     it("should skip transactions that result in no Aptos change", async () => {
       const address = "0x11";
       const id = "test_id";

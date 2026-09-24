@@ -1,4 +1,3 @@
-import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   encodeTokenAccountId,
@@ -84,9 +83,11 @@ export const txsToOps = async (
       const op: Operation = getBlankOperation(tx, id);
       op.fee = new BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price));
 
-      const payload = convertFunctionPayloadResponseToInputEntryFunctionData(
-        tx.payload as EntryFunctionPayloadResponse,
-      );
+      const payload = convertFunctionPayloadResponseToInputEntryFunctionData(tx.payload);
+
+      if (!payload) {
+        continue; // skip transaction without a function payload (e.g. script/multisig payloads)
+      }
 
       const function_address = getFunctionAddress(payload);
 
