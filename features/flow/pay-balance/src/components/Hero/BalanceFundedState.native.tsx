@@ -22,7 +22,7 @@ export function BalanceFundedState({
 }: BalanceFundedStateProps) {
   return (
     <Box
-      lx={{ alignItems: "center", justifyContent: "center", gap: "s16", paddingVertical: "s32" }}
+      lx={{ alignItems: "center", justifyContent: "center", gap: "s16" }}
       testID="pay-card-balance-funded-state"
     >
       <AmountDisplay
