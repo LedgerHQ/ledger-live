@@ -195,6 +195,17 @@ jest.mock(
   { virtual: true },
 );
 
+jest.mock("react-native-blob-util", () => ({
+  __esModule: true,
+  default: {
+    fs: {
+      dirs: { DocumentDir: "/docs" },
+      writeFile: jest.fn(),
+      readFile: jest.fn(),
+    },
+  },
+}));
+
 jest.mock("react-native-view-shot", () => ({
   captureRef: jest.fn(() => Promise.resolve("file://mock.png")),
 }));

@@ -34,8 +34,6 @@ function readPackage(pkg, context) {
       }),
 
       /* Other packages */
-      addDependencies("rn-fetch-blob", { lodash: "*" }),
-
       addPeerDependencies("app-builder-lib", {
         lodash: "*",
       }),
