@@ -41,6 +41,8 @@ export SPECULOS_DEVICE="nanoX"          # Options: nanoSP | nanoX | nanoS | stax
 
 Consider adding these exports to your profile so they persist.
 
+Specs under `specs/paytab/` also need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET`. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md).
+
 ### 3. Build
 
 All build commands below are run from the **repo root** (`ledger-live/`).
