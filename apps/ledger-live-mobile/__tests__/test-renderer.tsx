@@ -61,7 +61,6 @@ import { getEnv } from "@shared/env";
 import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
 import { LinkingProvider } from "@shared/linking";
 import StyleProvider from "~/StyleProvider";
-import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 
 const INITIAL_STATE: State = {
@@ -290,14 +289,22 @@ function Providers({
   renderType?: RenderType;
   navigationInitialState?: InitialState;
 }): React.JSX.Element {
-  // Custom live app provider
-  const content = withLiveApp ? (
-    <CustomLiveAppProvider>
+  // Custom live app provider. Required lazily: it pulls in live-common's wallet-api graph,
+  // which only the withLiveApp render path needs.
+  let content: React.JSX.Element;
+  if (withLiveApp) {
+    const CustomLiveAppProvider: typeof import("./CustomLiveAppProvider").default =
+      require("./CustomLiveAppProvider").default;
+    content = (
+      <CustomLiveAppProvider>
+        <NavigationContainer initialState={navigationInitialState}>{children}</NavigationContainer>
+      </CustomLiveAppProvider>
+    );
+  } else {
+    content = (
       <NavigationContainer initialState={navigationInitialState}>{children}</NavigationContainer>
-    </CustomLiveAppProvider>
-  ) : (
-    <NavigationContainer initialState={navigationInitialState}>{children}</NavigationContainer>
-  );
+    );
+  }
 
   // Conditionally wraps content with additional providers unless using hook-based rendering
   const extraProviders =
