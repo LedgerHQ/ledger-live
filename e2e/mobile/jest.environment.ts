@@ -42,6 +42,7 @@ import type { ServerData } from "~/e2e/bridge/types";
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 import { withTimeout } from "@e2e/utils/withTimeout";
+import { armWorkerWatchdog, setWatchdogState } from "@e2e/helpers/workerWatchdog";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
@@ -165,8 +166,15 @@ function installSpeculosTerminationHandlers() {
 
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
+  /** Set by Detox's environment constructor, relative to cwd. */
+  declare readonly testPath: string;
 
   async setup() {
+    // First thing: device allocation and app install happen in super.setup(), and
+    // a freeze during them must be caught too (QAA-1365).
+    armWorkerWatchdog();
+    setWatchdogState({ spec: this.testPath, phase: "setup" });
+
     const workerId = Number(process.env.JEST_WORKER_ID ?? "1");
     if (workerId > 1) this.setupDeviceForSecondaryWorker(workerId);
     await super.setup();
@@ -301,6 +309,10 @@ export default class TestEnvironment extends DetoxEnvironment {
   }
 
   async teardown() {
+    // Still watched: in the 2026-09-14 occurrence the silence began after the last
+    // spec had reported, so the freeze may be in here.
+    setWatchdogState({ phase: "teardown" });
+
     try {
       await withTimeout(cleanupAllSpeculos(), SLOW_DIAGNOSTIC_TIMEOUT_MS, "cleanupAllSpeculos");
     } catch (error) {
@@ -336,9 +348,14 @@ export default class TestEnvironment extends DetoxEnvironment {
     }
 
     await super.teardown();
+    // The worker stays watched while idle: it only stops beating if its loop freezes.
+    setWatchdogState({ spec: "<idle>", phase: "idle" });
   }
 
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
+    if (event.name === "test_start") setWatchdogState({ phase: `test: ${event.test.name}` });
+    else if (event.name === "test_done") setWatchdogState({ phase: `done: ${event.test.name}` });
+
     if (event.name === "hook_failure") {
       this.global.IS_FAILED = true;
       await captureFailureDiagnostics(this.global.mergedFeatureFlags);
