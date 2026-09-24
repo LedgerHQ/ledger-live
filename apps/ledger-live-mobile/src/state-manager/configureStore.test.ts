@@ -279,6 +279,22 @@ describe("mobile store", () => {
       expect(after).toBe("https://after.test");
     });
   });
+
+  describe("startup wiring", () => {
+    beforeEach(() => {
+      jest.resetModules();
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    it("registers the rate lookups when the store module loads", () => {
+      const { store } = require("./configureStore");
+      const { setupRateLookups } = require("~/config/bridge-setup");
+
+      expect(store).toBeDefined();
+      expect(setupRateLookups).toHaveBeenCalledTimes(1);
+    });
+  });
 });
 
 type AuthThunk = (
