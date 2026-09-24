@@ -80,6 +80,8 @@ const transformIncludePatterns = [
 ];
 
 const commonConfig = {
+  /** CI restores this directory between runs so Jest does not re-transform every file (cold cache ≈ 3.5x CPU). */
+  ...(process.env.JEST_CACHE_DIRECTORY ? { cacheDirectory: process.env.JEST_CACHE_DIRECTORY } : {}),
   testEnvironment: "jsdom",
   clearMocks: true,
   restoreMocks: true,

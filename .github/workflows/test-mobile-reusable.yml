@@ -143,8 +143,28 @@ jobs:
       - name: Build dependencies
         run: pnpm exec nx run live-mobile:build-lib-deps
 
+      # Jest's transform cache is keyed by file content and config, so a stale restore is harmless:
+      # changed files are simply re-transformed. A cold cache costs ~3.5x the CPU of a warm one.
+      - name: Restore Jest cache
+        uses: tespkg/actions-cache@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        continue-on-error: true
+        with:
+          path: ${{ runner.temp }}/jest-cache-mobile
+          key: ${{ runner.os }}-jest-mobile-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-jest-mobile-${{ hashFiles('pnpm-lock.yaml') }}-
+            ${{ runner.os }}-jest-mobile-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
       - name: Run unit tests
         shell: bash
+        env:
+          JEST_CACHE_DIRECTORY: ${{ runner.temp }}/jest-cache-mobile
         run: |
           set -euo pipefail
           CPUS="$(nproc 2>/dev/null || echo "?")"
