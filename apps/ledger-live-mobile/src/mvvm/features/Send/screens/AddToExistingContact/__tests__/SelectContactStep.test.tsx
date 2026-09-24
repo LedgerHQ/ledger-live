@@ -1,4 +1,5 @@
 import React from "react";
+import { SafeAreaInsetsContext } from "react-native-safe-area-context";
 import { render, screen, userEvent } from "@tests/test-renderer";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { createPopulatedContactsListViewModel } from "@features/flow-contacts-list";
@@ -71,5 +72,29 @@ describe("SelectContactStep", () => {
     await user.press(screen.getByTestId("contacts-saved-contact-contact-ada"));
 
     expect(onOpenContact).toHaveBeenCalledWith(ada.id);
+  });
+
+  it("should leave the bottom safe area to the sheet host", () => {
+    render(
+      <SafeAreaInsetsContext.Provider value={{ top: 0, right: 0, bottom: 48, left: 0 }}>
+        <SelectContactStep
+          title="Select contact"
+          viewModel={viewModel}
+          labels={labels}
+          meAvatarSrc="https://example.com/me.png"
+          searchQuery=""
+          onSearchQueryChange={jest.fn()}
+          onOpenContact={jest.fn()}
+          onAddContact={jest.fn()}
+          isOpeningAddressFlow={false}
+        />
+      </SafeAreaInsetsContext.Provider>,
+    );
+
+    expect(screen.getByTestId("contacts-list")).toHaveProp("contentContainerStyle", {
+      paddingHorizontal: 16,
+      paddingTop: 8,
+      paddingBottom: 8,
+    });
   });
 });

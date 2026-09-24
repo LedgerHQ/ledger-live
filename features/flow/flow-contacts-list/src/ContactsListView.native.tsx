@@ -5,6 +5,7 @@ import {
   type SectionListData,
   type SectionListRenderItemInfo,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactsListItem, ContactsListSection, ContactsListViewNativeProps } from "./types";
 import { createContactsListRowLayouts } from "./utils";
@@ -17,6 +18,7 @@ import { ContactsSectionHeader } from "./components/ContactsList/Section/Contact
 import { useContactsSectionIndex } from "./components/ContactsList/Section/useContactsSectionIndex.native";
 
 const noContactsListSections: readonly never[] = [];
+const listContentPaddingBottom = 8;
 
 export function ContactsListView({
   viewModel,
@@ -32,6 +34,12 @@ export function ContactsListView({
   const isPopulated = viewModel.displayMode === "populated";
   const hasNoResults = "status" in viewModel && viewModel.status === "no-results";
   const me = "me" in viewModel ? viewModel.me : undefined;
+  const { bottom: bottomSafeAreaInset } = useSafeAreaInsets();
+  // The full page is drawn edge to edge, so the last row would sit under the Android navigation bar
+  // or the iOS home indicator. A bottom sheet host already spaces itself off them, and padding here
+  // too would leave dead space at the end of its list.
+  const paddingBottom =
+    surface === "base" ? listContentPaddingBottom + bottomSafeAreaInset : listContentPaddingBottom;
   const listRef = useRef<SectionList<ContactsListItem, ContactsListSection> | null>(null);
   const [listHeight, setListHeight] = useState(0);
   const [sectionHeaderHeight, setSectionHeaderHeight] = useState(0);
@@ -131,7 +139,7 @@ export function ContactsListView({
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingTop: 8,
-            paddingBottom: 8,
+            paddingBottom,
           }}
           showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
