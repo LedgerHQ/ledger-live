@@ -96,7 +96,11 @@ describe("request shape", () => {
 
 describe("retry policy, measured", () => {
   async function attemptsFor(status: number): Promise<number> {
-    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(json({ error: "no" }, status));
+    // A fresh Response per call: a shared one fails on its second read, and RTK retries that
+    // exception whatever the retry condition says, which would fake the count.
+    fetchSpy = jest
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(() => Promise.resolve(json({ error: "no" }, status)));
     const store = makeStore();
 
     await store.dispatch(

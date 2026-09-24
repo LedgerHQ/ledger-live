@@ -12,7 +12,7 @@ import type {
 } from "./schema";
 import { extractUsdToFiatRate } from "./internals/extractUsdToFiatRate";
 import { pickNumericRates } from "./internals/rates";
-import { rateFetchRetryOptions } from "./internals/retry";
+import { noRetryOptions, RATE_REQUEST_TIMEOUT_MS, rateFetchRetryOptions } from "./internals/retry";
 import { COUNTERVALUES_TAGS, describeSchemaFailure } from "./internals/describeSchemaFailure";
 import type { HistoricalRatesArgs, SpotRatesArgs } from "./types";
 
@@ -38,6 +38,7 @@ export const marketCountervaluesApi = countervaluesApi
         query: ({ granularity, from, to, start, end }) => ({
           url: `/v3/historical/${granularity}/simple`,
           params: { from, to, start, end },
+          timeout: RATE_REQUEST_TIMEOUT_MS,
         }),
         rawResponseSchema: RawRatesResponseSchema,
         transformResponse: (raw: RawRatesResponse) => pickNumericRates(raw),
@@ -50,6 +51,7 @@ export const marketCountervaluesApi = countervaluesApi
         query: ({ to, froms }) => ({
           url: "/v3/spot/simple",
           params: { to, froms: froms.join(",") },
+          timeout: RATE_REQUEST_TIMEOUT_MS,
         }),
         rawResponseSchema: RawRatesResponseSchema,
         transformResponse: (raw: RawRatesResponse) => pickNumericRates(raw),
@@ -64,6 +66,7 @@ export const marketCountervaluesApi = countervaluesApi
         keepUnusedDataFor: THIRTY_MINUTES,
         responseSchema: CounterValueIdsSortedByMarketCapSchema,
         catchSchemaFailure: describeSchemaFailure,
+        extraOptions: noRetryOptions,
       }),
 
       getUsdToFiatRate: build.query<number | null, { to: string }>({
@@ -76,6 +79,7 @@ export const marketCountervaluesApi = countervaluesApi
         rawResponseSchema: SpotSimpleResponseSchema,
         catchSchemaFailure: describeSchemaFailure,
         transformResponse: (res: SpotSimpleResponse) => extractUsdToFiatRate(res),
+        extraOptions: noRetryOptions,
         keepUnusedDataFor: ONE_MINUTE,
       }),
     }),
