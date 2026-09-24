@@ -3,6 +3,7 @@ jest.mock("../network/sdk", () => ({ getVotes: jest.fn(), getPendingWithdrawals:
 import { BigNumber } from "bignumber.js";
 import { getPendingWithdrawals, getVotes } from "../network/sdk";
 import { getStakes } from "./getStakes";
+import { mockCeloConfig } from "../test/context";
 
 const ADDR = "0x7777777777777777777777777777777777777777";
 const GROUP = "0x4444444444444444444444444444444444444444";
@@ -33,7 +34,7 @@ describe("getStakes", () => {
       },
     ]);
 
-    const page = await getStakes(ADDR);
+    const page = await getStakes(mockCeloConfig, ADDR);
 
     expect(page.items).toHaveLength(2);
     const [pending, active] = page.items;
@@ -60,7 +61,7 @@ describe("getStakes", () => {
       { value: new BigNumber(70), time: new BigNumber(future), index: 1 },
     ]);
 
-    const page = await getStakes(ADDR);
+    const page = await getStakes(mockCeloConfig, ADDR);
 
     expect(page.items).toHaveLength(2);
     const [matured, notYet] = page.items;
@@ -78,7 +79,7 @@ describe("getStakes", () => {
     (getVotes as jest.Mock).mockResolvedValue([]);
     (getPendingWithdrawals as jest.Mock).mockResolvedValue([]);
 
-    const page = await getStakes(ADDR);
+    const page = await getStakes(mockCeloConfig, ADDR);
 
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();
@@ -88,7 +89,7 @@ describe("getStakes", () => {
     (getVotes as jest.Mock).mockResolvedValue([]);
     (getPendingWithdrawals as jest.Mock).mockRejectedValue(new Error("execution reverted"));
 
-    const page = await getStakes(ADDR);
+    const page = await getStakes(mockCeloConfig, ADDR);
 
     expect(page.items).toEqual([]);
   });

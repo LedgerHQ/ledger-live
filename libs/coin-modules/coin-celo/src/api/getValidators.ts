@@ -1,5 +1,6 @@
 import type { Cursor, Page, Validator } from "@ledgerhq/coin-module-framework/api/index";
 import { getValidatorGroups } from "../network/hubble";
+import type { CeloConfigInfo } from "../config";
 
 /**
  * Lists the Celo validator **groups** available to vote for, mapped to the
@@ -11,8 +12,11 @@ import { getValidatorGroups } from "../network/hubble";
  * groups are returned in one page (no cursor). `commissionRate`/`apy` are omitted
  * — Celo does not surface per-group values through this path.
  */
-export const getValidators = async (_cursor?: Cursor): Promise<Page<Validator>> => {
-  const groups = await getValidatorGroups();
+export const getValidators = async (
+  config: CeloConfigInfo,
+  _cursor?: Cursor,
+): Promise<Page<Validator>> => {
+  const groups = await getValidatorGroups(config);
 
   const items: Validator[] = groups.map(group => ({
     id: group.address,

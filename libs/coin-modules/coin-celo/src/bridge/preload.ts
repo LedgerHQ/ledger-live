@@ -4,6 +4,7 @@ import { Observable, Subject } from "rxjs";
 import { PRELOAD_MAX_AGE } from "../logic";
 import { getValidatorGroups } from "../network";
 import type { CeloPreloadData, CeloValidatorGroup } from "../types";
+import { bridgeCoinConfig } from "./coinConfig";
 
 let currentCeloPreloadedData: CeloPreloadData = {
   validatorGroups: [],
@@ -56,7 +57,7 @@ export const preload = async (): Promise<CeloPreloadData> => {
   // Always refetch (gated by preloadMaxAge); guarding on the hydrated list would pin it forever.
   log("celo/preload", "refreshing celo validatorGroups...");
   try {
-    validatorGroups = await getValidatorGroups();
+    validatorGroups = await getValidatorGroups(bridgeCoinConfig());
   } catch (error) {
     log("celo/preload", "failed to fetch validatorGroups", { error });
   }

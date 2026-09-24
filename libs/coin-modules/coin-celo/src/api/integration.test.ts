@@ -17,6 +17,7 @@ import { parseTransaction } from "viem/celo";
 import { combine } from "./combine";
 import { craftTransaction } from "./craftTransaction";
 import { estimateFees } from "./estimateFees";
+import { mainnetCeloConfig } from "../test/context";
 
 const SENDER = "0xAAAa0000000000000000000000000000000000aA";
 const RECIPIENT = "0x1234567890123456789012345678901234567890";
@@ -44,8 +45,8 @@ describe("api integration: estimate → craft → combine", () => {
   it("native CELO: estimated fees produce a signable eip1559 transaction", async () => {
     const intent = makeIntent({ type: "native" }, { sequence: 0n });
 
-    const fees = await estimateFees(intent);
-    const crafted = await craftTransaction(intent, fees);
+    const fees = await estimateFees(mainnetCeloConfig, intent);
+    const crafted = await craftTransaction(mainnetCeloConfig, intent, fees);
     const tx = parseTransaction(combine(crafted.transaction, SIG) as `0x${string}`);
 
     expect(tx.type).toBe("eip1559");
@@ -62,10 +63,10 @@ describe("api integration: estimate → craft → combine", () => {
       { sequence: 0n, amount: 1000n },
     );
 
-    const fees = await estimateFees(intent, { feeCurrency: USDC_CONTRACT });
+    const fees = await estimateFees(mainnetCeloConfig, intent, { feeCurrency: USDC_CONTRACT });
     expect(fees.parameters?.feeCurrency).toBe(USDC_ADAPTER);
 
-    const crafted = await craftTransaction(intent, fees);
+    const crafted = await craftTransaction(mainnetCeloConfig, intent, fees);
     const tx = parseTransaction(combine(crafted.transaction, SIG) as `0x${string}`);
 
     expect(tx.type).toBe("cip64");

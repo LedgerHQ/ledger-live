@@ -34,13 +34,14 @@ jest.mock("../network/client", () => {
 });
 
 import { createApi as createEvmApi } from "@ledgerhq/coin-evm/api/index";
-import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { getCeloClient } from "../network/client";
 import { createApi } from "./index";
+import type { CeloConfigInfo } from "../config";
+import { mockCeloConfig } from "../test/context";
 
-const mockCtx: Context<EvmConfigInfo> = {
-  config: async () => ({}) as EvmConfigInfo,
+const mockCtx: Context<CeloConfigInfo> = {
+  config: async () => mockCeloConfig,
   logger: () => {},
 };
 

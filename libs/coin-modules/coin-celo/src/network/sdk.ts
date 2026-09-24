@@ -4,6 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { celoGasPrice, getCeloClient } from "./client";
 import { getRegistryAddressFor } from "./registry";
 import type { CeloVote } from "../types/types";
+import type { CeloConfigInfo } from "../config";
 
 /**
  * CIP-64 transaction type byte. See https://github.com/celo-org/celo-proposals/blob/master/CIPs/cip-0064.md
@@ -42,9 +43,12 @@ const isHexHash = (s: string): s is `0x${string}` => TX_HASH_RE.test(s);
  * Callers MUST distinguish `null` from a thrown error: persisting "native" for
  * a transient RPC failure would permanently mis-label a real CIP-64 op.
  */
-export const getCeloTransactionFeeCurrency = async (hash: string): Promise<string | null> => {
+export const getCeloTransactionFeeCurrency = async (
+  config: CeloConfigInfo,
+  hash: string,
+): Promise<string | null> => {
   if (!isHexHash(hash)) throw new Error(`Invalid Celo tx hash: ${hash}`);
-  const client = getCeloClient();
+  const client = getCeloClient(config);
   const result: unknown = await client.request({
     method: "eth_getTransactionByHash",
     params: [hash],
@@ -62,9 +66,12 @@ export const getCeloTransactionFeeCurrency = async (hash: string): Promise<strin
 /**
  * Fetch account registered status. To lock any Celo, account needs to be registered first.
  */
-export const getAccountRegistrationStatus = async (address: string): Promise<boolean> => {
-  const client = getCeloClient();
-  const accountsAddress = await getRegistryAddressFor("Accounts");
+export const getAccountRegistrationStatus = async (
+  config: CeloConfigInfo,
+  address: string,
+): Promise<boolean> => {
+  const client = getCeloClient(config);
+  const accountsAddress = await getRegistryAddressFor(config, "Accounts");
   return client.readContract({
     address: accountsAddress,
     abi: accountsABI,
@@ -76,9 +83,9 @@ export const getAccountRegistrationStatus = async (address: string): Promise<boo
 /**
  * Fetch pending withdrawals, with an index.
  */
-export const getPendingWithdrawals = async (address: string) => {
-  const client = getCeloClient();
-  const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
+export const getPendingWithdrawals = async (config: CeloConfigInfo, address: string) => {
+  const client = getCeloClient(config);
+  const lockedGoldAddress = await getRegistryAddressFor(config, "LockedGold");
   const [values, timestamps] = await client.readContract({
     address: lockedGoldAddress,
     abi: lockedGoldABI,
@@ -103,10 +110,10 @@ export const getPendingWithdrawals = async (address: string) => {
  * its behaviour by listing the groups voted for and then querying pending /
  * active stakes group-by-group.
  */
-export const getVotes = async (address: string): Promise<CeloVote[]> => {
-  const client = getCeloClient();
-  const electionAddress = await getRegistryAddressFor("Election");
-  const signerAddress = (await voteSignerAccount(address)) as `0x${string}`;
+export const getVotes = async (config: CeloConfigInfo, address: string): Promise<CeloVote[]> => {
+  const client = getCeloClient(config);
+  const electionAddress = await getRegistryAddressFor(config, "Election");
+  const signerAddress = (await voteSignerAccount(config, address)) as `0x${string}`;
 
   let groups: readonly `0x${string}`[];
   try {
@@ -187,9 +194,9 @@ export const getVotes = async (address: string): Promise<CeloVote[]> => {
  * Cache is held for 1 hour since vote signer is usually the same account.
  */
 export const voteSignerAccount = makeLRUCache(
-  async (address: string): Promise<string> => {
-    const client = getCeloClient();
-    const accountsAddress = await getRegistryAddressFor("Accounts");
+  async (config: CeloConfigInfo, address: string): Promise<string> => {
+    const client = getCeloClient(config);
+    const accountsAddress = await getRegistryAddressFor(config, "Accounts");
     return client.readContract({
       address: accountsAddress,
       abi: accountsABI,
@@ -197,7 +204,7 @@ export const voteSignerAccount = makeLRUCache(
       args: [address as `0x${string}`],
     });
   },
-  address => address,
+  (_config, address) => address,
   {
     ttl: 60 * 60 * 1000, // 1 hour
   },
@@ -208,11 +215,12 @@ export const voteSignerAccount = makeLRUCache(
  * Returns maxFeePerGas and maxPriorityFeePerGas as bigint.
  */
 export const getFeeMarketGasParams = async (
+  config: CeloConfigInfo,
   feeCurrency?: `0x${string}`,
 ): Promise<{ maxFeePerGas: bigint; maxPriorityFeePerGas: bigint }> => {
-  const client = getCeloClient();
+  const client = getCeloClient(config);
   const [gasPrice, maxPriorityFeePerGas] = await Promise.all([
-    celoGasPrice(feeCurrency),
+    celoGasPrice(config, feeCurrency),
     client.estimateMaxPriorityFeePerGas(),
   ]);
 

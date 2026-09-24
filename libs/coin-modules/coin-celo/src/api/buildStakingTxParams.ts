@@ -6,6 +6,7 @@ import { getPendingWithdrawals, voteSignerAccount } from "../network/sdk";
 import { getVoteNeighbors } from "../network/voteNeighbors";
 import type { CeloTxParams } from "./buildCeloTxParams";
 import type { CeloStakingIntent } from "./stakingIntent";
+import type { CeloConfigInfo } from "../config";
 
 /** Resolve the target validator group from `valAddress`, or `recipient` (the channel the framework populates). */
 const requireGroup = (intent: CeloStakingIntent): `0x${string}` => {
@@ -22,8 +23,11 @@ const requireGroup = (intent: CeloStakingIntent): `0x${string}` => {
  * matured entry. `getPendingWithdrawals` assigns each entry its on-chain array
  * index before sorting by maturity, so the returned index is the contract index.
  */
-const resolveWithdrawIndex = async (intent: CeloStakingIntent): Promise<bigint> => {
-  const pending = await getPendingWithdrawals(intent.sender);
+const resolveWithdrawIndex = async (
+  config: CeloConfigInfo,
+  intent: CeloStakingIntent,
+): Promise<bigint> => {
+  const pending = await getPendingWithdrawals(config, intent.sender);
   const nowSeconds = Math.floor(Date.now() / 1000);
 
   if (typeof intent.index === "number") {
@@ -47,12 +51,13 @@ const resolveWithdrawIndex = async (intent: CeloStakingIntent): Promise<bigint> 
  * from `getGroupsVotedForByAccount` rather than assuming position 0.
  */
 const resolveVotedGroupIndex = async (
+  config: CeloConfigInfo,
   sender: string,
   electionAddress: `0x${string}`,
   group: `0x${string}`,
 ): Promise<bigint> => {
-  const signer = (await voteSignerAccount(sender)) as `0x${string}`;
-  const groups = await getCeloClient().readContract({
+  const signer = (await voteSignerAccount(config, sender)) as `0x${string}`;
+  const groups = await getCeloClient(config).readContract({
     address: electionAddress,
     abi: electionABI,
     functionName: "getGroupsVotedForByAccount",
@@ -71,15 +76,16 @@ const resolveVotedGroupIndex = async (
  * they differ only by the contract function called.
  */
 const buildRevokeTxParams = async (
+  config: CeloConfigInfo,
   intent: CeloStakingIntent,
   functionName: "revokePending" | "revokeActive",
   feeCurrencyField: { feeCurrency?: `0x${string}` },
 ): Promise<CeloTxParams> => {
-  const to = await getRegistryAddressFor("Election");
+  const to = await getRegistryAddressFor(config, "Election");
   const group = requireGroup(intent);
   const [{ lesser, greater }, index] = await Promise.all([
-    getVoteNeighbors(to, group, intent.amount, false),
-    resolveVotedGroupIndex(intent.sender, to, group),
+    getVoteNeighbors(config, to, group, intent.amount, false),
+    resolveVotedGroupIndex(config, intent.sender, to, group),
   ]);
   return {
     to,
@@ -105,6 +111,7 @@ const buildRevokeTxParams = async (
  * it is orthogonal to the staking operation.
  */
 export const buildStakingTxParams = async (
+  config: CeloConfigInfo,
   intent: CeloStakingIntent,
   feeCurrency?: `0x${string}`,
 ): Promise<CeloTxParams> => {
@@ -112,7 +119,7 @@ export const buildStakingTxParams = async (
 
   switch (intent.type) {
     case "celo.register": {
-      const to = await getRegistryAddressFor("Accounts");
+      const to = await getRegistryAddressFor(config, "Accounts");
       return {
         to,
         data: encodeFunctionData({ abi: accountsABI, functionName: "createAccount" }),
@@ -122,7 +129,7 @@ export const buildStakingTxParams = async (
     }
 
     case "celo.lock": {
-      const to = await getRegistryAddressFor("LockedGold");
+      const to = await getRegistryAddressFor(config, "LockedGold");
       return {
         to,
         data: encodeFunctionData({ abi: lockedGoldABI, functionName: "lock" }),
@@ -132,7 +139,7 @@ export const buildStakingTxParams = async (
     }
 
     case "celo.unlock": {
-      const to = await getRegistryAddressFor("LockedGold");
+      const to = await getRegistryAddressFor(config, "LockedGold");
       return {
         to,
         data: encodeFunctionData({
@@ -146,8 +153,8 @@ export const buildStakingTxParams = async (
     }
 
     case "celo.withdraw": {
-      const to = await getRegistryAddressFor("LockedGold");
-      const index = await resolveWithdrawIndex(intent);
+      const to = await getRegistryAddressFor(config, "LockedGold");
+      const index = await resolveWithdrawIndex(config, intent);
       return {
         to,
         data: encodeFunctionData({
@@ -161,18 +168,18 @@ export const buildStakingTxParams = async (
     }
 
     case "celo.vote": {
-      const to = await getRegistryAddressFor("Election");
+      const to = await getRegistryAddressFor(config, "Election");
       const group = requireGroup(intent);
       // Reject a vote that would exceed the group's cap *before* crafting, so the
       // failure surfaces here rather than as a masked `eth_estimateGas` revert.
       const [canVote, { lesser, greater }] = await Promise.all([
-        getCeloClient().readContract({
+        getCeloClient(config).readContract({
           address: to,
           abi: electionABI,
           functionName: "canReceiveVotes",
           args: [group, intent.amount],
         }),
-        getVoteNeighbors(to, group, intent.amount, true),
+        getVoteNeighbors(config, to, group, intent.amount, true),
       ]);
       if (!canVote) {
         throw new Error(
@@ -192,7 +199,7 @@ export const buildStakingTxParams = async (
     }
 
     case "celo.activate": {
-      const to = await getRegistryAddressFor("Election");
+      const to = await getRegistryAddressFor(config, "Election");
       const group = requireGroup(intent);
       return {
         to,
@@ -207,10 +214,10 @@ export const buildStakingTxParams = async (
     }
 
     case "celo.revokePending":
-      return buildRevokeTxParams(intent, "revokePending", feeCurrencyField);
+      return buildRevokeTxParams(config, intent, "revokePending", feeCurrencyField);
 
     case "celo.revokeActive":
-      return buildRevokeTxParams(intent, "revokeActive", feeCurrencyField);
+      return buildRevokeTxParams(config, intent, "revokeActive", feeCurrencyField);
 
     default:
       throw new Error(`celo: unsupported staking operation "${(intent as { type: string }).type}"`);

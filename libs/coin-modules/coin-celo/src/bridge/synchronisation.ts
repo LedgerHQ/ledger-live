@@ -34,6 +34,7 @@ import {
 } from "../network/sdk";
 import { CeloAccount, isCeloOperationExtra } from "../types/types";
 import { getTokenFromAsset } from "./getTokenFromAsset";
+import { bridgeCoinConfig } from "./coinConfig";
 
 const buildEvmContext = (currencyId: string): EvmContext => ({
   config: async () => getCoinConfig(currencyId).info,
@@ -206,7 +207,7 @@ const getOperationsList = async ({
   const results = await promiseAllBatched(
     FEE_CURRENCY_ENRICH_CONCURRENCY,
     hashesToFetch,
-    (h: string) => getCeloTransactionFeeCurrency(h).catch(() => undefined),
+    (h: string) => getCeloTransactionFeeCurrency(bridgeCoinConfig(), h).catch(() => undefined),
   );
   const fetched = new Map<string, string>();
   hashesToFetch.forEach((h, idx) => {
@@ -296,10 +297,10 @@ const getSubAccounts = async ({
 export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config) => {
   const { address, currency, initialAccount, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
-  const client = getCeloClient();
+  const client = getCeloClient(bridgeCoinConfig());
   const [electionAddress, lockedGoldAddress] = await Promise.all([
-    getRegistryAddressFor("Election"),
-    getRegistryAddressFor("LockedGold"),
+    getRegistryAddressFor(bridgeCoinConfig(), "Election"),
+    getRegistryAddressFor(bridgeCoinConfig(), "LockedGold"),
   ]);
 
   const [maxNumGroupsVotedFor, lockedBalance, nonvotingLockedBalance] = await Promise.all([
@@ -330,9 +331,11 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
     derivationMode,
   });
 
-  const accountRegistrationStatus = await getAccountRegistrationStatus(address);
-  const pendingWithdrawals = accountRegistrationStatus ? await getPendingWithdrawals(address) : [];
-  const votes = accountRegistrationStatus ? await getVotes(address) : [];
+  const accountRegistrationStatus = await getAccountRegistrationStatus(bridgeCoinConfig(), address);
+  const pendingWithdrawals = accountRegistrationStatus
+    ? await getPendingWithdrawals(bridgeCoinConfig(), address)
+    : [];
+  const votes = accountRegistrationStatus ? await getVotes(bridgeCoinConfig(), address) : [];
 
   const lockedBalanceBN = new BigNumber(lockedBalance.toString());
   const nonvotingLockedBalanceBN = new BigNumber(nonvotingLockedBalance.toString());

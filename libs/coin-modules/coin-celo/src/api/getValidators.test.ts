@@ -3,6 +3,7 @@ jest.mock("../network/hubble", () => ({ getValidatorGroups: jest.fn() }));
 import { BigNumber } from "bignumber.js";
 import { getValidatorGroups } from "../network/hubble";
 import { getValidators } from "./getValidators";
+import { mockCeloConfig } from "../test/context";
 
 const GROUP = "0x4444444444444444444444444444444444444444";
 
@@ -14,7 +15,7 @@ describe("getValidators", () => {
       { address: GROUP, name: "Group A", votes: new BigNumber("1500000000000000000000") },
     ]);
 
-    const page = await getValidators();
+    const page = await getValidators(mockCeloConfig);
 
     expect(page.items).toHaveLength(1);
     expect(page.items[0].address).toBe(GROUP);
@@ -26,7 +27,7 @@ describe("getValidators", () => {
   it("returns an empty page when there are no eligible groups", async () => {
     (getValidatorGroups as jest.Mock).mockResolvedValue([]);
 
-    const page = await getValidators();
+    const page = await getValidators(mockCeloConfig);
 
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();

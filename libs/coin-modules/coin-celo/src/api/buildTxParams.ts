@@ -6,6 +6,7 @@ import type {
 import { buildCeloTxParams, type CeloTxParams } from "./buildCeloTxParams";
 import { buildStakingTxParams } from "./buildStakingTxParams";
 import { isCeloStakingIntent } from "./stakingIntent";
+import type { CeloConfigInfo } from "../config";
 
 /**
  * Routes a transaction intent to the right params builder: staking intents go to
@@ -15,9 +16,10 @@ import { isCeloStakingIntent } from "./stakingIntent";
  * gas/nonce/serialize/CIP-64 pipeline.
  */
 export const buildTxParams = async (
+  config: CeloConfigInfo,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   feeCurrency?: `0x${string}`,
 ): Promise<CeloTxParams> =>
   isCeloStakingIntent(intent)
-    ? buildStakingTxParams(intent, feeCurrency)
+    ? buildStakingTxParams(config, intent, feeCurrency)
     : buildCeloTxParams(intent, feeCurrency);

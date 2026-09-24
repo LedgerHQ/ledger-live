@@ -1,12 +1,20 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import type { EvmCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 
 /**
  * Celo is an EVM chain, but it owns its own coin-config injection rather than relying on coin-evm's
  * singleton being seeded by `createApi`. The wallet layer seeds this via {@link setCoinConfig} (with
  * `getCurrencyConfiguration("celo")`) and the Celo bridge reads it back through {@link getCoinConfig}.
  */
-export type CeloCoinConfig = (currencyId: string) => EvmCoinConfig;
+export type CeloConfigInfo = EvmConfigInfo & {
+  infra: {
+    API_CELO_INDEXER: string;
+  };
+};
+
+export type CeloCurrencyConfig = { info: CeloConfigInfo };
+
+export type CeloCoinConfig = (currencyId: string) => CeloCurrencyConfig;
 
 let coinConfig: CeloCoinConfig | undefined;
 
@@ -14,7 +22,7 @@ export const setCoinConfig = (config: CeloCoinConfig): void => {
   coinConfig = config;
 };
 
-export const getCoinConfig = (currencyId: string): EvmCoinConfig => {
+export const getCoinConfig = (currencyId: string): CeloCurrencyConfig => {
   if (!coinConfig) {
     throw new Error("Celo module config not set");
   }

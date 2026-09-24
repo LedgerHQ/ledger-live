@@ -1,17 +1,19 @@
 import type { Balance, Stake } from "@ledgerhq/coin-module-framework/api/index";
-import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 
 jest.mock("./getStakes", () => ({ buildCeloStakes: jest.fn() }));
 
 import { makeGetBalance } from "./getBalance";
 import { buildCeloStakes } from "./getStakes";
+import type { CeloConfigInfo } from "../config";
+import { mockCeloConfig } from "../test/context";
 
 const ADDR = "0x7777777777777777777777777777777777777777";
 const GROUP = "0x4444444444444444444444444444444444444444";
 const NATIVE: Balance = { value: 500n, asset: { type: "native" }, locked: 0n };
 
-const mockCtx: Context<CurrencyConfig> = {
-  config: async () => ({ status: { type: "active" } }),
+const mockCtx: Context<CeloConfigInfo> = {
+  config: async () => mockCeloConfig,
   logger: () => {},
 };
 

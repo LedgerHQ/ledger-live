@@ -12,14 +12,16 @@ import { getCeloClient } from "../network/client";
 import { buildTxParams } from "./buildTxParams";
 import { estimateFees } from "./estimateFees";
 import type { CeloFeeParameters } from "./types";
+import type { CeloConfigInfo } from "../config";
 
 /** Use caller-provided fees when present; otherwise price the intent ourselves. */
 const resolveFeeParameters = async (
+  config: CeloConfigInfo,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFees?: FeeEstimation,
 ): Promise<CeloFeeParameters> => {
   if (customFees?.parameters) return customFees.parameters as CeloFeeParameters;
-  const estimated = await estimateFees(intent, customFees?.parameters);
+  const estimated = await estimateFees(config, intent, customFees?.parameters);
   return estimated.parameters as CeloFeeParameters;
 };
 
@@ -32,23 +34,24 @@ const resolveFeeParameters = async (
  * the result feeds `combine` (signature attach) then `broadcast`.
  */
 export const craftTransaction = async (
+  config: CeloConfigInfo,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> => {
-  const params = await resolveFeeParameters(intent, customFees);
-  const { to, data, value, feeCurrency } = await buildTxParams(intent, params.feeCurrency);
+  const params = await resolveFeeParameters(config, intent, customFees);
+  const { to, data, value, feeCurrency } = await buildTxParams(config, intent, params.feeCurrency);
 
   const nonce =
     typeof intent.sequence === "bigint" && intent.sequence >= 0n
       ? Number(intent.sequence)
-      : await getCeloClient().getTransactionCount({
+      : await getCeloClient(config).getTransactionCount({
           address: intent.sender as `0x${string}`,
           blockTag: "pending",
         });
 
   const baseFields = {
     // follow the client's configured chain rather than hardcoding mainnet
-    chainId: getCeloClient().chain?.id ?? celo.id,
+    chainId: getCeloClient(config).chain?.id ?? celo.id,
     nonce,
     to,
     value,

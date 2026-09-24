@@ -13,7 +13,7 @@ const LOCKED_GOLD_ADDRESS = "0x0000000000000000000000000000000000001d00";
 const ELECTION_ADDRESS = "0x000000000000000000000000000000000000ce10";
 
 jest.mock("../../network/registry", () => ({
-  getRegistryAddressFor: jest.fn(async (name: string) => {
+  getRegistryAddressFor: jest.fn(async (_config: unknown, name: string) => {
     if (name === "LockedGold") return LOCKED_GOLD_ADDRESS;
     if (name === "Election") return ELECTION_ADDRESS;
     return ZERO_ADDRESS;
@@ -38,5 +38,6 @@ jest.mock("../../network/sdk", () => ({
   getAccountRegistrationStatus: () => Promise.resolve(true),
   getPendingWithdrawals: () => Promise.resolve([]),
   getVotes: () => Promise.resolve([]),
-  getCeloTransactionFeeCurrency: (hash: string) => getCeloTransactionFeeCurrency(hash),
+  getCeloTransactionFeeCurrency: (_config: unknown, hash: string) =>
+    getCeloTransactionFeeCurrency(hash),
 }));

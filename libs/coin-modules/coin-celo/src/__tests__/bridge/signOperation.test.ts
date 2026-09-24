@@ -8,6 +8,7 @@ import { buildOptimisticOperation } from "../../bridge/buildOptimisticOperation"
 import { getFeeMarketGasParams } from "../../network/sdk";
 import { recoverAddress } from "viem";
 import { serializeTransaction } from "viem/celo";
+import { mockCeloConfig } from "../../test/context";
 
 jest.mock("../../bridge/buildTransaction", () => ({
   __esModule: true,
@@ -136,7 +137,7 @@ describe("signOperation", () => {
       "device-signature-granted",
       "signed",
     ]);
-    expect(mockGetFeeMarketGasParams).toHaveBeenCalledWith(undefined);
+    expect(mockGetFeeMarketGasParams).toHaveBeenCalledWith(mockCeloConfig, undefined);
     const signedEvent = events[2];
     expect(signedEvent.type).toBe("signed");
     if (signedEvent.type !== "signed") {

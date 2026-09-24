@@ -20,6 +20,7 @@ import { getRegistryAddressFor } from "../network/registry";
 import { getCurrentCeloPreloadData } from "./preload";
 import { CeloAccount, Transaction, TransactionStatus } from "../types";
 import { isSameTokenAsFee, convertNumberDecimals, normalizeAndSubtract } from "./utils";
+import { bridgeCoinConfig } from "./coinConfig";
 
 // Arbitrary buffer for paying fees of next transactions. 0.05 Celo for ~100 transactions
 const FEES_SAFETY_BUFFER = new BigNumber(5000000000000000);
@@ -42,8 +43,8 @@ export const getTransactionStatus: AccountBridge<
   }
 
   const pendingOperationAmounts = getPendingStakingOperationAmounts(account);
-  const client = getCeloClient();
-  const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
+  const client = getCeloClient(bridgeCoinConfig());
+  const lockedGoldAddress = await getRegistryAddressFor(bridgeCoinConfig(), "LockedGold");
   const nonvotingLockedGoldBalance = new BigNumber(
     (
       await client.readContract({
@@ -158,7 +159,7 @@ export const getTransactionStatus: AccountBridge<
 
   if (transaction.mode === "vote" && transaction.recipient && !errors.recipient) {
     const { validatorGroups } = getCurrentCeloPreloadData();
-    // Groups with capacity ≤ 0 are filtered out during preload by getValidatorGroups().
+    // Groups with capacity ≤ 0 are filtered out during preload by getValidatorGroups(bridgeCoinConfig()).
     // If the selected recipient is absent from the preload list, it cannot receive votes.
     // Empty list means the preload hasn't run yet — skip the check to avoid false positives.
     if (
@@ -180,7 +181,7 @@ export const getTransactionStatus: AccountBridge<
   // remains the safety net.
   if (transaction.mode === "vote") {
     try {
-      const electionAddress = await getRegistryAddressFor("Election");
+      const electionAddress = await getRegistryAddressFor(bridgeCoinConfig(), "Election");
       const blocked = await client.readContract({
         address: electionAddress,
         abi: electionABI,

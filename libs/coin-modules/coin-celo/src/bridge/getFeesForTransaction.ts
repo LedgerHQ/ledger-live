@@ -15,6 +15,7 @@ import { getRegistryAddressFor } from "../network/registry";
 import type { CeloAccount, Transaction } from "../types";
 import buildTransaction from "./buildTransaction";
 import { valueToHex } from "./utils";
+import { bridgeCoinConfig } from "./coinConfig";
 
 const getFeesForTransaction = async ({
   account,
@@ -24,7 +25,7 @@ const getFeesForTransaction = async ({
   transaction: Transaction;
 }): Promise<BigNumber> => {
   const { amount, index } = transaction;
-  const client = getCeloClient();
+  const client = getCeloClient(bridgeCoinConfig());
 
   // A workaround - estimating gas throws an error if value > funds
   let value: BigNumber = new BigNumber(0);
@@ -34,7 +35,7 @@ const getFeesForTransaction = async ({
   const fallbackGas = MIN_GAS_FOR_NATIVE_TRANSFER * MAX_FEES_THRESHOLD_MULTIPLIER;
 
   const pendingOperationAmounts = getPendingStakingOperationAmounts(account);
-  const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
+  const lockedGoldAddress = await getRegistryAddressFor(bridgeCoinConfig(), "LockedGold");
 
   const nonvotingLockedGoldBalance = new BigNumber(
     (
@@ -59,7 +60,7 @@ const getFeesForTransaction = async ({
 
   const maxPriorityFeePerGas = BigInt(await client.estimateMaxPriorityFeePerGas());
   // Align with @celo/connect setFeeMarketGas: used for final fee for all modes.
-  const gasPrice = await celoGasPrice(transaction.feeCurrency ?? undefined);
+  const gasPrice = await celoGasPrice(bridgeCoinConfig(), transaction.feeCurrency ?? undefined);
   const baseFeePerGas =
     gasPrice > maxPriorityFeePerGas ? gasPrice - maxPriorityFeePerGas : BigInt(0);
   const maxFeePerGas = (baseFeePerGas * BigInt(120)) / BigInt(100) + maxPriorityFeePerGas;
@@ -118,7 +119,7 @@ const getFeesForTransaction = async ({
       }),
     );
   } else if (transaction.mode === "vote") {
-    const electionAddress = await getRegistryAddressFor("Election");
+    const electionAddress = await getRegistryAddressFor(bridgeCoinConfig(), "Election");
     const data = encodeFunctionData({
       abi: electionABI,
       functionName: "vote",
@@ -157,7 +158,7 @@ const getFeesForTransaction = async ({
       gas = fallbackGas;
     }
   } else if (transaction.mode === "activate") {
-    const electionAddress = await getRegistryAddressFor("Election");
+    const electionAddress = await getRegistryAddressFor(bridgeCoinConfig(), "Election");
     const data = encodeFunctionData({
       abi: electionABI,
       functionName: "activate",
@@ -177,7 +178,7 @@ const getFeesForTransaction = async ({
       gas = fallbackGas;
     }
   } else if (transaction.mode === "register") {
-    const accountsAddress = await getRegistryAddressFor("Accounts");
+    const accountsAddress = await getRegistryAddressFor(bridgeCoinConfig(), "Accounts");
     const data = encodeFunctionData({ abi: accountsABI, functionName: "createAccount" });
     gas = Number(
       await client.estimateGas({
@@ -195,7 +196,10 @@ const getFeesForTransaction = async ({
 
     let tokenAddress: `0x${string}`;
     if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {
-      tokenAddress = await getRegistryAddressFor(getStableTokenRegistryName(tokenAccount.token.id));
+      tokenAddress = await getRegistryAddressFor(
+        bridgeCoinConfig(),
+        getStableTokenRegistryName(tokenAccount.token.id),
+      );
     } else {
       tokenAddress = tokenAccount.token.contractAddress as `0x${string}`;
     }
@@ -206,7 +210,7 @@ const getFeesForTransaction = async ({
       args: [transaction.recipient as `0x${string}`, BigInt(value.toFixed())],
     });
 
-    const estimatedGas = await celoEstimateGas({
+    const estimatedGas = await celoEstimateGas(bridgeCoinConfig(), {
       from: account.freshAddress as `0x${string}`,
       to: tokenAddress,
       data,

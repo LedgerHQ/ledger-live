@@ -6,6 +6,7 @@ import type {
 import { estimateFees } from "./estimateFees";
 import type { CeloStakingIntent, CeloStakingType } from "./stakingIntent";
 import type { CeloFeeParameters } from "./types";
+import type { CeloConfigInfo } from "../config";
 
 /** Staking operations that must target a validator group. */
 const GROUP_OPERATIONS = new Set<CeloStakingType>([
@@ -36,6 +37,7 @@ const AMOUNT_OPERATIONS = new Set<CeloStakingType>([
  * Deeper checks (vote-cap, activation timing, unbonding readiness) are deferred.
  */
 export const validateStakingIntent = async (
+  config: CeloConfigInfo,
   intent: CeloStakingIntent,
   balances: Balance[],
   customFees?: FeeEstimation,
@@ -43,7 +45,7 @@ export const validateStakingIntent = async (
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  const estimation = customFees ?? (await estimateFees(intent));
+  const estimation = customFees ?? (await estimateFees(config, intent));
   const estimatedFees = estimation.value;
   const feeCurrency = (estimation.parameters as CeloFeeParameters | undefined)?.feeCurrency;
 

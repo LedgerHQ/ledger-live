@@ -1,16 +1,6 @@
 import { intParser, boolParser, stringParser } from "@ledgerhq/live-env";
 
 const teamLedgerPartnerHoodies = {
-  API_CELO_INDEXER: {
-    def: "https://celo.coin.ledger.com/indexer/",
-    parser: stringParser,
-    desc: "Explorer API for celo",
-  },
-  API_CELO_NODE: {
-    def: "https://celo.coin.ledger.com/archive/",
-    parser: stringParser,
-    desc: "Node endpoint for celo",
-  },
   ENABLE_CELO_TOKENS: {
     def: true,
     parser: boolParser,

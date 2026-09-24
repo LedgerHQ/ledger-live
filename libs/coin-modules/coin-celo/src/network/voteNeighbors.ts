@@ -2,6 +2,7 @@ import { electionABI } from "@celo/abis";
 import { ZERO_ADDRESS } from "../constants";
 import { getCeloClient } from "./client";
 import { isRevertLike } from "./rpcErrors";
+import type { CeloConfigInfo } from "../config";
 
 const ZERO = ZERO_ADDRESS as `0x${string}`;
 
@@ -30,12 +31,13 @@ const compareVotesAscending = (a: { votes: bigint }, b: { votes: bigint }): numb
  * (`src/bridge/buildTransaction.ts`).
  */
 export const getVoteNeighbors = async (
+  config: CeloConfigInfo,
   electionAddress: `0x${string}`,
   group: `0x${string}`,
   delta: bigint,
   add: boolean,
 ): Promise<{ lesser: `0x${string}`; greater: `0x${string}` }> => {
-  const client = getCeloClient();
+  const client = getCeloClient(config);
 
   // On networks where no validator groups are registered (e.g. some testnets)
   // the call reverts. Treat only a revert as an empty list (defaults → ZERO

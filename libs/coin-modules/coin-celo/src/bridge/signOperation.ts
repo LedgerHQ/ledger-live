@@ -18,6 +18,7 @@ import { CeloSigner } from "../signer";
 import type { Transaction, CeloAccount } from "../types/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import buildTransaction from "./buildTransaction";
+import { bridgeCoinConfig } from "./coinConfig";
 
 type RunSignOperationInput = {
   signerContext: SignerContext<CeloSigner>;
@@ -49,6 +50,7 @@ const runSignOperation = async ({
   const value = isTokenTransaction ? "0x0" : (unsignedTransaction.value ?? "0x0");
 
   const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeMarketGasParams(
+    bridgeCoinConfig(),
     feeCurrency ?? undefined,
   );
 

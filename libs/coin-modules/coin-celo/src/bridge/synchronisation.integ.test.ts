@@ -1,5 +1,4 @@
-import type { EvmCoinConfig } from "@ledgerhq/coin-evm/config";
-import { setCoinConfig } from "../config";
+import { setCoinConfig, type CeloCurrencyConfig } from "../config";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
@@ -38,8 +37,11 @@ describe("Integration — getAccountShape with real implementations", () => {
               type: "etherscan",
               uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42220",
             },
+            infra: {
+              API_CELO_INDEXER: "https://celo.coin.ledger.com/indexer/",
+            },
           },
-        }) as unknown as EvmCoinConfig,
+        }) as unknown as CeloCurrencyConfig,
     );
   });
 

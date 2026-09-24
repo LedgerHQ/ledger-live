@@ -17,6 +17,7 @@ import { getPendingWithdrawals, voteSignerAccount } from "../network/sdk";
 import { getVoteNeighbors } from "../network/voteNeighbors";
 import { buildStakingTxParams } from "./buildStakingTxParams";
 import type { CeloStakingIntent, CeloStakingType } from "./stakingIntent";
+import { mockCeloConfig } from "../test/context";
 
 const ACCOUNTS = "0x1111111111111111111111111111111111111111" as `0x${string}`;
 const LOCKED = "0x2222222222222222222222222222222222222222" as `0x${string}`;
@@ -58,7 +59,7 @@ describe("buildStakingTxParams", () => {
   beforeEach(() => {
     (getRegistryAddressFor as unknown as jest.Mock)
       .mockReset()
-      .mockImplementation(async (name: string) => REGISTRY[name]);
+      .mockImplementation(async (_config: unknown, name: string) => REGISTRY[name]);
     (getVoteNeighbors as jest.Mock)
       .mockReset()
       .mockResolvedValue({ lesser: LESSER, greater: GREATER });
@@ -68,7 +69,7 @@ describe("buildStakingTxParams", () => {
   });
 
   it("register → Accounts.createAccount(), value 0", async () => {
-    const params = await buildStakingTxParams(makeIntent("celo.register"));
+    const params = await buildStakingTxParams(mockCeloConfig, makeIntent("celo.register"));
     expect(params.to).toBe(ACCOUNTS);
     expect(params.value).toBe(0n);
     expect(params.data).toBe(
@@ -77,14 +78,20 @@ describe("buildStakingTxParams", () => {
   });
 
   it("lock → LockedGold.lock(), value = amount", async () => {
-    const params = await buildStakingTxParams(makeIntent("celo.lock", { amount: 100n }));
+    const params = await buildStakingTxParams(
+      mockCeloConfig,
+      makeIntent("celo.lock", { amount: 100n }),
+    );
     expect(params.to).toBe(LOCKED);
     expect(params.value).toBe(100n);
     expect(params.data).toBe(encodeFunctionData({ abi: lockedGoldABI, functionName: "lock" }));
   });
 
   it("unlock → LockedGold.unlock(amount), value 0", async () => {
-    const params = await buildStakingTxParams(makeIntent("celo.unlock", { amount: 60n }));
+    const params = await buildStakingTxParams(
+      mockCeloConfig,
+      makeIntent("celo.unlock", { amount: 60n }),
+    );
     expect(params.to).toBe(LOCKED);
     expect(params.value).toBe(0n);
     expect(params.data).toBe(
@@ -97,7 +104,7 @@ describe("buildStakingTxParams", () => {
     (getPendingWithdrawals as jest.Mock).mockResolvedValue([
       { value: new BigNumber(10), time: new BigNumber(past), index: 2 },
     ]);
-    const params = await buildStakingTxParams(makeIntent("celo.withdraw"));
+    const params = await buildStakingTxParams(mockCeloConfig, makeIntent("celo.withdraw"));
     expect(params.to).toBe(LOCKED);
     expect(params.data).toBe(
       encodeFunctionData({ abi: lockedGoldABI, functionName: "withdraw", args: [2n] }),
@@ -110,7 +117,10 @@ describe("buildStakingTxParams", () => {
       { value: new BigNumber(10), time: new BigNumber(past), index: 0 },
       { value: new BigNumber(20), time: new BigNumber(past), index: 3 },
     ]);
-    const params = await buildStakingTxParams(makeIntent("celo.withdraw", { index: 3 }));
+    const params = await buildStakingTxParams(
+      mockCeloConfig,
+      makeIntent("celo.withdraw", { index: 3 }),
+    );
     expect(params.data).toBe(
       encodeFunctionData({ abi: lockedGoldABI, functionName: "withdraw", args: [3n] }),
     );
@@ -121,9 +131,9 @@ describe("buildStakingTxParams", () => {
     (getPendingWithdrawals as jest.Mock).mockResolvedValue([
       { value: new BigNumber(10), time: new BigNumber(future), index: 3 },
     ]);
-    await expect(buildStakingTxParams(makeIntent("celo.withdraw", { index: 3 }))).rejects.toThrow(
-      /unavailable or not yet matured/,
-    );
+    await expect(
+      buildStakingTxParams(mockCeloConfig, makeIntent("celo.withdraw", { index: 3 })),
+    ).rejects.toThrow(/unavailable or not yet matured/);
   });
 
   it("withdraw → throws when no pending withdrawal has matured", async () => {
@@ -131,14 +141,17 @@ describe("buildStakingTxParams", () => {
     (getPendingWithdrawals as jest.Mock).mockResolvedValue([
       { value: new BigNumber(10), time: new BigNumber(future), index: 0 },
     ]);
-    await expect(buildStakingTxParams(makeIntent("celo.withdraw"))).rejects.toThrow(/no matured/);
+    await expect(buildStakingTxParams(mockCeloConfig, makeIntent("celo.withdraw"))).rejects.toThrow(
+      /no matured/,
+    );
   });
 
   it("vote → Election.vote(group, amount, lesser, greater), neighbors added", async () => {
     const params = await buildStakingTxParams(
+      mockCeloConfig,
       makeIntent("celo.vote", { valAddress: GROUP, amount: 100n }),
     );
-    expect(getVoteNeighbors).toHaveBeenCalledWith(ELECTION, GROUP, 100n, true);
+    expect(getVoteNeighbors).toHaveBeenCalledWith(mockCeloConfig, ELECTION, GROUP, 100n, true);
     expect(params.to).toBe(ELECTION);
     expect(params.value).toBe(0n);
     expect(params.data).toBe(
@@ -153,12 +166,18 @@ describe("buildStakingTxParams", () => {
   it("vote → throws when the group cannot receive the votes (cap exceeded)", async () => {
     (getCeloClient as jest.Mock).mockReturnValue({ readContract: jest.fn(async () => false) });
     await expect(
-      buildStakingTxParams(makeIntent("celo.vote", { valAddress: GROUP, amount: 100n })),
+      buildStakingTxParams(
+        mockCeloConfig,
+        makeIntent("celo.vote", { valAddress: GROUP, amount: 100n }),
+      ),
     ).rejects.toThrow(/cap exceeded/);
   });
 
   it("activate → Election.activate(group)", async () => {
-    const params = await buildStakingTxParams(makeIntent("celo.activate", { valAddress: GROUP }));
+    const params = await buildStakingTxParams(
+      mockCeloConfig,
+      makeIntent("celo.activate", { valAddress: GROUP }),
+    );
     expect(params.to).toBe(ELECTION);
     expect(params.data).toBe(
       encodeFunctionData({ abi: electionABI, functionName: "activate", args: [GROUP] }),
@@ -167,9 +186,10 @@ describe("buildStakingTxParams", () => {
 
   it("revokePending → Election.revokePending(...), neighbors removed, group index resolved", async () => {
     const params = await buildStakingTxParams(
+      mockCeloConfig,
       makeIntent("celo.revokePending", { valAddress: GROUP, amount: 40n }),
     );
-    expect(getVoteNeighbors).toHaveBeenCalledWith(ELECTION, GROUP, 40n, false);
+    expect(getVoteNeighbors).toHaveBeenCalledWith(mockCeloConfig, ELECTION, GROUP, 40n, false);
     expect(params.data).toBe(
       encodeFunctionData({
         abi: electionABI,
@@ -185,6 +205,7 @@ describe("buildStakingTxParams", () => {
       readContract: jest.fn(async () => [OTHER_GROUP, GROUP]),
     });
     const params = await buildStakingTxParams(
+      mockCeloConfig,
       makeIntent("celo.revokeActive", { valAddress: GROUP, amount: 40n }),
     );
     expect(params.data).toBe(
@@ -201,25 +222,32 @@ describe("buildStakingTxParams", () => {
       readContract: jest.fn(async () => [OTHER_GROUP]),
     });
     await expect(
-      buildStakingTxParams(makeIntent("celo.revokePending", { valAddress: GROUP, amount: 40n })),
+      buildStakingTxParams(
+        mockCeloConfig,
+        makeIntent("celo.revokePending", { valAddress: GROUP, amount: 40n }),
+      ),
     ).rejects.toThrow(/not in the account's voted groups/);
   });
 
   it("uses recipient as the group when valAddress is absent", async () => {
-    const params = await buildStakingTxParams(makeIntent("celo.activate", { recipient: GROUP }));
+    const params = await buildStakingTxParams(
+      mockCeloConfig,
+      makeIntent("celo.activate", { recipient: GROUP }),
+    );
     expect(params.data).toBe(
       encodeFunctionData({ abi: electionABI, functionName: "activate", args: [GROUP] }),
     );
   });
 
   it("throws when a group operation has no validator group", async () => {
-    await expect(buildStakingTxParams(makeIntent("celo.vote", { amount: 1n }))).rejects.toThrow(
-      /validator group/,
-    );
+    await expect(
+      buildStakingTxParams(mockCeloConfig, makeIntent("celo.vote", { amount: 1n })),
+    ).rejects.toThrow(/validator group/);
   });
 
   it("attaches feeCurrency to the params when provided", async () => {
     const params = await buildStakingTxParams(
+      mockCeloConfig,
       makeIntent("celo.lock", { amount: 1n }),
       USDC_ADAPTER,
     );

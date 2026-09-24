@@ -41,7 +41,7 @@ jest.mock("../../network/client", () => ({
 }));
 
 jest.mock("../../network/registry", () => ({
-  getRegistryAddressFor: jest.fn(async (name: string) => {
+  getRegistryAddressFor: jest.fn(async (_config: unknown, name: string) => {
     if (name === "LockedGold") return LOCKED_GOLD_ADDRESS;
     if (name === "Election") return ELECTION_ADDRESS;
     if (name === "Accounts") return ACCOUNTS_ADDRESS;

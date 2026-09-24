@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { mockCeloConfig } from "../../test/context";
 
 const getCeloClientMock = jest.fn();
 const celoGasPriceMock = jest.fn();
@@ -31,7 +32,7 @@ describe("network/sdk", () => {
       request: requestMock,
     });
 
-    getRegistryAddressForMock.mockImplementation(async (name: string) => {
+    getRegistryAddressForMock.mockImplementation(async (_config: unknown, name: string) => {
       if (name === "Accounts") return "0x000000000000000000000000000000000000aa10";
       if (name === "LockedGold") return "0x0000000000000000000000000000000000001d00";
       if (name === "Election") return "0x000000000000000000000000000000000000ce10";
@@ -46,10 +47,13 @@ describe("network/sdk", () => {
     const { getAccountRegistrationStatus } = loadSdkModule();
     readContractMock.mockResolvedValue(true);
 
-    const result = await getAccountRegistrationStatus("0x79D5A290D7ba4b99322d91b577589e8d0BF87072");
+    const result = await getAccountRegistrationStatus(
+      mockCeloConfig,
+      "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+    );
 
     expect(result).toBe(true);
-    expect(getRegistryAddressForMock).toHaveBeenCalledWith("Accounts");
+    expect(getRegistryAddressForMock).toHaveBeenCalledWith(mockCeloConfig, "Accounts");
     expect(readContractMock).toHaveBeenCalledWith(
       expect.objectContaining({
         functionName: "isAccount",
@@ -64,7 +68,10 @@ describe("network/sdk", () => {
       [BigInt(200), BigInt(100)],
     ]);
 
-    const result = await getPendingWithdrawals("0x79D5A290D7ba4b99322d91b577589e8d0BF87072");
+    const result = await getPendingWithdrawals(
+      mockCeloConfig,
+      "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+    );
 
     expect(result).toHaveLength(2);
     expect(result[0]).toMatchObject({ index: 1 });
@@ -86,7 +93,7 @@ describe("network/sdk", () => {
       return BigInt(0);
     });
 
-    const result = await getVotes("0x79D5A290D7ba4b99322d91b577589e8d0BF87072");
+    const result = await getVotes(mockCeloConfig, "0x79D5A290D7ba4b99322d91b577589e8d0BF87072");
 
     expect(result).toEqual([]);
   });
@@ -113,7 +120,7 @@ describe("network/sdk", () => {
       return BigInt(0);
     });
 
-    const votes = await getVotes("0x79D5A290D7ba4b99322d91b577589e8d0BF87072");
+    const votes = await getVotes(mockCeloConfig, "0x79D5A290D7ba4b99322d91b577589e8d0BF87072");
 
     expect(votes).toHaveLength(2);
     const pendingVote = votes.find(vote => vote.type === "pending");
@@ -144,8 +151,8 @@ describe("network/sdk", () => {
 
     const address = "0x79D5A290D7ba4b99322d91b577589e8d0BF87072";
 
-    await voteSignerAccount(address);
-    await voteSignerAccount(address);
+    await voteSignerAccount(mockCeloConfig, address);
+    await voteSignerAccount(mockCeloConfig, address);
 
     expect(getRegistryAddressForMock).toHaveBeenCalledTimes(1);
     expect(readContractMock).toHaveBeenCalledTimes(1);
@@ -156,7 +163,7 @@ describe("network/sdk", () => {
     celoGasPriceMock.mockResolvedValue(BigInt(10));
     estimateMaxPriorityFeePerGasMock.mockResolvedValue(BigInt(2));
 
-    const params = await getFeeMarketGasParams();
+    const params = await getFeeMarketGasParams(mockCeloConfig);
 
     expect(params).toEqual({
       maxFeePerGas: BigInt(11),
@@ -169,7 +176,7 @@ describe("network/sdk", () => {
     celoGasPriceMock.mockResolvedValue(BigInt(1));
     estimateMaxPriorityFeePerGasMock.mockResolvedValue(BigInt(5));
 
-    const params = await getFeeMarketGasParams();
+    const params = await getFeeMarketGasParams(mockCeloConfig);
 
     expect(params).toEqual({
       maxFeePerGas: BigInt(5),
@@ -187,7 +194,7 @@ describe("network/sdk", () => {
         feeCurrency: "0xAB12CD34AB12CD34AB12CD34AB12CD34AB12CD34",
       });
 
-      const result = await getCeloTransactionFeeCurrency(VALID_HASH);
+      const result = await getCeloTransactionFeeCurrency(mockCeloConfig, VALID_HASH);
 
       expect(result).toBe("0xab12cd34ab12cd34ab12cd34ab12cd34ab12cd34");
       expect(requestMock).toHaveBeenCalledWith({
@@ -203,7 +210,7 @@ describe("network/sdk", () => {
         feeCurrency: "0xAB12CD34AB12CD34AB12CD34AB12CD34AB12CD34",
       });
 
-      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).resolves.toBe(
+      await expect(getCeloTransactionFeeCurrency(mockCeloConfig, VALID_HASH)).resolves.toBe(
         "0xab12cd34ab12cd34ab12cd34ab12cd34ab12cd34",
       );
     });
@@ -212,27 +219,29 @@ describe("network/sdk", () => {
       const { getCeloTransactionFeeCurrency } = loadSdkModule();
       requestMock.mockResolvedValueOnce({ type: "0x2", feeCurrency: null });
 
-      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).resolves.toBeNull();
+      await expect(getCeloTransactionFeeCurrency(mockCeloConfig, VALID_HASH)).resolves.toBeNull();
     });
 
     it("returns null when the response omits the `type` field", async () => {
       const { getCeloTransactionFeeCurrency } = loadSdkModule();
       requestMock.mockResolvedValueOnce({ feeCurrency: null });
 
-      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).resolves.toBeNull();
+      await expect(getCeloTransactionFeeCurrency(mockCeloConfig, VALID_HASH)).resolves.toBeNull();
     });
 
     it("throws when the node returns null (tx not found)", async () => {
       const { getCeloTransactionFeeCurrency } = loadSdkModule();
       requestMock.mockResolvedValueOnce(null);
 
-      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(/not found/);
+      await expect(getCeloTransactionFeeCurrency(mockCeloConfig, VALID_HASH)).rejects.toThrow(
+        /not found/,
+      );
     });
 
     it("throws synchronously on a malformed hash", async () => {
       const { getCeloTransactionFeeCurrency } = loadSdkModule();
 
-      await expect(getCeloTransactionFeeCurrency("0xnothex")).rejects.toThrow(
+      await expect(getCeloTransactionFeeCurrency(mockCeloConfig, "0xnothex")).rejects.toThrow(
         /Invalid Celo tx hash/,
       );
       expect(requestMock).not.toHaveBeenCalled();
@@ -242,7 +251,7 @@ describe("network/sdk", () => {
       const { getCeloTransactionFeeCurrency } = loadSdkModule();
       requestMock.mockResolvedValueOnce({ type: "0x7b", feeCurrency: null });
 
-      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(
+      await expect(getCeloTransactionFeeCurrency(mockCeloConfig, VALID_HASH)).rejects.toThrow(
         /CIP-64 but feeCurrency is missing/,
       );
     });
@@ -251,21 +260,27 @@ describe("network/sdk", () => {
       const { getCeloTransactionFeeCurrency } = loadSdkModule();
       requestMock.mockResolvedValueOnce({ type: 123, feeCurrency: null });
 
-      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(/not found/);
+      await expect(getCeloTransactionFeeCurrency(mockCeloConfig, VALID_HASH)).rejects.toThrow(
+        /not found/,
+      );
     });
 
     it("rejects responses with a malformed `feeCurrency` (no 0x prefix)", async () => {
       const { getCeloTransactionFeeCurrency } = loadSdkModule();
       requestMock.mockResolvedValueOnce({ type: "0x7b", feeCurrency: "deadbeef" });
 
-      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(/not found/);
+      await expect(getCeloTransactionFeeCurrency(mockCeloConfig, VALID_HASH)).rejects.toThrow(
+        /not found/,
+      );
     });
 
     it("rejects responses with a too-short `feeCurrency`", async () => {
       const { getCeloTransactionFeeCurrency } = loadSdkModule();
       requestMock.mockResolvedValueOnce({ type: "0x7b", feeCurrency: "0x1" });
 
-      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(/not found/);
+      await expect(getCeloTransactionFeeCurrency(mockCeloConfig, VALID_HASH)).rejects.toThrow(
+        /not found/,
+      );
     });
 
     it("rejects responses with non-hex characters in `feeCurrency`", async () => {
@@ -275,7 +290,9 @@ describe("network/sdk", () => {
         feeCurrency: "0xZZ12CD34AB12CD34AB12CD34AB12CD34AB12CD34",
       });
 
-      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(/not found/);
+      await expect(getCeloTransactionFeeCurrency(mockCeloConfig, VALID_HASH)).rejects.toThrow(
+        /not found/,
+      );
     });
   });
 });

@@ -29,7 +29,10 @@
     "src/datasets/celo.scanAccounts.1.ts",
     "src/errors.ts",
     "src/test/bridgeDatasetTest.ts",
-    "src/supportedFeatures.ts"
+    "src/test/coin-config-setup.ts",
+    "src/supportedFeatures.ts",
+    "src/test/integ-coin-config-setup.ts",
+    "src/test/context.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/coin-evm",

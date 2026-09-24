@@ -17,6 +17,7 @@ jest.mock("../network/registry", () => ({
 
 import { estimateFees } from "./estimateFees";
 import { craftTransaction } from "./craftTransaction";
+import { mockCeloConfig } from "../test/context";
 
 const mockEstimate = estimateFees as jest.Mock;
 
@@ -56,6 +57,7 @@ describe("craftTransaction", () => {
 
   it("crafts a native CELO send (eip1559) using the provided fees and sequence", async () => {
     const crafted = await craftTransaction(
+      mockCeloConfig,
       makeIntent({ type: "native" }, { sequence: 3n }),
       fees(),
     );
@@ -73,6 +75,7 @@ describe("craftTransaction", () => {
 
   it("crafts an ERC-20 token transfer (to contract, value 0, transfer calldata)", async () => {
     const crafted = await craftTransaction(
+      mockCeloConfig,
       makeIntent({ type: "erc20", assetReference: USDC_CONTRACT }, { sequence: 0n, amount: 1000n }),
       fees(),
     );
@@ -85,6 +88,7 @@ describe("craftTransaction", () => {
 
   it("crafts a CIP-64 transaction when a fee currency is set", async () => {
     const crafted = await craftTransaction(
+      mockCeloConfig,
       makeIntent({ type: "erc20", assetReference: USDC_CONTRACT }, { sequence: 1n }),
       fees({ ...baseParams, feeCurrency: USDC_ADAPTER, type: "cip64" }),
     );
@@ -100,15 +104,15 @@ describe("craftTransaction", () => {
     mockEstimate.mockResolvedValue(fees());
     const intent = makeIntent({ type: "native" }, { sequence: 2n });
 
-    const crafted = await craftTransaction(intent);
+    const crafted = await craftTransaction(mockCeloConfig, intent);
     const tx = parseTransaction(crafted.transaction as `0x${string}`);
 
-    expect(mockEstimate).toHaveBeenCalledWith(intent, undefined);
+    expect(mockEstimate).toHaveBeenCalledWith(mockCeloConfig, intent, undefined);
     expect(tx.type).toBe("eip1559");
   });
 
   it("fetches the nonce from the node when the intent has no sequence", async () => {
-    const crafted = await craftTransaction(makeIntent({ type: "native" }), fees());
+    const crafted = await craftTransaction(mockCeloConfig, makeIntent({ type: "native" }), fees());
     const tx = parseTransaction(crafted.transaction as `0x${string}`);
 
     expect(tx.nonce).toBe(7);
@@ -123,9 +127,9 @@ describe("craftTransaction", () => {
       amount: 0n,
       asset: { type: "native" },
       data: { type: "buffer", value: Buffer.from([]) },
-    } as unknown as Parameters<typeof craftTransaction>[0];
+    } as unknown as Parameters<typeof craftTransaction>[1];
 
-    const crafted = await craftTransaction(intent, fees());
+    const crafted = await craftTransaction(mockCeloConfig, intent, fees());
     const tx = parseTransaction(crafted.transaction as `0x${string}`);
 
     // `to` is the Accounts registry contract, not the (empty) recipient — proves staking routing

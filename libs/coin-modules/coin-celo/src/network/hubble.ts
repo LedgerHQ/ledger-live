@@ -1,28 +1,29 @@
 import { electionABI } from "@celo/abis";
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
+import type { CeloConfigInfo } from "../config";
 import { isDefaultValidatorGroup } from "../logic";
 import { CeloValidatorGroup } from "../types/types";
 import { getCeloClient } from "./client";
 import { getRegistryAddressFor } from "./registry";
 
-const getUrl = (route: string): string => `${getEnv("API_CELO_INDEXER")}${route || ""}`;
+const getUrl = (config: CeloConfigInfo, route: string): string =>
+  `${config.infra.API_CELO_INDEXER}${route || ""}`;
 
-const fetchValidatorGroups = async () => {
+const fetchValidatorGroups = async (config: CeloConfigInfo) => {
   const { data } = await network({
     method: "GET",
-    url: getUrl(`/validator_groups`),
+    url: getUrl(config, `/validator_groups`),
   });
   return data.items;
 };
 
-export const getValidatorGroups = async (): Promise<CeloValidatorGroup[]> => {
-  const client = getCeloClient();
-  const electionAddress = await getRegistryAddressFor("Election");
+export const getValidatorGroups = async (config: CeloConfigInfo): Promise<CeloValidatorGroup[]> => {
+  const client = getCeloClient(config);
+  const electionAddress = await getRegistryAddressFor(config, "Election");
 
   const [rawGroups, eligibleGroups] = await Promise.all([
-    fetchValidatorGroups(),
+    fetchValidatorGroups(config),
     client.readContract({
       address: electionAddress,
       abi: electionABI,

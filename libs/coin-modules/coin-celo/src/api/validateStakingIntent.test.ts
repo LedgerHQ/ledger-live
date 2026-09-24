@@ -9,6 +9,7 @@ jest.mock("./estimateFees", () => ({ estimateFees: jest.fn() }));
 import { estimateFees } from "./estimateFees";
 import type { CeloStakingIntent, CeloStakingType } from "./stakingIntent";
 import { validateStakingIntent } from "./validateStakingIntent";
+import { mockCeloConfig } from "../test/context";
 
 const SENDER = "0x7777777777777777777777777777777777777777";
 const GROUP = "0x4444444444444444444444444444444444444444";
@@ -41,6 +42,7 @@ describe("validateStakingIntent", () => {
 
   it("accepts a lock intent covered by the native balance (amount + fees)", async () => {
     const res = await validateStakingIntent(
+      mockCeloConfig,
       makeIntent("celo.lock", { amount: 100n }),
       nativeBalances(1000n),
       eip1559Fees(10n),
@@ -54,6 +56,7 @@ describe("validateStakingIntent", () => {
 
   it("flags an insufficient native balance", async () => {
     const res = await validateStakingIntent(
+      mockCeloConfig,
       makeIntent("celo.lock", { amount: 1000n }),
       nativeBalances(500n),
       eip1559Fees(10n),
@@ -64,6 +67,7 @@ describe("validateStakingIntent", () => {
 
   it("routes a fee-only shortfall to errors.fees, not errors.amount", async () => {
     const res = await validateStakingIntent(
+      mockCeloConfig,
       makeIntent("celo.register"),
       nativeBalances(5n),
       eip1559Fees(10n),
@@ -75,6 +79,7 @@ describe("validateStakingIntent", () => {
 
   it("rejects a non-positive amount for amount-bearing operations", async () => {
     const res = await validateStakingIntent(
+      mockCeloConfig,
       makeIntent("celo.lock", { amount: 0n }),
       nativeBalances(1000n),
       eip1559Fees(10n),
@@ -86,6 +91,7 @@ describe("validateStakingIntent", () => {
 
   it("flags a group operation missing its validator group", async () => {
     const res = await validateStakingIntent(
+      mockCeloConfig,
       makeIntent("celo.vote", { amount: 10n }),
       nativeBalances(1000n),
       eip1559Fees(10n),
@@ -96,6 +102,7 @@ describe("validateStakingIntent", () => {
 
   it("excludes ERC-20 (CIP-64) fees from the native totalSpent", async () => {
     const res = await validateStakingIntent(
+      mockCeloConfig,
       makeIntent("celo.lock", { amount: 100n }),
       nativeBalances(1000n),
       {
@@ -113,9 +120,9 @@ describe("validateStakingIntent", () => {
     (estimateFees as jest.Mock).mockResolvedValue({ value: 7n });
     const intent = makeIntent("celo.unlock", { amount: 5n });
 
-    const res = await validateStakingIntent(intent, nativeBalances(1000n));
+    const res = await validateStakingIntent(mockCeloConfig, intent, nativeBalances(1000n));
 
-    expect(estimateFees).toHaveBeenCalledWith(intent);
+    expect(estimateFees).toHaveBeenCalledWith(mockCeloConfig, intent);
     expect(res.estimatedFees).toBe(7n);
     // unlock moves 5 CELO of already-locked funds: amount reflects the operation,
     // but only gas is native-spent (unlock doesn't spend native), so totalSpent = fees
@@ -125,6 +132,7 @@ describe("validateStakingIntent", () => {
 
   it("does not count a vote's amount as native spend (moves already-locked funds)", async () => {
     const res = await validateStakingIntent(
+      mockCeloConfig,
       makeIntent("celo.vote", { valAddress: GROUP, amount: 100n }),
       nativeBalances(10n),
       eip1559Fees(5n),

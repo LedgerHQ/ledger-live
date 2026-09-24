@@ -1,21 +1,33 @@
-import { getEnv } from "@ledgerhq/live-env";
 import { createPublicClient, http, type PublicClient } from "viem";
 import { celo } from "viem/chains";
+import type { CeloConfigInfo } from "../config";
 
-let client: PublicClient | null = null;
+let cached: { nodeUrl: string; client: PublicClient } | null = null;
+
+const getNodeUrl = (config: CeloConfigInfo): string => {
+  const { node } = config;
+  if (node.type !== "external") {
+    throw new Error("Celo coin config must set an external node");
+  }
+  return node.uri;
+};
 
 /**
- * Returns a lazy singleton viem PublicClient for the Celo network.
- * The transport URL is sourced from the `API_CELO_NODE` env variable.
+ * Returns a lazy viem PublicClient for the Celo network, on the node the coin config names.
+ * It is rebuilt when that node changes, so a remote config update applies without a restart.
  */
-export const getCeloClient = (): PublicClient => {
-  if (!client) {
-    client = createPublicClient({
-      chain: celo,
-      transport: http(getEnv("API_CELO_NODE")),
-    }) as unknown as PublicClient;
+export const getCeloClient = (config: CeloConfigInfo): PublicClient => {
+  const nodeUrl = getNodeUrl(config);
+  if (cached?.nodeUrl !== nodeUrl) {
+    cached = {
+      nodeUrl,
+      client: createPublicClient({
+        chain: celo,
+        transport: http(nodeUrl),
+      }) as unknown as PublicClient,
+    };
   }
-  return client;
+  return cached.client;
 };
 
 /**
@@ -23,8 +35,11 @@ export const getCeloClient = (): PublicClient => {
  * Celo's `eth_gasPrice` RPC accepts an optional fee-currency address param,
  * which viem does not expose natively.
  */
-export const celoGasPrice = async (feeCurrency?: `0x${string}`): Promise<bigint> => {
-  const c = getCeloClient();
+export const celoGasPrice = async (
+  config: CeloConfigInfo,
+  feeCurrency?: `0x${string}`,
+): Promise<bigint> => {
+  const c = getCeloClient(config);
   const result = await c.request({
     method: "eth_gasPrice",
     params: feeCurrency ? [feeCurrency] : ([] as unknown as []),
@@ -47,8 +62,11 @@ export type CeloEstimateGasParams = {
  * `estimateGas` because the latter does not expose the fee-currency param —
  * without it, the node underestimates gas for non-native fee-token transactions.
  */
-export const celoEstimateGas = async (params: CeloEstimateGasParams): Promise<bigint> => {
-  const c = getCeloClient();
+export const celoEstimateGas = async (
+  config: CeloConfigInfo,
+  params: CeloEstimateGasParams,
+): Promise<bigint> => {
+  const c = getCeloClient(config);
   const rpcParams: Record<string, string> = { from: params.from };
   if (params.to !== undefined) rpcParams.to = params.to;
   if (params.data !== undefined) rpcParams.data = params.data;

@@ -1,6 +1,7 @@
 import type { Balance, BalanceOptions, Stake } from "@ledgerhq/coin-module-framework/api/index";
 import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { buildCeloStakes } from "./getStakes";
+import type { CeloConfigInfo } from "../config";
 
 /** Signature of the base `getBalance` (coin-evm) that we augment (v6: takes context as first arg). */
 type GetBalanceFn<C extends CurrencyConfig> = (
@@ -24,11 +25,14 @@ type GetBalanceFn<C extends CurrencyConfig> = (
  * LockedGold/Election positions.
  */
 export const makeGetBalance =
-  <C extends CurrencyConfig>(baseGetBalance: GetBalanceFn<C>): GetBalanceFn<C> =>
+  <C extends CeloConfigInfo>(baseGetBalance: GetBalanceFn<C>): GetBalanceFn<C> =>
   async (context, address, options) => {
     const [base, stakes] = await Promise.all([
       baseGetBalance(context, address, options),
-      buildCeloStakes(address).catch((): Stake[] => []),
+      context
+        .config()
+        .then(config => buildCeloStakes(config, address))
+        .catch((): Stake[] => []),
     ]);
 
     // `value` is 0 so these native-typed entries are never mistaken for the account's

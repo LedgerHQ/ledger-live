@@ -16,6 +16,7 @@ jest.mock("../../network/registry", () => ({
 }));
 
 import { getValidatorGroups } from "../../network/hubble";
+import { mockCeloConfig } from "../../test/context";
 
 const FIGMENT = "0x0861a61Bf679A30680510EcC238ee43B82C5e843";
 
@@ -70,7 +71,7 @@ describe("network/hubble - getValidatorGroups", () => {
       { address: "0xbbb", name: "Beta", cap: 1000n, total: 300n, eligible: true },
     ]);
 
-    const result = await getValidatorGroups();
+    const result = await getValidatorGroups(mockCeloConfig);
 
     expect(result.map(g => g.name)).toEqual(["Beta", "Alpha"]);
   });
@@ -81,7 +82,7 @@ describe("network/hubble - getValidatorGroups", () => {
       { address: "0xsat", name: "Saturated", cap: 100n, total: 500n, eligible: true },
     ]);
 
-    const result = await getValidatorGroups();
+    const result = await getValidatorGroups(mockCeloConfig);
 
     expect(result.map(g => g.name)).toEqual(["Alpha"]);
   });
@@ -92,7 +93,7 @@ describe("network/hubble - getValidatorGroups", () => {
       { address: "0xine", name: "Ineligible", cap: 1000n, total: 100n, eligible: false },
     ]);
 
-    const result = await getValidatorGroups();
+    const result = await getValidatorGroups(mockCeloConfig);
 
     expect(result.map(g => g.name)).toEqual(["Alpha"]);
   });
@@ -105,7 +106,7 @@ describe("network/hubble - getValidatorGroups", () => {
     ]);
     multicallMock.mockRejectedValueOnce(new Error("rpc down"));
 
-    const result = await getValidatorGroups();
+    const result = await getValidatorGroups(mockCeloConfig);
 
     expect(result.map(g => g.name)).toEqual(["Beta", "Alpha"]);
   });
@@ -118,7 +119,7 @@ describe("network/hubble - getValidatorGroups", () => {
       { status: "failure", error: new Error("revert") },
     ]);
 
-    const result = await getValidatorGroups();
+    const result = await getValidatorGroups(mockCeloConfig);
 
     expect(result.map(g => g.name)).toEqual(["Alpha"]);
   });
@@ -129,7 +130,7 @@ describe("network/hubble - getValidatorGroups", () => {
       { address: FIGMENT, name: "Ledger by Figment", cap: 999999n, total: 0n, eligible: true },
     ]);
 
-    const result = await getValidatorGroups();
+    const result = await getValidatorGroups(mockCeloConfig);
 
     expect(result.map(g => g.name)).toEqual(["Alpha"]);
   });

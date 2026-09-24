@@ -16,6 +16,7 @@ import { voteSignerAccount } from "../network/sdk";
 import { getVoteNeighbors } from "../network/voteNeighbors";
 import type { CeloAccount, CeloTransactionRequest, Transaction } from "../types";
 import { valueToHex, isSameTokenAsFee, normalizeAndSubtract, convertNumberDecimals } from "./utils";
+import { bridgeCoinConfig } from "./coinConfig";
 
 const calcTokenTransferValue = (
   tokenAccount: NonNullable<ReturnType<typeof findSubAccountById>> & { type: "TokenAccount" },
@@ -52,7 +53,7 @@ const buildLockTx = async (
   account: CeloAccount,
   value: BigNumber,
 ): Promise<CeloTransactionRequest> => {
-  const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
+  const lockedGoldAddress = await getRegistryAddressFor(bridgeCoinConfig(), "LockedGold");
   return {
     from: account.freshAddress as `0x${string}`,
     value: valueToHex(value),
@@ -65,7 +66,7 @@ const buildUnlockTx = async (
   account: CeloAccount,
   value: BigNumber,
 ): Promise<CeloTransactionRequest> => {
-  const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
+  const lockedGoldAddress = await getRegistryAddressFor(bridgeCoinConfig(), "LockedGold");
   return {
     from: account.freshAddress as `0x${string}`,
     to: lockedGoldAddress,
@@ -81,7 +82,7 @@ const buildWithdrawTx = async (
   account: CeloAccount,
   transaction: Transaction,
 ): Promise<CeloTransactionRequest> => {
-  const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
+  const lockedGoldAddress = await getRegistryAddressFor(bridgeCoinConfig(), "LockedGold");
   const withdrawIndex = transaction.index || 0;
   return {
     from: account.freshAddress as `0x${string}`,
@@ -100,7 +101,7 @@ const buildVoteTx = async (
   transaction: Transaction,
   value: BigNumber,
 ): Promise<CeloTransactionRequest> => {
-  const electionAddress = await getRegistryAddressFor("Election");
+  const electionAddress = await getRegistryAddressFor(bridgeCoinConfig(), "Election");
   const voteValue = BigInt(value.toFixed());
   const recipient = transaction.recipient as `0x${string}`;
 
@@ -117,7 +118,13 @@ const buildVoteTx = async (
     );
   }
 
-  const { lesser, greater } = await getVoteNeighbors(electionAddress, recipient, voteValue, true);
+  const { lesser, greater } = await getVoteNeighbors(
+    bridgeCoinConfig(),
+    electionAddress,
+    recipient,
+    voteValue,
+    true,
+  );
   return {
     from: account.freshAddress as `0x${string}`,
     to: electionAddress,
@@ -149,8 +156,11 @@ const getVotedGroupIndex = async (
   account: CeloAccount,
   group: `0x${string}`,
 ): Promise<bigint> => {
-  const client = getCeloClient();
-  const signerAddress = (await voteSignerAccount(account.freshAddress)) as `0x${string}`;
+  const client = getCeloClient(bridgeCoinConfig());
+  const signerAddress = (await voteSignerAccount(
+    bridgeCoinConfig(),
+    account.freshAddress,
+  )) as `0x${string}`;
   const groupsVotedFor = await client.readContract({
     address: electionAddress,
     abi: electionABI,
@@ -170,12 +180,12 @@ const buildRevokeTx = async (
   transaction: Transaction,
   value: BigNumber,
 ): Promise<CeloTransactionRequest> => {
-  const electionAddress = await getRegistryAddressFor("Election");
+  const electionAddress = await getRegistryAddressFor(bridgeCoinConfig(), "Election");
   const recipient = transaction.recipient as `0x${string}`;
   const revokeValue = BigInt(value.toFixed());
 
   const [{ lesser, greater }, groupIndex] = await Promise.all([
-    getVoteNeighbors(electionAddress, recipient, revokeValue, false),
+    getVoteNeighbors(bridgeCoinConfig(), electionAddress, recipient, revokeValue, false),
     getVotedGroupIndex(electionAddress, account, recipient),
   ]);
   const revokeArgs = [recipient, revokeValue, lesser, greater, groupIndex] as const;
@@ -192,7 +202,7 @@ const buildActivateTx = async (
   account: CeloAccount,
   transaction: Transaction,
 ): Promise<CeloTransactionRequest> => {
-  const electionAddress = await getRegistryAddressFor("Election");
+  const electionAddress = await getRegistryAddressFor(bridgeCoinConfig(), "Election");
   return {
     from: account.freshAddress as `0x${string}`,
     to: electionAddress,
@@ -205,7 +215,7 @@ const buildActivateTx = async (
 };
 
 const buildRegisterTx = async (account: CeloAccount): Promise<CeloTransactionRequest> => {
-  const accountsAddress = await getRegistryAddressFor("Accounts");
+  const accountsAddress = await getRegistryAddressFor(bridgeCoinConfig(), "Accounts");
   return {
     from: account.freshAddress as `0x${string}`,
     to: accountsAddress,
@@ -220,7 +230,10 @@ const buildTokenTransferTx = async (
   value: BigNumber,
 ): Promise<CeloTransactionRequest> => {
   const tokenAddress: `0x${string}` = CELO_STABLE_TOKENS.includes(tokenAccount.token.id)
-    ? await getRegistryAddressFor(getStableTokenRegistryName(tokenAccount.token.id))
+    ? await getRegistryAddressFor(
+        bridgeCoinConfig(),
+        getStableTokenRegistryName(tokenAccount.token.id),
+      )
     : (tokenAccount.token.contractAddress as `0x${string}`);
 
   return {
@@ -251,7 +264,7 @@ const buildTransaction = async (
   account: CeloAccount,
   transaction: Transaction,
 ): Promise<CeloTransactionRequest> => {
-  const client = getCeloClient();
+  const client = getCeloClient(bridgeCoinConfig());
   const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
@@ -293,7 +306,7 @@ const buildTransaction = async (
 
   let estimatedGas: bigint;
   try {
-    estimatedGas = await celoEstimateGas({
+    estimatedGas = await celoEstimateGas(bridgeCoinConfig(), {
       from: celoTransaction.from,
       ...(celoTransaction.to !== undefined && { to: celoTransaction.to }),
       ...(celoTransaction.data !== undefined && { data: celoTransaction.data }),

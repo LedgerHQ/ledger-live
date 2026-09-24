@@ -18,6 +18,7 @@ jest.mock("../network/registry", () => ({
 import { celoEstimateGas } from "../network/client";
 import { getFeeMarketGasParams } from "../network/sdk";
 import { estimateFees } from "./estimateFees";
+import { mockCeloConfig } from "../test/context";
 
 const mockGasParams = getFeeMarketGasParams as jest.Mock;
 const mockEstimateGas = celoEstimateGas as jest.Mock;
@@ -50,10 +51,11 @@ describe("estimateFees", () => {
   });
 
   it("estimates a native CELO send with native gas (eip1559)", async () => {
-    const fee = await estimateFees(makeIntent({ type: "native" }));
+    const fee = await estimateFees(mockCeloConfig, makeIntent({ type: "native" }));
 
-    expect(mockGasParams).toHaveBeenCalledWith(undefined);
+    expect(mockGasParams).toHaveBeenCalledWith(mockCeloConfig, undefined);
     expect(mockEstimateGas).toHaveBeenCalledWith(
+      mockCeloConfig,
       expect.objectContaining({ from: SENDER, to: RECIPIENT, value: 5n }),
     );
     expect(fee.parameters?.type).toBe("eip1559");
@@ -64,23 +66,32 @@ describe("estimateFees", () => {
   });
 
   it("estimates an ERC-20 token send with native gas (to contract, value 0)", async () => {
-    const fee = await estimateFees(makeIntent({ type: "erc20", assetReference: USDC_CONTRACT }));
+    const fee = await estimateFees(
+      mockCeloConfig,
+      makeIntent({ type: "erc20", assetReference: USDC_CONTRACT }),
+    );
 
-    expect(mockGasParams).toHaveBeenCalledWith(undefined);
+    expect(mockGasParams).toHaveBeenCalledWith(mockCeloConfig, undefined);
     expect(mockEstimateGas).toHaveBeenCalledWith(
+      mockCeloConfig,
       expect.objectContaining({ from: SENDER, to: USDC_CONTRACT, value: 0n }),
     );
     expect(fee.parameters?.type).toBe("eip1559");
   });
 
   it("estimates with CIP-64 fee currency, threading the adapter address to gas calls", async () => {
-    const fee = await estimateFees(makeIntent({ type: "erc20", assetReference: USDC_CONTRACT }), {
-      feeCurrency: USDC_CONTRACT,
-    });
+    const fee = await estimateFees(
+      mockCeloConfig,
+      makeIntent({ type: "erc20", assetReference: USDC_CONTRACT }),
+      {
+        feeCurrency: USDC_CONTRACT,
+      },
+    );
 
     // contract address selection is normalized to the CIP-64 adapter address
-    expect(mockGasParams).toHaveBeenCalledWith(USDC_ADAPTER);
+    expect(mockGasParams).toHaveBeenCalledWith(mockCeloConfig, USDC_ADAPTER);
     expect(mockEstimateGas).toHaveBeenCalledWith(
+      mockCeloConfig,
       expect.objectContaining({ feeCurrency: USDC_ADAPTER }),
     );
     expect(fee.parameters?.feeCurrency).toBe(USDC_ADAPTER);
@@ -96,12 +107,13 @@ describe("estimateFees", () => {
       amount: 0n,
       asset: { type: "native" },
       data: { type: "buffer", value: Buffer.from([]) },
-    }) as unknown as Parameters<typeof estimateFees>[0];
+    }) as unknown as Parameters<typeof estimateFees>[1];
 
   it("estimates a staking intent via the staking builder (register → Accounts contract)", async () => {
-    const fee = await estimateFees(makeRegisterIntent());
+    const fee = await estimateFees(mockCeloConfig, makeRegisterIntent());
 
     expect(mockEstimateGas).toHaveBeenCalledWith(
+      mockCeloConfig,
       expect.objectContaining({
         from: SENDER,
         to: "0x1111111111111111111111111111111111111111",
@@ -114,7 +126,7 @@ describe("estimateFees", () => {
   it("falls back to a fixed gas limit when estimation reverts for a staking intent", async () => {
     mockEstimateGas.mockReset().mockRejectedValue(new Error("execution reverted"));
 
-    const fee = await estimateFees(makeRegisterIntent());
+    const fee = await estimateFees(mockCeloConfig, makeRegisterIntent());
 
     expect(fee.parameters?.gasLimit).toBe(1_000_000n);
     // value = maxFeePerGas (1000) * fallback gasLimit (1_000_000)
@@ -127,12 +139,14 @@ describe("estimateFees", () => {
       .mockReset()
       .mockRejectedValue(new Error("HttpRequestError: connection timeout"));
 
-    await expect(estimateFees(makeRegisterIntent())).rejects.toThrow(/timeout/);
+    await expect(estimateFees(mockCeloConfig, makeRegisterIntent())).rejects.toThrow(/timeout/);
   });
 
   it("rethrows estimation errors for non-staking intents", async () => {
     mockEstimateGas.mockReset().mockRejectedValue(new Error("boom"));
 
-    await expect(estimateFees(makeIntent({ type: "native" }))).rejects.toThrow("boom");
+    await expect(estimateFees(mockCeloConfig, makeIntent({ type: "native" }))).rejects.toThrow(
+      "boom",
+    );
   });
 });

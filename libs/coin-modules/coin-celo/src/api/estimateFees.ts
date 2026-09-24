@@ -12,6 +12,7 @@ import { buildTxParams } from "./buildTxParams";
 import { resolveFeeCurrency } from "./feeCurrency";
 import { isCeloStakingIntent } from "./stakingIntent";
 import type { CeloFeeParameters } from "./types";
+import type { CeloConfigInfo } from "../config";
 
 /**
  * Estimates the network fee for a Celo transaction intent, honoring CIP-64 fee
@@ -26,18 +27,19 @@ import type { CeloFeeParameters } from "./types";
  * Celo bridge) to absorb estimation drift between estimate and broadcast.
  */
 export const estimateFees = async (
+  config: CeloConfigInfo,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> => {
   const feeCurrency = resolveFeeCurrency(customFeesParameters?.feeCurrency as string | undefined);
-  const { to, data, value } = await buildTxParams(intent, feeCurrency);
+  const { to, data, value } = await buildTxParams(config, intent, feeCurrency);
 
-  const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeMarketGasParams(feeCurrency);
+  const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeMarketGasParams(config, feeCurrency);
 
   // Only a revert (see isRevertLike) may fall back to a fixed ceiling; transient failures must surface.
   let gasLimit: bigint;
   try {
-    const estimatedGas = await celoEstimateGas({
+    const estimatedGas = await celoEstimateGas(config, {
       from: intent.sender as `0x${string}`,
       to,
       data,

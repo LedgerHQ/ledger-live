@@ -14,6 +14,7 @@ import type {
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
+import type { CeloConfigInfo } from "../config";
 import { getCeloClient } from "../network/client";
 import { combine } from "./combine";
 import { craftTransaction } from "./craftTransaction";
@@ -30,7 +31,7 @@ import { validateStakingIntent } from "./validateStakingIntent";
 // against the same source of truth instead of bare string literals.
 export type { CeloStakingType } from "./stakingIntent";
 
-type CeloContext = Context<EvmConfigInfo>;
+type CeloContext = Context<CeloConfigInfo>;
 
 const prefixHex = (hex: string): `0x${string}` =>
   (hex.startsWith("0x") ? hex : `0x${hex}`) as `0x${string}`;
@@ -68,46 +69,48 @@ export function createApi(currencyId = "celo") {
 
   return {
     ...typedEvmApi,
-    craftTransaction: (
-      _context: CeloContext,
+    craftTransaction: async (
+      context: CeloContext,
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       options?: { customFees?: FeeEstimation },
-    ) => craftTransaction(intent, options?.customFees),
-    estimateFees: (
-      _context: CeloContext,
+    ) => craftTransaction(await context.config(), intent, options?.customFees),
+    estimateFees: async (
+      context: CeloContext,
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       _options?: { feeOption?: unknown },
-    ) => estimateFees(intent),
+    ) => estimateFees(await context.config(), intent),
     combine: (_context: CeloContext, tx: string, signature: string[], _options?) =>
       combine(tx, signature),
-    broadcast: (
-      _context: CeloContext,
+    broadcast: async (
+      context: CeloContext,
       tx: string,
       _options?: { broadcastConfig?: BroadcastConfig },
     ): Promise<string> =>
-      getCeloClient().sendRawTransaction({ serializedTransaction: prefixHex(tx) }),
+      getCeloClient(await context.config()).sendRawTransaction({
+        serializedTransaction: prefixHex(tx),
+      }),
     // Surface staking positions via `getBalance().stake`; native/token balance still comes from coin-evm.
     getBalance: makeGetBalance((_context: CeloContext, address: string, options) =>
       typedEvmApi.getBalance(_context, address, options),
     ),
-    getStakes: (_context: CeloContext, address: string, _options?: { cursor?: Cursor }) =>
-      getStakes(address),
+    getStakes: async (context: CeloContext, address: string, _options?: { cursor?: Cursor }) =>
+      getStakes(await context.config(), address),
     getRewards: (_context: CeloContext, address: string, _options?: { cursor?: Cursor }) =>
       getRewards(address),
-    getValidators: (
-      _context: CeloContext,
+    getValidators: async (
+      context: CeloContext,
       _options?: { cursor?: Cursor },
-    ): Promise<Page<Validator>> => getValidators(),
-    validateIntent: (
+    ): Promise<Page<Validator>> => getValidators(await context.config()),
+    validateIntent: async (
       context: CeloContext,
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       balances: Balance[],
       options?: { customFees?: FeeEstimation },
     ) =>
       isCeloStakingIntent(intent)
-        ? validateStakingIntent(intent, balances, options?.customFees)
+        ? validateStakingIntent(await context.config(), intent, balances, options?.customFees)
         : typedEvmApi.validateIntent(context, intent, balances, options),
-  } satisfies CoinModuleImpl<EvmConfigInfo, MemoNotSupported, BufferTxData>;
+  } satisfies CoinModuleImpl<CeloConfigInfo, MemoNotSupported, BufferTxData>;
 }
 
 export default createApi;

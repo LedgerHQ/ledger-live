@@ -2,6 +2,7 @@ jest.mock("../../network/client", () => ({ getCeloClient: jest.fn() }));
 
 import { getCeloClient } from "../../network/client";
 import { getVoteNeighbors } from "../../network/voteNeighbors";
+import { mockCeloConfig } from "../../test/context";
 
 const ELECTION = "0x3333333333333333333333333333333333333333" as `0x${string}`;
 const A = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" as `0x${string}`;
@@ -23,7 +24,7 @@ describe("getVoteNeighbors", () => {
       [10n, 30n],
     ]);
 
-    const { lesser, greater } = await getVoteNeighbors(ELECTION, T, 20n, true);
+    const { lesser, greater } = await getVoteNeighbors(mockCeloConfig, ELECTION, T, 20n, true);
 
     expect(lesser.toLowerCase()).toBe(A.toLowerCase());
     expect(greater.toLowerCase()).toBe(B.toLowerCase());
@@ -35,7 +36,7 @@ describe("getVoteNeighbors", () => {
       [10n, 30n],
     ]);
 
-    const { lesser, greater } = await getVoteNeighbors(ELECTION, T, 100n, true);
+    const { lesser, greater } = await getVoteNeighbors(mockCeloConfig, ELECTION, T, 100n, true);
 
     expect(lesser.toLowerCase()).toBe(B.toLowerCase());
     expect(greater).toBe(ZERO);
@@ -46,7 +47,7 @@ describe("getVoteNeighbors", () => {
       throw new Error("execution reverted");
     });
 
-    const { lesser, greater } = await getVoteNeighbors(ELECTION, T, 5n, true);
+    const { lesser, greater } = await getVoteNeighbors(mockCeloConfig, ELECTION, T, 5n, true);
 
     expect(lesser).toBe(ZERO);
     expect(greater).toBe(ZERO);
@@ -57,7 +58,9 @@ describe("getVoteNeighbors", () => {
       throw new Error("HttpRequestError: connection timeout");
     });
 
-    await expect(getVoteNeighbors(ELECTION, T, 5n, true)).rejects.toThrow(/timeout/);
+    await expect(getVoteNeighbors(mockCeloConfig, ELECTION, T, 5n, true)).rejects.toThrow(
+      /timeout/,
+    );
   });
 
   it("recomputes neighbors for a revoke (subtracting votes) on an existing group", async () => {
@@ -67,7 +70,7 @@ describe("getVoteNeighbors", () => {
       [10n, 50n, 30n],
     ]);
 
-    const { lesser, greater } = await getVoteNeighbors(ELECTION, T, 30n, false);
+    const { lesser, greater } = await getVoteNeighbors(mockCeloConfig, ELECTION, T, 30n, false);
 
     expect(lesser.toLowerCase()).toBe(A.toLowerCase());
     expect(greater.toLowerCase()).toBe(B.toLowerCase());
@@ -80,7 +83,7 @@ describe("getVoteNeighbors", () => {
       [10n, 30n],
     ]);
 
-    const { lesser, greater } = await getVoteNeighbors(ELECTION, T, 999n, false);
+    const { lesser, greater } = await getVoteNeighbors(mockCeloConfig, ELECTION, T, 999n, false);
 
     expect(lesser).toBe(ZERO);
     expect(greater.toLowerCase()).toBe(B.toLowerCase());
@@ -93,7 +96,7 @@ describe("getVoteNeighbors", () => {
       [20n, 20n],
     ]);
 
-    const { lesser } = await getVoteNeighbors(ELECTION, T, 5n, true);
+    const { lesser } = await getVoteNeighbors(mockCeloConfig, ELECTION, T, 5n, true);
 
     // T (5 votes) is the lowest, so it has no lesser neighbor
     expect(lesser).toBe(ZERO);

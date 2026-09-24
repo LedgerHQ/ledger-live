@@ -1,3 +1,4 @@
+import { mockCeloConfig } from "../../test/context";
 const getCeloClientMock = jest.fn();
 const readContractMock = jest.fn();
 
@@ -23,7 +24,7 @@ describe("network/registry", () => {
     const accountsAddress = "0x000000000000000000000000000000000000aa10";
     readContractMock.mockResolvedValue(accountsAddress);
 
-    const result = await getRegistryAddressFor("Accounts");
+    const result = await getRegistryAddressFor(mockCeloConfig, "Accounts");
 
     expect(result).toBe(accountsAddress);
     expect(readContractMock).toHaveBeenCalledWith({
@@ -38,8 +39,8 @@ describe("network/registry", () => {
     const { getRegistryAddressFor } = loadRegistryModule();
     readContractMock.mockResolvedValue("0x000000000000000000000000000000000000aa10");
 
-    const first = await getRegistryAddressFor("Accounts");
-    const second = await getRegistryAddressFor("Accounts");
+    const first = await getRegistryAddressFor(mockCeloConfig, "Accounts");
+    const second = await getRegistryAddressFor(mockCeloConfig, "Accounts");
 
     expect(first).toBe(second);
     expect(readContractMock).toHaveBeenCalledTimes(1);
@@ -53,8 +54,8 @@ describe("network/registry", () => {
         : "0x000000000000000000000000000000000000ce10",
     );
 
-    await getRegistryAddressFor("Accounts");
-    await getRegistryAddressFor("Election");
+    await getRegistryAddressFor(mockCeloConfig, "Accounts");
+    await getRegistryAddressFor(mockCeloConfig, "Election");
 
     expect(readContractMock).toHaveBeenCalledTimes(2);
   });

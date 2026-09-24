@@ -12,6 +12,7 @@ import {
   tokenTransactionWithUsdcFeeFixture,
 } from "../../bridge/fixtures";
 import getFeesForTransaction from "../../bridge/getFeesForTransaction";
+import { mockCeloConfig } from "../../test/context";
 
 const VALID_RECIPIENT = "0x79D5A290D7ba4b99322d91b577589e8d0BF87072";
 
@@ -42,7 +43,7 @@ jest.mock("../../network/client", () => ({
 }));
 
 jest.mock("../../network/registry", () => ({
-  getRegistryAddressFor: jest.fn(async (name: string) => {
+  getRegistryAddressFor: jest.fn(async (_config: unknown, name: string) => {
     if (name === "LockedGold") return "0x0000000000000000000000000000000000001d00";
     if (name === "Election") return "0x000000000000000000000000000000000000ce10";
     if (name === "Accounts") return "0x000000000000000000000000000000000000aa10";
@@ -289,6 +290,7 @@ describe("getFeesForTransaction", () => {
     });
 
     expect(estimateGasMock).toHaveBeenCalledWith(
+      mockCeloConfig,
       expect.objectContaining({
         maxPriorityFeePerGas: BigInt(1),
         maxFeePerGas: BigInt(2),
@@ -332,7 +334,10 @@ describe("getFeesForTransaction", () => {
       transaction: transactionWithUsdcFeeFixture,
     });
 
-    expect(celoGasPriceMock).toHaveBeenCalledWith(transactionWithUsdcFeeFixture.feeCurrency);
+    expect(celoGasPriceMock).toHaveBeenCalledWith(
+      mockCeloConfig,
+      transactionWithUsdcFeeFixture.feeCurrency,
+    );
   });
 
   it("should call gasPrice with adapter feeCurrency when adapter/unwrapped differ", async () => {
@@ -349,6 +354,6 @@ describe("getFeesForTransaction", () => {
       transaction,
     });
 
-    expect(celoGasPriceMock).toHaveBeenCalledWith(transaction.feeCurrency);
+    expect(celoGasPriceMock).toHaveBeenCalledWith(mockCeloConfig, transaction.feeCurrency);
   });
 });

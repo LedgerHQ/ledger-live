@@ -6,6 +6,7 @@ import type {
   StakeState,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { getPendingWithdrawals, getVotes } from "../network/sdk";
+import type { CeloConfigInfo } from "../config";
 
 const NATIVE: AssetInfo = { type: "native" };
 
@@ -26,10 +27,13 @@ const NATIVE: AssetInfo = { type: "native" };
  * All positions are returned in a single page. Non-voting locked balance is not
  * represented as a Stake yet.
  */
-export const buildCeloStakes = async (address: string): Promise<Stake[]> => {
+export const buildCeloStakes = async (
+  config: CeloConfigInfo,
+  address: string,
+): Promise<Stake[]> => {
   const [votes, pendingWithdrawals] = await Promise.all([
-    getVotes(address),
-    getPendingWithdrawals(address).catch(() => []),
+    getVotes(config, address),
+    getPendingWithdrawals(config, address).catch(() => []),
   ]);
 
   const voteStakes: Stake[] = votes.map(vote => ({
@@ -68,8 +72,12 @@ export const buildCeloStakes = async (address: string): Promise<Stake[]> => {
   return [...voteStakes, ...withdrawalStakes];
 };
 
-export const getStakes = async (address: string, _cursor?: Cursor): Promise<Page<Stake>> => ({
-  items: await buildCeloStakes(address),
+export const getStakes = async (
+  config: CeloConfigInfo,
+  address: string,
+  _cursor?: Cursor,
+): Promise<Page<Stake>> => ({
+  items: await buildCeloStakes(config, address),
   next: undefined,
 });
 
