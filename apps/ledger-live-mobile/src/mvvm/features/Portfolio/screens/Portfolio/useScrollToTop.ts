@@ -1,11 +1,11 @@
-import { useCallback, useContext, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { FlatList } from "react-native";
 import { scrollToTopEvent } from "LLM/components/MainTabBar/scrollToTopEvent";
-import { WalletTabNavigatorScrollContext } from "~/components/WalletTab/WalletTabNavigatorScrollManager";
+import { useWalletNavScrollContext } from "~/components/WalletTab/WalletTabNavigatorScrollManager";
 
 export function useScrollToTop() {
   const flatListRef = useRef<FlatList | null>(null);
-  const { scrollY } = useContext(WalletTabNavigatorScrollContext);
+  const { scrollY } = useWalletNavScrollContext();
 
   const handleFlatListRef = useCallback((ref: FlatList | null) => {
     flatListRef.current = ref;

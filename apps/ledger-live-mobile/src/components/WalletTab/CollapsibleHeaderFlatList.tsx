@@ -1,14 +1,13 @@
-import { useIsFocused, useRoute } from "@react-navigation/native";
-import React, { useContext, useCallback } from "react";
+import React from "react";
 import { Dimensions, StatusBar, FlatList, FlatListProps, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { useScrollOffset } from "LLM/components/Wallet40Background";
 import SafeAreaView from "../SafeAreaView";
-import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
-
-// Default values for when context is not available (direct navigation)
-const DEFAULT_HEADER_HEIGHT = 0;
-const DEFAULT_TAB_BAR_HEIGHT = 0;
+import {
+  WALLET_TAB_BAR_HEIGHT,
+  WALLET_TAB_HEADER_HEIGHT,
+  useWalletNavScrollContext,
+} from "./WalletTabNavigatorScrollManager";
 
 // Reanimated's FlatList renders its own cells, so it doesn't take a CellRendererComponent.
 type CollapsibleHeaderFlatListProps<T> = Omit<FlatListProps<T>, "CellRendererComponent"> & {
@@ -24,45 +23,21 @@ function CollapsibleHeaderFlatList<T>({
   onFlatListRef,
   ...otherProps
 }: CollapsibleHeaderFlatListProps<T>) {
-  const context = useContext(WalletTabNavigatorScrollContext);
-
-  // Handle case where context is not available (direct navigation outside WalletTabNavigator)
-  const hasContext = context !== null && context !== undefined;
-  const { onScroll } = useScrollOffset(context?.scrollY);
-  const onGetRef = context?.onGetRef;
-  const syncScrollOffset = context?.syncScrollOffset;
-  const tabBarHeight = context?.tabBarHeight ?? DEFAULT_TAB_BAR_HEIGHT;
-  const headerHeight = context?.headerHeight ?? DEFAULT_HEADER_HEIGHT;
-
+  // Outside the Wallet tab (e.g. Market), the list has no tab chrome to clear and no scroll to share.
+  const { scrollY } = useWalletNavScrollContext();
+  const { onScroll } = useScrollOffset(scrollY);
+  const isInWalletTab = scrollY !== undefined;
+  const headerHeight = isInWalletTab ? WALLET_TAB_HEADER_HEIGHT : 0;
+  const tabBarHeight = isInWalletTab ? WALLET_TAB_BAR_HEIGHT : 0;
   const windowHeight = Dimensions.get("window").height;
-  const route = useRoute();
-  const isFocused = useIsFocused();
-
-  const onMomentumScrollEnd = useCallback(() => {
-    if (syncScrollOffset) {
-      syncScrollOffset(route.name);
-    }
-  }, [route.name, syncScrollOffset]);
-
-  const handleRef = useCallback(
-    (ref: FlatList) => {
-      onFlatListRef?.(ref);
-      if (onGetRef) {
-        onGetRef({ key: route.name, value: ref });
-      }
-    },
-    [onGetRef, onFlatListRef, route.name],
-  );
 
   const list = (
     <Animated.FlatList<T>
       {...otherProps}
       scrollToOverflowEnabled={true}
-      ref={handleRef}
+      ref={onFlatListRef}
       scrollEventThrottle={16}
-      onScroll={isFocused && hasContext ? onScroll : undefined}
-      onScrollEndDrag={onMomentumScrollEnd}
-      onMomentumScrollEnd={onMomentumScrollEnd}
+      onScroll={isInWalletTab ? onScroll : undefined}
       contentContainerStyle={[
         {
           paddingTop: headerHeight,

@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Box } from "@ledgerhq/native-ui";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import { PortfolioBalanceSync } from "LLM/features/Portfolio/components/PortfolioBalanceSync";
@@ -9,7 +9,7 @@ import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { Wallet40Background } from "LLM/components/Wallet40Background";
 import WalletTabNavigatorScrollManager, {
-  WalletTabNavigatorScrollContext,
+  useWalletNavScrollContext,
 } from "../WalletTab/WalletTabNavigatorScrollManager";
 import { BaseComposite, StackNavigatorProps } from "./types/helpers";
 import { PortfolioNavigatorStackParamList } from "./types/PortfolioNavigator";
@@ -19,7 +19,7 @@ type NavigationProps = BaseComposite<
 >;
 
 function PortfolioBackground() {
-  const { scrollY } = useContext(WalletTabNavigatorScrollContext);
+  const { scrollY } = useWalletNavScrollContext();
   return <Wallet40Background type="portfolio" scrollY={scrollY} />;
 }
 
@@ -38,7 +38,7 @@ export default function PortfolioRootScreen({ navigation, route }: NavigationPro
   );
 
   return (
-    <WalletTabNavigatorScrollManager currentRouteName={ScreenName.Portfolio}>
+    <WalletTabNavigatorScrollManager>
       <PortfolioBalanceSync />
       <Box flexGrow={1} bg={backgroundColor}>
         <PortfolioBackground />
