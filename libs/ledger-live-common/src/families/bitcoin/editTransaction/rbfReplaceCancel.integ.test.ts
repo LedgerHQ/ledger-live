@@ -33,8 +33,11 @@ import {
   buildRbfFixtureTxs,
   buildRbfFixtureTxsWithTwoUtxos,
 } from "@ledgerhq/coin-bitcoin/fixtures/rbf.fixtures";
+import { setTestCoinConfig } from "@ledgerhq/coin-bitcoin/fixtures/coinConfig.fixtures";
 
 jest.setTimeout(30000);
+
+beforeAll(() => setTestCoinConfig());
 
 const EXTERNAL_RECIPIENT = "1BKWjmA9swxRKMH9NgXpSz8YZfVMnWWU9D";
 const CHANGE_ADDRESS = "1FHa4cuKdea21ByTngP9vz3KYDqqQe9SsA";

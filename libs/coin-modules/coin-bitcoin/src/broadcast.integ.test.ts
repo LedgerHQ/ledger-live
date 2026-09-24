@@ -4,6 +4,7 @@ import { broadcast } from "./broadcast";
 import Xpub from "@ledgerhq/wallet-btc/xpub";
 import BitcoinLikeExplorer from "@ledgerhq/wallet-btc/explorer/index";
 import { walletBtcCurrencyById } from "./walletBtcCurrency";
+import { LEDGER_EXPLORER, setTestCoinConfig } from "./fixtures/coinConfig.fixtures";
 
 function buildSignedTxHex(): { txHex: string; address: string } {
   const privateKey = secp256k1.utils.randomSecretKey();
@@ -31,6 +32,8 @@ function buildSignedTxHex(): { txHex: string; address: string } {
 }
 
 describe("Broadcast", () => {
+  beforeAll(() => setTestCoinConfig(LEDGER_EXPLORER));
+
   it("throws when broadcasting a transaction spending nonexistent inputs", async () => {
     const { txHex, address } = buildSignedTxHex();
 

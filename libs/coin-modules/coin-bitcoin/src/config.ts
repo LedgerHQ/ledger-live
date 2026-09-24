@@ -3,7 +3,12 @@ import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 // Side-effect: register the zcash chain adapter
 import "./chain-adapters/zcash";
 
-export type BitcoinConfigInfo = CurrencyConfig;
+export type BitcoinConfigInfo = CurrencyConfig & {
+  infra: {
+    /** Ledger explorer base URL, where wallet-btc reads the account history from. */
+    EXPLORER: string;
+  };
+};
 
 type BitcoinCoinConfig = {
   info: BitcoinConfigInfo;

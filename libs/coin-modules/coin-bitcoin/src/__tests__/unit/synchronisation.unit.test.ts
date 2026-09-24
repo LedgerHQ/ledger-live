@@ -3,6 +3,7 @@ import { firstValueFrom } from "rxjs";
 import { makeGetAccountShape } from "../../synchronisation";
 
 import { createFixtureAccount, mockSignerContext } from "../../fixtures/common.fixtures";
+import { setTestCoinConfig, TEST_EXPLORER } from "../../fixtures/coinConfig.fixtures";
 import { BitcoinAccount } from "../../types";
 
 jest.setTimeout(10000);
@@ -19,6 +20,8 @@ jest.mock("@ledgerhq/wallet-btc/explorer/index", () => {
 });
 
 describe("synchronisation", () => {
+  beforeAll(setTestCoinConfig);
+
   it("should return a function", () => {
     const result = makeGetAccountShape(mockSignerContext);
     expect(typeof result).toBe("function");
@@ -58,7 +61,7 @@ describe("synchronisation", () => {
             GAP: 20,
             OUTPUT_VALUE_MAX: 9007199254740991,
             derivationMode: "Taproot",
-            explorer: { baseUrl: "https://explorers.api.live.ledger.com/blockchain/v4/btc" },
+            explorer: { baseUrl: `${TEST_EXPLORER}/blockchain/v4/btc` },
             freshAddress: "bc1pusjmg6xjpym8t8rvdw5gyx2mxvqj0l439acqzy2ssv546k857svqdnth09",
             freshAddressIndex: 0,
             txsSyncArraySize: 1000,

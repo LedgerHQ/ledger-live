@@ -1,5 +1,8 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 
+// Ledger explorer the UTXO currencies read their history from.
+const LEDGER_EXPLORER = "https://explorers.api.live.ledger.com";
+
 const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_bitcoin: {
     type: "object",
@@ -8,6 +11,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_bitcoin_cash: {
@@ -17,6 +21,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_bitcoin_gold: {
@@ -26,6 +31,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_bitcoin_private: {
@@ -35,6 +41,27 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
+    },
+  },
+  config_currency_bitcoin_regtest: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      infra: { EXPLORER: "http://localhost:9876" },
+    },
+  },
+  config_currency_bitcoin_testnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_dash: {
@@ -44,6 +71,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_decred: {
@@ -53,6 +81,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_digibyte: {
@@ -62,6 +91,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_dogecoin: {
@@ -71,6 +101,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_game_credits: {
@@ -80,6 +111,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_gochain: {
@@ -98,6 +130,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_lbry: {
@@ -107,6 +140,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_litecoin: {
@@ -116,6 +150,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_nix: {
@@ -125,6 +160,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_qtum: {
@@ -134,6 +170,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_ravencoin: {
@@ -143,6 +180,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_resistance: {
@@ -152,6 +190,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_zcash: {
@@ -160,6 +199,9 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      infra: {
+        EXPLORER: LEDGER_EXPLORER,
       },
     },
   },
@@ -170,6 +212,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_zcoin: {
@@ -179,6 +222,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
   config_currency_zencash: {
@@ -188,6 +232,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: { EXPLORER: LEDGER_EXPLORER },
     },
   },
 };

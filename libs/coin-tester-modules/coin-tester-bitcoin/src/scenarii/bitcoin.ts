@@ -274,6 +274,8 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
         status: {
           type: "active",
         },
+        // The Atlas explorer the docker stack serves regtest from.
+        infra: { EXPLORER: "http://localhost:9876" },
       },
     };
     setCoinConfig(() => ({ ...coinConfig }));

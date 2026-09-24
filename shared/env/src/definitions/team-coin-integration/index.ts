@@ -307,11 +307,6 @@ const teamCoinIntegration = {
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },
-  EXPLORER_REGTEST: {
-    def: "http://localhost:9876",
-    parser: stringParser,
-    desc: "Ledger regtest Bitcoin explorer API",
-  },
   LEDGER_REST_API_BASE: {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,

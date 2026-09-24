@@ -7,6 +7,7 @@ import { DerivationModes } from "@ledgerhq/wallet-btc/types";
 import { buildAccountTx, signAccountTx } from "../../buildAndSign";
 import { walletBtcCurrencyById } from "../../walletBtcCurrency";
 import { MockBtcSigner } from "../fixtures/mockBtcSigner";
+import { LEDGER_EXPLORER, setTestCoinConfig } from "../../fixtures/coinConfig.fixtures";
 
 jest.setTimeout(180000);
 
@@ -17,6 +18,7 @@ describe("buildAccountTx / signAccountTx", () => {
   let account: Account;
 
   beforeAll(async () => {
+    setTestCoinConfig(LEDGER_EXPLORER);
     account = await wallet.generateAccount(
       {
         xpub: "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",

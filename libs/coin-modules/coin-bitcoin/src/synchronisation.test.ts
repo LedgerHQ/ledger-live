@@ -25,6 +25,7 @@ import type { Operation, SyncConfig } from "@ledgerhq/types-live";
 import { SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import { firstValueFrom } from "rxjs";
 import { registerChainAdapter } from "./chain-adapters/registry";
+import { setTestCoinConfig } from "./fixtures/coinConfig.fixtures";
 
 describe("removeReplaced", () => {
   const baseTx: Omit<BtcOperation, "hash" | "id" | "blockHeight" | "date" | "extra"> = {
@@ -482,6 +483,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
 
   beforeAll(() => {
     wallet = require("@ledgerhq/wallet-btc/index").default;
+    setTestCoinConfig();
   });
 
   beforeEach(() => {
