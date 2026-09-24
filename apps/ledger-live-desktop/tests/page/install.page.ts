@@ -4,7 +4,7 @@ export class InstallSetOfApps extends AppPage {
   private debugInstallSetOfAppsButton = this.page.getByTestId("debug-install-set-of-apps-button");
   private resetButton = this.page.getByTestId("reset-button");
   private installCtaButton = this.page.getByTestId("install-cta-button");
-  private cancelCtaButton = this.page.getByTestId("skip-cta-button");
+  private cancelCtaButton = this.page.getByTestId("install-skip-cta-button");
   private inputOptionSelector = this.page.getByTestId("input-option-selector");
   container = this.page.getByTestId("install-set-of-apps-container");
   private restoreDrawerBody = this.container.getByTestId("install-set-of-apps-restore-body");

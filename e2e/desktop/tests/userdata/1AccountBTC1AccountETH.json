@@ -61,7 +61,10 @@
           "languageId": 0,
           "seFlags": []
         },
-        "apps": []
+        "apps": [
+          { "name": "Bitcoin", "version": "2.5.1" },
+          { "name": "Ethereum", "version": "1.22.4" }
+        ]
       },
       "blacklistedTokenIds": [],
       "swapAcceptedProviderIds": [],

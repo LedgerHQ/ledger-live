@@ -116,7 +116,7 @@ const SyncStep = ({
           <Button variant="main" onClick={openDrawer} data-testid="onboarding-sync" mt={6}>
             {t("common.continue")}
           </Button>
-          <Link onClick={openSkipDrawer} data-testid="skip-cta-button" mt={6} flex={1}>
+          <Link onClick={openSkipDrawer} data-testid="onboarding-sync-skip" mt={6} flex={1}>
             {t("syncOnboarding.manual.sync.skipButton")}
           </Link>
         </>

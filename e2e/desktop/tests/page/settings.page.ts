@@ -23,6 +23,7 @@ export class SettingsPage extends AppPage {
   private resetAppButton = this.page.getByTestId("reset-button");
   private viewUserDataButton = this.page.getByTestId("view-user-data-button");
   private exportLogsButton = this.page.getByTestId("export-logs-button");
+  private launchOnboardingButton = this.page.getByRole("button", { name: "Launch" });
 
   readonly counterValueSelector = this.page.locator(
     "[data-testid='setting-countervalue-dropDown'] .select__value-container",
@@ -47,6 +48,11 @@ export class SettingsPage extends AppPage {
   @step("Go to Settings Help tab")
   async goToHelpTab() {
     await this.helpTab.click();
+  }
+
+  @step("Launch onboarding from the Help tab")
+  async launchOnboarding() {
+    await this.launchOnboardingButton.click();
   }
 
   @step("Change counter value to $0")

@@ -21,6 +21,7 @@
     "@ledgerhq/coin-zcash": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-mockserver-client": "catalog:",
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
