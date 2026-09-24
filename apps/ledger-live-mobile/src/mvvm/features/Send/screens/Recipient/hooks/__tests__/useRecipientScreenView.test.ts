@@ -413,11 +413,11 @@ describe("useRecipientScreenView", () => {
       }),
     );
 
-    expect(result.current.contactsOnNetwork).toHaveLength(1);
-    expect(result.current.contactsOnNetwork[0]).toMatchObject({
-      id: "contact-alice",
-      addresses: [{ id: "address-eth" }, { id: "address-usdc" }],
-    });
+    expect(result.current.contactsOnNetwork).toMatchObject([
+      { id: "contact-me", addresses: [{ id: "address-me" }] },
+      { id: "contact-alice", addresses: [{ id: "address-eth" }, { id: "address-usdc" }] },
+    ]);
+    expect(result.current.contactsOnNetwork).toHaveLength(2);
   });
 
   it("opens the address sheet when a contact is selected", () => {

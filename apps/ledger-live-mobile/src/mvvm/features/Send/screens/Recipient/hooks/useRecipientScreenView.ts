@@ -94,7 +94,7 @@ export function useRecipientScreenView({
   });
 
   const contactsOnNetwork = useMemo(
-    () => filterContactsByNetwork(contacts, currency.id),
+    () => filterContactsByNetwork(contacts, currency.id, { includeMe: true }),
     [contacts, currency.id],
   );
   const hasSearchValue = recipientSearch.value.length > 0;

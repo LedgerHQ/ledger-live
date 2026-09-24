@@ -8,18 +8,20 @@ type ContactWithAddresses = Readonly<{
 export function filterContactsByNetwork<TContact extends ContactWithAddresses>(
   contacts: readonly TContact[],
   currencyId: string,
+  { includeMe = false }: Readonly<{ includeMe?: boolean }> = {},
 ): TContact[] {
   const networkId = resolveRecipientNetworkId(currencyId);
 
   return contacts.reduce<TContact[]>((matchingContacts, contact) => {
-    if (contact.isMe) {
+    if (contact.isMe && !includeMe) {
       return matchingContacts;
     }
 
     const addresses = contact.addresses.filter(
       address => resolveRecipientNetworkId(address.currencyId) === networkId,
     );
-    if (addresses.length > 0) {
+    // Me stays listed without a matching address, so the user can add one from there.
+    if (addresses.length > 0 || contact.isMe) {
       matchingContacts.push({ ...contact, addresses } as TContact);
     }
 
