@@ -46,6 +46,7 @@ export function QueuedBottomSheet({
   enablePanDownToClose,
   enableBlurKeyboardOnGesture,
   enableHandlePanningGesture,
+  enableContentPanningGesture,
   maxDynamicContentSize,
   footer,
   testID,
@@ -110,6 +111,7 @@ export function QueuedBottomSheet({
       enablePanDownToClose={enablePanDownToClose ?? computedEnablePanDownToClose}
       enableBlurKeyboardOnGesture={enableBlurKeyboardOnGesture}
       enableHandlePanningGesture={enableHandlePanningGesture}
+      enableContentPanningGesture={enableContentPanningGesture}
       maxDynamicContentSize={maxDynamicContentSize}
       hideCloseButton={noCloseButton || areBottomSheetsLocked}
       hideHandle={hideHandle}

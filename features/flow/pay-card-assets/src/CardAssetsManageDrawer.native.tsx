@@ -181,6 +181,10 @@ export function CardAssetsManageDrawer({
           onPlaceholderIndexChange={setDropTargetIndex}
           onDragEnd={handleDragEnd}
           onRelease={handleRelease}
+          // A card links a handful of assets at most, so the list always fits the sheet. Left
+          // scrollable it still claims the pan (iOS bounces a list that fits) and the drag never
+          // gets it, and its scroll viewport keeps the sheet from sizing to the rows.
+          scrollEnabled={false}
         />
       </Box>
       <CardAssetsManageFooter onAddAsset={onAddAsset} />
