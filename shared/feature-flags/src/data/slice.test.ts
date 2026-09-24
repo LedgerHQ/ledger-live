@@ -671,14 +671,26 @@ describe("cachedFlagsSettled", () => {
     expect(store.getState().featureFlags.cachedFlagsSettled).toBe(false);
   });
 
-  it("is armed right away when no cache reader is configured", async () => {
+  it("is armed right away when no cache reader is configured, with env overrides applied", async () => {
     // Nothing local to wait for, so a boot waiting on it must not be stranded.
-    const store = createStore(undefined, { fetchRemoteFlags: neverSettles });
+    const store = createStore(undefined, {
+      resolutionConfig: { envFlags: { mockFeature: { enabled: true } } },
+      fetchRemoteFlags: neverSettles,
+    });
+    const resolvedWhenSettled: unknown[] = [];
+    store.subscribe(() => {
+      const { cachedFlagsSettled, resolved } = store.getState().featureFlags;
+      if (cachedFlagsSettled && resolvedWhenSettled.length === 0) {
+        resolvedWhenSettled.push(resolved.mockFeature);
+      }
+    });
 
     expect(store.getState().featureFlags.cachedFlagsSettled).toBe(false);
     await jest.advanceTimersByTimeAsync(0);
 
-    expect(store.getState().featureFlags.cachedFlagsSettled).toBe(true);
+    expect(resolvedWhenSettled).toEqual([
+      expect.objectContaining({ enabled: true, overriddenByEnv: true }),
+    ]);
   });
 
   it("re-resolves only once when the cache is empty and the first poll fails", async () => {

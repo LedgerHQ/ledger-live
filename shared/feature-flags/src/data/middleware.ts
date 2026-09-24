@@ -135,9 +135,13 @@ export function createFeatureFlagsMiddleware<S = unknown>(
     if (readCachedFlags) {
       void primeThenPoll(readCachedFlags, readContext, fetchRemoteFlags, refreshInterval);
     } else {
-      // No cache to wait for. Deferred because Redux forbids dispatching while the middleware
-      // chain is still being built.
-      void Promise.resolve().then(dispatchCacheSettled);
+      // No cache to wait for, but still re-resolved first so env overrides and version filters
+      // are in place when the signal arms. Deferred because Redux forbids dispatching while the
+      // middleware chain is still being built.
+      void Promise.resolve().then(() => {
+        dispatchSync(false);
+        dispatchCacheSettled();
+      });
       if (fetchRemoteFlags) {
         // Deliberately a bare call: the middleware tests drain a fixed number of microtask turns,
         // so the no-cache path must not gain an `await` in front of the loop.
