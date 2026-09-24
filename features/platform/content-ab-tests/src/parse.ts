@@ -1,5 +1,3 @@
-import camelCase from "lodash/camelCase";
-
 const FIREBASE_FEATURE_PREFIX = "feature_";
 
 export type RemoteConfigValue = {
@@ -20,11 +18,21 @@ export type ContentAbTestPayload = {
 
 export type ContentAbTests = Record<string, ContentAbTestPayload>;
 
+/**
+ * Firebase key → in-app id (`feature_upgrade_banner` → `upgradeBanner`).
+ * Open-set keys cannot invert FeatureIdSchema; ids with internal digits
+ * (`web3hub`) do not round-trip through snake_case. Prefer digit-free camelCase
+ * experiment names.
+ */
 export function firebaseKeyToContentAbTestId(key: string): string | null {
   const lower = key.toLowerCase();
   if (!lower.startsWith(FIREBASE_FEATURE_PREFIX)) return null;
-  const id = camelCase(lower.slice(FIREBASE_FEATURE_PREFIX.length));
+  const id = snakeSuffixToCamelId(lower.slice(FIREBASE_FEATURE_PREFIX.length));
   return id.length > 0 ? id : null;
+}
+
+function snakeSuffixToCamelId(suffix: string): string {
+  return suffix.replace(/_([a-z0-9])/g, (_, char: string) => char.toUpperCase());
 }
 
 export function parseContentAbTestPayload(value: unknown): ContentAbTestPayload | null {

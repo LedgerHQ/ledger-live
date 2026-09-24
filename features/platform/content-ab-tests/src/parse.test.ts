@@ -16,6 +16,13 @@ describe("firebaseKeyToContentAbTestId", () => {
     expect(firebaseKeyToContentAbTestId("Feature_Test")).toBe("test");
   });
 
+  it("does not invent canonical FeatureIds for digit-splitting firebase keys", () => {
+    expect(firebaseKeyToContentAbTestId("feature_web_3_hub")).toBe("web3Hub");
+    expect(firebaseKeyToContentAbTestId("feature_ptx_swap_receive_trc_20_without_trx")).toBe(
+      "ptxSwapReceiveTrc20WithoutTrx",
+    );
+  });
+
   it("returns null for non-feature keys", () => {
     expect(firebaseKeyToContentAbTestId("config_ll_min_version")).toBeNull();
     expect(firebaseKeyToContentAbTestId("stranger")).toBeNull();

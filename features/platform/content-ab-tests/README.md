@@ -16,6 +16,11 @@ analytics `ab_tests` shaping) belong here. Each app only owns Firebase SDK init
 and calls `setContentAbTests(parseContentAbTests(getAll(rc)))`. Missing or invalid
 payloads leave an empty map so `app.json` stays the runtime default.
 
+Firebase keys follow `feature_<snake_case>`. In-app ids are the camelCased suffix
+(`feature_upgrade_banner` → `upgradeBanner`). There is no closed FeatureId catalog to
+invert, so names with internal digits (`web3hub`) will not round-trip; prefer camelCase
+ids without digits when creating experiments.
+
 ## Exports
 
 | Symbol | Behaviour |

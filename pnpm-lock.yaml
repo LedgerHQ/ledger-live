@@ -8643,10 +8643,6 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   features/platform/content-ab-tests:
-    dependencies:
-      lodash:
-        specifier: 'catalog:'
-        version: 4.17.21
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -8660,9 +8656,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       jest:
         specifier: 'catalog:'
         version: 30.5.0

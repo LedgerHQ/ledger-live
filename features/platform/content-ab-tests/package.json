@@ -19,15 +19,11 @@
     "format": "oxfmt src",
     "format:check": "oxfmt --check src"
   },
-  "dependencies": {
-    "lodash": "catalog:"
-  },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/lodash": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "typescript": "catalog:"
