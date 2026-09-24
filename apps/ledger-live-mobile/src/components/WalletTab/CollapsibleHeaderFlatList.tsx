@@ -1,7 +1,7 @@
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import React, { useContext, useCallback } from "react";
 import { Dimensions, StatusBar, FlatList, FlatListProps, View } from "react-native";
-import Animated, { type AnimatedProps } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { useScrollOffset } from "LLM/components/Wallet40Background";
 import SafeAreaView from "../SafeAreaView";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
@@ -10,7 +10,8 @@ import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManag
 const DEFAULT_HEADER_HEIGHT = 0;
 const DEFAULT_TAB_BAR_HEIGHT = 0;
 
-type CollapsibleHeaderFlatListProps<T> = AnimatedProps<FlatListProps<T>> & {
+// Reanimated's FlatList renders its own cells, so it doesn't take a CellRendererComponent.
+type CollapsibleHeaderFlatListProps<T> = Omit<FlatListProps<T>, "CellRendererComponent"> & {
   /** When false, skip SafeAreaView (e.g. when parent nav already handles safe area). Default true. */
   useSafeArea?: boolean;
   onFlatListRef?: (ref: FlatList | null) => void;
