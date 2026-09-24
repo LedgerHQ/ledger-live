@@ -14,8 +14,6 @@ import {
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
-  CryptoCurrencyIdSchema,
-  type CryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -39,6 +37,9 @@ bridgeEnvToNetworkState();
  * because Bun's --compile bundler statically resolves every import — pulling in the shared
  * list would drag in every coin family's dependency tree (including packages like
  * @walletconnect/sign-client that break CJS/ESM interop under Bun).
+ *
+ * `supportedCoins` is also the list of networks wallet-cli accepts (testnets follow their
+ * mainnet): add a currency id there to support it, e.g. "base" under evm.
  */
 const walletCliLoaders: CoinModuleLoader[] = [
   {
@@ -105,12 +106,6 @@ const walletCliLoaders: CoinModuleLoader[] = [
         m => m.createLocalSolanaApi,
       ),
   },
-];
-
-export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly CryptoCurrencyId[] = [
-  CryptoCurrencyIdSchema.parse("bitcoin"),
-  CryptoCurrencyIdSchema.parse("ethereum"),
-  CryptoCurrencyIdSchema.parse("solana"),
 ];
 
 setCurrenciesResolver({

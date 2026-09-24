@@ -1,3 +1,4 @@
+import "../../live-common-setup";
 import { describe, expect, it } from "bun:test";
 import {
   parseNetworkArg,
@@ -6,6 +7,7 @@ import {
   networkStringFromCurrencyId,
   currencyIdFromNetwork,
   UnknownNetworkError,
+  UnsupportedNetworkError,
 } from "./network";
 
 describe("parseNetworkArg", () => {
@@ -120,6 +122,25 @@ describe("currencyIdFromNetwork", () => {
     expect(() => currencyIdFromNetwork({ name: "notachain", env: "main" })).toThrow(
       UnknownNetworkError,
     );
+  });
+
+  it("throws UnsupportedNetworkError for a known network wallet-cli does not support", () => {
+    expect(() => currencyIdFromNetwork({ name: "base", env: "main" })).toThrow(
+      UnsupportedNetworkError,
+    );
+    expect(() => currencyIdFromNetwork({ name: "base", env: "main" })).toThrow(
+      /"base:main" is not supported/,
+    );
+  });
+
+  it("throws UnsupportedNetworkError for a testnet of an unsupported network", () => {
+    expect(() => currencyIdFromNetwork({ name: "base", env: "sepolia" })).toThrow(
+      UnsupportedNetworkError,
+    );
+  });
+
+  it("accepts testnets of supported networks", () => {
+    expect(currencyIdFromNetwork({ name: "ethereum", env: "sepolia" })).toBe("ethereum_sepolia");
   });
 
   it("round-trips with networkFromCurrencyId", () => {
