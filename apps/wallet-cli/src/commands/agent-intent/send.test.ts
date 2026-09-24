@@ -31,7 +31,7 @@ const enrolledProfile = {
   description: "Remote agent that proposes intents for review.",
   source: "openclaw",
   environment: "staging",
-  bffBaseUrl: "https://bff.example.com/agent-intent",
+  bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
   publicKey: agent.publicKey,
   trustchainId: "tc-1",
   enrollmentExpiresAt: new Date(Date.now() + 60_000).toISOString(),
@@ -312,6 +312,38 @@ describe("agent-intent send", () => {
 
       await expect(runSend()).rejects.toThrow(/not enrolled yet.*agent-intent complete/s);
       expect(secretKeyReads).toBe(0);
+    });
+
+    it("refuses a profile whose recorded service URL was changed, before reading the key or sending", async () => {
+      profiles = {
+        bot: { ...enrolledProfile, bffBaseUrl: "https://attacker.example.com/agent-intent" },
+      };
+
+      await expect(runSend()).rejects.toThrow(
+        /unexpected Agent Intent service URL.*nothing was sent/s,
+      );
+      expect(secretKeyReads).toBe(0);
+      expect(clientOptions).toEqual([]);
+    });
+
+    it("refuses a staging profile pointing at the production service", async () => {
+      profiles = {
+        bot: { ...enrolledProfile, bffBaseUrl: "https://global.api.prd.ledger.com/agent-intent" },
+      };
+
+      await expect(runSend()).rejects.toThrow(/unexpected Agent Intent service URL for staging/);
+    });
+
+    it("accepts the recorded service URL with a trailing slash", async () => {
+      profiles = { bot: { ...enrolledProfile, bffBaseUrl: `${enrolledProfile.bffBaseUrl}/` } };
+
+      await runSend();
+
+      expect(clientOptions).toEqual([
+        expect.objectContaining({
+          bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
+        }),
+      ]);
     });
 
     it("reports a missing keychain key without contacting the service", async () => {
