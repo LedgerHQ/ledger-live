@@ -45,7 +45,7 @@ describe("useModularDrawerController", () => {
     expect(state.presentation).toBe("drawer");
   });
 
-  it("should store asset categories and reset them on close", () => {
+  it("should keep asset categories while closing and reset them on the next open", () => {
     const { result, store } = renderHook(() => useModularDrawerController());
 
     act(() => {
@@ -62,7 +62,41 @@ describe("useModularDrawerController", () => {
       result.current.closeDrawer();
     });
 
+    // The closing sheet still shows the filtered list instead of flashing an unfiltered one.
+    expect(store.getState().modularDrawer).toMatchObject({
+      isOpen: false,
+      categories: [AssetCategory.Stablecoins],
+    });
+
+    act(() => {
+      result.current.openDrawer({ flow: "send", source: "test_source" });
+    });
+
     expect(store.getState().modularDrawer.categories).toBeUndefined();
+  });
+
+  it("should keep the account step while closing after an account is selected", () => {
+    const { result, store } = renderHook(() => useModularDrawerController());
+
+    act(() => {
+      result.current.openDrawer({
+        flow: "send",
+        source: "test_source",
+        onAccountSelected: jest.fn(),
+      });
+    });
+    act(() => {
+      store.dispatch(setStep(ModularDrawerStep.Account));
+    });
+    act(() => {
+      result.current.handleAccountSelected(mockAccount);
+    });
+
+    expect(store.getState().modularDrawer).toMatchObject({
+      isOpen: false,
+      step: ModularDrawerStep.Account,
+      callbackId: undefined,
+    });
   });
 
   it("should close the drawer when closeDrawer is called", () => {

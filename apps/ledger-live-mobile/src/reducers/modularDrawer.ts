@@ -80,8 +80,8 @@ const modularDrawerSlice = createSlice({
       state,
       action: PayloadAction<DrawerRemoteParams<DrawerExtras & { step?: ModularDrawerStep }>>,
     ) => {
-      state.isOpen = true;
-      state.searchValue = "";
+      // Start clean: close keeps the last screen on display while the sheet animates out.
+      Object.assign(state, INITIAL_STATE, { isOpen: true });
       const {
         currencies,
         categories,
@@ -145,25 +145,13 @@ const modularDrawerSlice = createSlice({
         state.step = step;
       }
     },
+    // The sheet keeps its last screen while it animates out: resetting the step or query here
+    // would flash "Select asset". openModularDrawer resets the rest. Embedded has no sheet.
     closeModularDrawer: state => {
+      if (state.presentation === "embedded") return INITIAL_STATE;
       state.isOpen = false;
-      state.preselectedCurrencies = [];
-      state.categories = undefined;
       state.callbackId = undefined;
       state.cancelCallbackId = undefined;
-      state.enableAccountSelection = false;
-      state.completionMode = undefined;
-      state.presentation = "drawer";
-      state.flow = "";
-      state.source = "";
-      state.assetsConfiguration = INITIAL_STATE.assetsConfiguration;
-      state.networksConfiguration = INITIAL_STATE.networksConfiguration;
-      state.useCase = undefined;
-      state.uiUseCase = undefined;
-      state.areCurrenciesFiltered = undefined;
-      state.selectableNetworkIds = undefined;
-      state.searchValue = "";
-      state.step = ModularDrawerStep.Asset;
     },
     // Hides the drawer UI without clearing cancelCallbackId. Used when navigating
     // away inline (e.g. add-account device flow) so the account.request stays pending
