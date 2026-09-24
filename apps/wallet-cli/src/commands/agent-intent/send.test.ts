@@ -385,7 +385,7 @@ describe("agent-intent send", () => {
         throw new AgentIntentHttpError("down", 503);
       };
 
-      await expect(runSend()).rejects.toThrow(/temporarily unavailable/);
+      await expect(runSend()).rejects.toThrow(/may still have been created/);
       expect(submittedIntents).toHaveLength(1);
     });
 
@@ -485,6 +485,26 @@ describe("agent-intent send", () => {
         intentId: "wire-1",
         deeplink: "https://agent-intent.ledger-test.com/intents/wire-1",
       });
+    });
+
+    it("puts an amount above 2^53 on the wire as its exact integer digits", async () => {
+      const bodies: string[] = [];
+      makeClient = options =>
+        realAgentIntentSdk.createAgentIntentClient({
+          ...(options as Parameters<typeof realAgentIntentSdk.createAgentIntentClient>[0]),
+          tokenProvider: realAgentIntentSdk.staticAccessTokenProvider("t"),
+          fetch: (async (_url: unknown, init?: RequestInit) => {
+            bodies.push(String(init?.body));
+            return new Response("https://bff.example.com/intents/big-1", { status: 200 });
+          }) as typeof fetch,
+        });
+
+      await runSend({ amount: "123456789.123456789123456789 ETH", output: "json" });
+
+      const exact = "123456789123456789123456789";
+      expect(BigInt(exact) > BigInt(Number.MAX_SAFE_INTEGER)).toBe(true);
+      expect(bodies).toEqual([expect.stringMatching(new RegExp(`"amount":${exact}[,}]`))]);
+      expect(jsonResult()).toMatchObject({ amount: exact, submitted: true });
     });
   });
 });
