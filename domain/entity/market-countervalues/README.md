@@ -17,8 +17,8 @@ turning accounts into pairs to track lives in the app layer.
 - `helpers.ts` — `pairId`, the `YYYY-MM-DD` / `YYYY-MM-DDTHH` date keys the rate maps are keyed by,
   `magFromTo` and `inferCurrencyAPIID`.
 - `logic.ts` — `calculate` and `calculateMany`, the `lenseRate*` lookups, `initialState`,
-  `importCountervalues` / `exportCountervalues`, the tracking-pair resolution, and `generateCache`,
-  which `loadCountervalues` calls from `@domain/api-market-countervalues`.
+  `importCountervalues` / `exportCountervalues`, the tracking-pair resolution, and `applyRatePatches`,
+  which folds freshly fetched rates into the state.
 
 Currencies come from `@domain/entity-currency`; only `type`, `id`, `ticker` and
 `units[0].magnitude` are ever read.
