@@ -1817,6 +1817,124 @@ describe("genericGetAccountShape", () => {
       );
     });
 
+    test("derives delegation.status from stake.details.status, allow-listing only unbonding/unbonded", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 500n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 500n },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-bonded",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper1",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+            details: { status: "bonded" },
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-unbonding",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper2",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+            details: { status: "unbonding" },
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-unbonded",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper3",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+            details: { status: "unbonded" },
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-unspecified",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper4",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+            // runtime-only value from the chain's BOND_STATUS_UNSPECIFIED, must not reach status
+            details: { status: "unspecified" },
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-no-details",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper5",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-activating-unbonding",
+            address: "cosmos1a",
+            delegate: "cosmosvaloper6",
+            state: "activating",
+            asset: { type: "native" },
+            amount: 100n,
+            // state precedes details.status: an activating stake stays "activating"
+            details: { status: "unbonding" },
+          },
+        },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      const getShape = genericGetAccountShape("mainnet", "cosmos");
+      const result = await getShape(
+        {
+          address: "cosmos1a",
+          initialAccount: undefined,
+          currency: { id: "cosmos", name: "Cosmos", family: "cosmos" },
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const statuses = (result as any).stakingResources?.delegations.map((d: any) => ({
+        validatorAddress: d.validatorAddress,
+        status: d.status,
+      }));
+      expect(statuses).toEqual([
+        { validatorAddress: "cosmosvaloper1", status: "bonded" },
+        { validatorAddress: "cosmosvaloper2", status: "unbonding" },
+        { validatorAddress: "cosmosvaloper3", status: "unbonded" },
+        { validatorAddress: "cosmosvaloper4", status: "bonded" },
+        { validatorAddress: "cosmosvaloper5", status: "bonded" },
+        { validatorAddress: "cosmosvaloper6", status: "activating" },
+      ]);
+    });
+
     test("maps stake.uid and the details bag onto StakingPositionDetails, and keeps undelegated stakes", async () => {
       getSyncHashMock.mockReturnValue("sync-hash");
       extractBalanceMock.mockReturnValue({ value: 200n, locked: 0n });

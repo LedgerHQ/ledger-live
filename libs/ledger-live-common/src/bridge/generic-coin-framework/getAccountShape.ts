@@ -591,12 +591,18 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         const validatorId = b.stake.details?.validatorId;
         const validatorName = b.stake.details?.validatorName;
         const sharesRaw = b.stake.details?.shares;
+        const detailStatus = b.stake.details?.status;
         return {
           ...stakingPositionDetails(b.stake),
           validatorAddress: b.stake.delegate ?? "",
           amount: new BigNumber(delegated.toString()),
           pendingRewards: new BigNumber(rewarded.toString()),
-          status: b.stake.state === "activating" ? "activating" : "bonded",
+          status:
+            b.stake.state === "activating"
+              ? "activating"
+              : detailStatus === "unbonding" || detailStatus === "unbonded"
+                ? detailStatus
+                : "bonded",
           ...(typeof validatorId === "string" ? { validatorId } : {}),
           ...(typeof validatorName === "string" ? { validatorName } : {}),
           ...(typeof sharesRaw === "bigint" ? { shares: new BigNumber(sharesRaw.toString()) } : {}),
