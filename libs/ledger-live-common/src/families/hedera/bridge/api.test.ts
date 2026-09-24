@@ -6,6 +6,7 @@ import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import hederaBridge, {
+  buildAccountShape,
   buildIntentData,
   computeIntentType,
   describeOptimisticOperation,
@@ -228,6 +229,63 @@ describe("hedera bridge", () => {
           assetReference: "0.0.1234567",
         }),
       ).toEqual({ extra: { associatedTokenId: "0.0.1234567" } });
+    });
+  });
+
+  describe("buildAccountShape", () => {
+    const accountInfo = {
+      type: "hedera",
+      maxAutomaticTokenAssociations: -1,
+      stakedNodeId: 3,
+      balance: 1_000_000_000,
+      pendingReward: 42,
+    };
+
+    it("returns undefined without Hedera account info", () => {
+      expect(buildAccountShape("0.0.1234")).toBeUndefined();
+      expect(buildAccountShape("0.0.1234", { type: "none" })).toBeUndefined();
+    });
+
+    it("maps a staking account's info to hederaResources", () => {
+      expect(buildAccountShape("0.0.1234", accountInfo)).toEqual({
+        hederaResources: {
+          maxAutomaticTokenAssociations: -1,
+          isAutoTokenAssociationEnabled: true,
+          delegation: {
+            nodeId: 3,
+            delegated: new BigNumber(1_000_000_000),
+            pendingReward: new BigNumber(42),
+          },
+        },
+      });
+    });
+
+    it("maps a non-staking account with limited auto association", () => {
+      expect(
+        buildAccountShape("0.0.1234", {
+          ...accountInfo,
+          maxAutomaticTokenAssociations: 10,
+          stakedNodeId: null,
+        }),
+      ).toEqual({
+        hederaResources: {
+          maxAutomaticTokenAssociations: 10,
+          isAutoTokenAssociationEnabled: false,
+          delegation: null,
+        },
+      });
+    });
+
+    it("keeps a delegation to node 0", () => {
+      const shape = buildAccountShape("0.0.1234", { ...accountInfo, stakedNodeId: 0 });
+
+      expect(shape?.hederaResources).toMatchObject({ delegation: { nodeId: 0 } });
+    });
+
+    it("drops the delegation of an undelegated account (node -1)", () => {
+      const shape = buildAccountShape("0.0.1234", { ...accountInfo, stakedNodeId: -1 });
+
+      expect(shape?.hederaResources).toMatchObject({ delegation: null });
     });
   });
 
