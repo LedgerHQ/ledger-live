@@ -1456,7 +1456,7 @@ describe("listOperationsV2", () => {
     expect(result.coinOperations).toEqual([expect.objectContaining({ hash: "encoded-hash1" })]);
   });
 
-  it("should use synthetic blocks when useSyntheticBlocks is true", async () => {
+  it("should place the operation in the synthetic block of its own consensus timestamp, matching getBlock", async () => {
     const mockTransaction = getMockedMirrorTransaction({
       consensus_timestamp: "1625097600.000000000",
       transaction_hash: "hash1",
@@ -1492,6 +1492,7 @@ describe("listOperationsV2", () => {
     });
 
     expect(utils.getSyntheticBlock).toHaveBeenCalledTimes(1);
+    expect(utils.getSyntheticBlock).toHaveBeenCalledWith("1625097600.000000000");
     expect(result.coinOperations).toEqual([
       expect.objectContaining({
         blockHeight: mockSyntheticBlock.blockHeight,

@@ -952,8 +952,8 @@ describe("createApi", () => {
       });
       expect(firstTokenAssociateOperations?.details).toMatchObject({
         ledgerOpType: expect.any(String),
-        associatedTokenId: expect.any(String),
         familyExtra: {
+          associatedTokenId: expect.any(String),
           pagingToken: expect.any(String),
           consensusTimestamp: expect.any(String),
           transactionId: expect.any(String),
@@ -979,7 +979,7 @@ describe("createApi", () => {
         order: "desc",
       });
 
-      const floor = getDateRangeFromBlockHeight(minHeight).start;
+      const floor = getDateRangeFromBlockHeight(newestOp.tx.block.height).start;
       expect(secondSync.map(op => op.id)).toContain(newestOp.id);
       expect(secondSync.every(op => op.tx.date >= floor)).toBe(true);
       expect(new Set(secondSync.map(op => op.id)).size).toBe(secondSync.length);
@@ -1044,23 +1044,23 @@ describe("createApi", () => {
       expect(delegateOp?.value).toBe(BigInt(0));
       expect(delegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(delegateOp?.details).toMatchObject({
-        previousStakingNodeId: null,
-        targetStakingNodeId: expect.any(Number),
         stakedAmount: expect.any(BigInt),
+        familyExtra: { previousStakingNodeId: null, targetStakingNodeId: expect.any(Number) },
       });
       expect(undelegateOp?.value).toBe(BigInt(0));
       expect(undelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(undelegateOp?.details).toMatchObject({
-        previousStakingNodeId: expect.any(Number),
-        targetStakingNodeId: null,
         stakedAmount: expect.any(BigInt),
+        familyExtra: { previousStakingNodeId: expect.any(Number), targetStakingNodeId: null },
       });
       expect(redelegateOp?.value).toBe(BigInt(0));
       expect(redelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(redelegateOp?.details).toMatchObject({
-        previousStakingNodeId: expect.any(Number),
-        targetStakingNodeId: expect.any(Number),
         stakedAmount: expect.any(BigInt),
+        familyExtra: {
+          previousStakingNodeId: expect.any(Number),
+          targetStakingNodeId: expect.any(Number),
+        },
       });
       expect(rewardOp?.value).toBeGreaterThan(BigInt(0));
       expect(rewardOp?.tx.fees).toBe(BigInt(0));

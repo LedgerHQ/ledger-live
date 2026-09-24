@@ -134,9 +134,10 @@ export function createApi(currencyId: string) {
         getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
       ]);
 
+      const newestStoredBlockHeight = minHeight - 1;
       const minTimestamp =
         minHeight > 0
-          ? (getDateRangeFromBlockHeight(minHeight).start.getTime() / 1000).toString()
+          ? (getDateRangeFromBlockHeight(newestStoredBlockHeight).start.getTime() / 1000).toString()
           : undefined;
       const latestAccountOperations = await logicListOperationsV2(coinConfig, {
         currencyId,
@@ -198,7 +199,7 @@ export function createApi(currencyId: string) {
             ? liveOp.hash.replace(STAKING_REWARD_HASH_SUFFIX, "")
             : liveOp.hash;
 
-        const { pagingToken, consensusTimestamp, transactionId, ...restExtra } = liveOp.extra;
+        const { memo, stakedAmount, ...familyExtra } = liveOp.extra;
 
         return {
           id: liveOp.id,
@@ -208,15 +209,11 @@ export function createApi(currencyId: string) {
           value: getOperationValue({ asset, operation: liveOp }),
           asset,
           details: {
-            ...restExtra,
+            ...(memo && { memo }),
             ledgerOpType: liveOp.type,
             ...(asset.type !== "native" && { assetAmount: liveOp.value.toFixed(0) }),
-            ...(liveOp.extra.stakedAmount && {
-              stakedAmount: BigInt(liveOp.extra.stakedAmount.toFixed(0)),
-            }),
-            ...((pagingToken || consensusTimestamp || transactionId) && {
-              familyExtra: { pagingToken, consensusTimestamp, transactionId },
-            }),
+            ...(stakedAmount && { stakedAmount: BigInt(stakedAmount.toFixed(0)) }),
+            ...(Object.keys(familyExtra).length > 0 && { familyExtra }),
           },
           tx: {
             hash,

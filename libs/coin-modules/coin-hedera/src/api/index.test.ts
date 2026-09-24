@@ -388,7 +388,7 @@ describe("createApi", () => {
       );
     });
 
-    it("falls back to minHeight's floor, converted to a timestamp, when no cursor is available", async () => {
+    it("floors at the start of the newest stored block, so operations later in its window are not skipped", async () => {
       mockListOperationsV2.mockResolvedValue({
         coinOperations: [mockOperation],
         tokenOperations: [],
@@ -404,7 +404,7 @@ describe("createApi", () => {
         minHeight: HARDCODED_BLOCK_HEIGHT + 1,
       });
 
-      expect(mockGetDateRangeFromBlockHeight).toHaveBeenCalledWith(HARDCODED_BLOCK_HEIGHT + 1);
+      expect(mockGetDateRangeFromBlockHeight).toHaveBeenCalledWith(HARDCODED_BLOCK_HEIGHT);
       expect(mockListOperationsV2).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({ order: "desc", minTimestamp: "1000" }),
@@ -487,6 +487,37 @@ describe("createApi", () => {
       expect(result.items[0].details).not.toHaveProperty("pagingToken");
     });
 
+    it("nests the extras shown in operation details under familyExtra, keeping memo flat", async () => {
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [
+          getMockedOperation({
+            extra: {
+              memo: "hello",
+              associatedTokenId: "0.0.555",
+              targetStakingNodeId: 3,
+              previousStakingNodeId: null,
+              gasUsed: 21000,
+            },
+          }),
+        ],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
+
+      expect(result.items[0].details).toEqual({
+        memo: "hello",
+        ledgerOpType: "IN",
+        familyExtra: {
+          associatedTokenId: "0.0.555",
+          targetStakingNodeId: 3,
+          previousStakingNodeId: null,
+          gasUsed: 21000,
+        },
+      });
+    });
+
     it("omits familyExtra entirely when the mirror transaction carries no pagingToken", async () => {
       mockListOperationsV2.mockResolvedValue({
         coinOperations: [getMockedOperation({ extra: {} })],
@@ -513,6 +544,7 @@ describe("createApi", () => {
       const result = await api.listOperations(mockContext, mockAddress, mockOptions);
 
       expect(result.items[0].details).toMatchObject({ stakedAmount: 200n });
+      expect(result.items[0].details).not.toHaveProperty("familyExtra");
     });
 
     it("should omit feesPayer when transactionId is absent", async () => {
