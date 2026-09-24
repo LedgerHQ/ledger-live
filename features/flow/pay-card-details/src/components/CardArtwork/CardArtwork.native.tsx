@@ -4,12 +4,7 @@ import Svg, { Path } from "react-native-svg";
 import { LinearGradient } from "@ledgerhq/lumen-ui-rnative";
 import { VISA_LOGO_PATH } from "./assets/visaLogoPath";
 import { Halftone } from "./Halftone.native";
-import {
-  CARD_FACE_BORDER,
-  CARD_FACE_TEXT,
-  CARD_GRADIENT_END,
-  CARD_GRADIENT_START,
-} from "./cardColors";
+import { CARD_FACE_TEXT, CARD_GRADIENT_END, CARD_GRADIENT_START } from "./cardColors";
 
 const CARD_ASPECT_RATIO = 343 / 193;
 
@@ -24,10 +19,9 @@ export function CardArtwork() {
       direction={120}
       stops={[...CARD_GRADIENT_STOPS]}
       testID="card-artwork"
-      lx={{ borderRadius: "lg", borderWidth: "s1" }}
+      lx={{ borderRadius: "lg" }}
       style={{
         aspectRatio: CARD_ASPECT_RATIO,
-        borderColor: CARD_FACE_BORDER,
         overflow: "hidden",
         width: "100%",
       }}

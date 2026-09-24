@@ -20,6 +20,7 @@ export type CardVisualProps = Readonly<{
 export type CardVisualViewProps = CardVisualProps &
   Readonly<{
     isFrozen: boolean;
+    fadeColor?: string;
   }>;
 
 export type CardDetailsProps = Readonly<{
