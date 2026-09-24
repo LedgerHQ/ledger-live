@@ -638,7 +638,7 @@ describe("Send flow integration tests", () => {
     it("Should stop with invalid recipient", async () => {
       const { user } = renderForAccount(accountStellar);
 
-      await user.type(await screen.findByPlaceholderText("Enter address"), "invalid-recipient");
+      await user.paste(await screen.findByPlaceholderText("Enter address"), "invalid-recipient");
 
       expect(await screen.findByText("Incorrect address format")).toBeOnTheScreen();
     });
@@ -659,22 +659,6 @@ describe("Send flow integration tests", () => {
       expect(await screen.findByText(/Balance cannot be below/)).toBeOnTheScreen();
     });
 
-    it("should ask to confirm before sending without a memo", async () => {
-      const { user } = renderForAccount(accountStellar);
-
-      await user.paste(
-        await screen.findByPlaceholderText("Enter address"),
-        VALID_STELLAR_RECIPIENT,
-      );
-      await flushTimers();
-      await user.press(await screen.findByText(/^Send to /));
-
-      expect(await screen.findByTestId("send-skip-memo-confirm")).toBeOnTheScreen();
-      await user.press(screen.getByTestId("send-skip-memo-confirm"));
-
-      expect(await screen.findByText("Review")).toBeOnTheScreen();
-    });
-
     it("should stay on recipient when refusing to skip the memo", async () => {
       const { user } = renderForAccount(accountStellar);
 
@@ -692,7 +676,7 @@ describe("Send flow integration tests", () => {
       expect(screen.queryByText("Review")).toBeNull();
     });
 
-    it("should restore the memo field when going back from amount after skipping", async () => {
+    it("should ask to confirm before sending without a memo, then restore the memo field when going back from amount", async () => {
       const { user } = renderForAccount(accountStellar);
 
       await user.paste(
@@ -701,7 +685,9 @@ describe("Send flow integration tests", () => {
       );
       await flushTimers();
       await user.press(await screen.findByText(/^Send to /));
-      await user.press(await screen.findByTestId("send-skip-memo-confirm"));
+
+      expect(await screen.findByTestId("send-skip-memo-confirm")).toBeOnTheScreen();
+      await user.press(screen.getByTestId("send-skip-memo-confirm"));
       expect(await screen.findByText("Review")).toBeOnTheScreen();
 
       await user.press(screen.getByLabelText("Back"));
@@ -765,20 +751,7 @@ describe("Send flow integration tests", () => {
       await user.press(matches[matches.length - 1]);
     }
 
-    it("Should open Custom fees, accept a valid sat/vbyte value, and return to Amount", async () => {
-      const { user } = renderForAccount(accountBitcoin);
-      await driveToAmount(user, { recipient: VALID_BITCOIN_RECIPIENT });
-
-      await openCustomFees(user);
-
-      const feeInput = findInputByLabel(/Fees amount \(sat\/vbyte\)/);
-      fireEvent.changeText(feeInput, "10");
-
-      await user.press(screen.getByText("Confirm"));
-      expect(await screen.findByText("Review")).toBeOnTheScreen();
-    });
-
-    it("Should show 'Enter a valid number' for an invalid sat/vbyte value", async () => {
+    it("Should open Custom fees, reject an invalid sat/vbyte value, accept a valid one, and return to Amount", async () => {
       const { user } = renderForAccount(accountBitcoin);
       await driveToAmount(user, { recipient: VALID_BITCOIN_RECIPIENT });
 
@@ -788,6 +761,11 @@ describe("Send flow integration tests", () => {
       fireEvent.changeText(feeInput, "0");
 
       expect(await screen.findByText("Enter a valid number")).toBeOnTheScreen();
+
+      fireEvent.changeText(feeInput, "10");
+
+      await user.press(screen.getByText("Confirm"));
+      expect(await screen.findByText("Review")).toBeOnTheScreen();
     });
   });
 
@@ -797,7 +775,7 @@ describe("Send flow integration tests", () => {
       await user.press(matches[matches.length - 1]);
     }
 
-    it("Should open Custom fees, accept valid gas values, and return to Amount", async () => {
+    it("Should open Custom fees, reject a zero max fee, accept valid gas values, and return to Amount", async () => {
       const { user } = renderForAccount(accountEthereum);
       await driveToAmount(user, { recipient: VALID_ETHEREUM_RECIPIENT });
 
@@ -805,6 +783,10 @@ describe("Send flow integration tests", () => {
 
       const maxFee = findInputByLabel(/Max fee \(Gwei\)/);
       const maxPriorityFee = findInputByLabel(/Max priority fee \(Gwei\)/);
+      fireEvent.changeText(maxFee, "0");
+
+      expect(await screen.findByText("Enter a valid number")).toBeOnTheScreen();
+
       fireEvent.changeText(maxFee, "20");
       fireEvent.changeText(maxPriorityFee, "1");
 
@@ -812,31 +794,9 @@ describe("Send flow integration tests", () => {
 
       expect(await screen.findByText("Review")).toBeOnTheScreen();
     });
-
-    it("Should show 'Enter a valid number' when max fee is zero", async () => {
-      const { user } = renderForAccount(accountEthereum);
-      await driveToAmount(user, { recipient: VALID_ETHEREUM_RECIPIENT });
-
-      await openCustomFees(user);
-
-      const maxFee = findInputByLabel(/Max fee \(Gwei\)/);
-      fireEvent.changeText(maxFee, "0");
-
-      expect(await screen.findByText("Enter a valid number")).toBeOnTheScreen();
-    });
   });
 
   describe("Fee strategy (Slow / Medium / Fast)", () => {
-    it("Bitcoin: selecting 'Fast' updates the strategy label on Amount", async () => {
-      const { user } = renderForAccount(accountBitcoin);
-      await driveToAmount(user, { recipient: VALID_BITCOIN_RECIPIENT });
-
-      await user.press(screen.getByText("Fast"));
-
-      const fastMatches = await screen.findAllByText("Fast");
-      expect(fastMatches.length).toBeGreaterThan(1);
-    });
-
     describe("EVM (gasOptions patched into the mock bridge)", () => {
       // The mock EVM bridge's `prepareTransaction` never sets
       // `transaction.gasOptions`, which the descriptor's `getOptions` reads
@@ -901,11 +861,14 @@ describe("Send flow integration tests", () => {
       });
     });
 
-    it("Bitcoin: selecting a preset then entering an invalid amount surfaces the balance error", async () => {
+    it("Bitcoin: selecting 'Fast' updates the strategy label, then an invalid amount surfaces the balance error", async () => {
       const { user } = renderForAccount(accountBitcoin);
       await driveToAmount(user, { recipient: VALID_BITCOIN_RECIPIENT });
 
       await user.press(screen.getByText("Fast"));
+
+      const fastMatches = await screen.findAllByText("Fast");
+      expect(fastMatches.length).toBeGreaterThan(1);
 
       await user.press(screen.getByLabelText("Toggle currency"));
       for (const digit of "99") {
