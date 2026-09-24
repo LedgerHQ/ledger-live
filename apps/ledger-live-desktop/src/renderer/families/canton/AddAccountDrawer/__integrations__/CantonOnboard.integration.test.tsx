@@ -119,6 +119,7 @@ describe("CantonOnboard (MAD) Integration", () => {
       nodeId: CANTON_DEVNET_NODE_ID,
       useGateway: true,
       nativeInstrumentId: "Amulet",
+      infra: { CAL_SERVICE_URL: "https://global.api.prd.ledger.com/cal" },
     }));
 
     await getCurrencyBridge(getCryptoCurrencyById("canton_network_devnet"));

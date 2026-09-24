@@ -36,6 +36,7 @@ const DEFAULT_VALUES = {
   CONFIG: {
     GATEWAY_URL: "https://canton-gateway-devnet.api.live.ledger-test.com",
     NETWORK_TYPE: "devnet",
+    CAL_SERVICE_URL: "https://cal.example.com",
   },
 } as const;
 
@@ -261,6 +262,7 @@ export const setupMockCoinConfig = (overrides: Partial<Record<string, unknown>> 
         useGateway: true,
         networkType: DEFAULT_VALUES.CONFIG.NETWORK_TYPE,
         nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
+        infra: { CAL_SERVICE_URL: DEFAULT_VALUES.CONFIG.CAL_SERVICE_URL },
         status: {
           type: "active",
         },
@@ -275,6 +277,7 @@ export const createMockCoinConfigValue = createFactory({
   networkType: DEFAULT_VALUES.CONFIG.NETWORK_TYPE,
   nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
   minReserve: 100,
+  infra: { CAL_SERVICE_URL: DEFAULT_VALUES.CONFIG.CAL_SERVICE_URL },
   status: { type: "active" as const },
 });
 

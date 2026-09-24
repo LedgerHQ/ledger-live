@@ -49,6 +49,7 @@ describe("getTransactionStatus", () => {
       networkType: "mainnet",
       status: { type: "active" },
       nativeInstrumentId: "Amulet",
+      infra: { CAL_SERVICE_URL: "https://cal.example.com" },
     });
     mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(false);
   });
@@ -226,6 +227,7 @@ describe("getTransactionStatus", () => {
         networkType: "mainnet",
         status: { type: "active" },
         nativeInstrumentId: "Amulet",
+        infra: { CAL_SERVICE_URL: "https://cal.example.com" },
       });
 
       const transaction: Transaction = {

@@ -47,10 +47,7 @@ import {
 jest.mock("@ledgerhq/live-network", () => ({ __esModule: true, default: jest.fn() }));
 
 jest.mock("@ledgerhq/live-env", () => ({
-  getEnv: jest.fn((key: string) => {
-    if (key === "CAL_SERVICE_URL") return "https://cal.example.com";
-    return undefined;
-  }),
+  getEnv: jest.fn(() => undefined),
 }));
 
 const mockBalances = createMockInstrumentBalances(2, [
@@ -634,7 +631,10 @@ describe("getCalTokensCached", () => {
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {
-    setupMockCoinConfig({ nodeId: "test-node-id" });
+    setupMockCoinConfig({
+      nodeId: "test-node-id",
+      infra: { CAL_SERVICE_URL: "https://cal.example.com" },
+    });
   });
 
   beforeEach(() => {
@@ -664,7 +664,9 @@ describe("getCalTokensCached", () => {
     expect(mockNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
         method: "GET",
-        url: expect.stringContaining("/v1/tokens?network=canton_network"),
+        url: expect.stringMatching(
+          /^https:\/\/cal\.example\.com\/v1\/tokens\?network=canton_network&/,
+        ),
       }),
     );
   });
@@ -772,6 +774,7 @@ describe("getEnabledInstruments", () => {
       useGateway: true,
       networkType: "devnet",
       nativeInstrumentId: "Amulet",
+      infra: { CAL_SERVICE_URL: "https://cal.example.com" },
       status: {
         type: "active",
       },
@@ -857,6 +860,7 @@ describe("getEnabledInstrumentsCached", () => {
       useGateway: true,
       networkType: "devnet",
       nativeInstrumentId: "Amulet",
+      infra: { CAL_SERVICE_URL: "https://cal.example.com" },
       status: {
         type: "active",
       },

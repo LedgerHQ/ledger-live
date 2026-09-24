@@ -51,6 +51,7 @@ describe.skip("sync (devnet)", () => {
       useGateway: true,
       networkType: "devnet",
       nativeInstrumentId: "Amulet",
+      infra: { CAL_SERVICE_URL: "https://cal.example.com" },
       status: {
         type: "active",
       },

@@ -446,7 +446,7 @@ export type CalToken = {
  * Fetch Canton tokens from CAL service and create a map of id -> token_identifier
  */
 async function getCalTokens(currency: CryptoCurrency): Promise<Map<string, string>> {
-  const calUrl = getEnv("CAL_SERVICE_URL");
+  const calUrl = coinConfig.getCoinConfig(currency.id).infra.CAL_SERVICE_URL;
   const { data: calTokens } = await gatewayNetwork<CalToken[]>({
     method: "GET",
     url: `${calUrl}/v1/tokens?network=${currency.id}&output=id,name,ticker,network,contract_address,token_identifier,units,standard`,

@@ -14,6 +14,9 @@ export type CantonConfig = {
   useGateway?: boolean;
   nativeInstrumentId: string;
   fee?: number;
+  infra: {
+    CAL_SERVICE_URL: string;
+  };
 };
 
 export type CantonCoinConfig = CurrencyConfig & CantonConfig;

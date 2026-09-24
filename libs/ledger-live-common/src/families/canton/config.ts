@@ -16,6 +16,9 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       networkType: "mainnet",
       nativeInstrumentId: "Amulet",
       fee: 0,
+      infra: {
+        CAL_SERVICE_URL: "https://global.api.prd.ledger.com/cal",
+      },
     },
   },
   config_currency_canton_network_devnet: {
@@ -33,6 +36,9 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       networkType: "devnet",
       nativeInstrumentId: "Amulet",
       fee: 0,
+      infra: {
+        CAL_SERVICE_URL: "https://global.api.prd.ledger.com/cal",
+      },
     },
   },
   config_currency_canton_network_testnet: {
@@ -51,6 +57,9 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       useGateway: true,
       networkType: "testnet",
       fee: 0,
+      infra: {
+        CAL_SERVICE_URL: "https://global.api.prd.ledger.com/cal",
+      },
     },
   },
 };
