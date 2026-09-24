@@ -33,6 +33,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
+    "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:^",
     "@shared/ui-queued-bottom-sheet": "workspace:^",
     "@features/platform-device-intent": "workspace:*",

@@ -453,7 +453,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const pageProps: ContactDetailViewProps = {
     contact,
     labels,
-    meAvatarSrc: USER_AVATAR_URL,
     onAddAddress,
     ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
     onLedgerWalletAccountsPress,

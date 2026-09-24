@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { ContactIdSchema } from "@domain/entity-contact";
+import { ContactIdSchema, DEFAULT_ME_CONTACT_ID } from "@domain/entity-contact";
 import { ContactAvatar } from ".";
 
 describe("ContactAvatar", () => {
@@ -48,14 +48,12 @@ describe("ContactAvatar", () => {
   );
 
   it("should render the Me profile image instead of a generated initial", () => {
-    const contactId = ContactIdSchema.parse("contact-me");
+    const contactId = ContactIdSchema.parse(DEFAULT_ME_CONTACT_ID);
 
     render(
       <ContactAvatar
         contactId={contactId}
         name="My Wallet"
-        isMe
-        src="https://example.com/me.png"
         size="xl"
         testId="contacts-detail-me-avatar"
       />,

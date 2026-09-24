@@ -508,7 +508,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     viewModel,
     labels,
     searchQuery,
-    meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
     onSearchInputChange,
     onClearSearch,
     onRequestAddContact,

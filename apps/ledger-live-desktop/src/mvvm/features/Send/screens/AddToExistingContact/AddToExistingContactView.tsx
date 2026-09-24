@@ -27,7 +27,6 @@ export type AddToExistingContactViewProps = Readonly<{
   searchPlaceholder: string;
   searchNoResults: string;
   formatAddressCount: (count: number) => string;
-  meAvatarSrc: string;
   isOpeningAddressFlow: boolean;
   onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onSelectContact: (contactId: ContactId) => void;
@@ -38,13 +37,11 @@ function ContactRow({
   formatAddressCount,
   onSelectContact,
   isMe,
-  meAvatarSrc,
 }: Readonly<{
   contact: ContactsListItem;
   formatAddressCount: (count: number) => string;
   onSelectContact: (contactId: ContactId) => void;
   isMe?: boolean;
-  meAvatarSrc?: string;
 }>) {
   return (
     <ListItem
@@ -57,8 +54,6 @@ function ContactRow({
           name={contact.name}
           size="md"
           ariaHidden
-          isMe={isMe}
-          src={isMe ? meAvatarSrc : undefined}
           testId={isMe ? "contacts-me-avatar" : `contacts-saved-avatar-${contact.contactId}`}
         />
         <ListItemContent>
@@ -76,7 +71,6 @@ export function AddToExistingContactView({
   searchPlaceholder,
   searchNoResults,
   formatAddressCount,
-  meAvatarSrc,
   isOpeningAddressFlow,
   onSearchInputChange,
   onSelectContact,
@@ -149,7 +143,6 @@ export function AddToExistingContactView({
             formatAddressCount={formatAddressCount}
             onSelectContact={onSelectContact}
             isMe
-            meAvatarSrc={meAvatarSrc}
           />
         ) : null}
       </div>

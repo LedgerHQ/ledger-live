@@ -146,7 +146,6 @@ export function useContactsPageViewModel(
     labels,
     searchQuery,
     onSearchQueryChange,
-    meAvatarSrc: USER_AVATAR_URL,
     onOpenContact,
     ledgerSyncStatus,
     featureIntroduction: {

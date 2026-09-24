@@ -4,14 +4,13 @@ import {
   resolveAvatarColor,
   type AvatarProps as LumenAvatarProps,
 } from "@ledgerhq/lumen-ui-react";
-import type { ContactId } from "@domain/entity-contact";
+import { DEFAULT_ME_CONTACT_ID, type ContactId } from "@domain/entity-contact";
 import { getContactAvatarInitials } from "../../utils/getContactAvatarInitials";
+import { MeAvatar } from "../MeAvatar/MeAvatar.web";
 
 export type ContactAvatarProps = Readonly<{
   contactId: ContactId;
   name: string;
-  isMe?: boolean;
-  src?: string;
   ariaHidden?: boolean;
   ariaLabel?: string;
   size?: LumenAvatarProps["size"];
@@ -21,8 +20,6 @@ export type ContactAvatarProps = Readonly<{
 export function ContactAvatar({
   contactId,
   name,
-  isMe = false,
-  src,
   ariaHidden = false,
   ariaLabel,
   size = "sm",
@@ -43,14 +40,13 @@ export function ContactAvatar({
     accessibilityProps = { role: undefined, "aria-label": undefined };
   }
 
-  if (isMe) {
+  if (contactId === DEFAULT_ME_CONTACT_ID) {
     return (
-      <Avatar
+      <MeAvatar
+        name={resolvedAriaLabel}
         size={size}
-        src={src}
-        alt={resolvedAriaLabel}
-        data-testid={resolvedTestId}
-        {...accessibilityProps}
+        testId={resolvedTestId}
+        ariaHidden={ariaHidden}
       />
     );
   }

@@ -35,7 +35,6 @@ function createViewModel({
       ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
       formatAddressCount: count => `${count} address`,
     },
-    meAvatarSrc: "https://example.com/black/user.png",
     searchQuery: "",
     onSearchQueryChange: jest.fn(),
     onOpenContact: jest.fn(),

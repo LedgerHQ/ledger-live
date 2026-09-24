@@ -75,7 +75,6 @@ export function useAddToExistingContactViewModel({
     listViewModel,
     labels,
     searchQuery,
-    meAvatarSrc: USER_AVATAR_URL,
     onSearchQueryChange,
     onSelectContact,
     resetSearch,

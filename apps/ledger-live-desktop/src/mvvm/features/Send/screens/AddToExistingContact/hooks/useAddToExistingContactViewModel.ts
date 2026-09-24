@@ -83,7 +83,6 @@ export function useAddToExistingContactViewModel() {
     listViewModel,
     searchQuery,
     labels,
-    meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
     onSearchInputChange,
     onSelectContact,
   };

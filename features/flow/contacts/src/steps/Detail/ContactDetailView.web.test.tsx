@@ -24,7 +24,6 @@ const onAddAddress = () => undefined;
 
 const defaultProps = {
   labels,
-  meAvatarSrc: "https://example.com/avatar.png",
   onAddAddress,
 };
 

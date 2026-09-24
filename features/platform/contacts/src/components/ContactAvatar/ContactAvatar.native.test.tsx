@@ -1,7 +1,8 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
-import { ContactIdSchema } from "@domain/entity-contact";
+import { ContactIdSchema, DEFAULT_ME_CONTACT_ID } from "@domain/entity-contact";
 import { ContactAvatar } from ".";
+import { ME_AVATAR_URL } from "../MeAvatar/meAvatarUrl";
 
 jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
   Avatar: ({ testID, ...props }: { testID?: string }) => {
@@ -55,15 +56,13 @@ describe("ContactAvatar", () => {
     expect(screen.getByTestId(`contacts-avatar-${contactId}`)).toHaveProp("size", size);
   });
 
-  it("should pass the Me profile image to the Lumen avatar", () => {
-    const contactId = ContactIdSchema.parse("contact-me");
+  it("should render the Me avatar for the Me contact", () => {
+    const contactId = ContactIdSchema.parse(DEFAULT_ME_CONTACT_ID);
 
     render(
       <ContactAvatar
         contactId={contactId}
         name="My Wallet"
-        isMe
-        src="https://example.com/me.png"
         size="xl"
         testId="contacts-detail-me-avatar"
       />,
@@ -73,9 +72,9 @@ describe("ContactAvatar", () => {
 
     expect(avatar).toBeVisible();
     expect(avatar).toHaveProp("size", "xl");
-    expect(avatar).toHaveProp("src", "https://example.com/me.png");
+    expect(avatar).toHaveProp("appearance", "thin");
+    expect(avatar).toHaveProp("src", ME_AVATAR_URL);
     expect(avatar).toHaveProp("alt", "My Wallet");
-    expect(avatar).toHaveProp("fallbackText", "MW");
-    expect(avatar.props).not.toHaveProperty("fallbackColor");
+    expect(avatar.props).not.toHaveProperty("fallbackText");
   });
 });

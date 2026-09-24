@@ -162,7 +162,6 @@ export function useContactDetailPaneAdapter(
 
     return {
       labels,
-      meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
       contact,
       onAddAddress: () => handleAddAddress(contact),
       ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,

@@ -28,12 +28,7 @@ export function PaySuccessHero({
   return (
     <Box lx={{ alignItems: "center", gap: "s24" }}>
       {recipient ? (
-        <ContactAvatar
-          contactId={recipient.id}
-          name={recipient.name}
-          isMe={recipient.isMe}
-          size={AVATAR_SIZE}
-        />
+        <ContactAvatar contactId={recipient.id} name={recipient.name} size={AVATAR_SIZE} />
       ) : (
         <Avatar size={AVATAR_SIZE} />
       )}

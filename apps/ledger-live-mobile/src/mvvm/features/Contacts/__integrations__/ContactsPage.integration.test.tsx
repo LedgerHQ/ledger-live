@@ -27,7 +27,6 @@ function renderContactsPage(
         ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
         formatAddressCount: count => `${count} address`,
       }}
-      meAvatarSrc="https://example.com/avatar.png"
       searchQuery=""
       onSearchQueryChange={jest.fn()}
       onOpenContact={onOpenContact}

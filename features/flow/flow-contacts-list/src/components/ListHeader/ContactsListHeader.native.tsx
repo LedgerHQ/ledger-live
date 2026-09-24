@@ -7,7 +7,6 @@ import { ContactsMeListItem } from "../ContactsList/ListItems/ContactsMeListItem
 type ContactsListHeaderProps = Readonly<{
   me?: ContactsListItem;
   labels: ContactsListViewLabels;
-  meAvatarSrc: string;
   showAddContact: boolean;
   onOpenContact: (contactId: ContactsListItem["contactId"]) => void;
   onAddContact: () => void;
@@ -16,7 +15,6 @@ type ContactsListHeaderProps = Readonly<{
 export function ContactsListHeader({
   me,
   labels,
-  meAvatarSrc,
   showAddContact,
   onOpenContact,
   onAddContact,
@@ -26,7 +24,7 @@ export function ContactsListHeader({
       {me ? (
         <ContactsMeListItem
           contact={me}
-          avatarSrc={meAvatarSrc}
+
           addressCountLabel={labels.formatAddressCount(me.addressCount)}
           onOpen={onOpenContact}
         />

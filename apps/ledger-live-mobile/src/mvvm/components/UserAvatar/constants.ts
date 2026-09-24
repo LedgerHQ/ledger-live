@@ -1,3 +1,1 @@
-import { getEnv } from "@shared/env";
-
-export const USER_AVATAR_URL = `${getEnv("LW_ICONS_AVATARS_CDN_BASE_URL")}/black/user.png`;
+export { ME_AVATAR_URL as USER_AVATAR_URL } from "@features/platform-contacts";
