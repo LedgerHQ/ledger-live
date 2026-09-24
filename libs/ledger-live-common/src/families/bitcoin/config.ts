@@ -189,6 +189,8 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      zaino: { url: "https://zec-indexer.coin.ledger.com" },
+      explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },
   config_currency_zcash_regtest: {

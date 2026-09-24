@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
-import { ZCASH_LOG_TYPE, getZainoEndpoint, sanitizeEndpointForLog } from "../../constants";
+import { ZCASH_LOG_TYPE, sanitizeEndpointForLog, type ZainoEndpoint } from "../../constants";
 import { getZCashClient } from "../engineClient";
 
 /**
@@ -72,6 +72,7 @@ export async function assertTransparentInputsUnspent({
  * spends no transparent outpoint (fully shielded) has nothing to guard.
  */
 export async function broadcast(
+  endpoint: ZainoEndpoint,
   txHex: string,
   transparentInputs?: TransparentInputs,
 ): Promise<string> {
@@ -79,16 +80,16 @@ export async function broadcast(
     await assertTransparentInputsUnspent(transparentInputs);
   }
 
-  const { grpcUrl, network } = getZainoEndpoint();
-  const client = await getZCashClient({ grpcUrl, network });
+  const { grpcUrl } = endpoint;
+  const client = await getZCashClient(endpoint);
 
   if (!client.broadcastTransaction) {
     throw new Error("Shielded Zcash transactions are not supported in this environment");
   }
 
-  // The endpoint is overridable (setZainoGrpcUrl, e.g. to point at a custom or
-  // local node), so nothing guarantees it never carries userinfo or a token in
-  // its query string. Everywhere it's logged or attached to error context
+  // The endpoint comes from a remote coin config (or a custom or local node),
+  // so nothing guarantees it never carries userinfo or a token in its query
+  // string. Everywhere it's logged or attached to error context
   // (which can reach Datadog), use the sanitized form; only the actual client
   // call gets the real URL.
   const sanitizedEndpoint = sanitizeEndpointForLog(grpcUrl);

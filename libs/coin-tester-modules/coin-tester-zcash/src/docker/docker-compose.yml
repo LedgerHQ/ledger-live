@@ -169,7 +169,7 @@ services:
       ZAINO_VALIDATOR_SETTINGS__VALIDATOR_JSONRPC_LISTEN_ADDRESS: "zebra:18232"
       ZAINO_GRPC_SETTINGS__LISTEN_ADDRESS: "0.0.0.0:8137"
     ports:
-      - "8137:8137" # gRPC, consumed via setZainoGrpcUrl("http://127.0.0.1:8137", ...)
+      - "8137:8137" # gRPC, the coin config's infra.ZCASH_GRPC_URL in scenarii/zcash.ts
     # No custom healthcheck: the image already declares one (zainod --version)
     # in its own Dockerfile; grpc_health_probe (tried first) is not installed
     # in the image.

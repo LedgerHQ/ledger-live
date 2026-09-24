@@ -1,5 +1,5 @@
 import { assertCanSend, getZCashClient, getZCashModule } from "./engineClient";
-import { getZainoEndpoint, setZainoGrpcUrl } from "../constants";
+import { TEST_ZAINO_ENDPOINT } from "../test/coinConfig";
 import type { ZCashClient } from "../network/types";
 
 const createZCashClient = jest.fn();
@@ -22,8 +22,6 @@ beforeEach(() => {
   createZCashClient.mockReset().mockImplementation(() => fullClient());
 });
 
-afterEach(() => setZainoGrpcUrl(null));
-
 describe("getZCashClient", () => {
   it("hands back the client the engine built for the endpoint it was given", async () => {
     const engineClient = fullClient();
@@ -44,8 +42,8 @@ describe("getZCashClient", () => {
 
 describe("assertCanSend", () => {
   it("accepts an engine that can build, finalize and broadcast", async () => {
-    await expect(assertCanSend()).resolves.toBe(undefined);
-    expect(createZCashClient).toHaveBeenCalledWith(getZainoEndpoint());
+    await expect(assertCanSend(TEST_ZAINO_ENDPOINT)).resolves.toBe(undefined);
+    expect(createZCashClient).toHaveBeenCalledWith(TEST_ZAINO_ENDPOINT);
   });
 
   // A client that can build but not finalize would let the user sign and only
@@ -62,19 +60,16 @@ describe("assertCanSend", () => {
       return client;
     });
 
-    await expect(assertCanSend()).rejects.toThrow(
+    await expect(assertCanSend(TEST_ZAINO_ENDPOINT)).rejects.toThrow(
       "Shielded Zcash transactions are not supported in this environment",
     );
   });
 
-  it("asks the endpoint the sync path uses, override included", async () => {
-    setZainoGrpcUrl("https://testnet.zec.rocks");
+  it("builds the client for the endpoint it is given", async () => {
+    const endpoint = { grpcUrl: "https://testnet.zec.rocks", network: "testnet" } as const;
 
-    await assertCanSend();
+    await assertCanSend(endpoint);
 
-    expect(createZCashClient).toHaveBeenCalledWith({
-      grpcUrl: "https://testnet.zec.rocks",
-      network: "testnet",
-    });
+    expect(createZCashClient).toHaveBeenCalledWith(endpoint);
   });
 });

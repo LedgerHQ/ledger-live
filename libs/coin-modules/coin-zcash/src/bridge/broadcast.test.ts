@@ -5,7 +5,8 @@
  */
 import { log } from "@ledgerhq/logs";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
-import { broadcast } from "./broadcast";
+import { buildBroadcast } from "./broadcast";
+import { TEST_ZAINO_ENDPOINT, testContext } from "../test/coinConfig";
 import { getWalletAccount } from "./getWalletAccount";
 import { broadcast as broadcastLogic } from "../logic/transaction/broadcast";
 import {
@@ -14,6 +15,12 @@ import {
   _resetReservationsForTest,
 } from "./note-reservation";
 import type { ZcashAccount, ZcashOperationExtra } from "../types/bridge";
+
+const broadcast = buildBroadcast(testContext);
+
+// Binding the explorer from the coin config is covered by explorer.test.ts; these tests drive
+// the account's own (fake) explorer.
+jest.mock("./explorer", () => ({ bindExplorer: (walletAccount: unknown) => walletAccount }));
 
 jest.mock("./getWalletAccount");
 jest.mock("../logic/transaction/broadcast");
@@ -60,12 +67,12 @@ describe("broadcast", () => {
 
     await submit({ zcashShielded: true, inputs: [`${PREVOUT_HASH}-0`], inputRefs });
 
-    expect(mockBroadcastLogic).toHaveBeenCalledWith(TX_HEX, {
+    expect(mockBroadcastLogic).toHaveBeenCalledWith(TEST_ZAINO_ENDPOINT, TX_HEX, {
       inputRefs,
       fetchUtxoTx: expect.any(Function),
     });
 
-    const { fetchUtxoTx: forwarded } = mockBroadcastLogic.mock.calls[0][1]!;
+    const { fetchUtxoTx: forwarded } = mockBroadcastLogic.mock.calls[0][2]!;
     await forwarded(PREVOUT_HASH);
     expect(fetchUtxoTx).toHaveBeenCalledWith(PREVOUT_HASH);
   });
@@ -73,7 +80,7 @@ describe("broadcast", () => {
   it("passes no guard context for a fully shielded send", async () => {
     await submit({ zcashShielded: true });
 
-    expect(mockBroadcastLogic).toHaveBeenCalledWith(TX_HEX, undefined);
+    expect(mockBroadcastLogic).toHaveBeenCalledWith(TEST_ZAINO_ENDPOINT, TX_HEX, undefined);
     expect(mockGetWalletAccount).not.toHaveBeenCalled();
   });
 
