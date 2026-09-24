@@ -10160,7 +10160,6 @@
   },
   "history": {
     "title": "Transaction history",
-    "cardScope": "Card",
     "cardAssetScope": "Card · {{assetName}}",
     "pending": "Pending transaction",
     "pending_other": "Pending transactions",
