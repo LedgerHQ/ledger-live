@@ -109,7 +109,18 @@ pnpm start -- <command> [args]
 
 ## Environment
 
-If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`env-setup.ts`).
+If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`live-common-setup.ts`).
+
+## API authentication
+
+`swap quote` and `swap execute` authenticate their quote requests against the production Ledger API with a key used for nothing else:
+
+- One key per profile (state directory). It is created on the first swap request and stored unencrypted in the OS keychain as `api-auth-key-<hash>` under the `ledger-wallet-cli` service, so it never asks for the Ledger Key Ring password.
+- It is not the Ledger Key Ring member key and carries no trustchain, so its tokens are unattested. `session reset` and `ring destroy` leave it in place.
+- The access token lives in memory for a single command.
+- Without a usable OS keychain, a one-off key authenticates that run.
+- If authentication fails or does not finish within 10 seconds, the shared authenticated base query sends the request without a token for now. If the swap API rejects a refreshed token, the command fails with `No quotes available: noQuotes`.
+- For development, `LEDGER_AUTH_KEYCLOAK_BASE_URL`, `LEDGER_AUTH_KEYCLOAK_REALM` and `LEDGER_AUTH_CLIENT_ID` override the Keycloak defaults (`configureStore.ts`). They do not change the swap API, which stays on production.
 
 ## Relation to `ledger-live` CLI
 
