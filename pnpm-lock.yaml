@@ -627,9 +627,9 @@ overrides:
   expect: 30.5.0
   pretty-format@^30.0.0: 30.5.0
 
-packageExtensionsChecksum: sha256-y05zn8SOmFlbIRTsh3Z3c43aAFvz482eG6q6x0pvCFg=
+packageExtensionsChecksum: sha256-DnRPKQHuFOrLMncuGd/N1CWVqNLIifH3AnXTY8A8iQs=
 
-pnpmfileChecksum: sha256-YT3c6PR0sDJOv5QX5BFHtgHtdIeMEwJL0lMX54PuO8s=
+pnpmfileChecksum: sha256-+5JdXKi7m+fNfRNFpT3+fOzd6JfTOPCDWyyYYT1SHJQ=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
@@ -61365,7 +61365,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:

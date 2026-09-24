@@ -330,6 +330,11 @@
           "tslib": "*"
         }
       },
+      "jest-allure2-reporter": {
+        "dependencies": {
+          "tslib": "*"
+        }
+      },
       "detox": {
         "dependencies": {
           "expect": "*"

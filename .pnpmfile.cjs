@@ -27,7 +27,6 @@ function readPackage(pkg, context) {
         So we are going to patch these until the maintainers fix their own stuff…
         Feel free to make PRs if you feel like it :).
       */
-      addDependencies("jest-allure2-reporter", { tslib: "*" }),
       /* React Native and Metro bundler packages */
       addPeerDependencies("metro-config", {
         "metro-transform-worker": "*",
