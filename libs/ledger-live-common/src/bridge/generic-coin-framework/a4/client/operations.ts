@@ -322,10 +322,19 @@ export async function fetchA4Operations(
   minHeight: number,
   maxDcRoamRetries: number,
   maxOperations?: number,
+  pageSize?: number,
 ): Promise<Operation[]> {
+  // `size` is what bounds one response, `maxOperations` what bounds the walk -- the same two
+  // gates the delegate path has, and only the first protects against a single huge response
+  // materialising before the walk gets a say. Omitted when unset, which is A4's own default.
   const fetchRawPage = (cursor: string | undefined) =>
     client
-      .listOperations(a4AccountId, { blocks: [minHeight, "latest"], order: "DESC", token: cursor })
+      .listOperations(a4AccountId, {
+        blocks: [minHeight, "latest"],
+        order: "DESC",
+        token: cursor,
+        ...(pageSize !== undefined ? { size: pageSize } : {}),
+      })
       .then(r => ({ items: r.data?.items ?? [], next: r.data?.nextToken }));
 
   const adapt = (rawOps: A4OperationView[]) =>

@@ -6,7 +6,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { genericGetAccountShape } from "./getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
-import { DEFAULT_MAX_OPERATIONS } from "./operationHistoryBound";
+import { DEFAULT_MAX_OPERATIONS, DEFAULT_PAGE_SIZE_BY_FAMILY } from "./operationHistoryBound";
 
 jest.mock("@ledgerhq/logs");
 
@@ -167,12 +167,30 @@ describe("genericGetAccountShape - A4 read branch", () => {
 
     await call();
 
-    // Asserted as the last argument rather than by index: a parameter was inserted ahead of it
-    // once already, and an index that silently drifts onto a neighbour is worse than no test.
-    // Without the bound this path paginates unbounded and materialises a whole history before the
+    // Both bounds, named rather than counted: this assertion has already drifted twice, once when
+    // a parameter was inserted ahead of it and once when the page size was appended after it.
+    // Without them this path paginates unbounded and materialises a whole history before the
     // store bound below it ever runs -- and A4 read is enabled for Ethereum, so the account that
     // produced the out-of-memory report reaches it.
-    expect(fetchA4OperationsMock.mock.calls[0].at(-1)).toBe(DEFAULT_MAX_OPERATIONS);
+    const [, , , , , , , walkBound, pageSize] = fetchA4OperationsMock.mock.calls[0];
+    expect(walkBound).toBe(DEFAULT_MAX_OPERATIONS);
+    // This suite drives the `mainnet` family, which has no shipped page size, so none is sent --
+    // the same rule the delegate path follows.
+    expect(pageSize).toBeUndefined();
+  });
+
+  it("sends the page size too for a family that has one", async () => {
+    // `size` bounds one A4 response the way `limit` bounds one explorer page; without it a single
+    // response can materialise in full before the walk bound applies.
+    fetchA4OperationsMock.mockResolvedValue([]);
+
+    await genericGetAccountShape("evm", currency.id)(
+      { address: "0xabc", initialAccount: undefined, currency, derivationMode: "" } as any,
+      { paginationConfig: {} as any },
+    );
+
+    const [, , , , , , , , pageSize] = fetchA4OperationsMock.mock.calls[0];
+    expect(pageSize).toBe(DEFAULT_PAGE_SIZE_BY_FAMILY.evm);
   });
 
   it("falls back to the coin-module delegate when fetchA4Operations throws with status 5xx", async () => {

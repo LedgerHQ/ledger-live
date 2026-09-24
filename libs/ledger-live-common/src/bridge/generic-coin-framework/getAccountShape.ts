@@ -761,10 +761,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           a4Network,
           minHeight,
           a4ChainConfig.maxDcRoamRetries,
-          // The same walk bound the delegate gets: this path paginates too, and without it a
-          // large A4-backed account materialises its whole history before the store bound below
-          // ever runs.
+          // Both bounds the delegate gets: the walk bound, without which a large A4-backed
+          // account materialises its whole history before the store bound runs, and the page
+          // size, without which a single response can do the same on its own.
           maxOperations,
+          pageSize,
         )) as OperationCommon[];
         logReadDecisionOnce(a4Network, "read_served_by_a4", "A4 is serving reads for this chain");
       } catch (e) {
