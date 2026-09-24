@@ -78,7 +78,12 @@ type FakeState = {
   accounts: unknown[];
   identities: unknown;
   history: unknown;
-  featureFlags: { overrides: unknown; bannerVisible: unknown; remoteFlagsReady?: unknown };
+  featureFlags: {
+    overrides: unknown;
+    bannerVisible: unknown;
+    remoteFlagsReady?: unknown;
+    cachedFlagsSettled?: unknown;
+  };
   coinConfigOverrides: { overrides: Record<string, unknown> };
   largeScreenUpsellModal: { retriesModal: number; lastSeenAt: number | null };
   payCardBalance: {
@@ -211,7 +216,7 @@ describe("DBMiddleware - featureFlags branch", () => {
     mockedSetKey.mockReset();
   });
 
-  it("persists only { overrides, bannerVisible } — never the transient remoteFlagsReady gate", () => {
+  it("persists only { overrides, bannerVisible } — never the transient readiness flags", () => {
     const before = baseState();
     const after: FakeState = {
       ...before,
@@ -219,6 +224,7 @@ describe("DBMiddleware - featureFlags branch", () => {
         overrides: { mockFeature: { enabled: true } },
         bannerVisible: false,
         remoteFlagsReady: true,
+        cachedFlagsSettled: true,
       },
     };
 
@@ -232,6 +238,7 @@ describe("DBMiddleware - featureFlags branch", () => {
 
     const persisted = mockedSetKey.mock.calls[0][2] as Record<string, unknown>;
     expect(persisted).not.toHaveProperty("remoteFlagsReady");
+    expect(persisted).not.toHaveProperty("cachedFlagsSettled");
   });
 });
 

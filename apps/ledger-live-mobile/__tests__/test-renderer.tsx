@@ -74,7 +74,11 @@ const INITIAL_STATE: State = {
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
   // Seed the boot-readiness gate as settled so tests mounting `WaitForAppReady` don't block.
-  featureFlags: { ...FEATURE_FLAGS_INITIAL_STATE, remoteFlagsReady: true },
+  featureFlags: {
+    ...FEATURE_FLAGS_INITIAL_STATE,
+    remoteFlagsReady: true,
+    cachedFlagsSettled: true,
+  },
   history: HISTORY_INITIAL_STATE,
   identities: initialIdentitiesState,
   inView: IN_VIEW_INITIAL_STATE,
