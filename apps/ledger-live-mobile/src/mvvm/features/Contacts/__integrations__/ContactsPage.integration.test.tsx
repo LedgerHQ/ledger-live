@@ -1,4 +1,5 @@
 import React from "react";
+import { SafeAreaInsetsContext } from "react-native-safe-area-context";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import {
   ContactsView,
@@ -12,37 +13,42 @@ import { render, screen } from "@tests/test-renderer";
 function renderContactsPage(
   ledgerSyncStatus: "ready" | "checking",
   viewModel?: ContactsListViewModel,
+  bottomSafeAreaInset = 0,
 ) {
   const me = mockMeContact();
   const onOpenContact = jest.fn();
   const onAddContact = jest.fn();
   const result = render(
-    <ContactsView
-      viewModel={viewModel ?? createEmptyContactsListViewModel(me)}
-      labels={{
-        title: "Contacts",
-        searchPlaceholder: "Search contact",
-        searchNoResults: "No contact found",
-        addContact: "Add contact",
-        ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
-        formatAddressCount: count => `${count} address`,
-      }}
-      searchQuery=""
-      onSearchQueryChange={jest.fn()}
-      onOpenContact={onOpenContact}
-      onAddContact={onAddContact}
-      ledgerSyncStatus={ledgerSyncStatus}
-      featureIntroduction={createClosedContactsFeatureIntroduction()}
-      ledgerSyncIntroduction={{
-        isOpen: false,
-        title: "Sync your wallet to add a contact",
-        description: "Contacts are encrypted.",
-        activateLabel: "Sync my wallet",
-        dismissLabel: "Not now",
-        onActivate: jest.fn(),
-        onDismiss: jest.fn(),
-      }}
-    />,
+    <SafeAreaInsetsContext.Provider
+      value={{ top: 0, right: 0, bottom: bottomSafeAreaInset, left: 0 }}
+    >
+      <ContactsView
+        viewModel={viewModel ?? createEmptyContactsListViewModel(me)}
+        labels={{
+          title: "Contacts",
+          searchPlaceholder: "Search contact",
+          searchNoResults: "No contact found",
+          addContact: "Add contact",
+          ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
+          formatAddressCount: count => `${count} address`,
+        }}
+        searchQuery=""
+        onSearchQueryChange={jest.fn()}
+        onOpenContact={onOpenContact}
+        onAddContact={onAddContact}
+        ledgerSyncStatus={ledgerSyncStatus}
+        featureIntroduction={createClosedContactsFeatureIntroduction()}
+        ledgerSyncIntroduction={{
+          isOpen: false,
+          title: "Sync your wallet to add a contact",
+          description: "Contacts are encrypted.",
+          activateLabel: "Sync my wallet",
+          dismissLabel: "Not now",
+          onActivate: jest.fn(),
+          onDismiss: jest.fn(),
+        }}
+      />
+    </SafeAreaInsetsContext.Provider>,
   );
 
   return { ...result, me, onOpenContact, onAddContact };
@@ -97,5 +103,21 @@ describe("ContactsPage", () => {
     expect(searchInput).toBeVisible();
     expect(screen.getByTestId("contacts-list")).toBeVisible();
     expect(screen.getByTestId("contacts-list-header")).not.toContainElement(searchInput);
+  });
+
+  it("should end the populated Contacts list above the system navigation bar", () => {
+    const me = mockMeContact();
+    const viewModel = createPopulatedContactsListViewModel(me, [
+      me,
+      mockContact({ id: "contact-ada", name: "Ada" }),
+    ]);
+
+    renderContactsPage("ready", viewModel, 48);
+
+    expect(screen.getByTestId("contacts-list")).toHaveProp("contentContainerStyle", {
+      paddingHorizontal: 16,
+      paddingTop: 8,
+      paddingBottom: 56,
+    });
   });
 });

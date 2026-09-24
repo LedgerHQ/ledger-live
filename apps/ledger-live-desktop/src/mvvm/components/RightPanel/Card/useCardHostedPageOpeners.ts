@@ -10,7 +10,6 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { SIDEBAR_VALUE_TO_PATH } from "LLD/components/SideBar/utils";
 import { CL_CARD_APP_ID } from "LLD/features/Card/constants";
 import { useCardHostedManifests } from "./useCardHostedManifests";
-import { whenHostedSessionWiped } from "./useWipeHostedSession";
 
 export type CardHostedPageOpeners = {
   readonly openHostedLogin: OpenHostedLogin;
@@ -38,8 +37,6 @@ export function useCardHostedPageOpeners(): CardHostedPageOpeners {
     async loginUrl => {
       const manifest = requireManifest(login);
 
-      await whenHostedSessionWiped();
-
       navigate(liveAppRoute(manifest.id), {
         state: { goToURL: buildHostedPageUrl(String(manifest.url), loginUrl) },
       });
@@ -53,8 +50,6 @@ export function useCardHostedPageOpeners(): CardHostedPageOpeners {
     async path => {
       const manifest = requireManifest(hosted);
 
-      await whenHostedSessionWiped();
-
       navigate(liveAppRoute(manifest.id), {
         state: { goToURL: buildHostedUrl(String(manifest.url), path) },
       });
@@ -63,7 +58,7 @@ export function useCardHostedPageOpeners(): CardHostedPageOpeners {
   );
 
   // The legacy Card live app resolves its own manifest on the `/platform/:appId` screen, so it
-  // needs no catalog lookup here, and it keeps its own session: nothing to wipe first.
+  // needs no catalog lookup here.
   const openLegacyCardApp = useCallback(() => {
     navigate(liveAppRoute(CL_CARD_APP_ID));
   }, [navigate]);
