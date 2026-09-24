@@ -1,15 +1,18 @@
 import {
   UnknownNetworkError,
-  currencyIdFromNetwork,
+  currencyIdFromNetwork as currencyIdFromKnownNetwork,
   type Network,
 } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  isWalletCliSupportedCurrency,
+  listWalletCliSupportedCurrencyIds,
+} from "../supported-currencies";
 import { networkFromLegacy } from "./v1";
 
 export {
   NetworkSchema,
   UnknownNetworkError,
-  currencyIdFromNetwork,
   networkFromCurrencyId,
 } from "@domain/entity-account-descriptor";
 export type { Network } from "@domain/entity-account-descriptor";
@@ -34,5 +37,32 @@ export function parseNetworkArg(input: string): Network {
 
 /** The mainnet a testnet network belongs to (`solana_devnet` → `solana`), else the network itself. */
 export function mainnetOf(network: Network): Network {
-  return getCryptoCurrencyById(currencyIdFromNetwork(network)).isTestnetFor ?? network;
+  return getCryptoCurrencyById(currencyIdFromKnownNetwork(network)).isTestnetFor ?? network;
+}
+
+// ---------------------------------------------------------------------------
+// Network → live-common currencyId mapping, restricted to wallet-cli support
+// ---------------------------------------------------------------------------
+
+export class UnsupportedNetworkError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "UnsupportedNetworkError";
+  }
+}
+
+/**
+ * Convert a Network to the corresponding live-common currencyId.
+ *
+ * Throws UnknownNetworkError if the resulting currencyId is not known.
+ * Throws UnsupportedNetworkError if it is known but not supported by wallet-cli (e.g. "base").
+ */
+export function currencyIdFromNetwork(network: Network): string {
+  const currencyId = currencyIdFromKnownNetwork(network);
+  if (!isWalletCliSupportedCurrency(getCryptoCurrencyById(currencyId))) {
+    throw new UnsupportedNetworkError(
+      `Network "${network}" is not supported by wallet-cli. Supported networks: ${listWalletCliSupportedCurrencyIds().join(", ")} (and their testnets).`,
+    );
+  }
+  return currencyId;
 }
