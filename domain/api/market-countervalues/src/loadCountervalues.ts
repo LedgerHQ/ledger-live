@@ -1,6 +1,6 @@
 import type { Currency } from "@domain/entity-currency";
 import {
-  generateCache,
+  applyRatePatches,
   incrementPerGranularity,
   pairId,
   type CounterValuesState,
@@ -211,34 +211,6 @@ export async function loadCountervalues(
     updates.push(latest);
   }
   log("countervalues", updates.length + " updates to apply");
-  const changesKeys: Record<string, unknown> = {};
-  updates.forEach(patch => {
-    Object.keys(patch).forEach(key => {
-      changesKeys[key] = 1;
 
-      if (!data[key]) {
-        data[key] = new Map();
-      }
-
-      const map = data[key];
-      Object.entries(patch[key]).forEach(([k, v]) => {
-        if (typeof v === "number") map.set(k, v);
-      });
-    });
-  });
-
-  // Synchronize cache. checkHoles on first run after restore (checkHolesOnNextLoad) or for new pairs (no status).
-  const checkHolesOnNextLoad = state.checkHolesOnNextLoad === true;
-  Object.keys(changesKeys).forEach(pair => {
-    const checkHoles = checkHolesOnNextLoad || !status[pair];
-    const previousStats = state.cache[pair]?.stats;
-    cache[pair] = generateCache(pair, data[pair], settings, checkHoles, previousStats);
-  });
-
-  return {
-    data,
-    cache,
-    status,
-    checkHolesOnNextLoad: false,
-  };
+  return applyRatePatches(state, { data, cache, status }, updates, settings);
 }
