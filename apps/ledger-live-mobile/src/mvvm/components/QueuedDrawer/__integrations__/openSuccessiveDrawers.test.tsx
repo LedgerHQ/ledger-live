@@ -1,22 +1,9 @@
 import React from "react";
-import { render, LONG_TIMEOUT, waitForElementToBeRemoved, waitFor } from "@tests/test-renderer";
+import { render, waitForElementToBeRemoved, waitFor } from "@tests/test-renderer";
 import { TestPages } from "./shared";
 import { TestIdPrefix, testIds } from "../TestScreens";
 
 describe("QueuedDrawer", () => {
-  // this test is really slow to cold start, so we need to increase the timeout
-  // we need to find out why and fix it
-  jest.setTimeout(LONG_TIMEOUT * 3);
-
-  beforeEach(() => {
-    jest.useRealTimers();
-  });
-
-  afterEach(() => {
-    jest.clearAllTimers();
-    jest.useFakeTimers();
-  });
-
   const withEnabledPrefix = <T extends Record<string, string>>(ids: T): T =>
     Object.fromEntries(Object.entries(ids).map(([k, v]) => [k, `enabled-${v}`])) as T;
   const mainTestIds = withEnabledPrefix(testIds(TestIdPrefix.Main));

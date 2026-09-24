@@ -26,7 +26,7 @@ const analyticsConsentInfo = {
   privacyPolicyVersion: 1,
 };
 
-const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+const flushPromises = () => jest.advanceTimersByTimeAsync(0);
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -49,13 +49,8 @@ const makeStore = (): AppStore =>
   }) as AppStore;
 
 describe("segment hasEnabledOsNotifications", () => {
-  beforeEach(() => {
-    jest.useRealTimers();
-  });
-
   afterEach(() => {
     jest.restoreAllMocks();
-    jest.useFakeTimers();
   });
 
   let store: AppStore;
