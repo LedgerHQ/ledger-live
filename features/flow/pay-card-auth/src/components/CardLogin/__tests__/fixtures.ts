@@ -3,7 +3,7 @@ export const CARD_LOGIN_INTRO_RESOURCES = {
     translation: {
       payTab: {
         cardLogin: {
-          title: "Crypto Card",
+          title: "Crypto card",
           beforeIntro: {
             title: "Get your crypto card",
             description: "Get 1% cashback every time you spend",

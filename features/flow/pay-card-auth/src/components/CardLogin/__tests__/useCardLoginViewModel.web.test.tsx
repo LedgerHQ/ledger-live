@@ -26,7 +26,7 @@ const onAlreadyHaveCardPress = jest.fn();
 
 const copy: CardLoginCopy = {
   headline: "Get your crypto card",
-  title: "Crypto Card",
+  title: "Crypto card",
   description: "Log in to access your card",
   loginLabel: "Login",
   alreadyHaveCardLabel: null,
@@ -248,7 +248,7 @@ describe("useCardLoginViewModel intro", () => {
   it("sells the card while the intro has not been seen", async () => {
     const { result } = await renderIdleLogin(store);
 
-    expect(result.current?.title).toBe("Crypto Card");
+    expect(result.current?.title).toBe("Crypto card");
     expect(result.current?.description).toBe("Get 1% cashback every time you spend");
     expect(result.current?.loginLabel).toBe("Get card");
   });
@@ -277,7 +277,7 @@ describe("useCardLoginViewModel intro", () => {
   it("sells the card before the intro has been seen", async () => {
     const { result } = await renderIdleLogin(store);
 
-    expect(result.current?.title).toBe("Crypto Card");
+    expect(result.current?.title).toBe("Crypto card");
     expect(result.current?.headline).toBe("Get your crypto card");
     expect(result.current?.description).toBe("Get 1% cashback every time you spend");
     expect(result.current?.loginLabel).toBe("Get card");
@@ -294,7 +294,7 @@ describe("useCardLoginViewModel intro", () => {
     store.dispatch(markPayCardLoginIntroSeen());
     const { result } = await renderIdleLogin(store);
 
-    expect(result.current?.title).toBe("Crypto Card");
+    expect(result.current?.title).toBe("Crypto card");
     expect(result.current?.headline).toBe("Log in to access your Card");
     expect(result.current?.description).toBe("You’ve been logged out for security");
     expect(result.current?.loginLabel).toBe("Log in");
