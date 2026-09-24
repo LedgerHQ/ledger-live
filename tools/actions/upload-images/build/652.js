@@ -1,9 +1,9 @@
 "use strict";
 exports.ids = [
-    "975"
+    652
 ];
 exports.modules = {
-    "../../../node_modules/.pnpm/@aws-sdk+credential-provider-ini@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/credential-provider-ini/dist-es/index.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
+    "../../../node_modules/.pnpm/@aws-sdk+credential-provider-ini@3.540.0_@aws-s_a7dd7b73a179d880616256dd2aa196b8/node_modules/@aws-sdk/credential-provider-ini/dist-es/index.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
         __webpack_require__.d(__webpack_exports__, {
             fromIni: ()=>fromIni
         });
@@ -11,9 +11,9 @@ exports.modules = {
         var property_provider_dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+property-provider@2.2.0/node_modules/@smithy/property-provider/dist-es/index.js");
         const resolveCredentialSource = (credentialSource, profileName)=>{
             const sourceProvidersMap = {
-                EcsContainer: (options)=>__webpack_require__.e("121").then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@smithy+credential-provider-imds@2.3.0/node_modules/@smithy/credential-provider-imds/dist-es/index.js")).then(({ fromContainerMetadata })=>fromContainerMetadata(options)),
-                Ec2InstanceMetadata: (options)=>__webpack_require__.e("121").then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@smithy+credential-provider-imds@2.3.0/node_modules/@smithy/credential-provider-imds/dist-es/index.js")).then(({ fromInstanceMetadata })=>fromInstanceMetadata(options)),
-                Environment: (options)=>__webpack_require__.e("903").then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-env@3.535.0/node_modules/@aws-sdk/credential-provider-env/dist-es/index.js")).then(({ fromEnv })=>fromEnv(options))
+                EcsContainer: (options)=>__webpack_require__.e(672).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@smithy+credential-provider-imds@2.3.0/node_modules/@smithy/credential-provider-imds/dist-es/index.js")).then(({ fromContainerMetadata })=>fromContainerMetadata(options)),
+                Ec2InstanceMetadata: (options)=>__webpack_require__.e(672).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@smithy+credential-provider-imds@2.3.0/node_modules/@smithy/credential-provider-imds/dist-es/index.js")).then(({ fromInstanceMetadata })=>fromInstanceMetadata(options)),
+                Environment: (options)=>__webpack_require__.e(634).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-env@3.535.0/node_modules/@aws-sdk/credential-provider-env/dist-es/index.js")).then(({ fromEnv })=>fromEnv(options))
             };
             if (credentialSource in sourceProvidersMap) return sourceProvidersMap[credentialSource];
             throw new property_provider_dist_es.C1(`Unsupported credential source in profile ${profileName}. Got ${credentialSource}, expected EcsContainer or Ec2InstanceMetadata or Environment.`);
@@ -35,9 +35,9 @@ exports.modules = {
             const data = profiles[profileName];
             if (!options.roleAssumer) {
                 const { getDefaultRoleAssumer } = await Promise.all([
-                    __webpack_require__.e("675"),
-                    __webpack_require__.e("858")
-                ]).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-ini@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/credential-provider-ini/dist-es/loadSts.js"));
+                    __webpack_require__.e(433),
+                    __webpack_require__.e(970)
+                ]).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-ini@3.540.0_@aws-s_a7dd7b73a179d880616256dd2aa196b8/node_modules/@aws-sdk/credential-provider-ini/dist-es/loadSts.js"));
                 options.roleAssumer = getDefaultRoleAssumer({
                     ...options.clientConfig,
                     credentialProviderLogger: options.logger,
@@ -66,12 +66,12 @@ exports.modules = {
             return options.roleAssumer(sourceCreds, params);
         };
         const isProcessProfile = (arg)=>Boolean(arg) && "object" == typeof arg && "string" == typeof arg.credential_process;
-        const resolveProcessCredentials = async (options, profile)=>__webpack_require__.e("632").then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-process@3.535.0/node_modules/@aws-sdk/credential-provider-process/dist-es/index.js")).then(({ fromProcess })=>fromProcess({
+        const resolveProcessCredentials = async (options, profile)=>__webpack_require__.e(651).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-process@3.535.0/node_modules/@aws-sdk/credential-provider-process/dist-es/index.js")).then(({ fromProcess })=>fromProcess({
                     ...options,
                     profile
                 })());
         const resolveSsoCredentials = async (profile, options = {})=>{
-            const { fromSSO } = await __webpack_require__.e("817").then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-sso@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/credential-provider-sso/dist-es/index.js"));
+            const { fromSSO } = await __webpack_require__.e(969).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-sso@3.540.0_@aws-s_c5e8290c353c1488b6ee20264644bb9f/node_modules/@aws-sdk/credential-provider-sso/dist-es/index.js"));
             return fromSSO({
                 profile,
                 logger: options.logger
@@ -95,7 +95,7 @@ exports.modules = {
                 "undefined",
                 "string"
             ].indexOf(typeof arg.role_session_name) > -1;
-        const resolveWebIdentityCredentials = async (profile, options)=>__webpack_require__.e("166").then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-web-identity@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/credential-provider-web-identity/dist-es/index.js")).then(({ fromTokenFile })=>fromTokenFile({
+        const resolveWebIdentityCredentials = async (profile, options)=>__webpack_require__.e(70).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-web-identity@3.540_0c803b071a2880a96357da8d70d392ed/node_modules/@aws-sdk/credential-provider-web-identity/dist-es/index.js")).then(({ fromTokenFile })=>fromTokenFile({
                     webIdentityTokenFile: profile.web_identity_token_file,
                     roleArn: profile.role_arn,
                     roleSessionName: profile.role_session_name,

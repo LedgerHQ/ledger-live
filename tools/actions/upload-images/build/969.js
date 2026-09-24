@@ -1,9 +1,9 @@
 "use strict";
 exports.ids = [
-    "817"
+    969
 ];
 exports.modules = {
-    "../../../node_modules/.pnpm/@aws-sdk+credential-provider-sso@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/credential-provider-sso/dist-es/index.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
+    "../../../node_modules/.pnpm/@aws-sdk+credential-provider-sso@3.540.0_@aws-s_c5e8290c353c1488b6ee20264644bb9f/node_modules/@aws-sdk/credential-provider-sso/dist-es/index.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
         __webpack_require__.d(__webpack_exports__, {
             fromSSO: ()=>fromSSO
         });
@@ -13,7 +13,7 @@ exports.modules = {
         const REFRESH_MESSAGE = "To refresh this SSO session run 'aws sso login' with the corresponding profile.";
         const ssoOidcClientsHash = {};
         const getSsoOidcClient = async (ssoRegion)=>{
-            const { SSOOIDCClient } = await __webpack_require__.e("437").then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+token-providers@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/token-providers/dist-es/loadSsoOidc.js"));
+            const { SSOOIDCClient } = await __webpack_require__.e(254).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+token-providers@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/token-providers/dist-es/loadSsoOidc.js"));
             if (ssoOidcClientsHash[ssoRegion]) return ssoOidcClientsHash[ssoRegion];
             const ssoOidcClient = new SSOOIDCClient({
                 region: ssoRegion
@@ -22,7 +22,7 @@ exports.modules = {
             return ssoOidcClient;
         };
         const getNewSsoOidcToken = async (ssoToken, ssoRegion)=>{
-            const { CreateTokenCommand } = await __webpack_require__.e("437").then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+token-providers@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/token-providers/dist-es/loadSsoOidc.js"));
+            const { CreateTokenCommand } = await __webpack_require__.e(254).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+token-providers@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/token-providers/dist-es/loadSsoOidc.js"));
             const ssoOidcClient = await getSsoOidcClient(ssoRegion);
             return ssoOidcClient.send(new CreateTokenCommand({
                 clientId: ssoToken.clientId,
@@ -129,7 +129,7 @@ exports.modules = {
             }
             if (new Date(token.expiresAt).getTime() - Date.now() <= 0) throw new dist_es.C1(`The SSO session associated with this profile has expired. ${refreshMessage}`, SHOULD_FAIL_CREDENTIAL_CHAIN);
             const { accessToken } = token;
-            const { SSOClient, GetRoleCredentialsCommand } = await __webpack_require__.e("318").then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-sso@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/credential-provider-sso/dist-es/loadSso.js"));
+            const { SSOClient, GetRoleCredentialsCommand } = await __webpack_require__.e(313).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-sso@3.540.0_@aws-s_c5e8290c353c1488b6ee20264644bb9f/node_modules/@aws-sdk/credential-provider-sso/dist-es/loadSso.js"));
             const sso = ssoClient || new SSOClient(Object.assign({}, clientConfig ?? {}, {
                 region: clientConfig?.region ?? ssoRegion
             }));

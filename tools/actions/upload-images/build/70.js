@@ -1,9 +1,9 @@
 "use strict";
 exports.ids = [
-    "166"
+    70
 ];
 exports.modules = {
-    "../../../node_modules/.pnpm/@aws-sdk+credential-provider-web-identity@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/credential-provider-web-identity/dist-es/index.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
+    "../../../node_modules/.pnpm/@aws-sdk+credential-provider-web-identity@3.540_0c803b071a2880a96357da8d70d392ed/node_modules/@aws-sdk/credential-provider-web-identity/dist-es/index.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
         __webpack_require__.d(__webpack_exports__, {
             fromTokenFile: ()=>fromTokenFile
         });
@@ -15,9 +15,9 @@ exports.modules = {
                 let { roleAssumerWithWebIdentity } = init;
                 if (!roleAssumerWithWebIdentity) {
                     const { getDefaultRoleAssumerWithWebIdentity } = await Promise.all([
-                        __webpack_require__.e("675"),
-                        __webpack_require__.e("450")
-                    ]).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-web-identity@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/credential-provider-web-identity/dist-es/loadSts.js"));
+                        __webpack_require__.e(433),
+                        __webpack_require__.e(668)
+                    ]).then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-web-identity@3.540_0c803b071a2880a96357da8d70d392ed/node_modules/@aws-sdk/credential-provider-web-identity/dist-es/loadSts.js"));
                     roleAssumerWithWebIdentity = getDefaultRoleAssumerWithWebIdentity({
                         ...init.clientConfig,
                         credentialProviderLogger: init.logger,

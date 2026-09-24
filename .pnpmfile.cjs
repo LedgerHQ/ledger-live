@@ -80,9 +80,6 @@ function readPackage(pkg, context) {
       addPeerDependencies("react-native-easy-markdown", {
         "prop-types": "*",
       }),
-      addDependencies("@actions/github", {
-        undici: "*",
-      }),
     ],
     pkg,
     context,
