@@ -47,4 +47,15 @@ describe("customCreateStore content A/B wiring", () => {
     expect(readCachedContentAbTests).not.toHaveBeenCalled();
     expect(fetchContentAbTests).not.toHaveBeenCalled();
   });
+
+  it("still fetches content A/B when a custom remote-flags fetcher is injected", async () => {
+    const injectedFetch = jest.fn(() => Promise.resolve({}));
+    customCreateStore({ fetchRemoteFlags: injectedFetch, readCachedFlags: null });
+
+    await flushPromises();
+
+    expect(injectedFetch).toHaveBeenCalledTimes(1);
+    expect(fetchContentAbTests).toHaveBeenCalledTimes(1);
+    expect(fetchRemoteFlags).not.toHaveBeenCalled();
+  });
 });

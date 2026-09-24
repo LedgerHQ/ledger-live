@@ -79,13 +79,11 @@ type Props = {
   readCachedFlags?: (() => Promise<PartialFeatures>) | null;
 };
 
-async function fetchRemoteFlagsWithContentAbTests(): Promise<PartialFeatures> {
-  const [flags] = await Promise.all([defaultFetchRemoteFlags(), fetchContentAbTests()]);
-  return flags;
-}
-
-async function readCachedFlagsWithContentAbTests(): Promise<PartialFeatures> {
-  const [flags] = await Promise.all([defaultReadCachedFlags(), readCachedContentAbTests()]);
+async function withContentAbTests(
+  fetchFlags: () => Promise<PartialFeatures>,
+  fetchAbTests: () => Promise<unknown>,
+): Promise<PartialFeatures> {
+  const [flags] = await Promise.all([fetchFlags(), fetchAbTests()]);
   return flags;
 }
 
@@ -93,9 +91,13 @@ const customCreateStore = ({
   state,
   dbMiddleware,
   analyticsMiddleware,
-  fetchRemoteFlags = fetchRemoteFlagsWithContentAbTests,
-  readCachedFlags = fetchRemoteFlags === null ? null : readCachedFlagsWithContentAbTests,
+  fetchRemoteFlags = defaultFetchRemoteFlags,
+  readCachedFlags = fetchRemoteFlags === null ? null : defaultReadCachedFlags,
 }: Props) => {
+  const fetchRemoteFlagsAndContentAbTests =
+    fetchRemoteFlags && (() => withContentAbTests(fetchRemoteFlags, fetchContentAbTests));
+  const readCachedFlagsAndContentAbTests =
+    readCachedFlags && (() => withContentAbTests(readCachedFlags, readCachedContentAbTests));
   const store = configureStore({
     reducer: reducers,
     preloadedState: withAccountAliases(state),
@@ -175,8 +177,8 @@ const customCreateStore = ({
               appVersion: __APP_VERSION__,
               envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
             },
-            readCachedFlags: readCachedFlags ?? undefined,
-            fetchRemoteFlags: fetchRemoteFlags ?? undefined,
+            readCachedFlags: readCachedFlagsAndContentAbTests ?? undefined,
+            fetchRemoteFlags: fetchRemoteFlagsAndContentAbTests ?? undefined,
             getAppLanguage: languageSelector,
             onRemoteFlagsError: reportFeatureFlagsReadFailure,
           }),
