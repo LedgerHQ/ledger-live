@@ -100,7 +100,6 @@ export function ContactsListView({
     <ContactsListHeader
       me={me}
       labels={labels}
-
       showAddContact={!isPopulated && !hasNoResults}
       onOpenContact={onOpenContact}
       onAddContact={onAddContact}
