@@ -1248,32 +1248,7 @@ describe("Contacts integration", () => {
     expect(await screen.findByTestId("contacts-rename-address-confirm")).toBeVisible();
   });
 
-  it("should rename an address after applying changes", async () => {
-    const { user } = render(<MyWalletNavigator />, {
-      overrideInitialState: withContactsPageReadyState(
-        { lwmContacts: { enabled: true, params: { newBadge: false } } },
-        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
-      ),
-    });
-
-    await user.press(screen.getByTestId("my-wallet-contacts-button"));
-    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
-    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
-    await user.press(await screen.findByText("Edit"));
-    const renameInput = await screen.findByDisplayValue("Ethereum");
-    await user.clear(renameInput);
-    await user.type(renameInput, "Exchange wallet");
-    await user.press(screen.getByTestId("contacts-rename-address-confirm"));
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
-      expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
-      expect(screen.queryByTestId("contacts-address-detail-dialog")).toBeNull();
-      expect(screen.getByText("Exchange wallet")).toBeVisible();
-    });
-  });
-
-  it("should prefill the saved address and update the address value", async () => {
+  it("should prefill the saved address and update its label and value", async () => {
     const newAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd";
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withContactsPageReadyState(
@@ -1290,6 +1265,9 @@ describe("Contacts integration", () => {
     const addressInput = await screen.findByTestId("contacts-edit-address-input");
     expect(addressInput).toHaveProp("value", "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
 
+    const renameInput = screen.getByDisplayValue("Ethereum");
+    await user.clear(renameInput);
+    await user.type(renameInput, "Exchange wallet");
     // One change event is classified as a paste, which skips the manual-typing debounce.
     fireEvent.changeText(addressInput, newAddress);
 
@@ -1300,6 +1278,7 @@ describe("Contacts integration", () => {
     await user.press(screen.getByTestId("contacts-rename-address-confirm"));
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
+      expect(screen.getByText("Exchange wallet")).toBeVisible();
     });
 
     await user.press(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
