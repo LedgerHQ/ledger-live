@@ -1,0 +1,101 @@
+# DO NOT MERGE — proves LIVE-37827 JS actions load on the PR checkout.
+# `uses: LedgerHQ/ledger-live/tools/actions/*@develop` always fetches develop, so
+# retargeting those pins in reusable workflows is a dead end unless the caller
+# (build-and-test-pr.yml) is also unpinned. Relative `uses: ./` is the pin GitHub
+# honors for this branch's node24 bundles.
+name: "[CI] - Smoke JS actions (LIVE-37827)"
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-github-hosted:
+    name: Smoke JS actions (ubuntu-22.04)
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: get-package-infos
+        id: pkg
+        uses: ./tools/actions/get-package-infos
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+          package: package.json
+
+      - name: change-product-name
+        uses: ./tools/actions/change-product-name
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+          suffix: Smoke
+
+      - name: generate-release-message
+        uses: ./tools/actions/generate-release-message
+        with:
+          package-path: ${{ github.workspace }}/apps/ledger-live-desktop/package.json
+          changelog-path: ${{ github.workspace }}/apps/ledger-live-desktop/CHANGELOG.md
+          output-path: ${{ github.workspace }}
+          name: smoke-release-message
+
+      - name: prepare dummy screenshot payload
+        run: |
+          printf '%s\n' '{"linux":[]}' > images.json
+
+      - name: prepare-comment-screenshots
+        uses: ./tools/actions/prepare-comment-screenshots
+        with:
+          images: images.json
+          no-actor: "true"
+
+      - name: assert get-package-infos outputs
+        env:
+          PKG_NAME: ${{ steps.pkg.outputs.name }}
+          PKG_VERSION: ${{ steps.pkg.outputs.version }}
+        run: |
+          test -n "$PKG_NAME"
+          test -n "$PKG_VERSION"
+          echo "name=$PKG_NAME version=$PKG_VERSION"
+
+  smoke-self-hosted:
+    name: Smoke JS actions (ledger-live-4xlarge)
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    runs-on: [ledger-live-4xlarge]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: get-package-infos
+        id: pkg
+        uses: ./tools/actions/get-package-infos
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+          package: package.json
+
+      - name: change-product-name
+        uses: ./tools/actions/change-product-name
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+          suffix: Smoke
+
+      - name: assert get-package-infos outputs
+        env:
+          PKG_NAME: ${{ steps.pkg.outputs.name }}
+          PKG_VERSION: ${{ steps.pkg.outputs.version }}
+        run: |
+          test -n "$PKG_NAME"
+          test -n "$PKG_VERSION"
+          echo "name=$PKG_NAME version=$PKG_VERSION"
