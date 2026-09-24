@@ -116,7 +116,7 @@ async function resolveEstimatedFees({
   const params: EstimateFeesParams =
     operationType === HEDERA_OPERATION_TYPES.ContractCall
       ? { configOrCurrencyId: config, operationType, txIntent: intent }
-      : { currencyId, operationType };
+      : { currencyId, config, operationType };
 
   const result = await estimateFees(params);
   return BigInt(result.tinybars.toFixed(0));
@@ -136,7 +136,7 @@ async function validateTokenAssociate({
   const currency = findCryptoCurrencyById(currencyId);
   invariant(currency, `hedera: currency with id ${currencyId} not found`);
   const [usdRate, estimatedFees, isAlreadyAssociated] = await Promise.all([
-    getCurrencyToUSDRate(currency),
+    getCurrencyToUSDRate(currency, config),
     resolveEstimatedFees({ config, currencyId, intent, customFees }),
     tokenId
       ? checkAccountTokenAssociationStatus({

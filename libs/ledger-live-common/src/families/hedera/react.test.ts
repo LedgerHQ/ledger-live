@@ -34,6 +34,9 @@ describe("hedera/react", () => {
         hgraph: "https://hedera-indexer-mainnet.coin.ledger.com/v1/graphql",
         mirrorNode: "https://hedera.coin.ledger.com",
       },
+      infra: {
+        LEDGER_COUNTERVALUES_API: "https://countervalues.live.ledger.com",
+      },
     }));
   });
 

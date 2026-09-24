@@ -23,6 +23,9 @@ export interface HederaConfig {
     mirrorNode: string;
     hgraph: string;
   };
+  infra: {
+    LEDGER_COUNTERVALUES_API: string;
+  };
 }
 
 export type HederaCoinConfig = CurrencyConfig & HederaConfig;

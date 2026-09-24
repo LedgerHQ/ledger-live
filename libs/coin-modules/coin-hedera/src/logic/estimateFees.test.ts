@@ -11,7 +11,9 @@ import {
   TINYBAR_SCALE,
 } from "../constants";
 import { apiClient } from "../network/api";
+import hederaCoinConfig from "../config";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
 import { estimateFees } from "./estimateFees";
 import { getCurrencyToUSDRate, toEVMAddress } from "../network/utils";
@@ -24,6 +26,10 @@ describe("getEstimatedFees", () => {
   const mockedTokenCurrencyERC20 = getMockedERC20TokenCurrency();
   const senderAddress = "0.0.12345";
   const recipientAddress = "0.0.67890";
+
+  beforeAll(() => {
+    hederaCoinConfig.setCoinConfig(() => getMockedConfig());
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -341,7 +347,7 @@ describe("getEstimatedFees", () => {
   it("getCurrencyToUSDRate resolves to null (not throws) when fetch rejects — degraded path still selects DEFAULT_TINYBAR_FEE", async () => {
     (network as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
 
-    const rate = await getCurrencyToUSDRate(mockedAccount.currency);
+    const rate = await getCurrencyToUSDRate(mockedAccount.currency, mockedAccount.currency.id);
     expect(rate).toBeNull();
 
     // Clear the LRU cache so the second fetch actually runs (not served from the cached null above)

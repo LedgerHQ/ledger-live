@@ -98,7 +98,7 @@ describe("getCurrencyToUSDRate", () => {
     const currency = findCryptoCurrencyById("hedera");
     invariant(currency, "hedera currency should be registered");
 
-    const rate = await getCurrencyToUSDRate(currency);
+    const rate = await getCurrencyToUSDRate(currency, currency.id);
 
     expect(rate).not.toBeNull();
     expect(BigNumber.isBigNumber(rate)).toBe(true);

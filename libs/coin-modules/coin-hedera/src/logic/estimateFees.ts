@@ -69,16 +69,18 @@ const estimateContractCallFees = async ({
 
 const estimateStandardFees = async ({
   currencyId,
+  config,
   operationType,
 }: {
   currencyId: string;
+  config?: HederaCoinConfig;
   operationType: HEDERA_OPERATION_TYPES;
 }): Promise<EstimateFeesResult> => {
   const currency = findCryptoCurrencyById(currencyId);
   invariant(currency, `hedera: currency with id ${currencyId} not found`);
 
   let tinybars: BigNumber;
-  const usdRate = await getCurrencyToUSDRate(currency).catch(() => null);
+  const usdRate = await getCurrencyToUSDRate(currency, config ?? currencyId).catch(() => null);
 
   if (usdRate) {
     tinybars = new BigNumber(BASE_USD_FEE_BY_OPERATION_TYPE[operationType])
@@ -104,6 +106,7 @@ export const estimateFees = async (params: EstimateFeesParams): Promise<Estimate
 
   return estimateStandardFees({
     currencyId: params.currencyId,
+    ...(params.config ? { config: params.config } : {}),
     operationType: params.operationType,
   });
 };

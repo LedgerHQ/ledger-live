@@ -1,4 +1,3 @@
-import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
 import { STAKING_REWARD_ACCOUNT_ID } from "../constants";
@@ -1064,21 +1063,19 @@ describe("network utils", () => {
       getCurrencyToUSDRate.reset();
     });
 
-    it("reads LEDGER_COUNTERVALUES_API lazily, so setEnv at runtime is honoured", async () => {
-      const original = getEnv("LEDGER_COUNTERVALUES_API");
-      setEnv("LEDGER_COUNTERVALUES_API", "https://example.test");
-
+    it("reads the countervalues URL from the coin config on each call", async () => {
+      hederaCoinConfig.setCoinConfig(() =>
+        getMockedConfig({ infra: { LEDGER_COUNTERVALUES_API: "https://example.test" } }),
+      );
       (network as jest.Mock).mockResolvedValueOnce({ data: { hedera: 0.07 } });
 
-      await getCurrencyToUSDRate(mockCurrency);
+      await getCurrencyToUSDRate(mockCurrency, mockCurrency.id);
 
       expect(network).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: expect.stringContaining("https://example.test"),
+          url: "https://example.test/v3/spot/simple?to=USD&froms=hedera",
         }),
       );
-
-      setEnv("LEDGER_COUNTERVALUES_API", original);
     });
   });
 });

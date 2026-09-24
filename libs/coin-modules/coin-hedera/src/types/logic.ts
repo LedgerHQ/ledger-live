@@ -9,6 +9,8 @@ import type { HederaMirrorContractCallResult, HederaMirrorTransaction } from "./
 export type EstimateFeesParams =
   | {
       currencyId: string;
+      // The api path passes its context's config; the bridge omits it and resolves by currency id.
+      config?: HederaCoinConfig;
       operationType: Exclude<HEDERA_OPERATION_TYPES, HEDERA_OPERATION_TYPES.ContractCall>;
     }
   | {

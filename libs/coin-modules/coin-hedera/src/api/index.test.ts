@@ -148,6 +148,7 @@ describe("createApi", () => {
         expect(mockEstimateFees).toHaveBeenCalledTimes(1);
         expect(mockEstimateFees).toHaveBeenCalledWith({
           currencyId: "hedera",
+          config: await mockContext.config(),
           operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
         });
       },

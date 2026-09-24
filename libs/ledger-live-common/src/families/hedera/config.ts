@@ -27,6 +27,9 @@ export const hederaConfig: Record<string, ConfigInfo> = {
         mirrorNode: getEnv("API_HEDERA_MIRROR"),
         hgraph: getEnv("API_HEDERA_HGRAPH"),
       },
+      infra: {
+        LEDGER_COUNTERVALUES_API: "https://countervalues.live.ledger.com",
+      },
     },
   },
   config_currency_hedera_testnet: {
@@ -44,6 +47,9 @@ export const hederaConfig: Record<string, ConfigInfo> = {
       apiUrls: {
         mirrorNode: getEnv("API_HEDERA_MIRROR_TESTNET"),
         hgraph: getEnv("API_HEDERA_HGRAPH_TESTNET"),
+      },
+      infra: {
+        LEDGER_COUNTERVALUES_API: "https://countervalues.live.ledger.com",
       },
     },
   },

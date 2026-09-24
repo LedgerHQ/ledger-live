@@ -76,7 +76,7 @@ async function handleTokenAssociateTransaction(
   const warnings: Warnings = {};
 
   const [usdRate, estimatedFees] = await Promise.all([
-    getCurrencyToUSDRate(account.currency),
+    getCurrencyToUSDRate(account.currency, account.currency.id),
     estimateFees({
       currencyId: account.currency.id,
       operationType: HEDERA_OPERATION_TYPES.TokenAssociate,

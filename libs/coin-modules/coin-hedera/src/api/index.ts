@@ -90,11 +90,11 @@ export function createApi(currencyId: string) {
       let estimateFeesParams: EstimateFeesParams;
       const operationType = mapIntentToSDKOperation(txIntent);
 
+      const coinConfig = await context.config();
       if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
-        const coinConfig = await context.config();
         estimateFeesParams = { configOrCurrencyId: coinConfig, operationType, txIntent };
       } else {
-        estimateFeesParams = { currencyId, operationType };
+        estimateFeesParams = { currencyId, config: coinConfig, operationType };
       }
 
       const estimatedFee = await logicEstimateFees(estimateFeesParams);
