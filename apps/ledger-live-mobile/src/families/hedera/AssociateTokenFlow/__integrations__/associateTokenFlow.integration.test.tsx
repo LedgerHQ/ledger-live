@@ -35,12 +35,6 @@ jest.mock("~/datadog", () => ({
   broadcastLogger: jest.fn(),
 }));
 
-// broadcastSignedTx holds the success screen behind a 3s UX floor (execAndWaitAtLeast).
-jest.mock("@ledgerhq/live-common/promise", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/promise"),
-  execAndWaitAtLeast: (_ms: number, cb: () => Promise<unknown>) => cb(),
-}));
-
 const mockAccountBridge = makeMockAccountBridge(HEDERA_TRANSACTION_MODES.TokenAssociate);
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => {
@@ -104,7 +98,11 @@ describe("Hedera AssociateTokenFlow (integration)", () => {
     const deviceItem = await screen.findByTestId("device-item-mock");
     await user.press(deviceItem);
 
-    await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
+    // Broadcast keeps the success screen back for at least 3s; step the fake clock 1s per poll.
+    await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible(), {
+      interval: 1000,
+      timeout: 5000,
+    });
   });
 
   it("lands on ValidationError and shows Retry when signOperation fails", async () => {
