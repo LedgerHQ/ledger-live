@@ -55,9 +55,11 @@ export function splitKeychainLines(stored: string): string[] {
 
 /**
  * Encrypt-and-`ENC:`-prefix a secret when a `wrappingKey` is given, otherwise return it verbatim.
- * This is the shared keychain-wrap home for wallet-cli's credential stores — Agent Intent's profile
- * keys use it here; `ring`'s and Ledger Sync's keychain modules are meant to adopt the same
- * functions too, so none of them drift onto a different wrap format.
+ * Shared by every keychain module that supports optional password-wrapping — `ring`'s `keychain.ts`
+ * and Agent Intent's `agent-intent-keychain.ts` both use it, so neither can drift onto a different
+ * wrap format. Ledger Sync's `keychain.ts` deliberately has no password layer at all (no `ring`-style
+ * wrapping key exists for it in this ticket's scope), so it has no use for `wrapSecret`/`unwrapSecret`
+ * — that is a design choice, not a gap to close.
  */
 export async function wrapSecret(secretHex: string, wrappingKey?: CryptoKey): Promise<string> {
   if (!wrappingKey) return secretHex;

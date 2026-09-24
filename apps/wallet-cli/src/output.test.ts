@@ -768,4 +768,95 @@ describe("HumanCommandOutput", () => {
       expect(out).toContain("tc-1");
     });
   });
+
+  describe("ledger-sync human output", () => {
+    let writes: string[] = [];
+    let restore: () => void;
+
+    beforeEach(() => {
+      writes = [];
+      restore = installOutputCapture({ stdout: chunk => writes.push(chunk) });
+    });
+
+    afterEach(() => restore());
+
+    const ctx = { command: "ledger-sync", network: "all" };
+
+    it("ledgerSyncEnroll prints member and root id", () => {
+      createCommandOutput("human", ctx).ledgerSyncEnroll({
+        memberName: "my-machine (darwin)",
+        rootId: "root-abc",
+      });
+      const out = writes.join("");
+      expect(out).toContain("my-machine (darwin)");
+      expect(out).toContain("root-abc");
+    });
+
+    it("ledgerSyncImport reports imported, unchanged, skipped, and invalid entries", () => {
+      createCommandOutput("human", ctx).ledgerSyncImport({
+        imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
+        unchanged: [{ status: "unchanged", label: "eth-2", network: "ethereum:main" }],
+        skipped: [
+          { status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" },
+        ],
+        invalid: [{ status: "invalid", id: "js:2:ethereum::ethM", reason: "empty address" }],
+      });
+      const out = writes.join("");
+      expect(out).toContain("eth-1");
+      expect(out).toContain("eth-2");
+      expect(out).toContain("family unsupported");
+      expect(out).toContain("empty address");
+    });
+
+    it("ledgerSyncImport shows an up-to-date message when nothing changed", () => {
+      createCommandOutput("human", ctx).ledgerSyncImport({
+        imported: [],
+        unchanged: [],
+        skipped: [],
+        invalid: [],
+      });
+      expect(writes.join("")).toContain("Up to date");
+    });
+
+    it("ledgerSyncDestroy reports destroyed when the trustchain was torn down", () => {
+      createCommandOutput("human", ctx).ledgerSyncDestroy({
+        remoteSucceeded: true,
+        trustchainDestroyed: true,
+        localWiped: true,
+      });
+      expect(writes.join("")).toContain("Ledger Sync destroyed");
+    });
+
+    it("ledgerSyncDestroy reports ejected when this machine was already removed remotely", () => {
+      createCommandOutput("human", ctx).ledgerSyncDestroy({
+        remoteSucceeded: true,
+        trustchainDestroyed: false,
+        localWiped: true,
+        memberEjected: true,
+      });
+      expect(writes.join("")).toContain("no longer a Ledger Sync member");
+    });
+
+    it("ledgerSyncDestroy warns about the real keychain prefix when local wipe failed", () => {
+      createCommandOutput("human", ctx).ledgerSyncDestroy({
+        remoteSucceeded: true,
+        trustchainDestroyed: true,
+        localWiped: false,
+      });
+      const out = writes.join("");
+      expect(out).toContain("Ledger Sync destroyed");
+      expect(out).toContain("ledger-sync-member-key-");
+    });
+
+    it("ledgerSyncDestroy does not repeat the local-wipe warning for nothing-done", () => {
+      createCommandOutput("human", ctx).ledgerSyncDestroy({
+        remoteSucceeded: false,
+        trustchainDestroyed: false,
+        localWiped: false,
+      });
+      const out = writes.join("");
+      expect(out).toContain("could not be removed");
+      expect(out).not.toContain("ledger-sync-member-key-");
+    });
+  });
 });

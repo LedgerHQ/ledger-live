@@ -2837,6 +2837,9 @@ importers:
       '@segment/analytics-node':
         specifier: 3.1.0
         version: 3.1.0
+      '@shared/cloud-sync':
+        specifier: workspace:*
+        version: link:../../shared/cloud-sync
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env

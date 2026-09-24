@@ -11,6 +11,7 @@ import { writeSecureFile } from "../shared/secure-file";
 import { PASSWORD_SALT_RE } from "../key-ring/crypto";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../agent-intent/profile-format";
 import { withFileLock } from "../shared/file-lock";
+import { LEDGER_SYNC_ENVIRONMENTS, type LedgerSyncEnvironment } from "../key-ring/constants";
 
 export const APP_NAME = "ledger-wallet-cli";
 const SESSION_FILE = "session.yaml";
@@ -117,14 +118,33 @@ function invalidAgentIntentProfileIds(rawInvalid: readonly unknown[]): string[] 
     .filter((id): id is string => typeof id === "string");
 }
 
+// Ledger Sync's own trustchain. Deliberately separate from `trustchain` above, which is
+// wallet-cli's `ring` application (LKRP application id 17) — Ledger Sync uses application id 16, so
+// the two must never be conflated or wiped together (see key-ring/constants.ts).
+const ledgerSyncFields = {
+  ledgerSyncTrustchain: TrustchainMetaSchema.optional().catch(undefined),
+  // Last CloudSync version successfully pulled, so a repeat `ledger-sync import` with no server-side
+  // change can short-circuit via CloudSyncSDK's own "up-to-date" response instead of re-fetching.
+  ledgerSyncVersion: z.number().int().nonnegative().optional().catch(undefined),
+  // The environment this trustchain was enrolled against. Set once at enroll time and reused by
+  // every later `import`/`destroy` so the LKRP/Trustchain backend (key-ring/lkrp-sdk.ts) and the
+  // Cloud Sync backend (ledger-sync/cloud-sync-accounts.ts) can never end up pointed at different
+  // environments.
+  ledgerSyncEnvironment: z.enum(LEDGER_SYNC_ENVIRONMENTS).optional().catch(undefined),
+};
+
 const SessionDataSchema = z.object({
   accounts: z.array(SessionEntrySchema).default(() => []),
   ...ringFields,
+  ...ledgerSyncFields,
 });
 
 // Same ring fields, without the strict `accounts` — used by `session reset` to salvage ring state
 // from an otherwise-corrupt (but object-shaped) file.
 const RingFieldsSalvageSchema = z.object(ringFields);
+
+// Ledger Sync fields, salvaged the same way as ring fields on a corrupt-but-parseable session file.
+const LedgerSyncFieldsSalvageSchema = z.object(ledgerSyncFields);
 
 export type SessionEntry = z.infer<typeof SessionEntrySchema>;
 export type TrustchainMeta = z.infer<typeof TrustchainMetaSchema>;
@@ -161,6 +181,11 @@ export async function withSessionLock<T>(fn: () => Promise<T> | T): Promise<T> {
  */
 export function trustchainFromMeta(meta: TrustchainMeta): Trustchain {
   return { ...meta, walletSyncEncryptionKey: "" };
+}
+
+/** Whether `a` still points at the same trustchain application as `b` (root and stream). */
+export function sameTrustchainMeta(a: TrustchainMeta | undefined, b: TrustchainMeta): boolean {
+  return a?.rootId === b.rootId && a.applicationPath === b.applicationPath;
 }
 
 type ParsedSessionData = {
@@ -246,6 +271,9 @@ export class Session {
     private _passwordSalt: string | undefined,
     private _agentIntentProfiles: AgentIntentProfileMeta[],
     private readonly _invalidAgentIntentProfileRaws: unknown[] = [],
+    private _ledgerSyncTrustchain: TrustchainMeta | undefined = undefined,
+    private _ledgerSyncVersion: number | undefined = undefined,
+    private _ledgerSyncEnvironment: LedgerSyncEnvironment | undefined = undefined,
   ) {}
 
   static async read(): Promise<Session> {
@@ -264,22 +292,26 @@ export class Session {
       data.passwordSalt,
       data.agentIntentProfiles,
       invalidAgentIntentProfileRaws,
+      data.ledgerSyncTrustchain,
+      data.ledgerSyncVersion,
+      data.ledgerSyncEnvironment,
     );
   }
 
   /**
-   * Build an account-only session. WARNING: it has no ring state, so `write()` wipes any
-   * trustchain/domains/passwordSalt/agentIntentProfiles on disk. To reset accounts while keeping
-   * that state, go through `read()`/`readForReset()` then `clear()`.
+   * Build an account-only session. WARNING: it has no ring/Ledger Sync state, so `write()` wipes
+   * any trustchain/domains/passwordSalt/agentIntentProfiles/ledgerSync* on disk. To reset accounts
+   * while keeping that state, go through `read()`/`readForReset()` then `clear()`.
    */
   static from(entries: SessionEntry[]): Session {
     return new Session([...entries], undefined, [], undefined, []);
   }
 
   /**
-   * Read the session for `session reset`. On a strict-parse failure the ring fields are salvaged
-   * (RingFieldsSalvageSchema) so clearing accounts never wipes the trustchain and orphans the
-   * keychain key. Throws only when the file cannot be read or is not valid YAML.
+   * Read the session for `session reset`. On a strict-parse failure the ring and Ledger Sync fields
+   * are salvaged (RingFieldsSalvageSchema / LedgerSyncFieldsSalvageSchema) so clearing accounts never
+   * wipes either trustchain and orphans its keychain key. Throws only when the file cannot be read or
+   * is not valid YAML.
    */
   static async readForReset(): Promise<Session> {
     const content = await readSessionContent();
@@ -287,10 +319,11 @@ export class Session {
     const raw = YAML.parse(content) ?? {}; // invalid YAML propagates to the caller
     const strict = SessionDataSchema.safeParse(raw);
     if (strict.success) return Session.fromData(strict.data, invalidAgentIntentProfileRaws(raw));
-    // Corrupt-but-parseable file: keep the individually-valid ring fields, drop accounts. A
-    // non-object root (bare scalar/array) salvages nothing.
+    // Corrupt-but-parseable file: keep the individually-valid ring/Ledger Sync fields, drop accounts.
+    // A non-object root (bare scalar/array) salvages nothing.
     const root = typeof raw === "object" && !Array.isArray(raw) ? raw : {};
     const ring = RingFieldsSalvageSchema.parse(root);
+    const ledgerSync = LedgerSyncFieldsSalvageSchema.parse(root);
     return new Session(
       [],
       ring.trustchain,
@@ -298,6 +331,9 @@ export class Session {
       ring.passwordSalt,
       ring.agentIntentProfiles,
       invalidAgentIntentProfileRaws(root),
+      ledgerSync.ledgerSyncTrustchain,
+      ledgerSync.ledgerSyncVersion,
+      ledgerSync.ledgerSyncEnvironment,
     );
   }
 
@@ -378,6 +414,50 @@ export class Session {
     return updated;
   }
 
+  /** Ledger Sync's own trustchain metadata — distinct from `trustchain` (the `ring`
+   * application). `undefined` means Ledger Sync has not been enrolled/restored on this machine. */
+  get ledgerSyncTrustchain(): TrustchainMeta | undefined {
+    return this._ledgerSyncTrustchain;
+  }
+
+  /** `environment` is required alongside the trustchain metadata (not a separate call) so it's never
+   * possible to record a Ledger Sync trustchain without also knowing which backend it belongs to. */
+  setLedgerSyncTrustchain(t: TrustchainMeta, environment: LedgerSyncEnvironment): void {
+    this._ledgerSyncTrustchain = t;
+    this._ledgerSyncEnvironment = environment;
+  }
+
+  /** Last CloudSync version successfully imported. `undefined` before the first successful import. */
+  get ledgerSyncVersion(): number | undefined {
+    return this._ledgerSyncVersion;
+  }
+
+  setLedgerSyncVersion(version: number): void {
+    this._ledgerSyncVersion = version;
+  }
+
+  /** Distinct from `setLedgerSyncVersion(0)`: `undefined` means "no cached version" (next import
+   * starts fresh), not "version 0" — the two aren't interchangeable even though the shared Cloud
+   * Sync SDK currently treats both as falsy. Used when the remote account list was deleted. */
+  clearLedgerSyncVersion(): void {
+    this._ledgerSyncVersion = undefined;
+  }
+
+  /** The environment this trustchain was enrolled against (set once at enroll time via
+   * `setLedgerSyncTrustchain`), reused by `import`/`destroy` so they never guess or default to the
+   * wrong backend. `undefined` when Ledger Sync has not been enrolled. */
+  get ledgerSyncEnvironment(): LedgerSyncEnvironment | undefined {
+    return this._ledgerSyncEnvironment;
+  }
+
+  /** Clears Ledger Sync state only (trustchain + cached version + environment). Never touches `ring`
+   * (trustchain/domains/passwordSalt), Agent Intent profiles, or discovered accounts. */
+  wipeLedgerSync(): void {
+    this._ledgerSyncTrustchain = undefined;
+    this._ledgerSyncVersion = undefined;
+    this._ledgerSyncEnvironment = undefined;
+  }
+
   clear(): number {
     const count = this.entries.length;
     this.entries = [];
@@ -422,6 +502,9 @@ export class Session {
       ...this._invalidAgentIntentProfileRaws,
     ];
     if (agentIntentProfiles.length > 0) data.agentIntentProfiles = agentIntentProfiles;
+    if (this._ledgerSyncTrustchain) data.ledgerSyncTrustchain = this._ledgerSyncTrustchain;
+    if (this._ledgerSyncVersion !== undefined) data.ledgerSyncVersion = this._ledgerSyncVersion;
+    if (this._ledgerSyncEnvironment) data.ledgerSyncEnvironment = this._ledgerSyncEnvironment;
     writeSessionData(data);
   }
 }
