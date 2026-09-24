@@ -812,6 +812,49 @@ describe("fetchA4Operations", () => {
     ]);
   });
 
+  it("sends the resolved page size on every request, not just the first", async () => {
+    // `size` bounds one response, `maxOperations` bounds the walk. Without the first, a single
+    // A4 response can materialise in full before the walk gets a say -- the same distinction the
+    // delegate path makes between `limit` and the bound.
+    listOperationsSpy
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx1")], nextToken: "page2" },
+        version: undefined,
+      })
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx2")], nextToken: undefined },
+        version: undefined,
+      });
+
+    await fetchA4Operations(
+      client,
+      "a4AccountId",
+      "liveAccountId",
+      "0xaddress",
+      "ethereum",
+      0,
+      5,
+      200,
+      100,
+    );
+
+    expect(listOperationsSpy).toHaveBeenCalledTimes(2);
+    for (const call of listOperationsSpy.mock.calls) {
+      expect(call[1]).toEqual(expect.objectContaining({ size: 100 }));
+    }
+  });
+
+  it("omits size when no page size is resolved, leaving A4 its own default", async () => {
+    listOperationsSpy.mockResolvedValueOnce({
+      data: { items: [makeA4Op("0xtx1")], nextToken: undefined },
+      version: undefined,
+    });
+
+    await fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", "ethereum", 0, 5);
+
+    expect(listOperationsSpy.mock.calls[0][1]).not.toHaveProperty("size");
+  });
+
   it("throws on 5xx so the caller can fall back to the delegate", async () => {
     listOperationsSpy.mockRejectedValueOnce(new A4HttpError("server error", 500));
 
