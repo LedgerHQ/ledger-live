@@ -75,7 +75,7 @@ export class PaginationIntegrityError extends Error {
 export async function paginateOperations<T>(
   fetchPage: (cursor: string | undefined) => Promise<Page<T>>,
   maxOperations?: number,
-  hashOf?: (item: T) => string | undefined,
+  blockOf?: (item: T) => number | undefined,
 ): Promise<T[]> {
   const items: T[] = [];
   const followed = new Set<string>();
@@ -108,12 +108,14 @@ export async function paginateOperations<T>(
     }
 
     if (maxOperations !== undefined && items.length >= maxOperations) {
-      // `Page<T>` promises nothing about a transaction's rows staying inside one page, so the
-      // rows sharing the last item's hash may continue on the page this stop will never fetch.
-      // They are dropped rather than kept: a transaction missing entirely is a truncation from
-      // the tail, contiguous and harmless, while half of one is a hole the next watermark seals.
+      // A page boundary can fall inside a block, and `Page<T>` promises nothing about the rows
+      // of one transaction staying together -- every operation in a block carries that block's
+      // date, so they interleave. Pages descend by height, so the *lowest block fetched* is the
+      // only one that can continue onto the page this stop will never fetch; everything above it
+      // is whole. That block is dropped: a missing block is a truncation from the tail,
+      // contiguous and harmless, while half a transaction is a hole the next watermark seals.
       // Only a bound-triggered stop needs this -- a falsy `next` means there was no next page.
-      const kept = hashOf ? dropTrailingTransaction(items, hashOf) : items;
+      const kept = blockOf ? dropTrailingBlock(items, blockOf) : items;
       log(
         "generic-coin-framework",
         "listOperations walk stopped: operation-history bound reached",
@@ -166,23 +168,21 @@ export async function paginateOperations<T>(
 }
 
 /**
- * Drops the transaction the bound cut into, by cutting before its *first* row rather than at the
- * start of its trailing run: rows of one transaction are not necessarily adjacent, since every
- * operation in a block carries that block's date and two transactions in one block interleave.
- * Walking back over the trailing run would leave the earlier rows of the same transaction in
- * place, which is the half-transaction this exists to prevent.
+ * Drops every row of the lowest block in the list, the only one a bound-triggered stop can have
+ * cut in half. Rows of other transactions inside that block go with it: the result has to stay a
+ * contiguous prefix, and losing them is a truncation from the tail.
  *
- * Rows of other transactions sitting after that cut go with it — the result has to stay a
- * contiguous prefix, and dropping them is a truncation from the tail. An item with no hash is its
- * own transaction and is kept. If the boundary transaction starts at the head, nothing is
- * returned, which a caller should read as "the bound is smaller than a single transaction".
+ * An item whose block height is unknown is not counted as the boundary -- without a height there
+ * is nothing to reason about, so the list is returned untouched rather than cut arbitrarily. If
+ * the lowest block starts at the head, nothing is returned, which a caller should read as "the
+ * bound is smaller than a single block".
  */
-function dropTrailingTransaction<T>(items: T[], hashOf: (item: T) => string | undefined): T[] {
-  const lastHash = items.length ? hashOf(items[items.length - 1]) : undefined;
-  if (!lastHash) return items;
+function dropTrailingBlock<T>(items: T[], blockOf: (item: T) => number | undefined): T[] {
+  const lastHeight = items.length ? blockOf(items[items.length - 1]) : undefined;
+  if (lastHeight === undefined) return items;
 
   return items.slice(
     0,
-    items.findIndex(item => hashOf(item) === lastHash),
+    items.findIndex(item => blockOf(item) === lastHeight),
   );
 }

@@ -731,7 +731,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
             ...(pageSize !== undefined ? { limit: pageSize } : {}),
           }),
         maxOperations,
-        op => op.tx.hash,
+        op => op.tx.block?.height,
       );
       // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation
       // ends up in the shape a restored one has — the family's `fromOperationExtraRaw` is the

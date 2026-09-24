@@ -3177,7 +3177,10 @@ describe("genericGetAccountShape", () => {
     const coreOp = (hash: string, height: number) => ({
       hash,
       type: "IN",
-      tx: { failed: false },
+      // `block` is not optional on the framework's `Operation`, and the walk reads its height to
+      // drop the block a bounded stop cut into -- a fixture without it tests a shape no module
+      // can return.
+      tx: { failed: false, block: { height } },
       height,
     });
 
