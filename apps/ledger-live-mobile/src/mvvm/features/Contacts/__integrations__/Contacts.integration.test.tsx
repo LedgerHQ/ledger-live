@@ -894,7 +894,7 @@ describe("Contacts integration", () => {
     const addressInput = await screen.findByTestId("contacts-add-address-input");
 
     if (step === "name") {
-      await user.type(addressInput, SCANNED_ADDRESS);
+      fireEvent.changeText(addressInput, SCANNED_ADDRESS);
 
       await waitFor(() => {
         expect(screen.getByTestId("contacts-add-address-confirm")).toBeEnabled();

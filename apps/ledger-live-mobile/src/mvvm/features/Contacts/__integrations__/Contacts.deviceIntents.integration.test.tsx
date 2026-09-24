@@ -1,6 +1,6 @@
 import React from "react";
 import { mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
-import { render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { connectDevice, useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { useContactsLedgerSyncStatus } from "LLM/features/Contacts/hooks/useContactsLedgerSyncStatus";
 import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
@@ -99,7 +99,8 @@ describe("Contacts device intents integration", () => {
     await user.press(await screen.findByTestId("network-item-Ethereum"));
 
     const addressInput = await screen.findByTestId("contacts-add-address-input");
-    await user.type(addressInput, "0xabcdef1234567890abcdef1234567890abcdef12");
+    // One change event is classified as a paste, which skips the manual-typing debounce.
+    fireEvent.changeText(addressInput, "0xabcdef1234567890abcdef1234567890abcdef12");
     await waitFor(() => {
       expect(screen.getByTestId("contacts-add-address-confirm")).toBeEnabled();
     });
