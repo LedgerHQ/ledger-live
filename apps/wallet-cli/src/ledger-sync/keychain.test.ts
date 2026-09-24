@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import {
   LedgerSyncCorruptKeychainError,
+  ledgerSyncCredentialState,
   loadLedgerSyncMemberCredentials,
   saveLedgerSyncMemberCredentials,
   type LedgerSyncKeychainEntry,
@@ -64,5 +65,17 @@ describe("Ledger Sync keychain", () => {
     } catch (e) {
       expect(String((e as Error).message)).not.toContain("super-secret-private-key");
     }
+  });
+
+  it("tells a present, a missing and an unreadable credential apart", () => {
+    expect(ledgerSyncCredentialState(fakeEntry("aa11\nbb22"))).toBe("present");
+    expect(ledgerSyncCredentialState(fakeEntry(null))).toBe("absent");
+    expect(
+      ledgerSyncCredentialState({
+        getPassword: () => {
+          throw new Error("Platform secure storage failure");
+        },
+      }),
+    ).toBe("unreadable");
   });
 });

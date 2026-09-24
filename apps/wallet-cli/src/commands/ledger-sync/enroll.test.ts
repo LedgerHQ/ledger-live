@@ -13,7 +13,10 @@ const memberCredentials = { privatekey: PRIVATE_KEY, pubkey: "pub" };
 let enrolledOnPrecheck: boolean;
 // Set only by the race test: what the locked recheck sees after the device round-trip.
 let enrolledOnRecheck: boolean | undefined;
-let keychainHasEntry: boolean;
+let credentialState: "present" | "absent" | "unreadable";
+// Set only by the race tests: what the locked recheck sees after the device round-trip.
+let credentialStateOnRecheck: "present" | "absent" | "unreadable" | undefined;
+let credentialStateReads: number;
 let sessionReadCalls: number;
 let setLedgerSyncTrustchainCalls: Array<{ meta: unknown; environment: string }>;
 let savedCredentials: unknown[];
@@ -47,7 +50,12 @@ beforeAll(() =>
     },
     noopSessionLock: true,
     keychain: {
-      hasLedgerSyncMemberCredentials: () => keychainHasEntry,
+      ledgerSyncCredentialState: () => {
+        credentialStateReads++;
+        return credentialStateReads > 1 && credentialStateOnRecheck
+          ? credentialStateOnRecheck
+          : credentialState;
+      },
       deleteLedgerSyncMemberCredentials: () => {
         deletedCredentials += 1;
         return deleteSucceeds;
@@ -103,7 +111,9 @@ describe("ledger-sync enroll", () => {
   beforeEach(() => {
     enrolledOnPrecheck = false;
     enrolledOnRecheck = undefined;
-    keychainHasEntry = false;
+    credentialState = "absent";
+    credentialStateOnRecheck = undefined;
+    credentialStateReads = 0;
     sessionReadCalls = 0;
     setLedgerSyncTrustchainCalls = [];
     savedCredentials = [];
@@ -132,10 +142,25 @@ describe("ledger-sync enroll", () => {
   });
 
   it("refuses when a stray keychain credential exists without session metadata", async () => {
-    keychainHasEntry = true;
+    credentialState = "present";
 
     await expectFailure(runEnroll, /member credential already exists in the OS keychain/);
     expect(createLkrpSdkOptions).toEqual([]);
+  });
+
+  it("refuses to enroll when the keychain can't be read, instead of risking an overwrite", async () => {
+    credentialState = "unreadable";
+
+    await expectFailure(runEnroll, /Couldn't read the OS keychain.*could overwrite a credential/s);
+    expect(createLkrpSdkOptions).toEqual([]);
+  });
+
+  it("refuses to write when the keychain turns unreadable after the device step", async () => {
+    credentialStateOnRecheck = "unreadable";
+
+    await expectFailure(runEnroll, /Lost the race/);
+    expect(savedCredentials).toEqual([]);
+    expect(writeCalls).toBe(0);
   });
 
   it("saves the credentials and records the trustchain with its environment", async () => {
