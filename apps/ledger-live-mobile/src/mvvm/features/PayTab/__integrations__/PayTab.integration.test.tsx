@@ -20,6 +20,7 @@ import {
   FEATURE_TOUR_CTA,
   FEATURE_TOUR_ROW,
   holdDada,
+  mockStablecoinMadCatalog,
   mockFullAssetCatalog,
   renderPayTab,
   renderRequestReceive,
@@ -511,10 +512,12 @@ describe("PayTab integration", () => {
       ).not.toBeOnTheScreen();
     });
 
-    it("should open the stablecoin send drawer from the New tile", async () => {
+    it("should open Send through the stablecoin MAD from the New tile", async () => {
+      mockStablecoinMadCatalog();
       const { user, store } = renderPayTab({
-        contacts: [mockMeContact(), mockContactWithAddress()],
+        contacts: [mockMeContact()],
         contactsEnabled: true,
+        holdsUsdc: true,
       });
 
       await user.press(await screen.findByRole("button", { name: "New" }));
@@ -525,19 +528,8 @@ describe("PayTab integration", () => {
         source: SEND_FLOW_SOURCE.PAY,
         categories: [AssetCategory.Stablecoins],
       });
-      expect(store.getState().modularDrawer.uiUseCase).not.toBe("pay");
-    });
-
-    it("should reach the Send recipient step from the New tile", async () => {
-      mockFullAssetCatalog();
-      const { user } = renderPayTab({
-        contacts: [mockMeContact()],
-        contactsEnabled: true,
-        cryptoOnly: true,
-      });
-
-      await user.press(await screen.findByRole("button", { name: "New" }));
-      await user.press(await screen.findByTestId("asset-item-ETH"));
+      await user.press(await screen.findByTestId("asset-item-USDC"));
+      await user.press(await screen.findByTestId("network-item-Ethereum"));
       await user.press(await screen.findByTestId("account-item"));
 
       expect(await screen.findByTestId("recipient-input")).toBeVisible();

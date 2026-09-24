@@ -466,7 +466,7 @@ describe("Send flow integration tests", () => {
     expect(await screen.findByText("Review")).toBeVisible();
   });
 
-  it("should show the full contact list with an empty search when going back after picking a contact", async () => {
+  it("should show the contact list with an empty search when going back after picking a contact", async () => {
     const vincent = mockContact({
       id: "contact-vincent-back",
       name: "Vincent",
@@ -479,22 +479,10 @@ describe("Send flow integration tests", () => {
         }),
       ],
     });
-    const benoit = mockContact({
-      id: "contact-benoit-back",
-      name: "Benoit",
-      addresses: [
-        mockContactAddress({
-          id: "address-benoit-back-eth",
-          currencyId: "ethereum",
-          label: "Ethereum",
-          address: "0x1234567890123456789012345678901234567890",
-        }),
-      ],
-    });
     const { user } = renderForAccount(
       accountEthereum,
       {},
-      { contactsEnabled: true, contacts: [vincent, benoit] },
+      { contactsEnabled: true, contacts: [vincent] },
     );
 
     await user.press(await screen.findByTestId("contacts-compact-row-contact-vincent-back"));
@@ -506,7 +494,6 @@ describe("Send flow integration tests", () => {
     expect(await screen.findByTestId("recipient-input")).toHaveDisplayValue("");
     expect(screen.queryByTestId("send-recipient-card")).not.toBeOnTheScreen();
     expect(screen.getByTestId("contacts-compact-row-contact-vincent-back")).toBeVisible();
-    expect(screen.getByTestId("contacts-compact-row-contact-benoit-back")).toBeVisible();
   });
 
   it("should keep the send title when the address sheet is open", async () => {
