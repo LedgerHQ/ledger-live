@@ -23,7 +23,7 @@ await executeScenario(scenarioSolana("devnet"), "generic-adapter");
 
 ## Development
 
-Run the tests with `pnpm start`. It builds the Agave images before running the tests.
+Run the tests with `pnpm start`. It builds the Agave images one at a time before running the tests: two Agave compiles at once don't fit in Docker Desktop's default memory.
 
 On Apple Silicon, Agave is built from source the first time each version is used (about 7 minutes per version). Anza ships no Linux arm64 release, and amd64 emulation lacks the io_uring Agave requires. Next runs use the Docker cache.
 

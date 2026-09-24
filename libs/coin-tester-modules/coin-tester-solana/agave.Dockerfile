@@ -28,7 +28,8 @@ WORKDIR /agave
 RUN git init -q \
     && git fetch -q --depth 1 https://github.com/anza-xyz/agave.git "${AGAVE_COMMIT}" \
     && git checkout -q FETCH_HEAD
-RUN curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal \
+# some Agave versions run rustfmt from build scripts
+RUN curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --component rustfmt \
     --default-toolchain "$(sed -n 's/^channel = "\(.*\)"/\1/p' rust-toolchain.toml)"
 # LTO only speeds up the validator, not needed for tests and costly to link
 RUN . /root/.cargo/env \
