@@ -5,8 +5,8 @@ import { useMarketIndicator } from "../useMarketIndicator";
 const percentStyles = cva("rounded-sm px-4 py-2 body-3", {
   variants: {
     variant: {
-      positive: "bg-success text-success",
-      negative: "bg-error text-error",
+      positive: "bg-success-transparent text-success",
+      negative: "bg-error-transparent text-error",
       neutral: "bg-muted text-muted",
     },
   },

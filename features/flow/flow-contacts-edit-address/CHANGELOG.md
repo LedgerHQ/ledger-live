@@ -1,5 +1,26 @@
 # @features/flow-contacts-edit-address
 
+## 0.4.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`48af604`](https://github.com/LedgerHQ/ledger-live/commit/48af6040c2835f067a2dfe38fb8fadde72e0787b)]:
+  - @shared/ui-queued-bottom-sheet@0.5.0-next.1
+  - @features/platform-contacts@0.8.0-next.1
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#21747](https://github.com/LedgerHQ/ledger-live/pull/21747) [`871e485`](https://github.com/LedgerHQ/ledger-live/commit/871e4854284a0b21e31b53ff0ac312010093d914) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix keyboard handling in the mobile Contacts add, edit, and send flows. Input sheets now open at full height with the keyboard, primary actions remain visible in a keyboard-aware `QueuedBottomSheet` footer, and name fields focus immediately and capitalize each word.
+
+### Patch Changes
+
+- Updated dependencies [[`871e485`](https://github.com/LedgerHQ/ledger-live/commit/871e4854284a0b21e31b53ff0ac312010093d914), [`c52af21`](https://github.com/LedgerHQ/ledger-live/commit/c52af21b622efa62774657e190abb9762cffac1c), [`33e92e8`](https://github.com/LedgerHQ/ledger-live/commit/33e92e8f074ff73a6a3e338c8313ba8bc9066ccf), [`0651158`](https://github.com/LedgerHQ/ledger-live/commit/0651158a2f03f819c2e2770ef4179901768c3c6c), [`bc43337`](https://github.com/LedgerHQ/ledger-live/commit/bc433372ebed1990d81a87b109eeb4d928271315)]:
+  - @shared/ui-queued-bottom-sheet@0.5.0-next.0
+  - @features/platform-contacts@0.8.0-next.0
+  - @domain/entity-contact@0.10.0-next.0
+
 ## 0.3.1
 
 ### Patch Changes

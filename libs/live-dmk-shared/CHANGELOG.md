@@ -1,5 +1,20 @@
 # @ledgerhq/live-dmk
 
+## 0.33.0-next.0
+
+### Minor Changes
+
+- [#22089](https://github.com/LedgerHQ/ledger-live/pull/22089) [`6183efd`](https://github.com/LedgerHQ/ledger-live/commit/6183efddac5de725cb22a013d5a9cdc94e65f756) Thanks [@benruseau](https://github.com/benruseau)! - Add the create backup sub-step to the OS updates orchestrator
+
+  Extract the device error cause recovery into a state machine shared by all sub-steps
+
+  Refactor the OS updates debug screen
+
+### Patch Changes
+
+- Updated dependencies [[`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68)]:
+  - @ledgerhq/types-devices@7.1.0-next.0
+
 ## 0.32.0
 
 ### Minor Changes

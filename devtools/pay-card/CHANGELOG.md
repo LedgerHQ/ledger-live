@@ -1,5 +1,30 @@
 # @devtools/pay-card
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#22077](https://github.com/LedgerHQ/ledger-live/pull/22077) [`72367fc`](https://github.com/LedgerHQ/ledger-live/commit/72367fcf2343fa488008236f1005da589e6e3054) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Wire the card onboarding widget to real, derived onboarding data and remove the unused stub endpoint and legacy devtool mock path it replaces
+
+- [#22306](https://github.com/LedgerHQ/ledger-live/pull/22306) [`845ac4a`](https://github.com/LedgerHQ/ledger-live/commit/845ac4a101b405b6c93333e335115ef1105ef824) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Restore translucent status backgrounds with the Lumen `-transparent` tokens after status colors became solid.
+
+- [#22068](https://github.com/LedgerHQ/ledger-live/pull/22068) [`91531f2`](https://github.com/LedgerHQ/ledger-live/commit/91531f29e71e4e186375a5e2908ddca0c351c0ac) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Carry each card wallet's Ledger currency, so the app can price it.
+
+  - `useCurrenciesByIds` resolves a list of Ledger ids to currencies: coins from the crypto registry, tokens from CAL. The lookups are dispatched rather than hooked, so the list can be any length.
+  - A card wallet now carries `ledgerCurrency` instead of a counter value. Converting needs the app's rates, so it happens in platform code.
+  - `BAANX_LEDGER_CURRENCY_IDS` lists every Ledger id the card catalog resolves to.
+  - The Pay card devtool shows `ledgerCurrencyId` per joined wallet.
+
+- [#22145](https://github.com/LedgerHQ/ledger-live/pull/22145) [`6844ca4`](https://github.com/LedgerHQ/ledger-live/commit/6844ca4e220c98ff99dd5d259dab339223624847) Thanks [@ysitbon](https://github.com/ysitbon)! - Put every devtools package under knip and remove the dead code it found
+
+  Dual-platform packages run knip once per platform through `createDualPlatformKnipConfig`, so a
+  suffix-less `./Tool` specifier resolves to the right twin instead of orphaning both. Removed: the
+  unreachable `Expand` component, the `metadata` and web-only `hooks` barrels, and the named exports
+  that duplicated a default export. `@devtools/protocols` now enumerates its two subpath exports
+  instead of a `./*` wildcard.
+
+- [#22236](https://github.com/LedgerHQ/ledger-live/pull/22236) [`43e1a21`](https://github.com/LedgerHQ/ledger-live/commit/43e1a21f2060d53875256b001e054cf0b1f7b86a) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add Pay Card devtools controls for transaction and wallet balance fixtures, and answer the mocked wallet reorder with the order alone so linked assets keep the amounts they were showing while the reordered row shows its spinner.
+
 ## 0.6.0
 
 ### Minor Changes

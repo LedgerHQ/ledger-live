@@ -39,7 +39,7 @@ describe("ActionTiles (Web)", () => {
 
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
       button: "deposit",
-      buttonLocation: "quick_action",
+      buttonLocation: "quick action",
       page: "Pay",
     });
     expect(onPress).toHaveBeenCalledTimes(1);

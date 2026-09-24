@@ -4,6 +4,7 @@ import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { screen, waitFor, within } from "@tests/test-renderer";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
 import { AssetCategory } from "@domain/api-aggregated-assets";
+import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { screen as trackScreen } from "~/analytics/segment";
@@ -226,14 +227,14 @@ describe("PayTab integration", () => {
       expect(screen.getByText("Request")).toBeVisible();
     });
 
-    it("should track button_clicked with quick_action location when an action tile is pressed", async () => {
+    it("should track button_clicked with quick action location when an action tile is pressed", async () => {
       const { user } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-deposit"));
 
       expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
         button: "deposit",
-        buttonLocation: "quick_action",
+        buttonLocation: "quick action",
         page: "Pay",
       });
 
@@ -241,7 +242,7 @@ describe("PayTab integration", () => {
 
       expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
         button: "request",
-        buttonLocation: "quick_action",
+        buttonLocation: "quick action",
         page: "Pay",
       });
     });
@@ -273,7 +274,8 @@ describe("PayTab integration", () => {
 
       expect(await screen.findByTestId("pay-card-balance-filter-picker")).toBeVisible();
       expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "balance_filter",
+        button: "balance filter",
+        page: "Pay",
       });
     });
 
@@ -293,8 +295,9 @@ describe("PayTab integration", () => {
       expect(within(pill).getByText("USDC")).toBeVisible();
 
       expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-        button: "confirm_balance_filter",
+        button: "confirm balance filter",
         asset: "USDC",
+        page: "Pay",
       });
     });
   });
@@ -612,7 +615,7 @@ describe("PayTab integration", () => {
       expect(store.getState().modularDrawer).toMatchObject({
         isOpen: true,
         flow: "send",
-        source: "Pay",
+        source: SEND_FLOW_SOURCE.PAY,
         preselectedCurrencies: [address.currencyId],
       });
     });
@@ -651,7 +654,7 @@ describe("PayTab integration", () => {
       expect(store.getState().modularDrawer).toMatchObject({
         isOpen: true,
         flow: "send",
-        source: "Pay",
+        source: SEND_FLOW_SOURCE.PAY,
         uiUseCase: "pay",
         preselectedCurrencies: [address.currencyId],
       });

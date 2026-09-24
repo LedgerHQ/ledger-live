@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "38.0.0",
+  "version": "38.1.0-next.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -450,7 +450,7 @@
     "@types/react": "catalog:",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
-    "buffer": "6.0.3",
+    "buffer": "catalog:",
     "camelcase": "^6.2.1",
     "cross-env": "^7.0.3",
     "env-cmd": "*",

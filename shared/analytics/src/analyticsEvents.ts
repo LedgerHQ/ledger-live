@@ -13,4 +13,12 @@
  * ```
  */
 
+import type { AnalyticsEvent } from "./types";
+import { publishEvent } from "./internals/eventLog";
+
+/**
+ * @deprecated Intended only to support unmigrated `updateIdentify` behavior. Prefer events published by the analytics pipeline.
+ */
+export const publishAnalyticsEvent = (event: AnalyticsEvent) => publishEvent(event);
+
 export { analyticsEvents$ } from "./internals/eventLog";

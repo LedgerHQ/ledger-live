@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-zcash",
-  "version": "0.1.2",
+  "version": "0.2.0-next.0",
   "private": true,
   "sideEffects": false,
   "description": "Ledger Zcash Coin Tester",
@@ -51,8 +51,8 @@
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "knip-check": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-zcash",
-    "test": "jest",
-    "coverage": "jest --coverage",
+    "test": "jest --selectProjects unit",
+    "coverage": "jest --coverage --selectProjects unit",
     "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {

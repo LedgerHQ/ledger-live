@@ -1,7 +1,7 @@
 # `ui`
 
 > [!WARNING]
-> **Status: DEPRECATED** — The whole `@ledgerhq/ui` suite is deprecated in favour of the Lumen design system. Migrate to `@ledgerhq/lumen-ui-react` (React), `@ledgerhq/lumen-ui-rnative` (React Native), or `@ledgerhq/lumen-design-core` (shared tokens).
+> **Status: DEPRECATED** — The whole `@ledgerhq/ui` suite is frozen and will be dropped. Migrate to the Lumen design system: `@ledgerhq/lumen-ui-react` (React), `@ledgerhq/lumen-ui-rnative` (React Native), or `@ledgerhq/lumen-design-core` (shared tokens).
 
 ### Design and interface resources for React and React Native projects.
 

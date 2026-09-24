@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-casper",
-  "version": "3.3.1",
+  "version": "3.4.0-next.0",
   "description": "Ledger Casper integration",
   "keywords": [
     "Ledger",
@@ -127,7 +127,6 @@
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",

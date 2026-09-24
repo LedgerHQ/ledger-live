@@ -90,13 +90,34 @@ describe("craftPltTransaction", () => {
     expect(craft().payload.operations[0]).toBe(0x81);
   });
 
-  it("includes the memo in the operations blob when there is one", () => {
-    const withMemo = craft({ memo: "salary" });
+  // The memo's own bytes were assembled by hand from RFC 8949, not taken from
+  // the encoder: text string(14) "send with memo" -> byte string(15) -> tag 24.
+  // Tag 24 is what declares the content to be CBOR; untagged would claim the
+  // opposite. The device app unwraps the tag but does not yet decode what is
+  // inside, so this is the form it will read once it does.
+  it("carries the memo as a CBOR text string under tag 24", () => {
+    const withMemo = craft({ memo: "send with memo" });
 
     expect(withMemo.payload.operations.toString("hex")).toContain(
-      Buffer.from("salary", "utf-8").toString("hex"),
+      "646d656d6f" + // text string(4) "memo"
+        "d818" + //     tag 24
+        "4f" + //       byte string(15)
+        "6e73656e642077697468206d656d6f", // text string(14) "send with memo"
     );
-    expect(withMemo.payload.operations.length).toBeGreaterThan(craft().payload.operations.length);
+  });
+
+  it("grows the blob by the memo, its key and its framing", () => {
+    const withMemo = craft({ memo: "send with memo" });
+
+    // 4 bytes of framing — tag 24 (2), byte string header (1), text string
+    // header (1) — plus the 5-byte "memo" key. The map header stays one byte
+    // going from two fields to three.
+    const framing = 4;
+    const key = 1 + "memo".length;
+
+    expect(withMemo.payload.operations.length - craft().payload.operations.length).toBe(
+      "send with memo".length + framing + key,
+    );
   });
 
   it("omits the memo key entirely when there is none", () => {

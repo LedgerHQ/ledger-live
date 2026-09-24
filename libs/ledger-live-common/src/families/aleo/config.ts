@@ -1,7 +1,12 @@
 import { TRANSACTION_TYPE } from "@ledgerhq/coin-aleo/constants";
-import type { RecordPickingStrategy, TransactionType } from "@ledgerhq/coin-aleo/types";
+import type {
+  AleoCoinConfig,
+  RecordPickingStrategy,
+  TransactionType,
+} from "@ledgerhq/coin-aleo/types";
 import type { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@shared/env";
+import { getCurrencyConfiguration } from "../../config";
 
 // API for fee estimation is not available yet, so for MVP we are using static fee configuration.
 // source of hardcoded values: https://ledgerhq.atlassian.net/wiki/spaces/BI/pages/6218678344/ARCH+-+Aleo+integration+HLD
@@ -55,6 +60,15 @@ const ENABLE_TOKENS = false;
  */
 const ENABLE_STAKING = false;
 
+/** Both are required on the config, so these only stand in until it has loaded. */
+export const LIVE_BLOCK_HEIGHT_POLL_MS = 10_000;
+
+/** Once spent, a settled unbonding entry is left to the background sync to pick up. */
+export const MAX_UNBONDING_SYNC_ATTEMPTS = 3;
+
+const MAINNET_DEFAULT_VALIDATOR = "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t";
+const TESTNET_DEFAULT_VALIDATOR = "aleo1l7avejc23yv6e8nx4udjwz89dw6mg95dzsp936hf77yuhnjywv9syl0ywc";
+
 export const aleoConfig: Record<string, ConfigInfo> = {
   config_currency_aleo: {
     type: "object",
@@ -63,6 +77,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
         type: "active",
       },
       networkType: "mainnet",
+      defaultValidator: MAINNET_DEFAULT_VALIDATOR,
       apiUrls: {
         node: getEnv("ALEO_NODE_ENDPOINT"),
         sdk: getEnv("ALEO_MAINNET_SDK_ENDPOINT"),
@@ -74,6 +89,8 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       enableStaking: ENABLE_STAKING,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
       recordPickingStrategy: RECORD_PICKING_STRATEGY,
+      liveBlockHeightPollMs: LIVE_BLOCK_HEIGHT_POLL_MS,
+      maxUnbondingSyncAttempts: MAX_UNBONDING_SYNC_ATTEMPTS,
     },
   },
   config_currency_aleo_testnet: {
@@ -83,6 +100,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
         type: "active",
       },
       networkType: "testnet",
+      defaultValidator: TESTNET_DEFAULT_VALIDATOR,
       apiUrls: {
         node: getEnv("ALEO_NODE_ENDPOINT"),
         sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
@@ -94,6 +112,17 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       enableStaking: ENABLE_STAKING,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
       recordPickingStrategy: RECORD_PICKING_STRATEGY,
+      liveBlockHeightPollMs: LIVE_BLOCK_HEIGHT_POLL_MS,
+      maxUnbondingSyncAttempts: MAX_UNBONDING_SYNC_ATTEMPTS,
     },
   },
 };
+
+/** `undefined` until the configuration is loaded: LiveConfig throws for an unknown currency. */
+export function getAleoCurrencyConfigById(currencyId: string): AleoCoinConfig | undefined {
+  try {
+    return getCurrencyConfiguration<AleoCoinConfig>(currencyId);
+  } catch {
+    return undefined;
+  }
+}

@@ -80,6 +80,12 @@ export class ConcordiumTokenPaused extends Error {
 
 /**
  * The token enforces an allow list and the sender is not on it.
+ *
+ * Distinct from {@link ConcordiumAccountDenied} because the remedy the user is
+ * told differs: one is approval to request, the other a restriction to query.
+ * Both are the issuer's to change — the module exposes `removeDenyList` as well
+ * as `removeAllowList` — so the split is about what to tell the user, not about
+ * what can be undone.
  */
 export class ConcordiumAccountNotAllowed extends Error {
   override name = "ConcordiumAccountNotAllowed";
@@ -107,9 +113,9 @@ export class ConcordiumAccountDenied extends Error {
  *
  * Distinct from the sender-side errors because the user's remedy is to change
  * the recipient, not to get themselves approved. Kept apart from
- * {@link ConcordiumRecipientDenied} because the recipient lookup reads the raw
- * account state and can name which rule refused, unlike the sender check — see
- * {@link ConcordiumTokenTransferNotPermitted}.
+ * {@link ConcordiumRecipientDenied} because the remedy the user is told differs,
+ * as it does for {@link ConcordiumAccountNotAllowed} and
+ * {@link ConcordiumAccountDenied}.
  */
 export class ConcordiumRecipientNotAllowed extends Error {
   override name = "ConcordiumRecipientNotAllowed";
@@ -172,40 +178,12 @@ export class ConcordiumInsufficientCcdForFee extends Error {
 }
 
 /**
- * The signed `token_id` does not exist on chain. Chain-level, so it is reported
- * against the whole transaction rather than one operation.
- */
-export class ConcordiumNonExistentTokenId extends Error {
-  override name = "ConcordiumNonExistentTokenId";
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ConcordiumNonExistentTokenId");
-    if (fields) Object.assign(this, fields);
-  }
-}
-
-/**
  * The recipient account could not be resolved on chain (`addressNotFound`).
  */
 export class ConcordiumRecipientNotFound extends Error {
   override name = "ConcordiumRecipientNotFound";
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message ?? "ConcordiumRecipientNotFound");
-    if (fields) Object.assign(this, fields);
-  }
-}
-
-/**
- * The token module rejected the transfer for a reason that cannot be narrowed
- * further.
- *
- * The catch-all for the broadcast mapping. It covers unrecognised module reject
- * types and, unavoidably, `operationNotPermitted` — see
- * {@link mapPltRejectReason} for why that one cannot be discriminated.
- */
-export class ConcordiumPltTransferRejected extends Error {
-  override name = "ConcordiumPltTransferRejected";
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ConcordiumPltTransferRejected");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -250,13 +228,12 @@ export class ConcordiumAppOutdatedError extends Error {
 }
 
 /**
- * The sender may not transfer this token, and the stored state cannot say which
- * rule refused them.
+ * The sender may not transfer this token and the cause is not known.
  *
- * Deliberately not {@link ConcordiumAccountNotAllowed} or
- * {@link ConcordiumAccountDenied}: `getAccountListStatus` folds "absent from an
- * allow list" and "present on a deny list" into one verdict, and only that
- * verdict is persisted, so naming either cause would assert something unproven.
+ * The fallback of the three sender-side errors, and no longer the usual answer:
+ * it covers a stored verdict that predates the cause being carried, and any
+ * value off the union. {@link ConcordiumAccountNotAllowed} and {@link ConcordiumAccountDenied}
+ * name the cause when the verdict has it.
  */
 export class ConcordiumTokenTransferNotPermitted extends Error {
   override name = "ConcordiumTokenTransferNotPermitted";

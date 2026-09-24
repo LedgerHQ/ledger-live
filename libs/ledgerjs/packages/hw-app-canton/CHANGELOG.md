@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-canton
 
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
 ## 0.13.0
 
 ### Minor Changes
@@ -233,21 +239,5 @@
 - Updated dependencies [[`53df748`](https://github.com/LedgerHQ/ledger-live/commit/53df74819753f084ed3df4a2ab9082d398b54920), [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
   - @ledgerhq/errors@6.33.0-next.0
   - @ledgerhq/hw-transport@6.35.0-next.0
-
-## 0.10.1
-
-### Patch Changes
-
-- Updated dependencies [[`6dac7f9`](https://github.com/LedgerHQ/ledger-live/commit/6dac7f974c28dcae409c110a60061996490c5088), [`8ce1cb7`](https://github.com/LedgerHQ/ledger-live/commit/8ce1cb755b3e68c8688f9e828596d3c2605ef3cb)]:
-  - @ledgerhq/errors@6.32.0
-  - @ledgerhq/hw-transport@6.34.1
-
-## 0.10.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`6dac7f9`](https://github.com/LedgerHQ/ledger-live/commit/6dac7f974c28dcae409c110a60061996490c5088), [`8ce1cb7`](https://github.com/LedgerHQ/ledger-live/commit/8ce1cb755b3e68c8688f9e828596d3c2605ef3cb)]:
-  - @ledgerhq/errors@6.32.0-next.0
-  - @ledgerhq/hw-transport@6.34.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

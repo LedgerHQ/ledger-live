@@ -1,5 +1,17 @@
 # @domain/entity-contact
 
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#22028](https://github.com/LedgerHQ/ledger-live/pull/22028) [`33e92e8`](https://github.com/LedgerHQ/ledger-live/commit/33e92e8f074ff73a6a3e338c8313ba8bc9066ccf) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Reject apostrophes and hyphens as separators in contact names, keeping letters from any script, digits, and spaces as the only accepted characters (LIVE-37522).
+
+### Patch Changes
+
+- Updated dependencies [[`98e3038`](https://github.com/LedgerHQ/ledger-live/commit/98e303872684da47feca343c0db7d83fcce857b2)]:
+  - @domain/entity-currency-crypto@0.13.0-next.0
+  - @domain/entity-currency-token@0.5.3-next.0
+
 ## 0.9.0
 
 ### Minor Changes

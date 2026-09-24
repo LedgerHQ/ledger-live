@@ -110,6 +110,9 @@ export type ShieldedTransaction = {
   /**
    * Whether the transaction spends transparent inputs, in which case those
    * inputs — rather than the shielded pools — may be paying `transparentOut`.
+   * Absent for transactions scanned before the scanner reported it (see
+   * `transparentOut`) — treated as unset rather than `false` by every reader
+   * of this field, never coerced.
    */
   hasTransparentInputs?: boolean;
   decryptedData?: DecryptedTransaction;

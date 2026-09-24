@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import type { TransactionLogAPI } from "./types";
 
 // see: https://solidity.readthedocs.io/en/v0.6.1/abi-spec.html#function-selector-and-argument-encoding
 // Use toString(16) on BigNumber to preserve full uint256 precision (avoid toNumber() which is limited to 2^53).
@@ -78,6 +79,116 @@ export const abiDecodeTrc20Transfer = (data: string): Trc20TransferData | null =
   if (amount.isNaN()) return null;
 
   return { to, amount };
+};
+
+/**
+ * topic0 of `Transfer(address,address,uint256)` — keccak256 of the event signature.
+ * Every TRC20 transfer emits it, including the ones minted from a contract's constructor.
+ */
+export const TRC20_TRANSFER_EVENT_TOPIC =
+  "ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+
+/** topic0 of `Approval(address,address,uint256)`. */
+export const TRC20_APPROVAL_EVENT_TOPIC =
+  "8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925";
+
+/** The kind of token event a TronGrid TRC20 record stands for. */
+export type Trc20EventKind = "Transfer" | "Approval";
+
+const TRC20_EVENT_TOPICS: Record<Trc20EventKind, string> = {
+  Transfer: TRC20_TRANSFER_EVENT_TOPIC,
+  Approval: TRC20_APPROVAL_EVENT_TOPIC,
+};
+
+/** A `uint256` event value occupies exactly one 32-byte ABI slot. */
+const UINT256_HEX_LENGTH = 64;
+
+/**
+ * Event logs carry addresses EVM-style — 20 bytes, no `41` prefix, and left-padded to 32 bytes
+ * inside a topic. TRON hex addresses keep the prefix, so put it back on the trailing 20 bytes.
+ */
+const toTronHexAddress = (hexAddress: string): string => {
+  const clean = hexAddress.toLowerCase().replace(/^0x/, "");
+  if (clean.length < 40 || !HEX_REGEX.test(clean)) return "";
+  return "41" + clean.slice(-40);
+};
+
+type Trc20TokenEventLog = {
+  /** TRON hex address (`41` + 20 bytes) of the token contract that emitted the event. */
+  contractAddress: string;
+  from: string;
+  to: string;
+};
+
+const decodeTrc20TokenEventLog = (
+  log: TransactionLogAPI,
+  expectedTopic: string,
+): Trc20TokenEventLog | null => {
+  const [topic, fromTopic, toTopic] = log.topics ?? [];
+  if (topic?.toLowerCase() !== expectedTopic) return null;
+  if (!fromTopic || !toTopic || !log.address) return null;
+
+  const contractAddress = toTronHexAddress(log.address);
+  const from = toTronHexAddress(fromTopic);
+  const to = toTronHexAddress(toTopic);
+  if (!contractAddress || !from || !to) return null;
+
+  return { contractAddress, from, to };
+};
+
+export type Trc20TransferLog = Trc20TokenEventLog & { amount: BigNumber };
+
+/**
+ * Decodes a `Transfer(address,address,uint256)` event log: the token contract, both parties and
+ * the amount. Returns null for any other event.
+ */
+export const decodeTrc20TransferLog = (log: TransactionLogAPI): Trc20TransferLog | null => {
+  const event = decodeTrc20TokenEventLog(log, TRC20_TRANSFER_EVENT_TOPIC);
+  if (!event) return null;
+
+  // An amount that is not exactly one ABI slot is not a `uint256` this event can carry: the log is
+  // malformed (or forged by the contract), and parsing it anyway would fabricate a transfer amount.
+  const data = (log.data ?? "").replace(/^0x/, "");
+  if (data.length !== UINT256_HEX_LENGTH || !HEX_REGEX.test(data)) return null;
+
+  const amount = new BigNumber(data, 16);
+  if (amount.isNaN()) return null;
+
+  return { ...event, amount };
+};
+
+/**
+ * Recovers the TRC20 contract address of one TronGrid record from a transaction's event logs.
+ *
+ * The logs are the one source that holds it in every case: a transfer minted inside a contract's
+ * constructor (`CreateSmartContract`) has no `contract_address` parameter to read it from, and an
+ * unindexed token has no TronGrid `token_info.address` either — but the event is always emitted by
+ * the token contract itself.
+ *
+ * The record's own event kind and both parties select the log: one transaction can approve token A
+ * while transferring token B, and an `Approval`'s owner/spender say nothing about which token
+ * moved. So only an event of the record's kind, between the record's parties, and naming a single
+ * token resolves; anything else returns undefined rather than guessing.
+ *
+ * @param event the record to resolve: its event kind and its two parties, as TRON hex addresses
+ * @returns the TRON hex address (`41` + 20 bytes) of the token contract, or undefined
+ */
+export const trc20ContractAddressFromLogs = (
+  logs: TransactionLogAPI[] | undefined,
+  event: { kind: Trc20EventKind; from?: string; to?: string },
+): string | undefined => {
+  // Without both parties the record cannot be correlated to a log at all.
+  if (!event.from || !event.to) return undefined;
+
+  const addresses = new Set(
+    (logs ?? [])
+      .map(log => decodeTrc20TokenEventLog(log, TRC20_EVENT_TOPICS[event.kind]))
+      .filter((decoded): decoded is Trc20TokenEventLog => decoded !== null)
+      .filter(decoded => decoded.from === event.from && decoded.to === event.to)
+      .map(decoded => decoded.contractAddress),
+  );
+
+  return addresses.size === 1 ? addresses.values().next().value : undefined;
 };
 
 export const hexToAscii = (hex: string): string => Buffer.from(hex, "hex").toString("ascii");

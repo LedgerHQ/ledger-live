@@ -49,7 +49,6 @@ export function craftPltTransaction(
   },
 ): TokenUpdateTransaction {
   const expiryEpochSeconds = Math.floor(Date.now() / 1000) + EXPIRY_WINDOW_SECONDS;
-  const memo = transaction.memo ? Buffer.from(transaction.memo, "utf-8") : undefined;
 
   return {
     type: TransactionType.TokenUpdate,
@@ -67,7 +66,7 @@ export function craftPltTransaction(
         // decimal would otherwise throw inside `BigInt` after the fee was shown.
         amount: BigInt(transaction.amount.toFixed(0)),
         decimals: transaction.decimals,
-        ...(memo ? { memo } : {}),
+        ...(transaction.memo ? { memo: transaction.memo } : {}),
       }),
     },
   };

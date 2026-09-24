@@ -2,6 +2,12 @@ import { useMemo } from "react";
 import { useTranslation } from "@shared/i18n";
 import type { ActionTilesProps, ActionTilesViewProps } from "./types";
 
+const TRACK_BUTTON = {
+  deposit: "deposit",
+  request: "request",
+  pay: "send",
+} as const;
+
 export function useActionTilesViewModel({
   tiles,
   page,
@@ -16,8 +22,8 @@ export function useActionTilesViewModel({
         label: t(`payTab.actions.${tile.id}`),
         onPress: () => {
           onTrackEvent?.("button_clicked", {
-            button: tile.id,
-            buttonLocation: "quick_action",
+            button: TRACK_BUTTON[tile.id],
+            buttonLocation: "quick action",
             page,
           });
           tile.onPress();

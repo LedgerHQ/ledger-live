@@ -39,6 +39,7 @@ export interface ValidatedEarnInfoModal {
 export interface ValidatedEarnDepositScreen {
   cryptoAssetId?: string;
   accountId?: string;
+  protocolId?: string;
 }
 
 export interface ValidatedEarnMenuModal {
@@ -225,10 +226,14 @@ export function validateEarnInfoModal(
 export function validateEarnDepositScreen(
   cryptoAssetId?: string,
   accountId?: string,
+  protocolId?: string,
 ): ValidatedEarnDepositScreen {
+  const sanitizedProtocolId = sanitizeString(protocolId || "", MAX_TITLE_LENGTH);
+
   return {
     cryptoAssetId: sanitizeString(cryptoAssetId || "", MAX_TITLE_LENGTH),
     accountId: sanitizeString(accountId || "", MAX_TITLE_LENGTH),
+    ...(sanitizedProtocolId && { protocolId: sanitizedProtocolId }),
   };
 }
 

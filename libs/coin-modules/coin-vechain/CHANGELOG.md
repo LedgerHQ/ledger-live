@@ -1,5 +1,44 @@
 # @ledgerhq/coin-evm
 
+## 4.3.0-next.0
+
+### Minor Changes
+
+- [#21951](https://github.com/LedgerHQ/ledger-live/pull/21951) [`f1cd6f5`](https://github.com/LedgerHQ/ledger-live/commit/f1cd6f5c5b4b8c5da27f5603ef564c6a819de9f2) Thanks [@may01](https://github.com/may01)! - Report VTHO transfers and both sides of every transfer in `getBlock`
+
+  `getBlock` mapped only `output.transfers` from Thor's expanded block, which holds native VET clause
+  transfers. A VTHO (VIP-180) movement is an ABI-encoded log in `output.events` instead, so every
+  token transfer came back with an empty `operations` array even though `listOperations` reported it
+  for the same transaction — on recent mainnet blocks that silently dropped the majority of
+  transactions. VIP-180 `Transfer` logs emitted by the VTHO contract are now decoded from the same
+  expanded-block payload, so no extra request is made.
+
+  Each transfer also produced a single operation, for the recipient only. `BlockOperation.amount` is
+  the signed impact on `address`, so a transfer is now reported once per side — negative for the
+  sender, positive for the recipient — and an outgoing VET or VTHO transfer is no longer invisible to
+  a block-based consumer.
+
+  Native operations now carry the same `NATIVE_ASSET` (`{ type: "native", name: "VET" }`) that
+  `getBalance` and `listOperations` already use, instead of a bare `{ type: "native" }`, so an asset
+  is identified consistently across the module's outputs.
+
+  **Consumer impact** — `getBlock` output changes shape for callers that were already consuming it,
+  hence the minor rather than patch bump:
+
+  - A transfer now yields two operations instead of one. Code that sums `operations[].amount` to get a
+    block's net flow now gets ~0, because each credit is cancelled by the matching debit; filter by
+    `address` (or by `amount > 0n`) before summing.
+  - Blocks whose transactions are VTHO-only now report operations where they previously reported none,
+    so per-block operation counts increase.
+  - Grouping native operations by structural asset equality must expect `name: "VET"` to be present.
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
+### Patch Changes
+
+- Updated dependencies [[`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`5d2f40f`](https://github.com/LedgerHQ/ledger-live/commit/5d2f40f470f859960e43a2a08755a962796f6beb), [`e2134f5`](https://github.com/LedgerHQ/ledger-live/commit/e2134f5cffe4669ff5896e2b52904fe22218461b)]:
+  - @ledgerhq/ledger-wallet-framework@3.5.0-next.0
+
 ## 4.2.0
 
 ### Minor Changes
@@ -366,36 +405,5 @@
   - @ledgerhq/cryptoassets@13.55.0
   - @ledgerhq/live-env@2.42.0
   - @ledgerhq/live-network@2.6.8
-
-## 2.25.0-next.0
-
-### Minor Changes
-
-- [#19683](https://github.com/LedgerHQ/ledger-live/pull/19683) [`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f) Thanks [@ysitbon](https://github.com/ysitbon)! - Consume currency accessors and currency types from `@ledgerhq/ledger-wallet-framework` instead of `@ledgerhq/cryptoassets`/`@ledgerhq/types-cryptoassets`. Value accessors now resolve through the framework's injected `CurrenciesResolver`; `CryptoCurrency`/`TokenCurrency`/`Unit`/`ExplorerView` types are imported from the framework.
-
-### Patch Changes
-
-- Updated dependencies [[`8f30c75`](https://github.com/LedgerHQ/ledger-live/commit/8f30c75ecb553a720722f1e039b4aec53fce2a87), [`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63), [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158)]:
-  - @ledgerhq/ledger-wallet-framework@2.4.0-next.0
-  - @ledgerhq/cryptoassets@13.55.0-next.0
-  - @ledgerhq/live-env@2.42.0-next.0
-  - @ledgerhq/live-network@2.6.8-next.0
-
-## 2.24.0
-
-### Minor Changes
-
-- [#19145](https://github.com/LedgerHQ/ledger-live/pull/19145) [`1e17c12`](https://github.com/LedgerHQ/ledger-live/commit/1e17c127178a871b665b25d6f4208d4613826dd1) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the per-coin `cli.ts` / `cli-transaction.ts` / `test/cli.ts` (`makeCliTools`) contract from coin families and the `cliTools` field of `FamilySetup`. The only consumer was the `apps/cli` `send` command, and the only e2e path that used it was the EVM ERC20 token approval. That flow is now a dedicated, self-contained `tokenApproval` CLI command; the generic `send` command keeps the cross-family options only.
-
-- [#18902](https://github.com/LedgerHQ/ledger-live/pull/18902) [`ab6aa6e`](https://github.com/LedgerHQ/ledger-live/commit/ab6aa6e50184b17247719741a2db23adf4475665) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-vechain): remove cyclic imports
-
-### Patch Changes
-
-- Updated dependencies [[`6df2017`](https://github.com/LedgerHQ/ledger-live/commit/6df20171a84b54e5b67eabefc938a98d7e3c3e43), [`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11), [`38728f9`](https://github.com/LedgerHQ/ledger-live/commit/38728f9d9ac879c276def56ce88c5e49549e4b9d), [`86ca231`](https://github.com/LedgerHQ/ledger-live/commit/86ca231ea9e0ec5996258b1abfa9742a7df3f9ec), [`e6566ff`](https://github.com/LedgerHQ/ledger-live/commit/e6566ff55d95ff36832d5f77899d67d80842f418), [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63), [`7fe5f11`](https://github.com/LedgerHQ/ledger-live/commit/7fe5f1129d6ac218ad274f2187a1a3dd83b8855a), [`7c39ea3`](https://github.com/LedgerHQ/ledger-live/commit/7c39ea39ca8999bcb8ce2294f4884430b6d1b2dc), [`d686e93`](https://github.com/LedgerHQ/ledger-live/commit/d686e93f8a548ff4e9ab3c877ad1f815510b35d9), [`f495213`](https://github.com/LedgerHQ/ledger-live/commit/f495213e811477c99d62f0d93cc7c513b951a303), [`c8b4ee7`](https://github.com/LedgerHQ/ledger-live/commit/c8b4ee77c03ca2117cbad039331b7b52e50d9620), [`df96477`](https://github.com/LedgerHQ/ledger-live/commit/df964774bdaccd897e5e7414c172e9c26ff21f67), [`b3ffa2f`](https://github.com/LedgerHQ/ledger-live/commit/b3ffa2f4bf735f2cfeed2a8028ea92d4bc3588e3), [`376915c`](https://github.com/LedgerHQ/ledger-live/commit/376915ca520ecc1708090ed9b3eba1ff7e780540)]:
-  - @ledgerhq/cryptoassets@13.54.0
-  - @ledgerhq/live-env@2.41.0
-  - @ledgerhq/ledger-wallet-framework@2.3.0
-  - @ledgerhq/devices@8.17.0
-  - @ledgerhq/live-network@2.6.7
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

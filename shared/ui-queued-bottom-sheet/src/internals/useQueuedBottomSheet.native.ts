@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Keyboard } from "react-native";
 import { BottomSheetProps, useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
 import {
@@ -7,6 +7,10 @@ import {
 } from "../contexts/QueuedBottomSheetsContext";
 import { useQueuedBottomSheetAdapters } from "./adaptersContext";
 import { useBottomSheetBackgroundToneRequests } from "./useBottomSheetBackgroundToneRequests";
+import {
+  isBottomSheetKeyboardOwnedByAnother,
+  releaseBottomSheetKeyboard,
+} from "./bottomSheetKeyboardOwnership";
 
 interface UseQueuedBottomSheetProps {
   isRequestingToBeOpened?: boolean;
@@ -17,9 +21,13 @@ interface UseQueuedBottomSheetProps {
   onBackdropPress?: () => void;
   onModalHide?: () => void;
   preventBackdropClick?: boolean;
+  restoreOnFocus?: boolean;
 }
 
-type BottomSheetState = "idle" | "open" | "dismissing";
+type BottomSheetState = "idle" | "open" | "restored" | "closing" | "dismissing";
+
+const isOnScreen = (state: BottomSheetState) => state === "open" || state === "restored";
+const isLeaving = (state: BottomSheetState) => state === "closing" || state === "dismissing";
 
 const DISMISS_FALLBACK_DELAY_MS = 600;
 
@@ -32,7 +40,9 @@ export function useQueuedBottomSheet({
   onBackdropPress,
   onModalHide,
   preventBackdropClick,
+  restoreOnFocus = false,
 }: UseQueuedBottomSheetProps) {
+  const sheetId = useId();
   const adapters = useQueuedBottomSheetAdapters();
   const logRef = useRef(adapters.log);
   logRef.current = adapters.log;
@@ -47,6 +57,9 @@ export function useQueuedBottomSheet({
   const bottomSheetInQueueRef = useRef<BottomSheetInQueue | undefined>(undefined);
   const bottomSheetRef = useBottomSheetRef();
   const isFocused = adapters.useIsScreenFocused();
+  // Read from the effect cleanup below, which runs after the render that took the focus away.
+  const isFocusedRef = useRef(isFocused);
+  isFocusedRef.current = isFocused;
   const areBottomSheetsLocked = adapters.useAreBottomSheetsLocked();
   const backgroundComponent: BottomSheetProps["backgroundComponent"] = backgroundTone
     ? adapters.backgroundComponentByTone?.[backgroundTone]
@@ -66,6 +79,11 @@ export function useQueuedBottomSheet({
 
   const stateRef = useRef<BottomSheetState>("idle");
 
+  // A dismissal started for one presentation can land on the next one. Only an onDismiss arriving
+  // while one is still unacknowledged can be that stale dismissal; any other is the user closing
+  // the sheet through a path gorhom did not report, like a pan-down during the entrance animation.
+  const isDismissInFlightRef = useRef(false);
+
   // Bumped at the end of handleDismiss to re-trigger the open/close effect below. This defers
   // the "should we reopen?" decision to a React commit, ensuring any state update scheduled by
   // the consumer's onClose (from handleAnimate) has been applied before we read
@@ -83,6 +101,14 @@ export function useQueuedBottomSheet({
     }
   }, []);
 
+  const requestDismiss = useCallback(() => {
+    if (stateRef.current !== "idle") {
+      stateRef.current = "dismissing";
+    }
+    isDismissInFlightRef.current = true;
+    bottomSheetRef.current?.dismiss();
+  }, [bottomSheetRef]);
+
   const dismissFallbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clearDismissFallback = useCallback(() => {
@@ -95,17 +121,21 @@ export function useQueuedBottomSheet({
   const settleClosed = useCallback(() => {
     clearDismissFallback();
     stateRef.current = "idle";
+    releaseBottomSheetKeyboard(sheetId);
     cleanupQueue();
-  }, [clearDismissFallback, cleanupQueue]);
+  }, [clearDismissFallback, cleanupQueue, sheetId]);
 
   const beginDismissing = useCallback(() => {
-    stateRef.current = "dismissing";
+    if (stateRef.current !== "dismissing") {
+      stateRef.current = "closing";
+    }
+    isDismissInFlightRef.current = true;
     cleanupQueue();
 
     clearDismissFallback();
     dismissFallbackRef.current = setTimeout(() => {
       dismissFallbackRef.current = null;
-      if (stateRef.current !== "dismissing") return;
+      if (!isLeaving(stateRef.current)) return;
 
       logBottomSheet("onDismiss never arrived - settling this sheet as closed");
       settleClosed();
@@ -117,11 +147,20 @@ export function useQueuedBottomSheet({
   // out makes the underlying bottom sheet re-evaluate its position mid-close, which can leave it
   // mounted at the closed position. Retracting the keyboard as soon as a close begins keeps the
   // closing layout stable.
+  //
+  // `Keyboard.dismiss()` is global though: on a hand-off the sheet taking over has already focused
+  // its field by the time this one finishes closing, so skip the dismiss unless we raised the
+  // keyboard ourselves.
   const dismissKeyboard = useCallback(() => {
-    if (Keyboard.isVisible()) {
-      Keyboard.dismiss();
+    if (!Keyboard.isVisible()) return;
+
+    if (isBottomSheetKeyboardOwnedByAnother(sheetId)) {
+      logBottomSheet("Keyboard was raised by another sheet - leaving it up");
+      return;
     }
-  }, []);
+
+    Keyboard.dismiss();
+  }, [logBottomSheet, sheetId]);
 
   // Closing a sheet often also clears the reason the sheet queued behind it wanted to be open, so
   // by the time the queue promotes us our consumer may no longer want us. Presenting anyway leaves
@@ -150,8 +189,13 @@ export function useQueuedBottomSheet({
     }
 
     if (state === "dismissing") {
-      logBottomSheet("Close signalled while already dismissing - re-issuing dismiss");
-      bottomSheetRef.current?.dismiss();
+      logBottomSheet("Close signalled while already on its way out - nothing to re-issue");
+      return;
+    }
+
+    if (state === "closing") {
+      logBottomSheet("Close signalled while only minimized - dismissing for real");
+      requestDismiss();
       return;
     }
 
@@ -159,9 +203,25 @@ export function useQueuedBottomSheet({
     beginDismissing();
     dismissKeyboard();
 
-    bottomSheetRef.current?.dismiss();
+    requestDismiss();
     onCloseRef.current?.();
-  }, [beginDismissing, bottomSheetRef, cleanupQueue, dismissKeyboard, logBottomSheet]);
+  }, [beginDismissing, cleanupQueue, dismissKeyboard, logBottomSheet, requestDismiss]);
+
+  // A screen losing focus is not the user dismissing the drawer. Under `restoreOnFocus` the
+  // consumer is not told, so it keeps requesting the drawer and the effect below presents it again
+  // once the screen is focused. The later onDismiss sees a sheet already dismissing, so it reports
+  // nothing either.
+  const hideWhileUnfocused = useCallback(() => {
+    if (!isOnScreen(stateRef.current)) {
+      cleanupQueue();
+      return;
+    }
+
+    logBottomSheet("Hiding drawer - screen not focused");
+    beginDismissing();
+    dismissKeyboard();
+    requestDismiss();
+  }, [beginDismissing, cleanupQueue, dismissKeyboard, logBottomSheet, requestDismiss]);
 
   // Adds this drawer to the queue. The queue decides when to actually open/close it via the
   // open/close state handlers.
@@ -177,8 +237,8 @@ export function useQueuedBottomSheet({
   const handleUserClose = useCallback(() => {
     logBottomSheet("User initiated close");
     dismissKeyboard();
-    bottomSheetRef.current?.dismiss();
-  }, [bottomSheetRef, dismissKeyboard, logBottomSheet]);
+    requestDismiss();
+  }, [dismissKeyboard, logBottomSheet, requestDismiss]);
 
   // Notifies the consumer of the explicit backdrop press before dismissing. Unlike onClose
   // (which fires for any closing reason), this reflects a real user close interaction.
@@ -189,10 +249,11 @@ export function useQueuedBottomSheet({
   }, [handleUserClose, logBottomSheet]);
 
   const handleHeaderClosePressed = useCallback(() => {
-    if (stateRef.current === "dismissing") return;
+    if (isLeaving(stateRef.current)) return;
 
     logBottomSheet("Header close pressed");
     beginDismissing();
+    stateRef.current = "dismissing";
     dismissKeyboard();
     onHeaderClosePressedRef.current?.();
     onCloseRef.current?.();
@@ -207,35 +268,51 @@ export function useQueuedBottomSheet({
   const handleAnimate = useCallback(
     (fromIndex: number, toIndex: number) => {
       if (toIndex >= 0) {
-        const restoredWhileDismissing = fromIndex === -1 && stateRef.current === "dismissing";
-        if (restoredWhileDismissing) {
+        const arrivingWhileConsideredClosed = fromIndex === -1 && !isOnScreen(stateRef.current);
+        if (arrivingWhileConsideredClosed) {
           logBottomSheet("Sheet opening while considered closed - dismissing it again");
-          bottomSheetRef.current?.dismiss();
+          requestDismiss();
         }
 
         return;
       }
 
-      if (toIndex === -1 && stateRef.current === "open") {
+      if (toIndex === -1 && isOnScreen(stateRef.current)) {
         logBottomSheet("Close animation started");
         beginDismissing();
         dismissKeyboard();
         onCloseRef.current?.();
       }
     },
-    [beginDismissing, bottomSheetRef, dismissKeyboard, logBottomSheet],
+    [beginDismissing, dismissKeyboard, logBottomSheet, requestDismiss],
   );
 
   const handleDismiss = useCallback(() => {
     logBottomSheet("BottomSheet dismissed (onDismiss)");
 
+    const state = stateRef.current;
+    const dismissedPresentationStillWanted =
+      state === "open" && wantsToBeOpenRef.current && isDismissInFlightRef.current;
+    isDismissInFlightRef.current = false;
+
+    if (dismissedPresentationStillWanted) {
+      logBottomSheet("Dismissed a presentation still being requested - presenting it again");
+      stateRef.current = "restored";
+      bottomSheetRef.current?.present();
+      return;
+    }
+
     dismissKeyboard();
 
-    // Fallback for dismissals that bypass the close animation (and thus handleAnimate).
-    if (stateRef.current === "open") {
+    if (isOnScreen(state)) {
+      stateRef.current = "dismissing";
+      onCloseRef.current?.();
+      requestDismiss();
+    } else if (state === "dismissing" && dismissFallbackRef.current === null) {
       onCloseRef.current?.();
     }
 
+    isDismissInFlightRef.current = false;
     settleClosed();
     onModalHideRef.current?.();
 
@@ -245,10 +322,15 @@ export function useQueuedBottomSheet({
     // isRequestingToBeOpened reflects the user's true intent — false for a normal backdrop close,
     // true only if the consumer genuinely re-requested while the sheet was closing.
     setReopenCheckSignal(s => s + 1);
-  }, [dismissKeyboard, logBottomSheet, settleClosed]);
+  }, [bottomSheetRef, dismissKeyboard, logBottomSheet, requestDismiss, settleClosed]);
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
+      if (restoreOnFocus) {
+        hideWhileUnfocused();
+        return;
+      }
+
       logBottomSheet("Closing drawer - screen not focused");
       handleClose();
       return;
@@ -258,6 +340,11 @@ export function useQueuedBottomSheet({
       enqueueBottomSheet();
 
       return () => {
+        if (restoreOnFocus && !isFocusedRef.current) {
+          hideWhileUnfocused();
+          return;
+        }
+
         logBottomSheet("Effect cleanup - closing drawer");
         handleClose();
       };
@@ -267,6 +354,8 @@ export function useQueuedBottomSheet({
     isForcingToBeOpened,
     isRequestingToBeOpened,
     handleClose,
+    hideWhileUnfocused,
+    restoreOnFocus,
     enqueueBottomSheet,
     logBottomSheet,
     reopenCheckSignal,
@@ -276,11 +365,13 @@ export function useQueuedBottomSheet({
     return () => {
       logBottomSheet("Component unmounting - cleaning up");
       clearDismissFallback();
+      releaseBottomSheetKeyboard(sheetId);
       cleanupQueue();
     };
-  }, [cleanupQueue, clearDismissFallback, logBottomSheet]);
+  }, [cleanupQueue, clearDismissFallback, logBottomSheet, sheetId]);
 
   return {
+    sheetId,
     bottomSheetRef,
     areBottomSheetsLocked,
     handleUserClose,

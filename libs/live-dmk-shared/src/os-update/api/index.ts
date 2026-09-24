@@ -1,3 +1,4 @@
+export * from "./model/CreateBackupState";
 export * from "./model/DeviceBackupStorage";
 export * from "./model/OsUpdatesOrchestrator";
 export * from "./model/OsUpdatesProgress";

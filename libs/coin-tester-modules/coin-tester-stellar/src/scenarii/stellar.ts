@@ -3,7 +3,6 @@ import { Config as StellarSdkConfig } from "@stellar/stellar-sdk";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
-import coinConfig from "@ledgerhq/coin-stellar/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
@@ -228,14 +227,11 @@ export const scenarioStellar: Scenario<GenericTransaction, Account> = {
 
     const stellarSigner = await buildSigner();
     const { currencyBridge, accountBridge, getAddress } = await getBridges(stellarSigner);
-    // Configure coin-stellar to talk to the local Horizon: the bridge reads
-    // the explorer URL from coinConfig.
     const localConfig = {
       status: { type: "active" as const },
       explorer: { url: HORIZON_URL, fetchLimit: 100 },
       useStaticFees: true,
     };
-    coinConfig.setCoinConfig(() => localConfig);
     LiveConfig.setConfig({
       config_currency_stellar: {
         type: "object",

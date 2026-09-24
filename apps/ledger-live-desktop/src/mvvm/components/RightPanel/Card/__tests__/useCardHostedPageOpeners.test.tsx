@@ -1,8 +1,11 @@
 import { ipcRenderer } from "electron";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { act } from "@testing-library/react";
+import { getEnvDefault, setEnv } from "@shared/env";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useCardHostedPageOpeners } from "../useCardHostedPageOpeners";
+import { payCardAuthSlice } from "@features/flow-pay-card-auth/state";
+import { useWipeHostedSession } from "../useWipeHostedSession";
 
 const mockNavigate = jest.fn();
 
@@ -24,11 +27,11 @@ const AUTHORIZE_URL =
 const LOGIN_MANIFEST_URL = "https://dev.api.baanx.test/v1/auth/oauth2/authorize";
 
 const CATALOG: Record<string, unknown> = {
-  "baanx-login-url-stg": {
-    id: "baanx-login-url-stg",
+  "baanx-login-url": {
+    id: "baanx-login-url",
     url: LOGIN_MANIFEST_URL,
   },
-  "baanx-hosted-url-stg": { id: "baanx-hosted-url-stg", url: "https://ledger.baanxapi.test" },
+  "baanx-hosted-url": { id: "baanx-hosted-url", url: "https://ledger.baanxapi.test" },
 };
 
 function manifestsFrom(catalog: Record<string, unknown>) {
@@ -38,12 +41,26 @@ function manifestsFrom(catalog: Record<string, unknown>) {
   );
 }
 
-function renderOpeners(params?: Record<string, string>) {
+function renderOpeners() {
   return renderHook(() => useCardHostedPageOpeners(), {
     initialState: withFlagOverrides({
-      lwdPayTab: { enabled: true, params: { card: true, ...params } },
+      lwdPayTab: { enabled: true, params: { card: true } },
     }),
   });
+}
+
+function renderOpenersWithWipe() {
+  return renderHook(
+    () => {
+      useWipeHostedSession();
+      return useCardHostedPageOpeners();
+    },
+    {
+      initialState: withFlagOverrides({
+        lwdPayTab: { enabled: true, params: { card: true } },
+      }),
+    },
+  );
 }
 
 async function run(action: () => Promise<unknown>) {
@@ -63,33 +80,33 @@ describe("useCardHostedPageOpeners", () => {
     manifestsFrom(CATALOG);
   });
 
+  afterEach(() => {
+    setEnv("CARD_BAANX_LOGIN_MANIFEST_ID", getEnvDefault("CARD_BAANX_LOGIN_MANIFEST_ID"));
+    setEnv("CARD_BAANX_HOSTED_MANIFEST_ID", getEnvDefault("CARD_BAANX_HOSTED_MANIFEST_ID"));
+  });
+
   describe("openHostedLogin", () => {
     it("opens the authorize page on the login manifest, and keeps the query", async () => {
       const { result } = renderOpeners();
 
       const answer = await act(async () => result.current.openHostedLogin(AUTHORIZE_URL));
 
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/platform/baanx-login-url-stg?returnTo=%2Fpaytab",
-        {
-          state: {
-            goToURL:
-              "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
-          },
+      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-login-url?returnTo=%2Fpaytab", {
+        state: {
+          goToURL:
+            "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
         },
-      );
+      });
       expect(answer).toEqual({ type: "pending" });
     });
 
-    it("takes the login manifest id the flag carries", async () => {
+    it("takes the login manifest id the env carries", async () => {
       manifestsFrom({ other: { id: "other", url: "https://other.test" } });
-      const { result } = renderOpeners({ baanx_login_manifest_id: "other" });
+      setEnv("CARD_BAANX_LOGIN_MANIFEST_ID", "other");
+      const { result } = renderOpeners();
 
       await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
 
-      expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [
-        "https://other.test",
-      ]);
       expect(mockNavigate).toHaveBeenCalledWith("/platform/other?returnTo=%2Fpaytab", {
         state: {
           goToURL:
@@ -98,47 +115,13 @@ describe("useCardHostedPageOpeners", () => {
       });
     });
 
-    it("ends the provider session on the login manifest before it navigates", async () => {
-      // A cold start reaches the login without a sign-in change, so this is the only wipe the
-      // provider gets before it may sign the previous holder straight back in.
-      let settleWipe!: (value: unknown) => void;
-      mockedInvoke.mockImplementationOnce(
-        () =>
-          new Promise(resolve => {
-            settleWipe = resolve;
-          }),
-      );
+    it("asks for no wipe of its own, since the entry of the pay tab already ended the session", async () => {
       const { result } = renderOpeners();
 
-      const opening = result.current.openHostedLogin(AUTHORIZE_URL);
+      await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
 
-      expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [LOGIN_MANIFEST_URL]);
-      expect(mockNavigate).not.toHaveBeenCalled();
-
-      settleWipe(undefined);
-      await act(async () => {
-        await opening;
-      });
-
+      expect(mockedInvoke).not.toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledTimes(1);
-    });
-
-    it("opens the login anyway when the wipe fails", async () => {
-      mockedInvoke.mockRejectedValueOnce(new Error("the session is not reachable"));
-      const { result } = renderOpeners();
-
-      const error = await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
-
-      expect(error).toBeNull();
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/platform/baanx-login-url-stg?returnTo=%2Fpaytab",
-        {
-          state: {
-            goToURL:
-              "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
-          },
-        },
-      );
     });
   });
 
@@ -148,10 +131,9 @@ describe("useCardHostedPageOpeners", () => {
 
       await run(() => result.current.openHostedPage("/kyc?step=2"));
 
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
-        { state: { goToURL: "https://ledger.baanxapi.test/kyc?step=2" } },
-      );
+      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-hosted-url?returnTo=%2Fpaytab", {
+        state: { goToURL: "https://ledger.baanxapi.test/kyc?step=2" },
+      });
       // The hosted page runs on the session the signed-in user already holds.
       expect(mockedInvoke).not.toHaveBeenCalled();
     });
@@ -161,32 +143,48 @@ describe("useCardHostedPageOpeners", () => {
 
       await run(() => result.current.openHostedPage("/onboarding/signup"));
 
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
-        { state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" } },
-      );
+      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-hosted-url?returnTo=%2Fpaytab", {
+        state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" },
+      });
     });
 
-    it("ends the provider session on the hosted manifest before it opens the signup", async () => {
-      // A signup reached after a restart never crosses a sign-in change, so this is the only wipe
-      // standing between the previous holder's session and the new applicant.
-      let settleWipe!: (value: unknown) => void;
-      mockedInvoke.mockImplementationOnce(
-        () =>
-          new Promise(resolve => {
-            settleWipe = resolve;
-          }),
-      );
+    it("asks for no wipe before the signup, since the entry of the pay tab ended the session", async () => {
       const { result } = renderOpeners();
 
-      const opening = result.current.openHostedPage("/onboarding/signup");
+      await run(() => result.current.openHostedPage("/onboarding/signup"));
 
-      expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [
-        "https://ledger.baanxapi.test",
-      ]);
+      expect(mockedInvoke).not.toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    it("takes the hosted manifest id the env carries", async () => {
+      manifestsFrom({ other: { id: "other", url: "https://other.test" } });
+      setEnv("CARD_BAANX_HOSTED_MANIFEST_ID", "other");
+      const { result } = renderOpeners();
+
+      await run(() => result.current.openHostedPage("/onboarding/signup"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/platform/other?returnTo=%2Fpaytab", {
+        state: { goToURL: "https://other.test/onboarding/signup" },
+      });
+    });
+  });
+
+  describe("the wipe of the pay tab entry", () => {
+    it("holds the navigation back until the wipe of every manifest has settled", async () => {
+      const settleWipes: ((value: unknown) => void)[] = [];
+      mockedInvoke.mockImplementationOnce(() => new Promise(resolve => settleWipes.push(resolve)));
+      mockedInvoke.mockImplementationOnce(() => new Promise(resolve => settleWipes.push(resolve)));
+      const { result } = renderOpenersWithWipe();
+
+      expect(settleWipes).toHaveLength(2);
+
+      const opening = result.current.openHostedPage("/topup");
+
       expect(mockNavigate).not.toHaveBeenCalled();
 
-      settleWipe(undefined);
+      settleWipes[0](undefined);
+      settleWipes[1](undefined);
       await act(async () => {
         await opening;
       });
@@ -194,28 +192,38 @@ describe("useCardHostedPageOpeners", () => {
       expect(mockNavigate).toHaveBeenCalledTimes(1);
     });
 
-    it("opens the signup anyway when the wipe fails", async () => {
-      mockedInvoke.mockRejectedValueOnce(new Error("the session is not reachable"));
-      const { result } = renderOpeners();
+    it("waits for the later wipe that a sign-in change queues during that wait", async () => {
+      const settleWipes: ((value: unknown) => void)[] = [];
+      const holdWipe = () => new Promise(resolve => settleWipes.push(resolve));
+      mockedInvoke
+        .mockImplementationOnce(holdWipe)
+        .mockImplementationOnce(holdWipe)
+        .mockImplementationOnce(holdWipe)
+        .mockImplementationOnce(holdWipe);
+      const { result, store } = renderOpenersWithWipe();
 
-      const error = await run(() => result.current.openHostedPage("/onboarding/signup"));
+      const opening = result.current.openHostedPage("/topup");
 
-      expect(error).toBeNull();
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
-        { state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" } },
-      );
-    });
-
-    it("takes the hosted manifest id the flag carries", async () => {
-      manifestsFrom({ other: { id: "other", url: "https://other.test" } });
-      const { result } = renderOpeners({ baanx_hosted_manifest_id: "other" });
-
-      await run(() => result.current.openHostedPage("/onboarding/signup"));
-
-      expect(mockNavigate).toHaveBeenCalledWith("/platform/other?returnTo=%2Fpaytab", {
-        state: { goToURL: "https://other.test/onboarding/signup" },
+      act(() => {
+        store.dispatch(payCardAuthSlice.actions.setSignedIn(true));
       });
+      expect(settleWipes).toHaveLength(4);
+
+      settleWipes[0](undefined);
+      settleWipes[1](undefined);
+      await act(async () => {
+        await new Promise(resolve => setImmediate(resolve));
+      });
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+
+      settleWipes[2](undefined);
+      settleWipes[3](undefined);
+      await act(async () => {
+        await opening;
+      });
+
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
     });
   });
 

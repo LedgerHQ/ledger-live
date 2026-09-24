@@ -3,7 +3,13 @@ import PayCard from "./PayCard";
 import type { PayCardToolProps } from "../types";
 
 const baanxWallets = [
-  { id: "w-usdc", balance: "125.40", currency: "usdc", address: "0xusdc", addressMemo: null },
+  {
+    id: "w-usdc",
+    balance: "125.40",
+    currency: "usdc",
+    address: "0xusdc",
+    addressMemo: null,
+  },
 ];
 
 // The second link has no Baanx wallet behind it, which is what the join has to show.
@@ -16,7 +22,13 @@ const linkedWallets = [
     priority: 0,
     ledgerId: "ethereum/erc20/usd__coin",
   },
-  { id: "w-sol", address: "sol-addr", currency: "sol", network: "solana", priority: 1 },
+  {
+    id: "w-sol",
+    address: "sol-addr",
+    currency: "sol",
+    network: "solana",
+    priority: 1,
+  },
 ];
 
 const combinedWallets = [
@@ -28,6 +40,7 @@ const combinedWallets = [
     priority: 0,
     ledgerId: "ethereum/erc20/usd__coin",
     balance: "125.40",
+    ledgerCurrencyId: "ethereum/erc20/usd__coin",
   },
   {
     id: "w-sol",
@@ -36,6 +49,7 @@ const combinedWallets = [
     network: "solana",
     priority: 1,
     balance: null,
+    ledgerCurrencyId: null,
   },
 ];
 
@@ -48,16 +62,6 @@ function buildProps(): PayCardToolProps {
       setPayTabEnabled: jest.fn(),
       setCardParam: jest.fn(),
       setPtxCardEnabled: jest.fn(),
-    },
-    onboarding: {
-      steps: [
-        {
-          id: "step1",
-          label: "Step 1",
-          done: false,
-        },
-      ],
-      setStepDone: jest.fn(),
     },
     cardOnboarding: {
       steps: [],
@@ -86,8 +90,30 @@ function buildProps(): PayCardToolProps {
       combinedWallets: [],
       isFetching: false,
       errors: [],
+      mock: {
+        available: true,
+        isOverridden: false,
+        fill: jest.fn(),
+        empty: jest.fn(),
+        fund: jest.fn(),
+        clear: jest.fn(),
+      },
       load: jest.fn(),
       refresh: jest.fn(),
+    },
+    transactions: {
+      available: true,
+      isOverridden: false,
+      count: 0,
+      fill: jest.fn(),
+      empty: jest.fn(),
+      receive: jest.fn(),
+      clear: jest.fn(),
+    },
+    reorder: {
+      available: true,
+      enabled: false,
+      setEnabled: jest.fn(),
     },
     currencyMapping: [{ key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" }],
     hasSeenFeatureTour: false,
@@ -105,10 +131,26 @@ describe("PayCard (web)", () => {
   it("renders every section", () => {
     render(<PayCard {...buildProps()} />);
     expect(screen.getByText("Feature flags")).toBeDefined();
-    expect(screen.getByText("Onboarding")).toBeDefined();
+    expect(screen.getByText("MSW")).toBeDefined();
+    expect(screen.getByText("Allow wallet reorder")).toBeDefined();
     expect(screen.getByText("Feature tour")).toBeDefined();
     expect(screen.getByText("Request verify hint")).toBeDefined();
     expect(screen.getByText("Card login intro")).toBeDefined();
+  });
+
+  it("should enable the wallet reorder handler from the MSW switch", () => {
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    fireEvent.click(screen.getByRole("switch", { name: "Allow wallet reorder" }));
+    expect(props.reorder.setEnabled).toHaveBeenCalledWith(true);
+  });
+
+  it("should hide the MSW switch when request mocking is unavailable", () => {
+    const props = buildProps();
+    render(<PayCard {...props} reorder={{ ...props.reorder, available: false }} />);
+
+    expect(screen.queryByText("Allow wallet reorder")).toBeNull();
   });
 
   it("resets the feature tour", () => {
@@ -167,15 +209,6 @@ describe("PayCard (web)", () => {
     expect(props.resetPayCardFeatureTourSeen).not.toHaveBeenCalled();
   });
 
-  it("wires onboarding actions", () => {
-    const props = buildProps();
-    render(<PayCard {...props} />);
-
-    // Label is display-only; ToggleRow wires onChange on the Switch.
-    const switches = screen.getAllByRole("switch");
-    fireEvent.click(switches[switches.length - 1]!);
-    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("step1", true);
-  });
   it("lists the same Card Debug entries the mobile tool lists", () => {
     render(<PayCard {...buildProps()} />);
 
@@ -236,7 +269,12 @@ describe("PayCard (web)", () => {
     render(
       <PayCard
         {...props}
-        balance={{ ...props.balance, baanxWallets, linkedWallets, combinedWallets }}
+        balance={{
+          ...props.balance,
+          baanxWallets,
+          linkedWallets,
+          combinedWallets,
+        }}
       />,
     );
 
@@ -248,9 +286,10 @@ describe("PayCard (web)", () => {
     // A link the catalog does not cover says so rather than showing an empty currency.
     expect(screen.getAllByText("undefined — this pair is not mapped").length).toBe(2);
     // And a link with no Baanx wallet behind it says that too.
-    expect(
-      screen.getByText("null — still reading, or no Baanx wallet matched"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("null — still reading, or no Baanx wallet matched")).toBeVisible();
+    // The linked response, the joined row's ledgerId, and the currency resolved from it.
+    expect(screen.getAllByText("ethereum/erc20/usd__coin")).toHaveLength(3);
+    expect(screen.getByText("null — unmapped asset, or CAL has not answered")).toBeVisible();
   });
 
   it("refreshes the wallets from the screen, and returns to the tool", () => {

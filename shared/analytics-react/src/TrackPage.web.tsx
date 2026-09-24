@@ -1,3 +1,4 @@
+import isEqual from "lodash/isEqual";
 import { useEffect, useRef, memo } from "react";
 import { trackPage } from "@shared/analytics";
 
@@ -10,8 +11,8 @@ export type TrackPageProps = {
 };
 
 /**
- * On mount, tracks an event named `Page ${category}${name ? " " + name : ""}`. A page view belongs
- * to the mount: later prop changes never emit a second event, so render one `<TrackPage>` per page.
+ * Tracks an event named `Page ${category}${name ? " " + name : ""}` whenever
+ * category, name, extra properties, refreshSource, or mandatory change.
  */
 const TrackPageComponent = ({
   category,
@@ -20,18 +21,33 @@ const TrackPageComponent = ({
   mandatory = false,
   ...props
 }: TrackPageProps): null => {
-  const firstRender = useRef(true);
+  const lastTrackedRef = useRef<TrackedPagePayload | undefined>(undefined);
 
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-
-      trackPage({ category, name, props }, { updateRoutes: true, refreshSource, mandatory });
+    const current: TrackedPagePayload = {
+      category,
+      name,
+      props,
+      refreshSource,
+      mandatory,
+    };
+    if (isEqual(lastTrackedRef.current, current)) {
+      return;
     }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    lastTrackedRef.current = current;
+
+    trackPage({ category, name, props }, { updateRoutes: true, refreshSource, mandatory });
+  }, [category, name, props, refreshSource, mandatory]);
 
   return null;
 };
 
 export const TrackPage = memo(TrackPageComponent);
+
+type TrackedPagePayload = {
+  category: string;
+  name?: string;
+  props: Record<string, unknown>;
+  refreshSource: boolean;
+  mandatory: boolean;
+};

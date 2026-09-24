@@ -31,7 +31,7 @@ function expectStakeBalance(balance: Balance) {
 
   expect(balance.stake?.actions.length).toBeGreaterThan(0);
   for (const action of balance.stake?.actions ?? []) {
-    expect(["delegate", "redelegate", "undelegate", "claim_reward"]).toContain(action);
+    expect(["delegate", "redelegate", "undelegate", "withdraw"]).toContain(action);
   }
 }
 

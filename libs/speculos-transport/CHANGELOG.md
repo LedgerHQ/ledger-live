@@ -1,5 +1,11 @@
 # @ledgerhq/speculos-transport
 
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
 ## 0.11.0
 
 ### Minor Changes
@@ -243,21 +249,5 @@
   - @ledgerhq/live-env@2.40.0-next.0
   - @ledgerhq/devices@8.16.0-next.0
   - @ledgerhq/hw-transport-node-speculos@6.34.5-next.0
-
-## 0.10.5
-
-### Patch Changes
-
-- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
-  - @ledgerhq/live-env@2.39.0
-  - @ledgerhq/live-dmk-speculos@0.9.2
-
-## 0.10.5-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
-  - @ledgerhq/live-env@2.39.0-next.0
-  - @ledgerhq/live-dmk-speculos@0.9.2-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

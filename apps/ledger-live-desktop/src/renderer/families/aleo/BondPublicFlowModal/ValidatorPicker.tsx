@@ -5,8 +5,8 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
 import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
+import { isValidatorBondable } from "@ledgerhq/live-common/families/aleo/utils";
 import BigSpinner from "~/renderer/components/BigSpinner";
-import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
@@ -15,7 +15,7 @@ import ValidatorSearchInput, {
 } from "~/renderer/components/Delegation/ValidatorSearchInput";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
-import AleoValidatorRow, { isDisabled } from "./ValidatorRow";
+import AleoValidatorRow from "./ValidatorRow";
 
 const LIST_HEIGHT = 256;
 
@@ -24,27 +24,20 @@ type Props = Readonly<{
   selected: string;
   lockedTo: string | null;
   onSelect: (address: string) => void;
-  onRetry: () => void;
 }>;
 
-export default function ValidatorPicker({
-  currency,
-  selected,
-  lockedTo,
-  onSelect,
-  onRetry,
-}: Props) {
+export default function ValidatorPicker({ currency, selected, lockedTo, onSelect }: Props) {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(true);
-  const { validators, loading, error } = useAleoValidators(currency);
+  const { validators, fetching, error, refetch } = useAleoValidators(currency);
 
   useEffect(() => {
     if (lockedTo) return;
 
     const current = validators.find(({ address }) => address === selected);
-    if (!current || !isDisabled(current)) return;
+    if (!current || isValidatorBondable(current)) return;
 
-    const replacement = validators.find(validator => !isDisabled(validator));
+    const replacement = validators.find(validator => isValidatorBondable(validator));
     if (replacement) onSelect(replacement.address);
   }, [validators, selected, lockedTo, onSelect]);
 
@@ -57,7 +50,9 @@ export default function ValidatorPicker({
         )
       : validators;
 
-    return [...matched].sort((left, right) => Number(isDisabled(left)) - Number(isDisabled(right)));
+    return [...matched].sort(
+      (left, right) => Number(isValidatorBondable(right)) - Number(isValidatorBondable(left)),
+    );
   }, [search, validators]);
 
   const renderItem = useCallback(
@@ -99,20 +94,7 @@ export default function ValidatorPicker({
     );
   }
 
-  if (error && validators.length === 0) {
-    return (
-      <Box flow={3} alignItems="flex-start" data-testid="validator-fetch-error">
-        <Alert type="warning">
-          <Trans i18nKey="aleo.bond.flow.steps.validator.fetchError" />
-        </Alert>
-        <Button primary onClick={onRetry}>
-          <Trans i18nKey="common.retry" />
-        </Button>
-      </Box>
-    );
-  }
-
-  if (loading && validators.length === 0) {
+  if (fetching) {
     return (
       <ValidatorsFieldContainer>
         <Box
@@ -123,6 +105,28 @@ export default function ValidatorPicker({
           data-testid="validator-list-loading"
         >
           <BigSpinner size={35} />
+        </Box>
+      </ValidatorsFieldContainer>
+    );
+  }
+
+  if (error && validators.length === 0) {
+    return (
+      <ValidatorsFieldContainer>
+        <Box
+          p={3}
+          flow={3}
+          alignItems="center"
+          justifyContent="center"
+          style={{ minHeight: LIST_HEIGHT }}
+          data-testid="validator-fetch-error"
+        >
+          <Text ff="Inter|Medium" fontSize={4} color="neutral.c70" textAlign="center">
+            <Trans i18nKey="aleo.bond.flow.steps.validator.fetchError" />
+          </Text>
+          <Button primary onClick={refetch}>
+            <Trans i18nKey="common.retry" />
+          </Button>
         </Box>
       </ValidatorsFieldContainer>
     );

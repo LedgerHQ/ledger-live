@@ -45,10 +45,7 @@ function StakingAmount({ navigation, route }: Props) {
   const account = useAccountScreen(route).account as NearAccount;
   const { locale } = useSettings();
 
-  invariant(
-    account && account.nearResources && route.params.transaction,
-    "account and near transaction required",
-  );
+  invariant(account && route.params.transaction, "account and near transaction required");
   const bridge = useAccountBridge<NearTransaction>(account, undefined);
   const unit = useAccountUnit(account);
   const initialValue = useMemo(() => route?.params?.value ?? new BigNumber(0), [route]);

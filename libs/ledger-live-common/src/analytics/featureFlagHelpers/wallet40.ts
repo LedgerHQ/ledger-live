@@ -17,7 +17,6 @@ export const getWallet40Attributes = (
 
   return {
     isEnabled,
-    tour: wallet40FeatureFlag?.params?.tour ?? false,
     lazyOnboarding: wallet40FeatureFlag?.params?.lazyOnboarding ?? false,
     assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,
     brazePlacement: wallet40FeatureFlag?.params?.brazePlacement ?? false,

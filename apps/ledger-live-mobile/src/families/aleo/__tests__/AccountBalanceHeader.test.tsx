@@ -6,6 +6,11 @@ import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT_1 } from "../__mocks__/account.mock"
 import AccountBalanceHeader from "../AccountBalanceHeader";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
 import { useAleoPrivateSync } from "../hooks/useAleoPrivateSync";
+import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
+
+jest.mock("@ledgerhq/live-common/families/aleo/config", () => ({
+  getAleoCurrencyConfigById: jest.fn(),
+}));
 
 jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -25,7 +30,13 @@ jest.mock("LLM/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ code: "ALEO", name: "Aleo", magnitude: 6 }),
 }));
 
-jest.mock("~/components/CurrencyUnitValue", () => ({ __esModule: true, default: () => null }));
+jest.mock("~/components/CurrencyUnitValue", () => ({
+  __esModule: true,
+  default: ({ value }: { value: { toString: () => string } }) => {
+    const { Text } = jest.requireActual("react-native");
+    return <Text>{value.toString()}</Text>;
+  },
+}));
 
 const baseAleoResources = {
   transparentBalance: new BigNumber(600000),
@@ -41,16 +52,49 @@ const baseAccount: AleoAccount = {
   aleoResources: baseAleoResources,
 };
 
+const mockGetAleoConfig = jest.mocked(getAleoCurrencyConfigById);
+
+function makeConfig(enableStaking: boolean): ReturnType<typeof getAleoCurrencyConfigById> {
+  return { enableStaking } as ReturnType<typeof getAleoCurrencyConfigById>;
+}
+
 describe("AccountBalanceHeader", () => {
+  beforeEach(() => {
+    mockGetAleoConfig.mockReturnValue(makeConfig(true));
+  });
+
   it("renders the Balances section title", () => {
     render(<AccountBalanceHeader account={baseAccount} />);
 
     expect(screen.getByText("aleo.balancesSection")).toBeOnTheScreen();
   });
 
-  it("renders transparent and private balance items when both are present", () => {
+  it("renders available, transparent and private balance items when all are present", () => {
     render(<AccountBalanceHeader account={baseAccount} />);
 
+    expect(screen.getByText("aleo.info.available.title")).toBeOnTheScreen();
+    expect(screen.getByText("aleo.info.transparent.title")).toBeOnTheScreen();
+    expect(screen.getByText("aleo.info.private.title")).toBeOnTheScreen();
+  });
+
+  it("shows the spendable balance as the available amount, next to the breakdown", () => {
+    const account: AleoAccount = { ...baseAccount, spendableBalance: new BigNumber(750000) };
+
+    render(<AccountBalanceHeader account={account} />);
+
+    expect(screen.getByText("750000")).toBeOnTheScreen();
+    expect(screen.getByText("600000")).toBeOnTheScreen();
+    expect(screen.getByText("400000")).toBeOnTheScreen();
+  });
+
+  it("hides the available amount when staking is disabled, keeping the breakdown", () => {
+    mockGetAleoConfig.mockReturnValue(makeConfig(false));
+    const account: AleoAccount = { ...baseAccount, spendableBalance: new BigNumber(750000) };
+
+    render(<AccountBalanceHeader account={account} />);
+
+    expect(screen.queryByText("aleo.info.available.title")).not.toBeOnTheScreen();
+    expect(screen.queryByText("750000")).not.toBeOnTheScreen();
     expect(screen.getByText("aleo.info.transparent.title")).toBeOnTheScreen();
     expect(screen.getByText("aleo.info.private.title")).toBeOnTheScreen();
   });

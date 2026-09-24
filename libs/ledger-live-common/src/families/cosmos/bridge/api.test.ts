@@ -1,7 +1,9 @@
 import type { StakingResources } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import BigNumber from "bignumber.js";
-import cosmosBridge from "./api";
+import { coinModuleLoaders } from "../../../coin-modules/loaders";
+import cosmosBridge, { getDeviceSignOptions } from "./api";
 
 const mockGetRedelegations = jest.fn();
 jest.mock("@ledgerhq/coin-cosmos/logic/staking/getRedelegations", () => ({
@@ -71,6 +73,36 @@ describe("cosmos bridge", () => {
       expect(mockGetRedelegations).toHaveBeenCalledWith("cosmos", "cosmos1a");
       expect(result.redelegations).toEqual(redelegations);
       expect(result.delegatedBalance).toBe(base.delegatedBalance);
+    });
+  });
+
+  describe("getDeviceSignOptions", () => {
+    const cosmosCoins = coinModuleLoaders.find(l => l.family === "cosmos")!.supportedCoins;
+
+    it.each(cosmosCoins)("supplies the chain HRP and signWithPrefix for %s", currencyId => {
+      const id = currencyId === "osmosis" ? "osmo" : currencyId;
+      const currency = getCryptoCurrencyById(id);
+      const chain = cryptoFactory(id);
+      const account = { currency } as never;
+
+      expect(getDeviceSignOptions({}, account)).toEqual({
+        hrp: chain.prefix,
+        signWithPrefix: chain.signWithPrefix,
+      });
+    });
+
+    it("omits the sign prefix for crypto_org and keeps it for injective", () => {
+      expect(
+        getDeviceSignOptions({}, { currency: getCryptoCurrencyById("crypto_org") } as never)
+          .signWithPrefix,
+      ).toBe(false);
+      expect(
+        getDeviceSignOptions({}, { currency: getCryptoCurrencyById("injective") } as never)
+          .signWithPrefix,
+      ).toBe(true);
+      expect(
+        getDeviceSignOptions({}, { currency: getCryptoCurrencyById("injective") } as never).hrp,
+      ).toBe("inj");
     });
   });
 });

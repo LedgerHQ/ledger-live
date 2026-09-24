@@ -1,5 +1,16 @@
 # @ledgerhq/hw-app-polkadot
 
+## 7.2.0-next.0
+
+### Minor Changes
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
+### Patch Changes
+
+- Updated dependencies [[`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`d6739d7`](https://github.com/LedgerHQ/ledger-live/commit/d6739d7fdc0b02ea26d2a29f6512f28b45c4ac38)]:
+  - @ledgerhq/hw-app-eth@7.9.0-next.0
+
 ## 7.1.16
 
 ### Patch Changes
@@ -143,20 +154,5 @@
 
 - Updated dependencies []:
   - @ledgerhq/hw-app-eth@7.8.10
-
-## 7.1.7-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@7.8.10-next.0
-
-## 7.1.6
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@7.8.9
-  - @ledgerhq/hw-transport@6.35.6
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

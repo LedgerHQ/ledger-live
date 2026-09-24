@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import coinConfig from "../../config";
 import { queryPreorderInfo } from "./index";
 
@@ -5,6 +6,7 @@ import { queryPreorderInfo } from "./index";
 //   TRONIFY_URL, TRONIFY_SOURCE_FLAG
 // Only queryPreorderInfo is exercised — it is a read-only quote. addTronRentRecord/uploadHash
 // create real, paid orders and must run against a Tronify sandbox (reconciliation Q10).
+const logger: Logger = (..._args: unknown[]) => {};
 const { TRONIFY_URL, TRONIFY_SOURCE_FLAG } = process.env;
 const run = TRONIFY_URL && TRONIFY_SOURCE_FLAG ? describe : describe.skip;
 
@@ -26,7 +28,7 @@ run("tronify queryPreorderInfo [integ]", () => {
   });
 
   it("returns a priced quote for a 10-minute, 32000-energy rental", async () => {
-    const quote = await queryPreorderInfo({
+    const quote = await queryPreorderInfo(logger, {
       fromAddress: RECEIVER,
       pledgeAddress: RECEIVER,
       pledgeNum: 32000,

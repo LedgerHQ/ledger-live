@@ -37,8 +37,8 @@ import {
 
 // Replacement for pointCompress from tiny-secp256k1
 function pointCompress(point: Uint8Array, compressed = true): Uint8Array {
-  const p = secp256k1.ProjectivePoint.fromHex(point);
-  return p.toRawBytes(compressed);
+  const p = secp256k1.Point.fromBytes(point);
+  return p.toBytes(compressed);
 }
 
 /**

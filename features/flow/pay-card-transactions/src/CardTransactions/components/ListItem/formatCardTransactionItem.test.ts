@@ -3,6 +3,7 @@ import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-t
 import {
   formatCardTransactionDate,
   formatFundingSources,
+  formatHistoryDayLabel,
   formatMaskedPanLast4,
   formatMerchantName,
   formatSignedAmount,
@@ -15,6 +16,14 @@ const TIMESTAMP = "2024-10-14T10:44:36.276Z";
 
 function formatLocale(locale: string) {
   return (date: Date) => new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date);
+}
+
+function translateHistoryDay(key: "today" | "yesterday" | "unknownDate") {
+  return key;
+}
+
+function formatHistoryDay() {
+  return "formatted";
 }
 
 describe("formatCardTransactionItem", () => {
@@ -72,5 +81,22 @@ describe("formatCardTransactionItem", () => {
     formatTransactionDetailDateTime(dateTime, translate, undefined, now);
 
     expect(translate).toHaveBeenCalledWith("yesterday", { time: expect.any(String) });
+  });
+
+  it("formats card history day labels consistently", () => {
+    const now = new Date(2024, 9, 15, 9, 0, 0);
+
+    expect(formatHistoryDayLabel(undefined, translateHistoryDay, formatHistoryDay, now)).toBe(
+      "unknownDate",
+    );
+    expect(
+      formatHistoryDayLabel(new Date(2024, 9, 15), translateHistoryDay, formatHistoryDay, now),
+    ).toBe("today");
+    expect(
+      formatHistoryDayLabel(new Date(2024, 9, 14), translateHistoryDay, formatHistoryDay, now),
+    ).toBe("yesterday");
+    expect(
+      formatHistoryDayLabel(new Date(2024, 9, 13), translateHistoryDay, formatHistoryDay, now),
+    ).toBe("formatted");
   });
 });

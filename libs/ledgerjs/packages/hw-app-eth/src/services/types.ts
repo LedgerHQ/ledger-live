@@ -67,8 +67,17 @@ export type LedgerEthTransactionService = {
     loadConfig: LoadConfig,
     resolutionConfig: ResolutionConfig,
     parseTx?: typeof parseTransaction,
+    /**
+     * Resolves one more contract as an ERC20 token, on top of what the transaction itself needs
+     * (e.g. the fee currency of a Celo CIP-64 transaction).
+     * The provided blob is looked up first; on a miss the CAL signatures for the chain are fetched
+     * and looked up too, so providing a blob does not guarantee that no network request is made.
+     * @name additionalErc20SignaturesConfig
+     */
     additionalErc20SignaturesConfig?: {
+      // ERC20 signatures blob (base64, same format as the CAL erc20-signatures.json files)
       additionalErc20SignaturesBlob: string;
+      // address of the contract to resolve
       contractAddressToResolve: string;
     } | null,
   ) => Promise<LedgerEthTransactionResolution>;

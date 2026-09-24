@@ -297,6 +297,22 @@ export function decodeUnifiedAddressTypecodes(address: string): number[] | null 
 }
 
 /**
+ * Whether an address is shielded -- a unified address or a Sapling one, as
+ * opposed to a transparent t-address.
+ *
+ * Reads the human-readable prefix rather than decoding the address, because
+ * this answers "may this string be shown in the clear", where an address that
+ * merely looks shielded must be hidden all the same. A unified address holding
+ * nothing but transparent receivers is therefore reported shielded, which
+ * `classifyZcashRecipient` -- the answer to the other question, what a send to
+ * it would be -- calls public.
+ */
+export function isZcashShieldedAddress(address: string): boolean {
+  const lower = address.toLowerCase();
+  return lower.startsWith(UA_HRP_MAINNET + "1") || lower.startsWith(SAPLING_HRP_MAINNET + "1");
+}
+
+/**
  * Classify a recipient address string for the Zcash shielded send flow.
  */
 export function classifyZcashRecipient(address: string): ZcashRecipientClass {

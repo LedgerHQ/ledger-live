@@ -8,15 +8,26 @@ export function selectHasCompletedCardOnboarding(state: PayCardOnboardingWidgetS
   return state.payCardOnboardingWidget.hasCompletedOnboarding;
 }
 
-export function selectHasAddedCardToWallet(state: PayCardOnboardingWidgetStateRoot): boolean {
-  return state.payCardOnboardingWidget.hasAddedCardToWallet;
+export function selectReportedAnalyticsMilestones(
+  state: PayCardOnboardingWidgetStateRoot,
+): PayCardOnboardingWidgetState["reportedAnalyticsMilestones"] {
+  return state.payCardOnboardingWidget.reportedAnalyticsMilestones;
+}
+
+export function selectAnalyticsCardId(state: PayCardOnboardingWidgetStateRoot): string | null {
+  return state.payCardOnboardingWidget.analyticsCardId ?? null;
 }
 
 export function payCardOnboardingWidgetPersistedSelector(
   state: PayCardOnboardingWidgetStateRoot,
 ): PayCardOnboardingWidgetState {
+  const reportedAnalyticsMilestones = (
+    state.payCardOnboardingWidget.reportedAnalyticsMilestones ?? []
+  ).filter(milestone => milestone !== "card-onboarding-in-progress");
+
   return {
     hasCompletedOnboarding: state.payCardOnboardingWidget.hasCompletedOnboarding,
-    hasAddedCardToWallet: state.payCardOnboardingWidget.hasAddedCardToWallet,
+    analyticsCardId: state.payCardOnboardingWidget.analyticsCardId ?? null,
+    reportedAnalyticsMilestones,
   };
 }

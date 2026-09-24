@@ -433,6 +433,33 @@ describe("postSync", () => {
     expect((synced.operations[0].extra as ZcashOperationExtra).memo).toBe("decoded by LWD");
   });
 
+  it("copies the private marker to the confirmed outgoing operation", () => {
+    const confirmed = operation({ extra: {} as ZcashOperationExtra });
+    const optimistic = operation({
+      id: "op-pending",
+      extra: { zcashShielded: true, zcashPrivate: true } as ZcashOperationExtra,
+    });
+
+    const synced = postSync(account([], []), account([confirmed], [optimistic]));
+
+    expect((synced.operations[0].extra as ZcashOperationExtra).zcashPrivate).toBe(true);
+  });
+
+  it("does not copy the private marker to an incoming leg with the same hash", () => {
+    const incoming = operation({
+      type: "SHIELDED_TX_IRONWOOD_IN",
+      extra: {} as ZcashOperationExtra,
+    });
+    const optimistic = operation({
+      id: "op-pending",
+      extra: { zcashShielded: true, zcashPrivate: true } as ZcashOperationExtra,
+    });
+
+    const synced = postSync(account([], []), account([incoming], [optimistic]));
+
+    expect((synced.operations[0].extra as ZcashOperationExtra).zcashPrivate).toBeUndefined();
+  });
+
   // The notes a shielded send spends are released on the same evidence that
   // retires its optimistic operation, so that a second send can reuse them only
   // once the first one is genuinely out of the way.

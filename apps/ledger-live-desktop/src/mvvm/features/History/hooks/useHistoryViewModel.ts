@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useSearchParams } from "react-router";
+import { useLocation, useSearchParams } from "react-router";
 import {
   formatSmallValueOperationsThreshold,
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
@@ -19,6 +19,7 @@ import {
 import type { Virtualizer } from "@tanstack/react-virtual";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { useCardAssetName } from "./useCardAssetName";
 import { useHistoryOperations } from "./useHistoryOperations";
 import { useHistoryTable } from "./useHistoryTable";
 import { useHistoryVirtualization } from "./useHistoryVirtualization";
@@ -26,7 +27,13 @@ import type { HistoryTable, OperationRow, VirtualItem } from "../types";
 import { track } from "~/renderer/analytics/segment";
 import { parseHistoryBackPath } from "../utils/historyLocationState";
 import { usePopNavigationBack } from "LLD/utils/usePopNavigationBack";
-import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "../constants";
+import {
+  HISTORY_DUST_FILTER_THRESHOLD_USD,
+  HISTORY_TAB_CARD,
+  HISTORY_TAB_CRYPTO,
+  HISTORY_TAB_SEARCH_PARAM,
+  type HistoryTab,
+} from "../constants";
 
 export type HistoryViewModel = {
   showBackButton: boolean;
@@ -44,21 +51,53 @@ export type HistoryViewModel = {
   dustFilterThreshold: string;
   onToggleHideSmallValueTokenOperations: () => void;
   contact?: Contact;
+  showHistoryTypeSwitcher: boolean;
+  historyTab: HistoryTab;
+  cardAsset?: string;
+  cardAssetName?: string;
+  onHistoryTabChange: (tab: HistoryTab) => void;
 };
 
 export function useHistoryViewModel(): HistoryViewModel {
   const dispatch = useDispatch();
+  const { showBackButton, navigateBack } = usePopNavigationBack(parseHistoryBackPath);
+
+  const { state: locationState } = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isPayTabEnabled = !!useFeature("lwdPayTab")?.enabled;
+  const hasCryptoHistoryFilter = searchParams.has("accountIds") || searchParams.has("contactId");
+  const hasCardAssetFilter =
+    searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD &&
+    Boolean(searchParams.get("asset"));
+  const showHistoryTypeSwitcher = isPayTabEnabled && !hasCryptoHistoryFilter && !hasCardAssetFilter;
+  const historyTab: HistoryTab =
+    isPayTabEnabled && searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD
+      ? HISTORY_TAB_CARD
+      : HISTORY_TAB_CRYPTO;
+  const cardAsset =
+    historyTab === HISTORY_TAB_CARD ? searchParams.get("asset") || undefined : undefined;
+  const cardAssetName = useCardAssetName(cardAsset);
 
   useEffect(() => {
     return () => {
-      dispatch(markOperationsAsSeen());
+      if (historyTab === HISTORY_TAB_CRYPTO) {
+        dispatch(markOperationsAsSeen());
+      }
     };
-  }, [dispatch]);
+  }, [dispatch, historyTab]);
 
-  const { showBackButton, navigateBack } = usePopNavigationBack(parseHistoryBackPath);
-
-  const [searchParams] = useSearchParams();
-  const isPayTabEnabled = !!useFeature("lwdPayTab")?.enabled;
+  const onHistoryTabChange = useCallback(
+    (tab: HistoryTab) => {
+      const next = new URLSearchParams(searchParams);
+      if (tab === HISTORY_TAB_CARD) {
+        next.set(HISTORY_TAB_SEARCH_PARAM, HISTORY_TAB_CARD);
+      } else {
+        next.delete(HISTORY_TAB_SEARCH_PARAM);
+      }
+      setSearchParams(next, { replace: true, state: locationState });
+    },
+    [locationState, searchParams, setSearchParams],
+  );
   const contactIdResult = ContactIdSchema.safeParse(searchParams.get("contactId"));
   const contactId = isPayTabEnabled && contactIdResult.success ? contactIdResult.data : undefined;
   const contact = useSelector(state =>
@@ -145,5 +184,10 @@ export function useHistoryViewModel(): HistoryViewModel {
     dustFilterThreshold,
     onToggleHideSmallValueTokenOperations,
     contact,
+    showHistoryTypeSwitcher,
+    historyTab,
+    cardAsset,
+    cardAssetName,
+    onHistoryTabChange,
   };
 }

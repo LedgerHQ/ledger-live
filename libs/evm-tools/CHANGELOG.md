@@ -1,5 +1,16 @@
 # @ledgerhq/evm-tools
 
+## 1.15.0-next.0
+
+### Minor Changes
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
+### Patch Changes
+
+- Updated dependencies [[`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b)]:
+  - @ledgerhq/live-env@4.1.0-next.0
+
 ## 1.14.3
 
 ### Patch Changes

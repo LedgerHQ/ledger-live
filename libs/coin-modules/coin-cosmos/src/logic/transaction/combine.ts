@@ -1,6 +1,13 @@
 import { buildTransaction } from "../../buildTransaction";
 import { CosmosCraftedTransaction } from "./craftTransaction";
 
+function assertCombinePublicKey(pubkey: string): void {
+  const bytes = Buffer.from(pubkey, "base64");
+  if (bytes.length !== 33 || (bytes[0] !== 0x02 && bytes[0] !== 0x03)) {
+    throw new Error("combine expects a compressed secp256k1 public key (33 bytes, base64)");
+  }
+}
+
 /**
  * Attach a signature to a crafted transaction, producing the broadcastable `TxRaw`.
  *
@@ -15,6 +22,7 @@ export function combine(tx: string, signature: string[], pubkey?: string): strin
   if (!pubkey) {
     throw new Error("combine requires the signer public key");
   }
+  assertCombinePublicKey(pubkey);
   if (!/^[0-9a-fA-F]{128}$/.test(signature[0])) {
     throw new Error("combine expects a 64-byte (r‖s) hex signature");
   }

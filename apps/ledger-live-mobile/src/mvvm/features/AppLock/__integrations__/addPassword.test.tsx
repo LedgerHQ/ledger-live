@@ -8,18 +8,12 @@ jest.mock("expo-crypto", () => ({
   getRandomBytesAsync: jest.fn(async (length: number) => new Uint8Array(length).fill(3)),
 }));
 
-jest.mock("../adapters/passwordDigest", () => ({
-  APP_LOCK_SALT_LENGTH: 16,
-  APP_LOCK_SCRYPT_PARAMS: { cost: 16384, blockSize: 8, parallelization: 1, digestLength: 32 },
-  derivePasswordDigest: jest.fn(async () => new Uint8Array(32).fill(9)),
-  serialiseDerivation: <T,>(run: () => Promise<T>) => run(),
+jest.mock("@features/platform-app-lock", () => ({
+  ...jest.requireActual("@features/platform-app-lock"),
+  storeNewPassword: jest.fn(async () => undefined),
 }));
 
-jest.mock("../adapters/verifierStore", () => ({
-  writePasswordVerifier: jest.fn(async () => undefined),
-}));
-
-const { writePasswordVerifier } = jest.requireMock("../adapters/verifierStore");
+const { storeNewPassword } = jest.requireMock("@features/platform-app-lock");
 
 const PASSWORD = "longenough";
 
@@ -73,7 +67,7 @@ describe("confirming a password", () => {
     await user.type(field, PASSWORD);
     await user.press(screen.getByTestId("app-lock-confirm-password-confirm"));
 
-    await waitFor(() => expect(writePasswordVerifier).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(storeNewPassword).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(store.getState().appLock.hasPassword).toBe(true));
   });
 
@@ -85,11 +79,11 @@ describe("confirming a password", () => {
     await user.press(screen.getByTestId("app-lock-confirm-password-confirm"));
 
     expect(await screen.findByText("Passwords don't match")).toBeVisible();
-    await waitFor(() => expect(writePasswordVerifier).not.toHaveBeenCalled());
+    await waitFor(() => expect(storeNewPassword).not.toHaveBeenCalled());
   });
 
   it("drops a previous save failure once the user types again", async () => {
-    writePasswordVerifier.mockRejectedValueOnce(new Error("keychain unavailable"));
+    storeNewPassword.mockRejectedValueOnce(new Error("keychain unavailable"));
 
     const { user } = renderConfirm();
 

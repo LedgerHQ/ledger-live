@@ -44,6 +44,10 @@ describe("the payCard blob restored into the desktop store", () => {
   it("keeps the runtime auth slice out of the restore", () => {
     const state = restoreAll(blob);
 
-    expect(state.payCardAuth).toEqual({ hasCard: false, status: "unknown" });
+    expect(state.payCardAuth).toEqual({
+      hasCard: false,
+      pendingLoginType: null,
+      status: "unknown",
+    });
   });
 });

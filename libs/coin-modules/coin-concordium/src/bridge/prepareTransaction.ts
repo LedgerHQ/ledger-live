@@ -4,8 +4,8 @@ import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/he
 import {
   AccountAddress,
   encodePltTransferOperations,
+  MAX_MEMO_LENGTH,
   PLT_MAX_DECIMALS,
-  PLT_MAX_MEMO_SIZE,
 } from "@ledgerhq/concordium-core";
 import type { ConcordiumCoinConfig, Transaction } from "../types";
 import { estimateFees, estimateTokenFees } from "../logic";
@@ -37,11 +37,11 @@ function recipientForEstimation(recipient: string): AccountAddress {
  * blob's byte length, so the payload has to exist before it can be priced.
  *
  * The memo counts toward `listOperationsSize`, so omitting it underprices the
- * transfer — a 256-byte memo is worth more energy than the buffer absorbs.
+ * transfer — a full-length memo is worth more energy than the buffer absorbs.
  *
  * Resolves to `undefined` when the transfer cannot be priced at all: a missing
- * magnitude, more decimals than the device will sign, or a memo past the chain's
- * limit. Sync only builds a sub-account whose CAL magnitude matches the chain's
+ * magnitude, more decimals than the device will sign, or a memo past
+ * {@link MAX_MEMO_LENGTH}. Sync only builds a sub-account whose CAL magnitude matches the chain's
  * decimals, so the first should not occur.
  *
  * The decimals check has to happen here rather than being left to the encoder.
@@ -59,8 +59,8 @@ async function estimatePltFees(
   const decimals = subAccount.token.units[0]?.magnitude;
   if (decimals === undefined || decimals > PLT_MAX_DECIMALS) return undefined;
 
-  const memo = transaction.memo ? Buffer.from(transaction.memo, "utf-8") : undefined;
-  if (memo && memo.length > PLT_MAX_MEMO_SIZE) return undefined;
+  const { memo } = transaction;
+  if (memo && Buffer.byteLength(memo, "utf-8") > MAX_MEMO_LENGTH) return undefined;
 
   const operations = encodePltTransferOperations({
     recipient: recipientForEstimation(transaction.recipient),

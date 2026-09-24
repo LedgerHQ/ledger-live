@@ -20,7 +20,8 @@ export type TargetName =
   | "earn"
   | "discover"
   | "refer a friend"
-  | "card";
+  | "card"
+  | "pay";
 
 export class MainNavigationPage extends AppPage {
   private readonly drawer = new Drawer(this.page);
@@ -43,6 +44,11 @@ export class MainNavigationPage extends AppPage {
     name: "refer a friend",
   });
   private readonly cardSideBarButton = this.sidebarNavigation.getByRole("button", { name: "card" });
+  // With `lwdPayTab` on, the sidebar swaps the Card entry for this one. The two are mutually
+  // exclusive, so a spec that enables the flag must target "pay", not "card".
+  private readonly paySideBarButton = this.sidebarNavigation.getByRole("button", {
+    name: "pay",
+  });
 
   private async expectPath(expectedPath: RegExp) {
     await expect(this.page).toHaveURL(url => {
@@ -90,6 +96,11 @@ export class MainNavigationPage extends AppPage {
         expectActive: true,
         expectedPath: /^\/card-new-wallet(?:\/|$|\?)/,
         selector: this.cardSideBarButton,
+      },
+      pay: {
+        expectActive: true,
+        expectedPath: /^\/paytab(?:\/|$|\?)/,
+        selector: this.paySideBarButton,
       },
     };
   }

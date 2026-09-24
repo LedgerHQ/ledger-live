@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-solana",
-  "version": "2.1.1",
+  "version": "2.2.0-next.0",
   "description": "Ledger Solana Coin integration",
   "keywords": [
     "Ledger",
@@ -104,7 +104,6 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",

@@ -4,7 +4,7 @@ import { useRecipientMemo } from "../useRecipientMemo";
 const mockSetDoNotAskAgain = jest.fn();
 let mockDoNotAskAgain = false;
 
-jest.mock("../useDoNotAskAgainSkipMemo", () => ({
+jest.mock("../../../../hooks/useDoNotAskAgainSkipMemo", () => ({
   useDoNotAskAgainSkipMemo: () => [mockDoNotAskAgain, mockSetDoNotAskAgain],
 }));
 

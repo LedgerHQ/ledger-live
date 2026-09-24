@@ -4,21 +4,21 @@ import {
   BottomSheet,
   BottomSheetHeader,
   BottomSheetView,
-  OptionList,
-  OptionListContent,
-  OptionListItem,
-  OptionListItemContent,
-  OptionListItemDescription,
-  OptionListItemLeading,
-  OptionListItemText,
-  OptionListTrigger,
+  SelectList,
+  SelectListContent,
+  SelectListItem,
+  SelectListItemContent,
+  SelectListItemDescription,
+  SelectListItemLeading,
+  SelectListItemText,
+  SelectListTrigger,
   Subheader,
   SubheaderRow,
   SubheaderTitle,
   Text,
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
-import type { OptionListItemData } from "@ledgerhq/lumen-ui-rnative";
+import type { SelectListItemData } from "@ledgerhq/lumen-ui-rnative";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
 import CurrencyIcon from "~/components/CurrencyIcon";
@@ -35,7 +35,7 @@ type FeeAssetMeta = Readonly<{
   formattedBalance: string | undefined;
 }>;
 
-type FeeAssetListItem = OptionListItemData<string, FeeAssetMeta>;
+type FeeAssetListItem = SelectListItemData<string, FeeAssetMeta>;
 
 export function FeeAssetSelector({
   options,
@@ -88,7 +88,7 @@ export function FeeAssetSelector({
           <SubheaderTitle>{payFeesInLabel}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
-      <OptionListTrigger onPress={handleOpenSheet}>
+      <SelectListTrigger onPress={handleOpenSheet}>
         {selectedOption != null && (
           <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s8" }}>
             {selectedOption.currency && (
@@ -97,7 +97,7 @@ export function FeeAssetSelector({
             <Text lx={{ color: "base" }}>{selectedOption.ticker}</Text>
           </Box>
         )}
-      </OptionListTrigger>
+      </SelectListTrigger>
       <BottomSheet
         ref={bottomSheetRef}
         enableDynamicSizing
@@ -106,32 +106,32 @@ export function FeeAssetSelector({
       >
         <BottomSheetView>
           <BottomSheetHeader title={payFeesInLabel} />
-          <OptionList items={items} value={selectedId || null} onValueChange={handleValueChange}>
-            <OptionListContent<string, FeeAssetMeta>
+          <SelectList items={items} value={selectedId || null} onValueChange={handleValueChange}>
+            <SelectListContent<string, FeeAssetMeta>
               lx={{ marginBottom: "s24" }}
               renderItem={item => {
                 const currency = item.meta?.currency;
                 const formattedBalance = item.meta?.formattedBalance;
                 return (
-                  <OptionListItem value={item.value}>
+                  <SelectListItem value={item.value}>
                     {currency && (
-                      <OptionListItemLeading testID={`send-fee-asset-icon-${item.value}`}>
+                      <SelectListItemLeading testID={`send-fee-asset-icon-${item.value}`}>
                         <CurrencyIcon currency={currency} size={32} />
-                      </OptionListItemLeading>
+                      </SelectListItemLeading>
                     )}
-                    <OptionListItemContent>
-                      <OptionListItemText>{item.label}</OptionListItemText>
+                    <SelectListItemContent>
+                      <SelectListItemText>{item.label}</SelectListItemText>
                       {formattedBalance !== undefined && (
-                        <OptionListItemDescription testID={`send-fee-asset-balance-${item.value}`}>
+                        <SelectListItemDescription testID={`send-fee-asset-balance-${item.value}`}>
                           {formattedBalance}
-                        </OptionListItemDescription>
+                        </SelectListItemDescription>
                       )}
-                    </OptionListItemContent>
-                  </OptionListItem>
+                    </SelectListItemContent>
+                  </SelectListItem>
                 );
               }}
             />
-          </OptionList>
+          </SelectList>
         </BottomSheetView>
       </BottomSheet>
     </Box>

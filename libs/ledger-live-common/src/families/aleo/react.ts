@@ -13,6 +13,12 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../../hw/connect
 import connectApp from "../../hw/connectApp";
 import type { Device } from "../../hw/actions/types";
 import { getAccountBridge } from "../../bridge";
+import { getSyncSkipUnderPriority, useAccountSyncState, useBridgeSync } from "../../bridge/react";
+import {
+  getAleoCurrencyConfigById,
+  LIVE_BLOCK_HEIGHT_POLL_MS,
+  MAX_UNBONDING_SYNC_ATTEMPTS,
+} from "./config";
 import {
   createAction,
   getViewKeyExec,
@@ -21,23 +27,34 @@ import {
   type ViewKeysByAccountId,
 } from "./hw/getViewKey/index";
 import {
+  getClaimableStakingBalance,
   getStrategyConfig,
+  getUnbondingDisplayState,
+  getUnstakingBalance,
+  hasPendingOperationType,
   isAleoAccount,
   isAleoTransaction,
+  isDelegatorBelowMinimum,
   isPrivateTransaction,
+  isUnbondingCountingDown,
   patchAccountWithViewKey,
   sumPrivateRecords,
 } from "./utils";
 import type {
   AleoAccount,
   AleoTokenAccount,
+  AleoUnbondingDisplayState,
   AleoUnspentRecord,
   AleoValidator,
   SigningStrategy,
 } from "./types";
-import { getValidators } from "@ledgerhq/coin-aleo/logic";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
-import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "./constants";
+import {
+  MANDATORY_SYNC_POLLING_DELAY,
+  PROGRESS_THROTTLE_INTERVAL_MS,
+  UNBONDING_SYNC_PRIORITY,
+} from "./constants";
+import { useGetLastBlockHeightQuery, useGetValidatorsQuery } from "./state-manager/api";
 
 const QUICK_AMOUNT_STRATEGIES: SigningStrategy[] = ["fast", "balanced", "full"];
 
@@ -577,47 +594,280 @@ export const useAleoPrivateSync = ({
   return { isSyncing, progress, error, start, stop };
 };
 
-const lastSeenValidators: Record<string, AleoValidator[]> = {};
-
 export interface UseAleoValidatorsResult {
   validators: AleoValidator[];
   loading: boolean;
+  fetching: boolean;
   error: Error | null;
+  refetch: () => void;
 }
 
 export function useAleoValidators(currency: CryptoCurrency): UseAleoValidatorsResult {
-  const currencyId = currency.id;
-  const [validators, setValidators] = useState<AleoValidator[]>(() => [
-    ...(lastSeenValidators[currencyId] ?? []),
-  ]);
-  const [loading, setLoading] = useState(() => lastSeenValidators[currencyId] === undefined);
-  const [error, setError] = useState<Error | null>(null);
+  // Not `data`: it sticks to the previous network's committee across a currency switch.
+  const { currentData, isFetching, error, refetch } = useGetValidatorsQuery(currency.id, {
+    // `getValidators` is LRU-cached on the same TTL, so refetching on mount re-reads that cache
+    refetchOnMountOrArgChange: true,
+  });
+  const hasNoData = currentData === undefined;
+
+  // RTK Query freezes what it caches, so a picker sorting in place would throw on `currentData`.
+  const validators = useMemo(() => (currentData ? [...currentData] : []), [currentData]);
+
+  return {
+    validators,
+    loading: hasNoData && isFetching,
+    fetching: isFetching,
+    error: hasNoData && error instanceof Error ? error : null,
+    refetch,
+  };
+}
+
+type AleoChainTipOptions = {
+  enabled: boolean;
+  /**
+   * Stops the ticker, keeping the subscription and the last height. What mobile has to use:
+   * `skipPollingIfUnfocused` reads `state.config.focused`, which React Native never flips.
+   */
+  paused?: boolean;
+};
+
+/** The one chain-tip subscription: every consumer shares its cache entry and polling loop. */
+function useAleoChainTip(currencyId: string, { enabled, paused = false }: AleoChainTipOptions) {
+  const pollingInterval =
+    getAleoCurrencyConfigById(currencyId)?.liveBlockHeightPollMs ?? LIVE_BLOCK_HEIGHT_POLL_MS;
+
+  const result = useGetLastBlockHeightQuery(currencyId, {
+    skip: !enabled,
+    pollingInterval: paused ? 0 : pollingInterval,
+    skipPollingIfUnfocused: true,
+    refetchOnFocus: true,
+  });
+
+  const { refetch } = result;
+  const wasPaused = useRef(paused);
+  useEffect(() => {
+    // Unpausing only re-arms the timer a full interval out, so without this
+    // the height the user comes back to would be as old as the pause was long.
+    const resumed = wasPaused.current && !paused;
+    if (resumed && enabled) refetch();
+    wasPaused.current = paused;
+  }, [paused, enabled, refetch]);
+
+  return result;
+}
+
+export type UseAleoLiveBlockHeightOptions = AleoChainTipOptions & {
+  fallbackHeight: number;
+};
+
+/**
+ * Chain tip as a height, never below `fallbackHeight` so a lagging node can't grow a countdown.
+ */
+export function useAleoLiveBlockHeight(
+  currencyId: string,
+  { fallbackHeight, enabled, paused }: UseAleoLiveBlockHeightOptions,
+): number {
+  const { data } = useAleoChainTip(currencyId, { enabled, paused });
+
+  if (!enabled || data == null) return fallbackHeight;
+
+  return Math.max(data, fallbackHeight);
+}
+
+/**
+ * Closes the gap between the chain and the account by syncing, not by reading the live height in
+ * more places: every claimable decision — the bridge's included — reads `account.blockHeight`, so
+ * a claim offered against the live height is one the flow then refuses.
+ */
+export function useSyncOnUnbondingComplete(
+  accountId: string,
+  currencyId: string,
+  enabled: boolean,
+  { paused }: { paused?: boolean } = {},
+): void {
+  const handledTick = useRef<{ key: string; tick: number | undefined } | null>(null);
+  const sync = useBridgeSync();
+  const { pending: isAccountSyncing } = useAccountSyncState({ accountId });
+  const maxAttempts =
+    getAleoCurrencyConfigById(currencyId)?.maxUnbondingSyncAttempts ?? MAX_UNBONDING_SYNC_ATTEMPTS;
+  // Keyed so an instance reused for another account — or a cap that only arrives once the config
+  // loads — starts over instead of inheriting a budget that is already spent.
+  const budgetKey = `${accountId}:${currencyId}:${maxAttempts}`;
+  const [budget, setBudget] = useState({ key: budgetKey, left: maxAttempts });
+  const attemptsLeft = budget.key === budgetKey ? budget.left : maxAttempts;
+  const exhausted = attemptsLeft <= 0;
+  const { fulfilledTimeStamp } = useAleoChainTip(currencyId, {
+    enabled: enabled && !exhausted,
+    paused,
+  });
 
   useEffect(() => {
-    let cancelled = false;
+    if (!enabled) {
+      handledTick.current = null;
+      setBudget(prev =>
+        prev.key === budgetKey && prev.left === maxAttempts
+          ? prev
+          : { key: budgetKey, left: maxAttempts },
+      );
+      return;
+    }
+    if (exhausted) return;
 
-    const seed = lastSeenValidators[currencyId];
-    setValidators([...(seed ?? [])]);
-    setLoading(seed === undefined);
-    setError(null);
+    // One chain tip is one opportunity, taken or not: nothing but a new tip — or re-enabling —
+    // may lead to a sync. Without this, `isAccountSyncing` below would fire the next attempt the
+    // instant the previous sync lands, back-to-back, instead of on the next tick.
+    // Keyed like the budget: the shared query's timestamp outlives an instance handed another
+    // account, whose first tick would otherwise read as one this instance already took.
+    const isFreshTick =
+      handledTick.current?.key !== budgetKey || handledTick.current.tick !== fulfilledTimeStamp;
+    if (!isFreshTick) return;
+    handledTick.current = { key: budgetKey, tick: fulfilledTimeStamp };
 
-    getValidators(currencyId)
-      .then(next => {
-        if (cancelled) return;
-        lastSeenValidators[currencyId] = next;
-        setValidators([...next]);
-        setLoading(false);
-      })
-      .catch((err: Error) => {
-        if (cancelled) return;
-        setError(err);
-        setLoading(false);
-      });
+    // A device flow raises the queue's skip priority above ours, and `sync()` reports nothing back
+    // either way — so a request made now would be dropped in silence.
+    const wouldBeDropped = UNBONDING_SYNC_PRIORITY < getSyncSkipUnderPriority();
+    if (wouldBeDropped) return;
 
-    return () => {
-      cancelled = true;
+    // The queue doesn't dedupe by account, so asking while the previous attempt runs queues a
+    // second sync of the same one.
+    if (isAccountSyncing) return;
+
+    setBudget(prev => ({
+      key: budgetKey,
+      left: (prev.key === budgetKey ? prev.left : maxAttempts) - 1,
+    }));
+
+    sync({
+      type: "SYNC_ONE_ACCOUNT",
+      accountId,
+      priority: UNBONDING_SYNC_PRIORITY,
+      reason: "aleo-unbonding-complete",
+    });
+  }, [
+    enabled,
+    exhausted,
+    accountId,
+    budgetKey,
+    maxAttempts,
+    sync,
+    fulfilledTimeStamp,
+    isAccountSyncing,
+  ]);
+}
+
+export type AleoNonEarningReason =
+  | NonNullable<AleoValidator["nonEarningReason"]>
+  | "leftCommittee"
+  | "ownStakeBelowMinimum";
+
+type AleoPendingStakingKind = "claim" | "unbond";
+
+export type AleoStakingPositionView = {
+  bondedBalance: BigNumber;
+  bondedValidator: string | null;
+  validatorLabel: string | null;
+  nonEarningReason: AleoNonEarningReason | undefined;
+  estimatedRate: number | undefined;
+  validatorsLoading: boolean;
+  validatorsError: Error | null;
+  unbondingBalance: BigNumber;
+  unbondingHeight: number | null;
+  claimableBalance: BigNumber;
+  unstakingBalance: BigNumber;
+  hasBonded: boolean;
+  hasUnbonding: boolean;
+  hasPendingUnbond: boolean;
+  hasPendingClaim: boolean;
+  hasPendingUnbondingChange: boolean;
+  pendingKind: AleoPendingStakingKind | null;
+};
+
+/** Everything the staking views read off an account, resolved against the validator list. */
+export function useAleoStakingPosition(account: AleoAccount): AleoStakingPositionView {
+  const { validators, loading, error } = useAleoValidators(account.currency);
+  const committeeRead = !loading && !error;
+
+  const bondedValidator = account.aleoResources?.bondedValidator ?? null;
+
+  const validator = useMemo(
+    () => (bondedValidator ? validators.find(item => item.address === bondedValidator) : undefined),
+    [validators, bondedValidator],
+  );
+
+  return useMemo(() => {
+    const bondedBalance = account.aleoResources?.bondedBalance ?? new BigNumber(0);
+    const unbondingBalance = account.aleoResources?.unbondingBalance ?? new BigNumber(0);
+    const hasBonded = bondedBalance.gt(0);
+    const hasPendingUnbond = hasPendingOperationType(account, "UNBOND");
+    const hasPendingClaim = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
+
+    const nonEarningReason = ((): AleoNonEarningReason | undefined => {
+      if (!hasBonded) return undefined;
+      if (validator) {
+        if (validator.nonEarningReason) return validator.nonEarningReason;
+        return isDelegatorBelowMinimum(bondedBalance) ? "ownStakeBelowMinimum" : undefined;
+      }
+      return committeeRead ? "leftCommittee" : undefined;
+    })();
+
+    const pendingKind = ((): AleoPendingStakingKind | null => {
+      // A claim can only follow a confirmed unbond, so when both are pending the claim is newer.
+      if (hasPendingClaim) return "claim";
+      if (hasPendingUnbond) return "unbond";
+      return null;
+    })();
+
+    return {
+      bondedBalance,
+      bondedValidator,
+      validatorLabel: validator?.name ?? null,
+      nonEarningReason,
+      estimatedRate: nonEarningReason ? 0 : validator?.estimatedYearlyRewardsRate,
+      validatorsLoading: loading,
+      validatorsError: error,
+      unbondingBalance,
+      unbondingHeight: account.aleoResources?.unbondingHeight ?? null,
+      claimableBalance: getClaimableStakingBalance(account),
+      unstakingBalance: getUnstakingBalance(account),
+      hasBonded,
+      hasUnbonding: unbondingBalance.gt(0),
+      hasPendingUnbond,
+      hasPendingClaim,
+      hasPendingUnbondingChange: hasPendingUnbond || hasPendingClaim,
+      pendingKind,
     };
-  }, [currencyId]);
+  }, [account, bondedValidator, validator, committeeRead, loading, error]);
+}
 
-  return { validators, loading, error };
+/**
+ * The unbonding row's whole display state: the countdown against the live chain tip, and the
+ * catch-up sync that closes the gap once the chain has passed the unbonding height.
+ */
+export function useAleoUnbondingState(
+  account: AleoAccount,
+  position: AleoStakingPositionView,
+  { paused }: { paused?: boolean } = {},
+): AleoUnbondingDisplayState {
+  const { unbondingHeight, claimableBalance, hasUnbonding } = position;
+  const syncedHeight = account.blockHeight;
+
+  // `hasUnbonding` gates both reads: an entry with nothing left in it can reach settling and
+  // never leave it, so a poll started for it is one nothing can ever end.
+  const currentHeight = useAleoLiveBlockHeight(account.currency.id, {
+    fallbackHeight: syncedHeight,
+    enabled:
+      hasUnbonding && isUnbondingCountingDown({ unbondingHeight, claimableBalance, syncedHeight }),
+    paused,
+  });
+  const state = getUnbondingDisplayState({
+    unbondingHeight,
+    claimableBalance,
+    syncedHeight,
+    currentHeight,
+  });
+  useSyncOnUnbondingComplete(account.id, account.currency.id, hasUnbonding && state.isSettling, {
+    paused,
+  });
+
+  return state;
 }

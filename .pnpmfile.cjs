@@ -17,6 +17,7 @@ const {
   addPeerDependencies,
   removeDependencies,
 } = require("./tools/pnpm-utils");
+const { assertDependencyChecks } = require("./tools/dependency-checks/validate");
 
 function readPackage(pkg, context) {
   /*
@@ -112,9 +113,6 @@ function readPackage(pkg, context) {
       addPeerDependencies("asyncstorage-down", {
         "@react-native-async-storage/async-storage": "*",
       }),
-      addDependencies("documentation", {
-        micromark: "*",
-      }),
       addDependencies("@react-native-community/cli-tools", {
         execa: "5.0.0",
       }),
@@ -147,8 +145,14 @@ function readPackage(pkg, context) {
   return pkg;
 }
 
+function afterAllResolved(lockfile) {
+  assertDependencyChecks(lockfile);
+  return lockfile;
+}
+
 module.exports = {
   hooks: {
+    afterAllResolved,
     readPackage,
   },
 };

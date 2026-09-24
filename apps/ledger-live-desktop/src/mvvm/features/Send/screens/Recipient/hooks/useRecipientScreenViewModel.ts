@@ -13,7 +13,7 @@ import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowCo
 import { useRecipientScanner } from "../../../context/RecipientScannerContext";
 import { trackPage } from "~/renderer/analytics/segment";
 import { t } from "~/renderer/i18n/init";
-import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
 import { getAccountSelfTransferTarget } from "../../../utils/selfTransferTarget";
 
@@ -56,6 +56,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     () => state.account.currency ?? (account ? getAccountCurrency(account) : null),
     [state.account.currency, account],
   );
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
   const trackingProperties = useMemo(() => {
     const contactsOnNetwork =
       isContactsFeatureEnabled &&
@@ -64,18 +65,17 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
         : [];
 
     return {
-      ...getSendFlowTrackingProperties(account, state.account.parentAccount),
+      ...sendFlowTrackingProperties,
       hasContacts: contactsOnNetwork.length > 0,
       contactsCount: contactsOnNetwork.length,
     };
   }, [
-    account,
+    sendFlowTrackingProperties,
     contacts,
     currency,
     eligibleAddressFamilies,
     excludedCurrencyIds,
     isContactsFeatureEnabled,
-    state.account.parentAccount,
   ]);
 
   const hasTrackedRef = useRef(false);

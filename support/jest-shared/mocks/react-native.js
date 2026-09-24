@@ -15,5 +15,7 @@ module.exports = {
   Keyboard: {
     isVisible: () => false,
     dismiss: () => {},
+    // Inert by default; tests that drive the keyboard spy on this and call the listener themselves.
+    addListener: () => ({ remove: () => {} }),
   },
 };

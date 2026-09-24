@@ -30,6 +30,7 @@ import {
 import {
   CosmosAccount,
   CosmosLikeTransaction,
+  getCosmosResources,
   StatusErrorMap,
   Transaction,
   TransactionStatus,
@@ -68,9 +69,9 @@ export class CosmosTransactionStatusManager {
         errors.redelegation = redelegationError;
       }
     } else if (transaction.mode === "undelegate") {
+      const cosmosResources = getCosmosResources(account);
       invariant(
-        account.cosmosResources &&
-          account.cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS,
+        cosmosResources && cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS,
         "unbondings should not have more than 6 entries",
       );
       if (transaction.validators.length === 0)
@@ -103,7 +104,7 @@ export class CosmosTransactionStatusManager {
     let totalSpent = estimatedFees;
 
     if (["claimReward", "claimRewardCompound"].includes(transaction.mode)) {
-      const { cosmosResources } = account;
+      const cosmosResources = getCosmosResources(account);
       invariant(cosmosResources, "cosmosResources should exist");
       const claimReward =
         transaction.validators.length && cosmosResources
@@ -249,7 +250,8 @@ export class CosmosTransactionStatusManager {
       errors.amount = new NotEnoughBalance();
     }
 
-    if (account.cosmosResources?.delegations.length > 0 && transaction.useAllAmount) {
+    const cosmosResources = getCosmosResources(account);
+    if (cosmosResources && cosmosResources.delegations.length > 0 && transaction.useAllAmount) {
       warnings.amount = new RecommendUndelegation();
     }
     return Promise.resolve({
@@ -265,8 +267,9 @@ export class CosmosTransactionStatusManager {
     account: CosmosAccount,
     transaction: CosmosLikeTransaction,
   ) => {
-    if (account.cosmosResources) {
-      const redelegations = account.cosmosResources.redelegations;
+    const cosmosResources = getCosmosResources(account);
+    if (cosmosResources) {
+      const redelegations = cosmosResources.redelegations;
       if (redelegations.length >= COSMOS_MAX_REDELEGATIONS) {
         return new CosmosTooManyRedelegations();
       }
@@ -303,7 +306,7 @@ export class CosmosTransactionStatusManager {
     address: string | undefined | null,
     amount: BigNumber,
   ) => {
-    const { cosmosResources } = account;
+    const cosmosResources = getCosmosResources(account);
     invariant(cosmosResources, "cosmosResources should exist");
 
     if (

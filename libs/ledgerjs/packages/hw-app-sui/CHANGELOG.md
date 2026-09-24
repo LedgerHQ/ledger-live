@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-sui
 
+## 1.12.0-next.0
+
+### Minor Changes
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
 ## 1.11.4
 
 ### Patch Changes

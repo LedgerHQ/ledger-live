@@ -7,7 +7,7 @@ const ROW_LX = { padding: "s12", gap: "s4" } as const;
 const KV_LX = { flexDirection: "row", alignItems: "center", gap: "s8" } as const;
 const INPUT_ROW_LX = { flexDirection: "row", alignItems: "center", gap: "s8" } as const;
 
-export function Env({ envVars, onOverride, onReset }: EnvDevToolProps) {
+function Env({ envVars, onOverride, onReset }: EnvDevToolProps) {
   const { theme } = useTheme();
   const [query, setQuery] = useState("");
 

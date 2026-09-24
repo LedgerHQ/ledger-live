@@ -6,6 +6,7 @@ import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { BroadcastFlow, shouldRunSharedAccountFlow } from "@e2e/helpers/broadcastRotation";
 import type { LiveDataCommandOptions } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import type { InitOptions } from "@e2e/utils/initUtil";
 
@@ -30,6 +31,11 @@ export type SendTestOptions = {
   featureFlags?: InitOptions["featureFlags"];
   userdata?: InitOptions["userdata"];
   liveDataOptions?: LiveDataCommandOptions;
+  /**
+   * Set it when the debited account is shared with the other mobile platform: the send then runs
+   * on one platform per run once both broadcast, instead of racing the account's nonce.
+   */
+  sharedAccountFlow?: BroadcastFlow;
 };
 
 export const beforeAllFunction = async (
@@ -124,7 +130,10 @@ export function runSendTest(
   );
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
-  describe("Send from 1 account to another", () => {
+  const flow = options?.sharedAccountFlow;
+  const describeFlow =
+    flow === undefined || shouldRunSharedAccountFlow(flow) ? describe : describe.skip;
+  describeFlow("Send from 1 account to another", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, options);
     });

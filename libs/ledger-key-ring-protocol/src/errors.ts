@@ -79,3 +79,10 @@ export class QRCodeWSClosed extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class QRCodeProtocolError extends Error {
+  override name = "QRCodeProtocolError";
+  constructor(message?: string) {
+    super(message || "QRCodeProtocolError");
+  }
+}

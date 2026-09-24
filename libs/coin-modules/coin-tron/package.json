@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "8.1.0",
+  "version": "9.0.0-next.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -55,7 +55,6 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/live-network": "catalog:",
-    "@ledgerhq/logs": "catalog:",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",
@@ -85,7 +84,6 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",

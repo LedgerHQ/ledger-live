@@ -878,7 +878,6 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 }>;
 
 type Feature_Wallet40_Params = {
-  tour: boolean;
   lazyOnboarding: boolean;
   assetSection: boolean;
   operationsList: boolean;

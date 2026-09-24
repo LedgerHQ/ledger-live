@@ -2,6 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import { activateLedgerSync, removeMemberLedgerSync } from "@ledgerhq/live-e2e-shared/speculos";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
 import * as ledgerSyncSetup from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
+import type { LedgerSyncContactGroupDescriptor } from "@ledgerhq/live-e2e-shared/contacts";
 import type { LedgerSyncAccountDescriptor } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
 
 export default class LedgerSyncPage {
@@ -162,6 +163,10 @@ export default class LedgerSyncPage {
     accountNames: Record<string, string> = {},
   ) {
     return ledgerSyncSetup.pushAccountsToTrustchain(descriptors, accountNames);
+  }
+
+  pushContactsToTrustchain(contactGroups: LedgerSyncContactGroupDescriptor[]) {
+    return ledgerSyncSetup.pushContactsToTrustchain(contactGroups);
   }
 
   addTrustchainMember(name: string) {

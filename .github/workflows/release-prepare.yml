@@ -12,6 +12,9 @@ jobs:
   prepare-release:
     name: Prepare Release
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:

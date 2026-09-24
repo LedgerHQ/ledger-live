@@ -3,11 +3,12 @@ import {
   PayCardErrorResponseSchema,
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletSchema,
+  PayCardRewardWalletResponseSchema,
+  PayCardLinkWalletRequestSchema,
+  PayCardLinkWalletResponseSchema,
   PayCardLinkedWalletSchema,
   PayCardLinkedWalletCanonicalSchema,
   PayCardLogoutResponseSchema,
-  PayCardOnboardingStatusResponseSchema,
-  PayCardOnboardingStepSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
@@ -19,12 +20,15 @@ import {
   PayCardSetPinTokenRequestSchema,
   PayCardSetPinTokenResponseSchema,
   PayCardStatusResponseSchema,
+  PayCardTransactionCashbackSchema,
   PayCardTransactionCategorySchema,
   PayCardTransactionFundingSourceSchema,
   PayCardTransactionSchema,
   PayCardTransactionsRequestSchema,
   PayCardWalletHistoryEntrySchema,
   PayCardWalletHistoryRequestSchema,
+  PayCardWalletPrioritiesRequestSchema,
+  PayCardWalletPrioritiesResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 
@@ -50,6 +54,8 @@ export type PayCardDetailsCss = z.infer<typeof PayCardDetailsCssSchema>;
 export type PayCardTransactionCategory = z.infer<typeof PayCardTransactionCategorySchema>;
 
 export type PayCardTransactionFundingSource = z.infer<typeof PayCardTransactionFundingSourceSchema>;
+
+export type PayCardTransactionCashback = z.infer<typeof PayCardTransactionCashbackSchema>;
 
 export type PayCardTransaction = z.infer<typeof PayCardTransactionSchema>;
 
@@ -106,12 +112,21 @@ export type PayCardRefreshSessionRequest = {
 
 export type PayCardInternalWallet = z.infer<typeof PayCardInternalWalletSchema>;
 
+/** Which custodial wallet to link to, or unlink from, the card. */
+export type PayCardLinkWalletRequest = z.infer<typeof PayCardLinkWalletRequestSchema>;
+
+export type PayCardLinkWalletResult = z.infer<typeof PayCardLinkWalletResponseSchema>;
+
+/** The wallet the card's rewards are paid into. */
+export type PayCardRewardWallet = z.infer<typeof PayCardRewardWalletResponseSchema>;
+
 /** One card-linked wallet exactly as the wire sent it. */
 export type PayCardLinkedWalletResponse = z.infer<typeof PayCardLinkedWalletSchema>;
 
 /** The same wallet, resolved to its Ledger currency once so every consumer reads one answer. */
 export type PayCardLinkedWallet = z.infer<typeof PayCardLinkedWalletCanonicalSchema>;
 
-export type PayCardOnboardingStep = z.infer<typeof PayCardOnboardingStepSchema>;
+/** The charging order to write: every linked wallet, each with a priority of its own. */
+export type PayCardWalletPrioritiesRequest = z.infer<typeof PayCardWalletPrioritiesRequestSchema>;
 
-export type PayCardOnboardingStatus = z.infer<typeof PayCardOnboardingStatusResponseSchema>;
+export type PayCardWalletPrioritiesResult = z.infer<typeof PayCardWalletPrioritiesResponseSchema>;

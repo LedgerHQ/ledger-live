@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { createLocalStellarApi } from "./coinModuleApi";
-import { createApi as createStellarApi } from "@ledgerhq/coin-stellar/api/index";
+import { createApi as createStellarApi } from "@ledgerhq/coin-stellar/api";
 
-jest.mock("@ledgerhq/coin-stellar/api/index", () => ({
+jest.mock("@ledgerhq/coin-stellar/api", () => ({
   createApi: jest.fn(),
 }));
 

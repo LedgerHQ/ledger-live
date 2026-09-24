@@ -1,5 +1,10 @@
 import Casper from "@zondax/ledger-casper";
 import Transport from "@ledgerhq/hw-transport";
+import {
+  LockedDeviceError,
+  UserRefusedAddress,
+  UserRefusedOnDevice,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { createDeviceSigner } from "./deviceSigner";
 
 jest.mock("@zondax/ledger-casper");
@@ -95,22 +100,100 @@ describe("createDeviceSigner (Casper)", () => {
     it("for showAddressAndPubKey", async () => {
       showAddressAndPubKey.mockResolvedValue({
         ...okAddress,
-        returnCode: 0x6985,
-        errorMessage: "rejected",
+        returnCode: 0x6a80,
+        errorMessage: "nope",
+      });
+      const signer = createDeviceSigner(mockTransport);
+
+      await expect(signer.showAddressAndPubKey("44'/506'/0'/0/0")).rejects.toThrow("27264 - nope");
+    });
+
+    it("for sign", async () => {
+      sign.mockResolvedValue({ ...okSign, returnCode: 0x6a80, errorMessage: "nope" });
+      const signer = createDeviceSigner(mockTransport);
+
+      await expect(signer.sign("44'/506'/0'/0/0", Buffer.alloc(4))).rejects.toThrow("27264 - nope");
+    });
+  });
+
+  describe("throws UserRefusedAddress when the device reports a user rejection", () => {
+    it("for showAddressAndPubKey", async () => {
+      showAddressAndPubKey.mockResolvedValue({
+        ...okAddress,
+        returnCode: 0x6986,
+        errorMessage: "Transaction rejected",
       });
       const signer = createDeviceSigner(mockTransport);
 
       await expect(signer.showAddressAndPubKey("44'/506'/0'/0/0")).rejects.toThrow(
-        "27013 - rejected",
+        UserRefusedAddress,
       );
     });
 
     it("for sign", async () => {
-      sign.mockResolvedValue({ ...okSign, returnCode: 0x6985, errorMessage: "rejected" });
+      sign.mockResolvedValue({
+        ...okSign,
+        returnCode: 0x6986,
+        errorMessage: "Transaction rejected",
+      });
       const signer = createDeviceSigner(mockTransport);
 
       await expect(signer.sign("44'/506'/0'/0/0", Buffer.alloc(4))).rejects.toThrow(
-        "27013 - rejected",
+        UserRefusedOnDevice,
+      );
+    });
+  });
+
+  describe("rebuilds the typed errors @zondax/ledger-casper flattens", () => {
+    it("throws LockedDeviceError when the device is locked", async () => {
+      sign.mockResolvedValue({
+        ...okSign,
+        returnCode: 0x5515,
+        errorMessage: "Unknown Status Code: 21781",
+      });
+      const signer = createDeviceSigner(mockTransport);
+
+      await expect(signer.sign("44'/506'/0'/0/0", Buffer.alloc(4))).rejects.toThrow(
+        LockedDeviceError,
+      );
+    });
+
+    it("keeps the original message for the 0xffff catch-all", async () => {
+      sign.mockResolvedValue({
+        ...okSign,
+        returnCode: 0xffff,
+        errorMessage: "DisconnectedDevice: The device was disconnected.",
+      });
+      const signer = createDeviceSigner(mockTransport);
+
+      await expect(signer.sign("44'/506'/0'/0/0", Buffer.alloc(4))).rejects.toThrow(
+        "DisconnectedDevice: The device was disconnected.",
+      );
+    });
+
+    it("does not turn a locked device on the address path into an address refusal", async () => {
+      showAddressAndPubKey.mockResolvedValue({
+        ...okAddress,
+        returnCode: 0x5515,
+        errorMessage: "Unknown Status Code: 21781",
+      });
+      const signer = createDeviceSigner(mockTransport);
+
+      await expect(signer.showAddressAndPubKey("44'/506'/0'/0/0")).rejects.toThrow(
+        LockedDeviceError,
+      );
+    });
+
+    it("keeps 0x6985 generic: app-casper rejects with 0x6986, zxlib reads 0x6985 as ConditionsNotSatisfied", async () => {
+      sign.mockResolvedValue({
+        ...okSign,
+        returnCode: 0x6985,
+        errorMessage: "Conditions not satisfied",
+      });
+      const signer = createDeviceSigner(mockTransport);
+
+      await expect(signer.sign("44'/506'/0'/0/0", Buffer.alloc(4))).rejects.toThrow(
+        "27013 - Conditions not satisfied",
       );
     });
   });

@@ -1,5 +1,5 @@
 // Encapsulate for LLD et LLM
-export * from "@ledgerhq/coin-stellar/types/index";
+export * from "@ledgerhq/coin-stellar/types";
 
 import { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import type {

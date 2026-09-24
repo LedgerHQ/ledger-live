@@ -1,6 +1,6 @@
 {
   "name": "@devtools/env",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "DevTools panel to inspect, override, and reset individual env vars at runtime",
   "main": "src/index.ts",
@@ -18,7 +18,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "unimported": "pnpm knip --directory ../.. -c devtools/env/knip.web.config.mjs -W devtools/env --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/env/knip.native.config.mjs -W devtools/env --tsConfig tsconfig.native.json"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

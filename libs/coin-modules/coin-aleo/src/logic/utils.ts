@@ -6,6 +6,8 @@ import type {
   Account,
   AccountLike,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
   OperationType,
   TokenAccount,
 } from "@ledgerhq/types-live";
@@ -31,6 +33,7 @@ import {
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   MAX_VALIDATOR_STAKE_SHARE,
   MICROCREDITS_PER_CREDIT,
+  MIN_BOND_AMOUNT_MICROCREDITS,
   MIN_DELEGATOR_STAKE_MICROCREDITS,
   PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
@@ -51,7 +54,9 @@ import type {
   Intent,
   AleoTransactionIntentData,
   AleoPublicTransaction,
+  AleoOperation,
   AleoOperationExtra,
+  AleoOperationExtraRaw,
   TransactionPublic,
   TransactionPrivate,
   AleoCoinConfig,
@@ -68,6 +73,8 @@ import type {
   AleoStakingPosition,
   AleoStakingResources,
   AleoStakingMode,
+  AleoValidator,
+  AleoUnbondingDisplayState,
   AleoValidatorNonEarningReason,
 } from "../types";
 
@@ -285,7 +292,9 @@ export function parseTransactionFields(rawTx: AleoPublicTransaction, address: st
   const blockHash = rawTx.block_hash;
 
   if (rawTx.program_id === PROGRAM_ID.CREDITS) {
-    type = address === rawTx.recipient_address ? "IN" : "OUT";
+    // The indexer blanks both sides of a staking call, so no address comparison can type it.
+    type =
+      resolveStakingOperationType(rawTx) ?? (address === rawTx.recipient_address ? "IN" : "OUT");
   }
 
   const transactionType = determineTransactionType(rawTx.function_id, type);
@@ -357,15 +366,19 @@ export const toPublicOperation = ({
     !rawTx.recipient_address && hasOwnedRecord
       ? address
       : rawTx.recipient_address || (resolvedRecipient ?? "");
-  const type = resolveOperationType(rawTx, address, sender, recipient);
+  const stakingType = resolveStakingOperationType(rawTx);
+  const type = stakingType ?? resolveOperationType(rawTx, address, sender, recipient);
+  const value = stakingType ? new BigNumber(rawTx.fee) : resolveTransactionAmount(rawTx);
 
   return {
     id: hash,
     type,
-    senders: [sender],
-    recipients: [recipient],
-    value: BigInt(resolveTransactionAmount(rawTx).toFixed(0)),
+    senders: stakingType ? [] : [sender],
+    recipients: stakingType ? [] : [recipient],
+    value: BigInt(value.toFixed(0)),
     asset: toOperationAsset(rawTx.program_id, tokenTypeByProgramName),
+    // No `validator`/`stakedAmount`: those cost one request per bond (see resolveBondArguments),
+    // which the api path does not spend.
     details: {
       functionId: rawTx.function_id,
       transactionType: determineTransactionType(rawTx.function_id, type),
@@ -561,6 +574,33 @@ export function getStakingOperationType(functionName: string): OperationType | u
   return Object.hasOwn(STAKING_OPERATION_TYPE, functionName)
     ? STAKING_OPERATION_TYPE[functionName as AleoStakingMode]
     : undefined;
+}
+
+/** Another program may expose a same-named function; only credits.aleo staking counts. */
+export function resolveStakingOperationType(
+  rawTx: AleoPublicTransaction,
+): OperationType | undefined {
+  return rawTx.program_id === PROGRAM_ID.CREDITS
+    ? getStakingOperationType(rawTx.function_id)
+    : undefined;
+}
+
+export function isStakingOperation(op: AleoOperation): boolean {
+  const { functionId, programId } = op.extra ?? {};
+  if (functionId === undefined) return false;
+
+  return programId === PROGRAM_ID.CREDITS && getStakingOperationType(functionId) !== undefined;
+}
+
+/** `functionId` works as the discriminant because no other family's extra carries one. */
+export function isAleoOperationExtra(extra: OperationExtra): extra is AleoOperationExtra {
+  return isRecord(extra) && "functionId" in extra;
+}
+
+export function isAleoOperationExtraRaw(
+  extraRaw: OperationExtraRaw,
+): extraRaw is AleoOperationExtraRaw {
+  return isRecord(extraRaw) && "functionId" in extraRaw;
 }
 
 export function isPublicTokenTransaction(transaction: Pick<Transaction, "mode">): boolean {
@@ -920,7 +960,8 @@ export function fromHex<T>(txHex: string): T {
   return JSON.parse(Buffer.from(txHex, "hex").toString());
 }
 
-// this function is used to extract the fields that should be displayed in the operation details
+// `validator` is absent by design: this renders as plain text on both platforms, while desktop
+// shows it as a truncated, copyable address.
 export const getOperationDetailsExtraFields = (
   extra: AleoOperationExtra,
 ): OperationDetailsExtraField[] => {
@@ -963,6 +1004,59 @@ export function getClaimableStakingBalance(account: AleoAccount): BigNumber {
 }
 
 /**
+ * The locked part of an unbonding entry. {@link getClaimableStakingBalance} is all-or-nothing, so
+ * the two never overlap.
+ */
+export function getUnstakingBalance(account: AleoAccount): BigNumber {
+  const unbondingBalance = account.aleoResources?.unbondingBalance ?? new BigNumber(0);
+  return unbondingBalance.minus(getClaimableStakingBalance(account));
+}
+
+/**
+ * Whether the unbonding entry is still waiting on the account's own height. Needs no live chain
+ * tip, so callers can use it to decide whether reading that tip is worth it at all.
+ */
+export function isUnbondingCountingDown({
+  unbondingHeight,
+  claimableBalance,
+  syncedHeight,
+}: {
+  unbondingHeight: number | null;
+  claimableBalance: BigNumber;
+  syncedHeight: number;
+}): boolean {
+  return !claimableBalance.gt(0) && unbondingHeight !== null && unbondingHeight > syncedHeight;
+}
+
+/**
+ * `syncedHeight` decides claimability, because the bridge validates the claim against that same
+ * height. `currentHeight` is the live chain tip and only drives the blocks the user reads.
+ * `isSettling` is the gap: chain past the height, account not yet caught up.
+ */
+export function getUnbondingDisplayState({
+  unbondingHeight,
+  claimableBalance,
+  syncedHeight,
+  currentHeight,
+}: {
+  unbondingHeight: number | null;
+  claimableBalance: BigNumber;
+  syncedHeight: number;
+  currentHeight: number;
+}): AleoUnbondingDisplayState {
+  const isClaimable = claimableBalance.gt(0);
+  const isCountingDown = isUnbondingCountingDown({
+    unbondingHeight,
+    claimableBalance,
+    syncedHeight,
+  });
+  const blocksLeft = unbondingHeight !== null ? Math.max(0, unbondingHeight - currentHeight) : null;
+  const isSettling = !isClaimable && blocksLeft === 0;
+
+  return { isClaimable, isCountingDown, isSettling, blocksLeft, currentHeight };
+}
+
+/**
  * True while an operation of that type is still in the pending pool.
  *
  * The staking figures in `aleoResources` are read straight from the `credits.aleo` mappings
@@ -973,6 +1067,9 @@ export function getClaimableStakingBalance(account: AleoAccount): BigNumber {
  */
 export const hasPendingOperationType = (account: AleoAccount, type: OperationType): boolean =>
   (account.pendingOperations ?? []).some(op => op.type === type);
+
+export const isFirstBondPending = (account: AleoAccount): boolean =>
+  !account.aleoResources?.bondedValidator && hasPendingOperationType(account, "BOND");
 
 /**
  * Returns the spendable balance for a given Aleo transaction mode.
@@ -992,6 +1089,8 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
       return account.aleoResources?.transparentBalance ?? new BigNumber(0);
     case TRANSACTION_TYPE.UNBOND_PUBLIC:
       return account.aleoResources?.bondedBalance ?? new BigNumber(0);
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return getClaimableStakingBalance(account);
     // spending private native balance
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC: {
@@ -1022,8 +1121,6 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
         }),
       );
     }
-    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
-      return getClaimableStakingBalance(account);
     default:
       // @ts-expect-error - runtime check to ensure all transaction types are handled
       throw new Error(`aleo: unsupported tx mode for balance calculation: ${transaction.mode}`);
@@ -1516,6 +1613,11 @@ export function estimateGrossRate(
   return totalSupplyCredits.multipliedBy(ANNUAL_INFLATION_RATE).dividedBy(totalStakeCredits);
 }
 
+/** Below this, `credits.aleo` pays the delegator nothing whatever its validator does. */
+export function isDelegatorBelowMinimum(delegatorStakeMicrocredits: BigNumber): boolean {
+  return delegatorStakeMicrocredits.isLessThan(MIN_DELEGATOR_STAKE_MICROCREDITS);
+}
+
 /**
  * Why a validator pays its delegators nothing, or null when it pays. The single source
  * of truth for these rules: {@link estimateNetRate} collapses all of them to a rate of
@@ -1540,6 +1642,19 @@ export function getValidatorNonEarningReason({
   if (commissionPercent.isGreaterThanOrEqualTo(100)) return "fullCommission";
 
   return null;
+}
+
+/**
+ * Whether a delegator may bond to this validator. A full-commission validator stays
+ * bondable — it pays nothing, which the picker warns about, but the network accepts
+ * the stake; a closed, unbonding or over-concentrated one does not.
+ */
+export function isValidatorBondable(
+  validator: Pick<AleoValidator, "isOpen" | "isUnbonding" | "nonEarningReason">,
+): boolean {
+  return (
+    validator.isOpen && !validator.isUnbonding && validator.nonEarningReason !== "overConcentrated"
+  );
 }
 
 /**
@@ -1569,8 +1684,7 @@ export function estimateNetRate({
   if (!commissionPercent.isFinite() || commissionPercent.isLessThan(0)) return null;
 
   const delegatorBelowMinimum =
-    delegatorStakeMicrocredits !== undefined &&
-    delegatorStakeMicrocredits.isLessThan(MIN_DELEGATOR_STAKE_MICROCREDITS);
+    delegatorStakeMicrocredits !== undefined && isDelegatorBelowMinimum(delegatorStakeMicrocredits);
   const nonEarningReason = getValidatorNonEarningReason({
     totalStakeMicrocredits,
     validatorStakeMicrocredits,
@@ -1581,4 +1695,18 @@ export function estimateNetRate({
   const keptShare = new BigNumber(1).minus(commissionPercent.dividedBy(100));
 
   return grossRate.multipliedBy(keptShare);
+}
+
+/**
+ * The smallest bond a delegator may submit given what is already bonded: enough for the
+ * projected total to clear MIN_DELEGATOR_STAKE_MICROCREDITS, never below the absolute
+ * MIN_BOND_AMOUNT_MICROCREDITS floor. Mirrors the two amount checks in
+ * `getTransactionStatus`.
+ */
+export function getMinBondAmount(bondedBalance: BigNumber = new BigNumber(0)): BigNumber {
+  const missingForDelegatorMinimum = new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS).minus(
+    bondedBalance,
+  );
+
+  return BigNumber.max(MIN_BOND_AMOUNT_MICROCREDITS, missingForDelegatorMinimum);
 }

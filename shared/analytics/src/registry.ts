@@ -13,7 +13,12 @@
  *   setPropsFilter,
  * } from "@shared/analytics";
  *
- * setAnalytics({ track: async (_event, _props) => {} });
+ * setAnalytics({
+ *   track: async (event, props) => {
+ *     if (!segment) return "skipped_no_client";
+ *     await segment.track(event, props);
+ *   },
+ * });
  * setEnabledFn(() => true);
  * setExtraPropsFn(() => ({ extra: "props" }));
  * setMandatoryExtraPropsFn(() => ({ mandatory: "props" }));

@@ -94,7 +94,7 @@ export function useQRCodeHost({ currentOption }: Props) {
         const { time } = e as unknown as { time: number };
         if (time >= MIN_TIME_TO_REFRESH) startQRCodeProcessing();
       }
-      if (e?.name === "InvalidDigitsError") {
+      if (e?.name === "InvalidDigitsError" || e?.name === "QRCodeProtocolError") {
         setCurrentStep(Steps.SyncError);
       }
       if (e?.name === "NoTrustchainInitialized") {

@@ -1,6 +1,7 @@
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AleoOperation, AleoOperationExtra, Transaction } from "../types";
+import { PROGRAM_ID } from "../constants";
 import {
   getFunctionNameFromTransactionType,
   getNextSequenceNumber,
@@ -8,6 +9,26 @@ import {
   getStakingOperationType,
   isTokenTransaction,
 } from "../logic/utils";
+
+function resolveStakingExtra(
+  stakingType: OperationType | undefined,
+  transaction: Transaction,
+): Partial<AleoOperationExtra> {
+  if (stakingType === undefined) return {};
+
+  // Staking is credits.aleo by definition, and `isStakingOperation` reads the program to tell a
+  // staking row from a same-named function of another program.
+  const base = { programId: PROGRAM_ID.CREDITS };
+
+  switch (stakingType) {
+    case "BOND":
+      return { ...base, validator: transaction.recipient, stakedAmount: transaction.amount };
+    case "UNBOND":
+      return { ...base, stakedAmount: transaction.amount };
+    default:
+      return base;
+  }
+}
 
 export function buildOptimisticOperation({
   account,
@@ -19,7 +40,6 @@ export function buildOptimisticOperation({
   const fee = transaction.fees;
   const isTokenTx = isTokenTransaction(transaction);
   const stakingType = getStakingOperationType(transaction.mode);
-  // Staking moves funds between the account's own balances, so the fee is all that leaves it.
   const value = isTokenTx || stakingType ? fee : transaction.amount;
   const mainOperationType: OperationType = isTokenTx ? "FEES" : (stakingType ?? "OUT");
   const subOperations: Operation[] = [];
@@ -29,6 +49,7 @@ export function buildOptimisticOperation({
     functionId: getFunctionNameFromTransactionType(transaction.mode),
     transactionType: getOperationTransactionType(transaction.mode),
   };
+  const stakingExtra = resolveStakingExtra(stakingType, transaction);
 
   if (isTokenTx && tokenSubAccount) {
     const subOperationType: OperationType = "OUT";
@@ -59,12 +80,12 @@ export function buildOptimisticOperation({
     fee,
     blockHash: null,
     blockHeight: null,
-    senders: [account.freshAddress],
-    recipients: [transaction.recipient],
+    senders: stakingType ? [] : [account.freshAddress],
+    recipients: stakingType ? [] : [transaction.recipient],
     accountId: account.id,
     date: new Date(),
     transactionSequenceNumber,
-    extra,
+    extra: { ...extra, ...stakingExtra },
     ...(subOperations.length > 0 && { subOperations }),
   };
 

@@ -16,6 +16,8 @@ type Answer = () => Response | Promise<Response>;
 export type CardProvider = {
   get: (path: string, answer: Answer) => void;
   post: (path: string, answer: Answer) => void;
+  put: (path: string, answer: Answer) => void;
+  delete: (path: string, answer: Answer) => void;
   sent: () => SentRequest;
   sentTo: (path: string) => SentRequest[];
   requests: () => SentRequest[];
@@ -53,6 +55,8 @@ export function mockCardProvider(): CardProvider {
   return {
     get: route(http.get),
     post: route(http.post),
+    put: route(http.put),
+    delete: route(http.delete),
     sent: () => sentRequests[0],
     sentTo: path => sentRequests.filter(({ url }) => new URL(url).pathname === path),
     requests: () => [...sentRequests],

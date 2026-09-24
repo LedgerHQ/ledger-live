@@ -1,9 +1,13 @@
 import { Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import uniqBy from "lodash/uniqBy";
 import type { TronCoinConfig } from "../config";
 import { fetchTronAccountTxsPage, getBlock } from "../network";
-import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
+import {
+  fromTrongridTxInfoToOperation,
+  hasUnresolvedTokenReference,
+} from "../network/trongrid/trongrid-adapters";
 import { Block } from "../network/types";
 import {
   compareTxsByTimestamp,
@@ -33,6 +37,7 @@ export type ListOperationsOptions = {
 };
 
 export async function listOperations(
+  logger: Logger,
   config: TronCoinConfig,
   address: string,
   options: ListOperationsOptions,
@@ -56,7 +61,7 @@ export async function listOperations(
   // Fetch native and TRC20 transactions in parallel from TronGrid.
   // Both endpoints are queried with the same timestamp bounds to ensure
   // we can properly merge and sort them chronologically.
-  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(config, address, {
+  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(logger, config, address, {
     limit,
     minTimestamp: fetchMinTimestamp,
     maxTimestamp: fetchMaxTimestamp,
@@ -85,17 +90,32 @@ export async function listOperations(
     trc20Result: trc20Txs,
   });
 
+  // A token operation whose contract address could not be resolved is dropped: an asset with a
+  // `trc10`/`trc20` type and no `assetReference` is unidentifiable for consumers (and fatal for
+  // some), and re-typing it as native would report a token amount as TRX. Dropping happens after
+  // the cursor is computed, so pagination still advances over the transaction, but before the
+  // blocks are fetched, so a page of only-unresolvable transactions costs no block request.
+  const emittableTxs = pageTxs.filter(tx => {
+    if (!hasUnresolvedTokenReference(tx)) return true;
+    logger("tron-error", `dropping ${tx.tokenType} operation without asset reference`, {
+      txID: tx.txID,
+    });
+    return false;
+  });
+
   const blocksByHeight = new Map<number, Block>();
   const uniqueHeights = Array.from(
-    new Set(pageTxs.map(tx => tx.blockHeight).filter((h): h is number => typeof h === "number")),
+    new Set(
+      emittableTxs.map(tx => tx.blockHeight).filter((h): h is number => typeof h === "number"),
+    ),
   );
 
   await promiseAllBatched(5, uniqueHeights, async height => {
-    const fetchedBlock = await getBlock(config, height);
+    const fetchedBlock = await getBlock(logger, config, height);
     blocksByHeight.set(height, fetchedBlock);
   });
 
-  const operations = pageTxs.map(tx => {
+  const operations = emittableTxs.map(tx => {
     const height = tx.blockHeight;
     if (typeof height !== "number") {
       throw new Error(`Transaction ${tx.txID} has no block height`);

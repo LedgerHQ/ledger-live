@@ -1,15 +1,13 @@
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useGetCardOnboardingStatusQuery,
-  type PayCardOnboardingStep,
-} from "@domain/api-card-management";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { markCardOnboardingCompleted, selectHasCompletedCardOnboarding } from "../../state";
-import { useOnboardingSteps } from "./useOnboardingSteps";
+import { useCardOnboardingStatus } from "../../onboardingStatus";
+import { useOnboardingSteps, type CardOnboardingStepWithCopy } from "./useOnboardingSteps";
 
 export type CardOnboardingViewModelResult = {
   readonly isOpen: boolean;
-  readonly steps: PayCardOnboardingStep[];
+  readonly steps: CardOnboardingStepWithCopy[];
   readonly completedCount: number;
   readonly totalCount: number;
   readonly onboardingCompleted: boolean;
@@ -21,25 +19,50 @@ export type CardOnboardingViewModelResult = {
   readonly handleGotIt: () => void;
 };
 
-const NO_STEPS: readonly PayCardOnboardingStep[] = [];
-
 export function useCardOnboardingViewModel(): CardOnboardingViewModelResult {
   const [isOpen, setIsOpen] = useState(false);
-  const { data, isLoading, isError } = useGetCardOnboardingStatusQuery();
+  const { trackCardOnboardingWidgetToggled } = usePayAnalyticsContext();
+  const { data, isLoading, isError } = useCardOnboardingStatus();
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(selectHasCompletedCardOnboarding);
 
-  const steps = useOnboardingSteps(data?.steps ?? NO_STEPS);
-  const completedCount = useMemo(() => steps.filter(s => s.isDone).length, [steps]);
-  const totalCount = steps.length;
+  const steps = useOnboardingSteps(data.steps);
+  const completedCount = data.completedCount;
+  const totalCount = data.steps.length;
   const onboardingCompleted = totalCount > 0 && completedCount === totalCount;
+  const stepDone = useCallback(
+    (id: string) => data.steps.find(step => step.id === id)?.isDone ?? false,
+    [data.steps],
+  );
+  const trackingProperties = useMemo(
+    () => ({
+      page: "Pay",
+      cardClaimed: stepDone("choose-card-type"),
+      addedToOsWallet: stepDone("apple-google-pay"),
+      cardTopUp: stepDone("top-up-card"),
+      firstPurchaseCompleted: stepDone("first-purchase"),
+    }),
+    [stepDone],
+  );
 
-  const handleOpen = useCallback(() => setIsOpen(true), []);
-  const handleClose = useCallback(() => setIsOpen(false), []);
+  const handleOpen = useCallback(() => {
+    trackCardOnboardingWidgetToggled({
+      opened: true,
+      ...trackingProperties,
+    });
+    setIsOpen(true);
+  }, [trackCardOnboardingWidgetToggled, trackingProperties]);
+  const handleClose = useCallback(() => {
+    trackCardOnboardingWidgetToggled({
+      opened: false,
+      ...trackingProperties,
+    });
+    setIsOpen(false);
+  }, [trackCardOnboardingWidgetToggled, trackingProperties]);
   const handleGotIt = useCallback(() => {
     dispatch(markCardOnboardingCompleted());
-    setIsOpen(false);
-  }, [dispatch]);
+    handleClose();
+  }, [dispatch, handleClose]);
 
   return useMemo(
     () => ({

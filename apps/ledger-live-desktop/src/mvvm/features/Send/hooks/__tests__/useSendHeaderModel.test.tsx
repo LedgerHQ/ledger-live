@@ -456,6 +456,32 @@ describe("useSendHeaderModel", () => {
       expect(latestVM?.recipientContact).toBeUndefined();
       expect(latestVM?.addressInputValue).toBe("0x123456...12345678");
     });
+
+    it("shows the search address when the recipient is not accepted yet", () => {
+      mockNavigation();
+      mockActions();
+      mockData(
+        {
+          account: {
+            currency: {
+              type: "CryptoCurrency",
+              ticker: "XRP",
+              id: "ripple",
+              family: "xrp",
+            },
+            account: {},
+          },
+          recipient: null,
+          transaction: { status: {} },
+        },
+        { hasMemo: true },
+        { value: ADDRESS },
+      );
+
+      renderHook();
+
+      expect(latestVM?.addressInputValue).toBe("0x123456...12345678");
+    });
   });
 
   describe("handleBack — floating steps (history-based)", () => {
@@ -954,6 +980,27 @@ describe("useSendHeaderModel", () => {
       expect(next.feesStrategy).toBeNull();
       expect(resetViewState).toHaveBeenCalled();
       expect(goToPreviousStep).toHaveBeenCalled();
+    });
+
+    it("resets the memo before the amount so the memo patch cannot restore the old amount", () => {
+      mockNavigation();
+      const calls: string[] = [];
+      mockActions({ updateTransaction: jest.fn(() => calls.push("updateTransaction")) });
+      const resetViewState = jest.fn(() => calls.push("resetViewState"));
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.AMOUNT,
+        currentStepConfig: {},
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
+      });
+
+      renderHook("", resetViewState);
+      latestVM?.handleBack();
+
+      expect(calls).toEqual(["resetViewState", "updateTransaction"]);
     });
 
     it("leaves transaction unchanged when COIN_CONTROL step but tx has no utxoStrategy", () => {

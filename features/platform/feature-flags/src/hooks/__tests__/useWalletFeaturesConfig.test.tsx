@@ -36,7 +36,6 @@ const makeConfig = (
 ): WalletFeaturesConfig => ({
   isEnabled: value,
   shouldUseLazyOnboarding: value,
-  shouldDisplayTour: value,
   shouldDisplayAssetSection: value,
   shouldDisplayBrazePlacement: value,
   shouldDisplayOperationsList: value,
@@ -51,7 +50,6 @@ const makeConfig = (
 
 const makeParams = (value: boolean): Wallet40Params => ({
   lazyOnboarding: value,
-  tour: value,
   assetSection: value,
   brazePlacement: value,
   operationsList: value,
@@ -102,7 +100,6 @@ describe("useWalletFeaturesConfig hook", () => {
     describe.each(PLATFORMS)("on %s platform", platform => {
       it.each<[string, Wallet40Params, Partial<WalletFeaturesConfig>]>([
         ["lazyOnboarding", { lazyOnboarding: true }, { shouldUseLazyOnboarding: true }],
-        ["tour", { tour: true }, { shouldDisplayTour: true }],
         ["assetSection", { assetSection: true }, { shouldDisplayAssetSection: true }],
         ["brazePlacement", { brazePlacement: true }, { shouldDisplayBrazePlacement: true }],
         ["operationsList", { operationsList: true }, { shouldDisplayOperationsList: true }],

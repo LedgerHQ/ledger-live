@@ -73,7 +73,12 @@ describe("sidecar integration test", () => {
       });
 
       describe("getValidators", () => {
-        it(`returns expected result with ${currencyId}`, async () => {
+        // Westend relay-chain staking has migrated to Asset Hub and is no longer supported:
+        // the relay node no longer exposes the staking pallet, so `getValidators` returns an
+        // empty array here. `assethub_westend` (below) is the supported chain and keeps this
+        // assertion.
+        const test = currencyId === "westend" ? it.skip : it;
+        test(`returns expected result with ${currencyId}`, async () => {
           const result = await getValidators(undefined, currency);
 
           expect(result).toEqual(

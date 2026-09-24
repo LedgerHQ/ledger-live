@@ -16,16 +16,8 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     derivationMode,
   });
 
-  const {
-    accountInfo,
-    balances,
-    blockHeight,
-    txs,
-    delegations,
-    redelegations,
-    unbondings,
-    withdrawAddress,
-  } = await new CosmosAPI(currency.id).getAccountInfo(address, currency);
+  const { accountInfo, balances, blockHeight, txs, delegations, redelegations, unbondings } =
+    await new CosmosAPI(currency.id).getAccountInfo(address, currency);
 
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps({ address, unitCode: currency.units[1].code }, accountId, txs);
@@ -60,7 +52,6 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     delegatedBalance,
     pendingRewardsBalance,
     unbondingBalance,
-    withdrawAddress,
     sequence: accountInfo.sequence,
     // Captured from the device at scan (hw-getAddress); plain re-syncs have no device,
     // so carry the previously-persisted value forward.

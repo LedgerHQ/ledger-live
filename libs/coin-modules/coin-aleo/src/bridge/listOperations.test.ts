@@ -1,5 +1,7 @@
-import { fetchAccountTransactionsFromHeight } from "../network/utils";
+import BigNumber from "bignumber.js";
+import { fetchAccountTransactionsFromHeight, resolveBondArguments } from "../network/utils";
 import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
+import { TRANSACTION_TYPE } from "../constants";
 import { getMockedTransaction } from "../__tests__/fixtures/api.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import {
@@ -15,11 +17,13 @@ jest.mock("../network/utils");
 jest.mock("./utils");
 
 const mockFetchAccountTransactionsFromHeight = jest.mocked(fetchAccountTransactionsFromHeight);
+const mockResolveBondArguments = jest.mocked(resolveBondArguments);
 const mockToBridgeOperation = jest.mocked(toBridgeOperation);
 const mockGetCalTokens = jest.mocked(getCalTokens);
 
 const mockConfig = getMockedConfig("mainnet");
 const mockConfigWithTokens = { ...mockConfig, enableTokens: true };
+const mockConfigWithStaking = { ...mockConfig, enableStaking: true };
 const mockTokenCurrency = getMockedTokenCurrency();
 
 describe("listOperations", () => {
@@ -68,7 +72,7 @@ describe("listOperations", () => {
     expect(result.calTokens).toEqual(new Map());
   });
 
-  it("should call toBridgeOperation with isTokenTx false when tokens are disabled", async () => {
+  it("should build an operation per transaction when tokens are disabled", async () => {
     const mockTx = getMockedTransaction({ transaction_id: "tx1" });
     const mockOp = getMockedOperation({ id: "op1" });
 
@@ -91,7 +95,7 @@ describe("listOperations", () => {
       mockLedgerAccountId,
       mockTx,
       mockAddress,
-      false,
+      undefined,
     );
     expect(mockGetCalTokens).not.toHaveBeenCalled();
   });
@@ -142,14 +146,9 @@ describe("listOperations", () => {
         nextCursor: null,
       });
       mockGetCalTokens.mockResolvedValue(calTokens);
-      mockToBridgeOperation.mockImplementation((_ledgerAccountId, rawTx, address, isTokenTx) => {
-        if (rawTx.program_id === MOCK_TOKEN_PROGRAM_ID) {
-          expect(isTokenTx).toBe(true);
-          return tokenOp;
-        }
-        expect(isTokenTx).toBe(false);
-        return nativeOp;
-      });
+      mockToBridgeOperation.mockImplementation((_ledgerAccountId, rawTx) =>
+        rawTx.program_id === MOCK_TOKEN_PROGRAM_ID ? tokenOp : nativeOp,
+      );
 
       const result = await listOperations({
         config: mockConfigWithTokens,
@@ -190,11 +189,12 @@ describe("listOperations", () => {
         options: { minHeight: 0 },
       });
 
+      expect(mockToBridgeOperation).toHaveBeenCalledTimes(1);
       expect(mockToBridgeOperation).toHaveBeenCalledWith(
         mockLedgerAccountId,
         unknownTokenTx,
         mockAddress,
-        false,
+        undefined,
       );
       expect(result.operations).toEqual([mockOp]);
       expect(result.tokenOperations).toEqual([]);
@@ -234,21 +234,200 @@ describe("listOperations", () => {
         options: { minHeight: 0 },
       });
 
+      expect(mockToBridgeOperation).toHaveBeenCalledTimes(2);
       expect(mockToBridgeOperation).toHaveBeenNthCalledWith(
         1,
         mockLedgerAccountId,
         tx1,
         mockAddress,
-        true,
+        undefined,
       );
       expect(mockToBridgeOperation).toHaveBeenNthCalledWith(
         2,
         mockLedgerAccountId,
         tx2,
         mockAddress,
-        true,
+        undefined,
       );
       expect(result.tokenOperations).toEqual([op1, op2]);
+    });
+  });
+
+  describe("bond argument enrichment", () => {
+    const bondTx = getMockedTransaction({
+      transaction_id: "bond-tx",
+      function_id: TRANSACTION_TYPE.BOND_PUBLIC,
+      sender_address: "",
+      recipient_address: "",
+      amount: 0,
+    });
+
+    it("should look up bond_public arguments and thread them into the operation", async () => {
+      const transferTx = getMockedTransaction({ transaction_id: "transfer-tx" });
+      const bondArguments = { validator: "aleo1validator", amount: new BigNumber(5000) };
+
+      mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+        transactions: [bondTx, transferTx],
+        nextCursor: null,
+      });
+      mockResolveBondArguments.mockResolvedValue(new Map([["bond-tx", bondArguments]]));
+      mockToBridgeOperation.mockReturnValue(getMockedOperation({ id: "op1" }));
+
+      await listOperations({
+        config: mockConfigWithStaking,
+        currencyId: mockCurrency.id,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        options: { minHeight: 0 },
+      });
+
+      expect(mockResolveBondArguments).toHaveBeenCalledTimes(1);
+      expect(mockResolveBondArguments).toHaveBeenCalledWith({
+        config: mockConfigWithStaking,
+        transactions: [bondTx],
+      });
+      expect(mockToBridgeOperation).toHaveBeenCalledTimes(2);
+      expect(mockToBridgeOperation).toHaveBeenNthCalledWith(
+        1,
+        mockLedgerAccountId,
+        bondTx,
+        mockAddress,
+        bondArguments,
+      );
+      expect(mockToBridgeOperation).toHaveBeenNthCalledWith(
+        2,
+        mockLedgerAccountId,
+        transferTx,
+        mockAddress,
+        undefined,
+      );
+    });
+
+    it.each([TRANSACTION_TYPE.UNBOND_PUBLIC, TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC])(
+      "should not look anything up for %s",
+      async functionId => {
+        mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+          transactions: [getMockedTransaction({ function_id: functionId })],
+          nextCursor: null,
+        });
+        mockToBridgeOperation.mockReturnValue(getMockedOperation({ id: "op1" }));
+
+        await listOperations({
+          config: mockConfigWithStaking,
+          currencyId: mockCurrency.id,
+          address: mockAddress,
+          ledgerAccountId: mockLedgerAccountId,
+          options: { minHeight: 0 },
+        });
+
+        expect(mockResolveBondArguments).not.toHaveBeenCalled();
+      },
+    );
+
+    it("should not look up a bond_public on another program", async () => {
+      mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+        transactions: [{ ...bondTx, program_id: MOCK_TOKEN_PROGRAM_ID }],
+        nextCursor: null,
+      });
+      mockToBridgeOperation.mockReturnValue(getMockedOperation({ id: "op1" }));
+
+      await listOperations({
+        config: mockConfigWithStaking,
+        currencyId: mockCurrency.id,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        options: { minHeight: 0 },
+      });
+
+      expect(mockResolveBondArguments).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("enableStaking gating", () => {
+    const stakingTxs = [
+      TRANSACTION_TYPE.BOND_PUBLIC,
+      TRANSACTION_TYPE.UNBOND_PUBLIC,
+      TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+    ].map(functionId =>
+      getMockedTransaction({
+        transaction_id: `${functionId}-tx`,
+        function_id: functionId,
+        sender_address: "",
+        recipient_address: "",
+        amount: 0,
+      }),
+    );
+    const transferTx = getMockedTransaction({ transaction_id: "transfer-tx" });
+
+    beforeEach(() => {
+      mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+        transactions: [...stakingTxs, transferTx],
+        nextCursor: null,
+      });
+      mockToBridgeOperation.mockReturnValue(getMockedOperation({ id: "op1" }));
+    });
+
+    it("should keep staking transactions out of the list when staking is disabled", async () => {
+      const result = await listOperations({
+        config: mockConfig,
+        currencyId: mockCurrency.id,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        options: { minHeight: 0 },
+      });
+
+      expect(result.operations).toHaveLength(1);
+      expect(mockToBridgeOperation).toHaveBeenCalledTimes(1);
+      expect(mockToBridgeOperation).toHaveBeenCalledWith(
+        mockLedgerAccountId,
+        transferTx,
+        mockAddress,
+        undefined,
+      );
+    });
+
+    it("should not resolve bond arguments when staking is disabled", async () => {
+      await listOperations({
+        config: mockConfig,
+        currencyId: mockCurrency.id,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        options: { minHeight: 0 },
+      });
+
+      expect(mockResolveBondArguments).not.toHaveBeenCalled();
+    });
+
+    it("should list staking transactions when staking is enabled", async () => {
+      mockResolveBondArguments.mockResolvedValue(new Map());
+
+      const result = await listOperations({
+        config: mockConfigWithStaking,
+        currencyId: mockCurrency.id,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        options: { minHeight: 0 },
+      });
+
+      expect(result.operations).toHaveLength(4);
+      expect(mockToBridgeOperation).toHaveBeenCalledTimes(4);
+    });
+
+    it("should keep a bond_public on another program regardless of the flag", async () => {
+      mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+        transactions: [{ ...stakingTxs[0], program_id: MOCK_TOKEN_PROGRAM_ID }],
+        nextCursor: null,
+      });
+
+      const result = await listOperations({
+        config: mockConfig,
+        currencyId: mockCurrency.id,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        options: { minHeight: 0 },
+      });
+
+      expect(result.operations).toHaveLength(1);
     });
   });
 

@@ -1,5 +1,18 @@
 # @ledgerhq/live-signer-solana
 
+## 0.21.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b), [`5d2f40f`](https://github.com/LedgerHQ/ledger-live/commit/5d2f40f470f859960e43a2a08755a962796f6beb), [`31208bf`](https://github.com/LedgerHQ/ledger-live/commit/31208bfbd73f45dbdd817802e6468211cba77de6), [`c55b967`](https://github.com/LedgerHQ/ledger-live/commit/c55b967ed644a1639fb385281b75923532f7f0b7), [`8dead4f`](https://github.com/LedgerHQ/ledger-live/commit/8dead4fcb776189c366401305586323ee9df0525), [`e2134f5`](https://github.com/LedgerHQ/ledger-live/commit/e2134f5cffe4669ff5896e2b52904fe22218461b)]:
+  - @ledgerhq/coin-solana@2.2.0-next.0
+  - @ledgerhq/hw-app-solana@7.12.0-next.0
+  - @ledgerhq/hw-bolos@6.37.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.5.0-next.0
+  - @ledgerhq/live-env@4.1.0-next.0
+  - @ledgerhq/ledger-cal-service@1.19.7-next.0
+  - @ledgerhq/ledger-trust-service@0.8.18-next.0
+
 ## 0.21.3
 
 ### Patch Changes
@@ -222,31 +235,5 @@
 
 - Updated dependencies [[`d8cb7de`](https://github.com/LedgerHQ/ledger-live/commit/d8cb7deff30c3c1a88ae873d7bcddd6ce0d7375f)]:
   - @ledgerhq/coin-solana@0.59.1-hotfix.0
-
-## 0.18.0
-
-### Minor Changes
-
-- [#19901](https://github.com/LedgerHQ/ledger-live/pull/19901) [`93194e4`](https://github.com/LedgerHQ/ledger-live/commit/93194e4a6efbdb3ae54c0784e604edaa76e342c7) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Set the Solana DMK signer origin token so clear-signing metadata is resolved correctly
-
-### Patch Changes
-
-- Updated dependencies [[`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
-  - @ledgerhq/coin-solana@0.59.0
-  - @ledgerhq/ledger-cal-service@1.18.5
-  - @ledgerhq/ledger-trust-service@0.8.10
-
-## 0.18.0-next.0
-
-### Minor Changes
-
-- [#19901](https://github.com/LedgerHQ/ledger-live/pull/19901) [`93194e4`](https://github.com/LedgerHQ/ledger-live/commit/93194e4a6efbdb3ae54c0784e604edaa76e342c7) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Set the Solana DMK signer origin token so clear-signing metadata is resolved correctly
-
-### Patch Changes
-
-- Updated dependencies [[`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
-  - @ledgerhq/coin-solana@0.59.0-next.0
-  - @ledgerhq/ledger-cal-service@1.18.5-next.0
-  - @ledgerhq/ledger-trust-service@0.8.10-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -1,5 +1,17 @@
 # @domain/api-aggregated-assets
 
+## 0.5.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`40d296b`](https://github.com/LedgerHQ/ledger-live/commit/40d296b822381cc5d05616acafa1bca61e500dce), [`98e3038`](https://github.com/LedgerHQ/ledger-live/commit/98e303872684da47feca343c0db7d83fcce857b2), [`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b), [`c48d6d7`](https://github.com/LedgerHQ/ledger-live/commit/c48d6d71b7ec0318cfec3277c119284a88d652f7)]:
+  - @shared/env@0.8.0-next.0
+  - @shared/api-services@0.8.0-next.0
+  - @domain/entity-currency-crypto@0.13.0-next.0
+  - @domain/api-currency-token@0.6.2-next.0
+  - @domain/entity-currency@0.4.4-next.0
+  - @domain/entity-currency-token@0.5.3-next.0
+
 ## 0.5.1
 
 ### Patch Changes

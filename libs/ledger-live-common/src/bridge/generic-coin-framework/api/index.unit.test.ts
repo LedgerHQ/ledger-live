@@ -1,8 +1,8 @@
 import { getCoinModuleApi } from "./index";
 import { coinModuleLoaders } from "../../../coin-modules/loaders";
 import { registerCoinModules, resetCoinModulesForTests } from "../../../coin-modules/registry";
-import * as xrpModule from "@ledgerhq/coin-xrp/api/index";
-import * as stellarModule from "@ledgerhq/coin-stellar/api/index";
+import * as xrpModule from "@ledgerhq/coin-xrp/api";
+import * as stellarModule from "@ledgerhq/coin-stellar/api";
 import * as cantonModule from "@ledgerhq/coin-canton/api/index";
 import * as tronModule from "@ledgerhq/coin-tron/api/index";
 import * as evmModule from "@ledgerhq/coin-evm/api/index";
@@ -33,11 +33,11 @@ jest.mock("../../../config", () => ({
   getCurrencyConfiguration: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-xrp/api/index", () => ({
+jest.mock("@ledgerhq/coin-xrp/api", () => ({
   createApi: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-stellar/api/index", () => ({
+jest.mock("@ledgerhq/coin-stellar/api", () => ({
   createApi: jest.fn(),
 }));
 

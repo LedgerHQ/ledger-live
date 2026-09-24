@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/account/ordering";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
+import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@ledgerhq/live-countervalues-react";
 import { useTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/useTrackingPairForAccounts";
 import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-common/portfolio/portfolioReact";
@@ -167,9 +168,24 @@ export function useUserSettings() {
 }
 
 export function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
+  addExtraSessionTrackingPairs([trackingPair]);
+}
+
+/**
+ * Adds every pair that is not tracked yet, in one publish: a caller with a whole catalog to track
+ * would otherwise notify each subscriber once per pair.
+ *
+ * Pairs are compared by `pairId`, not by currency identity, because a token refetched from CAL
+ * comes back as a new object.
+ */
+export function addExtraSessionTrackingPairs(trackingPairs: readonly TrackingPair[]) {
   const value = extraSessionTrackingPairsChanges.value;
-  if (!value.some(tp => tp.from === trackingPair.from && tp.to === trackingPair.to))
-    extraSessionTrackingPairsChanges.next(value.concat(trackingPair));
+  const tracked = new Set(value.map(pairId));
+  const missing = trackingPairs.filter(trackingPair => !tracked.has(pairId(trackingPair)));
+
+  if (missing.length === 0) return;
+
+  extraSessionTrackingPairsChanges.next(value.concat(missing));
 }
 
 export function useExtraSessionTrackingPair() {

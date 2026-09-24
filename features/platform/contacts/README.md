@@ -2,7 +2,7 @@
 
 > [!CAUTION]
 >
-> **Status: UNSTABLE** — In active development as part of the DDD migration.
+> **Status: UNSTABLE** — In active development.
 
 Contacts domain selectors, display helpers, feature configuration, React hooks, Device Intent
 ports, address-entry primitives, and shared analytics building blocks used by flow packages.

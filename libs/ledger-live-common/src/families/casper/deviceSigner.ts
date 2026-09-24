@@ -1,15 +1,21 @@
 import Transport from "@ledgerhq/hw-transport";
+import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import Casper, { type ResponseAddress } from "@zondax/ledger-casper";
 import { CreateSigner } from "../../bridge/setup";
-import { getPath, isError } from "./common";
+import { deviceError, getPath } from "./common";
 import { CasperGetAddrResponse, CasperSigner } from "./types";
 
 const throwOnDeviceError = async <T extends { returnCode: number; errorMessage?: string }>(
   request: Promise<T>,
 ): Promise<T> => {
   const r = await request;
-  isError(r);
+  const error = deviceError(r);
+  if (error) throw error;
   return r;
+};
+
+const asAddressRefusal = (e: unknown): never => {
+  throw e instanceof UserRefusedOnDevice ? new UserRefusedAddress() : e;
 };
 
 // @zondax/ledger-casper types `Address` as the boxed `String`; narrow it to a primitive.
@@ -23,7 +29,9 @@ export const createDeviceSigner: CreateSigner<CasperSigner> = (transport: Transp
   const casper = new Casper(transport);
   return {
     showAddressAndPubKey: path =>
-      throwOnDeviceError(casper.showAddressAndPubKey(getPath(path))).then(toAddrResponse),
+      throwOnDeviceError(casper.showAddressAndPubKey(getPath(path)))
+        .catch(asAddressRefusal)
+        .then(toAddrResponse),
     getAddressAndPubKey: path =>
       throwOnDeviceError(casper.getAddressAndPubKey(getPath(path))).then(toAddrResponse),
     sign: (path, message) => throwOnDeviceError(casper.sign(getPath(path), message)),

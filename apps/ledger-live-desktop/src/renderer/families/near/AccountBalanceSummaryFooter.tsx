@@ -11,6 +11,8 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { NearFamily } from "./types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getNearBalanceBreakdown } from "@ledgerhq/live-common/families/near/react";
+import type { NearAccount } from "@ledgerhq/live-common/families/near/types";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -51,18 +53,16 @@ const AccountBalanceSummaryFooter: NearFamily["AccountBalanceSummaryFooter"] = (
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
-
   if (account.type !== "Account") return null;
 
   const {
-    spendableBalance: _spendableBalance,
-    nearResources: {
-      stakedBalance: _stakedBalance,
-      storageUsageBalance: _storageUsageBalance,
-      availableBalance: _availableBalance,
-      pendingBalance: _pendingBalance,
-    },
-  } = account;
+    stakedBalance: _stakedBalance,
+    storageUsageBalance: _storageUsageBalance,
+    availableBalance: _availableBalance,
+    pendingBalance: _pendingBalance,
+  } = getNearBalanceBreakdown(account as NearAccount);
+
+  const _spendableBalance = account.spendableBalance;
 
   const formatConfig = {
     alwaysShowSign: false,

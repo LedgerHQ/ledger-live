@@ -26,7 +26,6 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
     return {
       isEnabled,
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
-      shouldDisplayTour: isEnabled && Boolean(params?.tour),
       shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
@@ -64,8 +63,6 @@ export interface WalletFeaturesConfig {
   readonly isEnabled: boolean;
   /** Whether onboarding should skip device setup and open portfolio in read-only mode */
   readonly shouldUseLazyOnboarding: boolean;
-  /** Whether to show the Wallet V4 Tour (e.g. drawer/dialog on Portfolio) */
-  readonly shouldDisplayTour: boolean;
   /** Whether to show the asset section */
   readonly shouldDisplayAssetSection: boolean;
   /** Whether to show Braze content cards as ContentBanner (e.g. action cards on portfolio, mobile only) */

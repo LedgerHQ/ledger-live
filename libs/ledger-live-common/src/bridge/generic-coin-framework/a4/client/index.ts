@@ -1,6 +1,5 @@
 import type { AxiosResponse } from "axios";
 import network from "@ledgerhq/live-network";
-import { log } from "@ledgerhq/logs";
 import { toA4HttpError } from "./errors";
 import type {
   A4AccountView,
@@ -50,9 +49,7 @@ export class A4Client {
       });
       return { data, version: readVersion(responseHeaders) };
     } catch (err) {
-      const error = toA4HttpError(err);
-      log("a4 - getAccount", error.message, { url, headers });
-      throw error;
+      throw toA4HttpError(err);
     }
   }
 
@@ -67,9 +64,7 @@ export class A4Client {
       });
       return { data, version: readVersion(headers) };
     } catch (err) {
-      const error = toA4HttpError(err);
-      log("a4 - createAccount", error.message, { url });
-      throw error;
+      throw toA4HttpError(err);
     }
   }
 
@@ -90,9 +85,7 @@ export class A4Client {
       });
       return { data, version: readVersion(responseHeaders) ?? data };
     } catch (err) {
-      const error = toA4HttpError(err);
-      log("a4 - addAddresses", error.message, { url, headers });
-      throw error;
+      throw toA4HttpError(err);
     }
   }
 
@@ -113,9 +106,7 @@ export class A4Client {
       });
       return { data, version: readVersion(responseHeaders) };
     } catch (err) {
-      const error = toA4HttpError(err);
-      log("a4 - getBalance", error.message, { url, params, headers });
-      throw error;
+      throw toA4HttpError(err);
     }
   }
 
@@ -138,9 +129,7 @@ export class A4Client {
       });
       return { data, version: readVersion(responseHeaders) };
     } catch (err) {
-      const error = toA4HttpError(err);
-      log("a4 - listOperations", error.message, { url, params: serializedParams, headers });
-      throw error;
+      throw toA4HttpError(err);
     }
   }
 }

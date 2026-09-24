@@ -59,14 +59,12 @@ function createViewModel(
 }
 
 describe("ContactsRenameContactDrawer", () => {
-  it("should render the validation state and account for drawer insets", () => {
-    const { toJSON } = render(
+  it("should render the validation state", () => {
+    render(
       <ContactsRenameContactDrawer
         {...createViewModel({
           draftName: "Ada",
           invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
-          bottomInset: 8,
-          keyboardInset: 300,
         })}
       />,
     );
@@ -80,29 +78,22 @@ describe("ContactsRenameContactDrawer", () => {
     );
     expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
     expect(screen.getByText("3/32")).toBeVisible();
-    expect(screen.getByTestId("contacts-rename-contact-confirm")).toHaveProp("disabled", true);
-    expect(toJSON()).toMatchObject({ props: { style: { paddingBottom: 332 } } });
   });
 
-  it("should forward name and confirmation actions", () => {
+  it("should forward name changes", () => {
     const onDraftNameChange = jest.fn();
-    const onConfirm = jest.fn(async () => undefined);
 
-    render(
-      <ContactsRenameContactDrawer
-        {...createViewModel({
-          isConfirmEnabled: true,
-          onDraftNameChange,
-          onConfirm,
-        })}
-      />,
-    );
+    render(<ContactsRenameContactDrawer {...createViewModel({ onDraftNameChange })} />);
 
     fireEvent.changeText(screen.getByTestId("contacts-rename-contact-name-input"), "Ada Lovelace");
-    fireEvent.press(screen.getByTestId("contacts-rename-contact-confirm"));
 
     expect(onDraftNameChange).toHaveBeenCalledWith("Ada Lovelace");
-    expect(onConfirm).toHaveBeenCalledTimes(1);
+  });
+
+  it("should leave the confirm action to the host, which pins it above the keyboard", () => {
+    render(<ContactsRenameContactDrawer {...createViewModel({ isConfirmEnabled: true })} />);
+
+    expect(screen.queryByTestId("contacts-rename-contact-confirm")).not.toBeOnTheScreen();
   });
 
   it("should withhold focus until the host grants it", () => {

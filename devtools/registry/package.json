@@ -1,6 +1,6 @@
 {
   "name": "@devtools/registry",
-  "version": "0.4.3",
+  "version": "0.5.0-next.0",
   "private": true,
   "description": "Static registry of lazy-loaded DevTools modules",
   "main": "src/index.ts",
@@ -13,7 +13,8 @@
     "reformat": "nx g @ledgerhq/generators:reformat-devtool-registry && oxfmt src",
     "typecheck": "tsc --noEmit",
     "coverage": "echo \"no tests in @devtools/registry\"",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "unimported": "pnpm knip --directory ../.. -W devtools/registry"
   },
   "dependencies": {
     "zod": "catalog:",
@@ -21,7 +22,8 @@
     "@devtools/env": "workspace:*",
     "@devtools/pay-card": "workspace:*",
     "@devtools/trustchain": "workspace:*",
-    "@devtools/cloud-sync": "workspace:*"
+    "@devtools/cloud-sync": "workspace:*",
+    "@devtools/device-onboarding": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"

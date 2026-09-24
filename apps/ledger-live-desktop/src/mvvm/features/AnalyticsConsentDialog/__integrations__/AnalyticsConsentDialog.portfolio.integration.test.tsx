@@ -2,8 +2,9 @@ import React from "react";
 import { Route, Routes } from "react-router";
 import { render, screen, waitFor } from "tests/testSetup";
 import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
+import { trackPage } from "@shared/analytics";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { track, trackPage, updateIdentify } from "~/renderer/analytics/segment";
+import { track, updateIdentify } from "~/renderer/analytics/segment";
 import { AnalyticsConsentDialog } from "../index";
 
 const analyticsOptInOverrides = {
@@ -58,6 +59,19 @@ const FRESH_CONSENT_TITLE = "Help us improve Ledger";
 const RECONFIRM_TITLE = "Continue improving Ledger?";
 const PRIVACY_UPDATE_TITLE = "We're updating our privacy policy";
 
+function expectTrackedPhase(
+  phase: "consentFresh" | "consentReconfirm" | "preferences" | "privacy",
+) {
+  expect(trackPage).toHaveBeenCalledWith(
+    {
+      category: "AnalyticsConsentDialog",
+      name: "Analytics consent",
+      props: { phase, type: "modal" },
+    },
+    { mandatory: true, refreshSource: false, updateRoutes: true },
+  );
+}
+
 describe("AnalyticsConsentDialog on portfolio route", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -80,17 +94,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
         const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
         expect(title).toBeVisible();
         expect(screen.queryByRole("button", { name: /close/i })).not.toBeInTheDocument();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
 
         await user.click(screen.getByRole("button", { name: "Accept all" }));
         expect(track).toHaveBeenCalledWith(
@@ -126,17 +130,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
         const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
         expect(title).toBeVisible();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
 
         await user.click(screen.getByRole("button", { name: "Refuse all" }));
         expect(track).toHaveBeenCalledWith(
@@ -172,17 +166,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
         const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
         expect(title).toBeVisible();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
         const setPreferencesLink = screen.getByRole("link", { name: "Set preferences" });
         expect(setPreferencesLink).toHaveAttribute("href", "#");
 
@@ -195,17 +179,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
         await waitFor(() => {
           expect(screen.getByRole("heading", { name: "Set preferences" })).toBeVisible();
         });
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "preferences",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("preferences");
         expect(screen.getByRole("button", { name: "Confirm" })).toBeVisible();
       });
     });
@@ -225,17 +199,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
         const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
         expect(title).toBeVisible();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
 
         await user.click(screen.getByRole("button", { name: "Accept all" }));
         expect(track).toHaveBeenCalledWith(
@@ -271,17 +235,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
         const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
         expect(title).toBeVisible();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
 
         await user.click(screen.getByRole("button", { name: "Refuse all" }));
         expect(track).toHaveBeenCalledWith(
@@ -317,17 +271,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
         const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
         expect(title).toBeVisible();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
         const setPreferencesLink = screen.getByRole("link", { name: "Set preferences" });
         expect(setPreferencesLink).toHaveAttribute("href", "#");
 
@@ -340,17 +284,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
         await waitFor(() => {
           expect(screen.getByRole("heading", { name: "Set preferences" })).toBeVisible();
         });
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "preferences",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("preferences");
         expect(screen.getByRole("button", { name: "Confirm" })).toBeVisible();
       });
     });
@@ -372,17 +306,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
         const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
         expect(title).toBeVisible();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
 
         await user.click(screen.getByRole("button", { name: "Yes, continue" }));
         expect(track).toHaveBeenCalledWith(
@@ -418,17 +342,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
         const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
         expect(title).toBeVisible();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
 
         await user.click(screen.getByRole("button", { name: "No, stop" }));
         expect(track).toHaveBeenCalledWith(
@@ -464,17 +378,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
         const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
         expect(title).toBeVisible();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
         const setPreferencesLink = screen.getByRole("link", { name: "Set preferences" });
         expect(setPreferencesLink).toHaveAttribute("href", "#");
 
@@ -487,17 +391,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
         await waitFor(() => {
           expect(screen.getByRole("heading", { name: "Set preferences" })).toBeVisible();
         });
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "preferences",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("preferences");
         expect(screen.getByRole("button", { name: "Confirm" })).toBeVisible();
       });
     });
@@ -517,17 +411,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
         const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
         expect(title).toBeVisible();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
 
         await user.click(screen.getByRole("button", { name: "Yes, continue" }));
         expect(track).toHaveBeenCalledWith(
@@ -563,17 +447,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
         const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
         expect(title).toBeVisible();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
 
         await user.click(screen.getByRole("button", { name: "No, stop" }));
         expect(track).toHaveBeenCalledWith(
@@ -609,17 +483,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
         const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
         expect(title).toBeVisible();
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
         const setPreferencesLink = screen.getByRole("link", { name: "Set preferences" });
         expect(setPreferencesLink).toHaveAttribute("href", "#");
 
@@ -632,17 +496,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
         await waitFor(() => {
           expect(screen.getByRole("heading", { name: "Set preferences" })).toBeVisible();
         });
-        expect(trackPage).toHaveBeenCalledWith(
-          "AnalyticsConsentDialog",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "preferences",
-            type: "modal",
-          }),
-          true,
-          false,
-          true,
-        );
+        expectTrackedPhase("preferences");
         expect(screen.getByRole("button", { name: "Confirm" })).toBeVisible();
       });
     });
@@ -693,17 +547,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
 
       const title = await screen.findByRole("heading", { name: PRIVACY_UPDATE_TITLE });
       expect(title).toBeVisible();
-      expect(trackPage).toHaveBeenCalledWith(
-        "AnalyticsConsentDialog",
-        "Analytics consent",
-        expect.objectContaining({
-          phase: "privacy",
-          type: "modal",
-        }),
-        true,
-        false,
-        true,
-      );
+      expectTrackedPhase("privacy");
 
       await user.click(screen.getByRole("button", { name: "Got it" }));
       expect(track).toHaveBeenCalledWith(

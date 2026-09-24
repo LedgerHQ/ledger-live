@@ -1,9 +1,4 @@
-import type {
-  PayCardInternalWallet,
-  PayCardLinkedWallet,
-  PayCardStatus,
-  PayCardUser,
-} from "./types";
+import type { PayCardStatus, PayCardUser } from "./types";
 
 /**
  * What the Card endpoints should answer, so onboarding can be put into a given state.
@@ -19,8 +14,10 @@ export type CardOnboardingStatusMock = {
   readonly accountVerified?: boolean;
   /** `GET /v1/card/status`: whether a card is answered with at all. */
   readonly hasCard?: boolean;
-  /** `GET /v1/wallet/internal(/card_linked)`: whether the linked wallet holds anything. */
+  /** `GET /v1/wallet/internal(/card_linked)`: whether the linked wallets hold anything. */
   readonly walletFunded?: boolean;
+  /** `GET /v1/card/status`: whether the card reads as added to Apple/Google Wallet. */
+  readonly cardAddedToDigitalWallet?: boolean;
 };
 
 let answers: CardOnboardingStatusMock = {};
@@ -47,12 +44,10 @@ export function setCardOnboardingStatusMock<Key extends keyof CardOnboardingStat
   answers = next;
 }
 
-/** Drops every answer, so all four endpoints answer from the provider again. */
+/** Drops every answer, so every endpoint answers from the provider again. */
 export function clearCardOnboardingStatusMock(): void {
   answers = {};
 }
-
-const MOCK_WALLET_ID = "11111111-1111-4111-8111-111111111111";
 
 export function mockPayCardUser(verified: boolean): PayCardUser {
   return {
@@ -61,7 +56,7 @@ export function mockPayCardUser(verified: boolean): PayCardUser {
   };
 }
 
-export function mockPayCardStatus(): PayCardStatus {
+export function mockPayCardStatus(cardAddedToDigitalWallet?: boolean): PayCardStatus {
   return {
     id: "card-mock",
     holderName: "Mock Holder",
@@ -70,30 +65,7 @@ export function mockPayCardStatus(): PayCardStatus {
     status: "ACTIVE",
     type: "VIRTUAL",
     orderedAt: "2026-01-01T00:00:00.000Z",
+    // Left off when unset, so the app reads it as a tenant that does not answer for the flag.
+    ...(cardAddedToDigitalWallet === undefined ? {} : { cardAddedToDigitalWallet }),
   };
-}
-
-/** The join keys balances to linked wallets by id, so both answers describe the same wallet. */
-export function mockPayCardInternalWallets(funded: boolean): readonly PayCardInternalWallet[] {
-  return [
-    {
-      id: MOCK_WALLET_ID,
-      balance: funded ? "125.40" : "0.00",
-      currency: "usdc",
-      address: "0x0000000000000000000000000000000000000000",
-      addressMemo: null,
-    },
-  ];
-}
-
-export function mockPayCardLinkedWallets(): readonly PayCardLinkedWallet[] {
-  return [
-    {
-      id: MOCK_WALLET_ID,
-      address: "0x0000000000000000000000000000000000000000",
-      currency: "usdc",
-      network: "ethereum",
-      priority: 1,
-    },
-  ];
 }

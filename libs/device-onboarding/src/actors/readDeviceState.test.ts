@@ -8,7 +8,11 @@ import {
 import { createRetryPolicy } from "../retry";
 import { runActor, settle } from "../tests/actorHarness";
 import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
-import { createOsVersionResponse, type OsVersionResponseOptions } from "../tests/osVersionResponse";
+import {
+  createOsVersionResponse,
+  defaultSeVersion,
+  type OsVersionResponseOptions,
+} from "../tests/osVersionResponse";
 import { OnboardingStep, type DeviceOnboardingState } from "../types";
 import { mapDeviceState, readDeviceState, type ReadDeviceStateEvent } from "./readDeviceState";
 
@@ -29,12 +33,27 @@ const onboardedDeviceState: DeviceOnboardingState = {
   seedPhraseWordCount: 24,
 };
 
+const readEvent: ReadDeviceStateEvent = {
+  type: "DEVICE_STATE_READ",
+  state: onboardedDeviceState,
+  firmwareVersion: defaultSeVersion,
+};
+
 describe("mapDeviceState", () => {
   it("reports a decoded device as read", () => {
     expect(mapDeviceState(createOsVersionResponse(onboardedDevice))).toEqual({
       type: "DEVICE_STATE_READ",
       state: onboardedDeviceState,
+      firmwareVersion: defaultSeVersion,
     });
+  });
+
+  it("carries the firmware version, which routing decides on before anything is read", () => {
+    const event = mapDeviceState(
+      createOsVersionResponse({ ...onboardedDevice, seVersion: "1.2.0" }),
+    );
+
+    expect(event).toMatchObject({ firmwareVersion: "1.2.0" });
   });
 
   it("takes the manager approval from the secure connection flag", () => {
@@ -65,6 +84,7 @@ describe("mapDeviceState", () => {
         seedWordIndex: 5,
         seedPhraseWordCount: 18,
       },
+      firmwareVersion: defaultSeVersion,
     });
   });
 
@@ -92,6 +112,7 @@ describe("mapDeviceState", () => {
       type: "DEVICE_STATE_UNREADABLE",
       isOnboarded: true,
       isInRecoveryMode: false,
+      firmwareVersion: defaultSeVersion,
     });
   });
 
@@ -100,6 +121,7 @@ describe("mapDeviceState", () => {
       type: "DEVICE_STATE_UNREADABLE",
       isOnboarded: false,
       isInRecoveryMode: false,
+      firmwareVersion: defaultSeVersion,
     });
   });
 });
@@ -115,7 +137,7 @@ describe("readDeviceState", () => {
       sessionId: "session",
       command: expect.any(GetOsVersionCommand),
     });
-    expect(received).toEqual([{ type: "DEVICE_STATE_READ", state: onboardedDeviceState }]);
+    expect(received).toEqual([readEvent]);
     stop();
   });
 
@@ -129,7 +151,7 @@ describe("readDeviceState", () => {
     await settle();
 
     expect(sendCommand).toHaveBeenCalledTimes(2);
-    expect(received).toEqual([{ type: "DEVICE_STATE_READ", state: onboardedDeviceState }]);
+    expect(received).toEqual([readEvent]);
     stop();
   });
 

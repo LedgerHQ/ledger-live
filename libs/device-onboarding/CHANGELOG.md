@@ -1,5 +1,13 @@
 # @ledgerhq/device-onboarding
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#22156](https://github.com/LedgerHQ/ledger-live/pull/22156) [`07546c2`](https://github.com/LedgerHQ/ledger-live/commit/07546c22eabba5a381dc1c436410264333af5696) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Follow on-device setup through seed creation and restore, and exit on `completed` or `offerLedgerSync`.
+
+- [#22080](https://github.com/LedgerHQ/ledger-live/pull/22080) [`5c5656a`](https://github.com/LedgerHQ/ledger-live/commit/5c5656a533350c7b37d3000e0276bc6bae8263af) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Add `deviceOnboardingMachine`: routing, the genuine and firmware checks, and the global lock, transport and quit handlers.
+
 ## 0.2.0
 
 ### Minor Changes

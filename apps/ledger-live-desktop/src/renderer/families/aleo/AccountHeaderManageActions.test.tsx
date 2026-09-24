@@ -9,6 +9,7 @@ import {
   ALEO_MAIN_ACCOUNT,
   ALEO_TOKEN_ACCOUNT,
   NEW_ALEO_ACCOUNT,
+  withPendingOperation,
 } from "./__mocks__/account.mock";
 import { mockAleoCoinConfig } from "./__mocks__/config.mock";
 import { getAleoCurrencyConfig } from "./shared/utils";
@@ -227,6 +228,39 @@ describe("AccountHeaderManageActions", () => {
         data: { account: bondedAccount },
       });
       expect(store.getState().modals[AleoCustomModal.BOND_PUBLIC]?.isOpened).toBeFalsy();
+    });
+
+    // The staking section disables its own earn CTA while a bond is pending; leaving this action
+    // open would route around that and spend a fee on a bond the chain rejects.
+    it("is disabled while a bond is waiting to be confirmed", () => {
+      mockGetAleoCurrencyConfig.mockReturnValue({ ...mockAleoCoinConfig, enableStaking: true });
+
+      const { result } = renderHook(() =>
+        hook({ account: withPendingOperation(ALEO_MAIN_ACCOUNT, "BOND"), parentAccount: null }),
+      );
+      const action = result.current?.find(item => item.key === "AleoBond");
+
+      expect(action?.disabled).toBe(true);
+      expect(action?.tooltip).toBeDefined();
+    });
+
+    it("stays enabled while a bond is pending on an already bonded account", () => {
+      mockGetAleoCurrencyConfig.mockReturnValue({ ...mockAleoCoinConfig, enableStaking: true });
+
+      const bondedAccount = {
+        ...ALEO_MAIN_ACCOUNT,
+        aleoResources: {
+          ...ALEO_MAIN_ACCOUNT.aleoResources!,
+          bondedValidator: "aleo1validator",
+        },
+      };
+      const { result } = renderHook(() =>
+        hook({ account: withPendingOperation(bondedAccount, "BOND"), parentAccount: null }),
+      );
+      const action = result.current?.find(item => item.key === "AleoBond");
+
+      expect(action?.disabled).toBeFalsy();
+      expect(action?.tooltip).toBeUndefined();
     });
   });
 });

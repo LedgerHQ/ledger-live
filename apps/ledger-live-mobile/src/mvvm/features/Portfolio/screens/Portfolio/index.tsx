@@ -9,7 +9,6 @@ import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
-import { useWalletV4TourDrawer, WalletV4TourDrawer } from "LLM/features/WalletV4Tour/Drawer";
 import { renderItem } from "LLM/utils/renderItem";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -76,8 +75,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
   const { handleFlatListRef } = useScrollToTop();
 
-  const { isDrawerOpen, handleCloseDrawer, closeDrawer, onSlideChange, slides } =
-    useWalletV4TourDrawer();
   const {
     isDrawerOpen: isQ2DrawerOpen,
     handleCloseDrawer: handleCloseQ2Drawer,
@@ -89,6 +86,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     handleCloseDrawer: handleCloseQ3Drawer,
     closeDrawer: closeQ3Drawer,
     onSlideChange: onQ3SlideChange,
+    onHeaderClosePressed: onQ3HeaderClosePressed,
+    dismissDrawer: dismissQ3Drawer,
+    onContinueClick: onQ3ContinueClick,
   } = useQ3WalletV4TourDrawer();
 
   const data = useMemo(() => {
@@ -199,13 +199,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           doesNotHaveAccount={!showAssets}
         />
       </Animated.View>
-      <WalletV4TourDrawer
-        isDrawerOpen={isDrawerOpen}
-        handleCloseDrawer={handleCloseDrawer}
-        closeDrawer={closeDrawer}
-        onSlideChange={onSlideChange}
-        slides={slides}
-      />
       <Q2WalletV4TourDrawer
         isDrawerOpen={isQ2DrawerOpen}
         handleCloseDrawer={handleCloseQ2Drawer}
@@ -217,6 +210,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         handleCloseDrawer={handleCloseQ3Drawer}
         closeDrawer={closeQ3Drawer}
         onSlideChange={onQ3SlideChange}
+        onHeaderClosePressed={onQ3HeaderClosePressed}
+        dismissDrawer={dismissQ3Drawer}
+        onContinueClick={onQ3ContinueClick}
       />
       <ProductTourPortfolioMount />
       <AnalyticsConsentDrawer />

@@ -239,8 +239,8 @@ function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffe
       ? sigHex
       : Buffer.from(signature.replace(/-/g, "+").replace(/_/g, "/"), "base64");
 
-  const sig = secp256k1.Signature.fromCompact(sigBytes);
-  return Buffer.from(sig.toDERRawBytes());
+  const sig = secp256k1.Signature.fromBytes(sigBytes, "compact");
+  return Buffer.from(sig.toBytes("der"));
 }
 
 /**

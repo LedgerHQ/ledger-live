@@ -141,6 +141,7 @@ export function useSendFlowBusinessLogic({
     handleRecipientSet,
     initParams?.recipient,
     initParams?.skipRecipientStep,
+    initParams?.source,
     transactionHook.state.transaction,
     uiConfig,
   ]);

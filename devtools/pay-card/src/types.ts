@@ -7,17 +7,6 @@ export interface PayCardFlagsProps {
   readonly setPtxCardEnabled: (value: boolean) => void;
 }
 
-export interface OnboardingStep {
-  readonly id: string;
-  readonly label: string;
-  readonly done: boolean;
-}
-
-export interface PayCardOnboardingProps {
-  readonly steps: readonly OnboardingStep[];
-  readonly setStepDone: (id: string, done: boolean) => void;
-}
-
 export interface PayCardSessionSnapshot {
   readonly accessToken: string;
   readonly refreshToken: string;
@@ -135,6 +124,8 @@ export interface PayCardCombinedWallet {
   readonly ledgerId?: string;
   /** `null` when no Baanx wallet matched this link, and while they are still being read. */
   readonly balance: string | null;
+  /** The resolved Ledger currency's id. `null` while unresolved or when the asset is unmapped. */
+  readonly ledgerCurrencyId: string | null;
 }
 
 /** One row of the Card asset catalog: what the provider calls an asset, and what Ledger calls it. */
@@ -149,14 +140,45 @@ export interface PayCardBalanceError {
   readonly detail: string;
 }
 
+export type PayCardMockWalletAsset = "usdc" | "btc" | "sol";
+
+export interface PayCardBalancesMockProps {
+  readonly available: boolean;
+  readonly isOverridden: boolean;
+  readonly fill: () => void;
+  readonly empty: () => void;
+  readonly fund: (asset: PayCardMockWalletAsset) => void;
+  readonly clear: () => void;
+}
+
 export interface PayCardBalanceProps {
   readonly baanxWallets: readonly PayCardBaanxWallet[];
   readonly linkedWallets: readonly PayCardLinkedWallet[];
   readonly combinedWallets: readonly PayCardCombinedWallet[];
   readonly isFetching: boolean;
   readonly errors: readonly PayCardBalanceError[];
+  readonly mock: PayCardBalancesMockProps;
   readonly load: () => void;
   readonly refresh: () => void;
+}
+
+export type PayCardMockTransactionAsset = "usdc" | "btc" | "eth";
+
+export interface PayCardReorderMockProps {
+  readonly available: boolean;
+  readonly enabled: boolean;
+  readonly setEnabled: (value: boolean) => void;
+}
+
+export interface PayCardTransactionsMockProps {
+  /** Request interception is required for these controls to affect the Card endpoint. */
+  readonly available: boolean;
+  readonly isOverridden: boolean;
+  readonly count: number;
+  readonly fill: () => void;
+  readonly empty: () => void;
+  readonly receive: (asset: PayCardMockTransactionAsset) => void;
+  readonly clear: () => void;
 }
 
 export type PayCardOpenSecureBrowser = (url: string) => Promise<string>;
@@ -185,10 +207,11 @@ export interface PayCardOnboardingStatusProps {
 
 export interface PayCardToolProps {
   readonly flags: PayCardFlagsProps;
-  readonly onboarding: PayCardOnboardingProps;
   readonly cardOnboarding: PayCardOnboardingStatusProps;
   readonly interaction: PayCardInteractionProps;
   readonly balance: PayCardBalanceProps;
+  readonly transactions: PayCardTransactionsMockProps;
+  readonly reorder: PayCardReorderMockProps;
   /** The whole Card asset catalog, so a mapping gap can be read against it. */
   readonly currencyMapping: readonly PayCardCurrencyMappingRow[];
   /** Whether the user has already seen the Pay feature tour. */

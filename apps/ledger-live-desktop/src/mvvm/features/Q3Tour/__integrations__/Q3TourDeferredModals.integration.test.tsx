@@ -14,7 +14,6 @@ const baseSettings = {
 
 const q3TourEnabledState = {
   ...withFlagOverrides({
-    lwdWallet40: { enabled: true, params: { tour: false } },
     releaseTour: { enabled: true, params: { variant: "q3_a" } },
   }),
   settings: {
@@ -25,7 +24,6 @@ const q3TourEnabledState = {
 
 const q3TourDisabledState = {
   ...withFlagOverrides({
-    lwdWallet40: { enabled: true, params: { tour: false } },
     releaseTour: { enabled: false, params: { variant: "q3_a" } },
   }),
   settings: {
@@ -36,7 +34,6 @@ const q3TourDisabledState = {
 
 const q3TourEnabledAlreadySeenState = {
   ...withFlagOverrides({
-    lwdWallet40: { enabled: true, params: { tour: false } },
     releaseTour: { enabled: true, params: { variant: "q3_a" } },
   }),
   settings: {

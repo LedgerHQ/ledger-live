@@ -37,8 +37,8 @@ const ZERO_HASH = Buffer.alloc(32);
 // Build the 99-byte extended public key expected by coin-kaspa's parseExtendedPublicKey:
 //   [0x41][04 ‖ x ‖ y (65 bytes)][0x20][chainCode (32 bytes)]
 export function buildKaspaXpub(compressedPubKey: Buffer, chainCode: Buffer): string {
-  const point = secp256k1.ProjectivePoint.fromHex(compressedPubKey.toString("hex"));
-  const uncompressed = point.toRawBytes(false); // 04 ‖ x ‖ y
+  const point = secp256k1.Point.fromBytes(compressedPubKey);
+  const uncompressed = point.toBytes(false); // 04 ‖ x ‖ y
   return Buffer.concat([
     Buffer.from([0x41]),
     Buffer.from(uncompressed),

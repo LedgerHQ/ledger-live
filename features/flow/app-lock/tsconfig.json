@@ -6,6 +6,7 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "moduleSuffixes": [".native", ""],
     "noEmit": true,
     "types": ["jest"]
   },

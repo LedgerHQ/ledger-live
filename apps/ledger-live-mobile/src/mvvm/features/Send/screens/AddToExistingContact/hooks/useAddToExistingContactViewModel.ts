@@ -10,8 +10,7 @@ import {
   type ContactsListViewLabels,
 } from "@features/flow-contacts-list";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
-import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
+import { useSendFlowTrackingProperties } from "LLM/features/Send/hooks/useSendFlowTrackingProperties";
 import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 
@@ -25,12 +24,8 @@ export function useAddToExistingContactViewModel({
   const { t } = useTranslation();
   const contacts = useContacts();
   const meContact = useContactsMeContact();
-  const { state } = useSendFlowData();
+  const trackingProperties = useSendFlowTrackingProperties();
   const [searchQuery, setSearchQuery] = useState("");
-  const trackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
-    [state.account.account, state.account.parentAccount],
-  );
 
   const labels = useMemo(
     (): ContactsListViewLabels => ({

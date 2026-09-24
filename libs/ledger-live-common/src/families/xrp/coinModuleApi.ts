@@ -1,4 +1,4 @@
-import { createApi as createXrpApi } from "@ledgerhq/coin-xrp/api/index";
+import { createApi as createXrpApi } from "@ledgerhq/coin-xrp/api";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 

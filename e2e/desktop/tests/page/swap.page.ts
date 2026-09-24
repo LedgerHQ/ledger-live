@@ -21,14 +21,6 @@ type SwapSurface = "full" | "embedded";
 
 type PercentageKey = "25%" | "50%" | "75%";
 
-// swap-live-app renders two quote card markups behind its own `ptxLumenQuoteCard` flag, which
-// e2e can neither read nor force. Only the provider-name testid prefix and the CTA label differ.
-type QuoteCardVariant = "legacy" | "lumen";
-
-// Provider UI names (e.g. "LI.FI", "Swaps.xyz") can contain regex metacharacters. Escape them
-// before embedding in a RegExp so they match literally instead of altering the pattern.
-const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
 export class SwapPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "swap";
   private static readonly EXPORT_SOURCE_PATH = path.resolve("./ledgerwallet-swap-history.csv");
@@ -36,12 +28,7 @@ export class SwapPage extends WebViewAppPage {
     __dirname,
     "../artifacts/ledgerwallet-swap-history.csv",
   );
-  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX: Record<QuoteCardVariant, string> = {
-    legacy: "compact-quote-card-provider-name-",
-    lumen: "lumen-quote-card-provider-name-",
-  };
-  // Common to both prefixes above, so it matches whichever variant is live.
-  private static readonly QUOTE_CARD_PROVIDER_NAME_SUFFIX = "quote-card-provider-name-";
+  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX = "compact-quote-card-provider-name-";
   private static readonly AMOUNT_LABEL_SUFFIX = "amount-label";
   private static readonly FIAT_AMOUNT_LABEL_SUFFIX = "fiatAmount-label";
   private static readonly NETWORK_FEES_HEADING_SUFFIX = "networkFees-heading";
@@ -62,7 +49,6 @@ export class SwapPage extends WebViewAppPage {
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
   private readonly toAccountAmountInput = "to-account-amount-input";
   private readonly fromAccountAmountInactive = "from-account-amount-inactive";
-  private quoteCardVariant: QuoteCardVariant | null = null;
   private specificQuoteCardProviderName = (prefix: string, provider: string) =>
     `[data-testid^='${prefix}${provider.toLowerCase()}']`;
   private providerContainerSelector = (provider: string) =>
@@ -127,29 +113,10 @@ export class SwapPage extends WebViewAppPage {
     await this.maxSpendableToggle.click();
   }
 
-  // Waits for a card of either variant before deciding: no Lumen cards is indistinguishable
-  // from no cards at all, so probing too early would latch onto "legacy". Cached once resolved.
-  private async resolveQuoteCardVariant(webview: Page): Promise<QuoteCardVariant> {
-    if (!this.quoteCardVariant) {
-      await expect(
-        webview.locator(`[data-testid*='${SwapPage.QUOTE_CARD_PROVIDER_NAME_SUFFIX}']`).first(),
-      ).toBeVisible();
-      const lumenCount = await webview
-        .locator(`[data-testid^='${SwapPage.QUOTE_CARD_PROVIDER_NAME_PREFIX.lumen}']`)
-        .count();
-      this.quoteCardVariant = lumenCount > 0 ? "lumen" : "legacy";
-    }
-    return this.quoteCardVariant;
-  }
-
-  private async resolveProviderNamePrefix(webview: Page): Promise<string> {
-    return SwapPage.QUOTE_CARD_PROVIDER_NAME_PREFIX[await this.resolveQuoteCardVariant(webview)];
-  }
-
-  // approvalRequired must reflect real allowance state: false for native assets,
-  // deposit-based providers (no contractAddress), or an already-approved token.
-  @step("Check exchange CTA text: $0")
-  async checkQuoteCardCta(providerUiName: string, approvalRequired = false): Promise<void> {
+  // Only asserts the CTA testid is present and usable; ignores its label so an
+  // A/B-tested label cannot fail callers that only need the button to exist.
+  @step("Check exchange CTA presence: $0")
+  async checkQuoteCardCtaPresence(providerUiName: string) {
     const webview = await this.getWebView();
     const providerName = SwapProvider.getNameByUiName(providerUiName);
     if (!providerName) {
@@ -161,18 +128,16 @@ export class SwapPage extends WebViewAppPage {
       .first();
     await expect(buttonLocator).toBeVisible();
     await expect(buttonLocator).toBeEnabled();
-    const actualButtonText = (await buttonLocator.textContent())?.trim() ?? "";
+    return buttonLocator;
+  }
 
-    if ((await this.resolveQuoteCardVariant(webview)) === "lumen") {
-      // The Lumen CTA is a fixed "Review"/"Continue" — it never interpolates the provider name.
-      const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
-      expect(actualButtonText).toMatch(expected);
-    } else {
-      const ctaVerbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
-      expect(actualButtonText).toMatch(
-        new RegExp(`^(${ctaVerbs}) with ${escapeRegExp(providerUiName)}$`, "i"),
-      );
-    }
+  // approvalRequired must reflect real allowance state: false for native assets,
+  // deposit-based providers (no contractAddress), or an already-approved token.
+  @step("Check exchange CTA text: $0")
+  async checkQuoteCardCtaLabel(providerUiName: string, approvalRequired = false): Promise<void> {
+    const buttonLocator = await this.checkQuoteCardCtaPresence(providerUiName);
+    const ctaVerb = approvalRequired ? "Approve spending" : "Swap";
+    await expect.soft(buttonLocator).toHaveText(`${ctaVerb} with ${providerUiName}`);
   }
 
   @step("Get provider list")
@@ -183,8 +148,9 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.bestValueInfoIcon)).toBeVisible();
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
 
-    const prefix = await this.resolveProviderNamePrefix(webview);
-    const providerList = await webview.locator(`[data-testid^='${prefix}']`).allTextContents();
+    const providerList = await webview
+      .locator(`[data-testid^='${SwapPage.QUOTE_CARD_PROVIDER_NAME_PREFIX}']`)
+      .allTextContents();
     if (providerList.length === 0) {
       throw new Error("No quote providers were returned");
     }
@@ -275,7 +241,7 @@ export class SwapPage extends WebViewAppPage {
           .getByText("%"),
       ).toBeVisible();
     }
-    await this.checkQuoteCardCta(providerList[0]);
+    await this.checkQuoteCardCtaLabel(providerList[0]);
   }
 
   @step("Select specific provider")
@@ -285,7 +251,7 @@ export class SwapPage extends WebViewAppPage {
     const providersList = await this.getProviderList();
 
     if (providersList.includes(provider.uiName)) {
-      const prefix = await this.resolveProviderNamePrefix(webview);
+      const prefix = SwapPage.QUOTE_CARD_PROVIDER_NAME_PREFIX;
       const providerLocator = webview
         .locator(this.specificQuoteCardProviderName(prefix, provider.name))
         .first();
@@ -323,7 +289,7 @@ export class SwapPage extends WebViewAppPage {
       throw new Error(`No providers without KYC found: ${providersList.join(", ")}`);
     }
 
-    const prefix = await this.resolveProviderNamePrefix(webview);
+    const prefix = SwapPage.QUOTE_CARD_PROVIDER_NAME_PREFIX;
     await webview
       .locator(this.specificQuoteCardProviderName(prefix, provider.name))
       .first()
@@ -347,7 +313,7 @@ export class SwapPage extends WebViewAppPage {
           entry.provider !== undefined,
       );
 
-    const prefix = await this.resolveProviderNamePrefix(webview);
+    const prefix = SwapPage.QUOTE_CARD_PROVIDER_NAME_PREFIX;
 
     for (const { providerName, provider } of providers) {
       const providerLocator = webview

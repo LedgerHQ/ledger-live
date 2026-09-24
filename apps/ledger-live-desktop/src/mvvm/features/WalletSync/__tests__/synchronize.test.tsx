@@ -18,6 +18,7 @@ jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
 
 describe("Synchronize flow", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     // React 19's act() uses queueMicrotask for scheduling — faking it causes act() to hang.
     jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
   });
@@ -73,5 +74,53 @@ describe("Synchronize flow", () => {
     });
 
     expect(await screen.findByText(/sync successful!/i)).toBeDefined();
+  });
+
+  const renderFlow = () =>
+    render(<WalletSyncTestApp />, {
+      initialState: {
+        walletSync: walletSyncActivatedState,
+        trustchain: {
+          trustchain: simpleTrustChain,
+          memberCredentials: {
+            pubkey: "pubkey",
+            privatekey: "privatekey",
+          },
+        },
+      },
+      userEventOptions: { advanceTimers: jest.advanceTimersByTime },
+    });
+
+  describe.each([
+    ["before the pin code is displayed", false],
+    ["after the pin code is displayed", true],
+  ])("when the pairing protocol fails %s", (_, displayDigitsFirst) => {
+    it("requests a new QR code", async () => {
+      const rejects: ((error: unknown) => void)[] = [];
+      const onDisplayDigitsCalls: ((digits: string) => void)[] = [];
+      (createQRCodeHostInstance as jest.Mock).mockImplementation(({ onDisplayDigits }) => {
+        onDisplayDigitsCalls.push(onDisplayDigits);
+        return new Promise((_resolve, reject) => rejects.push(reject));
+      });
+
+      const { user } = renderFlow();
+
+      await user.click(screen.getByRole("button", { name: "Manage" }));
+      await user.click(await screen.findByTestId("walletSync-synchronize"));
+      await screen.findByText(/Sync with the Ledger Wallet app on another phone/i);
+      expect(createQRCodeHostInstance).toHaveBeenCalledTimes(1);
+
+      if (displayDigitsFirst) {
+        act(() => onDisplayDigitsCalls[0]("321"));
+        await screen.findByTestId("pin-code-digit-0");
+      }
+
+      await act(async () => {
+        rejects[0](Object.assign(new Error("boom"), { name: "QRCodeProtocolError" }));
+      });
+
+      expect(createQRCodeHostInstance).toHaveBeenCalledTimes(2);
+      await screen.findByText(/Sync with the Ledger Wallet app on another phone/i);
+    });
   });
 });

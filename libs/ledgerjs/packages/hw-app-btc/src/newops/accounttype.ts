@@ -16,10 +16,10 @@ function bytesToBigInt(bytes: Uint8Array): bigint {
 // Replacement for pointAddScalar from tiny-secp256k1
 function pointAddScalar(point: Uint8Array, scalar: Uint8Array): Uint8Array | null {
   try {
-    const p = secp256k1.ProjectivePoint.fromHex(point);
+    const p = secp256k1.Point.fromBytes(point);
     const s = bytesToBigInt(scalar);
-    const result = p.add(secp256k1.ProjectivePoint.BASE.multiply(s));
-    return result.toRawBytes(point.length === 33);
+    const result = p.add(secp256k1.Point.BASE.multiply(s));
+    return result.toBytes(point.length === 33);
   } catch {
     return null;
   }

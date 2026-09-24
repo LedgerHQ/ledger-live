@@ -1,5 +1,13 @@
 # @shared/feature-flags
 
+## 0.24.0-next.0
+
+### Minor Changes
+
+- [#22038](https://github.com/LedgerHQ/ledger-live/pull/22038) [`c48d6d7`](https://github.com/LedgerHQ/ledger-live/commit/c48d6d71b7ec0318cfec3277c119284a88d652f7) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - feat(pay-card): read the Baanx login and hosted manifest ids from the env, not from the `lwdPayTab` flag params
+
+- [#21967](https://github.com/LedgerHQ/ledger-live/pull/21967) [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove the obsolete original Wallet V4 tour
+
 ## 0.23.0
 
 ### Minor Changes
@@ -417,45 +425,5 @@
 - [#19875](https://github.com/LedgerHQ/ledger-live/pull/19875) [`59a6c82`](https://github.com/LedgerHQ/ledger-live/commit/59a6c82a784b4f484b5fb6a5ea42b6ebb1115818) Thanks [@sarneijim](https://github.com/sarneijim)! - Gate the large-screen upsell modal by the enabled state of the selected opt-in variant
 
 - [#18413](https://github.com/LedgerHQ/ledger-live/pull/18413) [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove lldActionCarousel feature flag (always enabled with variant A)
-
-## 0.14.0
-
-### Minor Changes
-
-- [#19252](https://github.com/LedgerHQ/ledger-live/pull/19252) [`c75213b`](https://github.com/LedgerHQ/ledger-live/commit/c75213b0c649cc0acfdbabacd62e07848ccee842) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwm): switch to deviceaction instead of die with FF on new send flow
-
-- [#19568](https://github.com/LedgerHQ/ledger-live/pull/19568) [`45584e4`](https://github.com/LedgerHQ/ledger-live/commit/45584e4b87ad8ffea9a0e6ba48e196d14164c84a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show an estimated label for configured providers on completed mobile swaps.
-
-- [#19444](https://github.com/LedgerHQ/ledger-live/pull/19444) [`ea792bc`](https://github.com/LedgerHQ/ledger-live/commit/ea792bc06b9eb9931d75823bff63186202d3e2de) Thanks [@deepyjr](https://github.com/deepyjr)! - Add eligible address family configuration to Contacts feature flags.
-
-- [#19377](https://github.com/LedgerHQ/ledger-live/pull/19377) [`75a33a8`](https://github.com/LedgerHQ/ledger-live/commit/75a33a8ef74a6eef6236bb5db873cadd35643705) Thanks [@deepyjr](https://github.com/deepyjr)! - Register Contacts feature flags and expose Contacts flow access.
-
-- [#19380](https://github.com/LedgerHQ/ledger-live/pull/19380) [`bae43dd`](https://github.com/LedgerHQ/ledger-live/commit/bae43ddc50439d2a7f18852f2b727e24de0169ed) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `card` boolean param to `lwdPayTab` and `lwmPayTab` feature flags
-
-- [#19589](https://github.com/LedgerHQ/ledger-live/pull/19589) [`9479c28`](https://github.com/LedgerHQ/ledger-live/commit/9479c284321915f7d5139746f3f924b1ad2685c3) Thanks [@sarneijim](https://github.com/sarneijim)! - Keep large-screen upsell eligibility read-only and align the fallback CTA link
-
-- [#19378](https://github.com/LedgerHQ/ledger-live/pull/19378) [`fd9da5e`](https://github.com/LedgerHQ/ledger-live/commit/fd9da5e2b3a1e5300d012b826f3707535d07b1d9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add lwmPayTab feature flag for the Pay Tab in LWM
-
-- [#19367](https://github.com/LedgerHQ/ledger-live/pull/19367) [`8238860`](https://github.com/LedgerHQ/ledger-live/commit/8238860c893b0688d2c59a3e042d7a227031547a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - add lwdPayTab feature flag for desktop Pay tab
-
-## 0.14.0-next.0
-
-### Minor Changes
-
-- [#19252](https://github.com/LedgerHQ/ledger-live/pull/19252) [`c75213b`](https://github.com/LedgerHQ/ledger-live/commit/c75213b0c649cc0acfdbabacd62e07848ccee842) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwm): switch to deviceaction instead of die with FF on new send flow
-
-- [#19568](https://github.com/LedgerHQ/ledger-live/pull/19568) [`45584e4`](https://github.com/LedgerHQ/ledger-live/commit/45584e4b87ad8ffea9a0e6ba48e196d14164c84a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show an estimated label for configured providers on completed mobile swaps.
-
-- [#19444](https://github.com/LedgerHQ/ledger-live/pull/19444) [`ea792bc`](https://github.com/LedgerHQ/ledger-live/commit/ea792bc06b9eb9931d75823bff63186202d3e2de) Thanks [@deepyjr](https://github.com/deepyjr)! - Add eligible address family configuration to Contacts feature flags.
-
-- [#19377](https://github.com/LedgerHQ/ledger-live/pull/19377) [`75a33a8`](https://github.com/LedgerHQ/ledger-live/commit/75a33a8ef74a6eef6236bb5db873cadd35643705) Thanks [@deepyjr](https://github.com/deepyjr)! - Register Contacts feature flags and expose Contacts flow access.
-
-- [#19380](https://github.com/LedgerHQ/ledger-live/pull/19380) [`bae43dd`](https://github.com/LedgerHQ/ledger-live/commit/bae43ddc50439d2a7f18852f2b727e24de0169ed) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `card` boolean param to `lwdPayTab` and `lwmPayTab` feature flags
-
-- [#19589](https://github.com/LedgerHQ/ledger-live/pull/19589) [`9479c28`](https://github.com/LedgerHQ/ledger-live/commit/9479c284321915f7d5139746f3f924b1ad2685c3) Thanks [@sarneijim](https://github.com/sarneijim)! - Keep large-screen upsell eligibility read-only and align the fallback CTA link
-
-- [#19378](https://github.com/LedgerHQ/ledger-live/pull/19378) [`fd9da5e`](https://github.com/LedgerHQ/ledger-live/commit/fd9da5e2b3a1e5300d012b826f3707535d07b1d9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add lwmPayTab feature flag for the Pay Tab in LWM
-
-- [#19367](https://github.com/LedgerHQ/ledger-live/pull/19367) [`8238860`](https://github.com/LedgerHQ/ledger-live/commit/8238860c893b0688d2c59a3e042d7a227031547a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - add lwdPayTab feature flag for desktop Pay tab
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -110,6 +110,10 @@ export type BridgeApi = {
     address: string,
     accountInfo?: AccountInfo,
   ) => Promise<FamilyAccountShape | undefined> | FamilyAccountShape | undefined;
+  /** Family-specific token sub-account fields, keyed by the token's `contractAddress`. */
+  buildTokenAccountShapes?: (
+    address: string,
+  ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
   /**

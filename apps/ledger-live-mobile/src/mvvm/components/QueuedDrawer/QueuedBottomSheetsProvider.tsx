@@ -1,5 +1,4 @@
 import React from "react";
-import { useIsFocused } from "@react-navigation/native";
 import {
   QueuedBottomSheetsProvider as QueuedBottomSheetsProviderBase,
   type QueuedBottomSheetAdapters,
@@ -8,6 +7,7 @@ import { useSelector } from "~/context/hooks";
 import { isModalLockedSelector } from "~/reducers/appstate";
 import { bottomSheetGradientByTone } from "LLM/components/BottomSheetGradient";
 import { logDrawer } from "./utils/logDrawer";
+import { useIsScreenVisible } from "./useIsScreenVisible";
 
 const useAreBottomSheetsLocked = () => useSelector(isModalLockedSelector);
 
@@ -15,7 +15,7 @@ const useAreBottomSheetsLocked = () => useSelector(isModalLockedSelector);
 // focus, status-tone gradients, logging) that the shared package must not depend on directly.
 const adapters: QueuedBottomSheetAdapters = {
   useAreBottomSheetsLocked,
-  useIsScreenFocused: useIsFocused,
+  useIsScreenFocused: useIsScreenVisible,
   backgroundComponentByTone: bottomSheetGradientByTone,
   log: logDrawer,
 };

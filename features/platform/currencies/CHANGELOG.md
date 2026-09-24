@@ -1,5 +1,25 @@
 # @features/platform-currencies
 
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#22068](https://github.com/LedgerHQ/ledger-live/pull/22068) [`91531f2`](https://github.com/LedgerHQ/ledger-live/commit/91531f29e71e4e186375a5e2908ddca0c351c0ac) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Carry each card wallet's Ledger currency, so the app can price it.
+
+  - `useCurrenciesByIds` resolves a list of Ledger ids to currencies: coins from the crypto registry, tokens from CAL. The lookups are dispatched rather than hooked, so the list can be any length.
+  - A card wallet now carries `ledgerCurrency` instead of a counter value. Converting needs the app's rates, so it happens in platform code.
+  - `BAANX_LEDGER_CURRENCY_IDS` lists every Ledger id the card catalog resolves to.
+  - The Pay card devtool shows `ledgerCurrencyId` per joined wallet.
+
+### Patch Changes
+
+- Updated dependencies [[`40d296b`](https://github.com/LedgerHQ/ledger-live/commit/40d296b822381cc5d05616acafa1bca61e500dce), [`98e3038`](https://github.com/LedgerHQ/ledger-live/commit/98e303872684da47feca343c0db7d83fcce857b2), [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629)]:
+  - @shared/api-services@0.8.0-next.0
+  - @domain/entity-currency-crypto@0.13.0-next.0
+  - @features/platform-feature-flags@0.8.0-next.0
+  - @domain/api-currency-token@0.6.2-next.0
+  - @domain/entity-currency-token@0.5.3-next.0
+
 ## 0.8.1
 
 ### Patch Changes
@@ -321,31 +341,5 @@
   - @domain/entity-currency-crypto@0.7.0-next.0
   - @domain/api-currency-token@0.2.2-next.0
   - @features/platform-feature-flags@0.6.2-next.0
-
-## 0.3.0
-
-### Minor Changes
-
-- [#19693](https://github.com/LedgerHQ/ledger-live/pull/19693) [`deaa7ba`](https://github.com/LedgerHQ/ledger-live/commit/deaa7ba622776b95b87aee9926b34e20a0dc818b) Thanks [@ysitbon](https://github.com/ysitbon)! - Add `buildStandaloneCryptoAssetsStore` — a crypto-assets token store that configures its own Redux store, for runtimes without an application store (CLI scripts, monitoring jobs, integration-test setup). Complements `buildCryptoAssetsStore`, which binds to an existing store's `dispatch`.
-
-### Patch Changes
-
-- Updated dependencies [[`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7), [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10)]:
-  - @domain/entity-currency-crypto@0.6.0
-  - @features/platform-feature-flags@0.6.1
-  - @domain/api-currency-token@0.2.1
-
-## 0.3.0-next.0
-
-### Minor Changes
-
-- [#19693](https://github.com/LedgerHQ/ledger-live/pull/19693) [`deaa7ba`](https://github.com/LedgerHQ/ledger-live/commit/deaa7ba622776b95b87aee9926b34e20a0dc818b) Thanks [@ysitbon](https://github.com/ysitbon)! - Add `buildStandaloneCryptoAssetsStore` — a crypto-assets token store that configures its own Redux store, for runtimes without an application store (CLI scripts, monitoring jobs, integration-test setup). Complements `buildCryptoAssetsStore`, which binds to an existing store's `dispatch`.
-
-### Patch Changes
-
-- Updated dependencies [[`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7), [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10)]:
-  - @domain/entity-currency-crypto@0.6.0-next.0
-  - @features/platform-feature-flags@0.6.1-next.0
-  - @domain/api-currency-token@0.2.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

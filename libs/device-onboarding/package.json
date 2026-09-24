@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-onboarding",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "private": true,
   "description": "Shared DMK-native device onboarding state machine",
   "license": "Apache-2.0",
@@ -24,6 +24,7 @@
     "knip-check": "pnpm knip --directory ../.. -W libs/device-onboarding"
   },
   "dependencies": {
+    "semver": "catalog:",
     "xstate": "catalog:"
   },
   "devDependencies": {
@@ -33,6 +34,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@types/semver": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

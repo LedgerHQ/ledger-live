@@ -8,7 +8,7 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
     const { View } = jest.requireActual<typeof import("react-native")>("react-native");
     return <View testID={testID} {...props} />;
   },
-  resolveAvatarColor: (contactId: string) => `avatar-color-${contactId}`,
+  useResolveAvatarColor: (contactId: string) => `avatar-color-${contactId}`,
 }));
 
 describe("ContactAvatar", () => {

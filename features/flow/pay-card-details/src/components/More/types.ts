@@ -1,4 +1,10 @@
-export type MoreRowId = "managePin" | "accessBaanx" | "help" | "logout";
+export type MoreRowId = "managePin" | "accessBaanx" | "help" | "legal" | "logout";
+
+/** The hosted-page redirects a host wires from its own resolved URLs; they always travel together. */
+export type CardSettingsActions = Readonly<{
+  onManagePin?: () => void;
+  onAccessBaanx?: () => void;
+}>;
 
 export type MoreRow = Readonly<{
   id: MoreRowId;

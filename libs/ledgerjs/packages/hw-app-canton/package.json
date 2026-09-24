@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-canton",
-  "version": "0.13.0",
+  "version": "0.14.0-next.0",
   "description": "Ledger Hardware Wallet Canton Application API",
   "keywords": [
     "Ledger",
@@ -55,7 +55,6 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "documentation": "14.0.2",
     "jest": "catalog:",
     "protobufjs-cli": "1.1.2",
     "rimraf": "^4.4.1",
@@ -70,7 +69,6 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest --config=jest.config.ts",

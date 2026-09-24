@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-concordium",
-  "version": "1.3.0",
+  "version": "1.4.0-next.0",
   "description": "Concordium coin integration",
   "keywords": [
     "Ledger",
@@ -217,7 +217,6 @@
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",

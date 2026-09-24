@@ -10,7 +10,10 @@ import IconCoins from "~/renderer/icons/Coins";
 import UnbondIcon from "~/renderer/icons/Undelegate";
 import ClaimRewardIcon from "~/renderer/icons/ClaimReward";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
-import { hasPendingOperationType } from "@ledgerhq/live-common/families/aleo/utils";
+import {
+  getClaimableStakingBalance,
+  hasPendingOperationType,
+} from "@ledgerhq/live-common/families/aleo/utils";
 import type { Account } from "@ledgerhq/types-live";
 import { ModalData } from "~/renderer/modals/types";
 import * as S from "./ManageModal.styles";
@@ -26,8 +29,26 @@ const ManageModal = ({ account, parentAccount, source, ...rest }: Data) => {
   const { t } = useTranslation();
 
   const hasPendingUnbond = hasPendingOperationType(account, "UNBOND");
+  const hasPendingClaim = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
+  const unbondingLocked = hasPendingUnbond || hasPendingClaim;
   const canUnbond =
-    (account.aleoResources?.bondedBalance ?? new BigNumber(0)).gt(0) && !hasPendingUnbond;
+    (account.aleoResources?.bondedBalance ?? new BigNumber(0)).gt(0) && !unbondingLocked;
+  const canClaim = getClaimableStakingBalance(account).gt(0) && !unbondingLocked;
+
+  const lockedTooltip = hasPendingUnbond
+    ? t("aleo.manage.unbondPendingTooltip")
+    : t("aleo.manage.claimPendingTooltip");
+
+  const { unbondingBalance, unbondingHeight } = account.aleoResources ?? {};
+  const isStillUnbonding =
+    !!unbondingBalance?.gt(0) &&
+    unbondingHeight !== null &&
+    unbondingHeight !== undefined &&
+    account.blockHeight < unbondingHeight;
+  const unclaimableTooltip = isStillUnbonding
+    ? t("aleo.manage.stillUnbondingTooltip")
+    : t("aleo.manage.nothingToClaimTooltip");
+  const claimTooltip = unbondingLocked ? lockedTooltip : unclaimableTooltip;
 
   const onSelectAction = useCallback(
     (onClose: () => void, name: keyof ModalData) => {
@@ -65,14 +86,14 @@ const ManageModal = ({ account, parentAccount, source, ...rest }: Data) => {
                 </S.InfoWrapper>
               </S.ManageButton>
               <ToolTip
-                content={t("aleo.manage.unbondPendingTooltip")}
-                enabled={hasPendingUnbond}
+                content={lockedTooltip}
+                enabled={unbondingLocked}
                 containerStyle={{ width: "100%" }}
               >
                 <S.ManageButton
                   data-testid="aleo-unbond-button"
                   disabled={!canUnbond}
-                  onClick={() => canUnbond && onSelectAction(onClose, "MODAL_ALEO_UNBOND")}
+                  onClick={() => onSelectAction(onClose, "MODAL_ALEO_UNBOND")}
                 >
                   <S.IconWrapper>
                     <UnbondIcon size={16} />
@@ -88,10 +109,15 @@ const ManageModal = ({ account, parentAccount, source, ...rest }: Data) => {
                 </S.ManageButton>
               </ToolTip>
               <ToolTip
-                content={t("aleo.manage.comingSoonTooltip")}
+                content={claimTooltip}
+                enabled={!canClaim}
                 containerStyle={{ width: "100%" }}
               >
-                <S.ManageButton data-testid="aleo-claim-button" disabled>
+                <S.ManageButton
+                  data-testid="aleo-claim-button"
+                  disabled={!canClaim}
+                  onClick={() => onSelectAction(onClose, "MODAL_ALEO_CLAIM_UNBOND")}
+                >
                   <S.IconWrapper>
                     <ClaimRewardIcon size={16} />
                   </S.IconWrapper>

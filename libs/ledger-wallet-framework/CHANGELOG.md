@@ -1,5 +1,32 @@
 # @ledgerhq/ledger-wallet-framework
 
+## 3.5.0-next.0
+
+### Minor Changes
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
+- [#21835](https://github.com/LedgerHQ/ledger-live/pull/21835) [`5d2f40f`](https://github.com/LedgerHQ/ledger-live/commit/5d2f40f470f859960e43a2a08755a962796f6beb) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Casper fee estimation now names a valid dummy recipient, which a new test asserts for every family enabled on the generic coin framework.
+
+  Three additions on the way, in preparation for enabling Solana: a family can contribute its own fields to a token sub-account through the new `buildTokenAccountShapes` bridge hook; a fee estimation can propagate a transfer fee, a stake account rent and an owner token account onto the transaction, and a transfer fee is now assigned even when absent, so a fee kept from a previously selected asset can no longer reach the device screen; and a staking position's locked reserve counts towards the staked balance.
+
+  `asset-aggregation` now declares its transitive dependency on `ledger-wallet-framework`, like every other consumer of `live-countervalues`, so its build waits for the framework's declarations.
+
+  No family declares the new hook yet, and no coin module emits the new fee parameters or a locked reserve, so nothing changes on screen beyond the Casper fix.
+
+- [#22272](https://github.com/LedgerHQ/ledger-live/pull/22272) [`e2134f5`](https://github.com/LedgerHQ/ledger-live/commit/e2134f5cffe4669ff5896e2b52904fe22218461b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore: align the zod catalog on 4.4.3
+
+  `@ledgerhq/auth` and `@ledgerhq/wallet-api-core` both depend on zod 4.4.3, so the
+  workspace catalog pin at 4.3.6 resolved a second copy of zod into the desktop and
+  mobile bundles. Moving the catalog to 4.4.3 collapses the two into one.
+
+### Patch Changes
+
+- Updated dependencies [[`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b), [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26), [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629)]:
+  - @ledgerhq/types-live@6.125.0-next.0
+  - @ledgerhq/live-env@4.1.0-next.0
+  - @ledgerhq/live-currency-format@0.15.0
+
 ## 3.4.0
 
 ### Minor Changes
@@ -345,51 +372,5 @@
   - @ledgerhq/types-live@6.115.0
   - @ledgerhq/live-currency-format@0.13.0
   - @ledgerhq/live-network@2.6.8
-
-## 2.4.0-next.0
-
-### Minor Changes
-
-- [#19683](https://github.com/LedgerHQ/ledger-live/pull/19683) [`8f30c75`](https://github.com/LedgerHQ/ledger-live/commit/8f30c75ecb553a720722f1e039b4aec53fce2a87) Thanks [@ysitbon](https://github.com/ysitbon)! - Expose `getCurrenciesResolver` and bound currency accessors (`getCryptoCurrencyById`, `findCryptoCurrencyById`, `findCryptoCurrencyByScheme`, `listCryptoCurrencies`, `hasCryptoCurrencyId`) from the `currencies` barrel, and broaden the framework currency types so coin-modules can consume them instead of `@ledgerhq/cryptoassets`/`@ledgerhq/types-cryptoassets`:
-
-  - `CryptoCurrency` gains `explorerId`/`tokenTypes`; `TokenCurrency` gains `symbol`/`keywords`; `ExplorerView` gains the `tx`/`address`/`token`/`stakePool` fields.
-  - New exported types `CryptoCurrencyId`, `LedgerExplorerId`, `FiatCurrency` and `Currency`.
-
-- [#19284](https://github.com/LedgerHQ/ledger-live/pull/19284) [`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Align Bittensor (TAO) on the Polkadot derivation path: use CoinType.POLKADOT (354) for the bittensor currency and reuse the polkadotbip44 derivation mode (with disableBIP44). Bittensor reuses the Polkadot app, which derives at 354 and applies the SS58 prefix (42) dynamically.
-
-- [#19229](https://github.com/LedgerHQ/ledger-live/pull/19229) [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove `@ledgerhq/cryptoassets` (value import) from the framework's production dependency surface. The framework now declares injectable port types (`CurrenciesResolver`, `FrameworkCryptoAssetsStore`) that the application composition root wires at bootstrap via `setCurrenciesResolver()` and `setCryptoAssetsStore()`.
-
-- [#19229](https://github.com/LedgerHQ/ledger-live/pull/19229) [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158) Thanks [@ysitbon](https://github.com/ysitbon)! - Define framework-owned `CryptoCurrency`, `TokenCurrency`, and `Unit` structural interfaces in `src/types.ts` and remove the `@ledgerhq/types-cryptoassets` production dependency. The interfaces are structurally compatible with the legacy types, so no call-site changes are needed.
-
-### Patch Changes
-
-- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`e26e68e`](https://github.com/LedgerHQ/ledger-live/commit/e26e68e854ecea6ebbe5e26196c8d8e899329c7d), [`bde85a7`](https://github.com/LedgerHQ/ledger-live/commit/bde85a7ef50cf7990efd2f9bcd7ccc34c0764fb7), [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003), [`d631f0d`](https://github.com/LedgerHQ/ledger-live/commit/d631f0dd2480950c5f20dec0c9b4aca515ec63f8)]:
-  - @ledgerhq/live-env@2.42.0-next.0
-  - @ledgerhq/types-live@6.115.0-next.0
-  - @ledgerhq/live-currency-format@0.13.0-next.0
-  - @ledgerhq/live-network@2.6.8-next.0
-
-## 2.3.0
-
-### Minor Changes
-
-- [#18630](https://github.com/LedgerHQ/ledger-live/pull/18630) [`e6566ff`](https://github.com/LedgerHQ/ledger-live/commit/e6566ff55d95ff36832d5f77899d67d80842f418) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [LWM] feat(mobile): add tracking part 1
-
-- [#19197](https://github.com/LedgerHQ/ledger-live/pull/19197) [`c8b4ee7`](https://github.com/LedgerHQ/ledger-live/commit/c8b4ee77c03ca2117cbad039331b7b52e50d9620) Thanks [@lysyi3m](https://github.com/lysyi3m)! - generic-coin-framework: store the account public key in `Account.xpub` (previously the address) for the evm/xrp/stellar/tezos families. Derive `makeSync`'s account-id identity from the immutable account id instead of the mutable `xpub` field, so healing `xpub` to the public key never re-keys or clears accounts. Account ids remain address-based; existing accounts populate `xpub` on the next device-connected scan.
-
-- [#18829](https://github.com/LedgerHQ/ledger-live/pull/18829) [`b3ffa2f`](https://github.com/LedgerHQ/ledger-live/commit/b3ffa2f4bf735f2cfeed2a8028ea92d4bc3588e3) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Sunset the `CryptoCurrency.terminated` field: remove it from the type/schema, delete the 5 currencies it marked (clubcoin, hcash, poswallet, stakenet, stratis), drop the now-unused `withTerminated` parameter from `listCryptoCurrencies`, and clean up the dead code orphaned by those deletions.
-
-- [#18955](https://github.com/LedgerHQ/ledger-live/pull/18955) [`376915c`](https://github.com/LedgerHQ/ledger-live/commit/376915ca520ecc1708090ed9b3eba1ff7e780540) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(mobile): add tracking on new send flow part 2
-
-### Patch Changes
-
-- Updated dependencies [[`6df2017`](https://github.com/LedgerHQ/ledger-live/commit/6df20171a84b54e5b67eabefc938a98d7e3c3e43), [`a2621e2`](https://github.com/LedgerHQ/ledger-live/commit/a2621e2c6c6369c7109af72e1cb59df2448951ff), [`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11), [`8b6614e`](https://github.com/LedgerHQ/ledger-live/commit/8b6614eaff423aaeb50b7eb44ba5916a941a573d), [`38728f9`](https://github.com/LedgerHQ/ledger-live/commit/38728f9d9ac879c276def56ce88c5e49549e4b9d), [`86ca231`](https://github.com/LedgerHQ/ledger-live/commit/86ca231ea9e0ec5996258b1abfa9742a7df3f9ec), [`6400154`](https://github.com/LedgerHQ/ledger-live/commit/6400154daa131b225c6ec62c9134f1cd06370729), [`9f8ab96`](https://github.com/LedgerHQ/ledger-live/commit/9f8ab9672ababc02909e7553d433ee326c37762e), [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63), [`addef52`](https://github.com/LedgerHQ/ledger-live/commit/addef52ed445008c16e3f94d66f46222c8c535f7), [`81373c1`](https://github.com/LedgerHQ/ledger-live/commit/81373c1ca46cf2094cfd4f98958eff2114f02cea), [`7fe5f11`](https://github.com/LedgerHQ/ledger-live/commit/7fe5f1129d6ac218ad274f2187a1a3dd83b8855a), [`7c39ea3`](https://github.com/LedgerHQ/ledger-live/commit/7c39ea39ca8999bcb8ce2294f4884430b6d1b2dc), [`d686e93`](https://github.com/LedgerHQ/ledger-live/commit/d686e93f8a548ff4e9ab3c877ad1f815510b35d9), [`e97314e`](https://github.com/LedgerHQ/ledger-live/commit/e97314e0d8201195a91e5eeb0fcde9e2b1dfff76), [`f495213`](https://github.com/LedgerHQ/ledger-live/commit/f495213e811477c99d62f0d93cc7c513b951a303), [`f495213`](https://github.com/LedgerHQ/ledger-live/commit/f495213e811477c99d62f0d93cc7c513b951a303), [`e820e40`](https://github.com/LedgerHQ/ledger-live/commit/e820e402fb57d52b31dcd6de26f8d31d9564e2a4), [`0e30cdc`](https://github.com/LedgerHQ/ledger-live/commit/0e30cdc29d7fb3cab5bf1f2ef7c24cf0a152516e), [`b10ca6a`](https://github.com/LedgerHQ/ledger-live/commit/b10ca6ab5e80889b24805b460f81eff5748f0170), [`df96477`](https://github.com/LedgerHQ/ledger-live/commit/df964774bdaccd897e5e7414c172e9c26ff21f67), [`cf3aad1`](https://github.com/LedgerHQ/ledger-live/commit/cf3aad160bd9d2002a3154fbc70018fb1f7a6171), [`df6ca42`](https://github.com/LedgerHQ/ledger-live/commit/df6ca422fa70171162974ea71519da5c5eeb55d8), [`b3ffa2f`](https://github.com/LedgerHQ/ledger-live/commit/b3ffa2f4bf735f2cfeed2a8028ea92d4bc3588e3), [`5aada6f`](https://github.com/LedgerHQ/ledger-live/commit/5aada6f1a72df070770f4b67112f51b5ced58cff), [`69b201e`](https://github.com/LedgerHQ/ledger-live/commit/69b201e2b1e01b2c6bfb6eaf9e0aa60088f175fc), [`3da6b44`](https://github.com/LedgerHQ/ledger-live/commit/3da6b4439d61a7ad7f06e04be12aa1e92b9cdb55), [`f9411d1`](https://github.com/LedgerHQ/ledger-live/commit/f9411d1e2a06b031555cda9e26ecba37b4cf045e), [`6eea36b`](https://github.com/LedgerHQ/ledger-live/commit/6eea36bfafeba265672a96b37981e2c7e629ef33), [`35d4af9`](https://github.com/LedgerHQ/ledger-live/commit/35d4af90e7bee849814cd98358c80e20ef4e4f2a)]:
-  - @ledgerhq/cryptoassets@13.54.0
-  - @ledgerhq/types-live@6.114.0
-  - @ledgerhq/live-env@2.41.0
-  - @ledgerhq/live-currency-format@0.12.0
-  - @ledgerhq/types-cryptoassets@7.39.0
-  - @ledgerhq/devices@8.17.0
-  - @ledgerhq/live-network@2.6.7
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

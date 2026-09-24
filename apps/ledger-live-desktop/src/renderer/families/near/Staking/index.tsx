@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import invariant from "invariant";
 import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -33,9 +32,6 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 const Staking = ({ account }: { account: NearAccount }) => {
   const dispatch = useDispatch();
-  const { nearResources } = account;
-  invariant(nearResources, "near account expected");
-  const { stakingPositions } = nearResources;
   const mappedStakingPositions = useNearMappedStakingPositions(account);
   const stakingEnabled = canStake(account);
   const onStake = useCallback(() => {
@@ -67,7 +63,7 @@ const Staking = ({ account }: { account: NearAccount }) => {
     },
     [explorerView],
   );
-  const hasStakingPositions = stakingPositions.length > 0;
+  const hasStakingPositions = mappedStakingPositions.length > 0;
   return (
     <>
       <TableContainer mb={6}>

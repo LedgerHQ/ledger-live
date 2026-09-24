@@ -99,9 +99,27 @@ function inferTransferDirection(trongridTxInfo: TrongridTxInfo, userAddress: str
   }
 }
 
+/**
+ * A token operation is only usable downstream if the token itself can be named: consumers resolve
+ * an asset from `type` + `assetReference`, and a `trc10`/`trc20` asset with no reference is a
+ * fatal input for some of them. Callers must drop (or degrade) such an operation rather than emit
+ * a half-populated asset — `inferAssetInfo` assumes this has been checked.
+ */
+export function hasUnresolvedTokenReference(trongridTxInfo: TrongridTxInfo): boolean {
+  switch (trongridTxInfo.tokenType) {
+    case "trc10":
+      return !trongridTxInfo.tokenId;
+    case "trc20":
+      return !trongridTxInfo.tokenAddress;
+    default:
+      return false;
+  }
+}
+
 export function inferAssetInfo(trongridTxInfo: TrongridTxInfo, userAddress?: string): AssetInfo {
-  // `assetOwner` identifies the account holding the token sub-account. It is only
-  // meaningful when listing operations for a specific address (account sync); the
+  // `assetOwner` identifies the account holding the token sub-account. It is supplementary
+  // context, never a stand-in for `assetReference` (which names the token itself): it is only
+  // meaningful when listing operations for a specific address (account sync), and the
   // block-level operations path leaves it undefined.
   const owner = userAddress ? { assetOwner: userAddress } : {};
   switch (true) {

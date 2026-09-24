@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-concordium",
-  "version": "0.8.0",
+  "version": "0.9.0-next.0",
   "description": "Ledger Hardware Wallet Concordium Signer",
   "keywords": [
     "Ledger",
@@ -17,9 +17,7 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-signer-concordium",
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib-es/index.d.ts",

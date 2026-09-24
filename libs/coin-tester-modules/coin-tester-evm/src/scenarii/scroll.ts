@@ -106,7 +106,7 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
       explorer: {
         type: "blockscout",
         noCache: true,
-        uri: "https://scroll.blockscout.com/api",
+        uri: "https://proxyblockscout.api.live.ledger.com/534352/api",
       },
       supportedTokens: ["erc721", "erc1155"],
     };

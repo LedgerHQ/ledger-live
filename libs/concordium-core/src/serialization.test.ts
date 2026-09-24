@@ -618,7 +618,7 @@ describe("serialization", () => {
     });
 
     it("should handle large memo", () => {
-      // GIVEN - memo at maximum size (254 bytes before CBOR encoding)
+      // GIVEN - a memo well inside the 256-byte encoded limit
       const memoData = Buffer.alloc(200, 0xaa);
       const tx: Transaction = {
         header: {

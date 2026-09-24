@@ -36,7 +36,6 @@ const FF_LWD_WALLET_40_Q1 = {
   lwdWallet40: {
     enabled: true,
     params: {
-      tour: false,
       lazyOnboarding: true,
       assetSection: false,
       brazePlacement: true,
@@ -55,7 +54,6 @@ export const FF_LWD_WALLET_40_Q2 = {
   lwdWallet40: {
     enabled: true,
     params: {
-      tour: false,
       lazyOnboarding: true,
       assetSection: true,
       brazePlacement: true,
@@ -162,6 +160,35 @@ export const FF_NEW_SEND_FLOW_DISABLED = {
 
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
+} satisfies PartialFeatures;
+
+export const FF_LWD_PAY_TAB = {
+  lwdPayTab: {
+    enabled: true,
+    params: {
+      card: true,
+    },
+  },
+} satisfies PartialFeatures;
+
+/**
+ * Contacts on desktop, off by default (`lwdContacts.enabled === false`).
+ *
+ * The params mirror the flag's own defaults rather than inventing values: `eligibleAddressFamilies`
+ * is `["evm"]`, so only EVM addresses are offered as contacts.
+ */
+export const FF_LWD_CONTACTS = {
+  lwdContacts: {
+    enabled: true,
+    params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+  },
+} satisfies PartialFeatures;
+
+export const FF_LWD_CONTACTS_ENABLED = {
+  lwdContacts: {
+    enabled: true,
+    params: { newBadge: false, eligibleAddressFamilies: ["evm", "tron"] },
+  },
 } satisfies PartialFeatures;
 
 export const getMergedFeatureFlags = ({

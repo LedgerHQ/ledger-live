@@ -3,12 +3,12 @@ import {
   BottomSheet,
   BottomSheetHeader,
   BottomSheetView,
-  OptionList,
-  OptionListContent,
-  OptionListItem,
-  OptionListItemContent,
-  OptionListItemText,
-  OptionListTrigger,
+  SelectList,
+  SelectListContent,
+  SelectListItem,
+  SelectListItemContent,
+  SelectListItemText,
+  SelectListTrigger,
   Text,
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
@@ -61,9 +61,9 @@ export const StrategySelect = ({
 
   return (
     <Box lx={{ flexDirection: "column", gap: "s12", paddingHorizontal: "s8" }}>
-      <OptionListTrigger label={strategyLabel} onPress={handleOpenSheet}>
+      <SelectListTrigger label={strategyLabel} onPress={handleOpenSheet}>
         {selectedOption != null && <Text lx={{ color: "base" }}>{selectedOption.label}</Text>}
-      </OptionListTrigger>
+      </SelectListTrigger>
       <BottomSheet
         ref={bottomSheetRef}
         enableDynamicSizing
@@ -72,18 +72,18 @@ export const StrategySelect = ({
       >
         <BottomSheetView>
           <BottomSheetHeader title={strategyLabel} />
-          <OptionList items={items} value={value || null} onValueChange={handleValueChange}>
-            <OptionListContent
+          <SelectList items={items} value={value || null} onValueChange={handleValueChange}>
+            <SelectListContent
               lx={{ marginBottom: "s24" }}
               renderItem={item => (
-                <OptionListItem value={item.value}>
-                  <OptionListItemContent>
-                    <OptionListItemText>{item.label}</OptionListItemText>
-                  </OptionListItemContent>
-                </OptionListItem>
+                <SelectListItem value={item.value}>
+                  <SelectListItemContent>
+                    <SelectListItemText>{item.label}</SelectListItemText>
+                  </SelectListItemContent>
+                </SelectListItem>
               )}
             />
-          </OptionList>
+          </SelectList>
         </BottomSheetView>
       </BottomSheet>
     </Box>

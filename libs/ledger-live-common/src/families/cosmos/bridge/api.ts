@@ -1,6 +1,16 @@
 import { getRedelegations } from "@ledgerhq/coin-cosmos/logic/staking/getRedelegations";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { Account } from "@ledgerhq/types-live";
+
+export function getDeviceSignOptions(
+  _transaction: Record<string, unknown>,
+  account: Account,
+): { hrp: string; signWithPrefix: boolean } {
+  const chain = cryptoFactory(account.currency.id);
+  return { hrp: chain.prefix, signWithPrefix: chain.signWithPrefix };
+}
 
 export default function cosmosBridge(_currency: CryptoCurrency): BridgeApi {
   return {
@@ -21,10 +31,10 @@ export default function cosmosBridge(_currency: CryptoCurrency): BridgeApi {
           throw new Error(`Unsupported Cosmos transaction mode: ${mode}`);
       }
     },
-    // Redelegations can't be a getBalance `Stake`, so the coin-framework leaves them empty — fetch here.
     enrichStakingResources: async (currency, address, _operations, stakingResources) => ({
       ...stakingResources,
       redelegations: await getRedelegations(currency.id, address),
     }),
+    getDeviceSignOptions,
   };
 }

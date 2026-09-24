@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-devices",
-  "version": "7.0.0",
+  "version": "7.1.0-next.0",
   "description": "Ledger types for devices and transport.",
   "keywords": [
     "Ledger"
@@ -26,7 +26,6 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
@@ -39,7 +38,6 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "documentation": "14.0.2",
     "jest": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",

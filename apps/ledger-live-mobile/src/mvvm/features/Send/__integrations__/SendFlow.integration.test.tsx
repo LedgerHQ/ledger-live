@@ -28,6 +28,7 @@ import { SignatureScreen } from "../screens/Signature";
 import { ConfirmationScreen } from "../screens/Confirmation";
 import { PaySuccessScreen } from "../screens/PaySuccess";
 import {
+  SEND_FLOW_SOURCE,
   SEND_FLOW_STEP,
   type SendFlowStep,
   type SendFlowInitParams,
@@ -45,6 +46,7 @@ const recipientEthereum = genAccount("recipient-ethereum", { currency: ethereumC
 const recipientBitcoin = genAccount("recipient-bitcoin", { currency: bitcoinCurrency });
 
 const VALID_STELLAR_RECIPIENT = "GAUFLBKWAXBQGM5IXXYU33VVNHIB6UPBC3TF3GFPLKIWTOSI5AYU75TF";
+const OTHER_VALID_STELLAR_RECIPIENT = "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN";
 const VALID_ETHEREUM_RECIPIENT = recipientEthereum.freshAddress;
 const VALID_BITCOIN_RECIPIENT = recipientBitcoin.freshAddress;
 const MEMO_VALUE = "test-memo";
@@ -579,6 +581,101 @@ describe("Send flow integration tests", () => {
       }
 
       expect(await screen.findByText(/Balance cannot be below/)).toBeOnTheScreen();
+    });
+
+    it("should ask to confirm before sending without a memo", async () => {
+      const { user } = renderForAccount(accountStellar);
+
+      await user.paste(
+        await screen.findByPlaceholderText("Enter address"),
+        VALID_STELLAR_RECIPIENT,
+      );
+      await flushTimers();
+      await user.press(await screen.findByText(/^Send to /));
+
+      expect(await screen.findByTestId("send-skip-memo-confirm")).toBeOnTheScreen();
+      await user.press(screen.getByTestId("send-skip-memo-confirm"));
+
+      expect(await screen.findByText("Review")).toBeOnTheScreen();
+    });
+
+    it("should stay on recipient when refusing to skip the memo", async () => {
+      const { user } = renderForAccount(accountStellar);
+
+      await user.paste(
+        await screen.findByPlaceholderText("Enter address"),
+        VALID_STELLAR_RECIPIENT,
+      );
+      await flushTimers();
+      await user.press(await screen.findByText(/^Send to /));
+
+      expect(await screen.findByTestId("send-skip-memo-cancel")).toBeOnTheScreen();
+      await user.press(screen.getByTestId("send-skip-memo-cancel"));
+
+      expect(await screen.findByTestId("send-memo-input")).toBeOnTheScreen();
+      expect(screen.queryByText("Review")).toBeNull();
+    });
+
+    it("should restore the memo field when going back from amount after skipping", async () => {
+      const { user } = renderForAccount(accountStellar);
+
+      await user.paste(
+        await screen.findByPlaceholderText("Enter address"),
+        VALID_STELLAR_RECIPIENT,
+      );
+      await flushTimers();
+      await user.press(await screen.findByText(/^Send to /));
+      await user.press(await screen.findByTestId("send-skip-memo-confirm"));
+      expect(await screen.findByText("Review")).toBeOnTheScreen();
+
+      await user.press(screen.getByLabelText("Back"));
+
+      // The "no memo" choice made when skipping is dropped: the field comes back empty and
+      // validating the recipient again asks for the confirmation instead of moving straight on.
+      // The confirmation sheet stays mounted (the gorhom mock renders its content inline), so
+      // staying on the recipient step is what tells us the memo state was reset.
+      expect(await screen.findByTestId("send-memo-input")).toHaveDisplayValue("");
+
+      await user.press(await screen.findByText(/^Send to /));
+      await flushTimers();
+
+      expect(screen.queryByText("Review")).toBeNull();
+    });
+
+    it("should not hand a memo-less recipient to the amount step left below the recipient", async () => {
+      // Pay is the one entry point that starts a memo currency on the amount step, so the
+      // recipient step gets pushed on top of it instead of replacing it.
+      const { user } = renderForAccount(accountStellar, {
+        recipient: VALID_STELLAR_RECIPIENT,
+        skipRecipientStep: true,
+        source: SEND_FLOW_SOURCE.PAY,
+      });
+
+      await user.press(await screen.findByLabelText("Edit recipient"));
+
+      await user.paste(
+        await screen.findByPlaceholderText("Enter address"),
+        OTHER_VALID_STELLAR_RECIPIENT,
+      );
+      await flushTimers();
+      await user.press(await screen.findByText(/^Send to /));
+      await user.press(await screen.findByTestId("send-skip-memo-cancel"));
+
+      // Going back lands on the amount step that is still mounted underneath, which has no memo
+      // confirmation of its own, so the refused address must never have reached the transaction.
+      await user.press(screen.getByLabelText("Back"));
+
+      expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+      expect(
+        screen.getByDisplayValue(
+          formatAddress(VALID_STELLAR_RECIPIENT, SEND_ADDRESS_FORMAT_OPTIONS),
+        ),
+      ).toBeVisible();
+      expect(
+        screen.queryByDisplayValue(
+          formatAddress(OTHER_VALID_STELLAR_RECIPIENT, SEND_ADDRESS_FORMAT_OPTIONS),
+        ),
+      ).toBeNull();
     });
   });
 

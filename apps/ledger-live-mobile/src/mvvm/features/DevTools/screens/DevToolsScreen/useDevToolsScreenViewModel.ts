@@ -13,7 +13,9 @@ import {
   useEnvDevToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
-import { openHostedLoginInSecureBrowser } from "@features/flow-pay-card-auth";
+import { openHostedUrlInSecureBrowser } from "@features/flow-pay-card-auth";
+import { useCurrenciesByIds } from "@features/platform-currencies";
+import { BAANX_LEDGER_CURRENCY_IDS } from "@domain/entity-card-asset-mapping";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
@@ -53,14 +55,17 @@ export function useDevToolsScreenViewModel() {
   }, [navigation]);
 
   const openSecureBrowser = useCallback(async (url: string) => {
-    const result = await openHostedLoginInSecureBrowser(url, PAY_TAB_DEEP_LINK);
+    const result = await openHostedUrlInSecureBrowser(url, PAY_TAB_DEEP_LINK);
     return result.type === "success" ? `redirected to ${result.url}` : "dismissed";
   }, []);
+
+  const currencies = useCurrenciesByIds(BAANX_LEDGER_CURRENCY_IDS);
 
   const boundPayCard = usePayCardToolProps({
     platform: "native",
     openPayTab: onNavigateToPayTab,
     openSecureBrowser,
+    currencies,
   });
 
   const payCardToolProps = useMemo(

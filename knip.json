@@ -94,6 +94,9 @@
     },
     "./libs/coin-tester-modules/coin-tester-kaspa": {
       "ignore": ["miner/miner.js"]
+    },
+    "./features/platform/app-lock": {
+      "ignoreDependencies": ["buffer"]
     }
   }
 }

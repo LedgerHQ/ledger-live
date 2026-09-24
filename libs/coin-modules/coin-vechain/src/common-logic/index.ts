@@ -6,3 +6,4 @@ export * from "./calculateTransactionInfo";
 export * from "./calculateGasFees";
 export * from "./generateNonce";
 export * from "./parseAddress";
+export * from "./vip180";

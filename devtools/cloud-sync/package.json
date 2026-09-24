@@ -1,6 +1,6 @@
 {
   "name": "@devtools/cloud-sync",
-  "version": "0.1.1",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Ledger Live Cloud Sync / Wallet Sync debug DevTool",
   "main": "src/index.ts",
@@ -25,7 +25,8 @@
     "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "unimported": "pnpm knip --directory ../.. -c devtools/cloud-sync/knip.web.config.mjs -W devtools/cloud-sync --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/cloud-sync/knip.native.config.mjs -W devtools/cloud-sync --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@shared/cloud-sync": "workspace:^"

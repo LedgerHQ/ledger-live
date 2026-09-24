@@ -303,6 +303,7 @@ jobs:
     permissions:
       security-events: write
       contents: read
+      id-token: write
 
   test-mobile-e2e-lint:
     name: "Mobile E2E Lint & Typecheck"

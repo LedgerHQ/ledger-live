@@ -7,6 +7,7 @@ import type { SuperRepresentative, TronAccount, Vote } from "./types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useBridgeSync } from "../../bridge/react";
 import { getCurrencyConfiguration } from "../../config";
+import { contextLogger } from "../../bridge/generic-coin-framework/api/context";
 
 export type Action = {
   type: "updateVote" | "resetVotes" | "clearVotes";
@@ -40,7 +41,7 @@ export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
   useEffect(() => {
     let unsub = false;
     const config = getCurrencyConfiguration<TronCoinConfig>("tron");
-    getTronSuperRepresentatives(config).then((sr: SuperRepresentative[]) => {
+    getTronSuperRepresentatives(contextLogger, config).then((sr: SuperRepresentative[]) => {
       __lastSeenSR = sr;
       if (unsub) return;
       setSr(sr);
@@ -116,7 +117,7 @@ export const useVoteNames = (
     Promise.all(
       missingKey
         .split(",")
-        .map(async address => [address, await accountNamesCache(config, address)]),
+        .map(async address => [address, await accountNamesCache(contextLogger, config, address)]),
     ).then(entries => {
       if (unsub) return;
       setNames(previous => ({ ...previous, ...Object.fromEntries(entries) }));

@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-wallets",
-  "version": "0.3.0",
+  "version": "0.4.0-next.0",
   "private": true,
   "description": "Card-linked custodial wallets for Ledger Wallet: joins Baanx linked wallets with their balances and totals them",
   "main": "src/index.ts",
@@ -27,7 +27,8 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-card-wallets"
   },
   "dependencies": {
-    "@domain/api-card-management": "workspace:^"
+    "@domain/api-card-management": "workspace:^",
+    "@domain/entity-currency": "workspace:^"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",

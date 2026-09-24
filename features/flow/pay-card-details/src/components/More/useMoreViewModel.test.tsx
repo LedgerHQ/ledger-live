@@ -48,14 +48,21 @@ describe("mapUserToViewModel", () => {
     });
   });
 
-  it("returns the four rows in the design order with their ids and titles", () => {
+  it("returns the five rows in the design order with their ids and titles", () => {
     const rows = mapWith()?.rows ?? [];
 
-    expect(rows.map(row => row.id)).toEqual(["managePin", "accessBaanx", "help", "logout"]);
+    expect(rows.map(row => row.id)).toEqual([
+      "managePin",
+      "accessBaanx",
+      "help",
+      "legal",
+      "logout",
+    ]);
     expect(rows.map(row => row.title)).toEqual([
-      "Manage PIN Code",
+      "Card PIN",
       "Access to Baanx",
       "Help",
+      "Legal agreement",
       "Logout",
     ]);
   });

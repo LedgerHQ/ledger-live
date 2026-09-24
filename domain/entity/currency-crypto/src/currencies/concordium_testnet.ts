@@ -26,4 +26,5 @@ export const concordium_testnet = currency({
     },
   ],
   keywords: ["concordium_testnet"],
+  tokenTypes: ["plt"],
 });

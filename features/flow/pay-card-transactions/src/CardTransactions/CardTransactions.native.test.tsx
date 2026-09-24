@@ -50,6 +50,24 @@ describe("CardTransactions (native)", () => {
     expect(screen.getByText("NETFLIX.COM")).toBeVisible();
   });
 
+  it("shows only the preview and calls onShowMore from the subheader", async () => {
+    const page = mockPayCardTransactions();
+    const onShowMore = jest.fn();
+    const user = userEvent.setup();
+    server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
+
+    render(<CardTransactions onShowMore={onShowMore} />, {
+      wrapper: cardApiWrapper({ signedIn: true }),
+    });
+
+    await waitFor(() => expect(screen.getByTestId("card-transactions-list")).toBeVisible());
+    expect(screen.getAllByTestId(/^card-transactions-item-/)).toHaveLength(3);
+
+    await user.press(screen.getByTestId("card-transactions-subheader"));
+
+    expect(onShowMore).toHaveBeenCalledTimes(1);
+  });
+
   it("returns the selected transaction item", async () => {
     const page = mockPayCardTransactions();
     const onTransactionPress = jest.fn();

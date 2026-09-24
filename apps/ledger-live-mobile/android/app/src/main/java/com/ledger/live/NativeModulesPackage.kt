@@ -19,6 +19,7 @@ class NativeModulesPackage : ReactPackage {
         reactContext: ReactApplicationContext
     ): MutableList<NativeModule> = listOf(
         BluetoothHelperModule(reactContext),
+        GoogleWalletModule(reactContext),
         LocationHelperModule(reactContext, coroutineDispatcher = Dispatchers.Default),
         MeasureTransformModule(reactContext)
     ).toMutableList()

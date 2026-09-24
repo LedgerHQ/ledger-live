@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-btc
 
+## 11.6.0-next.0
+
+### Minor Changes
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
+- [#22143](https://github.com/LedgerHQ/ledger-live/pull/22143) [`29ce771`](https://github.com/LedgerHQ/ledger-live/commit/29ce7712ce93cd27afa97eda2d14a0ff066551fb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - refactor(noble-curves): replace the APIs @noble/curves 2.x renames away
+
 ## 11.5.0
 
 ### Minor Changes
@@ -223,18 +231,5 @@
 ### Major Changes
 
 - [#16796](https://github.com/LedgerHQ/ledger-live/pull/16796) [`00d692c`](https://github.com/LedgerHQ/ledger-live/commit/00d692ce539ebde1a3f7d623e91eca63a5278dfa) Thanks [@bigspider](https://github.com/bigspider)! - Use protocol version 1 of the Bitcoin application, supported since version 2.1.0.
-
-## 11.0.0-next.0
-
-### Major Changes
-
-- [#16796](https://github.com/LedgerHQ/ledger-live/pull/16796) [`00d692c`](https://github.com/LedgerHQ/ledger-live/commit/00d692ce539ebde1a3f7d623e91eca63a5278dfa) Thanks [@bigspider](https://github.com/bigspider)! - Use protocol version 1 of the Bitcoin application, supported since version 2.1.0.
-
-## 10.22.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.2
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

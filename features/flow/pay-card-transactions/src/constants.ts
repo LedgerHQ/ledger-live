@@ -1,0 +1,1 @@
+export const CARD_TRANSACTIONS_PREVIEW_LIMIT = 3;

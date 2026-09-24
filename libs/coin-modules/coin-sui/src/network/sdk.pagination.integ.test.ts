@@ -7,7 +7,6 @@
  */
 import { getEnv } from "@ledgerhq/live-env";
 import type { SuiCoinConfig, SuiTransport } from "../config";
-import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
 import { getListOperations, getOperations, TRANSACTIONS_LIMIT_PER_QUERY } from "./sdk";
 
 const configFor = (transport: SuiTransport): SuiCoinConfig => ({
@@ -20,8 +19,13 @@ const configFor = (transport: SuiTransport): SuiCoinConfig => ({
   features: { transport },
 });
 
-/** Steady, high-volume mainnet history — several pages deep on both arms. */
-const ACCOUNT = FIGMENT_SUI_VALIDATOR_ADDRESS;
+/**
+ * Steady, high-volume mainnet history — several pages deep on both arms. Deliberately not a
+ * validator: `FIGMENT_SUI_VALIDATOR_ADDRESS` reaches the same capped 300 operations, but the server
+ * scans a far larger affected-address index to get there (~190s of page walks against the 120-180s
+ * budgets below, vs ~11s here) and failed on `list_transactions request deadline exceeded`.
+ */
+const ACCOUNT = "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9";
 const TRANSPORTS = ["graphql", "grpc"] as const;
 const ORDERS = ["desc", "asc"] as const;
 

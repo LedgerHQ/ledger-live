@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 4.1.0-next.0
+
+### Minor Changes
+
+- [#22006](https://github.com/LedgerHQ/ledger-live/pull/22006) [`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Point the deprecation notices at `docs/configuration.md`, which is now the single guide for where a configuration value belongs and how to take one out of the env registry. `libs/env/MIGRATION.md` and `shared/env/MIGRATION.md` are removed — their content lives there, next to the app `.env` and build-secret mechanics it was already linking to. Comments and docs only.
+
 ## 4.0.0
 
 ### Major Changes

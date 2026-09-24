@@ -126,7 +126,7 @@ export async function buildTz2Signer(): Promise<TezosTestSigner> {
       const txBytes = Buffer.from(rawTxHex.replace(/^0x/, ""), "hex");
       const hash = blake2b(txBytes, { dkLen: 32 });
       const sig = secp256k1.sign(hash, privateKey);
-      return Buffer.from(sig.toCompactRawBytes()).toString("hex");
+      return Buffer.from(sig.toBytes("compact")).toString("hex");
     },
   };
 }

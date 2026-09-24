@@ -11,7 +11,7 @@ import {
   NotEnoughSpendableBalance,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { STELLAR_DUMMY_ADDRESS } from "@ledgerhq/coin-stellar/constants";
+import { STELLAR_DUMMY_ADDRESS } from "../constants";
 import { getSerializedAddressParameters } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Transaction } from "../types";
 import { StellarSourceHasMultiSign, StellarWrongMemoFormat } from "@ledgerhq/coin-stellar/errors";

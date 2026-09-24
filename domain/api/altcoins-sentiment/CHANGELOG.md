@@ -1,5 +1,12 @@
 # @domain/api-altcoins-sentiment
 
+## 0.3.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`40d296b`](https://github.com/LedgerHQ/ledger-live/commit/40d296b822381cc5d05616acafa1bca61e500dce)]:
+  - @shared/api-services@0.8.0-next.0
+
 ## 0.3.5
 
 ### Patch Changes

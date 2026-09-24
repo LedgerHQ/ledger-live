@@ -195,6 +195,7 @@ const eth = new Eth(transport, "w0w", {
     *   [Parameters](#parameters-25)
 *   [ResolutionConfig](#resolutionconfig)
     *   [Properties](#properties)
+*   [additionalErc20SignaturesConfig](#additionalerc20signaturesconfig)
 
 ### Eth
 
@@ -665,3 +666,10 @@ Type: {nft: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Referenc
 *   `erc20` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
 *   `domains` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<DomainDescriptor>?**&#x20;
 *   `uniswapV3` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
+
+### additionalErc20SignaturesConfig
+
+Resolves one more contract as an ERC20 token, on top of what the transaction itself needs
+(e.g. the fee currency of a Celo CIP-64 transaction).
+The provided blob is looked up first; on a miss the CAL signatures for the chain are fetched
+and looked up too, so providing a blob does not guarantee that no network request is made.

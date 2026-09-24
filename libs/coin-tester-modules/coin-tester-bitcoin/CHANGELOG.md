@@ -1,5 +1,16 @@
 # @ledgerhq/coin-tester-bitcoin
 
+## 1.12.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`5d2f40f`](https://github.com/LedgerHQ/ledger-live/commit/5d2f40f470f859960e43a2a08755a962796f6beb), [`29ce771`](https://github.com/LedgerHQ/ledger-live/commit/29ce7712ce93cd27afa97eda2d14a0ff066551fb), [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26), [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629), [`e2134f5`](https://github.com/LedgerHQ/ledger-live/commit/e2134f5cffe4669ff5896e2b52904fe22218461b)]:
+  - @ledgerhq/coin-bitcoin@0.53.0-next.0
+  - @ledgerhq/hw-app-btc@11.6.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.5.0-next.0
+  - @ledgerhq/types-live@6.125.0-next.0
+  - @ledgerhq/coin-tester@0.20.0
+
 ## 1.12.7
 
 ### Patch Changes
@@ -213,38 +224,6 @@
   - @ledgerhq/coin-bitcoin@0.48.0-next.0
   - @ledgerhq/live-network@2.7.0-next.0
   - @ledgerhq/ledger-wallet-framework@2.5.0-next.0
-  - @ledgerhq/coin-tester@0.20.0
-
-## 1.11.0
-
-### Minor Changes
-
-- [#19683](https://github.com/LedgerHQ/ledger-live/pull/19683) [`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f) Thanks [@ysitbon](https://github.com/ysitbon)! - Consume currency accessors and currency types from `@ledgerhq/ledger-wallet-framework` instead of `@ledgerhq/cryptoassets`/`@ledgerhq/types-cryptoassets`. Value accessors now resolve through the framework's injected `CurrenciesResolver`; `CryptoCurrency`/`TokenCurrency`/`Unit`/`ExplorerView` types are imported from the framework.
-
-### Patch Changes
-
-- Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f), [`8f30c75`](https://github.com/LedgerHQ/ledger-live/commit/8f30c75ecb553a720722f1e039b4aec53fce2a87), [`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`e26e68e`](https://github.com/LedgerHQ/ledger-live/commit/e26e68e854ecea6ebbe5e26196c8d8e899329c7d), [`bde85a7`](https://github.com/LedgerHQ/ledger-live/commit/bde85a7ef50cf7990efd2f9bcd7ccc34c0764fb7), [`d631f0d`](https://github.com/LedgerHQ/ledger-live/commit/d631f0dd2480950c5f20dec0c9b4aca515ec63f8), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158), [`d7edc6e`](https://github.com/LedgerHQ/ledger-live/commit/d7edc6ee38776dcbc6da341f734b42d78dc05836)]:
-  - @ledgerhq/coin-bitcoin@0.47.0
-  - @ledgerhq/ledger-wallet-framework@2.4.0
-  - @ledgerhq/types-live@6.115.0
-  - @ledgerhq/hw-app-btc@11.3.0
-  - @ledgerhq/live-network@2.6.8
-  - @ledgerhq/coin-tester@0.20.0
-
-## 1.11.0-next.0
-
-### Minor Changes
-
-- [#19683](https://github.com/LedgerHQ/ledger-live/pull/19683) [`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f) Thanks [@ysitbon](https://github.com/ysitbon)! - Consume currency accessors and currency types from `@ledgerhq/ledger-wallet-framework` instead of `@ledgerhq/cryptoassets`/`@ledgerhq/types-cryptoassets`. Value accessors now resolve through the framework's injected `CurrenciesResolver`; `CryptoCurrency`/`TokenCurrency`/`Unit`/`ExplorerView` types are imported from the framework.
-
-### Patch Changes
-
-- Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f), [`8f30c75`](https://github.com/LedgerHQ/ledger-live/commit/8f30c75ecb553a720722f1e039b4aec53fce2a87), [`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`e26e68e`](https://github.com/LedgerHQ/ledger-live/commit/e26e68e854ecea6ebbe5e26196c8d8e899329c7d), [`bde85a7`](https://github.com/LedgerHQ/ledger-live/commit/bde85a7ef50cf7990efd2f9bcd7ccc34c0764fb7), [`d631f0d`](https://github.com/LedgerHQ/ledger-live/commit/d631f0dd2480950c5f20dec0c9b4aca515ec63f8), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158), [`d7edc6e`](https://github.com/LedgerHQ/ledger-live/commit/d7edc6ee38776dcbc6da341f734b42d78dc05836)]:
-  - @ledgerhq/coin-bitcoin@0.47.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.4.0-next.0
-  - @ledgerhq/types-live@6.115.0-next.0
-  - @ledgerhq/hw-app-btc@11.3.0-next.0
-  - @ledgerhq/live-network@2.6.8-next.0
   - @ledgerhq/coin-tester@0.20.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -19,6 +19,7 @@ export const mockFeeByTransactionType: Record<TransactionType, number> = {
 export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinConfig => {
   return {
     networkType,
+    defaultValidator: "aleo1validator000000000000000000000000000000000000000000000000q",
     apiUrls: {
       node: "https://node.example.com",
       sdk: "https://sdk.example.com",
@@ -30,6 +31,8 @@ export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinCon
     enableStaking: false,
     useEncryptedProve: false,
     recordPickingStrategy: "manual",
+    liveBlockHeightPollMs: 10_000,
+    maxUnbondingSyncAttempts: 3,
     status: { type: "active" },
   };
 };
@@ -41,6 +44,7 @@ export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinCon
 export const getTestnetIntegConfig = (overrides?: Partial<AleoCoinConfig>): AleoCoinConfig => ({
   status: { type: "active" },
   networkType: "testnet",
+  defaultValidator: "aleo1validator000000000000000000000000000000000000000000000000q",
   apiUrls: {
     node: getEnv("ALEO_NODE_ENDPOINT"),
     sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
@@ -52,5 +56,7 @@ export const getTestnetIntegConfig = (overrides?: Partial<AleoCoinConfig>): Aleo
   enableStaking: false,
   useEncryptedProve: false,
   recordPickingStrategy: "manual",
+  liveBlockHeightPollMs: 10_000,
+  maxUnbondingSyncAttempts: 3,
   ...overrides,
 });

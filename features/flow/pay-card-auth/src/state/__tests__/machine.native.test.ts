@@ -47,6 +47,7 @@ function stubPorts(overrides: Partial<Ports> = {}): Ports {
     getUser: jest.fn(async () => user),
     setSignedIn: jest.fn(),
     markIntroSeen: jest.fn(),
+    setProviderAppId: jest.fn(),
     openHostedLogin: jest.fn(async () => ({
       type: "success",
       url: "ledgerlive://paytab?code=auth-code&app_id=app-value",
@@ -143,7 +144,7 @@ describe("cardLoginMachine cold start", () => {
   it("reports a redirect that has no attempt behind it", async () => {
     const actor = start(stubPorts(), callback);
 
-    await settledAt(actor, "error");
+    await settledAt(actor, "authError");
     expect(actor.getSnapshot().context.errorKind).toBe("missing_attempt");
   });
 
@@ -202,7 +203,7 @@ describe("cardLoginMachine login", () => {
 
     // The URL is built in the actor, so a bad `apiUrl` reports a failure instead of stopping the
     // machine. The attempt reached the store before that, so it is wiped again.
-    await settledAt(actor, "error");
+    await settledAt(actor, "authError");
     expect(actor.getSnapshot().context.errorKind).toBe("pkce_failed");
     expect(ports.clearAttempt).toHaveBeenCalled();
     expect(ports.openHostedLogin).not.toHaveBeenCalled();
@@ -287,6 +288,43 @@ describe("cardLoginMachine login", () => {
       code: callback.code,
       codeVerifier: attempt.codeVerifier,
     });
+  });
+
+  it("records the provider app before the token exchange leaves", async () => {
+    // The exchange is the first request that has to reach the holder's own tenant, so the app id
+    // must be stored before it, not after.
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      openHostedLogin: jest.fn(async () => ({ type: "pending" })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+    await settledAt(actor, "awaitingCallback");
+
+    actor.send({ type: "CALLBACK_RECEIVED", ...callback, appId: "ledger-us" });
+
+    await settledAt(actor, "ready");
+    expect(ports.setProviderAppId).toHaveBeenCalledWith("ledger-us");
+    expect(ports.setProviderAppId.mock.invocationCallOrder[0]).toBeLessThan(
+      ports.exchangeAuthorizationCode.mock.invocationCallOrder[0],
+    );
+  });
+
+  it("forgets the provider app when the redirect named none", async () => {
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      openHostedLogin: jest.fn(async () => ({ type: "pending" })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+    await settledAt(actor, "awaitingCallback");
+
+    actor.send({ type: "CALLBACK_RECEIVED", ...callback });
+
+    await settledAt(actor, "ready");
+    expect(ports.setProviderAppId).toHaveBeenCalledWith(null);
   });
 
   it("starts a fresh attempt when the login is pressed again while it waits", async () => {
@@ -443,7 +481,7 @@ describe("cardLoginMachine login", () => {
     const actor = start(ports);
     await settledAt(actor, "idle");
     actor.send({ type: "LOGIN" });
-    await settledAt(actor, "error");
+    await settledAt(actor, "authError");
 
     actor.send({ type: "RETRY" });
 
@@ -505,7 +543,7 @@ describe("cardLoginMachine intro flag", () => {
     await settledAt(actor, "idle");
     actor.send({ type: "LOGIN" });
 
-    await settledAt(actor, "error");
+    await settledAt(actor, "authError");
     expect(ports.markIntroSeen).toHaveBeenCalledTimes(1);
   });
 });
@@ -544,7 +582,7 @@ describe("cardLoginMachine failures", () => {
 
     actor.send({ type: "LOGIN" });
 
-    await settledAt(actor, "error");
+    await settledAt(actor, "authError");
     expect(actor.getSnapshot().context.errorKind).toBe(errorKind);
   });
 
@@ -570,7 +608,7 @@ describe("cardLoginMachine failures", () => {
 
     const actor = start(ports, callback);
 
-    await settledAt(actor, "error");
+    await settledAt(actor, "authError");
     expect(actor.getSnapshot().context.errorKind).toBe("missing_attempt");
     expect(ports.exchangeAuthorizationCode).not.toHaveBeenCalled();
   });
@@ -588,7 +626,7 @@ describe("cardLoginMachine failures", () => {
     expect(actor.getSnapshot().context.errorKind).toBeNull();
   });
 
-  it("keeps the session when a request outlived the session it was sent with", async () => {
+  it("says nothing when a request outlived the session it was sent with", async () => {
     const ports = stubPorts({
       hasSession: jest.fn(async () => true),
       getUser: jest.fn(async () =>
@@ -598,9 +636,10 @@ describe("cardLoginMachine failures", () => {
 
     const actor = start(ports);
 
-    await settledAt(actor, "error");
-    expect(actor.getSnapshot().context.errorKind).toBe("fetch_user_failed");
+    await settledAt(actor, "idle");
+    expect(actor.getSnapshot().context.errorKind).toBeNull();
     expect(ports.clearSession).not.toHaveBeenCalled();
+    expect(ports.setSignedIn).toHaveBeenLastCalledWith(false);
   });
 
   it("forgets the cached user when a 401 ends the session", async () => {
@@ -649,9 +688,70 @@ describe("cardLoginMachine failures", () => {
 
     const actor = start(ports);
 
-    await settledAt(actor, "error");
+    await settledAt(actor, "userFetchError");
     expect(actor.getSnapshot().context.errorKind).toBe("fetch_user_failed");
     expect(ports.clearSession).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["a 401 whose body does not parse", { status: "PARSING_ERROR", originalStatus: 401 }],
+    [
+      "a renewal the port could not start",
+      { status: "CUSTOM_ERROR", error: "Card session renew failed" },
+    ],
+  ])("ends the session on %s", async (_label, error) => {
+    const ports = stubPorts({
+      hasSession: jest.fn(async () => true),
+      getUser: jest.fn(async () => Promise.reject(error)),
+    });
+
+    const actor = start(ports);
+
+    await settledAt(actor, "idle");
+    expect(ports.clearSession).toHaveBeenCalledTimes(1);
+  });
+
+  it("asks for the card again without a new login", async () => {
+    const getUser = jest
+      .fn()
+      .mockRejectedValueOnce({ status: "FETCH_ERROR" })
+      .mockResolvedValueOnce({ id: "user-1" });
+    const ports = stubPorts({ hasSession: jest.fn(async () => true), getUser });
+
+    const actor = start(ports);
+    await settledAt(actor, "userFetchError");
+
+    actor.send({ type: "RETRY" });
+
+    await settledAt(actor, "ready");
+    expect(getUser).toHaveBeenCalledTimes(2);
+    expect(ports.createAttempt).not.toHaveBeenCalled();
+    expect(ports.clearSession).not.toHaveBeenCalled();
+  });
+
+  it("drops the error kind while the card is fetched again", async () => {
+    const ports = stubPorts({
+      hasSession: jest.fn(async () => true),
+      getUser: jest.fn(async () => Promise.reject({ status: "FETCH_ERROR" })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "userFetchError");
+
+    actor.send({ type: "RETRY" });
+
+    expect(actor.getSnapshot().context.errorKind).toBeNull();
+  });
+
+  it("keeps the signed-out flag unpublished while the card fails to load", async () => {
+    const ports = stubPorts({
+      hasSession: jest.fn(async () => true),
+      getUser: jest.fn(async () => Promise.reject({ status: "FETCH_ERROR" })),
+    });
+
+    const actor = start(ports);
+
+    await settledAt(actor, "userFetchError");
+    expect(ports.setSignedIn).not.toHaveBeenCalledWith(false);
   });
 });
 
@@ -682,7 +782,7 @@ describe("cardLoginMachine signed-in flag", () => {
     expect(ports.setSignedIn).toHaveBeenLastCalledWith(false);
   });
 
-  it("publishes the signed-out flag when it settles in error", async () => {
+  it("publishes the signed-out flag when it settles in authError", async () => {
     const ports = stubPorts({
       createAttempt: jest.fn(async () => Promise.reject(new Error("no csprng"))),
     });
@@ -691,7 +791,7 @@ describe("cardLoginMachine signed-in flag", () => {
 
     actor.send({ type: "LOGIN" });
 
-    await settledAt(actor, "error");
+    await settledAt(actor, "authError");
     expect(ports.setSignedIn).toHaveBeenLastCalledWith(false);
   });
 

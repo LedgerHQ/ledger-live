@@ -60,14 +60,24 @@ const getAdditionalDataForContract = async (
   }
 
   if (shouldResolve.token) {
-    const erc20SignaturesBlob =
-      providedErc20SignaturesBlob ?? (await findERC20SignaturesInfo(loadConfig, chainIdUint32));
-    const erc20Info = byContractAddressAndChainId(
-      contractAddress,
-      chainIdUint32,
-      erc20SignaturesBlob,
-      loadConfig,
-    );
+    const erc20InfoFromProvidedBlob = providedErc20SignaturesBlob
+      ? byContractAddressAndChainId(
+          contractAddress,
+          chainIdUint32,
+          providedErc20SignaturesBlob,
+          loadConfig,
+        )
+      : null;
+
+    // A provided blob can be missing entries, so a miss still consults CAL.
+    const erc20Info =
+      erc20InfoFromProvidedBlob ??
+      byContractAddressAndChainId(
+        contractAddress,
+        chainIdUint32,
+        await findERC20SignaturesInfo(loadConfig, chainIdUint32),
+        loadConfig,
+      );
 
     if (erc20Info) {
       log(

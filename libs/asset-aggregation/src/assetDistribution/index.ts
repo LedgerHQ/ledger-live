@@ -1,4 +1,5 @@
 export { buildAssetDistribution } from "./buildAssetDistribution";
+export { computeAvailableAndEarnDeposit } from "./computeAvailableAndEarnDeposit";
 export { toSlug } from "./toSlug";
 export { resolveDistributionItem } from "./resolveDistributionItem";
 export type {

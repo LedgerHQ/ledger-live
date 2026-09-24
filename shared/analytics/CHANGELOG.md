@@ -1,5 +1,11 @@
 # @shared/analytics
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#22082](https://github.com/LedgerHQ/ledger-live/pull/22082) [`216ecb7`](https://github.com/LedgerHQ/ledger-live/commit/216ecb720b1f1937ae1a8c10ef40be24ea5d79cf) Thanks [@LL782](https://github.com/LL782)! - Export `publishAnalyticsEvent`, align `LoggableEvent` property names with existing analytics, and re-track `<TrackPage>` when page properties change.
+
 ## 0.2.0
 
 ### Minor Changes

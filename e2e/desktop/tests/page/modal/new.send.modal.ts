@@ -14,6 +14,14 @@ export class NewSendModal extends Modal {
   readonly matchedAddressButtons = this.dialog
     .locator('[data-testid="send-matched-address-button"]')
     .filter({ visible: true });
+  private readonly recipientDisplay = this.dialog.getByTestId("send-recipient-display");
+  private readonly recipientContactAvatar = this.dialog.getByTestId(
+    "send-recipient-contact-avatar",
+  );
+  private readonly recipientCard = this.dialog.getByTestId("send-recipient-card");
+  private readonly recipientCardAddContactButton = this.dialog.getByTestId(
+    "send-recipient-card-add-contact",
+  );
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
@@ -41,6 +49,12 @@ export class NewSendModal extends Modal {
   getFeePreset(preset: Fee) {
     return this.page.getByTestId(`send-fees-preset-${preset.toLowerCase()}`);
   }
+
+  private readonly contactRow = (contactId: string) =>
+    this.dialog.getByTestId(`contacts-compact-row-${contactId}`);
+
+  private readonly contactAddressRow = (addressId: string) =>
+    this.dialog.getByTestId(`send-recipient-contact-address-${addressId}`);
 
   private async isCryptoInputMode(): Promise<boolean | null> {
     const secondaryValue = (await this.amountSecondaryValue.textContent())?.trim() ?? "";
@@ -70,6 +84,40 @@ export class NewSendModal extends Modal {
       : this.matchedAddressButtons.first();
 
     await button.click();
+  }
+
+  @step("Clear the recipient input")
+  async clearRecipient() {
+    await this.recipientInput.fill("");
+    await expect(this.recipientCard).toBeHidden();
+  }
+
+  @step("Select contact $0 from the address book")
+  async selectContact(contactId: string) {
+    await this.contactRow(contactId).click();
+  }
+
+  @step("Select contact address $0")
+  async selectContactAddress(addressId: string) {
+    await this.contactAddressRow(addressId).click();
+  }
+
+  @step("Verify the matched recipient is contact: $0")
+  async expectMatchedContact(contactName: string) {
+    await expect(this.recipientCard).toContainText(contactName);
+    await expect(this.recipientCard.getByTestId("send-recipient-card-avatar")).toBeVisible();
+  }
+
+  @step("Verify the Add contact action is enabled")
+  async expectAddContactEnabled() {
+    await expect(this.recipientCardAddContactButton).toBeVisible();
+    await expect(this.recipientCardAddContactButton).toBeEnabled();
+  }
+
+  @step("Verify the amount step recipient is contact: $0")
+  async expectAmountStepContact(contactName: string) {
+    await expect(this.recipientContactAvatar).toBeVisible();
+    await expect(this.recipientDisplay).toHaveValue(contactName);
   }
 
   @step("Type memo: $0")

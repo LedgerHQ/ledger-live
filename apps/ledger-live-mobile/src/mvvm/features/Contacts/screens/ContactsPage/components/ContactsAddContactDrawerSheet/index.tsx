@@ -1,11 +1,11 @@
-import React, { useCallback, useState } from "react";
-import { Platform } from "react-native";
+import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
-import { ContactsAddContactContent } from "@features/flow-contacts-add-contact";
+import {
+  ContactsAddContactContent,
+  ContactsAddContactFooter,
+} from "@features/flow-contacts-add-contact";
 import type { AddContactAppAdapterResult } from "@features/flow-contacts";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { resolveKeyboardBottomOffset, useKeyboardVisible } from "~/logic/keyboardVisible";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetFooterInset } from "@shared/ui-queued-bottom-sheet";
 
 export function ContactsAddContactDrawerSheet({
   isOpen,
@@ -13,39 +13,40 @@ export function ContactsAddContactDrawerSheet({
   onOpen: _onOpen,
   ...contentProps
 }: AddContactAppAdapterResult): React.JSX.Element {
-  const { bottom: bottomInset } = useSafeAreaInsets();
-  const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
-    eventTiming: Platform.OS === "ios" ? "will" : "did",
-  });
-  const keyboardInset = resolveKeyboardBottomOffset({
-    isKeyboardVisible,
-    keyboardHeight,
-    platform: Platform.OS,
-    version: Platform.Version,
-  });
-  const [hasOpened, setHasOpened] = useState(false);
-  const handleOpened = useCallback(() => setHasOpened(true), []);
-  const handleClose = useCallback(() => {
-    setHasOpened(false);
-    onClose();
-  }, [onClose]);
-
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
-      onOpened={handleOpened}
-      onClose={handleClose}
+      onClose={onClose}
       testID="contacts-add-contact-drawer"
-      enableDynamicSizing
+      // Fixed height, so raising the keyboard over the name field cannot re-snap the sheet
+      // mid-animation. The two then animate up together.
+      snapPoints="fullWithOffset"
+      footer={isOpen ? <ContactsAddContactFooter {...contentProps} /> : null}
     >
-      <BottomSheetView style={{ paddingBottom: bottomInset + 24 + keyboardInset }}>
-        {isOpen ? (
-          <Box lx={{ gap: "s24" }}>
-            <BottomSheetHeader />
-            <ContactsAddContactContent {...contentProps} autoFocus={hasOpened} />
-          </Box>
-        ) : null}
-      </BottomSheetView>
+      <AddContactDrawerContent isOpen={isOpen} contentProps={contentProps} />
     </QueuedBottomSheet>
+  );
+}
+
+type AddContactDrawerContentProps = Readonly<{
+  isOpen: boolean;
+  contentProps: Omit<AddContactAppAdapterResult, "isOpen" | "onOpen" | "onClose">;
+}>;
+
+function AddContactDrawerContent({
+  isOpen,
+  contentProps,
+}: AddContactDrawerContentProps): React.JSX.Element {
+  const footerInset = useBottomSheetFooterInset();
+
+  return (
+    <BottomSheetView style={{ paddingBottom: footerInset }}>
+      {isOpen ? (
+        <Box lx={{ gap: "s24" }}>
+          <BottomSheetHeader />
+          <ContactsAddContactContent {...contentProps} autoFocus />
+        </Box>
+      ) : null}
+    </BottomSheetView>
   );
 }

@@ -3,9 +3,10 @@ import type {
   OsUpdatesOrchestrator,
   OsUpdatesOrchestratorUseCaseInput,
 } from "../model/OsUpdatesOrchestrator";
-import { PreChecksStateType } from "../model/PreChecksState";
 import { osUpdatesOrchestratorStateMachine } from "../../internal/orchestrator/osUpdatesOrchestratorStateMachine";
 import { OsUpdatesOrchestratorStateMachineEventType } from "../../internal/orchestrator/types";
+import { toProgress } from "../../internal/orchestrator/utils/toProgress";
+import { unexpectedErrorState } from "../../internal/orchestrator/utils/unexpectedErrorState";
 
 export class OsUpdatesOrchestratorUseCase {
   execute(input: OsUpdatesOrchestratorUseCaseInput): OsUpdatesOrchestrator {
@@ -25,17 +26,17 @@ export class OsUpdatesOrchestratorUseCase {
       subscribe: listener => {
         const subscription = actor.subscribe({
           next: snapshot => {
-            listener(snapshot.context.currentState);
+            listener(toProgress(snapshot.context));
           },
           // The errored snapshot keeps the context, so the step reached so far is preserved.
           error: () => {
-            listener({
-              ...actor.getSnapshot().context.currentState,
-              state: {
-                type: PreChecksStateType.UNEXPECTED_ERROR,
-                cancel: stop,
-              },
-            });
+            const { currentStep } = actor.getSnapshot().context;
+            listener(
+              toProgress({
+                currentStep,
+                currentState: unexpectedErrorState(currentStep, stop),
+              }),
+            );
           },
         });
         return {

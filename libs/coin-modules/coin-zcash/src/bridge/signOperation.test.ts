@@ -20,7 +20,7 @@ import {
 } from "./note-reservation";
 import type { SpendableNote } from "../network/types";
 import type { SignerContext } from "../types/signer";
-import type { Transaction, ZcashAccount } from "../types/bridge";
+import type { Transaction, ZcashAccount, ZcashOperationExtra } from "../types/bridge";
 import { ZcashNotesNotYetSpendable, ZcashShieldedKeyMissing } from "../types/errors";
 
 jest.mock("../logic/transaction/craftTransaction");
@@ -204,13 +204,13 @@ describe("bridge/signOperation", () => {
   // "shielded-to-transparent") and shielding ("transparent-to-shielded") credits
   // it, so all three use the V6 builder; only t→t stays on the v1/V5 builder.
   it.each([
-    ["shielded", "z→z", "v6"],
-    ["shielded-to-transparent", "z→t", "v6"],
-    ["transparent-to-shielded", "t→z", "v6"],
-    ["transparent", "t→t", "v1"],
+    ["shielded", "z→z", "v6", true],
+    ["shielded-to-transparent", "z→t", "v6", true],
+    ["transparent-to-shielded", "t→z", "v6", true],
+    ["transparent", "t→t", "v1", false],
   ] as const)(
     "crafts, signs, finalizes and emits a signed operation (%s / %s, PCZT %s)",
-    async (transferType, _label, encoding) => {
+    async (transferType, _label, encoding, zcashPrivate) => {
       const account = makeAccount();
       const tx = makeTx(transferType);
       const signerContext = makeSignerContext();
@@ -249,8 +249,12 @@ describe("bridge/signOperation", () => {
       );
       expect(signedEvent?.signedOperation).toMatchObject({
         signature: MOCK_TX_HEX,
-        operation: { hash: MOCK_TXID, extra: { zcashShielded: true } },
+        operation: { hash: MOCK_TXID },
       });
+      const extra = signedEvent?.signedOperation.operation.extra as ZcashOperationExtra;
+      expect(extra.zcashShielded).toBe(true);
+      expect("zcashPrivate" in extra).toBe(zcashPrivate);
+      expect(extra.zcashPrivate).toBe(zcashPrivate || undefined);
     },
   );
 

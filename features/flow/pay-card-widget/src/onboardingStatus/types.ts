@@ -8,6 +8,7 @@ export type UseCardOnboardingStatusResult = {
   readonly data: CardOnboardingStatus;
   readonly isLoading: boolean;
   readonly isError: boolean;
-  /** Re-asks all three sources. The widget never needs it; the devtool does. */
+  readonly hasSourceError: boolean;
+  /** Re-asks all four sources. The widget never needs it; the devtool does. */
   readonly refresh: () => void;
 };

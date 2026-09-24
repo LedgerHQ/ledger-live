@@ -58,6 +58,7 @@ export const genericSignOperation =
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath, {
+            ...bridgeApi.getDeviceSignOptions?.(transaction, account),
             derivationMode: account.derivationMode,
           })) as GetAddressResult;
 

@@ -1,5 +1,15 @@
 # @ledgerhq/live-signer-evm
 
+## 0.23.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b), [`6183efd`](https://github.com/LedgerHQ/ledger-live/commit/6183efddac5de725cb22a013d5a9cdc94e65f756), [`5d2f40f`](https://github.com/LedgerHQ/ledger-live/commit/5d2f40f470f859960e43a2a08755a962796f6beb), [`d6739d7`](https://github.com/LedgerHQ/ledger-live/commit/d6739d7fdc0b02ea26d2a29f6512f28b45c4ac38), [`e2134f5`](https://github.com/LedgerHQ/ledger-live/commit/e2134f5cffe4669ff5896e2b52904fe22218461b)]:
+  - @ledgerhq/hw-app-eth@7.9.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.5.0-next.0
+  - @ledgerhq/live-env@4.1.0-next.0
+  - @ledgerhq/live-dmk-shared@0.33.0-next.0
+
 ## 0.23.2
 
 ### Patch Changes
@@ -198,24 +208,5 @@
 
 - Updated dependencies []:
   - @ledgerhq/hw-app-eth@7.8.10
-
-## 0.21.1-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@7.8.10-next.0
-
-## 0.21.0
-
-### Minor Changes
-
-- [#19071](https://github.com/LedgerHQ/ledger-live/pull/19071) [`3b35b5e`](https://github.com/LedgerHQ/ledger-live/commit/3b35b5ea8a0c67c215150f2aee008fd1c1993463) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - coin-evm: move the EVM signer (types + getAddress/signMessage) out to live-signer-evm and ledger-live-common
-
-### Patch Changes
-
-- Updated dependencies [[`d91f849`](https://github.com/LedgerHQ/ledger-live/commit/d91f849185c7a30514349be655bba69dd77bb8c8), [`0225804`](https://github.com/LedgerHQ/ledger-live/commit/0225804cd0f39b90050f52b14e1b159340f0530e)]:
-  - @ledgerhq/live-dmk-shared@0.28.0
-  - @ledgerhq/hw-app-eth@7.8.9
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

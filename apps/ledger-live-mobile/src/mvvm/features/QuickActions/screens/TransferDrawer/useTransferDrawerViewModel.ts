@@ -21,7 +21,7 @@ import { useTranslation } from "~/context/Locale";
 import { useReceiveNoahEntry } from "LLM/features/Noah/useNoahEntryPoint";
 import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { getSendFlowTrackingProperties } from "LLM/features/Send/utils/tracking";
 
 // Fiat provider manifest ID for Noah integration
 const FIAT_PROVIDER_MANIFEST_ID = "noah";

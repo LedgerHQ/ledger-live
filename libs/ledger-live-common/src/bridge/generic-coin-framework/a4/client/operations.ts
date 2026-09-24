@@ -8,6 +8,7 @@ import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { isOperationType, isStringArray, readFamilyExtra } from "../../utils";
 import { paginateOperations } from "../../paginateOperations";
 import { toA4HttpError } from "./errors";
+import { logA4 } from "../log";
 import { clearA4RegistrationCache, ensureA4Registered } from "./registration";
 import type { A4OperationView } from "./types";
 import type { A4Client } from "./index";
@@ -265,6 +266,7 @@ export async function withDcRoamRetry<T>(
   client: A4Client,
   a4AccountId: string,
   address: string,
+  chain: string,
   fn: () => Promise<T>,
   maxRetries: number,
 ): Promise<T> {
@@ -274,10 +276,29 @@ export async function withDcRoamRetry<T>(
       return await fn();
     } catch (rawErr) {
       const err = toA4HttpError(rawErr);
-      if (err.status !== 412 || attempt >= maxRetries) throw err;
+
+      if (err.status !== 412 || attempt >= maxRetries) {
+        logA4({
+          level: "warn",
+          message: `A4 read failing over to delegate: ${err.message}`,
+          decision: err.status === 412 ? "read_retries_exhausted" : "read_failover_reason",
+          chain,
+          status: err.status,
+          error: err,
+        });
+        throw err;
+      }
+
       attempt++;
+      logA4({
+        level: "info",
+        message: `A4 read hit a DC roam (412), retrying (attempt ${attempt}/${maxRetries})`,
+        decision: "read_retry_dc_roam",
+        chain,
+        status: 412,
+      });
       clearA4RegistrationCache();
-      await ensureA4Registered(client, a4AccountId, [address]);
+      await ensureA4Registered(client, a4AccountId, [address], chain);
     }
   }
 }
@@ -297,6 +318,7 @@ export async function fetchA4Operations(
   a4AccountId: string,
   liveAccountId: string,
   address: string,
+  chain: string,
   minHeight: number,
   maxDcRoamRetries: number,
 ): Promise<Operation[]> {
@@ -312,6 +334,7 @@ export async function fetchA4Operations(
     client,
     a4AccountId,
     address,
+    chain,
     () => paginateOperations(fetchRawPage).then(adapt),
     maxDcRoamRetries,
   );

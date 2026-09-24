@@ -55,7 +55,7 @@ describe("QueuedBottomSheetMock", () => {
   ] as const)("presses %s to call %s", (control, handlerName) => {
     const handler = jest.fn();
     render(
-      <QueuedBottomSheetMock testID="sheet" {...{ [handlerName]: handler }}>
+      <QueuedBottomSheetMock testID="sheet" isRequestingToBeOpened {...{ [handlerName]: handler }}>
         <Text>content</Text>
       </QueuedBottomSheetMock>,
     );
@@ -68,6 +68,16 @@ describe("QueuedBottomSheetMock", () => {
   it("renders no control for a callback the sheet does not pass", () => {
     render(
       <QueuedBottomSheetMock testID="sheet">
+        <Text>content</Text>
+      </QueuedBottomSheetMock>,
+    );
+
+    expect(screen.queryByTestId("sheet-dismiss")).toBeNull();
+  });
+
+  it("does not expose dismiss while the sheet is closed", () => {
+    render(
+      <QueuedBottomSheetMock testID="sheet" onClose={jest.fn()}>
         <Text>content</Text>
       </QueuedBottomSheetMock>,
     );

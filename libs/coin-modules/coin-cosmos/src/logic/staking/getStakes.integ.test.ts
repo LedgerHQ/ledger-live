@@ -5,7 +5,10 @@ import { getStakes } from "./getStakes";
 // validator's `/delegations` and picking a delegator with a non-zero stake (re-derive if it goes
 // stale). Babylon's x/epoching makes exact staking amounts/counts time-dependent, so this asserts
 // structural invariants only.
-const ADDR = "bbn1g84934jpu3v5de5yqukkkhxmcvsw3u2a9casjx";
+// Re-derived 2026-09-21: the previous delegator fully unbonded (0 delegations), reddening this
+// job on every coin-cosmos PR. This one spreads its stake across three bonded validators, so
+// a single unbonding no longer empties the result.
+const ADDR = "bbn1kvp570cd6zvzh8ffrhz7lmytt6v6u2gxxmq6qy";
 
 describe("getStakes (integ, Babylon)", () => {
   it("returns stakes with a well-formed delegate address and a positive amount", async () => {

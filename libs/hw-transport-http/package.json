@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-http",
-  "version": "6.37.0",
+  "version": "6.38.0-next.0",
   "private": true,
   "description": "Ledger Hardware Wallet communication layer over http",
   "keywords": [
@@ -69,7 +69,6 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "documentation": "14.0.2",
     "jest": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",

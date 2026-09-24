@@ -14,7 +14,7 @@ jest.mock("@react-navigation/native", () => {
 const revamped = (hasPassword: boolean) =>
   withFlagOverrides({ lwmPasswordRevamp: { enabled: true } }, state => ({
     ...state,
-    appLock: { ...state.appLock, hasPassword },
+    appLock: { ...state.appLock, isHydrated: true, hasPassword },
   }));
 
 beforeEach(() => jest.clearAllMocks());
@@ -41,7 +41,6 @@ describe("the password row in Settings", () => {
 
     await toggle(true);
 
-    // The flow decides; a cancelled add must not leave the switch on.
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.PasswordAddFlow);
     expect(screen.getByTestId("password-settings-switch")).not.toBeChecked();
   });
@@ -66,14 +65,25 @@ describe("the password row in Settings", () => {
     expect(await screen.findByTestId("password-settings-switch")).toBeChecked();
   });
 
-  it("leaves the legacy row on the legacy state when the flag is off", async () => {
+  it("shows the legacy row when the flag is off and nothing is stored", async () => {
     render(<AuthSecurityToggle />, {
       overrideInitialState: state => ({
         ...state,
-        appLock: { ...state.appLock, hasPassword: true },
+        appLock: { ...state.appLock, isHydrated: true, hasPassword: false },
       }),
     });
 
     expect(await screen.findByTestId("password-settings-switch")).not.toBeChecked();
+  });
+
+  it("keeps the revamped row for a stored verifier once the flag goes off", async () => {
+    render(<AuthSecurityToggle />, {
+      overrideInitialState: state => ({
+        ...state,
+        appLock: { ...state.appLock, isHydrated: true, hasPassword: true },
+      }),
+    });
+
+    expect(await screen.findByTestId("password-settings-switch")).toBeChecked();
   });
 });

@@ -77,7 +77,7 @@ names the folder `screens/`, and peer practice follows it 3:1 —
 only `features/flow/contacts` uses `steps/`. The `<Name>/` nesting comes from those packages rather
 than from the guideline, whose example omits it because it shows a single-view flow.
 
-Note that the `ddd-structure-flow` skill documents `steps/<StepName>/` while citing that guideline as
+Note that the `structure-flow` skill documents `steps/<StepName>/` while citing that guideline as
 its upstream source — the two disagree, and the skill is the minority. Worth reconciling in the docs
 rather than per package.
 

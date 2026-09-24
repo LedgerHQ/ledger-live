@@ -41,6 +41,7 @@ const mockRecentAddressesStore = {
 
 export const VALID_EVM_RECIPIENT = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd";
 export const VALID_BTC_RECIPIENT = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+export const VALID_XRP_RECIPIENT = "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
 
 export const createResolvedStatus = (
   errors: Record<string, Error> = {},
@@ -225,6 +226,7 @@ const mockGetTransactionStatus = jest.fn(() => Promise.resolve(mockStatus));
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getAccountBridge: jest.fn(() => {
     const bridge = {
+      createTransaction: () => ({ ...mockTransaction }),
       updateTransaction: mockBridgeUpdateTransaction,
       prepareTransaction: mockPrepareTransaction,
       getTransactionStatus: mockGetTransactionStatus,
@@ -244,6 +246,7 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
 jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
   getAccountBridge: jest.fn(() => {
     const bridge = {
+      createTransaction: () => ({ ...mockTransaction }),
       updateTransaction: mockBridgeUpdateTransaction,
       prepareTransaction: mockPrepareTransaction,
       getTransactionStatus: mockGetTransactionStatus,
@@ -361,6 +364,7 @@ jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
 
 const ethCurrency = getCryptoCurrencyById("ethereum");
 const btcCurrency = getCryptoCurrencyById("bitcoin");
+const xrpCurrency = getCryptoCurrencyById("ripple");
 
 export const createEthereumAccount = (overrides?: Partial<Account>): Account => {
   const account = genAccount("send-integration-test");
@@ -384,6 +388,19 @@ export const createBitcoinAccount = (overrides?: Partial<Account>): Account => {
     balance: new BigNumber("100000000"),
     spendableBalance: new BigNumber("100000000"),
     currency: btcCurrency,
+    ...overrides,
+  };
+};
+
+export const createRippleAccount = (overrides?: Partial<Account>): Account => {
+  const account = genAccount("send-ripple-integration-test", { currency: xrpCurrency });
+  return {
+    ...account,
+    id: "mock-ripple-account-id",
+    freshAddress: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+    balance: new BigNumber("100000000"),
+    spendableBalance: new BigNumber("100000000"),
+    currency: xrpCurrency,
     ...overrides,
   };
 };

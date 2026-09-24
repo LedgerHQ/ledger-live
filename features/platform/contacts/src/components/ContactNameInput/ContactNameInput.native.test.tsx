@@ -37,6 +37,15 @@ describe("ContactNameInput", () => {
     expect(screen.getByText("3/32")).toBeVisible();
   });
 
+  it("should capitalize each word of the name", () => {
+    render(<ContactNameInput value="ada" placeholder="Contact name" onChangeText={jest.fn()} />);
+
+    expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveProp(
+      "autoCapitalize",
+      "words",
+    );
+  });
+
   it("should leave the field unfocused unless a host asks for focus", () => {
     render(<ContactNameInput value="" placeholder="Contact name" onChangeText={jest.fn()} />);
 

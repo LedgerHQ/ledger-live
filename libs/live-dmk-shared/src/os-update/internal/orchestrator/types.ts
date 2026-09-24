@@ -1,12 +1,16 @@
 import type { ActorRef, Snapshot } from "xstate";
+import type { CreateBackupState } from "../../api/model/CreateBackupState";
 import type { OsUpdatesOrchestratorUseCaseInput } from "../../api/model/OsUpdatesOrchestrator";
-import type { OsUpdatesProgress } from "../../api/model/OsUpdatesProgress";
+import type { OsUpdatesSteps } from "../../api/model/OsUpdatesSteps";
 import type { PreChecksState } from "../../api/model/PreChecksState";
 
 export type OsUpdatesOrchestratorStateMachineInput = OsUpdatesOrchestratorUseCaseInput;
 
+export type OsUpdatesState = PreChecksState | CreateBackupState;
+
 export type OsUpdatesOrchestratorStateMachineContext = OsUpdatesOrchestratorStateMachineInput & {
-  currentState: OsUpdatesProgress;
+  currentStep: OsUpdatesSteps;
+  currentState: OsUpdatesState;
 };
 
 export enum OsUpdatesOrchestratorStateMachineEventType {
@@ -17,7 +21,7 @@ export enum OsUpdatesOrchestratorStateMachineEventType {
 export type OsUpdatesOrchestratorStateMachineEvent =
   | {
       type: OsUpdatesOrchestratorStateMachineEventType.STATE_UPDATE;
-      state: PreChecksState;
+      state: OsUpdatesState;
     }
   | {
       type: OsUpdatesOrchestratorStateMachineEventType.STOP;

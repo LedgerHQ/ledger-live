@@ -1,38 +1,92 @@
 import { Permissions, crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import WebSocket from "isomorphic-ws";
 import { MemberCredentials, Trustchain, TrustchainMember } from "../types";
-import { makeCipher, makeMessageCipher } from "./cipher";
-import { Message } from "./types";
+import { MessageCipher, makeCipher, makeMessageCipher } from "./cipher";
+import {
+  AddedMemberSchema,
+  ChallengeAnswerSchema,
+  ChallengeSchema,
+  EmptyBodySchema,
+  EnvelopeSchema,
+  MemberSchema,
+  Message,
+} from "./types";
+import { ProtocolStateMachine, createProtocolStateMachine } from "./protocol";
 import {
   InvalidDigitsError,
   NoTrustchainInitialized,
+  QRCodeProtocolError,
   QRCodeWSClosed,
   ScannedInvalidQrCode,
   ScannedOldImportQrCode,
   TrustchainAlreadyInitialized,
 } from "../errors";
 import { log } from "@ledgerhq/logs";
+import { z } from "zod";
 
 const version = 1;
 
 const CLOSE_TIMEOUT = 100; // just enough time for the onerror to appear before onclose
 
-const commonSwitch = async ({
+const DIGITS_COUNT = 3;
+
+type CredentialExchange = {
+  data: Message;
+  cipher: MessageCipher | undefined;
+  addMember: (member: TrustchainMember) => Promise<Trustchain>;
+  send: (message: Message) => void;
+  publisher: string;
+  resolve: (trustchain?: Trustchain) => void;
+  reject: (error: Error) => void;
+  memberCredentials: MemberCredentials;
+  memberName: string;
+  ws: WebSocket;
+  sm: ProtocolStateMachine;
+  initialTrustchainId?: string;
+};
+
+function decrypt<M extends Message, T>(cipher: MessageCipher, message: M, schema: z.ZodType<T>): T {
+  let body: unknown;
+  try {
+    body = cipher.decryptMessage(message);
+  } catch {
+    throw new QRCodeProtocolError(`undecryptable ${message.message}`);
+  }
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) {
+    throw new QRCodeProtocolError(`invalid ${message.message} body`);
+  }
+  return parsed.data;
+}
+
+const makeFail =
+  (sm: ProtocolStateMachine, ws: WebSocket, reject: (error: unknown) => void) =>
+  (error: unknown) => {
+    console.error("socket error", error);
+    // closing is asynchronous, so frames already queued would otherwise still be handled
+    sm.abort();
+    ws.close();
+    reject(error);
+  };
+
+const handleCredentialExchange = async ({
   data,
   cipher,
   addMember,
   send,
   publisher,
   resolve,
+  reject,
   memberCredentials,
   memberName,
-  reject,
   ws,
-  setFinished,
+  sm,
   initialTrustchainId,
-}) => {
+}: CredentialExchange) => {
   switch (data.message) {
     case "TrustchainShareCredential": {
+      if (!cipher) throw new Error("sessionEncryptionKey not set");
+      const { id, name } = decrypt(cipher, data, MemberSchema);
       if (!initialTrustchainId) {
         const payload = {
           type: "UNEXPECTED_SHARE_CREDENTIAL",
@@ -41,19 +95,18 @@ const commonSwitch = async ({
         send({ version, publisher, message: "Failure", payload });
         throw new NoTrustchainInitialized("unexpected share credential");
       }
-      setFinished(true);
-      if (!cipher) {
-        throw new Error("sessionEncryptionKey not set");
-      }
-      const { id, name } = cipher.decryptMessage(data);
       const trustchain = await addMember({ id, name, permissions: Permissions.OWNER });
       const payload = cipher.encryptMessagePayload({ trustchain });
+      sm.transition("send", "TrustchainAddedMember");
       send({ version, publisher, message: "TrustchainAddedMember", payload });
       resolve();
       break;
     }
 
     case "TrustchainRequestCredential": {
+      if (!cipher) throw new Error("sessionEncryptionKey not set");
+      // decrypting is what proves the frame is the peer's and not the relay's
+      decrypt(cipher, data, EmptyBodySchema);
       if (initialTrustchainId) {
         const payload = {
           type: "UNEXPECTED_REQUEST_CREDENTIAL",
@@ -66,31 +119,29 @@ const commonSwitch = async ({
         id: memberCredentials.pubkey,
         name: memberName,
       });
+      sm.transition("send", "TrustchainShareCredential");
       send({ version, publisher, message: "TrustchainShareCredential", payload });
       break;
     }
+
     case "TrustchainAddedMember": {
-      setFinished(true);
-      const { trustchain } = cipher.decryptMessage(data);
+      if (!cipher) throw new Error("sessionEncryptionKey not set");
+      const { trustchain } = decrypt(cipher, data, AddedMemberSchema);
       resolve(trustchain);
       ws.close();
       break;
     }
+
     case "Failure": {
-      setFinished(true);
       log("trustchain/qrcode", "Failure", { data });
       const error = fromErrorMessage(data.payload);
       reject(error);
       ws.close();
       break;
     }
-    case "HandshakeChallenge":
-    case "HandshakeCompletionSucceeded":
-    case "InitiateHandshake":
-    case "CompleteHandshakeChallenge":
-      break;
+
     default:
-      throw new Error("unexpected message");
+      throw new QRCodeProtocolError(`unhandled ${data.message}`);
   }
 };
 
@@ -144,50 +195,56 @@ export async function createQRCodeHostInstance({
     ws.send(JSON.stringify(message));
   }
 
-  let sessionEncryptionKey: Uint8Array | undefined;
-  let cipher: ReturnType<typeof makeMessageCipher> | undefined;
+  const sm = createProtocolStateMachine("host");
+  let cipher: MessageCipher | undefined;
   let expectedDigits: string | undefined;
-  let finished = false;
-  const setFinished = newValue => (finished = newValue);
 
   onDisplayQRCode(url);
   return new Promise((resolve, reject) => {
     const startedAt = Date.now();
 
+    const fail = makeFail(sm, ws, reject);
+
     ws.addEventListener("error", reject);
     ws.addEventListener("close", () => {
-      if (finished) return;
+      if (sm.isFinished()) return;
       // this error would reflect a protocol error. because otherwise, we would get the "error" event.
       const time = Date.now() - startedAt;
       reject(new QRCodeWSClosed("qrcode websocket prematurely closed", { time }));
     });
     ws.addEventListener("message", async e => {
       try {
+        if (sm.isFinished()) return;
         const data = parseMessage(e.data);
+        sm.bindPeer(data.publisher);
+        sm.transition("recv", data.message);
         switch (data.message) {
           case "InitiateHandshake": {
-            const candidatePublicKey = crypto.from_hex(data.payload.ephemeral_public_key);
-            sessionEncryptionKey = crypto.ecdh(ephemeralKey, candidatePublicKey);
-            cipher = makeMessageCipher(makeCipher(sessionEncryptionKey));
+            if (!sameHex(data.publisher, data.payload.ephemeral_public_key)) {
+              throw new QRCodeProtocolError("publisher does not match the ephemeral public key");
+            }
+            try {
+              const candidatePublicKey = crypto.from_hex(data.payload.ephemeral_public_key);
+              cipher = makeMessageCipher(makeCipher(crypto.ecdh(ephemeralKey, candidatePublicKey)));
+            } catch {
+              throw new QRCodeProtocolError("invalid ephemeral public key");
+            }
             // --- end of handshake first phase ---
-            const digitsCount = 3;
-            const digits = randomDigits(digitsCount);
+            const digits = randomDigits(DIGITS_COUNT);
             expectedDigits = digits;
             onDisplayDigits(digits);
             const payload = cipher.encryptMessagePayload({
-              digits: digitsCount,
+              digits: DIGITS_COUNT,
               connected: false,
             });
+            sm.transition("send", "HandshakeChallenge");
             send({ version, publisher, message: "HandshakeChallenge", payload });
             break;
           }
           case "CompleteHandshakeChallenge": {
-            if (!cipher) {
-              throw new Error("sessionEncryptionKey not set");
-            }
-            const { digits } = cipher.decryptMessage(data);
-            if (digits !== expectedDigits) {
-              console.warn("User invalid digits", { digits, expectedDigits });
+            if (!cipher) throw new Error("sessionEncryptionKey not set");
+            const { digits } = decrypt(cipher, data, ChallengeAnswerSchema);
+            if (!constantTimeEqual(digits, expectedDigits)) {
               const payload = {
                 type: "HANDSHAKE_COMPLETION_FAILED",
                 message: "invalid digits",
@@ -196,28 +253,29 @@ export async function createQRCodeHostInstance({
               throw new InvalidDigitsError("invalid digits");
             }
             const payload = cipher.encryptMessagePayload({});
+            sm.transition("send", "HandshakeCompletionSucceeded");
             send({ version, publisher, message: "HandshakeCompletionSucceeded", payload });
             break;
           }
+          default: {
+            await handleCredentialExchange({
+              data,
+              cipher,
+              addMember,
+              send,
+              publisher,
+              resolve,
+              reject,
+              memberCredentials,
+              memberName,
+              ws,
+              sm,
+              initialTrustchainId,
+            });
+          }
         }
-        await commonSwitch({
-          data,
-          cipher,
-          addMember,
-          send,
-          publisher,
-          resolve,
-          memberCredentials,
-          memberName,
-          reject,
-          ws,
-          setFinished,
-          initialTrustchainId,
-        });
       } catch (e) {
-        console.error("socket error", e);
-        ws.close();
-        reject(e);
+        fail(e);
       }
     });
   });
@@ -272,75 +330,109 @@ export async function createQRCodeCandidateInstance({
     if (isOldBase64Import(scannedUrl)) throw new ScannedOldImportQrCode();
     throw new ScannedInvalidQrCode();
   }
-  const hostPublicKey = crypto.from_hex(m[1]);
+  const hostPublisher = m[1];
   const ephemeralKey = crypto.randomKeypair();
   const publisher = crypto.to_hex(ephemeralKey.publicKey);
-  const sessionEncryptionKey = crypto.ecdh(ephemeralKey, hostPublicKey);
-  const cipher = makeMessageCipher(makeCipher(sessionEncryptionKey));
+  let cipher: MessageCipher;
+  try {
+    const hostPublicKey = crypto.from_hex(hostPublisher);
+    cipher = makeMessageCipher(makeCipher(crypto.ecdh(ephemeralKey, hostPublicKey)));
+  } catch {
+    throw new ScannedInvalidQrCode();
+  }
   const ws = new WebSocket(scannedUrl);
   function send(message: Message) {
     ws.send(JSON.stringify(message));
   }
-  let finished = false;
-  const setFinished = newValue => (finished = newValue);
+
+  const sm = createProtocolStateMachine("candidate");
 
   return new Promise((resolve, reject) => {
+    const fail = makeFail(sm, ws, reject);
+
     ws.addEventListener("close", () => {
-      if (finished) return;
+      if (sm.isFinished()) return;
       // this error would reflect a protocol error. because otherwise, we would get the "error" event. it shouldn't be visible to user, but we use it to ensure the promise ends.
       setTimeout(() => reject(new Error("qrcode websocket prematurely closed")), CLOSE_TIMEOUT);
     });
 
     ws.addEventListener("message", async e => {
       try {
+        if (sm.isFinished()) return;
         const data = parseMessage(e.data);
+        if (!sameHex(data.publisher, hostPublisher)) {
+          throw new QRCodeProtocolError("message publisher is not the scanned host");
+        }
+        sm.bindPeer(data.publisher);
+        sm.transition("recv", data.message);
         switch (data.message) {
           case "HandshakeChallenge": {
-            const config = cipher.decryptMessage(data);
+            const config = decrypt(cipher, data, ChallengeSchema);
+            // the protocol grants a single attempt, so a UI re-submitting the digits is ignored
+            let answered = false;
             onRequestQRCodeInput(config, digits => {
-              const payload = cipher.encryptMessagePayload({ digits });
-              send({ version, publisher, message: "CompleteHandshakeChallenge", payload });
+              if (answered || sm.isFinished()) return;
+              answered = true;
+              try {
+                const payload = cipher.encryptMessagePayload({ digits });
+                sm.transition("send", "CompleteHandshakeChallenge");
+                send({ version, publisher, message: "CompleteHandshakeChallenge", payload });
+              } catch (error) {
+                fail(error);
+              }
             });
             break;
           }
           case "HandshakeCompletionSucceeded": {
+            // decrypting is what proves the digits were accepted by the peer
+            decrypt(cipher, data, EmptyBodySchema);
             if (initialTrustchainId) {
               const payload = cipher.encryptMessagePayload({});
+              sm.transition("send", "TrustchainRequestCredential");
               send({ version, publisher, message: "TrustchainRequestCredential", payload });
             } else {
               const payload = cipher.encryptMessagePayload({
                 id: memberCredentials.pubkey,
                 name: memberName,
               });
+              sm.transition("send", "TrustchainShareCredential");
               send({ version, publisher, message: "TrustchainShareCredential", payload });
             }
             break;
           }
+          default:
+            await handleCredentialExchange({
+              data,
+              cipher,
+              addMember,
+              send,
+              publisher,
+              resolve,
+              reject,
+              memberCredentials,
+              memberName,
+              ws,
+              sm,
+              initialTrustchainId,
+            });
         }
-        await commonSwitch({
-          data,
-          cipher,
-          addMember,
-          send,
-          publisher,
-          resolve,
-          memberCredentials,
-          memberName,
-          reject,
-          ws,
-          setFinished,
-          initialTrustchainId,
-        });
       } catch (e) {
-        console.error("socket error", e);
-        ws.close();
-        reject(e);
+        fail(e);
       }
     });
     ws.addEventListener("error", reject);
     ws.addEventListener("open", () => {
-      const payload = { ephemeral_public_key: crypto.to_hex(ephemeralKey.publicKey) };
-      send({ version, publisher, message: "InitiateHandshake", payload });
+      try {
+        sm.transition("send", "InitiateHandshake");
+        send({
+          version,
+          publisher,
+          message: "InitiateHandshake",
+          payload: { ephemeral_public_key: publisher },
+        });
+      } catch (e) {
+        fail(e);
+      }
     });
   });
 }
@@ -354,35 +446,44 @@ function randomDigits(count: number) {
   return digits;
 }
 
+const sameHex = (a: string, b: string): boolean => a.toLowerCase() === b.toLowerCase();
+
+function constantTimeEqual(a: unknown, b: string | undefined): boolean {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  const encoder = new TextEncoder();
+  const left = encoder.encode(a);
+  const right = encoder.encode(b);
+  if (left.length !== right.length) return false;
+  let diff = 0;
+  for (let i = 0; i < left.length; i++) {
+    diff |= left[i] ^ right[i];
+  }
+  return diff === 0;
+}
+
 function parseMessage(e): Message {
-  const message = JSON.parse(e.toString());
-  if (!message || typeof message !== "object") {
-    throw new Error("invalid message");
+  let json: unknown;
+  try {
+    json = JSON.parse(e.toString());
+  } catch {
+    throw new QRCodeProtocolError("invalid json");
   }
-  if (message.version !== 1) {
-    throw new Error("invalid version");
+  const parsed = EnvelopeSchema.safeParse(json);
+  if (!parsed.success) {
+    throw new QRCodeProtocolError("invalid message");
   }
-  if (typeof message.publisher !== "string") {
-    throw new Error("invalid publisher");
-  }
-  if (typeof message.message !== "string") {
-    throw new Error("invalid message");
-  }
-  if (typeof message.payload !== "object") {
-    throw new Error("invalid payload");
-  }
-  return message;
+  return parsed.data;
 }
 
 function fromErrorMessage(payload: { message: string; type: string }): Error {
   if (payload.type === "HANDSHAKE_COMPLETION_FAILED") {
-    throw new InvalidDigitsError(payload.message);
+    return new InvalidDigitsError(payload.message);
   }
   if (payload.type === "UNEXPECTED_SHARE_CREDENTIAL") {
-    throw new NoTrustchainInitialized(payload.message);
+    return new NoTrustchainInitialized(payload.message);
   }
   if (payload.type === "UNEXPECTED_REQUEST_CREDENTIAL") {
-    throw new TrustchainAlreadyInitialized(payload.message);
+    return new TrustchainAlreadyInitialized(payload.message);
   }
   const error = new Error(payload.message);
   error.name = "TrustchainQRCode-" + payload.type;

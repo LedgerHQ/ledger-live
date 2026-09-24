@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import { getTronSuperRepresentatives } from "../network";
 import type { SuperRepresentative } from "../types";
@@ -6,6 +7,8 @@ import { getValidators } from "./getValidators";
 jest.mock("../network", () => ({ getTronSuperRepresentatives: jest.fn() }));
 
 const mockGetSuperRepresentatives = jest.mocked(getTronSuperRepresentatives);
+
+const mockLogger: Logger = jest.fn();
 
 const mockConfig = {
   status: { type: "active" },
@@ -32,7 +35,7 @@ describe("getValidators", () => {
   it("maps a super representative onto a framework Validator", async () => {
     mockGetSuperRepresentatives.mockResolvedValue([superRepresentative()]);
 
-    const { items, next } = await getValidators(mockConfig);
+    const { items, next } = await getValidators(mockLogger, mockConfig);
 
     expect(items).toEqual([
       {
@@ -50,7 +53,7 @@ describe("getValidators", () => {
   it("falls back to the address when the SR declares no url", async () => {
     mockGetSuperRepresentatives.mockResolvedValue([superRepresentative({ url: null })]);
 
-    const [validator] = (await getValidators(mockConfig)).items;
+    const [validator] = (await getValidators(mockLogger, mockConfig)).items;
 
     expect(validator.name).toBe("TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH");
     expect(validator.url).toBeUndefined();
@@ -59,13 +62,15 @@ describe("getValidators", () => {
   it("falls back to the raw url when it is not parseable", async () => {
     mockGetSuperRepresentatives.mockResolvedValue([superRepresentative({ url: "not a url" })]);
 
-    const [validator] = (await getValidators(mockConfig)).items;
+    const [validator] = (await getValidators(mockLogger, mockConfig)).items;
 
     expect(validator.name).toBe("not a url");
   });
 
   it("rejects a cursor rather than looping a paginating caller forever", async () => {
-    await expect(getValidators(mockConfig, "some-cursor")).rejects.toThrow(/does not paginate/);
+    await expect(getValidators(mockLogger, mockConfig, "some-cursor")).rejects.toThrow(
+      /does not paginate/,
+    );
     expect(mockGetSuperRepresentatives).not.toHaveBeenCalled();
   });
 });

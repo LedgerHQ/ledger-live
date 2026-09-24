@@ -37,6 +37,12 @@ export type QueuedBottomSheetProps = Readonly<{
   onModalHide?: () => void;
   /** Prevent closing via backdrop press. */
   preventBackdropClick?: boolean;
+  /**
+   * Treats the close a screen losing focus causes as a hide rather than as a dismissal: the drawer
+   * goes away without reporting {@link onClose}, so a consumer that keeps requesting it gets it
+   * back when its screen is focused again. Off by default, which reports every close alike.
+   */
+  restoreOnFocus?: boolean;
   /** Snap points for the bottom sheet. */
   snapPoints?: BottomSheetProps["snapPoints"];
   /** Enable dynamic sizing based on content. */
@@ -49,6 +55,15 @@ export type QueuedBottomSheetProps = Readonly<{
   enableHandlePanningGesture?: boolean;
   /** Maximum dynamic content size. */
   maxDynamicContentSize?: BottomSheetProps["maxDynamicContentSize"];
+  /**
+   * Sticky area pinned to the bottom of the sheet, for a primary action that has to stay reachable
+   * while a field inside the sheet is being edited. It tracks the keyboard, so unlike content
+   * inside the sheet it is never covered.
+   *
+   * Requires the edited field to opt into `useBottomSheetKeyboardAwareInput`, which is what tells
+   * gorhom the keyboard is up.
+   */
+  footer?: React.ReactNode;
   /** Test ID for end-to-end tests. */
   testID?: string;
   /** Content of the drawer. */

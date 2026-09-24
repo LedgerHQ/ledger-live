@@ -1,6 +1,5 @@
 import React from "react";
 import { Observable } from "rxjs";
-import BigNumber from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { AccountLike, SignOperationEvent } from "@ledgerhq/types-live";
 import { act, render, screen, waitFor } from "@tests/test-renderer";
@@ -8,6 +7,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import SendFundsNavigator from "~/components/RootNavigator/SendFundsNavigator";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT_1 } from "../../__mocks__/account.mock";
+import { aleoAccountBridge, resetAleoBridgeMock } from "../../__mocks__/bridge.mock";
 
 type PrivateSyncState = ReturnType<
   typeof import("../../hooks/useAleoPrivateSync").useAleoPrivateSync
@@ -52,6 +52,11 @@ jest.mock(
   () => require("../../__mocks__/deviceConnection.mock").deviceLockedPollingModule,
 );
 
+jest.mock(
+  "@ledgerhq/live-common/bridge/index",
+  () => require("../../__mocks__/bridge.mock").aleoBridgeModule,
+);
+
 // The Datadog native module isn't initialized in the test environment.
 jest.mock("~/datadog", () => ({
   isDatadogEnabled: false,
@@ -61,78 +66,6 @@ jest.mock("~/datadog", () => ({
   customLogEventMapper: jest.fn(),
   viewNamePredicate: jest.fn(),
   broadcastLogger: jest.fn(),
-}));
-
-const mockSignedOperation = {
-  signature: "sig",
-  operation: {
-    id: "op-1",
-    hash: "0xabc",
-    type: "OUT",
-    value: new BigNumber(0),
-    fee: new BigNumber(0),
-    senders: [],
-    recipients: [],
-    blockHeight: null,
-    blockHash: null,
-    accountId: ALEO_ACCOUNT_1.id,
-    date: new Date(),
-    extra: {},
-  },
-  expirationDate: undefined,
-};
-
-const mockAccountBridge = {
-  createTransaction: jest.fn((_account: AccountLike) => ({
-    family: "aleo" as const,
-    mode: "transfer_public",
-    amount: new BigNumber(0),
-    recipient: "",
-    useAllAmount: false,
-    subAccountId: undefined,
-  })),
-  updateTransaction: jest.fn((tx: object, patch: object) => ({ ...tx, ...patch })),
-  prepareTransaction: async (_account: AccountLike, tx: unknown) => tx,
-  getTransactionStatus: async () => ({
-    errors: {},
-    warnings: {},
-    estimatedFees: new BigNumber(1000),
-    amount: new BigNumber(1_000_000),
-    totalSpent: new BigNumber(1_001_000),
-  }),
-  estimateMaxSpendable: async () => new BigNumber(100_000_000),
-  getStuckAccountAndOperation: () => null,
-  isAccountEmpty: () => false,
-  signOperation: jest.fn(
-    () =>
-      new Observable<SignOperationEvent>(subscriber => {
-        subscriber.next({ type: "device-signature-requested" });
-        subscriber.next({ type: "device-signature-granted" });
-        subscriber.next({ type: "signed", signedOperation: mockSignedOperation as never });
-        subscriber.complete();
-      }),
-  ),
-  broadcast: async ({ signedOperation }: { signedOperation: typeof mockSignedOperation }) =>
-    signedOperation.operation,
-};
-
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  __esModule: true,
-  getAccountBridge: () =>
-    Object.assign(Promise.resolve(mockAccountBridge), {
-      status: "fulfilled" as const,
-      value: mockAccountBridge,
-    }),
-  getCurrencyBridge: () => {
-    const currencyBridge = {
-      preload: () => Promise.resolve(true),
-      hydrate: () => true,
-    };
-    return Object.assign(Promise.resolve(currencyBridge), {
-      status: "fulfilled" as const,
-      value: currencyBridge,
-    });
-  },
 }));
 
 const RECIPIENT = "aleo1qtd0z6qch67pyzt0yqz9rteyclc8mgz7zwqqqz3lvvxvcmsprsqqjfp2y8";
@@ -184,7 +117,11 @@ function renderFlow({
 }
 
 function renderSendFlow(isSelfTransfer: boolean) {
-  return renderFlow({ account: ALEO_ACCOUNT_1, parentAccount: undefined, isSelfTransfer });
+  return renderFlow({
+    account: ALEO_ACCOUNT_1,
+    parentAccount: undefined,
+    isSelfTransfer,
+  });
 }
 
 function renderTokenSendFlow(isSelfTransfer: boolean) {
@@ -198,9 +135,7 @@ function renderTokenSendFlow(isSelfTransfer: boolean) {
 describe("Aleo send flow (integration)", () => {
   beforeEach(() => {
     setPrivateSyncState = null;
-    mockAccountBridge.createTransaction.mockClear();
-    mockAccountBridge.updateTransaction.mockClear();
-    mockAccountBridge.signOperation.mockClear();
+    resetAleoBridgeMock();
   });
 
   describe("native coin", () => {
@@ -327,7 +262,7 @@ describe("Aleo send flow (integration)", () => {
     });
 
     it("shows the error screen with a Retry button when the device rejects during signing", async () => {
-      mockAccountBridge.signOperation.mockImplementationOnce(
+      aleoAccountBridge.signOperation.mockImplementationOnce(
         () =>
           new Observable<SignOperationEvent>(subscriber => {
             subscriber.next({ type: "device-signature-requested" });
@@ -358,7 +293,9 @@ describe("Aleo send flow (integration)", () => {
       const deviceItem = await screen.findByTestId("device-item-mock");
       await user.press(deviceItem);
 
-      await waitFor(() => expect(screen.getByText("Retry")).toBeVisible(), { timeout: 10000 });
+      await waitFor(() => expect(screen.getByText("Retry")).toBeVisible(), {
+        timeout: 10000,
+      });
       expect(screen.queryByTestId("validate-success-screen")).toBeNull();
     }, 30_000);
   });
@@ -370,8 +307,8 @@ describe("Aleo send flow (integration)", () => {
       await user.press(await screen.findByText("Public"));
       await user.press(screen.getByText("Send publicly"));
 
-      expect(mockAccountBridge.createTransaction).toHaveBeenCalledWith(ALEO_TOKEN_ACCOUNT_1);
-      expect(mockAccountBridge.updateTransaction).toHaveBeenCalledWith(
+      expect(aleoAccountBridge.createTransaction).toHaveBeenCalledWith(ALEO_TOKEN_ACCOUNT_1);
+      expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           mode: "transfer_token_public",
@@ -408,7 +345,7 @@ describe("Aleo send flow (integration)", () => {
       await user.press(await screen.findByText("Public"));
       await user.press(screen.getByText("Transfer from public"));
 
-      expect(mockAccountBridge.updateTransaction).toHaveBeenCalledWith(
+      expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           mode: "convert_token_public_to_private",
@@ -426,7 +363,7 @@ describe("Aleo send flow (integration)", () => {
       await user.press(await screen.findByText("Private"));
       await user.press(screen.getByText("Send privately"));
 
-      expect(mockAccountBridge.updateTransaction).toHaveBeenCalledWith(
+      expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           mode: "transfer_token_private",
@@ -451,7 +388,7 @@ describe("Aleo send flow (integration)", () => {
       await user.press(await screen.findByText("Private"));
       await user.press(screen.getByText("Transfer from private"));
 
-      expect(mockAccountBridge.updateTransaction).toHaveBeenCalledWith(
+      expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           mode: "convert_token_private_to_public",

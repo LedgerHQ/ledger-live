@@ -9,6 +9,10 @@ export function selectAppLock(state: WithAppLock): AppLockState {
   return state.appLock;
 }
 
+export function selectIsHydrated(state: WithAppLock): boolean {
+  return selectAppLock(state).isHydrated;
+}
+
 export function selectHasPassword(state: WithAppLock): boolean {
   return selectAppLock(state).hasPassword;
 }
@@ -19,6 +23,10 @@ export function selectBiometricsEnabled(state: WithAppLock): boolean {
 
 export function selectIsLocked(state: WithAppLock): boolean {
   return selectAppLock(state).isLocked;
+}
+
+export function selectNeedsLongerPassword(state: WithAppLock): boolean {
+  return selectAppLock(state).needsLongerPassword;
 }
 
 export function selectAuthenticationType(state: WithAppLock): AuthenticationType {

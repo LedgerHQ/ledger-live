@@ -30,7 +30,7 @@ import { useOpenSwap } from "LLM/features/Swap";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { getSendFlowTrackingProperties } from "LLM/features/Send/utils/tracking";
 
 const BUTTON_LOCATION = "quick_action";
 

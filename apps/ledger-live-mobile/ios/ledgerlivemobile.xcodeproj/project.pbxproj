@@ -21,6 +21,8 @@
 		BAE7949027D7C46A00C465F5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BAE7948F27D7C46A00C465F5 /* GoogleService-Info.plist */; };
 		BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F63C9E4AC284203A95B417E /* libz.tbd */; };
 		BC26C23ED1C649E7849FF99A /* HMAlphaMono-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1EA470840B7C44A3BF38FA4A /* HMAlphaMono-Medium.otf */; };
+		426E73E1B31645388A7FDBCE /* AppleWalletModule.m in Sources */ = {isa = PBXBuildFile; fileRef = E45CE71FCE184F60BE140697 /* AppleWalletModule.m */; };
+		049CE67E12094B398B313321 /* AppleWalletModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFCC7615DEF4A99944CBB00 /* AppleWalletModule.swift */; };
 		CA0B38082EDF3E62005A0FAA /* BluetoothHelperModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */; };
 		CA33C2532ED88BBB003C128E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA33C2502ED88BBB003C128E /* AppDelegate.swift */; };
 		CA3D2EB42EDDA65A008E836E /* BrazeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EB32EDDA65A008E836E /* BrazeManager.swift */; };
@@ -62,6 +64,8 @@
 		6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Light.ttf; path = ../assets/fonts/FontAwesome5_Pro_Light.ttf; sourceTree = "<group>"; };
 		991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Solid.ttf; path = ../assets/fonts/FontAwesome5_Pro_Solid.ttf; sourceTree = "<group>"; };
 		ADB2A550442C64936574B49B /* Pods-ledgerlivemobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.debug.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.debug.xcconfig"; sourceTree = "<group>"; };
+		E45CE71FCE184F60BE140697 /* AppleWalletModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppleWalletModule.m; sourceTree = "<group>"; };
+		DBFCC7615DEF4A99944CBB00 /* AppleWalletModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWalletModule.swift; sourceTree = "<group>"; };
 		BA451DE627CE516700AAB209 /* GoogleService-Info-Production.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Production.plist"; sourceTree = "<group>"; };
 		BA451DE727CE516700AAB209 /* GoogleService-Info-Staging.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Staging.plist"; sourceTree = "<group>"; };
 		BAE7948F27D7C46A00C465F5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -125,6 +129,8 @@
 		13B07FAE1A68108700A75B9A /* ledgerlivemobile */ = {
 			isa = PBXGroup;
 			children = (
+				DBFCC7615DEF4A99944CBB00 /* AppleWalletModule.swift */,
+				E45CE71FCE184F60BE140697 /* AppleWalletModule.m */,
 				CA3D2EC12EDE0D93008E836E /* BluetoothHelperModule.swift */,
 				CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */,
 				RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */,
@@ -542,6 +548,8 @@
 				CA3D2EB62EDDA670008E836E /* FirebaseConfigurator.swift in Sources */,
 				CA33C2532ED88BBB003C128E /* AppDelegate.swift in Sources */,
 				CA3D2EBE2EDDA70E008E836E /* AppKeys.swift in Sources */,
+				426E73E1B31645388A7FDBCE /* AppleWalletModule.m in Sources */,
+				049CE67E12094B398B313321 /* AppleWalletModule.swift in Sources */,
 				CA0B38082EDF3E62005A0FAA /* BluetoothHelperModule.m in Sources */,
 				CA3D2EC22EDE0D9B008E836E /* BluetoothHelperModule.swift in Sources */,
 				RED1A38082EDF3E62005A0FBB /* ReduceTransparencyModule.m in Sources */,

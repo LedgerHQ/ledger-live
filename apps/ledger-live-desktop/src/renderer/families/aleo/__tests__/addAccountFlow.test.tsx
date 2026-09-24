@@ -2,10 +2,11 @@ import React from "react";
 import { Observable, Subject } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
 import { act, render, screen, userEvent } from "tests/testSetup";
+import { trackPage } from "@shared/analytics";
 import { importLLDCoinFamily } from "~/renderer/families";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import type { State } from "~/renderer/reducers";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
@@ -177,12 +178,8 @@ function expectTrackPage(
 ) {
   expect(trackPage).toHaveBeenNthCalledWith(
     n,
-    page,
-    undefined,
-    { ...props, source },
-    true,
-    true,
-    false,
+    { category: page, name: undefined, props: { ...props, source } },
+    { mandatory: false, refreshSource: true, updateRoutes: true },
   );
 }
 

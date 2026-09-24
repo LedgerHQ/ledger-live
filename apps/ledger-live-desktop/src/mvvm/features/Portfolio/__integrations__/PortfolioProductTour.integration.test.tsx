@@ -32,7 +32,6 @@ function renderPortfolioProductTour({ isProductTourEnabled }: { isProductTourEna
     initialState: {
       settings: {
         ...AFTER_ONBOARDING_STATE,
-        hasSeenWalletV4Tour: true,
       },
       ...withFlagOverrides({
         analyticsOptIn: {

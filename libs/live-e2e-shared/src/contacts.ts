@@ -1,7 +1,14 @@
 import { randomUUID } from "node:crypto";
 
-// Every separator a user can type. The straight `'` is excluded: iOS rewrites it to `’` on input.
-const CONTACT_NAME_FORMAT_SAMPLE = "O’Neil-Zoe";
+// A space is the only separator ContactNamePattern accepts between name segments.
+const CONTACT_NAME_FORMAT_SAMPLE = "O Neil Zoe";
+
+/**
+ * Distant `me.name` for an empty Me contact.
+ *
+ * @see [DEFAULT_ME_CONTACT_NAME](../../../domain/entity/contact/src/constants.ts)
+ */
+const SEEDED_ME_CONTACT_NAME = "Me";
 
 /**
  * Valid contact name, unique per call — duplicates are rejected on save.
@@ -12,4 +19,81 @@ export function generateContactName(): string {
   const suffix = randomUUID().replaceAll("-", "").slice(0, 6);
 
   return `${CONTACT_NAME_FORMAT_SAMPLE} ${suffix}`.normalize("NFC");
+}
+
+export type ContactAddressSeed = Readonly<{
+  /** Doubles as the `send-recipient-contact-address-<id>` test id. */
+  id: string;
+  currencyId: string;
+  label: string;
+  address: string;
+}>;
+
+export type ContactSeed = Readonly<{
+  /** Doubles as the `contacts-compact-row-<id>` test id. */
+  id: string;
+  name: string;
+  addresses: readonly ContactAddressSeed[];
+}>;
+
+/**
+ * Not hex on purpose: `toEvmAddressBook` drops what it cannot decode, keeping seeded
+ * contacts out of the device address book so signing screens stay unchanged.
+ */
+const NOT_A_PROOF = "e2e-seeded-contact";
+
+/** Contacts shaped for the `contacts/setContacts` reducer. */
+export function buildSeededContacts(seeds: readonly ContactSeed[]) {
+  return seeds.map(seed => ({
+    ...seed,
+    isMe: false,
+    deviceCredentials: { groupHandle: NOT_A_PROOF, hmacProof: NOT_A_PROOF },
+    addresses: seed.addresses.map(address => ({
+      ...address,
+      device: { blockchainFamily: "e2e", chainId: "0", hmacRest: NOT_A_PROOF },
+    })),
+  }));
+}
+
+/** Ten distinct names in storage order, not UI order — the list must sort them alphabetically. */
+export const SEEDED_CONTACT_NAMES = [
+  "Hugo",
+  "Alice",
+  "Jules",
+  "Clara",
+  "Iris",
+  "Elena",
+  "Benoit",
+  "Farah",
+  "Diana",
+  "Grace",
+] as const;
+
+export type LedgerSyncContactGroupDescriptor = {
+  id: string;
+  name: string;
+};
+
+export function createSeededContactGroups(): LedgerSyncContactGroupDescriptor[] {
+  return SEEDED_CONTACT_NAMES.map(name => ({
+    id: `e2e-contact-${name.toLowerCase()}`,
+    name,
+  }));
+}
+
+export function createSeededContactsDocument(
+  contactGroups: readonly LedgerSyncContactGroupDescriptor[],
+) {
+  return {
+    accounts: [],
+    accountNames: {},
+    contacts: {
+      me: { name: SEEDED_ME_CONTACT_NAME, addresses: [] },
+      contactGroups: contactGroups.map(({ id, name }) => ({
+        id,
+        name,
+        addresses: [],
+      })),
+    },
+  };
 }

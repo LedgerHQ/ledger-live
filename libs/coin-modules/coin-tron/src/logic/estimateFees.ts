@@ -1,5 +1,5 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import coinConfig, { type TronCoinConfig } from "../config";
 import {
@@ -86,6 +86,7 @@ export const estimatedTxSize = (intent: TronIntent): number => {
 };
 
 export const estimateEnergy = async (
+  logger: Logger,
   config: TronCoinConfig,
   intent: TronIntent,
 ): Promise<number> => {
@@ -104,10 +105,15 @@ export const estimateEnergy = async (
   // cheaper contract path than the real amount. Simulate with the token balance instead.
   let simulatedAmount = new BigNumber(intent.amount.toString());
   if (intent.useAllAmount) {
-    simulatedAmount = await tokenBalance(config, intent.sender, intent.asset.assetReference);
+    simulatedAmount = await tokenBalance(
+      logger,
+      config,
+      intent.sender,
+      intent.asset.assetReference,
+    );
   }
 
-  const response = await triggerConstantContract(config, {
+  const response = await triggerConstantContract(logger, config, {
     ownerAddress: decode58Check(intent.sender),
     contractAddress: decode58Check(intent.asset.assetReference),
     functionSelector: "transfer(address,uint256)",
@@ -130,11 +136,12 @@ export const estimateEnergy = async (
 };
 
 async function tokenBalance(
+  logger: Logger,
   config: TronCoinConfig,
   sender: string,
   assetReference: string,
 ): Promise<BigNumber> {
-  const balances = await getBalance(config, sender);
+  const balances = await getBalance(logger, config, sender);
   const match = findBalance({ type: "trc20", assetReference }, balances);
   return new BigNumber((match?.value ?? 0n).toString());
 }
@@ -215,6 +222,7 @@ const isTrc20Send = (intent: TronIntent): boolean =>
 // Fetches the three network inputs shared by estimateFees and computeFeesRaw — extracted to avoid
 // duplicating the Promise.all in both callers.
 async function fetchTronFeeInputs(
+  logger: Logger,
   config: TronCoinConfig,
   transactionIntent: TronIntent,
 ): Promise<{
@@ -223,7 +231,7 @@ async function fetchTronFeeInputs(
   chainParams: ChainParameters;
 }> {
   const [networkInfo, recipientAccount, chainParams] = await Promise.all([
-    getTronAccountNetwork(config, transactionIntent.sender),
+    getTronAccountNetwork(logger, config, transactionIntent.sender),
     // Only native sends need the recipient account for the activation-fee branch, and only once a
     // recipient exists: `prepareTransaction` estimates on every transaction change, so an empty
     // recipient would send `/v1/accounts/` with no address, and `fetchTronAccount` propagates that
@@ -232,9 +240,9 @@ async function fetchTronFeeInputs(
     transactionIntent.type === "send" &&
     transactionIntent.asset.type === "native" &&
     transactionIntent.recipient
-      ? fetchTronAccount(config, transactionIntent.recipient).then(accounts => accounts[0])
+      ? fetchTronAccount(logger, config, transactionIntent.recipient).then(accounts => accounts[0])
       : Promise.resolve<AccountTronAPI | undefined>(undefined),
-    getChainParameters(config),
+    getChainParameters(logger, config),
   ]);
   return { networkInfo, recipientAccount, chainParams };
 }
@@ -243,11 +251,13 @@ async function fetchTronFeeInputs(
 // whether to fall back. Returns networkInfo alongside the fee so callers can build a
 // TronResourceBreakdown without a second network round-trip.
 async function computeFeesRaw(
+  logger: Logger,
   config: TronCoinConfig,
   transactionIntent: TronIntent,
   energyNeeded: number,
 ): Promise<{ value: bigint; networkInfo: NetworkInfo }> {
   const { networkInfo, recipientAccount, chainParams } = await fetchTronFeeInputs(
+    logger,
     config,
     transactionIntent,
   );
@@ -263,6 +273,7 @@ async function computeFeesRaw(
 }
 
 export async function estimateFees(
+  logger: Logger,
   config: TronCoinConfig,
   transactionIntent: TronIntent,
 ): Promise<FeeEstimation> {
@@ -272,6 +283,7 @@ export async function estimateFees(
 
   try {
     const { networkInfo, recipientAccount, chainParams } = await fetchTronFeeInputs(
+      logger,
       config,
       transactionIntent,
     );
@@ -280,14 +292,16 @@ export async function estimateFees(
     let energyRequired: BigNumber;
     let energyEstimated = true;
     try {
-      energyRequired = new BigNumber(await estimateEnergy(config, transactionIntent)).integerValue(
-        BigNumber.ROUND_CEIL,
-      );
+      energyRequired = new BigNumber(
+        await estimateEnergy(logger, config, transactionIntent),
+      ).integerValue(BigNumber.ROUND_CEIL);
     } catch (err) {
       // The simulation is the only way to know the real energy cost. Report one more than available
       // so the tooltip and `validateIntent` both read "insufficient" rather than "covered", and price
       // the transaction at the flat fee below.
-      log("tron/estimateFees", "energy simulation failed, reporting insufficient energy", { err });
+      logger("tron/estimateFees", "energy simulation failed, reporting insufficient energy", {
+        err,
+      });
       energyRequired = energyPool.plus(1);
       energyEstimated = false;
     }
@@ -318,7 +332,7 @@ export async function estimateFees(
 
     return withBreakdown(BigInt(total.integerValue(BigNumber.ROUND_CEIL).toFixed()), breakdown);
   } catch (err) {
-    log("tron/estimateFees", "falling back to pessimistic constants", { err });
+    logger("tron/estimateFees", "falling back to pessimistic constants", { err });
     // Network data is unavailable, so the resource pools are unknown rather than zero. Report a
     // non-zero requirement against a zero pool: the fee is flat and the tooltip must not claim
     // resources cover it.
@@ -346,10 +360,16 @@ const DEFAULT_TRONIFY_RENTAL_EXTRA_TRX = 0.8;
 // Remote coin-config is unvalidated JSON: a provided value that isn't a finite number >= min is a
 // misconfiguration, not a valid override. Fall back to the default and log it — so a config typo is
 // debuggable instead of silently sending a malformed/negative quote request.
-const readRentalParam = (value: unknown, fallback: number, min: number, name: string): number => {
+const readRentalParam = (
+  logger: Logger,
+  value: unknown,
+  fallback: number,
+  min: number,
+  name: string,
+): number => {
   if (value === undefined) return fallback;
   if (typeof value === "number" && Number.isFinite(value) && value >= min) return value;
-  log("tron/estimateFees", `ignoring invalid coin-config ${name}, using default`, { value });
+  logger("tron/estimateFees", `ignoring invalid coin-config ${name}, using default`, { value });
   return fallback;
 };
 
@@ -363,6 +383,7 @@ const readRentalParam = (value: unknown, fallback: number, min: number, name: st
  * explicitly (no silent fallback, per ADR-050 Option 3 AC).
  */
 export async function estimateTronifyFees(
+  logger: Logger,
   config: TronCoinConfig,
   intent: TronIntent,
 ): Promise<FeeEstimation> {
@@ -378,19 +399,21 @@ export async function estimateTronifyFees(
   }
 
   // Single energy simulation; result feeds both the standard burn calc and the Tronify quote.
-  const energyNeeded = await estimateEnergy(config, intent);
+  const energyNeeded = await estimateEnergy(logger, config, intent);
 
   // Rental params are remote-configurable via coin-config (energyRent.tronify), so they can be
   // tuned without a release; fall back to the defaults when unset. Read from the coinConfig
   // singleton — the same source the energyRent provider selection uses (network/tronify, energyRent).
   const tronifyConfig = coinConfig.getCoinConfig().energyRent?.tronify;
   const durationSeconds = readRentalParam(
+    logger,
     tronifyConfig?.rentalDurationSeconds,
     DEFAULT_TRONIFY_RENTAL_DURATION_SECONDS,
     1,
     "rentalDurationSeconds",
   );
   const extraTrx = readRentalParam(
+    logger,
     tronifyConfig?.rentalExtraTrx,
     DEFAULT_TRONIFY_RENTAL_EXTRA_TRX,
     0,
@@ -404,8 +427,8 @@ export async function estimateTronifyFees(
   // is the shared design of the energyRent module — the provider is selected via remote coin-config.
   // TODO(LIVE-34996): align energyRent config threading with the injected `config` pattern.
   const [{ value: originalValue, networkInfo }, quote] = await Promise.all([
-    computeFeesRaw(config, intent, energyNeeded),
-    getEnergyRentQuote({
+    computeFeesRaw(logger, config, intent, energyNeeded),
+    getEnergyRentQuote(logger, {
       payerAddress: intent.sender,
       receiverAddress: intent.sender, // energy is delegated to the sender (they call the contract)
       energy: BigInt(energyNeeded),

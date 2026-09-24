@@ -1,5 +1,30 @@
 # @ledgerhq/asset-aggregation
 
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#22093](https://github.com/LedgerHQ/ledger-live/pull/22093) [`2e94d90`](https://github.com/LedgerHQ/ledger-live/commit/2e94d909a573f7e52595a6fe38241f171ea7feab) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix available balance showing inflated value for DADA cross-network assets (e.g. Tezos + Etherlink)
+
+- [#21835](https://github.com/LedgerHQ/ledger-live/pull/21835) [`5d2f40f`](https://github.com/LedgerHQ/ledger-live/commit/5d2f40f470f859960e43a2a08755a962796f6beb) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Casper fee estimation now names a valid dummy recipient, which a new test asserts for every family enabled on the generic coin framework.
+
+  Three additions on the way, in preparation for enabling Solana: a family can contribute its own fields to a token sub-account through the new `buildTokenAccountShapes` bridge hook; a fee estimation can propagate a transfer fee, a stake account rent and an owner token account onto the transaction, and a transfer fee is now assigned even when absent, so a fee kept from a previously selected asset can no longer reach the device screen; and a staking position's locked reserve counts towards the staked balance.
+
+  `asset-aggregation` now declares its transitive dependency on `ledger-wallet-framework`, like every other consumer of `live-countervalues`, so its build waits for the framework's declarations.
+
+  No family declares the new hook yet, and no coin module emits the new fee parameters or a locked reserve, so nothing changes on screen beyond the Casper fix.
+
+### Patch Changes
+
+- Updated dependencies [[`98e3038`](https://github.com/LedgerHQ/ledger-live/commit/98e303872684da47feca343c0db7d83fcce857b2), [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`5d2f40f`](https://github.com/LedgerHQ/ledger-live/commit/5d2f40f470f859960e43a2a08755a962796f6beb), [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26), [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629), [`e2134f5`](https://github.com/LedgerHQ/ledger-live/commit/e2134f5cffe4669ff5896e2b52904fe22218461b)]:
+  - @domain/entity-currency-crypto@0.13.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.5.0-next.0
+  - @ledgerhq/types-live@6.125.0-next.0
+  - @domain/api-aggregated-assets@0.5.2-next.0
+  - @domain/entity-currency@0.4.4-next.0
+  - @domain/entity-currency-token@0.5.3-next.0
+  - @ledgerhq/live-countervalues@0.26.1-next.0
+
 ## 0.15.1
 
 ### Patch Changes
@@ -233,31 +258,5 @@
   - @ledgerhq/live-countervalues@0.23.0-next.0
   - @ledgerhq/types-live@6.116.0-next.0
   - @domain/entity-currency-crypto@0.7.0-next.0
-
-## 0.11.0
-
-### Minor Changes
-
-- [#19583](https://github.com/LedgerHQ/ledger-live/pull/19583) [`f7d68bb`](https://github.com/LedgerHQ/ledger-live/commit/f7d68bb85919a8029536993b6b6ffa93f20c7683) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix resolveNormalizedCurrency mapping token meta-currencies to same-named L2 chains when their tickers differ
-
-### Patch Changes
-
-- Updated dependencies [[`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`e26e68e`](https://github.com/LedgerHQ/ledger-live/commit/e26e68e854ecea6ebbe5e26196c8d8e899329c7d), [`bde85a7`](https://github.com/LedgerHQ/ledger-live/commit/bde85a7ef50cf7990efd2f9bcd7ccc34c0764fb7), [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63), [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10), [`d631f0d`](https://github.com/LedgerHQ/ledger-live/commit/d631f0dd2480950c5f20dec0c9b4aca515ec63f8)]:
-  - @ledgerhq/cryptoassets@13.55.0
-  - @ledgerhq/types-live@6.115.0
-  - @ledgerhq/live-countervalues@0.22.1
-
-## 0.11.0-next.0
-
-### Minor Changes
-
-- [#19583](https://github.com/LedgerHQ/ledger-live/pull/19583) [`f7d68bb`](https://github.com/LedgerHQ/ledger-live/commit/f7d68bb85919a8029536993b6b6ffa93f20c7683) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix resolveNormalizedCurrency mapping token meta-currencies to same-named L2 chains when their tickers differ
-
-### Patch Changes
-
-- Updated dependencies [[`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`e26e68e`](https://github.com/LedgerHQ/ledger-live/commit/e26e68e854ecea6ebbe5e26196c8d8e899329c7d), [`bde85a7`](https://github.com/LedgerHQ/ledger-live/commit/bde85a7ef50cf7990efd2f9bcd7ccc34c0764fb7), [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63), [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10), [`d631f0d`](https://github.com/LedgerHQ/ledger-live/commit/d631f0dd2480950c5f20dec0c9b4aca515ec63f8)]:
-  - @ledgerhq/cryptoassets@13.55.0-next.0
-  - @ledgerhq/types-live@6.115.0-next.0
-  - @ledgerhq/live-countervalues@0.22.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

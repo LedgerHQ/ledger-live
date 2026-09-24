@@ -231,6 +231,11 @@ export interface PayTabRoute {
    * redirect from an abandoned attempt apart from the one it is currently waiting on.
    */
   state?: string;
+  /**
+   * The provider app the holder belongs to. The provider runs one app per region, and the Card API
+   * routes on it.
+   */
+  appId?: string;
 }
 
 export interface LedgerSyncRoute {

@@ -5,9 +5,9 @@
   Copyright © 2023 Ledger SAS. All rights reserved.
 */
 
-"NSBluetoothAlwaysUsageDescription"="Ledger Live'ın kripto varlıklarınızı yönetebilmesi için Ledger cihazınıza bağlanması gerekir";
-"NSBluetoothPeripheralUsageDescription"="Ledger Live uygulaması cihaz erişimi gerektirir";
-"NSCameraUsageDescription"="Ledger Live uygulaması, karekod tarayabilmek için kamera erişimi gerektirir";
+"NSBluetoothAlwaysUsageDescription"="Ledger Wallet'in kripto varlıklarınızı yönetebilmesi için Ledger cihazınıza bağlanması gerekir";
+"NSBluetoothPeripheralUsageDescription"="Ledger Wallet uygulaması cihaz erişimi gerektirir";
+"NSCameraUsageDescription"="Ledger Wallet uygulaması, karekod tarayabilmek için kamera erişimi gerektirir";
 "NSFaceIDUsageDescription"="Bu uygulama, yüz tanıma özelliği ile doğrulama yapabilmek için Face ID kullanım izni gerektirir";
 "NSMicrophoneUsageDescription"="$(PRODUCT_NAME) için mikrofon kullanımına izin verin";
 "NSPhotoLibraryUsageDescription"="$(PRODUCT_NAME) için fotoğraf erişimine izin verin";

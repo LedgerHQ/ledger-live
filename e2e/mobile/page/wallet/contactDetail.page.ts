@@ -45,8 +45,7 @@ export default class ContactDetailPage {
   async renameContact(name: string) {
     await this.openActionsMenu();
     await this.openRenameDrawer();
-    await this.renameDrawer.typeName(name);
-    await this.renameDrawer.confirm();
+    await this.renameDrawer.typeAndConfirm(name);
   }
 
   @Step("Open the delete contact confirmation")

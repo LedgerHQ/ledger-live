@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, type CardProps } from "@features/flow-pay-card";
-import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-feature-tour";
+import { FeatureTour } from "@features/flow-pay-feature-tour";
 import { Balance, type ActionTilesProps, type BalanceData } from "@features/flow-pay-balance";
 import { BankTransferIntro, type BankTransferIntroProps } from "@features/flow-pay-bank-transfer";
 import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
@@ -19,7 +19,9 @@ type PayTabViewProps = {
   readonly top: number;
   readonly bottom: number;
   readonly login: CardProps["login"];
-  readonly featureTour: FeatureTourProps;
+  readonly cardAssets: CardProps["assets"];
+  readonly cardFormatters: CardProps["formatters"];
+  readonly onTopUp: () => Promise<void>;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
   readonly contacts: ContactsNativeProps;
@@ -27,13 +29,17 @@ type PayTabViewProps = {
   readonly isContactsEnabled: boolean;
   readonly depositOptions: DepositOptionsProps;
   readonly bankTransferIntro: BankTransferIntroProps;
+  readonly onShowMore: () => void;
+  readonly cardSettingsActions: CardProps["cardSettingsActions"];
 };
 
 export function PayTabView({
   top,
   bottom,
   login,
-  featureTour,
+  cardAssets,
+  cardFormatters,
+  onTopUp,
   balance,
   actionTiles,
   contacts,
@@ -41,6 +47,8 @@ export function PayTabView({
   isContactsEnabled,
   depositOptions,
   bankTransferIntro,
+  onShowMore,
+  cardSettingsActions,
 }: PayTabViewProps) {
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
@@ -54,8 +62,15 @@ export function PayTabView({
           <Balance {...balance} actionTiles={actionTiles} />
           {isContactsEnabled && <Contacts {...contacts} />}
           <ContactAddressPicker {...contactAddressPicker} />
-          <Card login={login} />
-          <FeatureTour {...featureTour} />
+          <Card
+            login={login}
+            assets={cardAssets}
+            formatters={cardFormatters}
+            onTopUp={onTopUp}
+            onShowMore={onShowMore}
+            cardSettingsActions={cardSettingsActions}
+          />
+          <FeatureTour />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />
         </Box>

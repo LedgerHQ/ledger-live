@@ -16,7 +16,7 @@ function getRequiredFamily(currencyId: string): string {
   return family;
 }
 
-const NEW_SEND_FLOW_FAMILIES = Array.from(
+export const NEW_SEND_FLOW_FAMILIES = Array.from(
   new Set(
     [
       Currency.ADA,

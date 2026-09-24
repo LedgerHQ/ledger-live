@@ -1,5 +1,36 @@
 # @ledgerhq/coin-solana
 
+## 2.2.0-next.0
+
+### Minor Changes
+
+- [#22343](https://github.com/LedgerHQ/ledger-live/pull/22343) [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `documentation` doc-gen CLI: remove the `doc` script and `documentation` devDependency, and the related `micromark` patch in `.pnpmfile.cjs`
+
+- [#21836](https://github.com/LedgerHQ/ledger-live/pull/21836) [`31208bf`](https://github.com/LedgerHQ/ledger-live/commit/31208bfbd73f45dbdd817802e6468211cba77de6) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Preparation for running Solana on the generic coin framework, with no effect on the app yet: the family is still served by its legacy bridge.
+
+  The coin module's read path now reports what an account actually holds. A balance lists the associated SPL and Token-2022 account of every mint held rather than the native one alone, a staking position carries the stake account it belongs to and its locked reserve, an operation list follows each token account's own signatures instead of only the owner's, operations come back newest-first whichever account they were found through, a token operation names only the counterparties of its own mint — so each leg of a swap no longer shows the other's — and a new `buildTokenAccountShapes` reports a token account's frozen state and its Token-2022 extensions — reading the epoch at most once per call, and never without a transfer-fee extension.
+
+- [#21838](https://github.com/LedgerHQ/ledger-live/pull/21838) [`c55b967`](https://github.com/LedgerHQ/ledger-live/commit/c55b967ed644a1639fb385281b75923532f7f0b7) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Preparation for running Solana on the generic coin framework, with no effect on the app yet: the family is still served by its legacy bridge.
+
+  The coin module validates an intent the way the legacy bridge validated a transaction, so the send and staking screens will refuse what the chain would refuse: a recipient that is not funded or sits off the ed25519 curve, a frozen or non-existent token account, a recipient that is the sender's own associated token account, an amount that leaves too little for the rent or for a later unstake, a memo that is too long, and a stake account in a state the requested command cannot act on. Opening a recipient's associated token account is reported as a warning with its rent, rather than rejected.
+
+  Restored alongside, each a check the legacy bridge had: a stake split requires an amount, an approval or a revocation is refused against a frozen or uninitialized token account, a Token-2022 transfer fee counts against the token balance rather than only the recipient's share, a token authority command is paid from the actually spendable balance rather than one that still counts the rent and the unstake reserve, a recipient whose derived token account address holds lamports without being a token account is refused instead of reaching the chain, opening a token account that already exists is refused rather than built on a non-idempotent instruction, approving or revoking against an account that does not exist is refused, an approval whose delegate is the sender's own token account is refused, and staking the maximum when nothing would be left reports an insufficient balance.
+
+- [#21837](https://github.com/LedgerHQ/ledger-live/pull/21837) [`8dead4f`](https://github.com/LedgerHQ/ledger-live/commit/8dead4fcb776189c366401305586323ee9df0525) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Preparation for running Solana on the generic coin framework, with no effect on the app yet: the family is still served by its legacy bridge.
+
+  The coin module can now craft and price every command the family exposes — a stake creation, delegation, deactivation and withdrawal, a token account opening, an approval and a revocation, and a transaction a partner already built — and charges each its true cost, including an associated token account's rent and the reserve a new stake account must keep to be unstaked later. Token-2022 transfer fees are computed in both directions, so sending a maximum amount no longer overshoots.
+
+  A stake split and a token account opening are now priced on their own dummy transaction rather than on an unrelated one, and a fee estimate is measured on the token program the crafted transaction will actually use — read off the mint, as crafting reads it. Opening an associated token account for a Token-2022 mint declares that program, so the address the account is created at matches the one it was derived from.
+
+  One change reaches the legacy send flow, which shares `broadcast`: a transaction the cluster did not confirm in time now surfaces as a named timeout error rather than a bare one, and a failed simulation is logged before it is thrown.
+
+### Patch Changes
+
+- Updated dependencies [[`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b), [`5d2f40f`](https://github.com/LedgerHQ/ledger-live/commit/5d2f40f470f859960e43a2a08755a962796f6beb), [`d59d123`](https://github.com/LedgerHQ/ledger-live/commit/d59d123a2ba037b44507b1f5424e31f05309ec26), [`40251b4`](https://github.com/LedgerHQ/ledger-live/commit/40251b41a62b2381c5c79410073a5f0b3c1fe629), [`e2134f5`](https://github.com/LedgerHQ/ledger-live/commit/e2134f5cffe4669ff5896e2b52904fe22218461b)]:
+  - @ledgerhq/ledger-wallet-framework@3.5.0-next.0
+  - @ledgerhq/types-live@6.125.0-next.0
+  - @ledgerhq/live-env@4.1.0-next.0
+
 ## 2.1.1
 
 ### Patch Changes
@@ -413,35 +444,5 @@
 
   The field was never read: the activation math uses a hardcoded `WARMUP_COOLDOWN_RATE`, as
   upstream recommends. Dropping it from the schema restores parsing with no behaviour change.
-
-## 0.59.0
-
-### Minor Changes
-
-- [#19540](https://github.com/LedgerHQ/ledger-live/pull/19540) [`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a) Thanks [@adussarps](https://github.com/adussarps)! - Expose the read-only smart-contract call API on EVM external RPC nodes and explicitly reject it on unsupported coin modules.
-
-- [#19731](https://github.com/LedgerHQ/ledger-live/pull/19731) [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7) Thanks [@ysitbon](https://github.com/ysitbon)! - Relocate the token-store accessor imports from `@ledgerhq/cryptoassets/state` onto the wallet-framework port (`@ledgerhq/ledger-wallet-framework/cryptoAssetsStore`). Apps and coin-modules now read `getCryptoAssetsStore` from the framework's injectable singleton; apps inject at bootstrap via `setCryptoAssetsStore` from the same port.
-
-### Patch Changes
-
-- Updated dependencies [[`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
-  - @ledgerhq/types-live@6.116.0
-  - @ledgerhq/live-network@2.7.0
-  - @ledgerhq/ledger-wallet-framework@2.5.0
-
-## 0.59.0-next.0
-
-### Minor Changes
-
-- [#19540](https://github.com/LedgerHQ/ledger-live/pull/19540) [`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a) Thanks [@adussarps](https://github.com/adussarps)! - Expose the read-only smart-contract call API on EVM external RPC nodes and explicitly reject it on unsupported coin modules.
-
-- [#19731](https://github.com/LedgerHQ/ledger-live/pull/19731) [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7) Thanks [@ysitbon](https://github.com/ysitbon)! - Relocate the token-store accessor imports from `@ledgerhq/cryptoassets/state` onto the wallet-framework port (`@ledgerhq/ledger-wallet-framework/cryptoAssetsStore`). Apps and coin-modules now read `getCryptoAssetsStore` from the framework's injectable singleton; apps inject at bootstrap via `setCryptoAssetsStore` from the same port.
-
-### Patch Changes
-
-- Updated dependencies [[`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
-  - @ledgerhq/types-live@6.116.0-next.0
-  - @ledgerhq/live-network@2.7.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.5.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

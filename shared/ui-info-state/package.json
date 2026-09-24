@@ -1,6 +1,6 @@
 {
   "name": "@shared/ui-info-state",
-  "version": "0.2.2",
+  "version": "0.3.0-next.1",
   "private": true,
   "description": "Shared InfoState layout for web (Desktop) and React Native (Mobile), plus the web-only dialog background tone plumbing it uses",
   "main": "src/index.web.ts",
@@ -11,6 +11,8 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.web.ts"
     },
+    "./native": "./src/index.native.ts",
+    "./web": "./src/index.web.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

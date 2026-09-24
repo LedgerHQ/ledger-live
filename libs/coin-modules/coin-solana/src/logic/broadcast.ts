@@ -1,10 +1,14 @@
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
+import { log } from "@ledgerhq/logs";
 import {
   BlockhashWithExpiryBlockHeight,
   TransactionError,
+  TransactionExpiredBlockheightExceededError,
+  TransactionExpiredTimeoutError,
   VersionedTransaction,
 } from "@solana/web3.js";
 import type { ChainAPI } from "../network";
+import { SolanaTxConfirmationTimeout } from "../errors";
 
 type BroadcastOptions = {
   recentBlockhash?: BlockhashWithExpiryBlockHeight;
@@ -71,8 +75,20 @@ export async function broadcast(
   });
 
   if (value.err !== null) {
+    log("solana", "transaction simulation failed", { err: value.err, logs: value.logs });
     throw classifySimulationError(value.err);
   }
 
-  return api.sendRawTransaction(buffer, options?.recentBlockhash);
+  try {
+    return await api.sendRawTransaction(buffer, options?.recentBlockhash);
+  } catch (error) {
+    // web3.js reports a blockhash expiry with two distinct classes.
+    if (
+      error instanceof TransactionExpiredTimeoutError ||
+      error instanceof TransactionExpiredBlockheightExceededError
+    ) {
+      throw new SolanaTxConfirmationTimeout();
+    }
+    throw error;
+  }
 }

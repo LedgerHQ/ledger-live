@@ -4,8 +4,10 @@
 module.exports = {
   Platform: { OS: "ios", select: obj => obj.ios },
   // Native modules a flow imports transitively (react-native-keychain) read this at module eval.
-  // Empty: a test that actually calls one has to mock it.
-  NativeModules: {},
+  NativeModules: {
+    AppleWalletModule: { openPaymentSetup: jest.fn(() => Promise.resolve()) },
+    GoogleWalletModule: { openWallet: jest.fn(() => Promise.resolve()) },
+  },
   StyleSheet: {
     create: styles => styles,
     flatten: style => (Array.isArray(style) ? Object.assign({}, ...style) : style || {}),
@@ -18,5 +20,10 @@ module.exports = {
   Keyboard: {
     isVisible: () => false,
     dismiss: () => {},
+  },
+  Linking: {
+    openURL: jest.fn(() => Promise.resolve()),
+    sendIntent: jest.fn(() => Promise.resolve()),
+    openSettings: jest.fn(() => Promise.resolve()),
   },
 };

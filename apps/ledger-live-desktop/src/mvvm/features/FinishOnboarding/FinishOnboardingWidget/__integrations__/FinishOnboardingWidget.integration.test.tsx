@@ -80,7 +80,6 @@ function renderDiscoverWalletPostOnboarding() {
         }),
         settings: {
           ...AFTER_ONBOARDING_STATE,
-          hasSeenWalletV4Tour: true,
           productTourCompleted: false,
         },
         ...withFlagOverrides({

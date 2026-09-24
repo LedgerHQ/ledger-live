@@ -6,12 +6,12 @@ import * as crypto from "crypto";
 import { Crypto, KeyPair, KeyPairWithChainCode } from "./Crypto";
 
 // ECC wrapper for @noble/curves/secp256k1 to be compatible with BIP32Factory
-const eccWrapper = {
+export const eccWrapper = {
   isPoint(point: Uint8Array | Buffer): boolean {
     try {
       const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
       if (pointBytes.length !== 33 && pointBytes.length !== 65) return false;
-      secp256k1.ProjectivePoint.fromHex(pointBytes);
+      secp256k1.Point.fromBytes(pointBytes);
       return true;
     } catch {
       return false;
@@ -22,7 +22,7 @@ const eccWrapper = {
     try {
       const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
       if (keyBytes.length !== 32) return false;
-      return secp256k1.utils.isValidPrivateKey(keyBytes);
+      return secp256k1.utils.isValidSecretKey(keyBytes);
     } catch {
       return false;
     }
@@ -49,13 +49,13 @@ const eccWrapper = {
 
       if (!this.isPoint(pointBytes) || !this.isPrivate(scalarBytes)) return null;
 
-      const p = secp256k1.ProjectivePoint.fromHex(pointBytes);
+      const p = secp256k1.Point.fromBytes(pointBytes);
       const scalarBigInt = bytesToBigInt(scalarBytes);
-      const scalarPoint = secp256k1.ProjectivePoint.BASE.multiply(scalarBigInt);
+      const scalarPoint = secp256k1.Point.BASE.multiply(scalarBigInt);
       const result = p.add(scalarPoint);
 
       const isCompressed = compressed !== undefined ? compressed : pointBytes.length === 33;
-      return result.toRawBytes(isCompressed);
+      return result.toBytes(isCompressed);
     } catch {
       return null;
     }
@@ -94,12 +94,12 @@ const eccWrapper = {
 
       if (!this.isPoint(pointBytes) || !this.isPrivate(scalarBytes)) return null;
 
-      const p = secp256k1.ProjectivePoint.fromHex(pointBytes);
+      const p = secp256k1.Point.fromBytes(pointBytes);
       const scalarBigInt = bytesToBigInt(scalarBytes);
       const result = p.multiply(scalarBigInt);
 
       const isCompressed = compressed !== undefined ? compressed : pointBytes.length === 33;
-      return result.toRawBytes(isCompressed);
+      return result.toBytes(isCompressed);
     } catch {
       return null;
     }
@@ -107,8 +107,8 @@ const eccWrapper = {
 
   pointCompress(point: Uint8Array | Buffer, compressed = true): Uint8Array {
     const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
-    const p = secp256k1.ProjectivePoint.fromHex(pointBytes);
-    return p.toRawBytes(compressed);
+    const p = secp256k1.Point.fromBytes(pointBytes);
+    return p.toBytes(compressed);
   },
 
   isPointCompressed(point: Uint8Array | Buffer): boolean {
@@ -120,7 +120,7 @@ const eccWrapper = {
     const hashBytes = hash instanceof Buffer ? new Uint8Array(hash) : hash;
     const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
     const signature = secp256k1.sign(hashBytes, keyBytes, { prehash: false });
-    return signature.toCompactRawBytes();
+    return signature.toBytes("compact");
   },
 
   verify(
@@ -165,7 +165,7 @@ export class NobleCryptoSecp256k1 implements Crypto {
     let pk: Uint8Array;
     do {
       pk = crypto.randomBytes(PRIVATE_KEY_SIZE);
-    } while (!secp256k1.utils.isValidPrivateKey(pk));
+    } while (!secp256k1.utils.isValidSecretKey(pk));
     return this.keypairFromSecretKey(pk);
   }
 
@@ -384,11 +384,11 @@ variable : Encrypted data
   }
 
   ecdh(keyPair: KeyPair, publicKey: Uint8Array): Uint8Array {
-    const point = secp256k1.ProjectivePoint.fromHex(publicKey);
+    const point = secp256k1.Point.fromBytes(publicKey);
     const scalar = bytesToBigInt(keyPair.privateKey);
     const result = point.multiply(scalar);
     // Return x coordinate only (32 bytes) - remove first byte which is 0x04 for uncompressed, then take only x
-    const fullPoint = result.toRawBytes(false).slice(1); // Remove 0x04 prefix -> 64 bytes
+    const fullPoint = result.toBytes(false).slice(1); // Remove 0x04 prefix -> 64 bytes
     return fullPoint.slice(0, 32); // Take only x coordinate -> 32 bytes
   }
 

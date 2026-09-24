@@ -1,5 +1,5 @@
 diff --git a/local-cli/testCommand/TestRunnerCommand.js b/local-cli/testCommand/TestRunnerCommand.js
-index 65e6cd7..1fbdd2b 100644
+index 65e6cd70a6257138afd8270671f0ef1c555a9bbc..89c4f92166d331b142b71c5fbc511d8fc3ad5921 100644
 --- a/local-cli/testCommand/TestRunnerCommand.js
 +++ b/local-cli/testCommand/TestRunnerCommand.js
 @@ -36,6 +36,7 @@ class TestRunnerCommand {
@@ -82,7 +82,7 @@ index 65e6cd7..1fbdd2b 100644
      ].map(String);
    }
 diff --git a/runners/jest/reporters/DetoxIPCReporter.js b/runners/jest/reporters/DetoxIPCReporter.js
-index 9e4c6ea..623bd4b 100644
+index 9e4c6eaba0607d9ff427a55a3738056caccf512f..623bd4b346e443063f7fb68d9e67ee8f4b714f14 100644
 --- a/runners/jest/reporters/DetoxIPCReporter.js
 +++ b/runners/jest/reporters/DetoxIPCReporter.js
 @@ -16,6 +16,10 @@ class DetoxIPCReporter {
@@ -96,8 +96,168 @@ index 9e4c6ea..623bd4b 100644
      })));
    }
  
+diff --git a/src/devices/allocation/DeviceAllocator.js b/src/devices/allocation/DeviceAllocator.js
+index b615cd28cab5a5ec24f939ff12076394c53b091b..6c3c893267b566720a2483bbb78f8d93a70d69b2 100644
+--- a/src/devices/allocation/DeviceAllocator.js
++++ b/src/devices/allocation/DeviceAllocator.js
+@@ -38,10 +38,10 @@ class DeviceAllocator {
+    * @param {Detox.DetoxDeviceConfig} deviceConfig
+    * @returns {Promise<DeviceCookie>}
+    */
+-  async allocate(deviceConfig) {
++  async allocate(deviceConfig, workerPid) {
+     const tid = this._counter++;
+     return await log.trace.complete({ data: deviceConfig, id: tid }, 'allocate', async () => {
+-      const cookie = await this._driver.allocate(deviceConfig);
++      const cookie = await this._driver.allocate(deviceConfig, workerPid);
+       log.debug({ data: cookie }, `settled on ${cookie.name || cookie.id}`);
+       this._ids.set(cookie.id, tid);
+       return cookie;
+diff --git a/src/devices/allocation/DeviceRegistry.js b/src/devices/allocation/DeviceRegistry.js
+index 3741e0866f13cef09a6545295af6b9739b600391..f9c69b0bd4e793b78474b0fcf0479bc2d5bc69b7 100644
+--- a/src/devices/allocation/DeviceRegistry.js
++++ b/src/devices/allocation/DeviceRegistry.js
+@@ -55,16 +55,19 @@ class DeviceRegistry {
+ 
+   /***
+    * @param {string|Function} getDeviceId
++   * @param {number} [ownerPid] - Records this pid as the device's owner instead of the caller's
++   *   own pid. Allocation runs inside Detox's primary process, so without this every device
++   *   would be stamped with the ever-alive primary's pid, never able to reflect a dead worker.
+    * @returns {Promise<string>}
+    */
+-  async registerDevice(getDeviceId) {
++  async registerDevice(getDeviceId, ownerPid) {
+     return this._lockfile.exclusively(async () => {
+       const deviceId = await safeAsync(getDeviceId);
+       if (deviceId) {
+         this._upsertDevice(deviceId, {
+           busy: true,
+           sessionId: this._sessionId,
+-          pid: this._pidService.getPid(),
++          pid: ownerPid ?? this._pidService.getPid(),
+         });
+       }
+       return deviceId;
+@@ -127,6 +130,17 @@ class DeviceRegistry {
+     });
+   }
+ 
++  /**
++   * Whether a registered device's owning process has died. Caller must already hold
++   * this._lockfile exclusively - this does not acquire it itself.
++   * @param {string} udid
++   * @returns {boolean}
++   */
++  isDeviceZombie(udid) {
++    const device = [...this._getRegisteredDevices()].find(d => d.id === udid);
++    return !!device && !this._pidService.isAlive(device.pid);
++  }
++
+   /**
+    * @returns {Promise<DeviceList>}
+    */
+diff --git a/src/devices/allocation/drivers/ios/SimulatorAllocDriver.js b/src/devices/allocation/drivers/ios/SimulatorAllocDriver.js
+index 38472ddad2940e659127869c3a1d0eb97889001c..9f953d05a2e0227085980165d94e9d9b73e0a8cb 100644
+--- a/src/devices/allocation/drivers/ios/SimulatorAllocDriver.js
++++ b/src/devices/allocation/drivers/ios/SimulatorAllocDriver.js
+@@ -36,14 +36,16 @@ class SimulatorAllocDriver {
+ 
+   /**
+    * @param deviceConfig { Object }
++   * @param workerPid { number } - the actual worker process using this device, so the registry
++   *   can detect it dying even though allocation itself runs in the primary process.
+    * @return {Promise<IosSimulatorCookie>}
+    */
+-  async allocate(deviceConfig) {
++  async allocate(deviceConfig, workerPid) {
+     const deviceQuery = new SimulatorQuery(deviceConfig.device);
+ 
+     const udid = await this._deviceRegistry.registerDevice(async () => {
+       return await this._findOrCreateDevice(deviceQuery);
+-    });
++    }, workerPid);
+ 
+     if (!udid) {
+       throw new DetoxRuntimeError(`Failed to find device matching ${deviceQuery.getDeviceComment()}`);
+@@ -121,21 +123,67 @@ class SimulatorAllocDriver {
+    * @returns {Promise<String>}
+    */
+   async _findOrCreateDevice(deviceQuery) {
+-    let udid;
+-
+     const { free, taken } = await this._groupDevicesByStatus(deviceQuery);
+ 
+-    if (_.isEmpty(free)) {
+-      const prototypeDevice = taken[0];
+-      udid = this._applesimutils.create(prototypeDevice);
+-      await this._runScreenshotWorkaround(udid);
+-    } else {
+-      udid = free[0].udid;
++    if (!_.isEmpty(free)) {
++      return free[0].udid;
+     }
+ 
++    // CI only boots these devices by their fixed name and never recreates a missing one, so
++    // reclaim a dead worker's device instead of creating a replacement it can never delete.
++    const zombieUdid = await this._reclaimZombieForReuse(taken);
++    if (zombieUdid) {
++      return zombieUdid;
++    }
++    log.debug({}, `No reusable device among ${taken.length} taken; creating a new one`);
++
++    const prototypeDevice = taken[0];
++    const udid = this._applesimutils.create(prototypeDevice);
++    await this._runScreenshotWorkaround(udid);
+     return udid;
+   }
+ 
++  /**
++   * @param {Array<{udid: string}>} takenDevices
++   * @returns {Promise<string|undefined>}
++   * @private
++   */
++  async _reclaimZombieForReuse(takenDevices) {
++    for (const { udid } of takenDevices) {
++      if (!this._deviceRegistry.isDeviceZombie(udid)) continue;
++      if (await this._isDeviceSafeToReuse(udid)) {
++        return udid;
++      }
++    }
++    return undefined;
++  }
++
++  /**
++   * Called only once isDeviceZombie() confirms the owner is dead, so a lingering "Booted"
++   * state isn't a live owner - only isBooted() itself failing (e.g. the UDID no longer exists)
++   * is treated as unsafe.
++   * @param {string} udid
++   * @returns {Promise<boolean>}
++   * @private
++   */
++  async _isDeviceSafeToReuse(udid) {
++    try {
++      await this._applesimutils.shutdown(udid);
++    } catch (err) {
++      try {
++        await this._applesimutils.isBooted(udid);
++        log.debug({ err }, `Zombie simulator ${udid} would not shut down; reusing it anyway since its owning process is dead`);
++      } catch (verifyErr) {
++        log.warn(
++          { err: verifyErr },
++          `Could not verify zombie simulator ${udid}'s state after a failed shutdown; leaving it alone`,
++        );
++        return false;
++      }
++    }
++    return true;
++  }
++
+   async _runScreenshotWorkaround(udid) {
+     await this._applesimutils.takeScreenshot(udid, '/dev/null').catch(() => {
+       log.debug({}, `
 diff --git a/src/devices/common/drivers/android/exec/ADB.js b/src/devices/common/drivers/android/exec/ADB.js
-index bde116c..06ab2f0 100644
+index bde116c69467a8f16f1d420a8fdbac89443099f0..06ab2f0a482af02d8675cd4a85070a9e46a660d9 100644
 --- a/src/devices/common/drivers/android/exec/ADB.js
 +++ b/src/devices/common/drivers/android/exec/ADB.js
 @@ -9,13 +9,15 @@ const { escape } = require('../../../../../utils/pipeCommands');
@@ -136,8 +296,94 @@ index bde116c..06ab2f0 100644
    }
  
    async emuKill(deviceId) {
+diff --git a/src/ipc/IPCClient.js b/src/ipc/IPCClient.js
+index bcc5384326c7fd7a640c2633de35461a2473301a..636f0a5a78bcdce0832b1bda0728d763fa35792d 100644
+--- a/src/ipc/IPCClient.js
++++ b/src/ipc/IPCClient.js
+@@ -60,8 +60,8 @@ class IPCClient {
+     this._sessionState.patch(sessionState);
+   }
+ 
+-  async allocateDevice(deviceConfig) {
+-    const { deviceCookie, error } = deserializeObjectWithError(await this._emit('allocateDevice', { deviceConfig }));
++  async allocateDevice(deviceConfig, workerPid) {
++    const { deviceCookie, error } = deserializeObjectWithError(await this._emit('allocateDevice', { deviceConfig, workerPid }));
+     if (error) {
+       throw error;
+     }
+diff --git a/src/ipc/IPCServer.js b/src/ipc/IPCServer.js
+index 203ccd597a9908539fa987bf7a5fae45b0e8ecfd..a93d16347b45dc433301a2c9d4f97861c223328c 100644
+--- a/src/ipc/IPCServer.js
++++ b/src/ipc/IPCServer.js
+@@ -9,7 +9,7 @@ class IPCServer {
+    * @param {import('./SessionState')} options.sessionState
+    * @param {Detox.Logger} options.logger
+    * @param {object} options.callbacks
+-   * @param {(deviceConfig: DetoxInternals.RuntimeConfig['device']) => Promise<any>} options.callbacks.onAllocateDevice
++   * @param {(deviceConfig: DetoxInternals.RuntimeConfig['device'], workerPid?: number) => Promise<any>} options.callbacks.onAllocateDevice
+    * @param {(cookie: any) => Promise<void>} options.callbacks.onDeallocateDevice
+    */
+   constructor({ sessionState, logger, callbacks }) {
+@@ -104,11 +104,11 @@ class IPCServer {
+     this._ipc.server.broadcast('sessionStateUpdate', newState);
+   }
+ 
+-  async onAllocateDevice({ deviceConfig }, socket) {
++  async onAllocateDevice({ deviceConfig, workerPid }, socket) {
+     let deviceCookie;
+ 
+     try {
+-      deviceCookie = await this._callbacks.onAllocateDevice(deviceConfig);
++      deviceCookie = await this._callbacks.onAllocateDevice(deviceConfig, workerPid);
+       this._ipc.server.emit(socket, 'allocateDeviceDone', { deviceCookie });
+     } catch (error) {
+       this._ipc.server.emit(socket, 'allocateDeviceDone', serializeObjectWithError({ error }));
+diff --git a/src/realms/DetoxPrimaryContext.js b/src/realms/DetoxPrimaryContext.js
+index e38fc192b151990116242196c47e6b26732f6dde..99d16b85f98673235108011db7049d88b474c48c 100644
+--- a/src/realms/DetoxPrimaryContext.js
++++ b/src/realms/DetoxPrimaryContext.js
+@@ -154,7 +154,7 @@ class DetoxPrimaryContext extends DetoxContext {
+   }
+ 
+   /** @override */
+-  async [symbols.allocateDevice](deviceConfig) {
++  async [symbols.allocateDevice](deviceConfig, workerPid) {
+     const deviceAllocator = await this[_createDeviceAllocator](deviceConfig);
+ 
+     const retryOptions = {
+@@ -165,12 +165,12 @@ class DetoxPrimaryContext extends DetoxContext {
+     };
+ 
+     return await retry(retryOptions, async () => {
+-      return await this[_allocateDeviceOnce](deviceAllocator, deviceConfig);
++      return await this[_allocateDeviceOnce](deviceAllocator, deviceConfig, workerPid);
+     });
+   }
+ 
+-  async [_allocateDeviceOnce](deviceAllocator, deviceConfig) {
+-    const deviceCookie = await deviceAllocator.allocate(deviceConfig);
++  async [_allocateDeviceOnce](deviceAllocator, deviceConfig, workerPid) {
++    const deviceCookie = await deviceAllocator.allocate(deviceConfig, workerPid);
+     this[_cookieAllocators][deviceCookie.id] = deviceAllocator;
+ 
+     try {
+diff --git a/src/realms/DetoxSecondaryContext.js b/src/realms/DetoxSecondaryContext.js
+index e5795f1ef888e85e662503b1ea9bcc19a9adcae4..d3a0ee8aee219902bbb55014184a9cc8ddc758b8 100644
+--- a/src/realms/DetoxSecondaryContext.js
++++ b/src/realms/DetoxSecondaryContext.js
+@@ -65,7 +65,9 @@ class DetoxSecondaryContext extends DetoxContext {
+   /** @override */
+   async [symbols.allocateDevice](deviceConfig) {
+     if (this[_ipcClient]) {
+-      const deviceCookie = await this[_ipcClient].allocateDevice(deviceConfig);
++      // Device allocation always runs in the primary process, so its own pid is useless for
++      // detecting a crashed worker later - pass this worker's real pid to be recorded instead.
++      const deviceCookie = await this[_ipcClient].allocateDevice(deviceConfig, process.pid);
+       return deviceCookie;
+     } else {
+       throw new DetoxInternalError('Detected an attempt to allocate a device using a non-initialized context.');
 diff --git a/src/utils/ExclusiveLockfile.js b/src/utils/ExclusiveLockfile.js
-index da29ae9..cb210d6 100644
+index da29ae99c8b90877f15715cdeb692ed8a2b47569..ce884adcafa10e78b0b040dbbbe3c4eeaacd7452 100644
 --- a/src/utils/ExclusiveLockfile.js
 +++ b/src/utils/ExclusiveLockfile.js
 @@ -6,6 +6,14 @@ const DetoxRuntimeError = require('../errors/DetoxRuntimeError');

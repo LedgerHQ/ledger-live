@@ -6,10 +6,11 @@ import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { log } from "@ledgerhq/logs";
 import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getAccountListStatus, isDecodedPltState } from "../network/plt";
+import { getAccountListVerdict, isDecodedPltState } from "../network/plt";
 import { baseOperation, toOperation } from "./operations";
 import type {
   ConcordiumAccount,
+  ConcordiumOperation,
   ConcordiumResources,
   ConcordiumTokenResources,
   PltAccountToken,
@@ -162,25 +163,39 @@ function buildTokenAccount(
  *
  * A zero fee stays `NONE`, which also keeps an incoming transfer out of the
  * parent's history: `NONE` operations are dropped from every list.
+ *
+ * A reject cause rides this operation rather than the token one because this is
+ * the operation that always exists. `operationsForToken` builds a sub-account
+ * operation only for a token resolved from `accountTokens` and found in the CAL,
+ * and a `NonExistentTokenId` rejection names, by definition, a token that is
+ * neither — so the cause would never reach a screen. The memo is left off: it
+ * belongs to the transfer, which is the sub-account's row.
  */
-export function buildParentOperation(op: RawOperation, accountId: string): Operation {
+export function buildParentOperation(op: RawOperation, accountId: string): ConcordiumOperation {
   const fee = new BigNumber(op.fee);
   const paysFee = fee.isGreaterThan(0);
 
-  return baseOperation(
+  const parent = baseOperation(
     op,
     accountId,
     paysFee ? "FEES" : "NONE",
     // `FEES` is an outgoing type, so this value is what gets debited from CCD.
     paysFee ? fee : new BigNumber(0),
   );
+
+  return op.rejectCode === undefined
+    ? parent
+    : { ...parent, extra: { pltRejectCode: op.rejectCode } };
 }
 
 /**
- * Folds pause state and both list rules into the single verdict the send path
- * reads.
+ * Resolves the verdict the send path reads, with pause folded in.
  *
- * Not interchangeable with `getAccountListStatus`, which answers only the list
+ * Pause collapses to `"blocked"` because it is not a list cause, and the send
+ * path reports it from the separate `paused` flag anyway. Everything else keeps
+ * the list cause, which is the whole point of persisting this value.
+ *
+ * Not interchangeable with `getAccountListVerdict`, which answers only the list
  * half. The two share a shape, so assigning one to the other compiles and would
  * let a paused token through.
  */
@@ -188,7 +203,7 @@ function resolveTransferStatus(entry: PltAccountToken): PltTransferStatus {
   const moduleState = entry.token.tokenState.moduleState;
   if (!isDecodedPltState(moduleState)) return "unknown";
   if (moduleState.paused === true) return "blocked";
-  return getAccountListStatus(entry);
+  return getAccountListVerdict(entry);
 }
 
 /**

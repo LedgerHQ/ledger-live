@@ -1,13 +1,26 @@
 import BigNumber from "bignumber.js";
-import type { Operation } from "@ledgerhq/types-live";
-import { fromOperationRaw, toOperationRaw } from "@ledgerhq/ledger-wallet-framework/serialization";
-import { getAccountRawAssignHooks } from "../accountRawAssign";
+import type { Account, AccountRaw, Operation } from "@ledgerhq/types-live";
+import {
+  assignStakingResourcesFromAccountRaw,
+  assignStakingResourcesToAccountRaw,
+  fromOperationRaw,
+  toOperationRaw,
+} from "@ledgerhq/ledger-wallet-framework/serialization";
+import accountRawAssignModule, { getAccountRawAssignHooks } from "../accountRawAssign";
 
 const loadAccountRawAssignForFamilyMock = jest.fn();
 
 jest.mock("../../../coin-modules/registry", () => ({
   loadAccountRawAssignForFamily: (...args: unknown[]) => loadAccountRawAssignForFamilyMock(...args),
 }));
+
+jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => {
+  return {
+    ...jest.requireActual("@ledgerhq/ledger-wallet-framework/serialization"),
+    assignStakingResourcesFromAccountRaw: jest.fn(),
+    assignStakingResourcesToAccountRaw: jest.fn(),
+  };
+});
 
 describe("getAccountRawAssignHooks — operation extra serialization", () => {
   beforeEach(() => jest.clearAllMocks());
@@ -182,5 +195,43 @@ describe("getAccountRawAssignHooks — round trip through the serialization laye
     const revived = fromOperationRaw(persisted, "accId", null, undefined) as any;
     expect(typeof revived.extra.stake.amount).toBe("string");
     expect(BigNumber.isBigNumber(revived.extra.stake.amount)).toBe(false);
+  });
+});
+
+describe("assignToAccountRaw", () => {
+  const { assignToAccountRaw } = accountRawAssignModule;
+  const mockAssignStakingResourcesToAccountRaw = jest.mocked(assignStakingResourcesToAccountRaw);
+
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it("should correcly call staking resource serialization", () => {
+    const account = {} as unknown as Account;
+    const accountRaw = {} as unknown as AccountRaw;
+    assignToAccountRaw(account, accountRaw);
+
+    expect(mockAssignStakingResourcesToAccountRaw).toHaveBeenCalledTimes(1);
+    expect(mockAssignStakingResourcesToAccountRaw).toHaveBeenCalledWith(account, accountRaw);
+  });
+});
+
+describe("assignFromAccountRaw", () => {
+  const { assignFromAccountRaw } = accountRawAssignModule;
+  const mockAssignStakingResourcesFromAccountRaw = jest.mocked(
+    assignStakingResourcesFromAccountRaw,
+  );
+
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it("should correcly call staking resource serialization", () => {
+    const account = {} as unknown as Account;
+    const accountRaw = {} as unknown as AccountRaw;
+    assignFromAccountRaw(accountRaw, account);
+
+    expect(mockAssignStakingResourcesFromAccountRaw).toHaveBeenCalledTimes(1);
+    expect(mockAssignStakingResourcesFromAccountRaw).toHaveBeenCalledWith(accountRaw, account);
   });
 });

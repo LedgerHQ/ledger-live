@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { buildRecipientTransactionPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -15,6 +16,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 type UseSendFlowTransactionParams = Readonly<{
   account: AccountLike | null;
   parentAccount: Account | null;
+  initialRecipient?: string;
 }>;
 
 type UseSendFlowTransactionResult = Readonly<{
@@ -25,6 +27,7 @@ type UseSendFlowTransactionResult = Readonly<{
 export function useSendFlowTransaction({
   account,
   parentAccount,
+  initialRecipient,
 }: UseSendFlowTransactionParams): UseSendFlowTransactionResult {
   const bridge = useAccountBridgeOrNull<Transaction>(account, parentAccount);
   const {
@@ -37,7 +40,21 @@ export function useSendFlowTransaction({
     setAccount,
   } = useBridgeTransaction(bridge, () => {
     if (!account) return {};
-    return { account, parentAccount: parentAccount ?? undefined };
+    if (!bridge?.createTransaction || !initialRecipient) {
+      return { account, parentAccount: parentAccount ?? undefined };
+    }
+
+    try {
+      const created = bridge.createTransaction(getMainAccount(account, parentAccount));
+      let transaction = bridge.updateTransaction(created, { recipient: initialRecipient });
+      if (account.type !== "Account") {
+        transaction = { ...transaction, subAccountId: account.id };
+      }
+
+      return { account, parentAccount: parentAccount ?? undefined, transaction };
+    } catch {
+      return { account, parentAccount: parentAccount ?? undefined };
+    }
   });
 
   const setTransaction = useCallback(

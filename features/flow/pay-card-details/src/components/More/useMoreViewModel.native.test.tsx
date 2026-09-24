@@ -1,8 +1,13 @@
 import React from "react";
 import { act, renderHook } from "@testing-library/react-native";
 import { I18nTestProvider } from "@shared/i18n/testing";
+import { LinkingProvider } from "@shared/linking";
 import { useMoreViewModel } from "./useMoreViewModel";
 import { MORE_RESOURCES } from "./fixtures";
+import { urls } from "../../urls";
+import type { CardSettingsActions } from "./types";
+
+const openExternalMock = jest.fn();
 
 jest.mock("@domain/api-card-management", () => ({ useGetUserQuery: jest.fn() }));
 jest.mock("@features/flow-pay-card-auth/hooks", () => ({
@@ -21,10 +26,17 @@ type Setup = {
 };
 
 function wrapper({ children }: { children: React.ReactNode }) {
-  return <I18nTestProvider resources={MORE_RESOURCES}>{children}</I18nTestProvider>;
+  return (
+    <I18nTestProvider resources={MORE_RESOURCES}>
+      <LinkingProvider config={{ openExternal: openExternalMock }}>{children}</LinkingProvider>
+    </I18nTestProvider>
+  );
 }
 
-function renderWith({ isSignedIn = true, hasUser = true }: Setup = {}) {
+function renderWith(
+  { isSignedIn = true, hasUser = true }: Setup = {},
+  actions: CardSettingsActions = {},
+) {
   const logout = jest.fn();
 
   jest.mocked(useCardLogout).mockReturnValue(logout);
@@ -33,7 +45,7 @@ function renderWith({ isSignedIn = true, hasUser = true }: Setup = {}) {
     data: hasUser ? user : undefined,
   } as unknown as ReturnType<typeof useGetUserQuery>);
 
-  const { result, rerender } = renderHook(() => useMoreViewModel(), { wrapper });
+  const { result, rerender } = renderHook(() => useMoreViewModel(actions), { wrapper });
 
   const signIn = (signedIn: boolean) =>
     act(() => {
@@ -57,6 +69,7 @@ describe("useMoreViewModel (native)", () => {
       "managePin",
       "accessBaanx",
       "help",
+      "legal",
       "logout",
     ]);
   });
@@ -85,5 +98,27 @@ describe("useMoreViewModel (native)", () => {
     signIn(true);
 
     expect(result.current?.isSheetOpen).toBe(false);
+  });
+
+  it("calls the host action wired to each redirect row", () => {
+    const onManagePin = jest.fn();
+    const onAccessBaanx = jest.fn();
+    const { result } = renderWith({}, { onManagePin, onAccessBaanx });
+
+    act(() => result.current?.rows.find(row => row.id === "managePin")?.onPress());
+    act(() => result.current?.rows.find(row => row.id === "accessBaanx")?.onPress());
+
+    expect(onManagePin).toHaveBeenCalledTimes(1);
+    expect(onAccessBaanx).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens the help center and legal agreement links directly, without a host action", () => {
+    const { result } = renderWith();
+
+    act(() => result.current?.rows.find(row => row.id === "help")?.onPress());
+    act(() => result.current?.rows.find(row => row.id === "legal")?.onPress());
+
+    expect(openExternalMock).toHaveBeenCalledWith(urls.helpCenter);
+    expect(openExternalMock).toHaveBeenCalledWith(urls.legalAgreement);
   });
 });

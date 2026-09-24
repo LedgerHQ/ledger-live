@@ -75,6 +75,13 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       NX_POWERPACK_CACHE_MODE: ${{ matrix.config.name == 'Windows' && 'read-only' || '' }}
     steps:
+      - name: Check out with LF line endings (Windows)
+        if: ${{ matrix.config.name == 'Windows' }}
+        shell: bash
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}

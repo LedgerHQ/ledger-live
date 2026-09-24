@@ -1,7 +1,10 @@
+import type BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { AleoOperation } from "../types/bridge";
-import { fetchAccountTransactionsFromHeight } from "../network/utils";
+import type { AleoPublicTransaction } from "../types/api";
+import { fetchAccountTransactionsFromHeight, resolveBondArguments } from "../network/utils";
+import { resolveStakingOperationType } from "../logic/utils";
 import { getCalTokens, toBridgeOperation } from "./utils";
 import type { AleoCoinConfig } from "../types";
 
@@ -43,9 +46,32 @@ export async function listOperations({
       })
     : new Map<string, TokenCurrency>();
 
+  // bond_public is the only staking call whose validator and amount the indexer drops while the
+  // chain still publishes them, so only those rows are worth a per-tx lookup.
+  const transactions: AleoPublicTransaction[] = [];
+  const bondTransactions: AleoPublicTransaction[] = [];
+
   for (const rawTx of result.transactions) {
+    const stakingType = resolveStakingOperationType(rawTx);
+    if (stakingType !== undefined && !config.enableStaking) continue;
+
+    transactions.push(rawTx);
+    if (stakingType === "BOND") bondTransactions.push(rawTx);
+  }
+
+  const bondArgumentsByTxId =
+    bondTransactions.length > 0
+      ? await resolveBondArguments({ config, transactions: bondTransactions })
+      : new Map<string, { validator: string; amount: BigNumber }>();
+
+  for (const rawTx of transactions) {
     const isTokenTx = calTokens.has(rawTx.program_id);
-    const op = toBridgeOperation(ledgerAccountId, rawTx, address, isTokenTx);
+    const op = toBridgeOperation(
+      ledgerAccountId,
+      rawTx,
+      address,
+      bondArgumentsByTxId.get(rawTx.transaction_id),
+    );
     operations.push(op);
     if (isTokenTx) {
       tokenOperations.push(op);

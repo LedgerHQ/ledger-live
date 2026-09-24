@@ -59,6 +59,8 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
     ),
     Card: Container,
     CardContent: Container,
+    CardFooter: Container,
+    CardFooterActions: Container,
     CardContentDescription: Label,
     CardContentTitle: Label,
     CardHeader: Container,

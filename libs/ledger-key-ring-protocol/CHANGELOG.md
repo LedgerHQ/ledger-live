@@ -1,5 +1,24 @@
 # @ledgerhq/live-wallet
 
+## 0.23.0-next.0
+
+### Minor Changes
+
+- [#22116](https://github.com/LedgerHQ/ledger-live/pull/22116) [`214d382`](https://github.com/LedgerHQ/ledger-live/commit/214d38269add0b4f04c42002e1a42b1e75dc3c6d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Enforce the QR code pairing sequence on both sides of the handshake
+
+  The host and the candidate now run the pairing messages through an explicit single-use state
+  machine: each message is only accepted at the one point of the sequence where it is expected,
+  and the peer that initiated the handshake is bound for the whole session. Envelopes, keys and
+  decrypted bodies are validated before being acted upon, so a duplicate, out-of-order, foreign or
+  malformed message ends the session with a `QRCodeProtocolError`: Desktop then asks for a fresh
+  QR code, Mobile goes to its existing retry screen.
+
+### Patch Changes
+
+- Updated dependencies [[`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68), [`29ce771`](https://github.com/LedgerHQ/ledger-live/commit/29ce7712ce93cd27afa97eda2d14a0ff066551fb)]:
+  - @ledgerhq/types-devices@7.1.0-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.13.0-next.0
+
 ## 0.22.0
 
 ### Minor Changes
@@ -349,59 +368,5 @@
   - @ledgerhq/hw-ledger-key-ring-protocol@0.11.1-next.0
   - @ledgerhq/live-network@2.6.8-next.0
   - @ledgerhq/speculos-transport@0.10.8-next.0
-
-## 0.16.0
-
-### Minor Changes
-
-- [#18568](https://github.com/LedgerHQ/ledger-live/pull/18568) [`6ddd641`](https://github.com/LedgerHQ/ledger-live/commit/6ddd64113a4c360a091fc1fd54256cfabaab5220) Thanks [@gre-ledger](https://github.com/gre-ledger)! - feat(lkrp): per-application close on Wallet Sync deactivation
-
-  Deactivating Wallet Sync now closes only the current application's stream instead of destroying the whole trustchain root, so other applications sharing the same root (e.g. wallet-cli `ring`) keep working. If the application being closed is the last open one, the whole trustchain is still destroyed (previous behaviour).
-
-  - `CommandStreamResolver` now observes `CloseStream` (`ResolvedCommandStream.isClosed()`).
-  - `StreamTree.getApplicationStreams()` / `hasAnotherOpenApplication()` enumerate application streams to detect the last open application.
-  - New `TrustchainSDK.destroyApplication()` primitive, software-key signed (no hardware device): closes only the current application's stream, or destroys the whole trustchain when it is the last open application (`{ trustchainDestroyed }`).
-  - `restoreTrustchain` throws `TrustchainEjected` when the application stream is closed, and `getOrCreateTrustchain` reopens on the next index after a close.
-  - LLD/LLM `useDestroyTrustchain` hooks now call `destroyApplication`.
-  - web-tools trustchain playground exposes a `sdk.destroyApplication` action to exercise the per-application close.
-
-- [#18537](https://github.com/LedgerHQ/ledger-live/pull/18537) [`c22afcb`](https://github.com/LedgerHQ/ledger-live/commit/c22afcba4dda045b2be9294abc67c5a96e5f4016) Thanks [@thesan](https://github.com/thesan)! - Implement an LKRP identity provider for the auth lib
-
-### Patch Changes
-
-- Updated dependencies [[`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11), [`6ddd641`](https://github.com/LedgerHQ/ledger-live/commit/6ddd64113a4c360a091fc1fd54256cfabaab5220)]:
-  - @ledgerhq/live-env@2.41.0
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.11.0
-  - @ledgerhq/live-network@2.6.7
-  - @ledgerhq/speculos-transport@0.10.7
-  - @ledgerhq/hw-transport@6.35.6
-  - @ledgerhq/hw-transport-mocker@6.34.6
-
-## 0.16.0-next.0
-
-### Minor Changes
-
-- [#18568](https://github.com/LedgerHQ/ledger-live/pull/18568) [`6ddd641`](https://github.com/LedgerHQ/ledger-live/commit/6ddd64113a4c360a091fc1fd54256cfabaab5220) Thanks [@gre-ledger](https://github.com/gre-ledger)! - feat(lkrp): per-application close on Wallet Sync deactivation
-
-  Deactivating Wallet Sync now closes only the current application's stream instead of destroying the whole trustchain root, so other applications sharing the same root (e.g. wallet-cli `ring`) keep working. If the application being closed is the last open one, the whole trustchain is still destroyed (previous behaviour).
-
-  - `CommandStreamResolver` now observes `CloseStream` (`ResolvedCommandStream.isClosed()`).
-  - `StreamTree.getApplicationStreams()` / `hasAnotherOpenApplication()` enumerate application streams to detect the last open application.
-  - New `TrustchainSDK.destroyApplication()` primitive, software-key signed (no hardware device): closes only the current application's stream, or destroys the whole trustchain when it is the last open application (`{ trustchainDestroyed }`).
-  - `restoreTrustchain` throws `TrustchainEjected` when the application stream is closed, and `getOrCreateTrustchain` reopens on the next index after a close.
-  - LLD/LLM `useDestroyTrustchain` hooks now call `destroyApplication`.
-  - web-tools trustchain playground exposes a `sdk.destroyApplication` action to exercise the per-application close.
-
-- [#18537](https://github.com/LedgerHQ/ledger-live/pull/18537) [`c22afcb`](https://github.com/LedgerHQ/ledger-live/commit/c22afcba4dda045b2be9294abc67c5a96e5f4016) Thanks [@thesan](https://github.com/thesan)! - Implement an LKRP identity provider for the auth lib
-
-### Patch Changes
-
-- Updated dependencies [[`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11), [`6ddd641`](https://github.com/LedgerHQ/ledger-live/commit/6ddd64113a4c360a091fc1fd54256cfabaab5220)]:
-  - @ledgerhq/live-env@2.41.0-next.0
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.11.0-next.0
-  - @ledgerhq/live-network@2.6.7-next.0
-  - @ledgerhq/speculos-transport@0.10.7-next.0
-  - @ledgerhq/hw-transport@6.35.6-next.0
-  - @ledgerhq/hw-transport-mocker@6.34.6-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

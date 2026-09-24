@@ -18,7 +18,7 @@ The wallet-cli source code itself is licensed under Apache License 2.0; see the 
 | rxjs | 7.8.2 | Apache-2.0 | Copyright (c) 2015-2018 Google, Inc., Netflix, Inc., Microsoft Corp. and contributors |
 | usb | 2.17.0 | MIT | Copyright (c) 2012 Nonolith Labs, LLC |
 | yocto-spinner | 0.2.0 | MIT | Copyright (c) Sindre Sorhus |
-| zod | 4.3.6 | MIT | Copyright (c) 2025 Colin McDonnell |
+| zod | 4.4.3 | MIT | Copyright (c) 2025 Colin McDonnell |
 
 For `rxjs` (Apache-2.0), the same Apache-2.0 v2.0 text shipped in the `LICENSE` file alongside this notice applies; rxjs does not ship a separate NOTICE file.
 

@@ -1,5 +1,14 @@
 # @domain/api-currency-token
 
+## 0.6.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`40d296b`](https://github.com/LedgerHQ/ledger-live/commit/40d296b822381cc5d05616acafa1bca61e500dce), [`98e3038`](https://github.com/LedgerHQ/ledger-live/commit/98e303872684da47feca343c0db7d83fcce857b2)]:
+  - @shared/api-services@0.8.0-next.0
+  - @domain/entity-currency-crypto@0.13.0-next.0
+  - @domain/entity-currency-token@0.5.3-next.0
+
 ## 0.6.1
 
 ### Patch Changes

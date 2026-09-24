@@ -1103,9 +1103,9 @@ describe("accountGetPublicKeyLogic (cosmos)", () => {
 
   const setCosmosPublicKey = (publicKey: string | undefined) => {
     const account = context.accounts.find(a => a.id === cosmosAccountId);
-    // the per-account pubkey is persisted in cosmosResources at scan time
-    if (account?.type === "Account")
-      (account as unknown as { cosmosResources: unknown }).cosmosResources = { publicKey };
+    if (account?.type === "Account") {
+      account.xpub = publicKey;
+    }
   };
 
   beforeEach(() => {

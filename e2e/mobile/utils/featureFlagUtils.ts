@@ -7,7 +7,6 @@ const FF_LWM_WALLET_40_Q1 = {
   lwmWallet40: {
     enabled: true,
     params: {
-      tour: false,
       lazyOnboarding: true,
       assetSection: false,
       brazePlacement: true,
@@ -26,7 +25,6 @@ export const FF_LWM_WALLET_40_Q2 = {
   lwmWallet40: {
     enabled: true,
     params: {
-      tour: false,
       lazyOnboarding: true,
       assetSection: true,
       brazePlacement: true,

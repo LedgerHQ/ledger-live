@@ -76,7 +76,6 @@ import type {
   SettingsIsOnboardingFlowPayload,
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
-  SettingsSetHasSeenWalletV4TourPayload,
   SettingsSetHasDismissedContactsFeatureIntroductionPayload,
   SettingsSetDoNotAskAgainSkipMemoPayload,
   SettingsSetProductTourCompletedPayload,
@@ -179,7 +178,6 @@ export const INITIAL_STATE: SettingsState = {
   isOnboardingFlowReceiveSuccess: false,
   isPostOnboardingFlow: false,
   generalTermsVersionAccepted: undefined,
-  hasSeenWalletV4Tour: false,
   hasDismissedContactsFeatureIntroduction: false,
   productTourCompleted: false,
   hasSeenQ2WalletV4Tour: false,
@@ -664,11 +662,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       .payload,
   }),
 
-  [SettingsActionTypes.SET_HAS_SEEN_WALLET_V4_TOUR]: (state, action) => ({
-    ...state,
-    hasSeenWalletV4Tour: (action as Action<SettingsSetHasSeenWalletV4TourPayload>).payload,
-  }),
-
   [SettingsActionTypes.SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION]: (state, action) => ({
     ...state,
     hasDismissedContactsFeatureIntroduction: (
@@ -972,8 +965,6 @@ export const starredMarketCoinsSelector = (state: State) => state.settings.starr
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
-export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
-
 export const hasDismissedContactsFeatureIntroductionSelector = (state: State) =>
   state.settings.hasDismissedContactsFeatureIntroduction;
 

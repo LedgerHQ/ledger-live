@@ -2,10 +2,12 @@ import BigNumber from "bignumber.js";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import {
   createBitcoinAccount,
   createEthereumAccount,
+  createRippleAccount,
   createMinimalBtcTransaction,
   createMinimalEvmTransaction,
   createResolvedStatus,
@@ -26,17 +28,26 @@ import {
   setMockTransaction,
   VALID_BTC_RECIPIENT,
   VALID_EVM_RECIPIENT,
+  VALID_XRP_RECIPIENT,
 } from "../__mocks__/sendFlowTestUtils";
 
 describe("Send Flow Integration", () => {
   const ethereumAccount = createEthereumAccount();
   const bitcoinAccount = createBitcoinAccount();
+  const rippleAccount = createRippleAccount();
 
   beforeEach(() => {
     resetSendFlowTestState("evm");
   });
 
   describe("Recipient step", () => {
+    it("should start on recipient for a regular send", async () => {
+      renderSendFlow(ethereumAccount);
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+    });
+
     it("should start on amount when opened from a contact", async () => {
       renderSendFlow(ethereumAccount, {
         recipient: VALID_EVM_RECIPIENT,
@@ -47,6 +58,23 @@ describe("Send Flow Integration", () => {
       expect(screen.getByTestId("send-amount-input")).toBeVisible();
     });
 
+    it("should start on amount when opened from Pay", async () => {
+      const { user } = renderSendFlow(ethereumAccount, {
+        recipient: VALID_EVM_RECIPIENT,
+        skipRecipientStep: true,
+        source: SEND_FLOW_SOURCE.PAY,
+      });
+
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+      expect(screen.getByTestId("send-edit-recipient-button")).toBeVisible();
+      await waitFor(() => expect(screen.getByDisplayValue("0xabcdef...cdefabcd")).toBeVisible());
+      expect(screen.queryByTestId("send-recipient-card-send")).not.toBeInTheDocument();
+
+      await user.type(screen.getByTestId("send-amount-input"), "1");
+
+      expect(screen.queryByText(/recipientrequired/i)).not.toBeInTheDocument();
+    });
+
     it("should keep the recipient step when a direct recipient is empty", async () => {
       renderSendFlow(ethereumAccount, {
         recipient: "   ",
@@ -54,6 +82,43 @@ describe("Send Flow Integration", () => {
       });
 
       expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+    });
+
+    it("should keep the recipient step when Pay has no recipient", async () => {
+      renderSendFlow(ethereumAccount, { source: SEND_FLOW_SOURCE.PAY });
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+    });
+
+    it("should start on amount when Pay opens a memo currency", async () => {
+      const { user } = renderSendFlow(rippleAccount, {
+        recipient: VALID_XRP_RECIPIENT,
+        skipRecipientStep: true,
+        source: SEND_FLOW_SOURCE.PAY,
+      });
+
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+      expect(screen.getByTestId("send-amount-input")).toBeVisible();
+      expect(screen.getByTestId("send-edit-recipient-button")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-input")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("send-memo-input")).not.toBeInTheDocument();
+      await waitFor(() => expect(screen.getByDisplayValue("rHb9CJAW...4bwdtyTh")).toBeVisible());
+
+      await user.type(screen.getByTestId("send-amount-input"), "1");
+
+      expect(screen.queryByText(/recipientrequired/i)).not.toBeInTheDocument();
+    });
+
+    it("should keep the recipient step when a contact skip opens a memo currency", async () => {
+      renderSendFlow(rippleAccount, {
+        recipient: VALID_XRP_RECIPIENT,
+        skipRecipientStep: true,
+      });
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue(VALID_XRP_RECIPIENT);
       expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
     });
 

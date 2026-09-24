@@ -28,7 +28,7 @@ jest.mock("LLM/features/Stake", () => ({
   useOpenStakeDrawer: () => ({ handleOpenStakeDrawer: jest.fn() }),
 }));
 
-function renderEarnWithAction(action?: string) {
+function renderEarnWithAction(action?: string, params: Record<string, string | undefined> = {}) {
   const navigation = {
     navigate: jest.fn(),
     setParams: jest.fn(),
@@ -40,7 +40,7 @@ function renderEarnWithAction(action?: string) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <Earn
       navigation={navigation as any}
-      route={{ key: "k", name: ScreenName.Earn, params: { action } } as any}
+      route={{ key: "k", name: ScreenName.Earn, params: { action, ...params } } as any}
     />,
   );
 
@@ -57,6 +57,27 @@ describe("EarnLiveAppNavigator › Earn deeplink routing", () => {
         screen: ScreenName.Earn,
         params: {
           intent: "simulate",
+        },
+      },
+    });
+  });
+
+  it("forwards the deposit protocol to the Earn webview route", () => {
+    const navigation = renderEarnWithAction("deposit", {
+      cryptoAssetId: "ethereum/erc20/usd__coin",
+      accountId: "usdc-account",
+      protocolId: "mtbill",
+    });
+
+    expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Base, {
+      screen: NavigatorName.Earn,
+      params: {
+        screen: ScreenName.Earn,
+        params: {
+          intent: "deposit",
+          cryptoAssetId: "ethereum/erc20/usd__coin",
+          accountId: "usdc-account",
+          protocolId: "mtbill",
         },
       },
     });

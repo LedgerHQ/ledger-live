@@ -11,7 +11,7 @@ import {
 } from "../constants";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { sdkClient } from "../network/sdk";
-import type { ProvableApi } from "../types";
+import type { AleoTransition, ProvableApi } from "../types";
 import {
   getMockedRecord,
   getMockedPublicTransaction,
@@ -37,6 +37,7 @@ import {
   sumUnspentRecords,
   getStakingPosition,
   getUnbondingValidators,
+  resolveBondArguments,
 } from "./utils";
 
 jest.mock("./api");
@@ -3450,5 +3451,148 @@ describe("getUnbondingValidators", () => {
     const unbonding = await getUnbondingValidators(config, [UNBONDING, SETTLED]);
 
     expect([...unbonding]).toEqual([UNBONDING]);
+  });
+});
+
+describe("resolveBondArguments", () => {
+  const config = getMockedConfig("mainnet");
+  const VALIDATOR = "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t";
+  const WITHDRAWAL = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  const bondTransition = (overrides?: Partial<AleoTransition>): AleoTransition => ({
+    id: "au1bond",
+    scm: "cm1",
+    tcm: "cm2",
+    tpk: "tpk1",
+    // bond_public(validator, withdrawal, amount)
+    inputs: [
+      { id: "in0", type: "public", value: `${VALIDATOR}.public` },
+      { id: "in1", type: "public", value: `${WITHDRAWAL}.public` },
+      { id: "in2", type: "public", value: "2982828466682u64" },
+    ],
+    outputs: [],
+    program: PROGRAM_ID.CREDITS,
+    function: "bond_public",
+    ...overrides,
+  });
+
+  const bondTx = (transactionId: string) =>
+    getMockedPublicTransaction({ transaction_id: transactionId, function_id: "bond_public" });
+
+  const detailsWith = (transitions: AleoTransition[], transactionId = "bond-1") =>
+    getMockedTransactionDetails(transactionId, { execution: { transitions } });
+
+  it("reads the validator and amount off the credits.aleo transition", async () => {
+    mockGetTransactionById.mockResolvedValue(detailsWith([bondTransition()]));
+
+    const resolved = await resolveBondArguments({ config, transactions: [bondTx("bond-1")] });
+
+    expect(resolved.get("bond-1")).toEqual({
+      // the `.public` suffix is stripped
+      validator: VALIDATOR,
+      amount: new BigNumber("2982828466682"),
+    });
+  });
+
+  it("matches the credits.aleo transition rather than the first one", async () => {
+    const wrapper: AleoTransition = {
+      ...bondTransition(),
+      id: "au1wrapper",
+      program: "pondo_core_protocol.aleo",
+      function: "bond_public",
+      inputs: [{ id: "in0", type: "public", value: "1u64" }],
+    };
+    mockGetTransactionById.mockResolvedValue(detailsWith([wrapper, bondTransition()]));
+
+    const resolved = await resolveBondArguments({ config, transactions: [bondTx("bond-1")] });
+
+    expect(resolved.get("bond-1")?.validator).toBe(VALIDATOR);
+  });
+
+  it("resolves every transaction it is given, keyed by transaction id", async () => {
+    mockGetTransactionById.mockImplementation(async (_config, transactionId) =>
+      detailsWith([bondTransition()], transactionId),
+    );
+
+    const resolved = await resolveBondArguments({
+      config,
+      transactions: [bondTx("bond-1"), bondTx("bond-2")],
+    });
+
+    expect([...resolved.keys()].sort()).toEqual(["bond-1", "bond-2"]);
+  });
+
+  it("omits and logs a credits.aleo bond_public transition with too few inputs", async () => {
+    mockGetTransactionById.mockResolvedValue(detailsWith([bondTransition({ inputs: [] })]));
+
+    const resolved = await resolveBondArguments({ config, transactions: [bondTx("bond-1")] });
+
+    expect(resolved.size).toBe(0);
+    expect(log).toHaveBeenCalledWith(
+      "aleo/sync",
+      "resolveBondArguments: unreadable bond_public inputs for bond-1",
+    );
+  });
+
+  it("omits a transaction with no credits.aleo bond_public transition", async () => {
+    mockGetTransactionById.mockResolvedValue(
+      detailsWith([{ ...bondTransition(), function: "transfer_public" }]),
+    );
+
+    const resolved = await resolveBondArguments({ config, transactions: [bondTx("bond-1")] });
+
+    expect(resolved.size).toBe(0);
+    expect(log).not.toHaveBeenCalled();
+  });
+
+  it("omits and logs a transaction whose validator input is not an address", async () => {
+    mockGetTransactionById.mockResolvedValue(
+      detailsWith([
+        bondTransition({
+          inputs: [
+            { id: "in0", type: "public", value: "12345u64" },
+            { id: "in1", type: "public", value: `${WITHDRAWAL}.public` },
+            { id: "in2", type: "public", value: "100u64" },
+          ],
+        }),
+      ]),
+    );
+
+    const resolved = await resolveBondArguments({ config, transactions: [bondTx("bond-1")] });
+
+    expect(resolved.size).toBe(0);
+    expect(log).toHaveBeenCalledWith(
+      "aleo/sync",
+      "resolveBondArguments: unreadable bond_public inputs for bond-1",
+    );
+  });
+
+  it("omits a transaction whose amount input is private", async () => {
+    mockGetTransactionById.mockResolvedValue(
+      detailsWith([
+        bondTransition({
+          inputs: [
+            { id: "in0", type: "public", value: `${VALIDATOR}.public` },
+            { id: "in1", type: "public", value: `${WITHDRAWAL}.public` },
+            { id: "in2", type: "private", value: "" },
+          ],
+        }),
+      ]),
+    );
+
+    const resolved = await resolveBondArguments({ config, transactions: [bondTx("bond-1")] });
+
+    expect(resolved.size).toBe(0);
+  });
+
+  it("returns an empty map when given no transactions", async () => {
+    const resolved = await resolveBondArguments({ config, transactions: [] });
+
+    expect(resolved.size).toBe(0);
+    expect(mockGetTransactionById).not.toHaveBeenCalled();
   });
 });

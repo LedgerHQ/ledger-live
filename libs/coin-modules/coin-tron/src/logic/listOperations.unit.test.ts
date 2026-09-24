@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import BigNumber from "bignumber.js";
 import { fetchTronAccountTxsPage, getBlock } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
@@ -12,12 +13,16 @@ jest.mock("../network", () => ({
 }));
 
 jest.mock("../network/trongrid/trongrid-adapters", () => ({
+  ...jest.requireActual("../network/trongrid/trongrid-adapters"),
   fromTrongridTxInfoToOperation: jest.fn(),
 }));
+
+const TRC20_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 
 describe("listOperations", () => {
   const mockAddress = "tronExampleAddress";
   const config = {} as TronCoinConfig;
+  const logger: Logger = (..._args: unknown[]) => {};
 
   const defaultOptions: ListOperationsOptions = {
     limit: 200,
@@ -59,9 +64,9 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(config, mockAddress, defaultOptions);
+    const result = await listOperations(logger, config, mockAddress, defaultOptions);
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(config, mockAddress, {
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(logger, config, mockAddress, {
       limit: 200,
       minTimestamp: 0,
       order: "asc",
@@ -70,13 +75,77 @@ describe("listOperations", () => {
     expect(result.next).toBeUndefined();
   });
 
+  it("should drop a token operation whose asset reference could not be resolved", async () => {
+    // A `trc10`/`trc20` asset with no `assetReference` names no token: consumers cannot resolve
+    // it, and typing it native would report a token amount as TRX.
+    const mockTxs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "tx-resolved",
+        tokenType: "trc20",
+        tokenAddress: TRC20_CONTRACT,
+        value: new BigNumber(1),
+        date: new Date("2023-01-01T00:00:00Z"),
+        blockHeight: 100,
+      },
+      {
+        txID: "tx-unresolved",
+        tokenType: "trc20",
+        value: new BigNumber(2),
+        date: new Date("2023-01-01T01:00:00Z"),
+        blockHeight: 100,
+      },
+      {
+        txID: "tx-unresolved-trc10",
+        tokenType: "trc10",
+        value: new BigNumber(3),
+        date: new Date("2023-01-01T02:00:00Z"),
+        blockHeight: 100,
+      },
+    ];
+
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: [], hasNextPage: false },
+      trc20Txs: { txs: mockTxs, hasNextPage: false },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({ id: tx.txID }));
+
+    const result = await listOperations(logger, config, mockAddress, defaultOptions);
+
+    expect(result.items.map(op => op.id)).toEqual(["tx-resolved"]);
+  });
+
+  it("should not fetch blocks for a page of only unresolvable token operations", async () => {
+    // Dropping happens before the block fan-out, so a page of transactions that are all dropped
+    // costs no block request — historical sync over spam airdrops stays cheap.
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: [], hasNextPage: false },
+      trc20Txs: {
+        txs: [
+          {
+            txID: "tx-unresolved",
+            tokenType: "trc20",
+            value: new BigNumber(1),
+            date: new Date("2023-01-01T00:00:00Z"),
+            blockHeight: 100,
+          },
+        ],
+        hasNextPage: false,
+      },
+    });
+
+    const result = await listOperations(logger, config, mockAddress, defaultOptions);
+
+    expect(result.items).toEqual([]);
+    expect(getBlock).not.toHaveBeenCalled();
+  });
+
   it("should handle empty transactions on first page (no cursor)", async () => {
     (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
       nativeTxs: { txs: [], hasNextPage: false },
       trc20Txs: { txs: [], hasNextPage: false },
     });
 
-    const result = await listOperations(config, mockAddress, defaultOptions);
+    const result = await listOperations(logger, config, mockAddress, defaultOptions);
 
     expect(result.items).toHaveLength(0);
     expect(result.next).toBeUndefined();
@@ -93,7 +162,7 @@ describe("listOperations", () => {
     const cursor = `${new Date("2023-01-01T01:00:00Z").getTime()}:tx1`;
 
     await expect(
-      listOperations(config, mockAddress, { ...defaultOptions, cursor }),
+      listOperations(logger, config, mockAddress, { ...defaultOptions, cursor }),
     ).rejects.toThrow(TronEmptyPage);
   });
 
@@ -128,7 +197,7 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(config, mockAddress, defaultOptions);
+    const result = await listOperations(logger, config, mockAddress, defaultOptions);
 
     expect(result.items).toHaveLength(3);
     expect(result.next).toContain("tx3");
@@ -173,7 +242,7 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(config, mockAddress, defaultOptions);
+    const result = await listOperations(logger, config, mockAddress, defaultOptions);
 
     expect(result.items).toHaveLength(3);
     const hashes = result.items.map(op => op.tx.hash);
@@ -211,7 +280,10 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(config, mockAddress, { ...defaultOptions, order: "asc" });
+    const result = await listOperations(logger, config, mockAddress, {
+      ...defaultOptions,
+      order: "asc",
+    });
 
     const hashes = result.items.map(op => op.tx.hash);
     expect(hashes).toEqual(["tx1", "tx2", "tx3"]);
@@ -248,7 +320,10 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(config, mockAddress, { ...defaultOptions, order: "desc" });
+    const result = await listOperations(logger, config, mockAddress, {
+      ...defaultOptions,
+      order: "desc",
+    });
 
     const hashes = result.items.map(op => op.tx.hash);
     expect(hashes).toEqual(["tx3", "tx2", "tx1"]);
@@ -288,7 +363,7 @@ describe("listOperations", () => {
     const cursorTimestamp = new Date("2023-01-01T01:00:00Z").getTime();
     const cursor = `${cursorTimestamp}:tx1`;
 
-    const result = await listOperations(config, mockAddress, { ...defaultOptions, cursor });
+    const result = await listOperations(logger, config, mockAddress, { ...defaultOptions, cursor });
 
     const hashes = result.items.map(op => op.tx.hash);
     expect(hashes).toEqual(["tx2", "tx3"]);
@@ -318,7 +393,7 @@ describe("listOperations", () => {
     }));
 
     const cursor = `${sameTimestamp.getTime()}:txB`;
-    const result = await listOperations(config, mockAddress, { ...defaultOptions, cursor });
+    const result = await listOperations(logger, config, mockAddress, { ...defaultOptions, cursor });
 
     const hashes = result.items.map(op => op.tx.hash);
     expect(hashes).toEqual(["txC", "txD"]);
@@ -328,14 +403,14 @@ describe("listOperations", () => {
     const exampleError = new Error("Network error!");
     (fetchTronAccountTxsPage as jest.Mock).mockRejectedValue(exampleError);
 
-    await expect(listOperations(config, mockAddress, defaultOptions)).rejects.toThrow(
+    await expect(listOperations(logger, config, mockAddress, defaultOptions)).rejects.toThrow(
       "Network error!",
     );
   });
 
   it("should throw on invalid cursor format", async () => {
     await expect(
-      listOperations(config, mockAddress, { ...defaultOptions, cursor: "invalid" }),
+      listOperations(logger, config, mockAddress, { ...defaultOptions, cursor: "invalid" }),
     ).rejects.toThrow("Invalid cursor format");
   });
 
@@ -372,7 +447,7 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(config, mockAddress, defaultOptions);
+    const result = await listOperations(logger, config, mockAddress, defaultOptions);
 
     expect(result.next).toContain("trc20-1");
     const hashes = result.items.map(op => op.tx.hash);
@@ -408,14 +483,14 @@ describe("listOperations", () => {
     const cursor = `${cursorTimestamp}:tx4`;
     const minTimestamp = 1000;
 
-    await listOperations(config, mockAddress, {
+    await listOperations(logger, config, mockAddress, {
       ...defaultOptions,
       order: "desc",
       cursor,
       minTimestamp,
     });
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(config, mockAddress, {
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(logger, config, mockAddress, {
       limit: 200,
       minTimestamp,
       maxTimestamp: cursorTimestamp,
@@ -431,13 +506,13 @@ describe("listOperations", () => {
 
     const minTimestamp = 1000;
 
-    await listOperations(config, mockAddress, {
+    await listOperations(logger, config, mockAddress, {
       ...defaultOptions,
       order: "desc",
       minTimestamp,
     });
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(config, mockAddress, {
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(logger, config, mockAddress, {
       limit: 200,
       minTimestamp,
       maxTimestamp: undefined,
@@ -468,14 +543,14 @@ describe("listOperations", () => {
     }));
     const minTimestamp = 1000;
 
-    await listOperations(config, mockAddress, {
+    await listOperations(logger, config, mockAddress, {
       ...defaultOptions,
       order: "asc",
       cursor,
       minTimestamp,
     });
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(config, mockAddress, {
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(logger, config, mockAddress, {
       limit: 200,
       minTimestamp: cursorTimestamp,
       maxTimestamp: undefined,

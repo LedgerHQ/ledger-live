@@ -17,6 +17,12 @@ export const CardApiExtraSchema = z.object({
     isFunction,
     mustBeAFunction("getCardBaanxClientKey"),
   ),
+  /**
+   * True while the holder belongs to the provider's US tenant. Read on every request for the same
+   * reason as the two above: the answer compares a stored app id with an env the debug settings can
+   * change, and the next request must carry the new answer.
+   */
+  isCardUsEnv: z.custom<() => boolean>(isFunction, mustBeAFunction("isCardUsEnv")),
   readCardSession: z.custom<() => Promise<CardSessionSnapshot>>(
     isFunction,
     mustBeAFunction("readCardSession"),

@@ -30,6 +30,10 @@ jest.mock("../context/SendFlowContext", () => ({
   ),
 }));
 
+jest.mock("../context/SendMemoResetContext", () => ({
+  SendMemoResetProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 jest.mock("../context/SendSignatureContext", () => ({
   SendSignatureProvider: ({ children }: { children: React.ReactNode }) => children,
   useSendSignature: jest.fn(),

@@ -55,6 +55,14 @@ The 3-digit code typed does not match the one shown on the other instance (the
 The pairing WebSocket closed before completion (timeout / cancellation). LWD automatically
 restarts the QR code if it closed after a minimum delay.
 
+### QRCodeProtocolError
+
+The pairing [sequence](./03-qr-code-protocol.md#sequence-enforcement) was broken: a message
+arrived out of order or twice, from a peer other than the one that started the handshake, or
+malformed (bad envelope, unreadable payload, a key that is not a point on the curve). LWD asks
+the relay for a **new QR code** — remounting the QR step from the pin-code screen, restarting in
+place when already on it. LWM routes it to its retry screen (`SyncError`).
+
 ### NoTrustchainInitialized
 
 The instance has no trustchain yet to add a member to → "unbacked" error step (`UnbackedError`).
@@ -75,4 +83,5 @@ Listed only to clarify they are **handled automatically**, never surfaced:
 - **TrustchainOutdated** — the `applicationPath` is behind after a
   [key rotation](./02-trustchain-sdk.md#key-rotation-on-member-removal); recovered by
   `restoreTrustchain` in the watch loop.
-- **InvalidEncryptionKeyError** — internal guard; not surfaced in the apps.
+- **InvalidEncryptionKeyError** — internal guard; not surfaced in the apps. A QR-code frame that
+  fails to decrypt is reported as `QRCodeProtocolError` instead, since it is the peer's doing.

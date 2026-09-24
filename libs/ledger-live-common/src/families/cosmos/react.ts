@@ -8,6 +8,7 @@ import {
 import { getAccountCurrency } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import { searchFilter as defaultSearchFilter, mapDelegations } from "./logic";
+import { getCosmosResources } from "./types";
 import type {
   CosmosAccount,
   CosmosDelegationInfo,
@@ -45,8 +46,7 @@ export function useCosmosFamilyMappedDelegations(
   const currencyId = account.currency.id;
   const { validators } = useCosmosFamilyPreloadData(currencyId);
 
-  const delegations = account.cosmosResources?.delegations;
-
+  const delegations = getCosmosResources(account)?.delegations;
   const unit = getAccountCurrency(account).units[0];
   return useMemo(() => {
     const mappedDelegations = mapDelegations(delegations || [], validators, unit);

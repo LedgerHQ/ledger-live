@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
@@ -76,7 +75,6 @@ function Body({
     bridgePending,
     status,
   } = useBridgeTransaction(bridge, () => {
-    invariant(accountProp.nearResources, "near: account and near resources required");
     const initTx = bridge.createTransaction(accountProp);
     const mode = "withdraw";
     const recipient = validatorAddress;

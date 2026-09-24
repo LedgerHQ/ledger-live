@@ -26,7 +26,9 @@ beforeEach(() => {
       { address: VALIDATOR_ADDRESS, name: "Figment", commissionPercent: 10 } as AleoValidator,
     ],
     loading: false,
+    fetching: false,
     error: null,
+    refetch: jest.fn(),
   });
 });
 

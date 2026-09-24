@@ -34,6 +34,7 @@ import {
 import {
   configureCardSessionRenewal,
   isCardSessionCurrent,
+  isCardUsEnv,
   readCardSession,
   refreshCardSession,
 } from "@features/platform-card";
@@ -91,6 +92,7 @@ export const store = configureStore({
               // Read on every request, so the debug settings can change them without a restart.
               getCardApiBaseUrl: () => getEnv("CARD_BAANX_API_URL"),
               getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
+              isCardUsEnv: () => isCardUsEnv(getEnv("CARD_BAANX_US_APP_ID")),
               readCardSession,
               isCardSessionCurrent,
               refreshCardSession,

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
 import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
@@ -23,9 +23,9 @@ import {
   formatAleoBalances,
 } from "./utils";
 
-jest.mock("@ledgerhq/live-common/config/index");
+jest.mock("@ledgerhq/live-common/families/aleo/config");
 
-const mockGetCurrencyConfiguration = jest.mocked(getCurrencyConfiguration);
+const mockGetAleoCurrencyConfigById = jest.mocked(getAleoCurrencyConfigById);
 
 describe("getAleoCurrencyConfig", () => {
   beforeEach(() => {
@@ -33,17 +33,17 @@ describe("getAleoCurrencyConfig", () => {
   });
 
   it("returns the config when passed a CryptoCurrency", () => {
-    mockGetCurrencyConfiguration.mockReturnValue(mockAleoCoinConfig);
+    mockGetAleoCurrencyConfigById.mockReturnValue(mockAleoCoinConfig);
 
     const result = getAleoCurrencyConfig(aleoCurrency);
 
-    expect(mockGetCurrencyConfiguration).toHaveBeenCalledTimes(1);
-    expect(mockGetCurrencyConfiguration).toHaveBeenCalledWith(aleoCurrency.id);
+    expect(mockGetAleoCurrencyConfigById).toHaveBeenCalledTimes(1);
+    expect(mockGetAleoCurrencyConfigById).toHaveBeenCalledWith(aleoCurrency.id);
     expect(result).toBe(mockAleoCoinConfig);
   });
 
   it("uses parentCurrency when passed a TokenCurrency", () => {
-    mockGetCurrencyConfiguration.mockReturnValue(mockAleoCoinConfig);
+    mockGetAleoCurrencyConfigById.mockReturnValue(mockAleoCoinConfig);
 
     // @ts-expect-error - not all fields are needed for this test
     const tokenCurrency: TokenCurrency = {
@@ -53,15 +53,13 @@ describe("getAleoCurrencyConfig", () => {
 
     const result = getAleoCurrencyConfig(tokenCurrency);
 
-    expect(mockGetCurrencyConfiguration).toHaveBeenCalledTimes(1);
-    expect(mockGetCurrencyConfiguration).toHaveBeenCalledWith(aleoCurrency.id);
+    expect(mockGetAleoCurrencyConfigById).toHaveBeenCalledTimes(1);
+    expect(mockGetAleoCurrencyConfigById).toHaveBeenCalledWith(aleoCurrency.id);
     expect(result).toBe(mockAleoCoinConfig);
   });
 
-  it("returns undefined when getCurrencyConfiguration throws", () => {
-    mockGetCurrencyConfiguration.mockImplementation(() => {
-      throw new Error("currency not configured");
-    });
+  it("returns undefined when the currency is not configured", () => {
+    mockGetAleoCurrencyConfigById.mockReturnValue(undefined);
 
     const result = getAleoCurrencyConfig(aleoCurrency);
 

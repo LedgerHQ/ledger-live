@@ -1,5 +1,17 @@
 # @ledgerhq/live-signer-concordium
 
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#22043](https://github.com/LedgerHQ/ledger-live/pull/22043) [`a304cfe`](https://github.com/LedgerHQ/ledger-live/commit/a304cfe5d6ea2ad27e0a4cb1fd6bc5761b951585) Thanks [@amaslakov](https://github.com/amaslakov)! - Mark the package as private so changeset publish stops releasing it to npm. Its only consumer, live-common, is private too
+
+### Patch Changes
+
+- Updated dependencies [[`ea94dd0`](https://github.com/LedgerHQ/ledger-live/commit/ea94dd00d64bae6b7fd9c792da77ffba751a9f01), [`736a0d5`](https://github.com/LedgerHQ/ledger-live/commit/736a0d5ba692e2342df4fc503056524359d35d65), [`7848066`](https://github.com/LedgerHQ/ledger-live/commit/7848066f6ba1b803b5a8d3df02ce6d35e46b370e), [`1648042`](https://github.com/LedgerHQ/ledger-live/commit/164804200fcd3486d9f364a31b065cb7f7d2a170), [`eb2a2a5`](https://github.com/LedgerHQ/ledger-live/commit/eb2a2a598787555cc05ed7ae105dd1648fbe43f5), [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68)]:
+  - @ledgerhq/coin-concordium@1.4.0-next.0
+  - @ledgerhq/concordium-core@0.8.0-next.0
+
 ## 0.8.0
 
 ### Minor Changes
@@ -189,24 +201,5 @@
 
 - Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f)]:
   - @ledgerhq/coin-concordium@0.16.0
-
-## 0.6.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f)]:
-  - @ledgerhq/coin-concordium@0.16.0-next.0
-
-## 0.6.0
-
-### Minor Changes
-
-- [#18814](https://github.com/LedgerHQ/ledger-live/pull/18814) [`fa0123a`](https://github.com/LedgerHQ/ledger-live/commit/fa0123a1da7b053d58afab498266cf830958e2ff) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate remaining lint scripts from ESLint to oxlint and drop Prettier (oxfmt is now the sole formatter)
-
-### Patch Changes
-
-- Updated dependencies [[`1e17c12`](https://github.com/LedgerHQ/ledger-live/commit/1e17c127178a871b665b25d6f4208d4613826dd1), [`67c6acb`](https://github.com/LedgerHQ/ledger-live/commit/67c6acb22afafa7671eebe94e60e672480b71728)]:
-  - @ledgerhq/coin-concordium@0.15.0
-  - @ledgerhq/concordium-core@0.5.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

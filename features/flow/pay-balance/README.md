@@ -87,7 +87,7 @@ file it can reach through no other path would be reported as dead.
 
 ## Structure
 
-This package follows the [Structure & Flow ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117/Guideline+Monorepo+DDD+Re-architecture+Structure+Flow).
+This package follows the [Structure & Flow ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117).
 Every `index.*` is a pure barrel (`export *` only). UI lives under `components/` (one folder per
 component); the platform-agnostic logic lives in `logic/`, the host hook in `hooks/`, Redux in
 `state/` (also exported as `./state`) and the shared contracts in `types.ts`.

@@ -29,7 +29,7 @@ export const SEND_FLOW_COMPLETION = {
 export type SendFlowCompletion = (typeof SEND_FLOW_COMPLETION)[keyof typeof SEND_FLOW_COMPLETION];
 
 export const SEND_FLOW_SOURCE = {
-  PAY: "Pay",
+  PAY: "pay",
 } as const;
 
 export type BaseSendStepConfig = FlowStepConfig<SendFlowStep> &
@@ -137,10 +137,11 @@ export function hasDirectRecipient(
 }
 
 export function canSkipRecipientStep(
-  params: Pick<SendFlowInitParams, "recipient" | "skipRecipientStep"> | undefined,
+  params: Pick<SendFlowInitParams, "recipient" | "skipRecipientStep" | "source"> | undefined,
   uiConfig: Pick<SendFlowUiConfig, "hasMemo">,
 ): boolean {
-  return hasDirectRecipient(params) && !uiConfig.hasMemo;
+  const isPay = params?.source === SEND_FLOW_SOURCE.PAY;
+  return hasDirectRecipient(params) && (isPay || !uiConfig.hasMemo);
 }
 
 export type SendFlowBusinessContext = Readonly<{

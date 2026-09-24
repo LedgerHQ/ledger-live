@@ -1,6 +1,6 @@
 {
   "name": "@devtools/wire",
-  "version": "0.5.0",
+  "version": "0.5.1-next.0",
   "private": true,
   "description": "Store-aware protocol builders and transport assembly for DevTools host ⇄ tool communication",
   "main": "src/index.ts",
@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "unimported": "pnpm knip --directory ../.. -W devtools/wire"
   },
   "dependencies": {
     "@devtools/protocols": "workspace:*",

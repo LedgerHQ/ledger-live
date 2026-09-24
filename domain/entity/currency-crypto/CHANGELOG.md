@@ -1,5 +1,14 @@
 # @domain/entity-currency-crypto
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#22162](https://github.com/LedgerHQ/ledger-live/pull/22162) [`98e3038`](https://github.com/LedgerHQ/ledger-live/commit/98e303872684da47feca343c0db7d83fcce857b2) Thanks [@lysyi3m](https://github.com/lysyi3m)! - feat(concordium): declare the PLT token standard on both networks
+
+  Concordium sub-accounts are now labelled as tokens, and the Receive step warns
+  that the address takes CCD and PLT only.
+
 ## 0.12.0
 
 ### Minor Changes

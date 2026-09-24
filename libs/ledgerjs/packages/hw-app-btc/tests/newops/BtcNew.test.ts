@@ -4,11 +4,15 @@ import { TransportReplayer } from "@ledgerhq/hw-transport-mocker";
 // Using @noble/curves instead of tiny-secp256k1
 import { secp256k1 } from "@noble/curves/secp256k1";
 
+function pointFromPrivateKey(privateKey: Uint8Array) {
+  return secp256k1.Point.BASE.multiply(secp256k1.Point.Fn.fromBytes(privateKey));
+}
+
 // ECC wrapper for compatibility
 const ecc = {
   isPoint: (point: Uint8Array): boolean => {
     try {
-      secp256k1.ProjectivePoint.fromHex(point);
+      secp256k1.Point.fromBytes(point);
       return true;
     } catch {
       return false;
@@ -16,7 +20,7 @@ const ecc = {
   },
   isPrivate: (privateKey: Uint8Array): boolean => {
     try {
-      secp256k1.ProjectivePoint.fromPrivateKey(privateKey);
+      pointFromPrivateKey(privateKey);
       return true;
     } catch {
       return false;
@@ -24,14 +28,14 @@ const ecc = {
   },
   pointFromScalar: (privateKey: Uint8Array, compressed = true): Uint8Array | null => {
     try {
-      return secp256k1.ProjectivePoint.fromPrivateKey(privateKey).toRawBytes(compressed);
+      return pointFromPrivateKey(privateKey).toBytes(compressed);
     } catch {
       return null;
     }
   },
   pointCompress: (point: Uint8Array, compressed = true): Uint8Array => {
-    const p = secp256k1.ProjectivePoint.fromHex(point);
-    return p.toRawBytes(compressed);
+    const p = secp256k1.Point.fromBytes(point);
+    return p.toBytes(compressed);
   },
   isPointCompressed: (point: Uint8Array): boolean => point.length === 33,
 };

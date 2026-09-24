@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-module-boilerplate",
-  "version": "5.1.2",
+  "version": "5.2.0-next.0",
   "private": true,
   "description": "Boilerplate coin integration",
   "keywords": [
@@ -133,7 +133,6 @@
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",

@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-aleo
 
+## 0.19.12-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`724f029`](https://github.com/LedgerHQ/ledger-live/commit/724f02932ccdf8ba5b8f8f0ccc10b9edbe7547cd), [`cf09fa6`](https://github.com/LedgerHQ/ledger-live/commit/cf09fa63c7aa509b1958bc594795895089fdf8de), [`0a5c2a0`](https://github.com/LedgerHQ/ledger-live/commit/0a5c2a0e13782aa3d12a2be1466b604436fcb4ad), [`b5338ec`](https://github.com/LedgerHQ/ledger-live/commit/b5338ec9173a08073a4b8524fe095428bb710a99), [`49b535f`](https://github.com/LedgerHQ/ledger-live/commit/49b535fa6cab495b0b8659c042c743b8f65c2ce2), [`31ec33f`](https://github.com/LedgerHQ/ledger-live/commit/31ec33f649209bd2b6971afc173e2e41f53c313f), [`387619d`](https://github.com/LedgerHQ/ledger-live/commit/387619d7be17b3d7cd86031430769c6bb6638a68)]:
+  - @ledgerhq/coin-aleo@2.5.0-next.0
+
 ## 0.19.11
 
 ### Patch Changes
@@ -141,19 +148,5 @@
 
 - Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f), [`26e7fbd`](https://github.com/LedgerHQ/ledger-live/commit/26e7fbd02929042b3f32c6d8cb73db6e3d070709), [`43d4872`](https://github.com/LedgerHQ/ledger-live/commit/43d487261dfb0681b561e4b114b2179acba5e2a8)]:
   - @ledgerhq/coin-aleo@1.18.0
-
-## 0.19.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f), [`26e7fbd`](https://github.com/LedgerHQ/ledger-live/commit/26e7fbd02929042b3f32c6d8cb73db6e3d070709), [`43d4872`](https://github.com/LedgerHQ/ledger-live/commit/43d487261dfb0681b561e4b114b2179acba5e2a8)]:
-  - @ledgerhq/coin-aleo@1.18.0-next.0
-
-## 0.19.1
-
-### Patch Changes
-
-- Updated dependencies [[`1d40088`](https://github.com/LedgerHQ/ledger-live/commit/1d40088e095cc064d9f3020e2fa6dd787aaca671), [`1e17c12`](https://github.com/LedgerHQ/ledger-live/commit/1e17c127178a871b665b25d6f4208d4613826dd1), [`43fc364`](https://github.com/LedgerHQ/ledger-live/commit/43fc36426f23a838e2b3c74692dbad29e54b4088)]:
-  - @ledgerhq/coin-aleo@1.17.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

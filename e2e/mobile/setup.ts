@@ -12,7 +12,7 @@ const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 setupEnvironment();
 
 beforeAll(async () => {
-  const port = await launchApp({ newInstance: true });
+  const port = await launchApp({ newInstance: true, delete: true });
   await device.reverseTcpPort(8081);
   await device.reverseTcpPort(port);
   await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app

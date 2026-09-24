@@ -788,11 +788,16 @@ export const DeeplinksProvider = ({
               const validatedModal = validateEarnDepositScreen(
                 searchParams.get("cryptoAssetId") || undefined,
                 searchParams.get("accountId") || undefined,
+                searchParams.get("protocolId") || undefined,
               );
               url.pathname = "";
               url.searchParams.set("action", "deposit");
               url.searchParams.set("cryptoAssetId", validatedModal.cryptoAssetId ?? "");
               url.searchParams.set("accountId", validatedModal.accountId ?? "");
+              url.searchParams.delete("protocolId");
+              if (validatedModal.protocolId) {
+                url.searchParams.set("protocolId", validatedModal.protocolId);
+              }
               return getStateFromPath(url.href?.split("://")[1], config);
             }
             if (pathname === "/simulate") {

@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { MIN_DELEGATOR_STAKE_MICROCREDITS } from "@ledgerhq/live-common/families/aleo/constants";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import React, { Fragment, PureComponent } from "react";
@@ -28,7 +27,7 @@ const StepAmount = ({
   bridgePending,
 }: StepProps) => {
   const unit = useMaybeAccountUnit(account);
-  const bondedBalance = (account as AleoAccount)?.aleoResources?.bondedBalance ?? new BigNumber(0);
+  const bondedBalance = account?.aleoResources?.bondedBalance ?? new BigNumber(0);
 
   if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;

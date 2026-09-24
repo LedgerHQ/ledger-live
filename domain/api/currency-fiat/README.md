@@ -7,7 +7,7 @@ Domain API client for **fiat currencies**, backed by the Ledger Countervalues Se
 Query endpoint and helpers, typed on the Zod-first `@domain/entity-currency-fiat` entity. Owns no
 env/config/logging dependency.
 
-Start of the DDD evolution of `libs/ledger-live-common/src/currencies/support.ts` (the supported-fiat
+Start of the evolution of `libs/ledger-live-common/src/currencies/support.ts` (the supported-fiat
 part) into an RTK Query model, following the `@domain/api-currency-token` package strategy.
 
 - `schema.ts` — Zod schemas for the CVS `/v3/supported/fiat` response (`SupportedFiatsResponseSchema`,

@@ -1,5 +1,29 @@
 # @devtools/registry
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#22145](https://github.com/LedgerHQ/ledger-live/pull/22145) [`6844ca4`](https://github.com/LedgerHQ/ledger-live/commit/6844ca4e220c98ff99dd5d259dab339223624847) Thanks [@ysitbon](https://github.com/ysitbon)! - Put every devtools package under knip and remove the dead code it found
+
+  Dual-platform packages run knip once per platform through `createDualPlatformKnipConfig`, so a
+  suffix-less `./Tool` specifier resolves to the right twin instead of orphaning both. Removed: the
+  unreachable `Expand` component, the `metadata` and web-only `hooks` barrels, and the named exports
+  that duplicated a default export. `@devtools/protocols` now enumerates its two subpath exports
+  instead of a `./*` wildcard.
+
+- [#22309](https://github.com/LedgerHQ/ledger-live/pull/22309) [`01473d6`](https://github.com/LedgerHQ/ledger-live/commit/01473d6dff53295312cef15863aff5abbf6ccf09) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Add the Device Onboarding devtool, which runs the shared onboarding flow against a real device
+
+### Patch Changes
+
+- Updated dependencies [[`72367fc`](https://github.com/LedgerHQ/ledger-live/commit/72367fcf2343fa488008236f1005da589e6e3054), [`845ac4a`](https://github.com/LedgerHQ/ledger-live/commit/845ac4a101b405b6c93333e335115ef1105ef824), [`91531f2`](https://github.com/LedgerHQ/ledger-live/commit/91531f29e71e4e186375a5e2908ddca0c351c0ac), [`6844ca4`](https://github.com/LedgerHQ/ledger-live/commit/6844ca4e220c98ff99dd5d259dab339223624847), [`01473d6`](https://github.com/LedgerHQ/ledger-live/commit/01473d6dff53295312cef15863aff5abbf6ccf09), [`43e1a21`](https://github.com/LedgerHQ/ledger-live/commit/43e1a21f2060d53875256b001e054cf0b1f7b86a)]:
+  - @devtools/pay-card@0.7.0-next.0
+  - @devtools/cloud-sync@0.2.0-next.0
+  - @devtools/feature-flags@0.10.0-next.0
+  - @devtools/env@0.2.0-next.0
+  - @devtools/trustchain@0.2.0-next.0
+  - @devtools/device-onboarding@0.2.0-next.0
+
 ## 0.4.3
 
 ### Patch Changes
@@ -179,19 +203,5 @@
 
 - Updated dependencies []:
   - @devtools/feature-flags@0.6.2-next.0
-
-## 0.1.6
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.6.1
-
-## 0.1.6-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.6.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/speculos-transport",
-  "version": "0.11.0",
+  "version": "0.12.0-next.0",
   "private": true,
   "description": "Ledger Live speculos transport test helper",
   "keywords": [
@@ -26,7 +26,6 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "documentation": "14.0.2",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
   },
@@ -41,8 +40,7 @@
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts"
+    "unimported": "unimported"
   },
   "typesVersions": {
     "*": {

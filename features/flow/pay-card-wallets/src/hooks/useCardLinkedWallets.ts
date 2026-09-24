@@ -4,10 +4,11 @@ import {
   useGetInternalWalletsQuery,
 } from "@domain/api-card-management";
 import { combineCardLinkedWallets } from "../logic/combineCardLinkedWallets";
-import type { CardLinkedWallets, ResolveWalletCounterValue } from "../types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CardLinkedWallets } from "../types";
 
 export type UseCardLinkedWalletsParams = Readonly<{
-  resolveCounterValue: ResolveWalletCounterValue;
+  currencies: ReadonlyMap<string, CryptoOrTokenCurrency>;
   skip?: boolean;
 }>;
 
@@ -23,7 +24,7 @@ export type UseCardLinkedWalletsResult = CardLinkedWallets &
 const NO_WALLETS: readonly [] = [];
 
 export function useCardLinkedWallets({
-  resolveCounterValue,
+  currencies,
   skip = false,
 }: UseCardLinkedWalletsParams): UseCardLinkedWalletsResult {
   const linkedQuery = useGetCardLinkedWalletsQuery(undefined, { skip });
@@ -34,9 +35,9 @@ export function useCardLinkedWallets({
       combineCardLinkedWallets({
         linked: linkedQuery.data ?? NO_WALLETS,
         internal: internalQuery.data ?? NO_WALLETS,
-        resolveCounterValue,
+        currencies,
       }),
-    [linkedQuery.data, internalQuery.data, resolveCounterValue],
+    [linkedQuery.data, internalQuery.data, currencies],
   );
 
   const { refetch: refetchLinked } = linkedQuery;

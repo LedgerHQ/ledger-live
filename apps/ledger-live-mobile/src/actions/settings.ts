@@ -61,7 +61,6 @@ import {
   SettingsIsOnboardingFlowPayload,
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
-  SettingsSetHasSeenWalletV4TourPayload,
   SettingsSetHasDismissedContactsFeatureIntroductionPayload,
   SettingsSetDoNotAskAgainSkipMemoPayload,
   SettingsSetProductTourCompletedPayload,
@@ -280,10 +279,6 @@ export const setSelectedTabPortfolioAssets =
   createAction<SettingsSetSelectedTabPortfolioAssetsPayload>(
     SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS,
   );
-
-export const setHasSeenWalletV4Tour = createAction<SettingsSetHasSeenWalletV4TourPayload>(
-  SettingsActionTypes.SET_HAS_SEEN_WALLET_V4_TOUR,
-);
 
 export const setHasDismissedContactsFeatureIntroduction =
   createAction<SettingsSetHasDismissedContactsFeatureIntroductionPayload>(

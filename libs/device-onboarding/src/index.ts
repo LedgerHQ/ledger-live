@@ -1,12 +1,4 @@
-export type {
-  DeviceOnboardingPorts,
-  DeviceOnboardingSession,
-  FirmwareUpdateFailure,
-  FirmwareUpdateInput,
-  FirmwareUpdateProgress,
-  FirmwareUpdateResult,
-  FirmwareUpdateStep,
-} from "./ports";
+export type { DeviceOnboardingPorts, DeviceOnboardingSession } from "./ports";
 export {
   OnboardingStep,
   type AvailableFirmwareUpdate,
@@ -16,9 +8,19 @@ export {
   type DeviceOnboardingOutput,
   type DeviceOnboardingState,
   type GenuineCheckFailure,
+  type GenuineFailureEvent,
+  type GenuineFailureReport,
+  type GenuineVerdict,
   type OnboardingEvent,
   type SeedPhraseWordCount,
 } from "./types";
+export { deviceOnboardingMachine } from "./machine";
+export {
+  isTouchscreen,
+  minimumNanoVersions,
+  requiresLegacyFlow,
+  type FirmwareVersionInput,
+} from "./rules";
 export {
   createRetryPolicy,
   withRetries,

@@ -1,7 +1,8 @@
 import React, { type ComponentType, type ReactNode } from "react";
 import { render, type RenderResult } from "@support/jest-devtools/native";
 import { NavigationContainer } from "@react-navigation/native";
-import { DevToolsShellProvider, type CategoryGroup } from "../src/context";
+import { DevToolsShellProvider } from "../src/context";
+import type { CategoryGroup } from "../src/context/shellContext";
 
 function NavigationWrapper({ children }: { readonly children: ReactNode }) {
   return <NavigationContainer>{children}</NavigationContainer>;

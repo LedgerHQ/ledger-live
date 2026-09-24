@@ -1,7 +1,6 @@
 import { getEnv } from "@shared/env";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 import type { Transaction } from "../types";
 import { getEstimatedFees } from "../utils";
 import { hasMinimumFundsToCancel, hasMinimumFundsToSpeedUp } from "./hasMinimumFunds";
@@ -18,15 +17,7 @@ jest.mock("../utils", () => ({
 const mockGetEnv = getEnv as jest.Mock;
 const mockGetEstimatedFees = getEstimatedFees as jest.Mock;
 
-jest.mock("@ledgerhq/coin-evm/config");
-const mockGetConfig = jest.mocked(getCoinConfig);
-
 describe("hasMinimumFunds", () => {
-  beforeEach(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return { info: {} };
-    });
-  });
   describe("hasMinimumFundsToCancel", () => {
     const mainAccount: Account = {
       balance: new BigNumber(0),

@@ -34,6 +34,13 @@ describe("logic/transaction/combine", () => {
     expect(() => combine(JSON.stringify(payload), ["11".repeat(64)])).toThrow("public key");
   });
 
+  it("throws when the public key is passed through as hex instead of base64", () => {
+    const pubkeyHex = Buffer.from(new Uint8Array(33).fill(2)).toString("hex");
+    expect(() => combine(JSON.stringify(payload), ["11".repeat(64)], pubkeyHex)).toThrow(
+      "compressed secp256k1 public key",
+    );
+  });
+
   it("throws on a non-hex or wrong-length signature", () => {
     const pubkeyBase64 = Buffer.from(new Uint8Array(33).fill(2)).toString("base64");
     expect(() => combine(JSON.stringify(payload), ["zz".repeat(64)], pubkeyBase64)).toThrow(

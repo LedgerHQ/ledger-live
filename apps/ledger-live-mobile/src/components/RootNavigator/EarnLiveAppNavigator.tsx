@@ -37,6 +37,7 @@ export const Earn = (props: NavigationProps) => {
   const paramAccountId = props.route.params?.accountId;
   const paramCurrencyId = props.route.params?.currencyId;
   const paramCryptoAssetId = props.route.params?.cryptoAssetId;
+  const paramProtocolId = props.route.params?.protocolId;
   const navigation: EarnNavigation = props.navigation as unknown as EarnNavigation;
   const accounts = useSelector(flattenAccountsSelector);
   const route = useRoute();
@@ -69,6 +70,7 @@ export const Earn = (props: NavigationProps) => {
         accountId: undefined,
         currencyId: undefined,
         cryptoAssetId: undefined,
+        protocolId: undefined,
       });
 
     function deeplinkRouting() {
@@ -82,6 +84,7 @@ export const Earn = (props: NavigationProps) => {
                 intent: "deposit",
                 cryptoAssetId: paramCryptoAssetId,
                 accountId: paramAccountId,
+                protocolId: paramProtocolId,
               },
             },
           });
@@ -174,6 +177,7 @@ export const Earn = (props: NavigationProps) => {
     paramAccountId,
     paramCurrencyId,
     paramCryptoAssetId,
+    paramProtocolId,
     accounts,
     navigation,
     route,

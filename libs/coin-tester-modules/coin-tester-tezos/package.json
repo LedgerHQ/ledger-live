@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-tezos",
-  "version": "1.5.5",
+  "version": "1.6.0-next.0",
   "private": true,
   "description": "Ledger Tezos Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -58,7 +58,6 @@
   },
   "dependencies": {
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/coin-tezos": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",

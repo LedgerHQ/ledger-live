@@ -37,6 +37,7 @@
         android:required="true" />
 
     <queries>
+        <package android:name="com.google.android.apps.walletnfcrel" />
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="concordiumidapp" />
