@@ -243,7 +243,6 @@ function makeStakingTransactions(valAddress: string, startBurnHt: number): Staki
       // account -- exercised here against the real coin-stacks `getBalance`/`getStakes`
       // wiring (no mocks), not just the generic framework's own chain-agnostic mechanism tests.
       const { stakingPositions } = curr as unknown as FrameworkAccount;
-      expect(stakingPositions).toBeDefined();
       expect(stakingPositions).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ delegate: valAddress, state: "active" }),
