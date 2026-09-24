@@ -74,6 +74,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  jest.useRealTimers();
   subjectRefs.sync.complete();
   subjectRefs.sign.complete();
   document.getElementById("modals")?.remove();
@@ -120,6 +121,9 @@ describe("Aleo bond flow — full modal", () => {
     expect(await screen.findByText(/must reach at least 10,000 ALEO/)).toBeInTheDocument();
     await clickContinueWhenEnabled();
 
+    // Broadcast holds the success step for at least 3s (execAndWaitAtLeast): fake the clock after
+    // the last user event so waitFor steps through that floor in virtual time.
+    jest.useFakeTimers();
     await act(async () => {
       subjectRefs.sign.next({ type: "signed", signedOperation: mockSignedOperation as never });
     });
@@ -127,7 +131,7 @@ describe("Aleo bond flow — full modal", () => {
     await waitFor(() => expect(screen.getByText("Bond sent")).toBeInTheDocument(), {
       timeout: 5000,
     });
-  }, 20000);
+  });
 
   // The withdrawal address is never a step: it is pinned to the user's own account at
   // transaction-creation time, and nothing downstream re-pins it.

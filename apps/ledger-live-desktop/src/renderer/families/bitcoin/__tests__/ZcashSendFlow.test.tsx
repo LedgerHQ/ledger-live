@@ -178,8 +178,9 @@ describe("Zcash shielded send flow", () => {
 
       expect(await screen.findByTestId(bannerTestId)).toBeVisible();
 
-      const recipientInput = await screen.findByTestId("send-recipient-input");
-      await user.type(recipientInput, shieldedRecipient);
+      // Pasted: per-keystroke typing of an address is covered by the recipient unit tests.
+      await user.click(await screen.findByTestId("send-recipient-input"));
+      await user.paste(shieldedRecipient);
 
       const matchedButton = await screen.findByTestId("send-matched-address-button");
       await user.click(matchedButton);
@@ -187,7 +188,6 @@ describe("Zcash shielded send flow", () => {
       expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
       expect(screen.getByTestId(bannerTestId)).toBeVisible();
     },
-    20000,
   );
 
   it("advances to amount for a private send once the shielded sync is complete", async () => {
@@ -203,7 +203,7 @@ describe("Zcash shielded send flow", () => {
     await navigateToAmountScreen(user, shieldedRecipient);
 
     expect(screen.getByTestId("send-amount-step")).toBeVisible();
-  }, 20000);
+  });
 
   it("starts the shielded sync once on entering the amount step with the private pool, and does not restart it on an amount keystroke", async () => {
     const shieldedRecipient =
@@ -220,7 +220,7 @@ describe("Zcash shielded send flow", () => {
 
     await user.type(screen.getByTestId("send-amount-input"), "1");
     expect(mockStartShieldedSync).toHaveBeenCalledTimes(1);
-  }, 20000);
+  });
 
   it("does not start a shielded sync on entering the amount step with the public pool", async () => {
     const account = createZcashAccount({ syncState: "complete" });
@@ -235,5 +235,5 @@ describe("Zcash shielded send flow", () => {
     await navigateToAmountScreen(user, "t1ZcashTransparentXXXXXXXXXXXXXXXXXXXXXX");
 
     expect(mockStartShieldedSync).not.toHaveBeenCalled();
-  }, 20000);
+  });
 });

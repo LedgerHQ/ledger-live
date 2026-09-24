@@ -45,6 +45,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  jest.useRealTimers();
   subjectRefs.sync.complete();
   subjectRefs.sign.complete();
   document.getElementById("modals")?.remove();
@@ -83,6 +84,9 @@ describe("Aleo unbond flow — full modal", () => {
     );
     await clickContinueWhenEnabled();
 
+    // Broadcast holds the success step for at least 3s (execAndWaitAtLeast): fake the clock after
+    // the last user event so waitFor steps through that floor in virtual time.
+    jest.useFakeTimers();
     await act(async () => {
       subjectRefs.sign.next({ type: "signed", signedOperation: mockSignedOperation as never });
     });
@@ -90,7 +94,7 @@ describe("Aleo unbond flow — full modal", () => {
     await waitFor(() => expect(screen.getByText("Unbond submitted")).toBeInTheDocument(), {
       timeout: 5000,
     });
-  }, 20000);
+  });
 
   // There is no recipient step: `unbond_public` names the account as its own on-chain
   // `staker`, so the flow seeds it from the account and prepareTransaction re-pins it.

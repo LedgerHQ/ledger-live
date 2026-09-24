@@ -74,6 +74,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  jest.useRealTimers();
   subjectRefs.sync.complete();
   subjectRefs.sign.complete();
   document.getElementById("modals")?.remove();
@@ -112,7 +113,8 @@ async function clickContinueWhenEnabled() {
 
 async function fillRecipientAndContinue(recipient = ALEO_RECIPIENT_ADDRESS) {
   const input = await screen.findByTestId("send-recipient-input");
-  await userEvent.type(input, recipient);
+  await userEvent.click(input);
+  await userEvent.paste(recipient);
   await clickContinueWhenEnabled();
 }
 
@@ -125,6 +127,13 @@ async function signSuccessfully() {
   await act(async () => {
     subjectRefs.sign.next({ type: "signed", signedOperation: mockSignedOperation as never });
   });
+}
+
+// Broadcast holds the success step for at least 3s (execAndWaitAtLeast): fake the clock after the
+// last user event so the waitFor that follows steps through that floor in virtual time.
+async function signOnFakeClock() {
+  jest.useFakeTimers();
+  await signSuccessfully();
 }
 
 async function completePrivateSync() {
@@ -184,12 +193,12 @@ describe("Aleo send flow — full modal", () => {
     await fillRecipientAndContinue();
     await continueFromAmount();
     await clickContinueWhenEnabled();
-    await signSuccessfully();
+    await signOnFakeClock();
 
     await waitFor(() => expect(screen.getByText("Transaction sent")).toBeInTheDocument(), {
       timeout: 5000,
     });
-  }, 20000);
+  });
 
   it("blocks at the mandatory private sync step when the private balance is selected", async () => {
     setupModal();
@@ -200,7 +209,8 @@ describe("Aleo send flow — full modal", () => {
     expect(await screen.findByText(/Syncing your private balance/i)).toBeInTheDocument();
     expect(screen.queryByTestId("aleo-step-amount")).not.toBeInTheDocument();
 
-    await new Promise(resolve => setTimeout(resolve, 200));
+    jest.useFakeTimers();
+    await act(() => jest.advanceTimersByTimeAsync(5000));
     expect(screen.queryByTestId("aleo-step-amount")).not.toBeInTheDocument();
   });
 
@@ -212,12 +222,12 @@ describe("Aleo send flow — full modal", () => {
 
     await continueFromAmount();
     await clickContinueWhenEnabled();
-    await signSuccessfully();
+    await signOnFakeClock();
 
     await waitFor(() => expect(screen.getByText("Transaction sent")).toBeInTheDocument(), {
       timeout: 5000,
     });
-  }, 12000);
+  });
 
   it("drives CONVERT_PRIVATE_TO_PUBLIC self-transfer through sync gate to 'Transaction sent'", async () => {
     setupModal({ mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC });
@@ -229,12 +239,12 @@ describe("Aleo send flow — full modal", () => {
     await completePrivateSync();
     await continueFromAmount();
     await clickContinueWhenEnabled();
-    await signSuccessfully();
+    await signOnFakeClock();
 
     await waitFor(() => expect(screen.getByText("Transaction sent")).toBeInTheDocument(), {
       timeout: 5000,
     });
-  }, 12000);
+  });
 
   it("shows the error state on a device error and returns to summary on retry", async () => {
     setupModal();
@@ -253,7 +263,7 @@ describe("Aleo send flow — full modal", () => {
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "Continue" })).toBeInTheDocument(),
     );
-  }, 10000);
+  });
 
   it("completes private sync and drives the private transfer through to confirmation", async () => {
     setupModal();
@@ -265,12 +275,12 @@ describe("Aleo send flow — full modal", () => {
     await completePrivateSync();
     await continueFromAmount();
     await clickContinueWhenEnabled();
-    await signSuccessfully();
+    await signOnFakeClock();
 
     await waitFor(() => expect(screen.getByText("Transaction sent")).toBeInTheDocument(), {
       timeout: 5000,
     });
-  }, 12000);
+  });
 
   it("shows the sync error UI when private sync fails", async () => {
     setupModal();
@@ -410,10 +420,10 @@ describe("Aleo self-transfer modal — token account", () => {
     await clickContinueWhenEnabled();
     await continueFromAmount();
     await clickContinueWhenEnabled();
-    await signSuccessfully();
+    await signOnFakeClock();
 
     await waitFor(() => expect(screen.getByText("Transaction sent")).toBeInTheDocument(), {
       timeout: 5000,
     });
-  }, 12000);
+  });
 });

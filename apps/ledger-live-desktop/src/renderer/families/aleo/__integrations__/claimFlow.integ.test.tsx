@@ -45,6 +45,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  jest.useRealTimers();
   subjectRefs.sync.complete();
   subjectRefs.sign.complete();
   document.getElementById("modals")?.remove();
@@ -81,6 +82,9 @@ describe("Aleo claim flow — full modal", () => {
     expect(await screen.findByTestId("claim-summary-amount")).toHaveValue("15,000");
     await clickContinueWhenEnabled();
 
+    // Broadcast holds the success step for at least 3s (execAndWaitAtLeast): fake the clock after
+    // the last user event so waitFor steps through that floor in virtual time.
+    jest.useFakeTimers();
     await act(async () => {
       subjectRefs.sign.next({ type: "signed", signedOperation: mockSignedOperation as never });
     });
@@ -88,7 +92,7 @@ describe("Aleo claim flow — full modal", () => {
     await waitFor(() => expect(screen.getByText("Claim submitted")).toBeInTheDocument(), {
       timeout: 5000,
     });
-  }, 20000);
+  });
 
   it("prepares the transaction with the account as its own staker", async () => {
     setupModal();

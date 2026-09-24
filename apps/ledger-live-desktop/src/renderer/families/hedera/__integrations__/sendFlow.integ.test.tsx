@@ -52,6 +52,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  jest.useRealTimers();
   cleanupHederaModalTest();
 });
 
@@ -99,12 +100,15 @@ describe("Hedera send flow — full modal", () => {
     await fillRecipientAndContinue();
     await clickContinueWhenEnabled(); // amount step
     await clickContinueWhenEnabled(); // summary
+    // Broadcast holds the success step for at least 3s (execAndWaitAtLeast): fake the clock after
+    // the last user event so waitFor steps through that floor in virtual time.
+    jest.useFakeTimers();
     await signSuccessfully();
 
     await waitFor(() => expect(screen.getByText("Transaction sent")).toBeVisible(), {
       timeout: 5000,
     });
-  }, 20_000);
+  });
 
   it("carries the typed memo through to the prepared transaction", async () => {
     setupModal();

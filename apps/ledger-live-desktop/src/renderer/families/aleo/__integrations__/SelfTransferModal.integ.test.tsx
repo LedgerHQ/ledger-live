@@ -48,6 +48,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  jest.useRealTimers();
   subjectRefs.sync.complete();
   subjectRefs.sign.complete();
   document.getElementById("modals")?.remove();
@@ -115,12 +116,15 @@ describe("SelfTransferModal", () => {
     await clickContinueWhenEnabled();
     await continueFromAmount();
     await clickContinueWhenEnabled();
+    // Broadcast holds the success step for at least 3s (execAndWaitAtLeast): fake the clock after
+    // the last user event so waitFor steps through that floor in virtual time.
+    jest.useFakeTimers();
     await signSuccessfully();
 
     await waitFor(() => expect(screen.getByText("Transaction sent")).toBeInTheDocument(), {
       timeout: 5000,
     });
-  }, 12000);
+  });
 
   it("toggling to the private balance switches to CONVERT_PRIVATE_TO_PUBLIC and requires the mandatory private sync", async () => {
     render(<SelfTransferModal stepId="recipient" />, { initialState: openedModalState() });

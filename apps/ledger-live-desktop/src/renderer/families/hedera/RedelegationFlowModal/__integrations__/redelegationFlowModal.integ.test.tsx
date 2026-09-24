@@ -96,6 +96,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  jest.useRealTimers();
   cleanupHederaModalTest();
 });
 
@@ -121,6 +122,9 @@ describe("Hedera RedelegationFlowModal (integration)", () => {
 
     await clickContinueWhenEnabled();
 
+    // Broadcast holds the success step for at least 3s (execAndWaitAtLeast): fake the clock after
+    // the last user event so waitFor steps through that floor in virtual time.
+    jest.useFakeTimers();
     await act(async () => {
       subjectRefs.sign.next({ type: "signed", signedOperation: mockSignedOperation as never });
     });
