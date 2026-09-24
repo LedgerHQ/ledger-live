@@ -62,9 +62,20 @@ export const EMPTY_PAGE_BUDGET = 1000;
  * finite without needing a ceiling on pages at all -- which is why it does not have one, and why
  * `PAGE_BUDGET` applies only when `maxOperations` is unset, the one case with no other net.
  */
+/**
+ * Thrown when the walk cannot be trusted rather than when it cannot be served: a cursor served
+ * twice, or a run of empty pages long enough to be a defect. Typed so a caller can tell it from a
+ * transport failure -- the A4 path falls back to its delegate on the latter, and must not treat a
+ * malformed history as a network blip.
+ */
+export class PaginationIntegrityError extends Error {
+  override name = "PaginationIntegrityError";
+}
+
 export async function paginateOperations<T>(
   fetchPage: (cursor: string | undefined) => Promise<Page<T>>,
   maxOperations?: number,
+  hashOf?: (item: T) => string | undefined,
 ): Promise<T[]> {
   const items: T[] = [];
   const followed = new Set<string>();
@@ -91,21 +102,28 @@ export async function paginateOperations<T>(
       // Thrown, not returned: `next` was served twice, so the walk is not at a real end of stream --
       // what was collected is a fragment, not a history, and the caller's watermark would seal the
       // gap below it on the next sync.
-      throw new Error(
+      throw new PaginationIntegrityError(
         `paginateOperations: cursor ${next} was served twice -- the ${items.length} operations collected so far are a fragment, not a complete history`,
       );
     }
 
     if (maxOperations !== undefined && items.length >= maxOperations) {
+      // `Page<T>` promises nothing about a transaction's rows staying inside one page, so the
+      // rows sharing the last item's hash may continue on the page this stop will never fetch.
+      // They are dropped rather than kept: a transaction missing entirely is a truncation from
+      // the tail, contiguous and harmless, while half of one is a hole the next watermark seals.
+      // Only a bound-triggered stop needs this -- a falsy `next` means there was no next page.
+      const kept = hashOf ? dropTrailingTransaction(items, hashOf) : items;
       log(
         "generic-coin-framework",
         "listOperations walk stopped: operation-history bound reached",
         {
           maxOperations,
           collected: items.length,
+          kept: kept.length,
         },
       );
-      return items;
+      return kept;
     }
 
     if (consecutiveEmptyPages >= EMPTY_PAGE_BUDGET) {
@@ -121,7 +139,7 @@ export async function paginateOperations<T>(
       // Thrown for the same reason as the cursor-cycle guard above: a module advancing its cursor
       // without producing anything has not reached a real end of stream, so what was collected is a
       // fragment, not a history.
-      throw new Error(
+      throw new PaginationIntegrityError(
         `paginateOperations: ${consecutiveEmptyPages} consecutive empty pages -- the module keeps advancing its cursor without returning operations, so the ${items.length} operations collected so far are a fragment, not a complete history`,
       );
     }
@@ -137,7 +155,7 @@ export async function paginateOperations<T>(
       );
       // Same reasoning again, for the unbounded caller: with no `maxOperations` to stop a module
       // that pages forever *while producing operations*, a page count is the only net left.
-      throw new Error(
+      throw new PaginationIntegrityError(
         `paginateOperations: page budget (${PAGE_BUDGET}) reached after collecting ${items.length} operations -- the result is a fragment, not a complete history`,
       );
     }
@@ -145,4 +163,18 @@ export async function paginateOperations<T>(
     followed.add(next);
     cursor = next;
   }
+}
+
+/**
+ * Drops the run of trailing items that share the last one's hash. An item with no hash is its own
+ * transaction and is kept. Everything is dropped only if the whole list is one transaction, which
+ * a caller should read as "the bound is smaller than a single transaction".
+ */
+function dropTrailingTransaction<T>(items: T[], hashOf: (item: T) => string | undefined): T[] {
+  const lastHash = items.length ? hashOf(items[items.length - 1]) : undefined;
+  if (!lastHash) return items;
+
+  let end = items.length;
+  while (end > 0 && hashOf(items[end - 1]) === lastHash) end--;
+  return items.slice(0, end);
 }
