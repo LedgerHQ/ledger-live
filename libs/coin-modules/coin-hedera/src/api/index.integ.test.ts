@@ -27,7 +27,7 @@ import {
   HederaNoStakingRewardsError,
   HederaRedundantStakingNodeIdError,
 } from "../errors";
-import { getDateRangeFromBlockHeight, getSyntheticBlock } from "../logic/utils";
+import { getSyntheticBlock } from "../logic/utils";
 import { HEDERA_MAX_MEMO_SIZE } from "../logic/validateMemo";
 import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
@@ -965,24 +965,24 @@ describe("createApi", () => {
       expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
     });
 
-    it("serves a second sync from the stored height without losing the newest operation", async () => {
+    it("serves a second sync from the stored height with only finalized operations after it", async () => {
       const accountId = MAINNET_TEST_ACCOUNTS.withTokens.accountId;
       const { items: firstSync } = await api.listOperations(context, accountId, {
         minHeight: 0,
         order: "desc",
       });
-      const newestOp = firstSync[0];
-      const minHeight = newestOp.tx.block.height + 1;
+      const lastFinalizedBlock = await api.lastBlock(context);
+      const minHeight = firstSync[0].tx.block.height + 1;
 
       const { items: secondSync } = await api.listOperations(context, accountId, {
         minHeight,
         order: "desc",
       });
 
-      const floor = getDateRangeFromBlockHeight(newestOp.tx.block.height).start;
-      expect(secondSync.map(op => op.id)).toContain(newestOp.id);
-      expect(secondSync.every(op => op.tx.date >= floor)).toBe(true);
-      expect(new Set(secondSync.map(op => op.id)).size).toBe(secondSync.length);
+      const firstSyncIds = new Set(firstSync.map(op => op.id));
+      expect(firstSync.every(op => op.tx.block.height <= lastFinalizedBlock.height)).toBe(true);
+      expect(secondSync.every(op => op.tx.block.height >= minHeight)).toBe(true);
+      expect(secondSync.some(op => firstSyncIds.has(op.id))).toBe(false);
     });
 
     it("returns IN/OUT operations for mint and burn of amUSDC", async () => {

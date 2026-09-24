@@ -129,22 +129,26 @@ export function createApi(currencyId: string) {
         accountId: address,
       });
       invariant(evmAddress, `hedera: evm address is missing for ${address}`);
-      const [mirrorTokens, erc20TokenBalances] = await Promise.all([
+      const [mirrorTokens, erc20TokenBalances, lastFinalizedBlock] = await Promise.all([
         apiClient.getAccountTokens({ configOrCurrencyId: coinConfig, address }),
         getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
+        lastBlockV2({ configOrCurrencyId: coinConfig }),
       ]);
 
-      const newestStoredBlockHeight = minHeight - 1;
       const minTimestamp =
         minHeight > 0
-          ? (getDateRangeFromBlockHeight(newestStoredBlockHeight).start.getTime() / 1000).toString()
+          ? (getDateRangeFromBlockHeight(minHeight).start.getTime() / 1000).toString()
           : undefined;
+      const isAscending = order === "asc";
+      const finalizedUntil = getDateRangeFromBlockHeight(lastFinalizedBlock.height).end;
+      const pageCursor =
+        cursor ?? (isAscending ? undefined : (finalizedUntil.getTime() / 1000).toFixed(9));
       const latestAccountOperations = await logicListOperationsV2(coinConfig, {
         currencyId,
         address,
         evmAddress,
         mirrorTokens,
-        ...(typeof cursor === "string" && { cursor }),
+        ...(typeof pageCursor === "string" && { cursor: pageCursor }),
         ...(typeof limit === "number" && { limit }),
         ...(typeof order === "string" && { order }),
         ...(minTimestamp && { minTimestamp }),
@@ -230,9 +234,17 @@ export function createApi(currencyId: string) {
         } satisfies Operation;
       });
 
+      const finalizedOperations = coinFrameworkOperations.filter(
+        op => op.tx.block.height <= lastFinalizedBlock.height,
+      );
+      const reachedUnfinalizedBlocks = finalizedOperations.length < coinFrameworkOperations.length;
+
       return {
-        items: coinFrameworkOperations,
-        next: latestAccountOperations.nextCursor || undefined,
+        items: finalizedOperations,
+        next:
+          isAscending && reachedUnfinalizedBlocks
+            ? undefined
+            : latestAccountOperations.nextCursor || undefined,
       };
     },
     getValidators: async (context: HederaContext, options?) => {
