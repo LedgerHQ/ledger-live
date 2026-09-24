@@ -36,7 +36,14 @@ export async function getCoinFrameworkAccountBridge(
     toOperationExtraRaw,
   } = await getAccountRawAssignHooks(network);
   return {
-    sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind), postSync }),
+    sync: makeSync({
+      getAccountShape: genericGetAccountShape(network, kind),
+      postSync,
+      shouldMergeOps: async account => {
+        const bridgeApi = await getBridgeApi(account.currency, network);
+        return bridgeApi.shouldMergeOps ?? true;
+      },
+    }),
     receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress), {
       getAddressLookup: async currency => {
         const bridgeApi = await getBridgeApi(currency, network);

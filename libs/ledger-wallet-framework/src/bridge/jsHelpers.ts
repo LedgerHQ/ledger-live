@@ -248,7 +248,7 @@ export const makeSync =
   }: {
     getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     postSync?: (initial: A, synced: A) => A;
-    shouldMergeOps?: boolean;
+    shouldMergeOps?: boolean | ((account: A) => Promise<boolean>);
   }): AccountBridge<T, A, U, O, R>["sync"] =>
   (initial: A, syncConfig: SyncConfig): Observable<AccountUpdater<A>> =>
     new Observable((o: Observer<AccountUpdater<A>>) => {
@@ -277,6 +277,11 @@ export const makeSync =
             initial.derivationMode as DerivationMode,
           );
 
+          // Awaited before `getAccountShape` starts: its promise has no handler until `shape$` is
+          // subscribed, so a rejection during this await would go unhandled.
+          const mergesOps =
+            typeof shouldMergeOps === "function" ? await shouldMergeOps(initial) : shouldMergeOps;
+
           const shapeResult = getAccountShape(
             {
               currency: initial.currency,
@@ -301,7 +306,7 @@ export const makeSync =
               }
 
               // FIXME reconsider doing mergeOps here. work is redundant for impl like eth
-              const operations = shouldMergeOps
+              const operations = mergesOps
                 ? mergeOps(a.operations, shape.operations || [])
                 : shape.operations || [];
 

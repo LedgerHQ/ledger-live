@@ -1,8 +1,14 @@
 import { firstValueFrom } from "rxjs";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { makeSync } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Account } from "@ledgerhq/types-live";
 import { getCoinFrameworkAccountBridge } from "../accountBridge";
 import type { CoinFrameworkSigner } from "../types";
+
+jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers"),
+  makeSync: jest.fn(),
+}));
 
 const getBridgeApiMock = jest.fn();
 jest.mock("../bridge", () => ({
@@ -73,5 +79,29 @@ describe("getCoinFrameworkAccountBridge — receive address lookup wiring", () =
     );
 
     expect(result.address).toBe("addr");
+  });
+});
+
+describe("getCoinFrameworkAccountBridge — shouldMergeOps", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  const mergesOpsFor = async (bridgeApi: object) => {
+    getBridgeApiMock.mockResolvedValue(bridgeApi);
+    await getCoinFrameworkAccountBridge("networkx", "local", stubSigner);
+    expect(makeSync).toHaveBeenCalledTimes(1);
+    const { shouldMergeOps } = jest.mocked(makeSync).mock.calls[0][0];
+
+    if (typeof shouldMergeOps !== "function") throw new Error("shouldMergeOps is not a function");
+    return shouldMergeOps({ currency: { id: "x" } } as Account);
+  };
+
+  it("merges stored operations for a family that sets nothing", async () => {
+    await expect(mergesOpsFor({})).resolves.toBe(true);
+  });
+
+  it("leaves the operation list to the account shape for a family that opts out", async () => {
+    await expect(mergesOpsFor({ shouldMergeOps: false })).resolves.toBe(false);
   });
 });
