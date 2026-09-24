@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { METACHAIN_SHARD, MAX_PAGINATION_SIZE } from "../constants";
+import { METACHAIN_SHARD, MAX_PAGINATION_SIZE, MAX_PAGINATION_RESULT_WINDOW } from "../constants";
 import type {
   ESDTToken,
   MultiversXApiTransaction,
@@ -118,16 +118,19 @@ export class MultiversXNetworkApi {
 
     const allTransactions: MultiversXApiTransaction[] = [];
     let from = 0;
-    while (from < transactionsCount) {
+    // The API hard-caps `from + size` to MAX_PAGINATION_RESULT_WINDOW, so once we
+    // reach it we stop paginating rather than issuing a request that will be rejected.
+    while (from < transactionsCount && from < MAX_PAGINATION_RESULT_WINDOW) {
+      const size = Math.min(MAX_PAGINATION_SIZE, MAX_PAGINATION_RESULT_WINDOW - from);
       const { data: transactions } = await network<MultiversXApiTransaction[]>({
         method: "GET",
-        url: `${this.API_URL}/accounts/${addr}/transactions?after=${after}&from=${from}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
+        url: `${this.API_URL}/accounts/${addr}/transactions?after=${after}&from=${from}&size=${size}&withOperations=true&withScResults=true`,
       });
       for (const transaction of transactions ?? []) {
         transaction.mode = decodeTransactionMode(transaction.action) as MultiversXTransactionMode;
       }
       allTransactions.push(...(transactions ?? []));
-      from = from + MAX_PAGINATION_SIZE;
+      from = from + size;
     }
     return allTransactions;
   }
