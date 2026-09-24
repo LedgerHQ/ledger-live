@@ -7,6 +7,7 @@
 "ledger-live-desktop": minor
 "live-mobile": minor
 "@ledgerhq/web-tools": minor
+"@shared/api-services": minor
 ---
 
 Add the countervalues domain api: rate fetching, and the orchestration that folds rates into the entity state.
@@ -18,3 +19,4 @@ Add the countervalues domain api: rate fetching, and the orchestration that fold
 - Rate requests keep the previous request policy: a 60s timeout, so a hung connection can no longer stall countervalues polling, and the same retries as before. The two endpoints moved out of live-common keep not retrying.
 - `@ledgerhq/live-countervalues` drops `loadCountervalues`, its `api` entry point and the fetch contract types, and with them its dependencies on `@ledgerhq/logs`, `@ledgerhq/live-network`, `@ledgerhq/live-promise` and `@ledgerhq/live-env`. It no longer reaches the network.
 - web-tools now registers the shared countervalues api, which its portfolio countervalues loading dispatches through.
+- `cvsApiExtra` takes `getCountervaluesServiceUrl`, a getter read on every request, in place of the `countervaluesServiceUrl` string read once at store creation. Switching the developer staging toggle now applies to the next countervalues request again, as it did before the rates moved onto the shared api.

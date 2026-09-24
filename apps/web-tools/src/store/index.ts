@@ -37,7 +37,7 @@ export const store = configureStore({
             calServiceUrl: getEnv("CAL_SERVICE_URL"),
             ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
           }),
-          ...cvsApiExtra({ countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API") }),
+          ...cvsApiExtra({ getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API") }),
         },
       },
     })
