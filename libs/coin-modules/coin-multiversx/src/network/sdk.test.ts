@@ -12,11 +12,22 @@ import {
   broadcastTransaction,
 } from "./sdk";
 import type { Transaction } from "../types";
+import { setCoinConfig } from "../config";
 import { server, useMswServer } from "../logic/tests/msw";
 
-// sdk.ts binds its network client to the env-default endpoints at import time.
 const API = "https://elrond.coin.ledger.com";
 const DELEGATION = "https://delegations-elrond.coin.ledger.com";
+
+const useEndpoints = (apiEndpoint: string, delegationApiEndpoint: string) =>
+  setCoinConfig(() => ({
+    status: { type: "active" },
+    infra: {
+      MULTIVERSX_API_ENDPOINT: apiEndpoint,
+      MULTIVERSX_DELEGATION_API_ENDPOINT: delegationApiEndpoint,
+    },
+  }));
+
+useEndpoints(API, DELEGATION);
 
 const ADDR = "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx";
 const RECIPIENT = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l";
@@ -61,6 +72,22 @@ describe("network/sdk (msw)", () => {
     const providers = await getProviders();
     expect(providers).toHaveLength(1);
     expect(providers[0].contract).toBe("erd1p");
+  });
+
+  it("resolves the endpoints from the coin config on every call", async () => {
+    const otherDelegation = "https://delegation.example";
+    server.use(
+      http.get(`${otherDelegation}/providers`, () =>
+        HttpResponse.json([{ contract: "erd1other", serviceFee: "10" }]),
+      ),
+    );
+    useEndpoints(API, otherDelegation);
+    try {
+      const providers = await getProviders();
+      expect(providers[0].contract).toBe("erd1other");
+    } finally {
+      useEndpoints(API, DELEGATION);
+    }
   });
 
   it("getEGLDOperations maps a native send transaction to an OUT operation", async () => {

@@ -5,8 +5,10 @@ import buildCoinConfig, {
 } from "@ledgerhq/coin-module-framework/config";
 
 export type MultiversXConfig = {
-  apiEndpoint: string;
-  delegationApiEndpoint: string;
+  infra: {
+    MULTIVERSX_API_ENDPOINT: string;
+    MULTIVERSX_DELEGATION_API_ENDPOINT: string;
+  };
 };
 
 export type MultiversXCoinConfig = CurrencyConfig & MultiversXConfig;

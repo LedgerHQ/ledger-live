@@ -17,7 +17,8 @@
     "src/supportedFeatures.ts",
     "src/test/bridge.dataset.ts",
     "src/test/context.ts",
-    "src/transaction.ts"
+    "src/transaction.ts",
+    "src/test/integ-coin-config-setup.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",

@@ -13,6 +13,7 @@ import resolver from "@ledgerhq/coin-multiversx/hw-getAddress";
 import { MIN_GAS_LIMIT } from "@ledgerhq/coin-multiversx/constants";
 import type { MultiversXSigner as LegacyMultiversXSigner } from "@ledgerhq/coin-multiversx/signer";
 import type { Transaction } from "@ledgerhq/coin-multiversx/types";
+import { MULTIVERSX_API_URL, MULTIVERSX_DELEGATION_API_URL } from "./fixtures";
 import type { MultiversXSigner } from "./signer";
 
 // Populate the coin-module registry so the generic coin framework can resolve
@@ -130,7 +131,13 @@ export async function getBridges(
     const signerContext: SignerContext<LegacyMultiversXSigner> = (_deviceId, fn) =>
       fn(toLegacySigner(signer));
     const getAddress = resolver(signerContext);
-    const { currencyBridge, accountBridge } = createBridges(signerContext);
+    const { currencyBridge, accountBridge } = createBridges(signerContext, () => ({
+      status: { type: "active" as const },
+      infra: {
+        MULTIVERSX_API_ENDPOINT: MULTIVERSX_API_URL,
+        MULTIVERSX_DELEGATION_API_ENDPOINT: MULTIVERSX_DELEGATION_API_URL,
+      },
+    }));
     return {
       currencyBridge,
       accountBridge: adaptLegacyBridge(accountBridge as unknown as AccountBridge<Transaction>),

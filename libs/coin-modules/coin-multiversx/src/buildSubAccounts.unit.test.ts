@@ -6,10 +6,19 @@ import { Address } from "@multiversx/sdk-core/out";
 import { ESDT_CONTRACT_ADDRESS_HEX } from "@multiversx/sdk-core/out/constants";
 import BigNumber from "bignumber.js";
 import MultiversXBuildESDTTokenAccounts from "./buildSubAccounts";
+import { setCoinConfig } from "./config";
 
 jest.mock("@ledgerhq/live-network", () => ({
   __esModule: true,
   default: jest.fn(),
+}));
+
+setCoinConfig(() => ({
+  status: { type: "active" },
+  infra: {
+    MULTIVERSX_API_ENDPOINT: "https://elrond.coin.ledger.com",
+    MULTIVERSX_DELEGATION_API_ENDPOINT: "https://delegations-elrond.coin.ledger.com",
+  },
 }));
 
 describe("MultiversXBuildESDTTokenAccounts", () => {

@@ -14,9 +14,11 @@ describe("createApi factory (integration)", () => {
   const api = createApi();
   const context = createMockMultiversXContext({
     status: { type: "active" },
-    apiEndpoint: process.env.MULTIVERSX_API_ENDPOINT ?? "https://api.multiversx.com",
-    delegationApiEndpoint:
-      process.env.MULTIVERSX_DELEGATION_API_ENDPOINT ?? "https://delegation-api.multiversx.com",
+    infra: {
+      MULTIVERSX_API_ENDPOINT: process.env.MULTIVERSX_API_ENDPOINT ?? "https://api.multiversx.com",
+      MULTIVERSX_DELEGATION_API_ENDPOINT:
+        process.env.MULTIVERSX_DELEGATION_API_ENDPOINT ?? "https://delegation-api.multiversx.com",
+    },
   });
 
   // Unsupported-method assertions live in index.unit.test.ts — they throw

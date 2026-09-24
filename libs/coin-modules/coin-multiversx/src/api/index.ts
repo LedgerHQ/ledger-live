@@ -38,7 +38,10 @@ export function createApi() {
   // call from the context (ADR-019) rather than seeded once through a module singleton.
   const resolveApi = async (context: MultiversXContext) => {
     const config = await context.config();
-    return createNetworkApi(config.apiEndpoint, config.delegationApiEndpoint);
+    return createNetworkApi(
+      config.infra.MULTIVERSX_API_ENDPOINT,
+      config.infra.MULTIVERSX_DELEGATION_API_ENDPOINT,
+    );
   };
 
   return {

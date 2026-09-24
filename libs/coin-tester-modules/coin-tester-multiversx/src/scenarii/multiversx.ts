@@ -132,8 +132,10 @@ export const scenarioMultiversx: Scenario<GenericTransaction, Account> = {
       type: "object" as const,
       default: {
         status: { type: "active" },
-        apiEndpoint: MULTIVERSX_API_URL,
-        delegationApiEndpoint: MULTIVERSX_DELEGATION_API_URL,
+        infra: {
+          MULTIVERSX_API_ENDPOINT: MULTIVERSX_API_URL,
+          MULTIVERSX_DELEGATION_API_ENDPOINT: MULTIVERSX_DELEGATION_API_URL,
+        },
       },
     };
     LiveConfig.setConfig({

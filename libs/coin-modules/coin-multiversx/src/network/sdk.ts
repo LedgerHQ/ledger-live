@@ -1,6 +1,5 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization/index";
-import { getEnv } from "@ledgerhq/live-env";
 import type { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import {
   Address,
@@ -30,21 +29,29 @@ import {
   MultiversXTransferOptions,
   Transaction,
 } from "../types";
+import { getCoinConfig } from "../config";
 import { BinaryUtils } from "../utils/binary.utils";
 import { MultiversXNetworkApi } from "./api";
 import { MultiversXAccount } from "./dtos/multiversx-account";
-const api = new MultiversXNetworkApi(
-  getEnv("MULTIVERSX_API_ENDPOINT"),
-  getEnv("MULTIVERSX_DELEGATION_API_ENDPOINT"),
-);
-
 const networkConfig = { clientName: "ledger-live" };
-const proxy = new ApiNetworkProvider(getEnv("MULTIVERSX_API_ENDPOINT"), networkConfig);
+
+// Resolved per call from the coin config, so a remote endpoint change applies without a restart.
+const getApi = (): MultiversXNetworkApi => {
+  const { infra } = getCoinConfig();
+  return new MultiversXNetworkApi(
+    infra.MULTIVERSX_API_ENDPOINT,
+    infra.MULTIVERSX_DELEGATION_API_ENDPOINT,
+  );
+};
+
+const getProxy = (): ApiNetworkProvider =>
+  new ApiNetworkProvider(getCoinConfig().infra.MULTIVERSX_API_ENDPOINT, networkConfig);
 
 /**
  * Get account balances and nonce
  */
 export const getAccount = async (addr: string): Promise<MultiversXAccount> => {
+  const api = getApi();
   const { balance, nonce, isGuarded } = await api.getAccountDetails(addr);
   const blockHeight = await api.getBlockchainBlockHeight();
 
@@ -53,18 +60,18 @@ export const getAccount = async (addr: string): Promise<MultiversXAccount> => {
 };
 
 export const getProviders = async (): Promise<MultiversXProvider[]> => {
-  const providers = await api.getProviders();
+  const providers = await getApi().getProviders();
   return providers;
 };
 
 export const getNetworkConfig = async (): Promise<INetworkConfig> => {
-  return await proxy.getNetworkConfig();
+  return await getProxy().getNetworkConfig();
 };
 
 export const getAccountNonce = async (addr: string): Promise<INonce> => {
   const address = new Address(addr);
 
-  const account = await proxy.getAccount(address);
+  const account = await getProxy().getAccount(address);
 
   return account.nonce;
 };
@@ -301,7 +308,7 @@ export const getEGLDOperations = async (
   startAt: number,
   subAccounts: TokenAccount[],
 ): Promise<MultiversXOperation[]> => {
-  const rawTransactions = await api.getHistory(addr, startAt);
+  const rawTransactions = await getApi().getHistory(addr, startAt);
   if (!rawTransactions) return rawTransactions;
   return rawTransactions.map(transaction =>
     transactionToEGLDOperation(accountId, addr, transaction, subAccounts),
@@ -309,15 +316,15 @@ export const getEGLDOperations = async (
 };
 
 export const getAccountESDTTokens = async (address: string): Promise<ESDTToken[]> => {
-  return await api.getESDTTokensForAddress(address);
+  return await getApi().getESDTTokensForAddress(address);
 };
 
 export const getAccountDelegations = async (address: string): Promise<MultiversXDelegation[]> => {
-  return await api.getAccountDelegations(address);
+  return await getApi().getAccountDelegations(address);
 };
 
 export const hasESDTTokens = async (address: string): Promise<boolean> => {
-  const tokensCount = await api.getESDTTokensCountForAddress(address);
+  const tokensCount = await getApi().getESDTTokensCountForAddress(address);
   return tokensCount > 0;
 };
 
@@ -327,7 +334,7 @@ export const getESDTOperations = async (
   tokenIdentifier: string,
   startAt: number,
 ): Promise<MultiversXOperation[]> => {
-  const accountESDTTransactions = await api.getESDTTransactionsForAddress(
+  const accountESDTTransactions = await getApi().getESDTTransactionsForAddress(
     address,
     tokenIdentifier,
     startAt,
@@ -367,7 +374,7 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
  * Broadcast blob to blockchain
  */
 export const broadcastTransaction = async (signedOperation: SignedOperation): Promise<string> => {
-  return await api.submit(
+  return await getApi().submit(
     JSON.stringify({ ...signedOperation.rawData, signature: signedOperation.signature }),
   );
 };

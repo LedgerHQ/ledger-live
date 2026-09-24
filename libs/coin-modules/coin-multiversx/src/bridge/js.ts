@@ -1,3 +1,4 @@
+import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
@@ -8,6 +9,7 @@ import {
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
+import { type MultiversXCoinConfig, setCoinConfig } from "../config";
 import { MULTIVERSX_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
@@ -84,7 +86,12 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<MultiversXSigner>) {
+export function createBridges(
+  signerContext: SignerContext<MultiversXSigner>,
+  coinConfig: CoinConfig<MultiversXCoinConfig>,
+) {
+  setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

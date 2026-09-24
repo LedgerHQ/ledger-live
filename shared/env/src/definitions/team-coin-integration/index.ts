@@ -57,16 +57,6 @@ const teamCoinIntegration = {
     parser: intParser,
     desc: "in blocks - number of blocks before Polkadot election effectively opens to consider it as open and disable all staking features",
   },
-  MULTIVERSX_API_ENDPOINT: {
-    parser: stringParser,
-    def: "https://elrond.coin.ledger.com",
-    desc: "MultiversX API url",
-  },
-  MULTIVERSX_DELEGATION_API_ENDPOINT: {
-    parser: stringParser,
-    def: "https://delegations-elrond.coin.ledger.com",
-    desc: "MultiversX DELEGATION API url",
-  },
   API_STELLAR_HORIZON: {
     parser: stringParser,
     def: "https://stellar.coin.ledger.com",
