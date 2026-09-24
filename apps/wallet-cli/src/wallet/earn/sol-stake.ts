@@ -163,19 +163,24 @@ export function describeStakeAmountError(
   const minimum = new BigNumber(limits.minimumDelegation);
   const rent = new BigNumber(limits.rent);
   const maxStakeable = new BigNumber(limits.maxStakeable);
+  const spendableBalance = fmt(new BigNumber(limits.spendableBalance));
+  const accountReservesUnknown = maxStakeable.isZero();
+
+  const maxStakeableBreakdown = accountReservesUnknown
+    ? `Max stakeable is ${fmt(maxStakeable)}: spendable balance ${spendableBalance} does not ` +
+      `cover the stake account rent ${fmt(rent)} and network fees.`
+    : `Max stakeable is ${fmt(maxStakeable)}: spendable balance ${spendableBalance} minus stake ` +
+      `account rent ${fmt(rent)} and fee reserve ${fmt(new BigNumber(limits.feeReserve))}.`;
 
   const message =
     errorName === "SolanaStakeAccountAmountTooLow"
       ? `Solana requires at least ${fmt(minimum)} per stake account (network minimum delegation). ` +
-        `Requested ${requested}.`
-      : `Max stakeable is ${fmt(maxStakeable)}: spendable balance ` +
-        `${fmt(new BigNumber(limits.spendableBalance))} minus stake account rent ${fmt(rent)} ` +
-        `and fee reserve ${fmt(new BigNumber(limits.feeReserve))}. Requested ${requested}.`;
+        `Requested ${requested}. ${maxStakeableBreakdown}`
+      : `${maxStakeableBreakdown} Requested ${requested}.`;
 
   const canReachMinimum = maxStakeable.gte(minimum);
   if (canReachMinimum) return message;
 
-  const accountReservesUnknown = maxStakeable.isZero();
   if (accountReservesUnknown) {
     const lowerBound = minimum.plus(rent);
     return `${message} This account cannot stake until it receives more than ${fmt(lowerBound)} (minimum plus stake account rent), plus network fees.`;
