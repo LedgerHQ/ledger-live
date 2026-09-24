@@ -25,7 +25,13 @@ import {
 
 // Modes that move funds rather than stake them. Listed explicitly so that adding a mode
 // upstream fails the test until someone decides which side it belongs on.
-const GENERIC_NON_STAKING = new Set(["send", "changeTrust", "send-legacy", "send-eip1559"]);
+const GENERIC_NON_STAKING = new Set([
+  "send",
+  "changeTrust",
+  "tokenAssociate",
+  "send-legacy",
+  "send-eip1559",
+]);
 const TRON_NON_STAKING = new Set(["send"]);
 
 describe("staking vocabulary drift", () => {

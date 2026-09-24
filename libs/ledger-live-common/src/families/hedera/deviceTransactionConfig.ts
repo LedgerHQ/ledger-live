@@ -1,4 +1,7 @@
-import { MAP_STAKING_MODE_TO_METHOD } from "@ledgerhq/coin-hedera/constants";
+import {
+  HEDERA_TRANSACTION_MODES,
+  MAP_STAKING_MODE_TO_METHOD,
+} from "@ledgerhq/coin-hedera/constants";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { computeIntentType } from "./bridge/api";
@@ -14,10 +17,14 @@ async function getDeviceTransactionConfig({
   status: TransactionStatus;
 }): Promise<Array<DeviceTransactionField>> {
   const fields: Array<DeviceTransactionField> = [];
-  const stakingMethod = MAP_STAKING_MODE_TO_METHOD[computeIntentType(transaction)];
+  const intentType = computeIntentType(transaction);
+  const method =
+    intentType === HEDERA_TRANSACTION_MODES.TokenAssociate
+      ? "Associate Token"
+      : MAP_STAKING_MODE_TO_METHOD[intentType];
 
-  if (stakingMethod) {
-    fields.push({ type: "text", label: "Method", value: stakingMethod });
+  if (method) {
+    fields.push({ type: "text", label: "Method", value: method });
 
     if (!estimatedFees.isZero()) {
       fields.push({ type: "fees", label: "Fees" });

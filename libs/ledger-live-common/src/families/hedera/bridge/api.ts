@@ -36,6 +36,8 @@ export function computeIntentType(transaction: Record<string, unknown>): HEDERA_
     case "send":
     case undefined:
       return HEDERA_TRANSACTION_MODES.Send;
+    case "tokenAssociate":
+      return HEDERA_TRANSACTION_MODES.TokenAssociate;
     case "delegate":
       return HEDERA_TRANSACTION_MODES.Delegate;
     case "undelegate":
@@ -62,10 +64,17 @@ export function buildIntentData(transaction: Record<string, unknown>): HederaTxD
 }
 
 // A claim carries no amount, so the pending row would show 0 until the next sync.
+// An association keeps its 0 amount even though the sync records the fee as its value: pending
+// rows lock `fee + value`, so a fee-valued row would lock the fee twice until that sync.
 export function describeOptimisticOperation(
   mode: string,
   account: Account,
+  transaction: Record<string, unknown>,
 ): OptimisticOperationDescriptor | undefined {
+  if (mode === "tokenAssociate") {
+    return { extra: { associatedTokenId: transaction.assetReference } };
+  }
+
   if (mode !== "claimReward" || !isStakingAccount(account)) return undefined;
 
   const reward = account.stakingResources?.pendingRewardsBalance;
