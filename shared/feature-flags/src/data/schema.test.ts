@@ -39,6 +39,7 @@ describe("FeatureFlagsStateSchema", () => {
       resolved: { ...FEATURE_FLAGS_DEFAULTS, mockFeature: { enabled: true } },
       bannerVisible: false,
       remoteFlagsReady: false,
+      cachedFlagsSettled: false,
     };
     expect(FeatureFlagsStateSchema.parse(input)).toEqual(input);
   });
@@ -49,6 +50,7 @@ describe("FeatureFlagsStateSchema", () => {
       resolved: FEATURE_FLAGS_DEFAULTS,
       bannerVisible: false,
       remoteFlagsReady: false,
+      cachedFlagsSettled: false,
     };
     expect(FeatureFlagsStateSchema.parse(input)).toEqual(input);
   });
@@ -59,6 +61,7 @@ describe("FeatureFlagsStateSchema", () => {
       resolved: {},
       bannerVisible: false,
       remoteFlagsReady: false,
+      cachedFlagsSettled: false,
     });
     expect(result.resolved).toEqual(FEATURE_FLAGS_DEFAULTS);
     expect(result.overrides).toEqual({});
@@ -71,6 +74,15 @@ describe("FeatureFlagsStateSchema", () => {
       bannerVisible: false,
     });
     expect(result.remoteFlagsReady).toBe(false);
+  });
+
+  it("defaults cachedFlagsSettled to false when omitted", () => {
+    const result = FeatureFlagsStateSchema.parse({
+      overrides: {},
+      resolved: FEATURE_FLAGS_DEFAULTS,
+      bannerVisible: false,
+    });
+    expect(result.cachedFlagsSettled).toBe(false);
   });
 
   it("rejects when resolved is missing", () => {

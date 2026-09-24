@@ -1,5 +1,5 @@
 import type { ResolutionConfig } from "../schema";
-import { syncRemoteConfig, setRemoteFlagsReady } from "../slice";
+import { syncRemoteConfig, setRemoteFlagsReady, setCachedFlagsSettled } from "../slice";
 import {
   buildFeatureFlagsMeta,
   createDispatchers,
@@ -47,6 +47,17 @@ describe("createDispatchers", () => {
 
     expect(dispatch).toHaveBeenCalledTimes(1);
     expect(dispatch).toHaveBeenCalledWith(setRemoteFlagsReady());
+  });
+
+  it("marks the cache as settled at most once", () => {
+    const dispatch = jest.fn();
+    const { dispatchCacheSettled } = createDispatchers(dispatch);
+
+    dispatchCacheSettled();
+    dispatchCacheSettled();
+
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledWith(setCachedFlagsSettled());
   });
 });
 
@@ -108,6 +119,7 @@ describe("primeFromCache", () => {
       ref,
       dispatchSync,
       dispatchReady,
+      dispatchCacheSettled: jest.fn(),
       reportError: jest.fn(),
     });
 
@@ -125,6 +137,7 @@ describe("primeFromCache", () => {
       ref,
       dispatchSync,
       dispatchReady,
+      dispatchCacheSettled: jest.fn(),
       reportError: jest.fn(),
     });
 
@@ -142,6 +155,7 @@ describe("primeFromCache", () => {
       ref: { current: {} },
       dispatchSync,
       dispatchReady,
+      dispatchCacheSettled: jest.fn(),
       reportError,
     });
 

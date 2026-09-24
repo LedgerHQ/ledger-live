@@ -49,3 +49,15 @@ export function featureFlagsBannerVisibleSelector(s: WithFeatureFlags) {
 export function selectRemoteFlagsReady(s: WithFeatureFlags): boolean {
   return s.featureFlags.remoteFlagsReady;
 }
+
+/**
+ * Selects whether the local cache read has settled. Unlike {@link selectRemoteFlagsReady} it never
+ * waits on the network: once `true`, `resolved` holds the last values this device knew, or the
+ * compiled defaults when there was nothing cached.
+ *
+ * @param s
+ * Any store state containing the `featureFlags` slice.
+ */
+export function selectCachedFlagsSettled(s: WithFeatureFlags): boolean {
+  return s.featureFlags.cachedFlagsSettled;
+}

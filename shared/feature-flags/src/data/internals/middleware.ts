@@ -5,7 +5,7 @@ import { type Action } from "@reduxjs/toolkit";
 import type { PartialFeatures, ResolutionConfig } from "../schema";
 import type { FeatureFlagsReadFailure, FeatureFlagsReadStage } from "../middleware";
 import { FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS } from "../../constants";
-import { syncRemoteConfig, setRemoteFlagsReady } from "../slice";
+import { syncRemoteConfig, setRemoteFlagsReady, setCachedFlagsSettled } from "../slice";
 
 /**
  * Mutable single-slot container for the latest remote flags. Modeled after a
@@ -17,13 +17,20 @@ export type RemoteFlagsRef = {
 };
 
 /** Minimal shape of the store dispatch these collaborators need. */
-type Dispatch = (action: ReturnType<typeof syncRemoteConfig | typeof setRemoteFlagsReady>) => void;
+type Dispatch = (
+  action: ReturnType<
+    typeof syncRemoteConfig | typeof setRemoteFlagsReady | typeof setCachedFlagsSettled
+  >,
+) => void;
 
 /** Re-resolves the slice. `didFetch` distinguishes a successful read from a first failed settle. */
 type DispatchSync = (didFetch: boolean) => void;
 
 /** Arms the boot-readiness gate. */
 type DispatchReady = () => void;
+
+/** Signals that the local cache read has settled. */
+type DispatchCacheSettled = () => void;
 
 /** Reports a failed read. Observation only, it never affects resolution. */
 type ReportError = (error: unknown, stage: FeatureFlagsReadStage, attempt: number) => void;
@@ -33,6 +40,7 @@ export type ReadContext = {
   ref: RemoteFlagsRef;
   dispatchSync: DispatchSync;
   dispatchReady: DispatchReady;
+  dispatchCacheSettled: DispatchCacheSettled;
   reportError: ReportError;
 };
 
@@ -47,15 +55,17 @@ export type PollContext = ReadContext & {
  * Builds the two one-shot dispatchers that drive re-resolution and the boot gate.
  *
  * `dispatchSync` re-resolves on every successful read, and once on the first settle even when it
- * failed, so env and default resolution still runs at boot. `dispatchReady` arms the gate at most
- * once; the reducer is idempotent regardless.
+ * failed, so env and default resolution still runs at boot. `dispatchReady` and
+ * `dispatchCacheSettled` each fire at most once; the reducers are idempotent regardless.
  */
 export function createDispatchers(dispatch: Dispatch): {
   dispatchSync: DispatchSync;
   dispatchReady: DispatchReady;
+  dispatchCacheSettled: DispatchCacheSettled;
 } {
   let initialSyncDone = false;
   let readyDispatched = false;
+  let cacheSettledDispatched = false;
 
   return {
     dispatchSync: (didFetch: boolean) => {
@@ -68,6 +78,11 @@ export function createDispatchers(dispatch: Dispatch): {
       if (readyDispatched) return;
       readyDispatched = true;
       dispatch(setRemoteFlagsReady());
+    },
+    dispatchCacheSettled: () => {
+      if (cacheSettledDispatched) return;
+      cacheSettledDispatched = true;
+      dispatch(setCachedFlagsSettled());
     },
   };
 }
@@ -153,10 +168,14 @@ export async function pollRemoteFlags(context: PollContext, attempt: number = 1)
  * Sequenced, never raced: awaiting the prime before starting the network means a slow storage
  * read can never land on top of a fresher fetch result.
  *
+ * Once the prime settles, the slice is re-resolved and `cachedFlagsSettled` is armed, so a boot
+ * that waits on local values only never sees the raw compiled defaults: an empty or unreadable
+ * cache still gets env overrides and version filters applied. The re-resolve is a no-op when the
+ * prime already synced.
+ *
  * Readiness is left to the poll, which arms it once the first call settles either way. With no
  * fetcher configured nothing else would ever settle, so this stands in for that first settle
- * rather than leaving consumers waiting forever: it re-resolves once and then arms the gate,
- * exactly as a failed first poll does.
+ * rather than leaving consumers waiting forever.
  */
 export async function primeThenPoll(
   readCachedFlags: () => Promise<PartialFeatures>,
@@ -165,13 +184,11 @@ export async function primeThenPoll(
   ms: number | undefined,
 ): Promise<void> {
   await primeFromCache(readCachedFlags, context);
+  context.dispatchSync(false);
+  context.dispatchCacheSettled();
   if (fetch) {
     await pollRemoteFlags({ ...context, fetch, ms });
   } else {
-    // `dispatchSync` first, and never the gate on its own: an empty or unreadable cache has left
-    // `resolved` on the raw compiled defaults, with env overrides and version filters never
-    // applied. A no-op when the prime already synced.
-    context.dispatchSync(false);
     context.dispatchReady();
   }
 }

@@ -6,6 +6,7 @@ import {
   setAllOverrides,
   setBannerVisible,
   setRemoteFlagsReady,
+  setCachedFlagsSettled,
   syncRemoteConfig,
   importState,
 } from "./slice";
@@ -67,6 +68,7 @@ describe("featureFlagsSlice reducers", () => {
       resolved: defaults,
       bannerVisible: false,
       remoteFlagsReady: false,
+      cachedFlagsSettled: false,
     });
   });
 
@@ -84,6 +86,7 @@ describe("featureFlagsSlice reducers", () => {
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
         remoteFlagsReady: false,
+        cachedFlagsSettled: false,
       });
       store.dispatch(
         setOverride({ key: "mockFeature", value: { enabled: false, params: { x: 1 } } }),
@@ -100,6 +103,7 @@ describe("featureFlagsSlice reducers", () => {
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
         remoteFlagsReady: false,
+        cachedFlagsSettled: false,
       });
       store.dispatch(setOverride({ key: "mockFeature", value: undefined }));
       expect(store.getState().featureFlags.overrides.mockFeature).toBeUndefined();
@@ -120,6 +124,7 @@ describe("featureFlagsSlice reducers", () => {
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
         remoteFlagsReady: false,
+        cachedFlagsSettled: false,
       });
       store.dispatch(setAllOverrides({ ptxCard: { enabled: false } }));
       expect(store.getState().featureFlags.overrides).toEqual({ ptxCard: { enabled: false } });
@@ -150,7 +155,21 @@ describe("featureFlagsSlice reducers", () => {
         resolved: defaults,
         bannerVisible: false,
         remoteFlagsReady: true,
+        cachedFlagsSettled: false,
       });
+    });
+  });
+
+  describe("setCachedFlagsSettled", () => {
+    it("starts false and flips to true once, idempotently", () => {
+      const store = createStore();
+      expect(store.getState().featureFlags.cachedFlagsSettled).toBe(false);
+
+      store.dispatch(setCachedFlagsSettled());
+      store.dispatch(setCachedFlagsSettled());
+
+      expect(store.getState().featureFlags.cachedFlagsSettled).toBe(true);
+      expect(store.getState().featureFlags.remoteFlagsReady).toBe(false);
     });
   });
 
@@ -162,6 +181,7 @@ describe("featureFlagsSlice reducers", () => {
         resolved: { ...defaults, mockFeature: { enabled: true, params: "test" } },
         bannerVisible: true,
         remoteFlagsReady: true,
+        cachedFlagsSettled: false,
       };
       store.dispatch(importState(newState));
       expect(store.getState().featureFlags).toEqual(newState);
@@ -583,6 +603,110 @@ describe("cache prime", () => {
 
     expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
+  });
+});
+
+describe("cachedFlagsSettled", () => {
+  const neverSettles = () => new Promise<PartialFeatures>(() => {});
+
+  it("is armed with the cached values already resolved, without waiting on the network", async () => {
+    // The guarantee a boot relies on: the first state in which the flag reads `true` must already
+    // hold the cached values, otherwise a consumer released by it would still see the defaults.
+    const store = createStore(undefined, {
+      readCachedFlags: () => Promise.resolve({ mockFeature: { enabled: true } }),
+      fetchRemoteFlags: neverSettles,
+    });
+    const resolvedWhenSettled: boolean[] = [];
+    store.subscribe(() => {
+      const { cachedFlagsSettled, resolved } = store.getState().featureFlags;
+      if (cachedFlagsSettled && resolvedWhenSettled.length === 0) {
+        resolvedWhenSettled.push(resolved.mockFeature.enabled);
+      }
+    });
+
+    expect(store.getState().featureFlags.cachedFlagsSettled).toBe(false);
+    await flushPromises();
+
+    expect(resolvedWhenSettled).toEqual([true]);
+    expect(store.getState().featureFlags.remoteFlagsReady).toBe(false);
+  });
+
+  it("is armed on an empty cache, with env overrides already applied", async () => {
+    const store = createStore(undefined, {
+      resolutionConfig: { envFlags: { mockFeature: { enabled: true } } },
+      readCachedFlags: () => Promise.resolve({}),
+      fetchRemoteFlags: neverSettles,
+    });
+
+    await flushPromises();
+
+    expect(store.getState().featureFlags.cachedFlagsSettled).toBe(true);
+    expect(store.getState().featureFlags.resolved.mockFeature).toMatchObject({
+      enabled: true,
+      overriddenByEnv: true,
+    });
+    expect(store.getState().featureFlags.remoteFlagsReady).toBe(false);
+  });
+
+  it("is armed when the cache cannot be read", async () => {
+    const store = createStore(undefined, {
+      readCachedFlags: () => Promise.reject(new Error("storage unavailable")),
+      fetchRemoteFlags: neverSettles,
+    });
+
+    await flushPromises();
+
+    expect(store.getState().featureFlags.cachedFlagsSettled).toBe(true);
+    expect(store.getState().featureFlags.resolved.mockFeature).toEqual(defaults.mockFeature);
+  });
+
+  it("stays unarmed while the cache read is pending", async () => {
+    const store = createStore(undefined, {
+      readCachedFlags: neverSettles,
+      fetchRemoteFlags: () => Promise.resolve({ mockFeature: { enabled: true } }),
+    });
+
+    await flushPromises();
+
+    expect(store.getState().featureFlags.cachedFlagsSettled).toBe(false);
+  });
+
+  it("is armed right away when no cache reader is configured", async () => {
+    // Nothing local to wait for, so a boot waiting on it must not be stranded.
+    const store = createStore(undefined, { fetchRemoteFlags: neverSettles });
+
+    expect(store.getState().featureFlags.cachedFlagsSettled).toBe(false);
+    await flushPromises();
+
+    expect(store.getState().featureFlags.cachedFlagsSettled).toBe(true);
+  });
+
+  it("re-resolves only once when the cache is empty and the first poll fails", async () => {
+    const dispatchedTypes: string[] = [];
+    const recorder: Middleware = () => next => action => {
+      dispatchedTypes.push((action as { type: string }).type);
+      return next(action);
+    };
+    configureStore({
+      reducer: { featureFlags: featureFlagsReducer },
+      middleware: getDefaultMiddleware =>
+        getDefaultMiddleware()
+          .concat(recorder)
+          .concat(
+            createFeatureFlagsMiddleware({
+              resolutionConfig: {},
+              readCachedFlags: () => Promise.resolve({}),
+              fetchRemoteFlags: () => Promise.reject(new Error("network down")),
+              refreshInterval: 1_000,
+            }),
+          ),
+    });
+
+    await flushPromises();
+
+    expect(dispatchedTypes.filter(type => type === syncRemoteConfig.type)).toHaveLength(1);
+    expect(dispatchedTypes).toContain(setCachedFlagsSettled.type);
+    expect(dispatchedTypes).toContain(setRemoteFlagsReady.type);
   });
 });
 

@@ -65,7 +65,8 @@ export interface FeatureFlagsMiddlewareConfig<S = unknown> {
    *
    * It changes *which values* boot resolves on, not *when* readiness is announced: that stays
    * with the first `fetchRemoteFlags` settling, so the boot gates keep the exact meaning they had
-   * before the cache existed.
+   * before the cache existed. Its own settling is exposed as `cachedFlagsSettled`, for a boot that
+   * must not render before the cached values are in the slice but must not wait on the network.
    */
   readCachedFlags?: () => Promise<PartialFeatures>;
   /**
@@ -121,16 +122,27 @@ export function createFeatureFlagsMiddleware<S = unknown>(
     } = config;
 
     const language = createLanguageWatcher(getAppLanguage, getState, dispatch);
-    const { dispatchSync, dispatchReady } = createDispatchers(dispatch);
+    const { dispatchSync, dispatchReady, dispatchCacheSettled } = createDispatchers(dispatch);
     const reportError = createErrorReporter(onRemoteFlagsError, remoteFlagsRef);
-    const readContext = { ref: remoteFlagsRef, dispatchSync, dispatchReady, reportError };
+    const readContext = {
+      ref: remoteFlagsRef,
+      dispatchSync,
+      dispatchReady,
+      dispatchCacheSettled,
+      reportError,
+    };
 
     if (readCachedFlags) {
       void primeThenPoll(readCachedFlags, readContext, fetchRemoteFlags, refreshInterval);
-    } else if (fetchRemoteFlags) {
-      // Deliberately a bare call: the middleware tests drain a fixed number of microtask turns,
-      // so the no-cache path must not gain an `await` in front of the loop.
-      void pollRemoteFlags({ ...readContext, fetch: fetchRemoteFlags, ms: refreshInterval });
+    } else {
+      // No cache to wait for. Deferred because Redux forbids dispatching while the middleware
+      // chain is still being built.
+      void Promise.resolve().then(dispatchCacheSettled);
+      if (fetchRemoteFlags) {
+        // Deliberately a bare call: the middleware tests drain a fixed number of microtask turns,
+        // so the no-cache path must not gain an `await` in front of the loop.
+        void pollRemoteFlags({ ...readContext, fetch: fetchRemoteFlags, ms: refreshInterval });
+      }
     }
 
     return next => action => {
