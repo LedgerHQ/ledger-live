@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { getAddressesActive, getBalancesForAddresses } from "../../network";
 import { AccountAddress, AccountAddresses } from "../../types";
 import KaspaBIP32 from "../bip32";
+import type { KaspaCoinConfig } from "../../config";
 
 // Constants to improve clarity
 const RECEIVE_ADDRESS_TYPE = 0;
@@ -19,6 +20,7 @@ const SCAN_BATCH_SIZE = 200;
  * @return {Promise<AccountAddresses>} - A promise that resolves to an AccountAddresses object containing used addresses and balance information.
  */
 export async function scanAddresses(
+  config: KaspaCoinConfig,
   compressedPublicKey: Buffer,
   chainCode: Buffer,
   startIndex: number,
@@ -68,7 +70,7 @@ export async function scanAddresses(
       }
 
       // fetch address information via API and update object
-      await updateAddressesActive(addresses);
+      await updateAddressesActive(config, addresses);
 
       // update balance
       for (const addr of addresses) {
@@ -141,9 +143,15 @@ function updateAddressesData(
  * @param {AccountAddress[]} addresses - An array of account addresses to be updated.
  * @return {Promise<void>} A promise that resolves when the update operation is complete.
  */
-async function updateAddressesActive(addresses: AccountAddress[]) {
-  const balances = await getBalancesForAddresses(addresses.map(addr => addr.address));
-  const addressesActive = await getAddressesActive(addresses.map(addr => addr.address));
+async function updateAddressesActive(config: KaspaCoinConfig, addresses: AccountAddress[]) {
+  const balances = await getBalancesForAddresses(
+    config,
+    addresses.map(addr => addr.address),
+  );
+  const addressesActive = await getAddressesActive(
+    config,
+    addresses.map(addr => addr.address),
+  );
 
   for (const addressBalance of balances) {
     const addressIndex = addresses.findIndex(addr => addr.address === addressBalance.address);

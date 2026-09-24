@@ -5,9 +5,9 @@ import type {
   ApiResponseBlockTxOutput,
 } from "../types";
 
-// Test host that `msw-setup.ts` points `API_KASPA_ENDPOINT` at, so MSW handlers intercept the exact
-// URL the network layer builds. Shared, empty MSW server; each suite registers handlers via `server.use`.
-export const TEST_KASPA_ENDPOINT = "https://kaspa-test.ledger.com";
+export { TEST_KASPA_ENDPOINT } from "./context";
+
+// Shared, empty MSW server; each suite registers handlers via `server.use`.
 export const server = setupServer();
 
 export const CHAIN_HASH = "a".repeat(64);

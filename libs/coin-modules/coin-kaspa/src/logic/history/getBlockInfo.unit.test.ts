@@ -1,5 +1,6 @@
 import type { ApiResponseBlockInfo, ApiResponseBlockVerboseData } from "../../types";
 import { getBlockInfo } from "./getBlockInfo";
+import { mockKaspaConfig } from "../../test/context";
 
 const mockGetBlocksFromBlueScore = jest.fn();
 jest.mock("../../network", () => ({
@@ -52,9 +53,9 @@ describe("getBlockInfo", () => {
       makeBlock({ hash: HASH_CHAIN, isChainBlock: true }),
     ]);
 
-    const info = await getBlockInfo(480818084);
+    const info = await getBlockInfo(mockKaspaConfig, 480818084);
 
-    expect(mockGetBlocksFromBlueScore).toHaveBeenCalledWith(480818084);
+    expect(mockGetBlocksFromBlueScore).toHaveBeenCalledWith(mockKaspaConfig, 480818084);
     expect(info.height).toBe(480818084);
     expect(info.hash).toBe(HASH_CHAIN);
     expect(info.time).toBeInstanceOf(Date);
@@ -64,6 +65,8 @@ describe("getBlockInfo", () => {
   it("throws when no block exists at the blue score", async () => {
     mockGetBlocksFromBlueScore.mockResolvedValue([]);
 
-    await expect(getBlockInfo(42)).rejects.toThrow("kaspa: no block at blueScore 42");
+    await expect(getBlockInfo(mockKaspaConfig, 42)).rejects.toThrow(
+      "kaspa: no block at blueScore 42",
+    );
   });
 });

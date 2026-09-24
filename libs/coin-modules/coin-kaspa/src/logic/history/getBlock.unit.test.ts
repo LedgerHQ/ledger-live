@@ -4,6 +4,7 @@ import type {
   ApiResponseBlockTxOutput,
 } from "../../types";
 import { getBlock } from "./getBlock";
+import { mockKaspaConfig } from "../../test/context";
 
 const mockGetBlocksFromBlueScore = jest.fn();
 jest.mock("../../network", () => ({
@@ -86,9 +87,9 @@ describe("getBlock", () => {
   it("requests transactions and returns block info alongside them", async () => {
     mockGetBlocksFromBlueScore.mockResolvedValue([makeBlock([tx([output(ADDR, 100)])])]);
 
-    const block = await getBlock(480818084);
+    const block = await getBlock(mockKaspaConfig, 480818084);
 
-    expect(mockGetBlocksFromBlueScore).toHaveBeenCalledWith(480818084, true);
+    expect(mockGetBlocksFromBlueScore).toHaveBeenCalledWith(mockKaspaConfig, 480818084, true);
     expect(block.info.height).toBe(480818084);
     expect(block.info.hash).toBe(HASH_CHAIN);
     expect(block.transactions).toHaveLength(1);
@@ -109,7 +110,7 @@ describe("getBlock", () => {
       ]),
     ]);
 
-    const { transactions } = await getBlock(480818084);
+    const { transactions } = await getBlock(mockKaspaConfig, 480818084);
     const [tx0] = transactions;
 
     expect(tx0.hash).toBe("abc");
@@ -125,7 +126,7 @@ describe("getBlock", () => {
       makeBlock([tx([output(ADDR, 100), output(null, 999)])]),
     ]);
 
-    const { operations } = (await getBlock(480818084)).transactions[0];
+    const { operations } = (await getBlock(mockKaspaConfig, 480818084)).transactions[0];
 
     expect(operations).toHaveLength(1);
     expect(operations[0]).toMatchObject({ address: ADDR, amount: 100n });
@@ -134,7 +135,7 @@ describe("getBlock", () => {
   it("returns an empty transactions array when the block has none", async () => {
     mockGetBlocksFromBlueScore.mockResolvedValue([makeBlock([])]);
 
-    expect((await getBlock(480818084)).transactions).toEqual([]);
+    expect((await getBlock(mockKaspaConfig, 480818084)).transactions).toEqual([]);
   });
 
   it("selects the chain block when several blocks share the blue score", async () => {
@@ -144,7 +145,7 @@ describe("getBlock", () => {
     ]);
 
     // the chain block (2nd) has no transactions
-    expect((await getBlock(480818084)).transactions).toEqual([]);
+    expect((await getBlock(mockKaspaConfig, 480818084)).transactions).toEqual([]);
   });
 
   it("defensively handles null outputs, amount, and mass fields", async () => {
@@ -157,7 +158,7 @@ describe("getBlock", () => {
       ]),
     ]);
 
-    const { transactions } = await getBlock(480818084);
+    const { transactions } = await getBlock(mockKaspaConfig, 480818084);
 
     expect(transactions[0].operations).toEqual([]);
     expect(transactions[0].details).toEqual({ mass: undefined, computeMass: 1967 });
@@ -169,12 +170,12 @@ describe("getBlock", () => {
     (block as { transactions: unknown }).transactions = null;
     mockGetBlocksFromBlueScore.mockResolvedValue([block]);
 
-    expect((await getBlock(480818084)).transactions).toEqual([]);
+    expect((await getBlock(mockKaspaConfig, 480818084)).transactions).toEqual([]);
   });
 
   it("throws when no block exists at the blue score", async () => {
     mockGetBlocksFromBlueScore.mockResolvedValue([]);
 
-    await expect(getBlock(42)).rejects.toThrow("kaspa: no block at blueScore 42");
+    await expect(getBlock(mockKaspaConfig, 42)).rejects.toThrow("kaspa: no block at blueScore 42");
   });
 });

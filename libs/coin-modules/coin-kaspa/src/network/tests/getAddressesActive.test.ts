@@ -1,4 +1,5 @@
 import { getAddressesActive } from "../index";
+import { mockKaspaConfig } from "../../test/context";
 
 describe("getAddressesActive function", () => {
   beforeEach(() => {
@@ -17,7 +18,7 @@ describe("getAddressesActive function", () => {
       ],
     });
     const addresses = ["kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e"];
-    const result = await getAddressesActive(addresses);
+    const result = await getAddressesActive(mockKaspaConfig, addresses);
 
     const expectedResult = [
       {
@@ -40,7 +41,7 @@ describe("getAddressesActive function", () => {
     });
 
     const addresses = ["kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp42"];
-    const result = await getAddressesActive(addresses);
+    const result = await getAddressesActive(mockKaspaConfig, addresses);
 
     const expectedResult = [
       {
@@ -59,7 +60,7 @@ describe("getAddressesActive function", () => {
       status: 404,
     });
 
-    await expect(getAddressesActive(addresses)).rejects.toThrow(
+    await expect(getAddressesActive(mockKaspaConfig, addresses)).rejects.toThrow(
       "Failed to fetch active state for addresses kaspa:invalid_address. Status: 404",
     );
   });
@@ -70,7 +71,7 @@ describe("getAddressesActive function", () => {
       throw new Error("Network Error");
     });
 
-    await expect(getAddressesActive(addresses)).rejects.toThrow(
+    await expect(getAddressesActive(mockKaspaConfig, addresses)).rejects.toThrow(
       "Error fetching AddressesActives: Network Error",
     );
   });

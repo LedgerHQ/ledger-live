@@ -9,6 +9,7 @@ import {
   KaspaHwTransactionOutput,
   Transaction,
 } from "../types";
+import coinConfig from "../config";
 
 /**
  * Assembles a transaction for the Kaspa network.
@@ -33,7 +34,11 @@ export const buildTransaction = async (
 
   const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(a.xpub, "hex"));
 
-  const { utxos, accountAddresses } = await scanUtxos(compressedPublicKey, chainCode);
+  const { utxos, accountAddresses } = await scanUtxos(
+    coinConfig.getCoinConfig(),
+    compressedPublicKey,
+    chainCode,
+  );
   const recipientIsTypeECDSA: boolean = t.recipient.length > 67;
   const result = selectUtxos(utxos, recipientIsTypeECDSA, t.amount, getFeeRate(t).toNumber());
 

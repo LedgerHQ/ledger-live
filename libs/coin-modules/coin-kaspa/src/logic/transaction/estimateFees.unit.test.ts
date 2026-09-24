@@ -1,5 +1,6 @@
 import { craftTransaction } from "./craftTransaction";
 import { estimateFees } from "./estimateFees";
+import { mockKaspaConfig } from "../../test/context";
 
 jest.mock("./craftTransaction");
 
@@ -22,16 +23,16 @@ describe("estimateFees", () => {
   it("returns the fee computed by crafting the intent", async () => {
     mockCraftTransaction.mockResolvedValue({ transaction: "{}", details: { fee: "2036" } });
 
-    const result = await estimateFees(INTENT);
+    const result = await estimateFees(mockKaspaConfig, INTENT);
 
-    expect(mockCraftTransaction).toHaveBeenCalledWith(INTENT);
+    expect(mockCraftTransaction).toHaveBeenCalledWith(mockKaspaConfig, INTENT);
     expect(result.value).toBe(2036n);
   });
 
   it("defaults to 0 when the crafted transaction has no fee detail", async () => {
     mockCraftTransaction.mockResolvedValue({ transaction: "{}" });
 
-    const result = await estimateFees(INTENT);
+    const result = await estimateFees(mockKaspaConfig, INTENT);
 
     expect(result.value).toBe(0n);
   });
@@ -39,6 +40,6 @@ describe("estimateFees", () => {
   it("propagates crafting errors (e.g. an invalid address)", async () => {
     mockCraftTransaction.mockRejectedValue(new Error("kaspa: invalid sender address"));
 
-    await expect(estimateFees(INTENT)).rejects.toThrow("invalid sender address");
+    await expect(estimateFees(mockKaspaConfig, INTENT)).rejects.toThrow("invalid sender address");
   });
 });

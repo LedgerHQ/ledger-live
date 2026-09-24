@@ -9,6 +9,7 @@ import {
   server,
 } from "../../test/msw.mock";
 import { estimateFees } from "./estimateFees";
+import { mockKaspaConfig } from "../../test/context";
 
 const UTXOS_URL = `${TEST_KASPA_ENDPOINT}/addresses/utxos`;
 const FEE_URL = `${TEST_KASPA_ENDPOINT}/info/fee-estimate`;
@@ -33,7 +34,7 @@ describe("estimateFees via MSW", () => {
       http.get(FEE_URL, () => HttpResponse.json(FEE_ESTIMATE)),
     );
 
-    const fees = await estimateFees(intent);
+    const fees = await estimateFees(mockKaspaConfig, intent);
 
     expect(typeof fees.value).toBe("bigint");
     expect(fees.value).toBeGreaterThan(0n);
@@ -45,6 +46,6 @@ describe("estimateFees via MSW", () => {
       http.get(FEE_URL, () => HttpResponse.json(FEE_ESTIMATE)),
     );
 
-    await expect(estimateFees(intent)).rejects.toThrow("no spendable UTXOs");
+    await expect(estimateFees(mockKaspaConfig, intent)).rejects.toThrow("no spendable UTXOs");
   });
 });

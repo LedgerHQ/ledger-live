@@ -1,4 +1,5 @@
 import { getBlockDagInfo } from "../index";
+import { mockKaspaConfig } from "../../test/context";
 
 describe("getBlockDagInfo", () => {
   beforeEach(() => {
@@ -22,7 +23,7 @@ describe("getBlockDagInfo", () => {
       }),
     });
 
-    const result = await getBlockDagInfo();
+    const result = await getBlockDagInfo(mockKaspaConfig);
 
     expect(result.pastMedianTime).toBe("1737569348584");
     expect(result.blockCount).toBe("220840");
@@ -34,7 +35,7 @@ it("Should throw an error when fetch returns a 500 response", async () => {
     status: 500,
   });
 
-  await expect(getBlockDagInfo()).rejects.toThrow(
+  await expect(getBlockDagInfo(mockKaspaConfig)).rejects.toThrow(
     "Failed to fetch BlockDAG info. Error: Error: Status: 500",
   );
 });

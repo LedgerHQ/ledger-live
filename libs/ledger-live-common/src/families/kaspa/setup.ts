@@ -9,17 +9,20 @@ import { KaspaSigner } from "@ledgerhq/coin-kaspa/types/signer";
 import { KaspaAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-kaspa/types/bridge";
 import { createBridges } from "@ledgerhq/coin-kaspa/bridge";
 import type { Bridge } from "@ledgerhq/types-live";
+import type { KaspaCoinConfig } from "@ledgerhq/coin-kaspa/config";
+import { getCurrencyConfiguration } from "../../config";
 
 const createSigner: CreateSigner<KaspaSigner> = (transport: Transport) => {
   return new Kaspa(transport);
 };
 
-// const kaspaCoin = getCryptoCurrencyById("kaspa");
 const resolver: Resolver = createResolver(createSigner, kaspaResolver);
-// const getCurrencyConfig = (): KaspaCoinConfig => getCurrencyConfiguration(kaspaCoin);
+
+const getCoinConfig = (): KaspaCoinConfig => getCurrencyConfiguration<KaspaCoinConfig>("kaspa");
 
 const bridge: Bridge<Transaction, KaspaAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
+  getCoinConfig,
 );
 
 export { bridge, resolver };

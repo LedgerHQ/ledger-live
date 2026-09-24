@@ -1,4 +1,5 @@
 import { submitTransaction } from "../index";
+import { mockKaspaConfig } from "../../test/context";
 
 describe("submitTransaction function", () => {
   beforeEach(() => {
@@ -15,7 +16,7 @@ describe("submitTransaction function", () => {
     const transactionDetails = {
       dummy: "data",
     };
-    const result = await submitTransaction(JSON.stringify(transactionDetails));
+    const result = await submitTransaction(mockKaspaConfig, JSON.stringify(transactionDetails));
 
     const expectedResult = {
       txId: "396f29c47bdd95dddbe868203ce905535a3de1b48af7adeb40b769662885c008",
@@ -35,9 +36,9 @@ describe("submitTransaction function", () => {
       dummy: "data",
     };
 
-    await expect(submitTransaction(JSON.stringify(transactionDetails))).rejects.toThrow(
-      "kaspa: broadcast failed with status 500",
-    );
+    await expect(
+      submitTransaction(mockKaspaConfig, JSON.stringify(transactionDetails)),
+    ).rejects.toThrow("kaspa: broadcast failed with status 500");
   });
 
   it("Throws an error if there is an exception while submitting", async () => {
@@ -47,8 +48,8 @@ describe("submitTransaction function", () => {
       dummy: "data",
     };
 
-    await expect(submitTransaction(JSON.stringify(transactionDetails))).rejects.toThrow(
-      "Network error",
-    );
+    await expect(
+      submitTransaction(mockKaspaConfig, JSON.stringify(transactionDetails)),
+    ).rejects.toThrow("Network error");
   });
 });

@@ -1,11 +1,13 @@
+import type { KaspaCoinConfig } from "../config";
 import { ApiResponseBalance } from "../types";
-import { API_BASE } from "./config";
+import { getApiBase } from "./config";
 
 export const getBalancesForAddresses = async (
+  config: KaspaCoinConfig,
   addresses: string[],
 ): Promise<ApiResponseBalance[]> => {
   try {
-    const response = await fetch(`${API_BASE}/addresses/balances`, {
+    const response = await fetch(`${getApiBase(config)}/addresses/balances`, {
       method: "POST",
       headers: {
         Accept: "application/json",

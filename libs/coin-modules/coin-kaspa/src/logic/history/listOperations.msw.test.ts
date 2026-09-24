@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { TEST_KASPA_ENDPOINT, server } from "../../test/msw.mock";
 import { listOperations } from "./listOperations";
+import { mockKaspaConfig } from "../../test/context";
 
 const ADDRESS = "kaspa:qz24c4tse54c2f9v02ap2l3957uw5kq3rdg960gvw50wtvvy0nxax5jt8zckp";
 // getTransactions builds `/addresses/{encoded-address}/full-transactions-page?...`; the query
@@ -39,7 +40,7 @@ describe("listOperations via MSW", () => {
       ),
     );
 
-    const page = await listOperations(ADDRESS, { minHeight: 0 });
+    const page = await listOperations(mockKaspaConfig, ADDRESS, { minHeight: 0 });
 
     expect(page.next).toBe("12345");
     expect(page.items).toHaveLength(1);
@@ -55,7 +56,7 @@ describe("listOperations via MSW", () => {
   it("returns an undefined cursor and no items when the indexer has no data", async () => {
     server.use(http.get(TX_URL, () => HttpResponse.json([])));
 
-    const page = await listOperations(ADDRESS, { minHeight: 0 });
+    const page = await listOperations(mockKaspaConfig, ADDRESS, { minHeight: 0 });
 
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();

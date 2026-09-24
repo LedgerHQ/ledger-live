@@ -3,6 +3,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ApiResponseTransaction } from "../../types";
 import { getAllTransactions } from "./getAllTransactions";
+import type { KaspaCoinConfig } from "../../config";
 
 const FETCH_CONCURRENCY = 5;
 
@@ -108,6 +109,7 @@ export function transactionToOperation(
 }
 
 export async function scanOperations(
+  config: KaspaCoinConfig,
   addresses: string[],
   accountId: string,
   afterValue: number = 1,
@@ -118,7 +120,7 @@ export async function scanOperations(
 
   const fetchedTxs = (
     await promiseAllBatched(FETCH_CONCURRENCY, addresses, addr =>
-      getAllTransactions(addr, afterValue),
+      getAllTransactions(config, addr, afterValue),
     )
   ).flat();
 

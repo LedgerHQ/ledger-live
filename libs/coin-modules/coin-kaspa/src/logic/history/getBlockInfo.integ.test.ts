@@ -1,10 +1,11 @@
 import { getBlockInfo } from "./getBlockInfo";
+import { mainnetKaspaConfig } from "../../test/context";
 
 const MINTED_BLOCK = 480818084;
 
 describe("getBlockInfo (integration)", () => {
   it("fetches the block at the latest virtual-chain blue score", async () => {
-    const result = await getBlockInfo(MINTED_BLOCK);
+    const result = await getBlockInfo(mainnetKaspaConfig, MINTED_BLOCK);
 
     expect(result.height).toBe(MINTED_BLOCK);
     expect(typeof result.hash).toBe("string");

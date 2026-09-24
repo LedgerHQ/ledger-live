@@ -1,4 +1,5 @@
 import { lastBlock } from "./lastBlock";
+import { mockKaspaConfig } from "../../test/context";
 
 const mockGetBlockDagInfo = jest.fn();
 const mockGetVirtualChainBlueScore = jest.fn();
@@ -20,7 +21,7 @@ describe("lastBlock", () => {
       virtualDaaScore: "999999999",
     });
 
-    const result = await lastBlock();
+    const result = await lastBlock(mockKaspaConfig);
 
     expect(result.height).toBe(191726843);
     expect(result.hash).toBe("abc123");
@@ -31,14 +32,14 @@ describe("lastBlock", () => {
     mockGetVirtualChainBlueScore.mockResolvedValue(0);
     mockGetBlockDagInfo.mockResolvedValue({ pruningPointHash: "abc123" });
 
-    await expect(lastBlock()).rejects.toThrow("invalid blue score");
+    await expect(lastBlock(mockKaspaConfig)).rejects.toThrow("invalid blue score");
   });
 
   it("falls back to an empty hash when the pruning point hash is absent", async () => {
     mockGetVirtualChainBlueScore.mockResolvedValue(42);
     mockGetBlockDagInfo.mockResolvedValue({});
 
-    const result = await lastBlock();
+    const result = await lastBlock(mockKaspaConfig);
 
     expect(result.hash).toBe("");
   });

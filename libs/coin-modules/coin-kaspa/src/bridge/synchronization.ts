@@ -4,6 +4,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { parseExtendedPublicKey, scanAddresses, scanOperations } from "../logic";
 import { getBlockDagInfo, getVirtualChainBlueScore } from "../network";
 import { AccountAddresses, KaspaAccount } from "../types";
+import coinConfig from "../config";
 
 export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   const { initialAccount, index, rest } = info;
@@ -22,7 +23,13 @@ export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
 
   const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(xpub, "hex"));
 
-  const accountAddresses: AccountAddresses = await scanAddresses(compressedPublicKey, chainCode, 0);
+  const config = coinConfig.getCoinConfig();
+  const accountAddresses: AccountAddresses = await scanAddresses(
+    config,
+    compressedPublicKey,
+    chainCode,
+    0,
+  );
 
   const oldOperations = initialAccount?.operations || [];
 
@@ -46,6 +53,7 @@ export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   ];
 
   const allOperations: Operation[] = await scanOperations(
+    config,
     usedAddresses,
     accountId,
     scanOperationsAfter,
@@ -59,9 +67,9 @@ export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   return {
     id: accountId,
     xpub: xpub,
-    lastSyncTimestamp: Number.parseInt((await getBlockDagInfo()).pastMedianTime || "1"),
+    lastSyncTimestamp: Number.parseInt((await getBlockDagInfo(config)).pastMedianTime || "1"),
     index,
-    blockHeight: await getVirtualChainBlueScore(),
+    blockHeight: await getVirtualChainBlueScore(config),
     balance: accountAddresses.totalBalance,
     spendableBalance: accountAddresses.spendableBalance,
     operations,

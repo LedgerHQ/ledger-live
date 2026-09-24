@@ -58,7 +58,8 @@
     "src/test/bridgeDatasetTest.ts",
     "src/test/context.ts",
     "src/test/index.ts",
-    "src/test/msw-setup.ts",
+    "src/test/coin-config-setup.ts",
+    "src/test/integ-coin-config-setup.ts",
     "src/test/msw.mock.ts",
     "src/transaction.ts"
   ],

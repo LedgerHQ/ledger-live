@@ -1,9 +1,10 @@
+import type { KaspaCoinConfig } from "../config";
 import { ApiResponseFeeEstimate } from "../types";
-import { API_BASE } from "./config";
+import { getApiBase } from "./config";
 
-export const getFeeEstimate = async (): Promise<ApiResponseFeeEstimate> => {
+export const getFeeEstimate = async (config: KaspaCoinConfig): Promise<ApiResponseFeeEstimate> => {
   try {
-    const response = await fetch(`${API_BASE}/info/fee-estimate`, {
+    const response = await fetch(`${getApiBase(config)}/info/fee-estimate`, {
       headers: {
         Accept: "application/json",
       },

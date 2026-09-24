@@ -2,7 +2,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ONE_KAS, makeAccount, makeGenericAdapterAccount, initMSW } from "./fixtures";
-import { getBridges } from "./helpers";
+import { getBridges, KASPA_DEVNET_LIVE_CONFIG } from "./helpers";
 import { mineBlocks, waitForBalance, getBalance } from "./kaspaNode";
 import {
   buildSigners,
@@ -27,12 +27,7 @@ describe("Kaspa negative cases (simnet devnet)", () => {
   let baseNetworkInfo: { label: string; amount: BigNumber; estimatedSeconds: number }[] = [];
 
   beforeAll(async () => {
-    LiveConfig.setConfig({
-      config_currency_kaspa: {
-        type: "object",
-        default: { status: { type: "active" } },
-      },
-    });
+    LiveConfig.setConfig(KASPA_DEVNET_LIVE_CONFIG);
 
     stopMSW = initMSW();
     const testAddress = await deriveAddress(KASPA_TEST_MNEMONIC, 0, 0);

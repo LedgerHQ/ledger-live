@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { TEST_KASPA_ENDPOINT, server } from "../../test/msw.mock";
 import { lastBlock } from "./lastBlock";
+import { mockKaspaConfig } from "../../test/context";
 
 const BLUE_SCORE_URL = `${TEST_KASPA_ENDPOINT}/info/virtual-chain-blue-score`;
 const BLOCKDAG_URL = `${TEST_KASPA_ENDPOINT}/info/blockdag`;
@@ -17,7 +18,7 @@ describe("lastBlock via MSW", () => {
       http.get(BLOCKDAG_URL, () => HttpResponse.json({ pruningPointHash: PRUNING_HASH })),
     );
 
-    const info = await lastBlock();
+    const info = await lastBlock(mockKaspaConfig);
 
     expect(info.height).toBe(480818084);
     expect(info.hash).toBe(PRUNING_HASH);
@@ -30,7 +31,7 @@ describe("lastBlock via MSW", () => {
       http.get(BLOCKDAG_URL, () => HttpResponse.json({})),
     );
 
-    expect((await lastBlock()).hash).toBe("");
+    expect((await lastBlock(mockKaspaConfig)).hash).toBe("");
   });
 
   it("throws when the blue score is not a positive integer", async () => {
@@ -39,6 +40,6 @@ describe("lastBlock via MSW", () => {
       http.get(BLOCKDAG_URL, () => HttpResponse.json({ pruningPointHash: PRUNING_HASH })),
     );
 
-    await expect(lastBlock()).rejects.toThrow("invalid blue score");
+    await expect(lastBlock(mockKaspaConfig)).rejects.toThrow("invalid blue score");
   });
 });

@@ -8,6 +8,9 @@ export const kaspaConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: {
+        API_KASPA_ENDPOINT: "https://kaspa.coin.ledger.com",
+      },
     },
   },
 };

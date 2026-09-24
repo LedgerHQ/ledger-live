@@ -12,7 +12,7 @@ import {
   initMSW,
 } from "../fixtures";
 import { mineBlocks, waitForBalance } from "../kaspaNode";
-import { getBridges } from "../helpers";
+import { getBridges, KASPA_DEVNET_LIVE_CONFIG } from "../helpers";
 import {
   buildSigners,
   deriveAddress,
@@ -112,12 +112,7 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
   name: "Kaspa",
 
   setup: async (strategy: BridgeStrategy) => {
-    LiveConfig.setConfig({
-      config_currency_kaspa: {
-        type: "object",
-        default: { status: { type: "active" } },
-      },
-    });
+    LiveConfig.setConfig(KASPA_DEVNET_LIVE_CONFIG);
 
     testAddress = await deriveAddress(KASPA_TEST_MNEMONIC, 0, 0);
     // Recipient from a different mnemonic so the legacy bridge's HD scanner never discovers

@@ -1,4 +1,5 @@
 import { estimateFees } from "./estimateFees";
+import { mainnetKaspaConfig } from "../../test/context";
 
 // Dedicated, independently-funded Kaspa account (see getBalance.integ.test.ts) — funded once and
 // never spent, so it keeps spendable UTXOs for the fee estimation below.
@@ -7,7 +8,7 @@ const RECIPIENT = "kaspa:qyp8y7hlk9uj5l9vqsyz78x90yt84cujdytg93s8q8malhpdq6c4hpg
 
 describe("estimateFees (integration)", () => {
   it("estimates a positive fee for a valid send (api.mdx: value > 0, no error)", async () => {
-    const fees = await estimateFees({
+    const fees = await estimateFees(mainnetKaspaConfig, {
       intentType: "transaction",
       type: "send",
       sender: FUNDED_SENDER,

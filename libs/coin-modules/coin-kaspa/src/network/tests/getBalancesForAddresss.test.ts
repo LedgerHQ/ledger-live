@@ -1,4 +1,5 @@
 import { getBalancesForAddresses } from "../index";
+import { mockKaspaConfig } from "../../test/context";
 
 describe("getBalanceForAddress", () => {
   beforeEach(() => {
@@ -25,7 +26,7 @@ describe("getBalanceForAddress", () => {
       "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e",
       "kaspa:qqkqkzjvr7zwxxmjxjkmxxdwju9kjs6e9u82uh59z07vgaks6gg62v8707g73",
     ];
-    const result = await getBalancesForAddresses(addresses);
+    const result = await getBalancesForAddresses(mockKaspaConfig, addresses);
 
     expect(result[0].address).toBe(addresses[0]);
     expect(result[0].balance).toBeGreaterThan(0);
@@ -37,7 +38,7 @@ describe("getBalanceForAddress", () => {
       ok: false,
     });
     const invalidAddress = "invalid:address";
-    await expect(getBalancesForAddresses([invalidAddress])).rejects.toThrow(
+    await expect(getBalancesForAddresses(mockKaspaConfig, [invalidAddress])).rejects.toThrow(
       "Error fetching balance",
     );
   });

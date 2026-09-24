@@ -1,10 +1,12 @@
+import type { KaspaCoinConfig } from "../config";
 import { ApiResponseSubmitTransaction } from "../types";
-import { API_BASE } from "./config";
+import { getApiBase } from "./config";
 
 export const submitTransaction = async (
+  config: KaspaCoinConfig,
   transactionJson: string,
 ): Promise<ApiResponseSubmitTransaction> => {
-  const response = await fetch(`${API_BASE}/transactions`, {
+  const response = await fetch(`${getApiBase(config)}/transactions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

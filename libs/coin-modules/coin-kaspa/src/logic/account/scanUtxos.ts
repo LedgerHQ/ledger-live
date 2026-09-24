@@ -2,19 +2,29 @@ import { BigNumber } from "bignumber.js";
 import { getUtxosForAddresses } from "../../network";
 import { AccountAddress, AccountAddresses, KaspaUtxo } from "../../types";
 import { scanAddresses } from "./scanAddresses";
+import type { KaspaCoinConfig } from "../../config";
 
 export async function scanUtxos(
+  config: KaspaCoinConfig,
   compressedPublicKey: Buffer,
   chainCode: Buffer,
 ): Promise<{ utxos: KaspaUtxo[]; accountAddresses: AccountAddresses }> {
-  const accountAddresses: AccountAddresses = await scanAddresses(compressedPublicKey, chainCode, 0);
+  const accountAddresses: AccountAddresses = await scanAddresses(
+    config,
+    compressedPublicKey,
+    chainCode,
+    0,
+  );
 
   const allUsedAddresses = [
     ...accountAddresses.usedReceiveAddresses,
     ...accountAddresses.usedChangeAddresses,
   ];
 
-  const utxoResponse = await getUtxosForAddresses(allUsedAddresses.map(addrObj => addrObj.address));
+  const utxoResponse = await getUtxosForAddresses(
+    config,
+    allUsedAddresses.map(addrObj => addrObj.address),
+  );
 
   const kaspaUtxos = utxoResponse.map(utxo => {
     return {

@@ -27,6 +27,7 @@ import { getBlockInfo } from "../logic/history/getBlockInfo";
 import { lastBlock } from "../logic/history/lastBlock";
 import { listOperations } from "../logic/history/listOperations";
 import { validateIntent } from "../logic/validateIntent";
+import { mockKaspaConfig } from "../test/context";
 
 jest.mock("../logic/transaction/broadcast", () => ({ broadcast: jest.fn() }));
 jest.mock("../logic/transaction/combine", () => ({ combine: jest.fn() }));
@@ -99,7 +100,7 @@ describe("createApi", () => {
 
     const result = await api.broadcast(context, "signedTx");
 
-    expect(broadcast).toHaveBeenCalledWith("signedTx", undefined);
+    expect(broadcast).toHaveBeenCalledWith(mockKaspaConfig, "signedTx", undefined);
     expect(result).toBe("txHash");
   });
 
@@ -123,7 +124,7 @@ describe("createApi", () => {
 
     const result = await api.craftTransaction(context, nativeIntent, { customFees });
 
-    expect(craftTransaction).toHaveBeenCalledWith(nativeIntent, customFees);
+    expect(craftTransaction).toHaveBeenCalledWith(mockKaspaConfig, nativeIntent, customFees);
     expect(result).toEqual(crafted);
   });
 
@@ -135,7 +136,7 @@ describe("createApi", () => {
 
     const result = await api.estimateFees(context, nativeIntent);
 
-    expect(estimateFees).toHaveBeenCalledWith(nativeIntent, undefined);
+    expect(estimateFees).toHaveBeenCalledWith(mockKaspaConfig, nativeIntent, undefined);
     expect(result).toEqual(fees);
   });
 
@@ -147,7 +148,7 @@ describe("createApi", () => {
 
     const result = await api.getBalance(context, SENDER);
 
-    expect(getBalance).toHaveBeenCalledWith(SENDER);
+    expect(getBalance).toHaveBeenCalledWith(mockKaspaConfig, SENDER);
     expect(result).toEqual(balances);
   });
 
@@ -185,7 +186,7 @@ describe("createApi", () => {
 
     const result = await api.getBlockInfo(context, 42);
 
-    expect(getBlockInfo).toHaveBeenCalledWith(42);
+    expect(getBlockInfo).toHaveBeenCalledWith(mockKaspaConfig, 42);
     expect(result).toEqual(info);
   });
 
@@ -197,7 +198,7 @@ describe("createApi", () => {
 
     const result = await api.getBlock(context, 42);
 
-    expect(getBlock).toHaveBeenCalledWith(42);
+    expect(getBlock).toHaveBeenCalledWith(mockKaspaConfig, 42);
     expect(result).toEqual(block);
   });
 
@@ -209,7 +210,7 @@ describe("createApi", () => {
 
     const result = await api.listOperations(context, SENDER, { minHeight: 0 });
 
-    expect(listOperations).toHaveBeenCalledWith(SENDER, { minHeight: 0 });
+    expect(listOperations).toHaveBeenCalledWith(mockKaspaConfig, SENDER, { minHeight: 0 });
     expect(result).toEqual(page);
   });
 

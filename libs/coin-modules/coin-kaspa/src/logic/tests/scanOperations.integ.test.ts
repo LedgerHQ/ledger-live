@@ -1,11 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import { scanOperations } from "../history/scanOperations";
+import { mainnetKaspaConfig } from "../../test/context";
 
 describe("scan transactions for multiple addresses", () => {
   it("One address", async () => {
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
 
-    const result = await scanOperations([address], "");
+    const result = await scanOperations(mainnetKaspaConfig, [address], "");
     expect(result.length).toBeGreaterThan(20);
 
     const exampleTx = result.find(
@@ -33,7 +34,7 @@ describe("scan transactions for multiple addresses", () => {
       "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e",
       "kaspa:qqkqkzjvr7zwxxmjxjkmxxdwju9kjs6e9u82uh59z07vgaks6gg62v8707g73",
     ];
-    const result = await scanOperations(addresses, "");
+    const result = await scanOperations(mainnetKaspaConfig, addresses, "");
 
     expect(result.length).toBeGreaterThan(20);
 
@@ -244,7 +245,7 @@ describe("scan transactions for multiple addresses", () => {
       "kaspa:qpy2dzp9znrrwqsmxgrj3glqy8dz7nyg6tatcfuy5ku7srkryju3gpmwuar8a",
     ];
 
-    const result = await scanOperations(addresses, "");
+    const result = await scanOperations(mainnetKaspaConfig, addresses, "");
 
     expect(result.length).toBeGreaterThan(5);
 

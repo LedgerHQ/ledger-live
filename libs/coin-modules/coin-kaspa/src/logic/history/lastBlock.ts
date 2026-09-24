@@ -1,5 +1,6 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { getBlockDagInfo, getVirtualChainBlueScore } from "../../network";
+import type { KaspaCoinConfig } from "../../config";
 
 /**
  * Latest confirmed block on the Kaspa BlockDAG. `height` is the virtual-chain blue score — the
@@ -15,8 +16,11 @@ import { getBlockDagInfo, getVirtualChainBlueScore } from "../../network";
  *   resolve the tip block by blue score here: that endpoint can lag behind the just-produced tip,
  *   which would make `lastBlock` throw — cardano avoids the same second lookup for this reason.
  */
-export async function lastBlock(): Promise<BlockInfo> {
-  const [height, blockDagInfo] = await Promise.all([getVirtualChainBlueScore(), getBlockDagInfo()]);
+export async function lastBlock(config: KaspaCoinConfig): Promise<BlockInfo> {
+  const [height, blockDagInfo] = await Promise.all([
+    getVirtualChainBlueScore(config),
+    getBlockDagInfo(config),
+  ]);
 
   if (!Number.isInteger(height) || height <= 0) {
     throw new Error(`kaspa: lastBlock: invalid blue score from API: ${height}`);

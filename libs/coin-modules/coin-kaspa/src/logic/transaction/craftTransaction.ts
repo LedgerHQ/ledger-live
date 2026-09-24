@@ -11,6 +11,7 @@ import { MASS_LIMIT_PER_TX } from "../constants";
 import { calcStorageMass } from "../massCalcluation";
 import { calcMaxSpendableAmount } from "../utxos/lib";
 import { selectUtxos } from "../utxos/selection";
+import type { KaspaCoinConfig } from "../../config";
 
 export type UnsignedKaspaInput = {
   prevTxId: string;
@@ -42,8 +43,11 @@ function toKaspaUtxos(raw: ApiResponseUtxo[]): KaspaUtxo[] {
   }));
 }
 
-async function resolveFeeRate(feesStrategy: TransactionIntent["feesStrategy"]): Promise<number> {
-  const estimate = await getFeeEstimate();
+async function resolveFeeRate(
+  config: KaspaCoinConfig,
+  feesStrategy: TransactionIntent["feesStrategy"],
+): Promise<number> {
+  const estimate = await getFeeEstimate(config);
   if (feesStrategy === "fast") {
     return estimate.priorityBucket.feerate;
   }
@@ -92,6 +96,7 @@ function validateCustomFees(
  * back and must stay in sync with this shape.
  */
 export async function craftTransaction(
+  config: KaspaCoinConfig,
   intent: TransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -102,14 +107,14 @@ export async function craftTransaction(
     throw new Error("kaspa: invalid recipient address");
   }
 
-  const rawUtxos = await getUtxosForAddresses([intent.sender]);
+  const rawUtxos = await getUtxosForAddresses(config, [intent.sender]);
   const utxos = toKaspaUtxos(rawUtxos);
   if (utxos.length === 0) {
     throw new Error("kaspa: no spendable UTXOs for sender address");
   }
 
   const recipientIsEcdsa = intent.recipient.length > 67;
-  const feerate = await resolveFeeRate(intent.feesStrategy);
+  const feerate = await resolveFeeRate(config, intent.feesStrategy);
 
   // A max-amount send targets the maximum the selected UTXO set can cover (mass/fee included);
   // selectUtxos then converges on (near) zero change, matching a sweep to the recipient.

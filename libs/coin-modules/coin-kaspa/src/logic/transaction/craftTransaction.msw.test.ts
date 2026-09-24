@@ -9,6 +9,7 @@ import {
   server,
 } from "../../test/msw.mock";
 import { craftTransaction, type UnsignedKaspaTransaction } from "./craftTransaction";
+import { mockKaspaConfig } from "../../test/context";
 
 const UTXOS_URL = `${TEST_KASPA_ENDPOINT}/addresses/utxos`;
 const FEE_URL = `${TEST_KASPA_ENDPOINT}/info/fee-estimate`;
@@ -36,7 +37,7 @@ describe("craftTransaction via MSW", () => {
       http.get(FEE_URL, () => HttpResponse.json(FEE_ESTIMATE)),
     );
 
-    const crafted = await craftTransaction(intent());
+    const crafted = await craftTransaction(mockKaspaConfig, intent());
     const parsed: UnsignedKaspaTransaction = JSON.parse(crafted.transaction);
 
     expect(parsed.inputs).toHaveLength(1);
@@ -51,7 +52,7 @@ describe("craftTransaction via MSW", () => {
       http.get(FEE_URL, () => HttpResponse.json(FEE_ESTIMATE)),
     );
 
-    await expect(craftTransaction(intent())).rejects.toThrow("no spendable UTXOs");
+    await expect(craftTransaction(mockKaspaConfig, intent())).rejects.toThrow("no spendable UTXOs");
   });
 
   it("regression: picks an old, low-DAA UTXO over a fresh, high-DAA one across a digit-count boundary", async () => {
@@ -69,7 +70,7 @@ describe("craftTransaction via MSW", () => {
       http.get(FEE_URL, () => HttpResponse.json(FEE_ESTIMATE)),
     );
 
-    const crafted = await craftTransaction(intent());
+    const crafted = await craftTransaction(mockKaspaConfig, intent());
     const parsed: UnsignedKaspaTransaction = JSON.parse(crafted.transaction);
 
     expect(parsed.inputs).toHaveLength(1);

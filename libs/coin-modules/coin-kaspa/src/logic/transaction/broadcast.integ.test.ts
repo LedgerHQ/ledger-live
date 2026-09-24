@@ -5,6 +5,7 @@ import {
   KaspaHwTransactionOutput,
 } from "../../types/kaspaHwTransaction";
 import { broadcast } from "./broadcast";
+import { mainnetKaspaConfig } from "../../test/context";
 
 const BURN_ADDRESS = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
 const FAKE_PREV_TX_ID = "a".repeat(64);
@@ -29,7 +30,7 @@ describe("broadcast (integration)", () => {
 
     const tx = new KaspaHwTransaction({ inputs: [input], outputs: [output], version: 0, fee: 100 });
 
-    await expect(broadcast(JSON.stringify(tx.toApiJSON()))).rejects.toThrow(
+    await expect(broadcast(mainnetKaspaConfig, JSON.stringify(tx.toApiJSON()))).rejects.toThrow(
       /Rejected transaction .+ is an orphan where orphan is disallowed/,
     );
   });

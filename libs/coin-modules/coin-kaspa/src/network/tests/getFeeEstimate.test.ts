@@ -1,4 +1,5 @@
 import { getFeeEstimate } from "../index";
+import { mockKaspaConfig } from "../../test/context";
 
 describe("getFees", () => {
   beforeEach(() => {
@@ -13,7 +14,7 @@ describe("getFees", () => {
       statusText: "Internal Server Error",
     });
 
-    await expect(getFeeEstimate()).rejects.toThrow("Network response was not ok");
+    await expect(getFeeEstimate(mockKaspaConfig)).rejects.toThrow("Network response was not ok");
   });
 
   it("Check if getFees gives correct output", async () => {
@@ -43,7 +44,7 @@ describe("getFees", () => {
       }),
     });
 
-    const result = await getFeeEstimate();
+    const result = await getFeeEstimate(mockKaspaConfig);
 
     expect(result.priorityBucket.feerate).toBeGreaterThan(0);
     expect(result.priorityBucket.estimatedSeconds).toBeGreaterThan(0);

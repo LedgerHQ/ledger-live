@@ -1,8 +1,9 @@
-import { API_BASE } from "./config";
+import type { KaspaCoinConfig } from "../config";
+import { getApiBase } from "./config";
 
-export const getVirtualChainBlueScore = async (): Promise<number> => {
+export const getVirtualChainBlueScore = async (config: KaspaCoinConfig): Promise<number> => {
   try {
-    const response = await fetch(`${API_BASE}/info/virtual-chain-blue-score`, {
+    const response = await fetch(`${getApiBase(config)}/info/virtual-chain-blue-score`, {
       method: "GET",
       headers: {
         Accept: "application/json",

@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { TEST_KASPA_ENDPOINT, server } from "../../test/msw.mock";
 import { getBalance } from "./getBalance";
+import { mockKaspaConfig } from "../../test/context";
 
 const BALANCES_URL = `${TEST_KASPA_ENDPOINT}/addresses/balances`;
 const ADDR = "kaspa:qz24c4tse54c2f9v02ap2l3957uw5kq3rdg960gvw50wtvvy0nxax5jt8zckp";
@@ -15,7 +16,7 @@ describe("getBalance via MSW", () => {
       http.post(BALANCES_URL, () => HttpResponse.json([{ address: ADDR, balance: 500_000_000 }])),
     );
 
-    const balances = await getBalance(ADDR);
+    const balances = await getBalance(mockKaspaConfig, ADDR);
 
     expect(balances).toEqual([{ value: 500_000_000n, asset: { type: "native", name: "KAS" } }]);
   });
@@ -23,7 +24,7 @@ describe("getBalance via MSW", () => {
   it("defaults to zero when the address is absent from the response (pristine account)", async () => {
     server.use(http.post(BALANCES_URL, () => HttpResponse.json([])));
 
-    const [balance] = await getBalance(ADDR);
+    const [balance] = await getBalance(mockKaspaConfig, ADDR);
 
     expect(balance.value).toBe(0n);
   });
@@ -31,6 +32,6 @@ describe("getBalance via MSW", () => {
   it("throws when the endpoint returns a non-ok status", async () => {
     server.use(http.post(BALANCES_URL, () => new HttpResponse(null, { status: 500 })));
 
-    await expect(getBalance(ADDR)).rejects.toThrow("Error fetching balance");
+    await expect(getBalance(mockKaspaConfig, ADDR)).rejects.toThrow("Error fetching balance");
   });
 });

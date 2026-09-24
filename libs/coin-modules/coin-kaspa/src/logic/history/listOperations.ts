@@ -7,6 +7,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { getTransactions } from "../../network";
 import { KaspaTransfer, parseKaspaTransfer } from "./scanOperations";
+import type { KaspaCoinConfig } from "../../config";
 
 const NATIVE_ASSET: AssetInfo = { type: "native", name: "KAS" };
 
@@ -64,12 +65,13 @@ function parseCursor(options: ListOperationsOptions): number {
  * transactions are available.
  */
 export async function listOperations(
+  config: KaspaCoinConfig,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation<MemoNotSupported>>> {
   const after = parseCursor(options);
 
-  const { transactions, nextPageAfter } = await getTransactions(address, after);
+  const { transactions, nextPageAfter } = await getTransactions(config, address, after);
   const addressSet = new Set([address]);
 
   const items = (transactions ?? [])

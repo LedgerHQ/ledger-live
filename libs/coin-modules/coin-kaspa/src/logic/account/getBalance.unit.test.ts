@@ -1,4 +1,5 @@
 import { getBalance } from "./getBalance";
+import { mockKaspaConfig } from "../../test/context";
 
 const mockGetBalancesForAddresses = jest.fn();
 jest.mock("../../network", () => ({
@@ -16,16 +17,16 @@ describe("getBalance", () => {
   it("returns the native KAS balance as a single-entry array", async () => {
     mockGetBalancesForAddresses.mockResolvedValue([{ address: ADDRESS, balance: 500000000 }]);
 
-    const balances = await getBalance(ADDRESS);
+    const balances = await getBalance(mockKaspaConfig, ADDRESS);
 
-    expect(mockGetBalancesForAddresses).toHaveBeenCalledWith([ADDRESS]);
+    expect(mockGetBalancesForAddresses).toHaveBeenCalledWith(mockKaspaConfig, [ADDRESS]);
     expect(balances).toEqual([{ value: 500000000n, asset: { type: "native", name: "KAS" } }]);
   });
 
   it("falls back to 0 when the address is absent from the indexer response", async () => {
     mockGetBalancesForAddresses.mockResolvedValue([]);
 
-    const balances = await getBalance(ADDRESS);
+    const balances = await getBalance(mockKaspaConfig, ADDRESS);
 
     expect(balances).toEqual([{ value: 0n, asset: { type: "native", name: "KAS" } }]);
   });
@@ -33,6 +34,6 @@ describe("getBalance", () => {
   it("propagates network errors", async () => {
     mockGetBalancesForAddresses.mockRejectedValue(new Error("network down"));
 
-    await expect(getBalance(ADDRESS)).rejects.toThrow("network down");
+    await expect(getBalance(mockKaspaConfig, ADDRESS)).rejects.toThrow("network down");
   });
 });

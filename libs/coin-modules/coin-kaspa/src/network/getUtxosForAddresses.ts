@@ -1,9 +1,13 @@
+import type { KaspaCoinConfig } from "../config";
 import { ApiResponseUtxo } from "../types";
-import { API_BASE } from "./config";
+import { getApiBase } from "./config";
 
-export const getUtxosForAddresses = async (addresses: string[]): Promise<ApiResponseUtxo[]> => {
+export const getUtxosForAddresses = async (
+  config: KaspaCoinConfig,
+  addresses: string[],
+): Promise<ApiResponseUtxo[]> => {
   try {
-    const response = await fetch(`${API_BASE}/addresses/utxos`, {
+    const response = await fetch(`${getApiBase(config)}/addresses/utxos`, {
       method: "POST",
       headers: {
         Accept: "application/json",

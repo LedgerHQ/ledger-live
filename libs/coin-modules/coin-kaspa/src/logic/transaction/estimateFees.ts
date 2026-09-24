@@ -1,5 +1,6 @@
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransaction } from "./craftTransaction";
+import type { KaspaCoinConfig } from "../../config";
 
 /**
  * Estimate the mass-based fee for a Kaspa transaction intent. Kaspa's fee is a deterministic
@@ -9,10 +10,11 @@ import { craftTransaction } from "./craftTransaction";
  * fee-market parameter to accept, so `customFeesParameters` is ignored for Kaspa.
  */
 export async function estimateFees(
+  config: KaspaCoinConfig,
   intent: TransactionIntent,
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
-  const { details } = await craftTransaction(intent);
+  const { details } = await craftTransaction(config, intent);
   const fee = typeof details?.fee === "string" ? details.fee : "0";
   return { value: BigInt(fee) };
 }

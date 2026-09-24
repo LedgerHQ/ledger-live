@@ -1,5 +1,6 @@
 import { publicKeyToAddress } from "../kaspaAddresses";
 import { getBalance } from "./getBalance";
+import { mainnetKaspaConfig } from "../../test/context";
 
 // A freshly-derived address (from a hash pattern not otherwise used in this codebase) has never
 // been broadcast anywhere, so it is pristine with overwhelming probability — avoids hardcoding a
@@ -13,14 +14,14 @@ const FUNDED_ADDRESS = "kaspa:qz24c4tse54c2f9v02ap2l3957uw5kq3rdg960gvw50wtvvy0n
 
 describe("getBalance (integration)", () => {
   it("returns a zero native balance for a pristine address", async () => {
-    const balances = await getBalance(PRISTINE_ADDRESS);
+    const balances = await getBalance(mainnetKaspaConfig, PRISTINE_ADDRESS);
 
     expect(balances).toEqual([{ value: 0n, asset: { type: "native", name: "KAS" } }]);
   });
 
   describe("funded address", () => {
     it("returns a positive native balance", async () => {
-      const balances = await getBalance(FUNDED_ADDRESS);
+      const balances = await getBalance(mainnetKaspaConfig, FUNDED_ADDRESS);
 
       expect(balances).toHaveLength(1);
       expect(balances[0].asset).toEqual({ type: "native", name: "KAS" });

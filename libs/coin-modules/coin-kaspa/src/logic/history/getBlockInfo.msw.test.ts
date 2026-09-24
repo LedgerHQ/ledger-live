@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { CHAIN_HASH, TEST_KASPA_ENDPOINT, makeApiBlock, server } from "../../test/msw.mock";
 import { getBlockInfo } from "./getBlockInfo";
+import { mockKaspaConfig } from "../../test/context";
 
 const BLOCKS_URL = `${TEST_KASPA_ENDPOINT}/blocks-from-bluescore`;
 
@@ -22,7 +23,7 @@ describe("getBlockInfo via MSW", () => {
       }),
     );
 
-    const info = await getBlockInfo(480818084);
+    const info = await getBlockInfo(mockKaspaConfig, 480818084);
 
     expect(info.height).toBe(480818084);
     expect(info.hash).toBe(CHAIN_HASH);
@@ -32,12 +33,16 @@ describe("getBlockInfo via MSW", () => {
   it("throws when the endpoint returns a non-ok status", async () => {
     server.use(http.get(BLOCKS_URL, () => new HttpResponse(null, { status: 500 })));
 
-    await expect(getBlockInfo(1)).rejects.toThrow("kaspa: getBlocksFromBlueScore: status 500");
+    await expect(getBlockInfo(mockKaspaConfig, 1)).rejects.toThrow(
+      "kaspa: getBlocksFromBlueScore: status 500",
+    );
   });
 
   it("throws when no block exists at the blue score", async () => {
     server.use(http.get(BLOCKS_URL, () => HttpResponse.json([])));
 
-    await expect(getBlockInfo(42)).rejects.toThrow("kaspa: no block at blueScore 42");
+    await expect(getBlockInfo(mockKaspaConfig, 42)).rejects.toThrow(
+      "kaspa: no block at blueScore 42",
+    );
   });
 });

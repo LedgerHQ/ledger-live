@@ -1,4 +1,5 @@
 import { getBlocksFromBlueScore } from "./getBlocksFromBlueScore";
+import { mockKaspaConfig } from "../test/context";
 
 describe("getBlocksFromBlueScore", () => {
   const originalFetch = global.fetch;
@@ -12,7 +13,7 @@ describe("getBlocksFromBlueScore", () => {
     const blocks = [{ verboseData: { hash: "a".repeat(64), isChainBlock: true } }];
     global.fetch = jest.fn().mockResolvedValueOnce({ ok: true, json: async () => blocks });
 
-    const result = await getBlocksFromBlueScore(480818084);
+    const result = await getBlocksFromBlueScore(mockKaspaConfig, 480818084);
 
     expect(result).toEqual(blocks);
   });
@@ -20,7 +21,7 @@ describe("getBlocksFromBlueScore", () => {
   it("requests includeTransactions=false by default", async () => {
     global.fetch = jest.fn().mockResolvedValueOnce({ ok: true, json: async () => [] });
 
-    await getBlocksFromBlueScore(480818084);
+    await getBlocksFromBlueScore(mockKaspaConfig, 480818084);
 
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining(
@@ -33,7 +34,7 @@ describe("getBlocksFromBlueScore", () => {
   it("requests includeTransactions=true when asked", async () => {
     global.fetch = jest.fn().mockResolvedValueOnce({ ok: true, json: async () => [] });
 
-    await getBlocksFromBlueScore(480818084, true);
+    await getBlocksFromBlueScore(mockKaspaConfig, 480818084, true);
 
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining("includeTransactions=true"),
@@ -44,7 +45,7 @@ describe("getBlocksFromBlueScore", () => {
   it("throws with the status code on a non-ok response", async () => {
     global.fetch = jest.fn().mockResolvedValueOnce({ ok: false, status: 500 });
 
-    await expect(getBlocksFromBlueScore(480818084)).rejects.toThrow(
+    await expect(getBlocksFromBlueScore(mockKaspaConfig, 480818084)).rejects.toThrow(
       "kaspa: getBlocksFromBlueScore: status 500",
     );
   });

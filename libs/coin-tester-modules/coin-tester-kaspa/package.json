@@ -37,7 +37,6 @@
     "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-kaspa"
   },
   "dependencies": {
-    "@shared/env": "workspace:*",
     "@bitcoinerlab/secp256k1": "^1.1.1",
     "@ledgerhq/coin-kaspa": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",

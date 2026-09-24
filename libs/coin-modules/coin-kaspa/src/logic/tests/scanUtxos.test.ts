@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { parseExtendedPublicKey } from "../kaspaAddresses";
 import { scanUtxos } from "../account/scanUtxos";
+import { mockKaspaConfig } from "../../test/context";
 
 // Module-level mocks for network functions
 const mockGetBalancesForAddresses = jest.fn();
@@ -100,7 +101,7 @@ describe("scan UTXOs function", () => {
       },
     ]);
 
-    const { utxos } = await scanUtxos(compressedPublicKey, chainCode);
+    const { utxos } = await scanUtxos(mockKaspaConfig, compressedPublicKey, chainCode);
 
     expect(utxos.length).toBe(3);
   });
@@ -151,7 +152,7 @@ describe("Error while scanning UTXOs", () => {
       },
     ]);
 
-    await expect(scanUtxos(compressedPublicKey, chainCode)).rejects.toThrow(
+    await expect(scanUtxos(mockKaspaConfig, compressedPublicKey, chainCode)).rejects.toThrow(
       "not found in addresses set",
     );
   });

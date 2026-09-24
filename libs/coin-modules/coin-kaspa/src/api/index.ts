@@ -50,47 +50,54 @@ import {
  * The consumer resolver applies `withDefaults`, which answers "not supported" for each.
  */
 export function createApi() {
+  // Every method that reaches the network resolves the coin config from its context and passes it
+  // down explicitly (ADR-019); the api path never reads the getCoinConfig() singleton.
   return {
     // --- Blocks / chain state ---
-    lastBlock: (_context: KaspaContext): Promise<BlockInfo> => lastBlock(),
-    getBlockInfo: (_context: KaspaContext, height: number): Promise<BlockInfo> =>
-      getBlockInfo(height),
-    getBlock: (_context: KaspaContext, height: number): Promise<Block> => getBlock(height),
+    lastBlock: async (context: KaspaContext): Promise<BlockInfo> =>
+      lastBlock(await context.config()),
+    getBlockInfo: async (context: KaspaContext, height: number): Promise<BlockInfo> =>
+      getBlockInfo(await context.config(), height),
+    getBlock: async (context: KaspaContext, height: number): Promise<Block> =>
+      getBlock(await context.config(), height),
 
     // --- Account state ---
     getBalance: (
-      _context: KaspaContext,
+      context: KaspaContext,
       address: string,
       options?: BalanceOptions,
-    ): Promise<Balance[]> => rejectBalanceOptions(() => getBalance(address), options),
-    listOperations: (
-      _context: KaspaContext,
+    ): Promise<Balance[]> =>
+      rejectBalanceOptions(async () => getBalance(await context.config(), address), options),
+    listOperations: async (
+      context: KaspaContext,
       address: string,
       options: ListOperationsOptions,
-    ): Promise<Page<Operation>> => listOperations(address, options),
+    ): Promise<Page<Operation>> => listOperations(await context.config(), address, options),
 
     // --- Transaction lifecycle ---
-    craftTransaction: (
-      _context: KaspaContext,
+    craftTransaction: async (
+      context: KaspaContext,
       transactionIntent: TransactionIntent,
       options?: { customFees?: FeeEstimation },
-    ): Promise<CraftedTransaction> => craftTransaction(transactionIntent, options?.customFees),
-    estimateFees: (
-      _context: KaspaContext,
+    ): Promise<CraftedTransaction> =>
+      craftTransaction(await context.config(), transactionIntent, options?.customFees),
+    estimateFees: async (
+      context: KaspaContext,
       transactionIntent: TransactionIntent,
       options?: { customFeesParameters?: FeeEstimation["parameters"] },
-    ): Promise<FeeEstimation> => estimateFees(transactionIntent, options?.customFeesParameters),
+    ): Promise<FeeEstimation> =>
+      estimateFees(await context.config(), transactionIntent, options?.customFeesParameters),
     combine: (
       _context: KaspaContext,
       tx: string,
       signature: string[],
       _options?: { pubkey?: string },
     ): string => combine(tx, signature),
-    broadcast: (
-      _context: KaspaContext,
+    broadcast: async (
+      context: KaspaContext,
       tx: string,
       options?: { broadcastConfig?: BroadcastConfig },
-    ): Promise<string> => broadcast(tx, options?.broadcastConfig),
+    ): Promise<string> => broadcast(await context.config(), tx, options?.broadcastConfig),
     validateIntent: (
       _context: KaspaContext,
       transactionIntent: TransactionIntent,

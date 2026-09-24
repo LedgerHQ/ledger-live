@@ -1,6 +1,4 @@
-// const API_BASE = "https://api.kaspa.org";
-import { getEnv } from "@ledgerhq/live-env";
+import type { KaspaCoinConfig } from "../config";
 
-const API_BASE = getEnv("API_KASPA_ENDPOINT");
-
-export { API_BASE };
+/** Base URL of the Kaspa REST API, from the coin config the caller passes in. */
+export const getApiBase = (config: KaspaCoinConfig): string => config.infra.API_KASPA_ENDPOINT;

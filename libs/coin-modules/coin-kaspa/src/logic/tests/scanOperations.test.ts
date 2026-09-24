@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { scanOperations } from "../history/scanOperations";
+import { mockKaspaConfig } from "../../test/context";
 
 // Module-level mock for getTransactions
 const mockGetTransactions = jest.fn();
@@ -170,7 +171,7 @@ describe("scan transactions for multiple addresses", () => {
 
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
 
-    const result = await scanOperations([address], "", afterValue);
+    const result = await scanOperations(mockKaspaConfig, [address], "", afterValue);
     expect(result.length).toBe(2);
 
     const exampleTx = result.find(
@@ -299,7 +300,7 @@ describe("scan transactions for multiple addresses", () => {
 
     const address = "kaspa:qrvqn64vxkcevdev6k2y49slxw4ls57cjzdqmqkcgh9wu7xmghk57v4ehla0t";
 
-    const result = await scanOperations([address], "", 0);
+    const result = await scanOperations(mockKaspaConfig, [address], "", 0);
     expect(result.length).toBe(1);
 
     const exampleTx = result.find(
@@ -320,7 +321,7 @@ describe("scan transactions for multiple addresses", () => {
   it("aggregates operations across many addresses", async () => {
     const addresses = Array.from({ length: 12 }, (_, i) => `kaspa:addr${i}`);
 
-    mockGetTransactions.mockImplementation((addr: string) =>
+    mockGetTransactions.mockImplementation((_config: unknown, addr: string) =>
       Promise.resolve({
         nextPageAfter: null,
         transactions: [
@@ -336,7 +337,7 @@ describe("scan transactions for multiple addresses", () => {
       }),
     );
 
-    const result = await scanOperations(addresses, "", 1);
+    const result = await scanOperations(mockKaspaConfig, addresses, "", 1);
 
     expect(mockGetTransactions).toHaveBeenCalledTimes(addresses.length);
     expect(result.length).toBe(addresses.length);

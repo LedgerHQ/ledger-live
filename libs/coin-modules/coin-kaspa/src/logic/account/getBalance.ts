@@ -1,5 +1,6 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import { getBalancesForAddresses } from "../../network";
+import type { KaspaCoinConfig } from "../../config";
 
 const NATIVE_ASSET = { type: "native", name: "KAS" } as const;
 
@@ -10,8 +11,8 @@ const NATIVE_ASSET = { type: "native", name: "KAS" } as const;
  * If the address is absent from the indexer response (pristine account), the balance
  * defaults to 0 rather than throwing.
  */
-export async function getBalance(address: string): Promise<Balance[]> {
-  const balances = await getBalancesForAddresses([address]);
+export async function getBalance(config: KaspaCoinConfig, address: string): Promise<Balance[]> {
+  const balances = await getBalancesForAddresses(config, [address]);
   const match = balances.find(b => b.address === address);
   const value = BigInt(match?.balance ?? "0");
 

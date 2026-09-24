@@ -1,9 +1,12 @@
+import type { KaspaCoinConfig } from "../config";
 import { ApiResponseBlockDagInfo } from "../types";
-import { API_BASE } from "./config";
+import { getApiBase } from "./config";
 
-export const getBlockDagInfo = async (): Promise<ApiResponseBlockDagInfo> => {
+export const getBlockDagInfo = async (
+  config: KaspaCoinConfig,
+): Promise<ApiResponseBlockDagInfo> => {
   try {
-    const response = await fetch(`${API_BASE}/info/blockdag`, {
+    const response = await fetch(`${getApiBase(config)}/info/blockdag`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

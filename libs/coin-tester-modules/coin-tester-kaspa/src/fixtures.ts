@@ -75,7 +75,7 @@ export function makeGenericAdapterAccount(address: string): KaspaAccount {
 const KASPA_REST_BASE = "http://localhost:8080";
 
 // Intercept external Ledger-service calls and reject unhandled non-local requests.
-// The coin module talks only to API_KASPA_ENDPOINT (local REST server), so no blockchain
+// The coin module talks only to its configured endpoint (local REST server), so no blockchain
 // endpoints need interception.
 export function initMSW(): () => void {
   const mockServer = setupServer(

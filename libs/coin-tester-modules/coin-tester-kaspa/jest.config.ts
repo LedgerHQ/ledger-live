@@ -1,12 +1,10 @@
 import type { Config } from "jest";
 
 // Shared options reused by all projects.
-// `setupFiles` runs before coin-kaspa's config.ts captures API_KASPA_ENDPOINT at module-eval
-// time, so the env var must be set there (not in setupFilesAfterEnv). The `@ledgerhq/source`
-// export condition resolves workspace packages from TypeScript source without a prior build.
+// The `@ledgerhq/source` export condition resolves workspace packages from TypeScript source
+// without a prior build.
 const sharedConfig = {
   testEnvironment: "node" as const,
-  setupFiles: ["<rootDir>/src/env.setup.ts"],
   setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   testEnvironmentOptions: {
     customExportConditions: ["@ledgerhq/source", "node", "require", "default"],

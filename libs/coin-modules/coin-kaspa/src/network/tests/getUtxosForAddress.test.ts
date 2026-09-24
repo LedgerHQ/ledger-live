@@ -1,4 +1,5 @@
 import { getUtxosForAddresses } from "../index";
+import { mockKaspaConfig } from "../../test/context";
 
 interface Outpoint {
   transactionId: string;
@@ -77,7 +78,7 @@ describe("getUtxosForAddress function", () => {
       ],
     });
     const addresses = ["kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e"];
-    const result = await getUtxosForAddresses(addresses);
+    const result = await getUtxosForAddresses(mockKaspaConfig, addresses);
 
     const expectedUtxos = [
       {
@@ -154,6 +155,6 @@ describe("getUtxosForAddress function", () => {
       status: 400,
     });
     const addresses = ["invalidAddress"];
-    await expect(getUtxosForAddresses(addresses)).rejects.toThrow();
+    await expect(getUtxosForAddresses(mockKaspaConfig, addresses)).rejects.toThrow();
   });
 });

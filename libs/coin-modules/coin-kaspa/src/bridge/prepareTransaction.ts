@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getFeeEstimate } from "../network";
 import { ApiResponseFeeEstimate, KaspaAccount, Transaction } from "../types";
+import coinConfig from "../config";
 
 /**
  * Prepares a transaction by calculating and setting its fee based on the specified fee strategy.
@@ -13,7 +14,7 @@ import { ApiResponseFeeEstimate, KaspaAccount, Transaction } from "../types";
  * @throws Will throw an error if the fee strategy type is unknown.
  */
 export const prepareTransaction = async (_account: KaspaAccount, transaction: Transaction) => {
-  const fees: ApiResponseFeeEstimate = await getFeeEstimate();
+  const fees: ApiResponseFeeEstimate = await getFeeEstimate(coinConfig.getCoinConfig());
 
   transaction.networkInfo = [
     {

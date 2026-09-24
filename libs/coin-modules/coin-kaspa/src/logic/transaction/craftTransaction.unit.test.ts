@@ -1,5 +1,6 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransaction, UnsignedKaspaTransaction } from "./craftTransaction";
+import { mockKaspaConfig } from "../../test/context";
 
 const mockGetUtxosForAddresses = jest.fn();
 const mockGetFeeEstimate = jest.fn();
@@ -50,23 +51,23 @@ describe("craftTransaction", () => {
   });
 
   it("validates the sender address before any network call", async () => {
-    await expect(craftTransaction(intent({ sender: "not-a-kaspa-address" }))).rejects.toThrow(
-      "invalid sender address",
-    );
+    await expect(
+      craftTransaction(mockKaspaConfig, intent({ sender: "not-a-kaspa-address" })),
+    ).rejects.toThrow("invalid sender address");
     expect(mockGetUtxosForAddresses).not.toHaveBeenCalled();
   });
 
   it("validates the recipient address before any network call", async () => {
-    await expect(craftTransaction(intent({ recipient: "not-a-kaspa-address" }))).rejects.toThrow(
-      "invalid recipient address",
-    );
+    await expect(
+      craftTransaction(mockKaspaConfig, intent({ recipient: "not-a-kaspa-address" })),
+    ).rejects.toThrow("invalid recipient address");
     expect(mockGetUtxosForAddresses).not.toHaveBeenCalled();
   });
 
   it("throws when the sender has no spendable UTXOs", async () => {
     mockGetUtxosForAddresses.mockResolvedValue([]);
 
-    await expect(craftTransaction(intent())).rejects.toThrow("no spendable UTXOs");
+    await expect(craftTransaction(mockKaspaConfig, intent())).rejects.toThrow("no spendable UTXOs");
   });
 
   it("selects UTXOs covering the amount and produces a change output", async () => {
@@ -75,7 +76,7 @@ describe("craftTransaction", () => {
     // (a tiny output would inflate storage mass and force the change to be discarded).
     mockGetUtxosForAddresses.mockResolvedValue([utxo(200_000_000, 0)]);
 
-    const crafted = await craftTransaction(intent({ amount: 150_000_000n }));
+    const crafted = await craftTransaction(mockKaspaConfig, intent({ amount: 150_000_000n }));
     const parsed: UnsignedKaspaTransaction = JSON.parse(crafted.transaction);
 
     expect(parsed.inputs).toHaveLength(1);
@@ -87,11 +88,13 @@ describe("craftTransaction", () => {
   it("overrides the estimated fee with the caller-supplied custom fee", async () => {
     mockGetUtxosForAddresses.mockResolvedValue([utxo(200_000_000, 0)]);
 
-    const defaultCraft = await craftTransaction(intent({ amount: 150_000_000n }));
+    const defaultCraft = await craftTransaction(mockKaspaConfig, intent({ amount: 150_000_000n }));
     const defaultFee = BigInt(defaultCraft.details?.fee as string);
 
     const customFee = defaultFee + 5000n;
-    const crafted = await craftTransaction(intent({ amount: 150_000_000n }), { value: customFee });
+    const crafted = await craftTransaction(mockKaspaConfig, intent({ amount: 150_000_000n }), {
+      value: customFee,
+    });
 
     expect(crafted.details?.fee).toBe(customFee.toString());
   });
@@ -100,18 +103,20 @@ describe("craftTransaction", () => {
     mockGetUtxosForAddresses.mockResolvedValue([utxo(200_000_000, 0)]);
 
     await expect(
-      craftTransaction(intent({ amount: 150_000_000n }), { value: 999_999_999n }),
+      craftTransaction(mockKaspaConfig, intent({ amount: 150_000_000n }), { value: 999_999_999n }),
     ).rejects.toThrow("custom fee exceeds");
   });
 
   it("throws when the custom fee is below the mass-based minimum for this transaction", async () => {
     mockGetUtxosForAddresses.mockResolvedValue([utxo(200_000_000, 0)]);
 
-    const defaultCraft = await craftTransaction(intent({ amount: 150_000_000n }));
+    const defaultCraft = await craftTransaction(mockKaspaConfig, intent({ amount: 150_000_000n }));
     const defaultFee = BigInt(defaultCraft.details?.fee as string);
 
     await expect(
-      craftTransaction(intent({ amount: 150_000_000n }), { value: defaultFee - 1n }),
+      craftTransaction(mockKaspaConfig, intent({ amount: 150_000_000n }), {
+        value: defaultFee - 1n,
+      }),
     ).rejects.toThrow("below the minimum required");
   });
 
@@ -122,14 +127,14 @@ describe("craftTransaction", () => {
     mockGetUtxosForAddresses.mockResolvedValue([utxo(200_000_000, 0)]);
 
     await expect(
-      craftTransaction(intent({ amount: 150_000_000n }), { value: 49_000_000n }),
+      craftTransaction(mockKaspaConfig, intent({ amount: 150_000_000n }), { value: 49_000_000n }),
     ).rejects.toThrow("KIP-9 storage mass");
   });
 
   it("throws for a non-positive amount", async () => {
     mockGetUtxosForAddresses.mockResolvedValue([utxo(50_000_000, 0)]);
 
-    await expect(craftTransaction(intent({ amount: 0n }))).rejects.toThrow(
+    await expect(craftTransaction(mockKaspaConfig, intent({ amount: 0n }))).rejects.toThrow(
       "transaction amount must be positive",
     );
   });
@@ -137,7 +142,10 @@ describe("craftTransaction", () => {
   it("sweeps the max spendable amount for a useAllAmount intent", async () => {
     mockGetUtxosForAddresses.mockResolvedValue([utxo(50_000_000, 0)]);
 
-    const crafted = await craftTransaction(intent({ useAllAmount: true, amount: 0n }));
+    const crafted = await craftTransaction(
+      mockKaspaConfig,
+      intent({ useAllAmount: true, amount: 0n }),
+    );
     const parsed: UnsignedKaspaTransaction = JSON.parse(crafted.transaction);
 
     // A sweep spends the full UTXO value on the recipient output, leaving no change.

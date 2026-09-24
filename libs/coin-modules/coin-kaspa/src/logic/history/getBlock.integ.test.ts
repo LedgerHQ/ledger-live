@@ -1,10 +1,11 @@
 import { getBlock } from "./getBlock";
+import { mainnetKaspaConfig } from "../../test/context";
 
 const MINTED_BLOCK = 480818084;
 
 describe("getBlock (integration)", () => {
   it("fetches the full block (metadata + transactions) at a known blue score", async () => {
-    const block = await getBlock(MINTED_BLOCK);
+    const block = await getBlock(mainnetKaspaConfig, MINTED_BLOCK);
 
     // info half mirrors getBlockInfo
     expect(block.info.height).toBe(MINTED_BLOCK);

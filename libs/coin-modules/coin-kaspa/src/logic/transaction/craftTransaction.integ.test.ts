@@ -1,5 +1,6 @@
 import { isValidKaspaAddress } from "../kaspaAddresses";
 import { craftTransaction } from "./craftTransaction";
+import { mainnetKaspaConfig } from "../../test/context";
 
 const RECIPIENT = "kaspa:qyp8y7hlk9uj5l9vqsyz78x90yt84cujdytg93s8q8malhpdq6c4hpg9dyesk65";
 // Dedicated, independently-funded Kaspa account (see getBalance.integ.test.ts) — funded once and
@@ -12,7 +13,7 @@ const SEND_AMOUNT = 100_000_000n;
 describe("craftTransaction (integration)", () => {
   it("rejects an invalid sender address without needing a funded fixture", async () => {
     await expect(
-      craftTransaction({
+      craftTransaction(mainnetKaspaConfig, {
         intentType: "transaction",
         type: "send",
         sender: "not-a-kaspa-address",
@@ -30,7 +31,7 @@ describe("craftTransaction (integration)", () => {
   describe("funded sender", () => {
     // api.mdx: "Send tx => crafted tx with corresponding amount and recipient".
     it("crafts a send with the requested amount and a change output", async () => {
-      const crafted = await craftTransaction({
+      const crafted = await craftTransaction(mainnetKaspaConfig, {
         intentType: "transaction",
         type: "send",
         sender: FUNDED_SENDER,
@@ -48,7 +49,7 @@ describe("craftTransaction (integration)", () => {
     });
 
     it("crafts a send-max transaction sweeping the funded UTXOs", async () => {
-      const crafted = await craftTransaction({
+      const crafted = await craftTransaction(mainnetKaspaConfig, {
         intentType: "transaction",
         type: "send",
         sender: FUNDED_SENDER,

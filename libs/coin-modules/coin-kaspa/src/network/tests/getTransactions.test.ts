@@ -1,4 +1,5 @@
 import { getTransactions } from "../index";
+import { mockKaspaConfig } from "../../test/context";
 
 describe("getTransactions function", () => {
   beforeEach(() => {
@@ -161,7 +162,7 @@ describe("getTransactions function", () => {
       ],
     });
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
-    const result = await getTransactions(address);
+    const result = await getTransactions(mockKaspaConfig, address);
     expect(result.transactions.length).toBe(3);
   });
 
@@ -173,7 +174,7 @@ describe("getTransactions function", () => {
     });
 
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
-    const promise = getTransactions(address);
+    const promise = getTransactions(mockKaspaConfig, address);
     const assertion = expect(promise).rejects.toThrow("Network response was not ok.");
     await jest.advanceTimersByTimeAsync(2000);
     await assertion;
@@ -192,7 +193,7 @@ describe("getTransactions function", () => {
       });
 
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
-    const promise = getTransactions(address);
+    const promise = getTransactions(mockKaspaConfig, address);
     await jest.advanceTimersByTimeAsync(2000);
     const result = await promise;
 
@@ -204,7 +205,9 @@ describe("getTransactions function", () => {
     global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 400 });
 
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
-    await expect(getTransactions(address)).rejects.toThrow("Network response was not ok.");
+    await expect(getTransactions(mockKaspaConfig, address)).rejects.toThrow(
+      "Network response was not ok.",
+    );
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 });

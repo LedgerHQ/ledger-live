@@ -1,4 +1,5 @@
 import { listOperations } from "./listOperations";
+import { mockKaspaConfig } from "../../test/context";
 
 const mockGetTransactions = jest.fn();
 jest.mock("../../network", () => ({
@@ -8,7 +9,7 @@ jest.mock("../../network", () => ({
 
 const ADDRESS = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
 
-function baseOptions(overrides: Partial<Parameters<typeof listOperations>[1]> = {}) {
+function baseOptions(overrides: Partial<Parameters<typeof listOperations>[2]> = {}) {
   return { minHeight: 0, ...overrides };
 }
 
@@ -20,7 +21,7 @@ describe("listOperations", () => {
   it("propagates the indexer's next-page cursor when more pages are available", async () => {
     mockGetTransactions.mockResolvedValue({ transactions: [], nextPageAfter: "12345" });
 
-    const page = await listOperations(ADDRESS, baseOptions());
+    const page = await listOperations(mockKaspaConfig, ADDRESS, baseOptions());
 
     expect(page.next).toBe("12345");
   });
@@ -28,7 +29,7 @@ describe("listOperations", () => {
   it("never hardcodes the cursor to undefined when the indexer reports more data", async () => {
     mockGetTransactions.mockResolvedValue({ transactions: [], nextPageAfter: "999" });
 
-    const page = await listOperations(ADDRESS, baseOptions());
+    const page = await listOperations(mockKaspaConfig, ADDRESS, baseOptions());
 
     expect(page.next).not.toBeUndefined();
     expect(page.next).toBe("999");
@@ -37,7 +38,7 @@ describe("listOperations", () => {
   it("returns an undefined cursor once the indexer has no further pages", async () => {
     mockGetTransactions.mockResolvedValue({ transactions: [], nextPageAfter: null });
 
-    const page = await listOperations(ADDRESS, baseOptions());
+    const page = await listOperations(mockKaspaConfig, ADDRESS, baseOptions());
 
     expect(page.next).toBeUndefined();
   });
@@ -45,15 +46,15 @@ describe("listOperations", () => {
   it("resumes from the supplied cursor", async () => {
     mockGetTransactions.mockResolvedValue({ transactions: [], nextPageAfter: null });
 
-    await listOperations(ADDRESS, baseOptions({ cursor: "500" }));
+    await listOperations(mockKaspaConfig, ADDRESS, baseOptions({ cursor: "500" }));
 
-    expect(mockGetTransactions).toHaveBeenCalledWith(ADDRESS, 500);
+    expect(mockGetTransactions).toHaveBeenCalledWith(mockKaspaConfig, ADDRESS, 500);
   });
 
   it("guards an undefined transactions array before iterating", async () => {
     mockGetTransactions.mockResolvedValue({ transactions: undefined, nextPageAfter: null });
 
-    const page = await listOperations(ADDRESS, baseOptions());
+    const page = await listOperations(mockKaspaConfig, ADDRESS, baseOptions());
 
     expect(page.items).toEqual([]);
   });
@@ -89,7 +90,7 @@ describe("listOperations", () => {
       ],
     });
 
-    const page = await listOperations(ADDRESS, baseOptions());
+    const page = await listOperations(mockKaspaConfig, ADDRESS, baseOptions());
 
     expect(page.items).toHaveLength(1);
     const [op] = page.items;
@@ -117,7 +118,7 @@ describe("listOperations", () => {
       ],
     });
 
-    const page = await listOperations(ADDRESS, baseOptions());
+    const page = await listOperations(mockKaspaConfig, ADDRESS, baseOptions());
 
     const [op] = page.items;
     expect(op.type).toBe("IN");
@@ -150,7 +151,7 @@ describe("listOperations", () => {
       ],
     });
 
-    const page = await listOperations(ADDRESS, baseOptions({ minHeight: 10 }));
+    const page = await listOperations(mockKaspaConfig, ADDRESS, baseOptions({ minHeight: 10 }));
 
     expect(page.items.map(op => op.id)).toEqual(["tx-new"]);
   });

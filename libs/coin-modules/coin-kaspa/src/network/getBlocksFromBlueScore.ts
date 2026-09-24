@@ -1,9 +1,11 @@
-import { API_BASE } from "./config";
+import type { KaspaCoinConfig } from "../config";
+import { getApiBase } from "./config";
 import { ApiResponseBlockInfo } from "../types";
 
 // The endpoint returns an array: a blue score can map to several blocks (BlockDAG).
 // `includeTransactions` is false for getBlockInfo (metadata only) and true for getBlock.
 export const getBlocksFromBlueScore = async (
+  config: KaspaCoinConfig,
   blueScore: number,
   includeTransactions = false,
 ): Promise<ApiResponseBlockInfo[]> => {
@@ -19,7 +21,7 @@ export const getBlocksFromBlueScore = async (
     includeTransactions: String(includeTransactions),
   });
 
-  const response = await fetch(`${API_BASE}/blocks-from-bluescore?${query}`, {
+  const response = await fetch(`${getApiBase(config)}/blocks-from-bluescore?${query}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });

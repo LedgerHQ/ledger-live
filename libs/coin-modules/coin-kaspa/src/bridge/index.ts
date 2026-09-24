@@ -1,3 +1,5 @@
+import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
+import coinConfig, { type KaspaCoinConfig } from "../config";
 import getAddressWrapper, {
   GetAddressFn,
 } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
@@ -108,7 +110,12 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<KaspaSigner>) {
+export function createBridges(
+  signerContext: SignerContext<KaspaSigner>,
+  kaspaCoinConfig: CoinConfig<KaspaCoinConfig>,
+) {
+  coinConfig.setCoinConfig(kaspaCoinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

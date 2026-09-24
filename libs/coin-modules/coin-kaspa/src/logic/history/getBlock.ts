@@ -6,6 +6,7 @@ import type {
 import { getBlocksFromBlueScore } from "../../network";
 import type { ApiResponseBlockTransaction } from "../../types";
 import { pickChainBlock, toBlockInfo } from "./blockInfo";
+import type { KaspaCoinConfig } from "../../config";
 
 /**
  * Full block (metadata + transactions) at a given virtual-chain blue score. Same block-selection
@@ -17,8 +18,8 @@ import { pickChainBlock, toBlockInfo } from "./blockInfo";
  * So this maps outputs to incoming `transfer` operations only; sender debits and per-tx `fees`
  * are not derivable here without resolving each previous outpoint separately.
  */
-export async function getBlock(height: number): Promise<Block> {
-  const blocks = await getBlocksFromBlueScore(height, true);
+export async function getBlock(config: KaspaCoinConfig, height: number): Promise<Block> {
+  const blocks = await getBlocksFromBlueScore(config, height, true);
   const block = pickChainBlock(blocks, height);
 
   return {

@@ -1,5 +1,6 @@
 import { publicKeyToAddress } from "../kaspaAddresses";
 import { listOperations } from "./listOperations";
+import { mainnetKaspaConfig } from "../../test/context";
 
 // See getBalance.integ.test.ts: a freshly-derived address has no on-chain history.
 const PRISTINE_ADDRESS = publicKeyToAddress(Buffer.alloc(32, 0xdd));
@@ -9,14 +10,14 @@ const ACTIVE_ADDRESS = "kaspa:qz24c4tse54c2f9v02ap2l3957uw5kq3rdg960gvw50wtvvy0n
 
 describe("listOperations (integration)", () => {
   it("returns an empty page for a pristine address", async () => {
-    const page = await listOperations(PRISTINE_ADDRESS, { minHeight: 0 });
+    const page = await listOperations(mainnetKaspaConfig, PRISTINE_ADDRESS, { minHeight: 0 });
 
     expect(page.items).toEqual([]);
   });
 
   describe("standard address with history", () => {
     it("returns at least one operation with IN/OUT metadata (api.mdx)", async () => {
-      const page = await listOperations(ACTIVE_ADDRESS, { minHeight: 0 });
+      const page = await listOperations(mainnetKaspaConfig, ACTIVE_ADDRESS, { minHeight: 0 });
 
       expect(page.items.length).toBeGreaterThan(0);
       for (const op of page.items) {

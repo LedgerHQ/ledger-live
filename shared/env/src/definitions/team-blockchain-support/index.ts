@@ -26,11 +26,6 @@ const teamBlockchainSupport = {
     def: false,
     desc: "Coin-tester only: skip the network fee estimate and keep the transaction's own pre-set fee (devnet has no historical fee data)",
   },
-  API_KASPA_ENDPOINT: {
-    parser: stringParser,
-    def: "https://kaspa.coin.ledger.com",
-    desc: "Kaspa API url",
-  },
   API_VECHAIN_THOREST: {
     def: "https://vechain.coin.ledger.com",
     parser: stringParser,

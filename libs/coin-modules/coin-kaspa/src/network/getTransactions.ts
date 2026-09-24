@@ -1,6 +1,7 @@
+import type { KaspaCoinConfig } from "../config";
 import { retry } from "@ledgerhq/coin-module-framework/promises";
 import { ApiResponseTransaction } from "../types";
-import { API_BASE } from "./config";
+import { getApiBase } from "./config";
 
 // Only retry transient failures: network-level errors (e.g. ECONNRESET, surfaced
 // as a TypeError by fetch) and 5xx responses. Not 4xx or response-parsing errors.
@@ -18,10 +19,14 @@ const isRetriableError = (error: unknown): boolean => {
 };
 
 export const getTransactions = async (
+  config: KaspaCoinConfig,
   address: string,
   after: number = 1,
 ): Promise<{ transactions: ApiResponseTransaction[]; nextPageAfter: string | null }> => {
-  const url = new URL(`/addresses/${encodeURIComponent(address)}/full-transactions-page`, API_BASE);
+  const url = new URL(
+    `/addresses/${encodeURIComponent(address)}/full-transactions-page`,
+    getApiBase(config),
+  );
   url.searchParams.set("resolve_previous_outpoints", "light");
   url.searchParams.set("limit", "500");
   url.searchParams.set("before", "0");

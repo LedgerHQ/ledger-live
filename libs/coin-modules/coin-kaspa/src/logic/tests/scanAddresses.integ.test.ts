@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { AccountAddresses } from "../../types";
 import { parseExtendedPublicKey } from "../kaspaAddresses";
 import { scanAddresses } from "../account/scanAddresses";
+import { mainnetKaspaConfig } from "../../test/context";
 
 describe("scanAddresses function", () => {
   it("Gets information about addresses being active or not", async () => {
@@ -10,6 +11,7 @@ describe("scanAddresses function", () => {
     const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(xpub, "hex"));
 
     const accountAddresses: AccountAddresses = await scanAddresses(
+      mainnetKaspaConfig,
       compressedPublicKey,
       chainCode,
       0,

@@ -8,6 +8,7 @@ import {
   server,
 } from "../../test/msw.mock";
 import { getBlock } from "./getBlock";
+import { mockKaspaConfig } from "../../test/context";
 
 const BLOCKS_URL = `${TEST_KASPA_ENDPOINT}/blocks-from-bluescore`;
 const ADDR = "kaspa:qpy827u4r43hp36nu2w78dphwgzjr3e9xdwwvm7k7dalyhpfkr84qucn4ecud";
@@ -37,7 +38,7 @@ describe("getBlock via MSW", () => {
       }),
     );
 
-    const block = await getBlock(480818084);
+    const block = await getBlock(mockKaspaConfig, 480818084);
 
     expect(block.info.hash).toBe(CHAIN_HASH);
     expect(block.transactions).toHaveLength(1);
@@ -55,6 +56,6 @@ describe("getBlock via MSW", () => {
   it("throws when no block exists at the blue score", async () => {
     server.use(http.get(BLOCKS_URL, () => HttpResponse.json([])));
 
-    await expect(getBlock(42)).rejects.toThrow("kaspa: no block at blueScore 42");
+    await expect(getBlock(mockKaspaConfig, 42)).rejects.toThrow("kaspa: no block at blueScore 42");
   });
 });

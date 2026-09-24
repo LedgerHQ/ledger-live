@@ -1,4 +1,5 @@
 import { getVirtualChainBlueScore } from "../index";
+import { mockKaspaConfig } from "../../test/context";
 
 describe("getVirtualChainBlueScore", () => {
   beforeEach(() => {
@@ -13,7 +14,7 @@ describe("getVirtualChainBlueScore", () => {
       json: async () => ({ blueScore: 12345 }),
     });
 
-    const result = await getVirtualChainBlueScore();
+    const result = await getVirtualChainBlueScore(mockKaspaConfig);
     expect(result).toBe(12345);
   });
 
@@ -23,7 +24,7 @@ describe("getVirtualChainBlueScore", () => {
       ok: false,
     });
 
-    await expect(getVirtualChainBlueScore()).rejects.toThrow("Failed to fetch");
+    await expect(getVirtualChainBlueScore(mockKaspaConfig)).rejects.toThrow("Failed to fetch");
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 });
