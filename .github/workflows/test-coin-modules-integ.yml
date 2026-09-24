@@ -48,7 +48,7 @@ jobs:
       contents: read
     needs: is-affected
     if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
-    runs-on: ubuntu-22.04
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-22.04' || 'ledger-wallet-4cpu-aws-public' }}
 
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -70,6 +70,12 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        if: ${{ !github.event.pull_request.head.repo.fork }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
         run: pnpm i --frozen-lockfile --filter="!./apps/**"

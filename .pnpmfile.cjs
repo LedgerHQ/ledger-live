@@ -20,19 +20,6 @@ const {
 const { assertDependencyChecks } = require("./tools/dependency-checks/validate");
 
 function readPackage(pkg, context) {
-  /*
-    Fix packages using wrong @types/react versions by making it a peer dependency.
-    So ultimately it uses our types package instead of their own which can conflict.
-  */
-  if (!!pkg.dependencies["@types/react"] && !pkg.name.startsWith("@ledgerhq") && !pkg.private) {
-    delete pkg.dependencies["@types/react"];
-    pkg.peerDependencies["@types/react"] = "*";
-    pkg.peerDependenciesMeta = {
-      ...pkg.peerDependenciesMeta,
-      "@types/react": { optional: true },
-    };
-  }
-
   process(
     [
       /*
@@ -42,21 +29,11 @@ function readPackage(pkg, context) {
       */
       addDependencies("jest-allure2-reporter", { tslib: "*" }),
       /* React Native and Metro bundler packages */
-      // react-native does not declare mkdirp; removing it has broken the iOS build before /!\
-      addDependencies("react-native", {
-        mkdirp: "*",
-      }),
-
       addPeerDependencies("metro-config", {
         "metro-transform-worker": "*",
       }),
 
       /* Other packages */
-      addDependencies("detox", {
-        "@jest/reporters": "*",
-        "jest-environment-node": "*",
-        "jest-circus": "*",
-      }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
 
       addPeerDependencies(/^expo-/, {
@@ -76,9 +53,6 @@ function readPackage(pkg, context) {
       // Try to prevent pnpm-lock.yaml flakiness
       removeDependencies("follow-redirects", ["debug"], {
         kind: "peerDependencies",
-      }),
-      addPeerDependencies("react-native-easy-markdown", {
-        "prop-types": "*",
       }),
     ],
     pkg,

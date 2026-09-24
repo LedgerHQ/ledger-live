@@ -1,13 +1,12 @@
 import React from "react";
 import {
   Banner,
-  BottomSheetFooter,
   BottomSheetHeader,
   BottomSheetScrollView,
   Box,
   Button,
 } from "@ledgerhq/lumen-ui-rnative";
-import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetFooterInset } from "@shared/ui-queued-bottom-sheet";
 import type { BalanceFilterPickerViewProps } from "../../types";
 import { BalanceFilterOptionRow } from "./BalanceFilterOptionRow";
 
@@ -24,59 +23,62 @@ export function BalanceFilterPickerView({
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
-      snapPoints="fullWithOffset"
-      testID="pay-card-balance-filter-sheet"
       enableDynamicSizing
+      maxDynamicContentSize="fullWithOffset"
+      testID="pay-card-balance-filter-sheet"
+      footer={
+        isOpen ? (
+          <Button
+            appearance="base"
+            size="lg"
+            isFull
+            onPress={onConfirm}
+            accessibilityLabel={labels.confirm}
+            testID="pay-card-balance-filter-confirm"
+          >
+            {labels.confirm}
+          </Button>
+        ) : null
+      }
     >
       {isOpen ? (
-        <>
+        <BalanceFilterPickerContent>
           <BottomSheetHeader
-            spacing
             density="expanded"
             title={labels.filterDialogTitle}
             description={labels.filterDialogDescription}
           />
-          {/* Scrollable asset list: only the options scroll, the footer below stays pinned. */}
-          <BottomSheetScrollView>
-            <Box
-              lx={{ flexDirection: "column", gap: "s8", paddingBottom: "s16" }}
-              testID="pay-card-balance-filter-picker"
-            >
-              {options.map(option => (
-                <BalanceFilterOptionRow
-                  key={option.id}
-                  option={option}
-                  selected={option.id === draftFilter}
-                  onSelect={onSelectDraft}
-                />
-              ))}
-              <Banner appearance="info" title={labels.filterDialogBanner} />
-            </Box>
-          </BottomSheetScrollView>
-          <BalanceFilterPickerFooter>
-            <Button
-              appearance="base"
-              size="lg"
-              isFull
-              onPress={onConfirm}
-              accessibilityLabel={labels.confirm}
-              testID="pay-card-balance-filter-confirm"
-            >
-              {labels.confirm}
-            </Button>
-          </BalanceFilterPickerFooter>
-        </>
+          <Box
+            lx={{ flexDirection: "column", gap: "s8", paddingBottom: "s16" }}
+            testID="pay-card-balance-filter-picker"
+          >
+            {options.map(option => (
+              <BalanceFilterOptionRow
+                key={option.id}
+                option={option}
+                selected={option.id === draftFilter}
+                onSelect={onSelectDraft}
+              />
+            ))}
+            <Banner appearance="info" title={labels.filterDialogBanner} />
+          </Box>
+        </BalanceFilterPickerContent>
       ) : null}
     </QueuedBottomSheet>
   );
 }
 
-function BalanceFilterPickerFooter({ children }: Readonly<{ children: React.ReactNode }>) {
-  const bottomInset = useBottomSheetBottomInset();
+/**
+ * Everything the sheet has to measure sits in this scrollable, so the sheet hugs it and only
+ * scrolls once the options outgrow the screen. The confirm button stays pinned below, and the room
+ * it takes is reserved here.
+ */
+function BalanceFilterPickerContent({ children }: Readonly<{ children: React.ReactNode }>) {
+  const footerInset = useBottomSheetFooterInset();
 
   return (
-    <BottomSheetFooter lx={{ gap: "s16" }} style={{ paddingBottom: bottomInset + 16 }}>
-      {children}
-    </BottomSheetFooter>
+    <BottomSheetScrollView>
+      <Box style={{ paddingBottom: footerInset }}>{children}</Box>
+    </BottomSheetScrollView>
   );
 }

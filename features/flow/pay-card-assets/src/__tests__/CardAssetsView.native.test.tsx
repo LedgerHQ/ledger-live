@@ -212,6 +212,20 @@ describe("CardAssetsView (native)", () => {
     expect(onMoveAsset).toHaveBeenCalledWith("w-btc", 0);
   });
 
+  it("should leave the drag gesture uncontested by keeping the list unscrollable", () => {
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(
+      <CardAssetsManageDrawer
+        rows={[usdc, bitcoin]}
+        onMoveAsset={jest.fn()}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    expect(screen.UNSAFE_getByType(DraggableFlatList).props.scrollEnabled).toBe(false);
+  });
+
   it("should move a wallet to where a drag was dropped", () => {
     const onMoveAsset = jest.fn().mockResolvedValue(undefined);
     const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };

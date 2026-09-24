@@ -35,7 +35,11 @@ import { usePayCardAssets } from "../../hooks/usePayCardAssets";
 import { useCountervalueFormatter } from "../../hooks/useCountervalueFormatter";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import { navigateToCardHistory } from "LLM/features/OperationsHistory/utils/navigateToCardHistory";
-import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
+import {
+  useAdjustedSafeAreaInsets,
+  useNavigationBarHeights,
+} from "LLM/hooks/useNavigationBarHeights";
+import { WALLET_TAB_HEADER_HEIGHT } from "~/components/WalletTab/WalletTabNavigatorScrollManager";
 import { useAppProtectionPrompt } from "LLM/features/AppLock/AppProtectionPrompt";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
@@ -49,7 +53,8 @@ import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 export function usePayTabViewModel() {
   const analytics = usePayAnalyticsContext();
   const { t } = useTranslation();
-  const { top, bottom } = useNavigationBarHeights();
+  const { bottom } = useNavigationBarHeights();
+  const { top: safeAreaTop } = useAdjustedSafeAreaInsets();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
@@ -244,7 +249,8 @@ export function usePayTabViewModel() {
   );
 
   return {
-    top,
+    // Same offset as the Home header so the hero sections line up.
+    top: safeAreaTop + WALLET_TAB_HEADER_HEIGHT,
     bottom: bottom + insets.bottom,
     card,
     balance,

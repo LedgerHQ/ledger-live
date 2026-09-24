@@ -11,9 +11,7 @@ describe("useScrollToTop", () => {
     const flatListRef = { scrollToOffset };
 
     const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <WalletTabNavigatorScrollManager currentRouteName={undefined}>
-        {children}
-      </WalletTabNavigatorScrollManager>
+      <WalletTabNavigatorScrollManager>{children}</WalletTabNavigatorScrollManager>
     );
 
     const { result } = renderHook(() => useScrollToTop(), { wrapper });

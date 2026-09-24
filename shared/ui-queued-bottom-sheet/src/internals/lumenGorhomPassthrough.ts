@@ -23,6 +23,11 @@ export type LumenForwardedGorhomProps = Readonly<{
    * room is already made and stops offsetting the keyboard itself.
    */
   android_keyboardInputMode?: "adjustPan" | "adjustResize";
+  /**
+   * Whether dragging the sheet's content moves the sheet. Turn it off when the content owns a
+   * gesture of its own — the sheet's pan covers every row and competes with it.
+   */
+  enableContentPanningGesture?: boolean;
 }>;
 
 /**

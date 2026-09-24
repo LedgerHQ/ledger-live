@@ -1,5 +1,5 @@
 import React from "react";
-import { Keyboard, View } from "react-native";
+import { View } from "react-native";
 import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { screen, waitFor, within } from "@tests/test-renderer";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
@@ -10,7 +10,6 @@ import { track } from "~/analytics";
 import { trackPage } from "@shared/analytics";
 import {
   mockContact,
-  mockContactAddress,
   mockContactWithAddress,
   mockContactWithMultipleAddresses,
   mockMeContact,
@@ -21,6 +20,7 @@ import {
   FEATURE_TOUR_CTA,
   FEATURE_TOUR_ROW,
   holdDada,
+  mockStablecoinMadCatalog,
   mockFullAssetCatalog,
   renderPayTab,
   renderRequestReceive,
@@ -512,167 +512,27 @@ describe("PayTab integration", () => {
       ).not.toBeOnTheScreen();
     });
 
-    it("should open send with the saved contacts from the New tile", async () => {
-      const me = mockMeContact();
-      const withAddress = mockContactWithAddress({ id: "contact-0", name: "Contact 0" });
-      const alsoWithAddress = mockContactWithAddress({ id: "contact-1", name: "Contact 1" });
-      const address = withAddress.addresses[0];
+    it("should open Send through the stablecoin MAD from the New tile", async () => {
+      mockStablecoinMadCatalog();
       const { user, store } = renderPayTab({
-        contacts: [me, withAddress, alsoWithAddress],
+        contacts: [mockMeContact()],
         contactsEnabled: true,
-        cryptoOnly: true,
+        holdsUsdc: true,
       });
 
       await user.press(await screen.findByRole("button", { name: "New" }));
-
-      expect(await screen.findByTestId("pay-select-contact")).toBeVisible();
-      expect(screen.getByText("Send")).toBeVisible();
-      expect(screen.getByPlaceholderText("Enter contact")).toBeVisible();
-      expect(await screen.findByTestId("pay-select-contact-list")).toBeVisible();
-      expect(screen.getByText(me.name)).toBeVisible();
-      expect(screen.getByText("Contact 0")).toBeVisible();
-      expect(screen.getByText("Contact 1")).toBeVisible();
-      expect(store.getState().modularDrawer.isOpen).toBe(false);
-
-      await user.press(screen.getByText("Contact 0"));
-      expect(await screen.findByText("Select Contact 0's address")).toBeVisible();
-      await user.press(screen.getByLabelText(`${address.label}, ${address.address}`));
-
-      expect(store.getState().modularDrawer).toMatchObject({
-        isOpen: true,
-        flow: "send",
-        source: "pay",
-        preselectedCurrencies: [address.currencyId],
-      });
-
-      await user.press(await screen.findByTestId("asset-item-ETH"));
-      await user.press(await screen.findByTestId("account-item"));
-
-      expect(await screen.findByTestId("disabled-amount-continue-button")).toBeVisible();
-      expect(
-        within(screen.getByTestId("recipient-contact-row")).getByText("Contact 0"),
-      ).toBeVisible();
-
-      await user.press(screen.getByLabelText("Back"));
-
-      expect(await screen.findByTestId("pay-select-contact")).toBeVisible();
-      expect(store.getState().modularDrawer.isOpen).toBe(false);
-    });
-
-    it("should open send with Me from the New contact list", async () => {
-      const address = mockContactAddress({ id: "address-me-ethereum" });
-      const me = mockMeContact({ addresses: [address] });
-      const { user, store } = renderPayTab({
-        contacts: [me],
-        contactsEnabled: true,
-        cryptoOnly: true,
-      });
-
-      await user.press(await screen.findByRole("button", { name: "New" }));
-
-      expect(await screen.findByText("Me")).toBeVisible();
-      await user.press(screen.getByText("Me"));
-      expect(await screen.findByText("Select Me's address")).toBeVisible();
-      await user.press(screen.getByLabelText(`${address.label}, ${address.address}`));
 
       expect(store.getState().modularDrawer).toMatchObject({
         isOpen: true,
         flow: "send",
         source: SEND_FLOW_SOURCE.PAY,
-        preselectedCurrencies: [address.currencyId],
+        categories: [AssetCategory.Stablecoins],
       });
-    });
+      await user.press(await screen.findByTestId("asset-item-USDC"));
+      await user.press(await screen.findByTestId("network-item-Ethereum"));
+      await user.press(await screen.findByTestId("account-item"));
 
-    it("should open send from New when some contacts have no address", async () => {
-      const withAddress = mockContactWithAddress({ id: "contact-yana", name: "Yana" });
-      const withoutAddress = mockContact({ id: "contact-rosa", name: "Rosa" });
-      const { user } = renderPayTab({
-        contacts: [mockMeContact(), withAddress, withoutAddress],
-        contactsEnabled: true,
-      });
-
-      await user.press(await screen.findByRole("button", { name: "New" }));
-
-      expect(await screen.findByTestId("pay-select-contact-list")).toBeVisible();
-      expect(screen.getByText("Yana")).toBeVisible();
-      expect(screen.getByText("Rosa")).toBeVisible();
-      expect(screen.queryByText("My addresses")).not.toBeOnTheScreen();
-
-      await user.type(screen.getByPlaceholderText("Enter contact"), "ros");
-
-      expect(screen.getByText("Rosa")).toBeVisible();
-      expect(screen.queryByText("Yana")).not.toBeOnTheScreen();
-    });
-
-    it("should show no results and dismiss the keyboard before opening a searched contact", async () => {
-      const yana = mockContactWithAddress({ id: "contact-yana", name: "Yana" });
-      const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
-      const { user } = renderPayTab({
-        contacts: [mockMeContact(), yana],
-        contactsEnabled: true,
-      });
-
-      await user.press(await screen.findByRole("button", { name: "New" }));
-      const input = await screen.findByPlaceholderText("Enter contact");
-
-      await user.type(input, "Nobody");
-      expect(await screen.findByTestId("contacts-search-no-results")).toBeVisible();
-      expect(screen.getByText("No contact found")).toBeVisible();
-
-      await user.clear(input);
-      await user.type(input, "Yana");
-      await user.press(screen.getByText("Yana"));
-
-      expect(dismissKeyboard).toHaveBeenCalled();
-      expect(await screen.findByText("Select Yana's address")).toBeVisible();
-      dismissKeyboard.mockRestore();
-    });
-
-    it("should show Me in the select-contact screen when there is no one else to pay", async () => {
-      const { user, store } = renderPayTab({
-        contacts: [mockMeContact()],
-        contactsEnabled: true,
-      });
-
-      await user.press(await screen.findByRole("button", { name: "New" }));
-
-      expect(await screen.findByTestId("pay-select-contact")).toBeVisible();
-      expect(screen.getByText("Send")).toBeVisible();
-      expect(await screen.findByPlaceholderText("Enter contact")).toBeVisible();
-      expect(screen.getByText("Me")).toBeVisible();
-      expect(screen.queryByTestId("send-recipient-empty-contacts-state")).not.toBeOnTheScreen();
-      expect(screen.queryByRole("button", { name: "Add contact" })).not.toBeOnTheScreen();
-      expect(screen.queryByText("My addresses")).not.toBeOnTheScreen();
-      expect(store.getState().modularDrawer.isOpen).toBe(false);
-    });
-
-    it("should go back to Pay from the select-contact screen", async () => {
-      const { user } = renderPayTab({
-        contacts: [mockMeContact()],
-        contactsEnabled: true,
-      });
-
-      await user.press(await screen.findByRole("button", { name: "New" }));
-      expect(await screen.findByTestId("pay-select-contact")).toBeVisible();
-
-      await user.press(screen.getByLabelText("Back"));
-
-      expect(await screen.findByTestId("paytab-screen")).toBeVisible();
-    });
-
-    it("should open send from New when no contact has an address", async () => {
-      const { user, store } = renderPayTab({
-        contacts: seedContacts(2),
-        contactsEnabled: true,
-      });
-
-      await user.press(await screen.findByRole("button", { name: "New" }));
-
-      expect(await screen.findByTestId("pay-select-contact-list")).toBeVisible();
-      expect(screen.getByText("Contact 0")).toBeVisible();
-      expect(screen.getByText("Contact 1")).toBeVisible();
-      expect(screen.queryByText("My addresses")).not.toBeOnTheScreen();
-      expect(store.getState().modularDrawer.isOpen).toBe(false);
+      expect(await screen.findByTestId("recipient-input")).toBeVisible();
     });
 
     it("should open the address sheet then MAD from see-all", async () => {
@@ -713,7 +573,6 @@ describe("PayTab integration", () => {
 
       expect(await screen.findByTestId("contacts-screen")).toBeVisible();
       expect(screen.getByText("My addresses")).toBeVisible();
-      expect(screen.queryByTestId("pay-select-contact")).not.toBeOnTheScreen();
       expect(store.getState().appstate.isMainNavigatorVisible).toBe(false);
     });
 

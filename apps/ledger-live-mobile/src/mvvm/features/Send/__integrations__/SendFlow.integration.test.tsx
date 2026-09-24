@@ -512,6 +512,36 @@ describe("Send flow integration tests", () => {
     expect(await screen.findByText("Add address")).toBeVisible();
   });
 
+  it("should show the contact list with an empty search when going back after picking a contact", async () => {
+    const vincent = mockContact({
+      id: "contact-vincent-back",
+      name: "Vincent",
+      addresses: [
+        mockContactAddress({
+          id: "address-vincent-back-eth",
+          currencyId: "ethereum",
+          label: "Ethereum Main",
+          address: VALID_ETHEREUM_RECIPIENT,
+        }),
+      ],
+    });
+    const { user } = renderForAccount(
+      accountEthereum,
+      {},
+      { contactsEnabled: true, contacts: [vincent] },
+    );
+
+    await user.press(await screen.findByTestId("contacts-compact-row-contact-vincent-back"));
+    await user.press(await screen.findByLabelText("Ethereum Main, " + VALID_ETHEREUM_RECIPIENT));
+    expect(await screen.findByText("Review")).toBeVisible();
+
+    await user.press(screen.getByLabelText("Back"));
+
+    expect(await screen.findByTestId("recipient-input")).toHaveDisplayValue("");
+    expect(screen.queryByTestId("send-recipient-card")).not.toBeOnTheScreen();
+    expect(screen.getByTestId("contacts-compact-row-contact-vincent-back")).toBeVisible();
+  });
+
   it("should keep the send title when the address sheet is open", async () => {
     const vincent = mockContact({
       id: "contact-vincent-header",

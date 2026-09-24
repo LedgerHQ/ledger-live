@@ -24,10 +24,10 @@ export function CardDetailsSheet({
   const isPending =
     scene.route.name === "freeze" && scene.freeze.viewModel.confirmState === "pending";
   const isOverview = scene.route.name === "overview";
-  // react-native-draggable-flatlist owns its own scrolling FlatList — nesting it inside the
-  // shared BottomSheetScrollView below is the classic FlatList-in-a-ScrollView anti-pattern
-  // (virtualization + gesture conflicts), so this one scene gets a plain, non-scrolling
-  // container instead and lets the list scroll itself.
+  // The manage scene reorders rows by dragging them, which needs both of the sheet's own vertical
+  // gestures out of the way: the BottomSheetScrollView below would claim the drag as a scroll, and
+  // the content panning gesture would claim it as a sheet drag. It gets a plain container and
+  // keeps only the handle as a way to pan the sheet.
   const isAssetsManage = scene.route.name === "assetsManage";
   const { sizing, hasBackButton } = CARD_DETAILS_SCENES[scene.route.name];
   const canGoBack = hasBackButton && !isPending;
@@ -57,6 +57,7 @@ export function CardDetailsSheet({
       noCloseButton={isPending}
       preventBackdropClick={isPending}
       enablePanDownToClose={!isPending}
+      enableContentPanningGesture={!isAssetsManage}
       // Show more leaves for the host's transaction history, and the sheet is expected back when
       // the user returns: a screen losing focus must not read as the user closing the sheet.
       restoreOnFocus

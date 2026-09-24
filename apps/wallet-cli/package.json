@@ -83,6 +83,7 @@
     "@oxlint/binding-linux-x64-gnu": "1.51.0",
     "@oxlint/binding-win32-x64-msvc": "1.51.0",
     "@segment/analytics-node": "3.1.0",
+    "@shared/analytics": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/schema-primitives": "workspace:^",
     "@types/debug": "4.1.12",
