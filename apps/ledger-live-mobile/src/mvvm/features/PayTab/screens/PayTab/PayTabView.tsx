@@ -1,7 +1,12 @@
 import React from "react";
 import { Card, type CardProps } from "@features/flow-pay-card";
 import { FeatureTour } from "@features/flow-pay-feature-tour";
-import { Balance, type ActionTilesProps, type BalanceData } from "@features/flow-pay-balance";
+import {
+  ActionTiles,
+  Balance,
+  type ActionTilesProps,
+  type BalanceData,
+} from "@features/flow-pay-balance";
 import { BankTransferIntro, type BankTransferIntroProps } from "@features/flow-pay-bank-transfer";
 import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
 import {
@@ -12,6 +17,7 @@ import {
 } from "@features/flow-pay-contact";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Wallet40Background, useScrollOffset } from "LLM/components/Wallet40Background";
+import { ScreenHeroSectionView } from "LLM/components/ScreenHeroSection/ScreenHeroSectionView";
 import { TrackScreen } from "~/analytics";
 import Animated from "react-native-reanimated";
 
@@ -59,16 +65,18 @@ export function PayTabView({
           paddingBottom: bottom + 16,
         }}
       >
-        <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
-          <TrackScreen
-            category="Pay"
-            balanceFilter={
-              balance.filterOptions
-                .find(option => option.id === balance.filter)
-                ?.ticker?.toLowerCase() ?? balance.filter
-            }
-          />
-          <Balance {...balance} actionTiles={actionTiles} />
+        <TrackScreen
+          category="Pay"
+          balanceFilter={
+            balance.filterOptions
+              .find(option => option.id === balance.filter)
+              ?.ticker?.toLowerCase() ?? balance.filter
+          }
+        />
+        <ScreenHeroSectionView ctas={<ActionTiles {...actionTiles} />}>
+          <Balance {...balance} />
+        </ScreenHeroSectionView>
+        <Box lx={{ gap: "s24", paddingHorizontal: "s16", marginTop: "s24" }}>
           {isContactsEnabled && <Contacts {...contacts} />}
           {trackRecipientAddressSelection && (
             <TrackScreen category="Recipient address selection" refreshSource={false} />

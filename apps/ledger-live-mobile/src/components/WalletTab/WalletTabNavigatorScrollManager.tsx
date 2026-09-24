@@ -3,7 +3,8 @@ import { FlatList, ScrollView } from "react-native";
 import { useSharedValue, type SharedValue } from "react-native-reanimated";
 
 const tabBarHeight = 56;
-const headerHeight = 48;
+export const WALLET_TAB_HEADER_HEIGHT = 48;
+const headerHeight = WALLET_TAB_HEADER_HEIGHT;
 
 interface WalletTabNavigatorScrollContextData {
   scrollY: SharedValue<number>;
