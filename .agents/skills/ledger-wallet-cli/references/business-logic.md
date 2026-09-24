@@ -49,3 +49,9 @@ The Claude Code sandbox blocks USB syscalls by default, so any wallet-cli comman
 ## Device contention
 
 The USB HID channel to a Ledger device does not multiplex. Two concurrent wallet-cli processes will both try to drive the secure channel and corrupt each other's APDU exchange. This applies even to seemingly read-only flows like `genuine-check`, which opens the secure channel just like signing flows do.
+
+---
+
+## Solana stake minimum
+
+Each Solana stake account must delegate at least the network minimum (`getStakeMinimumDelegation`, currently 1 SOL on mainnet). Creating one also locks the stake account rent (~0.0017 SOL) and a fee reserve for this transaction and the later undelegate and withdraw, on top of the SOL the account already holds back (its own rent reserve and the unstake fees for existing stakes). An account that holds only about 1 SOL cannot `earn deposit` on Solana at any amount, so do not retry smaller amounts: the error states the minimum, the max stakeable amount, and how much more SOL the account needs.
