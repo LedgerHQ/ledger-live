@@ -5,7 +5,17 @@ import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { Readable } from "node:stream";
 import { YAML } from "bun";
-import { runCli, type RunResult } from "../../testing/cli-runner";
+import type { ApiAuthKeychain } from "../../key-ring/api-auth-identity";
+import { APP_NAME } from "../../session/session-store";
+import {
+  runCli,
+  storedApiAuthPubkey,
+  useApiAuthKeychain,
+  type RunResult,
+} from "../../testing/cli-runner";
+import { makeSessionDir } from "../../testing/session-fixture";
+import { ETH_DESCRIPTOR } from "../../testing/constants";
+import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
 
 function runCliWithStdin(
   args: string[],
@@ -334,6 +344,73 @@ describe("ring — with password", () => {
   it("keys exits 1 after destroy", async () => {
     const r = await runCli(["ring", "keys"], env);
     expect(r.exitCode).toBe(1);
+  });
+});
+
+describe("ring — the API auth key stays separate from a password-protected ring", () => {
+  const { server, quoteSignature } = makeAuthenticatedQuoteServer();
+  const accounts = [{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }];
+  const fixture = makeSessionDir(accounts);
+  // Same mocked keychain as the ring key, so a teardown that deleted the API auth key would show.
+  const sharedKeychain: ApiAuthKeychain = {
+    getPassword: account => _store.get(`${APP_NAME}:${account}`) ?? null,
+    setPassword: (account, value) => {
+      _store.set(`${APP_NAME}:${account}`, value);
+    },
+  };
+
+  beforeAll(async () => {
+    _store.clear();
+    useApiAuthKeychain(sharedKeychain);
+    server.start();
+    const init = await runCli(["ring", "init", "--name", "auth-member"], {
+      ...fixture.env,
+      ...MOCK_ENV_DMK,
+      WALLET_PASS: "testpw",
+    });
+    expect(init.exitCode, init.stderr).toBe(0);
+  });
+
+  afterAll(() => {
+    useApiAuthKeychain(null);
+    server.stop();
+    fixture.cleanup();
+  });
+
+  it("authenticates swap requests without the ring password or its trustchain", async () => {
+    const signature = await quoteSignature(fixture.env);
+
+    expect(signature.attestation).toBeUndefined();
+    expect(await storedApiAuthPubkey(fixture.env)).toBe(signature.credential.publicKey);
+  });
+
+  it("keeps the same API auth key after ring destroy", async () => {
+    const before = (await quoteSignature(fixture.env)).credential.publicKey;
+
+    const destroy = await runCliWithStdin(
+      ["ring", "destroy"],
+      { ...fixture.env, ...MOCK_ENV, WALLET_PASS: "testpw" },
+      ["destroy"],
+    );
+    expect(destroy.exitCode, destroy.stderr).toBe(0);
+
+    expect(await storedApiAuthPubkey(fixture.env)).toBe(before);
+    expect((await quoteSignature(fixture.env)).credential.publicKey).toBe(before);
+  });
+
+  it("keeps the same API auth key after session reset", async () => {
+    const before = (await quoteSignature(fixture.env)).credential.publicKey;
+
+    const reset = await runCli(["session", "reset"], fixture.env);
+    expect(reset.exitCode, reset.stderr).toBe(0);
+    expect(await storedApiAuthPubkey(fixture.env)).toBe(before);
+
+    // Reset empties the accounts, so re-add the one the quote needs.
+    writeFileSync(
+      join(fixture.env.XDG_STATE_HOME, APP_NAME, "session.yaml"),
+      YAML.stringify({ accounts }),
+    );
+    expect((await quoteSignature(fixture.env)).credential.publicKey).toBe(before);
   });
 });
 
