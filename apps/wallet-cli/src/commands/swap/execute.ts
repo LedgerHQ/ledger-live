@@ -183,7 +183,7 @@ export async function executeSwapCommand({
     context = await resolveSwapExecuteContext();
   } catch (err) {
     const { name, cause } = getErrorDetails(err);
-    trackSwapFailed({
+    await trackSwapFailed({
       flowId,
       fromCurrency: flags.from,
       toCurrency: flags.to,
@@ -193,7 +193,7 @@ export async function executeSwapCommand({
   }
   const { fromDescriptor, fromCurrency, toCurrency, provider } = context;
 
-  trackSwapSimulated({
+  await trackSwapSimulated({
     flowId,
     fromCurrency: flags.from,
     toCurrency: flags.to,

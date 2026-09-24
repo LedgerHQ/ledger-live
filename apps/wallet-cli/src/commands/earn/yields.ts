@@ -47,7 +47,7 @@ export default defineCommand({
     });
 
     await out.run(async () => {
-      trackEarnYieldsRequested({ network: trackedNetwork });
+      await trackEarnYieldsRequested({ network: trackedNetwork });
 
       const session = await Session.read();
       const rows = await listEarnYieldRows({
@@ -58,7 +58,7 @@ export default defineCommand({
         accountLabel: flags.account,
       });
 
-      trackEarnYieldsReturned({ network: trackedNetwork, rowsCount: rows.length });
+      await trackEarnYieldsReturned({ network: trackedNetwork, rowsCount: rows.length });
       out.earnYields(rows);
     });
   },

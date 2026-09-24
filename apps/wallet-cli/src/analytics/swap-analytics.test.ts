@@ -15,7 +15,7 @@ type TrackCall = { event: string; properties?: Record<string, unknown> | null };
 
 const trackCalls: TrackCall[] = [];
 
-const trackSpy = spyOn(segment, "track").mockImplementation((event, properties) => {
+const trackSpy = spyOn(segment, "track").mockImplementation(async (event, properties) => {
   trackCalls.push({ event, properties });
 });
 
@@ -29,8 +29,8 @@ describe("swap analytics", () => {
   });
 
   describe("trackSwapCompleted", () => {
-    it("should call segment.track with swap_completed event including provider", () => {
-      trackSwapCompleted({
+    it("should call segment.track with swap_completed event including provider", async () => {
+      await trackSwapCompleted({
         flowId: "flow-123",
         fromCurrency: "BTC",
         toCurrency: "ETH",
@@ -51,8 +51,8 @@ describe("swap analytics", () => {
       });
     });
 
-    it("should forward provider field to segment.track", () => {
-      trackSwapCompleted({
+    it("should forward provider field to segment.track", async () => {
+      await trackSwapCompleted({
         flowId: "flow-456",
         fromCurrency: "ETH",
         toCurrency: "USDC",
@@ -63,8 +63,8 @@ describe("swap analytics", () => {
       expect(trackCalls[0].properties).toMatchObject({ provider: "thorswap" });
     });
 
-    it("should omit toAmount when not provided", () => {
-      trackSwapCompleted({
+    it("should omit toAmount when not provided", async () => {
+      await trackSwapCompleted({
         flowId: "flow-789",
         fromCurrency: "ETH",
         toCurrency: "USDC",
@@ -77,8 +77,8 @@ describe("swap analytics", () => {
   });
 
   describe("trackSwapQuoteRequested", () => {
-    it("should call segment.track with swapquote_requested event", () => {
-      trackSwapQuoteRequested({
+    it("should call segment.track with swapquote_requested event", async () => {
+      await trackSwapQuoteRequested({
         flowId: "flow-1",
         fromCurrency: "BTC",
         toCurrency: "ETH",
@@ -95,8 +95,8 @@ describe("swap analytics", () => {
   });
 
   describe("trackSwapQuoteReturned", () => {
-    it("should call segment.track with swapquote_returned event", () => {
-      trackSwapQuoteReturned({
+    it("should call segment.track with swapquote_returned event", async () => {
+      await trackSwapQuoteReturned({
         flowId: "flow-1",
         fromCurrency: "BTC",
         toCurrency: "ETH",
@@ -109,8 +109,8 @@ describe("swap analytics", () => {
   });
 
   describe("trackSwapSimulated", () => {
-    it("should call segment.track with swap_simulated event including provider", () => {
-      trackSwapSimulated({
+    it("should call segment.track with swap_simulated event including provider", async () => {
+      await trackSwapSimulated({
         flowId: "flow-1",
         fromCurrency: "BTC",
         toCurrency: "ETH",
@@ -123,8 +123,8 @@ describe("swap analytics", () => {
   });
 
   describe("trackSwapFailed", () => {
-    it("should call segment.track with swap_failed event", () => {
-      trackSwapFailed({
+    it("should call segment.track with swap_failed event", async () => {
+      await trackSwapFailed({
         flowId: "flow-1",
         fromCurrency: "BTC",
         toCurrency: "ETH",
@@ -137,8 +137,8 @@ describe("swap analytics", () => {
   });
 
   describe("trackSwapStarted", () => {
-    it("should call segment.track with swap_started event including provider", () => {
-      trackSwapStarted({
+    it("should call segment.track with swap_started event including provider", async () => {
+      await trackSwapStarted({
         flowId: "flow-1",
         fromCurrency: "BTC",
         toCurrency: "ETH",
@@ -155,8 +155,8 @@ describe("swap analytics", () => {
   });
 
   describe("trackSwapRejected", () => {
-    it("should call segment.track with swap_rejected event", () => {
-      trackSwapRejected({
+    it("should call segment.track with swap_rejected event", async () => {
+      await trackSwapRejected({
         flowId: "flow-1",
         fromCurrency: "BTC",
         toCurrency: "ETH",
@@ -172,8 +172,8 @@ describe("swap analytics", () => {
   });
 
   describe("trackSwapStatusPolled", () => {
-    it("should call segment.track with swapstatus_polled event including provider", () => {
-      trackSwapStatusPolled({
+    it("should call segment.track with swapstatus_polled event including provider", async () => {
+      await trackSwapStatusPolled({
         flowId: "flow-1",
         swapId: "swap-abc",
         provider: "changelly",

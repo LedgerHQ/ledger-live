@@ -58,10 +58,18 @@ describe("withTracking", () => {
     const events: string[] = [];
     const result = await withTracking(
       {
-        onStart: () => events.push("start"),
-        onSuccess: r => events.push(`success:${r}`),
-        onRejected: () => events.push("rejected"),
-        onFailed: () => events.push("failed"),
+        onStart: () => {
+          events.push("start");
+        },
+        onSuccess: r => {
+          events.push(`success:${r}`);
+        },
+        onRejected: () => {
+          events.push("rejected");
+        },
+        onFailed: () => {
+          events.push("failed");
+        },
       },
       async () => "value",
     );
@@ -74,9 +82,15 @@ describe("withTracking", () => {
     const events: string[] = [];
     const promise = withTracking(
       {
-        onStart: () => events.push("start"),
-        onRejected: () => events.push("rejected"),
-        onFailed: () => events.push("failed"),
+        onStart: () => {
+          events.push("start");
+        },
+        onRejected: () => {
+          events.push("rejected");
+        },
+        onFailed: () => {
+          events.push("failed");
+        },
       },
       async () => {
         throw rejection();
@@ -92,8 +106,12 @@ describe("withTracking", () => {
     const failed: Array<{ errorCode: string; errorMessage: string }> = [];
     const promise = withTracking(
       {
-        onRejected: () => failed.push({ errorCode: "should-not-happen", errorMessage: "" }),
-        onFailed: (_e, info) => failed.push(info),
+        onRejected: () => {
+          failed.push({ errorCode: "should-not-happen", errorMessage: "" });
+        },
+        onFailed: (_e, info) => {
+          failed.push(info);
+        },
       },
       async () => {
         throw new Error(`built for wallet ${EVM_ADDRESS}`);
@@ -109,7 +127,11 @@ describe("withTracking", () => {
   it("routes a device rejection to onFailed when no onRejected handler is provided", async () => {
     const events: string[] = [];
     const promise = withTracking(
-      { onFailed: (_e, info) => events.push(`failed:${info.errorCode}`) },
+      {
+        onFailed: (_e, info) => {
+          events.push(`failed:${info.errorCode}`);
+        },
+      },
       async () => {
         throw rejection();
       },

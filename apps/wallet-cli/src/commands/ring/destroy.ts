@@ -143,18 +143,18 @@ async function destroyStrayKey(session: Session, out: CommandOutput): Promise<vo
     throw new Error("Nothing to destroy — Ledger Key Ring is not initialized.");
   }
   if (!(await confirmDestroy())) {
-    trackRingDestroyCancelled();
+    await trackRingDestroyCancelled();
     out.ringDestroyCancelled();
     return;
   }
-  trackRingDestroyStarted({ passwordProtected: false });
+  await trackRingDestroyStarted({ passwordProtected: false });
   const localWiped = deletePrivateKey();
   if (localWiped) {
     session.wipeRing();
     session.write();
   }
   out.ringDestroy({ remoteSucceeded: false, trustchainDestroyed: false, localWiped });
-  trackRingDestroyCompleted({
+  await trackRingDestroyCompleted({
     remoteSucceeded: false,
     trustchainDestroyed: false,
     localWiped,
@@ -183,11 +183,11 @@ export default defineCommand({
 
       const confirmed = await confirmDestroy();
       if (!confirmed) {
-        trackRingDestroyCancelled();
+        await trackRingDestroyCancelled();
         out.ringDestroyCancelled();
         return;
       }
-      trackRingDestroyStarted({ passwordProtected: !!session.passwordSalt });
+      await trackRingDestroyStarted({ passwordProtected: !!session.passwordSalt });
 
       const creds = await loadDestroyCredentials(session);
       if (creds.status === "abort") {
@@ -244,7 +244,7 @@ export default defineCommand({
         session.write();
       }
       out.ringDestroy({ remoteSucceeded, trustchainDestroyed, localWiped, memberEjected });
-      trackRingDestroyCompleted({
+      await trackRingDestroyCompleted({
         remoteSucceeded,
         trustchainDestroyed,
         localWiped,

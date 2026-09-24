@@ -5,20 +5,23 @@ const RECEIVE = "Account - Receive";
 const BALANCES = "Account - Balances";
 const OPERATIONS = "Account - Operations";
 
-export function trackDiscoveryStarted(p: { networks: string[]; device?: string }): void {
-  track("discovery_started", {
+export async function trackDiscoveryStarted(p: {
+  networks: string[];
+  device?: string;
+}): Promise<void> {
+  await track("discovery_started", {
     page: DISCOVER,
     networks: p.networks,
     device: p.device,
   });
 }
 
-export function trackDiscoveryCompleted(p: {
+export async function trackDiscoveryCompleted(p: {
   networks: string[];
   accountsCount: number;
   device?: string;
-}): void {
-  track("discovery_completed", {
+}): Promise<void> {
+  await track("discovery_completed", {
     page: DISCOVER,
     networks: p.networks,
     accountsCount: p.accountsCount,
@@ -26,8 +29,11 @@ export function trackDiscoveryCompleted(p: {
   });
 }
 
-export function trackAddressResolved(p: { network: string; deviceRequired: boolean }): void {
-  track("address_resolved", {
+export async function trackAddressResolved(p: {
+  network: string;
+  deviceRequired: boolean;
+}): Promise<void> {
+  await track("address_resolved", {
     page: RECEIVE,
     network: p.network,
     deviceRequired: p.deviceRequired,
@@ -36,19 +42,19 @@ export function trackAddressResolved(p: { network: string; deviceRequired: boole
 
 // Exception: balance_viewed / operation_viewed are kept as track events (not Page events) because they
 // are in-context impressions rather than new screen loads. Documented exception to the *_viewed convention.
-export function trackBalanceViewed(p: { network: string }): void {
-  track("balance_viewed", {
+export async function trackBalanceViewed(p: { network: string }): Promise<void> {
+  await track("balance_viewed", {
     page: BALANCES,
     network: p.network,
   });
 }
 
-export function trackOperationViewed(p: {
+export async function trackOperationViewed(p: {
   network: string;
   limit?: number;
   cursor?: string;
-}): void {
-  track("operation_viewed", {
+}): Promise<void> {
+  await track("operation_viewed", {
     page: OPERATIONS,
     network: p.network,
     limit: p.limit,

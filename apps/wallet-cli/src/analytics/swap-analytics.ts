@@ -9,13 +9,13 @@ export function swapFlowId(): string {
   return randomUUID();
 }
 
-export function trackSwapQuoteRequested(p: {
+export async function trackSwapQuoteRequested(p: {
   flowId: string;
   fromCurrency: string;
   toCurrency: string;
   deviceRequired?: boolean;
-}): void {
-  track("swapquote_requested", {
+}): Promise<void> {
+  await track("swapquote_requested", {
     page: QUOTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
@@ -24,13 +24,13 @@ export function trackSwapQuoteRequested(p: {
   });
 }
 
-export function trackSwapQuoteReturned(p: {
+export async function trackSwapQuoteReturned(p: {
   flowId: string;
   fromCurrency: string;
   toCurrency: string;
   providersCount: number;
-}): void {
-  track("swapquote_returned", {
+}): Promise<void> {
+  await track("swapquote_returned", {
     page: QUOTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
@@ -39,13 +39,13 @@ export function trackSwapQuoteReturned(p: {
   });
 }
 
-export function trackSwapSimulated(p: {
+export async function trackSwapSimulated(p: {
   flowId: string;
   fromCurrency: string;
   toCurrency: string;
   provider: string;
-}): void {
-  track("swap_simulated", {
+}): Promise<void> {
+  await track("swap_simulated", {
     page: EXECUTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
@@ -54,13 +54,13 @@ export function trackSwapSimulated(p: {
   });
 }
 
-export function trackSwapFailed(p: {
+export async function trackSwapFailed(p: {
   flowId: string;
   fromCurrency: string;
   toCurrency: string;
   errorCode: string;
-}): void {
-  track("swap_failed", {
+}): Promise<void> {
+  await track("swap_failed", {
     page: EXECUTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
@@ -69,14 +69,14 @@ export function trackSwapFailed(p: {
   });
 }
 
-export function trackSwapStarted(p: {
+export async function trackSwapStarted(p: {
   flowId: string;
   fromCurrency: string;
   toCurrency: string;
   provider: string;
   feeStrategy: string;
-}): void {
-  track("swap_started", {
+}): Promise<void> {
+  await track("swap_started", {
     page: EXECUTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
@@ -86,15 +86,15 @@ export function trackSwapStarted(p: {
   });
 }
 
-export function trackSwapCompleted(p: {
+export async function trackSwapCompleted(p: {
   flowId: string;
   fromCurrency: string;
   toCurrency: string;
   provider: string;
   fromAmount: string;
   toAmount?: string;
-}): void {
-  track("swap_completed", {
+}): Promise<void> {
+  await track("swap_completed", {
     page: EXECUTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
@@ -105,13 +105,13 @@ export function trackSwapCompleted(p: {
   });
 }
 
-export function trackSwapRejected(p: {
+export async function trackSwapRejected(p: {
   flowId: string;
   fromCurrency: string;
   toCurrency: string;
   device?: string;
-}): void {
-  track("swap_rejected", {
+}): Promise<void> {
+  await track("swap_rejected", {
     page: EXECUTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
@@ -120,12 +120,12 @@ export function trackSwapRejected(p: {
   });
 }
 
-export function trackSwapStatusPolled(p: {
+export async function trackSwapStatusPolled(p: {
   flowId: string;
   swapId: string;
   provider: string;
-}): void {
-  track("swapstatus_polled", {
+}): Promise<void> {
+  await track("swapstatus_polled", {
     page: STATUS,
     flowId: p.flowId,
     swapId: p.swapId,

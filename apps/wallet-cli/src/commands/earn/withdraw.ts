@@ -62,7 +62,7 @@ export default defineCommand({
 
       const result = await withTracking(
         {
-          onStart: () =>
+          onStart: async () =>
             trackEarnWithdrawStarted({
               family,
               network,
@@ -72,15 +72,15 @@ export default defineCommand({
               finalize: flags.finalize,
               dryRun,
             }),
-          onSuccess: r =>
+          onSuccess: async r =>
             trackEarnWithdrawCompleted({
               family: r.family,
               network: r.network,
               status: r.status,
               transactionsCount: r.transactions.length,
             }),
-          onRejected: () => trackEarnWithdrawRejected({ network }),
-          onFailed: (_error, info) => trackEarnWithdrawFailed(info),
+          onRejected: async () => trackEarnWithdrawRejected({ network }),
+          onFailed: async (_error, info) => trackEarnWithdrawFailed(info),
         },
         () =>
           adapter.withdraw({

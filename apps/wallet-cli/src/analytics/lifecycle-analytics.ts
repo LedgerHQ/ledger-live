@@ -8,8 +8,8 @@ const HELP = "Help";
 
 // Exception: help_viewed is kept as a track event (not a Page event) because it is an
 // in-context impression rather than a new screen load. Documented exception to the *_viewed convention.
-function trackHelpViewed(p: { command?: string } = {}): void {
-  track("help_viewed", { page: HELP, ...(p.command ? { command: p.command } : {}) });
+async function trackHelpViewed(p: { command?: string } = {}): Promise<void> {
+  await track("help_viewed", { page: HELP, ...(p.command ? { command: p.command } : {}) });
 }
 
 function isHelpRequested(argv: string[]): boolean {
@@ -24,8 +24,8 @@ function getErrorName(error: unknown): string {
   return resolveErrorName(error) ?? "unknown";
 }
 
-function trackCommandInvoked(command: string, argv: string[]): void {
-  track("command_invoked", {
+async function trackCommandInvoked(command: string, argv: string[]): Promise<void> {
+  await track("command_invoked", {
     page: command,
     command,
     dryRun: argv.includes("--dry-run"),
@@ -35,12 +35,16 @@ function trackCommandInvoked(command: string, argv: string[]): void {
   });
 }
 
-function trackCommandCompleted(command: string, durationMs: number): void {
-  track("command_completed", { page: command, durationMs });
+async function trackCommandCompleted(command: string, durationMs: number): Promise<void> {
+  await track("command_completed", { page: command, durationMs });
 }
 
-function trackCommandFailed(command: string, durationMs: number, error: unknown): void {
-  track("command_failed", { page: command, durationMs, errorName: getErrorName(error) });
+async function trackCommandFailed(
+  command: string,
+  durationMs: number,
+  error: unknown,
+): Promise<void> {
+  await track("command_failed", { page: command, durationMs, errorName: getErrorName(error) });
 }
 
 /**
@@ -56,11 +60,11 @@ export async function withCommandLifecycleAnalytics(
   const command = parseCommand(argv);
 
   if (isHelpRequested(argv)) {
-    trackHelpViewed(command ? { command } : {});
+    await trackHelpViewed(command ? { command } : {});
   }
 
   const startedAt = Date.now();
-  if (command) trackCommandInvoked(command, argv);
+  if (command) await trackCommandInvoked(command, argv);
 
   let exitCode = 0;
   let failure: unknown;
@@ -73,8 +77,8 @@ export async function withCommandLifecycleAnalytics(
 
   if (command) {
     const durationMs = Date.now() - startedAt;
-    if (exitCode === 0) trackCommandCompleted(command, durationMs);
-    else trackCommandFailed(command, durationMs, failure);
+    if (exitCode === 0) await trackCommandCompleted(command, durationMs);
+    else await trackCommandFailed(command, durationMs, failure);
   }
 
   if (failure && getCliProcessExitCode(failure) === null) throw failure;

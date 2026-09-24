@@ -12,30 +12,30 @@ const DESTROY = "Ring - Destroy";
 type IoSource = "file" | "stdin";
 type IoDest = "file" | "stdout";
 
-export function trackRingInitStarted(p: {
+export async function trackRingInitStarted(p: {
   passwordProtected: boolean;
   usedCustomName: boolean;
-}): void {
-  track("ringinit_started", {
+}): Promise<void> {
+  await track("ringinit_started", {
     page: INIT,
     passwordProtected: p.passwordProtected,
     usedCustomName: p.usedCustomName,
   });
 }
 
-export function trackRingInitCompleted(p: { passwordProtected: boolean }): void {
-  track("ringinit_completed", {
+export async function trackRingInitCompleted(p: { passwordProtected: boolean }): Promise<void> {
+  await track("ringinit_completed", {
     page: INIT,
     passwordProtected: p.passwordProtected,
   });
 }
 
-export function trackRingEncrypt(p: {
+export async function trackRingEncrypt(p: {
   inputSource: IoSource;
   outputDest: IoDest;
   newKey: boolean;
-}): void {
-  track("ring_encrypted", {
+}): Promise<void> {
+  await track("ring_encrypted", {
     page: ENCRYPT,
     inputSource: p.inputSource,
     outputDest: p.outputDest,
@@ -43,8 +43,11 @@ export function trackRingEncrypt(p: {
   });
 }
 
-export function trackRingDecrypt(p: { inputSource: IoSource; outputDest: IoDest }): void {
-  track("ring_decrypted", {
+export async function trackRingDecrypt(p: {
+  inputSource: IoSource;
+  outputDest: IoDest;
+}): Promise<void> {
+  await track("ring_decrypted", {
     page: DECRYPT,
     inputSource: p.inputSource,
     outputDest: p.outputDest,
@@ -53,27 +56,27 @@ export function trackRingDecrypt(p: { inputSource: IoSource; outputDest: IoDest 
 
 // Exception: ringkeys_viewed is kept as a track event (not a Page event) because it is an
 // in-context impression rather than a new screen load. Documented exception to the *_viewed convention.
-export function trackRingKeysViewed(p: { keysCount: number }): void {
-  track("ringkeys_viewed", {
+export async function trackRingKeysViewed(p: { keysCount: number }): Promise<void> {
+  await track("ringkeys_viewed", {
     page: KEYS,
     keysCount: p.keysCount,
   });
 }
 
-export function trackRingDestroyStarted(p: { passwordProtected: boolean }): void {
-  track("ringdestroy_started", {
+export async function trackRingDestroyStarted(p: { passwordProtected: boolean }): Promise<void> {
+  await track("ringdestroy_started", {
     page: DESTROY,
     passwordProtected: p.passwordProtected,
   });
 }
 
-export function trackRingDestroyCompleted(p: {
+export async function trackRingDestroyCompleted(p: {
   remoteSucceeded: boolean;
   trustchainDestroyed: boolean;
   localWiped: boolean;
   recoveryWipe: boolean;
-}): void {
-  track("ringdestroy_completed", {
+}): Promise<void> {
+  await track("ringdestroy_completed", {
     page: DESTROY,
     remoteSucceeded: p.remoteSucceeded,
     trustchainDestroyed: p.trustchainDestroyed,
@@ -82,6 +85,6 @@ export function trackRingDestroyCompleted(p: {
   });
 }
 
-export function trackRingDestroyCancelled(): void {
-  track("ringdestroy_cancelled", { page: DESTROY });
+export async function trackRingDestroyCancelled(): Promise<void> {
+  await track("ringdestroy_cancelled", { page: DESTROY });
 }

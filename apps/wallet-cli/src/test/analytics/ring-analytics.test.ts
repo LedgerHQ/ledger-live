@@ -39,15 +39,15 @@ function assertNoPii(properties: Record<string, unknown> | null | undefined): vo
 
 describe("ring analytics", () => {
   beforeEach(() => {
-    trackSpy = spyOn(segment, "track").mockImplementation(() => {});
+    trackSpy = spyOn(segment, "track").mockImplementation(async () => {});
   });
 
   afterEach(() => {
     trackSpy.mockRestore();
   });
 
-  it("ringinit_started carries only non-PII booleans", () => {
-    trackRingInitStarted({ passwordProtected: true, usedCustomName: false });
+  it("ringinit_started carries only non-PII booleans", async () => {
+    await trackRingInitStarted({ passwordProtected: true, usedCustomName: false });
     expect(calls()).toHaveLength(1);
     expect(calls()[0][0]).toBe("ringinit_started");
     expect(calls()[0][1]).toEqual({
@@ -57,8 +57,8 @@ describe("ring analytics", () => {
     });
   });
 
-  it("ringinit_completed carries only the passwordProtected flag", () => {
-    trackRingInitCompleted({ passwordProtected: false });
+  it("ringinit_completed carries only the passwordProtected flag", async () => {
+    await trackRingInitCompleted({ passwordProtected: false });
     expect(calls()[0][0]).toBe("ringinit_completed");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Init",
@@ -66,8 +66,8 @@ describe("ring analytics", () => {
     });
   });
 
-  it("ring_encrypted carries only io enums and the newKey flag", () => {
-    trackRingEncrypt({ inputSource: "file", outputDest: "stdout", newKey: true });
+  it("ring_encrypted carries only io enums and the newKey flag", async () => {
+    await trackRingEncrypt({ inputSource: "file", outputDest: "stdout", newKey: true });
     expect(calls()[0][0]).toBe("ring_encrypted");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Encrypt",
@@ -77,8 +77,8 @@ describe("ring analytics", () => {
     });
   });
 
-  it("ring_decrypted carries only io enums", () => {
-    trackRingDecrypt({ inputSource: "stdin", outputDest: "file" });
+  it("ring_decrypted carries only io enums", async () => {
+    await trackRingDecrypt({ inputSource: "stdin", outputDest: "file" });
     expect(calls()[0][0]).toBe("ring_decrypted");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Decrypt",
@@ -87,8 +87,8 @@ describe("ring analytics", () => {
     });
   });
 
-  it("ringkeys_viewed carries only the key count, never key names", () => {
-    trackRingKeysViewed({ keysCount: 3 });
+  it("ringkeys_viewed carries only the key count, never key names", async () => {
+    await trackRingKeysViewed({ keysCount: 3 });
     expect(calls()[0][0]).toBe("ringkeys_viewed");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Keys",
@@ -96,8 +96,8 @@ describe("ring analytics", () => {
     });
   });
 
-  it("ringdestroy_started carries only the passwordProtected flag", () => {
-    trackRingDestroyStarted({ passwordProtected: true });
+  it("ringdestroy_started carries only the passwordProtected flag", async () => {
+    await trackRingDestroyStarted({ passwordProtected: true });
     expect(calls()[0][0]).toBe("ringdestroy_started");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Destroy",
@@ -105,8 +105,8 @@ describe("ring analytics", () => {
     });
   });
 
-  it("ringdestroy_completed carries only outcome booleans", () => {
-    trackRingDestroyCompleted({
+  it("ringdestroy_completed carries only outcome booleans", async () => {
+    await trackRingDestroyCompleted({
       remoteSucceeded: true,
       trustchainDestroyed: true,
       localWiped: true,
@@ -122,26 +122,26 @@ describe("ring analytics", () => {
     });
   });
 
-  it("ringdestroy_cancelled carries only the page", () => {
-    trackRingDestroyCancelled();
+  it("ringdestroy_cancelled carries only the page", async () => {
+    await trackRingDestroyCancelled();
     expect(calls()[0][0]).toBe("ringdestroy_cancelled");
     expect(calls()[0][1]).toEqual({ page: "Ring - Destroy" });
   });
 
-  it("never forwards key names, file paths, member names, or trustchain ids", () => {
-    trackRingInitStarted({ passwordProtected: true, usedCustomName: true });
-    trackRingInitCompleted({ passwordProtected: true });
-    trackRingEncrypt({ inputSource: "file", outputDest: "file", newKey: true });
-    trackRingDecrypt({ inputSource: "file", outputDest: "file" });
-    trackRingKeysViewed({ keysCount: 5 });
-    trackRingDestroyStarted({ passwordProtected: true });
-    trackRingDestroyCompleted({
+  it("never forwards key names, file paths, member names, or trustchain ids", async () => {
+    await trackRingInitStarted({ passwordProtected: true, usedCustomName: true });
+    await trackRingInitCompleted({ passwordProtected: true });
+    await trackRingEncrypt({ inputSource: "file", outputDest: "file", newKey: true });
+    await trackRingDecrypt({ inputSource: "file", outputDest: "file" });
+    await trackRingKeysViewed({ keysCount: 5 });
+    await trackRingDestroyStarted({ passwordProtected: true });
+    await trackRingDestroyCompleted({
       remoteSucceeded: true,
       trustchainDestroyed: true,
       localWiped: true,
       recoveryWipe: true,
     });
-    trackRingDestroyCancelled();
+    await trackRingDestroyCancelled();
 
     for (const call of calls()) {
       assertNoPii(call[1]);

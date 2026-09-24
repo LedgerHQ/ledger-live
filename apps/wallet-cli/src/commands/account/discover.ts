@@ -40,7 +40,7 @@ async function discoverAccounts({
 
   const networks = [`${network.name}:${network.env}`];
   const device = await getWalletCliDeviceModelId();
-  trackDiscoveryStarted({ networks, device });
+  await trackDiscoveryStarted({ networks, device });
 
   await runObservable({
     source$: wallet.discoverAccounts(network, WALLET_CLI_DMK_DEVICE_ID),
@@ -59,7 +59,7 @@ async function discoverAccounts({
 
   scanSpin?.success(`Found ${count} account${count === 1 ? "" : "s"}`);
   out.flushDiscovery();
-  trackDiscoveryCompleted({ networks, accountsCount: count, device });
+  await trackDiscoveryCompleted({ networks, accountsCount: count, device });
   return added;
 }
 

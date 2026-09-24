@@ -166,7 +166,7 @@ export default defineCommand({
       const managerAppName = getManagerAppNameForCurrencyId(descriptor.currencyId);
       const assetClass = classifySendAssetClass(descriptor.currencyId);
 
-      trackSendStarted({ network: ctx.network, assetClass, dryRun });
+      await trackSendStarted({ network: ctx.network, assetClass, dryRun });
 
       try {
         // Build the TransactionIntent based on the currency family
@@ -194,7 +194,7 @@ export default defineCommand({
         // The helper streams progress but no longer emits the final envelope; `send`'s result IS the
         // send, so it emits its own terminal envelope here (json: success envelope, human: no-op).
         out.sendComplete();
-        trackSendCompleted({
+        await trackSendCompleted({
           network: ctx.network,
           assetClass,
           amount: flags.amount,
@@ -202,9 +202,9 @@ export default defineCommand({
         });
       } catch (error) {
         if (error instanceof WalletCliDeviceError && error.state.code === "rejected") {
-          trackSendRejected({ network: ctx.network, device: error.state.deviceModelId });
+          await trackSendRejected({ network: ctx.network, device: error.state.deviceModelId });
         } else {
-          trackSendFailed({
+          await trackSendFailed({
             errorCode: sendErrorCode(error),
             errorName: error instanceof Error ? error.name : "unknown",
           });

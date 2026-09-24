@@ -44,13 +44,13 @@ export function trackErrorInfo(err: unknown): TrackErrorInfo {
 
 export type TrackedRun<T> = {
   /** Fired once, before `work()` runs. */
-  onStart?: () => void;
+  onStart?: () => void | Promise<void>;
   /** Fired with the resolved value when `work()` succeeds. */
-  onSuccess?: (result: T) => void;
+  onSuccess?: (result: T) => void | Promise<void>;
   /** Fired when `work()` throws a user device-rejection (takes precedence over `onFailed`). */
-  onRejected?: (err: WalletCliDeviceError) => void;
+  onRejected?: (err: WalletCliDeviceError) => void | Promise<void>;
   /** Fired for any non-rejection failure (or a rejection when no `onRejected` is provided). */
-  onFailed?: (err: unknown, info: TrackErrorInfo) => void;
+  onFailed?: (err: unknown, info: TrackErrorInfo) => void | Promise<void>;
 };
 
 /**
@@ -66,17 +66,17 @@ export type TrackedRun<T> = {
  * an operation that already succeeded.
  */
 export async function withTracking<T>(cfg: TrackedRun<T>, work: () => Promise<T>): Promise<T> {
-  cfg.onStart?.();
+  await cfg.onStart?.();
   try {
     const result = await work();
-    cfg.onSuccess?.(result);
+    await cfg.onSuccess?.(result);
     return result;
   } catch (err) {
     const rejection = WalletCliDeviceError.fromKnownDeviceError(err);
     if (rejection?.state.code === "rejected" && cfg.onRejected) {
-      cfg.onRejected(rejection);
+      await cfg.onRejected(rejection);
     } else {
-      cfg.onFailed?.(err, trackErrorInfo(err));
+      await cfg.onFailed?.(err, trackErrorInfo(err));
     }
     throw err;
   }

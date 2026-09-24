@@ -29,7 +29,7 @@ export default defineCommand({
     const provider = resolveSwapProvider(flags.provider);
     const flowId = swapFlowId();
     await out.run(async () => {
-      trackSwapStatusPolled({ flowId, swapId: flags["swap-id"], provider });
+      await trackSwapStatusPolled({ flowId, swapId: flags["swap-id"], provider });
       const raw = await getMultipleStatus([
         {
           provider,

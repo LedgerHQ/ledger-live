@@ -56,7 +56,7 @@ export default defineCommand({
       ctx.network = trackedNetwork;
       ctx.account = address;
 
-      trackEarnPositionsRequested({ network: trackedNetwork });
+      await trackEarnPositionsRequested({ network: trackedNetwork });
 
       const fresh = flags.fresh;
       // /v3/stakes = /v1/stakes (DB snapshot now + async provider refresh after the response) plus
@@ -94,7 +94,7 @@ export default defineCommand({
         data,
       }));
 
-      trackEarnPositionsReturned({ network: trackedNetwork, positionsCount: rows.length });
+      await trackEarnPositionsReturned({ network: trackedNetwork, positionsCount: rows.length });
       await out.earnPositions(rows, stakes);
     });
   },

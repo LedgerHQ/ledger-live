@@ -7,7 +7,7 @@ type TrackCall = { event: string; properties?: Record<string, unknown> | null };
 
 const trackCalls: TrackCall[] = [];
 
-const trackSpy = spyOn(segment, "track").mockImplementation((event, properties) => {
+const trackSpy = spyOn(segment, "track").mockImplementation(async (event, properties) => {
   trackCalls.push({ event, properties });
 });
 

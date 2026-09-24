@@ -50,7 +50,7 @@ export default defineCommand({
 
       const result = await withTracking(
         {
-          onStart: () =>
+          onStart: async () =>
             trackEarnDepositStarted({
               family,
               network,
@@ -58,7 +58,7 @@ export default defineCommand({
               amount: flags.amount,
               dryRun,
             }),
-          onSuccess: r =>
+          onSuccess: async r =>
             trackEarnDepositCompleted({
               family: r.family,
               network: r.network,
@@ -66,8 +66,8 @@ export default defineCommand({
               status: r.status,
               transactionsCount: r.transactions.length,
             }),
-          onRejected: () => trackEarnDepositRejected({ network }),
-          onFailed: (_error, info) => trackEarnDepositFailed(info),
+          onRejected: async () => trackEarnDepositRejected({ network }),
+          onFailed: async (_error, info) => trackEarnDepositFailed(info),
         },
         () =>
           adapter.deposit({

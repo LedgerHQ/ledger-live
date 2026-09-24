@@ -4,13 +4,13 @@ const SEND = "Send";
 
 export type SendAssetClass = "native" | "token";
 
-export function trackSendStarted(p: {
+export async function trackSendStarted(p: {
   network: string;
   assetClass: SendAssetClass;
   dryRun: boolean;
   device?: string;
-}): void {
-  track("send_started", {
+}): Promise<void> {
+  await track("send_started", {
     page: SEND,
     network: p.network,
     assetClass: p.assetClass,
@@ -19,21 +19,21 @@ export function trackSendStarted(p: {
   });
 }
 
-export function trackSendFailed(p: { errorCode: string; errorName: string }): void {
-  track("send_failed", {
+export async function trackSendFailed(p: { errorCode: string; errorName: string }): Promise<void> {
+  await track("send_failed", {
     page: SEND,
     errorCode: p.errorCode,
     errorName: p.errorName,
   });
 }
 
-export function trackSendCompleted(p: {
+export async function trackSendCompleted(p: {
   network: string;
   assetClass: SendAssetClass;
   amount: string;
   device?: string;
-}): void {
-  track("send_completed", {
+}): Promise<void> {
+  await track("send_completed", {
     page: SEND,
     network: p.network,
     assetClass: p.assetClass,
@@ -42,8 +42,8 @@ export function trackSendCompleted(p: {
   });
 }
 
-export function trackSendRejected(p: { network: string; device?: string }): void {
-  track("send_rejected", {
+export async function trackSendRejected(p: { network: string; device?: string }): Promise<void> {
+  await track("send_rejected", {
     page: SEND,
     network: p.network,
     device: p.device,

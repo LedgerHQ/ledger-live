@@ -314,7 +314,7 @@ export async function runFullSwapPipeline(
   let hardwareWalletType: Device["modelId"] | undefined;
 
   if (flowId) {
-    trackSwapStarted({
+    await trackSwapStarted({
       flowId,
       fromCurrency: fromCurrency.id,
       toCurrency: toCurrency.id,
@@ -433,7 +433,7 @@ export async function runFullSwapPipeline(
       }
 
       if (flowId) {
-        trackSwapCompleted({
+        await trackSwapCompleted({
           flowId,
           fromCurrency: fromCurrency.id,
           toCurrency: toCurrency.id,
@@ -455,7 +455,7 @@ export async function runFullSwapPipeline(
     });
   } catch (error) {
     if (flowId && WalletCliDeviceError.fromKnownDeviceError(error)?.state.code === "rejected") {
-      trackSwapRejected({
+      await trackSwapRejected({
         flowId,
         fromCurrency: fromCurrency.id,
         toCurrency: toCurrency.id,

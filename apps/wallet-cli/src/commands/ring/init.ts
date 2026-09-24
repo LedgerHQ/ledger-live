@@ -55,7 +55,7 @@ export default defineCommand({
         );
       }
 
-      trackRingInitStarted({
+      await trackRingInitStarted({
         passwordProtected: !flags["unsecure-no-password"],
         usedCustomName: !!flags.name,
       });
@@ -98,7 +98,7 @@ export default defineCommand({
       session.write();
 
       out.ringInit({ memberName, rootId: trustchain.rootId });
-      trackRingInitCompleted({ passwordProtected: !!passwordSalt });
+      await trackRingInitCompleted({ passwordProtected: !!passwordSalt });
     });
   },
 });

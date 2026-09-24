@@ -257,7 +257,7 @@ export async function runCliSwapDie(input: CliSwapDieInput): Promise<CliSwapDieR
   let hardwareWalletType: DeviceModelId | undefined;
 
   if (flowId) {
-    trackSwapStarted({
+    await trackSwapStarted({
       flowId,
       fromCurrency: trackingFromCurrency,
       toCurrency: trackingToCurrency,
@@ -362,7 +362,7 @@ export async function runCliSwapDie(input: CliSwapDieInput): Promise<CliSwapDieR
     });
 
     if (flowId) {
-      trackSwapCompleted({
+      await trackSwapCompleted({
         flowId,
         fromCurrency: trackingFromCurrency,
         toCurrency: trackingToCurrency,
@@ -375,7 +375,7 @@ export async function runCliSwapDie(input: CliSwapDieInput): Promise<CliSwapDieR
     return { plan: plan.kind, result };
   } catch (error) {
     if (flowId && WalletCliDeviceError.fromKnownDeviceError(error)?.state.code === "rejected") {
-      trackSwapRejected({
+      await trackSwapRejected({
         flowId,
         fromCurrency: trackingFromCurrency,
         toCurrency: trackingToCurrency,

@@ -90,7 +90,7 @@ export default defineCommand({
     const out = createCommandOutput(output, { command: "swap quote", network: flags.from });
 
     const flowId = swapFlowId();
-    trackSwapQuoteRequested({
+    await trackSwapQuoteRequested({
       flowId,
       fromCurrency: flags.from,
       toCurrency: flags.to,
@@ -136,7 +136,7 @@ export default defineCommand({
         mapSwapQuoteLine(q, flags.from, flags.to, flags.amount),
       );
       s?.success(`${result.quotes.length} quote(s) received`);
-      trackSwapQuoteReturned({
+      await trackSwapQuoteReturned({
         flowId,
         fromCurrency: flags.from,
         toCurrency: flags.to,

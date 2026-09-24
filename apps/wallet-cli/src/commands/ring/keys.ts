@@ -21,7 +21,7 @@ export default defineCommand({
         throw new Error("Ledger Key Ring not initialized. Run `wallet-cli ring init` first.");
       }
       out.ringKeys(session.domains);
-      trackRingKeysViewed({ keysCount: session.domains.length });
+      await trackRingKeysViewed({ keysCount: session.domains.length });
     });
   },
 });

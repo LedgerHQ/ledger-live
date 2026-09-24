@@ -2,44 +2,50 @@ import { track } from "./segment";
 
 const EARN = "Earn";
 
-export function trackEarnYieldsRequested(p: { network: string }): void {
-  track("earnyields_requested", {
+export async function trackEarnYieldsRequested(p: { network: string }): Promise<void> {
+  await track("earnyields_requested", {
     page: EARN,
     network: p.network,
   });
 }
 
-export function trackEarnYieldsReturned(p: { network: string; rowsCount: number }): void {
-  track("earnyields_returned", {
+export async function trackEarnYieldsReturned(p: {
+  network: string;
+  rowsCount: number;
+}): Promise<void> {
+  await track("earnyields_returned", {
     page: EARN,
     network: p.network,
     rowsCount: p.rowsCount,
   });
 }
 
-export function trackEarnPositionsRequested(p: { network: string }): void {
-  track("earnpositions_requested", {
+export async function trackEarnPositionsRequested(p: { network: string }): Promise<void> {
+  await track("earnpositions_requested", {
     page: EARN,
     network: p.network,
   });
 }
 
-export function trackEarnPositionsReturned(p: { network: string; positionsCount: number }): void {
-  track("earnpositions_returned", {
+export async function trackEarnPositionsReturned(p: {
+  network: string;
+  positionsCount: number;
+}): Promise<void> {
+  await track("earnpositions_returned", {
     page: EARN,
     network: p.network,
     positionsCount: p.positionsCount,
   });
 }
 
-export function trackEarnDepositStarted(p: {
+export async function trackEarnDepositStarted(p: {
   family: string;
   network: string;
   product: string;
   amount: string;
   dryRun: boolean;
-}): void {
-  track("earndeposit_started", {
+}): Promise<void> {
+  await track("earndeposit_started", {
     page: EARN,
     family: p.family,
     network: p.network,
@@ -49,14 +55,14 @@ export function trackEarnDepositStarted(p: {
   });
 }
 
-export function trackEarnDepositCompleted(p: {
+export async function trackEarnDepositCompleted(p: {
   family: string;
   network: string;
   amount: string;
   status: string;
   transactionsCount: number;
-}): void {
-  track("earndeposit_completed", {
+}): Promise<void> {
+  await track("earndeposit_completed", {
     page: EARN,
     family: p.family,
     network: p.network,
@@ -66,23 +72,29 @@ export function trackEarnDepositCompleted(p: {
   });
 }
 
-export function trackEarnDepositRejected(p: { network: string; device?: string }): void {
-  track("earndeposit_rejected", {
+export async function trackEarnDepositRejected(p: {
+  network: string;
+  device?: string;
+}): Promise<void> {
+  await track("earndeposit_rejected", {
     page: EARN,
     network: p.network,
     device: p.device,
   });
 }
 
-export function trackEarnDepositFailed(p: { errorCode: string; errorMessage: string }): void {
-  track("earndeposit_failed", {
+export async function trackEarnDepositFailed(p: {
+  errorCode: string;
+  errorMessage: string;
+}): Promise<void> {
+  await track("earndeposit_failed", {
     page: EARN,
     errorCode: p.errorCode,
     errorMessage: p.errorMessage,
   });
 }
 
-export function trackEarnWithdrawStarted(p: {
+export async function trackEarnWithdrawStarted(p: {
   family: string;
   network: string;
   product?: string;
@@ -93,8 +105,8 @@ export function trackEarnWithdrawStarted(p: {
   amount?: string;
   finalize: boolean;
   dryRun: boolean;
-}): void {
-  track("earnwithdraw_started", {
+}): Promise<void> {
+  await track("earnwithdraw_started", {
     page: EARN,
     family: p.family,
     network: p.network,
@@ -106,13 +118,13 @@ export function trackEarnWithdrawStarted(p: {
   });
 }
 
-export function trackEarnWithdrawCompleted(p: {
+export async function trackEarnWithdrawCompleted(p: {
   family: string;
   network: string;
   status: string;
   transactionsCount: number;
-}): void {
-  track("earnwithdraw_completed", {
+}): Promise<void> {
+  await track("earnwithdraw_completed", {
     page: EARN,
     family: p.family,
     network: p.network,
@@ -121,16 +133,22 @@ export function trackEarnWithdrawCompleted(p: {
   });
 }
 
-export function trackEarnWithdrawRejected(p: { network: string; device?: string }): void {
-  track("earnwithdraw_rejected", {
+export async function trackEarnWithdrawRejected(p: {
+  network: string;
+  device?: string;
+}): Promise<void> {
+  await track("earnwithdraw_rejected", {
     page: EARN,
     network: p.network,
     device: p.device,
   });
 }
 
-export function trackEarnWithdrawFailed(p: { errorCode: string; errorMessage: string }): void {
-  track("earnwithdraw_failed", {
+export async function trackEarnWithdrawFailed(p: {
+  errorCode: string;
+  errorMessage: string;
+}): Promise<void> {
+  await track("earnwithdraw_failed", {
     page: EARN,
     errorCode: p.errorCode,
     errorMessage: p.errorMessage,

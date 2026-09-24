@@ -36,8 +36,8 @@ export const startAnalytics = (): void => {
     client = segmentClient;
     setEnabledFn(() => true);
     setAnalytics({
-      track: (event, properties) =>
-        segmentClient.track({
+      track: async (event, properties) =>
+        await segmentClient.track({
           userId: WALLET_CLI_USER_ID,
           event,
           properties: {
@@ -60,8 +60,11 @@ export const startAnalytics = (): void => {
   }
 };
 
-export const track = (eventName: string, properties?: Record<string, unknown> | null): void => {
-  void sharedTrack(eventName, properties);
+export const track = async (
+  eventName: string,
+  properties?: Record<string, unknown> | null,
+): Promise<void> => {
+  await sharedTrack(eventName, properties);
 };
 
 export async function disposeAnalytics(): Promise<void> {

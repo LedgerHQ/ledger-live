@@ -38,7 +38,7 @@ export default defineCommand({
         "Balances fetched",
         () => wallet.getAccountBalances(descriptor),
       );
-      trackBalanceViewed({ network: ctx.network });
+      await trackBalanceViewed({ network: ctx.network });
       await out.balances(balances);
     });
   },

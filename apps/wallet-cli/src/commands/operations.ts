@@ -48,7 +48,11 @@ export default defineCommand({
         "Operations fetched",
         () => wallet.getAccountOperations(descriptor, { limit: flags.limit, cursor: flags.cursor }),
       );
-      trackOperationViewed({ network: ctx.network, limit: flags.limit, cursor: flags.cursor });
+      await trackOperationViewed({
+        network: ctx.network,
+        limit: flags.limit,
+        cursor: flags.cursor,
+      });
       await out.operations(page.operations, descriptor.currencyId, page.nextCursor);
     });
   },

@@ -59,7 +59,7 @@ export default defineCommand({
               "Fresh address resolved",
               () => wallet.getFreshAddress(toV0(v1)),
             );
-      trackAddressResolved({ network: ctx.network, deviceRequired: flags.verify });
+      await trackAddressResolved({ network: ctx.network, deviceRequired: flags.verify });
       if (flags.verify) {
         out.preVerifyAddress(address);
         const spin = out.spin(`Connect device and open ${colors.bold(managerAppName)} app…`);

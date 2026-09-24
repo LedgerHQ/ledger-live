@@ -98,7 +98,7 @@ export type RingCryptoCommandConfig = {
   /** Emit the file-output result envelope. */
   onFileWritten: (out: CommandOutput, dest: string, bytes: number) => void;
   /** Privacy-safe analytics for the run; `newlyTracked` is only meaningful for encrypt. */
-  track: (flags: { input?: string; out?: string }, newlyTracked: boolean) => void;
+  track: (flags: { input?: string; out?: string }, newlyTracked: boolean) => void | Promise<void>;
 };
 
 /**
@@ -140,7 +140,7 @@ export function defineRingCryptoCommand(cfg: RingCryptoCommandConfig) {
           transform: cfg.transform,
           onFileWritten: (dest, bytes) => cfg.onFileWritten(out, dest, bytes),
         });
-        cfg.track(flags, newlyTracked);
+        await cfg.track(flags, newlyTracked);
       });
     },
   });
