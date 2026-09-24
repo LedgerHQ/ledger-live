@@ -8,6 +8,11 @@ import { useLLDCoinFamily } from "~/renderer/families";
 import StepRecipient from "./StepRecipient";
 
 jest.mock("~/renderer/families");
+// Fixtures are partial accounts that SelectAccount cannot render
+jest.mock("~/renderer/components/SelectAccount", () => ({
+  __esModule: true,
+  default: () => null,
+}));
 const mockUseAccountBridgeOrNull = jest.fn(() => ({
   getStuckAccountAndOperation: () => undefined,
 }));
