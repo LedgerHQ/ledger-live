@@ -57,6 +57,7 @@ function buildProps(): PayCardToolProps {
       fill: jest.fn(),
       empty: jest.fn(),
       receive: jest.fn(),
+      receiveMultiAsset: jest.fn(),
       clear: jest.fn(),
     },
     reorder: {
@@ -132,6 +133,17 @@ describe("PayCard (native)", () => {
     await user.press(screen.getByText("Receive USDC"));
 
     expect(props.transactions.receive).toHaveBeenCalledWith("usdc");
+  });
+
+  it("receives a transaction funded by several assets", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    await user.press(screen.getByText("Transactions"));
+    await user.press(screen.getByText("Receive multi-asset"));
+
+    expect(props.transactions.receiveMultiAsset).toHaveBeenCalledTimes(1);
   });
 
   it("switches between full, empty, and provider transaction answers", async () => {

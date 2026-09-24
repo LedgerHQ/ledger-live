@@ -30,6 +30,7 @@ import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { NavigatorName, ScreenName } from "~/const";
 import { CL_CARD_APP_ID } from "LLM/features/Card";
 import type { CardProps } from "@features/flow-pay-card";
+import type { FormatCardTransactionAmount } from "@features/flow-pay-card-transactions";
 import { useLocale } from "~/context/Locale";
 import { formatCardTransactionAmount } from "LLM/features/OperationsHistory/utils/formatCardTransactionAmount";
 import { useCardHostedPageOpener } from "../../hooks/useCardHostedPageOpener";
@@ -223,7 +224,7 @@ export function usePayTabViewModel() {
 
   const formatCountervalue = useCountervalueFormatter();
   const { locale } = useLocale();
-  const formatTransactionAmount = useCallback(
+  const formatTransactionAmount = useCallback<FormatCardTransactionAmount>(
     (value, currency, kind) => formatCardTransactionAmount({ value, currency, kind, locale }),
     [locale],
   );

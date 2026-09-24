@@ -1,5 +1,7 @@
 ---
 "@features/flow-pay-card-transactions": minor
+"@features/flow-pay-card-assets": minor
+"@features/flow-pay-card-details": minor
 "@domain/api-card-management": minor
 "@devtools/pay-card": minor
 "@devtools/bindings": minor

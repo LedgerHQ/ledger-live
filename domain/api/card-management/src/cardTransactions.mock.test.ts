@@ -8,6 +8,7 @@ import {
   mockPayCardTransactions,
   mockPayCardTransactionsPage,
   readPayCardTransactionsMock,
+  receiveMultiAssetPayCardTransactionMock,
   receivePayCardTransactionMock,
 } from "./cardTransactions.mock";
 
@@ -47,6 +48,34 @@ describe("mockPayCardTransactions", () => {
       mocked?.map(transaction => (transaction.fundingSources ?? []).map(source => source.currency)),
     ).toEqual([["btc"], ["usdc"]]);
     expect(mocked?.[0]?.id).toMatch(/^devtool-btc-/);
+  });
+
+  it("receives a newest transaction keeping every asset that funded it", () => {
+    receiveMultiAssetPayCardTransactionMock();
+
+    const received = readPayCardTransactionsMock()?.[0];
+
+    const template = mockPayCardTransactions().find(
+      ({ fundingSources }) => fundingSources.length > 1,
+    );
+
+    expect(received?.id).toMatch(/^devtool-multi-/);
+    expect(received?.fundingSources?.map(({ currency }) => currency)).toEqual(
+      template?.fundingSources.map(({ currency }) => currency),
+    );
+  });
+
+  it("funds one charge with several assets, one of them carrying more digits than a row shows", () => {
+    const multiAsset = mockPayCardTransactions().filter(
+      ({ fundingSources }) => fundingSources.length > 1,
+    );
+
+    expect(multiAsset.length).toBeGreaterThan(0);
+    expect(
+      multiAsset.some(({ fundingSources }) =>
+        fundingSources.some(({ amount }) => (amount.split(".")[1]?.length ?? 0) > 8),
+      ),
+    ).toBe(true);
   });
 
   it("covers different fiat and funding asset amounts for visual testing", () => {
