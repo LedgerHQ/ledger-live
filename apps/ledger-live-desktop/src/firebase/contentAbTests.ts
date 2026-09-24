@@ -10,12 +10,11 @@ import {
   getContentAbTests,
   parseContentAbTests,
   setContentAbTests,
-  subscribeToContentAbTests,
 } from "@features/platform-content-ab-tests";
 import { getContentAbTestsFirebaseConfig } from "~/firebase-setup";
 import logger from "~/renderer/logger";
 
-export { getContentAbTests, subscribeToContentAbTests };
+export { getContentAbTests, subscribeToContentAbTests } from "@features/platform-content-ab-tests";
 
 const CONTENT_AB_TESTS_APP_NAME = "content-ab-tests";
 

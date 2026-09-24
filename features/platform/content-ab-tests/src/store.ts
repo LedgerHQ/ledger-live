@@ -35,7 +35,7 @@ export function clearContentAbTestOverrides(): ContentAbTests {
 }
 
 export function isContentAbTestOverridden(id: string): boolean {
-  return Object.prototype.hasOwnProperty.call(overrides, id);
+  return Object.hasOwn(overrides, id);
 }
 
 export function hasContentAbTestOverrides(): boolean {
