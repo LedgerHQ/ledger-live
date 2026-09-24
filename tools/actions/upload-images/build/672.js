@@ -1,16 +1,16 @@
 "use strict";
 exports.ids = [
-    "121"
+    672
 ];
 exports.modules = {
     "../../../node_modules/.pnpm/@smithy+credential-provider-imds@2.3.0/node_modules/@smithy/credential-provider-imds/dist-es/index.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
         __webpack_require__.d(__webpack_exports__, {
-            httpRequest: ()=>httpRequest,
             ENV_CMDS_FULL_URI: ()=>ENV_CMDS_FULL_URI,
-            getInstanceMetadataEndpoint: ()=>getInstanceMetadataEndpoint,
             ENV_CMDS_RELATIVE_URI: ()=>ENV_CMDS_RELATIVE_URI,
             fromContainerMetadata: ()=>fromContainerMetadata,
-            fromInstanceMetadata: ()=>fromInstanceMetadata
+            fromInstanceMetadata: ()=>fromInstanceMetadata,
+            getInstanceMetadataEndpoint: ()=>getInstanceMetadataEndpoint,
+            httpRequest: ()=>httpRequest
         });
         var dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+property-provider@2.2.0/node_modules/@smithy/property-provider/dist-es/index.js");
         var external_url_ = __webpack_require__("url");

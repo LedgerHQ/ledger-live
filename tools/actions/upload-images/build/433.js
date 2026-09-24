@@ -1,6 +1,6 @@
 "use strict";
 exports.ids = [
-    "675"
+    433
 ];
 exports.modules = {
     "../../../node_modules/.pnpm/@aws-sdk+client-sts@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/client-sts/dist-es/defaultRoleAssumers.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
@@ -1509,9 +1509,6 @@ exports.modules = {
         }
     },
     "../../../node_modules/.pnpm/@aws-sdk+core@3.535.0/node_modules/@aws-sdk/core/dist-es/httpAuthSchemes/aws_sdk/resolveAwsSdkSigV4Config.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
-        __webpack_require__.d(__webpack_exports__, {
-            h: ()=>resolveAwsSdkSigV4Config
-        });
         var _smithy_core__rspack_import_0 = __webpack_require__("../../../node_modules/.pnpm/@smithy+core@1.4.0/node_modules/@smithy/core/dist-es/index.js");
         var _smithy_signature_v4__rspack_import_1 = __webpack_require__("../../../node_modules/.pnpm/@smithy+signature-v4@2.2.0/node_modules/@smithy/signature-v4/dist-es/index.js");
         const resolveAwsSdkSigV4Config = (config)=>{
@@ -1574,5 +1571,8 @@ exports.modules = {
                 signer
             };
         };
+        __webpack_require__.d(__webpack_exports__, {}, {
+            h: resolveAwsSdkSigV4Config
+        });
     }
 };

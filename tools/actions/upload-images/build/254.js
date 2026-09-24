@@ -1,6 +1,6 @@
 "use strict";
 exports.ids = [
-    "318"
+    254
 ];
 exports.modules = {
     "../../../node_modules/.pnpm/@aws-sdk+core@3.535.0/node_modules/@aws-sdk/core/dist-es/httpAuthSchemes/aws_sdk/AwsSdkSigV4Signer.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
@@ -69,9 +69,6 @@ exports.modules = {
         }
     },
     "../../../node_modules/.pnpm/@aws-sdk+core@3.535.0/node_modules/@aws-sdk/core/dist-es/httpAuthSchemes/aws_sdk/resolveAwsSdkSigV4Config.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
-        __webpack_require__.d(__webpack_exports__, {
-            h: ()=>resolveAwsSdkSigV4Config
-        });
         var _smithy_core__rspack_import_0 = __webpack_require__("../../../node_modules/.pnpm/@smithy+core@1.4.0/node_modules/@smithy/core/dist-es/index.js");
         var _smithy_signature_v4__rspack_import_1 = __webpack_require__("../../../node_modules/.pnpm/@smithy+signature-v4@2.2.0/node_modules/@smithy/signature-v4/dist-es/index.js");
         const resolveAwsSdkSigV4Config = (config)=>{
@@ -134,13 +131,11 @@ exports.modules = {
                 signer
             };
         };
+        __webpack_require__.d(__webpack_exports__, {}, {
+            h: resolveAwsSdkSigV4Config
+        });
     },
     "../../../node_modules/.pnpm/@aws-sdk+core@3.535.0/node_modules/@aws-sdk/core/dist-es/protocols/json/parseJsonBody.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
-        __webpack_require__.d(__webpack_exports__, {
-            CG: ()=>parseJsonErrorBody,
-            Y2: ()=>parseJsonBody,
-            cJ: ()=>loadRestJsonErrorCode
-        });
         var _common__rspack_import_0 = __webpack_require__("../../../node_modules/.pnpm/@aws-sdk+core@3.535.0/node_modules/@aws-sdk/core/dist-es/protocols/common.js");
         const parseJsonBody = (streamBody, context)=>(0, _common__rspack_import_0.w)(streamBody, context).then((encoded)=>{
                 if (encoded.length) try {
@@ -173,11 +168,16 @@ exports.modules = {
             if (void 0 !== data.code) return sanitizeErrorCode(data.code);
             if (void 0 !== data["__type"]) return sanitizeErrorCode(data["__type"]);
         };
+        __webpack_require__.d(__webpack_exports__, {}, {
+            CG: parseJsonErrorBody,
+            Y2: parseJsonBody,
+            cJ: loadRestJsonErrorCode
+        });
     },
-    "../../../node_modules/.pnpm/@aws-sdk+credential-provider-sso@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/credential-provider-sso/dist-es/loadSso.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
+    "../../../node_modules/.pnpm/@aws-sdk+token-providers@3.540.0_@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/token-providers/dist-es/loadSsoOidc.js" (__unused_rspack_module, __webpack_exports__, __webpack_require__) {
         __webpack_require__.d(__webpack_exports__, {
-            SSOClient: ()=>SSOClient,
-            GetRoleCredentialsCommand: ()=>GetRoleCredentialsCommand
+            CreateTokenCommand: ()=>CreateTokenCommand,
+            SSOOIDCClient: ()=>SSOOIDCClient
         });
         var dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+middleware-endpoint@2.5.0/node_modules/@smithy/middleware-endpoint/dist-es/index.js");
         var serdePlugin = __webpack_require__("../../../node_modules/.pnpm/@smithy+middleware-serde@2.3.0/node_modules/@smithy/middleware-serde/dist-es/serdePlugin.js");
@@ -186,7 +186,7 @@ exports.modules = {
                 ...options,
                 useDualstackEndpoint: options.useDualstackEndpoint ?? false,
                 useFipsEndpoint: options.useFipsEndpoint ?? false,
-                defaultSigningName: "awsssoportal"
+                defaultSigningName: "sso-oauth"
             });
         const commonParams = {
             UseFIPS: {
@@ -206,13 +206,97 @@ exports.modules = {
                 name: "useDualstackEndpoint"
             }
         };
-        class SSOServiceException extends smithy_client_dist_es.TJ {
+        class SSOOIDCServiceException extends smithy_client_dist_es.TJ {
             constructor(options){
                 super(options);
-                Object.setPrototypeOf(this, SSOServiceException.prototype);
+                Object.setPrototypeOf(this, SSOOIDCServiceException.prototype);
             }
         }
-        class InvalidRequestException extends SSOServiceException {
+        class AccessDeniedException extends SSOOIDCServiceException {
+            constructor(opts){
+                super({
+                    name: "AccessDeniedException",
+                    $fault: "client",
+                    ...opts
+                });
+                this.name = "AccessDeniedException";
+                this.$fault = "client";
+                Object.setPrototypeOf(this, AccessDeniedException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
+            }
+        }
+        class AuthorizationPendingException extends SSOOIDCServiceException {
+            constructor(opts){
+                super({
+                    name: "AuthorizationPendingException",
+                    $fault: "client",
+                    ...opts
+                });
+                this.name = "AuthorizationPendingException";
+                this.$fault = "client";
+                Object.setPrototypeOf(this, AuthorizationPendingException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
+            }
+        }
+        class ExpiredTokenException extends SSOOIDCServiceException {
+            constructor(opts){
+                super({
+                    name: "ExpiredTokenException",
+                    $fault: "client",
+                    ...opts
+                });
+                this.name = "ExpiredTokenException";
+                this.$fault = "client";
+                Object.setPrototypeOf(this, ExpiredTokenException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
+            }
+        }
+        class InternalServerException extends SSOOIDCServiceException {
+            constructor(opts){
+                super({
+                    name: "InternalServerException",
+                    $fault: "server",
+                    ...opts
+                });
+                this.name = "InternalServerException";
+                this.$fault = "server";
+                Object.setPrototypeOf(this, InternalServerException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
+            }
+        }
+        class InvalidClientException extends SSOOIDCServiceException {
+            constructor(opts){
+                super({
+                    name: "InvalidClientException",
+                    $fault: "client",
+                    ...opts
+                });
+                this.name = "InvalidClientException";
+                this.$fault = "client";
+                Object.setPrototypeOf(this, InvalidClientException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
+            }
+        }
+        class InvalidGrantException extends SSOOIDCServiceException {
+            constructor(opts){
+                super({
+                    name: "InvalidGrantException",
+                    $fault: "client",
+                    ...opts
+                });
+                this.name = "InvalidGrantException";
+                this.$fault = "client";
+                Object.setPrototypeOf(this, InvalidGrantException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
+            }
+        }
+        class InvalidRequestException extends SSOOIDCServiceException {
             constructor(opts){
                 super({
                     name: "InvalidRequestException",
@@ -222,95 +306,151 @@ exports.modules = {
                 this.name = "InvalidRequestException";
                 this.$fault = "client";
                 Object.setPrototypeOf(this, InvalidRequestException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
             }
         }
-        class ResourceNotFoundException extends SSOServiceException {
+        class InvalidScopeException extends SSOOIDCServiceException {
             constructor(opts){
                 super({
-                    name: "ResourceNotFoundException",
+                    name: "InvalidScopeException",
                     $fault: "client",
                     ...opts
                 });
-                this.name = "ResourceNotFoundException";
+                this.name = "InvalidScopeException";
                 this.$fault = "client";
-                Object.setPrototypeOf(this, ResourceNotFoundException.prototype);
+                Object.setPrototypeOf(this, InvalidScopeException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
             }
         }
-        class TooManyRequestsException extends SSOServiceException {
+        class SlowDownException extends SSOOIDCServiceException {
             constructor(opts){
                 super({
-                    name: "TooManyRequestsException",
+                    name: "SlowDownException",
                     $fault: "client",
                     ...opts
                 });
-                this.name = "TooManyRequestsException";
+                this.name = "SlowDownException";
                 this.$fault = "client";
-                Object.setPrototypeOf(this, TooManyRequestsException.prototype);
+                Object.setPrototypeOf(this, SlowDownException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
             }
         }
-        class UnauthorizedException extends SSOServiceException {
+        class UnauthorizedClientException extends SSOOIDCServiceException {
             constructor(opts){
                 super({
-                    name: "UnauthorizedException",
+                    name: "UnauthorizedClientException",
                     $fault: "client",
                     ...opts
                 });
-                this.name = "UnauthorizedException";
+                this.name = "UnauthorizedClientException";
                 this.$fault = "client";
-                Object.setPrototypeOf(this, UnauthorizedException.prototype);
+                Object.setPrototypeOf(this, UnauthorizedClientException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
             }
         }
-        const GetRoleCredentialsRequestFilterSensitiveLog = (obj)=>({
+        class UnsupportedGrantTypeException extends SSOOIDCServiceException {
+            constructor(opts){
+                super({
+                    name: "UnsupportedGrantTypeException",
+                    $fault: "client",
+                    ...opts
+                });
+                this.name = "UnsupportedGrantTypeException";
+                this.$fault = "client";
+                Object.setPrototypeOf(this, UnsupportedGrantTypeException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
+            }
+        }
+        class InvalidRequestRegionException extends SSOOIDCServiceException {
+            constructor(opts){
+                super({
+                    name: "InvalidRequestRegionException",
+                    $fault: "client",
+                    ...opts
+                });
+                this.name = "InvalidRequestRegionException";
+                this.$fault = "client";
+                Object.setPrototypeOf(this, InvalidRequestRegionException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
+                this.endpoint = opts.endpoint;
+                this.region = opts.region;
+            }
+        }
+        class InvalidClientMetadataException extends SSOOIDCServiceException {
+            constructor(opts){
+                super({
+                    name: "InvalidClientMetadataException",
+                    $fault: "client",
+                    ...opts
+                });
+                this.name = "InvalidClientMetadataException";
+                this.$fault = "client";
+                Object.setPrototypeOf(this, InvalidClientMetadataException.prototype);
+                this.error = opts.error;
+                this.error_description = opts.error_description;
+            }
+        }
+        const CreateTokenRequestFilterSensitiveLog = (obj)=>({
+                ...obj,
+                ...obj.clientSecret && {
+                    clientSecret: smithy_client_dist_es.$H
+                },
+                ...obj.refreshToken && {
+                    refreshToken: smithy_client_dist_es.$H
+                }
+            });
+        const CreateTokenResponseFilterSensitiveLog = (obj)=>({
                 ...obj,
                 ...obj.accessToken && {
                     accessToken: smithy_client_dist_es.$H
-                }
-            });
-        const RoleCredentialsFilterSensitiveLog = (obj)=>({
-                ...obj,
-                ...obj.secretAccessKey && {
-                    secretAccessKey: smithy_client_dist_es.$H
                 },
-                ...obj.sessionToken && {
-                    sessionToken: smithy_client_dist_es.$H
-                }
-            });
-        const GetRoleCredentialsResponseFilterSensitiveLog = (obj)=>({
-                ...obj,
-                ...obj.roleCredentials && {
-                    roleCredentials: RoleCredentialsFilterSensitiveLog(obj.roleCredentials)
+                ...obj.refreshToken && {
+                    refreshToken: smithy_client_dist_es.$H
+                },
+                ...obj.idToken && {
+                    idToken: smithy_client_dist_es.$H
                 }
             });
         var parseJsonBody = __webpack_require__("../../../node_modules/.pnpm/@aws-sdk+core@3.535.0/node_modules/@aws-sdk/core/dist-es/protocols/json/parseJsonBody.js");
         var core_dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+core@1.4.0/node_modules/@smithy/core/dist-es/index.js");
-        const se_GetRoleCredentialsCommand = async (input, context)=>{
+        const se_CreateTokenCommand = async (input, context)=>{
             const b = (0, core_dist_es.lI)(input, context);
-            const headers = (0, smithy_client_dist_es.Tj)({}, isSerializableHeaderValue, {
-                [_xasbt]: input[_aT]
-            });
-            b.bp("/federation/credentials");
-            const query = (0, smithy_client_dist_es.Tj)({
-                [_rn]: [
-                    ,
-                    (0, smithy_client_dist_es.Y0)(input[_rN], "roleName")
-                ],
-                [_ai]: [
-                    ,
-                    (0, smithy_client_dist_es.Y0)(input[_aI], "accountId")
-                ]
-            });
+            const headers = {
+                "content-type": "application/json"
+            };
+            b.bp("/token");
             let body;
-            b.m("GET").h(headers).q(query).b(body);
+            body = JSON.stringify((0, smithy_client_dist_es.s)(input, {
+                clientId: [],
+                clientSecret: [],
+                code: [],
+                deviceCode: [],
+                grantType: [],
+                redirectUri: [],
+                refreshToken: [],
+                scope: (_)=>(0, smithy_client_dist_es.Ss)(_)
+            }));
+            b.m("POST").h(headers).b(body);
             return b.build();
         };
-        const de_GetRoleCredentialsCommand = async (output, context)=>{
+        const de_CreateTokenCommand = async (output, context)=>{
             if (200 !== output.statusCode && output.statusCode >= 300) return de_CommandError(output, context);
             const contents = (0, smithy_client_dist_es.Tj)({
                 $metadata: deserializeMetadata(output)
             });
             const data = (0, smithy_client_dist_es.Y0)((0, smithy_client_dist_es.Xk)(await (0, parseJsonBody.Y2)(output.body, context)), "body");
             const doc = (0, smithy_client_dist_es.s)(data, {
-                roleCredentials: smithy_client_dist_es.Ss
+                accessToken: smithy_client_dist_es.lK,
+                expiresIn: smithy_client_dist_es.ET,
+                idToken: smithy_client_dist_es.lK,
+                refreshToken: smithy_client_dist_es.lK,
+                tokenType: smithy_client_dist_es.lK
             });
             Object.assign(contents, doc);
             return contents;
@@ -322,18 +462,45 @@ exports.modules = {
             };
             const errorCode = (0, parseJsonBody.cJ)(output, parsedOutput.body);
             switch(errorCode){
+                case "AccessDeniedException":
+                case "com.amazonaws.ssooidc#AccessDeniedException":
+                    throw await de_AccessDeniedExceptionRes(parsedOutput, context);
+                case "AuthorizationPendingException":
+                case "com.amazonaws.ssooidc#AuthorizationPendingException":
+                    throw await de_AuthorizationPendingExceptionRes(parsedOutput, context);
+                case "ExpiredTokenException":
+                case "com.amazonaws.ssooidc#ExpiredTokenException":
+                    throw await de_ExpiredTokenExceptionRes(parsedOutput, context);
+                case "InternalServerException":
+                case "com.amazonaws.ssooidc#InternalServerException":
+                    throw await de_InternalServerExceptionRes(parsedOutput, context);
+                case "InvalidClientException":
+                case "com.amazonaws.ssooidc#InvalidClientException":
+                    throw await de_InvalidClientExceptionRes(parsedOutput, context);
+                case "InvalidGrantException":
+                case "com.amazonaws.ssooidc#InvalidGrantException":
+                    throw await de_InvalidGrantExceptionRes(parsedOutput, context);
                 case "InvalidRequestException":
-                case "com.amazonaws.sso#InvalidRequestException":
+                case "com.amazonaws.ssooidc#InvalidRequestException":
                     throw await de_InvalidRequestExceptionRes(parsedOutput, context);
-                case "ResourceNotFoundException":
-                case "com.amazonaws.sso#ResourceNotFoundException":
-                    throw await de_ResourceNotFoundExceptionRes(parsedOutput, context);
-                case "TooManyRequestsException":
-                case "com.amazonaws.sso#TooManyRequestsException":
-                    throw await de_TooManyRequestsExceptionRes(parsedOutput, context);
-                case "UnauthorizedException":
-                case "com.amazonaws.sso#UnauthorizedException":
-                    throw await de_UnauthorizedExceptionRes(parsedOutput, context);
+                case "InvalidScopeException":
+                case "com.amazonaws.ssooidc#InvalidScopeException":
+                    throw await de_InvalidScopeExceptionRes(parsedOutput, context);
+                case "SlowDownException":
+                case "com.amazonaws.ssooidc#SlowDownException":
+                    throw await de_SlowDownExceptionRes(parsedOutput, context);
+                case "UnauthorizedClientException":
+                case "com.amazonaws.ssooidc#UnauthorizedClientException":
+                    throw await de_UnauthorizedClientExceptionRes(parsedOutput, context);
+                case "UnsupportedGrantTypeException":
+                case "com.amazonaws.ssooidc#UnsupportedGrantTypeException":
+                    throw await de_UnsupportedGrantTypeExceptionRes(parsedOutput, context);
+                case "InvalidRequestRegionException":
+                case "com.amazonaws.ssooidc#InvalidRequestRegionException":
+                    throw await de_InvalidRequestRegionExceptionRes(parsedOutput, context);
+                case "InvalidClientMetadataException":
+                case "com.amazonaws.ssooidc#InvalidClientMetadataException":
+                    throw await de_InvalidClientMetadataExceptionRes(parsedOutput, context);
                 default:
                     const parsedBody = parsedOutput.body;
                     return throwDefaultError({
@@ -343,12 +510,111 @@ exports.modules = {
                     });
             }
         };
-        const throwDefaultError = (0, smithy_client_dist_es.jr)(SSOServiceException);
+        const throwDefaultError = (0, smithy_client_dist_es.jr)(SSOOIDCServiceException);
+        const de_AccessDeniedExceptionRes = async (parsedOutput, context)=>{
+            const contents = (0, smithy_client_dist_es.Tj)({});
+            const data = parsedOutput.body;
+            const doc = (0, smithy_client_dist_es.s)(data, {
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
+            });
+            Object.assign(contents, doc);
+            const exception = new AccessDeniedException({
+                $metadata: deserializeMetadata(parsedOutput),
+                ...contents
+            });
+            return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
+        };
+        const de_AuthorizationPendingExceptionRes = async (parsedOutput, context)=>{
+            const contents = (0, smithy_client_dist_es.Tj)({});
+            const data = parsedOutput.body;
+            const doc = (0, smithy_client_dist_es.s)(data, {
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
+            });
+            Object.assign(contents, doc);
+            const exception = new AuthorizationPendingException({
+                $metadata: deserializeMetadata(parsedOutput),
+                ...contents
+            });
+            return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
+        };
+        const de_ExpiredTokenExceptionRes = async (parsedOutput, context)=>{
+            const contents = (0, smithy_client_dist_es.Tj)({});
+            const data = parsedOutput.body;
+            const doc = (0, smithy_client_dist_es.s)(data, {
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
+            });
+            Object.assign(contents, doc);
+            const exception = new ExpiredTokenException({
+                $metadata: deserializeMetadata(parsedOutput),
+                ...contents
+            });
+            return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
+        };
+        const de_InternalServerExceptionRes = async (parsedOutput, context)=>{
+            const contents = (0, smithy_client_dist_es.Tj)({});
+            const data = parsedOutput.body;
+            const doc = (0, smithy_client_dist_es.s)(data, {
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
+            });
+            Object.assign(contents, doc);
+            const exception = new InternalServerException({
+                $metadata: deserializeMetadata(parsedOutput),
+                ...contents
+            });
+            return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
+        };
+        const de_InvalidClientExceptionRes = async (parsedOutput, context)=>{
+            const contents = (0, smithy_client_dist_es.Tj)({});
+            const data = parsedOutput.body;
+            const doc = (0, smithy_client_dist_es.s)(data, {
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
+            });
+            Object.assign(contents, doc);
+            const exception = new InvalidClientException({
+                $metadata: deserializeMetadata(parsedOutput),
+                ...contents
+            });
+            return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
+        };
+        const de_InvalidClientMetadataExceptionRes = async (parsedOutput, context)=>{
+            const contents = (0, smithy_client_dist_es.Tj)({});
+            const data = parsedOutput.body;
+            const doc = (0, smithy_client_dist_es.s)(data, {
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
+            });
+            Object.assign(contents, doc);
+            const exception = new InvalidClientMetadataException({
+                $metadata: deserializeMetadata(parsedOutput),
+                ...contents
+            });
+            return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
+        };
+        const de_InvalidGrantExceptionRes = async (parsedOutput, context)=>{
+            const contents = (0, smithy_client_dist_es.Tj)({});
+            const data = parsedOutput.body;
+            const doc = (0, smithy_client_dist_es.s)(data, {
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
+            });
+            Object.assign(contents, doc);
+            const exception = new InvalidGrantException({
+                $metadata: deserializeMetadata(parsedOutput),
+                ...contents
+            });
+            return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
+        };
         const de_InvalidRequestExceptionRes = async (parsedOutput, context)=>{
             const contents = (0, smithy_client_dist_es.Tj)({});
             const data = parsedOutput.body;
             const doc = (0, smithy_client_dist_es.s)(data, {
-                message: smithy_client_dist_es.lK
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
             });
             Object.assign(contents, doc);
             const exception = new InvalidRequestException({
@@ -357,40 +623,73 @@ exports.modules = {
             });
             return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
         };
-        const de_ResourceNotFoundExceptionRes = async (parsedOutput, context)=>{
+        const de_InvalidRequestRegionExceptionRes = async (parsedOutput, context)=>{
             const contents = (0, smithy_client_dist_es.Tj)({});
             const data = parsedOutput.body;
             const doc = (0, smithy_client_dist_es.s)(data, {
-                message: smithy_client_dist_es.lK
+                endpoint: smithy_client_dist_es.lK,
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK,
+                region: smithy_client_dist_es.lK
             });
             Object.assign(contents, doc);
-            const exception = new ResourceNotFoundException({
+            const exception = new InvalidRequestRegionException({
                 $metadata: deserializeMetadata(parsedOutput),
                 ...contents
             });
             return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
         };
-        const de_TooManyRequestsExceptionRes = async (parsedOutput, context)=>{
+        const de_InvalidScopeExceptionRes = async (parsedOutput, context)=>{
             const contents = (0, smithy_client_dist_es.Tj)({});
             const data = parsedOutput.body;
             const doc = (0, smithy_client_dist_es.s)(data, {
-                message: smithy_client_dist_es.lK
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
             });
             Object.assign(contents, doc);
-            const exception = new TooManyRequestsException({
+            const exception = new InvalidScopeException({
                 $metadata: deserializeMetadata(parsedOutput),
                 ...contents
             });
             return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
         };
-        const de_UnauthorizedExceptionRes = async (parsedOutput, context)=>{
+        const de_SlowDownExceptionRes = async (parsedOutput, context)=>{
             const contents = (0, smithy_client_dist_es.Tj)({});
             const data = parsedOutput.body;
             const doc = (0, smithy_client_dist_es.s)(data, {
-                message: smithy_client_dist_es.lK
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
             });
             Object.assign(contents, doc);
-            const exception = new UnauthorizedException({
+            const exception = new SlowDownException({
+                $metadata: deserializeMetadata(parsedOutput),
+                ...contents
+            });
+            return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
+        };
+        const de_UnauthorizedClientExceptionRes = async (parsedOutput, context)=>{
+            const contents = (0, smithy_client_dist_es.Tj)({});
+            const data = parsedOutput.body;
+            const doc = (0, smithy_client_dist_es.s)(data, {
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
+            });
+            Object.assign(contents, doc);
+            const exception = new UnauthorizedClientException({
+                $metadata: deserializeMetadata(parsedOutput),
+                ...contents
+            });
+            return (0, smithy_client_dist_es.Mw)(exception, parsedOutput.body);
+        };
+        const de_UnsupportedGrantTypeExceptionRes = async (parsedOutput, context)=>{
+            const contents = (0, smithy_client_dist_es.Tj)({});
+            const data = parsedOutput.body;
+            const doc = (0, smithy_client_dist_es.s)(data, {
+                error: smithy_client_dist_es.lK,
+                error_description: smithy_client_dist_es.lK
+            });
+            Object.assign(contents, doc);
+            const exception = new UnsupportedGrantTypeException({
                 $metadata: deserializeMetadata(parsedOutput),
                 ...contents
             });
@@ -402,21 +701,14 @@ exports.modules = {
                 extendedRequestId: output.headers["x-amz-id-2"],
                 cfId: output.headers["x-amz-cf-id"]
             });
-        const isSerializableHeaderValue = (value)=>null != value && "" !== value && (!Object.getOwnPropertyNames(value).includes("length") || 0 != value.length) && (!Object.getOwnPropertyNames(value).includes("size") || 0 != value.size);
-        const _aI = "accountId";
-        const _aT = "accessToken";
-        const _ai = "account_id";
-        const _rN = "roleName";
-        const _rn = "role_name";
-        const _xasbt = "x-amz-sso_bearer_token";
-        class GetRoleCredentialsCommand extends smithy_client_dist_es.uB.classBuilder().ep({
+        class CreateTokenCommand extends smithy_client_dist_es.uB.classBuilder().ep({
             ...commonParams
         }).m(function(Command, cs, config, o) {
             return [
                 (0, serdePlugin.TM)(config, this.serialize, this.deserialize),
                 (0, dist_es.rD)(config, Command.getEndpointParameterInstructions())
             ];
-        }).s("SWBPortalService", "GetRoleCredentials", {}).n("SSOClient", "GetRoleCredentialsCommand").f(GetRoleCredentialsRequestFilterSensitiveLog, GetRoleCredentialsResponseFilterSensitiveLog).ser(se_GetRoleCredentialsCommand).de(de_GetRoleCredentialsCommand).build() {
+        }).s("AWSSSOOIDCService", "CreateToken", {}).n("SSOOIDCClient", "CreateTokenCommand").f(CreateTokenRequestFilterSensitiveLog, CreateTokenResponseFilterSensitiveLog).ser(se_CreateTokenCommand).de(de_CreateTokenCommand).build() {
         }
         var middleware_host_header_dist_es = __webpack_require__("../../../node_modules/.pnpm/@aws-sdk+middleware-host-header@3.535.0/node_modules/@aws-sdk/middleware-host-header/dist-es/index.js");
         var loggerMiddleware = __webpack_require__("../../../node_modules/.pnpm/@aws-sdk+middleware-logger@3.535.0/node_modules/@aws-sdk/middleware-logger/dist-es/loggerMiddleware.js");
@@ -427,7 +719,7 @@ exports.modules = {
         var middleware_retry_dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+middleware-retry@2.2.0/node_modules/@smithy/middleware-retry/dist-es/index.js");
         var resolveAwsSdkSigV4Config = __webpack_require__("../../../node_modules/.pnpm/@aws-sdk+core@3.535.0/node_modules/@aws-sdk/core/dist-es/httpAuthSchemes/aws_sdk/resolveAwsSdkSigV4Config.js");
         var util_middleware_dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+util-middleware@2.2.0/node_modules/@smithy/util-middleware/dist-es/index.js");
-        const defaultSSOHttpAuthSchemeParametersProvider = async (config, context, input)=>({
+        const defaultSSOOIDCHttpAuthSchemeParametersProvider = async (config, context, input)=>({
                 operation: (0, util_middleware_dist_es.u)(context).operation,
                 region: await (0, util_middleware_dist_es.t)(config.region)() || (()=>{
                     throw new Error("expected `region` to be configured for `aws.auth#sigv4`");
@@ -437,7 +729,7 @@ exports.modules = {
             return {
                 schemeId: "aws.auth#sigv4",
                 signingProperties: {
-                    name: "awsssoportal",
+                    name: "sso-oauth",
                     region: authParameters.region
                 },
                 propertiesExtractor: (config, context)=>({
@@ -453,19 +745,16 @@ exports.modules = {
                 schemeId: "smithy.api#noAuth"
             };
         }
-        const defaultSSOHttpAuthSchemeProvider = (authParameters)=>{
+        const defaultSSOOIDCHttpAuthSchemeProvider = (authParameters)=>{
             const options = [];
             switch(authParameters.operation){
-                case "GetRoleCredentials":
+                case "CreateToken":
                     options.push(createSmithyApiNoAuthHttpAuthOption(authParameters));
                     break;
-                case "ListAccountRoles":
+                case "RegisterClient":
                     options.push(createSmithyApiNoAuthHttpAuthOption(authParameters));
                     break;
-                case "ListAccounts":
-                    options.push(createSmithyApiNoAuthHttpAuthOption(authParameters));
-                    break;
-                case "Logout":
+                case "StartDeviceAuthorization":
                     options.push(createSmithyApiNoAuthHttpAuthOption(authParameters));
                     break;
                 default:
@@ -482,6 +771,7 @@ exports.modules = {
         var package_namespaceObject = {
             rE: "3.540.0"
         };
+        const credentialDefaultProvider_defaultProvider = (input)=>()=>Promise.resolve().then(__webpack_require__.bind(__webpack_require__, "../../../node_modules/.pnpm/@aws-sdk+credential-provider-node@3.540.0/node_modules/@aws-sdk/credential-provider-node/dist-es/index.js")).then(({ defaultProvider })=>defaultProvider(input)());
         var emitWarningIfUnsupportedVersion = __webpack_require__("../../../node_modules/.pnpm/@aws-sdk+core@3.535.0/node_modules/@aws-sdk/core/dist-es/client/emitWarningIfUnsupportedVersion.js");
         var util_user_agent_node_dist_es = __webpack_require__("../../../node_modules/.pnpm/@aws-sdk+util-user-agent-node@3.535.0/node_modules/@aws-sdk/util-user-agent-node/dist-es/index.js");
         var hash_node_dist_es = __webpack_require__("../../../node_modules/.pnpm/@smithy+hash-node@2.2.0/node_modules/@smithy/hash-node/dist-es/index.js");
@@ -629,7 +919,7 @@ exports.modules = {
                                             rules: [
                                                 {
                                                     endpoint: {
-                                                        url: "https://portal.sso-fips.{Region}.{PartitionResult#dualStackDnsSuffix}",
+                                                        url: "https://oidc-fips.{Region}.{PartitionResult#dualStackDnsSuffix}",
                                                         properties: n,
                                                         headers: n
                                                     },
@@ -676,7 +966,7 @@ exports.modules = {
                                                         }
                                                     ],
                                                     endpoint: {
-                                                        url: "https://portal.sso.{Region}.amazonaws.com",
+                                                        url: "https://oidc.{Region}.amazonaws.com",
                                                         properties: n,
                                                         headers: n
                                                     },
@@ -684,7 +974,7 @@ exports.modules = {
                                                 },
                                                 {
                                                     endpoint: {
-                                                        url: "https://portal.sso-fips.{Region}.{PartitionResult#dnsSuffix}",
+                                                        url: "https://oidc-fips.{Region}.{PartitionResult#dnsSuffix}",
                                                         properties: n,
                                                         headers: n
                                                     },
@@ -710,7 +1000,7 @@ exports.modules = {
                                             rules: [
                                                 {
                                                     endpoint: {
-                                                        url: "https://portal.sso.{Region}.{PartitionResult#dualStackDnsSuffix}",
+                                                        url: "https://oidc.{Region}.{PartitionResult#dualStackDnsSuffix}",
                                                         properties: n,
                                                         headers: n
                                                     },
@@ -728,7 +1018,7 @@ exports.modules = {
                                 },
                                 {
                                     endpoint: {
-                                        url: "https://portal.sso.{Region}.{PartitionResult#dnsSuffix}",
+                                        url: "https://oidc.{Region}.{PartitionResult#dnsSuffix}",
                                         properties: n,
                                         headers: n
                                     },
@@ -759,7 +1049,7 @@ exports.modules = {
                 disableHostPrefix: config?.disableHostPrefix ?? false,
                 endpointProvider: config?.endpointProvider ?? defaultEndpointResolver,
                 extensions: config?.extensions ?? [],
-                httpAuthSchemeProvider: config?.httpAuthSchemeProvider ?? defaultSSOHttpAuthSchemeProvider,
+                httpAuthSchemeProvider: config?.httpAuthSchemeProvider ?? defaultSSOOIDCHttpAuthSchemeProvider,
                 httpAuthSchemes: config?.httpAuthSchemes ?? [
                     {
                         schemeId: "aws.auth#sigv4",
@@ -773,7 +1063,7 @@ exports.modules = {
                     }
                 ],
                 logger: config?.logger ?? new smithy_client_dist_es.N4(),
-                serviceId: config?.serviceId ?? "SSO",
+                serviceId: config?.serviceId ?? "SSO OIDC",
                 urlParser: config?.urlParser ?? url_parser_dist_es.D,
                 utf8Decoder: config?.utf8Decoder ?? util_utf8_dist_es.ar,
                 utf8Encoder: config?.utf8Encoder ?? util_utf8_dist_es.Pq
@@ -791,6 +1081,7 @@ exports.modules = {
                 runtime: "node",
                 defaultsMode,
                 bodyLengthChecker: config?.bodyLengthChecker ?? util_body_length_node_dist_es.n,
+                credentialDefaultProvider: config?.credentialDefaultProvider ?? credentialDefaultProvider_defaultProvider,
                 defaultUserAgentProvider: config?.defaultUserAgentProvider ?? (0, util_user_agent_node_dist_es.mJ)({
                     serviceId: clientSharedValues.serviceId,
                     clientVersion: package_namespaceObject.rE
@@ -859,7 +1150,7 @@ exports.modules = {
                 ...resolveHttpAuthRuntimeConfig(extensionConfiguration)
             };
         };
-        class SSOClient extends smithy_client_dist_es.Kj {
+        class SSOOIDCClient extends smithy_client_dist_es.Kj {
             constructor(...[configuration]){
                 const _config_0 = runtimeConfig_getRuntimeConfig(configuration || {});
                 const _config_1 = resolveClientEndpointParameters(_config_0);
@@ -888,7 +1179,7 @@ exports.modules = {
                 super.destroy();
             }
             getDefaultHttpAuthSchemeParametersProvider() {
-                return defaultSSOHttpAuthSchemeParametersProvider;
+                return defaultSSOOIDCHttpAuthSchemeParametersProvider;
             }
             getIdentityProviderConfigProvider() {
                 return async (config)=>new core_dist_es.h$({

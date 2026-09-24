@@ -1,12 +1,9 @@
 "use strict";
 exports.ids = [
-    "62"
+    62
 ];
 exports.modules = {
     "../../../node_modules/.pnpm/node-fetch@3.3.2/node_modules/node-fetch/src/utils/multipart-parser.js" (__unused_rspack___webpack_module__, __webpack_exports__, __webpack_require__) {
-        __webpack_require__.d(__webpack_exports__, {
-            toFormData: ()=>toFormData
-        });
         var fetch_blob_from_js__rspack_import_0 = __webpack_require__("../../../node_modules/.pnpm/fetch-blob@3.2.0/node_modules/fetch-blob/from.js");
         var formdata_polyfill_esm_min_js__rspack_import_1 = __webpack_require__("../../../node_modules/.pnpm/formdata-polyfill@4.0.10/node_modules/formdata-polyfill/esm.min.js");
         let s = 0;
@@ -297,5 +294,8 @@ exports.modules = {
             parser.end();
             return formData;
         }
+        __webpack_require__.d(__webpack_exports__, {
+            toFormData: ()=>toFormData
+        });
     }
 };
