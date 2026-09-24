@@ -48,6 +48,32 @@ describe("paginateOperations", () => {
     expect(items.map(i => (i as unknown as { tx: { hash: string } }).tx.hash)).toEqual(["a"]);
   });
 
+  it("drops every row of the boundary transaction, including the ones that are not adjacent", async () => {
+    // Two transactions in one block share its date, so `mergeOps` can interleave their rows.
+    // Walking back over the trailing run alone would keep the leading `h1` and persist half of
+    // it; the cut is taken before its first row instead, and `h2` goes with it to keep the
+    // result a contiguous prefix.
+    const items = await paginateOperations(
+      pages({ items: [op("a"), op("h1"), op("h2"), op("h1")], next: "c1" }),
+      2,
+      item => (item as unknown as { tx: { hash: string } }).tx.hash,
+    );
+
+    expect(items.map(i => (i as unknown as { tx: { hash: string } }).tx.hash)).toEqual(["a"]);
+  });
+
+  it("returns nothing when the boundary transaction starts at the head", async () => {
+    // The bound is smaller than a single transaction; keeping part of it is the one thing that
+    // must not happen.
+    const items = await paginateOperations(
+      pages({ items: [op("h1"), op("h2"), op("h1")], next: "c1" }),
+      2,
+      item => (item as unknown as { tx: { hash: string } }).tx.hash,
+    );
+
+    expect(items).toEqual([]);
+  });
+
   it("keeps every row when the walk ends on a falsy cursor, bound or not", async () => {
     // No next page exists, so nothing can be missing: the trailing transaction is whole.
     const items = await paginateOperations(
