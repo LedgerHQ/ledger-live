@@ -25,7 +25,6 @@ import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { usePayCardAssets } from "./usePayCardAssets";
-import { useWipeHostedSession } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
@@ -172,8 +171,6 @@ export function useCardViewModel(): CardViewModel {
     () => openHosted(buildCashbackPath, "cashback page did not open"),
     [openHosted],
   );
-
-  useWipeHostedSession();
 
   const login: CardViewModel["login"] = useMemo(
     () => ({ oauthConfig, callback, openHostedLogin, openHostedPage }),
