@@ -336,7 +336,7 @@ export async function fetchA4Operations(
     a4AccountId,
     address,
     chain,
-    () => paginateOperations(fetchRawPage, maxOperations).then(adapt),
+    () => paginateOperations(fetchRawPage, maxOperations, a4Op => a4Op.tx.hash).then(adapt),
     maxDcRoamRetries,
   );
 }

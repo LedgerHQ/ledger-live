@@ -166,15 +166,23 @@ export async function paginateOperations<T>(
 }
 
 /**
- * Drops the run of trailing items that share the last one's hash. An item with no hash is its own
- * transaction and is kept. Everything is dropped only if the whole list is one transaction, which
- * a caller should read as "the bound is smaller than a single transaction".
+ * Drops the transaction the bound cut into, by cutting before its *first* row rather than at the
+ * start of its trailing run: rows of one transaction are not necessarily adjacent, since every
+ * operation in a block carries that block's date and two transactions in one block interleave.
+ * Walking back over the trailing run would leave the earlier rows of the same transaction in
+ * place, which is the half-transaction this exists to prevent.
+ *
+ * Rows of other transactions sitting after that cut go with it — the result has to stay a
+ * contiguous prefix, and dropping them is a truncation from the tail. An item with no hash is its
+ * own transaction and is kept. If the boundary transaction starts at the head, nothing is
+ * returned, which a caller should read as "the bound is smaller than a single transaction".
  */
 function dropTrailingTransaction<T>(items: T[], hashOf: (item: T) => string | undefined): T[] {
   const lastHash = items.length ? hashOf(items[items.length - 1]) : undefined;
   if (!lastHash) return items;
 
-  let end = items.length;
-  while (end > 0 && hashOf(items[end - 1]) === lastHash) end--;
-  return items.slice(0, end);
+  return items.slice(
+    0,
+    items.findIndex(item => hashOf(item) === lastHash),
+  );
 }
