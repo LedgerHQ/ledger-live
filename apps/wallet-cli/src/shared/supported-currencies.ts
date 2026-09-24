@@ -1,19 +1,15 @@
-import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
-import {
-  isCurrencySupported,
-  listSupportedCurrencies,
-} from "@ledgerhq/live-common/coin-modules/registry";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { walletCliLoaders } from "../coin-module-loaders";
 
-// Support is declared once, by the `supportedCoins` of the coin-module loaders registered in
-// live-common-setup.ts. Registration must have run before these are called.
+const supportedIds: ReadonlySet<string> = new Set(
+  walletCliLoaders.flatMap(loader => loader.supportedCoins),
+);
 
 export function listWalletCliSupportedCurrencyIds(): string[] {
-  return listSupportedCurrencies().map(currency => currency.id);
+  return [...supportedIds];
 }
 
 /** True for a supported mainnet or one of its testnets (e.g. bitcoin_testnet, solana_devnet). */
 export function isWalletCliSupportedCurrency(currency: CryptoCurrency): boolean {
-  return isCurrencySupported(
-    currency.isTestnetFor ? getCryptoCurrencyById(currency.isTestnetFor) : currency,
-  );
+  return supportedIds.has(currency.isTestnetFor ?? currency.id);
 }
