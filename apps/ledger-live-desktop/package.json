@@ -122,6 +122,7 @@
     "@features/platform-aggregated-assets": "workspace:*",
     "@features/platform-card": "workspace:*",
     "@features/platform-contacts": "workspace:^",
+    "@features/platform-content-ab-tests": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@features/platform-device-action-content": "workspace:^",
     "@features/platform-device-intent": "workspace:^",

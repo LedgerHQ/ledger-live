@@ -73,6 +73,35 @@ id = "generic-api-key"
         '''apps/ledger-live-mobile/\.env\..+''',
     ]
 
+    [[rules.allowlists]]
+    condition = "AND"
+    description = "Ignore public Firebase web API keys baked into the desktop client. These are the same class of non-secret client identifiers as the existing FIREBASE_API_KEY entries -- matched by exact value, not by path alone."
+    regexTarget = "match"
+    regexes = [
+        '''AIzaSyDh7WKaA5cvXV1C554Djyd68vy_1LrXxhk''',
+        '''AIzaSyCqqnv4kKyCJHLBeuSxPYUwFl7uj2q6CnA''',
+    ]
+    paths = [
+        '''apps/ledger-live-desktop/\.env\..+''',
+        '''apps/ledger-live-desktop/src/firebase-setup\.ts''',
+    ]
+
+[[rules]]
+id = "gcp-api-key"
+
+    [[rules.allowlists]]
+    condition = "AND"
+    description = "Ignore public Firebase web API keys baked into the desktop client. These are the same class of non-secret client identifiers as the existing FIREBASE_API_KEY entries -- matched by exact value, not by path alone."
+    regexTarget = "match"
+    regexes = [
+        '''AIzaSyDh7WKaA5cvXV1C554Djyd68vy_1LrXxhk''',
+        '''AIzaSyCqqnv4kKyCJHLBeuSxPYUwFl7uj2q6CnA''',
+    ]
+    paths = [
+        '''apps/ledger-live-desktop/\.env\..+''',
+        '''apps/ledger-live-desktop/src/firebase-setup\.ts''',
+    ]
+
 [[rules]]
 id = "jwt"
 

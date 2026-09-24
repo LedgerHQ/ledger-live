@@ -1067,6 +1067,9 @@ importers:
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../features/platform/contacts
+      '@features/platform-content-ab-tests':
+        specifier: workspace:^
+        version: link:../../features/platform/content-ab-tests
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -8635,6 +8638,37 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  features/platform/content-ab-tests:
+    dependencies:
+      lodash:
+        specifier: 'catalog:'
+        version: 4.17.21
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/lodash':
+        specifier: 'catalog:'
+        version: 4.17.21
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'

@@ -44,6 +44,7 @@ import {
   fetchRemoteFlags as defaultFetchRemoteFlags,
   readCachedFlags as defaultReadCachedFlags,
 } from "~/firebase/remoteConfig";
+import { fetchContentAbTests, readCachedContentAbTests } from "~/firebase/contentAbTests";
 import { sleepingListener } from "./sleepingListener";
 /**
  * Reports only the failures that actually degrade the session. A warm failure is routine: the
@@ -78,12 +79,22 @@ type Props = {
   readCachedFlags?: (() => Promise<PartialFeatures>) | null;
 };
 
+async function fetchRemoteFlagsWithContentAbTests(): Promise<PartialFeatures> {
+  const [flags] = await Promise.all([defaultFetchRemoteFlags(), fetchContentAbTests()]);
+  return flags;
+}
+
+async function readCachedFlagsWithContentAbTests(): Promise<PartialFeatures> {
+  const [flags] = await Promise.all([defaultReadCachedFlags(), readCachedContentAbTests()]);
+  return flags;
+}
+
 const customCreateStore = ({
   state,
   dbMiddleware,
   analyticsMiddleware,
-  fetchRemoteFlags = defaultFetchRemoteFlags,
-  readCachedFlags = fetchRemoteFlags === null ? null : defaultReadCachedFlags,
+  fetchRemoteFlags = fetchRemoteFlagsWithContentAbTests,
+  readCachedFlags = fetchRemoteFlags === null ? null : readCachedFlagsWithContentAbTests,
 }: Props) => {
   const store = configureStore({
     reducer: reducers,

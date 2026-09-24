@@ -92,6 +92,24 @@
         "env": "FIREBASE_STORAGE_BUCKET"
       },
       {
+        "env": "CONTENT_AB_TESTS_FIREBASE_API_KEY"
+      },
+      {
+        "env": "CONTENT_AB_TESTS_FIREBASE_APP_ID"
+      },
+      {
+        "env": "CONTENT_AB_TESTS_FIREBASE_AUTH_DOMAIN"
+      },
+      {
+        "env": "CONTENT_AB_TESTS_FIREBASE_MESSAGING_SENDER_ID"
+      },
+      {
+        "env": "CONTENT_AB_TESTS_FIREBASE_PROJECT_ID"
+      },
+      {
+        "env": "CONTENT_AB_TESTS_FIREBASE_STORAGE_BUCKET"
+      },
+      {
         "env": "GENERATE_METAFILES"
       },
       {
