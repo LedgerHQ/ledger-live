@@ -250,6 +250,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadLocalApi: () =>
       import("../families/hedera/coinModuleApi").then(m => m.createLocalHederaApi),
     loadBridgeApi: () => import("../families/hedera/bridge/api").then(m => m.default),
+    loadAccountRawAssign: () => import("../families/hedera/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/hedera/bridgeExtensions").then(m => m.default),
   },
   {

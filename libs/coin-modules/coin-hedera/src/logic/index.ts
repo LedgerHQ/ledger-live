@@ -2,6 +2,7 @@ export { broadcast } from "./broadcast";
 export { combine } from "./combine";
 export { craftTransaction } from "./craftTransaction";
 export { estimateFees } from "./estimateFees";
+export { getAccountInfo } from "./getAccountInfo";
 export { getBalance } from "./getBalance";
 export { getBlockV2 } from "./getBlock.v2";
 export { getBlockInfo } from "./getBlockInfo";
