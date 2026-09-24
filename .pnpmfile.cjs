@@ -52,11 +52,6 @@ function readPackage(pkg, context) {
       }),
 
       /* Other packages */
-      addDependencies("detox", {
-        "@jest/reporters": "*",
-        "jest-environment-node": "*",
-        "jest-circus": "*",
-      }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
 
       addPeerDependencies(/^expo-/, {
