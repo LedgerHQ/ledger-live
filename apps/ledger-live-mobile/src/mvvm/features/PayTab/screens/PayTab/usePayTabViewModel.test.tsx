@@ -275,14 +275,25 @@ describe("usePayTabViewModel", () => {
     expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
   });
 
-  it("should open the withdrawal page of the hosted UI for the asset", async () => {
+  it("should open the withdrawal page of the hosted UI on the Baanx manifest", async () => {
     setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
     mockedReadCardUsEnv.mockResolvedValue(true);
     const { user } = renderViewModel();
 
     await user.press(screen.getByTestId("asset-withdraw"));
 
-    await expectSecureBrowser("https://hosted.test/withdrawal?app_id=LEDGERUS&currency=btc");
+    await expectHostedPage("https://ledger.baanxapi.test/withdrawal?app_id=LEDGERUS&currency=btc");
+    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
+  });
+
+  it("should open the legacy card live app on withdraw when the legacyTopUp param is on", async () => {
+    const { user } = renderViewModelWithLegacyTopUp();
+
+    await user.press(screen.getByTestId("asset-withdraw"));
+
+    await waitFor(() => expect(screen.getByTestId("base-platform")).toHaveTextContent("cl-card"));
+    expect(screen.getByTestId("base-goto")).toHaveTextContent("undefined");
+    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
   });
 
   it("should name the US app on the top up page for a US card holder", async () => {

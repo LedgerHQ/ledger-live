@@ -143,8 +143,8 @@ export function usePayTabViewModel() {
   // The legacy live app has its own top-up flow and its own login. It opens as every other live
   // app does, in the Discover webview, and never in the secure browser. It takes no currency, so
   // the fallback opens it at its root from every top-up entry point.
-  const openTopUp = useCallback(
-    async (currency?: string) => {
+  const openInDiscoverOrLegacyApp = useCallback(
+    async (buildPath: CardAssetPathBuilder, currency?: string) => {
       if (isLegacyTopUp) {
         navigation.navigate(NavigatorName.Base, {
           screen: ScreenName.PlatformApp,
@@ -155,7 +155,7 @@ export function usePayTabViewModel() {
 
       await openHostedWith(
         openInDiscover,
-        buildTopUpPath,
+        buildPath,
         "the hosted asset page did not open",
         currency,
       );
@@ -163,7 +163,10 @@ export function usePayTabViewModel() {
     [isLegacyTopUp, navigation, openHostedWith, openInDiscover],
   );
 
-  const onTopUp = useCallback(() => openTopUp(), [openTopUp]);
+  const onTopUp = useCallback(
+    () => openInDiscoverOrLegacyApp(buildTopUpPath),
+    [openInDiscoverOrLegacyApp],
+  );
 
   const onChooseCardType = useCallback(
     () => openHosted(buildOrderCardPath, "order card page did not open"),
@@ -209,12 +212,11 @@ export function usePayTabViewModel() {
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openTopUp(asset.currency),
-      onWithdraw: asset =>
-        void openHosted(buildWithdrawalPath, "the hosted asset page did not open", asset.currency),
+      onTopUp: asset => void openInDiscoverOrLegacyApp(buildTopUpPath, asset.currency),
+      onWithdraw: asset => void openInDiscoverOrLegacyApp(buildWithdrawalPath, asset.currency),
       onAddAsset,
     }),
-    [payCardAssets, onShowAssetHistory, openHosted, openTopUp, onAddAsset],
+    [payCardAssets, onShowAssetHistory, openInDiscoverOrLegacyApp, onAddAsset],
   );
 
   const formatCountervalue = useCountervalueFormatter();
