@@ -1,7 +1,8 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getHederaValidators } from "@ledgerhq/coin-hedera/network/utils";
 import { HEDERA_VALIDATORS_CACHE_MINUTES } from "@ledgerhq/coin-hedera/constants";
-import type { HederaValidator } from "../types";
+import { getCurrencyConfiguration } from "../../../config";
+import type { HederaCoinConfig, HederaValidator } from "../types";
 
 export const hederaApi = createApi({
   reducerPath: "hederaApi",
@@ -12,7 +13,9 @@ export const hederaApi = createApi({
     getValidators: build.query<HederaValidator[], string>({
       queryFn: async currencyId => {
         try {
-          return { data: await getHederaValidators({ currencyId }) };
+          // Only the legacy bridge fills coin-hedera's config registry, so pass the config in.
+          const config = getCurrencyConfiguration<HederaCoinConfig>(currencyId);
+          return { data: await getHederaValidators({ currencyId, config }) };
         } catch (error) {
           return { error: error instanceof Error ? error : new Error(String(error)) };
         }

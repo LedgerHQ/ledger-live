@@ -253,7 +253,7 @@ export const makeSync =
   }: {
     getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     postSync?: (initial: A, synced: A) => A;
-    shouldMergeOps?: boolean;
+    shouldMergeOps?: boolean | ((account: A) => Promise<boolean>);
   }): AccountBridge<T, A, U, O, R>["sync"] =>
   (initial: A, syncConfig: SyncConfig): Observable<AccountUpdater<A>> =>
     new Observable((o: Observer<AccountUpdater<A>>) => {
@@ -295,6 +295,8 @@ export const makeSync =
           );
 
           const shape$ = normalizeToObservable(shapeResult);
+          const mergesOps =
+            typeof shouldMergeOps === "function" ? await shouldMergeOps(initial) : shouldMergeOps;
 
           const updater =
             (shape: Partial<A>) =>
@@ -306,7 +308,7 @@ export const makeSync =
               }
 
               // FIXME reconsider doing mergeOps here. work is redundant for impl like eth
-              const operations = shouldMergeOps
+              const operations = mergesOps
                 ? mergeOps(a.operations, shape.operations || [])
                 : shape.operations || [];
 

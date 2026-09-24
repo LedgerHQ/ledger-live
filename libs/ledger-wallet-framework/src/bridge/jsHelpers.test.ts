@@ -360,6 +360,39 @@ describe("makeSync", () => {
     })(account, {} as SyncConfig);
     await expect(firstValueFrom(sync$)).rejects.toThrow("Observable shape error");
   });
+
+  describe("shouldMergeOps", () => {
+    const op = (id: string, date: string) =>
+      ({ id, hash: id, type: "IN", date: new Date(date), value: new BigNumber(1) }) as Operation;
+
+    const syncedOperationIds = async (shouldMergeOps?: (account: Account) => Promise<boolean>) => {
+      const account = createAccount({
+        id: "js:2:bitcoin::",
+        operations: [op("stored", "2024-05-12T17:04:12")],
+      });
+      const sync$ = makeSync({
+        getAccountShape: () => Promise.resolve({ operations: [op("new", "2024-05-13T17:04:12")] }),
+        ...(shouldMergeOps && { shouldMergeOps }),
+      })(account, {} as SyncConfig);
+      const updater = await firstValueFrom(sync$);
+
+      return updater(account).operations.map(o => o.id);
+    };
+
+    it("merges the stored operations by default", async () => {
+      await expect(syncedOperationIds()).resolves.toEqual(["new", "stored"]);
+    });
+
+    it("keeps only the shape's operations when the account opts out", async () => {
+      const shouldMergeOps = jest.fn().mockResolvedValue(false);
+
+      await expect(syncedOperationIds(shouldMergeOps)).resolves.toEqual(["new"]);
+      expect(shouldMergeOps).toHaveBeenCalledTimes(1);
+      expect(shouldMergeOps).toHaveBeenCalledWith(
+        expect.objectContaining({ id: "js:2:bitcoin::" }),
+      );
+    });
+  });
 });
 
 describe("makeScanAccounts", () => {
