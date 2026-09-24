@@ -4,6 +4,7 @@ import type { DeviceOnboardingToolContext } from "../types";
 import {
   formatTime,
   formatValue,
+  stateKind,
   useDeviceOnboardingViewModel,
 } from "./useDeviceOnboardingViewModel";
 
@@ -54,14 +55,99 @@ describe("formatTime", () => {
   });
 });
 
+describe("stateKind", () => {
+  it.each([
+    ["readingState", "progress"],
+    ["routing", "progress"],
+    ["checks.checksIdle", "progress"],
+    ["checks.genuineCheck", "genuine"],
+    ["checks.enteringEarlyCheckScreen", "genuine"],
+    ["checks.firmwareCheck", "firmware"],
+    ["checks.firmwareUpdateOffered", "firmware"],
+    ["deviceSetup.restoreWords", "setup"],
+    ["deviceLocked", "locked"],
+    ["awaitingSession", "session"],
+    ["checks.genuineFailed", "failed"],
+    ["checks.firmwareCheckFailed", "failed"],
+    ["bootloaderRecovery", "failed"],
+    ["legacyFallback", "failed"],
+    ["checks.checksSucceeded", "succeeded"],
+    ["done", "succeeded"],
+    ["syncOffer", "succeeded"],
+    ["exitOnboarding", "quit"],
+    ["leavingOnQuit", "quit"],
+  ])("classifies %p as %p", (state, expected) => {
+    expect(stateKind(state)).toBe(expected);
+  });
+
+  it("falls back to progress on a state it does not know, rather than dropping the step", () => {
+    expect(stateKind("somethingAddedLater")).toBe("progress");
+  });
+
+  it("reads a failure before the family it belongs to, so a failed check is not shown as running", () => {
+    expect(stateKind("checks.firmwareCheckFailed")).not.toBe("firmware");
+    expect(stateKind("checks.genuineFailed")).not.toBe("genuine");
+  });
+});
+
 describe("useDeviceOnboardingViewModel", () => {
-  it("reports the status as a label and the missing state as a dash", () => {
+  it("reports the status as a label and no step before the machine runs", () => {
     const { result } = renderHook(() => useDeviceOnboardingViewModel(buildProps()));
 
     expect(result.current.statusLabel).toBe("Not started");
-    expect(result.current.stateLabel).toBe("—");
+    expect(result.current.stateSteps).toEqual([]);
     expect(result.current.deviceLabel).toBeNull();
     expect(result.current.isRunning).toBe(false);
+  });
+
+  it("keeps every state the machine went through, marking the last one as current", () => {
+    const { result, rerender } = renderHook(
+      (state: string | null) => useDeviceOnboardingViewModel(buildProps({ state })),
+      { initialProps: "readingState" as string | null },
+    );
+
+    rerender("routing");
+    rerender("checks.genuineCheck");
+
+    expect(result.current.stateSteps).toEqual([
+      { key: "0-readingState", label: "readingState", kind: "progress", isCurrent: false },
+      { key: "1-routing", label: "routing", kind: "progress", isCurrent: false },
+      {
+        key: "2-checks.genuineCheck",
+        label: "checks.genuineCheck",
+        kind: "genuine",
+        isCurrent: true,
+      },
+    ]);
+  });
+
+  it("appends a revisited state rather than collapsing it, so a loop stays visible", () => {
+    const { result, rerender } = renderHook(
+      (state: string | null) => useDeviceOnboardingViewModel(buildProps({ state })),
+      { initialProps: "readingState" as string | null },
+    );
+
+    rerender("deviceLocked");
+    rerender("readingState");
+    rerender("readingState");
+
+    expect(result.current.stateSteps.map(step => step.label)).toEqual([
+      "readingState",
+      "deviceLocked",
+      "readingState",
+    ]);
+  });
+
+  it("clears the trail once the host drops the state, so a reset starts from scratch", () => {
+    const { result, rerender } = renderHook(
+      (state: string | null) => useDeviceOnboardingViewModel(buildProps({ state })),
+      { initialProps: "readingState" as string | null },
+    );
+
+    rerender("routing");
+    rerender(null);
+
+    expect(result.current.stateSteps).toEqual([]);
   });
 
   it("names the model and the transport in the device label, since the flow branches on both", () => {

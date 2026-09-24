@@ -2013,6 +2013,9 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.9.1(rxjs@7.8.2)
+      '@ledgerhq/device-onboarding':
+        specifier: workspace:^
+        version: link:../../libs/device-onboarding
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2))
@@ -2466,6 +2469,9 @@ importers:
       uuid:
         specifier: 8.3.2
         version: 8.3.2
+      xstate:
+        specifier: 'catalog:'
+        version: 5.19.2
     devDependencies:
       '@babel/core':
         specifier: 7.28.5

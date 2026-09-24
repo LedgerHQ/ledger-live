@@ -1,10 +1,43 @@
+import { Fragment } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
+import {
+  ArrowDown,
+  Bluetooth,
+  CheckmarkCircle,
+  Circles,
+  Download,
+  ExitLogout,
+  Lock,
+  Nano,
+  ShieldCheck,
+  Warning,
+} from "@ledgerhq/lumen-ui-react/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
 import {
   useDeviceOnboardingViewModel,
   type DisplayRow,
   type EventRow,
+  type StateKind,
+  type StateStep,
 } from "./useDeviceOnboardingViewModel";
+
+// IconProps is not exported from @ledgerhq/lumen-ui-react, so the type comes from a symbol.
+type IconComponent = typeof ShieldCheck;
+
+const stepPresentation: Record<
+  StateKind,
+  { readonly Icon: IconComponent; readonly tone: string }
+> = {
+  progress: { Icon: Circles, tone: "bg-muted-transparent text-muted" },
+  genuine: { Icon: ShieldCheck, tone: "bg-active-subtle text-active" },
+  firmware: { Icon: Download, tone: "bg-active-subtle text-active" },
+  setup: { Icon: Nano, tone: "bg-active-subtle text-active" },
+  locked: { Icon: Lock, tone: "bg-warning-transparent text-warning" },
+  session: { Icon: Bluetooth, tone: "bg-warning-transparent text-warning" },
+  failed: { Icon: Warning, tone: "bg-error-transparent text-error" },
+  succeeded: { Icon: CheckmarkCircle, tone: "bg-success-transparent text-success" },
+  quit: { Icon: ExitLogout, tone: "bg-muted-transparent text-muted" },
+};
 
 function DeviceOnboarding(props: DeviceOnboardingToolProps) {
   const vm = useDeviceOnboardingViewModel(props);
@@ -37,7 +70,18 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
 
       <div className="px-16 py-12 border-b border-base flex flex-col gap-4">
         <span className="body-3 text-muted">State</span>
-        <code className="text-base break-all">{vm.stateLabel}</code>
+        {vm.stateSteps.length === 0 ? (
+          <code className="text-muted">—</code>
+        ) : (
+          <span className="flex flex-col items-start gap-2">
+            {vm.stateSteps.map((step, index) => (
+              <Fragment key={step.key}>
+                {index > 0 ? <ArrowDown size={16} className="text-muted ml-8" /> : null}
+                <StateChip step={step} />
+              </Fragment>
+            ))}
+          </span>
+        )}
       </div>
 
       <div className="px-16 py-12 border-b border-base flex flex-wrap items-center gap-8">
@@ -70,6 +114,21 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
         )}
       </div>
     </div>
+  );
+}
+
+function StateChip({ step }: Readonly<{ step: StateStep }>) {
+  const { Icon, tone } = stepPresentation[step.kind];
+
+  return (
+    <span
+      className={`flex items-center gap-8 px-8 py-4 rounded-sm body-3 border ${tone} ${
+        step.isCurrent ? "border-current" : "border-transparent"
+      }`}
+    >
+      <Icon size={16} />
+      <code>{step.label}</code>
+    </span>
   );
 }
 

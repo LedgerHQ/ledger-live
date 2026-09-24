@@ -167,6 +167,7 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-onboarding": "workspace:^",
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",
     "@ledgerhq/devices": "catalog:",
@@ -317,7 +318,8 @@
     "styled-system": "catalog:",
     "stylis": "catalog:",
     "text-encoding-polyfill": "0.6.7",
-    "uuid": "8.3.2"
+    "uuid": "8.3.2",
+    "xstate": "catalog:"
   },
   "devDependencies": {
     "@babel/core": "7.28.5",

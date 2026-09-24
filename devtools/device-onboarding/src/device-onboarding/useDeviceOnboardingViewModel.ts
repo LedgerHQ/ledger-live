@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { OnboardingEvent } from "@ledgerhq/device-onboarding";
 import {
   watchedContextFields,
@@ -9,6 +10,7 @@ import {
 /** The host keeps the whole run; past this the panel is scrolled rather than read. */
 const displayedEventCount = 40;
 const displayedDetailLength = 80;
+const displayedStateCount = 24;
 
 const statusLabels: Record<DeviceOnboardingStatus, string> = {
   idle: "Not started",
@@ -35,9 +37,60 @@ export interface SendableRow {
   readonly event: OnboardingEvent;
 }
 
+/** What a state means for whoever reads the trail, not where it sits in the machine. */
+export type StateKind =
+  | "progress"
+  | "genuine"
+  | "firmware"
+  | "setup"
+  | "locked"
+  | "session"
+  | "failed"
+  | "succeeded"
+  | "quit";
+
+export interface StateStep {
+  /** A machine state is revisited, so the position disambiguates the label. */
+  readonly key: string;
+  readonly label: string;
+  readonly kind: StateKind;
+  readonly isCurrent: boolean;
+}
+
+const failedStates = new Set([
+  "checks.genuineFailed",
+  "checks.firmwareCheckFailed",
+  "checks.notGenuineSupport",
+  "legacyFallback",
+  "bootloaderRecovery",
+]);
+const succeededStates = new Set([
+  "checks.checksDone",
+  "checks.checksSucceeded",
+  "onboardedExit",
+  "syncOffer",
+  "done",
+]);
+const quitStates = new Set(["quitting", "leavingOnQuit", "exitOnboarding"]);
+const firmwarePattern = /firmware/i;
+const genuinePattern = /genuine|earlycheck/i;
+
+/** Families rather than an exhaustive map: the machine grows, an unknown state stays readable. */
+export function stateKind(state: string): StateKind {
+  if (failedStates.has(state)) return "failed";
+  if (succeededStates.has(state)) return "succeeded";
+  if (quitStates.has(state)) return "quit";
+  if (state === "deviceLocked") return "locked";
+  if (state === "awaitingSession") return "session";
+  if (state.startsWith("deviceSetup.")) return "setup";
+  if (firmwarePattern.test(state)) return "firmware";
+  if (genuinePattern.test(state)) return "genuine";
+  return "progress";
+}
+
 export interface DeviceOnboardingViewModel {
   readonly statusLabel: string;
-  readonly stateLabel: string;
+  readonly stateSteps: readonly StateStep[];
   readonly deviceLabel: string | null;
   readonly isRunning: boolean;
   readonly contextRows: readonly DisplayRow[];
@@ -104,6 +157,27 @@ export function useDeviceOnboardingViewModel(
 ): DeviceOnboardingViewModel {
   const { status, device, state, context, events, exit, sendableEvents, error } = props;
 
+  const [visitedStates, setVisitedStates] = useState<readonly string[]>([]);
+
+  useEffect(() => {
+    setVisitedStates(current => {
+      if (!state) {
+        return current.length === 0 ? current : [];
+      }
+      if (current.at(-1) === state) {
+        return current;
+      }
+      return [...current, state].slice(-displayedStateCount);
+    });
+  }, [state]);
+
+  const stateSteps: StateStep[] = visitedStates.map((label, index) => ({
+    key: `${index}-${label}`,
+    label,
+    kind: stateKind(label),
+    isCurrent: index === visitedStates.length - 1,
+  }));
+
   const contextRows: DisplayRow[] =
     context === null
       ? []
@@ -149,7 +223,7 @@ export function useDeviceOnboardingViewModel(
 
   return {
     statusLabel: statusLabels[status],
-    stateLabel: state || "—",
+    stateSteps,
     deviceLabel,
     isRunning: status === "running",
     contextRows,
