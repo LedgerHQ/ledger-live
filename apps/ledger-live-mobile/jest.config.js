@@ -48,6 +48,7 @@ const transformIncludePatterns = [
   "@ledgerhq/lumen-.*",
   "immer",
   "@features/.*",
+  "@ronradtke",
   "@sbaiahmed1/react-native-blur",
   "@mysten",
   "@scure",
@@ -132,7 +133,13 @@ module.exports = {
     // process.stderr.write with a swallow-everything stub, so the built-in
     // string reporter's annotations would otherwise be dropped on the floor.
     ...(process.env.CI ? [["<rootDir>/scripts/jestGithubActionsReporter.js", {}]] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    [
+      "jest-sonar",
+      {
+        outputName: "sonar-executionTests-report.xml",
+        reportedFilePath: "absolute",
+      },
+    ],
     "@ledgerhq/test-quarantine/jest",
   ],
   resolver: "<rootDir>/scripts/resolver.js",
@@ -163,6 +170,7 @@ module.exports = {
     "^react/(.*)$": "<rootDir>/node_modules/react/$1",
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
+    "^react-native-fit-image$": "<rootDir>/__tests__/mocks/react-native-fit-image.js",
     "^react-native-gesture-handler$": "<rootDir>/node_modules/react-native-gesture-handler",
     "^react-native-gesture-handler/(.*)$": "<rootDir>/node_modules/react-native-gesture-handler/$1",
     // Pin to a single instance so the jest-setup mock covers workspace packages too

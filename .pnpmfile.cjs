@@ -77,9 +77,6 @@ function readPackage(pkg, context) {
       removeDependencies("follow-redirects", ["debug"], {
         kind: "peerDependencies",
       }),
-      addPeerDependencies("react-native-easy-markdown", {
-        "prop-types": "*",
-      }),
       addDependencies("@actions/github", {
         undici: "*",
       }),
