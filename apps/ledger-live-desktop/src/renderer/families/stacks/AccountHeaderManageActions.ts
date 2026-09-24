@@ -30,6 +30,10 @@ const AccountHeaderManageActions: StacksFamily["accountHeaderManageActions"] = (
   if (account.type !== "Account") return null;
 
   const stakingPosition = getStacksStakingPosition(account);
+  // `getStakes` only sets `actions: ["undelegate"]` while the position is "active"; once it enters
+  // "deactivating" (its final reward cycle) a fresh `unstake` call is redundant/invalid, but the
+  // position is kept around (unfiltered) for the balance footer to still show it.
+  const canUnstake = stakingPosition?.state === "active";
 
   return [
     {
@@ -43,7 +47,7 @@ const AccountHeaderManageActions: StacksFamily["accountHeaderManageActions"] = (
       },
       accountActionsTestId: "stake-button",
     },
-    ...(stakingPosition
+    ...(canUnstake
       ? [
           {
             key: "Unstake",
