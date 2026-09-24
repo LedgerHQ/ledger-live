@@ -11,9 +11,9 @@ import {
   type ContactsNativeProps,
 } from "@features/flow-pay-contact";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import { Wallet40Background } from "LLM/components/Wallet40Background";
+import { Wallet40Background, useScrollOffset } from "LLM/components/Wallet40Background";
 import { TrackScreen } from "~/analytics";
-import { ScrollView } from "react-native";
+import Animated from "react-native-reanimated";
 
 type PayTabViewProps = {
   readonly top: number;
@@ -44,11 +44,15 @@ export function PayTabView({
   trackRecipientAddressSelection,
   disclaimer,
 }: PayTabViewProps) {
+  const { scrollY, onScroll } = useScrollOffset();
+
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
-      <Wallet40Background type="pay" />
-      <ScrollView
+      <Wallet40Background type="pay" scrollY={scrollY} />
+      <Animated.ScrollView
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={onScroll}
         contentContainerStyle={{
           flexGrow: 1,
           paddingTop: top,
@@ -83,7 +87,7 @@ export function PayTabView({
             {disclaimer}
           </Text>
         </Box>
-      </ScrollView>
+      </Animated.ScrollView>
     </Box>
   );
 }
