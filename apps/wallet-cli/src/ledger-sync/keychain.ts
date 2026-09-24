@@ -61,3 +61,15 @@ export function loadLedgerSyncMemberCredentials(
 export const deleteLedgerSyncMemberCredentials = (): boolean => deleteKeychainEntry(getEntry());
 
 export const hasLedgerSyncMemberCredentials = (): boolean => hasKeychainEntry(getEntry());
+
+/** Unlike `hasLedgerSyncMemberCredentials`, keeps a failed read apart from a missing entry, so a
+ * caller about to write a new credential can refuse instead of overwriting one it couldn't see. */
+export function ledgerSyncCredentialState(
+  entry: Pick<LedgerSyncKeychainEntry, "getPassword"> = getEntry(),
+): "present" | "absent" | "unreadable" {
+  try {
+    return entry.getPassword() ? "present" : "absent";
+  } catch {
+    return "unreadable";
+  }
+}

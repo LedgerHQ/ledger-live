@@ -13,7 +13,7 @@ import {
 import {
   saveLedgerSyncMemberCredentials,
   deleteLedgerSyncMemberCredentials,
-  hasLedgerSyncMemberCredentials,
+  ledgerSyncCredentialState,
 } from "../../ledger-sync/keychain";
 import { errMessage } from "../../shared/error-message";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../../device/register-dmk-transport";
@@ -53,6 +53,27 @@ function persistEnrollment(
   }
 }
 
+/** Mirrors ring/init.ts: refuse a stray keychain key with no session metadata (e.g. after a
+ * `session reset` on a corrupt file) — overwriting it would orphan the previous remote member. An
+ * entry that can't be read is treated the same way: it may be exactly such a key. */
+function assertNoExistingCredential(): void {
+  const state = ledgerSyncCredentialState();
+  if (state === "present") {
+    throw new Error(
+      "A Ledger Sync member credential already exists in the OS keychain but this session has " +
+        "no Ledger Sync metadata. Run `wallet-cli ledger-sync destroy` (or remove the keychain " +
+        "entry) before re-enrolling.",
+    );
+  }
+  if (state === "unreadable") {
+    throw new Error(
+      "Couldn't read the OS keychain to check for an existing Ledger Sync credential. Unlock or " +
+        "fix the keychain and re-run — enrolling now could overwrite a credential that still " +
+        "belongs to a Ledger Sync member.",
+    );
+  }
+}
+
 function defaultMemberName(): string {
   const raw = `${os.hostname()} (${os.platform()})`;
   return raw.slice(0, MEMBER_NAME_MAX_LENGTH);
@@ -87,15 +108,7 @@ export default defineCommand({
           "Ledger Sync already enrolled. Run `wallet-cli ledger-sync destroy` to reset.",
         );
       }
-      // Mirrors ring/init.ts: refuse a stray keychain key with no session metadata (e.g. after a
-      // `session reset` on a corrupt file) — overwriting it would orphan the previous remote member.
-      if (hasLedgerSyncMemberCredentials()) {
-        throw new Error(
-          "A Ledger Sync member credential already exists in the OS keychain but this session has " +
-            "no Ledger Sync metadata. Run `wallet-cli ledger-sync destroy` (or remove the keychain " +
-            "entry) before re-enrolling.",
-        );
-      }
+      assertNoExistingCredential();
 
       const memberName = flags.name ?? defaultMemberName();
       const sdk = createLkrpSdk({
@@ -120,7 +133,7 @@ export default defineCommand({
 
       await withSessionLock(async () => {
         const fresh = await Session.read();
-        if (fresh.ledgerSyncTrustchain || hasLedgerSyncMemberCredentials()) {
+        if (fresh.ledgerSyncTrustchain || ledgerSyncCredentialState() !== "absent") {
           // getOrCreateTrustchain above already registered this machine as a member remotely — that
           // can't be undone here, so say so rather than a plain "already enrolled".
           throw new Error(

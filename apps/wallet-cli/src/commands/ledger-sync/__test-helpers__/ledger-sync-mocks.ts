@@ -26,6 +26,7 @@ const KEYCHAIN_KEYS = [
   "loadLedgerSyncMemberCredentials",
   "deleteLedgerSyncMemberCredentials",
   "hasLedgerSyncMemberCredentials",
+  "ledgerSyncCredentialState",
 ] as const;
 const LKRP_SDK_KEYS = ["createLkrpSdk"] as const;
 const CLOUD_SYNC_KEYS = ["pullSyncedAccounts", "mergeSyncedAccounts"] as const;
