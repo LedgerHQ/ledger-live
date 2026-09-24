@@ -5,6 +5,17 @@ import {
   type SponsoredRentSignatureResult,
 } from "../useSponsoredRentSignatureViewModel";
 
+const mockTrack = jest.fn();
+const mockTrackPage = jest.fn();
+jest.mock("~/renderer/analytics/segment", () => ({
+  track: (...args: unknown[]) => mockTrack(...args),
+  trackPage: (...args: unknown[]) => mockTrackPage(...args),
+}));
+
+jest.mock("../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send", currency: "USDT" }),
+}));
+
 const mockAccount = { id: "acc_tron", type: "Account", currency: { id: "tron" } };
 
 const mockGoToStep = jest.fn();
@@ -41,7 +52,12 @@ let mockSponsoredState: {
 };
 
 jest.mock("../../../../context/SponsoredSendContext", () => ({
-  useSponsoredSend: () => ({ state: mockSponsoredState, actions: mockActions }),
+  useSponsoredSend: () => ({
+    state: mockSponsoredState,
+    actions: mockActions,
+    quote: { savings: 5_000_000n },
+    savingsFiatFormatted: "$0.50",
+  }),
 }));
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
@@ -197,5 +213,33 @@ describe("useSponsoredRentSignatureViewModel", () => {
     renderHook(() => useSponsoredRentSignatureViewModel());
 
     expect(mockGoToStep).not.toHaveBeenCalled();
+  });
+
+  it("tracks the rent signature page on mount", () => {
+    renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(mockTrackPage).toHaveBeenCalledWith(
+      "Modal send - step sponsored rent signature",
+      null,
+      expect.objectContaining({ flow: "send" }),
+    );
+  });
+
+  it("emits gas_sponsorship_order_created once when the order first becomes available", () => {
+    const { rerender } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(mockTrack).not.toHaveBeenCalledWith("gas_sponsorship_order_created", expect.anything());
+
+    mockSponsoredState = { ...mockSponsoredState, order: makeOrder() };
+    rerender();
+
+    expect(mockTrack).toHaveBeenCalledWith(
+      "gas_sponsorship_order_created",
+      expect.objectContaining({ provider: "tronify", orderId: "order-1", feePaid: "1.5" }),
+    );
+
+    // Second rerender must not double-fire
+    rerender();
+    expect(mockTrack).toHaveBeenCalledTimes(1);
   });
 });

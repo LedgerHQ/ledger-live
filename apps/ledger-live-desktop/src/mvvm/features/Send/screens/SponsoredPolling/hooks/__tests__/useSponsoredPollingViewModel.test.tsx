@@ -2,21 +2,40 @@ import { renderHook, act } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSponsoredPollingViewModel } from "../useSponsoredPollingViewModel";
 
+const mockTrack = jest.fn();
+const mockTrackPage = jest.fn();
+jest.mock("~/renderer/analytics/segment", () => ({
+  track: (...args: unknown[]) => mockTrack(...args),
+  trackPage: (...args: unknown[]) => mockTrackPage(...args),
+}));
+
+jest.mock("../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send", currency: "USDT" }),
+}));
+
 const mockGoToStep = jest.fn();
 jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
   useFlowWizard: () => ({ navigation: { goToStep: mockGoToStep } }),
 }));
 
-let mockSponsoredState: { phase: string };
+let mockSponsoredState: { phase: string; order?: { orderId: string; payCoinAmt: string; payCoinCode: string } | null };
 
 jest.mock("../../../../context/SponsoredSendContext", () => ({
-  useSponsoredSend: () => ({ state: mockSponsoredState, actions: {} }),
+  useSponsoredSend: () => ({
+    state: mockSponsoredState,
+    actions: {},
+    quote: { savings: 5_000_000n },
+    savingsFiatFormatted: "$0.50",
+  }),
 }));
 
 describe("useSponsoredPollingViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockSponsoredState = { phase: "POLLING" };
+    mockSponsoredState = {
+      phase: "POLLING",
+      order: { orderId: "order-1", payCoinAmt: "5.0", payCoinCode: "TRX" },
+    };
   });
 
   it("does not navigate while phase is POLLING and exposes a formatted elapsed label", () => {
@@ -104,5 +123,27 @@ describe("useSponsoredPollingViewModel", () => {
     rerender();
 
     expect(mockGoToStep).not.toHaveBeenCalled();
+  });
+
+  it("tracks the polling page on mount", () => {
+    renderHook(() => useSponsoredPollingViewModel());
+
+    expect(mockTrackPage).toHaveBeenCalledWith(
+      "Modal send - step sponsored polling",
+      null,
+      expect.objectContaining({ flow: "send" }),
+    );
+  });
+
+  it("emits gas_sponsorship_energy_delivered when the phase transitions to TRANSFER", () => {
+    const { rerender } = renderHook(() => useSponsoredPollingViewModel());
+
+    mockSponsoredState = { ...mockSponsoredState, phase: "TRANSFER" };
+    rerender();
+
+    expect(mockTrack).toHaveBeenCalledWith(
+      "gas_sponsorship_energy_delivered",
+      expect.objectContaining({ provider: "tronify", orderId: "order-1" }),
+    );
   });
 });

@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
+import { track, trackPage } from "~/renderer/analytics/segment";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useTranslation } from "react-i18next";
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import {
@@ -34,7 +36,23 @@ export function useSponsoredFailureViewModel(): SponsoredFailureViewModel {
   const { t } = useTranslation();
   const { navigation } = useFlowWizard<SendFlowStep>();
   const { close } = useSendFlowActions();
-  const { state, actions } = useSponsoredSend();
+  const { state, actions, quote, savingsFiatFormatted } = useSponsoredSend();
+  const trackingProps = useSendFlowTrackingProperties();
+
+  useEffect(() => {
+    trackPage("Modal send - step sponsored failure", null, trackingProps);
+    track("gas_sponsorship_send_failed", {
+      provider: "tronify",
+      orderId: state.order?.orderId,
+      feePaid: state.order?.payCoinAmt,
+      feeCurrency: state.order?.payCoinCode,
+      savings: quote?.savings?.toString(),
+      savingsFiat: savingsFiatFormatted,
+      failureKind: state.failureKind,
+      ...trackingProps,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const lastNavigatedPhaseRef = useRef<string | null>(null);
   useEffect(() => {
@@ -50,12 +68,24 @@ export function useSponsoredFailureViewModel(): SponsoredFailureViewModel {
   }, [state.phase, navigation]);
 
   const onRetry = useCallback(() => {
+    track("button_clicked", {
+      button: "retry sponsored",
+      page: "step sponsored failure",
+      failureKind: state.failureKind,
+      ...trackingProps,
+    });
     actions.retry();
-  }, [actions]);
+  }, [actions, state.failureKind, trackingProps]);
 
   const onCancel = useCallback(() => {
+    track("button_clicked", {
+      button: "cancel",
+      page: "step sponsored failure",
+      failureKind: state.failureKind,
+      ...trackingProps,
+    });
     close();
-  }, [close]);
+  }, [close, state.failureKind, trackingProps]);
 
   let message: string | null;
   // Retry costs a second rental fee only after DELIVERY_FAILED: the rent was paid and the retry

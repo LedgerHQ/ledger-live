@@ -1,6 +1,17 @@
 import { renderHook, act } from "tests/testSetup";
 import { useFeePaymentViewModel } from "../useFeePaymentViewModel";
 
+const mockTrack = jest.fn();
+const mockTrackPage = jest.fn();
+jest.mock("~/renderer/analytics/segment", () => ({
+  track: (...args: unknown[]) => mockTrack(...args),
+  trackPage: (...args: unknown[]) => mockTrackPage(...args),
+}));
+
+jest.mock("../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send", currency: "USDT" }),
+}));
+
 const mockSelectTronify = jest.fn();
 const mockSelectStandard = jest.fn();
 const mockGoToPreviousStep = jest.fn();
@@ -91,5 +102,41 @@ describe("useFeePaymentViewModel", () => {
 
     expect(result.current.disclaimer).toContain("TRX");
     expect(result.current.disclaimer).not.toContain("USDT");
+  });
+
+  it("tracks the fee payment page on mount", () => {
+    renderHook(() => useFeePaymentViewModel());
+
+    expect(mockTrackPage).toHaveBeenCalledWith(
+      "Modal send - step fee payment",
+      null,
+      expect.objectContaining({ flow: "send" }),
+    );
+  });
+
+  it("tracks button_clicked with the selected option id when an option is picked", () => {
+    const { result } = renderHook(() => useFeePaymentViewModel());
+
+    act(() => {
+      result.current.onSelect("tronify");
+    });
+
+    expect(mockTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "fee tronify", page: "step fee payment" }),
+    );
+  });
+
+  it("tracks button_clicked with standard when the regular option is picked", () => {
+    const { result } = renderHook(() => useFeePaymentViewModel());
+
+    act(() => {
+      result.current.onSelect("standard");
+    });
+
+    expect(mockTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "fee standard", page: "step fee payment" }),
+    );
   });
 });

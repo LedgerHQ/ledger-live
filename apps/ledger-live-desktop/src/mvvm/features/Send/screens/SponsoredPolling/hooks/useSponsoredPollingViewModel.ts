@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { track, trackPage } from "~/renderer/analytics/segment";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useTranslation } from "react-i18next";
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
@@ -28,7 +30,13 @@ export type SponsoredPollingViewModel = Readonly<{
 export function useSponsoredPollingViewModel(): SponsoredPollingViewModel {
   const { t } = useTranslation();
   const { navigation } = useFlowWizard<SendFlowStep>();
-  const { state } = useSponsoredSend();
+  const { state, quote, savingsFiatFormatted } = useSponsoredSend();
+  const trackingProps = useSendFlowTrackingProperties();
+
+  useEffect(() => {
+    trackPage("Modal send - step sponsored polling", null, trackingProps);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   useEffect(() => {
@@ -47,12 +55,21 @@ export function useSponsoredPollingViewModel(): SponsoredPollingViewModel {
     if (state.phase === lastNavigatedPhaseRef.current) return;
     if (state.phase === SPONSORED_PHASE.TRANSFER) {
       lastNavigatedPhaseRef.current = state.phase;
+      track("gas_sponsorship_energy_delivered", {
+        provider: "tronify",
+        orderId: state.order?.orderId,
+        feePaid: state.order?.payCoinAmt,
+        feeCurrency: state.order?.payCoinCode,
+        savings: quote?.savings?.toString(),
+        savingsFiat: savingsFiatFormatted,
+        ...trackingProps,
+      });
       navigation.goToStep(SEND_FLOW_STEP.SIGNATURE);
     } else if (state.phase === SPONSORED_PHASE.FAILED) {
       lastNavigatedPhaseRef.current = state.phase;
       navigation.goToStep(SEND_FLOW_STEP.SPONSORED_FAILURE);
     }
-  }, [state.phase, navigation]);
+  }, [state.phase, state.order, quote, savingsFiatFormatted, trackingProps, navigation]);
 
   return {
     waitingLabel: t("newSendFlow.sponsoredPolling.waiting"),

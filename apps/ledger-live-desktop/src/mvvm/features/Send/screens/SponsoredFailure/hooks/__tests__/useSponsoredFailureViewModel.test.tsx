@@ -2,6 +2,17 @@ import { renderHook } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSponsoredFailureViewModel } from "../useSponsoredFailureViewModel";
 
+const mockTrack = jest.fn();
+const mockTrackPage = jest.fn();
+jest.mock("~/renderer/analytics/segment", () => ({
+  track: (...args: unknown[]) => mockTrack(...args),
+  trackPage: (...args: unknown[]) => mockTrackPage(...args),
+}));
+
+jest.mock("../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send", currency: "USDT" }),
+}));
+
 const mockGoToStep = jest.fn();
 jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
   useFlowWizard: () => ({ navigation: { goToStep: mockGoToStep } }),
@@ -16,7 +27,12 @@ const mockRetry = jest.fn();
 let mockSponsoredState: { phase: string; failureKind: string | null; paymentTxId: string | null };
 
 jest.mock("../../../../context/SponsoredSendContext", () => ({
-  useSponsoredSend: () => ({ state: mockSponsoredState, actions: { retry: mockRetry } }),
+  useSponsoredSend: () => ({
+    state: mockSponsoredState,
+    actions: { retry: mockRetry },
+    quote: { savings: 5_000_000n },
+    savingsFiatFormatted: "$0.50",
+  }),
 }));
 
 describe("useSponsoredFailureViewModel", () => {
@@ -150,5 +166,41 @@ describe("useSponsoredFailureViewModel", () => {
     rerender();
 
     expect(mockGoToStep).toHaveBeenCalledTimes(1);
+  });
+
+  it("tracks the failure page and emits gas_sponsorship_send_failed on mount", () => {
+    renderHook(() => useSponsoredFailureViewModel());
+
+    expect(mockTrackPage).toHaveBeenCalledWith(
+      "Modal send - step sponsored failure",
+      null,
+      expect.objectContaining({ flow: "send" }),
+    );
+    expect(mockTrack).toHaveBeenCalledWith(
+      "gas_sponsorship_send_failed",
+      expect.objectContaining({ provider: "tronify", failureKind: "RENT_PAYMENT" }),
+    );
+  });
+
+  it("tracks button_clicked with retry and the failureKind when retrying", () => {
+    const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+    result.current.onRetry();
+
+    expect(mockTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "retry sponsored", failureKind: "RENT_PAYMENT" }),
+    );
+  });
+
+  it("tracks button_clicked with cancel when cancelling", () => {
+    const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+    result.current.onCancel();
+
+    expect(mockTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "cancel", page: "step sponsored failure" }),
+    );
   });
 });

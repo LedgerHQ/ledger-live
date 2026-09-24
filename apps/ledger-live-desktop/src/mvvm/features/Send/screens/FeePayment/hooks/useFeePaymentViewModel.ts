@@ -1,8 +1,10 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useSponsoredSend, type SponsoredFeeOptionId } from "../../../context/SponsoredSendContext";
+import { track, trackPage } from "~/renderer/analytics/segment";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 
 export type FeePaymentOptionId = SponsoredFeeOptionId;
 
@@ -37,9 +39,16 @@ export function useFeePaymentViewModel(): FeePaymentViewModel {
     savingsFiatFormatted,
     feeCurrencyTicker,
   } = useSponsoredSend();
+  const trackingProps = useSendFlowTrackingProperties();
+
+  useEffect(() => {
+    trackPage("Modal send - step fee payment", null, trackingProps);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSelect = useCallback(
     (id: FeePaymentOptionId) => {
+      track("button_clicked", { button: `fee ${id}`, page: "step fee payment", ...trackingProps });
       if (id === "tronify") {
         selectTronify();
       } else {
@@ -47,7 +56,7 @@ export function useFeePaymentViewModel(): FeePaymentViewModel {
       }
       navigation.goToPreviousStep();
     },
-    [selectTronify, selectStandard, navigation],
+    [selectTronify, selectStandard, navigation, trackingProps],
   );
 
   const options: readonly FeePaymentOption[] = useMemo(

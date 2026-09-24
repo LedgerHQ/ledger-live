@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { track, trackPage } from "~/renderer/analytics/segment";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -45,11 +47,33 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
   const { t } = useTranslation();
   const { navigation } = useFlowWizard<SendFlowStep>();
   const { state: sendFlowState } = useSendFlowData();
-  const { state, actions } = useSponsoredSend();
+  const { state, actions, quote, savingsFiatFormatted } = useSponsoredSend();
+  const trackingProps = useSendFlowTrackingProperties();
 
   const account = sendFlowState.account.account;
   const parentAccount = sendFlowState.account.parentAccount;
   const order = state.order;
+
+  useEffect(() => {
+    trackPage("Modal send - step sponsored rent signature", null, trackingProps);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const orderTrackedRef = useRef(false);
+  useEffect(() => {
+    if (state.order && !orderTrackedRef.current) {
+      orderTrackedRef.current = true;
+      track("gas_sponsorship_order_created", {
+        provider: "tronify",
+        orderId: state.order.orderId,
+        feePaid: state.order.payCoinAmt,
+        feeCurrency: state.order.payCoinCode,
+        savings: quote?.savings?.toString(),
+        savingsFiat: savingsFiatFormatted,
+        ...trackingProps,
+      });
+    }
+  }, [state.order, quote, savingsFiatFormatted, trackingProps]);
 
   const craftInFlightRef = useRef(false);
   useEffect(() => {
