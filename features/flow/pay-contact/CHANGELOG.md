@@ -1,5 +1,15 @@
 # @features/flow-pay-contact
 
+## 0.4.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`48af604`](https://github.com/LedgerHQ/ledger-live/commit/48af6040c2835f067a2dfe38fb8fadde72e0787b)]:
+  - @shared/ui-queued-bottom-sheet@0.5.0-next.1
+  - @features/platform-contacts@0.8.0-next.1
+  - @features/flow-contacts@0.12.0-next.1
+  - @features/flow-contacts-add-contact@0.7.0-next.1
+
 ## 0.4.1-next.0
 
 ### Patch Changes

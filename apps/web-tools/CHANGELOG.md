@@ -1,5 +1,12 @@
 # web-tools
 
+## 0.58.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/bindings@0.9.0-next.1
+
 ## 0.58.0-next.0
 
 ### Minor Changes

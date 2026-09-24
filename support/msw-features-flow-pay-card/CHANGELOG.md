@@ -1,5 +1,13 @@
 # @support/msw-features-flow-pay-card
 
+## 0.3.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/flow-pay-card-auth@0.8.0-next.1
+  - @features/flow-pay-card-widget@0.4.0-next.1
+
 ## 0.3.0-next.0
 
 ### Minor Changes

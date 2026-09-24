@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 4.22.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/flow-contacts-edit-address@0.4.0-next.1
+  - @features/flow-pay-balance@0.5.0-next.1
+  - @features/flow-pay-bank-transfer@0.3.2-next.1
+  - @features/flow-pay-card-auth@0.8.0-next.1
+  - @features/flow-pay-card-details@0.5.0-next.1
+  - @features/flow-pay-card-transactions@0.3.0-next.1
+  - @features/flow-pay-card-widget@0.4.0-next.1
+  - @features/flow-pay-contact@0.4.1-next.1
+  - @features/flow-pay-deposit@0.4.1-next.1
+  - @features/flow-pay-feature-tour@0.6.0-next.1
+  - @features/flow-pay-request@0.6.0-next.1
+  - @features/platform-contacts@0.8.0-next.1
+  - @shared/ui-info-state@0.3.0-next.1
+  - @features/flow-contacts@0.12.0-next.1
+  - @devtools/bindings@0.9.0-next.1
+  - @features/flow-pay-card@0.5.0-next.1
+  - @features/flow-pay-card-assets@0.2.0-next.1
+  - @features/flow-contacts-add-address@0.6.0-next.1
+  - @features/flow-contacts-add-contact@0.7.0-next.1
+  - @features/flow-contacts-delete-contact@0.2.3-next.1
+  - @features/flow-contacts-edit-contact@0.6.0-next.1
+  - @features/flow-contacts-list@0.8.0-next.1
+
 ## 4.22.0-next.0
 
 ### Minor Changes

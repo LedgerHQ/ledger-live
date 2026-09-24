@@ -1,5 +1,11 @@
 # @shared/ui-queued-bottom-sheet
 
+## 0.5.0-next.1
+
+### Minor Changes
+
+- [#22489](https://github.com/LedgerHQ/ledger-live/pull/22489) [`48af604`](https://github.com/LedgerHQ/ledger-live/commit/48af6040c2835f067a2dfe38fb8fadde72e0787b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix a bottom sheet reopening right after being swiped down before its entrance animation finished. Only a dismissal started for a previous presentation now puts the sheet back on screen.
+
 ## 0.5.0-next.0
 
 ### Minor Changes

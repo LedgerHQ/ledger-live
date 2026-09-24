@@ -1,5 +1,39 @@
 # live-mobile
 
+## 4.22.0-next.2
+
+### Minor Changes
+
+- [#22489](https://github.com/LedgerHQ/ledger-live/pull/22489) [`48af604`](https://github.com/LedgerHQ/ledger-live/commit/48af6040c2835f067a2dfe38fb8fadde72e0787b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix a bottom sheet reopening right after being swiped down before its entrance animation finished. Only a dismissal started for a previous presentation now puts the sheet back on screen.
+
+### Patch Changes
+
+- Updated dependencies [[`48af604`](https://github.com/LedgerHQ/ledger-live/commit/48af6040c2835f067a2dfe38fb8fadde72e0787b)]:
+  - @shared/ui-queued-bottom-sheet@0.5.0-next.1
+  - @features/flow-app-lock@0.5.0-next.1
+  - @features/flow-contacts-edit-address@0.4.0-next.1
+  - @features/flow-pay-balance@0.5.0-next.1
+  - @features/flow-pay-bank-transfer@0.3.2-next.1
+  - @features/flow-pay-card-auth@0.8.0-next.1
+  - @features/flow-pay-card-details@0.5.0-next.1
+  - @features/flow-pay-card-transactions@0.3.0-next.1
+  - @features/flow-pay-card-widget@0.4.0-next.1
+  - @features/flow-pay-contact@0.4.1-next.1
+  - @features/flow-pay-deposit@0.4.1-next.1
+  - @features/flow-pay-feature-tour@0.6.0-next.1
+  - @features/flow-pay-request@0.6.0-next.1
+  - @features/platform-contacts@0.8.0-next.1
+  - @shared/ui-info-state@0.3.0-next.1
+  - @features/flow-contacts@0.12.0-next.1
+  - @devtools/bindings@0.9.0-next.1
+  - @features/flow-pay-card@0.5.0-next.1
+  - @features/flow-pay-card-assets@0.2.0-next.1
+  - @features/flow-contacts-add-address@0.6.0-next.1
+  - @features/flow-contacts-add-contact@0.7.0-next.1
+  - @features/flow-contacts-delete-contact@0.2.3-next.1
+  - @features/flow-contacts-edit-contact@0.6.0-next.1
+  - @features/flow-contacts-list@0.8.0-next.1
+
 ## 4.22.0-next.1
 
 ### Minor Changes
