@@ -23,6 +23,20 @@ function btcTrend(t: number) {
   return Math.pow(daysSinceGenesis / 693, 5.526);
 }
 
+function getDates(granularity: RateGranularity, start: Date): Date[] {
+  const array: Date[] = [];
+  const f = formatPerGranularity[granularity];
+  const incr = increment[granularity];
+  const initial = new Date(f(start || new Date())).getTime();
+  const now = Date.now();
+
+  for (let t = initial; t < now; t += incr) {
+    array.push(new Date(t));
+  }
+
+  return array;
+}
+
 /**
  * Builds a deterministic {@link RateSource}.
  *
@@ -34,7 +48,8 @@ export function createMockRateSource(seed = ""): RateSource {
 
   function fromToRandom(id: string) {
     if (randomCache[id]) return randomCache[id];
-    return (randomCache[id] = new Prando(seed + id).next());
+    randomCache[id] = new Prando(seed + id).next();
+    return randomCache[id];
   }
 
   function temporalFactor(from: string, maybeDate: Date | undefined) {
@@ -71,27 +86,13 @@ export function createMockRateSource(seed = ""): RateSource {
     if (to === "USD") return asBTC * BTCtoUSD * temporalFactor(from, date);
 
     if (from === "BTC") {
-      const r = rate(to, from, date);
+      const r = rate(to, "BTC", date);
       if (!r) return;
       return 1 / r;
     }
 
     const btcTO = rate("BTC", to, date);
     if (btcTO) return asBTC * btcTO * temporalFactor(from, date);
-  }
-
-  function getDates(granularity: RateGranularity, start: Date): Date[] {
-    const array: Date[] = [];
-    const f = formatPerGranularity[granularity];
-    const incr = increment[granularity];
-    const initial = new Date(f(start || new Date())).getTime();
-    const now = Date.now();
-
-    for (let t = initial; t < now; t += incr) {
-      array.push(new Date(t));
-    }
-
-    return array;
   }
 
   return {

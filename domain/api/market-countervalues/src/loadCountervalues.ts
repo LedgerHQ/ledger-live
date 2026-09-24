@@ -83,20 +83,20 @@ export async function loadCountervalues(
         start = new Date(limitDate);
       }
 
-      const needOlderReload = s && s.oldestDateRequested && start < new Date(s.oldestDateRequested);
+      const needOlderReload = s?.oldestDateRequested && start < new Date(s.oldestDateRequested);
 
       if (needOlderReload) {
         log(
           "countervalues",
           `${key}@${granularity} need older reload (${start.toISOString()} < ${String(
-            s && s.oldestDateRequested,
+            s?.oldestDateRequested,
           )})`,
         );
       }
 
       if (!needOlderReload) {
         // we do not miss datapoints in the past so we can ask the only remaining part
-        if (stats && stats.earliestStableDate && stats.earliestStableDate > start) {
+        if (stats?.earliestStableDate && stats.earliestStableDate > start) {
           start = stats.earliestStableDate;
         }
       }
@@ -145,9 +145,6 @@ export async function loadCountervalues(
         })
         .catch(e => {
           if (settings.disableAutoRecoverErrors) throw e;
-          // TODO work on the semantic of failure.
-          // do we want to opt-in for the 404 cases and make other fails it all?
-          // do we want to be resilient on individual pulling / keep error somewhere?
           const id = pairId(pair);
 
           // only on HTTP error, we count the failures (not network down case)

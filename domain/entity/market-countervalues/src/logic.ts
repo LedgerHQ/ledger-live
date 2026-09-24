@@ -224,11 +224,8 @@ export function calculateMany(
 }
 
 /**
- * Recomputes one pair's derived cache: the direct date -> rate map, its bounds, and the fallback.
- *
- * Public only because `loadCountervalues` lives in `@domain/api-market-countervalues` and is the
- * one caller outside this file. A narrower boundary between the orchestration and this belongs in
- * the platform feature package; until then, treat it as internal to the countervalues packages.
+ * Public only for `loadCountervalues` in `@domain/api-market-countervalues`. Treat it as internal to
+ * the countervalues packages.
  */
 export function generateCache(
   pair: string,
