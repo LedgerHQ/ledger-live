@@ -29,7 +29,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { boundByTransaction } from "./boundByTransaction";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
-import { paginateOperations } from "./paginateOperations";
+import { PaginationIntegrityError, paginateOperations } from "./paginateOperations";
 import type {
   AssetInfo,
   Balance,
@@ -731,6 +731,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
             ...(pageSize !== undefined ? { limit: pageSize } : {}),
           }),
         maxOperations,
+        op => op.tx.hash,
       );
       // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation
       // ends up in the shape a restored one has — the family's `fromOperationExtraRaw` is the
@@ -768,10 +769,17 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         logReadDecisionOnce(a4Network, "read_served_by_a4", "A4 is serving reads for this chain");
       } catch (e) {
         const status = toA4HttpError(e).status;
+        // The fallback is deliberate even for a malformed A4 history: the delegate rewalks from
+        // the coin module, so what gets persisted is a complete history from another source, not
+        // a fragment. What it must not do is read as a network blip -- an A4 walk that stalls its
+        // cursor is a defect in A4, and the log has to say so or nobody goes looking.
+        const integrity = e instanceof PaginationIntegrityError;
         logA4({
           level: "warn",
-          message: `A4 read failed, falling back to delegate: ${e instanceof Error ? e.message : String(e)}`,
-          decision: "read_failover_to_delegate",
+          message: integrity
+            ? `A4 returned a malformed history, falling back to delegate: ${e instanceof Error ? e.message : String(e)}`
+            : `A4 read failed, falling back to delegate: ${e instanceof Error ? e.message : String(e)}`,
+          decision: integrity ? "read_failover_integrity" : "read_failover_to_delegate",
           chain: a4Network,
           status,
           error: e,
