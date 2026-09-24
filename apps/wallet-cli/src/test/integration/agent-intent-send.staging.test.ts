@@ -1,11 +1,15 @@
 import { describe, expect, it } from "bun:test";
 import { join } from "node:path";
+import {
+  AGENT_INTENT_FRONTEND_URLS,
+  type AgentIntentEnvironment,
+} from "@ledgerhq/agent-intent-sdk";
 
 /**
- * Opt-in staging integration test for `agent-intent send` — see ./README.md for prerequisites.
- * Skipped unless WALLET_CLI_AGENT_INTENT_STAGING_PROFILE is set, so CI never runs it. Runs the real
- * CLI as a subprocess against the real session, OS keychain, Keycloak/LKRP and Agent Intent BFF, and
- * leaves a real pending intent on staging for a human to reject.
+ * Opt-in integration test for `agent-intent send` — see ./README.md for prerequisites. Skipped
+ * unless WALLET_CLI_AGENT_INTENT_STAGING_PROFILE is set, so CI never runs it. Runs the real CLI as a
+ * subprocess against the real session, OS keychain, Keycloak/LKRP and the Agent Intent BFF of the
+ * profile's environment, and leaves a real pending intent there for a human to reject.
  */
 const profile = process.env.WALLET_CLI_AGENT_INTENT_STAGING_PROFILE;
 const sender = process.env.WALLET_CLI_AGENT_INTENT_STAGING_SENDER;
@@ -13,7 +17,6 @@ const token = process.env.WALLET_CLI_AGENT_INTENT_STAGING_TOKEN;
 const tokenAmount = process.env.WALLET_CLI_AGENT_INTENT_STAGING_TOKEN_AMOUNT;
 
 const CLI = join(import.meta.dir, "..", "..", "cli.ts");
-const STAGING_FRONTEND = "https://agent-intent.ledger-test.com/";
 
 async function send(
   args: string[],
@@ -33,7 +36,7 @@ async function send(
 describe.skipIf(!profile)("agent-intent send against staging (opt-in)", () => {
   const base = ["--profile", profile ?? "", "--from", sender ?? "", "--to", sender ?? ""];
 
-  it("creates a native ETH intent and returns a staging review link", async () => {
+  it("creates a native ETH intent and returns a review link for the profile's environment", async () => {
     const { exitCode, envelope } = await send([
       ...base,
       "--amount",
@@ -44,7 +47,9 @@ describe.skipIf(!profile)("agent-intent send against staging (opt-in)", () => {
 
     expect(envelope).toMatchObject({ status: "success", submitted: true });
     expect(exitCode).toBe(0);
-    expect(String(envelope.deeplink).startsWith(STAGING_FRONTEND)).toBe(true);
+    // The BFF, not wallet-cli, picks this host: it is the frontend of the service the profile uses.
+    const frontend = AGENT_INTENT_FRONTEND_URLS[envelope.environment as AgentIntentEnvironment];
+    expect(String(envelope.deeplink).startsWith(frontend)).toBe(true);
     expect(envelope.intentId).toEqual(expect.any(String));
   }, 60_000);
 
