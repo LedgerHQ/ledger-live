@@ -1,11 +1,12 @@
-import React, { createContext, useCallback, useEffect, useRef } from "react";
-import { Animated, FlatList, ScrollView } from "react-native";
+import React, { createContext, useCallback, useRef } from "react";
+import { FlatList, ScrollView } from "react-native";
+import { useSharedValue, type SharedValue } from "react-native-reanimated";
 
 const tabBarHeight = 56;
 const headerHeight = 48;
 
 interface WalletTabNavigatorScrollContextData {
-  scrollY: Animated.Value;
+  scrollY: SharedValue<number>;
   scrollableRefArray: React.RefObject<{ key: string; value: ScrollView | FlatList }[]>;
   scrollableOffsetMap: React.RefObject<{ [key: string]: number }>;
   onGetRef: ({ key, value }: { key: string; value: ScrollView | FlatList }) => void;
@@ -26,23 +27,15 @@ export default function WalletTabNavigatorScrollManager({
   children: React.ReactNode;
   currentRouteName?: string;
 }) {
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollY = useSharedValue(0);
   const scrollableRefArray = useRef<{ key: string; value: ScrollView | FlatList }[]>([]);
   const scrollableOffsetMap = useRef<{ [key: string]: number }>({});
 
-  useEffect(() => {
-    const listenerId = scrollY.addListener(({ value }) => {
-      if (currentRouteName) {
-        scrollableOffsetMap.current[currentRouteName] = Math.max(value, 0); // prevent negative offset
-      }
-    });
-    return () => {
-      scrollY.removeListener(listenerId);
-    };
-  }, [currentRouteName, scrollY, scrollableOffsetMap]);
-
   const syncScrollOffset = useCallback(
     (currentRouteKey: string) => {
+      if (currentRouteName) {
+        scrollableOffsetMap.current[currentRouteName] = Math.max(scrollY.value, 0); // prevent negative offset
+      }
       scrollableRefArray.current.forEach(item => {
         if (item.key !== currentRouteKey) {
           const scrollYValue = currentRouteName
@@ -83,7 +76,7 @@ export default function WalletTabNavigatorScrollManager({
         }
       });
     },
-    [currentRouteName],
+    [currentRouteName, scrollY],
   );
 
   const onGetRef = useCallback(

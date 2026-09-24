@@ -12,7 +12,9 @@ export function useScrollToTop() {
   }, []);
 
   const scrollToTop = useCallback(() => {
-    scrollY?.setValue(0);
+    if (scrollY) {
+      scrollY.value = 0;
+    }
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
   }, [scrollY]);
 

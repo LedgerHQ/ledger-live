@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { Box } from "@ledgerhq/native-ui";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import { PortfolioBalanceSync } from "LLM/features/Portfolio/components/PortfolioBalanceSync";
@@ -7,14 +7,21 @@ import { useSelector } from "~/context/hooks";
 import { ScreenName } from "~/const/navigation";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import WalletTabBackgroundGradient from "../WalletTab/WalletTabBackgroundGradient";
-import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
+import { Wallet40Background } from "LLM/components/Wallet40Background";
+import WalletTabNavigatorScrollManager, {
+  WalletTabNavigatorScrollContext,
+} from "../WalletTab/WalletTabNavigatorScrollManager";
 import { BaseComposite, StackNavigatorProps } from "./types/helpers";
 import { PortfolioNavigatorStackParamList } from "./types/PortfolioNavigator";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
+
+function PortfolioBackground() {
+  const { scrollY } = useContext(WalletTabNavigatorScrollContext);
+  return <Wallet40Background type="portfolio" scrollY={scrollY} />;
+}
 
 // Root screen of the portfolio area (the Market tab moved to a standalone destination,
 // so this is no longer a nested tab navigator). The Portfolio screen is rendered directly
@@ -34,7 +41,7 @@ export default function PortfolioRootScreen({ navigation, route }: NavigationPro
     <WalletTabNavigatorScrollManager currentRouteName={ScreenName.Portfolio}>
       <PortfolioBalanceSync />
       <Box flexGrow={1} bg={backgroundColor}>
-        <WalletTabBackgroundGradient />
+        <PortfolioBackground />
         <PortfolioComponent navigation={navigation} route={route} />
       </Box>
     </WalletTabNavigatorScrollManager>

@@ -1,9 +1,10 @@
 import { useIsFocused, useRoute } from "@react-navigation/native";
-import React, { useContext, useCallback, useRef } from "react";
-import { Dimensions, Animated, StatusBar, FlatList, FlatListProps, View } from "react-native";
+import React, { useContext, useCallback } from "react";
+import { Dimensions, StatusBar, FlatList, FlatListProps, View } from "react-native";
+import Animated, { type AnimatedProps } from "react-native-reanimated";
+import { useScrollOffset } from "LLM/components/Wallet40Background";
 import SafeAreaView from "../SafeAreaView";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
-import AnimatedProps = Animated.AnimatedProps;
 
 // Default values for when context is not available (direct navigation)
 const DEFAULT_HEADER_HEIGHT = 0;
@@ -24,12 +25,9 @@ function CollapsibleHeaderFlatList<T>({
 }: CollapsibleHeaderFlatListProps<T>) {
   const context = useContext(WalletTabNavigatorScrollContext);
 
-  // Fallback scrollY for when context is not available (direct navigation outside WalletTabNavigator)
-  const fallbackScrollY = useRef(new Animated.Value(0)).current;
-
   // Handle case where context is not available (direct navigation outside WalletTabNavigator)
   const hasContext = context !== null && context !== undefined;
-  const scrollY = context?.scrollY ?? fallbackScrollY;
+  const { onScroll } = useScrollOffset(context?.scrollY);
   const onGetRef = context?.onGetRef;
   const syncScrollOffset = context?.syncScrollOffset;
   const tabBarHeight = context?.tabBarHeight ?? DEFAULT_TAB_BAR_HEIGHT;
@@ -61,13 +59,7 @@ function CollapsibleHeaderFlatList<T>({
       scrollToOverflowEnabled={true}
       ref={handleRef}
       scrollEventThrottle={16}
-      onScroll={
-        isFocused && hasContext
-          ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-              useNativeDriver: true,
-            })
-          : undefined
-      }
+      onScroll={isFocused && hasContext ? onScroll : undefined}
       onScrollEndDrag={onMomentumScrollEnd}
       onMomentumScrollEnd={onMomentumScrollEnd}
       contentContainerStyle={[
