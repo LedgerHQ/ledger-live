@@ -4676,9 +4676,6 @@ importers:
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../../shared/api-services
-      '@shared/auth':
-        specifier: workspace:^
-        version: link:../../../shared/auth
       zod:
         specifier: 'catalog:'
         version: 4.3.6
