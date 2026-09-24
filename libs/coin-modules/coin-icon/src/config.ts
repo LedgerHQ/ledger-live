@@ -3,12 +3,9 @@ import { MissingCoinConfig } from "@ledgerhq/coin-module-framework/errors";
 
 export type IconConfig = {
   infra: {
-    indexer: string;
-    indexer_testnet: string;
-    node_endpoint: string;
-    node_testnet_endpoint: string;
-    debug_endpoint: string;
-    debug_testnet_endpoint: string;
+    ICON_INDEXER_ENDPOINT: string;
+    ICON_NODE_ENDPOINT: string;
+    ICON_DEBUG_ENDPOINT: string;
   };
 };
 
@@ -20,10 +17,10 @@ export const setCoinConfig = (config: CoinConfig<IconCoinConfig>): void => {
   coinConfig = config;
 };
 
-export const getCoinConfig = (): IconCoinConfig => {
+export const getCoinConfig = (currencyId: string): IconCoinConfig => {
   if (!coinConfig) {
     throw new MissingCoinConfig();
   }
 
-  return coinConfig();
+  return coinConfig(currencyId);
 };

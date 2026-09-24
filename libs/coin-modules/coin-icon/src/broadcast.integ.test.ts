@@ -12,7 +12,7 @@ describe("broadcast (integration)", () => {
         ({
           status: { type: "active", features: [] },
           infra: {
-            node_endpoint: "https://icon.coin.ledger.com/api/v3",
+            ICON_NODE_ENDPOINT: "https://icon.coin.ledger.com/api/v3",
           },
         }) as any,
     );

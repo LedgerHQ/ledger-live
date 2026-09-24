@@ -9,26 +9,16 @@ import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";
 import { IconCoinConfig } from "@ledgerhq/coin-icon/config";
-import { getEnv } from "@shared/env";
+import invariant from "invariant";
+import { getCurrencyConfiguration } from "../../config";
 
 const createSigner: CreateSigner<Icon> = (transport: Transport) => {
   return new Icon(transport);
 };
 
-const getCurrencyConfig = (): IconCoinConfig => {
-  return {
-    status: {
-      type: "active",
-    },
-    infra: {
-      indexer: getEnv("ICON_INDEXER_ENDPOINT"),
-      indexer_testnet: getEnv("ICON_TESTNET_INDEXER_ENDPOINT"),
-      node_endpoint: getEnv("ICON_NODE_ENDPOINT"),
-      node_testnet_endpoint: getEnv("ICON_TESTNET_NODE_ENDPOINT"),
-      debug_endpoint: getEnv("ICON_DEBUG_ENDPOINT"),
-      debug_testnet_endpoint: getEnv("ICON_TESTNET_DEBUG_ENDPOINT"),
-    },
-  };
+const getCurrencyConfig = (currencyId?: string): IconCoinConfig => {
+  invariant(currencyId, "icon: currencyId is required in getCurrencyConfig");
+  return getCurrencyConfiguration<IconCoinConfig>(currencyId);
 };
 
 const bridge: Bridge<Transaction> = createBridges(

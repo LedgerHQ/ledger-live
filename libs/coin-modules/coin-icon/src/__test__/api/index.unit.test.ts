@@ -6,7 +6,6 @@ import { fetchOperationList } from "../../api";
 import { IconTransactionType } from "../../api/api-type";
 import { getCoinConfig } from "../../config";
 import * as _constants from "../../constants";
-import { isTestnet } from "../../logic";
 
 // Mock the necessary modules and functions
 jest.mock("@ledgerhq/live-network/network");
@@ -27,17 +26,14 @@ jest.mock("../../constants", () => ({
 
 describe("ICON API", () => {
   const networkMock = network as jest.Mock;
-  const isTestnetMock = isTestnet as jest.Mock;
   const getCoinConfigMock = getCoinConfig as jest.Mock;
   const querystringMock = querystring.stringify as jest.Mock;
 
-  isTestnetMock.mockReturnValue(true);
-  getCoinConfigMock.mockReturnValue({
+  getCoinConfigMock.mockImplementation((currencyId: string) => ({
     infra: {
-      indexer: "mainnet-url",
-      indexer_testnet: "testnet-url",
+      ICON_INDEXER_ENDPOINT: currencyId === "icon_berlin_testnet" ? "testnet-url" : "mainnet-url",
     },
-  });
+  }));
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -47,7 +43,7 @@ describe("ICON API", () => {
       const accountId = "accountId";
       const addr = "hx123";
       const skip = 0;
-      const network = { id: "icon" } as CryptoCurrency;
+      const network = { id: "icon_berlin_testnet" } as CryptoCurrency;
       const maxLength = 10;
       mockLimit = 10;
 
@@ -86,7 +82,7 @@ describe("ICON API", () => {
       const accountId = "accountId";
       const addr = "hx123";
       const skip = 0;
-      const network = { id: "icon" } as CryptoCurrency;
+      const network = { id: "icon_berlin_testnet" } as CryptoCurrency;
       const maxLength = 10;
       mockLimit = 2; // set a small limit for easier testing
 

@@ -112,36 +112,6 @@ const teamCoinIntegration = {
     parser: intParser,
     desc: "solana transaction broadcast confirmation timeout",
   },
-  ICON_NODE_ENDPOINT: {
-    parser: stringParser,
-    def: "https://icon.coin.ledger.com/api/v3",
-    desc: "ICON RPC url",
-  },
-  ICON_DEBUG_ENDPOINT: {
-    parser: stringParser,
-    def: "https://icon.coin.ledger.com/api/v3d",
-    desc: "ICON debug RPC url",
-  },
-  ICON_INDEXER_ENDPOINT: {
-    parser: stringParser,
-    def: "https://icon.coin.ledger.com/api/v1",
-    desc: "ICON API url",
-  },
-  ICON_TESTNET_NODE_ENDPOINT: {
-    parser: stringParser,
-    def: "https://berlin.net.solidwallet.io/api/v3",
-    desc: "ICON Berlin Testnet API url",
-  },
-  ICON_TESTNET_DEBUG_ENDPOINT: {
-    parser: stringParser,
-    def: "https://berlin.net.solidwallet.io/api/v3d",
-    desc: "ICON Berlin Testnet debug",
-  },
-  ICON_TESTNET_INDEXER_ENDPOINT: {
-    parser: stringParser,
-    def: "https://tracker.berlin.icon.community/api/v1",
-    desc: "ICON Berlin Testnet API url",
-  },
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
     parser: stringParser,

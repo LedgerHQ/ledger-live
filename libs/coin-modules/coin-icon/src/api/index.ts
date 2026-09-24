@@ -7,22 +7,11 @@ import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getCoinConfig } from "../config";
 import { LIMIT } from "../constants";
-import { isTestnet } from "../logic";
 import { IconOperation } from "../types/index";
 import { AccountType, IconTransactionType } from "./api-type";
 
-/**
- * Returns Testnet API URL if the current network is testnet
- *
- * @param {network} network
- */
 function getApiUrl(network: CryptoCurrency): string {
-  const currencyConfig = getCoinConfig();
-  let apiUrl = currencyConfig.infra.indexer;
-  if (isTestnet(network)) {
-    apiUrl = currencyConfig.infra.indexer_testnet;
-  }
-  return apiUrl;
+  return getCoinConfig(network.id).infra.ICON_INDEXER_ENDPOINT;
 }
 
 async function fetch(url: string) {

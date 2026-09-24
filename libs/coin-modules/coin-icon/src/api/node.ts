@@ -5,33 +5,18 @@ import IconService from "icon-sdk-js";
 import type { IcxTransaction, SignedTransaction } from "icon-sdk-js";
 import { getCoinConfig } from "../config";
 import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
-import { isTestnet } from "../logic";
 import { IconAccount } from "../types/index";
 import { IconDelegationType } from "./api-type";
 
 const { HttpProvider } = IconService;
 const { IconBuilder } = IconService;
 
-/**
- * Returns Testnet RPC URL if the current currency is testnet
- * @param {currency} currency
- */
 export function getRpcUrl(currency: CryptoCurrency): string {
-  const currencyConfig = getCoinConfig();
-  let rpcUrl = currencyConfig.infra.node_endpoint;
-  if (isTestnet(currency)) {
-    rpcUrl = currencyConfig.infra.node_testnet_endpoint;
-  }
-  return rpcUrl;
+  return getCoinConfig(currency.id).infra.ICON_NODE_ENDPOINT;
 }
 
 export function getDebugRpcUrl(currency: CryptoCurrency): string {
-  const currencyConfig = getCoinConfig();
-  let rpcUrl = currencyConfig.infra.debug_endpoint;
-  if (isTestnet(currency)) {
-    rpcUrl = currencyConfig.infra.debug_testnet_endpoint;
-  }
-  return rpcUrl;
+  return getCoinConfig(currency.id).infra.ICON_DEBUG_ENDPOINT;
 }
 
 /**
