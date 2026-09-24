@@ -307,7 +307,8 @@ describe("Contacts integration", () => {
 
     const input = screen.getByTestId("contacts-add-contact-name-input");
 
-    await user.type(input, "Coinbase 1");
+    await user.click(input);
+    await user.paste("Coinbase 1");
 
     expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
 
@@ -386,7 +387,8 @@ describe("Contacts integration", () => {
   it("should filter saved contacts when searching", async () => {
     const { user } = renderContactsScreen(populatedContactsPageState);
 
-    await user.type(screen.getByTestId("contacts-list-search"), "Ben");
+    await user.click(screen.getByTestId("contacts-list-search"));
+    await user.paste("Ben");
 
     expect(screen.getByTestId("contacts-saved-row-contact-ben")).toBeVisible();
     expect(screen.queryByTestId("contacts-saved-row-contact-ada")).not.toBeInTheDocument();
@@ -396,7 +398,8 @@ describe("Contacts integration", () => {
   it("should render the no-results state when the search query has no match", async () => {
     const { user } = renderContactsScreen(populatedContactsPageState);
 
-    await user.type(screen.getByTestId("contacts-list-search"), "unknown");
+    await user.click(screen.getByTestId("contacts-list-search"));
+    await user.paste("unknown");
 
     expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
     expect(screen.getByText("No contact found")).toBeVisible();
@@ -594,13 +597,13 @@ describe("Contacts integration", () => {
     await waitFor(() => expect(confirmationButton).toBeEnabled());
 
     await user.clear(addressNameInput);
-    await user.type(addressNameInput, "Ethereum 💎");
+    await user.paste("Ethereum 💎");
 
     expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
     expect(confirmationButton).toBeDisabled();
 
     await user.clear(addressNameInput);
-    await user.type(addressNameInput, "Exchange");
+    await user.paste("Exchange");
     await user.click(confirmationButton);
 
     await waitFor(() => {
@@ -965,7 +968,7 @@ describe("Contacts integration", () => {
 
     const nameInput = screen.getByTestId("contacts-rename-contact-name-input");
     await user.clear(nameInput);
-    await user.type(nameInput, "Benjamin");
+    await user.paste("Benjamin");
     await user.click(screen.getByTestId("contacts-rename-contact-confirm"));
 
     await waitFor(() => {
