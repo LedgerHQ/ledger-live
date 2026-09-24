@@ -1,5 +1,7 @@
-import { openAuthSessionAsync } from "expo-web-browser";
+import { openAuthSessionAsync, type AuthSessionOpenOptions } from "expo-web-browser";
 import type { HostedLoginResult } from "../../state/types";
+
+const keepBrowserAliveOnAppSwitch: AuthSessionOpenOptions = { createTask: false };
 
 /**
  * The second argument is the app's deep link, not the OAuth redirect URI. It is what closes this
@@ -18,7 +20,7 @@ export async function openHostedUrlInSecureBrowser(
   hostedUrl: string,
   deepLink?: string,
 ): Promise<HostedLoginResult> {
-  const result = await openAuthSessionAsync(hostedUrl, deepLink);
+  const result = await openAuthSessionAsync(hostedUrl, deepLink, keepBrowserAliveOnAppSwitch);
 
   return result.type === "success" ? { type: "success", url: result.url } : { type: "dismissed" };
 }
