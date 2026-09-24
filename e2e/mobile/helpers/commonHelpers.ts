@@ -8,6 +8,10 @@ import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import {
+  CARD_SESSION_BOOTSTRAP_ENV,
+  resolveCardSessionBootstrap,
+} from "@ledgerhq/baanx-test-client";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -69,6 +73,13 @@ function createDetoxURLBlacklistRegex(): string {
 }
 
 export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) {
+  // get card session if requested - optional chain in case called outside spec
+  const specFile = expect?.getState?.()?.testPath ?? "";
+  const isPayTabSpec = specFile.toLowerCase().replaceAll("\\", "/").includes("/paytab/");
+  const cardSession = isPayTabSpec
+    ? { [CARD_SESSION_BOOTSTRAP_ENV]: await resolveCardSessionBootstrap() }
+    : {};
+
   const port = await findFreePort();
   closeBridge();
   initBridge(port);
@@ -80,9 +91,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
-      ...(process.env.CARD_SESSION_BOOTSTRAP
-        ? { CARD_SESSION_BOOTSTRAP: process.env.CARD_SESSION_BOOTSTRAP }
-        : {}),
+      ...cardSession,
     },
     languageAndLocale: {
       language: "en-US",

@@ -38,7 +38,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@feature/QAA-1564
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -51,6 +51,11 @@ jobs:
       MITMPROXY_LOGS_KEY: ${{ secrets.MITMPROXY_LOGS_KEY }}
       NX_KEY: ${{ secrets.NX_KEY }}
       SEED_QAA_B2C: ${{ secrets.SEED_QAA_B2C }}
+      BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
+      BAANX_TEST_USER_EMAIL: ${{ secrets.BAANX_TEST_USER_EMAIL }}
+      BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
+      BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
+      BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
       SLACK_LIVE_CI_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
       FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
       FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
@@ -89,7 +94,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@feature/QAA-1564
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -111,6 +116,11 @@ jobs:
       R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
       S3_DIRECTCONNECT_ENDPOINT: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
       SEED_QAA_B2C: ${{ secrets.SEED_QAA_B2C }}
+      BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
+      BAANX_TEST_USER_EMAIL: ${{ secrets.BAANX_TEST_USER_EMAIL }}
+      BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
+      BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
+      BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
       SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
     with:
       macos-specificity-runner-label: "general-pool"

@@ -209,6 +209,16 @@ on:
         required: false
       SEED_QAA_B2C:
         required: false
+      BAANX_TEST_CLIENT_KEY:
+        required: false
+      BAANX_TEST_USER_EMAIL:
+        required: false
+      BAANX_TEST_USER_PASSWORD:
+        required: false
+      BAANX_TEST_USER_TOTP_SECRET:
+        required: false
+      BAANX_TEST_API_URL:
+        required: false
       SLACK_BOT_USER_OAUTH_ACCESS_TOKEN:
         required: false
 
@@ -692,8 +702,8 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..."  --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          command: pnpm i --filter="live-mobile..."  --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Boot iOS Simulator in Background
         uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
@@ -777,6 +787,11 @@ jobs:
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
+          BAANX_TEST_USER_EMAIL: ${{ secrets.BAANX_TEST_USER_EMAIL }}
+          BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
+          BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
+          BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           INPUT_E2E: "true"
           REMOTE_SPECULOS: "true"
@@ -939,7 +954,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node node_modules/detox/scripts/postinstall.js
@@ -1040,6 +1055,11 @@ jobs:
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
+          BAANX_TEST_USER_EMAIL: ${{ secrets.BAANX_TEST_USER_EMAIL }}
+          BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
+          BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
+          BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
           INPUT_E2E: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}

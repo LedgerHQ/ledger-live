@@ -7,7 +7,8 @@ const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 setTeamOwner(Team.WALLET_XP);
 TAGS.forEach(tag => $Tag(tag));
 
-describe.skip("Pay tab", () => {
+// Proves the Baanx client and token injection work; not a Pay tab UI assertion yet.
+describe("Pay tab", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-many-stablecoins",

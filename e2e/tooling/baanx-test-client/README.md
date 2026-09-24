@@ -127,31 +127,28 @@ where the staging files already point at `dev.api.baanx.com`). Mint the token on
 targets, or override both at runtime in Settings → Debug → Configuration → Env, which takes
 `NAME=value` one line at a time.
 
-Both variables are equally required for Playwright, which already spreads `process.env` into
-`electron.launch`:
+Both variables are equally required when you start the desktop app from the shell. 
+Detox injects a session for specs whose path contains `/paytab/`.
+Playwright opts in with `test.use({ injectCardSession: true })`. 
+`resolveCardSessionBootstrap()` uses a set `CARD_SESSION_BOOTSTRAP` if present, 
+otherwise it mints via `getBaanxAuthToken()`. Put `BAANX_TEST_*`
+in the process environment (load this package's `.env` yourself); overlapping opted-in tests in one
+worker share the in-memory login cache.
 
 ```bash
-export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client token -- --session)
-export CARD_BAANX_API_URL=https://<the Baanx host that minted the token>
-export CARD_BAANX_CLIENT_KEY=baanx-client-key-that-minted-the-token
-pnpm --filter ledger-live-desktop-e2e-tests test:playwright
+set -a && source e2e/tooling/baanx-test-client/.env && set +a
+pnpm --filter ledger-live-desktop-e2e-tests test:playwright -- tests/specs/paytab.spec.ts
+pnpm --filter ledger-live-mobile-e2e-tests test:ios -- e2e/mobile/specs/paytab
 ```
 
-Detox reads `CARD_SESSION_BOOTSTRAP` from the environment of the test run and forwards it as a launch
-argument, so no bundler restart is involved. A Detox launch without that argument also clears any
-leftover keychain session, so a run that wants no card cannot inherit one from a previous launch:
+A pre-set `CARD_SESSION_BOOTSTRAP` is not expiry-checked. Unset it for long local sessions.
 
-```bash
-export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client token -- --session)
-pnpm --filter ledger-live-mobile-e2e-tests test:ios
-```
-
-Two things to know. On desktop `CARD_BAANX_API_URL` **must** point at the host that minted the token
-— in the Playwright run as much as in the `start` one. It defaults to the production Card backend
+On desktop, `CARD_BAANX_API_URL` **must** point at the host that minted the token (Playwright spreads
+`process.env` into Electron). It defaults to the production Card backend
 (`https://card.api.live.ledger.com`), so a sandbox token left with the default is a bearer for the
-wrong audience and every Card call answers 401. And the password login returns no refresh token, so
-`--session` fills that field with a placeholder: nothing can refresh with it, which is fine for a run
-shorter than the 6-hour token life but is not a substitute for the OAuth flow.
+wrong audience and every Card call answers 401. The password login returns no refresh token, so
+`--session` / the helper fill that field with a placeholder: nothing can refresh with it, which is
+fine for a run shorter than the 6-hour token life but is not a substitute for the OAuth flow.
 
 Keep `CARD_SESSION_BOOTSTRAP` out of `@shared/env` so it does not appear in `getAllEnvs()`, exported
 logs, or Allure's environment tab. Do not put it in a committed mobile `.env` file: those ship inside

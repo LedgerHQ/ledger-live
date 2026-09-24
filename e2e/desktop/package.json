@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@ledgerhq/device-mockserver-client": "catalog:",
+    "@ledgerhq/baanx-test-client": "workspace:^",
     "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",

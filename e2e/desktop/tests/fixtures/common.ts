@@ -28,6 +28,10 @@ import { attachNetworkLogging } from "tests/utils/networkLogging";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
+import {
+  CARD_SESSION_BOOTSTRAP_ENV,
+  resolveCardSessionBootstrap,
+} from "@ledgerhq/baanx-test-client";
 
 export type CliCommand = ((
   userdataPath?: string,
@@ -52,6 +56,7 @@ type TestFixtures = {
   userdataOriginalFile?: string;
   userdataFile: string;
   env: Record<string, string>;
+  injectCardSession: boolean;
   electronApp: ElectronApplication;
   page: Page;
   featureFlags: PartialFeatures;
@@ -90,6 +95,7 @@ async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: stri
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
+  injectCardSession: [false, { option: true }],
   lang: "en-US",
   theme: "dark",
   userdata: undefined,
@@ -221,7 +227,16 @@ export const test = base.extend<TestFixtures>({
   },
 
   electronApp: async (
-    { lang, theme, userdataDestinationPath, env, featureFlags, simulateCamera, speculos },
+    {
+      lang,
+      theme,
+      userdataDestinationPath,
+      env,
+      injectCardSession,
+      featureFlags,
+      simulateCamera,
+      speculos,
+    },
     use,
     testInfo,
   ) => {
@@ -251,6 +266,12 @@ export const test = base.extend<TestFixtures>({
       },
       env,
     );
+    delete env[CARD_SESSION_BOOTSTRAP_ENV];
+
+    if (injectCardSession) {
+      // only inject card session if requested
+      env[CARD_SESSION_BOOTSTRAP_ENV] = await resolveCardSessionBootstrap();
+    }
 
     // launch app
     const windowSize = { width: 1024, height: 768 };

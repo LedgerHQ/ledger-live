@@ -301,7 +301,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies and build LLD
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@feature/QAA-1564
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
@@ -413,6 +413,11 @@ jobs:
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
+          BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
+          BAANX_TEST_USER_EMAIL: ${{ secrets.BAANX_TEST_USER_EMAIL }}
+          BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
+          BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
+          BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
 
       - name: Upload Allure test results artifact
         if: ${{ !cancelled() }}
