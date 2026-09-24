@@ -15,11 +15,11 @@ describe("whenCachedFlagsSettled", () => {
     const onSettled = jest.fn();
 
     void whenCachedFlagsSettled(store).then(onSettled);
-    await Promise.resolve();
+    await jest.runAllTimersAsync();
     expect(onSettled).not.toHaveBeenCalled();
 
     store.dispatch(setCachedFlagsSettled());
-    await Promise.resolve();
+    await jest.runAllTimersAsync();
     expect(onSettled).toHaveBeenCalledTimes(1);
   });
 

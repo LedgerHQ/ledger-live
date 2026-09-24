@@ -625,7 +625,7 @@ describe("cachedFlagsSettled", () => {
     });
 
     expect(store.getState().featureFlags.cachedFlagsSettled).toBe(false);
-    await flushPromises();
+    await jest.advanceTimersByTimeAsync(0);
 
     expect(resolvedWhenSettled).toEqual([true]);
     expect(store.getState().featureFlags.remoteFlagsReady).toBe(false);
@@ -638,7 +638,7 @@ describe("cachedFlagsSettled", () => {
       fetchRemoteFlags: neverSettles,
     });
 
-    await flushPromises();
+    await jest.advanceTimersByTimeAsync(0);
 
     expect(store.getState().featureFlags.cachedFlagsSettled).toBe(true);
     expect(store.getState().featureFlags.resolved.mockFeature).toMatchObject({
@@ -654,7 +654,7 @@ describe("cachedFlagsSettled", () => {
       fetchRemoteFlags: neverSettles,
     });
 
-    await flushPromises();
+    await jest.advanceTimersByTimeAsync(0);
 
     expect(store.getState().featureFlags.cachedFlagsSettled).toBe(true);
     expect(store.getState().featureFlags.resolved.mockFeature).toEqual(defaults.mockFeature);
@@ -666,7 +666,7 @@ describe("cachedFlagsSettled", () => {
       fetchRemoteFlags: () => Promise.resolve({ mockFeature: { enabled: true } }),
     });
 
-    await flushPromises();
+    await jest.advanceTimersByTimeAsync(0);
 
     expect(store.getState().featureFlags.cachedFlagsSettled).toBe(false);
   });
@@ -676,7 +676,7 @@ describe("cachedFlagsSettled", () => {
     const store = createStore(undefined, { fetchRemoteFlags: neverSettles });
 
     expect(store.getState().featureFlags.cachedFlagsSettled).toBe(false);
-    await flushPromises();
+    await jest.advanceTimersByTimeAsync(0);
 
     expect(store.getState().featureFlags.cachedFlagsSettled).toBe(true);
   });
@@ -702,7 +702,7 @@ describe("cachedFlagsSettled", () => {
           ),
     });
 
-    await flushPromises();
+    await jest.advanceTimersByTimeAsync(0);
 
     expect(dispatchedTypes.filter(type => type === syncRemoteConfig.type)).toHaveLength(1);
     expect(dispatchedTypes).toContain(setCachedFlagsSettled.type);

@@ -37,8 +37,9 @@ jest.mock("../helpers/identities", () => ({ initIdentities: () => Promise.resolv
 jest.mock("~/logic/postOnboarding/backfillOnboardingDate", () => ({
   backfillOnboardingDate: () => {},
 }));
+const mockBootstrapCardSession = jest.fn(() => Promise.resolve());
 jest.mock("LLM/utils/bootstrapCardSession", () => ({
-  bootstrapCardSession: () => Promise.resolve(),
+  bootstrapCardSession: () => mockBootstrapCardSession(),
 }));
 jest.mock("~/bridge/cache", () => ({
   listCachedCurrencyIds: () => Promise.resolve([]),
@@ -56,22 +57,28 @@ const renderProvider = (store: ReturnType<typeof createStore>) =>
   );
 
 describe("LedgerStoreProvider", () => {
+  beforeEach(() => {
+    mockBootstrapCardSession.mockClear();
+  });
+
   it("is not ready until the feature-flags cache has settled", async () => {
     const store = createStore();
     renderProvider(store);
 
-    // Let every storage read resolve (timers are faked globally): only the cache is still pending.
-    await act(async () => {
-      for (let i = 0; i < 50; i++) await Promise.resolve();
-    });
+    // Run init until nothing is left pending: only the cache, which the test never settles.
+    await act(() => jest.runAllTimersAsync());
+
     expect(mockGetSettings).toHaveBeenCalled();
+    expect(mockBootstrapCardSession).not.toHaveBeenCalled();
     expect(screen.getByText("loading")).toBeOnTheScreen();
 
     await act(async () => {
       store.dispatch(setCachedFlagsSettled());
+      await jest.runAllTimersAsync();
     });
 
-    expect(await screen.findByText("ready")).toBeOnTheScreen();
+    expect(mockBootstrapCardSession).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("ready")).toBeOnTheScreen();
   });
 
   it("becomes ready when the cache settled before the storage reads", async () => {
@@ -79,7 +86,8 @@ describe("LedgerStoreProvider", () => {
     store.dispatch(setCachedFlagsSettled());
 
     renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
 
-    expect(await screen.findByText("ready")).toBeOnTheScreen();
+    expect(screen.getByText("ready")).toBeOnTheScreen();
   });
 });
