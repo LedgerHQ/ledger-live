@@ -7,7 +7,7 @@ import {
   ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID,
 } from "@e2e/page/drawer/wallet40Drawers.drawer";
 
-type Wallet40TabName = "home" | "swap" | "earn" | "card";
+type Wallet40TabName = "home" | "swap" | "earn" | "card" | "paytab";
 
 export default class MainNavigationPage {
   // --- Wallet 4.0 bottom tabs ---

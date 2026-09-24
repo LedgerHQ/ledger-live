@@ -39,6 +39,7 @@ import {
   getUser,
 } from "../db";
 import { importSettings } from "~/actions/settings";
+import { bootstrapCardSession } from "LLM/utils/bootstrapCardSession";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importBle } from "~/actions/ble";
 import { importKnownDevices } from "~/reducers/knownDevices";
@@ -276,6 +277,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
           });
         }
       }
+
+      await bootstrapCardSession(store.dispatch);
 
       setInitialCountervalues(initialCountervalues);
       setReady(true);

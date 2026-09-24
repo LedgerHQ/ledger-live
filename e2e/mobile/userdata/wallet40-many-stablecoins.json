@@ -1,5 +1,10 @@
 {
     "data": {
+        "payCard": {
+            "hasSeenFeatureTour": true,
+            "hasSeenLoginIntro": true,
+            "hasSeenReceiveVerifyHint": true
+        },
         "settings": {
             "hasCompletedOnboarding": true,
             "readOnlyModeEnabled": false,

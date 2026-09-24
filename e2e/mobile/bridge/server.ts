@@ -124,6 +124,10 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
     postMessage({ type: "importPostOnboarding", id: uniqueId(), payload: data.postOnboarding });
   }
 
+  if (data.payCard) {
+    postMessage({ type: "importPayCard", id: uniqueId(), payload: data.payCard });
+  }
+
   if (data.featureFlags?.overrides) {
     await setFeatureFlags(data.featureFlags.overrides);
   }

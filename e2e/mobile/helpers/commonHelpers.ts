@@ -80,6 +80,9 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
+      ...(process.env.CARD_SESSION_BOOTSTRAP
+        ? { CARD_SESSION_BOOTSTRAP: process.env.CARD_SESSION_BOOTSTRAP }
+        : {}),
     },
     languageAndLocale: {
       language: "en-US",
