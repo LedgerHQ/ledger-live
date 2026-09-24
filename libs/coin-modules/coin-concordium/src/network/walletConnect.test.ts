@@ -1,4 +1,5 @@
 import type { SessionTypes } from "@walletconnect/types";
+import coinConfig from "../config";
 import { CONCORDIUM_CHAIN_IDS } from "../constants";
 import {
   ConcordiumWalletConnect,
@@ -19,7 +20,7 @@ const mockPairingDelete = jest.fn();
 jest.mock("@walletconnect/sign-client", () => ({
   __esModule: true,
   default: {
-    init: () => mockSignClientInit(),
+    init: (options: unknown) => mockSignClientInit(options),
   },
 }));
 
@@ -46,6 +47,14 @@ describe("walletConnect", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     clearWalletConnect();
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      networkType: "mainnet",
+      proxyUrl: "https://proxy.example.com",
+      minReserve: 0,
+      enableTokens: false,
+      infra: { API_CONCORDIUM_WALLETCONNECT_RELAY: "wss://relay.example.com" },
+    }));
 
     // Default mock implementations
     mockSignClientInit.mockResolvedValue({
@@ -65,7 +74,10 @@ describe("walletConnect", () => {
         const wc = new ConcordiumWalletConnect();
         await wc.getClient();
 
-        expect(mockSignClientInit).toHaveBeenCalled();
+        expect(mockSignClientInit).toHaveBeenCalledWith({
+          projectId: "test-project-id",
+          relayUrl: "wss://relay.example.com",
+        });
       });
 
       it("should return cached client on subsequent calls", async () => {

@@ -38,6 +38,7 @@ export const TESTNET_COIN_CONFIG: ConcordiumConfig = {
   minReserve: 100000,
   // Matches the shipped default. Token tests opt in through `setupTestnetCoinConfig`.
   enableTokens: false,
+  infra: { API_CONCORDIUM_WALLETCONNECT_RELAY: "wss://relay.walletconnect.com" },
 };
 
 export function setupTestnetCoinConfig(overrides?: Partial<ConcordiumCoinConfig>): void {

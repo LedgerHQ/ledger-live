@@ -10,6 +10,9 @@ export const concordiumConfig: Record<string, ConfigInfo> = {
       proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
       minReserve: 0,
       enableTokens: false,
+      infra: {
+        API_CONCORDIUM_WALLETCONNECT_RELAY: "wss://relay.walletconnect.com",
+      },
     } satisfies ConcordiumCoinConfig,
   },
   config_currency_concordium_testnet: {
@@ -20,6 +23,9 @@ export const concordiumConfig: Record<string, ConfigInfo> = {
       proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
       minReserve: 0,
       enableTokens: false,
+      infra: {
+        API_CONCORDIUM_WALLETCONNECT_RELAY: "wss://relay.walletconnect.com",
+      },
     } satisfies ConcordiumCoinConfig,
   },
 };

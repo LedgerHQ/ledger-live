@@ -170,6 +170,7 @@ describe("OnboardModal Integration", () => {
       proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
       minReserve: 0,
       enableTokens: false,
+      infra: { API_CONCORDIUM_WALLETCONNECT_RELAY: "wss://relay.walletconnect.com" },
     }));
   });
 

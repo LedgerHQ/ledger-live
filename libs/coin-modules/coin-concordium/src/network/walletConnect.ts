@@ -2,6 +2,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import SignClient from "@walletconnect/sign-client";
 import type { SessionTypes } from "@walletconnect/types";
 import { log } from "@ledgerhq/logs";
+import coinConfig from "../config";
 import type {
   ConcordiumNetwork,
   IDAppCreateAccountParams,
@@ -11,10 +12,8 @@ import { CONCORDIUM_CHAIN_IDS } from "../constants";
 
 const REQUEST_CREATE_ACCOUNT_EXPIRY = 7 * 24 * 60 * 60; // 7 days in seconds
 
-const CLIENT_CONFIG = {
-  projectId: getEnv("WALLETCONNECT_PROJECT_ID"),
-  relayUrl: "wss://relay.walletconnect.com",
-};
+// The client is shared by both networks' sessions, so its relay comes from the mainnet config.
+const RELAY_CONFIG_CURRENCY_ID = "concordium";
 
 export class ConcordiumWalletConnect {
   client: SignClient | null = null;
@@ -27,7 +26,11 @@ export class ConcordiumWalletConnect {
     }
 
     try {
-      this.client = await SignClient.init(CLIENT_CONFIG);
+      const { infra } = coinConfig.getCoinConfig(RELAY_CONFIG_CURRENCY_ID);
+      this.client = await SignClient.init({
+        projectId: getEnv("WALLETCONNECT_PROJECT_ID"),
+        relayUrl: infra.API_CONCORDIUM_WALLETCONNECT_RELAY,
+      });
 
       return this.client;
     } catch (error) {

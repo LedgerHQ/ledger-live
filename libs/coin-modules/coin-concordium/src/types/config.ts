@@ -12,6 +12,10 @@ export type ConcordiumConfig = {
    * without a user ever seeing a balance they cannot spend.
    */
   enableTokens: boolean;
+  infra: {
+    /** WalletConnect relay used to pair with the Concordium IDApp. */
+    API_CONCORDIUM_WALLETCONNECT_RELAY: string;
+  };
 };
 
 export type ConcordiumCoinConfig = CurrencyConfig & ConcordiumConfig;
