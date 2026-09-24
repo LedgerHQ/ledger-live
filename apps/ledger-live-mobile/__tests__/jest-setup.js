@@ -186,6 +186,15 @@ jest.mock("react-native-share", () => ({
   default: { open: jest.fn(() => Promise.resolve({ success: true })) },
 }));
 
+jest.mock(
+  "react-native-fit-image",
+  () => {
+    const { Image } = require("react-native");
+    return { __esModule: true, default: Image };
+  },
+  { virtual: true },
+);
+
 jest.mock("react-native-view-shot", () => ({
   captureRef: jest.fn(() => Promise.resolve("file://mock.png")),
 }));
