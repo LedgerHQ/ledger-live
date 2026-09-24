@@ -3,7 +3,12 @@ import { BigNumber } from "bignumber.js";
 import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
 import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { BigNumberStrSchema } from "@shared/schema-primitives";
-import { applyEvmGasLimitMultiplier, BridgeAdapter, buildSolanaTransactionModel } from "./bridge";
+import {
+  applyEvmGasLimitMultiplier,
+  BridgeAdapter,
+  buildSolanaTransactionModel,
+  toSolanaStakeLimits,
+} from "./bridge";
 import type { TransactionIntent } from "../intents";
 import type { AccountDescriptor } from "../models";
 
@@ -203,6 +208,35 @@ describe("buildSolanaTransactionModel", () => {
       kind: "stake.delegate",
       uiState: { stakeAccAddr: "", voteAccAddr: "" },
     });
+  });
+});
+
+describe("toSolanaStakeLimits", () => {
+  it("derives the fee reserve from balance, rent and max stakeable", () => {
+    expect(
+      toSolanaStakeLimits({
+        minimumDelegation: new BigNumber(1_000_000_000),
+        rent: new BigNumber(1_666_240),
+        spendableBalance: new BigNumber(50_929_500),
+        maxStakeable: new BigNumber(49_243_260),
+      }),
+    ).toEqual({
+      minimumDelegation: BigNumberStrSchema.parse("1000000000"),
+      rent: BigNumberStrSchema.parse("1666240"),
+      spendableBalance: BigNumberStrSchema.parse("50929500"),
+      maxStakeable: BigNumberStrSchema.parse("49243260"),
+      feeReserve: BigNumberStrSchema.parse("20000"),
+    });
+  });
+
+  it("floors the fee reserve at 0 when nothing is stakeable", () => {
+    const limits = toSolanaStakeLimits({
+      minimumDelegation: new BigNumber(1_000_000_000),
+      rent: new BigNumber(1_666_240),
+      spendableBalance: new BigNumber(1_000_000),
+      maxStakeable: new BigNumber(0),
+    });
+    expect(limits.feeReserve).toBe(BigNumberStrSchema.parse("0"));
   });
 });
 

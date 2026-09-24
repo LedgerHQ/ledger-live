@@ -12,7 +12,7 @@ import type { AccountDescriptor, Balance, SendEvent, DiscoveredAccountRaw } from
 // at module load time for every subprocess regardless of which command is invoked.
 import type { BridgeAdapter } from "./compatibility/bridge";
 import type { CoinFrameworkAdapter, OperationsPage } from "./compatibility/coinframework";
-import type { EarnSolanaStake } from "./earn/types";
+import type { EarnSolanaStake, SolanaStakeLimits } from "./earn/types";
 import type { TransactionIntent } from "./intents";
 import type { Network } from "../shared/accountDescriptor";
 import { currencyIdFromNetwork, toV1 } from "../shared/accountDescriptor";
@@ -106,6 +106,10 @@ export class WalletAdapter {
    */
   async getSolanaStakes(descriptor: AccountDescriptor): Promise<EarnSolanaStake[]> {
     return (await this.getBridge()).getSolanaStakes(descriptor);
+  }
+
+  async getSolanaStakeLimits(descriptor: AccountDescriptor): Promise<SolanaStakeLimits> {
+    return (await this.getBridge()).getSolanaStakeLimits(descriptor);
   }
 
   /**
