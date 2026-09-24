@@ -230,6 +230,20 @@ describe("CardDetailsSheet (native)", () => {
     expect(screen.getByText("NETFLIX.COM")).toBeVisible();
   });
 
+  it("should give transaction details nothing to scroll, so its header stays put", () => {
+    renderSheet({ route: { name: "transaction", transaction } });
+
+    expect(screen.getByTestId("card-details-sheet-static-content")).toBeVisible();
+    expect(screen.queryByTestId("card-details-sheet-content")).toBeNull();
+  });
+
+  it("should keep the overview scrollable, since it opens at full height", () => {
+    renderSheet();
+
+    expect(screen.getByTestId("card-details-sheet-content")).toBeVisible();
+    expect(screen.queryByTestId("card-details-sheet-static-content")).toBeNull();
+  });
+
   it("should offer a way back to the overview from transaction details", async () => {
     const { onBack, onClose, pressBack } = renderSheet({
       route: { name: "transaction", transaction },
