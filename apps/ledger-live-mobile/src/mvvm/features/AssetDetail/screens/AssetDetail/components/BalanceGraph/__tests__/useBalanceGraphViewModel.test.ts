@@ -31,7 +31,8 @@ jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
 jest.mock("@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider", () => ({
   useSupportedCounterCurrencies: jest.fn(() => ({ data: ["usd", "eur", "btc"] })),
 }));
-jest.mock("LLM/features/Receive");
+// Factory (not automock): automocking loads the real module graph (ModularDrawer, ~3s).
+jest.mock("LLM/features/Receive", () => ({ useOpenReceiveDrawer: jest.fn() }));
 
 const mockUseGetCurrencyDataQuery = jest.mocked(useGetCurrencyDataQuery);
 const mockUseGetAssetChartDataQuery = jest.mocked(useGetAssetChartDataQuery);
