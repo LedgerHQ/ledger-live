@@ -26,6 +26,7 @@ import {
   type SendIntentSummary,
 } from "../../agent-intent/send-intent";
 import { findEthereumToken } from "../../agent-intent/token-lookup";
+import { AGENT_INTENT_BFF_URLS } from "../../agent-intent/endpoints";
 import {
   describeAgentIntentError,
   isAcceptedWithoutReviewLink,
@@ -60,6 +61,21 @@ function parseSenderInput(flags: {
   if (flags.account && !flags.from) return { account: flags.account };
   if (flags.from && !flags.account) return { from: flags.from };
   throw new Error("Pass exactly one sender: --account <session-label> or --from <address>.");
+}
+
+/** The signed-in request carries an access token, so its host comes from the fixed per-environment
+ * table, never from the editable session file. A recorded URL that differs means the file was
+ * changed by hand or corrupted. */
+function trustedBffUrl(profile: AgentIntentProfileMeta): string {
+  const expected = AGENT_INTENT_BFF_URLS[profile.environment];
+  if (profile.bffBaseUrl.replace(/\/+$/, "") !== expected) {
+    throw new Error(
+      `Profile "${profile.profileId}" records an unexpected Agent Intent service URL for ` +
+        `${profile.environment}, so nothing was sent. The session file may have been edited — ` +
+        "re-enroll under a new --profile id.",
+    );
+  }
+  return expected;
 }
 
 /** Only Ethereum mainnet accounts can send: that's the one network Agent Intent supports. */
@@ -218,7 +234,7 @@ export default defineCommand({
       }
 
       const client = createAgentIntentClient({
-        bffBaseUrl: profile.bffBaseUrl,
+        bffBaseUrl: trustedBffUrl(profile),
         identity: await loadProfileIdentity(profile),
         trustchainId: profile.trustchainId,
         environment: profile.environment,
