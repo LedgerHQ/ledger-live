@@ -1,5 +1,6 @@
 import { TEST_ADDRESSES } from "../../test/fixtures";
 import { estimateFees } from "./estimateFees";
+import { mainnetFilecoinConfig } from "../../test/context";
 
 describe("estimateFees (integration)", () => {
   it("returns a FeeEstimation with value > 0 and gas parameters for native intent", async () => {
@@ -13,7 +14,7 @@ describe("estimateFees (integration)", () => {
       useAllAmount: false,
     };
 
-    const result = await estimateFees(intent);
+    const result = await estimateFees(mainnetFilecoinConfig, intent);
 
     expect(typeof result.value).toBe("bigint");
     expect(result.value).toBeGreaterThan(0n);

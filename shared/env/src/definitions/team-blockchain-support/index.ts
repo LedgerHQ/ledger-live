@@ -11,11 +11,6 @@ const teamBlockchainSupport = {
     parser: boolParser,
     desc: "Enable staking for Aptos",
   },
-  API_FILECOIN_ENDPOINT: {
-    parser: stringParser,
-    def: "https://filecoin.coin.ledger.com",
-    desc: "Filecoin API url",
-  },
   API_STACKS_ENDPOINT: {
     parser: stringParser,
     def: "https://stacks.coin.ledger.com",

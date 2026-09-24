@@ -16,9 +16,11 @@
     "src/hw-signMessage.ts",
     "src/supportedFeatures.ts",
     "src/test/bridgeDatasetTest.ts",
+    "src/test/coin-config-setup.ts",
     "src/test/context.ts",
     "src/test/fixtures.ts",
-    "src/test/index.ts"
+    "src/test/index.ts",
+    "src/test/integ-coin-config-setup.ts"
   ],
   "entry": [
     "src/index.ts"

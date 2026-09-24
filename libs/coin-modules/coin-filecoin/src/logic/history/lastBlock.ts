@@ -5,9 +5,10 @@
 // same convention and let callers handle the safety delta if needed.
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { fetchBlockHeight } from "../../network/api";
+import type { FilecoinCoinConfig } from "../../config";
 
-export async function lastBlock(): Promise<BlockInfo> {
-  const status = await fetchBlockHeight();
+export async function lastBlock(config: FilecoinCoinConfig): Promise<BlockInfo> {
+  const status = await fetchBlockHeight(config);
   const { index, hash } = status.current_block_identifier;
   return {
     height: index,

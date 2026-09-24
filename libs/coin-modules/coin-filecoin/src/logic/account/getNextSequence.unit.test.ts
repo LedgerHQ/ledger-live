@@ -1,5 +1,6 @@
 import { fetchEstimatedFees } from "../../network/api";
 import { getNextSequence } from "./getNextSequence";
+import { mockFilecoinConfig } from "../../test/context";
 
 jest.mock("../../network/api");
 jest.mock("@ledgerhq/logs");
@@ -17,7 +18,10 @@ describe("getNextSequence", () => {
       nonce: 7,
     });
 
-    const result = await getNextSequence("f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za");
+    const result = await getNextSequence(
+      mockFilecoinConfig,
+      "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za",
+    );
     expect(result).toBe(7n);
     expect(typeof result).toBe("bigint");
   });
@@ -31,7 +35,7 @@ describe("getNextSequence", () => {
     });
 
     const addr = "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za";
-    await getNextSequence(addr);
-    expect(mockedFetch).toHaveBeenCalledWith({ from: addr, to: addr });
+    await getNextSequence(mockFilecoinConfig, addr);
+    expect(mockedFetch).toHaveBeenCalledWith(mockFilecoinConfig, { from: addr, to: addr });
   });
 });

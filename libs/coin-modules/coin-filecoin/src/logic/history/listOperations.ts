@@ -6,6 +6,7 @@ import type {
 import { fetchTxs, fetchERC20Transactions } from "../../network/api";
 import { convertAddressFilToEth } from "../../network/addresses";
 import { TxStatus, type TransactionResponse, type ERC20Transfer } from "../../types";
+import type { FilecoinCoinConfig } from "../../config";
 
 // Cursor encodes pagination state for both native and ERC-20 streams separately.
 // Format: JSON { nativeOffset: number, tokenOffset: number, fromHeight: number }
@@ -131,6 +132,7 @@ function mapTokenOperations(
 }
 
 export async function listOperations(
+  config: FilecoinCoinConfig,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
@@ -138,7 +140,7 @@ export async function listOperations(
   const cur = parseCursor(options.cursor, options.minHeight ?? 0);
 
   // Fetch native FIL transactions
-  const nativeResp = await fetchTxs(address, cur.fromHeight, cur.nativeOffset, limit);
+  const nativeResp = await fetchTxs(config, address, cur.fromHeight, cur.nativeOffset, limit);
   const nativeTxs = nativeResp.txs ?? [];
 
   // Fetch ERC-20 transactions — convert FIL address to Ethereum-compatible address first.
@@ -151,7 +153,8 @@ export async function listOperations(
   }
 
   const tokenTxs = ethAddr
-    ? ((await fetchERC20Transactions(ethAddr, cur.fromHeight, cur.tokenOffset, limit)).txs ?? [])
+    ? ((await fetchERC20Transactions(config, ethAddr, cur.fromHeight, cur.tokenOffset, limit))
+        .txs ?? [])
     : [];
 
   // tokenOpIndex continues from the native op count to avoid ID collisions

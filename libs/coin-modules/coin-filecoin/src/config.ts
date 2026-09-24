@@ -5,8 +5,8 @@ import buildCoinConfig, {
 } from "@ledgerhq/coin-module-framework/config";
 
 export type FilecoinConfig = {
-  infra?: {
-    API_FILECOIN_ENDPOINT?: string;
+  infra: {
+    API_FILECOIN_ENDPOINT: string;
   };
 };
 

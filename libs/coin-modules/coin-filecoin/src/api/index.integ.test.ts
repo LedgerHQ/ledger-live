@@ -4,11 +4,11 @@ import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from ".";
 import type { FilecoinCoinConfig } from "../config";
 import { TEST_ADDRESSES } from "../test/fixtures";
-import { createMockFilecoinContext } from "../test/context";
+import { createMockFilecoinContext, mainnetFilecoinConfig } from "../test/context";
 
 describe("createApi (integration)", () => {
   let api: CoinModuleApi<FilecoinCoinConfig>;
-  const context = createMockFilecoinContext();
+  const context = createMockFilecoinContext(mainnetFilecoinConfig);
 
   beforeAll(() => {
     // Through withDefaults, as the consumer resolver does: the module omits the capabilities the

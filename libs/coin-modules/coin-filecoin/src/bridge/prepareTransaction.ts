@@ -11,6 +11,7 @@ import { getAddress, getSubAccount } from "../common-logic/utils";
 import { encodeTxnParams, generateTokenTxnParams } from "../erc20/tokenAccounts";
 import { BroadcastBlockIncl, Transaction } from "../types";
 import { Methods, calculateEstimatedFees } from "./utils";
+import coinConfig from "../config";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
@@ -55,7 +56,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
       }
 
       const paramsForEstimation = params ? params : fallbackParams;
-      const result = await fetchEstimatedFees({
+      const result = await fetchEstimatedFees(coinConfig.getCoinConfig(), {
         to: finalRecipient.parsedAddress.toString(),
         from: senderValidation.parsedAddress.toString(),
         methodNum: method,

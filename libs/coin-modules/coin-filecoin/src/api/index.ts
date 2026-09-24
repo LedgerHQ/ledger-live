@@ -29,13 +29,15 @@ import { validateIntent } from "../logic/validateIntent";
 // Checked against CoinModuleImpl with `satisfies` rather than annotated as it: `satisfies` keeps the
 // precise type of what is returned, so a caller sees exactly which methods exist. An annotation would
 // widen every capability back to optional, including the ones this module does implement.
+// Every method that reaches the network resolves the coin config from its context and passes it
+// down explicitly (ADR-019); the api path never reads the getCoinConfig() singleton.
 export function createApi() {
   return {
-    broadcast: (
-      _context: FilecoinContext,
+    broadcast: async (
+      context: FilecoinContext,
       tx: string,
       options?: { broadcastConfig?: BroadcastConfig },
-    ): Promise<string> => broadcast(tx, options?.broadcastConfig),
+    ): Promise<string> => broadcast(await context.config(), tx, options?.broadcastConfig),
 
     combine: (
       _context: FilecoinContext,
@@ -44,25 +46,27 @@ export function createApi() {
       options?: { pubkey?: string },
     ): string => combine(tx, signature, options?.pubkey),
 
-    craftTransaction: (
-      _context: FilecoinContext,
+    craftTransaction: async (
+      context: FilecoinContext,
       intent: TransactionIntent,
       options?: { customFees?: FeeEstimation },
-    ): Promise<CraftedTransaction> => craftTransaction(intent, options?.customFees),
+    ): Promise<CraftedTransaction> =>
+      craftTransaction(await context.config(), intent, options?.customFees),
 
-    estimateFees: (
-      _context: FilecoinContext,
+    estimateFees: async (
+      context: FilecoinContext,
       intent: TransactionIntent,
       options?: { customFeesParameters?: FeeEstimation["parameters"] },
-    ): Promise<FeeEstimation> => estimateFees(intent, options?.customFeesParameters),
+    ): Promise<FeeEstimation> =>
+      estimateFees(await context.config(), intent, options?.customFeesParameters),
 
-    lastBlock: (_context: FilecoinContext) => lastBlock(),
+    lastBlock: async (context: FilecoinContext) => lastBlock(await context.config()),
 
-    listOperations: (
-      _context: FilecoinContext,
+    listOperations: async (
+      context: FilecoinContext,
       address: string,
       options: ListOperationsOptions,
-    ): Promise<Page<Operation>> => listOperations(address, options),
+    ): Promise<Page<Operation>> => listOperations(await context.config(), address, options),
 
     validateIntent: (
       _context: FilecoinContext,
@@ -71,8 +75,8 @@ export function createApi() {
       options?: { customFees?: FeeEstimation },
     ): Promise<TransactionValidation> => validateIntent(intent, balances, options?.customFees),
 
-    getNextSequence: (_context: FilecoinContext, address: string): Promise<bigint> =>
-      getNextSequence(address),
+    getNextSequence: async (context: FilecoinContext, address: string): Promise<bigint> =>
+      getNextSequence(await context.config(), address),
 
     validateAddress: (
       _context: FilecoinContext,
@@ -84,9 +88,10 @@ export function createApi() {
       craftTransactionData(intent),
 
     getBalance: (
-      _context: FilecoinContext,
+      context: FilecoinContext,
       address: string,
       options?: BalanceOptions,
-    ): Promise<Balance[]> => rejectBalanceOptions(() => getBalance(address), options),
+    ): Promise<Balance[]> =>
+      rejectBalanceOptions(async () => getBalance(await context.config(), address), options),
   } satisfies CoinModuleImpl<FilecoinCoinConfig>;
 }

@@ -1,5 +1,5 @@
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
+import coinConfig from "../config";
 import {
   createMockBalanceResponse,
   createMockEstimatedFeesResponse,
@@ -19,21 +19,23 @@ import {
   fetchERC20TokenBalance,
   fetchERC20TransactionsWithPages,
 } from "../network/api";
+import { mockFilecoinConfig } from "../test/context";
 
 // Mock dependencies
 jest.mock("@ledgerhq/logs");
 jest.mock("@ledgerhq/live-network/network");
-jest.mock("@ledgerhq/live-env");
 
 const MOCK_API_URL = "https://mock.filecoin.api";
 const mockedNetwork = network as jest.MockedFunction<typeof network>;
-const mockedGetEnv = getEnv as jest.MockedFunction<typeof getEnv>;
 
 describe("Filecoin API", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
-    mockedGetEnv.mockReturnValue(MOCK_API_URL);
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      infra: { API_FILECOIN_ENDPOINT: MOCK_API_URL },
+    }));
   });
 
   describe("fetchBalances", () => {
@@ -46,7 +48,7 @@ describe("Filecoin API", () => {
 
       mockedNetwork.mockResolvedValueOnce({ data: mockBalance, status: 200 });
 
-      const result = await fetchBalances(TEST_ADDRESSES.F1_ADDRESS);
+      const result = await fetchBalances(mockFilecoinConfig, TEST_ADDRESSES.F1_ADDRESS);
 
       expect(result).toEqual(mockBalance);
     });
@@ -68,7 +70,7 @@ describe("Filecoin API", () => {
 
       mockedNetwork.mockResolvedValueOnce({ data: mockFees, status: 200 });
 
-      const result = await fetchEstimatedFees(request);
+      const result = await fetchEstimatedFees(mockFilecoinConfig, request);
 
       expect(result).toEqual(mockFees);
     });
@@ -90,7 +92,7 @@ describe("Filecoin API", () => {
 
       mockedNetwork.mockResolvedValueOnce({ data: mockNetworkStatus, status: 200 });
 
-      const result = await fetchBlockHeight();
+      const result = await fetchBlockHeight(mockFilecoinConfig);
 
       expect(result.current_block_identifier.index).toBe(TEST_BLOCK_HEIGHTS.CURRENT);
     });
@@ -105,7 +107,7 @@ describe("Filecoin API", () => {
 
       mockedNetwork.mockResolvedValueOnce({ data: mockResponse, status: 200 });
 
-      await fetchTxs(TEST_ADDRESSES.F1_ADDRESS, 2500000, 10, 50);
+      await fetchTxs(mockFilecoinConfig, TEST_ADDRESSES.F1_ADDRESS, 2500000, 10, 50);
 
       expect(mockedNetwork).toHaveBeenCalledWith({
         method: "GET",
@@ -127,7 +129,7 @@ describe("Filecoin API", () => {
         .mockResolvedValueOnce({ data: { txs: firstPageTxs, metadata: {} }, status: 200 })
         .mockResolvedValueOnce({ data: { txs: secondPageTxs, metadata: {} }, status: 200 });
 
-      const result = await fetchTxsWithPages(TEST_ADDRESSES.F1_ADDRESS, 0);
+      const result = await fetchTxsWithPages(mockFilecoinConfig, TEST_ADDRESSES.F1_ADDRESS, 0);
 
       expect(result).toHaveLength(1500);
       expect(mockedNetwork).toHaveBeenCalledTimes(2);
@@ -161,7 +163,7 @@ describe("Filecoin API", () => {
 
       mockedNetwork.mockResolvedValueOnce({ data: mockResponse, status: 200 });
 
-      const result = await broadcastTx(mockRequest);
+      const result = await broadcastTx(mockFilecoinConfig, mockRequest);
 
       expect(result).toEqual({
         hash: "bafy2bzacedpqzd6qm2r7nvxj5oetpqvhujwwmvkhz4u3xnfzdvwzxpjzuqhpa",
@@ -178,6 +180,7 @@ describe("Filecoin API", () => {
       mockedNetwork.mockResolvedValueOnce({ data: mockResponse, status: 200 });
 
       const result = await fetchERC20TokenBalance(
+        mockFilecoinConfig,
         TEST_ADDRESSES.F4_ADDRESS,
         TEST_ADDRESSES.ERC20_CONTRACT,
       );
@@ -208,7 +211,11 @@ describe("Filecoin API", () => {
         .mockResolvedValueOnce({ data: { txs: firstPageTxs }, status: 200 })
         .mockResolvedValueOnce({ data: { txs: secondPageTxs }, status: 200 });
 
-      const result = await fetchERC20TransactionsWithPages(TEST_ADDRESSES.F4_ADDRESS, 100);
+      const result = await fetchERC20TransactionsWithPages(
+        mockFilecoinConfig,
+        TEST_ADDRESSES.F4_ADDRESS,
+        100,
+      );
 
       expect(result).toHaveLength(1300);
       expect(mockedNetwork).toHaveBeenCalledTimes(2);

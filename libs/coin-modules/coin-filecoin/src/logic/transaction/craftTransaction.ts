@@ -9,6 +9,7 @@ import { convertAddressFilToEth, validateAddress } from "../../network/addresses
 import { BroadcastBlockIncl } from "../../types";
 import { fetchEstimatedFees } from "../../network/api";
 import { getNextSequence } from "../account/getNextSequence";
+import type { FilecoinCoinConfig } from "../../config";
 
 // Inline method numbers from Filecoin spec (mirrors src/bridge/utils.ts Methods enum).
 // logic/ must not import from bridge/, so we inline the relevant constants here.
@@ -22,6 +23,7 @@ const METHOD_INVOKE_EVM = 3844450837;
 //     the BroadcastTransactionRequest without re-deserialising CBOR — iso-filecoin
 //     v4 exposes Message.serialize() but no static deserialize equivalent).
 export async function craftTransaction(
+  config: FilecoinCoinConfig,
   intent: TransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -31,7 +33,7 @@ export async function craftTransaction(
   }
   const from = senderValidation.parsedAddress.toString();
 
-  const nonce = await getNextSequence(from);
+  const nonce = await getNextSequence(config, from);
 
   let to: string;
   let value: string;
@@ -85,7 +87,7 @@ export async function craftTransaction(
     gasLimit = Number(customFees.parameters["gasLimit"] ?? 0);
     gasPremium = String(customFees.parameters["gasPremium"] ?? "0");
   } else {
-    const fees = await fetchEstimatedFees({
+    const fees = await fetchEstimatedFees(config, {
       from,
       to,
       methodNum: method,

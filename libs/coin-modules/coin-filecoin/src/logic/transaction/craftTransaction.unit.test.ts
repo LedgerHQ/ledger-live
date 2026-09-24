@@ -1,6 +1,7 @@
 import { fetchEstimatedFees } from "../../network/api";
 import { craftTransaction } from "./craftTransaction";
 import { combine } from "./combine";
+import { mockFilecoinConfig } from "../../test/context";
 
 jest.mock("../../network/api");
 jest.mock("@ledgerhq/logs");
@@ -75,7 +76,7 @@ describe("craftTransaction", () => {
       useAllAmount: false,
     };
 
-    const crafted = await craftTransaction(intent);
+    const crafted = await craftTransaction(mockFilecoinConfig, intent);
     expect(typeof crafted.transaction).toBe("string");
 
     // Round-trip: combine should produce a parseable BroadcastTransactionRequest
@@ -97,7 +98,9 @@ describe("craftTransaction", () => {
       useAllAmount: false,
     };
 
-    await expect(craftTransaction(intent)).rejects.toThrow(/Unsupported asset type/);
+    await expect(craftTransaction(mockFilecoinConfig, intent)).rejects.toThrow(
+      /Unsupported asset type/,
+    );
   });
 
   it("fetches nonce at craft time (via fetchEstimatedFees)", async () => {
@@ -111,7 +114,7 @@ describe("craftTransaction", () => {
       useAllAmount: false,
     };
 
-    await craftTransaction(intent);
+    await craftTransaction(mockFilecoinConfig, intent);
     // fetchEstimatedFees is called at least once: once for getNextSequence, once for gas
     expect(mockedFetch).toHaveBeenCalledTimes(2);
   });
@@ -131,7 +134,7 @@ describe("craftTransaction", () => {
       parameters: { gasFeeCap: "200", gasLimit: "500000", gasPremium: "100" },
     };
 
-    const crafted = await craftTransaction(intent, customFees);
+    const crafted = await craftTransaction(mockFilecoinConfig, intent, customFees);
     const parsed = JSON.parse(crafted.transaction);
     expect(parsed.message.gasFeeCap).toBe("200");
     expect(parsed.message.gasLimit).toBe(500000);
@@ -151,7 +154,7 @@ describe("craftTransaction", () => {
       useAllAmount: false,
     };
 
-    const crafted = await craftTransaction(intent);
+    const crafted = await craftTransaction(mockFilecoinConfig, intent);
     const parsed = JSON.parse(crafted.transaction);
     expect(parsed.message.method).toBe(3844450837);
     expect(parsed.message.value).toBe("0");
@@ -169,6 +172,8 @@ describe("craftTransaction", () => {
       useAllAmount: false,
     };
 
-    await expect(craftTransaction(intent)).rejects.toThrow(/Invalid sender address/);
+    await expect(craftTransaction(mockFilecoinConfig, intent)).rejects.toThrow(
+      /Invalid sender address/,
+    );
   });
 });

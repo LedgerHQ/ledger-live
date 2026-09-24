@@ -8,6 +8,9 @@ export const fileCoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: {
+        API_FILECOIN_ENDPOINT: "https://filecoin.coin.ledger.com",
+      },
     },
   },
 };

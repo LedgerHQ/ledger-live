@@ -20,6 +20,7 @@ import {
 import { AccountType } from "../bridge/utils";
 import { ERC20Transfer, TxStatus } from "../types";
 import contractABI from "./ERC20.json";
+import coinConfig from "../config";
 
 export const erc20TxnToOperation = (
   tx: ERC20Transfer,
@@ -92,7 +93,11 @@ export async function buildTokenAccounts(
   initialAccount?: Account,
 ): Promise<TokenAccount[]> {
   try {
-    const transfers = await fetchERC20TransactionsWithPages(filAddr, lastHeight);
+    const transfers = await fetchERC20TransactionsWithPages(
+      coinConfig.getCoinConfig(),
+      filAddr,
+      lastHeight,
+    );
 
     if (!transfers.length) {
       return initialAccount?.subAccounts ?? [];
@@ -135,7 +140,11 @@ export async function buildTokenAccounts(
         continue;
       }
 
-      const balance = await fetchERC20TokenBalance(filAddr, contractAddr);
+      const balance = await fetchERC20TokenBalance(
+        coinConfig.getCoinConfig(),
+        filAddr,
+        contractAddr,
+      );
       const bnBalance = new BigNumber(balance);
       const tokenAccountId = encodeTokenAccountId(parentAccountId, token);
 

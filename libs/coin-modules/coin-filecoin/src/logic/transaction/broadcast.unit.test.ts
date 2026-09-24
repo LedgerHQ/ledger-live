@@ -1,5 +1,6 @@
 import { broadcastTx } from "../../network/api";
 import { broadcast } from "./broadcast";
+import { mockFilecoinConfig } from "../../test/context";
 
 jest.mock("../../network/api");
 jest.mock("@ledgerhq/logs");
@@ -30,19 +31,21 @@ describe("broadcast", () => {
       hash: "bafy2bzacedpqzd6qm2r7nvxj5oetpqvhujwwmvkhz4u3xnfzdvwzxpjzuqhpa",
     });
 
-    const result = await broadcast(VALID_REQUEST);
+    const result = await broadcast(mockFilecoinConfig, VALID_REQUEST);
     expect(result).toBe("bafy2bzacedpqzd6qm2r7nvxj5oetpqvhujwwmvkhz4u3xnfzdvwzxpjzuqhpa");
   });
 
   it("throws when hash is empty string", async () => {
     mockedBroadcastTx.mockResolvedValueOnce({ hash: "" });
 
-    await expect(broadcast(VALID_REQUEST)).rejects.toThrow(/empty transaction hash/);
+    await expect(broadcast(mockFilecoinConfig, VALID_REQUEST)).rejects.toThrow(
+      /empty transaction hash/,
+    );
   });
 
   it("propagates API errors", async () => {
     mockedBroadcastTx.mockRejectedValueOnce(new Error("network failure"));
 
-    await expect(broadcast(VALID_REQUEST)).rejects.toThrow("network failure");
+    await expect(broadcast(mockFilecoinConfig, VALID_REQUEST)).rejects.toThrow("network failure");
   });
 });

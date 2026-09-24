@@ -2,6 +2,7 @@ import { fetchTxs, fetchERC20Transactions } from "../../network/api";
 import { convertAddressFilToEth } from "../../network/addresses";
 import { ERC20Transfer, TransactionResponse } from "../../types";
 import { listOperations } from "./listOperations";
+import { mockFilecoinConfig } from "../../test/context";
 
 jest.mock("../../network/api");
 jest.mock("../../network/addresses", () => ({
@@ -47,7 +48,7 @@ describe("listOperations", () => {
     });
     mockedFetchERC20.mockResolvedValueOnce({ txs: [] });
 
-    const result = await listOperations(ADDRESS, { minHeight: 0 });
+    const result = await listOperations(mockFilecoinConfig, ADDRESS, { minHeight: 0 });
 
     const outOp = result.items.find(op => op.type === "OUT");
     // value = 1000000000000000000 + 150000000000
@@ -58,7 +59,7 @@ describe("listOperations", () => {
     mockedFetchTxs.mockResolvedValueOnce({ txs: [], metadata: { limit: 50, offset: 0 } });
     mockedFetchERC20.mockResolvedValueOnce({ txs: [] });
 
-    const result = await listOperations(ADDRESS, { minHeight: 0 });
+    const result = await listOperations(mockFilecoinConfig, ADDRESS, { minHeight: 0 });
     expect(result.next).toBeUndefined();
   });
 
@@ -72,7 +73,7 @@ describe("listOperations", () => {
     });
     mockedFetchERC20.mockResolvedValueOnce({ txs: [] });
 
-    const result = await listOperations(ADDRESS, { minHeight: 0, limit: 50 });
+    const result = await listOperations(mockFilecoinConfig, ADDRESS, { minHeight: 0, limit: 50 });
     expect(typeof result.next).toBe("string");
   });
 
@@ -87,7 +88,7 @@ describe("listOperations", () => {
     });
     mockedFetchERC20.mockResolvedValueOnce({ txs: [] });
 
-    const result = await listOperations(ADDRESS, { minHeight: 0 });
+    const result = await listOperations(mockFilecoinConfig, ADDRESS, { minHeight: 0 });
     const inOp = result.items.find(op => op.type === "IN")!;
     // IN value = amount only (no fee added)
     expect(inOp.value).toBe(1_000_000_000_000_000_000n);
@@ -100,7 +101,7 @@ describe("listOperations", () => {
     });
     mockedFetchERC20.mockResolvedValueOnce({ txs: [] });
 
-    const result = await listOperations(ADDRESS, {
+    const result = await listOperations(mockFilecoinConfig, ADDRESS, {
       minHeight: 100,
       cursor: "NOT-VALID-JSON",
     });
@@ -129,7 +130,7 @@ describe("listOperations", () => {
     mockedFetchTxs.mockResolvedValueOnce({ txs: [], metadata: { limit: 50, offset: 0 } });
     mockedFetchERC20.mockResolvedValueOnce({ txs: [tokenTx] });
 
-    const result = await listOperations(ADDRESS, { minHeight: 0 });
+    const result = await listOperations(mockFilecoinConfig, ADDRESS, { minHeight: 0 });
 
     const tokenOps = result.items.filter(op => op.asset.type === "erc20");
     expect(tokenOps).toHaveLength(1);
@@ -150,7 +151,7 @@ describe("listOperations", () => {
     });
     mockedFetchERC20.mockResolvedValueOnce({ txs: [] });
 
-    const result = await listOperations(ADDRESS, { minHeight: 0 });
+    const result = await listOperations(mockFilecoinConfig, ADDRESS, { minHeight: 0 });
     expect(result.items).toEqual([]);
     expect(result.next).toBeUndefined();
   });

@@ -1,5 +1,6 @@
 import { fetchEstimatedFees } from "../../network/api";
 import { estimateFees } from "./estimateFees";
+import { mockFilecoinConfig } from "../../test/context";
 
 jest.mock("../../network/api");
 jest.mock("@ledgerhq/logs");
@@ -37,7 +38,7 @@ describe("estimateFees", () => {
       useAllAmount: false,
     };
 
-    const result = await estimateFees(intent);
+    const result = await estimateFees(mockFilecoinConfig, intent);
     expect(result.value).toBe(150_000_000_000n); // 150000 * 1_000_000
     expect(result.parameters?.["gasFeeCap"]).toBe("150000");
   });
@@ -55,7 +56,7 @@ describe("estimateFees", () => {
       useAllAmount: false,
     };
 
-    const result = await estimateFees(intent);
+    const result = await estimateFees(mockFilecoinConfig, intent);
     expect(result.value).toBe(100_000_000_000n);
   });
 
@@ -70,7 +71,9 @@ describe("estimateFees", () => {
       useAllAmount: false,
     };
 
-    await expect(estimateFees(intent)).rejects.toThrow(/Invalid sender address/);
+    await expect(estimateFees(mockFilecoinConfig, intent)).rejects.toThrow(
+      /Invalid sender address/,
+    );
   });
 
   it("estimates fees for ERC-20 token intent", async () => {
@@ -91,7 +94,7 @@ describe("estimateFees", () => {
       useAllAmount: false,
     };
 
-    const result = await estimateFees(intent);
+    const result = await estimateFees(mockFilecoinConfig, intent);
     expect(result.value).toBe(3_000_000_000_000n); // 300000 * 10_000_000
     expect(result.parameters?.["gasFeeCap"]).toBe("300000");
   });
@@ -107,6 +110,8 @@ describe("estimateFees", () => {
       useAllAmount: false,
     };
 
-    await expect(estimateFees(intent)).rejects.toThrow(/Unsupported asset type/);
+    await expect(estimateFees(mockFilecoinConfig, intent)).rejects.toThrow(
+      /Unsupported asset type/,
+    );
   });
 });

@@ -11,6 +11,7 @@ import flatMap from "lodash/flatMap";
 import { fetchBalances, fetchBlockHeight, fetchTxsWithPages } from "../network/api";
 import { buildTokenAccounts } from "../erc20/tokenAccounts";
 import { BroadcastTransactionRequest, TransactionResponse, TxStatus, Transaction } from "../types";
+import coinConfig from "../config";
 
 export const mapTxToOps =
   (accountId: string, { address }: AccountShapeInfo) =>
@@ -127,10 +128,11 @@ export const getAccountShape: GetAccountShape = async info => {
     derivationMode,
   });
 
+  const config = coinConfig.getCoinConfig();
   const [blockHeight, balance, rawTxs, tokenAccounts] = await Promise.all([
-    fetchBlockHeight(),
-    fetchBalances(address),
-    fetchTxsWithPages(address, lastHeight),
+    fetchBlockHeight(config),
+    fetchBalances(config, address),
+    fetchTxsWithPages(config, address, lastHeight),
     buildTokenAccounts(address, lastHeight, accountId, info.initialAccount),
   ]);
 

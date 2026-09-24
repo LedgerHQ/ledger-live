@@ -1,8 +1,9 @@
 import { lastBlock } from "./lastBlock";
+import { mainnetFilecoinConfig } from "../../test/context";
 
 describe("lastBlock (integration)", () => {
   it("returns a BlockInfo with height > 0, non-empty hash, and Date time", async () => {
-    const result = await lastBlock();
+    const result = await lastBlock(mainnetFilecoinConfig);
 
     expect(result.height).toBeGreaterThan(0);
     // Filecoin API returns block hashes as hex-encoded CIDs (76 chars observed)

@@ -3,13 +3,14 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { broadcastTx } from "../network";
 import { getTxToBroadcast } from "../common-logic";
 import { Transaction } from "../types";
+import coinConfig from "../config";
 
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
   // log("debug", "[broadcast] start fn");
   const { signature, rawData } = signedOperation;
   const tx = getTxToBroadcast(signature, rawData!);
 
-  const resp = await broadcastTx(tx);
+  const resp = await broadcastTx(coinConfig.getCoinConfig(), tx);
   const { hash } = resp;
 
   const result = patchOperationWithHash(signedOperation.operation, hash);

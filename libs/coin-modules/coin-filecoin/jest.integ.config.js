@@ -1,6 +1,7 @@
 /** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: "node",
+  setupFiles: ["./src/test/integ-coin-config-setup.ts"],
   setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   testRegex: ".integ.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/"],

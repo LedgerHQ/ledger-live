@@ -4,6 +4,7 @@ import { abiEncodeTransferParams, encodeTxnParams } from "../../erc20/tokenAccou
 import { convertAddressFilToEth, validateAddress } from "../../network/addresses";
 import { BroadcastBlockIncl } from "../../types";
 import { fetchEstimatedFees } from "../../network/api";
+import type { FilecoinCoinConfig } from "../../config";
 
 // Inline method numbers from Filecoin spec (mirrors src/bridge/utils.ts Methods enum).
 // logic/ must not import from bridge/, so we inline the relevant constants here.
@@ -77,6 +78,7 @@ function buildNativeFeeRequest(intent: TransactionIntent): FeeRequestParams {
 }
 
 export async function estimateFees(
+  config: FilecoinCoinConfig,
   intent: TransactionIntent,
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
@@ -103,7 +105,7 @@ export async function estimateFees(
   const { to, methodNum, value, params } = request;
 
   try {
-    const fees = await fetchEstimatedFees({
+    const fees = await fetchEstimatedFees(config, {
       from,
       ...(to ? { to } : {}),
       methodNum,

@@ -11,6 +11,7 @@ import { getAddress, getSubAccount } from "../common-logic";
 import { encodeTxnParams, generateTokenTxnParams } from "../erc20/tokenAccounts";
 import { BroadcastBlockIncl, Transaction } from "../types";
 import { AccountType, Methods, calculateEstimatedFees } from "./utils";
+import coinConfig from "../config";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,
@@ -60,7 +61,9 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
         : Methods.Transfer;
   }
 
-  let balance = new BigNumber((await fetchBalances(sender)).spendable_balance);
+  let balance = new BigNumber(
+    (await fetchBalances(coinConfig.getCoinConfig(), sender)).spendable_balance,
+  );
 
   if (balance.eq(0)) return balance;
 
@@ -83,7 +86,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
         )
       : undefined;
 
-  const result = await fetchEstimatedFees({
+  const result = await fetchEstimatedFees(coinConfig.getCoinConfig(), {
     to: finalRecipient,
     from: sender,
     methodNum,

@@ -1,6 +1,7 @@
 import { generateMnemonic, accountFromMnemonic } from "iso-filecoin/wallet";
 import { TEST_ADDRESSES } from "../../test/fixtures";
 import { listOperations } from "./listOperations";
+import { mainnetFilecoinConfig } from "../../test/context";
 
 // F1_ADDRESS has on-chain history starting around block 145170.
 const KNOWN_TX_MIN_HEIGHT = 145_000;
@@ -10,7 +11,7 @@ describe("listOperations (integration)", () => {
     const mnemonic = generateMnemonic();
     const pristine = accountFromMnemonic(mnemonic, "SECP256K1", "m/44'/461'/0'/0/0");
 
-    const result = await listOperations(pristine.address.toString(), {
+    const result = await listOperations(mainnetFilecoinConfig, pristine.address.toString(), {
       minHeight: 0,
       limit: 5,
     });
@@ -20,7 +21,7 @@ describe("listOperations (integration)", () => {
   });
 
   it("fetches operations with correct metadata for a standard account", async () => {
-    const result = await listOperations(TEST_ADDRESSES.F1_ADDRESS, {
+    const result = await listOperations(mainnetFilecoinConfig, TEST_ADDRESSES.F1_ADDRESS, {
       minHeight: KNOWN_TX_MIN_HEIGHT,
       limit: 5,
     });

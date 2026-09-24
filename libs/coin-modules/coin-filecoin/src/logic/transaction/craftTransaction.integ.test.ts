@@ -1,6 +1,7 @@
 import { generateMnemonic, accountFromMnemonic } from "iso-filecoin/wallet";
 import { TEST_ADDRESSES } from "../../test/fixtures";
 import { craftTransaction } from "./craftTransaction";
+import { mainnetFilecoinConfig } from "../../test/context";
 
 describe("craftTransaction (integration)", () => {
   it("crafts a native transaction with valid CBOR and message fields", async () => {
@@ -28,7 +29,7 @@ describe("craftTransaction (integration)", () => {
       },
     };
 
-    const crafted = await craftTransaction(intent, customFees);
+    const crafted = await craftTransaction(mainnetFilecoinConfig, intent, customFees);
 
     const parsed = JSON.parse(crafted.transaction);
     expect(typeof parsed.cbor).toBe("string");
@@ -66,7 +67,7 @@ describe("craftTransaction (integration)", () => {
       },
     };
 
-    const crafted = await craftTransaction(intent, customFees);
+    const crafted = await craftTransaction(mainnetFilecoinConfig, intent, customFees);
     const parsed = JSON.parse(crafted.transaction);
     expect(parsed.message.value).toBe(maxAmount.toString());
     expect(parsed.message.method).toBe(0);
@@ -96,7 +97,7 @@ describe("craftTransaction (integration)", () => {
       },
     };
 
-    const crafted = await craftTransaction(intent, customFees);
+    const crafted = await craftTransaction(mainnetFilecoinConfig, intent, customFees);
 
     const parsed = JSON.parse(crafted.transaction);
     expect(typeof parsed.cbor).toBe("string");

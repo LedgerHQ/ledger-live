@@ -1,5 +1,6 @@
 import { fetchBlockHeight } from "../../network/api";
 import { lastBlock } from "./lastBlock";
+import { mockFilecoinConfig } from "../../test/context";
 
 jest.mock("../../network/api");
 jest.mock("@ledgerhq/logs");
@@ -18,7 +19,7 @@ describe("lastBlock", () => {
       current_block_timestamp: tsMs,
     });
 
-    const result = await lastBlock();
+    const result = await lastBlock(mockFilecoinConfig);
 
     expect(result.height).toBe(3_000_000);
     expect(result.hash).toBe("bafy2bzacedXXX");

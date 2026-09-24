@@ -1,5 +1,6 @@
 import { fetchBalances, fetchERC20TokenBalance } from "../../network/api";
 import { getBalance } from "./getBalance";
+import { mockFilecoinConfig } from "../../test/context";
 
 jest.mock("../../network/api");
 jest.mock("@ledgerhq/logs");
@@ -28,7 +29,10 @@ describe("getBalance", () => {
       locked_balance: "1000000000000000000",
     });
 
-    const result = await getBalance("f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za");
+    const result = await getBalance(
+      mockFilecoinConfig,
+      "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za",
+    );
 
     expect(result).toHaveLength(1);
     expect(result[0].asset).toEqual({ type: "native" });
@@ -43,7 +47,10 @@ describe("getBalance", () => {
       locked_balance: undefined as unknown as string,
     });
 
-    const result = await getBalance("f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za");
+    const result = await getBalance(
+      mockFilecoinConfig,
+      "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za",
+    );
     expect(result[0].locked).toBe(0n);
   });
 
@@ -54,7 +61,7 @@ describe("getBalance", () => {
       locked_balance: "0",
     });
 
-    await getBalance("f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za");
+    await getBalance(mockFilecoinConfig, "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za");
     expect(mockedFetchERC20Balance).not.toHaveBeenCalled();
   });
 
@@ -67,10 +74,11 @@ describe("getBalance", () => {
     mockedFetchERC20Balance.mockResolvedValueOnce("0");
     mockedFetchERC20Balance.mockResolvedValueOnce("42");
 
-    const result = await getBalance("f410fkkld55ioe7qg24wvt7fu6pbknb56ht7ptloy", [
-      "0xABCDEF",
-      "0xDEADBEEF",
-    ]);
+    const result = await getBalance(
+      mockFilecoinConfig,
+      "f410fkkld55ioe7qg24wvt7fu6pbknb56ht7ptloy",
+      ["0xABCDEF", "0xDEADBEEF"],
+    );
 
     expect(result).toHaveLength(3);
     const tokens = result.filter(b => b.asset.type === "erc20");
@@ -92,7 +100,11 @@ describe("getBalance", () => {
     });
 
     // f1 SECP256K1 addresses are not convertAddressFilToEth-compatible — should fall back
-    const result = await getBalance("f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za", ["0xabcdef"]);
+    const result = await getBalance(
+      mockFilecoinConfig,
+      "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za",
+      ["0xabcdef"],
+    );
 
     expect(result).toHaveLength(1);
     expect(result[0].asset.type).toBe("native");

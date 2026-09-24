@@ -8,7 +8,9 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import { getAccountShape } from "../common-logic/utils";
+import coinConfig, { type FilecoinCoinConfig } from "../config";
 import { FILECOIN_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer";
 import type { Transaction, TransactionStatus, FilecoinSigner } from "../types";
@@ -62,7 +64,12 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<FilecoinSigner>) {
+export function createBridges(
+  signerContext: SignerContext<FilecoinSigner>,
+  filecoinCoinConfig: CoinConfig<FilecoinCoinConfig>,
+) {
+  coinConfig.setCoinConfig(filecoinCoinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

@@ -2,6 +2,7 @@ import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import { fetchBalances, fetchERC20TokenBalance } from "../../network/api";
 import { convertAddressFilToEth } from "../../network/addresses";
+import type { FilecoinCoinConfig } from "../../config";
 
 // getBalance returns the native FIL balance plus any ERC-20 token balances for
 // contracts passed in tokenContracts. The caller (e.g., the Alpaca generic sync
@@ -10,10 +11,11 @@ import { convertAddressFilToEth } from "../../network/addresses";
 // Zero-balance token entries are included explicitly so callers can distinguish
 // "zero" from "not yet synced" (specialized task constraint).
 export async function getBalance(
+  config: FilecoinCoinConfig,
   address: string,
   tokenContracts: string[] = [],
 ): Promise<Balance[]> {
-  const balanceResponse = await fetchBalances(address);
+  const balanceResponse = await fetchBalances(config, address);
 
   const nativeBalance: Balance = {
     value: BigInt(balanceResponse.total_balance),
@@ -41,7 +43,7 @@ export async function getBalance(
   for (const rawContract of tokenContracts) {
     const contractAddr = rawContract.toLowerCase();
     try {
-      const rawBalance = await fetchERC20TokenBalance(ethAddr, contractAddr);
+      const rawBalance = await fetchERC20TokenBalance(config, ethAddr, contractAddr);
       balances.push({
         value: BigInt(rawBalance),
         asset: { type: "erc20", assetReference: contractAddr },

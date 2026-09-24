@@ -20,6 +20,7 @@ import {
   getSubAccount,
   valueFromUnit,
 } from "./utils";
+import { mockFilecoinConfig } from "../test/context";
 
 // Mock API and token account modules
 jest.mock("../network/api");
@@ -311,7 +312,11 @@ describe("common-logic/utils", () => {
       await getAccountShape(info, mockSyncConfig);
 
       // Should call fetchTxsWithPages with lastHeight = 0 (not negative)
-      expect(mockedFetchTxsWithPages).toHaveBeenCalledWith(TEST_ADDRESSES.F1_ADDRESS, 0);
+      expect(mockedFetchTxsWithPages).toHaveBeenCalledWith(
+        mockFilecoinConfig,
+        TEST_ADDRESSES.F1_ADDRESS,
+        0,
+      );
     });
 
     it("should sort operations by date descending", async () => {

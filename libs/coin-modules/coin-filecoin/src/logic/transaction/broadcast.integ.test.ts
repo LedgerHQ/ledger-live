@@ -1,5 +1,6 @@
 import { generateMnemonic, accountFromMnemonic, signMessage } from "iso-filecoin/wallet";
 import { broadcast } from "./broadcast";
+import { mainnetFilecoinConfig } from "../../test/context";
 
 describe("broadcast (integration)", () => {
   it("rejects a signed transaction from an unfunded account", async () => {
@@ -32,6 +33,8 @@ describe("broadcast (integration)", () => {
       signature: { type: 1, data: Buffer.from(sigBytes.data).toString("base64") },
     });
 
-    await expect(broadcast(signedTx)).rejects.toThrow(/Something went wrong/);
+    await expect(broadcast(mainnetFilecoinConfig, signedTx)).rejects.toThrow(
+      /Something went wrong/,
+    );
   });
 });
