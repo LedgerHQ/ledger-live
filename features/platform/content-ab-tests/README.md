@@ -27,5 +27,7 @@ ids without digits when creating experiments.
 | --- | --- |
 | `parseContentAbTests` | Maps a Remote Config `getAll()` payload to valid experiment entries. |
 | `parseContentAbTestPayload` | Validates one JSON value. |
-| `getContentAbTests` / `setContentAbTests` / `subscribeToContentAbTests` | In-memory store shared by analytics and copy override. |
+| `buildContentAbTestCopyOverrides` | Merges copy from enabled experiments into one translation-key map. |
+| `getContentAbTests` / `setContentAbTests` / `subscribeToContentAbTests` | In-memory experiment store shared by analytics and copy override. |
+| `getContentAbTestCopyOverrides` / `subscribeToContentAbTestCopyOverrides` | Cached O(1) copy lookup map, refreshed when experiment payloads change. |
 | `setContentAbTestOverride` | Debug/local mock; wins over the last remote payload. |

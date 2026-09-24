@@ -1,11 +1,13 @@
 import {
   clearContentAbTestOverrides,
+  getContentAbTestCopyOverrides,
   getContentAbTests,
   hasContentAbTestOverrides,
   isContentAbTestOverridden,
   setContentAbTestOverride,
   setContentAbTests,
   subscribeToContentAbTests,
+  subscribeToContentAbTestCopyOverrides,
 } from "./store";
 
 const sample = {
@@ -33,6 +35,24 @@ describe("content AB tests store", () => {
     setContentAbTests({});
 
     expect(seen).toEqual([{}, sample]);
+  });
+
+  it("caches and publishes merged copy from enabled experiments", () => {
+    const seen: unknown[] = [];
+    const unsubscribe = subscribeToContentAbTestCopyOverrides(copy => {
+      seen.push(copy);
+    });
+
+    setContentAbTests({
+      enabled: { enabled: true, copy: { "upgrade.banner.title": "Remote title" } },
+      disabled: { enabled: false, copy: { "upgrade.banner.cta": "Hidden CTA" } },
+    });
+    unsubscribe();
+
+    expect(getContentAbTestCopyOverrides()).toEqual({
+      "upgrade.banner.title": "Remote title",
+    });
+    expect(seen).toEqual([{ "upgrade.banner.title": "Remote title" }]);
   });
 
   it("keeps local overrides when remote payloads refresh", () => {

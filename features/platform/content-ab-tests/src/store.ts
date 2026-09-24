@@ -1,13 +1,21 @@
 import type { ContentAbTestPayload, ContentAbTests } from "./parse";
+import { buildContentAbTestCopyOverrides, type ContentAbTestCopyOverrides } from "./copyOverrides";
 
 type Subscriber = (payloads: ContentAbTests) => void;
+type CopyOverridesSubscriber = (copyOverrides: ContentAbTestCopyOverrides) => void;
 
 let remote: ContentAbTests = {};
 let overrides: ContentAbTests = {};
+let copyOverrides: ContentAbTestCopyOverrides = buildContentAbTestCopyOverrides({});
 const subscribers = new Set<Subscriber>();
+const copyOverridesSubscribers = new Set<CopyOverridesSubscriber>();
 
 export function getContentAbTests(): ContentAbTests {
   return { ...remote, ...overrides };
+}
+
+export function getContentAbTestCopyOverrides(): ContentAbTestCopyOverrides {
+  return copyOverrides;
 }
 
 export function setContentAbTests(next: ContentAbTests): ContentAbTests {
@@ -50,8 +58,19 @@ export function subscribeToContentAbTests(callback: Subscriber): () => void {
   };
 }
 
+export function subscribeToContentAbTestCopyOverrides(
+  callback: CopyOverridesSubscriber,
+): () => void {
+  copyOverridesSubscribers.add(callback);
+  return () => {
+    copyOverridesSubscribers.delete(callback);
+  };
+}
+
 function publish(): ContentAbTests {
   const payloads = getContentAbTests();
+  copyOverrides = buildContentAbTestCopyOverrides(payloads);
   subscribers.forEach(callback => callback(payloads));
+  copyOverridesSubscribers.forEach(callback => callback(copyOverrides));
   return payloads;
 }

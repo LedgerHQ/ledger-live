@@ -501,6 +501,9 @@ apps/ledger-live-desktop/src/braze-setup.ts                                     
 apps/ledger-live-desktop/src/firebase/contentAbTests.ts                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/firebase/contentAbTests.test.ts                                   @ledgerhq/engagement
 apps/ledger-live-desktop/src/state-manager/configureStore.contentAbTests.test.ts               @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/i18n/contentAbTestCopyOverrides.ts                       @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/i18n/contentAbTestCopyOverrides.test.tsx                 @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/i18n/useContentAbTestCopyUpdates.ts                      @ledgerhq/engagement
 features/platform/content-ab-tests/                                                            @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/reducers/recoverState.ts                                 @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/reducers/dynamicContent.ts                               @ledgerhq/engagement
