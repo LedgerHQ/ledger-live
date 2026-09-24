@@ -391,7 +391,7 @@ describe("History integration", () => {
   it("should show the signed-out card history when the card tab is selected", async () => {
     renderHistoryWithPayTab("/history?tab=card");
 
-    expect(screen.getByTestId("history-card-scope")).toHaveTextContent("Card");
+    expect(screen.queryByTestId("history-card-scope")).not.toBeInTheDocument();
     expect(await screen.findByTestId("card-history-signed-out-state")).toBeVisible();
     expect(screen.getByText("Log in to see your card transactions")).toBeVisible();
     expect(screen.queryByTestId("history-table-body")).not.toBeInTheDocument();

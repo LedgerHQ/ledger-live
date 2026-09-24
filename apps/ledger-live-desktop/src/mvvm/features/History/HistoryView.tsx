@@ -56,7 +56,6 @@ export function HistoryView({
         dustFilterThreshold={dustFilterThreshold}
         onToggleHideSmallValueTokenOperations={onToggleHideSmallValueTokenOperations}
         contact={isCardTab ? undefined : contact}
-        isCardHistory={isCardTab}
         cardAssetName={cardAssetName}
       />
       {showHistoryTypeSwitcher ? (
