@@ -4,9 +4,6 @@
 //     https://graphql.mainnet.sui.io/graphql \
 //     -d '{"query":"{ serviceConfig { maxQueryPayloadSize maxQueryNodes maxOutputNodes } }"}'
 
-/** Public mainnet GraphQL endpoint — default for the transport, shared by tests. */
-export const GRAPHQL_MAINNET_URL = "https://graphql.mainnet.sui.io/graphql";
-
 /**
  * Synthetic address that never holds balances or stakes. Exercises
  * the empty / zero-result paths where REST and GraphQL pagination

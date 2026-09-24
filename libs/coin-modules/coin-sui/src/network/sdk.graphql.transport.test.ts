@@ -12,7 +12,6 @@ const config = {
   features: { transport: "graphql" },
 } as unknown as SuiCoinConfig;
 import { fetcher } from "./fetcher";
-import { GRAPHQL_MAINNET_URL } from "./graphql/constants";
 import {
   getAllBalancesCached,
   getBlock,
@@ -21,6 +20,8 @@ import {
   isGraphQLEnabled,
   withApi,
 } from "./sdk";
+
+const GRAPHQL_MAINNET_URL = "https://graphql.mainnet.sui.io/graphql";
 
 /** Selects a transport through injected config; nothing reads module-level config any more. */
 const configWith = (transport: "json" | "graphql" | "grpc"): SuiCoinConfig =>
