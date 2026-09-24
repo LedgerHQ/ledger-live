@@ -121,7 +121,9 @@ const buildTasks = args => [
                 DATADOG_ENV: "nightly",
               }
             : {};
-      await exec("pnpm", ["run", "build:js"], { env: { ...process.env, ...baseEnv } });
+      await exec("pnpm", ["run", "build:js"], {
+        env: { ...process.env, ...baseEnv },
+      });
     },
   },
   {
@@ -166,7 +168,6 @@ const buildTasks = args => [
       } else if (args.nosign) {
         commands.push("--config");
         commands.push("electron-builder-nosign.yml");
-        commands.push("-c.afterSign='lodash/noop'");
         commands.push("--publish", "never");
       }
 
