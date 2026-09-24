@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.22.0-next.1
+
+### Minor Changes
+
+- [#22497](https://github.com/LedgerHQ/ledger-live/pull/22497) [`80fa82a`](https://github.com/LedgerHQ/ledger-live/commit/80fa82a8cdd20df5b39509691443f9d72bf932a2) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(send): retract the keyboard before the skip-memo warning opens in the new send flow LWM
+
 ## 4.22.0-next.0
 
 ### Minor Changes
