@@ -216,7 +216,8 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
     if (canGoBack) {
       if (currentStep === SEND_FLOW_STEP.AMOUNT) {
-        leaveAmountStep();
+        // A contact was picked from the list: go back to the full list, not a search for it.
+        leaveAmountStep(recipientHeader.contact ? "" : undefined);
       } else if (isRecipientStep) {
         cancelRecipientEdit();
       }
@@ -234,6 +235,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     isSelectingContactAddress,
     leaveAmountStep,
     navigation,
+    recipientHeader.contact,
     trackingProperties,
   ]);
 
