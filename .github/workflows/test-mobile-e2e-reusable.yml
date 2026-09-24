@@ -117,6 +117,11 @@ on:
         required: false
         type: string
         default: ""
+      android_timeout_override:
+        description: "QAA-1365 probe: override the Android shard timeout-minutes (blank = the fixed 90min). Keep it small when probing."
+        required: false
+        type: string
+        default: ""
 
   workflow_call:
     inputs:
@@ -1059,7 +1064,7 @@ jobs:
 
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
-        timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
+        timeout-minutes: ${{ fromJSON(inputs.android_timeout_override != '' && inputs.android_timeout_override || needs.determine-builds.outputs.android_timeout) }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
@@ -1075,7 +1080,16 @@ jobs:
           REMOTE_SPECULOS: "true"
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
-        run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+        run: |
+          if [ "${{ inputs.stall_probe || 'off' }}" != "off" ]; then
+            # QAA-1365 probe: freeze one jest worker of THIS shard in JS, through its
+            # inspector — SIGSTOP would freeze the in-process watchdog thread too.
+            if [ "${{ inputs.stall_probe }}" = "inject-unwatched" ]; then
+              export E2E_STALL_WATCHDOG=0
+            fi
+            node e2e/mobile/scripts/ci-stall-inject.mjs --root-pid "$$" &
+          fi
+          pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Stop emulator watchdog
         if: always()

@@ -22,6 +22,7 @@
  */
 
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 
 const argv = process.argv.slice(2);
 const arg = (name, fallback) => {
@@ -54,10 +55,40 @@ function processTable() {
     .map(([, pid, ppid, time, command]) => ({ pid: +pid, ppid: +ppid, time, command }));
 }
 
-// ps prints CPU time as M:SS.ss or H:MM:SS.ss
-function cpuSeconds(time) {
-  const parts = time.split(":").map(Number);
-  return parts.reduce((total, part) => total * 60 + part, 0);
+let clockTicks;
+function linuxClockTicks() {
+  if (clockTicks === undefined) {
+    try {
+      clockTicks = Number(execFileSync("getconf", ["CLK_TCK"], { encoding: "utf8" }).trim()) || 100;
+    } catch {
+      clockTicks = 100; // USER_HZ on every mainstream Linux kernel
+    }
+  }
+  return clockTicks;
+}
+
+// CPU seconds used by a worker so far.
+function cpuSeconds(worker) {
+  if (process.platform === "linux") {
+    // On Linux ps only prints whole seconds, far too coarse for a 3s delta, so read
+    // utime + stime (in clock ticks) from /proc. The fields are counted after the
+    // parenthesised command name, which may itself contain spaces: state is field 3,
+    // so utime (14) and stime (15) sit at offsets 11 and 12.
+    try {
+      const stat = readFileSync(`/proc/${worker.pid}/stat`, "utf8");
+      const fields = stat.slice(stat.lastIndexOf(")") + 2).split(" ");
+      return (Number(fields[11]) + Number(fields[12])) / linuxClockTicks();
+    } catch {
+      // process gone or no /proc: fall back to ps
+    }
+  }
+  // ps: M:SS.ss or H:MM:SS.ss on macOS, [DD-]HH:MM:SS on Linux
+  const [days, clock] = worker.time.includes("-") ? worker.time.split("-") : ["0", worker.time];
+  const seconds = clock
+    .split(":")
+    .map(Number)
+    .reduce((total, part) => total * 60 + part, 0);
+  return Number(days) * 86_400 + seconds;
 }
 
 function ourWorkers() {
@@ -79,12 +110,13 @@ function ourWorkers() {
 }
 
 async function busiestWorker() {
-  const before = new Map(ourWorkers().map(w => [w.pid, cpuSeconds(w.time)]));
+  const before = new Map(ourWorkers().map(w => [w.pid, cpuSeconds(w)]));
   if (before.size === 0) return undefined;
   await sleep(SAMPLE_S);
   let best;
   for (const worker of ourWorkers()) {
-    const delta = cpuSeconds(worker.time) - (before.get(worker.pid) ?? cpuSeconds(worker.time));
+    const now = cpuSeconds(worker);
+    const delta = now - (before.get(worker.pid) ?? now);
     if (delta >= MIN_DELTA_S && (!best || delta > best.delta)) best = { pid: worker.pid, delta };
   }
   return best;
