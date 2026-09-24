@@ -629,7 +629,7 @@ overrides:
 
 packageExtensionsChecksum: sha256-y05zn8SOmFlbIRTsh3Z3c43aAFvz482eG6q6x0pvCFg=
 
-pnpmfileChecksum: sha256-YT3c6PR0sDJOv5QX5BFHtgHtdIeMEwJL0lMX54PuO8s=
+pnpmfileChecksum: sha256-wf+mV45r/vcz1cK/+ALfwo5DOZsNWotMlwCFQR/gvqU=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
@@ -1646,9 +1646,6 @@ importers:
       cross-env:
         specifier: 7.0.3
         version: 7.0.3
-      debug:
-        specifier: 4.3.4
-        version: 4.3.4
       dmg-builder:
         specifier: 26.0.1
         version: 26.0.1(lodash@4.17.21)
@@ -2769,10 +2766,10 @@ importers:
         version: link:../../libs/coin-modules/coin-bitcoin
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.4.1(@ledgerhq/logs@6.19.0)
+        version: 5.4.1(@ledgerhq/logs@6.19.0)(debug@4.4.3)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.1.0
+        version: 9.1.0(debug@4.4.3)
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-solana
@@ -31654,6 +31651,11 @@ packages:
   follow-redirects@1.16.0:
     resolution: {integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==}
     engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
 
   fontfaceobserver@2.3.0:
     resolution: {integrity: sha512-6FPvD/IVyT4ZlNe7Wcn5Fb/4ChigpucKYSvD6a+0iMoLn2inpo711eyIcKjmDtE5XNcgAkSH9uN/nfAeZzHEfg==}
@@ -45423,6 +45425,7 @@ snapshots:
       react-native-get-random-values: 1.11.0
     transitivePeerDependencies:
       - bufferutil
+      - debug
       - react-native
       - utf-8-validate
 
@@ -45439,6 +45442,7 @@ snapshots:
       react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
     transitivePeerDependencies:
       - bufferutil
+      - debug
       - react-native
       - utf-8-validate
 
@@ -45455,21 +45459,23 @@ snapshots:
       react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
     transitivePeerDependencies:
       - bufferutil
+      - debug
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@5.4.1(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-evm@5.4.1(@ledgerhq/logs@6.19.0)(debug@4.4.3)':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 9.1.0
+      '@ledgerhq/coin-module-framework': 9.1.0(debug@4.4.3)
       '@ledgerhq/logs': 6.19.0
-      axios: 1.13.5
+      axios: 1.13.5(debug@4.4.3)
       bignumber.js: 9.1.2
       eip55: 2.1.1
       ethers: 6.15.0
       react-native-get-random-values: 1.11.0
     transitivePeerDependencies:
       - bufferutil
+      - debug
       - react-native
       - utf-8-validate
 
@@ -45477,17 +45483,30 @@ snapshots:
     dependencies:
       '@ledgerhq/coin-module-framework': 9.1.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
+    transitivePeerDependencies:
+      - debug
 
   '@ledgerhq/coin-module-framework@9.1.0':
     dependencies:
       axios: 1.13.5
       bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - debug
 
   '@ledgerhq/coin-module-framework@9.1.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
     dependencies:
       '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
       axios: 1.13.5
       bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - debug
+
+  '@ledgerhq/coin-module-framework@9.1.0(debug@4.4.3)':
+    dependencies:
+      axios: 1.13.5(debug@4.4.3)
+      bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - debug
 
   '@ledgerhq/coin-stellar@10.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
     dependencies:
@@ -45496,6 +45515,8 @@ snapshots:
       '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
       '@stellar/stellar-sdk': 14.0.0
       bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - debug
 
   '@ledgerhq/coin-tezos@12.0.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
     dependencies:
@@ -45507,6 +45528,7 @@ snapshots:
       '@taquito/utils': 23.0.1
       axios: 1.13.5
     transitivePeerDependencies:
+      - debug
       - encoding
 
   '@ledgerhq/coin-xrp@11.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
@@ -45519,6 +45541,7 @@ snapshots:
       ripple-binary-codec: 1.11.0
     transitivePeerDependencies:
       - bufferutil
+      - debug
       - utf-8-validate
 
   '@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2))':
@@ -45898,6 +45921,8 @@ snapshots:
       axios: 1.13.5
       eip55: 2.1.1
       react: 19.1.4
+    transitivePeerDependencies:
+      - debug
 
   '@ledgerhq/errors@6.37.0': {}
 
@@ -45908,6 +45933,8 @@ snapshots:
       '@ledgerhq/live-env': 4.1.0
       axios: 1.13.5
       crypto-js: 4.2.0
+    transitivePeerDependencies:
+      - debug
 
   '@ledgerhq/hw-bolos@6.35.1':
     dependencies:
@@ -45939,6 +45966,8 @@ snapshots:
       '@ledgerhq/live-env': 2.31.0
       '@ledgerhq/live-network': 2.4.3
       axios: 1.13.5
+    transitivePeerDependencies:
+      - debug
 
   '@ledgerhq/live-app-sdk@0.8.2':
     dependencies:
@@ -45968,6 +45997,8 @@ snapshots:
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.2
       lru-cache: 7.18.3
+    transitivePeerDependencies:
+      - debug
 
   '@ledgerhq/live-network@3.1.0(axios@1.13.5)':
     dependencies:
@@ -46643,6 +46674,8 @@ snapshots:
       '@multiversx/sdk-bls-wasm': 0.3.5
       axios: 1.13.5
       bip39: 3.1.0
+    transitivePeerDependencies:
+      - debug
 
   '@multiversx/sdk-core@13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)':
     dependencies:
@@ -46665,6 +46698,8 @@ snapshots:
       '@multiversx/sdk-bls-wasm': 0.3.5
       axios: 1.13.5
       bip39: 3.1.0
+    transitivePeerDependencies:
+      - debug
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
     dependencies:
@@ -46686,6 +46721,8 @@ snapshots:
       '@ledgerhq/ledger-cal-service': 1.15.1
       fast-sha256: 1.3.0
       semver: 7.8.1
+    transitivePeerDependencies:
+      - debug
 
   '@mysten/signers@1.0.1(@mysten/sui@2.23.1(@typescript/typescript6@6.0.2))':
     dependencies:
@@ -47065,6 +47102,8 @@ snapshots:
       '@nx/key-linux-x64-musl': 5.0.7
       '@nx/key-win32-arm64-msvc': 5.0.7
       '@nx/key-win32-x64-msvc': 5.0.7
+    transitivePeerDependencies:
+      - debug
 
   '@nx/nx-darwin-arm64@22.7.8':
     optional: true
@@ -47109,6 +47148,7 @@ snapshots:
       tar-stream: 3.1.7
     transitivePeerDependencies:
       - aws-crt
+      - debug
 
   '@octokit/auth-token@4.0.0': {}
 
@@ -52006,6 +52046,8 @@ snapshots:
       randombytes: 2.1.0
       toml: 3.0.0
       urijs: 1.19.11
+    transitivePeerDependencies:
+      - debug
 
   '@stricahq/bip32ed25519@1.0.4':
     dependencies:
@@ -52612,6 +52654,8 @@ snapshots:
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
       zod: 4.4.3
+    transitivePeerDependencies:
+      - debug
 
   '@toon-format/toon@2.1.0': {}
 
@@ -53936,6 +53980,8 @@ snapshots:
       '@ledgerhq/hw-transport': 6.36.0
       '@zondax/ledger-js': 0.8.2
       axios: 1.13.5
+    transitivePeerDependencies:
+      - debug
 
   JSONStream@1.3.5:
     dependencies:
@@ -54407,18 +54453,32 @@ snapshots:
       follow-redirects: 1.16.0
       form-data: 4.0.6
       proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
 
   axios@1.13.5:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
       proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
+  axios@1.13.5(debug@4.4.3):
+    dependencies:
+      follow-redirects: 1.16.0(debug@4.4.3)
+      form-data: 4.0.6
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
 
   axios@1.16.0:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
       proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - debug
 
   axios@1.18.0:
     dependencies:
@@ -54427,15 +54487,17 @@ snapshots:
       https-proxy-agent: 5.0.1
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
+      - debug
       - supports-color
 
-  axios@1.18.1(supports-color@7.2.0):
+  axios@1.18.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
-      follow-redirects: 1.16.0
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
       form-data: 4.0.6
       https-proxy-agent: 5.0.1(supports-color@7.2.0)
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
+      - debug
       - supports-color
 
   b4a@1.6.6: {}
@@ -55452,6 +55514,7 @@ snapshots:
       typedjson: 1.8.0
     transitivePeerDependencies:
       - bufferutil
+      - debug
       - encoding
       - utf-8-validate
 
@@ -58044,6 +58107,14 @@ snapshots:
 
   follow-redirects@1.16.0: {}
 
+  follow-redirects@1.16.0(debug@4.4.3(supports-color@7.2.0)):
+    optionalDependencies:
+      debug: 4.4.3(supports-color@7.2.0)
+
+  follow-redirects@1.16.0(debug@4.4.3):
+    optionalDependencies:
+      debug: 4.4.3
+
   fontfaceobserver@2.3.0: {}
 
   for-each@0.3.5:
@@ -58772,7 +58843,7 @@ snapshots:
     dependencies:
       '@types/http-proxy': 1.17.17
       debug: 4.4.3
-      http-proxy: 1.18.1
+      http-proxy: 1.18.1(debug@4.4.3)
       is-glob: 4.0.3
       is-plain-object: 5.0.0
       micromatch: 4.0.8
@@ -58784,6 +58855,16 @@ snapshots:
       eventemitter3: 4.0.7
       follow-redirects: 1.16.0
       requires-port: 1.0.0
+    transitivePeerDependencies:
+      - debug
+
+  http-proxy@1.18.1(debug@4.4.3):
+    dependencies:
+      eventemitter3: 4.0.7
+      follow-redirects: 1.16.0(debug@4.4.3)
+      requires-port: 1.0.0
+    transitivePeerDependencies:
+      - debug
 
   http-server@14.1.1:
     dependencies:
@@ -58801,6 +58882,7 @@ snapshots:
       union: 0.5.0
       url-join: 4.0.1
     transitivePeerDependencies:
+      - debug
       - supports-color
 
   http-signature@1.2.0:
@@ -62390,7 +62472,7 @@ snapshots:
       ansi-styles: 4.3.0
       argparse: 2.0.1
       asynckit: 0.4.0
-      axios: 1.18.1(supports-color@7.2.0)
+      axios: 1.18.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       balanced-match: 4.0.3
       base64-js: 1.5.1
       bl: 4.1.0
@@ -62424,7 +62506,7 @@ snapshots:
       escape-string-regexp: 1.0.5
       figures: 3.2.0
       flat: 5.0.2
-      follow-redirects: 1.16.0
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
       form-data: 4.0.6
       fs-constants: 1.0.0
       function-bind: 1.1.2
@@ -66262,6 +66344,7 @@ snapshots:
       validator: 13.15.23
     transitivePeerDependencies:
       - bufferutil
+      - debug
       - supports-color
       - utf-8-validate
 

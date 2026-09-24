@@ -15,7 +15,6 @@ const {
   addDependencies,
   addDevDependencies,
   addPeerDependencies,
-  removeDependencies,
 } = require("./tools/pnpm-utils");
 const { assertDependencyChecks } = require("./tools/dependency-checks/validate");
 
@@ -42,10 +41,6 @@ function readPackage(pkg, context) {
 
       addPeerDependencies("react-native-config", {
         "react-native": "*",
-      }),
-      // Try to prevent pnpm-lock.yaml flakiness
-      removeDependencies("follow-redirects", ["debug"], {
-        kind: "peerDependencies",
       }),
     ],
     pkg,
