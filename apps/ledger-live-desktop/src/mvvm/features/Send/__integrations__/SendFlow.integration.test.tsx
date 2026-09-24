@@ -295,7 +295,8 @@ describe("Send Flow Integration", () => {
       setMockContacts([], true);
       const { user } = renderSendFlow(ethereumAccount);
 
-      await user.type(await screen.findByTestId("send-recipient-input"), VALID_EVM_RECIPIENT);
+      await user.click(await screen.findByTestId("send-recipient-input"));
+      await user.paste(VALID_EVM_RECIPIENT);
       await user.click(await screen.findByTestId("send-recipient-card-add-contact"));
 
       expect(await screen.findByTestId("send-add-contact-step")).toBeVisible();
@@ -334,7 +335,8 @@ describe("Send Flow Integration", () => {
       );
       const { user } = renderSendFlow(ethereumAccount);
 
-      await user.type(await screen.findByTestId("send-recipient-input"), VALID_EVM_RECIPIENT);
+      await user.click(await screen.findByTestId("send-recipient-input"));
+      await user.paste(VALID_EVM_RECIPIENT);
       await user.click(await screen.findByTestId("send-recipient-card-add-contact"));
 
       expect(await screen.findByTestId("send-add-contact-step")).toBeVisible();
@@ -377,7 +379,8 @@ describe("Send Flow Integration", () => {
       const { user } = renderSendFlow(ethereumAccount);
       const recipientInput = await screen.findByTestId("send-recipient-input");
 
-      await user.type(recipientInput, VALID_EVM_RECIPIENT);
+      await user.click(recipientInput);
+      await user.paste(VALID_EVM_RECIPIENT);
 
       expect(await screen.findByTestId("send-recent-history-warning")).toBeVisible();
 
@@ -419,7 +422,8 @@ describe("Send Flow Integration", () => {
 
       expect(screen.getByRole("button", { name: /qr/i })).toBeVisible();
 
-      await user.type(recipientInput, VALID_EVM_RECIPIENT);
+      await user.click(recipientInput);
+      await user.paste(VALID_EVM_RECIPIENT);
 
       expect(screen.queryByRole("button", { name: /qr/i })).not.toBeInTheDocument();
 
@@ -436,7 +440,10 @@ describe("Send Flow Integration", () => {
       await user.click(screen.getByRole("button", { name: /qr/i }));
       expect(await screen.findByTestId("send-recipient-qr-scanner")).toBeVisible();
 
-      await user.type(recipientInput, VALID_EVM_RECIPIENT);
+      await user.click(recipientInput);
+      // Focusing alone keeps it open: entering the address is what closes it.
+      expect(screen.getByTestId("send-recipient-qr-scanner")).toBeVisible();
+      await user.paste(VALID_EVM_RECIPIENT);
 
       await waitFor(() => {
         expect(screen.queryByTestId("send-recipient-qr-scanner")).not.toBeInTheDocument();
@@ -465,7 +472,8 @@ describe("Send Flow Integration", () => {
       const { user } = renderSendFlow(accountWithHistory);
       const recipientInput = await screen.findByTestId("send-recipient-input");
 
-      await user.type(recipientInput, VALID_EVM_RECIPIENT);
+      await user.click(recipientInput);
+      await user.paste(VALID_EVM_RECIPIENT);
 
       expect(await screen.findByTestId("send-matched-address-button")).toBeVisible();
       expect(screen.queryByTestId("send-recent-history-warning")).not.toBeInTheDocument();
@@ -483,7 +491,8 @@ describe("Send Flow Integration", () => {
 
       const { user } = renderSendFlow(ethereumAccount);
       const recipientInput = await screen.findByTestId("send-recipient-input");
-      await user.type(recipientInput, VALID_EVM_RECIPIENT);
+      await user.click(recipientInput);
+      await user.paste(VALID_EVM_RECIPIENT);
       const matchedButton = await screen.findByTestId("send-matched-address-button");
       await user.click(matchedButton);
 
@@ -546,7 +555,8 @@ describe("Send Flow Integration", () => {
 
       const { user } = renderSendFlow(ethereumAccount);
       const recipientInput = await screen.findByTestId("send-recipient-input");
-      await user.type(recipientInput, "not-a-valid-address");
+      await user.click(recipientInput);
+      await user.paste("not-a-valid-address");
 
       expect(await screen.findByTestId("address-validation-status")).toBeVisible();
       expect(screen.queryByTestId("send-matched-address-button")).not.toBeInTheDocument();

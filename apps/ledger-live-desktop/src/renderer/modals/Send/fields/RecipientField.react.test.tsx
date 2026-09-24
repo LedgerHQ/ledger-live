@@ -231,7 +231,8 @@ describe("RecipientField", () => {
         const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
 
-        await user.type(input, "vitalik.eth");
+        await user.click(input);
+        await user.paste("vitalik.eth");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -249,7 +250,8 @@ describe("RecipientField", () => {
       it("should reverse addr to domain name in transaction", async () => {
         const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
-        await user.type(input, "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86");
+        await user.click(input);
+        await user.paste("0x16bb635bc5c398b63a0fbb38dac84da709eb3e86");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -268,7 +270,8 @@ describe("RecipientField", () => {
         const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
 
-        await user.type(input, "vitalik.notadomainservice");
+        await user.click(input);
+        await user.paste("vitalik.notadomainservice");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -282,7 +285,8 @@ describe("RecipientField", () => {
         const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
 
-        await user.type(input, "vitalik👋.eth");
+        await user.click(input);
+        await user.paste("vitalik👋.eth");
         await waitFor(() => {
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -298,7 +302,8 @@ describe("RecipientField", () => {
         const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
 
-        await user.type(input, "anything-not-existing.eth");
+        await user.click(input);
+        await user.paste("anything-not-existing.eth");
         await waitFor(() => {
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -344,7 +349,8 @@ describe("RecipientField", () => {
         const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
 
-        await user.type(input, "vitalik.eth");
+        await user.click(input);
+        await user.paste("vitalik.eth");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -372,7 +378,8 @@ describe("RecipientField", () => {
         const spy = jest.spyOn(axios, "request");
         const { user } = setup(null, null, polygonMockAccount, domainInputResolutionOn);
         const input = screen.getByRole("textbox");
-        await user.type(input, "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86");
+        await user.click(input);
+        await user.paste("0x16bb635bc5c398b63a0fbb38dac84da709eb3e86");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -388,7 +395,8 @@ describe("RecipientField", () => {
       it("should not change domain", async () => {
         const { user } = setup({}, {}, ethMockAccount, domainInputResolutionOff);
         const input = screen.getByRole("textbox");
-        await user.type(input, "vitalik.eth");
+        await user.click(input);
+        await user.paste("vitalik.eth");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,

@@ -426,8 +426,9 @@ export async function navigateToAmountScreen(
   user: ReturnType<typeof render>["user"],
   recipient = VALID_EVM_RECIPIENT,
 ) {
-  const recipientInput = await screen.findByTestId("send-recipient-input");
-  await user.type(recipientInput, recipient);
+  // Pasted: per-keystroke typing of an address is covered by the recipient unit tests.
+  await user.click(await screen.findByTestId("send-recipient-input"));
+  await user.paste(recipient);
   const matchedButton = await screen.findByTestId("send-matched-address-button");
   await user.click(matchedButton);
   expect(await screen.findByTestId("send-amount-step")).toBeVisible();
