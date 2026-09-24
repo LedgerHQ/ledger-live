@@ -1,0 +1,46 @@
+/**
+ * @jest-environment node
+ */
+import { setEnv } from "@shared/env";
+import { marketCountervaluesApi } from "@domain/api-market-countervalues";
+
+// calApiExtra rejects an empty client version when the store is created, and its default is empty.
+setEnv("LEDGER_CLIENT_VERSION", "web-tools-test");
+
+type Store = (typeof import("../index"))["store"];
+
+describe("web-tools store: countervalues", () => {
+  let store: Store;
+
+  beforeAll(async () => {
+    ({ store } = await import("../index"));
+  });
+
+  it("registers the shared countervalues slice", () => {
+    expect(store.getState()).toHaveProperty(marketCountervaluesApi.reducerPath);
+  });
+
+  it("wires the countervalues service, so a rate fetch reaches it and resolves", async () => {
+    const fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(() =>
+      Promise.resolve(
+        new Response(JSON.stringify({ bitcoin: 9000 }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      ),
+    );
+
+    const result = await store.dispatch(
+      marketCountervaluesApi.endpoints.getSpotRates.initiate(
+        { to: "USD", froms: ["bitcoin"] },
+        { forceRefetch: true },
+      ),
+    );
+
+    expect(result.data).toEqual({ bitcoin: 9000 });
+    expect((fetchSpy.mock.calls[0][0] as Request).url).toContain(
+      "https://countervalues.live.ledger.com/v3/spot/simple",
+    );
+    fetchSpy.mockRestore();
+  });
+});
