@@ -26,7 +26,7 @@ function formatAmount(account: AccountLike, value: BigNumber): string | undefine
   const unit = getCurrencyForAccount(account).units[0];
   if (!unit) return undefined;
   const formatted = formatCurrencyUnit(unit, value, { showCode: true, disableRounding: true });
-  return formatted.replace(NON_BREAKING_SPACE, " ");
+  return formatted.replaceAll(NON_BREAKING_SPACE, " ");
 }
 
 function rewordForSwap(
