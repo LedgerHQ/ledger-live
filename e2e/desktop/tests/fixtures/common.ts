@@ -88,6 +88,52 @@ async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: stri
   });
 }
 
+async function executeCliCommands(
+  commands: CliCommand[] | undefined,
+  userdataDestinationPath?: string,
+) {
+  if (!commands?.length) return;
+
+  for (const cmd of commands) {
+    await executeCliCommand(cmd, userdataDestinationPath);
+  }
+}
+
+function canSkipSpeculosLaunch(
+  speculosForSetupOnly: boolean | undefined,
+  cliCommands: CliCommand[] | undefined,
+): boolean {
+  return (
+    !!speculosForSetupOnly &&
+    !!cliCommands?.length &&
+    cliCommands.every(cmd => cmd.canUseGeneratedUserdata?.() ?? false)
+  );
+}
+
+async function runCliCommandsOnLaunchedApps(
+  commands: { app: AppInfos; cmd: CliCommand }[],
+  testTitle: string,
+  userdataDestinationPath?: string,
+): Promise<SpeculosDevice | undefined> {
+  const commandsByApp = new Map<string, { app: AppInfos; cmds: CliCommand[] }>();
+  for (const { app, cmd } of commands) {
+    const grouped = commandsByApp.get(app.name);
+    if (grouped) {
+      grouped.cmds.push(cmd);
+    } else {
+      commandsByApp.set(app.name, { app, cmds: [cmd] });
+    }
+  }
+
+  let device: SpeculosDevice | undefined;
+  for (const { app, cmds } of commandsByApp.values()) {
+    device = await launchSpeculos(app.name, testTitle);
+    await executeCliCommands(cmds, userdataDestinationPath);
+    await cleanSpeculos(device);
+  }
+  return device;
+}
+
 export const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
@@ -188,40 +234,19 @@ export const test = base.extend<TestFixtures>({
       unregisterAllTransportModules();
 
       if (cliCommandsOnApp?.length) {
-        const commandsByApp = new Map<string, { app: AppInfos; cmds: CliCommand[] }>();
-        for (const { app, cmd } of cliCommandsOnApp) {
-          const existing = commandsByApp.get(app.name);
-          if (existing) {
-            existing.cmds.push(cmd);
-          } else {
-            commandsByApp.set(app.name, { app, cmds: [cmd] });
-          }
-        }
+        currentDevice = await runCliCommandsOnLaunchedApps(
+          cliCommandsOnApp,
+          testInfo.title,
+          userdataDestinationPath,
+        );
+      }
 
-        for (const { app, cmds } of commandsByApp.values()) {
-          currentDevice = await launchSpeculos(app.name, testInfo.title);
-          for (const cmd of cmds) {
-            await executeCliCommand(cmd, userdataDestinationPath);
-          }
-          await cleanSpeculos(currentDevice);
-        }
+      if (speculosApp && !canSkipSpeculosLaunch(speculosForSetupOnly, cliCommands)) {
+        currentDevice = await launchSpeculos(speculosApp.name, testInfo.title);
       }
 
       if (speculosApp) {
-        const skipSpeculos =
-          !!speculosForSetupOnly &&
-          !!cliCommands?.length &&
-          cliCommands.every(cmd => cmd.canUseGeneratedUserdata?.() ?? false);
-
-        if (!skipSpeculos) {
-          currentDevice = await launchSpeculos(speculosApp.name, testInfo.title);
-        }
-
-        if (cliCommands?.length) {
-          for (const cmd of cliCommands) {
-            await executeCliCommand(cmd, userdataDestinationPath);
-          }
-        }
+        await executeCliCommands(cliCommands, userdataDestinationPath);
       }
 
       await use(handle);

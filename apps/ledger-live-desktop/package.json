@@ -148,6 +148,7 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
+    "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/domain-service": "catalog:",
     "@ledgerhq/ethereum-provider": "workspace:^",

@@ -9,8 +9,12 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { EMPTY } from "rxjs";
 
 import { connectDevice } from "./connectDevice";
+import { SpeculosDeviceDiscoverySource } from "./discoveryService/sources/SpeculosDeviceDiscoverySource";
 import { WebHidDeviceDiscoverySource } from "./discoveryService/sources/WebHidDeviceDiscoverySource";
 import { createConnectionError, filterMatchedDevices } from "./utils";
+
+const mockWebHidListen = jest.fn(() => EMPTY);
+const mockSpeculosListen = jest.fn(() => EMPTY);
 
 jest.mock("@ledgerhq/live-dmk-shared", () => {
   const actual = jest.requireActual("@ledgerhq/live-dmk-shared");
@@ -23,8 +27,15 @@ jest.mock("@ledgerhq/live-dmk-shared", () => {
 
 jest.mock("./discoveryService/sources/WebHidDeviceDiscoverySource", () => ({
   WebHidDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
-    listen: jest.fn(),
+    listen: mockWebHidListen,
     transportId: "WEB-HID",
+  })),
+}));
+
+jest.mock("./discoveryService/sources/SpeculosDeviceDiscoverySource", () => ({
+  SpeculosDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
+    listen: mockSpeculosListen,
+    transportId: "SPECULOS",
   })),
 }));
 
@@ -68,5 +79,24 @@ describe("desktop connectDevice", () => {
       matchDiscoveredDevices: filterMatchedDevices,
       mapConnectionError: createConnectionError,
     });
+  });
+
+  it("GIVEN a started discovery, WHEN devices are discovered, THEN it should listen to both WebHID and Speculos", () => {
+    // GIVEN
+    const dmk = {} as DeviceManagementKit;
+    connectDevice({
+      acceptedDeviceModelIds: [DeviceModelId.nanoX],
+      dmk,
+      knownDevices: [knownDevice],
+      onConnected: jest.fn(),
+    });
+
+    // WHEN
+    mockedSharedConnectDeviceUseCase.mock.calls[0][0].deviceDiscoveryService.start();
+
+    // THEN
+    expect(SpeculosDeviceDiscoverySource).toHaveBeenCalledWith(dmk);
+    expect(mockWebHidListen).toHaveBeenCalled();
+    expect(mockSpeculosListen).toHaveBeenCalled();
   });
 });

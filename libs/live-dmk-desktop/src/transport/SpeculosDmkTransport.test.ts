@@ -10,20 +10,22 @@ import { firstValueFrom, of } from "rxjs";
 
 import { SpeculosDmkTransport } from "./SpeculosDmkTransport";
 
-const listenToAvailableDevices = jest.fn(() => of([{ id: "speculos-device" }]));
-const connect = jest.fn(async () => Right({ sessionId: "session-1" }));
-const disconnect = jest.fn(async () => Right(undefined));
+const mockListenToAvailableDevices = jest.fn(() => of([{ id: "speculos-device" }]));
+const mockStartDiscovering = jest.fn(() => of({ id: "speculos-device" }));
+const mockStopDiscovering = jest.fn();
+const mockConnect = jest.fn(async () => Right({ sessionId: "session-1" }));
+const mockDisconnect = jest.fn(async () => Right(undefined));
 
 jest.mock("@ledgerhq/device-transport-kit-speculos", () => {
   const actual = jest.requireActual("@ledgerhq/device-transport-kit-speculos");
   return {
     ...actual,
     speculosTransportFactory: jest.fn(() => () => ({
-      listenToAvailableDevices,
-      startDiscovering: jest.fn(() => of({ id: "speculos-device" })),
-      stopDiscovering: jest.fn(),
-      connect,
-      disconnect,
+      listenToAvailableDevices: mockListenToAvailableDevices,
+      startDiscovering: mockStartDiscovering,
+      stopDiscovering: mockStopDiscovering,
+      connect: mockConnect,
+      disconnect: mockDisconnect,
       getIdentifier: () => actual.speculosIdentifier,
       isSupported: () => true,
     })),
@@ -84,10 +86,10 @@ describe("SpeculosDmkTransport", () => {
     await expect(transport.connect({ deviceId: "speculos-device", onDisconnect })).resolves.toEqual(
       Right({ sessionId: "session-1" }),
     );
-    expect(connect).toHaveBeenCalledWith({ deviceId: "speculos-device", onDisconnect });
+    expect(mockConnect).toHaveBeenCalledWith({ deviceId: "speculos-device", onDisconnect });
 
     await transport.disconnect({ connectedDevice } as never);
-    expect(disconnect).toHaveBeenCalledWith({ connectedDevice });
+    expect(mockDisconnect).toHaveBeenCalledWith({ connectedDevice });
   });
 
   it("keeps the Speculos device listed after the kit's listen completes", () => {
@@ -108,4 +110,34 @@ describe("SpeculosDmkTransport", () => {
     expect(completed).toBe(false);
     subscription.unsubscribe();
   });
+
+  it("keeps the configured port when the address already carries one", async () => {
+    process.env.SPECULOS_API_PORT = "40000";
+    process.env.SPECULOS_ADDRESS = "http://127.0.0.1:50000/";
+    const transport = new SpeculosDmkTransport({} as TransportArgs);
+
+    await firstValueFrom(transport.listenToAvailableDevices());
+
+    expect(speculosTransportFactory).toHaveBeenCalledWith(
+      "http://127.0.0.1:50000",
+      true,
+      expect.anything(),
+    );
+  });
+
+  it("discovers a Nano S Plus when SPECULOS_DEVICE is unset", async () => {
+    process.env.SPECULOS_API_PORT = "40000";
+    process.env.SPECULOS_ADDRESS = "http://127.0.0.1";
+    delete process.env.SPECULOS_DEVICE;
+    const transport = new SpeculosDmkTransport({} as TransportArgs);
+
+    await firstValueFrom(transport.listenToAvailableDevices());
+
+    expect(speculosTransportFactory).toHaveBeenCalledWith(
+      "http://127.0.0.1:40000",
+      true,
+      ledgerToDmkDeviceIdMap[DeviceModelId.nanoSP],
+    );
+  });
+
 });

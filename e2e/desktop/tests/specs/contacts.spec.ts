@@ -170,10 +170,15 @@ test.describe("Contacts - browse and search", () => {
   );
 });
 
-// No @Stax: its rc builds stop at Ethereum 1.19.3. See CONTACTS_OS_VERSION_BY_MODEL.
 const CONTACTS_DEVICE_TAGS = deviceTagsWithoutLNS().filter(tag => tag !== "@Stax");
 
-test.describe("Contacts - with addresses", () => {
+function describeContactsWithAddresses(title: string, body: () => void) {
+  if (!CONTACTS_OS_VERSION_BY_MODEL[getSpeculosModel()]) return;
+
+  test.describe(title, body);
+}
+
+describeContactsWithAddresses("Contacts - with addresses", () => {
   setupSeed();
   test.afterAll(destroyTrustchain);
 
@@ -184,24 +189,18 @@ test.describe("Contacts - with addresses", () => {
 
   test.use({
     ...contactsTestOptions(),
-    // Address registration goes through the device-intent executor, which only
-    // connects when the desktop DMK transport is on.
     featureFlags: {
       ...CONTACTS_FEATURE_FLAGS,
       ldmkTransport: { enabled: true },
     },
     speculosApp: AppInfos.ETHEREUM_CONTACTS,
     cliCommands: [],
-    // Playwright reads [value, options] when the second element is an object, so a bare
-    // command list is treated as a fixture tuple and the trustchain setup never runs.
     cliCommandsOnApp: [
       trustchainCommands.map(cmd => ({ app: AppInfos.LS, cmd })),
       { scope: "test" },
     ],
   });
 
-  // Rename returns the device to the dashboard and ends this Speculos session.
-  // Covered by renameContactIntent unit tests.
   test(
     "Create and delete a contact with an address",
     {
@@ -212,11 +211,6 @@ test.describe("Contacts - with addresses", () => {
       },
     },
     async ({ app }) => {
-      test.skip(
-        !CONTACTS_OS_VERSION_BY_MODEL[getSpeculosModel()],
-        "No contacts Ethereum build for this device",
-      );
-
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.myWallet.openContacts();
       await app.contacts.expectScreenVisible();
@@ -242,7 +236,6 @@ test.describe("Contacts - with addresses", () => {
 
       await app.contacts.detail.expectName(ADDRESS_CONTACT_NAME);
 
-      // Deleting an address or the contact does not open a device intent.
       const addressToDelete = ETHEREUM_ADDRESS_DATASET[1];
       await app.contacts.detail.deleteAddress(addressToDelete.savedValue);
       await app.contacts.detail.expectAddressCount(addressCountLabel(1));

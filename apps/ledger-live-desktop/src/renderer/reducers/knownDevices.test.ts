@@ -1,6 +1,7 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { speculosTransportIdentifier, webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
+import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 import type { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import reducer, {
   INITIAL_STATE,
@@ -59,7 +60,7 @@ describe("knownDevices reducer", () => {
         );
         expect(state.knownDevices).toEqual([
           {
-            transport: speculosTransportIdentifier,
+            transport: speculosIdentifier,
             deviceModelId: DeviceModelId.nanoX,
             id: "",
             name: null,
