@@ -17,7 +17,10 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/platform/content-ab-tests",
     "format": "oxfmt src",
-    "format:check": "oxfmt --check src"
+    "format:check": "oxfmt --check src",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -26,6 +29,7 @@
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

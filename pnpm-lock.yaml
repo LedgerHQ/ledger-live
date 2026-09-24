@@ -8662,6 +8662,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
