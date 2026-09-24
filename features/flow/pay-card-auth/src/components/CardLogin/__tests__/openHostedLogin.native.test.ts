@@ -1,4 +1,5 @@
 import { openAuthSessionAsync } from "expo-web-browser";
+import { AppState, type AppStateStatus } from "react-native";
 import { openHostedUrlInSecureBrowser } from "../openHostedLogin.native";
 
 jest.mock("expo-web-browser", () => ({
@@ -11,9 +12,78 @@ const loginUrl =
   "https://card.example.com/login?request=opaque%2Bvalue&redirect_uri=ledgerlive%3A%2F%2Fpaytab";
 const deepLink = "ledgerlive://paytab";
 
+let changeListeners: ((state: AppStateStatus) => void)[] = [];
+const remove = jest.fn();
+
+const setAppState = (state: AppStateStatus) => Object.assign(AppState, { currentState: state });
+const becomeActive = () => {
+  setAppState("active");
+  changeListeners.forEach(listener => listener("active"));
+};
+
+const flush = async () => {
+  await Promise.resolve();
+  await Promise.resolve();
+};
+
 describe("openHostedUrlInSecureBrowser", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    changeListeners = [];
+    setAppState("active");
+    jest.spyOn(AppState, "addEventListener").mockImplementation(((
+      _type: string,
+      listener: (state: AppStateStatus) => void,
+    ) => {
+      changeListeners.push(listener);
+      return { remove };
+    }) as typeof AppState.addEventListener);
+    mockedOpenAuthSessionAsync.mockResolvedValue({ type: "success", url: deepLink });
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("should open straight away while the app is active", async () => {
+    await openHostedUrlInSecureBrowser(loginUrl, deepLink);
+
+    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledTimes(1);
+    expect(AppState.addEventListener).not.toHaveBeenCalled();
+  });
+
+  it("should hold the browser until the app is active again", async () => {
+    jest.useFakeTimers();
+    setAppState("inactive");
+
+    const opening = openHostedUrlInSecureBrowser(loginUrl, deepLink);
+    jest.advanceTimersByTime(2_500);
+    await flush();
+
+    expect(mockedOpenAuthSessionAsync).not.toHaveBeenCalled();
+
+    becomeActive();
+    await opening;
+
+    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledTimes(1);
+    expect(remove).toHaveBeenCalled();
+  });
+
+  it("should stop waiting after a bound, so an event that never comes cannot hang the login", async () => {
+    jest.useFakeTimers();
+    setAppState("inactive");
+
+    const opening = openHostedUrlInSecureBrowser(loginUrl, deepLink);
+    jest.advanceTimersByTime(4_999);
+    await flush();
+
+    expect(mockedOpenAuthSessionAsync).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(1);
+    await opening;
+
+    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledTimes(1);
+    expect(remove).toHaveBeenCalled();
   });
 
   it("should open the exact hosted login URL in the secure auth browser", async () => {
