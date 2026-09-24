@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+      "noEmit": true,
+      "rootDir": "../",
+      "jsx": "react",
+      "esModuleInterop": true,
+      "lib": ["es2020", "dom"],
+      "types": ["node", "jest"]
+  }
+}

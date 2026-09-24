@@ -22,7 +22,7 @@
     "format:check": "oxfmt --check src"
   },
   "dependencies": {
-    "@ledgerhq/live-env": "catalog:"
+    "@ledgerhq/live-env": "workspace:*"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",

@@ -25,22 +25,21 @@ describe("useContactsViewModel", () => {
     expect(result.current.isEmpty).toBe(true);
   });
 
-  it("should expose Me when it is the only contact", () => {
+  it("should be empty when the me contact is the only one", () => {
     const { result } = renderViewModel([mockMeContact()]);
 
-    expect(result.current.isEmpty).toBe(false);
-    expect(result.current.rows.map(row => row.contact.name)).toEqual(["Me"]);
+    expect(result.current.isEmpty).toBe(true);
   });
 
-  it("should include the me contact in its sorted position without a cap", () => {
+  it("should exclude the me contact and expose every saved contact without a cap", () => {
     const savedContacts = Array.from({ length: 9 }, (_, index) =>
       mockContact({ id: `contact-${index}`, name: `Contact ${index}` }),
     );
     const { result } = renderViewModel([mockMeContact(), ...savedContacts]);
 
     expect(result.current.isEmpty).toBe(false);
-    expect(result.current.rows).toHaveLength(10);
-    expect(result.current.rows[9]?.contact.isMe).toBe(true);
+    expect(result.current.rows).toHaveLength(9);
+    expect(result.current.rows.every(row => !row.contact.isMe)).toBe(true);
   });
 
   it("should order contacts by last sent-to, then last added", () => {
@@ -74,8 +73,8 @@ describe("useContactsViewModel", () => {
       makeContactsProps({ operations: sentToBob }),
     );
 
-    expect(result.current.rows.map(row => row.contact.name)).toEqual(["Bob", "Alice", "Me"]);
-    expect(result.current.rows.map(row => row.transactionCount)).toEqual([1, 0, 0]);
+    expect(result.current.rows.map(row => row.contact.name)).toEqual(["Bob", "Alice"]);
+    expect(result.current.rows.map(row => row.transactionCount)).toEqual([1, 0]);
   });
 
   it("should count incoming and outgoing transactions in the table", () => {
@@ -94,8 +93,7 @@ describe("useContactsViewModel", () => {
       makeContactsProps({ operations }),
     );
 
-    expect(result.current.rows.map(row => row.contact.name)).toEqual(["Bob", "Me"]);
-    expect(result.current.rows.map(row => row.transactionCount)).toEqual([2, 0]);
+    expect(result.current.rows.map(row => row.transactionCount)).toEqual([2]);
   });
 
   it("should request add contact with the dialog open handler", () => {

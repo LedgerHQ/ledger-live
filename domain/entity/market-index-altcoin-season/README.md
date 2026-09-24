@@ -9,4 +9,4 @@ Domain entity for the **CoinMarketCap Altcoin Season Index**.
 - `types.ts` — the inferred `AltcoinSeasonIndex` type.
 
 This is the transformed, app-facing model. The raw CoinMarketCap wire-format response schema and the
-RTK Query endpoint live in `@domain/api-market-index-altcoin-season`.
+RTK Query endpoint live in `@domain/api-altcoins-sentiment`.

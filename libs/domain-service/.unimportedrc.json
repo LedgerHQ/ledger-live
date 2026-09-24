@@ -1,0 +1,9 @@
+{
+  "entry": [
+    "src/index.ts"
+  ],
+  "ignoreUnused": [
+    "react-dom"
+  ],
+  "ignoreUnresolved": []
+}

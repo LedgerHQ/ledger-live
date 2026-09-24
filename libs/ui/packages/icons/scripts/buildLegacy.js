@@ -1,17 +1,16 @@
+//used to build legacy icons - to be deprecated
+
 const fs = require("fs");
 const path = require("path");
 const glob = require("glob");
 const camelcase = require("camelcase");
-const { transform } = require("@svgr/core");
-const { loadSvgrPlugin } = require("./loadSvgrPlugin");
-
-const jsxPlugin = loadSvgrPlugin("@svgr/plugin-jsx");
-const svgoPlugin = loadSvgrPlugin("@svgr/plugin-svgo");
+const svgr = require("@svgr/core").default;
 
 const rootDir = path.join(__dirname, "..", "src");
 const reactDir = path.join(rootDir, "reactLegacy");
 const nativeDir = path.join(rootDir, "nativeLegacy");
 
+// Create folders if needed
 if (!fs.existsSync(reactDir)) {
   fs.mkdirSync(reactDir);
 }
@@ -55,8 +54,12 @@ const StyledSvg = styled(Svg).attrs<SvgProps &  { xmlns?: string }>((props) => (
 export default StyledSvg;
 `;
 
-function reactTemplate({ imports, interfaces, componentName, jsx, exports }, { tpl }) {
-  return tpl`
+// Component template
+function reactTemplate({ template }, _, { imports, interfaces, componentName, __, jsx, exports }) {
+  const plugins = ["typescript"];
+  const tpl = template.smart({ plugins });
+
+  return tpl.ast`
     ${imports}
     import Svg from "./StyledSvg"
     type Props = { size?: number | string; color?: string; style?: object };
@@ -68,8 +71,16 @@ function reactTemplate({ imports, interfaces, componentName, jsx, exports }, { t
   `;
 }
 
-function reactNativeTemplate({ imports, interfaces, componentName, jsx, exports }, { tpl }) {
-  return tpl`
+// Component template
+function reactNativeTemplate(
+  { template },
+  _,
+  { imports, interfaces, componentName, __, jsx, exports },
+) {
+  const plugins = ["typescript"];
+  const tpl = template.smart({ plugins });
+
+  return tpl.ast`
     ${imports}
     import Svg from "./StyledSvg";
 
@@ -85,8 +96,16 @@ function reactNativeTemplate({ imports, interfaces, componentName, jsx, exports 
   `;
 }
 
-function reactNativeRTLTemplate({ imports, interfaces, componentName, jsx, exports }, { tpl }) {
-  return tpl`
+// React native RTL template
+function reactNativeRTLTemplate(
+  { template },
+  _,
+  { imports, interfaces, componentName, __, jsx, exports },
+) {
+  const plugins = ["typescript"];
+  const tpl = template.smart({ plugins });
+
+  return tpl.ast`
     ${imports}
     import Svg from "./StyledSvg";
     import styled from "styled-components";
@@ -102,7 +121,7 @@ function reactNativeRTLTemplate({ imports, interfaces, componentName, jsx, expor
 }
 
 const convert = (svg, options, componentName, outputFile, removeFills) => {
-  transform(svg, options, componentName)
+  svgr(svg, options, componentName)
     .then(result => {
       let component = result.replace("xlinkHref=", "href=").replace("import Svg,", "import ");
 
@@ -116,7 +135,10 @@ const convert = (svg, options, componentName, outputFile, removeFills) => {
     .catch(e => console.error(e));
 };
 
+//====== create base icons =====
+
 glob(`${rootDir}/svg-legacy/**/*.svg`, (err, icons) => {
+  // Create file stubs
   fs.writeFileSync(`${reactDir}/index.ts`, "", {
     flag: "w",
     encoding: "utf-8",
@@ -129,6 +151,7 @@ glob(`${rootDir}/svg-legacy/**/*.svg`, (err, icons) => {
   fs.writeFileSync(`${reactDir}/StyledSvg.ts`, reactSvgStyledComponent, "utf-8");
   fs.writeFileSync(`${nativeDir}/StyledSvg.ts`, reactNativeSvgStyledComponent, "utf-8");
 
+  // Extract the icon weight
   icons.forEach(icon => {
     let RTLShouldMirror = icon.endsWith("-rtl.svg");
     let iconPathCleaned = icon;
@@ -144,7 +167,7 @@ glob(`${rootDir}/svg-legacy/**/*.svg`, (err, icons) => {
       pascalCase: true,
     });
 
-    if (/^\d/.test(name)) name = `_${name}`;
+    if (!isNaN(name.charAt(0))) name = `_${name}`; // fix variable name leading with a numerical value
 
     const exportString = `export { default as ${name} } from "./${name}";\n`;
 
@@ -153,13 +176,9 @@ glob(`${rootDir}/svg-legacy/**/*.svg`, (err, icons) => {
 
     const svg = fs.readFileSync(icon, "utf-8");
     const options = {
-      plugins: [svgoPlugin, jsxPlugin],
+      plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx"],
       expandProps: false,
       componentName: name,
-      prettier: false,
-      typescript: true,
-      jsxRuntime: "classic",
-      runtimeConfig: false,
       svgProps: {
         height: "{size}",
         width: "{size}",
@@ -167,17 +186,7 @@ glob(`${rootDir}/svg-legacy/**/*.svg`, (err, icons) => {
         style: "{style}",
       },
       svgoConfig: {
-        plugins: [
-          {
-            name: "preset-default",
-            params: {
-              overrides: {
-                removeViewBox: false,
-              },
-            },
-          },
-          "removeXMLNS",
-        ],
+        plugins: [{ removeXMLNS: true, removeViewBox: false }],
       },
     };
 

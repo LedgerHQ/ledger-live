@@ -211,7 +211,6 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
-    implementation("androidx.lifecycle:lifecycle-process:2.8.7")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
 

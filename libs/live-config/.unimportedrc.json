@@ -1,0 +1,8 @@
+{
+  "entry": ["src/index.ts"],
+  "ignoreUnimported": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"]
+}

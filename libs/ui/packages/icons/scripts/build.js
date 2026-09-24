@@ -2,21 +2,62 @@ const fs = require("fs");
 const path = require("path");
 const glob = require("glob");
 const camelcase = require("camelcase");
-const { transform } = require("@svgr/core");
-const { loadSvgrPlugin } = require("./loadSvgrPlugin");
-
-const jsxPlugin = loadSvgrPlugin("@svgr/plugin-jsx");
+const svgr = require("@svgr/core").default;
 
 const rootDir = path.join(__dirname, "..", "src");
 const reactDir = path.join(rootDir, "react");
 const nativeDir = path.join(rootDir, "native");
 
+// Create folders if needed
 if (!fs.existsSync(reactDir)) {
   fs.mkdirSync(reactDir);
 }
 if (!fs.existsSync(nativeDir)) {
   fs.mkdirSync(nativeDir);
 }
+
+const sizeInterface = `
+interface SizeData {
+    size: number;
+    stroke: number;
+  }
+
+  interface AvailableSizes {
+    XS: SizeData;
+    S: SizeData;
+    M: SizeData;
+    L: SizeData;
+    XL: SizeData;
+    XXL: SizeData;
+  }
+  `;
+
+const availableSizes = {
+  XS: {
+    size: 16,
+    stroke: 1.3,
+  },
+  S: {
+    size: 20,
+    stroke: 1.5,
+  },
+  M: {
+    size: 24,
+    stroke: 1.8,
+  },
+  L: {
+    size: 40,
+    stroke: 2.2,
+  },
+  XL: {
+    size: 48,
+    stroke: 2.5,
+  },
+  XXL: {
+    size: 70,
+    stroke: 2.8,
+  },
+};
 
 const reactSvgStyledComponent = `
 import styled from "styled-components";
@@ -54,40 +95,21 @@ const StyledSvg = styled(Svg).attrs<SvgProps & { xmlns?: string }>((props) => ({
 export default StyledSvg;
 `;
 
-const availableSizesSource = `export type SizeKey = "XS" | "S" | "M" | "L" | "XL" | "XXL";
-
-export interface SizeData {
-  size: number;
-  stroke: number;
-}
-
-export interface AvailableSizes {
-  XS: SizeData;
-  S: SizeData;
-  M: SizeData;
-  L: SizeData;
-  XL: SizeData;
-  XXL: SizeData;
-}
-
-export const availableSizes: AvailableSizes = {
-  XS: { size: 16, stroke: 1.3 },
-  S: { size: 20, stroke: 1.5 },
-  M: { size: 24, stroke: 1.8 },
-  L: { size: 40, stroke: 2.2 },
-  XL: { size: 48, stroke: 2.5 },
-  XXL: { size: 70, stroke: 2.8 },
-};
-`;
-
-function reactTemplate({ imports, interfaces, componentName, jsx, exports }, { tpl }) {
-  return tpl`
+// Component template
+function reactTemplate({ template }, _, { imports, interfaces, componentName, __, jsx, exports }) {
+  const plugins = ["typescript"];
+  const tpl = template.smart({ plugins });
+  return tpl.ast`
     ${imports}
     import Svg from "./StyledSvg"
-    import { availableSizes, type SizeKey } from "./availableSizes"
-    type Props = { size?: SizeKey; color?: string; style?: object };
+    type Props = { size?: ${Object.keys(availableSizes)
+      .map(key => `"${key}"`)
+      .join(" | ")}; color?: string; style?: object };
 
     ${interfaces}
+    ${sizeInterface}
+
+    const availableSizes: AvailableSizes = ${JSON.stringify(availableSizes)}
 
     function ${componentName} ({ size = "M", color = "currentColor", style }: Props): React.JSX.Element {
       const strokeWidth = availableSizes[size]?.stroke
@@ -99,17 +121,29 @@ function reactTemplate({ imports, interfaces, componentName, jsx, exports }, { t
   `;
 }
 
-function reactNativeTemplate({ imports, interfaces, componentName, jsx, exports }, { tpl }) {
-  return tpl`
+// Component template
+function reactNativeTemplate(
+  { template },
+  _,
+  { imports, interfaces, componentName, __, jsx, exports },
+) {
+  const plugins = ["typescript"];
+  const tpl = template.smart({ plugins });
+
+  return tpl.ast`
     ${imports}
     import Svg from "./StyledSvg";
-    import { availableSizes, type SizeKey } from "./availableSizes"
 
     import { StyleProp, ViewStyle } from "react-native"
 
-    type Props = { size?: SizeKey; color?: string; style?: StyleProp<ViewStyle> };
+    type Props = { size?: ${Object.keys(availableSizes)
+      .map(key => `"${key}"`)
+      .join(" | ")}; color?: string; style?: StyleProp<ViewStyle> };
 
     ${interfaces}
+    ${sizeInterface}
+
+    const availableSizes: AvailableSizes = ${JSON.stringify(availableSizes)}
 
     function ${componentName} ({ size = "M", color = "neutral.c100", style }: Props): React.JSX.Element {
         const strokeWidth = availableSizes[size]?.stroke
@@ -121,16 +155,27 @@ function reactNativeTemplate({ imports, interfaces, componentName, jsx, exports 
   `;
 }
 
-function reactNativeRTLTemplate({ imports, interfaces, componentName, jsx, exports }, { tpl }) {
-  return tpl`
+// React native RTL template
+function reactNativeRTLTemplate(
+  { template },
+  _,
+  { imports, interfaces, componentName, __, jsx, exports },
+) {
+  const plugins = ["typescript"];
+  const tpl = template.smart({ plugins });
+
+  return tpl.ast`
     ${imports}
     import Svg from "./StyledSvg";
-    import { availableSizes, type SizeKey } from "./availableSizes"
     import styled from "styled-components";
     import { I18nManager, StyleProp, ViewStyle } from "react-native";
-    type Props = { size?: SizeKey; color?: string; style?: StyleProp<ViewStyle> };
+    type Props = { size?: ${Object.keys(availableSizes)
+      .map(key => `"${key}"`)
+      .join(" | ")}; color?: string; style?: StyleProp<ViewStyle> };
     ${interfaces}
+    ${sizeInterface}
 
+    const availableSizes: AvailableSizes = ${JSON.stringify(availableSizes)}
     const rtlStyle = I18nManager.isRTL ? {transform: [{scaleX: -1}]} : {};
     function ${componentName} ({size = "M", color = "neutral.c100", style = rtlStyle }: Props): React.JSX.Element {
       const strokeWidth = availableSizes[size]?.stroke
@@ -143,7 +188,7 @@ function reactNativeRTLTemplate({ imports, interfaces, componentName, jsx, expor
 }
 
 const convert = (svg, options, componentName, outputFile) => {
-  transform(svg, options, componentName)
+  svgr(svg, options, componentName)
     .then(result => {
       let component = result
         .replace("xlinkHref=", "href=")
@@ -164,7 +209,10 @@ const convert = (svg, options, componentName, outputFile) => {
     .catch(e => console.error(e));
 };
 
+//====== create base icons =====
+
 glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
+  // Create file stubs
   fs.writeFileSync(`${reactDir}/index.ts`, "", {
     flag: "w",
     encoding: "utf-8",
@@ -176,9 +224,8 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
 
   fs.writeFileSync(`${reactDir}/StyledSvg.ts`, reactSvgStyledComponent, "utf-8");
   fs.writeFileSync(`${nativeDir}/StyledSvg.ts`, reactNativeSvgStyledComponent, "utf-8");
-  fs.writeFileSync(`${reactDir}/availableSizes.ts`, availableSizesSource, "utf-8");
-  fs.writeFileSync(`${nativeDir}/availableSizes.ts`, availableSizesSource, "utf-8");
 
+  // Extract the icon weight
   icons.forEach(icon => {
     let RTLShouldMirror = icon.endsWith("-rtl.svg");
     let iconPathCleaned = icon;
@@ -191,7 +238,7 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
       pascalCase: true,
     });
 
-    if (/^\d/.test(name)) name = `_${name}`;
+    if (!isNaN(name.charAt(0))) name = `_${name}`; // fix variable name leading with a numerical value
 
     const exportString = `export { default as ${name} } from "./${name}";\n`;
 
@@ -201,19 +248,17 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
     const svg = fs.readFileSync(icon, "utf-8");
 
     const options = {
-      plugins: [jsxPlugin],
+      plugins: ["@svgr/plugin-jsx"],
       expandProps: false,
       componentName: name,
-      prettier: false,
-      typescript: true,
-      jsxRuntime: "classic",
-      runtimeConfig: false,
-      svgo: false,
       svgProps: {
         height: "{appliedSize}",
         width: "{appliedSize}",
         color: "{color}",
         style: "{style}",
+      },
+      svgoConfig: {
+        plugins: [{ removeXMLNS: true }, { removeViewBox: false }],
       },
     };
 

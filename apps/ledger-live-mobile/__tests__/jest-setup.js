@@ -144,12 +144,6 @@ jest.mock("expo-haptics", () => ({
 
 jest.mock("react-native-launch-arguments", () => ({}));
 
-NativeModules.AppVisibilityModule = {
-  isInForeground: () => true,
-  addListener: () => {},
-  removeListeners: () => {},
-};
-
 NativeModules.BluetoothHelperModule = {
   E_BLE_CANCELLED: "BLE_UNKNOWN_STATE",
 };

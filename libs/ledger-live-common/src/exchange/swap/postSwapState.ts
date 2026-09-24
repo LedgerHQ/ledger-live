@@ -123,16 +123,6 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   exchangeAppVersion,
   signingAppName,
   signingAppVersion,
-  nativeBalance,
-  nativeCurrency,
-  totalFees,
-  gasLimit,
-  gasPrice,
-  maxFeePerGas,
-  maxPriorityFeePerGas,
-  balance,
-  spendableBalance,
-  pendingOperationsCount,
   ...rest
 }) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
@@ -178,16 +168,6 @@ export const postSwapCancelled: PostSwapCancelled = async ({
         exchangeAppVersion,
         signingAppName,
         signingAppVersion,
-        nativeBalance,
-        nativeCurrency,
-        totalFees,
-        gasLimit,
-        gasPrice,
-        maxFeePerGas,
-        maxPriorityFeePerGas,
-        balance,
-        spendableBalance,
-        pendingOperationsCount,
       }),
       ...rest,
     };

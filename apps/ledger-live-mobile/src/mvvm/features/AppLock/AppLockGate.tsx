@@ -1,14 +1,14 @@
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 import {
+  isAppBackgrounded,
   isAppLockConfigured,
   lockApp,
   selectAppLock,
   selectIsLocked,
 } from "@features/platform-app-lock";
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { AppState, Platform, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { isAppInBackground, onAppBackground } from "./adapters/appVisibility";
 import { useAppLockHydration } from "./hooks/useAppLockHydration";
 import { useAppLockScheme } from "./hooks/useAppLockScheme";
 import { useLegacyPasswordMigration } from "./hooks/useLegacyPasswordMigration";
@@ -52,11 +52,17 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
 
   useEffect(() => {
     // Protection may have been enabled while the app was already backgrounded.
-    if (!isLocked && isAppInBackground()) {
+    if (!isLocked && isAppBackgrounded(AppState.currentState ?? "active", Platform.OS)) {
       lockIfConfigured();
     }
 
-    return onAppBackground(lockIfConfigured);
+    const subscription = AppState.addEventListener("change", nextState => {
+      if (isAppBackgrounded(nextState, Platform.OS)) {
+        lockIfConfigured();
+      }
+    });
+
+    return () => subscription.remove();
   }, [isLocked, lockIfConfigured]);
 
   // The initial state is unlocked, so anything rendered before the decision is reachable.

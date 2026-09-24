@@ -24,28 +24,17 @@ function renderContacts(
 }
 
 describe("Contacts (Web)", () => {
-  it("should render Me as a payable contact and forward it when pressed", async () => {
-    const user = userEvent.setup();
-    const me = mockMeContact();
-    const onContactPress = jest.fn();
-    renderWithContacts(
-      [me],
-      <Contacts
-        addContact={makeAddContactProps()}
-        renderAddresses={renderAddresses}
-        onContactPress={onContactPress}
-      />,
-    );
+  it("should render the empty state when the store holds no saved contact", () => {
+    renderContacts([mockMeContact()]);
 
-    expect(screen.queryByTestId("pay-contacts-empty-state")).not.toBeInTheDocument();
-    expect(screen.getByTestId(`pay-contacts-tile-${me.id}`)).toBeVisible();
-    await user.click(screen.getByTestId(`pay-contacts-tile-${me.id}`));
-    expect(onContactPress).toHaveBeenCalledWith(me);
+    expect(screen.getByTestId("pay-contacts-empty-state")).toBeVisible();
+    expect(screen.getByText("You don’t have contact yet")).toBeVisible();
+    expect(screen.queryByTestId("pay-contacts-list")).not.toBeInTheDocument();
   });
 
   it("should open the add-contact dialog from the empty-state CTA", async () => {
     const user = userEvent.setup();
-    renderContacts([]);
+    renderContacts([mockMeContact()]);
 
     expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
 
@@ -57,7 +46,7 @@ describe("Contacts (Web)", () => {
   it("should not open the dialog when the injected gate refuses", async () => {
     const user = userEvent.setup();
     const onRequestAddContact = jest.fn();
-    renderContacts([], makeAddContactProps({ onRequestAddContact }));
+    renderContacts([mockMeContact()], makeAddContactProps({ onRequestAddContact }));
 
     await user.click(screen.getByTestId("pay-contacts-add-contact"));
 
@@ -67,14 +56,14 @@ describe("Contacts (Web)", () => {
 
   it("should save a contact from the dialog and persist it to the store", async () => {
     const user = userEvent.setup();
-    const store = makeContactsStore([]);
+    const store = makeContactsStore([mockMeContact()]);
     const addContact = makeAddContactProps({
       contactCreation: createContactCreationPort({
         dispatch: store.dispatch,
         generateId: () => "coinbase-1",
       }),
     });
-    renderContacts([], addContact, store);
+    renderContacts([mockMeContact()], addContact, store);
 
     await user.click(screen.getByTestId("pay-contacts-add-contact"));
     await user.type(screen.getByTestId("contacts-add-contact-name-input"), "Coinbase 1");
@@ -90,17 +79,15 @@ describe("Contacts (Web)", () => {
   });
 
   it("should list saved contacts when they exist", () => {
-    const me = mockMeContact();
-    renderContacts([me, mockContact({ id: "contact-ada", name: "Ada" })]);
+    renderContacts([mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })]);
 
     expect(screen.queryByTestId("pay-contacts-empty-state")).not.toBeInTheDocument();
-    expect(screen.getByTestId(`pay-contacts-tile-${me.id}`)).toBeVisible();
     expect(screen.getByTestId("pay-contacts-tile-contact-ada")).toBeVisible();
   });
 
   it("should resolve its copy from the mounted i18n provider, not from props", () => {
     renderWithContacts(
-      [],
+      [mockMeContact()],
       <Contacts addContact={makeAddContactProps()} renderAddresses={renderAddresses} />,
       undefined,
       { en: { translation: { payTab: { contacts: { empty: { info: "Aucun contact" } } } } } },

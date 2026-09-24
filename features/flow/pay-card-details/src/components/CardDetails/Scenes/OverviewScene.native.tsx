@@ -107,6 +107,8 @@ export function OverviewScene({
         reveal={reveal}
       />
 
+      {assetsViewModel ? <CardAssetsView {...assetsViewModel} /> : null}
+
       <Reward
         formatters={formatters}
         currencies={assets?.currencies}
@@ -114,8 +116,6 @@ export function OverviewScene({
         formatCountervalue={assets?.formatCountervalue}
         onViewRewards={onViewRewards}
       />
-
-      {assetsViewModel ? <CardAssetsView {...assetsViewModel} /> : null}
 
       <CardTransactions
         formatters={formatters}

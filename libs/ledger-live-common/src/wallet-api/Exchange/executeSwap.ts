@@ -24,10 +24,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getAccountBridge } from "../../bridge";
 import { Transaction } from "../../coin-modules/transaction-types";
 import { CompleteExchangeError, getErrorDetails, getSwapStepFromError } from "../../exchange/error";
-import {
-  readEvmNotEnoughGasDiagnostics,
-  readNotEnoughBalanceDiagnostics,
-} from "../../exchange/swap/completeExchange";
 import { postSwapCancelled } from "../../exchange/swap";
 import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
@@ -370,8 +366,6 @@ export async function executeSwap(
             exchangeAppVersion,
             signingAppName,
             signingAppVersion,
-            ...readEvmNotEnoughGasDiagnostics(error),
-            ...readNotEnoughBalanceDiagnostics(error),
             seedIdFrom: mainFromAccount.seedIdentifier,
             seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
             data: (transaction as EvmTransaction).data
