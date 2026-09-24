@@ -11377,8 +11377,7 @@
       "amount": {
         "bondedAmount": "Amount to unstake",
         "belowMinimum": "This amount will be frozen for about 360 blocks (~1 hour). If unbonding would leave less than <minimum/> bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met.",
-        "max": "Max",
-        "validator": "Validator"
+        "max": "Max"
       },
       "validation": {
         "success": {

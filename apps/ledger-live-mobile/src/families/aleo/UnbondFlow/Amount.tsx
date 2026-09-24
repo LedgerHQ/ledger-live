@@ -1,21 +1,19 @@
 import React, { useCallback } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { Button, Switch, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { useTheme } from "styled-components/native";
+import { Button, Switch, Text } from "@ledgerhq/native-ui";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { isAleoAccount } from "@ledgerhq/live-common/families/aleo/utils";
-import { useAleoStakingPosition } from "@ledgerhq/live-common/families/aleo/react";
 import {
   MIN_DELEGATOR_STAKE_MICROCREDITS,
   TRANSACTION_TYPE,
 } from "@ledgerhq/live-common/families/aleo/constants";
 import type { Transaction as AleoTransaction } from "@ledgerhq/live-common/families/aleo/types";
 import SafeAreaView from "~/components/SafeAreaView";
-import Skeleton from "~/components/Skeleton";
 import { Trans, useTranslation } from "~/context/Locale";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
@@ -26,7 +24,6 @@ import TranslatedError from "~/components/TranslatedError";
 import Alert from "~/components/Alert";
 import { ScreenName } from "~/const";
 import { getFirstStatusError } from "../../helpers";
-import { getValidatorLabel } from "../Staking/utils";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AleoUnbondFlowParamList } from "./types";
 
@@ -36,73 +33,8 @@ type Props = BaseComposite<
 
 export default function Amount({ navigation, route }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
-  const styles = useStyleSheet(
-    theme => ({
-      root: {
-        flex: 1,
-      },
-      scroll: {
-        flex: 1,
-      },
-      content: {
-        flexGrow: 1,
-        paddingHorizontal: theme.spacings.s24,
-        paddingTop: theme.spacings.s16,
-      },
-      alert: {
-        marginBottom: theme.spacings.s16,
-      },
-      amountInputHeightGuard: {
-        flexShrink: 1,
-        minHeight: 160,
-      },
-      spacer: {
-        flexGrow: 1,
-      },
-      details: {
-        marginVertical: theme.spacings.s16,
-        paddingTop: theme.spacings.s12,
-        borderTopWidth: theme.borderWidth.s1,
-        borderTopColor: theme.colors.border.mutedSubtle,
-        gap: theme.spacings.s8,
-      },
-      detailsRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-      },
-      validatorRow: {
-        flexDirection: "row",
-        alignItems: "flex-start",
-        justifyContent: "space-between",
-        gap: theme.spacings.s8,
-      },
-      validatorLabel: {
-        flexShrink: 0,
-      },
-      validatorValue: {
-        flex: 1,
-        textAlign: "right",
-      },
-      validatorSkeleton: {
-        width: 96,
-        height: 16,
-        borderRadius: 4,
-      },
-      switchRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: theme.spacings.s8,
-      },
-      footer: {
-        paddingHorizontal: theme.spacings.s16,
-        paddingBottom: theme.spacings.s16,
-        paddingTop: theme.spacings.s8,
-      },
-    }),
-    [],
-  );
 
   invariant(
     account && isAleoAccount(account) && account.type === "Account",
@@ -112,7 +44,6 @@ export default function Amount({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount ?? null);
   const unit = useAccountUnit(account);
   const bondedBalance = account.aleoResources?.bondedBalance ?? new BigNumber(0);
-  const position = useAleoStakingPosition(account);
 
   const bridge = useAccountBridge<AleoTransaction>(account, parentAccount);
 
@@ -199,67 +130,48 @@ export default function Amount({ navigation, route }: Props) {
             />
           </Alert>
         </View>
-        {(error || warning) && (
-          <View style={styles.alert}>
-            <Alert type={error ? "error" : "warning"} testID="aleo-unbond-status-alert">
-              <TranslatedError error={error ?? warning} field="description" />
-            </Alert>
-          </View>
-        )}
         <View style={styles.amountInputHeightGuard}>
           <AmountInput
             account={account}
             value={amount}
             onChange={onChange}
             editable={!useAllAmount}
+            error={error}
+            warning={warning}
             testID="aleo-unbond-amount-input"
           />
         </View>
         <View style={styles.spacer} />
-        <View style={styles.details}>
-          <View style={styles.validatorRow}>
-            <Text typography="body3" lx={{ color: "muted" }} style={styles.validatorLabel}>
-              <Trans i18nKey="aleo.unbond.amount.validator" />
-            </Text>
-            <Skeleton loading={position.validatorsLoading} style={styles.validatorSkeleton}>
-              <Text
-                typography="body3SemiBold"
-                lx={{ color: "base" }}
-                style={styles.validatorValue}
-                testID="aleo-unbond-amount-validator"
-              >
-                {getValidatorLabel(t, position)}
-              </Text>
-            </Skeleton>
-          </View>
+        <View style={[styles.details, { borderTopColor: colors.neutral.c30 }]}>
           <View style={styles.detailsRow}>
-            <Text typography="body3" lx={{ color: "muted" }}>
+            <Text variant="small" color="neutral.c70">
               <Trans i18nKey="aleo.unbond.amount.bondedAmount" />{" "}
               <Text
-                typography="body3SemiBold"
-                lx={{ color: "base" }}
+                variant="small"
+                fontWeight="semiBold"
+                color="neutral.c100"
                 testID="aleo-unbond-amount-value"
               >
                 <CurrencyUnitValue unit={unit} value={bondedBalance} showCode />
               </Text>
             </Text>
             <View style={styles.switchRow}>
-              <Text typography="body3" lx={{ color: "muted" }}>
+              <Text variant="small" color="neutral.c70" mr={3}>
                 <Trans i18nKey="aleo.unbond.amount.max" />
               </Text>
               <Switch
                 checked={!!useAllAmount}
-                onCheckedChange={setUseAllAmount}
+                onChange={setUseAllAmount}
                 disabled={bridgePending}
                 testID="aleo-unbond-use-all-amount"
               />
             </View>
           </View>
           <View style={styles.detailsRow}>
-            <Text typography="body3" lx={{ color: "muted" }}>
+            <Text variant="small" color="neutral.c70">
               <Trans i18nKey="send.summary.fees" />
             </Text>
-            <Text typography="body3SemiBold" lx={{ color: "base" }}>
+            <Text variant="small" fontWeight="semiBold" color="neutral.c100">
               {bridgePending ? (
                 "-"
               ) : (
@@ -271,17 +183,16 @@ export default function Amount({ navigation, route }: Props) {
       </ScrollView>
       <View style={styles.footer}>
         {bridgeError && (
-          <Text typography="body3" lx={{ color: "error", textAlign: "center", marginBottom: "s8" }}>
+          <Text variant="small" color="error.c60" textAlign="center" mb={3}>
             <TranslatedError error={bridgeError} />
           </Text>
         )}
         <Button
-          appearance="base"
-          size="lg"
-          isFull
+          type="main"
+          size="large"
           onPress={onContinue}
           disabled={continueDisabled}
-          loading={bridgePending}
+          pending={bridgePending}
           testID="aleo-unbond-amount-continue"
         >
           {t("common.continue")}
@@ -290,3 +201,47 @@ export default function Amount({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
+  content: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
+    paddingTop: 16,
+  },
+  alert: {
+    marginBottom: 16,
+  },
+  amountInputHeightGuard: {
+    flexShrink: 1,
+    minHeight: 160,
+  },
+  spacer: {
+    flexGrow: 1,
+  },
+  details: {
+    marginVertical: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    gap: 8,
+  },
+  detailsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  switchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  footer: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    paddingTop: 8,
+  },
+});

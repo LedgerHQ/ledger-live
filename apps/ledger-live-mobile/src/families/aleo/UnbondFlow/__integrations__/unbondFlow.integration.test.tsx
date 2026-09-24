@@ -1,13 +1,13 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, screen, waitFor } from "@tests/test-renderer";
-import type { AleoAccount, AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
+import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
+import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { NotEnoughBalance, AmountRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import { NavigatorName, ScreenName } from "~/const";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
-import { makeAleoAccount, withFreshCurrencyId } from "../../__mocks__/account.mock";
+import { makeAleoAccount } from "../../__mocks__/account.mock";
 import {
   aleoAccountBridge,
   mockTransactionStatus,
@@ -41,23 +41,6 @@ jest.mock("~/datadog", () => ({
   viewNamePredicate: jest.fn(),
   broadcastLogger: jest.fn(),
 }));
-
-// Mocked here and not at useAleoValidators, which useAleoStakingPosition calls as a same-module
-// closure jest.mock cannot intercept. Virtual because coin-aleo is live-common's dependency, not
-// live-mobile's, so it has no type declarations here.
-jest.mock(
-  "@ledgerhq/coin-aleo/logic",
-  () => ({
-    getValidators: jest.fn(),
-    isDelegatorBelowMinimum: () => false,
-  }),
-  { virtual: true },
-);
-
-type GetValidatorsMock = jest.Mock<Promise<AleoValidator[]>, [string]>;
-const mockGetValidators: GetValidatorsMock = (
-  jest.requireMock("@ledgerhq/coin-aleo/logic") as { getValidators: GetValidatorsMock }
-).getValidators;
 
 jest.setTimeout(30_000);
 
@@ -109,7 +92,6 @@ describe("Aleo unbond flow (integration)", () => {
     resetAleoBridgeMock({
       operationType: "UNBOND",
     });
-    mockGetValidators.mockResolvedValue([]);
   });
 
   it("walks Amount → device → success for a full unbond, showing the bonded amount", async () => {
@@ -146,12 +128,12 @@ describe("Aleo unbond flow (integration)", () => {
   });
 
   it("turns off Max to enable a partial amount, and back on to use the full bonded balance", async () => {
-    const { user } = renderFlowAt(BONDED_ACCOUNT);
+    renderFlowAt(BONDED_ACCOUNT);
 
     const maxToggle = await screen.findByTestId("aleo-unbond-use-all-amount");
     expect(screen.getByTestId("aleo-unbond-amount-input")).toBeDisabled();
 
-    await user.press(maxToggle);
+    fireEvent(maxToggle, "valueChange", false);
 
     await waitFor(() =>
       expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(expect.anything(), {
@@ -161,7 +143,7 @@ describe("Aleo unbond flow (integration)", () => {
     );
     await waitFor(() => expect(screen.getByTestId("aleo-unbond-amount-input")).toBeEnabled());
 
-    await user.press(maxToggle);
+    fireEvent(maxToggle, "valueChange", true);
 
     await waitFor(() =>
       expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(expect.anything(), {
@@ -197,69 +179,7 @@ describe("Aleo unbond flow (integration)", () => {
 
     renderFlowAt(BONDED_ACCOUNT);
 
-    await waitFor(() =>
-      expect(screen.getByText("Please make sure the account has enough funds.")).toBeVisible(),
-    );
+    await waitFor(() => expect(screen.getByText("Sorry, insufficient funds")).toBeVisible());
     expect(screen.getByTestId("aleo-unbond-amount-continue")).toBeDisabled();
-  });
-
-  describe("Validator", () => {
-    it("shows a loading skeleton, not the bare address, before the committee fetch resolves", async () => {
-      let resolveValidators!: (validators: AleoValidator[]) => void;
-      mockGetValidators.mockReturnValue(
-        new Promise(resolve => {
-          resolveValidators = resolve;
-        }),
-      );
-
-      renderFlowAt(withFreshCurrencyId(BONDED_ACCOUNT));
-
-      await waitFor(() => expect(screen.getByTestId("aleo-unbond-amount-value")).toBeVisible());
-      expect(screen.queryByTestId("aleo-unbond-amount-validator")).toBeNull();
-
-      resolveValidators([]);
-
-      await waitFor(() =>
-        expect(screen.getByTestId("aleo-unbond-amount-validator")).toHaveTextContent(
-          VALIDATOR_ADDRESS,
-        ),
-      );
-    });
-
-    it("shows the validator's name once the committee fetch resolves", async () => {
-      mockGetValidators.mockResolvedValue([
-        {
-          address: VALIDATOR_ADDRESS,
-          name: "Figment",
-          isOpen: true,
-          isUnbonding: false,
-          commissionPercent: 10,
-          stakeMicrocredits: 1_000_000_000,
-        } as AleoValidator,
-      ]);
-
-      renderFlowAt(withFreshCurrencyId(BONDED_ACCOUNT));
-
-      await waitFor(() =>
-        expect(screen.getByTestId("aleo-unbond-amount-validator")).toHaveTextContent("Figment"),
-      );
-    });
-
-    it("falls back to the bonded address, without blocking Continue, when the committee fetch fails", async () => {
-      mockGetValidators.mockRejectedValue(new Error("boom"));
-
-      const { user } = renderFlowAt(withFreshCurrencyId(BONDED_ACCOUNT));
-
-      await waitFor(() =>
-        expect(screen.getByTestId("aleo-unbond-amount-validator")).toHaveTextContent(
-          VALIDATOR_ADDRESS,
-        ),
-      );
-      const continueButton = screen.getByTestId("aleo-unbond-amount-continue");
-      await waitFor(() => expect(continueButton).toBeEnabled());
-      await user.press(continueButton);
-
-      expect(await screen.findByTestId("device-item-mock")).toBeVisible();
-    });
   });
 });
