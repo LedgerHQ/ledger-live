@@ -103,6 +103,20 @@ on:
         required: false
         type: string
         default: ""
+      stall_probe:
+        description: "QAA-1365 probe: freeze one jest worker mid-shard through its inspector. inject = the stall watchdog should recover the shard; inject-unwatched = same fault with the watchdog off, which should hang until the timeout"
+        required: false
+        type: choice
+        options:
+          - "off"
+          - inject
+          - inject-unwatched
+        default: "off"
+      ios_timeout_override:
+        description: "QAA-1365 probe: override the iOS shard timeout-minutes (blank = computed, which has a 30min floor). Keep it small when probing."
+        required: false
+        type: string
+        default: ""
 
   workflow_call:
     inputs:
@@ -774,7 +788,7 @@ jobs:
 
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
-        timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
+        timeout-minutes: ${{ fromJSON(inputs.ios_timeout_override != '' && inputs.ios_timeout_override || needs.determine-builds.outputs.ios_timeout) }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
@@ -789,7 +803,16 @@ jobs:
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
-        run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+        run: |
+          if [ "${{ inputs.stall_probe || 'off' }}" != "off" ]; then
+            # QAA-1365 probe: freeze one jest worker of THIS shard in JS, through its
+            # inspector — SIGSTOP would freeze the in-process watchdog thread too.
+            if [ "${{ inputs.stall_probe }}" = "inject-unwatched" ]; then
+              export E2E_STALL_WATCHDOG=0
+            fi
+            node e2e/mobile/scripts/ci-stall-inject.mjs --root-pid "$$" &
+          fi
+          pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
