@@ -317,6 +317,17 @@ jest.mock("react-native-worklets", () => require("react-native-worklets/lib/modu
 // Setup Reanimated testing environment
 require("react-native-reanimated").setUpTests();
 
+// useAnimatedScrollHandler needs the worklets Babel transform, which Jest (SWC) doesn't run.
+jest.mock("LLM/components/Wallet40Background/useScrollOffset", () => {
+  const { useSharedValue } = jest.requireActual("react-native-reanimated");
+  return {
+    useScrollOffset: scrollY => {
+      const ownScrollY = useSharedValue(0);
+      return { scrollY: scrollY ?? ownScrollY, onScroll: undefined };
+    },
+  };
+});
+
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
   track: jest.fn(),
