@@ -28,11 +28,6 @@ function readPackage(pkg, context) {
         Feel free to make PRs if you feel like it :).
       */
       addDependencies("jest-allure2-reporter", { tslib: "*" }),
-      /* React Native and Metro bundler packages */
-      addPeerDependencies("metro-config", {
-        "metro-transform-worker": "*",
-      }),
-
       /* Other packages */
       addDependencies("rn-fetch-blob", { lodash: "*" }),
 

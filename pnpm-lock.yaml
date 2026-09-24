@@ -629,7 +629,7 @@ overrides:
 
 packageExtensionsChecksum: sha256-y05zn8SOmFlbIRTsh3Z3c43aAFvz482eG6q6x0pvCFg=
 
-pnpmfileChecksum: sha256-YT3c6PR0sDJOv5QX5BFHtgHtdIeMEwJL0lMX54PuO8s=
+pnpmfileChecksum: sha256-0Uisoqz+dK188vQ5ZzB7OLFP/aNykyfJiK3iSfrAv58=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
@@ -34143,29 +34143,14 @@ packages:
   metro-config@0.81.5:
     resolution: {integrity: sha512-oDRAzUvj6RNRxratFdcVAqtAsg+T3qcKrGdqGZFUdwzlFJdHGR9Z413sW583uD2ynsuOjA2QB6US8FdwiBdNKg==}
     engines: {node: '>=18.18'}
-    peerDependencies:
-      metro-transform-worker: '*'
-    peerDependenciesMeta:
-      metro-transform-worker:
-        optional: true
 
   metro-config@0.83.3:
     resolution: {integrity: sha512-mTel7ipT0yNjKILIan04bkJkuCzUUkm2SeEaTads8VfEecCh+ltXchdq6DovXJqzQAXuR2P9cxZB47Lg4klriA==}
     engines: {node: '>=20.19.4'}
-    peerDependencies:
-      metro-transform-worker: '*'
-    peerDependenciesMeta:
-      metro-transform-worker:
-        optional: true
 
   metro-config@0.83.7:
     resolution: {integrity: sha512-83mjWFbFOt2GeJ6pFIum5mSnc1uTsZJAtD8o4ej0s4NVsYsA7fB+pHvTfHhFrpeMONaobu2riKavkPei05Er/Q==}
     engines: {node: '>=20.19.4'}
-    peerDependencies:
-      metro-transform-worker: '*'
-    peerDependenciesMeta:
-      metro-transform-worker:
-        optional: true
 
   metro-core@0.81.5:
     resolution: {integrity: sha512-+2R0c8ByfV2N7CH5wpdIajCWa8escUFd8TukfoXyBq/vb6yTCsznoA25FhNXJ+MC/cz1L447Zj3vdUfCXIZBwg==}
@@ -43528,7 +43513,7 @@ snapshots:
       metro-babel-transformer: 0.83.3
       metro-cache: 0.83.3
       metro-cache-key: 0.83.3
-      metro-config: 0.83.3(metro-transform-worker@0.83.3)
+      metro-config: 0.83.3
       metro-core: 0.83.3
       metro-file-map: 0.83.3
       metro-minify-terser: 0.83.3
@@ -49134,7 +49119,6 @@ snapshots:
       - '@babel/core'
       - '@babel/preset-env'
       - bufferutil
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -49149,7 +49133,6 @@ snapshots:
       semver: 7.8.1
     transitivePeerDependencies:
       - bufferutil
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -49166,7 +49149,6 @@ snapshots:
       '@react-native-community/cli': 18.0.1(@typescript/typescript6@6.0.2)
     transitivePeerDependencies:
       - bufferutil
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -53083,7 +53065,6 @@ snapshots:
       - '@react-native-community/cli'
       - '@react-native/metro-config'
       - bufferutil
-      - metro-transform-worker
       - react
       - supports-color
       - utf-8-validate
@@ -61352,22 +61333,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  metro-config@0.81.5(metro-transform-worker@0.81.5):
-    dependencies:
-      connect: 3.7.0
-      cosmiconfig: 5.2.1
-      flow-enums-runtime: 0.0.6
-      jest-validate: 29.7.0
-      metro: 0.81.5
-      metro-cache: 0.81.5
-      metro-core: 0.81.5
-      metro-runtime: 0.81.5
-    optionalDependencies:
-      metro-transform-worker: 0.81.5
-    transitivePeerDependencies:
-      - supports-color
-
-  metro-config@0.83.3(metro-transform-worker@0.83.3):
+  metro-config@0.83.3:
     dependencies:
       connect: 3.7.0
       flow-enums-runtime: 0.0.6
@@ -61377,8 +61343,6 @@ snapshots:
       metro-core: 0.83.3
       metro-runtime: 0.83.3
       yaml: 2.8.1
-    optionalDependencies:
-      metro-transform-worker: 0.83.3
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -61398,21 +61362,6 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
-
-  metro-config@0.83.7(metro-transform-worker@0.83.7):
-    dependencies:
-      connect: 3.7.0
-      flow-enums-runtime: 0.0.6
-      jest-validate: 29.7.0
-      metro: 0.83.7
-      metro-cache: 0.83.7
-      metro-core: 0.83.7
-      metro-runtime: 0.83.7
-      yaml: 2.8.1
-    optionalDependencies:
-      metro-transform-worker: 0.83.7
-    transitivePeerDependencies:
-      - supports-color
 
   metro-core@0.81.5:
     dependencies:
@@ -61712,7 +61661,7 @@ snapshots:
       metro-babel-transformer: 0.81.5
       metro-cache: 0.81.5
       metro-cache-key: 0.81.5
-      metro-config: 0.81.5(metro-transform-worker@0.81.5)
+      metro-config: 0.81.5
       metro-core: 0.81.5
       metro-file-map: 0.81.5
       metro-resolver: 0.81.5
@@ -61759,7 +61708,7 @@ snapshots:
       metro-babel-transformer: 0.83.3
       metro-cache: 0.83.3
       metro-cache-key: 0.83.3
-      metro-config: 0.83.3(metro-transform-worker@0.83.3)
+      metro-config: 0.83.3
       metro-core: 0.83.3
       metro-file-map: 0.83.3
       metro-resolver: 0.83.3
@@ -61805,7 +61754,7 @@ snapshots:
       metro-babel-transformer: 0.83.7
       metro-cache: 0.83.7
       metro-cache-key: 0.83.7
-      metro-config: 0.83.7(metro-transform-worker@0.83.7)
+      metro-config: 0.83.7
       metro-core: 0.83.7
       metro-file-map: 0.83.7
       metro-resolver: 0.83.7
@@ -64219,7 +64168,6 @@ snapshots:
       - '@react-native-community/cli'
       - '@react-native/metro-config'
       - bufferutil
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -64267,7 +64215,6 @@ snapshots:
       - '@react-native-community/cli'
       - '@react-native/metro-config'
       - bufferutil
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -64315,7 +64262,6 @@ snapshots:
       - '@react-native-community/cli'
       - '@react-native/metro-config'
       - bufferutil
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -64361,7 +64307,6 @@ snapshots:
       - '@react-native-community/cli'
       - '@react-native/metro-config'
       - bufferutil
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
