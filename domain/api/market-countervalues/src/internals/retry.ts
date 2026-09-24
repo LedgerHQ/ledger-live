@@ -1,4 +1,4 @@
-// Retry policy for the rate endpoints.
+// Request policy for the countervalues endpoints.
 //
 // The shared Countervalues base query wraps `retry` with `maxRetries: 3` and RTK's default
 // condition, which retries everything. The rate fetches did not go through it before: they went
@@ -25,6 +25,12 @@ function isRetryable(error: FetchBaseQueryError | SerializedError): boolean {
   // asking again, and axios never retried them either.
   return status === "FETCH_ERROR" || status === "TIMEOUT_ERROR";
 }
+
+/** Mirrors `getCallsTimeout`, whose default is 60s. Without it a hung request never settles. */
+export const RATE_REQUEST_TIMEOUT_MS = 60_000;
+
+/** For the endpoints moved from live-common's client, which never retried. */
+export const noRetryOptions = { maxRetries: 0 };
 
 /** Per-endpoint retry options for the rate fetches. Overrides the shared base query's `retry(3)`. */
 export const rateFetchRetryOptions = {
