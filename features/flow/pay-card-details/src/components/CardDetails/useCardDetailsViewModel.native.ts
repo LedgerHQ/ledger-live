@@ -74,8 +74,8 @@ export function useCardDetailsViewModel({
   };
 
   const onAssetTopUpPress = () => {
-    assetsViewModel.onTopUpPress();
     closeSheet();
+    assetsViewModel.onTopUpPress();
   };
 
   const onAddToWalletPress = () => {
