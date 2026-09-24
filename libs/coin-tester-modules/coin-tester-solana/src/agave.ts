@@ -1,9 +1,12 @@
 import chalk from "chalk";
 import * as compose from "docker-compose";
 
-export async function spawnAgave() {
-  console.log("Starting Agave...");
-  await compose.upOne("agave", {
+// Each cluster has its own `agave-<cluster>` service in docker-compose.yml
+export type AgaveCluster = "mainnet" | "devnet";
+
+export async function spawnAgave(cluster: AgaveCluster) {
+  console.log(`Starting Agave (${cluster})...`);
+  await compose.upOne(`agave-${cluster}`, {
     cwd: __dirname,
     log: Boolean(process.env.DEBUG),
     env: process.env,
@@ -23,11 +26,11 @@ export async function killAgave() {
   });
 }
 
-export async function airdrop(address: string, amount: number) {
+export async function airdrop(cluster: AgaveCluster, address: string, amount: number) {
   // -ul is short for url localnet
   return new Promise<void>((resolve, reject) => {
     compose
-      .exec("agave", `solana airdrop ${amount} ${address} -ul`, {
+      .exec(`agave-${cluster}`, `solana airdrop ${amount} ${address} -ul`, {
         callback: chunck => {
           if (/Signature:/.test(chunck.toString())) {
             resolve();

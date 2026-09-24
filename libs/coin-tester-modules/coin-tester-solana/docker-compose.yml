@@ -1,29 +1,61 @@
+# Both validators share this setup, only the Agave version and the cluster whose features are cloned differ.
+x-agave: &agave
+  # Agave requires io_uring, which Docker's default seccomp profile blocks
+  # ponytail: a custom seccomp profile would be tighter, but this is a throwaway test validator
+  security_opt:
+    - seccomp=unconfined
+  volumes:
+    - ./data:/ledger
+  healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8899", "-H", "Content-Type: application/json", "-H", "Accept: application/json", "-d", '{ "jsonrpc": "2.0", "id": "healthcheck", "method": "getLatestBlockhash" }']
+      interval: 5s
+      timeout: 10s
+      retries: 12
+  ports:
+    - "8899:8899"
+    - "8900:8900"
+  # Start local validator, and import well known token account
+  # USDC: `spl-token create-token --decimals 6 --mint-authority GP9eo3dqHU3e7kGVvqNVzLym7BsTLTfmkuhEr6vqh6TQ -ul`
+  # CWIF: `spl-token create-token --decimals 2 --mint-authority GP9eo3dqHU3e7kGVvqNVzLym7BsTLTfmkuhEr6vqh6TQ --transfer-fee-basis-points 400 --transfer-fee-maximum-fee 99999999999999900 --program-2022 -ul`
+  # VIRTUAL: `spl-token create-token --decimals 9 --mint-authority GP9eo3dqHU3e7kGVvqNVzLym7BsTLTfmkuhEr6vqh6TQ -ul`
+  # TSLAX: `spl-token create-token --decimals 8 --mint-authority GP9eo3dqHU3e7kGVvqNVzLym7BsTLTfmkuhEr6vqh6TQ --program-2022 -ul`
+  # Tokens with random mint addresses but controllable mint authority are created. Store their account as JSON with `solana account --output json <token_address> -ul` and update the token address
+  # with whatever token account imported in the test validator.
+  # Note: These commands need an up-and-running test validator node. By precomputing those files we avoid the burden of having to create multiple instances.
+  # `--clone-feature-set` activates the same features as the cluster given by each service's `--url`.
+  entrypoint: >
+    solana-test-validator
+      --clone-feature-set
+      --account EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v /ledger/usdc.json
+      --account 7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1 /ledger/cwif.json
+      --account 3iQL8BFS2vE7mww4ehAqQHAsbmRNCrPxizWAT2Zfyr9y /ledger/virtual.json
+      --account XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB /ledger/tslax.json
+      --reset
+
+# To bump a version, take from https://github.com/anza-xyz/agave/releases/tag/v<version>:
+# - AGAVE_SHA256: digest of solana-release-x86_64-unknown-linux-gnu.tar.bz2 (amd64)
+# - AGAVE_COMMIT: commit of the tag, built from source on arm64
 services:
-  agave:
-    image: ghcr.io/zeta-chain/solana-docker:2.0.24@sha256:f935ab27e3d24a5963ba53aa83c6605760aac53aeb1004055bc0a3ab9581b07b
-    container_name: agave
-    volumes:
-      - ./data:/ledger
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://127.0.0.1:8899", "-H", "Content-Type: application/json", "-H", "Accept: application/json", "-d", '{ "jsonrpc": "2.0", "id": "healthcheck", "method": "getLatestBlockhash" }']
-        interval: 5s
-        timeout: 10s
-        retries: 12
-    ports:
-      - "8899:8899"
-      - "8900:8900"
-    # Start local validator, and import well known token account
-    # USDC: `spl-token create-token --decimals 6 --mint-authority GP9eo3dqHU3e7kGVvqNVzLym7BsTLTfmkuhEr6vqh6TQ -ul`
-    # CWIF: `spl-token create-token --decimals 2 --mint-authority GP9eo3dqHU3e7kGVvqNVzLym7BsTLTfmkuhEr6vqh6TQ --transfer-fee-basis-points 400 --transfer-fee-maximum-fee 99999999999999900 --program-2022 -ul`
-    # VIRTUAL: `spl-token create-token --decimals 9 --mint-authority GP9eo3dqHU3e7kGVvqNVzLym7BsTLTfmkuhEr6vqh6TQ -ul`
-    # TSLAX: `spl-token create-token --decimals 8 --mint-authority GP9eo3dqHU3e7kGVvqNVzLym7BsTLTfmkuhEr6vqh6TQ --program-2022 -ul`
-    # Tokens with random mint addresses but controllable mint authority are created. Store their account as JSON with `solana account --output json <token_address> -ul` and update the token address
-    # with whatever token account imported in the test validator.
-    # Note: These commands need an up-and-running test validator node. By precomputing those files we avoid the burden of having to create multiple instances.
-    command: >
-      solana-test-validator
-        --account EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v /ledger/usdc.json
-        --account 7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1 /ledger/cwif.json
-        --account 3iQL8BFS2vE7mww4ehAqQHAsbmRNCrPxizWAT2Zfyr9y /ledger/virtual.json
-        --account XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB /ledger/tslax.json
-        --reset
+  # What production runs: follow Ledger's mainnet node (`solana cluster-version --url https://solana.coin.ledger.com`)
+  agave-mainnet:
+    <<: *agave
+    build:
+      context: .
+      dockerfile: agave.Dockerfile
+      args:
+        AGAVE_VERSION: 4.3.0-rc.1
+        AGAVE_SHA256: 005be932ff75d9fe04b02c7d071119461375af435d29d2c876e1257453c0a128
+        AGAVE_COMMIT: 2e10d67f909c23a9586e1b3d099f7b8ef810ccfe
+    command: --url mainnet-beta
+
+  # What's coming: devnet gets Agave upgrades and feature activations before mainnet (`solana cluster-version -ud`)
+  agave-devnet:
+    <<: *agave
+    build:
+      context: .
+      dockerfile: agave.Dockerfile
+      args:
+        AGAVE_VERSION: 4.3.0
+        AGAVE_SHA256: c97289a8abb1d0efb497d8b5cb285baabd9b7f8ea6647f5d145c5dc8ff3611e8
+        AGAVE_COMMIT: 825efd18292aff6ffcf9daa0f7612f21b3531a72
+    command: --url devnet
