@@ -68,12 +68,6 @@ jest.mock("~/datadog", () => ({
   broadcastLogger: jest.fn(),
 }));
 
-// broadcastSignedTx holds the success screen behind a 3s UX floor (execAndWaitAtLeast).
-jest.mock("@ledgerhq/live-common/promise", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/promise"),
-  execAndWaitAtLeast: (_ms: number, cb: () => Promise<unknown>) => cb(),
-}));
-
 const RECIPIENT = "aleo1qtd0z6qch67pyzt0yqz9rteyclc8mgz7zwqqqz3lvvxvcmsprsqqjfp2y8";
 
 const Stack = createNativeStackNavigator();
@@ -171,7 +165,11 @@ describe("Aleo send flow (integration)", () => {
       const deviceItem = await screen.findByTestId("device-item-mock");
       await user.press(deviceItem);
 
-      await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
+      // Broadcast keeps the success screen back for at least 3s; step the fake clock 1s per poll.
+      await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible(), {
+        interval: 1000,
+        timeout: 5000,
+      });
     });
 
     it("blocks at the mandatory private sync screen and only proceeds once syncing completes", async () => {
@@ -332,7 +330,11 @@ describe("Aleo send flow (integration)", () => {
       const deviceItem = await screen.findByTestId("device-item-mock");
       await user.press(deviceItem);
 
-      await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
+      // Broadcast keeps the success screen back for at least 3s; step the fake clock 1s per poll.
+      await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible(), {
+        interval: 1000,
+        timeout: 5000,
+      });
     });
 
     it("convert_token_public_to_private: public self-transfer lands on amount, skipping the recipient step", async () => {
