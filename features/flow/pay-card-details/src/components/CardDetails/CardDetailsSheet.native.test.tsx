@@ -136,10 +136,10 @@ describe("CardDetailsSheet (native)", () => {
     expect(screen.getByTestId("card-details-sheet").props.accessibilityState.expanded).toBe(true);
   });
 
-  it("should show freeze and more when the sheet is open", () => {
+  it("should show the card face, freeze and more when the sheet is open", () => {
     renderSheet();
 
-    expect(screen.getByLabelText("Visa")).toBeVisible();
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
     expect(screen.getByLabelText(MORE_COPY.tile)).toBeVisible();
   });

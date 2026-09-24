@@ -77,8 +77,7 @@ through the bundler `asset/resource` rule. Native cannot do the same — the Rep
 turns a `.svg` import into an image URI and `Image` cannot decode SVG — so `Halftone.native.tsx`
 draws them with `react-native-svg` from the path data extracted verbatim into
 `assets/halftone*Path.ts`. Each halftone is a single path, so this costs one node per pattern and
-stays vector-crisp at any card size. The Visa logo is small enough to share one path constant
-(`assets/visaLogoPath.ts`) and draw it inline on both platforms.
+stays vector-crisp at any card size.
 
 ## Structure
 
@@ -91,8 +90,8 @@ pay-card-details/
     ├── assets.d.ts                            # `*.svg` / `*.webp` module declarations
     ├── components/
     │   ├── CardArtwork/
-    │   │   ├── CardArtwork.web.tsx            # Card face + halftone artwork + Visa logo
-    │   │   ├── CardArtwork.native.tsx         # Native gradient, halftones + Visa logo
+    │   │   ├── CardArtwork.web.tsx            # Card face + halftone artwork
+    │   │   ├── CardArtwork.native.tsx         # Native gradient + halftones
     │   │   ├── Halftone.native.tsx            # Halftone patterns drawn with react-native-svg
     │   │   ├── assets/                        # Figma SVGs (web) and shared / native path data
     │   │   ├── CardArtwork.web.test.tsx
