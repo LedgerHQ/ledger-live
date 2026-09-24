@@ -125,11 +125,13 @@ function makeAccount(descriptor: AccountDescriptor): Account {
       : descriptor.currencyId === "solana"
         ? "solana"
         : "evm";
+  const currency = findCryptoCurrencyById(descriptor.currencyId);
+  if (!currency) throw new Error(`Unknown test currency: ${descriptor.currencyId}`);
   return {
     type: "Account",
     id: descriptor.id,
     freshAddress: descriptor.freshAddress,
-    currency: { ...findCryptoCurrencyById(descriptor.currencyId), family },
+    currency: { ...currency, family },
     seedIdentifier: descriptor.seedIdentifier,
     derivationMode: descriptor.derivationMode,
     index: descriptor.index,
