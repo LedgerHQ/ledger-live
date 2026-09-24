@@ -20,11 +20,14 @@ import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingPrope
 
 type NetworkFeesRowProps = Readonly<{
   viewModel: NetworkFeesViewModel;
+  /** When provided, overrides the default preset-selector sheet with a custom open handler
+   * (used by AmountScreenView to open the Tronify fee selector when Tronify is active). */
+  onSelectorOverride?: () => void;
 }>;
 
 const isStrategyKind = (kind: FeeSelectorOptionKind) => kind === "preset" || kind === "default";
 
-export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
+export function NetworkFeesRow({ viewModel, onSelectorOverride }: NetworkFeesRowProps) {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const infoBottomSheetRef = useBottomSheetRef();
@@ -72,6 +75,9 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
       separator: {
         marginVertical: theme.spacings.s8,
       },
+      strikethrough: {
+        textDecorationLine: "line-through" as const,
+      },
     }),
     [],
   );
@@ -93,10 +99,12 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
   const canOpenFeeSelector = viewModel.canOpenSelector;
 
   const handleOpenSelector = useCallback(() => {
-    if (canOpenFeeSelector) {
+    if (onSelectorOverride) {
+      onSelectorOverride();
+    } else if (canOpenFeeSelector) {
       selectorBottomSheetRef.current?.present();
     }
-  }, [canOpenFeeSelector, selectorBottomSheetRef]);
+  }, [canOpenFeeSelector, onSelectorOverride, selectorBottomSheetRef]);
 
   const handleSelectOption = useCallback(
     (option: (typeof viewModel.displayOptions)[number]) => {
@@ -147,7 +155,11 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
               {viewModel.value}
             </Text>
             {viewModel.secondaryValue ? (
-              <Text typography="body3" lx={{ color: "muted" }}>
+              <Text
+                typography="body3"
+                lx={{ color: "muted" }}
+                style={viewModel.secondaryValueStrikethrough ? styles.strikethrough : undefined}
+              >
                 {viewModel.secondaryValue}
               </Text>
             ) : null}

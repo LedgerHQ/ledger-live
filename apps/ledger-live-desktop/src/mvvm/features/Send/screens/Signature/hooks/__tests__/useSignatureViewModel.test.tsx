@@ -1,6 +1,7 @@
 import React, { forwardRef, useImperativeHandle } from "react";
 import { render, cleanup, waitFor } from "tests/testSetup";
 import { SEND_FLOW_SOURCE, SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { useSignatureViewModel } from "../useSignatureViewModel";
 
 declare global {
@@ -30,6 +31,9 @@ const mockStatus = {
   setSuccess: jest.fn(),
 };
 const mockClose = jest.fn();
+const mockSponsoredActions = { onTransferSuccess: jest.fn(), onTransferError: jest.fn() };
+// IDLE by default: an ordinary send must not touch the sponsored machine.
+let mockSponsoredPhase: string = SPONSORED_PHASE.IDLE;
 
 type TokenCurrency = { id: string };
 type AccountLike = { id: string; type: "Account" | "TokenAccount"; token?: TokenCurrency };
@@ -71,6 +75,13 @@ jest.mock("../../../../context/SendFlowContext", () => ({
     close: mockClose,
   })),
   useSendFlowData: jest.fn(() => ({ state: mockState, source: mockSource })),
+}));
+
+jest.mock("../../../../context/SponsoredSendContext", () => ({
+  useSponsoredSend: jest.fn(() => ({
+    state: { phase: mockSponsoredPhase },
+    actions: mockSponsoredActions,
+  })),
 }));
 
 // eslint-disable-next-line
@@ -121,6 +132,7 @@ describe("useSignatureViewModel", () => {
       },
     };
     broadcastFn.mockReset();
+    mockSponsoredPhase = SPONSORED_PHASE.IDLE;
     global.__isUserRefusedTransactionErrorMock.mockReset().mockReturnValue(false);
   });
 
@@ -352,5 +364,48 @@ describe("useSignatureViewModel", () => {
 
     expect(mockNavigation.goToNextStep).toHaveBeenCalledTimes(1);
     expect(mockNavigation.goToStep).not.toHaveBeenCalled();
+  });
+
+  test("leaves the sponsored machine untouched for an ordinary send", async () => {
+    broadcastFn.mockResolvedValue({ id: "op" });
+
+    const ref = React.createRef<HookApi>();
+    render(<Harness ref={ref} />);
+
+    // @ts-expect-error - providing minimal stub for SignedOperation in tests
+    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" }, device: {} });
+
+    await waitFor(() => expect(mockNavigation.goToNextStep).toHaveBeenCalledTimes(1));
+    expect(mockSponsoredActions.onTransferSuccess).not.toHaveBeenCalled();
+    expect(mockSponsoredActions.onTransferError).not.toHaveBeenCalled();
+  });
+
+  test("reports TX-C success to the sponsored orchestration, then advances", async () => {
+    mockSponsoredPhase = SPONSORED_PHASE.TRANSFER;
+    broadcastFn.mockResolvedValue({ id: "op-sponsored" });
+
+    const ref = React.createRef<HookApi>();
+    render(<Harness ref={ref} />);
+
+    // @ts-expect-error - providing minimal stub for SignedOperation in tests
+    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" }, device: {} });
+
+    await waitFor(() => expect(mockSponsoredActions.onTransferSuccess).toHaveBeenCalledTimes(1));
+    expect(mockNavigation.goToNextStep).toHaveBeenCalledTimes(1);
+  });
+
+  test("routes a TX-C failure to SPONSORED_FAILURE with the error, not to confirmation", () => {
+    mockSponsoredPhase = SPONSORED_PHASE.TRANSFER;
+    mockState.account.currency = null;
+    const error = new Error("transfer boom");
+
+    const ref = React.createRef<HookApi>();
+    render(<Harness ref={ref} />);
+
+    ref.current?.finishWithError(error);
+
+    expect(mockSponsoredActions.onTransferError).toHaveBeenCalledWith(error);
+    expect(mockNavigation.goToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.SPONSORED_FAILURE);
+    expect(mockNavigation.goToNextStep).not.toHaveBeenCalled();
   });
 });
