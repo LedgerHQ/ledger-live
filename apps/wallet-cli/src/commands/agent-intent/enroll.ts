@@ -21,6 +21,7 @@ import {
   hasUrlCredentials,
 } from "../../agent-intent/profile-format";
 import { createCommandOutput } from "../../output";
+import { AGENT_INTENT_BFF_URLS } from "../../agent-intent/endpoints";
 
 function assertNoUrlCredentials(value: string, flagName: string): void {
   if (hasUrlCredentials(value)) {
@@ -48,17 +49,6 @@ function assertProfileAvailable(session: Session, profileId: string): void {
     );
   }
 }
-
-// Verified against agent-intent-frontend's argocd/{stg,prd}/values.yaml BFF_BASE_URL (2026-09-22),
-// same host/path the reference agent-intent.mjs CLI defaults to. The SDK has no default of its own
-// for bffBaseUrl (unlike AGENT_INTENT_FRONTEND_URLS for the app URL), so this stays local. No
-// override flag: nothing in this codebase yet calls the BFF with a profile's bffBaseUrl (that
-// client ships with NTTVS-746+), so a flag promising to redirect it would do nothing but look like
-// it works — add one once a real consumer exists to wire it into.
-const DEFAULT_BFF_BASE_URLS = {
-  staging: "https://global.api.stg.ledger-test.com/agent-intent",
-  production: "https://global.api.prd.ledger.com/agent-intent",
-} as const;
 
 const DURATION_RE = /^([1-9]\d*)([smhd])$/;
 const DURATION_UNITS_MS = { s: 1_000, m: 60_000, h: 3_600_000, d: 86_400_000 } as const;
@@ -123,7 +113,7 @@ export default defineCommand({
     await out.run(async () => {
       const expiresInMs = parseDurationMs(flags["expires-in"]);
 
-      const bffBaseUrl = DEFAULT_BFF_BASE_URLS[flags.environment];
+      const bffBaseUrl = AGENT_INTENT_BFF_URLS[flags.environment];
       const appUrl = flags["app-url"] ?? AGENT_INTENT_FRONTEND_URLS[flags.environment];
       assertNoUrlCredentials(appUrl, "app-url");
       const enrollmentExpiresAt = new Date(Date.now() + expiresInMs).toISOString();
