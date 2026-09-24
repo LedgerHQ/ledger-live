@@ -44,7 +44,7 @@ describe("useCardTransactionDetailViewModel", () => {
         }),
         expect.objectContaining({
           id: "fundingSource",
-          label: DETAIL_COPY.fundingSource,
+          label: DETAIL_COPY.fundingSource_one,
           value: "-13.0214 USDC",
         }),
         expect.objectContaining({
@@ -56,6 +56,28 @@ describe("useCardTransactionDetailViewModel", () => {
           id: "transactionId",
           label: DETAIL_COPY.transactionId,
           value: transaction.transactionId,
+        }),
+      ]),
+    );
+  });
+
+  it("counts the funding assets under a plural label, keeping the breakdown in the tooltip", () => {
+    const fundingSources = [
+      { currency: "usdc", amount: "13.0214", sign: "DEBIT" as const },
+      { currency: "btc", amount: "0.00005231", sign: "DEBIT" as const },
+    ];
+    const { result } = renderHook(
+      () => useCardTransactionDetailViewModel({ transaction: { ...transaction, fundingSources } }),
+      { wrapper: cardApiWrapper() },
+    );
+
+    expect(result.current.rows).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "fundingSource",
+          label: DETAIL_COPY.fundingSource_other,
+          value: "Paid with 2 assets",
+          infoLabel: "-13.0214 USDC · -0.00005231 BTC",
         }),
       ]),
     );

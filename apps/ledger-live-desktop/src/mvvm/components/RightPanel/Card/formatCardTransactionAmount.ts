@@ -42,6 +42,5 @@ export function formatCardTransactionAmount({
     locale,
     showCode: true,
     alwaysShowSign: value.startsWith("+"),
-    disableRounding: kind === "crypto",
   });
 }

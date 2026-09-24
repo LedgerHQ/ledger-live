@@ -1,6 +1,7 @@
+import { useTranslation } from "@shared/i18n";
 import {
   formatCardTransactionDate,
-  formatFundingSources,
+  formatFundingLabel,
   formatMerchantName,
   formatSignedAmount,
 } from "./formatCardTransactionItem";
@@ -11,6 +12,7 @@ export function useListItemViewModel({
   formatters,
   onPress,
 }: ListItemProps): ListItemViewProps {
+  const { t } = useTranslation();
   const { transaction, categoryLabel } = item;
 
   return {
@@ -19,7 +21,11 @@ export function useListItemViewModel({
     category: transaction.mccCategory,
     categoryLabel,
     fiatAmount: formatSignedAmount(transaction, formatters?.amount),
-    assetAmount: formatFundingSources(transaction.fundingSources, formatters?.amount),
+    assetAmount: formatFundingLabel(
+      transaction.fundingSources,
+      count => t("payTab.cardTransactions.history.paidWithAssets", { count }),
+      formatters?.amount,
+    ),
     dateLabel: formatCardTransactionDate(transaction.dateTime, formatters?.date),
     onPress,
   };

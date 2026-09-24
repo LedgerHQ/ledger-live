@@ -79,6 +79,9 @@ function PayTabViewModelProbe() {
       <Text testID="oauth-callback">{JSON.stringify(callback)}</Text>
       <Text testID="countervalue-integer">{formatted?.integerPart}</Text>
       <Text testID="countervalue-decimal">{formatted?.decimalPart}</Text>
+      <Text testID="transaction-amount">
+        {formatters?.transactionAmount?.("-0.104873912345678901", "eth", "crypto")}
+      </Text>
       <Pressable testID="top-up" onPress={onTopUp} />
       <Pressable testID="choose-card-type" onPress={onChooseCardType} />
       <Pressable testID="view-rewards" onPress={onViewRewards} />
@@ -180,6 +183,12 @@ describe("usePayTabViewModel", () => {
     expect(screen.getByTestId("oauth-deeplink")).toHaveTextContent(PAY_TAB_DEEP_LINK);
     expect(screen.getByTestId("countervalue-integer")).toHaveTextContent("12");
     expect(screen.getByTestId("countervalue-decimal")).toHaveTextContent("50");
+  });
+
+  it("should format transaction amounts with the decimals the rest of the product shows", () => {
+    renderViewModel();
+
+    expect(screen.getByTestId("transaction-amount")).toHaveTextContent("-0.104873\u00a0ETH");
   });
 
   it("should follow a change of the Card env vars", () => {

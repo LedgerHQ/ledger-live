@@ -8,10 +8,12 @@ import type { CardTransactionItem } from "../../../types";
 
 const transaction = PayCardTransactionSchema.parse(mockPayCardTransactions()[0]);
 
-function item(): CardTransactionItem {
+function item(overrides: Partial<CardTransactionItem["transaction"]> = {}): CardTransactionItem {
+  const next = { ...transaction, ...overrides };
+
   return {
-    transaction,
-    categoryLabel: CATEGORY_LABELS[transaction.mccCategory],
+    transaction: next,
+    categoryLabel: CATEGORY_LABELS[next.mccCategory],
   };
 }
 
@@ -41,6 +43,18 @@ describe("ListItem (native)", () => {
     expect(screen.getByText("usdc:-13.0214")).toBeVisible();
     expect(formatAmount).toHaveBeenNthCalledWith(1, "-12.99", "EUR", "fiat");
     expect(formatAmount).toHaveBeenNthCalledWith(2, "-13.0214", "usdc", "crypto");
+  });
+
+  it("counts the funding assets when the payment used several, to keep the merchant and date readable", () => {
+    const fundingSources = [
+      { currency: "usdc", amount: "13.0214", sign: "DEBIT" as const },
+      { currency: "btc", amount: "0.00005231", sign: "DEBIT" as const },
+    ];
+
+    render(<ListItem item={item({ fundingSources })} />, { wrapper: cardApiWrapper() });
+
+    expect(screen.getByText("Paid with 2 assets")).toBeVisible();
+    expect(screen.queryByText("-13.0214 USDC")).toBeNull();
   });
 
   it("calls onPress when the transaction is selected", async () => {

@@ -5,6 +5,7 @@ import type { CardTransactionFormatters, CardTransactionItem } from "../../types
 import {
   formatCardTransactionTime,
   formatCashback,
+  formatFundingLabel,
   formatFundingSources,
   formatMerchantName,
   formatSignedAmount,
@@ -47,9 +48,11 @@ export function useHistoryRowViewModel(
       statusLabel: isUnsuccessful ? statusLabel : undefined,
       statusLabelTone: isUnsuccessful ? statusLabelToneFor(transaction.status) : undefined,
       cashback: formatCashback(transaction.cashback, formatters?.amount) ?? NO_CASHBACK,
-      fundingLabel: hasMultipleFundingSources
-        ? t("payTab.cardTransactions.history.paidWithAssets", { count: fundingSources?.length })
-        : fundingAll,
+      fundingLabel: formatFundingLabel(
+        fundingSources,
+        count => t("payTab.cardTransactions.history.paidWithAssets", { count }),
+        formatters?.amount,
+      ),
       fundingTooltip: hasMultipleFundingSources ? fundingAll : undefined,
       fundingTooltipAriaLabel: hasMultipleFundingSources
         ? t("payTab.cardTransactions.history.columns.fundingSources")
