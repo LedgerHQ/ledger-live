@@ -7,7 +7,7 @@ const prettyJSON = (payload: any) => JSON.stringify(payload, null, 2);
 
 const App = () => {
   // Define the Ledger Live API variable used to call api methods
-  const api = useRef<LedgerLiveApi>();
+  const api = useRef<LedgerLiveApi | undefined>(undefined);
 
   const [output, setOutput] = useState<any>(null);
 

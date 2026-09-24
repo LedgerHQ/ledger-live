@@ -20,19 +20,6 @@ const {
 const { assertDependencyChecks } = require("./tools/dependency-checks/validate");
 
 function readPackage(pkg, context) {
-  /*
-    Fix packages using wrong @types/react versions by making it a peer dependency.
-    So ultimately it uses our types package instead of their own which can conflict.
-  */
-  if (!!pkg.dependencies["@types/react"] && !pkg.name.startsWith("@ledgerhq") && !pkg.private) {
-    delete pkg.dependencies["@types/react"];
-    pkg.peerDependencies["@types/react"] = "*";
-    pkg.peerDependenciesMeta = {
-      ...pkg.peerDependenciesMeta,
-      "@types/react": { optional: true },
-    };
-  }
-
   process(
     [
       /*
