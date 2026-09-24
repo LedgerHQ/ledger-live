@@ -12,13 +12,7 @@ import {
 } from "@features/flow-pay-card-transactions";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
 import { reorderByIndex } from "@shared/ui-list-reorder";
-import type {
-  CardAssetDialogState,
-  CardAssetRow,
-  CardAssetsProps,
-  CardAssetsStatus,
-  CardAssetsViewModel,
-} from "./types";
+import type { CardAssetRow, CardAssetsProps, CardAssetsStatus, CardAssetsViewModel } from "./types";
 
 const KEY_PREFIX = "payTab.card.assets";
 const RECENT_TRANSACTIONS_SHOWN = 3;
@@ -45,8 +39,6 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   } = props ?? {};
   const { t } = useTranslation();
   const { trackButtonClicked, trackDebitOrderChanged } = usePayAnalyticsContext();
-  const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
-  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [assetOrder, setAssetOrder] = useState<readonly string[]>([]);
   const manageInitialOrder = useRef<readonly string[] | null>(null);
   const [reorderingAssetIds, setReorderingAssetIds] = useState<ReadonlySet<string>>(
@@ -97,21 +89,15 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     return [...orderedRows, ...rowsById.values()];
   }, [assetOrder, unorderedRows]);
 
-  const selectedAsset = useMemo(
-    () => rows.find(asset => asset.id === selectedAssetId) ?? null,
-    [rows, selectedAssetId],
-  );
-  const selectedAssetTransactions = useMemo(
-    () =>
-      selectedAsset?.ledgerId
+  const getRecentTransactions = useCallback(
+    (asset: CardAssetRow) =>
+      asset.ledgerId
         ? transactions
-            .filter(item =>
-              isCardTransactionFundedBy(item, selectedAsset.currency, selectedAsset.network),
-            )
+            .filter(item => isCardTransactionFundedBy(item, asset.currency, asset.network))
             .sort((a, b) => b.transaction.dateTime.localeCompare(a.transaction.dateTime))
             .slice(0, RECENT_TRANSACTIONS_SHOWN)
         : [],
-    [selectedAsset, transactions],
+    [transactions],
   );
 
   const status = useMemo<CardAssetsStatus>(() => {
@@ -121,52 +107,19 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     return "ready";
   }, [isLoading, isError, rows.length]);
 
-  const onAssetPress = useCallback((asset: CardAssetRow) => {
-    setSelectedAssetId(asset.id);
-    setDialogState("details");
-  }, []);
-
-  const onDialogClose = useCallback(() => {
-    if (
-      dialogState === "manage" &&
-      manageInitialOrder.current &&
-      manageInitialOrder.current.join() !== rows.map(row => row.currency).join()
-    ) {
-      trackDebitOrderChanged(toPayDebitOrderProperties(rows.map(row => row.currency)));
-    }
-    manageInitialOrder.current = null;
-    setDialogState("closed");
-    setSelectedAssetId(null);
-  }, [dialogState, rows, trackDebitOrderChanged]);
-
-  const onTopUpPress = useCallback(() => {
-    if (selectedAsset) onTopUp?.(selectedAsset);
-    onDialogClose();
-  }, [onDialogClose, onTopUp, selectedAsset]);
-
-  const onWithdrawPress = useCallback(() => {
-    setDialogState("withdraw");
-  }, []);
-
-  const onWithdrawClose = useCallback(() => {
-    setDialogState("details");
-  }, []);
-
-  const onShowHistoryPress = useCallback(() => {
-    if (selectedAsset) onShowHistory?.(selectedAsset);
-    onDialogClose();
-  }, [onDialogClose, onShowHistory, selectedAsset]);
-
-  const onWithdrawContinue = useCallback(() => {
-    if (selectedAsset) onWithdraw?.(selectedAsset);
-    onDialogClose();
-  }, [onDialogClose, onWithdraw, selectedAsset]);
-
-  const onManagePress = useCallback(() => {
+  const onManageOpen = useCallback(() => {
     manageInitialOrder.current = rows.map(row => row.currency);
     trackButtonClicked({ button: "debit order", page: "Card details" });
-    setDialogState("manage");
   }, [rows, trackButtonClicked]);
+
+  const onManageClose = useCallback(() => {
+    const initialOrder = manageInitialOrder.current;
+    manageInitialOrder.current = null;
+    const order = rows.map(row => row.currency);
+    if (initialOrder && initialOrder.join() !== order.join()) {
+      trackDebitOrderChanged(toPayDebitOrderProperties(order));
+    }
+  }, [rows, trackDebitOrderChanged]);
 
   const onAddAssetPress = useCallback(() => {
     onAddAsset?.();
@@ -219,9 +172,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       isVisible: props !== undefined && isSignedIn,
       status,
       rows,
-      dialogState,
-      selectedAsset,
-      selectedAssetTransactions,
+      getRecentTransactions,
       formatBalance,
       formatters,
       dialogCopy: {
@@ -232,14 +183,11 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
         withdrawDescription: t(`${KEY_PREFIX}.withdraw.description`),
         continue: t(`${KEY_PREFIX}.withdraw.continue`),
       },
-      onAssetPress,
-      onDialogClose,
-      onTopUpPress,
-      onWithdrawPress,
-      onWithdrawClose,
-      onShowHistoryPress,
-      onWithdrawContinue,
-      onManagePress,
+      onTopUp,
+      onWithdraw,
+      onShowHistory,
+      onManageOpen,
+      onManageClose,
       onAddAssetPress: onAddAsset ? onAddAssetPress : undefined,
       onMoveAsset,
       reorderingAssetIds,
@@ -250,19 +198,14 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       t,
       status,
       rows,
-      dialogState,
-      selectedAsset,
-      selectedAssetTransactions,
+      getRecentTransactions,
       formatBalance,
       formatters,
-      onAssetPress,
-      onDialogClose,
-      onTopUpPress,
-      onWithdrawPress,
-      onWithdrawClose,
-      onShowHistoryPress,
-      onWithdrawContinue,
-      onManagePress,
+      onTopUp,
+      onWithdraw,
+      onShowHistory,
+      onManageOpen,
+      onManageClose,
       onAddAsset,
       onAddAssetPress,
       onMoveAsset,

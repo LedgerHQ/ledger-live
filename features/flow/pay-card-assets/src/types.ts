@@ -63,24 +63,26 @@ export type CardAssetsViewModel = Readonly<{
   isVisible: boolean;
   status: CardAssetsStatus;
   rows: readonly CardAssetRow[];
-  dialogState: CardAssetDialogState;
-  selectedAsset: CardAssetRow | null;
-  selectedAssetTransactions: readonly CardTransactionItem[];
+  getRecentTransactions: (asset: CardAssetRow) => readonly CardTransactionItem[];
   formatBalance?: (value: number) => FormattedValue;
   formatters?: CardTransactionFormatters;
   dialogCopy: CardAssetDialogCopy;
-  onAssetPress: (asset: CardAssetRow) => void;
-  onDialogClose: () => void;
-  onTopUpPress: () => void;
-  onWithdrawPress: () => void;
-  /** Withdraw is nested in details: dismissing it returns to details, it does not close both. */
-  onWithdrawClose: () => void;
-  onShowHistoryPress: () => void;
-  onWithdrawContinue: () => void;
-  onManagePress: () => void;
+  onTopUp?: (asset: CardAssetRow) => void;
+  onWithdraw?: (asset: CardAssetRow) => void;
+  onShowHistory?: (asset: CardAssetRow) => void;
+  /** Manage opening and closing, so a changed debit order is tracked once it is left. */
+  onManageOpen: () => void;
+  onManageClose: () => void;
   onAddAssetPress?: () => void;
   onMoveAsset: (id: string, toIndex: number) => Promise<void>;
   /** Wallets with an in-flight priority update. Multiple moves can be in flight at once — each
    * drop is issued independently rather than waiting for the previous one to settle. */
   reorderingAssetIds: ReadonlySet<string>;
 }>;
+
+/** The list with its entry points: the host decides what pressing an asset or manage opens. */
+export type CardAssetsListProps = CardAssetsViewModel &
+  Readonly<{
+    onAssetPress: (asset: CardAssetRow) => void;
+    onManagePress: () => void;
+  }>;

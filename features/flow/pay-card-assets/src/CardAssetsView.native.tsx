@@ -20,7 +20,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { useTranslation } from "@shared/i18n";
-import type { CardAssetRow, CardAssetsViewModel } from "./types";
+import type { CardAssetRow, CardAssetsListProps } from "./types";
 
 const ICON_SIZE = 48;
 const COUNTERVALUE_PLACEHOLDER = "\u00a0";
@@ -54,7 +54,7 @@ function AssetRow({
   );
 }
 
-type AssetsBodyProps = Readonly<Pick<CardAssetsViewModel, "status" | "rows" | "onAssetPress">>;
+type AssetsBodyProps = Readonly<Pick<CardAssetsListProps, "status" | "rows" | "onAssetPress">>;
 
 function AssetsBody({ status, rows, onAssetPress }: AssetsBodyProps) {
   const { t } = useTranslation();
@@ -99,7 +99,7 @@ export function CardAssetsView({
   rows,
   onAssetPress,
   onManagePress,
-}: CardAssetsViewModel) {
+}: CardAssetsListProps) {
   const { t } = useTranslation();
   const title = t("payTab.card.assets.title");
   const infoLabel = t("payTab.card.assets.info");

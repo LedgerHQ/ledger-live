@@ -4,7 +4,7 @@ import DraggableFlatList from "react-native-draggable-flatlist";
 import { CardAssetsManageDrawer } from "../CardAssetsManageDrawer.native";
 import { CardAssetsView } from "../CardAssetsView.native";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
-import type { CardAssetsViewModel } from "../types";
+import type { CardAssetsListProps } from "../types";
 
 const usdc = {
   id: "w-usdc",
@@ -18,13 +18,11 @@ const usdc = {
   countervalueAmount: 125.4,
 };
 
-const ready: CardAssetsViewModel = {
+const ready: CardAssetsListProps = {
   isVisible: true,
   status: "ready",
   rows: [usdc],
-  dialogState: "closed",
-  selectedAsset: null,
-  selectedAssetTransactions: [],
+  getRecentTransactions: () => [],
   dialogCopy: {
     topUp: "Top up",
     withdraw: "Withdraw",
@@ -33,13 +31,9 @@ const ready: CardAssetsViewModel = {
     withdrawDescription: "Withdraw funds from your Baanx account to your Ledger wallet address.",
     continue: "Continue",
   },
+  onManageOpen: jest.fn(),
+  onManageClose: jest.fn(),
   onAssetPress: jest.fn(),
-  onDialogClose: jest.fn(),
-  onTopUpPress: jest.fn(),
-  onWithdrawPress: jest.fn(),
-  onWithdrawClose: jest.fn(),
-  onShowHistoryPress: jest.fn(),
-  onWithdrawContinue: jest.fn(),
   onManagePress: jest.fn(),
   onAddAssetPress: jest.fn(),
   onMoveAsset: jest.fn(),

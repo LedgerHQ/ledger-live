@@ -20,6 +20,7 @@ import { useTranslation } from "@shared/i18n";
 import { CardAssetDetailsDialog } from "./CardAssetDetailsDialog.web";
 import { CardAssetDetailsWithdrawDialog } from "./CardAssetDetailsWithdrawDialog.web";
 import { CardAssetsManageDialog } from "./CardAssetsManageDialog.web";
+import { useCardAssetDialogs } from "./useCardAssetDialogs.web";
 import type { CardAssetRow, CardAssetsViewModel } from "./types";
 
 const ICON_SIZE = 48;
@@ -55,7 +56,9 @@ function AssetRow({
   );
 }
 
-type AssetsBodyProps = Readonly<Pick<CardAssetsViewModel, "status" | "rows" | "onAssetPress">>;
+type AssetsBodyProps = Readonly<
+  Pick<CardAssetsViewModel, "status" | "rows"> & { onAssetPress: (row: CardAssetRow) => void }
+>;
 
 function AssetsBody({ status, rows, onAssetPress }: AssetsBodyProps) {
   const { t } = useTranslation();
@@ -84,28 +87,31 @@ function AssetsBody({ status, rows, onAssetPress }: AssetsBodyProps) {
   );
 }
 
-export function CardAssetsView({
-  isVisible,
-  status,
-  rows,
-  dialogState,
-  selectedAsset,
-  selectedAssetTransactions,
-  formatBalance,
-  formatters,
-  dialogCopy,
-  onAssetPress,
-  onDialogClose,
-  onTopUpPress,
-  onWithdrawPress,
-  onWithdrawClose,
-  onShowHistoryPress,
-  onWithdrawContinue,
-  onManagePress,
-  onAddAssetPress,
-  onMoveAsset,
-  reorderingAssetIds,
-}: CardAssetsViewModel) {
+export function CardAssetsView(viewModel: CardAssetsViewModel) {
+  const {
+    isVisible,
+    status,
+    rows,
+    formatBalance,
+    formatters,
+    dialogCopy,
+    onAddAssetPress,
+    onMoveAsset,
+    reorderingAssetIds,
+  } = viewModel;
+  const {
+    dialogState,
+    selectedAsset,
+    selectedAssetTransactions,
+    onAssetPress,
+    onDialogClose,
+    onTopUpPress,
+    onWithdrawPress,
+    onWithdrawClose,
+    onShowHistoryPress,
+    onWithdrawContinue,
+    onManagePress,
+  } = useCardAssetDialogs(viewModel);
   const { t } = useTranslation();
   const title = t("payTab.card.assets.title");
   const infoLabel = t("payTab.card.assets.info");

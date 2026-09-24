@@ -34,26 +34,9 @@ export function CardDetailsScene({
     case "transaction":
       return transaction ? <TransactionScene {...transaction} /> : null;
     case "assetDetails":
-      return assetDetails?.viewModel.selectedAsset ? (
-        <CardAssetDetailsDrawer
-          asset={assetDetails.viewModel.selectedAsset}
-          transactions={assetDetails.viewModel.selectedAssetTransactions}
-          copy={assetDetails.viewModel.dialogCopy}
-          formatBalance={assetDetails.viewModel.formatBalance}
-          formatters={assetDetails.viewModel.formatters}
-          onTopUp={assetDetails.viewModel.onTopUpPress}
-          onWithdraw={assetDetails.viewModel.onWithdrawPress}
-          onShowHistory={assetDetails.viewModel.onShowHistoryPress}
-          onTransactionPress={assetDetails.onTransactionPress}
-        />
-      ) : null;
+      return assetDetails ? <CardAssetDetailsDrawer {...assetDetails} /> : null;
     case "assetWithdraw":
-      return assetWithdraw ? (
-        <CardAssetDetailsWithdrawDrawer
-          copy={assetWithdraw.dialogCopy}
-          onContinue={assetWithdraw.onWithdrawContinue}
-        />
-      ) : null;
+      return assetWithdraw ? <CardAssetDetailsWithdrawDrawer {...assetWithdraw} /> : null;
     case "assetsManage":
       return assetsManage ? (
         <CardAssetsManageDrawer

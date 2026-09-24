@@ -29,9 +29,7 @@ const ready: CardAssetsViewModel = {
   isVisible: true,
   status: "ready",
   rows: [usdc],
-  dialogState: "closed",
-  selectedAsset: null,
-  selectedAssetTransactions: [],
+  getRecentTransactions: () => [],
   dialogCopy: {
     topUp: "Top up",
     withdraw: "Withdraw",
@@ -40,25 +38,20 @@ const ready: CardAssetsViewModel = {
     withdrawDescription: "Withdraw funds from your Baanx account to your Ledger wallet address.",
     continue: "Continue",
   },
-  onAssetPress: jest.fn(),
-  onDialogClose: jest.fn(),
-  onTopUpPress: jest.fn(),
-  onWithdrawPress: jest.fn(),
-  onWithdrawClose: jest.fn(),
-  onShowHistoryPress: jest.fn(),
-  onWithdrawContinue: jest.fn(),
-  onManagePress: jest.fn(),
+  onManageOpen: jest.fn(),
+  onManageClose: jest.fn(),
   onAddAssetPress: jest.fn(),
   onMoveAsset: jest.fn(),
   reorderingAssetIds: new Set(),
 };
 
-const detailsOpen: CardAssetsViewModel = {
-  ...ready,
-  dialogState: "details",
-  selectedAsset: usdc,
-  formatBalance,
-};
+const withBalance: CardAssetsViewModel = { ...ready, formatBalance };
+
+async function openDetails(viewModel: CardAssetsViewModel) {
+  const user = userEvent.setup();
+  render(<CardAssetsView {...viewModel} />, { wrapper: I18nWrapper });
+  await user.click(screen.getByTestId("card-asset-w-usdc"));
+}
 
 describe("CardAssetsView (web)", () => {
   afterEach(() => {
@@ -138,14 +131,11 @@ describe("CardAssetsView (web)", () => {
     expect(screen.queryByText(CARD_ASSETS_COPY.error)).not.toBeInTheDocument();
   });
 
-  it("should keep AmountDisplay loading while the counter value is still missing", () => {
-    render(
-      <CardAssetsView
-        {...detailsOpen}
-        selectedAsset={{ ...usdc, countervalue: null, countervalueAmount: null }}
-      />,
-      { wrapper: I18nWrapper },
-    );
+  it("should keep AmountDisplay loading while the counter value is still missing", async () => {
+    await openDetails({
+      ...withBalance,
+      rows: [{ ...usdc, countervalue: null, countervalueAmount: null }],
+    });
 
     expect(screen.getByTestId("card-asset-details-amount")).toBeVisible();
     expect(screen.getByTestId("card-asset-details-amount-display")).toHaveAttribute(
@@ -154,8 +144,8 @@ describe("CardAssetsView (web)", () => {
     );
   });
 
-  it("should drop AmountDisplay loading once the counter value lands", () => {
-    render(<CardAssetsView {...detailsOpen} />, { wrapper: I18nWrapper });
+  it("should drop AmountDisplay loading once the counter value lands", async () => {
+    await openDetails(withBalance);
 
     expect(screen.getByTestId("card-asset-details-amount")).toBeVisible();
     expect(screen.getByTestId("card-asset-details-amount-display")).not.toHaveAttribute(
@@ -164,8 +154,8 @@ describe("CardAssetsView (web)", () => {
     );
   });
 
-  it("should drop the transactions header for Card's empty state when the asset has none", () => {
-    render(<CardAssetsView {...detailsOpen} />, { wrapper: I18nWrapper });
+  it("should drop the transactions header for Card's empty state when the asset has none", async () => {
+    await openDetails(withBalance);
 
     expect(screen.queryByText(CARD_ASSETS_COPY.transactions)).not.toBeInTheDocument();
     expect(screen.getByTestId("card-asset-details-transactions-empty")).toHaveTextContent(
@@ -187,25 +177,26 @@ describe("CardAssetsView (web)", () => {
     expect(screen.getByRole("tooltip")).toHaveTextContent(CARD_ASSETS_COPY.info);
   });
 
-  it("should ask the host to manage assets when Manage is pressed", async () => {
+  it("should start tracking manage when Manage is pressed", async () => {
     const user = userEvent.setup();
-    const onManagePress = jest.fn();
-    render(<CardAssetsView {...ready} onManagePress={onManagePress} />, { wrapper: I18nWrapper });
+    const onManageOpen = jest.fn();
+    render(<CardAssetsView {...ready} onManageOpen={onManageOpen} />, { wrapper: I18nWrapper });
 
     await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
 
-    expect(onManagePress).toHaveBeenCalledTimes(1);
+    expect(onManageOpen).toHaveBeenCalledTimes(1);
   });
 
   // dnd-kit owns the actual drag/keyboard-reorder mechanics (and its own accessibility
   // announcements) once a row's handle is rendered — simulating its real pointer/keyboard
   // geometry in jsdom would just be re-testing the library, not our code. This only checks that
   // every row gets a properly labeled handle to hand off to it.
-  it("should give every managed asset a labeled reorder handle", () => {
+  it("should give every managed asset a labeled reorder handle", async () => {
+    const user = userEvent.setup();
     const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
-    render(<CardAssetsView {...ready} dialogState="manage" rows={[usdc, bitcoin]} />, {
-      wrapper: I18nWrapper,
-    });
+    render(<CardAssetsView {...ready} rows={[usdc, bitcoin]} />, { wrapper: I18nWrapper });
+
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
 
     expect(screen.getByRole("button", { name: "Reorder USD Coin" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Reorder Bitcoin" })).toBeVisible();

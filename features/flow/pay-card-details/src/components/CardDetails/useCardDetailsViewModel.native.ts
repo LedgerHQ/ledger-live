@@ -2,7 +2,6 @@ import { useState } from "react";
 import type { PayCardTransaction } from "@domain/api-card-management";
 import { useCardAssetsViewModel, type CardAssetRow } from "@features/flow-pay-card-assets";
 import { transactionClickedProperties } from "@features/flow-pay-card-transactions";
-import type { CardTransactionItem } from "@features/flow-pay-card-transactions";
 import { getWalletPlatform } from "@features/flow-pay-card-widget/native";
 import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
@@ -24,7 +23,7 @@ export function useCardDetailsViewModel({
   const { t } = useTranslation();
   const { trackButtonClicked, trackTransactionClicked } = usePayAnalyticsContext();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const { route, goTo, goBack } = useCardDetailsNavigation();
+  const { route, goTo, goBack, reset } = useCardDetailsNavigation();
   const assetsViewModel = useCardAssetsViewModel(assets);
   const freezeViewModel = useFreezeCardViewModel(goBack);
   const moreViewModel = useMoreViewModel(cardSettingsActions);
@@ -45,32 +44,22 @@ export function useCardDetailsViewModel({
   };
 
   const onAssetPress = (asset: CardAssetRow) => {
-    assetsViewModel.onAssetPress(asset);
-    goTo({ name: "assetDetails" });
+    goTo({ name: "assetDetails", asset });
   };
 
   const onManageAssetsPress = () => {
-    assetsViewModel.onManagePress();
+    assetsViewModel.onManageOpen();
     goTo({ name: "assetsManage" });
   };
 
-  const onAssetWithdrawPress = () => {
-    assetsViewModel.onWithdrawPress();
-    goTo({ name: "assetWithdraw" });
+  const onAssetTopUp = (asset: CardAssetRow) => {
+    assetsViewModel.onTopUp?.(asset);
+    reset();
   };
 
-  const onAssetTransactionPress = (transaction: CardTransactionItem) => {
-    goTo({ name: "assetTransaction", transaction });
-  };
-
-  const onAssetHistoryPress = () => {
-    assetsViewModel.onShowHistoryPress();
-    goBack();
-  };
-
-  const onAssetWithdrawContinue = () => {
-    assetsViewModel.onWithdrawContinue();
-    goBack();
+  const onAssetWithdrawContinue = (asset: CardAssetRow) => {
+    assetsViewModel.onWithdraw?.(asset);
+    reset();
   };
 
   const onAddToWalletPress = () => {
@@ -83,33 +72,20 @@ export function useCardDetailsViewModel({
 
   const openSheet = () => {
     trackButtonClicked({ button: "card_details", page: "Pay" });
-    goBack();
+    reset();
     setIsSheetOpen(true);
   };
 
   const closeSheet = () => {
     freezeViewModel.onClose();
     moreViewModel?.onSheetClose();
-    goBack();
-    assetsViewModel.onDialogClose();
+    if (route.name === "assetsManage") assetsViewModel.onManageClose();
+    reset();
     setIsSheetOpen(false);
   };
 
   const onSceneBack = () => {
-    if (route.name === "assetWithdraw") {
-      goTo({ name: "assetDetails" });
-      return;
-    }
-
-    if (route.name === "assetTransaction") {
-      goTo({ name: "assetDetails" });
-      return;
-    }
-
-    if (route.name === "assetDetails" || route.name === "assetsManage") {
-      assetsViewModel.onDialogClose();
-    }
-
+    if (route.name === "assetsManage") assetsViewModel.onManageClose();
     goBack();
   };
 
@@ -117,19 +93,19 @@ export function useCardDetailsViewModel({
     ...assetsViewModel,
     onAssetPress,
     onManagePress: onManageAssetsPress,
-    onWithdrawPress: onAssetWithdrawPress,
-    onShowHistoryPress: onAssetHistoryPress,
-    onWithdrawContinue: onAssetWithdrawContinue,
   };
+
+  // Routes keep the asset as pressed; prefer the live row so balances stay current.
+  const routeAsset =
+    route.name === "assetDetails" || route.name === "assetWithdraw"
+      ? (assetsViewModel.rows.find(row => row.id === route.asset.id) ?? route.asset)
+      : null;
 
   // The sheet chrome owns the title slot between back and close, the way the desktop dialog
   // header carries the asset name and its ticker.
   const header =
-    route.name === "assetDetails" && assetsViewModel.selectedAsset
-      ? {
-          title: assetsViewModel.selectedAsset.name,
-          description: assetsViewModel.selectedAsset.ticker,
-        }
+    route.name === "assetDetails" && routeAsset
+      ? { title: routeAsset.name, description: routeAsset.ticker }
       : {};
 
   const scene: CardDetailsSceneProps = {
@@ -156,13 +132,26 @@ export function useCardDetailsViewModel({
     transaction:
       route.name === "transaction" ? { transaction: route.transaction, formatters } : null,
     assetDetails:
-      route.name === "assetDetails"
+      route.name === "assetDetails" && routeAsset
         ? {
-            viewModel: assetSceneViewModel,
-            onTransactionPress: onAssetTransactionPress,
+            asset: routeAsset,
+            transactions: assetsViewModel.getRecentTransactions(routeAsset),
+            copy: assetsViewModel.dialogCopy,
+            formatBalance: assetsViewModel.formatBalance,
+            formatters: assetsViewModel.formatters,
+            onTopUp: () => onAssetTopUp(routeAsset),
+            onWithdraw: () => goTo({ name: "assetWithdraw", asset: routeAsset }),
+            onShowHistory: () => assetsViewModel.onShowHistory?.(routeAsset),
+            onTransactionPress: transaction => goTo({ name: "assetTransaction", transaction }),
           }
         : null,
-    assetWithdraw: route.name === "assetWithdraw" ? assetSceneViewModel : null,
+    assetWithdraw:
+      route.name === "assetWithdraw" && routeAsset
+        ? {
+            copy: assetsViewModel.dialogCopy,
+            onContinue: () => onAssetWithdrawContinue(routeAsset),
+          }
+        : null,
     assetsManage: route.name === "assetsManage" ? { viewModel: assetSceneViewModel } : null,
     assetTransaction:
       route.name === "assetTransaction"

@@ -1,4 +1,3 @@
-export * from "./CardAssets";
 export * from "./CardAssetsView.native";
 export * from "./CardAssetDetailsDrawer.native";
 export * from "./CardAssetDetailsWithdrawDrawer.native";

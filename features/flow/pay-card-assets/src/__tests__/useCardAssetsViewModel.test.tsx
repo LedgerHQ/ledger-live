@@ -5,6 +5,7 @@ import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 import type { CardAssetsProps } from "../types";
 import { I18nWrapper } from "./i18nWrapper";
+import { useCardAssetDialogs } from "../useCardAssetDialogs.web";
 import { formatCardAssetCryptoAmount, useCardAssetsViewModel } from "../useCardAssetsViewModel";
 
 const mockUseIsCardSignedIn = jest.fn();
@@ -84,6 +85,22 @@ function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
         onAddAsset: jest.fn(),
         ...overrides,
       }),
+    { wrapper: Wrapper },
+  );
+}
+
+function renderDialogs(overrides: Partial<CardAssetsProps> = {}) {
+  return renderHook(
+    () => {
+      const viewModel = useCardAssetsViewModel({
+        currencies: CURRENCIES,
+        getCounterValue,
+        formatCountervalue,
+        onAddAsset: jest.fn(),
+        ...overrides,
+      });
+      return { viewModel, dialogs: useCardAssetDialogs(viewModel) };
+    },
     { wrapper: Wrapper },
   );
 }
@@ -216,9 +233,9 @@ describe("useCardAssetsViewModel", () => {
         },
       ],
     });
-    const { result, rerender } = renderViewModel();
+    const { result, rerender } = renderDialogs();
 
-    act(() => result.current.onAssetPress(result.current.rows[0]));
+    act(() => result.current.dialogs.onAssetPress(result.current.viewModel.rows[0]));
     stubWallets({
       wallets: [
         {
@@ -233,15 +250,15 @@ describe("useCardAssetsViewModel", () => {
     });
     rerender();
 
-    expect(result.current.selectedAsset?.cryptoAmount).toBe("250.80 USDC");
+    expect(result.current.dialogs.selectedAsset?.cryptoAmount).toBe("250.80 USDC");
   });
 
   it("should open the manage dialog when manage is pressed", () => {
-    const { result } = renderViewModel();
+    const { result } = renderDialogs();
 
-    act(() => result.current.onManagePress());
+    act(() => result.current.dialogs.onManagePress());
 
-    expect(result.current.dialogState).toBe("manage");
+    expect(result.current.dialogs.dialogState).toBe("manage");
   });
 
   it("should send every linked wallet in its new order when an asset is reordered", async () => {
@@ -286,7 +303,7 @@ describe("useCardAssetsViewModel", () => {
     });
   });
 
-  it("should track the changed debit order when the manage dialog closes", async () => {
+  it("should track the changed debit order when manage closes", async () => {
     stubWallets({
       wallets: [
         {
@@ -307,9 +324,9 @@ describe("useCardAssetsViewModel", () => {
     });
     const { result } = renderViewModel();
 
-    act(() => result.current.onManagePress());
+    act(() => result.current.onManageOpen());
     await act(() => result.current.onMoveAsset("w-usdt", 0));
-    act(() => result.current.onDialogClose());
+    act(() => result.current.onManageClose());
 
     expect(track).toHaveBeenCalledWith("debit_order_changed", {
       asset1: "USDT",
@@ -318,6 +335,15 @@ describe("useCardAssetsViewModel", () => {
       asset4: null,
       asset5: null,
     });
+  });
+
+  it("should not track the debit order when manage closes unchanged", () => {
+    const { result } = renderViewModel();
+
+    act(() => result.current.onManageOpen());
+    act(() => result.current.onManageClose());
+
+    expect(track).not.toHaveBeenCalledWith("debit_order_changed", expect.anything());
   });
 
   it("should hand add asset through to the host", () => {
@@ -353,15 +379,15 @@ describe("useCardAssetsViewModel", () => {
     });
     const onTopUp = jest.fn();
 
-    const { result } = renderViewModel({ onTopUp });
+    const { result } = renderDialogs({ onTopUp });
 
-    act(() => result.current.onAssetPress(result.current.rows[0]));
-    expect(result.current.dialogState).toBe("details");
+    act(() => result.current.dialogs.onAssetPress(result.current.viewModel.rows[0]));
+    expect(result.current.dialogs.dialogState).toBe("details");
 
-    act(() => result.current.onTopUpPress());
+    act(() => result.current.dialogs.onTopUpPress());
 
     expect(onTopUp).toHaveBeenCalledWith(expect.objectContaining({ currency: "usdc" }));
-    expect(result.current.dialogState).toBe("closed");
+    expect(result.current.dialogs.dialogState).toBe("closed");
   });
 
   it("should omit the add asset action without assets props", () => {

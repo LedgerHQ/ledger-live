@@ -31,6 +31,10 @@ price adds nothing to it.
 
 ## Dialogs and history
 
+On web, `useCardAssetDialogs` holds which dialog is open and the selected asset. Mobile keeps no
+such state here: the Card details sheet routes each asset scene and carries the asset in its route.
+Both call `onManageOpen` / `onManageClose` so a changed debit order is tracked the same way.
+
 Tapping a row opens `CardAssetDetailsDialog`; "Withdraw" opens `CardAssetDetailsWithdrawDialog` on
 top of it, and closing the withdraw dialog returns to the details one.
 
@@ -49,9 +53,10 @@ which the `asset` param scopes to one asset. There is no asset-specific history 
 
 ## MVVM
 
-- `useCardAssetsViewModel` (private) reads linked wallets and builds rows.
+- `useCardAssetsViewModel` reads linked wallets and builds rows. It holds no dialog state.
+- `useCardAssetDialogs.web.ts` owns the web dialog state on top of it.
 - `CardAssetsView.web.tsx` / `CardAssetsView.native.tsx` are the presentational views.
-- `CardAssets` wires the hook to the platform view.
+- `CardAssets` (web) wires the hook to the web view.
 
 ## Structure
 
@@ -61,10 +66,11 @@ Every `index.*` is a pure barrel (`export *` only).
 pay-card-assets/
 ├── package.json
 └── src/
-    ├── CardAssets.tsx
+    ├── CardAssets.web.tsx
     ├── CardAssetsView.web.tsx
     ├── CardAssetsView.native.tsx
     ├── useCardAssetsViewModel.ts
+    ├── useCardAssetDialogs.web.ts
     ├── types.ts
     ├── index.ts
     └── index.native.ts

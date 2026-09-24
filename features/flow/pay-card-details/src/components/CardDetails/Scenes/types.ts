@@ -1,5 +1,11 @@
 import type { PayCardTransaction } from "@domain/api-card-management";
-import type { CardAssetsProps, CardAssetsViewModel } from "@features/flow-pay-card-assets";
+import type {
+  CardAssetDialogCopy,
+  CardAssetRow,
+  CardAssetsListProps,
+  CardAssetsProps,
+  CardAssetsViewModel,
+} from "@features/flow-pay-card-assets";
 import type {
   CardTransactionFormatters,
   CardTransactionItem,
@@ -10,7 +16,7 @@ import type { CardDetailsRoute } from "./navigation";
 
 export type OverviewSceneProps = Readonly<{
   cardVisual?: CardVisualProps;
-  assetsViewModel: CardAssetsViewModel | null;
+  assetsViewModel: CardAssetsListProps | null;
   /** The host's pricing, which the reward banner needs for a counter-value. */
   assets?: CardAssetsProps;
   freezeViewModel: FreezeViewModel;
@@ -43,8 +49,20 @@ export type AddToWalletSceneProps = Readonly<{
 }>;
 
 export type AssetDetailsSceneProps = Readonly<{
-  viewModel: CardAssetsViewModel;
+  asset: CardAssetRow;
+  transactions: readonly CardTransactionItem[];
+  copy: CardAssetDialogCopy;
+  formatBalance?: CardAssetsViewModel["formatBalance"];
+  formatters?: CardTransactionFormatters;
+  onTopUp: () => void;
+  onWithdraw: () => void;
+  onShowHistory: () => void;
   onTransactionPress: (transaction: CardTransactionItem) => void;
+}>;
+
+export type AssetWithdrawSceneProps = Readonly<{
+  copy: CardAssetDialogCopy;
+  onContinue: () => void;
 }>;
 
 export type AssetsManageSceneProps = Readonly<{
@@ -71,7 +89,7 @@ export type CardDetailsSceneProps = Readonly<{
   addToWallet: AddToWalletSceneProps;
   transaction: TransactionSceneProps | null;
   assetDetails: AssetDetailsSceneProps | null;
-  assetWithdraw: CardAssetsViewModel | null;
+  assetWithdraw: AssetWithdrawSceneProps | null;
   assetsManage: AssetsManageSceneProps | null;
   assetTransaction: AssetTransactionSceneProps | null;
 }>;
