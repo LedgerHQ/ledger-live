@@ -61,7 +61,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
-    "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/live-signer-zcash": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",

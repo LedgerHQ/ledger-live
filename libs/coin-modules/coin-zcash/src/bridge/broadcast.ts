@@ -1,9 +1,11 @@
 import { log } from "@ledgerhq/logs";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { ZCASH_LOG_TYPE } from "../constants";
+import type { ZcashContext } from "../config";
+import { ZCASH_LOG_TYPE, zainoEndpoint } from "../constants";
 import type { BtcOperationExtra, Transaction, ZcashAccount } from "../types/bridge";
 import { getWalletAccount } from "./getWalletAccount";
+import { bindExplorer } from "./explorer";
 import { broadcast as broadcastLogic } from "../logic/transaction/broadcast";
 import { releaseReservation } from "./note-reservation";
 
@@ -21,34 +23,40 @@ import { releaseReservation } from "./note-reservation";
  * for it, and the user is expected to retry with those very notes, so a failure
  * hands them back instead of waiting for the reservation to age out.
  */
-export const broadcast: AccountBridge<Transaction, ZcashAccount>["broadcast"] = async ({
-  account,
-  signedOperation: { signature, operation },
-}) => {
-  const inputRefs = (operation.extra as BtcOperationExtra | undefined)?.inputRefs ?? [];
+export const buildBroadcast =
+  (context: ZcashContext): AccountBridge<Transaction, ZcashAccount>["broadcast"] =>
+  async ({ account, signedOperation: { signature, operation } }) => {
+    const config = await context.config(account.currency.id);
+    const inputRefs = (operation.extra as BtcOperationExtra | undefined)?.inputRefs ?? [];
 
-  let txid: string;
-  try {
-    txid = await broadcastLogic(
-      signature,
-      inputRefs.length > 0
-        ? {
-            inputRefs,
-            fetchUtxoTx: hash => getWalletAccount(account).xpub.explorer.fetchUtxoTx(hash),
-          }
-        : undefined,
-    );
-  } catch (error) {
-    // No operationHash here: on this path it's the txid of a transaction that
-    // never reached the chain -- exactly the "digest of the signed transaction"
-    // artifact this feature must not log (see logic/transaction/broadcast.ts's
-    // own "broadcast failed" line, already in the same log stream, for context).
-    log(ZCASH_LOG_TYPE, "released note reservation after broadcast failure", {
-      accountId: account.id,
-    });
-    releaseReservation(account.id, operation.hash);
-    throw error;
-  }
+    let txid: string;
+    try {
+      txid = await broadcastLogic(
+        zainoEndpoint(config),
+        signature,
+        inputRefs.length > 0
+          ? {
+              inputRefs,
+              fetchUtxoTx: hash =>
+                bindExplorer(
+                  getWalletAccount(account),
+                  account.currency,
+                  config.explorer.url,
+                ).xpub.explorer.fetchUtxoTx(hash),
+            }
+          : undefined,
+      );
+    } catch (error) {
+      // No operationHash here: on this path it's the txid of a transaction that
+      // never reached the chain -- exactly the "digest of the signed transaction"
+      // artifact this feature must not log (see logic/transaction/broadcast.ts's
+      // own "broadcast failed" line, already in the same log stream, for context).
+      log(ZCASH_LOG_TYPE, "released note reservation after broadcast failure", {
+        accountId: account.id,
+      });
+      releaseReservation(account.id, operation.hash);
+      throw error;
+    }
 
-  return patchOperationWithHash(operation, txid);
-};
+    return patchOperationWithHash(operation, txid);
+  };

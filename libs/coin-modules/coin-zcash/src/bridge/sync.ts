@@ -50,11 +50,14 @@ import {
 } from "./operations";
 import {
   DEFAULT_ZCASH_PRIVATE_INFO,
-  getZainoEndpoint,
   ZCASH_AUTO_SYNC_TIMEOUT_MS,
   ZCASH_LOG_TYPE,
   ZCASH_XPUB_VERSION,
+  zainoEndpoint,
+  type ZainoEndpoint,
 } from "../constants";
+import type { ZcashContext } from "../config";
+import { bindExplorer } from "./explorer";
 import { getZCashClient } from "../logic/engineClient";
 import { resolveTransactionDetails, type ResolvedTransactions } from "./transaction-details";
 import { composeXpub } from "../signer/xpub";
@@ -103,10 +106,11 @@ export const fromWalletUtxo = (
  * recoverable; only the payees are not, since they are encrypted to it.
  */
 async function recoverTransactionDetails(
+  endpoint: ZainoEndpoint,
   transactions: TX[],
   account: ZcashAccount | undefined,
 ): Promise<ResolvedTransactions> {
-  const client = await getZCashClient(getZainoEndpoint());
+  const client = await getZCashClient(endpoint);
 
   const transactionDetails = client.transactionDetails;
   if (!transactionDetails) {
@@ -431,8 +435,10 @@ function mapTxToOperations(
 export async function performTransparentSync(
   info: AccountShapeInfo<ZcashAccount>,
   signerContext: SignerContext,
+  context: ZcashContext,
 ): Promise<Partial<ZcashAccount>> {
   const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
+  const config = await context.config(currency.id);
 
   const rootPath = derivationPath.split("/", 2).join("/");
   const accountPath = `${rootPath}/${index}'`;
@@ -457,19 +463,20 @@ export async function performTransparentSync(
   const walletNetwork = toWalletNetwork(currency.id);
   const walletDerivationMode = toWalletDerivationMode(derivationMode);
 
-  const walletAccount =
-    initialAccount?.bitcoinResources?.walletAccount ||
-    (await wallet.generateAccount(
-      {
-        xpub,
-        path: rootPath,
-        index,
-        currency: <Currency>currency.id,
-        network: walletNetwork,
-        derivationMode: walletDerivationMode,
-      },
-      toWalletBtcCurrency(currency),
-    ));
+  const existingWalletAccount = initialAccount?.bitcoinResources?.walletAccount;
+  const walletAccount = existingWalletAccount
+    ? bindExplorer(existingWalletAccount, currency, config.explorer.url)
+    : await wallet.generateAccount(
+        {
+          xpub,
+          path: rootPath,
+          index,
+          currency: <Currency>currency.id,
+          network: walletNetwork,
+          derivationMode: walletDerivationMode,
+        },
+        toWalletBtcCurrency(currency, config.explorer.url),
+      );
 
   const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
   const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
@@ -494,7 +501,7 @@ export async function performTransparentSync(
   // the explorer's answer must not be lost because that reach failed.
   let resolved: ResolvedTransactions | undefined;
   try {
-    resolved = await recoverTransactionDetails(transactions, initialAccount);
+    resolved = await recoverTransactionDetails(zainoEndpoint(config), transactions, initialAccount);
   } catch (error) {
     log(ZCASH_LOG_TYPE, "keeping the explorer's view of the transactions", { error });
   }
@@ -606,9 +613,10 @@ export async function performTransparentSync(
 function createTransparentSyncObservable(
   info: AccountShapeInfo<ZcashAccount>,
   signerContext: SignerContext,
+  context: ZcashContext,
 ): Observable<Partial<ZcashAccount>> {
   return new Observable<Partial<ZcashAccount>>(subscriber => {
-    performTransparentSync(info, signerContext)
+    performTransparentSync(info, signerContext, context)
       .then(result => {
         subscriber.next(result);
         subscriber.complete();
@@ -683,6 +691,7 @@ async function resolveStartBlockHeight(
 export const zcashSyncShielded = (
   acc: AccountShapeInfo<ZcashAccount>,
   _syncConfig: SyncConfig,
+  endpoint: ZainoEndpoint,
 ): Observable<ShieldedSyncResult> =>
   defer(() => {
     const viewingKey = acc.initialAccount?.privateInfo?.ufvk;
@@ -717,7 +726,7 @@ export const zcashSyncShielded = (
       ]),
     ];
 
-    return from(getZCashClient(getZainoEndpoint())).pipe(
+    return from(getZCashClient(endpoint)).pipe(
       mergeMap(client => {
         return from(
           resolveStartBlockHeight(lastProcessedBlock, birthday, ts => client.findBlockHeight(ts)),
@@ -1008,6 +1017,7 @@ function createShieldedSyncObservable(
 export function buildExtraSyncObservable(
   info: AccountShapeInfo<ZcashAccount>,
   syncConfig: SyncConfig,
+  context: ZcashContext,
 ): Observable<Partial<ZcashAccount>> | undefined {
   const syncType = syncConfig.syncType ?? 0;
   const includesShielded = (syncType & SYNC_TYPE_SHIELDED) !== 0;
@@ -1037,7 +1047,9 @@ export function buildExtraSyncObservable(
 
   if (!ufvkIsPresent || !syncStateIsEnabled) return undefined;
 
-  const shieldedSyncRaw = zcashSyncShielded(info, syncConfig);
+  const shieldedSyncRaw = from(context.config(info.currency.id)).pipe(
+    mergeMap(config => zcashSyncShielded(info, syncConfig, zainoEndpoint(config))),
+  );
   return createShieldedSyncObservable(info, shieldedSyncRaw).pipe(
     timeout(ZCASH_AUTO_SYNC_TIMEOUT_MS),
     catchError(error => {
@@ -1143,6 +1155,7 @@ export function buildSyncObservables(
   info: AccountShapeInfo<ZcashAccount>,
   syncConfig: SyncConfig,
   signerContext: SignerContext,
+  context: ZcashContext,
 ): { syncs: Observable<Partial<ZcashAccount>>[]; syncType: number } {
   const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT;
   const syncs: Observable<Partial<ZcashAccount>>[] = [];
@@ -1155,13 +1168,13 @@ export function buildSyncObservables(
 
   if (syncType & SYNC_TYPE_TRANSPARENT) {
     syncs.push(
-      createTransparentSyncObservable(info, signerContext).pipe(
+      createTransparentSyncObservable(info, signerContext, context).pipe(
         map(result => reconcileLegOperations(latest, "transparent", result)),
       ),
     );
   }
 
-  const extraSync = buildExtraSyncObservable(info, syncConfig);
+  const extraSync = buildExtraSyncObservable(info, syncConfig, context);
   if (extraSync) {
     syncs.push(extraSync.pipe(map(result => reconcileLegOperations(latest, "shielded", result))));
   }
@@ -1171,10 +1184,11 @@ export function buildSyncObservables(
 
 export function makeGetAccountShape(
   signerContext: SignerContext,
+  context: ZcashContext,
 ): GetAccountShapeStream<ZcashAccount> {
   return (info: AccountShapeInfo<ZcashAccount>, syncConfig: SyncConfig) =>
     new Observable(o => {
-      const { syncs } = buildSyncObservables(info, syncConfig, signerContext);
+      const { syncs } = buildSyncObservables(info, syncConfig, signerContext, context);
 
       if (syncs.length === 0) {
         o.complete();

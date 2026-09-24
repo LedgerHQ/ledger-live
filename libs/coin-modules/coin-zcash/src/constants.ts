@@ -1,65 +1,39 @@
 import { BigNumber } from "bignumber.js";
+import type { ZcashCoinConfig } from "./config";
 import type { ZcashPrivateInfo } from "./network/types";
 
 export const ZCASH_LOG_TYPE = "zcash";
 export const ZCASH_XPUB_VERSION = 0x0488b21e;
-export const ZCASH_GRPC_URL_TESTNET = "https://testnet.zec.rocks";
-export const ZCASH_GRPC_URL_MAINNET = "https://zec-indexer.coin.ledger-test.com";
 
 // ── Zaino gRPC endpoint resolution ─────────────────────────────────────────
 //
 // The shielded sync path (bridge/sync.ts) and the shielded send path
-// (bridge/signOperation.ts) MUST target the same endpoint and network.
-// `setZainoGrpcUrl` lets callers override the default mainnet endpoint (e.g.
-// point at testnet or a local node). Both paths resolve through
-// `getZainoEndpoint()` so an override can never end up applied to sync but
-// silently ignored when building/broadcasting a send.
+// (bridge/signOperation.ts) MUST target the same endpoint and network. Both
+// derive it with `zainoEndpoint` from the coin config resolved through the
+// bridge's context (`zaino.url`), so one config change reaches both.
 
 export type ZcashNetwork = "mainnet" | "testnet";
 
-let zainoGrpcUrlOverride: string | null = null;
-let zainoNetworkOverride: ZcashNetwork | null = null;
+export type ZainoEndpoint = { grpcUrl: string; network: ZcashNetwork };
 
 const inferZainoNetwork = (url: string): ZcashNetwork =>
-  url === ZCASH_GRPC_URL_TESTNET || /testnet/i.test(url) ? "testnet" : "mainnet";
+  /testnet/i.test(url) ? "testnet" : "mainnet";
 
-/**
- * Override the Zaino gRPC URL used for shielded sync and shielded sends.
- * Pass `null` to reset to the default mainnet endpoint. When `network` is
- * omitted it is inferred from the URL (the testnet endpoint → "testnet",
- * anything else → "mainnet"); pass it explicitly for custom endpoints whose
- * network can't be inferred from the hostname.
- */
-export const setZainoGrpcUrl = (url: string | null, network?: ZcashNetwork): void => {
-  zainoGrpcUrlOverride = url;
-  // A null URL resets to the mainnet default, so any network override (whether
-  // passed here or set by a previous call) would leave the URL and network
-  // inconsistent. Only keep a network override when a URL override is set.
-  zainoNetworkOverride = url === null ? null : (network ?? null);
+/** Zaino endpoint (URL + network) shared by shielded sync and sends. */
+export const zainoEndpoint = (config: ZcashCoinConfig): ZainoEndpoint => {
+  const grpcUrl = config.zaino.url;
+  return { grpcUrl, network: inferZainoNetwork(grpcUrl) };
 };
-
-/** Effective Zaino gRPC URL (override if set, otherwise the mainnet default). */
-export const getZainoGrpcUrl = (): string => zainoGrpcUrlOverride ?? ZCASH_GRPC_URL_MAINNET;
-
-/** Effective network, kept consistent with {@link getZainoGrpcUrl}. */
-export const getZainoNetwork = (): ZcashNetwork =>
-  zainoNetworkOverride ?? inferZainoNetwork(getZainoGrpcUrl());
-
-/** Effective endpoint (URL + network) shared by shielded sync and sends. */
-export const getZainoEndpoint = (): { grpcUrl: string; network: ZcashNetwork } => ({
-  grpcUrl: getZainoGrpcUrl(),
-  network: getZainoNetwork(),
-});
 
 /**
  * Strips anything a log line or an error-context extraction (which can reach
- * Datadog, unlike `@ledgerhq/logs`) shouldn't carry: `setZainoGrpcUrl` lets a
- * caller point this at a custom or local node, so nothing guarantees the
- * endpoint never carries userinfo or a token in its query string -- or in its
- * path (e.g. a `/token/<value>`-style gateway route). `origin` never includes
- * credentials by spec and is kept as the only diagnostic signal; both known
- * production endpoints (ZCASH_GRPC_URL_MAINNET/TESTNET) are bare origins with
- * no pathname today, so this drops nothing currently in use.
+ * Datadog, unlike `@ledgerhq/logs`) shouldn't carry: the endpoint comes from a
+ * remote coin config or points at a custom or local node, so nothing guarantees
+ * it never carries userinfo or a token in its query string -- or in its path
+ * (e.g. a `/token/<value>`-style gateway route). `origin` never includes
+ * credentials by spec and is kept as the only diagnostic signal; the production
+ * endpoint is a bare origin with no pathname today, so this drops nothing
+ * currently in use.
  */
 export const sanitizeEndpointForLog = (url: string): string => {
   try {
