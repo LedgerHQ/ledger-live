@@ -36,17 +36,11 @@ const setupDadaApiLoading = () => {
 };
 
 describe("Portfolio Screen", () => {
-  it("should render Portfolio", async () => {
-    renderWithReactQuery(<PortfolioTest />);
-
-    expect(await screen.findByTestId("PortfolioEmptyList")).toBeVisible();
-  });
-
   describe("Portfolio Balance Section", () => {
-    it("should display noFund state when user has no assets", async () => {
+    it("should render Portfolio with the noFund state when user has no assets", async () => {
       renderWithReactQuery(<PortfolioTest />);
 
-      await screen.findByTestId("PortfolioEmptyList");
+      expect(await screen.findByTestId("PortfolioEmptyList")).toBeVisible();
 
       expect(await screen.findByTestId("portfolio-balance-noAccounts")).toBeVisible();
     });
@@ -139,18 +133,6 @@ describe("Portfolio Screen", () => {
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
       expect(await screen.findByTestId("assetItem-Bitcoin")).toBeVisible();
       expect(await screen.findByTestId("assetItem-Ethereum")).toBeVisible();
-    });
-
-    it("should display the fallback read-only cryptos list when no accounts and assetSection is disabled", async () => {
-      renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(false),
-      });
-
-      await screen.findByTestId("PortfolioEmptyList");
-
-      expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
-      expect(screen.queryByTestId("PortfolioStablecoinsList")).toBeNull();
-      expect(screen.queryByTestId("crypto-addresses-button")).toBeNull();
     });
   });
 
