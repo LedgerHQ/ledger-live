@@ -8,6 +8,7 @@ import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { getNextSequence } from "../logic/getNextSequence";
 import { Transaction, BoilerplateSigner } from "../types";
+import coinConfig from "../config";
 
 export const buildSignOperation =
   (signerContext: SignerContext<BoilerplateSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -23,7 +24,10 @@ export const buildSignOperation =
             type: "device-signature-requested",
           });
 
-          const nextSequenceNumber = await getNextSequence(account.freshAddress);
+          const nextSequenceNumber = await getNextSequence(
+            coinConfig.getCoinConfig(),
+            account.freshAddress,
+          );
 
           const signature = await signerContext(deviceId, async signer => {
             const { freshAddressPath: derivationPath } = account;

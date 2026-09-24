@@ -1,9 +1,10 @@
 import { Cursor } from "@ledgerhq/coin-module-framework/api/types";
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
+import type { BoilerplateCoinConfig } from "../config";
 import { AccountTxResponse } from "./types";
 
 export const getTransactions = async (
+  config: BoilerplateCoinConfig,
   address: string,
   params: {
     minHeight: number;
@@ -13,7 +14,7 @@ export const getTransactions = async (
   },
 ): Promise<AccountTxResponse["transactions"]> => {
   const { data } = await network<AccountTxResponse>({
-    url: `${getEnv("INDEXER_BOILERPLATE")}/account/${address}/transactions`,
+    url: `${config.infra.INDEXER_BOILERPLATE}/account/${address}/transactions`,
     params,
     method: "GET",
   });

@@ -25,23 +25,30 @@ import { listOperations } from "../logic/listOperations";
 // framework's `withDefaults`, which supplies each omitted capability — so there is nothing to stub
 // here, and `supports()` can tell a caller which ones are real.
 //
-// The caller builds the {@link BoilerplateContext} (config + logger) and passes it to each method (ADR-019).
+// The caller builds the {@link BoilerplateContext} (config + logger) and passes it to each method (ADR-019);
+// every method that reaches the network resolves the config from it and passes it down explicitly.
 export function createApi() {
   return {
-    broadcast: (_context, tx, _options?) => broadcast(tx),
+    broadcast: async (context, tx, _options?) => broadcast(await context.config(), tx),
     combine: (_context, tx, signature, options?) => combine(tx, signature, options?.pubkey),
-    craftTransaction: (_context, transactionIntent, _options?) => craft(transactionIntent),
+    craftTransaction: async (context, transactionIntent, _options?) =>
+      craft(await context.config(), transactionIntent),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-    estimateFees: (_context, transactionIntent, _options?) => estimate(transactionIntent),
+    estimateFees: async (context, transactionIntent, _options?) =>
+      estimate(await context.config(), transactionIntent),
     getBalance: (context, address, options?: BalanceOptions) =>
       rejectBalanceOptions(() => getBalance(context, address), options),
-    lastBlock: _context => lastBlock(),
-    listOperations: (_context, address, options) => listOperations(address, options),
+    lastBlock: async context => lastBlock(await context.config()),
+    listOperations: async (context, address, options) =>
+      listOperations(await context.config(), address, options),
   } satisfies CoinModuleImpl<BoilerplateCoinConfig>;
 }
 
-async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
-  const nextSequenceNumber = await getNextSequence(transactionIntent.sender);
+async function craft(
+  config: BoilerplateCoinConfig,
+  transactionIntent: TransactionIntent,
+): Promise<CraftedTransaction> {
+  const nextSequenceNumber = await getNextSequence(config, transactionIntent.sender);
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
     {
@@ -52,7 +59,10 @@ async function craft(transactionIntent: TransactionIntent): Promise<CraftedTrans
   return { transaction: tx.serializedTransaction };
 }
 
-async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
+async function estimate(
+  config: BoilerplateCoinConfig,
+  transactionIntent: TransactionIntent,
+): Promise<FeeEstimation> {
   const { serializedTransaction } = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -61,7 +71,7 @@ async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstima
     },
   );
 
-  const value = await estimateFees(serializedTransaction);
+  const value = await estimateFees(config, serializedTransaction);
 
   return { value };
 }

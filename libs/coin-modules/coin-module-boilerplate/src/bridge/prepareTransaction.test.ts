@@ -4,6 +4,8 @@ import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getNextSequence } from "../network/node";
 import { Transaction } from "../types";
+import coinConfig from "../config";
+import { mockBoilerplateConfig } from "../test/context";
 import { prepareTransaction } from "./prepareTransaction";
 
 jest.mock("../network/node");
@@ -14,6 +16,10 @@ describe("prepareTransaction", () => {
   let estimateFeesSpy: jest.SpyInstance;
   let getNextSequenceSpy: jest.SpyInstance;
   let craftTransactionSpy: jest.SpyInstance;
+
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => mockBoilerplateConfig);
+  });
 
   beforeEach(() => {
     getNextSequenceSpy = jest.spyOn({ getNextSequence }, "getNextSequence");

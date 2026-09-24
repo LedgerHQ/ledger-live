@@ -412,16 +412,6 @@ const teamCoinIntegration = {
     parser: intParser,
     desc: "define maximum number of utxos to display in CLI",
   },
-  INDEXER_BOILERPLATE: {
-    def: "",
-    parser: stringParser,
-    desc: "Indexer endpoint for the boilerplate coin module",
-  },
-  NODE_BOILERPLATE: {
-    def: "",
-    parser: stringParser,
-    desc: "Node endpoint for the boilerplate coin module",
-  },
 };
 
 export default teamCoinIntegration;

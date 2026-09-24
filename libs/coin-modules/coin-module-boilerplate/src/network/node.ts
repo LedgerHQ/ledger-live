@@ -1,12 +1,16 @@
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import type { BoilerplateCoinConfig } from "../config";
+import { type BoilerplateCoinConfig } from "../config";
 import { SimulationError } from "../types/errors";
 import { AccountInfoResponse, SubmitReponse } from "./types";
 
+const getNodeUrl = (config: BoilerplateCoinConfig): string => config.infra.NODE_BOILERPLATE;
+
 // txPayload needs to be unsigned
-export const simulate = async (serializedTx: string): Promise<number> => {
-  const url = `${getEnv("NODE_BOILERPLATE")}/simulate`;
+export const simulate = async (
+  config: BoilerplateCoinConfig,
+  serializedTx: string,
+): Promise<number> => {
+  const url = `${getNodeUrl(config)}/simulate`;
   const { data } = await network({
     url,
     method: "POST",
@@ -21,8 +25,11 @@ export const simulate = async (serializedTx: string): Promise<number> => {
 };
 
 // can be called nonce or sequence
-export const getNextSequence = async (address: string): Promise<number> => {
-  const url = `${getEnv("NODE_BOILERPLATE")}/${address}/sequence`;
+export const getNextSequence = async (
+  config: BoilerplateCoinConfig,
+  address: string,
+): Promise<number> => {
+  const url = `${getNodeUrl(config)}/${address}/sequence`;
   try {
     const { data } = await network({
       url,
@@ -34,8 +41,8 @@ export const getNextSequence = async (address: string): Promise<number> => {
   }
 };
 
-export const getBlockHeight = async (): Promise<number> => {
-  const url = `${getEnv("NODE_BOILERPLATE")}/blockheight`;
+export const getBlockHeight = async (config: BoilerplateCoinConfig): Promise<number> => {
+  const url = `${getNodeUrl(config)}/blockheight`;
   const { data } = await network({
     url,
     method: "GET",
@@ -43,12 +50,14 @@ export const getBlockHeight = async (): Promise<number> => {
   return data.blockHeight;
 };
 
-export const getLastBlock = async (): Promise<{
+export const getLastBlock = async (
+  config: BoilerplateCoinConfig,
+): Promise<{
   blockHeight: number;
   blockHash: string;
   timestamp: number;
 }> => {
-  const url = `${getEnv("NODE_BOILERPLATE")}/block/current`;
+  const url = `${getNodeUrl(config)}/block/current`;
   const { data } = await network({
     url,
     method: "GET",
@@ -56,8 +65,11 @@ export const getLastBlock = async (): Promise<{
   return data;
 };
 
-export const submit = async (signedTx: string): Promise<SubmitReponse> => {
-  const url = `${getEnv("NODE_BOILERPLATE")}/submit`;
+export const submit = async (
+  config: BoilerplateCoinConfig,
+  signedTx: string,
+): Promise<SubmitReponse> => {
+  const url = `${getNodeUrl(config)}/submit`;
   const { data } = await network<SubmitReponse>({
     url,
     method: "GET",

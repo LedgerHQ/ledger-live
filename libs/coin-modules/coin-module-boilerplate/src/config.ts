@@ -7,6 +7,10 @@ import buildCoinConfig, {
 export type BoilerplateConfig = {
   nodeUrl: string;
   minReserve: number;
+  infra: {
+    INDEXER_BOILERPLATE: string;
+    NODE_BOILERPLATE: string;
+  };
 };
 
 export type BoilerplateCoinConfig = CurrencyConfig & BoilerplateConfig;

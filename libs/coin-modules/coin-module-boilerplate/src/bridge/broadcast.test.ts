@@ -2,11 +2,17 @@ import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operat
 import { Account, BroadcastArg } from "@ledgerhq/types-live";
 import { broadcast as broadcastLogic } from "../logic/broadcast";
 import { broadcast } from "./broadcast";
+import coinConfig from "../config";
+import { mockBoilerplateConfig } from "../test/context";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../logic/broadcast");
 
 describe("broadcast", () => {
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => mockBoilerplateConfig);
+  });
+
   let patchOperationSpy: jest.SpyInstance;
   let broadcastSpy: jest.SpyInstance;
   beforeEach(() => {

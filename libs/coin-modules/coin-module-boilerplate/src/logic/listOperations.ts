@@ -5,6 +5,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { getTransactions } from "../network/indexer";
 import { BoilerplateOperation } from "../network/types";
+import type { BoilerplateCoinConfig } from "../config";
 
 /**
  * Returns list of operations associated to an account.
@@ -13,10 +14,11 @@ import { BoilerplateOperation } from "../network/types";
  * @returns Operations found and the next cursor for pagination.
  */
 export async function listOperations(
+  config: BoilerplateCoinConfig,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  const transactions = await getTransactions(address, options);
+  const transactions = await getTransactions(config, address, options);
   return { items: transactions.map(convertToCoreOperation(address)), next: undefined };
 }
 

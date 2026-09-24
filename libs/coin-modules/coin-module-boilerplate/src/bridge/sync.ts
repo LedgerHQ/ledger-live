@@ -73,7 +73,7 @@ export const getAccountShape: GetAccountShape = async info => {
   });
 
   // blockheight retrieval
-  const blockHeight = await getBlockHeight();
+  const blockHeight = await getBlockHeight(coinConfig.getCoinConfig());
 
   // Account info retrieval + spendable balance calculation
   const accountInfo = await getAccountInfo(coinConfig.getCoinConfig(), address);
@@ -84,7 +84,7 @@ export const getAccountShape: GetAccountShape = async info => {
   // Tx history fetching
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-  const newTransactions = await getTransactions(address, {
+  const newTransactions = await getTransactions(coinConfig.getCoinConfig(), address, {
     minHeight: startAt,
     limit: 100,
   });
