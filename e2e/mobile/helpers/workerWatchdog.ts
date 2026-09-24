@@ -1,6 +1,5 @@
 import * as path from "node:path";
 import { Worker } from "node:worker_threads";
-import { registerThread, threadPoll } from "@sentry/node-native-stacktrace";
 
 /**
  * In-worker watchdog for the shard hang (QAA-1365).
@@ -25,14 +24,16 @@ const BEAT_MS = 1_000;
 const THREAD_NAME = "main";
 
 type WatchdogState = { spec: string; phase: string };
+type ThreadPoll = typeof import("@sentry/node-native-stacktrace").threadPoll;
 
 const state: WatchdogState = { spec: "<idle>", phase: "idle" };
 let armed = false;
+let threadPoll: ThreadPoll | undefined;
 
 // The first argument ENABLES last-seen tracking: passing false silently turns the
 // detection off. The state rides along into the watchdog's capture, so even a
 // stack-less report can say which spec and phase froze.
-const beat = (): void => threadPoll(true, { ...state });
+const beat = (): void => threadPoll?.(true, { ...state });
 
 // This package's lib resolves setInterval to the DOM signature (a number), but at
 // runtime it is a Node timer, whose unref() keeps it from holding the worker open.
@@ -42,27 +43,49 @@ function unrefTimer(handle: unknown): void {
   }
 }
 
-export function armWorkerWatchdog(): void {
+// The watchdog must never be the reason a suite cannot run, so every failure of
+// its own is reported and swallowed, leaving the run unwatched rather than broken.
+function disable(reason: string): void {
+  console.warn(`[stall-watchdog] disabled: ${reason}`);
+}
+
+export async function armWorkerWatchdog(): Promise<void> {
   if (armed || process.env.E2E_STALL_WATCHDOG === "0") return;
   // Only a forked jest worker may be killed. In-band (local maxWorkers: 1) this
   // process is the whole run, and killing it would take Detox's cleanup with it.
   if (typeof process.send !== "function") return;
   armed = true;
 
-  registerThread(THREAD_NAME);
+  // Loaded here rather than at the top of the file, so that a missing or
+  // unloadable native binary (an unsupported platform or Node ABI) disables the
+  // watchdog instead of failing every spec at import time.
+  let native: typeof import("@sentry/node-native-stacktrace");
+  try {
+    native = await import("@sentry/node-native-stacktrace");
+    native.registerThread(THREAD_NAME);
+  } catch (error) {
+    disable(`could not load @sentry/node-native-stacktrace (${error})`);
+    return;
+  }
+  threadPoll = native.threadPoll;
+
   // Beat now, before anything can freeze, and then for the worker's whole life —
   // idle between spec files included. A beat tied to the spec lifecycle would make
   // an idle worker look frozen, or miss a freeze that lands before the first tick.
   beat();
   unrefTimer(setInterval(beat, BEAT_MS));
 
-  new Worker(path.join(__dirname, "workerWatchdog.thread.cjs"), {
+  const watchdog = new Worker(path.join(__dirname, "workerWatchdog.thread.cjs"), {
     workerData: {
       stallMs: STALL_MS,
       threadName: THREAD_NAME,
       reportDir: path.join(__dirname, "..", "artifacts"),
     },
-  }).unref();
+  });
+  // Without a listener, an error thrown in the thread would be re-raised in this
+  // worker's main thread and crash the very process being protected.
+  watchdog.on("error", error => disable(`watchdog thread failed (${error})`));
+  watchdog.unref();
 }
 
 export function setWatchdogState(next: Partial<WatchdogState>): void {

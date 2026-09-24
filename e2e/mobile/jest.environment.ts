@@ -172,7 +172,7 @@ export default class TestEnvironment extends DetoxEnvironment {
   async setup() {
     // First thing: device allocation and app install happen in super.setup(), and
     // a freeze during them must be caught too (QAA-1365).
-    armWorkerWatchdog();
+    await armWorkerWatchdog();
     setWatchdogState({ spec: this.testPath, phase: "setup" });
 
     const workerId = Number(process.env.JEST_WORKER_ID ?? "1");
