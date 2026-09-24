@@ -177,7 +177,9 @@ describe("Aleo bond flow (integration)", () => {
     await user.press(await screen.findByTestId("device-item-mock"));
 
     expect(await screen.findByTestId("device-action-loading")).toBeVisible();
+    // Broadcast keeps the success screen back for at least 3s; step the fake clock 1s per poll.
     await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible(), {
+      interval: 1_000,
       timeout: 5_000,
     });
   });
@@ -481,7 +483,7 @@ describe("Aleo bond flow (integration)", () => {
       expect(screen.getByText("Kiln")).toBeVisible();
 
       await user.clear(searchBox);
-      await user.type(searchBox, "aleo1q3vx8pe");
+      await user.paste(searchBox, "aleo1q3vx8pe");
       await waitFor(() => expect(screen.queryByText("Kiln")).toBeNull());
       expect(screen.getByText("Figment")).toBeVisible();
 

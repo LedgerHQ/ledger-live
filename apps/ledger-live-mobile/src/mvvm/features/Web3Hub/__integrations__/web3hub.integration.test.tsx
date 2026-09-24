@@ -47,7 +47,9 @@ jest.mock("LLM/features/Web3Hub/screens/Web3HubApp/components/Web3Player", () =>
 async function waitForLoader() {
   expect(await screen.findByRole("progressbar")).toBeOnTheScreen();
   await waitForElementToBeRemoved(() => screen.getByRole("progressbar"), {
-    timeout: 1500, // timeout because we mock the return and fake 1s delay
+    // Fake clock: each poll advances it by `interval`, crossing the 1s mock delay in a few polls
+    interval: 250,
+    timeout: 1500,
   });
 }
 
