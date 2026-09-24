@@ -27,4 +27,4 @@ wallet/
 
 ## Integration
 
-All setup (live-common coin graph, supported currencies, transport) is handled by `live-common-setup.ts` and `env-setup.ts` at CLI startup. See those files for the reference implementation.
+All setup (live-common coin graph, supported currencies, transport) is handled by `live-common-setup.ts` at CLI startup, and `runMain` builds the swap quotes store with `state-manager/configureStore.ts`. See those files for the reference implementation.
