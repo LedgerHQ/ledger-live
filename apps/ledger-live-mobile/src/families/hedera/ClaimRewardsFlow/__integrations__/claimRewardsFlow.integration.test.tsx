@@ -39,6 +39,12 @@ jest.mock("~/datadog", () => ({
   broadcastLogger: jest.fn(),
 }));
 
+// broadcastSignedTx holds the success screen behind a 3s UX floor (execAndWaitAtLeast).
+jest.mock("@ledgerhq/live-common/promise", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/promise"),
+  execAndWaitAtLeast: (_ms: number, cb: () => Promise<unknown>) => cb(),
+}));
+
 const mockAccountBridge = makeMockAccountBridge(HEDERA_TRANSACTION_MODES.ClaimRewards);
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => {
@@ -97,18 +103,15 @@ describe("Hedera ClaimRewardsFlow (integration)", () => {
   it("completes the happy path: Claim → SelectDevice → ConnectDevice → ValidationSuccess", async () => {
     const { user } = renderFlow();
 
-    await waitFor(
-      () => expect(screen.getByTestId("enabled-hedera-claim-continue-button")).toBeVisible(),
-      { timeout: 10000 },
+    await waitFor(() =>
+      expect(screen.getByTestId("enabled-hedera-claim-continue-button")).toBeVisible(),
     );
     await user.press(screen.getByTestId("enabled-hedera-claim-continue-button"));
 
-    const deviceItem = await screen.findByTestId("device-item-mock", {}, { timeout: 10000 });
+    const deviceItem = await screen.findByTestId("device-item-mock");
     await user.press(deviceItem);
 
-    await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible(), {
-      timeout: 15000,
-    });
+    await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
   });
 
   it("lands on ValidationError and shows Retry when signOperation fails", async () => {
@@ -122,16 +125,15 @@ describe("Hedera ClaimRewardsFlow (integration)", () => {
 
     const { user } = renderFlow();
 
-    await waitFor(
-      () => expect(screen.getByTestId("enabled-hedera-claim-continue-button")).toBeVisible(),
-      { timeout: 10000 },
+    await waitFor(() =>
+      expect(screen.getByTestId("enabled-hedera-claim-continue-button")).toBeVisible(),
     );
     await user.press(screen.getByTestId("enabled-hedera-claim-continue-button"));
 
-    const deviceItem = await screen.findByTestId("device-item-mock", {}, { timeout: 10000 });
+    const deviceItem = await screen.findByTestId("device-item-mock");
     await user.press(deviceItem);
 
-    await waitFor(() => expect(screen.getByText("Retry")).toBeVisible(), { timeout: 15000 });
+    await waitFor(() => expect(screen.getByText("Retry")).toBeVisible());
     expect(screen.queryByTestId("validate-success-screen")).toBeNull();
   });
 
@@ -142,9 +144,8 @@ describe("Hedera ClaimRewardsFlow (integration)", () => {
       validator: { ...mockEnrichedDelegation.validator, name: "" },
     });
 
-    await waitFor(
-      () => expect(screen.getByTestId("enabled-hedera-claim-continue-button")).toBeVisible(),
-      { timeout: 10000 },
+    await waitFor(() =>
+      expect(screen.getByTestId("enabled-hedera-claim-continue-button")).toBeVisible(),
     );
   });
 });

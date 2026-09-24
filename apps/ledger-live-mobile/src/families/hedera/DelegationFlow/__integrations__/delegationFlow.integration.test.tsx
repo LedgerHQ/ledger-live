@@ -62,6 +62,12 @@ jest.mock("~/datadog", () => ({
   broadcastLogger: jest.fn(),
 }));
 
+// broadcastSignedTx holds the success screen behind a 3s UX floor (execAndWaitAtLeast).
+jest.mock("@ledgerhq/live-common/promise", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/promise"),
+  execAndWaitAtLeast: (_ms: number, cb: () => Promise<unknown>) => cb(),
+}));
+
 let mockAccountBridge = makeMockAccountBridge(HEDERA_TRANSACTION_MODES.Delegate, {
   stakingNodeId: 0,
 });
@@ -121,18 +127,15 @@ describe("Hedera DelegationFlow (integration)", () => {
   it("completes the happy path: Summary → SelectDevice → ConnectDevice → ValidationSuccess", async () => {
     const { user } = renderFlow();
 
-    await waitFor(
-      () => expect(screen.getByTestId("enabled-hedera-summary-continue-button")).toBeVisible(),
-      { timeout: 10000 },
+    await waitFor(() =>
+      expect(screen.getByTestId("enabled-hedera-summary-continue-button")).toBeVisible(),
     );
     await user.press(screen.getByTestId("enabled-hedera-summary-continue-button"));
 
-    const deviceItem = await screen.findByTestId("device-item-mock", {}, { timeout: 10000 });
+    const deviceItem = await screen.findByTestId("device-item-mock");
     await user.press(deviceItem);
 
-    await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible(), {
-      timeout: 15000,
-    });
+    await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
   });
 
   it("lands on ValidationError and shows Retry when signOperation fails", async () => {
@@ -146,16 +149,15 @@ describe("Hedera DelegationFlow (integration)", () => {
 
     const { user } = renderFlow();
 
-    await waitFor(
-      () => expect(screen.getByTestId("enabled-hedera-summary-continue-button")).toBeVisible(),
-      { timeout: 10000 },
+    await waitFor(() =>
+      expect(screen.getByTestId("enabled-hedera-summary-continue-button")).toBeVisible(),
     );
     await user.press(screen.getByTestId("enabled-hedera-summary-continue-button"));
 
-    const deviceItem = await screen.findByTestId("device-item-mock", {}, { timeout: 10000 });
+    const deviceItem = await screen.findByTestId("device-item-mock");
     await user.press(deviceItem);
 
-    await waitFor(() => expect(screen.getByText("Retry")).toBeVisible(), { timeout: 15000 });
+    await waitFor(() => expect(screen.getByText("Retry")).toBeVisible());
     expect(screen.queryByTestId("validate-success-screen")).toBeNull();
   });
 
@@ -169,9 +171,7 @@ describe("Hedera DelegationFlow (integration)", () => {
 
     renderFlow();
 
-    await waitFor(() => expect(screen.getByText(/network down/i)).toBeVisible(), {
-      timeout: 10000,
-    });
+    await waitFor(() => expect(screen.getByText(/network down/i)).toBeVisible());
     expect(screen.getByTestId("disabled-hedera-summary-continue-button")).toBeVisible();
   });
 });

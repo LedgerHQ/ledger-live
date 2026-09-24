@@ -35,6 +35,12 @@ jest.mock("~/datadog", () => ({
   broadcastLogger: jest.fn(),
 }));
 
+// broadcastSignedTx holds the success screen behind a 3s UX floor (execAndWaitAtLeast).
+jest.mock("@ledgerhq/live-common/promise", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/promise"),
+  execAndWaitAtLeast: (_ms: number, cb: () => Promise<unknown>) => cb(),
+}));
+
 const mockAccountBridge = makeMockAccountBridge(HEDERA_TRANSACTION_MODES.TokenAssociate);
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => {
@@ -92,17 +98,13 @@ describe("Hedera AssociateTokenFlow (integration)", () => {
     const { user } = renderFlow();
 
     // Button.tsx returns testID="proceed-button" for type="primary" when isFocused=true and not disabled.
-    await waitFor(() => expect(screen.getByTestId("proceed-button")).toBeVisible(), {
-      timeout: 10000,
-    });
+    await waitFor(() => expect(screen.getByTestId("proceed-button")).toBeVisible());
     await user.press(screen.getByTestId("proceed-button"));
 
-    const deviceItem = await screen.findByTestId("device-item-mock", {}, { timeout: 10000 });
+    const deviceItem = await screen.findByTestId("device-item-mock");
     await user.press(deviceItem);
 
-    await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible(), {
-      timeout: 15000,
-    });
+    await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
   });
 
   it("lands on ValidationError and shows Retry when signOperation fails", async () => {
@@ -116,15 +118,13 @@ describe("Hedera AssociateTokenFlow (integration)", () => {
 
     const { user } = renderFlow();
 
-    await waitFor(() => expect(screen.getByTestId("proceed-button")).toBeVisible(), {
-      timeout: 10000,
-    });
+    await waitFor(() => expect(screen.getByTestId("proceed-button")).toBeVisible());
     await user.press(screen.getByTestId("proceed-button"));
 
-    const deviceItem = await screen.findByTestId("device-item-mock", {}, { timeout: 10000 });
+    const deviceItem = await screen.findByTestId("device-item-mock");
     await user.press(deviceItem);
 
-    await waitFor(() => expect(screen.getByText("Retry")).toBeVisible(), { timeout: 15000 });
+    await waitFor(() => expect(screen.getByText("Retry")).toBeVisible());
     expect(screen.queryByTestId("validate-success-screen")).toBeNull();
   });
 });
