@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/context-module": "catalog:",
-    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/hw-app-eth": "workspace:^",

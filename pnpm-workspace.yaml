@@ -63,6 +63,11 @@ catalog:
   "@ledgerhq/live-network": 3.1.0
   "@ledgerhq/live-promise": 0.4.0
   "@ledgerhq/psbtv2": 0.6.0
+  "@ledgerhq/live-config": 3.9.0
+  "@ledgerhq/live-env": 4.1.0
+  "@ledgerhq/live-currency-format": 0.16.0
+  "@ledgerhq/domain-service": 1.9.0
+  "@ledgerhq/evm-tools": 1.15.0
   "@ledgerhq/lumen-design-core": 0.1.29
   "@ledgerhq/lumen-ui-react": 0.1.59
   "@ledgerhq/lumen-ui-rnative": 0.1.62
