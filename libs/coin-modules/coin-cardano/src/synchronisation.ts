@@ -43,6 +43,7 @@ import {
   ProtocolParams,
   StakeCredential,
 } from "./types";
+import coinConfig from "./config";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<CardanoSigner>): GetAccountShape<CardanoAccount> =>
@@ -100,7 +101,13 @@ export const makeGetAccountShape =
       blockHeight,
       externalCredentials,
       internalCredentials,
-    } = await getTransactions(xpub, accountIndex, initialAccount, syncFromBlockHeight, currency);
+    } = await getTransactions(
+      coinConfig.getCoinConfig(currency.id),
+      xpub,
+      accountIndex,
+      initialAccount,
+      syncFromBlockHeight,
+    );
 
     const accountCredentialsMap = [...externalCredentials, ...internalCredentials].reduce(
       (finalMap, cred) => {
@@ -147,8 +154,11 @@ export const makeGetAccountShape =
           stakeCred: stakeCredential,
         }).getBech32(),
       }));
-    const cardanoNetworkInfo = await fetchNetworkInfo(currency);
-    const delegationInfo = await getDelegationInfo(currency, stakeCredential.key);
+    const cardanoNetworkInfo = await fetchNetworkInfo(coinConfig.getCoinConfig(currency.id));
+    const delegationInfo = await getDelegationInfo(
+      coinConfig.getCoinConfig(currency.id),
+      stakeCredential.key,
+    );
 
     const minAdaForTokens = calculateMinAdaForTokens(
       freshAddresses[0].address,

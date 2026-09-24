@@ -1,11 +1,9 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { fetchLatestBlock } from "../api/getLatestBlock";
 import { lastBlock } from "./lastBlock";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("../api/getLatestBlock");
 const mockFetchLatestBlock = jest.mocked(fetchLatestBlock);
-
-const currency = getCryptoCurrencyById("cardano");
 
 describe("lastBlock", () => {
   afterEach(() => {
@@ -15,16 +13,16 @@ describe("lastBlock", () => {
   it("returns the tip height reported by the API", async () => {
     mockFetchLatestBlock.mockResolvedValue({ blockHeight: 13494170 });
 
-    const result = await lastBlock(currency);
+    const result = await lastBlock(mockCardanoConfig);
 
     expect(result.height).toBe(13494170);
-    expect(mockFetchLatestBlock).toHaveBeenCalledWith(currency);
+    expect(mockFetchLatestBlock).toHaveBeenCalledWith(mockCardanoConfig);
   });
 
   it("returns an empty hash (not exposed by the Cardano API)", async () => {
     mockFetchLatestBlock.mockResolvedValue({ blockHeight: 1 });
 
-    const result = await lastBlock(currency);
+    const result = await lastBlock(mockCardanoConfig);
 
     expect(result.hash).toBe("");
   });
@@ -33,7 +31,7 @@ describe("lastBlock", () => {
     mockFetchLatestBlock.mockResolvedValue({ blockHeight: 1 });
 
     const before = Date.now();
-    const result = await lastBlock(currency);
+    const result = await lastBlock(mockCardanoConfig);
     const after = Date.now();
 
     expect(result.time).toBeInstanceOf(Date);
@@ -44,7 +42,7 @@ describe("lastBlock", () => {
   it("propagates fetch errors", async () => {
     mockFetchLatestBlock.mockRejectedValue(new Error("network down"));
 
-    await expect(lastBlock(currency)).rejects.toThrow("network down");
+    await expect(lastBlock(mockCardanoConfig)).rejects.toThrow("network down");
   });
 
   it.each([
@@ -57,6 +55,6 @@ describe("lastBlock", () => {
   ])("throws on an invalid block height (%s)", async (_label, blockHeight) => {
     mockFetchLatestBlock.mockResolvedValue({ blockHeight } as never);
 
-    await expect(lastBlock(currency)).rejects.toThrow("invalid block height");
+    await expect(lastBlock(mockCardanoConfig)).rejects.toThrow("invalid block height");
   });
 });

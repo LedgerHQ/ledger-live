@@ -14,6 +14,7 @@ import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import { extractPaymentKeyFromAddress } from "../utils";
 import { CardanoMinAmountError } from "../errors";
 import { buildUnsignedTransaction, craftTransaction } from "./craftTransaction";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("../api/fetchTransactions");
 jest.mock("../api/getDelegationInfo");
@@ -102,7 +103,11 @@ beforeEach(() => {
 
 describe("craftTransaction", () => {
   it("serializes the unsigned tx to a hex payload and reports the resolved fee", async () => {
-    const { transaction, details } = await craftTransaction(currency, sendIntent());
+    const { transaction, details } = await craftTransaction(
+      mockCardanoConfig,
+      currency,
+      sendIntent(),
+    );
 
     expect(transaction).toMatch(/^[0-9a-f]+$/);
     expect(new BigNumber(details?.fees as string).gt(0)).toBe(true);
@@ -111,16 +116,20 @@ describe("craftTransaction", () => {
 
 describe("buildUnsignedTransaction — native ADA", () => {
   it("adds a recipient output and lets Typhon return change to the sender", async () => {
-    const tx = await buildUnsignedTransaction(currency, sendIntent());
+    const tx = await buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent());
 
-    expect(mockFetchTxs).toHaveBeenCalledWith([PAYMENT_KEY], 0, currency);
+    expect(mockFetchTxs).toHaveBeenCalledWith(mockCardanoConfig, [PAYMENT_KEY], 0);
     expect(tx.getInputs()).toHaveLength(1);
     expect(tx.getOutputs()).toHaveLength(2); // recipient + change
     expect(tx.getFee().gt(0)).toBe(true);
   });
 
   it("sends the whole balance to the recipient (no change output) when useAllAmount is set", async () => {
-    const tx = await buildUnsignedTransaction(currency, sendIntent({ useAllAmount: true }));
+    const tx = await buildUnsignedTransaction(
+      mockCardanoConfig,
+      currency,
+      sendIntent({ useAllAmount: true }),
+    );
 
     expect(tx.getOutputs()).toHaveLength(1); // recipient is the sole sink
   });
@@ -136,7 +145,11 @@ describe("buildUnsignedTransaction — native ADA", () => {
       ]),
     );
 
-    const tx = await buildUnsignedTransaction(currency, sendIntent({ useAllAmount: true }));
+    const tx = await buildUnsignedTransaction(
+      mockCardanoConfig,
+      currency,
+      sendIntent({ useAllAmount: true }),
+    );
 
     expect(tx.getInputs()).toHaveLength(3); // every UTXO consumed
     const recipientOut = tx.getOutputs()[0];
@@ -156,7 +169,11 @@ describe("buildUnsignedTransaction — native ADA", () => {
       ]),
     );
 
-    const tx = await buildUnsignedTransaction(currency, sendIntent({ useAllAmount: true }));
+    const tx = await buildUnsignedTransaction(
+      mockCardanoConfig,
+      currency,
+      sendIntent({ useAllAmount: true }),
+    );
 
     const tokenOutputs = tx.getOutputs().filter(o => o.tokens.length > 0);
     expect(tokenOutputs).toHaveLength(1);
@@ -173,7 +190,11 @@ describe("buildUnsignedTransaction — native ADA", () => {
     // would fold the leftover into the fee. The recipient must still receive balance − a real fee.
     mockFetchTxs.mockResolvedValue(paged([makeTx({ hash: "a", outputs: [output("1500000")] })]));
 
-    const tx = await buildUnsignedTransaction(currency, sendIntent({ useAllAmount: true }));
+    const tx = await buildUnsignedTransaction(
+      mockCardanoConfig,
+      currency,
+      sendIntent({ useAllAmount: true }),
+    );
 
     expect(tx.getFee().lt(1e6)).toBe(true);
     expect(tx.getOutputs()).toHaveLength(1);
@@ -186,25 +207,29 @@ describe("buildUnsignedTransaction — native ADA", () => {
     mockFetchTxs.mockResolvedValue(paged([makeTx({ hash: "a", outputs: [output("1000000")] })]));
 
     await expect(
-      buildUnsignedTransaction(currency, sendIntent({ useAllAmount: true })),
+      buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent({ useAllAmount: true })),
     ).rejects.toBeInstanceOf(CardanoMinAmountError);
   });
 
   it("rejects a non-positive amount", async () => {
-    await expect(buildUnsignedTransaction(currency, sendIntent({ amount: 0n }))).rejects.toThrow(
-      "Transaction amount must be positive",
-    );
+    await expect(
+      buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent({ amount: 0n })),
+    ).rejects.toThrow("Transaction amount must be positive");
   });
 
   it("rejects an amount below the per-output min-ADA floor", async () => {
     await expect(
-      buildUnsignedTransaction(currency, sendIntent({ amount: 1n })),
+      buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent({ amount: 1n })),
     ).rejects.toBeInstanceOf(CardanoMinAmountError);
   });
 
   it("rejects a sender address with no payment credential without hitting the network", async () => {
     await expect(
-      buildUnsignedTransaction(currency, sendIntent({ sender: "not-an-address" })),
+      buildUnsignedTransaction(
+        mockCardanoConfig,
+        currency,
+        sendIntent({ sender: "not-an-address" }),
+      ),
     ).rejects.toThrow("Unsupported sender address");
     expect(mockFetchTxs).not.toHaveBeenCalled();
   });
@@ -212,9 +237,9 @@ describe("buildUnsignedTransaction — native ADA", () => {
   it("rejects when the sender has no spendable UTXOs", async () => {
     mockFetchTxs.mockResolvedValue(paged([]));
 
-    await expect(buildUnsignedTransaction(currency, sendIntent())).rejects.toThrow(
-      "No spendable UTXOs for sender address",
-    );
+    await expect(
+      buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent()),
+    ).rejects.toThrow("No spendable UTXOs for sender address");
   });
 });
 
@@ -230,6 +255,7 @@ describe("buildUnsignedTransaction — token", () => {
     );
 
     const tx = await buildUnsignedTransaction(
+      mockCardanoConfig,
       currency,
       // Canonical Cardano asset id: policyId (56 hex) concatenated with the asset name, no
       // separator — the same identifier getBalance/listOperations emit.
@@ -257,6 +283,7 @@ describe("buildUnsignedTransaction — token", () => {
     );
 
     const tx = await buildUnsignedTransaction(
+      mockCardanoConfig,
       currency,
       sendIntent({
         useAllAmount: true,
@@ -276,6 +303,7 @@ describe("buildUnsignedTransaction — token", () => {
 
     await expect(
       buildUnsignedTransaction(
+        mockCardanoConfig,
         currency,
         sendIntent({
           useAllAmount: true,
@@ -297,6 +325,7 @@ describe("buildUnsignedTransaction — token", () => {
     );
 
     const tx = await buildUnsignedTransaction(
+      mockCardanoConfig,
       currency,
       sendIntent({ amount: 100n, asset: { type: "token", assetReference: POLICY_ID } }),
     );
@@ -320,14 +349,14 @@ describe("buildUnsignedTransaction — token", () => {
     ],
   ])("rejects an invalid token asset reference (%s)", async (_label, asset) => {
     await expect(
-      buildUnsignedTransaction(currency, sendIntent({ amount: 100n, asset })),
+      buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent({ amount: 100n, asset })),
     ).rejects.toThrow("Invalid token asset reference");
   });
 });
 
 describe("buildUnsignedTransaction — staking", () => {
   it("registers and delegates when the stake key is not yet registered", async () => {
-    const tx = await buildUnsignedTransaction(currency, stakeIntent());
+    const tx = await buildUnsignedTransaction(mockCardanoConfig, currency, stakeIntent());
 
     const certs = tx.getCertificates();
     expect(certs.map(c => c.type)).toEqual([
@@ -339,7 +368,7 @@ describe("buildUnsignedTransaction — staking", () => {
   it("only delegates when the stake key is already registered", async () => {
     mockGetDelegation.mockResolvedValue(registeredDelegation());
 
-    const tx = await buildUnsignedTransaction(currency, stakeIntent());
+    const tx = await buildUnsignedTransaction(mockCardanoConfig, currency, stakeIntent());
 
     expect(tx.getCertificates().map(c => c.type)).toEqual([
       TyphonTypes.CertificateType.STAKE_DELEGATION,
@@ -350,6 +379,7 @@ describe("buildUnsignedTransaction — staking", () => {
     mockGetDelegation.mockResolvedValue(registeredDelegation());
 
     const tx = await buildUnsignedTransaction(
+      mockCardanoConfig,
       currency,
       stakeIntent({ type: "undelegate", mode: "undelegate" }),
     );
@@ -361,13 +391,18 @@ describe("buildUnsignedTransaction — staking", () => {
 
   it("rejects undelegate when the stake key is not registered", async () => {
     await expect(
-      buildUnsignedTransaction(currency, stakeIntent({ type: "undelegate", mode: "undelegate" })),
+      buildUnsignedTransaction(
+        mockCardanoConfig,
+        currency,
+        stakeIntent({ type: "undelegate", mode: "undelegate" }),
+      ),
     ).rejects.toThrow("Stake key is not registered");
   });
 
   it("rejects an unsupported staking mode", async () => {
     await expect(
       buildUnsignedTransaction(
+        mockCardanoConfig,
         currency,
         stakeIntent({ type: "redelegate", mode: "redelegate" } as never),
       ),
@@ -376,7 +411,7 @@ describe("buildUnsignedTransaction — staking", () => {
 
   it("rejects delegation without a pool id", async () => {
     await expect(
-      buildUnsignedTransaction(currency, stakeIntent({ valAddress: "" })),
+      buildUnsignedTransaction(mockCardanoConfig, currency, stakeIntent({ valAddress: "" })),
     ).rejects.toThrow("Missing pool id for delegation");
   });
 });
@@ -389,7 +424,7 @@ describe("buildUnsignedTransaction — account obligations are staking-only (swa
       registeredDelegation({ dRepHex: "drep1abc", rewards: new BigNumber("1500000") }),
     );
 
-    const tx = await buildUnsignedTransaction(currency, sendIntent());
+    const tx = await buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent());
 
     expect(tx.getWithdrawals()).toHaveLength(0);
     expect(tx.getCertificates()).toHaveLength(0);
@@ -400,7 +435,7 @@ describe("buildUnsignedTransaction — account obligations are staking-only (swa
       registeredDelegation({ dRepHex: undefined, rewards: new BigNumber("1500000") }),
     );
 
-    const tx = await buildUnsignedTransaction(currency, sendIntent());
+    const tx = await buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent());
 
     expect(tx.getWithdrawals()).toHaveLength(0);
     expect(tx.getCertificates()).toHaveLength(0);
@@ -412,6 +447,7 @@ describe("buildUnsignedTransaction — account obligations are staking-only (swa
     );
 
     const tx = await buildUnsignedTransaction(
+      mockCardanoConfig,
       currency,
       stakeIntent({ mode: "undelegate", type: "undelegate" }),
     );
@@ -425,7 +461,7 @@ describe("buildUnsignedTransaction — account obligations are staking-only (swa
       registeredDelegation({ dRepHex: undefined, rewards: new BigNumber("1500000") }),
     );
 
-    const tx = await buildUnsignedTransaction(currency, stakeIntent());
+    const tx = await buildUnsignedTransaction(mockCardanoConfig, currency, stakeIntent());
 
     expect(
       tx
@@ -441,11 +477,11 @@ describe("buildUnsignedTransaction — account obligations are staking-only (swa
 
 describe("buildUnsignedTransaction — custom fees", () => {
   it("overrides the estimated fee and absorbs the difference into the change output", async () => {
-    const estimated = await buildUnsignedTransaction(currency, sendIntent());
+    const estimated = await buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent());
     const estimatedChange = estimated.getOutputs()[1].amount;
     const customFee = estimated.getFee().plus(50_000);
 
-    const tx = await buildUnsignedTransaction(currency, sendIntent(), {
+    const tx = await buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent(), {
       value: BigInt(customFee.toFixed()),
     });
 
@@ -455,14 +491,16 @@ describe("buildUnsignedTransaction — custom fees", () => {
   });
 
   it("rejects a custom fee below the protocol minimum (Typhon's estimate)", async () => {
-    await expect(buildUnsignedTransaction(currency, sendIntent(), { value: 1n })).rejects.toThrow(
-      "Custom fee is below the minimum required fee",
-    );
+    await expect(
+      buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent(), { value: 1n }),
+    ).rejects.toThrow("Custom fee is below the minimum required fee");
   });
 
   it("rejects a custom fee that would push the change below the min-UTXO amount", async () => {
     await expect(
-      buildUnsignedTransaction(currency, sendIntent(), { value: 9_999_000_000n }),
+      buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent(), {
+        value: 9_999_000_000n,
+      }),
     ).rejects.toThrow("Custom fee too high");
   });
 });

@@ -1,6 +1,6 @@
 import type { Cursor, Page, Stake } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { buildStake, fetchDelegation } from "./stake";
+import type { CardanoCoinConfig } from "../config";
 
 /**
  * Staking positions of a Cardano address. A delegation is account-level, keyed by the
@@ -9,11 +9,11 @@ import { buildStake, fetchDelegation } from "./stake";
  * staking position to report.
  */
 export async function getStakes(
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
   address: string,
   _cursor?: Cursor,
 ): Promise<Page<Stake>> {
-  const { stakeKey, delegation } = await fetchDelegation(currency, address);
+  const { stakeKey, delegation } = await fetchDelegation(config, address);
   const stake = buildStake(address, stakeKey, delegation);
   return { items: stake ? [stake] : [] };
 }

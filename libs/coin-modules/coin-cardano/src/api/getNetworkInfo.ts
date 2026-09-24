@@ -1,15 +1,12 @@
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
-import { isTestnet } from "../logic";
 import { APINetworkInfo } from "./api-types";
+import { getApiEndpoint } from "./endpoints";
+import type { CardanoCoinConfig } from "../config";
 
-export async function fetchNetworkInfo(currency: CryptoCurrency): Promise<APINetworkInfo> {
+export async function fetchNetworkInfo(config: CardanoCoinConfig): Promise<APINetworkInfo> {
   const res = await network({
     method: "GET",
-    url: isTestnet(currency)
-      ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/network/info`
-      : `${CARDANO_API_ENDPOINT}/v1/network/info`,
+    url: `${getApiEndpoint(config)}/v1/network/info`,
   });
   return res && (res.data as APINetworkInfo);
 }

@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import { APITransaction } from "../api/api-types";
 import { getAllTransactionsByKeys } from "../api/fetchTransactions";
@@ -6,6 +5,7 @@ import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { extractPaymentKeyFromAddress } from "../utils";
 import { getBalance } from "./getBalance";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("../api/fetchTransactions");
 jest.mock("../api/getDelegationInfo");
@@ -19,7 +19,6 @@ const mockFetchNetworkInfo = jest.mocked(fetchNetworkInfo);
 // transaction list, so wrap a plain list with a dummy blockHeight in the tests.
 const paged = (transactions: APITransaction[]) => ({ transactions, blockHeight: 1 });
 
-const currency = getCryptoCurrencyById("cardano");
 // Real mainnet base address; extraction (Typhon) runs for real against it.
 const ADDRESS =
   "addr1q8mgw8geggkl2hs0m6rq3pgt69uxttpqcgu6euxje5tt6plxjtjrnskhhtt03g6l3sr98p9t8mtlajr26vmwjzep77pqxn8cms";
@@ -60,9 +59,9 @@ describe("getBalance", () => {
       ]),
     );
 
-    const [native] = await getBalance(currency, ADDRESS);
+    const [native] = await getBalance(mockCardanoConfig, ADDRESS);
 
-    expect(mockFetchTxs).toHaveBeenCalledWith([PAYMENT_KEY], 0, currency);
+    expect(mockFetchTxs).toHaveBeenCalledWith(mockCardanoConfig, [PAYMENT_KEY], 0);
     expect(native).toEqual({ value: 5000000n, asset: { type: "native", name: "ADA" }, locked: 0n });
   });
 
@@ -87,7 +86,7 @@ describe("getBalance", () => {
       ]),
     );
 
-    const [native] = await getBalance(currency, ADDRESS);
+    const [native] = await getBalance(mockCardanoConfig, ADDRESS);
 
     expect(native.value).toBe(3000000n);
   });
@@ -107,7 +106,7 @@ describe("getBalance", () => {
       ]),
     );
 
-    const balances = await getBalance(currency, ADDRESS);
+    const balances = await getBalance(mockCardanoConfig, ADDRESS);
     const token = balances.find(b => b.asset.type === "token");
 
     expect(token).toMatchObject({
@@ -133,7 +132,7 @@ describe("getBalance", () => {
       rewards: new BigNumber("1500000"),
     });
 
-    const balances = await getBalance(currency, ADDRESS);
+    const balances = await getBalance(mockCardanoConfig, ADDRESS);
     const stakeBalance = balances.find(b => b.stake !== undefined);
 
     expect(balances[0].value).toBe(6500000n); // utxo 5,000,000 + rewards 1,500,000
@@ -170,7 +169,7 @@ describe("getBalance", () => {
       rewards: new BigNumber("1500000"),
     });
 
-    const balances = await getBalance(currency, ADDRESS);
+    const balances = await getBalance(mockCardanoConfig, ADDRESS);
     const stakeBalance = balances.find(b => b.stake !== undefined);
 
     expect(balances[0].locked).toBe(0n); // rewards spendable when delegated to a dRep
@@ -185,13 +184,13 @@ describe("getBalance", () => {
     );
     mockGetDelegation.mockResolvedValue(undefined);
 
-    const balances = await getBalance(currency, ADDRESS);
+    const balances = await getBalance(mockCardanoConfig, ADDRESS);
 
     expect(balances.some(b => b.stake !== undefined)).toBe(false);
   });
 
   it("returns a zero native balance for an unparseable address without hitting the network", async () => {
-    const balances = await getBalance(currency, "not-a-cardano-address");
+    const balances = await getBalance(mockCardanoConfig, "not-a-cardano-address");
 
     expect(mockFetchTxs).not.toHaveBeenCalled();
     expect(balances).toEqual([{ value: 0n, asset: { type: "native", name: "ADA" }, locked: 0n }]);
@@ -201,7 +200,7 @@ describe("getBalance", () => {
     // Byron addresses are valid but carry no Shelley payment credential, so their UTXOs
     // cannot be derived — returning 0 would silently hide funds that may exist.
     await expect(
-      getBalance(currency, "Ae2tdPwUPEZFBgKrLT9pn8JPJVbefcL4kuznpQxQpxKfTVuHJ9gLAmxKk4w"),
+      getBalance(mockCardanoConfig, "Ae2tdPwUPEZFBgKrLT9pn8JPJVbefcL4kuznpQxQpxKfTVuHJ9gLAmxKk4w"),
     ).rejects.toThrow("Byron addresses are not supported");
     expect(mockFetchTxs).not.toHaveBeenCalled();
   });
@@ -209,6 +208,6 @@ describe("getBalance", () => {
   it("propagates fetch errors", async () => {
     mockFetchTxs.mockRejectedValue(new Error("network down"));
 
-    await expect(getBalance(currency, ADDRESS)).rejects.toThrow("network down");
+    await expect(getBalance(mockCardanoConfig, ADDRESS)).rejects.toThrow("network down");
   });
 });

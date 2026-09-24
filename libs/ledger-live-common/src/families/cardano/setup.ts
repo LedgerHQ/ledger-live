@@ -82,8 +82,10 @@ const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
   };
 };
 
-const getCurrencyConfig = () => {
-  return getCurrencyConfiguration<CardanoCoinConfig>("cardano");
+// Indexed by currency so each network reads its own endpoints; callers that pass no id (fee
+// thresholds) keep reading the mainnet entry.
+const getCurrencyConfig = (currencyId?: string) => {
+  return getCurrencyConfiguration<CardanoCoinConfig>(currencyId ?? "cardano");
 };
 
 const bridge: Bridge<Transaction, CardanoAccount, TransactionStatus> = createBridges(

@@ -1,12 +1,17 @@
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
 import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import { infraByCurrency } from "../test/coinConfig";
 import { validateAddress } from "../logic/validateAddress";
 
 jest.mock("../logic/validateAddress");
 const mockValidateAddress = jest.mocked(validateAddress);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const config: CardanoConfig = {
+  maxFeesWarning: 0,
+  maxFeesError: 0,
+  infra: infraByCurrency.cardano,
+};
 const mockCtx: Context<CardanoCoinConfig> = {
   config: async () => ({ ...config, status: { type: "active" } }),
   logger: () => {},

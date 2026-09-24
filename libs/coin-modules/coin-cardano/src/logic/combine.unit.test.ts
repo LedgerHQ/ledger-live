@@ -9,6 +9,7 @@ import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import { extractPaymentKeyFromAddress } from "../utils";
 import { combine } from "./combine";
 import { buildUnsignedTransaction } from "./craftTransaction";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("../api/fetchTransactions");
 jest.mock("../api/getDelegationInfo");
@@ -37,7 +38,7 @@ const POOL_HASH = "b".repeat(56);
  * (hence its hash — what the device signed) unchanged through the cbors decode/re-encode.
  */
 async function expectBodyPreserved(intent: TransactionIntent<StringMemo>): Promise<void> {
-  const tx = await buildUnsignedTransaction(currency, intent);
+  const tx = await buildUnsignedTransaction(mockCardanoConfig, currency, intent);
   const { payload, hash } = tx.buildTransaction();
   const { value } = cbors.Decoder.decode(Buffer.from(combine(payload, [SIGNATURE], PUBKEY), "hex"));
   expect(crypto.hash32(cbors.Encoder.encode(value[0])).toString("hex")).toBe(hash);
@@ -56,7 +57,7 @@ function sendIntent(): TransactionIntent<StringMemo> {
 
 /** Build a realistic unsigned tx and return its CBOR payload + canonical body hash. */
 async function craftUnsigned(): Promise<{ payload: string; bodyHash: string }> {
-  const tx = await buildUnsignedTransaction(currency, sendIntent());
+  const tx = await buildUnsignedTransaction(mockCardanoConfig, currency, sendIntent());
   const { payload, hash } = tx.buildTransaction();
   return { payload, bodyHash: hash };
 }

@@ -1,16 +1,14 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { APIGetPoolList, EpochInfo, StakePool } from "../api/api-types";
 import { fetchEpochInfo } from "../api/getEpochInfo";
 import { fetchPoolList } from "../api/getPools";
 import { getValidators } from "./getValidators";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("../api/getPools");
 jest.mock("../api/getEpochInfo");
 
 const mockFetchPoolList = jest.mocked(fetchPoolList);
 const mockFetchEpochInfo = jest.mocked(fetchEpochInfo);
-
-const currency = getCryptoCurrencyById("cardano");
 
 // Epoch params the endpoint serves today (no reserves / active stake) → APY stays omitted.
 const epochWithoutStakeData: EpochInfo = {
@@ -66,7 +64,7 @@ describe("getValidators", () => {
     const pools = Array.from({ length: 250 }, (_, i) => pool({ poolId: `pool${i}` }));
     paginate(pools, 100);
 
-    const { items, next } = await getValidators(currency);
+    const { items, next } = await getValidators(mockCardanoConfig);
 
     expect(mockFetchPoolList).toHaveBeenCalledTimes(3);
     expect(mockFetchPoolList.mock.calls.map(c => c[2])).toEqual([1, 2, 3]);
@@ -77,7 +75,7 @@ describe("getValidators", () => {
   it("returns a single page without extra calls when all pools fit in one fetch", async () => {
     paginate([pool({ poolId: "pool1" }), pool({ poolId: "pool2" })], 100);
 
-    const { items } = await getValidators(currency);
+    const { items } = await getValidators(mockCardanoConfig);
 
     expect(mockFetchPoolList).toHaveBeenCalledTimes(1);
     expect(items).toHaveLength(2);
@@ -86,7 +84,7 @@ describe("getValidators", () => {
   it("maps a pool to a validator", async () => {
     paginate([pool()], 100);
 
-    const { items } = await getValidators(currency);
+    const { items } = await getValidators(mockCardanoConfig);
 
     expect(items[0]).toEqual({
       id: "pool1abc",
@@ -108,7 +106,7 @@ describe("getValidators", () => {
       100,
     );
 
-    const { items } = await getValidators(currency);
+    const { items } = await getValidators(mockCardanoConfig);
 
     expect(items[0].name).toBe("TICK");
     expect(items[1].name).toBe("p2");
@@ -118,7 +116,7 @@ describe("getValidators", () => {
   it("skips a pool with an unparseable liveStake instead of failing the whole list", async () => {
     paginate([pool({ poolId: "good" }), pool({ poolId: "bad", liveStake: "not-a-number" })], 100);
 
-    const { items } = await getValidators(currency);
+    const { items } = await getValidators(mockCardanoConfig);
 
     expect(items).toHaveLength(1);
     expect(items[0].address).toBe("good");
@@ -127,7 +125,7 @@ describe("getValidators", () => {
   it("includes retired pools (no filtering)", async () => {
     paginate([pool({ poolId: "retired", retiredEpoch: 400 })], 100);
 
-    const { items } = await getValidators(currency);
+    const { items } = await getValidators(mockCardanoConfig);
 
     expect(items).toHaveLength(1);
     expect(items[0].address).toBe("retired");
@@ -137,7 +135,7 @@ describe("getValidators", () => {
     mockFetchEpochInfo.mockResolvedValue(epochWithStakeData);
     paginate([pool({ liveStake: "30000000000000", pledge: "1000000000000", margin: "2.00" })], 100);
 
-    const { items } = await getValidators(currency);
+    const { items } = await getValidators(mockCardanoConfig);
 
     expect(items[0].apy).toBeGreaterThan(0.03);
     expect(items[0].apy).toBeLessThan(0.12);
@@ -147,7 +145,7 @@ describe("getValidators", () => {
     mockFetchEpochInfo.mockResolvedValue(epochWithStakeData);
     paginate([pool({ retiredEpoch: 400 })], 100);
 
-    const { items } = await getValidators(currency);
+    const { items } = await getValidators(mockCardanoConfig);
 
     expect(items[0].apy).toBeUndefined();
   });
@@ -156,7 +154,7 @@ describe("getValidators", () => {
     mockFetchEpochInfo.mockRejectedValue(new Error("epoch endpoint down"));
     paginate([pool()], 100);
 
-    const { items } = await getValidators(currency);
+    const { items } = await getValidators(mockCardanoConfig);
 
     expect(items).toHaveLength(1);
     expect(items[0].apy).toBeUndefined();

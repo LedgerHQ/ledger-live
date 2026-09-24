@@ -24,6 +24,7 @@ import { CARDANO_MAX_SUPPLY } from "../constants";
 import { CardanoMemoExceededSizeError, CardanoMinAmountError, ValAddressRequired } from "../errors";
 import { getPaymentCredentialKeyHash, isTestnet, isTokenAsset, isValidAddress } from "../logic";
 import { validateMemo } from "./validateMemo";
+import type { CardanoCoinConfig } from "../config";
 
 type Intent = TransactionIntent<StringMemo | MemoNotSupported>;
 
@@ -40,6 +41,7 @@ const FEE_TOO_HIGH_RATIO = 10n;
  * validateIntent hits the network. Craft re-checks it (calculateMinUtxoAmountBabbage) as a backstop.
  */
 export async function validateIntent(
+  config: CardanoCoinConfig,
   currency: CryptoCurrency,
   intent: Intent,
   balances: Balance[],
@@ -81,7 +83,7 @@ export async function validateIntent(
   // NotEnoughBalance (so it overrides) but not AmountRequired (hence the amount > 0n guard).
   // Best-effort: a network blip fetching params must not fail validation — craft re-checks the floor.
   if (!isTokenTransfer && !errors.recipient && amount > 0n) {
-    const minAda = await computeMinUtxo(currency, intent.recipient).catch(() => undefined);
+    const minAda = await computeMinUtxo(config, intent.recipient).catch(() => undefined);
     if (minAda && new BigNumber(amount.toString()).lt(minAda)) {
       errors.amount = new CardanoMinAmountError("", { amount: minAda.div(1e6).toString() });
     }
@@ -142,8 +144,8 @@ function validateRecipient(
 
 // Babbage min-UTXO for a plain ADA output to `recipient`. CARDANO_MAX_SUPPLY is a worst-case amount so
 // the serialized-size estimate (and thus the floor) is an upper bound; mirrors legacy getTransactionStatus.
-async function computeMinUtxo(currency: CryptoCurrency, recipient: string): Promise<BigNumber> {
-  const { protocolParams } = await fetchNetworkInfo(currency);
+async function computeMinUtxo(config: CardanoCoinConfig, recipient: string): Promise<BigNumber> {
+  const { protocolParams } = await fetchNetworkInfo(config);
   return TyphonUtils.calculateMinUtxoAmountBabbage(
     {
       address: TyphonUtils.getAddressFromString(recipient),

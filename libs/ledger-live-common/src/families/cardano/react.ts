@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { fetchPoolList } from "@ledgerhq/coin-cardano/api/getPools";
 import { APIGetPoolList, StakePool } from "@ledgerhq/coin-cardano/api/api-types";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { CardanoCoinConfig } from "@ledgerhq/coin-cardano/config";
+import { getCurrencyConfiguration } from "../../config";
 
 export function useCardanoFamilyPools(currency: CryptoCurrency): {
   pools: Array<StakePool>;
@@ -27,7 +29,12 @@ export function useCardanoFamilyPools(currency: CryptoCurrency): {
 
     const delayDebounceFn = setTimeout(
       () => {
-        fetchPoolList(currency, searchQuery, pageNo.current, limit)
+        fetchPoolList(
+          getCurrencyConfiguration<CardanoCoinConfig>(currency.id),
+          searchQuery,
+          pageNo.current,
+          limit,
+        )
           .then((apiRes: APIGetPoolList) => {
             setPools([...apiRes.pools]);
             if (searchQuery && apiRes.pools.length < limit) {
@@ -49,7 +56,12 @@ export function useCardanoFamilyPools(currency: CryptoCurrency): {
     setIsPaginating(true);
     pageNo.current++;
 
-    fetchPoolList(currency, searchQuery, pageNo.current, limit)
+    fetchPoolList(
+      getCurrencyConfiguration<CardanoCoinConfig>(currency.id),
+      searchQuery,
+      pageNo.current,
+      limit,
+    )
       .then((apiRes: APIGetPoolList) => {
         setPools(currentPools => {
           return [...currentPools, ...apiRes.pools];

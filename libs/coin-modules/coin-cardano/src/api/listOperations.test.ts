@@ -7,6 +7,7 @@ import type {
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { CardanoCoinConfig, CardanoConfig } from "../config";
+import { infraByCurrency } from "../test/coinConfig";
 import { listOperations } from "../logic/listOperations";
 import { createApi } from ".";
 
@@ -16,7 +17,11 @@ jest.mock("../logic/listOperations", () => ({
 
 const mockListOperations = jest.mocked(listOperations);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const config: CardanoConfig = {
+  maxFeesWarning: 0,
+  maxFeesError: 0,
+  infra: infraByCurrency.cardano,
+};
 const currency = getCryptoCurrencyById("cardano");
 const mockCtx: Context<CardanoCoinConfig> = {
   config: async () => ({ ...config, status: { type: "active" } }),
@@ -55,7 +60,12 @@ describe("api.listOperations", () => {
     const result = await api.listOperations(mockCtx, "addr1_me", options);
 
     expect(mockListOperations).toHaveBeenCalledTimes(1);
-    expect(mockListOperations).toHaveBeenCalledWith(currency, "addr1_me", options);
+    expect(mockListOperations).toHaveBeenCalledWith(
+      expect.objectContaining({ infra: expect.any(Object) }),
+      currency,
+      "addr1_me",
+      options,
+    );
     expect(result).toBe(page);
   });
 

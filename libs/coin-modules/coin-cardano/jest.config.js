@@ -30,5 +30,6 @@ module.exports = {
     "@ledgerhq/wallet-framework-test-setup",
     "@ledgerhq/disable-network-setup",
     "@ledgerhq/test-quarantine/jest-retries",
+    "<rootDir>/src/test/coinConfig.setup.ts",
   ],
 };

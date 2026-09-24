@@ -28,7 +28,9 @@
     "src/signer.ts",
     "src/synchronisation.unit.test.ts",
     "src/test/bridge.dataset.ts",
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/test/coinConfig.setup.ts",
+    "src/test/coinConfig.ts"
   ],
   "ignoreUnresolved": [
     "@jest/expect-utils",

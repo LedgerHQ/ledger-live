@@ -1,20 +1,18 @@
 import network from "@ledgerhq/live-network/network";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
-import { isTestnet } from "../logic";
+import { getApiEndpoint } from "./endpoints";
+import type { CardanoCoinConfig } from "../config";
 
-export async function submitTransaction({
-  transaction,
-  currency,
-}: {
-  transaction: string;
-  currency: CryptoCurrency;
-}): Promise<{ hash: string }> {
+export async function submitTransaction(
+  config: CardanoCoinConfig,
+  {
+    transaction,
+  }: {
+    transaction: string;
+  },
+): Promise<{ hash: string }> {
   const res = await network({
     method: "POST",
-    url: isTestnet(currency)
-      ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/transaction/submit`
-      : `${CARDANO_API_ENDPOINT}/v1/transaction/submit`,
+    url: `${getApiEndpoint(config)}/v1/transaction/submit`,
     data: {
       transaction: transaction,
     },

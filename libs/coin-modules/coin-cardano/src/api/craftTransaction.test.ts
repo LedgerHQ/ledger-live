@@ -6,12 +6,17 @@ import type {
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
 import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import { infraByCurrency } from "../test/coinConfig";
 import { craftTransaction } from "../logic/craftTransaction";
 
 jest.mock("../logic/craftTransaction");
 const mockCraftTransaction = jest.mocked(craftTransaction);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const config: CardanoConfig = {
+  maxFeesWarning: 0,
+  maxFeesError: 0,
+  infra: infraByCurrency.cardano,
+};
 const mockCtx: Context<CardanoCoinConfig> = {
   config: async () => ({ ...config, status: { type: "active" } }),
   logger: () => {},
@@ -41,9 +46,9 @@ describe("craftTransaction", () => {
 
     expect(result).toBe(crafted);
     expect(mockCraftTransaction).toHaveBeenCalledTimes(1);
-    expect(mockCraftTransaction.mock.calls[0][0].id).toBe("cardano");
-    expect(mockCraftTransaction.mock.calls[0][1]).toBe(intent);
-    expect(mockCraftTransaction.mock.calls[0][2]).toBe(customFees);
+    expect(mockCraftTransaction.mock.calls[0][1].id).toBe("cardano");
+    expect(mockCraftTransaction.mock.calls[0][2]).toBe(intent);
+    expect(mockCraftTransaction.mock.calls[0][3]).toBe(customFees);
   });
 
   it("propagates errors from logic craftTransaction", async () => {

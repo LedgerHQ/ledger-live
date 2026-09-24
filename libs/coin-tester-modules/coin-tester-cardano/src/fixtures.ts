@@ -4,15 +4,30 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-fram
 import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import type { CardanoInfra } from "@ledgerhq/coin-cardano/config";
 
 export const CARDANO = getCryptoCurrencyById("cardano");
 // Testnet currency (networkId 0, addr_test…) — used by the Yaci-devnet send scenario.
 export const CARDANO_TESTNET = getCryptoCurrencyById("cardano_testnet");
 export const FRESH_ADDRESS_PATH = "1852'/1815'/0'/0/0";
 
-// Base URL the coin-cardano network layer is pointed at (via CARDANO_API_ENDPOINT) and that MSW
+// Base URL the coin-cardano network layer is pointed at (via its coin config) and that MSW
 // intercepts. Not a real host.
 export const MOCK_API = "https://cardano-coin-tester.mock";
+
+// coin-cardano endpoints of the mainnet (mock) scenarios, served by MSW.
+export const MOCK_INFRA: CardanoInfra = {
+  CARDANO_API_ENDPOINT: MOCK_API,
+  CARDANO_EPOCH_PARAMS_ENDPOINT: "https://ada.api.live.ledger.com/api/rest/params",
+};
+
+// coin-cardano endpoints of the testnet (Yaci) scenarios. getValidators' epoch-params endpoint is a
+// separate Ledger host; it points at the adapter too so the suite stays hermetic (served from a
+// captured fixture).
+export const MOCK_TESTNET_INFRA: CardanoInfra = {
+  CARDANO_API_ENDPOINT: MOCK_API,
+  CARDANO_EPOCH_PARAMS_ENDPOINT: `${MOCK_API}/epoch-params`,
+};
 
 // A Cardano native asset used by the token-send scenario. policyId is a 28-byte (56 hex) hash and
 // assetName is hex ("4d59544f4b454e" = "MYTOKEN"). The canonical Cardano asset id is policyId

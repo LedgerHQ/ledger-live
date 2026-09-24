@@ -12,6 +12,7 @@ import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import { extractPaymentKeyFromAddress } from "../utils";
 import { craftTransaction } from "./craftTransaction";
 import { estimateFees } from "./estimateFees";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("../api/fetchTransactions");
 jest.mock("../api/getDelegationInfo");
@@ -72,7 +73,7 @@ beforeEach(() => {
 
 describe("estimateFees", () => {
   it("returns the fee Typhon computes for a native send", async () => {
-    const { value } = await estimateFees(currency, sendIntent());
+    const { value } = await estimateFees(mockCardanoConfig, currency, sendIntent());
 
     expect(typeof value).toBe("bigint");
     expect(value).toBeGreaterThan(0n);
@@ -81,7 +82,7 @@ describe("estimateFees", () => {
   it("computes the exact deterministic fee for a fixed native send", async () => {
     // Pins the lovelace fee for a stable mocked tx so a fee regression that affects the shared
     // build path (not just estimate-vs-craft parity) is caught.
-    const { value } = await estimateFees(currency, sendIntent());
+    const { value } = await estimateFees(mockCardanoConfig, currency, sendIntent());
 
     expect(value).toBe(166865n);
   });
@@ -97,6 +98,7 @@ describe("estimateFees", () => {
     );
 
     const { value } = await estimateFees(
+      mockCardanoConfig,
       currency,
       sendIntent({ amount: 100n, asset: { type: "token", assetReference: `${POLICY_ID}abcd` } }),
     );
@@ -116,7 +118,7 @@ describe("estimateFees", () => {
       valAddress: POOL_HASH,
     } as StakingTransactionIntent<StringMemo>;
 
-    const { value } = await estimateFees(currency, intent);
+    const { value } = await estimateFees(mockCardanoConfig, currency, intent);
 
     expect(value).toBeGreaterThan(0n);
   });
@@ -124,8 +126,8 @@ describe("estimateFees", () => {
   it("matches the fee craftTransaction reports for the same intent (no custom fee)", async () => {
     const intent = sendIntent();
 
-    const { value } = await estimateFees(currency, intent);
-    const crafted = await craftTransaction(currency, intent);
+    const { value } = await estimateFees(mockCardanoConfig, currency, intent);
+    const crafted = await craftTransaction(mockCardanoConfig, currency, intent);
 
     expect(value.toString()).toBe(crafted.details?.fees);
   });
@@ -133,7 +135,7 @@ describe("estimateFees", () => {
   it("propagates errors when the transaction cannot be built", async () => {
     mockFetchTxs.mockResolvedValue(paged([]));
 
-    await expect(estimateFees(currency, sendIntent())).rejects.toThrow(
+    await expect(estimateFees(mockCardanoConfig, currency, sendIntent())).rejects.toThrow(
       "No spendable UTXOs for sender address",
     );
   });

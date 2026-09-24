@@ -1,5 +1,6 @@
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import { infraByCurrency } from "../test/coinConfig";
 import { combine } from "../logic/combine";
 import { createApi } from ".";
 
@@ -9,7 +10,11 @@ jest.mock("../logic/combine", () => ({
 
 const mockCombine = jest.mocked(combine);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const config: CardanoConfig = {
+  maxFeesWarning: 0,
+  maxFeesError: 0,
+  infra: infraByCurrency.cardano,
+};
 const mockCtx: Context<CardanoCoinConfig> = {
   config: async () => ({ ...config, status: { type: "active" } }),
   logger: () => {},

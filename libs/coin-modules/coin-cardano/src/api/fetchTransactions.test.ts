@@ -1,11 +1,9 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import network from "@ledgerhq/live-network/network";
 import { getAllTransactionsByKeys } from "./fetchTransactions";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockNetwork = jest.mocked(network);
-
-const currency = getCryptoCurrencyById("cardano");
 
 function page(hashes: string[], limit: number | string, blockHeight = 0) {
   return {
@@ -23,7 +21,7 @@ describe("getAllTransactionsByKeys", () => {
       .mockResolvedValueOnce(page(["a", "b"], 2, 10)) // full page -> keep going
       .mockResolvedValueOnce(page(["c"], 2, 12)); // short page -> stop
 
-    const res = await getAllTransactionsByKeys(["k1", "k2"], 5, currency);
+    const res = await getAllTransactionsByKeys(mockCardanoConfig, ["k1", "k2"], 5);
 
     expect(res.transactions.map(t => t.hash)).toEqual(["a", "b", "c"]);
     expect(res.blockHeight).toBe(12); // max across pages
@@ -37,7 +35,7 @@ describe("getAllTransactionsByKeys", () => {
   it("stops immediately when the API advertises no limit (avoids an unbounded loop)", async () => {
     mockNetwork.mockResolvedValueOnce(page(["a"], 0, 3));
 
-    const res = await getAllTransactionsByKeys(["k"], 0, currency);
+    const res = await getAllTransactionsByKeys(mockCardanoConfig, ["k"], 0);
 
     expect(res.transactions).toHaveLength(1);
     expect(res.blockHeight).toBe(3);
@@ -49,7 +47,7 @@ describe("getAllTransactionsByKeys", () => {
       data: { transactions: [{ hash: "a" }], blockHeight: 3 },
     } as never);
 
-    const res = await getAllTransactionsByKeys(["k"], 0, currency);
+    const res = await getAllTransactionsByKeys(mockCardanoConfig, ["k"], 0);
 
     expect(res.transactions).toHaveLength(1);
     expect(mockNetwork).toHaveBeenCalledTimes(1);
@@ -63,7 +61,7 @@ describe("getAllTransactionsByKeys", () => {
     async ({ limit }) => {
       mockNetwork.mockResolvedValueOnce(page(["a"], limit, 3));
 
-      const res = await getAllTransactionsByKeys(["k"], 0, currency);
+      const res = await getAllTransactionsByKeys(mockCardanoConfig, ["k"], 0);
 
       expect(res.transactions).toHaveLength(1);
       expect(mockNetwork).toHaveBeenCalledTimes(1);
@@ -75,7 +73,7 @@ describe("getAllTransactionsByKeys", () => {
       .mockResolvedValueOnce(page(["a", "b"], "2", 1)) // full page (length 2 == limit "2") -> continue
       .mockResolvedValueOnce(page(["c"], "2", 2)); // short page -> stop
 
-    const res = await getAllTransactionsByKeys(["k"], 0, currency);
+    const res = await getAllTransactionsByKeys(mockCardanoConfig, ["k"], 0);
 
     expect(res.transactions.map(t => t.hash)).toEqual(["a", "b", "c"]);
     expect(mockNetwork).toHaveBeenCalledTimes(2);

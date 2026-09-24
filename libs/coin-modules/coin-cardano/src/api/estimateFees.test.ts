@@ -2,12 +2,17 @@ import type { TransactionIntent, StringMemo } from "@ledgerhq/coin-module-framew
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
 import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import { infraByCurrency } from "../test/coinConfig";
 import { estimateFees } from "../logic/estimateFees";
 
 jest.mock("../logic/estimateFees");
 const mockEstimateFees = jest.mocked(estimateFees);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const config: CardanoConfig = {
+  maxFeesWarning: 0,
+  maxFeesError: 0,
+  infra: infraByCurrency.cardano,
+};
 const mockCtx: Context<CardanoCoinConfig> = {
   config: async () => ({ ...config, status: { type: "active" } }),
   logger: () => {},
@@ -36,8 +41,8 @@ describe("estimateFees", () => {
 
     expect(result).toBe(estimation);
     expect(mockEstimateFees).toHaveBeenCalledTimes(1);
-    expect(mockEstimateFees.mock.calls[0][0].id).toBe("cardano");
-    expect(mockEstimateFees.mock.calls[0][1]).toBe(intent);
+    expect(mockEstimateFees.mock.calls[0][1].id).toBe("cardano");
+    expect(mockEstimateFees.mock.calls[0][2]).toBe(intent);
   });
 
   it("accepts but ignores customFeesParameters (no fee market on Cardano)", async () => {
@@ -49,8 +54,8 @@ describe("estimateFees", () => {
 
     expect(result).toBe(estimation);
     // The second positional arg (customFeesParameters) is not forwarded to the logic layer.
-    expect(mockEstimateFees.mock.calls[0]).toHaveLength(2);
-    expect(mockEstimateFees.mock.calls[0][1]).toBe(intent);
+    expect(mockEstimateFees.mock.calls[0]).toHaveLength(3);
+    expect(mockEstimateFees.mock.calls[0][2]).toBe(intent);
   });
 
   it("propagates errors from logic estimateFees", async () => {

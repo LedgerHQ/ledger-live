@@ -50,57 +50,79 @@ export function createApi(currencyId: string) {
   const currency = getCryptoCurrencyById(currencyId);
 
   return {
-    lastBlock: (_context: CardanoContext): Promise<BlockInfo> => lastBlock(currency),
+    lastBlock: async (context: CardanoContext): Promise<BlockInfo> =>
+      lastBlock(await context.config(currencyId)),
     // cursor ignored: Cardano returns every pool in one page (see getValidators).
-    getValidators: (
-      _context: CardanoContext,
+    getValidators: async (
+      context: CardanoContext,
       _options?: { cursor?: Cursor },
-    ): Promise<Page<Validator>> => getValidators(currency),
-    getBalance: (
-      _context: CardanoContext,
+    ): Promise<Page<Validator>> => getValidators(await context.config(currencyId)),
+    getBalance: async (
+      context: CardanoContext,
       address: string,
       options?: BalanceOptions,
-    ): Promise<Balance[]> => rejectBalanceOptions(() => getBalance(currency, address), options),
-    listOperations: (
-      _context: CardanoContext,
+    ): Promise<Balance[]> =>
+      rejectBalanceOptions(
+        async () => getBalance(await context.config(currencyId), address),
+        options,
+      ),
+    listOperations: async (
+      context: CardanoContext,
       address: string,
       options: ListOperationsOptions,
-    ): Promise<Page<Operation>> => listOperations(currency, address, options),
-    getStakes: (
-      _context: CardanoContext,
+    ): Promise<Page<Operation>> =>
+      listOperations(await context.config(currencyId), currency, address, options),
+    getStakes: async (
+      context: CardanoContext,
       address: string,
       options?: { cursor?: Cursor },
-    ): Promise<Page<Stake>> => getStakes(currency, address, options?.cursor),
-    craftTransaction: (
-      _context: CardanoContext,
+    ): Promise<Page<Stake>> =>
+      getStakes(await context.config(currencyId), address, options?.cursor),
+    craftTransaction: async (
+      context: CardanoContext,
       transactionIntent: TransactionIntent<StringMemo>,
       options?: { customFees?: FeeEstimation },
     ): Promise<CraftedTransaction> =>
-      craftTransaction(currency, transactionIntent, options?.customFees),
-    estimateFees: (
-      _context: CardanoContext,
+      craftTransaction(
+        await context.config(currencyId),
+        currency,
+        transactionIntent,
+        options?.customFees,
+      ),
+    estimateFees: async (
+      context: CardanoContext,
       transactionIntent: TransactionIntent<StringMemo>,
       _options?: { feeOption?: unknown },
-    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
+    ): Promise<FeeEstimation> =>
+      estimateFees(await context.config(currencyId), currency, transactionIntent),
     combine: (
       _context: CardanoContext,
       tx: string,
       signature: string[],
       options?: { pubkey?: string },
     ) => combine(tx, signature, options?.pubkey),
-    broadcast: (
-      _context: CardanoContext,
+    broadcast: async (
+      context: CardanoContext,
       tx: string,
       options?: { broadcastConfig?: BroadcastConfig },
     ): Promise<string> =>
-      broadcast(currency, { signature: tx, broadcastConfig: options?.broadcastConfig }),
-    validateIntent: (
-      _context: CardanoContext,
+      broadcast(await context.config(currencyId), {
+        signature: tx,
+        broadcastConfig: options?.broadcastConfig,
+      }),
+    validateIntent: async (
+      context: CardanoContext,
       transactionIntent: TransactionIntent<StringMemo>,
       balances: Balance[],
       options?: { customFees?: FeeEstimation },
     ): Promise<TransactionValidation> =>
-      validateIntent(currency, transactionIntent, balances, options?.customFees),
+      validateIntent(
+        await context.config(currencyId),
+        currency,
+        transactionIntent,
+        balances,
+        options?.customFees,
+      ),
     validateAddress: (_context: CardanoContext, ...args: Parameters<typeof validateAddress>) =>
       validateAddress(...args),
     craftTransactionData: (

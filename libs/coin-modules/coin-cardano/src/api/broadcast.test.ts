@@ -1,6 +1,6 @@
 import type { Context } from "@ledgerhq/coin-module-framework/config";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { CardanoCoinConfig, CardanoConfig } from "../config";
+import { infraByCurrency } from "../test/coinConfig";
 import { broadcast } from "../logic/broadcast";
 import { createApi } from ".";
 
@@ -10,8 +10,11 @@ jest.mock("../logic/broadcast", () => ({
 
 const mockBroadcast = jest.mocked(broadcast);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
-const currency = getCryptoCurrencyById("cardano");
+const config: CardanoConfig = {
+  maxFeesWarning: 0,
+  maxFeesError: 0,
+  infra: infraByCurrency.cardano,
+};
 const mockCtx: Context<CardanoCoinConfig> = {
   config: async () => ({ ...config, status: { type: "active" } }),
   logger: () => {},
@@ -29,10 +32,13 @@ describe("api.broadcast", () => {
     const result = await api.broadcast(mockCtx, "signedTxPayload");
 
     expect(mockBroadcast).toHaveBeenCalledTimes(1);
-    expect(mockBroadcast).toHaveBeenCalledWith(currency, {
-      signature: "signedTxPayload",
-      broadcastConfig: undefined,
-    });
+    expect(mockBroadcast).toHaveBeenCalledWith(
+      expect.objectContaining({ infra: expect.any(Object) }),
+      {
+        signature: "signedTxPayload",
+        broadcastConfig: undefined,
+      },
+    );
     expect(result).toBe("txHash");
   });
 
@@ -43,10 +49,13 @@ describe("api.broadcast", () => {
 
     await api.broadcast(mockCtx, "signedTxPayload", { broadcastConfig });
 
-    expect(mockBroadcast).toHaveBeenCalledWith(currency, {
-      signature: "signedTxPayload",
-      broadcastConfig,
-    });
+    expect(mockBroadcast).toHaveBeenCalledWith(
+      expect.objectContaining({ infra: expect.any(Object) }),
+      {
+        signature: "signedTxPayload",
+        broadcastConfig,
+      },
+    );
   });
 
   it("propagates errors thrown by the broadcast logic", async () => {

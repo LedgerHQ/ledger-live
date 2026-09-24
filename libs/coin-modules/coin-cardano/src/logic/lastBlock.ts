@@ -1,9 +1,9 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { fetchLatestBlock } from "../api/getLatestBlock";
+import type { CardanoCoinConfig } from "../config";
 
-export async function lastBlock(currency: CryptoCurrency): Promise<BlockInfo> {
-  const { blockHeight } = await fetchLatestBlock(currency);
+export async function lastBlock(config: CardanoCoinConfig): Promise<BlockInfo> {
+  const { blockHeight } = await fetchLatestBlock(config);
 
   // The endpoint is untyped at runtime: guard against a missing/malformed height so a
   // bad payload surfaces a clear error instead of leaking undefined/NaN/negative into

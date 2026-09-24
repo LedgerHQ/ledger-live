@@ -1,16 +1,10 @@
 import network from "@ledgerhq/live-network/network";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { isTestnet } from "../logic";
 import { fetchLatestBlock } from "./getLatestBlock";
+import { infraByCurrency, mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("@ledgerhq/live-network/network");
-jest.mock("../logic", () => ({ isTestnet: jest.fn() }));
 
 const mockNetwork = jest.mocked(network);
-const mockIsTestnet = jest.mocked(isTestnet);
-
-// isTestnet is mocked, so the concrete currency value is irrelevant to routing.
-const currency = { id: "cardano" } as CryptoCurrency;
 
 describe("fetchLatestBlock", () => {
   afterEach(() => {
@@ -18,25 +12,23 @@ describe("fetchLatestBlock", () => {
   });
 
   it("GETs the mainnet block/latest endpoint and returns the payload", async () => {
-    mockIsTestnet.mockReturnValue(false);
     mockNetwork.mockResolvedValue({ data: { blockHeight: 13494170 } } as never);
 
-    const result = await fetchLatestBlock(currency);
+    const result = await fetchLatestBlock(mockCardanoConfig);
 
     expect(result).toEqual({ blockHeight: 13494170 });
     const call = mockNetwork.mock.calls[0][0];
     expect(call.method).toBe("GET");
-    expect(call.url).toContain("cardano.coin.ledger.com");
-    expect(call.url).toMatch(/\/v1\/block\/latest$/);
+    expect(call.url).toBe("https://cardano.coin.ledger.com/api/v1/block/latest");
   });
 
-  it("routes to the testnet endpoint for a testnet currency", async () => {
-    mockIsTestnet.mockReturnValue(true);
+  it("reads the testnet currency's own endpoint", async () => {
     mockNetwork.mockResolvedValue({ data: { blockHeight: 1 } } as never);
 
-    await fetchLatestBlock(currency);
+    await fetchLatestBlock({ ...mockCardanoConfig, infra: infraByCurrency.cardano_testnet });
 
-    expect(mockIsTestnet).toHaveBeenCalledWith(currency);
-    expect(mockNetwork.mock.calls[0][0].url).toContain("cardanoscan");
+    expect(mockNetwork.mock.calls[0][0].url).toBe(
+      "https://ledger-preprod.cardanoscan.io/api/v1/block/latest",
+    );
   });
 });

@@ -1,9 +1,9 @@
 import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { submitTransaction } from "../api/submitTransaction";
+import type { CardanoCoinConfig } from "../config";
 
 export async function broadcast(
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
   {
     signature,
   }: {
@@ -15,7 +15,7 @@ export async function broadcast(
   // submitTransaction is typed to return a hash, but guard against a malformed
   // (yet 2xx) API response so we surface a clear error instead of returning
   // undefined-as-string or throwing an opaque TypeError on destructuring.
-  const result = await submitTransaction({ transaction: signature, currency });
+  const result = await submitTransaction(config, { transaction: signature });
   if (!result?.hash) {
     throw new Error("Cardano broadcast: submit response is missing the transaction hash");
   }

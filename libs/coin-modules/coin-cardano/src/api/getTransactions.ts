@@ -1,5 +1,4 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import chunk from "lodash/chunk";
 import range from "lodash/range";
@@ -7,14 +6,15 @@ import { getBipPath, getCredentialKey, getExtendedPublicKeyFromHex } from "../lo
 import { CardanoAccount, PaymentChain, PaymentCredential } from "../types";
 import * as ApiTypes from "./api-types";
 import { getAllTransactionsByKeys } from "./fetchTransactions";
+import type { CardanoCoinConfig } from "../config";
 
 async function getSyncedTransactionsByChain(
+  config: CardanoCoinConfig,
   accountPubKey: Bip32PublicKey,
   accountIndex: number,
   chainType: PaymentChain,
   blockHeight: number,
   initialPaymentCredentials: Array<PaymentCredential>,
-  currency: CryptoCurrency,
 ): Promise<{
   transactions: Array<ApiTypes.APITransaction>;
   latestBlockHeight: number;
@@ -36,7 +36,7 @@ async function getSyncedTransactionsByChain(
   // fetch transactions for existing keys
   const trxsRes = await Promise.all(
     chunk(Object.keys(initialPaymentCredentialMap), keyChainRange).map(keys =>
-      getAllTransactionsByKeys(keys, blockHeight, currency),
+      getAllTransactionsByKeys(config, keys, blockHeight),
     ),
   );
   trxsRes.forEach(txRes => {
@@ -68,9 +68,9 @@ async function getSyncedTransactionsByChain(
       };
     });
     const trxRes = await getAllTransactionsByKeys(
+      config,
       Object.keys(currentPaymentKeysMap),
       blockHeight,
-      currency,
     );
     transactions.push(...trxRes.transactions);
 
@@ -112,11 +112,11 @@ async function getSyncedTransactionsByChain(
 }
 
 export async function getTransactions(
+  config: CardanoCoinConfig,
   xpub: string,
   accountIndex: number,
   initialAccount: CardanoAccount | undefined,
   blockHeight: number,
-  currency: CryptoCurrency,
 ): Promise<{
   transactions: Array<ApiTypes.APITransaction>;
   blockHeight: number;
@@ -140,20 +140,20 @@ export async function getTransactions(
     },
   ] = await Promise.all([
     getSyncedTransactionsByChain(
+      config,
       accountPubKey,
       accountIndex,
       PaymentChain.external,
       blockHeight,
       oldExternalCredentials,
-      currency,
     ),
     getSyncedTransactionsByChain(
+      config,
       accountPubKey,
       accountIndex,
       PaymentChain.internal,
       blockHeight,
       oldInternalCredentials,
-      currency,
     ),
   ]);
 

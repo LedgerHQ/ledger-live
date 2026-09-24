@@ -1,11 +1,9 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getValidators } from "./getValidators";
+import { mockCardanoTestnetConfig } from "../test/coinConfig";
 
 describe("getValidators (integration)", () => {
   it("fetches stake pools from the Cardano testnet API and maps them to validators", async () => {
-    const currency = getCryptoCurrencyById("cardano_testnet");
-
-    const { items, next } = await getValidators(currency);
+    const { items, next } = await getValidators(mockCardanoTestnetConfig);
 
     // All pools are returned in a single page (the framework consumer doesn't follow a cursor).
     expect(next).toBeUndefined();

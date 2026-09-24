@@ -1,16 +1,15 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { address as TyphonAddress, types as TyphonTypes } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { getDelegationFixture, STAKING_ADDRESS } from "../fixtures/delegation";
 import { extractPaymentKeyFromAddress, extractStakeKeyFromAddress } from "../utils";
 import { getStakes } from "./getStakes";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("../api/getDelegationInfo");
 
 const mockGetDelegation = jest.mocked(getDelegationInfo);
 
-const currency = getCryptoCurrencyById("cardano");
 // Non-null: STAKING_ADDRESS is a base address, so it always carries a stake credential.
 const STAKE_KEY = extractStakeKeyFromAddress(STAKING_ADDRESS)!;
 // Enterprise (payment-only) address built from STAKING_ADDRESS's payment credential: no stake credential.
@@ -27,9 +26,9 @@ describe("getStakes", () => {
   it("returns a single active stake for a delegated address", async () => {
     mockGetDelegation.mockResolvedValue(getDelegationFixture());
 
-    const { items, next } = await getStakes(currency, STAKING_ADDRESS);
+    const { items, next } = await getStakes(mockCardanoConfig, STAKING_ADDRESS);
 
-    expect(mockGetDelegation).toHaveBeenCalledWith(currency, STAKE_KEY);
+    expect(mockGetDelegation).toHaveBeenCalledWith(mockCardanoConfig, STAKE_KEY);
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject({
       uid: STAKE_KEY,
@@ -49,7 +48,7 @@ describe("getStakes", () => {
       getDelegationFixture({ rewards: new BigNumber(5_000_000), dRepHex: "drep1abc" }),
     );
 
-    const { items } = await getStakes(currency, STAKING_ADDRESS);
+    const { items } = await getStakes(mockCardanoConfig, STAKING_ADDRESS);
 
     expect(items[0].amountRewarded).toBe(5_000_000n);
     expect(items[0].actions).not.toContain("claim_reward");
@@ -59,14 +58,14 @@ describe("getStakes", () => {
   it("returns an empty page when the address has a stake key but no delegation", async () => {
     mockGetDelegation.mockResolvedValue(undefined);
 
-    const { items } = await getStakes(currency, STAKING_ADDRESS);
+    const { items } = await getStakes(mockCardanoConfig, STAKING_ADDRESS);
 
     expect(mockGetDelegation).toHaveBeenCalled();
     expect(items).toEqual([]);
   });
 
   it("returns an empty page without querying delegation for an address with no stake credential", async () => {
-    const { items } = await getStakes(currency, ENTERPRISE);
+    const { items } = await getStakes(mockCardanoConfig, ENTERPRISE);
 
     expect(items).toEqual([]);
     expect(mockGetDelegation).not.toHaveBeenCalled();

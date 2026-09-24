@@ -6,6 +6,7 @@ import type {
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { validateIntent } from "./validateIntent";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 // Stub the network fetch validateIntent uses for the min-UTXO floor (keeps these tests offline).
 jest.mock("../api/getNetworkInfo", () => ({
@@ -44,7 +45,7 @@ function intent(over: Partial<TransactionIntent<StringMemo>> = {}): TransactionI
 
 describe("validateIntent", () => {
   it("validates a fundable native transfer and computes amount + totalSpent", async () => {
-    const res = await validateIntent(currency, intent(), balances(10_000_000n), {
+    const res = await validateIntent(mockCardanoConfig, currency, intent(), balances(10_000_000n), {
       value: 1_000_000n,
     });
 
@@ -58,12 +59,18 @@ describe("validateIntent", () => {
     ["", "RecipientRequired"],
     ["not-an-address", "InvalidAddress"],
   ])("flags recipient %p", async (recipient, name) => {
-    const res = await validateIntent(currency, intent({ recipient }), balances(10_000_000n));
+    const res = await validateIntent(
+      mockCardanoConfig,
+      currency,
+      intent({ recipient }),
+      balances(10_000_000n),
+    );
     expect(res.errors.recipient?.name).toBe(name);
   });
 
   it("warns (without blocking) on a self-send (sender === recipient)", async () => {
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ recipient: SENDER }),
       balances(10_000_000n),
@@ -77,12 +84,18 @@ describe("validateIntent", () => {
   });
 
   it("flags a zero amount", async () => {
-    const res = await validateIntent(currency, intent({ amount: 0n }), balances(10_000_000n));
+    const res = await validateIntent(
+      mockCardanoConfig,
+      currency,
+      intent({ amount: 0n }),
+      balances(10_000_000n),
+    );
     expect(res.errors.amount?.name).toBe("AmountRequired");
   });
 
   it("flags amount + fees exceeding the spendable balance", async () => {
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ amount: 10_000_000n }),
       balances(10_000_000n),
@@ -95,6 +108,7 @@ describe("validateIntent", () => {
 
   it("computes max spendable for useAllAmount (balance − fees)", async () => {
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ useAllAmount: true, amount: 0n }),
       balances(10_000_000n),
@@ -107,6 +121,7 @@ describe("validateIntent", () => {
 
   it("validates a token transfer against the token balance, with fees excluded from totalSpent", async () => {
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ asset: tokenAsset, amount: 500n }),
       tokenBalances(1_000n),
@@ -121,6 +136,7 @@ describe("validateIntent", () => {
 
   it("flags a token transfer the native balance cannot cover the fee for", async () => {
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ asset: tokenAsset, amount: 500n }),
       tokenBalances(1_000n, 0n),
@@ -131,6 +147,7 @@ describe("validateIntent", () => {
 
   it("flags a token transfer exceeding the token balance (not the native balance)", async () => {
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ asset: tokenAsset, amount: 2_000n }),
       tokenBalances(1_000n),
@@ -152,6 +169,7 @@ describe("validateIntent", () => {
       { asset: nativeTypedToken, value: 1_000n },
     ];
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ asset: nativeTypedToken, amount: 500n }),
       balances,
@@ -165,6 +183,7 @@ describe("validateIntent", () => {
 
   it("computes max spendable for a useAllAmount token transfer (full token balance)", async () => {
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ asset: tokenAsset, useAllAmount: true, amount: 0n }),
       tokenBalances(1_000n),
@@ -177,6 +196,7 @@ describe("validateIntent", () => {
 
   it("warns feeTooHigh on a native transfer whose fee exceeds 10% of the amount", async () => {
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ amount: 5_000_000n }),
       balances(10_000_000n),
@@ -190,6 +210,7 @@ describe("validateIntent", () => {
 
   it("flags a native amount below the min-UTXO floor", async () => {
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ amount: 100_000n }),
       balances(10_000_000n),
@@ -204,6 +225,7 @@ describe("validateIntent", () => {
     (fetchNetworkInfo as jest.Mock).mockRejectedValueOnce(new Error("network down"));
     // Below the floor, but the params fetch failed → skip the best-effort check (craft still enforces it).
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ amount: 100_000n }),
       balances(10_000_000n),
@@ -216,6 +238,7 @@ describe("validateIntent", () => {
 
   it("flags a memo longer than the Cardano metadata limit", async () => {
     const res = await validateIntent(
+      mockCardanoConfig,
       currency,
       intent({ memo: { type: "string", kind: "text", value: "a".repeat(65) } }),
       balances(10_000_000n),
@@ -241,9 +264,15 @@ describe("validateIntent", () => {
     }
 
     it("validates a fundable delegation (no ADA moved, only fees)", async () => {
-      const res = await validateIntent(currency, stakeIntent(), balances(10_000_000n), {
-        value: 200_000n,
-      });
+      const res = await validateIntent(
+        mockCardanoConfig,
+        currency,
+        stakeIntent(),
+        balances(10_000_000n),
+        {
+          value: 200_000n,
+        },
+      );
       expect(res.errors).toEqual({});
       expect(res.amount).toBe(0n);
       expect(res.estimatedFees).toBe(200_000n);
@@ -252,6 +281,7 @@ describe("validateIntent", () => {
 
     it("does not run the native recipient check for a delegation (empty recipient is fine)", async () => {
       const res = await validateIntent(
+        mockCardanoConfig,
         currency,
         stakeIntent({ recipient: "" }),
         balances(10_000_000n),
@@ -264,6 +294,7 @@ describe("validateIntent", () => {
 
     it("flags a delegation missing its pool id", async () => {
       const res = await validateIntent(
+        mockCardanoConfig,
         currency,
         stakeIntent({ valAddress: "" } as Partial<TransactionIntent<StringMemo>>),
         balances(10_000_000n),
@@ -275,14 +306,21 @@ describe("validateIntent", () => {
     });
 
     it("flags a delegation whose fee the balance cannot cover", async () => {
-      const res = await validateIntent(currency, stakeIntent(), balances(100_000n), {
-        value: 200_000n,
-      });
+      const res = await validateIntent(
+        mockCardanoConfig,
+        currency,
+        stakeIntent(),
+        balances(100_000n),
+        {
+          value: 200_000n,
+        },
+      );
       expect(res.errors.amount?.name).toBe("NotEnoughBalance");
     });
 
     it("validates an undelegation without requiring a pool id", async () => {
       const res = await validateIntent(
+        mockCardanoConfig,
         currency,
         stakeIntent({ mode: "undelegate", valAddress: "" } as Partial<
           TransactionIntent<StringMemo>
@@ -296,6 +334,7 @@ describe("validateIntent", () => {
 
     it("flags an oversized memo on a delegation (craft applies it for staking too)", async () => {
       const res = await validateIntent(
+        mockCardanoConfig,
         currency,
         stakeIntent({ memo: { type: "string", kind: "text", value: "a".repeat(65) } }),
         balances(10_000_000n),

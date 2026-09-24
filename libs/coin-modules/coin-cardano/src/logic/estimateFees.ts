@@ -5,6 +5,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { buildUnsignedTransaction } from "./craftTransaction";
+import type { CardanoCoinConfig } from "../config";
 
 /**
  * Estimate the fee for a Cardano transaction intent. On Cardano the fee is deterministic —
@@ -16,9 +17,10 @@ import { buildUnsignedTransaction } from "./craftTransaction";
  * accepts the contract's `customFeesParameters` but ignores it for Cardano.
  */
 export async function estimateFees(
+  config: CardanoCoinConfig,
   currency: CryptoCurrency,
   intent: TransactionIntent<StringMemo>,
 ): Promise<FeeEstimation> {
-  const tx = await buildUnsignedTransaction(currency, intent);
+  const tx = await buildUnsignedTransaction(config, currency, intent);
   return { value: BigInt(tx.getFee().toFixed(0)) };
 }

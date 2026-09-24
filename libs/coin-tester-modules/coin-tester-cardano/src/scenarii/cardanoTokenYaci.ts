@@ -7,7 +7,7 @@ import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount } from "../fixtures";
+import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, MOCK_TESTNET_INFRA, makeAccount } from "../fixtures";
 import { getBridges, TESTNET } from "../helpers";
 import { computePolicyId, mintToken } from "../mintToken";
 import { buildSigner } from "../signer";
@@ -39,7 +39,12 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
     LiveConfig.setConfig({
       config_currency_cardano_testnet: {
         type: "object",
-        default: { status: { type: "active" }, maxFeesWarning: 0, maxFeesError: 0 },
+        default: {
+          status: { type: "active" },
+          maxFeesWarning: 0,
+          maxFeesError: 0,
+          infra: MOCK_TESTNET_INFRA,
+        },
       },
     });
 

@@ -1,12 +1,17 @@
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
 import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import { infraByCurrency } from "../test/coinConfig";
 import { getBalance } from "../logic/getBalance";
 
 jest.mock("../logic/getBalance");
 const mockGetBalance = jest.mocked(getBalance);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const config: CardanoConfig = {
+  maxFeesWarning: 0,
+  maxFeesError: 0,
+  infra: infraByCurrency.cardano,
+};
 const mockCtx: Context<CardanoCoinConfig> = {
   config: async () => ({ ...config, status: { type: "active" } }),
   logger: () => {},
@@ -26,7 +31,7 @@ describe("getBalance", () => {
 
     expect(result).toBe(balances);
     expect(mockGetBalance).toHaveBeenCalledTimes(1);
-    expect(mockGetBalance.mock.calls[0][0].id).toBe("cardano");
+    expect(mockGetBalance.mock.calls[0][0].infra).toBeDefined();
     expect(mockGetBalance.mock.calls[0][1]).toBe("addr1xxx");
   });
 

@@ -9,6 +9,7 @@ import BigNumber from "bignumber.js";
 import {
   CARDANO,
   FRESH_ADDRESS_PATH,
+  MOCK_INFRA,
   TEST_TOKEN,
   TEST_TOKEN_ASSET_NAME,
   TEST_TOKEN_POLICY_ID,
@@ -40,7 +41,12 @@ export const scenarioCardanoToken: Scenario<GenericTransaction, Account> = {
     LiveConfig.setConfig({
       config_currency_cardano: {
         type: "object",
-        default: { status: { type: "active" }, maxFeesWarning: 0, maxFeesError: 0 },
+        default: {
+          status: { type: "active" },
+          maxFeesWarning: 0,
+          maxFeesError: 0,
+          infra: MOCK_INFRA,
+        },
       },
     });
     closeMSW = initMSW();

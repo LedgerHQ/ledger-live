@@ -41,9 +41,9 @@ export async function safeExecuteScenario(
   }
 }
 
-// Which Cardano network the bridges target. Mainnet (network tag 1, addr1…, CARDANO_API_ENDPOINT) is
-// the default for the in-memory mock scenarios; testnet (tag 0, addr_test…, CARDANO_TESTNET_API_ENDPOINT)
-// is used by the Yaci-devnet send scenario.
+// Which Cardano network the bridges target, each reading its own config_currency_<id> endpoints.
+// Mainnet (network tag 1, addr1…) is the default for the in-memory mock scenarios; testnet (tag 0,
+// addr_test…) is used by the Yaci-devnet send scenario.
 export type CardanoNet = { network: "cardano" | "cardano_testnet"; networkId: number };
 export const MAINNET: CardanoNet = { network: "cardano", networkId: 1 };
 export const TESTNET: CardanoNet = { network: "cardano_testnet", networkId: 0 };

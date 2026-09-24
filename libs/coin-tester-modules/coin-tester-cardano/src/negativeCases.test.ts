@@ -2,7 +2,7 @@ import { CardanoMinAmountError } from "@ledgerhq/coin-cardano/errors";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount } from "./fixtures";
+import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, MOCK_TESTNET_INFRA, makeAccount } from "./fixtures";
 import { getBridges, TESTNET } from "./helpers";
 import { buildSigner } from "./signer";
 import { resetDevnet, sleep, topup } from "./yaci";
@@ -69,7 +69,12 @@ describe("Cardano negative cases (Yaci devnet)", () => {
     LiveConfig.setConfig({
       config_currency_cardano_testnet: {
         type: "object",
-        default: { status: { type: "active" }, maxFeesWarning: 0, maxFeesError: 0 },
+        default: {
+          status: { type: "active" },
+          maxFeesWarning: 0,
+          maxFeesError: 0,
+          infra: MOCK_TESTNET_INFRA,
+        },
       },
     });
     await resetDevnet();

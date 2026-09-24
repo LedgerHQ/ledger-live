@@ -1,6 +1,6 @@
 import type { Context } from "@ledgerhq/coin-module-framework/config";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import { infraByCurrency } from "../test/coinConfig";
 import { getValidators } from "../logic/getValidators";
 import { createApi } from ".";
 
@@ -10,8 +10,11 @@ jest.mock("../logic/getValidators", () => ({
 
 const mockGetValidators = jest.mocked(getValidators);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
-const currency = getCryptoCurrencyById("cardano");
+const config: CardanoConfig = {
+  maxFeesWarning: 0,
+  maxFeesError: 0,
+  infra: infraByCurrency.cardano,
+};
 const mockCtx: Context<CardanoCoinConfig> = {
   config: async () => ({ ...config, status: { type: "active" } }),
   logger: () => {},
@@ -30,7 +33,9 @@ describe("api.getValidators", () => {
     const result = await api.getValidators(mockCtx);
 
     expect(mockGetValidators).toHaveBeenCalledTimes(1);
-    expect(mockGetValidators).toHaveBeenCalledWith(currency);
+    expect(mockGetValidators).toHaveBeenCalledWith(
+      expect.objectContaining({ infra: expect.any(Object) }),
+    );
     expect(result).toBe(page);
   });
 

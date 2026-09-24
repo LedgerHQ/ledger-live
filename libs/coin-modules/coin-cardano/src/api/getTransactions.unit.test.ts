@@ -1,6 +1,7 @@
 import { getTransactions } from "./getTransactions";
 import { getAllTransactionsByKeys } from "./fetchTransactions";
 import { CardanoAccount } from "../types";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("./fetchTransactions");
 
@@ -50,7 +51,7 @@ describe("getTransactions — sync must not mutate frozen initialAccount credent
       blockHeight: 1,
     } as any);
 
-    const result = await getTransactions(xpub, 0, initialAccount, 0, { id: "cardano" } as any);
+    const result = await getTransactions(mockCardanoConfig, xpub, 0, initialAccount, 0);
 
     expect(result.externalCredentials.find(c => c.key === usedKey)?.isUsed).toBe(true);
     expect(initialAccount.cardanoResources.externalCredentials[0].isUsed).toBe(false);

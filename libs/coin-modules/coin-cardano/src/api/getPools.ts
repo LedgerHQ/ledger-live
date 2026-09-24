@@ -1,35 +1,30 @@
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
-import { isTestnet } from "../logic";
 import { APIGetPoolList, APIGetPoolsDetail } from "./api-types";
+import { getApiEndpoint } from "./endpoints";
+import type { CardanoCoinConfig } from "../config";
 
 export async function fetchPoolList(
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
   search: string,
   pageNo: number,
   limit: number,
 ): Promise<APIGetPoolList> {
   const res = await network({
     method: "GET",
-    url: isTestnet(currency)
-      ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/pool/list`
-      : `${CARDANO_API_ENDPOINT}/v1/pool/list`,
+    url: `${getApiEndpoint(config)}/v1/pool/list`,
     params: { search, pageNo, limit },
   });
   return res && (res.data as APIGetPoolList);
 }
 
 export async function fetchPoolDetails(
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
   poolIds: Array<string>,
 ): Promise<APIGetPoolsDetail> {
   const { data } = await network<APIGetPoolsDetail>({
     method: "GET",
-    url: isTestnet(currency)
-      ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/pool/detail`
-      : `${CARDANO_API_ENDPOINT}/v1/pool/detail`,
+    url: `${getApiEndpoint(config)}/v1/pool/detail`,
     params: { poolIds },
   });
 

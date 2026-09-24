@@ -150,7 +150,7 @@ export function initYaciIndexer(): () => void {
       );
     }),
     http.get(`${MOCK_API}/v1/pool/detail`, () => HttpResponse.json(POOL_DETAIL)),
-    // Epoch params for getValidators' APY (env.setup points CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT here).
+    // Epoch params for getValidators' APY (MOCK_TESTNET_INFRA points CARDANO_EPOCH_PARAMS_ENDPOINT here).
     http.get(`${MOCK_API}/epoch-params`, () => HttpResponse.json(EPOCH_PARAMS)),
   );
 

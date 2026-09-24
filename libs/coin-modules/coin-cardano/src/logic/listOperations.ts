@@ -11,10 +11,9 @@ import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
 import { APITransaction, HashType, StakeDelegationCertificate } from "../api/api-types";
+import { getApiEndpoint } from "../api/endpoints";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
-import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
 import {
-  isTestnet,
   getMemoFromTx,
   isHexString,
   decodeTokenName,
@@ -33,6 +32,7 @@ import {
   extractStakeKeyFromAddress,
   EMPTY_CREDENTIAL_KEY,
 } from "../utils";
+import type { CardanoCoinConfig } from "../config";
 
 // Logs a warning when a page yields an unusually large number of operations. One
 // transaction can produce several operations (native + one per token moved), so
@@ -359,8 +359,8 @@ function extractTokenOperations(
 // We don't send a limit to this endpoint; the server dictates the page size and
 // returns it as `limit`, which the caller uses only to detect a full page.
 async function fetchTransactionsByPaymentKey(
+  config: CardanoCoinConfig,
   paymentKey: string,
-  currency: CryptoCurrency,
   blockHeight: number = 0,
   pageNo: number = 1,
 ): Promise<{
@@ -369,7 +369,7 @@ async function fetchTransactionsByPaymentKey(
   limit: number;
   blockHeight: number;
 }> {
-  const endpoint = isTestnet(currency) ? CARDANO_TESTNET_API_ENDPOINT : CARDANO_API_ENDPOINT;
+  const endpoint = getApiEndpoint(config);
 
   const res = await network({
     method: "POST",
@@ -410,6 +410,7 @@ async function fetchTransactionsByPaymentKey(
  * @returns Paginated list of operations (native ADA + tokens)
  */
 export async function listOperations(
+  config: CardanoCoinConfig,
   currency: CryptoCurrency,
   address: string,
   options: ListOperationsOptions,
@@ -460,7 +461,7 @@ export async function listOperations(
     transactions,
     limit,
     pageNo: servedPageNo,
-  } = await fetchTransactionsByPaymentKey(paymentKey, currency, blockHeight, pageNo);
+  } = await fetchTransactionsByPaymentKey(config, paymentKey, blockHeight, pageNo);
 
   // Pre-Conway registration/de-registration amounts aren't carried on the
   // certificate — they come from the protocol params (as the rest of the Cardano
@@ -470,7 +471,7 @@ export async function listOperations(
     tx => tx.certificate.stakeRegistrations?.length || tx.certificate.stakeDeRegistrations?.length,
   );
   const stakeKeyDeposit = hasPreConwayStakeCerts
-    ? (await fetchNetworkInfo(currency)).protocolParams.stakeKeyDeposit
+    ? (await fetchNetworkInfo(config)).protocolParams.stakeKeyDeposit
     : "";
 
   const allOperations: Operation<MemoNotSupported>[] = [];

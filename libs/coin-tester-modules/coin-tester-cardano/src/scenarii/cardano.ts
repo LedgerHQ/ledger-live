@@ -5,7 +5,7 @@ import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-co
 import type { Scenario } from "@ledgerhq/coin-tester/main";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { CARDANO, FRESH_ADDRESS_PATH, makeAccount } from "../fixtures";
+import { CARDANO, FRESH_ADDRESS_PATH, MOCK_INFRA, makeAccount } from "../fixtures";
 import { getBridges } from "../helpers";
 import { fund, initMSW, resetLedger } from "../indexer";
 import { buildSigner } from "../signer";
@@ -52,11 +52,15 @@ export const scenarioCardano: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Cardano Transactions",
 
   setup: async () => {
-    // CARDANO_API_ENDPOINT is pointed at the mock in env.setup.ts (must precede module load).
     LiveConfig.setConfig({
       config_currency_cardano: {
         type: "object",
-        default: { status: { type: "active" }, maxFeesWarning: 0, maxFeesError: 0 },
+        default: {
+          status: { type: "active" },
+          maxFeesWarning: 0,
+          maxFeesError: 0,
+          infra: MOCK_INFRA,
+        },
       },
     });
     closeMSW = initMSW();

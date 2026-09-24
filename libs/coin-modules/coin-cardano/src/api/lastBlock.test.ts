@@ -1,12 +1,17 @@
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
 import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import { infraByCurrency } from "../test/coinConfig";
 import { lastBlock } from "../logic/lastBlock";
 
 jest.mock("../logic/lastBlock");
 const mockLastBlock = jest.mocked(lastBlock);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const config: CardanoConfig = {
+  maxFeesWarning: 0,
+  maxFeesError: 0,
+  infra: infraByCurrency.cardano,
+};
 const mockCtx: Context<CardanoCoinConfig> = {
   config: async () => ({ ...config, status: { type: "active" } }),
   logger: () => {},
@@ -26,7 +31,7 @@ describe("lastBlock", () => {
 
     expect(result).toBe(blockInfo);
     expect(mockLastBlock).toHaveBeenCalledTimes(1);
-    expect(mockLastBlock.mock.calls[0][0].id).toBe("cardano");
+    expect(mockLastBlock.mock.calls[0][0].infra).toBeDefined();
   });
 
   it("propagates errors from logic lastBlock", async () => {

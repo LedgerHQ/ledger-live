@@ -1,12 +1,10 @@
 import network from "@ledgerhq/live-network/network";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { APIEpochParams } from "./api-types";
 import { fetchEpochInfo } from "./getEpochInfo";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockNetwork = jest.mocked(network);
-
-const currency = getCryptoCurrencyById("cardano");
 
 const withCurrentEpoch = (currentEpoch: APIEpochParams["cardano"][number]["currentEpoch"]) =>
   ({ data: { cardano: [{ currentEpoch }] } }) as never;
@@ -25,7 +23,7 @@ describe("fetchEpochInfo", () => {
       }),
     );
 
-    expect(await fetchEpochInfo(currency)).toEqual({
+    expect(await fetchEpochInfo(mockCardanoConfig)).toEqual({
       number: 637,
       reserves: "6307350175048889",
       activeStake: "22000000000000000",
@@ -41,7 +39,7 @@ describe("fetchEpochInfo", () => {
       }),
     );
 
-    const epoch = await fetchEpochInfo(currency);
+    const epoch = await fetchEpochInfo(mockCardanoConfig);
     expect(epoch.reserves).toBeUndefined();
     expect(epoch.activeStake).toBeUndefined();
     expect(epoch.params).toEqual({ a0: 0.3, rho: 0.003, tau: 0.2 });

@@ -1,9 +1,9 @@
 import type { Page, Validator } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { EpochInfo, StakePool } from "../api/api-types";
 import { fetchEpochInfo } from "../api/getEpochInfo";
 import { fetchPoolList } from "../api/getPools";
 import { computePoolApy } from "./computePoolApy";
+import type { CardanoCoinConfig } from "../config";
 
 const PAGE_LIMIT = 100;
 
@@ -35,12 +35,12 @@ function toValidator(pool: StakePool, epoch: EpochInfo | undefined): Validator |
   return validator;
 }
 
-async function fetchAllPools(currency: CryptoCurrency): Promise<StakePool[]> {
+async function fetchAllPools(config: CardanoCoinConfig): Promise<StakePool[]> {
   const pools: StakePool[] = [];
   let pageNo = 1;
   let total = 0;
   do {
-    const res = await fetchPoolList(currency, "", pageNo, PAGE_LIMIT);
+    const res = await fetchPoolList(config, "", pageNo, PAGE_LIMIT);
     pools.push(...res.pools);
     total = res.count;
     pageNo += 1;
@@ -56,10 +56,10 @@ async function fetchAllPools(currency: CryptoCurrency): Promise<StakePool[]> {
  * are fetched once in parallel for APY; a failure there degrades to validators without APY
  * rather than failing the whole list.
  */
-export async function getValidators(currency: CryptoCurrency): Promise<Page<Validator>> {
+export async function getValidators(config: CardanoCoinConfig): Promise<Page<Validator>> {
   const [pools, epoch] = await Promise.all([
-    fetchAllPools(currency),
-    fetchEpochInfo(currency).catch(() => undefined),
+    fetchAllPools(config),
+    fetchEpochInfo(config).catch(() => undefined),
   ]);
 
   const items = pools.flatMap(pool => toValidator(pool, epoch) ?? []);

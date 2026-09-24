@@ -1,23 +1,10 @@
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { fetchPoolDetails } from "./getPools";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 jest.mock("@ledgerhq/live-network/network");
 
 const poolIds = ["pool1", "pool2", "pool3"];
-const currency = {
-  id: "cardano",
-  family: "cardano",
-  coinType: 1815,
-  name: "Cardano",
-  managerAppName: "Cardano",
-  ticker: "ADA",
-  scheme: "cardano",
-  units: [
-    { name: "ada", code: "ADA", magnitude: 6 },
-    { name: "Lovelace", code: "Lovelace", magnitude: 0 },
-  ],
-} as CryptoCurrency;
 
 describe("fetchPoolDetails with sorted data", () => {
   it("success with 200", async () => {
@@ -46,7 +33,7 @@ describe("fetchPoolDetails with sorted data", () => {
       },
     }));
 
-    const result = await fetchPoolDetails(currency, poolIds);
+    const result = await fetchPoolDetails(mockCardanoConfig, poolIds);
 
     expect(result.pools).toStrictEqual([
       {
@@ -75,7 +62,7 @@ describe("fetchPoolDetails with sorted data", () => {
       data: { pools: [] },
     }));
 
-    const result = await fetchPoolDetails(currency, poolIds);
+    const result = await fetchPoolDetails(mockCardanoConfig, poolIds);
 
     expect(result.pools).toStrictEqual([]);
   });
@@ -92,7 +79,7 @@ describe("fetchPoolDetails with sorted data", () => {
       data: poolsWithEqualStake,
     }));
 
-    const result = await fetchPoolDetails(currency, ["first", "second", "third"]);
+    const result = await fetchPoolDetails(mockCardanoConfig, ["first", "second", "third"]);
 
     expect(result.pools).toStrictEqual([
       { poolId: "first", name: "First", ticker: "FST", liveStake: "1000" },
@@ -128,7 +115,7 @@ describe("fetchPoolDetails with sorted data", () => {
       data: poolsWithLargeStake,
     }));
 
-    const result = await fetchPoolDetails(currency, ["huge", "small", "medium"]);
+    const result = await fetchPoolDetails(mockCardanoConfig, ["huge", "small", "medium"]);
 
     expect(result.pools).toStrictEqual([
       {
@@ -156,6 +143,8 @@ describe("fetchPoolDetails with sorted data", () => {
     const networkError = new Error("Network request failed");
     (network as jest.Mock).mockRejectedValue(networkError);
 
-    await expect(fetchPoolDetails(currency, poolIds)).rejects.toThrow("Network request failed");
+    await expect(fetchPoolDetails(mockCardanoConfig, poolIds)).rejects.toThrow(
+      "Network request failed",
+    );
   });
 });

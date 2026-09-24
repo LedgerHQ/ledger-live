@@ -1,5 +1,4 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { types as TyphonTypes } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import { APITransaction } from "../api/api-types";
@@ -14,13 +13,14 @@ import {
   isByronAddress,
 } from "../utils";
 import { NATIVE_ASSET, buildStake } from "./stake";
+import type { CardanoCoinConfig } from "../config";
 
 async function computeMinAdaForTokens(
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
   address: string,
   tokens: TyphonTypes.Token[],
 ): Promise<BigNumber> {
-  const { protocolParams } = await fetchNetworkInfo(currency);
+  const { protocolParams } = await fetchNetworkInfo(config);
   return calculateMinAdaForTokens(address, tokens, protocolParams.utxoCostPerByte);
 }
 
@@ -33,7 +33,7 @@ async function computeMinAdaForTokens(
  * single-address CoinModule contract cannot enumerate. Staking is account-complete (the
  * stake credential is shared across all the account's addresses).
  */
-export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
+export async function getBalance(config: CardanoCoinConfig, address: string): Promise<Balance[]> {
   // Byron addresses are valid (isValidAddress accepts them) but expose no Shelley payment
   // credential, so we cannot derive their UTXOs. Reject explicitly instead of silently
   // reporting a zero balance for an address that may actually hold funds.
@@ -51,8 +51,8 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
   const [{ transactions }, delegation] = await Promise.all([
     paymentKey === EMPTY_CREDENTIAL_KEY
       ? Promise.resolve<{ transactions: APITransaction[] }>({ transactions: [] })
-      : getAllTransactionsByKeys([paymentKey], 0, currency),
-    stakeKey ? getDelegationInfo(currency, stakeKey) : Promise.resolve(undefined),
+      : getAllTransactionsByKeys(config, [paymentKey], 0),
+    stakeKey ? getDelegationInfo(config, stakeKey) : Promise.resolve(undefined),
   ]);
 
   const utxos = deriveUtxos(transactions, paymentKey);
@@ -65,7 +65,7 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
   // (non-spendable) part is min-ADA backing the held tokens plus rewards that aren't yet
   // withdrawable (no dRep delegation). Only fetch network info for min-ADA when tokens exist.
   const minAdaForTokens = tokens.length
-    ? await computeMinAdaForTokens(currency, address, tokens)
+    ? await computeMinAdaForTokens(config, address, tokens)
     : new BigNumber(0);
   const { total: nativeValue, spendable } = computeAdaBalance({
     utxosSum,

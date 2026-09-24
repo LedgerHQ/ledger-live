@@ -34,6 +34,7 @@ import {
   extractPaymentKeyFromAddress,
   extractStakeKeyFromAddress,
 } from "../utils";
+import type { CardanoCoinConfig } from "../config";
 
 /**
  * The CoinModule API receives only the sender address (no xpub), so all inputs share the
@@ -289,6 +290,7 @@ function applyCustomFee(
  * downstream, not part of this body — so no xpub/account sync is needed here.
  */
 export async function buildUnsignedTransaction(
+  config: CardanoCoinConfig,
   currency: CryptoCurrency,
   intent: TransactionIntent<StringMemo>,
   customFees?: FeeEstimation,
@@ -303,9 +305,9 @@ export async function buildUnsignedTransaction(
   // Protocol params, the sender's tx history (for UTXOs) and the delegation state are independent
   // network calls — fetch them in parallel rather than serially.
   const [{ protocolParams }, { transactions }, delegation] = await Promise.all([
-    fetchNetworkInfo(currency),
-    getAllTransactionsByKeys([paymentKey], 0, currency),
-    stakeKey ? getDelegationInfo(currency, stakeKey) : Promise.resolve(undefined),
+    fetchNetworkInfo(config),
+    getAllTransactionsByKeys(config, [paymentKey], 0),
+    stakeKey ? getDelegationInfo(config, stakeKey) : Promise.resolve(undefined),
   ]);
 
   const typhonTx = new TyphonTransaction({
@@ -411,11 +413,12 @@ export async function buildUnsignedTransaction(
  * payload (ready for the downstream device-signing step) and the resolved fee.
  */
 export async function craftTransaction(
+  config: CardanoCoinConfig,
   currency: CryptoCurrency,
   intent: TransactionIntent<StringMemo>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  const tx = await buildUnsignedTransaction(currency, intent, customFees);
+  const tx = await buildUnsignedTransaction(config, currency, intent, customFees);
   const { payload } = tx.buildTransaction();
   return {
     transaction: payload,

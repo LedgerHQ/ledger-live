@@ -7,6 +7,7 @@ import {
   utils as TyphonUtils,
 } from "@stricahq/typhonjs";
 import { listOperations } from "./listOperations";
+import { mockCardanoConfig } from "../test/coinConfig";
 
 /**
  * Integration tests for listOperations against Cardano mainnet API.
@@ -70,7 +71,7 @@ describe("listOperations", () => {
     );
     PRISTINE_ADDRESS = pristineAddress.getBech32();
 
-    descFirstPage = await listOperations(currency, TESTING_ADDRESS, {
+    descFirstPage = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
       minHeight: 0,
       order: "desc",
       limit: 200,
@@ -80,7 +81,11 @@ describe("listOperations", () => {
   describe("Basic operations", () => {
     it("rejects ascending order (unsupported on a newest-first backend)", async () => {
       await expect(
-        listOperations(currency, TESTING_ADDRESS, { minHeight: 0, order: "asc", limit: 20 }),
+        listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
+          minHeight: 0,
+          order: "asc",
+          limit: 20,
+        }),
       ).rejects.toThrow("ascending order is not supported");
     });
 
@@ -100,7 +105,7 @@ describe("listOperations", () => {
 
     it("should filter by minHeight", async () => {
       const minHeight = 8000000;
-      const result = await listOperations(currency, TESTING_ADDRESS, {
+      const result = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
         minHeight,
         order: "desc",
         limit: 20,
@@ -176,7 +181,7 @@ describe("listOperations", () => {
       const limit = 10;
 
       while (pageCount < maxPages) {
-        const result = await listOperations(currency, TESTING_ADDRESS, {
+        const result = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
           minHeight: 0,
           order: "desc",
           limit,
@@ -206,7 +211,7 @@ describe("listOperations", () => {
     }, 60000);
 
     it("should return consistent results when re-fetching with same cursor", async () => {
-      const firstPage = await listOperations(currency, TESTING_ADDRESS, {
+      const firstPage = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
         minHeight: 0,
         order: "desc",
         limit: 10,
@@ -216,13 +221,13 @@ describe("listOperations", () => {
         return;
       }
 
-      const secondPageA = await listOperations(currency, TESTING_ADDRESS, {
+      const secondPageA = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
         minHeight: 0,
         order: "desc",
         limit: 10,
         cursor: firstPage.next,
       });
-      const secondPageB = await listOperations(currency, TESTING_ADDRESS, {
+      const secondPageB = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
         minHeight: 0,
         order: "desc",
         limit: 10,
@@ -241,7 +246,7 @@ describe("listOperations", () => {
       const maxPages = 10;
 
       while (pageCount < maxPages) {
-        lastResult = await listOperations(currency, TESTING_ADDRESS, {
+        lastResult = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
           minHeight: 0,
           order: "desc",
           limit: 10,
@@ -490,7 +495,7 @@ describe("listOperations", () => {
     }, 30000);
 
     it("should handle Conway era stake registrations", async () => {
-      const result = await listOperations(currency, TESTING_ADDRESS, {
+      const result = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
         minHeight: 8000000, // Post-Conway hardfork
         order: "desc",
         limit: 200,
@@ -637,7 +642,7 @@ describe("listOperations", () => {
     it("should handle Byron addresses gracefully", async () => {
       const byronAddress = "Ae2tdPwUPEZCanmBz5g2GEwFqKTKpNJcGYPKfDxoNeKZ8bRHr8366kseiK2";
 
-      const result = await listOperations(currency, byronAddress, {
+      const result = await listOperations(mockCardanoConfig, currency, byronAddress, {
         minHeight: 0,
         order: "desc",
         limit: 10,
@@ -650,7 +655,7 @@ describe("listOperations", () => {
 
   describe("Edge cases and error handling", () => {
     it("should handle pristine address query correctly", async () => {
-      const result = await listOperations(currency, PRISTINE_ADDRESS, {
+      const result = await listOperations(mockCardanoConfig, currency, PRISTINE_ADDRESS, {
         minHeight: 0,
         order: "desc",
         limit: 10,
@@ -663,7 +668,7 @@ describe("listOperations", () => {
     it("should handle invalid address gracefully", async () => {
       const invalidAddress = "invalid_cardano_address";
 
-      const result = await listOperations(currency, invalidAddress, {
+      const result = await listOperations(mockCardanoConfig, currency, invalidAddress, {
         minHeight: 0,
         order: "desc",
         limit: 10,
@@ -684,7 +689,7 @@ describe("listOperations", () => {
       ];
 
       for (const invalidAddr of testCases) {
-        const result = await listOperations(currency, invalidAddr, {
+        const result = await listOperations(mockCardanoConfig, currency, invalidAddr, {
           minHeight: 0,
           order: "desc",
           limit: 10,
@@ -696,13 +701,13 @@ describe("listOperations", () => {
     }, 30000);
 
     it("should ignore options.limit (API uses fixed page size)", async () => {
-      const result1 = await listOperations(currency, TESTING_ADDRESS, {
+      const result1 = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
         minHeight: 0,
         order: "desc",
         limit: 50,
       });
 
-      const result2 = await listOperations(currency, TESTING_ADDRESS, {
+      const result2 = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
         minHeight: 0,
         order: "desc",
         limit: 5,
@@ -714,7 +719,7 @@ describe("listOperations", () => {
     }, 30000);
 
     it("should return undefined cursor when all transactions are filtered by minHeight", async () => {
-      const result = await listOperations(currency, TESTING_ADDRESS, {
+      const result = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
         minHeight: 999999999,
         order: "desc",
         limit: 10,
@@ -753,7 +758,7 @@ describe("listOperations", () => {
     }, 30000);
 
     it("should handle very old transactions (edge case block heights)", async () => {
-      const result = await listOperations(currency, TESTING_ADDRESS, {
+      const result = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
         minHeight: 1,
         order: "desc",
         limit: 10,
@@ -772,7 +777,7 @@ describe("listOperations", () => {
       let pageCount = 0;
 
       while (pageCount < maxPages) {
-        const result = await listOperations(currency, TESTING_ADDRESS, {
+        const result = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
           minHeight: 0,
           order: "desc",
           limit: 10,
@@ -797,7 +802,7 @@ describe("listOperations", () => {
       const invalidCursors = ["abc", "-1", "0", "999999999999", "", "  ", "NaN"];
 
       for (const invalidCursor of invalidCursors) {
-        const result = await listOperations(currency, TESTING_ADDRESS, {
+        const result = await listOperations(mockCardanoConfig, currency, TESTING_ADDRESS, {
           minHeight: 0,
           order: "desc",
           limit: 10,

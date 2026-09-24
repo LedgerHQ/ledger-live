@@ -1,14 +1,13 @@
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
-import { isTestnet } from "../logic";
 import { APITransaction } from "./api-types";
+import { getApiEndpoint } from "./endpoints";
+import type { CardanoCoinConfig } from "../config";
 
 async function fetchTransactionsPage(
+  config: CardanoCoinConfig,
   paymentKeys: Array<string>,
   pageNo: number,
   blockHeight: number,
-  currency: CryptoCurrency,
 ): Promise<{
   pageNo: number;
   // Untyped network response: limit may be missing or non-numeric. Callers must coerce the
@@ -19,9 +18,7 @@ async function fetchTransactionsPage(
 }> {
   const res = await network({
     method: "POST",
-    url: isTestnet(currency)
-      ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/transaction`
-      : `${CARDANO_API_ENDPOINT}/v1/transaction`,
+    url: `${getApiEndpoint(config)}/v1/transaction`,
     data: {
       paymentKeys,
       pageNo,
@@ -38,9 +35,9 @@ async function fetchTransactionsPage(
  * drift between them — which matters for balance correctness.
  */
 export async function getAllTransactionsByKeys(
+  config: CardanoCoinConfig,
   paymentKeys: Array<string>,
   blockHeight: number,
-  currency: CryptoCurrency,
 ): Promise<{
   transactions: Array<APITransaction>;
   blockHeight: number;
@@ -50,7 +47,7 @@ export async function getAllTransactionsByKeys(
   let pageNo = 1;
 
   for (;;) {
-    const res = await fetchTransactionsPage(paymentKeys, pageNo, blockHeight, currency);
+    const res = await fetchTransactionsPage(config, paymentKeys, pageNo, blockHeight);
     transactions.push(...res.transactions);
     latestBlockHeight = Math.max(res.blockHeight, latestBlockHeight);
     // A short page (or no advertised limit) means there are no further pages. `limit` comes from
