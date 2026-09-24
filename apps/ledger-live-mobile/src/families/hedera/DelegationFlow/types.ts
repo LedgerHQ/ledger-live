@@ -1,6 +1,6 @@
 import type {
-  HederaValidator,
   Transaction,
+  HederaValidator,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/hedera/types";
 import type { ParamListBase, RouteProp } from "@react-navigation/native";

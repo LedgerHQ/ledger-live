@@ -13,6 +13,7 @@ import type {
   StakingResources,
 } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
+import type { GetAddressResult } from "../derivation";
 
 export type OptimisticOperationDescriptor = {
   /** The operation type this mode produces. Absent defers to the generic mode mapping. */
@@ -46,6 +47,17 @@ export type ChainSpecificRules = {
 
 export type BridgeApi = {
   getChainSpecificRules?: ChainSpecificRules;
+  /**
+   * For chains whose address is handed out by the network, not derived from the path (ADR-055).
+   * Return `[]` to stop the scan. Also makes `receive()` verify the device by public key.
+   * Set `keyOwnsSeveralAccounts` if one key can return several addresses.
+   */
+  getAddressesByPublicKey?: (derived: GetAddressResult) => Promise<string[]>;
+  /**
+   * Set when `getAddressesByPublicKey` can return several addresses for one key. Leaves those
+   * accounts without an `xpub`, else `sameAccountIdentity` would drop all but the first on add.
+   */
+  keyOwnsSeveralAccounts?: boolean;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined;
   computeIntentType?: (transaction: Record<string, unknown>) => string;
@@ -170,4 +182,15 @@ export type BridgeApi = {
    * @returns The readiness of the account (ready flag + optional reason).
    */
   getAccountReadiness?: (currency: CryptoCurrency, address: string) => Promise<AccountReadiness>;
+  /**
+   * Folded into the account's `syncHash`: bumping it re-syncs every stored account of this family
+   * from scratch, dropping its operations rather than merging into them. For a change the family
+   * cannot make backwards-compatible, such as a new spelling of `Operation.id`.
+   */
+  syncVersion?: string;
+  /**
+   * Defaults to `true`. A family whose account shape returns the whole operation list must set it
+   * to `false`, or the merge puts back whatever the shape deliberately left out.
+   */
+  shouldMergeOps?: boolean;
 };

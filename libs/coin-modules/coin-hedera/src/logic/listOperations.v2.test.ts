@@ -133,6 +133,93 @@ describe("listOperationsV2", () => {
     expect(result.tokenOperations).toEqual([]);
   });
 
+  it("forwards minTimestamp to both the mirror and hgraph sources", async () => {
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [],
+      nextCursor: null,
+    });
+
+    await listOperations(mockConfig, {
+      limit: mockLimit,
+      order: mockOrder,
+      currencyId: mockCurrency.id,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+      minTimestamp: "1787236926.768102104",
+    });
+
+    expect(apiClient.getAccountTransactions).toHaveBeenCalledWith(
+      expect.objectContaining({ minTimestamp: "1787236926.768102104" }),
+    );
+    expect(hgraphClient.getERC20Transfers).toHaveBeenCalledWith(
+      expect.objectContaining({ minTimestamp: "1787236926.768102104" }),
+    );
+  });
+
+  describe("erc20 floor in pagination mode", () => {
+    const paginationParams = {
+      limit: mockLimit,
+      order: "desc" as const,
+      currencyId: mockCurrency.id,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: false,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    };
+
+    it("floors the hgraph query at the oldest transaction of the mirror page", async () => {
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({ consensus_timestamp: "1787236926.768102104" }),
+          getMockedMirrorTransaction({ consensus_timestamp: "1787230000.000000000" }),
+        ],
+        nextCursor: "1787230000.000000000",
+      });
+
+      await listOperations(mockConfig, { ...paginationParams, minTimestamp: "1750000000" });
+
+      expect(hgraphClient.getERC20Transfers).toHaveBeenCalledWith(
+        expect.objectContaining({ minTimestamp: "1787230000.000000000" }),
+      );
+    });
+
+    it("keeps the caller's floor when the mirror page is empty", async () => {
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [],
+        nextCursor: null,
+      });
+
+      await listOperations(mockConfig, { ...paginationParams, minTimestamp: "1750000000" });
+
+      expect(hgraphClient.getERC20Transfers).toHaveBeenCalledWith(
+        expect.objectContaining({ minTimestamp: "1750000000" }),
+      );
+    });
+
+    it("leaves the hgraph query unfloored in asc order, which needs a ceiling instead", async () => {
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [getMockedMirrorTransaction({ consensus_timestamp: "1787230000.000000000" })],
+        nextCursor: null,
+      });
+
+      await listOperations(mockConfig, { ...paginationParams, order: "asc" });
+
+      expect(hgraphClient.getERC20Transfers).toHaveBeenCalledWith(
+        expect.not.objectContaining({ minTimestamp: expect.anything() }),
+      );
+    });
+  });
+
   it("should parse HBAR transfer transactions correctly", async () => {
     const mockTransaction = getMockedMirrorTransaction({
       consensus_timestamp: "1625097600.000000000",

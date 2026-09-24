@@ -3,7 +3,6 @@ import { Observable } from "rxjs";
 import BigNumber from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import { renderWithReactQuery as render, screen, waitFor } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { component } from "../index";
@@ -62,7 +61,7 @@ jest.mock("~/datadog", () => ({
   broadcastLogger: jest.fn(),
 }));
 
-let mockAccountBridge = makeMockAccountBridge(HEDERA_TRANSACTION_MODES.Delegate, {
+let mockAccountBridge = makeMockAccountBridge("delegate", {
   stakingNodeId: 0,
 });
 
@@ -112,7 +111,7 @@ function renderFlow() {
 }
 describe("Hedera DelegationFlow (integration)", () => {
   beforeEach(() => {
-    mockAccountBridge = makeMockAccountBridge(HEDERA_TRANSACTION_MODES.Delegate, {
+    mockAccountBridge = makeMockAccountBridge("delegate", {
       stakingNodeId: 0,
     });
     mockValidatorsQuery = { validators: MOCK_VALIDATORS, loading: false, error: null };
@@ -162,7 +161,7 @@ describe("Hedera DelegationFlow (integration)", () => {
   it("blocks Continue and shows the error when the validator list fails to load", async () => {
     mockValidatorsQuery = { validators: [], loading: false, error: new Error("network down") };
     mockAccountBridge = makeMockAccountBridge(
-      HEDERA_TRANSACTION_MODES.Delegate,
+      "delegate",
       { stakingNodeId: 0 },
       { validators: new Error("network down") },
     );

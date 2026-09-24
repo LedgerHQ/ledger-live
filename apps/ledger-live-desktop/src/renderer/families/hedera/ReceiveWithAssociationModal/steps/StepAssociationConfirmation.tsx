@@ -3,7 +3,6 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { isTokenAssociateTransaction } from "@ledgerhq/live-common/families/hedera/utils";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";
@@ -29,13 +28,14 @@ const Container = styled(Box).attrs<{
 
 function StepAssociationConfirmation({
   transaction,
+  token,
   optimisticOperation,
   error,
   signed,
 }: StepProps) {
   if (optimisticOperation) {
-    invariant(isTokenAssociateTransaction(transaction), "hedera: token associate tx expected");
-    const tokenName = transaction.properties.token.name ?? "token";
+    invariant(transaction?.mode === "tokenAssociate", "hedera: token associate tx expected");
+    const tokenName = token?.name ?? "token";
 
     return (
       <Container>

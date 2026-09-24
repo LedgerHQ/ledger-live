@@ -643,7 +643,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ? op
         : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
     );
-    const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+    const tokensSyncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+    const syncHash = bridgeApi.syncVersion
+      ? `${tokensSyncHash}-${bridgeApi.syncVersion}`
+      : tokensSyncHash;
     const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
     // Resume position across syncs: `minHeight` alone, derived from the newest stored operation.
     // It is non-volatile by construction and already persisted, unlike a module cursor (coin-hypercore
@@ -793,7 +796,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       id: accountId,
       // `||` (not `??`): a device getAddress may return an empty-string publicKey (e.g. when the
       // chain code is not requested); treat "" as absent and fall back rather than storing a blank xpub.
-      xpub: rest?.publicKey || initialAccount?.xpub || address,
+      // Set to undefined to clear old values: a shared xpub would merge accounts (ADR-055).
+      xpub: bridgeApi.keyOwnsSeveralAccounts
+        ? undefined
+        : rest?.publicKey || initialAccount?.xpub || address,
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),

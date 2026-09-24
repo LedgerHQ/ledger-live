@@ -264,10 +264,14 @@ export function hederaTransaction({
 }: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "hedera" }>> {
   return {
     family: "hedera",
+    mode: "send",
     amount,
     recipient,
     ...customFeeConfig,
-    memo: payinExtraId ?? undefined,
+    // The generic bridge turns these into the framework's `StringMemo`; a bare `memo` field is
+    // dropped, which would send a payin with no memo and lose the swap.
+    memoType: payinExtraId ? "string" : undefined,
+    memoValue: payinExtraId ?? undefined,
   };
 }
 

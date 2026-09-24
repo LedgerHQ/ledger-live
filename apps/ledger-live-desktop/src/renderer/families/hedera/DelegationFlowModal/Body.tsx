@@ -8,7 +8,6 @@ import { createStructuredSelector } from "reselect";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { HederaAccount, Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/utils";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -100,10 +99,8 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       const defaultValidator = getDefaultValidator(validators);
 
       const transaction = bridge.updateTransaction(t, {
-        mode: HEDERA_TRANSACTION_MODES.Delegate,
-        properties: {
-          stakingNodeId: defaultValidator ? Number(defaultValidator.id) : null,
-        },
+        mode: "delegate",
+        valId: defaultValidator?.id,
       });
 
       return {
@@ -113,23 +110,16 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       };
     });
 
-  // Validators load asynchronously, so on mount the lazy initializer above runs before any
-  // are available and stores stakingNodeId: null. Once the fetch resolves, backfill the
-  // default here, unless the user already picked a validator in the meantime.
+  // Validators load after mount, so the initializer above leaves valId unset — backfill it here.
   useEffect(() => {
-    if (transaction?.mode !== HEDERA_TRANSACTION_MODES.Delegate) return;
-
-    const hasSelectedValidator = typeof transaction.properties?.stakingNodeId === "number";
-    if (hasSelectedValidator || validators.length === 0) return;
+    if (transaction?.mode !== "delegate") return;
+    if (transaction.valId || validators.length === 0) return;
 
     const defaultValidator = getDefaultValidator(validators);
     if (!defaultValidator) return;
 
     updateTransaction(tx =>
-      bridge.updateTransaction(tx, {
-        mode: HEDERA_TRANSACTION_MODES.Delegate,
-        properties: { stakingNodeId: Number(defaultValidator.id) },
-      }),
+      bridge.updateTransaction(tx, { mode: "delegate", valId: defaultValidator.id }),
     );
   }, [validators, transaction, updateTransaction, bridge]);
 

@@ -17,6 +17,7 @@ import {
 import {
   combine,
   craftTransaction,
+  getAccountInfo,
   getBalance,
   getBlockInfo,
   getBlockV2,
@@ -32,6 +33,7 @@ import {
 import {
   extractInitiator,
   getBlockHash,
+  getDateRangeFromBlockHeight,
   getOperationValue,
   mapIntentToSDKOperation,
 } from "../logic/utils";
@@ -99,10 +101,19 @@ export function createApi(currencyId: string) {
 
       const estimatedFee = await logicEstimateFees(estimateFeesParams);
 
+      // `FeeEstimation` has no gas field; `parameters` is the only route to `gasLimit`.
       return {
         value: BigInt(estimatedFee.tinybars.toString()),
+        ...(estimatedFee.gas && {
+          parameters: { gasLimit: BigInt(estimatedFee.gas.toString()) },
+        }),
       };
     },
+    getAccountInfo: async (context: HederaContext, address: string) => {
+      const coinConfig = await context.config();
+      return getAccountInfo(coinConfig, address);
+    },
+    // Rejected on purpose: the Hedera family bridge api sets no `balanceOptions`.
     getBalance: (context: HederaContext, address: string, options?: BalanceOptions) =>
       rejectBalanceOptions(async () => {
         const coinConfig = await context.config();
@@ -122,8 +133,6 @@ export function createApi(currencyId: string) {
       address: string,
       { cursor, limit, order, minHeight }: ListOperationsOptions,
     ) => {
-      invariant(minHeight === 0, "minHeight is not supported");
-
       const coinConfig = await context.config();
       const evmAddress = await toEVMAddress({
         configOrCurrencyId: coinConfig,
@@ -135,6 +144,12 @@ export function createApi(currencyId: string) {
         getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
       ]);
 
+      // Never the cursor: the mirror node ANDs both as `timestamp` params, so a cursor used as the
+      // floor is `gte:c` in desc order — page 2 replays page 1 forever.
+      const minTimestamp =
+        minHeight > 0
+          ? (getDateRangeFromBlockHeight(minHeight).start.getTime() / 1000).toString()
+          : undefined;
       const latestAccountOperations = await logicListOperationsV2(coinConfig, {
         currencyId,
         address,
@@ -143,6 +158,7 @@ export function createApi(currencyId: string) {
         ...(typeof cursor === "string" && { cursor }),
         ...(typeof limit === "number" && { limit }),
         ...(typeof order === "string" && { order }),
+        ...(minTimestamp && { minTimestamp }),
         tokenEvmAddresses: erc20TokenBalances.map(t => t.contractAddress.toLowerCase()),
         fetchAllPages: false,
         skipFeesForTokenOperations: true,
@@ -194,6 +210,9 @@ export function createApi(currencyId: string) {
             ? liveOp.hash.replace(STAKING_REWARD_HASH_SUFFIX, "")
             : liveOp.hash;
 
+        // Moved under `familyExtra`: not on the framework's `details` allowlist (LIVE-36148).
+        const { pagingToken, consensusTimestamp, transactionId, ...restExtra } = liveOp.extra;
+
         return {
           id: liveOp.id,
           type: liveOp.type,
@@ -202,11 +221,14 @@ export function createApi(currencyId: string) {
           value: getOperationValue({ asset, operation: liveOp }),
           asset,
           details: {
-            ...liveOp.extra,
+            ...restExtra,
             ledgerOpType: liveOp.type,
             ...(asset.type !== "native" && { assetAmount: liveOp.value.toFixed(0) }),
             ...(liveOp.extra.stakedAmount && {
               stakedAmount: BigInt(liveOp.extra.stakedAmount.toFixed(0)),
+            }),
+            ...((pagingToken || consensusTimestamp || transactionId) && {
+              familyExtra: { pagingToken, consensusTimestamp, transactionId },
             }),
           },
           tx: {

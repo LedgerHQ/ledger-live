@@ -109,7 +109,7 @@ async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBr
   }
 
   if (shouldUseGenericCoinFrameworkBridge(family)) {
-    return getCoinFrameworkCurrencyBridge(family, "local");
+    return getCoinFrameworkCurrencyBridge(family, "local", undefined, currency);
   }
 
   const setup = await loadSetupForFamily(family);

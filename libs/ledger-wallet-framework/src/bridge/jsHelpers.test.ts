@@ -12,11 +12,13 @@ import { firstValueFrom, Observable, of, Subscription, throwError } from "rxjs";
 import {
   AccountShapeInfo,
   bip32asBuffer,
+  makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
   mergeOps,
   updateTransaction,
 } from "./jsHelpers";
+import { WrongDeviceForAccount } from "../errors";
 import { createEmptyHistoryCache } from "../account/balanceHistoryCache";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 
@@ -970,6 +972,159 @@ describe("makeScanAccounts", () => {
     });
     await new Promise(r => setImmediate(r));
     expect(completeSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe("makeScanAccounts with listAddressesForKey", () => {
+  const usedShape = (address: string) => ({
+    id: `acc-${address}`,
+    freshAddress: address,
+    used: true,
+    balanceHistoryCache: createEmptyHistoryCache(),
+  });
+
+  const scanAll = (scanAccounts: ReturnType<typeof makeScanAccounts>, currency: CryptoCurrency) =>
+    new Promise<Account[]>((resolve, reject) => {
+      const found: Account[] = [];
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }).subscribe({
+        next: e => found.push(e.account),
+        complete: () => resolve(found),
+        error: reject,
+      });
+    });
+
+  it("hands out every address one key owns on a scheme with no <account> placeholder", async () => {
+    const currency = getCryptoCurrencyById("hedera") as unknown as CryptoCurrency;
+    const publicKey = "302a300506032b6570";
+    const getAddressFn = jest.fn().mockResolvedValue({
+      address: publicKey,
+      path: "44/3030",
+      publicKey,
+    });
+    const listAddressesForKey = jest.fn().mockResolvedValue(["0.0.1", "0.0.2", "0.0.3"]);
+
+    const accounts = await scanAll(
+      makeScanAccounts({
+        getAccountShape: ({ address }) => Promise.resolve(usedShape(address)),
+        getAddressFn,
+        listAddressesForKey,
+      }),
+      currency,
+    );
+
+    expect(accounts.map(a => a.freshAddress)).toEqual(["0.0.1", "0.0.2", "0.0.3"]);
+    expect(listAddressesForKey).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps xpub as the device key rather than the looked-up address", async () => {
+    const currency = getCryptoCurrencyById("hedera") as unknown as CryptoCurrency;
+
+    const accounts = await scanAll(
+      makeScanAccounts({
+        getAccountShape: ({ address, rest }) =>
+          Promise.resolve({
+            ...usedShape(address),
+            xpub: (rest as { publicKey: string }).publicKey,
+          }),
+        getAddressFn: () =>
+          Promise.resolve({ address: "pubkey", path: "44/3030", publicKey: "pubkey" }),
+        listAddressesForKey: () => Promise.resolve(["0.0.1"]),
+      }),
+      currency,
+    );
+
+    expect(accounts[0].xpub).toBe("pubkey");
+    expect(accounts[0].freshAddress).toBe("0.0.1");
+  });
+
+  it("stops the scan when a key owns nothing", async () => {
+    const currency = getCryptoCurrencyById("hedera") as unknown as CryptoCurrency;
+    const getAccountShape = jest.fn();
+
+    const accounts = await scanAll(
+      makeScanAccounts({
+        getAccountShape,
+        getAddressFn: () =>
+          Promise.resolve({ address: "pubkey", path: "44/3030", publicKey: "pubkey" }),
+        listAddressesForKey: () => Promise.resolve([]),
+      }),
+      currency,
+    );
+
+    expect(accounts).toEqual([]);
+    expect(getAccountShape).not.toHaveBeenCalled();
+  });
+
+  it("moves on to the next key when the scheme has an <account> placeholder", async () => {
+    const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
+    const getAddressFn = jest
+      .fn()
+      .mockImplementation((_deviceId, { path }) =>
+        Promise.resolve({ address: `derived-${path}`, path, publicKey: `key-${path}` }),
+      );
+    const listAddressesForKey = jest
+      .fn()
+      .mockResolvedValueOnce(["addr-0"])
+      .mockResolvedValueOnce(["addr-1"])
+      .mockResolvedValue([]);
+
+    const accounts = await scanAll(
+      makeScanAccounts({
+        getAccountShape: ({ address }) => Promise.resolve(usedShape(address)),
+        getAddressFn,
+        listAddressesForKey,
+      }),
+      currency,
+    );
+
+    expect(accounts.map(a => a.freshAddress)).toEqual(["addr-0", "addr-1"]);
+    expect(listAddressesForKey).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe("makeAccountBridgeReceive", () => {
+  const account = {
+    freshAddress: "0.0.1",
+    freshAddressPath: "44/3030",
+    seedIdentifier: "pubkey",
+    currency: getCryptoCurrencyById("hedera"),
+    derivationMode: "hederaBip44",
+  } as unknown as Account;
+
+  const deviceResult = { address: "pubkey", path: "44/3030", publicKey: "pubkey" };
+
+  it("compares public keys and substitutes the account address when the address was looked up", async () => {
+    const receive = makeAccountBridgeReceive(() => Promise.resolve(deviceResult), {
+      hasLookedUpAddress: () => true,
+    });
+
+    const r = await firstValueFrom(receive(account, { verify: true, deviceId: "deviceId" }));
+
+    expect(r.address).toBe("0.0.1");
+    expect(r.publicKey).toBe("pubkey");
+  });
+
+  it("throws when the device holds a different seed", async () => {
+    const receive = makeAccountBridgeReceive(
+      () => Promise.resolve({ ...deviceResult, publicKey: "other-key" }),
+      { hasLookedUpAddress: () => true },
+    );
+
+    await expect(
+      firstValueFrom(receive(account, { verify: true, deviceId: "deviceId" })),
+    ).rejects.toBeInstanceOf(WrongDeviceForAccount);
+  });
+
+  it("keeps the default address check for a family with no lookup hook", async () => {
+    const receive = makeAccountBridgeReceive(() => Promise.resolve(deviceResult));
+
+    await expect(
+      firstValueFrom(receive(account, { verify: true, deviceId: "deviceId" })),
+    ).rejects.toBeInstanceOf(WrongDeviceForAccount);
   });
 });
 

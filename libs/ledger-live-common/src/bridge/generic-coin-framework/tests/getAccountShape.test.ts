@@ -3047,4 +3047,124 @@ describe("genericGetAccountShape", () => {
       expect(buildSubAccountsMock.mock.calls[0][0].familyShapes).toBeUndefined();
     });
   });
+
+  describe("syncVersion", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+    const storedOperation = {
+      id: "accId-h1-OUT",
+      accountId: "accId",
+      hash: "h1",
+      type: "OUT",
+      blockHeight: 500,
+      extra: {},
+    };
+
+    const syncWith = (syncVersion: string | undefined, storedSyncHash: string) => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBridgeApiMock.mockImplementation(() => ({ ...defaultBridgeApi(), syncVersion }));
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      lastBlockMock.mockResolvedValue({ height: 900 });
+      mergeOpsMock.mockImplementation((oldOps: any[], newOps: any[]) => [...oldOps, ...newOps]);
+      buildSubAccountsMock.mockReturnValue([]);
+
+      return genericGetAccountShape(network, currency.id)(
+        {
+          address: "tz1sync",
+          currency,
+          derivationMode: "",
+          initialAccount: {
+            operations: [storedOperation],
+            pendingOperations: [],
+            blockHeight: 800,
+            syncHash: storedSyncHash,
+          },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+    };
+
+    test("leaves the sync hash alone for a family that declares none", async () => {
+      const shape = await syncWith(undefined, "sync-hash");
+
+      expect(shape.syncHash).toBe("sync-hash");
+      expect(mergeOpsMock).toHaveBeenCalledWith([storedOperation], expect.anything());
+    });
+
+    test("drops the stored operations of an account synced before one was declared", async () => {
+      const shape = await syncWith("1", "sync-hash");
+
+      expect(shape.syncHash).toBe("sync-hash-1");
+      expect(mergeOpsMock).toHaveBeenCalledWith([], expect.anything());
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        "tz1sync",
+        expect.objectContaining({ minHeight: 0 }),
+      );
+    });
+
+    test("keeps syncing incrementally once an account has been migrated", async () => {
+      await syncWith("1", "sync-hash-1");
+
+      expect(mergeOpsMock).toHaveBeenCalledWith([storedOperation], expect.anything());
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        "tz1sync",
+        expect.objectContaining({ minHeight: storedOperation.blockHeight + 1 }),
+      );
+    });
+  });
+  describe("xpub", () => {
+    const network = "mainnet";
+    const currency = { id: "hedera", name: "Hedera" };
+
+    const shapeFor = (
+      bridgeApi: object,
+      initialAccount?: { xpub: string; operations: never[]; pendingOperations: never[] },
+    ) => {
+      getBridgeApiMock.mockImplementation(() => ({ ...defaultBridgeApi(), ...bridgeApi }));
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      lastBlockMock.mockResolvedValue({ height: 900 });
+      buildSubAccountsMock.mockReturnValue([]);
+
+      return genericGetAccountShape(network, currency.id)(
+        {
+          address: "0.0.8835924",
+          currency,
+          derivationMode: "",
+          rest: { publicKey: "devicePubKey" },
+          initialAccount,
+        } as any,
+        { paginationConfig: {} as any },
+      );
+    };
+
+    test("stores the device public key for a family that declares nothing", async () => {
+      await expect(shapeFor({})).resolves.toMatchObject({ xpub: "devicePubKey" });
+    });
+
+    test("stores the device public key for a lookup family whose key owns one account", async () => {
+      await expect(shapeFor({ getAddressesByPublicKey: jest.fn() })).resolves.toMatchObject({
+        xpub: "devicePubKey",
+      });
+    });
+
+    test("stores no xpub when one key owns several accounts, so they stay separate", async () => {
+      await expect(shapeFor({ keyOwnsSeveralAccounts: true })).resolves.toMatchObject({
+        xpub: undefined,
+      });
+    });
+
+    test("clears the public key an earlier version stored under a shared key", async () => {
+      const stored = { xpub: "devicePubKey", operations: [], pendingOperations: [] };
+
+      await expect(shapeFor({ keyOwnsSeveralAccounts: true }, stored)).resolves.toMatchObject({
+        xpub: undefined,
+      });
+    });
+  });
 });

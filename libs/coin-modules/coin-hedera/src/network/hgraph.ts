@@ -18,6 +18,13 @@ const getPaginationDirection = (fetchAllPages: boolean, order: string) => {
   return order === "asc" ? "_gt" : "_lt";
 };
 
+// `consensus_timestamp` is nanoseconds here, while the mirror node spells a timestamp
+// `<seconds>[.<fraction>]` — dropping the dot lines the two up only for a 9-digit fraction.
+const toNanoseconds = (timestamp: string): string => {
+  const [seconds, fraction = ""] = timestamp.split(".");
+  return seconds + fraction.padEnd(9, "0");
+};
+
 const throwOnGraphQLErrors: <T>(
   res: LiveNetworkResponse<HgraphResponse<T>>,
   context: string,
@@ -103,6 +110,7 @@ async function getERC20Transfers({
   limit = 100,
   order = "desc",
   fetchAllPages,
+  minTimestamp,
 }: {
   configOrCurrencyId: HederaCoinConfig | string;
   address: string;
@@ -111,6 +119,8 @@ async function getERC20Transfers({
   timestamp?: string;
   limit?: number;
   order?: "asc" | "desc";
+  /** A floor, not a page cursor like `timestamp`. */
+  minTimestamp?: string;
 }): Promise<ERC20TokenTransfer[]> {
   if (tokenEvmAddresses.length === 0) {
     return [];
@@ -119,8 +129,15 @@ async function getERC20Transfers({
   const config = resolveConfig(configOrCurrencyId);
   let hasMorePages = true;
   let cursor = timestamp?.replace(".", "") ?? null;
+  const minTimestampCursor = minTimestamp ? toNanoseconds(minTimestamp) : null;
   const transfers: ERC20TokenTransfer[] = [];
   const accountId = address.split(".").pop();
+
+  // Merged into one `consensus_timestamp` object: a GraphQL input can't repeat a field name.
+  const consensusTimestampConditions = [
+    cursor && `${getPaginationDirection(fetchAllPages, order)}: $cursor`,
+    minTimestampCursor && "_gte: $minTimestamp",
+  ].filter(Boolean);
 
   while (hasMorePages) {
     const res = await network<HgraphErcTokenTransferResponse>({
@@ -128,13 +145,13 @@ async function getERC20Transfers({
       method: "POST",
       data: {
         query: `
-          query GetAccountTransfers($accountId: bigint!, $tokenEvmAddresses: [String!]!, $cursor: bigint, $limit: Int!) {
+          query GetAccountTransfers($accountId: bigint!, $tokenEvmAddresses: [String!]!, $cursor: bigint, $minTimestamp: bigint, $limit: Int!) {
             erc_token_transfer(
                 where: {
                     transfer_type: { _in: ["transfer", "mint", "burn"] }
                     contract_type: { _eq: "ERC_20" }
                     token_evm_address: { _in: $tokenEvmAddresses }
-                    ${cursor ? `consensus_timestamp: { ${getPaginationDirection(fetchAllPages, order)}: $cursor }` : ""}
+                    ${consensusTimestampConditions.length ? `consensus_timestamp: { ${consensusTimestampConditions.join(", ")} }` : ""}
                     _or: [
                         { sender_account_id: { _eq: $accountId } }
                         { receiver_account_id: { _eq: $accountId } }
@@ -162,6 +179,7 @@ async function getERC20Transfers({
           tokenEvmAddresses,
           limit,
           ...(cursor && { cursor }),
+          ...(minTimestampCursor && { minTimestamp: minTimestampCursor }),
         },
       },
     });

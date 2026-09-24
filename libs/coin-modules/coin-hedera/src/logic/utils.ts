@@ -184,10 +184,16 @@ export const getTransactionExplorer = (
   operation: LiveOperation,
 ): string | undefined => {
   const extra = isValidExtra(operation.extra) ? operation.extra : null;
+  // The generic bridge nests these under `familyExtra`, the legacy one keeps them flat.
+  const familyExtra = isValidExtra(extra?.familyExtra) ? extra.familyExtra : null;
 
   return explorerView?.tx?.replace(
     "$hash",
-    extra?.consensusTimestamp ?? extra?.transactionId ?? "0",
+    familyExtra?.consensusTimestamp ??
+      familyExtra?.transactionId ??
+      extra?.consensusTimestamp ??
+      extra?.transactionId ??
+      "0",
   );
 };
 

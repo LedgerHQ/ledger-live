@@ -376,6 +376,44 @@ describe("hgraphClient", () => {
       expect(query).toContain("consensus_timestamp: { _lt: $cursor }");
     });
 
+    it("adds a '_gte' minTimestamp floor independent of timestamp/cursor's own direction", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          data: { erc_token_transfer: [] },
+        }),
+      );
+
+      await hgraphClient.getERC20Transfers({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        tokenEvmAddresses: ["0xabc123"],
+        minTimestamp: "1787236926.768102104",
+        fetchAllPages: false,
+      });
+
+      const { query, variables } = getRequestData(0);
+      expect(query).toContain("consensus_timestamp: { _gte: $minTimestamp }");
+      expect(variables.minTimestamp).toBe("1787236926768102104");
+    });
+
+    it("pads a whole-seconds minTimestamp to nanoseconds", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          data: { erc_token_transfer: [] },
+        }),
+      );
+
+      await hgraphClient.getERC20Transfers({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        tokenEvmAddresses: ["0xabc123"],
+        minTimestamp: "1789118690",
+        fetchAllPages: false,
+      });
+
+      expect(getRequestData(0).variables.minTimestamp).toBe("1789118690000000000");
+    });
+
     it("throws with empty message when error object has no message", async () => {
       mockedNetwork.mockResolvedValueOnce(
         getMockResponse({

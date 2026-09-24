@@ -27,7 +27,8 @@ const MemoField = ({
       });
       onChange(
         bridge.updateTransaction(transaction, {
-          memo,
+          memoType: "string",
+          memoValue: memo,
         }),
       );
       setMemoLength(memo.length);
@@ -42,7 +43,7 @@ const MemoField = ({
   return (
     <MemoTagField
       maxLength={HEDERA_MAX_MEMO_SIZE}
-      value={transaction.memo ?? ""}
+      value={transaction.memoValue ?? ""}
       onChange={onMemoChange}
       error={status.errors.transaction}
       CaracterCountComponent={() => (

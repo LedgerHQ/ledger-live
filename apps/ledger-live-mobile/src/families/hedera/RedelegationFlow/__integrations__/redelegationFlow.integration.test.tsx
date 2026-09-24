@@ -3,7 +3,6 @@ import { Observable } from "rxjs";
 import BigNumber from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { component } from "../index";
@@ -40,7 +39,7 @@ jest.mock("~/datadog", () => ({
   broadcastLogger: jest.fn(),
 }));
 
-const mockAccountBridge = makeMockAccountBridge(HEDERA_TRANSACTION_MODES.Redelegate, {
+const mockAccountBridge = makeMockAccountBridge("redelegate", {
   stakingNodeId: 5,
 });
 
