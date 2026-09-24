@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { useTheme } from "styled-components/native";
@@ -16,11 +16,12 @@ import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { TrackScreen } from "~/analytics";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import TranslatedError from "~/components/TranslatedError";
 import Alert from "~/components/Alert";
 import { ScreenName } from "~/const";
 import { getFirstStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { amountStyles as styles } from "../shared/amountStyles";
+import AmountContinueFooter from "../shared/AmountContinueFooter";
 import type { AleoBondPublicFlowParamList } from "./types";
 
 type Props = BaseComposite<
@@ -256,67 +257,13 @@ export default function Amount({ navigation, route }: Props) {
           )}
         </View>
       </ScrollView>
-      <View style={styles.footer}>
-        {bridgeError && (
-          <Text variant="small" color="error.c60" textAlign="center" mb={3}>
-            <TranslatedError error={bridgeError} />
-          </Text>
-        )}
-        <Button
-          type="main"
-          size="large"
-          onPress={onContinue}
-          disabled={continueDisabled}
-          pending={bridgePending}
-          testID="aleo-bond-amount-continue"
-        >
-          {t("common.continue")}
-        </Button>
-      </View>
+      <AmountContinueFooter
+        bridgeError={bridgeError}
+        onContinue={onContinue}
+        disabled={continueDisabled}
+        pending={bridgePending}
+        testID="aleo-bond-amount-continue"
+      />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  scroll: {
-    flex: 1,
-  },
-  content: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingTop: 16,
-  },
-  alert: {
-    marginBottom: 16,
-  },
-  amountInputHeightGuard: {
-    flexShrink: 1,
-    minHeight: 160,
-  },
-  spacer: {
-    flexGrow: 1,
-  },
-  details: {
-    marginVertical: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    gap: 8,
-  },
-  detailsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  switchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  footer: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    paddingTop: 8,
-  },
-});
