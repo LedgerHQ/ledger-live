@@ -1,11 +1,9 @@
-import { getEnv } from "@ledgerhq/live-env";
 import {
   AccountInfo,
   Cluster,
   ConfirmedSignatureInfo,
   ParsedAccountData,
   PublicKey,
-  clusterApiUrl,
 } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { partition } from "lodash/fp";
@@ -80,14 +78,14 @@ export async function drainSeq<T>(jobs: (() => Promise<T>)[]) {
 
 export function endpointByCurrencyId(config: SolanaCoinConfig, currencyId: string): string {
   const rpcUrls: SolanaConfig["rpcUrls"] = config.rpcUrls;
-  const endpoints: Record<string, string> = {
-    solana: rpcUrls?.solana ?? getEnv("API_SOLANA_PROXY"),
-    solana_devnet: rpcUrls?.solana_devnet ?? clusterApiUrl("devnet"),
-    solana_testnet: rpcUrls?.solana_testnet ?? clusterApiUrl("testnet"),
+  const endpoints: Record<string, string | undefined> = {
+    solana: rpcUrls?.solana,
+    solana_devnet: rpcUrls?.solana_devnet,
+    solana_testnet: rpcUrls?.solana_testnet,
   };
 
   if (currencyId in endpoints) {
-    return endpoints[currencyId];
+    return endpoints[currencyId] ?? config.infra.API_SOLANA_PROXY;
   }
 
   throw Error(

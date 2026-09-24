@@ -2,12 +2,16 @@ import {
   CollectionMetadataInput,
   NftMetadataInput,
 } from "@ledgerhq/ledger-wallet-framework/nft/types";
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
+import coinConfig from "../../config";
 
-export type NftMetdataParams = { chainId: number };
+export type NftMetdataParams = { chainId: number; currencyId: string };
+
+// Read per call: the metadata batcher caches its params per currency for the app's lifetime.
+const nftMetadataServiceUrl = (params: NftMetdataParams): string =>
+  coinConfig.getCoinConfig(params.currencyId).infra.NFT_METADATA_SERVICE;
 
 /**
  * Batched request of nft metadata on the "solana" protocol
@@ -22,7 +26,7 @@ export const getNftMetadata = async (
 ): Promise<NFTMetadataResponse[]> => {
   const { data }: { data: NFTMetadataResponse[] } = await network({
     method: "POST",
-    url: `${getEnv("NFT_METADATA_SERVICE")}/v2/solana/${params.chainId}/contracts/tokens/infos`,
+    url: `${nftMetadataServiceUrl(params)}/v2/solana/${params.chainId}/contracts/tokens/infos`,
     data: input,
   });
 
@@ -42,7 +46,7 @@ export const getNftCollectionMetadata = async (
 ): Promise<NFTCollectionMetadataResponse[]> => {
   const { data }: { data: NFTCollectionMetadataResponse[] } = await network({
     method: "POST",
-    url: `${getEnv("NFT_METADATA_SERVICE")}/v2/solana/${params.chainId}/contracts/infos`,
+    url: `${nftMetadataServiceUrl(params)}/v2/solana/${params.chainId}/contracts/infos`,
     data: input,
   });
 
@@ -55,11 +59,11 @@ export const getNftCollectionMetadata = async (
 export const getParams = (currency: CryptoCurrency): NftMetdataParams => {
   switch (currency.id) {
     case "solana":
-      return { chainId: 101 };
+      return { chainId: 101, currencyId: currency.id };
     case "solana_testnet":
-      return { chainId: 102 };
+      return { chainId: 102, currencyId: currency.id };
     case "solana_devnet":
-      return { chainId: 103 };
+      return { chainId: 103, currencyId: currency.id };
     default:
       throw new Error(`Solana: No chainId for this Currency (${currency.id}})`);
   }

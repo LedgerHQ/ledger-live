@@ -4,11 +4,13 @@ import { endpointByCurrencyId } from "../../utils";
 import { getBalance } from "../getBalance";
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import type { SolanaCoinConfig } from "../../config";
+import { MAINNET_INFRA } from "../../test/coinConfig.fixture";
 
 const config: SolanaCoinConfig = {
   token2022Enabled: false,
   legacyOCMSMaxVersion: "1.0.0",
   status: { type: "active" },
+  infra: MAINNET_INFRA,
 };
 const api = getChainAPI({ endpoint: endpointByCurrencyId(config, "solana") });
 

@@ -46,7 +46,9 @@ export function getSolanaSignerInstance(
   return new LegacySignerSolana(transport);
 }
 
-const getCurrencyConfig = () => getCurrencyConfiguration<SolanaCoinConfig>("solana");
+// Solana currencies each carry their own infra (the testnet/devnet endpoints differ from mainnet).
+const getCurrencyConfig = (currencyId: string = "solana") =>
+  getCurrencyConfiguration<SolanaCoinConfig>(currencyId);
 
 const bridge: Bridge<Transaction, SolanaAccount, TransactionStatus> = createBridges(
   executeWithSigner(getSolanaSignerInstance),

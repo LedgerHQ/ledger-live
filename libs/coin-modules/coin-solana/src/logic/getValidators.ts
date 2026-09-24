@@ -1,5 +1,4 @@
 import type { Page, Validator } from "@ledgerhq/coin-module-framework/api/types";
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 
 type ValidatorRaw = {
@@ -19,10 +18,16 @@ type ValidatorApyRaw = {
   name: string;
 };
 
-export async function getValidators(validatorsUrl?: string): Promise<Page<Validator>> {
+export async function getValidators(
+  validatorsUrl: string | undefined,
+  validatorsSummaryUrl: string,
+): Promise<Page<Validator>> {
   if (!validatorsUrl) return { items: [], next: undefined };
 
-  const [raw, apyMap] = await Promise.all([fetchValidators(validatorsUrl), fetchFigmentApy()]);
+  const [raw, apyMap] = await Promise.all([
+    fetchValidators(validatorsUrl),
+    fetchFigmentApy(validatorsSummaryUrl),
+  ]);
   const items = raw.flatMap(v => {
     const mapped = toValidator(v, apyMap);
     return mapped ? [mapped] : [];
@@ -36,11 +41,11 @@ async function fetchValidators(validatorsUrl: string): Promise<ValidatorRaw[]> {
   return response.status === 200 ? response.data : [];
 }
 
-async function fetchFigmentApy(): Promise<Record<string, number>> {
+async function fetchFigmentApy(validatorsSummaryUrl: string): Promise<Record<string, number>> {
   try {
     const response = await network<ValidatorApyRaw[]>({
       method: "GET",
-      url: getEnv("SOLANA_VALIDATORS_SUMMARY_BASE_URL"),
+      url: validatorsSummaryUrl,
     });
     if (response.status === 200 && Array.isArray(response.data)) {
       return Object.fromEntries(

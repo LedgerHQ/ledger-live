@@ -1,17 +1,11 @@
-import { getEnv } from "@ledgerhq/live-env";
 import * as network from "@ledgerhq/live-network";
 import { getValidators } from "../../network/validator-app";
 
-jest.spyOn({ getEnv }, "getEnv").mockImplementation((key: string) => {
-  const testUrls: Record<string, string> = {
-    SOLANA_VALIDATORS_APP_BASE_URL: "https://validators-solana.coin.ledger.com/api/v1/validators",
-    SOLANA_TESTNET_VALIDATORS_APP_BASE_URL:
-      "https://validators-solana.coin.ledger.com/api/v1/validators",
-    SOLANA_VALIDATORS_SUMMARY_BASE_URL:
-      "https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary",
-  };
-  return testUrls[key] || "";
-});
+const INFRA = {
+  SOLANA_VALIDATORS_APP_BASE_URL: "https://validators-solana.coin.ledger.com/api/v1/validators",
+  SOLANA_VALIDATORS_SUMMARY_BASE_URL:
+    "https://earn.api.live.ledger.com/figment/solana/validators_summary",
+};
 
 const mockValidator = (overrides = {}) => ({
   active_stake: 1000000,
@@ -41,7 +35,7 @@ describe("validator-app", () => {
     it("should work for testnet without APY", async () => {
       jest.spyOn(network, "default").mockResolvedValue({ status: 200, data: [] });
 
-      const result = await getValidators("testnet");
+      const result = await getValidators("testnet", INFRA);
 
       expect(network.default).toHaveBeenCalledTimes(1);
       expect(network.default).toHaveBeenCalledWith({
@@ -60,7 +54,7 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockResolvedValueOnce({ status: 200, data: [apyData] });
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators("mainnet-beta", INFRA);
 
       expect(network.default).toHaveBeenCalledTimes(2);
       expect(result[0]).toMatchObject({
@@ -77,7 +71,7 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockRejectedValueOnce(new Error("Network error"));
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators("mainnet-beta", INFRA);
 
       expect(result[0]).toMatchObject({
         name: "Test Validator",
@@ -92,7 +86,7 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockResolvedValueOnce({ status: 200, data: "invalid" });
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators("mainnet-beta", INFRA);
       expect(result[0]).toMatchObject({
         name: "Test Validator",
         apy: undefined,
@@ -112,7 +106,7 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockResolvedValueOnce({ status: 200, data: apyData });
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators("mainnet-beta", INFRA);
       expect(result).toEqual([
         {
           activeStake: 1000000,
@@ -141,7 +135,7 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 200, data: validators })
         .mockResolvedValueOnce({ status: 200, data: [] });
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators("mainnet-beta", INFRA);
 
       expect(result).toEqual([
         {
@@ -163,7 +157,7 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 500, data: null })
         .mockResolvedValueOnce({ status: 200, data: [] });
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators("mainnet-beta", INFRA);
       expect(result).toHaveLength(0);
     });
   });

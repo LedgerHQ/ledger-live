@@ -2,10 +2,14 @@
  * @jest-environment jsdom
  */
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import solanaCoinConfig, { type SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { LEDGER_VALIDATOR_DEFAULT } from "@ledgerhq/coin-solana/utils";
 import { getSolanaValidators } from "@ledgerhq/coin-solana/validators";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { renderHook, waitFor } from "@testing-library/react";
 import "../../__tests__/test-helpers/dom-polyfill";
+import { getCurrencyConfiguration } from "../../config";
+import { liveConfig } from "../../config/sharedConfig";
 import * as hooks from "./react";
 
 jest.setTimeout(2 * 60 * 1000);
@@ -16,6 +20,10 @@ describe("solana/react", () => {
   describe("useValidators", () => {
     // reset once, not per test: the whole suite then costs a single fetch
     beforeAll(() => {
+      LiveConfig.setConfig(liveConfig);
+      solanaCoinConfig.setCoinConfig(currencyId =>
+        getCurrencyConfiguration<SolanaCoinConfig>(currencyId ?? currency.id),
+      );
       getSolanaValidators.reset();
     });
 

@@ -1,11 +1,13 @@
 import { Keypair, Connection, SystemProgram, Transaction, clusterApiUrl } from "@solana/web3.js";
 import { createApi } from "../../api";
 import type { SolanaCoinConfig, SolanaContext } from "../../config";
+import { MAINNET_INFRA } from "../../test/coinConfig.fixture";
 
 const config: SolanaCoinConfig = {
   token2022Enabled: false,
   legacyOCMSMaxVersion: "1.0.0",
   status: { type: "active" },
+  infra: MAINNET_INFRA,
 };
 const api = createApi("solana");
 const context: SolanaContext = {

@@ -4,15 +4,16 @@ import { getValidators } from "./network/validator-app";
 import type { ValidatorsAppValidator } from "./network/validator-app";
 import { LEDGER_VALIDATOR_BY_BITWISE, LEDGER_VALIDATOR_BY_FIGMENT } from "./utils";
 import { fetchValidators, getSolanaValidators } from "./validators";
-import coinConfig, { type SolanaCoinConfig } from "./config";
+import coinConfig from "./config";
+import { coinConfigFixture, INFRA_FIXTURE } from "./test/coinConfig.fixture";
 
-coinConfig.setCoinConfig(
-  () =>
-    ({
-      token2022Enabled: false,
-      legacyOCMSMaxVersion: "1.0.0",
-      status: { type: "active" },
-    }) as SolanaCoinConfig,
+const TESTNET_INFRA = {
+  ...INFRA_FIXTURE,
+  SOLANA_VALIDATORS_APP_BASE_URL: "https://validators.example/testnet",
+};
+
+coinConfig.setCoinConfig(currencyId =>
+  coinConfigFixture(currencyId === "solana_testnet" ? { infra: TESTNET_INFRA } : {}),
 );
 
 jest.mock("./network/validator-app");
@@ -57,6 +58,22 @@ describe("fetchValidators", () => {
       ]),
     );
   });
+
+  it.each([
+    ["solana", "mainnet-beta", INFRA_FIXTURE],
+    ["solana_testnet", "testnet", TESTNET_INFRA],
+  ])(
+    "reads the validators app endpoints from the %s coin config",
+    async (currencyId, cluster, infra) => {
+      mockedGetValidators.mockImplementationOnce((_cluster: Cluster) =>
+        Promise.resolve(validators),
+      );
+
+      await fetchValidators(currencyId);
+
+      expect(mockedGetValidators).toHaveBeenCalledWith(cluster, infra);
+    },
+  );
 
   it("returns the validators as-is for solana_testnet", async () => {
     mockedGetValidators.mockImplementationOnce((_cluster: Cluster) => Promise.resolve(validators));

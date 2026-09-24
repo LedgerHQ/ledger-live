@@ -63,7 +63,6 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
-    "@shared/env": "workspace:*",
     "@solana/spl-token": "catalog:",
     "@solana/web3.js": "catalog:",
     "bignumber.js": "^9",

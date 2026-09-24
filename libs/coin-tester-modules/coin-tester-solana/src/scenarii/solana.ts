@@ -16,7 +16,6 @@ import {
 import type { SolanaAccount, SolanaStakingPosition } from "@ledgerhq/coin-solana/types";
 import { listSolanaStakingPositions } from "@ledgerhq/coin-solana/logic";
 import BigNumber from "bignumber.js";
-import { setEnv } from "@shared/env";
 import { airdrop, killAgave, spawnAgave } from "../agave";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { encodeAccountIdWithTokenAccountAddress } from "@ledgerhq/coin-solana/logic";
@@ -28,6 +27,7 @@ import {
 import { PublicKey } from "@solana/web3.js";
 import {
   PAYER,
+  SCENARIO_INFRA,
   STAKE_ACCOUNT,
   VOTE_ACCOUNT,
   createSplAccount,
@@ -525,8 +525,6 @@ export const scenarioSolana: Scenario<GenericTransaction, Account> = {
   setup: async strategy => {
     await spawnAgave();
 
-    setEnv("API_SOLANA_PROXY", "http://localhost:8899");
-
     LiveConfig.setConfig({
       config_currency_solana: {
         type: "object",
@@ -534,6 +532,7 @@ export const scenarioSolana: Scenario<GenericTransaction, Account> = {
           status: { type: "active" },
           token2022Enabled: true,
           legacyOCMSMaxVersion: "1.8.0",
+          infra: SCENARIO_INFRA,
         },
       },
     });

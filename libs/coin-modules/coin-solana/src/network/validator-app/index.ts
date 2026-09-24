@@ -1,7 +1,7 @@
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import { Cluster } from "@solana/web3.js";
 import { compact } from "lodash/fp";
+import type { SolanaConfig } from "../../config";
 
 const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
 
@@ -33,27 +33,28 @@ type ValidatorApyRaw = {
   name: string;
 };
 
-const URLS = {
-  validatorList: (cluster: Extract<Cluster, "mainnet-beta" | "testnet">) => {
-    if (cluster === "testnet") {
-      const baseUrl = getEnv("SOLANA_TESTNET_VALIDATORS_APP_BASE_URL");
-      return `${baseUrl}/${cluster}.json?order=score&limit=${MAX_VALIDATORS_NB}`;
-    }
+type ValidatorsAppInfra = Pick<
+  SolanaConfig["infra"],
+  "SOLANA_VALIDATORS_APP_BASE_URL" | "SOLANA_VALIDATORS_SUMMARY_BASE_URL"
+>;
 
-    const baseUrl = getEnv("SOLANA_VALIDATORS_APP_BASE_URL");
-    return baseUrl;
-  },
-  validatorApylist: getEnv("SOLANA_VALIDATORS_SUMMARY_BASE_URL"),
-};
+const validatorListUrl = (
+  cluster: Extract<Cluster, "mainnet-beta" | "testnet">,
+  infra: ValidatorsAppInfra,
+): string =>
+  cluster === "testnet"
+    ? `${infra.SOLANA_VALIDATORS_APP_BASE_URL}/${cluster}.json?order=score&limit=${MAX_VALIDATORS_NB}`
+    : infra.SOLANA_VALIDATORS_APP_BASE_URL;
 
 async function fetchFigmentApy(
   cluster: Extract<Cluster, "mainnet-beta" | "testnet">,
+  validatorsSummaryUrl: string,
 ): Promise<Record<string, number>> {
   if (cluster !== "mainnet-beta") return {};
   try {
     const response = await network({
       method: "GET",
-      url: URLS.validatorApylist,
+      url: validatorsSummaryUrl,
     });
 
     if (response.status === 200 && Array.isArray(response.data)) {
@@ -73,10 +74,11 @@ async function fetchFigmentApy(
 
 export async function getValidators(
   cluster: Extract<Cluster, "mainnet-beta" | "testnet">,
+  infra: ValidatorsAppInfra,
 ): Promise<ValidatorsAppValidator[]> {
   const [validatorsResponse, apyMap] = await Promise.all([
-    network({ method: "GET", url: URLS.validatorList(cluster) }),
-    fetchFigmentApy(cluster),
+    network({ method: "GET", url: validatorListUrl(cluster, infra) }),
+    fetchFigmentApy(cluster, infra.SOLANA_VALIDATORS_SUMMARY_BASE_URL),
   ]);
 
   const allRawValidators =

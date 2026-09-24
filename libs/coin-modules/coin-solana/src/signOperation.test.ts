@@ -7,15 +7,11 @@ import { ChainAPI } from "./network";
 import { buildSignOperation } from "./signOperation";
 import { SolanaAddress, SolanaSigner } from "./signer";
 import { Transaction } from "./types";
-import coinConfig, { type SolanaCoinConfig } from "./config";
+import coinConfig from "./config";
+import { coinConfigFixture, INFRA_FIXTURE } from "./test/coinConfig.fixture";
 
-coinConfig.setCoinConfig(
-  () =>
-    ({
-      token2022Enabled: false,
-      legacyOCMSMaxVersion: "1.0.0",
-      status: { type: "active" },
-    }) as SolanaCoinConfig,
+coinConfig.setCoinConfig(() =>
+  coinConfigFixture({ infra: { ...INFRA_FIXTURE, API_SOLANA_PROXY: "https://example.test" } }),
 );
 
 const TRANSFER_KINDS = [
@@ -33,10 +29,6 @@ const TEST_BLOCKHASH = "DJRuRgQP3BeBNH8WVdF9cppBDj7pQNiVr4ZDnqupRtTC";
 
 jest.mock("./logic/craftTransaction", () => ({
   buildVersionedTransaction: jest.fn(),
-}));
-
-jest.mock("@ledgerhq/live-env", () => ({
-  getEnv: jest.fn((key: string) => (key === "API_SOLANA_PROXY" ? "https://example.test" : "")),
 }));
 
 const mockBuildVersionedTransaction = jest.mocked(buildVersionedTransaction);

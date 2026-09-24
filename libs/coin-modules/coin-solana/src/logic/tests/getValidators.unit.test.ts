@@ -1,16 +1,8 @@
-import { getEnv } from "@ledgerhq/live-env";
 import * as network from "@ledgerhq/live-network";
 import { getValidators } from "../getValidators";
 
-jest.spyOn({ getEnv }, "getEnv").mockImplementation((key: string) => {
-  const urls: Record<string, string> = {
-    SOLANA_VALIDATORS_SUMMARY_BASE_URL:
-      "https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary",
-  };
-  return urls[key] ?? "";
-});
-
 const VALIDATORS_URL = "https://validators-solana.coin.ledger.com/api/v1/validators/mainnet.json";
+const VALIDATORS_SUMMARY_URL = "https://earn.api.live.ledger.com/figment/solana/validators_summary";
 
 describe("getValidators", () => {
   beforeEach(() => {
@@ -55,7 +47,7 @@ describe("getValidators", () => {
         ],
       });
 
-    const page = await getValidators(VALIDATORS_URL);
+    const page = await getValidators(VALIDATORS_URL, VALIDATORS_SUMMARY_URL);
 
     expect(page).toStrictEqual({
       next: undefined,
@@ -101,7 +93,7 @@ describe("getValidators", () => {
       })
       .mockResolvedValueOnce({ status: 200, data: [] });
 
-    const page = await getValidators(VALIDATORS_URL);
+    const page = await getValidators(VALIDATORS_URL, VALIDATORS_SUMMARY_URL);
 
     expect(page).toMatchObject({
       items: [{ name: "Unnamed1111111111111111111111111111111111111" }],
@@ -132,7 +124,7 @@ describe("getValidators", () => {
       })
       .mockResolvedValueOnce({ status: 200, data: [] });
 
-    const page = await getValidators(VALIDATORS_URL);
+    const page = await getValidators(VALIDATORS_URL, VALIDATORS_SUMMARY_URL);
 
     expect(page).toStrictEqual({ items: [], next: undefined });
   });
@@ -140,7 +132,7 @@ describe("getValidators", () => {
   it("returns an empty page when no validatorsUrl is provided", async () => {
     const networkSpy = jest.spyOn(network, "default");
 
-    const page = await getValidators();
+    const page = await getValidators(undefined, VALIDATORS_SUMMARY_URL);
 
     expect(page).toStrictEqual({ items: [], next: undefined });
     expect(networkSpy).not.toHaveBeenCalled();

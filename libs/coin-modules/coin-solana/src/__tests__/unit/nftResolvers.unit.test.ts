@@ -2,6 +2,8 @@ import { AssertionError, fail } from "assert";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import axios from "axios";
+import coinConfig from "../../config";
+import { coinConfigFixture } from "../../test/coinConfig.fixture";
 import { collectionMetadata, nftMetadata } from "../../nftResolvers";
 
 jest.mock("axios");
@@ -9,6 +11,8 @@ const mockedAxios = jest.mocked(axios);
 
 // Add solana manually to the env until officially supported
 setEnv("NFT_CURRENCIES", [...getEnv("NFT_CURRENCIES"), "solana"]);
+
+coinConfig.setCoinConfig(() => coinConfigFixture());
 
 const currencyId = "solana";
 const wrongCurrencyId = "bitcoin";
@@ -106,6 +110,11 @@ describe("Solana Family", () => {
             ...metadata,
           },
         });
+        expect(mockedAxios).toHaveBeenCalledWith(
+          expect.objectContaining({
+            url: "https://nft.example/v2/solana/101/contracts/tokens/infos",
+          }),
+        );
       });
     });
 
@@ -154,6 +163,9 @@ describe("Solana Family", () => {
             tokenName: "CollectionName",
           },
         });
+        expect(mockedAxios).toHaveBeenCalledWith(
+          expect.objectContaining({ url: "https://nft.example/v2/solana/101/contracts/infos" }),
+        );
       });
     });
   });

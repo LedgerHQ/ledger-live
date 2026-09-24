@@ -12,6 +12,16 @@ import { SolanaTokenProgram } from "@ledgerhq/coin-solana/types";
 import { getTokenAccountProgramId } from "@ledgerhq/coin-solana/helpers/token";
 
 const RPC_URL = "http://localhost:8899";
+
+// Coin-config infra for the scenario: the local validator as RPC, live Ledger services otherwise.
+export const SCENARIO_INFRA = {
+  API_SOLANA_PROXY: RPC_URL,
+  SOLANA_VALIDATORS_APP_BASE_URL:
+    "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
+  SOLANA_VALIDATORS_SUMMARY_BASE_URL:
+    "https://earn.api.live.ledger.com/figment/solana/validators_summary",
+  NFT_METADATA_SERVICE: "https://nft.api.live.ledger.com",
+};
 // Fresh Connection per call to avoid stale blockhash cache across Agave restarts
 function getConnection() {
   return new Connection(RPC_URL, "confirmed");

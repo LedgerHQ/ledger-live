@@ -3,14 +3,11 @@ import { Account, AnyMessage, TypedEvmMessage } from "@ledgerhq/types-live";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import bs58 from "bs58";
 import coinConfig from "../../config";
+import { coinConfigFixture } from "../../test/coinConfig.fixture";
 import { signMessage } from "../../hw-signMessage";
 import { PubKeyDisplayMode, SolanaSigner } from "../../signer";
 
-coinConfig.setCoinConfig(() => ({
-  legacyOCMSMaxVersion: "1.8.0",
-  token2022Enabled: false,
-  status: { type: "active" },
-}));
+coinConfig.setCoinConfig(() => coinConfigFixture({ legacyOCMSMaxVersion: "1.8.0" }));
 
 describe("Testing call to hardware off-chain sign message on Solana", () => {
   it("should sign a message off-chain on hardware and return the generated signature", async () => {

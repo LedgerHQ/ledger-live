@@ -12457,9 +12457,6 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
-      '@shared/env':
-        specifier: workspace:*
-        version: link:../../../shared/env
       '@solana/spl-token':
         specifier: 'catalog:'
         version: 0.4.14(@solana/web3.js@1.99.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)

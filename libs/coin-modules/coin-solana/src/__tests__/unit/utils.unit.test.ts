@@ -1,6 +1,5 @@
-import { clusterApiUrl } from "@solana/web3.js";
-import { getEnv } from "@ledgerhq/live-env";
 import type { SolanaCoinConfig } from "../../config";
+import { coinConfigFixture, INFRA_FIXTURE } from "../../test/coinConfig.fixture";
 import {
   endpointByCurrencyId,
   LEDGER_VALIDATOR_BY_FIGMENT,
@@ -8,36 +7,19 @@ import {
   LEDGER_VALIDATOR_DEFAULT,
 } from "../../utils";
 
-jest.mock("@ledgerhq/live-env", () => ({ getEnv: jest.fn() }));
-
-const mockGetEnv = getEnv as jest.Mock;
-
 const configWithRpcUrls = (rpcUrls?: SolanaCoinConfig["rpcUrls"]): SolanaCoinConfig =>
-  ({ token2022Enabled: false, legacyOCMSMaxVersion: "1.0.0", rpcUrls }) as SolanaCoinConfig;
+  coinConfigFixture(rpcUrls ? { rpcUrls } : {});
 
 describe("utils - endpointByCurrencyId", () => {
-  beforeEach(() => {
-    mockGetEnv.mockReturnValue("https://proxy.solana.example.com");
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe("when coin config has no rpcUrls", () => {
     const config = configWithRpcUrls(undefined);
 
-    it("falls back to API_SOLANA_PROXY for solana", () => {
-      expect(endpointByCurrencyId(config, "solana")).toBe("https://proxy.solana.example.com");
-    });
-
-    it("falls back to clusterApiUrl for solana_devnet", () => {
-      expect(endpointByCurrencyId(config, "solana_devnet")).toBe(clusterApiUrl("devnet"));
-    });
-
-    it("falls back to clusterApiUrl for solana_testnet", () => {
-      expect(endpointByCurrencyId(config, "solana_testnet")).toBe(clusterApiUrl("testnet"));
-    });
+    it.each(["solana", "solana_devnet", "solana_testnet"])(
+      "falls back to the currency's infra proxy for %s",
+      currencyId => {
+        expect(endpointByCurrencyId(config, currencyId)).toBe(INFRA_FIXTURE.API_SOLANA_PROXY);
+      },
+    );
   });
 
   describe("when coin config provides rpcUrls", () => {

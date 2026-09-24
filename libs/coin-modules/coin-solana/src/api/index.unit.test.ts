@@ -23,6 +23,7 @@ import { validateAddress } from "../logic/validateAddress";
 import { validateIntent } from "../logic/validateIntent";
 import { getValidators } from "../logic/getValidators";
 import { ChainAPI } from "../network";
+import { INFRA_FIXTURE } from "../test/coinConfig.fixture";
 
 const mockChainAPI = {} as unknown as ChainAPI;
 
@@ -88,6 +89,10 @@ describe("createApi", () => {
     legacyOCMSMaxVersion: "1.0.0",
     status: { type: "active" },
     validatorsUrl: "https://solana-validators.com",
+    infra: {
+      ...INFRA_FIXTURE,
+      SOLANA_VALIDATORS_SUMMARY_BASE_URL: "https://solana-validators-summary.com",
+    },
   };
 
   const context: SolanaContext = {
@@ -305,7 +310,10 @@ describe("createApi", () => {
     const api = createApi("solana");
     const result = await api.getValidators(context);
 
-    expect(getValidators).toHaveBeenCalledWith("https://solana-validators.com");
+    expect(getValidators).toHaveBeenCalledWith(
+      "https://solana-validators.com",
+      "https://solana-validators-summary.com",
+    );
     expect(result).toEqual({
       items: [
         {

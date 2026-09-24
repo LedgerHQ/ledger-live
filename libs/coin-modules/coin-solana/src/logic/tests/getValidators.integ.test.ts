@@ -1,9 +1,12 @@
 import { getValidators } from "../getValidators";
 
+const VALIDATORS_SUMMARY_URL = "https://earn.api.live.ledger.com/figment/solana/validators_summary";
+
 describe("getValidators (integration)", () => {
   it("returns a non-empty page of well-formed validators for mainnet-beta", async () => {
     const page = await getValidators(
       "https://validators-solana.coin.ledger.com/api/v1/validators/mainnet.json",
+      VALIDATORS_SUMMARY_URL,
     );
 
     expect(page).toMatchObject({ next: undefined });
@@ -21,7 +24,7 @@ describe("getValidators (integration)", () => {
   });
 
   it("returns an empty page when no validatorsUrl is provided", async () => {
-    const page = await getValidators();
+    const page = await getValidators(undefined, VALIDATORS_SUMMARY_URL);
     expect(page).toStrictEqual({ items: [], next: undefined });
   });
 });

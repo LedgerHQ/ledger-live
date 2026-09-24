@@ -13,6 +13,12 @@ export type SolanaConfig = {
     solana_testnet?: string;
   };
   validatorsUrl?: string;
+  infra: {
+    API_SOLANA_PROXY: string;
+    SOLANA_VALIDATORS_APP_BASE_URL: string;
+    SOLANA_VALIDATORS_SUMMARY_BASE_URL: string;
+    NFT_METADATA_SERVICE: string;
+  };
 };
 
 export type SolanaCoinConfig = CurrencyConfig & SolanaConfig;

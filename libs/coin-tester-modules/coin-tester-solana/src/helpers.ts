@@ -16,6 +16,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import { createBridges } from "@ledgerhq/coin-solana/bridge/js";
 import type { Transaction } from "@ledgerhq/coin-solana/types";
 import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
+import { SCENARIO_INFRA } from "./connection";
 import type { Signers } from "./signer";
 import BigNumber from "bignumber.js";
 
@@ -139,6 +140,7 @@ export async function getBridges(
       status: { type: "active" as const },
       token2022Enabled: true,
       legacyOCMSMaxVersion: "1.8.0",
+      infra: SCENARIO_INFRA,
     }));
 
     return {

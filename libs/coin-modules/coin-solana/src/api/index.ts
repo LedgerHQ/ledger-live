@@ -45,7 +45,7 @@ async function chainAPIFromContext(
   api: ChainAPI;
   config: SolanaCoinConfig;
 }> {
-  const config = await context.config();
+  const config = await context.config(currencyId);
   const api = getChainAPI({ endpoint: endpointByCurrencyId(config, currencyId) });
   return { api, config };
 }
@@ -123,7 +123,7 @@ export function createApi(currencyId: string) {
     },
     getValidators: async (context: SolanaContext, _options?) => {
       const { config } = await chainAPIFromContext(context, currencyId);
-      return getValidators(config.validatorsUrl);
+      return getValidators(config.validatorsUrl, config.infra.SOLANA_VALIDATORS_SUMMARY_BASE_URL);
     },
     getStakes: async (context: SolanaContext, address: string, options?: { cursor?: Cursor }) => {
       const { api } = await chainAPIFromContext(context, currencyId);
