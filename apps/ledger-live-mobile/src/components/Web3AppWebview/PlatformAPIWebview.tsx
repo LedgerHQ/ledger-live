@@ -48,6 +48,7 @@ import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNaviga
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
+import { closePlatformExchange } from "./closePlatformExchange";
 import { NetworkError } from "./NetworkError";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
@@ -330,10 +331,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   resolve(result.startExchangeResult.nonce);
                 }
 
-                const n =
-                  navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() ||
-                  navigation;
-                n.pop();
+                closePlatformExchange(navigation);
               },
             },
           });
@@ -390,11 +388,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                       resolve(result.operation);
                     }
                     setDevice(undefined);
-                    const n =
-                      navigation.getParent<
-                        StackNavigatorNavigation<BaseNavigatorStackParamList>
-                      >() || navigation;
-                    n.pop();
+                    closePlatformExchange(navigation);
                   },
                 },
               });
