@@ -42,11 +42,11 @@ export const EMPTY_PAGE_BUDGET = 1000;
  *
  * `maxOperations`, when set, bounds the walk in emitted operations (`undefined` is unbounded,
  * identical to today's behaviour). The bound is a parameter, never read from config here, so this
- * stays a pure function. A page is never trimmed to fit the bound exactly: several operations can
- * share one transaction hash (`buildParentOperations` groups by hash), so cutting inside a page
- * could split a transaction's operations across the boundary. The walk stops only *after* the page
- * that reaches the bound, returning that whole page -- overshooting by less than one page is
- * correct, splitting a transaction is not.
+ * stays a pure function. A page is never trimmed to fit it exactly: rows of one transaction
+ * interleave inside a block, so the walk stops after the page that reaches the bound and drops the
+ * lowest block fetched -- the only one the page it will never fetch can continue. If that leaves
+ * nothing, the bound is smaller than a single block and the bound gives way: the walk goes on until
+ * a whole block can be kept, because an empty result is not a short history, it is no watermark.
  *
  * `maxOperations` is the only stop that *returns* a partial list: it is an intended, contiguous
  * window from the tip, known and accepted by the caller. Every other stop below the falsy-`next`
@@ -82,6 +82,7 @@ export async function paginateOperations<T>(
   let cursor: string | undefined;
   let pagesFetched = 0;
   let consecutiveEmptyPages = 0;
+  let pagesPastBound = 0;
 
   for (;;) {
     const { items: pageItems, next } = await fetchPage(cursor);
@@ -116,16 +117,33 @@ export async function paginateOperations<T>(
       // contiguous and harmless, while half a transaction is a hole the next watermark seals.
       // Only a bound-triggered stop needs this -- a falsy `next` means there was no next page.
       const kept = blockOf ? dropTrailingBlock(items, blockOf) : items;
-      log(
-        "generic-coin-framework",
-        "listOperations walk stopped: operation-history bound reached",
-        {
-          maxOperations,
-          collected: items.length,
-          kept: kept.length,
-        },
-      );
-      return kept;
+
+      if (kept.length > 0 || kept === items) {
+        log(
+          "generic-coin-framework",
+          "listOperations walk stopped: operation-history bound reached",
+          {
+            maxOperations,
+            collected: items.length,
+            kept: kept.length,
+            pagesPastBound,
+          },
+        );
+        return kept;
+      }
+
+      // The cut emptied the list: everything collected is still one block, so the bound is smaller
+      // than that block. Returning nothing here is not a short history, it is no watermark at all --
+      // the shape stores `blockHeight: 0` when `operations` is empty, so the next sync reads as
+      // from-scratch, rewalks the same blocks and retains nothing again, forever. The bound gives
+      // way instead, the way `boundByTransaction` overshoots rather than splitting a transaction:
+      // walk on until a lower block appears and one whole block can be kept.
+      pagesPastBound++;
+      if (pagesPastBound >= PAGE_BUDGET) {
+        throw new PaginationIntegrityError(
+          `paginateOperations: ${pagesPastBound} pages past the bound of ${maxOperations} and the ${items.length} operations collected are all in block ${blockOf?.(items[0])} -- the module is not advancing through blocks`,
+        );
+      }
     }
 
     if (consecutiveEmptyPages >= EMPTY_PAGE_BUDGET) {
@@ -173,9 +191,9 @@ export async function paginateOperations<T>(
  * contiguous prefix, and losing them is a truncation from the tail.
  *
  * An item whose block height is unknown is not counted as the boundary -- without a height there
- * is nothing to reason about, so the list is returned untouched rather than cut arbitrarily. If
- * the lowest block starts at the head, nothing is returned, which a caller should read as "the
- * bound is smaller than a single block".
+ * is nothing to reason about, so the very list passed in is returned rather than cut arbitrarily,
+ * which is how the caller tells "nothing to cut" from "the cut kept nothing". The latter, an empty
+ * result, means the lowest block starts at the head: the bound is smaller than one block.
  */
 function dropTrailingBlock<T>(items: T[], blockOf: (item: T) => number | undefined): T[] {
   const lastHeight = items.length ? blockOf(items[items.length - 1]) : undefined;

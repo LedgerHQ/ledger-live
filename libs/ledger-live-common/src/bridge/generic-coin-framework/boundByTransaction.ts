@@ -28,8 +28,8 @@
  * failure this is meant to prevent.
  *
  * The bound is therefore a floor rather than a ceiling: the returned list can exceed
- * `maxOperations` by the tail of the transactions crossing it. That is the same rule
- * `paginateOperations` applies a level up when it returns the entire page that reached the bound.
+ * `maxOperations` by the tail of the transactions crossing it. `paginateOperations` gives way the
+ * same way a level up, when the bound falls short of the block it stopped in.
  *
  * An operation with a falsy hash is its own group — grouping those together would make one giant
  * group and retain everything, the opposite of what this is for.

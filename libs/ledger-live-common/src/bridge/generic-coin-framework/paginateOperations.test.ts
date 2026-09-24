@@ -56,16 +56,35 @@ describe("paginateOperations", () => {
     expect(heights(items)).toEqual([9, 9, 9]);
   });
 
-  it("returns nothing when the lowest block starts at the head", async () => {
-    // The bound is smaller than a single block; keeping part of it is the one thing that must
-    // not happen.
+  it("walks past the bound rather than retaining nothing when the bound is smaller than a block", async () => {
+    // Cutting here would empty the list, and an empty list is not a short history: the shape
+    // stores blockHeight 0, the next sync reads as from-scratch and rewalks the same blocks to
+    // retain nothing again. The bound gives way until a whole block can be kept.
     const items = await paginateOperations(
-      pages({ items: [at("a", 9), at("b", 9), at("c", 9)], next: "c1" }),
+      pages(
+        { items: [at("a", 9), at("b", 9), at("c", 9)], next: "c1" },
+        { items: [at("d", 9), at("e", 8)], next: "c2" },
+      ),
       2,
       blockOf,
     );
 
-    expect(items).toEqual([]);
+    expect(heights(items)).toEqual([9, 9, 9, 9]);
+  });
+
+  it("fails rather than walking forever when the module never leaves the block it is bound in", async () => {
+    // The give-way above is only sound while the walk makes progress through blocks. A module
+    // that advances its cursor without ever descending a block would otherwise loop.
+    let page = 0;
+    await expect(
+      paginateOperations(
+        () => Promise.resolve({ items: [at("a", 9)], next: `c${page++}` }),
+        1,
+        blockOf,
+      ),
+    ).rejects.toThrow("pages past the bound");
+
+    expect(page).toBe(PAGE_BUDGET);
   });
 
   it("leaves the list untouched when the items carry no block height", async () => {
