@@ -23,6 +23,42 @@ beforeEach(() => {
 });
 
 describe("paginateOperations", () => {
+  it("drops the transaction the bound cut into, since its remaining rows sit on the page never fetched", async () => {
+    // `Page<T>` does not promise a transaction's rows stay inside one page. Keeping half of one
+    // would leave a hole the next watermark seals; dropping it is a contiguous truncation.
+    const items = await paginateOperations(
+      pages({ items: [op("a"), op("b"), op("b")], next: "c1" }),
+      2,
+      item => (item as unknown as { tx: { hash: string } }).tx.hash,
+    );
+
+    expect(items.map(i => (i as unknown as { tx: { hash: string } }).tx.hash)).toEqual(["a"]);
+  });
+
+  it("drops the trailing transaction even when the page looks complete", async () => {
+    // There is no way to tell a complete trailing transaction from a truncated one: the cursor is
+    // truthy, so the page never fetched could hold more rows of `b`. One transaction per bounded
+    // sync is the price of never persisting half of one.
+    const items = await paginateOperations(
+      pages({ items: [op("a"), op("b")], next: "c1" }),
+      2,
+      item => (item as unknown as { tx: { hash: string } }).tx.hash,
+    );
+
+    expect(items.map(i => (i as unknown as { tx: { hash: string } }).tx.hash)).toEqual(["a"]);
+  });
+
+  it("keeps every row when the walk ends on a falsy cursor, bound or not", async () => {
+    // No next page exists, so nothing can be missing: the trailing transaction is whole.
+    const items = await paginateOperations(
+      pages({ items: [op("a"), op("b"), op("b")], next: undefined }),
+      2,
+      item => (item as unknown as { tx: { hash: string } }).tx.hash,
+    );
+
+    expect(items).toHaveLength(3);
+  });
+
   it("fails on a stalled cursor even when that page reaches the bound, rather than passing it off as a clean truncation", async () => {
     // The bound is a legitimate stop; a repeated cursor never is. Checking the bound first would
     // report this module as well-behaved for the one page where it stalls.
