@@ -127,8 +127,6 @@
     "@babel/preset-react": "7.28.5",
     "@babel/preset-typescript": "7.28.5",
     "@rspack/core": "catalog:",
-    "@svgr/core": "^5.5.0",
-    "@svgr/plugin-svgo": "*",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
