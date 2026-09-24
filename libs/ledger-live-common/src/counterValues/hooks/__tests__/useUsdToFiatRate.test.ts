@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from "@testing-library/react";
+import { log } from "@ledgerhq/logs";
 import { createTestStore, createWrapper } from "@tests/test-helpers/testUtils";
 import { marketCountervaluesApi as api } from "@domain/api-market-countervalues";
 import { useUsdToFiatRate } from "../useUsdToFiatRate";
@@ -13,6 +14,11 @@ const mockUseQuery = jest
 jest.mock("@domain/api-market-countervalues", () => ({
   ...jest.requireActual("@domain/api-market-countervalues"),
   useGetUsdToFiatRateQuery: (...args: unknown[]) => mockUseQuery(...args),
+}));
+
+jest.mock("@ledgerhq/logs", () => ({
+  ...jest.requireActual("@ledgerhq/logs"),
+  log: jest.fn(),
 }));
 
 let store: ReturnType<typeof createTestStore>;
@@ -73,6 +79,20 @@ describe("useUsdToFiatRate", () => {
     const { result } = renderHook(() => useUsdToFiatRate("EUR"), { wrapper });
 
     expect(result.current).toEqual({ status: "error", rate: null });
+  });
+
+  it("logs the failure, so a rejected response stays visible", () => {
+    const error = { status: "CUSTOM_ERROR", error: "rawResponseSchema rejected the response" };
+    mockUseQuery.mockReturnValue({ data: undefined, isLoading: false, isError: true, error });
+
+    const wrapper = createWrapper(store);
+    renderHook(() => useUsdToFiatRate("EUR"), { wrapper });
+
+    expect(jest.mocked(log)).toHaveBeenCalledWith(
+      "countervaluesApi",
+      expect.stringContaining("eur"),
+      { error },
+    );
   });
 
   it("returns error when the query resolves with a null rate", () => {

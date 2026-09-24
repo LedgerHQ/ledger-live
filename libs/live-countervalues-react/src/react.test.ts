@@ -111,6 +111,34 @@ describe("CountervaluesProvider", () => {
       ),
     ).toBe(false);
   });
+
+  it("should release pending and report the error when a load fails, so polling can resume", async () => {
+    const failure = new Error("countervalues service unreachable");
+    mockLoadCountervalues.mockRejectedValue(failure);
+    const bridge = createBridge({
+      supportedCryptoIds: [bitcoin.id],
+      trackingPairs: [supportedPair],
+    });
+
+    render(React.createElement(CountervaluesProvider, { bridge, children: null }));
+
+    await waitFor(() => expect(bridge.setStateError).toHaveBeenCalledWith(failure));
+    expect(bridge.setStatePending).toHaveBeenLastCalledWith(false);
+    expect(bridge.setState).not.toHaveBeenCalled();
+  });
+
+  it("should pass the bridge's rate source and a logger to loadCountervalues", async () => {
+    const bridge = createBridge({
+      supportedCryptoIds: [bitcoin.id],
+      trackingPairs: [supportedPair],
+    });
+
+    render(React.createElement(CountervaluesProvider, { bridge, children: null }));
+
+    await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(1));
+    expect(mockLoadCountervalues.mock.calls[0][2]?.rates).toBe(bridge.rates);
+    expect(mockLoadCountervalues.mock.calls[0][2]?.log).toEqual(expect.any(Function));
+  });
 });
 
 function trackingPair(from: Currency): TrackingPair {
