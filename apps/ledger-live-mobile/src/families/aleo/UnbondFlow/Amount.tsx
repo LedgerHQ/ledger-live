@@ -52,7 +52,6 @@ export default function Amount({ navigation, route }: Props) {
       const created = bridge.createTransaction(mainAccount);
       const prepared = bridge.updateTransaction(created, {
         mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
-        useAllAmount: true,
       });
 
       return {

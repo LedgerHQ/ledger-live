@@ -94,7 +94,7 @@ describe("Aleo unbond flow (integration)", () => {
     });
   });
 
-  it("walks Amount → device → success for a full unbond, showing the bonded amount", async () => {
+  it("walks Amount → device → success, showing the bonded amount", async () => {
     const { user } = renderFlowAt(BONDED_ACCOUNT);
 
     await waitFor(() =>
@@ -105,7 +105,6 @@ describe("Aleo unbond flow (integration)", () => {
 
     expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(expect.anything(), {
       mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
-      useAllAmount: true,
     });
 
     await user.press(continueButton);
@@ -127,21 +126,12 @@ describe("Aleo unbond flow (integration)", () => {
     );
   });
 
-  it("turns off Max to enable a partial amount, and back on to use the full bonded balance", async () => {
+  it("starts with Max off so a partial amount can be typed, and turning it on switches to the full bonded balance", async () => {
     renderFlowAt(BONDED_ACCOUNT);
 
     const maxToggle = await screen.findByTestId("aleo-unbond-use-all-amount");
-    expect(screen.getByTestId("aleo-unbond-amount-input")).toBeDisabled();
-
-    fireEvent(maxToggle, "valueChange", false);
-
-    await waitFor(() =>
-      expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(expect.anything(), {
-        amount: new BigNumber(0),
-        useAllAmount: false,
-      }),
-    );
-    await waitFor(() => expect(screen.getByTestId("aleo-unbond-amount-input")).toBeEnabled());
+    expect(maxToggle).not.toBeChecked();
+    expect(screen.getByTestId("aleo-unbond-amount-input")).toBeEnabled();
 
     fireEvent(maxToggle, "valueChange", true);
 
@@ -152,6 +142,16 @@ describe("Aleo unbond flow (integration)", () => {
       }),
     );
     await waitFor(() => expect(screen.getByTestId("aleo-unbond-amount-input")).toBeDisabled());
+
+    fireEvent(maxToggle, "valueChange", false);
+
+    await waitFor(() =>
+      expect(aleoAccountBridge.updateTransaction).toHaveBeenCalledWith(expect.anything(), {
+        amount: new BigNumber(0),
+        useAllAmount: false,
+      }),
+    );
+    await waitFor(() => expect(screen.getByTestId("aleo-unbond-amount-input")).toBeEnabled());
   });
 
   it("disables Continue when there is nothing to unbond", async () => {
