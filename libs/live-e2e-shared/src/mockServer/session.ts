@@ -1,7 +1,12 @@
 import { DmkNetworkClient } from "@ledgerhq/device-management-kit";
 import { MockClient, type Device, type MockConfig } from "@ledgerhq/device-mockserver-client";
 
-import { GET_VERSION_APDU, GET_VERSION_PREFIX, withOnboardingFlags } from "./onboardingFlags";
+import {
+  GET_VERSION_APDU,
+  GET_VERSION_PREFIX,
+  withCharonState,
+  withOnboardingFlags,
+} from "./onboardingFlags";
 
 const REQUEST_TIMEOUT_MS = 10_000;
 
@@ -63,13 +68,15 @@ export class MockServerSessionHandle {
    * Drive it onwards with another step rather than releasing the mock: released, the
    * device resumes from where it was and has to re-traverse the steps.
    */
-  async pinOnboardingStep(step: number, onboarded = false): Promise<void> {
+  async pinOnboardingStep(step: number, onboarded = false, charonStatus?: number): Promise<void> {
     const { id } = await this.firstDevice();
     const { response } = await this.client.sendApdu(id, GET_VERSION_APDU);
 
+    const flagged = withOnboardingFlags(response, step, onboarded);
+
     await this.pinApdu(id, {
       prefix: GET_VERSION_PREFIX,
-      responses: [withOnboardingFlags(response, step, onboarded)],
+      responses: [charonStatus === undefined ? flagged : withCharonState(flagged, charonStatus)],
     });
   }
 

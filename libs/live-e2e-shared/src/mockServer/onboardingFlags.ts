@@ -13,6 +13,48 @@ export const ONBOARDING_STEP = {
   ready: 0x0b,
 } as const;
 
+/** Ledger Recovery Key backup states. */
+export const CHARON_STATUS = {
+  rejected: 0x1,
+  choice: 0x2,
+  running: 0x3,
+  naming: 0x4,
+  ready: 0x5,
+} as const;
+
+/** Trailing fields are mcuVersion, bootloader, language, recover, charon — no device
+ * with a Recovery Key reports the hardware version a Nano X inserts before language. */
+const CHARON_TLV_INDEX = 4;
+const STATUS_WORD_LENGTH = 2;
+
+const tlv = (...payload: number[]) => Buffer.from([payload.length, ...payload]);
+
+/** Appends the LRK field, or replaces it so repeated pins do not stack copies. */
+export function withCharonState(getVersionReply: string, status: number): string {
+  const reply = Buffer.from(getVersionReply, "hex");
+  const body = reply.subarray(0, reply.length - STATUS_WORD_LENGTH);
+  const statusWord = reply.subarray(reply.length - STATUS_WORD_LENGTH);
+
+  const seVersionLength = body[4];
+  const flagsOffset = 5 + seVersionLength + 1;
+  const flagsLength = body[flagsOffset - 1];
+  const headLength = flagsOffset + flagsLength;
+
+  const tlvs: Buffer[] = [];
+  for (let i = headLength; i < body.length; i += 1 + body[i]) {
+    tlvs.push(body.subarray(i, i + 1 + body[i]));
+  }
+
+  const walked = tlvs.reduce((total, entry) => total + entry.length, headLength);
+  if (walked !== body.length || tlvs.length < CHARON_TLV_INDEX) {
+    throw new Error(`Could not walk the trailing fields of GET_VERSION reply "${getVersionReply}"`);
+  }
+
+  tlvs[CHARON_TLV_INDEX] = tlv(status);
+
+  return Buffer.concat([body.subarray(0, headLength), ...tlvs, statusWord]).toString("hex");
+}
+
 /**
  * Rewrites the onboarding flags inside a real GET_VERSION reply.
  *

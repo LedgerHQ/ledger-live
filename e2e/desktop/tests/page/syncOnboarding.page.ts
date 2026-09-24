@@ -34,6 +34,8 @@ export class SyncOnboardingPage extends AppPage {
     "onboarding-sync-skip-confirmSkip",
   );
   private readonly maybeLaterButton = this.page.getByTestId("onboarding-fund-new-seed-skip");
+  private readonly recoveryKeyStep = this.page.getByTestId("backup-charon-step");
+  private readonly seedStepCompleted = this.page.getByText("Secret Recovery Phrase confirmed");
   private readonly installAppsButton = this.page.getByTestId("install-cta-button");
   private readonly restoreAppsPanel = this.page.getByTestId("install-set-of-apps-restore-body");
   private readonly installingText = this.page.getByTestId("installing-text");
@@ -94,6 +96,17 @@ export class SyncOnboardingPage extends AppPage {
     ]);
 
     expect(winner, "a seed step was shown for an already-initialised device").toBe("advanced");
+  }
+
+  @step("Expect the Ledger Recovery Key backup screen")
+  async expectRecoveryKeyBackupScreen() {
+    await expect(this.recoveryKeyStep).toBeVisible();
+  }
+
+  @step("Expect the Ledger Recovery Key backup to be complete")
+  async expectRecoveryKeyBackupComplete() {
+    await expect(this.seedStepCompleted).toBeVisible();
+    await expect(this.recoveryKeyStep).toBeHidden();
   }
 
   @step("Skip the wallet sync step")
