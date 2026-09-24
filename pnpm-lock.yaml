@@ -633,7 +633,7 @@ overrides:
 
 packageExtensionsChecksum: sha256-y05zn8SOmFlbIRTsh3Z3c43aAFvz482eG6q6x0pvCFg=
 
-pnpmfileChecksum: sha256-dymAOigyr4j+6S+s4Z2OZf99baynJB1La1wR0WK6Azk=
+pnpmfileChecksum: sha256-i+Y0CJqPyPwZocX5b+CjuDCuw0GO2szrG/aLpWOMfB8=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
@@ -23424,6 +23424,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -61486,7 +61487,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
@@ -64317,7 +64320,6 @@ snapshots:
       memoize-one: 5.2.1
       metro-runtime: 0.83.7
       metro-source-map: 0.83.7
-      mkdirp: 3.0.1
       nullthrows: 1.1.1
       pretty-format: 29.7.0
       promise: 8.3.0
@@ -64366,7 +64368,6 @@ snapshots:
       memoize-one: 5.2.1
       metro-runtime: 0.83.7
       metro-source-map: 0.83.7
-      mkdirp: 3.0.1
       nullthrows: 1.1.1
       pretty-format: 29.7.0
       promise: 8.3.0
@@ -64415,7 +64416,6 @@ snapshots:
       memoize-one: 5.2.1
       metro-runtime: 0.83.7
       metro-source-map: 0.83.7
-      mkdirp: 3.0.1
       nullthrows: 1.1.1
       pretty-format: 29.7.0
       promise: 8.3.0
@@ -64464,7 +64464,6 @@ snapshots:
       memoize-one: 5.2.1
       metro-runtime: 0.83.7
       metro-source-map: 0.83.7
-      mkdirp: 3.0.1
       nullthrows: 1.1.1
       pretty-format: 29.7.0
       promise: 8.3.0
