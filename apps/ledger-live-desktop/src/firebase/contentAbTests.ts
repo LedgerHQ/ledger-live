@@ -44,8 +44,14 @@ export async function fetchContentAbTests() {
     }
     return setContentAbTests(next);
   } catch (error) {
-    logger.warn("Content AB tests: fetch failed, keeping app.json defaults", error);
-    return getContentAbTests();
+    const current = getContentAbTests();
+    logger.warn(
+      Object.keys(current).length === 0
+        ? "Content AB tests: fetch failed, keeping app.json defaults"
+        : "Content AB tests: fetch failed, keeping last remote payload",
+      error,
+    );
+    return current;
   }
 }
 

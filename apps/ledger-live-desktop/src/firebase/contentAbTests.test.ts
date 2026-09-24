@@ -101,7 +101,10 @@ describe("fetchContentAbTests", () => {
       test: { enabled: true, copy: {} },
     });
     expect(getContentAbTests()).toEqual({ test: { enabled: true, copy: {} } });
-    expect(mockLoggerWarn).toHaveBeenCalled();
+    expect(mockLoggerWarn).toHaveBeenCalledWith(
+      "Content AB tests: fetch failed, keeping last remote payload",
+      expect.any(Error),
+    );
   });
 
   it("does not throw when Firebase init fails", async () => {
@@ -110,6 +113,10 @@ describe("fetchContentAbTests", () => {
     });
     const { fetchContentAbTests } = await loadModule();
     await expect(fetchContentAbTests()).resolves.toEqual({});
+    expect(mockLoggerWarn).toHaveBeenCalledWith(
+      "Content AB tests: fetch failed, keeping app.json defaults",
+      expect.any(Error),
+    );
   });
 });
 
