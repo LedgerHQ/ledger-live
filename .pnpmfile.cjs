@@ -42,11 +42,6 @@ function readPackage(pkg, context) {
       */
       addDependencies("jest-allure2-reporter", { tslib: "*" }),
       /* React Native and Metro bundler packages */
-      // react-native does not declare mkdirp; removing it has broken the iOS build before /!\
-      addDependencies("react-native", {
-        mkdirp: "*",
-      }),
-
       addPeerDependencies("metro-config", {
         "metro-transform-worker": "*",
       }),

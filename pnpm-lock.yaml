@@ -633,7 +633,7 @@ overrides:
 
 packageExtensionsChecksum: sha256-y05zn8SOmFlbIRTsh3Z3c43aAFvz482eG6q6x0pvCFg=
 
-pnpmfileChecksum: sha256-PYURGcbFjaOvnGPFADKL5b1wir2MZnDO1duB0Ng7zDA=
+pnpmfileChecksum: sha256-8Nsl+nOJwW4/TPzCXSJ4CvJlozRQyCbBd5385xe2Nhg=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
@@ -64425,7 +64425,6 @@ snapshots:
       memoize-one: 5.2.1
       metro-runtime: 0.83.7
       metro-source-map: 0.83.7
-      mkdirp: 3.0.1
       nullthrows: 1.1.1
       pretty-format: 29.7.0
       promise: 8.3.0
@@ -64474,7 +64473,6 @@ snapshots:
       memoize-one: 5.2.1
       metro-runtime: 0.83.7
       metro-source-map: 0.83.7
-      mkdirp: 3.0.1
       nullthrows: 1.1.1
       pretty-format: 29.7.0
       promise: 8.3.0
@@ -64523,7 +64521,6 @@ snapshots:
       memoize-one: 5.2.1
       metro-runtime: 0.83.7
       metro-source-map: 0.83.7
-      mkdirp: 3.0.1
       nullthrows: 1.1.1
       pretty-format: 29.7.0
       promise: 8.3.0
@@ -64572,7 +64569,6 @@ snapshots:
       memoize-one: 5.2.1
       metro-runtime: 0.83.7
       metro-source-map: 0.83.7
-      mkdirp: 3.0.1
       nullthrows: 1.1.1
       pretty-format: 29.7.0
       promise: 8.3.0
