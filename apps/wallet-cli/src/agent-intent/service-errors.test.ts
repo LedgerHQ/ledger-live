@@ -179,13 +179,17 @@ describe("describeAgentIntentError", () => {
     );
   });
 
-  it("reports an unknown profile (404) and a server outage (5xx)", () => {
+  it("reports an unknown profile (404)", () => {
     expect(describeAgentIntentError(http(404), "bot").message).toMatch(
       /doesn't know profile "bot"/,
     );
-    expect(describeAgentIntentError(http(503), "bot").message).toMatch(
-      /temporarily unavailable \(HTTP 503.*No intent was created/s,
-    );
+  });
+
+  it("never claims a 5xx means nothing was created, since the service may have saved it", () => {
+    const message = describeAgentIntentError(http(503), "bot").message;
+
+    expect(message).toMatch(/failed \(HTTP 503.*may still have been created.*before re-running/s);
+    expect(message).not.toMatch(/No intent was created/);
   });
 
   it("redacts credentials from a raw service body", () => {

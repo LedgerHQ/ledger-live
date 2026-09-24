@@ -82,7 +82,11 @@ function httpErrorMessage(e: AgentIntentHttpError, profileId: string): string {
     );
   }
   if (e.status >= 500) {
-    return `The Agent Intent service is temporarily unavailable (HTTP ${e.status}: ${detail}). No intent was created — try again later.`;
+    return (
+      `The Agent Intent service failed (HTTP ${e.status}: ${detail}). The intent may still have ` +
+      "been created — check the Agent Intent frontend before re-running, or you may propose a " +
+      "duplicate."
+    );
   }
   return `The Agent Intent service rejected the request (HTTP ${e.status}: ${detail}).`;
 }
