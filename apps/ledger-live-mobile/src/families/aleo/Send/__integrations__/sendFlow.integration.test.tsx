@@ -68,6 +68,12 @@ jest.mock("~/datadog", () => ({
   broadcastLogger: jest.fn(),
 }));
 
+// broadcastSignedTx holds the success screen behind a 3s UX floor (execAndWaitAtLeast).
+jest.mock("@ledgerhq/live-common/promise", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/promise"),
+  execAndWaitAtLeast: (_ms: number, cb: () => Promise<unknown>) => cb(),
+}));
+
 const RECIPIENT = "aleo1qtd0z6qch67pyzt0yqz9rteyclc8mgz7zwqqqz3lvvxvcmsprsqqjfp2y8";
 
 const Stack = createNativeStackNavigator();
@@ -146,7 +152,7 @@ describe("Aleo send flow (integration)", () => {
       await user.press(screen.getByText("Send publicly"));
 
       const recipientInput = await screen.findByTestId("recipient-input");
-      await user.type(recipientInput, RECIPIENT);
+      await user.paste(recipientInput, RECIPIENT);
       await waitFor(() =>
         expect(screen.getByTestId("enabled-recipient-continue-button")).toBeVisible(),
       );
@@ -165,10 +171,8 @@ describe("Aleo send flow (integration)", () => {
       const deviceItem = await screen.findByTestId("device-item-mock");
       await user.press(deviceItem);
 
-      await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible(), {
-        timeout: 10000,
-      });
-    }, 30_000);
+      await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
+    });
 
     it("blocks at the mandatory private sync screen and only proceeds once syncing completes", async () => {
       const { user } = renderSendFlow(true);
@@ -189,9 +193,7 @@ describe("Aleo send flow (integration)", () => {
         });
       });
 
-      await waitFor(() => expect(screen.getByTestId("amount-input")).toBeVisible(), {
-        timeout: 5000,
-      });
+      await waitFor(() => expect(screen.getByTestId("amount-input")).toBeVisible());
     });
 
     it("routes a private send to a different recipient through the private sync gate via navigateAfterRecipient", async () => {
@@ -201,7 +203,7 @@ describe("Aleo send flow (integration)", () => {
       await user.press(screen.getByText("Send privately"));
 
       const recipientInput = await screen.findByTestId("recipient-input");
-      await user.type(recipientInput, RECIPIENT);
+      await user.paste(recipientInput, RECIPIENT);
       await waitFor(() =>
         expect(screen.getByTestId("enabled-recipient-continue-button")).toBeVisible(),
       );
@@ -244,9 +246,7 @@ describe("Aleo send flow (integration)", () => {
         });
       });
 
-      await waitFor(() => expect(screen.getByTestId("amount-input")).toBeVisible(), {
-        timeout: 5000,
-      });
+      await waitFor(() => expect(screen.getByTestId("amount-input")).toBeVisible());
     });
 
     it("sends a self-transfer from the public balance straight to amount, skipping the recipient step", async () => {
@@ -276,7 +276,7 @@ describe("Aleo send flow (integration)", () => {
       await user.press(screen.getByText("Send publicly"));
 
       const recipientInput = await screen.findByTestId("recipient-input");
-      await user.type(recipientInput, RECIPIENT);
+      await user.paste(recipientInput, RECIPIENT);
       await waitFor(() =>
         expect(screen.getByTestId("enabled-recipient-continue-button")).toBeVisible(),
       );
@@ -293,11 +293,9 @@ describe("Aleo send flow (integration)", () => {
       const deviceItem = await screen.findByTestId("device-item-mock");
       await user.press(deviceItem);
 
-      await waitFor(() => expect(screen.getByText("Retry")).toBeVisible(), {
-        timeout: 10000,
-      });
+      await waitFor(() => expect(screen.getByText("Retry")).toBeVisible());
       expect(screen.queryByTestId("validate-success-screen")).toBeNull();
-    }, 30_000);
+    });
   });
 
   describe("token account", () => {
@@ -317,7 +315,7 @@ describe("Aleo send flow (integration)", () => {
       );
 
       const recipientInput = await screen.findByTestId("recipient-input");
-      await user.type(recipientInput, RECIPIENT);
+      await user.paste(recipientInput, RECIPIENT);
       await waitFor(() =>
         expect(screen.getByTestId("enabled-recipient-continue-button")).toBeVisible(),
       );
@@ -334,10 +332,8 @@ describe("Aleo send flow (integration)", () => {
       const deviceItem = await screen.findByTestId("device-item-mock");
       await user.press(deviceItem);
 
-      await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible(), {
-        timeout: 10000,
-      });
-    }, 30_000);
+      await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
+    });
 
     it("convert_token_public_to_private: public self-transfer lands on amount, skipping the recipient step", async () => {
       const { user } = renderTokenSendFlow(true);
@@ -372,7 +368,7 @@ describe("Aleo send flow (integration)", () => {
       );
 
       const recipientInput = await screen.findByTestId("recipient-input");
-      await user.type(recipientInput, RECIPIENT);
+      await user.paste(recipientInput, RECIPIENT);
       await waitFor(() =>
         expect(screen.getByTestId("enabled-recipient-continue-button")).toBeVisible(),
       );
