@@ -168,27 +168,13 @@ describe.each(DRAWER_VARIANTS)(
       expect(getByText(/bitcoin/i)).toBeVisible();
 
       const searchInput = getByPlaceholderText(/search/i);
-      await user.type(searchInput, "bitc");
+      await user.paste(searchInput, "bitc");
 
       await waitFor(() => expect(queryByText(/ethereum/i)).not.toBeVisible());
       await waitFor(() => expect(getByText(/bitcoin/i)).toBeVisible());
     });
 
-    it("should show the empty state when no assets are found", async () => {
-      const { getByText, queryByText, getByPlaceholderText, user } = render(
-        <ModularDrawerSharedNavigator />,
-        renderOptions,
-      );
-
-      await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
-      advanceTimers();
-
-      await user.type(getByPlaceholderText(/search/i), "ttttttt");
-
-      await waitFor(() => expect(queryByText(/no assets found/i)).toBeVisible());
-    });
-
-    it("should not crash when tapping search input with empty asset list", async () => {
+    it("should show the empty state when no assets are found, and not crash when tapping the search input", async () => {
       const { getByText, getByPlaceholderText, getByTestId, user } = render(
         <ModularDrawerSharedNavigator />,
         renderOptions,
@@ -198,7 +184,7 @@ describe.each(DRAWER_VARIANTS)(
       advanceTimers();
 
       const searchInput = getByPlaceholderText(/search/i);
-      await user.type(searchInput, "zzzzzzz");
+      await user.paste(searchInput, "zzzzzzz");
 
       await waitFor(() => expect(getByText(/no assets found/i)).toBeVisible());
 

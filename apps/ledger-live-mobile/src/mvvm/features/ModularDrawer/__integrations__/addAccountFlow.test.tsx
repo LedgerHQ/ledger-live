@@ -193,7 +193,7 @@ describe("AddAccountFlow with MAD", () => {
     expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
   });
 
-  it("should do the add account flow and go back to the previous screen automatically", async () => {
+  it("should close the inline add account flow and go back to the initial screen automatically after account creation", async () => {
     const { getByText, user, queryByText } = render(
       <ModularDrawerSharedNavigator flow="not_add_account" />,
       { overrideInitialState },
@@ -220,6 +220,8 @@ describe("AddAccountFlow with MAD", () => {
     expect(getByText(/we found 1 account/i)).toBeVisible();
     await user.press(getByText(/confirm/i));
     expect(queryByText(/account added to your portfolio/i)).not.toBeVisible();
+    expect(queryByText(/checking the blockchain/i)).not.toBeVisible();
+    expect(queryByText(/connect device/i)).not.toBeVisible();
     expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
   });
 
@@ -410,53 +412,6 @@ describe("AddAccountFlow with MAD", () => {
       expect(queryByText(/checking the blockchain/i)).not.toBeVisible();
       expect(queryByText("Device locked")).not.toBeVisible();
       expect(getByText(/connect device/i)).toBeVisible();
-    });
-  });
-
-  it("should close inline flow and return to initial screen after account creation", async () => {
-    const { user, getByText, queryByText } = render(
-      <ModularDrawerSharedNavigator flow="not_add_account" />,
-      { overrideInitialState },
-    );
-
-    // Navigate through the add account flow
-    expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
-    await user.press(getByText(WITH_ACCOUNT_SELECTION));
-    advanceTimers();
-
-    expect(getByText(/bitcoin/i)).toBeVisible();
-    await user.press(getByText(/bitcoin/i));
-    advanceTimers();
-
-    expect(getByText(/add account/i)).toBeVisible();
-    await user.press(getByText(/add account/i));
-    advanceTimers();
-
-    expect(getByText(/connect device/i)).toBeVisible();
-    advanceTimers();
-
-    const deviceItem = getByText(/ledger stax/i);
-    expect(deviceItem).toBeVisible();
-    await user.press(deviceItem);
-    advanceTimers();
-
-    // Wait for scanning to start
-    await waitFor(() => {
-      expect(getByText(/checking the blockchain/i)).toBeVisible();
-    });
-
-    // Complete scanning
-    await mockScanAccountsSubscription([BTC_ACCOUNT]);
-    expect(getByText(/we found 1 account/i)).toBeVisible();
-
-    // Confirm account addition
-    await user.press(getByText(/confirm/i));
-
-    // Should close the entire flow and return to the initial screen
-    await waitFor(() => {
-      expect(queryByText(/checking the blockchain/i)).not.toBeVisible();
-      expect(queryByText(/connect device/i)).not.toBeVisible();
-      expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
     });
   });
 });
