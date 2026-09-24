@@ -21,7 +21,7 @@ const intro: CardLoginIntroViewProps = {
 };
 
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
-  title: "Crypto Card",
+  title: "Crypto card",
   headline: "Get your crypto card",
   description: "Log in to access your card",
   loginLabel: "Login",
@@ -43,9 +43,9 @@ describe("CardLoginView (Native)", () => {
   it("should render the login action", () => {
     renderCardLoginView();
 
-    expect(screen.getByText("Crypto Card")).toBeTruthy();
-    expect(screen.getByText("Log in to access your card")).toBeTruthy();
-    expect(screen.getByLabelText("Login")).toBeTruthy();
+    expect(screen.getByText("Crypto card")).toBeVisible();
+    expect(screen.getByText("Log in to access your card")).toBeVisible();
+    expect(screen.getByLabelText("Login")).toBeVisible();
   });
 
   it("should render the copy it is handed, whichever it is", () => {
@@ -54,8 +54,8 @@ describe("CardLoginView (Native)", () => {
       loginLabel: "Get card",
     });
 
-    expect(screen.getByText("Get 1% cashback every time you spend")).toBeTruthy();
-    expect(screen.getByLabelText("Get card")).toBeTruthy();
+    expect(screen.getByText("Get 1% cashback every time you spend")).toBeVisible();
+    expect(screen.getByLabelText("Get card")).toBeVisible();
   });
 
   it("should call the login handler when the action is pressed", () => {
@@ -70,6 +70,6 @@ describe("CardLoginView (Native)", () => {
   it("should render a login error when provided", () => {
     renderCardLoginView({ errorMessage: "Unable to start login. Please try again." });
 
-    expect(screen.getByText("Unable to start login. Please try again.")).toBeTruthy();
+    expect(screen.getByText("Unable to start login. Please try again.")).toBeVisible();
   });
 });
