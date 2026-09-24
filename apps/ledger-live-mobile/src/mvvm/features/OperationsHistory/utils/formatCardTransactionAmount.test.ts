@@ -12,7 +12,7 @@ describe("formatCardTransactionAmount", () => {
     ).toContain("€");
   });
 
-  it("formats crypto without rounding", () => {
+  it("rounds crypto amounts the way the rest of the product does", () => {
     expect(
       formatCardTransactionAmount({
         value: "-0.12345678",
@@ -20,7 +20,7 @@ describe("formatCardTransactionAmount", () => {
         kind: "crypto",
         locale: "en-US",
       }),
-    ).toBe("-0.12345678\u00a0BTC");
+    ).toBe("-0.123456\u00a0BTC");
   });
 
   it("keeps the sign on credits", () => {

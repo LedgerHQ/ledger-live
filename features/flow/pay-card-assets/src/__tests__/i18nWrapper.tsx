@@ -63,6 +63,7 @@ export const CARD_ASSETS_RESOURCES = {
               fundingSources: "Cashback",
               amount: "Amount",
             },
+            paidWithAssets: "Paid with {{count}} assets",
           },
         },
       },

@@ -35,7 +35,7 @@ export function DetailRow({ row }: DetailRowProps) {
                 size={16}
                 iconType="stroked"
                 accessibilityLabel={row.infoLabel}
-                testID="card-transaction-detail-card-info"
+                testID={`card-transaction-detail-info-${row.id}`}
                 appearance="base"
               />
             </TooltipTrigger>

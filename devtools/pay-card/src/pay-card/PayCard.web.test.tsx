@@ -108,6 +108,7 @@ function buildProps(): PayCardToolProps {
       fill: jest.fn(),
       empty: jest.fn(),
       receive: jest.fn(),
+      receiveMultiAsset: jest.fn(),
       clear: jest.fn(),
     },
     reorder: {
@@ -151,6 +152,20 @@ describe("PayCard (web)", () => {
     render(<PayCard {...props} reorder={{ ...props.reorder, available: false }} />);
 
     expect(screen.queryByText("Allow wallet reorder")).toBeNull();
+  });
+
+  it("mocks transaction answers, including one funded by several assets", () => {
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    fireEvent.click(screen.getByText("Transactions"));
+    fireEvent.click(screen.getByText("Full fixture"));
+    fireEvent.click(screen.getByText("Receive USDC"));
+    fireEvent.click(screen.getByText("Receive multi-asset"));
+
+    expect(props.transactions.fill).toHaveBeenCalledTimes(1);
+    expect(props.transactions.receive).toHaveBeenCalledWith("usdc");
+    expect(props.transactions.receiveMultiAsset).toHaveBeenCalledTimes(1);
   });
 
   it("resets the feature tour", () => {

@@ -35,7 +35,7 @@ export function DetailRow({ row }: DetailRowProps) {
                   size={16}
                   icon={Information}
                   aria-label={row.infoLabel}
-                  data-testid="card-transaction-detail-card-info"
+                  data-testid={`card-transaction-detail-info-${row.id}`}
                   appearance="base"
                 />
               </TooltipTrigger>

@@ -1,5 +1,4 @@
-import { ScrollView } from "react-native";
-import { Box, Button, Tag, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Button, Tag } from "@ledgerhq/lumen-ui-react";
 import type { PayCardMockTransactionAsset, PayCardTransactionsMockProps } from "../../types";
 import { Section } from "../Section/Section";
 
@@ -21,15 +20,15 @@ export function TransactionsScreen({
   onBack,
 }: TransactionsScreenProps) {
   return (
-    <ScrollView>
-      <Box lx={{ padding: "s16", alignItems: "flex-start" }}>
-        <Button appearance="gray" size="sm" onPress={onBack}>
+    <div className="flex flex-col overflow-y-auto">
+      <div className="flex p-16">
+        <Button appearance="gray" size="sm" onClick={onBack}>
           Back
         </Button>
-      </Box>
+      </div>
 
       <Section title="Transaction mock">
-        <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8" }}>
+        <div className="flex flex-wrap gap-8">
           <Tag
             size="sm"
             appearance={available ? "success" : "warning"}
@@ -40,46 +39,46 @@ export function TransactionsScreen({
             appearance={isOverridden ? "success" : "gray"}
             label={isOverridden ? `${count} mocked` : "Provider / mock session"}
           />
-        </Box>
-        <Text typography="body3" lx={{ color: "muted" }}>
+        </div>
+        <p className="body-3 text-muted">
           Changes invalidate the Card transaction cache, so an open Pay screen refreshes
           automatically.
-        </Text>
-        <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8" }}>
-          <Button appearance="gray" size="sm" disabled={!available} onPress={fill}>
+        </p>
+        <div className="flex flex-wrap gap-8">
+          <Button appearance="gray" size="sm" disabled={!available} onClick={fill}>
             Full fixture
           </Button>
-          <Button appearance="gray" size="sm" disabled={!available} onPress={empty}>
+          <Button appearance="gray" size="sm" disabled={!available} onClick={empty}>
             Empty list
           </Button>
-          <Button appearance="gray" size="sm" disabled={!available} onPress={clear}>
+          <Button appearance="gray" size="sm" disabled={!available} onClick={clear}>
             Use provider
           </Button>
-        </Box>
+        </div>
       </Section>
 
       <Section title="Receive transaction">
-        <Text typography="body3" lx={{ color: "muted" }}>
+        <p className="body-3 text-muted">
           Adds one newest charge funded only by that asset, or one funded by several. Repeat to
           build a longer history.
-        </Text>
-        <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8" }}>
+        </p>
+        <div className="flex flex-wrap gap-8">
           {ASSETS.map(asset => (
             <Button
               key={asset}
               appearance="base"
               size="sm"
               disabled={!available}
-              onPress={() => receive(asset)}
+              onClick={() => receive(asset)}
             >
               Receive {asset.toUpperCase()}
             </Button>
           ))}
-          <Button appearance="base" size="sm" disabled={!available} onPress={receiveMultiAsset}>
+          <Button appearance="base" size="sm" disabled={!available} onClick={receiveMultiAsset}>
             Receive multi-asset
           </Button>
-        </Box>
+        </div>
       </Section>
-    </ScrollView>
+    </div>
   );
 }

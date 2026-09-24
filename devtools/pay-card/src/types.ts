@@ -178,6 +178,8 @@ export interface PayCardTransactionsMockProps {
   readonly fill: () => void;
   readonly empty: () => void;
   readonly receive: (asset: PayCardMockTransactionAsset) => void;
+  /** One charge funded by several assets, which is what crowds a transaction row. */
+  readonly receiveMultiAsset: () => void;
   readonly clear: () => void;
 }
 
