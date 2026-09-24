@@ -9,7 +9,6 @@ import {
   useContactsSearchViewModel,
   type ContactsListViewLabels,
 } from "@features/flow-contacts-list";
-import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import { useSendFlowTrackingProperties } from "LLM/features/Send/hooks/useSendFlowTrackingProperties";
 import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";

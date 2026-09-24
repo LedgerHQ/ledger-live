@@ -24,7 +24,6 @@ import {
   trackContactsListContactOpen,
 } from "@features/flow-contacts";
 import type { AddAddressContact } from "@features/flow-contacts-add-address";
-import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { useContactsAnalytics } from "../../analytics";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";

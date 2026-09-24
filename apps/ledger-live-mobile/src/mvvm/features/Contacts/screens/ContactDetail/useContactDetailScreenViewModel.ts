@@ -56,7 +56,6 @@ import type { BaseNavigationComposite } from "~/components/RootNavigator/types/h
 import { NavigatorName, ScreenName } from "~/const";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
-import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactsLedgerSyncStatus } from "../../hooks/useContactsLedgerSyncStatus";
