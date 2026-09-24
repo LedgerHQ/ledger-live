@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getStacksStakingPosition, getStacksUnlockCycle } from "./react";
+import { getStacksStakingPosition, getStacksUnlockCycle, validateStacksAddress } from "./react";
 import type { StacksAccount, StakingPosition } from "./types";
 
 const makeAccount = (positions?: StakingPosition[]): StacksAccount =>
@@ -46,5 +46,14 @@ describe("getStacksUnlockCycle", () => {
       details: { firstRewardCycle: 42, numCycles: 6, rewardAsset: "sbtc", amountRewarded: "0" },
     });
     expect(getStacksUnlockCycle(position)).toBe(48);
+  });
+});
+
+describe("validateStacksAddress", () => {
+  it("re-exports coin-stacks's c32-checksum validator", () => {
+    // Real, checksum-valid mainnet address (also used, unmocked, by coin-stacks's own
+    // buildUnsignedTx.test.ts fixtures).
+    expect(validateStacksAddress("SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA").isValid).toBe(true);
+    expect(validateStacksAddress("not-an-address").isValid).toBe(false);
   });
 });

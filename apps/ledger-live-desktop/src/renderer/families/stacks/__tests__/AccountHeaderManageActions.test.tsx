@@ -82,4 +82,26 @@ describe("AccountHeaderManageActions (stacks)", () => {
       }),
     );
   });
+
+  it("returns exactly one action (Stake) when the staking position is 'deactivating' (its final reward cycle)", () => {
+    // getStakes.ts only sets `actions: ["undelegate"]` while `state === "active"`; a fresh unstake
+    // on a "deactivating" position is redundant/invalid on-chain.
+    const position = {
+      uid: "SP1staker",
+      address: "SP1staker",
+      delegate: "SP1pool.native-pool-signer-manager",
+      state: "deactivating",
+      asset: { type: "native" },
+      amount: 0,
+      actions: [],
+      details: { firstRewardCycle: 10, numCycles: 6, rewardAsset: "sbtc", amountRewarded: "0" },
+    } as unknown as StakingPosition;
+    const account = makeAccount([position]);
+    const { result } = renderHook(() =>
+      hook({ account, parentAccount: null, source: "Account Page" }),
+    );
+
+    expect(result.current).toHaveLength(1);
+    expect(result.current?.[0].key).toBe("Stake");
+  });
 });

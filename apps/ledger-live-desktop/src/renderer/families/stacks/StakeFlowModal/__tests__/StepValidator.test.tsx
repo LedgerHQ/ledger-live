@@ -108,11 +108,16 @@ describe("StakeFlowModal/StepValidator", () => {
   });
 });
 
+// Real, checksum-valid mainnet address (reused, unmocked, from coin-stacks's own
+// buildUnsignedTx.test.ts fixtures) -- a placeholder like "SP1pool" fails c32 checksum decoding.
+const VALID_ADDRESS = "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA";
+const VALID_POOL_ADDRESS = `${VALID_ADDRESS}.native-pool-signer-manager`;
+
 describe("StakeFlowModal/StepValidatorFooter", () => {
   const withValidatorFields = (overrides: Partial<Transaction> = {}) =>
     makeProps({
       transaction: makeTransaction({
-        valAddress: "SP1pool.native-pool-signer-manager",
+        valAddress: VALID_POOL_ADDRESS,
         familySpecificData: { numCycles: 1 },
         ...overrides,
       }),
@@ -120,6 +125,27 @@ describe("StakeFlowModal/StepValidatorFooter", () => {
 
   it("disables Continue when valAddress has no '.' (not a contract principal shape)", () => {
     const props = withValidatorFields({ valAddress: "SP1pool-no-dot" });
+    act(() => {
+      render(<StepValidatorFooter {...props} />);
+    });
+    expect(screen.getByRole("button")).toBeDisabled();
+  });
+
+  it.each(["foo.bar", `${VALID_ADDRESS}.`, "foo."])(
+    "disables Continue when valAddress is %s (invalid address or empty contract name)",
+    valAddress => {
+      const props = withValidatorFields({ valAddress });
+      act(() => {
+        render(<StepValidatorFooter {...props} />);
+      });
+      expect(screen.getByRole("button")).toBeDisabled();
+    },
+  );
+
+  it("disables Continue when the address part is not c32-decodable, even with a dot and a plausible contract name", () => {
+    const props = withValidatorFields({
+      valAddress: "SP1not-an-address.native-pool-signer-manager",
+    });
     act(() => {
       render(<StepValidatorFooter {...props} />);
     });

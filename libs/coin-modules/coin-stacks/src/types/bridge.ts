@@ -30,6 +30,9 @@ export type StacksFamilySpecificData = {
 export type Transaction = TransactionCommon & {
   family: FamilyType;
   fee?: BigNumber;
+  /** The `GenericTransaction` fee field (generic-coin-framework/types.ts) -- read this once the
+   * documented flag-flip PR routes Stacks through the generic bridge, which never sets `fee`. */
+  fees?: BigNumber | null;
   nonce?: BigNumber;
   memo?: string;
   network: keyof typeof StacksNetwork;
@@ -44,6 +47,7 @@ export type Transaction = TransactionCommon & {
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
   fee?: string;
+  fees?: string | null;
   nonce?: string;
   memo?: string;
   network: string;
