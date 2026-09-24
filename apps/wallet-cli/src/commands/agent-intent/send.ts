@@ -9,11 +9,12 @@ import {
 } from "@ledgerhq/agent-intent-sdk";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Session, type AgentIntentProfileMeta } from "../../session/session-store";
-import {
-  loadAgentIntentSecretKey,
-  AgentIntentCorruptKeychainError,
-  AgentIntentPasswordRequiredError,
-} from "../../key-ring/agent-intent-keychain";
+import { loadAgentIntentSecretKey } from "../../key-ring/agent-intent-keychain";
+
+const UNUSABLE_KEY_ERRORS = new Set([
+  "AgentIntentPasswordRequiredError",
+  "AgentIntentCorruptKeychainError",
+]);
 import { outputOption, resolveOutputFormat, resolveAccountDescriptorV1 } from "../inputs";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
 import { parseAmountWithTicker, parseDecimalAmount, parseEvmAddress } from "../../agent-intent/evm";
@@ -25,7 +26,10 @@ import {
   type SendIntentSummary,
 } from "../../agent-intent/send-intent";
 import { findEthereumToken } from "../../agent-intent/token-lookup";
-import { describeAgentIntentError } from "../../agent-intent/service-errors";
+import {
+  describeAgentIntentError,
+  isAcceptedWithoutReviewLink,
+} from "../../agent-intent/service-errors";
 import { createCommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
 
@@ -63,9 +67,10 @@ async function resolveSenderFromAccount(label: string): Promise<string> {
   const descriptor = await resolveAccountDescriptorV1(label);
   const { name, env } = descriptor.network;
   if (name !== "ethereum" || env !== "main" || descriptor.type !== "address") {
+    const network = env === "main" ? name : `${name} ${env}`;
     throw new Error(
-      `Account "${label}" is on ${name}${env === "main" ? "" : ` ${env}`}; Agent Intent send ` +
-        "intents support Ethereum mainnet accounts only.",
+      `Account "${label}" is on ${network}; Agent Intent send intents support Ethereum mainnet ` +
+        "accounts only.",
     );
   }
   return parseEvmAddress(descriptor.address, "account");
@@ -116,10 +121,7 @@ async function loadProfileIdentity(profile: AgentIntentProfileMeta) {
   try {
     secretKey = await loadAgentIntentSecretKey(profile.profileId);
   } catch (e) {
-    if (
-      e instanceof AgentIntentPasswordRequiredError ||
-      e instanceof AgentIntentCorruptKeychainError
-    ) {
+    if (e instanceof Error && UNUSABLE_KEY_ERRORS.has(e.name)) {
       throw new Error(`${e.message} Re-enroll under a new --profile id.`, { cause: e });
     }
     throw e;
@@ -222,17 +224,23 @@ export default defineCommand({
         environment: profile.environment,
       });
 
-      let deeplink: string;
+      let deeplink: string | null;
       try {
         deeplink = await client.createSendIntent(intent);
       } catch (e) {
-        throw describeAgentIntentError(e, profile.profileId);
+        if (!isAcceptedWithoutReviewLink(e)) throw describeAgentIntentError(e, profile.profileId);
+        deeplink = null;
       }
 
       // Past this point the intent exists: never fail, or a retry would propose a duplicate.
-      const intentId = intentIdFromDeeplink(deeplink);
+      const intentId = deeplink ? intentIdFromDeeplink(deeplink) : null;
       out.agentIntentSend({ ...summary, intentId, deeplink });
-      if (!intentId) {
+      if (!deeplink) {
+        writeStderr(
+          "⚠ The Agent Intent service accepted the intent but returned no readable review link. " +
+            "Find it in the Agent Intent frontend — don't re-run, or you'll propose a duplicate.\n",
+        );
+      } else if (!intentId) {
         writeStderr(
           "⚠ The review link has an unexpected shape, so no intent id could be extracted. " +
             "The intent was created — use the review link to find it.\n",

@@ -1,6 +1,10 @@
 import "../../live-common-setup";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { AgentIntentHttpError, type SendIntent } from "@ledgerhq/agent-intent-sdk";
+import {
+  AgentIntentHttpError,
+  AgentIntentSdkError,
+  type SendIntent,
+} from "@ledgerhq/agent-intent-sdk";
 import { installOutputCapture } from "../../shared/ui";
 import { toChecksumAddress } from "../../agent-intent/evm";
 import { AgentIntentCorruptKeychainError } from "../../key-ring/agent-intent-keychain";
@@ -383,6 +387,33 @@ describe("agent-intent send", () => {
 
       await expect(runSend()).rejects.toThrow(/temporarily unavailable/);
       expect(submittedIntents).toHaveLength(1);
+    });
+
+    it("succeeds with a warning, not an error, when the service accepted the intent but its link is unreadable", async () => {
+      createSendIntentImpl = async () => {
+        throw new AgentIntentSdkError("BFF returned an invalid intent deeplink.");
+      };
+
+      await runSend({ output: "json" });
+
+      expect(jsonResult()).toMatchObject({
+        status: "success",
+        submitted: true,
+        intentId: null,
+        deeplink: null,
+      });
+      expect(stderr.join("")).toMatch(/accepted the intent.*don't re-run/s);
+    });
+
+    it("prints no review link in human output when none came back", async () => {
+      createSendIntentImpl = async () => {
+        throw new AgentIntentSdkError("BFF returned an invalid intent deeplink.");
+      };
+
+      await runSend();
+
+      expect(stdout.join("")).toContain("Intent proposed for human review");
+      expect(stdout.join("")).not.toContain("null");
     });
 
     it("succeeds with a null intent id and a warning when the link has an unexpected shape", async () => {

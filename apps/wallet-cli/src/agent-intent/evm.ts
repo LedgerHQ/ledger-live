@@ -11,7 +11,7 @@ export function toChecksumAddress(address: string): string {
   const hash = bytesToHex(keccak_256(utf8ToBytes(lower)));
   let out = "0x";
   for (let i = 0; i < lower.length; i++) {
-    out += parseInt(hash[i], 16) >= 8 ? lower[i].toUpperCase() : lower[i];
+    out += Number.parseInt(hash[i], 16) >= 8 ? lower[i].toUpperCase() : lower[i];
   }
   return out;
 }

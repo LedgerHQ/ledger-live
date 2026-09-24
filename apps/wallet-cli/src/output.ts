@@ -245,7 +245,9 @@ export interface CommandOutput {
    * imported/unchanged/skipped/invalid arrays). */
   agentIntentSync(report: LedgerSyncImportReport): void;
   /** Output a submitted `agent-intent send` proposal (human: review link first; json: envelope). */
-  agentIntentSend(result: SendIntentSummary & { intentId: string | null; deeplink: string }): void;
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void;
   /** Output a validated `agent-intent send --dry-run` proposal that was not submitted. */
   agentIntentSendDryRun(summary: SendIntentSummary): void;
 }
@@ -869,11 +871,13 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  agentIntentSend(result: SendIntentSummary & { intentId: string | null; deeplink: string }): void {
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
     writeStdout(
       `${colors.green("✔")} Intent proposed for human review — nothing was signed or broadcast.`,
     );
-    writeStdout(result.deeplink);
+    if (result.deeplink) writeStdout(result.deeplink);
     writeStdout("");
     writeStdout(
       [
@@ -1303,7 +1307,9 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(this._envelope({ ...report }));
   }
 
-  agentIntentSend(result: SendIntentSummary & { intentId: string | null; deeplink: string }): void {
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
     this._writeNdjson(
       this._envelope({
         intentId: result.intentId,
