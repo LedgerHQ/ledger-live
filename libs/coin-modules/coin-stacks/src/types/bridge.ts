@@ -20,6 +20,13 @@ export type NetworkInfoRaw = {
   family: FamilyType;
 };
 
+export type StacksTransactionMode = "send" | "delegate" | "undelegate";
+
+export type StacksFamilySpecificData = {
+  numCycles?: number;
+  startBurnHt?: number;
+};
+
 export type Transaction = TransactionCommon & {
   family: FamilyType;
   fee?: BigNumber;
@@ -27,6 +34,11 @@ export type Transaction = TransactionCommon & {
   memo?: string;
   network: keyof typeof StacksNetwork;
   anchorMode: AnchorMode;
+  /** pox-5 staking mode; unset (or "send") on a classic transfer. */
+  mode?: StacksTransactionMode;
+  /** pox-5 signer-manager contract principal (the staking pool); unused on a transfer. */
+  valAddress?: string;
+  familySpecificData?: StacksFamilySpecificData;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -36,6 +48,9 @@ export type TransactionRaw = TransactionCommonRaw & {
   memo?: string;
   network: string;
   anchorMode: number;
+  mode?: StacksTransactionMode;
+  valAddress?: string;
+  familySpecificData?: StacksFamilySpecificData;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

@@ -47,6 +47,9 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     network: tr.network as keyof typeof StacksNetwork,
     anchorMode: tr.anchorMode,
     memo: tr.memo,
+    mode: tr.mode,
+    valAddress: tr.valAddress,
+    familySpecificData: tr.familySpecificData,
   };
 };
 
@@ -62,6 +65,9 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     network: t.network,
     anchorMode: t.anchorMode,
     memo: t.memo,
+    mode: t.mode,
+    valAddress: t.valAddress,
+    familySpecificData: t.familySpecificData,
   };
 };
 
