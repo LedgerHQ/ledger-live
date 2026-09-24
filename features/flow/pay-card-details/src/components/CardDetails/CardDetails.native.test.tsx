@@ -215,6 +215,19 @@ describe("CardDetails (native)", () => {
     expect(screen.queryByTestId("card-asset-details-drawer")).not.toBeOnTheScreen();
   });
 
+  it("should close the details sheet when an asset top up opens", async () => {
+    const user = userEvent.setup();
+    render(<CardDetails assets={assets} />, { wrapper: Wrapper });
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByTestId("card-asset-w-usdc"));
+    await user.press(screen.getByText("Top up"));
+
+    expect(mockUseCardAssetsViewModel.mock.results[0].value.onTopUpPress).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId("card-asset-details-drawer")).not.toBeOnTheScreen();
+    expect(screen.queryByText(CARD_COPY.freeze)).toBeNull();
+  });
+
   it("should return to asset details when withdraw goes back", async () => {
     const user = userEvent.setup();
     render(<CardDetails assets={assets} />, { wrapper: Wrapper });

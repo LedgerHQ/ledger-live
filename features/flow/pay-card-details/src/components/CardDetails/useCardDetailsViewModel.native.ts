@@ -73,6 +73,11 @@ export function useCardDetailsViewModel({
     goBack();
   };
 
+  const onAssetTopUpPress = () => {
+    assetsViewModel.onTopUpPress();
+    closeSheet();
+  };
+
   const onAddToWalletPress = () => {
     trackButtonClicked({
       button: `add to ${getWalletPlatform().brand.toLowerCase()} pay`,
@@ -117,6 +122,7 @@ export function useCardDetailsViewModel({
     ...assetsViewModel,
     onAssetPress,
     onManagePress: onManageAssetsPress,
+    onTopUpPress: onAssetTopUpPress,
     onWithdrawPress: onAssetWithdrawPress,
     onShowHistoryPress: onAssetHistoryPress,
     onWithdrawContinue: onAssetWithdrawContinue,
