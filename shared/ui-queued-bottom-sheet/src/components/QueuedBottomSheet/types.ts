@@ -53,6 +53,12 @@ export type QueuedBottomSheetProps = Readonly<{
   enableBlurKeyboardOnGesture?: boolean;
   /** Enable handle panning gesture. */
   enableHandlePanningGesture?: boolean;
+  /**
+   * Enable the content panning gesture, on by default. It makes any drag on the sheet's content
+   * move the sheet, so content that owns a drag gesture of its own (a reorderable list, a slider)
+   * has to turn it off to be able to claim that drag; the handle still moves the sheet.
+   */
+  enableContentPanningGesture?: boolean;
   /** Maximum dynamic content size. */
   maxDynamicContentSize?: BottomSheetProps["maxDynamicContentSize"];
   /**

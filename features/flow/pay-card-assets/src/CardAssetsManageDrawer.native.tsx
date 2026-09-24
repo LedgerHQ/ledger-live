@@ -24,6 +24,7 @@ import type { CardAssetRow } from "./types";
 type AssetRowProps = Readonly<{
   row: CardAssetRow;
   showHandle: boolean;
+  isDragging: boolean;
   isReordering: boolean;
   reorderLabel: string;
   onMoveUp: () => void;
@@ -34,20 +35,23 @@ type AssetRowProps = Readonly<{
 function AssetRow({
   row,
   showHandle,
+  isDragging,
   isReordering,
   reorderLabel,
   onMoveUp,
   onMoveDown,
   onDrag,
 }: AssetRowProps) {
+  const backgroundColor = isDragging ? "surfacePressed" : "surface";
+
   return (
     // Gutter + gap outside the scale/shadow: the dragged cell renders full-bleed otherwise.
     <Box lx={{ paddingHorizontal: "s12", paddingBottom: "s2" }}>
-      {/* Active look comes from the library's own drag animation, not our state. */}
+      {/* Scale and shadow come from the library's own drag animation, not our state. */}
       <ScaleDecorator activeScale={1.03}>
         <ShadowDecorator opacity={0.16} radius={12} elevation={6}>
-          <Box lx={{ backgroundColor: "surface", borderRadius: "sm", overflow: "hidden" }}>
-            <ListItem lx={{ backgroundColor: "surface" }}>
+          <Box lx={{ backgroundColor, borderRadius: "sm", overflow: "hidden" }}>
+            <ListItem lx={{ backgroundColor }}>
               <ListItemLeading>
                 <ListItemContent>
                   <ListItemTitle>{row.name}</ListItemTitle>
@@ -121,10 +125,11 @@ export function CardAssetsManageDrawer({
   );
 
   const renderItem = useCallback(
-    ({ item, drag }: RenderItemParams<CardAssetRow>) => (
+    ({ item, drag, isActive }: RenderItemParams<CardAssetRow>) => (
       <AssetRow
         row={item}
         showHandle={rows.length > 1}
+        isDragging={isActive}
         isReordering={reorderingAssetIds.has(item.id) || releasedId === item.id}
         reorderLabel={t("payTab.card.assets.manageDialog.reorder", { asset: item.name })}
         onMoveUp={() => moveByOffset(item.id, -1)}
@@ -181,6 +186,10 @@ export function CardAssetsManageDrawer({
           onPlaceholderIndexChange={setDropTargetIndex}
           onDragEnd={handleDragEnd}
           onRelease={handleRelease}
+          // A card links a handful of assets at most, so the list always fits the sheet. Left
+          // scrollable it still claims the pan (iOS bounces a list that fits) and the drag never
+          // gets it, and its scroll viewport keeps the sheet from sizing to the rows.
+          scrollEnabled={false}
         />
       </Box>
       <CardAssetsManageFooter onAddAsset={onAddAsset} />
