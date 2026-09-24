@@ -66,6 +66,9 @@ function reportFeatureFlagsReadFailure(error: unknown, { stage, isCold }: Featur
   console.error(`Feature flags: ${stage} read failed, resolving on compiled defaults`, error);
 }
 
+/** Matches the `SWAP_API_BASE` default in `shared/env`, kept here at the point of use. */
+const SWAP_API_BASE_DEFAULT = "https://swap.ledger.com/v5";
+
 export const store = configureStore({
   reducer: reducers,
   devTools: Config.DEBUG_RNDEBUGGER
@@ -102,7 +105,9 @@ export const store = configureStore({
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
             ...swapApiExtra({
-              swapApiBaseUrl: getEnv("SWAP_API_BASE"),
+              // `Config`, not `getEnv`: the `@shared/env` copy only lands after
+              // `experimental.ts` awaits the stored envs, long after this read.
+              swapApiBaseUrl: Config.SWAP_API_BASE || SWAP_API_BASE_DEFAULT,
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
             ...authApiExtra({

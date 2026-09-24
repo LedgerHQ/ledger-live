@@ -23,7 +23,7 @@ import {
   hasSeenAnalyticsOptInPromptSelector,
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
-import { accountsSelector } from "~/reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { getCurrentTrackingPage } from "~/analytics/screenRefs";
 import { usePerpsLiveConfig } from "LLM/features/Perps/hooks/usePerpsLiveConfig";
 
@@ -63,7 +63,7 @@ export function usePerpsLiveAppViewModel(): PerpsLiveAppViewModel {
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const { theme } = useTheme();
   const { language } = useSettings();
-  const accounts = useSelector(accountsSelector);
+  const accounts = useSelector(flattenAccountsSelector);
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const exportSettings = useSelector(exportSettingsSelector);
   const shareAnalytics = useSelector(analyticsEnabledSelector).toString();
