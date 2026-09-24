@@ -23,7 +23,6 @@ const listContentPaddingBottom = 8;
 export function ContactsListView({
   viewModel,
   labels,
-  meAvatarSrc,
   onOpenContact,
   onAddContact,
   isLedgerSyncChecking,
@@ -101,7 +100,6 @@ export function ContactsListView({
     <ContactsListHeader
       me={me}
       labels={labels}
-      meAvatarSrc={meAvatarSrc}
       showAddContact={!isPopulated && !hasNoResults}
       onOpenContact={onOpenContact}
       onAddContact={onAddContact}

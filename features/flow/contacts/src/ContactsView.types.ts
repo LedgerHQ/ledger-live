@@ -12,7 +12,6 @@ type ContactsPageSharedProps = Readonly<{
   viewModel: ContactsPageViewModel;
   labels: ContactsListViewLabels;
   searchQuery: string;
-  meAvatarSrc: string;
   onOpenContact: (contactId: ContactId) => void;
   onAddContact: () => void;
   ledgerSyncStatus: ContactsLedgerSyncStatus;

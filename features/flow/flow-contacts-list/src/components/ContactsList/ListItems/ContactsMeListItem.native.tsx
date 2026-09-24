@@ -1,24 +1,22 @@
 import React from "react";
 import {
-  Avatar,
   ListItem,
   ListItemContent,
   ListItemDescription,
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
+import { MeAvatar } from "@features/platform-contacts";
 import type { ContactsListItem } from "../../../types";
 
 type ContactsMeListItemProps = Readonly<{
   contact: ContactsListItem;
-  avatarSrc: string;
   addressCountLabel: string;
   onOpen: (contactId: ContactsListItem["contactId"]) => void;
 }>;
 
 export function ContactsMeListItem({
   contact,
-  avatarSrc,
   addressCountLabel,
   onOpen,
 }: ContactsMeListItemProps): React.JSX.Element {
@@ -30,13 +28,7 @@ export function ContactsMeListItem({
       lx={{ marginHorizontal: "-s8" }}
     >
       <ListItemLeading>
-        <Avatar
-          testID="contacts-me-avatar"
-          size="md"
-          appearance="thin"
-          src={avatarSrc}
-          alt={contact.name}
-        />
+        <MeAvatar name={contact.name} size="md" testId="contacts-me-avatar" />
         <ListItemContent>
           <ListItemTitle testID="contacts-me-name">{contact.name}</ListItemTitle>
           <ListItemDescription testID="contacts-me-address-count">

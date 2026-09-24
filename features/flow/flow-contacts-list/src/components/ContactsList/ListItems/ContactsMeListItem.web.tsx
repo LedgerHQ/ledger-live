@@ -6,19 +6,17 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-react";
-import { ContactAvatar } from "@features/platform-contacts";
+import { MeAvatar } from "@features/platform-contacts";
 import type { ContactsListItem } from "../../../types";
 
 type ContactsMeListItemProps = Readonly<{
   contact: ContactsListItem;
-  avatarSrc: string;
   formatAddressCount: (count: number) => string;
   onOpen: (contactId: ContactsListItem["contactId"]) => void;
 }>;
 
 export function ContactsMeListItem({
   contact,
-  avatarSrc,
   formatAddressCount,
   onOpen,
 }: ContactsMeListItemProps): React.ReactNode {
@@ -29,15 +27,7 @@ export function ContactsMeListItem({
       data-testid="contacts-me-row"
     >
       <ListItemLeading>
-        <ContactAvatar
-          contactId={contact.contactId}
-          name={contact.name}
-          isMe
-          src={avatarSrc}
-          size="md"
-          ariaHidden
-          testId="contacts-me-avatar"
-        />
+        <MeAvatar name={contact.name} size="md" ariaHidden testId="contacts-me-avatar" />
         <ListItemContent>
           <ListItemTitle data-testid="contacts-me-name">{contact.name}</ListItemTitle>
           <ListItemDescription data-testid="contacts-me-address-count">

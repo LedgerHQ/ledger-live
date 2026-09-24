@@ -11,7 +11,6 @@ import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCar
 export function ContactDetailView({
   contact,
   labels,
-  meAvatarSrc,
   onAddAddress,
   ledgerWalletAccountsIntent,
   onLedgerWalletAccountsPress,
@@ -32,7 +31,7 @@ export function ContactDetailView({
         <ContactDetailHeader
           contact={contact}
           labels={labels}
-          meAvatarSrc={meAvatarSrc}
+
           onAddAddress={onAddAddress}
         />
         {ledgerWalletAccountsIntent &&

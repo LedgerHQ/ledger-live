@@ -10,7 +10,6 @@ describe("ContactsMeListItem", () => {
     render(
       <ContactsMeListItem
         contact={{ contactId, name: "Me", initial: "M", addressCount: 1 }}
-        avatarSrc="https://example.com/avatar.png"
         addressCountLabel="1 address"
         onOpen={jest.fn()}
       />,
@@ -31,7 +30,6 @@ describe("ContactsMeListItem", () => {
     render(
       <ContactsMeListItem
         contact={{ contactId, name: "Me", initial: "M", addressCount: 1 }}
-        avatarSrc="https://example.com/avatar.png"
         addressCountLabel="1 address"
         onOpen={onOpen}
       />,

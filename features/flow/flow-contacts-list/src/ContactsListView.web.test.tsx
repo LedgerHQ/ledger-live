@@ -50,7 +50,6 @@ function renderContactsPage({
     <ContactsListView
       viewModel={viewModel}
       labels={labels}
-      meAvatarSrc="https://example.com/black/user.png"
       onOpenMe={onOpenMe}
       onOpenContact={onOpenContact}
       onAddContact={onAddContact}
@@ -221,7 +220,6 @@ describe("ContactsPage", () => {
       <ContactsListView
         viewModel={createContactsSearchViewModel(me, contacts, "ben")}
         labels={labels}
-        meAvatarSrc="https://example.com/black/user.png"
         onOpenMe={jest.fn()}
         onOpenContact={jest.fn()}
         onAddContact={jest.fn()}
@@ -246,7 +244,6 @@ describe("ContactsPage", () => {
       <ContactsListView
         viewModel={createContactsSearchViewModel(me, contacts, "unknown")}
         labels={labels}
-        meAvatarSrc="https://example.com/black/user.png"
         onOpenMe={jest.fn()}
         onOpenContact={jest.fn()}
         onAddContact={jest.fn()}

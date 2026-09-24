@@ -22,10 +22,10 @@ function toOutgoingOperations(account: AccountLike): OutgoingOperation[] {
 }
 
 /**
- * Account `OUT` operations (pending included) flattened into the platform DTO, used to order the Pay
- * contacts by last sent-to.
+ * Account `OUT` operations (pending included) flattened into the platform DTO, used to order
+ * contacts by last sent-to (Pay strip, Send recipient list).
  */
-export function usePayTabOutgoingOperations(): OutgoingOperation[] {
+export function useOutgoingContactOperations(): OutgoingOperation[] {
   const accounts = useSelector(flattenAccountsSelector);
 
   return useMemo(() => accounts.flatMap(toOutgoingOperations), [accounts]);

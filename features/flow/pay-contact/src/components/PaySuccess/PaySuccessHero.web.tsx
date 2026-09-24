@@ -31,7 +31,6 @@ export function PaySuccessHero({
         <ContactAvatar
           contactId={recipient.id}
           name={recipient.name}
-          isMe={recipient.isMe}
           size={AVATAR_SIZE}
           ariaHidden
         />

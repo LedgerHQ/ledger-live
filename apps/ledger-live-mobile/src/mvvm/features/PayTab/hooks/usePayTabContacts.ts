@@ -6,12 +6,12 @@ import type { ContactsNativeProps } from "@features/flow-pay-contact";
 import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { ScreenName } from "~/const";
 import type { PayTabNavigatorParamList } from "../types";
-import { usePayTabOutgoingOperations } from "./usePayTabOutgoingOperations";
+import { useOutgoingContactOperations } from "LLM/features/Contacts/hooks/useOutgoingContactOperations";
 
 export function usePayTabContacts(open: (contact?: Contact) => void): ContactsNativeProps {
   const navigation = useNavigation<NativeStackNavigationProp<PayTabNavigatorParamList>>();
   const { trackButtonClicked } = usePayAnalyticsContext();
-  const outgoingOperations = usePayTabOutgoingOperations();
+  const outgoingOperations = useOutgoingContactOperations();
 
   const openPayContactList = useCallback(() => {
     navigation.navigate(ScreenName.PayTabPayContact);

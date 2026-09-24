@@ -73,7 +73,6 @@ export type ContactDetailActionsLabels = Readonly<{
 export type ContactDetailViewProps = Readonly<{
   contact: Contact;
   labels: ContactDetailLabels;
-  meAvatarSrc: string;
   onAddAddress: () => void;
   ledgerWalletAccountsIntent?: ContactDetailLedgerWalletAccountsIntent;
   onLedgerWalletAccountsPress?: (intent: ContactDetailLedgerWalletAccountsIntent) => void;

@@ -466,6 +466,52 @@ describe("Send flow integration tests", () => {
     expect(await screen.findByText("Review")).toBeVisible();
   });
 
+  it("should list Me with only its addresses on the account network", async () => {
+    const me = mockMeContact({
+      addresses: [
+        mockContactAddress({
+          id: "address-me-eth",
+          currencyId: "ethereum",
+          label: "My Ethereum",
+          address: VALID_ETHEREUM_RECIPIENT,
+        }),
+        mockContactAddress({
+          id: "address-me-sol",
+          currencyId: "solana",
+          label: "My Solana",
+          address: "SolanaAddress123",
+        }),
+      ],
+    });
+    const { user } = renderForAccount(
+      accountEthereum,
+      {},
+      { contactsEnabled: true, contacts: [me] },
+    );
+
+    await user.press(await screen.findByTestId(`contacts-compact-row-${me.id}`));
+    expect(await screen.findByLabelText("My Ethereum, " + VALID_ETHEREUM_RECIPIENT)).toBeVisible();
+    expect(screen.queryByLabelText("My Solana, SolanaAddress123")).not.toBeOnTheScreen();
+    await user.press(screen.getByLabelText("My Ethereum, " + VALID_ETHEREUM_RECIPIENT));
+
+    expect(await screen.findByText("Review")).toBeVisible();
+  });
+
+  it("should always list Me, even without an address on the account network", async () => {
+    const { user } = renderForAccount(
+      accountEthereum,
+      {},
+      { contactsEnabled: true, contacts: [mockMeContact({ addresses: [] })] },
+    );
+
+    expect(await screen.findByTestId("contacts-compact-row-contact-me")).toBeVisible();
+    expect(screen.queryByTestId("send-recipient-empty-contacts-state")).not.toBeOnTheScreen();
+
+    await user.press(screen.getByTestId("contacts-compact-row-contact-me"));
+
+    expect(await screen.findByText("Add address")).toBeVisible();
+  });
+
   it("should show the contact list with an empty search when going back after picking a contact", async () => {
     const vincent = mockContact({
       id: "contact-vincent-back",

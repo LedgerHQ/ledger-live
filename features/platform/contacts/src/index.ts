@@ -11,6 +11,7 @@ export * from "./featureFlags";
 export * from "./utils/resolveEligibleAddressCurrencyIds";
 export * from "./utils/isEligibleAddressCurrency";
 export * from "./components/ContactAvatar";
+export * from "./components/MeAvatar";
 export * from "./addressEntry/types";
 export * from "./addressEntry/validation";
 export * from "./addressEntry/state";

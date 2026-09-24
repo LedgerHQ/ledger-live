@@ -25,7 +25,6 @@ const onLedgerWalletAccountsPress = () => undefined;
 
 const defaultProps = {
   labels,
-  meAvatarSrc: "https://example.com/avatar.png",
   onAddAddress,
 };
 
@@ -87,7 +86,7 @@ describe("ContactDetailPage", () => {
       <ContactDetailView
         contact={mockMeContact()}
         labels={sharedLabels}
-        meAvatarSrc={defaultProps.meAvatarSrc}
+
         onAddAddress={onAddAddress}
       />,
     );

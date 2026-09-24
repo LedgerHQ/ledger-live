@@ -51,7 +51,6 @@ import {
   type OtherContactAddress,
 } from "@features/platform-contacts";
 import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
-import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
 import { contactsIntentLWDDefinitions } from "../../deviceIntents/contactsIntentPlatformDefinitions";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
@@ -508,7 +507,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     viewModel,
     labels,
     searchQuery,
-    meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
     onSearchInputChange,
     onClearSearch,
     onRequestAddContact,

@@ -21,7 +21,6 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact } from "@domain/entity-contact";
 import { createMeDisplayNameFormatter, useContacts } from "@features/platform-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
-import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
@@ -146,7 +145,6 @@ export function useContactsPageViewModel(
     labels,
     searchQuery,
     onSearchQueryChange,
-    meAvatarSrc: USER_AVATAR_URL,
     onOpenContact,
     ledgerSyncStatus,
     featureIntroduction: {

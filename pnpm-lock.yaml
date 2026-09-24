@@ -8579,6 +8579,9 @@ importers:
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.0(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2))
+      '@shared/env':
+        specifier: workspace:*
+        version: link:../../../shared/env
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags

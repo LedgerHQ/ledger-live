@@ -7,6 +7,7 @@ import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useContacts, useContactsFeature } from "@features/platform-contacts";
+import { useOutgoingContactOperations } from "LLM/features/Contacts/hooks/useOutgoingContactOperations";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -29,12 +30,20 @@ jest.mock("../../../../context/SendMemoResetContext");
 jest.mock("../../../../hooks/useDoNotAskAgainSkipMemo");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
-jest.mock("@features/platform-contacts", () => ({
-  isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
+jest.mock("@features/platform-contacts", () => {
+  const actual = jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",
-  ).isEligibleAddressCurrency,
-  useContacts: jest.fn(),
-  useContactsFeature: jest.fn(),
+  );
+  return {
+    isEligibleAddressCurrency: actual.isEligibleAddressCurrency,
+    sortContactsByLastSentThenLastAdded: actual.sortContactsByLastSentThenLastAdded,
+    summarizeOutgoingOperationsByContact: actual.summarizeOutgoingOperationsByContact,
+    useContacts: jest.fn(),
+    useContactsFeature: jest.fn(),
+  };
+});
+jest.mock("LLM/features/Contacts/hooks/useOutgoingContactOperations", () => ({
+  useOutgoingContactOperations: jest.fn(() => []),
 }));
 jest.mock("../../../../context/RecipientContactSelectionContext");
 jest.mock("../../../../context/SendFlowTrackingContext");
@@ -49,6 +58,7 @@ const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedUseContacts = jest.mocked(useContacts);
+const mockedUseOutgoingContactOperations = jest.mocked(useOutgoingContactOperations);
 const mockedUseContactsFeature = jest.mocked(useContactsFeature);
 const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelection);
 const mockedUseSendFlowTracking = jest.mocked(useSendFlowTracking);
@@ -413,11 +423,57 @@ describe("useRecipientScreenView", () => {
       }),
     );
 
-    expect(result.current.contactsOnNetwork).toHaveLength(1);
-    expect(result.current.contactsOnNetwork[0]).toMatchObject({
-      id: "contact-alice",
-      addresses: [{ id: "address-eth" }, { id: "address-usdc" }],
+    // Me follows the regular order: never sent to, and first in the store, so it comes last.
+    expect(result.current.contactsOnNetwork).toMatchObject([
+      { id: "contact-alice", addresses: [{ id: "address-eth" }, { id: "address-usdc" }] },
+      { id: "contact-me", addresses: [{ id: "address-me" }] },
+    ]);
+    expect(result.current.contactsOnNetwork).toHaveLength(2);
+  });
+
+  it("orders contacts by last sent-to, Me included", () => {
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
+    mockedUseContacts.mockReturnValue([
+      mockContact({
+        id: "contact-me",
+        isMe: true,
+        name: "Me",
+        addresses: [
+          mockContactAddress({ id: "address-me", currencyId: "ethereum", address: "0xme" }),
+        ],
+      }),
+      mockContact({
+        id: "contact-alice",
+        name: "Alice",
+        addresses: [
+          mockContactAddress({ id: "address-alice", currencyId: "ethereum", address: "0xalice" }),
+        ],
+      }),
+    ]);
+    mockedUseOutgoingContactOperations.mockReturnValue([
+      { id: "op-alice", recipientAddress: "0xalice", date: 1_000, currencyId: "ethereum" },
+      { id: "op-me", recipientAddress: "0xme", date: 2_000, currencyId: "ethereum" },
+    ]);
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: createMockCurrency({ id: "ethereum" }),
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.contactsOnNetwork.map(contact => contact.id)).toEqual([
+      "contact-me",
+      "contact-alice",
+    ]);
+    mockedUseOutgoingContactOperations.mockReturnValue([]);
   });
 
   it("opens the address sheet when a contact is selected", () => {

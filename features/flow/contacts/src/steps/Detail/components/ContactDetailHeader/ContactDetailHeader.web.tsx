@@ -10,7 +10,7 @@ import { ContactDetailHeaderIdentity } from "./ContactDetailHeaderIdentity.web";
 
 type ContactDetailHeaderProps = Pick<
   ContactDetailViewProps,
-  "contact" | "labels" | "meAvatarSrc" | "onAddAddress"
+  "contact" | "labels" | "onAddAddress"
 > &
   Readonly<{
     detailActions?: ContactDetailActionsProps;
@@ -44,7 +44,6 @@ function getCompactHeaderLayout(detailActions?: ContactDetailActionsProps): Read
 export function ContactDetailHeader({
   contact,
   labels,
-  meAvatarSrc,
   onAddAddress,
   detailActions,
   isCollapsed,
@@ -68,7 +67,7 @@ export function ContactDetailHeader({
     >
       <ContactDetailHeaderIdentity
         contact={contact}
-        meAvatarSrc={meAvatarSrc}
+
         name={displayName}
         addressCount={labels.formatAddressCount(contact.addresses.length)}
         isCollapsed={isCollapsed}

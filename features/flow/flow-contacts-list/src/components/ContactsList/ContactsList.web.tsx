@@ -15,7 +15,6 @@ type ContactsListProps = Pick<
   | "viewModel"
   | "labels"
   | "searchQuery"
-  | "meAvatarSrc"
   | "onSearchInputChange"
   | "onOpenMe"
   | "onOpenContact"
@@ -26,7 +25,6 @@ export function ContactsList({
   viewModel,
   labels,
   searchQuery,
-  meAvatarSrc,
   onSearchInputChange,
   onOpenMe,
   onOpenContact,
@@ -83,7 +81,7 @@ export function ContactsList({
         {me ? (
           <ContactsMeListItem
             contact={me}
-            avatarSrc={meAvatarSrc}
+
             formatAddressCount={labels.formatAddressCount}
             onOpen={onOpenMe}
           />

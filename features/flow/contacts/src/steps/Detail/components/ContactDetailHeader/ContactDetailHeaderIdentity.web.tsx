@@ -5,7 +5,6 @@ import { ContactDetailName } from "../ContactDetailName.web";
 
 type ContactDetailHeaderIdentityProps = Readonly<{
   contact: ContactDetailViewProps["contact"];
-  meAvatarSrc: string;
   name: string;
   addressCount: string;
   isCollapsed: boolean;
@@ -14,7 +13,6 @@ type ContactDetailHeaderIdentityProps = Readonly<{
 
 export function ContactDetailHeaderIdentity({
   contact,
-  meAvatarSrc,
   name,
   addressCount,
   isCollapsed,
@@ -29,7 +27,7 @@ export function ContactDetailHeaderIdentity({
       >
         <ContactDetailAvatar
           contact={contact}
-          meAvatarSrc={meAvatarSrc}
+
           size={isCollapsed ? "md" : "xl"}
         />
       </div>

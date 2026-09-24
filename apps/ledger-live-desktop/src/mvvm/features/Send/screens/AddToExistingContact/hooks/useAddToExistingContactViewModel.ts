@@ -12,7 +12,6 @@ import {
 } from "@features/flow-contacts-list";
 import type { AddNewContactHeaderState } from "LLD/features/Send/context/AddNewContactHeaderContext";
 import { useSendPrefillAddAddressFlow } from "LLD/features/Send/hooks/useSendPrefillAddAddressFlow";
-import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { track, trackPage } from "~/renderer/analytics/segment";
 
@@ -83,7 +82,6 @@ export function useAddToExistingContactViewModel() {
     listViewModel,
     searchQuery,
     labels,
-    meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
     onSearchInputChange,
     onSelectContact,
   };

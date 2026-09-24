@@ -4,14 +4,13 @@ import {
   useResolveAvatarColor,
   type AvatarProps as LumenAvatarProps,
 } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactId } from "@domain/entity-contact";
+import { DEFAULT_ME_CONTACT_ID, type ContactId } from "@domain/entity-contact";
 import { getContactAvatarInitials } from "../../utils/getContactAvatarInitials";
+import { MeAvatar } from "../MeAvatar/MeAvatar.native";
 
 export type ContactAvatarProps = Readonly<{
   contactId: ContactId;
   name: string;
-  isMe?: boolean;
-  src?: string;
   size?: LumenAvatarProps["size"];
   testId?: string;
 }>;
@@ -19,24 +18,14 @@ export type ContactAvatarProps = Readonly<{
 export function ContactAvatar({
   contactId,
   name,
-  isMe = false,
-  src,
   size = "sm",
   testId,
 }: ContactAvatarProps): React.JSX.Element {
   const resolvedTestID = testId ?? `contacts-avatar-${contactId}`;
   const avatarFallbackColor = useResolveAvatarColor(contactId);
 
-  if (isMe) {
-    return (
-      <Avatar
-        testID={resolvedTestID}
-        size={size}
-        src={src}
-        alt={name}
-        fallbackText={getContactAvatarInitials(name)}
-      />
-    );
+  if (contactId === DEFAULT_ME_CONTACT_ID) {
+    return <MeAvatar name={name} size={size} testId={resolvedTestID} />;
   }
 
   return (
