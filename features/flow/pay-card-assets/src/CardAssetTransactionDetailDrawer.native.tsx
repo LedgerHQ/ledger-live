@@ -16,7 +16,7 @@ export function CardAssetTransactionDetailDrawer({
   formatters,
 }: CardAssetTransactionDetailDrawerProps) {
   return (
-    <Box lx={{ paddingBottom: "s24" }} testID="card-asset-transaction-detail-drawer">
+    <Box testID="card-asset-transaction-detail-drawer">
       <CardTransactionDetail transaction={transaction.transaction} formatters={formatters} />
     </Box>
   );

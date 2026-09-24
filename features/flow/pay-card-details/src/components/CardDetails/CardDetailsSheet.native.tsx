@@ -6,12 +6,19 @@ import {
   Box,
 } from "@ledgerhq/lumen-ui-rnative";
 import { AddToWalletCta } from "@features/flow-pay-card-widget/native";
-import { QueuedBottomSheet, useBottomSheetFooterInset } from "@shared/ui-queued-bottom-sheet";
+import {
+  QueuedBottomSheet,
+  useBottomSheetBottomInset,
+  useBottomSheetFooterInset,
+} from "@shared/ui-queued-bottom-sheet";
 import { CardTopUpButton } from "../CardTopUp";
 import { CardDetailsScene } from "./Scenes/CardDetailsScene";
 import { CARD_DETAILS_SCENES } from "./Scenes/registry";
 import type { CardDetailsSceneProps } from "./Scenes/types";
 import type { CardDetailsSheetProps } from "../../types";
+
+/** `s24`, as a number the safe-area and footer insets can be added to. */
+const CONTENT_BOTTOM_SPACING = 24;
 
 export function CardDetailsSheet({
   isOpen,
@@ -24,12 +31,10 @@ export function CardDetailsSheet({
   const isPending =
     scene.route.name === "freeze" && scene.freeze.viewModel.confirmState === "pending";
   const isOverview = scene.route.name === "overview";
-  // The manage scene reorders rows by dragging them, which needs both of the sheet's own vertical
-  // gestures out of the way: the BottomSheetScrollView below would claim the drag as a scroll, and
-  // the content panning gesture would claim it as a sheet drag. It gets a plain container and
-  // keeps only the handle as a way to pan the sheet.
+  // The manage scene reorders rows by dragging them, and the content panning gesture would claim
+  // that drag as a sheet drag. It keeps only the handle as a way to pan the sheet.
   const isAssetsManage = scene.route.name === "assetsManage";
-  const { sizing, hasBackButton } = CARD_DETAILS_SCENES[scene.route.name];
+  const { sizing, scrollable, hasBackButton } = CARD_DETAILS_SCENES[scene.route.name];
   const canGoBack = hasBackButton && !isPending;
   const sizingProps =
     sizing === "full"
@@ -75,51 +80,53 @@ export function CardDetailsSheet({
       testID="card-details-sheet"
     >
       {isOpen ? (
-        isAssetsManage ? (
-          <CardDetailsSheetNonScrollContent scene={scene} />
-        ) : (
+        scrollable ? (
           <CardDetailsSheetContent scene={scene} />
+        ) : (
+          <CardDetailsSheetStaticContent scene={scene} />
         )
       ) : null}
     </QueuedBottomSheet>
   );
 }
 
-function CardDetailsSheetNonScrollContent({ scene }: Readonly<{ scene: CardDetailsSceneProps }>) {
-  const footerInset = useBottomSheetFooterInset();
+/**
+ * A scene the sheet sizes itself to has nowhere to scroll, so it gets no scrollable at all: the
+ * header then stays where it is instead of travelling with a bounce.
+ */
+function CardDetailsSheetStaticContent({ scene }: Readonly<{ scene: CardDetailsSceneProps }>) {
+  const bottomInset = useBottomSheetBottomInset();
 
   return (
-    <BottomSheetView>
-      <Box style={{ paddingBottom: footerInset }}>
-        <Box lx={{ paddingBottom: "s24" }}>
-          <BottomSheetHeader
-            density="compact"
-            spacing
-            title={scene.header.title}
-            description={scene.header.description}
-          />
-          <CardDetailsScene {...scene} />
-        </Box>
-      </Box>
+    <BottomSheetView
+      style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}
+      testID="card-details-sheet-static-content"
+    >
+      <BottomSheetHeader
+        density="compact"
+        spacing
+        title={scene.header.title}
+        description={scene.header.description}
+      />
+      <CardDetailsScene {...scene} />
     </BottomSheetView>
   );
 }
 
 function CardDetailsSheetContent({ scene }: Readonly<{ scene: CardDetailsSceneProps }>) {
+  const bottomInset = useBottomSheetBottomInset();
   const footerInset = useBottomSheetFooterInset();
 
   return (
-    <BottomSheetScrollView>
-      <Box style={{ paddingBottom: footerInset }}>
-        <Box lx={{ paddingBottom: "s24" }}>
-          <BottomSheetHeader
-            density="compact"
-            spacing
-            title={scene.header.title}
-            description={scene.header.description}
-          />
-          <CardDetailsScene {...scene} />
-        </Box>
+    <BottomSheetScrollView testID="card-details-sheet-content">
+      <Box style={{ paddingBottom: bottomInset + footerInset + CONTENT_BOTTOM_SPACING }}>
+        <BottomSheetHeader
+          density="compact"
+          spacing
+          title={scene.header.title}
+          description={scene.header.description}
+        />
+        <CardDetailsScene {...scene} />
       </Box>
     </BottomSheetScrollView>
   );
