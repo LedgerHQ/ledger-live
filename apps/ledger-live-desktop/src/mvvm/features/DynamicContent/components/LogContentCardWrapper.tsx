@@ -11,7 +11,7 @@ import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras"
 import { Box } from "@ledgerhq/react-ui";
 import { updateAnonymousUserNotifications } from "~/renderer/actions/settings";
 import { OFFLINE_SEEN_DELAY } from "../utils/constants";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 import { track } from "~/renderer/analytics/segment";
 import { sanitizeExtras } from "~/renderer/hooks/useBraze";
 
@@ -83,7 +83,7 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
 
         const isContainerNowVisible = entry.intersectionRatio >= CONTAINER_IMPRESSION_THRESHOLD;
         if (isContainerNowVisible && !isContainerVisibleRef.current && location && isTrackedUser) {
-          const page = currentRouteNameRef.current ?? "";
+          const page = getCurrentTrackingPage();
           track("container_impression", { page, location });
         }
         isContainerVisibleRef.current = isContainerNowVisible;

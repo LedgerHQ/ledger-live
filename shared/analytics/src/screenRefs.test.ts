@@ -1,15 +1,12 @@
 import {
-  currentRouteNameRef,
   getCurrentTrackingPage,
   getPreviousTrackingPage,
-  previousRouteNameRef,
+  resetTrackingPages,
   setTrackingSource,
 } from "./screenRefs";
+import { updateTrackingPages } from "./internals/screenRefs.internals";
 
-beforeEach(() => {
-  currentRouteNameRef.current = undefined;
-  previousRouteNameRef.current = undefined;
-});
+beforeEach(resetTrackingPages);
 
 describe("screenRefs", () => {
   it("normalizes an unknown page to an empty string", () => {
@@ -17,15 +14,21 @@ describe("screenRefs", () => {
     expect(getPreviousTrackingPage()).toBe("");
   });
 
-  it("normalizes a null page to an empty string", () => {
-    currentRouteNameRef.current = null;
-
-    expect(getCurrentTrackingPage()).toBe("");
+  it("uses the requested fallback for an unknown page", () => {
+    expect(getCurrentTrackingPage({ fallback: "Unknown" })).toBe("Unknown");
+    expect(getPreviousTrackingPage({ fallback: "Unknown" })).toBe("Unknown");
   });
 
-  it("reads the refs through the getters", () => {
-    currentRouteNameRef.current = "Market";
-    previousRouteNameRef.current = "Portfolio";
+  it("does not replace an empty tracking page with the fallback", () => {
+    setTrackingSource("");
+    updateTrackingPages("Market", true);
+
+    expect(getPreviousTrackingPage({ fallback: "Unknown" })).toBe("");
+  });
+
+  it("reads the tracking pages through the getters", () => {
+    setTrackingSource("Portfolio");
+    updateTrackingPages("Market", true);
 
     expect(getCurrentTrackingPage()).toBe("Market");
     expect(getPreviousTrackingPage()).toBe("Portfolio");
@@ -34,14 +37,24 @@ describe("screenRefs", () => {
   it("overrides the current page through setTrackingSource", () => {
     setTrackingSource("Send Flow");
 
-    expect(currentRouteNameRef.current).toBe("Send Flow");
+    expect(getCurrentTrackingPage()).toBe("Send Flow");
   });
 
   it("clears the current page when setTrackingSource is called without a source", () => {
-    currentRouteNameRef.current = "Send Flow";
+    setTrackingSource("Send Flow");
 
     setTrackingSource();
 
     expect(getCurrentTrackingPage()).toBe("");
+  });
+
+  it("resets the current and previous tracking pages", () => {
+    setTrackingSource("Portfolio");
+    updateTrackingPages("Market", true);
+
+    resetTrackingPages();
+
+    expect(getCurrentTrackingPage()).toBe("");
+    expect(getPreviousTrackingPage()).toBe("");
   });
 });

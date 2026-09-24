@@ -59,7 +59,7 @@ import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { useSwapDefaultAccounts } from "./useSwapDefaultAccounts";
 import { buildSwapWebViewHash, type SwapLocationState } from "./buildSwapWebViewHash";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@features/platform-feature-flags";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { SwapLoader } from "./SwapLoader";
@@ -521,9 +521,7 @@ const SwapWebView = ({
     [manifest, hashString],
   );
 
-  const initialSource = useMemo(() => {
-    return currentRouteNameRef.current || "";
-  }, []);
+  const initialSource = useMemo(() => getCurrentTrackingPage(), []);
 
   const { pathname } = location;
   const swapEntryPoint = deriveSwapEntryPoint(pathname);

@@ -12,7 +12,7 @@ import {
   type ContentCardInteractionEvent,
   type ContentCardEventProperties,
 } from "@ledgerhq/live-common/braze/contentCardExtras";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 import { openURL } from "~/renderer/linking";
 import type { CategoryContentCard } from "~/types/dynamicContent";
 import { LocationContentCard } from "~/types/dynamicContent";
@@ -134,7 +134,7 @@ export function useContentCardsCategoryViewModel({
         type: category.cardsType,
         layout: category.cardsLayout,
         displayedPosition,
-        page: currentRouteNameRef.current ?? "Portfolio",
+        page: getCurrentTrackingPage({ fallback: "Portfolio" }),
         location: category.location ?? LocationContentCard.Portfolio,
       };
       trackContentCardEvent(event, properties);

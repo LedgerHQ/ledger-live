@@ -4,11 +4,12 @@ jest.mock("./internals/trackEvent", () => ({
 
 import { setEnabledFn } from "./registry";
 import {
-  currentRouteNameRef,
   getCurrentTrackingPage,
   getPreviousTrackingPage,
-  previousRouteNameRef,
+  resetTrackingPages,
+  setTrackingSource,
 } from "./screenRefs";
+import { updateTrackingPages } from "./internals/screenRefs.internals";
 import { trackEvent } from "./internals/trackEvent";
 import { resetLastPageEventName } from "./internals/trackPage.internals";
 import { trackPage } from "./trackPage";
@@ -20,8 +21,7 @@ const register = () => {
 beforeEach(() => {
   jest.mocked(trackEvent).mockReset();
   setEnabledFn(() => true);
-  currentRouteNameRef.current = undefined;
-  previousRouteNameRef.current = undefined;
+  resetTrackingPages();
   resetLastPageEventName();
 });
 
@@ -116,7 +116,7 @@ describe("trackPage", () => {
 
   it("updates previous and current route when updateRoutes and refreshSource are true", () => {
     register();
-    currentRouteNameRef.current = "Page Portfolio";
+    setTrackingSource("Page Portfolio");
 
     trackPage({ category: "Market" }, { updateRoutes: true, refreshSource: true });
 
@@ -126,7 +126,7 @@ describe("trackPage", () => {
 
   it("does not update current route when refreshSource is not true", () => {
     register();
-    currentRouteNameRef.current = "Page Portfolio";
+    setTrackingSource("Page Portfolio");
 
     trackPage({ category: "Market" }, { updateRoutes: true });
 
@@ -147,7 +147,8 @@ describe("trackPage", () => {
 
   it("injects source from the previous tracking page", () => {
     register();
-    previousRouteNameRef.current = "Page Portfolio";
+    setTrackingSource("Page Portfolio");
+    updateTrackingPages("Page Market", true);
 
     trackPage({ category: "Market" });
 
@@ -174,7 +175,8 @@ describe("trackPage", () => {
 
   it("allows caller to override source prop", () => {
     register();
-    previousRouteNameRef.current = "Page Portfolio";
+    setTrackingSource("Page Portfolio");
+    updateTrackingPages("Page Market", true);
 
     trackPage({ category: "Market", props: { source: "Custom source" } });
 

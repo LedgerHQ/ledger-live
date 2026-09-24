@@ -2,6 +2,7 @@ import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { track } from "~/renderer/analytics/segment";
+import { resetTrackingPages, setTrackingSource } from "~/renderer/analytics/screenRefs";
 import { useSearchOverlayViewModel } from "../useSearchOverlayViewModel";
 import { useAssetSearchBar } from "../useAssetSearchBar";
 import { SearchMode, SearchResults, SearchSuggestions } from "../types";
@@ -12,13 +13,6 @@ jest.mock("react-router", () => ({
 }));
 
 jest.mock("../useAssetSearchBar");
-
-// getCurrentTrackingPage/getPreviousTrackingPage read module-level navigation refs that leak
-// across the full suite. Mock them so the tracked page/source are deterministic here.
-jest.mock("~/renderer/analytics/screenRefs", () => ({
-  getCurrentTrackingPage: () => "",
-  getPreviousTrackingPage: () => "",
-}));
 
 const mockedUseAssetSearchBar = jest.mocked(useAssetSearchBar);
 const mockedTrack = jest.mocked(track);
@@ -61,10 +55,15 @@ function mockSearchBar({
 
 describe("useSearchOverlayViewModel", () => {
   beforeEach(() => {
+    resetTrackingPages();
+    setTrackingSource("");
     mockUseNavigate.mockReturnValue(mockNavigate);
   });
 
-  afterEach(() => jest.clearAllMocks());
+  afterEach(() => {
+    resetTrackingPages();
+    jest.clearAllMocks();
+  });
 
   describe("displayed mode while closing", () => {
     it("exposes the live mode while the overlay is open", () => {
