@@ -5,7 +5,6 @@ import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import { isStakingTransaction } from "@ledgerhq/live-common/families/hedera/utils";
 import { TrackScreen, track } from "~/analytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";
@@ -33,9 +32,9 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   const transaction = route.params.transaction;
   invariant(account, "account must be defined");
-  invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
 
-  const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
+  const txValId = transaction.valId ?? null;
+  const selectedValidatorNodeId = txValId ? Number(txValId) : null;
   const source = route.params.source?.name ?? "unknown";
   const delegation = getTrackingDelegationType({ type: route.params.result.type });
   const { ticker } = getAccountCurrency(account);

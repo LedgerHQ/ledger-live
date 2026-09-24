@@ -75,7 +75,7 @@ import type {
   TransactionRaw as hederaTransactionRaw,
   TransactionStatus as hederaTransactionStatus,
   TransactionStatusRaw as hederaTransactionStatusRaw,
-} from "@ledgerhq/coin-hedera/types/index";
+} from "../families/hedera/types";
 import type {
   Transaction as iconTransaction,
   TransactionRaw as iconTransactionRaw,

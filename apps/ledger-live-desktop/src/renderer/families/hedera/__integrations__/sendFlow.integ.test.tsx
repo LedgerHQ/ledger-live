@@ -117,7 +117,7 @@ describe("Hedera send flow — full modal", () => {
 
     await waitFor(() => {
       const lastTx = prepareTransactionSpy.mock.calls.at(-1)?.[1];
-      expect(lastTx).toMatchObject({ memo: "ref-42" });
+      expect(lastTx).toMatchObject({ memoType: "string", memoValue: "ref-42" });
     });
   });
 

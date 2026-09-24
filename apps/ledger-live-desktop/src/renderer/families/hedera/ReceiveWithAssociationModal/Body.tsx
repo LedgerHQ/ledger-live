@@ -8,7 +8,6 @@ import invariant from "invariant";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/hedera/utils";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
@@ -167,17 +166,14 @@ const Body = ({
 
   const getTransactionProperties = useCallback(
     (token: TokenCurrency | undefined | null): Partial<Transaction> => {
-      if (!token) {
+      if (token?.tokenType !== "hts") {
         return {};
       }
 
       return {
-        mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+        mode: "tokenAssociate",
         assetReference: token.contractAddress,
         assetOwner: mainAccount.freshAddress,
-        properties: {
-          token,
-        },
       };
     },
     [mainAccount],

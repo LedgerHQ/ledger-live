@@ -4,9 +4,7 @@ import { Trans } from "react-i18next";
 import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import { isStakingTransaction } from "@ledgerhq/live-common/families/hedera/utils";
+import { HederaValidator, type Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { urls } from "~/config/urls";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
@@ -32,11 +30,9 @@ function StepValidators({
 }: Readonly<StepProps>) {
   invariant(account && transaction, "hedera: account and transaction required");
   invariant(account.hederaResources?.delegation, "hedera: delegation is required");
-  invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
 
   const { delegation } = account.hederaResources;
-  const stakingNodeId = transaction.properties?.stakingNodeId;
-  const selectedValidatorId = typeof stakingNodeId === "number" ? String(stakingNodeId) : null;
+  const selectedValidatorId = transaction.valId ?? null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const enrichedDelegation = useHederaEnrichedDelegation(account, delegation);
   const feeError = status.errors.fee;
@@ -52,10 +48,8 @@ function StepValidators({
     if (!validator) return;
     onUpdateTransaction(() => {
       return bridge.updateTransaction(transaction, {
-        mode: HEDERA_TRANSACTION_MODES.Redelegate,
-        properties: {
-          stakingNodeId: Number(validator.id),
-        },
+        mode: "redelegate",
+        valId: validator.id,
       });
     });
   };

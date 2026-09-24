@@ -21,7 +21,7 @@ type NavigationProps = BaseComposite<
 function HederaEditMemo({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [memo, setMemo] = useState(route.params.transaction.memo);
+  const [memo, setMemo] = useState(route.params.transaction.memoValue ?? undefined);
   const account = route.params.account;
   const bridge = useAccountBridge<HederaTransaction>(account);
   const onValidateText = useCallback(() => {
@@ -29,7 +29,8 @@ function HederaEditMemo({ navigation, route }: NavigationProps) {
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
-        memo,
+        memoType: "string",
+        memoValue: memo,
       }),
     });
   }, [navigation, route.params, account, bridge, memo]);

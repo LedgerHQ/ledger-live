@@ -14,7 +14,12 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
+import {
+  CLAIM_REWARDS_TRIGGER_TINYBARS,
+  HEDERA_OPERATION_TYPES,
+  HEDERA_TRANSACTION_MODES,
+  TINYBAR_SCALE,
+} from "../constants";
 import {
   ClaimRewardsFeesWarning,
   HederaInsufficientFundsForAssociation,
@@ -28,6 +33,7 @@ import {
 } from "../errors";
 import type { EstimateFeesParams, HederaCoinConfig, HederaMemo, HederaTxData } from "../types";
 import { estimateFees } from "./estimateFees";
+import { getTokenFromAsset } from "./getTokenFromAsset";
 import { hasSpecificIntentData, mapIntentToSDKOperation } from "./utils";
 import { validateMemo } from "./validateMemo";
 import {
@@ -130,12 +136,12 @@ async function validateTokenAssociate({
   balances,
   customFees,
 }: ValidateContext): Promise<TransactionValidation> {
-  invariant(intent.asset.type === "hts", "hedera: association requires hts token type");
+  invariant(intent.asset.type !== "native", "hedera: association requires token asset");
   const errors: Errors = {};
   const tokenId = "assetReference" in intent.asset ? intent.asset.assetReference : undefined;
   const currency = findCryptoCurrencyById(currencyId);
   invariant(currency, `hedera: currency with id ${currencyId} not found`);
-  const [usdRate, estimatedFees, isAlreadyAssociated] = await Promise.all([
+  const [usdRate, estimatedFees, isAlreadyAssociated, token] = await Promise.all([
     getCurrencyToUSDRate(currency),
     resolveEstimatedFees({ config, currencyId, intent, customFees }),
     tokenId
@@ -145,7 +151,11 @@ async function validateTokenAssociate({
           tokenId,
         }).catch(() => false)
       : false,
+    getTokenFromAsset(currency, intent.asset),
   ]);
+
+  const tokenType = token?.tokenType ?? intent.asset.type;
+  invariant(tokenType === "hts", "hedera: association requires hts token type");
 
   if (!isAlreadyAssociated) {
     const nativeAvailable = available(findAssetBalance({ type: "native" }, balances));
@@ -192,7 +202,10 @@ async function validateStaking({
       : null,
     resolveEstimatedFees({ config, currencyId, intent, customFees }),
   ]);
-  const totalSpent = estimatedFees;
+  const isClaimRewards = intent.type === HEDERA_TRANSACTION_MODES.ClaimRewards;
+  const totalSpent = isClaimRewards
+    ? estimatedFees + BigInt(CLAIM_REWARDS_TRIGGER_TINYBARS)
+    : estimatedFees;
 
   if (validators instanceof Error) {
     errors.validators = validators;
@@ -223,7 +236,7 @@ async function validateStaking({
     }
   }
 
-  if (intent.type === HEDERA_TRANSACTION_MODES.ClaimRewards) {
+  if (isClaimRewards) {
     const account = await getHederaAccountForValidation({
       currencyId,
       config,

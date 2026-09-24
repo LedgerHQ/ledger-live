@@ -252,7 +252,7 @@ export const makeSync =
   }: {
     getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     postSync?: (initial: A, synced: A) => A;
-    shouldMergeOps?: boolean;
+    shouldMergeOps?: boolean | ((account: A) => Promise<boolean>);
   }): AccountBridge<T, A, U, O, R>["sync"] =>
   (initial: A, syncConfig: SyncConfig): Observable<AccountUpdater<A>> =>
     new Observable((o: Observer<AccountUpdater<A>>) => {
@@ -294,6 +294,8 @@ export const makeSync =
           );
 
           const shape$ = normalizeToObservable(shapeResult);
+          const mergeOpsForAccount =
+            typeof shouldMergeOps === "function" ? await shouldMergeOps(initial) : shouldMergeOps;
 
           const updater =
             (shape: Partial<A>) =>
@@ -305,7 +307,7 @@ export const makeSync =
               }
 
               // FIXME reconsider doing mergeOps here. work is redundant for impl like eth
-              const operations = shouldMergeOps
+              const operations = mergeOpsForAccount
                 ? mergeOps(a.operations, shape.operations || [])
                 : shape.operations || [];
 
@@ -362,56 +364,101 @@ export const makeSync =
       };
     });
 
-const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
-  Promise.resolve(
-    async ({
-      index,
-      derivationsCache,
-      derivationScheme,
-      derivationMode,
+type DeriveAtIndexParams = {
+  index: number | string;
+  derivationsCache: Record<string, GetAddressResult>;
+  derivationScheme: string;
+  derivationMode: DerivationMode;
+  currency: CryptoCurrency;
+  deviceId: string;
+};
+
+const deriveAtIndex = async ({
+  getAddressFn,
+  index,
+  derivationsCache,
+  derivationScheme,
+  derivationMode,
+  currency,
+  deviceId,
+}: DeriveAtIndexParams & { getAddressFn: GetAddressFn }): Promise<GetAddressResult> => {
+  const freshAddressPath = runDerivationScheme(derivationScheme, currency, {
+    account: index,
+  });
+  const cacheKey = `${freshAddressPath}:${derivationMode}`;
+  let res = derivationsCache[cacheKey];
+  if (!res) {
+    res = await getAddressWrapper(getAddressFn)(deviceId, {
       currency,
-      deviceId,
-    }: {
-      index: number | string;
-      derivationsCache: Record<string, GetAddressResult>;
-      derivationScheme: string;
-      derivationMode: DerivationMode;
-      currency: CryptoCurrency;
-      deviceId: string;
-    }): Promise<GetAddressResult | null> => {
-      const freshAddressPath = runDerivationScheme(derivationScheme, currency, {
-        account: index,
-      });
-      const cacheKey = `${freshAddressPath}:${derivationMode}`;
-      let res = derivationsCache[cacheKey];
-      if (!res) {
-        res = await getAddressWrapper(getAddressFn)(deviceId, {
-          currency,
-          path: freshAddressPath,
-          derivationMode,
-        });
-        derivationsCache[cacheKey] = res;
-      }
-      return res as GetAddressResult;
-    },
+      path: freshAddressPath,
+      derivationMode,
+    });
+    derivationsCache[cacheKey] = res;
+  }
+  return res;
+};
+
+const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
+  Promise.resolve((params: DeriveAtIndexParams): Promise<GetAddressResult | null> =>
+    deriveAtIndex({ ...params, getAddressFn }),
   );
+
+/** @see BridgeApi.getAddressesByPublicKey */
+export type ListAddressesForKey = (derived: GetAddressResult) => Promise<string[]>;
+
+/**
+ * The caller's `index` counts accounts; this walk counts keys. On a single-key scheme the two
+ * diverge from the second account onwards.
+ */
+const lookupIterateResultBuilder =
+  (getAddressFn: GetAddressFn, listAddressesForKey: ListAddressesForKey): IterateResultBuilder =>
+  async ({ derivationScheme }) => {
+    const singleKey = !derivationScheme.includes("<account>");
+
+    let keysDerived = 0;
+    let derived: GetAddressResult | undefined;
+    let addresses: string[] = [];
+    let next = 0;
+
+    return async params => {
+      if (next >= addresses.length) {
+        if (singleKey && keysDerived > 0) return null;
+
+        derived = await deriveAtIndex({ ...params, index: keysDerived++, getAddressFn });
+        addresses = await listAddressesForKey(derived);
+        next = 0;
+
+        if (addresses.length === 0) return null;
+      }
+
+      return {
+        address: addresses[next++],
+        publicKey: derived!.publicKey,
+        path: derived!.path,
+      };
+    };
+  };
 
 export const makeScanAccounts =
   <A extends Account = Account>({
     getAccountShape,
     buildIterateResult,
+    listAddressesForKey,
     getAddressFn,
     postSync = (_, a) => a,
   }: {
     getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     buildIterateResult?: IterateResultBuilder;
+    listAddressesForKey?: ListAddressesForKey;
     getAddressFn: GetAddressFn;
     postSync?: (initial: A, synced: A) => A;
   }): CurrencyBridge["scanAccounts"] =>
   ({ currency, deviceId, syncConfig, scheme }): Observable<ScanAccountEvent> =>
     new Observable((outerObs: Observer<{ type: "discovered"; account: Account }>) => {
       if (buildIterateResult === undefined) {
-        buildIterateResult = defaultIterateResultBuilder(getAddressFn);
+        buildIterateResult = listAddressesForKey
+          ? lookupIterateResultBuilder(getAddressFn, listAddressesForKey)
+          : defaultIterateResultBuilder(getAddressFn);
       }
 
       let finished = false;
@@ -663,8 +710,11 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
   getAddressFn: GetAddressFn,
   {
     injectGetAddressParams,
+    hasLookedUpAddress,
   }: {
     injectGetAddressParams?: (account: A) => any;
+    /** @see BridgeApi.getAddressesByPublicKey */
+    hasLookedUpAddress?: (account: A) => boolean | Promise<boolean>;
   } = {},
 ) {
   return (
@@ -688,14 +738,20 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
       ...(injectGetAddressParams && injectGetAddressParams(account)),
     };
     return from(
-      getAddressFn(deviceId, arg).then(r => {
+      getAddressFn(deviceId, arg).then(async r => {
         const accountAddress = account.freshAddress;
+        const fromLookup = (await hasLookedUpAddress?.(account)) ?? false;
 
-        if (verify && r.address !== accountAddress) {
+        const matches = fromLookup
+          ? r.publicKey === account.seedIdentifier
+          : r.address === accountAddress;
+
+        if (verify && !matches) {
           throw new WrongDeviceForAccount();
         }
 
-        return r;
+        // On a lookup chain `r.address` carries the public key, not an address.
+        return fromLookup ? { ...r, address: accountAddress } : r;
       }),
     );
   };

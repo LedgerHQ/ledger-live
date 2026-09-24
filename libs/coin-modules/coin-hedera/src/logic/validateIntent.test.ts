@@ -38,6 +38,7 @@ import { getMockedMirrorAccount } from "../test/fixtures/mirror.fixture";
 import { getMockedValidator } from "../test/fixtures/validator.fixture";
 import type { HederaMemo, HederaTxData } from "../types";
 import { estimateFees } from "./estimateFees";
+import { getTokenFromAsset } from "./getTokenFromAsset";
 import { validateIntent } from "./validateIntent";
 import { HEDERA_MAX_MEMO_SIZE } from "./validateMemo";
 
@@ -52,6 +53,9 @@ jest.mock("../network/utils", () => ({
   getCurrencyToUSDRate: jest.fn(),
   checkAccountTokenAssociationStatus: jest.fn(),
 }));
+jest.mock("./getTokenFromAsset", () => ({
+  getTokenFromAsset: jest.fn(),
+}));
 jest.mock("../network/rpc", () => ({
   rpcClient: require("../test/fixtures/rpc.fixture").getMockedRpcClient(),
 }));
@@ -61,6 +65,7 @@ const mockEstimateFees = estimateFees as jest.Mock;
 const mockGetHederaValidators = getHederaValidators as unknown as jest.Mock;
 const mockGetCurrencyToUSDRate = getCurrencyToUSDRate as unknown as jest.Mock;
 const mockCheckAssociation = checkAccountTokenAssociationStatus as unknown as jest.Mock;
+const mockGetTokenFromAsset = getTokenFromAsset as jest.Mock;
 
 type HederaIntent = TransactionIntent<HederaMemo, HederaTxData>;
 
@@ -548,6 +553,7 @@ describe("validateIntent", () => {
     beforeEach(() => {
       mockEstimateFees.mockResolvedValue({ tinybars: new BigNumber(500000) });
       mockCheckAssociation.mockResolvedValue(false);
+      mockGetTokenFromAsset.mockResolvedValue({ tokenType: "hts" });
     });
 
     it("has no errors, amount 0, and totalSpent equal to the fee", async () => {
@@ -613,6 +619,31 @@ describe("validateIntent", () => {
         tokenId: "0.0.456858",
       });
       expect(result.errors).toEqual({});
+    });
+
+    it("accepts the bare token asset the framework builds when no sub-account exists yet", async () => {
+      const intent = makeIntent({
+        type: HEDERA_TRANSACTION_MODES.TokenAssociate,
+        asset: { type: "token", assetReference: "0.0.456858" },
+      });
+
+      const result = await callValidateIntent(intent, [
+        balance(NATIVE_ASSET, ENOUGH_FOR_ASSOCIATION),
+      ]);
+
+      expect(result.errors).toEqual({});
+    });
+
+    it("rejects an erc20 token, which is reached over the EVM and associates nothing", async () => {
+      mockGetTokenFromAsset.mockResolvedValue({ tokenType: "erc20" });
+      const intent = makeIntent({
+        type: HEDERA_TRANSACTION_MODES.TokenAssociate,
+        asset: ERC20_ASSET,
+      });
+
+      await expect(
+        callValidateIntent(intent, [balance(NATIVE_ASSET, ENOUGH_FOR_ASSOCIATION)]),
+      ).rejects.toThrow("association requires hts token type");
     });
 
     it("runs the balance check when the association status can't be determined", async () => {

@@ -7,6 +7,10 @@ import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemo
 export default (props: MemoTagInputProps<HederaTransaction>) => (
   <GenericMemoTagInput
     {...props}
-    valueToTxPatch={value => tx => ({ ...tx, memo: value || undefined })}
+    valueToTxPatch={value => tx => ({
+      ...tx,
+      memoType: "string",
+      memoValue: value || undefined,
+    })}
   />
 );
