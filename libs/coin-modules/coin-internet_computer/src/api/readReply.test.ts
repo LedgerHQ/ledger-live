@@ -11,6 +11,7 @@ import {
   throwIfLedgerTransferRefused,
 } from "./api";
 import { getCanisterIdlFunc, governanceIdlFactory, ledgerIdlFactory } from "../network/candid";
+import { setCoinConfig } from "../config";
 
 // Encode a governance canister *reply* (return value) using the real vendored IDL, so the decode
 // functions run against genuine candid bytes rather than a hand-rolled buffer.
@@ -66,6 +67,13 @@ const respondingWith = (...bodies: unknown[]) => {
   (global as unknown as { fetch: unknown }).fetch = fetchMock;
   return fetchMock;
 };
+
+beforeAll(() => {
+  setCoinConfig(() => ({
+    status: { type: "active" },
+    infra: { ICP_NETWORK_URL: "https://node.example" },
+  }));
+});
 
 describe("readReplyFromCanister", () => {
   const originalFetch = global.fetch;

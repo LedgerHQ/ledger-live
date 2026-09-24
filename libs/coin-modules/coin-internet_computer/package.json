@@ -49,6 +49,11 @@
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
+    "./config": {
+      "@ledgerhq/source": "./src/config.ts",
+      "require": "./lib/config.js",
+      "default": "./lib-es/config.js"
+    },
     "./deviceTransactionConfig": {
       "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
       "require": "./lib/bridge/deviceTransactionConfig.js",

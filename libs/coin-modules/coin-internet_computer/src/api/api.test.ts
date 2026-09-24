@@ -1,5 +1,6 @@
 import { ICPNodeRefused } from "../errors";
 import { broadcastTxn } from "./api";
+import { setCoinConfig } from "../config";
 
 // A node answering every submission with the given status.
 const answering = (status: number, text = "") => {
@@ -13,6 +14,13 @@ const answering = (status: number, text = "") => {
 const submit = () => broadcastTxn(Buffer.from("00", "hex"), "ryjl3-tyaaa-aaaaa-aaaba-cai", "call");
 const poll = () =>
   broadcastTxn(Buffer.from("00", "hex"), "ryjl3-tyaaa-aaaaa-aaaba-cai", "read_state");
+
+beforeAll(() => {
+  setCoinConfig(() => ({
+    status: { type: "active" },
+    infra: { ICP_NETWORK_URL: "https://node.example" },
+  }));
+});
 
 describe("broadcastTxn answers", () => {
   const originalFetch = global.fetch;
@@ -73,7 +81,11 @@ describe("broadcastTxn endpoint routing", () => {
     await broadcastTxn(Buffer.from("00", "hex"), canisterId, "call");
     await broadcastTxn(Buffer.from("00", "hex"), canisterId, "read_state");
 
-    expect(fetchMock.mock.calls[0][0]).toContain(`/api/v3/canister/${canisterId}/call`);
-    expect(fetchMock.mock.calls[1][0]).toContain(`/api/v2/canister/${canisterId}/read_state`);
+    expect(fetchMock.mock.calls[0][0]).toBe(
+      `https://node.example/api/v3/canister/${canisterId}/call`,
+    );
+    expect(fetchMock.mock.calls[1][0]).toBe(
+      `https://node.example/api/v2/canister/${canisterId}/read_state`,
+    );
   });
 });

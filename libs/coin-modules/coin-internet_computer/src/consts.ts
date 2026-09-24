@@ -15,8 +15,7 @@ export const MAX_MEMO_VALUE = Number.MAX_SAFE_INTEGER;
 // API limits
 export const FETCH_TXNS_LIMIT = 100;
 
-// IC gateway and mainnet system canister ids
-export const ICP_NETWORK_URL = "https://ic0.app";
+// Mainnet system canister ids
 export const MAINNET_LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
 export const MAINNET_INDEX_CANISTER_ID = "qhbym-qaaaa-aaaaa-aaafq-cai";
 // NNS governance canister — target of manage_neuron / list_neurons / claim_or_refresh update calls.

@@ -17,10 +17,18 @@ jest.mock("../network/candid", () => ({
 }));
 
 import { fetchBalance, fetchBlockHeight, fetchTxns } from "./api";
+import { setCoinConfig } from "../config";
 
 const replied = () => ({ status: "replied", reply: { arg: new ArrayBuffer(0) } });
 
 afterEach(() => jest.clearAllMocks());
+
+beforeAll(() => {
+  setCoinConfig(() => ({
+    status: { type: "active" },
+    infra: { ICP_NETWORK_URL: "https://node.example" },
+  }));
+});
 
 describe("fetchBalance", () => {
   it("returns the balance when the query replies", async () => {

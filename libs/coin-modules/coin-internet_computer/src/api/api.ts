@@ -19,12 +19,12 @@ import invariant from "invariant";
 import {
   DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS,
   FETCH_TXNS_LIMIT,
-  ICP_NETWORK_URL,
   MAINNET_GOVERNANCE_CANISTER_ID,
   MAINNET_INDEX_CANISTER_ID,
   MAINNET_LEDGER_CANISTER_ID,
 } from "../consts";
 import { redactPrincipals } from "../common-logic/redact";
+import { getCoinConfig } from "../config";
 import {
   ICPCallRejected,
   ICPGovernanceRejected,
@@ -41,6 +41,8 @@ import {
   ledgerIdlFactory,
 } from "../network/candid";
 import type { ListNeuronsResponse, NeuronCommandOutcome } from "../types/neuron";
+
+const getNodeUrl = (): string => getCoinConfig().infra.ICP_NETWORK_URL;
 
 function toArrayBuffer(view: ArrayBuffer | Uint8Array): ArrayBuffer {
   if (view instanceof ArrayBuffer) {
@@ -63,7 +65,7 @@ function requestIdFromHex(hex: string): RequestId {
 // node whose replies we verify: doing so would let a compromised boundary supply both a forged
 // certificate and a matching forged root, defeating certificate verification.
 async function getRootKey(): Promise<ArrayBuffer> {
-  const agent = await getAgent(ICP_NETWORK_URL);
+  const agent = await getAgent(getNodeUrl());
   invariant(agent.rootKey, "[ICP](getRootKey) Root key unavailable");
   return agent.rootKey;
 }
@@ -78,7 +80,7 @@ export const fetchBlockHeight = async (): Promise<BigNumber> => {
   const queryBlocksIdlFunc = getCanisterIdlFunc(ledgerIdlFactory, "query_blocks");
   const queryBlocksargs = encodeCanisterIdlFunc(queryBlocksIdlFunc, [queryBlocksRawRequest]);
 
-  const agent = await getAgent(ICP_NETWORK_URL);
+  const agent = await getAgent(getNodeUrl());
   const blockHeightRes = await agent.query(canisterId, {
     arg: queryBlocksargs,
     methodName: "query_blocks",
@@ -115,7 +117,7 @@ export const broadcastTxn = async (
   log("debug", `[ICP] Broadcasting ${type} to ${canisterId}, body: ${payload.toString("hex")}`);
   // The IC serves the synchronous call on v3 but read_state only on v2 (there is no v3 read_state).
   const version = type === "read_state" ? "v2" : "v3";
-  const res = await fetch(`${ICP_NETWORK_URL}/api/${version}/canister/${canisterId}/${type}`, {
+  const res = await fetch(`${getNodeUrl()}/api/${version}/canister/${canisterId}/${type}`, {
     body: payload as unknown as BodyInit,
     method: "POST",
     headers: {
@@ -138,7 +140,7 @@ export const broadcastTxn = async (
 };
 
 export const fetchBalance = async (address: string): Promise<BigNumber> => {
-  const agent = await getAgent(ICP_NETWORK_URL);
+  const agent = await getAgent(getNodeUrl());
   const indexCanister = Principal.fromText(MAINNET_INDEX_CANISTER_ID);
   const getBalanceIdlFunc = getCanisterIdlFunc(indexIdlFactory, "get_account_identifier_balance");
   const getBalanceArgs = encodeCanisterIdlFunc(getBalanceIdlFunc, [address]);
@@ -171,7 +173,7 @@ export const fetchTxns = async (
     return [];
   }
 
-  const agent = await getAgent(ICP_NETWORK_URL);
+  const agent = await getAgent(getNodeUrl());
   const canisterId = Principal.fromText(MAINNET_INDEX_CANISTER_ID);
   const transactionsRawRequest = {
     account_identifier: address,

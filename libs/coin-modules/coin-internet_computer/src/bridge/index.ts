@@ -8,6 +8,8 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
+import { setCoinConfig, type InternetComputerCoinConfig } from "../config";
 import { ICP_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer";
 import type {
@@ -85,7 +87,12 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<ICPSigner>) {
+export function createBridges(
+  signerContext: SignerContext<ICPSigner>,
+  coinConfig: CoinConfig<InternetComputerCoinConfig>,
+) {
+  setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

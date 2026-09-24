@@ -50,7 +50,8 @@
     "@noble/curves/ed25519"
   ],
   "ignoreUnimported": [
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/test/integ-coin-config-setup.ts"
   ],
   "ignoreUnused": []
 }

@@ -8,6 +8,9 @@ export const internetComputerConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      infra: {
+        ICP_NETWORK_URL: "https://ic0.app",
+      },
     },
   },
 };
