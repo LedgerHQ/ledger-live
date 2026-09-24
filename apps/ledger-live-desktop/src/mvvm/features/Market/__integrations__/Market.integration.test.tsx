@@ -249,10 +249,12 @@ describe("Market Integration", () => {
   });
 
   it("should handle search functionality", async () => {
+    const searchedFilters: (string | null)[] = [];
     server.use(
       http.get(MARKET_API_ENDPOINT, ({ request }) => {
         const url = new URL(request.url);
         const search = url.searchParams.get("filter");
+        searchedFilters.push(search);
 
         if (search === "bitcoin") {
           return HttpResponse.json([MOCK_MARKET_CURRENCY_DATA[0]]);
@@ -275,10 +277,12 @@ describe("Market Integration", () => {
       expect(screen.queryByTestId("market-list-skeleton")).toBeNull();
     });
 
-    const searchInput = screen.getByPlaceholderText(/search/i);
-    if (searchInput) {
-      await user.type(searchInput, "bitcoin");
-    }
+    await user.click(screen.getByPlaceholderText(/search/i));
+    await user.paste("bitcoin");
+
+    await waitFor(() => {
+      expect(searchedFilters).toContain("bitcoin");
+    });
   });
 
   it("should toggle starred filter", async () => {
