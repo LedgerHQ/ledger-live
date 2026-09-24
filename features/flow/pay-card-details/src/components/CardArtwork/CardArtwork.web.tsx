@@ -13,7 +13,7 @@ export function CardArtwork() {
   return (
     <div
       data-testid="card-artwork"
-      className="relative h-[195px] w-full overflow-hidden rounded-lg border border-muted-subtle"
+      className="relative h-[195px] w-full overflow-hidden rounded-lg"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <div

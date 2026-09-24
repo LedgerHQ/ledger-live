@@ -115,6 +115,7 @@ describe("CardDetails (native)", () => {
 
     expect(screen.getByLabelText(CARD_COPY.topUp)).toBeVisible();
     expect(screen.getByLabelText(CARD_COPY.details)).toBeVisible();
+    expect(screen.getByTestId("card-visual-fade")).toBeVisible();
   });
 
   it("should show no top up action when the host wires none", () => {
@@ -163,6 +164,8 @@ describe("CardDetails (native)", () => {
     const amounts = await screen.findAllByTestId("card-visual-amount");
     expect(amounts).toHaveLength(2);
     expect(amounts.map(amount => amount.props.value)).toEqual([2500, 2500]);
+    // The tab's card fades into the page; the sheet's card does not.
+    expect(screen.getAllByTestId("card-visual-fade")).toHaveLength(1);
   });
 
   it("should keep the details sheet content hidden when Details has not been pressed", () => {
