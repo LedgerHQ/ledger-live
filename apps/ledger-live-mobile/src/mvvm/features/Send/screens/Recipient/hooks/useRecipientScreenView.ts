@@ -14,6 +14,7 @@ import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Keyboard } from "react-native";
 import { screen, track } from "~/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
@@ -234,6 +235,9 @@ export function useRecipientScreenView({
           return;
         }
 
+        // The address input holds the keyboard, and the search results are tapped through
+        // `keyboardShouldPersistTaps`, so nothing retracts it before the sheet slides up under it.
+        Keyboard.dismiss();
         setPendingSkipMemoRecipient({ address, ensName });
         return;
       }
