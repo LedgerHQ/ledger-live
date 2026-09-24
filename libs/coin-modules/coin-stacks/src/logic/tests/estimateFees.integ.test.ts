@@ -11,6 +11,7 @@ import {
 } from "@stacks/transactions";
 import type { StacksTxData } from "../../types";
 import { estimateFees } from "../estimateFees";
+import { mainnetStacksConfig } from "../../test/context";
 
 // Real network round-trip, no device/funds needed: fee estimation is byte-length-based and the
 // nonce lookup for a fresh, never-used address simply resolves to 0 -- both work against a real
@@ -38,7 +39,7 @@ describe("estimateFees (Alpaca)", () => {
       data: { type: "stacks-pox" },
     };
 
-    const { value } = await estimateFees(intent);
+    const { value } = await estimateFees(mainnetStacksConfig, intent);
 
     expect(value).toBeGreaterThan(0n);
   });
@@ -55,7 +56,7 @@ describe("estimateFees (Alpaca)", () => {
       data: { type: "stacks-pox" },
     };
 
-    const { value } = await estimateFees(intent);
+    const { value } = await estimateFees(mainnetStacksConfig, intent);
 
     expect(value).toBeGreaterThan(0n);
   });
@@ -74,7 +75,7 @@ describe("estimateFees (Alpaca)", () => {
       data: { type: "stacks-pox", numCycles: 6, startBurnHt: 1_000_000 },
     };
 
-    const { value } = await estimateFees(intent);
+    const { value } = await estimateFees(mainnetStacksConfig, intent);
 
     expect(value).toBeGreaterThan(0n);
   });

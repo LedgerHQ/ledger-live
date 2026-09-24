@@ -1,6 +1,7 @@
 import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/index";
 import { fetchAllTokenBalances, fetchBalances } from "../network/api";
 import { getStakes } from "./getStakes";
+import type { StacksCurrencyConfig } from "../config";
 
 export const NATIVE_ASSET: AssetInfo = { type: "native", name: "STX" };
 
@@ -12,8 +13,14 @@ export const tokenAsset = (tokenId: string, owner: string): AssetInfo => ({
 });
 
 /** Native STX (incl. locked/stake position) + all SIP-010 token balances for `address`. */
-export async function getBalance(address: string): Promise<Balance[]> {
-  const [stx, tokens] = await Promise.all([fetchBalances(address), fetchAllTokenBalances(address)]);
+export async function getBalance(
+  config: StacksCurrencyConfig,
+  address: string,
+): Promise<Balance[]> {
+  const [stx, tokens] = await Promise.all([
+    fetchBalances(config, address),
+    fetchAllTokenBalances(config, address),
+  ]);
 
   const locked = BigInt(stx.locked || "0");
   const nativeBalance: Balance = {
@@ -22,7 +29,7 @@ export async function getBalance(address: string): Promise<Balance[]> {
   };
 
   if (locked > 0n) {
-    const { items } = await getStakes(address);
+    const { items } = await getStakes(config, address);
     nativeBalance.locked = locked;
     nativeBalance.stake = items[0];
   }

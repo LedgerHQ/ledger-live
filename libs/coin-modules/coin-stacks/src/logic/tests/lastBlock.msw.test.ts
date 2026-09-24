@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { TEST_STACKS_ENDPOINT, server } from "../../test/msw.mock";
 import { lastBlock } from "../lastBlock";
+import { mockStacksConfig } from "../../test/context";
 
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterEach(() => server.resetHandlers());
@@ -29,7 +30,7 @@ describe("lastBlock via MSW", () => {
       ),
     );
 
-    await expect(lastBlock()).resolves.toEqual({
+    await expect(lastBlock(mockStacksConfig)).resolves.toEqual({
       height: 961565,
       hash: "0xpreviousblockhash",
       time: new Date(1754999995 * 1000),

@@ -1,4 +1,5 @@
 import { listOperations } from "../listOperations";
+import { mainnetStacksConfig } from "../../test/context";
 
 // A real mainnet address with a modest amount of real transaction history (~20 txs) -- light
 // enough to stay well under the test timeout, unlike a high-activity address (a real pool/vault
@@ -7,7 +8,10 @@ const ACTIVE_ADDRESS = "SP3H6RCZ1X6V85NZBDVCBPGQ1CGBJKY9WYHBKFYBA";
 
 describe("listOperations (Alpaca)", () => {
   it("returns real, correctly-shaped operations for an active address", async () => {
-    const { items } = await listOperations(ACTIVE_ADDRESS, { minHeight: 0, order: "desc" });
+    const { items } = await listOperations(mainnetStacksConfig, ACTIVE_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(items.length).toBeGreaterThan(0);
     for (const op of items) {
@@ -24,7 +28,10 @@ describe("listOperations (Alpaca)", () => {
   });
 
   it("orders results ascending when requested", async () => {
-    const { items } = await listOperations(ACTIVE_ADDRESS, { minHeight: 0, order: "asc" });
+    const { items } = await listOperations(mainnetStacksConfig, ACTIVE_ADDRESS, {
+      minHeight: 0,
+      order: "asc",
+    });
 
     expect(items.length).toBeGreaterThan(0);
     for (let i = 1; i < items.length; i++) {

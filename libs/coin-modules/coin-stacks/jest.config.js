@@ -37,6 +37,7 @@ module.exports = {
       ...sharedConfig,
       displayName: "unit",
       testPathIgnorePatterns: [...sharedConfig.testPathIgnorePatterns, "\\.msw\\.test\\.ts"],
+      setupFiles: ["./src/test/coin-config-setup.ts"],
       setupFilesAfterEnv: [
         "@ledgerhq/wallet-framework-test-setup",
         "@ledgerhq/disable-network-setup",
@@ -47,7 +48,7 @@ module.exports = {
       ...sharedConfig,
       displayName: "msw",
       testMatch: ["**/*.msw.test.ts"],
-      setupFiles: ["@ledgerhq/wallet-framework-test-setup", "./src/test/msw-setup.ts"],
+      setupFiles: ["@ledgerhq/wallet-framework-test-setup", "./src/test/coin-config-setup.ts"],
       setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
     },
   ],

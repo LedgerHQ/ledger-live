@@ -1,6 +1,7 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-stacks";
+import type { StacksCurrencyConfig } from "@ledgerhq/coin-stacks/config";
 import stacksResolver, { signMessage } from "@ledgerhq/coin-stacks/signer/index";
 import Transport from "@ledgerhq/hw-transport";
 import { Bridge } from "@ledgerhq/types-live";
@@ -11,6 +12,7 @@ import {
   createResolver,
   executeWithSigner,
 } from "../../bridge/setup";
+import { getCurrencyConfiguration } from "../../config";
 import { Resolver } from "../../hw/getAddress/types";
 import { StacksSigner, Transaction } from "./types";
 
@@ -18,7 +20,10 @@ const createSigner: CreateSigner<StacksSigner> = (transport: Transport) => {
   return new BlockstackApp(transport);
 };
 
-const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
+const getCoinConfig = (): StacksCurrencyConfig =>
+  getCurrencyConfiguration<StacksCurrencyConfig>("stacks");
+
+const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner), getCoinConfig);
 
 const messageSigner = {
   signMessage: createMessageSigner(createSigner, signMessage),

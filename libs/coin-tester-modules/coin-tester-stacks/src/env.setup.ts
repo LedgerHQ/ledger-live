@@ -1,14 +1,20 @@
-// Runs in Jest's `setupFiles` (before `setupFilesAfterEnv` and before any test file is required):
-// `coin-stacks`'s `network/api.ts` builds its `StacksNetwork` map (including the `devnet` entry
-// added for this package) at module-evaluation time by reading `API_STACKS_ENDPOINT` through
-// `@ledgerhq/live-env`'s `getEnv`. Setting it here guarantees the env var is in place before
-// `helpers.ts` (or anything else) performs its first `import "@ledgerhq/coin-stacks"`; setting it
-// inside the scenario's `setup()` would run after that import has already resolved.
+// Runs in Jest's `setupFiles`, before `setupFilesAfterEnv` and before any test file is required, so
+// every bridge strategy reads the devnet endpoint from the live config and the env flags below are
+// in place before `helpers.ts` performs its first `import "@ledgerhq/coin-stacks"`.
 import "@ledgerhq/wallet-framework-test-setup";
 import { setEnv } from "@ledgerhq/live-env";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { STACKS_DEVNET_URL } from "./devnet";
 
-setEnv("API_STACKS_ENDPOINT", STACKS_DEVNET_URL);
+LiveConfig.setConfig({
+  config_currency_stacks: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      infra: { API_STACKS_ENDPOINT: STACKS_DEVNET_URL },
+    },
+  },
+});
 // The devnet's genesis accounts (`settings/Devnet.toml`) are funded on testnet-versioned (`ST...`)
 // addresses, not mainnet (`SP...`) ones — see `bridge/synchronization.ts`'s `API_STACKS_NETWORK`
 // read, added specifically so a devnet/testnet consumer can get the correctly-versioned address.

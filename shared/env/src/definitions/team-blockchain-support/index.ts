@@ -11,11 +11,6 @@ const teamBlockchainSupport = {
     parser: boolParser,
     desc: "Enable staking for Aptos",
   },
-  API_STACKS_ENDPOINT: {
-    parser: stringParser,
-    def: "https://stacks.coin.ledger.com",
-    desc: "Stacks API url",
-  },
   API_STACKS_NETWORK: {
     parser: stringParser,
     def: "mainnet",

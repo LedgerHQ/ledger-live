@@ -1,5 +1,6 @@
 import { fetchBlockByHeight } from "../../network/blocks";
 import { getBlockInfo, toBlockInfo } from "../getBlockInfo";
+import { mockStacksConfig } from "../../test/context";
 
 jest.mock("../../network/blocks");
 
@@ -15,16 +16,18 @@ describe("getBlockInfo", () => {
       canonical: true,
     });
 
-    await expect(getBlockInfo(961566)).resolves.toEqual({
+    await expect(getBlockInfo(mockStacksConfig, 961566)).resolves.toEqual({
       height: 961566,
       hash: "0xblockhash",
       time: new Date(1700000000 * 1000),
     });
-    expect(fetchBlockByHeight).toHaveBeenCalledWith(961566);
+    expect(fetchBlockByHeight).toHaveBeenCalledWith(mockStacksConfig, 961566);
   });
 
   it("rejects a negative height without calling the network", async () => {
-    await expect(getBlockInfo(-1)).rejects.toThrow("stacks: block height must be >= 0");
+    await expect(getBlockInfo(mockStacksConfig, -1)).rejects.toThrow(
+      "stacks: block height must be >= 0",
+    );
     expect(fetchBlockByHeight).not.toHaveBeenCalled();
   });
 

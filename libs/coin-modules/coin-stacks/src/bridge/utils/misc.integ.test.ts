@@ -2,6 +2,7 @@ import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import type { Operation } from "@ledgerhq/types-live";
 import { fetchFullTxs } from "../../network/index";
 import { mapTxToOps } from "./misc";
+import { mainnetStacksConfig } from "../../test/context";
 
 const Address = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
 
@@ -16,7 +17,7 @@ describe("misc integration tests", () => {
   });
 
   test("convert raw transactions to live operations", async () => {
-    const [rawTxs] = await fetchFullTxs(Address);
+    const [rawTxs] = await fetchFullTxs(mainnetStacksConfig, Address);
     const operations: Operation[] = rawTxs.flatMap(mapTxToOps("dummyAccountID", Address));
 
     expect(operations).toBeInstanceOf(Array);

@@ -2,13 +2,8 @@ import { CurrencyConfig, CoinConfig, type Context } from "@ledgerhq/coin-module-
 import { MissingCoinConfig } from "@ledgerhq/coin-module-framework/errors";
 
 export type StacksCurrencyConfig = CurrencyConfig & {
-  config_currency_stacks: {
-    type: "object";
-    default: {
-      status: {
-        type: "active";
-      };
-    };
+  infra: {
+    API_STACKS_ENDPOINT: string;
   };
 };
 

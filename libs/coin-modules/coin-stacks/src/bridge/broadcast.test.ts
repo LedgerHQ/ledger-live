@@ -4,6 +4,7 @@ import { broadcastTx } from "../network/api";
 import { StacksOperation } from "../types";
 import { broadcast } from "./broadcast";
 import { getTxToBroadcast } from "./utils/transactions";
+import { mockStacksConfig } from "../test/context";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../network/api");
@@ -65,7 +66,7 @@ describe("broadcast", () => {
       },
     } as unknown as BroadcastArg<Account>);
 
-    expect(broadcastTxSpy).toHaveBeenCalledWith(mockTx);
+    expect(broadcastTxSpy).toHaveBeenCalledWith(mockStacksConfig, mockTx);
   });
 
   it("should patch operation with hash", async () => {

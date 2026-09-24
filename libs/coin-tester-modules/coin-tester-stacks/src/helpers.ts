@@ -3,6 +3,8 @@ import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-liv
 import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { createBridges } from "@ledgerhq/coin-stacks";
+import type { StacksCurrencyConfig } from "@ledgerhq/coin-stacks/config";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { StacksSigner, Transaction } from "@ledgerhq/coin-stacks/types";
 import { getCoinFrameworkCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-coin-framework/currencyBridge";
 import { getCoinFrameworkAccountBridge } from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBridge";
@@ -129,7 +131,9 @@ export async function getBridges(
 }> {
   if (strategy === "legacy") {
     const context: SignerContext<StacksSigner> = (_deviceId, fn) => fn(signer.legacy);
-    const { currencyBridge, accountBridge } = createBridges(context);
+    const { currencyBridge, accountBridge } = createBridges(context, (): StacksCurrencyConfig =>
+      LiveConfig.getValueByKey("config_currency_stacks"),
+    );
     return { currencyBridge, accountBridge: adaptLegacyBridge(accountBridge) };
   }
 

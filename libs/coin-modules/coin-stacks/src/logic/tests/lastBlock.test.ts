@@ -1,5 +1,6 @@
 import { fetchBlockByHeight, fetchLatestBlock } from "../../network/blocks";
 import { lastBlock } from "../lastBlock";
+import { mockStacksConfig } from "../../test/context";
 
 jest.mock("../../network/blocks");
 
@@ -22,12 +23,12 @@ describe("lastBlock", () => {
       canonical: true,
     });
 
-    await expect(lastBlock()).resolves.toEqual({
+    await expect(lastBlock(mockStacksConfig)).resolves.toEqual({
       height: 961565,
       hash: "0xprevious",
       time: new Date(1699999995 * 1000),
     });
-    expect(fetchBlockByHeight).toHaveBeenCalledWith(961565);
+    expect(fetchBlockByHeight).toHaveBeenCalledWith(mockStacksConfig, 961565);
   });
 
   it("returns the tip itself at genesis (height 0), never a negative height", async () => {
@@ -39,7 +40,7 @@ describe("lastBlock", () => {
       canonical: true,
     });
 
-    await expect(lastBlock()).resolves.toEqual({
+    await expect(lastBlock(mockStacksConfig)).resolves.toEqual({
       height: 0,
       hash: "0xgenesis",
       time: new Date(1600000000 * 1000),

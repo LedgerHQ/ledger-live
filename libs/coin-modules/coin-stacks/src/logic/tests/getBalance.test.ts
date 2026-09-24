@@ -1,6 +1,7 @@
 import { fetchAllTokenBalances, fetchBalances } from "../../network/api";
 import { getStakes } from "../getStakes";
 import { getBalance, NATIVE_ASSET, tokenAsset } from "../getBalance";
+import { mockStacksConfig } from "../../test/context";
 
 jest.mock("../../network/api");
 jest.mock("../getStakes");
@@ -14,7 +15,7 @@ describe("getBalance", () => {
       "sp_contract.token-x::token-x": "5000",
     });
 
-    const balances = await getBalance("SP_ADDRESS");
+    const balances = await getBalance(mockStacksConfig, "SP_ADDRESS");
 
     expect(balances).toEqual([
       { value: 1000000n, asset: NATIVE_ASSET },
@@ -32,7 +33,7 @@ describe("getBalance", () => {
     const stake = { uid: "SP_ADDRESS" };
     (getStakes as jest.Mock).mockResolvedValue({ items: [stake] });
 
-    const [native] = await getBalance("SP_ADDRESS");
+    const [native] = await getBalance(mockStacksConfig, "SP_ADDRESS");
 
     expect(native.locked).toBe(200000000000n);
     expect(native.stake).toBe(stake);

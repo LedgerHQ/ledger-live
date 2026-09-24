@@ -11,6 +11,7 @@ import { MAX_STACKS_PAGE_LIMIT, SEND_MANY_MEMO_CONTRACT_ID } from "../constants"
 import { fetchAllTransactions } from "../network/api";
 import type { DecodedSendManyFunctionArgsCV, TransactionResponse } from "../types/api";
 import { NATIVE_ASSET, tokenAsset } from "./getBalance";
+import type { StacksCurrencyConfig } from "../config";
 
 function toOperation(params: {
   id: string;
@@ -261,6 +262,7 @@ function toOperations(tx: TransactionResponse, address: string): Operation[] {
 }
 
 export async function listOperations(
+  config: StacksCurrencyConfig,
   address: string,
   { limit, order = "desc", minHeight = 0, cursor }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
@@ -271,7 +273,7 @@ export async function listOperations(
     throw new Error("cursor is not supported for Stacks: the full history is fetched in one page");
   }
 
-  const transactions = await fetchAllTransactions(address);
+  const transactions = await fetchAllTransactions(config, address);
   const sorted = transactions
     .flatMap(tx => toOperations(tx, address))
     // No incremental fetch on the indexer side (the full history is always pulled above), so

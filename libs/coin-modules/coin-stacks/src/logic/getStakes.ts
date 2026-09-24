@@ -1,5 +1,6 @@
 import type { Cursor, Page, Stake, StakeState } from "@ledgerhq/coin-module-framework/api/index";
 import { fetchEarnedStakerRewards, fetchPoxInfo, fetchStakerInfo } from "../network/pox";
+import type { StacksCurrencyConfig } from "../config";
 
 const NATIVE_ASSET = { type: "native" as const };
 
@@ -11,9 +12,13 @@ const NATIVE_ASSET = { type: "native" as const };
  * cycle is approximated as "deactivating" -- this can't distinguish that from a full-term stake
  * that already called `unstake` but hasn't reached its (shortened) final cycle yet.
  */
-export async function getStakes(address: string, _cursor?: Cursor): Promise<Page<Stake>> {
-  const poxInfo = await fetchPoxInfo();
-  const staker = await fetchStakerInfo(poxInfo.contract_id, address);
+export async function getStakes(
+  config: StacksCurrencyConfig,
+  address: string,
+  _cursor?: Cursor,
+): Promise<Page<Stake>> {
+  const poxInfo = await fetchPoxInfo(config);
+  const staker = await fetchStakerInfo(config, poxInfo.contract_id, address);
 
   if (!staker) {
     return { items: [] };
@@ -26,6 +31,7 @@ export async function getStakes(address: string, _cursor?: Cursor): Promise<Page
     currentCycle >= firstRewardCycle + numCycles - 1 ? "deactivating" : "active";
 
   const earnedRewards = await fetchEarnedStakerRewards(
+    config,
     poxInfo.contract_id,
     signer,
     currentCycle,

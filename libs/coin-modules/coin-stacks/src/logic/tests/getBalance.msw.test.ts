@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { TEST_STACKS_ENDPOINT, server } from "../../test/msw.mock";
 import { getBalance } from "../getBalance";
+import { mockStacksConfig } from "../../test/context";
 
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterEach(() => server.resetHandlers());
@@ -32,7 +33,7 @@ describe("getBalance via MSW", () => {
       ),
     );
 
-    const balances = await getBalance(ADDRESS);
+    const balances = await getBalance(mockStacksConfig, ADDRESS);
 
     expect(balances).toEqual([
       { value: 1000000n, asset: { type: "native", name: "STX" } },

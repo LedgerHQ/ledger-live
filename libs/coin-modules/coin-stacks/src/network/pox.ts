@@ -8,12 +8,13 @@ import {
   uintCV,
 } from "@stacks/transactions";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
+import type { StacksCurrencyConfig } from "../config";
 import { getStacksBaseUrl } from "./api";
 import { PoxInfoResponse } from "../types/api";
 
 /** `GET /v2/pox` — the currently active PoX contract, resolved dynamically (never hardcoded). */
-export const fetchPoxInfo = async (): Promise<PoxInfoResponse> => {
-  const opts: AxiosRequestConfig = { method: "GET", url: `${getStacksBaseUrl()}/v2/pox` };
+export const fetchPoxInfo = async (config: StacksCurrencyConfig): Promise<PoxInfoResponse> => {
+  const opts: AxiosRequestConfig = { method: "GET", url: `${getStacksBaseUrl(config)}/v2/pox` };
   const { data } = (await network(opts)) as AxiosResponse<PoxInfoResponse>;
   return data;
 };
@@ -33,6 +34,7 @@ export type StakerInfo = {
 /** pox-5's `get-staker-info(staker)` — `none` when the staker has never staked, or once the lock
  * period (first-reward-cycle + num-cycles) has elapsed (there is no separate "unstaked" flag). */
 export const fetchStakerInfo = async (
+  config: StacksCurrencyConfig,
   poxContractId: string,
   stakerAddress: string,
 ): Promise<StakerInfo | undefined> => {
@@ -43,7 +45,7 @@ export const fetchStakerInfo = async (
     functionName: "get-staker-info",
     functionArgs: [standardPrincipalCV(stakerAddress)],
     senderAddress: stakerAddress,
-    client: { baseUrl: getStacksBaseUrl() },
+    client: { baseUrl: getStacksBaseUrl(config) },
   });
 
   const decoded = cvToJSON(result);
@@ -64,6 +66,7 @@ export const fetchStakerInfo = async (
  * accrued but not yet claimed by the staker's pool. Protocol-uniform (unlike claiming itself,
  * which is pool-contract-specific). Returns 0n when nothing has accrued yet. */
 export const fetchEarnedStakerRewards = async (
+  config: StacksCurrencyConfig,
   poxContractId: string,
   signer: string,
   rewardCycle: number,
@@ -76,7 +79,7 @@ export const fetchEarnedStakerRewards = async (
     functionName: "get-earned-staker-rewards",
     functionArgs: [principalCV(signer), uintCV(rewardCycle), noneCV(), standardPrincipalCV(staker)],
     senderAddress: staker,
-    client: { baseUrl: getStacksBaseUrl() },
+    client: { baseUrl: getStacksBaseUrl(config) },
   });
 
   const decoded = cvToJSON(result);

@@ -27,7 +27,9 @@
     "src/network/index.ts",
     "src/signer/signMessage.ts",
     "src/supportedFeatures.ts",
-    "src/test/msw-setup.ts"
+    "src/test/coin-config-setup.ts",
+    "src/test/integ-coin-config-setup.ts",
+    "src/test/context.ts"
   ],
   "ignoreUnused": [
     "ripple-address-codec",

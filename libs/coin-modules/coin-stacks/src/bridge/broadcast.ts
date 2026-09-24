@@ -4,6 +4,7 @@ import invariant from "invariant";
 import { broadcastTx } from "../network/api";
 import { StacksOperation, Transaction } from "../types";
 import { getTxToBroadcast } from "./utils/transactions";
+import { getCoinConfig } from "../config";
 
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   signedOperation: { operation, signature, rawData },
@@ -11,7 +12,7 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   invariant(operation as StacksOperation, "StacksOperation expected");
   const tx = await getTxToBroadcast(operation as StacksOperation, signature, rawData ?? {});
 
-  const hash = await broadcastTx(tx);
+  const hash = await broadcastTx(getCoinConfig(), tx);
   const result = patchOperationWithHash(operation, hash);
 
   return result;

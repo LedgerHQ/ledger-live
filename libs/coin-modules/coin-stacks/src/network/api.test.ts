@@ -1,5 +1,5 @@
-import * as env from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
+import type { StacksCurrencyConfig } from "../config";
 import { EstimatedFeesRequest } from "../types/api";
 import {
   fetchBalances,
@@ -45,12 +45,11 @@ describe("Stacks API", () => {
   const mockAddress = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
   const mockApiUrl = "https://api.stacks.test";
 
+  let config: StacksCurrencyConfig;
+
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(env, "getEnv").mockImplementation(key => {
-      if (key === "API_STACKS_ENDPOINT") return mockApiUrl;
-      return "";
-    });
+    config = { status: { type: "active" }, infra: { API_STACKS_ENDPOINT: mockApiUrl } };
     (network as jest.Mock).mockResolvedValue({ data: {} });
   });
 
@@ -65,7 +64,7 @@ describe("Stacks API", () => {
     it("should fetch STX balance for an address", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: mockBalanceResponse });
 
-      const result = await fetchBalances(mockAddress);
+      const result = await fetchBalances(config, mockAddress);
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
@@ -89,7 +88,7 @@ describe("Stacks API", () => {
     it("should fetch a page of token balances", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: mockTokenBalancesResponse });
 
-      const result = await fetchTokenBalancesPage(mockAddress);
+      const result = await fetchTokenBalancesPage(config, mockAddress);
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
@@ -101,7 +100,7 @@ describe("Stacks API", () => {
     it("should handle custom pagination parameters", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: mockTokenBalancesResponse });
 
-      await fetchTokenBalancesPage(mockAddress, 100, 25);
+      await fetchTokenBalancesPage(config, mockAddress, 100, 25);
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
@@ -112,7 +111,7 @@ describe("Stacks API", () => {
     it("should return empty results on error", async () => {
       (network as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
 
-      const result = await fetchTokenBalancesPage(mockAddress);
+      const result = await fetchTokenBalancesPage(config, mockAddress);
 
       expect(result).toEqual({ limit: 50, offset: 0, total: 0, results: [] });
     });
@@ -141,7 +140,7 @@ describe("Stacks API", () => {
         .mockResolvedValueOnce({ data: mockTokenBalancesPage1 })
         .mockResolvedValueOnce({ data: mockTokenBalancesPage2 });
 
-      const result = await fetchAllTokenBalances(mockAddress);
+      const result = await fetchAllTokenBalances(config, mockAddress);
 
       expect(network).toHaveBeenCalledTimes(2);
       expect(result).toEqual({
@@ -162,7 +161,7 @@ describe("Stacks API", () => {
     it("should fetch estimated fees for a transfer", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: mockFeeResponse });
 
-      const result = await fetchEstimatedFees(mockFeeRequest);
+      const result = await fetchEstimatedFees(config, mockFeeRequest);
 
       expect(network).toHaveBeenCalledWith({
         method: "POST",
@@ -187,7 +186,7 @@ describe("Stacks API", () => {
     it("should fetch current blockchain status", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: mockNetworkStatusResponse });
 
-      const result = await fetchBlockHeight();
+      const result = await fetchBlockHeight(config);
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
@@ -211,7 +210,7 @@ describe("Stacks API", () => {
     it("should fetch a page of transactions", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: mockTransactionsResponse });
 
-      const result = await fetchTransactionsPage(mockAddress);
+      const result = await fetchTransactionsPage(config, mockAddress);
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
@@ -223,7 +222,7 @@ describe("Stacks API", () => {
     it("should handle custom pagination parameters", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: mockTransactionsResponse });
 
-      await fetchTransactionsPage(mockAddress, 100, 25);
+      await fetchTransactionsPage(config, mockAddress, 100, 25);
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
@@ -234,7 +233,7 @@ describe("Stacks API", () => {
     it("should return empty results on error", async () => {
       (network as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
 
-      const result = await fetchTransactionsPage(mockAddress);
+      const result = await fetchTransactionsPage(config, mockAddress);
 
       expect(result).toEqual({ limit: 50, offset: 0, total: 0, results: [] });
     });
@@ -242,9 +241,9 @@ describe("Stacks API", () => {
 
   describe("fetchAllTransactions", () => {
     it("should fetch all transactions by paginating", async () => {
-      const result = await fetchAllTransactions(mockAddress);
+      const result = await fetchAllTransactions(config, mockAddress);
 
-      expect(fetchAllTransactions).toHaveBeenCalledWith(mockAddress);
+      expect(fetchAllTransactions).toHaveBeenCalledWith(config, mockAddress);
       expect(result).toEqual([
         { tx_id: "0xabc123", tx_type: "token_transfer" },
         { tx_id: "0xdef456", tx_type: "contract_call" },
@@ -255,9 +254,9 @@ describe("Stacks API", () => {
 
   describe("fetchFullTxs", () => {
     it("should organize transactions by type", async () => {
-      const result = await fetchFullTxs(mockAddress);
+      const result = await fetchFullTxs(config, mockAddress);
 
-      expect(fetchFullTxs).toHaveBeenCalledWith(mockAddress);
+      expect(fetchFullTxs).toHaveBeenCalledWith(config, mockAddress);
       expect(result).toEqual([
         [
           { tx_id: "0xabc123", tx_type: "token_transfer" },
@@ -276,7 +275,7 @@ describe("Stacks API", () => {
     it("should broadcast a transaction", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: "abc123" });
 
-      const result = await broadcastTx(mockTxBuffer);
+      const result = await broadcastTx(config, mockTxBuffer);
 
       expect(network).toHaveBeenCalledWith({
         method: "POST",
@@ -290,7 +289,7 @@ describe("Stacks API", () => {
     it("should handle empty response", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: "" });
 
-      const result = await broadcastTx(mockTxBuffer);
+      const result = await broadcastTx(config, mockTxBuffer);
 
       expect(result).toEqual("");
     });
@@ -310,7 +309,7 @@ describe("Stacks API", () => {
     it("should fetch a page of mempool transactions", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: mockMempoolResponse });
 
-      const result = await fetchMempoolTransactionsPage(mockAddress);
+      const result = await fetchMempoolTransactionsPage(config, mockAddress);
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
@@ -322,7 +321,7 @@ describe("Stacks API", () => {
     it("should handle custom pagination parameters", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: mockMempoolResponse });
 
-      await fetchMempoolTransactionsPage(mockAddress, 100, 25);
+      await fetchMempoolTransactionsPage(config, mockAddress, 100, 25);
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
@@ -354,7 +353,7 @@ describe("Stacks API", () => {
         .mockResolvedValueOnce({ data: mockMempoolPage1 })
         .mockResolvedValueOnce({ data: mockMempoolPage2 });
 
-      const result = await fetchFullMempoolTxs(mockAddress);
+      const result = await fetchFullMempoolTxs(config, mockAddress);
 
       expect(network).toHaveBeenCalledTimes(2);
       expect(result).toEqual([
@@ -376,7 +375,7 @@ describe("Stacks API", () => {
     it("should fetch the nonce for an address", async () => {
       (network as jest.Mock).mockResolvedValueOnce({ data: mockNonceResponse });
 
-      const result = await fetchNonce(mockAddress);
+      const result = await fetchNonce(config, mockAddress);
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
@@ -388,9 +387,11 @@ describe("Stacks API", () => {
 
   describe("API URL handling", () => {
     it("should throw error when API endpoint is not available", async () => {
-      jest.spyOn(env, "getEnv").mockReturnValueOnce("");
+      config = { status: { type: "active" }, infra: { API_STACKS_ENDPOINT: "" } };
 
-      await expect(fetchBalances(mockAddress)).rejects.toThrow("API base URL not available");
+      await expect(fetchBalances(config, mockAddress)).rejects.toThrow(
+        "API base URL not available",
+      );
     });
   });
 });

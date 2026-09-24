@@ -7,6 +7,7 @@ import { createStxTransferTransaction, createTokenTransferTransaction } from "..
 import type { StacksTxData } from "../../types";
 import { getBalance } from "../getBalance";
 import { buildUnsignedTx } from "../buildUnsignedTx";
+import { mockStacksConfig } from "../../test/context";
 
 jest.mock("../../common-logic", () => ({
   ...jest.requireActual("../../common-logic"),
@@ -45,7 +46,12 @@ describe("buildUnsignedTx", () => {
 
   describe("resolveAmount", () => {
     it("uses the intent's own amount without a balance lookup when it is already resolved", async () => {
-      await buildUnsignedTx(transferIntent({ useAllAmount: true, amount: 5000n }), 300n, 5n);
+      await buildUnsignedTx(
+        mockStacksConfig,
+        transferIntent({ useAllAmount: true, amount: 5000n }),
+        300n,
+        5n,
+      );
 
       expect(getBalance).not.toHaveBeenCalled();
       const call = (createStxTransferTransaction as jest.Mock).mock.calls[0];
@@ -55,9 +61,14 @@ describe("buildUnsignedTx", () => {
     it("falls back to a fresh balance lookup when the amount is still the unresolved placeholder", async () => {
       (getBalance as jest.Mock).mockResolvedValue([{ value: 100000n, asset: { type: "native" } }]);
 
-      await buildUnsignedTx(transferIntent({ useAllAmount: true, amount: 0n }), 300n, 5n);
+      await buildUnsignedTx(
+        mockStacksConfig,
+        transferIntent({ useAllAmount: true, amount: 0n }),
+        300n,
+        5n,
+      );
 
-      expect(getBalance).toHaveBeenCalledWith(SENDER);
+      expect(getBalance).toHaveBeenCalledWith(mockStacksConfig, SENDER);
       const call = (createStxTransferTransaction as jest.Mock).mock.calls[0];
       expect(call[0].toString()).toBe("99700");
     });
@@ -71,7 +82,7 @@ describe("buildUnsignedTx", () => {
     it("passes the configured network through when building a transfer", async () => {
       setEnv("API_STACKS_NETWORK", "testnet");
 
-      await buildUnsignedTx(transferIntent(), 300n, 5n);
+      await buildUnsignedTx(mockStacksConfig, transferIntent(), 300n, 5n);
 
       const call = (createStxTransferTransaction as jest.Mock).mock.calls[0];
       expect(call[3]).toBe("testnet");

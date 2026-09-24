@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { makeRandomPrivKey, makeSTXTokenTransfer, transactionToHex } from "@stacks/transactions";
 import { broadcast } from "../broadcast";
+import { mainnetStacksConfig } from "../../test/context";
 
 const RECIPIENT_ADDRESS = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
 
@@ -19,7 +20,7 @@ describe("broadcast (Alpaca)", () => {
       nonce: "0",
     });
 
-    await expect(broadcast(transactionToHex(signedTx))).rejects.toMatchObject({
+    await expect(broadcast(mainnetStacksConfig, transactionToHex(signedTx))).rejects.toMatchObject({
       name: "LedgerAPI4xx",
       status: 400,
     });

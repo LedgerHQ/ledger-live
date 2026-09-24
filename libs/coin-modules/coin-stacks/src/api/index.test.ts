@@ -5,10 +5,7 @@ import { createApi } from "./index";
 const context: StacksContext = {
   config: async () => ({
     status: { type: "active" as const },
-    config_currency_stacks: {
-      type: "object" as const,
-      default: { status: { type: "active" as const } },
-    },
+    infra: { API_STACKS_ENDPOINT: "https://stacks.test.invalid" },
   }),
   logger: () => {},
 };

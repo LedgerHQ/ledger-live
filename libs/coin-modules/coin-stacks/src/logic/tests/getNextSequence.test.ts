@@ -1,5 +1,6 @@
 import { fetchNonce } from "../../network/api";
 import { getNextSequence } from "../getNextSequence";
+import { mockStacksConfig } from "../../test/context";
 
 jest.mock("../../network/api");
 
@@ -12,7 +13,7 @@ describe("getNextSequence", () => {
       detected_missing_nonces: [],
     });
 
-    await expect(getNextSequence("SP_ADDRESS")).resolves.toBe(5n);
-    expect(fetchNonce).toHaveBeenCalledWith("SP_ADDRESS");
+    await expect(getNextSequence(mockStacksConfig, "SP_ADDRESS")).resolves.toBe(5n);
+    expect(fetchNonce).toHaveBeenCalledWith(mockStacksConfig, "SP_ADDRESS");
   });
 });

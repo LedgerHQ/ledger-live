@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+import { getCoinConfig } from "@ledgerhq/coin-stacks/config";
 import { fetchPoxInfo } from "@ledgerhq/coin-stacks/network/pox";
 import {
   DEPLOYER_ADDRESS,
@@ -287,7 +288,7 @@ export const scenarioStacksStaking: Scenario<GenericTransaction, Account> = {
     // Read first: pox-5 is a separate, literally-named contract (`...pox-5`), not something `.pox`
     // ever aliases to -- `poxInfo.contract_id` is the live source of truth for its current address,
     // same as `buildUnsignedTx.ts`'s own `buildStaking`.
-    const poxInfo = await fetchPoxInfo();
+    const poxInfo = await fetchPoxInfo(getCoinConfig());
     startBurnHt = poxInfo.current_burnchain_block_height;
 
     const { valAddress } = await setupSignerManager(

@@ -26,6 +26,7 @@ import { fetchPoxInfo } from "../network/pox";
 import type { StacksTxData } from "../types";
 import { getBalance } from "./getBalance";
 import { getStakes } from "./getStakes";
+import type { StacksCurrencyConfig } from "../config";
 
 /** Same dummy-recipient substitution the legacy bridge's estimateMaxSpendable uses: the Send form
  * probes estimateFees before a valid recipient is entered, and a c32 address is embedded
@@ -64,6 +65,7 @@ function parseContractPrincipal(value: string, context: string): { address: stri
  * general-purpose, unlike the framework's own `prepareTransaction`), so it's resolved
  * defensively here too. Fee is native STX, so only subtracted for a native sweep. */
 async function resolveAmount(
+  config: StacksCurrencyConfig,
   intent: TransactionIntent<MemoNotSupported, StacksTxData>,
   fee: bigint,
 ): Promise<BigNumber> {
@@ -82,7 +84,7 @@ async function resolveAmount(
     return preResolved;
   }
 
-  const balances = await getBalance(intent.sender);
+  const balances = await getBalance(config, intent.sender);
   const isToken = intent.asset.type !== "native";
   const assetReference = "assetReference" in intent.asset ? intent.asset.assetReference : undefined;
   // Case-insensitive: `getBalance`'s SIP-010 entries are always lowercased (`fetchAllTokenBalances`'s
@@ -102,6 +104,7 @@ async function resolveAmount(
 }
 
 async function buildTransfer(
+  config: StacksCurrencyConfig,
   intent: TransactionIntent<MemoNotSupported, StacksTxData>,
   fee: bigint,
   nonce: bigint,
@@ -112,7 +115,7 @@ async function buildTransfer(
   const network = getConfiguredStacksNetwork();
   const feeAmount = new BigNumber(fee.toString());
   const nonceAmount = new BigNumber(nonce.toString());
-  const amount = await resolveAmount(intent, fee);
+  const amount = await resolveAmount(config, intent, fee);
   // Only guards the sweep case -- a not-yet-filled-in draft (amount 0) must still build, since
   // callers probe estimateFees before the user enters anything; validateIntent owns that check.
   if (intent.useAllAmount && amount.lte(0)) {
@@ -155,6 +158,7 @@ async function buildTransfer(
 }
 
 async function buildStaking(
+  config: StacksCurrencyConfig,
   intent: StakingTransactionIntent<MemoNotSupported, StacksTxData>,
   fee: bigint,
   nonce: bigint,
@@ -164,7 +168,7 @@ async function buildStaking(
   }
   const network = getConfiguredStacksNetwork();
 
-  const poxInfo = await fetchPoxInfo();
+  const poxInfo = await fetchPoxInfo(config);
   const { address: poxAddress, name: poxName } = parseContractPrincipal(
     poxInfo.contract_id,
     "pox contract_id from /v2/pox",
@@ -202,7 +206,7 @@ async function buildStaking(
   }
 
   if (intent.mode === "undelegate") {
-    const { items } = await getStakes(intent.sender);
+    const { items } = await getStakes(config, intent.sender);
     const signerManager = items[0]?.delegate;
     if (!signerManager) {
       throw new Error("stacks: no active stake found to undelegate");
@@ -231,16 +235,18 @@ async function buildStaking(
 }
 
 export async function buildUnsignedTx(
+  config: StacksCurrencyConfig,
   intent: TransactionIntent<MemoNotSupported, StacksTxData>,
   fee: bigint,
   nonce: bigint,
 ): Promise<StacksTransactionWire> {
   if (intent.intentType === "staking") {
     return buildStaking(
+      config,
       intent as StakingTransactionIntent<MemoNotSupported, StacksTxData>,
       fee,
       nonce,
     );
   }
-  return buildTransfer(intent, fee, nonce);
+  return buildTransfer(config, intent, fee, nonce);
 }

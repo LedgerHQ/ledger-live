@@ -1,5 +1,6 @@
 import { fetchEarnedStakerRewards, fetchPoxInfo, fetchStakerInfo } from "../../network/pox";
 import { getStakes } from "../getStakes";
+import { mockStacksConfig } from "../../test/context";
 
 jest.mock("../../network/pox");
 
@@ -18,7 +19,7 @@ describe("getStakes", () => {
   it("returns an empty page when the address has never staked", async () => {
     (fetchStakerInfo as jest.Mock).mockResolvedValue(undefined);
 
-    await expect(getStakes("SP_ADDRESS")).resolves.toEqual({ items: [] });
+    await expect(getStakes(mockStacksConfig, "SP_ADDRESS")).resolves.toEqual({ items: [] });
   });
 
   it("returns a synthetic active Stake when the lock is mid-term", async () => {
@@ -30,7 +31,7 @@ describe("getStakes", () => {
     });
     (fetchEarnedStakerRewards as jest.Mock).mockResolvedValue(500n);
 
-    const { items } = await getStakes("SP_ADDRESS");
+    const { items } = await getStakes(mockStacksConfig, "SP_ADDRESS");
 
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject({
@@ -59,7 +60,7 @@ describe("getStakes", () => {
     });
     (fetchEarnedStakerRewards as jest.Mock).mockResolvedValue(0n);
 
-    const { items } = await getStakes("SP_ADDRESS");
+    const { items } = await getStakes(mockStacksConfig, "SP_ADDRESS");
 
     expect(items[0].state).toBe("deactivating");
     expect(items[0].actions).toEqual([]);

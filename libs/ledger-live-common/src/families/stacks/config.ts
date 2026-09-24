@@ -11,6 +11,9 @@ export const stacksConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      infra: {
+        API_STACKS_ENDPOINT: "https://stacks.coin.ledger.com",
+      },
     },
   },
 };

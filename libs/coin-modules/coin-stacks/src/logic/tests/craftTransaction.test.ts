@@ -13,6 +13,7 @@ import { getNextSequence } from "../getNextSequence";
 import { getStakes } from "../getStakes";
 import { craftTransaction } from "../craftTransaction";
 import { estimateFees } from "../estimateFees";
+import { mockStacksConfig } from "../../test/context";
 
 jest.mock("../getBalance");
 jest.mock("../getNextSequence");
@@ -65,10 +66,13 @@ describe("craftTransaction", () => {
   it("crafts a native STX transfer, resolving nonce and fee when not provided", async () => {
     (createStxTransferTransaction as jest.Mock).mockResolvedValue(FAKE_TX);
 
-    const result = await craftTransaction(transferIntent());
+    const result = await craftTransaction(mockStacksConfig, transferIntent());
 
-    expect(getNextSequence).toHaveBeenCalledWith(SENDER);
-    expect(estimateFees).toHaveBeenCalledWith(expect.objectContaining({ sequence: 5n }));
+    expect(getNextSequence).toHaveBeenCalledWith(mockStacksConfig, SENDER);
+    expect(estimateFees).toHaveBeenCalledWith(
+      mockStacksConfig,
+      expect.objectContaining({ sequence: 5n }),
+    );
     expect(createStxTransferTransaction).toHaveBeenCalledWith(
       expect.anything(),
       RECIPIENT,
@@ -83,7 +87,7 @@ describe("craftTransaction", () => {
   it("uses the intent's sequence and customFees when provided, skipping resolution", async () => {
     (createStxTransferTransaction as jest.Mock).mockResolvedValue(FAKE_TX);
 
-    await craftTransaction(transferIntent({ sequence: 42n }), { value: 900n });
+    await craftTransaction(mockStacksConfig, transferIntent({ sequence: 42n }), { value: 900n });
 
     expect(getNextSequence).not.toHaveBeenCalled();
     expect(estimateFees).not.toHaveBeenCalled();
@@ -96,6 +100,7 @@ describe("craftTransaction", () => {
     (createTokenTransferTransaction as jest.Mock).mockResolvedValue(FAKE_TX);
 
     await craftTransaction(
+      mockStacksConfig,
       transferIntent({ asset: { type: "token", assetReference: "SP_CONTRACT.token-x::token-x" } }),
     );
 
@@ -113,9 +118,9 @@ describe("craftTransaction", () => {
   });
 
   it("throws when senderPublicKey is missing", async () => {
-    await expect(craftTransaction(transferIntent({ senderPublicKey: undefined }))).rejects.toThrow(
-      "senderPublicKey is required",
-    );
+    await expect(
+      craftTransaction(mockStacksConfig, transferIntent({ senderPublicKey: undefined })),
+    ).rejects.toThrow("senderPublicKey is required");
   });
 
   describe("useAllAmount", () => {
@@ -127,7 +132,9 @@ describe("craftTransaction", () => {
       (createStxTransferTransaction as jest.Mock).mockResolvedValue(FAKE_TX);
       (getBalance as jest.Mock).mockResolvedValue([{ value: 100000n, asset: { type: "native" } }]);
 
-      await craftTransaction(transferIntent({ useAllAmount: true, amount: 0n }), { value: 300n });
+      await craftTransaction(mockStacksConfig, transferIntent({ useAllAmount: true, amount: 0n }), {
+        value: 300n,
+      });
 
       const call = (createStxTransferTransaction as jest.Mock).mock.calls[0];
       expect(call[0].toString()).toBe("99700");
@@ -141,6 +148,7 @@ describe("craftTransaction", () => {
       ]);
 
       await craftTransaction(
+        mockStacksConfig,
         transferIntent({
           useAllAmount: true,
           amount: 0n,
@@ -157,7 +165,9 @@ describe("craftTransaction", () => {
       (getBalance as jest.Mock).mockResolvedValue([{ value: 100n, asset: { type: "native" } }]);
 
       await expect(
-        craftTransaction(transferIntent({ useAllAmount: true, amount: 0n }), { value: 300n }),
+        craftTransaction(mockStacksConfig, transferIntent({ useAllAmount: true, amount: 0n }), {
+          value: 300n,
+        }),
       ).rejects.toThrow("amount must be positive");
     });
 
@@ -167,7 +177,7 @@ describe("craftTransaction", () => {
       // empty" fallback -- the legacy bridge already substitutes STACKS_DUMMY_ADDRESS for this.
       (createStxTransferTransaction as jest.Mock).mockResolvedValue(FAKE_TX);
 
-      await craftTransaction(transferIntent({ recipient: "" }), { value: 300n });
+      await craftTransaction(mockStacksConfig, transferIntent({ recipient: "" }), { value: 300n });
 
       expect(createStxTransferTransaction).toHaveBeenCalledWith(
         expect.anything(),
@@ -185,20 +195,21 @@ describe("craftTransaction", () => {
       (createStxTransferTransaction as jest.Mock).mockResolvedValue(FAKE_TX);
 
       await expect(
-        craftTransaction(transferIntent({ amount: 0n }), { value: 300n }),
+        craftTransaction(mockStacksConfig, transferIntent({ amount: 0n }), { value: 300n }),
       ).resolves.toEqual({ transaction: "0xcrafted" });
     });
   });
 
   it("throws for a token asset with no assetReference", async () => {
-    await expect(craftTransaction(transferIntent({ asset: { type: "token" } }))).rejects.toThrow(
-      "token asset requires assetReference",
-    );
+    await expect(
+      craftTransaction(mockStacksConfig, transferIntent({ asset: { type: "token" } })),
+    ).rejects.toThrow("token asset requires assetReference");
   });
 
   it("throws for a malformed SIP-010 assetReference", async () => {
     await expect(
       craftTransaction(
+        mockStacksConfig,
         transferIntent({ asset: { type: "token", assetReference: "not-composite" } }),
       ),
     ).rejects.toThrow('invalid SIP-010 asset reference "not-composite"');
@@ -237,7 +248,7 @@ describe("craftTransaction", () => {
     it("crafts a stake call against the dynamically-resolved pox contract", async () => {
       const pcSpy = jest.spyOn(Pc, "principal");
 
-      await craftTransaction(stakingIntent());
+      await craftTransaction(mockStacksConfig, stakingIntent());
 
       expect(makeUnsignedContractCall).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -257,14 +268,14 @@ describe("craftTransaction", () => {
 
     it("throws when delegate is missing numCycles/startBurnHt", async () => {
       await expect(
-        craftTransaction(stakingIntent({ data: { type: "stacks-pox" } })),
+        craftTransaction(mockStacksConfig, stakingIntent({ data: { type: "stacks-pox" } })),
       ).rejects.toThrow("numCycles and data.startBurnHt");
     });
 
     it("throws when senderPublicKey is missing", async () => {
-      await expect(craftTransaction(stakingIntent({ senderPublicKey: undefined }))).rejects.toThrow(
-        "senderPublicKey is required",
-      );
+      await expect(
+        craftTransaction(mockStacksConfig, stakingIntent({ senderPublicKey: undefined })),
+      ).rejects.toThrow("senderPublicKey is required");
     });
 
     it("crafts an unstake call using the active stake's signer-manager", async () => {
@@ -272,7 +283,7 @@ describe("craftTransaction", () => {
         items: [{ delegate: "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.signer-manager" }],
       });
 
-      await craftTransaction(stakingIntent({ mode: "undelegate" }));
+      await craftTransaction(mockStacksConfig, stakingIntent({ mode: "undelegate" }));
 
       expect(makeUnsignedContractCall).toHaveBeenCalledWith(
         expect.objectContaining({ functionName: "unstake" }),
@@ -282,15 +293,15 @@ describe("craftTransaction", () => {
     it("throws unstake when there is no active stake to leave", async () => {
       (getStakes as jest.Mock).mockResolvedValue({ items: [] });
 
-      await expect(craftTransaction(stakingIntent({ mode: "undelegate" }))).rejects.toThrow(
-        "no active stake found",
-      );
+      await expect(
+        craftTransaction(mockStacksConfig, stakingIntent({ mode: "undelegate" })),
+      ).rejects.toThrow("no active stake found");
     });
 
     it.each(["redelegate", "claimReward", "compoundReward", "withdraw"] as const)(
       "throws for unsupported staking mode %s",
       async mode => {
-        await expect(craftTransaction(stakingIntent({ mode }))).rejects.toThrow(
+        await expect(craftTransaction(mockStacksConfig, stakingIntent({ mode }))).rejects.toThrow(
           `staking mode "${mode}" is not supported`,
         );
       },

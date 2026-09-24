@@ -13,6 +13,7 @@ import { createTransaction } from "./createTransaction";
 import { getAccountInfo } from "./utils/account";
 import { getAddress } from "./utils/misc";
 import { createTransaction as createStacksTransaction } from "./utils/transactions";
+import { getCoinConfig } from "../config";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,
@@ -49,7 +50,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     payload: serializePayload(tx.payload),
     estimatedLength: estimateTransactionByteLength(tx),
     network: dummyTx.network,
-    client: { baseUrl: getStacksBaseUrl() },
+    client: { baseUrl: getStacksBaseUrl(getCoinConfig()) },
   });
 
   // Calculate maximum spendable balance by subtracting fee

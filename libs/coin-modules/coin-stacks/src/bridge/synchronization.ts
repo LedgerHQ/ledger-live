@@ -26,6 +26,7 @@ import {
   sip010TxnToOperation,
   sip010OpToParentOp,
 } from "./utils/misc";
+import { getCoinConfig } from "../config";
 
 /**
  * Calculates the spendable balance by subtracting pending transactions from the total balance
@@ -199,12 +200,13 @@ export const getAccountShape: GetAccountShape = async info => {
     : getAddressFromPublicKey(pubKey, getConfiguredStacksNetwork());
 
   // Make API calls in parallel for better performance
+  const config = getCoinConfig();
   const [blockHeight, balanceResp, txsResult, tokenBalances, mempoolTxs] = await Promise.all([
-    fetchBlockHeight(),
-    fetchBalances(address),
-    fetchFullTxs(address),
-    fetchAllTokenBalances(address),
-    fetchFullMempoolTxs(address),
+    fetchBlockHeight(config),
+    fetchBalances(config, address),
+    fetchFullTxs(config, address),
+    fetchAllTokenBalances(config, address),
+    fetchFullMempoolTxs(config, address),
   ]);
 
   const [rawTxs, tokenTxs] = txsResult;

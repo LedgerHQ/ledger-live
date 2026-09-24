@@ -1,6 +1,7 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { fetchBlockByHeight } from "../network/blocks";
 import type { BlockResponse } from "../types/api";
+import type { StacksCurrencyConfig } from "../config";
 
 export function toBlockInfo(block: BlockResponse): BlockInfo {
   return {
@@ -12,11 +13,14 @@ export function toBlockInfo(block: BlockResponse): BlockInfo {
 
 /** Block metadata (height/hash/time) at a given height. Guards against a negative height so a
  * literal-decrement caller upstream can't underflow past genesis on regtest/devnet (height 0). */
-export async function getBlockInfo(height: number): Promise<BlockInfo> {
+export async function getBlockInfo(
+  config: StacksCurrencyConfig,
+  height: number,
+): Promise<BlockInfo> {
   if (height < 0) {
     throw new Error("stacks: block height must be >= 0");
   }
 
-  const block = await fetchBlockByHeight(height);
+  const block = await fetchBlockByHeight(config, height);
   return toBlockInfo(block);
 }

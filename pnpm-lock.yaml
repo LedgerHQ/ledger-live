@@ -12524,6 +12524,9 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../ledger-live-common
+      '@ledgerhq/live-config':
+        specifier: 'catalog:'
+        version: 3.9.0
       '@ledgerhq/live-env':
         specifier: 'catalog:'
         version: 4.1.0

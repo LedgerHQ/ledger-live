@@ -16,6 +16,7 @@ import { validateAddress } from "../common-logic";
 import { findNextNonce, getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
 import { createTransaction } from "./utils/transactions";
+import { getCoinConfig } from "../config";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
@@ -53,7 +54,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         payload: serializePayload(tx.payload),
         estimatedLength: estimateTransactionByteLength(tx),
         network,
-        client: { baseUrl: getStacksBaseUrl() },
+        client: { baseUrl: getStacksBaseUrl(getCoinConfig()) },
       });
 
       patch.fee = new BigNumber(fee.fee);

@@ -17,6 +17,7 @@ import {
 } from "../../network/index";
 import { StacksOperation } from "../../types";
 import { bufferMemoToString, hexMemoToString } from "../../common-logic";
+import { getCoinConfig } from "../../config";
 
 type ContractCallArg = {
   hex: string;
@@ -298,7 +299,7 @@ export const findNextNonce = async (
     }
   }
 
-  const allMempoolTxns = await fetchFullMempoolTxs(senderAddress);
+  const allMempoolTxns = await fetchFullMempoolTxs(getCoinConfig(), senderAddress);
   for (const tx of allMempoolTxns) {
     const nonce = BigNumber(tx.nonce);
     if (nonce.gt(nextNonce)) {
@@ -310,7 +311,7 @@ export const findNextNonce = async (
     nextNonce = nextNonce.plus(1);
   }
 
-  const nonceResp = await fetchNonce(senderAddress);
+  const nonceResp = await fetchNonce(getCoinConfig(), senderAddress);
   const possibleNextNonce = new BigNumber(nonceResp.possible_next_nonce);
   if (possibleNextNonce.gt(nextNonce)) {
     nextNonce = possibleNextNonce;

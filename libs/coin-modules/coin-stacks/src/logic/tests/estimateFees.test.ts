@@ -12,6 +12,7 @@ import type { StacksTxData } from "../../types";
 import { getNextSequence } from "../getNextSequence";
 import { buildUnsignedTx } from "../buildUnsignedTx";
 import { estimateFees } from "../estimateFees";
+import { mockStacksConfig } from "../../test/context";
 
 jest.mock("../getNextSequence");
 jest.mock("../buildUnsignedTx", () => ({
@@ -51,7 +52,9 @@ describe("estimateFees", () => {
       throw new Error("API base URL not available");
     });
 
-    await expect(estimateFees(intent)).rejects.toThrow("API base URL not available");
+    await expect(estimateFees(mockStacksConfig, intent)).rejects.toThrow(
+      "API base URL not available",
+    );
   });
 
   it("builds a zero-fee tx to size it, then returns the low-tier estimate", async () => {
@@ -61,9 +64,9 @@ describe("estimateFees", () => {
       { fee: 500, fee_rate: 4 },
     ]);
 
-    const result = await estimateFees(intent);
+    const result = await estimateFees(mockStacksConfig, intent);
 
-    expect(buildUnsignedTx).toHaveBeenCalledWith(intent, 0n, 5n);
+    expect(buildUnsignedTx).toHaveBeenCalledWith(mockStacksConfig, intent, 0n, 5n);
     expect(fetchFeeEstimateTransaction).toHaveBeenCalledWith(
       expect.objectContaining({ payload: "0xpayload", estimatedLength: 180, network: "mainnet" }),
     );
@@ -77,9 +80,9 @@ describe("estimateFees", () => {
       { fee: 500 },
     ]);
 
-    await estimateFees({ ...intent, sequence: 99n });
+    await estimateFees(mockStacksConfig, { ...intent, sequence: 99n });
 
     expect(getNextSequence).not.toHaveBeenCalled();
-    expect(buildUnsignedTx).toHaveBeenCalledWith(expect.anything(), 0n, 99n);
+    expect(buildUnsignedTx).toHaveBeenCalledWith(mockStacksConfig, expect.anything(), 0n, 99n);
   });
 });

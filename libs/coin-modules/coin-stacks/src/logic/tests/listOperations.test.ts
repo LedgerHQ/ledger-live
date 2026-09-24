@@ -10,6 +10,7 @@ import {
 import { fetchAllTransactions } from "../../network/api";
 import type { TransactionResponse } from "../../types/api";
 import { listOperations } from "../listOperations";
+import { mockStacksConfig } from "../../test/context";
 
 jest.mock("../../network/api");
 
@@ -72,9 +73,9 @@ describe("listOperations", () => {
   beforeEach(() => jest.clearAllMocks());
 
   it("rejects a limit above the Stacks page-size cap", async () => {
-    await expect(listOperations(SENDER, { minHeight: 0, limit: 51 })).rejects.toThrow(
-      "limit must be <= 50 for Stacks",
-    );
+    await expect(
+      listOperations(mockStacksConfig, SENDER, { minHeight: 0, limit: 51 }),
+    ).rejects.toThrow("limit must be <= 50 for Stacks");
     expect(fetchAllTransactions).not.toHaveBeenCalled();
   });
 
@@ -92,16 +93,16 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(SENDER, { minHeight: 150 });
+    const { items } = await listOperations(mockStacksConfig, SENDER, { minHeight: 150 });
 
     expect(items).toHaveLength(1);
     expect(items[0].tx.hash).toBe("0xtx-new");
   });
 
   it("rejects a cursor", async () => {
-    await expect(listOperations(SENDER, { minHeight: 0, cursor: "abc" })).rejects.toThrow(
-      "cursor is not supported for Stacks",
-    );
+    await expect(
+      listOperations(mockStacksConfig, SENDER, { minHeight: 0, cursor: "abc" }),
+    ).rejects.toThrow("cursor is not supported for Stacks");
   });
 
   it("caps the returned page at limit, after sorting", async () => {
@@ -123,7 +124,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(SENDER, { minHeight: 0, limit: 2 });
+    const { items } = await listOperations(mockStacksConfig, SENDER, { minHeight: 0, limit: 2 });
 
     expect(items).toHaveLength(2);
     expect(items.map(op => op.tx.hash)).toEqual(["0xtx-3", "0xtx-2"]);
@@ -136,7 +137,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(SENDER, { minHeight: 0 });
+    const { items } = await listOperations(mockStacksConfig, SENDER, { minHeight: 0 });
 
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject({
@@ -154,7 +155,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+    const { items } = await listOperations(mockStacksConfig, RECIPIENT, { minHeight: 0 });
 
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject({
@@ -179,7 +180,10 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(SENDER, { minHeight: 0, order: "asc" });
+    const { items } = await listOperations(mockStacksConfig, SENDER, {
+      minHeight: 0,
+      order: "asc",
+    });
 
     expect(items.map(op => op.tx.hash)).toEqual(["0xtx-earlier", "0xtx-later"]);
   });
@@ -190,7 +194,7 @@ describe("listOperations", () => {
       baseTx({ tx_type: "smart_contract" as TransactionResponse["tx"]["tx_type"] }),
     ]);
 
-    const { items } = await listOperations(SENDER, { minHeight: 0 });
+    const { items } = await listOperations(mockStacksConfig, SENDER, { minHeight: 0 });
 
     expect(items).toHaveLength(0);
   });
@@ -218,7 +222,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(SENDER, { minHeight: 0 });
+    const { items } = await listOperations(mockStacksConfig, SENDER, { minHeight: 0 });
 
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject({
@@ -253,7 +257,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(SENDER, { minHeight: 0 });
+    const { items } = await listOperations(mockStacksConfig, SENDER, { minHeight: 0 });
 
     expect(items).toHaveLength(1);
     expect(items[0].type).toBe("send-many");
@@ -283,7 +287,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+    const { items } = await listOperations(mockStacksConfig, RECIPIENT, { minHeight: 0 });
 
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject({
@@ -328,7 +332,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+    const { items } = await listOperations(mockStacksConfig, RECIPIENT, { minHeight: 0 });
 
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject({
@@ -360,7 +364,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+    const { items } = await listOperations(mockStacksConfig, RECIPIENT, { minHeight: 0 });
 
     expect(items).toHaveLength(0);
   });
@@ -378,7 +382,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(SENDER, { minHeight: 0 });
+    const { items } = await listOperations(mockStacksConfig, SENDER, { minHeight: 0 });
 
     expect(items).toHaveLength(1);
     expect(items[0].type).toBe("stake");
@@ -393,7 +397,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(SENDER, { minHeight: 0 });
+    const { items } = await listOperations(mockStacksConfig, SENDER, { minHeight: 0 });
 
     expect(items[0].tx.failed).toBe(true);
   });

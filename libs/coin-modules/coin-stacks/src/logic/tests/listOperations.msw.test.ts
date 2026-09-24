@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { TEST_STACKS_ENDPOINT, server } from "../../test/msw.mock";
 import { listOperations } from "../listOperations";
+import { mockStacksConfig } from "../../test/context";
 
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterEach(() => server.resetHandlers());
@@ -68,7 +69,7 @@ describe("listOperations via MSW", () => {
       ),
     );
 
-    const { items } = await listOperations(SENDER, { minHeight: 0 });
+    const { items } = await listOperations(mockStacksConfig, SENDER, { minHeight: 0 });
 
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject({
