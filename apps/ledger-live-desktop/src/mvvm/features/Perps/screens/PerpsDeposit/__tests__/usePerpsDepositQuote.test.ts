@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { act, renderHook, waitFor } from "tests/testSetup";
+import { act, renderHook, useComponentFakeTimers, waitFor } from "tests/testSetup";
 import { usePerpsDepositQuote, type PerpsDepositQuoteState } from "../usePerpsDepositQuote";
 
 const mockFetchPerpsDepositQuote = jest.fn();
@@ -29,11 +29,16 @@ function renderQuote(initialProps: QuoteProps) {
 
 /** Outlasts the debounce the hook waits out before reaching the provider. */
 async function passDebounce() {
-  await act(() => new Promise(resolve => setTimeout(resolve, 600)));
+  await act(() => jest.advanceTimersByTimeAsync(600));
 }
 
 describe("usePerpsDepositQuote", () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   beforeEach(() => {
+    useComponentFakeTimers();
     jest.clearAllMocks();
     mockFetchPerpsDepositQuote.mockResolvedValue({
       amountTo: new BigNumber("19.75"),

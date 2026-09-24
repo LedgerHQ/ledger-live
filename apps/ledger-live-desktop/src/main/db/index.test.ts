@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { beforeAll, beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 const readFileMock = jest.fn<(path: string) => Promise<Buffer>>();
 const writeFileMock = jest.fn<(path: string, data: string) => Promise<void>>();
@@ -12,12 +12,15 @@ describe("db (app namespace allow list + keepLegacy)", () => {
   let db: typeof import("./index").default;
   const testDir = "/tmp/db-test";
 
-  beforeEach(async () => {
-    jest.resetModules();
+  // Imported after the fsHelper mock is registered; loaded once since `init` resets its state.
+  beforeAll(async () => {
+    db = (await import("./index")).default;
+  });
+
+  beforeEach(() => {
     readFileMock.mockReset();
     writeFileMock.mockReset();
     writeFileMock.mockResolvedValue(undefined);
-    db = (await import("./index")).default;
     db.init(testDir);
   });
 

@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import React from "react";
 import * as reduxHooks from "LLD/hooks/redux";
-import { act, render, screen, waitFor } from "tests/testSetup";
+import { act, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { closeDialog } from "~/renderer/reducers/modularDialog";
 import { trackPage } from "@shared/analytics";
@@ -60,6 +60,11 @@ const getBackButton = () => {
 
 beforeEach(() => {
   mockDomMeasurements();
+});
+
+// Search results are asserted here, not the debounce: skip the 500ms default wait.
+const NO_SEARCH_DEBOUNCE = withFlagOverrides({
+  lldModularDrawer: { params: { searchDebounceTime: 0 } },
 });
 
 const mockCurrencies = currencies.map(currency => currency.id);
@@ -367,6 +372,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should not re trigger page tracking on asset search", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       initialState: {
+        ...NO_SEARCH_DEBOUNCE,
         modularDialog: {
           flow: "flowTest",
           source: "sourceTest",
@@ -381,7 +387,8 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     const input = screen.getByRole("textbox");
-    await user.type(input, "bitcoin");
+    await user.click(input);
+    await user.paste("bitcoin");
 
     await waitFor(
       () => {
@@ -429,13 +436,13 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should navigate normaly doing a complex flow", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { modularDialog: defaultModularDialogState },
+      initialState: { ...NO_SEARCH_DEBOUNCE, modularDialog: defaultModularDialogState },
     });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     const input = screen.getByRole("textbox");
     await user.clear(input);
-    await user.type(input, "ethereum");
+    await user.paste("ethereum");
 
     await waitFor(
       () => {
