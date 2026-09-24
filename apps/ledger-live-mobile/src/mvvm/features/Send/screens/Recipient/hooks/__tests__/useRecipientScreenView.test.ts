@@ -1,4 +1,5 @@
 import { act, renderHook } from "@tests/test-renderer";
+import { Keyboard } from "react-native";
 import { useRecipientScreenView } from "../useRecipientScreenView";
 import { useAddressValidation } from "../useAddressValidation";
 import { useClipboardRecipient } from "../useClipboardRecipient";
@@ -608,6 +609,25 @@ describe("useRecipientScreenView", () => {
 
     expect(onAddressSelected).not.toHaveBeenCalled();
     expect(result.current.isSkipMemoConfirmationOpen).toBe(true);
+  });
+
+  it("retracts the keyboard when the memo warning opens", () => {
+    const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleAddressSelect("new_address"));
+
+    expect(dismissKeyboard).toHaveBeenCalled();
+    dismissKeyboard.mockRestore();
   });
 
   it("keeps the recipient untouched until the memo warning is confirmed", () => {
