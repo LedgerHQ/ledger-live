@@ -8,6 +8,7 @@ import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/error
 import { broadcast, assertTransparentInputsUnspent, type TransparentInputs } from "./broadcast";
 import { getZCashClient } from "../engineClient";
 import { setZainoGrpcUrl } from "../../constants";
+import { setTestCoinConfig } from "../../test/coinConfig";
 
 jest.mock("../engineClient");
 jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
@@ -35,6 +36,7 @@ function explorer(
   });
 }
 
+beforeAll(setTestCoinConfig);
 afterEach(() => setZainoGrpcUrl(null));
 
 beforeEach(() => {

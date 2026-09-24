@@ -1,6 +1,7 @@
 import { assertCanSend, getZCashClient, getZCashModule } from "./engineClient";
 import { getZainoEndpoint, setZainoGrpcUrl } from "../constants";
 import type { ZCashClient } from "../network/types";
+import { setTestCoinConfig } from "../test/coinConfig";
 
 const createZCashClient = jest.fn();
 
@@ -22,6 +23,7 @@ beforeEach(() => {
   createZCashClient.mockReset().mockImplementation(() => fullClient());
 });
 
+beforeAll(setTestCoinConfig);
 afterEach(() => setZainoGrpcUrl(null));
 
 describe("getZCashClient", () => {

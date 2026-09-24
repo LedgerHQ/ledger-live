@@ -202,6 +202,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       },
       infra: {
         EXPLORER: LEDGER_EXPLORER,
+        ZCASH_GRPC_URL: "https://zec-indexer.coin.ledger.com",
       },
     },
   },

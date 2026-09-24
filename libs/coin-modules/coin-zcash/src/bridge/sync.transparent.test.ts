@@ -17,6 +17,7 @@ import { ZCASH_AUTO_SYNC_TIMEOUT_MS } from "../constants";
 import type { ZcashAccount } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
+import { setTestCoinConfig } from "../test/coinConfig";
 
 const generateAccount = jest.fn((..._args: unknown[]): unknown => undefined);
 const syncAccount = jest.fn(async (..._args: unknown[]) => undefined);
@@ -205,6 +206,8 @@ const serializedXpub = (xpub: string): { depth: number; childNumber: number } =>
   const raw = Buffer.from(bs58.decode(xpub) as Uint8Array);
   return { depth: raw[4], childNumber: raw.readUInt32BE(9) };
 };
+
+beforeAll(setTestCoinConfig);
 
 beforeEach(() => {
   jest.clearAllMocks();

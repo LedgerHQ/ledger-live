@@ -21,7 +21,6 @@ import { orchardAddressFromUfvk } from "@ledgerhq/zcash-utils";
 import { setZcashShieldedEnabled } from "@ledgerhq/live-common/bridge/zcashRouting";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setEnv } from "@ledgerhq/live-env";
 import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import {
   assertCommonTxProperties,
@@ -341,11 +340,15 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
     const { signer, ufvk, xpub, accountIndex } = buildSigner();
     const signerContext: SignerContext = (_deviceId, fn) => fn(signer);
 
-    setEnv("EXPLORER", EXPLORER_ORIGIN);
     setZainoGrpcUrl(ZAINO_GRPC_URL, ZCASH_UTILS_NETWORK);
     setZcashShieldedEnabled(true);
 
-    const coinConfig: ZcashCoinConfig = { info: { status: { type: "active" } } };
+    const coinConfig: ZcashCoinConfig = {
+      info: {
+        status: { type: "active" },
+        infra: { EXPLORER: EXPLORER_ORIGIN, ZCASH_GRPC_URL: ZAINO_GRPC_URL },
+      },
+    };
     LiveConfig.setConfig({
       config_currency_zcash_regtest: {
         type: "object",

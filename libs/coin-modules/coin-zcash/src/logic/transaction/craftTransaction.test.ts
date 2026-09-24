@@ -1,6 +1,7 @@
 import { craftIronwoodTransaction, craftTransaction } from "./craftTransaction";
 import { combine } from "./combine";
-import { setZainoGrpcUrl, ZCASH_GRPC_URL_MAINNET } from "../../constants";
+import { setZainoGrpcUrl } from "../../constants";
+import { setTestCoinConfig, TEST_ZCASH_GRPC_URL } from "../../test/coinConfig";
 import type { CraftPlan, IronwoodCraftPlan } from "./craftTransaction";
 
 const buildTransaction = jest.fn(async () => ({ pcztHex: "01", nActionsOrchard: 2 }));
@@ -30,6 +31,7 @@ beforeEach(() => {
   createZCashClient.mockImplementation(() => client());
 });
 
+beforeAll(setTestCoinConfig);
 afterEach(() => setZainoGrpcUrl(null));
 
 describe("craftTransaction", () => {
@@ -38,7 +40,7 @@ describe("craftTransaction", () => {
 
     expect(buildTransaction).toHaveBeenCalledWith({
       ...plan,
-      grpcUrl: ZCASH_GRPC_URL_MAINNET,
+      grpcUrl: TEST_ZCASH_GRPC_URL,
       network: "mainnet",
       seedFingerprint: "00".repeat(32),
     });

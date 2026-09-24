@@ -10,12 +10,13 @@ import { ZCASH_ESTIMATION_RECIPIENT } from "../constants";
 import type { SignerContext } from "../types/signer";
 import type { ZcashAccount } from "../types/bridge";
 import { getZCashClient } from "../logic/engineClient";
+import { testCoinConfigInfo } from "../test/coinConfig";
 
 jest.mock("../logic/engineClient", () => ({ getZCashClient: jest.fn() }));
 const mockedGetZCashClient = jest.mocked(getZCashClient);
 
 const currency = getCryptoCurrencyById("zcash");
-const coinConfig = () => ({ info: { status: { type: "active" as const } } });
+const coinConfig = () => ({ info: testCoinConfigInfo });
 
 const account = {
   currency,
