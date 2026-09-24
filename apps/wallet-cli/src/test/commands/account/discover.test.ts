@@ -42,6 +42,19 @@ describe("account discover command (mock DMK)", () => {
   });
 });
 
+describe("account discover — unsupported network", () => {
+  it("rejects a network outside the supported list without touching the device", async () => {
+    const { stdout, stderr, exitCode } = await runCli(
+      ["account", "discover", "base", "--output", "json"],
+      { WALLET_CLI_MOCK_DMK: "1" },
+    );
+    expect(exitCode, `stderr: ${stderr}`).toBe(1);
+    expect(stdout).not.toContain("device-state");
+    const data = JSON.parse(stdout);
+    expect(data.error.message).toContain('Network "base:main" is not supported by wallet-cli');
+  });
+});
+
 describe("account discover — session persistence", () => {
   const server = new MockServer(ETH_SYNC_ROUTES);
   let cleanup: (() => void) | undefined;
