@@ -511,7 +511,7 @@ describe("PayTab integration", () => {
       ).not.toBeOnTheScreen();
     });
 
-    it("should open the unfiltered send drawer from the New tile", async () => {
+    it("should open the stablecoin send drawer from the New tile", async () => {
       const { user, store } = renderPayTab({
         contacts: [mockMeContact(), mockContactWithAddress()],
         contactsEnabled: true,
@@ -523,9 +523,8 @@ describe("PayTab integration", () => {
         isOpen: true,
         flow: "send",
         source: SEND_FLOW_SOURCE.PAY,
-        areCurrenciesFiltered: false,
+        categories: [AssetCategory.Stablecoins],
       });
-      expect(store.getState().modularDrawer.categories).toBeUndefined();
       expect(store.getState().modularDrawer.uiUseCase).not.toBe("pay");
     });
 
