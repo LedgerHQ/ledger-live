@@ -24,20 +24,18 @@ import {
 // IconProps is not exported from @ledgerhq/lumen-ui-react, so the type comes from a symbol.
 type IconComponent = typeof ShieldCheck;
 
-const stepPresentation: Record<
-  StateKind,
-  { readonly Icon: IconComponent; readonly tone: string }
-> = {
-  progress: { Icon: Circles, tone: "bg-muted-transparent text-muted" },
-  genuine: { Icon: ShieldCheck, tone: "bg-active-subtle text-active" },
-  firmware: { Icon: Download, tone: "bg-active-subtle text-active" },
-  setup: { Icon: Nano, tone: "bg-active-subtle text-active" },
-  locked: { Icon: Lock, tone: "bg-warning-transparent text-warning" },
-  session: { Icon: Bluetooth, tone: "bg-warning-transparent text-warning" },
-  failed: { Icon: Warning, tone: "bg-error-transparent text-error" },
-  succeeded: { Icon: CheckmarkCircle, tone: "bg-success-transparent text-success" },
-  quit: { Icon: ExitLogout, tone: "bg-muted-transparent text-muted" },
-};
+const stepPresentation: Record<StateKind, { readonly Icon: IconComponent; readonly tone: string }> =
+  {
+    progress: { Icon: Circles, tone: "bg-muted-transparent text-muted" },
+    genuine: { Icon: ShieldCheck, tone: "bg-active-subtle text-active" },
+    firmware: { Icon: Download, tone: "bg-active-subtle text-active" },
+    setup: { Icon: Nano, tone: "bg-active-subtle text-active" },
+    locked: { Icon: Lock, tone: "bg-warning-transparent text-warning" },
+    session: { Icon: Bluetooth, tone: "bg-warning-transparent text-warning" },
+    failed: { Icon: Warning, tone: "bg-error-transparent text-error" },
+    succeeded: { Icon: CheckmarkCircle, tone: "bg-success-transparent text-success" },
+    quit: { Icon: ExitLogout, tone: "bg-muted-transparent text-muted" },
+  };
 
 function DeviceOnboarding(props: DeviceOnboardingToolProps) {
   const vm = useDeviceOnboardingViewModel(props);

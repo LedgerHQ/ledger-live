@@ -9,8 +9,8 @@ export function useOfferSync(): boolean {
 
   return Boolean(
     walletSync?.enabled &&
-      onboardingSync?.enabled &&
-      onboardingSync.params?.touchscreens &&
-      !hasTrustchain,
+    onboardingSync?.enabled &&
+    onboardingSync.params?.touchscreens &&
+    !hasTrustchain,
   );
 }

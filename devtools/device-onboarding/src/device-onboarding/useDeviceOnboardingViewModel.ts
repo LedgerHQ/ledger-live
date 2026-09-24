@@ -7,7 +7,6 @@ import {
   type DeviceOnboardingToolProps,
 } from "../types";
 
-/** The host keeps the whole run; past this the panel is scrolled rather than read. */
 const displayedEventCount = 40;
 const displayedDetailLength = 80;
 const displayedStateCount = 24;
@@ -37,7 +36,6 @@ export interface SendableRow {
   readonly event: OnboardingEvent;
 }
 
-/** What a state means for whoever reads the trail, not where it sits in the machine. */
 export type StateKind =
   | "progress"
   | "genuine"
@@ -50,7 +48,6 @@ export type StateKind =
   | "quit";
 
 export interface StateStep {
-  /** A machine state is revisited, so the position disambiguates the label. */
   readonly key: string;
   readonly label: string;
   readonly kind: StateKind;
@@ -75,7 +72,6 @@ const quitStates = new Set(["quitting", "leavingOnQuit", "exitOnboarding"]);
 const firmwarePattern = /firmware/i;
 const genuinePattern = /genuine|earlycheck/i;
 
-/** Families rather than an exhaustive map: the machine grows, an unknown state stays readable. */
 export function stateKind(state: string): StateKind {
   if (failedStates.has(state)) return "failed";
   if (succeededStates.has(state)) return "succeeded";
@@ -111,7 +107,6 @@ export function formatValue(value: string | number | boolean | null | undefined)
     return "—";
   }
 
-  // `String()` prints an Error's message, and throws on an object without a prototype.
   const hostDefeatedTheType = value !== null && typeof value === "object";
   if (hostDefeatedTheType) {
     return "—";
@@ -185,7 +180,6 @@ export function useDeviceOnboardingViewModel(
           .filter(field => context[field] !== undefined)
           .map(field => ({ label: field, value: formatValue(context[field]) }));
 
-  // Several transitions land in the same millisecond, so the append order breaks the ties.
   const eventRows: EventRow[] = events
     .map((event, index) => ({ event, index }))
     .sort(
@@ -214,10 +208,11 @@ export function useDeviceOnboardingViewModel(
     event: entry.event,
   }));
 
-  const deviceLabel =
-    device === null
-      ? null
-      : `${device.name} · ${device.modelId} · ${device.wired ? "USB" : "BLE"} · ${device.sessionId}`;
+  let deviceLabel = null;
+  if (device !== null) {
+    const transport = device.wired ? "USB" : "BLE";
+    deviceLabel = `${device.name} · ${device.modelId} · ${transport} · ${device.sessionId}`;
+  }
 
   const transportWentAwayMidRun = status === "running" && device === null;
 

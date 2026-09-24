@@ -53,7 +53,6 @@ describe("DeviceOnboarding mobile integration", () => {
     const first = createDeviceOnboardingPorts({
       dmk,
       sessionId: "session-1",
-      connectedDevice,
       wired: false,
     });
     await first.openSession();
@@ -62,7 +61,6 @@ describe("DeviceOnboarding mobile integration", () => {
     const second = createDeviceOnboardingPorts({
       dmk,
       sessionId: "session-1",
-      connectedDevice,
       wired: false,
     });
     await second.openSession();
@@ -74,7 +72,6 @@ describe("DeviceOnboarding mobile integration", () => {
     const ports = createDeviceOnboardingPorts({
       dmk: createPortDmk(),
       sessionId: "session-1",
-      connectedDevice,
       wired: false,
     });
     await ports.openSession();
@@ -91,7 +88,6 @@ describe("DeviceOnboarding mobile integration", () => {
     const ports = createDeviceOnboardingPorts({
       dmk,
       sessionId: "session-1",
-      connectedDevice,
       wired: false,
     });
     await ports.openSession();
@@ -142,9 +138,9 @@ describe("DeviceOnboarding mobile integration", () => {
     });
 
     expect(result.current.device).toBeNull();
-    expect(
-      result.current.sendableEvents.some(({ event }) => event.type === "SESSION_READY"),
-    ).toBe(false);
+    expect(result.current.sendableEvents.some(({ event }) => event.type === "SESSION_READY")).toBe(
+      false,
+    );
 
     act(() => result.current.connect());
     await act(async () => {

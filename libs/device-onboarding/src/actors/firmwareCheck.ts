@@ -43,7 +43,7 @@ export const firmwareCheck = fromCallback<FirmwareCheckEvent, FirmwareCheckInput
       input.dmk.executeDeviceAction({
         sessionId: input.sessionId,
         deviceAction: new GetDeviceMetadataDeviceAction({
-          input: { useSecureChannel: true, forceUpdate: false, allowNonOnboardedDevice: true },
+          input: { useSecureChannel: false, forceUpdate: false, allowNonOnboardedDevice: true },
         }),
       }),
     );

@@ -1,7 +1,4 @@
-import type {
-  DeviceOnboardingContext,
-  OnboardingEvent,
-} from "@ledgerhq/device-onboarding";
+import type { DeviceOnboardingContext, OnboardingEvent } from "@ledgerhq/device-onboarding";
 import type { DevToolsConfig } from "@devtools/shell";
 
 export type DeviceOnboardingToolProps = Extract<
@@ -23,9 +20,7 @@ export const userEvents = [
   { type: "USER_DECLINE" },
 ] as const satisfies readonly OnboardingEvent[];
 
-export function flattenDeviceOnboardingContext(
-  context: DeviceOnboardingContext,
-): ToolContext {
+export function flattenDeviceOnboardingContext(context: DeviceOnboardingContext): ToolContext {
   const verdict = context.genuineVerdict;
 
   return {
@@ -66,19 +61,16 @@ export function stateValueToString(value: unknown): string {
     .join(",");
 }
 
-export function toolEvent(
-  event: OnboardingEvent,
-  id: string,
-  sessionId: string,
-): ToolEvent {
-  const detail =
-    event.type === "STEP_CHANGED"
-      ? { kind: "step" as const, step: event.state.currentOnboardingStep }
-      : event.type === "FIRMWARE_UPDATE_AVAILABLE"
-        ? { kind: "firmware" as const, version: event.update.finalFirmware.version }
-        : event.type === "SESSION_READY" || event.type === "TRANSPORT_LOST"
-          ? { kind: "session" as const, sessionId }
-          : undefined;
+export function toolEvent(event: OnboardingEvent, id: string, sessionId: string): ToolEvent {
+  let detail: ToolEvent["detail"];
+
+  if (event.type === "STEP_CHANGED") {
+    detail = { kind: "step", step: event.state.currentOnboardingStep };
+  } else if (event.type === "FIRMWARE_UPDATE_AVAILABLE") {
+    detail = { kind: "firmware", version: event.update.finalFirmware.version };
+  } else if (event.type === "SESSION_READY" || event.type === "TRANSPORT_LOST") {
+    detail = { kind: "session", sessionId };
+  }
 
   return { id, type: event.type, at: Date.now(), detail };
 }

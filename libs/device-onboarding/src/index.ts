@@ -71,9 +71,3 @@ export {
   type SeedPollingEvent,
   type SeedPollingInput,
 } from "./actors/seedPolling";
-export {
-  defaultUnlockPollingIntervalMs,
-  unlockPolling,
-  type UnlockPollingEvent,
-  type UnlockPollingInput,
-} from "./actors/unlockPolling";

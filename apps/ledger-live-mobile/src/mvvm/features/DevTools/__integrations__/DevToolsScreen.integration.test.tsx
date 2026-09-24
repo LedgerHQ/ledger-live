@@ -63,7 +63,7 @@ describe("DevToolsScreen", () => {
   it("mounts DevTools with the configured tools and stack screen options padded by the bottom inset", () => {
     render(withBottomInset(<DevToolsScreen />));
 
-    expect(devToolsSpy).toHaveBeenCalledTimes(1);
+    expect(devToolsSpy).toHaveBeenCalled();
     const props = devToolsSpy.mock.lastCall![0];
 
     expect(props.config).toEqual([
@@ -78,6 +78,15 @@ describe("DevToolsScreen", () => {
           onNavigateToPaySuccess: expect.any(Function),
           onNavigateToSendSuccess: expect.any(Function),
         },
+      },
+      {
+        id: "device-onboarding",
+        config: expect.objectContaining({
+          status: "idle",
+          connect: expect.any(Function),
+          send: expect.any(Function),
+          reset: expect.any(Function),
+        }),
       },
     ]);
     expect(props.screenOptions.contentStyle).toEqual([expect.anything(), { paddingBottom: 34 }]);

@@ -50,7 +50,6 @@ const updateAvailable = { completes: metadata(availableUpdate) };
 
 const lockedDevice: ScriptedCommand<GetOsVersionResponse> = { throws: new Error("locked") };
 
-/** A test left mid-flow keeps a polling actor, and its pending timer, alive. */
 const started: OnboardingActor[] = [];
 
 afterEach(() => {
@@ -770,7 +769,6 @@ describe("global handlers", () => {
     expect(stateOf(actor)).toBe("deviceLocked");
   });
 
-  /** Hosts disable the kit refresher, so the unlock is only noticed by polling from here. */
   it("resumes on its own once the device answers again, with no event from the host", async () => {
     const { actor } = await start({ osVersion: [os(unseeded)], ...passingChecks });
 
