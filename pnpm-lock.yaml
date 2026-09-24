@@ -629,7 +629,7 @@ overrides:
 
 packageExtensionsChecksum: sha256-y05zn8SOmFlbIRTsh3Z3c43aAFvz482eG6q6x0pvCFg=
 
-pnpmfileChecksum: sha256-YT3c6PR0sDJOv5QX5BFHtgHtdIeMEwJL0lMX54PuO8s=
+pnpmfileChecksum: sha256-sYLwi/bzHv61gbL5YvFc0ksIdzunnCHTWqYUbG1Wg7I=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
@@ -683,9 +683,6 @@ patchedDependencies:
   react-native@0.81.6:
     hash: fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1
     path: patches/react-native@0.81.6.patch
-  rn-fetch-blob@0.12.0:
-    hash: 5d357d2cf58066f49b2c2d96c7b92b4b1c6d3d63508aca870f571e092deaaefd
-    path: patches/rn-fetch-blob@0.12.0.patch
   styled-components@6.1.19:
     hash: 810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7
     path: patches/styled-components@6.1.19.patch
@@ -2442,9 +2439,6 @@ importers:
       reselect:
         specifier: 'catalog:'
         version: 5.1.1
-      rn-fetch-blob:
-        specifier: 0.12.0
-        version: 0.12.0(patch_hash=5d357d2cf58066f49b2c2d96c7b92b4b1c6d3d63508aca870f571e092deaaefd)
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -31927,10 +31921,6 @@ packages:
     resolution: {integrity: sha512-MKZeRNyYZAVVVG1oZeLaWie1uweH40m9AZwIwxyPbTSX4hHrVYSzLg0Ro5Z5R7XKkIX+Cc6oD1rqeDJnwsB8/A==}
     deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
-  glob@7.0.6:
-    resolution: {integrity: sha512-f8c0rE8JiCxpa52kWPAOa3ZaYEnzofDzCQLCn3Vdk0Z5OVLq3BsRFJI4S4ykpeVW6QMGBUkMeUpoEgWnMTnw5Q==}
-    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
     deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
@@ -36635,9 +36625,6 @@ packages:
   rlp@3.0.0:
     resolution: {integrity: sha512-PD6U2PGk6Vq2spfgiWZdomLvRGDreBLxi5jv5M8EpRo3pU6VEm31KO+HFxE18Q3vgqfDrQ9pZA3FP95rkijNKw==}
     hasBin: true
-
-  rn-fetch-blob@0.12.0:
-    resolution: {integrity: sha512-+QnR7AsJ14zqpVVUbzbtAjq0iI8c9tCg49tIoKO2ezjzRunN7YL6zFSFSWZm6d+mE/l9r+OeDM3jmb2tBb2WbA==}
 
   rn-host-detect@1.2.0:
     resolution: {integrity: sha512-btNg5kzHcjZZ7t7mvvV/4wNJ9e3MPgrWivkRgWURzXL0JJ0pwWlU4zrbmdlz3HHzHOxhBhHB4D+/dbMFfu4/4A==}
@@ -58323,15 +58310,6 @@ snapshots:
       path-is-absolute: 1.0.1
     optional: true
 
-  glob@7.0.6:
-    dependencies:
-      fs.realpath: 1.0.0
-      inflight: 1.0.6
-      inherits: 2.0.4
-      minimatch: 3.1.2
-      once: 1.4.0
-      path-is-absolute: 1.0.1
-
   glob@7.2.3:
     dependencies:
       fs.realpath: 1.0.0
@@ -61365,7 +61343,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
@@ -64866,12 +64846,6 @@ snapshots:
       - utf-8-validate
 
   rlp@3.0.0: {}
-
-  rn-fetch-blob@0.12.0(patch_hash=5d357d2cf58066f49b2c2d96c7b92b4b1c6d3d63508aca870f571e092deaaefd):
-    dependencies:
-      base-64: 0.1.0
-      glob: 7.0.6
-      lodash: 4.17.21
 
   rn-host-detect@1.2.0: {}
 
