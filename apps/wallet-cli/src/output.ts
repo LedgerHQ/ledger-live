@@ -239,7 +239,9 @@ export interface CommandOutput {
   /** Output the result of `agent-intent complete` (human: confirmation line; json: envelope). */
   agentIntentComplete(result: { profileId: string; trustchainId: string }): void;
   /** Output a submitted `agent-intent send` proposal (human: review link first; json: envelope). */
-  agentIntentSend(result: SendIntentSummary & { intentId: string | null; deeplink: string }): void;
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void;
   /** Output a validated `agent-intent send --dry-run` proposal that was not submitted. */
   agentIntentSendDryRun(summary: SendIntentSummary): void;
 }
@@ -765,11 +767,13 @@ class HumanCommandOutput implements CommandOutput {
     );
   }
 
-  agentIntentSend(result: SendIntentSummary & { intentId: string | null; deeplink: string }): void {
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
     writeStdout(
       `${colors.green("✔")} Intent proposed for human review — nothing was signed or broadcast.`,
     );
-    writeStdout(result.deeplink);
+    if (result.deeplink) writeStdout(result.deeplink);
     writeStdout("");
     writeStdout(
       [
@@ -1195,7 +1199,9 @@ class JsonCommandOutput implements CommandOutput {
     );
   }
 
-  agentIntentSend(result: SendIntentSummary & { intentId: string | null; deeplink: string }): void {
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
     this._writeNdjson(
       this._envelope({
         intentId: result.intentId,

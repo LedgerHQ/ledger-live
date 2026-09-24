@@ -10,13 +10,17 @@ import {
  * Thrown when a stored Agent Intent secret key is password-protected (`ENC:`) but no wrapping key
  * was supplied. Mirrors `PasswordRequiredError` in `keychain.ts` for the ring member key.
  */
-export class AgentIntentPasswordRequiredError extends Error {}
+export class AgentIntentPasswordRequiredError extends Error {
+  override name = "AgentIntentPasswordRequiredError";
+}
 
 /**
  * Thrown when a stored Agent Intent entry is structurally broken (non-hex `ENC:` payload) rather
  * than merely locked by the wrong password.
  */
-export class AgentIntentCorruptKeychainError extends Error {}
+export class AgentIntentCorruptKeychainError extends Error {
+  override name = "AgentIntentCorruptKeychainError";
+}
 
 function getEntry(profileId: string) {
   return keychainEntry("agent-intent-key", "agent-intent", profileId);

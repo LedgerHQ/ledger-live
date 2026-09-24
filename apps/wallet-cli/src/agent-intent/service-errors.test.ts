@@ -7,7 +7,11 @@ import {
   staticAccessTokenProvider,
   type SendIntent,
 } from "@ledgerhq/agent-intent-sdk";
-import { describeAgentIntentError, redactServiceText } from "./service-errors";
+import {
+  describeAgentIntentError,
+  isAcceptedWithoutReviewLink,
+  redactServiceText,
+} from "./service-errors";
 
 const INTENT: SendIntent = {
   type: "send",
@@ -46,16 +50,25 @@ async function realSdkError(options: {
   );
 }
 
-// These pin the SDK error messages describeAgentIntentError recognizes by text: if an SDK upgrade
-// rewords them, these fail instead of the "intent was probably created" warning silently vanishing.
-describe("describeAgentIntentError against the real SDK", () => {
-  it("recognizes the SDK's unreadable-deeplink error, raised after the service accepted the intent", async () => {
+// These pin the SDK errors recognized by name and message: if an SDK upgrade renames or rewords
+// them, these fail instead of the "intent was accepted" handling silently vanishing.
+describe("SDK errors, as the real SDK throws them", () => {
+  it("recognizes the unreadable-deeplink error the SDK raises after the service accepted the intent", async () => {
     const e = await realSdkError({
       staticToken: true,
       fetch: fakeFetch(() => new Response("not a url", { status: 200 })),
     });
 
-    expect(describeAgentIntentError(e, "bot").message).toMatch(/most likely created/);
+    expect(isAcceptedWithoutReviewLink(e)).toBe(true);
+  });
+
+  it("does not mistake a service rejection for an accepted intent", async () => {
+    const e = await realSdkError({
+      staticToken: true,
+      fetch: fakeFetch(() => new Response("nope", { status: 500 })),
+    });
+
+    expect(isAcceptedWithoutReviewLink(e)).toBe(false);
   });
 
   it("recognizes the SDK's authentication failure", async () => {
@@ -183,15 +196,6 @@ describe("describeAgentIntentError", () => {
 
     expect(err.message).toContain("HTTP 418");
     expect(err.message).not.toContain("hunter2");
-  });
-
-  it("warns that an unreadable deeplink most likely means the intent was created", () => {
-    const err = describeAgentIntentError(
-      new AgentIntentSdkError("BFF returned an invalid intent deeplink."),
-      "bot",
-    );
-
-    expect(err.message).toMatch(/most likely created.*duplicate/s);
   });
 
   it("reports an SDK authentication failure with the failing leg", () => {

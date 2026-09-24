@@ -49,12 +49,9 @@ function assertProfileAvailable(session: Session, profileId: string): void {
   }
 }
 
-// Verified against agent-intent-frontend's argocd/{stg,prd}/values.yaml BFF_BASE_URL (2026-09-22),
-// same host/path the reference agent-intent.mjs CLI defaults to. The SDK has no default of its own
-// for bffBaseUrl (unlike AGENT_INTENT_FRONTEND_URLS for the app URL), so this stays local. No
-// override flag: nothing in this codebase yet calls the BFF with a profile's bffBaseUrl (that
-// client ships with NTTVS-746+), so a flag promising to redirect it would do nothing but look like
-// it works — add one once a real consumer exists to wire it into.
+// Same values as agent-intent-frontend's per-environment BFF_BASE_URL. The SDK has no default for
+// bffBaseUrl (unlike AGENT_INTENT_FRONTEND_URLS), so it is recorded on the profile at enroll time
+// and reused by `agent-intent send`.
 const DEFAULT_BFF_BASE_URLS = {
   staging: "https://global.api.stg.ledger-test.com/agent-intent",
   production: "https://global.api.prd.ledger.com/agent-intent",

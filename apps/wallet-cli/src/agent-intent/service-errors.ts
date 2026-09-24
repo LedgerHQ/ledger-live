@@ -1,6 +1,22 @@
-import { AgentIntentHttpError, AgentIntentSdkError } from "@ledgerhq/agent-intent-sdk";
+import type { AgentIntentHttpError } from "@ledgerhq/agent-intent-sdk";
 
 const MAX_DETAIL_LENGTH = 300;
+
+// Matched by `name`, not `instanceof`: the SDK is a separate package, so its classes can exist
+// twice in a bundle and fail an `instanceof` check.
+function isHttpError(e: unknown): e is AgentIntentHttpError {
+  return e instanceof Error && e.name === "AgentIntentHttpError";
+}
+
+function isSdkError(e: unknown): e is Error {
+  return e instanceof Error && e.name === "AgentIntentSdkError";
+}
+
+/** The SDK throws this after a 2xx whose body isn't a URL: the intent exists, only its review
+ * link is missing, so the caller must report success rather than invite a duplicate retry. */
+export function isAcceptedWithoutReviewLink(e: unknown): boolean {
+  return isSdkError(e) && /invalid intent deeplink/i.test(e.message);
+}
 
 /**
  * Makes service- or network-supplied text safe to print: the SDK passes a non-JSON response body
@@ -11,7 +27,7 @@ const MAX_DETAIL_LENGTH = 300;
  */
 export function redactServiceText(text: string): string {
   const redacted = text
-    .replace(/([a-z][a-z0-9+.-]*:\/\/)[^/\s@]*@/gi, "$1")
+    .replace(/:\/\/[^/\s@]*@/g, "://")
     .replace(/Bearer\s+\S+/gi, "Bearer [redacted]")
     .replace(/(0x)?[0-9a-fA-F]{64,}/g, "[redacted]")
     .replace(/[A-Za-z0-9_\-.~+/=]{80,}/g, "[redacted]")
@@ -77,16 +93,9 @@ function httpErrorMessage(e: AgentIntentHttpError, profileId: string): string {
  * body or a request URL that must never reach output or logs.
  */
 export function describeAgentIntentError(e: unknown, profileId: string): Error {
-  if (e instanceof AgentIntentHttpError) return new Error(httpErrorMessage(e, profileId));
+  if (isHttpError(e)) return new Error(httpErrorMessage(e, profileId));
   const message = redactServiceText(e instanceof Error ? e.message : String(e));
-  if (e instanceof AgentIntentSdkError) {
-    if (/invalid intent deeplink/i.test(message)) {
-      return new Error(
-        "The Agent Intent service accepted the request but returned an unreadable review link, so " +
-          "the intent was most likely created. Check the Agent Intent frontend before re-running, " +
-          "or you may propose a duplicate.",
-      );
-    }
+  if (isSdkError(e)) {
     if (/authentication request failed/i.test(message)) {
       return new Error(
         `Could not authenticate profile "${profileId}" with Agent Intent (${message}). Check the ` +
