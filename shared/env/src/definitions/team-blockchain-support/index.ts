@@ -1,26 +1,6 @@
 import { boolParser, stringParser } from "@ledgerhq/live-env";
 
 const teamBlockchainSupport = {
-  APTOS_API_ENDPOINT: {
-    def: "https://apt.coin.ledger.com/node",
-    parser: stringParser,
-    desc: "API endpoint for Aptos",
-  },
-  APTOS_TESTNET_API_ENDPOINT: {
-    def: "https://api.testnet.aptoslabs.com/v1",
-    parser: stringParser,
-    desc: "API endpoint for Aptos testnet",
-  },
-  APTOS_INDEXER_ENDPOINT: {
-    def: "https://apt.coin.ledger.com/indexer",
-    parser: stringParser,
-    desc: "Indexer endpoint for Aptos",
-  },
-  APTOS_TESTNET_INDEXER_ENDPOINT: {
-    def: "https://api.testnet.aptoslabs.com/v1/graphql",
-    parser: stringParser,
-    desc: "Indexer endpoint for Aptos testnet",
-  },
   APTOS_ENABLE_TOKENS: {
     def: false,
     parser: boolParser,

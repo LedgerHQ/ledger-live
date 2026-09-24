@@ -28,6 +28,8 @@
     "src/test/index.ts",
     "src/types/assets.ts",
     "src/utils/IconGenerator.ts",
-    "src/utils/index.ts"
+    "src/utils/index.ts",
+    "src/test/coinConfig.setup.ts",
+    "src/test/coinConfig.ts"
   ]
 }

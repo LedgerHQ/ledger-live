@@ -32,6 +32,7 @@ import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
+import coinConfig from "../config";
 import {
   APTOS_ASSET_ID,
   DEFAULT_GAS,
@@ -56,11 +57,9 @@ import type {
 } from "./graphql/types";
 
 const getApiEndpoint = (currencyId: string) =>
-  isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
+  coinConfig.getCoinConfig(currencyId).infra.APTOS_API_ENDPOINT;
 const getIndexerEndpoint = (currencyId: string) =>
-  isTestnet(currencyId)
-    ? getEnv("APTOS_TESTNET_INDEXER_ENDPOINT")
-    : getEnv("APTOS_INDEXER_ENDPOINT");
+  coinConfig.getCoinConfig(currencyId).infra.APTOS_INDEXER_ENDPOINT;
 const getNetwork = (currencyId: string) =>
   isTestnet(currencyId) ? Network.TESTNET : Network.MAINNET;
 

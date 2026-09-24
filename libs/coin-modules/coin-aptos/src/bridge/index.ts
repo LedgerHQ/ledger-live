@@ -1,3 +1,4 @@
+import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   makeAccountBridgeReceive,
@@ -9,6 +10,7 @@ import {
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import aptosCoinConfig, { type AptosBridgeConfig } from "../config";
 import { APTOS_DUMMY_ADDRESS } from "../constants";
 import createTransaction from "../logic/createTransaction";
 import { validateAddress } from "../logic/validateAddress";
@@ -73,7 +75,11 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<AptosSigner>) {
+export function createBridges(
+  signerContext: SignerContext<AptosSigner>,
+  coinConfig: CoinConfig<AptosBridgeConfig>,
+) {
+  aptosCoinConfig.setCoinConfig(coinConfig);
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

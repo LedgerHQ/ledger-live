@@ -1,15 +1,12 @@
-import { getEnv } from "@ledgerhq/live-env";
+import coinConfig from "../config";
 
 export * from "./IconGenerator";
 
-export function endpointByCurrencyId(currencyId: string): string {
-  const endpoints: Record<string, string> = {
-    aptos: getEnv("APTOS_API_ENDPOINT"),
-    aptos_testnet: getEnv("APTOS_TESTNET_API_ENDPOINT"),
-  };
+const APTOS_CURRENCY_IDS = ["aptos", "aptos_testnet"];
 
-  if (currencyId in endpoints) {
-    return endpoints[currencyId];
+export function endpointByCurrencyId(currencyId: string): string {
+  if (APTOS_CURRENCY_IDS.includes(currencyId)) {
+    return coinConfig.getCoinConfig(currencyId).infra.APTOS_API_ENDPOINT;
   }
 
   throw Error(`unexpected currency id format <${currencyId}>, should be like aptos[_testnet]`);

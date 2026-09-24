@@ -1,6 +1,7 @@
 import { Deserializer, Hex, Network, RawTransaction } from "@aptos-labs/ts-sdk";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+import { setEnvUnsafe } from "@ledgerhq/live-env";
 import { createApi } from "../../api";
+import { defaultAptosInfra } from "../../test/coinConfig";
 import { createMockAptosContext } from "../../test/context";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, TOKEN_TYPE } from "../../constants";
 
@@ -13,8 +14,8 @@ describe("createApi", () => {
     status: { type: "active" },
     aptosSettings: {
       network: Network.MAINNET,
-      fullnode: getEnv("APTOS_API_ENDPOINT"),
-      indexer: getEnv("APTOS_INDEXER_ENDPOINT"),
+      fullnode: defaultAptosInfra.aptos.APTOS_API_ENDPOINT,
+      indexer: defaultAptosInfra.aptos.APTOS_INDEXER_ENDPOINT,
     },
   });
   const assetTypeNative = "native";

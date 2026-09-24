@@ -6,9 +6,10 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import { createBridges } from "../../bridge";
+import { getMockAptosBridgeConfig } from "../../test/coinConfig";
 
 const signer = jest.fn();
-const bridge = createBridges(signer);
+const bridge = createBridges(signer, getMockAptosBridgeConfig);
 
 describe("Aptos bridge interface", () => {
   describe("currencyBridge", () => {
