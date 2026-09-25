@@ -4,7 +4,7 @@ import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSy
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { EMPTY } from "rxjs";
 import { Flow, initialStateWalletSync, Step } from "~/renderer/reducers/walletSync";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 import { useActivationDrawer } from "../../LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import WalletSyncDrawer from "../components/Drawer";
@@ -26,7 +26,6 @@ export const lldWalletSyncFeatureFlag = {
   lldWalletSync: {
     enabled: true,
     params: {
-      environment: "STAGING" as const,
       watchConfig: {
         pollingInterval: 10000,
         initialTimeout: 5000,

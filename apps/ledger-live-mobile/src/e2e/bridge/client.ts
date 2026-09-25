@@ -49,6 +49,7 @@ import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { setSpeculosDeviceModel } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
+import { walletSyncEnvironment } from "~/config/walletSync";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -71,22 +72,6 @@ function removeKnownSpeculosDevices() {
   }
 }
 
-function overrideLedgerSyncEnvironment() {
-  const environment = LaunchArguments.value()["ledger_sync_environment"];
-  if (environment !== "PROD" && environment !== "STAGING") return;
-
-  log(`[E2E Bridge Client]: Ledger Sync environment=${environment}`);
-  store.dispatch(
-    setOverride({
-      key: "llmWalletSync",
-      value: {
-        enabled: false,
-        params: { environment, watchConfig: {}, learnMoreLink: "" },
-      },
-    }),
-  );
-}
-
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
   const mock = LaunchArguments.value()["mock"];
@@ -100,7 +85,6 @@ export function init() {
     Config.MOCK = "";
   }
   setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
-  overrideLedgerSyncEnvironment();
 
   initAppNetworkLogging();
 
@@ -254,6 +238,14 @@ async function onMessage(event: WebSocketMessageEvent) {
           type: "appEnvs",
           id: msg.id,
           payload,
+        });
+        break;
+      }
+      case "getWalletSyncEnvironment": {
+        postMessage({
+          type: "walletSyncEnvironment",
+          id: msg.id,
+          payload: walletSyncEnvironment,
         });
         break;
       }

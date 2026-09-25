@@ -10,7 +10,6 @@ const entryPointsVisibleState = withFlagOverrides(
     llmWalletSync: {
       enabled: true,
       params: {
-        environment: "STAGING",
         watchConfig: {},
       },
     },

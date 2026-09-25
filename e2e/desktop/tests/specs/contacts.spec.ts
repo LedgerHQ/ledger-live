@@ -6,7 +6,6 @@ import {
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
-import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import {
   destroyTrustchain,
   generateLedgerSyncSeed,
@@ -30,7 +29,6 @@ const CONTACTS_FEATURE_FLAGS: PartialFeatures = {
   lldWalletSync: {
     enabled: true,
     params: {
-      environment: ledgerSyncEnvironment,
       watchConfig: {
         pollingInterval: 2_000,
         initialTimeout: 500,

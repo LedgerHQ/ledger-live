@@ -79,9 +79,11 @@ UI via selectors; they are not part of the `Account` object itself.
 ### Building the SDKs
 
 `useTrustchainSdk` constructs the SDK with context `{ applicationId: 16, name: <instance name>,
-apiBaseUrl }`, where `name` is the user-set instance name and the URLs come from the feature
-flag's `environment` param. `useCloudSyncSDK` builds `new CloudSyncSDK({ slug: "live", schema:
-walletsync.schema, trustchainSdk, getCurrentVersion, saveNewUpdate })`.
+apiBaseUrl }`, where `name` is the user-set instance name. Desktop selects the paired Trustchain
+and Cloud Sync URLs from `process.env.WALLET_SYNC_ENVIRONMENT`; Mobile reads the same setting
+through `react-native-config` from its selected `.env.*` file. `useCloudSyncSDK` builds
+`new CloudSyncSDK({ slug: "live", schema: walletsync.schema, trustchainSdk, getCurrentVersion,
+saveNewUpdate })`.
 
 A `trustchainLifecycle` implementing the `onTrustchainRotation` hook is passed to the SDK so
 that, on a [key rotation](./02-trustchain-sdk.md#key-rotation-on-member-removal), the Cloud Sync

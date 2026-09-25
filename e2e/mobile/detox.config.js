@@ -10,6 +10,11 @@ const androidArch = process.env.E2E_ANDROID_ABI || (isAppleSiliconHost ? "arm64-
 const gpuMode = process.env.CI ? "swiftshader_indirect" : "host";
 const SCHEME = "ledgerlivemobile";
 
+const walletSyncEnvironment = process.env.WALLET_SYNC_ENVIRONMENT ?? "STAGING";
+if (walletSyncEnvironment !== "PROD" && walletSyncEnvironment !== "STAGING") {
+  throw new Error(`Invalid WALLET_SYNC_ENVIRONMENT: ${walletSyncEnvironment}`);
+}
+
 const rootDir = path.resolve(__dirname, "../..");
 const iosDir = path.join(rootDir, "apps/ledger-live-mobile/ios");
 const iosBuildDir = path.join(iosDir, "build");

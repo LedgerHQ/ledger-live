@@ -8,7 +8,6 @@ const INITIAL_STATE = withFlagOverrides(
     llmWalletSync: {
       enabled: true,
       params: {
-        environment: "STAGING",
         watchConfig: {},
       },
     },

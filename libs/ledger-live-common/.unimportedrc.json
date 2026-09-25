@@ -842,8 +842,7 @@
     "src/families/xrp/bridgeExtensions.ts",
     "src/families/xrp/coinModuleApi.ts",
     "src/families/xrp/config.ts",
-    "src/families/xrp/signer.ts",
-    "src/walletSync/getEnvironmentParams.ts"
+    "src/families/xrp/signer.ts"
   ],
   "ignoreUnused": [
     "@cardano-foundation/ledgerjs-hw-app-cardano",

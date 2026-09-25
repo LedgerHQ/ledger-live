@@ -194,6 +194,10 @@ export async function getEnvs() {
   return fetchData({ type: "getEnvs", id: uniqueId() });
 }
 
+export async function getWalletSyncEnvironment() {
+  return fetchData({ type: "getWalletSyncEnvironment", id: uniqueId() });
+}
+
 /** Last Buy/Sell handoff URL (`goToManifest` + `goToURL`) seen by the app, or "" if none yet. */
 export async function getPtxHandoff() {
   return fetchData({ type: "getPtxHandoff", id: uniqueId() });
@@ -260,6 +264,7 @@ function onMessage(messageStr: string) {
     case "appFlags":
     case "appEnvs":
     case "contactsImported":
+    case "walletSyncEnvironment":
       resolvePending(msg.id, msg.payload);
       break;
     case "swapSetupDone":

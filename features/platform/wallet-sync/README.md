@@ -10,6 +10,14 @@ Wires together `@shared/cloud-sync` (network), `@shared/cloud-sync-module` (aggr
 - `createWalletSyncWatchLoop` — drives push/pull cycles using a `CloudSyncSDKInterface`
 - `makeSaveNewUpdate` / `makeLocalIncrementalUpdate` — helpers for processing incoming sync events and dispatching Redux actions
 - `trustchainLifecycle` / `liveSlug` — lifecycle hooks called on trustchain rotation
+- `resolveWalletSyncEnvironment` — validates the app-provided Wallet Sync environment
+- `getWalletSyncEnvironmentParams` — selects paired Trustchain and Cloud Sync URLs
+
+Apps own platform-specific configuration reads: Desktop uses
+`process.env.WALLET_SYNC_ENVIRONMENT`, while Mobile uses
+`Config.WALLET_SYNC_ENVIRONMENT` from its selected `.env.*` file. Node E2E helpers use
+`process.env`. This package validates the supplied environment and resolves paired Trustchain and
+Cloud Sync URLs through `@shared/env`.
 
 ## Related documentation
 

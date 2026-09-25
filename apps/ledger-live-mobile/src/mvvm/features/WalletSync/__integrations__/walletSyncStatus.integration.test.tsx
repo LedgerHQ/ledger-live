@@ -12,6 +12,10 @@ jest.mock("../hooks/useLedgerSyncStatus", () => ({
   }),
 }));
 
+jest.mock("~/config/walletSync", () => ({
+  walletSyncEnvironment: "STAGING",
+}));
+
 describe("WalletSyncStatus", () => {
   it("Should display warning banner when LedgerSync is down", async () => {
     const { user } = render(<WalletSyncSettingsNavigator />, {
@@ -20,7 +24,6 @@ describe("WalletSyncStatus", () => {
           llmWalletSync: {
             enabled: true,
             params: {
-              environment: "STAGING",
               watchConfig: {
                 pollingInterval: 10000,
                 initialTimeout: 5000,

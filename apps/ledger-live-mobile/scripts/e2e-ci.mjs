@@ -150,7 +150,6 @@ for (const argName in argv) {
       break;
     case "production":
       target = "prerelease";
-      process.env.LEDGER_SYNC_ENVIRONMENT ??= "PROD";
       break;
     case "filter":
       filter = argv[argName];
@@ -164,6 +163,8 @@ for (const argName in argv) {
       break;
   }
 }
+
+process.env.WALLET_SYNC_ENVIRONMENT ??= target === "prerelease" ? "PROD" : "STAGING";
 
 const extraArgs = process.argv.slice(2).filter(arg => !arg.startsWith("-"));
 const filteredArgs = extraArgs.filter(arg => {

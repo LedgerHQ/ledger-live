@@ -9082,6 +9082,9 @@ importers:
       '@shared/cloud-sync-module':
         specifier: workspace:^
         version: link:../../../shared/cloud-sync-module
+      '@shared/env':
+        specifier: workspace:*
+        version: link:../../../shared/env
       zod:
         specifier: 'catalog:'
         version: 4.4.3

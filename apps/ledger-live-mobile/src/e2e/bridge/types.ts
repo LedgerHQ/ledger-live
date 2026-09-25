@@ -52,6 +52,11 @@ export type ServerData =
       payload: string;
     }
   | {
+      type: "walletSyncEnvironment";
+      id: string;
+      payload: string;
+    }
+  | {
       type: "ptxHandoff";
       id: string;
       payload: string;
@@ -77,6 +82,7 @@ export type MessageData =
   | { type: "getLogs"; id: string }
   | { type: "getFlags"; id: string }
   | { type: "getEnvs"; id: string }
+  | { type: "getWalletSyncEnvironment"; id: string }
   | { type: "getPtxHandoff"; id: string }
   | { type: "navigate"; id: string; payload: string }
   | { type: "importSettings"; id: string; payload: Partial<SettingsState> }

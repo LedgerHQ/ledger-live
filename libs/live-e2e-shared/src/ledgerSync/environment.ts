@@ -1,9 +1,11 @@
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import {
+  getWalletSyncEnvironmentParams,
+  resolveWalletSyncEnvironment,
+} from "@features/platform-wallet-sync";
 
-export type LedgerSyncEnvironment = "STAGING" | "PROD";
-
-export const ledgerSyncEnvironment: LedgerSyncEnvironment =
-  process.env.LEDGER_SYNC_ENVIRONMENT === "PROD" ? "PROD" : "STAGING";
+export const ledgerSyncEnvironment = resolveWalletSyncEnvironment(
+  process.env.WALLET_SYNC_ENVIRONMENT ?? "STAGING",
+);
 
 /**
  * Both URLs come from a single resolution, the same way the app derives them in `useTrustchainSdk`.

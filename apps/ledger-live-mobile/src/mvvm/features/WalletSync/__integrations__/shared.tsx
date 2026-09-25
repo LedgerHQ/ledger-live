@@ -9,7 +9,7 @@ import WalletSyncNavigator from "../WalletSyncNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { withFlagOverrides } from "@tests/test-renderer";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 import { EMPTY } from "rxjs";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
@@ -63,7 +63,6 @@ export const INITIAL_TEST = withFlagOverrides(
     llmWalletSync: {
       enabled: true,
       params: {
-        environment: "STAGING",
         watchConfig: {},
         learnMoreLink: "https://www.ledger.com",
       },

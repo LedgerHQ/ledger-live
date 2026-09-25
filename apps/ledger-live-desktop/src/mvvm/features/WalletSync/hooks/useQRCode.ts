@@ -11,8 +11,8 @@ import {
   setTrustchain,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
+import { walletSyncEnvironment } from "~/config/walletSync";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { track } from "~/renderer/analytics/segment";
 import { QueryKey } from "./type.hooks";
@@ -35,10 +35,7 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
   const memberCredentials = useSelector(memberCredentialsSelector);
   const store = useStore();
   const sdk = useTrustchainSdk();
-  const featureWalletSync = useFeature("lldWalletSync");
-  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
+  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(walletSyncEnvironment);
   const [url, setUrl] = useState<string | null>(null);
   const memberName = useInstanceName();
 

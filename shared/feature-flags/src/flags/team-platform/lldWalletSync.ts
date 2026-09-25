@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { flagWith } from "../../define";
 
-const walletSyncEnvironmentSchema = z.enum(["STAGING", "PROD"]);
 const walletSyncWatchConfigSchema = z.object({
   notificationsEnabled: z.boolean().optional(),
   pollingInterval: z.number().optional(),
@@ -11,14 +10,12 @@ const walletSyncWatchConfigSchema = z.object({
 
 export const lldWalletSync = flagWith(
   {
-    environment: walletSyncEnvironmentSchema,
     watchConfig: walletSyncWatchConfigSchema,
     learnMoreLink: z.string(),
   },
   {
     enabled: false,
     params: {
-      environment: "PROD",
       watchConfig: {},
       learnMoreLink: "",
     },

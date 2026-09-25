@@ -54,7 +54,6 @@ describe("WalletSyncActivation", () => {
           llmWalletSync: {
             enabled: true,
             params: {
-              environment: "STAGING",
               watchConfig: {},
             },
           },
@@ -103,7 +102,6 @@ describe("WalletSyncActivation", () => {
           llmWalletSync: {
             enabled: true,
             params: {
-              environment: "STAGING",
               watchConfig: {},
             },
           },
@@ -149,7 +147,6 @@ describe("WalletSyncActivation", () => {
           llmWalletSync: {
             enabled: true,
             params: {
-              environment: "STAGING",
               watchConfig: {},
             },
           },
