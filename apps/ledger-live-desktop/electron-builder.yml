@@ -58,6 +58,7 @@ nsis:
 files:
   # Include files
   - .webpack/**/*
+  - "!.webpack/node_modules/**"
   - "!.webpack/**/*.js.map"
   - "node_modules/@ledgerhq/zcash-utils/**/*"
   - from: "dist/node_modules"
@@ -91,6 +92,11 @@ files:
       # Custom inclusion list
       - "**/build/**/*.{js,cjs,mjs}"
       - "**/*.node"
+  - from: ".webpack/node_modules"
+    to: "node_modules"
+    filter:
+      - "**/*"
+      - "!**/*.js.map"
   # Exclude files
   - "!node_modules"
 
@@ -104,3 +110,4 @@ publish:
 
 asarUnpack:
   - "node_modules/@ledgerhq/zcash-utils/**/*"
+  - "node_modules/@datadog/electron-sdk/**/*.node"

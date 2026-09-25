@@ -7,6 +7,7 @@ import fs from "fs/promises";
 import updater from "./updater";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
+import { captureExceptionMain } from "~/datadog/main";
 
 /**
  * Sets env variables for the main process.
@@ -120,6 +121,13 @@ if (!__DEV__) {
     const stack = error.stack ? error.stack : `${error.name}: ${error.message}`;
     const message = "Uncaught Exception:\n" + stack;
     console.error(message);
+    captureExceptionMain(error);
+  });
+
+  process.on("unhandledRejection", function (reason) {
+    const stack = reason instanceof Error ? (reason.stack ?? reason.message) : String(reason);
+    console.error("Unhandled Rejection:\n" + stack);
+    captureExceptionMain(reason);
   });
 }
 

@@ -15,7 +15,18 @@ import {
 import db from "./db";
 import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
+import {
+  initDatadogMain,
+  captureExceptionMain,
+  setUserIdMain,
+  beginPreInitBufferingMain,
+} from "~/datadog/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
+import {
+  DatadogId,
+  shouldUsePersistedId,
+  type PersistedIdentities,
+} from "@domain/entity-client-identity";
 import {
   installExtension,
   REDUX_DEVTOOLS,
@@ -36,6 +47,7 @@ setUserDataPath();
 Store.initRenderer();
 
 const SUPPORTED_SCHEMES = ["ledgerlive", "ledgerwallet"];
+let isQuitting = false;
 
 const gotLock = app.requestSingleInstanceLock();
 const { LEDGER_CONFIG_DIRECTORY } = process.env;
@@ -89,6 +101,16 @@ app.on("ready", async () => {
   console.timeEnd("T-init");
   app.dirname = __dirname;
 
+  // Registered before window creation so a renderer crash during early startup queues instead
+  // of being dropped for having no init attempt in flight yet (see beginPreInitBufferingMain).
+  beginPreInitBufferingMain();
+  app.on("render-process-gone", (_event, _webContents, details) => {
+    if (details.reason === "clean-exit" || isQuitting) return;
+    captureExceptionMain(
+      new Error(`render-process-gone: ${details.reason} (exit ${details.exitCode})`),
+    );
+  });
+
   // Measure window creation time
   console.time("T-window");
   const window = createEarlyMainWindow();
@@ -110,8 +132,31 @@ app.on("ready", async () => {
 
   // Measure database initialization and first reads
   console.time("T-db");
-  const settings = (await db.getKey("app", "settings")) as SettingsState;
+  let settings = (await db.getKey("app", "settings")) as SettingsState;
+  let identities = (await db.getKey("app", "identities")) as PersistedIdentities | undefined;
+  const lastKnownLldDatadogEnabled = (await db.getKey("app", "lldDatadogEnabled")) as
+    | boolean
+    | undefined;
   console.timeEnd("T-db");
+
+  let lldDatadogFeatureEnabled = lastKnownLldDatadogEnabled === true;
+  let crashReportingEnabled = settings?.crashReporting === true;
+  const shouldSendDatadog = () => lldDatadogFeatureEnabled && crashReportingEnabled;
+  const initDatadog = () =>
+    initDatadogMain(shouldSendDatadog).then(ok => {
+      if (ok && shouldUsePersistedId(identities?.datadogId)) {
+        setUserIdMain(DatadogId.fromString(identities.datadogId));
+      }
+    });
+  initDatadog();
+  ipcMain.on("lldDatadogFlagChanged", (_event, enabled: boolean) => {
+    lldDatadogFeatureEnabled = enabled === true;
+    if (lldDatadogFeatureEnabled) initDatadog();
+  });
+  ipcMain.on("crashReportingChanged", (_event, enabled: boolean) => {
+    crashReportingEnabled = enabled === true;
+    if (crashReportingEnabled) initDatadog();
+  });
 
   // Set up transport handlers for Speculos and HTTP proxy in main process
   setupTransportHandlers();
@@ -126,6 +171,17 @@ app.on("ready", async () => {
     return db.getKey(ns, keyPath, defaultValue);
   });
   ipcMain.handle("setKey", (event, { ns, keyPath, value }) => {
+    if (ns === "app" && keyPath === "settings") {
+      settings = value as SettingsState;
+      crashReportingEnabled = settings?.crashReporting === true;
+      if (crashReportingEnabled) initDatadog();
+    }
+    if (ns === "app" && keyPath === "identities") {
+      identities = value as PersistedIdentities;
+      if (shouldUsePersistedId(identities?.datadogId)) {
+        setUserIdMain(DatadogId.fromString(identities.datadogId));
+      }
+    }
     return db.setKey(ns, keyPath, value);
   });
   ipcMain.handle("hasEncryptionKey", () => {
@@ -214,6 +270,7 @@ app.on("ready", async () => {
 
 // Cleanup transports on app shutdown
 app.on("before-quit", () => {
+  isQuitting = true;
   console.log("App shutting down, cleaning up transports...");
   cleanupTransports();
 });

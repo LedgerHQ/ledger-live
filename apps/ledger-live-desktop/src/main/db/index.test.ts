@@ -103,6 +103,13 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     await expect(db.setKey("app", "knownDevices", { knownDevices: [] })).resolves.toBeUndefined();
   });
 
+  it("allows lldDatadogEnabled persistence and round-trips it on load", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({}));
+    await expect(db.setKey("app", "lldDatadogEnabled", true)).resolves.toBeUndefined();
+    const written = getWrittenData();
+    expect(written.lldDatadogEnabled).toBe(true);
+  });
+
   it("preserves allowed and keepLegacy keys on load", async () => {
     readFileMock.mockResolvedValueOnce(
       appJson({

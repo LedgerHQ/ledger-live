@@ -26,6 +26,42 @@ export function rewriteAsarUrls(text: string): string {
     .replace(ASAR_RAW_PATH, "$1https://app.asar/");
 }
 
+// Reshapes raw V8 frames (`at {fn} ({url})`) into the `@` shape Datadog unminifies.
+export function toDatadogStackFrames(stack: string): string {
+  return stack.split("\n").map(reshapeStackFrame).join("\n");
+}
+
+function reshapeStackFrame(line: string): string {
+  const afterIndent = line.trimStart();
+  if (!afterIndent.startsWith("at ")) return line;
+  const body = afterIndent.slice(3);
+  if (body.includes(" @ ")) return line;
+  const indent = line.slice(0, line.length - afterIndent.length);
+  const frame = body.trimEnd();
+  if (frame.length === 0) return line;
+  const open = matchingOpenParen(frame);
+  if (open >= 1 && frame[open] === " " && frame[open + 1] === "(" && frame.endsWith(")")) {
+    const loc = frame.slice(open + 2, -1);
+    if (loc.length > 0) return `${indent}at ${frame.slice(0, open)} @ ${loc}`;
+  }
+  return `${indent}at <anonymous> @ ${frame}`;
+}
+
+// Finds the "(" matching the frame's trailing ")" by paren depth, so nested parens (e.g. eval
+// frames: "eval (eval at <anonymous> (file:1:1), <anonymous>:1:1)") don't get split too early.
+function matchingOpenParen(frame: string): number {
+  if (!frame.endsWith(")")) return -1;
+  let depth = 0;
+  for (let i = frame.length - 1; i >= 0; i--) {
+    if (frame[i] === ")") depth++;
+    else if (frame[i] === "(") {
+      depth--;
+      if (depth === 0) return i - 1;
+    }
+  }
+  return -1;
+}
+
 function rewriteAsarUrlsRecursive(value: unknown, seen: Set<object>): void {
   if (value === null || typeof value !== "object" || seen.has(value)) return;
   seen.add(value);

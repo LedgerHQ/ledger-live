@@ -1,5 +1,7 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
+import { DatadogWebpackPlugin } from "@datadog/electron-sdk/webpack-plugin";
+import { DatadogRuntimeDepsPlugin } from "./datadogRuntimeDeps";
 import { commonConfig, rootFolder, outputFolder } from "./rspack.common";
 import {
   buildMainEnv,
@@ -38,7 +40,14 @@ export function createMainConfig(
       ...commonConfig.resolve,
       mainFields: ["main", "module"],
     },
+    // Rspack can't bundle dd-trace's WASM files; DatadogWebpackPlugin copies them to .webpack/node_modules instead.
+    externals: {
+      "@datadog/electron-sdk": "commonjs @datadog/electron-sdk",
+      "@datadog/electron-sdk/instrument": "commonjs @datadog/electron-sdk/instrument",
+    },
     plugins: [
+      new DatadogWebpackPlugin({ copyRuntimeDependencies: false }),
+      new DatadogRuntimeDepsPlugin(),
       ...getRsdoctorPlugin("main"),
       new rspack.DefinePlugin({
         ...buildMainEnv(mode, argv),
