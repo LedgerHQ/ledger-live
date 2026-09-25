@@ -14,6 +14,10 @@ jest.mock("../useCardLoginViewModel", () => ({
   useCardLoginViewModel: () => viewModel,
 }));
 
+jest.mock("../CardAuthError", () => ({
+  CardAuthError: () => null,
+}));
+
 const oauthConfig: CardLoginProps["oauthConfig"] = {
   apiUrl: "https://card.example",
   clientId: "client",

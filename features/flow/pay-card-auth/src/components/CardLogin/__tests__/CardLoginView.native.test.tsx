@@ -1,7 +1,30 @@
 import React from "react";
+import { Pressable, Text, View } from "react-native";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { CardLoginView } from "../CardLoginView.native";
 import type { CardAuthErrorCopy, CardLoginIntroViewProps } from "../types";
+
+jest.mock("@shared/ui-info-state", () => ({
+  InfoState: ({
+    title,
+    description,
+    primaryCta,
+    testID,
+  }: {
+    title: string;
+    description: string;
+    primaryCta: { label: string; onPress: () => void; testID: string };
+    testID: string;
+  }) => (
+    <View testID={testID}>
+      <Text>{title}</Text>
+      <Text>{description}</Text>
+      <Pressable testID={primaryCta.testID} onPress={primaryCta.onPress}>
+        <Text>{primaryCta.label}</Text>
+      </Pressable>
+    </View>
+  ),
+}));
 
 const intro: CardLoginIntroViewProps = {
   isOpen: false,

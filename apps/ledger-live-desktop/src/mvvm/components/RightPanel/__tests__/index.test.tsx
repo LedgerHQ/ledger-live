@@ -96,12 +96,7 @@ describe("RightPanel", () => {
     it("hands the countervalue formatter and the balance label to the visual once signed in", () => {
       render(<RightPanel variant="card" />, {
         initialState: {
-          payCardAuth: {
-            hasCard: true,
-            pendingLoginType: null,
-            status: "signedIn",
-            isSessionResolving: false,
-          },
+          payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" },
         },
       });
 

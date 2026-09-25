@@ -324,7 +324,6 @@ function getPayTabRenderInput({
                 hasCard: true,
                 pendingLoginType: null,
                 status: "signedIn" as const,
-                isSessionResolving: false,
               },
             }
           : {}),

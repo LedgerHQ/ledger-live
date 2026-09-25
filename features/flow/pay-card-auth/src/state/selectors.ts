@@ -26,7 +26,6 @@ export function selectCardAuthStatus(state: PayCardAuthStateRoot): PayCardAuthSt
   return state.payCardAuth.status;
 }
 
-/** True while the login machine still works towards a resolved session. */
 export function selectIsCardSessionResolving(state: PayCardAuthStateRoot): boolean {
   return state.payCardAuth.isSessionResolving;
 }

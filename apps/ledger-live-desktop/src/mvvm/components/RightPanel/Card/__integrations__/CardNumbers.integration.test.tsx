@@ -7,12 +7,7 @@ import { Card } from "../Card";
 
 const CARD_DETAILS_TOKEN_URL = `${getEnv("CARD_BAANX_API_URL")}/v1/card/details/token`;
 const signedIn = {
-  payCardAuth: {
-    hasCard: true,
-    pendingLoginType: null,
-    status: "signedIn" as const,
-    isSessionResolving: false,
-  },
+  payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const },
 };
 
 async function finishCardNumbersReveal() {

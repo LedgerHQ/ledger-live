@@ -408,12 +408,7 @@ describe("History integration", () => {
       initialState: {
         accounts: [BTC_ACCOUNT],
         settings: AFTER_ONBOARDING_STATE,
-        payCardAuth: {
-          hasCard: true,
-          pendingLoginType: null,
-          status: "signedIn",
-          isSessionResolving: false,
-        },
+        payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" },
         ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
       },
     });

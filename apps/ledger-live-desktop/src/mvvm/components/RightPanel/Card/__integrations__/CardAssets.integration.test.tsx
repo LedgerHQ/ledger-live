@@ -11,12 +11,7 @@ const CAL_TOKENS_URL = `${getEnv("CAL_SERVICE_URL")}/v1/tokens`;
 const USDC_ID = "ethereum/erc20/usd__coin";
 
 const signedIn = {
-  payCardAuth: {
-    hasCard: true,
-    pendingLoginType: null,
-    status: "signedIn" as const,
-    isSessionResolving: false,
-  },
+  payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const },
 };
 
 /** `btc.bitcoin` and `usdc.ethereum` are both in the Baanx catalog, so both resolve a currency. */

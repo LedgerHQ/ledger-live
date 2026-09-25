@@ -5,7 +5,7 @@ import { getPayAttributes } from "../getPayAttributes";
 
 describe("getPayAttributes", () => {
   const unsigned = {
-    payCardAuth: { hasCard: false, status: "signedOut", isSessionResolving: false },
+    payCardAuth: { hasCard: false, status: "signedOut" },
   };
   const accountsWithUsdc = [
     {
