@@ -47,7 +47,7 @@ All build commands below are run from the **repo root** (`ledger-live/`).
 
 ```bash
 pnpm clean
-pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli..." --filter="ledger-live-mobile-e2e-tests"
+pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli..." --filter="ledger-live-mobile-e2e-tests..."
 pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
 # Android release build
 pnpm mobile e2e:build -c android.emu.release
