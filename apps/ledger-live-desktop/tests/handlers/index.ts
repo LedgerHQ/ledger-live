@@ -10,6 +10,7 @@ import ConcordiumHandlers from "./concordium";
 import BuyHandlers from "./buy";
 import SwapHandlers from "./swap";
 import LedgerSyncHandlers from "./ledgerSync";
+import CalHandlers from "./cal";
 
 export default [
   ...MarketHandlers,
@@ -24,4 +25,5 @@ export default [
   ...BuyHandlers,
   ...SwapHandlers,
   ...LedgerSyncHandlers,
+  ...CalHandlers,
 ];
