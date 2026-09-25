@@ -10,6 +10,10 @@ inputs:
     required: false
     # Every shard polls independently: 60s is well under GITHUB_TOKEN's 1,000 req/hour/repo limit.
     default: "60"
+  max-wait-minutes:
+    description: "Fallback timeout if the caller's step/job timeout-minutes is unset or looser; set both for defense in depth."
+    required: false
+    default: "180"
 
 runs:
   using: "composite"
@@ -19,27 +23,18 @@ runs:
       env:
         JOB_NAME_PREFIX: ${{ inputs.job-name-prefix }}
         POLL_INTERVAL_SECONDS: ${{ inputs.poll-interval-seconds }}
+        MAX_WAIT_MINUTES: ${{ inputs.max-wait-minutes }}
+        ACTION_PATH: ${{ github.action_path }}
       with:
         script: |
-          const prefix = process.env.JOB_NAME_PREFIX;
-          const pollIntervalMs = Number.parseInt(process.env.POLL_INTERVAL_SECONDS, 10) * 1000;
-          for (;;) {
-            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.runId,
-              per_page: 100,
-            });
-            const matching = jobs.filter(j => j.name.startsWith(prefix));
-            if (matching.length === 0) {
-              core.info(`No jobs matching "${prefix}" visible yet in this run; waiting...`);
-            } else {
-              const pending = matching.filter(j => j.status !== "completed");
-              if (pending.length === 0) {
-                core.info(`All ${matching.length} job(s) matching "${prefix}" have finished.`);
-                break;
-              }
-              core.info(`Waiting on ${pending.length}/${matching.length} job(s) matching "${prefix}".`);
-            }
-            await new Promise(resolve => setTimeout(resolve, pollIntervalMs));
-          }
+          const path = require("path");
+          const scriptPath = path.join(process.env.ACTION_PATH, "wait-for-workflow-jobs.js");
+          const { waitForMatchingJobs } = require(scriptPath);
+          await waitForMatchingJobs({
+            github,
+            context,
+            core,
+            prefix: process.env.JOB_NAME_PREFIX,
+            pollIntervalMs: Number.parseInt(process.env.POLL_INTERVAL_SECONDS, 10) * 1000,
+            maxWaitMs: Number.parseInt(process.env.MAX_WAIT_MINUTES, 10) * 60_000,
+          });
