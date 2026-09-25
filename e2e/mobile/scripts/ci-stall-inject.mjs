@@ -24,6 +24,11 @@
  * the artifacts/speculos-instances.<pid>.json tracking files), then follows those
  * instances through Speculinho: before the kill, right after it, and once the
  * controller's teardown sweep has removed the dead worker's tracking file.
+ *
+ * --worker-id <n> narrows the speculos target to the jest worker with that
+ * JEST_WORKER_ID. On Android each worker is pinned to its own AVD and an in-band
+ * retry always asks for worker 1's, so freezing worker 1 is the case that tests
+ * whether Detox reclaims a dead worker's emulator.
  */
 
 import { execFileSync } from "node:child_process";
@@ -45,6 +50,7 @@ const PORT = Number(arg("port", 9229));
 const TARGET = arg("target", "busiest"); // busiest | speculos
 const ARTIFACTS_DIR = arg("artifacts-dir", "e2e/mobile/artifacts");
 const FOLLOW_TIMEOUT_S = Number(arg("follow-timeout", 1200)); // kill, then the sweep at teardown
+const WORKER_ID = arg("worker-id"); // only with --target speculos; any worker when absent
 
 const notice = message => console.log(`::notice::QAA-1365 probe: ${message}`);
 const warn = message => console.log(`::warning::QAA-1365 probe: ${message}`);
@@ -142,8 +148,25 @@ function trackedRunIds(pid) {
   }
 }
 
+// jest-worker sets JEST_WORKER_ID in each child's environment. Linux exposes it in
+// /proc; macOS prints it with `ps -E` for processes of the same user.
+function jestWorkerId(pid) {
+  try {
+    const environ =
+      process.platform === "linux"
+        ? readFileSync(`/proc/${pid}/environ`, "utf8").split("\0").join(" ")
+        : execFileSync("ps", ["-E", "-ww", "-o", "command=", "-p", String(pid)], {
+            encoding: "utf8",
+          });
+    return /(?:^|\s)JEST_WORKER_ID=(\d+)/.exec(environ)?.[1];
+  } catch {
+    return undefined;
+  }
+}
+
 function speculosOwner() {
   for (const worker of ourWorkers()) {
+    if (WORKER_ID !== undefined && jestWorkerId(worker.pid) !== WORKER_ID) continue;
     const runIds = trackedRunIds(worker.pid);
     if (runIds.length) return { pid: worker.pid, runIds };
   }
@@ -201,7 +224,9 @@ async function pickVictim() {
       // Still holding it: a spec that finished meanwhile would test nothing.
       const runIds = trackedRunIds(owner.pid);
       if (runIds.length && isAlive(owner.pid)) {
-        notice(`victim jest worker ${owner.pid}, holding Speculos ${runIds.join(", ")}`);
+        notice(
+          `victim jest worker ${owner.pid} (JEST_WORKER_ID=${jestWorkerId(owner.pid) ?? "?"}), holding Speculos ${runIds.join(", ")}`,
+        );
         return { pid: owner.pid, runIds };
       }
       continue;

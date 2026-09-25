@@ -104,13 +104,14 @@ on:
         type: string
         default: ""
       stall_probe:
-        description: "QAA-1365 probe: freeze one jest worker mid-shard through its inspector. inject = the stall watchdog should recover the shard; inject-speculos = freeze a worker holding a Speculos, whose pod the teardown sweep should release; inject-unwatched = same fault with the watchdog off, which should hang until the timeout"
+        description: "QAA-1365 probe: freeze one jest worker mid-shard through its inspector. inject = the stall watchdog should recover the shard; inject-speculos = freeze a worker holding a Speculos, whose pod the teardown sweep should release; inject-speculos-worker1 = same, always jest worker 1 (whose Android emulator the retry needs back); inject-unwatched = same fault with the watchdog off, which should hang until the timeout"
         required: false
         type: choice
         options:
           - "off"
           - inject
           - inject-speculos
+          - inject-speculos-worker1
           - inject-unwatched
         default: "off"
       ios_timeout_override:
@@ -816,11 +817,12 @@ jobs:
             if [ "${{ inputs.stall_probe }}" = "inject-unwatched" ]; then
               export E2E_STALL_WATCHDOG=0
             fi
-            TARGET=busiest
-            if [ "${{ inputs.stall_probe }}" = "inject-speculos" ]; then
-              TARGET=speculos
-            fi
-            node e2e/mobile/scripts/ci-stall-inject.mjs --root-pid "$$" --target "$TARGET" &
+            INJECT_ARGS=(--target busiest)
+            case "${{ inputs.stall_probe }}" in
+              inject-speculos) INJECT_ARGS=(--target speculos) ;;
+              inject-speculos-worker1) INJECT_ARGS=(--target speculos --worker-id 1) ;;
+            esac
+            node e2e/mobile/scripts/ci-stall-inject.mjs --root-pid "$$" "${INJECT_ARGS[@]}" &
           fi
           pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
@@ -1102,11 +1104,12 @@ jobs:
             if [ "${{ inputs.stall_probe }}" = "inject-unwatched" ]; then
               export E2E_STALL_WATCHDOG=0
             fi
-            TARGET=busiest
-            if [ "${{ inputs.stall_probe }}" = "inject-speculos" ]; then
-              TARGET=speculos
-            fi
-            node e2e/mobile/scripts/ci-stall-inject.mjs --root-pid "$$" --target "$TARGET" &
+            INJECT_ARGS=(--target busiest)
+            case "${{ inputs.stall_probe }}" in
+              inject-speculos) INJECT_ARGS=(--target speculos) ;;
+              inject-speculos-worker1) INJECT_ARGS=(--target speculos --worker-id 1) ;;
+            esac
+            node e2e/mobile/scripts/ci-stall-inject.mjs --root-pid "$$" "${INJECT_ARGS[@]}" &
           fi
           pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
