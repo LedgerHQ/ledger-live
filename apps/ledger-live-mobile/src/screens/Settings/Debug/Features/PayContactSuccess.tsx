@@ -38,7 +38,9 @@ export default function DebugPayContactSuccess() {
   const accounts = useSelector(accountsSelector);
   const account = accounts[0];
   const payContact = useSelector(selectContacts).find(contact => !contact.isMe);
-  const recipient = payContact ? { id: payContact.id, name: payContact.name } : SAMPLE_RECIPIENT;
+  const recipient = payContact
+    ? { id: payContact.id, name: payContact.name, isMe: payContact.isMe }
+    : SAMPLE_RECIPIENT;
 
   const mockOperation = useMemo(() => {
     if (!account) return null;

@@ -23,6 +23,7 @@ function createViewModel({
       me: {
         contactId: "contact-me" as never,
         name: "Me",
+        isMe: true,
         initial: "M",
         addressCount: 0,
       },

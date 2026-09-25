@@ -191,6 +191,7 @@ describe("AddressMatchedSection", () => {
       matchedContact: {
         contactId: "contact-remi",
         contactName: "Remi",
+        isMe: false,
         addressId: "address-remi-ethereum",
         addressLabel: "Ethereum Network",
         address,

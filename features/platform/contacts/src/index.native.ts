@@ -10,6 +10,7 @@ export * from "./featureFlags";
 export * from "./utils/resolveEligibleAddressCurrencyIds";
 export * from "./utils/isEligibleAddressCurrency";
 export * from "./components/ContactAvatar/index.native";
+export * from "./components/MeAvatar/meAvatarUrl";
 export * from "./contactDeviceIntentsPort";
 export * from "./device/addressBook/toEvmAddressBook";
 export * from "./addressEntry/types";
