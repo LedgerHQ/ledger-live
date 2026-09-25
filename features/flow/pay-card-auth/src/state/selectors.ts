@@ -26,6 +26,11 @@ export function selectCardAuthStatus(state: PayCardAuthStateRoot): PayCardAuthSt
   return state.payCardAuth.status;
 }
 
+/** True while the login machine still works towards a resolved session. */
+export function selectIsCardSessionResolving(state: PayCardAuthStateRoot): boolean {
+  return state.payCardAuth.isSessionResolving;
+}
+
 /** True while a Card session is live. `CardLogin` hides on it, and `More` shows on it. */
 export function selectIsSignedIn(state: PayCardAuthStateRoot): boolean {
   return state.payCardAuth.status === "signedIn";

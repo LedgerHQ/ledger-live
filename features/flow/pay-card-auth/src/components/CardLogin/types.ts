@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type {
   CardLoginOauthConfig,
   OpenCardHostedPage,
@@ -13,6 +14,8 @@ import type {
 export type RequestAppProtection = () => Promise<boolean>;
 
 export type CardLoginProps = {
+  /** What the login shows beside itself while no error holds the panel. */
+  readonly children?: ReactNode;
   readonly oauthConfig: CardLoginOauthConfig;
   /**
    * The redirect the app received, when it has one. The app's router owns the deep link, so it hands
@@ -85,6 +88,8 @@ export type CardAuthErrorProps = Readonly<{
 export type CardLoginViewProps = CardLoginCopy & {
   /** True while the machine works. The login action is not pressable then. */
   readonly isLoading: boolean;
+  /** True while the flow reads or renews the session, which a skeleton stands in for. */
+  readonly isResolving: boolean;
   /** Set when an error holds the panel. It opens over the login block, and hides nothing. */
   readonly error: CardAuthErrorCopy | null;
   readonly onLoginPress: () => void;

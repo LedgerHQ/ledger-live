@@ -11,7 +11,7 @@ import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
 import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors";
 import { selectIsSignedIn } from "../../state/selectors";
-import { setPendingLoginType } from "../../state/slice";
+import { setPendingLoginType, setSessionResolving } from "../../state/slice";
 import type {
   CardAuthErrorCopy,
   CardLoginCopy,
@@ -33,6 +33,16 @@ const INTRO_ROWS: readonly { icon: CardLoginIntroRowIcon; key: string }[] = [
   { icon: "CreditCard", key: "virtualCard" },
   { icon: "LedgerLogo", key: "topUp" },
 ];
+
+const SESSION_RESOLVING_STATES: ReadonlySet<CardLoginStateValue> = new Set([
+  "hydrating",
+  "clearingAttempt",
+  "validatingCallback",
+  "exchangingCode",
+  "persistingSession",
+  "authenticated",
+  "fetchingUser",
+]);
 
 const INTRO_ACTIONS: readonly { id: CardLoginIntroActionId; appearance: "base" | "gray" }[] = [
   { id: "createAccount", appearance: "base" },
@@ -64,15 +74,14 @@ export function mapSnapshotToViewModel(
   onAlreadyHaveCardPress: () => void,
   intro: CardLoginIntroViewProps,
 ): CardLoginViewModel {
-  // Nothing to offer yet. `hydrating` is still reading the stored session, so a login CTA here would
-  // flash for a holder who turns out to be signed in; `ready` means they already are, and `More`
-  // holds the screen.
-  if (value === "hydrating" || value === "ready") {
+  // Nothing to offer: `ready` means the holder is signed in already, and `More` holds the screen.
+  if (value === "ready") {
     return null;
   }
 
   return {
     ...copy,
+    isResolving: SESSION_RESOLVING_STATES.has(value),
     // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
     isLoading:
       value !== "idle" &&
@@ -127,6 +136,19 @@ export function useCardLoginViewModel({
       });
     }
   }, [callbackCode, callbackState, callbackAppId, send]);
+
+  const isSessionResolving = SESSION_RESOLVING_STATES.has(snapshot.value);
+
+  useEffect(() => {
+    dispatch(setSessionResolving(isSessionResolving));
+  }, [dispatch, isSessionResolving]);
+
+  useEffect(
+    () => () => {
+      dispatch(setSessionResolving(false));
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     // `More` ended the session. `ready` raises the flag on entry, so a lowered flag while the

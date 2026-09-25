@@ -5,6 +5,7 @@ export const payCardAuthInitialState: PayCardAuthState = {
   hasCard: false,
   pendingLoginType: null,
   status: "unknown",
+  isSessionResolving: false,
 };
 
 export const payCardAuthSlice = createSlice({
@@ -25,7 +26,11 @@ export const payCardAuthSlice = createSlice({
     setSignedIn: (state, action: PayloadAction<boolean>) => {
       state.status = action.payload ? "signedIn" : "signedOut";
     },
+    setSessionResolving: (state, action: PayloadAction<boolean>) => {
+      state.isSessionResolving = action.payload;
+    },
   },
 });
 
-export const { setHasCard, setPendingLoginType, setSignedIn } = payCardAuthSlice.actions;
+export const { setHasCard, setPendingLoginType, setSessionResolving, setSignedIn } =
+  payCardAuthSlice.actions;

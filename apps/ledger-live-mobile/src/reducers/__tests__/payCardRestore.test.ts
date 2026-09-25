@@ -48,6 +48,7 @@ describe("the payCard blob restored into the mobile store", () => {
       hasCard: false,
       pendingLoginType: null,
       status: "unknown",
+      isSessionResolving: false,
     });
   });
 });

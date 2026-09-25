@@ -6,20 +6,25 @@ import type { CardFormatters, CardProps } from "./Card.types";
 import { CARD_DISCLAIMER, CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
 
 let mockStatus: PayCardAuthStatus = "unknown";
+let mockIsSessionResolving = false;
 let receivedDetailsFormatters: CardTransactionFormatters | undefined;
 const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError: false }));
 let receivedTransactionFormatters: CardTransactionFormatters | undefined;
 let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
-  CardLogin: () => <div data-testid="card-login" />,
+  CardLogin: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="card-login">{children}</div>
+  ),
   useCardAuthStatus: () => mockStatus,
+  useCardSessionResolving: () => mockIsSessionResolving,
   useIsCardSignedIn: () => mockStatus === "signedIn",
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
   CardVisual: () => <div data-testid="card-visual" />,
+  CardLoadingVisual: () => <div data-testid="card-loading-visual" />,
   CardDetails: ({
     cardVisual,
     formatters,
@@ -122,6 +127,24 @@ describe("Card (web)", () => {
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("while the login machine trades a redirect for a token", () => {
+    beforeEach(() => {
+      mockStatus = "signedOut";
+      mockIsSessionResolving = true;
+    });
+
+    afterEach(() => {
+      mockIsSessionResolving = false;
+    });
+
+    it("keeps the loading card face up, although the status already reads signed out", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+
+      expect(screen.getByTestId("card-loading-visual")).toBeVisible();
+      expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
     });
   });
 

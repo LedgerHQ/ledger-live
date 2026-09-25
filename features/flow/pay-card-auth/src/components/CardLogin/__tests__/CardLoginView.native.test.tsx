@@ -30,6 +30,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   description: "Log in to access your card",
   loginLabel: "Login",
   isLoading: false,
+  isResolving: false,
   error: null,
   onLoginPress: jest.fn(),
   intro,
@@ -105,5 +106,12 @@ describe("CardLoginView (Native)", () => {
     fireEvent.press(screen.getByTestId("card-auth-error-sheet-dismiss"));
 
     expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("should show nothing in place of the login block while the session resolves", () => {
+    renderCardLoginView({ isResolving: true });
+
+    expect(screen.queryByText("Crypto card")).toBeNull();
+    expect(screen.queryByLabelText("Login")).toBeNull();
   });
 });

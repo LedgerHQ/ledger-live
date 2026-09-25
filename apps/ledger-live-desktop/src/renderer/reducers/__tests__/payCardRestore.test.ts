@@ -48,6 +48,7 @@ describe("the payCard blob restored into the desktop store", () => {
       hasCard: false,
       pendingLoginType: null,
       status: "unknown",
+      isSessionResolving: false,
     });
   });
 });

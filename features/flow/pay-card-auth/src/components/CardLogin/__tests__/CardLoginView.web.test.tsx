@@ -32,6 +32,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   loginLabel: "Login",
   alreadyHaveCardLabel: null,
   isLoading: false,
+  isResolving: false,
   error: null,
   onLoginPress: jest.fn(),
   onAlreadyHaveCardPress: jest.fn(),
@@ -114,5 +115,12 @@ describe("CardLoginView (Web)", () => {
     fireEvent.click(screen.getByTestId("card-auth-error-cta"));
 
     expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("should show a skeleton in place of the login block while the session resolves", () => {
+    renderCardLoginView({ isResolving: true });
+
+    expect(screen.getByTestId("card-login-skeleton")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Login" })).toBeNull();
   });
 });

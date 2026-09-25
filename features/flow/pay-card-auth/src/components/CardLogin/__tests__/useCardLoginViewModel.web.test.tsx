@@ -96,6 +96,35 @@ describe("mapSnapshotToViewModel", () => {
     ).toBeNull();
   });
 
+  it.each([
+    "hydrating",
+    "clearingAttempt",
+    "validatingCallback",
+    "exchangingCode",
+    "persistingSession",
+    "authenticated",
+    "fetchingUser",
+  ] as const)("asks for the skeleton in %s", value => {
+    expect(
+      mapSnapshotToViewModel(value, null, copy, onLoginPress, onAlreadyHaveCardPress, intro)
+        ?.isResolving,
+    ).toBe(true);
+  });
+
+  it.each([
+    "idle",
+    "preparingAttempt",
+    "awaitingHostedLogin",
+    "awaitingCallback",
+    "authError",
+    "userFetchError",
+  ] as const)("asks for no skeleton in %s", value => {
+    expect(
+      mapSnapshotToViewModel(value, null, copy, onLoginPress, onAlreadyHaveCardPress, intro)
+        ?.isResolving,
+    ).toBe(false);
+  });
+
   it("shows no panel while there is no error", () => {
     expect(
       mapSnapshotToViewModel("idle", null, copy, onLoginPress, onAlreadyHaveCardPress, intro)

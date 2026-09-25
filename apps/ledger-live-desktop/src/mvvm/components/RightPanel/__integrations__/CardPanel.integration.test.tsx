@@ -3,7 +3,7 @@ import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashb
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { getEnv } from "@shared/env";
 import { http, HttpResponse, server } from "tests/server";
-import { fireEvent, render, screen, within } from "tests/testSetup";
+import { fireEvent, render, screen, waitFor, within } from "tests/testSetup";
 import { initialCountervaluesMock } from "tests/mocks/countervalues.mock";
 import { Card } from "../Card";
 
@@ -49,7 +49,12 @@ function resolveUsdc() {
 const [subscription] = mockPayCardTransactions();
 
 const signedIn = {
-  payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const },
+  payCardAuth: {
+    hasCard: true,
+    pendingLoginType: null,
+    status: "signedIn" as const,
+    isSessionResolving: false,
+  },
 };
 
 const onTransactionsRequest = jest.fn();
@@ -140,7 +145,7 @@ describe("RightPanel card integration", () => {
   it("should not ask for the history while the card session is unresolved", async () => {
     render(<Card />);
 
-    expect(await screen.findByTestId("card-artwork")).toBeVisible();
+    await waitFor(() => expect(screen.getByTestId("card-artwork")).toBeVisible());
     expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
     expect(onTransactionsRequest).not.toHaveBeenCalled();
   });
