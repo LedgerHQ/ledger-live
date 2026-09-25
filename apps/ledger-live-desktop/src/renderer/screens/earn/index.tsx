@@ -87,7 +87,6 @@ const Earn = () => {
         : undefined,
     [stableSavingsFlag],
   );
-
   const { updateManifests } = useRemoteLiveAppContext();
 
   const inputs = useMemo(() => {

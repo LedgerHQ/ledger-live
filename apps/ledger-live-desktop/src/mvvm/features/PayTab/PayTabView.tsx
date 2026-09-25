@@ -66,7 +66,6 @@ export function PayTabView({
           selection={deviceIntent.selection}
           onReady={deviceIntent.onReady}
           onExit={deviceIntent.onExit}
-          onTrackEvent={verifyAddress.onTrackEvent}
         />
       )}
       <FeatureTour />

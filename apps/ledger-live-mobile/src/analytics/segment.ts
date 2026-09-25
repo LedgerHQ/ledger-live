@@ -148,6 +148,7 @@ const getFeatureFlagProperties = () => {
     const ptxSwapLiveAppKycWarning = analyticsFeatureFlagMethod("ptxSwapLiveAppKycWarning");
     const ptxBorrowLiveAppFlag = analyticsFeatureFlagMethod("ptxBorrowLiveApp");
     const stableSavingsFlag = analyticsFeatureFlagMethod("stableSavings");
+    const ptxEarnCtaOnMobileFlag = analyticsFeatureFlagMethod("ptxEarnCtaOnMobile");
     const lwmAnalyticsConsentOnboardingFlag = analyticsFeatureFlagMethod(
       "lwmAnalyticsConsentOnboarding",
     );
@@ -166,6 +167,7 @@ const getFeatureFlagProperties = () => {
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
     const borrowFeature = Boolean(ptxBorrowLiveAppFlag?.enabled);
     const stableSavings = Boolean(stableSavingsFlag?.enabled);
+    const ptxEarnCtaOnMobile = Boolean(ptxEarnCtaOnMobileFlag?.enabled);
     const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
     const lwmNotificationsOptIn = Boolean(lwmNotificationsOptInFlag?.enabled);
 
@@ -203,6 +205,7 @@ const getFeatureFlagProperties = () => {
       ptxSwapLiveAppKycWarningEnabled,
       borrowFeature,
       stableSavings,
+      ptxEarnCtaOnMobile,
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
     });

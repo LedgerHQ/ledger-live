@@ -4,6 +4,11 @@ import userEvent from "@testing-library/user-event";
 import { i18nWrapper, REQUEST_RESOURCES } from "../../../__tests__/i18nWrapper";
 import { VerifyAddress } from "../VerifyAddress";
 import type { VerifyAddressProps } from "../../../types";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 function renderVerifyAddress(overrides: Partial<VerifyAddressProps> = {}) {
   const props: VerifyAddressProps = {
@@ -12,7 +17,6 @@ function renderVerifyAddress(overrides: Partial<VerifyAddressProps> = {}) {
     onVerify: jest.fn(),
     onGotIt: jest.fn(),
     onClose: jest.fn(),
-    onTrackEvent: jest.fn(),
     ...overrides,
   };
   return {
@@ -22,6 +26,10 @@ function renderVerifyAddress(overrides: Partial<VerifyAddressProps> = {}) {
 }
 
 describe("VerifyAddress (Web)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterEach(() => {
     cleanup();
   });
@@ -41,7 +49,7 @@ describe("VerifyAddress (Web)", () => {
 
     await user.click(screen.getByTestId("pay-card-verify-address-verify-cta"));
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "verify",
       buttonLocation: "verify address",
       page: "Pay",
@@ -58,7 +66,7 @@ describe("VerifyAddress (Web)", () => {
 
     await user.click(screen.getByTestId("pay-card-verify-address-got-it-cta"));
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "got it",
       buttonLocation: "verify address",
       page: "Pay",

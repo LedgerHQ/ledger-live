@@ -12,7 +12,6 @@ export function aggregateBalance({
   filterOptions,
   formatCountervalue,
   onConfirmFilter,
-  onTrackEvent,
 }: PortfolioPort): BalanceData {
   const optionIds = filterOptions.map(option => option.id);
   const effectiveFilter = resolveSelection(filter, optionIds);
@@ -53,6 +52,5 @@ export function aggregateBalance({
     filterOptions,
     formatCountervalue,
     onConfirmFilter,
-    onTrackEvent,
   };
 }

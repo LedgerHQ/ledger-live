@@ -9,7 +9,6 @@ import {
   type BalanceData,
   type BalanceFilter,
 } from "@features/flow-pay-balance";
-import type { PayAnalyticsHelper } from "@features/platform-pay-analytics";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
@@ -18,7 +17,7 @@ import { usePayStablecoins } from "./usePayStablecoins";
 import { useCountervalueFormatter } from "./useCountervalueFormatter";
 import { useFiatFormatter } from "./useFiatFormatter";
 
-export function usePayCardBalance(onTrackEvent?: PayAnalyticsHelper["trackEvent"]): BalanceData {
+export function usePayCardBalance(): BalanceData {
   const dispatch = useDispatch();
   const locale = useSelector(localeSelector);
   const { discreetMode: discreet, toggleDiscreetMode } = useToggleDiscreetMode();
@@ -60,6 +59,5 @@ export function usePayCardBalance(onTrackEvent?: PayAnalyticsHelper["trackEvent"
     onToggleDiscreetMode: toggleDiscreetMode,
     onConfirmFilter,
     onResetFilter,
-    onTrackEvent,
   });
 }

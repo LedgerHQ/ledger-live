@@ -1,11 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useFeature } from "@features/platform-feature-flags";
-import type {
-  PayRequestTrackEvent,
-  VerifyAddressPhase,
-  VerifyAddressProps,
-} from "@features/flow-pay-request";
+import type { VerifyAddressPhase, VerifyAddressProps } from "@features/flow-pay-request";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 
@@ -63,9 +59,7 @@ export type UsePayTabVerifyAddress = Readonly<{
  *   fallback).
  * - flag off -> open the classic Receive modal, which verifies via the legacy transport.
  */
-export function usePayTabVerifyAddress(
-  onTrackEvent: PayRequestTrackEvent | undefined,
-): UsePayTabVerifyAddress {
+export function usePayTabVerifyAddress(): UsePayTabVerifyAddress {
   const dispatch = useDispatch();
   const ldmkTransport = useFeature("ldmkTransport");
   const [phase, setPhase] = useState<VerifyAddressPhase>("hidden");
@@ -131,9 +125,8 @@ export function usePayTabVerifyAddress(
       onVerify,
       onGotIt: onIntroDismiss,
       onClose: onIntroDismiss,
-      onTrackEvent,
     }),
-    [phase, onVerify, onIntroDismiss, onTrackEvent],
+    [phase, onVerify, onIntroDismiss],
   );
 
   const deviceIntent = useMemo<PayVerifyDeviceIntent>(

@@ -12,7 +12,9 @@ import {
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-react";
 import * as Icons from "@ledgerhq/lumen-ui-react/symbols";
+import { FEATURE_INTRO_PAGE, PayTrackPage } from "@features/platform-pay-analytics";
 import { BANK_TRANSFER_INTRO_HERO_IMAGE } from "./assets";
+import { BANK_TRANSFER_INTRO_FLOW } from "./useBankTransferIntroViewModel";
 import type { BankTransferIntroViewProps } from "../../types";
 
 export function BankTransferIntroView({
@@ -23,25 +25,18 @@ export function BankTransferIntroView({
   logInLabel,
   providedBy,
   rows,
-  onShown,
   onCreateAccountPress,
   onLogInPress,
   onClosePress,
   onDismiss,
 }: BankTransferIntroViewProps) {
   const acted = useRef(false);
-  const shown = useRef(false);
 
   useEffect(() => {
-    if (isOpen && !shown.current) {
-      shown.current = true;
+    if (isOpen) {
       acted.current = false;
-      onShown();
     }
-    if (!isOpen) {
-      shown.current = false;
-    }
-  }, [isOpen, onShown]);
+  }, [isOpen]);
 
   const actOnce = useCallback((action: () => void) => {
     if (acted.current) {
@@ -80,6 +75,11 @@ export function BankTransferIntroView({
 
   return (
     <Dialog open onOpenChange={handleOpenChange}>
+      <PayTrackPage
+        page={FEATURE_INTRO_PAGE}
+        name={BANK_TRANSFER_INTRO_FLOW}
+        flow={BANK_TRANSFER_INTRO_FLOW}
+      />
       <DialogContent
         aria-describedby={undefined}
         className="max-h-[90vh] bg-canvas-sheet p-0"

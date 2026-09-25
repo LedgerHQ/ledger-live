@@ -48,6 +48,12 @@ export function useDevToolsScreenViewModel() {
       screen: ScreenName.DebugPayContactSuccess,
     });
   }, [navigation]);
+  const onNavigateToPaySuccessMe = useCallback(() => {
+    navigation.navigate(NavigatorName.Settings, {
+      screen: ScreenName.DebugPayContactSuccess,
+      params: { recipient: "me" },
+    });
+  }, [navigation]);
   const onNavigateToSendSuccess = useCallback(() => {
     navigation.navigate(NavigatorName.Settings, {
       screen: ScreenName.DebugSendSuccess,
@@ -74,6 +80,7 @@ export function useDevToolsScreenViewModel() {
       onNavigateToPortfolio,
       onNavigateToPayTab,
       onNavigateToPaySuccess,
+      onNavigateToPaySuccessMe,
       onNavigateToSendSuccess,
     }),
     [
@@ -81,6 +88,7 @@ export function useDevToolsScreenViewModel() {
       onNavigateToPortfolio,
       onNavigateToPayTab,
       onNavigateToPaySuccess,
+      onNavigateToPaySuccessMe,
       onNavigateToSendSuccess,
     ],
   );

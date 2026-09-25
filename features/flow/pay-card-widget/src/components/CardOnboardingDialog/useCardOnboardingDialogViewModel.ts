@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import type { CardOnboardingStepWithCopy } from "../CardOnboardingWidget/useOnboardingSteps";
 import { getWalletPlatform } from "../getWalletPlatform";
@@ -60,7 +60,6 @@ export function useCardOnboardingDialogViewModel({
   onChooseCardType,
 }: Params): CardOnboardingDialogViewProps {
   const { t } = useTranslation();
-  const { trackButtonClicked } = usePayAnalyticsContext();
   const dialogTitle = t("payTab.cardOnboarding.dialog.title");
   const gotItLabel = t("payTab.cardOnboarding.dialog.gotIt");
 
@@ -84,7 +83,7 @@ export function useCardOnboardingDialogViewModel({
         setIsAddToWalletSceneOpen(true);
       },
     }),
-    [onChooseCardType, onTopUp, trackButtonClicked],
+    [onChooseCardType, onTopUp],
   );
 
   const options = useMemo<CardOnboardingOptionViewProps[]>(() => {

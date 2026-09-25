@@ -1,7 +1,6 @@
 import React from "react";
 import { Platform } from "react-native";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 
 jest.mock("../AddToWalletInstructions/openWalletApp", () => ({
   openGoogleWalletStore: jest.fn(),
@@ -27,13 +26,7 @@ function setCardAddedToDigitalWallet(cardAddedToDigitalWallet?: boolean) {
 }
 
 function renderIn(component: React.ReactElement) {
-  return render(component, {
-    wrapper: ({ children }) => (
-      <PayAnalyticsProvider adapter={{ track: jest.fn() }}>
-        <I18nWrapper>{children}</I18nWrapper>
-      </PayAnalyticsProvider>
-    ),
-  });
+  return render(component, { wrapper: I18nWrapper });
 }
 
 function renderCta(appearance?: "base" | "gray", onPress = jest.fn()) {

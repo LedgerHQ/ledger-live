@@ -40,7 +40,7 @@ const noop = () => {};
 
 describe("usePayTabRequestReceive", () => {
   it("should start closed with empty display data", () => {
-    const { result } = renderHook(() => usePayTabRequestReceive(undefined, noop));
+    const { result } = renderHook(() => usePayTabRequestReceive(noop));
 
     expect(result.current.requestReceive.isOpen).toBe(false);
     expect(result.current.requestReceive.address).toBe("");
@@ -49,7 +49,7 @@ describe("usePayTabRequestReceive", () => {
   });
 
   it("should open MAD filtered to the stablecoin category", () => {
-    const { result } = renderHook(() => usePayTabRequestReceive(undefined, noop));
+    const { result } = renderHook(() => usePayTabRequestReceive(noop));
 
     act(() => result.current.open());
 
@@ -64,7 +64,7 @@ describe("usePayTabRequestReceive", () => {
     const account = { type: "TokenAccount" } as unknown as AccountLike;
     const parentAccount = { type: "Account" } as unknown as Account;
 
-    const { result } = renderHook(() => usePayTabRequestReceive(undefined, noop));
+    const { result } = renderHook(() => usePayTabRequestReceive(noop));
 
     act(() => result.current.open());
     const { onSuccess } = openAssetAndAccount.mock.calls[0][0];
@@ -82,7 +82,7 @@ describe("usePayTabRequestReceive", () => {
 
   it("should close the dialog through onClose", () => {
     const account = { type: "Account" } as unknown as AccountLike;
-    const { result } = renderHook(() => usePayTabRequestReceive(undefined, noop));
+    const { result } = renderHook(() => usePayTabRequestReceive(noop));
 
     act(() => result.current.open());
     act(() => openAssetAndAccount.mock.calls[0][0].onSuccess(account, undefined));
@@ -96,7 +96,7 @@ describe("usePayTabRequestReceive", () => {
     const account = { type: "TokenAccount" } as unknown as AccountLike;
     const parentAccount = { type: "Account" } as unknown as Account;
     const onVerify = jest.fn();
-    const { result } = renderHook(() => usePayTabRequestReceive(undefined, onVerify));
+    const { result } = renderHook(() => usePayTabRequestReceive(onVerify));
 
     act(() => result.current.open());
     act(() => openAssetAndAccount.mock.calls[0][0].onSuccess(account, parentAccount));
@@ -111,7 +111,7 @@ describe("usePayTabRequestReceive", () => {
   it("should reopen the receive dialog when the verify flow calls back", () => {
     const account = { type: "TokenAccount" } as unknown as AccountLike;
     const onVerify = jest.fn();
-    const { result } = renderHook(() => usePayTabRequestReceive(undefined, onVerify));
+    const { result } = renderHook(() => usePayTabRequestReceive(onVerify));
 
     act(() => result.current.open());
     act(() => openAssetAndAccount.mock.calls[0][0].onSuccess(account, undefined));

@@ -119,7 +119,6 @@ export function OperationsListView({
           asset={cardAsset}
           formatters={cardHistoryViewModel.formatters}
           formatDay={cardHistoryViewModel.formatDay}
-          onTrackEvent={cardHistoryViewModel.onTrackEvent}
           onGoToPay={cardHistoryViewModel.onGoToPay}
           cardVisual={<CardArtwork />}
         />

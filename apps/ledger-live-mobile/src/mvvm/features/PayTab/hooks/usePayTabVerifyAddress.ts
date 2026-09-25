@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { PayRequestTrackEvent, VerifyAddressProps } from "@features/flow-pay-request";
+import type { VerifyAddressProps } from "@features/flow-pay-request";
 
 export const PAY_REQUEST_VERIFY_PAGE = "Request Address Verification";
 
@@ -11,10 +11,7 @@ export type PayVerifyOutcome =
   | "dismissed"
   | "initFailed";
 
-export function usePayTabVerifyAddress(
-  onTrackEvent?: PayRequestTrackEvent,
-  onMismatch?: () => void,
-) {
+export function usePayTabVerifyAddress(onMismatch?: () => void) {
   const [introOpen, setIntroOpen] = useState(false);
   const [dieActive, setDieActive] = useState(false);
   const introOpenRef = useRef(false);
@@ -55,9 +52,8 @@ export function usePayTabVerifyAddress(
       onVerify,
       onGotIt: onIntroDismiss,
       onClose: onIntroDismiss,
-      onTrackEvent,
     }),
-    [introOpen, onVerify, onIntroDismiss, onTrackEvent],
+    [introOpen, onVerify, onIntroDismiss],
   );
 
   return {

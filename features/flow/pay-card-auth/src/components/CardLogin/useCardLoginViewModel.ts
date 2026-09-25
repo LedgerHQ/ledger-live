@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { useDispatch, useSelector } from "react-redux";
 import { useMachine } from "@xstate/react";
 import type { SnapshotFrom } from "xstate";
@@ -12,6 +12,7 @@ import { cardLoginMachine } from "../../state/machine";
 import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors";
 import { selectIsSignedIn } from "../../state/selectors";
 import { setPendingLoginType, setSessionResolving } from "../../state/slice";
+import { CARD_LOGIN_INTRO_FLOW, CARD_LOGIN_INTRO_PAGE } from "./analytics";
 import type {
   CardAuthErrorCopy,
   CardLoginCopy,
@@ -48,10 +49,6 @@ const INTRO_ACTIONS: readonly { id: CardLoginIntroActionId; appearance: "base" |
   { id: "createAccount", appearance: "base" },
   { id: "logIn", appearance: "gray" },
 ];
-
-export const CARD_LOGIN_INTRO_PAGE_EVENT = "Page card login intro";
-export const CARD_LOGIN_INTRO_PAGE = "card login intro";
-export const CARD_LOGIN_INTRO_FLOW = "card";
 
 const TRACK_BUTTON = {
   getCard: "get card",
@@ -104,7 +101,6 @@ export function useCardLoginViewModel({
   requestProtection,
 }: CardLoginViewModelParams): CardLoginViewModel {
   const { t } = useTranslation();
-  const { trackButtonClicked, trackEvent } = usePayAnalyticsContext();
   const dispatch = useDispatch<CardLoginDispatch>();
   const isSignedIn = useSelector(selectIsSignedIn);
   const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
@@ -197,16 +193,13 @@ export function useCardLoginViewModel({
     })();
   }, [dispatch, openHostedPage, openHostedLogin, oauthConfig, whenProtected]);
 
-  const trackCta = useCallback(
-    (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
-      trackButtonClicked({
-        button,
-        flow: CARD_LOGIN_INTRO_FLOW,
-        page: CARD_LOGIN_INTRO_PAGE,
-      });
-    },
-    [trackButtonClicked],
-  );
+  const trackCta = useCallback((button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
+    trackButtonClicked({
+      button,
+      flow: CARD_LOGIN_INTRO_FLOW,
+      page: CARD_LOGIN_INTRO_PAGE,
+    });
+  }, []);
 
   const onLoginPress = useCallback(() => {
     if (snapshot.value === "awaitingCallback" || hasSeenLoginIntro) {
@@ -215,9 +208,8 @@ export function useCardLoginViewModel({
       return;
     }
     trackCta(TRACK_BUTTON.getCard);
-    trackEvent(CARD_LOGIN_INTRO_PAGE_EVENT, { flow: CARD_LOGIN_INTRO_FLOW });
     setIsIntroRequested(true);
-  }, [hasSeenLoginIntro, snapshot.value, startLogin, trackCta, trackEvent]);
+  }, [hasSeenLoginIntro, snapshot.value, startLogin, trackCta]);
 
   const onAlreadyHaveCardPress = useCallback(() => {
     trackCta(TRACK_BUTTON.alreadyHaveCard);

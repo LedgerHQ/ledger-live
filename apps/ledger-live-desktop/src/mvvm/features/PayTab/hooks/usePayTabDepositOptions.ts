@@ -10,7 +10,6 @@ import {
 import {
   useDepositOptionsAdapter,
   type DepositOptionId,
-  type PayCardTrackEvent,
   type UseDepositOptionsAdapter,
 } from "@features/flow-pay-deposit";
 import { useDispatch } from "LLD/hooks/redux";
@@ -25,9 +24,7 @@ export type UsePayTabDepositOptions = UseDepositOptionsAdapter & {
   bankTransferIntro: BankTransferIntroProps;
 };
 
-export function usePayTabDepositOptions(
-  onTrackEvent: PayCardTrackEvent | undefined,
-): UsePayTabDepositOptions {
+export function usePayTabDepositOptions(): UsePayTabDepositOptions {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { openAssetAndAccount } = useOpenAssetAndAccount();
@@ -57,7 +54,6 @@ export function usePayTabDepositOptions(
 
   const { open: openBankTransferIntro, bankTransferIntro } = useBankTransferIntroAdapter({
     onBankTransfer,
-    onTrackEvent,
   });
 
   const onSelect = useCallback(
@@ -86,7 +82,6 @@ export function usePayTabDepositOptions(
   const { open, depositOptions } = useDepositOptionsAdapter({
     page: DEPOSIT_PAGE,
     onSelect,
-    onTrackEvent,
   });
 
   return { open, depositOptions, bankTransferIntro };

@@ -1,40 +1,42 @@
 import React from "react";
-import { Text } from "react-native";
 import { configureStore } from "@reduxjs/toolkit";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+import {
+  trackButtonClicked,
+  trackedPages,
+} from "@features/platform-pay-analytics/testing/module-mock";
 import { markPayCardFeatureTourSeen, payCardFeatureTourSlice } from "../../../state";
 import { Provider } from "react-redux";
 import { FeatureTour } from "../FeatureTour";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { FEATURE_TOUR_RESOURCES } from "./fixtures";
 
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
+
 function makeStore() {
   return configureStore({ reducer: { payCardFeatureTour: payCardFeatureTourSlice.reducer } });
 }
 
-function renderTour(store = makeStore(), adapter = { track: jest.fn() }) {
+function renderTour(store = makeStore()) {
   return {
     store,
-    adapter,
     ...render(
       <Provider store={store}>
-        <PayAnalyticsProvider
-          adapter={adapter}
-          renderPage={(page, properties) => (
-            <Text testID="pay-track-page">{`${page}:${properties?.flow}`}</Text>
-          )}
-        >
-          <I18nTestProvider resources={FEATURE_TOUR_RESOURCES}>
-            <FeatureTour />
-          </I18nTestProvider>
-        </PayAnalyticsProvider>
+        <I18nTestProvider resources={FEATURE_TOUR_RESOURCES}>
+          <FeatureTour />
+        </I18nTestProvider>
       </Provider>,
     ),
   };
 }
 
 describe("FeatureTour (Native)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterEach(() => {
     cleanup();
   });
@@ -49,20 +51,20 @@ describe("FeatureTour (Native)", () => {
   it("tracks the page when shown", () => {
     renderTour();
 
-    expect(screen.getByTestId("pay-track-page")).toHaveTextContent("Feature Intro:pay");
+    expect(trackedPages()).toContainEqual({ page: "Feature Intro", name: "pay", flow: "pay" });
   });
 
   it("marks the tour as seen and emits the click event on the CTA", async () => {
     const user = userEvent.setup();
-    const { store, adapter } = renderTour();
+    const { store } = renderTour();
 
     await user.press(screen.getByLabelText("Explore Pay"));
 
     expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
-    expect(adapter.track).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "continue",
       flow: "pay",
-      page: "Feature Intro",
+      page: "Feature Intro pay",
     });
   });
 
@@ -72,19 +74,17 @@ describe("FeatureTour (Native)", () => {
     renderTour(store);
 
     expect(screen.queryByText("All your payments, in one place")).toBeNull();
-    expect(screen.queryByTestId("pay-track-page")).toBeNull();
+    expect(trackedPages()).toHaveLength(0);
   });
 
   it("resolves its copy from the mounted i18n provider, not from props", () => {
     render(
       <Provider store={makeStore()}>
-        <PayAnalyticsProvider adapter={{ track: jest.fn() }}>
-          <I18nTestProvider
-            resources={{ en: { translation: { payTab: { featureTour: { cta: "Compris" } } } } }}
-          >
-            <FeatureTour />
-          </I18nTestProvider>
-        </PayAnalyticsProvider>
+        <I18nTestProvider
+          resources={{ en: { translation: { payTab: { featureTour: { cta: "Compris" } } } } }}
+        >
+          <FeatureTour />
+        </I18nTestProvider>
       </Provider>,
     );
 

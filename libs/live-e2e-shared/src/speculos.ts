@@ -643,16 +643,25 @@ export async function waitFor(
 }
 
 /**
+ * Text of an app's idle screen. Button devices read "<app> app is ready"; touch devices show the
+ * app name over "This app enables signing transactions on the <app> network".
+ */
+function appReadyLabel(appName: string): string {
+  return isTouchDevice()
+    ? `This app enables signing transactions on the ${appName} network`
+    : `${appName} app is ready`;
+}
+
+/**
  * Waits for the device to return to its app-ready screen after a status page
  * that answers a command and then draws its own screen -- during that
  * window, the app's own APDU loop can drop an incoming command instead of
  * queuing it (LIVE-37178). The default maxAttempts (9 x the 500ms poll
  * interval = 4.5s) is an upper bound on that screen's own duration, not a
- * guess about CI load. "${name} app is ready" matches how these screens
- * render today (confirmed on Zcash and Exchange, see EXCHANGE_APP_IS_READY).
+ * guess about CI load.
  */
 export async function waitForAppReady(speculosApp: AppInfos, maxAttempts = 9): Promise<string> {
-  return waitFor(`${speculosApp.name} app is ready`, maxAttempts);
+  return waitFor(appReadyLabel(speculosApp.name), maxAttempts);
 }
 
 const SWAP_INIT_STALL_HINT =

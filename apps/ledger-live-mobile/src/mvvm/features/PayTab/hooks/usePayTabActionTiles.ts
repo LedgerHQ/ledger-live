@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import type { ActionTilesProps } from "@features/flow-pay-balance";
 
 export function usePayTabActionTiles(
-  onTrackEvent: ActionTilesProps["onTrackEvent"],
   onDeposit: () => void,
   onRequest: () => void,
 ): ActionTilesProps {
@@ -13,8 +12,7 @@ export function usePayTabActionTiles(
         { id: "request", onPress: onRequest },
       ],
       page: "Pay",
-      onTrackEvent,
     }),
-    [onTrackEvent, onDeposit, onRequest],
+    [onDeposit, onRequest],
   );
 }

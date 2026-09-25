@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
-import { PayAnalyticsProvider, type PayPageProperties } from "@features/platform-pay-analytics";
 import { ScreenName } from "~/const";
-import { TrackScreen, track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import {
   createLumenNativeStackNavigator,
@@ -15,10 +13,6 @@ import { PaySelectContactScreen } from "./screens/PaySelectContact";
 import type { PayTabNavigatorParamList } from "./types";
 
 const TabStack = createLumenNativeStackNavigator<PayTabNavigatorParamList>();
-const renderPage = (page: string, properties?: PayPageProperties) => (
-  <TrackScreen category={page} {...properties} />
-);
-const payAnalyticsAdapter = { track };
 
 export default function PayTabNavigator() {
   const { t } = useTranslation();
@@ -26,29 +20,27 @@ export default function PayTabNavigator() {
   const stackNavigationConfig = useMemo(() => getStackNavigationConfigV4(theme), [theme]);
 
   return (
-    <PayAnalyticsProvider adapter={payAnalyticsAdapter} renderPage={renderPage}>
-      <TabStack.Navigator
-        screenOptions={{
+    <TabStack.Navigator
+      screenOptions={{
+        ...stackNavigationConfig,
+        headerShown: false,
+        gestureEnabled: Platform.OS === "ios",
+      }}
+    >
+      <TabStack.Screen name={ScreenName.PayTab} component={PayTabScreen} />
+      <TabStack.Screen
+        name={ScreenName.PayTabRequestReceive}
+        component={PayTabRequestReceiveScreen}
+      />
+      <TabStack.Screen
+        name={ScreenName.PayTabPayContact}
+        component={PaySelectContactScreen}
+        options={{
+          headerShown: true,
+          title: t("payTab.contacts.seeAllTitle"),
           ...stackNavigationConfig,
-          headerShown: false,
-          gestureEnabled: Platform.OS === "ios",
         }}
-      >
-        <TabStack.Screen name={ScreenName.PayTab} component={PayTabScreen} />
-        <TabStack.Screen
-          name={ScreenName.PayTabRequestReceive}
-          component={PayTabRequestReceiveScreen}
-        />
-        <TabStack.Screen
-          name={ScreenName.PayTabPayContact}
-          component={PaySelectContactScreen}
-          options={{
-            headerShown: true,
-            title: t("payTab.contacts.seeAllTitle"),
-            ...stackNavigationConfig,
-          }}
-        />
-      </TabStack.Navigator>
-    </PayAnalyticsProvider>
+      />
+    </TabStack.Navigator>
   );
 }

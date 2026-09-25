@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import {
   markAnalyticsMilestonesReported,
+  markCardAccountRead,
   markCardOnboardingCompleted,
   payCardOnboardingWidgetInitialState,
   payCardOnboardingWidgetPersistedSelector,
@@ -84,7 +85,35 @@ describe("payCardOnboardingWidgetSlice", () => {
       hasCompletedOnboarding: true,
       analyticsCardId: null,
       reportedAnalyticsMilestones: ["card-onboarding-completed"],
+      hasReadCardAccount: false,
     });
+  });
+
+  it("remembers a read account across restarts", () => {
+    const store = makeStore();
+    store.dispatch(markCardAccountRead());
+
+    const restored = makeStore();
+    restored.dispatch(restorePayCardOnboardingWidget(store.persisted()));
+
+    expect(restored.persisted().hasReadCardAccount).toBe(true);
+  });
+
+  it("keeps the account read once its first card shows up", () => {
+    const store = makeStore();
+    store.dispatch(markCardAccountRead());
+    store.dispatch(setAnalyticsCardId("card-1"));
+
+    expect(store.persisted().hasReadCardAccount).toBe(true);
+  });
+
+  it("reads the account again when another account's card shows up", () => {
+    const store = makeStore();
+    store.dispatch(setAnalyticsCardId("card-1"));
+    store.dispatch(markCardAccountRead());
+    store.dispatch(setAnalyticsCardId("card-2"));
+
+    expect(store.persisted().hasReadCardAccount).toBe(false);
   });
 
   it("clears reported milestones when the card account changes", () => {

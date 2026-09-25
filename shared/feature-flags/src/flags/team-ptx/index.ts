@@ -10,6 +10,7 @@ export * from "./noah";
 export * from "./portfolioExchangeBanner";
 export * from "./ptxBorrowLiveApp";
 export * from "./ptxCard";
+export * from "./ptxEarnCtaOnMobile";
 export * from "./ptxEarnDrawerConfiguration";
 export * from "./ptxEarnLiveApp";
 export * from "./ptxEarnTransactionSuccessBanner";

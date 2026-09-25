@@ -76,6 +76,7 @@ describe("DevToolsScreen", () => {
           onNavigateToPortfolio: expect.any(Function),
           onNavigateToPayTab: expect.any(Function),
           onNavigateToPaySuccess: expect.any(Function),
+          onNavigateToPaySuccessMe: expect.any(Function),
           onNavigateToSendSuccess: expect.any(Function),
         },
       },

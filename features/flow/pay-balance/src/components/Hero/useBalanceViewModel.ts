@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "@shared/i18n";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "../../state";
 import { resolveSelection } from "../../logic/resolveSelection";
 import type { BalanceLabels, BalanceProps, BalanceViewProps } from "../../types";
@@ -12,7 +13,6 @@ export function useBalanceViewModel({
   filterOptions,
   formatCountervalue,
   onConfirmFilter,
-  onTrackEvent,
   actionTiles,
   discreet,
   onToggleDiscreetMode,
@@ -39,8 +39,8 @@ export function useBalanceViewModel({
 
   const onOpenFilter = useCallback(() => {
     setIsFilterOpen(true);
-    onTrackEvent?.("button_clicked", { button: "balance filter", page: "Pay" });
-  }, [onTrackEvent]);
+    trackButtonClicked({ button: "balance filter", page: "Pay" });
+  }, []);
 
   const onCloseFilter = useCallback(() => {
     setIsFilterOpen(false);
@@ -71,7 +71,6 @@ export function useBalanceViewModel({
     onOpenFilter,
     onCloseFilter,
     onConfirmFilter,
-    onTrackEvent,
     actionTiles,
     discreet,
     onToggleDiscreetMode,

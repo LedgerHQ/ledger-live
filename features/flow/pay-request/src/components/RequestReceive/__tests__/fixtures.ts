@@ -24,7 +24,6 @@ export function createRequestReceiveProps(
     onSave: jest.fn(),
     onVerify: jest.fn(),
     onClose: jest.fn(),
-    onTrackEvent: jest.fn(),
     ...overrides,
   };
 }
@@ -32,13 +31,7 @@ export function createRequestReceiveProps(
 export function createRequestReceiveViewProps(
   overrides: Partial<RequestReceiveViewProps> = {},
 ): RequestReceiveViewProps {
-  const {
-    asset: _asset,
-    network: _network,
-    page: _page,
-    onTrackEvent: _onTrackEvent,
-    ...shell
-  } = createRequestReceiveProps();
+  const { asset: _asset, network: _network, page: _page, ...shell } = createRequestReceiveProps();
 
   return {
     ...shell,

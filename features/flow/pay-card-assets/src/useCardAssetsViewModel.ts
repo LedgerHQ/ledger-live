@@ -2,7 +2,8 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useUpdateCardWalletPrioritiesMutation } from "@domain/api-card-management";
 import {
   toPayDebitOrderProperties,
-  usePayAnalyticsContext,
+  trackButtonClicked,
+  trackDebitOrderChanged,
 } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
@@ -50,7 +51,6 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     discreet = false,
   } = props ?? {};
   const { t } = useTranslation();
-  const { trackButtonClicked, trackDebitOrderChanged } = usePayAnalyticsContext();
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [assetOrder, setAssetOrder] = useState<readonly string[]>([]);
@@ -143,7 +143,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     manageInitialOrder.current = null;
     setDialogState("closed");
     setSelectedAssetId(null);
-  }, [dialogState, rows, trackDebitOrderChanged]);
+  }, [dialogState, rows]);
 
   const onTopUpPress = useCallback(() => {
     if (selectedAsset) onTopUp?.(selectedAsset);
@@ -172,7 +172,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     manageInitialOrder.current = rows.map(row => row.currency);
     trackButtonClicked({ button: "debit order", page: "Card details" });
     setDialogState("manage");
-  }, [rows, trackButtonClicked]);
+  }, [rows]);
 
   const onAddAssetPress = useCallback(() => {
     onAddAsset?.();

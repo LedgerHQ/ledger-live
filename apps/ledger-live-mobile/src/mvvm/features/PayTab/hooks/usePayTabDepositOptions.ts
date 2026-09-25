@@ -10,7 +10,6 @@ import {
 import {
   useDepositOptionsAdapter,
   type DepositOptionId,
-  type PayCardTrackEvent,
   type UseDepositOptionsAdapter,
 } from "@features/flow-pay-deposit";
 import { NavigatorName, ScreenName } from "~/const";
@@ -31,9 +30,7 @@ export type UsePayTabDepositOptions = UseDepositOptionsAdapter & {
   bankTransferIntro: BankTransferIntroProps;
 };
 
-export function usePayTabDepositOptions(
-  onTrackEvent: PayCardTrackEvent | undefined,
-): UsePayTabDepositOptions {
+export function usePayTabDepositOptions(): UsePayTabDepositOptions {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
@@ -61,7 +58,6 @@ export function usePayTabDepositOptions(
   const { open: openBankTransferIntro, bankTransferIntro } = useBankTransferIntroAdapter({
     heroImage: BANK_TRANSFER_INTRO_HERO_IMAGE,
     onBankTransfer,
-    onTrackEvent,
   });
 
   const onSelect = useCallback(
@@ -87,7 +83,6 @@ export function usePayTabDepositOptions(
   const { open, depositOptions } = useDepositOptionsAdapter({
     page: DEPOSIT_PAGE,
     onSelect,
-    onTrackEvent,
   });
 
   return { open, depositOptions, bankTransferIntro };

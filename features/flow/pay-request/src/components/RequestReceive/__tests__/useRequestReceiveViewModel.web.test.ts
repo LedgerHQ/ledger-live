@@ -2,6 +2,11 @@ import { renderHook } from "@testing-library/react";
 import { i18nWrapper, REQUEST_RESOURCES } from "../../../__tests__/i18nWrapper";
 import type { RequestReceiveViewModelParams } from "../../../types";
 import { useRequestReceiveViewModel } from "../useRequestReceiveViewModel";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 const ADDRESS = "0x1234567890abcdef1234567890abcdef";
 
@@ -15,7 +20,6 @@ function setup(overrides: Partial<RequestReceiveViewModelParams> = {}) {
     onCopy: jest.fn(),
     onSave: jest.fn(),
     onVerify: jest.fn(),
-    onTrackEvent: jest.fn(),
     ...overrides,
   };
   const { result } = renderHook(() => useRequestReceiveViewModel(props), {
@@ -25,6 +29,10 @@ function setup(overrides: Partial<RequestReceiveViewModelParams> = {}) {
 }
 
 describe("useRequestReceiveViewModel", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("exposes translated title, network label, address, address parts and QR payload", () => {
     const { result } = setup();
 
@@ -51,7 +59,7 @@ describe("useRequestReceiveViewModel", () => {
 
     result.current[handler]();
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button,
       buttonLocation: "request",
       page: "Pay",
@@ -60,20 +68,13 @@ describe("useRequestReceiveViewModel", () => {
     expect(props[handler]).toHaveBeenCalledWith(ADDRESS);
   });
 
-  it("does not throw when no tracker is provided", () => {
-    const { props, result } = setup({ onTrackEvent: undefined });
-
-    expect(() => result.current.onCopy()).not.toThrow();
-    expect(props.onCopy).toHaveBeenCalledWith(ADDRESS);
-  });
-
   it.each(["onShare", "onSave"] as const)(
     "neither tracks nor throws when the optional %s callback is omitted",
     handler => {
-      const { props, result } = setup({ [handler]: undefined });
+      const { result } = setup({ [handler]: undefined });
 
       expect(() => result.current[handler]()).not.toThrow();
-      expect(props.onTrackEvent).not.toHaveBeenCalled();
+      expect(trackButtonClicked).not.toHaveBeenCalled();
     },
   );
 });

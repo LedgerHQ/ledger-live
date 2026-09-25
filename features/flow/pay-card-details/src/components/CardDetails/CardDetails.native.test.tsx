@@ -1,8 +1,11 @@
 import React, { type PropsWithChildren } from "react";
-import { Text } from "react-native";
 import { act, render, screen, userEvent } from "@testing-library/react-native";
 import type { CardAssetRow, CardAssetsViewModel } from "@features/flow-pay-card-assets";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+import {
+  trackButtonClicked,
+  trackTransactionClicked,
+  trackedPages,
+} from "@features/platform-pay-analytics/testing/module-mock";
 import { Spinner } from "@ledgerhq/lumen-ui-rnative";
 import {
   cardApiWrapper,
@@ -13,6 +16,10 @@ import {
 import { ADD_TO_WALLET_COPY, CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardDetails } from "./CardDetails";
 import type { CardVisualProps } from "../../types";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 const mockUseCardAssetsViewModel = jest.fn();
 
@@ -34,32 +41,17 @@ const assets = {
   formatCountervalue: (value: number) => `$${value}`,
   onAddAsset: jest.fn(),
 };
-let track = jest.fn();
-
 function Wrapper({ children }: PropsWithChildren) {
   return (
     <StoreWrapper>
-      <PayAnalyticsProvider
-        adapter={{ track }}
-        renderPage={page => <Text testID="pay-track-page">{page}</Text>}
-      >
-        <I18nWrapper>{children}</I18nWrapper>
-      </PayAnalyticsProvider>
+      <I18nWrapper>{children}</I18nWrapper>
     </StoreWrapper>
   );
 }
 
-function renderCardDetails({
-  onTrackEvent = jest.fn(),
-  onTopUp,
-}: {
-  onTrackEvent?: jest.Mock;
-  onTopUp?: () => void;
-} = {}) {
-  track = onTrackEvent;
+function renderCardDetails({ onTopUp }: { onTopUp?: () => void } = {}) {
   return {
     user: userEvent.setup(),
-    onTrackEvent,
     ...render(<CardDetails onTopUp={onTopUp} />, { wrapper: Wrapper }),
   };
 }
@@ -247,7 +239,7 @@ describe("CardDetails (native)", () => {
   });
 
   it("should show and track the card numbers after View", async () => {
-    const { user, onTrackEvent } = renderCardDetails();
+    const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
     await user.press(await screen.findByText(CARD_COPY.numbersReveal));
@@ -266,13 +258,11 @@ describe("CardDetails (native)", () => {
     expect(screen.getByLabelText(CARD_COPY.numbersImageAlt)).toBeVisible();
     expect(screen.getByText(CARD_COPY.numbersHide)).toBeVisible();
     expect(screen.queryByText(CARD_COPY.numbersReveal)).not.toBeOnTheScreen();
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "view_card_digits",
       page: "Card details",
     });
-    expect(
-      screen.getAllByTestId("pay-track-page").some(page => page.props.children === "Card digits"),
-    ).toBe(true);
+    expect(trackedPages()).toContainEqual(expect.objectContaining({ page: "Card digits" }));
 
     await user.press(screen.getByText(CARD_COPY.numbersHide));
 
@@ -281,14 +271,14 @@ describe("CardDetails (native)", () => {
   });
 
   it("should navigate to More without opening another sheet", async () => {
-    const { user, onTrackEvent } = renderCardDetails();
+    const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
     await user.press(await screen.findByLabelText(MORE_COPY.tile));
 
     expect(screen.getByText(MORE_COPY.rows.managePin)).toBeVisible();
     expect(screen.getByTestId("card-details-more-content")).toBeVisible();
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "more",
       page: "Card details",
     });
@@ -327,16 +317,14 @@ describe("CardDetails (native)", () => {
   });
 
   it("should open the selected transaction in the same sheet and track the click", async () => {
-    const { user, onTrackEvent } = renderCardDetails();
+    const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
     await user.press(await screen.findByText("NETFLIX.COM"));
 
     expect(screen.getByTestId("card-details-transaction-content")).toBeVisible();
-    expect(
-      onTrackEvent.mock.calls.filter(([event]) => event === "transaction_clicked"),
-    ).toHaveLength(1);
-    expect(onTrackEvent).toHaveBeenCalledWith("transaction_clicked", {
+    expect(trackTransactionClicked).toHaveBeenCalledTimes(1);
+    expect(trackTransactionClicked).toHaveBeenCalledWith({
       category: "card",
       transaction: "out",
       page: "Pay",

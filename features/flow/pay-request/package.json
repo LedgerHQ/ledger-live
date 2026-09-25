@@ -29,6 +29,7 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-request"
   },
   "dependencies": {
+    "@features/platform-pay-analytics": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@shared/i18n": "workspace:*",

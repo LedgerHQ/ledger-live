@@ -1,6 +1,11 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { trackedPages } from "@features/platform-pay-analytics/testing/module-mock";
 import { CardLoginIntroView } from "../CardLoginIntroView.web";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 const defaultProps: React.ComponentProps<typeof CardLoginIntroView> = {
   isOpen: true,
@@ -49,6 +54,13 @@ describe("CardLoginIntroView (Web)", () => {
 
     expect(screen.queryByTestId("pay-card-login-intro-dialog")).toBeNull();
     expect(screen.queryByText("Spend crypto, earn cashback")).toBeNull();
+    expect(trackedPages()).toHaveLength(0);
+  });
+
+  it("tracks the card feature intro page once open", () => {
+    renderIntro();
+
+    expect(trackedPages()).toContainEqual({ page: "Feature Intro", name: "card", flow: "card" });
   });
 
   it("renders the title, every row and the disclaimer once open", () => {

@@ -2,19 +2,21 @@ import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { I18nTestProvider } from "@shared/i18n/testing";
+import {
+  trackButtonClicked,
+  trackedPages,
+} from "@features/platform-pay-analytics/testing/module-mock";
 import { BankTransferIntro } from "../BankTransferIntro";
 import { useBankTransferIntroAdapter } from "../useBankTransferIntroAdapter";
-import type { BankTransferIntroProps } from "../../../types";
 import { I18nWrapper } from "./i18nWrapper";
 
-function OpenIntro({
-  onTrackEvent = jest.fn(),
-}: {
-  onTrackEvent?: BankTransferIntroProps["onTrackEvent"];
-}) {
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
+
+function OpenIntro() {
   const { open, bankTransferIntro } = useBankTransferIntroAdapter({
     onBankTransfer: jest.fn(),
-    onTrackEvent,
   });
   React.useEffect(() => {
     open();
@@ -27,13 +29,16 @@ function renderIntro(ui: React.ReactElement) {
 }
 
 describe("BankTransferIntro (Web)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterEach(() => {
     cleanup();
   });
 
   it("should render the intro copy", () => {
-    const onTrackEvent = jest.fn();
-    renderIntro(<OpenIntro onTrackEvent={onTrackEvent} />);
+    renderIntro(<OpenIntro />);
 
     expect(screen.getByRole("heading", { name: "Send cash, receive stablecoin" })).toBeVisible();
     expect(
@@ -43,57 +48,58 @@ describe("BankTransferIntro (Web)", () => {
     expect(screen.getByRole("button", { name: "Create an account" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Log in to Noah" })).toBeVisible();
     expect(screen.getByText("Provided by Noah")).toBeVisible();
-    expect(onTrackEvent).toHaveBeenCalledWith("Page cash to stable", { flow: "C2S" });
+    expect(trackedPages()).toContainEqual({
+      page: "Feature Intro",
+      name: "Cash to stable",
+      flow: "Cash to stable",
+    });
   });
 
   it("should close after create account and track that CTA", async () => {
     const user = userEvent.setup();
-    const onTrackEvent = jest.fn();
-    renderIntro(<OpenIntro onTrackEvent={onTrackEvent} />);
+    renderIntro(<OpenIntro />);
 
     await user.click(screen.getByRole("button", { name: "Create an account" }));
 
     expect(
       screen.queryByRole("heading", { name: "Send cash, receive stablecoin" }),
     ).not.toBeInTheDocument();
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "create an account",
-      flow: "C2S",
-      page: "cash to stable",
+      flow: "Cash to stable",
+      page: "Feature Intro Cash to stable",
     });
   });
 
   it("should close after log in and track that CTA", async () => {
     const user = userEvent.setup();
-    const onTrackEvent = jest.fn();
-    renderIntro(<OpenIntro onTrackEvent={onTrackEvent} />);
+    renderIntro(<OpenIntro />);
 
     await user.click(screen.getByRole("button", { name: "Log in to Noah" }));
 
     expect(
       screen.queryByRole("heading", { name: "Send cash, receive stablecoin" }),
     ).not.toBeInTheDocument();
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "log in to noah",
-      flow: "C2S",
-      page: "cash to stable",
+      flow: "Cash to stable",
+      page: "Feature Intro Cash to stable",
     });
   });
 
   it("should close after header close and track close", async () => {
     const user = userEvent.setup();
-    const onTrackEvent = jest.fn();
-    renderIntro(<OpenIntro onTrackEvent={onTrackEvent} />);
+    renderIntro(<OpenIntro />);
 
     await user.click(screen.getByRole("button", { name: "Close" }));
 
     expect(
       screen.queryByRole("heading", { name: "Send cash, receive stablecoin" }),
     ).not.toBeInTheDocument();
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "close",
-      flow: "C2S",
-      page: "cash to stable",
+      flow: "Cash to stable",
+      page: "Feature Intro Cash to stable",
     });
   });
 
