@@ -338,7 +338,7 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
     // zcash_regtest.ts and signer.ts for the full rationale.
     const coinConfig: ZcashCoinConfig = {
       status: { type: "active" },
-      zaino: { url: ZAINO_GRPC_URL, timeoutMs: 120_000, batchSize: 5_000 },
+      zaino: { url: ZAINO_GRPC_URL },
       explorer: { url: EXPLORER_ORIGIN },
     };
     LiveConfig.setConfig({
