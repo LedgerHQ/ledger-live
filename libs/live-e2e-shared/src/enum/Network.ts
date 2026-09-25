@@ -29,6 +29,7 @@ export enum Network {
   SCROLL = "Scroll",
   NEAR = "NEAR",
   OSMOSIS = "Osmosis",
+  BABYLON = "Babylon",
   MULTIVERS_X = "MultiversX",
   LITECOIN = "Litecoin",
   KASPA = "Kaspa",

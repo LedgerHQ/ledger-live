@@ -1,6 +1,7 @@
-import { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { Currency, CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 const BST_ADD_ACCOUNT_CURRENCIES = new Set([
   "ton",
@@ -12,12 +13,17 @@ const BST_ADD_ACCOUNT_CURRENCIES = new Set([
   "ripple",
 ]);
 
+const CURRENCY_FEATURE_FLAGS = new Map<string, PartialFeatures>([
+  [Currency.BABY.id, { currencyBabylon: { enabled: true } }],
+]);
+
 export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], tags: string[]) {
   describe("Add account", () => {
     beforeAll(async () => {
       await app.init({
         userdata: "skip-onboarding",
         speculosApp: currency.speculosApp,
+        featureFlags: CURRENCY_FEATURE_FLAGS.get(currency.id),
       });
       await app.mainNavigation.waitForWallet40Ready();
     });
