@@ -184,6 +184,8 @@ pnpm --silent wallet-cli start send ethereum-1 --to <WETH_CONTRACT_ADDRESS> --am
 
 Always run with `--dry-run` first to validate calldata before signing. The CLI cannot verify the semantic correctness of hand-supplied `--data` — the device screen is the last line of defense, so review the decoded call on-device before approving.
 
+Without `--dry-run`, `send` signs and broadcasts the transaction; it does not stop after signing.
+
 ### swap quote
 
 Fetches quotes in parallel from the built-in provider list (no device required; addresses are resolved from session accounts).
