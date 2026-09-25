@@ -1,6 +1,8 @@
-import { getMessaging, type FirebaseMessagingTypes } from "@react-native-firebase/messaging";
+import { getMessaging, AuthorizationStatus } from "@react-native-firebase/messaging";
 
-export const getNotificationPermissionStatus =
-  async (): Promise<FirebaseMessagingTypes.AuthorizationStatus> => {
-    return getMessaging().hasPermission();
-  };
+export type AuthorizationStatusType =
+  (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
+
+export const getNotificationPermissionStatus = async (): Promise<AuthorizationStatusType> => {
+  return getMessaging().hasPermission();
+};

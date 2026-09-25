@@ -210,48 +210,48 @@ PODS:
     - ExpoModulesCore
   - fast_float (8.0.0)
   - FBLazyVector (0.81.6)
-  - Firebase/CoreOnly (12.15.0):
-    - FirebaseCore (~> 12.15.0)
-  - Firebase/Messaging (12.15.0):
+  - Firebase/CoreOnly (12.18.0):
+    - FirebaseCore (~> 12.18.0)
+  - Firebase/Messaging (12.18.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 12.15.0)
-  - Firebase/RemoteConfig (12.15.0):
+    - FirebaseMessaging (~> 12.18.0)
+  - Firebase/RemoteConfig (12.18.0):
     - Firebase/CoreOnly
-    - FirebaseRemoteConfig (~> 12.15.0)
-  - FirebaseABTesting (12.15.0):
-    - FirebaseCore (~> 12.15.0)
-  - FirebaseCore (12.15.0):
-    - FirebaseCoreInternal (~> 12.15.0)
+    - FirebaseRemoteConfig (~> 12.18.0)
+  - FirebaseABTesting (12.18.0):
+    - FirebaseCore (~> 12.18.0)
+  - FirebaseCore (12.18.0):
+    - FirebaseCoreInternal (~> 12.18.0)
     - GoogleUtilities/Environment (~> 8.1)
     - GoogleUtilities/Logger (~> 8.1)
-  - FirebaseCoreExtension (12.15.0):
-    - FirebaseCore (~> 12.15.0)
-  - FirebaseCoreInternal (12.15.0):
+  - FirebaseCoreExtension (12.18.0):
+    - FirebaseCore (~> 12.18.0)
+  - FirebaseCoreInternal (12.18.0):
     - "GoogleUtilities/NSData+zlib (~> 8.1)"
-  - FirebaseInstallations (12.15.0):
-    - FirebaseCore (~> 12.15.0)
+  - FirebaseInstallations (12.18.0):
+    - FirebaseCore (~> 12.18.0)
     - GoogleUtilities/Environment (~> 8.1)
     - GoogleUtilities/UserDefaults (~> 8.1)
     - PromisesObjC (~> 2.4)
-  - FirebaseMessaging (12.15.0):
-    - FirebaseCore (~> 12.15.0)
-    - FirebaseInstallations (~> 12.15.0)
+  - FirebaseMessaging (12.18.0):
+    - FirebaseCore (~> 12.18.0)
+    - FirebaseInstallations (~> 12.18.0)
     - GoogleDataTransport (~> 10.1)
     - GoogleUtilities/AppDelegateSwizzler (~> 8.1)
     - GoogleUtilities/Environment (~> 8.1)
     - GoogleUtilities/Reachability (~> 8.1)
     - GoogleUtilities/UserDefaults (~> 8.1)
     - nanopb (~> 3.30910.0)
-  - FirebaseRemoteConfig (12.15.0):
-    - FirebaseABTesting (~> 12.15.0)
-    - FirebaseCore (~> 12.15.0)
-    - FirebaseInstallations (~> 12.15.0)
-    - FirebaseRemoteConfigInterop (~> 12.15.0)
-    - FirebaseSharedSwift (~> 12.15.0)
+  - FirebaseRemoteConfig (12.18.0):
+    - FirebaseABTesting (~> 12.18.0)
+    - FirebaseCore (~> 12.18.0)
+    - FirebaseInstallations (~> 12.18.0)
+    - FirebaseRemoteConfigInterop (~> 12.18.0)
+    - FirebaseSharedSwift (~> 12.18.0)
     - GoogleUtilities/Environment (~> 8.1)
     - "GoogleUtilities/NSData+zlib (~> 8.1)"
-  - FirebaseRemoteConfigInterop (12.15.0)
-  - FirebaseSharedSwift (12.15.0)
+  - FirebaseRemoteConfigInterop (12.18.0)
+  - FirebaseSharedSwift (12.18.0)
   - fmt (11.0.2)
   - glog (0.3.5)
   - GoogleDataTransport (10.1.1):
@@ -3226,11 +3226,11 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNFBApp (25.1.0):
+  - RNFBApp (26.4.0):
     - boost
     - DoubleConversion
     - fast_float
-    - Firebase/CoreOnly (= 12.15.0)
+    - Firebase/CoreOnly (= 12.18.0)
     - fmt
     - glog
     - hermes-engine
@@ -3255,12 +3255,12 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNFBMessaging (25.1.0):
+  - RNFBMessaging (26.4.0):
     - boost
     - DoubleConversion
     - fast_float
-    - Firebase/Messaging (= 12.15.0)
-    - FirebaseCoreExtension
+    - Firebase/Messaging (= 12.18.0)
+    - FirebaseCoreExtension (= 12.18.0)
     - fmt
     - glog
     - hermes-engine
@@ -3286,11 +3286,11 @@ PODS:
     - RNFBApp
     - SocketRocket
     - Yoga
-  - RNFBRemoteConfig (25.1.0):
+  - RNFBRemoteConfig (26.4.0):
     - boost
     - DoubleConversion
     - fast_float
-    - Firebase/RemoteConfig (= 12.15.0)
+    - Firebase/RemoteConfig (= 12.18.0)
     - fmt
     - glog
     - hermes-engine
@@ -3845,9 +3845,9 @@ DEPENDENCIES:
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.9_rea_9f463ab6f0d191fdd306a850817bdf11/node_modules/@react-native-masked-view/masked-view`)"
   - "RNDeviceInfo (from `../../../node_modules/.pnpm/react-native-device-info@11.1.0_react-native@0._f1edf7871ea9376f46bb26851d8f16fc/node_modules/react-native-device-info`)"
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_891d9f6abe81c0fe843d59433e768e9a/node_modules/react-native-fast-image`)"
-  - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@25.1.0_@react-native_aeeb3a78fb10a04a05859b6624642be4/node_modules/@react-native-firebase/app`)"
-  - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@25.1.0_@react-_a4ddb7cbf722b5495f15fb28e402902b/node_modules/@react-native-firebase/messaging`)"
-  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@25.1.0_@re_cce808b6d182cad6eca39e45cc80bf48/node_modules/@react-native-firebase/remote-config`)"
+  - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@26.4.0_@react-native_d483016b1525858af99748f907f8e4d8/node_modules/@react-native-firebase/app`)"
+  - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@26.4.0_@react-_91f5942a93393b303afce250752f08d6/node_modules/@react-native-firebase/messaging`)"
+  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@26.4.0_@re_c605908ac35e5450d0812625fb3721da/node_modules/@react-native-firebase/remote-config`)"
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_0a7cb677e518f2e9f30a24dde608028e/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_22b59121ec847ba53fb2e7d8aec6c181/node_modules/react-native-localize`)"
@@ -4144,11 +4144,11 @@ EXTERNAL SOURCES:
   RNFastImage:
     :path: "../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_891d9f6abe81c0fe843d59433e768e9a/node_modules/react-native-fast-image"
   RNFBApp:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@25.1.0_@react-native_aeeb3a78fb10a04a05859b6624642be4/node_modules/@react-native-firebase/app"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@26.4.0_@react-native_d483016b1525858af99748f907f8e4d8/node_modules/@react-native-firebase/app"
   RNFBMessaging:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+messaging@25.1.0_@react-_a4ddb7cbf722b5495f15fb28e402902b/node_modules/@react-native-firebase/messaging"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+messaging@26.4.0_@react-_91f5942a93393b303afce250752f08d6/node_modules/@react-native-firebase/messaging"
   RNFBRemoteConfig:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@25.1.0_@re_cce808b6d182cad6eca39e45cc80bf48/node_modules/@react-native-firebase/remote-config"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@26.4.0_@re_c605908ac35e5450d0812625fb3721da/node_modules/@react-native-firebase/remote-config"
   RNGestureHandler:
     :path: "../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_0a7cb677e518f2e9f30a24dde608028e/node_modules/react-native-gesture-handler"
   RNKeychain:
@@ -4208,16 +4208,16 @@ SPEC CHECKSUMS:
   ExpoWebBrowser: 17b064c621789e41d4816c95c93f429b84971f52
   fast_float: b32c788ed9c6a8c584d114d0047beda9664e7cc6
   FBLazyVector: 812782f0506ba4c4a1b9f4b793e6de1bfdfc4c25
-  Firebase: a8539b633d474fbeb654c7043f9c1649e274045b
-  FirebaseABTesting: 04cab3e6db77b86af50b6cf7c825a13e04beca52
-  FirebaseCore: 2e86a4ea1684d4381707069e4a6d89ac808e901e
-  FirebaseCoreExtension: 10d2a627977b39418759ad88ada80fbbd34f1c4f
-  FirebaseCoreInternal: 6ab6a02c94446c026d2cf35cf5383842ebaa4992
-  FirebaseInstallations: eb29ccbf64eaedf86fd5b2ccc7fabde567660b52
-  FirebaseMessaging: 40017d7bc8457ee295b0f41d480a80fdabc9994e
-  FirebaseRemoteConfig: d8b57e994277aabef7cca708e671ce676eefed7a
-  FirebaseRemoteConfigInterop: 7e3d57ce4b1e958bb1d15403faa7178f46bbb5b7
-  FirebaseSharedSwift: 3f5c2758484d32099d693f269f110d3249c3f7e3
+  Firebase: 5523dd53ebe603451b4e1befcd99fa20a5c015cd
+  FirebaseABTesting: 7060ad22592c1ae86cccf9cc0f886f470084cbd5
+  FirebaseCore: 96787d19ee32dc2242cc487b301bc616afeb398b
+  FirebaseCoreExtension: a86bab02524ca2bff95dddab7a3fcad505c2ddeb
+  FirebaseCoreInternal: 93b2d5f9e184c6818a04433891c358b0720a6a38
+  FirebaseInstallations: 933b2747e8594084c9117b65e8358fce29d7ced7
+  FirebaseMessaging: 422bb80cbf8ff83e69e50bea4d4984fc4704f665
+  FirebaseRemoteConfig: 263cc3d8306e5ec83727bca18fc245fb7027d3ca
+  FirebaseRemoteConfigInterop: 3cbd659033c3129ea81a756a52e4bf1cfc20c3a7
+  FirebaseSharedSwift: 9d9404eea60b650d3e549898bfebbb8f665fe601
   fmt: ef0a98103bd75695e5734efe6b9016b2675ffcd5
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   GoogleDataTransport: a24e58982ab3ba2f64d79613e027fe7f57e88539
@@ -4327,9 +4327,9 @@ SPEC CHECKSUMS:
   RNCMaskedView: 4b5b12efdee55966f1d68f32d4b3401c2acf05c2
   RNDeviceInfo: 900bd20e1fd3bfd894e7384cc4a83880c0341bd3
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
-  RNFBApp: cec9fe4fe0e6ccd8e2359aa8f6dc41fa16ff8cd9
-  RNFBMessaging: 7bf784ca7b67c052629cf669e20d9966c92e151b
-  RNFBRemoteConfig: a5fb399c53510fa15099bb5ffc6536c9b539c856
+  RNFBApp: 41c7eb911e83bda7638b88cdaff965b6810eb269
+  RNFBMessaging: f1dec696005efb4c2a1863381ce3861cb9530972
+  RNFBRemoteConfig: 912c545afc2587066f6df15f07571f58a214c683
   RNGestureHandler: b8d2e75c2e88fc2a1f6be3b3beeeed80b88fa37d
   RNKeychain: 76d042fc1dfba47f3945920bc82e0bce9ad1ff55
   RNLocalize: 8bf466de4c92d4721b254aabe1ff0a1456e7b9f4
@@ -4348,6 +4348,6 @@ SPEC CHECKSUMS:
   VisionCamera: b51af005669c6642dd1b4fca434eda4c1778de87
   Yoga: ff16d80456ce825ffc9400eeccc645a0dfcccdf5
 
-PODFILE CHECKSUM: 11b0543d8207874e261875d4864930a6c73fcd92
+PODFILE CHECKSUM: 03267e08fbfdcdf3125290800ee1c89079db09b4
 
 COCOAPODS: 1.14.3
