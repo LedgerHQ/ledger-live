@@ -1,0 +1,45 @@
+name: "Wait for workflow jobs"
+description: "Poll the current run until every job whose name starts with a prefix is completed."
+
+inputs:
+  job-name-prefix:
+    description: "Jobs in this run whose `name` starts with this exact string are waited on"
+    required: true
+  poll-interval-seconds:
+    description: "How often to re-check job status"
+    required: false
+    # Every shard polls independently: 60s is well under GITHUB_TOKEN's 1,000 req/hour/repo limit.
+    default: "60"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Poll until matching jobs complete
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      env:
+        JOB_NAME_PREFIX: ${{ inputs.job-name-prefix }}
+        POLL_INTERVAL_SECONDS: ${{ inputs.poll-interval-seconds }}
+      with:
+        script: |
+          const prefix = process.env.JOB_NAME_PREFIX;
+          const pollIntervalMs = Number.parseInt(process.env.POLL_INTERVAL_SECONDS, 10) * 1000;
+          for (;;) {
+            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+              per_page: 100,
+            });
+            const matching = jobs.filter(j => j.name.startsWith(prefix));
+            if (matching.length === 0) {
+              core.info(`No jobs matching "${prefix}" visible yet in this run; waiting...`);
+            } else {
+              const pending = matching.filter(j => j.status !== "completed");
+              if (pending.length === 0) {
+                core.info(`All ${matching.length} job(s) matching "${prefix}" have finished.`);
+                break;
+              }
+              core.info(`Waiting on ${pending.length}/${matching.length} job(s) matching "${prefix}".`);
+            }
+            await new Promise(resolve => setTimeout(resolve, pollIntervalMs));
+          }

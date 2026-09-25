@@ -624,6 +624,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      actions: read # needed by the "Wait for Android to finish" step
     needs: [build-ios, determine-builds]
     if: ${{ always() && !cancelled() && needs.build-ios.result == 'success' && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on: ["qaa", macOS, ARM64, "performance-pool"]
@@ -771,6 +772,15 @@ jobs:
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
+
+      # Only waits when both platforms broadcast in this run. They should not do it in parallel as they share one seed.
+      - name: Wait for Android to finish before iOS broadcasts
+        if: ${{ env.E2E_BROADCAST_BOTH_MOBILE_PLATFORMS == 'true' }}
+        timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/wait-for-workflow-jobs@develop
+        with:
+          job-name-prefix: "Android E2E Tests ("
+          poll-interval-seconds: "60"
 
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
