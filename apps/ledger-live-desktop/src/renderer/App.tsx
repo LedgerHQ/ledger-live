@@ -35,6 +35,7 @@ import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
 import { I18nextProvider } from "react-i18next";
 import { I18nProvider } from "@shared/i18n";
 import i18n from "~/renderer/i18n/init";
+import { useContentAbTestCopyUpdates } from "~/renderer/i18n/useContentAbTestCopyUpdates";
 import { setZcashShieldedEnabled } from "@ledgerhq/live-common/families/zcash/setup";
 import { LinkingProviderWrapper } from "~/renderer/components/LinkingProviderWrapper";
 
@@ -124,6 +125,8 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
 };
 
 const App = ({ store, initialCountervalues }: Props) => {
+  useContentAbTestCopyUpdates();
+
   return (
     <LiveStyleSheetManager>
       {/* Two providers, one instance: `I18nextProvider` serves the app's own react-i18next call

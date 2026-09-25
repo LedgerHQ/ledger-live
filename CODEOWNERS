@@ -168,6 +168,11 @@ apps/ledger-live-desktop/src/mvvm/features/WalletSync/   @ledgerhq/platform
 apps/ledger-live-desktop/src/mvvm/features/LedgerSyncEntryPoints/ @ledgerhq/platform
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/FeatureFlagsSettings/ @ledgerhq/platform
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/ @ledgerhq/wallet-xp
+apps/ledger-live-desktop/src/firebase/contentAbTestCopy.ts                                     @ledgerhq/platform
+apps/ledger-live-desktop/src/firebase/contentAbTestCopy.test.ts                                @ledgerhq/platform
+apps/ledger-live-desktop/src/renderer/i18n/contentAbTestCopyOverrides.ts                       @ledgerhq/platform
+apps/ledger-live-desktop/src/renderer/i18n/contentAbTestCopyOverrides.test.tsx                 @ledgerhq/platform
+apps/ledger-live-desktop/src/renderer/i18n/useContentAbTestCopyUpdates.ts                      @ledgerhq/platform
 
 # Coin integration team
 .github/**/bot-*.yml                                                @ledgerhq/coin-integration

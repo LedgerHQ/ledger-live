@@ -47,6 +47,9 @@ describe("fetchRemoteFlags", () => {
     mockGetAll.mockReturnValue({
       feature_counter_value: value(JSON.stringify({ enabled: true })),
       feature_lwd_wallet_40: value(JSON.stringify({ enabled: false, params: { mainNav: true } })),
+      feature_copy_upgrade_banner: value(
+        JSON.stringify({ enabled: true, "upgrade.banner.title": "Discover Ledger Flex" }),
+      ),
       config_unrelated: value('"ignored"'),
       stranger_key: value('"ignored"'),
       feature_unknown_flag: value('"ignored"'),
@@ -59,6 +62,11 @@ describe("fetchRemoteFlags", () => {
       counterValue: { enabled: true },
       lwdWallet40: { enabled: false, params: { mainNav: true } },
     });
+    const { getContentAbTestCopy } = await import("./contentAbTestCopy");
+    expect(getContentAbTestCopy()).toEqual({
+      "upgrade.banner.title": "Discover Ledger Flex",
+    });
+    expect(mockGetAll).toHaveBeenCalledTimes(1);
   });
 
   it("resolves Firebase keys whose snake_case ↔ camelCase round-trip is lossy", async () => {
