@@ -205,7 +205,32 @@ describe("customCreateStore", () => {
       );
     });
   });
+
+  describe("swap extraArgument", () => {
+    it("re-reads SWAP_API_BASE on every request, so a runtime override reaches the swap api without a restart", () => {
+      const store = customCreateStore({ fetchRemoteFlags: null });
+
+      setEnv("SWAP_API_BASE", "https://before.test");
+      const before = dispatchSwapExtra(store);
+
+      setEnv("SWAP_API_BASE", "https://after.test");
+      const after = dispatchSwapExtra(store);
+
+      expect(before).toBe("https://before.test");
+      expect(after).toBe("https://after.test");
+    });
+  });
 });
+
+type SwapThunk = (
+  dispatch: unknown,
+  getState: unknown,
+  extra: { getSwapApiBaseUrl: () => string },
+) => string;
+function dispatchSwapExtra(store: unknown): string {
+  const dispatch = (store as { dispatch: unknown }).dispatch as (thunk: SwapThunk) => string;
+  return dispatch((_dispatch, _getState, extra) => extra.getSwapApiBaseUrl());
+}
 
 type AuthThunk = (
   dispatch: unknown,
