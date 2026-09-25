@@ -6,6 +6,7 @@ import logReport from "../log-report";
 import getFullAppVersion from "~/logic/version";
 import { getEnv } from "@shared/env";
 import { sendFile } from "~/e2e/bridge/client";
+import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
 const getJSONStringifyReplacer: () => (key: string, value: unknown) => unknown = () => {
   const ancestors: unknown[] = [];
@@ -72,7 +73,7 @@ export default function useExportLogs() {
         const fileContent = await RNFetchBlob.fs.readFile(filePath, "base64");
         sendFile({ fileName: "ledgerwallet-logs.txt", fileContent });
       } else {
-        await Share.open(options);
+        await leaveAppFor(() => Share.open(options));
       }
     } catch (err) {
       if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {

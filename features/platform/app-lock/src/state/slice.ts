@@ -16,6 +16,7 @@ export const appLockInitialState: AppLockState = {
   biometricsEnabled: false,
   isLocked: false,
   needsLongerPassword: false,
+  hasDecidedLaunchLock: false,
 };
 
 export const appLockSlice = createSlice({
@@ -61,6 +62,9 @@ export const appLockSlice = createSlice({
     unlockApp: state => {
       state.isLocked = false;
     },
+    decideLaunchLock: state => {
+      state.hasDecidedLaunchLock = true;
+    },
     resetAppLock: () => appLockInitialState,
   },
 });
@@ -72,5 +76,6 @@ export const {
   setBiometricsEnabled,
   lockApp,
   unlockApp,
+  decideLaunchLock,
   resetAppLock,
 } = appLockSlice.actions;

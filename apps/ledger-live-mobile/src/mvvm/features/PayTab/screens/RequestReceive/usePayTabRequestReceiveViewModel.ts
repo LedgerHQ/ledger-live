@@ -19,6 +19,7 @@ import type { PayTabNavigatorParamList } from "../../types";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { ScreenName } from "~/const";
 import type { PayTabRequestReceiveViewProps } from "./PayTabRequestReceiveView";
+import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
 const REQUEST_PAGE = "Request complete";
 const VERIFY_HINT = "verify";
@@ -56,7 +57,7 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const onShare = useCallback(async (address: string) => {
     try {
       const imageUrl = await captureRef(cardRef, { format: "png" });
-      await Share.open({ url: imageUrl, message: address, failOnCancel: false });
+      await leaveAppFor(() => Share.open({ url: imageUrl, message: address, failOnCancel: false }));
     } catch {
       // TODO: handle share/capture errors
     }

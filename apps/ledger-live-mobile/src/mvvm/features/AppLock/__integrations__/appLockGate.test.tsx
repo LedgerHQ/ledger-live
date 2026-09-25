@@ -126,6 +126,27 @@ describe("the app lock gate", () => {
     expect(screen.queryByText(APP_CONTENT)).toBeNull();
   });
 
+  it("keeps an unlocked app open when the tree reboots, as clearing the cache does", async () => {
+    hasPasswordVerifier.mockResolvedValue(true);
+
+    const { store, rerender } = renderGate();
+
+    expect(await screen.findByTestId(UNLOCK_SCREEN)).toBeVisible();
+
+    act(() => {
+      store.dispatch(unlockApp());
+    });
+
+    rerender(
+      <AppLockGate key="rebooted">
+        <Text>{APP_CONTENT}</Text>
+      </AppLockGate>,
+    );
+
+    expect(await screen.findByText(APP_CONTENT)).toBeVisible();
+    expect(screen.queryByTestId(UNLOCK_SCREEN)).toBeNull();
+  });
+
   it("sends away the sheets the app left open, which sit above the lock's own overlay", async () => {
     hasPasswordVerifier.mockResolvedValue(true);
 

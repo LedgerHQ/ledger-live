@@ -7,6 +7,7 @@ import {
 import { Share } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
 type ContactAddressDetailDialogSheetProps = ContactAddressDetailDialogNativeProps &
   Readonly<{ isActionSheetOpen: boolean }>;
@@ -22,7 +23,7 @@ export function ContactAddressDetailDialogSheet({
     Clipboard.setString(address);
   }, []);
   const onShareAddress = useCallback((address: string) => {
-    void Share.share({ message: address }).catch(() => undefined);
+    void leaveAppFor(() => Share.share({ message: address })).catch(() => undefined);
   }, []);
 
   // While an action sheet owns the screen this sheet must not sit in the queue. Closing that action

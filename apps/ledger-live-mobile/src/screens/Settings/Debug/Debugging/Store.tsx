@@ -19,6 +19,7 @@ import { State } from "~/reducers/types";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import TextInput from "~/components/FocusedTextInput";
 import SafeAreaView from "~/components/SafeAreaView";
+import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
 const Separator = styled(Flex).attrs({
   width: "100%",
@@ -131,7 +132,7 @@ export default function Store() {
       };
 
       try {
-        await Share.open(options);
+        await leaveAppFor(() => Share.open(options));
       } catch (err) {
         if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
           logger.critical(err as Error);
