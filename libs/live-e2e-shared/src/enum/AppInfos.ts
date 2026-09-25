@@ -54,6 +54,8 @@ export class AppInfos {
 
   static readonly OSMOSIS = new AppInfos("Osmosis");
 
+  static readonly BABYLON = new AppInfos("Babylon");
+
   static readonly LS = new AppInfos("LedgerSync");
 
   static readonly EXCHANGE = new AppInfos("Exchange");

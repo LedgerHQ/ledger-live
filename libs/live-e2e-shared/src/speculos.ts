@@ -335,6 +335,14 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  Babylon: {
+    currency: getCryptoCurrencyById("babylon"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Cosmos",
+    },
+    dependencies: [],
+  },
   Celo: {
     currency: getCryptoCurrencyById("celo"),
     appQuery: {

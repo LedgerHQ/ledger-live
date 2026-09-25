@@ -4,11 +4,13 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 type AddAccountTestCase = {
   readonly currency: Currency;
   readonly xrayTicket: string;
   readonly portfolioAssetName?: string;
+  readonly featureFlags?: PartialFeatures;
 };
 
 const currencies: AddAccountTestCase[] = [
@@ -40,6 +42,11 @@ const currencies: AddAccountTestCase[] = [
     portfolioAssetName: Currency.ETH.name,
   },
   { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298" },
+  {
+    currency: Currency.BABY,
+    xrayTicket: "B2CQA-6629",
+    featureFlags: { currencyBabylon: { enabled: true } },
+  },
 ];
 
 for (const currency of currencies) {
@@ -48,6 +55,7 @@ for (const currency of currencies) {
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.currency.speculosApp,
+      featureFlags: currency.featureFlags,
     });
 
     test(
