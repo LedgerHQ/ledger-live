@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  MOCK_CARD_DETAILS_IMAGE_URL,
-  mockCardDetailsImage,
-  mockPayCardDetailsToken,
-} from "@domain/api-card-management/mock/card-details-token";
+import { mockPayCardDetailsToken } from "@domain/api-card-management/mock/card-details-token";
 import { getEnv } from "@shared/env";
 import { http, HttpResponse, server } from "tests/server";
 import { act, render, screen } from "tests/testSetup";
@@ -26,9 +22,6 @@ describe("Card numbers", () => {
   beforeEach(() => {
     server.use(
       http.post(CARD_DETAILS_TOKEN_URL, () => HttpResponse.json(mockPayCardDetailsToken())),
-      http.get(MOCK_CARD_DETAILS_IMAGE_URL, () =>
-        HttpResponse.text(mockCardDetailsImage(), { headers: { "Content-Type": "image/svg+xml" } }),
-      ),
     );
   });
 

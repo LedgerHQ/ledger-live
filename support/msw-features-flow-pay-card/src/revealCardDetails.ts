@@ -20,15 +20,3 @@ export const revealCardDetailsHandler = http.post(CARD_DETAILS_TOKEN_URL, () =>
 export const revealCardDetailsFailureHandler = http.post(CARD_DETAILS_TOKEN_URL, () =>
   HttpResponse.json({ message: "mint failed" }, { status: 500 }),
 );
-
-const ONE_PIXEL_PNG = Uint8Array.from(
-  atob(
-    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
-  ),
-  char => char.charCodeAt(0),
-);
-
-export const revealCardDetailsImageHandler = http.get(
-  CARD_DETAILS_IMAGE_URL,
-  () => new HttpResponse(ONE_PIXEL_PNG, { headers: { "Content-Type": "image/png" } }),
-);
