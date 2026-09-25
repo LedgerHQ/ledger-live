@@ -1,9 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import { getSpeculosModel } from "./devices";
 import type { State } from "./index";
 import type { SettingsState } from "./settings";
 
@@ -48,16 +50,31 @@ function mapToWebHidKnownDevice(
   };
 }
 
+function mapSpeculosKnownDevice(): KnownDevice | null {
+  if (!process.env.SPECULOS_API_PORT) return null;
+
+  return {
+    transport: speculosIdentifier,
+    deviceModelId: getSpeculosModel(),
+    id: "",
+    name: null,
+  };
+}
+
+function mapConnectedDevice(deviceModelId: DeviceModelId, name: string | null = null): KnownDevice {
+  return mapSpeculosKnownDevice() ?? mapToWebHidKnownDevice(deviceModelId, name);
+}
+
 export function mapLastSeenDeviceToKnownDevice(
   device: DeviceModelInfo | null | undefined,
 ): KnownDevice | null {
-  if (!device) return null;
-  return mapToWebHidKnownDevice(device.modelId);
+  if (!device) return mapSpeculosKnownDevice();
+  return mapConnectedDevice(device.modelId);
 }
 
 export function mapDeviceToKnownDevice(device: Device | null | undefined): KnownDevice | null {
-  if (!device) return null;
-  return mapToWebHidKnownDevice(device.modelId, device.deviceName ?? null);
+  if (!device) return mapSpeculosKnownDevice();
+  return mapConnectedDevice(device.modelId, device.deviceName ?? null);
 }
 
 /**

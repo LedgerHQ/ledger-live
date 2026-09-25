@@ -1,4 +1,5 @@
 import type { DiscoveredDevice } from "@ledgerhq/device-management-kit";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { webHidIdentifier as webHidTransportIdentifier } from "@ledgerhq/device-transport-kit-web-hid";
 import {
   dmkToLedgerDeviceIdMap,
@@ -14,7 +15,10 @@ export const filterMatchedDevices = (
 ): MatchedDevice[] => {
   return discoveredDevices
     .map(device => {
-      if (device.transport !== webHidTransportIdentifier) {
+      if (
+        device.transport !== webHidTransportIdentifier &&
+        device.transport !== speculosIdentifier
+      ) {
         return null;
       }
 
@@ -23,18 +27,14 @@ export const filterMatchedDevices = (
           return false;
         }
 
-        if (knownDevice.transport === webHidTransportIdentifier) {
-          return dmkToLedgerDeviceIdMap[device.deviceModel.model] === knownDevice.deviceModelId;
-        }
-
-        return false;
+        return dmkToLedgerDeviceIdMap[device.deviceModel.model] === knownDevice.deviceModelId;
       });
 
       if (!matchedDevice) {
         return null;
       }
 
-      return matchedDevice ? { knownDevice: matchedDevice, discoveredDevice: device } : null;
+      return { knownDevice: matchedDevice, discoveredDevice: device };
     })
     .filter((matchedDevice): matchedDevice is MatchedDevice => matchedDevice !== null);
 };

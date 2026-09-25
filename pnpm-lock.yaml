@@ -1153,6 +1153,9 @@ importers:
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2))
+      '@ledgerhq/device-transport-kit-speculos':
+        specifier: 'catalog:'
+        version: 1.2.1(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -15659,6 +15662,9 @@ importers:
       '@ledgerhq/device-transport-kit-mockserver':
         specifier: 'catalog:'
         version: 1.1.1(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2))(rxjs@7.8.2)
+      '@ledgerhq/device-transport-kit-speculos':
+        specifier: 'catalog:'
+        version: 1.2.1(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 'catalog:'
         version: 1.2.4(@ledgerhq/device-management-kit@1.9.1(rxjs@7.8.2))(rxjs@7.8.2)
@@ -15680,6 +15686,9 @@ importers:
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
+      purify-ts:
+        specifier: ^2.1.0
+        version: 2.1.0
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*

@@ -24,6 +24,8 @@ export type {
   DeviceDiscoverySource,
   DeviceDiscoverySourceEvent,
 } from "./connectDevice/discoveryService/sources/DeviceDiscoverySource";
+export * from "./connectDevice/discoveryService/sources/listenToTransportDevices";
+export * from "./transport/SpeculosTransportSession";
 export {
   connectDeviceUseCase,
   type ConnectDeviceUseCaseInput,

@@ -15,6 +15,7 @@ import {
   approveToken,
   signTypedMessage as signTypedMessageDevice,
   acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
+  confirmContactAction,
   waitForAppReady,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -120,5 +121,10 @@ export class SpeculosPage extends AppPage {
   @step("Check and accept if available enable transaction check")
   async acceptEnableTransactionCheck() {
     await acceptEnableTransactionCheckDevice();
+  }
+
+  @step("Confirm the contact action on device")
+  async confirmContactAction() {
+    await confirmContactAction();
   }
 }

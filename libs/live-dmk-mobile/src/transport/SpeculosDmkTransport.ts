@@ -1,11 +1,10 @@
 import { BehaviorSubject, EMPTY, Observable, of } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import { Either, Left, Right } from "purify-ts";
+import type { Either } from "purify-ts";
 import {
-  DeviceModelId,
-  UnknownDeviceError,
   type ConnectError,
   type DeviceId,
+  type DeviceModelId,
   type DisconnectHandler,
   type DmkError,
   type Transport as DmkTransport,
@@ -19,6 +18,7 @@ import {
   speculosIdentifier,
   speculosTransportFactory,
 } from "@ledgerhq/device-transport-kit-speculos";
+import { SpeculosTransportSession } from "@ledgerhq/live-dmk-shared";
 
 export type SpeculosTarget = Readonly<{
   url: string;
@@ -37,16 +37,18 @@ export const buildSpeculosLegacyDeviceId = (url: string): string =>
 export const isSpeculosLegacyDeviceId = (deviceId: string): boolean =>
   deviceId.startsWith(SPECULOS_LEGACY_DEVICE_ID_PREFIX);
 
-const targetKey = (target: SpeculosTarget): string => `${target.url}|${target.deviceModelId ?? ""}`;
+function openSpeculosTransport(args: TransportArgs) {
+  return (target: SpeculosTarget) =>
+    speculosTransportFactory(target.url, true, target.deviceModelId)(args);
+}
 
 /** Built lazily: the DMK starts before the e2e bridge knows the Speculos URL. */
 export class SpeculosDmkTransport implements DmkTransport {
-  private readonly args: TransportArgs;
+  private readonly session: SpeculosTransportSession;
   private readonly targetSubject: BehaviorSubject<SpeculosTarget | null>;
-  private delegate: { key: string; transport: DmkTransport } | null = null;
 
   constructor(args: TransportArgs, targetSubject: BehaviorSubject<SpeculosTarget | null>) {
-    this.args = args;
+    this.session = new SpeculosTransportSession(openSpeculosTransport(args));
     this.targetSubject = targetSubject;
   }
 
@@ -61,7 +63,7 @@ export class SpeculosDmkTransport implements DmkTransport {
   listenToAvailableDevices(): Observable<TransportDiscoveredDevice[]> {
     return this.targetSubject.pipe(
       switchMap(target => {
-        const transport = this.resolveDelegate(target);
+        const transport = this.session.resolve(target);
 
         return transport ? transport.listenToAvailableDevices() : of([]);
       }),
@@ -69,51 +71,26 @@ export class SpeculosDmkTransport implements DmkTransport {
   }
 
   startDiscovering(): Observable<TransportDiscoveredDevice> {
-    const transport = this.resolveDelegate(this.targetSubject.getValue());
+    const transport = this.session.resolve(this.targetSubject.getValue());
 
     return transport ? transport.startDiscovering() : EMPTY;
   }
 
   stopDiscovering(): void {
-    this.delegate?.transport.stopDiscovering();
+    this.session.stopDiscovering();
   }
 
-  async connect(params: {
+  connect(params: {
     deviceId: DeviceId;
     onDisconnect: DisconnectHandler;
   }): Promise<Either<ConnectError, TransportConnectedDevice>> {
-    const transport = this.resolveDelegate(this.targetSubject.getValue());
-
-    if (!transport) {
-      return Left(new UnknownDeviceError("Speculos target not set"));
-    }
-
-    return transport.connect(params);
+    return this.session.connect(this.targetSubject.getValue(), params);
   }
 
-  async disconnect(params: {
+  disconnect(params: {
     connectedDevice: TransportConnectedDevice;
   }): Promise<Either<DmkError, void>> {
-    const transport = this.delegate?.transport;
-
-    return transport ? transport.disconnect(params) : Right(undefined);
-  }
-
-  private resolveDelegate(target: SpeculosTarget | null): DmkTransport | null {
-    if (!target) {
-      return null;
-    }
-
-    const key = targetKey(target);
-
-    if (this.delegate?.key !== key) {
-      this.delegate = {
-        key,
-        transport: speculosTransportFactory(target.url, true, target.deviceModelId)(this.args),
-      };
-    }
-
-    return this.delegate.transport;
+    return this.session.disconnect(params);
   }
 }
 

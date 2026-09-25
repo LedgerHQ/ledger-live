@@ -1,5 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 import type { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import reducer, {
@@ -46,6 +47,33 @@ describe("knownDevices reducer", () => {
   });
 
   describe("migration on settings fetch", () => {
+    it("seeds a Speculos device from SPECULOS_DEVICE when the API port is set", () => {
+      const previousDevice = process.env.SPECULOS_DEVICE;
+      const previousPort = process.env.SPECULOS_API_PORT;
+      process.env.SPECULOS_DEVICE = "nanoX";
+      process.env.SPECULOS_API_PORT = "5000";
+
+      try {
+        const state = reducer(
+          INITIAL_STATE,
+          fetchSettings({ lastSeenDevice: makeLastSeenDevice(DeviceModelId.nanoSP) }),
+        );
+        expect(state.knownDevices).toEqual([
+          {
+            transport: speculosIdentifier,
+            deviceModelId: DeviceModelId.nanoX,
+            id: "",
+            name: null,
+          },
+        ]);
+      } finally {
+        if (previousDevice === undefined) delete process.env.SPECULOS_DEVICE;
+        else process.env.SPECULOS_DEVICE = previousDevice;
+        if (previousPort === undefined) delete process.env.SPECULOS_API_PORT;
+        else process.env.SPECULOS_API_PORT = previousPort;
+      }
+    });
+
     it("seeds from lastSeenDevice when empty", () => {
       const state = reducer(
         INITIAL_STATE,
