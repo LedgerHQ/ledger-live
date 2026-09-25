@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -15,17 +15,15 @@ import SelectDevice2, { type SetHeaderOptionsRequest } from "~/components/Select
 import type { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
 import type { CardTopUpSignViewModel } from "../useCardTopUpViewModel";
 
-const KEY_PREFIX = "payTab.cardTopUp";
-
 const ignoreHeaderOptions = (_request: SetHeaderOptionsRequest) => undefined;
 
 type TopUpStepProps = Readonly<
-  Pick<CardTopUpSignViewModel, "deviceStep" | "onRetry" | "onDeviceError" | "onDone"> & {
+  Pick<CardTopUpSignViewModel, "deviceStep" | "onRetry" | "onDeviceError"> & {
     device: Device;
   }
 >;
 
-function TopUpStep({ deviceStep, device, onRetry, onDeviceError, onDone }: TopUpStepProps) {
+function TopUpStep({ deviceStep, device, onRetry, onDeviceError }: TopUpStepProps) {
   const { t } = useTranslation();
   const { colors, dark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -41,24 +39,6 @@ function TopUpStep({ deviceStep, device, onRetry, onDeviceError, onDone }: TopUp
       theme,
       device,
     });
-  }
-
-  if (deviceStep.kind === "success") {
-    return (
-      <Box lx={{ width: "full", gap: "s16", paddingHorizontal: "s16", paddingTop: "s24" }}>
-        <Box lx={{ gap: "s8", alignItems: "center" }}>
-          <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
-            {t(`${KEY_PREFIX}.successTitle`)}
-          </Text>
-          <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-            {t(`${KEY_PREFIX}.successDescription`)}
-          </Text>
-        </Box>
-        <Button appearance="base" size="lg" isFull onPress={onDone} testID="card-top-up-done">
-          {t(`${KEY_PREFIX}.done`)}
-        </Button>
-      </Box>
-    );
   }
 
   if (deviceStep.kind !== "device") return renderLoading({ t, colors, theme });
@@ -84,7 +64,6 @@ export function CardTopUpSign({
   onRetry,
   onDeviceError,
   onCancel,
-  onDone,
 }: CardTopUpSignViewModel) {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const styles = useStyleSheet(
@@ -101,8 +80,6 @@ export function CardTopUpSign({
 
   if (!isOpen) return null;
 
-  const isSettled = deviceStep.kind === "error" || deviceStep.kind === "success";
-
   return (
     <>
       {device ? null : (
@@ -116,8 +93,8 @@ export function CardTopUpSign({
       )}
       <QueuedBottomSheet
         isRequestingToBeOpened={!!device}
-        onClose={deviceStep.kind === "success" ? onDone : onCancel}
-        preventBackdropClick={!isSettled}
+        onClose={onCancel}
+        preventBackdropClick={deviceStep.kind !== "error"}
         hideHandle
         enableDynamicSizing
       >
@@ -129,7 +106,6 @@ export function CardTopUpSign({
                 device={device}
                 onRetry={onRetry}
                 onDeviceError={onDeviceError}
-                onDone={onDone}
               />
             ) : null}
           </Box>

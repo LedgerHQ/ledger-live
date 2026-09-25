@@ -58,7 +58,6 @@ export type CardTopUpSignViewModel = Readonly<{
   onRetry: () => void;
   onDeviceError: (error: Error) => void;
   onCancel: () => void;
-  onDone: () => void;
 }>;
 
 export type CardTopUpViewModel = CardTopUpAmountViewProps &
@@ -66,7 +65,10 @@ export type CardTopUpViewModel = CardTopUpAmountViewProps &
     sign: CardTopUpSignViewModel;
   }>;
 
-export function useCardTopUpViewModel(data: CardTopUpData, onDone: () => void): CardTopUpViewModel {
+export function useCardTopUpViewModel(
+  data: CardTopUpData,
+  onSigned: () => void,
+): CardTopUpViewModel {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
@@ -186,15 +188,23 @@ export function useCardTopUpViewModel(data: CardTopUpData, onDone: () => void): 
     if (canSubmit) setIsSignOpen(true);
   }, [canSubmit]);
 
+  const runTopUp = useCallback(async () => {
+    const operationHash = await execute(amount);
+    if (!operationHash) return;
+    setIsSignOpen(false);
+    setDevice(undefined);
+    onSigned();
+  }, [amount, execute, onSigned]);
+
   const onSelectDevice = useCallback(
     (selected: Device) => {
       setDevice(selected);
-      void execute(amount);
+      void runTopUp();
     },
-    [amount, execute],
+    [runTopUp],
   );
 
-  const onRetry = useCallback(() => void execute(amount), [amount, execute]);
+  const onRetry = useCallback(() => void runTopUp(), [runTopUp]);
 
   const onCancel = useCallback(() => {
     reset();
@@ -232,7 +242,6 @@ export function useCardTopUpViewModel(data: CardTopUpData, onDone: () => void): 
       onRetry,
       onDeviceError,
       onCancel,
-      onDone,
     },
   };
 }

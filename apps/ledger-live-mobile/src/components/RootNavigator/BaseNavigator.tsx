@@ -71,6 +71,7 @@ import PerpsSign from "LLM/features/Perps/screens/PerpsSign/PerpsSignScreen";
 import PerpsDeposit from "LLM/features/Perps/screens/PerpsDeposit/PerpsDepositScreen";
 import PerpsTransactionSigned from "LLM/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedScreen";
 import PayCardTopUp from "LLM/features/PayCardTopUp/screens/CardTopUp/CardTopUpScreen";
+import PayCardTopUpSigned from "LLM/features/PayCardTopUp/screens/CardTopUpSigned/CardTopUpSignedScreen";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
@@ -604,6 +605,14 @@ export default function BaseNavigator() {
           options={{
             title: "",
             headerStyle: { backgroundColor: lumenBaseColor },
+            contentStyle: { backgroundColor: lumenBaseColor },
+          }}
+        />
+        <Stack.Screen
+          name={ScreenName.PayCardTopUpSigned}
+          component={PayCardTopUpSigned}
+          options={{
+            headerShown: false,
             contentStyle: { backgroundColor: lumenBaseColor },
           }}
         />

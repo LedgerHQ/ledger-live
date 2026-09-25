@@ -113,7 +113,7 @@ export function useCardTopUpExecution({
   }, []);
 
   const execute = useCallback(
-    async (amount: BigNumber) => {
+    async (amount: BigNumber): Promise<string | undefined> => {
       const run = ++currentRun.current;
       const settle = (step: CardTopUpDeviceStep) => {
         if (run === currentRun.current) setDeviceStep(step);
@@ -228,8 +228,10 @@ export function useCardTopUpExecution({
         const operation = await broadcast(signResult.signedOperation);
 
         settle({ kind: "success", operationHash: operation.hash });
+        return run === currentRun.current ? operation.hash : undefined;
       } catch (error) {
         settle({ kind: "error", error: asError(error) });
+        return undefined;
       }
     },
     [

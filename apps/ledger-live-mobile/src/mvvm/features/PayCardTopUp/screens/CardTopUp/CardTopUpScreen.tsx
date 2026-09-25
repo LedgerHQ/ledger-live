@@ -3,7 +3,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { CardTopUpHeaderTitle } from "@features/flow-pay-card-top-up";
 import type { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import type { ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { CardTopUpView } from "./CardTopUpView";
@@ -17,8 +17,11 @@ function CardTopUpContent({
   data,
   navigation,
 }: Readonly<{ data: CardTopUpData; navigation: NavigationProps["navigation"] }>) {
-  const finish = useCallback(() => navigation.goBack(), [navigation]);
-  const viewModel = useCardTopUpViewModel(data, finish);
+  const showSigned = useCallback(
+    () => navigation.replace(ScreenName.PayCardTopUpSigned),
+    [navigation],
+  );
+  const viewModel = useCardTopUpViewModel(data, showSigned);
   const { title, headerDescription } = viewModel;
 
   useLayoutEffect(() => {

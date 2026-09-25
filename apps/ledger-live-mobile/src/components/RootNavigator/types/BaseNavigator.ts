@@ -378,6 +378,7 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.PerpsDeposit]: PerpsDepositUiParams;
   [ScreenName.PerpsTransactionSigned]: PerpsTransactionSignedParams;
   [ScreenName.PayCardTopUp]: CardTopUpParams;
+  [ScreenName.PayCardTopUpSigned]: undefined;
   [ScreenName.DeeplinkInstallAppDeviceSelection]: {
     appKey: string;
   };
