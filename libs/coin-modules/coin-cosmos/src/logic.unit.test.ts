@@ -1,12 +1,23 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import type { Account, StakingResources } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
+  canRedelegate,
+  canUndelegate,
+  COSMOS_MAX_REDELEGATIONS,
+  COSMOS_MAX_UNBONDINGS,
   getCosmosDummyRecipient,
+  getRedelegation,
   isCompoundRewardSupported,
   mapUnbondings,
   resolveClaimRewardMode,
 } from "./logic";
-import type { CosmosUnbonding } from "./types";
+import type {
+  CosmosMappedDelegation,
+  CosmosResources,
+  CosmosUnbonding,
+  CosmosValidatorItem,
+} from "./types";
 
 const unit = getCryptoCurrencyById("cosmos").units[0];
 
@@ -15,6 +26,32 @@ const buildUnbonding = (validatorAddress: string, completionDate: string): Cosmo
   amount: new BigNumber(1000),
   completionDate: new Date(completionDate),
 });
+
+const emptyResources = {
+  delegations: [],
+  redelegations: [],
+  unbondings: [],
+  delegatedBalance: new BigNumber(0),
+  pendingRewardsBalance: new BigNumber(0),
+  unbondingBalance: new BigNumber(0),
+};
+
+const buildAccounts = (resources: StakingResources) => {
+  const baseAccount = {
+    currency: getCryptoCurrencyById("cosmos"),
+    spendableBalance: new BigNumber(1_000_000),
+  };
+  const genericAccount = { ...baseAccount, stakingResources: resources } as unknown as Account;
+  const legacyAccount = {
+    ...baseAccount,
+    cosmosResources: resources as CosmosResources,
+  } as unknown as Account;
+  return { genericAccount, legacyAccount };
+};
+
+const validator = {
+  validatorAddress: "cosmosvaloper1source",
+} as CosmosValidatorItem;
 
 describe("mapUnbondings", () => {
   it("should not throw when unbondings input is frozen", () => {
@@ -87,5 +124,89 @@ describe("getCosmosDummyRecipient", () => {
     expect(getCosmosDummyRecipient("crypto_org_croeseid")).toBe(
       getCosmosDummyRecipient("crypto_org"),
     );
+  });
+});
+
+describe("staking action predicates", () => {
+  it("keeps the generic unbonding-limit verdict in parity with the legacy account", () => {
+    const resources = {
+      ...emptyResources,
+      unbondings: Array.from({ length: COSMOS_MAX_UNBONDINGS }, (_, index) =>
+        buildUnbonding(`cosmosvaloper${index}`, "2999-01-01T00:00:00.000Z"),
+      ),
+    };
+    const { genericAccount, legacyAccount } = buildAccounts(resources);
+
+    expect(canUndelegate(genericAccount)).toBe(canUndelegate(legacyAccount));
+    expect(canUndelegate(genericAccount)).toBe(false);
+  });
+
+  it("keeps the generic active-redelegation-limit verdict in parity with the legacy account", () => {
+    const resources = {
+      ...emptyResources,
+      redelegations: Array.from({ length: COSMOS_MAX_REDELEGATIONS }, (_, index) => ({
+        validatorSrcAddress: `cosmosvaloper1src${index}`,
+        validatorDstAddress: `cosmosvaloper1dst${index}`,
+        amount: new BigNumber(1000),
+        completionDate: new Date("2999-01-01T00:00:00.000Z"),
+      })),
+    };
+    const { genericAccount, legacyAccount } = buildAccounts(resources);
+
+    expect(canRedelegate(genericAccount, validator)).toBe(canRedelegate(legacyAccount, validator));
+    expect(canRedelegate(genericAccount, validator)).toBe(false);
+  });
+
+  it("keeps the generic in-progress verdict in parity with the legacy account", () => {
+    const resources = {
+      ...emptyResources,
+      redelegations: [
+        {
+          validatorSrcAddress: "cosmosvaloper1origin",
+          validatorDstAddress: validator.validatorAddress,
+          amount: new BigNumber(1000),
+          completionDate: new Date("2999-01-01T00:00:00.000Z"),
+        },
+      ],
+    };
+    const { genericAccount, legacyAccount } = buildAccounts(resources);
+
+    expect(canRedelegate(genericAccount, validator)).toBe(canRedelegate(legacyAccount, validator));
+    expect(canRedelegate(genericAccount, validator)).toBe(false);
+  });
+
+  it("ignores expired redelegations for both the limit and in-progress checks", () => {
+    const resources = {
+      ...emptyResources,
+      redelegations: Array.from({ length: COSMOS_MAX_REDELEGATIONS }, (_, index) => ({
+        validatorSrcAddress: `cosmosvaloper1src${index}`,
+        validatorDstAddress: index === 0 ? validator.validatorAddress : `cosmosvaloper1dst${index}`,
+        amount: new BigNumber(1000),
+        completionDate: new Date("2000-01-01T00:00:00.000Z"),
+      })),
+    };
+    const { genericAccount, legacyAccount } = buildAccounts(resources);
+
+    expect(canRedelegate(genericAccount, validator)).toBe(canRedelegate(legacyAccount, validator));
+    expect(canRedelegate(genericAccount, validator)).toBe(true);
+  });
+
+  it("does not return an expired redelegation", () => {
+    const resources = {
+      ...emptyResources,
+      redelegations: [
+        {
+          validatorSrcAddress: "cosmosvaloper1origin",
+          validatorDstAddress: validator.validatorAddress,
+          amount: new BigNumber(1000),
+          completionDate: new Date("2000-01-01T00:00:00.000Z"),
+        },
+      ],
+    };
+    const { genericAccount } = buildAccounts(resources);
+
+    expect(
+      getRedelegation(genericAccount, validator as unknown as CosmosMappedDelegation),
+    ).toBeUndefined();
   });
 });

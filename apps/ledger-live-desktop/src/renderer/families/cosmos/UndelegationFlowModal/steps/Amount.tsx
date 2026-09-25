@@ -7,6 +7,7 @@ import { StepProps } from "../types";
 import {
   CosmosDelegationInfo,
   CosmosMappedDelegation,
+  getCosmosResources,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -129,12 +130,22 @@ export function StepAmountFooter({
   onClose,
   status,
   bridgePending,
+  transaction,
 }: StepProps) {
   const { t } = useTranslation();
   invariant(account, "account required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
-  const canNext = !bridgePending && !hasErrors;
+  const requestedDelegation = transaction?.validators?.[0];
+  const currentDelegation = getCosmosResources(account)?.delegations.find(
+    delegation => delegation.validatorAddress === requestedDelegation?.address,
+  );
+  const hasValidAmount =
+    !!requestedDelegation &&
+    !!currentDelegation &&
+    requestedDelegation.amount.gt(0) &&
+    requestedDelegation.amount.lte(currentDelegation.amount);
+  const canNext = !bridgePending && !hasErrors && hasValidAmount;
   return (
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />
