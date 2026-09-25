@@ -40,9 +40,11 @@ export class AccountPage extends AppPage {
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
   private readonly noAssetsTitle = this.page.getByTestId("no-assets-title");
 
+  // Case-insensitive: asset names come from the cryptoasset list and don't always match the
+  // casing declared in the Currency enum (e.g. "dogwifhat" vs "DOGWIFHAT").
   private accountHeaderNamePattern(...names: string[]) {
     const escaped = names.map(n => n.trim().replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`));
-    return new RegExp(`^(${escaped.join("|")})$`);
+    return new RegExp(`^(${escaped.join("|")})$`, "i");
   }
 
   @step("Click `Receive` button")

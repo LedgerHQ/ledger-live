@@ -116,18 +116,26 @@ case Currency.NEWCOIN.id:
   break;
 ```
 
-### Step 7: Add test case to spec
+### Step 7: Add test case to the New Send Flow spec
 
-[File](e2e/desktop/tests/specs/send.tx.spec.ts)
+[File](../tests/specs/newSendFlow.tx.spec.ts)
 
 **Ask user for:** a valid, unused `B2CQA-XXXX` test id
 
 ```typescript
-{
-  transaction: new Transaction(Account.NEWCOIN_1, Account.NEWCOIN_2, "0.001"),
-  xrayTicket: "B2CQA-XXXX",
-},
+const nativeSendTransactions: NewSendFlowEntry[] = [
+  {
+    transaction: new Transaction(Account.NEWCOIN_1, Account.NEWCOIN_2, "0.001"),
+    xrayTicket: "B2CQA-XXXX",
+  },
+];
+
+registerNewSendFlowTests(nativeSendTransactions);
 ```
+
+The New Send Flow feature flag used by these tests mirrors the production rollout in
+`tests/utils/featureFlagUtils.ts`. Currencies excluded from that rollout must remain in the legacy
+spec until they are enabled in production.
 
 ### Step 8: Rebuild dependencies
 

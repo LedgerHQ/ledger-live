@@ -158,6 +158,35 @@ export const FF_NEW_SEND_FLOW_DISABLED = {
   },
 } satisfies PartialFeatures;
 
+// Keep this scope synchronized with the LWD production Firebase configuration.
+export const FF_NEW_SEND_FLOW_ENABLED = {
+  newSendFlow: {
+    enabled: true,
+    params: {
+      families: [
+        "evm",
+        "bitcoin",
+        "solana",
+        "xrp",
+        "stellar",
+        "cosmos",
+        "polkadot",
+        "near",
+        "sui",
+        "tezos",
+        "vechain",
+        "algorand",
+        "tron",
+        "cardano",
+        "ton",
+        "internet_computer",
+        "filecoin",
+      ],
+      excludedCurrencyIds: ["zcash", "dash"],
+    },
+  },
+} satisfies PartialFeatures;
+
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies PartialFeatures;
