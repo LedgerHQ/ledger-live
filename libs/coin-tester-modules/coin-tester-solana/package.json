@@ -53,7 +53,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
+    "start": "docker compose build agave-mainnet && docker compose build agave-devnet && pnpm jest --runTestsByPath src/*.test.ts --runInBand",
     "unimported": "unimported"
   },
   "dependencies": {
