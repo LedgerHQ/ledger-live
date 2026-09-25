@@ -50,7 +50,6 @@ import {
 } from "./operations";
 import {
   DEFAULT_ZCASH_PRIVATE_INFO,
-  ZCASH_AUTO_SYNC_TIMEOUT_MS,
   ZCASH_LOG_TYPE,
   ZCASH_XPUB_VERSION,
   zainoEndpoint,
@@ -671,8 +670,6 @@ async function generateXpubIfNeeded(
 
 // ── Shielded sync ────────────────────────────────────────────────────────
 
-const ZCASH_NATIVE_CHUNK_SIZE = 5_000;
-
 async function resolveStartBlockHeight(
   lastProcessedBlock: number | null | undefined,
   birthday: string | null | undefined,
@@ -692,6 +689,7 @@ export const zcashSyncShielded = (
   acc: AccountShapeInfo<ZcashAccount>,
   _syncConfig: SyncConfig,
   endpoint: ZainoEndpoint,
+  maxBatchSize: number,
 ): Observable<ShieldedSyncResult> =>
   defer(() => {
     const viewingKey = acc.initialAccount?.privateInfo?.ufvk;
@@ -735,7 +733,7 @@ export const zcashSyncShielded = (
             client.syncShielded({
               startBlockHeight,
               viewingKey,
-              maxBatchSize: ZCASH_NATIVE_CHUNK_SIZE,
+              maxBatchSize,
               ...(knownNullifiers.length > 0 && { knownNullifiers }),
             }),
           ),
@@ -1047,11 +1045,13 @@ export function buildExtraSyncObservable(
 
   if (!ufvkIsPresent || !syncStateIsEnabled) return undefined;
 
-  const shieldedSyncRaw = from(context.config(info.currency.id)).pipe(
-    mergeMap(config => zcashSyncShielded(info, syncConfig, zainoEndpoint(config))),
-  );
-  return createShieldedSyncObservable(info, shieldedSyncRaw).pipe(
-    timeout(ZCASH_AUTO_SYNC_TIMEOUT_MS),
+  return from(context.config(info.currency.id)).pipe(
+    mergeMap(config =>
+      createShieldedSyncObservable(
+        info,
+        zcashSyncShielded(info, syncConfig, zainoEndpoint(config), config.zaino.batchSize),
+      ).pipe(timeout(config.zaino.timeoutMs)),
+    ),
     catchError(error => {
       log(ZCASH_LOG_TYPE, `shielded sync failed/timed out: ${String(error)}`);
       // This bridge is registered with shouldMergeOps: false (bridge/index.ts),

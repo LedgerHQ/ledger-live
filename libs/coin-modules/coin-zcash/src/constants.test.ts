@@ -1,7 +1,7 @@
 import { sanitizeEndpointForLog, zainoEndpoint } from "./constants";
 import { TEST_CONFIG } from "./test/coinConfig";
 
-const withZainoUrl = (url: string) => ({ ...TEST_CONFIG, zaino: { url } });
+const withZainoUrl = (url: string) => ({ ...TEST_CONFIG, zaino: { ...TEST_CONFIG.zaino, url } });
 
 // Sync and send must resolve the same endpoint, or a send would be built
 // against a chain the account was never scanned on: both derive it here.
