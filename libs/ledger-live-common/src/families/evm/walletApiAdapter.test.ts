@@ -1,6 +1,7 @@
-import { Account } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { EthereumTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import evm from "./walletApiAdapter";
 
 describe("getWalletAPITransactionSignFlowInfos", () => {
@@ -248,6 +249,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     });
 
     test("with account (chainId) provided", () => {
+      LiveConfig.setConfig({
+        config_currency_ethereum: { type: "object", default: { chainId: 1 } },
+      } as never);
+
       const ethPlatformTx: WalletAPITransaction = {
         family: "ethereum",
         amount: new BigNumber(100000),
@@ -256,7 +261,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
 
       const { canEditFees, hasFeesProvided, liveTx } = evm.getWalletAPITransactionSignFlowInfos({
         walletApiTransaction: ethPlatformTx,
-        account: { type: "Account", currency: { ethereumLikeInfo: { chainId: 1 } } } as Account,
+        account: { type: "Account", currency: { id: "ethereum" } } as Account,
       });
 
       expect(canEditFees).toBe(true);
@@ -280,6 +285,28 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
   "useAllAmount": false,
 }
 `);
+    });
+
+    test("with a token account, chainId comes from the parent currency", () => {
+      LiveConfig.setConfig({
+        config_currency_polygon: { type: "object", default: { chainId: 137 } },
+      } as never);
+
+      const ethPlatformTx: WalletAPITransaction = {
+        family: "ethereum",
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+      };
+
+      const { liveTx } = evm.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: ethPlatformTx,
+        account: {
+          type: "TokenAccount",
+          token: { parentCurrencyId: "polygon" },
+        } as TokenAccount,
+      });
+
+      expect(liveTx.chainId).toBe(137);
     });
   });
 });

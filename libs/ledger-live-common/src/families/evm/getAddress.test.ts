@@ -2,6 +2,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import eip55 from "eip55";
 import resolver from "./getAddress";
 import type { EvmSigner } from "@ledgerhq/live-signer-evm";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 const address = "0xc3f95102D5c8F2c83e49Ce3Acfb905eDfb7f37dE";
 const spy = jest.fn().mockImplementation(async () =>
@@ -18,6 +19,10 @@ const mockSignerFactory = <T>(_: string, fn: (signer: EvmSigner) => Promise<T>):
 describe("EVM Family", () => {
   describe("hw-getAddress.ts", () => {
     it("should return an eip 55 encoded address", async () => {
+      LiveConfig.setConfig({
+        config_currency_polygon: { type: "object", default: { chainId: 137 } },
+      } as never);
+
       const getAddress = resolver(mockSignerFactory);
       const response = await getAddress(
         {} as any,
@@ -26,6 +31,24 @@ describe("EVM Family", () => {
       expect(response.address).toBe(address);
       expect(eip55.verify(response.address)).toBe(true);
       expect(spy).toHaveBeenCalledWith("44'/60'/0'/0/0", true, false, "137");
+    });
+
+    it("resolves no chain id for a currency whose config has none (HyperCore reuses this resolver)", async () => {
+      LiveConfig.setConfig({
+        config_currency_hypercore: { type: "object", default: {} },
+      } as never);
+
+      const getAddress = resolver(mockSignerFactory);
+      const response = await getAddress(
+        {} as any,
+        {
+          path: "44'/60'/0'/0/0",
+          verify: true,
+          currency: getCryptoCurrencyById("hypercore"),
+        } as any,
+      );
+      expect(response.address).toBe(address);
+      expect(spy).toHaveBeenCalledWith("44'/60'/0'/0/0", true, false, undefined);
     });
   });
 });

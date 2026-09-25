@@ -44,6 +44,12 @@ import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-to
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { TrackingAPI } from "./tracking";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { evmConfig } from "../families/evm/config";
+
+// completeExchangeLogic's EVM path reads chainId via getCurrencyConfiguration (LiveConfig); seed the
+// real EVM config so the "ethereum" fixture account/token resolve deterministically.
+LiveConfig.setConfig(evmConfig);
 
 const walletState: AccountNamesState = new Map();
 
