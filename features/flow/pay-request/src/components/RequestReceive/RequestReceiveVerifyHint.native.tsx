@@ -24,7 +24,7 @@ export function RequestReceiveVerifyHint({
     <Animated.View
       entering={FadeInUp.duration(HINT_ENTER_MS)}
       testID="pay-request-receive-verify-hint"
-      style={{ alignSelf: "flex-end", maxWidth: 256, width: 256, zIndex: 2 }}
+      style={{ position: "absolute", right: 16, bottom: "100%", width: 256, zIndex: 2 }}
     >
       <Box
         lx={{
