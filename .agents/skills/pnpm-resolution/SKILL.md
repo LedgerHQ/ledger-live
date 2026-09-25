@@ -21,4 +21,6 @@ They invent a graph that `package.json` does not declare. That poisons `nx affec
 3. **`pnpm.overrides` / catalog** only pin versions; they do not replace a missing declaration.
 4. Existing entries: shrink them. Moving a `.pnpmfile.cjs` hook into `packageExtensions` is the same workaround.
 
+When rebasing a branch that touches the lockfile: check out `origin/develop`'s `pnpm-lock.yaml`, then `SKIP_BUNDLE_CHECK=1 pnpm install` on top of the branch manifests. Do not keep a lockfile merged from the old branch — it carries stale snapshots (Babel, Metro, extra axios variants). A second `--lockfile-only` should be a no-op.
+
 `pnpm.patchedDependencies` is a content fork, not this class of workaround. Prefer upstream; do not use a patch to inject undeclared deps.
