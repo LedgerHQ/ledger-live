@@ -10,6 +10,7 @@ import { ContactAvatar } from "@features/platform-contacts";
 import type { ContactsCompactListProps } from "../../types";
 import {
   getCompactContactAddressDescription,
+  getCompactContactDisplayName,
   getDisplayedCompactContacts,
 } from "./utils/ContactsCompactList.utils";
 
@@ -32,7 +33,7 @@ export function ContactsCompactList({
           <ListItemLeading>
             <ContactAvatar contactId={contact.id} name={contact.name} size="md" ariaHidden />
             <ListItemContent>
-              <ListItemTitle>{contact.name}</ListItemTitle>
+              <ListItemTitle>{getCompactContactDisplayName(contact, labels)}</ListItemTitle>
               <ListItemDescription>
                 {getCompactContactAddressDescription(contact, labels)}
               </ListItemDescription>

@@ -53,6 +53,22 @@ describe("ContactsCompactList", () => {
     ]);
   });
 
+  it("should suffix the me contact name with the me label", () => {
+    render(
+      <ContactsCompactList
+        contacts={[
+          mockContact({ id: "contact-me", name: "Alice", isMe: true }),
+          mockContact({ id: "contact-bob", name: "Bob" }),
+        ]}
+        labels={{ ...labels, formatMeDisplayName: name => `${name} (Me)` }}
+        onContactSelect={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Alice (Me)")).toBeVisible();
+    expect(screen.getByText("Bob")).toBeVisible();
+  });
+
   it("should render only the first supplied contacts when maxContacts is set", () => {
     render(
       <ContactsCompactList
