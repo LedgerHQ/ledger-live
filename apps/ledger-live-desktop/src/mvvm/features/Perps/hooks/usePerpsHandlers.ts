@@ -43,6 +43,8 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
     return request;
   }, []);
 
+  useEffect(() => cancelDepositRequest, []);
+
   return useMemo<WalletAPICustomHandlers>(() => {
     return perpsHandlers({
       accounts,
