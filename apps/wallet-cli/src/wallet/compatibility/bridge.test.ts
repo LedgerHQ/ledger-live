@@ -1,9 +1,17 @@
-import { describe, expect, it } from "bun:test";
+import "../../live-common-setup";
+import { afterEach, describe, expect, it, spyOn } from "bun:test";
 import { BigNumber } from "bignumber.js";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
 import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
 import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { BigNumberStrSchema } from "@shared/schema-primitives";
-import { applyEvmGasLimitMultiplier, BridgeAdapter, buildSolanaTransactionModel } from "./bridge";
+import {
+  applyEvmGasLimitMultiplier,
+  BridgeAdapter,
+  buildSolanaTransactionModel,
+  toSolanaStakeLimits,
+} from "./bridge";
 import type { TransactionIntent } from "../intents";
 import type { AccountDescriptor } from "../models";
 
@@ -202,6 +210,92 @@ describe("buildSolanaTransactionModel", () => {
     ).toEqual({
       kind: "stake.delegate",
       uiState: { stakeAccAddr: "", voteAccAddr: "" },
+    });
+  });
+});
+
+describe("toSolanaStakeLimits", () => {
+  it("derives the fee reserve from balance, rent and max stakeable", () => {
+    expect(
+      toSolanaStakeLimits({
+        minimumDelegation: new BigNumber(1_000_000_000),
+        rent: new BigNumber(1_666_240),
+        spendableBalance: new BigNumber(50_929_500),
+        maxStakeable: new BigNumber(49_243_260),
+      }),
+    ).toEqual({
+      minimumDelegation: BigNumberStrSchema.parse("1000000000"),
+      rent: BigNumberStrSchema.parse("1666240"),
+      spendableBalance: BigNumberStrSchema.parse("50929500"),
+      maxStakeable: BigNumberStrSchema.parse("49243260"),
+      feeReserve: BigNumberStrSchema.parse("20000"),
+    });
+  });
+
+  it("floors the fee reserve at 0 when nothing is stakeable", () => {
+    const limits = toSolanaStakeLimits({
+      minimumDelegation: new BigNumber(1_000_000_000),
+      rent: new BigNumber(1_666_240),
+      spendableBalance: new BigNumber(1_000_000),
+      maxStakeable: new BigNumber(0),
+    });
+    expect(limits.feeReserve).toBe(BigNumberStrSchema.parse("0"));
+  });
+});
+
+describe("BridgeAdapter.getSolanaStakeLimits", () => {
+  const address = "4pKFxpCN3k97FW5TUNYpJrCXNvGBu4aYGqPESkzi3tmR";
+  const descriptor = {
+    id: `js:2:solana:${address}:solanaMain`,
+    currencyId: "solana",
+    freshAddress: address,
+    seedIdentifier: address,
+    derivationMode: "solanaMain",
+    index: 0,
+  } as AccountDescriptor;
+  const account = {
+    ...descriptorToAccount(descriptor),
+    spendableBalance: new BigNumber(50_929_500),
+  };
+  const restores: Array<() => void> = [];
+
+  afterEach(() => {
+    restores.splice(0).forEach(restore => restore());
+  });
+
+  it("combines the chain stake costs with coin-solana's max stakeable for a new stake account", async () => {
+    const solanaNetwork = await import("@ledgerhq/coin-solana/network/index");
+    const bridge = await getAccountBridge(account);
+    const chainApi = {
+      getStakeMinimumDelegation: async () => 1_000_000_000,
+      getMinimumBalanceForRentExemption: async () => 1_666_240,
+    } as unknown as ReturnType<typeof solanaNetwork.getChainAPI>;
+    const getChainAPI = spyOn(solanaNetwork, "getChainAPI").mockReturnValue(chainApi);
+    const estimateMaxSpendable = spyOn(bridge, "estimateMaxSpendable").mockResolvedValue(
+      new BigNumber(49_243_260),
+    );
+    restores.push(
+      () => getChainAPI.mockRestore(),
+      () => estimateMaxSpendable.mockRestore(),
+    );
+    const adapter = new BridgeAdapter();
+    Object.assign(adapter, { sync: async () => account });
+
+    await expect(adapter.getSolanaStakeLimits(descriptor)).resolves.toEqual({
+      minimumDelegation: BigNumberStrSchema.parse("1000000000"),
+      rent: BigNumberStrSchema.parse("1666240"),
+      spendableBalance: BigNumberStrSchema.parse("50929500"),
+      maxStakeable: BigNumberStrSchema.parse("49243260"),
+      feeReserve: BigNumberStrSchema.parse("20000"),
+    });
+    expect(getChainAPI).toHaveBeenCalledTimes(1);
+    expect(getChainAPI).toHaveBeenCalledWith({ endpoint: expect.stringMatching(/^https?:\/\//) });
+    expect(estimateMaxSpendable).toHaveBeenCalledTimes(1);
+    expect(estimateMaxSpendable).toHaveBeenCalledWith({
+      account,
+      transaction: expect.objectContaining({
+        model: { kind: "stake.createAccount", uiState: { delegate: { voteAccAddress: "" } } },
+      }),
     });
   });
 });
