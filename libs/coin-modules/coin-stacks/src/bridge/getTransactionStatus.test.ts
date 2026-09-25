@@ -37,4 +37,40 @@ describe("getTransactionStatus", () => {
 
     expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memo);
   });
+
+  it.each(["delegate", "undelegate"] as const)(
+    "should not require recipient for a %s transaction",
+    async mode => {
+      const account = {
+        currency: { name: "" },
+        spendableBalance: BigNumber(1000000),
+      } as Account;
+      const transaction = {
+        mode,
+        recipient: "",
+        amount: BigNumber(100),
+        fee: BigNumber(10),
+      } as Transaction;
+
+      const status = await getTransactionStatus(account, transaction);
+
+      expect(status.errors.recipient).not.toBeDefined();
+    },
+  );
+
+  it("should still require recipient for a classic transfer", async () => {
+    const account = {
+      currency: { name: "" },
+      spendableBalance: BigNumber(1000000),
+    } as Account;
+    const transaction = {
+      recipient: "",
+      amount: BigNumber(100),
+      fee: BigNumber(10),
+    } as Transaction;
+
+    const status = await getTransactionStatus(account, transaction);
+
+    expect(status.errors.recipient).toBeDefined();
+  });
 });
