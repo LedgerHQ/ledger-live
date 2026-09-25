@@ -11,9 +11,6 @@ import { NavigatorName, ScreenName } from "~/const";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import type { PayTabNavigatorParamList } from "../../types";
 import { usePayTabViewModel } from "./usePayTabViewModel";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
-
-const payAnalyticsAdapter = { track: () => undefined };
 
 // ledger-live-mobile does not depend on expo-web-browser directly — only
 // @features/flow-pay-card-auth does, and importing it here would fail typecheck since the app has
@@ -122,16 +119,14 @@ function renderViewModel(
   options?: Parameters<typeof render>[1],
 ) {
   return render(
-    <PayAnalyticsProvider adapter={payAnalyticsAdapter}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name={ScreenName.PayTab}
-          component={PayTabViewModelProbe}
-          initialParams={params}
-        />
-        <Stack.Screen name={NavigatorName.Base} component={BaseNavigatorProbe} />
-      </Stack.Navigator>
-    </PayAnalyticsProvider>,
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name={ScreenName.PayTab}
+        component={PayTabViewModelProbe}
+        initialParams={params}
+      />
+      <Stack.Screen name={NavigatorName.Base} component={BaseNavigatorProbe} />
+    </Stack.Navigator>,
     options,
   );
 }
