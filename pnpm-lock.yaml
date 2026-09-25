@@ -1753,11 +1753,11 @@ importers:
         specifier: 18.0.0
         version: 18.0.0
       '@datadog/mobile-react-native':
-        specifier: 2.8.2
-        version: 2.8.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+        specifier: 3.7.0
+        version: 3.7.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@datadog/mobile-react-navigation':
-        specifier: 2.8.2
-        version: 2.8.2(@datadog/mobile-react-native@2.8.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+        specifier: 3.7.0
+        version: 3.7.0(@datadog/mobile-react-native@3.7.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@devtools/bindings':
         specifier: workspace:^
         version: link:../../devtools/bindings
@@ -20743,16 +20743,19 @@ packages:
     resolution: {integrity: sha512-b8XxPEy0pnsmKed/4aejWMXkzV2IXolUreK7K7KYGJW/bYPpQLJpwBgv2W+GJTaHWX1YfH1veQnm3CW3Qvs04Q==}
     engines: {node: '>=12.0.0'}
 
-  '@datadog/mobile-react-native@2.8.2':
-    resolution: {integrity: sha512-co8dCCTWCXpSUbbcXTPWbaV4sHT++NalM5BvNjtjNkKuTKdmWD9+vPa0lwk6yodIEkJyOIrRzhvVzfezh4OPlQ==}
+  '@datadog/flagging-core@2.0.2':
+    resolution: {integrity: sha512-2+oWyqz/EMNXtsgyW3NtueFgL0TciWInyMg/6bEUZhfr7UgPzCQ88Nag9FGoPCig19F/tHXE5hLiQccjkRUMWQ==}
+
+  '@datadog/mobile-react-native@3.7.0':
+    resolution: {integrity: sha512-6kdp7DXBhlIAWG3dsxVpyHW2mWaZq33DdfD87jl7Tz5rz4ay2DfJGur/HJn5+99KczNOcrwnYv+2dT//CllgWQ==}
     peerDependencies:
       react: 19.1.4
       react-native: '>=0.63.4 <1.0'
 
-  '@datadog/mobile-react-navigation@2.8.2':
-    resolution: {integrity: sha512-/Kr/dlvdKodDz++y4MwYCv04DKPq+MvHyz5hGCWnuSX+5a2spHKIcWLDNxgHsDzQAsjE8i1Z8+IAeRzWKuAPxw==}
+  '@datadog/mobile-react-navigation@3.7.0':
+    resolution: {integrity: sha512-Wvt/InKE7aIgpvdM5t7+dqQXg1x1ka/VWnJRfT8GDME+c4OfyeA2uf4O2LKDiMWwzwXoOUYZH29Q6Wp2fmJCQQ==}
     peerDependencies:
-      '@datadog/mobile-react-native': ^2.0.1
+      '@datadog/mobile-react-native': ^3.0.0
       react: 19.1.4
       react-native: '>=0.63.4 <1.0'
 
@@ -42475,15 +42478,20 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@datadog/mobile-react-native@2.8.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
+  '@datadog/flagging-core@2.0.2':
     dependencies:
+      spark-md5: 3.0.2
+
+  '@datadog/mobile-react-native@3.7.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
+    dependencies:
+      '@datadog/flagging-core': 2.0.2
       big-integer: 1.6.52
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
 
-  '@datadog/mobile-react-navigation@2.8.2(@datadog/mobile-react-native@2.8.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
+  '@datadog/mobile-react-navigation@3.7.0(@datadog/mobile-react-native@3.7.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
     dependencies:
-      '@datadog/mobile-react-native': 2.8.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@datadog/mobile-react-native': 3.7.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
 

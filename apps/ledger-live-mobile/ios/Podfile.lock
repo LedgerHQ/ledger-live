@@ -69,24 +69,28 @@ PODS:
     - SwiftyRSA (~> 1.7)
     - Yoga
   - CocoaAsyncSocket (7.6.5)
-  - DatadogCore (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogCrashReporting (2.27.0):
-    - DatadogInternal (= 2.27.0)
-    - PLCrashReporter (~> 1.12.0)
-  - DatadogInternal (2.27.0)
-  - DatadogLogs (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogRUM (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogSDKReactNative (2.8.2):
+  - DatadogCore (3.16.0):
+    - DatadogInternal (= 3.16.0)
+  - DatadogCrashReporting (3.16.0):
+    - DatadogInternal (= 3.16.0)
+    - KSCrash/Filters (= 2.5.1)
+    - KSCrash/Recording (= 2.5.1)
+  - DatadogFlags (3.16.0):
+    - DatadogInternal (= 3.16.0)
+  - DatadogInternal (3.16.0)
+  - DatadogLogs (3.16.0):
+    - DatadogInternal (= 3.16.0)
+  - DatadogRUM (3.16.0):
+    - DatadogInternal (= 3.16.0)
+  - DatadogSDKReactNative (3.7.0):
     - boost
-    - DatadogCore (~> 2.27.0)
-    - DatadogCrashReporting (~> 2.27.0)
-    - DatadogLogs (~> 2.27.0)
-    - DatadogRUM (~> 2.27.0)
-    - DatadogTrace (~> 2.27.0)
-    - DatadogWebViewTracking (~> 2.27.0)
+    - DatadogCore (= 3.16.0)
+    - DatadogCrashReporting (= 3.16.0)
+    - DatadogFlags (= 3.16.0)
+    - DatadogLogs (= 3.16.0)
+    - DatadogRUM (= 3.16.0)
+    - DatadogTrace (= 3.16.0)
+    - DatadogWebViewTracking (= 3.16.0)
     - DoubleConversion
     - fast_float
     - fmt
@@ -113,11 +117,11 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - DatadogTrace (2.27.0):
-    - DatadogInternal (= 2.27.0)
-    - OpenTelemetrySwiftApi (= 1.13.1)
-  - DatadogWebViewTracking (2.27.0):
-    - DatadogInternal (= 2.27.0)
+  - DatadogTrace (3.16.0):
+    - DatadogInternal (= 3.16.0)
+    - OpenTelemetry-Swift-Api (~> 2.5.0)
+  - DatadogWebViewTracking (3.16.0):
+    - DatadogInternal (= 3.16.0)
   - DoubleConversion (1.1.6)
   - EXConstants (18.0.13):
     - ExpoModulesCore
@@ -281,6 +285,17 @@ PODS:
     - hermes-engine/Pre-built (= 0.81.6)
   - hermes-engine/Pre-built (0.81.6)
   - JWTDecode (3.0.1)
+  - KSCrash/Core (2.5.1)
+  - KSCrash/Filters (2.5.1):
+    - KSCrash/Recording
+    - KSCrash/RecordingCore
+    - KSCrash/ReportingCore
+  - KSCrash/Recording (2.5.1):
+    - KSCrash/RecordingCore
+  - KSCrash/RecordingCore (2.5.1):
+    - KSCrash/Core
+  - KSCrash/ReportingCore (2.5.1):
+    - KSCrash/Core
   - libwebp (1.5.0):
     - libwebp/demux (= 1.5.0)
     - libwebp/mux (= 1.5.0)
@@ -390,8 +405,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - OpenTelemetrySwiftApi (1.13.1)
-  - PLCrashReporter (1.12.0)
+  - OpenTelemetry-Swift-Api (2.5.1)
   - PromisesObjC (2.4.1)
   - RCT-Folly (2024.11.18.00):
     - boost
@@ -3613,7 +3627,7 @@ DEPENDENCIES:
   - "braze-react-native-sdk (from `../../../node_modules/.pnpm/@braze+react-native-sdk@18.0.0/node_modules/@braze/react-native-sdk`)"
   - "BVLinearGradient (from `../../../node_modules/.pnpm/react-native-linear-gradient@2.8.3_react-native_45c4068ade6ad1d4746621cb55d5ba26/node_modules/react-native-linear-gradient`)"
   - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_f3ec7a086ef8b13b8963365d684ac5a0/node_modules/@callstack/repack`)"
-  - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@2.8.2_react-native_818183bc1b1503a912a95bd8f582ae9c/node_modules/@datadog/mobile-react-native`)"
+  - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_2d8853d66cf1e150ce24524eba4de272/node_modules/@datadog/mobile-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
   - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@18.0.13_expo-modules-core@3.0.29_9ac6c87e219610c9e54825af0bb0875c/node_modules/expo-constants/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo-modules-core@3.0.2_42839fbb65a690fabeec5fbcb4022eef/node_modules/expo-image-loader/ios`)"
@@ -3755,6 +3769,7 @@ SPEC REPOS:
     - CocoaAsyncSocket
     - DatadogCore
     - DatadogCrashReporting
+    - DatadogFlags
     - DatadogInternal
     - DatadogLogs
     - DatadogRUM
@@ -3773,13 +3788,13 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleUtilities
     - JWTDecode
+    - KSCrash
     - libwebp
     - lottie-ios
     - MMKVCore
     - MultiplatformBleAdapter
     - nanopb
-    - OpenTelemetrySwiftApi
-    - PLCrashReporter
+    - OpenTelemetry-Swift-Api
     - PromisesObjC
     - SDWebImage
     - SDWebImageWebPCoder
@@ -3797,7 +3812,7 @@ EXTERNAL SOURCES:
   callstack-repack:
     :path: "../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_f3ec7a086ef8b13b8963365d684ac5a0/node_modules/@callstack/repack"
   DatadogSDKReactNative:
-    :path: "../../../node_modules/.pnpm/@datadog+mobile-react-native@2.8.2_react-native_818183bc1b1503a912a95bd8f582ae9c/node_modules/@datadog/mobile-react-native"
+    :path: "../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_2d8853d66cf1e150ce24524eba4de272/node_modules/@datadog/mobile-react-native"
   DoubleConversion:
     :podspec: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXConstants:
@@ -4069,14 +4084,15 @@ SPEC CHECKSUMS:
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
   callstack-repack: 6de6a4d5a87bdf8f6b75e51fd32e557c9be85110
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  DatadogCore: 68aee4ffcc3ea17a3b0aa527907757883fc72c84
-  DatadogCrashReporting: e6a83b143394e28c9c1cb48c5cfb18eff507b3be
-  DatadogInternal: 3c5cae6772295fd175a9de11e4747a9322aaa4e7
-  DatadogLogs: 09d6358dc7682f9d3eaea85dd418f82d2db3560c
-  DatadogRUM: 0f267df8c9c8579a291870c2bce4549587391a07
-  DatadogSDKReactNative: 8f8c7a3b52aa692af05c6c31f69f1b71a712422d
-  DatadogTrace: f46c8220c73463d09741013f385a6e27cd39185b
-  DatadogWebViewTracking: dc8376420c8686efd09d00752bc1034b639d180b
+  DatadogCore: 7eed8fbaaa1575503c389f343c230858343c8baf
+  DatadogCrashReporting: 04f3c3a5bfd9921aef4d44b4ab80accb39c84ddb
+  DatadogFlags: 033cf48e769c271843e77068c015519880011866
+  DatadogInternal: e5a4652ee266986e29c6b8491aff7f78dc3b731d
+  DatadogLogs: 52792add5827042f619771a23656e2bfb6b0f4e7
+  DatadogRUM: b78d608e013f39c5679ed31ad97dad323c6113e8
+  DatadogSDKReactNative: 44a9c6086ae7f8dfaea55d98a3b63721e7c76998
+  DatadogTrace: 5ef84e254e2e1d337bc52e0cdf16396ca102aeb1
+  DatadogWebViewTracking: e0470157f55a83680a549d79ba2985e0d17465db
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXConstants: fce59a631a06c4151602843667f7cfe35f81e271
   EXImageLoader: 189e3476581efe3ad4d1d3fb4735b7179eb26f05
@@ -4109,6 +4125,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 766ace00c6b10d8148408f329d10c4f051931850
   hermes-engine: 7219f6e751ad6ec7f3d7ec121830ee34dae40749
   JWTDecode: 2eed97c2fa46ccaf3049a787004eedf0be474a87
+  KSCrash: 8c4464fd5da7de520f2ce4a00fdf63f169a80f18
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   lottie-ios: 8f959969761e9c45d70353667d00af0e5b9cadb3
   lottie-react-native: e542fe4b6e8eddcf893d5a8cef9f8b5c6d2f7331
@@ -4117,8 +4134,7 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   NitroMmkv: 5d6c3a5cca0e47be9a4dd3f66262dbad0799c087
   NitroModules: d2d7b8a417d5f498ef5affa78d82113ad8c35c59
-  OpenTelemetrySwiftApi: aaee576ed961e0c348af78df58b61300e95bd104
-  PLCrashReporter: db59ef96fa3d25f3650040d02ec2798cffee75f2
+  OpenTelemetry-Swift-Api: 3be9043f6288eb4ac3cbe7548b5bd45fb4ed5849
   PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: d4ef510f229cea15314176aee5e3ba10064a8496
