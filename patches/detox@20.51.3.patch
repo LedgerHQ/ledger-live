@@ -157,6 +157,64 @@ index 3741e0866f13cef09a6545295af6b9739b600391..f9c69b0bd4e793b78474b0fcf0479bc2
    /**
     * @returns {Promise<DeviceList>}
     */
+diff --git a/src/devices/allocation/drivers/android/FreeDeviceFinder.js b/src/devices/allocation/drivers/android/FreeDeviceFinder.js
+index bf0a74ee8d56f1b732807d5f765553e5cfd3147a..6fcfe926114526775b1b60f0d1a57c0bc39727f1 100644
+--- a/src/devices/allocation/drivers/android/FreeDeviceFinder.js
++++ b/src/devices/allocation/drivers/android/FreeDeviceFinder.js
+@@ -25,8 +25,13 @@ class FreeDeviceFinder {
+   async _isDeviceFreeAndMatching(takenDevices, candidate, deviceQuery) {
+     const { adbName } = candidate;
+ 
++    // A device whose owning worker died (e.g. SIGKILLed mid-spec) is never released. Each worker
++    // can be pinned to its own AVD, so unless it is reclaimed no later allocation of that AVD can
++    // succeed: Detox boots a second instance of it, which the emulator refuses. The caller holds
++    // the registry lock, as isDeviceZombie() requires.
+     const isTaken = takenDevices.includes(adbName);
+-    if (isTaken) {
++    const isZombie = isTaken && this.deviceRegistry.isDeviceZombie(adbName);
++    if (isTaken && !isZombie) {
+       log.debug(DEVICE_LOOKUP, `Device ${adbName} is already taken, skipping...`);
+       return false;
+     }
+@@ -43,7 +48,11 @@ class FreeDeviceFinder {
+       return false;
+     }
+ 
+-    log.debug(DEVICE_LOOKUP, `Found a matching & free device ${candidate.adbName}`);
++    if (isZombie) {
++      log.warn(DEVICE_LOOKUP, `Reclaiming device ${adbName}: the worker that allocated it is dead`);
++    } else {
++      log.debug(DEVICE_LOOKUP, `Found a matching & free device ${candidate.adbName}`);
++    }
+     return true;
+   }
+ 
+diff --git a/src/devices/allocation/drivers/android/emulator/EmulatorAllocDriver.js b/src/devices/allocation/drivers/android/emulator/EmulatorAllocDriver.js
+index a9a7ec21421f4751343e9b4b397538e6a4091738..1b4dc5653a397c1554852afc8e6b5033cbcbf7f2 100644
+--- a/src/devices/allocation/drivers/android/emulator/EmulatorAllocDriver.js
++++ b/src/devices/allocation/drivers/android/emulator/EmulatorAllocDriver.js
+@@ -48,9 +48,11 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
+ 
+   /**
+    * @param deviceConfig
++   * @param workerPid { number } - the actual worker process using this device, so the registry
++   *   can detect it dying even though allocation itself runs in the primary process.
+    * @returns {Promise<AndroidDeviceCookie>}
+    */
+-  async allocate(deviceConfig) {
++  async allocate(deviceConfig, workerPid) {
+     const avdName = deviceConfig.device.avdName;
+ 
+     await this._avdValidator.validate(avdName, deviceConfig.headless);
+@@ -74,7 +76,7 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
+       }
+ 
+       return adbName;
+-    });
++    }, workerPid);
+ 
+     return {
+       id: adbName,
 diff --git a/src/devices/allocation/drivers/ios/SimulatorAllocDriver.js b/src/devices/allocation/drivers/ios/SimulatorAllocDriver.js
 index 38472ddad2940e659127869c3a1d0eb97889001c..9f953d05a2e0227085980165d94e9d9b73e0a8cb 100644
 --- a/src/devices/allocation/drivers/ios/SimulatorAllocDriver.js
