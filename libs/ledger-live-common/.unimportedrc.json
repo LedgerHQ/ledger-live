@@ -567,6 +567,7 @@
     "src/families/internet_computer/consts.ts",
     "src/families/internet_computer/descriptor/index.ts",
     "src/families/internet_computer/descriptor/memo.ts",
+    "src/families/internet_computer/errors.ts",
     "src/families/internet_computer/neuron.ts",
     "src/families/internet_computer/setup.ts",
     "src/families/internet_computer/utils.ts",
