@@ -1,6 +1,5 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { NetworkWarning } from "@ledgerhq/lumen-ui-react/symbols";
 import { DialogBackgroundToneProvider, InfoState } from "@shared/ui-info-state";
 import type { CardAuthErrorProps } from "./types";
 
@@ -20,9 +19,7 @@ export function CardAuthError({ error }: CardAuthErrorProps) {
           <DialogHeader density="compact" />
           <DialogBody>
             <InfoState
-              preset="spot"
-              spotProps={{ icon: NetworkWarning }}
-              backgroundTone="error"
+              preset="error"
               size="hug"
               title={error.title}
               description={error.description}
