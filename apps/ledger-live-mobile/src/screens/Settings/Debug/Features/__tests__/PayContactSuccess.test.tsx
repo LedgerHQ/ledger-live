@@ -68,6 +68,6 @@ describe("DebugPayContactSuccess", () => {
       }),
     });
 
-    expect(await screen.findByText(/You paid My addresses/)).toBeVisible();
+    expect(await screen.findByText(/You paid My addresses \(Me\)/)).toBeVisible();
   });
 });

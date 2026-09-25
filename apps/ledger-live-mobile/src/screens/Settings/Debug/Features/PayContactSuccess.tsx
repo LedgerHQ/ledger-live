@@ -3,14 +3,13 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { ContactIdSchema, selectContacts } from "@domain/entity-contact";
 import { PaySuccess } from "@features/flow-pay-contact";
-import { createMeDisplayNameFormatter, useContactsMeContact } from "@features/platform-contacts";
+import { useContactDisplayName, useContactsMeContact } from "@features/platform-contacts";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useTranslation } from "~/context/Locale";
 import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import type { StackNavigatorRoute } from "~/components/RootNavigator/types/helpers";
 
@@ -41,7 +40,7 @@ export default function DebugPayContactSuccess() {
   const navigation = useNavigation();
   const accounts = useSelector(accountsSelector);
   const account = accounts[0];
-  const { t } = useTranslation();
+  const getDisplayName = useContactDisplayName();
   const { params } =
     useRoute<
       StackNavigatorRoute<SettingsNavigatorStackParamList, ScreenName.DebugPayContactSuccess>
@@ -84,13 +83,7 @@ export default function DebugPayContactSuccess() {
     <SafeAreaView edges={["top", "bottom"]} style={styles.container}>
       <PaySuccess
         recipient={recipient}
-        recipientLabel={
-          recipient.isMe
-            ? createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-                t("contacts.detail.meDisplayName", { name }),
-              )(recipient.name)
-            : recipient.name
-        }
+        recipientLabel={getDisplayName(recipient)}
         amountFormatted="10 USDC"
         fromAccountName="Ethereum 1"
         networkIcon={{ ledgerId: "ethereum", ticker: "ETH" }}
