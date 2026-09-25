@@ -97,6 +97,7 @@ type FakeState = {
     hasCompletedOnboarding: boolean;
     analyticsCardId: string | null;
     reportedAnalyticsMilestones: unknown[];
+    hasReadCardAccount: boolean;
   };
   trustchain?: unknown;
 };
@@ -120,6 +121,7 @@ const baseState = (): FakeState => ({
     hasCompletedOnboarding: false,
     analyticsCardId: null,
     reportedAnalyticsMilestones: [],
+    hasReadCardAccount: false,
   },
 });
 
@@ -274,6 +276,7 @@ describe("DBMiddleware - payCard branch", () => {
       hasCompletedOnboarding: true,
       analyticsCardId: null,
       reportedAnalyticsMilestones: [],
+      hasReadCardAccount: false,
     },
   };
 
@@ -285,6 +288,7 @@ describe("DBMiddleware - payCard branch", () => {
     hasCompletedOnboarding: true,
     analyticsCardId: null,
     reportedAnalyticsMilestones: [],
+    hasReadCardAccount: false,
   };
 
   it.each([
