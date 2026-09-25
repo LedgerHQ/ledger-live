@@ -1,6 +1,6 @@
 import React, { type PropsWithChildren } from "react";
 import { Text } from "react-native";
-import { act, render, screen, userEvent } from "@testing-library/react-native";
+import { act, render, screen, userEvent, waitFor } from "@testing-library/react-native";
 import type { CardAssetRow, CardAssetsViewModel } from "@features/flow-pay-card-assets";
 import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import { Spinner } from "@ledgerhq/lumen-ui-rnative";
@@ -200,6 +200,19 @@ describe("CardDetails (native)", () => {
 
     expect(await screen.findByTestId("card-assets")).toBeVisible();
     expect(screen.getByTestId("card-asset-w-usdc")).toBeVisible();
+  });
+
+  it("should close the details sheet when an asset is topped up", async () => {
+    const user = userEvent.setup();
+    render(<CardDetails assets={assets} />, { wrapper: Wrapper });
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByTestId("card-asset-w-usdc"));
+    await user.press(screen.getByText("Top up"));
+
+    expect(mockUseCardAssetsViewModel.mock.results[0].value.onTopUpPress).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(screen.queryByText(CARD_COPY.freeze)).not.toBeOnTheScreen());
+    expect(screen.queryByTestId("card-asset-details-drawer")).not.toBeOnTheScreen();
   });
 
   it("should return to the assets overview when asset details goes back", async () => {

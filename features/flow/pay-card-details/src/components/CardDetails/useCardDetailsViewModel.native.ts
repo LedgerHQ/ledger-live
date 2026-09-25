@@ -63,6 +63,11 @@ export function useCardDetailsViewModel({
     goTo({ name: "assetTransaction", transaction });
   };
 
+  const onAssetTopUpPress = () => {
+    assetsViewModel.onTopUpPress();
+    closeSheet();
+  };
+
   const onAssetHistoryPress = () => {
     assetsViewModel.onShowHistoryPress();
     goBack();
@@ -117,6 +122,7 @@ export function useCardDetailsViewModel({
     ...assetsViewModel,
     onAssetPress,
     onManagePress: onManageAssetsPress,
+    onTopUpPress: onAssetTopUpPress,
     onWithdrawPress: onAssetWithdrawPress,
     onShowHistoryPress: onAssetHistoryPress,
     onWithdrawContinue: onAssetWithdrawContinue,
