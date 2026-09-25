@@ -829,6 +829,12 @@ export const patchPublicOperations = async ({
       const dateOffset = oppositeOperationType === "OUT" ? -1 : 1;
       const oppositeOperationDate = new Date(operation.date.getTime() + dateOffset);
 
+      // Only OUT is fee-inclusive, so flipping the type moves the fee into or out of the value.
+      const oppositeOperationValue =
+        oppositeOperationType === "OUT"
+          ? operation.value.plus(operation.fee)
+          : operation.value.minus(operation.fee);
+
       patchedOperations.push(
         {
           ...operation,
@@ -843,6 +849,7 @@ export const patchPublicOperations = async ({
           ...operation,
           id: encodeOperationId(ledgerAccountId, operation.hash, oppositeOperationType),
           type: oppositeOperationType,
+          value: oppositeOperationValue,
           date: oppositeOperationDate,
           senders: [address],
           recipients: [address],

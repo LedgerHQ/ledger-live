@@ -18,7 +18,6 @@ export async function broadcast({
     feeAuthorization?: Record<string, unknown>;
   }>(signedTx);
 
-  // TODO: not used anymore, remove with https://ledgerhq.atlassian.net/browse/LIVE-29982
   if (!config.useEncryptedProve) {
     const res = await apiClient.submitDelegatedProvingRequest({
       config,

@@ -40,7 +40,8 @@ export function buildOptimisticOperation({
   const fee = transaction.fees;
   const isTokenTx = isTokenTransaction(transaction);
   const stakingType = getStakingOperationType(transaction.mode);
-  const value = isTokenTx || stakingType ? fee : transaction.amount;
+  // Native OUT is fee-inclusive; token/staking fee is billed on the parent FEES op instead.
+  const value = isTokenTx || stakingType ? fee : transaction.amount.plus(fee);
   const mainOperationType: OperationType = isTokenTx ? "FEES" : (stakingType ?? "OUT");
   const subOperations: Operation[] = [];
   const tokenSubAccount = account.subAccounts?.find(s => s.id === transaction.subAccountId);

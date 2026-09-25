@@ -1,0 +1,61 @@
+services:
+  aleo-devnode:
+    platform: linux/amd64
+    container_name: aleo-devnode
+    image: coin-tester-aleo-devnode:latest
+    build:
+      context: .
+      dockerfile: aleo-devnode.Dockerfile
+    ports:
+      - "3030:3030"
+    # The devnode is disposable, so there is nothing to flush on the way out.
+    # Skipping the 10s SIGTERM grace period makes teardown near-instant, which
+    # matters on Ctrl-C: the interrupted process only gets a short window to
+    # remove the container before it is killed itself.
+    stop_grace_period: 0s
+    healthcheck:
+      # devnode fast-forwards past genesis to the latest consensus version as it
+      # boots, so height >= 1 means the ledger is up and serving. It stops
+      # there: heights only advance on a broadcast or an explicit
+      # `advanceBlocks`.
+      test:
+        - "CMD-SHELL"
+        - >-
+          [ "$$(curl -sf
+          http://127.0.0.1:3030/testnet/block/height/latest)" -ge 1 ]
+      interval: 1s
+      timeout: 5s
+      retries: 30
+
+  aleo-backend:
+    container_name: aleo-backend
+    image: coin-tester-aleo-backend:latest
+    build:
+      context: ./aleo-backend
+    ports:
+      - "3031:3030"
+    # Same reasoning as aleo-devnode: disposable state, nothing to flush.
+    stop_grace_period: 0s
+    environment:
+      - APP_SERVER_HOST=0.0.0.0
+      - APP_SERVER_PORT=3030
+      - APP_LOGGING_LEVEL=info
+      # Without this the backend reads freeze lists from Provable's public API,
+      # so a run would silently reach the internet. The devnode has no
+      # *_freezelist.aleo programs deployed, so private stablecoin transfers
+      # fail here with a clear error instead — that is intended.
+      - APP_ALEO_TESTNET_URL=http://aleo-devnode:3030/testnet
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:3030/_health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+      start_period: 5s
+
+# No depends_on between the two services: the freeze-list call above is
+# request-time, not boot-time, so both containers can build and start in
+# parallel.
+
+# No named volume: the ledger lives inside the container filesystem (under
+# /aleo, the --storage passed to `leo devnode`), so `down --volumes` discarding
+# the container is enough for every run to start from genesis.

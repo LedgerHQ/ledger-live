@@ -73,6 +73,25 @@ id = "generic-api-key"
         '''apps/ledger-live-mobile/\.env\..+''',
     ]
 
+    [[rules.allowlists]]
+    condition = "AND"
+    description = "Ignore the Aleo devnode's own public genesis private key (the one `leo devnode start` recommends for local use, baked into the Dockerfile's --private-key flag) and the coin-tester's fixed recipient test key -- matched by exact value, not by path, so a real key added anywhere else in these files would still be caught."
+    regexTarget = "match"
+    regexes = [
+        '''APrivateKey1zkp8CZNn3yeCseEtxuVPbDCwSyhGW6yZKUYKfgXmcpoGPWH''',
+        '''APrivateKey1zkpHj8RPJD1wJR818BSyLPa5f5fR4uxYgW2jas7atx83HG8''',
+    ]
+    paths = [
+        '''libs/coin-tester-modules/coin-tester-aleo/aleo-devnode\.Dockerfile''',
+        '''libs/coin-tester-modules/coin-tester-aleo/src/fixtures\.ts''',
+    ]
+
+    [[rules.allowlists]]
+    description = "Ignore Cargo.lock: every checksum in it is a public crates.io registry hash, not a secret -- some trip the rule's generic keyword match because they sit next to a dependency name like crypto_secretbox."
+    paths = [
+        '''libs/coin-tester-modules/coin-tester-aleo/aleo-backend/Cargo\.lock''',
+    ]
+
 [[rules]]
 id = "datadog-access-token"
 

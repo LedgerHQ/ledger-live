@@ -27,7 +27,8 @@ describe("buildOptimisticOperation", () => {
       id: encodeOperationId(account.id, "", "OUT"),
       hash: "",
       type: "OUT",
-      value: transaction.amount,
+      // Fee-inclusive, so the optimistic operation matches the confirmed one.
+      value: transaction.amount.plus(transaction.fees),
       fee: transaction.fees,
       blockHash: null,
       blockHeight: null,
