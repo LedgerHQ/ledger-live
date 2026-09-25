@@ -37,11 +37,6 @@ const teamPlatform = {
     parser: intParser,
     desc: "version used for ledger status api",
   },
-  PUSH_DEVICES_SERVICE_URL: {
-    def: "https://device-gateway.api.ledger.com",
-    parser: stringParser,
-    desc: "Push Devices Service url for device tracking",
-  },
   VERBOSE: {
     def: [] as Array<string>,
     parser: stringArrayParser,

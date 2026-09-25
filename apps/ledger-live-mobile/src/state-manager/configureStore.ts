@@ -66,6 +66,9 @@ function reportFeatureFlagsReadFailure(error: unknown, { stage, isCold }: Featur
   console.error(`Feature flags: ${stage} read failed, resolving on compiled defaults`, error);
 }
 
+/** Only the release `.env`s set it; every other build leaves it empty, which disables the sync. */
+const pushDevicesServiceUrl = Config.PUSH_DEVICES_SERVICE_URL ?? "";
+
 export const store = configureStore({
   reducer: reducers,
   devTools: Config.DEBUG_RNDEBUGGER
@@ -98,7 +101,7 @@ export const store = configureStore({
               refreshCardSession,
             }),
             ...pushDevicesApiExtra({
-              pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
+              pushDevicesServiceUrl,
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
             ...swapApiExtra({
@@ -133,7 +136,7 @@ export const store = configureStore({
       .concat(rebootMiddleware)
       .concat(
         createIdentitiesSyncMiddleware({
-          pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL").trim(),
+          pushDevicesServiceUrl,
           getIdentitiesState: (state: State) => state.identities,
           getAnalyticsConsent: canPushDeviceIdsSelector,
         }),

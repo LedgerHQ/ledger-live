@@ -60,6 +60,9 @@ function reportFeatureFlagsReadFailure(error: unknown, { stage, isCold }: Featur
   appLogger.critical(error, `Feature flags: ${stage} read failed, resolving on compiled defaults`);
 }
 
+/** Only `.env.production` sets it; every other build leaves it empty, which disables the sync. */
+const pushDevicesServiceUrl = process.env.PUSH_DEVICES_SERVICE_URL ?? "";
+
 type Props = {
   state?: State;
   dbMiddleware?: Middleware;
@@ -115,7 +118,7 @@ const customCreateStore = ({
                 refreshCardSession,
               }),
               ...pushDevicesApiExtra({
-                pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
+                pushDevicesServiceUrl,
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
               }),
               ...swapApiExtra({
@@ -152,7 +155,7 @@ const customCreateStore = ({
         .concat(dbMiddleware ? [dbMiddleware] : [])
         .concat(
           createIdentitiesSyncMiddleware({
-            pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL").trim(),
+            pushDevicesServiceUrl,
             getIdentitiesState: ({ identities }: State) => identities,
             getAnalyticsConsent: canPushDeviceIdsSelector,
           }),

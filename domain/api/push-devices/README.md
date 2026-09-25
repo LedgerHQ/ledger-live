@@ -25,6 +25,10 @@ Domain API client for the **Push Devices Service** — the Ledger backend endpoi
 ```ts
 import { pushDevicesApi, createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api-push-devices";
 
+// Each app resolves the url from its own `.env`: `process.env.PUSH_DEVICES_SERVICE_URL` on desktop,
+// `Config.PUSH_DEVICES_SERVICE_URL` (react-native-config) on mobile. Empty disables sync.
+declare const pushDevicesServiceUrl: string;
+
 configureStore({
   reducer: { [pushDevicesApi.reducerPath]: pushDevicesApi.reducer },
   middleware: gdm =>
@@ -32,7 +36,7 @@ configureStore({
       thunk: {
         extraArgument: {
           ...pushDevicesApiExtra({
-            pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
+            pushDevicesServiceUrl,
             ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
           }),
         },
@@ -40,7 +44,7 @@ configureStore({
     })
     .concat(pushDevicesApi.middleware)
     .concat(createIdentitiesSyncMiddleware({
-      pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
+      pushDevicesServiceUrl,
       getIdentitiesState: state => state.identities,
       getAnalyticsConsent: state => selectAnalyticsConsent(state),
     })),
