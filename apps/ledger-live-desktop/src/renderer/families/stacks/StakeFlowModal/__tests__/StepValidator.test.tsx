@@ -94,6 +94,26 @@ describe("StakeFlowModal/StepValidator", () => {
     expect(props.onChangeTransaction).toHaveBeenCalledTimes(1);
   });
 
+  it("clearing the pool address field back to empty also clears mode, instead of leaving mode: 'delegate' with no valAddress", () => {
+    // A staking intent with `mode` set but no `valAddress` crashes the generic bridge's pool-address
+    // validation (`intent.valAddress.includes(...)` on `undefined`) instead of returning a form error.
+    const props = makeProps({ transaction: makeTransaction({ valAddress: "SP1pool.name" }) });
+    act(() => {
+      render(<StepValidator {...props} />);
+    });
+
+    act(() => {
+      fireEvent.change(screen.getByTestId("stacks-stake-pool-address-input"), {
+        target: { value: "" },
+      });
+    });
+
+    expect(updateTransactionMock).toHaveBeenCalledWith(props.transaction, {
+      mode: undefined,
+      valAddress: "",
+    });
+  });
+
   it("updating the numCycles field calls bridge.updateTransaction with {familySpecificData: {numCycles}}", () => {
     const props = makeProps();
     act(() => {

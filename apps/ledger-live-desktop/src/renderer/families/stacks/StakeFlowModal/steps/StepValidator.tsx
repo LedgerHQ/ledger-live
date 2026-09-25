@@ -40,8 +40,16 @@ const StepValidator = ({ account, transaction, onChangeTransaction }: StepProps)
     (valAddress: string) => {
       if (!transaction) return;
       // `mode` travels together with `valAddress` -- see Body.tsx's initial-transaction comment for
-      // why the two must not be set apart.
-      onChangeTransaction(bridge.updateTransaction(transaction, { mode: "delegate", valAddress }));
+      // why the two must not be set apart. That includes clearing the field back to empty: with
+      // `mode` left on "delegate", the generic bridge's `getDelegationIntentFields` drops `valAddress`
+      // (falsy) while `defaultComputeIntentType` still classifies the intent as staking, so
+      // validation reaches `intent.valAddress.includes(...)` on `undefined` and throws.
+      onChangeTransaction(
+        bridge.updateTransaction(transaction, {
+          mode: valAddress ? "delegate" : undefined,
+          valAddress,
+        }),
+      );
     },
     [bridge, onChangeTransaction, transaction],
   );
