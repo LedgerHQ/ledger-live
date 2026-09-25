@@ -406,7 +406,7 @@ describe("useCardLoginViewModel intro", () => {
 
   it("puts the login back on offer from the signup panel, and starts nothing", async () => {
     const openHostedPage = jest.fn().mockRejectedValue(new Error("no manifest"));
-    const { result } = await renderIdleLogin(store, "both", undefined, openHostedPage);
+    const { result } = await renderIdleLogin(store, "both", openHostedPage);
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
