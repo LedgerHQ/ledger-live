@@ -1,3 +1,4 @@
+import { RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { StacksMemoTooLong } from "../errors";
@@ -22,7 +23,7 @@ describe("getTransactionStatus", () => {
     const account = { currency: { name: "" } } as Account;
     const transaction = { amount: BigNumber(1), memo: "random memo for unit test" } as Transaction;
     const status = await getTransactionStatus(account, transaction);
-    expect(status.errors.transaction).not.toBeDefined();
+    expect(status.errors.transaction).toBeUndefined();
 
     expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memo);
   });
@@ -57,7 +58,7 @@ describe("getTransactionStatus", () => {
 
       const status = await getTransactionStatus(account, transaction);
 
-      expect(status.errors.recipient).toBeDefined();
+      expect(status.errors.recipient).toBeInstanceOf(RecipientRequired);
     },
   );
 });
