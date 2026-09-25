@@ -42,6 +42,78 @@ const decodeTransactionMode = (action?: MultiversXTransactionAction): string => 
   return action.name;
 };
 
+/**
+ * Fetches every transaction matching `buildUrl`'s filter, working around the
+ * MultiversX API's hard cap on `from + size` (Elasticsearch's
+ * `index.max_result_window`, see MAX_PAGINATION_RESULT_WINDOW).
+ *
+ * Once a single `from`-based window is exhausted (from reaches the cap) we
+ * can't page further with `from` alone, so we shift the window by adding a
+ * `before` cursor set to the oldest transaction timestamp seen so far and
+ * restart `from` at 0. `before` is exclusive (strictly-older-than), so the
+ * next window picks up right where the previous one left off. Results are
+ * deduped by tx hash as a safety net, since several transactions can share
+ * the same timestamp across a window boundary.
+ *
+ * Stops once a page comes back shorter than requested (no more data for the
+ * current filter) or once `totalCount` deduped transactions have been
+ * collected.
+ */
+async function fetchAllTransactions(
+  totalCount: number,
+  buildUrl: (from: number, size: number, before?: number) => string,
+): Promise<MultiversXApiTransaction[]> {
+  const allTransactions: MultiversXApiTransaction[] = [];
+  const seenHashes = new Set<string>();
+  // `before` stays fixed for the whole 10k window so `from` keeps indexing
+  // into the same filtered set; it only moves once the window is shifted.
+  let before: number | undefined;
+
+  while (allTransactions.length < totalCount) {
+    let from = 0;
+    let reachedEnd = false;
+    let oldestInWindow: number | undefined;
+
+    while (from < MAX_PAGINATION_RESULT_WINDOW) {
+      const size = Math.min(MAX_PAGINATION_SIZE, MAX_PAGINATION_RESULT_WINDOW - from);
+      const { data: page } = await network<MultiversXApiTransaction[]>({
+        method: "GET",
+        url: buildUrl(from, size, before),
+      });
+      const transactions = page ?? [];
+
+      for (const transaction of transactions) {
+        const hash = transaction.txHash;
+        if (hash && seenHashes.has(hash)) continue;
+        if (hash) seenHashes.add(hash);
+        allTransactions.push(transaction);
+      }
+
+      const oldest = transactions[transactions.length - 1]?.timestamp;
+      if (oldest !== undefined) oldestInWindow = oldest;
+
+      from += size;
+
+      if (transactions.length < size) {
+        reachedEnd = true;
+        break;
+      }
+    }
+
+    // The whole filtered set fit in this window (last page was short): done.
+    if (reachedEnd) break;
+
+    // The window filled up (from hit the cap) with more data left: shift the
+    // window by excluding everything at-or-newer-than the oldest tx we just
+    // saw, and restart `from` at 0. If we didn't see any timestamp to shift
+    // on, bail out rather than looping forever.
+    if (oldestInWindow === undefined) break;
+    before = oldestInWindow;
+  }
+
+  return allTransactions;
+}
+
 export class MultiversXNetworkApi {
   private readonly API_URL: string;
   private readonly DELEGATION_API_URL: string;
@@ -116,21 +188,15 @@ export class MultiversXNetworkApi {
       url: `${this.API_URL}/accounts/${addr}/transactions/count?after=${after}`,
     });
 
-    const allTransactions: MultiversXApiTransaction[] = [];
-    let from = 0;
-    // The API hard-caps `from + size` to MAX_PAGINATION_RESULT_WINDOW, so once we
-    // reach it we stop paginating rather than issuing a request that will be rejected.
-    while (from < transactionsCount && from < MAX_PAGINATION_RESULT_WINDOW) {
-      const size = Math.min(MAX_PAGINATION_SIZE, MAX_PAGINATION_RESULT_WINDOW - from);
-      const { data: transactions } = await network<MultiversXApiTransaction[]>({
-        method: "GET",
-        url: `${this.API_URL}/accounts/${addr}/transactions?after=${after}&from=${from}&size=${size}&withOperations=true&withScResults=true`,
-      });
-      for (const transaction of transactions ?? []) {
-        transaction.mode = decodeTransactionMode(transaction.action) as MultiversXTransactionMode;
-      }
-      allTransactions.push(...(transactions ?? []));
-      from = from + size;
+    const allTransactions = await fetchAllTransactions(
+      transactionsCount,
+      (from, size, before) =>
+        `${this.API_URL}/accounts/${addr}/transactions?after=${after}&from=${from}&size=${size}` +
+        (before !== undefined ? `&before=${before}` : "") +
+        `&withOperations=true&withScResults=true`,
+    );
+    for (const transaction of allTransactions) {
+      transaction.mode = decodeTransactionMode(transaction.action) as MultiversXTransactionMode;
     }
     return allTransactions;
   }
@@ -154,16 +220,12 @@ export class MultiversXNetworkApi {
       url: `${this.API_URL}/accounts/${addr}/transactions/count?token=${token}&after=${after}`,
     });
 
-    const allTokenTransactions: MultiversXApiTransaction[] = [];
-    let from = 0;
-    while (from < tokenTransactionsCount) {
-      const { data: tokenTransactions } = await network<MultiversXApiTransaction[]>({
-        method: "GET",
-        url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&from=${from}&after=${after}&size=${MAX_PAGINATION_SIZE}`,
-      });
-      allTokenTransactions.push(...(tokenTransactions ?? []));
-      from = from + MAX_PAGINATION_SIZE;
-    }
+    const allTokenTransactions = await fetchAllTransactions(
+      tokenTransactionsCount,
+      (from, size, before) =>
+        `${this.API_URL}/accounts/${addr}/transactions?token=${token}&from=${from}&after=${after}&size=${size}` +
+        (before !== undefined ? `&before=${before}` : ""),
+    );
 
     for (const esdtTransaction of allTokenTransactions) {
       (esdtTransaction as { transfer?: string }).transfer =
