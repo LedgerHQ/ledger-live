@@ -1,10 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { resolveAccountArg, resolveAccountInput, resolveOutputFormat } from "./inputs";
+import {
+  resolveAccountArg,
+  resolveAccountDescriptor,
+  resolveAccountDescriptorV1,
+  resolveAccountInput,
+  resolveOutputFormat,
+} from "./inputs";
 import { makeSessionDir } from "../test/helpers/session-fixture";
 import { ETH_DESCRIPTOR } from "../test/helpers/constants";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 
 const SHORT = `js:2:bitcoin:${XPUB}:native_segwit:0`;
+const BASE_DESCRIPTOR =
+  "account:1:address:base:main:0x64466ae5d0565d3A2D9479A755E18d18aDaC8f46:m/44h/60h/0h/0/0";
 
 describe("resolveAccountArg", () => {
   it("prefers the --account flag over positional", () => {
@@ -20,7 +28,7 @@ describe("resolveAccountArg", () => {
   });
 });
 
-describe("resolveAccountInput", () => {
+describe("session-backed account resolution", () => {
   let sessionCleanup: (() => void) | undefined;
   let savedXdgStateHome: string | undefined;
 
@@ -65,6 +73,18 @@ describe("resolveAccountInput", () => {
     expect(caught?.message).toMatch(/Raw descriptors are not accepted/);
     // Must not echo the descriptor back (would leak xpub/path into logs).
     expect(caught?.message).not.toContain(ETH_DESCRIPTOR);
+  });
+
+  it.each([
+    ["resolveAccountDescriptor", resolveAccountDescriptor],
+    ["resolveAccountDescriptorV1", resolveAccountDescriptorV1],
+  ])("%s rejects a saved account on an unsupported network", async (_name, resolve) => {
+    const fixture = makeSessionDir([{ label: "base-1", descriptor: BASE_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    await expect(resolve("base-1")).rejects.toThrow(
+      /Network "base:main" is not supported by wallet-cli/,
+    );
   });
 });
 

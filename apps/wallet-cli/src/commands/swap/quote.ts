@@ -2,7 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getQuotes, type QuotesError } from "@ledgerhq/live-common/wallet-api/Exchange/index";
-import { WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS } from "../../live-common-setup";
+import { listWalletCliSupportedCurrencyIds } from "../../shared/supported-currencies";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
 import { WalletAdapter } from "../../wallet";
@@ -19,8 +19,6 @@ import {
   trackSwapQuoteReturned,
 } from "../../analytics/swap-analytics";
 
-const walletCliSupportedSwapCurrencyIds = new Set<string>(WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS);
-
 function formatQuotesError(error: QuotesError): string {
   if ("minAmount" in error) {
     return `amount too low (minimum: ${error.minAmount})`;
@@ -32,17 +30,18 @@ function formatQuotesError(error: QuotesError): string {
 }
 
 async function assertWalletCliSwapCurrencyId(id: string, role: "from" | "to"): Promise<void> {
-  if (walletCliSupportedSwapCurrencyIds.has(id)) {
+  const supportedIds = listWalletCliSupportedCurrencyIds();
+  if (supportedIds.includes(id)) {
     return;
   }
 
   const token = await getCryptoAssetsStore().findTokenById(id);
-  if (token && walletCliSupportedSwapCurrencyIds.has(token.parentCurrencyId)) {
+  if (token && supportedIds.includes(token.parentCurrencyId)) {
     return;
   }
 
   throw new Error(
-    `Unsupported swap ${role} currency "${id}". Wallet CLI supports: ${WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS.join(", ")} (and tokens on those chains).`,
+    `Unsupported swap ${role} currency "${id}". Wallet CLI supports: ${supportedIds.join(", ")} (and tokens on those chains).`,
   );
 }
 

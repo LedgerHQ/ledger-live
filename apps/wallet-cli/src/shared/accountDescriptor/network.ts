@@ -1,5 +1,9 @@
 import { z } from "zod";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  isWalletCliSupportedCurrency,
+  listWalletCliSupportedCurrencyIds,
+} from "../supported-currencies";
 
 /**
  * A Network identifies a blockchain by name and environment.
@@ -81,6 +85,13 @@ export class UnknownNetworkError extends Error {
   }
 }
 
+export class UnsupportedNetworkError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "UnsupportedNetworkError";
+  }
+}
+
 /**
  * Convert a live-common currencyId to a Network.
  *
@@ -117,14 +128,21 @@ export function networkFromCurrencyId(currencyId: string): Network {
  *   otherwise      → currencyId = name_env            (e.g. "bitcoin_testnet", "solana_devnet")
  *
  * Throws UnknownNetworkError if the resulting currencyId is not known.
+ * Throws UnsupportedNetworkError if it is known but not supported by wallet-cli (e.g. "base").
  */
 export function currencyIdFromNetwork(network: Network): string {
   const currencyId = network.env === "main" ? network.name : `${network.name}_${network.env}`;
+  let currency;
   try {
-    getCryptoCurrencyById(currencyId);
+    currency = getCryptoCurrencyById(currencyId);
   } catch {
     throw new UnknownNetworkError(
       `No currency found for network "${network.name}:${network.env}" (tried currencyId "${currencyId}")`,
+    );
+  }
+  if (!isWalletCliSupportedCurrency(currency)) {
+    throw new UnsupportedNetworkError(
+      `Network "${serializeNetwork(network)}" is not supported by wallet-cli. Supported networks: ${listWalletCliSupportedCurrencyIds().join(", ")} (and their testnets).`,
     );
   }
   return currencyId;
