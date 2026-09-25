@@ -5,8 +5,8 @@ import { http, HttpResponse } from "msw";
 import { render, waitFor } from "@tests/test-renderer";
 import { server } from "@tests/server";
 import type { State } from "~/reducers/types";
-import TrackScreen from "../TrackScreen";
-import * as segment from "../segment";
+import { flush, track } from "@shared/analytics";
+import { start as startAnalytics } from "../segment";
 
 jest.unmock("../segment");
 jest.unmock("@shared/analytics");
@@ -55,34 +55,66 @@ const endpoints = {
   batch: jest.fn().mockReturnValue(HttpResponse.json({ success: true })),
 };
 
-describe("Segment integration", () => {
-  beforeEach(() => {
+describe("Integration with Segment.io", () => {
+  beforeEach(async () => {
     jest.useRealTimers();
-    jest.clearAllMocks();
     server.use(
       http.post("https://api.segment.io/v1/b", endpoints.batch),
       http.get("https://cdn-settings.segment.com/v1/projects/:writeKey/settings", () =>
         HttpResponse.json({ integrations: { "Segment.io": {} } }),
       ),
     );
+
+    const { store, rerender: _rerender } = render(<></>, {
+      overrideInitialState: withAnalyticsEnabled,
+    });
+    rerender = _rerender;
+    await startAnalytics(store);
   });
 
   afterEach(() => {
     jest.useFakeTimers();
+    endpoints.batch.mockClear();
+    jest.clearAllMocks();
   });
 
-  it("should call api.segment.io when tracking", async () => {
-    const { store, rerender } = render(<></>, {
-      overrideInitialState: withAnalyticsEnabled,
-    });
-    await segment.start(store);
-    endpoints.batch.mockClear();
-
-    rerender(<TrackScreen category="Settings" name="General" />);
-
+  it("tracking sends batches of events to api.segment.io", async () => {
     await waitFor(() => expect(endpoints.batch).toHaveBeenCalled());
-    expect(await endpoints.batch.mock.calls[0][0].request.json()).toMatchObject({
-      batch: expect.arrayContaining([expect.objectContaining({ userId: expect.any(String) })]),
-    });
+  });
+
+  it("identifies the user", async () => {
+    await waitFor(async () =>
+      expect(await endpoints.batch.mock.calls[0][0].request.json()).toMatchObject({
+        batch: expect.arrayContaining([
+          expect.objectContaining({
+            type: "identify",
+            userId: expect.any(String),
+          }),
+        ]),
+      }),
+    );
+  });
+
+  it("configures @shared/analytics to send events to api.segment.io", async () => {
+    await track("Example event");
+
+    await waitFor(
+      async () => {
+        await flush();
+        const events = (
+          await Promise.all(endpoints.batch.mock.calls.map(call => call[0].request.clone().json()))
+        ).flatMap(body => body.batch ?? []);
+
+        expect(events).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              type: "track",
+              event: "Example event",
+            }),
+          ]),
+        );
+      },
+      { timeout: 10_000 },
+    );
   });
 });
