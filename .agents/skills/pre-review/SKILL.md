@@ -15,7 +15,7 @@ Deep code review
 2. Launch 5 `code-reviewer` agents **in parallel**, each with a different focus:
    - **A** — Architecture & MVVM compliance
    - **B** — Correctness (edge cases, null handling, error states)
-   - **C** — Code quality & conventions (Lumen UI, TypeScript, naming, new deps)
+   - **C** — Code quality & conventions (Lumen UI, TypeScript, naming, new deps). Reject new `.pnpmfile.cjs` hooks and `pnpm.packageExtensions` (skill `pnpm-resolution`).
    - **D** — General review — DRY, KISS, missing tests, anything that would slow down a reviewer or cause future regressions
    - **E** — Security: invoke the `detect-data-leaks` skill for PII; check for auth bypass, injection, SSRF, crypto misuse; scan the diff for hardcoded secrets, tokens, API keys, or private keys.
 
