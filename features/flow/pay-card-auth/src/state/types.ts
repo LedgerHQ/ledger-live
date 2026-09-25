@@ -179,6 +179,7 @@ export type CardLoginContext = {
 export type CardLoginEvent =
   | { type: "LOGIN" }
   | { type: "RETRY" }
+  | { type: "DISMISS" }
   | { type: "SESSION_ENDED" }
   | { type: "CALLBACK_RECEIVED"; code: string; state?: string; appId?: string };
 
