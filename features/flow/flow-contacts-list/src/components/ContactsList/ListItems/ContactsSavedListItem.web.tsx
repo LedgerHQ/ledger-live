@@ -32,6 +32,7 @@ export function ContactsSavedListItem({
         <ContactAvatar
           contactId={contact.contactId}
           name={contact.name}
+          isMe={contact.isMe}
           size="md"
           ariaHidden
           testId={`contacts-saved-avatar-${contact.contactId}`}

@@ -9,7 +9,7 @@ const AVATAR_SIZE = "xl";
 export type PaySuccessRecipient = Readonly<{
   id: ContactId;
   name: string;
-  isMe?: boolean;
+  isMe: boolean;
 }>;
 
 export type PaySuccessHeroProps = Readonly<{
@@ -28,7 +28,12 @@ export function PaySuccessHero({
   return (
     <Box lx={{ alignItems: "center", gap: "s24" }}>
       {recipient ? (
-        <ContactAvatar contactId={recipient.id} name={recipient.name} size={AVATAR_SIZE} />
+        <ContactAvatar
+          contactId={recipient.id}
+          name={recipient.name}
+          isMe={recipient.isMe}
+          size={AVATAR_SIZE}
+        />
       ) : (
         <Avatar size={AVATAR_SIZE} />
       )}

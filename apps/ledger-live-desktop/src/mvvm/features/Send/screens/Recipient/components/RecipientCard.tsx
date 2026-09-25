@@ -68,6 +68,7 @@ export function RecipientCard({
             <ContactAvatar
               contactId={ContactIdSchema.parse(contact.contactId)}
               name={contact.contactName}
+              isMe={contact.isMe}
               size="md"
               ariaHidden
               testId="send-recipient-card-avatar"

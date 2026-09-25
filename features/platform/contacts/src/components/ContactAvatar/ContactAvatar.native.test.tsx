@@ -1,8 +1,12 @@
 import React from "react";
-import { render, screen } from "@testing-library/react-native";
+import { render as renderWithoutI18n, screen } from "@testing-library/react-native";
+import { ContactsI18nTestProvider } from "../../testing/ContactsI18nTestProvider";
 import { ContactIdSchema, DEFAULT_ME_CONTACT_ID } from "@domain/entity-contact";
 import { ContactAvatar } from ".";
 import { ME_AVATAR_URL } from "../MeAvatar/meAvatarUrl";
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
   Avatar: ({ testID, ...props }: { testID?: string }) => {
@@ -16,7 +20,7 @@ describe("ContactAvatar", () => {
   it("should pass the contact details to the Lumen avatar in the list", () => {
     const contactId = ContactIdSchema.parse("contact-elodie");
 
-    render(<ContactAvatar contactId={contactId} name="élodie" />);
+    render(<ContactAvatar isMe={false} contactId={contactId} name="élodie" />);
 
     const avatar = screen.getByTestId(`contacts-avatar-${contactId}`);
 
@@ -32,6 +36,7 @@ describe("ContactAvatar", () => {
 
     render(
       <ContactAvatar
+        isMe={false}
         contactId={contactId}
         name="Benoit Jean"
         size="xl"
@@ -51,7 +56,7 @@ describe("ContactAvatar", () => {
   it.each(["xs", "md", "lg", "2xl"] as const)("should support the %s Lumen avatar size", size => {
     const contactId = ContactIdSchema.parse(`contact-${size}`);
 
-    render(<ContactAvatar contactId={contactId} name="Benoit" size={size} />);
+    render(<ContactAvatar isMe={false} contactId={contactId} name="Benoit" size={size} />);
 
     expect(screen.getByTestId(`contacts-avatar-${contactId}`)).toHaveProp("size", size);
   });
@@ -61,6 +66,7 @@ describe("ContactAvatar", () => {
 
     render(
       <ContactAvatar
+        isMe
         contactId={contactId}
         name="My Wallet"
         size="xl"
@@ -74,7 +80,7 @@ describe("ContactAvatar", () => {
     expect(avatar).toHaveProp("size", "xl");
     expect(avatar).toHaveProp("appearance", "thin");
     expect(avatar).toHaveProp("src", ME_AVATAR_URL);
-    expect(avatar).toHaveProp("alt", "My Wallet");
+    expect(avatar).toHaveProp("alt", "My Wallet (Me)");
     expect(avatar.props).not.toHaveProperty("fallbackText");
   });
 });

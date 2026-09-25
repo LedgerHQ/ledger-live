@@ -43,7 +43,13 @@ export function ContactTile({
       <TableCell>
         <TableCellItem>
           <div className="shrink-0">
-            <ContactAvatar contactId={contact.id} name={contact.name} size="sm" ariaHidden />
+            <ContactAvatar
+              contactId={contact.id}
+              name={contact.name}
+              isMe={contact.isMe}
+              size="sm"
+              ariaHidden
+            />
           </div>
           <TableCellContent>
             <ContactName name={getDisplayName(contact)} />

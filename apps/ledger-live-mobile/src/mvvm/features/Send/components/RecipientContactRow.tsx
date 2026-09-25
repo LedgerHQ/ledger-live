@@ -42,6 +42,7 @@ export function RecipientContactRow({ contact, label, value }: RecipientContactR
       <ContactAvatar
         contactId={contact.id as ContactId}
         name={contact.name}
+        isMe={contact.isMe}
         size="xs"
         testId="recipient-contact-avatar"
       />
