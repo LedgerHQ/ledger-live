@@ -19,10 +19,16 @@
  * - No log markers: under CI's --loglevel warn they are all hidden.
  * - Before freezing, the inspector is asked for its process.pid. If port 9229
  *   belongs to anything but our victim, nothing is frozen.
+ *
+ * --target speculos instead picks a worker that holds a Speculos right now (from
+ * the artifacts/speculos-instances.<pid>.json tracking files), then follows those
+ * instances through Speculinho: before the kill, right after it, and once the
+ * controller's teardown sweep has removed the dead worker's tracking file.
  */
 
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { appendFileSync, existsSync, readFileSync } from "node:fs";
+import * as path from "node:path";
 
 const argv = process.argv.slice(2);
 const arg = (name, fallback) => {
@@ -36,6 +42,9 @@ const SETTLE_S = Number(arg("settle", 15)); // specs only run ~50-70s in CI: fre
 const SAMPLE_S = Number(arg("sample", 3));
 const MIN_DELTA_S = Number(arg("min-delta", 0.2));
 const PORT = Number(arg("port", 9229));
+const TARGET = arg("target", "busiest"); // busiest | speculos
+const ARTIFACTS_DIR = arg("artifacts-dir", "e2e/mobile/artifacts");
+const FOLLOW_TIMEOUT_S = Number(arg("follow-timeout", 1200)); // kill, then the sweep at teardown
 
 const notice = message => console.log(`::notice::QAA-1365 probe: ${message}`);
 const warn = message => console.log(`::warning::QAA-1365 probe: ${message}`);
@@ -122,6 +131,137 @@ async function busiestWorker() {
   return best;
 }
 
+const trackingFile = pid => path.join(ARTIFACTS_DIR, `speculos-instances.${pid}.json`);
+
+// The Speculos run ids a worker has recorded and not yet released.
+function trackedRunIds(pid) {
+  try {
+    return JSON.parse(readFileSync(trackingFile(pid), "utf8")).map(({ deviceId }) => deviceId);
+  } catch {
+    return [];
+  }
+}
+
+function speculosOwner() {
+  for (const worker of ourWorkers()) {
+    const runIds = trackedRunIds(worker.pid);
+    if (runIds.length) return { pid: worker.pid, runIds };
+  }
+  return undefined;
+}
+
+function isAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return error.code === "EPERM";
+  }
+}
+
+// What Speculinho says about one run id. Only the HTTP status, the top-level key
+// names and a few short state fields are printed: these logs are public, and the
+// body may describe the pod in detail.
+async function speculinhoState(runId) {
+  const base = process.env.SPECULINHO_URL?.trim().replace(/\/+$/, "");
+  if (!base) return "no SPECULINHO_URL";
+  try {
+    const res = await fetch(`${base}/status/${encodeURIComponent(runId)}`, {
+      signal: AbortSignal.timeout(10_000),
+    });
+    let detail = "";
+    try {
+      const body = await res.json();
+      if (body && typeof body === "object") {
+        const state = ["phase", "status", "state"]
+          .map(key => body[key])
+          .filter(value => typeof value === "string")
+          .map(value => value.slice(0, 40));
+        detail = ` keys=[${Object.keys(body).slice(0, 12).join(",")}]${state.length ? ` state=${state.join("/")}` : ""}`;
+      }
+    } catch {
+      // not JSON
+    }
+    return `HTTP ${res.status}${detail}`;
+  } catch (error) {
+    return `unreachable (${error.name})`;
+  }
+}
+
+async function pickVictim() {
+  const deadline = Date.now() + START_TIMEOUT_S * 1000;
+  while (Date.now() < deadline) {
+    if (TARGET === "speculos") {
+      const owner = speculosOwner();
+      if (!owner) {
+        await sleep(1);
+        continue;
+      }
+      await sleep(SETTLE_S);
+      // Still holding it: a spec that finished meanwhile would test nothing.
+      const runIds = trackedRunIds(owner.pid);
+      if (runIds.length && isAlive(owner.pid)) {
+        notice(`victim jest worker ${owner.pid}, holding Speculos ${runIds.join(", ")}`);
+        return { pid: owner.pid, runIds };
+      }
+      continue;
+    }
+    const busiest = await busiestWorker();
+    if (!busiest) continue;
+    await sleep(SETTLE_S);
+    const victim = (await busiestWorker()) ?? busiest;
+    notice(`victim jest worker ${victim.pid} (+${victim.delta.toFixed(2)}s CPU in ${SAMPLE_S}s)`);
+    return victim;
+  }
+  return undefined;
+}
+
+async function waitUntil(condition, deadline) {
+  while (!condition()) {
+    if (Date.now() > deadline) return false;
+    await sleep(1);
+  }
+  return true;
+}
+
+// After the freeze: the watchdog should kill the worker, which leaves its Speculos
+// allocated until the controller's globalTeardown sweeps the dead worker's file.
+async function followSpeculos({ pid, runIds }, frozenAt) {
+  const since = () => `+${Math.round((Date.now() - frozenAt) / 1000)}s`;
+  const states = async () =>
+    (await Promise.all(runIds.map(async id => `${id} ${await speculinhoState(id)}`))).join("; ");
+  const report = line => {
+    notice(line);
+    if (process.env.GITHUB_STEP_SUMMARY) {
+      appendFileSync(process.env.GITHUB_STEP_SUMMARY, `- QAA-1365 probe: ${line}\n`);
+    }
+  };
+  const deadline = frozenAt + FOLLOW_TIMEOUT_S * 1000;
+
+  report(`[speculos] frozen worker ${pid}. Speculinho before the kill: ${await states()}`);
+
+  if (!(await waitUntil(() => !isAlive(pid), deadline))) {
+    warn(
+      `[speculos] worker ${pid} still alive ${since()} after the freeze; the watchdog never killed it`,
+    );
+    return;
+  }
+  const leftAfterKill = trackedRunIds(pid);
+  report(
+    `[speculos] worker ${pid} killed ${since()} after the freeze, tracking file still lists ${leftAfterKill.length} instance(s). Speculinho right after the kill: ${await states()}`,
+  );
+
+  if (!(await waitUntil(() => !existsSync(trackingFile(pid)), deadline))) {
+    warn(
+      `[speculos] tracking file of dead worker ${pid} still there ${since()} after the freeze; never swept`,
+    );
+    return;
+  }
+  report(
+    `[speculos] dead worker ${pid}'s tracking file swept ${since()} after the freeze. Speculinho after the sweep: ${await states()}`,
+  );
+}
+
 async function inspectorTarget() {
   for (let attempt = 0; attempt < 20; attempt++) {
     try {
@@ -170,18 +310,15 @@ function cdp(url) {
 }
 
 async function main() {
-  // Wait until one of our workers is genuinely executing a spec.
-  let victim;
-  const deadline = Date.now() + START_TIMEOUT_S * 1000;
-  while (!victim && Date.now() < deadline) victim = await busiestWorker();
+  // Wait until one of our workers is genuinely executing a spec (and, with
+  // --target speculos, holding a Speculos).
+  const victim = await pickVictim();
   if (!victim) {
-    warn(`no busy jest worker of this shard within ${START_TIMEOUT_S}s; nothing frozen`);
+    warn(
+      `no ${TARGET === "speculos" ? "Speculos-holding" : "busy"} jest worker of this shard within ${START_TIMEOUT_S}s; nothing frozen`,
+    );
     return;
   }
-
-  await sleep(SETTLE_S);
-  victim = (await busiestWorker()) ?? victim;
-  notice(`victim jest worker ${victim.pid} (+${victim.delta.toFixed(2)}s CPU in ${SAMPLE_S}s)`);
 
   process.kill(victim.pid, "SIGUSR1");
   const target = await inspectorTarget();
@@ -206,9 +343,12 @@ async function main() {
   void session.evaluate(
     "(function injectedFreeze() { Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0); })()",
   );
+  const frozenAt = Date.now();
   await sleep(1);
-  notice(`froze the JS main thread of worker ${victim.pid} at ${new Date().toISOString()}`);
+  notice(`froze the JS main thread of worker ${victim.pid} at ${new Date(frozenAt).toISOString()}`);
   session.close();
+
+  if (TARGET === "speculos") await followSpeculos(victim, frozenAt);
 }
 
 main()
