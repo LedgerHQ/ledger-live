@@ -265,6 +265,15 @@ describe("usePayTabViewModel", () => {
     expect(screen.getByTestId("login-open-hosted-page")).toHaveTextContent("undefined");
   });
 
+  it("should pre-select on the hosted page the asset the user topped up from", async () => {
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("asset-top-up"));
+
+    await expectHostedPage("https://ledger.baanxapi.test/topup?currency=btc");
+    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
+  });
+
   it("should pre-select on the hosted page a card wallet Ledger Wallet has no currency for", async () => {
     const { user } = renderViewModel();
 

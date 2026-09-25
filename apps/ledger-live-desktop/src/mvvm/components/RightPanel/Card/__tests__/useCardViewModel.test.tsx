@@ -8,11 +8,6 @@ import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { useCardViewModel } from "../useCardViewModel";
 
 const mockNavigate = jest.fn();
-const mockTopUpAsset = jest.fn();
-
-jest.mock("LLD/features/PayCardTopUp/hooks/useCardTopUpEntryPoint", () => ({
-  useCardTopUpEntryPoint: () => mockTopUpAsset,
-}));
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -64,7 +59,6 @@ function renderCardViewModelWithLegacyTopUp() {
 describe("useCardViewModel", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
-    mockTopUpAsset.mockClear();
     mockedReadCardUsEnv.mockResolvedValue(false);
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     mockedManifest.mockReturnValue(HOSTED_MANIFEST as ReturnType<typeof useLiveAppManifest>);
@@ -193,19 +187,17 @@ describe("useCardViewModel", () => {
     );
   });
 
-  it("starts the native Fund flow for the asset the user topped up from", () => {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const asset = {
-      currency: "xrp",
-      ledgerId: "ripple",
-      address: "rCardWallet",
-    } as CardAssetRow;
+  it("opens the hosted top up page for the asset the user topped up from", async () => {
     const { result } = renderCardViewModel(null);
 
-    act(() => result.current.assets?.onTopUp?.(asset));
+    await act(async () => {
+      result.current.assets?.onTopUp?.(
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        { currency: "xrp", ledgerId: "ripple", address: "rCardWallet" } as CardAssetRow,
+      );
+    });
 
-    expect(mockTopUpAsset).toHaveBeenCalledWith(asset);
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?currency=xrp");
   });
 
   it("keeps the hosted top up page for a card wallet Ledger Wallet has no currency for", async () => {
@@ -218,7 +210,6 @@ describe("useCardViewModel", () => {
       );
     });
 
-    expect(mockTopUpAsset).not.toHaveBeenCalled();
     expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?currency=eurc");
   });
 
@@ -241,7 +232,6 @@ describe("useCardViewModel", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith("/platform/cl-card?returnTo=%2Fpaytab");
-    expect(mockTopUpAsset).not.toHaveBeenCalled();
   });
 
   it("opens the withdrawal page for the asset the user withdraws from", async () => {
