@@ -176,7 +176,10 @@ beforeEach(() => {
   setupHooks();
 });
 
-const renderBody = (overrides: Partial<React.ComponentProps<typeof Body>> = {}) => {
+const renderBody = (
+  overrides: Partial<React.ComponentProps<typeof Body>> = {},
+  renderOptions: Parameters<typeof render>[1] = {},
+) => {
   const props = {
     stepId: "validator" as const,
     onClose: jest.fn(),
@@ -184,7 +187,11 @@ const renderBody = (overrides: Partial<React.ComponentProps<typeof Body>> = {}) 
     params: { account },
     ...overrides,
   };
-  return { ...render(<Body {...props} />), props };
+  return { ...render(<Body {...props} />, renderOptions), props };
+};
+
+const connectedDeviceState = {
+  devices: { currentDevice: { deviceId: "mock", modelId: "nanoX", wired: true }, devices: [] },
 };
 
 describe("StakeFlowModal/Body", () => {
@@ -196,10 +203,12 @@ describe("StakeFlowModal/Body", () => {
     expect(screen.getByTestId("stepper-step-id")).toHaveTextContent("validator");
   });
 
-  it("initializes the bridge transaction with mode: delegate and familySpecificData.numCycles: 1", () => {
+  it("initializes the bridge transaction with familySpecificData.numCycles: 1, mode unset until a pool is entered", () => {
+    // `mode` is set later by StepValidator's onChangeValAddress, alongside `valAddress` -- setting
+    // it here, before any pool address exists, is what the generic-bridge migration can't handle
+    // (see StepValidator.test.tsx and Body.tsx's initial-transaction comment).
     renderBody();
     expect(baseBridge.updateTransaction).toHaveBeenCalledWith(expect.anything(), {
-      mode: "delegate",
       familySpecificData: { numCycles: 1 },
     });
   });
@@ -304,14 +313,38 @@ describe("StakeFlowModal/Body", () => {
     clearIntervalSpy.mockRestore();
   });
 
-  it("stops refreshing startBurnHt as soon as the transaction is ready for the device, before signing starts", async () => {
-    // GenericStepConnectDevice's device-signing effect depends on `transaction` (hw/actions/transaction.ts)
-    // and tears down/restarts an in-flight sign request whenever that reference changes -- so once
-    // fee + startBurnHt are both resolved, no further mutation may reach `transaction`, well before
-    // `signed` ever flips true.
+  it("keeps refreshing startBurnHt while ready for the device but no device has connected yet", async () => {
+    // Before a device is present, GenericStepConnectDevice's device-signing hook has no deviceId
+    // and never subscribes to signOperation, so mutating `transaction` here cannot interrupt
+    // anything -- the refresh must keep protecting against staleness while the user is still away
+    // from their device (no `devices.currentDevice` in this render's initial state).
     const clearIntervalSpy = jest.spyOn(global, "clearInterval");
     fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
     const { rerender, props } = renderBody({ stepId: "connectDevice" });
+    await waitFor(() => expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1));
+    clearIntervalSpy.mockClear();
+
+    currentTransaction = { ...currentTransaction, fee: new BigNumber(1) } as Transaction;
+    rerender(<Body {...props} stepId="connectDevice" />);
+
+    // isReadyForDevice is now true, but with no device connected mustFreezeTransaction stays false,
+    // so the periodic-refresh effect's dependencies are unchanged and its interval is never torn down.
+    await act(async () => {});
+    expect(clearIntervalSpy).not.toHaveBeenCalled();
+    clearIntervalSpy.mockRestore();
+  });
+
+  it("stops refreshing startBurnHt once a device connects while ready for the device, before signing starts", async () => {
+    // GenericStepConnectDevice's device-signing effect depends on `transaction` (hw/actions/transaction.ts)
+    // and tears down/restarts an in-flight sign request whenever that reference changes once a real
+    // device is present -- so once fee + startBurnHt are resolved AND a device shows up, no further
+    // mutation may reach `transaction`, well before `signed` ever flips true.
+    const clearIntervalSpy = jest.spyOn(global, "clearInterval");
+    fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
+    const { rerender, props } = renderBody(
+      { stepId: "connectDevice" },
+      { initialState: connectedDeviceState },
+    );
     await waitFor(() => expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1));
     clearIntervalSpy.mockClear();
 

@@ -72,7 +72,10 @@ describe("StakeFlowModal/StepValidator", () => {
     updateTransactionMock.mockClear();
   });
 
-  it("updating the pool address field calls bridge.updateTransaction with {valAddress}", () => {
+  it("updating the pool address field calls bridge.updateTransaction with {mode: 'delegate', valAddress}", () => {
+    // `mode` travels together with `valAddress` -- setting it any earlier (before a pool address
+    // exists) is what breaks the generic-bridge migration's intent validation (Body.tsx's
+    // initial-transaction comment).
     const props = makeProps();
     act(() => {
       render(<StepValidator {...props} />);
@@ -85,6 +88,7 @@ describe("StakeFlowModal/StepValidator", () => {
     });
 
     expect(updateTransactionMock).toHaveBeenCalledWith(props.transaction, {
+      mode: "delegate",
       valAddress: "SP1pool.native-pool-signer-manager",
     });
     expect(props.onChangeTransaction).toHaveBeenCalledTimes(1);

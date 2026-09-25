@@ -39,7 +39,9 @@ const StepValidator = ({ account, transaction, onChangeTransaction }: StepProps)
   const onChangeValAddress = useCallback(
     (valAddress: string) => {
       if (!transaction) return;
-      onChangeTransaction(bridge.updateTransaction(transaction, { valAddress }));
+      // `mode` travels together with `valAddress` -- see Body.tsx's initial-transaction comment for
+      // why the two must not be set apart.
+      onChangeTransaction(bridge.updateTransaction(transaction, { mode: "delegate", valAddress }));
     },
     [bridge, onChangeTransaction, transaction],
   );
