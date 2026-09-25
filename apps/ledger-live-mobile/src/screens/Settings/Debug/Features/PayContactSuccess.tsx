@@ -1,14 +1,17 @@
 import React, { useCallback, useMemo } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { ContactIdSchema, selectContacts } from "@domain/entity-contact";
 import { PaySuccess } from "@features/flow-pay-contact";
+import { useContactDisplayName, useContactsMeContact } from "@features/platform-contacts";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 import SafeAreaView from "~/components/SafeAreaView";
+import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import type { StackNavigatorRoute } from "~/components/RootNavigator/types/helpers";
 
 const SAMPLE_RECIPIENT = {
   id: ContactIdSchema.parse("qa-pay-success"),
@@ -37,10 +40,17 @@ export default function DebugPayContactSuccess() {
   const navigation = useNavigation();
   const accounts = useSelector(accountsSelector);
   const account = accounts[0];
-  const payContact = useSelector(selectContacts).find(contact => !contact.isMe);
+  const { params } =
+    useRoute<
+      StackNavigatorRoute<SettingsNavigatorStackParamList, ScreenName.DebugPayContactSuccess>
+    >();
+  const meContact = useContactsMeContact();
+  const savedContact = useSelector(selectContacts).find(contact => !contact.isMe);
+  const payContact = params?.recipient === "me" ? meContact : savedContact;
   const recipient = payContact
     ? { id: payContact.id, name: payContact.name, isMe: payContact.isMe }
     : SAMPLE_RECIPIENT;
+  const getDisplayName = useContactDisplayName();
 
   const mockOperation = useMemo(() => {
     if (!account) return null;
@@ -73,7 +83,7 @@ export default function DebugPayContactSuccess() {
     <SafeAreaView edges={["top", "bottom"]} style={styles.container}>
       <PaySuccess
         recipient={recipient}
-        recipientLabel={recipient.name}
+        recipientLabel={getDisplayName(recipient)}
         amountFormatted="10 USDC"
         fromAccountName="Ethereum 1"
         networkIcon={{ ledgerId: "ethereum", ticker: "ETH" }}
