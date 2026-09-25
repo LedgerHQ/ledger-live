@@ -37,7 +37,7 @@ export async function retryUntilTimeout<T>(
 
   throw new Error(
     [
-      `❌ ${options.messageOnError ?? "[retryUntilTimeout] Timed out after "}${timeout}ms}`,
+      `❌ ${options.messageOnError ?? `[retryUntilTimeout] Timed out after ${timeout}ms`}`,
       `🧪 ${errMsg}`,
     ].join("\n"),
   );
