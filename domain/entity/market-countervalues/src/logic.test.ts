@@ -7,17 +7,24 @@ import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import type { Currency } from "@domain/entity-currency";
 import {
+  applyRatePatches,
   calculate,
   calculateMany,
   exportCountervalues,
   filterSupportedTrackingPairs,
   hasNewCountervaluesToExport,
   importCountervalues,
+  initialState,
   resolveTrackingPairs,
   trackingPairIds,
 } from "./logic";
 import type { CounterValuesState, CountervaluesSettings, TrackingPair } from "./types";
-import { datapointRetention, formatCounterValueDay, formatCounterValueHour } from "./helpers";
+import {
+  datapointRetention,
+  formatCounterValueDay,
+  formatCounterValueHour,
+  pairId,
+} from "./helpers";
 
 describe("filterSupportedTrackingPairs", () => {
   const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -489,5 +496,86 @@ describe("resolveTrackingPairs", () => {
     ]);
 
     expect(trackingPairIds(resolved)).toEqual(["USD bitcoin", "USD ethereum"]);
+  });
+});
+
+describe("applyRatePatches", () => {
+  const bitcoin = getCryptoCurrencyById("bitcoin");
+  const ethereum = getCryptoCurrencyById("ethereum");
+  const usd = getFiatCurrencyByTicker("USD");
+  const btcUsd = pairId({ from: bitcoin, to: usd });
+  const ethUsd = pairId({ from: ethereum, to: usd });
+  const settings: CountervaluesSettings = {
+    trackingPairs: [{ from: bitcoin, to: usd, startDate: new Date("2018-01-01") }],
+    autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
+  };
+
+  function emptyNext() {
+    return { data: {}, cache: {}, status: {} } as Pick<
+      CounterValuesState,
+      "data" | "cache" | "status"
+    >;
+  }
+
+  it("merges rates into a new pair and builds its cache", () => {
+    const state = applyRatePatches(
+      initialState,
+      emptyNext(),
+      [{ [btcUsd]: { "2018-03-01": 9000, "2018-03-02": 9100 } }],
+      settings,
+    );
+
+    expect([...(state.data[btcUsd]?.entries() ?? [])]).toEqual([
+      ["2018-03-01", 9000],
+      ["2018-03-02", 9100],
+    ]);
+    expect(state.cache[btcUsd]?.stats.oldest).toBe("2018-03-01");
+  });
+
+  it("skips non-numeric values, such as a missing latest rate", () => {
+    const state = applyRatePatches(
+      initialState,
+      emptyNext(),
+      [{ [btcUsd]: { latest: null, "2018-03-01": 9000 } }],
+      settings,
+    );
+
+    expect(state.data[btcUsd]?.has("latest")).toBe(false);
+    expect(state.data[btcUsd]?.get("2018-03-01")).toBe(9000);
+  });
+
+  it("leaves the cache of pairs no patch touched alone", () => {
+    const next = emptyNext();
+    const ethCache = { map: new Map(), stats: {} };
+    next.cache[ethUsd] = ethCache;
+
+    const state = applyRatePatches(
+      initialState,
+      next,
+      [{ [btcUsd]: { "2018-03-01": 9000 } }],
+      settings,
+    );
+
+    expect(state.cache[ethUsd]).toBe(ethCache);
+    expect(state.cache[btcUsd]).toBeDefined();
+  });
+
+  it("clears checkHolesOnNextLoad once the patches are applied", () => {
+    const state = applyRatePatches(
+      { ...initialState, checkHolesOnNextLoad: true },
+      emptyNext(),
+      [{ [btcUsd]: { "2018-03-01": 9000 } }],
+      settings,
+    );
+
+    expect(state.checkHolesOnNextLoad).toBe(false);
+  });
+
+  it("returns the state unchanged in shape when there is nothing to apply", () => {
+    const state = applyRatePatches(initialState, emptyNext(), [], settings);
+
+    expect(state).toEqual({ data: {}, cache: {}, status: {}, checkHolesOnNextLoad: false });
   });
 });

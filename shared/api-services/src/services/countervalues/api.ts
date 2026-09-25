@@ -29,7 +29,7 @@ const cvsBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError
   (args, api, extraOptions) => {
     const extra = getCvsExtra(api);
     return fetchBaseQuery({
-      baseUrl: extra.countervaluesServiceUrl,
+      baseUrl: extra.getCountervaluesServiceUrl(),
       prepareHeaders: headers => {
         headers.set("Accept", "application/json");
         return headers;

@@ -32,8 +32,8 @@ configureStore({
     gdm({
       thunk: {
         extraArgument: cvsApiExtra({
-          // Pass the staging URL here when running in staging mode — the package has no staging switch.
-          countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API"),
+          // Read on every request, so a runtime switch to the staging URL applies to the next one.
+          getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API"),
         }),
       },
     }).concat(currencyFiatApi.middleware),

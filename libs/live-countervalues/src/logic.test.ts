@@ -5,7 +5,6 @@ import {
   hasNewCountervaluesToExport,
   importCountervalues,
   initialState,
-  loadCountervalues,
 } from "./logic";
 import type { CounterValuesState, TrackingPair } from "./types";
 import { datapointRetention, formatCounterValueDay, formatCounterValueHour } from "./helpers";
@@ -378,17 +377,5 @@ describe("checkHolesOnNextLoad", () => {
     };
     const imported = importCountervalues(raw, settings);
     expect(imported.checkHolesOnNextLoad).toBe(true);
-  });
-
-  test("loadCountervalues clears checkHolesOnNextLoad after run", async () => {
-    const api = require("./api");
-    jest.spyOn(api.default, "fetchHistorical").mockResolvedValue({});
-    jest.spyOn(api.default, "fetchLatest").mockResolvedValue([50000]);
-    const withFlag = { ...initialState, checkHolesOnNextLoad: true };
-    const result = await loadCountervalues(withFlag, {
-      ...settings,
-      disableAutoRecoverErrors: true,
-    });
-    expect(result.checkHolesOnNextLoad).toBe(false);
   });
 });

@@ -18,11 +18,7 @@
   "types": "src/types.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/logs": "catalog:",
-    "@ledgerhq/live-network": "catalog:",
-    "@ledgerhq/live-promise": "catalog:",
-    "@ledgerhq/live-env": "catalog:"
+    "@ledgerhq/ledger-wallet-framework": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -32,8 +28,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "axios": "catalog:",
-    "jest": "catalog:",
-    "prando": "6"
+    "jest": "catalog:"
   },
   "scripts": {
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
@@ -48,7 +43,6 @@
     "./logic": "./src/logic.ts",
     "./helpers": "./src/helpers.ts",
     "./mock": "./src/mock.ts",
-    "./api": "./src/api/index.ts",
     "./package.json": "./package.json"
   }
 }

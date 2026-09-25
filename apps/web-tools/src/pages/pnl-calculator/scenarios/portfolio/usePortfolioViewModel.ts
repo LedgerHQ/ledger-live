@@ -1,4 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
+import { createRateSource, marketCountervaluesApi } from "@domain/api-market-countervalues";
 import { useCryptoFiat } from "../../shared/useCryptoFiat";
 import { useGenerationGuard } from "../../shared/useGenerationGuard";
 import { formatPortfolio, type FormattedPortfolio } from "./format/formatPortfolio";
@@ -34,6 +36,25 @@ function makeError(kind: PortfolioError["kind"], message: string): PortfolioErro
 
 export function usePortfolioViewModel() {
   const fiat = useCryptoFiat(QUOTE_FIAT_TICKER);
+  const dispatch = useDispatch();
+  // Built here, where a dispatch is in scope, and closed over by the file-drop callback below,
+  // which runs outside render and cannot call hooks itself.
+  const rates = useMemo(
+    () =>
+      createRateSource({
+        fetchHistoricalWindow: args =>
+          dispatch(
+            marketCountervaluesApi.endpoints.getHistoricalRates.initiate(args, {
+              forceRefetch: true,
+            }),
+          ),
+        fetchSpotBatch: args =>
+          dispatch(
+            marketCountervaluesApi.endpoints.getSpotRates.initiate(args, { forceRefetch: true }),
+          ),
+      }),
+    [dispatch],
+  );
   const [status, setStatus] = useState<PortfolioStatus>({ kind: "idle" });
   const guard = useGenerationGuard();
 
@@ -86,7 +107,7 @@ export function usePortfolioViewModel() {
       setStatus({ kind: "loading-cv", fileName, accountsCount: accounts.length });
 
       try {
-        const cv = await loadPortfolioCountervalues(accounts, fiat);
+        const cv = await loadPortfolioCountervalues(accounts, fiat, rates);
         if (guard.isStale(token)) return;
         const breakdown = computePortfolioBreakdown(accounts, cv, fiat, namesById);
         setStatus({ kind: "ready", fileName, breakdown, decodeFailures: failures });
@@ -102,7 +123,7 @@ export function usePortfolioViewModel() {
         });
       }
     },
-    [fiat, guard],
+    [fiat, guard, rates],
   );
 
   const onFiles = useCallback(

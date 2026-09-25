@@ -3,8 +3,9 @@ import {
   calculate,
   filterSupportedTrackingPairs,
   importCountervalues,
-  loadCountervalues,
 } from "@ledgerhq/live-countervalues/logic";
+import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
+import { log } from "@ledgerhq/logs";
 import { inferCurrencyAPIID } from "@ledgerhq/live-countervalues/helpers";
 import type {
   CounterValuesState,
@@ -34,6 +35,12 @@ export interface PollingState {
  * @note: make sure that the object is memoized to avoid re-renders.
  */
 export interface CountervaluesBridge {
+  /**
+   * Where rates come from. The app builds one at composition time, because this package holds no
+   * Redux reference and cannot reach a dispatch. It is a plain object, never a hook: the
+   * non-React callers of `loadCountervalues` construct their own.
+   */
+  rates: RateSource;
   setPollingIsPolling(polling: boolean): void;
   setPollingTriggerLoad(triggerLoad: boolean): void;
   setState(state: CounterValuesState): void;
@@ -146,12 +153,12 @@ function Effect({
     bridge.setPollingTriggerLoad(false);
 
     bridge.setStatePending(true);
-    loadCountervalues(
-      currentState,
-      filteredUserSettings,
+    loadCountervalues(currentState, filteredUserSettings, {
+      rates: bridge.rates,
       batchStrategySolver,
-      filteredUserSettings.granularitiesRates,
-    ).then(
+      granularitiesRates: filteredUserSettings.granularitiesRates,
+      log,
+    }).then(
       s => {
         bridge.setState(s);
         bridge.setStatePending(false);

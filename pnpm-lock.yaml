@@ -937,6 +937,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
+      '@domain/api-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/api/market-countervalues
       '@domain/api-market-index-altcoin-season':
         specifier: workspace:^
         version: link:../../domain/api/market-index-altcoin-season
@@ -1782,6 +1785,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
+      '@domain/api-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/api/market-countervalues
       '@domain/api-market-index-altcoin-season':
         specifier: workspace:^
         version: link:../../domain/api/market-index-altcoin-season
@@ -2947,6 +2953,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:*
         version: link:../../domain/api/currency-token
+      '@domain/api-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/api/market-countervalues
       '@domain/entity-account':
         specifier: workspace:^
         version: link:../../domain/entity/account
@@ -4702,6 +4711,70 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/api/market-countervalues:
+    dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../entity/currency
+      '@domain/entity-market-countervalues':
+        specifier: workspace:*
+        version: link:../../entity/market-countervalues
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
+      prando:
+        specifier: '6'
+        version: 6.0.1
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../entity/currency-fiat
+      '@domain/entity-currency-token':
+        specifier: workspace:*
+        version: link:../../entity/currency-token
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(react@19.1.4)
+      timemachine:
+        specifier: ^0.3.2
+        version: 0.3.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13591,6 +13664,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
+      '@domain/api-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/api/market-countervalues
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
@@ -15536,18 +15612,6 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
-      '@ledgerhq/live-env':
-        specifier: 'catalog:'
-        version: 4.1.0
-      '@ledgerhq/live-network':
-        specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
-      '@ledgerhq/live-promise':
-        specifier: 'catalog:'
-        version: 0.4.0
-      '@ledgerhq/logs':
-        specifier: 'catalog:'
-        version: 6.19.0
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -15573,12 +15637,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
-      prando:
-        specifier: '6'
-        version: 6.0.1
 
   libs/live-countervalues-react:
     dependencies:
+      '@domain/api-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/api/market-countervalues
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
@@ -15588,6 +15652,9 @@ importers:
       '@ledgerhq/live-hooks':
         specifier: workspace:*
         version: link:../live-hooks
+      '@ledgerhq/logs':
+        specifier: 'catalog:'
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../types-live

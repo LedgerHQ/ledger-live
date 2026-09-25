@@ -7,6 +7,7 @@ import { initialIdentitiesState } from "@domain/entity-client-identity";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
+import { createMockRateSource } from "@domain/api-market-countervalues/mock";
 import { INITIAL_STATE as WALLET_INITIAL_STATE } from "~/reducers/wallet";
 import { NavigationContainer, type InitialState } from "@react-navigation/native";
 import { configureStore } from "@reduxjs/toolkit";
@@ -155,7 +156,9 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
                 calServiceUrl: getEnv("CAL_SERVICE_URL"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
               }),
-              ...cvsApiExtra({ countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API") }),
+              ...cvsApiExtra({
+                getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API"),
+              }),
               ...coinMarketCapApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
             },
           },
@@ -244,6 +247,7 @@ function CountervaluesProviders({
   const bridge = useMemo((): CountervaluesBridge => {
     const state = store.getState();
     return {
+      rates: createMockRateSource(),
       setPollingIsPolling: () => {},
       setPollingTriggerLoad: () => {},
       setState: () => {},
