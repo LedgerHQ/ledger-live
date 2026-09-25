@@ -212,7 +212,6 @@
     "@commitlint/prompt-cli": "catalog:",
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
-    "@ledgerhq/pnpm-utils": "workspace:*",
     "@nx/devkit": "catalog:",
     "@nx/nx-linux-x64-gnu": "catalog:",
     "@nx/s3-cache": "catalog:",
@@ -332,6 +331,11 @@
       "detox": {
         "dependencies": {
           "expect": "*"
+        }
+      },
+      "jest-allure2-reporter": {
+        "dependencies": {
+          "tslib": "*"
         }
       }
     },
