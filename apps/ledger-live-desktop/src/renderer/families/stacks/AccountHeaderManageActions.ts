@@ -30,23 +30,32 @@ const AccountHeaderManageActions: StacksFamily["accountHeaderManageActions"] = (
   if (account.type !== "Account") return null;
 
   const stakingPosition = getStacksStakingPosition(account);
-  // `getStakes` only sets `actions: ["undelegate"]` while the position is "active"; once it enters
-  // "deactivating" (its final reward cycle) a fresh `unstake` call is redundant/invalid, but the
-  // position is kept around (unfiltered) for the balance footer to still show it.
+  // pox-5's `stake` aborts with ERR_ALREADY_STAKED as long as `get-staker-info` still returns a
+  // record for the address -- true for both "active" and "deactivating" (get-staker-info only goes
+  // to none once the lock period fully elapses, per getStakes.ts) -- so Stake must stay hidden for
+  // any existing position, not just an active one. `getStakes` only sets `actions: ["undelegate"]`
+  // while the position is "active"; once it enters "deactivating" (its final reward cycle) a fresh
+  // `unstake` call is redundant/invalid too -- so a "deactivating" position shows neither action,
+  // matching getStakes.ts's own "nothing useful to do once already deactivating" comment.
+  const canStake = !stakingPosition;
   const canUnstake = stakingPosition?.state === "active";
 
   return [
-    {
-      key: "Stake",
-      onClick: onStakeClick,
-      icon: IconCoins,
-      label,
-      event: "button_clicked2",
-      eventProperties: {
-        button: "stake",
-      },
-      accountActionsTestId: "stake-button",
-    },
+    ...(canStake
+      ? [
+          {
+            key: "Stake",
+            onClick: onStakeClick,
+            icon: IconCoins,
+            label,
+            event: "button_clicked2",
+            eventProperties: {
+              button: "stake",
+            },
+            accountActionsTestId: "stake-button",
+          },
+        ]
+      : []),
     ...(canUnstake
       ? [
           {

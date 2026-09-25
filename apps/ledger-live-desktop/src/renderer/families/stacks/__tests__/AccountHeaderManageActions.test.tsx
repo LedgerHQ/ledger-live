@@ -49,7 +49,7 @@ describe("AccountHeaderManageActions (stacks)", () => {
     );
   });
 
-  it("returns two actions (Stake, Unstake) when a staking position exists; clicking Unstake opens MODAL_STACKS_UNSTAKE", () => {
+  it("returns exactly one action (Unstake, not Stake) when an active staking position exists; a second `stake` would abort on-chain with ERR_ALREADY_STAKED", () => {
     const position = {
       uid: "SP1staker",
       address: "SP1staker",
@@ -65,13 +65,11 @@ describe("AccountHeaderManageActions (stacks)", () => {
       hook({ account, parentAccount: null, source: "Account Page" }),
     );
 
-    expect(result.current).toHaveLength(2);
-    expect(result.current?.map(a => a.key)).toEqual(["Stake", "Unstake"]);
-    expect(result.current?.[1].label).toBe("Unstake");
-    expect(result.current?.[1].label).not.toBe(result.current?.[0].label);
+    expect(result.current).toHaveLength(1);
+    expect(result.current?.[0].key).toBe("Unstake");
 
     act(() => {
-      result.current?.[1].onClick();
+      result.current?.[0].onClick();
     });
 
     const modal = store.getState().modals.MODAL_STACKS_UNSTAKE;
@@ -83,9 +81,11 @@ describe("AccountHeaderManageActions (stacks)", () => {
     );
   });
 
-  it("returns exactly one action (Stake) when the staking position is 'deactivating' (its final reward cycle)", () => {
-    // getStakes.ts only sets `actions: ["undelegate"]` while `state === "active"`; a fresh unstake
-    // on a "deactivating" position is redundant/invalid on-chain.
+  it("returns zero actions when the staking position is 'deactivating' (its final reward cycle): Stake would abort on-chain, Unstake is redundant", () => {
+    // get-staker-info still returns a record for "deactivating" (only goes to none once the lock
+    // period fully elapses, per getStakes.ts), so a fresh `stake` still aborts with
+    // ERR_ALREADY_STAKED; `getStakes` only sets `actions: ["undelegate"]` while `state === "active"`,
+    // so a redundant `unstake` is excluded too.
     const position = {
       uid: "SP1staker",
       address: "SP1staker",
@@ -101,7 +101,6 @@ describe("AccountHeaderManageActions (stacks)", () => {
       hook({ account, parentAccount: null, source: "Account Page" }),
     );
 
-    expect(result.current).toHaveLength(1);
-    expect(result.current?.[0].key).toBe("Stake");
+    expect(result.current).toHaveLength(0);
   });
 });

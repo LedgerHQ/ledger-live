@@ -76,6 +76,7 @@ type StepperPropsShape = {
   onRetry: () => void;
   onTransactionError: (e: Error) => void;
   transaction: Transaction | null | undefined;
+  setSigned: (signed: boolean) => void;
 };
 
 const stepperPropsCapture = jest.fn<void, [StepperPropsShape]>();
@@ -102,6 +103,9 @@ jest.mock("~/renderer/components/Stepper", () => ({
           onClick={() => props.onTransactionError(new UserRefusedOnDevice())}
         >
           tx-refused
+        </button>
+        <button data-testid="stepper-set-signed" onClick={() => props.setSigned(true)}>
+          set-signed
         </button>
       </div>
     );
@@ -273,6 +277,31 @@ describe("StakeFlowModal/Body", () => {
         }),
       ),
     );
+  });
+
+  it("sets up a 5-minute periodic refresh of startBurnHt while waiting on the device step", async () => {
+    const setIntervalSpy = jest.spyOn(global, "setInterval");
+    fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
+    renderBody({ stepId: "connectDevice" });
+    await waitFor(() => expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1));
+
+    expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 5 * 60 * 1000);
+    setIntervalSpy.mockRestore();
+  });
+
+  it("stops refreshing startBurnHt once the device has signed", async () => {
+    const clearIntervalSpy = jest.spyOn(global, "clearInterval");
+    fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
+    const { user } = renderBody({ stepId: "connectDevice" });
+    await waitFor(() => expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1));
+
+    await act(async () => {
+      await user.click(screen.getByTestId("stepper-set-signed"));
+    });
+    // signed flips to true, re-running the effect: the previous interval's cleanup fires even
+    // though the effect body then bails out immediately (stepId !== "connectDevice" || signed).
+    expect(clearIntervalSpy).toHaveBeenCalled();
+    clearIntervalSpy.mockRestore();
   });
 
   it("surfaces a pox info fetch failure instead of leaving the device step waiting", async () => {
