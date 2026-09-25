@@ -3,13 +3,13 @@ import {
   isStuckOperation,
   getStuckAccountAndOperation,
 } from "./editTransaction/operation";
-import { getEvmDummyAddress } from "@ledgerhq/coin-evm/constants";
+import { getEvmDummyAddress } from "./constants";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type {
   Transaction as EvmTransaction,
   TransactionStatus as EvmTransactionStatus,
 } from "./types";
-import type { FeeData } from "@ledgerhq/coin-evm/types/index";
+import type { FeeData } from "@ledgerhq/coin-evm/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account, AccountBridgeExtensions, AccountLike } from "@ledgerhq/types-live";
 import { getCurrencyConfiguration } from "../../config";

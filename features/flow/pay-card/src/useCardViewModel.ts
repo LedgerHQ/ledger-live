@@ -14,6 +14,7 @@ export function useCardViewModel({
   onChooseCardType,
   onViewRewards,
   cardSettingsActions,
+  discreet,
 }: CardProps): CardViewProps {
   const { t } = useTranslation();
   useCardLifecycleTracking();
@@ -28,12 +29,12 @@ export function useCardViewModel({
     if (!formatCountervalue) return undefined;
 
     if (displayState === "resolving") {
-      return { balance: 0, formatCountervalue, balanceLabel, isLoading: true };
+      return { balance: 0, formatCountervalue, balanceLabel, isLoading: true, discreet };
     }
 
     if (!isSignedIn || assets === undefined || isError) return undefined;
 
-    return { balance: total, formatCountervalue, balanceLabel, isLoading };
+    return { balance: total, formatCountervalue, balanceLabel, isLoading, discreet };
   }, [
     displayState,
     isSignedIn,
@@ -43,6 +44,7 @@ export function useCardViewModel({
     total,
     isLoading,
     isError,
+    discreet,
   ]);
 
   return {

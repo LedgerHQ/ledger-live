@@ -33,4 +33,16 @@ describe("formatCardTransactionAmount", () => {
       }),
     ).toContain("+");
   });
+
+  it("hides the amount in discreet mode", () => {
+    expect(
+      formatCardTransactionAmount({
+        value: "-12.99",
+        currency: "EUR",
+        kind: "fiat",
+        locale: "en-US",
+        discreet: true,
+      }),
+    ).toContain("***");
+  });
 });

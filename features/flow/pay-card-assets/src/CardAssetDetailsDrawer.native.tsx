@@ -32,6 +32,7 @@ type CardAssetDetailsDrawerProps = Readonly<{
   copy: CardAssetDialogCopy;
   formatBalance?: CardAssetsViewModel["formatBalance"];
   formatters?: CardAssetsViewModel["formatters"];
+  discreet?: boolean;
   onTopUp: () => void;
   onWithdraw: () => void;
   onShowHistory: () => void;
@@ -44,6 +45,7 @@ export function CardAssetDetailsDrawer({
   copy,
   formatBalance,
   formatters,
+  discreet,
   onTopUp,
   onWithdraw,
   onShowHistory,
@@ -66,6 +68,7 @@ export function CardAssetDetailsDrawer({
           value={asset.countervalueAmount ?? 0}
           formatter={formatBalance ?? LOADING_FORMATTER}
           loading={isAmountLoading}
+          hidden={discreet}
           size="md"
           testID="card-asset-details-amount-display"
         />

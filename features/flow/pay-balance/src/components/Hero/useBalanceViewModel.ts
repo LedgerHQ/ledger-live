@@ -14,6 +14,8 @@ export function useBalanceViewModel({
   onConfirmFilter,
   onTrackEvent,
   actionTiles,
+  discreet,
+  onToggleDiscreetMode,
 }: BalanceProps): BalanceViewProps {
   const { t } = useTranslation();
 
@@ -71,5 +73,7 @@ export function useBalanceViewModel({
     onConfirmFilter,
     onTrackEvent,
     actionTiles,
+    discreet,
+    onToggleDiscreetMode,
   };
 }

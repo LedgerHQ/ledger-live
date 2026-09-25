@@ -13,7 +13,7 @@ import {
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { ComponentProps } from "react";
 import { track } from "~/renderer/analytics/segment";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 
 type ConnectedDevice = ComponentProps<DeviceDisconnectedComponent>["device"];
 
@@ -228,7 +228,7 @@ export const trackDeviceflowCanceled = (params: {
   sourceFlow: SourceFlow;
   extraProperties: DeviceIntentTrackingProperties;
 }): void => {
-  const currentPage = currentRouteNameRef.current;
+  const currentPage = getCurrentTrackingPage();
   const isTerminalConnectDeviceErrorPage =
     currentPage === PAGE_CONNECT_DEVICE.DiscoveryError ||
     currentPage === PAGE_CONNECT_DEVICE.ConnectionError;

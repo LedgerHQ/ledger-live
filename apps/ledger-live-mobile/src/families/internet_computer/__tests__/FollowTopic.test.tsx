@@ -113,6 +113,18 @@ describe("FollowTopic", () => {
     expect(handedOver().followeesIds).toEqual(["42", "99"]);
   });
 
+  // Seeded twice, the bridge refused the untouched list, and Remove took out both copies of the id.
+  it("seeds a followee the neuron lists twice only once", () => {
+    neuron = makeHealthyNeuron({
+      followees: [{ topic: GOVERNANCE, followeeIds: [42n, 42n, 99n] }],
+    });
+
+    renderScreen();
+    fireEvent.press(screen.getByTestId("icp-follow-topic-Governance"));
+
+    expect(handedOver().followeesIds).toEqual(["42", "99"]);
+  });
+
   it("ignores followees the neuron holds on other topics", () => {
     neuron = makeHealthyNeuron({ followees: [{ topic: GOVERNANCE + 1, followeeIds: [42n] }] });
 

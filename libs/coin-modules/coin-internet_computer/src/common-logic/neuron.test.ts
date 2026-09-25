@@ -5,6 +5,7 @@ import {
   KNOWN_TOPICS,
   LAST_SYNC_THRESHOLD_IN_DAYS,
   MAX_HOT_KEYS_PER_NEURON,
+  MAX_NEURON_ID,
   MIN_NEURON_STAKE,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
@@ -16,7 +17,7 @@ import {
   SECONDS_IN_YEAR,
   SECONDS_IN_7_DAYS,
 } from "../consts";
-import type { Transaction } from "../types/common";
+import type { ICPTransactionType, Transaction } from "../types/common";
 import {
   ICPNeuron,
   ListNeuronsResponse,
@@ -30,6 +31,7 @@ import {
   ageMultiplier,
   applyNeuronCommand,
   bonusMultiplier,
+  canRetryNeuronCommand,
   dissolveDelayMultiplier,
   getBannerState,
   getNeuronActionPermissions,
@@ -54,6 +56,7 @@ import {
   neuronsNeedSync,
   neuronStake,
   neuronState,
+  parseNeuronId,
   secondsToDuration,
   toNeuronsData,
   votingPowerNeedsRefresh,
@@ -168,6 +171,28 @@ describe("toNeuronsData", () => {
     const [n] = toNeuronsData(response).fullNeurons;
     expect(n.votingPowerRefreshedTimestampSeconds).toBe(1_700_000_000n);
     expect("decidingVotingPower" in n).toBe(false);
+  });
+});
+
+describe("parseNeuronId", () => {
+  it("returns the id canonically", () => {
+    expect(parseNeuronId("0123")).toEqual({ id: "123" });
+  });
+
+  it("accepts the largest id a nat64 holds", () => {
+    expect(parseNeuronId(String(MAX_NEURON_ID))).toEqual({ id: String(MAX_NEURON_ID) });
+  });
+
+  it.each(["12a3", "-1", "1.5", ""])("refuses %p as not a neuron id", text => {
+    expect(parseNeuronId(text)).toEqual({ issue: "notANeuronId" });
+  });
+
+  it.each(["0x10", " 5", "+5"])("refuses %p, which BigInt alone would take", text => {
+    expect(parseNeuronId(text)).toEqual({ issue: "notANeuronId" });
+  });
+
+  it.each(["0", String(MAX_NEURON_ID + 1n)])("refuses %p as out of range", text => {
+    expect(parseNeuronId(text)).toEqual({ issue: "outOfRange" });
   });
 });
 
@@ -669,6 +694,59 @@ describe("secondsToDuration", () => {
   it("clamps negatives to zero and keeps precision for bigint input", () => {
     expect(secondsToDuration(-5)).toMatchObject({ years: 0, seconds: 0 });
     expect(secondsToDuration(BigInt(SECONDS_IN_YEAR) * 1_000n)).toMatchObject({ years: 1_000 });
+  });
+});
+
+const afterSigning = (command: ICPTransactionType, errorName = "Error") =>
+  canRetryNeuronCommand({ signed: true, errorName, command });
+
+describe("canRetryNeuronCommand", () => {
+  it("allows any retry while the signature has not left the device", () => {
+    expect(
+      canRetryNeuronCommand({ signed: false, errorName: "Error", command: "split_neuron" }),
+    ).toBe(true);
+  });
+
+  it.each<ICPTransactionType>([
+    "increase_dissolve_delay",
+    "set_dissolve_delay",
+    "split_neuron",
+    "disburse",
+    "spawn_neuron",
+    "stake_maturity",
+  ])("refuses %s once it may already be executing", command => {
+    expect(afterSigning(command)).toBe(false);
+  });
+
+  it.each<ICPTransactionType>([
+    "list_neurons",
+    "refresh_voting_power",
+    "start_dissolving",
+    "stop_dissolving",
+    "add_hot_key",
+    "remove_hot_key",
+    "auto_stake_maturity",
+    "follow",
+  ])("allows %s, which repeats harmlessly", command => {
+    expect(afterSigning(command)).toBe(true);
+  });
+
+  it.each(["ICPGovernanceRejected", "ICPCallRejected", "ICPNodeRefused"])(
+    "allows a retry after %s, which reports that nothing ran",
+    name => {
+      expect(afterSigning("split_neuron", name)).toBe(true);
+    },
+  );
+
+  it.each(["ICPCallUnconfirmed", "Error", "NetworkDown"])(
+    "refuses a retry after %s, which says nothing about whether the command ran",
+    name => {
+      expect(afterSigning("increase_dissolve_delay", name)).toBe(false);
+    },
+  );
+
+  it("refuses a retry after signing when the command is not known", () => {
+    expect(canRetryNeuronCommand({ signed: true, errorName: "Error", command: null })).toBe(false);
   });
 });
 

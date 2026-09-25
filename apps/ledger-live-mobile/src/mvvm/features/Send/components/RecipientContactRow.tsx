@@ -45,7 +45,7 @@ export function RecipientContactRow({ contact, label, value }: RecipientContactR
         size="xs"
         testId="recipient-contact-avatar"
       />
-      <Text style={styles.name} numberOfLines={1}>
+      <Text testID="recipient-contact-name" style={styles.name} numberOfLines={1}>
         {value}
       </Text>
     </View>

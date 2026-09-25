@@ -15,6 +15,7 @@ export type CardVisualProps = Readonly<{
   formatCountervalue: (value: number) => FormattedValue;
   balanceLabel: string;
   isLoading?: boolean;
+  discreet?: boolean;
 }>;
 
 export type CardVisualViewProps = CardVisualProps &

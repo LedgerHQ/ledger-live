@@ -1777,6 +1777,30 @@
       "title": "This topic cannot be followed",
       "description": "The Internet Computer has retired this topic, or the Ledger Internet Computer app cannot yet sign following on it. Choose another topic."
     },
+    "ICPTooManyFollowees": {
+      "title": "Followee limit reached",
+      "description": "A topic can follow at most {{max}} neurons. Remove neurons until the list holds {{max}} or fewer."
+    },
+    "ICPInvalidFolloweeId": {
+      "title": "Invalid neuron ID",
+      "description": "{{id}} is not a valid neuron ID. Remove it from the list."
+    },
+    "ICPDuplicateFollowee": {
+      "title": "Neuron listed twice",
+      "description": "Neuron {{id}} is listed more than once. Remove the duplicate."
+    },
+    "ICPFolloweeIsSelf": {
+      "title": "A neuron cannot follow itself",
+      "description": "{{id}} is this neuron's own ID. Remove it from the list."
+    },
+    "ICPStartDissolvingNotAllowed": {
+      "title": "Cannot start dissolving this neuron",
+      "description": "Only a locked neuron can start dissolving. Sync your neurons to see their current state."
+    },
+    "ICPStopDissolvingNotAllowed": {
+      "title": "Cannot stop dissolving this neuron",
+      "description": "Only a dissolving neuron can stop dissolving, and this one may have already finished. Sync your neurons to see their current state."
+    },
     "ICPDisburseNotAllowed": {
       "title": "Cannot disburse this neuron",
       "description": "A neuron can be disbursed once it has fully dissolved and its stake is more than the network fee. Sync your neurons to see their current state."

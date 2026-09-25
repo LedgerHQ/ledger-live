@@ -39,7 +39,7 @@ getSyncHash.mockReturnValue("0x0000000000000000000000000000000000001d00");
 createSwapHistoryMap.mockReturnValue(new Map<string, SwapOperation[]>([]));
 
 const getNodeApi = jest.fn();
-jest.mock("@ledgerhq/coin-evm/network/node/index", () => {
+jest.mock("@ledgerhq/coin-evm/network", () => {
   return {
     getNodeApi: () => getNodeApi(),
   };

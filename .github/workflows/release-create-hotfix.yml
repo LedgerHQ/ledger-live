@@ -17,7 +17,7 @@ on:
 jobs:
   create-hotfix:
     name: Create Hotfix
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-4cpu-aws-public-docker
     permissions:
       contents: read
       id-token: write
@@ -59,6 +59,10 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
       - name: install dependencies
         run: pnpm i --frozen-lockfile -F "ledger-live"
       - name: Move minor updates to patch for hotfix branch

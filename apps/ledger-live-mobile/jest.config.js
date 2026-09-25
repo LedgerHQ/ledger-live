@@ -196,6 +196,8 @@ module.exports = {
     // expo-crypto needs a native runtime, and pnpm gives the app and the workspace
     // packages it renders separate copies; map both to one stub.
     "^expo-crypto$": "<rootDir>/__mocks__/expo-crypto.ts",
+    // expo-file-system needs a native runtime; map every copy to one stub.
+    "^expo-file-system$": "<rootDir>/__mocks__/expo-file-system.ts",
     "^expo-web-browser$": "<rootDir>/__mocks__/expo-web-browser.ts",
     // react-native-fast-crypto ships ESM and needs a native runtime; one stub for every copy.
     "^react-native-fast-crypto$": "<rootDir>/__mocks__/react-native-fast-crypto.ts",

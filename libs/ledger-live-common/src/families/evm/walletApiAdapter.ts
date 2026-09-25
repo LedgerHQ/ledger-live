@@ -8,7 +8,7 @@ import {
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AccountLike } from "@ledgerhq/types-live";
-import { DEFAULT_GAS_LIMIT, DEFAULT_NONCE } from "@ledgerhq/coin-evm/utils";
+import { DEFAULT_GAS_LIMIT, DEFAULT_NONCE } from "@ledgerhq/coin-evm/logic-public";
 
 const CAN_EDIT_FEES = true;
 

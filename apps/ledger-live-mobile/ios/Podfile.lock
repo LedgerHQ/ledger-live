@@ -69,24 +69,28 @@ PODS:
     - SwiftyRSA (~> 1.7)
     - Yoga
   - CocoaAsyncSocket (7.6.5)
-  - DatadogCore (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogCrashReporting (2.27.0):
-    - DatadogInternal (= 2.27.0)
-    - PLCrashReporter (~> 1.12.0)
-  - DatadogInternal (2.27.0)
-  - DatadogLogs (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogRUM (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogSDKReactNative (2.8.2):
+  - DatadogCore (3.16.0):
+    - DatadogInternal (= 3.16.0)
+  - DatadogCrashReporting (3.16.0):
+    - DatadogInternal (= 3.16.0)
+    - KSCrash/Filters (= 2.5.1)
+    - KSCrash/Recording (= 2.5.1)
+  - DatadogFlags (3.16.0):
+    - DatadogInternal (= 3.16.0)
+  - DatadogInternal (3.16.0)
+  - DatadogLogs (3.16.0):
+    - DatadogInternal (= 3.16.0)
+  - DatadogRUM (3.16.0):
+    - DatadogInternal (= 3.16.0)
+  - DatadogSDKReactNative (3.7.0):
     - boost
-    - DatadogCore (~> 2.27.0)
-    - DatadogCrashReporting (~> 2.27.0)
-    - DatadogLogs (~> 2.27.0)
-    - DatadogRUM (~> 2.27.0)
-    - DatadogTrace (~> 2.27.0)
-    - DatadogWebViewTracking (~> 2.27.0)
+    - DatadogCore (= 3.16.0)
+    - DatadogCrashReporting (= 3.16.0)
+    - DatadogFlags (= 3.16.0)
+    - DatadogLogs (= 3.16.0)
+    - DatadogRUM (= 3.16.0)
+    - DatadogTrace (= 3.16.0)
+    - DatadogWebViewTracking (= 3.16.0)
     - DoubleConversion
     - fast_float
     - fmt
@@ -113,11 +117,11 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - DatadogTrace (2.27.0):
-    - DatadogInternal (= 2.27.0)
-    - OpenTelemetrySwiftApi (= 1.13.1)
-  - DatadogWebViewTracking (2.27.0):
-    - DatadogInternal (= 2.27.0)
+  - DatadogTrace (3.16.0):
+    - DatadogInternal (= 3.16.0)
+    - OpenTelemetry-Swift-Api (~> 2.5.0)
+  - DatadogWebViewTracking (3.16.0):
+    - DatadogInternal (= 3.16.0)
   - DoubleConversion (1.1.6)
   - EXConstants (18.0.13):
     - ExpoModulesCore
@@ -281,6 +285,17 @@ PODS:
     - hermes-engine/Pre-built (= 0.81.6)
   - hermes-engine/Pre-built (0.81.6)
   - JWTDecode (3.0.1)
+  - KSCrash/Core (2.5.1)
+  - KSCrash/Filters (2.5.1):
+    - KSCrash/Recording
+    - KSCrash/RecordingCore
+    - KSCrash/ReportingCore
+  - KSCrash/Recording (2.5.1):
+    - KSCrash/RecordingCore
+  - KSCrash/RecordingCore (2.5.1):
+    - KSCrash/Core
+  - KSCrash/ReportingCore (2.5.1):
+    - KSCrash/Core
   - libwebp (1.5.0):
     - libwebp/demux (= 1.5.0)
     - libwebp/mux (= 1.5.0)
@@ -390,8 +405,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - OpenTelemetrySwiftApi (1.13.1)
-  - PLCrashReporter (1.12.0)
+  - OpenTelemetry-Swift-Api (2.5.1)
   - PromisesObjC (2.4.1)
   - RCT-Folly (2024.11.18.00):
     - boost
@@ -3122,8 +3136,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - rn-fetch-blob (0.12.0):
-    - React-Core
   - RNCAsyncStorage (2.1.2):
     - boost
     - DoubleConversion
@@ -3613,21 +3625,21 @@ DEPENDENCIES:
   - "braze-react-native-sdk (from `../../../node_modules/.pnpm/@braze+react-native-sdk@18.0.0/node_modules/@braze/react-native-sdk`)"
   - "BVLinearGradient (from `../../../node_modules/.pnpm/react-native-linear-gradient@2.8.3_react-native_45c4068ade6ad1d4746621cb55d5ba26/node_modules/react-native-linear-gradient`)"
   - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_f3ec7a086ef8b13b8963365d684ac5a0/node_modules/@callstack/repack`)"
-  - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@2.8.2_react-native_818183bc1b1503a912a95bd8f582ae9c/node_modules/@datadog/mobile-react-native`)"
+  - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_2d8853d66cf1e150ce24524eba4de272/node_modules/@datadog/mobile-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
-  - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@18.0.13_expo-modules-core@3.0.29_9ac6c87e219610c9e54825af0bb0875c/node_modules/expo-constants/ios`)"
-  - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo-modules-core@3.0.2_42839fbb65a690fabeec5fbcb4022eef/node_modules/expo-image-loader/ios`)"
+  - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@18.0.13_expo@54.0.33_@babel+core_b22cd438bdc25b6bf312b0a0a3c1343c/node_modules/expo-constants/ios`)"
+  - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo@54.0.33_@babel+cor_d2551dbf6ee14e65e9adb05ebc0496a4/node_modules/expo-image-loader/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@54.0.33_@babel+core@7.28.5_@typescript+typ_2a00541bc325cf16b8598f974224ee6d/node_modules/expo`)"
-  - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@12.0.13_@typescript+typescript6@6.0._f748edbae4a3943c9c6001a4d05667d2/node_modules/expo-asset/ios`)"
-  - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@15.0.8_expo-modules-core@3.0.29_exp_87222f11ab30720530df579571f43462/node_modules/expo-crypto/ios`)"
-  - "ExpoDocumentPicker (from `../../../node_modules/.pnpm/expo-document-picker@13.1.6_expo-modules-core@3_a7e488d26ec41b3c836e1a5671ab6828/node_modules/expo-document-picker/ios`)"
-  - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@19.0.21_expo-modules-core@3.0._a5c1dd86736e0df8621f7f956b54ebf3/node_modules/expo-file-system/ios`)"
-  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@14.0.12_expo-constants@18.0.13_expo-m_8d02cb26cf8232041c7889c7e8b39725/node_modules/expo-font/ios`)"
-  - "ExpoHaptics (from `../../../node_modules/.pnpm/expo-haptics@15.0.8_expo-modules-core@3.0.29_ex_08d075bce56c16b1ce7fa13804bf89e0/node_modules/expo-haptics/ios`)"
-  - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_expo-modules-core_b61a351a1a16636bfe2eafbbdd2a1d01/node_modules/expo-image-manipulator/ios`)"
-  - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo-modules-core@3.0.29_a3e695e2615eae4e21b75e51b9762414/node_modules/expo-keep-awake/ios`)"
+  - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@12.0.13_@typescript+typescript6@6.0._ffd393dcaf553fd63fd2bba5bacded5c/node_modules/expo-asset/ios`)"
+  - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@15.0.8_expo@54.0.33_@babel+core@7.2_3ba660f3d9dce8656217ff6647088a08/node_modules/expo-crypto/ios`)"
+  - "ExpoDocumentPicker (from `../../../node_modules/.pnpm/expo-document-picker@13.1.6_expo@54.0.33_@babel_aba989316b0b8968201d599c42d8784c/node_modules/expo-document-picker/ios`)"
+  - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@19.0.21_expo@54.0.33_@babel+co_6d4e116bafde6b808580a6f2f27d7b5b/node_modules/expo-file-system/ios`)"
+  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@14.0.12_expo@54.0.33_@babel+core@7.28_7352f76cad19c7a48df0a0ea84e10d2b/node_modules/expo-font/ios`)"
+  - "ExpoHaptics (from `../../../node_modules/.pnpm/expo-haptics@15.0.8_expo@54.0.33_@babel+core@7._c7b003b8132eba4818e21232be88873d/node_modules/expo-haptics/ios`)"
+  - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_expo@54.0.33_@bab_ea3579061f7577f6fcc1ee040311d2e8/node_modules/expo-image-manipulator/ios`)"
+  - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo@54.0.33_@babel+core_1db16acbf4786c4bbba462baf85654ee/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.6_pa_504022793f36a86da4082485cf0b596e/node_modules/expo-modules-core`)"
-  - "ExpoWebBrowser (from `../../../node_modules/.pnpm/expo-web-browser@15.0.10_react-native@0.81.6_pa_169a8f3ba1f79f3fa170dcb7950d9e60/node_modules/expo-web-browser/ios`)"
+  - "ExpoWebBrowser (from `../../../node_modules/.pnpm/expo-web-browser@15.0.10_react-native@0.81.6_pa_5328a6dc6a10efdc3a33989642a7a2c7/node_modules/expo-web-browser/ios`)"
   - "fast_float (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/third-party-podspecs/fast_float.podspec`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/Libraries/FBLazyVector`)"
   - "fmt (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/third-party-podspecs/fmt.podspec`)"
@@ -3724,7 +3736,6 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - "ReactCommon/turbomodule/core (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/ReactCommon`)"
   - "ReactNativeBlur (from `../../../node_modules/.pnpm/@sbaiahmed1+react-native-blur@4.5.5_react-nativ_dd6a3e5bee8b5f83e5484c03c21dd197/node_modules/@sbaiahmed1/react-native-blur`)"
-  - "rn-fetch-blob (from `../../../node_modules/.pnpm/rn-fetch-blob@0.12.0_patch_hash=5d357d2cf58066f_16e2d2a441c9e35289a07ec5f8c939de/node_modules/rn-fetch-blob`)"
   - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@2.1.2_d5677e92a0348706570b600690134e0a/node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../../../node_modules/.pnpm/@react-native-clipboard+clipboard@1.16.2_react-_6a9c565e16383dbd3d7bb65071c9bc71/node_modules/@react-native-clipboard/clipboard`)"
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.9_rea_9f463ab6f0d191fdd306a850817bdf11/node_modules/@react-native-masked-view/masked-view`)"
@@ -3755,6 +3766,7 @@ SPEC REPOS:
     - CocoaAsyncSocket
     - DatadogCore
     - DatadogCrashReporting
+    - DatadogFlags
     - DatadogInternal
     - DatadogLogs
     - DatadogRUM
@@ -3773,13 +3785,13 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleUtilities
     - JWTDecode
+    - KSCrash
     - libwebp
     - lottie-ios
     - MMKVCore
     - MultiplatformBleAdapter
     - nanopb
-    - OpenTelemetrySwiftApi
-    - PLCrashReporter
+    - OpenTelemetry-Swift-Api
     - PromisesObjC
     - SDWebImage
     - SDWebImageWebPCoder
@@ -3797,35 +3809,35 @@ EXTERNAL SOURCES:
   callstack-repack:
     :path: "../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_f3ec7a086ef8b13b8963365d684ac5a0/node_modules/@callstack/repack"
   DatadogSDKReactNative:
-    :path: "../../../node_modules/.pnpm/@datadog+mobile-react-native@2.8.2_react-native_818183bc1b1503a912a95bd8f582ae9c/node_modules/@datadog/mobile-react-native"
+    :path: "../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_2d8853d66cf1e150ce24524eba4de272/node_modules/@datadog/mobile-react-native"
   DoubleConversion:
     :podspec: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXConstants:
-    :path: "../../../node_modules/.pnpm/expo-constants@18.0.13_expo-modules-core@3.0.29_9ac6c87e219610c9e54825af0bb0875c/node_modules/expo-constants/ios"
+    :path: "../../../node_modules/.pnpm/expo-constants@18.0.13_expo@54.0.33_@babel+core_b22cd438bdc25b6bf312b0a0a3c1343c/node_modules/expo-constants/ios"
   EXImageLoader:
-    :path: "../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo-modules-core@3.0.2_42839fbb65a690fabeec5fbcb4022eef/node_modules/expo-image-loader/ios"
+    :path: "../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo@54.0.33_@babel+cor_d2551dbf6ee14e65e9adb05ebc0496a4/node_modules/expo-image-loader/ios"
   Expo:
     :path: "../../../node_modules/.pnpm/expo@54.0.33_@babel+core@7.28.5_@typescript+typ_2a00541bc325cf16b8598f974224ee6d/node_modules/expo"
   ExpoAsset:
-    :path: "../../../node_modules/.pnpm/expo-asset@12.0.13_@typescript+typescript6@6.0._f748edbae4a3943c9c6001a4d05667d2/node_modules/expo-asset/ios"
+    :path: "../../../node_modules/.pnpm/expo-asset@12.0.13_@typescript+typescript6@6.0._ffd393dcaf553fd63fd2bba5bacded5c/node_modules/expo-asset/ios"
   ExpoCrypto:
-    :path: "../../../node_modules/.pnpm/expo-crypto@15.0.8_expo-modules-core@3.0.29_exp_87222f11ab30720530df579571f43462/node_modules/expo-crypto/ios"
+    :path: "../../../node_modules/.pnpm/expo-crypto@15.0.8_expo@54.0.33_@babel+core@7.2_3ba660f3d9dce8656217ff6647088a08/node_modules/expo-crypto/ios"
   ExpoDocumentPicker:
-    :path: "../../../node_modules/.pnpm/expo-document-picker@13.1.6_expo-modules-core@3_a7e488d26ec41b3c836e1a5671ab6828/node_modules/expo-document-picker/ios"
+    :path: "../../../node_modules/.pnpm/expo-document-picker@13.1.6_expo@54.0.33_@babel_aba989316b0b8968201d599c42d8784c/node_modules/expo-document-picker/ios"
   ExpoFileSystem:
-    :path: "../../../node_modules/.pnpm/expo-file-system@19.0.21_expo-modules-core@3.0._a5c1dd86736e0df8621f7f956b54ebf3/node_modules/expo-file-system/ios"
+    :path: "../../../node_modules/.pnpm/expo-file-system@19.0.21_expo@54.0.33_@babel+co_6d4e116bafde6b808580a6f2f27d7b5b/node_modules/expo-file-system/ios"
   ExpoFont:
-    :path: "../../../node_modules/.pnpm/expo-font@14.0.12_expo-constants@18.0.13_expo-m_8d02cb26cf8232041c7889c7e8b39725/node_modules/expo-font/ios"
+    :path: "../../../node_modules/.pnpm/expo-font@14.0.12_expo@54.0.33_@babel+core@7.28_7352f76cad19c7a48df0a0ea84e10d2b/node_modules/expo-font/ios"
   ExpoHaptics:
-    :path: "../../../node_modules/.pnpm/expo-haptics@15.0.8_expo-modules-core@3.0.29_ex_08d075bce56c16b1ce7fa13804bf89e0/node_modules/expo-haptics/ios"
+    :path: "../../../node_modules/.pnpm/expo-haptics@15.0.8_expo@54.0.33_@babel+core@7._c7b003b8132eba4818e21232be88873d/node_modules/expo-haptics/ios"
   ExpoImageManipulator:
-    :path: "../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_expo-modules-core_b61a351a1a16636bfe2eafbbdd2a1d01/node_modules/expo-image-manipulator/ios"
+    :path: "../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_expo@54.0.33_@bab_ea3579061f7577f6fcc1ee040311d2e8/node_modules/expo-image-manipulator/ios"
   ExpoKeepAwake:
-    :path: "../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo-modules-core@3.0.29_a3e695e2615eae4e21b75e51b9762414/node_modules/expo-keep-awake/ios"
+    :path: "../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo@54.0.33_@babel+core_1db16acbf4786c4bbba462baf85654ee/node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.6_pa_504022793f36a86da4082485cf0b596e/node_modules/expo-modules-core"
   ExpoWebBrowser:
-    :path: "../../../node_modules/.pnpm/expo-web-browser@15.0.10_react-native@0.81.6_pa_169a8f3ba1f79f3fa170dcb7950d9e60/node_modules/expo-web-browser/ios"
+    :path: "../../../node_modules/.pnpm/expo-web-browser@15.0.10_react-native@0.81.6_pa_5328a6dc6a10efdc3a33989642a7a2c7/node_modules/expo-web-browser/ios"
   fast_float:
     :podspec: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/third-party-podspecs/fast_float.podspec"
   FBLazyVector:
@@ -4017,8 +4029,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/ReactCommon"
   ReactNativeBlur:
     :path: "../../../node_modules/.pnpm/@sbaiahmed1+react-native-blur@4.5.5_react-nativ_dd6a3e5bee8b5f83e5484c03c21dd197/node_modules/@sbaiahmed1/react-native-blur"
-  rn-fetch-blob:
-    :path: "../../../node_modules/.pnpm/rn-fetch-blob@0.12.0_patch_hash=5d357d2cf58066f_16e2d2a441c9e35289a07ec5f8c939de/node_modules/rn-fetch-blob"
   RNCAsyncStorage:
     :path: "../../../node_modules/.pnpm/@react-native-async-storage+async-storage@2.1.2_d5677e92a0348706570b600690134e0a/node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
@@ -4069,14 +4079,15 @@ SPEC CHECKSUMS:
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
   callstack-repack: 6de6a4d5a87bdf8f6b75e51fd32e557c9be85110
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  DatadogCore: 68aee4ffcc3ea17a3b0aa527907757883fc72c84
-  DatadogCrashReporting: e6a83b143394e28c9c1cb48c5cfb18eff507b3be
-  DatadogInternal: 3c5cae6772295fd175a9de11e4747a9322aaa4e7
-  DatadogLogs: 09d6358dc7682f9d3eaea85dd418f82d2db3560c
-  DatadogRUM: 0f267df8c9c8579a291870c2bce4549587391a07
-  DatadogSDKReactNative: 8f8c7a3b52aa692af05c6c31f69f1b71a712422d
-  DatadogTrace: f46c8220c73463d09741013f385a6e27cd39185b
-  DatadogWebViewTracking: dc8376420c8686efd09d00752bc1034b639d180b
+  DatadogCore: 7eed8fbaaa1575503c389f343c230858343c8baf
+  DatadogCrashReporting: 04f3c3a5bfd9921aef4d44b4ab80accb39c84ddb
+  DatadogFlags: 033cf48e769c271843e77068c015519880011866
+  DatadogInternal: e5a4652ee266986e29c6b8491aff7f78dc3b731d
+  DatadogLogs: 52792add5827042f619771a23656e2bfb6b0f4e7
+  DatadogRUM: b78d608e013f39c5679ed31ad97dad323c6113e8
+  DatadogSDKReactNative: 44a9c6086ae7f8dfaea55d98a3b63721e7c76998
+  DatadogTrace: 5ef84e254e2e1d337bc52e0cdf16396ca102aeb1
+  DatadogWebViewTracking: e0470157f55a83680a549d79ba2985e0d17465db
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXConstants: fce59a631a06c4151602843667f7cfe35f81e271
   EXImageLoader: 189e3476581efe3ad4d1d3fb4735b7179eb26f05
@@ -4109,6 +4120,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 766ace00c6b10d8148408f329d10c4f051931850
   hermes-engine: 7219f6e751ad6ec7f3d7ec121830ee34dae40749
   JWTDecode: 2eed97c2fa46ccaf3049a787004eedf0be474a87
+  KSCrash: 8c4464fd5da7de520f2ce4a00fdf63f169a80f18
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   lottie-ios: 8f959969761e9c45d70353667d00af0e5b9cadb3
   lottie-react-native: e542fe4b6e8eddcf893d5a8cef9f8b5c6d2f7331
@@ -4117,8 +4129,7 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   NitroMmkv: 5d6c3a5cca0e47be9a4dd3f66262dbad0799c087
   NitroModules: d2d7b8a417d5f498ef5affa78d82113ad8c35c59
-  OpenTelemetrySwiftApi: aaee576ed961e0c348af78df58b61300e95bd104
-  PLCrashReporter: db59ef96fa3d25f3650040d02ec2798cffee75f2
+  OpenTelemetry-Swift-Api: 3be9043f6288eb4ac3cbe7548b5bd45fb4ed5849
   PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: d4ef510f229cea15314176aee5e3ba10064a8496
@@ -4207,7 +4218,6 @@ SPEC CHECKSUMS:
   ReactCodegen: cf3a05a6c517b54f333d65e790250bf3308eea8f
   ReactCommon: 66eb46e6696f1f4816b250ab2807389018bacd78
   ReactNativeBlur: c9fb0b7d56e1899dabe6d6d980be597f533645f6
-  rn-fetch-blob: 25612b6d6f6e980c6f17ed98ba2f58f5696a51ca
   RNCAsyncStorage: 19f80a583d24bf587a07e8fe0b7be7e278bc204a
   RNCClipboard: e2848f1c094a2609237d54b68d5d0a25cdbc6575
   RNCMaskedView: 4b5b12efdee55966f1d68f32d4b3401c2acf05c2

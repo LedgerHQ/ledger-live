@@ -1,41 +1,13 @@
+import * as icpErrors from "@ledgerhq/live-common/families/internet_computer/errors";
 import en from "../../../../../static/i18n/en/app.json";
 
 /**
- * Every error the ICP bridge can put on a transaction status, plus the ones broadcast throws.
+ * Every error the ICP coin module exports can reach the user, so each needs copy of its own.
  *
  * TranslatedError falls back to `errors.generic`, whose title is `"{{message}}"` — so a missing key
- * does not fail loudly, it shows the class name to the user. Mirrors `coin-internet_computer/errors.ts`.
+ * does not fail loudly, it shows the class name to the user.
  */
-const REACHABLE_ERRORS = [
-  "InvalidMemoICP",
-  "NotEnoughTransferAmount",
-  "ICPDissolveDelayLTMin",
-  "ICPDissolveDelayGTMax",
-  "ICPDissolveDelayLTCurrent",
-  "ICPInvalidDissolveDelayIncrease",
-  "ICPNeuronNotFound",
-  "ICPInvalidHotKey",
-  "ICPHotKeyAlreadyExists",
-  "ICPHotKeyIsController",
-  "ICPSplitNotAllowed",
-  "ICPSpawnNotAllowed",
-  "ICPStakeMaturityNotAllowed",
-  "ICPFollowTopicNotAllowed",
-  "ICPDisburseNotAllowed",
-  "ICPTooManyHotKeys",
-  "ICPTopUpBelowMinimumStake",
-  "ICPStakeNotRefreshed",
-  "ICPStakeMemoNotRecoverable",
-  "ICPCallUnconfirmed",
-  "ICPNeuronsNotRead",
-  "ICPGovernanceRejected",
-  "ICPCallRejected",
-  "ICPInvalidPercentage",
-  // getTransactionStatus assigns these to `warnings.staking`, a slot the generic send flow does not
-  // read. The family's own SendAmountFields renders it, which is what makes them reachable.
-  "ICPCreateNeuronWarning",
-  "ICPIncreaseStakeWarning",
-];
+const REACHABLE_ERRORS = Object.values(icpErrors).map(ErrorClass => new ErrorClass().name);
 
 // Through `unknown` because the block is not uniform: a few entries carry a null description, and
 // others nest an object under `list`.
@@ -85,6 +57,10 @@ describe("internet_computer error translations", () => {
     "ICPHotKeyIsController",
     "ICPTooManyHotKeys",
     "ICPTopUpBelowMinimumStake",
+    "ICPTooManyFollowees",
+    "ICPInvalidFolloweeId",
+    "ICPDuplicateFollowee",
+    "ICPFolloweeIsSelf",
   ])("%s explains how to correct the value", name => {
     expect(describes(name)).toBeTruthy();
   });
@@ -99,9 +75,17 @@ describe("internet_computer error translations", () => {
   it.each([
     ["ICPTooManyHotKeys", "{{max}}"],
     ["ICPTopUpBelowMinimumStake", "{{missing}}"],
+    ["ICPTooManyFollowees", "{{max}}"],
   ])("%s quotes the figure the bridge computed", (name, placeholder) => {
     expect(describes(name)).toContain(placeholder);
   });
+
+  it.each(["ICPInvalidFolloweeId", "ICPDuplicateFollowee", "ICPFolloweeIsSelf"])(
+    "%s names the followee to remove",
+    name => {
+      expect(describes(name)).toContain("{{id}}");
+    },
+  );
 
   // The transfer has settled by the time governance refuses the refresh, so copy that reads as a
   // failed transaction would tell the user their ICP is gone.
@@ -119,9 +103,9 @@ describe("internet_computer error translations", () => {
     },
   );
 
-  // Both are thrown with the network's own text in `reason`. Dropping the placeholder would lose the
+  // All are thrown with the network's own text in `reason`. Dropping the placeholder would lose the
   // only part of the message that says what actually went wrong.
-  it.each(["ICPGovernanceRejected", "ICPCallRejected", "ICPStakeNotRefreshed"])(
+  it.each(["ICPGovernanceRejected", "ICPCallRejected", "ICPNodeRefused", "ICPStakeNotRefreshed"])(
     "%s passes the network's own wording through",
     name => {
       expect(errors[name]?.description).toContain("{{reason}}");

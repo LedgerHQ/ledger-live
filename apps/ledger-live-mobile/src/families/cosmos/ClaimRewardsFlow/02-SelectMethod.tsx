@@ -101,8 +101,9 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
     navigation.navigate(ScreenName.CosmosClaimRewardsSelectDevice, {
       ...route.params,
       transaction,
+      status,
     });
-  }, [navigation, transaction, route]);
+  }, [navigation, transaction, status, route]);
   const onChangeMode = useCallback(
     (mode: string) => {
       updateTransaction(() =>

@@ -39,6 +39,7 @@ type CardAssetDetailsDialogProps = Readonly<{
   copy: CardAssetDialogCopy;
   formatBalance?: (value: number) => FormattedValue;
   formatters?: CardTransactionFormatters;
+  discreet?: boolean;
   onClose: () => void;
   onTopUp: () => void;
   onWithdraw: () => void;
@@ -52,6 +53,7 @@ export function CardAssetDetailsDialog({
   copy,
   formatBalance,
   formatters,
+  discreet,
   onClose,
   onTopUp,
   onWithdraw,
@@ -90,6 +92,7 @@ export function CardAssetDetailsDialog({
                     value={asset.countervalueAmount ?? 0}
                     formatter={formatBalance ?? LOADING_FORMATTER}
                     loading={isAmountLoading}
+                    hidden={discreet}
                     animate
                     data-testid="card-asset-details-amount-display"
                     aria-busy={isAmountLoading}

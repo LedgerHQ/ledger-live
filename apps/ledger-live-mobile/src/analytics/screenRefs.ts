@@ -1,7 +1,6 @@
 export {
-  currentRouteNameRef,
-  previousRouteNameRef,
   getCurrentTrackingPage,
   getPreviousTrackingPage,
+  resetTrackingPages,
   setTrackingSource,
 } from "@shared/analytics";

@@ -1,10 +1,13 @@
+import type { ProtectionSource } from "../types";
+
 export type AppProtectionRequest = Readonly<{
+  source: ProtectionSource;
   reason?: string;
   successReason?: string;
 }>;
 
 export type AppProtectionPrompt = Readonly<{
-  requestProtection: (request?: AppProtectionRequest) => Promise<boolean>;
+  requestProtection: (request: AppProtectionRequest) => Promise<boolean>;
 }>;
 
 export type AppProtectionPromptState = AppProtectionPrompt &

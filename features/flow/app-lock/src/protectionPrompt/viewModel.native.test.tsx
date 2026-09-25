@@ -1,7 +1,12 @@
 import type { BiometricsAvailability } from "@features/platform-app-lock";
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@testing-library/react-native";
 import { useProtectionPromptViewModel } from "./viewModel";
 import type { UseProtectionPromptViewModelOptions } from "./types";
+
+jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
+
+beforeEach(() => jest.clearAllMocks());
 
 const AVAILABLE: BiometricsAvailability = { status: "available", kind: "FaceID" };
 
@@ -124,5 +129,39 @@ describe("asking a user to protect the app", () => {
     });
 
     expect(onEnableBiometrics).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports the password enable press", () => {
+    const { result } = renderViewModel({ biometrics: { status: "unavailable" } });
+
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith("button_clicked", { button: "enable", type: "password" });
+  });
+
+  it("reports the biometrics enable press once however many times it is pressed meanwhile", () => {
+    const onEnableBiometrics = jest.fn(() => new Promise<void>(() => undefined));
+    const { result } = renderViewModel({ onEnableBiometrics });
+
+    act(() => {
+      result.current.onConfirm();
+      result.current.onConfirm();
+    });
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith("button_clicked", { button: "enable", type: "biometrics" });
+  });
+
+  it("reports nothing when the prompt is closed", () => {
+    const { result } = renderViewModel();
+
+    act(() => {
+      result.current.onClose();
+    });
+
+    expect(track).not.toHaveBeenCalled();
   });
 });
