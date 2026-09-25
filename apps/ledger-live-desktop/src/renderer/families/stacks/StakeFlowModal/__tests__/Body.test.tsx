@@ -304,6 +304,27 @@ describe("StakeFlowModal/Body", () => {
     clearIntervalSpy.mockRestore();
   });
 
+  it("stops refreshing startBurnHt as soon as the transaction is ready for the device, before signing starts", async () => {
+    // GenericStepConnectDevice's device-signing effect depends on `transaction` (hw/actions/transaction.ts)
+    // and tears down/restarts an in-flight sign request whenever that reference changes -- so once
+    // fee + startBurnHt are both resolved, no further mutation may reach `transaction`, well before
+    // `signed` ever flips true.
+    const clearIntervalSpy = jest.spyOn(global, "clearInterval");
+    fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
+    const { rerender, props } = renderBody({ stepId: "connectDevice" });
+    await waitFor(() => expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1));
+    clearIntervalSpy.mockClear();
+
+    currentTransaction = { ...currentTransaction, fee: new BigNumber(1) } as Transaction;
+    rerender(<Body {...props} stepId="connectDevice" />);
+
+    await waitFor(() => expect(clearIntervalSpy).toHaveBeenCalled());
+    fetchPoxInfoMock.mockClear();
+    await act(async () => {});
+    expect(fetchPoxInfoMock).not.toHaveBeenCalled();
+    clearIntervalSpy.mockRestore();
+  });
+
   it("surfaces a pox info fetch failure instead of leaving the device step waiting", async () => {
     fetchPoxInfoMock.mockRejectedValue(new Error("pox unreachable"));
     renderBody({ stepId: "connectDevice" });
