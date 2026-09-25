@@ -21,7 +21,7 @@ describe("getBalance", () => {
 
     const balances = await getBalance(context, ADDRESS);
 
-    expect(getAccount).toHaveBeenCalledWith(mockVechainConfig, ADDRESS);
+    expect(getAccount).toHaveBeenCalledWith(mockVechainConfig, ADDRESS, undefined);
     expect(balances).toEqual([
       { value: BigInt("0x1bc16d674ec80000"), asset: NATIVE_ASSET },
       { value: BigInt("0xde0b6b3a7640000"), asset: vthoAsset(ADDRESS) },
@@ -33,6 +33,34 @@ describe("getBalance", () => {
 
     const balances = await getBalance(context, ADDRESS);
 
+    expect(balances).toEqual([
+      { value: 0n, asset: NATIVE_ASSET },
+      { value: 0n, asset: vthoAsset(ADDRESS) },
+    ]);
+  });
+
+  it("reads the account as of the requested height", async () => {
+    jest
+      .mocked(getAccount)
+      .mockResolvedValueOnce({ balance: "0x8ac7230489e80000", energy: "0x0", hasCode: false });
+
+    const balances = await getBalance(context, ADDRESS, 16407349);
+
+    expect(getAccount).toHaveBeenCalledWith(mockVechainConfig, ADDRESS, 16407349);
+    expect(balances).toEqual([
+      { value: BigInt("0x8ac7230489e80000"), asset: NATIVE_ASSET },
+      { value: 0n, asset: vthoAsset(ADDRESS) },
+    ]);
+  });
+
+  it("reads the account at the genesis block for height 0", async () => {
+    jest
+      .mocked(getAccount)
+      .mockResolvedValueOnce({ balance: "0x0", energy: "0x0", hasCode: false });
+
+    const balances = await getBalance(context, ADDRESS, 0);
+
+    expect(getAccount).toHaveBeenCalledWith(mockVechainConfig, ADDRESS, 0);
     expect(balances).toEqual([
       { value: 0n, asset: NATIVE_ASSET },
       { value: 0n, asset: vthoAsset(ADDRESS) },

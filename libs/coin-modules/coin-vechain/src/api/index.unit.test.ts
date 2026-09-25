@@ -162,15 +162,50 @@ describe("createApi", () => {
 
     const result = await api.getBalance(context, SENDER);
 
-    expect(getBalance).toHaveBeenCalledWith(context, SENDER);
+    expect(getBalance).toHaveBeenCalledWith(context, SENDER, undefined);
     expect(result).toEqual(balances);
   });
 
-  it("rejects getBalance when options are provided (not supported)", async () => {
+  it("delegates getBalance at the requested height", async () => {
+    const balances: Balance[] = [{ value: 1000n, asset: { type: "native" } }];
+    jest.mocked(getBalance).mockResolvedValueOnce(balances);
     const api = createApi();
     const context = createMockVechainContext();
 
-    await expect(api.getBalance(context, SENDER, {} as BalanceOptions)).rejects.toThrow();
+    const result = await api.getBalance(context, SENDER, { height: 16407349 });
+
+    expect(getBalance).toHaveBeenCalledWith(context, SENDER, 16407349);
+    expect(result).toEqual(balances);
+  });
+
+  it("delegates getBalance at height 0 rather than reading it as absent", async () => {
+    jest.mocked(getBalance).mockResolvedValueOnce([]);
+    const api = createApi();
+    const context = createMockVechainContext();
+
+    await api.getBalance(context, SENDER, { height: 0 });
+
+    expect(getBalance).toHaveBeenCalledWith(context, SENDER, 0);
+  });
+
+  it("accepts a getBalance options object that requests nothing", async () => {
+    const options: BalanceOptions = {};
+    jest.mocked(getBalance).mockResolvedValueOnce([]);
+    const api = createApi();
+    const context = createMockVechainContext();
+
+    await api.getBalance(context, SENDER, options);
+
+    expect(getBalance).toHaveBeenCalledWith(context, SENDER, undefined);
+  });
+
+  it("rejects a getBalance option it cannot honour instead of ignoring it", async () => {
+    const api = createApi();
+    const context = createMockVechainContext();
+
+    await expect(
+      api.getBalance(context, SENDER, { includeAssets: async () => true }),
+    ).rejects.toMatchObject({ name: "InvalidParameterError" });
     expect(getBalance).not.toHaveBeenCalled();
   });
 

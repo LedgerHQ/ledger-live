@@ -15,9 +15,14 @@ export const vthoAsset = (address: string): AssetInfo => ({
 });
 
 // VET + VTHO balances from Thor's /accounts/{address} (both returned in one call); 0 if absent.
-export async function getBalance(context: VechainContext, address: string): Promise<Balance[]> {
+// `height` reads the account as of that block (Thor's `revision`) instead of the chain head.
+export async function getBalance(
+  context: VechainContext,
+  address: string,
+  height?: number,
+): Promise<Balance[]> {
   const config = await context.config();
-  const { balance, energy } = await getAccount(config, address);
+  const { balance, energy } = await getAccount(config, address, height);
 
   return [
     { value: BigInt(balance || "0"), asset: NATIVE_ASSET },
