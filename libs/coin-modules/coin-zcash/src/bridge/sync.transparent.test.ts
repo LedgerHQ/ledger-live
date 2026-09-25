@@ -13,7 +13,6 @@ import {
   zcashSyncShielded,
 } from "./sync";
 import { clearTransactionDetailsCache } from "./transaction-details";
-import { ZCASH_AUTO_SYNC_TIMEOUT_MS } from "../constants";
 import type { ZcashAccount } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
@@ -655,7 +654,12 @@ describe("zcashSyncShielded", () => {
   it("refuses to scan without a viewing key", async () => {
     await expect(
       firstValueFrom(
-        zcashSyncShielded(info({ initialAccount: {} }), syncConfig, TEST_ZAINO_ENDPOINT),
+        zcashSyncShielded(
+          info({ initialAccount: {} }),
+          syncConfig,
+          TEST_ZAINO_ENDPOINT,
+          TEST_CONFIG.zaino.batchSize,
+        ),
       ),
     ).rejects.toThrow("Missing unified full viewing key (ufvk) for ZCash shielded sync");
   });
@@ -665,7 +669,12 @@ describe("zcashSyncShielded", () => {
     const account = { privateInfo: privateInfo({ lastProcessedBlock: 3_425_000 }) };
 
     await firstValueFrom(
-      zcashSyncShielded(info({ initialAccount: account }), syncConfig, TEST_ZAINO_ENDPOINT),
+      zcashSyncShielded(
+        info({ initialAccount: account }),
+        syncConfig,
+        TEST_ZAINO_ENDPOINT,
+        TEST_CONFIG.zaino.batchSize,
+      ),
     );
 
     expect(syncShielded).toHaveBeenCalledWith(
@@ -679,7 +688,12 @@ describe("zcashSyncShielded", () => {
     const account = { privateInfo: privateInfo({ birthday: "2022-05-31" }) };
 
     await firstValueFrom(
-      zcashSyncShielded(info({ initialAccount: account }), syncConfig, TEST_ZAINO_ENDPOINT),
+      zcashSyncShielded(
+        info({ initialAccount: account }),
+        syncConfig,
+        TEST_ZAINO_ENDPOINT,
+        TEST_CONFIG.zaino.batchSize,
+      ),
     );
 
     expect(findBlockHeight).toHaveBeenCalledWith(Math.floor(Date.parse("2022-05-31") / 1000));
@@ -696,10 +710,13 @@ describe("zcashSyncShielded", () => {
         info({ initialAccount: { privateInfo: privateInfo() } }),
         syncConfig,
         TEST_ZAINO_ENDPOINT,
+        TEST_CONFIG.zaino.batchSize,
       ),
     );
 
-    expect(syncShielded).toHaveBeenCalledWith(expect.objectContaining({ startBlockHeight: 0 }));
+    expect(syncShielded).toHaveBeenCalledWith(
+      expect.objectContaining({ startBlockHeight: 0, maxBatchSize: TEST_CONFIG.zaino.batchSize }),
+    );
   });
 
   // The scanner needs the nullifiers to tell which of our notes a block spends,
@@ -734,7 +751,12 @@ describe("zcashSyncShielded", () => {
     };
 
     await firstValueFrom(
-      zcashSyncShielded(info({ initialAccount: account }), syncConfig, TEST_ZAINO_ENDPOINT),
+      zcashSyncShielded(
+        info({ initialAccount: account }),
+        syncConfig,
+        TEST_ZAINO_ENDPOINT,
+        TEST_CONFIG.zaino.batchSize,
+      ),
     );
 
     expect(syncShielded).toHaveBeenCalledWith(
@@ -900,16 +922,22 @@ describe("buildExtraSyncObservable", () => {
           },
         }),
         { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
-        testContext,
+        {
+          ...testContext,
+          config: async () => ({
+            ...TEST_CONFIG,
+            zaino: { ...TEST_CONFIG.zaino, timeoutMs: 1_000 },
+          }),
+        },
       );
 
       const resultPromise = firstValueFrom(observable!);
-      // Let the getZCashClient()/resolveStartBlockHeight() promise chain settle
-      // before the timeout window is exhausted, native promises are not
+      // Let the config / getZCashClient() / resolveStartBlockHeight() promise chain
+      // settle before the timeout window is exhausted, native promises are not
       // affected by fake timers.
-      await Promise.resolve();
-      await Promise.resolve();
-      jest.advanceTimersByTime(ZCASH_AUTO_SYNC_TIMEOUT_MS + 1);
+      for (let i = 0; i < 5; i++) await Promise.resolve();
+      // The budget comes from the coin config, not a module constant.
+      jest.advanceTimersByTime(1_001);
 
       const result = await resultPromise;
       expect(result.privateInfo).toMatchObject({ syncState: "stopped" });
