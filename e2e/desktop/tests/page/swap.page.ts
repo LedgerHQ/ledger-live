@@ -103,12 +103,10 @@ export class SwapPage extends WebViewAppPage {
   private readonly topGainersInfoIcon = "top-gainers-info-icon";
   private readonly topGainersDateTrigger = "top-gainers-date-select-trigger";
   private readonly topGainersItemsSelector = '[data-testid^="top-gainers-item-"]';
-  private readonly topGainersDateOptionsSelector =
-    '[data-testid^="top-gainers-date-option-"]';
+  private readonly topGainersDateOptionsSelector = '[data-testid^="top-gainers-date-option-"]';
   private readonly topStablecoinsContainer = "top-stablecoins-container";
   private readonly topStablecoinsInfoIcon = "top-stablecoins-info-icon";
-  private readonly topStablecoinsItemsSelector =
-    '[data-testid^="top-stablecoins-item-"]';
+  private readonly topStablecoinsItemsSelector = '[data-testid^="top-stablecoins-item-"]';
 
   private async waitForSelectorPopulated(webview: Page, testId: string, timeout: number) {
     await webview.waitForFunction(
@@ -640,9 +638,7 @@ export class SwapPage extends WebViewAppPage {
     const topGainersRows = webview.locator(this.topGainersItemsSelector);
     await this.softExpect(async soft => {
       await soft(webview.getByTestId(this.topGainersContainer)).toBeVisible();
-      await soft(webview.getByTestId(this.topGainersContainer)).toContainText(
-        "Trending Assets",
-      );
+      await soft(webview.getByTestId(this.topGainersContainer)).toContainText("Trending Assets");
       await soft(topGainersRows).toHaveCount(5);
     });
     const topGainersTexts = await topGainersRows.allTextContents();
@@ -668,9 +664,7 @@ export class SwapPage extends WebViewAppPage {
         soft(dateOptionTexts).toContain(label);
       }
     });
-    const nextDateOption = dateOptions
-      .filter({ hasNotText: initialDateLabel ?? "" })
-      .first();
+    const nextDateOption = dateOptions.filter({ hasNotText: initialDateLabel ?? "" }).first();
     await nextDateOption.click();
     await this.softExpect(async soft => {
       await soft(dateTrigger).not.toContainText(initialDateLabel ?? "");
@@ -689,9 +683,7 @@ export class SwapPage extends WebViewAppPage {
     const topStablecoinsRows = webview.locator(this.topStablecoinsItemsSelector);
     await this.softExpect(async soft => {
       await soft(webview.getByTestId(this.topStablecoinsContainer)).toBeVisible();
-      await soft(webview.getByTestId(this.topStablecoinsContainer)).toContainText(
-        "Stablecoins",
-      );
+      await soft(webview.getByTestId(this.topStablecoinsContainer)).toContainText("Stablecoins");
       await soft(topStablecoinsRows).toHaveCount(2);
     });
     const topStablecoinsTexts = await topStablecoinsRows.allTextContents();
