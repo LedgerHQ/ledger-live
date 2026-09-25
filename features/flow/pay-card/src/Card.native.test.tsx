@@ -85,6 +85,7 @@ describe("Card (native)", () => {
 
   beforeEach(() => {
     mockUseCardAuthStatus.mockReturnValue("unknown");
+    mockUseCardSessionResolving.mockReturnValue(false);
     receivedCardSettingsActions = undefined;
   });
 
@@ -95,6 +96,23 @@ describe("Card (native)", () => {
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-onboarding-widget")).toBeNull();
       expect(screen.queryByTestId("card-details")).toBeNull();
+    });
+
+    it("shows the loading card face once the host provides a formatter", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+
+      expect(screen.getByTestId("card-loading-visual")).toBeVisible();
+      expect(screen.queryByTestId("card-artwork")).toBeNull();
+    });
+
+    it("keeps the loading card face up while the machine trades a redirect for a token", () => {
+      mockUseCardAuthStatus.mockReturnValue("signedOut");
+      mockUseCardSessionResolving.mockReturnValue(true);
+
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+
+      expect(screen.getByTestId("card-loading-visual")).toBeVisible();
+      expect(screen.queryByTestId("card-artwork")).toBeNull();
     });
   });
 

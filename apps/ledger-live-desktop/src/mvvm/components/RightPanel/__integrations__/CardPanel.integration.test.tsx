@@ -49,7 +49,12 @@ function resolveUsdc() {
 const [subscription] = mockPayCardTransactions();
 
 const signedIn = {
-  payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const },
+  payCardAuth: {
+    hasCard: true,
+    pendingLoginType: null,
+    status: "signedIn" as const,
+    isSessionResolving: false,
+  },
 };
 
 const onTransactionsRequest = jest.fn();

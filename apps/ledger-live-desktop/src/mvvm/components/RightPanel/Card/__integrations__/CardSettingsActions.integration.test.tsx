@@ -8,7 +8,12 @@ import { render, screen } from "tests/testSetup";
 import { Card } from "../Card";
 
 const signedIn = {
-  payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const },
+  payCardAuth: {
+    hasCard: true,
+    pendingLoginType: null,
+    status: "signedIn" as const,
+    isSessionResolving: false,
+  },
 };
 
 const mockOpenHostedPage = jest.fn().mockResolvedValue(undefined);
