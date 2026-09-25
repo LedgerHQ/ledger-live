@@ -10,13 +10,10 @@ import { useContactDisplayName } from "@features/platform-contacts";
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
-let getDisplayName: (contact: Contact) => string;
-
-beforeAll(() => {
-  getDisplayName = renderHook(() => useContactDisplayName(), {
-    wrapper: ContactsI18nTestProvider,
-  }).result.current;
-});
+const getDisplayName = (contact: Contact) =>
+  renderHook(() => useContactDisplayName(), { wrapper: ContactsI18nTestProvider }).result.current(
+    contact,
+  );
 
 const labels = {
   title: "Contacts",
