@@ -1,4 +1,5 @@
 import React from "react";
+import { View } from "react-native";
 import { Skeleton } from "@ledgerhq/lumen-ui-rnative";
 import { AmountDisplay as OriginalAmountDisplay } from "@ledgerhq/lumen-ui-rnative";
 import { AmountDisplay } from "LLM/components/AmountDisplay";

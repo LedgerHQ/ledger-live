@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { View } from "react-native";
 import { Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { AmountDisplaySize, FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";

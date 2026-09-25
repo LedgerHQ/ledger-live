@@ -1,4 +1,5 @@
 import React from "react";
+import { View } from "react-native";
 import { Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
