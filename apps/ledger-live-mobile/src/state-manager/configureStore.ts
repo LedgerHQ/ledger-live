@@ -91,6 +91,7 @@ export const store = configureStore({
             ...cardApiExtra({
               // Read on every request, so the debug settings can change them without a restart.
               getCardApiBaseUrl: () => getEnv("CARD_BAANX_API_URL"),
+              getCardLegacyApiBaseUrl: () => Config.CARD_BAANX_LEGACY_API_URL,
               getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
               isCardUsEnv: () => isCardUsEnv(getEnv("CARD_BAANX_US_APP_ID")),
               readCardSession,
