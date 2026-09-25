@@ -639,7 +639,10 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       chainId: 11155420,
       name: "OP Sepolia",
       node: { type: "external", uri: "https://optimism-sepolia.coin.ledger.com" },
-      explorer: { type: "blockscout", uri: "https://optimism-sepolia.blockscout.com/api" },
+      explorer: {
+        type: "blockscout",
+        uri: "https://proxyblockscout.api.live.ledger.com/11155420/api",
+      },
     },
   },
   config_currency_energy_web: {
