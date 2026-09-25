@@ -35,7 +35,7 @@ import {
 } from "@features/flow-contacts-add-address";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
-  useMeDisplayNameFormatter,
+  useContactDisplayName,
   resolveEligibleAddressCurrencyIds,
   useContacts,
   useContactsFeature,
@@ -120,12 +120,17 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const contact = populatedContactDetail?.contact ?? emptyContact;
   const allContacts = useContacts();
   const addressValidation = useContactsAddressValidationAdapter();
+  const getDisplayName = useContactDisplayName();
   const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
     () =>
       allContacts.flatMap(c =>
-        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
+        c.addresses.map(a => ({
+          contactId: c.id,
+          contactName: getDisplayName(c),
+          address: a.address,
+        })),
       ),
-    [allContacts],
+    [allContacts, getDisplayName],
   );
   const eligibleNetworkIds = useMemo(
     () =>
@@ -325,7 +330,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     completeAddressConfirmation,
     continueFromName,
   ]);
-  const formatMeDisplayName = useMeDisplayNameFormatter();
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
@@ -336,15 +340,11 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
       myAddresses: t("contacts.detail.myAddresses"),
-      formatMeDisplayName,
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
-    [formatMeDisplayName, t],
+    [t],
   );
-  const detailSharedState = useContactDetailSharedState(
-    route.params.contactId,
-    labels.formatMeDisplayName,
-  );
+  const detailSharedState = useContactDetailSharedState(route.params.contactId);
   const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogNativeLabels>(
     () => ({
       send: t("contacts.addressDetail.send"),
@@ -480,7 +480,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     pageProps,
     addressDetailDialog: {
       isOpen,
-      contactName: contact.name,
+      contactName: getDisplayName(contact),
       row: selection?.row,
       network: selection?.network,
       labels: addressDetailDialogLabels,

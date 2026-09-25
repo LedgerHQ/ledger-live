@@ -45,7 +45,7 @@ import {
 } from "@features/flow-contacts-introduction";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
-  useMeDisplayNameFormatter,
+  useContactDisplayName,
   useContacts,
   useContactsMeContact,
   type OtherContactAddress,
@@ -97,12 +97,17 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const currencySelection = useContactsCurrencySelectionAdapter();
   const { cancelCurrencySelection } = currencySelection;
   const addressValidation = useContactsAddressValidationAdapter();
+  const getDisplayName = useContactDisplayName();
   const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
     () =>
       contacts.flatMap(c =>
-        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
+        c.addresses.map(a => ({
+          contactId: c.id,
+          contactName: getDisplayName(c),
+          address: a.address,
+        })),
       ),
-    [contacts],
+    [contacts, getDisplayName],
   );
   const { selectCurrency } = useAddAddressCurrencySelectionViewModel({
     platform: "desktop",
@@ -416,7 +421,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
       isContactsEntryAvailable: true,
       preference,
     });
-  const formatMeDisplayName = useMeDisplayNameFormatter();
   const labels = useMemo<ContactsListViewLabels>(
     () => ({
       title: t("contacts.title"),
@@ -424,9 +428,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName,
     }),
-    [formatMeDisplayName, t],
+    [t],
   );
   const featureIntroductionHighlights = useMemo(
     () =>
@@ -439,16 +442,11 @@ export function useContactsViewModel(): ContactsPageViewModel {
   );
   const viewModel = useMemo(() => {
     if (searchQuery.trim().length > 0) {
-      return createContactsSearchViewModel(
-        meContact,
-        contacts,
-        searchQuery,
-        labels.formatMeDisplayName,
-      );
+      return createContactsSearchViewModel(meContact, contacts, searchQuery, getDisplayName);
     }
 
-    return createContactsListViewModel(meContact, contacts, labels.formatMeDisplayName);
-  }, [contacts, labels.formatMeDisplayName, meContact, searchQuery]);
+    return createContactsListViewModel(meContact, contacts, getDisplayName);
+  }, [contacts, getDisplayName, meContact, searchQuery]);
   const onSearchInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   }, []);

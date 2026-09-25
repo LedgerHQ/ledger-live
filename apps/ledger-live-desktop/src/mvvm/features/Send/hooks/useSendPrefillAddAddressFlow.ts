@@ -21,6 +21,7 @@ import {
   CONTACTS_EVENT_SOURCE,
 } from "@features/flow-contacts";
 import {
+  useContactDisplayName,
   buildContactsGlobalProperties,
   useContacts,
   type OtherContactAddress,
@@ -94,12 +95,17 @@ export function useSendPrefillAddAddressFlow({
     intents: contactsIntentLWDDefinitions,
     getLiveConfigMinVersion: getMinVersion,
   });
+  const getDisplayName = useContactDisplayName();
   const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
     () =>
       contacts.flatMap(c =>
-        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
+        c.addresses.map(a => ({
+          contactId: c.id,
+          contactName: getDisplayName(c),
+          address: a.address,
+        })),
       ),
-    [contacts],
+    [contacts, getDisplayName],
   );
   const {
     state: addressFlowState,

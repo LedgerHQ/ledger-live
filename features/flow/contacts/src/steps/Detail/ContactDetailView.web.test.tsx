@@ -1,9 +1,15 @@
 import React from "react";
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render as renderWithoutI18n,
+  screen,
+  within,
+} from "@testing-library/react";
 import { CONTACT_NAME_MAX_LENGTH } from "@domain/entity-contact";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { createMeDisplayNameFormatter } from "@features/platform-contacts";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
 import type { ContactDetailLabels } from "./types";
@@ -16,9 +22,11 @@ const labels: ContactDetailLabels = {
   emptyContactTitle: name => `No saved addresses for ${name}`,
   emptyMeDescription: "Save your wallet addresses to receive crypto by name next time.",
   emptyContactDescription: () => "Save their wallet addresses to send to them by name next time",
-  formatMeDisplayName: createMeDisplayNameFormatter("My addresses", name => `${name} (Me)`),
   formatAddressCount: count => `${count} address`,
 };
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 const onAddAddress = () => undefined;
 

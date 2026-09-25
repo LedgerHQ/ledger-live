@@ -1,8 +1,12 @@
 import React from "react";
-import { render, screen } from "@testing-library/react-native";
+import { render as renderWithoutI18n, screen } from "@testing-library/react-native";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { ContactsView } from "../ContactsView.native";
 import type { ContactsViewNativeProps } from "../../../types";
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 function makeProps(overrides: Partial<ContactsViewNativeProps> = {}): ContactsViewNativeProps {
   return {

@@ -12,6 +12,7 @@ type GetRecipientHeaderPresentationArgs = Readonly<{
 export type RecipientHeaderContact = Readonly<{
   id: string;
   name: string;
+  isMe: boolean;
 }>;
 
 export type RecipientHeaderPresentation = Readonly<{
@@ -42,6 +43,7 @@ export function getRecipientHeaderPresentation({
     contact: {
       id: matchedContact.contactId,
       name: matchedContact.contactName,
+      isMe: matchedContact.isMe,
     },
   };
 }

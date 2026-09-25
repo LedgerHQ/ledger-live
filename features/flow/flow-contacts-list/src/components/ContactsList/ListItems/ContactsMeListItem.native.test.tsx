@@ -1,7 +1,11 @@
 import React from "react";
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { render as renderWithoutI18n, screen, userEvent } from "@testing-library/react-native";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { ContactIdSchema } from "@domain/entity-contact";
 import { ContactsMeListItem } from "./ContactsMeListItem.native";
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 describe("ContactsMeListItem", () => {
   it("should render the Me avatar with the Figma size and border", () => {

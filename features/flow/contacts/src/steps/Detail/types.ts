@@ -61,7 +61,6 @@ export type ContactDetailLabels = Readonly<{
   emptyContactDescription: (name: string) => string;
   ledgerWalletAddresses?: string;
   myAddresses?: string;
-  formatMeDisplayName?: (name: string) => string;
   formatAddressCount: (count: number) => string;
 }>;
 

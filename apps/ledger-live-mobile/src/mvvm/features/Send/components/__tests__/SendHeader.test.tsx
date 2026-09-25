@@ -25,6 +25,9 @@ jest.mock("../AddressDisclaimer", () => ({
   },
 }));
 jest.mock("@features/platform-contacts", () => ({
+  useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).useContactDisplayName,
   ContactAvatar: ({ name, testId }: { name: string; testId?: string }) => {
     const RN = jest.requireActual<typeof import("react-native")>("react-native");
     return <RN.Text testID={testId}>{name}</RN.Text>;

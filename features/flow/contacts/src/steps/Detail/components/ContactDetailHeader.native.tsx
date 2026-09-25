@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { resolveMeContactDisplayName } from "@features/platform-contacts";
+import { useContactDisplayName } from "@features/platform-contacts";
 import type { ContactDetailViewProps } from "../types";
 import { ContactDetailAvatar } from "./ContactDetailAvatar.native";
 
@@ -12,10 +12,7 @@ export function ContactDetailHeader({
   labels,
   onAddAddress,
 }: ContactDetailHeaderProps): React.JSX.Element {
-  const displayName = resolveMeContactDisplayName(
-    contact,
-    labels.formatMeDisplayName ?? (name => name),
-  );
+  const displayName = useContactDisplayName()(contact);
 
   return (
     <Box lx={{ alignItems: "center", gap: "s24", paddingTop: "s24" }}>

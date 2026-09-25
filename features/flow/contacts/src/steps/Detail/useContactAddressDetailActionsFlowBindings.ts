@@ -8,9 +8,10 @@ import {
 import { ContactAddressIdSchema } from "@domain/entity-contact";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import type {
-  ContactsAddressValidationPort,
-  OtherContactAddress,
+import {
+  useContactDisplayName,
+  type ContactsAddressValidationPort,
+  type OtherContactAddress,
 } from "@features/platform-contacts";
 import {
   type ContactAddressEditSavePayload,
@@ -68,14 +69,19 @@ export function useContactAddressDetailActionsFlowBindings({
     [addressId, contact?.addresses],
   );
   const allContacts = useSelector((state: ContactsStateRoot) => selectContacts(state));
+  const getDisplayName = useContactDisplayName();
   const otherContactsAddresses = useMemo<readonly OtherContactAddress[]>(
     () =>
       allContacts.flatMap(c =>
         c.id !== contactId
-          ? c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address }))
+          ? c.addresses.map(a => ({
+              contactId: c.id,
+              contactName: getDisplayName(c),
+              address: a.address,
+            }))
           : [],
       ),
-    [allContacts, contactId],
+    [allContacts, contactId, getDisplayName],
   );
   const renameViewModel = useRenameAddressDialogViewModel({
     contactId,

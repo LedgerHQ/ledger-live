@@ -7,7 +7,11 @@ import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send
 import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
-import { isEligibleAddressCurrency, useContactsFeature } from "@features/platform-contacts";
+import {
+  isEligibleAddressCurrency,
+  useContactsFeature,
+  useContactDisplayName,
+} from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "LLD/hooks/redux";
 import { buildTransactionPatchFromURIScheme } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
@@ -308,12 +312,16 @@ export function useSendHeaderModel({
       state.recipient,
     ],
   );
+  const getDisplayName = useContactDisplayName();
+  const recipientLabel = recipientHeader.contact
+    ? getDisplayName(recipientHeader.contact)
+    : recipientHeader.label;
 
   const addressInputValue = useMemo(() => {
     if (isRecipientStep) return recipientSearch.value;
-    if (isAmountStep) return recipientHeader.label;
+    if (isAmountStep) return recipientLabel;
     return recipientSearch.value;
-  }, [isRecipientStep, isAmountStep, recipientHeader.label, recipientSearch.value]);
+  }, [isRecipientStep, isAmountStep, recipientLabel, recipientSearch.value]);
 
   const handleRecipientInputClick = useCallback(() => {
     if (!isAmountStep) return;

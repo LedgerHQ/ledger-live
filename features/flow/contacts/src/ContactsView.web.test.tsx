@@ -1,8 +1,16 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render as renderWithoutI18n, screen } from "@testing-library/react";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
+import type { Contact } from "@domain/entity-contact";
 import { createContactsSearchViewModel } from "@features/flow-contacts-list";
 import { ContactsView } from "./ContactsView.web";
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
+
+const getDisplayName = (contact: Contact) =>
+  contact.isMe ? `${contact.name === "Me" ? "My addresses" : contact.name} (Me)` : contact.name;
 
 const labels = {
   title: "Contacts",
@@ -20,7 +28,7 @@ describe("ContactsView", () => {
 
     render(
       <ContactsView
-        viewModel={createContactsSearchViewModel(me, contacts, "unknown")}
+        viewModel={createContactsSearchViewModel(me, contacts, "unknown", getDisplayName)}
         labels={labels}
         searchQuery="unknown"
         onSearchInputChange={jest.fn()}
@@ -59,7 +67,7 @@ describe("ContactsView", () => {
 
     render(
       <ContactsView
-        viewModel={createContactsSearchViewModel(me, contacts, "")}
+        viewModel={createContactsSearchViewModel(me, contacts, "", getDisplayName)}
         labels={labels}
         searchQuery=""
         onSearchInputChange={jest.fn()}

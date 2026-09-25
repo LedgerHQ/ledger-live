@@ -16,6 +16,7 @@
     "./device": "./src/device/index.ts",
     "./device/intents": "./src/device/intents/index.ts",
     "./test": "./src/contactDeviceIntentsPort.mock.ts",
+    "./testing": "./src/testing/ContactsI18nTestProvider.tsx",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

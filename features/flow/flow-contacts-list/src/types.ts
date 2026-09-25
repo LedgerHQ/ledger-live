@@ -53,13 +53,11 @@ export type ContactsListViewLabels = Readonly<{
   addContact: string;
   ledgerSyncCheckingAccessibilityLabel?: string;
   formatAddressCount: (count: number) => string;
-  formatMeDisplayName?: (name: string) => string;
 }>;
 
 export type ContactsCompactListLabels = Readonly<{
   emptyAddress: string;
   formatAddressCount: (count: number) => string;
-  formatMeDisplayName: (name: string) => string;
 }>;
 
 export type ContactsCompactRowProps = Readonly<{

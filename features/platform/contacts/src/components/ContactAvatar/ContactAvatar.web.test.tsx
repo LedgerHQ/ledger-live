@@ -1,7 +1,11 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render as renderWithoutI18n, screen } from "@testing-library/react";
+import { ContactsI18nTestProvider } from "../../testing/ContactsI18nTestProvider";
 import { ContactIdSchema, DEFAULT_ME_CONTACT_ID } from "@domain/entity-contact";
 import { ContactAvatar } from ".";
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 describe("ContactAvatar", () => {
   it("should bind a contact initial and Lumen pastel color for the default list size", () => {

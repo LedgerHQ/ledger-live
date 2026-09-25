@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
 import {
-  useMeDisplayNameFormatter,
+  useContactDisplayName,
   useContacts,
   useContactsMeContact,
   type ContactDeviceIntentsPort,
@@ -93,7 +93,6 @@ export function useContactDetailPaneAdapter(
     addressDetailAsset,
     addressDetailNetwork,
   );
-  const formatMeDisplayName = useMeDisplayNameFormatter();
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
@@ -103,15 +102,11 @@ export function useContactDetailPaneAdapter(
       emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
       emptyContactDescription: () => t("contacts.detail.emptyState.contactDescription"),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
-      formatMeDisplayName,
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
-    [formatMeDisplayName, t],
+    [t],
   );
-  const detailSharedState = useContactDetailSharedState(
-    detailContactId,
-    labels.formatMeDisplayName,
-  );
+  const detailSharedState = useContactDetailSharedState(detailContactId);
   const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogLabels>(
     () => ({
       send: t("contacts.addressDetail.send"),
@@ -182,6 +177,8 @@ export function useContactDetailPaneAdapter(
     onAddressRowPress,
     populatedContactDetail,
   ]);
+  const getDisplayName = useContactDisplayName();
+  const dialogContact = populatedContactDetail?.contact ?? emptyContact;
   const addressDetailDialog = useMemo<ContactAddressDetailDialogProps>(() => {
     const isAddressActionDialogOpen =
       addressDetailActionsDialogs.deleteDialog.isOpen ||
@@ -190,7 +187,7 @@ export function useContactDetailPaneAdapter(
 
     return {
       isOpen: isOpen && !isAddressActionDialogOpen,
-      contactName: populatedContactDetail?.contact.name ?? emptyContact?.name ?? "",
+      contactName: dialogContact ? getDisplayName(dialogContact) : "",
       row: selection?.row,
       network: selection?.network,
       labels: addressDetailDialogLabels,
@@ -203,10 +200,10 @@ export function useContactDetailPaneAdapter(
     addressDetailActionsDialogs.renameDialog.isOpen,
     addressDetailActionsDialogs.signerMismatchDialog.isOpen,
     addressDetailDialogLabels,
-    emptyContact?.name,
+    dialogContact,
+    getDisplayName,
     isOpen,
     onCloseAddressDetail,
-    populatedContactDetail?.contact.name,
     selection?.network,
     selection?.row,
   ]);

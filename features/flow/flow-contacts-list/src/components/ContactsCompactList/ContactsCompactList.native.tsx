@@ -6,7 +6,7 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ContactAvatar } from "@features/platform-contacts";
+import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
 import type { ContactsCompactListProps, ContactsCompactRowProps } from "../../types";
 import {
   getCompactContactAddressDescription,
@@ -18,6 +18,8 @@ export function ContactsCompactRow({
   labels,
   onContactSelect,
 }: ContactsCompactRowProps): React.JSX.Element {
+  const getDisplayName = useContactDisplayName();
+
   return (
     <ListItem
       testID={`contacts-compact-row-${contact.id}`}
@@ -28,9 +30,7 @@ export function ContactsCompactRow({
       <ListItemLeading>
         <ContactAvatar contactId={contact.id} name={contact.name} size="md" />
         <ListItemContent>
-          <ListItemTitle>
-            {contact.isMe ? labels.formatMeDisplayName(contact.name) : contact.name}
-          </ListItemTitle>
+          <ListItemTitle>{getDisplayName(contact)}</ListItemTitle>
           <ListItemDescription>
             {getCompactContactAddressDescription(contact, labels)}
           </ListItemDescription>

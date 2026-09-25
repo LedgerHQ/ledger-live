@@ -1,8 +1,12 @@
 import React from "react";
-import { render, screen } from "@testing-library/react-native";
+import { render as renderWithoutI18n, screen } from "@testing-library/react-native";
+import { ContactsI18nTestProvider } from "../../testing/ContactsI18nTestProvider";
 import { ContactIdSchema, DEFAULT_ME_CONTACT_ID } from "@domain/entity-contact";
 import { ContactAvatar } from ".";
 import { ME_AVATAR_URL } from "../MeAvatar/meAvatarUrl";
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
   Avatar: ({ testID, ...props }: { testID?: string }) => {
@@ -74,7 +78,7 @@ describe("ContactAvatar", () => {
     expect(avatar).toHaveProp("size", "xl");
     expect(avatar).toHaveProp("appearance", "thin");
     expect(avatar).toHaveProp("src", ME_AVATAR_URL);
-    expect(avatar).toHaveProp("alt", "My Wallet");
+    expect(avatar).toHaveProp("alt", "My Wallet (Me)");
     expect(avatar.props).not.toHaveProperty("fallbackText");
   });
 });

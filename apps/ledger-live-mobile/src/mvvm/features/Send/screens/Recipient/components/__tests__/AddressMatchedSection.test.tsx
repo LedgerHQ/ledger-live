@@ -1,8 +1,12 @@
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { fireEvent, render as renderWithoutI18n, screen } from "@testing-library/react-native";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { AddressMatchedSection } from "../AddressMatchedSection";
 import { useAddressMatchedSectionViewModel } from "../../hooks/useAddressMatchedSectionViewModel";
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 const mockPresentBottomSheet = jest.fn();
 
@@ -22,6 +26,9 @@ jest.mock("~/context/hooks", () => ({
 }));
 
 jest.mock("@features/platform-contacts", () => ({
+  useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).useContactDisplayName,
   ContactAvatar: ({ name, testId }: { name: string; testId?: string }) => {
     const RN = jest.requireActual<typeof import("react-native")>("react-native");
     return <RN.Text testID={testId}>{name}</RN.Text>;

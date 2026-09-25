@@ -10,6 +10,8 @@ import {
 import { createClosedContactsFeatureIntroduction } from "@features/flow-contacts-introduction";
 import { render, screen } from "@tests/test-renderer";
 
+const getName = (contact: { name: string }) => contact.name;
+
 function renderContactsPage(
   ledgerSyncStatus: "ready" | "checking",
   viewModel?: ContactsListViewModel,
@@ -23,7 +25,7 @@ function renderContactsPage(
       value={{ top: 0, right: 0, bottom: bottomSafeAreaInset, left: 0 }}
     >
       <ContactsView
-        viewModel={viewModel ?? createEmptyContactsListViewModel(me)}
+        viewModel={viewModel ?? createEmptyContactsListViewModel(me, getName)}
         labels={{
           title: "Contacts",
           searchPlaceholder: "Search contact",
@@ -87,10 +89,11 @@ describe("ContactsPage", () => {
 
   it("should keep the search input outside the populated Contacts list", () => {
     const me = mockMeContact();
-    const viewModel = createPopulatedContactsListViewModel(me, [
+    const viewModel = createPopulatedContactsListViewModel(
       me,
-      mockContact({ id: "contact-ada", name: "Ada" }),
-    ]);
+      [me, mockContact({ id: "contact-ada", name: "Ada" })],
+      getName,
+    );
 
     renderContactsPage("ready", viewModel);
 
@@ -107,10 +110,11 @@ describe("ContactsPage", () => {
 
   it("should end the populated Contacts list above the system navigation bar", () => {
     const me = mockMeContact();
-    const viewModel = createPopulatedContactsListViewModel(me, [
+    const viewModel = createPopulatedContactsListViewModel(
       me,
-      mockContact({ id: "contact-ada", name: "Ada" }),
-    ]);
+      [me, mockContact({ id: "contact-ada", name: "Ada" })],
+      getName,
+    );
 
     renderContactsPage("ready", viewModel, 48);
 

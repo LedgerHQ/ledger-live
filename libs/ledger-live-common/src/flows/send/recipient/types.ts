@@ -36,6 +36,7 @@ export type MatchedAccount = Readonly<{
 export type MatchedContact = Readonly<{
   contactId: string;
   contactName: string;
+  isMe: boolean;
   addressId: string;
   addressLabel: string;
   address: string;

@@ -1,9 +1,5 @@
 import type { Contact } from "@domain/entity-contact";
-import {
-  getContactInitial,
-  identityFormatMeDisplayName,
-  resolveMeContactDisplayName,
-} from "@features/platform-contacts";
+import { getContactInitial } from "@features/platform-contacts";
 import type {
   ContactsSearchViewModel,
   ContactsListItem,
@@ -12,15 +8,15 @@ import type {
 } from "../types";
 import { createContactsListSections } from "../utils";
 
+export type GetContactDisplayName = (contact: Contact) => string;
+
 function createContactsListItem(
   contact: Contact,
-  formatMeDisplayName?: (name: string) => string,
+  getDisplayName: GetContactDisplayName,
 ): ContactsListItem {
-  const formatName = formatMeDisplayName ?? identityFormatMeDisplayName;
-
   return {
     contactId: contact.id,
-    name: resolveMeContactDisplayName(contact, formatName),
+    name: getDisplayName(contact),
     initial: getContactInitial(contact.name),
     addressCount: contact.addresses.length,
   };
@@ -28,8 +24,8 @@ function createContactsListItem(
 
 function createSavedContactsListItems(
   contacts: readonly Contact[],
-  normalizedQuery = "",
-  formatMeDisplayName?: (name: string) => string,
+  normalizedQuery: string,
+  getDisplayName: GetContactDisplayName,
 ) {
   return contacts
     .filter(
@@ -38,7 +34,7 @@ function createSavedContactsListItems(
         (normalizedQuery.length === 0 || isContactNameMatching(contact, normalizedQuery)),
     )
     .sort((left, right) => left.name.localeCompare(right.name))
-    .map(contact => createContactsListItem(contact, formatMeDisplayName));
+    .map(contact => createContactsListItem(contact, getDisplayName));
 }
 
 function isContactNameMatching(contact: Contact, normalizedQuery: string): boolean {
@@ -48,10 +44,9 @@ function isContactNameMatching(contact: Contact, normalizedQuery: string): boole
 function isMeContactMatching(
   me: Contact,
   normalizedQuery: string,
-  formatMeDisplayName?: (name: string) => string,
+  getDisplayName: GetContactDisplayName,
 ): boolean {
-  const formatName = formatMeDisplayName ?? identityFormatMeDisplayName;
-  const displayName = resolveMeContactDisplayName(me, formatName);
+  const displayName = getDisplayName(me);
 
   return (
     displayName.toLowerCase().includes(normalizedQuery) ||
@@ -61,22 +56,22 @@ function isMeContactMatching(
 
 export function createEmptyContactsListViewModel(
   me: Contact,
-  formatMeDisplayName?: (name: string) => string,
+  getDisplayName: GetContactDisplayName,
 ): EmptyContactsListViewModel {
   return {
     displayMode: "empty",
-    me: createContactsListItem(me, formatMeDisplayName),
+    me: createContactsListItem(me, getDisplayName),
   };
 }
 
 function createPopulatedContactsListViewModelFromSavedContacts(
   me: Contact,
   savedContacts: readonly ContactsListItem[],
-  formatMeDisplayName?: (name: string) => string,
+  getDisplayName: GetContactDisplayName,
 ): PopulatedContactsListViewModel {
   return {
     displayMode: "populated",
-    me: createContactsListItem(me, formatMeDisplayName),
+    me: createContactsListItem(me, getDisplayName),
     savedContacts,
     sections: createContactsListSections(savedContacts),
   };
@@ -85,55 +80,47 @@ function createPopulatedContactsListViewModelFromSavedContacts(
 export function createPopulatedContactsListViewModel(
   me: Contact,
   contacts: readonly Contact[],
-  formatMeDisplayName?: (name: string) => string,
+  getDisplayName: GetContactDisplayName,
 ): PopulatedContactsListViewModel {
   return createPopulatedContactsListViewModelFromSavedContacts(
     me,
-    createSavedContactsListItems(contacts, "", formatMeDisplayName),
-    formatMeDisplayName,
+    createSavedContactsListItems(contacts, "", getDisplayName),
+    getDisplayName,
   );
 }
 
 export function createContactsListViewModel(
   me: Contact,
   contacts: readonly Contact[],
-  formatMeDisplayName?: (name: string) => string,
+  getDisplayName: GetContactDisplayName,
 ): EmptyContactsListViewModel | PopulatedContactsListViewModel {
-  const savedContacts = createSavedContactsListItems(contacts, "", formatMeDisplayName);
+  const savedContacts = createSavedContactsListItems(contacts, "", getDisplayName);
 
   if (savedContacts.length > 0) {
-    return createPopulatedContactsListViewModelFromSavedContacts(
-      me,
-      savedContacts,
-      formatMeDisplayName,
-    );
+    return createPopulatedContactsListViewModelFromSavedContacts(me, savedContacts, getDisplayName);
   }
 
-  return createEmptyContactsListViewModel(me, formatMeDisplayName);
+  return createEmptyContactsListViewModel(me, getDisplayName);
 }
 
 export function createContactsSearchViewModel(
   me: Contact,
   contacts: readonly Contact[],
   query: string,
-  formatMeDisplayName?: (name: string) => string,
+  getDisplayName: GetContactDisplayName,
 ): ContactsSearchViewModel {
   const normalizedQuery = query.trim().toLowerCase();
 
   if (normalizedQuery.length === 0) {
     return {
       status: "results",
-      ...createPopulatedContactsListViewModel(me, contacts, formatMeDisplayName),
+      ...createPopulatedContactsListViewModel(me, contacts, getDisplayName),
     };
   }
 
-  const savedContacts = createSavedContactsListItems(
-    contacts,
-    normalizedQuery,
-    formatMeDisplayName,
-  );
-  const matchingMe = isMeContactMatching(me, normalizedQuery, formatMeDisplayName)
-    ? createContactsListItem(me, formatMeDisplayName)
+  const savedContacts = createSavedContactsListItems(contacts, normalizedQuery, getDisplayName);
+  const matchingMe = isMeContactMatching(me, normalizedQuery, getDisplayName)
+    ? createContactsListItem(me, getDisplayName)
     : undefined;
 
   if (savedContacts.length === 0 && !matchingMe) {

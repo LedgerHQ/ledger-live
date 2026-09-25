@@ -1,10 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Contact, ContactId } from "@domain/entity-contact";
-import {
-  useMeDisplayNameFormatter,
-  useContacts,
-  useContactsMeContact,
-} from "@features/platform-contacts";
+import { useContacts, useContactsMeContact } from "@features/platform-contacts";
 import {
   useContactsSearchViewModel,
   type ContactsListViewLabels,
@@ -26,7 +22,6 @@ export function useAddToExistingContactViewModel({
   const trackingProperties = useSendFlowTrackingProperties();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const formatMeDisplayName = useMeDisplayNameFormatter();
   const labels = useMemo(
     (): ContactsListViewLabels => ({
       title: t("send.newSendFlow.addContact.selectContact"),
@@ -34,12 +29,11 @@ export function useAddToExistingContactViewModel({
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName,
     }),
-    [formatMeDisplayName, t],
+    [t],
   );
 
-  const listViewModel = useContactsSearchViewModel(searchQuery, labels.formatMeDisplayName);
+  const listViewModel = useContactsSearchViewModel(searchQuery);
 
   const onSearchQueryChange = useCallback((query: string) => {
     setSearchQuery(query);

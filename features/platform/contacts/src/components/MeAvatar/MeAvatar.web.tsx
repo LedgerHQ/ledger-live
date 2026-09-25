@@ -1,5 +1,6 @@
 import React from "react";
 import { Avatar, type AvatarProps as LumenAvatarProps } from "@ledgerhq/lumen-ui-react";
+import { useContactDisplayName } from "../../hooks/useContactDisplayName";
 import { ME_AVATAR_URL } from "./meAvatarUrl";
 
 export type MeAvatarProps = Readonly<{
@@ -16,15 +17,16 @@ export function MeAvatar({
   testId,
   ariaHidden = false,
 }: MeAvatarProps): React.JSX.Element {
+  const label = useContactDisplayName()({ name, isMe: true });
   const accessibilityProps = ariaHidden
     ? { "aria-hidden": true as const }
-    : { role: "img" as const, "aria-label": name };
+    : { role: "img" as const, "aria-label": label };
 
   return (
     <Avatar
       size={size}
       src={ME_AVATAR_URL}
-      alt={name}
+      alt={label}
       data-testid={testId}
       {...accessibilityProps}
     />

@@ -24,7 +24,7 @@ describe("getRecipientHeaderPresentation", () => {
   it("should return the contact when the address belongs to a contact", () => {
     expect(getRecipientHeaderPresentation(baseArgs)).toEqual({
       label: "Benoit Jean",
-      contact: { id: "contact-benoit", name: "Benoit Jean" },
+      contact: { id: "contact-benoit", name: "Benoit Jean", isMe: false },
     });
   });
 
@@ -53,7 +53,7 @@ describe("getRecipientHeaderPresentation", () => {
       }),
     ).toEqual({
       label: "Alice",
-      contact: { id: "contact-alice", name: "Alice" },
+      contact: { id: "contact-alice", name: "Alice", isMe: false },
     });
   });
 

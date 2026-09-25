@@ -502,7 +502,7 @@ describe("PayTab integration", () => {
 
       expect(await screen.findByRole("button", { name: "New" })).toBeVisible();
       expect(screen.getByRole("button", { name: "Contact 6" })).toBeVisible();
-      expect(screen.getByRole("button", { name: "Me" })).toBeVisible();
+      expect(screen.getByRole("button", { name: "My addresses (Me)" })).toBeVisible();
       expect(screen.queryByRole("button", { name: "Contact 7" })).not.toBeOnTheScreen();
 
       await user.press(screen.getByText("Pay"));

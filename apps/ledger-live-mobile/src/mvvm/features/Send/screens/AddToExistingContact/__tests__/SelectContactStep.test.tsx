@@ -21,7 +21,7 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
 
 const me = mockMeContact();
 const ada = mockContact({ id: "contact-ada", name: "Ada" });
-const viewModel = createPopulatedContactsListViewModel(me, [me, ada]);
+const viewModel = createPopulatedContactsListViewModel(me, [me, ada], contact => contact.name);
 const labels = {
   title: "Select contact",
   searchPlaceholder: "Search contact",

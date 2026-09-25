@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@ledgerhq/lumen-ui-react";
 import { Telegram } from "@ledgerhq/lumen-ui-react/symbols";
-import { ContactAvatar } from "@features/platform-contacts";
+import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
 import { ContactMoreMenu } from "../ContactMoreMenu/ContactMoreMenu.web";
 import { ContactName } from "./ContactName.web";
 import type { Contact } from "@domain/entity-contact";
@@ -32,6 +32,8 @@ export function ContactTile({
   onViewContact,
   onViewTransactions,
 }: ContactTileProps) {
+  const displayName = useContactDisplayName()(contact);
+
   return (
     <TableRow
       clickable={Boolean(onContactPress)}
@@ -44,7 +46,7 @@ export function ContactTile({
             <ContactAvatar contactId={contact.id} name={contact.name} size="sm" ariaHidden />
           </div>
           <TableCellContent>
-            <ContactName name={contact.name} />
+            <ContactName name={displayName} />
           </TableCellContent>
         </TableCellItem>
       </TableCell>
