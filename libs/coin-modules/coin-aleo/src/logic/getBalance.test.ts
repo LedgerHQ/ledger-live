@@ -1,10 +1,11 @@
 import { apiClient } from "../network/api";
 import { sdkClient } from "../network/sdk";
 import { fetchAccountTransactionsFromHeight, fetchAllOwnedRecords } from "../network/utils";
-import { PROGRAM_ID } from "../constants";
+import { MIN_DELEGATOR_STAKE_MICROCREDITS, PROGRAM_ID } from "../constants";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import {
+  earningValidator,
   getMockedDecryptedRecord,
   getMockedGetTokensResponse,
   getMockedRecord,
@@ -14,6 +15,8 @@ import {
 } from "../__tests__/fixtures/api.fixture";
 import type { AleoContext } from "../types";
 import { getBalance } from "./getBalance";
+import { getValidators } from "./getValidators";
+import { lastBlock } from "./lastBlock";
 
 jest.mock("../network/api");
 jest.mock("../network/sdk");
@@ -22,17 +25,32 @@ jest.mock("../network/utils", () => ({
   fetchAccountTransactionsFromHeight: jest.fn(),
   fetchAllOwnedRecords: jest.fn(),
 }));
+jest.mock("./getValidators");
+jest.mock("./lastBlock");
 
 const mockGetAccountBalance = jest.mocked(apiClient.getAccountBalance);
 const mockGetTokenBalance = jest.mocked(apiClient.getTokenBalance);
 const mockGetTokens = jest.mocked(apiClient.getTokens);
 const mockGetRecordScannerStatus = jest.mocked(apiClient.getRecordScannerStatus);
+const mockGetBondedMapping = jest.mocked(apiClient.getBondedMapping);
+const mockGetUnbondingMapping = jest.mocked(apiClient.getUnbondingMapping);
+const mockGetWithdrawMapping = jest.mocked(apiClient.getWithdrawMapping);
 const mockDecryptRecord = jest.mocked(sdkClient.decryptRecord);
 const mockFetchAccountTransactionsFromHeight = jest.mocked(fetchAccountTransactionsFromHeight);
 const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
+const mockGetValidators = jest.mocked(getValidators);
+const mockLastBlock = jest.mocked(lastBlock);
+
+const VALIDATOR_ADDRESS = earningValidator.address;
+const CURRENT_HEIGHT = 1_000;
+
+const bondedRaw = (microcredits: number) =>
+  `{\n  validator: ${VALIDATOR_ADDRESS},\n  microcredits: ${microcredits}u64\n}`;
+const unbondingRaw = (microcredits: number, height: number) =>
+  `{\n  microcredits: ${microcredits}u64,\n  height: ${height}u32\n}`;
 
 describe("getBalance", () => {
-  const mockConfig = getMockedConfig("mainnet");
+  const mockConfig = { ...getMockedConfig("mainnet"), enableStaking: true };
   const address = getMockedAccount().freshAddress;
   const provableId = "provable-id-1";
   const viewKey = "AViewKey1mock";
@@ -60,6 +78,11 @@ describe("getBalance", () => {
       nextCursor: null,
     });
     mockFetchAllOwnedRecords.mockResolvedValue([]);
+    mockGetBondedMapping.mockResolvedValue(null);
+    mockGetUnbondingMapping.mockResolvedValue(null);
+    mockGetWithdrawMapping.mockResolvedValue(null);
+    mockGetValidators.mockResolvedValue([earningValidator]);
+    mockLastBlock.mockResolvedValue({ hash: "hash", height: CURRENT_HEIGHT, time: new Date() });
   });
 
   it("no provableId/viewKey — throws before any network call", async () => {
@@ -360,5 +383,49 @@ describe("getBalance", () => {
     expect(thrownForViewKey).toBeInstanceOf(Error);
     expect((thrownForViewKey as Error).message).not.toContain(secretViewKey);
     expect(Object.keys(thrownForViewKey as Error)).not.toContain("viewKey");
+  });
+
+  describe("staked and unbonding components", () => {
+    beforeEach(() => {
+      mockGetRecordScannerStatus.mockResolvedValue(getMockedRecordScannerStatus());
+    });
+
+    it("returns a single liquid native entry when nothing is staked", async () => {
+      const result = await getBalance({ ...context, provableId, viewKey }, address);
+
+      expect(result.filter(balance => balance.asset.type === "native")).toEqual([
+        { value: 5_000_000n, asset: { type: "native" } },
+      ]);
+    });
+
+    it("adds bonded and unbonding to the native total as locked, and reports each as a stake entry", async () => {
+      const LIQUID_MICROCREDITS = 5_000_000n;
+      const UNBONDING_MICROCREDITS = 3_000_000;
+      mockGetBondedMapping.mockResolvedValue(bondedRaw(MIN_DELEGATOR_STAKE_MICROCREDITS));
+      mockGetUnbondingMapping.mockResolvedValue(
+        unbondingRaw(UNBONDING_MICROCREDITS, CURRENT_HEIGHT),
+      );
+
+      const result = await getBalance({ ...context, provableId, viewKey }, address);
+      const totalStaked = BigInt(MIN_DELEGATOR_STAKE_MICROCREDITS) + BigInt(UNBONDING_MICROCREDITS);
+
+      expect(result.filter(balance => balance.asset.type === "native")).toEqual([
+        {
+          value: LIQUID_MICROCREDITS + totalStaked,
+          locked: totalStaked,
+          asset: { type: "native" },
+        },
+        {
+          value: BigInt(MIN_DELEGATOR_STAKE_MICROCREDITS),
+          asset: { type: "native" },
+          stake: expect.objectContaining({ delegate: VALIDATOR_ADDRESS, state: "active" }),
+        },
+        {
+          value: BigInt(UNBONDING_MICROCREDITS),
+          asset: { type: "native" },
+          stake: expect.objectContaining({ state: "withdrawable" }),
+        },
+      ]);
+    });
   });
 });
