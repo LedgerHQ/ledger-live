@@ -151,6 +151,7 @@ export function createFeatureFlagsMiddleware<S = unknown>(
       void Promise.resolve().then(() => {
         dispatchSafely(() => dispatchSync(false), reportError, 1);
         dispatchSafely(dispatchCacheSettled, reportError, 1);
+        if (!fetchRemoteFlags) dispatchSafely(dispatchReady, reportError, 1);
       });
       if (fetchRemoteFlags) {
         // Deliberately a bare call: the middleware tests drain a fixed number of microtask turns,

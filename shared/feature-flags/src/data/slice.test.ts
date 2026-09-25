@@ -527,6 +527,23 @@ describe("cache prime", () => {
     expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
   });
 
+  it("arms readiness with env overrides applied when neither a reader nor a fetcher is set", async () => {
+    const store = createStore(undefined, {
+      resolutionConfig: { envFlags: { mockFeature: { enabled: true } } },
+    });
+    expect(store.getState().featureFlags.remoteFlagsReady).toBe(false);
+
+    await jest.advanceTimersByTimeAsync(0);
+
+    const { featureFlags } = store.getState();
+    expect(featureFlags.cachedFlagsSettled).toBe(true);
+    expect(featureFlags.remoteFlagsReady).toBe(true);
+    expect(featureFlags.resolved.mockFeature).toMatchObject({
+      enabled: true,
+      overriddenByEnv: true,
+    });
+  });
+
   it("still applies envFlags when there is no fetcher and the cache is empty", async () => {
     // On this branch the prime is the only thing that will ever open the gate, so it has to stand
     // in for the first poll completely. Arming readiness without re-resolving would release
