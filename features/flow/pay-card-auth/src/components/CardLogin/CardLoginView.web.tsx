@@ -60,8 +60,8 @@ export function CardLoginView({
 function CardLoginSkeleton() {
   return (
     <div className="flex flex-col items-center gap-16" data-testid="card-login-skeleton">
-      <Skeleton className="h-48 w-full rounded-full" />
-      <Skeleton className="h-48 w-full rounded-full" />
+      <Skeleton className="h-56 w-full rounded-md" />
+      <Skeleton className="h-56 w-full rounded-md" />
     </div>
   );
 }
