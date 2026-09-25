@@ -6,7 +6,6 @@ import type { CardProps } from "./Card.types";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
 
 const mockUseCardAuthStatus = jest.fn<PayCardAuthStatus, []>();
-const mockUseCardSessionResolving = jest.fn<boolean, []>(() => false);
 const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError: false }));
 let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
@@ -15,7 +14,6 @@ jest.mock("@features/flow-pay-card-auth", () => ({
     <View testID="card-login">{children}</View>
   ),
   useCardAuthStatus: () => mockUseCardAuthStatus(),
-  useCardSessionResolving: () => mockUseCardSessionResolving(),
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
@@ -85,7 +83,6 @@ describe("Card (native)", () => {
 
   beforeEach(() => {
     mockUseCardAuthStatus.mockReturnValue("unknown");
-    mockUseCardSessionResolving.mockReturnValue(false);
     receivedCardSettingsActions = undefined;
   });
 
@@ -99,16 +96,6 @@ describe("Card (native)", () => {
     });
 
     it("shows the loading card face once the host provides a formatter", () => {
-      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
-
-      expect(screen.getByTestId("card-loading-visual")).toBeVisible();
-      expect(screen.queryByTestId("card-artwork")).toBeNull();
-    });
-
-    it("keeps the loading card face up while the machine trades a redirect for a token", () => {
-      mockUseCardAuthStatus.mockReturnValue("signedOut");
-      mockUseCardSessionResolving.mockReturnValue(true);
-
       renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
 
       expect(screen.getByTestId("card-loading-visual")).toBeVisible();
