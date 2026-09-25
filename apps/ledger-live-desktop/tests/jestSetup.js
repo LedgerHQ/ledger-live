@@ -6,6 +6,8 @@ import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq
 import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";
+import { historyKey, inferCurrencyAPIID } from "@domain/entity-market-countervalues";
 import {
   getCryptoCurrencyById,
   findCryptoCurrencyById,
@@ -34,6 +36,7 @@ setFrameworkCryptoAssetsStore({
 
 setAssetAggregationRateLookup({ calculate });
 setWalletAnalyticsRateLookup({ calculate });
+setWalletPnlRateLookup({ calculate, historyKey, currencyApiId: inferCurrencyAPIID });
 import "@jest/globals";
 import "@testing-library/jest-dom";
 import { configure } from "@testing-library/react";

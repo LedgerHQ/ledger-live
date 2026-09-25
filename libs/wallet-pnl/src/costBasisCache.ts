@@ -1,28 +1,11 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
-import { lenseRateMap } from "@ledgerhq/live-countervalues/logic";
-import { formatCounterValueDay, inferCurrencyAPIID } from "@ledgerhq/live-countervalues/helpers";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import { initialCostBasisState, reduceCostBasis } from "./costBasis";
+import { getRateLookup } from "./rateLookup";
 import type { ComputePnLOptions, CostBasisState } from "./types";
 
 const cache = new Map<string, CostBasisState>();
-
-function getHistoryKey(
-  state: CounterValuesState,
-  from: Currency,
-  to: Currency,
-  lastOpDate: Date | null,
-): string {
-  if (inferCurrencyAPIID(from) === inferCurrencyAPIID(to)) return "identity";
-  const pairCache = lenseRateMap(state, { from, to });
-  if (!pairCache) return "noCV";
-  const { oldest, earliest, earliestStableDate } = pairCache.stats;
-  const bucket = lastOpDate ? formatCounterValueDay(lastOpDate) : "0";
-  const earliestRelevant = earliest && earliest <= bucket ? earliest : "";
-  return `${oldest ?? "_"}|${earliestStableDate ?? "_"}|${earliestRelevant}`;
-}
 
 function getLastOpBookmark(account: AccountLike): { id: string; date: Date | null } {
   const ops = account.operations;
@@ -41,7 +24,7 @@ function getLastOpBookmark(account: AccountLike): { id: string; date: Date | nul
 export function getCostBasis(
   account: AccountLike,
   fiat: Currency,
-  countervalues: CounterValuesState,
+  countervalues: unknown,
   options?: ComputePnLOptions,
 ): CostBasisState {
   const asset = getAccountCurrency(account);
@@ -57,9 +40,10 @@ export function getCostBasis(
     );
   }
 
+  const rateLookup = getRateLookup();
   const { id: lastOpId, date: lastOpDate } = getLastOpBookmark(account);
-  const historyKey = getHistoryKey(countervalues, asset, fiat, lastOpDate);
-  const fiatKey = inferCurrencyAPIID(fiat);
+  const historyKey = rateLookup.historyKey(countervalues, asset, fiat, lastOpDate);
+  const fiatKey = rateLookup.currencyApiId(fiat);
   const key = `${account.id}|${fiatKey}|${lastOpId}|${historyKey}`;
 
   const hit = cache.get(key);

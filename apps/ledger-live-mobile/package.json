@@ -105,6 +105,7 @@
     "@domain/entity-currency-token": "workspace:^",
     "@domain/entity-currency-unit": "workspace:^",
     "@domain/entity-interest-rate": "workspace:*",
+    "@domain/entity-market-countervalues": "workspace:^",
     "@domain/entity-market-index-altcoin-season": "workspace:^",
     "@domain/entity-market-index-fear-and-greed": "workspace:^",
     "@domain/entity-recent-addresses": "workspace:^",
