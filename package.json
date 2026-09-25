@@ -291,7 +291,6 @@
       "detox@20.51.3": "patches/detox@20.51.3.patch",
       "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch",
       "@taquito/http-utils": "patches/@taquito__http-utils.patch",
-      "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
       "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch",
       "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
       "react-native@0.81.6": "patches/react-native@0.81.6.patch",
@@ -300,7 +299,8 @@
       "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch",
       "usb@2.17.0": "patches/usb@2.17.0.patch",
       "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch",
-      "@hiero-ledger/proto@2.25.0": "patches/@hiero-ledger__proto@2.25.0.patch"
+      "@hiero-ledger/proto@2.25.0": "patches/@hiero-ledger__proto@2.25.0.patch",
+      "react-native-webview@14.0.1": "patches/react-native-webview@14.0.1.patch"
     },
     "packageExtensions": {
       "@ledgerhq/coin-module-framework": {

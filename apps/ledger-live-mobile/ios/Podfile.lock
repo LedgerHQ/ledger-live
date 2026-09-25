@@ -257,28 +257,28 @@ PODS:
   - GoogleDataTransport (10.1.1):
     - nanopb (~> 3.30910.0)
     - PromisesObjC (~> 2.4)
-  - GoogleUtilities/AppDelegateSwizzler (8.1.2):
+  - GoogleUtilities/AppDelegateSwizzler (8.1.3):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Environment (8.1.2):
+  - GoogleUtilities/Environment (8.1.3):
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Logger (8.1.2):
+  - GoogleUtilities/Logger (8.1.3):
     - GoogleUtilities/Environment
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Network (8.1.2):
+  - GoogleUtilities/Network (8.1.3):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Privacy
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (8.1.2)":
+  - "GoogleUtilities/NSData+zlib (8.1.3)":
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Privacy (8.1.2)
-  - GoogleUtilities/Reachability (8.1.2):
+  - GoogleUtilities/Privacy (8.1.3)
+  - GoogleUtilities/Reachability (8.1.3):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
-  - GoogleUtilities/UserDefaults (8.1.2):
+  - GoogleUtilities/UserDefaults (8.1.3):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
   - hermes-engine (0.81.6):
@@ -2247,34 +2247,8 @@ PODS:
     - Yoga
   - react-native-launch-arguments (4.0.2):
     - React
-  - react-native-netinfo (12.0.1):
-    - boost
-    - DoubleConversion
-    - fast_float
-    - fmt
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCT-Folly/Fabric
-    - RCTRequired
-    - RCTTypeSafety
+  - react-native-netinfo (11.4.1):
     - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - SocketRocket
-    - Yoga
   - react-native-pager-view (7.0.0):
     - boost
     - DoubleConversion
@@ -2601,7 +2575,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-webview (13.16.0):
+  - react-native-webview (14.0.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -3717,7 +3691,7 @@ DEPENDENCIES:
   - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_10c2a4dd6e488f5d32af795229f6b436/node_modules/react-native-image-crop-tools`)"
   - "react-native-image-picker (from `../../../node_modules/.pnpm/react-native-image-picker@8.2.0_react-native@0._2675aa72c05fd373bb4ab156fa8c7e04/node_modules/react-native-image-picker`)"
   - "react-native-launch-arguments (from `../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_c4bbb6fd9a1925e903fa616a647715a9/node_modules/react-native-launch-arguments`)"
-  - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@12.0.1_react-na_c835164ab25df800ff6cf8807cb782f6/node_modules/@react-native-community/netinfo`)"
+  - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@11.4.1_react-na_86e92b27cfbc2cc37825bfe76bb15e23/node_modules/@react-native-community/netinfo`)"
   - "react-native-pager-view (from `../../../node_modules/.pnpm/react-native-pager-view@7.0.0_react-native@0.81_c0ff24837a45f8c2423b5ee7da79e1b6/node_modules/react-native-pager-view`)"
   - "react-native-randombytes (from `../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes`)"
   - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.81.6_f4e95484bb2762619f4b89d0ee00b582/node_modules/react-native-restart`)"
@@ -3730,7 +3704,7 @@ DEPENDENCIES:
   - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
   - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_f6cee87bac56333e1bcaa7ed5e65d1cc/node_modules/react-native-video`)"
   - "react-native-view-shot (from `../../../node_modules/.pnpm/react-native-view-shot@5.1.1_react-native@0.81._83e6766540172c22b2f788432d1311fb/node_modules/react-native-view-shot`)"
-  - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@13.16.0_patch_hash=d6fc65a_5f0ced0e93cf39ab8ad54ed459a34635/node_modules/react-native-webview`)"
+  - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@14.0.1_react-native@0.81.6_34212adc1d183fa1b23bd3ebd1464f52/node_modules/react-native-webview`)"
   - "React-NativeModulesApple (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)"
   - "React-oscompat (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/ReactCommon/oscompat`)"
   - "React-perflogger (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/ReactCommon/reactperflogger`)"
@@ -3767,9 +3741,9 @@ DEPENDENCIES:
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.9_rea_9f463ab6f0d191fdd306a850817bdf11/node_modules/@react-native-masked-view/masked-view`)"
   - "RNDeviceInfo (from `../../../node_modules/.pnpm/react-native-device-info@11.1.0_react-native@0._f1edf7871ea9376f46bb26851d8f16fc/node_modules/react-native-device-info`)"
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_891d9f6abe81c0fe843d59433e768e9a/node_modules/react-native-fast-image`)"
-  - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_b00f6ff242b280623ed7891b1c3b6575/node_modules/@react-native-firebase/app`)"
-  - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_76db1e70a2beb8104b6f439bc477555c/node_modules/@react-native-firebase/messaging`)"
-  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@22.2.0_@re_34c57b21a6ef422b8aea67fcc0589b7d/node_modules/@react-native-firebase/remote-config`)"
+  - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_@react-native_78dc609c4b1ed491b966546a18c785d9/node_modules/@react-native-firebase/app`)"
+  - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_5a8679a257eaa95ba337a8a880a87da5/node_modules/@react-native-firebase/messaging`)"
+  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@22.2.0_@re_d899df297098195ed69b916ab3a94884/node_modules/@react-native-firebase/remote-config`)"
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_0a7cb677e518f2e9f30a24dde608028e/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_22b59121ec847ba53fb2e7d8aec6c181/node_modules/react-native-localize`)"
@@ -3843,7 +3817,7 @@ EXTERNAL SOURCES:
   EXImageLoader:
     :path: "../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo@54.0.33_@babel+cor_d2551dbf6ee14e65e9adb05ebc0496a4/node_modules/expo-image-loader/ios"
   Expo:
-    :path: "../../../node_modules/.pnpm/expo@54.0.33_@babel+core@7.28.5_@typescript+typ_2a00541bc325cf16b8598f974224ee6d/node_modules/expo"
+    :path: "../../../node_modules/.pnpm/expo@54.0.33_38d265fbfc06f73f6e3d4a136a7a73aa/node_modules/expo"
   ExpoAsset:
     :path: "../../../node_modules/.pnpm/expo-asset@12.0.13_@typescript+typescript6@6.0._ffd393dcaf553fd63fd2bba5bacded5c/node_modules/expo-asset/ios"
   ExpoCrypto:
@@ -3966,7 +3940,7 @@ EXTERNAL SOURCES:
   react-native-launch-arguments:
     :path: "../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_c4bbb6fd9a1925e903fa616a647715a9/node_modules/react-native-launch-arguments"
   react-native-netinfo:
-    :path: "../../../node_modules/.pnpm/@react-native-community+netinfo@12.0.1_react-na_c835164ab25df800ff6cf8807cb782f6/node_modules/@react-native-community/netinfo"
+    :path: "../../../node_modules/.pnpm/@react-native-community+netinfo@11.4.1_react-na_86e92b27cfbc2cc37825bfe76bb15e23/node_modules/@react-native-community/netinfo"
   react-native-pager-view:
     :path: "../../../node_modules/.pnpm/react-native-pager-view@7.0.0_react-native@0.81_c0ff24837a45f8c2423b5ee7da79e1b6/node_modules/react-native-pager-view"
   react-native-randombytes:
@@ -3992,7 +3966,7 @@ EXTERNAL SOURCES:
   react-native-view-shot:
     :path: "../../../node_modules/.pnpm/react-native-view-shot@5.1.1_react-native@0.81._83e6766540172c22b2f788432d1311fb/node_modules/react-native-view-shot"
   react-native-webview:
-    :path: "../../../node_modules/.pnpm/react-native-webview@13.16.0_patch_hash=d6fc65a_5f0ced0e93cf39ab8ad54ed459a34635/node_modules/react-native-webview"
+    :path: "../../../node_modules/.pnpm/react-native-webview@14.0.1_react-native@0.81.6_34212adc1d183fa1b23bd3ebd1464f52/node_modules/react-native-webview"
   React-NativeModulesApple:
     :path: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-oscompat:
@@ -4066,11 +4040,11 @@ EXTERNAL SOURCES:
   RNFastImage:
     :path: "../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_891d9f6abe81c0fe843d59433e768e9a/node_modules/react-native-fast-image"
   RNFBApp:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_b00f6ff242b280623ed7891b1c3b6575/node_modules/@react-native-firebase/app"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_@react-native_78dc609c4b1ed491b966546a18c785d9/node_modules/@react-native-firebase/app"
   RNFBMessaging:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_76db1e70a2beb8104b6f439bc477555c/node_modules/@react-native-firebase/messaging"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_5a8679a257eaa95ba337a8a880a87da5/node_modules/@react-native-firebase/messaging"
   RNFBRemoteConfig:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@22.2.0_@re_34c57b21a6ef422b8aea67fcc0589b7d/node_modules/@react-native-firebase/remote-config"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@22.2.0_@re_d899df297098195ed69b916ab3a94884/node_modules/@react-native-firebase/remote-config"
   RNGestureHandler:
     :path: "../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_0a7cb677e518f2e9f30a24dde608028e/node_modules/react-native-gesture-handler"
   RNKeychain:
@@ -4143,7 +4117,7 @@ SPEC CHECKSUMS:
   fmt: ef0a98103bd75695e5734efe6b9016b2675ffcd5
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   GoogleDataTransport: a24e58982ab3ba2f64d79613e027fe7f57e88539
-  GoogleUtilities: 766ace00c6b10d8148408f329d10c4f051931850
+  GoogleUtilities: 4e0c2ad9fa0d0d18b5c4df8bf57b461cba35b0bb
   hermes-engine: 7219f6e751ad6ec7f3d7ec121830ee34dae40749
   JWTDecode: 2eed97c2fa46ccaf3049a787004eedf0be474a87
   KSCrash: 8c4464fd5da7de520f2ce4a00fdf63f169a80f18
@@ -4199,7 +4173,7 @@ SPEC CHECKSUMS:
   react-native-image-crop-tools: 0995d2ece9b4b6b04d298bd1dfe00b2b841507f2
   react-native-image-picker: 12721145cf1f5a72d9de03beecf19b6df79f6c1a
   react-native-launch-arguments: d4759f7591e2766e6c5ec746b7032429edaf7058
-  react-native-netinfo: 9fad4eedfec9840a10e73ac4591ea1158523309b
+  react-native-netinfo: cec9c4e86083cb5b6aba0e0711f563e2fbbff187
   react-native-pager-view: 4046e20b89f9ec1d29155668eb06c76a5f464951
   react-native-randombytes: 3c8f3e89d12487fd03a2f966c288d495415fc116
   react-native-restart: b195f3ec6628c041e52753fe84a4851240267957
@@ -4212,7 +4186,7 @@ SPEC CHECKSUMS:
   react-native-version-number: 3d74b5224ca4e1032b1593937d86d3f3c94bf95c
   react-native-video: 6ed94120c73e29c8fbea89ec4e3cedf3528751d6
   react-native-view-shot: 5ed55de8892be2746074c2f8066e6abc21dd6fd3
-  react-native-webview: cdce419e8022d0ef6f07db21890631258e7a9e6e
+  react-native-webview: 565438c513f95a3a6c82d14492d4a3794914d50c
   React-NativeModulesApple: 76d9e54adf2b333d0939bbd18102c62bdfebb934
   React-oscompat: d5e3366fbd6c7150e17c1bda85eab583a6fa9fce
   React-perflogger: 2e4ca29b2bc69c80ef5133de127f5a3c2357c583
