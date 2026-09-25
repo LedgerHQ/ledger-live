@@ -138,14 +138,16 @@ export async function primeFromCache(
   readCachedFlags: () => Promise<PartialFeatures>,
   { ref, dispatchSync, reportError }: ReadContext,
 ): Promise<void> {
+  let cached: PartialFeatures;
   try {
-    const cached = await readCachedFlags();
-    if (Object.keys(cached).length > 0) {
-      ref.current = cached;
-      dispatchSync(true);
-    }
+    cached = await readCachedFlags();
   } catch (error) {
     reportError(error, "cache", 1);
+    return;
+  }
+  if (Object.keys(cached).length > 0) {
+    ref.current = cached;
+    dispatchSafely(() => dispatchSync(true), reportError, 1);
   }
 }
 

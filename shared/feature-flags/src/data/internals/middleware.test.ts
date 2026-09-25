@@ -163,6 +163,24 @@ describe("primeFromCache", () => {
     expect(dispatchSync).not.toHaveBeenCalled();
     expect(dispatchReady).not.toHaveBeenCalled();
   });
+
+  it("reports a throwing re-resolution as a sync failure, not a cache one", async () => {
+    const failure = new Error("reducer blew up");
+    const reportError = jest.fn();
+
+    await primeFromCache(() => Promise.resolve({ mockFeature: { enabled: true } }), {
+      ref: { current: {} },
+      dispatchSync: () => {
+        throw failure;
+      },
+      dispatchReady: jest.fn(),
+      dispatchCacheSettled: jest.fn(),
+      reportError,
+    });
+
+    expect(reportError).toHaveBeenCalledTimes(1);
+    expect(reportError).toHaveBeenCalledWith(failure, "sync", 1);
+  });
 });
 
 describe("createLanguageWatcher", () => {

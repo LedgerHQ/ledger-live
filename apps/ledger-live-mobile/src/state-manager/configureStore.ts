@@ -63,13 +63,18 @@ import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
  * `DEBUG_ERROR` builds and so would make this *less* visible than a plain warning. Desktop uses
  * `logger.critical` instead, because there it really is the Datadog path.
  *
- * A `sync` failure is a bug whatever `isCold` says, so it is always reported. It happens during
- * boot, before Datadog is initialized and starts intercepting `console.error`, hence the explicit
- * `DdRum.addError`, which the SDK buffers until initialization.
+ * A `sync` failure is a bug whatever `isCold` says, so it is reported, but only at boot: a later
+ * poll would repeat the same failure every interval. Boot is before Datadog is initialized and
+ * starts intercepting `console.error`, hence the explicit `DdRum.addError`, which the SDK buffers
+ * until initialization.
  */
-function reportFeatureFlagsReadFailure(error: unknown, { stage, isCold }: FeatureFlagsReadFailure) {
+function reportFeatureFlagsReadFailure(
+  error: unknown,
+  { stage, attempt, isCold }: FeatureFlagsReadFailure,
+) {
   if (stage === "sync") {
-    const message = "Feature flags: re-resolution threw, running on the previous values";
+    if (attempt !== 1) return;
+    const message = "Feature flags: re-resolution failed at boot, running on compiled defaults";
     console.error(message, error);
     if (isDatadogEnabled) {
       DdRum.addError(

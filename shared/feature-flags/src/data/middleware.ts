@@ -45,10 +45,12 @@ export type FeatureFlagsReadStage = "cache" | "remote" | "sync";
  *   for how long this session has been misconfigured.
  * - `remote` / attempt n > 1 / warm — a routine poll failure with values in place. Expected on any
  *   flaky connection, and usually not worth reporting.
- * - `sync` / any attempt / cold or warm — a reducer or a downstream middleware threw while the
- *   slice was being re-resolved, so it still holds the previous values. Always a bug, never
- *   routine, whatever `isCold` says. The boot signals are armed anyway, so a startup waiting on
- *   them is not stranded.
+ * - `sync` / attempt 1 / cold or warm — a reducer or a downstream middleware threw while the
+ *   slice was being re-resolved at boot, so it was left unresolved, usually on compiled
+ *   defaults. Always a bug, whatever `isCold` says. The boot signals are armed anyway, so a
+ *   startup waiting on them is not stranded.
+ * - `sync` / attempt n > 1 — the same failure on a later poll. Caught so the poll loop survives,
+ *   but a deterministic bug already surfaced at attempt 1, so it is usually not worth reporting.
  *
  * `cache` combined with a warm map, or with an attempt above 1, cannot happen.
  */
