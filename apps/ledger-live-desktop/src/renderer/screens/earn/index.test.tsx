@@ -256,40 +256,6 @@ describe("Earn screen", () => {
     expect(lastCall.inputs.stableSavings).toBe(JSON.stringify({ enabled: false }));
   });
 
-  it("passes ptxEarnCtaOnMobile with enabled and params", () => {
-    render(<Earn />, {
-      initialState: withFlagOverrides({
-        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
-        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
-        ptxEarnCtaOnMobile: { enabled: true, params: { cohort: "a" } },
-      }),
-    });
-
-    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
-      inputs: Record<string, string | undefined>;
-    };
-
-    expect(lastCall.inputs.ptxEarnCtaOnMobile).toBe(
-      JSON.stringify({ enabled: true, params: { cohort: "a" } }),
-    );
-  });
-
-  it("passes ptxEarnCtaOnMobile with enabled=false and no params key", () => {
-    render(<Earn />, {
-      initialState: withFlagOverrides({
-        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
-        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
-        ptxEarnCtaOnMobile: { enabled: false },
-      }),
-    });
-
-    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
-      inputs: Record<string, string | undefined>;
-    };
-
-    expect(lastCall.inputs.ptxEarnCtaOnMobile).toBe(JSON.stringify({ enabled: false }));
-  });
-
   it("passes uiVersion v4 when earn simulator is enabled", () => {
     render(<Earn />, {
       initialState: withFlagOverrides({

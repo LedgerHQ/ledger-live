@@ -4,4 +4,4 @@
 "live-mobile": minor
 ---
 
-Add the `ptxEarnCtaOnMobile` feature flag and forward it to Earn and analytics.
+Add the `ptxEarnCtaOnMobile` feature flag and send it to Mixpanel as a boolean identify trait. Earn reads it via Wallet API.

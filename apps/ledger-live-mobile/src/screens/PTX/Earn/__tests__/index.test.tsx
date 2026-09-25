@@ -136,28 +136,6 @@ describe("EarnScreen canvas background wiring", () => {
     expect(capturedProps.current?.inputs?.stableSavings).toBe(JSON.stringify({ enabled: false }));
   });
 
-  it("should pass ptxEarnCtaOnMobile with enabled and params", () => {
-    renderEarnScreen("deposit", {
-      lwmWallet40: { enabled: true },
-      ptxEarnCtaOnMobile: { enabled: true, params: { cohort: "a" } },
-    });
-
-    expect(capturedProps.current?.inputs?.ptxEarnCtaOnMobile).toBe(
-      JSON.stringify({ enabled: true, params: { cohort: "a" } }),
-    );
-  });
-
-  it("should pass ptxEarnCtaOnMobile with enabled=false and no params key", () => {
-    renderEarnScreen("deposit", {
-      lwmWallet40: { enabled: true },
-      ptxEarnCtaOnMobile: { enabled: false },
-    });
-
-    expect(capturedProps.current?.inputs?.ptxEarnCtaOnMobile).toBe(
-      JSON.stringify({ enabled: false }),
-    );
-  });
-
   it("should pass the device-intent sign flag state", () => {
     renderEarnScreen("deposit", {
       lwmWallet40: { enabled: true },
