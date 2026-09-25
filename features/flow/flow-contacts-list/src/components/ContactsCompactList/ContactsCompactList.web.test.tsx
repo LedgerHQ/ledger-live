@@ -12,6 +12,7 @@ import { ContactsCompactList } from "../../index";
 const labels = {
   emptyAddress: "No saved addresses",
   formatAddressCount: (count: number) => `${count} saved addresses`,
+  formatMeDisplayName: (name: string) => `${name} (Me)`,
 };
 
 function createContacts(): readonly Contact[] {

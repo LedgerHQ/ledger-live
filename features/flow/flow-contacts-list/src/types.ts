@@ -59,7 +59,7 @@ export type ContactsListViewLabels = Readonly<{
 export type ContactsCompactListLabels = Readonly<{
   emptyAddress: string;
   formatAddressCount: (count: number) => string;
-  formatMeDisplayName?: (name: string) => string;
+  formatMeDisplayName: (name: string) => string;
 }>;
 
 export type ContactsCompactRowProps = Readonly<{

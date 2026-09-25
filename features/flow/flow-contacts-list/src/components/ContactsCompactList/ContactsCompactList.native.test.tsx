@@ -12,6 +12,7 @@ import { ContactsCompactList } from "../../index.native";
 const labels = {
   emptyAddress: "No saved addresses",
   formatAddressCount: (count: number) => `${count} saved addresses`,
+  formatMeDisplayName: (name: string) => `${name} (Me)`,
 };
 
 function createContacts(): readonly Contact[] {
@@ -60,7 +61,7 @@ describe("ContactsCompactList", () => {
           mockContact({ id: "contact-me", name: "Alice", isMe: true }),
           mockContact({ id: "contact-bob", name: "Bob" }),
         ]}
-        labels={{ ...labels, formatMeDisplayName: name => `${name} (Me)` }}
+        labels={labels}
         onContactSelect={jest.fn()}
       />,
     );

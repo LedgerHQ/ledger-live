@@ -1,8 +1,4 @@
 import type { Contact } from "@domain/entity-contact";
-import {
-  identityFormatMeDisplayName,
-  resolveMeContactDisplayName,
-} from "@features/platform-contacts";
 import type { ContactsCompactListProps } from "../../../types";
 
 export function getCompactContactAddressDescription(
@@ -18,16 +14,6 @@ export function getCompactContactAddressDescription(
   }
 
   return labels.formatAddressCount(contact.addresses.length);
-}
-
-export function getCompactContactDisplayName(
-  contact: Contact,
-  labels: ContactsCompactListProps["labels"],
-): string {
-  return resolveMeContactDisplayName(
-    contact,
-    labels.formatMeDisplayName ?? identityFormatMeDisplayName,
-  );
 }
 
 export function getDisplayedCompactContacts(
