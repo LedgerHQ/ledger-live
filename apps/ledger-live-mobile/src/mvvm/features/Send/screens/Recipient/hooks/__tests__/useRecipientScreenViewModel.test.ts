@@ -17,6 +17,9 @@ jest.mock("~/analytics", () => ({
   track: jest.fn(),
 }));
 jest.mock("@features/platform-contacts", () => ({
+  useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).useContactDisplayName,
   isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",
   ).isEligibleAddressCurrency,

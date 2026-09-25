@@ -35,6 +35,7 @@ jest.mock("@features/platform-contacts", () => {
     "@features/platform-contacts",
   );
   return {
+    useContactDisplayName: actual.useContactDisplayName,
     isEligibleAddressCurrency: actual.isEligibleAddressCurrency,
     sortContactsByLastSentThenLastAdded: actual.sortContactsByLastSentThenLastAdded,
     summarizeOutgoingOperationsByContact: actual.summarizeOutgoingOperationsByContact,

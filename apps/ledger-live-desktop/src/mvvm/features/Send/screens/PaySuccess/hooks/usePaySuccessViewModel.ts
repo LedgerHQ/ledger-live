@@ -7,7 +7,7 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { useContactsFeature } from "@features/platform-contacts";
+import { useContactsFeature, useContactDisplayName } from "@features/platform-contacts";
 import { selectContacts, ContactIdSchema } from "@domain/entity-contact";
 import { useSelector } from "LLD/hooks/redux";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -53,6 +53,10 @@ export function usePaySuccessViewModel(): PaySuccessProps {
       }),
     [contacts, currency?.id, isContactsFeatureEnabled, state.recipient],
   );
+  const getDisplayName = useContactDisplayName();
+  const recipientLabel = recipientHeader.contact
+    ? getDisplayName(recipientHeader.contact)
+    : recipientHeader.recipientDisplayValue;
 
   const amountUnit = useMaybeAccountUnit(account ?? undefined) ?? currency?.units[0];
   const amountFormatted = useMemo(() => {
@@ -92,7 +96,7 @@ export function usePaySuccessViewModel(): PaySuccessProps {
     ? {
         id: ContactIdSchema.parse(recipientHeader.contact.id),
         name: recipientHeader.contact.name,
-        isMe: false,
+        isMe: recipientHeader.contact.isMe,
       }
     : undefined;
 
@@ -107,7 +111,7 @@ export function usePaySuccessViewModel(): PaySuccessProps {
 
   return {
     recipient,
-    recipientLabel: recipientHeader.label,
+    recipientLabel,
     amountFormatted,
     fromAccountName,
     networkIcon,

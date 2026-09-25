@@ -24,7 +24,11 @@ import {
 } from "@ledgerhq/live-common/flows/send/utils";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
-import { isEligibleAddressCurrency, useContactsFeature } from "@features/platform-contacts";
+import {
+  isEligibleAddressCurrency,
+  useContactsFeature,
+  useContactDisplayName,
+} from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "~/context/hooks";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
@@ -163,16 +167,20 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
       state.account.currency?.id,
     ],
   );
+  const getDisplayName = useContactDisplayName();
+  const recipientLabel = recipientHeader.contact
+    ? getDisplayName(recipientHeader.contact)
+    : recipientHeader.recipientDisplayValue;
 
   const formattedAddress = useMemo(() => {
     if (isRecipientStep) {
       return formatAddress(recipientSearch.value, SEND_ADDRESS_FORMAT_OPTIONS);
     }
     if (isAmountStep) {
-      return recipientHeader.label;
+      return recipientLabel;
     }
     return "";
-  }, [isRecipientStep, isAmountStep, recipientHeader.label, recipientSearch.value]);
+  }, [isRecipientStep, isAmountStep, recipientLabel, recipientSearch.value]);
 
   // The recipient step keeps a draft in the transaction while the user types: the memo input
   // writes the resolved address as soon as it validates, before anything is confirmed. Going back

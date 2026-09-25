@@ -38,6 +38,9 @@ jest.mock("../../../../../FlowWizard/FlowWizardContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@features/platform-contacts", () => ({
+  useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).useContactDisplayName,
   isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",
   ).isEligibleAddressCurrency,
@@ -505,6 +508,7 @@ describe("useRecipientAddressModalViewModel", () => {
         matchedContact: {
           contactId: contact.id,
           contactName: contact.name,
+          isMe: false,
           addressId: contact.addresses[0]!.id,
           addressLabel: contact.addresses[0]!.label,
           address: contact.addresses[0]!.address,
