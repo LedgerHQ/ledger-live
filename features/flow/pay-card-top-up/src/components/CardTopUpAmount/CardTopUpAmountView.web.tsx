@@ -49,7 +49,7 @@ export function CardTopUpAmountView({
       />
       <DialogBody className="flex flex-col items-center gap-40 py-24">
         <div className="flex w-full flex-col items-center gap-8">
-          <div className="flex w-full items-center justify-center gap-8">
+          <div className="relative flex w-full items-center justify-center px-40">
             <AmountInput
               value={amountText}
               onChange={event => onAmountChange(event.target.value)}
@@ -66,6 +66,7 @@ export function CardTopUpAmountView({
                 size="xs"
                 appearance="gray"
                 aria-label={t("payTab.cardTopUp.toggleInputMode")}
+                className="absolute right-0 top-1/2 -translate-y-1/2"
                 onClick={onToggleInputMode}
                 data-testid="card-top-up-toggle-input-mode"
               />
