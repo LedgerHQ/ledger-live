@@ -16,6 +16,7 @@ import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlock
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
 import {
+  recordExecutorStateFailure,
   trackAppReady,
   trackDeviceflowCanceled,
   trackDeviceflowCompleted,
@@ -112,6 +113,7 @@ export function useDeviceIntentExecutorLWDViewModel<
 
   const wrappedOnExecutorStateChanged = useCallback(
     (state: ExecutorState) => {
+      recordExecutorStateFailure(state);
       if (enabled && state.type === "executingIntent" && !initializationCompletedRef.current) {
         initializationCompletedRef.current = true;
         const { modelId, transport } = mapConnectionResult(state.connectionResult);

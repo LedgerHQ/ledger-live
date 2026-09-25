@@ -1,6 +1,14 @@
 import React from "react";
+import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-mobile";
+import { getErrorSubError } from "@ledgerhq/live-dmk-shared";
 import { InfoState } from "@shared/ui-info-state";
 import { useTranslation } from "~/context/Locale";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
+
+type UnknownErrorStateProps = {
+  state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.UnknownError }>;
+};
 
 /**
  * Rendered when the connect device use case escalates an unexpected error
@@ -10,16 +18,23 @@ import { useTranslation } from "~/context/Locale";
  * "this shouldn't have happened" category. No retry: the host chrome
  * provides the dismiss affordance.
  */
-export function UnknownErrorState(): React.ReactNode {
+export function UnknownErrorState({ state }: Readonly<UnknownErrorStateProps>): React.ReactNode {
   const { t } = useTranslation();
 
   return (
-    <InfoState
-      preset="error"
-      size="hug"
-      title={t("deviceIntentExecutor.errors.intentError.title")}
-      description={t("deviceIntentExecutor.errors.intentError.description")}
-      testID="device-intent-executor-connect-device-unknown-error"
-    />
+    <>
+      <TrackDIEScreen
+        category={PAGE_CONNECT_DEVICE.UnknownError}
+        subError={getErrorSubError(state.error)}
+        refreshSource
+      />
+      <InfoState
+        preset="error"
+        size="hug"
+        title={t("deviceIntentExecutor.errors.intentError.title")}
+        description={t("deviceIntentExecutor.errors.intentError.description")}
+        testID="device-intent-executor-connect-device-unknown-error"
+      />
+    </>
   );
 }

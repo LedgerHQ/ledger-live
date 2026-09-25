@@ -11,6 +11,7 @@ import {
 } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import {
+  recordExecutorStateFailure,
   trackAppReady,
   trackDeviceflowCanceled,
   trackDeviceflowCompleted,
@@ -109,6 +110,7 @@ export function useDeviceIntentExecutorLWMViewModel<
 
   const wrappedOnExecutorStateChanged = useCallback(
     (state: ExecutorState) => {
+      recordExecutorStateFailure(state);
       if (enabled && state.type === "executingIntent" && !initializationCompletedRef.current) {
         initializationCompletedRef.current = true;
         const { modelId, transport } = mapConnectionResult(state.connectionResult);

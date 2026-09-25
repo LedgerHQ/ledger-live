@@ -18,6 +18,7 @@ import { setLastSeenDeviceInfo } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { InitializationInput } from "../types";
+import { recordEnsureAppReadyFailure } from "../utils/trackDeviceIntent";
 import { buildInitializerDevice } from "./utils/buildInitializerDevice";
 import type { InitializerDevice } from "./types";
 
@@ -66,6 +67,10 @@ export function useDeviceContextInitializerComponentLWMViewModel({
     }),
     [dispatch],
   );
+
+  useEffect(() => {
+    recordEnsureAppReadyFailure(state, connectionResult.connectedDevice);
+  }, [connectionResult.connectedDevice, state]);
 
   useEffect(() => {
     const { dmk, sessionId } = connectionResult;
