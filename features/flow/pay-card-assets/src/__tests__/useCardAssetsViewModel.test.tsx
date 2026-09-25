@@ -42,6 +42,7 @@ function stubWallets(
     >[];
     isLoading: boolean;
     isError: boolean;
+    refetch: () => void;
   }> = {},
 ) {
   mockUseCardLinkedWallets.mockReturnValue({
@@ -147,6 +148,19 @@ describe("useCardAssetsViewModel", () => {
     expect(result.current).toMatchObject({
       status: "error",
     });
+  });
+
+  it("should refetch linked wallets when retry is pressed", () => {
+    const refetch = jest.fn();
+    stubWallets({ isError: true, refetch });
+
+    const { result } = renderViewModel();
+
+    act(() => {
+      result.current.onRetryPress();
+    });
+
+    expect(refetch).toHaveBeenCalledTimes(1);
   });
 
   it("should report empty when the card has no linked wallets", () => {

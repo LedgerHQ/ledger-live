@@ -41,6 +41,7 @@ const ready: CardAssetsViewModel = {
   onShowHistoryPress: jest.fn(),
   onWithdrawContinue: jest.fn(),
   onManagePress: jest.fn(),
+  onRetryPress: jest.fn(),
   onAddAssetPress: jest.fn(),
   onMoveAsset: jest.fn(),
   reorderingAssetIds: new Set(),
@@ -105,7 +106,7 @@ describe("CardAssetsView (native)", () => {
       wrapper: I18nWrapper,
     });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.error)).toBeVisible();
+    expect(screen.getByText(CARD_ASSETS_COPY.errorTitle)).toBeVisible();
     expect(screen.queryByText("125.40 USDC")).not.toBeOnTheScreen();
   });
 
@@ -114,7 +115,7 @@ describe("CardAssetsView (native)", () => {
       wrapper: I18nWrapper,
     });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.empty)).toBeVisible();
+    expect(screen.getByText(CARD_ASSETS_COPY.emptyTitle)).toBeVisible();
   });
 
   it("should show a skeleton list while the wallets are still loading", () => {
@@ -124,8 +125,8 @@ describe("CardAssetsView (native)", () => {
 
     expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeVisible();
     expect(screen.getByTestId("card-assets-loading-state")).toBeVisible();
-    expect(screen.queryByText(CARD_ASSETS_COPY.empty)).not.toBeOnTheScreen();
-    expect(screen.queryByText(CARD_ASSETS_COPY.error)).not.toBeOnTheScreen();
+    expect(screen.queryByText(CARD_ASSETS_COPY.emptyTitle)).not.toBeOnTheScreen();
+    expect(screen.queryByText(CARD_ASSETS_COPY.errorTitle)).not.toBeOnTheScreen();
   });
 
   it("should open the selected asset", async () => {
@@ -154,6 +155,22 @@ describe("CardAssetsView (native)", () => {
     await user.press(screen.getByText(CARD_ASSETS_COPY.manage));
 
     expect(onManagePress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should hide Manage until the asset list is ready", () => {
+    const { rerender } = render(<CardAssetsView {...ready} status="loading" rows={[]} />, {
+      wrapper: I18nWrapper,
+    });
+    expect(screen.queryByText(CARD_ASSETS_COPY.manage)).not.toBeOnTheScreen();
+
+    rerender(<CardAssetsView {...ready} status="error" />);
+    expect(screen.queryByText(CARD_ASSETS_COPY.manage)).not.toBeOnTheScreen();
+
+    rerender(<CardAssetsView {...ready} status="empty" rows={[]} />);
+    expect(screen.queryByText(CARD_ASSETS_COPY.manage)).not.toBeOnTheScreen();
+
+    rerender(<CardAssetsView {...ready} />);
+    expect(screen.getByText(CARD_ASSETS_COPY.manage)).toBeVisible();
   });
 
   it("should show managed assets and add another asset", async () => {

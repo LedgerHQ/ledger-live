@@ -95,6 +95,7 @@ describe("CardDetails (native)", () => {
       onShowHistoryPress: jest.fn(),
       onWithdrawContinue: jest.fn(),
       onManagePress: jest.fn(),
+      onRetryPress: jest.fn(),
       onAddAssetPress: jest.fn(),
       onMoveAsset: jest.fn(),
       reorderingAssetIds: new Set(),

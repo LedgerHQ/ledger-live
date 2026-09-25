@@ -20,6 +20,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { useTranslation } from "@shared/i18n";
+import { CardAssetsEmptyState } from "./CardAssetsEmptyState.native";
 import type { CardAssetRow, CardAssetsViewModel } from "./types";
 
 const ICON_SIZE = 48;
@@ -54,23 +55,24 @@ function AssetRow({
   );
 }
 
-type AssetsBodyProps = Readonly<Pick<CardAssetsViewModel, "status" | "rows" | "onAssetPress">>;
+type AssetsBodyProps = Readonly<
+  Pick<CardAssetsViewModel, "status" | "rows" | "onAssetPress" | "onRetryPress" | "onAddAssetPress">
+>;
 
-function AssetsBody({ status, rows, onAssetPress }: AssetsBodyProps) {
-  const { t } = useTranslation();
+function AssetsBody({
+  status,
+  rows,
+  onAssetPress,
+  onRetryPress,
+  onAddAssetPress,
+}: AssetsBodyProps) {
   if (status === "error") {
-    return (
-      <Text typography="body2" lx={{ color: "muted" }}>
-        {t("payTab.card.assets.error")}
-      </Text>
-    );
+    return <CardAssetsEmptyState variant="error" onRetry={onRetryPress} />;
   }
 
   if (status === "empty") {
     return (
-      <Text typography="body2" lx={{ color: "muted" }}>
-        {t("payTab.card.assets.empty")}
-      </Text>
+      <CardAssetsEmptyState variant="empty" onRetry={onRetryPress} onAddAsset={onAddAssetPress} />
     );
   }
 
@@ -99,6 +101,8 @@ export function CardAssetsView({
   rows,
   onAssetPress,
   onManagePress,
+  onRetryPress,
+  onAddAssetPress,
 }: CardAssetsViewModel) {
   const { t } = useTranslation();
   const title = t("payTab.card.assets.title");
@@ -125,21 +129,29 @@ export function CardAssetsView({
               }
             />
           </Tooltip>
-          <Box lx={{ flex: 1, alignItems: "flex-end" }}>
-            <Link
-              appearance="accent"
-              size="sm"
-              underline={false}
-              onPress={onManagePress}
-              testID="card-assets-manage"
-            >
-              {manageLabel}
-            </Link>
-          </Box>
+          {status === "ready" ? (
+            <Box lx={{ flex: 1, alignItems: "flex-end" }}>
+              <Link
+                appearance="accent"
+                size="sm"
+                underline={false}
+                onPress={onManagePress}
+                testID="card-assets-manage"
+              >
+                {manageLabel}
+              </Link>
+            </Box>
+          ) : null}
         </SubheaderRow>
       </Subheader>
 
-      <AssetsBody status={status} rows={rows} onAssetPress={onAssetPress} />
+      <AssetsBody
+        status={status}
+        rows={rows}
+        onAssetPress={onAssetPress}
+        onRetryPress={onRetryPress}
+        onAddAssetPress={onAddAssetPress}
+      />
     </Box>
   );
 }

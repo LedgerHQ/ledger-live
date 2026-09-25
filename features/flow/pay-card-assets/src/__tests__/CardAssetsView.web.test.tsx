@@ -48,6 +48,7 @@ const ready: CardAssetsViewModel = {
   onShowHistoryPress: jest.fn(),
   onWithdrawContinue: jest.fn(),
   onManagePress: jest.fn(),
+  onRetryPress: jest.fn(),
   onAddAssetPress: jest.fn(),
   onMoveAsset: jest.fn(),
   reorderingAssetIds: new Set(),
@@ -119,23 +120,25 @@ describe("CardAssetsView (web)", () => {
   it("should say so when the read failed", () => {
     render(<CardAssetsView {...ready} status="error" />, { wrapper: I18nWrapper });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.error)).toBeInTheDocument();
+    expect(screen.getByText(CARD_ASSETS_COPY.errorTitle)).toBeVisible();
+    expect(screen.getByText(CARD_ASSETS_COPY.errorDescription)).toBeVisible();
     expect(screen.queryByText("125.40 USDC")).not.toBeInTheDocument();
   });
 
   it("should say so when the card has no wallets", () => {
     render(<CardAssetsView {...ready} status="empty" rows={[]} />, { wrapper: I18nWrapper });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.empty)).toBeInTheDocument();
+    expect(screen.getByText(CARD_ASSETS_COPY.emptyTitle)).toBeVisible();
+    expect(screen.getByText(CARD_ASSETS_COPY.emptyDescription)).toBeVisible();
   });
 
   it("should show a skeleton list while the wallets are still loading", () => {
     render(<CardAssetsView {...ready} status="loading" rows={[]} />, { wrapper: I18nWrapper });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeInTheDocument();
-    expect(screen.getByTestId("card-assets-loading-state")).toBeInTheDocument();
-    expect(screen.queryByText(CARD_ASSETS_COPY.empty)).not.toBeInTheDocument();
-    expect(screen.queryByText(CARD_ASSETS_COPY.error)).not.toBeInTheDocument();
+    expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeVisible();
+    expect(screen.getByTestId("card-assets-loading-state")).toBeVisible();
+    expect(screen.queryByText(CARD_ASSETS_COPY.emptyTitle)).not.toBeInTheDocument();
+    expect(screen.queryByText(CARD_ASSETS_COPY.errorTitle)).not.toBeInTheDocument();
   });
 
   it("should keep AmountDisplay loading while the counter value is still missing", () => {
@@ -195,6 +198,22 @@ describe("CardAssetsView (web)", () => {
     await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
 
     expect(onManagePress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should hide Manage until the asset list is ready", () => {
+    const { rerender } = render(<CardAssetsView {...ready} status="loading" rows={[]} />, {
+      wrapper: I18nWrapper,
+    });
+    expect(screen.queryByRole("button", { name: CARD_ASSETS_COPY.manage })).not.toBeInTheDocument();
+
+    rerender(<CardAssetsView {...ready} status="error" />);
+    expect(screen.queryByRole("button", { name: CARD_ASSETS_COPY.manage })).not.toBeInTheDocument();
+
+    rerender(<CardAssetsView {...ready} status="empty" rows={[]} />);
+    expect(screen.queryByRole("button", { name: CARD_ASSETS_COPY.manage })).not.toBeInTheDocument();
+
+    rerender(<CardAssetsView {...ready} />);
+    expect(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage })).toBeVisible();
   });
 
   // dnd-kit owns the actual drag/keyboard-reorder mechanics (and its own accessibility
