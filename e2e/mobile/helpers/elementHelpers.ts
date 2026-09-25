@@ -558,6 +558,7 @@ export const WebElementHelpers = {
     const webElement = await WebElementHelpers.waitWebElementByTestId(id, {
       timeout,
       index: options?.index,
+      testIdSuffix: options?.testIdSuffix,
       throwOnTimeout: true,
     });
     await WebElementHelpers.tapWebElementByElement(webElement!, timeout);
@@ -767,8 +768,8 @@ export const WebElementHelpers = {
     return retryUntilTimeout(
       async () => {
         const isEnabled = await WebElementHelpers.isWebElementEnabled(webElement!, timeout);
-        if (isEnabled) {
-          return;
+        if (!isEnabled) {
+          throw new Error(`Web element '${id}' is not enabled yet`);
         }
       },
       timeout,
