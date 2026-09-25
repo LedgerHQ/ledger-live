@@ -1,4 +1,8 @@
-import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
+import {
+  EntryFunctionPayloadResponse,
+  InputEntryFunctionData,
+  TransactionPayloadResponse,
+} from "@aptos-labs/ts-sdk";
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import { APTOS_ASSET_ID, OP_TYPE } from "../constants";
@@ -9,13 +13,21 @@ import { getFunctionAddress } from "./getFunctionAddress";
 import { normalizeAddress } from "./normalizeAddress";
 import { processRecipients } from "./processRecipients";
 
+// Some payloads (script, module bundle, multisig, ...) have no `function` field,
+// unlike EntryFunctionPayloadResponse; only convert when it's actually present.
 export const convertFunctionPayloadResponseToInputEntryFunctionData = (
-  payload: EntryFunctionPayloadResponse,
-): InputEntryFunctionData => ({
-  function: payload.function,
-  typeArguments: payload.type_arguments,
-  functionArguments: payload.arguments,
-});
+  payload: TransactionPayloadResponse,
+): InputEntryFunctionData | undefined => {
+  if (!payload || !("function" in payload)) {
+    return undefined;
+  }
+  const functionPayload = payload as EntryFunctionPayloadResponse;
+  return {
+    function: functionPayload.function,
+    typeArguments: functionPayload.type_arguments,
+    functionArguments: functionPayload.arguments,
+  };
+};
 
 const detectType = (address: string, tx: AptosTransaction, value: BigNumber): OP_TYPE => {
   let type = compareAddress(tx.sender, address) ? OP_TYPE.OUT : OP_TYPE.IN;
@@ -47,9 +59,11 @@ export function transactionsToOperations(
       return acc;
     }
 
-    const payload = convertFunctionPayloadResponseToInputEntryFunctionData(
-      tx.payload as EntryFunctionPayloadResponse,
-    );
+    const payload = convertFunctionPayloadResponseToInputEntryFunctionData(tx.payload);
+
+    if (!payload) {
+      return acc; // skip transaction without a function payload (e.g. script/multisig payloads)
+    }
 
     const function_address = getFunctionAddress(payload);
 
