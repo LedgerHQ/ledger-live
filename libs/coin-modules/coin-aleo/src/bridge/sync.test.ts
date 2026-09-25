@@ -25,6 +25,7 @@ import {
   getMockedAccount,
   getMockedTokenAccount,
   mockAleoResources,
+  mockUnspentRecord1,
 } from "../__tests__/fixtures/account.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import type { AleoAccount, AleoTokenAccount } from "../types";
@@ -46,6 +47,7 @@ import {
   createPrivateSyncObservable,
   createPublicSyncObservable,
   postSync,
+  sync,
 } from "./sync";
 import { apiClient } from "../network/api";
 import { buildSyncObservables, makeGetAccountShape } from "./sync";
@@ -2742,6 +2744,223 @@ describe("sync.ts", () => {
       };
 
       expect(postSync(synced, synced)).toBe(synced);
+    });
+  });
+
+  describe("concurrent syncs", () => {
+    const configuredProvableApi = {
+      ...mockAleoResources.provableApi,
+      scannerStatus: { percentage: 100, synced: true },
+    };
+    const syncStartedAt = new Date("2026-01-01T10:00:00Z");
+    const newerSyncLandedAt = new Date("2026-01-01T10:05:00Z");
+
+    // A sync computes its shape from the account it started with; the updater it emits is
+    // applied to whatever the store holds by the time it lands.
+    const applySync = (startedFrom: AleoAccount, landsOn: AleoAccount, syncType: number) =>
+      new Promise<AleoAccount>(resolve => {
+        let account = landsOn;
+        sync(startedFrom, { paginationConfig: {}, syncType }).subscribe({
+          next: updater => {
+            account = updater(account);
+          },
+          complete: () => resolve(account),
+          error: () => resolve(account),
+        });
+      });
+
+    const startedFrom: AleoAccount = {
+      ...mockInitialAccount,
+      lastSyncDate: syncStartedAt,
+      aleoResources: {
+        transparentBalance: new BigNumber(500000),
+        provableApi: configuredProvableApi,
+        privateBalance: new BigNumber(100),
+        unspentPrivateRecords: [],
+        lastPrivateSyncDate: syncStartedAt,
+        hasMigratedStaking: true,
+        bondedBalance: new BigNumber(20000),
+        bondedValidator: "aleo1validator",
+        unbondingBalance: new BigNumber(0),
+        unbondingHeight: null,
+      },
+    };
+
+    describe("when a public sync landed while a private sync was running", () => {
+      const afterPublicSync: AleoAccount = {
+        ...startedFrom,
+        lastSyncDate: newerSyncLandedAt,
+        aleoResources: {
+          ...startedFrom.aleoResources!,
+          transparentBalance: new BigNumber(400000),
+          bondedBalance: new BigNumber(0),
+          bondedValidator: null,
+          unbondingBalance: new BigNumber(20000),
+          unbondingHeight: 300,
+        },
+      };
+
+      beforeEach(() => {
+        coinConfig.setCoinConfig(() => mockConfigWithStaking);
+        mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+        mockGetPrivateBalance.mockResolvedValue({
+          balance: new BigNumber(300),
+          unspentRecords: [],
+        });
+      });
+
+      it("keeps the public fields of the newer public sync", async () => {
+        const result = await applySync(startedFrom, afterPublicSync, SYNC_TYPE_SHIELDED);
+
+        expect(result.lastSyncDate).toEqual(newerSyncLandedAt);
+        expect(result.aleoResources).toMatchObject({
+          transparentBalance: new BigNumber(400000),
+          bondedBalance: new BigNumber(0),
+          bondedValidator: null,
+          unbondingBalance: new BigNumber(20000),
+          unbondingHeight: 300,
+          privateBalance: new BigNumber(300),
+        });
+        expect(result.spendableBalance).toEqual(new BigNumber(400300));
+        expect(result.balance).toEqual(new BigNumber(420300));
+      });
+
+      it("keeps the public fields of the newer public sync when the private sync resets provableApi", async () => {
+        mockAccessProvableApi.mockRejectedValue(new AleoApiConfigurationResetError());
+
+        const result = await applySync(startedFrom, afterPublicSync, SYNC_TYPE_SHIELDED);
+
+        expect(result.aleoResources).toMatchObject({
+          provableApi: null,
+          transparentBalance: new BigNumber(400000),
+          bondedBalance: new BigNumber(0),
+          unbondingBalance: new BigNumber(20000),
+          unbondingHeight: 300,
+        });
+      });
+    });
+
+    describe("when a private sync landed while a public sync was running", () => {
+      const afterPrivateSync: AleoAccount = {
+        ...startedFrom,
+        aleoResources: {
+          ...startedFrom.aleoResources!,
+          privateBalance: new BigNumber(300),
+          unspentPrivateRecords: [mockUnspentRecord1],
+          lastPrivateSyncDate: newerSyncLandedAt,
+        },
+      };
+
+      it("keeps the private fields of the newer private sync", async () => {
+        const result = await applySync(startedFrom, afterPrivateSync, SYNC_TYPE_TRANSPARENT);
+
+        expect(result.aleoResources).toMatchObject({
+          privateBalance: new BigNumber(300),
+          unspentPrivateRecords: [mockUnspentRecord1],
+          lastPrivateSyncDate: newerSyncLandedAt,
+          transparentBalance: new BigNumber(mockAccount.balance.toString()),
+        });
+        expect(result.spendableBalance).toEqual(mockAccount.balance.plus(300));
+      });
+    });
+
+    describe("when nothing else lands during the sync", () => {
+      beforeEach(() => {
+        mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+        mockGetPrivateBalance.mockResolvedValue({
+          balance: new BigNumber(300),
+          unspentRecords: [],
+        });
+      });
+
+      it("advances both sync dates in a combined sync", async () => {
+        const result = await applySync(
+          startedFrom,
+          startedFrom,
+          SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+        );
+
+        expect(result.lastSyncDate.getTime()).toBeGreaterThan(syncStartedAt.getTime());
+        expect(result.aleoResources?.lastPrivateSyncDate?.getTime()).toBeGreaterThan(
+          syncStartedAt.getTime(),
+        );
+        expect(result.aleoResources).toMatchObject({
+          transparentBalance: new BigNumber(mockAccount.balance.toString()),
+          privateBalance: new BigNumber(300),
+        });
+      });
+
+      it("keeps the last private sync date when the private sync of a combined sync fails", async () => {
+        mockGetPrivateBalance.mockRejectedValue(new Error("network error"));
+
+        const result = await applySync(
+          startedFrom,
+          startedFrom,
+          SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+        );
+
+        expect(result.lastSyncDate.getTime()).toBeGreaterThan(syncStartedAt.getTime());
+        expect(result.aleoResources).toMatchObject({
+          transparentBalance: new BigNumber(mockAccount.balance.toString()),
+          privateBalance: new BigNumber(100),
+          lastPrivateSyncDate: syncStartedAt,
+        });
+      });
+
+      it("keeps the last private sync date when the private sync of a combined sync resets provableApi", async () => {
+        mockAccessProvableApi.mockRejectedValue(new AleoApiConfigurationResetError());
+
+        const result = await applySync(
+          startedFrom,
+          startedFrom,
+          SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+        );
+
+        expect(result.lastSyncDate.getTime()).toBeGreaterThan(syncStartedAt.getTime());
+        expect(result.aleoResources).toMatchObject({
+          provableApi: null,
+          transparentBalance: new BigNumber(mockAccount.balance.toString()),
+          privateBalance: new BigNumber(100),
+          lastPrivateSyncDate: syncStartedAt,
+        });
+      });
+    });
+
+    describe("when a sync date was saved while the clock ran ahead", () => {
+      const aheadOfClock = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+      beforeEach(() => {
+        mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+        mockGetPrivateBalance.mockResolvedValue({
+          balance: new BigNumber(300),
+          unspentRecords: [],
+        });
+      });
+
+      it("applies the public sync", async () => {
+        const account: AleoAccount = { ...startedFrom, lastSyncDate: aheadOfClock };
+
+        const result = await applySync(account, account, SYNC_TYPE_TRANSPARENT);
+
+        expect(result.lastSyncDate.getTime()).toBeLessThan(aheadOfClock.getTime());
+        expect(result.aleoResources?.transparentBalance).toEqual(
+          new BigNumber(mockAccount.balance.toString()),
+        );
+      });
+
+      it("applies the private sync", async () => {
+        const account: AleoAccount = {
+          ...startedFrom,
+          aleoResources: { ...startedFrom.aleoResources!, lastPrivateSyncDate: aheadOfClock },
+        };
+
+        const result = await applySync(account, account, SYNC_TYPE_SHIELDED);
+
+        expect(result.aleoResources?.lastPrivateSyncDate?.getTime()).toBeLessThan(
+          aheadOfClock.getTime(),
+        );
+        expect(result.aleoResources?.privateBalance).toEqual(new BigNumber(300));
+      });
     });
   });
 });
