@@ -45,7 +45,7 @@ jobs:
 
       - name: Validate CODEOWNERS
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-codeowners@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-codeowners@ci/codeowners-validator
 
   changes:
     name: Detect Workflow File Changes

@@ -325,7 +325,7 @@ jobs:
   test-additional:
     name: "Test Additional"
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@ci/codeowners-validator
     permissions:
       security-events: write
       contents: read
