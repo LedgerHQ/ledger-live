@@ -762,7 +762,7 @@ describe("cardLoginMachine failures", () => {
     expect(actor.getSnapshot().context.errorKind).toBeNull();
   });
 
-  it("keeps the stored session when the user dismisses the panel", async () => {
+  it("clears the stored session when the user dismisses the panel", async () => {
     const getUser = jest.fn(async () => Promise.reject({ status: "FETCH_ERROR" }));
     const ports = stubPorts({ hasSession: jest.fn(async () => true), getUser });
 
@@ -773,7 +773,8 @@ describe("cardLoginMachine failures", () => {
 
     await settledAt(actor, "idle");
     expect(actor.getSnapshot().context.errorKind).toBeNull();
-    expect(ports.clearSession).not.toHaveBeenCalled();
+    expect(ports.clearSession).toHaveBeenCalledTimes(1);
+    expect(ports.forgetUser).toHaveBeenCalledTimes(1);
     expect(getUser).toHaveBeenCalledTimes(1);
   });
 

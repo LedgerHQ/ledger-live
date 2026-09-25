@@ -863,7 +863,7 @@ describe("useCardLoginViewModel errors", () => {
     expect(mockPorts.createAttempt).toHaveBeenCalledTimes(1);
   });
 
-  it("keeps the stored session when the panel of a failed user load is dismissed", async () => {
+  it("clears the stored session when the panel of a failed user load is dismissed", async () => {
     mockPorts.hasSession.mockResolvedValue(true);
     mockPorts.getUser.mockRejectedValueOnce({ status: "FETCH_ERROR" });
     const { result } = renderHook(
@@ -883,7 +883,7 @@ describe("useCardLoginViewModel errors", () => {
     act(() => result.current?.error?.onDismiss());
 
     await waitFor(() => expect(result.current?.error).toBeNull());
-    expect(mockPorts.clearSession).not.toHaveBeenCalled();
+    await waitFor(() => expect(mockPorts.clearSession).toHaveBeenCalledTimes(1));
     expect(mockPorts.getUser).toHaveBeenCalledTimes(1);
   });
 

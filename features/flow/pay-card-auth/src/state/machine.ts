@@ -304,7 +304,12 @@ export const cardLoginMachine = setup({
       on: {
         LOGIN: { target: "preparingAttempt" },
         RETRY: { target: "fetchingUser", actions: "clearErrorKind" },
-        DISMISS: { target: "idle" },
+        // The session is live, so a dismissal must drop it. `idle` publishes the signed out flag,
+        // and a session left in the store would sign the holder back in on the next hydrate.
+        DISMISS: {
+          target: "clearingAttempt",
+          actions: [assign({ clearSession: true }), "clearErrorKind"],
+        },
       },
     },
 
