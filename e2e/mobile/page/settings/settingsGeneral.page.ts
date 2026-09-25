@@ -101,6 +101,18 @@ export default class SettingsGeneralPage {
     await this.enterNewPassword(password);
     await this.enterNewPassword(password);
     await this.expectPasswordToggleValue("ON");
+    await this.sendToBackgroundAndBack();
+  }
+
+  @Step("Set up a revamped password and lock the app")
+  async setupRevampedPasswordAndLock(password: string) {
+    await app.appLock.choosePassword(password);
+    await app.appLock.confirmPassword(password);
+    await this.expectPasswordToggleValue("ON");
+    await this.sendToBackgroundAndBack();
+  }
+
+  private async sendToBackgroundAndBack() {
     // Recurring JS timers post-RN-0.81 keep Detox's idle sync from completing during
     // background transitions; opt out around sendToHome/launchApp to avoid the hang.
     await app.common.disableSynchronizationForiOS();

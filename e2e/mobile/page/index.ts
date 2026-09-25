@@ -3,6 +3,7 @@ import AssetAccountsPage from "@e2e/page/accounts/assetAccounts.page";
 import AccountPage from "@e2e/page/accounts/account.page";
 import AccountsPage from "@e2e/page/accounts/accounts.page";
 import AddAccountDrawer from "@e2e/page/accounts/addAccount.drawer";
+import AppLockPage from "@e2e/page/appLock.page";
 import CommonPage from "@e2e/page/common.page";
 import CustomLockscreenPage from "@e2e/page/stax/customLockscreen.page";
 import DeviceValidationPage from "@e2e/page/trade/deviceValidation.page";
@@ -80,6 +81,7 @@ export class Application {
   private postOnboardingHubPageInstance = lazyInit(PostOnboardingHubPage);
   private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
+  private appLockPageInstance = lazyInit(AppLockPage);
   private portfolioPageInstance = lazyInit(PortfolioPage);
   private readonly assetDetailPageInstance = lazyInit(AssetDetailPage);
   private receivePageInstance = lazyInit(ReceivePage);
@@ -183,6 +185,10 @@ export class Application {
 
   public get passwordEntry() {
     return this.passwordEntryPageInstance();
+  }
+
+  public get appLock() {
+    return this.appLockPageInstance();
   }
 
   public get portfolio() {

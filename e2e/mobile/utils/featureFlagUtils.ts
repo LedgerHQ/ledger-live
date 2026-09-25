@@ -39,6 +39,10 @@ export const FF_LWM_WALLET_40_Q2 = {
   },
 } satisfies PartialFeatures;
 
+export const FF_PASSWORD_REVAMP = {
+  lwmPasswordRevamp: { enabled: true },
+} satisfies PartialFeatures;
+
 export const FF_BORROW_ENABLED = {
   ...FF_LWM_WALLET_40_Q2,
   ptxBorrowLiveApp: {
