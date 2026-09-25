@@ -5,7 +5,12 @@ import { getPayAttributes } from "../getPayAttributes";
 
 describe("getPayAttributes", () => {
   const unsigned = {
-    payCardAuth: { hasCard: false, pendingLoginType: null, status: "signedOut" as const },
+    payCardAuth: {
+      hasCard: false,
+      pendingLoginType: null,
+      status: "signedOut" as const,
+      isSessionResolving: false,
+    },
   };
   const accountsWithUsdc = [
     {
