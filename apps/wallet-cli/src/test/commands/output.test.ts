@@ -9,23 +9,51 @@ const HUMAN_DEVICE_ERROR_EXIT = path.resolve(
   "../helpers/human-device-error-exit.ts",
 );
 
+/**
+ * `NO_COLOR` keeps the assertions free of escape codes, but Bun ignores it when `FORCE_COLOR` is
+ * also set and warns with a full stack trace on stderr — which agent shells and some CI runners
+ * would then turn into a test failure unrelated to the CLI's own output.
+ */
+function childEnv(): Record<string, string | undefined> {
+  const { FORCE_COLOR: _ignored, ...rest } = process.env;
+  return { ...rest, CLAUDECODE: "1", NO_COLOR: "1" };
+}
+
 describe("output command handling", () => {
   it("human output exits with the WalletCliDeviceError exit code", async () => {
     const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_EXIT], {
-      env: {
-        ...process.env,
-        CLAUDECODE: "1",
-        NO_COLOR: "1",
-      },
+      env: childEnv(),
       stdin: "ignore",
       stdout: "pipe",
       stderr: "pipe",
     });
 
     const exitCode = await proc.exited;
+    const stderr = await new Response(proc.stderr).text();
+
     expect(exitCode).toBe(DEVICE_EXIT_CODES.timeout);
-    expect(await new Response(proc.stderr).text()).toContain(
-      new WalletCliDeviceError({ code: "timeout" }).message,
+    expect(stderr).toContain(
+      new WalletCliDeviceError({ code: "timeout", likelyCause: "sandbox_blocking_usb" }).message,
     );
+  });
+
+  it("human output points at the JSON view and stays within 3 lines (LIVE-31394)", async () => {
+    const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_EXIT], {
+      env: childEnv(),
+      stdin: "ignore",
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    await proc.exited;
+    const stderr = await new Response(proc.stderr).text();
+    const lines = stderr
+      .trimEnd()
+      .split("\n")
+      .filter(line => line.trim().length > 0);
+
+    expect(lines.length).toBeLessThanOrEqual(3);
+    expect(stderr).toContain("--output json");
+    expect(stderr).not.toContain("dangerouslyDisableSandbox");
   });
 });

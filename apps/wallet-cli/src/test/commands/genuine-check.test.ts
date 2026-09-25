@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { Observable } from "rxjs";
 import type { GetGenuineCheckFromDeviceIdResult } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { runCli } from "../helpers/cli-runner";
+import { WALLET_CLI_SKILL_DOCS_URL } from "../../device/usb-timeout-hints";
 
 let genuineCheckImpl: () => Observable<GetGenuineCheckFromDeviceIdResult>;
 
@@ -113,7 +114,10 @@ describe("genuine-check command (mock DMK)", () => {
       ok: false,
       error: {
         command: "genuine-check",
-        code: "timeout",
+        code: "USB_TIMEOUT",
+        likely_cause: expect.any(String),
+        user_hint: expect.any(String),
+        docs: WALLET_CLI_SKILL_DOCS_URL,
       },
     });
   });

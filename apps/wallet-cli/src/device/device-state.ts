@@ -24,17 +24,31 @@ export type DeviceStateCode =
   | "unknown";
 
 export type AwaitingApprovalReason = "sign" | "verify_address" | "open_app" | "unlock";
+
+/**
+ * Best-effort attribution for a USB failure, reported as `likely_cause` in JSON error envelopes.
+ * "Likely", not "certain": wallet-cli only ever sees an errno from libusb.
+ *
+ * `usb_session_stale` is declared but never produced yet — detecting it needs the auto-lock session
+ * handling from LIVE-31395, so it is not advertised in the agent skill until it can occur.
+ */
+export type UsbTimeoutLikelyCause =
+  | "sandbox_blocking_usb"
+  | "usb_session_stale"
+  | "device_not_present"
+  | "app_not_open"
+  | "unknown";
 export type RejectedContext = "sign" | "verify_address" | "open_app";
 
 export type DeviceState =
-  | { code: "disconnected" }
+  | { code: "disconnected"; likelyCause?: UsbTimeoutLikelyCause }
   | { code: "wrong_app"; expected: string; found?: string }
   | { code: "awaiting_approval"; reason: AwaitingApprovalReason }
   | { code: "rejected"; context: RejectedContext; deviceModelId?: string }
   | { code: "exchange_app_needed" }
   | { code: "locked" }
   | { code: "app_not_installed"; appName: string }
-  | { code: "timeout" }
+  | { code: "timeout"; likelyCause?: UsbTimeoutLikelyCause }
   | { code: "unknown"; cause: unknown };
 
 export type DeviceStateGlyph = "[✖]" | "[⧖]" | "[ℹ]";
@@ -50,6 +64,26 @@ export const DEVICE_EXIT_CODES = {
 } as const;
 
 export type DeviceExitCode = (typeof DEVICE_EXIT_CODES)[keyof typeof DEVICE_EXIT_CODES];
+
+/** Every `error.code` wallet-cli publishes. Diverges from `DeviceStateCode` only for `timeout`. */
+export type DeviceStateWireCode = Exclude<DeviceStateCode, "timeout"> | "USB_TIMEOUT";
+
+/**
+ * `error.code` as published in JSON error envelopes. `timeout` is published as `USB_TIMEOUT`
+ * (LIVE-31394) because agents match on a stable identifier; NDJSON `device-state` progress events
+ * keep emitting the internal `"timeout"`, so both spellings are documented in the agent skill.
+ */
+export const DEVICE_STATE_WIRE_CODES: Record<DeviceStateCode, DeviceStateWireCode> = {
+  disconnected: "disconnected",
+  wrong_app: "wrong_app",
+  awaiting_approval: "awaiting_approval",
+  rejected: "rejected",
+  exchange_app_needed: "exchange_app_needed",
+  locked: "locked",
+  app_not_installed: "app_not_installed",
+  timeout: "USB_TIMEOUT",
+  unknown: "unknown",
+};
 
 /**
  * A terminal state causes the process to exit non-zero once rendered.
@@ -122,8 +156,7 @@ export function renderDeviceState(state: DeviceState): {
     case "timeout":
       return {
         glyph: "[✖]",
-        message:
-          "Timed out talking to the Ledger over USB. The device may be busy or locked. Retry the command.",
+        message: renderUsbTimeoutMessage(state.likelyCause),
         exitCode: DEVICE_EXIT_CODES.timeout,
       };
     case "unknown":
@@ -132,6 +165,33 @@ export function renderDeviceState(state: DeviceState): {
         message: unknownCauseMessage(state.cause),
         exitCode: DEVICE_EXIT_CODES.generic,
       };
+  }
+}
+
+/**
+ * The USB attribution a state carries, or `undefined` for states that carry none — which is what
+ * `output.ts` gates the diagnostic fields on. Both USB failure states always qualify: a `timeout`
+ * defaults to `unknown`, and a `disconnected` the classifier did not attribute defaults to
+ * `device_not_present`, which is what "Ledger not detected" already tells the human.
+ */
+export function usbLikelyCauseOf(state: DeviceState): UsbTimeoutLikelyCause | undefined {
+  if (state.code === "timeout") return state.likelyCause ?? "unknown";
+  if (state.code === "disconnected") return state.likelyCause ?? "device_not_present";
+  return undefined;
+}
+
+function renderUsbTimeoutMessage(cause: UsbTimeoutLikelyCause | undefined): string {
+  switch (cause) {
+    case "sandbox_blocking_usb":
+      return "Timed out talking to the Ledger over USB.";
+    case "device_not_present":
+      return "No Ledger detected over USB. Plug in, unlock, retry.";
+    case "app_not_open":
+      return "Timed out waiting for the Ledger app to open.";
+    case "usb_session_stale":
+      return "The USB session went stale (the device locked). Unplug and replug, then retry.";
+    default:
+      return "Timed out talking to the Ledger over USB. The device may be busy or locked. Retry the command.";
   }
 }
 

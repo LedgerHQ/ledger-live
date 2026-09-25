@@ -10,7 +10,7 @@ const out = createCommandOutput("human", {
 
 try {
   await out.run(async () => {
-    throw new WalletCliDeviceError({ code: "timeout" });
+    throw new WalletCliDeviceError({ code: "timeout", likelyCause: "sandbox_blocking_usb" });
   });
 } catch (e) {
   const code = getCliProcessExitCode(e);
