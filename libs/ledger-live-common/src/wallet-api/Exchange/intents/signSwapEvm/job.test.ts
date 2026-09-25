@@ -48,12 +48,9 @@ jest.mock("@ledgerhq/live-signer-evm", () => ({
 }));
 
 const craftTransaction = jest.fn();
-jest.mock("@ledgerhq/coin-evm/logic/craftTransaction", () => ({
-  craftTransaction: (...args: unknown[]) => craftTransaction(...args),
-}));
-
 const combine = jest.fn();
-jest.mock("@ledgerhq/coin-evm/logic/combine", () => ({
+jest.mock("@ledgerhq/coin-evm/logic", () => ({
+  craftTransaction: (...args: unknown[]) => craftTransaction(...args),
   combine: (...args: unknown[]) => combine(...args),
 }));
 

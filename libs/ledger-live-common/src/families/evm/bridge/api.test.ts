@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import { isSeiAccountUnassociated } from "@ledgerhq/coin-evm/staking/index";
+import { isSeiAccountUnassociated } from "@ledgerhq/coin-evm/staking";
 import evmBridge, {
   computeIntentType,
   getAccountReadiness,
@@ -15,8 +15,8 @@ import evmBridge, {
   getTokenFromAsset,
 } from "./api";
 
-jest.mock("@ledgerhq/coin-evm/staking/index", () => ({
-  ...jest.requireActual("@ledgerhq/coin-evm/staking/index"),
+jest.mock("@ledgerhq/coin-evm/staking", () => ({
+  ...jest.requireActual("@ledgerhq/coin-evm/staking"),
   isSeiAccountUnassociated: jest.fn(),
 }));
 

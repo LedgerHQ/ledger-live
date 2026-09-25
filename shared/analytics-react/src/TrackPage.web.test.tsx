@@ -1,10 +1,11 @@
 import React from "react";
 import { cleanup, render, waitFor } from "@testing-library/react";
 import {
-  currentRouteNameRef,
-  previousRouteNameRef,
+  getCurrentTrackingPage,
+  resetTrackingPages,
   setAnalytics,
   setEnabledFn,
+  setTrackingSource,
 } from "@shared/analytics";
 import { TrackPage } from "./TrackPage.web";
 
@@ -14,8 +15,7 @@ beforeEach(() => {
   track.mockClear();
   setAnalytics({ track });
   setEnabledFn(() => true);
-  currentRouteNameRef.current = undefined;
-  previousRouteNameRef.current = undefined;
+  resetTrackingPages();
 });
 
 afterEach(cleanup);
@@ -40,7 +40,7 @@ describe("TrackPage", () => {
     cleanup();
     render(<TrackPage category="Market" />);
 
-    expect(currentRouteNameRef.current).toBe("Market");
+    expect(getCurrentTrackingPage()).toBe("Market");
     await waitFor(() => {
       expect(track).toHaveBeenLastCalledWith("Page Market", {
         source: "Portfolio",
@@ -49,14 +49,14 @@ describe("TrackPage", () => {
   });
 
   it("leaves the current page untouched when it does not refresh the source", async () => {
-    currentRouteNameRef.current = "Portfolio";
+    setTrackingSource("Portfolio");
 
     render(<TrackPage category="Some Drawer" refreshSource={false} />);
 
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
     });
-    expect(currentRouteNameRef.current).toBe("Portfolio");
+    expect(getCurrentTrackingPage()).toBe("Portfolio");
   });
 
   it("sends nothing more when re-rendered with the same properties", async () => {

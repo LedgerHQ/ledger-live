@@ -91,6 +91,10 @@ export function usePayTabViewModel() {
   );
 
   const { requestProtection } = useAppProtectionPrompt();
+  const requestCardProtection = useCallback(
+    () => requestProtection({ source: "card" }),
+    [requestProtection],
+  );
 
   // The OAuth redirect, when the deep link brought one. PKCE ties the code to the verifier on disk,
   // so nothing else has to be echoed back, but the app id names the provider tenant to route on.
@@ -115,8 +119,8 @@ export function usePayTabViewModel() {
   const openInDiscover = useCardHostedPageOpener();
 
   const login: CardProps["login"] = useMemo(
-    () => ({ oauthConfig, callback, requestProtection }),
-    [oauthConfig, callback, requestProtection],
+    () => ({ oauthConfig, callback, requestProtection: requestCardProtection }),
+    [oauthConfig, callback, requestCardProtection],
   );
 
   const onShowMore = useCallback(() => {
@@ -230,8 +234,15 @@ export function usePayTabViewModel() {
   const formatCountervalue = useCountervalueFormatter();
   const { locale } = useLocale();
   const formatTransactionAmount = useCallback<FormatCardTransactionAmount>(
-    (value, currency, kind) => formatCardTransactionAmount({ value, currency, kind, locale }),
-    [locale],
+    (value, currency, kind) =>
+      formatCardTransactionAmount({
+        value,
+        currency,
+        kind,
+        locale,
+        discreet: payCardAssets.discreet,
+      }),
+    [locale, payCardAssets.discreet],
   );
   const card: CardProps = useMemo(
     () => ({
@@ -243,6 +254,7 @@ export function usePayTabViewModel() {
       onViewRewards,
       onShowMore,
       cardSettingsActions,
+      discreet: payCardAssets.discreet,
     }),
     [
       login,
@@ -254,6 +266,7 @@ export function usePayTabViewModel() {
       onViewRewards,
       onShowMore,
       cardSettingsActions,
+      payCardAssets.discreet,
     ],
   );
 

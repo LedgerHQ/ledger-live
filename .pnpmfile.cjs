@@ -15,7 +15,6 @@ const {
   addDependencies,
   addDevDependencies,
   addPeerDependencies,
-  removeDependencies,
 } = require("./tools/pnpm-utils");
 const { assertDependencyChecks } = require("./tools/dependency-checks/validate");
 
@@ -28,31 +27,9 @@ function readPackage(pkg, context) {
         Feel free to make PRs if you feel like it :).
       */
       addDependencies("jest-allure2-reporter", { tslib: "*" }),
-      /* React Native and Metro bundler packages */
-      addPeerDependencies("metro-config", {
-        "metro-transform-worker": "*",
-      }),
-
-      /* Other packages */
-      addDependencies("rn-fetch-blob", { lodash: "*" }),
-
-      addPeerDependencies(/^expo-/, {
-        "expo-modules-core": "*",
-        "expo-constants": "*",
-        "react-native": "*",
-        react: "*",
-      }),
-
-      addPeerDependencies("app-builder-lib", {
-        lodash: "*",
-      }),
 
       addPeerDependencies("react-native-config", {
         "react-native": "*",
-      }),
-      // Try to prevent pnpm-lock.yaml flakiness
-      removeDependencies("follow-redirects", ["debug"], {
-        kind: "peerDependencies",
       }),
     ],
     pkg,

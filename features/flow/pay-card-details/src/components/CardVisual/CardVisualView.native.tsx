@@ -21,6 +21,7 @@ export function CardVisualView({
   isLoading = false,
   isFrozen,
   fadeColor,
+  discreet,
 }: CardVisualViewProps) {
   const { i18n } = useTranslation();
 
@@ -48,6 +49,7 @@ export function CardVisualView({
               value={balance}
               formatter={formatCountervalue}
               loading={isLoading}
+              hidden={discreet}
               size="sm"
               testID="card-visual-amount"
             />

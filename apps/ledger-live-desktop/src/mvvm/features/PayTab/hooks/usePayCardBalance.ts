@@ -16,12 +16,17 @@ import {
 import type { PayAnalyticsHelper } from "@features/platform-pay-analytics";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import {
+  counterValueCurrencySelector,
+  discreetModeSelector,
+  localeSelector,
+} from "~/renderer/reducers/settings";
 import { usePayStablecoins } from "./usePayStablecoins";
 
 export function usePayCardBalance(onTrackEvent?: PayAnalyticsHelper["trackEvent"]): BalanceData {
   const dispatch = useDispatch();
   const locale = useSelector(localeSelector);
+  const discreet = useSelector(discreetModeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const filter = useSelector(selectPayCardBalanceFilter);
 
@@ -31,14 +36,14 @@ export function usePayCardBalance(onTrackEvent?: PayAnalyticsHelper["trackEvent"
 
   const formatFiat = useCallback(
     (value: number): string =>
-      formatCurrencyUnit(unit, new BigNumber(value), { locale, showCode: true }),
-    [unit, locale],
+      formatCurrencyUnit(unit, new BigNumber(value), { locale, showCode: true, discreet }),
+    [unit, locale, discreet],
   );
 
   const formatCrypto = useCallback(
     (cryptoUnit: Unit, balance: number): string =>
-      formatCurrencyUnit(cryptoUnit, new BigNumber(balance), { locale, showCode: true }),
-    [locale],
+      formatCurrencyUnit(cryptoUnit, new BigNumber(balance), { locale, showCode: true, discreet }),
+    [locale, discreet],
   );
 
   const formatCountervalue = useCallback(
@@ -67,6 +72,7 @@ export function usePayCardBalance(onTrackEvent?: PayAnalyticsHelper["trackEvent"
     formatFiat,
     formatCrypto,
     formatCountervalue,
+    discreet,
     onConfirmFilter,
     onResetFilter,
     onTrackEvent,

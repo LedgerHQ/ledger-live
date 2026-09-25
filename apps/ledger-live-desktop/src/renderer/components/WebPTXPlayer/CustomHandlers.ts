@@ -12,7 +12,7 @@ import type { Dispatch } from "redux";
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { getTrackingRouteLiveAppSource } from "../Web3AppWebview/analytics";
 import { track } from "~/renderer/analytics/segment";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
@@ -98,10 +98,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             eventName,
             {
               ...properties,
-              flowInitiatedFrom:
-                currentRouteNameRef.current === "Platform Catalog"
-                  ? "Discover"
-                  : currentRouteNameRef.current,
+              flowInitiatedFrom: getTrackingRouteLiveAppSource(),
             },
             mandatory,
           ),

@@ -103,6 +103,21 @@ describe("usePayCardAssets", () => {
     expect(result.current.formatCountervalue(1250)).toContain("12.50");
   });
 
+  it("hides formatted counter values in discreet mode", () => {
+    const { result } = renderHook(() => usePayCardAssets(), {
+      initialState: { settings: { discreetMode: true } },
+    });
+
+    expect(result.current.formatCountervalue(1250)).toContain("***");
+    expect(result.current.discreet).toBe(true);
+  });
+
+  it("formats asset transaction amounts with the host formatter", () => {
+    const { result } = renderHook(() => usePayCardAssets());
+
+    expect(result.current.formatters?.amount?.("-12.99", "EUR", "fiat")).toContain("€");
+  });
+
   it("looks the card currencies up once someone is signed in", () => {
     renderHook(() => usePayCardAssets());
 

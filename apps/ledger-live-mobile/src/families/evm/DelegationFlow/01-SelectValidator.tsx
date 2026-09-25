@@ -6,7 +6,7 @@ import {
   useEvmStakingValidators,
   useStakingContractAddress,
 } from "@ledgerhq/live-common/families/evm/staking/react";
-import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking";
 import { sortLedgerValidatorFirst } from "@ledgerhq/live-common/families/evm/staking/ledgerValidator";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {

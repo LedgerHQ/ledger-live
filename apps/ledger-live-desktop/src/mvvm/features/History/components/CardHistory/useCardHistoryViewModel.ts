@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
-import { localeSelector } from "~/renderer/reducers/settings";
+import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import { longDayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { SIDEBAR_VALUE_TO_PATH } from "LLD/components/SideBar/utils/constants";
@@ -11,13 +11,14 @@ import type { CardHistoryViewModel } from "./types";
 export function useCardHistoryViewModel(): CardHistoryViewModel {
   const navigate = useNavigate();
   const locale = useSelector(localeSelector);
+  const discreet = useSelector(discreetModeSelector);
   const formatDay = useDateFormatter(longDayFormat);
   const formatters = useMemo(
     () => ({
       amount: (value: string, currency: string, kind: "fiat" | "crypto") =>
-        formatCardTransactionAmount({ value, currency, kind, locale }),
+        formatCardTransactionAmount({ value, currency, kind, locale, discreet }),
     }),
-    [locale],
+    [locale, discreet],
   );
   const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
     track(event, params);

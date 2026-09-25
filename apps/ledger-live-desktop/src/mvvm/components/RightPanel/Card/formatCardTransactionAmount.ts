@@ -16,6 +16,7 @@ type FormatCardTransactionAmountArgs = Readonly<{
   currency: string;
   kind: Parameters<FormatCardTransactionAmount>[2];
   locale: string;
+  discreet?: boolean;
 }>;
 
 export function formatCardTransactionAmount({
@@ -23,6 +24,7 @@ export function formatCardTransactionAmount({
   currency,
   kind,
   locale,
+  discreet = false,
 }: FormatCardTransactionAmountArgs): string {
   const ticker = currency.toUpperCase();
   const unit: Unit =
@@ -42,5 +44,6 @@ export function formatCardTransactionAmount({
     locale,
     showCode: true,
     alwaysShowSign: value.startsWith("+"),
+    discreet,
   });
 }

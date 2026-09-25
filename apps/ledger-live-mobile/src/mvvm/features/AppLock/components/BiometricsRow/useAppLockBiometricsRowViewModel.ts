@@ -1,6 +1,6 @@
 import { selectBiometricsEnabled, type BiometricsAvailability } from "@features/platform-app-lock";
 import { useCallback, useRef } from "react";
-import { track } from "~/analytics";
+import { track } from "@shared/analytics";
 import { ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
@@ -43,7 +43,7 @@ function useAppLockBiometricsRowViewModel(): AppLockBiometricsRowViewModel {
       track("toggle_clicked", {
         toggle: "biometrics",
         page: ScreenName.GeneralSettings,
-        enabled,
+        enabled: isEnabled,
       });
 
       // The prompt takes as long as the user does, and a second tap meanwhile would race it. Claimed
@@ -72,7 +72,7 @@ function useAppLockBiometricsRowViewModel(): AppLockBiometricsRowViewModel {
         isPendingRef.current = false;
       }
     },
-    [allowRemoval, biometricsName, disable, enable, promptLabels, t],
+    [allowRemoval, biometricsName, disable, enable, isEnabled, promptLabels, t],
   );
 
   return { availability, isEnabled, biometricsName, onValueChange, isRefusing, onRefusalClose };

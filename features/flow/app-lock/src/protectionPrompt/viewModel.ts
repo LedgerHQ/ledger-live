@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useRef, useState } from "react";
 import type {
   ProtectionPromptViewModel,
@@ -22,6 +23,7 @@ export function useProtectionPromptViewModel({
 
   const onConfirm = useCallback(async () => {
     if (!isBiometricsAvailable) {
+      track("button_clicked", { button: "enable", type: "password" });
       onCreatePassword();
       return;
     }
@@ -30,6 +32,7 @@ export function useProtectionPromptViewModel({
       return;
     }
 
+    track("button_clicked", { button: "enable", type: "biometrics" });
     isConfirmingRef.current = true;
     setIsConfirming(true);
 

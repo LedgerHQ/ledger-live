@@ -96,6 +96,14 @@ describe("formatCardAssetCryptoAmount", () => {
   it("should keep the ticker when the balance is missing", () => {
     expect(formatCardAssetCryptoAmount(null, "usdt")).toBe("USDT");
   });
+
+  it("should hide the balance and keep the ticker in discreet mode", () => {
+    expect(formatCardAssetCryptoAmount("125.40", "usdc", true)).toBe("*** USDC");
+  });
+
+  it("should keep a missing balance as the ticker in discreet mode", () => {
+    expect(formatCardAssetCryptoAmount(null, "usdt", true)).toBe("USDT");
+  });
 });
 
 describe("useCardAssetsViewModel", () => {
@@ -200,6 +208,28 @@ describe("useCardAssetsViewModel", () => {
     ]);
     expect(getCounterValue).toHaveBeenCalledWith(USDC, "125.40");
     expect(getCounterValue).toHaveBeenCalledTimes(1);
+  });
+
+  it("should hide crypto amounts in discreet mode and leave a missing balance as the ticker", () => {
+    stubWallets({
+      wallets: [
+        {
+          id: "w-usdc",
+          addressId: "address-usdc",
+          balance: "125.40",
+          currency: "usdc",
+          network: "ethereum",
+          ledgerId: "ethereum/erc20/usd__coin",
+          ledgerCurrency: USDC,
+        },
+        { id: "w-usdt", balance: null, currency: "usdt", network: "ethereum" },
+      ],
+    });
+
+    const { result } = renderViewModel({ discreet: true });
+
+    expect(result.current.rows.map(row => row.cryptoAmount)).toEqual(["*** USDC", "USDT"]);
+    expect(result.current.discreet).toBe(true);
   });
 
   it("should refresh the selected asset when its wallet balance changes", () => {

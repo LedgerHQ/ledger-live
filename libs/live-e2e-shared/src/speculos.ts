@@ -48,6 +48,7 @@ import {
   getSpeculosModel,
   isTouchDevice,
 } from "./speculosAppVersion";
+import { CONTACTS_ETHEREUM_APP_VERSION, CONTACTS_OS_VERSION_BY_MODEL } from "./contacts";
 import {
   pressAndRelease,
   longPressAndRelease,
@@ -81,6 +82,8 @@ export type Spec = {
     model: DeviceModelId;
     appName: string;
     appVersion?: string;
+    /** Pins the OS the app binary is looked up under, instead of the catalog's latest. */
+    firmware?: string;
   };
   dependencies?: Dependency[];
   onSpeculosDeviceCreated?: (device: Device) => Promise<void>;
@@ -159,6 +162,16 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Ethereum",
+    },
+    dependencies: [],
+  },
+  // No currency, so resolution uses the pinned binary instead of the catalog Ethereum app.
+  Ethereum_Contacts: {
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum",
+      appVersion: CONTACTS_ETHEREUM_APP_VERSION,
+      firmware: CONTACTS_OS_VERSION_BY_MODEL[getSpeculosModel()],
     },
     dependencies: [],
   },
@@ -474,7 +487,7 @@ export async function startSpeculos(
 
   const { appQuery, onSpeculosDeviceCreated } = spec;
   const { model } = appQuery;
-  const firmware = await getDeviceFirmwareVersion(model);
+  const firmware = appQuery.firmware ?? (await getDeviceFirmwareVersion(model));
 
   const catalogVersions = await getNanoAppCatalogVersionMap(getEnv("E2E_NANO_APP_VERSION_PATH"));
 
@@ -896,6 +909,17 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   } else {
     await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
     await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+    await buttons.both();
+  }
+});
+
+export const confirmContactAction = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
+  await pressUntilTextFound(DeviceLabels.CONFIRM);
+
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.CONFIRM);
+  } else {
     await buttons.both();
   }
 });

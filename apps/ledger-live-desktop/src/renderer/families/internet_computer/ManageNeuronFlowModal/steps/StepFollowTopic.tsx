@@ -48,9 +48,13 @@ const StepFollowTopic = ({
           : {
               ...tx,
               followTopic: topic,
-              followeesIds: (
-                neuron?.followees.find(f => f.topic === KNOWN_TOPICS[topic])?.followeeIds ?? []
-              ).map(id => id.toString()),
+              followeesIds: Array.from(
+                new Set(
+                  (
+                    neuron?.followees.find(f => f.topic === KNOWN_TOPICS[topic])?.followeeIds ?? []
+                  ).map(id => id.toString()),
+                ),
+              ),
             },
       );
       // A draft left from a previous visit would arrive holding Continue disabled with no cause.

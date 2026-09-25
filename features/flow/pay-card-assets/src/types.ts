@@ -46,6 +46,7 @@ export type CardAssetsProps = Readonly<{
   onWithdraw?: (asset: CardAssetRow) => void;
   onShowHistory?: (asset: CardAssetRow) => void;
   onAddAsset: () => void;
+  discreet?: boolean;
 }>;
 
 export type CardAssetDialogState = "closed" | "details" | "withdraw" | "manage";
@@ -83,4 +84,5 @@ export type CardAssetsViewModel = Readonly<{
   /** Wallets with an in-flight priority update. Multiple moves can be in flight at once — each
    * drop is issued independently rather than waiting for the previous one to settle. */
   reorderingAssetIds: ReadonlySet<string>;
+  discreet?: boolean;
 }>;

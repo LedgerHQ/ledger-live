@@ -12,13 +12,14 @@ import { useNavigation } from "@react-navigation/native";
 import type { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { NavigatorName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { useBiometricsSetup } from "../hooks/useBiometricsSetup";
 import { useBiometricsTypeLabel } from "../hooks/useBiometricsTypeLabel";
 import { useAppProtectionPromptState } from "./AppProtectionPromptProvider";
 import { useIsRouteMounted } from "./internals/routePresence";
+import type { ProtectionSource } from "../types";
 import type { AppProtectionRequest } from "./types";
 
 type RequestScoped<T> = Readonly<{ request: AppProtectionRequest; value: T }>;
@@ -102,24 +103,32 @@ export function useAppProtectionPromptViewModel(): AppProtectionPromptViewModel 
     });
   }, [biometricsType, enable, t]);
 
-  const pendingExitRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingExitRef = useRef<Readonly<{
+    timer: ReturnType<typeof setTimeout>;
+    source: ProtectionSource;
+  }> | null>(null);
 
   const goToPasswordFlow = useCallback(() => {
-    if (!pendingExitRef.current) {
+    const pendingExit = pendingExitRef.current;
+
+    if (!pendingExit) {
       return;
     }
 
-    clearTimeout(pendingExitRef.current);
+    clearTimeout(pendingExit.timer);
     pendingExitRef.current = null;
     // Through Base, not by bare name: this host sits outside the navigators, and the flow is
     // registered inside Base, where a root-level name would not reach it.
-    navigation.navigate(NavigatorName.Base, { screen: NavigatorName.PasswordAddFlow });
+    navigation.navigate(NavigatorName.Base, {
+      screen: NavigatorName.PasswordAddFlow,
+      params: { screen: ScreenName.PasswordAdd, params: { source: pendingExit.source } },
+    });
   }, [navigation]);
 
   useEffect(
     () => () => {
       if (pendingExitRef.current) {
-        clearTimeout(pendingExitRef.current);
+        clearTimeout(pendingExitRef.current.timer);
       }
     },
     [],
@@ -132,7 +141,10 @@ export function useAppProtectionPromptViewModel(): AppProtectionPromptViewModel 
 
     hasSeenPasswordFlowRef.current = false;
     setOpenedPasswordFlow({ request, value: true });
-    pendingExitRef.current = setTimeout(goToPasswordFlow, SHEET_EXIT_MS);
+    pendingExitRef.current = {
+      timer: setTimeout(goToPasswordFlow, SHEET_EXIT_MS),
+      source: request.source,
+    };
   }, [goToPasswordFlow, request]);
 
   // Closing is only the user's answer while the prompt is what is on screen: it also fires when

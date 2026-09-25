@@ -1,11 +1,12 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { screen } from "@testing-library/react-native";
+import { screen, fireEvent } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import ClaimRewardsMethod from "./02-SelectMethod";
+import { ScreenName } from "~/const";
+import ClaimRewardsMethod from "../02-SelectMethod";
 
 // Mock only external deps (bridge/tx/account hooks, navigation theme); the mode toggle and
 // the rest of the screen render for real so we assert on the actual user-visible label.
@@ -40,7 +41,11 @@ const route = {
 } as unknown as Props["route"];
 const navigation = { navigate: jest.fn() } as unknown as Props["navigation"];
 
-function setup(currencyId: string, mode: string) {
+function setup(
+  currencyId: string,
+  mode: string,
+  status: Record<string, unknown> = { errors: {}, warnings: {} },
+) {
   (useAccountScreen as jest.Mock).mockReturnValue({
     account: {
       type: "Account",
@@ -51,7 +56,7 @@ function setup(currencyId: string, mode: string) {
   });
   (useBridgeTransaction as jest.Mock).mockReturnValue({
     transaction: { family: "cosmos", mode, recipient: "", validators: [] },
-    status: { errors: {}, warnings: {} },
+    status,
     updateTransaction: jest.fn(),
   });
 }
@@ -69,5 +74,28 @@ describe("Cosmos ClaimRewards SelectMethod compound gating", () => {
     setup("babylon", "claimReward");
     render(<ClaimRewardsMethod navigation={navigation} route={route} />);
     expect(screen.queryByText("Compound")).toBeNull();
+  });
+});
+
+describe("Cosmos ClaimRewards SelectMethod device handoff", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("forwards the transaction status to CosmosClaimRewardsSelectDevice on continue", () => {
+    const sentinelStatus = {
+      errors: {},
+      warnings: {},
+      estimatedFees: BigNumber(42),
+      amount: BigNumber(1000),
+      __sentinel: "cosmos-claim-rewards-status",
+    };
+    setup("cosmos", "claimReward", sentinelStatus);
+    render(<ClaimRewardsMethod navigation={navigation} route={route} />);
+
+    fireEvent.press(screen.getByText("Continue"));
+
+    expect(navigation.navigate).toHaveBeenCalledWith(
+      ScreenName.CosmosClaimRewardsSelectDevice,
+      expect.objectContaining({ status: sentinelStatus }),
+    );
   });
 });

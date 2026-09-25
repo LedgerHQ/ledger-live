@@ -35,14 +35,14 @@ export default function BiometricsRow({ iconLeft }: Props) {
       track("toggle_clicked", {
         toggle: "biometrics",
         page: ScreenName.GeneralSettings,
-        enabled: biometricsEnabled,
+        enabled: !!privacy?.biometricsEnabled,
       });
 
       if (validationPending) return;
       setValidationPending(true);
       setBiometricsEnabled(biometricsEnabled);
     },
-    [validationPending],
+    [privacy?.biometricsEnabled, validationPending],
   );
 
   const onSuccess = useCallback(() => {

@@ -20,6 +20,7 @@ export function ContactsDeleteAddressDialog({
       confirmAppearance="red"
       confirmLoading={isDeleting}
       confirmDisabled={isDeleting}
+      contentTestID="contacts-delete-address-content"
       confirmTestID="contacts-delete-address-confirm"
       onConfirm={() => void onConfirm()}
       onCancel={onCancel}
