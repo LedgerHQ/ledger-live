@@ -1,11 +1,13 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import type { Account } from "@ledgerhq/types-live";
+import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { PERPS_DEPOSIT_QUOTE_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/depositQuote";
 import { act, renderHook } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
+import { PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID } from "../../../constants/depositFunding";
 import { usePerpsDepositViewModel } from "../usePerpsDepositViewModel";
 
 const mockOpenDrawer = jest.fn();
@@ -46,6 +48,34 @@ const fundingAccount = createAccount("funding-1", "ethereum", 10000);
 /** Holds more than the form can ask for, so the balance cap never kicks in. */
 const fundedAccount = createAccount("funding-2", "ethereum", 1e18);
 
+const arbitrumUsdcToken: TokenCurrency = {
+  type: "TokenCurrency",
+  id: TokenCurrencyIdSchema.parse(PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID),
+  contractAddress: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("arbitrum"),
+  tokenType: "erc20",
+  name: "USD Coin",
+  ticker: "USDC",
+  units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+};
+
+const usdcParent = createAccount("usdc-parent", "arbitrum", 0);
+
+/** A USDC-on-Arbitrum token account with a fixed spendable balance (atomic units). */
+function createUsdcTokenAccount(id: string, spendableBalance: number): TokenAccount {
+  return {
+    ...genTokenAccount(0, usdcParent, arbitrumUsdcToken),
+    id,
+    spendableBalance: new BigNumber(spendableBalance),
+    balance: new BigNumber(spendableBalance),
+  };
+}
+
+/** Bundles token accounts under their parent so `flattenAccountsSelector` exposes them. */
+function withUsdcAccounts(...tokenAccounts: TokenAccount[]): Account[] {
+  return [{ ...usdcParent, subAccounts: tokenAccounts }, fundedAccount];
+}
+
 function createProps(navigate = jest.fn(), replace = jest.fn()) {
   return {
     props: { navigation: { navigate, replace }, route: { params: { receiverAccount } } } as never,
@@ -55,11 +85,15 @@ function createProps(navigate = jest.fn(), replace = jest.fn()) {
 }
 
 /** The funding account is read back from the store, so it has to live there. */
-function renderViewModel(props: never, discreetMode = false) {
+function renderViewModel(
+  props: never,
+  discreetMode = false,
+  accounts: Account[] = [fundingAccount, fundedAccount],
+) {
   return renderHook(() => usePerpsDepositViewModel(props), {
     overrideInitialState: state => ({
       ...state,
-      accounts: { ...state.accounts, active: [fundingAccount, fundedAccount] },
+      accounts: { ...state.accounts, active: accounts },
       settings: { ...state.settings, discreetMode },
     }),
   });
@@ -373,6 +407,37 @@ describe("usePerpsDepositViewModel", () => {
 
     expect(result.current.isReviewOpen).toBe(false);
     expect(result.current.reviewParams).toBeNull();
+  });
+
+  it("defaults to the USDC funding account with the highest balance", () => {
+    const { props } = createProps();
+    const { result } = renderViewModel(
+      props,
+      false,
+      withUsdcAccounts(
+        createUsdcTokenAccount("usdc-zero", 0),
+        createUsdcTokenAccount("usdc-low", 5000),
+        createUsdcTokenAccount("usdc-high", 20000),
+      ),
+    );
+
+    // The 20_000-atomic account wins; priced 1:1 into USD (2 decimals) that is a $200 ceiling.
+    expect(result.current.maxAmount).toBe(200);
+    expect(result.current.depositCurrencyTicker).toBe("USDC");
+    expect(result.current.depositAccountName).not.toBeNull();
+  });
+
+  it("ignores zero-balance USDC accounts when choosing the default", () => {
+    const { props } = createProps();
+    const { result } = renderViewModel(
+      props,
+      false,
+      withUsdcAccounts(createUsdcTokenAccount("usdc-zero", 0)),
+    );
+
+    // A null account name means nothing was defaulted; maxAmount only falls back to 0.
+    expect(result.current.depositAccountName).toBeNull();
+    expect(result.current.maxAmount).toBe(0);
   });
 
   describe("handing the reviewed deposit over to the device", () => {
