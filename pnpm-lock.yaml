@@ -2691,6 +2691,9 @@ importers:
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
+      '@domain/api-swap-quotes':
+        specifier: workspace:^
+        version: link:../../domain/api/swap-quotes
       '@domain/entity-currency':
         specifier: workspace:^
         version: link:../../domain/entity/currency
@@ -2712,6 +2715,9 @@ importers:
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../../features/platform/device-intent
+      '@ledgerhq/auth':
+        specifier: 'catalog:'
+        version: 0.1.0
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-bitcoin
@@ -2784,9 +2790,18 @@ importers:
       '@oxlint/binding-win32-x64-msvc':
         specifier: 1.51.0
         version: 1.51.0
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react@19.1.4)
       '@segment/analytics-node':
         specifier: 3.1.0
         version: 3.1.0
+      '@shared/api-services':
+        specifier: workspace:^
+        version: link:../../shared/api-services
+      '@shared/auth':
+        specifier: workspace:^
+        version: link:../../shared/auth
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -2802,6 +2817,9 @@ importers:
       '@types/w3c-web-usb':
         specifier: ^1.0.10
         version: 1.0.10
+      axios:
+        specifier: 'catalog:'
+        version: 1.13.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -2814,6 +2832,9 @@ importers:
       debug:
         specifier: 4.4.3
         version: 4.4.3
+      fetch-cookie:
+        specifier: 3.2.0
+        version: 3.2.0
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -4655,9 +4676,6 @@ importers:
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../../shared/api-services
-      '@shared/auth':
-        specifier: workspace:^
-        version: link:../../../shared/auth
       zod:
         specifier: 'catalog:'
         version: 4.3.6

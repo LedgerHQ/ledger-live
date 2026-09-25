@@ -23,6 +23,7 @@
 
 import path from "node:path";
 import { getCliProcessExitCode } from "../cli-process-exit-error";
+import type { ApiAuthKeychain } from "../key-ring/api-auth-identity";
 import { installOutputCapture } from "../shared/ui";
 
 // ---------------------------------------------------------------------------
@@ -39,27 +40,73 @@ import { installOutputCapture } from "../shared/ui";
 
 type RunMainFn = (argv: string[]) => Promise<number>;
 type SetTestDmkTransportFn = (transport: unknown) => void;
+type SetTestApiAuthKeychainFn = (keychain: ApiAuthKeychain | null) => void;
 
 let _runMain: RunMainFn | null = null;
 let _setTestDmkTransport: SetTestDmkTransportFn | null = null;
+let _setTestApiAuthKeychain: SetTestApiAuthKeychainFn | null = null;
+
+/**
+ * Stands in for the OS keychain behind the API auth key, keyed by keychain account (one per
+ * XDG_STATE_HOME), so runs never write to the developer's real keychain.
+ */
+const testApiAuthKeychain = new Map<string, string>();
+
+const inMemoryApiAuthKeychain: ApiAuthKeychain = {
+  getPassword: account => testApiAuthKeychain.get(account) ?? null,
+  setPassword: (account, value) => {
+    testApiAuthKeychain.set(account, value);
+  },
+};
+
+let runCliApiAuthKeychain = inMemoryApiAuthKeychain;
+
+/**
+ * Keychain that `runCli` gives the API auth key, e.g. one sharing a suite's `@napi-rs/keyring` mock;
+ * `null` restores the in-memory one.
+ */
+export function useApiAuthKeychain(keychain: ApiAuthKeychain | null): void {
+  runCliApiAuthKeychain = keychain ?? inMemoryApiAuthKeychain;
+}
+
+/** Public key of the API auth key stored for the profile at `XDG_STATE_HOME`, if any. */
+export async function storedApiAuthPubkey(env: {
+  XDG_STATE_HOME: string;
+}): Promise<string | undefined> {
+  const [{ apiAuthKeychainAccount }, { pubkeyFromPrivatekey }] = await Promise.all([
+    import("../key-ring/api-auth-identity"),
+    import("../key-ring/crypto"),
+  ]);
+  const saved = applyEnv(env);
+  try {
+    const privatekey = runCliApiAuthKeychain.getPassword(apiAuthKeychainAccount());
+    return privatekey ? pubkeyFromPrivatekey(privatekey) : undefined;
+  } finally {
+    restoreEnv(saved);
+  }
+}
 
 async function getCliModules(): Promise<{
   runMain: RunMainFn;
   setTestDmkTransport: SetTestDmkTransportFn;
+  setTestApiAuthKeychain: SetTestApiAuthKeychainFn;
 }> {
   if (!_runMain) {
     // These imports load the full CLI module graph (live-common-setup, commands.gen, etc.).
     // They run once per Bun test-worker; the module system caches the result.
-    const [cliMod, dmkMod] = await Promise.all([
+    const [cliMod, dmkMod, apiAuthMod] = await Promise.all([
       import("../cli"),
       import("../device/register-dmk-transport"),
+      import("../key-ring/api-auth-identity"),
     ]);
     _runMain = cliMod.runMain;
     _setTestDmkTransport = dmkMod._setTestDmkTransport as SetTestDmkTransportFn;
+    _setTestApiAuthKeychain = apiAuthMod._setTestApiAuthKeychain;
   }
   return {
     runMain: _runMain!,
     setTestDmkTransport: _setTestDmkTransport!,
+    setTestApiAuthKeychain: _setTestApiAuthKeychain!,
   };
 }
 
@@ -298,7 +345,10 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
   // 0. Lazy-load the CLI module graph (once per worker; cached after first call).
   //    Doing this lazily ensures module-resolution failures appear as individual
   //    test errors rather than a file-level "Unhandled error between tests".
-  const { runMain, setTestDmkTransport } = await getCliModules();
+  const { runMain, setTestDmkTransport, setTestApiAuthKeychain } = await getCliModules();
+
+  // Per call rather than once: a unit test may have restored the OS keychain since the last run.
+  setTestApiAuthKeychain(runCliApiAuthKeychain);
 
   // 1. HTTP interceptor: install once, update port per call
   if (mergedEnv.WALLET_CLI_MOCK_PORT) {

@@ -8,7 +8,6 @@
   "exports": {
     ".": "./src/index.ts",
     "./store": "./src/store/store.ts",
-    "./store.standalone": "./src/store/store.standalone.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -22,7 +21,6 @@
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:^",
-    "@shared/auth": "workspace:^",
     "zod": "catalog:"
   },
   "devDependencies": {

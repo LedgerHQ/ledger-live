@@ -26,9 +26,13 @@ export class CorruptKeychainError extends Error {}
  * Keychain account name, hashed from the state dir (the same source that locates session.yaml). Binds
  * the key to its profile so distinct profiles and parallel test workers never cross-read entries.
  */
-function keychainAccount(): string {
+export function profileKeychainAccount(prefix: string): string {
   const digest = createHash("sha256").update(stateDir(APP_NAME)).digest("hex").slice(0, 16);
-  return `member-private-key-${digest}`;
+  return `${prefix}-${digest}`;
+}
+
+function keychainAccount(): string {
+  return profileKeychainAccount("member-private-key");
 }
 
 function getEntry() {
