@@ -1,16 +1,22 @@
 import React from "react";
-import { render as renderWithoutI18n, screen } from "@testing-library/react";
+import { render as renderWithoutI18n, screen, renderHook } from "@testing-library/react";
 import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import type { Contact } from "@domain/entity-contact";
 import { createContactsSearchViewModel } from "@features/flow-contacts-list";
 import { ContactsView } from "./ContactsView.web";
+import { useContactDisplayName } from "@features/platform-contacts";
 
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
-const getDisplayName = (contact: Contact) =>
-  contact.isMe ? `${contact.name === "Me" ? "My addresses" : contact.name} (Me)` : contact.name;
+let getDisplayName: (contact: Contact) => string;
+
+beforeAll(() => {
+  getDisplayName = renderHook(() => useContactDisplayName(), {
+    wrapper: ContactsI18nTestProvider,
+  }).result.current;
+});
 
 const labels = {
   title: "Contacts",

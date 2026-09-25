@@ -4,9 +4,17 @@ import {
   createContactDetailLedgerWalletAccountsIntent,
   createContactDetailSharedState,
 } from "./contactDetailSharedState";
+import { renderHook } from "@testing-library/react";
+import { useContactDisplayName } from "@features/platform-contacts";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 
-const getDisplayName = (contact: Contact) =>
-  contact.isMe ? `${contact.name === "Me" ? "My addresses" : contact.name} (Me)` : contact.name;
+let getDisplayName: (contact: Contact) => string;
+
+beforeAll(() => {
+  getDisplayName = renderHook(() => useContactDisplayName(), {
+    wrapper: ContactsI18nTestProvider,
+  }).result.current;
+});
 
 describe("createContactDetailLedgerWalletAccountsIntent", () => {
   it("returns the ledger wallet accounts intent for Me", () => {

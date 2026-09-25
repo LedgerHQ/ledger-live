@@ -6,9 +6,17 @@ import {
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
 } from "./viewModel";
+import { renderHook } from "@testing-library/react";
+import { useContactDisplayName } from "@features/platform-contacts";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 
-const getDisplayName = (contact: Contact) =>
-  contact.isMe ? `${contact.name === "Me" ? "My addresses" : contact.name} (Me)` : contact.name;
+let getDisplayName: (contact: Contact) => string;
+
+beforeAll(() => {
+  getDisplayName = renderHook(() => useContactDisplayName(), {
+    wrapper: ContactsI18nTestProvider,
+  }).result.current;
+});
 
 describe("createEmptyContactsListViewModel", () => {
   it("returns the Me row with no addresses", () => {
