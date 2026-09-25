@@ -810,6 +810,7 @@
     "src/families/stacks/bridge/api.ts",
     "src/families/stacks/coinModuleApi.ts",
     "src/families/stacks/config.ts",
+    "src/families/stacks/react.ts",
     "src/families/stacks/signer.ts",
     "src/families/stellar/bridge/api.ts",
     "src/families/stellar/bridgeExtensions.ts",
