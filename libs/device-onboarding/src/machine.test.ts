@@ -68,7 +68,7 @@ describe("routing", () => {
   it("runs the checks of an unseeded touchscreen under the on-device waiting screen", async () => {
     const { actor, fake } = await start({ osVersion: [os(unseeded)], ...passingChecks });
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
     expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
   });
 
@@ -78,21 +78,21 @@ describe("routing", () => {
       { deviceModelId: DeviceModelId.NANO_X },
     );
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
     expect(fake.earlyCheckToggles()).toEqual([]);
   });
 
   it("never shows the on-device screen to a seeded device, whose firmware refuses the APDU", async () => {
     const { actor, fake } = await start({ osVersion: [os(seeded)], ...passingChecks });
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
     expect(fake.earlyCheckToggles()).toEqual([]);
   });
 
   it("checks a device whose onboarding step it cannot parse, which is every device today", async () => {
     const { actor } = await start({ osVersion: [os({})], ...passingChecks });
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it.each([
@@ -101,7 +101,7 @@ describe("routing", () => {
   ])(
     "sends a nano %s on an old firmware to legacy, before anything is done to it",
     async (_case, state) => {
-      const { actor, fake } = await start(
+      const { actor, fake } = await launch(
         { osVersion: [os({ ...state, seVersion: "0.9.0" })], ...passingChecks },
         { deviceModelId: DeviceModelId.NANO_X },
       );
@@ -111,14 +111,14 @@ describe("routing", () => {
     },
   );
 
-  it("sends a nano s to legacy on the firmware that is the best it will ever run", async () => {
+  it("drives a nano s whatever firmware it runs, since it holds no floor", async () => {
     const { actor, fake } = await start(
-      { osVersion: [os({ ...unseeded, seVersion: "2.1.0" })], ...passingChecks },
+      { osVersion: [os({ ...unseeded, seVersion: "1.6.1" })], ...passingChecks },
       { deviceModelId: DeviceModelId.NANO_S },
     );
 
-    expect(exitOf(actor)).toMatchObject({ reason: "legacyFallback" });
-    expect(fake.genuineCheckRuns()).toBe(0);
+    expectChecksPassed(actor);
+    expect(fake.genuineCheckRuns()).toBe(1);
   });
 
   it("keeps a nano sitting exactly on its model floor", async () => {
@@ -130,7 +130,7 @@ describe("routing", () => {
       { deviceModelId: DeviceModelId.NANO_X },
     );
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("drives a touchscreen whatever firmware it runs, since only the nanos have a floor", async () => {
@@ -139,7 +139,7 @@ describe("routing", () => {
       ...passingChecks,
     });
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it.each([
@@ -169,7 +169,7 @@ describe("the on-device waiting screen", () => {
     });
 
     expect(fake.genuineCheckRuns()).toBe(1);
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("skips leaving a screen it never entered", async () => {
@@ -186,7 +186,7 @@ describe("the on-device waiting screen", () => {
     const { actor, fake } = await start({ osVersion: [os(unseeded)], ...passingChecks });
 
     expect(fake.earlyCheckToggles()).toContain(EarlyCheckToggle.Exit);
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("is not dismissed twice when the device locks after the checks passed", async () => {
@@ -213,7 +213,7 @@ describe("the on-device waiting screen", () => {
     await settle();
 
     expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("is not shown again to a device that comes back with its checks paused", async () => {
@@ -261,7 +261,7 @@ describe("the on-device waiting screen", () => {
       EarlyCheckToggle.Enter,
       EarlyCheckToggle.Exit,
     ]);
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 });
 
@@ -321,7 +321,7 @@ describe("the genuine check", () => {
     await settle();
 
     expect(fake.genuineCheckRuns()).toBe(2);
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("carries the device's request to allow a secure connection to the app", async () => {
@@ -361,7 +361,7 @@ describe("the genuine check", () => {
 
     expect(fake.genuineCheckRuns()).toBe(2);
     expect(actor.getSnapshot().context.lastGenuineFailure).toBeNull();
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("is mandatory: the checks never complete without it", async () => {
@@ -410,7 +410,7 @@ describe("drawers", () => {
     await settle();
 
     expect(fake.genuineCheckRuns()).toBe(2);
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 });
 
@@ -436,7 +436,7 @@ describe("the firmware check", () => {
     actor.send({ type: "USER_DECLINE" });
     await settle();
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
     expect(actor.getSnapshot().context.availableFirmwareUpdate).toBeNull();
   });
 
@@ -505,7 +505,7 @@ describe("the firmware check", () => {
     actor.send({ type: "RETRY" });
     await settle();
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("lets the user skip a check it could not complete", async () => {
@@ -518,7 +518,7 @@ describe("the firmware check", () => {
     actor.send({ type: "SKIP" });
     await settle();
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("runs again on the device that came back on another session", async () => {
@@ -538,7 +538,7 @@ describe("the firmware check", () => {
     await settle();
 
     expect(fake.firmwareCheckRuns()).toBe(2);
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("never hands the update it found to the device that replaced that one", async () => {
@@ -559,7 +559,7 @@ describe("the firmware check", () => {
     actor.send({ type: "SESSION_READY" });
     await settle();
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
     expect(actor.getSnapshot().context.availableFirmwareUpdate).toBeNull();
   });
 });
@@ -595,7 +595,7 @@ describe("the firmware handover", () => {
 
     await handOverAndReturn(actor);
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("offers the update again when the device comes back unchanged", async () => {
@@ -643,7 +643,7 @@ describe("the firmware handover", () => {
     actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
     await settle();
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
     expect(fake.genuineCheckRuns()).toBe(1);
   });
 
@@ -671,7 +671,7 @@ describe("the firmware handover", () => {
     await handOverAndReturn(actor, ports);
 
     expect(fake.genuineCheckRuns()).toBe(1);
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("dismisses the on-device screen a cancelled update left up", async () => {
@@ -682,7 +682,7 @@ describe("the firmware handover", () => {
     await handOverAndReturn(actor);
 
     expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("does not check a device twice for being genuine on the session it already attested", async () => {
@@ -693,37 +693,85 @@ describe("the firmware handover", () => {
     await handOverAndReturn(actor);
 
     expect(fake.genuineCheckRuns()).toBe(1);
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
+  });
+});
+
+describe("entering the flow", () => {
+  it("reads the device, then waits for the user before it touches it again", async () => {
+    const { actor, fake } = await launch({ osVersion: [os(unseeded)], ...passingChecks });
+
+    expect(stateOf(actor)).toBe("awaitingStart");
+    expect(actor.getSnapshot().context.firmwareVersion).not.toBeNull();
+    expect(fake.genuineCheckRuns()).toBe(0);
+    expect(fake.earlyCheckToggles()).toEqual([]);
+  });
+
+  it("runs the checks through to the setup once the user starts", async () => {
+    const { actor, fake } = await launch({ osVersion: [os(unseeded)], ...passingChecks });
+
+    actor.send({ type: "CONTINUE" });
+    await settle();
+
+    expect(fake.genuineCheckRuns()).toBe(1);
+    expectChecksPassed(actor);
+    actor.stop();
+  });
+
+  it("asks again when the device was locked before the user started", async () => {
+    const { actor } = await launch({ osVersion: [os(unseeded)], ...passingChecks });
+
+    actor.send({ type: "LOCKED" });
+    actor.send({ type: "UNLOCKED" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("awaitingStart");
+  });
+
+  it("asks once, and not again when the device is re-read after an update", async () => {
+    const { actor } = await start(
+      handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
+    );
+
+    await handOverAndReturn(actor);
+
+    expectChecksPassed(actor);
+    actor.stop();
+  });
+
+  it("sends a device it cannot drive to legacy without asking the user anything", async () => {
+    const { actor } = await launch(
+      { osVersion: [os({ ...unseeded, seVersion: "0.9.0" })], ...passingChecks },
+      { deviceModelId: DeviceModelId.NANO_X },
+    );
+
+    expect(exitOf(actor)).toMatchObject({ reason: "legacyFallback" });
+  });
+
+  it("leaves the flow on the onboarding cross before the user has started", async () => {
+    const { actor } = await launch({ osVersion: [os(unseeded)], ...passingChecks });
+
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
   });
 });
 
 describe("the end of the checks", () => {
-  it("holds until the user acknowledges them", async () => {
+  it("asks nothing of the user and sends a device still to be set up to the setup phase", async () => {
     const { actor } = await start({ osVersion: [os(unseeded)], ...passingChecks });
 
-    await settle();
-
-    expect(stateOf(actor)).toBe("checksSucceeded");
-  });
-
-  it("has already dismissed the on-device screen by the time the user taps", async () => {
-    const { actor, fake } = await start({ osVersion: [os(unseeded)], ...passingChecks });
-
-    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
-
-    actor.send({ type: "CONTINUE" });
     await settle();
 
     expect(stateOf(actor)).toBe("waiting");
     actor.stop();
   });
 
-  it("sends a device that still has to be set up to the setup phase", async () => {
-    const { actor } = await start({ osVersion: [os(unseeded)], ...passingChecks });
+  it("has dismissed the on-device screen by the time the setup phase starts", async () => {
+    const { actor, fake } = await start({ osVersion: [os(unseeded)], ...passingChecks });
 
-    actor.send({ type: "CONTINUE" });
-    await settle();
-
+    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
     expect(stateOf(actor)).toBe("waiting");
     actor.stop();
   });
@@ -734,15 +782,11 @@ describe("the end of the checks", () => {
       { offerSync: true },
     );
 
-    actor.send({ type: "CONTINUE" });
-
     expect(exitOf(actor)).toMatchObject({ reason: "offerLedgerSync" });
   });
 
   it("ends an already onboarded device without the offer when sync is not on the table", async () => {
     const { actor } = await start({ osVersion: [os(seeded)], ...passingChecks });
-
-    actor.send({ type: "CONTINUE" });
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
@@ -775,7 +819,7 @@ describe("global handlers", () => {
     actor.send({ type: "LOCKED" });
     await settle();
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("re-reads the device once it is unlocked", async () => {
@@ -785,7 +829,7 @@ describe("global handlers", () => {
     actor.send({ type: "UNLOCKED" });
     await settle();
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("waits for a new session when the transport is lost", async () => {
@@ -803,7 +847,7 @@ describe("global handlers", () => {
     actor.send({ type: "SESSION_READY" });
     await settle();
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it("starts over on a new session, rather than holding a failure the user dismissed", async () => {
@@ -826,14 +870,14 @@ describe("global handlers", () => {
 
     expect(fake.genuineCheckRuns()).toBe(2);
     expect(actor.getSnapshot().context.lastGenuineFailure).toBeNull();
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
   });
 
   it.each([
     "checksIdle",
     "genuineFailed",
     "firmwareUpdateOffered",
-    "checksSucceeded",
+    "waiting",
     "deviceLocked",
   ])("leaves the flow on the onboarding cross from %s", async state => {
     const { actor } = await start(scriptReaching(state));
@@ -947,7 +991,7 @@ describe("device setup", () => {
     actor.send(stepChanged(OnboardingStep.WelcomeScreen1));
     await settle();
 
-    expect(stateOf(actor)).toBe("checksSucceeded");
+    expectChecksPassed(actor);
     expect(actor.getSnapshot().context.currentSetupStep).toBeNull();
     actor.stop();
   });
@@ -974,7 +1018,7 @@ describe("device setup", () => {
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 
-  it("still treats a device as unseeded on CONTINUE after a seed appears mid-setup", async () => {
+  it("still treats a device as unseeded after a seed appears mid-setup", async () => {
     const { actor } = await start(
       {
         osVersion: [os(unseeded), os({ ...unseeded, onboardingState: "pin", isOnboarded: true })],
@@ -983,13 +1027,9 @@ describe("device setup", () => {
       { offerSync: true },
     );
 
-    actor.send({ type: "CONTINUE" });
-    await settle();
     actor.send(stepChanged(OnboardingStep.Pin, { isOnboarded: true }));
     actor.send({ type: "LOCKED" });
     actor.send({ type: "UNLOCKED" });
-    await settle();
-    actor.send({ type: "CONTINUE" });
     await settle();
 
     expect(actor.getSnapshot().status).not.toBe("done");
@@ -1014,13 +1054,14 @@ describe("device setup", () => {
 
   it("leaves the session open on the Ledger Sync exit too", async () => {
     const ports = rebindingPorts();
-    const { actor } = await start(
+    const { actor } = await launch(
       { osVersion: [os(seeded)], ...passingChecks },
       { offerSync: true, ports },
     );
 
     ports.rebind();
     actor.send({ type: "CONTINUE" });
+    await settle();
 
     expect(exitOf(actor)).toEqual({
       sessionId: "session-after-update",
@@ -1031,13 +1072,16 @@ describe("device setup", () => {
   });
 
   it("polls the device for the whole setup phase and stops once it has exited", async () => {
-    const { actor, fake } = await start({ osVersion: [os(unseeded)], ...passingChecks });
-    const commandsAfterChecks = fake.sendCommand.mock.calls.length;
+    const { actor, fake } = await launch(
+      { osVersion: [os({ ...unseeded, seVersion: "2.4.0" })], ...passingChecks },
+      { deviceModelId: DeviceModelId.NANO_X },
+    );
+    const commandsBeforeSetup = fake.sendCommand.mock.calls.length;
 
     actor.send({ type: "CONTINUE" });
     await settle();
 
-    expect(fake.sendCommand.mock.calls.length).toBeGreaterThan(commandsAfterChecks);
+    expect(fake.sendCommand.mock.calls.length).toBeGreaterThan(commandsBeforeSetup);
 
     actor.send(stepChanged(OnboardingStep.Ready));
     const commandsOnceDone = fake.sendCommand.mock.calls.length;
@@ -1054,7 +1098,7 @@ type OnboardingActor = Actor<typeof deviceOnboardingMachine>;
 
 type ReboundPorts = DeviceOnboardingPorts & { rebind(): void };
 
-async function start(
+async function launch(
   script: OnboardingDmkScript,
   overrides: Partial<{
     deviceModelId: DeviceModelId;
@@ -1080,6 +1124,20 @@ async function start(
   return { actor, fake };
 }
 
+async function start(
+  script: OnboardingDmkScript,
+  overrides: Parameters<typeof launch>[1] = {},
+): Promise<{ actor: OnboardingActor; fake: FakeOnboardingDmk }> {
+  const launched = await launch(script, overrides);
+
+  if (stateOf(launched.actor) === "awaitingStart") {
+    launched.actor.send({ type: "CONTINUE" });
+    await settle();
+  }
+
+  return launched;
+}
+
 async function enterSetup(
   overrides: Partial<{
     deviceModelId: DeviceModelId;
@@ -1090,18 +1148,13 @@ async function enterSetup(
   const needsNanoFirmware =
     overrides.deviceModelId === DeviceModelId.NANO_X ||
     overrides.deviceModelId === DeviceModelId.NANO_SP;
-  const started = await start(
+  return start(
     {
       osVersion: [os(needsNanoFirmware ? { ...unseeded, seVersion: "2.4.0" } : unseeded)],
       ...passingChecks,
     },
     overrides,
   );
-
-  started.actor.send({ type: "CONTINUE" });
-  await settle();
-
-  return started;
 }
 
 async function follow(actor: OnboardingActor, steps: OnboardingStep[]): Promise<void> {
@@ -1192,6 +1245,10 @@ async function reach(actor: OnboardingActor, state: string): Promise<void> {
   await settle();
 
   expect(stateOf(actor)).toBe(state);
+}
+
+function expectChecksPassed(actor: OnboardingActor): void {
+  expect(stateOf(actor)).toBe("waiting");
 }
 
 function stateOf(actor: OnboardingActor): string {

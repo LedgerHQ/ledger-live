@@ -16,6 +16,7 @@ import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { NEVER, Observable, Subject } from "rxjs";
 import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
+import { useDeviceOnboardingExit } from "../hooks/useDeviceOnboardingExit";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 
 jest.mock("@ledgerhq/live-dmk-mobile", () => ({
@@ -23,7 +24,16 @@ jest.mock("@ledgerhq/live-dmk-mobile", () => ({
   connectDevice: jest.fn(),
 }));
 
+jest.mock("../hooks/useDeviceOnboardingExit", () => ({
+  useDeviceOnboardingExit: jest.fn(),
+}));
+
+jest.mock("../hooks/useFirmwareUpdateHandover", () => ({
+  useFirmwareUpdateHandover: jest.fn(),
+}));
+
 const mockedConnectDevice = jest.mocked(connectDevice);
+const mockedUseDeviceOnboardingExit = jest.mocked(useDeviceOnboardingExit);
 
 const connectedDevice = {
   id: "device-id",
@@ -166,6 +176,15 @@ describe("DeviceOnboarding mobile integration", () => {
       reason: "legacyFallback",
       sessionId: "session-2",
       modelId: DeviceModelId.STAX,
+    });
+    expect(mockedUseDeviceOnboardingExit).toHaveBeenLastCalledWith({
+      device: {
+        deviceId: "compat-device-id",
+        deviceName: "Ledger Stax",
+        modelId: DeviceModelId.STAX.toLowerCase(),
+        wired: false,
+      },
+      output: expect.objectContaining({ reason: "legacyFallback" }),
     });
 
     act(() => result.current.connect());

@@ -6,8 +6,6 @@ export type FirmwareVersionInput = {
   deviceModelId: DeviceModelId;
 };
 
-const modelsWithoutNewFlow = new Set<DeviceModelId>([DeviceModelId.NANO_S]);
-
 export const minimumNanoVersions = new Map<DeviceModelId, string>([
   [DeviceModelId.NANO_SP, "1.1.0"],
   [DeviceModelId.NANO_X, "2.2.0"],
@@ -17,10 +15,6 @@ export function requiresLegacyFlow({
   currentVersion,
   deviceModelId,
 }: FirmwareVersionInput): boolean {
-  if (modelsWithoutNewFlow.has(deviceModelId)) {
-    return true;
-  }
-
   const minimum = minimumNanoVersions.get(deviceModelId);
 
   if (minimum === undefined) {
