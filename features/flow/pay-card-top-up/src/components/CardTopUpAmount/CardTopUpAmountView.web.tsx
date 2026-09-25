@@ -47,7 +47,7 @@ export function CardTopUpAmountView({
         description={headerDescription}
         onClose={onClose}
       />
-      <DialogBody className="flex flex-col items-center gap-24 py-24">
+      <DialogBody className="flex flex-col items-center gap-40 py-24">
         <div className="flex w-full flex-col items-center gap-8">
           <div className="flex w-full items-center justify-center gap-8">
             <AmountInput
@@ -82,7 +82,7 @@ export function CardTopUpAmountView({
             </p>
           ) : null}
         </div>
-        <div className="flex w-full justify-center gap-8">
+        <div className="flex w-full justify-center gap-16">
           {ratios.map(ratio => (
             <Button
               key={ratio.id}
@@ -97,7 +97,7 @@ export function CardTopUpAmountView({
           ))}
         </div>
       </DialogBody>
-      <DialogFooter className="flex flex-col gap-12">
+      <DialogFooter className="flex flex-col gap-12 pt-48">
         <Button
           appearance="base"
           size="lg"
