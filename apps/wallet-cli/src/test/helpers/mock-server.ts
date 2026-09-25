@@ -1,11 +1,16 @@
-export type Route = {
+type RouteMatch = {
   method?: string;
   /** URL path pattern to match (string = substring, RegExp = test against pathname+search) */
   match: RegExp | string;
-  response: unknown;
   status?: number;
   headers?: Record<string, string>;
 };
+
+export type Route = RouteMatch &
+  (
+    | { response: unknown; respond?: never }
+    | { respond: (body: unknown) => unknown; response?: never }
+  );
 
 export class MockServer {
   private _server: ReturnType<typeof Bun.serve> | null = null;
@@ -17,7 +22,7 @@ export class MockServer {
     const { routes } = this;
     const server = Bun.serve({
       port: 0,
-      fetch(req) {
+      async fetch(req) {
         const url = new URL(req.url);
         const pathAndQuery = url.pathname + url.search;
 
@@ -28,7 +33,11 @@ export class MockServer {
               : route.match.test(pathAndQuery);
 
           if (matches && (!route.method || route.method === req.method)) {
-            return Response.json(route.response, {
+            const responseBody = route.respond
+              ? await route.respond(await req.json().catch(() => undefined))
+              : route.response;
+            if (responseBody instanceof Response) return responseBody;
+            return Response.json(responseBody, {
               status: route.status ?? 200,
               headers: { "Content-Type": "application/json", ...(route.headers ?? {}) },
             });

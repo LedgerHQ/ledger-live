@@ -1,14 +1,14 @@
 import type { SwapStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import { colors } from "../../shared/ui";
 
-export type SwapStatusValue = "PENDING" | "FINISHED" | "REFUNDED" | "UNKNOWN";
+export type SwapStatusValue = "PENDING" | "FINISHED" | "REFUNDED";
 
 export type SwapStatusLine = {
   swapId: string;
   status: SwapStatusValue;
 };
 
-function normalizeStatus(rawStatus?: string): SwapStatusValue {
+function normalizeStatus(rawStatus?: string): SwapStatusValue | undefined {
   const status = (rawStatus ?? "").trim().toUpperCase();
   switch (status) {
     case "FINISHED":
@@ -20,15 +20,23 @@ function normalizeStatus(rawStatus?: string): SwapStatusValue {
     case "ONHOLD":
       return "PENDING";
     default:
-      return "UNKNOWN";
+      return undefined;
   }
 }
 
-export function mapSwapStatusLine(raw: SwapStatus, fallbackSwapId: string): SwapStatusLine {
+export function isSwapKnownToProvider(raw: SwapStatus): boolean {
+  return normalizeStatus(raw.status) !== undefined;
+}
+
+export function mapSwapStatusLine(
+  raw: SwapStatus,
+  fallbackSwapId: string,
+): SwapStatusLine | undefined {
   const swapId =
     (typeof raw.swapId === "string" && raw.swapId.trim() !== "" ? raw.swapId : fallbackSwapId) ??
     fallbackSwapId;
   const status = normalizeStatus(raw.status);
+  if (status === undefined) return undefined;
 
   return { swapId, status };
 }
@@ -41,8 +49,6 @@ export function statusIndicator(status: SwapStatusValue): string {
       return "[✔]";
     case "REFUNDED":
       return "[↩]";
-    case "UNKNOWN":
-      return "[?]";
   }
 }
 
