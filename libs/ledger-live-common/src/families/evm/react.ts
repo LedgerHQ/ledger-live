@@ -1,7 +1,7 @@
-import { getGasTracker } from "@ledgerhq/coin-evm/network/gasTracker/index";
+import { getGasTracker } from "@ledgerhq/coin-evm/network";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { Transaction } from "./types";
-import type { GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions } from "@ledgerhq/coin-evm/types";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useEffect, useMemo, useState } from "react";
 import { getCurrencyConfiguration } from "../../config";

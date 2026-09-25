@@ -3,7 +3,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { useFeature } from "@features/platform-feature-flags";
 import { useEvmStakingValidators } from "@ledgerhq/live-common/families/evm/staking/react";
-import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   canRedelegate,

@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { AccountBridge, CurrencyBridge, NFTStandard } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
+import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import resolver from "@ledgerhq/live-common/families/evm/getAddress";

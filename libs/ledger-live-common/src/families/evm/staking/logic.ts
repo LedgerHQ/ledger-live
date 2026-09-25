@@ -13,7 +13,7 @@ import type {
   StakingUnbonding,
   StakingValidatorItem,
 } from "@ledgerhq/types-live";
-import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking/index";
+import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking";
 
 export {
   parseAmountStringToNumber,
@@ -32,7 +32,7 @@ export {
   getValidators,
   prefetchValidators,
   isSeiAccountUnassociated,
-} from "@ledgerhq/coin-evm/staking/index";
+} from "@ledgerhq/coin-evm/staking";
 
 export function mapDelegations(
   delegations: StakingDelegation[],

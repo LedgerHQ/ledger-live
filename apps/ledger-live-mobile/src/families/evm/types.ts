@@ -1,4 +1,4 @@
-import { Strategy } from "@ledgerhq/coin-evm/types/index";
+import { Strategy } from "@ledgerhq/coin-evm/types";
 import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
