@@ -627,9 +627,9 @@ overrides:
   expect: 30.5.0
   pretty-format@^30.0.0: 30.5.0
 
-packageExtensionsChecksum: sha256-y05zn8SOmFlbIRTsh3Z3c43aAFvz482eG6q6x0pvCFg=
+packageExtensionsChecksum: sha256-DnRPKQHuFOrLMncuGd/N1CWVqNLIifH3AnXTY8A8iQs=
 
-pnpmfileChecksum: sha256-swZby4c6N476o8FX0XoKf+uMZZhkYmxWWAUU0I3zpPI=
+pnpmfileChecksum: sha256-JyE64KwSjZ7Ykvi+y4PoBd1Pk100XNhr0fI7RUun0QE=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
@@ -715,9 +715,6 @@ importers:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.29
-      '@ledgerhq/pnpm-utils':
-        specifier: workspace:*
-        version: link:tools/pnpm-utils
       '@nx/devkit':
         specifier: 'catalog:'
         version: 22.7.8(nx@22.7.8)
@@ -18909,8 +18906,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
-
-  tools/pnpm-utils: {}
 
   tools/prune-changelogs:
     devDependencies:
