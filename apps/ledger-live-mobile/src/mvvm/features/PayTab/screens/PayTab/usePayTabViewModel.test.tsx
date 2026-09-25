@@ -56,6 +56,18 @@ const CARD_ASSET: CardAssetRow = {
   countervalueAmount: 100,
 };
 
+const HOSTED_TOP_UP_ASSET: CardAssetRow = {
+  ...CARD_ASSET,
+  id: "wallet-usdc",
+  address: "0xcardwallet",
+  currency: "usdc",
+  network: "ethereum",
+  name: "USD Coin",
+  ticker: "USDC",
+  ledgerId: "ethereum/erc20/usd__coin",
+  cryptoAmount: "100 USDC",
+};
+
 function PayTabViewModelProbe() {
   const { card } = usePayTabViewModel();
   const {
@@ -84,6 +96,10 @@ function PayTabViewModelProbe() {
       <Pressable testID="choose-card-type" onPress={onChooseCardType} />
       <Pressable testID="view-rewards" onPress={onViewRewards} />
       <Pressable testID="asset-top-up" onPress={() => cardAssets?.onTopUp?.(CARD_ASSET)} />
+      <Pressable
+        testID="hosted-asset-top-up"
+        onPress={() => cardAssets?.onTopUp?.(HOSTED_TOP_UP_ASSET)}
+      />
       <Pressable testID="asset-withdraw" onPress={() => cardAssets?.onWithdraw?.(CARD_ASSET)} />
       <Text testID="has-manage-pin">
         {String(typeof cardSettingsActions?.onManagePin === "function")}
@@ -249,12 +265,12 @@ describe("usePayTabViewModel", () => {
     expect(screen.getByTestId("login-open-hosted-page")).toHaveTextContent("undefined");
   });
 
-  it("should pre-select the asset the holder tops up from", async () => {
+  it("should pre-select on the hosted page an asset the native top up does not support", async () => {
     const { user } = renderViewModel();
 
-    await user.press(screen.getByTestId("asset-top-up"));
+    await user.press(screen.getByTestId("hosted-asset-top-up"));
 
-    await expectHostedPage("https://ledger.baanxapi.test/topup?currency=btc");
+    await expectHostedPage("https://ledger.baanxapi.test/topup?currency=usdc");
   });
 
   it("should open the legacy card live app on top up when the legacyTopUp param is on", async () => {
