@@ -62,12 +62,8 @@ export function RequestReceiveView({
           cardRef={cardRef}
         />
       </Box>
-      <Box lx={{ marginTop: "s12", paddingHorizontal: "s16", paddingBottom: "s24" }}>
-        {hint ? (
-          <Box lx={{ position: "absolute", right: "s16" }} style={{ bottom: "100%" }}>
-            <RequestReceiveVerifyHint {...hint} />
-          </Box>
-        ) : null}
+      <Box lx={{ marginTop: "s12", paddingHorizontal: "s16" }}>
+        {hint ? <RequestReceiveVerifyHint {...hint} /> : null}
         <RequestReceiveActions
           visibleActions={visibleActions}
           hasCopied={hasCopied}
