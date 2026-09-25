@@ -19,6 +19,8 @@ export const mockFeeByTransactionType: Record<TransactionType, number> = {
 export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinConfig => {
   return {
     networkType,
+    name: networkType === "testnet" ? "Aleo (Testnet)" : "Aleo",
+    unit: { name: "Aleo", code: "ALEO", magnitude: 6 },
     defaultValidator: "aleo1validator000000000000000000000000000000000000000000000000q",
     apiUrls: {
       node: "https://node.example.com",
@@ -43,6 +45,8 @@ export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinCon
  */
 export const getTestnetIntegConfig = (overrides?: Partial<AleoCoinConfig>): AleoCoinConfig => ({
   status: { type: "active" },
+  name: "Aleo (Testnet)",
+  unit: { name: "Aleo", code: "ALEO", magnitude: 6 },
   networkType: "testnet",
   defaultValidator: "aleo1validator000000000000000000000000000000000000000000000000q",
   apiUrls: {

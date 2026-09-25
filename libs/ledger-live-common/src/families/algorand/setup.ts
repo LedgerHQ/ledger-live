@@ -23,6 +23,8 @@ const getCoinConfig: CoinConfig<AlgorandCoinConfig> = () => {
   const baseUrl = getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
   return {
     status: { type: "active" },
+    name: "Algorand",
+    unit: { name: "ALGO", code: "ALGO", magnitude: 6 },
     node: `${baseUrl}/ps2/v2`,
     indexer: `${baseUrl}/idx2/v2`,
   };

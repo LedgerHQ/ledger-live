@@ -32,6 +32,8 @@ describe("getDescriptor", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
     });
 
     const descriptor = getDescriptor(currency);
@@ -61,6 +63,8 @@ describe("getDescriptor", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Ethereum",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
     });
 
     const descriptor = getDescriptor(currency);
@@ -88,6 +92,8 @@ describe("getDescriptor", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Solana",
+      unit: { name: "SOL", code: "SOL", magnitude: 9 },
     });
 
     const descriptor = getDescriptor(currency);
@@ -115,6 +121,8 @@ describe("getDescriptor", () => {
           type: "active",
           features: [{ id: "blockchain_txs", status: "inactive" }],
         },
+        name: "Bitcoin",
+        unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
       },
     ],
     [
@@ -124,6 +132,8 @@ describe("getDescriptor", () => {
           type: "under_maintenance",
           message: "Maintenance",
         },
+        name: "Bitcoin",
+        unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
       },
     ],
   ];
@@ -142,6 +152,8 @@ describe("getDescriptor", () => {
       status: {
         type: "active",
       },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
     });
 
     const descriptor = getDescriptor(bitcoin);
@@ -167,6 +179,8 @@ describe("getSendDescriptor", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
     });
 
     const sendDescriptor = getSendDescriptor(bitcoin);
@@ -194,6 +208,8 @@ describe("getSendDescriptor", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "inactive" }],
       },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
     });
 
     const sendDescriptor = getSendDescriptor(bitcoin);
@@ -208,6 +224,8 @@ describe("sendFeatures", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
     });
   });
 
@@ -723,6 +741,8 @@ describe("zcash descriptor resolution", () => {
           type: "active",
           features: [{ id: "blockchain_txs", status: "active" }],
         },
+        name: "Zcash",
+        unit: { name: "zcash", code: "ZEC", magnitude: 8 },
       });
   });
 

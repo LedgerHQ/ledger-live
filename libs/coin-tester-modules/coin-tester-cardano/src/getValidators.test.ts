@@ -9,7 +9,12 @@ const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
 // createApi() is context-driven (framework v6); the getValidators impl ignores the context, but the
 // signature requires one. Derive its type from the api to avoid a direct coin-module-framework dep.
 const context: Parameters<ReturnType<typeof createApi>["getValidators"]>[0] = {
-  config: async () => ({ ...config, status: { type: "active" } }),
+  config: async () => ({
+    ...config,
+    status: { type: "active" },
+    name: "Cardano",
+    unit: { name: "ada", code: "ADA", magnitude: 6 },
+  }),
   logger: () => {},
 };
 

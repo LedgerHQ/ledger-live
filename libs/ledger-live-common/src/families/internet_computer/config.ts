@@ -8,6 +8,8 @@ export const internetComputerConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Internet Computer",
+      unit: { name: "ICP", code: "ICP", magnitude: 8 },
     },
   },
 };

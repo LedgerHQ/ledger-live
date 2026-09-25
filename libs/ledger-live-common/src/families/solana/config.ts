@@ -12,6 +12,8 @@ export const solanaConfig: CurrencyLiveConfigDefinition = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Solana",
+      unit: { name: "SOL", code: "SOL", magnitude: 9 },
       token2022Enabled: false,
       legacyOCMSMaxVersion: "1.8.0",
       validatorsUrl: "https://validators-solana.coin.ledger.com/api/v1/validators/mainnet.json",

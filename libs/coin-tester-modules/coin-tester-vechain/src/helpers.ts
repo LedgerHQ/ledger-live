@@ -113,6 +113,8 @@ export async function getBridges(
 
     const { currencyBridge, accountBridge } = createBridges(context, () => ({
       status: { type: "active" as const },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       chainTag,
       node: { url: THOR_SOLO_RPC },
     }));

@@ -19,7 +19,12 @@ const mockListOperations = jest.mocked(listOperations);
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
 const currency = getCryptoCurrencyById("cardano");
 const mockCtx: Context<CardanoCoinConfig> = {
-  config: async () => ({ ...config, status: { type: "active" } }),
+  config: async () => ({
+    ...config,
+    status: { type: "active" },
+    name: "Cardano",
+    unit: { name: "ada", code: "ADA", magnitude: 6 },
+  }),
   logger: () => {},
 };
 

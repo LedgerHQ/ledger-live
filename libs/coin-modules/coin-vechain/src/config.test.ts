@@ -20,11 +20,15 @@ describe("config", () => {
   it("returns the config as set, without a chainTag when the currency config omits it", () => {
     setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
     }));
 
     expect(getCoinConfig()).toEqual({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
     });
     expect(getCoinConfig().chainTag).toBeUndefined();
@@ -33,6 +37,8 @@ describe("config", () => {
   it("returns the configured chainTag when the currency config provides one", () => {
     setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
       chainTag: 39,
     }));
@@ -45,6 +51,8 @@ describe("getChainTag", () => {
   it("returns the configured chainTag when it is a valid single byte", () => {
     setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
       chainTag: 39,
     }));
@@ -55,6 +63,8 @@ describe("getChainTag", () => {
   it("falls back to mainnet when the currency config omits a chainTag", () => {
     setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
     }));
 
@@ -66,6 +76,8 @@ describe("getChainTag", () => {
     invalid => {
       setCoinConfig(() => ({
         status: { type: "active" },
+        name: "Vechain",
+        unit: { name: "VET", code: "VET", magnitude: 18 },
         node: { url: "https://vechain.coin.ledger.com" },
         chainTag: invalid,
       }));

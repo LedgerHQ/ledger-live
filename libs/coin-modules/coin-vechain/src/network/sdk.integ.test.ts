@@ -6,7 +6,12 @@ import { TEST_VECHAIN_ENDPOINT } from "../test/constants";
 import { setCoinConfig, type VechainCurrencyConfig } from "../config";
 
 const BASE_URL = TEST_VECHAIN_ENDPOINT;
-const config: VechainCurrencyConfig = { status: { type: "active" }, node: { url: BASE_URL } };
+const config: VechainCurrencyConfig = {
+  status: { type: "active" },
+  name: "Vechain",
+  unit: { name: "VET", code: "VET", magnitude: 18 },
+  node: { url: BASE_URL },
+};
 const LAST_BLOCK_COUNT = 24580112;
 const MAX_OPS_IN_BLOCK_RANGE = 1000;
 const N_OPS_IN_BLOCK = 3;
@@ -104,7 +109,12 @@ const interceptors = [
 const server = setupServer(...interceptors);
 
 beforeAll(() => {
-  setCoinConfig(() => ({ status: { type: "active" }, node: { url: BASE_URL } }));
+  setCoinConfig(() => ({
+    status: { type: "active" },
+    name: "Vechain",
+    unit: { name: "VET", code: "VET", magnitude: 18 },
+    node: { url: BASE_URL },
+  }));
   server.listen({ onUnhandledRequest: "error" });
 });
 afterEach(() => server.resetHandlers());

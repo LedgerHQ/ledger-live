@@ -58,6 +58,7 @@ export const scenarioArcTestnetNative: Scenario<GenericTransaction, Account> = {
       status: { type: "active" },
       chainId: 5042002,
       name: "Arc Testnet",
+      unit: { name: "USDC", code: "USDC", magnitude: 18 },
       node: { type: "external", uri: "http://127.0.0.1:8545" },
       explorer: { type: "blockscout", noCache: true, uri: ARC_TESTNET_EXPLORER },
       nativeContracts: [ARC_USDC_NATIVE_CONTRACT],

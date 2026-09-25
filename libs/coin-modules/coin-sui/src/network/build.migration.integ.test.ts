@@ -38,11 +38,19 @@ beforeAll(() => {
       graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
       grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
     };
+    const name = "Sui";
+    const unit = { name: "Sui", code: "SUI", magnitude: 9 };
     if (id === GRPC_ID) {
-      return { node, status: { type: "active" }, features: { transport: "grpc" } };
+      return { node, status: { type: "active" }, features: { transport: "grpc" }, name, unit };
     }
     if (id === GRAPHQL_ID) {
-      return { node, status: { type: "active" }, features: { transport: "graphql" } };
+      return {
+        node,
+        status: { type: "active" },
+        features: { transport: "graphql" },
+        name,
+        unit,
+      };
     }
     throw new Error(`Unknown currency id in build migration test: ${id}`);
   });

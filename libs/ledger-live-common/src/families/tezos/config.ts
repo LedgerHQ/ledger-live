@@ -12,6 +12,8 @@ export const tezosConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Tezos",
+      unit: { name: "XTZ", code: "XTZ", magnitude: 6 },
       baker: {
         url: getEnv("API_TEZOS_BAKER"),
       },

@@ -25,6 +25,7 @@ export const scenarioRobinhoodTestnet: Scenario<GenericTransaction, Account> = {
       status: { type: "active" },
       chainId: 46630,
       name: "Robinhood Chain Testnet",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "http://127.0.0.1:8545" },
       explorer: { type: "none" },
     };

@@ -18,6 +18,8 @@ function configureTransport(transport: SuiTransport) {
       grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
     },
     features: { transport },
+    name: "Sui",
+    unit: { name: "Sui", code: "SUI", magnitude: 9 },
   }));
 }
 

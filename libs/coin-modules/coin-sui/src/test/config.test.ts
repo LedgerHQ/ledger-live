@@ -23,6 +23,8 @@ describe("Configuration", () => {
     node: { url: "123", graphqlUrl: "456", grpcUrl: "789" },
     status: { type: "active" as const },
     features: { transport: "json" as const },
+    name: "Sui",
+    unit: { name: "Sui", code: "SUI", magnitude: 9 },
   };
 
   beforeEach(() => {

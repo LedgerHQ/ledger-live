@@ -48,6 +48,8 @@ describe("getTransactionStatus", () => {
       minReserve: 100,
       networkType: "mainnet",
       status: { type: "active" },
+      name: "Canton Network",
+      unit: { name: "cc", code: "CC", magnitude: 38 },
       nativeInstrumentId: "Amulet",
     });
     mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(false);
@@ -225,6 +227,8 @@ describe("getTransactionStatus", () => {
         minReserve: 0,
         networkType: "mainnet",
         status: { type: "active" },
+        name: "Canton Network",
+        unit: { name: "cc", code: "CC", magnitude: 38 },
         nativeInstrumentId: "Amulet",
       });
 

@@ -13,6 +13,8 @@ describe("gRPC-web transport (live mainnet)", () => {
       grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
     },
     features: { transport: "grpc" },
+    name: "Sui",
+    unit: { name: "Sui", code: "SUI", magnitude: 9 },
   };
 
   // Liveness is asserted through GetEpoch rather than the more obvious GetServiceInfo:

@@ -36,6 +36,8 @@ export const EPOCHS_TO_UNLOCK_BLOCKS = 2500;
 
 export const coinConfig = (rpcUrl: string) => () => ({
   status: { type: "active" as const },
+  name: "NEAR",
+  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
   infra: {
     API_NEAR_PRIVATE_NODE: rpcUrl,
     API_NEAR_PUBLIC_NODE: rpcUrl,

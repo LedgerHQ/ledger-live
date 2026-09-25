@@ -11,6 +11,8 @@ describe("getTransactionStatus", () => {
       status: {
         type: "active",
       },
+      name: "NEAR",
+      unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
       infra: {
         API_NEAR_PRIVATE_NODE: NEAR_BASE_URL_MOCKED,
         API_NEAR_PUBLIC_NODE: NEAR_BASE_URL_MOCKED,

@@ -20,6 +20,8 @@ describe.skip("getBalance", () => {
         grpcUrl: getJsonRpcFullnodeUrl("testnet"),
       },
       features: { transport: "json" },
+      name: "Sui (Testnet)",
+      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 

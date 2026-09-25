@@ -279,6 +279,8 @@ const coinConfig: PolkadotCoinConfig = {
   status: {
     type: "active",
   },
+  name: "Polkadot",
+  unit: { name: "DOT", code: "DOT", magnitude: 10 },
   node: {
     url: LOCAL_TESTNODE_WS_URL,
   },

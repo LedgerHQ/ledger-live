@@ -22,6 +22,8 @@ const mockConfig: AlgorandCoinConfig = {
   node: "https://testnet-api.algonode.cloud/v2",
   indexer: "https://testnet-idx.algonode.cloud/v2",
   status: { type: "active" },
+  name: "Algorand",
+  unit: { name: "ALGO", code: "ALGO", magnitude: 6 },
 };
 
 const mockCtx: Context<AlgorandCoinConfig> = {
