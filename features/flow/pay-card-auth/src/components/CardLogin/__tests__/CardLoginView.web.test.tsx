@@ -123,4 +123,13 @@ describe("CardLoginView (Web)", () => {
     expect(screen.getByTestId("card-login-skeleton")).toBeVisible();
     expect(screen.queryByRole("button", { name: "Login" })).toBeNull();
   });
+
+  it("should call onDismiss when the dialog close button is pressed", () => {
+    const onDismiss = jest.fn();
+    renderCardLoginView({ error: buildError({ onDismiss }) });
+
+    fireEvent.click(screen.getByRole("button", { name: /close/i }));
+
+    expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
 });
