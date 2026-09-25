@@ -377,7 +377,7 @@ describe("useRecipientAddressModalViewModel", () => {
     expect(result.current.showEmptyContactsState).toBe(false);
   });
 
-  it("only exposes saved contact addresses from the selected network", () => {
+  it("lists Me and saved contacts with only their addresses on the selected network", () => {
     mockedUseContactsFeature.mockReturnValue({
       isEnabled: true,
       showNewBadge: false,
@@ -419,11 +419,10 @@ describe("useRecipientAddressModalViewModel", () => {
       }),
     );
 
-    expect(result.current.contactsOnNetwork).toHaveLength(1);
-    expect(result.current.contactsOnNetwork[0]).toMatchObject({
-      id: "contact-alice",
-      addresses: [{ id: "address-eth" }, { id: "address-usdc" }],
-    });
+    expect(result.current.contactsOnNetwork).toMatchObject([
+      { id: "contact-me", addresses: [{ id: "address-me" }] },
+      { id: "contact-alice", addresses: [{ id: "address-eth" }, { id: "address-usdc" }] },
+    ]);
   });
 
   it("advances with the address matching the current currency when a contact has several network addresses", () => {
