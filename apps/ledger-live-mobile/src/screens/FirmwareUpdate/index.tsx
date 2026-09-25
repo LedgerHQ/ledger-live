@@ -479,6 +479,9 @@ export const FirmwareUpdate = ({
               }}
             />
           ),
+          // The base screen options keep a close button whose default is popToTop, which skips
+          // the warning the back button shows while a flash is in progress.
+          headerRight: () => null,
         }
       : {
           headerRight: () => (
