@@ -783,6 +783,33 @@ describe("onRemoteFlagsError", () => {
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
   });
 
+  it("boots on env-resolved defaults when both the cache and the first fetch fail", async () => {
+    const onRemoteFlagsError = jest.fn();
+    const storageError = new Error("storage unavailable");
+    const networkError = new Error("network down");
+    const store = createStore(undefined, {
+      resolutionConfig: { envFlags: { mockFeature: { enabled: true } } },
+      readCachedFlags: () => Promise.reject(storageError),
+      fetchRemoteFlags: () => Promise.reject(networkError),
+      refreshInterval: 1_000,
+      onRemoteFlagsError,
+    });
+
+    await jest.advanceTimersByTimeAsync(0);
+
+    const { featureFlags } = store.getState();
+    expect(featureFlags.cachedFlagsSettled).toBe(true);
+    expect(featureFlags.remoteFlagsReady).toBe(true);
+    expect(featureFlags.resolved.mockFeature).toMatchObject({
+      enabled: true,
+      overriddenByEnv: true,
+    });
+    expect(onRemoteFlagsError.mock.calls).toEqual([
+      [storageError, { stage: "cache", attempt: 1, isCold: true }],
+      [networkError, { stage: "remote", attempt: 1, isCold: true }],
+    ]);
+  });
+
   it("keeps polling when the reporter itself throws", async () => {
     const fetcher = jest.fn().mockRejectedValue(new Error("network down"));
     createStore(undefined, {
