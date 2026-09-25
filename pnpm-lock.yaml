@@ -6875,6 +6875,9 @@ importers:
       '@domain/entity-currency-unit':
         specifier: workspace:^
         version: link:../../../domain/entity/currency-unit
+      '@features/platform-pay-analytics':
+        specifier: workspace:*
+        version: link:../../platform/pay-analytics
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.6(@ledgerhq/lumen-design-core@0.1.29)(@ledgerhq/lumen-ui-react@0.1.59(@ledgerhq/lumen-design-core@0.1.29)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-ui-rnative@0.1.62(@ledgerhq/lumen-design-core@0.1.29)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -6988,6 +6991,9 @@ importers:
 
   features/flow/pay-bank-transfer:
     dependencies:
+      '@features/platform-pay-analytics':
+        specifier: workspace:^
+        version: link:../../platform/pay-analytics
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -8057,6 +8063,9 @@ importers:
 
   features/flow/pay-deposit:
     dependencies:
+      '@features/platform-pay-analytics':
+        specifier: workspace:^
+        version: link:../../platform/pay-analytics
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -8277,6 +8286,9 @@ importers:
 
   features/flow/pay-request:
     dependencies:
+      '@features/platform-pay-analytics':
+        specifier: workspace:^
+        version: link:../../platform/pay-analytics
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.6(@ledgerhq/lumen-design-core@0.1.29)(@ledgerhq/lumen-ui-react@0.1.59(@ledgerhq/lumen-design-core@0.1.29)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-ui-rnative@0.1.62(@ledgerhq/lumen-design-core@0.1.29)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native-reanimated@4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -8947,6 +8959,13 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   features/platform/pay-analytics:
+    dependencies:
+      '@shared/analytics':
+        specifier: workspace:*
+        version: link:../../../shared/analytics
+      '@shared/analytics-react':
+        specifier: workspace:*
+        version: link:../../../shared/analytics-react
     devDependencies:
       '@jest/globals':
         specifier: 'catalog:'
@@ -23441,7 +23460,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
