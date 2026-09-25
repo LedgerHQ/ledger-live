@@ -3,6 +3,7 @@ import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation"
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import eip55 from "eip55";
 import { CeloSigner } from ".";
+import { getCoinConfig } from "../config";
 
 /*
 NOTE: we should use the evm resolver for celo, but due to the signer types conflicting for now 
@@ -11,8 +12,7 @@ we are using a separate resolver
 const resolver = (signerContext: SignerContext<CeloSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify, currency }: GetAddressOptions) => {
     const { address, publicKey } = await signerContext(deviceId, signer => {
-      /* istanbul ignore next: optional chaining + undefined is a valid value */
-      const chainId = currency?.ethereumLikeInfo?.chainId.toString();
+      const chainId = getCoinConfig(currency.id).info.chainId.toString();
       return signer.getAddress(path, verify, false, chainId);
     });
 

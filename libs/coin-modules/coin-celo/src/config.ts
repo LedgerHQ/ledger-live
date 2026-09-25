@@ -33,6 +33,8 @@ export const celoConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", type: "active" },
         ],
       },
+      chainId: 42220,
+      name: "Celo",
       node: {
         type: "external",
         uri: "https://celo.coin.ledger.com/archive",
