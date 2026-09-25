@@ -278,9 +278,9 @@ describe("PayTab integration", () => {
         page: "Pay",
       }),
     );
-    expect(mockedTrack).toHaveBeenCalledWith(
-      "Page cash to stable",
-      expect.objectContaining({ flow: "C2S" }),
+    expect(mockedTrackPage).toHaveBeenCalledWith(
+      expect.objectContaining({ category: "Feature Intro", name: "Cash to stable" }),
+      expect.anything(),
     );
   });
 
@@ -296,16 +296,16 @@ describe("PayTab integration", () => {
       "button_clicked",
       expect.objectContaining({
         button: "create an account",
-        flow: "C2S",
-        page: "cash to stable",
+        flow: "Cash to stable",
+        page: "Feature Intro Cash to stable",
       }),
     );
     expect(mockedTrack).not.toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
         button: "close",
-        flow: "C2S",
-        page: "cash to stable",
+        flow: "Cash to stable",
+        page: "Feature Intro Cash to stable",
       }),
     );
   });
@@ -322,8 +322,8 @@ describe("PayTab integration", () => {
       "button_clicked",
       expect.objectContaining({
         button: "log in to noah",
-        flow: "C2S",
-        page: "cash to stable",
+        flow: "Cash to stable",
+        page: "Feature Intro Cash to stable",
       }),
     );
   });

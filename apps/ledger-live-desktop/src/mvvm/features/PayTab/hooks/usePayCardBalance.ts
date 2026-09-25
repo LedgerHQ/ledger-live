@@ -13,7 +13,6 @@ import {
   type BalanceData,
   type BalanceFilter,
 } from "@features/flow-pay-balance";
-import type { PayAnalyticsHelper } from "@features/platform-pay-analytics";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
@@ -23,7 +22,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { usePayStablecoins } from "./usePayStablecoins";
 
-export function usePayCardBalance(onTrackEvent?: PayAnalyticsHelper["trackEvent"]): BalanceData {
+export function usePayCardBalance(): BalanceData {
   const dispatch = useDispatch();
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
@@ -75,6 +74,5 @@ export function usePayCardBalance(onTrackEvent?: PayAnalyticsHelper["trackEvent"
     discreet,
     onConfirmFilter,
     onResetFilter,
-    onTrackEvent,
   });
 }

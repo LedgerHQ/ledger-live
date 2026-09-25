@@ -6,7 +6,7 @@ import type {
   VerifyAddressIntentInput,
   VerifyAddressIntentJobState,
 } from "@features/platform-verify-address-intent";
-import type { PayRequestTrackEvent } from "@features/flow-pay-request";
+import { trackEvent } from "@features/platform-pay-analytics";
 import {
   buildDeviceInitializationInput,
   DeviceIntentExecutorLWD,
@@ -29,7 +29,6 @@ type Props = Readonly<{
   selection: PayVerifySelection;
   onReady: () => void;
   onExit: (outcome: PayVerifyOutcome) => void;
-  onTrackEvent?: PayRequestTrackEvent;
 }>;
 
 const noop = () => {};
@@ -51,7 +50,6 @@ export function VerifyAddressExecutorLWD({
   selection,
   onReady,
   onExit,
-  onTrackEvent,
 }: Props): React.ReactElement | null {
   const { account, parentAccount } = selection;
   const [initInput, setInitInput] = useState<InitializationInput | null>(null);
@@ -101,7 +99,7 @@ export function VerifyAddressExecutorLWD({
       lastJobStateRef.current = jobState;
       const event = JOB_TRACK_EVENT[jobState.type];
       if (event) {
-        onTrackEvent?.(event, {
+        trackEvent(event, {
           page: "Request Address Verification",
           flow: "request",
           asset: account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker,
@@ -110,19 +108,19 @@ export function VerifyAddressExecutorLWD({
       }
       if (jobState.type === "verified") exit("verified");
     },
-    [account, exit, mainAccount.currency.id, onTrackEvent],
+    [account, exit, mainAccount.currency.id],
   );
 
   const onUserCancel = useCallback(() => {
     if (exitedRef.current) return;
-    onTrackEvent?.("request_verification_dismiss", {
+    trackEvent("request_verification_dismiss", {
       page: "Request Address Verification",
       flow: "request",
       asset: account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker,
       network: mainAccount.currency.id,
     });
     exit(outcomeFromLastState(lastJobStateRef.current));
-  }, [account, exit, mainAccount.currency.id, onTrackEvent]);
+  }, [account, exit, mainAccount.currency.id]);
 
   const intent = useMemo(
     () =>

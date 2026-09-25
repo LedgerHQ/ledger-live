@@ -2,7 +2,6 @@ import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
 import { longDayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { SIDEBAR_VALUE_TO_PATH } from "LLD/components/SideBar/utils/constants";
 import { formatCardTransactionAmount } from "LLD/components/RightPanel/Card/formatCardTransactionAmount";
@@ -20,12 +19,9 @@ export function useCardHistoryViewModel(): CardHistoryViewModel {
     }),
     [locale, discreet],
   );
-  const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
-    track(event, params);
-  }, []);
   const onGoToPay = useCallback(() => {
     navigate(SIDEBAR_VALUE_TO_PATH.paytab);
   }, [navigate]);
 
-  return { formatters, formatDay, onTrackEvent, onGoToPay };
+  return { formatters, formatDay, onGoToPay };
 }
