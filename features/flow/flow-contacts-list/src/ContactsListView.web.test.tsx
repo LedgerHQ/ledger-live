@@ -40,7 +40,7 @@ type RenderContactsPageOptions = Readonly<{
 }>;
 
 function renderContactsPage({
-  viewModel = createEmptyContactsListViewModel(mockMeContact(), getDisplayName),
+  viewModel = createEmptyContactsListViewModel(mockMeContact()),
   isLedgerSyncChecking = false,
   isFeatureIntroductionOpen = false,
   onCompleteFeatureIntroduction = jest.fn(),
@@ -117,7 +117,7 @@ describe("ContactsPage", () => {
     const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
 
     renderContactsPage({
-      viewModel: createPopulatedContactsListViewModel(me, contacts, getDisplayName),
+      viewModel: createPopulatedContactsListViewModel(me, contacts),
     });
 
     const contactsList = screen.getByTestId("contacts-list");
@@ -144,7 +144,7 @@ describe("ContactsPage", () => {
     const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
 
     renderContactsPage({
-      viewModel: createPopulatedContactsListViewModel(me, contacts, getDisplayName),
+      viewModel: createPopulatedContactsListViewModel(me, contacts),
     });
 
     const scrollContainer = screen.getByTestId("contacts-list-scroll");

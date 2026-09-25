@@ -5,12 +5,12 @@ import type { Contact } from "@domain/entity-contact";
 type Props = Readonly<{ contact: Contact }>;
 
 export function HistoryContactScope({ contact }: Props) {
-  const displayName = useContactDisplayName()(contact);
+  const getDisplayName = useContactDisplayName();
 
   return (
     <span className="inline-flex items-center gap-8 body-1" data-testid="history-contact-scope">
-      {displayName}
-      <ContactAvatar contactId={contact.id} name={contact.name} size="xs" />
+      {getDisplayName(contact)}
+      <ContactAvatar contactId={contact.id} name={contact.name} isMe={contact.isMe} size="xs" />
     </span>
   );
 }

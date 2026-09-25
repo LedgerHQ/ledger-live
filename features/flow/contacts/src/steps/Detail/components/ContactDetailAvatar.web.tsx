@@ -27,6 +27,7 @@ export function ContactDetailAvatar({
         <ContactAvatar
           contactId={contact.id}
           name={contact.name}
+          isMe={contact.isMe}
           ariaHidden
           size="xl"
           testId={contact.isMe ? "contacts-detail-me-avatar" : "contacts-detail-avatar"}

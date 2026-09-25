@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "@shared/i18n";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
-import { useContactDisplayName } from "@features/platform-contacts";
 import type { ContactAddressPickerProps } from "../../types";
 import { buildContactAddressPickerGroups } from "./model/buildContactAddressPickerGroups";
 
@@ -21,7 +20,6 @@ export function useContactAddressPickerViewModel({
   onAddNewAddress,
 }: UseContactAddressPickerViewModelParams): UseContactAddressPickerViewModel {
   const { t } = useTranslation();
-  const getDisplayName = useContactDisplayName();
   const [contact, setContact] = useState<Contact | null>(null);
 
   const open = useCallback((nextContact: Contact) => setContact(nextContact), []);
@@ -32,13 +30,12 @@ export function useContactAddressPickerViewModel({
     [contact],
   );
 
-  const title = useMemo(
-    () =>
-      contact === null
-        ? ""
-        : t("payTab.contacts.addressPicker.title", { name: getDisplayName(contact) }),
-    [contact, getDisplayName, t],
-  );
+  const title = useMemo(() => {
+    if (contact === null) return "";
+    return contact.isMe
+      ? t("payTab.contacts.addressPicker.meTitle")
+      : t("payTab.contacts.addressPicker.title", { name: contact.name });
+  }, [contact, t]);
 
   const handleAddNewAddress = useMemo(
     () =>

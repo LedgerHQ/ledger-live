@@ -56,7 +56,7 @@ export function usePaySuccessViewModel(): PaySuccessProps {
   const getDisplayName = useContactDisplayName();
   const recipientLabel = recipientHeader.contact
     ? getDisplayName(recipientHeader.contact)
-    : recipientHeader.label;
+    : recipientHeader.recipientDisplayValue;
 
   const amountUnit = useMaybeAccountUnit(account ?? undefined) ?? currency?.units[0];
   const amountFormatted = useMemo(() => {

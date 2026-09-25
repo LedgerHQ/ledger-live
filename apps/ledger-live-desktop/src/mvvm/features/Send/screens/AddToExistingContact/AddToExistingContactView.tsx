@@ -1,6 +1,6 @@
 import React, { type ChangeEvent } from "react";
 import type { ContactId } from "@domain/entity-contact";
-import { ContactAvatar } from "@features/platform-contacts";
+import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
 import {
   isContactsSearchNoResultsViewModel,
   isPopulatedContactsListViewModel,
@@ -36,28 +36,31 @@ function ContactRow({
   contact,
   formatAddressCount,
   onSelectContact,
-  isMe,
 }: Readonly<{
   contact: ContactsListItem;
   formatAddressCount: (count: number) => string;
   onSelectContact: (contactId: ContactId) => void;
-  isMe?: boolean;
 }>) {
+  const getDisplayName = useContactDisplayName();
+
   return (
     <ListItem
       onClick={() => onSelectContact(contact.contactId)}
-      data-testid={isMe ? "contacts-me-row" : `contacts-saved-row-${contact.contactId}`}
+      data-testid={contact.isMe ? "contacts-me-row" : `contacts-saved-row-${contact.contactId}`}
     >
       <ListItemLeading>
         <ContactAvatar
           contactId={contact.contactId}
           name={contact.name}
+          isMe={contact.isMe}
           size="md"
           ariaHidden
-          testId={isMe ? "contacts-me-avatar" : `contacts-saved-avatar-${contact.contactId}`}
+          testId={
+            contact.isMe ? "contacts-me-avatar" : `contacts-saved-avatar-${contact.contactId}`
+          }
         />
         <ListItemContent>
-          <ListItemTitle>{contact.name}</ListItemTitle>
+          <ListItemTitle>{getDisplayName(contact)}</ListItemTitle>
           <ListItemDescription>{formatAddressCount(contact.addressCount)}</ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
@@ -142,7 +145,6 @@ export function AddToExistingContactView({
             contact={me}
             formatAddressCount={formatAddressCount}
             onSelectContact={onSelectContact}
-            isMe
           />
         ) : null}
       </div>

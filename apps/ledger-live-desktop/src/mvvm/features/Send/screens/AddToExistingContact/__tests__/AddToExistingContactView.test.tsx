@@ -9,7 +9,7 @@ import { AddToExistingContactView } from "../AddToExistingContactView";
 
 const me = mockMeContact();
 const ada = mockContact({ id: "contact-ada", name: "Ada" });
-const viewModel = createPopulatedContactsListViewModel(me, [me, ada], contact => contact.name);
+const viewModel = createPopulatedContactsListViewModel(me, [me, ada]);
 
 describe("AddToExistingContactView", () => {
   it("should render the searchable contacts list", () => {

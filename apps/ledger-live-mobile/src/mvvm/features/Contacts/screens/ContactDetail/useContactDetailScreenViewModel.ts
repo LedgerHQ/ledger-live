@@ -37,10 +37,9 @@ import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
   useContactDisplayName,
   resolveEligibleAddressCurrencyIds,
-  useContacts,
   useContactsFeature,
   useContactsMeContact,
-  type OtherContactAddress,
+  useOtherContactsAddresses,
 } from "@features/platform-contacts";
 import {
   useContactsIntentsOrchestrator,
@@ -118,20 +117,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     onClose: onCloseAddressDetail,
   } = useContactAddressDetailDialog(populatedContactDetail);
   const contact = populatedContactDetail?.contact ?? emptyContact;
-  const allContacts = useContacts();
   const addressValidation = useContactsAddressValidationAdapter();
-  const getDisplayName = useContactDisplayName();
-  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
-    () =>
-      allContacts.flatMap(c =>
-        c.addresses.map(a => ({
-          contactId: c.id,
-          contactName: getDisplayName(c),
-          address: a.address,
-        })),
-      ),
-    [allContacts, getDisplayName],
-  );
+  const allContactsAddresses = useOtherContactsAddresses();
   const eligibleNetworkIds = useMemo(
     () =>
       resolveEligibleAddressCurrencyIds(eligibleAddressFamilies, undefined, excludedCurrencyIds),
@@ -443,6 +430,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       }
     }
   }, [navigation, shouldRedirect]);
+
+  const getDisplayName = useContactDisplayName();
 
   if (shouldRedirect) {
     return { status: "redirecting" };

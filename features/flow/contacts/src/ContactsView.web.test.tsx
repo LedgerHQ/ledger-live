@@ -1,19 +1,16 @@
 import React from "react";
-import { render as renderWithoutI18n, screen, renderHook } from "@testing-library/react";
-import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
+import { render as renderWithoutI18n, screen } from "@testing-library/react";
+import {
+  ContactsI18nTestProvider,
+  formatTestContactDisplayName,
+} from "@features/platform-contacts/testing";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import type { Contact } from "@domain/entity-contact";
 import { createContactsSearchViewModel } from "@features/flow-contacts-list";
 import { ContactsView } from "./ContactsView.web";
-import { useContactDisplayName } from "@features/platform-contacts";
 
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
-
-const getDisplayName = (contact: Contact) =>
-  renderHook(() => useContactDisplayName(), { wrapper: ContactsI18nTestProvider }).result.current(
-    contact,
-  );
 
 const labels = {
   title: "Contacts",
@@ -31,7 +28,12 @@ describe("ContactsView", () => {
 
     render(
       <ContactsView
-        viewModel={createContactsSearchViewModel(me, contacts, "unknown", getDisplayName)}
+        viewModel={createContactsSearchViewModel(
+          me,
+          contacts,
+          "unknown",
+          formatTestContactDisplayName,
+        )}
         labels={labels}
         searchQuery="unknown"
         onSearchInputChange={jest.fn()}
@@ -70,7 +72,7 @@ describe("ContactsView", () => {
 
     render(
       <ContactsView
-        viewModel={createContactsSearchViewModel(me, contacts, "", getDisplayName)}
+        viewModel={createContactsSearchViewModel(me, contacts, "", formatTestContactDisplayName)}
         labels={labels}
         searchQuery=""
         onSearchInputChange={jest.fn()}

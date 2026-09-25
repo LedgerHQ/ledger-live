@@ -10,23 +10,17 @@ import { createContactsListSections } from "../utils";
 
 export type GetContactDisplayName = (contact: Contact) => string;
 
-function createContactsListItem(
-  contact: Contact,
-  getDisplayName: GetContactDisplayName,
-): ContactsListItem {
+function createContactsListItem(contact: Contact): ContactsListItem {
   return {
     contactId: contact.id,
-    name: getDisplayName(contact),
+    name: contact.name,
+    isMe: contact.isMe,
     initial: getContactInitial(contact.name),
     addressCount: contact.addresses.length,
   };
 }
 
-function createSavedContactsListItems(
-  contacts: readonly Contact[],
-  normalizedQuery: string,
-  getDisplayName: GetContactDisplayName,
-) {
+function createSavedContactsListItems(contacts: readonly Contact[], normalizedQuery = "") {
   return contacts
     .filter(
       contact =>
@@ -34,7 +28,7 @@ function createSavedContactsListItems(
         (normalizedQuery.length === 0 || isContactNameMatching(contact, normalizedQuery)),
     )
     .sort((left, right) => left.name.localeCompare(right.name))
-    .map(contact => createContactsListItem(contact, getDisplayName));
+    .map(createContactsListItem);
 }
 
 function isContactNameMatching(contact: Contact, normalizedQuery: string): boolean {
@@ -46,32 +40,26 @@ function isMeContactMatching(
   normalizedQuery: string,
   getDisplayName: GetContactDisplayName,
 ): boolean {
-  const displayName = getDisplayName(me);
-
   return (
-    displayName.toLowerCase().includes(normalizedQuery) ||
+    getDisplayName(me).toLowerCase().includes(normalizedQuery) ||
     me.name.toLowerCase().includes(normalizedQuery)
   );
 }
 
-export function createEmptyContactsListViewModel(
-  me: Contact,
-  getDisplayName: GetContactDisplayName,
-): EmptyContactsListViewModel {
+export function createEmptyContactsListViewModel(me: Contact): EmptyContactsListViewModel {
   return {
     displayMode: "empty",
-    me: createContactsListItem(me, getDisplayName),
+    me: createContactsListItem(me),
   };
 }
 
 function createPopulatedContactsListViewModelFromSavedContacts(
   me: Contact,
   savedContacts: readonly ContactsListItem[],
-  getDisplayName: GetContactDisplayName,
 ): PopulatedContactsListViewModel {
   return {
     displayMode: "populated",
-    me: createContactsListItem(me, getDisplayName),
+    me: createContactsListItem(me),
     savedContacts,
     sections: createContactsListSections(savedContacts),
   };
@@ -80,29 +68,27 @@ function createPopulatedContactsListViewModelFromSavedContacts(
 export function createPopulatedContactsListViewModel(
   me: Contact,
   contacts: readonly Contact[],
-  getDisplayName: GetContactDisplayName,
 ): PopulatedContactsListViewModel {
   return createPopulatedContactsListViewModelFromSavedContacts(
     me,
-    createSavedContactsListItems(contacts, "", getDisplayName),
-    getDisplayName,
+    createSavedContactsListItems(contacts),
   );
 }
 
 export function createContactsListViewModel(
   me: Contact,
   contacts: readonly Contact[],
-  getDisplayName: GetContactDisplayName,
 ): EmptyContactsListViewModel | PopulatedContactsListViewModel {
-  const savedContacts = createSavedContactsListItems(contacts, "", getDisplayName);
+  const savedContacts = createSavedContactsListItems(contacts);
 
   if (savedContacts.length > 0) {
-    return createPopulatedContactsListViewModelFromSavedContacts(me, savedContacts, getDisplayName);
+    return createPopulatedContactsListViewModelFromSavedContacts(me, savedContacts);
   }
 
-  return createEmptyContactsListViewModel(me, getDisplayName);
+  return createEmptyContactsListViewModel(me);
 }
 
+/** `getDisplayName` lets the query match what the user sees, e.g. "addresses" finds Me. */
 export function createContactsSearchViewModel(
   me: Contact,
   contacts: readonly Contact[],
@@ -114,13 +100,13 @@ export function createContactsSearchViewModel(
   if (normalizedQuery.length === 0) {
     return {
       status: "results",
-      ...createPopulatedContactsListViewModel(me, contacts, getDisplayName),
+      ...createPopulatedContactsListViewModel(me, contacts),
     };
   }
 
-  const savedContacts = createSavedContactsListItems(contacts, normalizedQuery, getDisplayName);
+  const savedContacts = createSavedContactsListItems(contacts, normalizedQuery);
   const matchingMe = isMeContactMatching(me, normalizedQuery, getDisplayName)
-    ? createContactsListItem(me, getDisplayName)
+    ? createContactsListItem(me)
     : undefined;
 
   if (savedContacts.length === 0 && !matchingMe) {

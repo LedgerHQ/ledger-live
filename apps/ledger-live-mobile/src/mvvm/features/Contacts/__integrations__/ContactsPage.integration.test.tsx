@@ -25,7 +25,7 @@ function renderContactsPage(
       value={{ top: 0, right: 0, bottom: bottomSafeAreaInset, left: 0 }}
     >
       <ContactsView
-        viewModel={viewModel ?? createEmptyContactsListViewModel(me, getName)}
+        viewModel={viewModel ?? createEmptyContactsListViewModel(me)}
         labels={{
           title: "Contacts",
           searchPlaceholder: "Search contact",
@@ -89,11 +89,10 @@ describe("ContactsPage", () => {
 
   it("should keep the search input outside the populated Contacts list", () => {
     const me = mockMeContact();
-    const viewModel = createPopulatedContactsListViewModel(
+    const viewModel = createPopulatedContactsListViewModel(me, [
       me,
-      [me, mockContact({ id: "contact-ada", name: "Ada" })],
-      getName,
-    );
+      mockContact({ id: "contact-ada", name: "Ada" }),
+    ]);
 
     renderContactsPage("ready", viewModel);
 
@@ -110,11 +109,10 @@ describe("ContactsPage", () => {
 
   it("should end the populated Contacts list above the system navigation bar", () => {
     const me = mockMeContact();
-    const viewModel = createPopulatedContactsListViewModel(
+    const viewModel = createPopulatedContactsListViewModel(me, [
       me,
-      [me, mockContact({ id: "contact-ada", name: "Ada" })],
-      getName,
-    );
+      mockContact({ id: "contact-ada", name: "Ada" }),
+    ]);
 
     renderContactsPage("ready", viewModel, 48);
 

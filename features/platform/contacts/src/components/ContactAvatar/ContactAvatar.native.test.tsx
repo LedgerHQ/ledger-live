@@ -20,7 +20,7 @@ describe("ContactAvatar", () => {
   it("should pass the contact details to the Lumen avatar in the list", () => {
     const contactId = ContactIdSchema.parse("contact-elodie");
 
-    render(<ContactAvatar contactId={contactId} name="élodie" />);
+    render(<ContactAvatar isMe={false} contactId={contactId} name="élodie" />);
 
     const avatar = screen.getByTestId(`contacts-avatar-${contactId}`);
 
@@ -36,6 +36,7 @@ describe("ContactAvatar", () => {
 
     render(
       <ContactAvatar
+        isMe={false}
         contactId={contactId}
         name="Benoit Jean"
         size="xl"
@@ -55,7 +56,7 @@ describe("ContactAvatar", () => {
   it.each(["xs", "md", "lg", "2xl"] as const)("should support the %s Lumen avatar size", size => {
     const contactId = ContactIdSchema.parse(`contact-${size}`);
 
-    render(<ContactAvatar contactId={contactId} name="Benoit" size={size} />);
+    render(<ContactAvatar isMe={false} contactId={contactId} name="Benoit" size={size} />);
 
     expect(screen.getByTestId(`contacts-avatar-${contactId}`)).toHaveProp("size", size);
   });
@@ -65,6 +66,7 @@ describe("ContactAvatar", () => {
 
     render(
       <ContactAvatar
+        isMe
         contactId={contactId}
         name="My Wallet"
         size="xl"

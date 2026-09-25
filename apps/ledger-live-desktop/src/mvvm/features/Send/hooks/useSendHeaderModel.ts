@@ -315,7 +315,7 @@ export function useSendHeaderModel({
   const getDisplayName = useContactDisplayName();
   const recipientLabel = recipientHeader.contact
     ? getDisplayName(recipientHeader.contact)
-    : recipientHeader.label;
+    : recipientHeader.recipientDisplayValue;
 
   const addressInputValue = useMemo(() => {
     if (isRecipientStep) return recipientSearch.value;

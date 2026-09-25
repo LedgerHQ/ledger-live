@@ -11060,6 +11060,7 @@
       "seeAllTitle": "Pay contact",
       "addressPicker": {
         "title": "Select {{name}}'s address",
+        "meTitle": "Select my address",
         "addAddress": "Add address"
       },
       "paySuccess": {

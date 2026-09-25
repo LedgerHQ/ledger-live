@@ -16,7 +16,7 @@ export function useContactsSearchViewModel(
 
   return useMemo(() => {
     if (query.trim().length === 0) {
-      return createContactsListViewModel(meContact, contacts, getDisplayName);
+      return createContactsListViewModel(meContact, contacts);
     }
 
     return createContactsSearchViewModel(meContact, contacts, query, getDisplayName);

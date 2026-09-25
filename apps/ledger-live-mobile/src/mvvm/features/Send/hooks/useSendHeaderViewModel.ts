@@ -170,7 +170,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const getDisplayName = useContactDisplayName();
   const recipientLabel = recipientHeader.contact
     ? getDisplayName(recipientHeader.contact)
-    : recipientHeader.label;
+    : recipientHeader.recipientDisplayValue;
 
   const formattedAddress = useMemo(() => {
     if (isRecipientStep) {

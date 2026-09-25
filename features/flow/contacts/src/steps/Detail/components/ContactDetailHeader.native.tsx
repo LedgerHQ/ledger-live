@@ -12,7 +12,7 @@ export function ContactDetailHeader({
   labels,
   onAddAddress,
 }: ContactDetailHeaderProps): React.JSX.Element {
-  const displayName = useContactDisplayName()(contact);
+  const getDisplayName = useContactDisplayName();
 
   return (
     <Box lx={{ alignItems: "center", gap: "s24", paddingTop: "s24" }}>
@@ -20,7 +20,7 @@ export function ContactDetailHeader({
         <ContactDetailAvatar contact={contact} />
         <Box lx={{ alignItems: "center", gap: "s4" }}>
           <Text testID="contacts-detail-name" typography="heading3SemiBold" lx={{ color: "base" }}>
-            {displayName}
+            {getDisplayName(contact)}
           </Text>
           <Text testID="contacts-detail-address-count" typography="body2" lx={{ color: "muted" }}>
             {labels.formatAddressCount(contact.addresses.length)}

@@ -11,7 +11,7 @@ type ContactTileProps = Readonly<{
 
 export function ContactTile({ contact, index, onPress }: ContactTileProps): React.JSX.Element {
   const handlePress = useCallback(() => onPress?.(contact), [contact, onPress]);
-  const displayName = useContactDisplayName()(contact);
+  const getDisplayName = useContactDisplayName();
 
   return (
     <Tile
@@ -19,11 +19,11 @@ export function ContactTile({ contact, index, onPress }: ContactTileProps): Reac
       lx={{ width: "s96", flexGrow: 1, marginLeft: "-s8" }}
       testID={`pay-contacts-tile-${index}`}
       accessibilityRole={onPress ? "button" : undefined}
-      accessibilityLabel={displayName}
+      accessibilityLabel={getDisplayName(contact)}
     >
-      <ContactAvatar contactId={contact.id} name={contact.name} size="lg" />
+      <ContactAvatar contactId={contact.id} name={contact.name} isMe={contact.isMe} size="lg" />
       <TileContent>
-        <TileDescription>{displayName}</TileDescription>
+        <TileDescription>{getDisplayName(contact)}</TileDescription>
       </TileContent>
     </Tile>
   );

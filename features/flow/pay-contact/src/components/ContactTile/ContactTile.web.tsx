@@ -32,7 +32,7 @@ export function ContactTile({
   onViewContact,
   onViewTransactions,
 }: ContactTileProps) {
-  const displayName = useContactDisplayName()(contact);
+  const getDisplayName = useContactDisplayName();
 
   return (
     <TableRow
@@ -43,10 +43,16 @@ export function ContactTile({
       <TableCell>
         <TableCellItem>
           <div className="shrink-0">
-            <ContactAvatar contactId={contact.id} name={contact.name} size="sm" ariaHidden />
+            <ContactAvatar
+              contactId={contact.id}
+              name={contact.name}
+              isMe={contact.isMe}
+              size="sm"
+              ariaHidden
+            />
           </div>
           <TableCellContent>
-            <ContactName name={displayName} />
+            <ContactName name={getDisplayName(contact)} />
           </TableCellContent>
         </TableCellItem>
       </TableCell>

@@ -31,7 +31,13 @@ export function ContactsCompactList({
           data-testid={`contacts-compact-row-${contact.id}`}
         >
           <ListItemLeading>
-            <ContactAvatar contactId={contact.id} name={contact.name} size="md" ariaHidden />
+            <ContactAvatar
+              contactId={contact.id}
+              name={contact.name}
+              isMe={contact.isMe}
+              size="md"
+              ariaHidden
+            />
             <ListItemContent>
               <ListItemTitle>{getDisplayName(contact)}</ListItemTitle>
               <ListItemDescription>

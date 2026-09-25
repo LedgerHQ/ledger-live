@@ -47,7 +47,7 @@ export function usePaySuccessViewModel(): PaySuccessProps {
   const getDisplayName = useContactDisplayName();
   const recipientLabel = recipientHeader.contact
     ? getDisplayName(recipientHeader.contact)
-    : recipientHeader.label;
+    : recipientHeader.recipientDisplayValue;
 
   const amountUnit = useMaybeAccountUnit(account ?? undefined) ?? currency?.units[0];
   const amountFormatted = useMemo(() => {
@@ -79,6 +79,7 @@ export function usePaySuccessViewModel(): PaySuccessProps {
     ? {
         id: ContactIdSchema.parse(recipientHeader.contact.id),
         name: recipientHeader.contact.name,
+        isMe: recipientHeader.contact.isMe,
       }
     : undefined;
 

@@ -13,7 +13,7 @@ describe("ContactsMeListItem", () => {
 
     render(
       <ContactsMeListItem
-        contact={{ contactId, name: "Me", initial: "M", addressCount: 1 }}
+        contact={{ contactId, name: "Me", isMe: true, initial: "M", addressCount: 1 }}
         addressCountLabel="1 address"
         onOpen={jest.fn()}
       />,
@@ -24,6 +24,8 @@ describe("ContactsMeListItem", () => {
     expect(avatar).toBeVisible();
     expect(avatar.props.size).toBe("md");
     expect(avatar.props.appearance).toBe("thin");
+    expect(screen.getByTestId("contacts-me-name")).toHaveTextContent("My addresses (Me)");
+    expect(avatar.props.alt).toBe("My addresses (Me)");
   });
 
   it("should open Me when its row is pressed", async () => {
@@ -33,7 +35,7 @@ describe("ContactsMeListItem", () => {
 
     render(
       <ContactsMeListItem
-        contact={{ contactId, name: "Me", initial: "M", addressCount: 1 }}
+        contact={{ contactId, name: "Me", isMe: true, initial: "M", addressCount: 1 }}
         addressCountLabel="1 address"
         onOpen={onOpen}
       />,

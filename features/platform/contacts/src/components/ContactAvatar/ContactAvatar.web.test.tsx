@@ -11,7 +11,7 @@ describe("ContactAvatar", () => {
   it("should bind a contact initial and Lumen pastel color for the default list size", () => {
     const contactId = ContactIdSchema.parse("contact-elodie");
 
-    render(<ContactAvatar contactId={contactId} name="élodie Martin" />);
+    render(<ContactAvatar isMe={false} contactId={contactId} name="élodie Martin" />);
 
     const avatar = screen.getByRole("img", { name: "élodie Martin" });
 
@@ -26,6 +26,7 @@ describe("ContactAvatar", () => {
 
     render(
       <ContactAvatar
+        isMe={false}
         contactId={contactId}
         name="Benoit Jean"
         size="xl"
@@ -45,7 +46,7 @@ describe("ContactAvatar", () => {
     size => {
       const contactId = ContactIdSchema.parse(`contact-${size}`);
 
-      render(<ContactAvatar contactId={contactId} name="Benoit" size={size} />);
+      render(<ContactAvatar isMe={false} contactId={contactId} name="Benoit" size={size} />);
 
       expect(screen.getByTestId(`contacts-avatar-${contactId}`)).toHaveAttribute("data-size", size);
     },
@@ -56,6 +57,7 @@ describe("ContactAvatar", () => {
 
     render(
       <ContactAvatar
+        isMe
         contactId={contactId}
         name="My Wallet"
         size="xl"
@@ -74,6 +76,7 @@ describe("ContactAvatar", () => {
 
     render(
       <ContactAvatar
+        isMe={false}
         contactId={contactId}
         name="Benoit"
         ariaHidden
@@ -90,7 +93,9 @@ describe("ContactAvatar", () => {
   it("should not expose an empty accessible label", () => {
     const contactId = ContactIdSchema.parse("contact-empty");
 
-    render(<ContactAvatar contactId={contactId} name="" testId="contacts-empty-avatar" />);
+    render(
+      <ContactAvatar isMe={false} contactId={contactId} name="" testId="contacts-empty-avatar" />,
+    );
 
     const avatar = screen.getByTestId("contacts-empty-avatar");
 

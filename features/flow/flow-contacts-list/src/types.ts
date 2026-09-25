@@ -3,7 +3,9 @@ import type { Contact, ContactId } from "@domain/entity-contact";
 
 export type ContactsListItem = Readonly<{
   contactId: ContactId;
+  /** Raw name: render it with useContactDisplayName. */
   name: string;
+  isMe: boolean;
   initial: string;
   addressCount: number;
 }>;

@@ -48,7 +48,7 @@ import {
   useContactDisplayName,
   useContacts,
   useContactsMeContact,
-  type OtherContactAddress,
+  useOtherContactsAddresses,
 } from "@features/platform-contacts";
 import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
@@ -97,18 +97,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const currencySelection = useContactsCurrencySelectionAdapter();
   const { cancelCurrencySelection } = currencySelection;
   const addressValidation = useContactsAddressValidationAdapter();
-  const getDisplayName = useContactDisplayName();
-  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
-    () =>
-      contacts.flatMap(c =>
-        c.addresses.map(a => ({
-          contactId: c.id,
-          contactName: getDisplayName(c),
-          address: a.address,
-        })),
-      ),
-    [contacts, getDisplayName],
-  );
+  const allContactsAddresses = useOtherContactsAddresses();
   const { selectCurrency } = useAddAddressCurrencySelectionViewModel({
     platform: "desktop",
     currencySelection,
@@ -440,12 +429,13 @@ export function useContactsViewModel(): ContactsPageViewModel {
       })),
     [t],
   );
+  const getDisplayName = useContactDisplayName();
   const viewModel = useMemo(() => {
     if (searchQuery.trim().length > 0) {
       return createContactsSearchViewModel(meContact, contacts, searchQuery, getDisplayName);
     }
 
-    return createContactsListViewModel(meContact, contacts, getDisplayName);
+    return createContactsListViewModel(meContact, contacts);
   }, [contacts, getDisplayName, meContact, searchQuery]);
   const onSearchInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);

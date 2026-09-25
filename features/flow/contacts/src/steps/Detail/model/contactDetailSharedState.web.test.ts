@@ -4,14 +4,7 @@ import {
   createContactDetailLedgerWalletAccountsIntent,
   createContactDetailSharedState,
 } from "./contactDetailSharedState";
-import { renderHook } from "@testing-library/react";
-import { useContactDisplayName } from "@features/platform-contacts";
-import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
-
-const getDisplayName = (contact: Contact) =>
-  renderHook(() => useContactDisplayName(), { wrapper: ContactsI18nTestProvider }).result.current(
-    contact,
-  );
+import { formatTestContactDisplayName } from "@features/platform-contacts/testing";
 
 describe("createContactDetailLedgerWalletAccountsIntent", () => {
   it("returns the ledger wallet accounts intent for Me", () => {
@@ -27,7 +20,7 @@ describe("createContactDetailLedgerWalletAccountsIntent", () => {
 
 describe("createContactDetailSharedState", () => {
   it("exposes the default Me display name and zero external addresses", () => {
-    expect(createContactDetailSharedState(mockMeContact(), getDisplayName)).toEqual({
+    expect(createContactDetailSharedState(mockMeContact(), formatTestContactDisplayName)).toEqual({
       contact: mockMeContact(),
       displayName: "My addresses (Me)",
       addressCount: 0,
@@ -38,7 +31,7 @@ describe("createContactDetailSharedState", () => {
   it("exposes a renamed Me display name with the Me suffix", () => {
     const me = mockMeContact({ name: "Brian" });
 
-    expect(createContactDetailSharedState(me, getDisplayName)).toMatchObject({
+    expect(createContactDetailSharedState(me, formatTestContactDisplayName)).toMatchObject({
       displayName: "Brian (Me)",
       addressCount: 0,
       ledgerWalletAccountsIntent: { type: "open-ledger-wallet-accounts" },
@@ -50,12 +43,12 @@ describe("createContactDetailSharedState", () => {
       addresses: [mockContactAddress()],
     });
 
-    expect(createContactDetailSharedState(me, getDisplayName).addressCount).toBe(1);
+    expect(createContactDetailSharedState(me, formatTestContactDisplayName).addressCount).toBe(1);
   });
 
   it("does not expose the ledger wallet accounts intent for saved contacts", () => {
     expect(
-      createContactDetailSharedState(mockContact({ name: "Ada" }), getDisplayName),
+      createContactDetailSharedState(mockContact({ name: "Ada" }), formatTestContactDisplayName),
     ).toMatchObject({
       displayName: "Ada",
       ledgerWalletAccountsIntent: undefined,
