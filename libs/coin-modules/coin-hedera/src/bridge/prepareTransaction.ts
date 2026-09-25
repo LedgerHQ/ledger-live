@@ -2,6 +2,7 @@ import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/he
 import type { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
+  CLAIM_REWARDS_TRIGGER_TINYBARS,
   HEDERA_OPERATION_TYPES,
   HEDERA_TRANSACTION_MODES,
   MAP_STAKING_MODE_TO_MEMO,
@@ -94,7 +95,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     if (transaction.mode === HEDERA_TRANSACTION_MODES.ClaimRewards) {
       const config = resolveConfig(account.currency.id);
       transaction.recipient = config.claimRewardsRecipient;
-      transaction.amount = new BigNumber(1);
+      transaction.amount = new BigNumber(CLAIM_REWARDS_TRIGGER_TINYBARS);
     }
   }
 

@@ -102,6 +102,7 @@ export function createApi(currencyId: string) {
 
       return {
         value: BigInt(estimatedFee.tinybars.toString()),
+        ...(estimatedFee.gas && { parameters: { gasLimit: BigInt(estimatedFee.gas.toString()) } }),
       };
     },
     getAccountInfo: async (context: HederaContext, address: string) => {

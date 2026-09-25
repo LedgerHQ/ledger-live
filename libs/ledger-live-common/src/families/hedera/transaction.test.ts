@@ -33,6 +33,23 @@ describe("hedera transaction serialization", () => {
     expect(fromTransactionRaw(toTransactionRaw(transaction))).toEqual(transaction);
   });
 
+  it("round-trips the memo of a transfer", () => {
+    const transaction: HederaGenericTransaction = {
+      family: "hedera",
+      mode: "send",
+      amount: new BigNumber(500),
+      recipient: "0.0.7654321",
+      fees: null,
+      memoType: "string",
+      memoValue: "ref-42",
+    };
+
+    const raw = toTransactionRaw(transaction);
+
+    expect(raw).toMatchObject({ memoType: "string", memoValue: "ref-42" });
+    expect(fromTransactionRaw(raw)).toEqual(transaction);
+  });
+
   it("revives missing fees as null", () => {
     const revived = fromTransactionRaw(
       toTransactionRaw({

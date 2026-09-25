@@ -41,21 +41,43 @@ describe("getDeviceTransactionConfig", () => {
   });
 
   it.each([
-    ["delegate", "Delegate"],
-    ["redelegate", "Redelegate"],
-    ["undelegate", "Undelegate"],
-    ["claimReward", "Claim Rewards"],
-  ] as const)("shows the %s method, fees and node id", async (mode, method) => {
-    expect(await fieldsFor({ mode, valId: "3" }, 10)).toEqual([
+    ["delegate", "Delegate", "Stake"],
+    ["redelegate", "Redelegate", "Restake"],
+    ["undelegate", "Undelegate", "Unstake"],
+    ["claimReward", "Claim Rewards", "Collect Staking Rewards"],
+  ] as const)("shows the %s method, fees, node id and memo", async (mode, method, memo) => {
+    expect(await fieldsFor({ mode, valId: "3", memoValue: "user memo" }, 10)).toEqual([
       { type: "text", label: "Method", value: method },
       { type: "fees", label: "Fees" },
       { type: "text", label: "Staked Node ID", value: "3" },
+      { type: "text", label: "Memo", value: memo },
     ]);
   });
 
   it("leaves out the node id when none is set", async () => {
     expect(await fieldsFor({ mode: "undelegate" }, 0)).toEqual([
       { type: "text", label: "Method", value: "Undelegate" },
+      { type: "text", label: "Memo", value: "Unstake" },
+    ]);
+  });
+
+  it("shows the gas limit and memo of a send", async () => {
+    expect(
+      await fieldsFor({ feeParameters: { gasLimit: "123456" }, memoValue: "ref-42" }, 10),
+    ).toEqual([
+      { type: "text", label: "Method", value: "Transfer" },
+      { type: "amount", label: "Amount" },
+      { type: "fees", label: "Fees" },
+      { type: "text", label: "Gas Limit", value: "123456" },
+      { type: "text", label: "Memo", value: "ref-42" },
+    ]);
+  });
+
+  it("shows the memo of a token association", async () => {
+    expect(await fieldsFor({ mode: "tokenAssociate", memoValue: "ref-42" }, 10)).toEqual([
+      { type: "text", label: "Method", value: "Associate Token" },
+      { type: "fees", label: "Fees" },
+      { type: "text", label: "Memo", value: "ref-42" },
     ]);
   });
 });

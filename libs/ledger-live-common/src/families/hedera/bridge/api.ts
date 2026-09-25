@@ -86,16 +86,25 @@ export function computeIntentType(transaction: Record<string, unknown>): HEDERA_
   }
 }
 
-// `craftTransaction` reads the staked node id from `intent.data` only. Without this hook a staking
-// transaction signs and broadcasts while changing nothing.
+// `craftTransaction` reads the staked node id and the gas limit from `intent.data` only. Without this
+// hook a staking transaction signs and broadcasts while changing nothing.
 export function buildIntentData(transaction: Record<string, unknown>): HederaTxData {
   const mode = transaction.mode as string | undefined;
   // `null` clears the staked node.
   if (mode === "undelegate") return { type: "staking", stakingNodeId: null };
-  if (mode !== "delegate" && mode !== "redelegate") return { type: "none" };
 
-  const valId = transaction.valId as string | undefined;
-  return { type: "staking", stakingNodeId: valId ? Number(valId) : null };
+  if (mode === "delegate" || mode === "redelegate") {
+    const valId = transaction.valId as string | undefined;
+    return { type: "staking", stakingNodeId: valId ? Number(valId) : null };
+  }
+
+  const feeParameters = transaction.feeParameters as Record<string, unknown> | undefined;
+  const gasLimit = feeParameters?.gasLimit;
+  if (mode === "send" && typeof gasLimit === "string") {
+    return { type: "erc20", gasLimit: BigInt(gasLimit) };
+  }
+
+  return { type: "none" };
 }
 
 // A claim carries no amount, so the pending row would show 0 until the next sync.
