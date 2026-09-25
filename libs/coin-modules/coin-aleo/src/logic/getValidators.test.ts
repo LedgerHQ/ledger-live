@@ -106,6 +106,32 @@ describe("getValidators", () => {
     expect(apiClient.getTotalSupply).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps mainnet and testnet cache entries separate despite sharing the same node URL", async () => {
+    // getMockedConfig gives both networks the same apiUrls.node, mirroring the real
+    // config where mainnet and testnet share ALEO_NODE_ENDPOINT and differ only by
+    // networkType — so the cache key must include networkType or one network's
+    // response leaks into the other's for the TTL.
+    const testnetConfig = getMockedConfig("testnet");
+
+    jest.mocked(apiClient.getCommittee).mockImplementation(async config =>
+      config.networkType === "mainnet"
+        ? committee
+        : {
+            total_stake: microcredits(1),
+            members: { aleo1testnet_only: [microcredits(1), true, 0] },
+          },
+    );
+
+    const mainnetValidators = await getValidators(mockConfig);
+    const testnetValidators = await getValidators(testnetConfig);
+
+    expect(mainnetValidators.map(v => v.address)).toEqual(
+      expect.arrayContaining([OPEN_HIGH_STAKE, OPEN_LOW_STAKE, CLOSED_HIGH_STAKE]),
+    );
+    expect(testnetValidators.map(v => v.address)).toEqual(["aleo1testnet_only"]);
+    expect(apiClient.getCommittee).toHaveBeenCalledTimes(2);
+  });
+
   describe("unbonding validators", () => {
     const unbondingOnly = (unbonding: string[]) =>
       jest

@@ -127,7 +127,7 @@ export const getValidators = makeLRUCache(
         return right.stakeMicrocredits - left.stakeMicrocredits;
       });
   },
-  config => config.apiUrls.node,
+  config => `${config.apiUrls.node}:${config.networkType}`,
   VALIDATORS_CACHE,
 );
 

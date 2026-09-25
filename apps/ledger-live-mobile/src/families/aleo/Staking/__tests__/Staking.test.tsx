@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import { render, screen, waitFor, act, fireEvent, within } from "@tests/test-renderer";
 import type { Operation } from "@ledgerhq/types-live";
 import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import type {
   AleoAccount,
   AleoResources,
@@ -18,14 +19,23 @@ jest.mock("@ledgerhq/live-common/families/aleo/config", () => ({
   getAleoCurrencyConfigById: jest.fn(),
 }));
 
+// Synthetic per-test currency ids (see `currencyIdCounter`) aren't registered in `LiveConfig`,
+// so the real `getCurrencyConfiguration` would throw.
+jest.mock("@ledgerhq/live-common/config/index", () => ({
+  getCurrencyConfiguration: jest.fn(),
+}));
+
 // Mocked here and not at useAleoValidators, which useAleoStakingPosition calls as a same-module
 // closure jest.mock cannot intercept. Virtual because coin-aleo is live-common's dependency,
-// not live-mobile's, so it has no type declarations here. `isDelegatorBelowMinimum` is stubbed off rather than reimplemented.
+// not live-mobile's, so it has no type declarations here. `isDelegatorBelowMinimum` and
+// `resolveBondedNonEarningReason` are stubbed off rather than reimplemented.
 jest.mock(
   "@ledgerhq/coin-aleo/logic",
   () => ({
     getValidators: jest.fn(),
     isDelegatorBelowMinimum: () => false,
+    resolveBondedNonEarningReason: ({ validator }: { validator?: AleoValidator }) =>
+      validator ? validator.nonEarningReason : "leftCommittee",
   }),
   { virtual: true },
 );
@@ -67,6 +77,7 @@ jest.mock("@react-navigation/native", () => ({
 const flushValidators = () => act(async () => {});
 
 const mockGetAleoConfig = jest.mocked(getAleoCurrencyConfigById);
+const mockGetCurrencyConfiguration = jest.mocked(getCurrencyConfiguration);
 const mockGetAddressExplorer = jest.mocked(getAddressExplorer);
 
 const baseAleoResources: AleoResources = {
@@ -153,6 +164,7 @@ describe("Staking section", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetAleoConfig.mockReturnValue(makeConfig(true));
+    mockGetCurrencyConfiguration.mockReturnValue({} as ReturnType<typeof getCurrencyConfiguration>);
     mockGetValidators.mockResolvedValue([]);
     liveHeight = 5000;
     mockGetAddressExplorer.mockReturnValue(undefined);
