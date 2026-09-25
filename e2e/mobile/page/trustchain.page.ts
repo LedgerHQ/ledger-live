@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
 import {
   getTrustchainAccountName,

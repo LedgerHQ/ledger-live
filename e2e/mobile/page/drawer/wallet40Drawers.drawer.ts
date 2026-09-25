@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import { isAndroid } from "@e2e/helpers/commonHelpers";
 import {
   QUICK_VISIBILITY_PROBE_TIMEOUT,

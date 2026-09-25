@@ -2,7 +2,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { swapSetup } from "@e2e/bridge/server";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { allure } from "jest-allure2-reporter/api";
+import { allure } from "@support/jest-allure2-reporter/api";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 

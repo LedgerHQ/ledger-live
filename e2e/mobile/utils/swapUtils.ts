@@ -1,6 +1,6 @@
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
-import { allure } from "jest-allure2-reporter/api";
+import { allure } from "@support/jest-allure2-reporter/api";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import { getEnv } from "@shared/env";
 import BigNumber from "bignumber.js";

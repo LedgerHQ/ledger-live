@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import { log } from "detox";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
 import CommonPage from "@e2e/page/common.page";

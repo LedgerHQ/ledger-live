@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 
 const MODAL_DISMISS_TIMEOUT_MS = 30_000;

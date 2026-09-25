@@ -12,7 +12,7 @@ import type {
   $Tag as $TagType,
   $Owner as $OwnerType,
   $ParentSuite as $ParentSuiteType,
-} from "jest-allure2-reporter/api";
+} from "@support/jest-allure2-reporter/api";
 import { NativeElementHelpers, WebElementHelpers } from "@e2e/helpers/elementHelpers";
 import { Currency as CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Delegate as DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";

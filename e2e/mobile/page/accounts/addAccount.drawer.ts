@@ -1,5 +1,5 @@
 import { device } from "detox";
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
 import CommonPage from "@e2e/page/common.page";
 import { retryUntilTimeout } from "@e2e/utils/retry";

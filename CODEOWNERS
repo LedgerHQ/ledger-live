@@ -78,6 +78,8 @@ devtools/relay/                                          @ledgerhq/platform
 tools/nx-plugins/generators/                             @ledgerhq/platform
 
 # Platform — support
+support/detox-allure2-adapter/                           @ledgerhq/qaa
+support/jest-allure2-reporter/                           @ledgerhq/qaa
 support/jest-devtools/                                   @ledgerhq/platform
 support/jest-features-flow/                              @ledgerhq/platform
 support/jest-shared/                                     @ledgerhq/platform

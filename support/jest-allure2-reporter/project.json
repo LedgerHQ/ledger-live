@@ -1,0 +1,8 @@
+{
+  "name": "support-jest-allure2-reporter",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

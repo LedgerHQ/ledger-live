@@ -1,0 +1,10 @@
+import type { Primitive, Stage, Status, Severity } from '@support/jest-allure2-reporter';
+export declare function assertNotNullish(value: unknown, name?: string): asserts value;
+export declare function assertString(value: unknown, name?: string): asserts value is string;
+export declare function assertAttachmentContent(value: unknown, name?: string): asserts value is string;
+export declare function assertPrimitive(value: unknown, name?: string): asserts value is Primitive;
+export declare function assertFunction(function_: unknown, name?: string): asserts function_ is Function;
+export declare function assertArray(value: unknown, name?: string): asserts value is unknown[];
+export declare function assertSeverity(value: unknown): asserts value is Severity;
+export declare function assertStatus(value: unknown): asserts value is Status;
+export declare function assertStage(value: unknown): asserts value is Stage;

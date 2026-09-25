@@ -35,6 +35,8 @@ Two kinds of preset:
 
 | Package | Applies to |
 | --- | --- |
+| [`detox-allure2-adapter`](./detox-allure2-adapter) | Mobile Detox E2E — vendored Allure artifact adapter |
+| [`jest-allure2-reporter`](./jest-allure2-reporter) | Mobile Jest E2E — vendored Allure reporter |
 | [`jest-devtools`](./jest-devtools) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
 | [`jest-features-flow`](./jest-features-flow) | `features/flow/*` — dual web/native jest preset plus Lumen passthrough stubs |
 | [`jest-shared`](./jest-shared) | `shared/*` — flat node preset for logic packages, dual web/native and native-only presets for UI packages |

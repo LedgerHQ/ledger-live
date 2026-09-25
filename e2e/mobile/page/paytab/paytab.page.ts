@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 
 export default class PayTabPage {
   detailsButtonId = "card-details-button";

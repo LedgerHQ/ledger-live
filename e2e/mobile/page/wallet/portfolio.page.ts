@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
 import { DEFAULT_TIMEOUT, VISIBILITY_PROBE_TIMEOUT } from "@e2e/helpers/elementHelpers";
 import { getFlags } from "@e2e/bridge/server";

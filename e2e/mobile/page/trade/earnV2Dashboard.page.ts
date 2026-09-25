@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 
 export default class EarnV2DashboardPage {
   // Webview locators (shared earn web app v2)

@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import type { ContactAddressTestData } from "@ledgerhq/live-e2e-shared/contacts";
 import ContactNameDrawer, { RENAME_CONTACT_PREFIX } from "@e2e/page/drawer/contactName.drawer";
 

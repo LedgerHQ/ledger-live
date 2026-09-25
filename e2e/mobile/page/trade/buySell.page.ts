@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { BuySell, Fiat } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";

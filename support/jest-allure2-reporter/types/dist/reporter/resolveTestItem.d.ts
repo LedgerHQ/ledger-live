@@ -1,0 +1,3 @@
+import type { AllureTestCaseResult, PromisedProperties, PropertyExtractor, TestItemExtractorContext } from '@support/jest-allure2-reporter';
+export declare function resolvePromisedTestCase<Context extends TestItemExtractorContext<AllureTestCaseResult>>(context: Context, extractor: PropertyExtractor<Context, PromisedProperties<AllureTestCaseResult>>): Promise<AllureTestCaseResult | undefined>;
+export declare function resolvePromisedItem<Context, ResultKey extends keyof Context, Result>(context: Context, extractor: PropertyExtractor<Context, PromisedProperties<Result>>, resultKey: ResultKey): Promise<Result>;

@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import invariant from "invariant";
 
 const PROVIDER_ROW_PREFIX = "provider-row-";

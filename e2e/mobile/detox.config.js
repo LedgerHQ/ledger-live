@@ -62,7 +62,7 @@ module.exports = {
     // sat under `behavior`, where Detox does not read it.
     debugSynchronization: 10000,
   },
-  // Specified in full rather than inherited from detox-allure2-adapter/preset-detox: `pnpm mobile
+  // Specified in full rather than inherited from @support/detox-allure2-adapter/preset-detox: `pnpm mobile
   // e2e:build` installs only the app's dependencies, and that preset belongs to this package, so
   // extending it fails the Detox build. It only ever contributed these same five plugins.
   artifacts: {
