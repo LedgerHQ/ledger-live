@@ -102,6 +102,7 @@ describe("integration with segment.io", () => {
     await startAnalyticsWithTracking(true);
 
     await waitFor(async () => {
+      expect(endpoints.identify).toHaveBeenCalled();
       const bodies = await collectedIdentifyBodies();
       expect(bodies).toEqual(
         expect.arrayContaining([
