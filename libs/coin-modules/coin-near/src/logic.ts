@@ -95,7 +95,8 @@ export const getNearStakingPositions = (account: NearAccount): NearStakingPositi
 export const getMaxAmount = (
   account: NearAccount,
   transaction: Transaction,
-  fees?: BigNumber,
+  // `null` as well as `undefined`: a transaction carries `fees: null` until it is estimated.
+  fees?: BigNumber | null,
 ): BigNumber => {
   let maxAmount;
   const selectedValidator = getNearStakingPositions(account).find(
