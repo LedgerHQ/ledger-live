@@ -36,13 +36,6 @@ function readPackage(pkg, context) {
       /* Other packages */
       addDependencies("rn-fetch-blob", { lodash: "*" }),
 
-      addPeerDependencies(/^expo-/, {
-        "expo-modules-core": "*",
-        "expo-constants": "*",
-        "react-native": "*",
-        react: "*",
-      }),
-
       addPeerDependencies("app-builder-lib", {
         lodash: "*",
       }),
