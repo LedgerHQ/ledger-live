@@ -42,6 +42,8 @@ jest.mock("../logic/validateIntent", () => ({ validateIntent: jest.fn() }));
 
 const config = () => ({
   status: { type: "active" as const },
+  name: "Vechain",
+  unit: { name: "VET", code: "VET", magnitude: 18 },
   node: { url: "https://vechain.coin.ledger.com" },
 });
 
@@ -82,6 +84,8 @@ describe("createApi", () => {
 
     expect(getCoinConfig()).toEqual({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
     });
   });

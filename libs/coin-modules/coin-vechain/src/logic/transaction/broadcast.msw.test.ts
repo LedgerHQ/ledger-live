@@ -6,6 +6,8 @@ import { broadcast } from "./broadcast";
 const SUBMIT_URL = `${TEST_VECHAIN_ENDPOINT}/transactions`;
 const context = createMockVechainContext({
   status: { type: "active" },
+  name: "Vechain",
+  unit: { name: "VET", code: "VET", magnitude: 18 },
   node: { url: TEST_VECHAIN_ENDPOINT },
 });
 

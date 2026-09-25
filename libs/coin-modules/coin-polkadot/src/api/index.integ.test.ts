@@ -11,6 +11,8 @@ describe("Polkadot Api", () => {
   let module: CoinModuleApi<PolkadotCoinConfig>;
   const mainnetConfig: PolkadotCoinConfig = {
     status: { type: "active" },
+    name: "Polkadot",
+    unit: { name: "DOT", code: "DOT", magnitude: 10 },
     node: {
       url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
     },

@@ -45,6 +45,8 @@ export const localCoinConfig: ReturnType<CasperCoinConfig> = {
       { id: "staking_txs", status: "active" },
     ],
   },
+  name: "Casper",
+  unit: { name: "CSPR", code: "CSPR", magnitude: 9 },
   infra: {
     API_CASPER_NODE_ENDPOINT: DEVNET_RPC_URL,
     API_CASPER_INDEXER: UNUSED_INDEXER_URL,

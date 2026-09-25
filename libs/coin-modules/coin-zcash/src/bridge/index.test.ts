@@ -15,7 +15,13 @@ jest.mock("../logic/engineClient", () => ({ getZCashClient: jest.fn() }));
 const mockedGetZCashClient = jest.mocked(getZCashClient);
 
 const currency = getCryptoCurrencyById("zcash");
-const coinConfig = () => ({ info: { status: { type: "active" as const } } });
+const coinConfig = () => ({
+  info: {
+    status: { type: "active" as const },
+    name: "Zcash",
+    unit: { name: "zcash", code: "ZEC", magnitude: 8 },
+  },
+});
 
 const account = {
   currency,

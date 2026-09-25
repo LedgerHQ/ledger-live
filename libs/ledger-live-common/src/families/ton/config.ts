@@ -9,6 +9,8 @@ const tonConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Gram",
+      unit: { name: "GRAM", code: "GRAM", magnitude: 9 },
       infra: {
         API_TON_ENDPOINT: "https://ton.coin.ledger.com/api/v3",
         KNOWN_JETTONS,

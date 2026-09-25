@@ -48,6 +48,8 @@ describe("getAccountShape", () => {
         grpcUrl: getJsonRpcFullnodeUrl("mainnet"),
       },
       features: { transport: "json" },
+      name: "Sui",
+      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 

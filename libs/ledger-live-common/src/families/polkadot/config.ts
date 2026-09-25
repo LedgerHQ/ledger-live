@@ -12,6 +12,8 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       sidecar: {
         url: getEnv("API_POLKADOT_SIDECAR"),
         credentials: getEnv("API_POLKADOT_SIDECAR_CREDENTIALS"),
@@ -37,6 +39,8 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       sidecar: {
         url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
       },
@@ -62,6 +66,8 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Westend",
+      unit: { name: "WND", code: "WND", magnitude: 12 },
       sidecar: {
         url: "https://polkadot-westend-rest-api.coin.ledger.com/v1/rc",
       },
@@ -83,6 +89,8 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Assethub Westend",
+      unit: { name: "WND", code: "WND", magnitude: 12 },
       sidecar: {
         url: "https://polkadot-westend-rest-api.coin.ledger.com/v1",
       },

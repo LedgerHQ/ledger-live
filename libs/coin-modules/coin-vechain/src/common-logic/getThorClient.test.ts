@@ -11,7 +11,12 @@ jest.mock("@vechain/sdk-network", () => ({
 
 const NODE_URL = "https://testnet.veblocks.net";
 // The endpoint comes from the coin config, threaded in explicitly.
-const config: VechainCurrencyConfig = { status: { type: "active" }, node: { url: NODE_URL } };
+const config: VechainCurrencyConfig = {
+  status: { type: "active" },
+  name: "Vechain",
+  unit: { name: "VET", code: "VET", magnitude: 18 },
+  node: { url: NODE_URL },
+};
 
 const mockedThorClient = jest.mocked(ThorClient);
 

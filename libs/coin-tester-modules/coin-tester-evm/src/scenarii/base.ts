@@ -69,6 +69,7 @@ export const scenarioBase: Scenario<GenericTransaction, Account> = {
       },
       chainId: 8453,
       name: "Base",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
         uri: "http://127.0.0.1:8545",

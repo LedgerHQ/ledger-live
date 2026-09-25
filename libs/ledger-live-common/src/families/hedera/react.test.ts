@@ -25,6 +25,8 @@ describe("hedera/react", () => {
     LiveConfig.setConfig(liveConfig);
     hederaCoinConfig.setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Hedera",
+      unit: { name: "HBAR", code: "HBAR", magnitude: 8 },
       useNetworkTimestamp: false,
       networkType: "mainnet",
       claimRewardsRecipient: "0.0.163372",

@@ -22,6 +22,8 @@ const mockConfig: SuiCoinConfig = {
   },
   status: { type: "active" },
   features: { transport: "json" },
+  name: "Sui",
+  unit: { name: "Sui", code: "SUI", magnitude: 9 },
 };
 
 const context: SuiContext = {

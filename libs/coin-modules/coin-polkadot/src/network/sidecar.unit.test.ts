@@ -27,6 +27,8 @@ describe("getAccount", () => {
       status: {
         type: "active",
       },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       node: {
         url: "https://httpbin.org/",
       },
@@ -238,6 +240,8 @@ describe("getBalances", () => {
       status: {
         type: "active",
       },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       node: {
         url: "https://httpbin.org/",
       },
@@ -285,6 +289,8 @@ describe("getRegistry", () => {
       status: {
         type: "active",
       },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       node: {
         url: "https://httpbin.org/",
       },
@@ -315,6 +321,8 @@ describe("getMetadata", () => {
       status: {
         type: "active",
       },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       node: {
         url: "https://httpbin.org/",
       },

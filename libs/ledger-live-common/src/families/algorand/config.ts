@@ -8,6 +8,8 @@ export const algorandConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Algorand",
+      unit: { name: "ALGO", code: "ALGO", magnitude: 6 },
     },
   },
 };

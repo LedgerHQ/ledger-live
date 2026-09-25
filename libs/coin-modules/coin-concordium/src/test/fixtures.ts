@@ -43,6 +43,8 @@ export const TESTNET_COIN_CONFIG: ConcordiumConfig = {
 export function setupTestnetCoinConfig(overrides?: Partial<ConcordiumCoinConfig>): void {
   coinConfig.setCoinConfig(() => ({
     status: { type: "active" },
+    name: "Concordium (Testnet)",
+    unit: { name: "ccd", code: "CCD", magnitude: 6 },
     ...TESTNET_COIN_CONFIG,
     ...overrides,
   }));
@@ -52,7 +54,13 @@ export function setupTestnetCoinConfig(overrides?: Partial<ConcordiumCoinConfig>
 export function createFixtureConfig(
   overrides?: Partial<ConcordiumCoinConfig>,
 ): ConcordiumCoinConfig {
-  return { status: { type: "active" }, ...TESTNET_COIN_CONFIG, ...overrides };
+  return {
+    status: { type: "active" },
+    name: "Concordium (Testnet)",
+    unit: { name: "ccd", code: "CCD", magnitude: 6 },
+    ...TESTNET_COIN_CONFIG,
+    ...overrides,
+  };
 }
 
 /** Builds a {@link ConcordiumContext} resolving to the testnet coin config for API tests. */

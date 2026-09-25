@@ -276,6 +276,8 @@ export const createMockCoinConfigValue = createFactory({
   nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
   minReserve: 100,
   status: { type: "active" as const },
+  name: "Canton Network (Devnet)",
+  unit: { name: "cc", code: "CC", magnitude: 38 },
 });
 
 export const createMockCoinConfig = (): CoinConfig<CantonCoinConfig> => {

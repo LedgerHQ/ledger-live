@@ -3,6 +3,8 @@ import type { AlgorandCoinConfig, AlgorandContext } from "../config";
 /** The resolved config every mocked endpoint points at. */
 export const mockAlgorandConfig: AlgorandCoinConfig = {
   status: { type: "active" },
+  name: "Algorand",
+  unit: { name: "ALGO", code: "ALGO", magnitude: 6 },
   node: "https://algo.test/ps2/v2",
   indexer: "https://algo.test/idx2/v2",
 };

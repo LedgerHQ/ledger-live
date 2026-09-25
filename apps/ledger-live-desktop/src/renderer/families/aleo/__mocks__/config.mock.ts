@@ -3,6 +3,8 @@ import type { AleoCoinConfig } from "@ledgerhq/live-common/families/aleo/types";
 
 export const mockAleoCoinConfig: AleoCoinConfig = {
   status: { type: "active" },
+  name: "Aleo",
+  unit: { name: "Aleo", code: "ALEO", magnitude: 6 },
   networkType: "mainnet",
   defaultValidator: "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t",
   apiUrls: { node: "https://node.aleo.org", sdk: "https://sdk.aleo.org" },

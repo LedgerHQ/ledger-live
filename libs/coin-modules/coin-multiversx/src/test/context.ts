@@ -3,6 +3,8 @@ import type { MultiversXCoinConfig, MultiversXContext } from "../config";
 /** The resolved config every mocked endpoint points at. */
 export const mockMultiversXConfig: MultiversXCoinConfig = {
   status: { type: "active" },
+  name: "MultiversX",
+  unit: { name: "EGLD", code: "EGLD", magnitude: 18 },
   apiEndpoint: "https://api.multiversx.com",
   delegationApiEndpoint: "https://delegation-api.multiversx.com",
 };

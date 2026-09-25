@@ -122,6 +122,8 @@ describe("Build TON transaction", () => {
       status: {
         type: "active",
       },
+      name: "Gram",
+      unit: { name: "GRAM", code: "GRAM", magnitude: 9 },
       infra: {
         API_TON_ENDPOINT: API_TON_ENDPOINT,
         KNOWN_JETTONS: [],

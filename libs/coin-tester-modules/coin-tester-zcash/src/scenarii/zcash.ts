@@ -345,7 +345,13 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
     setZainoGrpcUrl(ZAINO_GRPC_URL, ZCASH_UTILS_NETWORK);
     setZcashShieldedEnabled(true);
 
-    const coinConfig: ZcashCoinConfig = { info: { status: { type: "active" } } };
+    const coinConfig: ZcashCoinConfig = {
+      info: {
+        status: { type: "active" },
+        name: "Zcash",
+        unit: { name: "zcash", code: "ZEC", magnitude: 8 },
+      },
+    };
     LiveConfig.setConfig({
       config_currency_zcash_regtest: {
         type: "object",

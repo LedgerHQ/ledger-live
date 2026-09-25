@@ -3,6 +3,8 @@ import { getCoinConfig, resetCoinConfigForTesting, setCoinConfig } from "./confi
 
 const minaTestConfig = {
   status: { type: "active" as const },
+  name: "Mina",
+  unit: { name: "MINA", code: "MINA", magnitude: 9 },
   infra: {
     API_VALIDATORS_BASE_URL: "https://validators.test",
     API_MINA_ROSETTA_NODE: "https://rosetta.test",

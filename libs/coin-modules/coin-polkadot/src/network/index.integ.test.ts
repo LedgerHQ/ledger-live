@@ -7,6 +7,8 @@ const CURRENCY_CONFIGS = {
     currency: getCryptoCurrencyById("polkadot"),
     config: {
       status: { type: "active" as const },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       node: { url: "https://polkadot-rpc.publicnode.com" },
       sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1/rc" },
       indexer: { url: "https://polkadot.coin.ledger.com" },
@@ -17,6 +19,8 @@ const CURRENCY_CONFIGS = {
     currency: getCryptoCurrencyById("assethub_polkadot"),
     config: {
       status: { type: "active" as const },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1" },
       node: { url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub" },

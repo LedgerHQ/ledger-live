@@ -11,6 +11,8 @@ const nearConfig: CurrencyLiveConfigDefinition = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "NEAR",
+      unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
       infra: {
         API_NEAR_PRIVATE_NODE: "https://near.coin.ledger.com/node",
         API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",

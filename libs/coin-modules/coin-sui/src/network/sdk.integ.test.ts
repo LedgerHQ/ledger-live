@@ -35,6 +35,8 @@ describe("SUI SDK Integration tests", () => {
         grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
       },
       features: { transport: "json" },
+      name: "Sui",
+      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 
@@ -576,6 +578,8 @@ describe("SUI SDK Integration tests", () => {
           grpcUrl: getJsonRpcFullnodeUrl("testnet"),
         },
         features: { transport: "json" },
+        name: "Sui (Testnet)",
+        unit: { name: "Sui", code: "SUI", magnitude: 9 },
       }));
     });
 
@@ -588,6 +592,8 @@ describe("SUI SDK Integration tests", () => {
           grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
         },
         features: { transport: "json" },
+        name: "Sui",
+        unit: { name: "Sui", code: "SUI", magnitude: 9 },
       }));
     });
 
@@ -610,6 +616,8 @@ describe("SUI SDK Integration tests", () => {
             grpcUrl: getJsonRpcFullnodeUrl("mainnet"),
           },
           features: { transport: "json" },
+          name: "Sui",
+          unit: { name: "Sui", code: "SUI", magnitude: 9 },
         }));
       });
 
@@ -704,6 +712,8 @@ describe("SUI SDK Integration tests", () => {
             grpcUrl: getJsonRpcFullnodeUrl("testnet"),
           },
           features: { transport: "json" },
+          name: "Sui (Testnet)",
+          unit: { name: "Sui", code: "SUI", magnitude: 9 },
         }));
       });
 

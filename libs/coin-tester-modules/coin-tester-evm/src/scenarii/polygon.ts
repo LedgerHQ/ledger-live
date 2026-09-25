@@ -96,6 +96,7 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
       },
       chainId: 137,
       name: "Polygon",
+      unit: { name: "POL", code: "POL", magnitude: 18 },
       node: {
         type: "external",
         uri: "http://127.0.0.1:8545",

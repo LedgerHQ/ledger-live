@@ -13,12 +13,16 @@ describe("createBridges", () => {
   it("sets the coin config so downstream logic (e.g. createTransaction) can read it", () => {
     createBridges(signerContext, () => ({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
       chainTag: 39,
     }));
 
     expect(getCoinConfig()).toEqual({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
       chainTag: 39,
     });
@@ -27,6 +31,8 @@ describe("createBridges", () => {
   it("returns a currencyBridge and an accountBridge", () => {
     const { currencyBridge, accountBridge } = createBridges(signerContext, () => ({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
     }));
 

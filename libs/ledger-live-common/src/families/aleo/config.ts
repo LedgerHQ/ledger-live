@@ -76,6 +76,8 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
+      name: "Aleo",
+      unit: { name: "Aleo", code: "ALEO", magnitude: 6 },
       networkType: "mainnet",
       defaultValidator: MAINNET_DEFAULT_VALIDATOR,
       apiUrls: {
@@ -99,6 +101,8 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
+      name: "Aleo (Testnet)",
+      unit: { name: "Aleo", code: "ALEO", magnitude: 6 },
       networkType: "testnet",
       defaultValidator: TESTNET_DEFAULT_VALIDATOR,
       apiUrls: {
