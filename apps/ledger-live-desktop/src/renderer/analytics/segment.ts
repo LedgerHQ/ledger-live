@@ -193,6 +193,7 @@ const getPtxAttributes = () => {
   const ptxSwapLiveAppOnAsset = analyticsFeatureFlagMethod("ptxSwapLiveAppOnAsset");
   const ptxBorrowLiveApp = analyticsFeatureFlagMethod("ptxBorrowLiveApp");
   const stableSavings = analyticsFeatureFlagMethod("stableSavings");
+  const ptxEarnCtaOnMobile = analyticsFeatureFlagMethod("ptxEarnCtaOnMobile");
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -235,6 +236,7 @@ const getPtxAttributes = () => {
     ptxSwapLiveAppOnAsset: ptxSwapLiveAppOnAsset?.enabled,
     borrowFeature: !!ptxBorrowLiveApp?.enabled,
     stableSavings: !!stableSavings?.enabled,
+    ptxEarnCtaOnMobile: !!ptxEarnCtaOnMobile?.enabled,
     stablecoinYield,
     bitcoinYield,
     ethDepositScreen,
