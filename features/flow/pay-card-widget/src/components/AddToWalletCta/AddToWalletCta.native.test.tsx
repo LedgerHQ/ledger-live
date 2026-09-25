@@ -1,5 +1,7 @@
 import React from "react";
 import { Platform } from "react-native";
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 
@@ -12,28 +14,39 @@ jest.mock("@domain/api-card-management", () => ({ useGetCardStatusQuery: jest.fn
 
 import { useGetCardStatusQuery } from "@domain/api-card-management";
 import { CARD_WALLET_PAY_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
+import {
+  payCardOnboardingWidgetSlice,
+  selectDigitalWalletProvisioningStartedAt,
+} from "../../state";
 import { AddToWalletCtaWithBottomSheet } from "../AddToWalletCtaWithBottomSheet/AddToWalletCtaWithBottomSheet.native";
 import { openWalletApp } from "../AddToWalletInstructions/openWalletApp";
 import { AddToWalletCta } from "./AddToWalletCta.native";
 
-const refetchCardStatus = jest.fn();
-
 /** `undefined` is a tenant that does not answer for the flag, which still offers the CTA. */
 function setCardAddedToDigitalWallet(cardAddedToDigitalWallet?: boolean) {
   jest.mocked(useGetCardStatusQuery).mockReturnValue({
-    refetch: refetchCardStatus,
+    refetch: jest.fn(),
     data: cardAddedToDigitalWallet === undefined ? undefined : { cardAddedToDigitalWallet },
   } as unknown as ReturnType<typeof useGetCardStatusQuery>);
 }
 
 function renderIn(component: React.ReactElement) {
-  return render(component, {
-    wrapper: ({ children }) => (
-      <PayAnalyticsProvider adapter={{ track: jest.fn() }}>
-        <I18nWrapper>{children}</I18nWrapper>
-      </PayAnalyticsProvider>
-    ),
+  const store = configureStore({
+    reducer: { payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer },
   });
+
+  return {
+    ...render(component, {
+      wrapper: ({ children }) => (
+        <Provider store={store}>
+          <PayAnalyticsProvider adapter={{ track: jest.fn() }}>
+            <I18nWrapper>{children}</I18nWrapper>
+          </PayAnalyticsProvider>
+        </Provider>
+      ),
+    }),
+    store,
+  };
 }
 
 function renderCta(appearance?: "base" | "gray", onPress = jest.fn()) {
@@ -85,17 +98,17 @@ describe("AddToWalletCta (native)", () => {
     expect(screen.getByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
   });
 
-  it("opens the wallet sheet on press, and re-asks the provider once the wallet opened", async () => {
+  it("opens the wallet from the sheet without marking anything pending yet", async () => {
     const user = userEvent.setup();
-    renderIn(<AddToWalletCtaWithBottomSheet appearance="gray" />);
+    const { store } = renderIn(<AddToWalletCtaWithBottomSheet appearance="gray" />);
 
     expect(screen.getByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
 
     await user.press(screen.getByTestId("pay-card-add-to-wallet-cta-entry"));
     await user.press(screen.getByTestId("pay-card-add-to-wallet-cta"));
 
-    // Nothing local records the answer now, so the CTA stays until the provider reports it.
-    expect(refetchCardStatus).toHaveBeenCalledTimes(1);
+    expect(openWalletApp).toHaveBeenCalledTimes(1);
+    expect(selectDigitalWalletProvisioningStartedAt(store.getState())).toBeNull();
   });
 
   it("calls the host when pressed", async () => {

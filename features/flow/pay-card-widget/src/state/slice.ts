@@ -1,10 +1,15 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { PayCardAnalyticsMilestone, PayCardOnboardingWidgetState } from "./types";
+import type {
+  PayCardAnalyticsMilestone,
+  PayCardOnboardingWidgetPersistedState,
+  PayCardOnboardingWidgetState,
+} from "./types";
 
 export const payCardOnboardingWidgetInitialState: PayCardOnboardingWidgetState = {
   hasCompletedOnboarding: false,
   analyticsCardId: null,
   reportedAnalyticsMilestones: [],
+  digitalWalletProvisioningStartedAt: null,
 };
 
 export const payCardOnboardingWidgetSlice = createSlice({
@@ -33,9 +38,18 @@ export const payCardOnboardingWidgetSlice = createSlice({
         }
       }
     },
+    startDigitalWalletProvisioning: {
+      reducer: (state, action: PayloadAction<number>) => {
+        state.digitalWalletProvisioningStartedAt = action.payload;
+      },
+      prepare: () => ({ payload: Date.now() }),
+    },
+    endDigitalWalletProvisioning: state => {
+      state.digitalWalletProvisioningStartedAt = null;
+    },
     restorePayCardOnboardingWidget: (
       state,
-      action: PayloadAction<Partial<PayCardOnboardingWidgetState> | undefined>,
+      action: PayloadAction<Partial<PayCardOnboardingWidgetPersistedState> | undefined>,
     ) => {
       const { hasCompletedOnboarding, analyticsCardId, reportedAnalyticsMilestones } =
         action.payload ?? {};
@@ -57,5 +71,7 @@ export const {
   resetCardOnboardingCompleted,
   setAnalyticsCardId,
   markAnalyticsMilestonesReported,
+  startDigitalWalletProvisioning,
+  endDigitalWalletProvisioning,
   restorePayCardOnboardingWidget,
 } = payCardOnboardingWidgetSlice.actions;

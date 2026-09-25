@@ -59,6 +59,7 @@ export function createRenderWidget(render: RenderWidget) {
           hasCompletedOnboarding,
           analyticsCardId: null,
           reportedAnalyticsMilestones: [],
+          digitalWalletProvisioningStartedAt: null,
         },
       },
     });
