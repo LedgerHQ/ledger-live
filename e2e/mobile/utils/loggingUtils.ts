@@ -1,4 +1,4 @@
-import { allure } from "jest-allure2-reporter/api";
+import { allure } from "@support/jest-allure2-reporter/api";
 import {
   extractSwapInitError,
   type SwapInitLogEntry,

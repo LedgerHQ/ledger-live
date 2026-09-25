@@ -40,11 +40,11 @@ const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
   ? new Set(JSON.parse(process.env.E2E_RETRY_TEST_NAMES))
   : undefined;
 
-// jest-allure2-reporter appends descriptions rather than replacing — QAA-1547
+// @support/jest-allure2-reporter appends descriptions rather than replacing — QAA-1547
 const dedupeParagraphs = paragraphs => [...new Set(paragraphs ?? [])];
 
 const jestAllure2ReporterOptions = {
-  extends: "detox-allure2-adapter/preset-detox",
+  extends: "@support/detox-allure2-adapter/preset-detox",
   resultsDir: "artifacts",
   testCase: {
     description: ({ testCaseMetadata }) =>
@@ -92,7 +92,7 @@ const jestAllure2ReporterOptions = {
   }),
 };
 
-// Video recording is handled by patched detox-allure2-adapter via DETOX_ENABLE_VIDEO env var in globalSetup
+// Video recording is handled by the vendored adapter via DETOX_ENABLE_VIDEO env var in globalSetup
 const detoxAllure2AdapterOptions = {
   deviceLogs: true,
   deviceScreenshots: false,
@@ -147,7 +147,7 @@ const config = {
   testTimeout: 60_000 * 6,
   reporters: [
     "detox/runners/jest/reporter",
-    ["jest-allure2-reporter", jestAllure2ReporterOptions],
+    ["@support/jest-allure2-reporter", jestAllure2ReporterOptions],
     ...(process.env.CI ? [["github-actions", { silent: false }]] : []),
   ],
   globalSetup: "<rootDir>/jest.globalSetup.ts",
@@ -157,8 +157,8 @@ const config = {
     customConditions: ["node"],
     eventListeners: [
       "jest-metadata/environment-listener",
-      "jest-allure2-reporter/environment-listener",
-      ["detox-allure2-adapter", detoxAllure2AdapterOptions],
+      "@support/jest-allure2-reporter/environment-listener",
+      ["@support/detox-allure2-adapter", detoxAllure2AdapterOptions],
     ],
   },
   verbose: true,

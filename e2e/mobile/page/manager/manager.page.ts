@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
 
 export default class ManagerPage {

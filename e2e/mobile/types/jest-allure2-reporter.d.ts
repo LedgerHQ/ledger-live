@@ -1,5 +1,5 @@
 // jest-allure2-reporter-api.d.ts
-declare module "jest-allure2-reporter/api" {
+declare module "@support/jest-allure2-reporter/api" {
   /**
    * Link one or more TMS issues to this test.
    * You can pass either a single string or a list of strings.

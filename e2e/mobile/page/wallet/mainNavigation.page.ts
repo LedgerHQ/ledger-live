@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import { openDeeplink, isAndroid } from "@e2e/helpers/commonHelpers";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { isMyWalletEnabled } from "@e2e/utils/initUtil";

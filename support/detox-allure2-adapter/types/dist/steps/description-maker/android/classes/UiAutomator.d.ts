@@ -1,0 +1,52 @@
+import { StepDescription } from '../../types';
+export declare class UiAutomator {
+    static uiDevice(): UiDevice;
+}
+export declare class UiDevice {
+    static click(x: any, y: any): StepDescription;
+    static pressBack(): StepDescription;
+    static pressKeyCode(keyCode: any, metaState?: any): StepDescription;
+    static swipe(startX: any, startY: any, endX: any, endY: any, steps: any): StepDescription;
+    static setCompressedLayoutHeirarchy(compressed: any): StepDescription;
+    static getInstance(): StepDescription;
+    static getDisplaySizeDp(): StepDescription;
+    static getProductName(): StepDescription;
+    static getLastTraversedText(): StepDescription;
+    static clearLastTraversedText(): StepDescription;
+    static pressMenu(): StepDescription;
+    static pressHome(): StepDescription;
+    static pressSearch(): StepDescription;
+    static pressDPadCenter(): StepDescription;
+    static pressDPadDown(): StepDescription;
+    static pressDPadUp(): StepDescription;
+    static pressDPadLeft(): StepDescription;
+    static pressDPadRight(): StepDescription;
+    static pressDelete(): StepDescription;
+    static pressEnter(): StepDescription;
+    static pressRecentApps(): StepDescription;
+    static openNotification(): StepDescription;
+    static openQuickSettings(): StepDescription;
+    static getDisplayWidth(): StepDescription;
+    static getDisplayHeight(): StepDescription;
+    static drag(startX: any, startY: any, endX: any, endY: any, steps: any): StepDescription;
+    static waitForIdle(): StepDescription;
+    static getCurrentActivityName(): StepDescription;
+    static getCurrentPackageName(): StepDescription;
+    static removeWatcher(name: any): StepDescription;
+    static runWatchers(): StepDescription;
+    static resetWatcherTriggers(): StepDescription;
+    static hasWatcherTriggered(watcherName: any): StepDescription;
+    static hasAnyWatcherTriggered(): StepDescription;
+    static setWatcherTriggered(watcherName: any): StepDescription;
+    static isNaturalOrientation(): StepDescription;
+    static getDisplayRotation(): StepDescription;
+    static freezeRotation(): StepDescription;
+    static unfreezeRotation(): StepDescription;
+    static setOrientationLeft(): StepDescription;
+    static setOrientationRight(): StepDescription;
+    static setOrientationNatural(): StepDescription;
+    static wakeUp(): StepDescription;
+    static isScreenOn(): StepDescription;
+    static sleep(): StepDescription;
+    static dumpWindowHierarchy(fileName: any): StepDescription;
+}

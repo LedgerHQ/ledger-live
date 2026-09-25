@@ -12,7 +12,7 @@ import {
   installConsoleCapture,
   uninstallConsoleCapture,
 } from "@e2e/utils/loggingUtils";
-import { allure } from "jest-allure2-reporter/api";
+import { allure } from "@support/jest-allure2-reporter/api";
 import type { OptionalFeatureMap } from "@shared/feature-flags";
 import { getLogs } from "@e2e/bridge/server";
 import { Circus } from "@jest/types";

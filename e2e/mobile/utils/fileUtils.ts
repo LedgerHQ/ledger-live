@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import * as fs from "fs/promises";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 

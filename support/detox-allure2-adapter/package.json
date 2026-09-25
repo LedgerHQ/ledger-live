@@ -1,0 +1,50 @@
+{
+  "name": "@support/detox-allure2-adapter",
+  "version": "1.0.0-alpha.42-ledger.0",
+  "private": true,
+  "description": "Vendored Detox adapter for Ledger Wallet Allure2 reports",
+  "main": "./runtime/index.cjs",
+  "types": "./types/dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/dist/index.d.ts",
+      "require": "./runtime/index.cjs"
+    },
+    "./path-builder": {
+      "types": "./types/dist/path-builder.d.ts",
+      "require": "./runtime/path-builder.cjs"
+    },
+    "./preset-allure": {
+      "types": "./types/dist/preset/allure.d.ts",
+      "require": "./runtime/preset-allure.cjs"
+    },
+    "./preset-detox": {
+      "types": "./types/dist/preset/detox.d.ts",
+      "require": "./runtime/preset-detox.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "format": "oxfmt runtime",
+    "format:check": "oxfmt runtime --check",
+    "lint": "oxlint runtime",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@support/jest-allure2-reporter": "workspace:*",
+    "archiver": "^6.0.1",
+    "detox": "catalog:",
+    "logkitten": "^1.3.3",
+    "screenkitten": "^1.0.0",
+    "videokitten": "^1.0.1"
+  },
+  "peerDependencies": {
+    "detox": ">=20.41.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

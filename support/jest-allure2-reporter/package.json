@@ -1,0 +1,55 @@
+{
+  "name": "@support/jest-allure2-reporter",
+  "version": "2.2.8-ledger.0",
+  "private": true,
+  "description": "Vendored Jest Allure2 reporter for Ledger Wallet E2E tests",
+  "main": "./runtime/index.cjs",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "require": "./runtime/index.cjs"
+    },
+    "./api": {
+      "types": "./types/dist/api/index.d.ts",
+      "require": "./runtime/api.cjs"
+    },
+    "./environment-listener": {
+      "types": "./types/dist/environment/listener.d.ts",
+      "require": "./runtime/environment-listener.cjs"
+    },
+    "./register": "./runtime/register.cjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "format": "oxfmt runtime",
+    "format:check": "oxfmt runtime --check",
+    "lint": "oxlint runtime",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "allure-store": "^1.1.0",
+    "bunyamin": "^1.6.1",
+    "handlebars": "^4.7.8",
+    "import-from": "^4.0.0",
+    "jest-docblock": "catalog:",
+    "jest-metadata": "1.6.0",
+    "lodash": "catalog:",
+    "node-fetch": "^2.6.7",
+    "pkg-up": "^3.1.0",
+    "properties": "^1.2.1",
+    "stacktrace-js": "^2.0.2",
+    "strip-ansi": "^6.0.0",
+    "ts-node": "10.9.2",
+    "uuid": "^8.3.2"
+  },
+  "peerDependencies": {
+    "jest": ">=27.2.5"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

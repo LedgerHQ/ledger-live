@@ -1,0 +1,8 @@
+{
+  "name": "support-detox-allure2-adapter",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

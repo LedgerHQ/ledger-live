@@ -1,5 +1,5 @@
 import CommonPage from "@e2e/page/common.page";
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import { openDeeplink, normalizeText, isIos } from "@e2e/helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";

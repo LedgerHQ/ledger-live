@@ -1,0 +1,240 @@
+:root {
+  --clr-bg: #fafafa;
+  --clr-meta-bg: #333;
+  --clr-meta-fg: #fff;
+  --clr-active: #ff0080;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--clr-bg);
+  margin: 1rem 1rem 10rem;
+}
+
+header {
+  margin-bottom: 1.5rem;
+}
+
+header h1 {
+  margin: 0 0 1.25rem;
+  text-align: center;
+}
+
+.instructions {
+  margin: 0 0 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.controls {
+  text-align: center;
+  margin: 1rem 0 1.5rem;
+}
+
+/* Custom checkbox styles */
+.checkbox-container {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+  user-select: none;
+}
+
+.checkbox-container input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  height: 18px;
+  width: 18px;
+  background-color: #fff;
+  border: 2px solid #ddd;
+  border-radius: 3px;
+  margin-right: 8px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.checkbox-container:hover .checkmark {
+  border-color: #007acc;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #007acc;
+  border-color: #007acc;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Canvas container styles */
+.root {
+  position: relative;
+  outline: 2px solid #001;
+  margin: auto;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+  overflow: hidden; /* Default: overflow hidden */
+}
+
+/* Overflow visible state */
+.overflow-visible,
+.overflow-visible .node {
+  overflow: visible;
+}
+
+/* Node element styles */
+.node {
+  position: absolute;
+  z-index: 1;
+  box-sizing: border-box;
+  font-size: 11px;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.6);
+  outline: 1px solid #bbb;
+  transition: background 0.1s, outline 0.1s;
+  cursor: pointer;
+}
+
+.root.bg.overflow-visible .node {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.node:hover {
+  background: rgba(98, 255, 0, 0.25);
+}
+
+.node:has(.node:hover) {
+  background: transparent;
+}
+
+/* Special state styles */
+
+.invisible {
+  outline: 1px dashed;
+}
+
+/* Screenshot mode adjustments */
+.root.bg:not(.overflow-visible) .node {
+  background: transparent;
+  outline: none;
+}
+
+.root.bg:not(.overflow-visible) .node:hover {
+  outline: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+/* Node text styling */
+.txt {
+  pointer-events: none;
+}
+
+.root.bg:not(.overflow-visible) .txt {
+  display: none;
+}
+
+/* Smart tooltip styles */
+#smart-tooltip {
+  position: fixed;
+  max-width: 300px;
+  min-width: 200px;
+  display: none;
+  pointer-events: none;
+  z-index: 10000;
+  background: var(--clr-meta-bg);
+  color: var(--clr-meta-fg);
+  padding: 8px 12px;
+  font-size: 11px;
+  line-height: 1.4;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.15s ease-in-out;
+  word-wrap: break-word;
+}
+
+#smart-tooltip.visible {
+  display: block;
+  opacity: 1;
+}
+
+#smart-tooltip::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+}
+
+/* Arrow positioning classes */
+#smart-tooltip.arrow-bottom::after {
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-top-color: var(--clr-meta-bg);
+}
+
+#smart-tooltip.arrow-top::after {
+  bottom: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-bottom-color: var(--clr-meta-bg);
+}
+
+#smart-tooltip.arrow-right::after {
+  top: 50%;
+  right: 100%;
+  margin-top: -6px;
+  border-right-color: var(--clr-meta-bg);
+}
+
+#smart-tooltip.arrow-left::after {
+  top: 50%;
+  left: 100%;
+  margin-top: -6px;
+  border-left-color: var(--clr-meta-bg);
+}
+
+/* Error message styles */
+.error-container {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #fff0f0;
+  border: 1px solid #ffcccc;
+  border-radius: 8px;
+}
+
+.error-container h2 {
+  margin-top: 0;
+  color: #d8000c;
+}
+
+.error-container pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background-color: #fdfdfd;
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}

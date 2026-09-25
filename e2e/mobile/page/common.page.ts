@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import { removeSpeculosAndDeregisterKnownSpeculos } from "@e2e/utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { isIos, openDeeplink } from "@e2e/helpers/commonHelpers";

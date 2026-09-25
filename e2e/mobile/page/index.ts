@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import AssetAccountsPage from "@e2e/page/accounts/assetAccounts.page";
 import AccountPage from "@e2e/page/accounts/account.page";
 import AccountsPage from "@e2e/page/accounts/accounts.page";

@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "importHelpers": false,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["typecheck.ts"],
+  "exclude": ["node_modules"]
+}

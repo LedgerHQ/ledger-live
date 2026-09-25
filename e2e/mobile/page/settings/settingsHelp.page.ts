@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 import * as path from "path";
 import { FileUtils } from "@e2e/utils/fileUtils";
 import { urls } from "~/utils/urls";

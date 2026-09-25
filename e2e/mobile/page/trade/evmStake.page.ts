@@ -1,4 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
+import { Step } from "@support/jest-allure2-reporter/api";
 
 const VALIDATOR_ROW_REGEX = /^evm-validator-row-.+$/;
 // The staking quick-action testID suffix depends on account state: `cta` when the account has no

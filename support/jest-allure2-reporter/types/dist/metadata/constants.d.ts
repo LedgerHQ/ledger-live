@@ -1,0 +1,14 @@
+import type { AllureTestCaseMetadata } from '@support/jest-allure2-reporter';
+export declare const PREFIX: "allure2";
+type Path = readonly [typeof PREFIX, keyof AllureTestCaseMetadata];
+export declare const CURRENT_STEP: Path;
+export declare const DESCRIPTION: readonly ["allure2", "description"];
+export declare const DESCRIPTION_HTML: readonly ["allure2", "descriptionHtml"];
+export declare const DISPLAY_NAME: Path;
+export declare const DOCBLOCK: Path;
+export declare const FULL_NAME: Path;
+export declare const HISTORY_ID: Path;
+export declare const LABELS: readonly ["allure2", "labels"];
+export declare const LINKS: readonly ["allure2", "links"];
+export declare const PARAMETERS: Path;
+export {};
