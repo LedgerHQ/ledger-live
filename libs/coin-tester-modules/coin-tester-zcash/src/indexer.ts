@@ -5,7 +5,7 @@
  * `onUnhandledRequest` guard) rather than running a separate explorer service:
  * zebra already indexes addresses natively (see `helpers.ts`).
  *
- * The coin config's `infra.EXPLORER` points at `EXPLORER_ORIGIN` (see `scenarii/zcash.ts`)
+ * The coin config's `explorer.url` points at `EXPLORER_ORIGIN` (see `scenarii/zcash.ts`)
  * so every request this package answers is guaranteed local; the
  * `onUnhandledRequest` guard registered by `startIndexer` still throws on any
  * request to a non-localhost host, as a second line of defense.
