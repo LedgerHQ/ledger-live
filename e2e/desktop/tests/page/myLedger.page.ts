@@ -155,6 +155,13 @@ export class MyLedgerPage extends AppPage {
     await this.confirmModalButton.click();
   }
 
+  /** Uninstalling a parent app opens the same ConfirmModal, listing the apps that go with it. */
+  @step("Uninstall $0 together with the apps that depend on it")
+  async uninstallAppWithDependents(app: AppInfos) {
+    await this.uninstallButton(app).click();
+    await this.confirmModalButton.click();
+  }
+
   @step("Expect no app to be installed")
   async expectNoAppsInstalled() {
     await expect(this.noAppsEmptyState).toBeVisible();
