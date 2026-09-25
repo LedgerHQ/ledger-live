@@ -16,7 +16,9 @@ import { Worker } from "node:worker_threads";
  * once it stops beating. jest then attributes the failure to the running spec and
  * Detox's `--retries` re-runs it (see workerWatchdog.thread.cjs).
  *
- * Set E2E_STALL_WATCHDOG=0 to disable it, e.g. while paused in a debugger.
+ * It arms only in forked workers, so in-band runs (the local default, maxWorkers: 1)
+ * are never watched. A forked worker paused in a debugger for longer than STALL_MS
+ * looks frozen and is killed: set E2E_STALL_WATCHDOG=0 to debug with several workers.
  */
 
 // Well above the longest a healthy worker blocks its loop (GC, loading a spec's
