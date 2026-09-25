@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Check from "~/renderer/icons/CheckFull";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { closeModal } from "~/renderer/actions/modals";
-import Rewards from "~/renderer/images/rewards.svg";
+import Votes from "~/renderer/images/votes.svg";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
@@ -94,7 +94,12 @@ export default function VoteDelegationInfoModal<Name extends keyof ModalData>({
                     </Row>
                   ))}
                 </Box>
-                <Box mt={4} horizontal justifyContent="center" flow={4}>
+                <Box
+                  horizontal
+                  justifyContent="center"
+                  flow={4}
+                  style={{ marginTop: 40 }}
+                >
                   <Button primary onClick={onNextFn("dRep")}>
                     <Trans i18nKey="voteDelegation.options.dRep" />
                   </Button>
@@ -115,16 +120,16 @@ export default function VoteDelegationInfoModal<Name extends keyof ModalData>({
   );
 }
 const RewardImg = styled.img.attrs(() => ({
-  src: Rewards,
+  src: Votes,
 }))`
   width: 130px;
   height: auto;
 `;
-const Row = styled(Box).attrs(p => ({
+const Row = styled(Box).attrs((p) => ({
   horizontal: true,
   justifyContent: "flex-start",
   alignItems: "center",
-  color: p.theme.colors.greenPill,
+  color: p.theme.colors.neutral.c100,
 }))`
   margin-bottom: 6px;
   & > :first-child {

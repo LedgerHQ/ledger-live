@@ -3,8 +3,6 @@ import { screen, fireEvent } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import VoteDelegationStarted from "./01-Started";
 import { ScreenName } from "~/const";
-import { Linking } from "react-native";
-import { urls } from "~/utils/urls";
 
 const mockNavigate = jest.fn();
 const mockNavigation = {
@@ -43,16 +41,6 @@ describe("VoteDelegationStarted", () => {
     expect(screen.getByTestId("cardano-vote-delegation-drep-button")).toBeDefined();
     expect(screen.getByTestId("cardano-vote-delegation-no-confidence-button")).toBeDefined();
     expect(screen.getByTestId("cardano-vote-delegation-abstain-button")).toBeDefined();
-  });
-
-  it("should open linking URL when 'How delegation works' is pressed", () => {
-    const spy = jest.spyOn(Linking, "openURL").mockImplementation(jest.fn());
-    render(<VoteDelegationStarted navigation={mockNavigation} route={mockRoute} />);
-
-    const link = screen.getByText("How delegation works");
-    fireEvent.press(link);
-    expect(spy).toHaveBeenCalledWith(urls.cardanoStaking);
-    spy.mockRestore();
   });
 
   it("should navigate to SelectDRep when 'DRep' is selected", () => {

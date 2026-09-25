@@ -10,7 +10,9 @@ import Box from "~/renderer/components/Box";
 import IconChartLine from "~/renderer/icons/ChartLine";
 import Header from "./Header";
 import Row from "./Row";
-import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
+import TableContainer, {
+  TableHeader,
+} from "~/renderer/components/TableContainer";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 
 import { AccountLike } from "@ledgerhq/types-live";
@@ -56,7 +58,11 @@ const VoteDelegation = ({ account }: Props) => {
               maxWidth: "65%",
             }}
           >
-            <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+            <Text
+              ff="Inter|Medium|SemiBold"
+              color="palette.text.shade60"
+              fontSize={4}
+            >
               {t("voteDelegation.delegateVotePower", {
                 name: account.currency.name,
               })}

@@ -1,16 +1,14 @@
 import React, { useCallback } from "react";
-import { View, StyleSheet, Linking } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import LText from "~/components/LText";
-import ExternalLink from "~/components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "~/components/BulletList";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
-import { urls } from "~/utils/urls";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -39,10 +37,6 @@ export default function VoteDelegationStarted({ navigation, route }: Props) {
     },
     [navigation, route.params],
   );
-
-  const howDelegationWorks = useCallback(() => {
-    Linking.openURL(urls.cardanoStaking); // we might need a separate URL for DRep in the future
-  }, []);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -73,13 +67,6 @@ export default function VoteDelegationStarted({ navigation, route }: Props) {
             </LText>
           ))}
         />
-        <View style={[styles.howDelegationWorks]}>
-          <ExternalLink
-            event="VoteDelegationStartedHowDelegationWorks"
-            onPress={howDelegationWorks}
-            text={<Trans i18nKey="delegation.howDelegationWorks" />}
-          />
-        </View>
       </NavigationScrollView>
       <View style={[styles.footer, { borderColor: colors.border }]}>
         <Button
@@ -128,11 +115,6 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     textAlign: "center",
     marginBottom: 16,
-  },
-  howDelegationWorks: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    flexDirection: "row",
   },
   footer: {
     padding: 16,

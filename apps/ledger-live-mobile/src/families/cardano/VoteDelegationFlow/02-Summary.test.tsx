@@ -1,8 +1,9 @@
 import React from "react";
-import { screen, waitFor } from "@testing-library/react-native";
+import { screen, waitFor, fireEvent } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import VoteDelegationSummary from "./02-Summary";
 import BigNumber from "bignumber.js";
+import { ScreenName } from "~/const";
 
 jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   __esModule: true,
@@ -185,5 +186,61 @@ describe("VoteDelegationSummary", () => {
     });
 
     expect(screen.getByText("Chosen Name")).toBeDefined();
+  });
+
+  it("should navigate to Started screen when change DRep is pressed", async () => {
+    (useAccountScreen as jest.Mock).mockReturnValue({ account: baseAccount, parentAccount: undefined });
+
+    const mockRoute = {
+      params: {
+        accountId: "account-id",
+        option: "abstain",
+        transaction: { family: "cardano", amount: new BigNumber(0) },
+      },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
+
+    render(<VoteDelegationSummary navigation={mockNavigation} route={mockRoute} />, {
+      overrideInitialState: state => ({
+        ...state,
+        accounts: {
+          ...state.accounts,
+          active: [baseAccount],
+        },
+      }),
+    });
+
+    const changeBtn = await screen.findByText("Change");
+    fireEvent.press(changeBtn);
+
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.CardanoVoteDelegationStarted, expect.anything());
+  });
+
+  it("should navigate to SelectDevice when continue is pressed", async () => {
+    (useAccountScreen as jest.Mock).mockReturnValue({ account: baseAccount, parentAccount: undefined });
+
+    const mockRoute = {
+      params: {
+        accountId: "account-id",
+        option: "abstain",
+        transaction: { family: "cardano", amount: new BigNumber(0) },
+      },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
+
+    render(<VoteDelegationSummary navigation={mockNavigation} route={mockRoute} />, {
+      overrideInitialState: state => ({
+        ...state,
+        accounts: {
+          ...state.accounts,
+          active: [baseAccount],
+        },
+      }),
+    });
+
+    const continueBtn = await screen.findByText("Continue");
+    fireEvent.press(continueBtn);
+
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.CardanoVoteDelegationSelectDevice, expect.anything());
   });
 });

@@ -71,6 +71,51 @@ describe("SelectDRep", () => {
     expect(mockSetSearchQuery).toHaveBeenCalledWith("new query");
   });
 
+  it("should not call setSearchQuery for a 1-2 character query, but should once it reaches 3", () => {
+    (useAccountScreen as jest.Mock).mockReturnValue({ account: { type: "Account", currency: { id: "cardano" } } });
+
+    const mockSetSearchQuery = jest.fn();
+    (useCardanoFamilyDReps as jest.Mock).mockReturnValue({
+      dReps: [],
+      searchQuery: "",
+      setSearchQuery: mockSetSearchQuery,
+      onScrollEndReached: jest.fn(),
+      isPaginating: false,
+    });
+
+    render(<SelectDRep navigation={mockNavigation} route={mockRoute} />, {
+      overrideInitialState: state => ({
+        ...state,
+        accounts: {
+          ...state.accounts,
+          active: [
+            {
+              id: "account-id",
+              type: "Account",
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+              currency: { id: "cardano" } as any,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any,
+          ],
+        },
+      }),
+    });
+
+    const searchInput = screen.getByPlaceholderText("Search by name or DRep Id...");
+
+    fireEvent.changeText(searchInput, "a");
+    expect(mockSetSearchQuery).not.toHaveBeenCalled();
+
+    fireEvent.changeText(searchInput, "ab");
+    expect(mockSetSearchQuery).not.toHaveBeenCalled();
+
+    fireEvent.changeText(searchInput, "abc");
+    expect(mockSetSearchQuery).toHaveBeenCalledWith("abc");
+
+    fireEvent.changeText(searchInput, "");
+    expect(mockSetSearchQuery).toHaveBeenCalledWith("");
+  });
+
   it("should navigate to Summary on DRep selection", () => {
     (useAccountScreen as jest.Mock).mockReturnValue({ account: { type: "Account", currency: { id: "cardano" } } });
 

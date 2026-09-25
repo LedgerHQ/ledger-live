@@ -7,7 +7,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import Box from "~/renderer/components/Box";
-import DRepSearchInput, { NoResultPlaceholder } from "./components/DRepSearchInput";
+import DRepSearchInput, {
+  NoResultPlaceholder,
+} from "./components/DRepSearchInput";
 import ScrollLoadingList from "../ScrollLoadingList";
 import DRepRow from "./components/DRepRow";
 import DRepListHeader from "./components/DRepListHeader";
@@ -18,9 +20,15 @@ type Props = {
   selectedDRepHex: string;
 };
 
-export function putUserDRepAtFirstPositionInDReps(dReps: DRep[], firstDRepHex: string): DRep[] {
+const MIN_DREP_SEARCH_LENGTH = 3;
+
+export function putUserDRepAtFirstPositionInDReps(
+  dReps: DRep[],
+  firstDRepHex: string,
+): DRep[] {
   const index = dReps.findIndex(
-    dRep => (dRep.hex || "").toLowerCase() === (firstDRepHex || "").toLowerCase(),
+    (dRep) =>
+      (dRep.hex || "").toLowerCase() === (firstDRepHex || "").toLowerCase(),
   );
   if (index === -1) {
     return dReps;
@@ -32,13 +40,26 @@ export function putUserDRepAtFirstPositionInDReps(dReps: DRep[], firstDRepHex: s
 
 const DRepField = ({ account, onChangeDRep, selectedDRepHex }: Props) => {
   const [userAndLedgerDReps, setUserAndLedgerDReps] = useState<Array<DRep>>([]);
-  const [userAndLedgerDRepsLoading, setUserAndLedgerDRepsLoading] = useState(false);
-  const { dReps, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =
-    useCardanoFamilyDReps(account.currency);
+  const [userAndLedgerDRepsLoading, setUserAndLedgerDRepsLoading] =
+    useState(false);
+  const {
+    dReps,
+    searchQuery,
+    setSearchQuery,
+    onScrollEndReached,
+    isSearching,
+    isPaginating,
+  } = useCardanoFamilyDReps(account.currency);
+
+  const [inputValue, setInputValue] = useState("");
+  const isQueryTooShort =
+    inputValue.length > 0 && inputValue.length < MIN_DREP_SEARCH_LENGTH;
 
   useEffect(() => {
     setUserAndLedgerDRepsLoading(true);
-    setUserAndLedgerDReps(putUserDRepAtFirstPositionInDReps(dReps, selectedDRepHex));
+    setUserAndLedgerDReps(
+      putUserDRepAtFirstPositionInDReps(dReps, selectedDRepHex),
+    );
     setUserAndLedgerDRepsLoading(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,16 +68,21 @@ const DRepField = ({ account, onChangeDRep, selectedDRepHex }: Props) => {
   useEffect(() => {
     const selectedDRep =
       dReps.find(
-        (d: { hex: string }) => (d.hex || "").toLowerCase() === (selectedDRepHex || "").toLowerCase(),
+        (d: { hex: string }) =>
+          (d.hex || "").toLowerCase() === (selectedDRepHex || "").toLowerCase(),
       ) ||
       userAndLedgerDReps.find(
-        dRep => (dRep.hex || "").toLowerCase() === (selectedDRepHex || "").toLowerCase(),
+        (dRep) =>
+          (dRep.hex || "").toLowerCase() ===
+          (selectedDRepHex || "").toLowerCase(),
       );
 
     if (selectedDRep) {
       if (
         dReps.some(
-          (d: { hex: string }) => (d.hex || "").toLowerCase() === (selectedDRepHex || "").toLowerCase(),
+          (d: { hex: string }) =>
+            (d.hex || "").toLowerCase() ===
+            (selectedDRepHex || "").toLowerCase(),
         )
       ) {
         onChangeDRep(selectedDRep);
@@ -67,7 +93,13 @@ const DRepField = ({ account, onChangeDRep, selectedDRepHex }: Props) => {
   }, [selectedDRepHex]);
 
   const onSearch = useCallback(
-    (evt: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(evt.target.value),
+    (evt: React.ChangeEvent<HTMLInputElement>) => {
+      const text = evt.target.value;
+      setInputValue(text);
+      if (text.length === 0 || text.length >= MIN_DREP_SEARCH_LENGTH) {
+        setSearchQuery(text);
+      }
+    },
     [setSearchQuery],
   );
   const renderItem = (dRep: DRep, dRepIdx: number) => {
@@ -76,7 +108,10 @@ const DRepField = ({ account, onChangeDRep, selectedDRepHex }: Props) => {
         currency={account.currency}
         key={dRepIdx + dRep.hex}
         dRep={dRep}
-        active={(selectedDRepHex || "").toLowerCase() === (dRep.hex || "").toLowerCase()}
+        active={
+          (selectedDRepHex || "").toLowerCase() ===
+          (dRep.hex || "").toLowerCase()
+        }
         onClick={onChangeDRep}
       />
     );
@@ -84,10 +119,19 @@ const DRepField = ({ account, onChangeDRep, selectedDRepHex }: Props) => {
 
   return (
     <>
-      {<DRepSearchInput noMargin={true} search={searchQuery} onSearch={onSearch} />}
+      {
+        <DRepSearchInput
+          noMargin={true}
+          search={inputValue}
+          onSearch={onSearch}
+        />
+      }
       <DRepContainer>
         <Box p={1} data-testid="dRep-list">
-          {isSearching || userAndLedgerDRepsLoading || (!dReps.length && !searchQuery) ? (
+          {!isQueryTooShort &&
+          (isSearching ||
+            userAndLedgerDRepsLoading ||
+            (!dReps.length && !searchQuery)) ? (
             <Box flex={1} py={3} alignItems="center" justifyContent="center">
               <BigSpinner size={35} />
             </Box>
@@ -120,7 +164,7 @@ const DRepField = ({ account, onChangeDRep, selectedDRepHex }: Props) => {
 };
 
 const DRepContainer = styled(Box)`
-  border: 1px solid ${p => p.theme.colors.neutral.c40};
+  border: 1px solid ${(p) => p.theme.colors.neutral.c40};
   border-radius: 4px;
 `;
 

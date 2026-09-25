@@ -10,6 +10,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import { getBech32DRepId } from "@ledgerhq/live-common/families/cardano/logic";
 import type {
   CardanoAccount,
   CardanoDelegation,
@@ -363,10 +364,13 @@ function SummaryWords({
     if (chosenDRep) {
       if (chosenDRep.hex === "2") return t("cardano.voteDelegation.options.alwaysAbstain");
       if (chosenDRep.hex === "3") return t("cardano.voteDelegation.options.alwaysNoConfidence");
-      return chosenDRep.meta?.givenName || chosenDRep.hex;
+      return (
+        chosenDRep.meta?.givenName ||
+        getBech32DRepId(chosenDRep.hex, getAccountCurrency(account).id)
+      );
     }
     return t("cardano.delegation.select");
-  }, [option, chosenDRep, t]);
+  }, [option, chosenDRep, t, account]);
 
   const formatConfig = {
     disableRounding: true,
@@ -398,7 +402,14 @@ function SummaryWords({
                 size={50}
                 style={[styles.poolCircle, { borderColor: colors.primary, borderStyle: "solid" }]}
               >
-                <DRepImage size={50} name={currentDelegation.dRepHex} />
+                <DRepImage
+                  size={50}
+                  name={
+                    currentDelegation.dRepHex === "2" || currentDelegation.dRepHex === "3"
+                      ? currentDelegation.dRepHex
+                      : getBech32DRepId(currentDelegation.dRepHex, getAccountCurrency(account).id)
+                  }
+                />
               </Circle>
               <Text
                 style={[{ marginLeft: 15, flex: 1, flexGrow: 1 }]}
@@ -411,7 +422,7 @@ function SummaryWords({
                   ? t("cardano.voteDelegation.options.alwaysAbstain")
                   : currentDelegation.dRepHex === "3"
                   ? t("cardano.voteDelegation.options.alwaysNoConfidence")
-                  : currentDelegation.dRepHex}
+                  : getBech32DRepId(currentDelegation.dRepHex, getAccountCurrency(account).id)}
               </Text>
             </View>
           </View>
@@ -448,7 +459,10 @@ function SummaryWords({
                     size={50}
                     name={
                       chosenDRep
-                        ? chosenDRep.meta?.givenName || chosenDRep.hex
+                        ? chosenDRep.hex === "2" || chosenDRep.hex === "3"
+                          ? chosenDRep.hex
+                          : chosenDRep.meta?.givenName ||
+                            getBech32DRepId(chosenDRep.hex, getAccountCurrency(account).id)
                         : option === "abstain"
                         ? "2"
                         : option === "noConfidence"

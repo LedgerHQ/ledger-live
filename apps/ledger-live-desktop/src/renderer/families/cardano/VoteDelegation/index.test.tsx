@@ -9,13 +9,16 @@ jest.mock("~/renderer/actions/modals", () => ({
 }));
 
 describe("VoteDelegation", () => {
+  const mockDRepHex = "11223344556677889900aabbccddeeff00112233445566778899aabb";
+  const mockDRepBech32 = "drep1zy3rx3z4vemc3xgq42aueh0wluqpzg3ng32kvaugnx4tkttkftx";
+
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockAccount = {
     type: "Account",
-    currency: { name: "Cardano" },
+    currency: { id: "cardano", name: "Cardano" },
     cardanoResources: {
       delegation: {
-        dRepHex: "drep-hex",
+        dRepHex: mockDRepHex,
       },
     },
   } as CardanoAccount;
@@ -35,7 +38,7 @@ describe("VoteDelegation", () => {
   it("renders table with header and row when delegated", () => {
     render(<VoteDelegation account={mockAccount} />);
     expect(screen.getByText("Vote Delegation")).toBeInTheDocument();
-    expect(screen.getByText("drep-hex")).toBeInTheDocument();
+    expect(screen.getByText(mockDRepBech32)).toBeInTheDocument();
   });
 
   it("renders delegate button when not delegated", () => {

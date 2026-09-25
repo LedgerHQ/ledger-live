@@ -15,10 +15,10 @@ const IconContainer = styled(Box)`
   color: ${p => p.theme.colors.primary.c80};
 `;
 
-const CardanoDRepIcon = ({ dRep }: { dRep: DRep }) => {
+const CardanoDRepIcon = ({ dRep, bech32DRepId }: { dRep: DRep; bech32DRepId: string }) => {
   return (
     <IconContainer>
-      <FirstLetterIcon label={dRep.meta?.givenName || dRep.hex} />
+      <FirstLetterIcon label={dRep.meta?.givenName || bech32DRepId} />
     </IconContainer>
   );
 };

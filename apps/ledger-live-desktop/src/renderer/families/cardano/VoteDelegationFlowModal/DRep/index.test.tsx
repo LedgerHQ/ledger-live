@@ -141,6 +141,42 @@ describe("DRepField", () => {
     expect(setSearchQueryMock).toHaveBeenCalledWith("test");
   });
 
+  it("does not call setSearchQuery for a 1-2 character query, but does once it reaches 3", () => {
+    const setSearchQueryMock = jest.fn();
+    jest.mocked(useCardanoFamilyDReps).mockReturnValue({
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      dReps: [{ hex: "dRep1" }] as DRep[],
+      searchQuery: "",
+      setSearchQuery: setSearchQueryMock,
+      onScrollEndReached: jest.fn(),
+      isSearching: false,
+      isPaginating: false,
+    });
+
+    render(
+      <DRepField
+        account={mockAccount}
+        status={mockStatus}
+        onChangeDRep={mockOnChangeDRep}
+        selectedDRepHex=""
+      />,
+    );
+
+    const searchInput = screen.getByTestId("search-input");
+
+    fireEvent.change(searchInput, { target: { value: "a" } });
+    expect(setSearchQueryMock).not.toHaveBeenCalled();
+
+    fireEvent.change(searchInput, { target: { value: "ab" } });
+    expect(setSearchQueryMock).not.toHaveBeenCalled();
+
+    fireEvent.change(searchInput, { target: { value: "abc" } });
+    expect(setSearchQueryMock).toHaveBeenCalledWith("abc");
+
+    fireEvent.change(searchInput, { target: { value: "" } });
+    expect(setSearchQueryMock).toHaveBeenCalledWith("");
+  });
+
   it("calls onChangeDRep when a DRep row is clicked", () => {
     const mockDRep = { hex: "dRep1" };
     jest.mocked(useCardanoFamilyDReps).mockReturnValue({

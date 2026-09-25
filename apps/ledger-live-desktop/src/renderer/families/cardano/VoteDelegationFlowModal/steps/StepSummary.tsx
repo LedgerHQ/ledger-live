@@ -2,6 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getBech32DRepId } from "@ledgerhq/live-common/families/cardano/logic";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -14,6 +15,7 @@ import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { useDateFormatter, dayAndHourFormat } from "~/renderer/hooks/useDateFormatter";
 import StepProgress from "~/renderer/components/StepProgress";
+import LedgerDRepIcon from "../LedgerDRepIcon";
 
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
@@ -25,6 +27,7 @@ const Separator = styled.div`
 
 const DRepNameAndHexContainer = styled(Box).attrs(() => ({
   alignItems: "start",
+  justifyContent: "center",
 }))`
   ${Text} {
     width: min-content;
@@ -70,34 +73,37 @@ function StepSummary(props: StepProps) {
               <Text ff="Inter|Medium" color="neutral.c70" fontSize={4}>
                 <Trans i18nKey="cardano.voteDelegation.delegatingTo" />
               </Text>
-              <Box my={1}>
-                <DRepNameAndHexContainer>
+              <Box my={1} horizontal alignItems="center">
+                {selectedDRep && (
+                  <LedgerDRepIcon
+                    dRep={selectedDRep}
+                    bech32DRepId={getBech32DRepId(selectedDRep.hex, account.currency.id)}
+                  />
+                )}
+                <DRepNameAndHexContainer ml={selectedDRep ? 2 : 0}>
                   <Text
                     ff="Inter"
                     color="neutral.c100"
                     fontSize={4}
-                    ml={2}
                     data-testid="dRep-name-label"
+                    style={{
+                      fontWeight: 600,
+                      width: "100%",
+                      maxWidth: "100%",
+                      overflow: "visible",
+                      textOverflow: "clip",
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                    }}
                   >
                     {transaction.dRepAbstain ? (
-                       <Trans i18nKey="voteDelegation.options.alwaysAbstain" />
+                      <Trans i18nKey="voteDelegation.options.alwaysAbstain" />
                     ) : transaction.dRepNoConfidence ? (
-                       <Trans i18nKey="voteDelegation.options.alwaysNoConfidence" />
+                      <Trans i18nKey="voteDelegation.options.alwaysNoConfidence" />
                     ) : (
-                      selectedDRep?.meta?.givenName || ""
+                      selectedDRep?.meta?.givenName || getBech32DRepId(selectedDRep!.hex, account.currency.id)
                     )}
                   </Text>
-                  {selectedDRep && (
-                    <Text
-                      ff="Inter"
-                      color="neutral.c90"
-                      fontSize={3}
-                      ml={2}
-                      data-testid="dRep-name-label"
-                    >
-                      {selectedDRep.hex}
-                    </Text>
-                  )}
                 </DRepNameAndHexContainer>
               </Box>
             </Box>

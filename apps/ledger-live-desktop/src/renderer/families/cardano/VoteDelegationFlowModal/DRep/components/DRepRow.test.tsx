@@ -23,9 +23,11 @@ jest.mock("~/renderer/hooks/useDateFormatter", () => ({
 describe("DRepRow", () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockCurrency = { type: "CryptoCurrency", id: "cardano" } as CryptoCurrency;
+  const mockDRepHex = "11223344556677889900aabbccddeeff00112233445566778899aabb";
+  const mockDRepBech32 = "drep1zy3rx3z4vemc3xgq42aueh0wluqpzg3ng32kvaugnx4tkttkftx";
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockDRep = {
-    hex: "drep123",
+    hex: mockDRepHex,
     meta: { givenName: "Test dRep" },
     active: "2023-01-01T00:00:00.000Z",
   } as DRep;
@@ -39,7 +41,7 @@ describe("DRepRow", () => {
     render(<DRepRow currency={mockCurrency} dRep={mockDRep} onClick={mockOnClick} />);
 
     expect(screen.getByText("Test dRep")).toBeInTheDocument();
-    expect(screen.getByText("drep123")).toBeInTheDocument();
+    expect(screen.getByText(mockDRepBech32)).toBeInTheDocument();
     expect(screen.getByText("Formatted Date")).toBeInTheDocument();
   });
 
@@ -57,10 +59,10 @@ describe("DRepRow", () => {
 
     render(<DRepRow currency={mockCurrency} dRep={mockDRep} onClick={mockOnClick} />);
 
-    fireEvent.click(screen.getByText("drep123"));
+    fireEvent.click(screen.getByText(mockDRepBech32));
 
     expect(getDefaultExplorerView).toHaveBeenCalledWith(mockCurrency);
-    expect(getDRepExplorer).toHaveBeenCalledWith("explorerView", "drep123");
+    expect(getDRepExplorer).toHaveBeenCalledWith("explorerView", mockDRepHex);
     expect(openURL).toHaveBeenCalledWith("https://explorer.com/drep123");
 
     // Ensure that row click was not triggered due to stopPropagation
@@ -70,16 +72,17 @@ describe("DRepRow", () => {
   it("handles a missing DRep meta name gracefully", () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const missingMetaDRep = {
-      hex: "drep456",
+      hex: "aabbccddeeff00112233445566778899aabbccddeeff0011223344556677",
       active: "2023-01-01T00:00:00.000Z",
     } as DRep;
 
     render(<DRepRow currency={mockCurrency} dRep={missingMetaDRep} onClick={mockOnClick} />);
 
-    // The title element should exist but be empty
-    const titleElement = screen.getByTestId("dRep-title");
-    expect(titleElement).toHaveTextContent("");
-    expect(screen.getByText("drep456")).toBeInTheDocument();
+    // The title element should not be rendered
+    expect(screen.queryByTestId("dRep-title")).not.toBeInTheDocument();
+    expect(
+      screen.getByText("drep142aueh0wluqpzg3ng32kvaugnx4thnxaamlsqyfzxdz92enhz3yuqq"),
+    ).toBeInTheDocument();
   });
 
   it("renders correctly without an external link if the explorer URL is not found", () => {
@@ -87,7 +90,7 @@ describe("DRepRow", () => {
 
     render(<DRepRow currency={mockCurrency} dRep={mockDRep} onClick={mockOnClick} />);
 
-    fireEvent.click(screen.getByText("drep123"));
+    fireEvent.click(screen.getByText(mockDRepBech32));
 
     // openURL should not be called
     expect(openURL).not.toHaveBeenCalled();

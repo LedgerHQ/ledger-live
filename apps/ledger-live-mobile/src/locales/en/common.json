@@ -6220,8 +6220,8 @@
       "select": "Select",
       "change": "Change",
       "networkFees": "Network Fees",
-      "stakeKeyRegistrationDeposit": "Stake Key Registration deposit",
-      "stakeKeyRegistrationDepositRefund": "Stake Key Registration deposit refund",
+      "stakeKeyRegistrationDeposit": "Stake key registration deposit",
+      "stakeKeyRegistrationDepositRefund": "Stake key registration deposit refund",
       "stepperHeader": {
         "starter": "Earn rewards",
         "validator": "Delegate assets",
