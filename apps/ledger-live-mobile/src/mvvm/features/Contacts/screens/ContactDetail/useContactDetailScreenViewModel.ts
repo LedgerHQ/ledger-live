@@ -39,8 +39,7 @@ import {
   resolveEligibleAddressCurrencyIds,
   useContactsFeature,
   useContactsMeContact,
-  useContacts,
-  type OtherContactAddress,
+  useOtherContactsAddresses,
 } from "@features/platform-contacts";
 import {
   useContactsIntentsOrchestrator,
@@ -119,14 +118,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   } = useContactAddressDetailDialog(populatedContactDetail);
   const contact = populatedContactDetail?.contact ?? emptyContact;
   const addressValidation = useContactsAddressValidationAdapter();
-  const allContacts = useContacts();
-  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
-    () =>
-      allContacts.flatMap(c =>
-        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
-      ),
-    [allContacts],
-  );
+  const allContactsAddresses = useOtherContactsAddresses();
   const eligibleNetworkIds = useMemo(
     () =>
       resolveEligibleAddressCurrencyIds(eligibleAddressFamilies, undefined, excludedCurrencyIds),
