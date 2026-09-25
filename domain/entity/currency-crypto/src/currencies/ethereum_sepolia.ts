@@ -48,5 +48,4 @@ export const ethereum_sepolia = currency({
       address: "https://sepolia.etherscan.io/address/$address",
     },
   ],
-  explorerId: "eth_sepolia",
 });

@@ -2,6 +2,7 @@ import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getEnv } from "@ledgerhq/live-env";
 import type { WalletBtcCurrency } from "@ledgerhq/wallet-btc/crypto/types";
+import type { BitcoinConfigInfo } from "./config";
 
 /**
  * Resolve a wallet-btc currency descriptor from a Ledger CryptoCurrency.
@@ -10,7 +11,10 @@ import type { WalletBtcCurrency } from "@ledgerhq/wallet-btc/crypto/types";
  * @ledgerhq/live-env. coin-bitcoin (which legitimately depends on both) resolves the
  * explorer id and endpoint here and injects them into wallet-btc.
  */
-export const toWalletBtcCurrency = (currency: CryptoCurrency): WalletBtcCurrency => {
+export const toWalletBtcCurrency = (
+  currency: CryptoCurrency,
+  config: Pick<BitcoinConfigInfo, "explorerId">,
+): WalletBtcCurrency => {
   if (currency.id === "bitcoin_regtest") {
     return {
       id: currency.id,
@@ -20,11 +24,13 @@ export const toWalletBtcCurrency = (currency: CryptoCurrency): WalletBtcCurrency
   }
   return {
     id: currency.id,
-    explorerId: currency.explorerId ?? currency.id,
+    explorerId: config.explorerId ?? currency.id,
     explorerEndpoint: getEnv("EXPLORER"),
   };
 };
 
 /** Same as {@link toWalletBtcCurrency} but from a currency id (e.g. when rehydrating a serialized account). */
-export const walletBtcCurrencyById = (currencyId: string): WalletBtcCurrency =>
-  toWalletBtcCurrency(getCryptoCurrencyById(currencyId));
+export const walletBtcCurrencyById = (
+  currencyId: string,
+  config: Pick<BitcoinConfigInfo, "explorerId">,
+): WalletBtcCurrency => toWalletBtcCurrency(getCryptoCurrencyById(currencyId), config);

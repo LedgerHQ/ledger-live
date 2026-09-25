@@ -182,7 +182,6 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       },
     ],
     keywords: ["eth", "ethereum"],
-    explorerId: "eth",
   },
   {
     type: "CryptoCurrency",

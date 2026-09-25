@@ -48,5 +48,4 @@ export const polygon_amoy = currency({
       token: "https://amoy.polygonscan.com/token/$contractAddress?a=$address",
     },
   ],
-  explorerId: "matic_amoy",
 });

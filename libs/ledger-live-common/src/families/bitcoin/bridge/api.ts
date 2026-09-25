@@ -5,13 +5,18 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { blockchainBaseURL } from "@ledgerhq/coin-bitcoin/explorer";
+import type { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/config";
+import { getCurrencyConfiguration } from "../../../config";
 import type { FeeItems } from "../types";
 
 type Fees = Record<string, number>;
 
 const getEstimatedFees: (currency: CryptoCurrency) => Promise<Fees> = makeLRUCache(
   async currency => {
-    const baseURL = blockchainBaseURL(currency);
+    const baseURL = blockchainBaseURL(
+      currency,
+      getCurrencyConfiguration<BitcoinConfigInfo>(currency.id),
+    );
     invariant(baseURL, `Fees for ${currency.id} are not supported`);
     const { data, status } = await network<Fees>({
       method: "GET",

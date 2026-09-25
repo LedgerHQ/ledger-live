@@ -9,6 +9,9 @@ import {
 } from "../../fixtures/common.fixtures";
 import type { SignerContext } from "../../signer";
 import { BitcoinAccount } from "../../types";
+import type { CoinConfig } from "../../config";
+
+const coinConfig: CoinConfig = () => ({ info: { status: { type: "active" }, explorerId: "btc" } });
 
 jest.setTimeout(10000);
 
@@ -25,12 +28,12 @@ jest.mock("@ledgerhq/wallet-btc/explorer/index", () => {
 
 describe("synchronisation", () => {
   it("should return a function", () => {
-    const result = makeGetAccountShape(mockSignerContext);
+    const result = makeGetAccountShape(mockSignerContext, coinConfig);
     expect(typeof result).toBe("function");
   });
 
   it("should return an account shape with the correct properties", async () => {
-    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const getAccountShape = makeGetAccountShape(mockSignerContext, coinConfig);
     const mockAccount = createFixtureAccount();
     mockAccount.id =
       "js:2:bitcoin:xpub6DM4oxVnZiePFvQMu1RJLQwWUzZQP3UNaLqrGcbJQkAJZYdiRoRivHULWoYN3zBYU4mJRpM3WrGaqo1kS8Q2XFfd9E3QEc9P3MKHwbHz9LB:native_segwit";
@@ -81,7 +84,7 @@ describe("synchronisation", () => {
   });
 
   it("returns an Observable that errors when deviceId is missing and xpub must be generated", async () => {
-    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const getAccountShape = makeGetAccountShape(mockSignerContext, coinConfig);
     const observable = getAccountShape(
       /* @ts-expect-error intentional invalid arg */
       {
@@ -109,7 +112,7 @@ describe("synchronisation", () => {
       const getWalletXpub = jest.fn().mockRejectedValue(new Error("stop after xpub request"));
       const signerContext: SignerContext = (_deviceId, _crypto, fn) =>
         fn({ ...mockSigner, getWalletXpub });
-      const getAccountShape = makeGetAccountShape(signerContext);
+      const getAccountShape = makeGetAccountShape(signerContext, coinConfig);
 
       await expect(
         firstValueFrom(
@@ -133,7 +136,7 @@ describe("synchronisation", () => {
   );
 
   it("returns an Observable that emits exactly one value then completes", async () => {
-    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const getAccountShape = makeGetAccountShape(mockSignerContext, coinConfig);
     const mockAccount = createFixtureAccount();
     mockAccount.id =
       "js:2:bitcoin:xpub6DM4oxVnZiePFvQMu1RJLQwWUzZQP3UNaLqrGcbJQkAJZYdiRoRivHULWoYN3zBYU4mJRpM3WrGaqo1kS8Q2XFfd9E3QEc9P3MKHwbHz9LB:native_segwit";

@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { makeGetAccountShape, postSync } from "../synchronisation";
-import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import { assignToAccountRaw, makeAssignFromAccountRaw } from "../serialization";
 import { BitcoinAccount, Transaction, TransactionStatus } from "../types";
 import formatters from "../formatters";
 import { getTransactionStatus } from "../getTransactionStatus";
@@ -36,10 +36,10 @@ export type BitcoinAccountBridge = AccountBridge<Transaction, BitcoinAccount> & 
   getFullViewingKey: GetFullViewingKeyFromBridgeFn;
 };
 
-function buildCurrencyBridge(signerContext: SignerContext) {
+function buildCurrencyBridge(signerContext: SignerContext, coinConfig: CoinConfig) {
   const getAddress = resolver(signerContext);
   const scanAccounts = makeScanAccounts<BitcoinAccount>({
-    getAccountShape: makeGetAccountShape(signerContext),
+    getAccountShape: makeGetAccountShape(signerContext, coinConfig),
     getAddressFn: getAddressWrapper(getAddress),
     postSync,
   });
@@ -49,9 +49,9 @@ function buildCurrencyBridge(signerContext: SignerContext) {
   };
 }
 
-function buildAccountBridge(signerContext: SignerContext) {
+function buildAccountBridge(signerContext: SignerContext, coinConfig: CoinConfig) {
   const sync = makeSync<Transaction, BitcoinAccount, TransactionStatus>({
-    getAccountShape: makeGetAccountShape(signerContext),
+    getAccountShape: makeGetAccountShape(signerContext, coinConfig),
     postSync,
     shouldMergeOps: false,
   });
@@ -99,7 +99,7 @@ function buildAccountBridge(signerContext: SignerContext) {
     signOperation: buildSignOperation(signerContext),
     signRawOperation: buildSignRawOperation(signerContext),
     broadcast: wrappedBroadcast,
-    assignFromAccountRaw,
+    assignFromAccountRaw: makeAssignFromAccountRaw(coinConfig),
     assignToAccountRaw,
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     getSerializedAddressParameters,
@@ -114,7 +114,7 @@ export function createBridges(signerContext: SignerContext, coinConfig: CoinConf
   setCoinConfig(coinConfig);
 
   return {
-    currencyBridge: buildCurrencyBridge(signerContext),
-    accountBridge: buildAccountBridge(signerContext),
+    currencyBridge: buildCurrencyBridge(signerContext, coinConfig),
+    accountBridge: buildAccountBridge(signerContext, coinConfig),
   };
 }

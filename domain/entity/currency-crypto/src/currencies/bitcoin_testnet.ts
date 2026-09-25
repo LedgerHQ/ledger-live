@@ -43,5 +43,4 @@ export const bitcoin_testnet = currency({
       address: "https://live.blockcypher.com/btc-testnet/address/$address",
     },
   ],
-  explorerId: "btc_testnet",
 });
