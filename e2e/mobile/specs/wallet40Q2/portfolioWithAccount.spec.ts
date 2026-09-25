@@ -22,7 +22,6 @@ describe("Portfolio with account", () => {
     await app.mainNavigation.waitForWallet40Ready();
     await app.portfolio.addAccount();
     await app.addAccount.importWithYourLedger();
-    await app.modularDrawer.performSearchByTicker(TICKER);
     await app.modularDrawer.selectCurrencyByTicker(TICKER);
     await app.modularDrawer.selectNetwork(CURRENCY.name);
     await app.addAccount.addAccountAtIndex(ACCOUNT.accountName, CURRENCY.id, ACCOUNT.index);

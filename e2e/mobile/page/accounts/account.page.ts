@@ -64,10 +64,12 @@ export default class AccountPage {
     return await IsIdVisible(this.accountScreenScrollView, timeout);
   }
 
-  @Step("Go to the account with the name {{{0}}}")
+  @Step("Go to the account with the name {{{0}}} in accounts list")
   async goToAccountByName(name: string) {
     await scrollToId(this.baseAccountName + name, this.accountsListId);
-    await tapById(this.baseAccountName + name);
+    await app.common.withSynchronizationDisabledForDOT(name, async () => {
+      await tapById(this.baseAccountName + name);
+    });
   }
 
   @Step("Go to the account with id {{{0}}}")

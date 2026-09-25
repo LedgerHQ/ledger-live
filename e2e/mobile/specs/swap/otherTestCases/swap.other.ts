@@ -13,7 +13,6 @@ import type { SwapTransactionStatusDetails } from "@e2e/page/drawer/swapTransact
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 async function handleAssetSwap(asset: Account, hasAccount: boolean) {
-  await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
   await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
   const networkName = asset?.parentAccount
     ? asset.parentAccount.currency.name
@@ -440,7 +439,6 @@ export function runSwapWithSendMaxTest(
     tags.forEach(tag => $Tag(tag));
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max amount`, async () => {
       await app.swapLiveApp.tapFromCurrency();
-      await app.modularDrawer.performSearchByTicker(fromAccount.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(fromAccount.currency.ticker);
       let networkName = fromAccount?.parentAccount
         ? fromAccount.parentAccount.currency.name
@@ -448,7 +446,6 @@ export function runSwapWithSendMaxTest(
       await app.modularDrawer.selectNetworkIfAsked(networkName);
       await app.modularDrawer.selectFirstAccount();
       await app.swapLiveApp.tapToCurrency();
-      await app.modularDrawer.performSearchByTicker(toAccount.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(toAccount.currency.ticker);
       networkName = toAccount?.parentAccount
         ? toAccount.parentAccount.currency.name
