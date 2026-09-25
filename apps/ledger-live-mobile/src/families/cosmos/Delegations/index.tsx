@@ -80,12 +80,9 @@ function Delegations({ account }: Props) {
 
   const { validators } = useCosmosFamilyPreloadData(account.currency.id);
 
-  const { cosmosResources } = mainAccount;
+  const { stakingResources } = mainAccount;
 
-  const undelegations =
-    cosmosResources &&
-    cosmosResources.unbondings &&
-    mapUnbondings(cosmosResources.unbondings, validators, unit);
+  const undelegations = mapUnbondings(stakingResources.unbondings, validators, unit);
   const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
   const { transaction } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
@@ -94,8 +91,7 @@ function Delegations({ account }: Props) {
       account,
       transaction: bridge.updateTransaction(t, {
         mode: "redelegate",
-        validators: [],
-        sourceValidator: validatorSrcAddress,
+        valAddress: validatorSrcAddress,
       }),
     };
   });
@@ -200,7 +196,7 @@ function Delegations({ account }: Props) {
         validatorSrcAddress,
         transaction: {
           ...transaction,
-          sourceValidator: validatorSrcAddress,
+          valAddress: validatorSrcAddress,
         },
         validatorName: ledgerValidator?.name,
         validatorSrc: worstValidator?.validator,
@@ -558,7 +554,7 @@ function Delegations({ account }: Props) {
 }
 
 export default function CosmosDelegations({ account }: { account: AccountLike<CosmosAccount> }) {
-  if (account.type !== "Account" || !account.cosmosResources) return null;
+  if (account.type !== "Account") return null;
 
   const coinConfig = getCurrencyConfiguration(account.currency.id);
   if ("disableDelegation" in coinConfig && coinConfig.disableDelegation === true) {

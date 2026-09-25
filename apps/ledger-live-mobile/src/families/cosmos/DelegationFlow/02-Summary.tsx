@@ -75,7 +75,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
           account,
           transaction: bridge.updateTransaction(t, {
             mode: "delegate",
-            validators: [],
           }),
         };
       }
@@ -96,15 +95,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
       updateTransaction(_ => tmpTransaction);
     }
 
-    if (chosenValidator && chosenValidator.validatorAddress !== transaction.validators[0].address) {
+    if (chosenValidator && chosenValidator.validatorAddress !== transaction.valAddress) {
       setTransaction(
         bridge.updateTransaction(transaction, {
-          validators: [
-            {
-              address: chosenValidator.validatorAddress,
-              amount: transaction.amount,
-            },
-          ],
+          valAddress: chosenValidator.validatorAddress,
         }),
       );
     }

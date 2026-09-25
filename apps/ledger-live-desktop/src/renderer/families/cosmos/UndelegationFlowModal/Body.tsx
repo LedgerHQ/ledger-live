@@ -1,4 +1,4 @@
-import invariant from "invariant";
+import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState } from "react";
 import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
@@ -22,8 +22,8 @@ import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
 import {
-  CosmosAccount,
-  Transaction as CosmosTransaction,
+  type CosmosAccount,
+  type Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 
 export type Data = {
@@ -74,18 +74,13 @@ function Body({
     bridgePending,
     status,
   } = useBridgeTransaction(bridge, () => {
-    invariant(accountProp.cosmosResources, "cosmos: account and cosmos resources required");
-    const delegations = accountProp.cosmosResources.delegations || [];
+    const { delegations } = accountProp.stakingResources;
     const initTx = bridge.createTransaction(accountProp);
+    const source = delegations.find(d => d.validatorAddress === validatorAddress);
     const newTx = {
       mode: "undelegate" as const,
-      validators: delegations
-        .filter(d => d.validatorAddress === validatorAddress)
-        .slice(0, 1)
-        .map(({ validatorAddress, amount }) => ({
-          address: validatorAddress,
-          amount,
-        })),
+      valAddress: validatorAddress,
+      amount: source?.amount ?? new BigNumber(0),
     };
     const transaction = bridge.updateTransaction(initTx, newTx);
     return {

@@ -2,6 +2,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
+import { resolveTransactionValidators } from "./buildTransaction";
 import type { Transaction, TransactionStatus } from "./types";
 
 export type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
@@ -75,7 +76,8 @@ async function getDeviceTransactionConfig({
   transaction: Transaction;
   status: TransactionStatus;
 }): Promise<Array<CosmosTransactionFieldType>> {
-  const { mode, memo, validators } = transaction;
+  const { mode, memo } = transaction;
+  const validators = resolveTransactionValidators(transaction);
   const { estimatedFees } = status;
   const mainAccount = getMainAccount(account, parentAccount);
   const source = mainAccount.freshAddress;
@@ -161,6 +163,7 @@ async function getDeviceTransactionConfig({
       break;
 
     case "claimRewardCompound":
+    case "compoundReward":
       fields.push({
         type: "text",
         label: "Type",

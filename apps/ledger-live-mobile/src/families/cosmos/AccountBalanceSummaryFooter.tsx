@@ -30,9 +30,8 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const { t } = useTranslation();
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const info = useInfo(account);
-  const { spendableBalance, cosmosResources } = account;
-  const { delegatedBalance = new BigNumber(0), unbondingBalance = new BigNumber(0) } =
-    cosmosResources || {};
+  const { spendableBalance, stakingResources } = account;
+  const { delegatedBalance, unbondingBalance } = stakingResources;
   const unit = useAccountUnit(account);
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
@@ -115,7 +114,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 }
 
 export default function AccountBalanceFooter({ account }: Props) {
-  if (!account.cosmosResources || account.balance.lte(0)) return null;
+  if (account.balance.lte(0)) return null;
   return <AccountBalanceSummaryFooter account={account} />;
 }
 
