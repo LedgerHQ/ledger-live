@@ -1,7 +1,7 @@
 import React from "react";
-import { act, render, screen } from "@testing-library/react";
 import { createInstance } from "i18next";
 import { I18nextProvider, Trans } from "react-i18next";
+import { act, render, screen } from "tests/testSetup";
 import { setContentAbTestCopy } from "~/firebase/contentAbTestCopy";
 import { installContentAbTestCopyOverrides } from "./contentAbTestCopyOverrides";
 import { useContentAbTestCopyUpdates } from "./useContentAbTestCopyUpdates";
