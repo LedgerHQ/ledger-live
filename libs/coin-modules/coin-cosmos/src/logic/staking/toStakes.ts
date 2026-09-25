@@ -24,6 +24,7 @@ export function buildStakes(
       amount: deposited, // principal only — framework sums this into delegatedBalance
       amountDeposited: deposited,
       amountRewarded: rewarded,
+      details: { status: d.status },
     });
   }
 

@@ -20,6 +20,7 @@ describe("logic/staking/toStakes", () => {
     expect(s.amountDeposited).toBe(1_000_000n);
     expect(s.amountRewarded).toBe(2_500n);
     expect(s.actions).toContain("claim_reward");
+    expect(s.details).toEqual({ status: "bonded" });
   });
 
   it("keeps a delegation to a non-bonded validator as an active position (matches legacy inclusion)", () => {
@@ -35,6 +36,23 @@ describe("logic/staking/toStakes", () => {
       unbondings: [],
     } as any);
     expect(s.state).toBe("active");
+    expect(s.details).toEqual({ status: "unbonding" });
+  });
+
+  it("carries an unbonded validator status through to the pushed stake's details", () => {
+    const [s] = buildStakes("cosmos1a", {
+      delegations: [
+        {
+          validatorAddress: "cosmosvaloper1v",
+          amount: new BigNumber("1000000"),
+          pendingRewards: new BigNumber("0"),
+          status: "unbonded",
+        },
+      ],
+      unbondings: [],
+    } as any);
+    expect(s.state).toBe("active");
+    expect(s.details).toEqual({ status: "unbonded" });
   });
 
   it("maps an in-progress unbonding to a deactivating stake carrying its completion date", () => {

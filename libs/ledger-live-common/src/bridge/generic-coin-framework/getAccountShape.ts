@@ -31,6 +31,7 @@ import type {
   Account,
   AccountReadiness,
   StakingDelegation,
+  StakingDelegationStatus,
   StakingPositionDetails,
   StakingResources,
   StakingUnbonding,
@@ -80,6 +81,16 @@ function hasDeactivatingStake(balance: Balance): balance is Balance & {
 
 function delegatedAmountForStakingResources(b: Balance): bigint {
   return b.stake?.amount ?? 0n;
+}
+
+/** The validator's chain-supplied bond status overrides "bonded" only for "unbonding"/"unbonded" — anything absent or unrecognised (e.g. Cosmos's runtime-only "unspecified") keeps today's default. */
+function deriveDelegationStatus(
+  stakeState: Stake["state"],
+  detailStatus: unknown,
+): StakingDelegationStatus {
+  if (stakeState === "activating") return "activating";
+  if (detailStatus === "unbonding" || detailStatus === "unbonded") return detailStatus;
+  return "bonded";
 }
 
 function stakingPositionDetails(stake: Stake): StakingPositionDetails {
@@ -591,12 +602,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         const validatorId = b.stake.details?.validatorId;
         const validatorName = b.stake.details?.validatorName;
         const sharesRaw = b.stake.details?.shares;
+        const detailStatus = b.stake.details?.status;
         return {
           ...stakingPositionDetails(b.stake),
           validatorAddress: b.stake.delegate ?? "",
           amount: new BigNumber(delegated.toString()),
           pendingRewards: new BigNumber(rewarded.toString()),
-          status: b.stake.state === "activating" ? "activating" : "bonded",
+          status: deriveDelegationStatus(b.stake.state, detailStatus),
           ...(typeof validatorId === "string" ? { validatorId } : {}),
           ...(typeof validatorName === "string" ? { validatorName } : {}),
           ...(typeof sharesRaw === "bigint" ? { shares: new BigNumber(sharesRaw.toString()) } : {}),
@@ -615,8 +627,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           completionDate: b.stake.stateUpdatedAt ?? new Date(),
           // `inactive` also covers an idle stake, so trust `actions` rather than the state.
           status:
-            b.stake.state === "withdrawable" ||
-            b.stake.actions?.some(action => action === "withdraw")
+            b.stake.state === "withdrawable" || b.stake.actions?.includes("withdraw")
               ? "withdrawable"
               : "deactivating",
           ...(typeof validatorId === "string" ? { validatorId } : {}),
