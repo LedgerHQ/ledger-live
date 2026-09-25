@@ -1741,8 +1741,8 @@ importers:
         specifier: 1.0.2
         version: 1.0.2
       '@braze/react-native-sdk':
-        specifier: 18.0.0
-        version: 18.0.0
+        specifier: 23.0.0
+        version: 23.0.0
       '@datadog/mobile-react-native':
         specifier: 3.7.0
         version: 3.7.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -20384,8 +20384,8 @@ packages:
     engines: {node: '>=20.8.0'}
     hasBin: true
 
-  '@braze/react-native-sdk@18.0.0':
-    resolution: {integrity: sha512-6VEFpvDObYqr9nMfNHUTVpIQXS3ibJTbEnIZs8/2rw0qyn3cZdMPDHBWTawR8GuQiKHF0UwGLJiEkCu2mOozDw==}
+  '@braze/react-native-sdk@23.0.0':
+    resolution: {integrity: sha512-iK3f1BVlT6qh1Befn19A+oqPyZaOqcbjkXsTLzek8LUZClCGt0c1b49ocn1s4GPMGiQWK5lrE81UhGYA6+nt2w==}
 
   '@braze/web-sdk@6.4.0':
     resolution: {integrity: sha512-eBbFfGF9PUPowFsBmgqJmKs9T+qkh8LRm5T41mZsQCeNUjXjME6q1sXxXtjV2R3evsk4sN+d+xHSDF4B++HG7Q==}
@@ -23467,6 +23467,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -41781,7 +41782,7 @@ snapshots:
       '@bloxbean/yaci-devkit-linux-x64': 0.10.6
       '@bloxbean/yaci-devkit-macos-arm64': 0.10.6
 
-  '@braze/react-native-sdk@18.0.0': {}
+  '@braze/react-native-sdk@23.0.0': {}
 
   '@braze/web-sdk@6.4.0': {}
 
