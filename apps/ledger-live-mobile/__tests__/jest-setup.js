@@ -378,14 +378,14 @@ jest.mock("@react-native-firebase/messaging", () => ({
  * SyntaxError: Cannot use import statement outside a module
  */
 jest.mock("@react-native-firebase/remote-config", () => {
-  const rc = {
-    getValue: jest.fn().mockReturnValue(),
-    setConfigSettings: jest.fn().mockResolvedValue(null),
-    setDefaults: jest.fn().mockResolvedValue(null),
+  const rc = { settings: {}, defaultConfig: {} };
+  return {
+    getRemoteConfig: jest.fn().mockReturnValue(rc),
+    activate: jest.fn().mockResolvedValue(false),
     fetchAndActivate: jest.fn().mockResolvedValue(null),
     getAll: jest.fn().mockReturnValue({}),
+    getValue: jest.fn().mockReturnValue(undefined),
   };
-  return { getRemoteConfig: jest.fn().mockReturnValue(rc) };
 });
 
 // Inert mock — avoids the real module's `getRemoteConfig()` + `LiveConfig` import side

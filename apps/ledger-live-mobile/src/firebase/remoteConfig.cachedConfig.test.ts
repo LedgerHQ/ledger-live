@@ -11,21 +11,31 @@ jest.unmock("~/firebase/remoteConfig");
 // which has no top-level import/export and therefore lives in the global scope.
 export {};
 
-const mockSetConfigSettings = jest.fn();
-const mockSetDefaults = jest.fn();
+const mockSettingsSetter = jest.fn();
+const mockDefaultConfigSetter = jest.fn();
+const mockActivate = jest.fn();
 const mockFetchAndActivate = jest.fn();
-const mockEnsureInitialized = jest.fn();
 const mockGetAll = jest.fn();
-const mockGetRemoteConfig = jest.fn(() => ({
-  setConfigSettings: (...args: unknown[]) => mockSetConfigSettings(...(args as [])),
-  setDefaults: (...args: unknown[]) => mockSetDefaults(...(args as [])),
-  fetchAndActivate: (...args: unknown[]) => mockFetchAndActivate(...(args as [])),
-  ensureInitialized: (...args: unknown[]) => mockEnsureInitialized(...(args as [])),
-  getAll: (...args: unknown[]) => mockGetAll(...(args as [])),
-}));
+
+const mockRc = {
+  get settings() {
+    return { fetchTimeoutMillis: 60000, minimumFetchIntervalMillis: 43200000 };
+  },
+  set settings(value: unknown) {
+    mockSettingsSetter(value);
+  },
+  set defaultConfig(value: unknown) {
+    mockDefaultConfigSetter(value);
+  },
+};
+const mockGetRemoteConfig = jest.fn(() => mockRc);
 
 jest.mock("@react-native-firebase/remote-config", () => ({
   getRemoteConfig: () => mockGetRemoteConfig(),
+  activate: (...args: unknown[]) => mockActivate(...(args as [])),
+  fetchAndActivate: (...args: unknown[]) => mockFetchAndActivate(...(args as [])),
+  getAll: (...args: unknown[]) => mockGetAll(...(args as [])),
+  getValue: () => undefined,
 }));
 jest.mock("@features/platform-feature-flags", () => ({
   DEFAULT_FEATURES: { mockFeature: { enabled: false } },
@@ -43,10 +53,10 @@ async function loadModule() {
 
 beforeEach(() => {
   jest.resetModules();
-  mockSetConfigSettings.mockReset().mockResolvedValue(undefined);
-  mockSetDefaults.mockReset().mockResolvedValue(undefined);
+  mockSettingsSetter.mockReset();
+  mockDefaultConfigSetter.mockReset();
+  mockActivate.mockReset().mockResolvedValue(false);
   mockFetchAndActivate.mockReset().mockResolvedValue(true);
-  mockEnsureInitialized.mockReset().mockResolvedValue(undefined);
   mockGetAll.mockReset().mockReturnValue({});
   mockGetRemoteConfig.mockClear();
 });
@@ -73,17 +83,19 @@ describe("readCachedFlags", () => {
     expect(mockFetchAndActivate).not.toHaveBeenCalled();
   });
 
-  it("does not call ensureInitialized, which fetches over the network on Android", async () => {
-    // RNFB's Android `ensureInitialized` runs a blocking `fetchAndActivate` internally, so using
-    // it as a barrier would put this read back on the network. `setup()` is the right barrier:
-    // both of its calls return native constants and hydrate the value map from disk.
+  it("hydrates via activate() rather than a network fetch", async () => {
+    // `activate()` doesn't hit the network (it only activates whatever the native SDK already
+    // fetched/persisted), unlike `ensureInitialized()` which on Android runs a blocking
+    // `fetchAndActivate` internally. `setup()` uses `activate()` as its barrier for exactly
+    // that reason.
     const { readCachedFlags } = await loadModule();
 
     await readCachedFlags();
 
-    expect(mockEnsureInitialized).not.toHaveBeenCalled();
-    expect(mockSetConfigSettings).toHaveBeenCalled();
-    expect(mockSetDefaults).toHaveBeenCalled();
+    expect(mockActivate).toHaveBeenCalledTimes(1);
+    expect(mockSettingsSetter).toHaveBeenCalled();
+    expect(mockDefaultConfigSetter).toHaveBeenCalled();
+    expect(mockFetchAndActivate).not.toHaveBeenCalled();
   });
 
   it("excludes entries served from the compiled defaults", async () => {
@@ -99,7 +111,7 @@ describe("readCachedFlags", () => {
   });
 
   it("resolves empty when the native module cannot be reached", async () => {
-    mockSetDefaults.mockRejectedValue(new Error("native module unavailable"));
+    mockActivate.mockRejectedValue(new Error("native module unavailable"));
 
     const { readCachedFlags } = await loadModule();
 
@@ -110,7 +122,7 @@ describe("readCachedFlags", () => {
     // `setup` is memoised at module scope and both readers await it, so a rejection kept in that
     // memo would be handed straight to `fetchRemoteFlags` and the documented fall-through to the
     // network would never happen. The memo holds successes only.
-    mockSetDefaults.mockRejectedValueOnce(new Error("native module unavailable"));
+    mockActivate.mockRejectedValueOnce(new Error("native module unavailable"));
 
     const { readCachedFlags, fetchRemoteFlags } = await loadModule();
     await expect(readCachedFlags()).resolves.toEqual({});

@@ -2,19 +2,31 @@
 // in this app rely on via `__tests__/jest-setup.js`.
 jest.unmock("~/firebase/remoteConfig");
 
-const mockSetConfigSettings = jest.fn();
-const mockSetDefaults = jest.fn();
+const mockSettingsSetter = jest.fn();
+const mockDefaultConfigSetter = jest.fn();
+const mockActivate = jest.fn();
 const mockFetchAndActivate = jest.fn();
 const mockGetAll = jest.fn();
-const mockGetRemoteConfig = jest.fn(() => ({
-  setConfigSettings: (...args: unknown[]) => mockSetConfigSettings(...(args as [])),
-  setDefaults: (...args: unknown[]) => mockSetDefaults(...(args as [])),
-  fetchAndActivate: (...args: unknown[]) => mockFetchAndActivate(...(args as [])),
-  getAll: (...args: unknown[]) => mockGetAll(...(args as [])),
-}));
+
+const mockRc = {
+  get settings() {
+    return { fetchTimeoutMillis: 60000, minimumFetchIntervalMillis: 43200000 };
+  },
+  set settings(value: unknown) {
+    mockSettingsSetter(value);
+  },
+  set defaultConfig(value: unknown) {
+    mockDefaultConfigSetter(value);
+  },
+};
+const mockGetRemoteConfig = jest.fn(() => mockRc);
 
 jest.mock("@react-native-firebase/remote-config", () => ({
   getRemoteConfig: () => mockGetRemoteConfig(),
+  activate: (...args: unknown[]) => mockActivate(...(args as [])),
+  fetchAndActivate: (...args: unknown[]) => mockFetchAndActivate(...(args as [])),
+  getAll: (...args: unknown[]) => mockGetAll(...(args as [])),
+  getValue: () => undefined,
 }));
 jest.mock("@features/platform-feature-flags", () => ({
   DEFAULT_FEATURES: { mockFeature: { enabled: false } },
@@ -32,8 +44,9 @@ async function loadModule() {
 
 beforeEach(() => {
   jest.resetModules();
-  mockSetConfigSettings.mockReset().mockResolvedValue(undefined);
-  mockSetDefaults.mockReset().mockResolvedValue(undefined);
+  mockSettingsSetter.mockReset();
+  mockDefaultConfigSetter.mockReset();
+  mockActivate.mockReset().mockResolvedValue(false);
   mockFetchAndActivate.mockReset().mockResolvedValue(true);
   mockGetAll.mockReset().mockReturnValue({});
   mockGetRemoteConfig.mockClear();
@@ -111,28 +124,30 @@ describe("fetchRemoteFlags", () => {
     await expect(fetchRemoteFlags()).rejects.toThrow("network down");
   });
 
-  it("runs setup (setConfigSettings + setDefaults) exactly once across multiple fetches", async () => {
+  it("runs setup (settings + defaultConfig) exactly once across multiple fetches", async () => {
     const { fetchRemoteFlags } = await loadModule();
 
     await fetchRemoteFlags();
     await fetchRemoteFlags();
     await fetchRemoteFlags();
 
-    expect(mockSetConfigSettings).toHaveBeenCalledTimes(1);
-    expect(mockSetConfigSettings).toHaveBeenCalledWith({ minimumFetchIntervalMillis: 0 });
-    expect(mockSetDefaults).toHaveBeenCalledTimes(1);
-    expect(mockSetDefaults).toHaveBeenCalledWith({
+    expect(mockSettingsSetter).toHaveBeenCalledTimes(1);
+    expect(mockSettingsSetter).toHaveBeenCalledWith({
+      fetchTimeoutMillis: 60000,
+      minimumFetchIntervalMillis: 0,
+    });
+    expect(mockDefaultConfigSetter).toHaveBeenCalledTimes(1);
+    expect(mockDefaultConfigSetter).toHaveBeenCalledWith({
       feature_mock_feature: JSON.stringify({ enabled: false }),
     });
+    expect(mockActivate).toHaveBeenCalledTimes(1);
   });
 
-  it("awaits setup before calling fetchAndActivate", async () => {
+  it("awaits setup (activate) before calling fetchAndActivate", async () => {
     const calls: string[] = [];
-    mockSetConfigSettings.mockImplementation(async () => {
-      calls.push("setConfigSettings");
-    });
-    mockSetDefaults.mockImplementation(async () => {
-      calls.push("setDefaults");
+    mockActivate.mockImplementation(async () => {
+      calls.push("activate");
+      return false;
     });
     mockFetchAndActivate.mockImplementation(async () => {
       calls.push("fetchAndActivate");
@@ -142,8 +157,7 @@ describe("fetchRemoteFlags", () => {
     const { fetchRemoteFlags } = await loadModule();
     await fetchRemoteFlags();
 
-    expect(calls.indexOf("fetchAndActivate")).toBeGreaterThan(calls.indexOf("setConfigSettings"));
-    expect(calls.indexOf("fetchAndActivate")).toBeGreaterThan(calls.indexOf("setDefaults"));
+    expect(calls.indexOf("fetchAndActivate")).toBeGreaterThan(calls.indexOf("activate"));
   });
 });
 
