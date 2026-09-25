@@ -28,11 +28,6 @@ export const decred = currency({
   ],
   family: "bitcoin",
   blockAvgTime: 900,
-  bitcoinLikeInfo: {
-    P2PKH: 1855,
-    P2SH: 1818,
-    XPUBVersion: 50178342,
-  },
   explorerViews: [
     {
       tx: "https://mainnet.decred.org/tx/$hash",

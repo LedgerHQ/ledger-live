@@ -13,11 +13,6 @@ export const bitcoin_gold = currency({
   supportsSegwit: true,
   family: "bitcoin",
   blockAvgTime: 900,
-  bitcoinLikeInfo: {
-    P2PKH: 38,
-    P2SH: 23,
-    XPUBVersion: 76067358,
-  },
   units: [
     {
       name: "bitcoin gold",

@@ -53,6 +53,7 @@ import {
   getZainoEndpoint,
   ZCASH_AUTO_SYNC_TIMEOUT_MS,
   ZCASH_LOG_TYPE,
+  ZCASH_XPUB_VERSION,
 } from "../constants";
 import { getZCashClient } from "../logic/engineClient";
 import { resolveTransactionDetails, type ResolvedTransactions } from "./transaction-details";
@@ -629,13 +630,10 @@ async function generateXpubIfNeeded(
 ): Promise<string> {
   if (providedXpub) return providedXpub;
 
-  const { deviceId, currency, signerContext, accountPath } = params;
+  const { deviceId, signerContext, accountPath } = params;
   if (deviceId === undefined || deviceId === null) {
     throw new Error("deviceId required to generate the xpub");
   }
-  const { bitcoinLikeInfo } = currency;
-  const { XPUBVersion: xpubVersion } = bitcoinLikeInfo as { XPUBVersion: number };
-
   // coin-zcash always composes the xpub locally (see signer/xpub.ts) -- the
   // DMK Zcash signer kit only exposes getAddress, not a native xpub command.
   const accountPathElements = pathStringToArray(accountPath);
@@ -654,7 +652,7 @@ async function generateXpubIfNeeded(
   });
 
   return composeXpub({
-    xpubVersion,
+    xpubVersion: ZCASH_XPUB_VERSION,
     depth: accountPathElements.length,
     childNumber,
     parentPublicKeyHex: parent.publicKey,

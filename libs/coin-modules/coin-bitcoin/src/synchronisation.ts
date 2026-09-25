@@ -25,6 +25,7 @@ import { perCoinLogic, mapTxToOperations } from "./logic";
 import { BitcoinXPub, SignerContext } from "./signer";
 import { merge, Observable } from "rxjs";
 import { getChainAdapter } from "./chain-adapters/registry";
+import { getNetworkParameters } from "./networks";
 import type { ResolvedTransactions } from "./chain-adapters/types";
 
 // Map LL's DerivationMode to wallet-btc's
@@ -391,12 +392,7 @@ async function generateXpubIfNeeded(
   if (deviceId === undefined || deviceId === null) {
     throw new Error("deviceId required to generate the xpub");
   }
-  const { bitcoinLikeInfo } = currency;
-  const { XPUBVersion: xpubVersion } = bitcoinLikeInfo as {
-    // FIXME It's supposed to be optional
-    //XPUBVersion?: number;
-    XPUBVersion: number;
-  };
+  const xpubVersion = getNetworkParameters(currency.id).xpubVersion.readUInt32BE(0);
 
   const adapter = getChainAdapter(currency.id);
   const custom = adapter.getWalletXpub?.(

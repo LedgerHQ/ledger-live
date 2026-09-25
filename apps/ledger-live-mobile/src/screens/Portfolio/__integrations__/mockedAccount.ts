@@ -113,11 +113,6 @@ export const MockedAccounts: AccountsState = {
         color: "#0e76aa",
         family: "bitcoin",
         blockAvgTime: 150,
-        bitcoinLikeInfo: {
-          P2PKH: 76,
-          P2SH: 16,
-          XPUBVersion: 50221816,
-        },
         units: [
           { name: "dash", code: "DASH", magnitude: 8 },
           { name: "satoshi", code: "sat", magnitude: 0 },
@@ -205,11 +200,6 @@ export const MockedAccounts: AccountsState = {
         color: "#65d196",
         family: "bitcoin",
         blockAvgTime: 60,
-        bitcoinLikeInfo: {
-          P2PKH: 30,
-          P2SH: 22,
-          XPUBVersion: 49990397,
-        },
         symbol: "Ð",
         units: [
           { name: "dogecoin", code: "DOGE", magnitude: 8 },

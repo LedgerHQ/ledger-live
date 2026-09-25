@@ -37,11 +37,6 @@ export const bitcoin_regtest = currency({
   isTestnetFor: "bitcoin",
   family: "bitcoin",
   blockAvgTime: 900,
-  bitcoinLikeInfo: {
-    P2PKH: 111,
-    P2SH: 196,
-    XPUBVersion: 70617039,
-  },
   explorerViews: [
     {
       tx: "https://live.blockcypher.com/btc-testnet/tx/$hash",

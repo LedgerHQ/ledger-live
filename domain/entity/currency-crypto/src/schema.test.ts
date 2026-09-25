@@ -1,6 +1,5 @@
 import {
   ExplorerViewSchema,
-  BitcoinLikeInfoSchema,
   EthereumLikeInfoSchema,
   CryptoCurrencyIdSchema,
   CryptoCurrencySchema,
@@ -27,17 +26,6 @@ describe("ExplorerViewSchema", () => {
       address: "https://example.com/address/$address",
     };
     expect(ExplorerViewSchema.parse(view)).toEqual(view);
-  });
-});
-
-describe("BitcoinLikeInfoSchema", () => {
-  it("accepts valid bitcoin info", () => {
-    expect(BitcoinLikeInfoSchema.parse({ P2PKH: 0, P2SH: 5 })).toEqual({ P2PKH: 0, P2SH: 5 });
-  });
-
-  it("accepts XPUBVersion", () => {
-    const result = BitcoinLikeInfoSchema.parse({ P2PKH: 0, P2SH: 5, XPUBVersion: 76066276 });
-    expect(result.XPUBVersion).toBe(76066276);
   });
 });
 

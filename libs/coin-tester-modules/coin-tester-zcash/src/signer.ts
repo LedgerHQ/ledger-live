@@ -31,10 +31,9 @@ import type {
 } from "@ledgerhq/live-signer-zcash";
 import { getCapturedPcztHex } from "./zcashClientTestSeam";
 
-// Matches zcash_regtest's `bitcoinLikeInfo.P2PKH` (domain/entity/currency-crypto) --
-// deliberately the mainnet Zcash version byte, not Zcash's own testnet/regtest one.
-// See that file for why: @ledgerhq/coin-zcash's recipient classifier only accepts
-// mainnet-prefixed addresses.
+// Deliberately the mainnet Zcash P2PKH version byte, not Zcash's own testnet/regtest
+// one: @ledgerhq/coin-zcash's recipient classifier only accepts mainnet-prefixed
+// addresses (see domain/entity/currency-crypto/src/currencies/zcash_regtest.ts).
 export const P2PKH_VERSION = 7352;
 
 // `testDeriveKeys`/`testSignPczt`/`orchardAddressFromUfvk` all key off this network

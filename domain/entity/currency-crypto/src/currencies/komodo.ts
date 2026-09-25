@@ -11,11 +11,6 @@ export const komodo = currency({
   color: "#326464",
   family: "bitcoin",
   blockAvgTime: 60,
-  bitcoinLikeInfo: {
-    P2PKH: 60,
-    P2SH: 85,
-    XPUBVersion: 4193182861,
-  },
   units: [
     {
       name: "komodo",

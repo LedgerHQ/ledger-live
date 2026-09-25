@@ -12,10 +12,6 @@ export const nix = currency({
   supportsSegwit: true,
   family: "bitcoin",
   blockAvgTime: 120,
-  bitcoinLikeInfo: {
-    P2PKH: 38,
-    P2SH: 53,
-  },
   units: [
     {
       name: "nix",
