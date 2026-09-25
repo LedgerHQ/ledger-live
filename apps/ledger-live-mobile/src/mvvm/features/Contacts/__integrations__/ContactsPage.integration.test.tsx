@@ -10,8 +10,6 @@ import {
 import { createClosedContactsFeatureIntroduction } from "@features/flow-contacts-introduction";
 import { render, screen } from "@tests/test-renderer";
 
-const getName = (contact: { name: string }) => contact.name;
-
 function renderContactsPage(
   ledgerSyncStatus: "ready" | "checking",
   viewModel?: ContactsListViewModel,
