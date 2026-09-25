@@ -77,10 +77,10 @@ function AssetRow({
                         if (event.nativeEvent.actionName === "decrement") onMoveUp();
                         if (event.nativeEvent.actionName === "increment") onMoveDown();
                       }}
-                      onLongPress={onDrag}
+                      onPress={onDrag}
                       testID={`card-asset-reorder-handle-${row.id}`}
                     >
-                      {/* Bigger touch target for the long-press-to-drag gesture. */}
+                      {/* Bigger touch target for the drag handle. */}
                       <Box lx={{ padding: "s8" }}>
                         <MenuBurger size={24} />
                       </Box>
