@@ -1,5 +1,5 @@
 import { ContactIdSchema } from "@domain/entity-contact";
-import { ContactAvatar } from "@features/platform-contacts";
+import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
 import type { MatchedContact } from "@ledgerhq/live-common/flows/send/recipient/types";
 import {
   Button,
@@ -46,6 +46,7 @@ export function RecipientCard({
   onAddContact,
   onUnsupportedNetwork,
 }: RecipientCardProps) {
+  const getDisplayName = useContactDisplayName();
   const addContactButton = (
     <Button
       appearance="gray"
@@ -76,7 +77,9 @@ export function RecipientCard({
           )}
           <CardContent className="min-w-0">
             <CardContentTitle className={contact ? undefined : "break-all whitespace-normal"}>
-              {contact?.contactName ?? recipient}
+              {contact
+                ? getDisplayName({ name: contact.contactName, isMe: contact.isMe })
+                : recipient}
             </CardContentTitle>
             {(contact?.addressLabel ?? description) && (
               <CardContentDescription className="whitespace-normal">

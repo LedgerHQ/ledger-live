@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import type { PaySuccessProps } from "@features/flow-pay-contact";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { useContactsFeature } from "@features/platform-contacts";
+import { useContactsFeature, useContactDisplayName } from "@features/platform-contacts";
 import { selectContacts, ContactIdSchema } from "@domain/entity-contact";
 import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
@@ -44,6 +44,10 @@ export function usePaySuccessViewModel(): PaySuccessProps {
       }),
     [contacts, currency?.id, isContactsFeatureEnabled, recipient],
   );
+  const getDisplayName = useContactDisplayName();
+  const recipientLabel = recipientHeader.contact
+    ? getDisplayName(recipientHeader.contact)
+    : recipientHeader.recipientDisplayValue;
 
   const amountUnit = useMaybeAccountUnit(account ?? undefined) ?? currency?.units[0];
   const amountFormatted = useMemo(() => {
@@ -75,12 +79,13 @@ export function usePaySuccessViewModel(): PaySuccessProps {
     ? {
         id: ContactIdSchema.parse(recipientHeader.contact.id),
         name: recipientHeader.contact.name,
+        isMe: recipientHeader.contact.isMe,
       }
     : undefined;
 
   return {
     recipient: matchedRecipient,
-    recipientLabel: recipientHeader.label,
+    recipientLabel,
     amountFormatted,
     canViewTransaction: Boolean(account && concernedOperation),
     onViewTransaction,

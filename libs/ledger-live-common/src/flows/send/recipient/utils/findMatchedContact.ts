@@ -49,6 +49,7 @@ export function findMatchedContact(
         return {
           contactId: contact.id,
           contactName: contact.name,
+          isMe: contact.isMe,
           addressId: address.id,
           addressLabel: address.label,
           address: address.address,
@@ -79,6 +80,7 @@ export function findMatchedContact(
       return {
         contactId: contact.id,
         contactName: contact.name,
+        isMe: contact.isMe,
         addressId: address.id,
         addressLabel: address.label,
         address: address.address,

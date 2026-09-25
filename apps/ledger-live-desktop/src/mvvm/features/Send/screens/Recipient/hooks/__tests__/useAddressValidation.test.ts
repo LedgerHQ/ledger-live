@@ -470,6 +470,7 @@ describe("useAddressValidation", () => {
     const matchedContact = {
       contactId: "contact-remi",
       contactName: "Remi",
+      isMe: false,
       addressId: "address-remi-ethereum",
       addressLabel: "Ethereum Network",
       address: contactAddress,
@@ -513,6 +514,7 @@ describe("useAddressValidation", () => {
     mockedFindMatchedContact.mockReturnValue({
       contactId: "contact-benoit",
       contactName: "Benoit",
+      isMe: false,
       addressId: "address-benoit-ethereum",
       addressLabel: "Ethereum Network",
       address: contactAddress,
@@ -585,6 +587,7 @@ describe("useAddressValidation", () => {
     mockedFindMatchedContact.mockReturnValue({
       contactId: "contact-me",
       contactName: "My contact",
+      isMe: false,
       addressId: "address-me",
       addressLabel: "Bitcoin",
       address: mockAccount.freshAddress,

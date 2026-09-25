@@ -7,6 +7,7 @@ import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/ut
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useFeature } from "@features/platform-feature-flags";
 import { useTranslation } from "react-i18next";
+import { useContactDisplayName } from "@features/platform-contacts";
 import { useFormatRelativeDate } from "./useFormatRelativeDate";
 
 type UseAddressMatchedSectionViewModelProps = Readonly<{
@@ -101,6 +102,7 @@ function useAddressMatchedSectionViewModelInternal({
   addressBookFamilyName = "",
 }: UseAddressMatchedSectionViewModelProps): AddressMatchedSectionViewModel {
   const { t } = useTranslation();
+  const getDisplayName = useContactDisplayName();
   const formatRelativeDate = useFormatRelativeDate();
   const isFirstInteractionBannerEnabled =
     useFeature("newSendFlowFirstInteractionBanner")?.enabled ?? false;
@@ -210,7 +212,10 @@ function useAddressMatchedSectionViewModelInternal({
         suggestion: {
           kind: "address-list-item",
           address: presentation.address,
-          name: presentation.matchedContact.contactName,
+          name: getDisplayName({
+            name: presentation.matchedContact.contactName,
+            isMe: presentation.matchedContact.isMe,
+          }),
           description: formattedAddress,
           onSelect: () => onSelect(presentation.address, presentation.ensName),
           disabled: presentation.isDisabled,

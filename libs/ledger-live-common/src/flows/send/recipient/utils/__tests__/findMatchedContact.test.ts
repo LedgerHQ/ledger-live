@@ -34,6 +34,7 @@ describe("findMatchedContact", () => {
     expect(findMatchedContact([meContact, remiContact], vitalikAddress, "ethereum")).toEqual({
       contactId: "remi",
       contactName: "Remi",
+      isMe: false,
       addressId: "remi-ethereum",
       addressLabel: "Eth main",
       address: vitalikAddress.toLowerCase(),
@@ -58,6 +59,7 @@ describe("findMatchedContact", () => {
     expect(findMatchedContact([contact], "   ", "ethereum", vitalikAddress)).toEqual({
       contactId: "remi",
       contactName: "Remi",
+      isMe: false,
       addressId: "remi-ethereum",
       addressLabel: "Eth main",
       address: vitalikAddress,
@@ -84,6 +86,7 @@ describe("findMatchedContact", () => {
     ).toEqual({
       contactId: "remi",
       contactName: "Remi",
+      isMe: false,
       addressId: "remi-ethereum",
       addressLabel: "Eth main",
       address: vitalikAddress,
@@ -116,6 +119,7 @@ describe("findMatchedContact", () => {
     ).toEqual({
       contactId: "benoit",
       contactName: "Benoit",
+      isMe: false,
       addressId: "benoit-ethereum",
       addressLabel: "Ethereum Network",
       address: vitalikAddress,
@@ -165,6 +169,7 @@ describe("findMatchedContact", () => {
     ).toEqual({
       contactId: "benoit",
       contactName: "Benoit Jean",
+      isMe: false,
       addressId: "benoit-ethereum",
       addressLabel: "Ethereum Network",
       address: vitalikAddress,
@@ -221,6 +226,7 @@ describe("findMatchedContact", () => {
     ).toEqual({
       contactId: "benoit",
       contactName: "Benoit",
+      isMe: false,
       addressId: "benoit-usdc",
       addressLabel: "USDC",
       address: "0xUsdcAddress",
@@ -255,6 +261,7 @@ describe("findMatchedContact", () => {
     ).toEqual({
       contactId: "benoit",
       contactName: "Benoit",
+      isMe: false,
       addressId: "benoit-ethereum",
       addressLabel: "Ethereum",
       address: vitalikAddress,
@@ -315,6 +322,7 @@ describe("findMatchedContact", () => {
     ).toEqual({
       contactId: "benoit",
       contactName: "Benoit",
+      isMe: false,
       addressId: "benoit-ethereum-work",
       addressLabel: "Work",
       address: vitalikAddress,

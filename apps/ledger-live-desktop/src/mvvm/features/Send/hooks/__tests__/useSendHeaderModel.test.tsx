@@ -4,6 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { act } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { mockContact } from "@domain/entity-contact/schema.mock";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { useSendHeaderModel } from "../useSendHeaderModel";
 
 jest.mock("../../../FlowWizard/FlowWizardContext", () => ({
@@ -23,6 +24,9 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 jest.mock("LLD/hooks/redux");
 jest.mock("@features/platform-contacts", () => ({
+  useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).useContactDisplayName,
   isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",
   ).isEligibleAddressCurrency,
@@ -144,13 +148,15 @@ const mockData = (
 function renderHook(availableText = "", resetViewState = () => {}) {
   act(() => {
     root.render(
-      <RecipientScannerProvider>
-        <HookProbe
-          onResult={vm => (latestVM = vm)}
-          availableText={availableText}
-          resetViewState={resetViewState}
-        />
-      </RecipientScannerProvider>,
+      <ContactsI18nTestProvider>
+        <RecipientScannerProvider>
+          <HookProbe
+            onResult={vm => (latestVM = vm)}
+            availableText={availableText}
+            resetViewState={resetViewState}
+          />
+        </RecipientScannerProvider>
+      </ContactsI18nTestProvider>,
     );
   });
 }
@@ -429,6 +435,7 @@ describe("useSendHeaderModel", () => {
       expect(latestVM?.recipientContact).toEqual({
         id: "contact-benoit",
         name: "Benoit Jean",
+        isMe: false,
       });
       expect(latestVM?.addressInputValue).toBe("Benoit Jean");
     });
