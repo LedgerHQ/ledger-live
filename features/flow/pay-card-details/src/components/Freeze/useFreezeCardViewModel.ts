@@ -4,7 +4,7 @@ import {
   useGetCardStatusQuery,
   useUnfreezeCardMutation,
 } from "@domain/api-card-management";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import type { ConfirmState, FreezeViewModel } from "../../types";
 
 /**
@@ -12,7 +12,6 @@ import type { ConfirmState, FreezeViewModel } from "../../types";
  * stays open on an error. Lets a host react (e.g. navigate back) without watching `confirmState`.
  */
 export function useFreezeCardViewModel(onResolved?: () => void): FreezeViewModel {
-  const { trackButtonClicked } = usePayAnalyticsContext();
   const { data: cardStatus, isLoading: isStatusLoading } = useGetCardStatusQuery();
   const [freeze] = useFreezeCardMutation();
   const [unfreeze] = useUnfreezeCardMutation();
@@ -26,7 +25,7 @@ export function useFreezeCardViewModel(onResolved?: () => void): FreezeViewModel
       page: "Card details",
     });
     setConfirmState("prompt");
-  }, [status, trackButtonClicked]);
+  }, [status]);
   const onClose = useCallback(() => {
     setConfirmState("closed");
     onResolved?.();
@@ -44,7 +43,7 @@ export function useFreezeCardViewModel(onResolved?: () => void): FreezeViewModel
     } catch {
       setConfirmState("error");
     }
-  }, [status, freeze, unfreeze, onResolved, trackButtonClicked]);
+  }, [status, freeze, unfreeze, onResolved]);
 
   return useMemo(
     () => ({
