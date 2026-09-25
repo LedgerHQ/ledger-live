@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { PAY_CARD_BALANCE_FILTER_ALL, type BalanceFilter } from "../../state";
 import type { BalanceFilterPickerViewModel, BalanceFilterPickerViewModelParams } from "../../types";
 
@@ -8,7 +9,6 @@ export function useBalanceFilterPickerViewModel({
   options,
   onConfirmFilter,
   onClose,
-  onTrackEvent,
 }: BalanceFilterPickerViewModelParams): BalanceFilterPickerViewModel {
   const [draftFilter, setDraftFilter] = useState<BalanceFilter>(activeFilter);
 
@@ -28,13 +28,9 @@ export function useBalanceFilterPickerViewModel({
       draftFilter === PAY_CARD_BALANCE_FILTER_ALL
         ? PAY_CARD_BALANCE_FILTER_ALL
         : (options.find(option => option.id === draftFilter)?.ticker ?? draftFilter);
-    onTrackEvent?.("button_clicked", {
-      button: "confirm balance filter",
-      asset,
-      page: "Pay",
-    });
+    trackButtonClicked({ button: "confirm balance filter", asset, page: "Pay" });
     onClose();
-  }, [draftFilter, options, onConfirmFilter, onClose, onTrackEvent]);
+  }, [draftFilter, options, onConfirmFilter, onClose]);
 
   return { draftFilter, onSelectDraft, onConfirm };
 }
