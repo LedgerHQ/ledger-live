@@ -24,7 +24,7 @@ This package abstracts those into a single provider that each app wires once.
 // apps/ledger-live-desktop
 import { LinkingProvider } from "@shared/platform-linking";
 import { shell } from "electron";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 <LinkingProvider
   config={{

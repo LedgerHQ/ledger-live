@@ -44,3 +44,4 @@ See examples:
 - **API packages** (`domain/api/`): read `domain/api/README.md`
 - **Shared packages** (`shared/**`): read `shared/README.md`
 - **Support packages** (`support/**`): read `support/README.md`
+- **Analytics** (product events): read `shared/analytics/README.md`
