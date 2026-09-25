@@ -68,6 +68,64 @@ describe("logic/transaction/validateIntent", () => {
     expect(res.errors.amount).toBeInstanceOf(Error);
   });
 
+  it("accepts a memo within the length limit", async () => {
+    const res = await validateIntent(
+      "cosmos",
+      withOverrides({ memo: { type: "string", kind: "text", value: "a".repeat(256) } }),
+      balances,
+      fees,
+    );
+    expect(res.errors.transaction).toBeUndefined();
+  });
+
+  it("flags a memo exceeding the length limit, before any signing step is reached", async () => {
+    const res = await validateIntent(
+      "cosmos",
+      withOverrides({ memo: { type: "string", kind: "text", value: "a".repeat(257) } }),
+      balances,
+      fees,
+    );
+    expect(res.errors.transaction?.name).toBe("CosmosMemoTooLong");
+  });
+
+  it("does not flag a MemoNotSupported intent", async () => {
+    const res = await validateIntent(
+      "cosmos",
+      withOverrides({ memo: { type: "none" } }),
+      balances,
+      fees,
+    );
+    expect(res.errors.transaction).toBeUndefined();
+  });
+
+  it("measures the memo limit in UTF-8 bytes, not UTF-16 code units", async () => {
+    const emojiMemo = "🌍".repeat(128); // 128 code units, but 512 UTF-8 bytes
+    const res = await validateIntent(
+      "cosmos",
+      withOverrides({ memo: { type: "string", kind: "text", value: emojiMemo } }),
+      balances,
+      fees,
+    );
+    expect(res.errors.transaction?.name).toBe("CosmosMemoTooLong");
+  });
+
+  it("flags a memo exceeding the length limit on a staking intent", async () => {
+    const intent = {
+      intentType: "staking",
+      type: "delegate",
+      mode: "delegate",
+      sender: "cosmos1sender",
+      recipient: "",
+      amount: 1_000_000n,
+      valAddress: "cosmosvaloper1v",
+      asset: { type: "native" },
+      memo: { type: "string", kind: "text", value: "a".repeat(257) },
+    } as unknown as TransactionIntent;
+
+    const res = await validateIntent("cosmos", intent, balances, fees);
+    expect(res.errors.transaction?.name).toBe("CosmosMemoTooLong");
+  });
+
   it("accepts a delegate staking intent within balance", async () => {
     const intent = {
       intentType: "staking",

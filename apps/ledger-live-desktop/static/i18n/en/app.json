@@ -7239,6 +7239,10 @@
     "CosmosDelegateAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transactions fees"
     },
+    "CosmosMemoTooLong": {
+      "title": "Memo exceeds maximum length",
+      "description": "Your memo is {{memoLength}} bytes, but the maximum allowed is {{maxLength}} bytes. Please reduce the memo size."
+    },
     "CurrencyNotSupported": {
       "title": "{{currencyName}} is not supported",
       "description": "This crypto asset is not yet supported. Please contact Ledger Support."
