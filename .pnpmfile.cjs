@@ -33,9 +33,6 @@ function readPackage(pkg, context) {
         "metro-transform-worker": "*",
       }),
 
-      /* Other packages */
-      addDependencies("rn-fetch-blob", { lodash: "*" }),
-
       addPeerDependencies("app-builder-lib", {
         lodash: "*",
       }),
