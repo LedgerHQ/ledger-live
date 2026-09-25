@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
+import { CardAuthError } from "./CardAuthError";
 import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
 
@@ -9,7 +10,7 @@ export function CardLoginView({
   loginLabel,
   alreadyHaveCardLabel,
   isLoading,
-  errorMessage,
+  error,
   onLoginPress,
   onAlreadyHaveCardPress,
   intro,
@@ -43,9 +44,9 @@ export function CardLoginView({
               {alreadyHaveCardLabel}
             </Button>
           ) : null}
-          {errorMessage ? <span className="body-3 text-error">{errorMessage}</span> : null}
         </div>
       </div>
+      <CardAuthError error={error} />
       <CardLoginIntroView {...intro} />
     </>
   );

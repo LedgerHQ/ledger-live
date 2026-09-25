@@ -6,8 +6,8 @@ import {
   SubheaderDescription,
   SubheaderRow,
   SubheaderTitle,
-  Text,
 } from "@ledgerhq/lumen-ui-rnative";
+import { CardAuthError } from "./CardAuthError";
 import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
 
@@ -21,7 +21,7 @@ export function CardLoginView({
   description,
   loginLabel,
   isLoading,
-  errorMessage,
+  error,
   onLoginPress,
   intro,
 }: CardLoginNativeViewProps) {
@@ -51,12 +51,8 @@ export function CardLoginView({
             {loginLabel}
           </Button>
         </Box>
-        {errorMessage ? (
-          <Text typography="body3" lx={{ color: "error", alignSelf: "flex-end" }}>
-            {errorMessage}
-          </Text>
-        ) : null}
       </Box>
+      <CardAuthError error={error} />
       <CardLoginIntroView {...intro} />
     </>
   );

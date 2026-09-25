@@ -67,10 +67,26 @@ export type CardLoginCopy = Readonly<{
   alreadyHaveCardLabel: string | null;
 }>;
 
+/** What the panel says. The spot icon is the view's to supply, because its type is per platform. */
+export type CardAuthErrorCopy = Readonly<{
+  title: string;
+  description: string;
+  ctaLabel: string;
+  onRetry: () => void;
+  /** The panel closes without acting. The login goes back on offer, and nothing starts. */
+  onDismiss: () => void;
+}>;
+
+/** `null` keeps the sheet mounted and closed, so it can animate when an error does arrive. */
+export type CardAuthErrorProps = Readonly<{
+  error: CardAuthErrorCopy | null;
+}>;
+
 export type CardLoginViewProps = CardLoginCopy & {
   /** True while the machine works. The login action is not pressable then. */
   readonly isLoading: boolean;
-  readonly errorMessage: string | null;
+  /** Set when an error holds the panel. It opens over the login block, and hides nothing. */
+  readonly error: CardAuthErrorCopy | null;
   readonly onLoginPress: () => void;
   readonly onAlreadyHaveCardPress: () => void;
   readonly intro: CardLoginIntroViewProps;
