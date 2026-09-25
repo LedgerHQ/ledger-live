@@ -58,14 +58,14 @@ const CARD_ASSET: CardAssetRow = {
 
 const HOSTED_TOP_UP_ASSET: CardAssetRow = {
   ...CARD_ASSET,
-  id: "wallet-usdc",
+  id: "wallet-eurc",
   address: "0xcardwallet",
-  currency: "usdc",
+  currency: "eurc",
   network: "ethereum",
-  name: "USD Coin",
-  ticker: "USDC",
-  ledgerId: "ethereum/erc20/usd__coin",
-  cryptoAmount: "100 USDC",
+  name: "EURC",
+  ticker: "EURC",
+  ledgerId: "",
+  cryptoAmount: "100 EURC",
 };
 
 function PayTabViewModelProbe() {
@@ -265,12 +265,12 @@ describe("usePayTabViewModel", () => {
     expect(screen.getByTestId("login-open-hosted-page")).toHaveTextContent("undefined");
   });
 
-  it("should pre-select on the hosted page an asset the native top up does not support", async () => {
+  it("should pre-select on the hosted page a card wallet Ledger Wallet has no currency for", async () => {
     const { user } = renderViewModel();
 
     await user.press(screen.getByTestId("hosted-asset-top-up"));
 
-    await expectHostedPage("https://ledger.baanxapi.test/topup?currency=usdc");
+    await expectHostedPage("https://ledger.baanxapi.test/topup?currency=eurc");
   });
 
   it("should open the legacy card live app on top up when the legacyTopUp param is on", async () => {

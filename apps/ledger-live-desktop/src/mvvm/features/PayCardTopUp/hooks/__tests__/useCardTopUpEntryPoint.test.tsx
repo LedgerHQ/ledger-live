@@ -33,14 +33,17 @@ beforeEach(() => {
   });
 });
 
-it("filters the source-account picker to the linked wallet asset", () => {
+it.each([
+  ["coin", "bitcoin"],
+  ["token", "ethereum/erc20/usd__coin"],
+])("filters the source-account picker to the linked %s wallet", (_, ledgerId) => {
   const { result } = renderHook(() => useCardTopUpEntryPoint());
 
-  act(() => result.current(asset));
+  act(() => result.current({ ...asset, ledgerId }));
 
   expect(openAssetAndAccount).toHaveBeenCalledWith(
     expect.objectContaining({
-      currencies: [asset.ledgerId],
+      currencies: [ledgerId],
       areCurrenciesFiltered: true,
       uiUseCase: "pay-card-top-up",
     }),
@@ -63,12 +66,12 @@ it("hands the selected source account and linked destination to the top-up", () 
 });
 
 it.each([
-  ["an unmapped asset", ""],
-  ["an asset the top-up is not verified for", "ethereum/erc20/usd__coin"],
-])("does not open an account picker for %s", (_, ledgerId) => {
+  ["an unmapped asset", { ledgerId: "" }],
+  ["a wallet without a deposit address", { address: " " }],
+])("does not open an account picker for %s", (_, override) => {
   const { result } = renderHook(() => useCardTopUpEntryPoint());
 
-  act(() => result.current({ ...asset, ledgerId }));
+  act(() => result.current({ ...asset, ...override }));
 
   expect(openAssetAndAccount).not.toHaveBeenCalled();
 });
