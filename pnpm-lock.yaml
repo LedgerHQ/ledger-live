@@ -627,7 +627,7 @@ overrides:
   expect: 30.5.0
   pretty-format@^30.0.0: 30.5.0
 
-packageExtensionsChecksum: sha256-DnRPKQHuFOrLMncuGd/N1CWVqNLIifH3AnXTY8A8iQs=
+packageExtensionsChecksum: sha256-I1mFllXh4GV5jFwv6V8tWXil0vdGj9SeSHYo0Qi2ihw=
 
 pnpmfileChecksum: sha256-JyE64KwSjZ7Ykvi+y4PoBd1Pk100XNhr0fI7RUun0QE=
 
@@ -14269,9 +14269,6 @@ importers:
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
-      axios:
-        specifier: 1.13.5
-        version: 1.13.5
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -14288,6 +14285,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      axios:
+        specifier: 'catalog:'
+        version: 1.13.5
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -16730,6 +16730,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      axios:
+        specifier: 'catalog:'
+        version: 1.13.5
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -23467,6 +23470,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -45966,7 +45970,6 @@ snapshots:
     dependencies:
       '@ledgerhq/live-env': 2.31.0
       '@ledgerhq/live-network': 2.4.3
-      axios: 1.13.5
     transitivePeerDependencies:
       - debug
 
@@ -53976,9 +53979,10 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': 6.36.0
       '@zondax/ledger-js': 0.8.2
-      axios: 1.13.5
+      axios: 1.18.1
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   JSONStream@1.3.5:
     dependencies:
@@ -54476,6 +54480,16 @@ snapshots:
       - debug
 
   axios@1.18.0:
+    dependencies:
+      follow-redirects: 1.16.0
+      form-data: 4.0.6
+      https-proxy-agent: 5.0.1
+      proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - debug
+      - supports-color
+
+  axios@1.18.1:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6

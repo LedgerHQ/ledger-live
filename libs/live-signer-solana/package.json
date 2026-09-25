@@ -64,9 +64,13 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
+    "axios": "catalog:",
     "jest": "catalog:",
     "rimraf": "^4.4.1",
     "ts-node": "^10.4.0"
+  },
+  "peerDependencies": {
+    "axios": "catalog:"
   },
   "exports": {
     ".": {
