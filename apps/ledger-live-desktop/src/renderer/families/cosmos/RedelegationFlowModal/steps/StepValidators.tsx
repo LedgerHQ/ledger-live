@@ -20,7 +20,11 @@ import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/c
 import Text from "~/renderer/components/Text";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
-import { CosmosMappedDelegation, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  CosmosMappedDelegation,
+  getCosmosResources,
+  Transaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 
 const SelectButton = styled(Base)`
   border-radius: 4px;
@@ -212,11 +216,21 @@ export function StepValidatorsFooter({
   onClose,
   status,
   bridgePending,
+  transaction,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
-  const canNext = !bridgePending && !hasErrors;
+  const requestedAmount = transaction?.validators?.[0]?.amount;
+  const sourceDelegation = getCosmosResources(account)?.delegations.find(
+    delegation => delegation.validatorAddress === transaction?.sourceValidator,
+  );
+  const hasValidAmount =
+    !!requestedAmount &&
+    !!sourceDelegation &&
+    requestedAmount.gt(0) &&
+    requestedAmount.lte(sourceDelegation.amount);
+  const canNext = !bridgePending && !hasErrors && hasValidAmount;
   return (
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />

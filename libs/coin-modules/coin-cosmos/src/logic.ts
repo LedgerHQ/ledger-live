@@ -21,6 +21,8 @@ import {
   type Transaction,
 } from "./types";
 
+type Account = Parameters<typeof getCosmosResources>[0];
+
 export const COSMOS_MAX_REDELEGATIONS = 7;
 export const COSMOS_MAX_UNBONDINGS = 7;
 export const COSMOS_MAX_DELEGATIONS = 5;
@@ -143,10 +145,7 @@ export const searchFilter: CosmosSearchFilter =
     const terms = `${validator?.name ?? ""} ${validator?.validatorAddress ?? ""}`;
     return terms.toLowerCase().includes(query.toLowerCase().trim());
   };
-export function getMaxDelegationAvailable(
-  account: CosmosAccount,
-  validatorsLength: number,
-): BigNumber {
+export function getMaxDelegationAvailable(account: Account, validatorsLength: number): BigNumber {
   const numberOfDelegations = Math.min(COSMOS_MAX_DELEGATIONS, validatorsLength || 1);
   const { spendableBalance } = account;
   return spendableBalance
@@ -175,46 +174,47 @@ export const getMaxEstimatedBalance = (
   return amount;
 };
 
-export function canUndelegate(account: CosmosAccount): boolean {
+export function canUndelegate(account: Account): boolean {
   const cosmosResources = getCosmosResources(account);
   invariant(cosmosResources, "cosmosResources should exist");
   return !!cosmosResources?.unbondings && cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS;
 }
 
-export function canDelegate(account: CosmosAccount): boolean {
+export function canDelegate(account: Account): boolean {
   const maxSpendableBalance = getMaxDelegationAvailable(account, 1);
   return maxSpendableBalance.gt(0);
 }
 
 export function canRedelegate(
-  account: CosmosAccount,
+  account: Account,
   delegation: CosmosDelegation | CosmosValidatorItem,
 ): boolean {
   const cosmosResources = getCosmosResources(account);
   invariant(cosmosResources, "cosmosResources should exist");
+  const now = new Date();
+  const activeRedelegations =
+    cosmosResources?.redelegations.filter(rd => rd.completionDate > now) ?? [];
   return (
-    !!cosmosResources?.redelegations &&
-    cosmosResources.redelegations.length < COSMOS_MAX_REDELEGATIONS &&
-    !cosmosResources.redelegations.some(
-      rd => rd.validatorDstAddress === delegation.validatorAddress,
-    )
+    activeRedelegations.length < COSMOS_MAX_REDELEGATIONS &&
+    !activeRedelegations.some(rd => rd.validatorDstAddress === delegation.validatorAddress)
   );
 }
 
 export function getRedelegation(
-  account: CosmosAccount,
+  account: Account,
   delegation: CosmosMappedDelegation,
 ): CosmosRedelegation | null | undefined {
   const cosmosResources = getCosmosResources(account);
   const redelegations = cosmosResources?.redelegations ?? [];
+  const now = new Date();
   const currentRedelegation = redelegations.find(
-    r => r.validatorDstAddress === delegation.validatorAddress,
+    r => r.validatorDstAddress === delegation.validatorAddress && r.completionDate > now,
   );
   return currentRedelegation;
 }
 
 export function getRedelegationCompletionDate(
-  account: CosmosAccount,
+  account: Account,
   delegation: CosmosMappedDelegation,
 ): Date | null | undefined {
   const currentRedelegation = getRedelegation(account, delegation);

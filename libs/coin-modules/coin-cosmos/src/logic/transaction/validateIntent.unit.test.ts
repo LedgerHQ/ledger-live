@@ -68,6 +68,26 @@ describe("logic/transaction/validateIntent", () => {
     expect(res.errors.amount).toBeInstanceOf(Error);
   });
 
+  it("flags fees that have not been loaded", async () => {
+    const res = await validateIntent("cosmos", base, balances);
+    expect(res.errors.fees?.name).toBe("FeeNotLoaded");
+  });
+
+  it("flags the zero fee the framework sends before estimation has run", async () => {
+    const res = await validateIntent("cosmos", base, balances, { value: 0n });
+    expect(res.errors.fees?.name).toBe("FeeNotLoaded");
+  });
+
+  it("accepts a zero fee on a chain with a zero gas price", async () => {
+    const res = await validateIntent(
+      "gonka",
+      withOverrides({ sender: "gonka1sender", recipient: "gonka1recipient" }),
+      balances,
+      { value: 0n },
+    );
+    expect(res.errors.fees).toBeUndefined();
+  });
+
   it("accepts a delegate staking intent within balance", async () => {
     const intent = {
       intentType: "staking",
@@ -84,6 +104,55 @@ describe("logic/transaction/validateIntent", () => {
     expect(res.errors).toEqual({});
     expect(res.amount).toBe(1_000_000n);
     expect(res.totalSpent).toBe(1_005_000n);
+  });
+
+  it("warns when delegating all available funds", async () => {
+    const intent = {
+      intentType: "staking",
+      type: "delegate",
+      mode: "delegate",
+      sender: "cosmos1sender",
+      recipient: "",
+      amount: 9_995_000n,
+      useAllAmount: true,
+      valAddress: "cosmosvaloper1v",
+      asset: { type: "native" },
+    } as unknown as TransactionIntent;
+
+    const res = await validateIntent("cosmos", intent, balances, fees);
+    expect(res.warnings.amount?.name).toBe("CosmosDelegateAllFundsWarning");
+  });
+
+  it("flags a zero staking fee as not loaded", async () => {
+    const intent = {
+      intentType: "staking",
+      type: "delegate",
+      mode: "delegate",
+      sender: "cosmos1sender",
+      recipient: "",
+      amount: 1_000_000n,
+      valAddress: "cosmosvaloper1v",
+      asset: { type: "native" },
+    } as unknown as TransactionIntent;
+
+    const res = await validateIntent("cosmos", intent, balances, { value: 0n });
+    expect(res.errors.fees?.name).toBe("FeeNotLoaded");
+  });
+
+  it("accepts a zero staking fee on a chain with a zero gas price", async () => {
+    const intent = {
+      intentType: "staking",
+      type: "delegate",
+      mode: "delegate",
+      sender: "gonka1sender",
+      recipient: "",
+      amount: 1_000_000n,
+      valAddress: "gonkavaloper1v",
+      asset: { type: "native" },
+    } as unknown as TransactionIntent;
+
+    const res = await validateIntent("gonka", intent, balances, { value: 0n });
+    expect(res.errors.fees).toBeUndefined();
   });
 
   it("flags a delegate staking intent with zero amount", async () => {
@@ -198,6 +267,23 @@ describe("logic/transaction/validateIntent", () => {
 
     const res = await validateIntent("cosmos", intent, balances, fees);
     expect(res.errors.dstValAddress?.name).toBe("InvalidAddress");
+  });
+
+  it("flags a redelegate whose source and destination validators are identical", async () => {
+    const intent = {
+      intentType: "staking",
+      type: "redelegate",
+      mode: "redelegate",
+      sender: "cosmos1sender",
+      recipient: "",
+      amount: 1_000_000n,
+      valAddress: "cosmosvaloper1same",
+      dstValAddress: "cosmosvaloper1same",
+      asset: { type: "native" },
+    } as unknown as TransactionIntent;
+
+    const res = await validateIntent("cosmos", intent, balances, fees);
+    expect(res.errors.dstValAddress?.name).toBe("InvalidAddressBecauseDestinationIsAlsoSource");
   });
 
   it("warns when a compoundReward fee exceeds the reward being claimed", async () => {
