@@ -28,20 +28,20 @@ export function CardLoginView({
 }: CardLoginNativeViewProps) {
   return (
     <>
-      {isResolving ? null : (
-        <Box
-          lx={{
-            flexDirection: "column",
-            gap: "s4",
-          }}
-        >
-          <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s16" }}>
-            <Subheader lx={{ flex: 1 }} style={{ minWidth: 0 }}>
-              <SubheaderRow>
-                <SubheaderTitle>{title}</SubheaderTitle>
-              </SubheaderRow>
-              <SubheaderDescription>{description}</SubheaderDescription>
-            </Subheader>
+      <Box
+        lx={{
+          flexDirection: "column",
+          gap: "s4",
+        }}
+      >
+        <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s16" }}>
+          <Subheader lx={{ flex: 1 }} style={{ minWidth: 0 }}>
+            <SubheaderRow>
+              <SubheaderTitle>{title}</SubheaderTitle>
+            </SubheaderRow>
+            {isResolving ? null : <SubheaderDescription>{description}</SubheaderDescription>}
+          </Subheader>
+          {isResolving ? null : (
             <Button
               appearance="base"
               size="md"
@@ -52,9 +52,9 @@ export function CardLoginView({
             >
               {loginLabel}
             </Button>
-          </Box>
+          )}
         </Box>
-      )}
+      </Box>
       <CardAuthError error={error} />
       <CardLoginIntroView {...intro} />
     </>

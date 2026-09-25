@@ -131,10 +131,11 @@ describe("CardLoginView (Native)", () => {
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 
-  it("should show nothing in place of the login block while the session resolves", () => {
+  it("should show only the title of the login block while the session resolves", () => {
     renderCardLoginView({ isResolving: true });
 
-    expect(screen.queryByText("Crypto card")).toBeNull();
+    expect(screen.getByText("Crypto card")).toBeVisible();
+    expect(screen.queryByText("Log in to access your card")).toBeNull();
     expect(screen.queryByLabelText("Login")).toBeNull();
   });
 });

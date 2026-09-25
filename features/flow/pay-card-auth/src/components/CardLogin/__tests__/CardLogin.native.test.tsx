@@ -57,13 +57,13 @@ function buildViewModel(isResolving: boolean): CardLoginViewModel {
 }
 
 describe("CardLogin (Native)", () => {
-  it("should keep the card mounted, and hide the login block, while the session resolves", () => {
+  it("should keep the card and the title, and hide the login action, while the session resolves", () => {
     viewModel = buildViewModel(true);
 
     renderCardLogin();
 
     expect(screen.getByTestId("card-artwork")).toBeVisible();
-    expect(screen.queryByText("Crypto Card")).toBeNull();
+    expect(screen.getByText("Crypto Card")).toBeVisible();
     expect(screen.queryByLabelText("Get card")).toBeNull();
   });
 
