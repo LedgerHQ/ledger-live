@@ -66,7 +66,7 @@ export function CardTopUpAmountView({
                 size="xs"
                 appearance="gray"
                 aria-label={t("payTab.cardTopUp.toggleInputMode")}
-                className="absolute right-0 top-1/2 -translate-y-1/2"
+                className="absolute top-1/2 right-0 -translate-y-1/2"
                 onClick={onToggleInputMode}
                 data-testid="card-top-up-toggle-input-mode"
               />
