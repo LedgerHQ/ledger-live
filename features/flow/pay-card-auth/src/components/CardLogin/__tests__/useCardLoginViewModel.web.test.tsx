@@ -1,5 +1,5 @@
 import React, { type PropsWithChildren } from "react";
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, render, renderHook, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
@@ -267,6 +267,37 @@ describe("useCardLoginViewModel intro", () => {
       store.dispatch(setSignedIn(value)),
     );
     mockPorts.markIntroSeen.mockImplementation(() => store.dispatch(markPayCardLoginIntroSeen()));
+  });
+
+  it("keeps the resolving flag raised when a new login machine replaces the old one", async () => {
+    mockPorts.hasSession.mockImplementation(() => new Promise<boolean>(() => undefined));
+    const store = buildStore();
+    const Providers = withProviders(store);
+
+    function Login() {
+      useCardLoginViewModel({
+        openHostedLogin: mockPorts.openHostedLogin,
+        mobileWallet: "both",
+        oauthConfig,
+      });
+      return null;
+    }
+
+    const { rerender } = render(
+      <Providers>
+        <Login key="first" />
+      </Providers>,
+    );
+    expect(store.getState().payCardAuth.isSessionResolving).toBe(true);
+
+    rerender(
+      <Providers>
+        <Login key="second" />
+      </Providers>,
+    );
+    await act(async () => undefined);
+
+    expect(store.getState().payCardAuth.isSessionResolving).toBe(true);
   });
 
   it("resolves the copy from the app's own translation keys", async () => {

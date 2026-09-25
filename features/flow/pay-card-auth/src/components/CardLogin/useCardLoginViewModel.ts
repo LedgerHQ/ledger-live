@@ -141,14 +141,11 @@ export function useCardLoginViewModel({
 
   useLayoutEffect(() => {
     dispatch(setSessionResolving(isSessionResolving));
-  }, [dispatch, isSessionResolving]);
 
-  useEffect(
-    () => () => {
+    return () => {
       dispatch(setSessionResolving(false));
-    },
-    [dispatch],
-  );
+    };
+  }, [dispatch, isSessionResolving]);
 
   useEffect(() => {
     // `More` ended the session. `ready` raises the flag on entry, so a lowered flag while the
