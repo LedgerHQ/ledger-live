@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useDispatch, useSelector } from "react-redux";
 import { useMachine } from "@xstate/react";
@@ -139,7 +139,7 @@ export function useCardLoginViewModel({
 
   const isSessionResolving = SESSION_RESOLVING_STATES.has(snapshot.value);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(setSessionResolving(isSessionResolving));
   }, [dispatch, isSessionResolving]);
 
