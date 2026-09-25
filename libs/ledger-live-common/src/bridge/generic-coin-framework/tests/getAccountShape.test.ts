@@ -3574,6 +3574,35 @@ describe("genericGetAccountShape", () => {
       });
 
       expect(getBalanceMock.mock.calls[0][2]).toBeUndefined();
+      // Called exactly once per sub-account -- the pre-existing vanished-token check just below,
+      // which is unconditional by design. Not twice: `getAssetFromToken` is not guaranteed
+      // side-effect-free for a family that declares one without declaring `balanceOptions`
+      // (coin-tron does both), and a second, knownAssets-deriving call would be wasted regardless.
+      expect(getAssetFromTokenMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not fail the sync when a resumed family's getAssetFromToken throws deriving knownAssets", async () => {
+      // The same guard `vanishedTokenBalances` already needs (see above): a throwing family
+      // implementation must not fail the whole sync over one sub-account it is merely trying to
+      // describe to the module, on a call whose entire purpose is a caller-side optimization.
+      getAssetFromTokenMock.mockImplementationOnce(() => {
+        throw new Error("boom");
+      });
+
+      await expect(
+        syncWith({
+          blockHeight: 50,
+          syncHash: "sync-hash",
+          operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+          pendingOperations: [],
+          subAccounts: [subAccount("0xaaa"), subAccount("0xbbb")],
+        }),
+      ).resolves.toBeDefined();
+
+      const options = getBalanceMock.mock.calls[0][2];
+      expect(options.knownAssets).toEqual([
+        { type: "erc20", assetReference: "ethereum/erc20/0xbbb" },
+      ]);
     });
   });
 });

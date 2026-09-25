@@ -507,33 +507,46 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // documents its own as volatile). Only the cursor varies from page to page below.
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
 
-    // Assets this account already stores, so the module scans from the watermark instead of the
-    // whole history and still returns a balance for a token last moved below it.
-    //
-    // This list is a filtered view -- the family's `includeAssets` keeps only CAL-resolvable
-    // tokens -- but that filter is hashed into `syncHash`, so the day a token becomes listed the
-    // hash changes, `syncFromScratch` goes true, and the next sync scans from 0 with no
-    // `knownAssets`. Completeness therefore holds by induction within one hash generation.
-    const knownAssets = syncFromScratch
-      ? undefined
-      : ((initialAccount?.subAccounts ?? []) as TokenAccount[])
-          .map(sub => bridgeApi.getAssetFromToken?.(sub.token, address))
-          .filter((asset): asset is AssetInfo => asset !== undefined);
-
     // No options at all unless the family declares some: coin-tron and coin-casper wrap their
     // `getBalance` in `rejectBalanceOptions`, which throws on any truthy value, `{}` included.
     // Declaring `balanceOptions` is what marks a family as accepting the parameter, and evm is
-    // today the only one whose module reads these two fields.
+    // today the only one whose module reads these two fields. Checked before deriving `knownAssets`
+    // below, not after: a family that doesn't declare `balanceOptions` never uses that list, and
+    // `getAssetFromToken` is not guaranteed not to throw on every family that happens to declare
+    // it (coin-tron does, for its own reasons) -- there is no reason to pay that cost or take that
+    // risk for a result that would be discarded regardless.
     //
     // Assigned onto a typed object, never spread into a literal: a spread escapes
     // excess-property checking, so this would compile against a framework without the fields and
     // ship as a silent no-op.
     let balanceOptions: BalanceOptions | undefined = bridgeApi.balanceOptions;
-    if (balanceOptions && knownAssets?.length) {
-      const scoped: BalanceOptions = { ...balanceOptions };
-      scoped.knownAssets = knownAssets;
-      scoped.scanAssetsMinHeight = minHeight;
-      balanceOptions = scoped;
+    if (balanceOptions && !syncFromScratch) {
+      // Assets this account already stores, so the module scans from the watermark instead of the
+      // whole history and still returns a balance for a token last moved below it.
+      //
+      // This list is a filtered view -- the family's `includeAssets` keeps only CAL-resolvable
+      // tokens -- but that filter is hashed into `syncHash`, so the day a token becomes listed the
+      // hash changes, `syncFromScratch` goes true, and the next sync scans from 0 with no
+      // `knownAssets`. Completeness therefore holds by induction within one hash generation.
+      //
+      // Guarded the same way as `vanishedTokenBalances` below: a throwing family implementation
+      // must not fail the whole sync over one sub-account.
+      const knownAssets = ((initialAccount?.subAccounts ?? []) as TokenAccount[])
+        .map(sub => {
+          try {
+            return bridgeApi.getAssetFromToken?.(sub.token, address);
+          } catch {
+            return undefined;
+          }
+        })
+        .filter((asset): asset is AssetInfo => asset !== undefined);
+
+      if (knownAssets.length) {
+        const scoped: BalanceOptions = { ...balanceOptions };
+        scoped.knownAssets = knownAssets;
+        scoped.scanAssetsMinHeight = minHeight;
+        balanceOptions = scoped;
+      }
     }
 
     const balancePromise = coinModuleApi
