@@ -26,6 +26,7 @@ type ReservedDeviceIntentTrackingProperties = {
   transport?: never;
   matchedDevice?: never;
   subError?: never;
+  failureType?: never;
   button?: never;
   refreshSource?: never;
   avoidDuplicates?: never;

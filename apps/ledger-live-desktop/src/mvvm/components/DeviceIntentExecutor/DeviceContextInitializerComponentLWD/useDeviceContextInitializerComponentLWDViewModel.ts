@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { addNewDeviceModel, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
 import { settingsStoreSelector } from "~/renderer/reducers/settings";
 import type { InitializationInput } from "../types";
+import { recordEnsureAppReadyFailure } from "../utils/trackDeviceIntent";
 import type { InitializerDevice } from "./types";
 import { buildInitializerDevice } from "./utils/buildInitializerDevice";
 
@@ -71,6 +72,10 @@ export function useDeviceContextInitializerComponentLWDViewModel({
     }),
     [dispatch],
   );
+
+  useEffect(() => {
+    recordEnsureAppReadyFailure(state, connectionResult.connectedDevice);
+  }, [connectionResult.connectedDevice, state]);
 
   useEffect(() => {
     const { dmk, sessionId } = connectionResult;

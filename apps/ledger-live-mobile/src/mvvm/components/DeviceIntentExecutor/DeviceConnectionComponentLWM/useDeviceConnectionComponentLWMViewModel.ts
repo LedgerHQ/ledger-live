@@ -26,6 +26,7 @@ import { urls } from "~/utils/urls";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import {
+  recordConnectDeviceFailure,
   trackDeviceConnected,
   trackDeviceConnecting,
   trackDevicePrompted,
@@ -76,6 +77,10 @@ export function useDeviceConnectionComponentLWMViewModel({
     prompted: false,
     connecting: false,
   });
+
+  useEffect(() => {
+    recordConnectDeviceFailure(state);
+  }, [state]);
 
   useEffect(() => {
     switch (state.type) {

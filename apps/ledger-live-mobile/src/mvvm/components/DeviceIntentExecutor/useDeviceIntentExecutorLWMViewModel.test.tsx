@@ -12,7 +12,6 @@ import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
-import { PAGE_CONNECT_APP } from "./utils/trackDeviceIntent";
 import { useDeviceIntentExecutorLWMViewModel } from "./useDeviceIntentExecutorLWMViewModel";
 
 jest.mock("~/analytics", () => {
@@ -390,11 +389,16 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
       expect(onUserCancel).toHaveBeenCalledTimes(1);
     });
 
-    it("WHEN the user cancels from a blocking page THEN it fires deviceflow_failed and forwards to the original onUserCancel", () => {
+    it("WHEN the device disconnected before the user cancels THEN it fires deviceflow_failed with the disconnected device", () => {
       // GIVEN
-      setTrackingSource(PAGE_CONNECT_APP.UnsupportedFirmware);
       const onUserCancel = jest.fn();
       const { result } = renderViewModel({ onUserCancel });
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({
+          type: "deviceDisconnected",
+          device: makeConnectionResult({ type: "USB" }).connectedDevice,
+        });
+      });
 
       // WHEN
       act(() => {
@@ -402,10 +406,14 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
       });
 
       // THEN
-      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
-        ...layerABaseProperties,
-        sourceFlow: "swap",
-      });
+      expect(mockedTrack).toHaveBeenCalledWith(
+        "deviceflow_failed",
+        expect.objectContaining({
+          sourceFlow: "swap",
+          failureType: "DeviceDisconnected",
+          transport: "usb",
+        }),
+      );
       expect(onUserCancel).toHaveBeenCalledTimes(1);
     });
   });

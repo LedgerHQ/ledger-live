@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
+import React from "react";
+import { getConnectDeviceSubError, useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
 import {
   BaseConnectionErrorTypes,
   ConnectDeviceUIStateTypes,
@@ -11,10 +11,8 @@ import { InfoState } from "@shared/ui-info-state";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import {
   CONNECT_DEVICE_BUTTON,
-  getTrackingSubError,
   getTrackingTransport,
   PAGE_CONNECT_DEVICE,
-  setIsInTerminalConnectDeviceError,
   trackConnectDeviceButtonClicked,
 } from "../../utils/trackDeviceIntent";
 
@@ -28,11 +26,6 @@ export function ConnectionErrorState({
   const { t } = useTranslation();
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
 
-  useEffect(() => {
-    setIsInTerminalConnectDeviceError(true);
-    return () => setIsInTerminalConnectDeviceError(false);
-  }, []);
-
   if (state.error.type !== BaseConnectionErrorTypes.Unknown) {
     return null;
   }
@@ -43,7 +36,7 @@ export function ConnectionErrorState({
         category={PAGE_CONNECT_DEVICE.ConnectionError}
         modelId={state.device.deviceModelId}
         transport={getTrackingTransport(state.device.transport)}
-        subError={getTrackingSubError(state.error.type)}
+        subError={getConnectDeviceSubError(state.error)}
         refreshSource
       />
       <InfoState

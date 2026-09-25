@@ -39,6 +39,25 @@ export type {
   DeviceIntentTrackingProperties,
   SourceFlow,
 } from "./deviceIntentTracking/DeviceIntentTrackingContext";
+export {
+  DeviceFlowFailureType,
+  getConnectDeviceFailure,
+  getConnectDeviceSubError,
+  getDeviceDisconnectedFailure,
+  getDeviceFlowFailureProperties,
+  getDeviceflowCancelEventName,
+  getEnsureAppReadyFailure,
+  getErrorSubError,
+  getInvalidOperationFailure,
+  setDeviceFlowFailure,
+  takeDeviceFlowFailure,
+} from "./deviceIntentTracking/deviceFlowFailure";
+export type {
+  DeviceFlowDevice,
+  DeviceFlowFailure,
+  DeviceFlowFailureProperties,
+  DeviceFlowTransport,
+} from "./deviceIntentTracking/deviceFlowFailure";
 export { OverrideDeviceIntentExecutorHeader } from "./deviceIntentHeader/OverrideDeviceIntentExecutorHeader";
 export { DeviceIntentExecutorHeaderContext } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
 export type { DeviceIntentExecutorHeaderContextValue } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";

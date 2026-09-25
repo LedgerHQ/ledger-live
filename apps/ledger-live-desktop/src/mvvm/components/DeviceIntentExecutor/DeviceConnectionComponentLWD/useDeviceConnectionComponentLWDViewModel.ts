@@ -16,6 +16,7 @@ import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { addNewDeviceModel } from "~/renderer/actions/settings";
 import { knownDevicesSelector } from "~/renderer/reducers/knownDevices";
 import {
+  recordConnectDeviceFailure,
   trackDeviceConnected,
   trackDeviceConnecting,
   trackDevicePrompted,
@@ -53,6 +54,10 @@ export function useDeviceConnectionComponentLWDViewModel({
     prompted: false,
     connecting: false,
   });
+
+  useEffect(() => {
+    recordConnectDeviceFailure(state);
+  }, [state]);
 
   useEffect(() => {
     switch (state.type) {
