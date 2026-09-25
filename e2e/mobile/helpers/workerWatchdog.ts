@@ -16,10 +16,12 @@ import { Worker } from "node:worker_threads";
  * once it stops beating. jest then attributes the failure to the running spec and
  * Detox's `--retries` re-runs it (see workerWatchdog.thread.cjs).
  *
- * Set E2E_STALL_WATCHDOG=0 to disable it; E2E_STALL_MS tunes the threshold.
+ * Set E2E_STALL_WATCHDOG=0 to disable it, e.g. while paused in a debugger.
  */
 
-const STALL_MS = Number(process.env.E2E_STALL_MS ?? 90_000);
+// Well above the longest a healthy worker blocks its loop (GC, loading a spec's
+// modules), well below the step timeout: a frozen spec costs ~1.5 min, not the shard.
+const STALL_MS = 90_000;
 const BEAT_MS = 1_000;
 const THREAD_NAME = "main";
 
