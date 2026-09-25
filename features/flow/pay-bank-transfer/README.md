@@ -19,7 +19,6 @@ import { BankTransferIntro, useBankTransferIntroAdapter } from "@features/flow-p
 const intro = useBankTransferIntroAdapter({
   heroImage: require("./bank-transfer-intro-hero.webp"),
   onBankTransfer: handoff => navigateToPartner(handoff),
-  onTrackEvent: track,
 });
 
 // Deposit options `onSelect("bankTransfer")` → intro.open()
@@ -27,7 +26,7 @@ const intro = useBankTransferIntroAdapter({
 ```
 
 Copy is resolved inside this package via `@shared/i18n` (`payTab.bankTransferIntro.*` in each
-app's default namespace). Hosts inject data, analytics, and partner handoff only.
+app's default namespace). Hosts inject data and partner handoff only.
 
 ## Host intents
 
@@ -48,16 +47,16 @@ Child screens under Figma `6784:63692` are TBD.
 
 ## Tracking
 
-Injected `onTrackEvent` only (Pay Tracking Plan). Deposit-row
+Tracked in-package through `@features/platform-pay-analytics` (Pay Tracking Plan). Deposit-row
 `button_clicked { button: "bank transfer", buttonLocation: "deposit", page }` stays in
 `@features/flow-pay-deposit`.
 
 | Event | Payload |
 | --- | --- |
-| Open intro | `Page cash to stable` `{ flow: "C2S" }` |
-| Create an account | `button_clicked` `{ button: "create an account", flow: "C2S", page: "cash to stable" }` |
-| Log in to Noah | `button_clicked` `{ button: "log in to noah", flow: "C2S", page: "cash to stable" }` |
-| Close | `button_clicked` `{ button: "close", flow: "C2S", page: "cash to stable" }` |
+| Open intro | `Page Feature Intro Cash to stable` `{ flow: "Cash to stable" }` |
+| Create an account | `button_clicked` `{ button: "create an account", flow: "Cash to stable", page: "Feature Intro Cash to stable" }` |
+| Log in to Noah | `button_clicked` `{ button: "log in to noah", flow: "Cash to stable", page: "Feature Intro Cash to stable" }` |
+| Close | `button_clicked` `{ button: "close", flow: "Cash to stable", page: "Feature Intro Cash to stable" }` |
 
 ## Platform resolution
 
