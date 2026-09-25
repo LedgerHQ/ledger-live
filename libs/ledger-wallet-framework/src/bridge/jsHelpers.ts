@@ -40,6 +40,7 @@ import {
 import { shouldRetainPendingOperation } from "../account/pending";
 import { shouldShowNewAccount } from "../account/support";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
+import type { AddressLookup } from "../api/types";
 import type { GetAddressResult } from "../derivation";
 import type { CryptoCurrency } from "../types";
 import type {
@@ -56,22 +57,17 @@ import type {
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 
-// Customize the way to iterate on the keychain derivation
-type IterateResult = ({
-  index,
-  derivationsCache,
-  derivationScheme,
-  derivationMode,
-  currency,
-  deviceId,
-}: {
+type IterateParams = {
   index: number;
   derivationsCache: Record<string, GetAddressResult>;
   derivationScheme: string;
   derivationMode: DerivationMode;
   currency: CryptoCurrency;
   deviceId: string;
-}) => Promise<GetAddressResult | null>;
+};
+
+// Customize the way to iterate on the keychain derivation
+type IterateResult = (params: IterateParams) => Promise<GetAddressResult | null>;
 
 export type IterateResultBuilder = ({
   result, // derivation on the "root" of the derivation
@@ -362,58 +358,69 @@ export const makeSync =
       };
     });
 
-const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
-  Promise.resolve(
-    async ({
-      index,
-      derivationsCache,
-      derivationScheme,
-      derivationMode,
+const deriveAtIndex = async (
+  getAddressFn: GetAddressFn,
+  { index, derivationsCache, derivationScheme, derivationMode, currency, deviceId }: IterateParams,
+): Promise<GetAddressResult> => {
+  const freshAddressPath = runDerivationScheme(derivationScheme, currency, {
+    account: index,
+  });
+  const cacheKey = `${freshAddressPath}:${derivationMode}`;
+  let res = derivationsCache[cacheKey];
+  if (!res) {
+    res = await getAddressWrapper(getAddressFn)(deviceId, {
       currency,
-      deviceId,
-    }: {
-      index: number | string;
-      derivationsCache: Record<string, GetAddressResult>;
-      derivationScheme: string;
-      derivationMode: DerivationMode;
-      currency: CryptoCurrency;
-      deviceId: string;
-    }): Promise<GetAddressResult | null> => {
-      const freshAddressPath = runDerivationScheme(derivationScheme, currency, {
-        account: index,
-      });
-      const cacheKey = `${freshAddressPath}:${derivationMode}`;
-      let res = derivationsCache[cacheKey];
-      if (!res) {
-        res = await getAddressWrapper(getAddressFn)(deviceId, {
-          currency,
-          path: freshAddressPath,
-          derivationMode,
-        });
-        derivationsCache[cacheKey] = res;
+      path: freshAddressPath,
+      derivationMode,
+    });
+    derivationsCache[cacheKey] = res;
+  }
+  return res;
+};
+
+const defaultIterateResultBuilder =
+  (getAddressFn: GetAddressFn): IterateResultBuilder =>
+  async () => {
+    return params => deriveAtIndex(getAddressFn, params);
+  };
+
+const lookupIterateResultBuilder =
+  (getAddressFn: GetAddressFn, addressLookup: AddressLookup): IterateResultBuilder =>
+  async () => {
+    let keyIndex = 0;
+    let previousPath: string | undefined;
+    let queue: GetAddressResult[] = [];
+
+    return async params => {
+      if (queue.length === 0) {
+        const derived = await deriveAtIndex(getAddressFn, { ...params, index: keyIndex++ });
+        if (derived.path === previousPath) return null;
+
+        previousPath = derived.path;
+        const addresses = await addressLookup.getAddresses(derived);
+        queue = addresses.map(address => ({ ...derived, address }));
       }
-      return res as GetAddressResult;
-    },
-  );
+
+      return queue.shift() ?? null;
+    };
+  };
 
 export const makeScanAccounts =
   <A extends Account = Account>({
     getAccountShape,
     buildIterateResult,
+    getAddressLookup,
     getAddressFn,
     postSync = (_, a) => a,
   }: {
     getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     buildIterateResult?: IterateResultBuilder;
+    getAddressLookup?: (currency: CryptoCurrency) => Promise<AddressLookup | undefined>;
     getAddressFn: GetAddressFn;
     postSync?: (initial: A, synced: A) => A;
   }): CurrencyBridge["scanAccounts"] =>
   ({ currency, deviceId, syncConfig, scheme }): Observable<ScanAccountEvent> =>
     new Observable((outerObs: Observer<{ type: "discovered"; account: Account }>) => {
-      if (buildIterateResult === undefined) {
-        buildIterateResult = defaultIterateResultBuilder(getAddressFn);
-      }
-
       let finished = false;
       const teardown$ = new Subject<void>();
 
@@ -522,6 +529,13 @@ export const makeScanAccounts =
 
       async function main() {
         try {
+          const addressLookup = await getAddressLookup?.(currency);
+          const iterateResultBuilder =
+            buildIterateResult ??
+            (addressLookup
+              ? lookupIterateResultBuilder(getAddressFn, addressLookup)
+              : defaultIterateResultBuilder(getAddressFn));
+
           let derivationModes: DerivationMode[] = [];
           if (scheme === null || scheme === undefined) {
             derivationModes = getDerivationModesForCurrency(currency);
@@ -576,7 +590,7 @@ export const makeScanAccounts =
               `start scanning account process. MandatoryEmptyAccountSkip ${mandatoryEmptyAccountSkip} / StartsAt: ${startsAt} - StopAt: ${stopAt}`,
             );
 
-            const iterateResult = await buildIterateResult!({
+            const iterateResult = await iterateResultBuilder({
               result,
               derivationMode,
               derivationScheme,
@@ -663,8 +677,10 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
   getAddressFn: GetAddressFn,
   {
     injectGetAddressParams,
+    getAddressLookup,
   }: {
     injectGetAddressParams?: (account: A) => any;
+    getAddressLookup?: (currency: CryptoCurrency) => Promise<AddressLookup | undefined>;
   } = {},
 ) {
   return (
@@ -688,8 +704,18 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
       ...(injectGetAddressParams && injectGetAddressParams(account)),
     };
     return from(
-      getAddressFn(deviceId, arg).then(r => {
+      getAddressFn(deviceId, arg).then(async r => {
         const accountAddress = account.freshAddress;
+        const addressLookup = await getAddressLookup?.(account.currency);
+
+        if (addressLookup) {
+          if (verify && !addressLookup.keyControlsAccount(r.publicKey, account)) {
+            throw new WrongDeviceForAccount();
+          }
+
+          // The device cannot derive this address, so `r.address` is meaningless.
+          return { ...r, address: accountAddress };
+        }
 
         if (verify && r.address !== accountAddress) {
           throw new WrongDeviceForAccount();
