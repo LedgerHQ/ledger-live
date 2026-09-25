@@ -1,3 +1,4 @@
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { CloudSyncSDK, type UpdateEvent } from "@shared/cloud-sync";

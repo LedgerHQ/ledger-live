@@ -2,6 +2,8 @@ import { parseAnyAccountId, safeParseAnyAccountId } from "@domain/entity-account
 import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Observable, concat, defer, find, from, ignoreElements, mergeMap, tap } from "rxjs";
 import { Button } from "@ledgerhq/lumen-ui-react";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useTrustchainSDK } from "../context";
 import { CloudSyncSDK } from "@shared/cloud-sync";

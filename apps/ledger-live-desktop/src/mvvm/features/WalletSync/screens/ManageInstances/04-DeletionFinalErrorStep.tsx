@@ -2,6 +2,7 @@ import React from "react";
 import { Error } from "../../components/Error";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/react-ui";
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 
 export type FinalStepProps = {

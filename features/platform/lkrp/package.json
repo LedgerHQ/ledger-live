@@ -1,0 +1,37 @@
+{
+  "name": "@features/platform-lkrp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Wallet platform composition for the injectable LKRP SDK",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src",
+    "lint": "oxlint -c ../../../libs/oxc-live-libs/.oxlintrc.json ./src",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/lkrp"
+  },
+  "dependencies": {
+    "@shared/lkrp": "workspace:*"
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

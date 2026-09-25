@@ -1,5 +1,6 @@
 import { useQueries, UseQueryResult } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
+// LKRP_MIGRATION: Trustchain HTTP → @shared/lkrp createTrustchainHttpBackend; JWT/OIDC stays LedgerAuth.
 import getTrustchainApi, {
   StatusAPIResponse as TrustchainStatus,
 } from "@ledgerhq/ledger-key-ring-protocol/api";

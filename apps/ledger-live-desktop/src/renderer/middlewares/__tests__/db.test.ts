@@ -27,6 +27,7 @@ jest.mock("~/renderer/reducers/wallet", () => ({
   exportWalletState: jest.fn(s => s),
 }));
 
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
   trustchainStoreActionTypePrefix: "TRUSTCHAIN_STORE_",
   trustchainStoreSelector: jest.fn(state => state.trustchain),

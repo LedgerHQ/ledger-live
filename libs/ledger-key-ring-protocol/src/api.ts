@@ -85,9 +85,16 @@ export type PutCommandsRequest = {
 const getApi = (apiBaseURL: string) => {
   /**
    * Authentication flow:
+   *
+   * LKRP_MIGRATION: JWT/OIDC challenge endpoints stay in LedgerAuth.
+   * Trustchain resource endpoints (`/v1/trustchain`, `/v1/seed`) move to
+   * `@shared/lkrp` `createTrustchainHttpBackend` (then public ts-libs), with authorization injected.
    */
 
-  async function getAuthenticationChallenge(): Promise<{ json: Challenge; tlv: string }> {
+  async function getAuthenticationChallenge(): Promise<{
+    json: Challenge;
+    tlv: string;
+  }> {
     const { data } = await network<{ json: Challenge; tlv: string }>({
       url: `${apiBaseURL}/v1/challenge`,
       method: "GET",

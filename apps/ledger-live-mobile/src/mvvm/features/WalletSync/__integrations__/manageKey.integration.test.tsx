@@ -2,6 +2,7 @@ import React from "react";
 import { screen } from "@testing-library/react-native";
 import { render, withFlagOverrides } from "@tests/test-renderer";
 import { WalletSyncSettingsNavigator } from "./shared";
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 
 jest.mock("../hooks/useDestroyTrustchain", () => ({

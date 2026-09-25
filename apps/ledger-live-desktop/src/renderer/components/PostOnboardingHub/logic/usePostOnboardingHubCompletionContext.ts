@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature } from "@features/platform-feature-flags";
 import type { Account } from "@ledgerhq/types-live";

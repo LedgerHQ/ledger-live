@@ -13,6 +13,7 @@ import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-countervalues/ty
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsStoreSelector } from "./reducers/settings";
 import logger from "./logger";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { marketStoreSelector } from "./reducers/market";
 import { marketBannerStoreSelector } from "./reducers/marketBanner";

@@ -17,6 +17,7 @@ import type { WalletState } from "./wallet";
 import { authEnvironmentReducer, type AuthEnvironmentState } from "@shared/auth";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@shared/env";
 import countervalues, { CountervaluesState } from "./countervalues";

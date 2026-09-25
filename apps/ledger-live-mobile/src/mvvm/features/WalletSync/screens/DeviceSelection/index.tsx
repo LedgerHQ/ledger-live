@@ -15,6 +15,8 @@ import {
 import { useAppDeviceAction, useSelectDevice } from "~/hooks/deviceActions";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
+// LKRP_MIGRATION: TRUSTCHAIN_APP_NAME → @features/platform-lkrp constants until the HW adapter owns it.
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";

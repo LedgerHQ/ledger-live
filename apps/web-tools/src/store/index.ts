@@ -5,6 +5,7 @@ import { sleepingListener } from "./sleepingListener";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { calApiExtra } from "@shared/api-services";
 import { getEnv } from "@shared/env";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import {
   trustchainHandlers,
   getInitialStore,

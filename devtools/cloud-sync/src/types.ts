@@ -1,4 +1,5 @@
 // Trustchain + MemberCredentials come from @shared/cloud-sync's own local
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
 // structural copies (it already avoids pulling in @ledgerhq/ledger-key-ring-protocol).
 import type { MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
 

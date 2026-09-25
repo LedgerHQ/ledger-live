@@ -1,3 +1,6 @@
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
+// LKRP_MIGRATION: LkrpIdentityProvider → @features/platform-lkrp createLkrpIdentityProvider.
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { AuthSDK } from "@ledgerhq/auth";
 import { configureStore } from "@reduxjs/toolkit";

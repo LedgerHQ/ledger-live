@@ -35,6 +35,7 @@ const testPathIgnorePatterns = [
   "src/.*/shared\\.(ts|tsx)$",
 ];
 
+// LKRP_MIGRATION: replace this legacy LKRP import with the new DDD/ts-libs split. See shared/lkrp/README.md.
 const moduleNameMapper = {
   ".*\\.lottie$": "<rootDir>/fileMock.js",
   "^@ledgerhq/ledger-key-ring-protocol/__mocks__/(.*)$":
