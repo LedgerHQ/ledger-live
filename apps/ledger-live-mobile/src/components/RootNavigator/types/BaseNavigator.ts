@@ -18,6 +18,7 @@ import type {
 import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
 import type { DecodedURISchemePayment } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
 import type { PerpsTransactionSignedParams } from "LLM/features/Perps/types";
+import type { CardTopUpParams } from "LLM/features/PayCardTopUp/types";
 import type { AssetDetailNavigatorParamsList } from "LLM/features/AssetDetail/types";
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
@@ -376,6 +377,7 @@ export type BaseNavigatorStackParamList = {
   };
   [ScreenName.PerpsDeposit]: PerpsDepositUiParams;
   [ScreenName.PerpsTransactionSigned]: PerpsTransactionSignedParams;
+  [ScreenName.PayCardTopUp]: CardTopUpParams;
   [ScreenName.DeeplinkInstallAppDeviceSelection]: {
     appKey: string;
   };

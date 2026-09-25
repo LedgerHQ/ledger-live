@@ -70,6 +70,7 @@ import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConne
 import PerpsSign from "LLM/features/Perps/screens/PerpsSign/PerpsSignScreen";
 import PerpsDeposit from "LLM/features/Perps/screens/PerpsDeposit/PerpsDepositScreen";
 import PerpsTransactionSigned from "LLM/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedScreen";
+import PayCardTopUp from "LLM/features/PayCardTopUp/screens/CardTopUp/CardTopUpScreen";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
@@ -594,6 +595,15 @@ export default function BaseNavigator() {
           component={PerpsTransactionSigned}
           options={{
             headerShown: false,
+            contentStyle: { backgroundColor: lumenBaseColor },
+          }}
+        />
+        <Stack.Screen
+          name={ScreenName.PayCardTopUp}
+          component={PayCardTopUp}
+          options={{
+            title: "",
+            headerStyle: { backgroundColor: lumenBaseColor },
             contentStyle: { backgroundColor: lumenBaseColor },
           }}
         />

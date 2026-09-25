@@ -10870,6 +10870,20 @@
         "title": "Total cashback · {{ratePercent}}% in {{ticker}}"
       }
     },
+    "cardTopUp": {
+      "title": "Top up {{asset}}",
+      "source": "{{account}} · {{balance}}",
+      "toggleInputMode": "Switch between fiat and crypto amount",
+      "max": "Max",
+      "insufficientBalance": "This amount exceeds your available balance",
+      "review": "Review",
+      "keypadDelete": "Delete last digit",
+      "disclaimer": "Topping up sends your funds to Baanx and out of your Ledger Wallet. This transaction is subject to Baanx's <termsLink>Terms & Conditions</termsLink> and <privacyLink>Privacy Policy</privacyLink>.",
+      "deviceTitle": "Confirm card top up",
+      "successTitle": "Top up submitted",
+      "successDescription": "Your transaction was broadcast and will appear after confirmation.",
+      "done": "Done"
+    },
     "cardTransactions": {
       "title": "Transactions",
       "categories": {

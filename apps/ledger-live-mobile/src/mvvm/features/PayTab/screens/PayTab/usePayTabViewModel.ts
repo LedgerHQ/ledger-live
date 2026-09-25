@@ -35,6 +35,8 @@ import { usePayCardAssets } from "../../hooks/usePayCardAssets";
 import { useCountervalueFormatter } from "../../hooks/useCountervalueFormatter";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import { navigateToCardHistory } from "LLM/features/OperationsHistory/utils/navigateToCardHistory";
+import { useCardTopUpEntryPoint } from "LLM/features/PayCardTopUp/hooks/useCardTopUpEntryPoint";
+import { isCardTopUpSupported } from "LLM/features/PayCardTopUp/utils/isCardTopUpSupported";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { useAppProtectionPrompt } from "LLM/features/AppLock/AppProtectionPrompt";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
@@ -204,17 +206,32 @@ export function usePayTabViewModel() {
     [navigation],
   );
 
+  const onTopUpAsset = useCardTopUpEntryPoint();
   const payCardAssets = usePayCardAssets();
   const cardAssets: CardAssetsProps = useMemo(
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openTopUp(asset.currency),
+      onTopUp: asset => {
+        if (!isLegacyTopUp && isCardTopUpSupported(asset)) {
+          onTopUpAsset(asset);
+          return;
+        }
+        void openTopUp(asset.currency);
+      },
       onWithdraw: asset =>
         void openHosted(buildWithdrawalPath, "the hosted asset page did not open", asset.currency),
       onAddAsset,
     }),
-    [payCardAssets, onShowAssetHistory, openHosted, openTopUp, onAddAsset],
+    [
+      payCardAssets,
+      onShowAssetHistory,
+      isLegacyTopUp,
+      onTopUpAsset,
+      openHosted,
+      openTopUp,
+      onAddAsset,
+    ],
   );
 
   const formatCountervalue = useCountervalueFormatter();
