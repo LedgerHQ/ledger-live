@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
+import { StyleProvider } from "@features/platform-style";
 import { CardLogin } from "../index.web";
 import type { CardLoginProps, CardLoginViewModel } from "../types";
 
@@ -7,10 +8,6 @@ let viewModel: CardLoginViewModel = null;
 
 jest.mock("../useCardLoginViewModel", () => ({
   useCardLoginViewModel: () => viewModel,
-}));
-
-jest.mock("../CardLoginView", () => ({
-  CardLoginView: () => <div data-testid="card-login-view" />,
 }));
 
 const oauthConfig: CardLoginProps["oauthConfig"] = {
@@ -21,9 +18,11 @@ const oauthConfig: CardLoginProps["oauthConfig"] = {
 
 function renderCardLogin() {
   return render(
-    <CardLogin oauthConfig={oauthConfig} callback={null}>
-      <div data-testid="card-artwork" />
-    </CardLogin>,
+    <StyleProvider colorScheme="dark">
+      <CardLogin oauthConfig={oauthConfig} callback={null}>
+        <div data-testid="card-artwork" />
+      </CardLogin>
+    </StyleProvider>,
   );
 }
 
@@ -70,12 +69,22 @@ describe("CardLogin (Web)", () => {
     expect(screen.queryByTestId("card-artwork-skeleton")).not.toBeInTheDocument();
   });
 
+  it("should show the login block once the session is resolved", () => {
+    viewModel = buildViewModel(false);
+
+    renderCardLogin();
+
+    expect(screen.getByRole("heading", { name: "Get your crypto card" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Get card" })).toBeVisible();
+  });
+
   it("should show the artwork when the holder is signed in already", () => {
     viewModel = null;
 
     renderCardLogin();
 
     expect(screen.getByTestId("card-artwork")).toBeVisible();
-    expect(screen.queryByTestId("card-login-view")).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Get your crypto card" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Get card" })).toBeNull();
   });
 });

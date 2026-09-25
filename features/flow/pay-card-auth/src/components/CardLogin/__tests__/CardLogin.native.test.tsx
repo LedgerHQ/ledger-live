@@ -14,11 +14,6 @@ jest.mock("../useCardLoginViewModel", () => ({
   useCardLoginViewModel: () => viewModel,
 }));
 
-jest.mock("../CardLoginView", () => {
-  const { View: MockView } = jest.requireActual("react-native");
-  return { CardLoginView: () => <MockView testID="card-login-view" /> };
-});
-
 const oauthConfig: CardLoginProps["oauthConfig"] = {
   apiUrl: "https://card.example",
   clientId: "client",
@@ -63,7 +58,7 @@ describe("CardLogin (Native)", () => {
 
     renderCardLogin();
 
-    expect(screen.getByTestId("card-artwork-skeleton")).toBeTruthy();
+    expect(screen.getByTestId("card-artwork-skeleton")).toBeVisible();
     expect(screen.queryByTestId("card-artwork")).toBeNull();
   });
 
@@ -72,8 +67,17 @@ describe("CardLogin (Native)", () => {
 
     renderCardLogin();
 
-    expect(screen.getByTestId("card-artwork")).toBeTruthy();
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.queryByTestId("card-artwork-skeleton")).toBeNull();
+  });
+
+  it("should show the login block once the session is resolved", () => {
+    viewModel = buildViewModel(false);
+
+    renderCardLogin();
+
+    expect(screen.getByText("Crypto Card")).toBeVisible();
+    expect(screen.getByLabelText("Get card")).toBeVisible();
   });
 
   it("should show the artwork when the holder is signed in already", () => {
@@ -81,7 +85,8 @@ describe("CardLogin (Native)", () => {
 
     renderCardLogin();
 
-    expect(screen.getByTestId("card-artwork")).toBeTruthy();
-    expect(screen.queryByTestId("card-login-view")).toBeNull();
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
+    expect(screen.queryByText("Crypto Card")).toBeNull();
+    expect(screen.queryByLabelText("Get card")).toBeNull();
   });
 });
