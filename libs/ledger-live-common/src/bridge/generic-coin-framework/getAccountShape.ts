@@ -1,5 +1,6 @@
 import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { getDerivationScheme } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
@@ -785,6 +786,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       stakingShape = { stakingResources: enrichedStakingResources };
     }
 
+    // A shared xpub makes `sameAccountIdentity` merge the accounts.
+    const isXpubShared =
+      bridgeApi.addressLookup !== undefined &&
+      !getDerivationScheme({ derivationMode, currency }).includes("<account>");
+
     const res: Partial<Account> & {
       stakingResources?: StakingResources;
       stakingPositions?: StakingPositionOnAccount[];
@@ -793,7 +799,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       id: accountId,
       // `||` (not `??`): a device getAddress may return an empty-string publicKey (e.g. when the
       // chain code is not requested); treat "" as absent and fall back rather than storing a blank xpub.
-      xpub: rest?.publicKey || initialAccount?.xpub || address,
+      xpub: isXpubShared ? undefined : rest?.publicKey || initialAccount?.xpub || address,
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),

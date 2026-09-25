@@ -1482,6 +1482,49 @@ describe("genericGetAccountShape", () => {
 
       expect(result.xpub).toBe("tz1address");
     });
+
+    describe("with an address lookup", () => {
+      const withLookup = () => ({
+        ...defaultBridgeApi(),
+        addressLookup: { getAddresses: jest.fn(), keyControlsAccount: jest.fn() },
+      });
+
+      test("stores no xpub when every account shares the seed key", async () => {
+        getBridgeApiMock.mockImplementationOnce(withLookup);
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: "0.0.1",
+            initialAccount: { xpub: "shared", operations: [], pendingOperations: [] },
+            currency: { id: "hedera", name: "Hedera" },
+            derivationMode: "hederaBip44",
+            rest: { publicKey: "shared" },
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(result.xpub).toBeUndefined();
+      });
+
+      test("stores the xpub when the derivation path is per account", async () => {
+        getBridgeApiMock.mockImplementationOnce(withLookup);
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: "tz1address",
+            initialAccount: undefined,
+            currency,
+            derivationMode: "",
+            rest: { publicKey: "edpkPUBLICKEY" },
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(result.xpub).toBe("edpkPUBLICKEY");
+      });
+    });
   });
 
   describe("evm", () => {
