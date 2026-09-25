@@ -1,6 +1,7 @@
 import {
   appLockInitialState,
   appLockSlice,
+  decideLaunchLock,
   hydrateAppLock,
   lockApp,
   resetAppLock,
@@ -20,7 +21,15 @@ describe("appLockSlice", () => {
       biometricsEnabled: false,
       isLocked: false,
       needsLongerPassword: false,
+      hasDecidedLaunchLock: false,
     });
+  });
+
+  it("remembers that the launch lock was decided, whatever the protection", () => {
+    const decided = reduce(appLockInitialState, decideLaunchLock());
+
+    expect(decided.hasDecidedLaunchLock).toBe(true);
+    expect(decided.isLocked).toBe(false);
   });
 
   it("sets each protection independently", () => {
@@ -31,6 +40,7 @@ describe("appLockSlice", () => {
       biometricsEnabled: false,
       isLocked: false,
       needsLongerPassword: false,
+      hasDecidedLaunchLock: false,
     });
 
     const withBoth = reduce(withPassword, setBiometricsEnabled(true));
@@ -43,6 +53,7 @@ describe("appLockSlice", () => {
       biometricsEnabled: true,
       isLocked: false,
       needsLongerPassword: false,
+      hasDecidedLaunchLock: false,
     });
   });
 
@@ -56,6 +67,7 @@ describe("appLockSlice", () => {
       biometricsEnabled: false,
       isLocked: true,
       needsLongerPassword: false,
+      hasDecidedLaunchLock: false,
     });
 
     expect(reduce(locked, unlockApp()).isLocked).toBe(false);

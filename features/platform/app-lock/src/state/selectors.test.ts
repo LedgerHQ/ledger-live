@@ -3,6 +3,7 @@ import {
   selectAppLock,
   selectAuthenticationType,
   selectBiometricsEnabled,
+  selectHasDecidedLaunchLock,
   selectHasPassword,
   selectIsAppLockConfigured,
   selectIsLocked,
@@ -18,6 +19,7 @@ function state(overrides: Partial<AppLockState> = {}): { appLock: AppLockState }
       biometricsEnabled: false,
       isLocked: false,
       needsLongerPassword: false,
+      hasDecidedLaunchLock: false,
       ...overrides,
     },
   };
@@ -58,6 +60,8 @@ describe("selectors", () => {
     expect(selectIsLocked(root)).toBe(true);
     expect(selectNeedsLongerPassword(root)).toBe(false);
     expect(selectNeedsLongerPassword(state({ needsLongerPassword: true }))).toBe(true);
+    expect(selectHasDecidedLaunchLock(root)).toBe(false);
+    expect(selectHasDecidedLaunchLock(state({ hasDecidedLaunchLock: true }))).toBe(true);
   });
 
   it("derive the authentication type and configured-ness", () => {

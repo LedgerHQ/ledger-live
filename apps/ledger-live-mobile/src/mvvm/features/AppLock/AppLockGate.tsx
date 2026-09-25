@@ -1,11 +1,13 @@
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 import {
+  decideLaunchLock,
   isAppLockConfigured,
   lockApp,
   selectAppLock,
+  selectHasDecidedLaunchLock,
   selectIsLocked,
 } from "@features/platform-app-lock";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { isAppInBackground, onAppBackground } from "./adapters/appVisibility";
@@ -26,7 +28,7 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
   const isLocked = useSelector(selectIsLocked);
   const { dismissAll } = useBottomSheetModal();
   const longerPassword = useLongerPasswordGateViewModel();
-  const [hasDecidedInitialLock, setHasDecidedInitialLock] = useState(false);
+  const hasDecidedLaunchLock = useSelector(selectHasDecidedLaunchLock);
 
   const lockIfConfigured = useCallback(() => {
     if (isRevamped && isAppLockConfigured(protection)) {
@@ -35,13 +37,13 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
   }, [dispatch, isRevamped, protection]);
 
   useEffect(() => {
-    if (scheme === undefined || hasDecidedInitialLock) {
+    if (scheme === undefined || hasDecidedLaunchLock) {
       return;
     }
 
     lockIfConfigured();
-    setHasDecidedInitialLock(true);
-  }, [hasDecidedInitialLock, lockIfConfigured, scheme]);
+    dispatch(decideLaunchLock());
+  }, [dispatch, hasDecidedLaunchLock, lockIfConfigured, scheme]);
 
   // A sheet the app left open sits in a host above this gate, so it would show through the lock.
   useEffect(() => {
@@ -60,7 +62,7 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
   }, [isLocked, lockIfConfigured]);
 
   // The initial state is unlocked, so anything rendered before the decision is reachable.
-  if (scheme === undefined || !hasDecidedInitialLock) {
+  if (scheme === undefined || !hasDecidedLaunchLock) {
     return <View style={styles.cover} />;
   }
 

@@ -40,6 +40,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { ScreenName } from "~/const";
 import type { SwapSubScreensNavigatorParamList } from "~/components/RootNavigator/types/SwapSubScreensNavigator";
 import { useAutoOpenSwapDrawer } from "./useAutoOpenSwapDrawer";
+import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
 // const SList : SectionList<MappedSwapOperation, SwapHistorySection> = SectionList;
 const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent(
@@ -166,7 +167,7 @@ const History = () => {
           url: `data:text/csv;base64,${base64}`,
         };
 
-        await Share.open(options);
+        await leaveAppFor(() => Share.open(options));
       } catch (err) {
         // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
         if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {

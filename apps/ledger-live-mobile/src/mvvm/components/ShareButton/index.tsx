@@ -4,6 +4,7 @@ import styled from "styled-components/native";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { Platform, Share } from "react-native";
+import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
 export default memo(ShareButton);
 
@@ -15,9 +16,11 @@ type Props = Omit<ButtonProps, "Icon" | "isNewIcon" | "onPress"> & {
 function ShareButton({ value, ...props }: Props) {
   const transition = useSharedValue(0);
   const handleShare = useCallback(async () => {
-    await Share.share({
-      message: value,
-    });
+    await leaveAppFor(() =>
+      Share.share({
+        message: value,
+      }),
+    );
 
     transition.value = withTiming(1, { duration: 200 });
     setTimeout(() => (transition.value = withTiming(0, { duration: 200 })), 1200);
