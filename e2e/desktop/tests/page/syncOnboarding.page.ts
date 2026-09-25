@@ -35,6 +35,13 @@ export class SyncOnboardingPage extends AppPage {
   );
   private readonly maybeLaterButton = this.page.getByTestId("onboarding-fund-new-seed-skip");
   private readonly recoveryKeyStep = this.page.getByTestId("backup-charon-step");
+  private readonly restoreChoiceStep = this.page.getByTestId("choice-restore-recover-step");
+  private readonly restoreChoiceSources = [
+    "choice-restore-recover-srp",
+    "choice-restore-recover-charon",
+    "choice-restore-recover-subscription",
+  ].map(testId => this.page.getByTestId(testId));
+  private readonly restoreFromRecoveryKeyStep = this.page.getByTestId("restore-charon-step");
   private readonly seedStepCompleted = this.page.getByText("Secret Recovery Phrase confirmed");
   private readonly installAppsButton = this.page.getByTestId("install-cta-button");
   private readonly restoreAppsPanel = this.page.getByTestId("install-set-of-apps-restore-body");
@@ -96,6 +103,17 @@ export class SyncOnboardingPage extends AppPage {
     ]);
 
     expect(winner, "a seed step was shown for an already-initialised device").toBe("advanced");
+  }
+
+  @step("Expect the restore sources to be offered")
+  async expectRestoreChoices() {
+    await expect(this.restoreChoiceStep).toBeVisible();
+    for (const source of this.restoreChoiceSources) await expect(source).toBeVisible();
+  }
+
+  @step("Expect the restore to run from the Ledger Recovery Key")
+  async expectRestoreFromRecoveryKey() {
+    await expect(this.restoreFromRecoveryKeyStep).toBeVisible();
   }
 
   @step("Expect the Ledger Recovery Key backup screen")

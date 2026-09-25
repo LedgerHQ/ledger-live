@@ -11,6 +11,8 @@ export const ONBOARDING_STEP = {
   newDeviceConfirming: 0x08,
   restoreSeed: 0x09,
   ready: 0x0b,
+  setupChoiceRestore: 0x0e,
+  restoreCharon: 0x10,
 } as const;
 
 /** Ledger Recovery Key backup states. */

@@ -180,3 +180,96 @@ test.describe(`Back up a restored seed with a Ledger Recovery Key`, () => {
     },
   );
 });
+
+test.describe(`Restore a seed from a Ledger Recovery Key`, () => {
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    mockDeviceParams: { onboarded: false },
+  });
+
+  test(
+    `Unseeded device is restored from a Recovery Key and onboarding completes`,
+    {
+      tag: ["@onboarding", ...deviceWithScreenTags()],
+      annotation: { type: "TMS", description: "B2CQA-3380" },
+    },
+    async ({ app, mockDevice, mockServer }) => {
+      await app.onboarding.waitForLaunch();
+      await app.onboarding.getStarted();
+      await app.portfolio.startConnectDeviceFlow();
+      await app.onboarding.selectDevice(mockDevice.modelId);
+      await app.syncOnboarding.expectCompanionReached(mockDevice.modelId);
+
+      await app.syncOnboarding.runGenuineCheck();
+      await app.syncOnboarding.expectDeviceGenuine();
+      await app.syncOnboarding.expectOsUpToDate();
+      await app.syncOnboarding.continueToSetup();
+
+      await mockServer.pinOnboardingStep(
+        ONBOARDING_STEP.setupChoiceRestore,
+        false,
+        CHARON_STATUS.ready,
+      );
+      await app.syncOnboarding.expectRestoreChoices();
+
+      await mockServer.pinOnboardingStep(ONBOARDING_STEP.restoreCharon, false, CHARON_STATUS.ready);
+      await app.syncOnboarding.expectRestoreFromRecoveryKey();
+
+      await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.ready);
+
+      await app.syncOnboarding.skipWalletSync();
+      await app.syncOnboarding.expectSetupComplete();
+      await app.syncOnboarding.expectAppInstallOffered();
+      await app.syncOnboarding.declineAppInstall();
+      await app.syncOnboarding.expectCompletionScreen(mockDevice.modelId);
+    },
+  );
+});
+
+test.describe(`Back up a newly created seed with a Ledger Recovery Key`, () => {
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    mockDeviceParams: { onboarded: false },
+  });
+
+  test(
+    `Recovery Key backup completes after setting the device up as new`,
+    {
+      tag: ["@onboarding", ...deviceWithScreenTags()],
+      annotation: { type: "TMS", description: "B2CQA-3372" },
+    },
+    async ({ app, mockDevice, mockServer }) => {
+      await app.onboarding.waitForLaunch();
+      await app.onboarding.getStarted();
+      await app.portfolio.startConnectDeviceFlow();
+      await app.onboarding.selectDevice(mockDevice.modelId);
+      await app.syncOnboarding.expectCompanionReached(mockDevice.modelId);
+
+      await app.syncOnboarding.runGenuineCheck();
+      await app.syncOnboarding.expectDeviceGenuine();
+      await app.syncOnboarding.expectOsUpToDate();
+
+      await mockServer.pinOnboardingStep(ONBOARDING_STEP.newDevice);
+      await app.syncOnboarding.continueToSetup();
+      await app.syncOnboarding.expectNewSeedPath();
+
+      await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.choice);
+      await app.syncOnboarding.expectRecoveryKeyBackupScreen();
+
+      await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.running);
+      await app.syncOnboarding.expectRecoveryKeyBackupScreen();
+      await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.naming);
+      await app.syncOnboarding.expectRecoveryKeyBackupScreen();
+
+      await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.ready);
+      await app.syncOnboarding.expectRecoveryKeyBackupComplete();
+
+      await app.syncOnboarding.skipWalletSync();
+      await app.syncOnboarding.expectSetupComplete();
+
+      await app.syncOnboarding.expectOnboardingComplete();
+      await app.syncOnboarding.declineFunding();
+      await app.syncOnboarding.expectCompletionScreen(mockDevice.modelId);
+    },
+  );
+});
