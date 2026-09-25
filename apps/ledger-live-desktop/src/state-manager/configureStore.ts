@@ -29,7 +29,6 @@ import {
   withAccountAliases,
 } from "~/renderer/middlewares/accountAlias";
 import logger from "~/renderer/middlewares/logger";
-import appLogger from "~/renderer/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
@@ -37,7 +36,6 @@ import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/
 import {
   createFeatureFlagsMiddleware,
   selectFeature,
-  type FeatureFlagsReadFailure,
   type PartialFeatures,
 } from "@shared/feature-flags";
 import {
@@ -45,20 +43,7 @@ import {
   readCachedFlags as defaultReadCachedFlags,
 } from "~/firebase/remoteConfig";
 import { sleepingListener } from "./sleepingListener";
-/**
- * Reports only the failures that actually degrade the session. A warm failure is routine: the
- * previously read values stay in place and the next poll retries. A cold one means the app is
- * running on compiled defaults, which is a misconfigured session rather than a passing network
- * blip, and is precisely the signal whose absence let a staging leak run unnoticed for a whole
- * release cycle.
- *
- * `logger.critical` rather than a bare console call: it is the one path wired to Datadog
- * (breadcrumb plus `captureException`), so a cold boot becomes searchable instead of invisible.
- */
-function reportFeatureFlagsReadFailure(error: unknown, { stage, isCold }: FeatureFlagsReadFailure) {
-  if (!isCold) return;
-  appLogger.critical(error, `Feature flags: ${stage} read failed, resolving on compiled defaults`);
-}
+import { reportFeatureFlagsReadFailure } from "./reportFeatureFlagsReadFailure";
 
 type Props = {
   state?: State;

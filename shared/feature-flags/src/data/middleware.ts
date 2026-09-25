@@ -6,6 +6,7 @@ import {
   createDispatchers,
   createErrorReporter,
   createLanguageWatcher,
+  dispatchSafely,
   pollRemoteFlags,
   primeThenPoll,
   type RemoteFlagsRef,
@@ -17,8 +18,11 @@ export interface FeatureFlagsMeta {
   remoteFlags: PartialFeatures;
 }
 
-/** Which of the two reads failed, reported to {@link FeatureFlagsMiddlewareConfig.onRemoteFlagsError}. */
-export type FeatureFlagsReadStage = "cache" | "remote";
+/**
+ * Which step failed, reported to {@link FeatureFlagsMiddlewareConfig.onRemoteFlagsError}: one of
+ * the two reads, or the re-resolution of the slice that follows them.
+ */
+export type FeatureFlagsReadStage = "cache" | "remote" | "sync";
 
 /**
  * Context for a failed feature-flag read. Observation only, it never feeds resolution.
@@ -41,11 +45,17 @@ export type FeatureFlagsReadStage = "cache" | "remote";
  *   for how long this session has been misconfigured.
  * - `remote` / attempt n > 1 / warm — a routine poll failure with values in place. Expected on any
  *   flaky connection, and usually not worth reporting.
+ * - `sync` / attempt 1 / cold or warm — a reducer or a downstream middleware threw while the
+ *   slice was being re-resolved at boot, so it was left unresolved, usually on compiled
+ *   defaults. Always a bug, whatever `isCold` says. The boot signals are armed anyway, so a
+ *   startup waiting on them is not stranded.
+ * - `sync` / attempt n > 1 — the same failure on a later poll. Caught so the poll loop survives,
+ *   but a deterministic bug already surfaced at attempt 1, so it is usually not worth reporting.
  *
  * `cache` combined with a warm map, or with an attempt above 1, cannot happen.
  */
 export interface FeatureFlagsReadFailure {
-  /** The local cache prime, or a network poll. */
+  /** The local cache prime, a network poll, or the re-resolution that follows either. */
   stage: FeatureFlagsReadStage;
   /** 1 for the boot attempt, incremented on each subsequent poll. Always 1 for `cache`. */
   attempt: number;
@@ -65,7 +75,8 @@ export interface FeatureFlagsMiddlewareConfig<S = unknown> {
    *
    * It changes *which values* boot resolves on, not *when* readiness is announced: that stays
    * with the first `fetchRemoteFlags` settling, so the boot gates keep the exact meaning they had
-   * before the cache existed.
+   * before the cache existed. Its own settling is exposed as `cachedFlagsSettled`, for a boot that
+   * must not render before the cached values are in the slice but must not wait on the network.
    */
   readCachedFlags?: () => Promise<PartialFeatures>;
   /**
@@ -121,16 +132,31 @@ export function createFeatureFlagsMiddleware<S = unknown>(
     } = config;
 
     const language = createLanguageWatcher(getAppLanguage, getState, dispatch);
-    const { dispatchSync, dispatchReady } = createDispatchers(dispatch);
+    const { dispatchSync, dispatchReady, dispatchCacheSettled } = createDispatchers(dispatch);
     const reportError = createErrorReporter(onRemoteFlagsError, remoteFlagsRef);
-    const readContext = { ref: remoteFlagsRef, dispatchSync, dispatchReady, reportError };
+    const readContext = {
+      ref: remoteFlagsRef,
+      dispatchSync,
+      dispatchReady,
+      dispatchCacheSettled,
+      reportError,
+    };
 
     if (readCachedFlags) {
       void primeThenPoll(readCachedFlags, readContext, fetchRemoteFlags, refreshInterval);
-    } else if (fetchRemoteFlags) {
-      // Deliberately a bare call: the middleware tests drain a fixed number of microtask turns,
-      // so the no-cache path must not gain an `await` in front of the loop.
-      void pollRemoteFlags({ ...readContext, fetch: fetchRemoteFlags, ms: refreshInterval });
+    } else {
+      // No cache to wait for, but still re-resolved first so env overrides and version filters
+      // are in place when the signal arms. Deferred because Redux forbids dispatching while the
+      // middleware chain is still being built.
+      void Promise.resolve().then(() => {
+        dispatchSafely(() => dispatchSync(false), reportError, 1);
+        dispatchSafely(dispatchCacheSettled, reportError, 1);
+      });
+      if (fetchRemoteFlags) {
+        // Deliberately a bare call: the middleware tests drain a fixed number of microtask turns,
+        // so the no-cache path must not gain an `await` in front of the loop.
+        void pollRemoteFlags({ ...readContext, fetch: fetchRemoteFlags, ms: refreshInterval });
+      }
     }
 
     return next => action => {

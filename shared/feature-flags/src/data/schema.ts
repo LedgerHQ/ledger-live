@@ -34,6 +34,12 @@ export interface FeatureFlagsState {
    * so it re-arms to `false` every session.
    */
   remoteFlagsReady: boolean;
+  /**
+   * Whether the local cache read has settled (primed, empty or unreadable), so `resolved` already
+   * holds the last values this device knew, without any network. Lets boot wait on local values
+   * only. Transient: never persisted, so it re-arms to `false` every session.
+   */
+  cachedFlagsSettled: boolean;
 }
 
 /** Represents the resolved values of all feature flags. */
@@ -62,6 +68,7 @@ export const FeatureFlagsStateSchema = z.object({
   resolved: z.object(flagRegistry),
   bannerVisible: z.boolean(),
   remoteFlagsReady: z.boolean().default(false),
+  cachedFlagsSettled: z.boolean().default(false),
 }) as z.ZodType<FeatureFlagsState>;
 
 /** Schema that validates the resolution configuration. */
