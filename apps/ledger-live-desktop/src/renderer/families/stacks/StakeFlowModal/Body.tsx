@@ -140,22 +140,33 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
       });
   }, [bridge, setTransaction, handleTransactionError]);
 
-  // Refreshed once on entry, then periodically while the user sits on this step -- device
-  // connect/approve can take a while, and pox-5 validates start-burn-ht against the real chain tip
-  // at *mining* time (see resolveStartBurnHt above), so a value resolved long ago can belong to a
+  // Mirrors StepConnectDevice's own gate: once this is true, GenericStepConnectDevice takes over
+  // and its device-signing effect (hw/actions/transaction.ts) depends on `transaction` -- any
+  // further mutation there tears down and restarts an in-flight sign request, which can abandon a
+  // prompt the device is already showing. So a fresh transaction reference must never be produced
+  // past this point.
+  const isReadyForDevice =
+    !bridgePending &&
+    !!(transaction?.fee || transaction?.fees) &&
+    transaction?.familySpecificData?.startBurnHt !== undefined;
+
+  // Refreshed once on entry, then periodically while the user sits on this step waiting to connect
+  // -- that wait can take a while, and pox-5 validates start-burn-ht against the real chain tip at
+  // *mining* time (see resolveStartBurnHt above), so a value resolved long ago can belong to a
   // reward cycle that has since rolled over. The interval is a small fraction of a reward cycle
   // (~7-14 days), so this only ever narrows a rare edge case, not eliminates a routine one. Stops
-  // once signed: the device has already committed to a payload by then, so changing it further
-  // would desync the signature from what's displayed, not help.
+  // as soon as the transaction is ready to hand to the device (isReadyForDevice), not only once
+  // signed: by the time the device is actually signing, the transaction must stay frozen (see the
+  // comment above); `handleRetry` resolves a fresh height again after a failed/refused attempt.
   useEffect(() => {
-    if (stepId !== "connectDevice" || signed) return;
+    if (stepId !== "connectDevice" || signed || isReadyForDevice) return;
     resolveStartBurnHt();
     const intervalId = setInterval(resolveStartBurnHt, START_BURN_HT_REFRESH_INTERVAL_MS);
     return () => {
       startBurnHtRequest.current += 1;
       clearInterval(intervalId);
     };
-  }, [stepId, signed, resolveStartBurnHt]);
+  }, [stepId, signed, isReadyForDevice, resolveStartBurnHt]);
 
   // Going back to edit the pool or the amount invalidates the height already resolved, so the
   // device step waits for a fresh one instead of reusing it.
