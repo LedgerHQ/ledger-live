@@ -1,5 +1,6 @@
 import type { ApplicationDependency } from "@ledgerhq/device-management-kit";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import type { AccountDescriptor } from "../models";
 import { requireChainId } from "./eth-vault-products";
 import type { NormalizedDefiProduct, NormalizedDefiTransaction } from "./normalize";
@@ -52,7 +53,12 @@ export function assertAccountMatchesProductChain(
   product: NormalizedDefiProduct,
 ): void {
   const expectedChainId = requireChainId(product);
-  const accountChainId = getCryptoCurrencyById(descriptor.currencyId).ethereumLikeInfo?.chainId;
+  let accountChainId: number | undefined;
+  try {
+    accountChainId = getCurrencyConfiguration<EvmConfigInfo>(descriptor.currencyId).chainId;
+  } catch {
+    accountChainId = undefined;
+  }
   if (accountChainId === undefined) {
     throw new Error(
       `Account currency "${descriptor.currencyId}" is not an EVM chain; earn vault ${product.id} requires chain id ${expectedChainId}.`,

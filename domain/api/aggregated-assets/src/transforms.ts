@@ -45,7 +45,6 @@ export function convertApiAssets(
           explorerViews: [],
           symbol: asset.symbol,
           supportsSegwit: asset.hasSegwit,
-          ...(asset.chainId ? { ethereumLikeInfo: { chainId: parseInt(asset.chainId, 10) } } : {}),
         });
       }
     }
