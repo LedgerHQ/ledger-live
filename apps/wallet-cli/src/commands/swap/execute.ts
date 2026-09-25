@@ -25,6 +25,7 @@ import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
 import { runCliSwapDie as runCliSwapDiePipelineDefault } from "./cli-swap-die-pipeline";
+import { checkSwapAffordability } from "./check-swap-affordability";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   isDieExecutionProvider,
@@ -106,6 +107,11 @@ export type SwapExecuteDependencies = {
   getQuotes?: GetQuotes;
 };
 
+function swapFailureCode(error: unknown): string {
+  const { name, cause } = getErrorDetails(error);
+  return cause?.swapCode ?? name ?? "UnknownError";
+}
+
 async function selectDieQuote(
   getQuotesFn: GetQuotes,
   args: {
@@ -182,12 +188,11 @@ export async function executeSwapCommand({
   try {
     context = await resolveSwapExecuteContext();
   } catch (err) {
-    const { name, cause } = getErrorDetails(err);
     trackSwapFailed({
       flowId,
       fromCurrency: flags.from,
       toCurrency: flags.to,
-      errorCode: cause?.swapCode ?? name ?? "UnknownError",
+      errorCode: swapFailureCode(err),
     });
     throw err;
   }
@@ -249,6 +254,25 @@ export async function executeSwapCommand({
     const fromParent = getParentAccount(fromAccount, accounts);
     const mainFromAccount: Account = getMainAccount(fromAccount, fromParent);
 
+    const balanceCheck = await checkSwapAffordability({
+      account: fromAccount,
+      parentAccount: fromParent,
+      amount: amountInAtomicUnit,
+      feeStrategy: flags["fee-strategy"],
+      getAccountBridge: getBridge,
+    }).catch(error => {
+      trackSwapFailed({
+        flowId,
+        fromCurrency: flags.from,
+        toCurrency: flags.to,
+        errorCode: swapFailureCode(error),
+      });
+      throw error;
+    });
+    if (!balanceCheck.checked) {
+      out.swapExecuteProgress(`[i] Balance pre-check skipped: ${balanceCheck.reason}`);
+    }
+
     if (isDieExecutionProvider(provider) && mainFromAccount.currency.family === "evm") {
       out.swapExecuteProgress(`[i] Using provider=${provider}; fetching quote…`);
 
@@ -286,6 +310,7 @@ export async function executeSwapCommand({
           quoteId: quote.id ?? null,
           approvalTxHash: dieResult.result.approvalTxHash,
           swapTxHash: dieResult.result.swapTxHash,
+          balanceCheck,
         });
         return;
       }
@@ -321,6 +346,7 @@ export async function executeSwapCommand({
       amountExpectedTo: result.amountExpectedTo,
       amountExpectedToAtomic: result.amountExpectedToAtomic,
       magnitudeAwareRate: result.magnitudeAwareRate,
+      balanceCheck,
     });
   });
 }
