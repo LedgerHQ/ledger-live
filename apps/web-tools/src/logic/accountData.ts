@@ -1,7 +1,15 @@
 import type { Account } from "@ledgerhq/types-live";
-import { createAccountBalanceSources } from "@ledgerhq/live-common/account-data/sources";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getEnabledGenericCoinFrameworkFamilies } from "@ledgerhq/live-common/bridge/generic-coin-framework/genericCoinFrameworkFamilies";
+import {
+  createAccountBalanceSources,
+  createAccountOperationsSources,
+} from "@ledgerhq/live-common/account-data/sources";
 import { accountBalancesSlice, type AccountBalance } from "@domain/entity-account-balance";
-import { registerAccountBalanceSources } from "@features/platform-account-data";
+import {
+  registerAccountBalanceSources,
+  registerAccountOperationsSources,
+} from "@features/platform-account-data";
 import { AccountIdSchema } from "@domain/entity-account";
 import { store } from "../store";
 import { bridgeCache, inferAccount } from "./syncAccount";
@@ -22,8 +30,7 @@ export function accountBalanceRowsOf(accountId: string): AccountBalance[] {
   return own ? [own, ...subs] : [...subs];
 }
 
-// `inferAccount` throws on an id it cannot shape; the source contract is `Account | undefined`, and
-// the caller turns that into a legible "not in the store" rather than an opaque throw.
+// `inferAccount` throws on an id it cannot shape; the source contract is `Account | undefined`.
 function inferredAccount(accountId: string) {
   try {
     return inferAccount(accountId);
@@ -32,9 +39,16 @@ function inferredAccount(accountId: string) {
   }
 }
 
-registerAccountBalanceSources(
-  createAccountBalanceSources({
-    getAccount: accountId => shapedAccounts.get(accountId) ?? inferredAccount(accountId),
-    prepareCurrency: currency => bridgeCache.prepareCurrency(currency),
+const hostAccess = {
+  getAccount: (accountId: string) => shapedAccounts.get(accountId) ?? inferredAccount(accountId),
+  prepareCurrency: (currency: CryptoCurrency) => bridgeCache.prepareCurrency(currency),
+};
+
+registerAccountBalanceSources(createAccountBalanceSources(hostAccess));
+
+registerAccountOperationsSources(
+  createAccountOperationsSources({
+    ...hostAccess,
+    granularOperationFamilies: getEnabledGenericCoinFrameworkFamilies,
   }),
 );

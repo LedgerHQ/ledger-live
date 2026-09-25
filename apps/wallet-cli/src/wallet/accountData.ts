@@ -1,9 +1,12 @@
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBalance } from "@domain/entity-account-balance";
+import { compareAccountOperations, type AccountOperation } from "@domain/entity-account-operations";
 import {
   readAccountBalances,
+  readAccountOperations,
   type AccountBalanceSource,
+  type AccountOperationsSource,
   type AccountRef,
 } from "@features/platform-account-data";
 import { AccountIdSchema } from "@domain/entity-account";
@@ -45,6 +48,7 @@ export type AccountDataAdapters = {
   }>;
   loadBridge: () => Promise<{
     getBalanceRows: (descriptor: AccountDescriptor) => Promise<AccountBalance[]>;
+    getOperationRows: (descriptor: AccountDescriptor) => Promise<AccountOperation[]>;
   }>;
 };
 
@@ -81,4 +85,35 @@ export async function readDescriptorBalances(
   const own = balances.filter(row => row.accountId === ref.accountId);
   const subs = balances.filter(row => row.parentId === ref.accountId);
   return [...own, ...subs];
+}
+
+export function accountOperationsSources(
+  descriptor: AccountDescriptor,
+  adapters: AccountDataAdapters = defaultAdapters,
+): AccountOperationsSource[] {
+  const family = findCryptoCurrencyById(descriptor.currencyId)?.family;
+
+  return [
+    {
+      id: "full-sync",
+      priority: 0,
+      paginated: false,
+      supports: () => family !== undefined,
+      getOperations: async () => {
+        const operations = await (await adapters.loadBridge()).getOperationRows(descriptor);
+        return { operations, complete: true, total: operations.length };
+      },
+    },
+  ];
+}
+
+export async function readDescriptorOperations(
+  descriptor: AccountDescriptor,
+  adapters?: AccountDataAdapters,
+): Promise<AccountOperation[]> {
+  const { operations } = await readAccountOperations(
+    accountRefOf(descriptor),
+    accountOperationsSources(descriptor, adapters),
+  );
+  return [...operations].sort(compareAccountOperations);
 }

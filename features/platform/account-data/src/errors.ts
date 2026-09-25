@@ -1,8 +1,13 @@
 import type { AccountId } from "@domain/entity-account";
 
-export class NoAccountBalanceSourceError extends Error {
-  constructor(readonly accountId: AccountId) {
-    super(`No account balance source supports ${accountId}`);
-    this.name = "NoAccountBalanceSourceError";
+export type AccountDatum = "balance" | "operations";
+
+export class NoAccountSourceError extends Error {
+  constructor(
+    readonly accountId: AccountId,
+    readonly datum: AccountDatum,
+  ) {
+    super(`No account ${datum} source supports ${accountId}`);
+    this.name = "NoAccountSourceError";
   }
 }

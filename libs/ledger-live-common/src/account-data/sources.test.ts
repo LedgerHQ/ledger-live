@@ -1,11 +1,13 @@
 import type { Account } from "@ledgerhq/types-live";
 import { AccountIdSchema } from "@domain/entity-account";
-import { createAccountBalanceSources } from "./sources";
+import { createAccountBalanceSources, createAccountOperationsSources } from "./sources";
 import type { AccountRefLike } from "../bridge/generic-coin-framework/accountBalances";
 
 const getAccountBalanceRows = jest.fn();
 const syncAccountBalanceRows = jest.fn();
 const getAccountBridge = jest.fn();
+const getAccountOperationPage = jest.fn();
+const syncAccountOperations = jest.fn();
 
 jest.mock("../bridge/generic-coin-framework/accountBalances", () => ({
   getAccountBalanceRows: (...args: unknown[]) => getAccountBalanceRows(...args),
@@ -13,6 +15,10 @@ jest.mock("../bridge/generic-coin-framework/accountBalances", () => ({
 }));
 jest.mock("../bridge", () => ({
   getAccountBridge: (...args: unknown[]) => getAccountBridge(...args),
+}));
+jest.mock("./operations", () => ({
+  getAccountOperationPage: (...args: unknown[]) => getAccountOperationPage(...args),
+  syncAccountOperations: (...args: unknown[]) => syncAccountOperations(...args),
 }));
 
 const ETH_ID = AccountIdSchema.parse("js:2:ethereum:0xabc:");
@@ -140,5 +146,77 @@ describe("createAccountBalanceSources", () => {
       );
       expect(syncAccountBalanceRows).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe("createAccountOperationsSources", () => {
+  const buildOps = (over: Partial<Parameters<typeof createAccountOperationsSources>[0]> = {}) =>
+    createAccountOperationsSources({
+      getAccount: id => (id === ETH_ID ? account : undefined),
+      prepareCurrency,
+      ...over,
+    });
+
+  it("keeps every family on the full sync by default — listOperations parity is unproven", () => {
+    const [granular, fullSync] = buildOps();
+    expect(granular.supports(ref())).toBe(false);
+    expect(fullSync.supports(ref())).toBe(true);
+  });
+
+  it("uses a gate of its own, not the balance one", () => {
+    const [balanceGranular] = build();
+    const [operationsGranular] = buildOps();
+    expect(balanceGranular.supports(ref())).toBe(true);
+    expect(operationsGranular.supports(ref())).toBe(false);
+  });
+
+  it("serves a family the host has opted in granularly", async () => {
+    getAccountOperationPage.mockResolvedValue({ operations: [], complete: false });
+    const [granular] = buildOps({ granularOperationFamilies: () => ["evm"] });
+
+    expect(granular.supports(ref())).toBe(true);
+    await granular.getOperations(ref(), { cursor: "c1", limit: 25 });
+    expect(getAccountOperationPage).toHaveBeenCalledWith({
+      accountId: ETH_ID,
+      currencyId: "ethereum",
+      address: "0xabc",
+      cursor: "c1",
+      limit: 25,
+    });
+  });
+
+  it("declares the granular source as resumable and the full sync as not", () => {
+    const [granular, fullSync] = buildOps();
+    expect(granular.paginated).toBe(true);
+    expect(fullSync.paginated).toBe(false);
+  });
+
+  it("does no granular work at all when the signal is already aborted", async () => {
+    const controller = new AbortController();
+    controller.abort();
+    const [granular] = buildOps({ granularOperationFamilies: () => ["evm"] });
+    await expect(granular.getOperations(ref(), {}, controller.signal)).rejects.toThrow(/aborted/);
+    expect(getAccountOperationPage).not.toHaveBeenCalled();
+  });
+
+  it("full-syncs the whole history, and fails clearly without an account", async () => {
+    syncAccountOperations.mockResolvedValue({ operations: [], complete: true, total: 0 });
+    const [, fullSync] = buildOps();
+
+    await fullSync.getOperations(ref(), {});
+    expect(prepareCurrency).toHaveBeenCalledWith(account.currency);
+
+    await expect(fullSync.getOperations(ref({ accountId: BTC_ID }), {})).rejects.toThrow(
+      `account ${BTC_ID} is not in the store`,
+    );
+  });
+
+  it("does no work at all when the signal is already aborted", async () => {
+    const controller = new AbortController();
+    controller.abort();
+    const [, fullSync] = buildOps();
+    await expect(fullSync.getOperations(ref(), {}, controller.signal)).rejects.toThrow(/aborted/);
+    expect(prepareCurrency).not.toHaveBeenCalled();
+    expect(syncAccountOperations).not.toHaveBeenCalled();
   });
 });
