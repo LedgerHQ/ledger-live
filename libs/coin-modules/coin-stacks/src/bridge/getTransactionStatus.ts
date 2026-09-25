@@ -124,11 +124,14 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
   const { spendableBalance } = account;
   const { address } = getAddress(account);
   const subAccount = getSubAccount(account, transaction);
-  const { memo, recipient, useAllAmount, fee } = transaction;
+  const { memo, recipient, useAllAmount, fee, mode } = transaction;
   let { amount } = transaction;
 
-  // Validate recipient and fee
-  validateRecipient(recipient, address, account.currency.name, errors);
+  // pox-5 delegate/undelegate transactions call the pox contract, not `recipient` -- StepValidator
+  // already validates the pool address (valAddress) before the amount step is reached.
+  if (mode !== "delegate" && mode !== "undelegate") {
+    validateRecipient(recipient, address, account.currency.name, errors);
+  }
   validateFee(fee, errors);
 
   const estimatedFees = fee || new BigNumber(0);
