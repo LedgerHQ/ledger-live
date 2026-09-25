@@ -154,12 +154,17 @@ describe("emptyAssetsData", () => {
 });
 
 describe("assertDadaApiHost", () => {
-  it.each(["https://dada.api.ledger.com/assets", "https://dada.api.ledger-test.com/assets"])(
-    "allows the known DADA host %s",
-    href => {
-      expect(() => assertDadaApiHost(href)).not.toThrow();
-    },
-  );
+  it("allows the new Gravitee gateway host", () => {
+    expect(() =>
+      assertDadaApiHost(
+        "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+      ),
+    ).not.toThrow();
+  });
+
+  it("allows the still-live prod host", () => {
+    expect(() => assertDadaApiHost("https://dada.api.ledger.com/assets")).not.toThrow();
+  });
 
   /*
    * This guards the endpoints that build their own `fetch` instead of going through `baseQuery`,
@@ -167,8 +172,9 @@ describe("assertDadaApiHost", () => {
    */
   it.each([
     "https://evil.example.com/assets",
-    "https://dada.api.ledger.com.evil.example.com/assets",
+    "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com.evil.example.com/assets",
     "https://ledger.com/assets",
+    "https://dada.api.ledger-test.com/assets",
   ])("blocks %s", href => {
     expect(() => assertDadaApiHost(href)).toThrow(/untrusted host/);
   });
@@ -180,7 +186,11 @@ describe("assertDadaApiHost", () => {
   });
 
   it("matches on hostname only, ignoring port and protocol", () => {
-    expect(() => assertDadaApiHost("http://dada.api.ledger.com:8080/x")).not.toThrow();
+    expect(() =>
+      assertDadaApiHost(
+        "http://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com:8080/x",
+      ),
+    ).not.toThrow();
   });
 });
 
