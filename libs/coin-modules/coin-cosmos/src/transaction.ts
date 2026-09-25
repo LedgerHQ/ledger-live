@@ -9,23 +9,25 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { resolveSourceValidator, resolveTransactionValidators } from "./buildTransaction";
 import type { Transaction, TransactionRaw } from "./types";
 
-export const formatTransaction = (
-  { mode, amount, fees, recipient, validators, memo, sourceValidator, useAllAmount }: Transaction,
-  account: Account,
-): string => `
+export const formatTransaction = (transaction: Transaction, account: Account): string => {
+  const { mode, amount, fees, recipient, memo, useAllAmount } = transaction;
+  const validators = resolveTransactionValidators(transaction);
+  const sourceValidator = resolveSourceValidator(transaction);
+  return `
 ${mode.toUpperCase()} ${
-  useAllAmount
-    ? "MAX"
-    : amount.isZero()
-      ? ""
-      : " " +
-        formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
-          showCode: true,
-          disableRounding: true,
-        })
-}
+    useAllAmount
+      ? "MAX"
+      : amount.isZero()
+        ? ""
+        : " " +
+          formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+            showCode: true,
+            disableRounding: true,
+          })
+  }
 TO ${recipient}
 ${
   !validators
@@ -43,8 +45,9 @@ ${
         .join("\n")
 }${!sourceValidator ? "" : "\n  source validator=" + sourceValidator}
 with fees=${fees ? formatCurrencyUnit(getAccountCurrency(account).units[0], fees) : "?"}${
-  !memo ? "" : `\n  memo=${memo}`
-}`;
+    !memo ? "" : `\n  memo=${memo}`
+  }`;
+};
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
@@ -64,6 +67,8 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     validators: tr.validators
       ? tr.validators.map(v => ({ ...v, amount: new BigNumber(v.amount) }))
       : [],
+    ...(tr.valAddress !== undefined ? { valAddress: tr.valAddress } : {}),
+    ...(tr.dstValAddress !== undefined ? { dstValAddress: tr.dstValAddress } : {}),
   };
 };
 
@@ -83,6 +88,8 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     memo: t.memo,
     sourceValidator: t.sourceValidator,
     validators: t.validators ? t.validators.map(v => ({ ...v, amount: v.amount.toString() })) : [],
+    ...(t.valAddress !== undefined ? { valAddress: t.valAddress } : {}),
+    ...(t.dstValAddress !== undefined ? { dstValAddress: t.dstValAddress } : {}),
   };
 };
 

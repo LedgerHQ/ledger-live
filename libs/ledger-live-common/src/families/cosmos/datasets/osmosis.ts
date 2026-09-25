@@ -11,7 +11,12 @@ import { fromTransactionRaw } from "@ledgerhq/coin-cosmos/transaction";
 import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
+  FIXME_ignoreAccountFields: [
+    "cosmosResources",
+    "stakingResources",
+    "operationsCount",
+    "operations",
+  ],
   FIXME_ignorePreloadFields: ["validators"], // the APY of validators changes over time
   scanAccounts: [
     {

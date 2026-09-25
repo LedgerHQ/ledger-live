@@ -1,7 +1,6 @@
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { getCurrentCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";
 import { canDelegate, canRedelegate } from "./logic";
-import { getCosmosResources } from "./types";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 
 export interface AccountBannerState {
@@ -13,11 +12,11 @@ export interface AccountBannerState {
 
 export function getAccountBannerState(account: CosmosAccount): AccountBannerState {
   // Group current validator
-  const cosmosResources = getCosmosResources(account) ?? { delegations: [], redelegations: [] };
-  const delegationAddresses = cosmosResources.delegations.map(delegation => {
+  const { delegations, redelegations } = account.stakingResources;
+  const delegationAddresses = delegations.map(delegation => {
     return delegation.validatorAddress;
   });
-  const redelegationAddresses = cosmosResources.redelegations.map(redelegation => {
+  const redelegationAddresses = redelegations.map(redelegation => {
     return redelegation.validatorDstAddress;
   });
   const validatorAdresses = [...delegationAddresses, ...redelegationAddresses];

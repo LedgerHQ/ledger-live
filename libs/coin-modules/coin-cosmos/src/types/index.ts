@@ -1,13 +1,15 @@
 import {
   Account,
   AccountRaw,
-  isStakingAccount,
   Operation,
   OperationExtra,
   OperationExtraRaw,
   OperationRaw,
   StakingDelegation,
+  StakingRedelegation,
   StakingResources,
+  StakingResourcesRaw,
+  StakingUnbonding,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -67,11 +69,15 @@ export type CosmosResources = {
   delegatedBalance: BigNumber;
   pendingRewardsBalance: BigNumber;
   unbondingBalance: BigNumber;
+} & LegacyCosmosResourcesFields;
+
+export type LegacyCosmosResourcesFields = {
   sequence?: number;
   // Compressed secp256k1 public key (hex) of this account, captured at scan from the
   // device. Optional/empty when unknown (e.g. accounts synced before this was persisted).
   publicKey?: string;
 };
+
 export type CosmosDelegationRaw = {
   validatorAddress: string;
   amount: string;
@@ -120,7 +126,8 @@ export type CosmosOperationMode =
   | "undelegate"
   | "redelegate"
   | "claimReward"
-  | "claimRewardCompound";
+  | "claimRewardCompound"
+  | "compoundReward";
 
 export type CosmosLikeNetworkInfo = {
   family: string;
@@ -200,6 +207,8 @@ export type CosmosLikeTransaction = TransactionCommon & {
   memo: string | null | undefined;
   validators: CosmosDelegationInfo[];
   sourceValidator: string | null | undefined;
+  valAddress?: string;
+  dstValAddress?: string;
 };
 
 export type Transaction = CosmosLikeTransaction & {
@@ -216,6 +225,8 @@ export type CosmosLikeTransactionRaw = TransactionCommonRaw & {
   memo: string | null | undefined;
   validators: CosmosDelegationInfoRaw[];
   sourceValidator: string | null | undefined;
+  valAddress?: string;
+  dstValAddress?: string;
 };
 
 export type TransactionRaw = CosmosLikeTransactionRaw & {
@@ -235,17 +246,17 @@ export type StatusErrorMap = {
   feeTooHigh?: Error;
 };
 
-export type CosmosMappedDelegation = CosmosDelegation & {
+export type CosmosMappedDelegation = StakingDelegation & {
   formattedAmount: string;
   formattedPendingRewards: string;
   rank: number;
   validator: CosmosValidatorItem | null | undefined;
 };
-export type CosmosMappedUnbonding = CosmosUnbonding & {
+export type CosmosMappedUnbonding = StakingUnbonding & {
   formattedAmount: string;
   validator: CosmosValidatorItem | null | undefined;
 };
-export type CosmosMappedRedelegation = CosmosRedelegation & {
+export type CosmosMappedRedelegation = StakingRedelegation & {
   formattedAmount: string;
   validatorSrc: CosmosValidatorItem | null | undefined;
   validatorDst: CosmosValidatorItem | null | undefined;
@@ -264,46 +275,14 @@ export type CosmosSearchFilter = (
 export function isCosmosAccount(account: Account): account is CosmosAccount {
   return "cosmosResources" in account;
 }
-export type CosmosAccount = Account & { cosmosResources: CosmosResources };
-
-export function getCosmosResources(account: Account): CosmosResources | undefined {
-  if (isStakingAccount(account)) {
-    return toCosmosResources(account.stakingResources, account.xpub);
-  } else if (isCosmosAccount(account)) {
-    return account.cosmosResources;
-  } else {
-    return undefined;
-  }
-}
-
-export function toCosmosResources(
-  stakingResources: StakingResources,
-  xpub?: string,
-): CosmosResources {
-  return {
-    delegations: stakingResources.delegations.map(delegation => toCosmosDelegation(delegation)),
-    redelegations: stakingResources.redelegations,
-    unbondings: stakingResources.unbondings,
-    delegatedBalance: stakingResources.delegatedBalance,
-    pendingRewardsBalance: stakingResources.pendingRewardsBalance,
-    unbondingBalance: stakingResources.unbondingBalance,
-    ...(xpub !== undefined ? { publicKey: xpub } : {}),
-  };
-}
-
-function toCosmosDelegation(stakingDelegation: StakingDelegation): CosmosDelegation {
-  return {
-    validatorAddress: stakingDelegation.validatorAddress,
-    amount: stakingDelegation.amount,
-    pendingRewards: stakingDelegation.pendingRewards,
-    status: (stakingDelegation.status === "activating"
-      ? "bonded"
-      : stakingDelegation.status) as CosmosDelegationStatus,
-  };
-}
+export type CosmosAccount = Account & {
+  cosmosResources: CosmosResources;
+  stakingResources: StakingResources & LegacyCosmosResourcesFields;
+};
 
 export type CosmosAccountRaw = AccountRaw & {
   cosmosResources: CosmosResourcesRaw;
+  stakingResources: StakingResourcesRaw & LegacyCosmosResourcesFields;
 };
 export type TransactionStatus = TransactionStatusCommon;
 
