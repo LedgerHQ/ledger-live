@@ -115,4 +115,13 @@ describe("CardLoginView (Web)", () => {
 
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
+
+  it("should call onDismiss when the dialog close button is pressed", () => {
+    const onDismiss = jest.fn();
+    renderCardLoginView({ error: buildError({ onDismiss }) });
+
+    fireEvent.click(screen.getByRole("button", { name: /close/i }));
+
+    expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
 });
