@@ -67,7 +67,11 @@ jest.mock("./utils", () => ({
   })),
 }));
 
-jest.mock("@ledgerhq/coin-aleo/logic", () => ({ getValidators: jest.fn(), lastBlock: jest.fn() }));
+jest.mock("@ledgerhq/coin-aleo/logic", () => ({
+  ...jest.requireActual("@ledgerhq/coin-aleo/logic"),
+  getValidators: jest.fn(),
+  lastBlock: jest.fn(),
+}));
 
 jest.mock("../../config/index", () => ({
   ...jest.requireActual("../../config/index"),
@@ -2091,6 +2095,26 @@ describe("useAleoStakingPosition", () => {
 
       await waitFor(() => expect(result.current.nonEarningReason).toBe("ownStakeBelowMinimum"));
       expect(result.current.estimatedRate).toBe(0);
+    });
+
+    it("is undefined for a validator's own self-bond, even below the delegator minimum", async () => {
+      const account = accountWith({
+        aleoResources: {
+          ...(ALEO_ACCOUNT_1 as AleoAccount).aleoResources,
+          bondedBalance: new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS).minus(1),
+          bondedValidator: ALEO_ACCOUNT_1.freshAddress,
+        } as AleoAccount["aleoResources"],
+      });
+      jest
+        .mocked(getValidators)
+        .mockResolvedValue([
+          { ...earningValidator, address: ALEO_ACCOUNT_1.freshAddress },
+        ] as Awaited<ReturnType<typeof getValidators>>);
+
+      const { result } = renderHook(() => useAleoStakingPosition(account), { wrapper });
+
+      await waitFor(() => expect(result.current.validatorLabel).toBe("Validator One"));
+      expect(result.current.nonEarningReason).toBeUndefined();
     });
 
     it("keeps the validator's own reason over the delegator minimum", async () => {

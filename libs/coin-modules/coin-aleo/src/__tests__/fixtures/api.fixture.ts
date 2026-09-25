@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { PROGRAM_ID } from "../../constants";
-import type { DelegatedProvingResponse } from "../../types";
+import type { AleoValidator, DelegatedProvingResponse } from "../../types";
 import {
   AleoDecryptedRecordResponse,
   AleoGetTokensResponse,
@@ -14,6 +14,15 @@ import {
 } from "../../types";
 
 export const MOCK_ALEO_ADDRESS = "aleo1test123address456";
+
+export const earningValidator: AleoValidator = {
+  address: "aleo1validator",
+  stakeMicrocredits: 40_000_000_000_000,
+  isOpen: true,
+  isUnbonding: false,
+  commissionPercent: 10,
+  estimatedYearlyRewardsRate: 0.07,
+};
 
 export const getMockedTransaction = (
   overrides?: Partial<AleoPublicTransaction>,
@@ -229,6 +238,11 @@ export const referenceTransferPublicTx = {
   value: 1000000,
   fee: 2725,
 };
+
+// testnetAddress's active bond on testnet (10,010 ALEO), tx at12c59u57ehxv6utj0pl66d6a58ca8ml9uptttreqzx2jwv7d04q9qwjue6y.
+export const testnetBondedMicrocredits = 10_010_000_000n;
+export const testnetBondedValidator =
+  "aleo1vfukg8ky2mhfprw63s0k0hl4vvd8573s6fkn8cv9y0ca6q27eq8qwdnxls";
 
 // Rejected self-transfer (sender === recipient === testnetAddress on credits.aleo, so it
 // classifies as type "IN" — this account's only 2 Rejected txs are both self-transfers).

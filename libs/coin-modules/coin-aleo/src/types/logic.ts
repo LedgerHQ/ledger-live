@@ -51,6 +51,11 @@ export type AleoAccountInfo = {
 
 export type AleoValidatorNonEarningReason = "overConcentrated" | "fullCommission";
 
+export type AleoStakeNonEarningReason =
+  | AleoValidatorNonEarningReason
+  | "leftCommittee"
+  | "ownStakeBelowMinimum";
+
 export type AleoValidator = {
   address: string;
   name?: string;

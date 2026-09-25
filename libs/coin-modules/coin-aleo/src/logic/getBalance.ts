@@ -12,6 +12,7 @@ import {
   sumUnspentRecords,
 } from "../network/utils";
 import type { AleoContext, AleoPrivateRecord, AleoTokenType } from "../types";
+import { getStakes } from "./getStakes";
 import { getPublicBalance } from "./getPublicBalance";
 import { classifyAleoTokenType, isTokenRecord, parseAmount, resolvePrivacyContext } from "./utils";
 
@@ -19,25 +20,27 @@ export async function getBalance(context: AleoContext, address: string): Promise
   const config = await context.config();
   const privacyContext = resolvePrivacyContext(context);
 
-  const [publicBalance, publicDetails, status, allUnspentRecords, allTokens] = await Promise.all([
-    getPublicBalance(config, address),
-    fetchAccountTransactionsFromHeight({
-      config,
-      address,
-      fetchAllPages: true,
-      minBlockHeight: 0,
-    }),
-    getRecordScannerStatusOrThrow(config, privacyContext.provableId),
-    fetchAllOwnedRecords({
-      config,
-      uuid: privacyContext.provableId,
-      unspent: true,
-      // empty arrays opt out of the credits.aleo-only filter, returning records for all programs
-      programs: [],
-      functions: [],
-    }),
-    fetchAllTokens({ config }),
-  ]);
+  const [publicBalance, publicDetails, status, allUnspentRecords, allTokens, { items: stakes }] =
+    await Promise.all([
+      getPublicBalance(config, address),
+      fetchAccountTransactionsFromHeight({
+        config,
+        address,
+        fetchAllPages: true,
+        minBlockHeight: 0,
+      }),
+      getRecordScannerStatusOrThrow(config, privacyContext.provableId),
+      fetchAllOwnedRecords({
+        config,
+        uuid: privacyContext.provableId,
+        unspent: true,
+        // empty arrays opt out of the credits.aleo-only filter, returning records for all programs
+        programs: [],
+        functions: [],
+      }),
+      fetchAllTokens({ config }),
+      getStakes(config, address),
+    ]);
 
   const tokenTypeByProgramName = new Map<string, AleoTokenType>(
     allTokens.map(token => [token.program_name, classifyAleoTokenType(token)]),
@@ -87,7 +90,20 @@ export async function getBalance(context: AleoContext, address: string): Promise
   });
 
   const publicNativeValue = publicBalance[0]?.value ?? 0n;
-  const nativeValue = publicNativeValue + BigInt(privateNativeSum.toFixed(0));
+  const liquidNativeValue = publicNativeValue + BigInt(privateNativeSum.toFixed(0));
 
-  return [{ value: nativeValue, asset: { type: "native" } }, ...tokenBalances];
+  const totalStaked = stakes.reduce((sum, stake) => sum + stake.amount, 0n);
+  const stakeBalances: Balance[] = stakes.map(stake => ({
+    value: stake.amount,
+    asset: { type: "native" },
+    stake,
+  }));
+
+  const native: Balance = {
+    value: liquidNativeValue + totalStaked,
+    asset: { type: "native" },
+    ...(totalStaked > 0n && { locked: totalStaked }),
+  };
+
+  return [native, ...stakeBalances, ...tokenBalances];
 }

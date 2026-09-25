@@ -1,7 +1,6 @@
 import { apiClient } from "../network/api";
 import type { AleoCommitteeResponse } from "../types/api";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import coinConfig from "../config";
 import { MICROCREDITS_PER_CREDIT } from "../constants";
 import { getValidators } from "./getValidators";
 
@@ -27,13 +26,12 @@ const committee: AleoCommitteeResponse = {
   },
 };
 
-const CURRENCY_ID = "aleo";
+const mockConfig = getMockedConfig("mainnet");
 
 describe("getValidators", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     getValidators.reset();
-    coinConfig.setCoinConfig(() => getMockedConfig("mainnet"));
 
     jest.mocked(apiClient.getCommittee).mockResolvedValue(committee);
     jest.mocked(apiClient.getValidatorMetadata).mockResolvedValue({
@@ -44,7 +42,7 @@ describe("getValidators", () => {
   });
 
   it("orders open validators first, then by descending stake", async () => {
-    const validators = await getValidators(CURRENCY_ID);
+    const validators = await getValidators(mockConfig);
 
     expect(validators.map(v => v.address)).toEqual([
       OPEN_HIGH_STAKE,
@@ -54,14 +52,14 @@ describe("getValidators", () => {
   });
 
   it("resolves names where metadata has one and leaves the rest unnamed", async () => {
-    const validators = await getValidators(CURRENCY_ID);
+    const validators = await getValidators(mockConfig);
 
     expect(validators.find(v => v.address === OPEN_HIGH_STAKE)?.name).toBe("High Stake Validator");
     expect(validators.find(v => v.address === OPEN_LOW_STAKE)?.name).toBeUndefined();
   });
 
   it("keeps the whole gross rate at zero commission and half of it at 50%", async () => {
-    const validators = await getValidators(CURRENCY_ID);
+    const validators = await getValidators(mockConfig);
 
     expect(validators.find(v => v.address === OPEN_HIGH_STAKE)?.estimatedYearlyRewardsRate).toBe(
       GROSS_RATE,
@@ -72,7 +70,7 @@ describe("getValidators", () => {
   });
 
   it("reports a zero rate over the 25% concentration cap, even at zero commission", async () => {
-    const validators = await getValidators(CURRENCY_ID);
+    const validators = await getValidators(mockConfig);
 
     expect(validators.find(v => v.address === CLOSED_HIGH_STAKE)?.estimatedYearlyRewardsRate).toBe(
       0,
@@ -95,17 +93,43 @@ describe("getValidators", () => {
       },
     });
 
-    const validators = await getValidators(CURRENCY_ID);
+    const validators = await getValidators(mockConfig);
 
     expect(validators.map(v => v.address)).toEqual([BIG_STAKE, SMALL_STAKE, OVER_CONCENTRATED]);
   });
 
   it("fetches committee, names and supply concurrently", async () => {
-    await getValidators(CURRENCY_ID);
+    await getValidators(mockConfig);
 
     expect(apiClient.getCommittee).toHaveBeenCalledTimes(1);
     expect(apiClient.getValidatorMetadata).toHaveBeenCalledTimes(1);
     expect(apiClient.getTotalSupply).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps mainnet and testnet cache entries separate despite sharing the same node URL", async () => {
+    // getMockedConfig gives both networks the same apiUrls.node, mirroring the real
+    // config where mainnet and testnet share ALEO_NODE_ENDPOINT and differ only by
+    // networkType — so the cache key must include networkType or one network's
+    // response leaks into the other's for the TTL.
+    const testnetConfig = getMockedConfig("testnet");
+
+    jest.mocked(apiClient.getCommittee).mockImplementation(async config =>
+      config.networkType === "mainnet"
+        ? committee
+        : {
+            total_stake: microcredits(1),
+            members: { aleo1testnet_only: [microcredits(1), true, 0] },
+          },
+    );
+
+    const mainnetValidators = await getValidators(mockConfig);
+    const testnetValidators = await getValidators(testnetConfig);
+
+    expect(mainnetValidators.map(v => v.address)).toEqual(
+      expect.arrayContaining([OPEN_HIGH_STAKE, OPEN_LOW_STAKE, CLOSED_HIGH_STAKE]),
+    );
+    expect(testnetValidators.map(v => v.address)).toEqual(["aleo1testnet_only"]);
+    expect(apiClient.getCommittee).toHaveBeenCalledTimes(2);
   });
 
   describe("unbonding validators", () => {
@@ -119,7 +143,7 @@ describe("getValidators", () => {
     it("flags a validator that has an unbonding entry of its own", async () => {
       unbondingOnly([OPEN_HIGH_STAKE]);
 
-      const validators = await getValidators(CURRENCY_ID);
+      const validators = await getValidators(mockConfig);
 
       expect(validators.find(v => v.address === OPEN_HIGH_STAKE)?.isUnbonding).toBe(true);
       expect(validators.find(v => v.address === OPEN_LOW_STAKE)?.isUnbonding).toBe(false);
@@ -128,7 +152,7 @@ describe("getValidators", () => {
     it("demotes an unbonding validator below the open ones, despite the higher stake", async () => {
       unbondingOnly([OPEN_HIGH_STAKE]);
 
-      const validators = await getValidators(CURRENCY_ID);
+      const validators = await getValidators(mockConfig);
 
       // Behind the one validator still taking stake, then among the rest by descending stake.
       expect(validators.map(v => v.address)).toEqual([
@@ -141,7 +165,7 @@ describe("getValidators", () => {
     it("reports no unbonding rather than failing the list when the lookup errors", async () => {
       jest.mocked(apiClient.getUnbondingMapping).mockRejectedValue(new Error("boom"));
 
-      const validators = await getValidators(CURRENCY_ID);
+      const validators = await getValidators(mockConfig);
 
       expect(validators).toHaveLength(3);
       expect(validators.every(v => v.isUnbonding === false)).toBe(true);
@@ -160,7 +184,7 @@ describe("getValidators", () => {
         total_stake: totalStake as number,
       });
 
-      const validators = await getValidators(CURRENCY_ID);
+      const validators = await getValidators(mockConfig);
 
       expect(validators).toHaveLength(3);
       expect(validators.every(v => v.nonEarningReason === undefined)).toBe(true);
@@ -170,7 +194,7 @@ describe("getValidators", () => {
     it("still returns a usable list when the names fetch fails", async () => {
       jest.mocked(apiClient.getValidatorMetadata).mockRejectedValue(new Error("boom"));
 
-      const validators = await getValidators(CURRENCY_ID);
+      const validators = await getValidators(mockConfig);
 
       expect(validators).toHaveLength(3);
       expect(validators.every(v => v.name === undefined)).toBe(true);
@@ -181,7 +205,7 @@ describe("getValidators", () => {
         .mocked(apiClient.getValidatorMetadata)
         .mockResolvedValue({ [OPEN_HIGH_STAKE]: 42 } as never);
 
-      const validators = await getValidators(CURRENCY_ID);
+      const validators = await getValidators(mockConfig);
 
       expect(validators.every(v => v.name === undefined)).toBe(true);
     });
@@ -189,7 +213,7 @@ describe("getValidators", () => {
     it("omits the rate — rather than reporting zero — when the supply fetch fails", async () => {
       jest.mocked(apiClient.getTotalSupply).mockRejectedValue(new Error("boom"));
 
-      const validators = await getValidators(CURRENCY_ID);
+      const validators = await getValidators(mockConfig);
 
       expect(validators).toHaveLength(3);
       expect(validators.every(v => v.estimatedYearlyRewardsRate === undefined)).toBe(true);
@@ -198,7 +222,7 @@ describe("getValidators", () => {
     it("omits the rate when the committee reports no total stake", async () => {
       jest.mocked(apiClient.getCommittee).mockResolvedValue({ members: committee.members });
 
-      const validators = await getValidators(CURRENCY_ID);
+      const validators = await getValidators(mockConfig);
 
       expect(validators.every(v => v.estimatedYearlyRewardsRate === undefined)).toBe(true);
     });
@@ -217,7 +241,7 @@ describe("getValidators", () => {
     ])("throws on %s rather than caching an empty list", async (_label, response) => {
       jest.mocked(apiClient.getCommittee).mockResolvedValue(response as never);
 
-      await expect(getValidators(CURRENCY_ID)).rejects.toThrow("invalid committee response");
+      await expect(getValidators(mockConfig)).rejects.toThrow("invalid committee response");
     });
   });
 });

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { resolveBondedNonEarningReason } from "@ledgerhq/coin-aleo/logic";
 import { useFeature } from "@features/platform-feature-flags";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
@@ -34,7 +35,6 @@ import {
   hasPendingOperationType,
   isAleoAccount,
   isAleoTransaction,
-  isDelegatorBelowMinimum,
   isPrivateTransaction,
   isUnbondingCountingDown,
   patchAccountWithViewKey,
@@ -42,6 +42,7 @@ import {
 } from "./utils";
 import type {
   AleoAccount,
+  AleoStakeNonEarningReason,
   AleoTokenAccount,
   AleoUnbondingDisplayState,
   AleoUnspentRecord,
@@ -755,10 +756,7 @@ export function useSyncOnUnbondingComplete(
   ]);
 }
 
-export type AleoNonEarningReason =
-  | NonNullable<AleoValidator["nonEarningReason"]>
-  | "leftCommittee"
-  | "ownStakeBelowMinimum";
+export type AleoNonEarningReason = AleoStakeNonEarningReason;
 
 type AleoPendingStakingKind = "claim" | "unbond";
 
@@ -801,14 +799,15 @@ export function useAleoStakingPosition(account: AleoAccount): AleoStakingPositio
     const hasPendingUnbond = hasPendingOperationType(account, "UNBOND");
     const hasPendingClaim = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
 
-    const nonEarningReason = ((): AleoNonEarningReason | undefined => {
-      if (!hasBonded) return undefined;
-      if (validator) {
-        if (validator.nonEarningReason) return validator.nonEarningReason;
-        return isDelegatorBelowMinimum(bondedBalance) ? "ownStakeBelowMinimum" : undefined;
-      }
-      return committeeRead ? "leftCommittee" : undefined;
-    })();
+    const nonEarningReason =
+      hasBonded && (validator || committeeRead)
+        ? resolveBondedNonEarningReason({
+            address: account.freshAddress,
+            bondedValidator,
+            bondedBalance,
+            validator,
+          })
+        : undefined;
 
     const pendingKind = ((): AleoPendingStakingKind | null => {
       // A claim can only follow a confirmed unbond, so when both are pending the claim is newer.

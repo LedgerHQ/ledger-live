@@ -9,6 +9,8 @@ import {
   referenceTransferPublicTx,
   TEST_TOKEN_PROGRAM_ID,
   testnetAddress,
+  testnetBondedMicrocredits,
+  testnetBondedValidator,
   testnetIncomingPrivateRecord1,
   testnetSelfConversionTx,
   testnetViewKey,
@@ -40,14 +42,20 @@ describe("createApi", () => {
     config: async () => getTestnetIntegConfig(),
     logger: () => {},
   };
+  const stakingContext: AleoContext = {
+    config: async () => getTestnetIntegConfig({ enableStaking: true }),
+    logger: () => {},
+  };
   let emptyAddress: string;
   let privacyContext: AleoContext;
+  let stakingPrivacyContext: AleoContext;
   let emptyAddressViewKey: string;
 
   beforeAll(async () => {
     setupCalStore();
     const pristineAccount = await getPristineAccount();
     privacyContext = await withPrivacyContext(context, testnetViewKey);
+    stakingPrivacyContext = await withPrivacyContext(stakingContext, testnetViewKey);
     emptyAddress = pristineAccount.address;
     emptyAddressViewKey = pristineAccount.viewKey;
   });
@@ -171,6 +179,67 @@ describe("createApi", () => {
       const balance = await api.getBalance(emptyPrivacyContext, emptyAddress);
 
       expect(balance).toEqual([{ value: 0n, asset: { type: "native" } }]);
+    });
+
+    it("adds the bonded stake to the native total as locked, on top of the liquid balance", async () => {
+      const [[liquidNative], stakedBalance] = await Promise.all([
+        api.getBalance(privacyContext, testnetAddress),
+        api.getBalance(stakingPrivacyContext, testnetAddress),
+      ]);
+
+      expect(stakedBalance.filter(entry => entry.asset.type === "native")).toEqual([
+        {
+          value: liquidNative.value + testnetBondedMicrocredits,
+          locked: testnetBondedMicrocredits,
+          asset: { type: "native" },
+        },
+        {
+          value: testnetBondedMicrocredits,
+          asset: { type: "native" },
+          stake: expect.objectContaining({
+            address: testnetAddress,
+            state: "active",
+            delegate: testnetBondedValidator,
+          }),
+        },
+      ]);
+    });
+  });
+
+  describe("getStakes", () => {
+    it("returns an empty page for an address with no bond", async () => {
+      const page = await api.getStakes(stakingContext, emptyAddress);
+
+      expect(page).toEqual({ items: [] });
+    });
+
+    it("returns the bonded testnetAddress's active stake", async () => {
+      const page = await api.getStakes(stakingContext, testnetAddress);
+
+      expect(page.items).toEqual([
+        expect.objectContaining({
+          uid: testnetAddress,
+          address: testnetAddress,
+          state: "active",
+          actions: ["delegate", "undelegate"],
+          delegate: testnetBondedValidator,
+          asset: { type: "native" },
+          amount: testnetBondedMicrocredits,
+        }),
+      ]);
+    });
+  });
+
+  describe("getValidators", () => {
+    it("reads the validator committee", async () => {
+      const page = await api.getValidators(context);
+
+      expect(page.items.length).toBeGreaterThan(0);
+      page.items.forEach(validator => {
+        expect(validator.id).toBe(validator.address);
+        expect(validator.name.length).toBeGreaterThan(0);
+        expect(validator.balance).toBeGreaterThan(0n);
+      });
     });
   });
 
