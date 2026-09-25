@@ -1,22 +1,22 @@
 import { useCallback } from "react";
 import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
-import { openCardFund } from "../screens/CardFund/CardFundDialog";
-import { isCardFundSupported } from "../utils/isCardFundSupported";
+import { openCardTopUp } from "../screens/CardTopUp/CardTopUpDialog";
+import { isCardTopUpSupported } from "../utils/isCardTopUpSupported";
 
-export function useCardFundEntryPoint(): (asset: CardAssetRow) => void {
+export function useCardTopUpEntryPoint(): (asset: CardAssetRow) => void {
   const { openAssetAndAccount } = useOpenAssetAndAccount();
 
   return useCallback(
     (asset: CardAssetRow) => {
-      if (!isCardFundSupported(asset)) return;
+      if (!isCardTopUpSupported(asset)) return;
 
       openAssetAndAccount({
         currencies: [asset.ledgerId],
         areCurrenciesFiltered: true,
-        uiUseCase: "pay-card-fund",
+        uiUseCase: "pay-card-top-up",
         onSuccess: (account, parentAccount) => {
-          openCardFund({ account, parentAccount, asset });
+          openCardTopUp({ account, parentAccount, asset });
         },
       });
     },

@@ -6,7 +6,7 @@ import { transactionStrategy } from "@ledgerhq/live-common/exchange/swap/transac
 import { decodeFundPayload } from "@ledgerhq/hw-app-exchange";
 import BigNumber from "bignumber.js";
 
-type BuildCardFundTransactionParams = Readonly<{
+type BuildCardTopUpTransactionParams = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   amount: BigNumber;
@@ -14,19 +14,19 @@ type BuildCardFundTransactionParams = Readonly<{
   binaryPayload: string;
 }>;
 
-export async function buildCardFundTransaction({
+export async function buildCardTopUpTransaction({
   account,
   parentAccount,
   amount,
   payinAddress,
   binaryPayload,
-}: BuildCardFundTransactionParams): Promise<Transaction> {
+}: BuildCardTopUpTransactionParams): Promise<Transaction> {
   const mainAccount = getMainAccount(account, parentAccount);
   const family = mainAccount.currency.family as Transaction["family"];
   const strategy = transactionStrategy[family];
 
   if (!strategy) {
-    throw new Error(`Card Fund does not support ${family}`);
+    throw new Error(`Card top-up does not support ${family}`);
   }
 
   const payload = await decodeFundPayload(binaryPayload);

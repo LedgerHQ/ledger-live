@@ -17,14 +17,14 @@ import { broadcastLogger } from "~/datadog/logs";
 import { useSelector } from "LLD/hooks/redux";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { BAANX_FUND_PROVIDER } from "../constants";
-import { assertCardFundDestination } from "../utils/assertCardFundDestination";
-import { buildCardFundTransaction } from "../utils/buildCardFundTransaction";
+import { assertCardTopUpDestination } from "../utils/assertCardTopUpDestination";
+import { buildCardTopUpTransaction } from "../utils/buildCardTopUpTransaction";
 
 type SignResult = { signedOperation: SignedOperation } | { transactionSignError: Error };
 
 const FUND_EXCHANGE_TYPE = 0x02;
 
-export type CardFundDeviceStep =
+export type CardTopUpDeviceStep =
   | { kind: "idle" | "processing" }
   | { kind: "success"; operationHash: string }
   | { kind: "error"; error: Error }
@@ -40,9 +40,9 @@ export type CardFundDeviceStep =
       ) => T;
     };
 
-type DevicePhase = Extract<CardFundDeviceStep, { kind: "device" }>;
+type DevicePhase = Extract<CardTopUpDeviceStep, { kind: "device" }>;
 
-type UseCardFundExecutionParams = Readonly<{
+type UseCardTopUpExecutionParams = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   asset: CardAssetRow;
@@ -61,19 +61,19 @@ function asError(error: unknown): Error {
     (typeof record.message === "string" && record.message) ||
     (typeof record.statusText === "string" && record.statusText) ||
     nestedError?.message ||
-    (status === undefined ? "Unknown Card Fund error" : `Card Fund failed (${String(status)})`);
+    (status === undefined ? "Unknown Card top-up error" : `Card top-up failed (${String(status)})`);
   const normalized = new Error(message);
 
   if (typeof record.name === "string") normalized.name = record.name;
   return normalized;
 }
 
-export function useCardFundExecution({
+export function useCardTopUpExecution({
   account,
   parentAccount,
   asset,
-}: UseCardFundExecutionParams) {
-  const [deviceStep, setDeviceStep] = useState<CardFundDeviceStep>({ kind: "idle" });
+}: UseCardTopUpExecutionParams) {
+  const [deviceStep, setDeviceStep] = useState<CardTopUpDeviceStep>({ kind: "idle" });
   const failActiveStep = useRef<((error: Error) => void) | null>(null);
   const currentRun = useRef(0);
 
@@ -91,7 +91,7 @@ export function useCardFundExecution({
     [account, fromCurrency, parentAccount],
   );
   const broadcastConfig = useMemo(
-    () => ({ mevProtected, source: { type: "swap" as const, name: "pay-card-fund" } }),
+    () => ({ mevProtected, source: { type: "swap" as const, name: "pay-card-top-up" } }),
     [mevProtected],
   );
   const broadcast = useBroadcast({
@@ -113,7 +113,7 @@ export function useCardFundExecution({
   const execute = useCallback(
     async (amountText: string) => {
       const run = ++currentRun.current;
-      const settle = (step: CardFundDeviceStep) => {
+      const settle = (step: CardTopUpDeviceStep) => {
         if (run === currentRun.current) setDeviceStep(step);
       };
       const runDeviceStep = <R>(build: (onResult: (result: R) => void) => DevicePhase) => {
@@ -142,7 +142,7 @@ export function useCardFundExecution({
 
         const amount = parseCurrencyUnit(unit, amountText);
         if (!amount.isGreaterThan(0) || amount.isGreaterThan(account.spendableBalance)) {
-          throw new Error("Invalid Card Fund amount");
+          throw new Error("Invalid Card top-up amount");
         }
         const inAmount = amount.toNumber();
         if (!Number.isSafeInteger(inAmount)) {
@@ -175,9 +175,9 @@ export function useCardFundExecution({
           .finally(forgetCardTopUpPayload);
 
         const fundPayload = await decodeFundPayload(signed.payload);
-        assertCardFundDestination(asset.address, fundPayload.inAddress);
+        assertCardTopUpDestination(asset.address, fundPayload.inAddress);
 
-        const transaction = await buildCardFundTransaction({
+        const transaction = await buildCardTopUpTransaction({
           account,
           parentAccount,
           amount,
@@ -249,7 +249,7 @@ export function useCardFundExecution({
 
   const reset = useCallback(() => {
     currentRun.current += 1;
-    failActiveStep.current?.(new Error("Card Fund was reset"));
+    failActiveStep.current?.(new Error("Card top-up was reset"));
     setDeviceStep({ kind: "idle" });
   }, []);
 

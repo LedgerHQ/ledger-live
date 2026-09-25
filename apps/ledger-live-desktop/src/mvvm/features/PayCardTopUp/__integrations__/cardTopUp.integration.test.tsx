@@ -4,7 +4,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { act, render, screen } from "tests/testSetup";
-import CardFundRoot, { openCardFund } from "../screens/CardFund/CardFundDialog";
+import CardTopUpRoot, { openCardTopUp } from "../screens/CardTopUp/CardTopUpDialog";
 
 const parentAccount = genAccount("ethereum-account", {
   currency: getCryptoCurrencyById("ethereum"),
@@ -30,42 +30,42 @@ const asset = {
   countervalueAmount: 50,
 };
 
-function renderFundDialog() {
-  const rendered = render(<CardFundRoot />, {
+function renderTopUpDialog() {
+  const rendered = render(<CardTopUpRoot />, {
     initialState: { accounts: [parentAccount] },
   });
 
   act(() => {
-    openCardFund({ account: sourceAccount, parentAccount, asset });
+    openCardTopUp({ account: sourceAccount, parentAccount, asset });
   });
 
   return rendered;
 }
 
 it("starts the form with the selected linked-wallet address", () => {
-  renderFundDialog();
+  renderTopUpDialog();
 
   expect(screen.getByRole("dialog", { name: "Top up USD Coin" })).toBeVisible();
-  expect(screen.getByTestId("card-fund-destination")).toHaveTextContent(asset.address);
+  expect(screen.getByTestId("card-top-up-destination")).toHaveTextContent(asset.address);
 });
 
 it("enables Fund after a valid amount is entered", async () => {
-  const { user } = renderFundDialog();
+  const { user } = renderTopUpDialog();
 
-  const submit = screen.getByTestId("card-fund-submit");
+  const submit = screen.getByTestId("card-top-up-submit");
   expect(submit).toBeDisabled();
 
-  await user.type(screen.getByTestId("card-fund-amount-input"), "25");
+  await user.type(screen.getByTestId("card-top-up-amount-input"), "25");
 
   expect(submit).toBeEnabled();
   expect(screen.getByText(/Available:/)).toBeVisible();
 });
 
 it("blocks an amount above the source account balance", async () => {
-  const { user } = renderFundDialog();
+  const { user } = renderTopUpDialog();
 
-  await user.type(screen.getByTestId("card-fund-amount-input"), "101");
+  await user.type(screen.getByTestId("card-top-up-amount-input"), "101");
 
   expect(screen.getByText("This amount exceeds your available balance")).toBeVisible();
-  expect(screen.getByTestId("card-fund-submit")).toBeDisabled();
+  expect(screen.getByTestId("card-top-up-submit")).toBeDisabled();
 });

@@ -31,7 +31,9 @@ const CurrencyRegionRestrictedDialog = lazy(
 const AccountPublicKeyUnavailableDialog = lazy(
   () => import("LLD/features/AccountPublicKeyUnavailableDialog"),
 );
-const CardFundRoot = lazy(() => import("LLD/features/PayCardFund/screens/CardFund/CardFundDialog"));
+const CardTopUpRoot = lazy(
+  () => import("LLD/features/PayCardTopUp/screens/CardTopUp/CardTopUpDialog"),
+);
 
 /** Mounts all root-level dialogs and flows. Add new global dialogs here. */
 const GlobalDialogs = () => (
@@ -56,7 +58,7 @@ const GlobalDialogs = () => (
       <PerpsTransactionSignedRoot />
     </Suspense>
     <Suspense fallback={null}>
-      <CardFundRoot />
+      <CardTopUpRoot />
     </Suspense>
     <ActionConfirmationDialog />
     <Suspense fallback={null}>

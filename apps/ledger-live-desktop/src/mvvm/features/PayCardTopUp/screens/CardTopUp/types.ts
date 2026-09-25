@@ -1,14 +1,14 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CardAssetRow } from "@features/flow-pay-card-assets";
-import type { CardFundDeviceStep } from "../../hooks/useCardFundExecution";
+import type { CardTopUpDeviceStep } from "../../hooks/useCardTopUpExecution";
 
-export type CardFundData = Readonly<{
+export type CardTopUpData = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   asset: CardAssetRow;
 }>;
 
-export type CardFundViewModel = Readonly<{
+export type CardTopUpViewModel = Readonly<{
   asset: CardAssetRow;
   amountText: string;
   maxDecimalLength: number;
@@ -16,7 +16,7 @@ export type CardFundViewModel = Readonly<{
   sourceAccountName: string;
   amountError: string | null;
   canSubmit: boolean;
-  deviceStep: CardFundDeviceStep;
+  deviceStep: CardTopUpDeviceStep;
   onAmountChange: (value: string) => void;
   onSubmit: () => void;
   onRetry: () => void;

@@ -22,8 +22,8 @@ import logger from "~/renderer/logger";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { HISTORY_TAB_CARD, HISTORY_TAB_SEARCH_PARAM } from "LLD/features/History/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
-import { useCardFundEntryPoint } from "LLD/features/PayCardFund/hooks/useCardFundEntryPoint";
-import { isCardFundSupported } from "LLD/features/PayCardFund/utils/isCardFundSupported";
+import { useCardTopUpEntryPoint } from "LLD/features/PayCardTopUp/hooks/useCardTopUpEntryPoint";
+import { isCardTopUpSupported } from "LLD/features/PayCardTopUp/utils/isCardTopUpSupported";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { usePayCardAssets } from "./usePayCardAssets";
@@ -204,7 +204,7 @@ export function useCardViewModel(): CardViewModel {
     [navigate, pathname],
   );
 
-  const onFundAsset = useCardFundEntryPoint();
+  const onTopUpAsset = useCardTopUpEntryPoint();
 
   const onManagePin = useCallback(
     () => openHosted(buildManagePinPath, "manage pin page did not open"),
@@ -227,8 +227,8 @@ export function useCardViewModel(): CardViewModel {
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
       onTopUp: asset => {
-        if (!isLegacyTopUp && isCardFundSupported(asset)) {
-          onFundAsset(asset);
+        if (!isLegacyTopUp && isCardTopUpSupported(asset)) {
+          onTopUpAsset(asset);
           return;
         }
         void openTopUp(asset.currency);
@@ -239,7 +239,7 @@ export function useCardViewModel(): CardViewModel {
     [
       isLegacyTopUp,
       onAddAsset,
-      onFundAsset,
+      onTopUpAsset,
       onShowAssetHistory,
       openAssetPage,
       openTopUp,

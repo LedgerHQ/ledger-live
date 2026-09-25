@@ -6,12 +6,15 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { useCardFundExecution } from "../../hooks/useCardFundExecution";
-import type { CardFundData, CardFundViewModel } from "./types";
+import { useCardTopUpExecution } from "../../hooks/useCardTopUpExecution";
+import type { CardTopUpData, CardTopUpViewModel } from "./types";
 
 const KEY_PREFIX = "payTab.card.fund";
 
-export function useCardFundViewModel(data: CardFundData, onClose: () => void): CardFundViewModel {
+export function useCardTopUpViewModel(
+  data: CardTopUpData,
+  onClose: () => void,
+): CardTopUpViewModel {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const [amountText, setAmountText] = useState("");
@@ -41,7 +44,7 @@ export function useCardFundViewModel(data: CardFundData, onClose: () => void): C
     ? formatCurrencyUnit(unit, data.account.spendableBalance, { showCode: true, locale })
     : "";
   const canSubmit = amountText.length > 0 && amountError === null;
-  const { deviceStep, execute, reset, onDeviceError } = useCardFundExecution(data);
+  const { deviceStep, execute, reset, onDeviceError } = useCardTopUpExecution(data);
 
   const onSubmit = useCallback(() => {
     if (canSubmit) void execute(normalizedAmount);

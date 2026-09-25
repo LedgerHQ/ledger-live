@@ -2,12 +2,12 @@ import { act, renderHook } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
-import { openCardFund } from "../../screens/CardFund/CardFundDialog";
-import { useCardFundEntryPoint } from "../useCardFundEntryPoint";
+import { openCardTopUp } from "../../screens/CardTopUp/CardTopUpDialog";
+import { useCardTopUpEntryPoint } from "../useCardTopUpEntryPoint";
 
 jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer");
-jest.mock("../../screens/CardFund/CardFundDialog", () => ({
-  openCardFund: jest.fn(),
+jest.mock("../../screens/CardTopUp/CardTopUpDialog", () => ({
+  openCardTopUp: jest.fn(),
 }));
 
 const asset: CardAssetRow = {
@@ -34,7 +34,7 @@ beforeEach(() => {
 });
 
 it("filters the source-account picker to the linked wallet asset", () => {
-  const { result } = renderHook(() => useCardFundEntryPoint());
+  const { result } = renderHook(() => useCardTopUpEntryPoint());
 
   act(() => result.current(asset));
 
@@ -42,20 +42,20 @@ it("filters the source-account picker to the linked wallet asset", () => {
     expect.objectContaining({
       currencies: [asset.ledgerId],
       areCurrenciesFiltered: true,
-      uiUseCase: "pay-card-fund",
+      uiUseCase: "pay-card-top-up",
     }),
   );
 });
 
-it("hands the selected source account and linked destination to Fund", () => {
+it("hands the selected source account and linked destination to the top-up", () => {
   const account = genAccount("source-account");
-  const { result } = renderHook(() => useCardFundEntryPoint());
+  const { result } = renderHook(() => useCardTopUpEntryPoint());
 
   act(() => result.current(asset));
   const { onSuccess } = openAssetAndAccount.mock.calls[0][0];
   act(() => onSuccess(account));
 
-  expect(openCardFund).toHaveBeenCalledWith({
+  expect(openCardTopUp).toHaveBeenCalledWith({
     account,
     parentAccount: undefined,
     asset,
@@ -64,9 +64,9 @@ it("hands the selected source account and linked destination to Fund", () => {
 
 it.each([
   ["an unmapped asset", ""],
-  ["an asset Fund is not verified for", "ethereum/erc20/usd__coin"],
+  ["an asset the top-up is not verified for", "ethereum/erc20/usd__coin"],
 ])("does not open an account picker for %s", (_, ledgerId) => {
-  const { result } = renderHook(() => useCardFundEntryPoint());
+  const { result } = renderHook(() => useCardTopUpEntryPoint());
 
   act(() => result.current({ ...asset, ledgerId }));
 

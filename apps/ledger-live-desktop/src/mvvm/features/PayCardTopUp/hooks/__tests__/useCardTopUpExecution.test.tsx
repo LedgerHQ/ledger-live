@@ -9,8 +9,8 @@ import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { act, renderHook, waitFor } from "tests/testSetup";
 import { useStartExchangeAction, useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
-import { buildCardFundTransaction } from "../../utils/buildCardFundTransaction";
-import { useCardFundExecution } from "../useCardFundExecution";
+import { buildCardTopUpTransaction } from "../../utils/buildCardTopUpTransaction";
+import { useCardTopUpExecution } from "../useCardTopUpExecution";
 
 jest.mock("@domain/api-card-top-up", () => ({
   useRequestCardTopUpPayloadMutation: jest.fn(),
@@ -32,8 +32,8 @@ jest.mock("@ledgerhq/live-common/exchange/platform/completeExchange", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
-jest.mock("../../utils/buildCardFundTransaction", () => ({
-  buildCardFundTransaction: jest.fn(),
+jest.mock("../../utils/buildCardTopUpTransaction", () => ({
+  buildCardTopUpTransaction: jest.fn(),
 }));
 
 const parentAccount = genAccount("ethereum-account", {
@@ -67,7 +67,7 @@ const requestCardTopUpPayload = jest.fn();
 const forgetCardTopUpPayload = jest.fn();
 
 async function finishDeviceStep(
-  result: { current: ReturnType<typeof useCardFundExecution> },
+  result: { current: ReturnType<typeof useCardTopUpExecution> },
   stepId: "start" | "confirm" | "sign",
   response: unknown,
 ) {
@@ -94,7 +94,7 @@ beforeEach(() => {
   jest.mocked(useStartExchangeAction).mockReturnValue({} as never);
   jest.mocked(useTransactionAction).mockReturnValue({} as never);
   jest.mocked(useBroadcast).mockReturnValue(broadcast);
-  jest.mocked(buildCardFundTransaction).mockResolvedValue(transaction);
+  jest.mocked(buildCardTopUpTransaction).mockResolvedValue(transaction);
   jest
     .mocked(useRequestCardTopUpPayloadMutation)
     .mockReturnValue([requestCardTopUpPayload, { reset: forgetCardTopUpPayload }] as never);
@@ -108,7 +108,7 @@ beforeEach(() => {
 
 it("signs the provider payload for the linked wallet and broadcasts it", async () => {
   const { result } = renderHook(() =>
-    useCardFundExecution({ account: sourceAccount, parentAccount, asset }),
+    useCardTopUpExecution({ account: sourceAccount, parentAccount, asset }),
   );
 
   let execution!: Promise<void>;
@@ -132,7 +132,7 @@ it("signs the provider payload for the linked wallet and broadcasts it", async (
     inAddress: asset.address,
   });
   expect(forgetCardTopUpPayload).toHaveBeenCalled();
-  expect(buildCardFundTransaction).toHaveBeenCalledWith(
+  expect(buildCardTopUpTransaction).toHaveBeenCalledWith(
     expect.objectContaining({
       account: sourceAccount,
       parentAccount,
@@ -156,7 +156,7 @@ it("stops before the device confirmation when the payload pays another address",
     .mocked(decodeFundPayload)
     .mockResolvedValue({ inAddress: "0x3333333333333333333333333333333333333333" } as never);
   const { result } = renderHook(() =>
-    useCardFundExecution({ account: sourceAccount, parentAccount, asset }),
+    useCardTopUpExecution({ account: sourceAccount, parentAccount, asset }),
   );
 
   let execution!: Promise<void>;
@@ -168,7 +168,7 @@ it("stops before the device confirmation when the payload pays another address",
   });
   await act(async () => execution);
 
-  expect(buildCardFundTransaction).not.toHaveBeenCalled();
+  expect(buildCardTopUpTransaction).not.toHaveBeenCalled();
   expect(broadcast).not.toHaveBeenCalled();
   expect(result.current.deviceStep).toMatchObject({
     kind: "error",
@@ -181,7 +181,7 @@ it("shows the provider's refusal message", async () => {
     unwrap: jest.fn().mockRejectedValue({ status: "CUSTOM_ERROR", error: "User not logged in" }),
   });
   const { result } = renderHook(() =>
-    useCardFundExecution({ account: sourceAccount, parentAccount, asset }),
+    useCardTopUpExecution({ account: sourceAccount, parentAccount, asset }),
   );
 
   let execution!: Promise<void>;
@@ -202,7 +202,7 @@ it("shows the provider's refusal message", async () => {
 
 it("ends the run when the device fails during a step, so a retry starts clean", async () => {
   const { result } = renderHook(() =>
-    useCardFundExecution({ account: sourceAccount, parentAccount, asset }),
+    useCardTopUpExecution({ account: sourceAccount, parentAccount, asset }),
   );
 
   let execution!: Promise<void>;
@@ -235,7 +235,7 @@ it("refuses an amount the provider cannot receive exactly, before the device", a
     spendableBalance: new BigNumber("1e30"),
   };
   const { result } = renderHook(() =>
-    useCardFundExecution({ account: richAccount, parentAccount, asset }),
+    useCardTopUpExecution({ account: richAccount, parentAccount, asset }),
   );
 
   await act(async () => result.current.execute("100000000000"));
@@ -249,7 +249,7 @@ it("refuses an amount the provider cannot receive exactly, before the device", a
 
 it("shows the message from a serialized device error", () => {
   const { result } = renderHook(() =>
-    useCardFundExecution({ account: sourceAccount, parentAccount, asset }),
+    useCardTopUpExecution({ account: sourceAccount, parentAccount, asset }),
   );
 
   act(() => {
@@ -267,7 +267,7 @@ it("shows the message from a serialized device error", () => {
 
 it("stops before connecting to the device when the linked wallet has no address", async () => {
   const { result } = renderHook(() =>
-    useCardFundExecution({
+    useCardTopUpExecution({
       account: sourceAccount,
       parentAccount,
       asset: { ...asset, address: "" },

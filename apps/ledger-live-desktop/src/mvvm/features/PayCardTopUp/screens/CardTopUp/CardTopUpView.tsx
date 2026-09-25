@@ -10,11 +10,11 @@ import {
 import { useTranslation } from "react-i18next";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { renderError, renderLoading } from "~/renderer/components/DeviceAction/rendering";
-import type { CardFundViewModel } from "./types";
+import type { CardTopUpViewModel } from "./types";
 
 const KEY_PREFIX = "payTab.card.fund";
 
-export function CardFundView({
+export function CardTopUpView({
   asset,
   amountText,
   maxDecimalLength,
@@ -28,7 +28,7 @@ export function CardFundView({
   onRetry,
   onDeviceError,
   onClose,
-}: CardFundViewModel) {
+}: CardTopUpViewModel) {
   const { t } = useTranslation();
 
   if (deviceStep.kind === "error") {
@@ -90,7 +90,7 @@ export function CardFundView({
             currencyText={asset.ticker}
             maxDecimalLength={maxDecimalLength}
             aria-invalid={amountError !== null}
-            data-testid="card-fund-amount-input"
+            data-testid="card-top-up-amount-input"
           />
           <p className={`body-3 mt-8 ${amountError ? "text-error" : "text-muted"}`}>
             {amountError ?? t(`${KEY_PREFIX}.available`, { balance: availableBalance })}
@@ -99,7 +99,7 @@ export function CardFundView({
 
         <div className="flex flex-col gap-4">
           <p className="body-3 text-muted">{t(`${KEY_PREFIX}.destination`)}</p>
-          <p className="body-2 break-all" data-testid="card-fund-destination">
+          <p className="body-2 break-all" data-testid="card-top-up-destination">
             {asset.address}
           </p>
         </div>
@@ -109,7 +109,7 @@ export function CardFundView({
           className="w-full"
           disabled={!canSubmit}
           onClick={onSubmit}
-          data-testid="card-fund-submit"
+          data-testid="card-top-up-submit"
         >
           {t(`${KEY_PREFIX}.continue`)}
         </Button>

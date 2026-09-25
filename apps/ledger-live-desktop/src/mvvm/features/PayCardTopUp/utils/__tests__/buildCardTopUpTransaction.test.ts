@@ -3,7 +3,7 @@ import { decodeFundPayload } from "@ledgerhq/hw-app-exchange";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { buildCardFundTransaction } from "../buildCardFundTransaction";
+import { buildCardTopUpTransaction } from "../buildCardTopUpTransaction";
 
 jest.mock("@ledgerhq/hw-app-exchange", () => ({
   decodeFundPayload: jest.fn(),
@@ -29,14 +29,14 @@ it.each([
   ["ripple", "xrp"],
   ["solana", "solana"],
 ] as const)(
-  "builds the %s Card Fund transaction through its %s strategy",
+  "builds the %s Card top-up transaction through its %s strategy",
   async (currencyId, family) => {
     const account = genAccount(`${currencyId}-account`, {
       currency: getCryptoCurrencyById(currencyId),
       operationsSize: 0,
     });
 
-    const transaction = await buildCardFundTransaction({
+    const transaction = await buildCardTopUpTransaction({
       account,
       amount: new BigNumber(10),
       payinAddress: "destination",
@@ -58,7 +58,7 @@ it("builds token funding on the parent EVM family", async () => {
   });
   const account = genTokenAccount(0, parentAccount, usdcToken);
 
-  const transaction = await buildCardFundTransaction({
+  const transaction = await buildCardTopUpTransaction({
     account,
     parentAccount,
     amount: new BigNumber(10),

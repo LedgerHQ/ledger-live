@@ -8,10 +8,10 @@ import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { useCardViewModel } from "../useCardViewModel";
 
 const mockNavigate = jest.fn();
-const mockFundAsset = jest.fn();
+const mockTopUpAsset = jest.fn();
 
-jest.mock("LLD/features/PayCardFund/hooks/useCardFundEntryPoint", () => ({
-  useCardFundEntryPoint: () => mockFundAsset,
+jest.mock("LLD/features/PayCardTopUp/hooks/useCardTopUpEntryPoint", () => ({
+  useCardTopUpEntryPoint: () => mockTopUpAsset,
 }));
 
 jest.mock("react-router", () => ({
@@ -64,7 +64,7 @@ function renderCardViewModelWithLegacyTopUp() {
 describe("useCardViewModel", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
-    mockFundAsset.mockClear();
+    mockTopUpAsset.mockClear();
     mockedReadCardUsEnv.mockResolvedValue(false);
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     mockedManifest.mockReturnValue(HOSTED_MANIFEST as ReturnType<typeof useLiveAppManifest>);
@@ -204,7 +204,7 @@ describe("useCardViewModel", () => {
 
     act(() => result.current.assets?.onTopUp?.(asset));
 
-    expect(mockFundAsset).toHaveBeenCalledWith(asset);
+    expect(mockTopUpAsset).toHaveBeenCalledWith(asset);
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
@@ -216,7 +216,7 @@ describe("useCardViewModel", () => {
       result.current.assets?.onTopUp?.({ currency: "xrp", ledgerId: "ripple" } as CardAssetRow);
     });
 
-    expect(mockFundAsset).not.toHaveBeenCalled();
+    expect(mockTopUpAsset).not.toHaveBeenCalled();
     expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?currency=xrp");
   });
 
@@ -239,7 +239,7 @@ describe("useCardViewModel", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith("/platform/cl-card?returnTo=%2Fpaytab");
-    expect(mockFundAsset).not.toHaveBeenCalled();
+    expect(mockTopUpAsset).not.toHaveBeenCalled();
   });
 
   it("opens the withdrawal page for the asset the user withdraws from", async () => {

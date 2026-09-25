@@ -1,6 +1,9 @@
 const EVM_ADDRESS = /^0x[0-9a-f]{40}$/i;
 
-export function assertCardFundDestination(linkedWalletAddress: string, payinAddress: string): void {
+export function assertCardTopUpDestination(
+  linkedWalletAddress: string,
+  payinAddress: string,
+): void {
   const matches =
     EVM_ADDRESS.test(linkedWalletAddress) && EVM_ADDRESS.test(payinAddress)
       ? linkedWalletAddress.toLowerCase() === payinAddress.toLowerCase()
