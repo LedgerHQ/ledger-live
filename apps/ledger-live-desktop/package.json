@@ -167,6 +167,7 @@
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/live-send": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
+    "@ledgerhq/live-signer-tron": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",

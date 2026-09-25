@@ -1220,6 +1220,9 @@ importers:
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../../libs/live-signer-evm
+      '@ledgerhq/live-signer-tron':
+        specifier: workspace:^
+        version: link:../../libs/live-signer-tron
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../../libs/live-wallet
@@ -2089,6 +2092,9 @@ importers:
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../../libs/live-signer-evm
+      '@ledgerhq/live-signer-tron':
+        specifier: workspace:^
+        version: link:../../libs/live-signer-tron
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../../libs/live-wallet
@@ -8584,6 +8590,9 @@ importers:
         specifier: 'catalog:'
         version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/device-signer-kit-ethereum':
+        specifier: 'catalog:'
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/device-signer-kit-tron':
         specifier: 'catalog:'
         version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@shared/feature-flags':
@@ -16736,6 +16745,9 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
+      '@ledgerhq/live-dmk-shared':
+        specifier: workspace:^
+        version: link:../live-dmk-shared
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -46004,6 +46016,15 @@ snapshots:
   '@ledgerhq/device-signer-kit-tron@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      xstate: 5.19.2
+
+  '@ledgerhq/device-signer-kit-tron@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
+    dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)

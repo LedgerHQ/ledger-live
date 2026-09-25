@@ -11,6 +11,7 @@ import {
   type SignerTrx,
 } from "@ledgerhq/device-signer-kit-tron";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
+import { tronAddressBookProvider } from "./addressBook/tronAddressBookProvider";
 import type { TronAddress, TronSignature, TronSigner } from "./types";
 
 type DAError = GetAddressDAError | SignTransactionDAError;
@@ -19,7 +20,17 @@ export class DmkSignerTron implements TronSigner {
   private readonly signer: SignerTrx;
 
   constructor(dmk: DeviceManagementKit, sessionId: string) {
-    this.signer = new SignerTrxBuilder({ dmk, sessionId }).build();
+    const builder = new SignerTrxBuilder({ dmk, sessionId });
+
+    // Snapshot the address book for this signer's lifetime, so the recipient
+    // and the signing account are matched against the same contacts. An absent
+    // or empty book leaves signing behavior unchanged.
+    const addressBook = tronAddressBookProvider.getAddressBook();
+    if (addressBook !== undefined) {
+      builder.withAddressBook(addressBook);
+    }
+
+    this.signer = builder.build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {
