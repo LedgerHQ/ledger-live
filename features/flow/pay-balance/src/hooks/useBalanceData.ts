@@ -19,6 +19,7 @@ export type UseBalanceDataParams = Readonly<{
   onResetFilter: () => void;
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
   discreet?: boolean;
+  onToggleDiscreetMode?: () => void;
 }>;
 
 // Host-facing data hook: both apps feed their portfolio source + formatters and get back
@@ -36,6 +37,7 @@ export function useBalanceData({
   onResetFilter,
   onTrackEvent,
   discreet,
+  onToggleDiscreetMode,
 }: UseBalanceDataParams): BalanceData {
   const { t } = useTranslation();
   const allLabel = t("payTab.balance.filter.allStablecoins");
@@ -76,5 +78,5 @@ export function useBalanceData({
     }
   }, [shouldResetFilter, onResetFilter]);
 
-  return { ...data, discreet };
+  return { ...data, discreet, onToggleDiscreetMode };
 }

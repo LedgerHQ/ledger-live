@@ -19,6 +19,7 @@ export function BalanceBody(props: BalanceViewProps) {
         selectedOption={props.selectedOption}
         onOpenFilter={props.onOpenFilter}
         discreet={props.discreet}
+        onToggleDiscreetMode={props.onToggleDiscreetMode}
       />
       <BalanceFilterPicker
         isOpen={props.isFilterOpen}

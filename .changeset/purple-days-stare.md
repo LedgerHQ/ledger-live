@@ -7,4 +7,4 @@
 "@features/flow-pay-card": minor
 ---
 
-Hide Pay and card history amounts when discreet mode is enabled
+Hide Pay and card history amounts when discreet mode is enabled, and toggle it from the Pay balance

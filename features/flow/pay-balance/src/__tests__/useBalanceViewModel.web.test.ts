@@ -53,6 +53,15 @@ describe("useBalanceViewModel", () => {
     expect(result.current).toMatchObject({ displayMode: "funded", discreet: true });
   });
 
+  it("should pass discreet toggle through to the funded view", () => {
+    const onToggleDiscreetMode = jest.fn();
+    const { result } = renderBalanceViewModel(
+      buildProps({ hasBalance: true, stableBalance: 1250.5, onToggleDiscreetMode }),
+    );
+
+    expect(result.current).toMatchObject({ displayMode: "funded", onToggleDiscreetMode });
+  });
+
   it("should keep funded chrome and skeleton the amount while funded data loads", () => {
     const { result } = renderBalanceViewModel(
       buildProps({ status: "loading", hasBalance: true, stableBalance: 1250.5 }),

@@ -11,6 +11,8 @@ type BalanceFundedStateProps = Readonly<{
   selectedOption?: BalanceFilterOption;
   onOpenFilter: () => void;
   discreet?: boolean;
+  /** Desktop toggles discreet mode from the top bar, so the amount is not pressable here. */
+  onToggleDiscreetMode?: () => void;
 }>;
 
 export function BalanceFundedState({
