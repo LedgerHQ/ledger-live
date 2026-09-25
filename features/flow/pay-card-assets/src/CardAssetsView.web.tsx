@@ -94,6 +94,7 @@ export function CardAssetsView({
   formatBalance,
   formatters,
   dialogCopy,
+  discreet,
   onAssetPress,
   onDialogClose,
   onTopUpPress,
@@ -144,6 +145,7 @@ export function CardAssetsView({
         copy={dialogCopy}
         formatBalance={formatBalance}
         formatters={formatters}
+        discreet={discreet}
         onClose={onDialogClose}
         onTopUp={onTopUpPress}
         onWithdraw={onWithdrawPress}

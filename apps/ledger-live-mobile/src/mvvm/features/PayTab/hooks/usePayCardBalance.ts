@@ -12,6 +12,7 @@ import {
 import type { PayAnalyticsHelper } from "@features/platform-pay-analytics";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "~/context/hooks";
+import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
 import { localeSelector } from "~/reducers/settings";
 import { usePayStablecoins } from "./usePayStablecoins";
 import { useCountervalueFormatter } from "./useCountervalueFormatter";
@@ -20,6 +21,7 @@ import { useFiatFormatter } from "./useFiatFormatter";
 export function usePayCardBalance(onTrackEvent?: PayAnalyticsHelper["trackEvent"]): BalanceData {
   const dispatch = useDispatch();
   const locale = useSelector(localeSelector);
+  const { discreetMode: discreet, toggleDiscreetMode } = useToggleDiscreetMode();
   const filter = useSelector(selectPayCardBalanceFilter);
 
   const { stablecoins, defaultStablecoins, isLoading, isError } = usePayStablecoins();
@@ -28,8 +30,8 @@ export function usePayCardBalance(onTrackEvent?: PayAnalyticsHelper["trackEvent"
 
   const formatCrypto = useCallback(
     (cryptoUnit: Unit, balance: number): string =>
-      formatCurrencyUnit(cryptoUnit, new BigNumber(balance), { locale, showCode: true }),
-    [locale],
+      formatCurrencyUnit(cryptoUnit, new BigNumber(balance), { locale, showCode: true, discreet }),
+    [locale, discreet],
   );
 
   const formatCountervalue = useCountervalueFormatter();
@@ -54,6 +56,8 @@ export function usePayCardBalance(onTrackEvent?: PayAnalyticsHelper["trackEvent"
     formatFiat,
     formatCrypto,
     formatCountervalue,
+    discreet,
+    onToggleDiscreetMode: toggleDiscreetMode,
     onConfirmFilter,
     onResetFilter,
     onTrackEvent,

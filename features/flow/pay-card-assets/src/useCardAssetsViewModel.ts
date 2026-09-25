@@ -26,9 +26,14 @@ const EMPTY_CURRENCIES = new Map();
 const NO_PRICE: CardAssetsProps["getCounterValue"] = () => null;
 const NO_COUNTERVALUE: CardAssetsProps["formatCountervalue"] = () => "";
 
-export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
+export function formatCardAssetCryptoAmount(
+  balance: string | null,
+  currency: string,
+  discreet = false,
+): string {
   const ticker = currency.toUpperCase();
-  return balance === null ? ticker : `${balance} ${ticker}`;
+  if (balance === null) return ticker;
+  return `${discreet ? "***" : balance} ${ticker}`;
 }
 
 export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewModel {
@@ -42,6 +47,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     onWithdraw,
     onShowHistory,
     onAddAsset,
+    discreet = false,
   } = props ?? {};
   const { t } = useTranslation();
   const { trackButtonClicked, trackDebitOrderChanged } = usePayAnalyticsContext();
@@ -77,12 +83,12 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
           name: ledgerCurrency?.name ?? currency.toUpperCase(),
           ticker: ledgerCurrency?.ticker ?? currency.toUpperCase(),
           ledgerId: ledgerId ?? "",
-          cryptoAmount: formatCardAssetCryptoAmount(balance, currency),
+          cryptoAmount: formatCardAssetCryptoAmount(balance, currency, discreet),
           countervalue: countervalue === null ? null : formatCountervalue(countervalue),
           countervalueAmount: countervalue,
         };
       }),
-    [wallets, getCounterValue, formatCountervalue],
+    [wallets, getCounterValue, formatCountervalue, discreet],
   );
 
   const rows = useMemo<readonly CardAssetRow[]>(() => {
@@ -243,6 +249,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onAddAssetPress: onAddAsset ? onAddAssetPress : undefined,
       onMoveAsset,
       reorderingAssetIds,
+      discreet,
     }),
     [
       props,
@@ -267,6 +274,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onAddAssetPress,
       onMoveAsset,
       reorderingAssetIds,
+      discreet,
     ],
   );
 }

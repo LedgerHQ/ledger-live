@@ -230,8 +230,15 @@ export function usePayTabViewModel() {
   const formatCountervalue = useCountervalueFormatter();
   const { locale } = useLocale();
   const formatTransactionAmount = useCallback<FormatCardTransactionAmount>(
-    (value, currency, kind) => formatCardTransactionAmount({ value, currency, kind, locale }),
-    [locale],
+    (value, currency, kind) =>
+      formatCardTransactionAmount({
+        value,
+        currency,
+        kind,
+        locale,
+        discreet: payCardAssets.discreet,
+      }),
+    [locale, payCardAssets.discreet],
   );
   const card: CardProps = useMemo(
     () => ({
@@ -243,6 +250,7 @@ export function usePayTabViewModel() {
       onViewRewards,
       onShowMore,
       cardSettingsActions,
+      discreet: payCardAssets.discreet,
     }),
     [
       login,
@@ -254,6 +262,7 @@ export function usePayTabViewModel() {
       onViewRewards,
       onShowMore,
       cardSettingsActions,
+      payCardAssets.discreet,
     ],
   );
 

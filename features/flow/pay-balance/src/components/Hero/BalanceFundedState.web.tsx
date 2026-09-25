@@ -10,6 +10,9 @@ type BalanceFundedStateProps = Readonly<{
   allStablecoinsLabel: string;
   selectedOption?: BalanceFilterOption;
   onOpenFilter: () => void;
+  discreet?: boolean;
+  /** Desktop toggles discreet mode from the top bar, so the amount is not pressable here. */
+  onToggleDiscreetMode?: () => void;
 }>;
 
 export function BalanceFundedState({
@@ -19,6 +22,7 @@ export function BalanceFundedState({
   allStablecoinsLabel,
   selectedOption,
   onOpenFilter,
+  discreet,
 }: BalanceFundedStateProps) {
   return (
     <div className="flex flex-col gap-24" data-testid="pay-card-balance-funded-state">
@@ -27,6 +31,7 @@ export function BalanceFundedState({
           value={balance}
           formatter={formatCountervalue}
           loading={isLoading}
+          hidden={discreet}
           data-testid="pay-card-balance-amount"
         />
         <BalanceFilterPill
