@@ -3,6 +3,7 @@ export * from "./analytics";
 export * from "./contactOperations";
 export * from "./utils/getContactInitial";
 export * from "./hooks/useContactsMeContact";
+export * from "./hooks/useMeDisplayNameFormatter";
 export * from "./utils/formatMeDisplayName";
 export * from "./utils/resolveMeContactDisplayName";
 export * from "./contactDeviceIntentsPort";

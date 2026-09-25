@@ -1,6 +1,6 @@
 import type { Contact } from "@domain/entity-contact";
 import { ContactsCompactList } from "@features/flow-contacts-list";
-import { createMeDisplayNameFormatter } from "@features/platform-contacts";
+import { useMeDisplayNameFormatter } from "@features/platform-contacts";
 import { Box, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-rnative";
 import React, { useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
@@ -12,15 +12,14 @@ type RecipientContactsListProps = Readonly<{
 
 export function RecipientContactsList({ contacts, onContactSelect }: RecipientContactsListProps) {
   const { t } = useTranslation();
+  const formatMeDisplayName = useMeDisplayNameFormatter();
   const labels = useMemo(
     () => ({
       emptyAddress: t("contacts.addressCount", { count: 0 }),
       formatAddressCount: (count: number) => t("contacts.addressCount", { count }),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
+      formatMeDisplayName,
     }),
-    [t],
+    [formatMeDisplayName, t],
   );
 
   return (

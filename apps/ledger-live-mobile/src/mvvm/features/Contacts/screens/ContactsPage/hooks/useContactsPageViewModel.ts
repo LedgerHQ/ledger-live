@@ -19,7 +19,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact } from "@domain/entity-contact";
-import { createMeDisplayNameFormatter, useContacts } from "@features/platform-contacts";
+import { useMeDisplayNameFormatter, useContacts } from "@features/platform-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { ScreenName } from "~/const";
@@ -42,6 +42,7 @@ export function useContactsPageViewModel(
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
   const contacts = useContacts();
+  const formatMeDisplayName = useMeDisplayNameFormatter();
   const labels = useMemo<ContactsListViewLabels>(
     () => ({
       title: t("contacts.title"),
@@ -52,11 +53,9 @@ export function useContactsPageViewModel(
         "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
       ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
+      formatMeDisplayName,
     }),
-    [t],
+    [formatMeDisplayName, t],
   );
   const preference = useContactsFeatureIntroductionPreference();
   const { isRequested: isFeatureIntroductionRequested, dismiss: dismissFeatureIntroduction } =

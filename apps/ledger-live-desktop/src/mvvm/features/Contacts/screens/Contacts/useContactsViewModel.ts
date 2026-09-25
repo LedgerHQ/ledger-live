@@ -45,7 +45,7 @@ import {
 } from "@features/flow-contacts-introduction";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
-  createMeDisplayNameFormatter,
+  useMeDisplayNameFormatter,
   useContacts,
   useContactsMeContact,
   type OtherContactAddress,
@@ -416,6 +416,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       isContactsEntryAvailable: true,
       preference,
     });
+  const formatMeDisplayName = useMeDisplayNameFormatter();
   const labels = useMemo<ContactsListViewLabels>(
     () => ({
       title: t("contacts.title"),
@@ -423,11 +424,9 @@ export function useContactsViewModel(): ContactsPageViewModel {
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
+      formatMeDisplayName,
     }),
-    [t],
+    [formatMeDisplayName, t],
   );
   const featureIntroductionHighlights = useMemo(
     () =>

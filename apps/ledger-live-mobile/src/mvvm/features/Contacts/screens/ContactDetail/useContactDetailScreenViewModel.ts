@@ -35,7 +35,7 @@ import {
 } from "@features/flow-contacts-add-address";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
-  createMeDisplayNameFormatter,
+  useMeDisplayNameFormatter,
   resolveEligibleAddressCurrencyIds,
   useContacts,
   useContactsFeature,
@@ -325,6 +325,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     completeAddressConfirmation,
     continueFromName,
   ]);
+  const formatMeDisplayName = useMeDisplayNameFormatter();
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
@@ -335,12 +336,10 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
       myAddresses: t("contacts.detail.myAddresses"),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
+      formatMeDisplayName,
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
-    [t],
+    [formatMeDisplayName, t],
   );
   const detailSharedState = useContactDetailSharedState(
     route.params.contactId,
