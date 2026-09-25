@@ -58,6 +58,9 @@ export class MyLedgerPage extends AppPage {
 
   private readonly customImageButton = this.page.getByTestId("manager-custom-image-button");
 
+  private readonly appRow = (app: AppInfos) =>
+    this.page.locator(`[id="managerAppsList-${app.name}"]`);
+
   private readonly updateFirmwareButton = this.page.getByTestId("manager-update-firmware-button");
 
   /**
@@ -123,6 +126,18 @@ export class MyLedgerPage extends AppPage {
   @step("Expect $0 not to be listed")
   async expectAppNotListed(app: AppInfos) {
     await expect.poll(() => this.listedAppNames()).not.toContain(app.name);
+  }
+
+  /** Unsupported assets read "Requires 3rd-party wallet" where supported ones read supported. */
+  @step("Expect $0 to be marked as not supported by Ledger Wallet")
+  async expectAppNotSupported(app: AppInfos) {
+    await expect(this.appRow(app)).toContainText("Requires 3rd-party wallet");
+  }
+
+  @step("Expect $0 to offer Learn more rather than Add account")
+  async expectLearnMoreOffered(app: AppInfos) {
+    await expect(this.appRow(app).getByRole("button", { name: "Learn more" })).toBeVisible();
+    await expect(this.appRow(app).getByRole("button", { name: "Add account" })).toBeHidden();
   }
 
   @step("Install $0")
