@@ -93,7 +93,11 @@ describe("toTronAddressBook", () => {
       tronContact({
         addresses: [
           tronAddress({
-            device: { blockchainFamily: "tron", chainId: "not-a-chain-id", hmacRest: HMAC_REST_HEX },
+            device: {
+              blockchainFamily: "tron",
+              chainId: "not-a-chain-id",
+              hmacRest: HMAC_REST_HEX,
+            },
           }),
         ],
       }),
