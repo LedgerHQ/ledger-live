@@ -1,8 +1,6 @@
 import type { RefObject } from "react";
 import type { AddressParts } from "./utils/splitAddress";
 
-export type PayRequestTrackEvent = (event: string, params: Record<string, unknown>) => void;
-
 export type VerifyAddressPhase = "hidden" | "intro" | "success";
 
 /** Single digit index of a "Next steps" entry, matching the design-system numbered Spot. */
@@ -26,7 +24,6 @@ export type VerifyAddressProps = Readonly<{
   /** Host closes the success overlay. */
   onGotIt: () => void;
   onClose: () => void;
-  onTrackEvent?: PayRequestTrackEvent;
 }>;
 
 export type VerifyAddressViewModel = Readonly<{
@@ -86,7 +83,6 @@ export type RequestReceiveViewModelParams = RequestActionCallbacks &
     asset: RequestReceiveAsset;
     network: string;
     page: string;
-    onTrackEvent?: PayRequestTrackEvent;
   }>;
 
 export type RequestReceiveViewModel = Readonly<{
