@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { ContactId } from "@domain/entity-contact";
-import {
-  createMeDisplayNameFormatter,
-  useContacts,
-  useContactsMeContact,
-} from "@features/platform-contacts";
+import { useContacts, useContactsMeContact } from "@features/platform-contacts";
 import {
   useContactsSearchViewModel,
   type ContactsListViewLabels,
@@ -33,19 +29,16 @@ export function useAddToExistingContactViewModel() {
   const labels = useMemo(
     (): Pick<
       ContactsListViewLabels,
-      "searchPlaceholder" | "searchNoResults" | "formatAddressCount" | "formatMeDisplayName"
+      "searchPlaceholder" | "searchNoResults" | "formatAddressCount"
     > => ({
       searchPlaceholder: t("contacts.searchPlaceholder"),
       searchNoResults: t("contacts.searchNoResults"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
     }),
     [t],
   );
 
-  const listViewModel = useContactsSearchViewModel(searchQuery, labels.formatMeDisplayName);
+  const listViewModel = useContactsSearchViewModel(searchQuery);
   const trackingProperties = useSendFlowTrackingProperties();
 
   useEffect(() => {

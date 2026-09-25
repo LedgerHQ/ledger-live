@@ -1,6 +1,6 @@
 import React, { type ChangeEvent } from "react";
 import type { ContactId } from "@domain/entity-contact";
-import { ContactAvatar } from "@features/platform-contacts";
+import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
 import {
   isContactsSearchNoResultsViewModel,
   isPopulatedContactsListViewModel,
@@ -43,6 +43,8 @@ function ContactRow({
   onSelectContact: (contactId: ContactId) => void;
   isMe?: boolean;
 }>) {
+  const getDisplayName = useContactDisplayName();
+
   return (
     <ListItem
       onClick={() => onSelectContact(contact.contactId)}
@@ -51,13 +53,13 @@ function ContactRow({
       <ListItemLeading>
         <ContactAvatar
           contactId={contact.contactId}
-          name={contact.name}
+          name={getDisplayName(contact)}
           size="md"
           ariaHidden
           testId={isMe ? "contacts-me-avatar" : `contacts-saved-avatar-${contact.contactId}`}
         />
         <ListItemContent>
-          <ListItemTitle>{contact.name}</ListItemTitle>
+          <ListItemTitle>{getDisplayName(contact)}</ListItemTitle>
           <ListItemDescription>{formatAddressCount(contact.addressCount)}</ListItemDescription>
         </ListItemContent>
       </ListItemLeading>

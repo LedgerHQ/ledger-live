@@ -6,6 +6,7 @@ function createContact(name: string, initial: string): ContactsListItem {
   return {
     contactId: ContactIdSchema.parse(`contact-${name.toLowerCase()}`),
     name,
+    isMe: false,
     initial,
     addressCount: 1,
   };

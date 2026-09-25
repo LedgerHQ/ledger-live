@@ -1,5 +1,6 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render as renderWithoutI18n, screen } from "@testing-library/react";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import {
   mockContact,
   mockContactAddress,
@@ -13,6 +14,9 @@ const labels = {
   emptyAddress: "No saved addresses",
   formatAddressCount: (count: number) => `${count} saved addresses`,
 };
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 function createContacts(): readonly Contact[] {
   return [

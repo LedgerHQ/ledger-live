@@ -35,11 +35,11 @@ import {
 } from "@features/flow-contacts-add-address";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
-  createMeDisplayNameFormatter,
+  useContactDisplayName,
   resolveEligibleAddressCurrencyIds,
-  useContacts,
   useContactsFeature,
   useContactsMeContact,
+  useContacts,
   type OtherContactAddress,
 } from "@features/platform-contacts";
 import {
@@ -118,8 +118,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     onClose: onCloseAddressDetail,
   } = useContactAddressDetailDialog(populatedContactDetail);
   const contact = populatedContactDetail?.contact ?? emptyContact;
-  const allContacts = useContacts();
   const addressValidation = useContactsAddressValidationAdapter();
+  const allContacts = useContacts();
   const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
     () =>
       allContacts.flatMap(c =>
@@ -335,17 +335,11 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
       myAddresses: t("contacts.detail.myAddresses"),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
   );
-  const detailSharedState = useContactDetailSharedState(
-    route.params.contactId,
-    labels.formatMeDisplayName,
-  );
+  const detailSharedState = useContactDetailSharedState(route.params.contactId);
   const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogNativeLabels>(
     () => ({
       send: t("contacts.addressDetail.send"),
@@ -445,6 +439,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     }
   }, [navigation, shouldRedirect]);
 
+  const getDisplayName = useContactDisplayName();
+
   if (shouldRedirect) {
     return { status: "redirecting" };
   }
@@ -481,7 +477,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     pageProps,
     addressDetailDialog: {
       isOpen,
-      contactName: contact.name,
+      contactName: getDisplayName(contact),
       row: selection?.row,
       network: selection?.network,
       labels: addressDetailDialogLabels,

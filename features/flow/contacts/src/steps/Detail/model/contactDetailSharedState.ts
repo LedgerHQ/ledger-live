@@ -1,8 +1,4 @@
 import type { Contact } from "@domain/entity-contact";
-import {
-  identityFormatMeDisplayName,
-  resolveMeContactDisplayName,
-} from "@features/platform-contacts";
 import type { ContactDetailLedgerWalletAccountsIntent } from "../types";
 
 export function createContactDetailLedgerWalletAccountsIntent(
@@ -20,11 +16,11 @@ export type ContactDetailSharedState = Readonly<{
 
 export function createContactDetailSharedState(
   contact: Contact,
-  formatMeDisplayName: (name: string) => string = identityFormatMeDisplayName,
+  getDisplayName: (contact: Contact) => string,
 ): ContactDetailSharedState {
   return {
     contact,
-    displayName: resolveMeContactDisplayName(contact, formatMeDisplayName),
+    displayName: getDisplayName(contact),
     addressCount: contact.addresses.length,
     ledgerWalletAccountsIntent: createContactDetailLedgerWalletAccountsIntent(contact),
   };

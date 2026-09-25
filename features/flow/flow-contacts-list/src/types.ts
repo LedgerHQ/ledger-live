@@ -3,7 +3,9 @@ import type { Contact, ContactId } from "@domain/entity-contact";
 
 export type ContactsListItem = Readonly<{
   contactId: ContactId;
+  /** Raw name: render it with useContactDisplayName. */
   name: string;
+  isMe: boolean;
   initial: string;
   addressCount: number;
 }>;
@@ -53,7 +55,6 @@ export type ContactsListViewLabels = Readonly<{
   addContact: string;
   ledgerSyncCheckingAccessibilityLabel?: string;
   formatAddressCount: (count: number) => string;
-  formatMeDisplayName?: (name: string) => string;
 }>;
 
 export type ContactsCompactListLabels = Readonly<{
