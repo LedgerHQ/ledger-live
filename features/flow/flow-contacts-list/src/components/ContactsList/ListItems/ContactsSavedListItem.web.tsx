@@ -6,7 +6,7 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-react";
-import { ContactAvatar } from "@features/platform-contacts";
+import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
 import type { ContactsListItem } from "../../../types";
 
 type ContactsSavedListItemProps = Readonly<{
@@ -20,6 +20,8 @@ export function ContactsSavedListItem({
   formatAddressCount,
   onOpen,
 }: ContactsSavedListItemProps): React.ReactNode {
+  const getDisplayName = useContactDisplayName();
+
   return (
     <ListItem
       onClick={() => onOpen(contact.contactId)}
@@ -36,7 +38,7 @@ export function ContactsSavedListItem({
         />
         <ListItemContent>
           <ListItemTitle data-testid={`contacts-saved-contact-${contact.contactId}-name`}>
-            {contact.name}
+            {getDisplayName(contact)}
           </ListItemTitle>
           <ListItemDescription
             data-testid={`contacts-saved-contact-${contact.contactId}-address-count`}

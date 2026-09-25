@@ -1,5 +1,5 @@
 import React from "react";
-import { resolveMeContactDisplayName } from "@features/platform-contacts";
+import { useContactDisplayName } from "@features/platform-contacts";
 import type { ContactDetailViewProps } from "../../types";
 import {
   ContactDetailActions,
@@ -48,10 +48,7 @@ export function ContactDetailHeader({
   detailActions,
   isCollapsed,
 }: ContactDetailHeaderProps): React.ReactNode {
-  const displayName = resolveMeContactDisplayName(
-    contact,
-    labels.formatMeDisplayName ?? (name => name),
-  );
+  const getDisplayName = useContactDisplayName();
   const addAddressLabel = contact.isMe
     ? (labels.addYourAddress ?? labels.addAddress)
     : labels.addAddress;
@@ -68,7 +65,7 @@ export function ContactDetailHeader({
       <ContactDetailHeaderIdentity
         contact={contact}
 
-        name={displayName}
+        name={getDisplayName(contact)}
         addressCount={labels.formatAddressCount(contact.addresses.length)}
         isCollapsed={isCollapsed}
         compactContentRight={contentRight}

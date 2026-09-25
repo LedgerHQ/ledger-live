@@ -17,7 +17,7 @@ describe("Contacts (Native)", () => {
     renderWithContacts([me], <Contacts {...makeContactsProps({ onContactPress })} />);
 
     expect(screen.getByTestId("pay-contacts-pay-tile")).toBeVisible();
-    expect(screen.getByText("Me")).toBeVisible();
+    expect(screen.getByText("My addresses (Me)")).toBeVisible();
     screen.getByTestId("pay-contacts-tile-0").props.onPress();
     expect(onContactPress).toHaveBeenCalledWith(me);
   });
@@ -29,7 +29,9 @@ describe("Contacts (Native)", () => {
     );
 
     expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Ada");
-    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Me");
+    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe(
+      "My addresses (Me)",
+    );
   });
 
   it("should open the Send flow from the Pay tile", () => {
@@ -96,7 +98,9 @@ describe("Contacts (Native)", () => {
 
     expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Bob");
     expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Alice");
-    expect(screen.getByTestId("pay-contacts-tile-2").props.accessibilityLabel).toBe("Me");
+    expect(screen.getByTestId("pay-contacts-tile-2").props.accessibilityLabel).toBe(
+      "My addresses (Me)",
+    );
   });
 
   it("should fall back to last added order when no outgoing operation matches", () => {
@@ -104,7 +108,9 @@ describe("Contacts (Native)", () => {
 
     expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Alice");
     expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Bob");
-    expect(screen.getByTestId("pay-contacts-tile-2").props.accessibilityLabel).toBe("Me");
+    expect(screen.getByTestId("pay-contacts-tile-2").props.accessibilityLabel).toBe(
+      "My addresses (Me)",
+    );
   });
 
   it("should resolve its copy from the mounted i18n provider, not from props", () => {

@@ -1,10 +1,12 @@
 import type { I18nTestProviderProps } from "@shared/i18n/testing";
+import { CONTACT_DISPLAY_NAME_TRANSLATIONS } from "@features/platform-contacts/testing";
 
 export type I18nResources = I18nTestProviderProps["resources"];
 
 export const CONTACTS_RESOURCES: I18nResources = {
   en: {
     translation: {
+      ...CONTACT_DISPLAY_NAME_TRANSLATIONS,
       payTab: {
         contacts: {
           title: "Pay contact",

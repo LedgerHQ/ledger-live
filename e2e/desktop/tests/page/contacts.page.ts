@@ -5,7 +5,7 @@ import { ContactAddDialog } from "tests/page/dialog/contactAdd.dialog";
 import { ContactRenameDialog } from "tests/page/dialog/contactRename.dialog";
 import { step } from "tests/misc/reporters/step";
 
-const ME_CONTACT_DISPLAY_NAME = "My addresses";
+const ME_CONTACT_DISPLAY_NAME = "My addresses (Me)";
 
 export class ContactsPage extends AppPage {
   readonly detail = new ContactDetailPage(this.page);

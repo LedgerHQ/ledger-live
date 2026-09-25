@@ -19,7 +19,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact } from "@domain/entity-contact";
-import { createMeDisplayNameFormatter, useContacts } from "@features/platform-contacts";
+import { useContacts } from "@features/platform-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { ScreenName } from "~/const";
@@ -52,9 +52,6 @@ export function useContactsPageViewModel(
         "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
       ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
     }),
     [t],
   );
@@ -79,7 +76,7 @@ export function useContactsPageViewModel(
     useContactsLedgerSyncActivationDrawer();
   const [isLedgerSyncIntroductionRequested, setIsLedgerSyncIntroductionRequested] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const viewModel = useContactsSearchViewModel(searchQuery, labels.formatMeDisplayName);
+  const viewModel = useContactsSearchViewModel(searchQuery);
   const onSearchQueryChange = useCallback((query: string) => setSearchQuery(query), []);
   const onOpenContact = useCallback<ContactsViewNativeProps["onOpenContact"]>(
     contactId => {

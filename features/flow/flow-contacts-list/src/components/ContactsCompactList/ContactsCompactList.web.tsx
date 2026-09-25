@@ -6,7 +6,7 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-react";
-import { ContactAvatar } from "@features/platform-contacts";
+import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
 import type { ContactsCompactListProps } from "../../types";
 import {
   getCompactContactAddressDescription,
@@ -20,6 +20,7 @@ export function ContactsCompactList({
   onContactSelect,
 }: ContactsCompactListProps): React.JSX.Element {
   const displayedContacts = getDisplayedCompactContacts(contacts, maxContacts);
+  const getDisplayName = useContactDisplayName();
 
   return (
     <div className="flex flex-col" data-testid="contacts-compact-list">
@@ -32,7 +33,7 @@ export function ContactsCompactList({
           <ListItemLeading>
             <ContactAvatar contactId={contact.id} name={contact.name} size="md" ariaHidden />
             <ListItemContent>
-              <ListItemTitle>{contact.name}</ListItemTitle>
+              <ListItemTitle>{getDisplayName(contact)}</ListItemTitle>
               <ListItemDescription>
                 {getCompactContactAddressDescription(contact, labels)}
               </ListItemDescription>

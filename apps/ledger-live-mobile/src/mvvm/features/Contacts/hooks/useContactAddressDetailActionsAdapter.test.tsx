@@ -17,6 +17,7 @@ import {
 } from "@features/flow-contacts";
 import { createMockContactDeviceIntentsPort } from "@features/platform-contacts/test";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 
 const trackEvent = jest.fn();
 const trackPage = jest.fn();
@@ -56,7 +57,11 @@ function makeWrapper(contacts: ReturnType<typeof contactsSlice.getInitialState>[
   });
 
   return function Wrapper({ children }: { readonly children: ReactNode }) {
-    return <Provider store={store}>{children}</Provider>;
+    return (
+      <Provider store={store}>
+        <ContactsI18nTestProvider>{children}</ContactsI18nTestProvider>
+      </Provider>
+    );
   };
 }
 

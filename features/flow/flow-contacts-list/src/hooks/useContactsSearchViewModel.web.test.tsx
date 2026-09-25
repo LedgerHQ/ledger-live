@@ -4,6 +4,7 @@ import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { contactsSlice } from "@domain/entity-contact";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { useContactsSearchViewModel } from "./useContactsSearchViewModel";
 
 function makeWrapper() {
@@ -17,7 +18,9 @@ function makeWrapper() {
     },
   });
   const Wrapper: FC<{ children: ReactNode }> = ({ children }) => (
-    <Provider store={store}>{children}</Provider>
+    <Provider store={store}>
+      <ContactsI18nTestProvider>{children}</ContactsI18nTestProvider>
+    </Provider>
   );
 
   return { Wrapper };

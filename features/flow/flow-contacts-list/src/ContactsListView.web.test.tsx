@@ -1,6 +1,7 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
-import type { ContactId } from "@domain/entity-contact";
+import { fireEvent, render as renderWithoutI18n, screen } from "@testing-library/react";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
+import type { Contact, ContactId } from "@domain/entity-contact";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import type { ContactsPageViewModel } from "./types";
 import {
@@ -10,6 +11,9 @@ import {
 } from "./model/viewModel";
 import { ContactsListView } from "./ContactsListView.web";
 
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
+
 const labels = {
   title: "Contacts",
   searchPlaceholder: "Search contact",
@@ -18,6 +22,8 @@ const labels = {
   ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
   formatAddressCount: (count: number) => `${count} address`,
 };
+
+const getDisplayName = (contact: Contact) => contact.name;
 
 type RenderContactsPageOptions = Readonly<{
   viewModel?: ContactsPageViewModel;
@@ -218,7 +224,7 @@ describe("ContactsPage", () => {
 
     render(
       <ContactsListView
-        viewModel={createContactsSearchViewModel(me, contacts, "ben")}
+        viewModel={createContactsSearchViewModel(me, contacts, "ben", getDisplayName)}
         labels={labels}
         onOpenMe={jest.fn()}
         onOpenContact={jest.fn()}
@@ -242,7 +248,7 @@ describe("ContactsPage", () => {
 
     render(
       <ContactsListView
-        viewModel={createContactsSearchViewModel(me, contacts, "unknown")}
+        viewModel={createContactsSearchViewModel(me, contacts, "unknown", getDisplayName)}
         labels={labels}
         onOpenMe={jest.fn()}
         onOpenContact={jest.fn()}

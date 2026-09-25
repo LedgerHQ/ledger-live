@@ -45,7 +45,7 @@ import {
 } from "@features/flow-contacts-introduction";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
-  createMeDisplayNameFormatter,
+  useContactDisplayName,
   useContacts,
   useContactsMeContact,
   type OtherContactAddress,
@@ -423,9 +423,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
     }),
     [t],
   );
@@ -438,18 +435,14 @@ export function useContactsViewModel(): ContactsPageViewModel {
       })),
     [t],
   );
+  const getDisplayName = useContactDisplayName();
   const viewModel = useMemo(() => {
     if (searchQuery.trim().length > 0) {
-      return createContactsSearchViewModel(
-        meContact,
-        contacts,
-        searchQuery,
-        labels.formatMeDisplayName,
-      );
+      return createContactsSearchViewModel(meContact, contacts, searchQuery, getDisplayName);
     }
 
-    return createContactsListViewModel(meContact, contacts, labels.formatMeDisplayName);
-  }, [contacts, labels.formatMeDisplayName, meContact, searchQuery]);
+    return createContactsListViewModel(meContact, contacts);
+  }, [contacts, getDisplayName, meContact, searchQuery]);
   const onSearchInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   }, []);
