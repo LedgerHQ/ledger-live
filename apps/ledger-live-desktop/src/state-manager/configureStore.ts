@@ -54,8 +54,14 @@ import { sleepingListener } from "./sleepingListener";
  *
  * `logger.critical` rather than a bare console call: it is the one path wired to Datadog
  * (breadcrumb plus `captureException`), so a cold boot becomes searchable instead of invisible.
+ *
+ * A `sync` failure is a bug whatever `isCold` says, so it is always reported.
  */
 function reportFeatureFlagsReadFailure(error: unknown, { stage, isCold }: FeatureFlagsReadFailure) {
+  if (stage === "sync") {
+    appLogger.critical(error, "Feature flags: re-resolution threw, running on the previous values");
+    return;
+  }
   if (!isCold) return;
   appLogger.critical(error, `Feature flags: ${stage} read failed, resolving on compiled defaults`);
 }

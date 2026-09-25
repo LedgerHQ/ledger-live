@@ -6,6 +6,7 @@ import {
   createDispatchers,
   createErrorReporter,
   createLanguageWatcher,
+  dispatchSafely,
   pollRemoteFlags,
   primeThenPoll,
   type RemoteFlagsRef,
@@ -17,8 +18,11 @@ export interface FeatureFlagsMeta {
   remoteFlags: PartialFeatures;
 }
 
-/** Which of the two reads failed, reported to {@link FeatureFlagsMiddlewareConfig.onRemoteFlagsError}. */
-export type FeatureFlagsReadStage = "cache" | "remote";
+/**
+ * Which step failed, reported to {@link FeatureFlagsMiddlewareConfig.onRemoteFlagsError}: one of
+ * the two reads, or the re-resolution of the slice that follows them.
+ */
+export type FeatureFlagsReadStage = "cache" | "remote" | "sync";
 
 /**
  * Context for a failed feature-flag read. Observation only, it never feeds resolution.
@@ -41,11 +45,15 @@ export type FeatureFlagsReadStage = "cache" | "remote";
  *   for how long this session has been misconfigured.
  * - `remote` / attempt n > 1 / warm — a routine poll failure with values in place. Expected on any
  *   flaky connection, and usually not worth reporting.
+ * - `sync` / any attempt / cold or warm — a reducer or a downstream middleware threw while the
+ *   slice was being re-resolved, so it still holds the previous values. Always a bug, never
+ *   routine, whatever `isCold` says. The boot signals are armed anyway, so a startup waiting on
+ *   them is not stranded.
  *
  * `cache` combined with a warm map, or with an attempt above 1, cannot happen.
  */
 export interface FeatureFlagsReadFailure {
-  /** The local cache prime, or a network poll. */
+  /** The local cache prime, a network poll, or the re-resolution that follows either. */
   stage: FeatureFlagsReadStage;
   /** 1 for the boot attempt, incremented on each subsequent poll. Always 1 for `cache`. */
   attempt: number;
@@ -139,8 +147,8 @@ export function createFeatureFlagsMiddleware<S = unknown>(
       // are in place when the signal arms. Deferred because Redux forbids dispatching while the
       // middleware chain is still being built.
       void Promise.resolve().then(() => {
-        dispatchSync(false);
-        dispatchCacheSettled();
+        dispatchSafely(() => dispatchSync(false), reportError, 1);
+        dispatchSafely(dispatchCacheSettled, reportError, 1);
       });
       if (fetchRemoteFlags) {
         // Deliberately a bare call: the middleware tests drain a fixed number of microtask turns,

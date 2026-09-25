@@ -801,3 +801,76 @@ describe("onRemoteFlagsError", () => {
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 });
+
+describe("a re-resolution that throws", () => {
+  const neverSettles = () => new Promise<PartialFeatures>(() => {});
+  const failure = new Error("downstream middleware blew up");
+  const throwsOnSync: Middleware = () => next => action => {
+    if (syncRemoteConfig.match(action)) throw failure;
+    return next(action);
+  };
+
+  function createStoreThrowingOnSync(middlewareConfig: Partial<FeatureFlagsMiddlewareConfig>) {
+    return configureStore({
+      reducer: { featureFlags: featureFlagsReducer },
+      middleware: getDefaultMiddleware =>
+        getDefaultMiddleware()
+          .concat(createFeatureFlagsMiddleware({ resolutionConfig: {}, ...middlewareConfig }))
+          .concat(throwsOnSync),
+    });
+  }
+
+  it("still settles the cache, reported as a sync failure", async () => {
+    const onRemoteFlagsError = jest.fn();
+    const store = createStoreThrowingOnSync({
+      readCachedFlags: () => Promise.resolve({}),
+      fetchRemoteFlags: neverSettles,
+      onRemoteFlagsError,
+    });
+
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(store.getState().featureFlags.cachedFlagsSettled).toBe(true);
+    expect(onRemoteFlagsError).toHaveBeenCalledWith(failure, {
+      stage: "sync",
+      attempt: 1,
+      isCold: true,
+    });
+  });
+
+  it("still settles the cache when no cache reader is configured", async () => {
+    const onRemoteFlagsError = jest.fn();
+    const store = createStoreThrowingOnSync({ fetchRemoteFlags: neverSettles, onRemoteFlagsError });
+
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(store.getState().featureFlags.cachedFlagsSettled).toBe(true);
+    expect(onRemoteFlagsError).toHaveBeenCalledWith(
+      failure,
+      expect.objectContaining({ stage: "sync" }),
+    );
+  });
+
+  it("still arms readiness and keeps polling after the first fetch", async () => {
+    const onRemoteFlagsError = jest.fn();
+    const fetcher = jest.fn(() => Promise.resolve({ mockFeature: { enabled: true } }));
+    const store = createStoreThrowingOnSync({
+      readCachedFlags: () => Promise.resolve({}),
+      fetchRemoteFlags: fetcher,
+      refreshInterval: 1_000,
+      onRemoteFlagsError,
+    });
+
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
+    expect(onRemoteFlagsError).toHaveBeenCalledWith(failure, {
+      stage: "sync",
+      attempt: 1,
+      isCold: false,
+    });
+
+    await jest.advanceTimersByTimeAsync(1_000);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
+});

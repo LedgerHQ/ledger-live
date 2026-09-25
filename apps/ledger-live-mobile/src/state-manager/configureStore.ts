@@ -45,6 +45,8 @@ import {
   type FeatureFlagsReadFailure,
   type PartialFeatures,
 } from "@shared/feature-flags";
+import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
+import { isDatadogEnabled } from "~/datadog";
 import { fetchRemoteFlags, readCachedFlags } from "~/firebase/remoteConfig";
 import { sleepingListener } from "./sleepingListener";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
@@ -60,8 +62,24 @@ import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
  * app's `logger.critical`, which despite its name falls back to `console.log` outside
  * `DEBUG_ERROR` builds and so would make this *less* visible than a plain warning. Desktop uses
  * `logger.critical` instead, because there it really is the Datadog path.
+ *
+ * A `sync` failure is a bug whatever `isCold` says, so it is always reported. It happens during
+ * boot, before Datadog is initialized and starts intercepting `console.error`, hence the explicit
+ * `DdRum.addError`, which the SDK buffers until initialization.
  */
 function reportFeatureFlagsReadFailure(error: unknown, { stage, isCold }: FeatureFlagsReadFailure) {
+  if (stage === "sync") {
+    const message = "Feature flags: re-resolution threw, running on the previous values";
+    console.error(message, error);
+    if (isDatadogEnabled) {
+      DdRum.addError(
+        message,
+        ErrorSource.SOURCE,
+        error instanceof Error ? (error.stack ?? "") : "",
+      );
+    }
+    return;
+  }
   if (!isCold) return;
   console.error(`Feature flags: ${stage} read failed, resolving on compiled defaults`, error);
 }

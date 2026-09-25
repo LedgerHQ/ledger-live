@@ -111,6 +111,19 @@ export function createErrorReporter(
 }
 
 /**
+ * Runs one of the dispatches a boot waits on. A reducer or a downstream middleware that throws
+ * would otherwise abort the sequence before the boot signals are armed and leave startup waiting
+ * forever, so the exception is reported as a `sync` failure and the sequence carries on.
+ */
+export function dispatchSafely(run: () => void, reportError: ReportError, attempt: number): void {
+  try {
+    run();
+  } catch (error) {
+    reportError(error, "sync", attempt);
+  }
+}
+
+/**
  * Primes the remote-flag cache from the device's own storage, with no network access.
  *
  * Deliberately does not arm readiness. That signal keeps its original meaning, "the first sync
@@ -157,8 +170,8 @@ export async function pollRemoteFlags(context: PollContext, attempt: number = 1)
   if (remote !== null) {
     ref.current = remote;
   }
-  dispatchSync(remote !== null);
-  dispatchReady();
+  dispatchSafely(() => dispatchSync(remote !== null), reportError, attempt);
+  dispatchSafely(dispatchReady, reportError, attempt);
   setTimeout(pollRemoteFlags, ms, context, attempt + 1);
 }
 
@@ -184,12 +197,12 @@ export async function primeThenPoll(
   ms: number | undefined,
 ): Promise<void> {
   await primeFromCache(readCachedFlags, context);
-  context.dispatchSync(false);
-  context.dispatchCacheSettled();
+  dispatchSafely(() => context.dispatchSync(false), context.reportError, 1);
+  dispatchSafely(context.dispatchCacheSettled, context.reportError, 1);
   if (fetch) {
     await pollRemoteFlags({ ...context, fetch, ms });
   } else {
-    context.dispatchReady();
+    dispatchSafely(context.dispatchReady, context.reportError, 1);
   }
 }
 
