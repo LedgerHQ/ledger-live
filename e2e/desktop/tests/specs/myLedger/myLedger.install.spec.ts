@@ -15,7 +15,7 @@ test.describe("My Ledger — install an app", () => {
       tag: ["@myLedger", ...DEVICE_TAGS],
       annotation: { type: "TMS", description: "B2CQA-664" },
     },
-    async ({ app }) => {
+    async ({ app, mockServer }) => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.waitForDashboard();
 
@@ -29,6 +29,8 @@ test.describe("My Ledger — install an app", () => {
       // The catalog never renders an uninstall button, so the install is confirmed on the other tab.
       await app.myLedger.openInstalledAppsTab();
       await app.myLedger.expectAppInstalled(AppInfos.BITCOIN);
+
+      await mockServer.expectInstalledApps([AppInfos.BITCOIN.name]);
     },
   );
 });
