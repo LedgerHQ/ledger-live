@@ -1,7 +1,8 @@
 import React from "react";
 import { Title as DialogTitle } from "@radix-ui/react-dialog";
-import { Button, DialogBody, DialogFooter, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { DialogBody, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { CardTopUpAmountView } from "@features/flow-pay-card-top-up";
+import { DialogBackgroundToneProvider, InfoState } from "@shared/ui-info-state";
 import { useTranslation } from "react-i18next";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { renderError, renderLoading } from "~/renderer/components/DeviceAction/rendering";
@@ -46,21 +47,22 @@ export function CardTopUpView({
 
   if (deviceStep.kind === "success") {
     return (
-      <>
-        <DialogHeader
-          density="compact"
-          title={t(`${KEY_PREFIX}.successTitle`)}
-          onClose={amountView.onClose}
-        />
-        <DialogBody>
-          <p className="body-2 text-muted">{t(`${KEY_PREFIX}.successDescription`)}</p>
+      <DialogBackgroundToneProvider>
+        <DialogHeader density="compact" onClose={amountView.onClose} className="!mb-0" />
+        <DialogBody className="!mb-0 flex min-h-0 flex-col px-24 pb-24">
+          <InfoState
+            preset="success"
+            size="hug"
+            title={t(`${KEY_PREFIX}.successTitle`)}
+            description={t(`${KEY_PREFIX}.successDescription`)}
+            primaryCta={{
+              label: t(`${KEY_PREFIX}.done`),
+              onPress: amountView.onClose,
+              testID: "card-top-up-done",
+            }}
+          />
         </DialogBody>
-        <DialogFooter>
-          <Button className="w-full" onClick={amountView.onClose}>
-            {t(`${KEY_PREFIX}.done`)}
-          </Button>
-        </DialogFooter>
-      </>
+      </DialogBackgroundToneProvider>
     );
   }
 
