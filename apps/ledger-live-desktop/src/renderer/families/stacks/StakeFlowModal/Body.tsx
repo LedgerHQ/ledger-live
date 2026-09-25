@@ -80,9 +80,14 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
 
   const { transaction, setTransaction, account, status, bridgeError, bridgePending } =
     useBridgeTransaction<Transaction>(bridge, () => {
+      // `mode` is set once the pool address is entered (StepValidator's onChangeValAddress), not
+      // here: once Stacks routes through the generic bridge, `transactionToIntent` only populates a
+      // delegation mode when `valAddress` is already present (generic-coin-framework/utils.ts's
+      // `getDelegationIntentFields`), and a staking intent with no `valAddress` at all crashes the
+      // pool-address validation (`intent.valAddress.includes(...)` on `undefined`). Leaving `mode`
+      // unset until there's a `valAddress` to go with it keeps that path safe.
       const initial = bridge.createTransaction(params.account);
       const initialTx = bridge.updateTransaction(initial, {
-        mode: "delegate",
         familySpecificData: { numCycles: 1 },
       });
       return { account: params.account, transaction: initialTx };
@@ -140,33 +145,39 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
       });
   }, [bridge, setTransaction, handleTransactionError]);
 
-  // Mirrors StepConnectDevice's own gate: once this is true, GenericStepConnectDevice takes over
-  // and its device-signing effect (hw/actions/transaction.ts) depends on `transaction` -- any
-  // further mutation there tears down and restarts an in-flight sign request, which can abandon a
-  // prompt the device is already showing. So a fresh transaction reference must never be produced
-  // past this point.
+  // Mirrors StepConnectDevice's own gate: once this is true, GenericStepConnectDevice mounts.
   const isReadyForDevice =
     !bridgePending &&
     !!(transaction?.fee || transaction?.fees) &&
     transaction?.familySpecificData?.startBurnHt !== undefined;
+
+  // Until a device is present, GenericStepConnectDevice's device-signing hook (hw/actions/transaction.ts)
+  // has no `deviceId` and bails out before ever subscribing to `signOperation` -- so mutating
+  // `transaction` up to that point cannot interrupt anything. Once a device shows up while
+  // isReadyForDevice, that hook may already hold a live sign subscription keyed on this exact
+  // `transaction` reference, and replacing it there tears the subscription down mid-flight,
+  // abandoning a prompt the device could already be showing. So a fresh reference must never be
+  // produced past that point.
+  const mustFreezeTransaction = isReadyForDevice && !!device;
 
   // Refreshed once on entry, then periodically while the user sits on this step waiting to connect
   // -- that wait can take a while, and pox-5 validates start-burn-ht against the real chain tip at
   // *mining* time (see resolveStartBurnHt above), so a value resolved long ago can belong to a
   // reward cycle that has since rolled over. The interval is a small fraction of a reward cycle
   // (~7-14 days), so this only ever narrows a rare edge case, not eliminates a routine one. Stops
-  // as soon as the transaction is ready to hand to the device (isReadyForDevice), not only once
-  // signed: by the time the device is actually signing, the transaction must stay frozen (see the
-  // comment above); `handleRetry` resolves a fresh height again after a failed/refused attempt.
+  // once a device connection makes further mutation unsafe (mustFreezeTransaction), not only once
+  // signed -- refreshing for as long as it's safe keeps the staleness window (a device the user
+  // hasn't even reached for yet) far smaller than the interrupt-signing window it must avoid.
+  // `handleRetry` resolves a fresh height again after a failed/refused attempt.
   useEffect(() => {
-    if (stepId !== "connectDevice" || signed || isReadyForDevice) return;
+    if (stepId !== "connectDevice" || signed || mustFreezeTransaction) return;
     resolveStartBurnHt();
     const intervalId = setInterval(resolveStartBurnHt, START_BURN_HT_REFRESH_INTERVAL_MS);
     return () => {
       startBurnHtRequest.current += 1;
       clearInterval(intervalId);
     };
-  }, [stepId, signed, isReadyForDevice, resolveStartBurnHt]);
+  }, [stepId, signed, mustFreezeTransaction, resolveStartBurnHt]);
 
   // Going back to edit the pool or the amount invalidates the height already resolved, so the
   // device step waits for a fresh one instead of reusing it.
