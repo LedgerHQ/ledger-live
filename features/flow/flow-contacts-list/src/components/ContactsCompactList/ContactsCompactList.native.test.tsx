@@ -70,6 +70,7 @@ describe("ContactsCompactList", () => {
     );
 
     expect(screen.getByText("Alice (Me)")).toBeVisible();
+    expect(screen.getByTestId("contacts-avatar-contact-me").props.alt).toBe("Alice (Me)");
     expect(screen.getByText("Bob")).toBeVisible();
   });
 

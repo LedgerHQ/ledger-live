@@ -10,7 +10,7 @@ export function HistoryContactScope({ contact }: Props) {
   return (
     <span className="inline-flex items-center gap-8 body-1" data-testid="history-contact-scope">
       {getDisplayName(contact)}
-      <ContactAvatar contactId={contact.id} name={contact.name} size="xs" />
+      <ContactAvatar contactId={contact.id} name={getDisplayName(contact)} size="xs" />
     </span>
   );
 }

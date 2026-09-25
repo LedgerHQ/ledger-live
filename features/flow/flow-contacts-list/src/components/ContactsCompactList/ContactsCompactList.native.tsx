@@ -28,7 +28,7 @@ export function ContactsCompactRow({
       lx={{ marginHorizontal: "-s8" }}
     >
       <ListItemLeading>
-        <ContactAvatar contactId={contact.id} name={contact.name} size="md" />
+        <ContactAvatar contactId={contact.id} name={getDisplayName(contact)} size="md" />
         <ListItemContent>
           <ListItemTitle>{getDisplayName(contact)}</ListItemTitle>
           <ListItemDescription>
