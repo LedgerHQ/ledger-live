@@ -17,6 +17,7 @@ import type { ZcashAccount } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
 import { TEST_CONFIG, TEST_ZAINO_ENDPOINT, testContext } from "../test/coinConfig";
+import { ZCASH_SHIELDED_BATCH_SIZE, ZCASH_SHIELDED_CHUNK_TIMEOUT_MS } from "../constants";
 import { bindExplorer } from "./explorer";
 
 const generateAccount = jest.fn((..._args: unknown[]): unknown => undefined);
@@ -658,7 +659,7 @@ describe("zcashSyncShielded", () => {
           info({ initialAccount: {} }),
           syncConfig,
           TEST_ZAINO_ENDPOINT,
-          TEST_CONFIG.zaino.batchSize,
+          ZCASH_SHIELDED_BATCH_SIZE,
         ),
       ),
     ).rejects.toThrow("Missing unified full viewing key (ufvk) for ZCash shielded sync");
@@ -673,7 +674,7 @@ describe("zcashSyncShielded", () => {
         info({ initialAccount: account }),
         syncConfig,
         TEST_ZAINO_ENDPOINT,
-        TEST_CONFIG.zaino.batchSize,
+        ZCASH_SHIELDED_BATCH_SIZE,
       ),
     );
 
@@ -692,7 +693,7 @@ describe("zcashSyncShielded", () => {
         info({ initialAccount: account }),
         syncConfig,
         TEST_ZAINO_ENDPOINT,
-        TEST_CONFIG.zaino.batchSize,
+        ZCASH_SHIELDED_BATCH_SIZE,
       ),
     );
 
@@ -710,12 +711,12 @@ describe("zcashSyncShielded", () => {
         info({ initialAccount: { privateInfo: privateInfo() } }),
         syncConfig,
         TEST_ZAINO_ENDPOINT,
-        TEST_CONFIG.zaino.batchSize,
+        ZCASH_SHIELDED_BATCH_SIZE,
       ),
     );
 
     expect(syncShielded).toHaveBeenCalledWith(
-      expect.objectContaining({ startBlockHeight: 0, maxBatchSize: TEST_CONFIG.zaino.batchSize }),
+      expect.objectContaining({ startBlockHeight: 0, maxBatchSize: ZCASH_SHIELDED_BATCH_SIZE }),
     );
   });
 
@@ -755,7 +756,7 @@ describe("zcashSyncShielded", () => {
         info({ initialAccount: account }),
         syncConfig,
         TEST_ZAINO_ENDPOINT,
-        TEST_CONFIG.zaino.batchSize,
+        ZCASH_SHIELDED_BATCH_SIZE,
       ),
     );
 
@@ -906,14 +907,17 @@ describe("buildExtraSyncObservable", () => {
     expect(emissions[0].privateInfo).toMatchObject({ syncState: "stopped" });
   });
 
-  it("times out rather than hanging when the shielded leg never emits or completes", async () => {
-    jest.useFakeTimers();
-    try {
-      getZCashClient.mockResolvedValue({
-        syncShielded: () => new Observable<never>(() => {}),
-        findBlockHeight: jest.fn(),
-      });
-      const observable = buildExtraSyncObservable(
+  it.each([
+    ["the coin config's", 42, 42],
+    ["the module default", undefined, ZCASH_SHIELDED_BATCH_SIZE],
+  ])("scans in batches of %s size", async (_label, batchSize, expected) => {
+    const syncShielded = jest.fn(() =>
+      of({ transactions: [], processedBlocks: 5, remainingBlocks: 0, lastProcessedBlock: 5 }),
+    );
+    getZCashClient.mockResolvedValue({ syncShielded, findBlockHeight: jest.fn() });
+
+    await firstValueFrom(
+      buildExtraSyncObservable(
         info({
           initialAccount: {
             id: "js:2:zcash:xpub6DZ:",
@@ -926,25 +930,68 @@ describe("buildExtraSyncObservable", () => {
           ...testContext,
           config: async () => ({
             ...TEST_CONFIG,
-            zaino: { ...TEST_CONFIG.zaino, timeoutMs: 1_000 },
+            zaino: { ...TEST_CONFIG.zaino, ...(batchSize === undefined ? {} : { batchSize }) },
           }),
         },
-      );
+      )!,
+    );
 
-      const resultPromise = firstValueFrom(observable!);
-      // Let the config / getZCashClient() / resolveStartBlockHeight() promise chain
-      // settle before the timeout window is exhausted, native promises are not
-      // affected by fake timers.
-      for (let i = 0; i < 5; i++) await Promise.resolve();
-      // The budget comes from the coin config, not a module constant.
-      jest.advanceTimersByTime(1_001);
-
-      const result = await resultPromise;
-      expect(result.privateInfo).toMatchObject({ syncState: "stopped" });
-    } finally {
-      jest.useRealTimers();
-    }
+    expect(syncShielded).toHaveBeenCalledWith(expect.objectContaining({ maxBatchSize: expected }));
   });
+
+  it.each([
+    ["the coin config's", 1_000, 1_000],
+    ["the module default", undefined, ZCASH_SHIELDED_CHUNK_TIMEOUT_MS],
+  ])(
+    "stops a chunk that outlives %s budget rather than hanging",
+    async (_label, timeoutMs, budget) => {
+      jest.useFakeTimers();
+      try {
+        getZCashClient.mockResolvedValue({
+          syncShielded: () => new Observable<never>(() => {}),
+          findBlockHeight: jest.fn(),
+        });
+        const observable = buildExtraSyncObservable(
+          info({
+            initialAccount: {
+              id: "js:2:zcash:xpub6DZ:",
+              operations: [],
+              privateInfo: privateInfo({ syncState: "ready", lastProcessedBlock: 1 }),
+            },
+          }),
+          { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+          {
+            ...testContext,
+            config: async () => ({
+              ...TEST_CONFIG,
+              zaino: { ...TEST_CONFIG.zaino, ...(timeoutMs === undefined ? {} : { timeoutMs }) },
+            }),
+          },
+        );
+
+        let settled = false;
+        const resultPromise = firstValueFrom(observable!).finally(() => {
+          settled = true;
+        });
+        // Let the config / getZCashClient() / resolveStartBlockHeight() promise chain
+        // settle before the timeout window is exhausted, native promises are not
+        // affected by fake timers.
+        const flush = async () => {
+          for (let i = 0; i < 5; i++) await Promise.resolve();
+        };
+        await flush();
+        jest.advanceTimersByTime(budget - 1);
+        await flush();
+        expect(settled).toBe(false);
+        jest.advanceTimersByTime(2);
+
+        const result = await resultPromise;
+        expect(result.privateInfo).toMatchObject({ syncState: "stopped" });
+      } finally {
+        jest.useRealTimers();
+      }
+    },
+  );
 });
 
 describe("buildSyncObservables", () => {

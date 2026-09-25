@@ -52,6 +52,8 @@ import {
   DEFAULT_ZCASH_PRIVATE_INFO,
   ZCASH_LOG_TYPE,
   ZCASH_XPUB_VERSION,
+  ZCASH_SHIELDED_BATCH_SIZE,
+  ZCASH_SHIELDED_CHUNK_TIMEOUT_MS,
   zainoEndpoint,
   type ZainoEndpoint,
 } from "../constants";
@@ -1049,8 +1051,13 @@ export function buildExtraSyncObservable(
     mergeMap(config =>
       createShieldedSyncObservable(
         info,
-        zcashSyncShielded(info, syncConfig, zainoEndpoint(config), config.zaino.batchSize),
-      ).pipe(timeout(config.zaino.timeoutMs)),
+        zcashSyncShielded(
+          info,
+          syncConfig,
+          zainoEndpoint(config),
+          config.zaino.batchSize ?? ZCASH_SHIELDED_BATCH_SIZE,
+        ),
+      ).pipe(timeout(config.zaino.timeoutMs ?? ZCASH_SHIELDED_CHUNK_TIMEOUT_MS)),
     ),
     catchError(error => {
       log(ZCASH_LOG_TYPE, `shielded sync failed/timed out: ${String(error)}`);

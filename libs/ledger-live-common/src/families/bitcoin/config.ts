@@ -161,7 +161,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      zaino: { url: "https://zec-indexer.coin.ledger.com", timeoutMs: 120_000, batchSize: 5_000 },
+      zaino: { url: "https://zec-indexer.coin.ledger.com" },
       explorer: { url: "https://explorers.api.live.ledger.com" },
     },
   },

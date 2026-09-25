@@ -63,6 +63,16 @@ export const ZCASH_MEMO_MAX_BYTES = 512;
 export const ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES = 2;
 /** @deprecated kept for backward compatibility */
 export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5_000;
+// Defaults of the optional `zaino` tuning fields of the coin config (`config.ts`).
+//
+// The automatic (wallet-sync-driven) shielded leg is treated as hung, and degraded to
+// "stopped" for this tick, when one chunk takes longer than this. RxJS's `timeout()`
+// resets on every emission, so it bounds one server round-trip for one block range, not
+// the whole catch-up; the next tick resumes from `lastProcessedBlock`. It must clearly
+// exceed realistic single-chunk latency, including for a new or far-behind account.
+export const ZCASH_SHIELDED_CHUNK_TIMEOUT_MS = 120_000;
+// Maximum number of blocks the native engine scans per shielded sync chunk.
+export const ZCASH_SHIELDED_BATCH_SIZE = 5_000;
 export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   orchardBalance: new BigNumber(0),
   saplingBalance: new BigNumber(0),
