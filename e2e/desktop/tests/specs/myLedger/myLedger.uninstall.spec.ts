@@ -19,7 +19,7 @@ test.describe("My Ledger — uninstall an app", () => {
       tag: ["@myLedger", ...DEVICE_TAGS],
       annotation: { type: "TMS", description: "B2CQA-782" },
     },
-    async ({ app }) => {
+    async ({ app, mockServer }) => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.waitForDashboard();
 
@@ -34,6 +34,8 @@ test.describe("My Ledger — uninstall an app", () => {
       await app.myLedger.openCatalogTab();
       await app.myLedger.searchCatalog(AppInfos.BITCOIN.name);
       await app.myLedger.expectAppUninstalled(AppInfos.BITCOIN);
+
+      await mockServer.expectInstalledApps([AppInfos.ETHEREUM.name]);
     },
   );
 });
