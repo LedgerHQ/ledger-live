@@ -6,6 +6,10 @@ import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currenc
 import { act, render, screen } from "tests/testSetup";
 import CardTopUpRoot, { openCardTopUp } from "../screens/CardTopUp/CardTopUpDialog";
 
+jest.mock("../hooks/useCardTopUpMaxAmount", () => ({
+  useCardTopUpMaxAmount: () => new BigNumber(80_000_000),
+}));
+
 const parentAccount = genAccount("ethereum-account", {
   currency: getCryptoCurrencyById("ethereum"),
   operationsSize: 0,
@@ -42,30 +46,35 @@ function renderTopUpDialog() {
   return rendered;
 }
 
-it("starts the form with the selected linked-wallet address", () => {
+it("opens on the linked asset", () => {
   renderTopUpDialog();
 
-  expect(screen.getByRole("dialog", { name: "Top up USD Coin" })).toBeVisible();
-  expect(screen.getByTestId("card-top-up-destination")).toHaveTextContent(asset.address);
+  expect(screen.getByRole("dialog", { name: "Top up USDC" })).toBeVisible();
+  expect(screen.getByTestId("card-top-up-submit")).toBeDisabled();
 });
 
-it("enables Fund after a valid amount is entered", async () => {
+it("enables the review after a valid amount is entered", async () => {
   const { user } = renderTopUpDialog();
-
-  const submit = screen.getByTestId("card-top-up-submit");
-  expect(submit).toBeDisabled();
 
   await user.type(screen.getByTestId("card-top-up-amount-input"), "25");
 
-  expect(submit).toBeEnabled();
-  expect(screen.getByText(/Available:/)).toBeVisible();
+  expect(screen.getByTestId("card-top-up-submit")).toBeEnabled();
 });
 
-it("blocks an amount above the source account balance", async () => {
+it("blocks an amount above what the account can send", async () => {
   const { user } = renderTopUpDialog();
 
-  await user.type(screen.getByTestId("card-top-up-amount-input"), "101");
+  await user.type(screen.getByTestId("card-top-up-amount-input"), "90");
 
   expect(screen.getByText("This amount exceeds your available balance")).toBeVisible();
   expect(screen.getByTestId("card-top-up-submit")).toBeDisabled();
+});
+
+it("fills the maximum the account can send", async () => {
+  const { user } = renderTopUpDialog();
+
+  await user.click(screen.getByTestId("card-top-up-ratio-max"));
+
+  expect(screen.getByTestId("card-top-up-amount-input")).toHaveValue("80");
+  expect(screen.getByTestId("card-top-up-submit")).toBeEnabled();
 });

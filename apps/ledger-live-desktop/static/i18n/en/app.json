@@ -951,20 +951,6 @@
           }
         }
       },
-      "fund": {
-        "title": "Top up {{asset}}",
-        "source": "From {{account}}",
-        "available": "Available: {{balance}}",
-        "destination": "Card wallet address",
-        "invalidAmount": "Enter a valid amount",
-        "invalidPrecision": "This amount has too many decimal places",
-        "insufficientBalance": "This amount exceeds your available balance",
-        "continue": "Continue",
-        "deviceTitle": "Confirm card top up",
-        "successTitle": "Top up submitted",
-        "successDescription": "Your transaction was broadcast and will appear after confirmation.",
-        "done": "Done"
-      },
       "reward": {
         "title": "Total cashback · {{ratePercent}}% in {{ticker}}"
       },
@@ -980,6 +966,19 @@
         "passwordUnavailable": "Couldn't check your password",
         "passwordCreateFailed": "Couldn't set your password"
       }
+    },
+    "cardTopUp": {
+      "title": "Top up {{asset}}",
+      "source": "{{account}} · {{balance}}",
+      "toggleInputMode": "Switch between fiat and crypto amount",
+      "max": "Max",
+      "insufficientBalance": "This amount exceeds your available balance",
+      "review": "Review",
+      "disclaimer": "Topping up sends your funds to Baanx and out of your Ledger Wallet. This transaction is subject to Baanx's <termsLink>Terms & Conditions</termsLink> and <privacyLink>Privacy Policy</privacyLink>.",
+      "deviceTitle": "Confirm card top up",
+      "successTitle": "Top up submitted",
+      "successDescription": "Your transaction was broadcast and will appear after confirmation.",
+      "done": "Done"
     },
     "cardTransactions": {
       "title": "Transactions",
