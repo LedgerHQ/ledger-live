@@ -1,6 +1,10 @@
 import { renderHook, act } from "@tests/test-renderer";
 import { track } from "~/analytics";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import {
+  getCurrentTrackingPage,
+  resetTrackingPages,
+  setTrackingSource,
+} from "~/analytics/screenRefs";
 import { ScreenName } from "~/const";
 import { useGlobalSearchViewModel } from "../useGlobalSearchViewModel";
 import { useGlobalSearchDefaults } from "LLM/features/GlobalSearch/hooks/useGlobalSearchDefaults";
@@ -53,6 +57,8 @@ describe("useGlobalSearchViewModel", () => {
     });
     mockedResults.mockReturnValue(resultsState());
   });
+
+  afterEach(resetTrackingPages);
 
   it("composes default sections and search results from the data hooks", () => {
     const cryptos = [{ id: "btc" }] as never;
@@ -115,11 +121,11 @@ describe("useGlobalSearchViewModel", () => {
   });
 
   it("registers GlobalSearch as the current route so it is the source of the next screen", () => {
-    currentRouteNameRef.current = "Portfolio";
+    setTrackingSource("Portfolio");
 
     renderHook(() => useGlobalSearchViewModel());
 
-    expect(currentRouteNameRef.current).toBe(ScreenName.GlobalSearch);
+    expect(getCurrentTrackingPage()).toBe(ScreenName.GlobalSearch);
   });
 
   it("navigates back when onBack is invoked", () => {

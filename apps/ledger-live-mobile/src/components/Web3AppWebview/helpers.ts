@@ -40,7 +40,7 @@ import {
   E2E_WEBVIEW_NETWORK_LOG_TYPE,
 } from "../../e2e/webviewNetworkLogCapture";
 import { webviewLogStore } from "../../e2e/webviewLogStore";
-import { currentRouteNameRef } from "../../analytics/screenRefs";
+import { getTrackingRouteLiveAppSource } from "./analytics";
 import { walletSelector } from "~/reducers/wallet";
 import {
   CacheMode,
@@ -93,10 +93,7 @@ export function useWebView(
       trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
         track(eventName, {
           ...properties,
-          flowInitiatedFrom:
-            currentRouteNameRef.current === "Platform Catalog"
-              ? "Discover"
-              : currentRouteNameRef.current,
+          flowInitiatedFrom: getTrackingRouteLiveAppSource(),
         }),
       ),
     [],
@@ -540,10 +537,7 @@ export function useUiHook({
   const { openDrawer: openModularDrawer } = useModularDrawerController();
   const deviceIntentSignEnabled = useDeviceIntentSignEnabled(manifest.id);
 
-  const source =
-    currentRouteNameRef.current === "Platform Catalog"
-      ? "Discover"
-      : (currentRouteNameRef.current ?? "Unknown");
+  const source = getTrackingRouteLiveAppSource();
 
   const flow = manifest.name;
 
@@ -861,10 +855,7 @@ export function useSelectAccount({
       enableAccountSelection: true,
       onAccountSelected: onSelectAccountSuccess,
       flow: manifest.name,
-      source:
-        currentRouteNameRef.current === "Platform Catalog"
-          ? "Discover"
-          : (currentRouteNameRef.current ?? "Unknown"),
+      source: getTrackingRouteLiveAppSource(),
     });
   }, [currencyIds, onSelectAccountSuccess, manifest.name]);
 

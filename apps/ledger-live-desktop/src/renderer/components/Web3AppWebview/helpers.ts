@@ -20,11 +20,11 @@ import { track } from "~/renderer/analytics/segment";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useDispatch } from "LLD/hooks/redux";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { getTrackingRouteLiveAppSource } from "./analytics";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -374,10 +374,7 @@ export function useSelectAccount({
   const { openAssetAndAccount } = useOpenAssetAndAccount();
 
   const onSelectAccount = useCallback(() => {
-    const source =
-      currentRouteNameRef.current === "Platform Catalog"
-        ? "Discover"
-        : (currentRouteNameRef.current ?? "Unknown");
+    const source = getTrackingRouteLiveAppSource();
 
     dispatch(setFlowValue(flow));
     dispatch(setSourceValue(source));

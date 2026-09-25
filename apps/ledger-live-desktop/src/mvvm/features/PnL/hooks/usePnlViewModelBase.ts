@@ -15,7 +15,7 @@ import { buildInfoCard } from "../builders/buildInfoCard";
 import type { PnlNamespace, PnlNumbers, PnlSecondaryCardConfig, PnlViewModel } from "../types";
 import type { PnLCardProps } from "../components/PnLCard/types";
 import { track } from "~/renderer/analytics/segment";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 
 const ZERO = new BigNumber(0);
 
@@ -55,7 +55,7 @@ export function usePnlViewModelBase({
     setDetailOpen(true);
     track("button_clicked", {
       button: "Pnl details",
-      page: currentRouteNameRef.current,
+      page: getCurrentTrackingPage(),
     });
   }, []);
 

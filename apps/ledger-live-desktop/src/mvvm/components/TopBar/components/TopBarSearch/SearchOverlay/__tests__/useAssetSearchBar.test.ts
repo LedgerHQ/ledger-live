@@ -1,6 +1,7 @@
 import { ChangeEvent } from "react";
 import { renderHook, act } from "tests/testSetup";
 import { track } from "~/renderer/analytics/segment";
+import { resetTrackingPages, setTrackingSource } from "~/renderer/analytics/screenRefs";
 import { useAssetSearchBar } from "../useAssetSearchBar";
 
 jest.mock("@ledgerhq/live-common/hooks/useDebounce", () => ({
@@ -19,19 +20,20 @@ jest.mock("LLD/features/SearchAssets/hooks/useAssetSearchResultsViewModel", () =
   useAssetSearchResultsViewModel: () => ({ data: [], isLoading: false, isError: false }),
 }));
 
-// getCurrentTrackingPage reads a module-level navigation ref that leaks across the full suite.
-// Mock it so the tracked page is deterministic here.
-jest.mock("~/renderer/analytics/screenRefs", () => ({
-  getCurrentTrackingPage: () => "",
-  getPreviousTrackingPage: () => "",
-}));
-
 const mockedTrack = jest.mocked(track);
 
 const changeQuery = (value: string) => ({ target: { value } }) as ChangeEvent<HTMLInputElement>;
 
 describe("useAssetSearchBar", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    resetTrackingPages();
+    setTrackingSource("");
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    resetTrackingPages();
+  });
 
   it("tracks the debounced query once it reaches the minimum search length", () => {
     const { result } = renderHook(() => useAssetSearchBar());
