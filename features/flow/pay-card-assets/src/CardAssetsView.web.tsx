@@ -19,6 +19,7 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { useTranslation } from "@shared/i18n";
 import { CardAssetDetailsDialog } from "./CardAssetDetailsDialog.web";
 import { CardAssetDetailsWithdrawDialog } from "./CardAssetDetailsWithdrawDialog.web";
+import { CardAssetsEmptyState } from "./CardAssetsEmptyState.web";
 import { CardAssetsManageDialog } from "./CardAssetsManageDialog.web";
 import type { CardAssetRow, CardAssetsViewModel } from "./types";
 
@@ -55,15 +56,24 @@ function AssetRow({
   );
 }
 
-type AssetsBodyProps = Readonly<Pick<CardAssetsViewModel, "status" | "rows" | "onAssetPress">>;
+type AssetsBodyProps = Readonly<
+  Pick<CardAssetsViewModel, "status" | "rows" | "onAssetPress" | "onRetryPress" | "onAddAssetPress">
+>;
 
-function AssetsBody({ status, rows, onAssetPress }: AssetsBodyProps) {
-  const { t } = useTranslation();
+function AssetsBody({
+  status,
+  rows,
+  onAssetPress,
+  onRetryPress,
+  onAddAssetPress,
+}: AssetsBodyProps) {
   if (status === "error") {
-    return <p className="body-2 text-muted">{t("payTab.card.assets.error")}</p>;
+    return <CardAssetsEmptyState variant="error" onRetry={onRetryPress} />;
   }
   if (status === "empty") {
-    return <p className="body-2 text-muted">{t("payTab.card.assets.empty")}</p>;
+    return (
+      <CardAssetsEmptyState variant="empty" onRetry={onRetryPress} onAddAsset={onAddAssetPress} />
+    );
   }
   if (status === "loading") {
     return (
@@ -103,6 +113,7 @@ export function CardAssetsView({
   onShowHistoryPress,
   onWithdrawContinue,
   onManagePress,
+  onRetryPress,
   onAddAssetPress,
   onMoveAsset,
   reorderingAssetIds,
@@ -128,15 +139,23 @@ export function CardAssetsView({
                 <TooltipContent>{infoLabel}</TooltipContent>
               </Tooltip>
             </div>
-            <Link appearance="accent" underline={false} size="sm" asChild>
-              <button type="button" onClick={onManagePress}>
-                {manageLabel}
-              </button>
-            </Link>
+            {status === "ready" ? (
+              <Link appearance="accent" underline={false} size="sm" asChild>
+                <button type="button" onClick={onManagePress}>
+                  {manageLabel}
+                </button>
+              </Link>
+            ) : null}
           </div>
         </Subheader>
 
-        <AssetsBody status={status} rows={rows} onAssetPress={onAssetPress} />
+        <AssetsBody
+          status={status}
+          rows={rows}
+          onAssetPress={onAssetPress}
+          onRetryPress={onRetryPress}
+          onAddAssetPress={onAddAssetPress}
+        />
       </section>
       <CardAssetDetailsDialog
         isOpen={dialogState === "details"}

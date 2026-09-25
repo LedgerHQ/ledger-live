@@ -64,7 +64,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   const isSignedIn = useIsCardSignedIn();
   const [updateCardWalletPriorities] = useUpdateCardWalletPrioritiesMutation();
   const { transactions } = useCardTransactionsViewModel();
-  const { wallets, isLoading, isError } = useCardLinkedWallets({
+  const { wallets, isLoading, isError, refetch } = useCardLinkedWallets({
     currencies,
     skip: !isSignedIn,
   });
@@ -174,6 +174,10 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     setDialogState("manage");
   }, [rows]);
 
+  const onRetryPress = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
   const onAddAssetPress = useCallback(() => {
     onAddAsset?.();
   }, [onAddAsset]);
@@ -246,6 +250,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
+      onRetryPress,
       onAddAssetPress: onAddAsset ? onAddAssetPress : undefined,
       onMoveAsset,
       reorderingAssetIds,
@@ -270,6 +275,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
+      onRetryPress,
       onAddAsset,
       onAddAssetPress,
       onMoveAsset,

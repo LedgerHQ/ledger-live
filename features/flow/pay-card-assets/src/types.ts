@@ -79,6 +79,7 @@ export type CardAssetsViewModel = Readonly<{
   onShowHistoryPress: () => void;
   onWithdrawContinue: () => void;
   onManagePress: () => void;
+  onRetryPress: () => void;
   onAddAssetPress?: () => void;
   onMoveAsset: (id: string, toIndex: number) => Promise<void>;
   /** Wallets with an in-flight priority update. Multiple moves can be in flight at once — each
