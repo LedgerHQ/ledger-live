@@ -4,6 +4,7 @@ export * from "./contactOperations";
 export * from "./utils/getContactInitial";
 export * from "./hooks/useContactsMeContact";
 export * from "./hooks/useContactDisplayName";
+export * from "./hooks/useOtherContactsAddresses";
 export * from "./utils/formatContactDisplayName";
 export * from "./featureFlags";
 export * from "./utils/resolveEligibleAddressCurrencyIds";

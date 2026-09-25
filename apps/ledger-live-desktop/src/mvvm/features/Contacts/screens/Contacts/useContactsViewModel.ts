@@ -48,7 +48,7 @@ import {
   useContactDisplayName,
   useContacts,
   useContactsMeContact,
-  type OtherContactAddress,
+  useOtherContactsAddresses,
 } from "@features/platform-contacts";
 import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
@@ -97,13 +97,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const currencySelection = useContactsCurrencySelectionAdapter();
   const { cancelCurrencySelection } = currencySelection;
   const addressValidation = useContactsAddressValidationAdapter();
-  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
-    () =>
-      contacts.flatMap(c =>
-        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
-      ),
-    [contacts],
-  );
+  const allContactsAddresses = useOtherContactsAddresses();
   const { selectCurrency } = useAddAddressCurrencySelectionViewModel({
     platform: "desktop",
     currencySelection,
