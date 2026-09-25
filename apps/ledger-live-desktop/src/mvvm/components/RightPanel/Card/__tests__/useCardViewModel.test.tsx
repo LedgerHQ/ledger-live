@@ -8,6 +8,11 @@ import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { useCardViewModel } from "../useCardViewModel";
 
 const mockNavigate = jest.fn();
+const mockFundAsset = jest.fn();
+
+jest.mock("LLD/features/PayCardFund/hooks/useCardFundEntryPoint", () => ({
+  useCardFundEntryPoint: () => mockFundAsset,
+}));
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -59,6 +64,7 @@ function renderCardViewModelWithLegacyTopUp() {
 describe("useCardViewModel", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
+    mockFundAsset.mockClear();
     mockedReadCardUsEnv.mockResolvedValue(false);
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     mockedManifest.mockReturnValue(HOSTED_MANIFEST as ReturnType<typeof useLiveAppManifest>);
@@ -187,15 +193,31 @@ describe("useCardViewModel", () => {
     );
   });
 
-  it("pre-selects the asset the user topped up from", async () => {
+  it("starts the native Fund flow for the asset the user topped up from", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const asset = {
+      currency: "btc",
+      ledgerId: "bitcoin",
+      address: "bc1qcardwallet",
+    } as CardAssetRow;
+    const { result } = renderCardViewModel(null);
+
+    act(() => result.current.assets?.onTopUp?.(asset));
+
+    expect(mockFundAsset).toHaveBeenCalledWith(asset);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("keeps the hosted top up page for an asset native Fund does not support yet", async () => {
     const { result } = renderCardViewModel(null);
 
     await act(async () => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      result.current.assets?.onTopUp?.({ currency: "btc" } as CardAssetRow);
+      result.current.assets?.onTopUp?.({ currency: "xrp", ledgerId: "ripple" } as CardAssetRow);
     });
 
-    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?currency=btc");
+    expect(mockFundAsset).not.toHaveBeenCalled();
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/topup?currency=xrp");
   });
 
   it("opens the legacy card live app on top up when the legacyTopUp param is on", async () => {
@@ -208,7 +230,7 @@ describe("useCardViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/platform/cl-card?returnTo=%2Fpaytab");
   });
 
-  it("opens the legacy card live app from an asset too, and drops its currency", async () => {
+  it("falls back to the legacy card live app from an asset when the legacyTopUp param is on", async () => {
     const { result } = renderCardViewModelWithLegacyTopUp();
 
     await act(async () => {
@@ -217,6 +239,7 @@ describe("useCardViewModel", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith("/platform/cl-card?returnTo=%2Fpaytab");
+    expect(mockFundAsset).not.toHaveBeenCalled();
   });
 
   it("opens the withdrawal page for the asset the user withdraws from", async () => {
@@ -250,6 +273,7 @@ describe("useCardViewModel", () => {
     act(() =>
       result.current.assets?.onShowHistory?.({
         id: "wallet-usdc",
+        address: "0x2222222222222222222222222222222222222222",
         currency: "usdc",
         network: "ethereum",
         name: "USD Coin",

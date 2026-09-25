@@ -951,6 +951,20 @@
           }
         }
       },
+      "fund": {
+        "title": "Top up {{asset}}",
+        "source": "From {{account}}",
+        "available": "Available: {{balance}}",
+        "destination": "Card wallet address",
+        "invalidAmount": "Enter a valid amount",
+        "invalidPrecision": "This amount has too many decimal places",
+        "insufficientBalance": "This amount exceeds your available balance",
+        "continue": "Continue",
+        "deviceTitle": "Confirm card top up",
+        "successTitle": "Top up submitted",
+        "successDescription": "Your transaction was broadcast and will appear after confirmation.",
+        "done": "Done"
+      },
       "reward": {
         "title": "Total cashback · {{ratePercent}}% in {{ticker}}"
       },

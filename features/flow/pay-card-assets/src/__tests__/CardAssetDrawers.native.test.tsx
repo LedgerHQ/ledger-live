@@ -7,6 +7,7 @@ import type { CardAssetDialogCopy, CardAssetRow } from "../types";
 
 const asset: CardAssetRow = {
   id: "w-usdc",
+  address: "0x2222222222222222222222222222222222222222",
   currency: "usdc",
   network: "ethereum",
   name: "USD Coin",

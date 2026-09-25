@@ -17,4 +17,6 @@ export type CardSessionRefreshResult =
 export type CardBaseQueryExtraOptions = Readonly<{
   authenticated?: boolean;
   renewSession?: boolean;
+  /** `legacy` sends the request to the provider's CL Card API instead of the Card API. */
+  api?: "legacy";
 }>;

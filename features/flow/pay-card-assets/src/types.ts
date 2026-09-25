@@ -9,6 +9,8 @@ export type CardAssetRow = Readonly<{
   id: string;
   /** Provider address identifier used to mutate the linked wallet. */
   addressId?: string;
+  /** Card-linked wallet address selected as the Fund destination. */
+  address: string;
   /** Provider asset code used by card transaction funding sources. */
   currency: string;
   /** Provider network paired with `currency` by the existing asset catalog. */

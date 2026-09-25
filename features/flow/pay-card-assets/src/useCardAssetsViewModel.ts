@@ -65,23 +65,26 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
 
   const unorderedRows = useMemo<readonly CardAssetRow[]>(
     () =>
-      wallets.map(({ id, addressId, balance, currency, network, ledgerId, ledgerCurrency }) => {
-        const countervalue =
-          ledgerCurrency && balance !== null ? getCounterValue(ledgerCurrency, balance) : null;
+      wallets.map(
+        ({ id, addressId, address, balance, currency, network, ledgerId, ledgerCurrency }) => {
+          const countervalue =
+            ledgerCurrency && balance !== null ? getCounterValue(ledgerCurrency, balance) : null;
 
-        return {
-          id,
-          ...(addressId === undefined ? {} : { addressId }),
-          currency,
-          network,
-          name: ledgerCurrency?.name ?? currency.toUpperCase(),
-          ticker: ledgerCurrency?.ticker ?? currency.toUpperCase(),
-          ledgerId: ledgerId ?? "",
-          cryptoAmount: formatCardAssetCryptoAmount(balance, currency),
-          countervalue: countervalue === null ? null : formatCountervalue(countervalue),
-          countervalueAmount: countervalue,
-        };
-      }),
+          return {
+            id,
+            ...(addressId === undefined ? {} : { addressId }),
+            address,
+            currency,
+            network,
+            name: ledgerCurrency?.name ?? currency.toUpperCase(),
+            ticker: ledgerCurrency?.ticker ?? currency.toUpperCase(),
+            ledgerId: ledgerId ?? "",
+            cryptoAmount: formatCardAssetCryptoAmount(balance, currency),
+            countervalue: countervalue === null ? null : formatCountervalue(countervalue),
+            countervalueAmount: countervalue,
+          };
+        },
+      ),
     [wallets, getCounterValue, formatCountervalue],
   );
 

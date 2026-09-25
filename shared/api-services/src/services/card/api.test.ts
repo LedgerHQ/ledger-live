@@ -189,6 +189,10 @@ describe("cardBaseQuery", () => {
           query: () => ({ url: "/v1/auth/oauth2/token", method: "POST" }),
           extraOptions: { authenticated: false },
         }),
+        probeLegacy: build.mutation<unknown, void>({
+          query: () => ({ url: "/legacy-probe", method: "POST" }),
+          extraOptions: { api: "legacy" },
+        }),
       }),
       overrideExisting: true,
     });
@@ -219,6 +223,30 @@ describe("cardBaseQuery", () => {
     expect(sent.headers.get("authorization")).toBe("Bearer session-token");
     expect(sent.headers.get("x-client-key")).toBe("test-client-key");
     expect(sent.headers.get("x-us-env")).toBeNull();
+  });
+
+  it("sends a legacy request to the configured legacy host on the same Card session", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
+
+    const { api, store } = probeStore(
+      cardApiExtra(buildExtra({ getCardLegacyApiBaseUrl: () => "https://legacy.card.test" })),
+    );
+    const result = await store.dispatch(api.endpoints.probeLegacy.initiate());
+
+    expect(result.data).toEqual({ ok: true });
+    const sent = request(fetchSpy);
+    expect(sent.url).toBe("https://legacy.card.test/legacy-probe");
+    expect(sent.headers.get("authorization")).toBe("Bearer session-token");
+  });
+
+  it("sends nothing for a legacy request when no legacy host is configured", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra()));
+    const result = await store.dispatch(api.endpoints.probeLegacy.initiate());
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(result.error).toMatchObject({ status: "CUSTOM_ERROR" });
   });
 
   it("names the US tenant only while the holder belongs to it", async () => {

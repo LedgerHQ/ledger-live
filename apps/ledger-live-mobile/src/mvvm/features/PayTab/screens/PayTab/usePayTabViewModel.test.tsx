@@ -45,6 +45,7 @@ const HOSTED_UI = "https://hosted.test";
 
 const CARD_ASSET: CardAssetRow = {
   id: "wallet-btc",
+  address: "bc1qcardwallet",
   currency: "btc",
   network: "bitcoin",
   name: "Bitcoin",

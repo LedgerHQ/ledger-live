@@ -7,6 +7,7 @@ import type { CardAssetsViewModel } from "../types";
 
 const usdc = {
   id: "w-usdc",
+  address: "0x2222222222222222222222222222222222222222",
   currency: "usdc",
   network: "ethereum",
   name: "USD Coin",
@@ -92,6 +93,7 @@ describe("CardAssetsView (web)", () => {
           usdc,
           {
             id: "w-btc",
+            address: "bc1qcardwallet",
             currency: "btc",
             network: "bitcoin",
             name: "Bitcoin",

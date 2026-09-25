@@ -7,6 +7,7 @@ import { CardAssetsManageRow } from "../CardAssetsManageRow.web";
 const row = {
   id: "wallet-usdc",
   addressId: "address-usdc",
+  address: "0x2222222222222222222222222222222222222222",
   currency: "usdc",
   network: "ethereum",
   name: "USD Coin",
