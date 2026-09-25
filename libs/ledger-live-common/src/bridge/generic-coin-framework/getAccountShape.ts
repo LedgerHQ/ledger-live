@@ -627,8 +627,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           completionDate: b.stake.stateUpdatedAt ?? new Date(),
           // `inactive` also covers an idle stake, so trust `actions` rather than the state.
           status:
-            b.stake.state === "withdrawable" ||
-            b.stake.actions?.includes("withdraw")
+            b.stake.state === "withdrawable" || b.stake.actions?.includes("withdraw")
               ? "withdrawable"
               : "deactivating",
           ...(typeof validatorId === "string" ? { validatorId } : {}),
