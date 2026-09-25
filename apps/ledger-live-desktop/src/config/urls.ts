@@ -4,6 +4,7 @@ export const supportLinkByTokenType = {
   trc20: "https://support.ledger.com/article/360013062159-zd",
   asa: "https://support.ledger.com/article/360015896040-zd",
   spl: "https://support.ledger.com/article/7723954701469-zd",
+  plt: "https://support.ledger.com/article/Managing-PLT-Tokens-in-Ledger-Wallet",
 };
 
 const errors: Record<string, string> = {
