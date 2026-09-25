@@ -1,7 +1,7 @@
 import flatten from "lodash/flatten";
 import BigNumber from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import type { WalletBtcCurrency } from "./crypto/types";
+import { LogFn, noopLog } from "./logger";
 import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
 import { Currency } from "./crypto/types";
 import { DerivationModes } from "./types";
@@ -26,7 +26,7 @@ class BitcoinLikeWallet {
   // Storage id is xpub + currency id
   storages: { [storageId: string]: BitcoinLikeStorage } = {};
 
-  constructor() {}
+  constructor(private readonly log: LogFn = noopLog) {}
 
   getExplorer(currency: WalletBtcCurrency) {
     if (!this.explorers[currency.id]) {
@@ -55,7 +55,7 @@ class BitcoinLikeWallet {
     const crypto = cryptoFactory(params.currency);
     const storageId = params.xpub + cryptoCurrency.id;
     if (!this.storages[storageId]) {
-      this.storages[storageId] = new BitcoinLikeStorage();
+      this.storages[storageId] = new BitcoinLikeStorage(this.log);
     }
     return {
       params,
@@ -65,6 +65,7 @@ class BitcoinLikeWallet {
         crypto,
         xpub: params.xpub,
         derivationMode: params.derivationMode,
+        log: this.log,
       }),
     };
   }
@@ -143,7 +144,7 @@ class BitcoinLikeWallet {
     });
 
     let balance = new BigNumber(0);
-    log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
+    this.log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
     const safeFeePerByte = Math.max(1, Math.ceil(feePerByte));
     const fixedVBytes = utils.maxTxVBytesCeil(
       0,
@@ -193,8 +194,8 @@ class BitcoinLikeWallet {
         account.xpub.derivationMode,
       );
 
-    log("btcwallet", "estimateAccountMaxSpendable balance", balance);
-    log("btcwallet", "estimateAccountMaxSpendable fees", fees);
+    this.log("btcwallet", "estimateAccountMaxSpendable balance", balance);
+    this.log("btcwallet", "estimateAccountMaxSpendable fees", fees);
     const maxSpendable = balance.minus(fees);
     return maxSpendable.lt(0) ? new BigNumber(0) : maxSpendable;
   }
@@ -232,7 +233,7 @@ class BitcoinLikeWallet {
     const crypto = cryptoFactory(currencyId);
     const storageId = account.xpub.xpub + currencyId;
     if (!this.storages[storageId]) {
-      this.storages[storageId] = new BitcoinLikeStorage();
+      this.storages[storageId] = new BitcoinLikeStorage(this.log);
     }
     return new Xpub({
       storage: this.storages[storageId],
@@ -240,6 +241,7 @@ class BitcoinLikeWallet {
       crypto,
       xpub: account.xpub.xpub,
       derivationMode: account.params.derivationMode,
+      log: this.log,
     });
   }
 

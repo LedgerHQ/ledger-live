@@ -3,6 +3,7 @@ import { OutputInfo } from "..";
 import { ICrypto } from "../crypto/types";
 import { Output } from "../storage/types";
 import Xpub from "../xpub";
+import { LogFn, noopLog } from "../logger";
 
 export abstract class PickingStrategy {
   crypto: ICrypto;
@@ -15,6 +16,8 @@ export abstract class PickingStrategy {
     outputIndex: number;
   }>;
 
+  protected readonly log: LogFn;
+
   constructor(
     crypto: ICrypto,
     derivationMode: string,
@@ -22,10 +25,12 @@ export abstract class PickingStrategy {
       hash: string;
       outputIndex: number;
     }>,
+    log: LogFn = noopLog,
   ) {
     this.crypto = crypto;
     this.derivationMode = derivationMode;
     this.excludedUTXOs = excludedUTXOs;
+    this.log = log;
   }
 
   /**
