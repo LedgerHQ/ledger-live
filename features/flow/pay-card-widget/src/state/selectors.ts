@@ -1,4 +1,4 @@
-import type { PayCardOnboardingWidgetState } from "./types";
+import type { PayCardOnboardingWidgetPersistedState, PayCardOnboardingWidgetState } from "./types";
 
 type PayCardOnboardingWidgetStateRoot = {
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
@@ -18,9 +18,15 @@ export function selectAnalyticsCardId(state: PayCardOnboardingWidgetStateRoot): 
   return state.payCardOnboardingWidget.analyticsCardId ?? null;
 }
 
+export function selectDigitalWalletProvisioningStartedAt(
+  state: PayCardOnboardingWidgetStateRoot,
+): number | null {
+  return state.payCardOnboardingWidget.digitalWalletProvisioningStartedAt ?? null;
+}
+
 export function payCardOnboardingWidgetPersistedSelector(
   state: PayCardOnboardingWidgetStateRoot,
-): PayCardOnboardingWidgetState {
+): PayCardOnboardingWidgetPersistedState {
   const reportedAnalyticsMilestones = (
     state.payCardOnboardingWidget.reportedAnalyticsMilestones ?? []
   ).filter(milestone => milestone !== "card-onboarding-in-progress");

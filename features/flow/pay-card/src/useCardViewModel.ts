@@ -4,6 +4,7 @@ import { useTranslation } from "@shared/i18n";
 import { useCardWalletsTotal } from "@features/flow-pay-card-assets";
 import type { CardDisplayState, CardProps, CardViewProps } from "./Card.types";
 import { useCardLifecycleTracking } from "./useCardLifecycleTracking";
+import { useCardStatusRefresh } from "./useCardStatusRefresh";
 
 export function useCardViewModel({
   login,
@@ -21,6 +22,7 @@ export function useCardViewModel({
   const status = useCardAuthStatus();
   const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
   const isSignedIn = status === "signedIn";
+  useCardStatusRefresh({ skip: !isSignedIn });
   const formatCountervalue = formatters?.countervalue;
   const balanceLabel = t("payTab.card.balanceLabel");
   const { total, isLoading, isError } = useCardWalletsTotal(assets, isSignedIn);
