@@ -40,6 +40,21 @@ describe("MultiversXNetworkApi startAt clamping", () => {
     );
   });
 
+  test("getHistory stops at the API result-window limit", async () => {
+    (network as unknown as jest.Mock).mockResolvedValue({ data: [] });
+    (network as unknown as jest.Mock).mockResolvedValueOnce({ data: 10_050 });
+
+    await api.getHistory("erd1paginated", 1);
+
+    const transactionRequests = (network as unknown as jest.Mock).mock.calls
+      .map(([request]) => request.url as string)
+      .filter(url => url.includes("/accounts/erd1paginated/transactions?"));
+
+    expect(transactionRequests).toHaveLength(200);
+    expect(transactionRequests.at(-1)).toContain("from=9950&size=50");
+    expect(transactionRequests).not.toContain(expect.stringContaining("from=10000"));
+  });
+
   test("getESDTTransactionsForAddress clamps startAt=0 to after=1", async () => {
     (network as unknown as jest.Mock).mockResolvedValueOnce({ data: 0 });
 

@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { METACHAIN_SHARD, MAX_PAGINATION_SIZE } from "../constants";
+import { MAX_PAGINATION_SIZE, MAX_RESULT_WINDOW, METACHAIN_SHARD } from "../constants";
 import type {
   ESDTToken,
   MultiversXApiTransaction,
@@ -118,7 +118,7 @@ export class MultiversXNetworkApi {
 
     const allTransactions: MultiversXApiTransaction[] = [];
     let from = 0;
-    while (from < transactionsCount) {
+    while (from < Math.min(transactionsCount, MAX_RESULT_WINDOW)) {
       const { data: transactions } = await network<MultiversXApiTransaction[]>({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/transactions?after=${after}&from=${from}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
@@ -153,7 +153,7 @@ export class MultiversXNetworkApi {
 
     const allTokenTransactions: MultiversXApiTransaction[] = [];
     let from = 0;
-    while (from < tokenTransactionsCount) {
+    while (from < Math.min(tokenTransactionsCount, MAX_RESULT_WINDOW)) {
       const { data: tokenTransactions } = await network<MultiversXApiTransaction[]>({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&from=${from}&after=${after}&size=${MAX_PAGINATION_SIZE}`,
@@ -178,7 +178,7 @@ export class MultiversXNetworkApi {
 
     const allTokens: ESDTToken[] = [];
     let from = 0;
-    while (from < tokensCount) {
+    while (from < Math.min(tokensCount, MAX_RESULT_WINDOW)) {
       const { data: tokens } = await network<ESDTToken[]>({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/tokens?from=${from}&size=${MAX_PAGINATION_SIZE}`,
