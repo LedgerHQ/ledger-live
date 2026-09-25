@@ -38,6 +38,7 @@ import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBui
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import { selectContacts } from "@domain/entity-contact";
 import { buildContactsGlobalProperties } from "@features/platform-contacts";
+import { getAppLockAttributes } from "./getAppLockAttributes";
 import { getPayAttributes } from "./getPayAttributes";
 import {
   analyticsEnabledSelector,
@@ -496,6 +497,10 @@ const extraProperties = async (store: AppStore) => {
     analyticsFeatureFlagMethod?.("lwmPayTab")?.enabled ?? false,
     accounts ?? [],
   );
+  const appLockAttributes = getAppLockAttributes(
+    state,
+    analyticsFeatureFlagMethod?.("lwmPasswordRevamp")?.enabled ?? false,
+  );
 
   return {
     ...mandatoryProperties,
@@ -550,6 +555,7 @@ const extraProperties = async (store: AppStore) => {
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
     ...payAttributes,
+    ...appLockAttributes,
     quickActionsCtasVariant: quickActionsCtasVariantFlag?.enabled,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,

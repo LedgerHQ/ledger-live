@@ -5880,6 +5880,9 @@ importers:
       '@features/platform-app-lock':
         specifier: workspace:*
         version: link:../../platform/app-lock
+      '@shared/analytics':
+        specifier: workspace:*
+        version: link:../../../shared/analytics
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n

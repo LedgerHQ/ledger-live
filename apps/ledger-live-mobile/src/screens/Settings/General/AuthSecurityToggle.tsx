@@ -30,7 +30,7 @@ function LegacyAuthSecurityToggle() {
     track("toggle_clicked", {
       toggle: "Password Lock",
       page: ScreenName.GeneralSettings,
-      enabled: !privacy?.hasPassword,
+      enabled: !!privacy?.hasPassword,
     });
 
     setIsToggleOn(authSecurityEnabled);

@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { lockApp } from "@features/platform-app-lock";
+import { track } from "@shared/analytics";
 import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import QueuedBottomSheetsProvider from "LLM/components/QueuedDrawer/QueuedBottomSheetsProvider";
 import React, { useState } from "react";
@@ -49,7 +50,9 @@ function CallerScreen(): React.JSX.Element {
     <>
       <Pressable
         testID={ACTION}
-        onPress={async () => setOutcome((await requestProtection()) ? "resumed" : "held")}
+        onPress={async () =>
+          setOutcome((await requestProtection({ source: "card" })) ? "resumed" : "held")
+        }
       />
       <Pressable testID={ELSEWHERE} onPress={() => navigation.navigate("Elsewhere" as never)} />
       <Text testID={OUTCOME}>{outcome}</Text>
@@ -175,6 +178,11 @@ describe("asking from anywhere for the app to be protected", () => {
     await user.press(screen.getByTestId("app-lock-confirm-password-confirm"));
 
     await waitFor(() => expect(store.getState().appLock.hasPassword).toBe(true));
+    expect(track).toHaveBeenCalledWith("button_clicked", { button: "enable", type: "password" });
+    expect(track).toHaveBeenCalledWith("encryption_activated", {
+      type: "password",
+      source: "card",
+    });
 
     expect(await screen.findByText("Password created")).toBeVisible();
 
