@@ -113,7 +113,7 @@ it("signs the provider payload for the linked wallet and broadcasts it", async (
 
   let execution!: Promise<void>;
   act(() => {
-    execution = result.current.execute("25");
+    execution = result.current.execute(new BigNumber(25_000_000));
   });
 
   await finishDeviceStep(result, "start", {
@@ -161,7 +161,7 @@ it("stops before the device confirmation when the payload pays another address",
 
   let execution!: Promise<void>;
   act(() => {
-    execution = result.current.execute("25");
+    execution = result.current.execute(new BigNumber(25_000_000));
   });
   await finishDeviceStep(result, "start", {
     startExchangeResult: { nonce: "device-nonce", device: {} },
@@ -186,7 +186,7 @@ it("shows the provider's refusal message", async () => {
 
   let execution!: Promise<void>;
   act(() => {
-    execution = result.current.execute("25");
+    execution = result.current.execute(new BigNumber(25_000_000));
   });
   await finishDeviceStep(result, "start", {
     startExchangeResult: { nonce: "device-nonce", device: {} },
@@ -207,7 +207,7 @@ it("ends the run when the device fails during a step, so a retry starts clean", 
 
   let execution!: Promise<void>;
   act(() => {
-    execution = result.current.execute("25");
+    execution = result.current.execute(new BigNumber(25_000_000));
   });
   await waitFor(() => {
     expect(result.current.deviceStep).toMatchObject({ kind: "device", stepId: "start" });
@@ -238,7 +238,7 @@ it("refuses an amount the provider cannot receive exactly, before the device", a
     useCardTopUpExecution({ account: richAccount, parentAccount, asset }),
   );
 
-  await act(async () => result.current.execute("100000000000"));
+  await act(async () => result.current.execute(new BigNumber("1e17")));
 
   expect(result.current.deviceStep).toMatchObject({
     kind: "error",
@@ -274,7 +274,7 @@ it("stops before connecting to the device when the linked wallet has no address"
     }),
   );
 
-  await act(async () => result.current.execute("25"));
+  await act(async () => result.current.execute(new BigNumber(25_000_000)));
 
   expect(result.current.deviceStep).toMatchObject({
     kind: "error",

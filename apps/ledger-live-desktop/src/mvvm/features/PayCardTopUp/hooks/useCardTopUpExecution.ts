@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import type BigNumber from "bignumber.js";
 import { decodeFundPayload } from "@ledgerhq/hw-app-exchange";
 import type { Action } from "@ledgerhq/live-common/hw/actions/types";
 import type { States } from "~/renderer/components/DeviceAction";
@@ -111,7 +111,7 @@ export function useCardTopUpExecution({
   }, []);
 
   const execute = useCallback(
-    async (amountText: string) => {
+    async (amount: BigNumber) => {
       const run = ++currentRun.current;
       const settle = (step: CardTopUpDeviceStep) => {
         if (run === currentRun.current) setDeviceStep(step);
@@ -137,11 +137,11 @@ export function useCardTopUpExecution({
           throw new Error("The selected account does not match the card wallet asset");
         }
 
-        const unit = fromCurrency.units[0];
-        if (!unit) throw new Error(`No unit found for ${fromCurrency.id}`);
-
-        const amount = parseCurrencyUnit(unit, amountText);
-        if (!amount.isGreaterThan(0) || amount.isGreaterThan(account.spendableBalance)) {
+        if (
+          !amount.isInteger() ||
+          !amount.isGreaterThan(0) ||
+          amount.isGreaterThan(account.spendableBalance)
+        ) {
           throw new Error("Invalid Card top-up amount");
         }
         const inAmount = amount.toNumber();
