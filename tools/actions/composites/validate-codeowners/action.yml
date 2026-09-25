@@ -1,0 +1,9 @@
+name: "Validate CODEOWNERS"
+description: "Fails when CODEOWNERS rules match nothing, never take effect, or silently re-own narrower rules"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Validate CODEOWNERS
+      shell: bash
+      run: node "${{ github.action_path }}/validate-codeowners.js"
