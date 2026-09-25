@@ -12,7 +12,8 @@ import {
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 
 const localCache: Record<string, unknown> = {};
-const bridgeCache = makeBridgeCacheSystem({
+
+export const bridgeCache = makeBridgeCacheSystem({
   saveData(c, d) {
     localCache[c.id] = d;
     return Promise.resolve();
