@@ -4,14 +4,11 @@ import { log } from "detox";
 import { session as detoxSession, config as detoxConfig } from "detox/internals";
 import * as fs from "fs/promises";
 import * as path from "path";
-import { exec } from "child_process";
-import { releaseSpeculosDeviceCI } from "@ledgerhq/live-e2e-shared/speculosCI";
 import {
   getDeviceFirmwareVersion,
   getSpeculosModel,
 } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
-import { isSpeculosRemote } from "@e2e/helpers/commonHelpers";
-import { ARTIFACTS_DIR, SPECULOS_TRACKING_FILE_PATTERN } from "@e2e/utils/speculosUtils";
+import { releaseTrackedSpeculos } from "@e2e/utils/speculosSweep";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import type { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
@@ -67,49 +64,6 @@ export default async function setup(): Promise<void> {
   }
 }
 
-async function cleanupAllSpeculos() {
-  // Workers each write their own artifacts/speculos-instances.<pid>.json. From the
-  // controller (this process) we sweep all of them on shutdown so nothing leaks
-  // when workers are killed without running their teardown.
-  try {
-    const files = await fs.readdir(ARTIFACTS_DIR).catch(() => [] as string[]);
-    const trackingFiles = files.filter(f => SPECULOS_TRACKING_FILE_PATTERN.test(f));
-    if (!trackingFiles.length) return;
-
-    const allInstances: { deviceId: string; file: string }[] = [];
-    const parsedFiles = new Set<string>();
-    for (const file of trackingFiles) {
-      const fullPath = path.join(ARTIFACTS_DIR, file);
-      const content = await fs.readFile(fullPath, "utf-8").catch(() => null);
-      if (!content) continue;
-      try {
-        const parsed: { deviceId: string }[] = JSON.parse(content);
-        for (const inst of parsed) allInstances.push({ ...inst, file: fullPath });
-        parsedFiles.add(fullPath);
-      } catch {
-        // ignore malformed tracking file
-        log.error(`Malformed Speculos tracking file ${fullPath}. Keeping file for recovery`);
-      }
-    }
-
-    if (!allInstances.length) return;
-
-    log.info(
-      `Cleaning ${allInstances.length} Speculos instances across ${trackingFiles.length} worker file(s)`,
-    );
-
-    await Promise.allSettled(
-      allInstances.map(({ deviceId }) =>
-        isSpeculosRemote() ? releaseSpeculosDeviceCI(deviceId) : exec(`docker rm -f ${deviceId}`),
-      ),
-    );
-
-    await Promise.all([...parsedFiles].map(fullPath => fs.unlink(fullPath).catch(() => {})));
-  } catch (error) {
-    log.error("Speculos cleanup failed:", sanitizeError(error));
-  }
-}
-
 function setupSpeculosCleanupHandlers() {
   let cleanupInProgress = false;
 
@@ -118,7 +72,8 @@ function setupSpeculosCleanupHandlers() {
     cleanupInProgress = true;
 
     try {
-      await cleanupAllSpeculos();
+      // The run is being aborted, so every worker's instances go, live ones included.
+      await releaseTrackedSpeculos({ orphansOnly: false });
     } catch (error) {
       log.error(`Cleanup failed (${signal}):`, sanitizeError(error));
     }
