@@ -17,6 +17,8 @@ const configFor = (transport: SuiTransport): SuiCoinConfig => ({
     grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
   },
   features: { transport },
+  name: "Sui",
+  unit: { name: "Sui", code: "SUI", magnitude: 9 },
 });
 
 // Deliberately not a validator: `FIGMENT_SUI_VALIDATOR_ADDRESS` reaches the same capped 300

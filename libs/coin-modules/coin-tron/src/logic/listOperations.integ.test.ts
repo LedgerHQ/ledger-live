@@ -8,6 +8,8 @@ const logger: Logger = (..._args: unknown[]) => {};
 
 const config: TronCoinConfig = {
   status: { type: "active" },
+  name: "Tron",
+  unit: { name: "TRX", code: "TRX", magnitude: 6 },
   explorer: { url: "https://tron.coin.ledger.com" },
 };
 

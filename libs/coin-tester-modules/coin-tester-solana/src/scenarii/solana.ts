@@ -532,6 +532,8 @@ export const scenarioSolana = (cluster: AgaveCluster): Scenario<GenericTransacti
         type: "object",
         default: {
           status: { type: "active" },
+          name: "Solana",
+          unit: { name: "SOL", code: "SOL", magnitude: 9 },
           token2022Enabled: true,
           legacyOCMSMaxVersion: "1.8.0",
         },

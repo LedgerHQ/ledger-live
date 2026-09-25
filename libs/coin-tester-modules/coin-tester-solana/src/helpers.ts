@@ -137,6 +137,8 @@ export async function getBridges(
 
     const { currencyBridge, accountBridge } = createBridges(signerContext, () => ({
       status: { type: "active" as const },
+      name: "Solana",
+      unit: { name: "SOL", code: "SOL", magnitude: 9 },
       token2022Enabled: true,
       legacyOCMSMaxVersion: "1.8.0",
     }));

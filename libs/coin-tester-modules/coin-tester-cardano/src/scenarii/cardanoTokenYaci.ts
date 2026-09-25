@@ -39,7 +39,13 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
     LiveConfig.setConfig({
       config_currency_cardano_testnet: {
         type: "object",
-        default: { status: { type: "active" }, maxFeesWarning: 0, maxFeesError: 0 },
+        default: {
+          status: { type: "active" },
+          name: "Cardano (Testnet)",
+          unit: { name: "ada", code: "tADA", magnitude: 6 },
+          maxFeesWarning: 0,
+          maxFeesError: 0,
+        },
       },
     });
 

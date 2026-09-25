@@ -338,6 +338,8 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
     // zcash_regtest.ts and signer.ts for the full rationale.
     const coinConfig: ZcashCoinConfig = {
       status: { type: "active" },
+      name: "Zcash Regtest",
+      unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
       zaino: { url: ZAINO_GRPC_URL },
       explorer: { url: EXPLORER_ORIGIN },
     };
