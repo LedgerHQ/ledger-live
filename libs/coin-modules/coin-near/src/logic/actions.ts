@@ -36,14 +36,7 @@ export const buildActions = ({ mode, amount, useAllAmount }: ActionsInput): Acti
           ];
     case "withdraw":
       return useAllAmount
-        ? [
-            nearAPI.transactions.functionCall(
-              "withdraw_all",
-              {},
-              getStakingGas({ mode, useAllAmount }).toNumber(),
-              "0",
-            ),
-          ]
+        ? [nearAPI.transactions.functionCall("withdraw_all", {}, getStakingGas().toNumber(), "0")]
         : [
             nearAPI.transactions.functionCall(
               "withdraw",

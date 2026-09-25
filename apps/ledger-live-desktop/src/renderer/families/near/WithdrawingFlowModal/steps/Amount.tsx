@@ -11,12 +11,14 @@ import Button from "~/renderer/components/Button";
 import { ValidatorField, AmountField } from "../fields";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
 export default function StepAmount({
   account,
   transaction,
   onUpdateTransaction,
   status,
   error,
+  onClose,
 }: StepProps) {
   const [available, setAvailable] = useState(transaction.amount);
   const bridge = useAccountBridge<Transaction>(account);
@@ -60,6 +62,7 @@ export default function StepAmount({
     };
   }, [transaction]);
   const amount = useMemo(() => (validator ? validator.amount : new BigNumber(0)), [validator]);
+  const notEnoughFundsError = status.errors?.amount?.name === "NotEnoughBalance";
   return (
     <Box flow={1}>
       <TrackPage
@@ -79,6 +82,10 @@ export default function StepAmount({
         onChange={onChangeAmount}
         label={<Trans i18nKey="near.withdraw.flow.steps.amount.fields.amount" />}
       />
+      <Box mb={1} />
+      {notEnoughFundsError ? (
+        <NotEnoughFundsToUnstake account={account} onClose={onClose} page="WithdrawingFlowModal" />
+      ) : null}
     </Box>
   );
 }
