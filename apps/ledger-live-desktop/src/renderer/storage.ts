@@ -26,13 +26,7 @@ import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
 import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
 import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
 import type { PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
-import type { PayCardOnboardingWidgetState } from "@features/flow-pay-card-widget/state";
-
-type PayCardPersistedState = PayCardFeatureTourState &
-  PayRequestVerifyHintState &
-  PayCardBalanceState &
-  PayCardLoginIntroState &
-  PayCardOnboardingWidgetState;
+import type { PayCardOnboardingWidgetPersistedState } from "@features/flow-pay-card-widget/state";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -53,7 +47,11 @@ export type Settings = ReturnType<typeof settingsStoreSelector>;
 export type Market = ReturnType<typeof marketStoreSelector>;
 export type MarketBanner = ReturnType<typeof marketBannerStoreSelector>;
 export type KnownDevices = ReturnType<typeof knownDevicesStoreSelector>;
-export type PayCard = PayCardPersistedState;
+export type PayCard = PayCardFeatureTourState &
+  PayRequestVerifyHintState &
+  PayCardBalanceState &
+  PayCardLoginIntroState &
+  PayCardOnboardingWidgetPersistedState;
 
 export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
 
