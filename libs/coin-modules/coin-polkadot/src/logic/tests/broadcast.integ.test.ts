@@ -1,8 +1,8 @@
 import { ApiPromise, HttpProvider, Keyring } from "@polkadot/api";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import { cryptoWaitReady, encodeAddress, hdLedger, mnemonicGenerate } from "@polkadot/util-crypto";
-import coinConfig from "../config";
-import { broadcast } from "./broadcast";
+import coinConfig from "../../config";
+import { broadcast } from "../broadcast";
 
 describe("Broadcast", () => {
   beforeAll(() => {

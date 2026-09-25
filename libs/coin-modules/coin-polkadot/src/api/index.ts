@@ -12,16 +12,16 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import type { PolkadotCoinConfig, PolkadotContext } from "../config";
+import { broadcast } from "../logic/broadcast";
 import {
-  broadcast,
   craftEstimationTransaction,
   craftTransaction,
   defaultExtrinsicArg,
-  estimateFees,
-  getBalance,
-  lastBlock,
-  listOperations,
-} from "../logic";
+} from "../logic/craftTransaction";
+import { estimateFees } from "../logic/estimateFees";
+import { getBalance } from "../logic/getBalance";
+import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
 import { validateAddress } from "../logic/validateAddress";
 
 // The caller builds the PolkadotContext and passes it to each method (ADR-019). Each method resolves

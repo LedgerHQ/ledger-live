@@ -5,8 +5,10 @@ import prepareTransaction from "./prepareTransaction";
 
 const mockCraftTransaction = jest.fn();
 const mockEstimateFees = jest.fn();
-jest.mock("../logic", () => ({
+jest.mock("../logic/estimateFees", () => ({
   estimateFees: () => mockEstimateFees(),
+}));
+jest.mock("../logic/craftTransaction", () => ({
   craftTransaction: () => mockCraftTransaction(),
 }));
 

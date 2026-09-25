@@ -3,7 +3,7 @@ import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
 import { POLKADOT_NULL_ADDRESS } from "../constants";
-import { estimateFees } from "../logic";
+import { estimateFees } from "../logic/estimateFees";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 import type { PolkadotAccount, Transaction } from "../types";
 import { buildTransaction } from "./buildTransaction";

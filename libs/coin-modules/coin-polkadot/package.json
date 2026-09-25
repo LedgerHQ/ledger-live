@@ -31,9 +31,6 @@
       "api": [
         "lib/api/index"
       ],
-      "logic": [
-        "lib/logic/index"
-      ],
       "specs": [
         "lib/test/bot-specs"
       ],
@@ -70,11 +67,6 @@
       "@ledgerhq/source": "./src/bridge/formatters.ts",
       "require": "./lib/bridge/formatters.js",
       "default": "./lib-es/bridge/formatters.js"
-    },
-    "./logic": {
-      "@ledgerhq/source": "./src/logic/index.ts",
-      "require": "./lib/logic/index.js",
-      "default": "./lib-es/logic/index.js"
     },
     "./network": {
       "@ledgerhq/source": "./src/network/index.ts",

@@ -1,8 +1,8 @@
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { TypeRegistry } from "@polkadot/types";
-import { type PolkadotCoinConfig } from "../config";
-import { createFixtureAccount } from "../types/bridge.fixture";
-import { craftTransaction, defaultExtrinsicArg } from "./craftTransaction";
+import { type PolkadotCoinConfig } from "../../config";
+import { createFixtureAccount } from "../../types/bridge.fixture";
+import { craftTransaction, defaultExtrinsicArg } from "../craftTransaction";
 
 const config = {} as PolkadotCoinConfig;
 
@@ -17,7 +17,7 @@ const mockGetTransactionParams = jest.fn().mockResolvedValue({
   transactionVersion: 22,
 });
 
-jest.mock("../network", () => {
+jest.mock("../../network", () => {
   return {
     getRegistry: () =>
       Promise.resolve({

@@ -19,12 +19,18 @@ const mockEstimateFees = jest.fn();
 const mockCraftEstimationTransaction = jest.fn();
 const mockListOperations = jest.fn();
 
-jest.mock("../logic", () => ({
-  ...jest.requireActual("../logic"),
+jest.mock("../logic/broadcast", () => ({
   broadcast: (...args: unknown[]) => mockBroadcast(...args),
+}));
+jest.mock("../logic/craftTransaction", () => ({
+  ...jest.requireActual("../logic/craftTransaction"),
   craftTransaction: (...args: unknown[]) => mockCraftTransaction(...args),
-  estimateFees: (...args: unknown[]) => mockEstimateFees(...args),
   craftEstimationTransaction: (...args: unknown[]) => mockCraftEstimationTransaction(...args),
+}));
+jest.mock("../logic/estimateFees", () => ({
+  estimateFees: (...args: unknown[]) => mockEstimateFees(...args),
+}));
+jest.mock("../logic/listOperations", () => ({
   listOperations: (...args: unknown[]) => mockListOperations(...args),
 }));
 

@@ -1,16 +1,16 @@
-import coinConfig from "../config";
-import { createRegistryAndExtrinsics } from "../network/common";
+import coinConfig from "../../config";
+import { createRegistryAndExtrinsics } from "../../network/common";
 import {
   fixtureChainSpec,
   fixtureTxMaterialWithMetadata,
   fixtureTransactionParams,
-} from "../network/sidecar.fixture";
-import { createFixtureAccount } from "../types/bridge.fixture";
-import { craftEstimationTransaction } from "./craftTransaction";
-import { estimateFees } from "./estimateFees";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
+} from "../../network/sidecar.fixture";
+import { createFixtureAccount } from "../../types/bridge.fixture";
+import { craftEstimationTransaction } from "../craftTransaction";
+import { estimateFees } from "../estimateFees";
+import { loadPolkadotCrypto } from "../polkadot-crypto";
 
-jest.mock("./polkadot-crypto");
+jest.mock("../polkadot-crypto");
 
 const mockPaymentInfo = jest.fn().mockResolvedValue({
   weight: "WHATEVER",
@@ -22,7 +22,7 @@ const mockRegistry = jest
   .mockResolvedValue(createRegistryAndExtrinsics(fixtureTxMaterialWithMetadata, fixtureChainSpec));
 const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
 
-jest.mock("../network/sidecar", () => ({
+jest.mock("../../network/sidecar", () => ({
   getRegistry: () => mockRegistry(),
   paymentInfo: (...args: unknown[]) => mockPaymentInfo(...args),
   getTransactionParams: () => mockTransactionParams(),

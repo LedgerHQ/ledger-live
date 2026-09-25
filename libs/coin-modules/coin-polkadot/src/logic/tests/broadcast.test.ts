@@ -1,11 +1,11 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { type PolkadotCoinConfig } from "../config";
-import { broadcast } from "./broadcast";
+import { type PolkadotCoinConfig } from "../../config";
+import { broadcast } from "../broadcast";
 
 const submitExtrinsicMock = jest.fn();
 const submitExtrinsicDryRunMock = jest.fn();
 
-jest.mock("../network", () => ({
+jest.mock("../../network", () => ({
   submitExtrinsic: (...args: unknown[]) => submitExtrinsicMock(...args),
   submitExtrinsicDryRun: (...args: unknown[]) => submitExtrinsicDryRunMock(...args),
 }));
