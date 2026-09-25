@@ -149,7 +149,7 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | bmp-ts | 1.0.9 | Andrew lisowski |
 | buffer | 6.0.3 | Copyright (c) Feross Aboukhadijeh, and other contributors. |
 | bun-ffi-structs | 0.1.2 | Copyright (c) Oven and contributors |
-| bun-types | 1.3.12 | Copyright (c) Oven and contributors |
+| bun-types | 1.4.2 | Copyright (c) Oven and contributors |
 | bunli | 0.9.1 | Arya Labs, Inc. |
 | call-bind-apply-helpers | 1.0.2 | Copyright (c) 2024 Jordan Harband |
 | call-bound | 1.0.4 | Copyright (c) 2024 Jordan Harband |
