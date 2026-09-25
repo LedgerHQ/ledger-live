@@ -17,8 +17,7 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 // Global jest-setup stubs createClient with no-op track/identify. Use the real RN
-// SDK (POSTs to /v1/b) so MSW can observe HTTP; flushAt: 1 so one TrackScreen
-// event is enough to flush.
+// SDK (POSTs to /v1/b) so MSW can observe HTTP; flushAt: 1 so one event is enough to flush.
 const { createClient: mockCreateClient } = require("@segment/analytics-react-native") as {
   createClient: jest.Mock;
 };
@@ -41,70 +40,64 @@ NativeModules.AnalyticsReactNative = {
 
 const REAL_USER_ID = UserId.fromString("11111111-1111-1111-1111-111111111111");
 
-const withAnalyticsEnabled = (state: State): State => ({
-  ...state,
-  identities: { ...state.identities, userId: REAL_USER_ID },
-  settings: {
-    ...state.settings,
-    analyticsEnabled: true,
-    personalizedRecommendationsEnabled: false,
-  },
-});
+const withTrackingEnabled =
+  (enabled: boolean) =>
+  (state: State): State => ({
+    ...state,
+    identities: { ...state.identities, userId: REAL_USER_ID },
+    settings: {
+      ...state.settings,
+      analyticsEnabled: enabled,
+      personalizedRecommendationsEnabled: false,
+    },
+  });
 
 const endpoints = {
   batch: jest.fn().mockReturnValue(HttpResponse.json({ success: true })),
 };
 
-describe("Integration with Segment.io", () => {
-  beforeEach(async () => {
+const startAnalyticsWithTracking = async (enabled: boolean) => {
+  const { store } = render(<></>, {
+    overrideInitialState: withTrackingEnabled(enabled),
+  });
+  await startAnalytics(store);
+  return store;
+};
+
+const collectedBatchEvents = async () => {
+  const bodies = await Promise.all(
+    endpoints.batch.mock.calls.map(call => call[0].request.clone().json()),
+  );
+  return bodies.flatMap(body => body.batch ?? []);
+};
+
+describe("integration with segment.io", () => {
+  beforeEach(() => {
     jest.useRealTimers();
+    endpoints.batch.mockClear();
+    jest.clearAllMocks();
     server.use(
       http.post("https://api.segment.io/v1/b", endpoints.batch),
       http.get("https://cdn-settings.segment.com/v1/projects/:writeKey/settings", () =>
         HttpResponse.json({ integrations: { "Segment.io": {} } }),
       ),
     );
-
-    const { store, rerender: _rerender } = render(<></>, {
-      overrideInitialState: withAnalyticsEnabled,
-    });
-    rerender = _rerender;
-    await startAnalytics(store);
   });
 
   afterEach(() => {
     jest.useFakeTimers();
-    endpoints.batch.mockClear();
     jest.clearAllMocks();
   });
 
-  it("tracking sends batches of events to api.segment.io", async () => {
-    await waitFor(() => expect(endpoints.batch).toHaveBeenCalled());
-  });
+  it("configures @shared/analytics to use Segment", async () => {
+    await startAnalyticsWithTracking(true);
 
-  it("identifies the user", async () => {
-    await waitFor(async () =>
-      expect(await endpoints.batch.mock.calls[0][0].request.json()).toMatchObject({
-        batch: expect.arrayContaining([
-          expect.objectContaining({
-            type: "identify",
-            userId: expect.any(String),
-          }),
-        ]),
-      }),
-    );
-  });
-
-  it("configures @shared/analytics to send events to api.segment.io", async () => {
     await track("Example event");
 
     await waitFor(
       async () => {
         await flush();
-        const events = (
-          await Promise.all(endpoints.batch.mock.calls.map(call => call[0].request.clone().json()))
-        ).flatMap(body => body.batch ?? []);
-
+        const events = await collectedBatchEvents();
         expect(events).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
@@ -116,5 +109,51 @@ describe("Integration with Segment.io", () => {
       },
       { timeout: 10_000 },
     );
+  });
+
+  it("sends tracking events in batches to Segment's API", async () => {
+    await startAnalyticsWithTracking(true);
+
+    await waitFor(
+      async () => {
+        await flush();
+        expect(endpoints.batch).toHaveBeenCalled();
+        const bodies = await Promise.all(
+          endpoints.batch.mock.calls.map(call => call[0].request.clone().json()),
+        );
+        expect(bodies.some(body => Array.isArray(body.batch) && body.batch.length > 0)).toBe(true);
+      },
+      { timeout: 10_000 },
+    );
+  });
+
+  it("identifies the user when tracking is enabled", async () => {
+    await startAnalyticsWithTracking(true);
+
+    await waitFor(
+      async () => {
+        await flush();
+        const events = await collectedBatchEvents();
+        expect(events).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              type: "identify",
+              userId: expect.any(String),
+            }),
+          ]),
+        );
+      },
+      { timeout: 10_000 },
+    );
+  });
+
+  it("does not identify the user when tracking is not enabled", async () => {
+    await startAnalyticsWithTracking(false);
+    await flush();
+
+    await waitFor(async () => {
+      const events = await collectedBatchEvents();
+      expect(events.some(event => event.type === "identify")).toBe(false);
+    });
   });
 });
