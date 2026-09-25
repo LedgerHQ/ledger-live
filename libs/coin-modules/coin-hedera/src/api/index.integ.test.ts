@@ -192,36 +192,36 @@ describe("createApi", () => {
       expect(rawTx.transactionMemo).toBe("token association");
     });
 
-    it.each([HEDERA_TRANSACTION_MODES.Delegate, HEDERA_TRANSACTION_MODES.Undelegate])(
-      "returns serialized %s transaction",
-      async type => {
-        const { transaction: hex } = await api.craftTransaction(context, {
-          intentType: "transaction",
-          asset: {
-            type: "native",
-          },
-          type,
-          amount: BigInt(0),
-          sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
-          senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
-          recipient: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
-          memo: {
-            kind: "text",
-            type: "string",
-            value: type,
-          },
-        });
+    it.each([
+      [HEDERA_TRANSACTION_MODES.Delegate, "Stake"],
+      [HEDERA_TRANSACTION_MODES.Undelegate, "Unstake"],
+    ])("returns serialized %s transaction with the %s memo", async (type, expectedMemo) => {
+      const { transaction: hex } = await api.craftTransaction(context, {
+        intentType: "transaction",
+        asset: {
+          type: "native",
+        },
+        type,
+        amount: BigInt(0),
+        sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+        recipient: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        memo: {
+          kind: "text",
+          type: "string",
+          value: type,
+        },
+      });
 
-        const rawTx = AccountUpdateTransaction.fromBytes(Buffer.from(hex, "hex"));
+      const rawTx = AccountUpdateTransaction.fromBytes(Buffer.from(hex, "hex"));
 
-        expect(rawTx).toBeInstanceOf(AccountUpdateTransaction);
-        invariant(rawTx instanceof AccountUpdateTransaction, "AccountUpdateTransaction type guard");
-        expect(rawTx.accountId).toEqual(
-          AccountId.fromString(MAINNET_TEST_ACCOUNTS.withoutTokens.accountId),
-        );
-        expect(rawTx.transactionMemo).toBe(type);
-      },
-    );
+      expect(rawTx).toBeInstanceOf(AccountUpdateTransaction);
+      invariant(rawTx instanceof AccountUpdateTransaction, "AccountUpdateTransaction type guard");
+      expect(rawTx.accountId).toEqual(
+        AccountId.fromString(MAINNET_TEST_ACCOUNTS.withoutTokens.accountId),
+      );
+      expect(rawTx.transactionMemo).toBe(expectedMemo);
+    });
 
     it("applies customFees properly", async () => {
       const customFees: FeeEstimation = {

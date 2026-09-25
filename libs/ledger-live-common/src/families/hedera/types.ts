@@ -21,6 +21,8 @@ export type HederaGenericTransaction = TransactionCommon & {
   family: "hedera";
   mode: HederaTransactionMode;
   fees?: BigNumber | null;
+  memoType?: string | null;
+  memoValue?: string | null;
   assetReference?: string;
   assetOwner?: string;
   valId?: string;
@@ -32,6 +34,8 @@ export type HederaGenericTransactionRaw = TransactionCommonRaw & {
   family: "hedera";
   mode: HederaTransactionMode;
   fees?: string | null;
+  memoType?: string | null;
+  memoValue?: string | null;
   assetReference?: string;
   assetOwner?: string;
   valId?: string;

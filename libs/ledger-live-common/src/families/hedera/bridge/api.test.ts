@@ -195,6 +195,19 @@ describe("hedera bridge", () => {
     it.each(["send", "tokenAssociate", "claimReward"])("sends no data for %s", mode => {
       expect(buildIntentData({ mode })).toEqual({ type: "none" });
     });
+
+    it.each(["send", undefined])("sends the estimated gas limit of a send (mode %s)", mode => {
+      expect(buildIntentData({ mode, feeParameters: { gasLimit: "123456" } })).toEqual({
+        type: "erc20",
+        gasLimit: 123456n,
+      });
+    });
+
+    it.each(["tokenAssociate", "claimReward"])("ignores the estimated gas limit on %s", mode => {
+      expect(buildIntentData({ mode, feeParameters: { gasLimit: "123456" } })).toEqual({
+        type: "none",
+      });
+    });
   });
 
   describe("describeOptimisticOperation", () => {
