@@ -46,13 +46,43 @@ describe("MultiversXNetworkApi startAt clamping", () => {
 
     await api.getHistory("erd1paginated", 1);
 
-    const transactionRequests = (network as unknown as jest.Mock).mock.calls
+    const pageRequests = (network as unknown as jest.Mock).mock.calls
       .map(([request]) => request.url as string)
       .filter(url => url.includes("/accounts/erd1paginated/transactions?"));
 
-    expect(transactionRequests).toHaveLength(200);
-    expect(transactionRequests.at(-1)).toContain("from=9950&size=50");
-    expect(transactionRequests).not.toContain(expect.stringContaining("from=10000"));
+    expect(pageRequests).toHaveLength(200);
+    expect(new URL(pageRequests.at(-1)).searchParams.get("from")).toBe("9950");
+    expect(pageRequests.some(url => new URL(url).searchParams.get("from") === "10000")).toBe(false);
+  });
+
+  test("getESDTTransactionsForAddress stops at the API result-window limit", async () => {
+    (network as unknown as jest.Mock).mockResolvedValue({ data: [] });
+    (network as unknown as jest.Mock).mockResolvedValueOnce({ data: 10_050 });
+
+    await api.getESDTTransactionsForAddress("erd1paginated", "TOKEN-abc", 1);
+
+    const pageRequests = (network as unknown as jest.Mock).mock.calls
+      .map(([request]) => request.url as string)
+      .filter(url => url.includes("/accounts/erd1paginated/transactions?token=TOKEN-abc"));
+
+    expect(pageRequests).toHaveLength(200);
+    expect(new URL(pageRequests.at(-1)).searchParams.get("from")).toBe("9950");
+    expect(pageRequests.some(url => new URL(url).searchParams.get("from") === "10000")).toBe(false);
+  });
+
+  test("getESDTTokensForAddress stops at the API result-window limit", async () => {
+    (network as unknown as jest.Mock).mockResolvedValue({ data: [] });
+    (network as unknown as jest.Mock).mockResolvedValueOnce({ data: 10_050 });
+
+    await api.getESDTTokensForAddress("erd1paginated");
+
+    const pageRequests = (network as unknown as jest.Mock).mock.calls
+      .map(([request]) => request.url as string)
+      .filter(url => url.includes("/accounts/erd1paginated/tokens?"));
+
+    expect(pageRequests).toHaveLength(200);
+    expect(new URL(pageRequests.at(-1)).searchParams.get("from")).toBe("9950");
+    expect(pageRequests.some(url => new URL(url).searchParams.get("from") === "10000")).toBe(false);
   });
 
   test("getESDTTransactionsForAddress clamps startAt=0 to after=1", async () => {
