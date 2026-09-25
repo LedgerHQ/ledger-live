@@ -418,4 +418,113 @@ describe("JsonCommandOutput", () => {
       },
     });
   });
+
+  const baseAgentIntentProfile = {
+    profileId: "test-agent",
+    displayName: "Test Agent",
+    description: "Remote agent that proposes intents for review.",
+    source: "openclaw" as const,
+    environment: "staging" as const,
+    bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
+    publicKey: "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076",
+    enrollmentExpiresAt: "2026-09-22T11:28:46.999Z",
+    createdAt: "2026-09-22T10:58:47.007Z",
+  };
+
+  it("agentIntentProfiles emits a profiles array with redacted bffBaseUrl and derived status", () => {
+    const out = createCommandOutput("json", { command: "agent-intent list", network: "all" });
+    out.agentIntentProfiles([
+      {
+        ...baseAgentIntentProfile,
+        bffBaseUrl: "https://user:secret@global.api.stg.ledger-test.com/agent-intent",
+        trustchainId: "tc-1",
+      },
+    ]);
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      profiles: [
+        expect.objectContaining({
+          profileId: "test-agent",
+          bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
+          profileStatus: "enrolled",
+        }),
+      ],
+    });
+    expect(JSON.stringify(line)).not.toContain("secret");
+  });
+
+  it("agentIntentProfileShow nests the profile under `profile` and includes the fingerprint", () => {
+    const out = createCommandOutput("json", { command: "agent-intent show", network: "all" });
+    out.agentIntentProfileShow({ ...baseAgentIntentProfile, trustchainId: "tc-1" });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      profile: expect.objectContaining({
+        profileId: "test-agent",
+        profileStatus: "enrolled",
+        fingerprint: expect.any(String),
+      }),
+    });
+  });
+
+  it("agentIntentEnroll emits profileId, enrollmentUrl, and fingerprint", () => {
+    const out = createCommandOutput("json", { command: "agent-intent enroll", network: "all" });
+    out.agentIntentEnroll({
+      profileId: "test-agent",
+      enrollmentUrl: "https://example.com/enroll?x=1",
+      fingerprint: "Ez4f ubY2 TD8k Ve",
+    });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      profileId: "test-agent",
+      enrollmentUrl: "https://example.com/enroll?x=1",
+      fingerprint: "Ez4f ubY2 TD8k Ve",
+    });
+  });
+
+  it("agentIntentComplete emits completed:true with the trustchain id", () => {
+    const out = createCommandOutput("json", { command: "agent-intent complete", network: "all" });
+    out.agentIntentComplete({ profileId: "test-agent", trustchainId: "tc-1" });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      profileId: "test-agent",
+      trustchainId: "tc-1",
+      completed: true,
+    });
+  });
+
+  it("reconcileDiscoveredLabels() patches buffered account labels before flushDiscovery emits them", () => {
+    const descriptor = {
+      purpose: "account",
+      version: "1",
+      type: "utxo",
+      network: { name: "bitcoin", env: "main" },
+      xpub: "xpub6BosfCnifzxcA",
+      path: "m/84h/0h/0h",
+    } as const;
+    const out = createCommandOutput("json", {
+      command: "account discover",
+      network: "bitcoin:main",
+    });
+
+    out.discoveredAccount({ descriptor, freshAddress: "bc1qfirst", label: "bitcoin-native-1" });
+    out.discoveredAccount({ descriptor, freshAddress: "bc1qsecond", label: "bitcoin-native-2" });
+    out.reconcileDiscoveredLabels(["bitcoin-native-1", "bitcoin-native-3"]);
+    out.flushDiscovery();
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      accounts: [
+        { label: "bitcoin-native-1", freshAddress: "bc1qfirst" },
+        { label: "bitcoin-native-3", freshAddress: "bc1qsecond" },
+      ],
+    });
+  });
 });

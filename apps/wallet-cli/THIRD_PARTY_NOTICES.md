@@ -28,7 +28,7 @@ For `rxjs` (Apache-2.0), the same Apache-2.0 v2.0 text shipped in the `LICENSE` 
 
 The packages below are inlined into `bin/wallet-cli` by the bundler, in addition to the direct dependencies listed above. They are grouped by license; full license texts are reproduced in section 4. Copyright information was resolved by reading the upstream `LICENSE` file when available, otherwise by reading the `author`/`contributors` field of the upstream `package.json`, otherwise (rare cases) by alignment with the package's homepage or repository.
 
-### MIT License (189 packages)
+### MIT License (191 packages)
 
 | Package | Version | Copyright |
 |---|---|---|
@@ -84,7 +84,9 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | @jridgewell/resolve-uri | 3.1.2 | Justin Ridgewell |
 | @jridgewell/sourcemap-codec | 1.5.5 | Justin Ridgewell |
 | @jridgewell/trace-mapping | 0.3.31 | Justin Ridgewell |
+| @noble/curves | 2.4.0 | Copyright (c) 2022 Paul Miller (https://paulmillr.com) |
 | @noble/hashes | 1.8.0 | Copyright (c) 2022 Paul Miller (https://paulmillr.com) |
+| @noble/hashes | 2.4.0 | Copyright (c) 2022 Paul Miller (https://paulmillr.com) |
 | @opentui/core | 0.1.97 | Copyright (c) 2025 opentui |
 | @opentui/core-darwin-arm64 | 0.1.97 | Copyright (c) 2025 opentui |
 | @opentui/core-darwin-x64 | 0.1.97 | Copyright (c) 2025 opentui |

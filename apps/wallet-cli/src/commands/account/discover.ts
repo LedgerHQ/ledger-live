@@ -11,10 +11,11 @@ import {
   withCurrencyDeviceSession,
 } from "../../session/bridge-device-session";
 import { walletCliDebug } from "../../shared/log";
-import { colors } from "../../shared/ui";
+import { colors, writeStderr } from "../../shared/ui";
 import { parseNetworkArg, currencyIdFromNetwork } from "../../shared/accountDescriptor";
 import { createCommandOutput } from "../../output";
-import { Session } from "../../session/session-store";
+import { Session, withSessionLock } from "../../session/session-store";
+import type { AccountDescriptorV1 } from "../../shared/accountDescriptor";
 import { runObservable } from "../run-observable";
 import { deviceTimeoutOption, outputOption, resolveOutputFormat } from "../inputs";
 import { trackDiscoveryStarted, trackDiscoveryCompleted } from "../accounts-analytics";
@@ -27,16 +28,26 @@ type DiscoverAccountsParams = {
   out: ReturnType<typeof createCommandOutput>;
 };
 
+/**
+ * Runs the device scan and returns the newly-discovered descriptors — it does NOT persist them.
+ * `session` is used only to preview labels live as accounts stream in (existing-label collision
+ * avoidance needs to know what's already there); the authoritative merge+write happens afterwards,
+ * under the session lock, against a freshly re-read session (see the handler below) — the device
+ * scan can take a while, and something else may have written in the meantime, so a label previewed
+ * here is not guaranteed to be the one that actually gets saved. The caller is responsible for
+ * calling `out.reconcileDiscoveredLabels(...)` and `out.flushDiscovery()` once the authoritative
+ * labels are known — this function only streams the provisional ones.
+ */
 async function discoverAccounts({
   wallet,
   network,
   managerAppName,
   session,
   out,
-}: DiscoverAccountsParams): Promise<number> {
+}: DiscoverAccountsParams): Promise<AccountDescriptorV1[]> {
   const scanSpin = out.spin(`Scanning for ${colors.bold(network.name)} accounts…`);
   let count = 0;
-  let added = 0;
+  const discovered: AccountDescriptorV1[] = [];
 
   const networks = [`${network.name}:${network.env}`];
   const device = await getWalletCliDeviceModelId();
@@ -45,8 +56,13 @@ async function discoverAccounts({
   await runObservable({
     source$: wallet.discoverAccounts(network, WALLET_CLI_DMK_DEVICE_ID),
     onNext: raw => {
-      const { label, added: wasAdded } = session.addDescriptor(raw.descriptor);
-      if (wasAdded) added++;
+      // Every scanned descriptor goes into `discovered`, not just ones new to this preview session:
+      // `addDescriptors` (plural) at the authoritative merge is itself idempotent, and gating on
+      // this session's `wasAdded` would silently drop an account that's rediscovered here but was
+      // meanwhile removed elsewhere (e.g. a concurrent `session reset`) — it just printed with a
+      // label, so it must not vanish from what gets persisted.
+      const { label } = session.addDescriptor(raw.descriptor);
+      discovered.push(raw.descriptor);
       out.discoveredAccount({ ...raw, label });
       count++;
       if (scanSpin) scanSpin.text = `Scanning… (${count} found so far)`;
@@ -58,9 +74,8 @@ async function discoverAccounts({
   });
 
   scanSpin?.success(`Found ${count} account${count === 1 ? "" : "s"}`);
-  out.flushDiscovery();
   trackDiscoveryCompleted({ networks, accountsCount: count, device });
-  return added;
+  return discovered;
 }
 
 export default defineCommand({
@@ -106,7 +121,7 @@ export default defineCommand({
           // overwrite a recoverable file with a fresh one. Session.read() returns an empty
           // session on ENOENT, so this only throws on parse/IO errors that need user action.
           const session = await Session.read();
-          const added = await discoverAccounts({
+          const discovered = await discoverAccounts({
             wallet,
             network,
             managerAppName,
@@ -114,13 +129,36 @@ export default defineCommand({
             out,
           });
 
-          if (added > 0) {
+          if (discovered.length > 0) {
             try {
-              session.write();
-              out.sessionSaved(added);
-            } catch {
-              // Session persistence failure is non-fatal; discovery output is already flushed.
+              // Re-read under lock rather than reusing `session`: the scan just spent a while
+              // talking to the device, and another command could have written in that window.
+              // Merging the discovered descriptors into a fresh read (not `session`, which is now
+              // stale) is what makes this safe against that.
+              const results = await withSessionLock(async () => {
+                const fresh = await Session.read();
+                const r = fresh.addDescriptors(discovered);
+                fresh.write();
+                return r;
+              });
+              // The labels streamed live above were previewed against the pre-scan `session` and can
+              // differ from what actually got saved if something else wrote in the meantime — patch/
+              // announce the authoritative ones before the discovery output is flushed.
+              out.reconcileDiscoveredLabels(results.map(r => r.label));
+              out.flushDiscovery();
+              out.sessionSaved(results.filter(r => r.added).length);
+            } catch (e) {
+              // Non-fatal but must not be silent: this can now also be the lock's own 10s acquire
+              // timeout (e.g. enroll or ring init holding it across a keychain/OS prompt), not just a
+              // disk error — either way, the user just spent time on the device and needs to know
+              // nothing was actually saved. The labels already streamed are the best we have, so flush
+              // them as-is (unreconciled) rather than silently dropping the discovery output too.
+              out.flushDiscovery();
+              const message = e instanceof Error ? e.message : String(e);
+              writeStderr(`⚠ Found accounts were NOT saved to the session: ${message}\n`);
             }
+          } else {
+            out.flushDiscovery();
           }
         },
         {

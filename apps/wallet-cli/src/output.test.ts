@@ -468,6 +468,40 @@ describe("HumanCommandOutput", () => {
     expect(joined).toContain(USDT_TOKEN_INFO.contractAddress);
   });
 
+  it("reconcileDiscoveredLabels() prints a correction only for labels that actually changed", async () => {
+    const { installOutputCapture } = await import("./shared/ui");
+    const writes: string[] = [];
+    const restore = installOutputCapture({
+      stdout: chunk => {
+        writes.push(chunk);
+      },
+    });
+    const descriptor = {
+      purpose: "account",
+      version: "1",
+      type: "utxo",
+      network: { name: "bitcoin", env: "main" },
+      xpub: "xpub6BosfCnifzxcA",
+      path: "m/84h/0h/0h",
+    } as const;
+    try {
+      const out = createCommandOutput("human", {
+        command: "account discover",
+        network: "bitcoin:main",
+      });
+      out.discoveredAccount({ descriptor, freshAddress: "bc1qfirst", label: "bitcoin-native-1" });
+      out.discoveredAccount({ descriptor, freshAddress: "bc1qsecond", label: "bitcoin-native-2" });
+      writes.length = 0; // only assert on what reconcileDiscoveredLabels itself prints
+
+      out.reconcileDiscoveredLabels(["bitcoin-native-1", "bitcoin-native-3"]);
+    } finally {
+      restore();
+    }
+    const joined = writes.join("");
+    expect(joined).toContain("bitcoin-native-2 -> bitcoin-native-3");
+    expect(joined).not.toContain("bitcoin-native-1 -> bitcoin-native-1");
+  });
+
   it("swapExecuteFullResult() prints the display-unit amount without the decoded-payload wording", async () => {
     const { installOutputCapture } = await import("./shared/ui");
     const writes: string[] = [];
@@ -630,6 +664,108 @@ describe("HumanCommandOutput", () => {
     it("ringDecrypt shows written path", () => {
       createCommandOutput("human", ctx).ringDecrypt({ dest: "/tmp/out.txt" });
       expect(writes.join("")).toContain("/tmp/out.txt");
+    });
+  });
+
+  describe("agent-intent human output", () => {
+    let writes: string[] = [];
+    let restore: () => void;
+
+    beforeEach(() => {
+      writes = [];
+      restore = installOutputCapture({ stdout: chunk => writes.push(chunk) });
+    });
+
+    afterEach(() => restore());
+
+    const ctx = { command: "agent-intent", network: "all" };
+
+    const baseProfile = {
+      profileId: "test-agent",
+      displayName: "Test Agent",
+      description: "Remote agent that proposes intents for review.",
+      source: "openclaw" as const,
+      environment: "staging" as const,
+      bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
+      publicKey: "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076",
+      enrollmentExpiresAt: "2026-09-22T11:28:46.999Z",
+      createdAt: "2026-09-22T10:58:47.007Z",
+    };
+
+    it("agentIntentProfiles renders a table with profile/name/source/environment columns", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        { ...baseProfile, trustchainId: "tc-1" },
+      ]);
+      const out = writes.join("");
+      expect(out).toContain("test-agent");
+      expect(out).toContain("Test Agent");
+      expect(out).toContain("openclaw");
+      expect(out).toContain("staging");
+      expect(out).toContain("enrolled");
+    });
+
+    it("agentIntentProfiles reports pending status before completion", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        { ...baseProfile, enrollmentExpiresAt: "2099-01-01T00:00:00.000Z" },
+      ]);
+      expect(writes.join("")).toContain("pending");
+    });
+
+    it("agentIntentProfiles reports expired status once enrollmentExpiresAt has passed", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        { ...baseProfile, enrollmentExpiresAt: "2020-01-01T00:00:00.000Z" },
+      ]);
+      expect(writes.join("")).toContain("expired");
+    });
+
+    it("agentIntentProfiles renders dim message when there are no profiles", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([]);
+      expect(writes.join("")).toContain("No Agent Intent profiles");
+    });
+
+    it("agentIntentProfileShow includes a fingerprint derived from the public key", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow({
+        ...baseProfile,
+        trustchainId: "tc-1",
+      });
+      const out = writes.join("");
+      expect(out).toContain("Fingerprint:");
+      expect(out).toContain(baseProfile.publicKey);
+    });
+
+    it("agentIntentProfileShow redacts credentials embedded in the BFF URL", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow({
+        ...baseProfile,
+        bffBaseUrl: "https://user:secret@global.api.stg.ledger-test.com/agent-intent",
+        trustchainId: "tc-1",
+      });
+      expect(writes.join("")).not.toContain("secret");
+    });
+
+    it("agentIntentProfileShow omits the Trustchain ID line before completion", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow(baseProfile);
+      expect(writes.join("")).not.toContain("Trustchain ID:");
+    });
+
+    it("agentIntentEnroll prints the enrollment URL and fingerprint to compare with the device", () => {
+      createCommandOutput("human", ctx).agentIntentEnroll({
+        profileId: "test-agent",
+        enrollmentUrl: "https://example.com/enroll?x=1",
+        fingerprint: "Ez4f ubY2 TD8k Ve",
+      });
+      const out = writes.join("");
+      expect(out).toContain("https://example.com/enroll?x=1");
+      expect(out).toContain("Ez4f ubY2 TD8k Ve");
+    });
+
+    it("agentIntentComplete confirms the profile and trustchain id", () => {
+      createCommandOutput("human", ctx).agentIntentComplete({
+        profileId: "test-agent",
+        trustchainId: "tc-1",
+      });
+      const out = writes.join("");
+      expect(out).toContain("test-agent");
+      expect(out).toContain("tc-1");
     });
   });
 });
