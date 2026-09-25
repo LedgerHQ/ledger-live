@@ -39,6 +39,7 @@ export async function performSwapUntilQuoteSelectionStep(
   app: Application,
   swap: Swap,
   minAmount: string,
+  checkLandingPage = false,
 ) {
   if (swap.accountToDebit.currency === Currency.APT) {
     await checkAccountFromIsSynchronised(app, swap);
@@ -46,6 +47,9 @@ export async function performSwapUntilQuoteSelectionStep(
   await app.swap.goAndWaitForSwapToBeReady(() =>
     app.mainNavigation.openTargetFromMainNavigation("swap"),
   );
+  if (checkLandingPage) {
+    await app.swap.checkLandingPageTrendingAssets();
+  }
   const isAssetFromSelected = await app.swap.checkIfFromAssetIsAlreadySelected(
     swap.accountToDebit.currency.ticker,
   );
