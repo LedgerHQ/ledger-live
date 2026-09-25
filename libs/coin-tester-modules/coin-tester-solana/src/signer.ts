@@ -20,9 +20,10 @@ export async function buildSigners(): Promise<Signers> {
     getAppConfiguration: () => {
       throw new Error("Not implemented");
     },
-    getAddress: async (path: string) => ({
-      address: keyPair(path).publicKey.toBuffer(),
-    }),
+    getAddress: async (path: string) => {
+      const { publicKey } = keyPair(path);
+      return { address: publicKey.toBuffer(), publicKey: publicKey.toBase58() };
+    },
     signTransaction: async (path: string, txBuffer: Buffer) => {
       const kp = keyPair(path);
       const message = VersionedMessage.deserialize(txBuffer);
@@ -36,9 +37,10 @@ export async function buildSigners(): Promise<Signers> {
   };
 
   const coinframework: CoinFrameworkSolanaSigner = {
-    getAddress: async (path: string) => ({
-      address: keyPair(path).publicKey.toBuffer(),
-    }),
+    getAddress: async (path: string) => {
+      const { publicKey } = keyPair(path);
+      return { address: publicKey.toBuffer(), publicKey: publicKey.toBase58() };
+    },
     signTransaction: async (path: string, txBase64: string) => {
       const kp = keyPair(path);
       const tx = VersionedTransaction.deserialize(Buffer.from(txBase64, "base64"));

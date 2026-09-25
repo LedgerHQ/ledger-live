@@ -17,6 +17,7 @@ import {
 } from "@solana/web3.js";
 import { transferFeeForIntent, tokenProgramOfMint } from "../helpers/token";
 import { isValidBase58Address } from "../logic";
+import { SolanaTokenAccountHoldsAnotherToken } from "../errors";
 import type { ChainAPI } from "../network";
 import type { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
@@ -595,7 +596,7 @@ export async function resolveRecipientDescriptor(
   if (recipientTokenAccount instanceof Error) throw recipientTokenAccount;
   if (recipientTokenAccount) {
     if (recipientTokenAccount.mint.toBase58() !== mintAddress) {
-      throw new Error("Recipient token account holds another token");
+      throw new SolanaTokenAccountHoldsAnotherToken();
     }
     return {
       walletAddress: recipientTokenAccount.owner.toBase58(),

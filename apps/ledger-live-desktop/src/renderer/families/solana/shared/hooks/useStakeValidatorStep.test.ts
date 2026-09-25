@@ -45,13 +45,12 @@ const validator = {
 
 const undelegateTx = (stakeAccAddr = "stake-acc-1") =>
   ({
-    model: { kind: "stake.undelegate", uiState: { stakeAccAddr } },
-  }) as unknown as Transaction;
+    mode: "undelegate",
+    recipient: stakeAccAddr,
+  }) as Transaction;
 
-const render = (
-  transaction: Transaction | null,
-  kind: "stake.delegate" | "stake.undelegate" = "stake.undelegate",
-) => renderHook(() => useStakeValidatorStep(account, transaction, kind));
+const render = (transaction: Transaction | null, mode: "delegate" | "undelegate" = "undelegate") =>
+  renderHook(() => useStakeValidatorStep(account, transaction, mode));
 
 describe("useStakeValidatorStep", () => {
   beforeEach(() => {
@@ -95,13 +94,13 @@ describe("useStakeValidatorStep", () => {
   });
 
   it("throws when the transaction kind is not the expected one", () => {
-    expect(() => render(undelegateTx(), "stake.delegate")).toThrow("unsupported transaction");
+    expect(() => render(undelegateTx(), "delegate")).toThrow("unsupported transaction");
   });
 
   it("throws when the transaction does not target a staking position at all", () => {
     const transfer = {
-      model: { kind: "transfer", uiState: {} },
-    } as unknown as Transaction;
+      mode: "send",
+    } as Transaction;
 
     expect(() => render(transfer)).toThrow("unsupported transaction");
   });

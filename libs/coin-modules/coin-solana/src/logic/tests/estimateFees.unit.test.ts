@@ -284,6 +284,28 @@ describe("estimateFees", () => {
     expect((api.getAccountInfo as jest.Mock).mock.calls).toHaveLength(1);
   });
 
+  it("prices a transfer whose recipient holds another token instead of throwing", async () => {
+    const api = createMockApi([5000]);
+    (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token"));
+    setupBuildMock();
+
+    const result = await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1n,
+      asset: {
+        type: "spl-token",
+        assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        assetOwner: TEST_ADDRESS,
+      },
+    } as unknown as TransactionIntent);
+
+    expect(result.value).toBe(5000n);
+    expect(result.parameters?.recipientTokenAccount).toBeUndefined();
+  });
+
   it("charges no rent to approve", async () => {
     const api = createMockApi([5000]);
     (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token"));
