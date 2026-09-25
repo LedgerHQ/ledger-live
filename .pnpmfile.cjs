@@ -10,12 +10,7 @@
  * See: https://pnpm.io/pnpmfile
  */
 
-const {
-  process,
-  addDependencies,
-  addDevDependencies,
-  addPeerDependencies,
-} = require("./tools/pnpm-utils");
+const { process, addDependencies } = require("./tools/pnpm-utils");
 const { assertDependencyChecks } = require("./tools/dependency-checks/validate");
 
 function readPackage(pkg, context) {
@@ -27,10 +22,6 @@ function readPackage(pkg, context) {
         Feel free to make PRs if you feel like it :).
       */
       addDependencies("jest-allure2-reporter", { tslib: "*" }),
-
-      addPeerDependencies("react-native-config", {
-        "react-native": "*",
-      }),
     ],
     pkg,
     context,
