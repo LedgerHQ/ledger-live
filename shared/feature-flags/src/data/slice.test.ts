@@ -765,6 +765,30 @@ describe("onRemoteFlagsError", () => {
     });
   });
 
+  it("reports a later poll failure as warm once a fetch has succeeded", async () => {
+    const onRemoteFlagsError = jest.fn();
+    const networkError = new Error("network down");
+    const fetcher = jest
+      .fn()
+      .mockResolvedValueOnce({ mockFeature: { enabled: true } })
+      .mockRejectedValue(networkError);
+    const store = createStore(undefined, {
+      fetchRemoteFlags: fetcher,
+      refreshInterval: 1_000,
+      onRemoteFlagsError,
+    });
+
+    await jest.advanceTimersByTimeAsync(0);
+    expect(onRemoteFlagsError).not.toHaveBeenCalled();
+
+    await jest.advanceTimersByTimeAsync(1_000);
+
+    expect(onRemoteFlagsError.mock.calls).toEqual([
+      [networkError, { stage: "remote", attempt: 2, isCold: false }],
+    ]);
+    expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
+  });
+
   it("reports a failing cache read and still runs the poll", async () => {
     const onRemoteFlagsError = jest.fn();
     const store = createStore(undefined, {
@@ -899,5 +923,28 @@ describe("a re-resolution that throws", () => {
 
     await jest.advanceTimersByTimeAsync(1_000);
     expect(fetcher).toHaveBeenCalledTimes(2);
+  });
+
+  it("reports a failure on a later poll with its attempt, and keeps polling", async () => {
+    const onRemoteFlagsError = jest.fn();
+    const fetcher = jest.fn(() => Promise.resolve({ mockFeature: { enabled: true } }));
+    createStoreThrowingOnSync({
+      readCachedFlags: () => Promise.resolve({}),
+      fetchRemoteFlags: fetcher,
+      refreshInterval: 1_000,
+      onRemoteFlagsError,
+    });
+
+    await jest.advanceTimersByTimeAsync(0);
+    onRemoteFlagsError.mockClear();
+
+    await jest.advanceTimersByTimeAsync(1_000);
+
+    expect(onRemoteFlagsError.mock.calls).toEqual([
+      [failure, { stage: "sync", attempt: 2, isCold: false }],
+    ]);
+
+    await jest.advanceTimersByTimeAsync(1_000);
+    expect(fetcher).toHaveBeenCalledTimes(3);
   });
 });
