@@ -124,14 +124,16 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
   const { spendableBalance } = account;
   const { address } = getAddress(account);
   const subAccount = getSubAccount(account, transaction);
-  const { memo, recipient, useAllAmount, fee, mode } = transaction;
+  const { memo, recipient, useAllAmount, fee } = transaction;
   let { amount } = transaction;
 
-  // pox-5 delegate/undelegate transactions call the pox contract, not `recipient` -- StepValidator
-  // already validates the pool address (valAddress) before the amount step is reached.
-  if (mode !== "delegate" && mode !== "undelegate") {
-    validateRecipient(recipient, address, account.currency.name, errors);
-  }
+  // The classic bridge's `prepareTransaction`/`signOperation` only ever build a plain STX/token
+  // transfer -- they have no pox-5 delegate/undelegate contract-call support and never resolve a
+  // fee/nonce without a valid `recipient`. Requiring `recipient` here isn't a transfer-only
+  // leftover: it's the guard that stops a staking-shaped transaction from being signed and
+  // broadcast as an ordinary transfer once Stacks is routed through the classic bridge. Remove
+  // this only once staking is handled here (or Stacks moves to the generic bridge).
+  validateRecipient(recipient, address, account.currency.name, errors);
   validateFee(fee, errors);
 
   const estimatedFees = fee || new BigNumber(0);
