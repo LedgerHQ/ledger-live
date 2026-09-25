@@ -12,7 +12,9 @@ let receivedTransactionFormatters: CardTransactionFormatters | undefined;
 let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
-  CardLogin: () => <div data-testid="card-login" />,
+  CardLogin: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="card-login">{children}</div>
+  ),
   useCardAuthStatus: () => mockStatus,
   useIsCardSignedIn: () => mockStatus === "signedIn",
 }));
@@ -20,6 +22,7 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
   CardVisual: () => <div data-testid="card-visual" />,
+  CardLoadingVisual: () => <div data-testid="card-loading-visual" />,
   CardDetails: ({
     cardVisual,
     formatters,

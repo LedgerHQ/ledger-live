@@ -10,12 +10,15 @@ const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError
 let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
-  CardLogin: () => <View testID="card-login" />,
+  CardLogin: ({ children }: { children?: React.ReactNode }) => (
+    <View testID="card-login">{children}</View>
+  ),
   useCardAuthStatus: () => mockUseCardAuthStatus(),
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <View testID="card-artwork" />,
+  CardLoadingVisual: () => <View testID="card-loading-visual" />,
   CardDetails: ({
     cardVisual,
     assets,
@@ -90,6 +93,13 @@ describe("Card (native)", () => {
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-onboarding-widget")).toBeNull();
       expect(screen.queryByTestId("card-details")).toBeNull();
+    });
+
+    it("shows the loading card face once the host provides a formatter", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+
+      expect(screen.getByTestId("card-loading-visual")).toBeVisible();
+      expect(screen.queryByTestId("card-artwork")).toBeNull();
     });
   });
 
