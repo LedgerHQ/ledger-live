@@ -67,10 +67,22 @@ export type CardLoginCopy = Readonly<{
   alreadyHaveCardLabel: string | null;
 }>;
 
+export type CardAuthErrorCopy = Readonly<{
+  title: string;
+  description: string;
+  ctaLabel: string;
+  onRetry: () => void;
+  onDismiss: () => void;
+}>;
+
+export type CardAuthErrorProps = Readonly<{
+  error: CardAuthErrorCopy | null;
+}>;
+
 export type CardLoginViewProps = CardLoginCopy & {
   /** True while the machine works. The login action is not pressable then. */
   readonly isLoading: boolean;
-  readonly errorMessage: string | null;
+  readonly error: CardAuthErrorCopy | null;
   readonly onLoginPress: () => void;
   readonly onAlreadyHaveCardPress: () => void;
   readonly intro: CardLoginIntroViewProps;
