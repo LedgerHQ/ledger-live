@@ -540,6 +540,7 @@ apps/ledger-live-mobile/src/dynamicContent/                                     
 apps/ledger-live-mobile/src/mvvm/features/AnalyticsConsent/                                    @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/WelcomePage/                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Onboarding/                                          @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/DeviceOnboarding/                                    @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/PostOnboardingHubDrawer/                             @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/DynamicContent/                                      @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/contexts/InViewContext/                                       @ledgerhq/engagement

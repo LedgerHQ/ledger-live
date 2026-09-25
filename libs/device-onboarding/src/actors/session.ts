@@ -28,16 +28,16 @@ export function mapSession(
     return { type: "TRANSPORT_LOST" };
   }
 
-  if (previous === undefined) {
-    return undefined;
-  }
-
   if (previous === DeviceStatus.LOCKED && next === DeviceStatus.CONNECTED) {
     return { type: "UNLOCKED" };
   }
 
   if (previous !== DeviceStatus.LOCKED && next === DeviceStatus.LOCKED) {
     return { type: "LOCKED" };
+  }
+
+  if (previous === undefined) {
+    return undefined;
   }
 
   return undefined;

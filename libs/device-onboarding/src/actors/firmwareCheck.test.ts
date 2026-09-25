@@ -47,8 +47,15 @@ describe("firmwareCheck", () => {
       sessionId: "session",
       deviceAction: expect.any(GetDeviceMetadataDeviceAction),
     });
+    stop();
+  });
+
+  it("reads the metadata without the secure channel the app catalogue would need", () => {
+    const fake = createFake();
+    const { stop } = start(fake);
+
     expect(fake.executeDeviceAction.mock.calls[0][0].deviceAction.input).toEqual({
-      useSecureChannel: true,
+      useSecureChannel: false,
       forceUpdate: false,
       allowNonOnboardedDevice: true,
     });

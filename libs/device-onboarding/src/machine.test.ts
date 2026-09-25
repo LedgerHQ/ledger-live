@@ -48,6 +48,16 @@ const notGenuine = { completes: { isGenuine: false } as GenuineCheckDAOutput };
 const upToDate = { completes: metadata(undefined) };
 const updateAvailable = { completes: metadata(availableUpdate) };
 
+const lockedDevice: ScriptedCommand<GetOsVersionResponse> = { throws: new Error("locked") };
+
+const started: OnboardingActor[] = [];
+
+afterEach(() => {
+  while (started.length > 0) {
+    started.pop()?.stop();
+  }
+});
+
 const deviceRefusal = { fails: { _tag: "RefusedByUserDAError" } };
 const checkFailure = { fails: new UnknownDAError() };
 const secureConnectionPrompt = { prompts: UserInteractionRequired.AllowSecureConnection };
@@ -328,7 +338,7 @@ describe("the genuine check", () => {
     "takes that request back on %s, which leaves the check with no one to answer it",
     async type => {
       const { actor } = await start({
-        osVersion: [os(unseeded)],
+        osVersion: [os(unseeded), lockedDevice],
         genuineCheck: [secureConnectionPrompt],
       });
 
@@ -747,6 +757,27 @@ describe("global handlers", () => {
     expect(stateOf(actor)).toBe("deviceLocked");
   });
 
+  it("keeps waiting while the locked device turns the polling away", async () => {
+    const { actor } = await start({
+      osVersion: [os(unseeded), lockedDevice],
+      ...passingChecks,
+    });
+
+    actor.send({ type: "LOCKED" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("deviceLocked");
+  });
+
+  it("resumes on its own once the device answers again, with no event from the host", async () => {
+    const { actor } = await start({ osVersion: [os(unseeded)], ...passingChecks });
+
+    actor.send({ type: "LOCKED" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("checksSucceeded");
+  });
+
   it("re-reads the device once it is unlocked", async () => {
     const { actor } = await start({ osVersion: [os(unseeded)], ...passingChecks });
 
@@ -1043,6 +1074,7 @@ async function start(
     },
   }).start();
 
+  started.push(actor);
   await settle();
 
   return { actor, fake };
@@ -1141,6 +1173,8 @@ function scriptReaching(state: string): OnboardingDmkScript {
       return { ...base, genuineCheck: [deviceRefusal] };
     case "firmwareUpdateOffered":
       return { ...base, genuineCheck: [genuine], firmwareCheck: [updateAvailable] };
+    case "deviceLocked":
+      return { ...passingChecks, osVersion: [os(unseeded), lockedDevice] };
     default:
       return { ...base, ...passingChecks };
   }

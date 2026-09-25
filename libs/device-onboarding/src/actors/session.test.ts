@@ -10,6 +10,7 @@ import { mapSession, sessionListener, type SessionEvent } from "./session";
 describe("mapSession", () => {
   it.each([
     [DeviceStatus.CONNECTED, DeviceStatus.LOCKED, "LOCKED"],
+    [undefined, DeviceStatus.LOCKED, "LOCKED"],
     [DeviceStatus.LOCKED, DeviceStatus.CONNECTED, "UNLOCKED"],
     [DeviceStatus.CONNECTED, DeviceStatus.NOT_CONNECTED, "TRANSPORT_LOST"],
     [DeviceStatus.LOCKED, DeviceStatus.NOT_CONNECTED, "TRANSPORT_LOST"],
@@ -19,7 +20,6 @@ describe("mapSession", () => {
 
   it.each([
     [undefined, DeviceStatus.CONNECTED],
-    [undefined, DeviceStatus.LOCKED],
     [DeviceStatus.CONNECTED, DeviceStatus.CONNECTED],
     [DeviceStatus.LOCKED, DeviceStatus.LOCKED],
     [DeviceStatus.CONNECTED, DeviceStatus.BUSY],
@@ -38,6 +38,17 @@ describe("mapSession", () => {
 });
 
 describe("sessionListener", () => {
+  it("reports a session that is already locked", () => {
+    const states = new Subject<DeviceSessionState>();
+    const received: SessionEvent[] = [];
+    const actor = createListenerActor(states, received);
+
+    states.next(sessionState(DeviceStatus.LOCKED));
+
+    expect(received).toEqual([{ type: "LOCKED" }]);
+    actor.stop();
+  });
+
   it("compares statuses against the last non-BUSY status", () => {
     const states = new Subject<DeviceSessionState>();
     const received: SessionEvent[] = [];
