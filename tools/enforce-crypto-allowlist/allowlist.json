@@ -1,0 +1,31 @@
+{
+  "epic": "LIVE-37372 — the monorepo converges on @noble/curves for secp256k1",
+  "patterns": ["*secp256k1*", "@noble/curves", "elliptic", "ecurve", "bcrypto"],
+  "implementations": {
+    "@noble/curves": {
+      "reason": "The implementation we converge on. Catalogued in pnpm-workspace.yaml."
+    },
+    "@bitcoinerlab/secp256k1": {
+      "reason": "bitcoinjs `ecc` adapter. Depends on @noble/curves, no curve arithmetic of its own."
+    },
+    "@dfinity/identity-secp256k1": {
+      "reason": "@dfinity signing identity. Depends on @noble/curves, no curve arithmetic of its own."
+    },
+    "elliptic": {
+      "tolerated": true,
+      "reason": "Legacy pure-JS curve library reached only through third-party SDKs, and the fallback secp256k1 uses when its bindings are missing. Pinned to 6.6.1 by a root pnpm override.",
+      "exit": "LIVE-37448 — the SDKs stop pinning it, or we stop shipping them."
+    },
+    "secp256k1": {
+      "tolerated": true,
+      "mustNotBuild": true,
+      "reason": "Native bindings, reached only through icon-sdk-js. Its build script stays blocked, so x64 loads the shipped prebuild and every other platform falls back to elliptic.",
+      "exit": "LIVE-37372 — coin-icon drops icon-sdk-js, or the SDK stops depending on it."
+    },
+    "@noble/secp256k1": {
+      "tolerated": true,
+      "reason": "Standalone noble package superseded by @noble/curves. Pinned exactly by every SDK.",
+      "exit": "LIVE-37448 — the SDKs move to @noble/curves, or we stop shipping them."
+    }
+  }
+}

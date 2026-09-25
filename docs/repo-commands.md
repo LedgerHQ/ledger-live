@@ -36,6 +36,7 @@ pnpm lint:fix                           # Lint entire monorepo + auto-fix
 pnpm format                             # Format + auto-fix
 pnpm typecheck                          # Typecheck entire monorepo
 pnpm nx run <package-name>:typecheck    # Typecheck a specific lib
+pnpm lint:crypto                        # Check the tree for stray secp256k1 implementations
 ```
 
 ### Testing
