@@ -5118,6 +5118,61 @@
       "OUT": "Withdraw"
     }
   },
+  "stacks": {
+    "stake": {
+      "flow": {
+        "title": "Stake",
+        "preparingTransaction": "Preparing transaction…",
+        "steps": {
+          "validator": {
+            "title": "Pool",
+            "description": "Choose a pool to delegate your STX to for staking.",
+            "poolAddressLabel": "Pool address",
+            "numCyclesLabel": "Number of cycles"
+          },
+          "amount": {
+            "title": "Amount",
+            "disclaimer": "Your STX will be locked until the staking pool releases them."
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully staked your assets",
+              "text": "You staked {{amount}}. Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "Visit Account Dashboard"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "unstake": {
+      "flow": {
+        "title": "Unstake",
+        "steps": {
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "broadcastError": "Your unstaking transaction couldn't be sent to the network. Please try again.",
+            "success": {
+              "title": "Unstake submitted",
+              "text": "Your STX undelegation was broadcasted successfully.",
+              "cta": "View details"
+            }
+          }
+        }
+      }
+    },
+    "account": {
+      "staked": "Staked",
+      "unlockCycle": "Unlock cycle"
+    }
+  },
   "tezos": {
     "operationTypes": {
       "UNSTAKE": "Unstaking",

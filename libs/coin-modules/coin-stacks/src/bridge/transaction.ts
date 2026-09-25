@@ -43,10 +43,14 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     family: tr.family,
     nonce: tr.nonce !== undefined ? new BigNumber(tr.nonce) : undefined,
     fee: tr.fee !== undefined ? new BigNumber(tr.fee) : undefined,
+    fees: tr.fees !== undefined && tr.fees !== null ? new BigNumber(tr.fees) : tr.fees,
     amount: new BigNumber(tr.amount),
     network: tr.network as keyof typeof StacksNetwork,
     anchorMode: tr.anchorMode,
     memo: tr.memo,
+    mode: tr.mode,
+    valAddress: tr.valAddress,
+    familySpecificData: tr.familySpecificData,
   };
 };
 
@@ -57,11 +61,15 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     ...common,
     family: t.family,
     fee: t.fee !== undefined ? t.fee.toFixed() : undefined,
+    fees: t.fees !== undefined && t.fees !== null ? t.fees.toFixed() : t.fees,
     nonce: t.nonce !== undefined ? t.nonce.toFixed() : undefined,
     amount: t.amount.toFixed(),
     network: t.network,
     anchorMode: t.anchorMode,
     memo: t.memo,
+    mode: t.mode,
+    valAddress: t.valAddress,
+    familySpecificData: t.familySpecificData,
   };
 };
 
