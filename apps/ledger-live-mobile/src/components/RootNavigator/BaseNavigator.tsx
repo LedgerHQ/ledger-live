@@ -604,6 +604,7 @@ export default function BaseNavigator() {
           component={PayCardTopUp}
           options={{
             title: "",
+            headerRight: () => null,
             headerStyle: { backgroundColor: lumenBaseColor },
             contentStyle: { backgroundColor: lumenBaseColor },
           }}
