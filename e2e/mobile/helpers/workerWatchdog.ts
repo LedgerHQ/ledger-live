@@ -1,5 +1,6 @@
 import * as path from "node:path";
 import { Worker } from "node:worker_threads";
+import type { Circus } from "@jest/types";
 
 /**
  * In-worker watchdog for the shard hang (QAA-1365).
@@ -95,4 +96,29 @@ export async function armWorkerWatchdog(): Promise<void> {
 export function setWatchdogState(next: Partial<WatchdogState>): void {
   Object.assign(state, next);
   beat();
+}
+
+/**
+ * The phase a jest-circus event starts, for the stall report: what this worker last started.
+ * Hooks get their own label, or a freeze in a beforeAll would read as "environment setup",
+ * the phase set before it. Hooks of the root block are the global ones from setup.ts.
+ */
+export function watchdogPhase(event: Circus.Event, circusState: Circus.State): string | undefined {
+  switch (event.name) {
+    case "hook_start": {
+      const { type, parent } = event.hook;
+      const test = circusState.currentlyRunningTest;
+      if (test && (type === "beforeEach" || type === "afterEach")) return `${type}: ${test.name}`;
+      // Single quotes: the report, annotation and Allure message quote the phase in double ones.
+      return parent.parent ? `${type} in '${parent.name}'` : `${type} (setup.ts)`;
+    }
+    // test_fn_start as well: beforeEach hooks run between test_start and the test body.
+    case "test_start":
+    case "test_fn_start":
+      return `test: ${event.test.name}`;
+    case "test_done":
+      return `done: ${event.test.name}`;
+    default:
+      return undefined;
+  }
 }
