@@ -1,0 +1,40 @@
+name: "Wait for workflow jobs"
+description: "Poll the current run until every job whose name starts with a prefix is completed."
+
+inputs:
+  job-name-prefix:
+    description: "Jobs in this run whose `name` starts with this exact string are waited on"
+    required: true
+  poll-interval-seconds:
+    description: "How often to re-check job status"
+    required: false
+    # Every shard polls independently: 60s is well under GITHUB_TOKEN's 1,000 req/hour/repo limit.
+    default: "60"
+  max-wait-minutes:
+    description: "Fallback timeout if the caller's step/job timeout-minutes is unset or looser; set both for defense in depth."
+    required: false
+    default: "180"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Poll until matching jobs complete
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      env:
+        JOB_NAME_PREFIX: ${{ inputs.job-name-prefix }}
+        POLL_INTERVAL_SECONDS: ${{ inputs.poll-interval-seconds }}
+        MAX_WAIT_MINUTES: ${{ inputs.max-wait-minutes }}
+        ACTION_PATH: ${{ github.action_path }}
+      with:
+        script: |
+          const path = require("path");
+          const scriptPath = path.join(process.env.ACTION_PATH, "wait-for-workflow-jobs.js");
+          const { waitForMatchingJobs } = require(scriptPath);
+          await waitForMatchingJobs({
+            github,
+            context,
+            core,
+            prefix: process.env.JOB_NAME_PREFIX,
+            pollIntervalMs: Number.parseInt(process.env.POLL_INTERVAL_SECONDS, 10) * 1000,
+            maxWaitMs: Number.parseInt(process.env.MAX_WAIT_MINUTES, 10) * 60_000,
+          });

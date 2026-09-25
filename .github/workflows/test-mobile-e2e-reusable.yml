@@ -620,13 +620,28 @@ jobs:
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
 
+  # Only waits when both platforms broadcast in this run. They should not do it in parallel as they share one seed.
+  wait-android-before-ios-broadcast:
+    name: "Gate: wait for Android before iOS broadcasts"
+    needs: [determine-builds]
+    if: ${{ inputs.enable_broadcast == true && inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    runs-on: [public-ledgerhq-shared-small]
+    timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
+    permissions:
+      actions: read
+    steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/wait-for-workflow-jobs@develop
+        with:
+          job-name-prefix: "Android E2E Tests ("
+          poll-interval-seconds: "60"
+
   detox-tests-ios:
     name: iOS E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
     permissions:
       id-token: write
       contents: read
-    needs: [build-ios, determine-builds]
-    if: ${{ always() && !cancelled() && needs.build-ios.result == 'success' && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    needs: [build-ios, determine-builds, wait-android-before-ios-broadcast]
+    if: ${{ always() && !cancelled() && needs.build-ios.result == 'success' && needs.determine-builds.result == 'success' && (needs.wait-android-before-ios-broadcast.result == 'success' || needs.wait-android-before-ios-broadcast.result == 'skipped') && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on: ["qaa", macOS, ARM64, "performance-pool"]
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
