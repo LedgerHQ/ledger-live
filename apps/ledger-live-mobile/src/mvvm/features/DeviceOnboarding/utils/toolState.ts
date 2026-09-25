@@ -10,12 +10,11 @@ type ToolContext = NonNullable<DeviceOnboardingToolProps["context"]>;
 type ToolEvent = DeviceOnboardingToolProps["events"][number];
 
 export const userEvents = [
-  { type: "START" },
+  { type: "CONTINUE" },
   { type: "RETRY" },
   { type: "SKIP" },
   { type: "CLOSE" },
   { type: "QUIT" },
-  { type: "CONTINUE" },
   { type: "USER_ACCEPT" },
   { type: "USER_DECLINE" },
 ] as const satisfies readonly OnboardingEvent[];

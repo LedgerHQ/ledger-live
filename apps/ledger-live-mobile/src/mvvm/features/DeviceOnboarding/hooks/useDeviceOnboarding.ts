@@ -2,19 +2,27 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
   deviceOnboardingMachine,
+  type DeviceOnboardingOutput,
   type DeviceOnboardingPorts,
   type OnboardingEvent,
   type OnboardingStep,
   type SessionEvent,
 } from "@ledgerhq/device-onboarding";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   connectDevice,
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
-import type { DeviceConnectionResult, KnownDevice } from "@ledgerhq/live-dmk-shared";
+import {
+  dmkToLedgerDeviceIdMap,
+  type DeviceConnectionResult,
+  type KnownDevice,
+} from "@ledgerhq/live-dmk-shared";
 import { createActor, type ActorRefFrom } from "xstate";
 import type { Subscription } from "rxjs";
+import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
+import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 import { createSessionEventsActor } from "../utils/sessionEvents";
 import {
@@ -60,6 +68,8 @@ export function useDeviceOnboarding({
     [],
   );
   const [error, setError] = useState<string | null>(null);
+  const [liveDevice, setLiveDevice] = useState<Device | null>(null);
+  const [output, setOutput] = useState<DeviceOnboardingOutput | null>(null);
 
   const actorRef = useRef<OnboardingActor | null>(null);
   const portsRef = useRef<DeviceOnboardingPorts | null>(null);
@@ -147,6 +157,12 @@ export function useDeviceOnboarding({
           sessionId: nextPorts.currentSessionId(),
           wired: result.compatDeviceWired,
         });
+        setLiveDevice({
+          deviceId: result.compatDeviceId,
+          deviceName: result.compatDeviceName,
+          modelId: dmkToLedgerDeviceIdMap[session.deviceModelId],
+          wired: result.compatDeviceWired,
+        });
         setError(null);
 
         if (actorRef.current) {
@@ -158,6 +174,7 @@ export function useDeviceOnboarding({
         }
 
         lastLoggedStep.current = null;
+        setOutput(null);
 
         const actor = createActor(deviceOnboardingMachine, {
           input: {
@@ -187,6 +204,7 @@ export function useDeviceOnboarding({
 
           if (snapshot.status === "done") {
             const output = snapshot.output;
+            setOutput(output);
             setExit({
               reason: output.reason,
               sessionId: output.sessionId,
@@ -297,15 +315,24 @@ export function useDeviceOnboarding({
     retryRef.current = null;
     setStatus("idle");
     setDevice(null);
+    setLiveDevice(null);
     setState(null);
     setContext(null);
     setEvents([]);
     setExit(null);
+    setOutput(null);
     setSendableEvents([]);
     setError(null);
     sessionReadyRef.current = false;
     lastLoggedStep.current = null;
   }, []);
+
+  useFirmwareUpdateHandover({
+    device: liveDevice,
+    machineState: state,
+    send,
+  });
+  useDeviceOnboardingExit({ device: liveDevice, output });
 
   useEffect(
     () => () => {

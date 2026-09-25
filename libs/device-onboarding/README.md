@@ -12,6 +12,7 @@ Design and rationale live in the [technical plan](https://ledgerhq.atlassian.net
 ## What it does
 
 - Reads the device and routes it: the legacy flow, the pre-seed checks, or an interrupted update
+- Waits for the user once, on entry, before it touches a device it can drive
 - Runs the mandatory genuine check and the firmware check, and offers an available update
 - Shows the on-device waiting screen to an unseeded touchscreen while the checks run
 - Hands the OS update over to the app's own update flow, then re-reads the device
@@ -30,7 +31,8 @@ const actor = createActor(deviceOnboardingMachine, {
 ```
 
 Screens render the current state and send the user's events: `CONTINUE`, `RETRY`, `SKIP`, `CLOSE`,
-`QUIT`, `USER_ACCEPT`, `USER_DECLINE`. The app pushes in what it alone observes: `LOCKED`,
+`QUIT`, `USER_ACCEPT`, `USER_DECLINE`. `CONTINUE` is only for `awaitingStart`, right after the
+first device read. The app pushes in what it alone observes: `LOCKED`,
 `UNLOCKED` and `TRANSPORT_LOST` from `sessionListener`, and `FIRMWARE_UPDATE_FLOW_CLOSED` when its
 OS update flow returns control.
 
@@ -54,7 +56,7 @@ open. Other reasons: `legacyFallback`, `resumeFirmwareUpdate`, `userQuit`.
 - `OnboardingEvent`, `DeviceOnboardingInput`, `DeviceOnboardingContext`, `DeviceOnboardingOutput` —
   the language the machine and the screens speak
 - `rules.ts` — the pure decisions the transitions ask. Only the Nano SP and Nano X have a firmware
-  floor; the Nano S always takes the legacy flow
+  floor; every other model takes the flow whatever it runs
 - `actors/` — the only code that talks to the device: `readDeviceState`, `genuineCheck`,
   `firmwareCheck`, `toggleEarlyCheck`, `seedPolling`. Each reports through events only
 - `withRetries`, `createRetryPolicy` — back the retries of the first three, so a failure event from
