@@ -323,7 +323,7 @@ describe("one-shot transaction handlers", () => {
   });
 
   // extractErrorContext copies this onto Datadog's error context, unlike
-  // @ledgerhq/logs -- and msg.endpoint is overridable (setZainoGrpcUrl) to a
+  // @ledgerhq/logs -- and msg.endpoint comes from the remote coin config (`zaino.url`): a
   // custom or local node, so nothing guarantees it's free of credentials or a
   // query/path-embedded token (e.g. a `/token/<value>`-style gateway route).
   it("strips credentials, path and query params from the endpoint before attaching it", async () => {

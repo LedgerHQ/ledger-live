@@ -17,16 +17,19 @@ import { ZCASH_AUTO_SYNC_TIMEOUT_MS } from "../constants";
 import type { ZcashAccount } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
-import { TEST_ZAINO_ENDPOINT, testContext } from "../test/coinConfig";
+import { TEST_CONFIG, TEST_ZAINO_ENDPOINT, testContext } from "../test/coinConfig";
+import { bindExplorer } from "./explorer";
 
 const generateAccount = jest.fn((..._args: unknown[]): unknown => undefined);
 const syncAccount = jest.fn(async (..._args: unknown[]) => undefined);
 const getAccountTransactions = jest.fn(async (..._args: unknown[]) => ({ txs: [] as TX[] }));
 const getAccountUnspentUtxos = jest.fn(async (..._args: unknown[]) => [] as WalletOutput[]);
 
-// Binding the explorer from the coin config is covered by explorer.test.ts; these tests drive
-// the account's own (fake) explorer.
-jest.mock("./explorer", () => ({ bindExplorer: (walletAccount: unknown) => walletAccount }));
+// bindExplorer itself is covered by explorer.test.ts; here it hands the account back unchanged so
+// these tests drive the account's own (fake) explorer, and they assert what the sync passes it.
+jest.mock("./explorer", () => ({
+  bindExplorer: jest.fn((walletAccount: unknown) => walletAccount),
+}));
 
 jest.mock("@ledgerhq/wallet-btc/index", () => ({
   ...jest.requireActual("@ledgerhq/wallet-btc/index"),
@@ -342,6 +345,8 @@ describe("performTransparentSync", () => {
     // Re-deriving it would mean rescanning the gap limit on every sync.
     expect(shape.bitcoinResources?.walletAccount).toBe(previous);
     expect(generateAccount).not.toHaveBeenCalled();
+    // The stored account is pointed at the explorer the coin config names now.
+    expect(bindExplorer).toHaveBeenCalledWith(previous, currency, TEST_CONFIG.explorer.url);
   });
 
   it("composes the xpub on the device for an account that has none yet", async () => {
@@ -359,6 +364,10 @@ describe("performTransparentSync", () => {
       childNumber: 0x8000_0000,
     });
     expect(shape.id).toContain(shape.xpub as string);
+    expect(generateAccount).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ explorerEndpoint: TEST_CONFIG.explorer.url }),
+    );
   });
 
   it("cannot compose an xpub without a device", async () => {

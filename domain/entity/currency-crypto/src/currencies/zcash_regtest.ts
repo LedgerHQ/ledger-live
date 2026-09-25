@@ -15,7 +15,7 @@ import { currency } from "../define";
  * transaction. Reusing the mainnet encoding keeps this currency's own
  * addresses (and the UFVK/PCZT derivation, which shares `coinType`) accepted
  * by that unmodified check; only `id`/`explorerId` differ, so the transparent
- * sync leg and the Zaino gRPC endpoint (the coin config's `infra.ZCASH_GRPC_URL`) still route
+ * sync leg and the Zaino gRPC endpoint (the coin config's `zaino.url`) still route
  * to the local regtest stack instead of production.
  */
 export const zcash_regtest = currency({
