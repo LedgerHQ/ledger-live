@@ -15,7 +15,7 @@ Upstream source: [Structure & Flow](https://ledgerhq.atlassian.net/wiki/spaces/W
 
 | Concern                                  | Location                      | Owns                                                                                             | Does not own                                       |
 | ---------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
-| Platform entry point                     | `apps/<app>`                  | Screens, global routing, store composition, analytics, observability, app glue                   | Reusable feature internals                         |
+| Platform entry point                     | `apps/<app>`                  | Screens, global routing, store composition, observability, app glue                              | Reusable feature internals                         |
 | User-visible capability                  | `features/flow/<feature>`     | Business-aware UI, user journeys, local state, flow routing                                      | App-specific screen composition                    |
 | Capability shared across flows           | `features/platform/<feature>` | Hooks, selectors, NFR rules, React glue, and components shared by several flows or use cases     | Single-flow internals and fully generic components |
 | Business object                          | `domain/entity/<entity>`      | Runtime schema, inferred type, defaults, mocks, selectors, slice                                 | Network calls and feature state                    |

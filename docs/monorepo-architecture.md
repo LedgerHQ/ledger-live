@@ -16,7 +16,7 @@ shared  (10%)  — agnostic primitives
 ```
 
 ### `apps/`
-Platform-specific entry points: observability, analytics, routing, screens. Desktop and mobile do not necessarily share the same screens — each app assembles `features/flow` packages into its own screens.
+Platform-specific entry points: observability, routing, screens. Desktop and mobile do not necessarily share the same screens — each app assembles `features/flow` packages into its own screens.
 
 `apps/` is also the only place allowed to import both legacy and new code.
 
