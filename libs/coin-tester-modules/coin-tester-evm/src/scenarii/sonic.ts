@@ -145,7 +145,7 @@ export const scenarioSonic: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks(sonic.ethereumLikeInfo?.chainId || 146);
+    await indexBlocks(146);
   },
   afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);
