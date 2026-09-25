@@ -22,6 +22,7 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.stack.base.sha }}
         run:
           echo "extracting stack information"
+          echo "$STACK_POSITION"
 
   determine-affected:
     name: "Affected"
