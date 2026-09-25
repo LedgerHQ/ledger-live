@@ -45,6 +45,7 @@ import {
 } from "../constants";
 import type {
   AleoAccount,
+  AleoResources,
   AleoStakingResources,
   AleoOperation,
   AleoUnspentRecord,
@@ -673,6 +674,7 @@ export function createPrivateSyncObservable(
           subscriber.next({
             operations: initialAccount.operations,
             operationsCount: initialAccount.operationsCount,
+            lastSyncDate: initialAccount.lastSyncDate,
             aleoResources: {
               ...initialAccount.aleoResources,
               provableApi: null,
@@ -789,6 +791,63 @@ export function makeGetAccountShape(): GetAccountShapeStream<AleoAccount> {
     });
 }
 
+// A date saved while the clock ran ahead must not win, or it would discard every sync until then.
+const isNewer = (date: Date | null | undefined, than: Date | null | undefined) => {
+  const time = date?.getTime() ?? 0;
+  return time > (than?.getTime() ?? 0) && time <= Date.now();
+};
+
+/**
+ * A shape is computed from the snapshot its sync started with, but is applied to `initialAccount`:
+ * the account as it is when the shape lands. The private sync runs for minutes and, from the sync
+ * button, outside the bridge queue, so a public and a private sync can overlap and each would
+ * restore its stale copy of the fields the other one owns. Only public syncs advance `lastSyncDate`
+ * and only private ones `lastPrivateSyncDate`, so whichever side `initialAccount` is newer on keeps
+ * its fields.
+ *
+ * Operations, `syncHash` and the migration markers still come from the landing shape: the markers
+ * and the hash decide the next sync's cursors, so they must describe the operations stored with them.
+ */
+function keepNewerSyncFields(initialAccount: AleoAccount, syncedAccount: AleoAccount): AleoAccount {
+  const initialResources = initialAccount.aleoResources;
+  const syncedResources = syncedAccount.aleoResources;
+  if (!initialResources || !syncedResources) return syncedAccount;
+
+  const keepInitialPublic = isNewer(initialAccount.lastSyncDate, syncedAccount.lastSyncDate);
+  const keepInitialPrivate = isNewer(
+    initialResources.lastPrivateSyncDate,
+    syncedResources.lastPrivateSyncDate,
+  );
+  if (!keepInitialPublic && !keepInitialPrivate) return syncedAccount;
+
+  const aleoResources: AleoResources = {
+    ...syncedResources,
+    ...(keepInitialPublic && {
+      transparentBalance: initialResources.transparentBalance,
+      bondedBalance: initialResources.bondedBalance,
+      bondedValidator: initialResources.bondedValidator,
+      unbondingBalance: initialResources.unbondingBalance,
+      unbondingHeight: initialResources.unbondingHeight,
+    }),
+    ...(keepInitialPrivate && {
+      provableApi: initialResources.provableApi,
+      privateBalance: initialResources.privateBalance,
+      unspentPrivateRecords: initialResources.unspentPrivateRecords,
+      lastPrivateSyncDate: initialResources.lastPrivateSyncDate,
+    }),
+  };
+  const liquidBalance = aleoResources.transparentBalance.plus(aleoResources.privateBalance ?? 0);
+
+  return {
+    ...syncedAccount,
+    balance: liquidBalance.plus(sumStakedBalance(aleoResources)),
+    spendableBalance: liquidBalance,
+    blockHeight: Math.max(initialAccount.blockHeight, syncedAccount.blockHeight),
+    ...(keepInitialPublic && { lastSyncDate: initialAccount.lastSyncDate }),
+    aleoResources,
+  };
+}
+
 /**
  * Aleo doesn't have a per-account transaction nonce, so there is no natural value
  * to assign to `transactionSequenceNumber` on confirmed operations.
@@ -804,7 +863,7 @@ export function makeGetAccountShape(): GetAccountShapeStream<AleoAccount> {
  * once a confirmed operation with the same id appears in the confirmed list,
  * the corresponding pending operation is no longer needed.
  */
-export function postSync(_initial: AleoAccount, synced: AleoAccount): AleoAccount {
+function removeConfirmedPendingOperations(synced: AleoAccount): AleoAccount {
   const pendingOperations = synced.pendingOperations ?? [];
   const pendingSubOperations = (synced.subAccounts ?? []).flatMap(sa => sa.pendingOperations ?? []);
 
@@ -827,6 +886,10 @@ export function postSync(_initial: AleoAccount, synced: AleoAccount): AleoAccoun
       })),
     }),
   };
+}
+
+export function postSync(initialAccount: AleoAccount, syncedAccount: AleoAccount): AleoAccount {
+  return removeConfirmedPendingOperations(keepNewerSyncFields(initialAccount, syncedAccount));
 }
 
 export const sync = makeSync<AleoTransaction, AleoAccount>({
