@@ -23,7 +23,12 @@ export type PerpsDepositParams = {
   receiverAccountId: string;
 };
 
-export type PerpsDepositResult = Record<string, never>;
+export type PerpsDepositResult = {
+  /** Only set when the provider issued one, so the deposit can be tracked. */
+  swapId?: string;
+  /** Amount quoted to land on the receiver account, in its currency's major unit. */
+  amountTo?: string;
+};
 
 export type PerpsDepositUiParams = {
   receiverAccount: AccountLike;
@@ -45,7 +50,11 @@ export type PerpsUiHooks = {
     onError: (error: Error) => void;
     onCancel: () => void;
   }) => void;
-  "deposit.execute"?: (params: PerpsDepositUiParams) => void;
+  /**
+   * Returning a promise holds the live app's request open until the deposit settles.
+   * A rejection is forwarded as is, so reject with a `UserRefused*` error when the user abandons.
+   */
+  "deposit.execute"?: (params: PerpsDepositUiParams) => Promise<PerpsDepositResult> | void;
 };
 
 export type PerpsSignParams = {
@@ -156,8 +165,12 @@ export const handlers = ({
 
       const receiverAccount = findAccountOrThrow(params.receiverAccountId);
 
-      uiDepositExecute({ receiverAccount });
-      return {};
+      try {
+        return (await uiDepositExecute({ receiverAccount })) ?? {};
+      } catch (error) {
+        console.warn("[perps] Deposit request rejected", error);
+        throw error;
+      }
     }),
   };
 };

@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import type { PerpsReviewData } from "./usePerpsReviewViewModel";
 import { usePerpsReviewViewModel } from "./usePerpsReviewViewModel";
 import { PerpsReviewView } from "./PerpsReviewView";
+import { cancelDepositRequest } from "../../utils/perpsDepositRequest";
 
 let _opener: ((data: PerpsReviewData) => void) | null = null;
 
@@ -33,7 +34,9 @@ function PerpsReviewInnerDialog({
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      if (!open) onClose();
+      if (open) return;
+      cancelDepositRequest();
+      onClose();
     },
     [onClose],
   );

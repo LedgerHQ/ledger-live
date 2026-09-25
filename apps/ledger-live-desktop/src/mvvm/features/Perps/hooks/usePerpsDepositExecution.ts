@@ -30,6 +30,7 @@ import { openPerpsTransactionSigned } from "LLD/features/Perps/screens/PerpsTran
 import { broadcastLogger } from "~/datadog/logs";
 import { track } from "~/renderer/analytics/segment";
 import { isUserRefusal } from "../utils/isUserRefusal";
+import { settleDepositRequest } from "../utils/perpsDepositRequest";
 
 type StartResult = StartExchangeResult;
 type CompleteResult = CompleteExchangeResult;
@@ -269,6 +270,7 @@ export function usePerpsDepositExecution(
 
       if (!signed) return;
 
+      settleDepositRequest({ swapId: signed.swapId, amountTo });
       openPerpsTransactionSigned({
         receiveCurrencyTicker: receiveCurrency.ticker,
         swapId: signed.swapId,
@@ -285,6 +287,7 @@ export function usePerpsDepositExecution(
   }, [
     accounts,
     amountSent,
+    amountTo,
     confirmSignAndBroadcast,
     depositAccount,
     getFeature,

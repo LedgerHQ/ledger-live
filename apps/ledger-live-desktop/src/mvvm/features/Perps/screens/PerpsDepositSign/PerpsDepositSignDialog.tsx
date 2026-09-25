@@ -5,6 +5,7 @@ import {
   type PerpsDepositSignData,
 } from "./usePerpsDepositSignViewModel";
 import { PerpsDepositSignView } from "./PerpsDepositSignView";
+import { cancelDepositRequest } from "../../utils/perpsDepositRequest";
 
 let _opener: ((data: PerpsDepositSignData) => void) | null = null;
 
@@ -35,7 +36,9 @@ function PerpsDepositSignInnerDialog({
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      if (!open) onClose();
+      if (open) return;
+      cancelDepositRequest();
+      onClose();
     },
     [onClose],
   );

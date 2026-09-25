@@ -1,9 +1,11 @@
 import { from } from "rxjs";
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
 import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
   handlers,
   type PerpsDepositParams,
+  type PerpsDepositResult,
   type PerpsSignParams,
   type PerpsSignResult,
 } from "./server";
@@ -83,7 +85,7 @@ const baseParams = {
 describe("Perps handlers", () => {
   type MockedHandlers = {
     "custom.perps.signActions": (params?: PerpsSignParams) => Promise<PerpsSignResult>;
-    "custom.perps.deposit": (params?: PerpsDepositParams) => Promise<Record<string, never>>;
+    "custom.perps.deposit": (params?: PerpsDepositParams) => Promise<PerpsDepositResult>;
   };
 
   let mockSignActions: jest.Mock;
@@ -241,7 +243,25 @@ describe("Perps handlers", () => {
       expect(mockUiDepositExecute).toHaveBeenCalledWith({ receiverAccount: mockAccount });
     });
 
-    it("should resolve once the deposit flow is handed over to the wallet", async () => {
+    it("should resolve with the outcome the deposit flow settles with", async () => {
+      mockUiDepositExecute.mockResolvedValue({ swapId: "swap-1" });
+
+      const result = await serverHandlers["custom.perps.deposit"](depositParams);
+
+      expect(result).toEqual({ swapId: "swap-1" });
+    });
+
+    it("should forward the client's rejection as is", async () => {
+      const refusal = new UserRefusedOnDevice();
+      mockUiDepositExecute.mockRejectedValue(refusal);
+      jest.spyOn(console, "warn").mockImplementation(() => {});
+
+      await expect(serverHandlers["custom.perps.deposit"](depositParams)).rejects.toBe(refusal);
+    });
+
+    it("should resolve immediately when the client hook does not report an outcome", async () => {
+      mockUiDepositExecute.mockReturnValue(undefined);
+
       const result = await serverHandlers["custom.perps.deposit"](depositParams);
 
       expect(result).toEqual({});
