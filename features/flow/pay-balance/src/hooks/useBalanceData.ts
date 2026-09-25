@@ -17,7 +17,6 @@ export type UseBalanceDataParams = Readonly<{
   formatCountervalue: (value: number) => FormattedValue;
   onConfirmFilter: (filter: BalanceFilter) => void;
   onResetFilter: () => void;
-  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
   discreet?: boolean;
   onToggleDiscreetMode?: () => void;
 }>;
@@ -35,7 +34,6 @@ export function useBalanceData({
   formatCountervalue,
   onConfirmFilter,
   onResetFilter,
-  onTrackEvent,
   discreet,
   onToggleDiscreetMode,
 }: UseBalanceDataParams): BalanceData {
@@ -55,7 +53,6 @@ export function useBalanceData({
         formatCrypto,
         formatCountervalue,
         onConfirmFilter,
-        onTrackEvent,
       }),
     [
       stablecoins,
@@ -68,7 +65,6 @@ export function useBalanceData({
       formatCrypto,
       formatCountervalue,
       onConfirmFilter,
-      onTrackEvent,
     ],
   );
 

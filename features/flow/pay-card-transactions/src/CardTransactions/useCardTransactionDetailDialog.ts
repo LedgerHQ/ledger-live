@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import type { PayCardTransaction } from "@domain/api-card-management";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { trackTransactionClicked } from "@features/platform-pay-analytics";
 import {
   transactionClickedProperties,
   type CardTransactionClickedPage,
@@ -20,32 +20,15 @@ export function useCardTransactionDetailDialog({
 }: Pick<CardTransactionsProps, "onTransactionPress"> & {
   page?: CardTransactionClickedPage;
 }): CardTransactionDetailDialogViewModel {
-  const { trackEvent } = usePayAnalyticsContext();
-
-  return useTrackedCardTransactionDetailDialog({
-    onTransactionPress,
-    onTrackEvent: trackEvent,
-    page,
-  });
-}
-
-export function useTrackedCardTransactionDetailDialog({
-  onTransactionPress,
-  onTrackEvent,
-  page,
-}: Pick<CardTransactionsProps, "onTransactionPress"> & {
-  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
-  page: CardTransactionClickedPage;
-}): CardTransactionDetailDialogViewModel {
   const [selectedTransaction, setSelectedTransaction] = useState<PayCardTransaction>();
 
   const openTransaction = useCallback(
     (item: CardTransactionItem) => {
       onTransactionPress?.(item);
-      onTrackEvent?.("transaction_clicked", transactionClickedProperties(item.transaction, page));
+      trackTransactionClicked(transactionClickedProperties(item.transaction, page));
       setSelectedTransaction(item.transaction);
     },
-    [onTransactionPress, onTrackEvent, page],
+    [onTransactionPress, page],
   );
 
   const closeTransaction = useCallback(() => {

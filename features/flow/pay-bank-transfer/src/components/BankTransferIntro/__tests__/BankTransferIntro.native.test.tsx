@@ -1,15 +1,22 @@
 import React from "react";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
+import {
+  trackButtonClicked,
+  trackedPages,
+} from "@features/platform-pay-analytics/testing/module-mock";
 import { BankTransferIntro } from "../BankTransferIntro";
 import type { BankTransferIntroProps } from "../../../types";
 import { I18nWrapper } from "./i18nWrapper";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 function renderIntro(overrides: Partial<BankTransferIntroProps> = {}) {
   const props: BankTransferIntroProps = {
     isOpen: true,
     onBankTransfer: jest.fn(),
     onClose: jest.fn(),
-    onTrackEvent: jest.fn(),
     ...overrides,
   };
   return {
@@ -23,14 +30,22 @@ function renderIntro(overrides: Partial<BankTransferIntroProps> = {}) {
 }
 
 describe("BankTransferIntro (Native)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterEach(() => {
     cleanup();
   });
 
   it("tracks the page when opened", () => {
-    const { props } = renderIntro();
+    renderIntro();
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("Page cash to stable", { flow: "C2S" });
+    expect(trackedPages()).toContainEqual({
+      page: "Feature Intro",
+      name: "Cash to stable",
+      flow: "Cash to stable",
+    });
   });
 
   it("tracks create account, hands off and closes", async () => {
@@ -39,10 +54,10 @@ describe("BankTransferIntro (Native)", () => {
 
     await user.press(screen.getByTestId("pay-bank-transfer-intro-create-account"));
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "create an account",
-      flow: "C2S",
-      page: "cash to stable",
+      flow: "Cash to stable",
+      page: "Feature Intro Cash to stable",
     });
     expect(props.onBankTransfer).toHaveBeenCalledWith("createAccount");
     expect(props.onClose).toHaveBeenCalledTimes(1);
@@ -54,10 +69,10 @@ describe("BankTransferIntro (Native)", () => {
 
     await user.press(screen.getByTestId("pay-bank-transfer-intro-log-in"));
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "log in to noah",
-      flow: "C2S",
-      page: "cash to stable",
+      flow: "Cash to stable",
+      page: "Feature Intro Cash to stable",
     });
     expect(props.onBankTransfer).toHaveBeenCalledWith("logIn");
     expect(props.onClose).toHaveBeenCalledTimes(1);

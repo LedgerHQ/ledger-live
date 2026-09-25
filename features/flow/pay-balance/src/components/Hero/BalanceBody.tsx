@@ -28,7 +28,6 @@ export function BalanceBody(props: BalanceViewProps) {
         labels={props.labels}
         onClose={props.onCloseFilter}
         onConfirmFilter={props.onConfirmFilter}
-        onTrackEvent={props.onTrackEvent}
       />
     </>
   );

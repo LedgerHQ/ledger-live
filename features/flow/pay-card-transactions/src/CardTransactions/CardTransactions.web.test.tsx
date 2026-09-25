@@ -3,8 +3,13 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse, type JsonBodyType } from "msw";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { listenToCardApi } from "@support/msw-features-flow-pay-card";
+import { trackTransactionClicked } from "@features/platform-pay-analytics/testing/module-mock";
 import { CARD_TRANSACTIONS_URL, SECTION_TITLE, cardApiWrapper } from "../__tests__/cardApiStore";
 import { CardTransactions } from "./CardTransactions";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 const server = listenToCardApi();
 
@@ -75,17 +80,14 @@ describe("CardTransactions", () => {
 
   it("opens a transaction dialog from a row and tracks the click", async () => {
     const page = mockPayCardTransactions();
-    const onTrackEvent = jest.fn();
     server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
 
-    render(<CardTransactions />, {
-      wrapper: cardApiWrapper({ signedIn: true, track: onTrackEvent }),
-    });
+    render(<CardTransactions />, { wrapper: cardApiWrapper({ signedIn: true }) });
 
     fireEvent.click(await screen.findByText("NETFLIX.COM"));
 
     expect(screen.getByTestId("card-transaction-detail-dialog")).toBeVisible();
-    expect(onTrackEvent).toHaveBeenCalledWith("transaction_clicked", {
+    expect(trackTransactionClicked).toHaveBeenCalledWith({
       category: "card",
       transaction: "out",
       page: "Pay",

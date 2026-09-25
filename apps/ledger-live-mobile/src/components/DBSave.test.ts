@@ -30,6 +30,7 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
         hasCompletedOnboarding: true,
         analyticsCardId: null,
         reportedAnalyticsMilestones: [],
+        hasReadCardAccount: false,
       },
     } as unknown as State;
 
@@ -43,6 +44,7 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
       hasCompletedOnboarding: true,
       analyticsCardId: null,
       reportedAnalyticsMilestones: [],
+      hasReadCardAccount: false,
     });
   });
 });

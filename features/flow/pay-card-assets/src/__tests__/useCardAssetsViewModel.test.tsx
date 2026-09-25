@@ -1,18 +1,20 @@
 import React, { type PropsWithChildren } from "react";
 import { act, renderHook } from "@testing-library/react";
 import type { CardLinkedWalletBalance } from "@features/flow-pay-card-wallets";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+import { trackDebitOrderChanged } from "@features/platform-pay-analytics/testing/module-mock";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 import type { CardAssetsProps } from "../types";
 import { I18nWrapper } from "./i18nWrapper";
 import { formatCardAssetCryptoAmount, useCardAssetsViewModel } from "../useCardAssetsViewModel";
 
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
+
 const mockUseIsCardSignedIn = jest.fn();
 const mockUseCardLinkedWallets = jest.fn();
 const mockUpdateCardWalletPriorities = jest.fn();
 const mockUnwrapUpdate = jest.fn();
-const track = jest.fn();
-
 jest.mock("@domain/api-card-management", () => ({
   useUpdateCardWalletPrioritiesMutation: () => [
     mockUpdateCardWalletPriorities,
@@ -67,11 +69,7 @@ const getCounterValue = jest.fn(() => 12540);
 const formatCountervalue = jest.fn((value: number) => `$${value}`);
 
 function Wrapper({ children }: PropsWithChildren) {
-  return (
-    <PayAnalyticsProvider adapter={{ track }}>
-      <I18nWrapper>{children}</I18nWrapper>
-    </PayAnalyticsProvider>
-  );
+  return <I18nWrapper>{children}</I18nWrapper>;
 }
 
 function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
@@ -341,7 +339,7 @@ describe("useCardAssetsViewModel", () => {
     await act(() => result.current.onMoveAsset("w-usdt", 0));
     act(() => result.current.onDialogClose());
 
-    expect(track).toHaveBeenCalledWith("debit_order_changed", {
+    expect(trackDebitOrderChanged).toHaveBeenCalledWith({
       asset1: "USDT",
       asset2: "USDC",
       asset3: null,

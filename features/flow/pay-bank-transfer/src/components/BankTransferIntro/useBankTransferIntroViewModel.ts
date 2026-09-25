@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { featureIntroPageName, trackButtonClicked } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import type {
   BankTransferHandoff,
@@ -7,9 +8,8 @@ import type {
   BankTransferIntroViewModel,
 } from "../../types";
 
-export const BANK_TRANSFER_INTRO_PAGE_EVENT = "Page cash to stable";
-export const BANK_TRANSFER_INTRO_PAGE = "cash to stable";
-export const BANK_TRANSFER_INTRO_FLOW = "C2S";
+export const BANK_TRANSFER_INTRO_FLOW = "Cash to stable";
+export const BANK_TRANSFER_INTRO_PAGE = featureIntroPageName(BANK_TRANSFER_INTRO_FLOW);
 
 const KEY_PREFIX = "payTab.bankTransferIntro";
 
@@ -30,24 +30,16 @@ export function useBankTransferIntroViewModel({
   heroImage,
   onBankTransfer,
   onClose,
-  onTrackEvent,
 }: BankTransferIntroProps): BankTransferIntroViewModel {
   const { t } = useTranslation();
 
-  const onShown = useCallback(() => {
-    onTrackEvent?.(BANK_TRANSFER_INTRO_PAGE_EVENT, { flow: BANK_TRANSFER_INTRO_FLOW });
-  }, [onTrackEvent]);
-
-  const trackCta = useCallback(
-    (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
-      onTrackEvent?.("button_clicked", {
-        button,
-        flow: BANK_TRANSFER_INTRO_FLOW,
-        page: BANK_TRANSFER_INTRO_PAGE,
-      });
-    },
-    [onTrackEvent],
-  );
+  const trackCta = useCallback((button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
+    trackButtonClicked({
+      button,
+      flow: BANK_TRANSFER_INTRO_FLOW,
+      page: BANK_TRANSFER_INTRO_PAGE,
+    });
+  }, []);
 
   const handOffToPartner = useCallback(
     (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON], handoff: BankTransferHandoff) => {
@@ -94,7 +86,6 @@ export function useBankTransferIntroViewModel({
     providedBy: t(`${KEY_PREFIX}.providedBy`),
     heroImage,
     rows,
-    onShown,
     onCreateAccountPress,
     onLogInPress,
     onClosePress,

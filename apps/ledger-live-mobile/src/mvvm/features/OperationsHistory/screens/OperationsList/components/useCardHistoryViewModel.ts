@@ -5,14 +5,12 @@ import { useSelector } from "~/context/hooks";
 import { useLocale } from "~/context/Locale";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useFormatDaySection } from "~/hooks/useDateFormatter";
-import { track } from "~/analytics";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
 import { formatCardTransactionAmount } from "LLM/features/OperationsHistory/utils/formatCardTransactionAmount";
 
 export type CardHistoryViewModel = Readonly<{
   formatters: CardTransactionFormatters;
   formatDay: (date: Date) => string;
-  onTrackEvent: (event: string, params: Record<string, unknown>) => void;
   onGoToPay: () => void;
 }>;
 
@@ -31,13 +29,9 @@ export function useCardHistoryViewModel(
     [locale, discreet],
   );
 
-  const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
-    track(event, params);
-  }, []);
-
   const onGoToPay = useCallback(() => {
     navigateToPayTab(navigation);
   }, [navigation]);
 
-  return { formatters, formatDay, onTrackEvent, onGoToPay };
+  return { formatters, formatDay, onGoToPay };
 }

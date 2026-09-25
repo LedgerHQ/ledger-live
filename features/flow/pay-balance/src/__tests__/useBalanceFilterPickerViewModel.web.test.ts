@@ -2,6 +2,11 @@ import { act, renderHook } from "@testing-library/react";
 import { useBalanceFilterPickerViewModel } from "../components/Filter/useBalanceFilterPickerViewModel";
 import type { BalanceFilterPickerViewModelParams } from "../types";
 import { USDC_ID, USDT_ID, options } from "./fixtures";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 function buildParams(
   overrides: Partial<BalanceFilterPickerViewModelParams> = {},
@@ -12,7 +17,6 @@ function buildParams(
     options,
     onConfirmFilter: jest.fn(),
     onClose: jest.fn(),
-    onTrackEvent: jest.fn(),
     ...overrides,
   };
 }
@@ -47,17 +51,16 @@ describe("useBalanceFilterPickerViewModel", () => {
   it("should persist the draft, track the ticker and close on confirm", () => {
     const onConfirmFilter = jest.fn();
     const onClose = jest.fn();
-    const onTrackEvent = jest.fn();
     const { result } = renderHook(() =>
       useBalanceFilterPickerViewModel(
-        buildParams({ activeFilter: USDC_ID, onConfirmFilter, onClose, onTrackEvent }),
+        buildParams({ activeFilter: USDC_ID, onConfirmFilter, onClose }),
       ),
     );
 
     act(() => result.current.onConfirm());
 
     expect(onConfirmFilter).toHaveBeenCalledWith(USDC_ID);
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "confirm balance filter",
       asset: "USDC",
       page: "Pay",
@@ -66,14 +69,13 @@ describe("useBalanceFilterPickerViewModel", () => {
   });
 
   it("should track 'all' as the asset when confirming the all option", () => {
-    const onTrackEvent = jest.fn();
     const { result } = renderHook(() =>
-      useBalanceFilterPickerViewModel(buildParams({ activeFilter: "all", onTrackEvent })),
+      useBalanceFilterPickerViewModel(buildParams({ activeFilter: "all" })),
     );
 
     act(() => result.current.onConfirm());
 
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "confirm balance filter",
       asset: "all",
       page: "Pay",

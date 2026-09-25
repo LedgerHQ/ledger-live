@@ -10,7 +10,7 @@ Cross-platform Pay Card authentication flow for Ledger Wallet.
 ```tsx
 import { CardLogin, useCardLogout, useIsCardSignedIn } from "@features/flow-pay-card-auth";
 
-<CardLogin oauthConfig={oauthConfig} callback={callback} onTrackEvent={track} />
+<CardLogin oauthConfig={oauthConfig} callback={callback} />
 ```
 
 `CardLogin` runs the whole login, and shows nothing once the card holder is signed in. Session
@@ -109,9 +109,10 @@ because the view model resolves the key on both platforms.
 One press, one handler: `onLoginPress` reads the flag and either opens the sheet or sends `LOGIN`,
 and the sheet's own buttons send the same `LOGIN` afterwards.
 
-Hosts may pass `onTrackEvent`. The login block fires `button_clicked` for `Get card`, `Login`, the
-intro CTAs and close, and a `Page card login intro` event when the sheet opens. The app injects
-`track`, the same way FeatureTour and BankTransferIntro do.
+Tracking goes straight through `@features/platform-pay-analytics`, with no host injection. The login
+block fires `button_clicked` for `Get card`, `Login`, the intro CTAs and close, and a
+`Page Feature Intro card` event when the sheet opens — the same way FeatureTour and
+BankTransferIntro do.
 
 ## Card API
 

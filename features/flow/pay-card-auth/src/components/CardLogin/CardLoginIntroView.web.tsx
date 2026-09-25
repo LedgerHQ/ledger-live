@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { CoinsAddPlus, CreditCard, LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
+import { FEATURE_INTRO_PAGE, PayTrackPage } from "@features/platform-pay-analytics";
 import heroImage from "./payCardLoginIntro.webp";
+import { CARD_LOGIN_INTRO_FLOW } from "./analytics";
 import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 
 const ROW_ICONS: Record<CardLoginIntroRowIcon, typeof CreditCard> = {
@@ -52,6 +54,11 @@ export function CardLoginIntroView({
 
   return (
     <Dialog open onOpenChange={handleOpenChange}>
+      <PayTrackPage
+        page={FEATURE_INTRO_PAGE}
+        name={CARD_LOGIN_INTRO_FLOW}
+        flow={CARD_LOGIN_INTRO_FLOW}
+      />
       <DialogContent
         aria-describedby={undefined}
         className="max-h-[90vh] p-0"

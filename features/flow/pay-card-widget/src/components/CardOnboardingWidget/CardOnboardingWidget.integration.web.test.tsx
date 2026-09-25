@@ -1,6 +1,11 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { trackCardOnboardingWidgetToggled } from "@features/platform-pay-analytics/testing/module-mock";
 import { CARD_ONBOARDING_COPY, CARD_ONBOARDING_STEP_COPY } from "../../__tests__/i18nWrapper";
 import { createRenderWidget, setQuery, stepsWith, stepsWithIds } from "./__tests__/shared";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 jest.mock("../../onboardingStatus", () => ({
   useCardOnboardingStatus: jest.fn(),
@@ -130,6 +135,37 @@ describe("CardOnboardingWidget (integration)", () => {
     expect(
       screen.queryByRole("heading", { name: CARD_ONBOARDING_COPY.dialogTitle }),
     ).not.toBeInTheDocument();
+  });
+
+  it("should track opening and closing with the current onboarding progress", () => {
+    const steps = stepsWithIds(
+      "choose-card-type",
+      "apple-google-pay",
+      "top-up-card",
+      "first-purchase",
+    ).map((step, index) => ({ ...step, isDone: index % 2 === 0 }));
+    setQuery({ data: { steps } });
+    renderWidget();
+
+    openWidget();
+    fireEvent.click(screen.getByRole("button", { name: /close/i }));
+
+    expect(trackCardOnboardingWidgetToggled).toHaveBeenNthCalledWith(1, {
+      opened: true,
+      page: "Pay",
+      cardClaimed: true,
+      addedToOsWallet: false,
+      cardTopUp: true,
+      firstPurchaseCompleted: false,
+    });
+    expect(trackCardOnboardingWidgetToggled).toHaveBeenNthCalledWith(2, {
+      opened: false,
+      page: "Pay",
+      cardClaimed: true,
+      addedToOsWallet: false,
+      cardTopUp: true,
+      firstPurchaseCompleted: false,
+    });
   });
 
   it("should hide the widget after got-it completes onboarding", () => {

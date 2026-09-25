@@ -60,13 +60,4 @@ describe("usePayCardBalance", () => {
 
     await waitFor(() => expect(store.getState().payCardBalance.balanceFilter).toBe(USDC.id));
   });
-
-  it("should forward tracking events to the injected callback", () => {
-    const onTrackEvent = jest.fn();
-    const { result } = renderHook(() => usePayCardBalance(onTrackEvent), { initialState });
-
-    act(() => result.current.onTrackEvent?.("button_clicked", { button: "balance_filter" }));
-
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", { button: "balance_filter" });
-  });
 });
