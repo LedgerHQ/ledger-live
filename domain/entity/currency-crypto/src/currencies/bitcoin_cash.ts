@@ -12,11 +12,6 @@ export const bitcoin_cash = currency({
   color: "#3ca569",
   family: "bitcoin",
   blockAvgTime: 900,
-  bitcoinLikeInfo: {
-    P2PKH: 0,
-    P2SH: 5,
-    XPUBVersion: 76067358,
-  },
   units: [
     {
       name: "bitcoin cash",

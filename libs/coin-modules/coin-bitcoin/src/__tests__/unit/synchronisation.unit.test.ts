@@ -2,7 +2,12 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import { firstValueFrom } from "rxjs";
 import { makeGetAccountShape } from "../../synchronisation";
 
-import { createFixtureAccount, mockSignerContext } from "../../fixtures/common.fixtures";
+import {
+  createFixtureAccount,
+  mockSigner,
+  mockSignerContext,
+} from "../../fixtures/common.fixtures";
+import type { SignerContext } from "../../signer";
 import { BitcoinAccount } from "../../types";
 
 jest.setTimeout(10000);
@@ -93,6 +98,39 @@ describe("synchronisation", () => {
       "deviceId required to generate the xpub",
     );
   });
+
+  it.each([
+    ["bitcoin", 0x0488_b21e],
+    ["bitcoin_testnet", 0x0435_87cf],
+    ["litecoin", 0x019d_a462],
+  ])(
+    "asks the device for a %s xpub with that network's version bytes",
+    async (currencyId, expectedXpubVersion) => {
+      const getWalletXpub = jest.fn().mockRejectedValue(new Error("stop after xpub request"));
+      const signerContext: SignerContext = (_deviceId, _crypto, fn) =>
+        fn({ ...mockSigner, getWalletXpub });
+      const getAccountShape = makeGetAccountShape(signerContext);
+
+      await expect(
+        firstValueFrom(
+          getAccountShape(
+            {
+              currency: getCryptoCurrencyById(currencyId),
+              address: "0x123",
+              index: 0,
+              derivationPath: "m/84'/1'/0'/0/0",
+              derivationMode: "native_segwit",
+              deviceId: "device",
+            },
+            { paginationConfig: {} },
+          ),
+        ),
+      ).rejects.toThrow("stop after xpub request");
+      expect(getWalletXpub).toHaveBeenCalledWith(
+        expect.objectContaining({ xpubVersion: expectedXpubVersion }),
+      );
+    },
+  );
 
   it("returns an Observable that emits exactly one value then completes", async () => {
     const getAccountShape = makeGetAccountShape(mockSignerContext);

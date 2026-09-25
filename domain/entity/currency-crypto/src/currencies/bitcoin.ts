@@ -36,11 +36,6 @@ export const bitcoin = currency({
   supportsNativeSegwit: true,
   family: "bitcoin",
   blockAvgTime: 900,
-  bitcoinLikeInfo: {
-    P2PKH: 0,
-    P2SH: 5,
-    XPUBVersion: 76067358,
-  },
   explorerViews: [
     {
       address: "https://blockstream.info/address/$address",

@@ -44,11 +44,6 @@ export interface CryptoCurrency {
   blockAvgTime?: number;
   explorerViews: ExplorerView[];
   ethereumLikeInfo?: { chainId: number };
-  bitcoinLikeInfo?: {
-    P2PKH: number;
-    P2SH: number;
-    XPUBVersion?: number;
-  };
   symbol?: string;
   keywords?: string[];
   explorerId?: string;

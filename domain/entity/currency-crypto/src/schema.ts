@@ -26,19 +26,6 @@ export const EthereumLikeInfoSchema = z.object({
 });
 
 /**
- * Bitcoin-like chain metadata used for address derivation and XPUB encoding.
- * Values correspond to the network's version bytes.
- */
-export const BitcoinLikeInfoSchema = z.object({
-  /** P2PKH version byte (e.g. `0` for Bitcoin mainnet). */
-  P2PKH: z.number().int(),
-  /** P2SH version byte (e.g. `5` for Bitcoin mainnet). */
-  P2SH: z.number().int(),
-  /** XPUB version bytes (e.g. `76066276` / `0x0488B21E` for Bitcoin mainnet). */
-  XPUBVersion: z.number().int().optional(),
-});
-
-/**
  * Canonical Zod-first schema for a crypto currency entity.
  *
  * Written from scratch — does **not** derive from the legacy currency types.
@@ -88,8 +75,6 @@ export const CryptoCurrencySchema = z.object({
   supportsNativeSegwit: z.boolean().optional(),
   /** If set, this is a testnet for the currency with this id. */
   isTestnetFor: z.string().optional(),
-  /** Bitcoin-like chain metadata (version bytes). Present for `family: "bitcoin"`. */
-  bitcoinLikeInfo: BitcoinLikeInfoSchema.optional(),
   /** EVM chain metadata. Present for `family: "ethereum"` and `family: "evm"`. */
   ethereumLikeInfo: EthereumLikeInfoSchema.optional(),
   /** One or more blockchain explorer URL templates. */
@@ -111,5 +96,3 @@ export type CryptoCurrency = z.infer<typeof CryptoCurrencySchema>;
 export type ExplorerView = z.infer<typeof ExplorerViewSchema>;
 /** EVM chain info value object, inferred from {@link EthereumLikeInfoSchema}. */
 export type EthereumLikeInfo = z.infer<typeof EthereumLikeInfoSchema>;
-/** Bitcoin-like chain info value object, inferred from {@link BitcoinLikeInfoSchema}. */
-export type BitcoinLikeInfo = z.infer<typeof BitcoinLikeInfoSchema>;

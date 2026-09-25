@@ -196,14 +196,14 @@ const signerContext = (async (_deviceId: string, fn: (signer: unknown) => unknow
   fn({ getAddress: deviceGetAddress })) as unknown as SignerContext;
 
 /**
- * The depth and child number a composed xpub carries, read back out of the
- * base58check serialization -- bytes 4 and 9..13 of the BIP-32 header.
+ * The version, depth and child number a composed xpub carries, read back out of
+ * the base58check serialization -- bytes 0..4, 4 and 9..13 of the BIP-32 header.
  */
-const serializedXpub = (xpub: string): { depth: number; childNumber: number } => {
+const serializedXpub = (xpub: string): { version: number; depth: number; childNumber: number } => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const bs58 = require("bs58");
   const raw = Buffer.from(bs58.decode(xpub) as Uint8Array);
-  return { depth: raw[4], childNumber: raw.readUInt32BE(9) };
+  return { version: raw.readUInt32BE(0), depth: raw[4], childNumber: raw.readUInt32BE(9) };
 };
 
 beforeEach(() => {
@@ -346,7 +346,11 @@ describe("performTransparentSync", () => {
     // the account path is `44'/133'/0'`: depth 3, hardened child. Losing the
     // hardened bit would derive a different -- valid-looking -- xpub.
     expect(deviceGetAddress.mock.calls.map(([path]) => path)).toEqual(["44'/133'", "44'/133'/0'"]);
-    expect(serializedXpub(shape.xpub as string)).toEqual({ depth: 3, childNumber: 0x8000_0000 });
+    expect(serializedXpub(shape.xpub as string)).toEqual({
+      version: 0x0488_b21e,
+      depth: 3,
+      childNumber: 0x8000_0000,
+    });
     expect(shape.id).toContain(shape.xpub as string);
   });
 

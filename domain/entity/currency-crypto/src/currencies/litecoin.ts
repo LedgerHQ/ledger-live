@@ -13,11 +13,6 @@ export const litecoin = currency({
   supportsNativeSegwit: true,
   family: "bitcoin",
   blockAvgTime: 300,
-  bitcoinLikeInfo: {
-    P2PKH: 48,
-    P2SH: 50,
-    XPUBVersion: 27108450,
-  },
   symbol: "Ł",
   units: [
     {

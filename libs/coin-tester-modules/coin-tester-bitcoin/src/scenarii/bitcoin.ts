@@ -3,6 +3,7 @@ import { BitcoinAccount, Transaction as BtcTransaction } from "@ledgerhq/coin-bi
 import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import resolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
+import { getNetworkParameters } from "@ledgerhq/coin-bitcoin/networks";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BitcoinSigner, SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import { BitcoinConfigInfo, setCoinConfig } from "@ledgerhq/coin-bitcoin/config";
@@ -297,10 +298,7 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
       currency: BITCOIN,
       derivationMode: "segwit",
     });
-    const { bitcoinLikeInfo } = BITCOIN;
-    const { XPUBVersion: xpubVersion } = bitcoinLikeInfo as {
-      XPUBVersion: number;
-    };
+    const xpubVersion = getNetworkParameters(BITCOIN.id).xpubVersion.readUInt32BE(0);
 
     const xpub = await signerContext("", BITCOIN, signer =>
       signer.getWalletXpub({

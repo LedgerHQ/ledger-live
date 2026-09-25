@@ -11,11 +11,6 @@ export const zencash = currency({
   color: "#152f5c",
   family: "bitcoin",
   blockAvgTime: 150,
-  bitcoinLikeInfo: {
-    P2PKH: 8329,
-    P2SH: 8342,
-    XPUBVersion: 76067358,
-  },
   units: [
     {
       name: "zencash",
