@@ -40,7 +40,7 @@ jest.mock("@ledgerhq/live-network/network", () => ({
   default: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-evm/utils", () => ({
+jest.mock("@ledgerhq/coin-evm/logic-public", () => ({
   safeEncodeEIP55: (addr: string) => addr,
 }));
 

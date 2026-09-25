@@ -8,7 +8,7 @@ import {
   hasUnbondingPeriod,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
-import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking";
 import type { TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import { Alert, Text } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";

@@ -11,6 +11,7 @@ import {
 } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { setContacts } from "@domain/entity-contact";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
@@ -165,6 +166,11 @@ async function onMessage(event: WebSocketMessageEvent) {
         // Boot hydration has already run and minted throwaway member credentials, so this
         // overwrites them. DBSave persists the slice on its own.
         store.dispatch(importTrustchainStoreState(msg.payload));
+        break;
+      }
+      case "importContacts": {
+        store.dispatch(setContacts(msg.payload));
+        postMessage({ type: "contactsImported", id: msg.id, payload: "" });
         break;
       }
       case "mockDeviceEvent": {

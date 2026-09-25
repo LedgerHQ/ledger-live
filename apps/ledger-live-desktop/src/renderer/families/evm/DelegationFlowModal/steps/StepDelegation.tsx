@@ -1,5 +1,5 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import invariant from "invariant";
 import React, { useCallback } from "react";

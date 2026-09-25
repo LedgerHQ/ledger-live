@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import { TrackScreen, track } from "~/analytics";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_DEVICE, trackDeviceflowCanceled } from "../../utils/trackDeviceIntent";
 import { DiscoveryErrorState } from "./DiscoveryErrorState";
@@ -230,8 +230,10 @@ function renderState({
 describe("DiscoveryErrorState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    currentRouteNameRef.current = PAGE_CONNECT_DEVICE.DiscoveryError;
+    setTrackingSource(PAGE_CONNECT_DEVICE.DiscoveryError);
   });
+
+  afterEach(resetTrackingPages);
 
   it.each(errorCases)("should render the $type error title", ({ type, title }) => {
     renderState({ type });

@@ -1,4 +1,4 @@
-import { Strategy } from "@ledgerhq/coin-evm/types/index";
+import { Strategy } from "@ledgerhq/coin-evm/types";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Account } from "@ledgerhq/types-live";

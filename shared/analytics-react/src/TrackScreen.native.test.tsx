@@ -4,10 +4,11 @@ import React from "react";
 import { render, waitFor } from "@testing-library/react-native";
 import { useIsFocused } from "@react-navigation/native";
 import {
-  currentRouteNameRef,
-  previousRouteNameRef,
+  getCurrentTrackingPage,
+  resetTrackingPages,
   setAnalytics,
   setEnabledFn,
+  setTrackingSource,
 } from "@shared/analytics";
 import { TrackScreen } from "./TrackScreen.native";
 
@@ -19,8 +20,7 @@ beforeEach(() => {
   mockUseIsFocused.mockReturnValue(true);
   setAnalytics({ track });
   setEnabledFn(() => true);
-  currentRouteNameRef.current = undefined;
-  previousRouteNameRef.current = undefined;
+  resetTrackingPages();
 });
 
 describe("TrackScreen", () => {
@@ -88,7 +88,7 @@ describe("TrackScreen", () => {
     render(<TrackScreen category="Portfolio" />).unmount();
     render(<TrackScreen category="Market" />);
 
-    expect(currentRouteNameRef.current).toBe("Market");
+    expect(getCurrentTrackingPage()).toBe("Market");
     await waitFor(() => {
       expect(track).toHaveBeenLastCalledWith("Page Market", {
         source: "Portfolio",
@@ -97,14 +97,14 @@ describe("TrackScreen", () => {
   });
 
   it("leaves the current screen untouched when it does not refresh the source", async () => {
-    currentRouteNameRef.current = "Portfolio";
+    setTrackingSource("Portfolio");
 
     render(<TrackScreen category="Some Modal" refreshSource={false} />);
 
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
     });
-    expect(currentRouteNameRef.current).toBe("Portfolio");
+    expect(getCurrentTrackingPage()).toBe("Portfolio");
   });
 
   it("sends a single screen event when StrictMode mounts the component twice", async () => {

@@ -5,7 +5,7 @@ import * as xrpModule from "@ledgerhq/coin-xrp/api";
 import * as stellarModule from "@ledgerhq/coin-stellar/api";
 import * as cantonModule from "@ledgerhq/coin-canton/api/index";
 import * as tronModule from "@ledgerhq/coin-tron/api/index";
-import * as evmModule from "@ledgerhq/coin-evm/api/index";
+import * as evmModule from "@ledgerhq/coin-evm/api";
 import * as cardanoModule from "@ledgerhq/coin-cardano/api/index";
 import * as config from "../../../config";
 import * as networkApi from "./network/network-coin-service";
@@ -49,7 +49,7 @@ jest.mock("@ledgerhq/coin-tron/api/index", () => ({
   createApi: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-evm/api/index", () => ({
+jest.mock("@ledgerhq/coin-evm/api", () => ({
   createApi: jest.fn(),
 }));
 

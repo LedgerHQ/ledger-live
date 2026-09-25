@@ -1,10 +1,10 @@
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { getGasTracker } from "@ledgerhq/coin-evm/network/gasTracker/index";
+import { getGasTracker } from "@ledgerhq/coin-evm/network";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { EvmTransactionEIP1559, EvmTransactionLegacy, Transaction } from "../types";
-import type { EditType, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { EditType, GasOptions } from "@ledgerhq/coin-evm/types";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
 import { getCurrencyConfiguration } from "../../../config";
 

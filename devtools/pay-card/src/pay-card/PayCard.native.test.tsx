@@ -199,6 +199,7 @@ describe("PayCard (native)", () => {
     const onNavigateToPortfolio = jest.fn();
     const onNavigateToPayTab = jest.fn();
     const onNavigateToPaySuccess = jest.fn();
+    const onNavigateToPaySuccessMe = jest.fn();
     const onNavigateToSendSuccess = jest.fn();
     render(
       <PayCard
@@ -206,6 +207,7 @@ describe("PayCard (native)", () => {
         onNavigateToPortfolio={onNavigateToPortfolio}
         onNavigateToPayTab={onNavigateToPayTab}
         onNavigateToPaySuccess={onNavigateToPaySuccess}
+        onNavigateToPaySuccessMe={onNavigateToPaySuccessMe}
         onNavigateToSendSuccess={onNavigateToSendSuccess}
       />,
     );
@@ -214,10 +216,12 @@ describe("PayCard (native)", () => {
     await user.press(screen.getByText("Go to Portfolio"));
     await user.press(screen.getByText("Go to Pay tab"));
     await user.press(screen.getByText("Pay contact success"));
+    await user.press(screen.getByText("Pay contact success (Me)"));
     await user.press(screen.getByText("Send success"));
     expect(onNavigateToPortfolio).toHaveBeenCalledTimes(1);
     expect(onNavigateToPayTab).toHaveBeenCalledTimes(1);
     expect(onNavigateToPaySuccess).toHaveBeenCalledTimes(1);
+    expect(onNavigateToPaySuccessMe).toHaveBeenCalledTimes(1);
     expect(onNavigateToSendSuccess).toHaveBeenCalledTimes(1);
   });
 

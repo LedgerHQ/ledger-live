@@ -5,10 +5,15 @@ import { getStakes } from "./getStakes";
 // validator's `/delegations` and picking a delegator with a non-zero stake (re-derive if it goes
 // stale). Babylon's x/epoching makes exact staking amounts/counts time-dependent, so this asserts
 // structural invariants only.
-// Re-derived 2026-09-25: the previous delegator fully unbonded (0 delegations) for the third time,
-// reddening this job on every coin-cosmos PR. This one spreads its stake across fourteen bonded
-// validators, so the result only empties once all of them unbond.
-const ADDR = "bbn1pz50045uvxrwyc6rxvzlg9047tmttkwquqns3m";
+// Re-derived 2026-09-25: the previous delegator (bbn1kvp570cd6zvzh8ffrhz7lmytt6v6u2gxxmq6qy) fully
+// unbonded (0 delegations) again, reddening this job on every coin-cosmos PR — same failure mode as
+// the 2026-09-21 re-derivation. Method: GET .../cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED
+// against https://babylon.coin.ledger.com, then GET .../validators/{operator_address}/delegations for a
+// few large bonded validators, and picked a delegator address appearing with a non-zero balance across
+// several of those validators' delegator lists. This one has active delegations to 3 distinct bonded,
+// non-jailed validators (Moon Core, Keplr, Anchorage Digital 1), so a single unbonding no longer empties
+// the result. Verified via GET .../cosmos/staking/v1beta1/delegations/{address}.
+const ADDR = "bbn1qe2g5cspv4m59chuhrmy26f6ddrygtms6jx6zj";
 
 describe("getStakes (integ, Babylon)", () => {
   it("returns stakes with a well-formed delegate address and a positive amount", async () => {

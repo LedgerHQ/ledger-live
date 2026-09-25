@@ -49,8 +49,8 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { closePlatformExchange } from "./closePlatformExchange";
+import { getTrackingRouteLiveAppSource } from "./analytics";
 import { NetworkError } from "./NetworkError";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
@@ -80,10 +80,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
           track(eventName, {
             ...properties,
-            flowInitiatedFrom:
-              currentRouteNameRef.current === "Platform Catalog"
-                ? "Discover"
-                : currentRouteNameRef.current,
+            flowInitiatedFrom: getTrackingRouteLiveAppSource(),
           }),
         ),
       [],
@@ -168,10 +165,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             enableAccountSelection: true,
             onAccountSelected: onSuccess,
             flow: manifest.name,
-            source:
-              currentRouteNameRef.current === "Platform Catalog"
-                ? "Discover"
-                : (currentRouteNameRef.current ?? "Unknown"),
+            source: getTrackingRouteLiveAppSource(),
           });
         }),
       [tracking, manifest, deactivatedCurrencyIds, walletState.accountNames, openModularDrawer],

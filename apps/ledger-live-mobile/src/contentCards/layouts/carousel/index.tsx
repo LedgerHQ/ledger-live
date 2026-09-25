@@ -17,7 +17,7 @@ import { WidthFactor } from "~/contentCards/layouts/types";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { useInViewContext } from "LLM/contexts/InViewContext";
 import { track } from "~/analytics";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { getCurrentTrackingPage } from "~/analytics/screenRefs";
 import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
 
 const CONTAINER_IMPRESSION_THRESHOLD = 0.8;
@@ -136,7 +136,7 @@ const Carousel = ContentLayoutBuilder<Props>(
 
         const isNowVisible = progressRatio >= CONTAINER_IMPRESSION_THRESHOLD;
         if (isNowVisible && !isContainerVisibleRef.current) {
-          const page = currentRouteNameRef.current ?? "";
+          const page = getCurrentTrackingPage();
           visibleCardsRef.current.forEach(id => {
             const item = items.find(i => i.props.metadata.id === id);
             if (item?.props.location) {
