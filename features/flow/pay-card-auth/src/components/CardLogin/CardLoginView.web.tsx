@@ -58,5 +58,10 @@ export function CardLoginView({
 }
 
 function CardLoginSkeleton() {
-  return <Skeleton className="h-80 w-full rounded-lg" data-testid="card-login-skeleton" />;
+  return (
+    <div className="flex flex-col items-center gap-16" data-testid="card-login-skeleton">
+      <Skeleton className="h-48 w-full rounded-full" />
+      <Skeleton className="h-48 w-full rounded-full" />
+    </div>
+  );
 }

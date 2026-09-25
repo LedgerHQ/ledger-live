@@ -82,14 +82,13 @@ describe("RightPanel", () => {
   });
 
   describe("card variant", () => {
-    it("renders a skeleton while the card session is unresolved, and no swap webview", () => {
+    it("renders the card face and the login skeleton while the card session is unresolved", () => {
       render(<RightPanel variant="card" />);
 
       expect(screen.getByTestId("pay-card-container")).toBeVisible();
-      expect(screen.getByTestId("card-artwork-skeleton")).toBeVisible();
+      expect(screen.getByTestId("card-visual")).toBeVisible();
+      expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.getByTestId("card-login-skeleton")).toBeVisible();
-      expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("card-visual")).not.toBeInTheDocument();
       expect(screen.queryByTestId("swap-webview-embedded")).not.toBeInTheDocument();
       expect(mockUseSwapViewModel).not.toHaveBeenCalled();
     });

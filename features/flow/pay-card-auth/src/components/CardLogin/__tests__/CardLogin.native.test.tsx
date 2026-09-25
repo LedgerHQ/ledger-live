@@ -53,13 +53,14 @@ function buildViewModel(isResolving: boolean): CardLoginViewModel {
 }
 
 describe("CardLogin (Native)", () => {
-  it("should stand a skeleton in for the artwork while the session resolves", () => {
+  it("should keep the card mounted, and hide the login block, while the session resolves", () => {
     viewModel = buildViewModel(true);
 
     renderCardLogin();
 
-    expect(screen.getByTestId("card-artwork-skeleton")).toBeVisible();
-    expect(screen.queryByTestId("card-artwork")).toBeNull();
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
+    expect(screen.queryByText("Crypto Card")).toBeNull();
+    expect(screen.queryByLabelText("Get card")).toBeNull();
   });
 
   it("should show the artwork once the session is resolved", () => {
@@ -68,7 +69,6 @@ describe("CardLogin (Native)", () => {
     renderCardLogin();
 
     expect(screen.getByTestId("card-artwork")).toBeVisible();
-    expect(screen.queryByTestId("card-artwork-skeleton")).toBeNull();
   });
 
   it("should show the login block once the session is resolved", () => {

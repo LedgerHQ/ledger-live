@@ -2,7 +2,6 @@ import React from "react";
 import {
   Box,
   Button,
-  Skeleton,
   Subheader,
   SubheaderDescription,
   SubheaderRow,
@@ -29,9 +28,7 @@ export function CardLoginView({
 }: CardLoginNativeViewProps) {
   return (
     <>
-      {isResolving ? (
-        <CardLoginSkeleton />
-      ) : (
+      {isResolving ? null : (
         <Box
           lx={{
             flexDirection: "column",
@@ -61,14 +58,5 @@ export function CardLoginView({
       <CardAuthError error={error} />
       <CardLoginIntroView {...intro} />
     </>
-  );
-}
-
-function CardLoginSkeleton() {
-  return (
-    <Skeleton
-      lx={{ height: "s80", width: "full", borderRadius: "lg" }}
-      testID="card-login-skeleton"
-    />
   );
 }

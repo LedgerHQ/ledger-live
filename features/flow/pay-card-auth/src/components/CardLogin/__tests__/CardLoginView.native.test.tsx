@@ -108,10 +108,10 @@ describe("CardLoginView (Native)", () => {
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 
-  it("should show a skeleton in place of the login block while the session resolves", () => {
+  it("should show nothing in place of the login block while the session resolves", () => {
     renderCardLoginView({ isResolving: true });
 
-    expect(screen.getByTestId("card-login-skeleton")).toBeVisible();
+    expect(screen.queryByText("Crypto card")).toBeNull();
     expect(screen.queryByLabelText("Login")).toBeNull();
   });
 });
