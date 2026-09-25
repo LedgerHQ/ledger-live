@@ -51,13 +51,7 @@ export function RequestReceiveView({
           testID="pay-request-receive-close"
         />
       </Box>
-      <Box
-        lx={{
-          flex: 1,
-          marginTop: "s24",
-          paddingHorizontal: "s8",
-        }}
-      >
+      <Box lx={{ marginTop: "s24", paddingHorizontal: "s8" }}>
         <RequestReceiveSummary
           title={title}
           networkLabel={networkLabel}
@@ -68,8 +62,12 @@ export function RequestReceiveView({
           cardRef={cardRef}
         />
       </Box>
-      <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s24" }}>
-        {hint ? <RequestReceiveVerifyHint {...hint} /> : null}
+      <Box lx={{ marginTop: "s12", paddingHorizontal: "s16", paddingBottom: "s24" }}>
+        {hint ? (
+          <Box lx={{ position: "absolute", right: "s16" }} style={{ bottom: "100%" }}>
+            <RequestReceiveVerifyHint {...hint} />
+          </Box>
+        ) : null}
         <RequestReceiveActions
           visibleActions={visibleActions}
           hasCopied={hasCopied}
