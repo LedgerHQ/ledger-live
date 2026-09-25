@@ -8,10 +8,15 @@ import {
   FeatureIdSchema,
   featureFlagsBannerVisibleSelector,
   groupedFeatures,
+  type GroupedFeature,
   setAllOverrides,
   setBannerVisible,
 } from "@shared/feature-flags";
 import { useFeature, useHasLocallyOverriddenFeatureFlags } from "@features/platform-feature-flags";
+import {
+  clearContentAbTestOverrides,
+  hasContentAbTestOverrides,
+} from "~/firebase/contentAbTestCopy";
 import { Flex, SearchInput, Alert, Tag, Text } from "@ledgerhq/react-ui";
 import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
@@ -20,6 +25,9 @@ import lowerCase from "lodash/lowerCase";
 import trim from "lodash/trim";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import FeatureFlagDetails from "./FeatureFlagDetails";
+import ContentAbTestDetails, { CONTENT_AB_TESTS_GROUP } from "./ContentAbTestDetails";
+import ContentAbTestsGroup from "./ContentAbTestsGroup";
+import { useContentAbTests } from "./useContentAbTests";
 import GroupedFeatures from "./GroupedFeatures";
 import TabBar from "~/renderer/components/TabBar";
 import { objectKeysType } from "@ledgerhq/live-common/helpers";
@@ -34,6 +42,8 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
   const searchInputTrimmed = trim(searchInput);
   const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
   const [focusedGroupName, setFocusedGroupName] = useState<string | undefined>();
+  const [focusedContentAbTest, setFocusedContentAbTest] = useState<string | undefined>();
+  const contentAbTests = useContentAbTests();
 
   const featureFlags = useMemo(() => {
     const featureKeys = Object.keys(FEATURE_FLAGS_DEFAULTS);
@@ -67,34 +77,93 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
       );
   }, [searchInput]);
 
-  const flagsList = useMemo(
+  const contentAbTestNames = useMemo(() => Object.keys(contentAbTests).sort(), [contentAbTests]);
+
+  const filteredContentAbTests = useMemo(
     () =>
-      filteredFlags.map(flagName => (
-        <FeatureFlagDetails
-          key={flagName}
-          focused={focusedName === flagName}
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          flagName={flagName as FeatureId}
-          setFocusedName={setFocusedName}
-        />
-      )),
-    [filteredFlags, focusedName],
+      contentAbTestNames.filter(
+        name => !searchInput || includes(lowerCase(name), lowerCase(searchInput)),
+      ),
+    [contentAbTestNames, searchInput],
   );
 
-  const groupsList = useMemo(
+  const flagsList = useMemo(
     () =>
-      filteredGroups
-        .sort()
-        .map(groupName => (
-          <GroupedFeatures
-            key={groupName}
-            groupName={groupName}
-            focused={focusedGroupName === groupName}
+      [
+        ...filteredContentAbTests.map(name => ({ kind: "ab" as const, name })),
+        ...filteredFlags.map(name => ({ kind: "ff" as const, name })),
+      ]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(row =>
+          row.kind === "ab" ? (
+            <ContentAbTestDetails
+              key={`ab-${row.name}`}
+              testName={row.name}
+              testValue={contentAbTests[row.name]}
+              focused={focusedContentAbTest === row.name}
+              setFocusedName={setFocusedContentAbTest}
+            />
+          ) : (
+            <FeatureFlagDetails
+              key={`ff-${row.name}`}
+              focused={focusedName === row.name}
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              flagName={row.name as FeatureId}
+              setFocusedName={setFocusedName}
+            />
+          ),
+        ),
+    [filteredContentAbTests, filteredFlags, contentAbTests, focusedContentAbTest, focusedName],
+  );
+
+  const contentAbTestsGroupVisible =
+    contentAbTestNames.length > 0 &&
+    (!searchInput ||
+      filteredContentAbTests.length > 0 ||
+      includes(lowerCase(CONTENT_AB_TESTS_GROUP), lowerCase(searchInput)));
+
+  const setFocusedFeatureGroupName = useCallback((name: GroupedFeature | undefined) => {
+    setFocusedGroupName(name);
+  }, []);
+
+  const groupsList = useMemo(() => {
+    const items: Array<{ kind: "ab" } | { kind: "ff"; groupName: GroupedFeature }> = [
+      ...filteredGroups.map(groupName => ({ kind: "ff" as const, groupName })),
+    ];
+    if (contentAbTestsGroupVisible) items.push({ kind: "ab" });
+
+    return items
+      .sort((a, b) => {
+        const nameA = a.kind === "ab" ? CONTENT_AB_TESTS_GROUP : a.groupName;
+        const nameB = b.kind === "ab" ? CONTENT_AB_TESTS_GROUP : b.groupName;
+        return nameA.localeCompare(nameB);
+      })
+      .map(item =>
+        item.kind === "ab" ? (
+          <ContentAbTestsGroup
+            key={CONTENT_AB_TESTS_GROUP}
+            contentAbTests={contentAbTests}
+            testNames={contentAbTestNames}
+            focused={focusedGroupName === CONTENT_AB_TESTS_GROUP}
             setFocusedGroupName={setFocusedGroupName}
           />
-        )),
-    [filteredGroups, focusedGroupName],
-  );
+        ) : (
+          <GroupedFeatures
+            key={item.groupName}
+            groupName={item.groupName}
+            focused={focusedGroupName === item.groupName}
+            setFocusedGroupName={setFocusedFeatureGroupName}
+          />
+        ),
+      );
+  }, [
+    filteredGroups,
+    contentAbTestsGroupVisible,
+    contentAbTests,
+    contentAbTestNames,
+    focusedGroupName,
+    setFocusedFeatureGroupName,
+  ]);
 
   const config = useFeature("firebaseEnvironmentReadOnly");
   const params = config?.params;
@@ -138,8 +207,11 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
           <Button
             style={{ alignSelf: "flex-start", marginTop: 12 }}
             appearance="accent"
-            onClick={() => dispatch(setAllOverrides({}))}
-            disabled={!hasLocallyOverriddenFlags}
+            onClick={() => {
+              dispatch(setAllOverrides({}));
+              clearContentAbTestOverrides();
+            }}
+            disabled={!hasLocallyOverriddenFlags && !hasContentAbTestOverrides()}
           >
             {t("settings.developer.featureFlagsRestoreAll")}
           </Button>
