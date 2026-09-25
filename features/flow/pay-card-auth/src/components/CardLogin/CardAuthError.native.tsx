@@ -12,6 +12,7 @@ export function CardAuthError({ error }: CardAuthErrorProps) {
     <QueuedBottomSheet
       isForcingToBeOpened={error !== null}
       onClose={error?.onDismiss}
+      restoreOnFocus
       enableDynamicSizing
       testID="card-auth-error-sheet"
     >
