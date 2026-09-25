@@ -15,9 +15,9 @@ import { getPendingTokenSpent, transactionToIntent } from "./utils";
  * The sponsored-send seam methods (`listFeeOptions`, `estimateSponsoredFeeQuote`,
  * `buildEnergyRentRequest`) take a `TransactionIntent`, but the app holds a bridge `Transaction`; this
  * is the one place that turns the latter into the former without the app touching family internals or
- * re-deriving the token asset by hand. `network`/`kind` mirror `getCoinModuleApi` (`kind = "local"`
- * for a generic-coin-framework family). Kept a thin standalone helper rather than refactoring that
- * hot path.
+ * re-deriving the token asset by hand. `network` is the family string and `kind` the coin-module
+ * kind (`"local"` for a generic-coin-framework family). Kept a thin standalone helper rather than
+ * refactoring that hot path.
  */
 export async function buildGenericTransactionIntent(
   network: string,
@@ -25,12 +25,10 @@ export async function buildGenericTransactionIntent(
   account: Account,
   transaction: GenericTransaction,
 ): Promise<ReturnType<typeof transactionToIntent>> {
-  // Resolve by `network` (the chain id), never `account.currency.id`: these agree only when the
-  // caller passes the parent-chain account, but the seam resolves by chain id, so use the param the
-  // signature already carries — the same key getBridgeApi below uses — to stay correct for a token
-  // account too.
-  const coinModuleApi = await getCoinModuleApi(network, kind);
-  const context = buildContext(network);
+  // Coin-module and context are keyed by currency id; getBridgeApi by the family (`network`) — the
+  // two differ for a multi-currency family.
+  const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
+  const context = buildContext(account.currency.id);
   const bridgeApi = await getBridgeApi(account.currency, network);
 
   const getAssetFromTokenForCurrency = bridgeApi.getAssetFromToken;

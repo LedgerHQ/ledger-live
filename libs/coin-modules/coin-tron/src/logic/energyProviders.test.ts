@@ -1,4 +1,4 @@
-import { ENERGY_PROVIDERS, TRONIFY_PROVIDER, getEnergyProvider } from "./energyProviders";
+import { ENERGY_PROVIDERS, TRONIFY_PROVIDER, findEnergyProvider } from "./energyProviders";
 
 describe("energyProviders", () => {
   it("registers Tronify with a disclosable display name", () => {
@@ -7,10 +7,10 @@ describe("energyProviders", () => {
   });
 
   it("resolves a known provider id to its metadata", () => {
-    expect(getEnergyProvider("tronify")).toEqual({ id: "tronify", name: "Tronify" });
+    expect(findEnergyProvider("tronify")).toEqual({ id: "tronify", name: "Tronify" });
   });
 
   it("returns undefined for an unknown provider id", () => {
-    expect(getEnergyProvider("unknown")).toBeUndefined();
+    expect(findEnergyProvider("unknown")).toBeUndefined();
   });
 });

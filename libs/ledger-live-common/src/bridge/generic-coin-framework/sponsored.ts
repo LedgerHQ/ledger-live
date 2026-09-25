@@ -11,6 +11,10 @@ import type { FeeOptionMeta } from "@ledgerhq/coin-module-framework/api/index";
  * family's factory return satisfies them) so the generic bridge takes no dependency on a specific
  * family. When the framework contract gains these methods, replace this interface with the contract
  * type — a lift-and-move.
+ *
+ * Generic in name only: the methods and phases (RENT_SIGNING -> POLLING -> TRANSFER) model TRON
+ * energy rental and aren't validated against a second mechanism — one with a different shape
+ * reshapes this contract rather than implementing it.
  */
 
 export type EnergyRentStatus = "pending" | "paid" | "delivered" | "failed" | "unknown";

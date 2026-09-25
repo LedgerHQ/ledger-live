@@ -1,4 +1,5 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../../config";
 import {
@@ -202,8 +203,6 @@ export function getEnergyRentStatus(
   return getEnergyProvider(config).getOrderStatus(logger, config, order);
 }
 
-const delay = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
-
 /** Rejection marker for a poll that outlived the hard deadline; caught by identity below and never
  * escapes this module. An Error instance so it is a valid Promise rejection reason. */
 const POLL_DEADLINE_REACHED = new Error("energy-rent-poll-deadline");
@@ -306,14 +305,8 @@ export async function awaitEnergyDeliveryWith(
   }
 }
 
-/**
- * On-chain energy available to `address` right now: `EnergyLimit − EnergyUsed` from
- * `/wallet/getaccountresource`, clamped at 0. On TRON (Stake 2.0) energy delegated *to* an account
- * raises that account's `EnergyLimit` — a delegatee uses the resource without staking itself — so a
- * receiver of a Tronify delegation sees its available energy rise here once the on-chain
- * `DelegateResourceContract` lands. Verified against TRON developer docs (resource-model /
- * getaccountresource); the provider order-status API is advisory only (ADR-058 C4).
- */
+/** `EnergyLimit − EnergyUsed`, clamped at 0. Delegated-in energy raises `EnergyLimit` (Stake 2.0), so this
+ * is the delivery authority (ADR-058 C4). */
 async function getOnChainEnergyAvailable(
   logger: Logger,
   config: TronCoinConfig,
@@ -323,15 +316,8 @@ async function getOnChainEnergyAvailable(
   return BigNumber.maximum(0, info.energyLimit.minus(info.energyUsed));
 }
 
-/**
- * Gate energy delivery on the receiver's on-chain resource state, not the provider API. Resolves once
- * `receiverAddress`'s available energy covers `energyNeeded` (the transfer's full requirement, from
- * `buildEnergyRentRequest`). The sponsored option is only ever offered to an energy-deficient sender,
- * so the threshold starts unmet and its crossing is positive proof the delegation landed and TX-C
- * will burn rented energy rather than TRX (LIVE-32780 AC2). The provider's `getOrderStatus` is
- * consulted only to fail fast on an explicit `failed`; it never confirms delivery — the status API is
- * advisory and its lifecycle mapping still carries an [assumption] (ADR-058 C4 / decision #2).
- */
+/** Resolve once the receiver's on-chain energy covers `energyNeeded` (ADR-058 C4); the threshold starts
+ * unmet since only an energy-deficient sender is offered this. The provider only fails fast on `failed`. */
 export function awaitEnergyDelivery(
   logger: Logger,
   config: TronCoinConfig,
@@ -345,12 +331,8 @@ export function awaitEnergyDelivery(
     // advisory provider call is skipped once the energy is present.
     const available = await getOnChainEnergyAvailable(logger, config, target.receiverAddress);
     if (available.gte(needed)) return "delivered";
-    // Still not on-chain: consult the provider only to surface an explicit failure early. Every other
-    // provider status — including its own "delivered"/"complete" — is treated as still pending, so
-    // the on-chain read remains the only thing that releases TX-C. The provider is advisory, so its
-    // own unavailability must not abort a delivery the on-chain read would confirm: a thrown status
-    // call is swallowed to "pending" rather than counting toward awaitEnergyDeliveryWith's error
-    // budget, leaving the on-chain read (or an explicit "failed") the only outcomes it drives.
+    // Provider is advisory: only an explicit "failed" counts; anything else, or a thrown call, stays
+    // "pending" so provider downtime can't abort a delivery the on-chain read would confirm.
     try {
       const status = await getEnergyRentStatus(logger, config, ref);
       return status === "failed" ? "failed" : "pending";
@@ -360,12 +342,7 @@ export function awaitEnergyDelivery(
   }, opts);
 }
 
-/**
- * One-shot version of the gate above: does `receiverAddress` already hold enough on-chain energy to
- * cover `energyNeeded`? Same authority (getaccountresource) as the poll, for the reconciliation paths
- * that must confirm delivery without polling — so the provider's advisory "delivered" never releases
- * TX-C on its own (LIVE-32780 AC2 / ADR-058 C4).
- */
+/** One-shot {@link awaitEnergyDelivery} gate for the reconcile paths. */
 export async function isEnergyDeliveredOnChain(
   logger: Logger,
   config: TronCoinConfig,

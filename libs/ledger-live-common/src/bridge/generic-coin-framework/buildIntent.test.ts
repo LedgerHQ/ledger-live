@@ -71,24 +71,20 @@ test("a token max-send reads the sub-account spendable balance as the amount", a
   expect(passedTx.amount).toEqual(new BigNumber(999));
 });
 
-test("resolves the coin-module and context by `network`, not the account's own currency id", async () => {
-  // A token account whose currency id (tron/trc20/usdt) is NOT the chain network id (tron): the
-  // module + context must resolve by the `network` arg, or a token send would load the wrong module.
-  const tokenAccount = {
-    currency: { id: "tron/trc20/usdt" },
-    freshAddress: "TSender",
-    subAccounts: [{ id: "sub1", spendableBalance: new BigNumber(999) }],
+test("resolves the coin-module and context by currency id, and the bridge by the family network", async () => {
+  // A multi-currency family: the family string ("evm") differs from the currency id ("ethereum").
+  const evmAccount = {
+    currency: { id: "ethereum" },
+    freshAddress: "0xSender",
+    subAccounts: [],
   } as never;
-  const transaction = {
-    recipient: "TRecv",
-    amount: new BigNumber(5),
-    subAccountId: "sub1",
-  } as never;
+  const transaction = { recipient: "0xRecv", amount: new BigNumber(5) } as never;
 
-  await buildGenericTransactionIntent("tron", "local", tokenAccount, transaction);
+  await buildGenericTransactionIntent("evm", "local", evmAccount, transaction);
 
-  expect(mockGetCoinModuleApi).toHaveBeenCalledWith("tron", "local");
-  expect(mockBuildContext).toHaveBeenCalledWith("tron");
+  expect(mockGetCoinModuleApi).toHaveBeenCalledWith("ethereum", "local");
+  expect(mockBuildContext).toHaveBeenCalledWith("ethereum");
+  expect(mockGetBridgeApi).toHaveBeenCalledWith({ id: "ethereum" }, "evm");
 });
 
 test("falls back to the transaction's own asset fields when the family has no getAssetFromToken", async () => {

@@ -36,17 +36,16 @@ export type UseSponsoredSendOrchestrationParams = Readonly<{
 
 export type SponsoredSendActions = Readonly<{
   craftRent: () => Promise<void>; // craft order, phase -> RENT_SIGNING
+  // Every externally-fired callback below takes signedPaymentTxId: state.paymentTxId captured when the
+  // device step STARTED (not re-read when it resolves — the live value always matches). A callback from
+  // a superseded cycle is then dropped; the phase repeats across cycles, so it can't identify one alone.
+  //
   // submit TX A (rebuilt from the device's combined signature via the family seam) + await delivery.
   // TX A's hash is captured on state at craft, so a delivery timeout can surface it for support/refund.
-  // signedPaymentTxId is the paymentTxId the caller signed against; pass it so a signature from a
-  // superseded signing cycle is dropped rather than signed against the current order.
-  startRentPayment: (combinedSignature: string, signedPaymentTxId?: string) => Promise<void>;
-  onTransferSuccess: () => void; // UI calls when TX C is broadcast — terminal DONE
-  // UI calls on a device contract-data refusal. signedPaymentTxId is the flow's paymentTxId the refusal
-  // pertains to; pass it so a refusal from a superseded signing cycle is dropped rather than failing the
-  // current order (the phase repeats across cycles, so it can't identify one on its own).
-  setContractDataFailure: (error: Error, signedPaymentTxId?: string) => void;
-  onTransferError: (error: Error) => void; // UI calls when TX C fails after delivery
+  startRentPayment: (combinedSignature: string, signedPaymentTxId: string | null) => Promise<void>;
+  onTransferSuccess: (signedPaymentTxId: string | null) => void; // UI calls when TX C is broadcast — terminal DONE
+  setContractDataFailure: (error: Error, signedPaymentTxId: string | null) => void; // UI calls on a device contract-data refusal
+  onTransferError: (error: Error, signedPaymentTxId: string | null) => void; // UI calls when TX C fails after delivery
   retry: () => void; // reset to the correct step by failureKind
   reset: () => void; // back to IDLE
 }>;
@@ -82,11 +81,15 @@ type Action =
   | { type: "DELIVERY_SUCCESS"; paymentTxId?: string }
   | { type: "DELIVERY_TIMEOUT"; error: Error & { paymentTxId?: string } }
   | { type: "DELIVERY_FAILURE"; error: Error; paymentTxId?: string }
-  | { type: "TRANSFER_SUCCESS" }
-  | { type: "CONTRACT_DATA_FAILURE"; error: Error; signedPaymentTxId?: string }
-  | { type: "TRANSFER_FAILURE"; error: Error }
+  | { type: "TRANSFER_SUCCESS"; signedPaymentTxId: string | null }
+  | { type: "CONTRACT_DATA_FAILURE"; error: Error; signedPaymentTxId: string | null }
+  | { type: "TRANSFER_FAILURE"; error: Error; signedPaymentTxId: string | null }
   | { type: "RETRY" }
   | { type: "RESET" };
+
+function isCurrentCycle(state: SponsoredState, signedPaymentTxId: string | null): boolean {
+  return signedPaymentTxId !== null && signedPaymentTxId === state.paymentTxId;
+}
 
 function reducer(state: SponsoredState, action: Action): SponsoredState {
   switch (action.type) {
@@ -136,6 +139,7 @@ function reducer(state: SponsoredState, action: Action): SponsoredState {
       // fired externally by the UI device action, so a delayed callback from a flow that was reset and
       // reused must not drive the new flow (still at IDLE/RENT_SIGNING, or already terminal) to DONE.
       if (state.phase !== SPONSORED_PHASE.TRANSFER) return state;
+      if (!isCurrentCycle(state, action.signedPaymentTxId)) return state;
       return {
         ...state,
         phase: SPONSORED_PHASE.DONE,
@@ -174,15 +178,7 @@ function reducer(state: SponsoredState, action: Action): SponsoredState {
       ) {
         return state;
       }
-      // reset() + re-craft returns a new order to a signing phase, so the phase alone can't tell a stale
-      // refusal from the previous cycle apart from a live one. When the caller passes the paymentTxId the
-      // refusal pertains to, drop it on a mismatch rather than fail the current order.
-      if (
-        action.signedPaymentTxId !== undefined &&
-        action.signedPaymentTxId !== state.paymentTxId
-      ) {
-        return state;
-      }
+      if (!isCurrentCycle(state, action.signedPaymentTxId)) return state;
       return {
         ...state,
         phase: SPONSORED_PHASE.FAILED,
@@ -198,6 +194,7 @@ function reducer(state: SponsoredState, action: Action): SponsoredState {
       // Same guard as TRANSFER_SUCCESS: a stale externally-fired transfer callback must not fail a flow
       // that is no longer in the transfer step.
       if (state.phase !== SPONSORED_PHASE.TRANSFER) return state;
+      if (!isCurrentCycle(state, action.signedPaymentTxId)) return state;
       return {
         ...state,
         phase: SPONSORED_PHASE.FAILED,
@@ -270,18 +267,9 @@ async function onChainDelivered(
 }
 
 /**
- * Reconcile an ambiguous rent-payment submit rejection into the action to dispatch.
- * submitEnergyRentPayment asks the provider to broadcast TX-A, so a rejection is ambiguous: the
- * payment may already be on-chain. TX-C is released only when delivery is confirmed on-chain, read
- * directly and independent of the provider's advisory status (LIVE-32780 AC2) — the provider's
- * order list pages only recent orders, so it can still report `paid`/`pending` after the delegation
- * has landed. Route to SUBMIT_FAILURE (-> RENT_PAYMENT copy, "funds not moved"; retry re-crafts a new
- * paid order) ONLY when the order is definitively unpaid; a paid/pending/unconfirmable payment goes to
- * DELIVERY_FAILURE ("funds moved, contact support") so a retry never silently pays twice. If the submit
- * was never attempted (seam unavailable), funds truly did not move. `paymentTxId` rides along so the
- * failure screen can show the hash for support/refund.
- * NOTE (follow-up): DELIVERY_FAILED's own retry still re-crafts; a non-re-crafting "payment uncertain"
- * state + resumable polling is the complete fix. See LIVE-32780 review.
+ * Reconcile an ambiguous TX-A submit rejection: confirmed on-chain → TX-C (ADR-058 C4); definitively
+ * unpaid or never submitted → SUBMIT_FAILURE; otherwise DELIVERY_FAILURE, so a retry never pays twice.
+ * NOTE (follow-up): DELIVERY_FAILED still re-crafts on retry; needs a "payment uncertain" state (LIVE-32780).
  */
 async function reconcileSubmitFailure(
   error: Error,
@@ -294,44 +282,40 @@ async function reconcileSubmitFailure(
     target?: { receiverAddress: string; energyNeeded: bigint };
   }>,
 ): Promise<Action> {
-  let fundsMayHaveMoved = false;
-  if (ctx.submitAttempted && ctx.seam && ctx.payerAddress) {
+  const { submitAttempted, seam, orderId, payerAddress, paymentTxId, target } = ctx;
+  if (!submitAttempted || !seam) return { type: "SUBMIT_FAILURE", error };
+  const readFundsMayHaveMoved = async (): Promise<boolean> => {
+    if (!payerAddress) return true;
     try {
-      const status = await ctx.seam.getEnergyRentStatus({
-        orderId: ctx.orderId,
-        payerAddress: ctx.payerAddress,
-      });
-      fundsMayHaveMoved = status !== "failed";
+      const status = await seam.getEnergyRentStatus({ orderId, payerAddress });
+      return status !== "failed";
     } catch {
       // Can't confirm the payment did NOT land — assume it may have, to avoid a double charge.
-      fundsMayHaveMoved = true;
+      return true;
     }
-  }
+  };
   // On-chain is authoritative and read regardless of provider status (mirrors reconcileDeliveryOutcome):
   // a delegation that landed while the provider still reports paid/pending must reach TX-C, not support.
   // Gated on submitAttempted: with no submit, any on-chain energy is pre-existing (not from this order),
   // so it must not be read as "delivered" — that would reserve rent for a payment that never happened.
-  if (
-    ctx.submitAttempted &&
-    ctx.seam &&
-    ctx.target &&
-    (await onChainDelivered(ctx.seam, ctx.target))
-  ) {
-    return { type: "DELIVERY_SUCCESS", paymentTxId: ctx.paymentTxId };
+  const readDelivered = async (): Promise<boolean> =>
+    target ? onChainDelivered(seam, target) : false;
+  // Safe to run concurrently only because both reads fail closed internally (never reject).
+  const [fundsMayHaveMoved, delivered] = await Promise.all([
+    readFundsMayHaveMoved(),
+    readDelivered(),
+  ]);
+  if (delivered) {
+    return { type: "DELIVERY_SUCCESS", paymentTxId };
   }
   return fundsMayHaveMoved
-    ? { type: "DELIVERY_FAILURE", error, paymentTxId: ctx.paymentTxId }
+    ? { type: "DELIVERY_FAILURE", error, paymentTxId }
     : { type: "SUBMIT_FAILURE", error };
 }
 
 /**
- * Reconcile a delivery-poll rejection into the action to dispatch. A client-deadline timeout is not a
- * definitive failure — the rented energy may have landed just after our deadline — so do one final
- * authoritative on-chain read: a delivery confirmed on-chain is salvaged (DELIVERY_SUCCESS -> proceed
- * to TX-C) instead of prompting a second paid rental, while the provider's advisory status is never
- * trusted to release TX-C (LIVE-32780 AC2). Any non-timeout error is a plain DELIVERY_FAILURE.
- * NOTE (follow-up): a still-pending order lands on DELIVERY_FAILED, whose retry re-crafts; the complete
- * fix is a no-re-craft "payment uncertain" state + resumable polling.
+ * A poll timeout isn't definitive: one final on-chain read salvages a late delivery (ADR-058 C4) rather
+ * than prompting a second rental. Any other error is DELIVERY_FAILURE. Same follow-up as above.
  */
 async function reconcileDeliveryOutcome(
   error: Error & { paymentTxId?: string },
@@ -466,7 +450,8 @@ async function runDeliveryPoll(
 /**
  * Two-signature orchestration for a TRON Tronify sponsored send: craft an energy-rent order (TX A),
  * have the device sign + submit its payment (TX A), poll until the rented energy is delivered
- * on-chain, then hand control back to the caller to send the actual transfer (TX C).
+ * on-chain, then hand control back to the caller to send the actual transfer (TX C). The phases are
+ * that mechanism's, not a validated cross-family model (see SponsoredCoinApi).
  */
 export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrationParams): {
   state: SponsoredState;
@@ -572,7 +557,7 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
   }, [getSeam, params.intent]);
 
   const startRentPayment = useCallback(
-    async (combinedSignature: string, signedPaymentTxId?: string) => {
+    async (combinedSignature: string, signedPaymentTxId: string | null) => {
       // One snapshot of the live state (stateRef) at entry, so order/payer/txid stay mutually consistent
       // for this submit.
       const s = stateRef.current;
@@ -585,7 +570,7 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
       // Bind the signature to the order it was produced for: reset() + re-craft yields a new order under a
       // new RENT_SIGNING cycle, so a delayed signature from the previous cycle would otherwise be combined
       // with the current order's bytes (the phase alone can't tell two cycles apart).
-      if (signedPaymentTxId !== undefined && signedPaymentTxId !== s.paymentTxId) return;
+      if (!isCurrentCycle(s, signedPaymentTxId)) return;
       if (inFlightRef.current) return;
       inFlightRef.current = true;
       try {
@@ -667,18 +652,18 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
     [getSeam, params.pollOpts, params.onRentPaymentBroadcast],
   );
 
-  const setContractDataFailure = useCallback((error: Error, signedPaymentTxId?: string) => {
+  const setContractDataFailure = useCallback((error: Error, signedPaymentTxId: string | null) => {
     // The resume phase and the identity check are both derived by the reducer from live state at dispatch
     // time (CONTRACT_DATA_FAILURE), so this needs no phase dependency of its own.
     dispatch({ type: "CONTRACT_DATA_FAILURE", error, signedPaymentTxId });
   }, []);
 
-  const onTransferSuccess = useCallback(() => {
-    dispatch({ type: "TRANSFER_SUCCESS" });
+  const onTransferSuccess = useCallback((signedPaymentTxId: string | null) => {
+    dispatch({ type: "TRANSFER_SUCCESS", signedPaymentTxId });
   }, []);
 
-  const onTransferError = useCallback((error: Error) => {
-    dispatch({ type: "TRANSFER_FAILURE", error });
+  const onTransferError = useCallback((error: Error, signedPaymentTxId: string | null) => {
+    dispatch({ type: "TRANSFER_FAILURE", error, signedPaymentTxId });
   }, []);
 
   const retry = useCallback(() => {

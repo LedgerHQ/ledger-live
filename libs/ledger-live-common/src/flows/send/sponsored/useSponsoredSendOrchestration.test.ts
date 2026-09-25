@@ -125,7 +125,7 @@ test("submit failure the provider confirms unpaid -> RENT_PAYMENT (safe to re-cr
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.getEnergyRentStatus).toHaveBeenCalledWith({ orderId: "o1", payerAddress: "TPayer" });
@@ -148,7 +148,7 @@ test("reset while seam resolution is pending skips the irreversible payment subm
   // generation before the post-await guard. The device already signed TX-A, but the flow was
   // abandoned, so the stale payment must never reach submitEnergyRentPayment.
   await act(async () => {
-    const pending = result.current.actions.startRentPayment("sig");
+    const pending = result.current.actions.startRentPayment("sig", "txA");
     result.current.actions.reset();
     await pending;
   });
@@ -171,7 +171,7 @@ test("closing the dialog (unmount) while seam resolution is pending skips the pa
   // unmount() runs the hook's cleanup, bumping the generation, after startRentPayment has entered
   // `await getSeam()` but before its post-await guard.
   await act(async () => {
-    const pending = result.current.actions.startRentPayment("sig");
+    const pending = result.current.actions.startRentPayment("sig", "txA");
     unmount();
     await pending;
   });
@@ -203,7 +203,7 @@ test("closing the dialog (unmount) during polling aborts the delivery poll", asy
   });
 
   await act(async () => {
-    void result.current.actions.startRentPayment("sig");
+    void result.current.actions.startRentPayment("sig", "txA");
     await started;
   });
 
@@ -230,7 +230,7 @@ test.each([["paid"], ["pending"], ["unknown"]])(
       await result.current.actions.craftRent();
     });
     await act(async () => {
-      await result.current.actions.startRentPayment("sig");
+      await result.current.actions.startRentPayment("sig", "txA");
     });
 
     expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -254,7 +254,7 @@ test("submit failure the provider reports delivered AND the chain confirms -> pr
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.isEnergyDelivered).toHaveBeenCalledWith({
@@ -282,7 +282,7 @@ test("submit failure the provider reports delivered but the chain does NOT confi
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -306,7 +306,7 @@ test("submit failure, provider still reports paid but the chain confirms -> proc
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.isEnergyDelivered).toHaveBeenCalledWith({
@@ -330,7 +330,7 @@ test("submit-path DELIVERY_FAILED carries the caller's paymentTxId for the suppo
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.DELIVERY_FAILED);
@@ -350,7 +350,7 @@ test("submit failure whose reconciliation also fails -> DELIVERY_FAILED (avoid d
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -376,7 +376,7 @@ test("delivery timeout the chain then confirms delivered -> proceeds to TRANSFER
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.isEnergyDelivered).toHaveBeenCalledWith({
@@ -406,7 +406,7 @@ test("delivery timeout the chain does NOT confirm -> DELIVERY_FAILED (provider s
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -432,7 +432,7 @@ test("happy path: craft -> RENT_SIGNING, startRentPayment -> TRANSFER", async ()
   });
 
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.submitEnergyRentPayment).toHaveBeenCalledWith({
@@ -457,7 +457,7 @@ test("a stale signature callback after the flow advanced past RENT_SIGNING does 
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   // The flow has advanced to TRANSFER with the order still on state. The in-flight guard has cleared,
@@ -467,7 +467,7 @@ test("a stale signature callback after the flow advanced past RENT_SIGNING does 
   expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
 
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
@@ -491,13 +491,13 @@ test("a RETAINED startRentPayment closure re-fired after the flow advanced does 
   // live phase through stateRef rather than the RENT_SIGNING snapshot this closure captured.
   const staleStart = result.current.actions.startRentPayment;
   await act(async () => {
-    await staleStart("sig");
+    await staleStart("sig", "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
   expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
 
   await act(async () => {
-    await staleStart("sig");
+    await staleStart("sig", "txA");
   });
   expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
@@ -560,7 +560,7 @@ test("awaitEnergyDelivery timeout -> FAILED / DELIVERY_FAILED, carries paymentTx
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -581,7 +581,7 @@ test("awaitEnergyDelivery generic order failure -> FAILED / DELIVERY_FAILED (pay
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -600,12 +600,12 @@ test("onTransferError sets phase FAILED / failureKind TRANSFER", async () => {
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
 
   act(() => {
-    result.current.actions.onTransferError(new Error("transfer boom"));
+    result.current.actions.onTransferError(new Error("transfer boom"), "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -626,7 +626,7 @@ test("retry from DELIVERY_FAILED -> RENT_SIGNING; retry from TRANSFER -> TRANSFE
     await timeoutHook.result.current.actions.craftRent();
   });
   await act(async () => {
-    await timeoutHook.result.current.actions.startRentPayment("sig");
+    await timeoutHook.result.current.actions.startRentPayment("sig", "txA");
   });
   expect(timeoutHook.result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.DELIVERY_FAILED);
 
@@ -645,12 +645,12 @@ test("retry from DELIVERY_FAILED -> RENT_SIGNING; retry from TRANSFER -> TRANSFE
     await transferHook.result.current.actions.craftRent();
   });
   await act(async () => {
-    await transferHook.result.current.actions.startRentPayment("sig");
+    await transferHook.result.current.actions.startRentPayment("sig", "txA");
   });
   expect(transferHook.result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
 
   act(() => {
-    transferHook.result.current.actions.onTransferError(new Error("transfer boom"));
+    transferHook.result.current.actions.onTransferError(new Error("transfer boom"), "txA");
   });
   expect(transferHook.result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.TRANSFER);
 
@@ -675,7 +675,7 @@ test("contract-data refusal resumes at the phase it failed on, keeping the paid 
   expect(rentHook.result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
   act(() => {
-    rentHook.result.current.actions.setContractDataFailure(new Error("0x6a80"));
+    rentHook.result.current.actions.setContractDataFailure(new Error("0x6a80"), "txA");
   });
   expect(rentHook.result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.CONTRACT_DATA);
 
@@ -695,12 +695,12 @@ test("contract-data refusal resumes at the phase it failed on, keeping the paid 
     await transferHook.result.current.actions.craftRent();
   });
   await act(async () => {
-    await transferHook.result.current.actions.startRentPayment("sig");
+    await transferHook.result.current.actions.startRentPayment("sig", "txA");
   });
   expect(transferHook.result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
 
   act(() => {
-    transferHook.result.current.actions.setContractDataFailure(new Error("0x6a80"));
+    transferHook.result.current.actions.setContractDataFailure(new Error("0x6a80"), "txA");
   });
   expect(transferHook.result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.CONTRACT_DATA);
 
@@ -721,12 +721,12 @@ test("onTransferSuccess sets phase DONE", async () => {
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
 
   act(() => {
-    result.current.actions.onTransferSuccess();
+    result.current.actions.onTransferSuccess("txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.DONE);
@@ -747,12 +747,12 @@ test("a stale transfer callback outside the TRANSFER phase is ignored (does not 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
   act(() => {
-    result.current.actions.onTransferSuccess();
+    result.current.actions.onTransferSuccess("txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
   act(() => {
-    result.current.actions.onTransferError(new Error("stale tx-C failure"));
+    result.current.actions.onTransferError(new Error("stale tx-C failure"), "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 });
@@ -767,17 +767,17 @@ test("a stale contract-data refusal outside a signing phase is ignored (does not
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
   act(() => {
-    result.current.actions.onTransferSuccess();
+    result.current.actions.onTransferSuccess("txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.DONE);
 
   // A delayed contract-data refusal from a prior signing step must not drag DONE back to FAILED — it
   // is only valid while signing (RENT_SIGNING/TRANSFER).
   act(() => {
-    result.current.actions.setContractDataFailure(new Error("0x6a80"));
+    result.current.actions.setContractDataFailure(new Error("0x6a80"), "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.DONE);
   expect(result.current.state.failureKind).toBeNull();
@@ -788,7 +788,7 @@ test("a stale contract-data refusal outside a signing phase is ignored (does not
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.IDLE);
   act(() => {
-    result.current.actions.setContractDataFailure(new Error("0x6a80"));
+    result.current.actions.setContractDataFailure(new Error("0x6a80"), "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.IDLE);
 });
@@ -832,6 +832,67 @@ test("a contract-data refusal for a reset-and-recrafted cycle's prior order is i
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.CONTRACT_DATA);
 });
 
+test("a transfer outcome for a reset cycle's prior order is ignored once a new cycle reaches TRANSFER", async () => {
+  // reset() + a new cycle (txB) reaches TRANSFER again; a delayed TX-C outcome from the txA cycle lands
+  // in the same phase but must not complete or fail the current transfer.
+  const seam = makeSeam({
+    getEnergyRentSignaturePayload: jest
+      .fn()
+      .mockReturnValueOnce({ toSign: "0aA", paymentTxId: "txA" })
+      .mockReturnValueOnce({ toSign: "0aB", paymentTxId: "txB" }),
+  });
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+  await act(async () => {
+    await result.current.actions.craftRent();
+  });
+  act(() => {
+    result.current.actions.reset();
+  });
+  await act(async () => {
+    await result.current.actions.craftRent();
+  });
+  await act(async () => {
+    await result.current.actions.startRentPayment("sigB", "txB");
+  });
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
+
+  act(() => {
+    result.current.actions.onTransferError(new Error("stale tx-C failure"), "txA");
+  });
+  act(() => {
+    result.current.actions.onTransferSuccess("txA");
+  });
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
+  expect(result.current.state.failureKind).toBeNull();
+
+  act(() => {
+    result.current.actions.onTransferSuccess("txB");
+  });
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.DONE);
+});
+
+test("a callback bound to no payment id (null) never matches the current cycle", async () => {
+  mockGetSponsoredCoinApi.mockResolvedValue(makeSeam());
+
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+  await act(async () => {
+    await result.current.actions.craftRent();
+  });
+  await act(async () => {
+    await result.current.actions.startRentPayment("sig", "txA");
+  });
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
+
+  act(() => {
+    result.current.actions.onTransferSuccess(null);
+  });
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
+});
+
 test("awaitEnergyDelivery gets the craft-derived paymentTxId; a timeout's own id lands on state", async () => {
   const timeoutError = Object.assign(new Error("timed out"), {
     name: "EnergyDelegationTimeoutError",
@@ -848,7 +909,7 @@ test("awaitEnergyDelivery gets the craft-derived paymentTxId; a timeout's own id
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.paymentTxId).toBe("real-tx-A");
@@ -876,7 +937,7 @@ test("a retried craft clears the prior cycle's paymentTxId", async () => {
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
   expect(result.current.state.paymentTxId).toBe("stale-tx");
 
@@ -994,7 +1055,7 @@ test("a delivery that resolves after reset() is dropped, not committed as DELIVE
 
   let payPromise!: Promise<void>;
   await act(async () => {
-    payPromise = result.current.actions.startRentPayment("sig");
+    payPromise = result.current.actions.startRentPayment("sig", "txA");
     await deliverCalled.promise;
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.POLLING);
@@ -1030,7 +1091,7 @@ test("onRentPaymentBroadcast fires on the happy submit path with the payer and a
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(onRentPaymentBroadcast).toHaveBeenCalledTimes(1);
@@ -1054,7 +1115,7 @@ test.each([["paid"], ["pending"], ["unknown"]])(
       await result.current.actions.craftRent();
     });
     await act(async () => {
-      await result.current.actions.startRentPayment("sig");
+      await result.current.actions.startRentPayment("sig", "txA");
     });
 
     expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.DELIVERY_FAILED);
@@ -1078,7 +1139,7 @@ test("onRentPaymentBroadcast fires when a submit reject reconciles to delivered"
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
@@ -1100,7 +1161,7 @@ test("onRentPaymentBroadcast does NOT fire when the provider confirms the paymen
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
@@ -1128,7 +1189,7 @@ test("onRentPaymentBroadcast still fires when reset() abandons the flow mid-subm
 
   let payPromise!: Promise<void>;
   await act(async () => {
-    payPromise = result.current.actions.startRentPayment("sig");
+    payPromise = result.current.actions.startRentPayment("sig", "txA");
     await submitCalled.promise;
   });
 
