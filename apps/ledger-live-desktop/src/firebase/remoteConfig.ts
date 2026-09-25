@@ -13,6 +13,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
 import { formatDefaultFeatures } from "@features/platform-feature-flags";
 import { parseFirebaseFeatures } from "@features/platform-feature-flags/firebase";
+import { setContentAbTestCopy } from "./contentAbTestCopy";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { getFirebaseConfig } from "~/firebase-setup";
@@ -83,7 +84,7 @@ export async function readCachedFlags(): Promise<PartialFeatures> {
   try {
     const rc = getRemoteConfigSingleton();
     await ensureInitialized(rc);
-    return parseFirebaseFeatures(getAll(rc));
+    return hydrateRemoteConfigValues(getAll(rc));
   } catch {
     return {};
   }
@@ -101,11 +102,18 @@ export async function readCachedFlags(): Promise<PartialFeatures> {
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   const rc = getRemoteConfigSingleton();
   await fetchAndActivate(rc);
-  const flags = parseFirebaseFeatures(getAll(rc));
+  const flags = hydrateRemoteConfigValues(getAll(rc));
   const fetchedAt = Date.now();
   lastFetchedAt = fetchedAt;
   subscribers.forEach(callback => callback({ fetchedAt }));
   return flags;
+}
+
+// One `getAll()` payload, two readers: the flag decoder and the Engagement copy experiments,
+// which are `feature_copy_*` keys in the same Remote Config template.
+function hydrateRemoteConfigValues(all: ReturnType<typeof getAll>): PartialFeatures {
+  setContentAbTestCopy(all);
+  return parseFirebaseFeatures(all);
 }
 
 const parseEnvFile = (fileContent: string) => {
