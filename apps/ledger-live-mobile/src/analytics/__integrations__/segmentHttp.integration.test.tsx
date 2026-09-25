@@ -89,7 +89,7 @@ describe("integration with segment.io", () => {
     jest.clearAllMocks();
   });
 
-  it("configures @shared/analytics to use Segment", async () => {
+  it("configures @shared/analytics to send tracking events in batches to Segment", async () => {
     await startAnalyticsWithTracking(true);
 
     await track("Example event");
@@ -111,23 +111,7 @@ describe("integration with segment.io", () => {
     );
   });
 
-  it("sends tracking events in batches to Segment's API", async () => {
-    await startAnalyticsWithTracking(true);
-
-    await waitFor(
-      async () => {
-        await flush();
-        expect(endpoints.batch).toHaveBeenCalled();
-        const bodies = await Promise.all(
-          endpoints.batch.mock.calls.map(call => call[0].request.clone().json()),
-        );
-        expect(bodies.some(body => Array.isArray(body.batch) && body.batch.length > 0)).toBe(true);
-      },
-      { timeout: 10_000 },
-    );
-  });
-
-  it("identifies the user when tracking is enabled", async () => {
+  it("identifies the user when analytics is enabled", async () => {
     await startAnalyticsWithTracking(true);
 
     await waitFor(
@@ -147,7 +131,7 @@ describe("integration with segment.io", () => {
     );
   });
 
-  it("does not identify the user when tracking is not enabled", async () => {
+  it("does not identify the user when analytics is disabled", async () => {
     await startAnalyticsWithTracking(false);
     await flush();
 

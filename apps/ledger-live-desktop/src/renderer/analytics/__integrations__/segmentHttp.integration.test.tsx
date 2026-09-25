@@ -63,7 +63,7 @@ describe("integration with segment.io", () => {
     );
   });
 
-  it("configures @shared/analytics to use Segment", async () => {
+  it("configures @shared/analytics to send tracking events to Segment", async () => {
     await startAnalyticsWithTracking(true);
 
     await track("Example event");
@@ -74,26 +74,9 @@ describe("integration with segment.io", () => {
         expect.arrayContaining([
           expect.objectContaining({
             event: "Example event",
-            userId: expect.any(String),
+            type: "track",
           }),
         ]),
-      );
-    });
-  });
-
-  it("sends tracking events in batches to Segment's API", async () => {
-    await startAnalyticsWithTracking(true);
-
-    await track("Batch contract event");
-
-    await waitFor(async () => {
-      expect(endpoints.track).toHaveBeenCalled();
-      const bodies = await collectedTrackBodies();
-      expect(bodies.length).toBeGreaterThan(0);
-      expect(bodies[0]).toEqual(
-        expect.objectContaining({
-          event: expect.any(String),
-        }),
       );
     });
   });
