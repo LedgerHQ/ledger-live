@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useCardAuthStatus } from "@features/flow-pay-card-auth";
+import { useCardAuthStatus, useCardSessionResolving } from "@features/flow-pay-card-auth";
 import { useTranslation } from "@shared/i18n";
 import { useCardWalletsTotal } from "@features/flow-pay-card-assets";
 import type { CardDisplayState, CardProps, CardViewProps } from "./Card.types";
@@ -18,8 +18,9 @@ export function useCardViewModel({
   const { t } = useTranslation();
   useCardLifecycleTracking();
   const status = useCardAuthStatus();
-  const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
+  const isSessionResolving = useCardSessionResolving();
   const isSignedIn = status === "signedIn";
+  const displayState: CardDisplayState = resolveDisplayState(status, isSessionResolving);
   const formatCountervalue = formatters?.countervalue;
   const balanceLabel = t("payTab.card.balanceLabel");
   const { total, isLoading, isError } = useCardWalletsTotal(assets, isSignedIn);
@@ -59,4 +60,14 @@ export function useCardViewModel({
     onViewRewards,
     cardSettingsActions,
   };
+}
+
+function resolveDisplayState(
+  status: ReturnType<typeof useCardAuthStatus>,
+  isSessionResolving: boolean,
+): CardDisplayState {
+  if (status === "signedIn") return "signedIn";
+  if (status === "unknown" || isSessionResolving) return "resolving";
+
+  return "signedOut";
 }

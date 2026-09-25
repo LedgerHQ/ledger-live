@@ -11,7 +11,7 @@ import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
 import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors";
 import { selectIsSignedIn } from "../../state/selectors";
-import { setPendingLoginType } from "../../state/slice";
+import { setPendingLoginType, setSessionResolving } from "../../state/slice";
 import type {
   CardAuthErrorCopy,
   CardLoginCopy,
@@ -36,6 +36,7 @@ const INTRO_ROWS: readonly { icon: CardLoginIntroRowIcon; key: string }[] = [
 
 const SESSION_RESOLVING_STATES: ReadonlySet<CardLoginStateValue> = new Set([
   "hydrating",
+  "clearingAttempt",
   "validatingCallback",
   "exchangingCode",
   "persistingSession",
@@ -135,6 +136,19 @@ export function useCardLoginViewModel({
       });
     }
   }, [callbackCode, callbackState, callbackAppId, send]);
+
+  const isSessionResolving = SESSION_RESOLVING_STATES.has(snapshot.value);
+
+  useEffect(() => {
+    dispatch(setSessionResolving(isSessionResolving));
+  }, [dispatch, isSessionResolving]);
+
+  useEffect(
+    () => () => {
+      dispatch(setSessionResolving(false));
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     // `More` ended the session. `ready` raises the flag on entry, so a lowered flag while the

@@ -10,4 +10,5 @@ export type { CardLoginOauthConfig, PayCardAuthCallback } from "./state/types";
 export type { PayCardAuthStatus } from "./state/types";
 export { useIsCardSignedIn } from "./hooks/useIsCardSignedIn";
 export { useCardAuthStatus } from "./hooks/useCardAuthStatus";
+export { useCardSessionResolving } from "./hooks/useCardSessionResolving";
 export { useCardLogout } from "./hooks/useCardLogout";

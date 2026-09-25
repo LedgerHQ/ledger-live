@@ -202,6 +202,11 @@ export type PayCardAuthState = Readonly<{
    * reads this instead, because two machines would each hydrate and neither would agree.
    */
   status: PayCardAuthStatus;
+  /**
+   * True while the login machine reads the stored session, or trades a redirect for a token. The
+   * status alone cannot say it, because a fresh login runs its whole round trip on `signedOut`.
+   */
+  isSessionResolving: boolean;
 }>;
 
 export type PayCardLoginIntroState = Readonly<{

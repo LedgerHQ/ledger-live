@@ -6,6 +6,7 @@ import type { CardProps } from "./Card.types";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
 
 const mockUseCardAuthStatus = jest.fn<PayCardAuthStatus, []>();
+const mockUseCardSessionResolving = jest.fn<boolean, []>(() => false);
 const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError: false }));
 let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
@@ -14,10 +15,12 @@ jest.mock("@features/flow-pay-card-auth", () => ({
     <View testID="card-login">{children}</View>
   ),
   useCardAuthStatus: () => mockUseCardAuthStatus(),
+  useCardSessionResolving: () => mockUseCardSessionResolving(),
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <View testID="card-artwork" />,
+  CardLoadingVisual: () => <View testID="card-loading-visual" />,
   CardDetails: ({
     cardVisual,
     assets,

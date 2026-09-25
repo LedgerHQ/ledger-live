@@ -98,6 +98,7 @@ describe("mapSnapshotToViewModel", () => {
 
   it.each([
     "hydrating",
+    "clearingAttempt",
     "validatingCallback",
     "exchangingCode",
     "persistingSession",
@@ -115,7 +116,6 @@ describe("mapSnapshotToViewModel", () => {
     "preparingAttempt",
     "awaitingHostedLogin",
     "awaitingCallback",
-    "clearingAttempt",
     "authError",
     "userFetchError",
   ] as const)("asks for no skeleton in %s", value => {
