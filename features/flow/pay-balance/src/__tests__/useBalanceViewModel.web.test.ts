@@ -45,6 +45,14 @@ describe("useBalanceViewModel", () => {
     });
   });
 
+  it("should pass discreet mode through to the funded view", () => {
+    const { result } = renderBalanceViewModel(
+      buildProps({ hasBalance: true, stableBalance: 1250.5, discreet: true }),
+    );
+
+    expect(result.current).toMatchObject({ displayMode: "funded", discreet: true });
+  });
+
   it("should keep funded chrome and skeleton the amount while funded data loads", () => {
     const { result } = renderBalanceViewModel(
       buildProps({ status: "loading", hasBalance: true, stableBalance: 1250.5 }),

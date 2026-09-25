@@ -73,6 +73,7 @@ export type BalanceData = BalanceAggregate &
     filterOptions: readonly BalanceFilterOption[];
     onConfirmFilter: (filter: BalanceFilter) => void;
     onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
+    discreet?: boolean;
   }>;
 
 export type BalanceProps = BalanceData &
@@ -102,6 +103,7 @@ export type BalanceViewProps =
       onConfirmFilter: (filter: BalanceFilter) => void;
       onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
       actionTiles?: ActionTilesProps;
+      discreet?: boolean;
     }>;
 
 export type BalanceFilterPickerViewModelParams = Readonly<{

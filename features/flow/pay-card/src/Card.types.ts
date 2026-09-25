@@ -27,6 +27,7 @@ export type CardProps = {
   readonly onChooseCardType?: () => void;
   readonly onViewRewards?: () => void;
   readonly cardSettingsActions?: CardSettingsActions;
+  readonly discreet?: boolean;
 };
 
 /**

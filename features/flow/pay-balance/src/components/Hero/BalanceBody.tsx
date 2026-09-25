@@ -18,6 +18,7 @@ export function BalanceBody(props: BalanceViewProps) {
         allStablecoinsLabel={props.labels.allStablecoins}
         selectedOption={props.selectedOption}
         onOpenFilter={props.onOpenFilter}
+        discreet={props.discreet}
       />
       <BalanceFilterPicker
         isOpen={props.isFilterOpen}

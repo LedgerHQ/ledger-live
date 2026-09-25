@@ -10,6 +10,7 @@ type BalanceFundedStateProps = Readonly<{
   allStablecoinsLabel: string;
   selectedOption?: BalanceFilterOption;
   onOpenFilter: () => void;
+  discreet?: boolean;
 }>;
 
 export function BalanceFundedState({
@@ -19,6 +20,7 @@ export function BalanceFundedState({
   allStablecoinsLabel,
   selectedOption,
   onOpenFilter,
+  discreet,
 }: BalanceFundedStateProps) {
   return (
     <Box
@@ -29,6 +31,7 @@ export function BalanceFundedState({
         value={balance}
         formatter={formatCountervalue}
         loading={isLoading}
+        hidden={discreet}
         size="md"
         testID="pay-card-balance-amount"
       />
