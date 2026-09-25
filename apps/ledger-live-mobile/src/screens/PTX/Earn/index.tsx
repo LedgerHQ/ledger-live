@@ -105,6 +105,17 @@ function Earn({ route }: Props) {
         : undefined,
     [stableSavingsFlag],
   );
+  const ptxEarnCtaOnMobileFlag = useFeature("ptxEarnCtaOnMobile");
+  const ptxEarnCtaOnMobileParam = useMemo(
+    () =>
+      ptxEarnCtaOnMobileFlag
+        ? JSON.stringify({
+            enabled: ptxEarnCtaOnMobileFlag.enabled,
+            params: ptxEarnCtaOnMobileFlag.params,
+          })
+        : undefined,
+    [ptxEarnCtaOnMobileFlag],
+  );
   const deviceIntentSignEnabled = useFeature("llmWalletApiDeviceIntentSign")?.enabled ?? false;
 
   const shouldDisplayBackgroundCanvas = useMemo(
@@ -135,6 +146,7 @@ function Earn({ route }: Props) {
         : undefined,
       swapToEarn: swapToEarnParam,
       stableSavings: stableSavingsParam,
+      ptxEarnCtaOnMobile: ptxEarnCtaOnMobileParam,
       OS: Platform.OS,
       ethDepositCohort,
       uiVersion: "v1",
@@ -159,6 +171,7 @@ function Earn({ route }: Props) {
     ethDepositCohort,
     swapToEarnParam,
     stableSavingsParam,
+    ptxEarnCtaOnMobileParam,
     deviceIntentSignEnabled,
     params,
     searchParams,

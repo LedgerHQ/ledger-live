@@ -87,6 +87,17 @@ const Earn = () => {
         : undefined,
     [stableSavingsFlag],
   );
+  const ptxEarnCtaOnMobileFlag = useFeature("ptxEarnCtaOnMobile");
+  const ptxEarnCtaOnMobileParam = useMemo(
+    () =>
+      ptxEarnCtaOnMobileFlag
+        ? JSON.stringify({
+            enabled: ptxEarnCtaOnMobileFlag.enabled,
+            params: ptxEarnCtaOnMobileFlag.params,
+          })
+        : undefined,
+    [ptxEarnCtaOnMobileFlag],
+  );
 
   const { updateManifests } = useRemoteLiveAppContext();
 
@@ -109,6 +120,7 @@ const Earn = () => {
       ethDepositCohort,
       swapToEarn: swapToEarnParam,
       stableSavings: stableSavingsParam,
+      ptxEarnCtaOnMobile: ptxEarnCtaOnMobileParam,
     };
 
     return {
@@ -133,6 +145,7 @@ const Earn = () => {
     ethDepositCohort,
     swapToEarnParam,
     stableSavingsParam,
+    ptxEarnCtaOnMobileParam,
   ]);
 
   if (!manifest) {
