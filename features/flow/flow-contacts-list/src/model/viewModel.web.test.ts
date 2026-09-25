@@ -39,9 +39,9 @@ describe("createEmptyContactsListViewModel", () => {
     });
   });
 
-  it("uses the default Me label when the stored name is Me", () => {
+  it("suffixes the default Me label when the stored name is Me", () => {
     expect(createEmptyContactsListViewModel(mockMeContact(), formatMeDisplayName).me.name).toBe(
-      "My addresses",
+      "My addresses (Me)",
     );
   });
 });
@@ -85,7 +85,7 @@ describe("createPopulatedContactsListViewModel", () => {
       displayMode: "populated",
       me: {
         contactId: "contact-me",
-        name: "My addresses",
+        name: "My addresses (Me)",
         initial: "M",
         addressCount: 1,
       },
@@ -248,7 +248,7 @@ describe("createContactsSearchViewModel", () => {
       status: "results",
       me: {
         contactId: "contact-me",
-        name: "My addresses",
+        name: "My addresses (Me)",
         initial: "M",
         addressCount: 0,
       },
@@ -261,7 +261,7 @@ describe("createContactsSearchViewModel", () => {
       status: "results",
       me: {
         contactId: "contact-me",
-        name: "My addresses",
+        name: "My addresses (Me)",
         initial: "M",
         addressCount: 0,
       },

@@ -49,7 +49,7 @@ describe("ContactDetailView", () => {
     render(<ContactDetailView {...defaultProps} contact={mockMeContact()} />);
 
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeInTheDocument();
-    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses");
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses (Me)");
     expect(screen.getByText("Add your address")).toBeInTheDocument();
     expect(screen.getByText("No saved addresses for you")).toBeInTheDocument();
     expect(

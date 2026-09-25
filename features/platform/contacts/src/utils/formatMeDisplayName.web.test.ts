@@ -1,12 +1,12 @@
 import { createMeDisplayNameFormatter, identityFormatMeDisplayName } from "./formatMeDisplayName";
 
-const formatCustomName = (name: string) => `${name} (Me)`;
+const formatName = (name: string) => `${name} (Me)`;
 
 describe("createMeDisplayNameFormatter", () => {
-  const formatMeDisplayName = createMeDisplayNameFormatter("My addresses", formatCustomName);
+  const formatMeDisplayName = createMeDisplayNameFormatter("My addresses", formatName);
 
-  it("should return the default label when the stored name is Me", () => {
-    expect(formatMeDisplayName("Me")).toBe("My addresses");
+  it("should suffix the default label when the stored name is Me", () => {
+    expect(formatMeDisplayName("Me")).toBe("My addresses (Me)");
   });
 
   it("should format a custom Me name", () => {

@@ -39,7 +39,7 @@ describe("ContactDetailPage", () => {
     render(<ContactDetailView {...meDetailProps} contact={mockMeContact()} />);
 
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
-    expect(screen.getByText("My addresses")).toBeVisible();
+    expect(screen.getByText("My addresses (Me)")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add your address");
     expect(screen.getByTestId("contacts-detail-ledger-wallet-addresses")).toHaveTextContent(
       "Ledger Wallet addresses",

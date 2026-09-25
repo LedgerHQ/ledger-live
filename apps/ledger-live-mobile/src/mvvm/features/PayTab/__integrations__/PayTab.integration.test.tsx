@@ -551,7 +551,7 @@ describe("PayTab integration", () => {
 
       await user.press(await screen.findByTestId("pay-contacts-see-all"));
       expect(await screen.findByTestId("contacts-screen")).toBeVisible();
-      expect(screen.getByText("My addresses")).toBeVisible();
+      expect(screen.getByText("My addresses (Me)")).toBeVisible();
       await user.press(screen.getByTestId(`contacts-saved-contact-${yana.id}`));
       await user.press(await screen.findByLabelText(`${address.label}, ${address.address}`));
 
@@ -572,7 +572,7 @@ describe("PayTab integration", () => {
       await user.press(screen.getByText("Pay"));
 
       expect(await screen.findByTestId("contacts-screen")).toBeVisible();
-      expect(screen.getByText("My addresses")).toBeVisible();
+      expect(screen.getByText("My addresses (Me)")).toBeVisible();
       expect(store.getState().appstate.isMainNavigatorVisible).toBe(false);
     });
 

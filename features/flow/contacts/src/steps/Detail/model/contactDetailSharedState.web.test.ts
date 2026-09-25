@@ -23,7 +23,7 @@ describe("createContactDetailSharedState", () => {
   it("exposes the default Me display name and zero external addresses", () => {
     expect(createContactDetailSharedState(mockMeContact(), formatMeDisplayName)).toEqual({
       contact: mockMeContact(),
-      displayName: "My addresses",
+      displayName: "My addresses (Me)",
       addressCount: 0,
       ledgerWalletAccountsIntent: { type: "open-ledger-wallet-accounts" },
     });

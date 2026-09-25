@@ -11,8 +11,10 @@ describe("resolveMeContactDisplayName", () => {
     );
   });
 
-  it("should return the default Me label when the self contact still uses the default name", () => {
-    expect(resolveMeContactDisplayName(mockMeContact(), formatMeDisplayName)).toBe("My addresses");
+  it("should suffix the default Me label when the self contact still uses the default name", () => {
+    expect(resolveMeContactDisplayName(mockMeContact(), formatMeDisplayName)).toBe(
+      "My addresses (Me)",
+    );
   });
 
   it("should format a custom self-contact name", () => {

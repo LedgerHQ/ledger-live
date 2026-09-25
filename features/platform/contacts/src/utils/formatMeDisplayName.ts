@@ -6,7 +6,7 @@ export const identityFormatMeDisplayName: FormatMeDisplayName = name => name;
 
 export function createMeDisplayNameFormatter(
   defaultName: string,
-  formatCustomName: FormatMeDisplayName,
+  formatName: FormatMeDisplayName,
 ): FormatMeDisplayName {
-  return name => (name === DEFAULT_ME_CONTACT_NAME ? defaultName : formatCustomName(name));
+  return name => formatName(name === DEFAULT_ME_CONTACT_NAME ? defaultName : name);
 }

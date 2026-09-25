@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import ContactDetailPage from "@e2e/page/wallet/contactDetail.page";
 
-const ME_CONTACT_DISPLAY_NAME = "My addresses";
+const ME_CONTACT_DISPLAY_NAME = "My addresses (Me)";
 
 export default class ContactsPage {
   savedContactNameRegExp = /^contacts-saved-contact-.+-name$/;

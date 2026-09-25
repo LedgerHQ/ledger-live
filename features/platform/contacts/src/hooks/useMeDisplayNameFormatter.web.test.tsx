@@ -22,8 +22,8 @@ function renderFormatter() {
 }
 
 describe("useMeDisplayNameFormatter", () => {
-  it("should show my addresses when the me contact was never renamed", () => {
-    expect(renderFormatter()(DEFAULT_ME_CONTACT_NAME)).toBe("My addresses");
+  it("should suffix my addresses when the me contact was never renamed", () => {
+    expect(renderFormatter()(DEFAULT_ME_CONTACT_NAME)).toBe("My addresses (Me)");
   });
 
   it("should suffix a renamed me contact with the me label", () => {
