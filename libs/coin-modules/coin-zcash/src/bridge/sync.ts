@@ -40,6 +40,7 @@ import type { SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction, ZcashPrivateInfo } from "../network/types";
 import { ZCASH_SHIELDED_TX_TYPES } from "../network/types";
 import { toWalletBtcCurrency } from "../walletBtcCurrency";
+import type { CoinConfig } from "../config";
 import { computeZcashBalance, getTransparentBalance } from "../logic/account/balance";
 import { explorerFee, spentOutpoints, txDate } from "../logic/history/transparentTx";
 import {
@@ -431,6 +432,7 @@ function mapTxToOperations(
 export async function performTransparentSync(
   info: AccountShapeInfo<ZcashAccount>,
   signerContext: SignerContext,
+  coinConfig: CoinConfig,
 ): Promise<Partial<ZcashAccount>> {
   const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
 
@@ -468,7 +470,7 @@ export async function performTransparentSync(
         network: walletNetwork,
         derivationMode: walletDerivationMode,
       },
-      toWalletBtcCurrency(currency),
+      toWalletBtcCurrency(currency, coinConfig(currency.id).info),
     ));
 
   const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
@@ -606,9 +608,10 @@ export async function performTransparentSync(
 function createTransparentSyncObservable(
   info: AccountShapeInfo<ZcashAccount>,
   signerContext: SignerContext,
+  coinConfig: CoinConfig,
 ): Observable<Partial<ZcashAccount>> {
   return new Observable<Partial<ZcashAccount>>(subscriber => {
-    performTransparentSync(info, signerContext)
+    performTransparentSync(info, signerContext, coinConfig)
       .then(result => {
         subscriber.next(result);
         subscriber.complete();
@@ -1143,6 +1146,7 @@ export function buildSyncObservables(
   info: AccountShapeInfo<ZcashAccount>,
   syncConfig: SyncConfig,
   signerContext: SignerContext,
+  coinConfig: CoinConfig,
 ): { syncs: Observable<Partial<ZcashAccount>>[]; syncType: number } {
   const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT;
   const syncs: Observable<Partial<ZcashAccount>>[] = [];
@@ -1155,7 +1159,7 @@ export function buildSyncObservables(
 
   if (syncType & SYNC_TYPE_TRANSPARENT) {
     syncs.push(
-      createTransparentSyncObservable(info, signerContext).pipe(
+      createTransparentSyncObservable(info, signerContext, coinConfig).pipe(
         map(result => reconcileLegOperations(latest, "transparent", result)),
       ),
     );
@@ -1171,10 +1175,11 @@ export function buildSyncObservables(
 
 export function makeGetAccountShape(
   signerContext: SignerContext,
+  coinConfig: CoinConfig,
 ): GetAccountShapeStream<ZcashAccount> {
   return (info: AccountShapeInfo<ZcashAccount>, syncConfig: SyncConfig) =>
     new Observable(o => {
-      const { syncs } = buildSyncObservables(info, syncConfig, signerContext);
+      const { syncs } = buildSyncObservables(info, syncConfig, signerContext, coinConfig);
 
       if (syncs.length === 0) {
         o.complete();

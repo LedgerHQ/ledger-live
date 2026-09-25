@@ -79,11 +79,6 @@ export const CryptoCurrencySchema = z.object({
   ethereumLikeInfo: EthereumLikeInfoSchema.optional(),
   /** One or more blockchain explorer URL templates. */
   explorerViews: z.array(ExplorerViewSchema),
-  /**
-   * Id used to connect to the Ledger explorer endpoint (when different from the currency id and ticker).
-   * @deprecated Kept only for backward compatibility; the explorer-id concept is being phased out.
-   */
-  explorerId: z.string().optional(),
   /** Token standards supported by this chain (e.g. `["erc20"]`). */
   tokenTypes: z.array(z.string()).optional(),
 });

@@ -45,7 +45,6 @@ const mockedAccount: Account = {
       },
     ],
     keywords: ["eth", "ethereum"],
-    explorerId: "eth",
   },
   lastSyncDate: new Date(),
   swapHistory: [],

@@ -29,5 +29,4 @@ export const dash = currency({
       address: "https://explorer.dash.org/insight/address/$address",
     },
   ],
-  explorerId: "dash",
 });

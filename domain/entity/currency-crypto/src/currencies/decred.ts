@@ -34,5 +34,4 @@ export const decred = currency({
       address: "https://mainnet.decred.org/address/$address",
     },
   ],
-  explorerId: "dcr",
 });

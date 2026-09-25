@@ -28,5 +28,4 @@ export const avalanche_c_chain = currency({
     },
   ],
   keywords: ["avax", "avalanche", "c-chain"],
-  explorerId: "avax",
 });

@@ -38,5 +38,4 @@ export const litecoin = currency({
     },
   ],
   keywords: ["ltc", "litecoin"],
-  explorerId: "ltc",
 });

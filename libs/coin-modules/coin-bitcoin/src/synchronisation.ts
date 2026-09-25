@@ -3,6 +3,7 @@ import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { toWalletBtcCurrency } from "./walletBtcCurrency";
+import type { CoinConfig } from "./config";
 import type {
   AccountShapeInfo,
   GetAccountShapeStream,
@@ -91,6 +92,7 @@ function withRecoveredRecipients(
 export async function performTransparentSync(
   info: AccountShapeInfo<BitcoinAccount>,
   signerContext: SignerContext,
+  coinConfig: CoinConfig,
 ): Promise<Partial<BitcoinAccount>> {
   const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
 
@@ -131,7 +133,7 @@ export async function performTransparentSync(
         network: walletNetwork,
         derivationMode: walletDerivationMode,
       },
-      toWalletBtcCurrency(currency),
+      toWalletBtcCurrency(currency, coinConfig(currency.id).info),
     ));
 
   const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
@@ -274,11 +276,12 @@ export async function performTransparentSync(
 export function createTransparentSyncObservable(
   info: AccountShapeInfo<BitcoinAccount>,
   signerContext: SignerContext,
+  coinConfig: CoinConfig,
 ): Observable<Partial<BitcoinAccount>> {
   const currencyId = info.currency.id;
   log("bitcoin/createTransparentSyncObservable", `Initiating transparent sync for ${currencyId}`);
   return new Observable<Partial<BitcoinAccount>>(subscriber => {
-    performTransparentSync(info, signerContext)
+    performTransparentSync(info, signerContext, coinConfig)
       .then(result => {
         log(
           "bitcoin/createTransparentSyncObservable",
@@ -306,6 +309,7 @@ export function buildSyncObservables(
   info: AccountShapeInfo<BitcoinAccount>,
   syncConfig: SyncConfig,
   signerContext: SignerContext,
+  coinConfig: CoinConfig,
 ): { syncs: Observable<Partial<BitcoinAccount>>[]; syncType: number } {
   const { currency } = info;
   const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT;
@@ -313,7 +317,7 @@ export function buildSyncObservables(
   const syncs: Observable<Partial<BitcoinAccount>>[] = [];
 
   if (syncType & SYNC_TYPE_TRANSPARENT) {
-    syncs.push(createTransparentSyncObservable(info, signerContext));
+    syncs.push(createTransparentSyncObservable(info, signerContext, coinConfig));
   }
 
   // Chain adapter guards (syncType flags, ufvk, syncState) are checked internally
@@ -328,11 +332,12 @@ export function buildSyncObservables(
 
 export function makeGetAccountShape(
   signerContext: SignerContext,
+  coinConfig: CoinConfig,
 ): GetAccountShapeStream<BitcoinAccount> {
   return (info: AccountShapeInfo<BitcoinAccount>, syncConfig: SyncConfig) =>
     new Observable(o => {
       const { currency } = info;
-      const { syncs, syncType } = buildSyncObservables(info, syncConfig, signerContext);
+      const { syncs, syncType } = buildSyncObservables(info, syncConfig, signerContext, coinConfig);
 
       if (syncs.length === 0) {
         log("bitcoin/makeGetAccountShape", `No syncs to perform for ${currency.id}`);

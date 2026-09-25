@@ -6,12 +6,6 @@
 // reached from outside the package. Consumers use `@domain/entity-currency-*`.
 
 /**
- * @deprecated Opaque Ledger-explorer endpoint id, kept only for backward compatibility.
- * Loosened from a fixed union to `string`; the explorer-id concept is being phased out.
- */
-type LedgerExplorerId = string;
-
-/**
  * @deprecated Temporary local copy. Kept only until the types that carry it move to
  * `@domain/entity-currency-*`. Use `@domain/entity-currency-unit` instead.
  */
@@ -108,11 +102,6 @@ export type CryptoCurrency = CurrencyCommon & {
   isTestnetFor?: string;
   ethereumLikeInfo?: EthereumLikeInfo;
   explorerViews: ExplorerView[];
-  /**
-   * Used to connect to the right endpoint url since it is different from currencyId and ticker.
-   * @deprecated Kept only for backward compatibility; the explorer-id concept is being phased out.
-   */
-  explorerId?: LedgerExplorerId;
   tokenTypes?: string[];
 };
 

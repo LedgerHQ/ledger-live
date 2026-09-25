@@ -29,5 +29,4 @@ export const zencash = currency({
       address: "https://explorer.zensystem.io/address/$address",
     },
   ],
-  explorerId: "zen",
 });

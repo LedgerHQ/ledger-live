@@ -13,6 +13,7 @@ import wallet from "@ledgerhq/wallet-btc/index";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { getChainAdapter } from "./chain-adapters/registry";
 import { walletBtcCurrencyById } from "./walletBtcCurrency";
+import type { CoinConfig } from "./config";
 
 export function toBitcoinInputRaw({
   address,
@@ -73,14 +74,20 @@ export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw 
   };
 }
 
-export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
+export function fromBitcoinResourcesRaw(
+  r: BitcoinResourcesRaw,
+  coinConfig: CoinConfig,
+): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
     walletAccount:
       r.walletAccount &&
       wallet.importFromSerializedAccountSync(
         r.walletAccount,
-        walletBtcCurrencyById(r.walletAccount.params.currency),
+        walletBtcCurrencyById(
+          r.walletAccount.params.currency,
+          coinConfig(r.walletAccount.params.currency).info,
+        ),
       ),
   };
 }
@@ -96,10 +103,15 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
   getChainAdapter(account.currency?.id ?? "").assignToAccountRaw?.(account, accountRaw);
 }
 
-export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
-  const bitcoinResourcesRaw = (accountRaw as BitcoinAccountRaw).bitcoinResources;
-  if (bitcoinResourcesRaw)
-    (account as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(bitcoinResourcesRaw);
+export const makeAssignFromAccountRaw =
+  (coinConfig: CoinConfig) =>
+  (accountRaw: AccountRaw, account: Account): void => {
+    const bitcoinResourcesRaw = (accountRaw as BitcoinAccountRaw).bitcoinResources;
+    if (bitcoinResourcesRaw)
+      (account as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
+        bitcoinResourcesRaw,
+        coinConfig,
+      );
 
-  getChainAdapter(account.currency?.id ?? "").assignFromAccountRaw?.(accountRaw, account);
-}
+    getChainAdapter(account.currency?.id ?? "").assignFromAccountRaw?.(accountRaw, account);
+  };

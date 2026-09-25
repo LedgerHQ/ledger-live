@@ -30,5 +30,4 @@ export const qtum = currency({
       address: "https://explorer.qtum.org/address/$address",
     },
   ],
-  explorerId: "qtum",
 });
