@@ -90,7 +90,6 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
-    "react-native-safe-area-context": "catalog:",
     "react-native-svg": "catalog:",
     "react-redux": "catalog:"
   },
@@ -108,9 +107,6 @@
       "optional": true
     },
     "react-native-svg": {
-      "optional": true
-    },
-    "react-native-safe-area-context": {
       "optional": true
     }
   }
