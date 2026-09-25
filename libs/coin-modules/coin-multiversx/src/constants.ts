@@ -4,6 +4,9 @@ export const TRANSACTION_OPTIONS_TX_HASH_SIGN = 0b0001;
 export const TRANSACTION_VERSION_DEFAULT = 2;
 export const METACHAIN_SHARD = 4294967295;
 export const MAX_PAGINATION_SIZE = 50;
+// The MultiversX API rejects any request where `from + size` exceeds this value
+// (Elasticsearch's `index.max_result_window`), so pagination must never cross it.
+export const MAX_PAGINATION_RESULT_WINDOW = 10000;
 export const GAS = {
   ESDT_TRANSFER: 500000,
   DELEGATE: 75000000,
