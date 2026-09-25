@@ -137,7 +137,7 @@ export const scenarioBlast: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks(blast.ethereumLikeInfo?.chainId || 81457);
+    await indexBlocks(81457);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
