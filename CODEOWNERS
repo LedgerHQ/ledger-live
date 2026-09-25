@@ -283,6 +283,7 @@ libs/concordium-core/                                                    @ledger
 # PTX team
 libs/transaction-observability/                                           @ledgerhq/ptx
 features/flow/pay-card-auth/                                             @ledgerhq/ptx
+features/flow/pay-card-top-up/                                           @ledgerhq/ptx
 features/platform/card/                                                  @ledgerhq/ptx
 domain/api/card-management/                                              @ledgerhq/ptx
 domain/api/card-top-up/                                                  @ledgerhq/ptx
