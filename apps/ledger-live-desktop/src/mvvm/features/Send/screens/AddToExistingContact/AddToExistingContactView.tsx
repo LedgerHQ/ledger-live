@@ -36,27 +36,28 @@ function ContactRow({
   contact,
   formatAddressCount,
   onSelectContact,
-  isMe,
 }: Readonly<{
   contact: ContactsListItem;
   formatAddressCount: (count: number) => string;
   onSelectContact: (contactId: ContactId) => void;
-  isMe?: boolean;
 }>) {
   const getDisplayName = useContactDisplayName();
 
   return (
     <ListItem
       onClick={() => onSelectContact(contact.contactId)}
-      data-testid={isMe ? "contacts-me-row" : `contacts-saved-row-${contact.contactId}`}
+      data-testid={contact.isMe ? "contacts-me-row" : `contacts-saved-row-${contact.contactId}`}
     >
       <ListItemLeading>
         <ContactAvatar
           contactId={contact.contactId}
-          name={getDisplayName(contact)}
+          name={contact.name}
+          isMe={contact.isMe}
           size="md"
           ariaHidden
-          testId={isMe ? "contacts-me-avatar" : `contacts-saved-avatar-${contact.contactId}`}
+          testId={
+            contact.isMe ? "contacts-me-avatar" : `contacts-saved-avatar-${contact.contactId}`
+          }
         />
         <ListItemContent>
           <ListItemTitle>{getDisplayName(contact)}</ListItemTitle>
@@ -144,7 +145,6 @@ export function AddToExistingContactView({
             contact={me}
             formatAddressCount={formatAddressCount}
             onSelectContact={onSelectContact}
-            isMe
           />
         ) : null}
       </div>

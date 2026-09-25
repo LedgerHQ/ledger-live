@@ -5,7 +5,7 @@ import { PaySuccess, type PaySuccessProps } from "../PaySuccess.native";
 import { renderPaySuccess } from "./shared.native";
 
 const baseProps: PaySuccessProps = {
-  recipient: { id: ContactIdSchema.parse("contact-ada"), name: "Ada" },
+  recipient: { id: ContactIdSchema.parse("contact-ada"), name: "Ada", isMe: false },
   recipientLabel: "Ada",
   amountFormatted: "100 USDC",
   canViewTransaction: true,

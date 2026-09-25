@@ -9,7 +9,7 @@ const AVATAR_SIZE = "xl";
 export type PaySuccessRecipient = Readonly<{
   id: ContactId;
   name: string;
-  isMe?: boolean;
+  isMe: boolean;
 }>;
 
 export type PaySuccessHeroProps = Readonly<{
@@ -31,6 +31,7 @@ export function PaySuccessHero({
         <ContactAvatar
           contactId={recipient.id}
           name={recipient.name}
+          isMe={recipient.isMe}
           size={AVATAR_SIZE}
           ariaHidden
         />

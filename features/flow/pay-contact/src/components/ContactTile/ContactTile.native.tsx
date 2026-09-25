@@ -21,7 +21,7 @@ export function ContactTile({ contact, index, onPress }: ContactTileProps): Reac
       accessibilityRole={onPress ? "button" : undefined}
       accessibilityLabel={getDisplayName(contact)}
     >
-      <ContactAvatar contactId={contact.id} name={getDisplayName(contact)} size="lg" />
+      <ContactAvatar contactId={contact.id} name={contact.name} isMe={contact.isMe} size="lg" />
       <TileContent>
         <TileDescription>{getDisplayName(contact)}</TileDescription>
       </TileContent>

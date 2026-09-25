@@ -30,7 +30,12 @@ export function ContactsSavedContactListItem({
       lx={{ marginHorizontal: "-s8" }}
     >
       <ListItemLeading>
-        <ContactAvatar contactId={contact.contactId} name={contact.name} size="md" />
+        <ContactAvatar
+          contactId={contact.contactId}
+          name={contact.name}
+          isMe={contact.isMe}
+          size="md"
+        />
         <ListItemContent>
           <ListItemTitle testID={`contacts-saved-contact-${contact.contactId}-name`}>
             {getDisplayName(contact)}

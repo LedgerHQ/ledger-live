@@ -11,6 +11,7 @@ export function ContactDetailAvatar({ contact }: ContactDetailAvatarProps): Reac
     <ContactAvatar
       contactId={contact.id}
       name={contact.name}
+      isMe={contact.isMe}
       size="xl"
       testId={contact.isMe ? "contacts-detail-me-avatar" : "contacts-detail-avatar"}
     />
