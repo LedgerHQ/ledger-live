@@ -10,7 +10,7 @@ import type { Result as CompleteExchangeResult } from "@ledgerhq/live-common/hw/
 import type { Result as StartExchangeResult } from "@ledgerhq/live-common/hw/actions/startExchange";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
-import { useRequestCardFundPayloadMutation } from "@domain/api-card-funding";
+import { useRequestCardTopUpPayloadMutation } from "@domain/api-card-top-up";
 import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { useTransactionAction, useStartExchangeAction } from "~/renderer/hooks/useConnectAppAction";
 import { broadcastLogger } from "~/datadog/logs";
@@ -77,8 +77,8 @@ export function useCardFundExecution({
   const failActiveStep = useRef<((error: Error) => void) | null>(null);
   const currentRun = useRef(0);
 
-  const [requestCardFundPayload, { reset: forgetCardFundPayload }] =
-    useRequestCardFundPayloadMutation();
+  const [requestCardTopUpPayload, { reset: forgetCardTopUpPayload }] =
+    useRequestCardTopUpPayloadMutation();
 
   const startAction = useStartExchangeAction();
   const signAction = useTransactionAction();
@@ -165,14 +165,14 @@ export function useCardFundExecution({
         }));
         if ("startExchangeError" in startResult) throw startResult.startExchangeError.error;
 
-        const signed = await requestCardFundPayload({
+        const signed = await requestCardTopUpPayload({
           transactionId: startResult.startExchangeResult.nonce,
           inAmount,
           currency: asset.currency,
           inAddress: asset.address,
         })
           .unwrap()
-          .finally(forgetCardFundPayload);
+          .finally(forgetCardTopUpPayload);
 
         const fundPayload = await decodeFundPayload(signed.payload);
         assertCardFundDestination(asset.address, fundPayload.inAddress);
@@ -238,10 +238,10 @@ export function useCardFundExecution({
       broadcast,
       completeAction,
       exchange,
-      forgetCardFundPayload,
+      forgetCardTopUpPayload,
       fromCurrency,
       parentAccount,
-      requestCardFundPayload,
+      requestCardTopUpPayload,
       signAction,
       startAction,
     ],

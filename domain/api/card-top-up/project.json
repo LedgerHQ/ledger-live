@@ -1,5 +1,5 @@
 {
-  "name": "@domain/api-card-funding",
+  "name": "@domain/api-card-top-up",
   "targets": {
     "build": {
       "executor": "nx:noop"

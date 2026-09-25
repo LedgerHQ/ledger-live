@@ -917,9 +917,9 @@ importers:
       '@domain/api-aggregated-assets':
         specifier: workspace:*
         version: link:../../domain/api/aggregated-assets
-      '@domain/api-card-funding':
+      '@domain/api-card-top-up':
         specifier: workspace:^
-        version: link:../../domain/api/card-funding
+        version: link:../../domain/api/card-top-up
       '@domain/api-card-management':
         specifier: workspace:^
         version: link:../../domain/api/card-management
@@ -4542,7 +4542,7 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
-  domain/api/card-funding:
+  domain/api/card-top-up:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'

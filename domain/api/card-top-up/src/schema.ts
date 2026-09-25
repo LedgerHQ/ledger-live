@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const CardFundPayloadRequestSchema = z.object({
+export const CardTopUpPayloadRequestSchema = z.object({
   /** The device nonce returned by the Fund `startExchange`. */
   transactionId: z.string().min(1),
   /** Smallest unit of the funded currency (satoshis for BTC); must be exact as a JS number. */
@@ -16,20 +16,20 @@ const SerializedBufferSchema = z.object({
   data: z.array(z.number().int().min(0).max(255)).min(1),
 });
 
-export const CardFundPayloadResponseSchema = z.object({
+export const CardTopUpPayloadResponseSchema = z.object({
   binaryPayload: SerializedBufferSchema,
   signature: SerializedBufferSchema,
 });
 
 /** The provider answers a refusal with HTTP 200 and this body. */
-export const CardFundPayloadRefusalSchema = z.object({
+export const CardTopUpPayloadRefusalSchema = z.object({
   error: z.object({
     status: z.number().optional(),
     message: z.string().min(1),
   }),
 });
 
-export const CardFundSignedPayloadSchema = z.object({
+export const CardTopUpSignedPayloadSchema = z.object({
   /** Base64url text of the signed Fund protobuf, as the device expects it. */
   payload: z.string().min(1),
   /** Hex of the provider's 64-byte `r || s` signature. */

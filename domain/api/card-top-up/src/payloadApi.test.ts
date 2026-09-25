@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { cardApi, cardApiExtra } from "@shared/api-services";
-import { cardFundPayloadApi } from "./payloadApi";
+import { cardTopUpPayloadApi } from "./payloadApi";
 
 const request = {
   transactionId: "7dKAV87vBZW/TA8yCPdRZXoeuphDxa5Rl9qvwu/gQws=",
@@ -55,7 +55,7 @@ it("asks the configured legacy host for a payload on the Card session", async ()
   );
 
   const result = await createStore().dispatch(
-    cardFundPayloadApi.endpoints.requestCardFundPayload.initiate(request),
+    cardTopUpPayloadApi.endpoints.requestCardTopUpPayload.initiate(request),
   );
 
   const sent = fetchSpy.mock.calls[0][0] as Request;
@@ -73,7 +73,7 @@ it("fails with the provider's message when it refuses on a 200", async () => {
     );
 
   const result = await createStore().dispatch(
-    cardFundPayloadApi.endpoints.requestCardFundPayload.initiate(request),
+    cardTopUpPayloadApi.endpoints.requestCardTopUpPayload.initiate(request),
   );
 
   expect(result.error).toMatchObject({ status: "CUSTOM_ERROR", error: "User not logged in" });
@@ -85,7 +85,7 @@ it("fails when the answer carries no signed payload", async () => {
     .mockResolvedValue(jsonResponse({ signature: serializedBuffer([1]) }));
 
   const result = await createStore().dispatch(
-    cardFundPayloadApi.endpoints.requestCardFundPayload.initiate(request),
+    cardTopUpPayloadApi.endpoints.requestCardTopUpPayload.initiate(request),
   );
 
   expect(result).not.toHaveProperty("data");

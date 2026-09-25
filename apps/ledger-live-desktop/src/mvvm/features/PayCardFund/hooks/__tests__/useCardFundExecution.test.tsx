@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { useRequestCardFundPayloadMutation } from "@domain/api-card-funding";
+import { useRequestCardTopUpPayloadMutation } from "@domain/api-card-top-up";
 import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { decodeFundPayload } from "@ledgerhq/hw-app-exchange";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -12,8 +12,8 @@ import { useStartExchangeAction, useTransactionAction } from "~/renderer/hooks/u
 import { buildCardFundTransaction } from "../../utils/buildCardFundTransaction";
 import { useCardFundExecution } from "../useCardFundExecution";
 
-jest.mock("@domain/api-card-funding", () => ({
-  useRequestCardFundPayloadMutation: jest.fn(),
+jest.mock("@domain/api-card-top-up", () => ({
+  useRequestCardTopUpPayloadMutation: jest.fn(),
 }));
 jest.mock("@ledgerhq/hw-app-exchange", () => ({
   decodeFundPayload: jest.fn(),
@@ -63,8 +63,8 @@ const signedPayload = { payload: "ChFQ", signature: "27cba8" };
 const transaction = { family: "evm", amount: new BigNumber(25_000_000) } as Transaction;
 const signedOperation = { signature: "signed-operation" };
 const broadcast = jest.fn();
-const requestCardFundPayload = jest.fn();
-const forgetCardFundPayload = jest.fn();
+const requestCardTopUpPayload = jest.fn();
+const forgetCardTopUpPayload = jest.fn();
 
 async function finishDeviceStep(
   result: { current: ReturnType<typeof useCardFundExecution> },
@@ -96,11 +96,11 @@ beforeEach(() => {
   jest.mocked(useBroadcast).mockReturnValue(broadcast);
   jest.mocked(buildCardFundTransaction).mockResolvedValue(transaction);
   jest
-    .mocked(useRequestCardFundPayloadMutation)
-    .mockReturnValue([requestCardFundPayload, { reset: forgetCardFundPayload }] as never);
+    .mocked(useRequestCardTopUpPayloadMutation)
+    .mockReturnValue([requestCardTopUpPayload, { reset: forgetCardTopUpPayload }] as never);
   jest.mocked(decodeFundPayload).mockResolvedValue({ inAddress: asset.address } as never);
 
-  requestCardFundPayload.mockReturnValue({
+  requestCardTopUpPayload.mockReturnValue({
     unwrap: jest.fn().mockResolvedValue(signedPayload),
   });
   broadcast.mockResolvedValue({ hash: "operation-hash" });
@@ -125,13 +125,13 @@ it("signs the provider payload for the linked wallet and broadcasts it", async (
   await finishDeviceStep(result, "sign", { signedOperation });
   await act(async () => execution);
 
-  expect(requestCardFundPayload).toHaveBeenCalledWith({
+  expect(requestCardTopUpPayload).toHaveBeenCalledWith({
     transactionId: "device-nonce",
     inAmount: 25_000_000,
     currency: "usdc",
     inAddress: asset.address,
   });
-  expect(forgetCardFundPayload).toHaveBeenCalled();
+  expect(forgetCardTopUpPayload).toHaveBeenCalled();
   expect(buildCardFundTransaction).toHaveBeenCalledWith(
     expect.objectContaining({
       account: sourceAccount,
@@ -177,7 +177,7 @@ it("stops before the device confirmation when the payload pays another address",
 });
 
 it("shows the provider's refusal message", async () => {
-  requestCardFundPayload.mockReturnValue({
+  requestCardTopUpPayload.mockReturnValue({
     unwrap: jest.fn().mockRejectedValue({ status: "CUSTOM_ERROR", error: "User not logged in" }),
   });
   const { result } = renderHook(() =>
@@ -193,7 +193,7 @@ it("shows the provider's refusal message", async () => {
   });
   await act(async () => execution);
 
-  expect(forgetCardFundPayload).toHaveBeenCalled();
+  expect(forgetCardTopUpPayload).toHaveBeenCalled();
   expect(result.current.deviceStep).toMatchObject({
     kind: "error",
     error: new Error("User not logged in"),
@@ -222,7 +222,7 @@ it("ends the run when the device fails during a step, so a retry starts clean", 
     kind: "error",
     error: new Error("Exchange app closed"),
   });
-  expect(requestCardFundPayload).not.toHaveBeenCalled();
+  expect(requestCardTopUpPayload).not.toHaveBeenCalled();
 
   act(() => result.current.reset());
   expect(result.current.deviceStep).toEqual({ kind: "idle" });
@@ -244,7 +244,7 @@ it("refuses an amount the provider cannot receive exactly, before the device", a
     kind: "error",
     error: new Error("This amount cannot be sent to the provider exactly"),
   });
-  expect(requestCardFundPayload).not.toHaveBeenCalled();
+  expect(requestCardTopUpPayload).not.toHaveBeenCalled();
 });
 
 it("shows the message from a serialized device error", () => {
@@ -280,5 +280,5 @@ it("stops before connecting to the device when the linked wallet has no address"
     kind: "error",
     error: new Error("The selected card wallet has no destination address"),
   });
-  expect(requestCardFundPayload).not.toHaveBeenCalled();
+  expect(requestCardTopUpPayload).not.toHaveBeenCalled();
 });

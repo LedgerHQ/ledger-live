@@ -1,17 +1,17 @@
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { CardFundPayloadRefusalSchema, CardFundPayloadResponseSchema } from "./schema";
-import type { CardFundSignedPayload } from "./types";
+import { CardTopUpPayloadRefusalSchema, CardTopUpPayloadResponseSchema } from "./schema";
+import type { CardTopUpSignedPayload } from "./types";
 
-type CardFundPayloadResult =
-  | { data: CardFundSignedPayload; error?: undefined }
+type CardTopUpPayloadResult =
+  | { data: CardTopUpSignedPayload; error?: undefined }
   | { error: FetchBaseQueryError; data?: undefined };
 
 function toHex(bytes: readonly number[]): string {
   return bytes.map(byte => byte.toString(16).padStart(2, "0")).join("");
 }
 
-export function readCardFundPayload(body: unknown): CardFundPayloadResult {
-  const refusal = CardFundPayloadRefusalSchema.safeParse(body);
+export function readCardTopUpPayload(body: unknown): CardTopUpPayloadResult {
+  const refusal = CardTopUpPayloadRefusalSchema.safeParse(body);
   if (refusal.success) {
     return {
       error: {
@@ -22,7 +22,7 @@ export function readCardFundPayload(body: unknown): CardFundPayloadResult {
     };
   }
 
-  const signed = CardFundPayloadResponseSchema.safeParse(body);
+  const signed = CardTopUpPayloadResponseSchema.safeParse(body);
   if (!signed.success) {
     return {
       error: {
