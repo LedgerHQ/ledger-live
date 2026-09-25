@@ -2,7 +2,7 @@ import React, { type PropsWithChildren } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { payCardAuthSlice, setSignedIn } from "../../../state/slice";
 import {
@@ -10,16 +10,15 @@ import {
   payCardLoginIntroSlice,
   resetPayCardLoginIntroSeen,
 } from "../../../state/loginIntroSlice";
-import {
-  CARD_LOGIN_INTRO_FLOW,
-  CARD_LOGIN_INTRO_PAGE,
-  CARD_LOGIN_INTRO_PAGE_EVENT,
-  mapSnapshotToViewModel,
-  useCardLoginViewModel,
-} from "../useCardLoginViewModel";
+import { CARD_LOGIN_INTRO_FLOW, CARD_LOGIN_INTRO_PAGE } from "../analytics";
+import { mapSnapshotToViewModel, useCardLoginViewModel } from "../useCardLoginViewModel";
 import type { CardLoginCopy, CardLoginIntroViewProps, MobileWallet } from "../types";
 import type { CardLoginOauthConfig, CardLoginPorts, HostedLoginResult } from "../../../state/types";
 import { CARD_LOGIN_INTRO_RESOURCES } from "./fixtures";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 const onLoginPress = jest.fn();
 const onAlreadyHaveCardPress = jest.fn();
@@ -177,12 +176,10 @@ function buildStore() {
   });
 }
 
-function withProviders(store: ReturnType<typeof buildStore>, track = jest.fn()) {
+function withProviders(store: ReturnType<typeof buildStore>) {
   return ({ children }: PropsWithChildren) => (
     <Provider store={store}>
-      <PayAnalyticsProvider adapter={{ track }}>
-        <I18nTestProvider resources={CARD_LOGIN_INTRO_RESOURCES}>{children}</I18nTestProvider>
-      </PayAnalyticsProvider>
+      <I18nTestProvider resources={CARD_LOGIN_INTRO_RESOURCES}>{children}</I18nTestProvider>
     </Provider>
   );
 }
@@ -190,7 +187,6 @@ function withProviders(store: ReturnType<typeof buildStore>, track = jest.fn()) 
 async function renderIdleLogin(
   store: ReturnType<typeof buildStore>,
   mobileWallet: MobileWallet = "both",
-  track = jest.fn(),
   openHostedPage?: jest.Mock,
   requestProtection?: jest.Mock,
 ) {
@@ -203,7 +199,7 @@ async function renderIdleLogin(
         oauthConfig,
         requestProtection,
       }),
-    { wrapper: withProviders(store, track) },
+    { wrapper: withProviders(store) },
   );
 
   await waitFor(() => expect(rendered.result.current?.isLoading).toBe(false));
@@ -267,14 +263,13 @@ describe("useCardLoginViewModel intro", () => {
   });
 
   it("starts the login from that link, and skips the intro", async () => {
-    const onTrackEvent = jest.fn();
-    const { result } = await renderIdleLogin(store, "both", onTrackEvent);
+    const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onAlreadyHaveCardPress());
 
     await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
     expect(result.current?.intro.isOpen).toBe(false);
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "signin",
       flow: CARD_LOGIN_INTRO_FLOW,
       page: CARD_LOGIN_INTRO_PAGE,
@@ -390,7 +385,7 @@ describe("useCardLoginViewModel intro", () => {
 
   it("asks the host for the signup page when the host owns those pages", async () => {
     const openHostedPage = jest.fn().mockResolvedValue(undefined);
-    const { result } = await renderIdleLogin(store, "both", undefined, openHostedPage);
+    const { result } = await renderIdleLogin(store, "both", openHostedPage);
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
@@ -401,7 +396,7 @@ describe("useCardLoginViewModel intro", () => {
 
   it("reports a host that refuses the signup page, with the copy of that error kind", async () => {
     const openHostedPage = jest.fn().mockRejectedValue(new Error("no manifest"));
-    const { result } = await renderIdleLogin(store, "both", undefined, openHostedPage);
+    const { result } = await renderIdleLogin(store, "both", openHostedPage);
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
@@ -561,49 +556,42 @@ describe("useCardLoginViewModel intro", () => {
     expect(result.current?.intro.isOpen).toBe(false);
   });
 
-  it("tracks Get card and the intro page when the intro opens", async () => {
-    const onTrackEvent = jest.fn();
-    const { result } = await renderIdleLogin(store, "both", onTrackEvent);
+  it("tracks Get card when the intro opens", async () => {
+    const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onLoginPress());
 
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "get card",
       flow: CARD_LOGIN_INTRO_FLOW,
       page: CARD_LOGIN_INTRO_PAGE,
     });
-    expect(onTrackEvent).toHaveBeenCalledWith(CARD_LOGIN_INTRO_PAGE_EVENT, {
-      flow: CARD_LOGIN_INTRO_FLOW,
-    });
   });
 
   it("tracks Login and starts the login once the intro has been seen", async () => {
-    const onTrackEvent = jest.fn();
     store.dispatch(markPayCardLoginIntroSeen());
-    const { result } = await renderIdleLogin(store, "both", onTrackEvent);
+    const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onLoginPress());
 
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "signin",
       flow: CARD_LOGIN_INTRO_FLOW,
       page: CARD_LOGIN_INTRO_PAGE,
     });
-    expect(onTrackEvent).not.toHaveBeenCalledWith(CARD_LOGIN_INTRO_PAGE_EVENT, expect.anything());
   });
 
   it.each([
     ["createAccount", "signup"],
     ["logIn", "signin"],
   ] as const)("tracks the %s intro action", async (id, button) => {
-    const onTrackEvent = jest.fn();
-    const { result } = await renderIdleLogin(store, "both", onTrackEvent);
+    const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onLoginPress());
-    onTrackEvent.mockClear();
+    jest.mocked(trackButtonClicked).mockClear();
     act(() => result.current?.intro.onActionPress(id));
 
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button,
       flow: CARD_LOGIN_INTRO_FLOW,
       page: CARD_LOGIN_INTRO_PAGE,
@@ -611,14 +599,13 @@ describe("useCardLoginViewModel intro", () => {
   });
 
   it("tracks close when the intro is dismissed", async () => {
-    const onTrackEvent = jest.fn();
-    const { result } = await renderIdleLogin(store, "both", onTrackEvent);
+    const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onLoginPress());
-    onTrackEvent.mockClear();
+    jest.mocked(trackButtonClicked).mockClear();
     act(() => result.current?.intro.onClose());
 
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "close",
       flow: CARD_LOGIN_INTRO_FLOW,
       page: CARD_LOGIN_INTRO_PAGE,
@@ -894,13 +881,7 @@ describe("protecting the app before either way to the provider", () => {
 
   it("logs in once the app is protected", async () => {
     const requestProtection = jest.fn().mockResolvedValue(true);
-    const { result } = await renderIdleLogin(
-      store,
-      "both",
-      undefined,
-      undefined,
-      requestProtection,
-    );
+    const { result } = await renderIdleLogin(store, "both", undefined, requestProtection);
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("logIn"));
@@ -911,13 +892,7 @@ describe("protecting the app before either way to the provider", () => {
 
   it("holds the login where the app is left unprotected", async () => {
     const requestProtection = jest.fn().mockResolvedValue(false);
-    const { result } = await renderIdleLogin(
-      store,
-      "both",
-      undefined,
-      undefined,
-      requestProtection,
-    );
+    const { result } = await renderIdleLogin(store, "both", undefined, requestProtection);
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("logIn"));
@@ -930,13 +905,7 @@ describe("protecting the app before either way to the provider", () => {
   it("opens the signup page once the app is protected", async () => {
     const requestProtection = jest.fn().mockResolvedValue(true);
     const openHostedPage = jest.fn().mockResolvedValue(undefined);
-    const { result } = await renderIdleLogin(
-      store,
-      "both",
-      undefined,
-      openHostedPage,
-      requestProtection,
-    );
+    const { result } = await renderIdleLogin(store, "both", openHostedPage, requestProtection);
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
@@ -948,13 +917,7 @@ describe("protecting the app before either way to the provider", () => {
   it("holds the signup where the app is left unprotected", async () => {
     const requestProtection = jest.fn().mockResolvedValue(false);
     const openHostedPage = jest.fn().mockResolvedValue(undefined);
-    const { result } = await renderIdleLogin(
-      store,
-      "both",
-      undefined,
-      openHostedPage,
-      requestProtection,
-    );
+    const { result } = await renderIdleLogin(store, "both", openHostedPage, requestProtection);
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));

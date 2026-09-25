@@ -112,7 +112,7 @@ export const scenarioArcTestnetNative: Scenario<GenericTransaction, Account> = {
     },
   ],
   beforeSync: async () => {
-    await indexBlocks(arcTestnet.ethereumLikeInfo?.chainId || 5042002);
+    await indexBlocks(5042002);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());

@@ -28,8 +28,8 @@ jest.mock("LLM/features/Buy", () => ({
   useOpenBuySell: jest.fn(() => ({ handleOpenBuySell: mockHandleOpenBuySell })),
 }));
 
-function render(onTrackEvent = jest.fn()) {
-  return renderHook(() => usePayTabDepositOptions(onTrackEvent));
+function render() {
+  return renderHook(() => usePayTabDepositOptions());
 }
 
 describe("usePayTabDepositOptions", () => {
@@ -41,13 +41,6 @@ describe("usePayTabDepositOptions", () => {
     const { result } = render();
 
     expect(result.current.depositOptions.page).toBe("Pay");
-  });
-
-  it("passes the host tracking callback through", () => {
-    const onTrackEvent = jest.fn();
-    const { result } = render(onTrackEvent);
-
-    expect(result.current.depositOptions.onTrackEvent).toBe(onTrackEvent);
   });
 
   it("toggles isOpen via open and onClose", () => {

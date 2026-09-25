@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useGetUserQuery } from "@domain/api-card-management";
 import type { PayCardUser } from "@domain/api-card-management";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import { useLocalizedUrl, useOpenLink } from "@shared/linking";
 import { useIsCardSignedIn, useCardLogout } from "@features/flow-pay-card-auth/hooks";
@@ -64,7 +64,6 @@ export function mapUserToViewModel({
 export function useMoreViewModel(actions: CardSettingsActions = {}): MoreViewModel {
   const { onManagePin, onAccessBaanx } = actions;
   const { t } = useTranslation();
-  const { trackButtonClicked } = usePayAnalyticsContext();
   const isSignedIn = useIsCardSignedIn();
   const logout = useCardLogout();
   const openLink = useOpenLink();

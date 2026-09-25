@@ -13,7 +13,6 @@ export type ActionTile = ActionTileInput & Readonly<{ label: string }>;
 export type ActionTilesProps = Readonly<{
   tiles: readonly ActionTileInput[];
   page: string;
-  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
 export type ActionTilesViewProps = Readonly<{

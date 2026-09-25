@@ -2,6 +2,11 @@ import { renderHook } from "@testing-library/react";
 import { useDepositOptionsViewModel } from "../useDepositOptionsViewModel";
 import type { DepositOptionsProps } from "../../../types";
 import { DEPOSIT_RESOURCES, i18nWrapper } from "./i18nWrapper";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 function setup(overrides: Partial<DepositOptionsProps> = {}) {
   const props: DepositOptionsProps = {
@@ -9,7 +14,6 @@ function setup(overrides: Partial<DepositOptionsProps> = {}) {
     page: "Pay",
     onClose: jest.fn(),
     onSelect: jest.fn(),
-    onTrackEvent: jest.fn(),
     ...overrides,
   };
   const { result } = renderHook(() => useDepositOptionsViewModel(props), {
@@ -19,6 +23,10 @@ function setup(overrides: Partial<DepositOptionsProps> = {}) {
 }
 
 describe("useDepositOptionsViewModel", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("builds the four options in a fixed order", () => {
     const { result } = setup();
 
@@ -41,20 +49,13 @@ describe("useDepositOptionsViewModel", () => {
 
     result.current.onSelectOption("receive");
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "receive via crypto address",
       buttonLocation: "deposit",
       page: "Pay",
     });
     expect(props.onSelect).toHaveBeenCalledWith("receive");
     expect(props.onClose).toHaveBeenCalledTimes(1);
-  });
-
-  it("does not throw when no tracker is provided", () => {
-    const { props, result } = setup({ onTrackEvent: undefined });
-
-    expect(() => result.current.onSelectOption("swap")).not.toThrow();
-    expect(props.onSelect).toHaveBeenCalledWith("swap");
   });
 
   it("resolves its copy from the mounted i18n provider, not from props", () => {

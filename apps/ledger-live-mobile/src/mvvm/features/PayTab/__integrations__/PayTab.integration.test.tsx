@@ -6,8 +6,7 @@ import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
-import { trackPage } from "@shared/analytics";
+import { track, trackPage } from "@shared/analytics";
 import {
   mockContact,
   mockContactWithAddress,
@@ -30,9 +29,10 @@ import {
   usdc,
 } from "./shared";
 
-jest.mock("~/analytics", () => ({
-  ...jest.requireActual("~/analytics"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus", () => ({
   useContactsLedgerSyncStatus: () => "ready",
@@ -382,9 +382,9 @@ describe("PayTab integration", () => {
           page: "Pay",
         }),
       );
-      expect(jest.mocked(track)).toHaveBeenCalledWith(
-        "Page cash to stable",
-        expect.objectContaining({ flow: "C2S" }),
+      expect(jest.mocked(trackPage)).toHaveBeenCalledWith(
+        expect.objectContaining({ category: "Feature Intro", name: "Cash to stable" }),
+        expect.anything(),
       );
     });
 
@@ -399,16 +399,16 @@ describe("PayTab integration", () => {
         "button_clicked",
         expect.objectContaining({
           button: "create an account",
-          flow: "C2S",
-          page: "cash to stable",
+          flow: "Cash to stable",
+          page: "Feature Intro Cash to stable",
         }),
       );
       expect(jest.mocked(track)).not.toHaveBeenCalledWith(
         "button_clicked",
         expect.objectContaining({
           button: "close",
-          flow: "C2S",
-          page: "cash to stable",
+          flow: "Cash to stable",
+          page: "Feature Intro Cash to stable",
         }),
       );
     });
@@ -424,8 +424,8 @@ describe("PayTab integration", () => {
         "button_clicked",
         expect.objectContaining({
           button: "log in to noah",
-          flow: "C2S",
-          page: "cash to stable",
+          flow: "Cash to stable",
+          page: "Feature Intro Cash to stable",
         }),
       );
     });

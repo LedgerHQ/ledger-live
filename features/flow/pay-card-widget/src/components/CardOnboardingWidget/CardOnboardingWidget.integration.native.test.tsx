@@ -7,7 +7,12 @@ import {
   CARD_WALLET_PAY_COPY,
 } from "../../__tests__/i18nWrapper";
 import { useGetCardStatusQuery } from "@domain/api-card-management";
+import { trackCardOnboardingWidgetToggled } from "@features/platform-pay-analytics/testing/module-mock";
 import { createRenderWidget, setQuery, stepsWith, stepsWithIds } from "./__tests__/shared";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 jest.mock("../../onboardingStatus", () => ({
   useCardOnboardingStatus: jest.fn(),
@@ -146,6 +151,38 @@ describe("CardOnboardingWidget (integration)", () => {
     await user.press(screen.getByTestId("pay-card-onboarding-sheet-dismiss"));
 
     expect(screen.queryByText(CARD_ONBOARDING_COPY.dialogTitle)).toBeNull();
+  });
+
+  it("should track opening and closing with the current onboarding progress", async () => {
+    const user = userEvent.setup();
+    const steps = stepsWithIds(
+      "choose-card-type",
+      "apple-google-pay",
+      "top-up-card",
+      "first-purchase",
+    ).map((step, index) => ({ ...step, isDone: index % 2 === 0 }));
+    setQuery({ data: { steps } });
+    renderWidget();
+
+    await openWidget(user);
+    await user.press(screen.getByTestId("pay-card-onboarding-sheet-dismiss"));
+
+    expect(trackCardOnboardingWidgetToggled).toHaveBeenNthCalledWith(1, {
+      opened: true,
+      page: "Pay",
+      cardClaimed: true,
+      addedToOsWallet: false,
+      cardTopUp: true,
+      firstPurchaseCompleted: false,
+    });
+    expect(trackCardOnboardingWidgetToggled).toHaveBeenNthCalledWith(2, {
+      opened: false,
+      page: "Pay",
+      cardClaimed: true,
+      addedToOsWallet: false,
+      cardTopUp: true,
+      firstPurchaseCompleted: false,
+    });
   });
 
   it("should open the wallet instructions scene without marking the step done", async () => {

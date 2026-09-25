@@ -21,24 +21,17 @@ describe("useBankTransferIntroAdapter", () => {
     expect(result.current.isOpen).toBe(false);
   });
 
-  it("passes onBankTransfer and onTrackEvent through into bankTransferIntro", () => {
+  it("passes heroImage and onBankTransfer through into bankTransferIntro", () => {
     const onBankTransfer = jest.fn();
-    const onTrackEvent = jest.fn();
 
     const { result } = renderHook(
-      () =>
-        useBankTransferIntroAdapter({
-          heroImage: 7,
-          onBankTransfer,
-          onTrackEvent,
-        }),
+      () => useBankTransferIntroAdapter({ heroImage: 7, onBankTransfer }),
       { wrapper: I18nWrapper },
     );
 
     const { bankTransferIntro } = result.current;
     expect(bankTransferIntro.heroImage).toBe(7);
     expect(bankTransferIntro.onBankTransfer).toBe(onBankTransfer);
-    expect(bankTransferIntro.onTrackEvent).toBe(onTrackEvent);
   });
 
   it("emits onBankTransfer and closes on create account", () => {

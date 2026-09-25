@@ -17,21 +17,19 @@ import { DepositOptions } from "@features/flow-pay-deposit";
   page="Pay"
   onClose={closeDeposit}
   onSelect={handleDepositOption}
-  onTrackEvent={track}
 />;
 ```
 
 The overlay is opened by the host (the Pay tab Deposit / "add stablecoins" action tile) via a local
 `isOpen` boolean. The view stays props-only: it emits `onSelect(id)` and the host owns navigation
 (Swap tab, Receive filtered to stablecoins, Buy live app, Bank transfer flow). Copy is resolved
-inside the feature through `@shared/i18n` (`payTab.deposit.*`); the host injects navigation and
-analytics only.
+inside the feature through `@shared/i18n` (`payTab.deposit.*`); the host injects navigation only.
 
 ### Tracking
 
-On press the view-model emits `button_clicked { button, buttonLocation: "deposit", page }` via the
-injected `onTrackEvent`, where `button` is `bank transfer` | `swap` | `receive via crypto address` |
-`buy` (per the
+On press the view-model calls `trackButtonClicked({ button, buttonLocation: "deposit", page })` from
+`@features/platform-pay-analytics`, where `button` is `bank transfer` | `swap` |
+`receive via crypto address` | `buy` (per the
 [Pay Tracking Plan](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7331315855/Pay+-+Tracking+Plan)).
 
 ## Platform resolution

@@ -50,11 +50,9 @@ import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
 export function usePayTabViewModel() {
-  const analytics = usePayAnalyticsContext();
   const { t } = useTranslation();
   const { bottom } = useNavigationBarHeights();
   const { top: safeAreaTop } = useAdjustedSafeAreaInsets();
@@ -62,10 +60,10 @@ export function usePayTabViewModel() {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
-  const balance = usePayCardBalance(analytics.trackEvent);
-  const deposit = usePayTabDepositOptions(balance.onTrackEvent);
+  const balance = usePayCardBalance();
+  const deposit = usePayTabDepositOptions();
   const request = usePayTabRequestReceive();
-  const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
+  const actionTiles = usePayTabActionTiles(deposit.open, request.open);
   const payment = usePayTabNewPayment();
   const contacts = usePayTabContacts(payment.open);
   const { isEnabled: isContactsEnabled } = useContactsFeature("mobile");

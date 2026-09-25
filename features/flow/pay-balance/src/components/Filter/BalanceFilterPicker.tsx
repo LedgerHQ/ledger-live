@@ -11,7 +11,6 @@ export type BalanceFilterPickerProps = Readonly<{
   labels: BalanceFilterLabels;
   onClose: () => void;
   onConfirmFilter: (filter: BalanceFilter) => void;
-  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
 export function BalanceFilterPicker({
@@ -21,7 +20,6 @@ export function BalanceFilterPicker({
   labels,
   onClose,
   onConfirmFilter,
-  onTrackEvent,
 }: BalanceFilterPickerProps) {
   const { draftFilter, onSelectDraft, onConfirm } = useBalanceFilterPickerViewModel({
     isOpen,
@@ -29,7 +27,6 @@ export function BalanceFilterPicker({
     options,
     onConfirmFilter,
     onClose,
-    onTrackEvent,
   });
 
   return (

@@ -29,7 +29,6 @@ export const MockedAccounts: AccountsState = {
         scheme: "cro",
         color: "#002D74",
         family: "evm",
-        ethereumLikeInfo: { chainId: 25 },
         units: [{ name: "CRO", code: "CRO", magnitude: 18 }],
         explorerViews: [
           {
@@ -319,7 +318,6 @@ export const MockedAccounts: AccountsState = {
           { name: "Kwei", code: "Kwei", magnitude: 3 },
           { name: "wei", code: "wei", magnitude: 0 },
         ],
-        ethereumLikeInfo: { chainId: 246 },
         explorerViews: [
           {
             tx: "https://explorer.energyweb.org/tx/$hash",
@@ -409,7 +407,6 @@ export const MockedAccounts: AccountsState = {
         ],
         family: "evm",
         blockAvgTime: 15,
-        ethereumLikeInfo: { chainId: 61 },
         explorerViews: [
           {
             tx: "https://blockscout.com/etc/mainnet/tx/$hash/internal-transactions",
@@ -549,7 +546,6 @@ export const MockedAccounts: AccountsState = {
           { name: "Kwei", code: "Kwei", magnitude: 3 },
           { name: "wei", code: "wei", magnitude: 0 },
         ],
-        ethereumLikeInfo: { chainId: 59144 },
         explorerViews: [
           {
             tx: "https://lineascan.build/tx/$hash",

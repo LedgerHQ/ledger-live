@@ -85,7 +85,7 @@ export function useRecipientAddressModalViewModel({
   });
 
   const contactsOnNetwork = useMemo(
-    () => filterContactsByNetwork(contacts, currency.id),
+    () => filterContactsByNetwork(contacts, currency.id, { includeMe: true }),
     [contacts, currency.id],
   );
 

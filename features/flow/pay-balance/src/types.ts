@@ -53,7 +53,6 @@ export type PortfolioPort = Readonly<{
   filterOptions: readonly BalanceFilterOption[];
   formatCountervalue: (value: number) => FormattedValue;
   onConfirmFilter: (filter: BalanceFilter) => void;
-  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
 /** Result of {@link aggregateBalance}: filtered total, funded flag, and status. */
@@ -72,7 +71,6 @@ export type BalanceData = BalanceAggregate &
     /** First entry is always the "all" option. */
     filterOptions: readonly BalanceFilterOption[];
     onConfirmFilter: (filter: BalanceFilter) => void;
-    onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
     discreet?: boolean;
     onToggleDiscreetMode?: () => void;
   }>;
@@ -102,7 +100,6 @@ export type BalanceViewProps =
       onOpenFilter: () => void;
       onCloseFilter: () => void;
       onConfirmFilter: (filter: BalanceFilter) => void;
-      onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
       actionTiles?: ActionTilesProps;
       discreet?: boolean;
       onToggleDiscreetMode?: () => void;
@@ -115,7 +112,6 @@ export type BalanceFilterPickerViewModelParams = Readonly<{
   options: readonly BalanceFilterOption[];
   onConfirmFilter: (filter: BalanceFilter) => void;
   onClose: () => void;
-  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
 export type BalanceFilterPickerViewModel = Readonly<{
