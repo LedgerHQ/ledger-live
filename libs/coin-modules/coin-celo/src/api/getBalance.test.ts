@@ -11,7 +11,11 @@ const GROUP = "0x4444444444444444444444444444444444444444";
 const NATIVE: Balance = { value: 500n, asset: { type: "native" }, locked: 0n };
 
 const mockCtx: Context<CurrencyConfig> = {
-  config: async () => ({ status: { type: "active" } }),
+  config: async () => ({
+    status: { type: "active" },
+    name: "Celo",
+    unit: { name: "CELO", code: "CELO", magnitude: 18 },
+  }),
   logger: () => {},
 };
 

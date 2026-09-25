@@ -43,6 +43,8 @@ describe("createTransaction", () => {
     mockedGenerateNonce.mockReturnValue("0x1234567890abcdef");
     setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
     }));
   });
@@ -80,6 +82,8 @@ describe("createTransaction", () => {
   it("should fall back to MAINNET_CHAIN_TAG when the config has no chainTag", () => {
     setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
     }));
 
@@ -91,6 +95,8 @@ describe("createTransaction", () => {
   it("should use the config-provided chainTag when set", () => {
     setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Vechain",
+      unit: { name: "VET", code: "VET", magnitude: 18 },
       node: { url: "https://vechain.coin.ledger.com" },
       chainTag: 39,
     }));

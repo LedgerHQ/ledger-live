@@ -4,6 +4,8 @@ import { zainoEndpoint } from "../constants";
 // `.invalid` hosts never resolve: a test that forgets to mock the network fails fast.
 export const TEST_CONFIG: ZcashCoinConfig = {
   status: { type: "active" },
+  name: "Zcash",
+  unit: { name: "zcash", code: "ZEC", magnitude: 8 },
   zaino: { url: "https://zaino.test.invalid" },
   explorer: { url: "https://explorer.test.invalid" },
 };

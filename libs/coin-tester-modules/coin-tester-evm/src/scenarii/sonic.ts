@@ -87,6 +87,7 @@ export const scenarioSonic: Scenario<GenericTransaction, Account> = {
       },
       chainId: 146,
       name: "Sonic",
+      unit: { name: "S", code: "S", magnitude: 18 },
       node: {
         type: "external",
         uri: "http://127.0.0.1:8545",

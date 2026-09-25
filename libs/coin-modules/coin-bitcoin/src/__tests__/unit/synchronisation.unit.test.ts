@@ -11,7 +11,14 @@ import type { SignerContext } from "../../signer";
 import { BitcoinAccount } from "../../types";
 import type { CoinConfig } from "../../config";
 
-const coinConfig: CoinConfig = () => ({ info: { status: { type: "active" }, explorerId: "btc" } });
+const coinConfig: CoinConfig = () => ({
+  info: {
+    status: { type: "active" },
+    explorerId: "btc",
+    name: "Bitcoin",
+    unit: { name: "satoshi", code: "BTC", magnitude: 8 },
+  },
+});
 
 jest.setTimeout(10000);
 
