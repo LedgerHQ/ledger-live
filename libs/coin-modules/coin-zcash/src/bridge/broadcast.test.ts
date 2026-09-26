@@ -111,6 +111,31 @@ describe("broadcast", () => {
       );
     });
 
+    it("hands them back when the coin config cannot be resolved", async () => {
+      reserveNotes(account.id, TXID, [NULLIFIER]);
+      const unavailable = buildBroadcast({
+        ...testContext,
+        config: () => Promise.reject(new Error("config unavailable")),
+      });
+
+      await expect(
+        unavailable({
+          account,
+          signedOperation: {
+            signature: TX_HEX,
+            operation: {
+              id: "op1",
+              hash: TXID,
+              extra: { zcashShielded: true },
+            } as unknown as Operation,
+          } as SignedOperation,
+        }),
+      ).rejects.toThrow("config unavailable");
+
+      expect(getSessionReservedNullifiers(account.id).size).toBe(0);
+      expect(mockBroadcastLogic).not.toHaveBeenCalled();
+    });
+
     it("keeps them reserved once the send is out", async () => {
       reserveNotes(account.id, TXID, [NULLIFIER]);
 

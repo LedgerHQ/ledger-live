@@ -26,11 +26,13 @@ import { releaseReservation } from "./note-reservation";
 export const buildBroadcast =
   (context: ZcashContext): AccountBridge<Transaction, ZcashAccount>["broadcast"] =>
   async ({ account, signedOperation: { signature, operation } }) => {
-    const config = await context.config(account.currency.id);
     const inputRefs = (operation.extra as BtcOperationExtra | undefined)?.inputRefs ?? [];
 
     let txid: string;
     try {
+      // Resolved inside the try: a config lookup failure is a send that did not go
+      // out, and must hand the reserved notes back like any other.
+      const config = await context.config(account.currency.id);
       txid = await broadcastLogic(
         zainoEndpoint(config),
         signature,
