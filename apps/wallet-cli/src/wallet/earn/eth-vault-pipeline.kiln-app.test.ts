@@ -1,4 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, mock } from "bun:test";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { evmConfig } from "@ledgerhq/live-common/families/evm/config";
 import type { AccountDescriptor } from "../models";
 import type { CommandOutput } from "../../output";
 import type { WalletAdapter } from "../index";
@@ -26,6 +28,9 @@ const signAndBroadcastIntent = mock(async (_params: unknown) => ({ txHash: "0xde
 // Scope these earn-api + sign-and-broadcast fakes to this file's tests only (see the mock helpers for
 // the why — Bun's mock.module is process-global, so we gate the overrides behind an active flag).
 beforeAll(() => {
+  // depositEvm's chain guard reads chainId via getCurrencyConfiguration (LiveConfig); seed the real
+  // EVM config so it resolves deterministically when this file runs in isolation.
+  LiveConfig.setConfig(evmConfig);
   activateEarnApiMock({
     getDefiProducts: async () => [PRODUCT],
     // 204 no-action: the allowance is already sufficient, so only the deposit leg signs.

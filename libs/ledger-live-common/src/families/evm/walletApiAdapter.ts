@@ -6,18 +6,19 @@ import {
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AccountLike } from "@ledgerhq/types-live";
 import { DEFAULT_GAS_LIMIT, DEFAULT_NONCE } from "@ledgerhq/coin-evm/logic-public";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import { getCurrencyConfiguration } from "../../config";
 
 const CAN_EDIT_FEES = true;
 
 const getChainId = (account: AccountLike): number => {
   if (account.type === "Account") {
-    return account.currency.ethereumLikeInfo?.chainId || 0;
+    return getCurrencyConfiguration<EvmConfigInfo>(account.currency.id).chainId;
   }
   if (account.type === "TokenAccount") {
-    return getCryptoCurrencyById(account.token.parentCurrencyId).ethereumLikeInfo?.chainId || 0;
+    return getCurrencyConfiguration<EvmConfigInfo>(account.token.parentCurrencyId).chainId;
   }
   return 0;
 };

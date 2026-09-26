@@ -1,9 +1,49 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { createTransaction } from "./createTransaction";
 
 describe("createTransaction", () => {
+  it("returns the EVM default transaction with the configured chain id", () => {
+    LiveConfig.setConfig({
+      config_currency_ethereum: { type: "object", default: { chainId: 1 } },
+    } as never);
+
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("ethereum"),
+    } as unknown as Account;
+
+    expect(createTransaction(account)).toEqual({
+      mode: "send",
+      type: 2,
+      family: "evm",
+      amount: new BigNumber(0),
+      recipient: "",
+      useAllAmount: false,
+      feesStrategy: "medium",
+      chainId: 1,
+      gasLimit: new BigNumber(21000),
+      maxFeePerGas: new BigNumber(0),
+      maxPriorityFeePerGas: new BigNumber(0),
+    });
+  });
+
+  it("throws for an EVM currency with no configuration", () => {
+    LiveConfig.setConfig({
+      config_currency_polygon: { type: "object", default: { chainId: 137 } },
+    } as never);
+
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("ethereum"),
+    } as unknown as Account;
+
+    expect(() => createTransaction(account)).toThrow(
+      "No currency configuration available for ethereum",
+    );
+  });
   it("returns the Cardano default transaction with a zero nonce", () => {
     const account = {
       type: "Account",

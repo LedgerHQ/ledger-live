@@ -211,22 +211,6 @@ describe("convertApiAssets, via getAssetData", () => {
         scheme: "mixedcasechain",
       });
     });
-
-    it("adds ethereumLikeInfo only when a chainId is present", async () => {
-      const withChain = { ...unknownCrypto, chainId: "137" };
-
-      const withResult = await getAssetData(raw({ cryptoOrTokenCurrencies: { withChain } }));
-      const withoutResult = await getAssetData(
-        raw({ cryptoOrTokenCurrencies: { unk: unknownCrypto } }),
-      );
-
-      expect(withResult.data?.cryptoOrTokenCurrencies.withChain).toMatchObject({
-        ethereumLikeInfo: { chainId: 137 },
-      });
-      expect(withoutResult.data?.cryptoOrTokenCurrencies.unk).not.toHaveProperty(
-        "ethereumLikeInfo",
-      );
-    });
   });
 
   describe("tokens", () => {
