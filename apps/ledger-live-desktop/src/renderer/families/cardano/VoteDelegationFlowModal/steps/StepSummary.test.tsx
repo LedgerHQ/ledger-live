@@ -54,6 +54,7 @@ describe("StepSummary", () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockStatus = {
     estimatedFees: new BigNumber("10000"),
+    errors: {},
     warnings: {},
   } as TransactionStatus;
 
@@ -188,6 +189,8 @@ describe("StepSummary", () => {
     const footerProps = {
       transitionTo: jest.fn(),
       transaction: mockTransaction,
+      status: mockStatus,
+      bridgePending: false,
       onClose: jest.fn(),
     } as unknown as StepProps;
 
@@ -221,6 +224,17 @@ describe("StepSummary", () => {
 
       fireEvent.click(screen.getByText(/Continue/i).closest("button")!);
       expect(footerProps.transitionTo).toHaveBeenCalledWith("connectDevice");
+    });
+
+    it("disables continue when the transaction status has errors", () => {
+      render(
+        <StepSummaryFooter
+          {...footerProps}
+          status={{ ...mockStatus, errors: { amount: new Error("not enough funds") } }}
+        />,
+      );
+
+      expect(screen.getByText(/Continue/i).closest("button")).toBeDisabled();
     });
   });
 });

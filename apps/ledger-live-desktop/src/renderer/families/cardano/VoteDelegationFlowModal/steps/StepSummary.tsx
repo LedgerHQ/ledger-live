@@ -189,8 +189,15 @@ function StepSummary(props: StepProps) {
   );
 }
 
-export function StepSummaryFooter({ transitionTo, transaction, onClose }: StepProps) {
-  const canNext = true;
+export function StepSummaryFooter({
+  transitionTo,
+  transaction,
+  status,
+  bridgePending,
+  onClose,
+}: StepProps) {
+  const { errors } = status;
+  const canNext = !bridgePending && Object.keys(errors).length === 0 && transaction;
   const isDirectMode = transaction?.dRepAbstain || transaction?.dRepNoConfidence;
 
   return (
