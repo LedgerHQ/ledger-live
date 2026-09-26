@@ -1,0 +1,250 @@
+import { z } from "zod";
+import { log } from "@ledgerhq/logs";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import type { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
+
+export type OperationHistoryBoundEntry = {
+  maxOperations?: number;
+  pageSize?: number;
+};
+
+export type OperationHistoryBoundConfig = {
+  maxOperations?: number;
+  pageSize?: number;
+  networks: Record<string, OperationHistoryBoundEntry>;
+};
+
+export type OperationHistoryBound = {
+  /**
+   * `undefined` means unbounded: the walk and the store never truncate. The resolver never
+   * produces it -- every path yields at least the shipped safety ceiling -- but the type keeps it
+   * because `paginateOperations` accepts an unbounded caller, and the A4 client is one.
+   */
+  maxOperations: number | undefined;
+  /**
+   * The per-request page size for the paginated `listOperations` walk, or `undefined` to send no
+   * `limit` at all.
+   *
+   * Distinct from `maxOperations` and independent of it: this bounds what one request costs,
+   * `maxOperations` bounds how much the walk keeps. It is deliberately *not* gated on
+   * `maxOperations` -- page cost is crash safety, retention is a product decision, and gating the
+   * first on the second would put crash safety behind a product call.
+   *
+   * It *is* gated on the family supporting `limit`, which is a different question. The contract is
+   * explicit: "implementation must raise a 'not supported' error if limit is set and not
+   * supported". So sending one to a module that does not support it is a caller bug that fails the
+   * sync, not a soft hint the module may ignore. Absent per-module declaration, the caller only
+   * sends a `limit` where support has been verified -- see `DEFAULT_PAGE_SIZE_BY_FAMILY`.
+   */
+  pageSize: number | undefined;
+};
+
+// A bound is meaningful only as a positive operation count; anything else (zero, negative,
+// a non-number) degrades to "absent" rather than to an accidental truncation -- the resolver then
+// substitutes the global value, or the shipped safety ceiling.
+//
+// A valid but oversized value is clamped rather than honoured, for the same reason the page size
+// is: the shipped ceiling is the largest figure measured to complete a sync on the account from
+// the out-of-memory report, and the walk accumulates up to it in memory. A remote 10 000 000 is a
+// perfectly valid number that reopens the crash, so the remote knob can lower the bound and never
+// raise it -- raising it is a release, behind a measurement.
+const MaxOperationsSchema = z
+  .number()
+  .int()
+  .positive()
+  .transform(max => Math.min(max, DEFAULT_MAX_OPERATIONS))
+  .optional()
+  .catch(undefined);
+
+/**
+ * The largest page size that may be sent to a module on this path.
+ *
+ * A page size is not a free dial: it is forwarded verbatim as `listOperations`' `limit`, and a
+ * module may reject a value it cannot serve. `coin-tron` throws above 200 (its indexer's own
+ * ceiling), so a remote payload of 250 would fail every tron sync -- a config value taking a whole
+ * family down. A very large value is the other failure: a module that honours it materialises one
+ * enormous page, which is precisely the per-page cost this setting exists to bound.
+ *
+ * 200 is the smallest ceiling among the modules currently routed here, so it is the only value
+ * safe for all of them. It is a floor-of-ceilings, not a measurement, and it is the wrong shape of
+ * answer: the right one is for a module to declare what it can serve, which is what rule 5 of the
+ * pagination-contract ADR proposes. Until that exists, clamping here keeps a remote value from
+ * breaking a family.
+ */
+const MAX_PAGE_SIZE = 200;
+
+// Same shape of validation as above, but a page size never degrades to "no limit" -- an absent or
+// hostile value falls back to `DEFAULT_PAGE_SIZE` instead, since sending no limit at all is exactly
+// the legacy exhaustive-fetch behaviour this bound exists to avoid. A value above what every routed
+// module can serve is clamped rather than rejected: the intent ("use large pages") is honourable and
+// worth honouring as far as it safely can be.
+const PageSizeSchema = z
+  .number()
+  .int()
+  .positive()
+  .transform(size => Math.min(size, MAX_PAGE_SIZE))
+  .optional()
+  .catch(undefined);
+
+const OperationHistoryBoundEntrySchema = z
+  .object({
+    maxOperations: MaxOperationsSchema,
+    pageSize: PageSizeSchema,
+  })
+  .catch({ maxOperations: undefined, pageSize: undefined });
+
+const OperationHistoryBoundConfigSchema = z
+  .object({
+    maxOperations: MaxOperationsSchema,
+    pageSize: PageSizeSchema,
+    networks: z.record(z.string(), OperationHistoryBoundEntrySchema).default({}),
+  })
+  .catch({ maxOperations: undefined, pageSize: undefined, networks: {} });
+
+/**
+ * The shipped default is a **safety ceiling**, not a retention policy.
+ *
+ * Those are two different things and only the second is Product's. How much history a user should
+ * see is a product decision, and this file does not make it: a lower `maxOperations` set remotely
+ * overrides this value at any time. What is *not* negotiable is that the sync must not run out of
+ * memory, and that is an engineering bound derived from measurement.
+ *
+ * Why a ceiling is required at all, rather than relying on `pageSize`: a page size bounds what one
+ * request costs, but `paginateOperations` accumulates every page into one array before returning,
+ * so nothing bounds the accumulation. Measured 2026-09-10 against the production EVM explorer on
+ * 0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe, walking with pages of 100 and no ceiling, reading
+ * live heap after a forced GC so the figures are retention and not collector lag:
+ *
+ *     page  25 ->     1 613 operations ->    72 MB
+ *     page  50 ->     9 636 operations ->    89 MB
+ *     page  75 ->   186 882 operations ->   392 MB
+ *     page 125 ->   312 092 operations ->   632 MB
+ *     page 150 ->   912 274 operations -> 1 817 MB
+ *
+ * That is linear, at roughly 2 KB of live heap per retained operation. This address carries about
+ * 8.4 M operations, which extrapolates past 16 GB; the run died under a 2 GB heap. So an unbounded
+ * walk cannot complete on an account of this shape however small the pages are.
+ *
+ * Why this figure: a full sync's peak is roughly 550 MB of constant cost (the exhaustive
+ * token-discovery walk plus operation assembly) plus 2 KB per retained operation. End-to-end
+ * measurements on the same address, same day, with pages of 100:
+ *
+ *     ceiling  50 000 -> 984 MB peak, completed
+ *     ceiling 200 000 -> 962 MB peak, completed, 4 045 operations retained, 24 min
+ *
+ * 200 000 is the largest ceiling measured to complete, and it is the last point before the figures
+ * leave measured ground. Above it the arithmetic predicts growth this walk never demonstrated.
+ *
+ * What it does *not* promise: 200 000 raw operations is not 200 000 rows a user sees. Operations
+ * are counted as the module emits them, before filtering and before grouping by transaction; deep
+ * in a spam-heavy history that ratio reached 49 to 1, so this ceiling retained about 4 045
+ * transactions out of roughly 35 000 on the measured address. A retention policy expressed in
+ * something a user recognises -- a number of transactions, or a time window -- is a separate
+ * decision this ceiling neither makes nor prevents.
+ */
+export const DEFAULT_MAX_OPERATIONS = 200_000;
+
+const DEFAULT_OPERATION_HISTORY_CONFIG: OperationHistoryBoundConfig = Object.freeze({
+  maxOperations: DEFAULT_MAX_OPERATIONS,
+  pageSize: undefined,
+  networks: {},
+});
+
+export const operationHistoryConfig: ConfigSchema = {
+  config_generic_operation_history: {
+    type: "object",
+    default: DEFAULT_OPERATION_HISTORY_CONFIG,
+  },
+};
+
+/**
+ * Applied whenever a bound is set (`maxOperations` defined) but no explicit `pageSize` is
+ * configured, globally or per currency. Sized from measurements taken against the production EVM
+ * explorer (2026-09-10, address 0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe): pages of 500 records
+ * reach roughly 117 MB each in the dense region of the history and drew HTTP 503/504 within about
+ * 30 requests, while pages of 100 records (roughly 24 MB each) completed a 325-page walk with
+ * 325x HTTP 200 and zero errors. 100 is the order of magnitude that stays inside both the
+ * peak-memory budget and what the explorer tolerates; an absent or hostile configured value must
+ * degrade to this constant, never to something larger.
+ */
+/**
+ * Shipped page size per coin-framework family, and the list of families we will send a `limit` to
+ * at all. A family absent here receives no `limit`, which is exactly today's behaviour for it.
+ *
+ * Only `evm` is listed, because it is the only family whose `limit` support and page cost have been
+ * measured: 100 records per page completed a full walk of the account from the out-of-memory report
+ * with every request served, where 500 drew 503s and 504s within about thirty requests. Adding a
+ * family here is a claim about that family, so it wants the same evidence -- not an assumption that
+ * because the option exists the module honours it. Several do not: they raise, as the contract
+ * tells them to.
+ *
+ * A remote per-currency or global `pageSize` still overrides this, for a family whose support is
+ * established later without waiting for a release.
+ */
+export const DEFAULT_PAGE_SIZE_BY_FAMILY: Readonly<Record<string, number>> = Object.freeze({
+  evm: 100,
+});
+
+/**
+ * Resolved when the remote config is unavailable, malformed, or hostile. It carries the safety
+ * ceiling rather than no ceiling: a missing config must not reopen the out-of-memory crash the
+ * ceiling exists to prevent. Only a remote payload that parses can lower or lift it.
+ */
+function fallbackFor(family: string): OperationHistoryBound {
+  return {
+    maxOperations: DEFAULT_MAX_OPERATIONS,
+    pageSize: DEFAULT_PAGE_SIZE_BY_FAMILY[family],
+  };
+}
+
+let warnedConfigMissing = false;
+
+/**
+ * Resolves the operation-history bound for one currency (`currency.id`, e.g. "ethereum",
+ * "polygon", "stellar" -- the same key space `a4Config`'s per-chain record uses, and the one
+ * already in scope in `genericGetAccountShape` via `currency.id`). Deliberately *not* keyed by
+ * the coin-framework family (`"evm"`, `"stellar"`, ...): a remote payload keyed by family would
+ * never match a per-currency entry written the way every other config in this framework is
+ * written, silently falling back to the global value with no error and no log -- the one failure
+ * mode this key space exists to remove. Page sizes and per-page costs differ by an order of
+ * magnitude across chains, so the bound is looked up per currency rather than shared; the global
+ * `maxOperations` still applies to any currency absent from `networks`, so a family-wide bound
+ * stays expressible by setting the global. Every failure path -- LiveConfig unavailable, a
+ * malformed payload, or a hostile per-currency value -- resolves to the shipped safety ceiling,
+ * never to unbounded: a config that cannot be read must not reopen the out-of-memory crash the
+ * ceiling exists to prevent. Only a payload that parses can lower or raise it.
+ */
+export function resolveOperationHistoryBound(
+  currencyId: string,
+  family: string,
+): OperationHistoryBound {
+  try {
+    const raw = LiveConfig.getValueByKey("config_generic_operation_history");
+
+    const parsed = OperationHistoryBoundConfigSchema.safeParse(raw);
+    if (!parsed.success) return fallbackFor(family);
+
+    const { maxOperations: globalMax, pageSize: globalPageSize, networks } = parsed.data;
+    const entry = networks[currencyId];
+    const maxOperations = entry?.maxOperations ?? globalMax ?? DEFAULT_MAX_OPERATIONS;
+    // The global page size applies only to a family already known to support `limit`. Without
+    // that gate, a global value set to tune evm would start sending a `limit` to casper and every
+    // other family whose module raises on it -- one remote setting taking down several families,
+    // which is exactly what the per-family list exists to prevent. A per-currency entry stays the
+    // explicit opt-in for an unlisted family: it names the currency, so it cannot be collateral.
+    const familyDefault = DEFAULT_PAGE_SIZE_BY_FAMILY[family];
+    const pageSize =
+      entry?.pageSize ??
+      (familyDefault !== undefined ? (globalPageSize ?? familyDefault) : undefined);
+
+    return { maxOperations, pageSize };
+  } catch {
+    if (warnedConfigMissing) return fallbackFor(family);
+    warnedConfigMissing = true;
+    log(
+      "generic-coin-framework",
+      "config_generic_operation_history not set in LiveConfig - falling back to the default operation history ceiling",
+    );
+    return fallbackFor(family);
+  }
+}

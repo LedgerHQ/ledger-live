@@ -35,7 +35,14 @@ export async function getCoinFrameworkAccountBridge(
     toOperationExtraRaw,
   } = await getAccountRawAssignHooks(network);
   return {
-    sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind), postSync }),
+    // `shouldMergeOps: false`: the shape already returns the merged list. Left on, the outer
+    // `mergeOps(stored, shape.operations)` re-adds every operation the store bound just dropped,
+    // undoing it, and resurrects the history a from-scratch resync deliberately discarded.
+    sync: makeSync({
+      getAccountShape: genericGetAccountShape(network, kind),
+      postSync,
+      shouldMergeOps: false,
+    }),
     receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress)),
     createTransaction: createTransaction,
     updateTransaction: updateTransaction<GenericTransaction>,

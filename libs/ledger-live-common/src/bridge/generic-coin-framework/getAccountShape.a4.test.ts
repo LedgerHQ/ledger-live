@@ -6,6 +6,8 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { genericGetAccountShape } from "./getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
+import { DEFAULT_MAX_OPERATIONS, DEFAULT_PAGE_SIZE_BY_FAMILY } from "./operationHistoryBound";
+
 jest.mock("@ledgerhq/logs");
 
 const getSyncHashMock = jest.fn();
@@ -53,8 +55,10 @@ jest.mock("./accountRawAssign", () => ({
 }));
 
 const inferSubOperationsMock = jest.fn();
+const buildSubOperationIndexMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
   inferSubOperations: (...a: any[]) => inferSubOperationsMock(...a),
+  buildSubOperationIndex: (...a: any[]) => buildSubOperationIndexMock(...a),
 }));
 
 const buildSubAccountsMock = jest.fn();
@@ -124,6 +128,10 @@ describe("genericGetAccountShape - A4 read branch", () => {
     mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
     cleanedOperationMock.mockImplementation((op: any) => op);
     inferSubOperationsMock.mockReturnValue([]);
+    // Parent operations look their sub-operations up in this index instead of rescanning the
+    // sub-accounts per hash; an empty index is this suite's "no sub-operations" case, the same
+    // thing `inferSubOperations` returning [] used to express.
+    buildSubOperationIndexMock.mockReturnValue(new Map());
     buildSubAccountsMock.mockReturnValue([]);
     mergeSubAccountsMock.mockImplementation((_old: any[], subs: any[]) => subs ?? []);
     listOperationsMock.mockResolvedValue({ items: [], next: undefined });
@@ -152,6 +160,37 @@ describe("genericGetAccountShape - A4 read branch", () => {
 
     expect(fetchA4OperationsMock).toHaveBeenCalledTimes(1);
     expect(listOperationsMock).not.toHaveBeenCalled();
+  });
+
+  it("passes the walk bound to the A4 pagination, not only to the coin-module delegate", async () => {
+    fetchA4OperationsMock.mockResolvedValue([]);
+
+    await call();
+
+    // Both bounds, named rather than counted: this assertion has already drifted twice, once when
+    // a parameter was inserted ahead of it and once when the page size was appended after it.
+    // Without them this path paginates unbounded and materialises a whole history before the
+    // store bound below it ever runs -- and A4 read is enabled for Ethereum, so the account that
+    // produced the out-of-memory report reaches it.
+    const [, , , , , , , walkBound, pageSize] = fetchA4OperationsMock.mock.calls[0];
+    expect(walkBound).toBe(DEFAULT_MAX_OPERATIONS);
+    // This suite drives the `mainnet` family, which has no shipped page size, so none is sent --
+    // the same rule the delegate path follows.
+    expect(pageSize).toBeUndefined();
+  });
+
+  it("sends the page size too for a family that has one", async () => {
+    // `size` bounds one A4 response the way `limit` bounds one explorer page; without it a single
+    // response can materialise in full before the walk bound applies.
+    fetchA4OperationsMock.mockResolvedValue([]);
+
+    await genericGetAccountShape("evm", currency.id)(
+      { address: "0xabc", initialAccount: undefined, currency, derivationMode: "" } as any,
+      { paginationConfig: {} as any },
+    );
+
+    const [, , , , , , , , pageSize] = fetchA4OperationsMock.mock.calls[0];
+    expect(pageSize).toBe(DEFAULT_PAGE_SIZE_BY_FAMILY.evm);
   });
 
   it("falls back to the coin-module delegate when fetchA4Operations throws with status 5xx", async () => {
