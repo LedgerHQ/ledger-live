@@ -1,65 +1,39 @@
 import { BigNumber } from "bignumber.js";
+import type { ZcashCoinConfig } from "./config";
 import type { ZcashPrivateInfo } from "./network/types";
 
 export const ZCASH_LOG_TYPE = "zcash";
 export const ZCASH_XPUB_VERSION = 0x0488b21e;
-export const ZCASH_GRPC_URL_TESTNET = "https://testnet.zec.rocks";
-export const ZCASH_GRPC_URL_MAINNET = "https://zec-indexer.coin.ledger-test.com";
 
 // ── Zaino gRPC endpoint resolution ─────────────────────────────────────────
 //
 // The shielded sync path (bridge/sync.ts) and the shielded send path
-// (bridge/signOperation.ts) MUST target the same endpoint and network.
-// `setZainoGrpcUrl` lets callers override the default mainnet endpoint (e.g.
-// point at testnet or a local node). Both paths resolve through
-// `getZainoEndpoint()` so an override can never end up applied to sync but
-// silently ignored when building/broadcasting a send.
+// (bridge/signOperation.ts) MUST target the same endpoint and network. Both
+// derive it with `zainoEndpoint` from the coin config resolved through the
+// bridge's context (`zaino.url`), so one config change reaches both.
 
 export type ZcashNetwork = "mainnet" | "testnet";
 
-let zainoGrpcUrlOverride: string | null = null;
-let zainoNetworkOverride: ZcashNetwork | null = null;
+export type ZainoEndpoint = { grpcUrl: string; network: ZcashNetwork };
 
 const inferZainoNetwork = (url: string): ZcashNetwork =>
-  url === ZCASH_GRPC_URL_TESTNET || /testnet/i.test(url) ? "testnet" : "mainnet";
+  /testnet/i.test(url) ? "testnet" : "mainnet";
 
-/**
- * Override the Zaino gRPC URL used for shielded sync and shielded sends.
- * Pass `null` to reset to the default mainnet endpoint. When `network` is
- * omitted it is inferred from the URL (the testnet endpoint → "testnet",
- * anything else → "mainnet"); pass it explicitly for custom endpoints whose
- * network can't be inferred from the hostname.
- */
-export const setZainoGrpcUrl = (url: string | null, network?: ZcashNetwork): void => {
-  zainoGrpcUrlOverride = url;
-  // A null URL resets to the mainnet default, so any network override (whether
-  // passed here or set by a previous call) would leave the URL and network
-  // inconsistent. Only keep a network override when a URL override is set.
-  zainoNetworkOverride = url === null ? null : (network ?? null);
+/** Zaino endpoint (URL + network) shared by shielded sync and sends. */
+export const zainoEndpoint = (config: ZcashCoinConfig): ZainoEndpoint => {
+  const grpcUrl = config.zaino.url;
+  return { grpcUrl, network: inferZainoNetwork(grpcUrl) };
 };
-
-/** Effective Zaino gRPC URL (override if set, otherwise the mainnet default). */
-export const getZainoGrpcUrl = (): string => zainoGrpcUrlOverride ?? ZCASH_GRPC_URL_MAINNET;
-
-/** Effective network, kept consistent with {@link getZainoGrpcUrl}. */
-export const getZainoNetwork = (): ZcashNetwork =>
-  zainoNetworkOverride ?? inferZainoNetwork(getZainoGrpcUrl());
-
-/** Effective endpoint (URL + network) shared by shielded sync and sends. */
-export const getZainoEndpoint = (): { grpcUrl: string; network: ZcashNetwork } => ({
-  grpcUrl: getZainoGrpcUrl(),
-  network: getZainoNetwork(),
-});
 
 /**
  * Strips anything a log line or an error-context extraction (which can reach
- * Datadog, unlike `@ledgerhq/logs`) shouldn't carry: `setZainoGrpcUrl` lets a
- * caller point this at a custom or local node, so nothing guarantees the
- * endpoint never carries userinfo or a token in its query string -- or in its
- * path (e.g. a `/token/<value>`-style gateway route). `origin` never includes
- * credentials by spec and is kept as the only diagnostic signal; both known
- * production endpoints (ZCASH_GRPC_URL_MAINNET/TESTNET) are bare origins with
- * no pathname today, so this drops nothing currently in use.
+ * Datadog, unlike `@ledgerhq/logs`) shouldn't carry: the endpoint comes from a
+ * remote coin config or points at a custom or local node, so nothing guarantees
+ * it never carries userinfo or a token in its query string -- or in its path
+ * (e.g. a `/token/<value>`-style gateway route). `origin` never includes
+ * credentials by spec and is kept as the only diagnostic signal; the production
+ * endpoint is a bare origin with no pathname today, so this drops nothing
+ * currently in use.
  */
 export const sanitizeEndpointForLog = (url: string): string => {
   try {
@@ -89,20 +63,16 @@ export const ZCASH_MEMO_MAX_BYTES = 512;
 export const ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES = 2;
 /** @deprecated kept for backward compatibility */
 export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5_000;
-// Bounds how long the automatic (wallet-sync-driven) shielded leg may run before
-// it is treated as hung and degraded to a "stopped" state for this tick. RxJS's
-// `timeout()` on a plain number resets on every emission from the underlying
-// scan, not once for the whole sync, so this is really a per-chunk budget: one
-// server round-trip for one block range, not the full catch-up. A single
-// chunk on an ordinary connection can legitimately take well over the
-// previous 20s, especially for a new or far-behind account, exactly the case
-// this task automates syncing for, so a tight value here falsely treats a
-// slow-but-healthy chunk as hung. No chunk-processing time has actually been
-// measured yet (this stays a planning-time default), but it must clearly
-// exceed realistic single-chunk latency, not just "near-instant" typical
-// latency. A resumable checkpoint (lastProcessedBlock) means the next tick
-// picks up where this one left off, this only bounds one chunk's worst case.
-export const ZCASH_AUTO_SYNC_TIMEOUT_MS = 120_000;
+// Defaults of the optional `zaino` tuning fields of the coin config (`config.ts`).
+//
+// The automatic (wallet-sync-driven) shielded leg is treated as hung, and degraded to
+// "stopped" for this tick, when one chunk takes longer than this. RxJS's `timeout()`
+// resets on every emission, so it bounds one server round-trip for one block range, not
+// the whole catch-up; the next tick resumes from `lastProcessedBlock`. It must clearly
+// exceed realistic single-chunk latency, including for a new or far-behind account.
+export const ZCASH_SHIELDED_CHUNK_TIMEOUT_MS = 120_000;
+// Maximum number of blocks the native engine scans per shielded sync chunk.
+export const ZCASH_SHIELDED_BATCH_SIZE = 5_000;
 export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   orchardBalance: new BigNumber(0),
   saplingBalance: new BigNumber(0),

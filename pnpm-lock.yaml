@@ -13010,9 +13010,6 @@ importers:
       '@ledgerhq/live-config':
         specifier: 'catalog:'
         version: 3.9.0
-      '@ledgerhq/live-env':
-        specifier: 'catalog:'
-        version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)

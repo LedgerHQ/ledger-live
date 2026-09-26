@@ -5,7 +5,9 @@
  */
 import { log } from "@ledgerhq/logs";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
-import { broadcast } from "./broadcast";
+import { buildBroadcast } from "./broadcast";
+import { TEST_CONFIG, TEST_ZAINO_ENDPOINT, testContext } from "../test/coinConfig";
+import { bindExplorer } from "./explorer";
 import { getWalletAccount } from "./getWalletAccount";
 import { broadcast as broadcastLogic } from "../logic/transaction/broadcast";
 import {
@@ -14,6 +16,14 @@ import {
   _resetReservationsForTest,
 } from "./note-reservation";
 import type { ZcashAccount, ZcashOperationExtra } from "../types/bridge";
+
+const broadcast = buildBroadcast(testContext);
+
+// bindExplorer itself is covered by explorer.test.ts; here it hands the account back unchanged so
+// these tests drive the account's own (fake) explorer, and they assert what the broadcast passes it.
+jest.mock("./explorer", () => ({
+  bindExplorer: jest.fn((walletAccount: unknown) => walletAccount),
+}));
 
 jest.mock("./getWalletAccount");
 jest.mock("../logic/transaction/broadcast");
@@ -60,20 +70,25 @@ describe("broadcast", () => {
 
     await submit({ zcashShielded: true, inputs: [`${PREVOUT_HASH}-0`], inputRefs });
 
-    expect(mockBroadcastLogic).toHaveBeenCalledWith(TX_HEX, {
+    expect(mockBroadcastLogic).toHaveBeenCalledWith(TEST_ZAINO_ENDPOINT, TX_HEX, {
       inputRefs,
       fetchUtxoTx: expect.any(Function),
     });
 
-    const { fetchUtxoTx: forwarded } = mockBroadcastLogic.mock.calls[0][1]!;
+    const { fetchUtxoTx: forwarded } = mockBroadcastLogic.mock.calls[0][2]!;
     await forwarded(PREVOUT_HASH);
     expect(fetchUtxoTx).toHaveBeenCalledWith(PREVOUT_HASH);
+    expect(bindExplorer).toHaveBeenCalledWith(
+      expect.anything(),
+      account.currency,
+      TEST_CONFIG.explorer.url,
+    );
   });
 
   it("passes no guard context for a fully shielded send", async () => {
     await submit({ zcashShielded: true });
 
-    expect(mockBroadcastLogic).toHaveBeenCalledWith(TX_HEX, undefined);
+    expect(mockBroadcastLogic).toHaveBeenCalledWith(TEST_ZAINO_ENDPOINT, TX_HEX, undefined);
     expect(mockGetWalletAccount).not.toHaveBeenCalled();
   });
 
@@ -94,6 +109,31 @@ describe("broadcast", () => {
         "released note reservation after broadcast failure",
         { accountId: account.id },
       );
+    });
+
+    it("hands them back when the coin config cannot be resolved", async () => {
+      reserveNotes(account.id, TXID, [NULLIFIER]);
+      const unavailable = buildBroadcast({
+        ...testContext,
+        config: () => Promise.reject(new Error("config unavailable")),
+      });
+
+      await expect(
+        unavailable({
+          account,
+          signedOperation: {
+            signature: TX_HEX,
+            operation: {
+              id: "op1",
+              hash: TXID,
+              extra: { zcashShielded: true },
+            } as unknown as Operation,
+          } as SignedOperation,
+        }),
+      ).rejects.toThrow("config unavailable");
+
+      expect(getSessionReservedNullifiers(account.id).size).toBe(0);
+      expect(mockBroadcastLogic).not.toHaveBeenCalled();
     });
 
     it("keeps them reserved once the send is out", async () => {

@@ -5,11 +5,10 @@ import {
   makeSync,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import type { CoinConfig } from "../config";
-import { setCoinConfig } from "../config";
+import type { ZcashContext } from "../config";
 import type { SignerContext } from "../types/signer";
 import type { Transaction, TransactionStatus, ZcashAccount } from "../types/bridge";
-import { getZainoEndpoint, ZCASH_ESTIMATION_RECIPIENT } from "../constants";
+import { zainoEndpoint, ZCASH_ESTIMATION_RECIPIENT } from "../constants";
 import getAddress from "../signer/getAddress";
 import getFullViewingKeyResolver, {
   type GetFullViewingKeyResult,
@@ -17,7 +16,7 @@ import getFullViewingKeyResolver, {
 import getShieldedAddressResolver from "../signer/getShieldedAddress";
 import { getSerializedAddressParameters } from "./exchange";
 import { validateAddress } from "../logic/validateAddress";
-import { broadcast } from "./broadcast";
+import { buildBroadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
@@ -53,13 +52,11 @@ export type ZcashAccountBridge = AccountBridge<Transaction, ZcashAccount, Transa
  * broadcast). The only bespoke residue is `signOperation` (PCZT device
  * orchestration).
  */
-export function createBridges(signerContext: SignerContext, coinConfig: CoinConfig) {
-  setCoinConfig(coinConfig);
-
+export function createBridges(signerContext: SignerContext, context: ZcashContext) {
   const getAddressFn = getAddress(signerContext);
   const getFullViewingKeyFn = getFullViewingKeyResolver(signerContext);
   const getShieldedAddressFn = getShieldedAddressResolver(signerContext);
-  const getAccountShape = makeGetAccountShape(signerContext);
+  const getAccountShape = makeGetAccountShape(signerContext, context);
 
   const scanAccounts = makeScanAccounts<ZcashAccount>({
     getAccountShape,
@@ -87,11 +84,11 @@ export function createBridges(signerContext: SignerContext, coinConfig: CoinConf
     estimateMaxSpendable,
     sync,
     receive,
-    signOperation: buildSignOperation(signerContext),
+    signOperation: buildSignOperation(signerContext, context),
     signRawOperation: () => {
       throw new Error("signRawOperation is not supported");
     },
-    broadcast,
+    broadcast: buildBroadcast(context),
     assignFromAccountRaw,
     assignToAccountRaw,
     formatAccountSpecifics: () => "",
@@ -108,7 +105,7 @@ export function createBridges(signerContext: SignerContext, coinConfig: CoinConf
         path: path ?? account.freshAddressPath,
       }),
     deriveShieldedAddress: async (ufvk: string) => {
-      const client = await getZCashClient(getZainoEndpoint());
+      const client = await getZCashClient(zainoEndpoint(await context.config("zcash")));
       return client.deriveShieldedAddress(ufvk);
     },
     getShieldedAddress: (account, { deviceId, path, display }) =>

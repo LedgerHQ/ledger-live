@@ -7,7 +7,7 @@ import { log } from "@ledgerhq/logs";
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import { broadcast, assertTransparentInputsUnspent, type TransparentInputs } from "./broadcast";
 import { getZCashClient } from "../engineClient";
-import { setZainoGrpcUrl } from "../../constants";
+import { TEST_ZAINO_ENDPOINT } from "../../test/coinConfig";
 
 jest.mock("../engineClient");
 jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
@@ -34,8 +34,6 @@ function explorer(
     return { outputs };
   });
 }
-
-afterEach(() => setZainoGrpcUrl(null));
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -141,7 +139,7 @@ describe("assertTransparentInputsUnspent", () => {
 
 describe("broadcast", () => {
   it("submits the transaction hex and returns the txid", async () => {
-    await expect(broadcast(TX_HEX)).resolves.toBe(TXID);
+    await expect(broadcast(TEST_ZAINO_ENDPOINT, TX_HEX)).resolves.toBe(TXID);
     expect(broadcastTransaction).toHaveBeenCalledWith(expect.any(String), TX_HEX);
   });
 
@@ -151,7 +149,10 @@ describe("broadcast", () => {
     });
 
     await expect(
-      broadcast(TX_HEX, { inputRefs: [{ hash: PREVOUT_HASH, outputIndex: 0 }], fetchUtxoTx }),
+      broadcast(TEST_ZAINO_ENDPOINT, TX_HEX, {
+        inputRefs: [{ hash: PREVOUT_HASH, outputIndex: 0 }],
+        fetchUtxoTx,
+      }),
     ).rejects.toThrow("utxos already spent");
     expect(broadcastTransaction).not.toHaveBeenCalled();
   });
@@ -160,14 +161,19 @@ describe("broadcast", () => {
     const fetchUtxoTx = explorer({ [PREVOUT_HASH]: [{ output_index: 0 }] });
 
     await expect(
-      broadcast(TX_HEX, { inputRefs: [{ hash: PREVOUT_HASH, outputIndex: 0 }], fetchUtxoTx }),
+      broadcast(TEST_ZAINO_ENDPOINT, TX_HEX, {
+        inputRefs: [{ hash: PREVOUT_HASH, outputIndex: 0 }],
+        fetchUtxoTx,
+      }),
     ).resolves.toBe(TXID);
   });
 
   it("has nothing to check for a fully shielded send", async () => {
     const fetchUtxoTx = explorer({});
 
-    await expect(broadcast(TX_HEX, { inputRefs: [], fetchUtxoTx })).resolves.toBe(TXID);
+    await expect(
+      broadcast(TEST_ZAINO_ENDPOINT, TX_HEX, { inputRefs: [], fetchUtxoTx }),
+    ).resolves.toBe(TXID);
     expect(fetchUtxoTx).not.toHaveBeenCalled();
   });
 
@@ -176,11 +182,13 @@ describe("broadcast", () => {
       {} as unknown as Awaited<ReturnType<typeof getZCashClient>>,
     );
 
-    await expect(broadcast(TX_HEX)).rejects.toThrow("not supported in this environment");
+    await expect(broadcast(TEST_ZAINO_ENDPOINT, TX_HEX)).rejects.toThrow(
+      "not supported in this environment",
+    );
   });
 
   it("logs the endpoint and outcome, on both success and failure", async () => {
-    await broadcast(TX_HEX);
+    await broadcast(TEST_ZAINO_ENDPOINT, TX_HEX);
     expect(mockLog).toHaveBeenCalledWith(
       "zcash",
       "broadcasting transaction",
@@ -194,7 +202,7 @@ describe("broadcast", () => {
 
     mockLog.mockClear();
     broadcastTransaction.mockRejectedValueOnce(new Error("gRPC rejected"));
-    await expect(broadcast(TX_HEX)).rejects.toThrow("gRPC rejected");
+    await expect(broadcast(TEST_ZAINO_ENDPOINT, TX_HEX)).rejects.toThrow("gRPC rejected");
     expect(mockLog).toHaveBeenCalledWith(
       "zcash",
       "broadcast failed",
@@ -206,7 +214,7 @@ describe("broadcast", () => {
     mockLog.mockClear();
     broadcastTransaction.mockRejectedValueOnce(new Error(`rejected ${TXID}: fee too low`));
 
-    await expect(broadcast(TX_HEX)).rejects.toThrow();
+    await expect(broadcast(TEST_ZAINO_ENDPOINT, TX_HEX)).rejects.toThrow();
 
     expect(mockLog).toHaveBeenCalledWith(
       "zcash",
@@ -218,17 +226,22 @@ describe("broadcast", () => {
   it("attaches the endpoint to the thrown error, surviving past this call site", async () => {
     broadcastTransaction.mockRejectedValueOnce(new Error("gRPC rejected"));
 
-    await expect(broadcast(TX_HEX)).rejects.toMatchObject({ endpoint: expect.any(String) });
+    await expect(broadcast(TEST_ZAINO_ENDPOINT, TX_HEX)).rejects.toMatchObject({
+      endpoint: expect.any(String),
+    });
   });
 
-  // setZainoGrpcUrl lets a caller point this at a custom or local node, so
+  // The endpoint comes from a remote coin config or a custom or local node, so
   // nothing guarantees the endpoint never carries userinfo or a query/path
   // token -- every log line and the error context must only ever see the
   // sanitized (origin-only) form.
   it("sanitizes the endpoint everywhere it's logged or attached, on success and failure", async () => {
-    setZainoGrpcUrl("https://user:secret@my-node.example/token/abc123?token=abc123");
+    const endpoint = {
+      grpcUrl: "https://user:secret@my-node.example/token/abc123?token=abc123",
+      network: "mainnet",
+    } as const;
 
-    await broadcast(TX_HEX);
+    await broadcast(endpoint, TX_HEX);
     for (const call of mockLog.mock.calls) {
       expect(JSON.stringify(call)).not.toContain("secret");
       expect(JSON.stringify(call)).not.toContain("abc123");
@@ -241,7 +254,7 @@ describe("broadcast", () => {
 
     mockLog.mockClear();
     broadcastTransaction.mockRejectedValueOnce(new Error("gRPC rejected"));
-    await expect(broadcast(TX_HEX)).rejects.toMatchObject({
+    await expect(broadcast(endpoint, TX_HEX)).rejects.toMatchObject({
       endpoint: "https://my-node.example",
     });
     for (const call of mockLog.mock.calls) {
@@ -263,7 +276,7 @@ describe("broadcast", () => {
     mockLog.mockClear();
     arrange();
 
-    await broadcast(TX_HEX, {
+    await broadcast(TEST_ZAINO_ENDPOINT, TX_HEX, {
       inputRefs: [{ hash: PREVOUT_HASH, outputIndex: 0 }],
       fetchUtxoTx: explorer({ [PREVOUT_HASH]: [{ output_index: 0, spent_at_height: null }] }),
     }).catch(() => {});

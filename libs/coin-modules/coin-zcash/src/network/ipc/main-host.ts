@@ -349,8 +349,8 @@ function handleUtilityMessage(msg: UtilityOutboundMessage): void {
     case "broadcast-transaction-error":
       // Sanitized: this becomes an own property on the rejected Error, which
       // extractErrorContext copies into Datadog's error context -- unlike
-      // @ledgerhq/logs, that's a third-party sink. msg.endpoint is overridable
-      // (setZainoGrpcUrl) so it isn't guaranteed free of userinfo/query tokens.
+      // @ledgerhq/logs, that's a third-party sink. msg.endpoint comes from the
+      // remote coin config (`zaino.url`) so it isn't guaranteed free of userinfo/query tokens.
       return rejectOneShot(broadcastTx, msg.requestId, msg.message, "broadcast-transaction-error", {
         endpoint: sanitizeEndpointForLog(msg.endpoint),
       });

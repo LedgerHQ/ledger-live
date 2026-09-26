@@ -1,4 +1,4 @@
-import { getZainoEndpoint } from "../constants";
+import type { ZainoEndpoint } from "../constants";
 import type { ZCashClient } from "../network/types";
 
 // Lazy module import (renderer-safe): ZCash.ts transitively loads the native
@@ -34,8 +34,8 @@ export async function getZCashClient(args: {
  * of the device: a client that can build but not finalize would otherwise let
  * the user sign and only then fail (the React Native stub omits all three).
  */
-export async function assertCanSend(): Promise<void> {
-  const client = await getZCashClient(getZainoEndpoint());
+export async function assertCanSend(endpoint: ZainoEndpoint): Promise<void> {
+  const client = await getZCashClient(endpoint);
   if (
     !client.buildTransaction ||
     !client.buildIronwoodTransaction ||
