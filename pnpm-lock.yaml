@@ -5529,6 +5529,9 @@ importers:
 
   e2e/desktop:
     dependencies:
+      '@ledgerhq/baanx-test-client':
+        specifier: workspace:^
+        version: link:../tooling/baanx-test-client
       '@ledgerhq/device-mockserver-client':
         specifier: 'catalog:'
         version: 1.3.0
@@ -5652,6 +5655,9 @@ importers:
       '@jest/types':
         specifier: 30.5.0
         version: 30.5.0
+      '@ledgerhq/baanx-test-client':
+        specifier: workspace:^
+        version: link:../tooling/baanx-test-client
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0

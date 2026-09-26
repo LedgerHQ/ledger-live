@@ -29,6 +29,16 @@ on:
         required: false
       SEED_QAA_B2C:
         required: true
+      BAANX_TEST_CLIENT_KEY:
+        required: false
+      BAANX_TEST_USER_EMAIL:
+        required: false
+      BAANX_TEST_USER_PASSWORD:
+        required: false
+      BAANX_TEST_USER_TOTP_SECRET:
+        required: false
+      BAANX_TEST_API_URL:
+        required: false
       SLACK_LIVE_CI_BOT_TOKEN:
         required: true
   workflow_dispatch:
@@ -153,6 +163,11 @@ jobs:
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SPECULOS_IMAGE_TAG: ${{ env.SMOKE_SPECULOS_IMAGE_TAG }}
           SPECULOS_FIRMWARE_VERSION: ${{ env.SMOKE_SPECULOS_FIRMWARE_VERSION }}
+          BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
+          BAANX_TEST_USER_EMAIL: ${{ secrets.BAANX_TEST_USER_EMAIL }}
+          BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
+          BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
+          BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
         continue-on-error: true

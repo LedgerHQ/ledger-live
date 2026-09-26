@@ -69,6 +69,16 @@ on:
         required: true
       SEED_QAA_B2C:
         required: true
+      BAANX_TEST_CLIENT_KEY:
+        required: false
+      BAANX_TEST_USER_EMAIL:
+        required: false
+      BAANX_TEST_USER_PASSWORD:
+        required: false
+      BAANX_TEST_USER_TOTP_SECRET:
+        required: false
+      BAANX_TEST_API_URL:
+        required: false
       SPECULINHO_URL:
         required: true
   workflow_dispatch:
@@ -629,6 +639,11 @@ jobs:
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
+          BAANX_TEST_USER_EMAIL: ${{ secrets.BAANX_TEST_USER_EMAIL }}
+          BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
+          BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
+          BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           REMOTE_SPECULOS: "true"
           INPUT_E2E: "true"
@@ -797,6 +812,11 @@ jobs:
         timeout-minutes: 45
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
+          BAANX_TEST_USER_EMAIL: ${{ secrets.BAANX_TEST_USER_EMAIL }}
+          BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
+          BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
+          BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           INPUT_E2E: "true"
           REMOTE_SPECULOS: "true"
