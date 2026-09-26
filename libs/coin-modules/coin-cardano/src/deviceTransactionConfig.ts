@@ -129,6 +129,26 @@ async function getDeviceTransactionConfig({
         index: stakeCredential.path.index,
       }),
     });
+  } else if (mode === "voteDelegate" && account.type === "Account") {
+    const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
+    fields.push({
+      type: "text",
+      label: "Staking key",
+      value: getBipPathString({
+        account: stakeCredential.path.account,
+        chain: stakeCredential.path.chain,
+        index: stakeCredential.path.index,
+      }),
+    });
+    fields.push({
+      type: "text",
+      label: "DRep",
+      value: transaction.dRepAbstain
+        ? "Always abstain"
+        : transaction.dRepNoConfidence
+          ? "Always no confidence"
+          : transaction.dRepHex!, // either one will always be present
+    });
   }
 
   return fields;
