@@ -274,7 +274,7 @@ export function mapTxToAccountOperation(
     tx.certificate.stakeDeRegsConway?.length
   ) {
     mainOperationType = "UNDELEGATE";
-  } else if (tx.certificate.voteDelegations?.length) {
+  } else if (vote) {
     mainOperationType = "VOTE";
   } else {
     mainOperationType = getOperationType({

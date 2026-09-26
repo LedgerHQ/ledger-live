@@ -54,7 +54,7 @@ describe("getDeviceTransactionConfig", () => {
       expect(result).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ type: "text", label: "Staking key" }),
-          expect.objectContaining({ type: "text", label: "DRep", value: "Abstain" }),
+          expect.objectContaining({ type: "text", label: "DRep", value: "Always abstain" }),
         ]),
       );
     });
@@ -74,7 +74,7 @@ describe("getDeviceTransactionConfig", () => {
       expect(result).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ type: "text", label: "Staking key" }),
-          expect.objectContaining({ type: "text", label: "DRep", value: "No Confidence" }),
+          expect.objectContaining({ type: "text", label: "DRep", value: "Always no confidence" }),
         ]),
       );
     });

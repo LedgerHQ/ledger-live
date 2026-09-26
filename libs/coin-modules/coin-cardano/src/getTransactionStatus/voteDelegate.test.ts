@@ -43,17 +43,15 @@ describe("getVoteDelegateTransactionStatus", () => {
     expect(result.estimatedFees.toString()).toBe("1");
   });
 
-  it("should throw error if zero or multiple dRep options are provided", async () => {
-    await expect(getVoteDelegateTransactionStatus(mockAccount, {} as Transaction)).rejects.toThrow(
-      "Exactly one of dRepAbstain, dRepNoConfidence or dRepHex must be provided.",
-    );
+  it("should return CardanoInvalidDRepHex error if zero or multiple dRep options are provided", async () => {
+    let result = await getVoteDelegateTransactionStatus(mockAccount, {} as Transaction);
+    expect(result.errors.dRepHex).toBeInstanceOf(CardanoInvalidDRepHex);
 
-    await expect(
-      getVoteDelegateTransactionStatus(mockAccount, {
-        dRepAbstain: true,
-        dRepHex: "testDRepHex",
-      } as unknown as Transaction),
-    ).rejects.toThrow("Exactly one of dRepAbstain, dRepNoConfidence or dRepHex must be provided.");
+    result = await getVoteDelegateTransactionStatus(mockAccount, {
+      dRepAbstain: true,
+      dRepHex: "testDRepHex",
+    } as unknown as Transaction);
+    expect(result.errors.dRepHex).toBeInstanceOf(CardanoInvalidDRepHex);
   });
 
   it("should return CardanoInvalidDRepHex error for invalid dRepHex", async () => {

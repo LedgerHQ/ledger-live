@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchPoolList } from "@ledgerhq/coin-cardano/api/getPools";
 import { fetchDRepList } from "@ledgerhq/coin-cardano/api/getDRepList";
 import {
@@ -91,23 +91,34 @@ export function useCardanoFamilyDReps(currency: CryptoCurrency): {
   const limit = 50;
   const pageNo = useRef(1);
   const isPaginationDisabled = useRef(false);
+  // Incremented on every currency/search change; responses from older generations are ignored.
+  const requestGeneration = useRef(0);
+  const isPaginationInFlight = useRef(false);
 
   useEffect(() => {
+    const generation = ++requestGeneration.current;
     isPaginationDisabled.current = false;
+    isPaginationInFlight.current = false;
     setDReps([]);
     setIsSearching(true);
+    setIsPaginating(false);
     pageNo.current = 1;
 
     const delayDebounceFn = setTimeout(
       () => {
         fetchDRepList(currency, searchQuery, pageNo.current, limit)
           .then((apiRes: APIGetDRepList) => {
+            if (generation !== requestGeneration.current) return;
             setDReps([...apiRes.dRepList]);
-            if (searchQuery && apiRes.dRepList.length < limit) {
+            if (apiRes.dRepList.length < limit) {
               isPaginationDisabled.current = true;
             }
           })
+          .catch(() => {
+            // leave list empty; UI shows empty state
+          })
           .finally(() => {
+            if (generation !== requestGeneration.current) return;
             setIsSearching(false);
           });
       },
@@ -117,21 +128,31 @@ export function useCardanoFamilyDReps(currency: CryptoCurrency): {
     return () => clearTimeout(delayDebounceFn);
   }, [currency, searchQuery]);
 
-  const onScrollEndReached = () => {
-    if (isPaginationDisabled.current) return;
+  const onScrollEndReached = useCallback(() => {
+    if (isPaginationDisabled.current || isPaginationInFlight.current) return;
+    isPaginationInFlight.current = true;
+    const generation = requestGeneration.current;
+    const nextPage = pageNo.current + 1;
     setIsPaginating(true);
-    pageNo.current++;
 
-    fetchDRepList(currency, searchQuery, pageNo.current, limit)
+    fetchDRepList(currency, searchQuery, nextPage, limit)
       .then((apiRes: APIGetDRepList) => {
-        setDReps(currentDReps => {
-          return [...currentDReps, ...apiRes.dRepList];
-        });
+        if (generation !== requestGeneration.current) return;
+        pageNo.current = nextPage;
+        if (apiRes.dRepList.length < limit) {
+          isPaginationDisabled.current = true;
+        }
+        setDReps(currentDReps => [...currentDReps, ...apiRes.dRepList]);
+      })
+      .catch(() => {
+        // keep pageNo unchanged so the next scroll retries the same page
       })
       .finally(() => {
+        if (generation !== requestGeneration.current) return;
+        isPaginationInFlight.current = false;
         setIsPaginating(false);
       });
-  };
+  }, [currency, searchQuery]);
 
   return {
     dReps,

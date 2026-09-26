@@ -24,8 +24,14 @@ export async function getVoteDelegateTransactionStatus(
     Number(transaction.dRepNoConfidence === true) +
     Number((transaction.dRepHex?.length ?? 0) > 0);
   if (dRepCount !== 1) {
-    // this will never happen
-    throw new Error("Exactly one of dRepAbstain, dRepNoConfidence or dRepHex must be provided.");
+    errors.dRepHex = new CardanoInvalidDRepHex();
+    return {
+      errors,
+      warnings,
+      estimatedFees,
+      amount: new BigNumber(0),
+      totalSpent: estimatedFees,
+    };
   }
 
   if (transaction.dRepHex) {

@@ -508,6 +508,34 @@ describe("mapTxToAccountOperation", () => {
         expect(op.type).toBe("VOTE");
         expect(op.extra.vote).toBe("mockDrepHex");
       });
+
+      it("should not map vote delegation of another stake key as VOTE", async () => {
+        const op = mapTxToAccountOperation(
+          {
+            ...mockTxResult,
+            certificate: {
+              ...mockTxResult.certificate,
+              voteDelegations: [
+                {
+                  index: 0,
+                  stakeHex: "e1" + "00".repeat(28),
+                  dRepHex: "mockDrepHex",
+                },
+              ],
+            },
+          },
+          "accountId",
+          accountCredentialMap,
+          { key: stakeCredKey } as any,
+          [],
+          accountShapeInfo,
+          { stakeKeyDeposit: "1" } as any,
+        );
+
+        expect(op).toBeDefined();
+        expect(op.type).not.toBe("VOTE");
+        expect(op.extra.vote).toBeUndefined();
+      });
     });
   });
 });

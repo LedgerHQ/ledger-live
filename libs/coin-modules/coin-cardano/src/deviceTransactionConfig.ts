@@ -144,9 +144,9 @@ async function getDeviceTransactionConfig({
       type: "text",
       label: "DRep",
       value: transaction.dRepAbstain
-        ? "Abstain"
+        ? "Always abstain"
         : transaction.dRepNoConfidence
-          ? "No Confidence"
+          ? "Always no confidence"
           : transaction.dRepHex!, // either one will always be present
     });
   }
