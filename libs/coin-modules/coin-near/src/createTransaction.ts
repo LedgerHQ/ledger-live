@@ -9,4 +9,7 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
   recipient: "",
   useAllAmount: false,
   fees: new BigNumber(0),
+  // Inert here (buildTransaction reads the access key's nonce), but fromTransactionRaw revives a
+  // missing nonce as zero, so seeding it keeps the serialization round-trip exact on this route too.
+  nonce: new BigNumber(0),
 });
