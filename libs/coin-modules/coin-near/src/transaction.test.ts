@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
+import { createTransaction } from "./createTransaction";
 import transaction, {
   formatTransaction,
   fromTransactionRaw,
@@ -185,6 +186,12 @@ describe("round trip", () => {
     const restored = fromTransactionRaw(toTransactionRaw(tx({ nonce: new BigNumber(0) })));
 
     expect(restored.nonce?.toFixed()).toBe("0");
+  });
+
+  it("round-trips a transaction from the legacy bridge's createTransaction exactly", () => {
+    const created = createTransaction({} as Account);
+
+    expect(fromTransactionRaw(toTransactionRaw(created))).toEqual(created);
   });
 });
 
