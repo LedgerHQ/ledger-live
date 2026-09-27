@@ -16,11 +16,8 @@ export default class TopBarSearchPage {
 
   @Step("Open the global search screen from the portfolio top bar")
   async open() {
-    await waitForElementById(this.topBarSearchButtonId);
-    if (await IsIdPresent(this.screenId)) return;
     await tapById(this.topBarSearchButtonId);
-    await waitForElementById(this.screenId, 5000);
-
+    await waitForElementById(this.searchInputId);
     await waitForElementById(this.defaultSectionsId, undefined, {
       errorElementId: this.defaultsErrorId,
       checkVisibility: false,
