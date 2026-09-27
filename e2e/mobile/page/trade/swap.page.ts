@@ -156,8 +156,8 @@ export default class SwapPage extends CommonPage {
       if (tapped && !(await IsIdVisible(this.swapSuccessTitleId, 500))) {
         return; // already dismissed by a previous tap — nothing left to do
       }
-      await app.common.closePage();
       tapped = true;
+      await app.common.closePage();
       if (await IsIdVisible(this.swapSuccessTitleId, 1000)) {
         throw new Error("swap-success-title still visible after close tap");
       }

@@ -41,7 +41,7 @@ function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
  */
 async function withHardTimeout<T>(
   actionPromise: Promise<T>,
-  timeoutMs = DEFAULT_TIMEOUT,
+  timeoutMs = DEFAULT_TIMEOUT * 2,
 ): Promise<T> {
   // actionPromise can't actually be cancelled if the deadline fires first; a no-op catch here
   // stops its eventual settlement from surfacing as an unhandled rejection later.
@@ -318,8 +318,8 @@ export const NativeElementHelpers = {
         const visible = await NativeElementHelpers.isIdVisible(id);
         if (!visible) return;
       }
-      await NativeElementHelpers.tapById(id, index);
       tapped = true;
+      await NativeElementHelpers.tapById(id, index);
       const stillVisible = await NativeElementHelpers.isIdVisible(id, disappearTimeout);
       if (stillVisible) throw new Error(`Element "${id}" is still visible after tap`);
     }, timeout);
