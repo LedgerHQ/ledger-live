@@ -1,16 +1,9 @@
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink, isAndroid } from "@e2e/helpers/commonHelpers";
-import { retryUntilTimeout } from "@e2e/utils/retry";
+import { openDeeplink } from "@e2e/helpers/commonHelpers";
 import { isMyWalletEnabled } from "@e2e/utils/initUtil";
 import { TIMEOUT } from "@e2e/utils/timeouts";
-import {
-  ANALYTICS_CONSENT_DRAWER_ID,
-  ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID,
-} from "@e2e/page/drawer/wallet40Drawers.drawer";
 
 type Wallet40TabName = "home" | "swap" | "earn" | "card" | "paytab";
-
-const WALLET40_READY_POLL_INTERVAL = 600;
 
 export default class MainNavigationPage {
   // --- Wallet 4.0 bottom tabs ---
@@ -42,21 +35,7 @@ export default class MainNavigationPage {
 
   @Step("Wait for Wallet 4.0 navigation to be ready")
   async waitForWallet40Ready(timeout = TIMEOUT.xxlarge) {
-    await retryUntilTimeout(
-      async () => {
-        if (isAndroid() && (await IsIdVisible(ANALYTICS_CONSENT_DRAWER_ID, TIMEOUT.xxxsmall))) {
-          if (await IsIdVisible(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID, TIMEOUT.xxsmall)) {
-            await tapById(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID);
-          }
-          throw new Error("analytics consent drawer still present");
-        }
-        if (!(await IsIdVisible(this.topBarDiscoverId, TIMEOUT.xxxsmall))) {
-          throw new Error(`"${this.topBarDiscoverId}" not visible yet`);
-        }
-      },
-      timeout,
-      WALLET40_READY_POLL_INTERVAL,
-    );
+    await waitForElementById(this.topBarDiscoverId, timeout);
   }
 
   // =====================

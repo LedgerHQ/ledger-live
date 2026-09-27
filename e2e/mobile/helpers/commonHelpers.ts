@@ -153,12 +153,17 @@ export async function captureNativeViewHierarchy(
   label = "Native View Hierarchy at failure",
 ): Promise<void> {
   try {
+    await app.common.disableSynchronization();
     const xml = await device.generateViewHierarchyXml();
     if (xml) {
       await allure.attachment(label, xml, "text/xml");
     }
   } catch (error) {
     log.warn(`Could not capture native view hierarchy: ${sanitizeError(error)}`);
+  } finally {
+    await app.common.enableSynchronization().catch(error => {
+      log.warn(`Could not re-enable synchronization: ${sanitizeError(error)}`);
+    });
   }
 }
 
