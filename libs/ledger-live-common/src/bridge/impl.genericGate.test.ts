@@ -5,6 +5,12 @@ import { coinModuleLoaders } from "../coin-modules/loaders";
 import { registerCoinModules, resetCoinModulesForTests } from "../coin-modules/registry";
 import { clearBridgeCache, getCurrencyBridge } from ".";
 
+// NEAR is not in genericCoinFrameworkFamilies.json yet; list it here so the gate is testable on its own.
+jest.mock("./generic-coin-framework/genericCoinFrameworkFamilies.json", () => ({
+  ...jest.requireActual("./generic-coin-framework/genericCoinFrameworkFamilies.json"),
+  near: true,
+}));
+
 const NEAR = getCryptoCurrencyById("near");
 const KEY = "config_near_generic_bridge";
 
