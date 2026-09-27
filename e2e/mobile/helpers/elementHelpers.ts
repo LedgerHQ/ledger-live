@@ -140,7 +140,7 @@ export const NativeElementHelpers = {
       ? waitFor(nativeElement).toBeVisible(options?.visibilityPercentage)
       : waitFor(nativeElement).toExist();
     if (!options?.errorElementId) {
-      return waitCondition.withTimeout(timeout);
+      return withHardTimeout(waitCondition.withTimeout(timeout), timeout * 1.1);
     }
 
     const startTime = Date.now();
@@ -148,7 +148,10 @@ export const NativeElementHelpers = {
 
     while (Date.now() - startTime < timeout) {
       try {
-        await waitCondition.withTimeout(errorCheckTimeout);
+        await withHardTimeout(
+          waitCondition.withTimeout(errorCheckTimeout),
+          errorCheckTimeout * 1.1,
+        );
         return;
       } catch (error) {
         lastWaitError = error instanceof Error ? error : new Error(String(error));
@@ -291,16 +294,16 @@ export const NativeElementHelpers = {
     }
   },
 
-  async tapById(id: string | RegExp, index = 0, timeout = TIMEOUT.xxlarge) {
-    return await withHardTimeout(NativeElementHelpers.getElementById(id, index).tap(), timeout);
+  async tapById(id: string | RegExp, index = 0) {
+    return await withHardTimeout(NativeElementHelpers.getElementById(id, index).tap());
   },
 
-  async tapByText(text: string | RegExp, index = 0, timeout = TIMEOUT.xxlarge) {
-    return await withHardTimeout(NativeElementHelpers.getElementByText(text, index).tap(), timeout);
+  async tapByText(text: string | RegExp, index = 0) {
+    return await withHardTimeout(NativeElementHelpers.getElementByText(text, index).tap());
   },
 
-  async tapByElement(elem: Detox.NativeElement, timeout = TIMEOUT.xxlarge) {
-    await withHardTimeout(elem.tap(), timeout);
+  async tapByElement(elem: Detox.NativeElement) {
+    await withHardTimeout(elem.tap());
   },
 
   async tapByIdAndExpectToDisappear(
@@ -341,13 +344,13 @@ export const NativeElementHelpers = {
     closeKeyboard = true,
     focus = true,
   ): Promise<void> {
-    if (focus) await withHardTimeout(elem.tap(), TIMEOUT.xxlarge);
-    await withHardTimeout(elem.replaceText(text), TIMEOUT.xxlarge);
-    if (closeKeyboard) await withHardTimeout(elem.typeText("\n"), TIMEOUT.xxlarge);
+    if (focus) await withHardTimeout(elem.tap());
+    await withHardTimeout(elem.replaceText(text));
+    if (closeKeyboard) await withHardTimeout(elem.typeText("\n"));
   },
 
-  async clearTextByElement(elem: NativeElement, timeout = TIMEOUT.xxlarge): Promise<void> {
-    await withHardTimeout(elem.clearText(), timeout);
+  async clearTextByElement(elem: NativeElement): Promise<void> {
+    await withHardTimeout(elem.clearText());
   },
 
   async scrollToText(
@@ -561,27 +564,21 @@ export const WebElementHelpers = {
   async tapWebElementByTestId(
     id: string,
     options?: { index?: number; testIdSuffix?: string },
-    timeout = TIMEOUT.xxlarge,
   ): Promise<void> {
     const webElement = await WebElementHelpers.waitWebElementByTestId(id, {
-      timeout,
       index: options?.index,
       testIdSuffix: options?.testIdSuffix,
       throwOnTimeout: true,
     });
-    await WebElementHelpers.tapWebElementByElement(webElement!, timeout);
+    await WebElementHelpers.tapWebElementByElement(webElement!);
   },
 
-  async tapWebElementByElement(
-    webElement: WebElement,
-    timeout = TIMEOUT.xxlarge / 10,
-  ): Promise<void> {
-    await withHardTimeout(webElement.tap(), timeout);
+  async tapWebElementByElement(webElement: WebElement): Promise<void> {
+    await withHardTimeout(webElement.tap(), TIMEOUT.medium);
   },
 
-  async typeTextByWebTestId(id: string, text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
+  async typeTextByWebTestId(id: string, text: string): Promise<void> {
     const webElement = await WebElementHelpers.waitWebElementByTestId(id, {
-      timeout,
       throwOnTimeout: true,
     });
     await withHardTimeout(
@@ -597,7 +594,7 @@ export const WebElementHelpers = {
         },
         [text],
       ),
-      timeout,
+      TIMEOUT.medium,
     );
   },
 
