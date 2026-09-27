@@ -54,7 +54,7 @@ const mockNavigation = {
   navigate: mockNavigate,
   setOptions: jest.fn(),
   getParent: jest.fn(),
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 describe("VoteDelegationSummary", () => {
@@ -71,7 +71,7 @@ describe("VoteDelegationSummary", () => {
       name: "Cardano",
       ticker: "ADA",
       units: [{ code: "ADA", magnitude: 6 }],
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any,
     cardanoResources: {
       delegation: {
@@ -79,11 +79,14 @@ describe("VoteDelegationSummary", () => {
       },
     },
     spendableBalance: new BigNumber(100),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any;
 
   it("should update transaction with dRepAbstain when abstain option is selected", async () => {
-    (useAccountScreen as jest.Mock).mockReturnValue({ account: baseAccount, parentAccount: undefined });
+    (useAccountScreen as jest.Mock).mockReturnValue({
+      account: baseAccount,
+      parentAccount: undefined,
+    });
 
     const mockRoute = {
       params: {
@@ -91,11 +94,15 @@ describe("VoteDelegationSummary", () => {
         option: "abstain",
         transaction: { family: "cardano", amount: new BigNumber(0) },
       },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
 
     mockCreateTransaction.mockReturnValue({ family: "cardano", amount: new BigNumber(0) });
-    mockUpdateTransaction.mockReturnValue({ family: "cardano", dRepAbstain: true, amount: new BigNumber(0) });
+    mockUpdateTransaction.mockReturnValue({
+      family: "cardano",
+      dRepAbstain: true,
+      amount: new BigNumber(0),
+    });
 
     render(<VoteDelegationSummary navigation={mockNavigation} route={mockRoute} />, {
       overrideInitialState: state => ({
@@ -110,7 +117,7 @@ describe("VoteDelegationSummary", () => {
     await waitFor(() => {
       expect(mockUpdateTransaction).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ dRepAbstain: true })
+        expect.objectContaining({ dRepAbstain: true }),
       );
     });
 
@@ -118,7 +125,10 @@ describe("VoteDelegationSummary", () => {
   });
 
   it("should update transaction with dRepNoConfidence when noConfidence option is selected", async () => {
-    (useAccountScreen as jest.Mock).mockReturnValue({ account: baseAccount, parentAccount: undefined });
+    (useAccountScreen as jest.Mock).mockReturnValue({
+      account: baseAccount,
+      parentAccount: undefined,
+    });
 
     const mockRoute = {
       params: {
@@ -126,11 +136,15 @@ describe("VoteDelegationSummary", () => {
         option: "noConfidence",
         transaction: { family: "cardano", amount: new BigNumber(0) },
       },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
 
     mockCreateTransaction.mockReturnValue({ family: "cardano", amount: new BigNumber(0) });
-    mockUpdateTransaction.mockReturnValue({ family: "cardano", dRepNoConfidence: true, amount: new BigNumber(0) });
+    mockUpdateTransaction.mockReturnValue({
+      family: "cardano",
+      dRepNoConfidence: true,
+      amount: new BigNumber(0),
+    });
 
     render(<VoteDelegationSummary navigation={mockNavigation} route={mockRoute} />, {
       overrideInitialState: state => ({
@@ -145,7 +159,7 @@ describe("VoteDelegationSummary", () => {
     await waitFor(() => {
       expect(mockUpdateTransaction).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ dRepNoConfidence: true })
+        expect.objectContaining({ dRepNoConfidence: true }),
       );
     });
 
@@ -153,7 +167,10 @@ describe("VoteDelegationSummary", () => {
   });
 
   it("should update transaction with dRepHex when a DRep is chosen", async () => {
-    (useAccountScreen as jest.Mock).mockReturnValue({ account: baseAccount, parentAccount: undefined });
+    (useAccountScreen as jest.Mock).mockReturnValue({
+      account: baseAccount,
+      parentAccount: undefined,
+    });
 
     const mockDRep = { hex: "chosen_drep_123", meta: { givenName: "Chosen Name" } };
     const mockRoute = {
@@ -162,11 +179,15 @@ describe("VoteDelegationSummary", () => {
         drep: mockDRep,
         transaction: { family: "cardano", amount: new BigNumber(0) },
       },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
 
     mockCreateTransaction.mockReturnValue({ family: "cardano", amount: new BigNumber(0) });
-    mockUpdateTransaction.mockReturnValue({ family: "cardano", dRepHex: "chosen_drep_123", amount: new BigNumber(0) });
+    mockUpdateTransaction.mockReturnValue({
+      family: "cardano",
+      dRepHex: "chosen_drep_123",
+      amount: new BigNumber(0),
+    });
 
     render(<VoteDelegationSummary navigation={mockNavigation} route={mockRoute} />, {
       overrideInitialState: state => ({
@@ -181,7 +202,7 @@ describe("VoteDelegationSummary", () => {
     await waitFor(() => {
       expect(mockUpdateTransaction).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ dRepHex: "chosen_drep_123" })
+        expect.objectContaining({ dRepHex: "chosen_drep_123" }),
       );
     });
 
@@ -189,7 +210,10 @@ describe("VoteDelegationSummary", () => {
   });
 
   it("should navigate to Started screen when change DRep is pressed", async () => {
-    (useAccountScreen as jest.Mock).mockReturnValue({ account: baseAccount, parentAccount: undefined });
+    (useAccountScreen as jest.Mock).mockReturnValue({
+      account: baseAccount,
+      parentAccount: undefined,
+    });
 
     const mockRoute = {
       params: {
@@ -197,7 +221,7 @@ describe("VoteDelegationSummary", () => {
         option: "abstain",
         transaction: { family: "cardano", amount: new BigNumber(0) },
       },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
 
     render(<VoteDelegationSummary navigation={mockNavigation} route={mockRoute} />, {
@@ -213,11 +237,17 @@ describe("VoteDelegationSummary", () => {
     const changeBtn = await screen.findByText("Change");
     fireEvent.press(changeBtn);
 
-    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.CardanoVoteDelegationStarted, expect.anything());
+    expect(mockNavigate).toHaveBeenCalledWith(
+      ScreenName.CardanoVoteDelegationStarted,
+      expect.anything(),
+    );
   });
 
   it("should navigate to SelectDevice when continue is pressed", async () => {
-    (useAccountScreen as jest.Mock).mockReturnValue({ account: baseAccount, parentAccount: undefined });
+    (useAccountScreen as jest.Mock).mockReturnValue({
+      account: baseAccount,
+      parentAccount: undefined,
+    });
 
     const mockRoute = {
       params: {
@@ -225,7 +255,7 @@ describe("VoteDelegationSummary", () => {
         option: "abstain",
         transaction: { family: "cardano", amount: new BigNumber(0) },
       },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
 
     render(<VoteDelegationSummary navigation={mockNavigation} route={mockRoute} />, {
@@ -241,6 +271,9 @@ describe("VoteDelegationSummary", () => {
     const continueBtn = await screen.findByText("Continue");
     fireEvent.press(continueBtn);
 
-    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.CardanoVoteDelegationSelectDevice, expect.anything());
+    expect(mockNavigate).toHaveBeenCalledWith(
+      ScreenName.CardanoVoteDelegationSelectDevice,
+      expect.anything(),
+    );
   });
 });

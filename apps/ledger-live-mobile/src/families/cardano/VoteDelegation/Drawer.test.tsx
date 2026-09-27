@@ -14,7 +14,7 @@ const mockAccount = {
   type: "Account",
   currency: { id: "cardano", units: [{ code: "ADA", name: "ADA", magnitude: 6 }] },
   balance: new BigNumber(1000),
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 const MockValidatorImage = () => <Text>Validator Image</Text>;
@@ -54,7 +54,7 @@ describe("VoteDelegationDrawer", () => {
         formattedCounterValue={<Text>$500</Text>}
         data={mockData}
         actions={mockActions}
-      />
+      />,
     );
     // QueuedDrawer handles visibility, we assert contents are not rendered
     expect(screen.queryByText("Test Label")).toBeNull();
@@ -71,7 +71,7 @@ describe("VoteDelegationDrawer", () => {
         formattedCounterValue={<Text>$500</Text>}
         data={mockData}
         actions={mockActions}
-      />
+      />,
     );
 
     expect(screen.getByText("Test Label")).toBeDefined();
@@ -91,7 +91,7 @@ describe("VoteDelegationDrawer", () => {
         formattedCounterValue={<Text>$500</Text>}
         data={mockData}
         actions={mockActions}
-      />
+      />,
     );
 
     const actionBtn = screen.getByText("Test Action");

@@ -23,9 +23,12 @@ import StepDRep, { StepDRepFooter } from "./steps/StepDRepSelection";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import { CardanoAccount, Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
+import {
+  CardanoAccount,
+  Transaction as CardanoTransaction,
+} from "@ledgerhq/live-common/families/cardano/types";
 import { TFunction } from "i18next";
-import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 
 type OwnProps = {
   stepId: StepId;
@@ -118,10 +121,7 @@ const Body = ({
     );
     let transaction = bridge.createTransaction(account);
 
-    transaction = bridge.updateTransaction(transaction, {
-      mode: "voteDelegate",
-      dRepAbstain: true,
-    });
+    transaction = bridge.updateTransaction(transaction, { mode: "voteDelegate" });
 
     const { option } = params;
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "tests/testSetup";
 import ScrollLoadingList from "./ScrollLoadingList";
-import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 
 describe("ScrollLoadingList", () => {
   const mockRenderItem = (item: DRep) => (
@@ -31,9 +31,8 @@ describe("ScrollLoadingList", () => {
 
   it("renders data correctly within buffer size", () => {
     render(<ScrollLoadingList {...defaultProps} />);
-    // data.length (30) > bufferSize (20)
-    // useEffect sets offset to data.length - 20 = 10
-    expect(screen.getAllByTestId(/item-drep/)).toHaveLength(10);
+    // data.length (30) > bufferSize (20): only the first bufferSize items are rendered
+    expect(screen.getAllByTestId(/item-drep/)).toHaveLength(20);
   });
 
   it("renders all data if length is less than buffer size", () => {
@@ -53,7 +52,7 @@ describe("ScrollLoadingList", () => {
 
   it("resets scroll offset when search changes", () => {
     const { rerender } = render(<ScrollLoadingList {...defaultProps} />);
-    expect(screen.getAllByTestId(/item-drep/)).toHaveLength(10);
+    expect(screen.getAllByTestId(/item-drep/)).toHaveLength(20);
 
     // Trigger effect by changing data and search
     rerender(<ScrollLoadingList {...defaultProps} data={[...mockData]} search="test" />);

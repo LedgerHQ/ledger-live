@@ -2,7 +2,7 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/famil
 import type { Operation } from "@ledgerhq/types-live";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import type { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 import { ScreenName } from "~/const";
 
 export type CardanoVoteDelegationFlowParamList = {

@@ -40,7 +40,8 @@ export default function VoteDelegationRow({
   }
 
   const avatarLabel =
-    delegation.dRepName || (delegation.dRepHex === "2" || delegation.dRepHex === "3"
+    delegation.dRepName ||
+    (delegation.dRepHex === "2" || delegation.dRepHex === "3"
       ? delegation.dRepHex
       : getBech32DRepId(delegation.dRepHex || "", currencyId));
 

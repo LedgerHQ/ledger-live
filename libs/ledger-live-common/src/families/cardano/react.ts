@@ -76,7 +76,7 @@ export function useCardanoFamilyPools(currency: CryptoCurrency): {
   };
 }
 
-export function useCardanoFamilyDReps(currency: CryptoCurrency): {
+export function useCardanoFamilyDReps(currency: CryptoCurrency | undefined): {
   dReps: Array<DRep>;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -104,6 +104,12 @@ export function useCardanoFamilyDReps(currency: CryptoCurrency): {
     setIsPaginating(false);
     pageNo.current = 1;
 
+    // account may not be resolved yet (e.g. first mobile render): don't query without a currency
+    if (!currency) {
+      setIsSearching(false);
+      return;
+    }
+
     const delayDebounceFn = setTimeout(
       () => {
         fetchDRepList(currency, searchQuery, pageNo.current, limit)
@@ -129,7 +135,7 @@ export function useCardanoFamilyDReps(currency: CryptoCurrency): {
   }, [currency, searchQuery]);
 
   const onScrollEndReached = useCallback(() => {
-    if (isPaginationDisabled.current || isPaginationInFlight.current) return;
+    if (!currency || isPaginationDisabled.current || isPaginationInFlight.current) return;
     isPaginationInFlight.current = true;
     const generation = requestGeneration.current;
     const nextPage = pageNo.current + 1;

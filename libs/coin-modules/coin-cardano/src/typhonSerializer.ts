@@ -253,7 +253,9 @@ function prepareVoteDelegationCertificate(
         },
       };
     } else {
-      throw new Error(`DRep type invalid certificate ${dRepCert}`);
+      throw new Error(
+        `Invalid DRep in vote delegation certificate: type=${dRepCert.type}, hasKey=${!!dRepCert.key}`,
+      );
     }
   } else {
     throw new Error("Invalid stakeKey type");

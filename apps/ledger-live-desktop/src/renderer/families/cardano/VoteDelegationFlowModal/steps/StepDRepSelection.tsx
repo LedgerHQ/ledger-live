@@ -7,7 +7,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
-import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 import DRepContainer from "../DRep";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";

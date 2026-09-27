@@ -50,11 +50,7 @@ export default function VoteDelegationDrawer({
   const insets = useSafeAreaInsets();
   const scrollMaxHeight = height - normalize(425) - insets.bottom;
   return (
-    <QueuedDrawer
-      style={styles.modal}
-      isRequestingToBeOpened={isOpen}
-      onClose={onClose}
-    >
+    <QueuedDrawer style={styles.modal} isRequestingToBeOpened={isOpen} onClose={onClose}>
       <View style={styles.root}>
         <DelegatingContainer
           left={
@@ -85,11 +81,7 @@ export default function VoteDelegationDrawer({
           showsVerticalScrollIndicator={true}
         >
           {data.map((field, i) => (
-            <DataField
-              {...field}
-              key={"data-" + i}
-              isLast={i === data.length - 1}
-            />
+            <DataField {...field} key={"data-" + i} isLast={i === data.length - 1} />
           ))}
         </ScrollView>
 
@@ -102,11 +94,7 @@ export default function VoteDelegationDrawer({
           ]}
         >
           {actions.map((props, i) => (
-            <ActionButton
-              key={`actions-${i}`}
-              {...props}
-              isSingle={actions.length === 1}
-            />
+            <ActionButton key={`actions-${i}`} {...props} isSingle={actions.length === 1} />
           ))}
         </View>
       </View>
@@ -135,12 +123,7 @@ function DataField({ label, Component, isLast }: DataFieldProps) {
       ]}
     >
       <View>
-        <LText
-          numberOfLines={1}
-          semiBold
-          style={styles.labelText}
-          color="smoke"
-        >
+        <LText numberOfLines={1} semiBold style={styles.labelText} color="smoke">
           {label}
         </LText>
       </View>
@@ -183,11 +166,7 @@ function ActionButton({
       onPress={onPress}
     >
       <Icon size={48} style={styles.actionIcon} />
-      <LText
-        semiBold
-        style={[styles.actionText]}
-        color={disabled ? "grey" : "darkBlue"}
-      >
+      <LText semiBold style={[styles.actionText]} color={disabled ? "grey" : "darkBlue"}>
         {label}
       </LText>
     </Touchable>

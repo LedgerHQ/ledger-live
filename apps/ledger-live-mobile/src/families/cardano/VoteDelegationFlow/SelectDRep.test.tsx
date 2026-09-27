@@ -18,7 +18,7 @@ jest.mock("LLM/hooks/useAccountScreen", () => ({
 const mockNavigate = jest.fn();
 const mockNavigation = {
   navigate: mockNavigate,
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 const mockRoute = {
@@ -26,7 +26,7 @@ const mockRoute = {
     accountId: "account-id",
     skipStartedStep: true,
   },
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 describe("SelectDRep", () => {
@@ -35,7 +35,9 @@ describe("SelectDRep", () => {
   });
 
   it("should render search input and call setSearchQuery when typing", () => {
-    (useAccountScreen as jest.Mock).mockReturnValue({ account: { type: "Account", currency: { id: "cardano" } } });
+    (useAccountScreen as jest.Mock).mockReturnValue({
+      account: { type: "Account", currency: { id: "cardano" } },
+    });
 
     const mockSetSearchQuery = jest.fn();
     (useCardanoFamilyDReps as jest.Mock).mockReturnValue({
@@ -55,9 +57,9 @@ describe("SelectDRep", () => {
             {
               id: "account-id",
               type: "Account",
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               currency: { id: "cardano" } as any,
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any,
           ],
         },
@@ -72,7 +74,9 @@ describe("SelectDRep", () => {
   });
 
   it("should not call setSearchQuery for a 1-2 character query, but should once it reaches 3", () => {
-    (useAccountScreen as jest.Mock).mockReturnValue({ account: { type: "Account", currency: { id: "cardano" } } });
+    (useAccountScreen as jest.Mock).mockReturnValue({
+      account: { type: "Account", currency: { id: "cardano" } },
+    });
 
     const mockSetSearchQuery = jest.fn();
     (useCardanoFamilyDReps as jest.Mock).mockReturnValue({
@@ -92,9 +96,9 @@ describe("SelectDRep", () => {
             {
               id: "account-id",
               type: "Account",
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               currency: { id: "cardano" } as any,
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any,
           ],
         },
@@ -117,7 +121,9 @@ describe("SelectDRep", () => {
   });
 
   it("should navigate to Summary on DRep selection", () => {
-    (useAccountScreen as jest.Mock).mockReturnValue({ account: { type: "Account", currency: { id: "cardano" } } });
+    (useAccountScreen as jest.Mock).mockReturnValue({
+      account: { type: "Account", currency: { id: "cardano" } },
+    });
 
     const mockDRep = { hex: "drep_hex_123", meta: { givenName: "DRep Name" } };
     (useCardanoFamilyDReps as jest.Mock).mockReturnValue({
@@ -137,9 +143,9 @@ describe("SelectDRep", () => {
             {
               id: "account-id",
               type: "Account",
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               currency: { id: "cardano" } as any,
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any,
           ],
         },

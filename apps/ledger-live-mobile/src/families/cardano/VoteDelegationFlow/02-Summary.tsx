@@ -9,7 +9,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import type { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import type { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 import { getBech32DRepId } from "@ledgerhq/live-common/families/cardano/logic";
 import type {
   CardanoAccount,
@@ -65,24 +65,42 @@ export default function VoteDelegationSummary({ navigation, route }: Props) {
     return undefined;
   }, [drep]);
 
-  const effectiveDRepHex = chosenDRep ? chosenDRep.hex : route.params.option === "abstain" ? "2" : route.params.option === "noConfidence" ? "3" : undefined;
-
-
+  const effectiveDRepHex = chosenDRep
+    ? chosenDRep.hex
+    : route.params.option === "abstain"
+      ? "2"
+      : route.params.option === "noConfidence"
+        ? "3"
+        : undefined;
 
   let tx = bridge.createTransaction(account);
   tx = bridge.updateTransaction(tx, { mode: "voteDelegate" });
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(bridge, () => {
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
+    () => {
       if (chosenDRep) {
-        tx = bridge.updateTransaction(tx, { dRepHex: chosenDRep.hex, dRepNoConfidence: undefined, dRepAbstain: undefined });
+        tx = bridge.updateTransaction(tx, {
+          dRepHex: chosenDRep.hex,
+          dRepNoConfidence: undefined,
+          dRepAbstain: undefined,
+        });
       } else if (route.params.option === "noConfidence") {
-        tx = bridge.updateTransaction(tx, { dRepNoConfidence: true, dRepHex: undefined, dRepAbstain: undefined });
+        tx = bridge.updateTransaction(tx, {
+          dRepNoConfidence: true,
+          dRepHex: undefined,
+          dRepAbstain: undefined,
+        });
       } else if (route.params.option === "abstain") {
-        tx = bridge.updateTransaction(tx, { dRepAbstain: true, dRepHex: undefined, dRepNoConfidence: undefined });
+        tx = bridge.updateTransaction(tx, {
+          dRepAbstain: true,
+          dRepHex: undefined,
+          dRepNoConfidence: undefined,
+        });
       }
 
       return { account, transaction: tx };
-    });
+    },
+  );
 
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
@@ -421,8 +439,8 @@ function SummaryWords({
                 {currentDelegation.dRepHex === "2"
                   ? t("cardano.voteDelegation.options.alwaysAbstain")
                   : currentDelegation.dRepHex === "3"
-                  ? t("cardano.voteDelegation.options.alwaysNoConfidence")
-                  : getBech32DRepId(currentDelegation.dRepHex, getAccountCurrency(account).id)}
+                    ? t("cardano.voteDelegation.options.alwaysNoConfidence")
+                    : getBech32DRepId(currentDelegation.dRepHex, getAccountCurrency(account).id)}
               </Text>
             </View>
           </View>
@@ -464,10 +482,10 @@ function SummaryWords({
                           : chosenDRep.meta?.givenName ||
                             getBech32DRepId(chosenDRep.hex, getAccountCurrency(account).id)
                         : option === "abstain"
-                        ? "2"
-                        : option === "noConfidence"
-                        ? "3"
-                        : " "
+                          ? "2"
+                          : option === "noConfidence"
+                            ? "3"
+                            : " "
                     }
                   />
                 </Animated.View>
@@ -493,7 +511,9 @@ function SummaryWords({
                 }}
               >
                 <LText style={{ fontSize: 14 }} color="live">
-                  {chosenDRep || option ? t("cardano.delegation.change") : t("cardano.delegation.select")}
+                  {chosenDRep || option
+                    ? t("cardano.delegation.change")
+                    : t("cardano.delegation.select")}
                 </LText>
                 <ArrowRight color={colors.live} size={14} />
               </View>

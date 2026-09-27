@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "tests/testSetup";
 import DRepField from ".";
-import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 import { CardanoAccount, TransactionStatus } from "@ledgerhq/live-common/families/cardano/types";
 
 jest.mock("@ledgerhq/live-common/families/cardano/react", () => ({

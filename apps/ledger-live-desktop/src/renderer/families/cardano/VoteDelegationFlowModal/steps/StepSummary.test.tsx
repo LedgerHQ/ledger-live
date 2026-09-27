@@ -6,10 +6,9 @@ import {
   CardanoAccount,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 import { StepProps } from "../types";
 import BigNumber from "bignumber.js";
-
 
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
   useMaybeAccountUnit: jest.fn().mockReturnValue({ code: "ADA", magnitude: 6 }),
@@ -40,7 +39,12 @@ describe("StepSummary", () => {
   const mockAccount = {
     id: "account-id",
     type: "Account",
-    currency: { id: "cardano", name: "Cardano", ticker: "ADA", units: [{ code: "ADA", magnitude: 6 }] },
+    currency: {
+      id: "cardano",
+      name: "Cardano",
+      ticker: "ADA",
+      units: [{ code: "ADA", magnitude: 6 }],
+    },
     cardanoResources: { delegation: { status: true } },
   } as CardanoAccount;
 
@@ -114,14 +118,8 @@ describe("StepSummary", () => {
     });
 
     it("renders correctly with the DRep hex if name is missing", () => {
-      const dRepWithoutName = { ...mockDRep, meta: undefined };
-      render(
-        <StepSummary
-          {...defaultProps}
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          selectedDRep={dRepWithoutName as DRep}
-        />,
-      );
+      const dRepWithoutName: DRep = { ...mockDRep, meta: null };
+      render(<StepSummary {...defaultProps} selectedDRep={dRepWithoutName} />);
       expect(screen.getByText(mockDRepBech32)).toBeInTheDocument();
     });
 

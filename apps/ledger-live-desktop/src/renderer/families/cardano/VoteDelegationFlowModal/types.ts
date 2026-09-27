@@ -7,7 +7,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 
 export type StepId = "dRep" | "summary" | "connectDevice" | "confirmation";
 
@@ -19,8 +19,8 @@ export type StepProps = {
   onRetry: (a: void) => void;
   onClose: () => void;
   openModal: (key: string, config?: unknown) => void;
-  optimisticOperation: Operation;
-  error: Error;
+  optimisticOperation: Operation | null;
+  error: Error | null | undefined;
   signed: boolean;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;
@@ -30,7 +30,7 @@ export type StepProps = {
   onOperationBroadcasted: (a: Operation) => void;
   setSigned: (a: boolean) => void;
   bridgePending: boolean;
-  selectedDRep: DRep;
+  selectedDRep: DRep | null;
   setSelectedDRep: (a: DRep) => void;
 };
 

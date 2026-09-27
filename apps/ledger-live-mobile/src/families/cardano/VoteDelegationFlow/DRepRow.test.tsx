@@ -13,7 +13,7 @@ describe("DRepRow", () => {
       hex: mockDRepHex,
       meta: { givenName: "My DRep" },
       active: "2023-01-01T00:00:00.000Z",
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
 
     render(<DRepRow drep={mockDRep} onPress={mockOnPress} currencyId="cardano" />);
@@ -34,7 +34,7 @@ describe("DRepRow", () => {
     const mockDRep = {
       hex: mockDRepHex,
       active: "2023-01-01T00:00:00.000Z",
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
 
     render(<DRepRow drep={mockDRep} onPress={mockOnPress} currencyId="cardano" />);

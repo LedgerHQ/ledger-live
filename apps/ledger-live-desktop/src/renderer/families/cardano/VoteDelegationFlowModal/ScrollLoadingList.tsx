@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useRef, memo, useEffect, useMemo } from "react";
 import debounce from "lodash/debounce";
-import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import BigSpinner from "~/renderer/components/BigSpinner";
@@ -37,38 +37,25 @@ const ScrollLoadingList = ({
   isPaginating,
 }: ScrollLoadingListProps) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  // Number of rows rendered. Grows by `bufferSize` on each scroll-end and is reset only when the
+  // search changes, so pages appended by pagination (or a parent re-render) don't collapse the list.
   const [scrollOffset, setScrollOffset] = useState(bufferSize);
   useEffect(() => {
-    if (search !== "") {
-      setScrollOffset(bufferSize);
-    } else {
-      setScrollOffset(data.length - 20);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, scrollRef, bufferSize]);
+    setScrollOffset(bufferSize);
+  }, [search, bufferSize]);
 
-  const handleScroll = useCallback(async () => {
-    const target = scrollRef && scrollRef.current;
+  const handleScroll = useCallback(() => {
+    const target = scrollRef.current;
     if (
       target &&
       target.scrollTop + target.offsetHeight >= target.scrollHeight - scrollEndThreshold
     ) {
       fetchPoolsFromNextPage();
-      setScrollOffset(Math.min(data.length, scrollOffset + bufferSize));
+      setScrollOffset(prev => Math.min(Math.max(data.length, bufferSize), prev + bufferSize));
     }
-  }, [
-    setScrollOffset,
-    fetchPoolsFromNextPage,
-    scrollOffset,
-    data.length,
-    bufferSize,
-    scrollEndThreshold,
-  ]);
+  }, [fetchPoolsFromNextPage, data.length, bufferSize, scrollEndThreshold]);
 
-  const debouncedHandleScroll = useMemo(
-    () => debounce(handleScroll, 50),
-    [handleScroll]
-  );
+  const debouncedHandleScroll = useMemo(() => debounce(handleScroll, 50), [handleScroll]);
 
   useEffect(() => {
     return () => {

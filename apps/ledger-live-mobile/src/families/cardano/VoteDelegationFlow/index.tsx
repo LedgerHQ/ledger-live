@@ -59,7 +59,9 @@ function VoteDelegationFlow() {
         name={ScreenName.CardanoVoteDelegationSelectDRep}
         component={SelectDRep}
         options={{
-          headerTitle: () => <StepHeader title={t("cardano.voteDelegation.flow.steps.dRep.title")} />,
+          headerTitle: () => (
+            <StepHeader title={t("cardano.voteDelegation.flow.steps.dRep.title")} />
+          ),
         }}
       />
 

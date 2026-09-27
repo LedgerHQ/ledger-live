@@ -11,7 +11,7 @@ import { SearchInput, Box, InfiniteLoader, Flex, Text } from "@ledgerhq/native-u
 import NoResultsFound from "~/icons/NoResultsFound";
 import { CardanoVoteDelegationFlowParamList } from "./types";
 import { useCardanoFamilyDReps } from "@ledgerhq/live-common/families/cardano/react";
-import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 import DRepRow from "./DRepRow";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -33,7 +33,7 @@ export default function SelectDRep({ navigation, route }: Props) {
     account && account.type === "Account" ? account.currency : undefined;
 
   const { dReps, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =
-    useCardanoFamilyDReps(currency!);
+    useCardanoFamilyDReps(currency);
 
   const [inputValue, setInputValue] = useState("");
   const isQueryTooShort = inputValue.length > 0 && inputValue.length < MIN_DREP_SEARCH_LENGTH;

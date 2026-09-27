@@ -15,7 +15,6 @@ jest.mock("~/components/CurrencyIcon", () => {
   return () => <RNText>CurrencyIcon</RNText>;
 });
 
-
 const mockNavigate = jest.fn();
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
@@ -34,7 +33,7 @@ const mockAccount = {
       dRepHex: undefined,
     },
   },
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 describe("CardanoVoteDelegation", () => {
@@ -45,7 +44,11 @@ describe("CardanoVoteDelegation", () => {
   it("should render empty state when not delegated", () => {
     render(<CardanoVoteDelegation account={mockAccount} />);
     expect(screen.getByText("Vote Delegation")).toBeDefined();
-    expect(screen.getByText("Delegate your voting power to a DRep to actively participate in Cardano governance.")).toBeDefined();
+    expect(
+      screen.getByText(
+        "Delegate your voting power to a DRep to actively participate in Cardano governance.",
+      ),
+    ).toBeDefined();
   });
 
   it("should navigate to Started screen when delegate button is pressed", () => {
@@ -106,10 +109,10 @@ describe("CardanoVoteDelegation", () => {
       },
     };
     render(<CardanoVoteDelegation account={delegatedAccount} />);
-    
+
     // Press the row to open drawer
     fireEvent.press(screen.getByText(dRepBech32));
-    
+
     // Press Redelegate action in the drawer
     const redelegateBtn = screen.getByText("Change Vote Delegation");
     fireEvent.press(redelegateBtn);
@@ -121,8 +124,8 @@ describe("CardanoVoteDelegation", () => {
   });
 
   it("should open explorer when DRep ID is pressed in the drawer", () => {
-    jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined as never);
-    
+    jest.spyOn(Linking, "openURL").mockResolvedValue(undefined as never);
+
     const delegatedAccount = {
       ...mockAccount,
       cardanoResources: {
@@ -132,10 +135,10 @@ describe("CardanoVoteDelegation", () => {
       },
     };
     render(<CardanoVoteDelegation account={delegatedAccount} />);
-    
+
     // Press the row to open drawer
     fireEvent.press(screen.getByText(dRepBech32));
-    
+
     // Press the DRep ID text in the drawer (the first one is the row, the second is in the drawer, but actually both have same text so we can get getAllByText)
     const dRepIdTexts = screen.getAllByText(dRepBech32);
     fireEvent.press(dRepIdTexts[0]); // Trigger onOpenExplorer

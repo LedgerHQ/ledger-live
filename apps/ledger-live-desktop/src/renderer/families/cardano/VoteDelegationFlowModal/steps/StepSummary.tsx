@@ -40,8 +40,6 @@ const DRepNameAndHexContainer = styled(Box).attrs(() => ({
   }
 `;
 
-
-
 function StepSummary(props: StepProps) {
   const { account, transaction, status, selectedDRep, bridgePending } = props;
 
@@ -101,7 +99,8 @@ function StepSummary(props: StepProps) {
                     ) : transaction.dRepNoConfidence ? (
                       <Trans i18nKey="voteDelegation.options.alwaysNoConfidence" />
                     ) : (
-                      selectedDRep?.meta?.givenName || getBech32DRepId(selectedDRep!.hex, account.currency.id)
+                      selectedDRep?.meta?.givenName ||
+                      getBech32DRepId(selectedDRep!.hex, account.currency.id)
                     )}
                   </Text>
                 </DRepNameAndHexContainer>

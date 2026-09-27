@@ -434,7 +434,7 @@ describe("buildTransaction", () => {
       ).resolves.toBeDefined();
     });
   });
-  
+
   describe("vote delegate transaction", () => {
     it("should skip the default auto-abstain certificate for voteDelegate mode", async () => {
       // scenario when it might add default abstain vote
@@ -495,12 +495,12 @@ describe("buildTransaction", () => {
       ) as TyphonTypes.VoteDelegationCertificate | undefined;
 
       // should have stake key registration certificate
-      expect(registerCertificate).toBeDefined();
+      expect(registerCertificate?.type).toBe(TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION);
       expect(registerCertificate!.cert.deposit.toString()).toBe(
         transaction.protocolParams.stakeKeyDeposit.toString(),
       );
       // should have vote delegation certificate
-      expect(voteDelegateCertificate).toBeDefined();
+      expect(voteDelegateCertificate?.type).toBe(TyphonTypes.CertificateType.VOTE_DELEGATION);
       expect(voteDelegateCertificate?.cert.dRep.key?.toString("hex")).toBe("bbccdd");
     });
 
@@ -540,7 +540,7 @@ describe("buildTransaction", () => {
       ) as TyphonTypes.VoteDelegationCertificate | undefined;
 
       expect(registerCertificate).toBeUndefined(); // should not have stake key registration certificate
-      expect(voteDelegateCertificate).toBeDefined(); // should have vote delegation certificate
+      expect(voteDelegateCertificate?.type).toBe(TyphonTypes.CertificateType.VOTE_DELEGATION); // should have vote delegation certificate
       expect(voteDelegateCertificate?.cert.dRep.key?.toString("hex")).toBe("aacc");
     });
 
@@ -564,7 +564,7 @@ describe("buildTransaction", () => {
         | TyphonTypes.VoteDelegationCertificate
         | undefined;
       // should have vote delegation certificate
-      expect(voteDelegateCertificate).toBeDefined();
+      expect(voteDelegateCertificate?.type).toBe(TyphonTypes.CertificateType.VOTE_DELEGATION);
       // should have abstain vote
       expect(voteDelegateCertificate?.cert.dRep.type).toBe(TyphonTypes.DRepType.ABSTAIN);
       expect(voteDelegateCertificate?.cert.dRep.key).toBeUndefined();
@@ -590,7 +590,7 @@ describe("buildTransaction", () => {
         | TyphonTypes.VoteDelegationCertificate
         | undefined;
       // should have vote delegation certificate
-      expect(voteDelegateCertificate).toBeDefined();
+      expect(voteDelegateCertificate?.type).toBe(TyphonTypes.CertificateType.VOTE_DELEGATION);
       // should have no confidence vote
       expect(voteDelegateCertificate?.cert.dRep.type).toBe(TyphonTypes.DRepType.NO_CONFIDENCE);
       expect(voteDelegateCertificate?.cert.dRep.key).toBeUndefined();

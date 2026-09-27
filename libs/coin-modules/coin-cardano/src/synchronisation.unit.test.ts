@@ -448,7 +448,6 @@ describe("mapTxToAccountOperation", () => {
           { stakeKeyDeposit: "1" } as any,
         );
 
-        expect(op).toBeDefined();
         expect(op.type).toBe("VOTE");
         expect(op.extra.vote).toBe("ABSTAIN");
       });
@@ -476,7 +475,6 @@ describe("mapTxToAccountOperation", () => {
           { stakeKeyDeposit: "1" } as any,
         );
 
-        expect(op).toBeDefined();
         expect(op.type).toBe("VOTE");
         expect(op.extra.vote).toBe("NO CONFIDENCE");
       });
@@ -504,7 +502,6 @@ describe("mapTxToAccountOperation", () => {
           { stakeKeyDeposit: "1" } as any,
         );
 
-        expect(op).toBeDefined();
         expect(op.type).toBe("VOTE");
         expect(op.extra.vote).toBe("mockDrepHex");
       });
@@ -532,7 +529,6 @@ describe("mapTxToAccountOperation", () => {
           { stakeKeyDeposit: "1" } as any,
         );
 
-        expect(op).toBeDefined();
         expect(op.type).not.toBe("VOTE");
         expect(op.extra.vote).toBeUndefined();
       });

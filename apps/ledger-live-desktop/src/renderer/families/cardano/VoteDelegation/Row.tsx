@@ -1,9 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import {
-  CardanoAccount,
-  CardanoDelegation,
-} from "@ledgerhq/live-common/families/cardano/types";
+import { CardanoAccount, CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import { getBech32DRepId } from "@ledgerhq/live-common/families/cardano/logic";
 import { useTranslation } from "react-i18next";
 import Text from "~/renderer/components/Text";

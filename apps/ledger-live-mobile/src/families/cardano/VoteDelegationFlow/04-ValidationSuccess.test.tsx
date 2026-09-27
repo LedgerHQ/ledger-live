@@ -15,7 +15,7 @@ const mockNavigate = jest.fn();
 const mockNavigation = {
   getParent: () => ({ pop: mockPop }),
   navigate: mockNavigate,
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 const mockRoute = {
@@ -23,7 +23,7 @@ const mockRoute = {
     accountId: "account-id",
     result: { hash: "tx-hash-123" },
   },
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 describe("VoteDelegationValidationSuccess", () => {

@@ -9,7 +9,7 @@ const mockGoBack = jest.fn();
 const mockNavigation = {
   getParent: () => ({ pop: mockPop }),
   goBack: mockGoBack,
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 const mockRoute = {
@@ -17,7 +17,7 @@ const mockRoute = {
     accountId: "account-id",
     error: new Error("Test error message"),
   },
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 describe("VoteDelegationValidationError", () => {

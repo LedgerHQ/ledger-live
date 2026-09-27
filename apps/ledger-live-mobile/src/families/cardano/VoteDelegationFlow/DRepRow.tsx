@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import Touchable from "~/components/Touchable";
 import DRepImage from "./DRepImage";
-import type { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import type { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 import { getBech32DRepId } from "@ledgerhq/live-common/families/cardano/logic";
 import { useFormatDate } from "~/hooks/useDateFormatter";
 import { useTranslation } from "~/context/Locale";

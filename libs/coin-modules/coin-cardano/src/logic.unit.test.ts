@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { types as TyphonTypes } from "@stricahq/typhonjs";
 import {
   canStake,
   isAlreadyStaking,
@@ -192,7 +193,9 @@ describe("getTyphonInputFromUtxo", () => {
     expect(typhonInput.index).toEqual(0);
     expect(typhonInput.amount).toEqual(new BigNumber(100));
     expect(typhonInput.tokens).toEqual([]);
-    expect(typhonInput.address).toBeDefined();
+    expect((typhonInput.address as TyphonTypes.ShelleyAddress).paymentCredential.bipPath).toEqual(
+      mockUtxo.paymentCredential.path,
+    );
   });
 });
 

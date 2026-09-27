@@ -15,7 +15,7 @@ describe("VoteDelegationRow", () => {
         currencyId="cardano"
         onPress={mockOnPress}
         isLast={false}
-      />
+      />,
     );
 
     // Should display the DRep id

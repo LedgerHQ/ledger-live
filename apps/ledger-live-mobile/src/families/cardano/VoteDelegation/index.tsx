@@ -96,7 +96,7 @@ function VoteDelegation({ account }: Props) {
   const dRepAvatarLabel = useMemo(
     () =>
       dRepHex && dRepHex !== "2" && dRepHex !== "3"
-        ? (d?.dRepName || getBech32DRepId(dRepHex, account.currency.id))
+        ? d?.dRepName || getBech32DRepId(dRepHex, account.currency.id)
         : dRepHex,
     [dRepHex, account.currency.id, d?.dRepName],
   );
@@ -118,8 +118,8 @@ function VoteDelegation({ account }: Props) {
                   {dRepHex === "2"
                     ? t("cardano.voteDelegation.options.alwaysAbstain")
                     : dRepHex === "3"
-                    ? t("cardano.voteDelegation.options.alwaysNoConfidence")
-                    : (d?.dRepName || getBech32DRepId(dRepHex, account.currency.id))}
+                      ? t("cardano.voteDelegation.options.alwaysNoConfidence")
+                      : d?.dRepName || getBech32DRepId(dRepHex, account.currency.id)}
                 </LText>
               </Touchable>
             ),
@@ -140,7 +140,7 @@ function VoteDelegation({ account }: Props) {
           },
         ]
       : [];
-  }, [dRepHex, t, accountName, onOpenExplorer, account.currency.id]);
+  }, [dRepHex, d?.dRepName, t, accountName, onOpenExplorer, account.currency.id]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {
     return [
@@ -164,15 +164,8 @@ function VoteDelegation({ account }: Props) {
         isOpen={data && data.length > 0}
         onClose={onCloseDrawer}
         account={account}
-        ValidatorImage={({ size }) => (
-          <DRepImage
-            name={dRepAvatarLabel}
-            size={size}
-          />
-        )}
-        formattedAmount={
-          <CurrencyUnitValue showCode unit={unit} value={account.balance} />
-        }
+        ValidatorImage={({ size }) => <DRepImage name={dRepAvatarLabel} size={size} />}
+        formattedAmount={<CurrencyUnitValue showCode unit={unit} value={account.balance} />}
         formattedCounterValue={
           <CounterValue
             currency={account.currency}
@@ -190,7 +183,7 @@ function VoteDelegation({ account }: Props) {
         <View style={styles.wrapper}>
           <AccountSectionLabel name={t("cardano.voteDelegation.header")} />
           <View key={d.dRepHex} style={[styles.delegationsWrapper]}>
-              <VoteDelegationRow
+            <VoteDelegationRow
               delegation={d}
               currencyId={account.currency.id}
               onPress={setDRepHex}

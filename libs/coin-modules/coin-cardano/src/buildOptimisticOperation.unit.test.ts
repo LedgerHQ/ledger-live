@@ -219,7 +219,6 @@ describe("buildOptimisticOperation", () => {
 
         const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
 
-        expect(operation).toBeDefined();
         expect(operation.type).toBe("VOTE");
         expect(operation.extra.vote).toBe("ABSTAIN");
       });
@@ -246,7 +245,6 @@ describe("buildOptimisticOperation", () => {
 
         const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
 
-        expect(operation).toBeDefined();
         expect(operation.type).toBe("VOTE");
         expect(operation.extra.vote).toBe("NO CONFIDENCE");
       });
@@ -276,7 +274,6 @@ describe("buildOptimisticOperation", () => {
 
         const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
 
-        expect(operation).toBeDefined();
         expect(operation.type).toBe("VOTE");
         expect(operation.extra.vote).toBe("22testDRep");
       });

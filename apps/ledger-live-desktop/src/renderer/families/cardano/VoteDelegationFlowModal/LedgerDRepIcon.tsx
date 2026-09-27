@@ -1,4 +1,4 @@
-import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
+import { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 import React from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";

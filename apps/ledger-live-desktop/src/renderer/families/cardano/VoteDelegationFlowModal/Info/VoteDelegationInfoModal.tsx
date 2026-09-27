@@ -94,12 +94,7 @@ export default function VoteDelegationInfoModal<Name extends keyof ModalData>({
                     </Row>
                   ))}
                 </Box>
-                <Box
-                  horizontal
-                  justifyContent="center"
-                  flow={4}
-                  style={{ marginTop: 40 }}
-                >
+                <Box horizontal justifyContent="center" flow={4} style={{ marginTop: 40 }}>
                   <Button primary onClick={onNextFn("dRep")}>
                     <Trans i18nKey="voteDelegation.options.dRep" />
                   </Button>
@@ -125,7 +120,7 @@ const RewardImg = styled.img.attrs(() => ({
   width: 130px;
   height: auto;
 `;
-const Row = styled(Box).attrs((p) => ({
+const Row = styled(Box).attrs(p => ({
   horizontal: true,
   justifyContent: "flex-start",
   alignItems: "center",
