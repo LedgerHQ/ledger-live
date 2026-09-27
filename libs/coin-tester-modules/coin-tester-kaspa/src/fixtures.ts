@@ -74,6 +74,16 @@ export function makeGenericAdapterAccount(address: string): KaspaAccount {
 
 const KASPA_REST_BASE = "http://localhost:8080";
 
+// History page requests (`full-transactions-page`) seen by the MSW proxy since the last reset —
+// lets the scenario check how many pages a single sync walked.
+let historyPageRequests = 0;
+export const historyPages = {
+  reset: (): void => {
+    historyPageRequests = 0;
+  },
+  count: (): number => historyPageRequests,
+};
+
 // Intercept external Ledger-service calls and reject unhandled non-local requests.
 // The coin module talks only to API_KASPA_ENDPOINT (local REST server), so no blockchain
 // endpoints need interception.
@@ -93,21 +103,24 @@ export function initMSW(): () => void {
     // that will never match any real kaspa: address the wallet knows about. Coin-tester-only
     // normalization — zero coin-module changes.
     http.all(`${KASPA_REST_BASE}/*`, async ({ request }) => {
+      if (new URL(request.url).pathname.endsWith("/full-transactions-page")) historyPageRequests++;
       const response = await fetch(bypass(request));
       const body = await response.text();
       const normalized = body.replace(/kaspasim:[a-z0-9]+/g, match => toMainnetAddress(match));
 
       // Rebuild headers explicitly rather than copying response.headers wholesale: the local
       // REST server sends hop-by-hop headers (Transfer-Encoding: chunked, Connection) that are
-      // forbidden on a synthetic Response. Copying them silently corrupted header construction —
-      // this dropped X-Next-Page-After too, which made listOperations/getAllTransactions look
-      // permanently stuck on page 1 (500-item cap) even though the real server had more pages.
-      // Only forward the headers the coin module actually reads.
+      // forbidden on a synthetic Response, and copying them silently corrupted header
+      // construction. Only forward the headers the coin module actually reads — including both
+      // paging cursors: dropping one ends that walk after its first page (X-Next-Page-Before for
+      // listOperations' backward walk, X-Next-Page-After for legacy getAllTransactions).
       const headers = new Headers();
       const contentType = response.headers.get("content-type");
       if (contentType) headers.set("content-type", contentType);
       const nextPageAfter = response.headers.get("x-next-page-after");
       if (nextPageAfter) headers.set("x-next-page-after", nextPageAfter);
+      const nextPageBefore = response.headers.get("x-next-page-before");
+      if (nextPageBefore) headers.set("x-next-page-before", nextPageBefore);
 
       return new HttpResponse(normalized, { status: response.status, headers });
     }),

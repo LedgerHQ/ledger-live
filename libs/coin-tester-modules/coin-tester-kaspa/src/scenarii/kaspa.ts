@@ -10,8 +10,10 @@ import {
   makeAccount,
   makeGenericAdapterAccount,
   initMSW,
+  historyPages,
 } from "../fixtures";
-import { mineBlocks, waitForBalance } from "../kaspaNode";
+import { mineBlocks, waitForTransactionCount } from "../kaspaNode";
+import { SETUP_BLOCKS } from "../chainSetup";
 import { getBridges } from "../helpers";
 import {
   buildSigners,
@@ -20,28 +22,11 @@ import {
   KASPA_RECIPIENT_MNEMONIC,
 } from "../signer";
 import type { Signers } from "../signer";
-import { toSimnetAddress } from "../addressUtils";
 
-// Block reward = 50 KAS = 5,000,000,000 sompi. 100 blocks = 5,000 KAS total — still comfortably
-// above the 88-input drain cap (see transaction #4). setup() now mines this unconditionally on
-// every strategy run (see below), so testAddress's own transaction count accumulates across both
-// strategy runs *and* negativeCases.test.ts's own top-up in the same process — kept at 100
-// (halved from an earlier 200) specifically to stay well clear of the Kaspa REST API's 500-item
-// page cap (each block is a separate coinbase transaction to this address; LIVE-34179 hit exactly
-// that cap at 200/round).
-const SETUP_BLOCKS = 100;
-
-// After setup blocks, mine 1000 more to advance the DAA score so every setup UTXO satisfies
-// the 1000-block coinbase maturity period. FIFO selection keeps these newer immature UTXOs
-// from being chosen first. Mined to a throwaway address (not testAddress) so these 1000
-// confirmation-only blocks don't inflate the wallet's own transaction history — maturity is a
-// chain-height/DAA-score rule, not a per-address one, so it doesn't matter who receives them.
-const MATURITY_GAP_BLOCKS = 1000;
-
-// Mining interval for setup blocks. At 50 ms/block the simply-kaspa-indexer's virtual chain
-// processor handles each block in live mode (~1 ms) instead of a slow historical resync
-// (~240 ms/block). 100 blocks × 50 ms = 5 s total, all blocks indexed by the time setup ends.
-const SETUP_MINE_INTERVAL_MS = 50;
+// The chain is funded once for the whole run by globalSetup (see chainSetup.ts): SETUP_BLOCKS
+// coinbase txs to testAddress, which is more than one indexer page. That history must come back
+// whole across the page boundary: more than one page, no duplicates.
+const INDEXER_PAGE_SIZE = 500;
 
 // Settle delay after mining a confirmation block. Live blocks process in ~1 ms at the indexer;
 // 500 ms gives the REST server time to reflect the new state before the first sync attempt.
@@ -62,6 +47,30 @@ let signers: Signers;
 let testAddress: string;
 let recipient: string;
 let stopMSW: (() => void) | null = null;
+// Hashes synced by the legacy run's first sync. The generic-adapter run comes second on the same
+// chain, so its first sync must contain every one of them (past txs never change).
+let legacyFirstSyncHashes: Set<string> | null = null;
+// Hashes returned by the current run's first sync; every later sync must still contain them all.
+let firstSyncHashes = new Set<string>();
+
+/**
+ * Invariants of every sync after the first, checked right after it:
+ * - nothing is duplicated and nothing already synced disappears (the new ops are merged in, not
+ *   replacing or repeating history);
+ * - on the generic adapter, the sync reads exactly one history page: the newest page holds the new
+ *   ops *and* already-synced ones, so listOperations' stop rule ends the walk there instead of
+ *   re-reading the whole (multi-page) history. Legacy fetches per used address, so its request
+ *   count is not a fixed number.
+ */
+function expectHealthySync(prev: Account, curr: Account, strategy: BridgeStrategy): void {
+  const hashes = curr.operations.map(op => op.hash);
+  expect(new Set(hashes).size).toBe(hashes.length);
+  const currHashes = new Set(hashes);
+  expect(prev.operations.filter(op => !currHashes.has(op.hash)).map(op => op.hash)).toEqual([]);
+  if (strategy === "generic-adapter") {
+    expect(historyPages.count()).toBe(1);
+  }
+}
 
 // Transaction #3's custom-fee input is bridge-specific — a top-level `fees` field is not the
 // real custom-fee input for either bridge and is silently overwritten by the live network
@@ -77,6 +86,7 @@ function customFeeTransactionLegacy(): ScenarioTransaction<GenericTransaction, A
     feesStrategy: "custom",
     customFeeRate: new BigNumber(CUSTOM_FEE_RATE),
     expect: (prev: Account, curr: Account) => {
+      expectHealthySync(prev, curr, "legacy");
       expect(curr.operationsCount).toBeGreaterThanOrEqual(prev.operationsCount + 1);
       const prevIds = new Set(prev.operations.map(o => o.id));
       const op = curr.operations.find(o => !prevIds.has(o.id) && o.type === "OUT");
@@ -97,6 +107,7 @@ function customFeeTransactionGenericAdapter(): ScenarioTransaction<GenericTransa
     useAllAmount: false,
     customFees: { parameters: { fees: new BigNumber(CUSTOM_ABSOLUTE_FEE) } },
     expect: (prev: Account, curr: Account) => {
+      expectHealthySync(prev, curr, "generic-adapter");
       expect(curr.operationsCount).toBeGreaterThanOrEqual(prev.operationsCount + 1);
       const prevIds = new Set(prev.operations.map(o => o.id));
       const op = curr.operations.find(o => !prevIds.has(o.id) && o.type === "OUT");
@@ -125,27 +136,14 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
 
     testAddress = await deriveAddress(KASPA_TEST_MNEMONIC, 0, 0);
     // Recipient from a different mnemonic so the legacy bridge's HD scanner never discovers
-    // it as a wallet address (which would turn outgoing sends into internal-transfer ops).
+    // it as a wallet address (which would turn outgoing sends into internal-transfer ops). Never
+    // synced, so globalSetup also uses it as the sink for the maturity-gap blocks.
     recipient = await deriveAddress(KASPA_RECIPIENT_MNEMONIC, 0, 0);
-    // A second, distinct address from the same throwaway mnemonic (index 1, so it never
-    // collides with `recipient` above) — pure sink for the maturity-gap blocks, never queried.
-    const maturityGapSink = toSimnetAddress(await deriveAddress(KASPA_RECIPIENT_MNEMONIC, 0, 1));
     signers = await buildSigners(KASPA_TEST_MNEMONIC);
 
-    // Infra (kaspad + postgres + indexer + REST + miner) is already up — started by scenarii.test.ts
-    // beforeAll. Mine unconditionally — a raw balance check is not a valid "already set up"
-    // signal here: negativeCases.test.ts shares this same Docker stack and testAddress, and its
-    // own fallback funds testAddress with immature coinbase UTXOs. A balance-based skip would
-    // (and did, see LIVE-34179) treat that as "already funded" and skip this scenario's own
-    // maturity-gap mining, leaving only immature inputs for the first broadcast. The account's
-    // own "Send max (drain)" step empties it before every run anyway, so this never actually
-    // skipped anything in the intended flow — it only ever fired in the buggy cross-file case.
-    await mineBlocks(SETUP_BLOCKS, SETUP_MINE_INTERVAL_MS);
-    await mineBlocks(MATURITY_GAP_BLOCKS, SETUP_MINE_INTERVAL_MS, maturityGapSink);
-
-    // Wait for the balance to confirm the indexer processed enough blocks. 100 setup blocks
-    // mint 5,000 KAS; 4,500 leaves margin below that without requiring an exact match.
-    await waitForBalance(testAddress, BigInt(4_500 * ONE_KAS), 300_000);
+    // Infra is up and testAddress already funded — both done once by globalSetup, before any test
+    // file. Re-check the indexer's history here so a slow indexer can't leave the first sync short.
+    await waitForTransactionCount(testAddress, SETUP_BLOCKS, 60_000);
 
     stopMSW = initMSW();
 
@@ -170,19 +168,49 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
 
   // Mine 1 block to confirm the pending transaction, then give the indexer time to catch up.
   // Without a new block, the transaction stays in the mempool and sync returns no new op.
+  // Also resets the history-page counter: every sync runs right after this hook, so the count read
+  // afterwards covers exactly that one sync.
   beforeSync: async () => {
     await mineBlocks(1);
     await new Promise(resolve => setTimeout(resolve, SETTLE_MS));
+    historyPages.reset();
   },
 
-  beforeAll: async (account: Account) => {
-    // 100 mature UTXOs × 50 KAS = 5,000 KAS — well above the 1,000 KAS threshold.
+  beforeAll: async (account: Account, strategy: BridgeStrategy) => {
+    // 600 mature UTXOs × 50 KAS = 30,000 KAS — well above the 1,000 KAS threshold.
     expect(account.balance.toNumber()).toBeGreaterThanOrEqual(Number(INITIAL_FUND_SOMPI));
-    expect(account.operationsCount).toBeGreaterThan(0);
+
+    // A from-scratch sync must return the whole mined history, not stop at the first page.
+    const hashes = account.operations.map(op => op.hash);
+    expect(account.operationsCount).toBeGreaterThanOrEqual(SETUP_BLOCKS);
+    expect(account.operationsCount).toBeGreaterThan(INDEXER_PAGE_SIZE);
+    expect(account.operations).toHaveLength(account.operationsCount);
+    // Nothing duplicated where two pages meet.
+    expect(new Set(hashes).size).toBe(hashes.length);
+    // ...and it really took more than one history page to get there.
+    expect(historyPages.count()).toBeGreaterThanOrEqual(2);
+    firstSyncHashes = new Set(hashes);
+
+    // Parity across the page boundary: whatever legacy's own `after` loop saw, the generic
+    // adapter's `before` walk sees too. Compared by tx hash — operation ids embed the account id,
+    // which differs between the two strategies.
+    if (strategy === "legacy") {
+      legacyFirstSyncHashes = new Set(hashes);
+    } else if (legacyFirstSyncHashes) {
+      const genericHashes = new Set(hashes);
+      const missing = [...legacyFirstSyncHashes].filter(hash => !genericHashes.has(hash));
+      expect(missing).toEqual([]);
+    }
   },
 
   afterAll: async (account: Account) => {
-    expect(account.operationsCount).toBeGreaterThanOrEqual(4);
+    // After four sends and their syncs: the whole first-sync history is still there, nothing is
+    // duplicated, and at least the four sends were added on top.
+    const hashes = account.operations.map(op => op.hash);
+    expect(new Set(hashes).size).toBe(hashes.length);
+    const finalHashes = new Set(hashes);
+    expect([...firstSyncHashes].filter(hash => !finalHashes.has(hash))).toEqual([]);
+    expect(account.operationsCount).toBeGreaterThanOrEqual(firstSyncHashes.size + 4);
   },
 
   getTransactions: (
@@ -196,6 +224,7 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
       recipient,
       useAllAmount: false,
       expect: (prev: Account, curr: Account) => {
+        expectHealthySync(prev, curr, strategy);
         expect(curr.operationsCount).toBeGreaterThanOrEqual(prev.operationsCount + 1);
         const prevIds = new Set(prev.operations.map(o => o.id));
         const op = curr.operations.find(o => !prevIds.has(o.id) && o.type === "OUT");
@@ -205,7 +234,7 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
       },
     },
 
-    // #2 — Multi-UTXO consolidation send (200 KAS). With 100 mature UTXOs at 50 KAS each,
+    // #2 — Multi-UTXO consolidation send (200 KAS). With 600 mature UTXOs at 50 KAS each,
     // craftTransaction selects multiple inputs to cover amount + fee.
     {
       name: "Send 200 KAS (multi-UTXO)",
@@ -213,6 +242,7 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
       recipient,
       useAllAmount: false,
       expect: (prev: Account, curr: Account) => {
+        expectHealthySync(prev, curr, strategy);
         expect(curr.operationsCount).toBeGreaterThanOrEqual(prev.operationsCount + 1);
         const prevIds = new Set(prev.operations.map(o => o.id));
         const op = curr.operations.find(o => !prevIds.has(o.id) && o.type === "OUT");
@@ -235,6 +265,7 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
       recipient,
       useAllAmount: true,
       expect: (prev: Account, curr: Account) => {
+        expectHealthySync(prev, curr, strategy);
         const prevIds = new Set(prev.operations.map(o => o.id));
         const op = curr.operations.find(o => !prevIds.has(o.id) && o.type === "OUT");
         expect(op).toBeDefined();

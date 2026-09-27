@@ -42,14 +42,10 @@ describe("Kaspa negative cases (simnet devnet)", () => {
     const testAddress = await deriveAddress(KASPA_TEST_MNEMONIC, 0, 0);
     recipient = await deriveAddress(KASPA_RECIPIENT_MNEMONIC, 0, 0);
 
-    // Safety net: if scenarii.test.ts drained the account, mine fresh spendable UTXOs.
-    // Change UTXOs from scenario sends are non-coinbase (immediately spendable), but if the
-    // account is nearly empty we need more mature coinbase UTXOs. These tests never broadcast
-    // (getTransactionStatus/prepareTransaction only) and use tiny amounts, so 50 blocks (2,500
-    // KAS) is far more than needed — kept deliberately small since this fallback shares
-    // testAddress with scenarii.test.ts's own setup, and their combined transaction count must
-    // stay well clear of the Kaspa REST API's 500-item page cap (LIVE-34179 hit that cap when
-    // both used larger values).
+    // Safety net only: globalSetup funds testAddress with 30,000 KAS before any test file runs, and
+    // the scenario's sends never come close to spending it (each "Send max" moves at most 88
+    // inputs). These tests never broadcast (getTransactionStatus/prepareTransaction only) and use
+    // tiny amounts, so 50 blocks (2,500 KAS) is plenty if it ever fires.
     const currentBalance = await getBalance(testAddress);
     if (currentBalance < BigInt(100 * ONE_KAS)) {
       await mineBlocks(50, 50);

@@ -3,7 +3,8 @@ import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import { scenarioKaspa } from "./scenarii/kaspa";
 
 // Docker stack is started/stopped by globalSetup/globalTeardown (jest.config.ts).
-// 7 minutes: 2 × (1200-block mining at 50ms + indexer catch-up) + scenario execution.
+// 7 minutes per strategy run. Funding is mined once in globalSetup (outside this timeout), so this
+// only covers the syncs and the scenario's transactions.
 jest.setTimeout(420_000);
 
 describe.each([["legacy"], ["generic-adapter"]] as const)(
