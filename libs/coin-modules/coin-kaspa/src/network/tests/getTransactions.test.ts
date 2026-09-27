@@ -1,5 +1,18 @@
 import { getTransactions } from "../index";
 
+// Answers headers by exact name, like the names getTransactions reads; anything else is absent.
+function mockPage(headers: Record<string, string> = {}) {
+  global.fetch = jest.fn().mockResolvedValueOnce({
+    ok: true,
+    headers: { get: (name: string) => headers[name] ?? null },
+    json: async () => [],
+  });
+}
+
+function requestedUrl(): URL {
+  return (global.fetch as jest.Mock).mock.calls[0][0] as URL;
+}
+
 describe("getTransactions function", () => {
   beforeEach(() => {
     // Clear all mocks before each test to avoid interference
@@ -206,5 +219,136 @@ describe("getTransactions function", () => {
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
     await expect(getTransactions(address)).rejects.toThrow("Network response was not ok.");
     expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  describe("paging direction (before / after)", () => {
+    const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
+
+    it("requests the newest page when no option is given", async () => {
+      mockPage();
+
+      await getTransactions(address);
+
+      expect(requestedUrl().searchParams.get("before")).toBeNull();
+      expect(requestedUrl().searchParams.get("after")).toBeNull();
+    });
+
+    it("requests the newest page when before is undefined (listOperations' first page)", async () => {
+      mockPage();
+
+      await getTransactions(address, { before: undefined });
+
+      expect(requestedUrl().searchParams.get("before")).toBeNull();
+      expect(requestedUrl().searchParams.get("after")).toBeNull();
+    });
+
+    it("walks backward: sends before and never after", async () => {
+      mockPage();
+
+      await getTransactions(address, { before: 1720440515512 });
+
+      // Sending both makes the indexer answer 400.
+      expect(requestedUrl().searchParams.get("before")).toBe("1720440515512");
+      expect(requestedUrl().searchParams.get("after")).toBeNull();
+    });
+
+    it("walks forward: sends after and never before (legacy getAllTransactions)", async () => {
+      mockPage();
+
+      await getTransactions(address, { after: 12345 });
+
+      expect(requestedUrl().searchParams.get("after")).toBe("12345");
+      expect(requestedUrl().searchParams.get("before")).toBeNull();
+    });
+
+    it("keeps the fixed query parameters in every mode", async () => {
+      mockPage();
+
+      await getTransactions(address, { before: 1720440515512 });
+
+      expect(requestedUrl().searchParams.get("limit")).toBe("500");
+      expect(requestedUrl().searchParams.get("resolve_previous_outpoints")).toBe("light");
+    });
+
+    it("returns X-Next-Page-Before as nextPageBefore", async () => {
+      mockPage({ "X-Next-Page-Before": "1720440515512" });
+
+      const result = await getTransactions(address);
+
+      expect(result.nextPageBefore).toBe("1720440515512");
+      expect(result.nextPageAfter).toBeNull();
+    });
+
+    it("returns X-Next-Page-After as nextPageAfter", async () => {
+      mockPage({ "X-Next-Page-After": "1785340024452" });
+
+      const result = await getTransactions(address, { after: 1 });
+
+      expect(result.nextPageAfter).toBe("1785340024452");
+      expect(result.nextPageBefore).toBeNull();
+    });
+
+    it("returns null cursors when the indexer reports no further page", async () => {
+      mockPage();
+
+      const result = await getTransactions(address, { before: 1720440515512 });
+
+      expect(result.nextPageBefore).toBeNull();
+      expect(result.nextPageAfter).toBeNull();
+    });
+
+    it("treats an empty cursor header as no further page", async () => {
+      mockPage({ "X-Next-Page-Before": "" });
+
+      const result = await getTransactions(address);
+
+      expect(result.nextPageBefore).toBeNull();
+    });
+
+    describe("page size (limit)", () => {
+      it("defaults to 500 when no option is given", async () => {
+        mockPage();
+
+        await getTransactions(address);
+
+        expect(requestedUrl().searchParams.get("limit")).toBe("500");
+      });
+
+      it("keeps 500 for the legacy forward walk, which never passes a limit", async () => {
+        mockPage();
+
+        await getTransactions(address, { after: 12345 });
+
+        expect(requestedUrl().searchParams.get("limit")).toBe("500");
+      });
+
+      it.each([1, 2, 500])("sends the requested limit (%i)", async limit => {
+        mockPage();
+
+        await getTransactions(address, { limit });
+
+        expect(requestedUrl().searchParams.get("limit")).toBe(String(limit));
+      });
+
+      it("combines limit with before (backward walk)", async () => {
+        mockPage();
+
+        await getTransactions(address, { before: 1720440515512, limit: 2 });
+
+        expect(requestedUrl().searchParams.get("limit")).toBe("2");
+        expect(requestedUrl().searchParams.get("before")).toBe("1720440515512");
+        expect(requestedUrl().searchParams.get("after")).toBeNull();
+      });
+
+      it("combines limit with after (forward walk)", async () => {
+        mockPage();
+
+        await getTransactions(address, { after: 12345, limit: 2 });
+
+        expect(requestedUrl().searchParams.get("limit")).toBe("2");
+        expect(requestedUrl().searchParams.get("after")).toBe("12345");
+        expect(requestedUrl().searchParams.get("before")).toBeNull();
+      });
+    });
   });
 });

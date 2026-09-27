@@ -13,7 +13,7 @@ export const getAllTransactions = async (
 
   let nextPageAfter: string | null = afterValue.toString();
   while (nextPageAfter) {
-    const response = await getTransactions(addr, parseInt(nextPageAfter));
+    const response = await getTransactions(addr, { after: parseInt(nextPageAfter) });
     allTransactions = allTransactions.concat(response.transactions);
     nextPageAfter = response.nextPageAfter;
   }
