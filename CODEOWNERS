@@ -89,10 +89,8 @@ libs/wallet-pnl/                                         @ledgerhq/wallet-xp
 libs/wallet-analytics/                                   @ledgerhq/wallet-xp
 libs/live-wallet/                                        @ledgerhq/wallet-xp
 shared/linking/                                          @ledgerhq/wallet-xp
-libs/ledger-live-common/src/featureFlags/walletFeaturesConfig/ @ledgerhq/wallet-xp
 libs/ledger-live-common/src/modularDrawer/               @ledgerhq/wallet-xp
 libs/ledger-live-common/src/cg-client/                   @ledgerhq/wallet-xp
-libs/ledger-live-common/src/dada-client/                 @ledgerhq/wallet-xp
 libs/ledger-live-common/src/account/                     @ledgerhq/wallet-xp
 libs/ledger-live-common/src/deposit/                     @ledgerhq/wallet-xp
 libs/ledger-live-common/src/icons/                        @ledgerhq/wallet-xp
@@ -201,6 +199,9 @@ apps/ledger-live-mobile/src/screens/ReceiveFunds/                   @ledgerhq/co
 apps/ledger-live-mobile/src/screens/SignMessage/                    @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/screens/SignRawTransaction/             @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/screens/SignTransaction/                @ledgerhq/coin-integration
+
+# Wallet — desktop UI tests
+apps/ledger-live-desktop/tests/                          @ledgerhq/wallet-xp
 
 ### ... cryptoassets ongoing rework => the lib now belongs to @ledgerhq/wallet-xp (with currencies owned by @ledgerhq/coin-integration) ... ###
 domain/entity/currency-crypto/src/currencies/            @ledgerhq/coin-integration
@@ -589,7 +590,6 @@ libs/ledger-live-common/src/genericAwarenessModal/                              
 libs/ui/packages/native/src/components/Layout/Slides/                                          @ledgerhq/engagement
 
 # UI tests
-apps/ledger-live-desktop/tests/                                             @ledgerhq/wallet-xp
 e2e/                                                                        @ledgerhq/qaa
 libs/ledger-live-common/src/e2e/                                            @ledgerhq/qaa
 libs/live-e2e-shared/                                                       @ledgerhq/qaa
