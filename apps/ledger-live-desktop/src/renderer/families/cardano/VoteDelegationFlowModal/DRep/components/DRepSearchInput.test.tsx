@@ -9,7 +9,7 @@ jest.mock("~/renderer/screens/accounts/AccountList/SearchBox", () => ({
     placeholder,
     search,
   }: {
-    onTextChange: (val: string) => void;
+    onTextChange: (evt: React.ChangeEvent<HTMLInputElement>) => void;
     placeholder: string;
     search?: string;
   }) => (
@@ -17,7 +17,7 @@ jest.mock("~/renderer/screens/accounts/AccountList/SearchBox", () => ({
       data-testid="mock-search-box"
       placeholder={placeholder}
       value={search || ""}
-      onChange={e => onTextChange(e.target.value)}
+      onChange={onTextChange}
     />
   ),
 }));
@@ -33,13 +33,13 @@ describe("DRepSearchInput Component", () => {
   });
 
   it("calls onSearch when typing", () => {
-    const mockOnSearch = jest.fn();
+    const mockOnSearch = jest.fn((evt: React.ChangeEvent<HTMLInputElement>) => evt.target.value);
     render(<DREPSearchInput onSearch={mockOnSearch} />);
 
     const searchInput = screen.getByTestId("mock-search-box");
     fireEvent.change(searchInput, { target: { value: "test dRep" } });
 
-    expect(mockOnSearch).toHaveBeenCalledWith("test dRep");
+    expect(mockOnSearch).toHaveReturnedWith("test dRep");
   });
 
   it("passes the search prop correctly", () => {
