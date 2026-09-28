@@ -324,7 +324,7 @@ export function useWebviewState(
   onStateChange: WebviewProps["onStateChange"],
   serverRef?: React.RefObject<WalletAPIServer | undefined>,
 ) {
-  const webviewRef = useRef<WebView>(null);
+  const webviewRef = useRef<WebView<object>>(null);
   const { manifest, inputs, manifestDomainCheckEnabled } = params;
   const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
   const [state, setState] = useState<WebviewState>(initialWebviewState);

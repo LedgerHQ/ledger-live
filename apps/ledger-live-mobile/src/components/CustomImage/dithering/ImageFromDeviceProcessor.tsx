@@ -28,7 +28,7 @@ export type Props = ProcessorRawResult & {
  *
  * */
 export default class ImageHexProcessor extends React.Component<Props> {
-  webViewRef: WebView | null = null;
+  webViewRef: WebView<object> | null = null;
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.hexData !== this.props.hexData) {
