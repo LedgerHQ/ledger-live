@@ -659,6 +659,7 @@
     "src/flows/send/hooks/useSendFlowBusinessLogic.ts",
     "src/flows/send/hooks/useSendFlowOperationState.ts",
     "src/flows/send/hooks/useSendFlowSignatureCore.ts",
+    "src/flows/send/hooks/useSyncSendFlowAccount.ts",
     "src/flows/send/recipient/hooks/useBridgeRecipientValidation.ts",
     "src/flows/send/recipient/hooks/useRecipientMemoCore.ts",
     "src/flows/send/recipient/hooks/useRecipientSearchState.ts",

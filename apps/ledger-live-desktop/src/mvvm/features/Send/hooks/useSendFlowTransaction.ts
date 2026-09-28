@@ -38,6 +38,7 @@ export function useSendFlowTransaction({
     bridgeError,
     bridgePending,
     setAccount,
+    updateAccount,
   } = useBridgeTransaction(bridge, () => {
     if (!account) return {};
     if (!bridge?.createTransaction || !initialRecipient) {
@@ -109,8 +110,9 @@ export function useSendFlowTransaction({
       updateTransaction,
       setRecipient,
       setAccount: setAccountForTransaction,
+      updateAccount,
     }),
-    [setTransaction, updateTransaction, setRecipient, setAccountForTransaction],
+    [setTransaction, updateTransaction, setRecipient, setAccountForTransaction, updateAccount],
   );
 
   return { state, actions };
