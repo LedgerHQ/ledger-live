@@ -8,15 +8,20 @@
 
 (define-fungible-token test-token)
 
-(define-constant contract-owner tx-sender)
 (define-constant err-not-token-owner (err u101))
 
 (define-data-var token-name (string-ascii 32) "Coin Tester Token")
 (define-data-var token-symbol (string-ascii 10) "CTT")
 (define-data-var token-uri (optional (string-utf8 256)) none)
 
-;; Minted once at deploy time so the scenario's funder account has a balance to send from.
-(try! (ft-mint? test-token u1000000000000 contract-owner))
+;; Minted once at deploy time, straight to the send scenario's two senders (100 CTT each, 6
+;; decimals): wallet_4 (legacy strategy) and wallet_5 (generic-adapter strategy), see `src/fixtures.ts`.
+;; Minting here rather than transferring from the deployer during the test is deliberate: Clarinet
+;; signs its whole deployment plan up front with pre-assigned deployer nonces, and a deployer
+;; transaction sent before the epoch-4.0 batch (`signer-manager-stub`) takes that batch's nonce, so
+;; the stub is silently never deployed.
+(try! (ft-mint? test-token u100000000 'ST2NEB84ASENDXKYGJPQW86YXQCEFEX2ZQPG87ND))
+(try! (ft-mint? test-token u100000000 'ST2REHHS5J3CERCRBEPMGH7921Q6PYKAADT7JP2VB))
 
 (define-public (transfer
     (amount uint)

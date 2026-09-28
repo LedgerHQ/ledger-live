@@ -234,14 +234,22 @@ accounts — not a secret specific to this package.
 
 | Account | Role |
 |---|---|
-| `deployer` | Funder only. `contracts/sip-010-test-token.clar` mints its entire test-token supply to `tx-sender` at deploy time (the manifest's `deployer`, since the contract entry sets no override), and the contract has no public mint, so each send run's sender gets its tokens from here (`src/funding.ts`). Also deploys `signer-manager-stub` and pays for the staking run's signer-manager setup. |
-| `wallet_4` | Sender, send scenario, legacy strategy |
-| `wallet_5` | Sender, send scenario, generic-adapter strategy |
+| `deployer` | Publishes both contracts (the contract entries set no `deployer` override) and pays for the staking run's signer-manager setup. Never a scenario's sender. |
+| `wallet_4` | Sender, send scenario, legacy strategy. Gets 100 CTT minted at deploy |
+| `wallet_5` | Sender, send scenario, generic-adapter strategy. Gets 100 CTT minted at deploy |
 | `wallet_6` | Staker, pox-5 staking scenario (`validate-stake!` accepts any staker) |
 | `wallet_2` | Recipient of every send |
 
 `wallet_4`..`6` were chosen because they are **not** in `[[devnet.pox_stacking_orders]]`, so none
-of their STX is locked. `wallet_1`/`wallet_3` and the `[[devnet.pox_stacking_orders]]` block are **not used by
+of their STX is locked.
+
+**The deployer must not send any transaction before `signer-manager-stub` is deployed.** Clarinet
+signs its whole deployment plan up front with pre-assigned deployer nonces (`accounts_cached_nonces`
+in `clarinet-deployments/src/onchain/mod.rs`) and broadcasts the epoch-4.0 batch only once the
+chain gets there. A deployer transaction sent earlier takes that batch's nonce: the stub deploy is
+rejected, and Clarinet still marks it confirmed because the account's nonce moved past the
+expected one. That is why the test tokens are minted straight to `wallet_4`/`wallet_5` in
+`sip-010-test-token.clar` rather than transferred from the deployer during the test. `wallet_1`/`wallet_3` and the `[[devnet.pox_stacking_orders]]` block are **not used by
 the scenario** — they exist only because Clarinet's bundled devnet snapshot is keyed to that exact
 default stacking configuration (see "Known limitations" above); removing them reintroduces an
 interactive confirmation prompt on `clarinet integrate`.

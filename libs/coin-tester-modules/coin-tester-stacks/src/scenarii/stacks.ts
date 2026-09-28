@@ -20,7 +20,6 @@ import { initMSW } from "../indexer";
 import { buildStacksTestSigner } from "../signer";
 import { buildStacksGenericTestSigner } from "../genericSigner";
 import { waitForContractDeployment } from "../devnet";
-import { fundTestToken } from "../funding";
 import { setupSignerManager } from "../signerManager";
 
 let closeMsw: (() => void) | null = null;
@@ -33,9 +32,6 @@ type Tx = ScenarioTransaction<GenericTransaction, Account>;
 type StakingTx = ScenarioTransaction<GenericTransaction, Account>;
 
 const SIGNER_MANAGER_CONTRACT_NAME = "signer-manager-stub";
-// 100 CTT (6 decimals): what each send scenario's sender starts with; the scenario sends 10, then
-// the rest via send-max.
-const SENDER_TOKEN_FUNDING = 100_000_000n;
 
 function makeTransactions(): Tx[] {
   // A fresh devnet has never mined a plain STX transfer or a call to this specific contract, and
@@ -128,7 +124,8 @@ export const scenarioStacks: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Stacks (STX + SIP-010 token)",
 
   // The devnet is shared by every scenario and started once by `scenarii.test.ts`; setup only waits
-  // for what this scenario needs, then funds this strategy's own sender.
+  // for what this scenario needs. Each strategy's sender already holds 100 CTT, minted to it when
+  // `sip-010-test-token.clar` deploys.
   setup: async strategy => {
     // 15 minutes: at the 10s-per-block cadence (`scripts/bitcoin-miner.js`), reaching the
     // contract's deployment batch (epoch 3.0, ~42 blocks past genesis) needs ~7 minutes in the
@@ -141,8 +138,6 @@ export const scenarioStacks: Scenario<GenericTransaction, Account> = {
     const genericSender = buildStacksGenericTestSigner(senderKey);
     const recipient = buildStacksTestSigner(RECIPIENT_PRIVATE_KEY);
     recipientAddress = recipient.address;
-
-    await fundTestToken(sender.address, SENDER_TOKEN_FUNDING);
 
     registerTestTokenInMockStore();
     closeMsw = initMSW();
@@ -289,8 +284,11 @@ export const scenarioStacksStaking: Scenario<GenericTransaction, Account> = {
     // from here, after the send scenarios have already used part of that time on the shared devnet.
     await waitForContractDeployment(DEPLOYER_ADDRESS, SIGNER_MANAGER_CONTRACT_NAME, 25 * 60 * 1000);
 
-    // The deployer still pays for the signer-manager setup below (it deployed the stub); the stake
-    // itself is signed by a separate staker -- `validate-stake!` accepts any `staker`.
+    // The deployer pays for the signer-manager setup below (it deployed the stub); the stake itself
+    // is signed by a separate staker -- `validate-stake!` accepts any `staker`. This is the first
+    // transaction the deployer sends: Clarinet pre-assigns its nonces for the deployment plan, so a
+    // deployer transaction before the stub exists would take the stub's nonce and it would never
+    // deploy.
     const staker = buildStacksTestSigner(STAKER_PRIVATE_KEY);
     const genericStaker = buildStacksGenericTestSigner(STAKER_PRIVATE_KEY);
 

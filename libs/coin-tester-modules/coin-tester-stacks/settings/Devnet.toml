@@ -7,9 +7,9 @@
 name = "devnet"
 deployment_fee_rate = 10
 
-# Funder only, never a scenario's sender: `contracts/sip-010-test-token.clar` mints its whole
-# test-token supply to the deployer at deploy time, and each send scenario's sender gets its tokens
-# from here (`src/funding.ts`). `src/fixtures.ts` holds the matching secret key directly, no
+# Publishes both contracts and pays for the staking scenario's signer-manager setup; never a
+# scenario's sender (see `src/fixtures.ts` for why it must not send anything before
+# `signer-manager-stub` deploys). `src/fixtures.ts` holds the matching secret key directly, no
 # mnemonic derivation needed at test time.
 [accounts.deployer]
 mnemonic = "twice kind fence tip hidden tilt action fragile skin nothing glory cousin green tomorrow spring wrist shed math olympic multiply hip blue scout claw"

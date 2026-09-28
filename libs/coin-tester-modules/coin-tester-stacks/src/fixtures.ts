@@ -20,11 +20,12 @@ export const STACKS = getCryptoCurrencyById("stacks");
 // https://github.com/stx-labs/clarinet) — public, deterministic, devnet-only keys, not a secret
 // specific to this package. See `settings/Devnet.toml` for the matching mnemonics/balances.
 //
-// The deployer is the funder only, never a scenario's sender: `contracts/sip-010-test-token.clar`
-// mints the whole test-token supply to `tx-sender` at deploy time, i.e. to whichever account the
-// Clarinet deployment plan uses to publish the contract — the manifest's `deployer` account, since
-// `Clarinet.toml`'s `[contracts.sip-010-test-token]` entry sets no `deployer` override. It also
-// deploys `signer-manager-stub` and pays for the staking scenario's signer-manager setup.
+// The deployer publishes both contracts (`Clarinet.toml` sets no per-contract `deployer` override)
+// and pays for the staking scenario's signer-manager setup, but is never a scenario's sender. It
+// must not send anything before `signer-manager-stub` is deployed: Clarinet signs its deployment
+// plan up front with pre-assigned deployer nonces, so an earlier deployer transaction takes the
+// stub's nonce and the stub silently never deploys. That is why the send scenarios' test tokens are
+// minted straight to their senders by `contracts/sip-010-test-token.clar`, not transferred.
 export const DEPLOYER_PRIVATE_KEY =
   "753b7cc01a1a2e86221266a154af739463fce51219d97e4f856cd7200c3bd2a601";
 export const DEPLOYER_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
@@ -44,7 +45,7 @@ export const STAKER_PRIVATE_KEY =
   "7036b29cb5e235e5fd9b09ae3e8eec4404e44906814d5d01cbca968a60ed4bfb01"; // wallet_6
 
 export const TOKEN_CONTRACT_NAME = "sip-010-test-token";
-export const TOKEN_ASSET_NAME = "test-token";
+const TOKEN_ASSET_NAME = "test-token";
 
 /**
  * The SIP-010 test token deployed at devnet genesis by `contracts/sip-010-test-token.clar`
