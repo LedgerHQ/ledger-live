@@ -569,7 +569,6 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 **/team-ledger-partner-hoodies/   @ledgerhq/ledger-partner-hoodies
 **/team-ledger-partner-blockydevs/ @ledgerhq/ledger-partner-blockydevs
 **/team-ptx/                      @ledgerhq/ptx
-**/team-cloud-wallet/             @ledgerhq/cloud-wallet
 **/team-live-devices/             @ledgerhq/live-devices
 **/team-recover-software/         @ledgerhq/recover-software
 **/team-engagement/               @ledgerhq/engagement
