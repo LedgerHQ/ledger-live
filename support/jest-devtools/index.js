@@ -63,12 +63,13 @@ function createWebJestConfig({ moduleNameMapper, ...overrides } = {}) {
     transformIgnorePatterns: [`node_modules/.pnpm/(?!(${WEB_TRANSFORM_ALLOWLIST.join("|")}))`],
     setupFilesAfterEnv: ["@testing-library/jest-dom", here("setup/web.js")],
     moduleNameMapper: {
+      // First matching pattern wins, so a consumer mapper comes before this prefix.
+      ...moduleNameMapper,
       "^jest/(.*)$": "<rootDir>/jest/$1",
       // Pin lumen to the consumer's copy. Two reasons: this package does not carry lumen's peer
       // graph (clsx, radix, …), and a second lumen instance would give the ThemeProvider rendered
       // here a different React context than the components under test.
       "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
-      ...moduleNameMapper,
     },
     coverageReporters: coverageReporters("lcov.info"),
     reporters: ["default", sonarReporter("sonar-executionTests-report.xml")],
@@ -102,6 +103,8 @@ function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
     transformIgnorePatterns: [`node_modules/(?!(${NATIVE_TRANSFORM_ALLOWLIST.join("|")})/.)`],
     modulePaths: ["<rootDir>"],
     moduleNameMapper: {
+      // First matching pattern wins, so a consumer mapper comes before this prefix.
+      ...moduleNameMapper,
       "^jest/(.*)$": "<rootDir>/jest/$1",
       // resolved in the consumer: each devtools package declares lumen itself
       "^@ledgerhq/lumen-ui-rnative$":
@@ -110,7 +113,6 @@ function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
       "^@sbaiahmed1/react-native-blur$": here("mocks/react-native-blur.tsx"),
       "^react-native-worklets$": here("mocks/react-native-worklets.js"),
       "^expo-haptics$": here("mocks/expo-haptics.ts"),
-      ...moduleNameMapper,
     },
     setupFilesAfterEnv: [here("setup/native.ts")],
     coverageReporters: coverageReporters("lcov.native.info"),
