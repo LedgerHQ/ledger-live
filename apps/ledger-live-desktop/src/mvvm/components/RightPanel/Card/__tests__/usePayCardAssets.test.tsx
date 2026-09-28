@@ -61,7 +61,7 @@ describe("usePayCardAssets", () => {
     const { result } = renderHook(() => usePayCardAssets());
 
     // 12.5 USDC is 12_500_000 at magnitude 6, and 1250 is 12.50 at the USD magnitude of 2.
-    expect(result.current.priceWallet(usdc, "12.5")).toBe(1250);
+    expect(result.current.getCounterValue(usdc, "12.5")).toBe(1250);
     expect(calculateCountervalue).toHaveBeenCalledWith(usdc, new BigNumber(12_500_000));
   });
 
@@ -69,7 +69,7 @@ describe("usePayCardAssets", () => {
     calculateCountervalue.mockReturnValue(new BigNumber(1250));
     const { result } = renderHook(() => usePayCardAssets());
 
-    expect(result.current.priceWallet(usdc, "12,5")).toBe(1250);
+    expect(result.current.getCounterValue(usdc, "12,5")).toBe(1250);
     expect(calculateCountervalue).toHaveBeenCalledWith(usdc, new BigNumber(12_500_000));
   });
 
@@ -77,7 +77,7 @@ describe("usePayCardAssets", () => {
     const { result } = renderHook(() => usePayCardAssets());
 
     for (const balance of ["", "not a number", "Infinity"]) {
-      expect(result.current.priceWallet(usdc, balance)).toBeNull();
+      expect(result.current.getCounterValue(usdc, balance)).toBeNull();
     }
     expect(calculateCountervalue).not.toHaveBeenCalled();
   });
@@ -86,7 +86,7 @@ describe("usePayCardAssets", () => {
     calculateCountervalue.mockReturnValue(undefined);
     const { result } = renderHook(() => usePayCardAssets());
 
-    expect(result.current.priceWallet(BITCOIN, "1")).toBeNull();
+    expect(result.current.getCounterValue(BITCOIN, "1")).toBeNull();
   });
 
   it("registers every card currency against the counter value, so their rates are polled", () => {
@@ -101,6 +101,21 @@ describe("usePayCardAssets", () => {
 
     // 1250 is the smallest unit, so USD reads 12.50 — the number is not a major-unit amount.
     expect(result.current.formatCountervalue(1250)).toContain("12.50");
+  });
+
+  it("hides formatted counter values in discreet mode", () => {
+    const { result } = renderHook(() => usePayCardAssets(), {
+      initialState: { settings: { discreetMode: true } },
+    });
+
+    expect(result.current.formatCountervalue(1250)).toContain("***");
+    expect(result.current.discreet).toBe(true);
+  });
+
+  it("formats asset transaction amounts with the host formatter", () => {
+    const { result } = renderHook(() => usePayCardAssets());
+
+    expect(result.current.formatters?.amount?.("-12.99", "EUR", "fiat")).toContain("€");
   });
 
   it("looks the card currencies up once someone is signed in", () => {

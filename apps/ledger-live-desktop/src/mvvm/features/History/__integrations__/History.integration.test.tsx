@@ -7,6 +7,14 @@ import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv"
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { track } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  trackPage: jest.fn(),
+}));
+
+const mockedTrackPage = jest.mocked(trackPage);
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { bitcoinCurrency, ethereumCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
@@ -383,7 +391,7 @@ describe("History integration", () => {
   it("should show the signed-out card history when the card tab is selected", async () => {
     renderHistoryWithPayTab("/history?tab=card");
 
-    expect(screen.getByTestId("history-card-scope")).toHaveTextContent("Card");
+    expect(screen.queryByTestId("history-card-scope")).not.toBeInTheDocument();
     expect(await screen.findByTestId("card-history-signed-out-state")).toBeVisible();
     expect(screen.getByText("Log in to see your card transactions")).toBeVisible();
     expect(screen.queryByTestId("history-table-body")).not.toBeInTheDocument();
@@ -411,6 +419,29 @@ describe("History integration", () => {
     expect(screen.queryByText("NETFLIX.COM")).not.toBeInTheDocument();
     expect(screen.getByText("Cashback")).toBeVisible();
     expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
+  });
+
+  it("should not track OperationList when opening card history", async () => {
+    renderHistoryWithPayTab("/history?tab=card");
+
+    expect(await screen.findByTestId("card-history-signed-out-state")).toBeVisible();
+    expect(mockedTrackPage).not.toHaveBeenCalledWith(
+      expect.objectContaining({ category: "OperationList" }),
+      expect.anything(),
+    );
+  });
+
+  it("should track OperationList with the number of operations, not virtualizer rows", async () => {
+    renderHistory();
+
+    const operationRows = await screen.findAllByTestId(/history-operation-row-/);
+    expect(mockedTrackPage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: "OperationList",
+        props: expect.objectContaining({ operationsCount: operationRows.length }),
+      }),
+      expect.anything(),
+    );
   });
 
   it("should switch from crypto history to signed-out card history", async () => {

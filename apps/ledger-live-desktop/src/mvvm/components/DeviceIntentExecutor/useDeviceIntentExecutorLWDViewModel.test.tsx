@@ -8,7 +8,7 @@ import type {
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/renderer/analytics/segment";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource } from "~/renderer/analytics/screenRefs";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
@@ -94,8 +94,12 @@ function executingIntentState(
 describe("useDeviceIntentExecutorLWDViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    currentRouteNameRef.current = "Connect Device - Connecting";
+    setTrackingSource("Connect Device - Connecting");
     mockedUseDeviceBlocked.mockReturnValue(false);
+  });
+
+  afterEach(() => {
+    resetTrackingPages();
   });
 
   describe("GIVEN the ViewModel mounts", () => {
@@ -402,7 +406,7 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
     });
 
     it("WHEN the user cancels from a shell error page THEN it fires deviceflow_failed and forwards to the original onUserCancel", () => {
-      currentRouteNameRef.current = PAGE_DEVICE_ACTION.Disconnected;
+      setTrackingSource(PAGE_DEVICE_ACTION.Disconnected);
       const onUserCancel = jest.fn();
       const { result } = renderViewModel({ onUserCancel });
 

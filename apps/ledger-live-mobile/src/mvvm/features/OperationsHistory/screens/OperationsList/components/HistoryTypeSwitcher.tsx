@@ -33,7 +33,6 @@ export function HistoryTypeSwitcher({ selectedTab, onTabChange }: HistoryTypeSwi
         onSelectedChange={onSelectedChange}
         accessibilityLabel={t("history.tabs.accessibilityLabel")}
         testID="history-type-switcher"
-        tabLayout="fit"
       >
         <SegmentedControlButton value={HISTORY_TAB_CRYPTO} testID="history-tab-crypto">
           {t("history.tabs.crypto")}

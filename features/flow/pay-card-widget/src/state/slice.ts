@@ -5,6 +5,7 @@ export const payCardOnboardingWidgetInitialState: PayCardOnboardingWidgetState =
   hasCompletedOnboarding: false,
   analyticsCardId: null,
   reportedAnalyticsMilestones: [],
+  hasReadCardAccount: false,
 };
 
 export const payCardOnboardingWidgetSlice = createSlice({
@@ -18,10 +19,16 @@ export const payCardOnboardingWidgetSlice = createSlice({
       state.hasCompletedOnboarding = false;
     },
     setAnalyticsCardId: (state, action: PayloadAction<string>) => {
-      if (state.analyticsCardId !== action.payload) {
-        state.analyticsCardId = action.payload;
-        state.reportedAnalyticsMilestones = [];
+      if (state.analyticsCardId === action.payload) return;
+
+      if (state.analyticsCardId !== null) {
+        state.hasReadCardAccount = false;
       }
+      state.analyticsCardId = action.payload;
+      state.reportedAnalyticsMilestones = [];
+    },
+    markCardAccountRead: state => {
+      state.hasReadCardAccount = true;
     },
     markAnalyticsMilestonesReported: (
       state,
@@ -37,10 +44,17 @@ export const payCardOnboardingWidgetSlice = createSlice({
       state,
       action: PayloadAction<Partial<PayCardOnboardingWidgetState> | undefined>,
     ) => {
-      const { hasCompletedOnboarding, analyticsCardId, reportedAnalyticsMilestones } =
-        action.payload ?? {};
+      const {
+        hasCompletedOnboarding,
+        analyticsCardId,
+        reportedAnalyticsMilestones,
+        hasReadCardAccount,
+      } = action.payload ?? {};
       if (typeof hasCompletedOnboarding === "boolean") {
         state.hasCompletedOnboarding = hasCompletedOnboarding;
+      }
+      if (typeof hasReadCardAccount === "boolean") {
+        state.hasReadCardAccount = hasReadCardAccount;
       }
       if (typeof analyticsCardId === "string") {
         state.analyticsCardId = analyticsCardId;
@@ -56,6 +70,7 @@ export const {
   markCardOnboardingCompleted,
   resetCardOnboardingCompleted,
   setAnalyticsCardId,
+  markCardAccountRead,
   markAnalyticsMilestonesReported,
   restorePayCardOnboardingWidget,
 } = payCardOnboardingWidgetSlice.actions;

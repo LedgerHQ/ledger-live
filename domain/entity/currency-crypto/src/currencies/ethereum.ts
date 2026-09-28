@@ -50,6 +50,5 @@ export const ethereum = currency({
     },
   ],
   keywords: ["eth", "ethereum"],
-  explorerId: "eth",
   tokenTypes: ["erc20"],
 });

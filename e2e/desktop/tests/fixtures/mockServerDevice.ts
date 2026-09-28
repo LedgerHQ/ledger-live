@@ -1,20 +1,20 @@
 import { expect } from "@playwright/test";
-import { type MockServerDevice } from "@ledgerhq/live-e2e-shared/mockServer/types";
-import { deviceUnderTest } from "@ledgerhq/live-e2e-shared/mockServer/devices";
+import { deviceUnderTest, type MockDevice } from "@ledgerhq/live-e2e-shared/mockServer/devices";
+import { withInstallHashes } from "@ledgerhq/live-e2e-shared/mockServer/installedApps";
 import { mockServerEnv } from "@ledgerhq/live-e2e-shared/mockServer/launchEnv";
 import {
   assertMockServerReachable,
-  attachMockServerSession,
-  type MockServerSessionHandle,
+  mockServerBaseUrl,
 } from "@ledgerhq/live-e2e-shared/mockServer/session";
+import { MockServerDevicePage } from "tests/page/mockServerDevice.page";
 import base from "tests/fixtures/common";
 
 const SESSION_TOKEN_TIMEOUT_MS = 30_000;
 
 type MockServerFixtures = {
-  mockDevice: MockServerDevice;
-  mockDeviceParams: Partial<MockServerDevice>;
-  mockServer: MockServerSessionHandle;
+  mockDevice: MockDevice;
+  mockDeviceParams: Partial<MockDevice>;
+  mockServer: MockServerDevicePage;
 };
 
 /**
@@ -37,12 +37,21 @@ export const test = base.extend<MockServerFixtures>({
       expect(token, "the app published no mock server session token").not.toBe("");
     }).toPass({ timeout: SESSION_TOKEN_TIMEOUT_MS });
 
-    await use(attachMockServerSession(token));
+    await use(new MockServerDevicePage(mockServerBaseUrl(), token));
   },
 
   env: async ({ mockDevice }, use) => {
     await assertMockServerReachable();
-    await use(await mockServerEnv({ devices: [mockDevice] }));
+
+    // `apps` entries that do not pin a hash get one looked up for the device under test,
+    // so a seeded session still follows SPECULOS_DEVICE.
+    const devices = [
+      mockDevice.apps?.length
+        ? { ...mockDevice, apps: await withInstallHashes(mockDevice.modelId, mockDevice.apps) }
+        : mockDevice,
+    ];
+
+    await use(await mockServerEnv({ devices }));
   },
 });
 

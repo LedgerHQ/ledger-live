@@ -1,34 +1,37 @@
 import { renderHook } from "@testing-library/react";
+import {
+  i18nWrapper,
+  REQUEST_RESOURCES,
+  VERIFY_ADDRESS_COPY,
+} from "../../../__tests__/i18nWrapper";
 import { useVerifyAddressViewModel } from "../useVerifyAddressViewModel";
-import type { VerifyAddressLabels, VerifyAddressProps } from "../../../types";
+import type { VerifyAddressProps } from "../../../types";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
 
-const LABELS: VerifyAddressLabels = {
-  introTitle: "Verify your address",
-  introDescription: "To protect against address replacement attacks, verify your address.",
-  verifyCta: "Verify address",
-  successTitle: "Address displayed on the device's Secure Screen",
-  nextStepsLabel: "Next steps",
-  nextStepShare: "Share your address via your desired app",
-  nextStepMatch: "Ensure the shared address matches the one on your Ledger Device.",
-  gotItCta: "Got it",
-};
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 function setup(overrides: Partial<VerifyAddressProps> = {}) {
   const props: VerifyAddressProps = {
     phase: "intro",
-    labels: LABELS,
     page: "Pay",
     onVerify: jest.fn(),
     onGotIt: jest.fn(),
     onClose: jest.fn(),
-    onTrackEvent: jest.fn(),
     ...overrides,
   };
-  const { result } = renderHook(() => useVerifyAddressViewModel(props));
+  const { result } = renderHook(() => useVerifyAddressViewModel(props), {
+    wrapper: i18nWrapper(REQUEST_RESOURCES),
+  });
   return { props, result };
 }
 
 describe("useVerifyAddressViewModel", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("maps the phase to open flags", () => {
     expect(setup({ phase: "hidden" }).result.current).toMatchObject({
       isIntroOpen: false,
@@ -44,12 +47,13 @@ describe("useVerifyAddressViewModel", () => {
     });
   });
 
-  it("builds the two ordered next steps from the labels", () => {
+  it("builds the three ordered next steps from translations", () => {
     const { result } = setup();
 
     expect(result.current.nextSteps).toEqual([
-      { index: 1, label: LABELS.nextStepShare },
-      { index: 2, label: LABELS.nextStepMatch },
+      { index: 1, label: VERIFY_ADDRESS_COPY.nextStepKeepDisplayed },
+      { index: 2, label: VERIFY_ADDRESS_COPY.nextStepPaste },
+      { index: 3, label: VERIFY_ADDRESS_COPY.nextStepCheckMatch },
     ]);
   });
 
@@ -58,7 +62,7 @@ describe("useVerifyAddressViewModel", () => {
 
     result.current.onVerify();
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "verify",
       buttonLocation: "verify address",
       page: "Pay",
@@ -72,19 +76,12 @@ describe("useVerifyAddressViewModel", () => {
 
     result.current.onGotIt();
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "got it",
       buttonLocation: "verify address",
       page: "Pay",
       flow: "request",
     });
     expect(props.onGotIt).toHaveBeenCalledTimes(1);
-  });
-
-  it("does not throw when no tracker is provided", () => {
-    const { props, result } = setup({ onTrackEvent: undefined });
-
-    expect(() => result.current.onVerify()).not.toThrow();
-    expect(props.onVerify).toHaveBeenCalledTimes(1);
   });
 });

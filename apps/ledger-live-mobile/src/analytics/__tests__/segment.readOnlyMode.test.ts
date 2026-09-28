@@ -10,6 +10,7 @@ import { setAnalytics, setAnalyticsConsentInfo, setReadOnlyMode } from "~/action
 import * as segment from "../segment";
 
 jest.unmock("../segment");
+jest.unmock("@shared/analytics");
 
 const { _trackMock: mockTrack } = require("@segment/analytics-react-native") as {
   _trackMock: jest.Mock;

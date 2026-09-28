@@ -50,6 +50,7 @@ import SanctionedAccountModal from "./SanctionedAccountModal";
 import { useToastsActions } from "~/actions/toast";
 import { getFreshAccountAddress } from "~/utils/address";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -203,7 +204,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       page: "Receive Account Qr Code",
     });
     if (freshAccountAddress) {
-      Share.share({ message: freshAccountAddress });
+      leaveAppFor(() => Share.share({ message: freshAccountAddress }));
     }
   }, [freshAccountAddress]);
 

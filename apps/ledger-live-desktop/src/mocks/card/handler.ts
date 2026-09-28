@@ -4,9 +4,10 @@ import {
   mockCardDetailsImage,
   mockPayCardDetailsToken,
 } from "@domain/api-card-management/mock/card-details-token";
+import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashback";
 import { isMockCardRequest } from "@domain/api-card-management/mock/card-session";
 import {
-  mockPayCardTransactions,
+  mockPayCardTransactionsPage,
   readPayCardTransactionsMock,
 } from "@domain/api-card-management/mock/card-transactions";
 import {
@@ -17,14 +18,12 @@ import {
 import {
   applyPayCardWalletPrioritiesMock,
   mockPayCardLinkedWallets,
-  mockPayCardRewardWallet,
   readPayCardReorderMockEnabled,
   readPayCardWalletsMock,
   resolvePayCardInternalWalletsMock,
 } from "@domain/api-card-management/mock/card-wallets";
 
 const REORDER_MS = 200;
-const TRANSACTIONS_PAGE_SIZE = 10;
 
 const handlers = [
   http.get("*/v1/user", ({ request }) => {
@@ -48,14 +47,11 @@ const handlers = [
   }),
 
   http.get("*/v1/card/transactions", ({ request }) => {
-    const override = readPayCardTransactionsMock();
-    if (override === undefined && !isMockCardRequest(request)) return passthrough();
+    if (readPayCardTransactionsMock() === undefined && !isMockCardRequest(request)) {
+      return passthrough();
+    }
 
-    const transactions = override ?? mockPayCardTransactions();
-    const page = Number(new URL(request.url).searchParams.get("page") ?? 0);
-    const start = page * TRANSACTIONS_PAGE_SIZE;
-
-    return HttpResponse.json(transactions.slice(start, start + TRANSACTIONS_PAGE_SIZE));
+    return HttpResponse.json(mockPayCardTransactionsPage(request));
   }),
 
   http.post("*/v1/card/details/token", ({ request }) =>
@@ -103,8 +99,8 @@ const handlers = [
     });
   }),
 
-  http.get("*/v1/wallet/reward", ({ request }) =>
-    isMockCardRequest(request) ? HttpResponse.json(mockPayCardRewardWallet()) : passthrough(),
+  http.get("*/v1/card/cashback", ({ request }) =>
+    isMockCardRequest(request) ? HttpResponse.json(mockPayCardCashback()) : passthrough(),
   ),
 
   // Never let a fake bearer reach an unmocked provider endpoint.

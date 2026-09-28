@@ -28,6 +28,10 @@ function createHistoricalHandler(granularity: "daily" | "hourly") {
 
 const SPOT_RATES: Record<string, number> = {
   bitcoin: 43000,
+  // Card assets, keyed by the token id the countervalues API is asked with. Off the peg on purpose:
+  // an exact 1 reads as the fallback below rather than as a rate that was actually answered.
+  "ethereum/erc20/usd__coin": 0.9999,
+  "ethereum/erc20/usd_tether__erc20_": 0.9996,
   ethereum: 2761.27,
   arbitrum: 2761.27,
   scroll: 2761.27,

@@ -1,5 +1,6 @@
 import React, { useEffect, type ReactNode } from "react";
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@ledgerhq/lumen-ui-react";
+import { useTranslation } from "@shared/i18n";
 import type { RequestReceiveVerifyHint as RequestReceiveVerifyHintProps } from "../../types";
 
 type Props = RequestReceiveVerifyHintProps &
@@ -7,14 +8,8 @@ type Props = RequestReceiveVerifyHintProps &
     children: ReactNode;
   }>;
 
-export function RequestReceiveVerifyHint({
-  open,
-  message,
-  gotItLabel,
-  onGotIt,
-  onShown,
-  children,
-}: Props) {
+export function RequestReceiveVerifyHint({ open, onGotIt, onShown, children }: Props) {
+  const { t } = useTranslation();
   useEffect(() => {
     if (open) onShown?.();
   }, [open, onShown]);
@@ -24,9 +19,11 @@ export function RequestReceiveVerifyHint({
       {/* Request dialog sets pointer-events: none on body. */}
       <PopoverContent side="top" align="end" className="pointer-events-auto max-w-256">
         <div className="flex flex-col gap-12" data-testid="pay-request-receive-verify-hint">
-          <p className="body-2 whitespace-pre-line text-base">{message}</p>
+          <p className="body-2 whitespace-pre-line text-base">
+            {t("payTab.request.verifyHint.message")}
+          </p>
           <Button size="sm" className="self-end" onClick={onGotIt}>
-            {gotItLabel}
+            {t("payTab.request.verifyHint.gotIt")}
           </Button>
         </div>
       </PopoverContent>

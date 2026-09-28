@@ -65,7 +65,7 @@ for (const currency of currencies) {
       async ({ app, userdataFile }) => {
         const firstAccountName = `${currency.currency.name} 1`;
 
-        await app.portfolio.waitForPortfolioEmptyState();
+        await app.portfolio.expectPortfolioEmptyState();
         await app.portfolio.clickAddAccountButton();
 
         const selector = await getModularSelector(app, "ASSET");
@@ -139,7 +139,7 @@ test.describe("Add account", () => {
     async ({ app, userdataFile }) => {
       const firstAccountName = `${Currency.ALEO.name} 1`;
 
-      await app.portfolio.waitForPortfolioEmptyState();
+      await app.portfolio.expectPortfolioEmptyState();
       await app.portfolio.clickAddAccountButton();
 
       const selector = await getModularSelector(app, "ASSET");

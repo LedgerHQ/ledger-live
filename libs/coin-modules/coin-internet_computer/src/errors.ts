@@ -144,6 +144,67 @@ export class ICPFollowTopicNotAllowed extends Error {
   }
 }
 
+// More followees than a topic may hold (passed as { max } at throw time).
+export class ICPTooManyFollowees extends Error {
+  override name = "ICPTooManyFollowees";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPTooManyFollowees");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// A followee entry that is not a neuron id ({ id } is the entry as given).
+export class ICPInvalidFolloweeId extends Error {
+  override name = "ICPInvalidFolloweeId";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPInvalidFolloweeId");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// A neuron listed twice on one topic ({ id }, canonical): the tally would count it twice.
+export class ICPDuplicateFollowee extends Error {
+  override name = "ICPDuplicateFollowee";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPDuplicateFollowee");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The neuron lists itself ({ id }, canonical): accepted by the canister, but always an abstention
+// in the tally.
+export class ICPFolloweeIsSelf extends Error {
+  override name = "ICPFolloweeIsSelf";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPFolloweeIsSelf");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// Only a locked neuron can start dissolving (RequiresNotDissolving otherwise).
+export class ICPStartDissolvingNotAllowed extends Error {
+  override name = "ICPStartDissolvingNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPStartDissolvingNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// Only a dissolving neuron can stop dissolving (RequiresDissolving on a locked or dissolved one).
+export class ICPStopDissolvingNotAllowed extends Error {
+  override name = "ICPStopDissolvingNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPStopDissolvingNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 // The neuron is not dissolved, or its stake is at or under the ledger fee, so the transfer disburse
 // makes cannot be funded: the ledger refuses it after the signature.
 export class ICPDisburseNotAllowed extends Error {
@@ -176,8 +237,9 @@ export class ICPTopUpBelowMinimumStake extends Error {
   }
 }
 
-// The stake transfer settled, but governance refused to claim or refresh the neuron from it: the
-// ICP sits in the neuron's account, unclaimed. `reason` carries the canister's own text.
+// The stake transfer settled, but the neuron was not claimed or refreshed from it — governance
+// refused, or the claim call itself was rejected: the ICP sits in the neuron's account, unclaimed.
+// `reason` carries the network's own text.
 export class ICPStakeNotRefreshed extends Error {
   override name = "ICPStakeNotRefreshed";
   [key: string]: unknown;
@@ -197,7 +259,9 @@ export class ICPStakeMemoNotRecoverable extends Error {
   }
 }
 
-// A governance call was submitted but no terminal status was observed; its outcome is unknown.
+// A call was submitted but its outcome is unknown: no terminal status was observed, or — for a stake
+// transfer, or the claim behind one — the attempt failed before one could be read, in which case
+// `cause` carries that failure.
 export class ICPCallUnconfirmed extends Error {
   override name = "ICPCallUnconfirmed";
   [key: string]: unknown;
@@ -258,13 +322,27 @@ export class ICPGovernanceRejected extends Error {
   }
 }
 
-// The replica rejected the ingress message, so the call never executed. Distinct from
-// ICPGovernanceRejected: nothing ran, and from ICPCallUnconfirmed: the outcome is known.
+// The replica rejected the ingress message, or the node turned it away before replication: the
+// call never executed. Distinct from ICPGovernanceRejected: nothing ran, and from
+// ICPCallUnconfirmed: the outcome is known.
 export class ICPCallRejected extends Error {
   override name = "ICPCallRejected";
   [key: string]: unknown;
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "ICPCallRejected");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The node answered a call with a 4xx (carried as `status`, its text as `reason`): it never took the
+// message, so nothing ran. Distinct from a dropped connection, a 202 or a 5xx, after which the
+// message may still execute. Only a call earns this: a refused read_state says nothing about the
+// call it polls, and is treated as no answer.
+export class ICPNodeRefused extends Error {
+  override name = "ICPNodeRefused";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPNodeRefused");
     if (fields) Object.assign(this, fields);
   }
 }

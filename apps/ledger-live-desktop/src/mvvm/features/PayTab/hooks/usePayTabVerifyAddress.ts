@@ -1,13 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useFeature } from "@features/platform-feature-flags";
-import type {
-  PayRequestTrackEvent,
-  VerifyAddressLabels,
-  VerifyAddressPhase,
-  VerifyAddressProps,
-} from "@features/flow-pay-request";
+import type { VerifyAddressPhase, VerifyAddressProps } from "@features/flow-pay-request";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 
@@ -65,10 +59,7 @@ export type UsePayTabVerifyAddress = Readonly<{
  *   fallback).
  * - flag off -> open the classic Receive modal, which verifies via the legacy transport.
  */
-export function usePayTabVerifyAddress(
-  onTrackEvent: PayRequestTrackEvent | undefined,
-): UsePayTabVerifyAddress {
-  const { t } = useTranslation();
+export function usePayTabVerifyAddress(): UsePayTabVerifyAddress {
   const dispatch = useDispatch();
   const ldmkTransport = useFeature("ldmkTransport");
   const [phase, setPhase] = useState<VerifyAddressPhase>("hidden");
@@ -125,34 +116,17 @@ export function usePayTabVerifyAddress(
     [finish],
   );
 
-  const labels = useMemo<VerifyAddressLabels>(
-    () => ({
-      introTitle: t("payTab.request.verifyAddress.introTitle"),
-      introDescription: t("payTab.request.verifyAddress.introDescription"),
-      verifyCta: t("payTab.request.verifyAddress.verifyCta"),
-      successTitle: t("payTab.request.verifyAddress.successTitle"),
-      nextStepsLabel: t("payTab.request.verifyAddress.nextStepsLabel"),
-      nextStepShare: t("payTab.request.verifyAddress.nextStepShare"),
-      nextStepMatch: t("payTab.request.verifyAddress.nextStepMatch"),
-      gotItCta: t("payTab.request.verifyAddress.gotItCta"),
-    }),
-    [t],
-  );
-
-  // Dismissing the intro (X / Escape / Got it) backs out to the request summary.
   const onIntroDismiss = useCallback(() => finish(true), [finish]);
 
   const verifyAddress = useMemo<VerifyAddressProps>(
     () => ({
       phase,
-      labels,
       page: VERIFY_PAGE,
       onVerify,
       onGotIt: onIntroDismiss,
       onClose: onIntroDismiss,
-      onTrackEvent,
     }),
-    [phase, labels, onVerify, onIntroDismiss, onTrackEvent],
+    [phase, onVerify, onIntroDismiss],
   );
 
   const deviceIntent = useMemo<PayVerifyDeviceIntent>(

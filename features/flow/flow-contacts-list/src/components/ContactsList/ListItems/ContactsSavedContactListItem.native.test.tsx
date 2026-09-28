@@ -1,7 +1,11 @@
 import React from "react";
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { render as renderWithoutI18n, screen, userEvent } from "@testing-library/react-native";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { ContactIdSchema } from "@domain/entity-contact";
 import { ContactsSavedContactListItem } from "./ContactsSavedContactListItem.native";
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 describe("ContactsSavedContactListItem", () => {
   it("should render a 48px avatar for a saved contact", () => {
@@ -9,7 +13,7 @@ describe("ContactsSavedContactListItem", () => {
 
     render(
       <ContactsSavedContactListItem
-        contact={{ contactId, name: "Ada", initial: "A", addressCount: 2 }}
+        contact={{ contactId, name: "Ada", isMe: false, initial: "A", addressCount: 2 }}
         addressCountLabel="2 addresses"
         onOpen={jest.fn()}
       />,
@@ -25,7 +29,7 @@ describe("ContactsSavedContactListItem", () => {
 
     render(
       <ContactsSavedContactListItem
-        contact={{ contactId, name: "Ada", initial: "A", addressCount: 2 }}
+        contact={{ contactId, name: "Ada", isMe: false, initial: "A", addressCount: 2 }}
         addressCountLabel="2 addresses"
         onOpen={onOpen}
       />,

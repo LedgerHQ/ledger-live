@@ -1,8 +1,9 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
-import coinConfig, { type TronCoinConfig } from "../config";
+import type { TronCoinConfig } from "../config";
 import {
+  DEFAULT_TRC20_FEES_LIMIT,
   fetchTronAccount,
   getChainParameters,
   getTronAccountNetwork,
@@ -41,6 +42,14 @@ export type TronResourceBreakdown = {
   bandwidthAvailable: string;
   /** False when the energy simulation failed and `energyRequired` is a pessimistic sentinel. */
   energyEstimated: boolean;
+  /**
+   * The `fee_limit` a crafted TRC-20 transaction must carry; absent on native/TRC-10, which have no
+   * such field. Deliberately separate from `value`: `value` is the *fee* — net of the sender's own
+   * energy, and `0` when energy covers the transfer — while this is a *ceiling* on what the TVM may
+   * burn, so pinning the ceiling to `value` reverts OUT_OF_ENERGY (LIVE-36865). `craftTransaction`
+   * reads it back out of `customFees.parameters`.
+   */
+  feeLimit?: string;
 };
 
 // UTF-8 byte length of a memo that will land in `raw_data.data`. A memo only reaches the chain on a
@@ -171,6 +180,16 @@ export const computeEnergyFee = (
   return missing.multipliedBy(params.energyFee);
 };
 
+// Unlike the fee, the ceiling is sized against the *gross* energy cost and ignores the sender's
+// pool: that pool can drain between estimating and executing, and a ceiling below the real cost
+// reverts OUT_OF_ENERGY with the bandwidth already burned. Only ratchets up from the chain
+// default, so an unusually expensive transfer — activating the recipient's token balance roughly
+// doubles a USDT transfer — still clears.
+const trc20FeeLimit = (grossEnergyCost?: BigNumber): string =>
+  BigNumber.maximum(grossEnergyCost ?? 0, DEFAULT_TRC20_FEES_LIMIT)
+    .integerValue(BigNumber.ROUND_CEIL)
+    .toFixed();
+
 // Each pool is clamped to ≥ 0 on its own: a node reporting used > limit in one pool must not eat
 // into the other's availability.
 const freeBandwidth = (networkInfo: NetworkInfo): BigNumber =>
@@ -248,14 +267,14 @@ async function fetchTronFeeInputs(
 }
 
 // Internal: compute fee from a pre-fetched energyNeeded. Does NOT catch — callers decide
-// whether to fall back. Returns networkInfo alongside the fee so callers can build a
-// TronResourceBreakdown without a second network round-trip.
+// whether to fall back. Returns networkInfo and chainParams alongside the fee so callers can build
+// a TronResourceBreakdown, including its `feeLimit` ceiling, without a second network round-trip.
 async function computeFeesRaw(
   logger: Logger,
   config: TronCoinConfig,
   transactionIntent: TronIntent,
   energyNeeded: number,
-): Promise<{ value: bigint; networkInfo: NetworkInfo }> {
+): Promise<{ value: bigint; networkInfo: NetworkInfo; chainParams: ChainParameters }> {
   const { networkInfo, recipientAccount, chainParams } = await fetchTronFeeInputs(
     logger,
     config,
@@ -269,6 +288,7 @@ async function computeFeesRaw(
   return {
     value: BigInt(total.integerValue(BigNumber.ROUND_CEIL).toFixed()),
     networkInfo,
+    chainParams,
   };
 }
 
@@ -312,6 +332,13 @@ export async function estimateFees(
       bandwidthRequired: String(size),
       bandwidthAvailable: bandwidthAvailable(networkInfo).toFixed(),
       energyEstimated,
+      // Only a real simulation may raise the ceiling: `energyRequired` is otherwise a sentinel sized
+      // from the sender's own pool, so it would raise the cap off a number that measures nothing.
+      feeLimit: isTrc20Send(transactionIntent)
+        ? trc20FeeLimit(
+            energyEstimated ? energyRequired.multipliedBy(chainParams.energyFee) : undefined,
+          )
+        : undefined,
     };
 
     // An unmeasurable energy cost is uncertainty, not a 1-energy shortfall: charge the flat fee.
@@ -342,6 +369,9 @@ export async function estimateFees(
       bandwidthRequired: String(size),
       bandwidthAvailable: "0",
       energyEstimated: false,
+      // No simulation survived, so there is nothing to size the ceiling against — same rule as the
+      // `energyEstimated` gate above: only a real measurement may raise it off the default.
+      feeLimit: isTrc20Send(transactionIntent) ? trc20FeeLimit() : undefined,
     });
   }
 }
@@ -402,9 +432,8 @@ export async function estimateTronifyFees(
   const energyNeeded = await estimateEnergy(logger, config, intent);
 
   // Rental params are remote-configurable via coin-config (energyRent.tronify), so they can be
-  // tuned without a release; fall back to the defaults when unset. Read from the coinConfig
-  // singleton — the same source the energyRent provider selection uses (network/tronify, energyRent).
-  const tronifyConfig = coinConfig.getCoinConfig().energyRent?.tronify;
+  // tuned without a release; fall back to the defaults when unset.
+  const tronifyConfig = config.energyRent?.tronify;
   const durationSeconds = readRentalParam(
     logger,
     tronifyConfig?.rentalDurationSeconds,
@@ -423,12 +452,9 @@ export async function estimateTronifyFees(
   // computeFeesRaw does not catch — any chain-params failure propagates here (no silent fallback
   // on originalValue, per ADR-050 Option 3). Both calls are independent once energyNeeded is
   // known, so they run in parallel to keep pricing latency minimal.
-  // getEnergyRentQuote resolves its provider through the coinConfig singleton (not `config`); this
-  // is the shared design of the energyRent module — the provider is selected via remote coin-config.
-  // TODO(LIVE-34996): align energyRent config threading with the injected `config` pattern.
-  const [{ value: originalValue, networkInfo }, quote] = await Promise.all([
+  const [{ value: originalValue, networkInfo, chainParams }, quote] = await Promise.all([
     computeFeesRaw(logger, config, intent, energyNeeded),
-    getEnergyRentQuote(logger, {
+    getEnergyRentQuote(logger, config, {
       payerAddress: intent.sender,
       receiverAddress: intent.sender, // energy is delegated to the sender (they call the contract)
       energy: BigInt(energyNeeded),
@@ -469,6 +495,11 @@ export async function estimateTronifyFees(
     bandwidthRequired: String(estimatedTxSize(intent)),
     bandwidthAvailable: bandwidthAvailable(networkInfo).toFixed(),
     energyEstimated: true,
+    // Rented energy should cover the burn, but the ceiling still has to survive a rental that lands
+    // short or late, so it is sized from the simulation rather than left at the flat default.
+    feeLimit: isTrc20Send(intent)
+      ? trc20FeeLimit(new BigNumber(energyNeeded).multipliedBy(chainParams.energyFee))
+      : undefined,
   };
 
   return {

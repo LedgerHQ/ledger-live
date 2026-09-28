@@ -38,9 +38,10 @@ export function migrateLegacyPassword(
 
     const digest = await derivePasswordDigest(legacyPassword, salt, APP_LOCK_SCRYPT_PARAMS);
 
-    await writePasswordVerifier(
-      createPasswordVerifier({ digest, salt, scrypt: APP_LOCK_SCRYPT_PARAMS }),
-    );
+    await writePasswordVerifier({
+      verifier: createPasswordVerifier({ digest, salt, scrypt: APP_LOCK_SCRYPT_PARAMS }),
+      needsLongerPassword: migrated.needsLongerPassword,
+    });
 
     if ((await verifyPassword(legacyPassword)).status !== "correct") {
       return { status: "deferred" } as const;

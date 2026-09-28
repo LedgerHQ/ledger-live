@@ -11,4 +11,5 @@ export type PayCardOnboardingWidgetState = Readonly<{
   hasCompletedOnboarding: boolean;
   analyticsCardId: string | null;
   reportedAnalyticsMilestones: readonly PayCardAnalyticsMilestone[];
+  hasReadCardAccount: boolean;
 }>;

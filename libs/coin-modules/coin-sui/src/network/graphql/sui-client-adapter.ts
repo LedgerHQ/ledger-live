@@ -161,8 +161,7 @@ export function makeSuiClientFromGraphQL(api: SuiGraphQLClient): ClientWithCoreA
         if (!next) break;
         cursor = next;
       }
-      // Mirror the JSON-RPC `client.core.getBalance` contract
-      // (`@mysten/sui/jsonRpc/core.ts:226-243`): `coinBalance` is the
+      // Mirror the SDK Core `getBalance` contract: `coinBalance` is the
       // total minus the SIP-58 address-balance reservation.
       const coinBalance = String(BigInt(total) - BigInt(addr));
       return {
@@ -179,7 +178,7 @@ export function makeSuiClientFromGraphQL(api: SuiGraphQLClient): ClientWithCoreA
       options: SuiClientTypes.ListCoinsOptions,
     ): Promise<SuiClientTypes.ListCoinsResponse> {
       const coinType = options.coinType ?? DEFAULT_SUI_COIN_TYPE;
-      // GraphQL caps `first:` at 50; JSON-RPC has no cap. Clamp here so a
+      // GraphQL caps `first:` at 50. Clamp here so a
       // caller passing a larger limit gets server-side pagination instead
       // of a query rejection.
       const first = Math.min(options.limit ?? GRAPHQL_PAGE_LIMIT, GRAPHQL_PAGE_LIMIT);

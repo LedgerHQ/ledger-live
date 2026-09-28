@@ -11,6 +11,7 @@ import {
   emptyPayCardTransactionsMock,
   fillPayCardTransactionsMock,
   readPayCardTransactionsMock,
+  receiveMultiAssetPayCardTransactionMock,
   receivePayCardTransactionMock,
   type PayCardMockTransactionAsset,
 } from "@domain/api-card-management/mock/card-transactions";
@@ -137,19 +138,22 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const payTabEnabled = !!payTab?.enabled;
   const cardParam = !!payTab?.params?.card;
+  const legacyTopUpParam = !!payTab?.params?.legacyTopUp;
   const ptxCardEnabled = !!ptxCard?.enabled;
 
+  // An override replaces every param default, so each setter has to carry the params it does not
+  // change. Otherwise a toggle here silently resets them.
   const setPayTabEnabled = useCallback(
     (enabled: boolean) => {
-      const params = { card: cardParam };
+      const params = { card: cardParam, legacyTopUp: legacyTopUpParam };
       dispatch(setOverride({ key: payTabKey, value: { enabled, params } }));
     },
-    [cardParam, dispatch, payTabKey],
+    [cardParam, legacyTopUpParam, dispatch, payTabKey],
   );
 
   const setCardParam = useCallback(
     (card: boolean) => {
-      const params = { card };
+      const params = { card, legacyTopUp: legacyTopUpParam };
       dispatch(
         setOverride({
           key: payTabKey,
@@ -157,7 +161,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
         }),
       );
     },
-    [dispatch, payTabEnabled, payTabKey],
+    [dispatch, legacyTopUpParam, payTabEnabled, payTabKey],
   );
 
   const setPtxCardEnabled = useCallback(
@@ -243,7 +247,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
         canToggle: isMockingEnabled && step.id in STEP_ANSWERS,
       })),
       completedCount: derivedOnboarding.completedCount,
-      isFetching: onboardingStatus.isLoading,
+      isFetching: onboardingStatus.isFetching,
       error: onboardingStatus.isError ? "the account could not be read" : undefined,
       raw: JSON.stringify(derivedOnboarding, null, 2),
       refresh: refreshCardOnboarding,
@@ -253,7 +257,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     };
   }, [
     derivedOnboarding,
-    onboardingStatus.isLoading,
+    onboardingStatus.isFetching,
     onboardingStatus.isError,
     refreshCardOnboarding,
     setDerivedStepDone,
@@ -404,6 +408,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     empty: () => updateTransactions(emptyPayCardTransactionsMock),
     receive: (asset: PayCardMockTransactionAsset) =>
       updateTransactions(() => receivePayCardTransactionMock(asset)),
+    receiveMultiAsset: () => updateTransactions(receiveMultiAssetPayCardTransactionMock),
     clear: () => updateTransactions(clearPayCardTransactionsMock),
   };
 

@@ -66,7 +66,10 @@ import { useTrackFundsReceived } from "LLM/features/Analytics/hooks/useTrackFund
 import { updateIdentify } from "./analytics";
 import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
+import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -81,11 +84,10 @@ import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
   TrackingConsent,
   DatadogProvider,
-  AutoInstrumentationConfiguration,
   DdSdkReactNative,
   PropagatorType,
 } from "@datadog/mobile-react-native";
-import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
+import type { AutoInstrumentationConfiguration } from "@datadog/mobile-react-native";
 import {
   customActionEventMapper,
   customErrorEventMapper,
@@ -102,6 +104,7 @@ import {
 } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import { LinkingProviderWrapper } from "~/components/LinkingProviderWrapper";
+import { setPolkadotLdmkEnabled } from "@ledgerhq/live-common/families/polkadot/setup";
 import { setXrpLdmkEnabled } from "@ledgerhq/live-common/families/xrp/setup";
 import { resolveSuiTransport, setSuiTransport } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
@@ -125,6 +128,17 @@ setAnalyticsFeatureFlagMethod(
   ((key: FeatureId) => selectFeature(store.getState(), key) ?? null) as Parameters<
     typeof setAnalyticsFeatureFlagMethod
   >[0],
+);
+store.subscribe(
+  installEarnLifecycleHost({
+    platform: "mobile",
+    readEnabled: () =>
+      selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false,
+    readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
+    resolveVersionedRedirects: getVersionedRedirects,
+    readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+    apiBaseUrl: Config.EARN_API_BASE_URL,
+  }),
 );
 
 const styles = StyleSheet.create({
@@ -150,22 +164,27 @@ function App() {
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   const ldmkSolanaSignerIsTxcActiveFeatureFlag = useFeature("ldmkSolanaSignerIsTxcActive");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
+  const ldmkPolkadotSignerFeatureFlag = useFeature("ldmkPolkadotSigner");
   const ldmkXrpSignerFeatureFlag = useFeature("ldmkXrpSigner");
   const suiTransportFeatureFlag = useFeature("suiTransport");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
-      trackErrors: datadogFF?.params?.trackErrors ?? false,
-      trackInteractions: datadogFF?.params?.trackInteractions ?? false,
-      trackResources: datadogFF?.params?.trackResources ?? false,
-      errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
-      actionEventMapper: customActionEventMapper,
-      logEventMapper: customLogEventMapper,
-      firstPartyHosts: [
-        {
-          match: FIRST_PARTY_MAIN_HOST_DOMAIN,
-          propagatorTypes: [PropagatorType.DATADOG, PropagatorType.TRACECONTEXT],
-        },
-      ],
+      rumConfiguration: {
+        trackErrors: datadogFF?.params?.trackErrors ?? false,
+        trackInteractions: datadogFF?.params?.trackInteractions ?? false,
+        trackResources: datadogFF?.params?.trackResources ?? false,
+        errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
+        actionEventMapper: customActionEventMapper,
+        firstPartyHosts: [
+          {
+            match: FIRST_PARTY_MAIN_HOST_DOMAIN,
+            propagatorTypes: [PropagatorType.DATADOG, PropagatorType.TRACECONTEXT],
+          },
+        ],
+      },
+      logsConfiguration: {
+        logEventMapper: customLogEventMapper,
+      },
     }),
     [datadogFF?.params, automaticBugReportingEnabled],
   );
@@ -187,6 +206,12 @@ function App() {
       setCosmosLdmkEnabled(ldmkCosmosSignerFeatureFlag.enabled);
     }
   }, [ldmkCosmosSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkPolkadotSignerFeatureFlag?.enabled === "boolean") {
+      setPolkadotLdmkEnabled(ldmkPolkadotSignerFeatureFlag.enabled);
+    }
+  }, [ldmkPolkadotSignerFeatureFlag]);
 
   useEffect(() => {
     if (typeof ldmkXrpSignerFeatureFlag?.enabled === "boolean") {
@@ -231,8 +256,7 @@ function App() {
     };
     initializeDatadogProvider(
       {
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        ...(datadogFF?.params as PartialInitializationConfiguration),
+        ...datadogFF?.params,
         ...(Config.FORCE_DATADOG_SAMPLE_RATE_100 ? { sessionSamplingRate: 100 } : {}),
       },
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,

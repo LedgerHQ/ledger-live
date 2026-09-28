@@ -17,6 +17,14 @@ const usdc = {
   countervalueAmount: 125.4,
 };
 
+const formatBalance = (value: number) => ({
+  integerPart: String(Math.trunc(value)),
+  decimalPart: "00",
+  currencyText: "$",
+  decimalSeparator: "." as const,
+  currencyPosition: "start" as const,
+});
+
 const ready: CardAssetsViewModel = {
   isVisible: true,
   status: "ready",
@@ -40,18 +48,11 @@ const ready: CardAssetsViewModel = {
   onShowHistoryPress: jest.fn(),
   onWithdrawContinue: jest.fn(),
   onManagePress: jest.fn(),
+  onRetryPress: jest.fn(),
   onAddAssetPress: jest.fn(),
-  onReorderAssets: jest.fn(),
-  reorderingAssetId: null,
+  onMoveAsset: jest.fn(),
+  reorderingAssetIds: new Set(),
 };
-
-const formatBalance = (value: number) => ({
-  integerPart: String(Math.trunc(value)),
-  decimalPart: "00",
-  currencyText: "$",
-  decimalSeparator: "." as const,
-  currencyPosition: "start" as const,
-});
 
 const detailsOpen: CardAssetsViewModel = {
   ...ready,
@@ -119,23 +120,25 @@ describe("CardAssetsView (web)", () => {
   it("should say so when the read failed", () => {
     render(<CardAssetsView {...ready} status="error" />, { wrapper: I18nWrapper });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.error)).toBeInTheDocument();
+    expect(screen.getByText(CARD_ASSETS_COPY.errorTitle)).toBeVisible();
+    expect(screen.getByText(CARD_ASSETS_COPY.errorDescription)).toBeVisible();
     expect(screen.queryByText("125.40 USDC")).not.toBeInTheDocument();
   });
 
   it("should say so when the card has no wallets", () => {
     render(<CardAssetsView {...ready} status="empty" rows={[]} />, { wrapper: I18nWrapper });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.empty)).toBeInTheDocument();
+    expect(screen.getByText(CARD_ASSETS_COPY.emptyTitle)).toBeVisible();
+    expect(screen.getByText(CARD_ASSETS_COPY.emptyDescription)).toBeVisible();
   });
 
   it("should show a skeleton list while the wallets are still loading", () => {
     render(<CardAssetsView {...ready} status="loading" rows={[]} />, { wrapper: I18nWrapper });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeInTheDocument();
-    expect(screen.getByTestId("card-assets-loading-state")).toBeInTheDocument();
-    expect(screen.queryByText(CARD_ASSETS_COPY.empty)).not.toBeInTheDocument();
-    expect(screen.queryByText(CARD_ASSETS_COPY.error)).not.toBeInTheDocument();
+    expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeVisible();
+    expect(screen.getByTestId("card-assets-loading-state")).toBeVisible();
+    expect(screen.queryByText(CARD_ASSETS_COPY.emptyTitle)).not.toBeInTheDocument();
+    expect(screen.queryByText(CARD_ASSETS_COPY.errorTitle)).not.toBeInTheDocument();
   });
 
   it("should keep AmountDisplay loading while the counter value is still missing", () => {
@@ -195,5 +198,35 @@ describe("CardAssetsView (web)", () => {
     await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
 
     expect(onManagePress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should hide Manage until the asset list is ready", () => {
+    const { rerender } = render(<CardAssetsView {...ready} status="loading" rows={[]} />, {
+      wrapper: I18nWrapper,
+    });
+    expect(screen.queryByRole("button", { name: CARD_ASSETS_COPY.manage })).not.toBeInTheDocument();
+
+    rerender(<CardAssetsView {...ready} status="error" />);
+    expect(screen.queryByRole("button", { name: CARD_ASSETS_COPY.manage })).not.toBeInTheDocument();
+
+    rerender(<CardAssetsView {...ready} status="empty" rows={[]} />);
+    expect(screen.queryByRole("button", { name: CARD_ASSETS_COPY.manage })).not.toBeInTheDocument();
+
+    rerender(<CardAssetsView {...ready} />);
+    expect(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage })).toBeVisible();
+  });
+
+  // dnd-kit owns the actual drag/keyboard-reorder mechanics (and its own accessibility
+  // announcements) once a row's handle is rendered — simulating its real pointer/keyboard
+  // geometry in jsdom would just be re-testing the library, not our code. This only checks that
+  // every row gets a properly labeled handle to hand off to it.
+  it("should give every managed asset a labeled reorder handle", () => {
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(<CardAssetsView {...ready} dialogState="manage" rows={[usdc, bitcoin]} />, {
+      wrapper: I18nWrapper,
+    });
+
+    expect(screen.getByRole("button", { name: "Reorder USD Coin" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Reorder Bitcoin" })).toBeVisible();
   });
 });

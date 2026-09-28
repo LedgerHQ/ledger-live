@@ -1,6 +1,7 @@
 import {
   appLockInitialState,
   appLockSlice,
+  decideLaunchLock,
   hydrateAppLock,
   lockApp,
   resetAppLock,
@@ -20,7 +21,15 @@ describe("appLockSlice", () => {
       biometricsEnabled: false,
       isLocked: false,
       needsLongerPassword: false,
+      hasDecidedLaunchLock: false,
     });
+  });
+
+  it("remembers that the launch lock was decided, whatever the protection", () => {
+    const decided = reduce(appLockInitialState, decideLaunchLock());
+
+    expect(decided.hasDecidedLaunchLock).toBe(true);
+    expect(decided.isLocked).toBe(false);
   });
 
   it("sets each protection independently", () => {
@@ -31,6 +40,7 @@ describe("appLockSlice", () => {
       biometricsEnabled: false,
       isLocked: false,
       needsLongerPassword: false,
+      hasDecidedLaunchLock: false,
     });
 
     const withBoth = reduce(withPassword, setBiometricsEnabled(true));
@@ -43,6 +53,7 @@ describe("appLockSlice", () => {
       biometricsEnabled: true,
       isLocked: false,
       needsLongerPassword: false,
+      hasDecidedLaunchLock: false,
     });
   });
 
@@ -56,6 +67,7 @@ describe("appLockSlice", () => {
       biometricsEnabled: false,
       isLocked: true,
       needsLongerPassword: false,
+      hasDecidedLaunchLock: false,
     });
 
     expect(reduce(locked, unlockApp()).isLocked).toBe(false);
@@ -80,6 +92,25 @@ describe("appLockSlice", () => {
 
     expect(afterLateRead.hasPassword).toBe(true);
     expect(afterLateRead.isHydrated).toBe(true);
+  });
+
+  // The prompt is owed on a boot the user unlocks with biometrics, which never sees a password.
+  it("restores the mark read back from the keychain", () => {
+    const hydrated = reduce(
+      undefined,
+      hydrateAppLock({ hasPassword: true, biometricsEnabled: true, needsLongerPassword: true }),
+    );
+
+    expect(hydrated.needsLongerPassword).toBe(true);
+  });
+
+  it("reads a hydration without the mark as nothing owed", () => {
+    const hydrated = reduce(
+      undefined,
+      hydrateAppLock({ hasPassword: true, biometricsEnabled: false }),
+    );
+
+    expect(hydrated.needsLongerPassword).toBe(false);
   });
 
   it("restores biometrics read back from the keychain", () => {

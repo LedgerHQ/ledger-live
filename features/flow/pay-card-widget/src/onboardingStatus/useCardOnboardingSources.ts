@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import {
   useGetCardStatusQuery,
-  useGetCardTransactionsQuery,
+  useGetCardTransactionsInfiniteQuery,
   useGetUserQuery,
 } from "@domain/api-card-management";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
@@ -25,7 +25,10 @@ export type CardOnboardingSources = {
    * lists this one.
    */
   readonly cardAddedToDigitalWallet: boolean | undefined;
+  /** The first read only: after it, every signal has an answer to show. */
   readonly isLoading: boolean;
+  /** Any read in flight, refetches included, so the signals may be stale. */
+  readonly isFetching: boolean;
   readonly isError: boolean;
   readonly hasSourceError: boolean;
   readonly refresh: () => void;
@@ -45,7 +48,7 @@ export function useCardOnboardingSources({
 }: CardOnboardingSourcesParams = {}): CardOnboardingSources {
   const user = useGetUserQuery(undefined, { skip });
   const cardStatus = useGetCardStatusQuery(undefined, { skip });
-  const transactions = useGetCardTransactionsQuery(undefined, { skip });
+  const transactions = useGetCardTransactionsInfiniteQuery(undefined, { skip });
   const linkedWallets = useCardLinkedWallets({ currencies: NO_CURRENCIES, skip });
 
   const signals = useMemo(
@@ -55,7 +58,11 @@ export function useCardOnboardingSources({
       // and reading it as "no card" would send the holder back to choosing a type.
       "choose-card-type": cardStatus.data !== undefined,
       "top-up-card": linkedWallets.wallets.some(({ balance }) => hasPositiveBalance(balance)),
-      "first-purchase": transactions.data?.some(({ status }) => status === "CONFIRMED") === true,
+      // Every page read, not just the first: the newest page can hold nothing but pending or
+      // declined attempts while an older charge did settle.
+      "first-purchase": (transactions.data?.pages ?? []).some(page =>
+        page.some(({ status }) => status === "CONFIRMED"),
+      ),
     }),
     [user.data, cardStatus.data, linkedWallets.wallets, transactions.data],
   );
@@ -81,9 +88,11 @@ export function useCardOnboardingSources({
     signals,
     cardAddedToDigitalWallet: cardStatus.data?.cardAddedToDigitalWallet,
     refresh,
-    // `isFetching` on all four, not `isLoading`: a query reports `isLoading` only while it has no
-    // data, so after the first read a refetch would have looked idle.
     isLoading:
+      user.isLoading || cardStatus.isLoading || transactions.isLoading || linkedWallets.isLoading,
+    // Every read in flight, refetches included: a consumer acting on the signals has to wait for
+    // them to settle, while `isLoading` only covers the first read.
+    isFetching:
       user.isFetching ||
       cardStatus.isFetching ||
       transactions.isFetching ||

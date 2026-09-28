@@ -239,7 +239,7 @@ export default withRozeniteUrlFix(
           },
           fallback: {
             ...require("node-libs-react-native"),
-            fs: require.resolve("react-native-level-fs"),
+            fs: false,
             net: require.resolve("react-native-tcp-socket"),
             tls: false,
             child_process: false,

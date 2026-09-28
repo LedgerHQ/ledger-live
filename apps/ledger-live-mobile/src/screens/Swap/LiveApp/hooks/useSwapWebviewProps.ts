@@ -21,7 +21,7 @@ import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useDeviceIntentSignAssignment } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { useSwapCustomHandlers } from "../customHandlers";
 import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { getCurrentTrackingPage } from "~/analytics/screenRefs";
 import { useTranslateToSwapAccount } from "./useTranslateToSwapAccount";
 import { DefaultAccountSwapParamList } from "../../types";
 
@@ -66,8 +66,8 @@ export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapW
   const insets = useAdjustedSafeAreaInsets();
 
   // Capture the initial source to prevent webview refreshes.
-  // currentRouteNameRef.current updates when going back and forth inside the navigation stack and returning to the webview
-  const initialSource = useMemo(() => currentRouteNameRef.current || "", []);
+  // The tracking page updates when going back and forth inside the navigation stack and returning to the webview.
+  const initialSource = useMemo(() => getCurrentTrackingPage(), []);
 
   const inputs = useMemo(
     () => ({

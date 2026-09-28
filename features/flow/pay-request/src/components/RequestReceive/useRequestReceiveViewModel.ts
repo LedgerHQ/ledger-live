@@ -1,4 +1,6 @@
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "@shared/i18n";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import type {
   RequestReceiveActionId,
   RequestReceiveViewModel,
@@ -22,8 +24,8 @@ export function useRequestReceiveViewModel({
   onCopy,
   onSave,
   onVerify,
-  onTrackEvent,
 }: RequestReceiveViewModelParams): RequestReceiveViewModel {
+  const { t } = useTranslation();
   const addressParts = useMemo(() => splitAddress(address), [address]);
 
   const runAction = useCallback(
@@ -31,7 +33,7 @@ export function useRequestReceiveViewModel({
       if (!callback) {
         return;
       }
-      onTrackEvent?.("button_clicked", {
+      trackButtonClicked({
         button: TRACK_BUTTON[id],
         buttonLocation: "request",
         page,
@@ -39,7 +41,7 @@ export function useRequestReceiveViewModel({
       });
       callback(address);
     },
-    [address, page, onTrackEvent],
+    [address, page],
   );
 
   const handleShare = useCallback(() => runAction("share", onShare), [runAction, onShare]);
@@ -48,6 +50,8 @@ export function useRequestReceiveViewModel({
   const handleVerify = useCallback(() => runAction("verify", onVerify), [runAction, onVerify]);
 
   return {
+    title: t("payTab.request.title", { asset: asset.name }),
+    networkLabel: t("payTab.request.networkLabel", { network }),
     asset,
     network,
     address,

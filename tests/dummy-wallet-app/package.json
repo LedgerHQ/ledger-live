@@ -39,8 +39,8 @@
     "@rspack/core": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.2.13",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"

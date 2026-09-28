@@ -52,6 +52,7 @@ const Filter = ({ onFilterChange, filter }: Props) => {
         horizontal
         isActive={isActive}
         flow={2}
+        data-testid={`manager-filter-option-${item.key}`}
       >
         <Box grow alignItems="flex-start">
           <BoldToggle isBold={isActive}>{item.label}</BoldToggle>
@@ -70,7 +71,7 @@ const Filter = ({ onFilterChange, filter }: Props) => {
     >
       {({ isOpen, value }) =>
         value ? (
-          <Box horizontal flow={1}>
+          <Box horizontal flow={1} data-testid="manager-filter-button">
             <Text color="neutral.c70" ff="Inter|SemiBold" fontSize={4}>
               <Trans i18nKey="manager.applist.filter.title" />
             </Text>

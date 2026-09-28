@@ -1,21 +1,27 @@
 import { unlockApp } from "@features/platform-app-lock";
 import { act, render, screen, waitFor } from "@tests/test-renderer";
 import React from "react";
-import { AppState, Platform, Text, type AppStateStatus } from "react-native";
+import { AppState, Text, type AppStateStatus } from "react-native";
 import { AppLockGate } from "../AppLockGate";
 
 jest.mock("@features/platform-app-lock", () => ({
   ...jest.requireActual("@features/platform-app-lock"),
   hasPasswordVerifier: jest.fn(async () => false),
   hasBiometricsMarker: jest.fn(async () => false),
+  needsLongerStoredPassword: jest.fn(async () => false),
   clearStoredPassword: jest.fn(async () => undefined),
   clearBiometricsMarker: jest.fn(async () => undefined),
   checkPassword: jest.fn(async () => ({ status: "incorrect" })),
   promptBiometrics: jest.fn(async () => ({ status: "failed" })),
 }));
 
-const { hasPasswordVerifier, hasBiometricsMarker, clearStoredPassword, checkPassword } =
-  jest.requireMock("@features/platform-app-lock");
+const {
+  hasPasswordVerifier,
+  hasBiometricsMarker,
+  needsLongerStoredPassword,
+  clearStoredPassword,
+  checkPassword,
+} = jest.requireMock("@features/platform-app-lock");
 
 const dismissAll = jest.fn();
 
@@ -30,6 +36,19 @@ jest.mock("../adapters/installMarker", () => ({
 }));
 
 const { hasKnownInstall, writeInstallMarker } = jest.requireMock("../adapters/installMarker");
+
+let mockIsInBackground = false;
+let mockBackgroundListeners: (() => void)[] = [];
+
+jest.mock("../adapters/appVisibility", () => ({
+  isAppInBackground: () => mockIsInBackground,
+  onAppBackground: (listener: () => void) => {
+    mockBackgroundListeners.push(listener);
+    return () => {
+      mockBackgroundListeners = mockBackgroundListeners.filter(other => other !== listener);
+    };
+  },
+}));
 
 let appStateSpy: jest.SpyInstance | undefined;
 
@@ -53,12 +72,19 @@ const renderGate = () => {
     </AppLockGate>,
   );
 
+  const pause = () => {
+    Object.assign(AppState, { currentState: "background" });
+    listeners.forEach(listener => listener("background"));
+  };
+
   return {
     ...rendered,
+    pause: () => act(pause),
     background: () =>
       act(() => {
-        Object.assign(AppState, { currentState: "background" });
-        listeners.forEach(listener => listener("background"));
+        pause();
+        mockIsInBackground = true;
+        mockBackgroundListeners.forEach(listener => listener());
       }),
   };
 };
@@ -69,15 +95,17 @@ beforeEach(() => {
   // previous one last set on these two reads.
   hasPasswordVerifier.mockResolvedValue(false);
   hasBiometricsMarker.mockResolvedValue(false);
+  needsLongerStoredPassword.mockResolvedValue(false);
   hasKnownInstall.mockResolvedValue(true);
   Object.assign(AppState, { currentState: "active" });
+  mockIsInBackground = false;
+  mockBackgroundListeners = [];
 });
 
 afterEach(() => {
   // Not restoreAllMocks: it would undo the jest setup's own spies for every later test.
   appStateSpy?.mockRestore();
   appStateSpy = undefined;
-  Object.assign(Platform, { OS: "android" });
 });
 
 describe("the app lock gate", () => {
@@ -96,6 +124,27 @@ describe("the app lock gate", () => {
     expect(await screen.findByTestId(UNLOCK_SCREEN)).toBeVisible();
     expect(screen.getByText(APP_CONTENT, { includeHiddenElements: true })).toBeTruthy();
     expect(screen.queryByText(APP_CONTENT)).toBeNull();
+  });
+
+  it("keeps an unlocked app open when the tree reboots, as clearing the cache does", async () => {
+    hasPasswordVerifier.mockResolvedValue(true);
+
+    const { store, rerender } = renderGate();
+
+    expect(await screen.findByTestId(UNLOCK_SCREEN)).toBeVisible();
+
+    act(() => {
+      store.dispatch(unlockApp());
+    });
+
+    rerender(
+      <AppLockGate key="rebooted">
+        <Text>{APP_CONTENT}</Text>
+      </AppLockGate>,
+    );
+
+    expect(await screen.findByText(APP_CONTENT)).toBeVisible();
+    expect(screen.queryByTestId(UNLOCK_SCREEN)).toBeNull();
   });
 
   it("sends away the sheets the app left open, which sit above the lock's own overlay", async () => {
@@ -236,31 +285,18 @@ describe("the app lock gate", () => {
     expect(store.getState().appLock.isLocked).toBe(true);
   });
 
-  it("ignores the inactive state on iOS, which a biometric prompt causes", async () => {
+  // A permission dialog pauses the app without it leaving. Only the app actually leaving locks.
+  it("stays unlocked when the app only pauses under a system dialog", async () => {
     hasPasswordVerifier.mockResolvedValue(true);
-    Object.assign(Platform, { OS: "ios" });
 
-    const listeners: ((state: AppStateStatus) => void)[] = [];
-    appStateSpy = jest.spyOn(AppState, "addEventListener").mockImplementation(((
-      _type: string,
-      listener: (state: AppStateStatus) => void,
-    ) => {
-      listeners.push(listener);
-      return { remove: jest.fn() };
-    }) as typeof AppState.addEventListener);
-
-    const { store } = render(
-      <AppLockGate>
-        <Text>{APP_CONTENT}</Text>
-      </AppLockGate>,
-    );
+    const { store, pause } = renderGate();
 
     await screen.findByTestId(UNLOCK_SCREEN);
     await act(async () => {
       store.dispatch(unlockApp());
     });
 
-    act(() => listeners.forEach(listener => listener("inactive")));
+    pause();
 
     expect(store.getState().appLock.isLocked).toBe(false);
   });

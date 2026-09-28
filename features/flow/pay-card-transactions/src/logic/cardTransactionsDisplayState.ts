@@ -10,7 +10,9 @@ export function resolveCardTransactionsDisplayState({
   hasTransactions: boolean;
 }): CardTransactionsDisplayState {
   if (isLoading) return "loading";
-  if (isError) return "error";
-  if (!hasTransactions) return "empty";
+  // Only a read that returned nothing is fatal. Once anything has been read, a failure leaves the
+  // list standing rather than blanking it — that covers a later page, and equally a refresh that
+  // failed over cached pages. The cost is that such a failure is not announced anywhere.
+  if (!hasTransactions) return isError ? "error" : "empty";
   return "ready";
 }

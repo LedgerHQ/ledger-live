@@ -4,8 +4,11 @@ import {
   documentedPayCardTransaction,
   emptyPayCardTransactionsMock,
   fillPayCardTransactionsMock,
+  MOCK_CARD_TRANSACTIONS_PAGE_SIZE,
   mockPayCardTransactions,
+  mockPayCardTransactionsPage,
   readPayCardTransactionsMock,
+  receiveMultiAssetPayCardTransactionMock,
   receivePayCardTransactionMock,
 } from "./cardTransactions.mock";
 
@@ -45,6 +48,34 @@ describe("mockPayCardTransactions", () => {
       mocked?.map(transaction => (transaction.fundingSources ?? []).map(source => source.currency)),
     ).toEqual([["btc"], ["usdc"]]);
     expect(mocked?.[0]?.id).toMatch(/^devtool-btc-/);
+  });
+
+  it("receives a newest transaction keeping every asset that funded it", () => {
+    receiveMultiAssetPayCardTransactionMock();
+
+    const received = readPayCardTransactionsMock()?.[0];
+
+    const template = mockPayCardTransactions().find(
+      ({ fundingSources }) => fundingSources.length > 1,
+    );
+
+    expect(received?.id).toMatch(/^devtool-multi-/);
+    expect(received?.fundingSources?.map(({ currency }) => currency)).toEqual(
+      template?.fundingSources.map(({ currency }) => currency),
+    );
+  });
+
+  it("funds one charge with several assets, one of them carrying more digits than a row shows", () => {
+    const multiAsset = mockPayCardTransactions().filter(
+      ({ fundingSources }) => fundingSources.length > 1,
+    );
+
+    expect(multiAsset.length).toBeGreaterThan(0);
+    expect(
+      multiAsset.some(({ fundingSources }) =>
+        fundingSources.some(({ amount }) => (amount.split(".")[1]?.length ?? 0) > 8),
+      ),
+    ).toBe(true);
   });
 
   it("covers different fiat and funding asset amounts for visual testing", () => {
@@ -103,4 +134,48 @@ describe("mockPayCardTransactions", () => {
 
     expect(misc).toEqual(documentedPayCardTransaction);
   });
+});
+
+describe("mockPayCardTransactionsPage", () => {
+  const pageRequest = (page: string) =>
+    new Request(`https://card.test/v1/card/transactions?page=${page}`);
+
+  it("serves the first page to a caller that asks for page 0", () => {
+    const page = mockPayCardTransactionsPage(pageRequest("0"));
+
+    expect(page).toHaveLength(MOCK_CARD_TRANSACTIONS_PAGE_SIZE);
+    expect(page).toEqual(mockPayCardTransactions().slice(0, MOCK_CARD_TRANSACTIONS_PAGE_SIZE));
+  });
+
+  it("walks the whole history in pages, without repeating or dropping a transaction", () => {
+    const all = mockPayCardTransactions();
+    const pageCount = Math.ceil(all.length / MOCK_CARD_TRANSACTIONS_PAGE_SIZE);
+    const walked = Array.from({ length: pageCount }, (_, page) =>
+      mockPayCardTransactionsPage(pageRequest(String(page))),
+    ).flat();
+
+    expect(walked).toEqual(all);
+  });
+
+  it("ends on a short page, which is how a caller learns the history stopped", () => {
+    const all = mockPayCardTransactions();
+    const lastPage = Math.ceil(all.length / MOCK_CARD_TRANSACTIONS_PAGE_SIZE) - 1;
+
+    expect(mockPayCardTransactionsPage(pageRequest(String(lastPage))).length).toBeLessThan(
+      MOCK_CARD_TRANSACTIONS_PAGE_SIZE,
+    );
+  });
+
+  it("answers a page past the end with an empty array, which is what ends the reading", () => {
+    expect(mockPayCardTransactionsPage(pageRequest("99"))).toEqual([]);
+  });
+
+  it.each(["-1", "", "nonsense"])(
+    "falls back to page 0 for page %s, as the provider does when it is missing or not a number",
+    page => {
+      expect(mockPayCardTransactionsPage(pageRequest(page))).toEqual(
+        mockPayCardTransactionsPage(pageRequest("0")),
+      );
+    },
+  );
 });

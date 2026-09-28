@@ -13,3 +13,5 @@ export const CARD_IMAGE_WIDTH_VIEWPORT_RATIO = 0.4;
 /** Max width of the subtitle text block in pixels */
 export const CARD_SUBTITLE_MAX_WIDTH_PX = 330;
 export const CARD_TRACKING_PAGE_NAME = "Card";
+
+export const CL_CARD_APP_ID = "cl-card";

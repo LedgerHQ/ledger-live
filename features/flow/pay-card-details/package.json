@@ -29,9 +29,11 @@
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:*",
+    "@domain/entity-currency": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:*",
     "@features/flow-pay-card-assets": "workspace:*",
     "@features/flow-pay-card-transactions": "workspace:*",
+    "@features/flow-pay-card-wallets": "workspace:*",
     "@features/flow-pay-card-widget": "workspace:*",
     "@features/platform-pay-analytics": "workspace:^",
     "@ledgerhq/lumen-utils-shared": "catalog:",

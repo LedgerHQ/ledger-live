@@ -18,6 +18,10 @@ export function selectAnalyticsCardId(state: PayCardOnboardingWidgetStateRoot): 
   return state.payCardOnboardingWidget.analyticsCardId ?? null;
 }
 
+export function selectHasReadCardAccount(state: PayCardOnboardingWidgetStateRoot): boolean {
+  return state.payCardOnboardingWidget.hasReadCardAccount ?? false;
+}
+
 export function payCardOnboardingWidgetPersistedSelector(
   state: PayCardOnboardingWidgetStateRoot,
 ): PayCardOnboardingWidgetState {
@@ -29,5 +33,6 @@ export function payCardOnboardingWidgetPersistedSelector(
     hasCompletedOnboarding: state.payCardOnboardingWidget.hasCompletedOnboarding,
     analyticsCardId: state.payCardOnboardingWidget.analyticsCardId ?? null,
     reportedAnalyticsMilestones,
+    hasReadCardAccount: selectHasReadCardAccount(state),
   };
 }

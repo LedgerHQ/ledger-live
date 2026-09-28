@@ -106,16 +106,19 @@ export function OperationsListView({
 
   return (
     <Box lx={rootStyle}>
-      <TrackScreen name="OperationsList" has_pending_operations={hasPendingOperations} />
+      {!isCardTab ? (
+        <TrackScreen name="OperationsList" has_pending_operations={hasPendingOperations} />
+      ) : null}
       {showHistoryTypeSwitcher ? (
-        <HistoryTypeSwitcher selectedTab={historyTab} onTabChange={onHistoryTabChange} />
+        <Box style={switcherInsetStyle}>
+          <HistoryTypeSwitcher selectedTab={historyTab} onTabChange={onHistoryTabChange} />
+        </Box>
       ) : null}
       {isCardTab ? (
         <CardTransactionHistory
           asset={cardAsset}
           formatters={cardHistoryViewModel.formatters}
           formatDay={cardHistoryViewModel.formatDay}
-          onTrackEvent={cardHistoryViewModel.onTrackEvent}
           onGoToPay={cardHistoryViewModel.onGoToPay}
           cardVisual={<CardArtwork />}
         />
@@ -157,4 +160,5 @@ const rootStyle: LumenViewStyle = {
 };
 
 const listStyle = { flex: 1 } as const;
+const switcherInsetStyle = { paddingHorizontal: 16 } as const;
 const contentContainerStyle = { flexGrow: 1, paddingHorizontal: 16, paddingTop: 8 } as const;

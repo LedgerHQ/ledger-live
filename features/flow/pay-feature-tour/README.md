@@ -8,12 +8,14 @@ mobile and a dialog on desktop, shown once until the user dismisses it.
 ## Usage
 
 Copy lives with the feature: the tour resolves its own strings through
-[`@shared/i18n`](../../../shared/i18n), so the host only injects analytics.
+[`@shared/i18n`](../../../shared/i18n), and tracks through
+[`@features/platform-pay-analytics`](../../platform/pay-analytics/README.md), so the host mounts it
+with no props at all.
 
 ```tsx
 import { FeatureTour } from "@features/flow-pay-feature-tour";
 
-<FeatureTour onTrackScreen={trackScreen} onTrackEvent={trackEvent} />;
+<FeatureTour />;
 ```
 
 The keys it reads, in the host app's **default** namespace (`app` on Desktop, `common` on Mobile):
@@ -36,9 +38,9 @@ Tests wrap the component in `I18nTestProvider` from `@shared/i18n/testing`.
 Visibility is derived from this flow's `payCardFeatureTour` slice (`hasSeenFeatureTour`),
 exposed through `@features/flow-pay-feature-tour/state`. Store, persistence and test
 setup should import that entry so they do not load the tour UI. Dismissing the tour (Explore Pay, close
-button, or backdrop) dispatches `markPayCardFeatureTourSeen` once. Analytics are injected via the
-optional `onTrackScreen` / `onTrackEvent` props so the flow stays decoupled from any app analytics
-package.
+button, or backdrop) dispatches `markPayCardFeatureTourSeen` once. The screen view and the dismiss
+`button_clicked` are emitted in-package through `@features/platform-pay-analytics`, so the flow
+stays decoupled from any app analytics package.
 
 ## Platform resolution
 

@@ -10,6 +10,7 @@ import {
   cardManagementApi,
   initiatePayCardLogout,
   useFreezeCardMutation,
+  useGetCardCashbackQuery,
   useGetCardLinkedWalletsQuery,
   useLinkWalletToCardMutation,
   useUnlinkWalletFromCardMutation,
@@ -20,7 +21,6 @@ import {
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
   useGetInternalWalletsQuery,
-  useGetRewardWalletQuery,
   useOrderCardMutation,
   useUnfreezeCardMutation,
 } from "./api";
@@ -68,15 +68,12 @@ const internalWalletsOnTheWire = [
   },
 ];
 
-const rewardWalletOnTheWire = {
-  id: "098aeb90-e7f7-4f81-bc2e-4963330122c5",
-  balance: "45.75",
-  currency: "usdc",
-  isWithdrawable: true,
-  type: "REWARD",
+const cashback = {
+  amount: "0.00294697",
+  currency: "BTC",
+  network: "bitcoin",
+  ratePercent: "1",
 };
-
-const { type: _rewardType, ...rewardWallet } = rewardWalletOnTheWire;
 
 const internalWallets = internalWalletsOnTheWire.map(({ type: _type, ...wallet }) => wallet);
 
@@ -118,11 +115,15 @@ const makeStore = (sessionToken: string | null = null, overrides: Partial<CardAp
       }).concat(cardApi.middleware),
   });
 
-function expectSessionRequest(method: "GET" | "POST" | "PUT" | "DELETE", path: string) {
+function expectSessionRequest(
+  method: "GET" | "POST" | "PUT" | "DELETE",
+  path: string,
+  search = "",
+) {
   const sent = provider.sent();
 
   expect(sent.method).toBe(method);
-  expect(sent.url).toBe(`${CARD_API_BASE_URL}${path}`);
+  expect(sent.url).toBe(`${CARD_API_BASE_URL}${path}${search}`);
   expect(sent.headers.get("authorization")).toBe("Bearer session-token");
   expect(sent.headers.get("x-client-key")).toBe("client-key");
 }
@@ -140,11 +141,11 @@ describe("cardManagementApi configuration", () => {
       "createCardSetPinToken",
       "exchangeAuthorizationCode",
       "freezeCard",
+      "getCardCashback",
       "getCardLinkedWallets",
       "getCardStatus",
       "getCardTransactions",
       "getInternalWallets",
-      "getRewardWallet",
       "getUser",
       "getWalletHistory",
       "linkWalletToCard",
@@ -217,13 +218,11 @@ describe("cardManagementApi configuration", () => {
     expect(useUnlinkWalletFromCardMutation).toBeDefined();
     expect(cardManagementApi.endpoints.updateCardWalletPriorities).toBeDefined();
     expect(useUpdateCardWalletPrioritiesMutation).toBeDefined();
-    expect(cardManagementApi.endpoints.getRewardWallet).toBeDefined();
-    expect(useGetRewardWalletQuery).toBeDefined();
   });
 
-  it("exposes getRewardWallet and its hook", () => {
-    expect(cardManagementApi.endpoints.getRewardWallet).toBeDefined();
-    expect(useGetRewardWalletQuery).toBeDefined();
+  it("exposes getCardCashback and its hook", () => {
+    expect(cardManagementApi.endpoints.getCardCashback).toBeDefined();
+    expect(useGetCardCashbackQuery).toBeDefined();
   });
 
   it("registers under the shared cardApi reducer path", () => {
@@ -480,7 +479,11 @@ describe("cardManagementApi requests", () => {
     const TRANSACTIONS_PATH = "/v1/card/transactions";
     const transaction = PayCardTransactionSchema.parse(documentedPayCardTransaction);
 
-    it("reads the transactions with the bearer token and the client key", async () => {
+    function transactionsPage(ids: readonly string[]) {
+      return ids.map(id => ({ ...documentedPayCardTransaction, id }));
+    }
+
+    it("reads the first page with the bearer token and the client key", async () => {
       provider.get(TRANSACTIONS_PATH, () => jsonResponse([documentedPayCardTransaction]));
 
       const store = makeStore("session-token");
@@ -488,17 +491,25 @@ describe("cardManagementApi requests", () => {
         cardManagementApi.endpoints.getCardTransactions.initiate(undefined),
       );
 
-      expectSessionRequest("GET", TRANSACTIONS_PATH);
-      expect(result.data).toEqual([transaction]);
+      expectSessionRequest("GET", TRANSACTIONS_PATH, "?page=0");
+      expect(result.data?.pages).toEqual([[transaction]]);
     });
 
-    it("sends the filters as query parameters", async () => {
+    it("names the first page rather than letting the provider default it", async () => {
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardTransactions.initiate(undefined));
+
+      expect(new URL(provider.sent().url).searchParams.get("page")).toBe("0");
+    });
+
+    it("sends the filters alongside the page", async () => {
       provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
 
       const store = makeStore("session-token");
       await store.dispatch(
         cardManagementApi.endpoints.getCardTransactions.initiate({
-          page: 2,
           dateFrom: "2026-01-01",
           dateTo: "2026-01-31",
           mccCategories: "FOOD,TRAVEL",
@@ -506,10 +517,45 @@ describe("cardManagementApi requests", () => {
       );
 
       const { searchParams } = new URL(provider.sent().url);
-      expect(searchParams.get("page")).toBe("2");
+      expect(searchParams.get("page")).toBe("0");
       expect(searchParams.get("dateFrom")).toBe("2026-01-01");
       expect(searchParams.get("dateTo")).toBe("2026-01-31");
       expect(searchParams.get("mccCategories")).toBe("FOOD,TRAVEL");
+    });
+
+    it("reads on page by page until an empty one answers", async () => {
+      const pages = [transactionsPage(["a", "b"]), transactionsPage(["c"])];
+      provider.get(TRANSACTIONS_PATH, request =>
+        jsonResponse(pages[Number(new URL(request.url).searchParams.get("page"))] ?? []),
+      );
+
+      const readForward = () =>
+        store.dispatch(
+          cardManagementApi.endpoints.getCardTransactions.initiate(undefined, {
+            direction: "forward",
+          }),
+        );
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardTransactions.initiate(undefined));
+
+      // The short page is read past: no page size is documented, so a short page could still be a
+      // full one and only an empty answer ends the list.
+      await readForward();
+      const result = await readForward();
+
+      expect(result.data?.pages.map(page => page.map(({ id }) => id))).toEqual([
+        ["a", "b"],
+        ["c"],
+        [],
+      ]);
+      expect(result.data?.pageParams).toEqual([0, 1, 2]);
+
+      // The empty page ended the list, so asking forward again reads nothing further.
+      const afterTheEnd = await readForward();
+
+      expect(afterTheEnd.data?.pageParams).toEqual([0, 1, 2]);
+      expect(provider.sentTo(TRANSACTIONS_PATH)).toHaveLength(3);
     });
 
     it("rejects one date without the other before the request goes out", async () => {
@@ -527,7 +573,7 @@ describe("cardManagementApi requests", () => {
       expect(provider.requests()).toEqual([]);
     });
 
-    it("reads an empty history as an empty list, not as a failure", async () => {
+    it("reads an empty history as an empty first page, not as a failure", async () => {
       provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
 
       const store = makeStore("session-token");
@@ -535,7 +581,7 @@ describe("cardManagementApi requests", () => {
         cardManagementApi.endpoints.getCardTransactions.initiate(undefined),
       );
 
-      expect(result.data).toEqual([]);
+      expect(result.data?.pages).toEqual([[]]);
       expect(result.error).toBeUndefined();
     });
   });
@@ -882,44 +928,76 @@ describe("cardManagementApi requests", () => {
     });
   });
 
-  describe("getRewardWallet", () => {
-    const REWARD_WALLET_PATH = "/v1/wallet/reward";
+  describe("getCardCashback", () => {
+    const CASHBACK_PATH = "/v1/card/cashback";
 
-    const readRewardWallet = () =>
-      makeStore("session-token").dispatch(cardManagementApi.endpoints.getRewardWallet.initiate());
+    const readCashback = () =>
+      makeStore("session-token").dispatch(cardManagementApi.endpoints.getCardCashback.initiate());
 
-    it("reads the wallet the rewards are paid into", async () => {
-      provider.get(REWARD_WALLET_PATH, () => jsonResponse(rewardWalletOnTheWire));
+    it("reads the cashback the card has earned and the rate it earns at", async () => {
+      provider.get(CASHBACK_PATH, () => jsonResponse(cashback));
 
-      const result = await readRewardWallet();
+      const result = await readCashback();
 
-      expectSessionRequest("GET", REWARD_WALLET_PATH);
-      expect(result.data).toEqual(rewardWallet);
+      expectSessionRequest("GET", CASHBACK_PATH);
+      expect(result.data).toEqual({ ...cashback, ledgerId: "bitcoin" });
     });
 
-    it("keeps the balance a string, so its precision survives", async () => {
-      provider.get(REWARD_WALLET_PATH, () =>
-        jsonResponse({ ...rewardWalletOnTheWire, balance: "9007199254740993.000001" }),
+    it("resolves the asset by its currency and network, as a linked wallet does", async () => {
+      provider.get(CASHBACK_PATH, () =>
+        jsonResponse({ ...cashback, currency: "usdc", network: "ethereum" }),
       );
 
-      const result = await readRewardWallet();
+      const result = await readCashback();
 
-      expect(result.data?.balance).toBe("9007199254740993.000001");
+      expect(result.data?.ledgerId).toBe("ethereum/erc20/usd__coin");
     });
 
-    it("drops the keys the wire contract does not declare", async () => {
-      provider.get(REWARD_WALLET_PATH, () => jsonResponse(rewardWalletOnTheWire));
+    it("resolves an asset that names no network by its currency alone", async () => {
+      const { network: _network, ...withoutNetwork } = cashback;
+      provider.get(CASHBACK_PATH, () => jsonResponse(withoutNetwork));
 
-      const result = await readRewardWallet();
+      const result = await readCashback();
 
-      expect(result.data).not.toHaveProperty("type");
+      expect(result.data).toEqual({ ...withoutNetwork, ledgerId: "bitcoin" });
     });
 
-    it("rejects an answer that does not say whether the rewards can be withdrawn", async () => {
-      const { isWithdrawable: _isWithdrawable, ...withoutFlag } = rewardWalletOnTheWire;
-      provider.get(REWARD_WALLET_PATH, () => jsonResponse(withoutFlag));
+    it("resolves an asset whose network is null by its currency alone", async () => {
+      provider.get(CASHBACK_PATH, () => jsonResponse({ ...cashback, network: null }));
 
-      const result = await readRewardWallet();
+      const result = await readCashback();
+
+      expect(result.data?.ledgerId).toBe("bitcoin");
+    });
+
+    it.each([
+      ["absent", (({ currency: _currency, ...rest }) => rest)(cashback)],
+      ["null", { ...cashback, currency: null }],
+    ])("keeps a cashback whose currency is %s, with nothing to resolve", async (_name, body) => {
+      provider.get(CASHBACK_PATH, () => jsonResponse(body));
+
+      const result = await readCashback();
+
+      expect(result.data?.amount).toBe(cashback.amount);
+      expect(result.data?.ledgerId).toBeUndefined();
+    });
+
+    it("leaves the currency unresolved for an asset the catalog does not cover", async () => {
+      provider.get(CASHBACK_PATH, () =>
+        jsonResponse({ ...cashback, currency: "BXX", network: "ethereum" }),
+      );
+
+      const result = await readCashback();
+
+      expect(result.data?.ledgerId).toBeUndefined();
+      expect(result.data?.amount).toBe(cashback.amount);
+    });
+
+    it("rejects an answer without a rate", async () => {
+      const { ratePercent: _ratePercent, ...withoutRate } = cashback;
+      provider.get(CASHBACK_PATH, () => jsonResponse(withoutRate));
+
+      const result = await readCashback();
 
       expect(result.data).toBeUndefined();
       expect(result.error).toBeDefined();

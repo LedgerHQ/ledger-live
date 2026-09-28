@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Balance } from "@features/flow-pay-balance";
 import { Contacts, ContactAddressPicker } from "@features/flow-pay-contact";
 import { ContactsLedgerSyncIntroductionDialog } from "@features/flow-contacts-introduction";
@@ -17,18 +17,29 @@ export function PayTabView({
   depositOptions,
   bankTransferIntro,
   requestReceive,
-  verifyPhase,
   verifyAddress,
   deviceIntent,
   contacts,
   ledgerSyncIntroduction,
   contactAddressPicker,
   isContactsEnabled,
+  trackRequestAddressVerification,
+  trackRecipientAddressSelection,
 }: Readonly<PayTabViewModel>) {
+  const [initialBalanceFilter] = useState(balance.filter);
+
   return (
-    <div className="flex flex-col">
-      <TrackPage category="Pay" balance_filter={balance.filter} />
-      {verifyPhase === "intro" && <TrackPage category="Request Address Verification" />}
+    <div className="flex flex-col pb-32">
+      <TrackPage category="Pay" balance_filter={initialBalanceFilter} />
+      {requestReceive.isOpen && requestReceive.address ? (
+        <TrackPage
+          category="Request complete"
+          flow="request"
+          asset={requestReceive.asset.ticker}
+          network={requestReceive.network}
+        />
+      ) : null}
+      {trackRequestAddressVerification && <TrackPage category="Request Address Verification" />}
       <div className="flex flex-col gap-24">
         <PayTabHeader />
         <Balance {...balance} actionTiles={actionTiles} />
@@ -37,6 +48,9 @@ export function PayTabView({
       {isContactsEnabled && (
         <>
           <Contacts {...contacts} />
+          {trackRecipientAddressSelection && (
+            <TrackPage category="Recipient address selection" refreshSource={false} />
+          )}
           <ContactAddressPicker {...contactAddressPicker} />
           <ContactsLedgerSyncIntroductionDialog {...ledgerSyncIntroduction} />
         </>

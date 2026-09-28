@@ -5,14 +5,18 @@ import {
   buildWithdrawalPath,
   buildAccessBaanxPath,
   buildManagePinPath,
+  buildAddAssetPath,
+  buildOrderCardPath,
+  buildCashbackPath,
   openHostedCardPathSafely,
   type CardAssetPathBuilder,
 } from "@features/flow-pay-card-auth";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import useEnv from "@features/platform-env";
+import { useFeature } from "@features/platform-feature-flags";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { useSelector } from "LLD/hooks/redux";
-import { localeSelector } from "~/renderer/reducers/settings";
+import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 import { useCountervalueFormatter } from "LLD/hooks/useCountervalueFormatter";
 import logger from "~/renderer/logger";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
@@ -21,7 +25,6 @@ import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { usePayCardAssets } from "./usePayCardAssets";
-import { useWipeHostedSession } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
@@ -62,13 +65,15 @@ export function useCardViewModel(): CardViewModel {
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const locale = useSelector(localeSelector);
+  const discreet = useSelector(discreetModeSelector);
   const formatCountervalue = useCountervalueFormatter();
 
   const formatTransactionAmount = useCallback<
     NonNullable<CardViewModel["formatters"]["transactionAmount"]>
   >(
-    (value, currency, kind) => formatCardTransactionAmount({ value, currency, kind, locale }),
-    [locale],
+    (value, currency, kind) =>
+      formatCardTransactionAmount({ value, currency, kind, locale, discreet }),
+    [locale, discreet],
   );
   const formatTransactionDate = useDateFormatter(CARD_TRANSACTION_DATE_FORMAT);
 
@@ -122,27 +127,52 @@ export function useCardViewModel(): CardViewModel {
     }
   }, [callback, navigate, pathname]);
 
-  const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
+  const { openHostedLogin, openHostedPage, openLegacyCardApp } = useCardHostedPageOpeners();
+  const isLegacyTopUp = !!useFeature("lwdPayTab")?.params?.legacyTopUp;
 
-  const openHostedPath = useCallback(
-    (buildPath: CardAssetPathBuilder, onError: (error: unknown) => void, currency?: string) =>
-      openHostedCardPathSafely(openHostedPage, usAppId, buildPath, onError, currency),
+  const openHosted = useCallback(
+    (buildPath: CardAssetPathBuilder, failedToOpen: string, currency?: string) =>
+      openHostedCardPathSafely(
+        openHostedPage,
+        usAppId,
+        buildPath,
+        error => logger.warn(`[card] ${failedToOpen}`, error),
+        currency,
+      ),
     [openHostedPage, usAppId],
   );
 
   const openAssetPage = useCallback(
     (buildPath: CardAssetPathBuilder, currency?: string) =>
-      openHostedPath(
-        buildPath,
-        error => logger.warn("[card] the hosted asset page did not open", error),
-        currency,
-      ),
-    [openHostedPath],
+      openHosted(buildPath, "the hosted asset page did not open", currency),
+    [openHosted],
   );
 
-  const onTopUp = useCallback(() => openAssetPage(buildTopUpPath), [openAssetPage]);
+  // The legacy live app has its own top-up flow and its own login. It takes no currency, so the
+  // fallback opens it at its root from every top-up entry point.
+  const openTopUp = useCallback(
+    async (currency?: string) => {
+      if (isLegacyTopUp) {
+        openLegacyCardApp();
+        return;
+      }
 
-  useWipeHostedSession();
+      await openAssetPage(buildTopUpPath, currency);
+    },
+    [isLegacyTopUp, openLegacyCardApp, openAssetPage],
+  );
+
+  const onTopUp = useCallback(() => openTopUp(), [openTopUp]);
+
+  const onChooseCardType = useCallback(
+    () => openHosted(buildOrderCardPath, "order card page did not open"),
+    [openHosted],
+  );
+
+  const onViewRewards = useCallback(
+    () => openHosted(buildCashbackPath, "cashback page did not open"),
+    [openHosted],
+  );
 
   const login: CardViewModel["login"] = useMemo(
     () => ({ oauthConfig, callback, openHostedLogin, openHostedPage }),
@@ -171,44 +201,46 @@ export function useCardViewModel(): CardViewModel {
     [navigate, pathname],
   );
 
+  const onManagePin = useCallback(
+    () => openHosted(buildManagePinPath, "manage pin page did not open"),
+    [openHosted],
+  );
+
+  const onAccessBaanx = useCallback(
+    () => openHosted(buildAccessBaanxPath, "baanx page did not open"),
+    [openHosted],
+  );
+
+  const onAddAsset = useCallback(
+    () => openHosted(buildAddAssetPath, "add asset page did not open"),
+    [openHosted],
+  );
+
   const payCardAssets = usePayCardAssets();
   const assets: CardAssetsProps = useMemo(
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openAssetPage(buildTopUpPath, asset.currency),
+      onTopUp: asset => void openTopUp(asset.currency),
       onWithdraw: asset => void openAssetPage(buildWithdrawalPath, asset.currency),
+      onAddAsset,
     }),
-    [onShowAssetHistory, openAssetPage, payCardAssets],
-  );
-
-  const onManagePin = useCallback(
-    () =>
-      openHostedPath(buildManagePinPath, error =>
-        logger.warn("[card] manage pin page did not open", error),
-      ),
-    [openHostedPath],
-  );
-
-  const onAccessBaanx = useCallback(
-    () =>
-      openHostedPath(buildAccessBaanxPath, error =>
-        logger.warn("[card] baanx page did not open", error),
-      ),
-    [openHostedPath],
+    [onAddAsset, onShowAssetHistory, openAssetPage, openTopUp, payCardAssets],
   );
 
   const cardSettingsActions: CardSettingsActions = useMemo(
     () => ({ onManagePin, onAccessBaanx }),
     [onManagePin, onAccessBaanx],
   );
-
   return {
     formatters,
     assets,
     login,
     onShowMore,
     onTopUp,
+    onChooseCardType,
+    onViewRewards,
     cardSettingsActions,
+    discreet,
   };
 }

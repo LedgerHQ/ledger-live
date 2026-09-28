@@ -7,7 +7,7 @@ import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-n
 import { ConnectionErrorTypes, DiscoveryErrorTypes } from "@ledgerhq/live-dmk-mobile";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/analytics";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import {
   DEVICE_ACTION_BUTTON,
   getConnectedDeviceTrackingProperties,
@@ -60,8 +60,10 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     setIsInTerminalConnectDeviceError(false);
-    currentRouteNameRef.current = "Connect Device - Connecting";
+    setTrackingSource("Connect Device - Connecting");
   });
+
+  afterEach(resetTrackingPages);
 
   describe("trackDeviceflowStarted", () => {
     describe("Given a sourceFlow", () => {
@@ -214,7 +216,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
 
   describe("trackDeviceflowCanceled", () => {
     it("GIVEN the current page is non-blocking WHEN called THEN it tracks deviceflow_aborted", () => {
-      currentRouteNameRef.current = PAGE_CONNECT_APP.DeviceBusy;
+      setTrackingSource(PAGE_CONNECT_APP.DeviceBusy);
 
       trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {} });
 
@@ -225,7 +227,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     });
 
     it("GIVEN the current page is blocking WHEN called THEN it tracks deviceflow_failed", () => {
-      currentRouteNameRef.current = PAGE_CONNECT_APP.UnsupportedFirmware;
+      setTrackingSource(PAGE_CONNECT_APP.UnsupportedFirmware);
 
       trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {} });
 
@@ -236,7 +238,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     });
 
     it("GIVEN the current page is a generic device action error WHEN called THEN it tracks deviceflow_failed", () => {
-      currentRouteNameRef.current = PAGE_DEVICE_ACTION.Disconnected;
+      setTrackingSource(PAGE_DEVICE_ACTION.Disconnected);
 
       trackDeviceflowCanceled({ sourceFlow: "send", extraProperties: {} });
 
@@ -250,7 +252,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
       "GIVEN a non-terminal Connect Device error page %s WHEN called THEN it tracks deviceflow_aborted",
       page => {
         // GIVEN
-        currentRouteNameRef.current = page;
+        setTrackingSource(page);
 
         // WHEN
         trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {} });
@@ -267,7 +269,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
       "GIVEN a terminal Connect Device error page %s WHEN called THEN it tracks deviceflow_failed",
       page => {
         // GIVEN
-        currentRouteNameRef.current = page;
+        setTrackingSource(page);
         setIsInTerminalConnectDeviceError(true);
 
         // WHEN

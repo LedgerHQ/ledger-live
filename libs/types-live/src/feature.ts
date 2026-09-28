@@ -252,8 +252,6 @@ export type Features = CurrencyFeatures & {
   lwdLedgerSyncOptimisation: DefaultFeature;
   lwdProductTour: DefaultFeature;
   lwdBackupHub: DefaultFeature;
-  llmThai: DefaultFeature;
-  lldThai: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_ModularDrawer;
   lwdDeeplinkOpenHardening: DefaultFeature;
@@ -265,6 +263,7 @@ export type Features = CurrencyFeatures & {
   ldmkSolanaSigner: DefaultFeature;
   ldmkSolanaSignerIsTxcActive: DefaultFeature;
   ldmkCosmosSigner: DefaultFeature;
+  ldmkPolkadotSigner: DefaultFeature;
   ldmkXrpSigner: DefaultFeature;
   ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;

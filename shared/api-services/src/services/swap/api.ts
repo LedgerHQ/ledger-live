@@ -12,7 +12,8 @@ import type { SwapApiExtra } from "./types";
 /**
  * Builds this service's slice of the thunk `extraArgument`. RTK leaves `extraArgument` untyped, so
  * this is the one compile- and runtime-checked entry point: `parse` fails fast at app init if the swap
- * config is incomplete (e.g. an env var resolved to an empty string).
+ * config is incomplete (e.g. a getter is missing). A getter that resolves to an empty value is only
+ * knowable once it is called, so that case is caught by `swapBaseQuery` at request time instead.
  */
 export function swapApiExtra(extra: SwapApiExtra): SwapApiExtra {
   return SwapApiExtraSchema.parse(extra);
@@ -35,8 +36,17 @@ const swapBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
   extraOptions,
 ) => {
   const extra = getSwapExtra(api);
+  const baseUrl = extra.getSwapApiBaseUrl();
+
+  // An empty baseUrl would otherwise resolve `fetch` against the app's own origin instead of failing.
+  if (!baseUrl) {
+    return {
+      error: { status: "CUSTOM_ERROR", error: "getSwapApiBaseUrl() resolved to an empty value" },
+    };
+  }
+
   return createAuthenticatedBaseQuery({
-    baseUrl: extra.swapApiBaseUrl,
+    baseUrl,
     // `fetch` does not inherit the axios default headers `@ledgerhq/live-network` sets.
     prepareHeaders: headers => {
       headers.set(HEADER_X_LEDGER_CLIENT_VERSION, extra.ledgerClientVersion);

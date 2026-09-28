@@ -32,6 +32,7 @@ const Column = styled(Flex).attrs({
 
 type BulletProps = FlexBoxProps & {
   status: Status;
+  testId?: string;
   bulletText?: string;
   title: string;
   subtitle?: string;
@@ -40,6 +41,7 @@ type BulletProps = FlexBoxProps & {
 
 export const Bullet = ({
   status,
+  testId,
   bulletText,
   title,
   subtitle,
@@ -47,7 +49,11 @@ export const Bullet = ({
   ...props
 }: BulletProps) => {
   return (
-    <Row {...props} alignItems={children ? "flex-start" : "center"}>
+    <Row
+      {...props}
+      data-testid={testId ? `${testId}-${status}` : undefined}
+      alignItems={children ? "flex-start" : "center"}
+    >
       <IconContainer>
         {status === Status.active ? (
           <InfiniteLoader color="primary.c60" size={20} />

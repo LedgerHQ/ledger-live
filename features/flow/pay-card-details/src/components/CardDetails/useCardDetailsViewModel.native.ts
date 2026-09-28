@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { PayCardTransaction } from "@domain/api-card-management";
 import { useCardAssetsViewModel, type CardAssetRow } from "@features/flow-pay-card-assets";
-import type { CardTransactionItem } from "@features/flow-pay-card-transactions";
 import { transactionClickedProperties } from "@features/flow-pay-card-transactions";
+import type { CardTransactionItem } from "@features/flow-pay-card-transactions";
 import { getWalletPlatform } from "@features/flow-pay-card-widget/native";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { trackButtonClicked, trackTransactionClicked } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import { useFreezeCardViewModel } from "../Freeze/useFreezeCardViewModel";
 import { useMoreViewModel } from "../More/useMoreViewModel";
@@ -18,10 +18,10 @@ export function useCardDetailsViewModel({
   formatters,
   onShowMore,
   onTopUp,
+  onViewRewards,
   cardSettingsActions,
 }: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
-  const { trackButtonClicked, trackTransactionClicked } = usePayAnalyticsContext();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { route, goTo, goBack } = useCardDetailsNavigation();
   const assetsViewModel = useCardAssetsViewModel(assets);
@@ -34,6 +34,7 @@ export function useCardDetailsViewModel({
   };
 
   const onMorePress = () => {
+    trackButtonClicked({ button: "more", page: "Card details" });
     goTo({ name: "more" });
   };
 
@@ -69,6 +70,11 @@ export function useCardDetailsViewModel({
   const onAssetWithdrawContinue = () => {
     assetsViewModel.onWithdrawContinue();
     goBack();
+  };
+
+  const onAssetTopUpPress = () => {
+    closeSheet();
+    assetsViewModel.onTopUpPress();
   };
 
   const onAddToWalletPress = () => {
@@ -115,6 +121,7 @@ export function useCardDetailsViewModel({
     ...assetsViewModel,
     onAssetPress,
     onManagePress: onManageAssetsPress,
+    onTopUpPress: onAssetTopUpPress,
     onWithdrawPress: onAssetWithdrawPress,
     onShowHistoryPress: onAssetHistoryPress,
     onWithdrawContinue: onAssetWithdrawContinue,
@@ -136,6 +143,7 @@ export function useCardDetailsViewModel({
     overview: {
       cardVisual,
       assetsViewModel: assets ? assetSceneViewModel : null,
+      assets,
       freezeViewModel,
       moreViewModel,
       onFreezePress,
@@ -143,7 +151,9 @@ export function useCardDetailsViewModel({
       onTransactionPress,
       onAddToWalletPress,
       onShowMore,
+      onViewRewards,
       formatters,
+      disclaimer: t("payTab.disclaimer"),
     },
     freeze: { viewModel: freezeViewModel },
     more: moreViewModel ? { viewModel: moreViewModel } : null,

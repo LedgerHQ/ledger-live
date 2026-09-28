@@ -38,7 +38,7 @@ Prints a Baanx access token for the configured test user.
 
   --json     Print the full session object instead of the bare token.
   --session  Print a PayCardSession JSON for CARD_SESSION_BOOTSTRAP, to start
-             Ledger Wallet Desktop already signed in (dev and E2E only).
+             Ledger Wallet Desktop or Mobile already signed in (dev and E2E only).
   --help     Show this message.
 
 Configuration is read from the environment only:

@@ -138,15 +138,20 @@ export function StepAmountFooter({
   status,
   bridgePending,
   transaction,
+  validatorAddress,
 }: Readonly<StepProps>) {
   const { t } = useTranslation();
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
-  // Pre-populated from the delegation row — amount must be positive to proceed.
+  const delegatedAmount =
+    account.stakingResources.delegations.find(
+      delegation => delegation.validatorAddress === validatorAddress,
+    )?.amount ?? new BigNumber(0);
   // bridgePending is handled via isLoading on the button (spinner), not by disabling outright,
   // so the user gets visual feedback instead of a silently-grayed button.
-  const hasAmount = !!transaction && new BigNumber(transaction.amount ?? 0).gt(0);
-  const canNext = !hasErrors && hasAmount;
+  const amount = new BigNumber(transaction?.amount ?? 0);
+  const hasValidAmount = amount.gt(0) && amount.lte(delegatedAmount);
+  const canNext = !hasErrors && hasValidAmount;
   return (
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />

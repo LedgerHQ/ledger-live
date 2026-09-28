@@ -6,5 +6,8 @@ export interface CardViewModel {
   readonly login: PayCardProps["login"];
   readonly onShowMore: () => void;
   readonly onTopUp: () => Promise<void>;
+  readonly onChooseCardType: () => Promise<void>;
+  readonly onViewRewards: () => Promise<void>;
   readonly cardSettingsActions: PayCardProps["cardSettingsActions"];
+  readonly discreet?: boolean;
 }

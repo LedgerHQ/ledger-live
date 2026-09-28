@@ -11,11 +11,6 @@ export const zcash = currency({
   color: "#3790ca",
   family: "bitcoin",
   blockAvgTime: 150,
-  bitcoinLikeInfo: {
-    P2PKH: 7352,
-    P2SH: 7357,
-    XPUBVersion: 76067358,
-  },
   units: [
     {
       name: "zcash",
@@ -34,5 +29,4 @@ export const zcash = currency({
       address: "https://blockchair.com/zcash/address/$address",
     },
   ],
-  explorerId: "zec",
 });

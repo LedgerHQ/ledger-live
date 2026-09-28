@@ -11,7 +11,10 @@ export function useCardViewModel({
   formatters,
   onShowMore,
   onTopUp,
+  onChooseCardType,
+  onViewRewards,
   cardSettingsActions,
+  discreet,
 }: CardProps): CardViewProps {
   const { t } = useTranslation();
   useCardLifecycleTracking();
@@ -23,13 +26,30 @@ export function useCardViewModel({
   const { total, isLoading, isError } = useCardWalletsTotal(assets, isSignedIn);
 
   const cardVisual = useMemo<CardViewProps["cardVisual"]>(() => {
-    if (!isSignedIn || !formatCountervalue || assets === undefined || isError) return undefined;
+    if (!formatCountervalue) return undefined;
 
-    return { balance: total, formatCountervalue, balanceLabel, isLoading };
-  }, [isSignedIn, formatCountervalue, balanceLabel, assets, total, isLoading, isError]);
+    if (displayState === "resolving") {
+      return { balance: 0, formatCountervalue, balanceLabel, isLoading: true, discreet };
+    }
+
+    if (!isSignedIn || assets === undefined || isError) return undefined;
+
+    return { balance: total, formatCountervalue, balanceLabel, isLoading, discreet };
+  }, [
+    displayState,
+    isSignedIn,
+    formatCountervalue,
+    balanceLabel,
+    assets,
+    total,
+    isLoading,
+    isError,
+    discreet,
+  ]);
 
   return {
     title: t("payTab.card.title"),
+    disclaimer: t("payTab.disclaimer"),
     login,
     displayState,
     cardVisual,
@@ -37,6 +57,8 @@ export function useCardViewModel({
     formatters,
     onShowMore,
     onTopUp,
+    onChooseCardType,
+    onViewRewards,
     cardSettingsActions,
   };
 }

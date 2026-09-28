@@ -1,6 +1,7 @@
 export * from "./buySellLoader";
 export * from "./buySellShortcut";
 export * from "./buySellUi";
+export * from "./earnTxLifecycleMonitoring";
 export * from "./ethStakingModalWithFilters";
 export * from "./ethStakingProviders";
 export * from "./lifiSolana";
@@ -9,6 +10,7 @@ export * from "./noah";
 export * from "./portfolioExchangeBanner";
 export * from "./ptxBorrowLiveApp";
 export * from "./ptxCard";
+export * from "./ptxEarnCtaOnMobile";
 export * from "./ptxEarnDrawerConfiguration";
 export * from "./ptxEarnLiveApp";
 export * from "./ptxEarnTransactionSuccessBanner";

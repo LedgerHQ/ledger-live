@@ -1,10 +1,9 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
 import { track } from "~/renderer/analytics/segment";
-import { CARD_TRACKING_PAGE_NAME } from "../constants";
+import { CARD_TRACKING_PAGE_NAME, CL_CARD_APP_ID } from "../constants";
 
 const CARD_APP_ID = "card-program";
-const CL_CARD_APP_ID = "cl-card";
 /** Path in card-program Live App for "Choose your crypto card" / providers list */
 const CARD_PROGRAM_PATH_PROVIDERS_LIST = "/providers-list";
 

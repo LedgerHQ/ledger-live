@@ -29,8 +29,13 @@ const appConfig: Record<string, ConfigInfo> = {
   config_nanoapp_ethereum: {
     type: "object",
     default: {
-      minVersion: "1.20.1",
-      nanosMinVersion: "1.16.0",
+      minVersion: "1.22.5",
+      nanoxMinVersion: "1.22.5",
+      nanospMinVersion: "1.22.5",
+      flexMinVersion: "1.22.5",
+      staxMinVersion: "1.22.5",
+      apexpMinVersion: "1.22.5",
+      nanosMinVersion: "1.16.2",
     },
   },
   config_nanoapp_solana: {

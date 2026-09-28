@@ -2,8 +2,8 @@ import BigNumber from "bignumber.js";
 import { SetupServerApi, setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
 import { AbiCoder, ethers } from "ethers";
-import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
-import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
+import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis";
+import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic-public";
 import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type {
   EtherscanERC1155Event,
@@ -12,7 +12,7 @@ import type {
   EtherscanInternalTransaction,
   EtherscanOperation,
   LedgerExplorerOperation,
-} from "@ledgerhq/coin-evm/types/index";
+} from "@ledgerhq/coin-evm/types";
 import { promiseAllBatched } from "@ledgerhq/live-common/promise";
 
 type TraceTransaction = {

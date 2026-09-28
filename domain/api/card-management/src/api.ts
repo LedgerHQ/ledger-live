@@ -1,9 +1,10 @@
 import { cardApi } from "@shared/api-services";
 import { CARD_MANAGEMENT_TAGS, OAUTH2_TOKEN_PATH } from "./constants";
 import {
+  PayCardCashbackCanonicalSchema,
+  PayCardCashbackResponseSchema,
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
-  PayCardRewardWalletResponseSchema,
   PayCardLinkWalletRequestSchema,
   PayCardLinkWalletResponseSchema,
   PayCardLinkedWalletsResponseSchema,
@@ -21,21 +22,26 @@ import {
   PayCardSetPinTokenRequestSchema,
   PayCardSetPinTokenResponseSchema,
   PayCardStatusResponseSchema,
-  PayCardTransactionsRequestSchema,
+  PayCardTransactionsPageRequestSchema,
   PayCardTransactionsResponseSchema,
   PayCardWalletHistoryRequestSchema,
   PayCardWalletHistoryResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
-import { transformPayCardLinkedWallets, transformPayCardSessionResponse } from "./transforms";
+import { FIRST_CARD_TRANSACTIONS_PAGE, nextCardTransactionsPage } from "./transactionsPaging";
+import {
+  transformPayCardCashback,
+  transformPayCardLinkedWallets,
+  transformPayCardSessionResponse,
+} from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
+  PayCardCashback,
   PayCardFreezeStateResult,
   PayCardInternalWallet,
   PayCardLinkWalletRequest,
   PayCardLinkWalletResult,
   PayCardLinkedWallet,
-  PayCardRewardWallet,
   PayCardWalletPrioritiesRequest,
   PayCardWalletPrioritiesResult,
   PayCardLogoutResult,
@@ -143,20 +149,29 @@ export const cardManagementApi = cardApi
       }),
 
       /**
-       * The card's own transactions, newest first.
+       * The card's own transactions, newest first, one provider page at a time.
        *
-       * Paged by number and nothing else: the provider answers with a bare array, so a short page
-       * is how a caller learns it has reached the end.
+       * An infinite query: the provider pages a bare array and answers a page past the end with an
+       * empty one, which is what stops the reading. `transactionsPaging.ts` holds that rule and the
+       * join that puts the pages back together.
        */
-      getCardTransactions: build.query<PayCardTransaction[], PayCardTransactionsRequest>({
-        query: filters => ({
+      getCardTransactions: build.infiniteQuery<
+        PayCardTransaction[],
+        PayCardTransactionsRequest,
+        number
+      >({
+        query: ({ pageParam, queryArg }) => ({
           url: "/v1/card/transactions",
           method: "GET",
-          params: filters,
+          params: { ...queryArg, page: pageParam },
         }),
-        argSchema: PayCardTransactionsRequestSchema,
+        argSchema: PayCardTransactionsPageRequestSchema,
         responseSchema: PayCardTransactionsResponseSchema,
         providesTags: ["CardTransactions"],
+        infiniteQueryOptions: {
+          initialPageParam: FIRST_CARD_TRANSACTIONS_PAGE,
+          getNextPageParam: nextCardTransactionsPage,
+        },
       }),
 
       /**
@@ -263,12 +278,14 @@ export const cardManagementApi = cardApi
         providesTags: ["InternalWallets"],
       }),
 
-      getRewardWallet: build.query<PayCardRewardWallet, void>({
+      getCardCashback: build.query<PayCardCashback, void>({
         query: () => ({
-          url: "/v1/wallet/reward",
+          url: "/v1/card/cashback",
           method: "GET",
         }),
-        responseSchema: PayCardRewardWalletResponseSchema,
+        rawResponseSchema: PayCardCashbackResponseSchema,
+        transformResponse: transformPayCardCashback,
+        responseSchema: PayCardCashbackCanonicalSchema,
       }),
 
       getCardLinkedWallets: build.query<PayCardLinkedWallet[], void>({
@@ -373,8 +390,7 @@ export const {
   useGetUserQuery,
   useOrderCardMutation,
   useGetCardStatusQuery,
-  useGetCardTransactionsQuery,
-  useLazyGetCardTransactionsQuery,
+  useGetCardTransactionsInfiniteQuery,
   useGetWalletHistoryQuery,
   useLazyGetWalletHistoryQuery,
   useCreateCardDetailsTokenMutation,
@@ -384,7 +400,7 @@ export const {
   useFreezeCardMutation,
   useUnfreezeCardMutation,
   useGetInternalWalletsQuery,
-  useGetRewardWalletQuery,
+  useGetCardCashbackQuery,
   useGetCardLinkedWalletsQuery,
   useLinkWalletToCardMutation,
   useUnlinkWalletFromCardMutation,

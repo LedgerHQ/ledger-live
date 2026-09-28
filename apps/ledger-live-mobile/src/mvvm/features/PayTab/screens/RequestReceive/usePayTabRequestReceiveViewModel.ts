@@ -5,12 +5,12 @@ import { captureRef } from "react-native-view-shot";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { PayRequestTrackEvent, RequestReceiveProps } from "@features/flow-pay-request";
+import type { RequestReceiveProps } from "@features/flow-pay-request";
+import { trackButtonClicked, trackEvent } from "@features/platform-pay-analytics";
 import {
   markReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
 } from "@features/flow-pay-request/state";
-import { useTranslation } from "@shared/i18n";
 import { useHideTabBar } from "LLM/hooks/useTabBarVisibility";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { deriveRequestReceiveData } from "LLM/features/PayTab/hooks/deriveRequestReceiveData";
@@ -18,20 +18,15 @@ import { usePayTabVerifyAddress } from "LLM/features/PayTab/hooks/usePayTabVerif
 import type { PayTabNavigatorParamList } from "../../types";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
 import type { PayTabRequestReceiveViewProps } from "./PayTabRequestReceiveView";
+import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
-const REQUEST_PAGE = "Pay";
+const REQUEST_PAGE = "Request complete";
 const VERIFY_HINT = "verify";
-
-const onTrackEvent: PayRequestTrackEvent = (event, params) => {
-  void track(event, params);
-};
 
 export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProps {
   useHideTabBar();
 
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasSeenReceiveVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
   const { goBack, addListener, setOptions } =
@@ -41,10 +36,7 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const { account } = useAccountScreen(route);
   const currency = route.params.currency;
   const cardRef = useRef<View>(null);
-  const { openIntro, verifyAddress, dieActive, onReady, onExit } = usePayTabVerifyAddress(
-    onTrackEvent,
-    goBack,
-  );
+  const { openIntro, verifyAddress, dieActive, onReady, onExit } = usePayTabVerifyAddress(goBack);
 
   const data = useMemo(
     () => (account?.type === "Account" ? deriveRequestReceiveData(account, currency) : undefined),
@@ -60,7 +52,7 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const onShare = useCallback(async (address: string) => {
     try {
       const imageUrl = await captureRef(cardRef, { format: "png" });
-      await Share.open({ url: imageUrl, message: address, failOnCancel: false });
+      await leaveAppFor(() => Share.open({ url: imageUrl, message: address, failOnCancel: false }));
     } catch {
       // TODO: handle share/capture errors
     }
@@ -92,19 +84,21 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   }, [addListener, hasSeenReceiveVerifyHint]);
 
   const onHintShown = useCallback(() => {
-    track("hint_impression", {
+    trackEvent("hint_impression", {
       hint: VERIFY_HINT,
       buttonLocation: "request",
       page: REQUEST_PAGE,
+      flow: "request",
     });
   }, []);
 
   const onGotIt = useCallback(() => {
-    track("button_clicked", {
+    trackButtonClicked({
       button: "got it",
       hint: VERIFY_HINT,
       buttonLocation: "request",
       page: REQUEST_PAGE,
+      flow: "request",
     });
     markHintSeen();
   }, [markHintSeen]);
@@ -115,21 +109,6 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
     openIntro();
   }, [account, markHintSeen, openIntro]);
 
-  const labels = useMemo(
-    () => ({
-      title: t("payTab.request.title", { asset: data?.asset.name ?? "" }),
-      networkLabel: t("payTab.request.networkLabel", { network: data?.network ?? "" }),
-      actions: {
-        share: t("payTab.request.actions.share"),
-        copy: t("payTab.request.actions.copy"),
-        copied: t("payTab.request.actions.copied"),
-        save: t("payTab.request.actions.save"),
-        verify: t("payTab.request.actions.verify"),
-      },
-    }),
-    [t, data],
-  );
-
   const requestReceive = useMemo<RequestReceiveProps>(
     () => ({
       isOpen: true,
@@ -137,7 +116,6 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
       asset: data?.asset ?? { name: "", ticker: "" },
       network: data?.network ?? "",
       page: REQUEST_PAGE,
-      labels,
       assetIcon: data?.assetIcon ?? { ledgerId: "", ticker: "" },
       networkIcon: data?.networkIcon,
       cardRef,
@@ -146,27 +124,22 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
       onCopy,
       onVerify,
       onClose: goBack,
-      onTrackEvent,
       verifyHint: hasSeenReceiveVerifyHint
         ? undefined
         : {
             open: hasNavigationSettled,
-            message: t("payTab.request.verifyHint.message"),
-            gotItLabel: t("payTab.request.verifyHint.gotIt"),
             onGotIt,
             onShown: onHintShown,
           },
     }),
     [
       data,
-      labels,
       onShare,
       onCopy,
       onVerify,
       goBack,
       hasSeenReceiveVerifyHint,
       hasNavigationSettled,
-      t,
       onGotIt,
       onHintShown,
     ],
@@ -183,7 +156,6 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
             page: verifyAddress.page,
             onReady,
             onExit,
-            onTrackEvent,
           }
         : undefined,
   };

@@ -1,35 +1,35 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { i18nWrapper, REQUEST_RESOURCES } from "../../../__tests__/i18nWrapper";
 import { VerifyAddress } from "../VerifyAddress";
-import type { VerifyAddressLabels, VerifyAddressProps } from "../../../types";
+import type { VerifyAddressProps } from "../../../types";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
 
-const LABELS: VerifyAddressLabels = {
-  introTitle: "Verify your address",
-  introDescription: "To protect against address replacement attacks, verify your address.",
-  verifyCta: "Verify address",
-  successTitle: "Address displayed on the device's Secure Screen",
-  nextStepsLabel: "Next steps",
-  nextStepShare: "Share your address via your desired app",
-  nextStepMatch: "Ensure the shared address matches the one on your Ledger Device.",
-  gotItCta: "Got it",
-};
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 function renderVerifyAddress(overrides: Partial<VerifyAddressProps> = {}) {
   const props: VerifyAddressProps = {
     phase: "intro",
-    labels: LABELS,
     page: "Pay",
     onVerify: jest.fn(),
     onGotIt: jest.fn(),
     onClose: jest.fn(),
-    onTrackEvent: jest.fn(),
     ...overrides,
   };
-  return { props, ...render(<VerifyAddress {...props} />) };
+  return {
+    props,
+    ...render(<VerifyAddress {...props} />, { wrapper: i18nWrapper(REQUEST_RESOURCES) }),
+  };
 }
 
 describe("VerifyAddress (Web)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterEach(() => {
     cleanup();
   });
@@ -49,7 +49,7 @@ describe("VerifyAddress (Web)", () => {
 
     await user.click(screen.getByTestId("pay-card-verify-address-verify-cta"));
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "verify",
       buttonLocation: "verify address",
       page: "Pay",
@@ -66,7 +66,7 @@ describe("VerifyAddress (Web)", () => {
 
     await user.click(screen.getByTestId("pay-card-verify-address-got-it-cta"));
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "got it",
       buttonLocation: "verify address",
       page: "Pay",

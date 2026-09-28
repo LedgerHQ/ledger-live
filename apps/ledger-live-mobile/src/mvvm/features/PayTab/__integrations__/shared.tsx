@@ -252,6 +252,26 @@ export function holdDada() {
   return () => release();
 }
 
+const USDC_META_CURRENCY_ID = "urn:crypto:meta-currency:usd_coin";
+
+// MAD sends `additionalData`, the balance query does not: only MAD's stablecoin call gets USDC.
+export function mockStablecoinMadCatalog() {
+  const usdcOnly = {
+    ...mockData,
+    cryptoAssets: { [USDC_META_CURRENCY_ID]: mockData.cryptoAssets[USDC_META_CURRENCY_ID] },
+  };
+  server.use(
+    ...DADA_URLS.map(url =>
+      http.get(url, ({ request }) => {
+        const params = new URL(request.url).searchParams;
+        const isStablecoinMad =
+          params.get("categories") === "stablecoins" && params.has("additionalData");
+        return isStablecoinMad ? HttpResponse.json(usdcOnly) : dadaResponse(request);
+      }),
+    ),
+  );
+}
+
 export function mockFullAssetCatalog() {
   server.use(...DADA_URLS.map(url => http.get(url, () => HttpResponse.json(mockData))));
 }
@@ -299,7 +319,14 @@ function getPayTabRenderInput({
         ...state,
         payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour },
         ...(signedInCard
-          ? { payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" as const } }
+          ? {
+              payCardAuth: {
+                hasCard: true,
+                pendingLoginType: null,
+                status: "signedIn" as const,
+                isSessionResolving: false,
+              },
+            }
           : {}),
         ...(contacts ? { contacts: { contacts } } : {}),
       };

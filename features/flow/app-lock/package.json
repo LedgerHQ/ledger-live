@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@features/platform-app-lock": "workspace:*",
+    "@shared/analytics": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"

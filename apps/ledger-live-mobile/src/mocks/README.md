@@ -69,8 +69,9 @@ reaches the real provider. Only the answer buttons and the renewal counter need 
 
 `GET /v1/card/transactions` is always answered from
 `@domain/api-card-management/mock/card-transactions`, so a transaction list renders without a funded
-card. The page holds one transaction per spend category, which is how every
-`payTab.cardTransactions.categories` label becomes visible.
+card. The mock holds one transaction per spend category, which is how the
+`payTab.cardTransactions.categories` labels become visible, and serves them six to a page — so the
+last two arrive only with the second page.
 
 `src/mocks/card/state.ts` holds the switchboard the panel and the handler share. It lives on
 `globalThis`, because the panel's props are built in `@devtools/bindings`, which cannot import from

@@ -49,7 +49,11 @@ const wrapper = cardApiWrapper({ signedIn: true });
 describe("CardTransactionHistoryView (native)", () => {
   it("renders the loading state", () => {
     render(
-      <CardTransactionHistoryView displayState={{ kind: "loading" }} onRowClick={jest.fn()} />,
+      <CardTransactionHistoryView
+        isLoadingMore={false}
+        displayState={{ kind: "loading" }}
+        onRowClick={jest.fn()}
+      />,
       {
         wrapper,
       },
@@ -63,6 +67,7 @@ describe("CardTransactionHistoryView (native)", () => {
 
     render(
       <CardTransactionHistoryView
+        isLoadingMore={false}
         displayState={{
           kind: "ready",
           groups: [{ day: new Date("2024-10-14T10:44:36.276Z"), items: [item] }],
@@ -84,6 +89,7 @@ describe("CardTransactionHistoryView (native)", () => {
 
     render(
       <CardTransactionHistoryView
+        isLoadingMore={false}
         displayState={{
           kind: "ready",
           groups: [{ day: new Date("2024-10-14T10:44:36.276Z"), items: [item] }],
@@ -104,6 +110,7 @@ describe("CardTransactionHistoryView (native)", () => {
 
     render(
       <CardTransactionHistoryView
+        isLoadingMore={false}
         displayState={{ kind: "empty" }}
         onRowClick={jest.fn()}
         onGoToPay={onGoToPay}

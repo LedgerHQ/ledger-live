@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { SectionList, type SectionListRenderItem } from "react-native";
-import { Box, Skeleton, Spot } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Skeleton, Spinner, Spot } from "@ledgerhq/lumen-ui-rnative";
 import { CreditCard } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { StatusMessage, type StatusMessageProps } from "./components/StatusMessage";
 import { DayHeader } from "./components/DayHeader";
@@ -26,6 +26,8 @@ export function CardTransactionHistoryView({
   onRowClick,
   onGoToPay,
   cardVisual,
+  onLoadMore,
+  isLoadingMore,
 }: CardTransactionHistoryViewProps) {
   const sections: HistorySection[] = useMemo(() => {
     if (displayState.kind !== "ready") return [];
@@ -35,6 +37,20 @@ export function CardTransactionHistoryView({
   const renderItem: SectionListRenderItem<CardTransactionItem, HistorySection> = useCallback(
     ({ item }) => <HistoryRow item={item} formatters={formatters} onRowClick={onRowClick} />,
     [formatters, onRowClick],
+  );
+
+  const renderFooter = useCallback(
+    () =>
+      isLoadingMore ? (
+        <Box
+          lx={{ paddingVertical: "s16", alignItems: "center" }}
+          accessibilityLiveRegion="polite"
+          testID="card-history-loading-more"
+        >
+          <Spinner size={20} />
+        </Box>
+      ) : null,
+    [isLoadingMore],
   );
 
   const renderSectionHeader = useCallback(
@@ -97,6 +113,10 @@ export function CardTransactionHistoryView({
           renderItem={renderItem}
           renderSectionHeader={renderSectionHeader}
           SectionSeparatorComponent={SectionSeparator}
+          ListFooterComponent={renderFooter}
+          onEndReached={onLoadMore}
+          // Half a screen out, so the next page is usually there by the time the list reaches it.
+          onEndReachedThreshold={0.5}
           stickySectionHeadersEnabled={false}
           style={listStyle}
           contentContainerStyle={listContentStyle}

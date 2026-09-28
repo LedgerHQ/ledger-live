@@ -183,7 +183,7 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/concordium-core": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",

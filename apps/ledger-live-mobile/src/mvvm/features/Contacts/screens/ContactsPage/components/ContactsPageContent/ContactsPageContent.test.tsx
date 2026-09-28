@@ -23,6 +23,7 @@ function createViewModel({
       me: {
         contactId: "contact-me" as never,
         name: "Me",
+        isMe: true,
         initial: "M",
         addressCount: 0,
       },
@@ -35,7 +36,6 @@ function createViewModel({
       ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
       formatAddressCount: count => `${count} address`,
     },
-    meAvatarSrc: "https://example.com/black/user.png",
     searchQuery: "",
     onSearchQueryChange: jest.fn(),
     onOpenContact: jest.fn(),

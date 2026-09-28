@@ -1,6 +1,7 @@
 import { useMemo } from "react";
-import { Check, Copy, Download, LedgerLogo, Share } from "@ledgerhq/lumen-ui-react/symbols";
-import type { RequestReceiveActionId, RequestReceiveActionLabels } from "../../types";
+import { Check, Copy, Download, ShieldCheck, Share } from "@ledgerhq/lumen-ui-react/symbols";
+import { useTranslation } from "@shared/i18n";
+import type { RequestReceiveActionId } from "../../types";
 
 type SymbolComponent = typeof Copy;
 
@@ -13,7 +14,6 @@ export type RequestReceiveActionTile = Readonly<{
 }>;
 
 type UseRequestReceiveActionsParams = Readonly<{
-  labels: RequestReceiveActionLabels;
   visibleActions: readonly RequestReceiveActionId[];
   hasCopied: boolean;
   onShare: () => void;
@@ -23,7 +23,6 @@ type UseRequestReceiveActionsParams = Readonly<{
 }>;
 
 export function useRequestReceiveActions({
-  labels,
   visibleActions,
   hasCopied,
   onShare,
@@ -31,38 +30,40 @@ export function useRequestReceiveActions({
   onSave,
   onVerify,
 }: UseRequestReceiveActionsParams): readonly RequestReceiveActionTile[] {
+  const { t } = useTranslation();
+
   return useMemo(() => {
     const byId: Readonly<Record<RequestReceiveActionId, RequestReceiveActionTile>> = {
       share: {
         id: "share",
         icon: Share,
-        label: labels.share,
+        label: t("payTab.request.actions.share"),
         onClick: onShare,
         testId: "pay-request-receive-share",
       },
       copy: {
         id: "copy",
         icon: hasCopied ? Check : Copy,
-        label: hasCopied ? labels.copied : labels.copy,
+        label: hasCopied ? t("payTab.request.actions.copied") : t("payTab.request.actions.copy"),
         onClick: onCopy,
         testId: "pay-request-receive-copy",
       },
       save: {
         id: "save",
         icon: Download,
-        label: labels.save,
+        label: t("payTab.request.actions.save"),
         onClick: onSave,
         testId: "pay-request-receive-save",
       },
       verify: {
         id: "verify",
-        icon: LedgerLogo,
-        label: labels.verify,
+        icon: ShieldCheck,
+        label: t("payTab.request.actions.verify"),
         onClick: onVerify,
         testId: "pay-request-receive-verify",
       },
     };
 
     return visibleActions.map(id => byId[id]);
-  }, [labels, visibleActions, hasCopied, onShare, onCopy, onSave, onVerify]);
+  }, [t, visibleActions, hasCopied, onShare, onCopy, onSave, onVerify]);
 }

@@ -38,7 +38,7 @@ jobs:
         os:
           - ubuntu-22.04
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ github.event.pull_request.head.repo.fork && matrix.os || 'ledger-wallet-4cpu-aws-public' }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Setup the caches
@@ -53,6 +53,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+      - name: JFrog npm auth
+        if: ${{ !github.event.pull_request.head.repo.fork }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
       - name: Install node-gyp globally
         if: runner.os == 'Windows'
         run: |

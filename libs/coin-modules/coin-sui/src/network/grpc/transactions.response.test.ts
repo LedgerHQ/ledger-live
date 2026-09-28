@@ -1,6 +1,6 @@
 import type { GrpcTypes } from "@mysten/sui/grpc";
 import { getOperationRecipients, getUnifiedBalanceChanges } from "../sdk";
-import { grpcTxToJsonRpcResponse } from "./transactions";
+import { grpcTxToSuiTransaction } from "./transactions";
 import fixtures from "./transactions.fixtures.json";
 
 /**
@@ -24,9 +24,9 @@ const programmable = revive(fixtures.programmable) as GrpcTypes.ExecutedTransact
 const system = revive(fixtures.system) as GrpcTypes.ExecutedTransaction;
 const transfer = revive(fixtures.transfer) as GrpcTypes.ExecutedTransaction;
 
-describe("grpcTxToJsonRpcResponse", () => {
+describe("grpcTxToSuiTransaction", () => {
   describe("a programmable transaction", () => {
-    const mapped = grpcTxToJsonRpcResponse(programmable);
+    const mapped = grpcTxToSuiTransaction(programmable);
 
     it("preserves the digest and marks the kind programmable", () => {
       expect(mapped.digest).toBe("GYcdZWiSrpcgcY8k4ZyJSycW1ew9yqMfQt4bazHJcLjr");
@@ -54,10 +54,8 @@ describe("grpcTxToJsonRpcResponse", () => {
     it("shortens balance-change coin types and keeps the signed amount", () => {
       expect(mapped.balanceChanges).toEqual([
         {
+          address: "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3",
           coinType: "0x2::sui::SUI",
-          owner: {
-            AddressOwner: "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3",
-          },
           amount: "-32784",
         },
       ]);
@@ -77,16 +75,10 @@ describe("grpcTxToJsonRpcResponse", () => {
       expect(getUnifiedBalanceChanges(mapped)).toEqual(mapped.balanceChanges);
     });
 
-    it("maps events with a shortened type and a usable id", () => {
-      const [event] = mapped.events ?? [];
+    it("maps events to a shortened type and their parsed JSON", () => {
+      const [event] = mapped.events;
+      expect(Object.keys(event).sort()).toEqual(["parsedJson", "type"]);
       expect(event.type).not.toContain("0x0000000000000000");
-      expect(event.id.txDigest).toBe(mapped.digest);
-    });
-
-    // The wire returns signatures but Core's include set omits them, matching the GraphQL adapter's
-    // hardcoded `[]`. No consumer reads the field; asserted so widening the include set is deliberate.
-    it("does not project signatures", () => {
-      expect(mapped.transaction?.txSignatures).toEqual([]);
     });
   });
 
@@ -94,12 +86,13 @@ describe("grpcTxToJsonRpcResponse", () => {
   // "Only programmable transactions are supported" if a body is requested for one, so the mapper
   // must classify the kind from the raw proto before decoding.
   describe("a system transaction", () => {
-    const mapped = grpcTxToJsonRpcResponse(system);
+    const mapped = grpcTxToSuiTransaction(system);
 
-    it("names the kind and omits the programmable body", () => {
-      expect(mapped.transaction?.data.transaction.kind).toBe("ConsensusCommitPrologue");
-      expect(mapped.transaction?.data.transaction).not.toHaveProperty("inputs");
-      expect(mapped.transaction?.data.transaction).not.toHaveProperty("transactions");
+    it("keeps the kind name and omits the programmable body", () => {
+      expect(mapped.transaction.data.transaction).toEqual({
+        kind: "System",
+        name: "ConsensusCommitPrologue",
+      });
     });
 
     it("still yields a digest and a status", () => {
@@ -116,7 +109,7 @@ describe("grpcTxToJsonRpcResponse", () => {
   // DeepBook fixture above cannot reach the recipient path at all, so without this the money path
   // from proto through `getOperationRecipients` would have no hermetic coverage.
   describe("a transfer transaction", () => {
-    const mapped = grpcTxToJsonRpcResponse(transfer);
+    const mapped = grpcTxToSuiTransaction(transfer);
 
     it("extracts the transfer recipients as addresses", () => {
       const recipients = getOperationRecipients(mapped.transaction?.data);
@@ -128,13 +121,12 @@ describe("grpcTxToJsonRpcResponse", () => {
       }
     });
 
-    it("maps the transfer commands and keeps its balance changes", () => {
-      const commands = (
-        mapped.transaction?.data.transaction as { transactions?: Record<string, unknown>[] }
-      ).transactions;
+    it("keeps the kind name of the non-MoveCall commands and keeps its balance changes", () => {
+      const block = mapped.transaction.data.transaction;
+      const commands = block.kind === "ProgrammableTransaction" ? block.transactions : [];
 
-      expect(commands?.some(c => "TransferObjects" in c)).toBe(true);
-      expect(commands?.some(c => "SplitCoins" in c)).toBe(true);
+      expect(commands).toContainEqual({ Other: "TransferObjects" });
+      expect(commands).toContainEqual({ Other: "SplitCoins" });
       expect(mapped.balanceChanges?.length).toBeGreaterThan(0);
       for (const change of mapped.balanceChanges ?? []) {
         expect(change.coinType).not.toContain("0x0000000000000000");
@@ -166,11 +158,9 @@ describe("grpcTxToJsonRpcResponse", () => {
         },
       } as unknown as GrpcTypes.ExecutedTransaction;
 
-      const unified = grpcTxToJsonRpcResponse(withWrite);
+      const unified = grpcTxToSuiTransaction(withWrite);
       const changes = getUnifiedBalanceChanges(unified);
-      const deposit = changes.find(
-        c => (c.owner as { AddressOwner?: string })?.AddressOwner === recipient,
-      );
+      const deposit = changes.find(c => c.address === recipient);
 
       expect(deposit?.amount).toBe("4200");
       expect(deposit?.coinType).toBe("0x2::sui::SUI");

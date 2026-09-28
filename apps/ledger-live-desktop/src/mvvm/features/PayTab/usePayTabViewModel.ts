@@ -9,16 +9,11 @@ import { usePayTabVerifyAddress } from "./hooks/usePayTabVerifyAddress";
 
 export function usePayTabViewModel() {
   const balance = usePayCardBalance();
-  const deposit = usePayTabDepositOptions(balance.onTrackEvent);
-  const verify = usePayTabVerifyAddress(balance.onTrackEvent);
-  const request = usePayTabRequestReceive(balance.onTrackEvent, verify.openIntro);
+  const verify = usePayTabVerifyAddress();
+  const request = usePayTabRequestReceive(verify.openIntro);
+  const deposit = usePayTabDepositOptions(request.open);
   const newPayment = usePayTabNewPayment();
-  const actionTiles = usePayTabActionTiles(
-    balance.onTrackEvent,
-    deposit.open,
-    request.open,
-    newPayment.open,
-  );
+  const actionTiles = usePayTabActionTiles(deposit.open, request.open, newPayment.open);
   const { contacts, ledgerSyncIntroduction, contactAddressPicker } = usePayTabContacts(
     newPayment.payFromAddress,
   );
@@ -37,6 +32,8 @@ export function usePayTabViewModel() {
     ledgerSyncIntroduction,
     contactAddressPicker,
     isContactsEnabled,
+    trackRequestAddressVerification: verify.phase === "intro",
+    trackRecipientAddressSelection: isContactsEnabled && contactAddressPicker.isOpen,
   };
 }
 

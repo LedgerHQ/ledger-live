@@ -7,7 +7,8 @@ import type { RequestReceiveViewProps } from "../../types";
 
 export function RequestReceiveView({
   isOpen,
-  labels,
+  title,
+  networkLabel,
   assetIcon,
   networkIcon,
   visibleActions,
@@ -52,15 +53,14 @@ export function RequestReceiveView({
           data-testid="pay-request-receive"
         >
           <RequestReceiveSummary
-            title={labels.title}
-            networkLabel={labels.networkLabel}
+            title={title}
+            networkLabel={networkLabel}
             assetIcon={assetIcon}
             networkIcon={networkIcon}
             addressParts={addressParts}
             qrPayload={qrPayload}
           />
           <RequestReceiveActions
-            labels={labels.actions}
             visibleActions={visibleActions}
             hasCopied={hasCopied}
             onShare={onShare}

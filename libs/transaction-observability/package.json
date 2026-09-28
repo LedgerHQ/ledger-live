@@ -20,7 +20,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/evm-tools": "workspace:^",
+    "@ledgerhq/evm-tools": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@shared/env": "workspace:*"
   },

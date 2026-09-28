@@ -32,4 +32,12 @@ describe("CardTransactionHistory", () => {
 
     expect(screen.queryByTestId("card-transaction-detail-dialog")).not.toBeInTheDocument();
   });
+
+  it("marks the end of the list, so scrolling there reads the next page", async () => {
+    server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(mockPayCardTransactions())));
+
+    render(<CardTransactionHistory />, { wrapper: cardApiWrapper({ signedIn: true }) });
+
+    expect(await screen.findByTestId("card-history-load-more-sentinel")).toBeInTheDocument();
+  });
 });

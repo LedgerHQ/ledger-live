@@ -1,4 +1,4 @@
-jest.mock("@ledgerhq/coin-evm/api/index", () => {
+jest.mock("@ledgerhq/coin-evm/api", () => {
   const methods = [
     "broadcast",
     "combine",
@@ -33,7 +33,7 @@ jest.mock("../network/client", () => {
   };
 });
 
-import { createApi as createEvmApi } from "@ledgerhq/coin-evm/api/index";
+import { createApi as createEvmApi } from "@ledgerhq/coin-evm/api";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { getCeloClient } from "../network/client";

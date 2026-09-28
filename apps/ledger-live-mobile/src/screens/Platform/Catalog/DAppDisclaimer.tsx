@@ -79,8 +79,8 @@ const DAppDisclaimer = ({
         borderRadius={2}
       >
         <IconsLegacy.InfoMedium color="primary.c90" size={20} />
-        <Text variant="body" color="primary.c90" ml={5}>
-          {t("platform.disclaimer.legalAdviceShort")}
+        <Text variant="body" color="primary.c90" ml={5} flex={1}>
+          {t("platform.disclaimer.legalAdvice")}
         </Text>
       </Flex>
 

@@ -7,6 +7,7 @@ import {
   checkPassword,
   selectBiometricsEnabled,
   selectHasPassword,
+  setNeedsLongerPassword,
   unlockApp,
   type BiometricsKind,
 } from "@features/platform-app-lock";
@@ -78,10 +79,13 @@ function useUnlockScreenViewModel(): UnlockScreenViewModel {
 
       try {
         // `notSet` means unreadable, and must not unlock the lock the hydration just imposed.
-        if ((await checkPassword(password)).status !== "correct") {
+        const check = await checkPassword(password);
+
+        if (check.status !== "correct") {
           return "incorrect";
         }
 
+        dispatch(setNeedsLongerPassword(check.needsLongerPassword));
         dispatch(unlockApp());
         return "unlocked";
       } catch {

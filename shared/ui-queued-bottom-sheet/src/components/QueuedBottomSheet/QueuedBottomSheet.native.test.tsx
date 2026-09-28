@@ -1,8 +1,15 @@
 import React from "react";
-import { View } from "react-native";
+import { Platform, Text, View } from "react-native";
 import { render } from "@testing-library/react-native";
 import { QueuedBottomSheet } from ".";
 import { QueuedBottomSheetsProvider } from "../QueuedBottomSheetsProvider";
+import { useBottomSheetBottomInset } from "../../contexts/BottomSheetBottomInsetContext";
+
+const BOTTOM_INSET = 48;
+
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ top: 0, bottom: BOTTOM_INSET, left: 0, right: 0 }),
+}));
 
 describe("QueuedBottomSheet (native)", () => {
   it("renders its children inside the bottom sheet", () => {
@@ -100,6 +107,32 @@ describe("QueuedBottomSheet (native)", () => {
     expect(getByTestId("sheet").props.footerComponent).toBeUndefined();
   });
 
+  describe("bottom inset left to the content", () => {
+    const originalOS = Platform.OS;
+
+    afterEach(() => {
+      Platform.OS = originalOS;
+    });
+
+    // The Android spacer is a sibling of the content, so dynamic sizing — which measures the
+    // content alone — never makes room for it and the sheet still has to pad itself.
+    it.each([
+      { os: "ios", enableDynamicSizing: true, inset: BOTTOM_INSET },
+      { os: "android", enableDynamicSizing: true, inset: BOTTOM_INSET },
+      { os: "android", enableDynamicSizing: false, inset: 0 },
+    ] as const)("leaves $inset on $os, dynamically sized: $enableDynamicSizing", testCase => {
+      Platform.OS = testCase.os;
+
+      expect(renderContentBottomInset({ enableDynamicSizing: testCase.enableDynamicSizing })).toBe(
+        testCase.inset,
+      );
+    });
+
+    it("leaves nothing when the footer already pads over the area", () => {
+      expect(renderContentBottomInset({ enableDynamicSizing: true, footer: <View /> })).toBe(0);
+    });
+  });
+
   // Keeping gorhom off the Android keyboard leaves the footer free to rise over it on its own,
   // without the two offsets stacking. See QueuedBottomSheetFooter.
   it("matches the manifest, so gorhom leaves the Android keyboard to the window", () => {
@@ -109,6 +142,24 @@ describe("QueuedBottomSheet (native)", () => {
     );
   });
 });
+
+function renderContentBottomInset(
+  props: Readonly<{ footer?: React.ReactNode; enableDynamicSizing: boolean }>,
+): number {
+  function InsetProbe() {
+    return <Text testID="inset">{useBottomSheetBottomInset()}</Text>;
+  }
+
+  const { getByTestId } = render(
+    <QueuedBottomSheetsProvider>
+      <QueuedBottomSheet testID="sheet" isRequestingToBeOpened {...props}>
+        <InsetProbe />
+      </QueuedBottomSheet>
+    </QueuedBottomSheetsProvider>,
+  );
+
+  return Number(getByTestId("inset").props.children);
+}
 
 function renderSheet() {
   return render(

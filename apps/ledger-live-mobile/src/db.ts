@@ -37,7 +37,7 @@ import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state
 import type { PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 import type { PayCardOnboardingWidgetState } from "@features/flow-pay-card-widget/state";
 
-type PayCardPersistedState = PayCardFeatureTourState &
+export type PayCardPersistedState = PayCardFeatureTourState &
   PayRequestVerifyHintState &
   PayCardBalanceState &
   PayCardLoginIntroState &

@@ -1,17 +1,21 @@
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 import {
-  isAppBackgrounded,
+  decideLaunchLock,
   isAppLockConfigured,
   lockApp,
   selectAppLock,
+  selectHasDecidedLaunchLock,
   selectIsLocked,
 } from "@features/platform-app-lock";
-import React, { useCallback, useEffect, useState } from "react";
-import { AppState, Platform, StyleSheet, View } from "react-native";
+import React, { useCallback, useEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "~/context/hooks";
+import { isAppInBackground, onAppBackground } from "./adapters/appVisibility";
 import { useAppLockHydration } from "./hooks/useAppLockHydration";
 import { useAppLockScheme } from "./hooks/useAppLockScheme";
 import { useLegacyPasswordMigration } from "./hooks/useLegacyPasswordMigration";
+import { LongerPasswordGate } from "./LongerPasswordGate";
+import { useLongerPasswordGateViewModel } from "./LongerPasswordGate/useLongerPasswordGateViewModel";
 import { UnlockScreen } from "./screens/Unlock";
 
 export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -23,7 +27,8 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
   const protection = useSelector(selectAppLock);
   const isLocked = useSelector(selectIsLocked);
   const { dismissAll } = useBottomSheetModal();
-  const [hasDecidedInitialLock, setHasDecidedInitialLock] = useState(false);
+  const longerPassword = useLongerPasswordGateViewModel();
+  const hasDecidedLaunchLock = useSelector(selectHasDecidedLaunchLock);
 
   const lockIfConfigured = useCallback(() => {
     if (isRevamped && isAppLockConfigured(protection)) {
@@ -32,13 +37,13 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
   }, [dispatch, isRevamped, protection]);
 
   useEffect(() => {
-    if (scheme === undefined || hasDecidedInitialLock) {
+    if (scheme === undefined || hasDecidedLaunchLock) {
       return;
     }
 
     lockIfConfigured();
-    setHasDecidedInitialLock(true);
-  }, [hasDecidedInitialLock, lockIfConfigured, scheme]);
+    dispatch(decideLaunchLock());
+  }, [dispatch, hasDecidedLaunchLock, lockIfConfigured, scheme]);
 
   // A sheet the app left open sits in a host above this gate, so it would show through the lock.
   useEffect(() => {
@@ -49,33 +54,32 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
 
   useEffect(() => {
     // Protection may have been enabled while the app was already backgrounded.
-    if (!isLocked && isAppBackgrounded(AppState.currentState ?? "active", Platform.OS)) {
+    if (!isLocked && isAppInBackground()) {
       lockIfConfigured();
     }
 
-    const subscription = AppState.addEventListener("change", nextState => {
-      if (isAppBackgrounded(nextState, Platform.OS)) {
-        lockIfConfigured();
-      }
-    });
-
-    return () => subscription.remove();
+    return onAppBackground(lockIfConfigured);
   }, [isLocked, lockIfConfigured]);
 
   // The initial state is unlocked, so anything rendered before the decision is reachable.
-  if (scheme === undefined || !hasDecidedInitialLock) {
+  if (scheme === undefined || !hasDecidedLaunchLock) {
     return <View style={styles.cover} />;
   }
+
+  // `accessibilityViewIsModal` hides nothing from TalkBack, so whatever covers the app has to take
+  // the screen reader with it, or a mandatory prompt can be reached around.
+  const isCovered = isLocked || longerPassword.isHolding;
 
   return (
     <>
       <View
         style={styles.children}
-        importantForAccessibility={isLocked ? "no-hide-descendants" : "auto"}
-        accessibilityElementsHidden={isLocked}
+        importantForAccessibility={isCovered ? "no-hide-descendants" : "auto"}
+        accessibilityElementsHidden={isCovered}
       >
         {children}
       </View>
+      <LongerPasswordGate {...longerPassword} />
       {isLocked ? (
         <View style={styles.overlay} accessibilityViewIsModal>
           <UnlockScreen />

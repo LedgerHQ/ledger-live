@@ -30,4 +30,4 @@ export type {
   StakingLikeNetworkInfo,
   StakingLikeNetworkInfoRaw,
 } from "@ledgerhq/types-live";
-export type { StakingContractConfig, StakingOperation } from "@ledgerhq/coin-evm/types/staking";
+export type { StakingContractConfig, StakingOperation } from "@ledgerhq/coin-evm/types";

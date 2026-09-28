@@ -1,5 +1,7 @@
 import React from "react";
+import { useThemeVariant } from "@features/platform-style/hooks";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { QrCode } from "@shared/ui-qr-code";
 import { RequestReceiveAddress } from "./RequestReceiveAddress.web";
 import type { RequestReceiveIconProps } from "../../types";
@@ -25,6 +27,8 @@ export function RequestReceiveSummary({
   addressParts,
   qrPayload,
 }: RequestReceiveSummaryProps) {
+  const themeVariant = useThemeVariant();
+
   return (
     <div
       className="flex flex-col items-center gap-32 bg-surface p-24 rounded-2xl"
@@ -47,6 +51,7 @@ export function RequestReceiveSummary({
       </div>
       <QrCode
         value={qrPayload}
+        foregroundColor={ledgerLiveThemes[themeVariant].colors.text.base}
         testID="pay-request-receive-qr-code"
         centerContent={
           <CryptoIcon

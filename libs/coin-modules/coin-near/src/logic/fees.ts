@@ -18,15 +18,9 @@ const STAKING_MODES = new Set(["stake", "unstake", "withdraw"]);
 // Fee for a transaction, in yoctoNEAR — single formula shared by the account bridge (`costs` from
 // preload) and CoinModuleApi (from the protocol config). Sending to a not-yet-existing implicit
 // account also pays for creating it and adding its access key.
-export const computeFees = ({
-  mode,
-  recipient,
-  useAllAmount,
-  gasPrice,
-  costs,
-}: FeeInput): BigNumber => {
+export const computeFees = ({ mode, recipient, gasPrice, costs }: FeeInput): BigNumber => {
   if (STAKING_MODES.has(mode)) {
-    return getStakingFees({ mode, useAllAmount: useAllAmount ?? false }, gasPrice);
+    return getStakingFees(gasPrice, costs.minGasPurchasePrice);
   }
 
   let sendFee = costs.transferCostSend.plus(costs.receiptCreationSend);

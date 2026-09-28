@@ -9,6 +9,7 @@ import { getNotificationPermissionStatus } from "~/logic/getNotificationPermissi
 import * as segment from "../segment";
 
 jest.unmock("../segment");
+jest.unmock("@shared/analytics");
 
 jest.mock("~/logic/getNotificationPermissionStatus", () => ({
   getNotificationPermissionStatus: jest.fn(),

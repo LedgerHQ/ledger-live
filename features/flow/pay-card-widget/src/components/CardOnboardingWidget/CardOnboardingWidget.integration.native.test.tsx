@@ -1,5 +1,5 @@
-import { Platform } from "react-native";
-import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
+import { AppState, type AppStateStatus, Platform } from "react-native";
+import { act, cleanup, render, screen, userEvent } from "@testing-library/react-native";
 import {
   CARD_ONBOARDING_ADD_TO_WALLET_COPY,
   CARD_ONBOARDING_COPY,
@@ -7,7 +7,12 @@ import {
   CARD_WALLET_PAY_COPY,
 } from "../../__tests__/i18nWrapper";
 import { useGetCardStatusQuery } from "@domain/api-card-management";
+import { trackCardOnboardingWidgetToggled } from "@features/platform-pay-analytics/testing/module-mock";
 import { createRenderWidget, setQuery, stepsWith, stepsWithIds } from "./__tests__/shared";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 jest.mock("../../onboardingStatus", () => ({
   useCardOnboardingStatus: jest.fn(),
@@ -17,6 +22,7 @@ jest.mock("@domain/api-card-management", () => ({ useGetCardStatusQuery: jest.fn
 
 const refetchCardStatus = jest.fn();
 const renderWidget = createRenderWidget(render);
+let appStateListener: ((state: AppStateStatus) => void) | undefined;
 
 type User = ReturnType<typeof userEvent.setup>;
 
@@ -27,6 +33,11 @@ async function openWidget(user: User) {
 describe("CardOnboardingWidget (integration)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    appStateListener = undefined;
+    jest.mocked(AppState.addEventListener).mockImplementation((_type, listener) => {
+      appStateListener = listener;
+      return { remove: jest.fn() };
+    });
     jest.mocked(useGetCardStatusQuery).mockReturnValue({
       refetch: refetchCardStatus,
       data: undefined,
@@ -142,6 +153,38 @@ describe("CardOnboardingWidget (integration)", () => {
     expect(screen.queryByText(CARD_ONBOARDING_COPY.dialogTitle)).toBeNull();
   });
 
+  it("should track opening and closing with the current onboarding progress", async () => {
+    const user = userEvent.setup();
+    const steps = stepsWithIds(
+      "choose-card-type",
+      "apple-google-pay",
+      "top-up-card",
+      "first-purchase",
+    ).map((step, index) => ({ ...step, isDone: index % 2 === 0 }));
+    setQuery({ data: { steps } });
+    renderWidget();
+
+    await openWidget(user);
+    await user.press(screen.getByTestId("pay-card-onboarding-sheet-dismiss"));
+
+    expect(trackCardOnboardingWidgetToggled).toHaveBeenNthCalledWith(1, {
+      opened: true,
+      page: "Pay",
+      cardClaimed: true,
+      addedToOsWallet: false,
+      cardTopUp: true,
+      firstPurchaseCompleted: false,
+    });
+    expect(trackCardOnboardingWidgetToggled).toHaveBeenNthCalledWith(2, {
+      opened: false,
+      page: "Pay",
+      cardClaimed: true,
+      addedToOsWallet: false,
+      cardTopUp: true,
+      firstPurchaseCompleted: false,
+    });
+  });
+
   it("should open the wallet instructions scene without marking the step done", async () => {
     const user = userEvent.setup();
     const steps = stepsWithIds("top-up-card", "apple-google-pay", "first-purchase").map(step => ({
@@ -174,6 +217,12 @@ describe("CardOnboardingWidget (integration)", () => {
     await user.press(screen.getByTestId("pay-card-add-to-wallet-cta"));
 
     expect(refetchCardStatus).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("pay-card-add-to-wallet-instructions")).toBeVisible();
+
+    act(() => appStateListener?.("background"));
+    act(() => appStateListener?.("active"));
+
+    expect(refetchCardStatus).toHaveBeenCalledTimes(2);
     expect(screen.queryByTestId("pay-card-add-to-wallet-instructions")).toBeNull();
     expect(screen.getByText(CARD_ONBOARDING_COPY.dialogTitle)).toBeVisible();
   });

@@ -2,6 +2,8 @@ import React from "react";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { LinkingProvider } from "@shared/linking";
 
+export const CARD_DISCLAIMER = "Disclaimer placeholder";
+
 export const CARD_COPY = {
   freeze: "Freeze",
   unfreeze: "Unfreeze",
@@ -21,8 +23,11 @@ export const CARD_COPY = {
   numbersHide: "Hide",
   numbersFailed: "Couldn't load card numbers",
   numbersImageAlt: "Card numbers",
-  reward: "Total cashback",
+  reward: "Total cashback · {{ratePercent}}% in {{ticker}}",
 } as const;
+
+/** {@link CARD_COPY.reward} as the banner renders it for the mocked cashback. */
+export const REWARD_SUBTITLE = "Total cashback · 1% in BTC";
 
 export const ADD_TO_WALLET_COPY = {
   entry: "Add to {{wallet}} Pay",
@@ -62,7 +67,8 @@ export const CARD_TRANSACTIONS_COPY = {
     status: "Status",
     card: "Card",
     cardInfo: "The last four digits of the card used for this payment.",
-    fundingSource: "Funding source",
+    fundingSource_one: "Funding source",
+    fundingSource_other: "Funding sources",
     transactionId: "Transaction ID",
     copyTransactionId: "Copy transaction ID",
     today: "Today {{time}}",
@@ -81,6 +87,7 @@ export const CARD_RESOURCES = {
   en: {
     translation: {
       payTab: {
+        disclaimer: CARD_DISCLAIMER,
         card: {
           freeze: CARD_COPY.freeze,
           unfreeze: CARD_COPY.unfreeze,

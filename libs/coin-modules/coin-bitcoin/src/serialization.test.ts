@@ -1,6 +1,10 @@
 import BigNumber from "bignumber.js";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
+import { assignToAccountRaw, makeAssignFromAccountRaw } from "./serialization";
 import { BitcoinAccount, BitcoinAccountRaw, BitcoinOutput, BitcoinOutputRaw } from "./types";
+import type { CoinConfig } from "./config";
+
+const coinConfig: CoinConfig = () => ({ info: { status: { type: "active" } } });
+const assignFromAccountRaw = makeAssignFromAccountRaw(coinConfig);
 
 describe("assignToAccountRaw", () => {
   let accountMock: BitcoinAccount = {} as BitcoinAccount;

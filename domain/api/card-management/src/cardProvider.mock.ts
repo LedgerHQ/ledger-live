@@ -11,7 +11,8 @@ export type SentRequest = {
   body: string;
 };
 
-type Answer = () => Response | Promise<Response>;
+/** Reads the request when the answer depends on it, such as the page a caller asked for. */
+type Answer = (request: Request) => Response | Promise<Response>;
 
 export type CardProvider = {
   get: (path: string, answer: Answer) => void;
@@ -47,7 +48,7 @@ export function mockCardProvider(): CardProvider {
             headers: request.headers,
             body: await request.clone().text(),
           });
-          return answer();
+          return answer(request);
         }),
       );
     };

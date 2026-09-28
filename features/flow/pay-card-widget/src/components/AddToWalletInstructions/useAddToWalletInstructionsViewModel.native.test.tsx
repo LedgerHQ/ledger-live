@@ -1,6 +1,11 @@
 import React from "react";
 import { act, renderHook } from "@testing-library/react-native";
-import { Platform } from "react-native";
+import {
+  AppState,
+  type AppStateStatus,
+  type NativeEventSubscription,
+  Platform,
+} from "react-native";
 
 jest.mock("./openWalletApp", () => ({
   openGoogleWalletStore: jest.fn(),
@@ -18,6 +23,8 @@ import {
 } from "./useAddToWalletInstructionsViewModel";
 
 const refetchCardStatus = jest.fn();
+const removeAppStateListener = jest.fn();
+let appStateListener: ((state: AppStateStatus) => void) | undefined;
 
 function renderViewModel(onDone = jest.fn()) {
   return renderHook(() => useAddToWalletInstructionsViewModel({ onDone }), {
@@ -36,6 +43,11 @@ function getScene<TScene extends AddToWalletInstructionsViewProps["scene"]>(
 describe("useAddToWalletInstructionsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    appStateListener = undefined;
+    jest.mocked(AppState.addEventListener).mockImplementation((_type, listener) => {
+      appStateListener = listener;
+      return { remove: removeAppStateListener } as NativeEventSubscription;
+    });
     jest.mocked(useGetCardStatusQuery).mockReturnValue({
       refetch: refetchCardStatus,
       data: undefined,
@@ -70,7 +82,7 @@ describe("useAddToWalletInstructionsViewModel", () => {
     expect(instructions.ctaLabel).toBe(CARD_ONBOARDING_ADD_TO_WALLET_COPY.android.cta);
   });
 
-  it("re-asks the provider and tells the host it is done once the wallet opened", async () => {
+  it("re-asks the provider after opening the wallet and when the app returns", async () => {
     const onDone = jest.fn();
     const { result } = renderViewModel(onDone);
 
@@ -78,7 +90,44 @@ describe("useAddToWalletInstructionsViewModel", () => {
 
     expect(refetchCardStatus).toHaveBeenCalledTimes(1);
     expect(openWalletApp).toHaveBeenCalledTimes(1);
+    expect(onDone).not.toHaveBeenCalled();
+
+    act(() => appStateListener?.("background"));
+    act(() => appStateListener?.("active"));
+
+    expect(refetchCardStatus).toHaveBeenCalledTimes(2);
     expect(onDone).toHaveBeenCalledTimes(1);
+  });
+
+  it("listens for the app return only once the wallet has opened", async () => {
+    const { result } = renderViewModel();
+
+    expect(AppState.addEventListener).not.toHaveBeenCalled();
+
+    await act(getScene(result.current, "instructions").onPressCta);
+
+    expect(AppState.addEventListener).toHaveBeenCalledTimes(1);
+  });
+
+  it("stops listening once the holder is back", async () => {
+    const { result } = renderViewModel();
+
+    await act(getScene(result.current, "instructions").onPressCta);
+    act(() => appStateListener?.("background"));
+    act(() => appStateListener?.("active"));
+
+    expect(removeAppStateListener).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not re-fetch on an active event unless the app first left", async () => {
+    const onDone = jest.fn();
+    const { result } = renderViewModel(onDone);
+
+    await act(getScene(result.current, "instructions").onPressCta);
+    act(() => appStateListener?.("active"));
+
+    expect(refetchCardStatus).toHaveBeenCalledTimes(1);
+    expect(onDone).not.toHaveBeenCalled();
   });
 
   it("shows the iOS error scene when Apple Wallet could not be opened", async () => {
@@ -102,9 +151,11 @@ describe("useAddToWalletInstructionsViewModel", () => {
 
     await act(getScene(result.current, "instructions").onPressCta);
     await act(getScene(result.current, "error").onPressAction);
+    act(() => appStateListener?.("background"));
+    act(() => appStateListener?.("active"));
 
     expect(openWalletApp).toHaveBeenCalledTimes(2);
-    expect(refetchCardStatus).toHaveBeenCalledTimes(1);
+    expect(refetchCardStatus).toHaveBeenCalledTimes(2);
     expect(onDone).toHaveBeenCalledTimes(1);
   });
 

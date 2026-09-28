@@ -32,7 +32,7 @@
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-solana": "catalog:",
-    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/hw-app-solana": "workspace:^",
     "@ledgerhq/hw-bolos": "workspace:^",
     "@ledgerhq/hw-transport": "catalog:",

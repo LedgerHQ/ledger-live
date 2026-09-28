@@ -7,7 +7,7 @@ import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { ScreenName } from "~/const";
 import type { PayTabNavigatorParamList } from "../types";
 
-const REQUEST_PAGE = "Pay";
+const REQUEST_SOURCE = "pay";
 const REQUEST_CATEGORIES: AssetCategory[] = [AssetCategory.Stablecoins];
 
 export type UsePayTabRequestReceive = Readonly<{
@@ -22,7 +22,7 @@ export function usePayTabRequestReceive(): UsePayTabRequestReceive {
     openDrawer({
       categories: REQUEST_CATEGORIES,
       flow: "request",
-      source: REQUEST_PAGE,
+      source: REQUEST_SOURCE,
       enableAccountSelection: true,
       onAccountSelected: (account, parentAccount) => {
         const accountCurrency = getAccountCurrency(account);

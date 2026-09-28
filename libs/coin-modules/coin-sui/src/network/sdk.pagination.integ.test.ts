@@ -12,7 +12,6 @@ import { getListOperations, getOperations, TRANSACTIONS_LIMIT_PER_QUERY } from "
 const configFor = (transport: SuiTransport): SuiCoinConfig => ({
   status: { type: "active" },
   node: {
-    url: getEnv("API_SUI_NODE_PROXY"),
     graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
     grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
   },
@@ -41,7 +40,7 @@ describe("getListOperations pagination (live mainnet)", () => {
       let pages = 0;
 
       for (let i = 0; i < 4; i++) {
-        const page = await getListOperations(config, ACCOUNT, order, undefined, cursor);
+        const page = await getListOperations(config, ACCOUNT, order, cursor);
         pages++;
         for (const op of page.items) {
           // A repeat means the window moved backwards or the cursor failed to advance.
@@ -67,7 +66,7 @@ describe("getListOperations pagination (live mainnet)", () => {
       let cursor: string | undefined;
 
       for (let i = 0; i < 5; i++) {
-        const page = await getListOperations(config, ACCOUNT, "desc", undefined, cursor);
+        const page = await getListOperations(config, ACCOUNT, "desc", cursor);
         pageSizes.push(page.items.length);
         for (const op of page.items) seen.add(op.tx.hash);
         if (!page.next) break;
@@ -100,12 +99,12 @@ describe("getListOperations pagination (live mainnet)", () => {
     async transport => {
       const config = configFor(transport);
 
-      const first = await getListOperations(config, ACCOUNT, "desc", undefined, undefined);
+      const first = await getListOperations(config, ACCOUNT, "desc", undefined);
       expect(first.items).toHaveLength(TRANSACTIONS_LIMIT_PER_QUERY);
       expect(first.next).toEqual(expect.any(String));
 
       const cursorDigest = first.items.at(-1)!.tx.hash;
-      const second = await getListOperations(config, ACCOUNT, "desc", undefined, first.next);
+      const second = await getListOperations(config, ACCOUNT, "desc", first.next);
 
       // The server re-delivers the cursor's checkpoint by design and the filter drops what was already
       // emitted, so this page is deliberately short and must not repeat the cursor.

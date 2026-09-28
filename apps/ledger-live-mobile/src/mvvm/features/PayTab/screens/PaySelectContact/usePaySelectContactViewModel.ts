@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact } from "@domain/entity-contact";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -25,6 +26,11 @@ export function usePaySelectContactViewModel() {
         return;
       }
 
+      trackButtonClicked({
+        button: "send to contact",
+        buttonLocation: "contacts",
+        page: "Pay",
+      });
       open(contact);
     },
     [navigation, open],
@@ -34,5 +40,6 @@ export function usePaySelectContactViewModel() {
     title,
     onSelectContact,
     contactAddressPicker,
+    trackRecipientAddressSelection: contactAddressPicker.isOpen,
   };
 }

@@ -4,9 +4,7 @@
  * and is not asserted on. Identifiers (digests, addresses, stake IDs, stake principals) are
  * deterministic and ARE asserted exactly.
  *
- * gRPC is the reference leg, and the `rpc`-prefixed locals below hold it. It replaced JSON-RPC after
- * the Sui Foundation retired the public mainnet fullnode (wk of 2026-07-20), which left this suite
- * with no runnable baseline.
+ * gRPC is the reference leg, and the `rpc`-prefixed locals below hold it.
  */
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
@@ -50,10 +48,9 @@ let stableCheckpointSequence: string;
 
 beforeAll(async () => {
   coinConfig.setCoinConfig(id => {
-    // Both ids carry all three URLs — `SuiCoinConfig` requires them — and differ only in
+    // Both ids carry the gRPC and GraphQL URLs — `SuiCoinConfig` requires them — and differ only in
     // `features.transport`, so a parity failure can only come from the arm, never from the endpoints.
     const node = {
-      url: getEnv("API_SUI_NODE_PROXY"),
       graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
       grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
     };
@@ -215,10 +212,8 @@ describe("gRPC vs GraphQL shape parity (live mainnet)", () => {
   // ----- Read-side: balances ----------------------------------------------
 
   describe("getAllBalancesCached", () => {
-    // The function returns a narrowed `DispatchedCoinBalance` (see `sdk.ts`) —
-    // only fields both transports populate. JSON-RPC-only `coinObjectCount` /
-    // `lockedBalance` are intentionally stripped at the cache boundary so the
-    // dispatcher's surface stays transport-agnostic.
+    // The function returns `SuiCoinBalance` (see `network/types.ts`) — only fields both
+    // transports populate.
     const balanceItem: ShapeSpec = {
       object: {
         coinType: "non-empty-string",
@@ -528,13 +523,11 @@ describe("gRPC vs GraphQL shape parity (live mainnet)", () => {
         accountId,
         STEADY_ACCOUNT,
         undefined,
-        undefined,
       );
       const gql = await getOperations(
         coinConfig.getCoinConfig(GRAPHQL_ID),
         accountId,
         STEADY_ACCOUNT,
-        undefined,
         undefined,
       );
       assertShapeBoth(rpc, gql, { array: opItem, minLen: 1 }, "getOperations");
@@ -586,13 +579,11 @@ describe("gRPC vs GraphQL shape parity (live mainnet)", () => {
         STEADY_ACCOUNT,
         "desc",
         undefined,
-        undefined,
       );
       const gqlPage = await getListOperations(
         coinConfig.getCoinConfig(GRAPHQL_ID),
         STEADY_ACCOUNT,
         "desc",
-        undefined,
         undefined,
       );
       assertShapeBoth(
@@ -626,7 +617,6 @@ describe("gRPC vs GraphQL shape parity (live mainnet)", () => {
         STEADY_ACCOUNT,
         "desc",
         undefined,
-        undefined,
       );
       // Multi-page precondition: if the address's history is below one page, the
       // cursor-mapping path can't be exercised. Fail loudly so the test summary
@@ -643,14 +633,12 @@ describe("gRPC vs GraphQL shape parity (live mainnet)", () => {
         coinConfig.getCoinConfig(GRPC_ID),
         STEADY_ACCOUNT,
         "desc",
-        undefined,
         first.next,
       );
       const gqlPage = await getListOperations(
         coinConfig.getCoinConfig(GRAPHQL_ID),
         STEADY_ACCOUNT,
         "desc",
-        undefined,
         first.next,
       );
 

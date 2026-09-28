@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { Addresses } from "./enum/Addresses";
 
 // A space is the only separator ContactNamePattern accepts between name segments.
 const CONTACT_NAME_FORMAT_SAMPLE = "O Neil Zoe";
@@ -97,3 +99,66 @@ export function createSeededContactsDocument(
     },
   };
 }
+
+// Contacts intents need Ethereum 1.23.0. The catalog is still on 1.22.x, so runs pin
+// coin-apps' 1.23.0-dev and the rc OS it ships on. Stax rc stops at 1.19.3. Nano S is unsupported.
+export const CONTACTS_ETHEREUM_APP_VERSION = "1.23.0-dev";
+
+export const CONTACTS_OS_VERSION_BY_MODEL: Partial<Record<DeviceModelId, string>> = {
+  [DeviceModelId.nanoSP]: "1.7.0-rc2",
+  [DeviceModelId.nanoX]: "2.8.0-rc2",
+  [DeviceModelId.europa]: "1.7.0-rc2",
+  [DeviceModelId.apex]: "1.2.0-rc2",
+};
+
+export type ContactAddressTestData = Readonly<{
+  ticker: string;
+  networkId: string;
+  networkName: string;
+  addressInput: string;
+  savedValue: string;
+  defaultAddressLabel: string;
+  /** Replaces the prefill when that label is already used on the contact. */
+  addressLabel: string;
+  isEns?: boolean;
+}>;
+
+export const CONTACT_ADDRESS_DATASET: readonly ContactAddressTestData[] = [
+  {
+    ticker: "ETH",
+    networkId: "ethereum",
+    networkName: "Ethereum",
+    addressInput: Addresses.ETH_OTHER_SEED,
+    savedValue: Addresses.ETH_OTHER_SEED,
+    defaultAddressLabel: "Ethereum",
+    addressLabel: "Ethereum",
+  },
+  {
+    ticker: "ETH",
+    networkId: "ethereum",
+    networkName: "Ethereum",
+    addressInput: "speculos-qaa.eth",
+    savedValue: Addresses.ETH_2,
+    defaultAddressLabel: "Ethereum",
+    addressLabel: "ENS",
+    isEns: true,
+  },
+  {
+    ticker: "BNB",
+    networkId: "bsc",
+    networkName: "BNB Chain",
+    addressInput: Addresses.SWAP_HISTORY_ETH_TO,
+    savedValue: Addresses.SWAP_HISTORY_ETH_TO,
+    defaultAddressLabel: "BNB Chain",
+    addressLabel: "BNB Chain",
+  },
+  {
+    ticker: "POL",
+    networkId: "polygon",
+    networkName: "Polygon",
+    addressInput: Addresses.SWAP_HISTORY_ERC20_ETH_USDT_TO,
+    savedValue: Addresses.SWAP_HISTORY_ERC20_ETH_USDT_TO,
+    defaultAddressLabel: "Polygon",
+    addressLabel: "Polygon",
+  },
+];

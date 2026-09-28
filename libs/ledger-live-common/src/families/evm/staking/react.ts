@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { getStakingContractAddress, getValidators } from "@ledgerhq/coin-evm/staking/index";
+import { getStakingContractAddress, getValidators } from "@ledgerhq/coin-evm/staking";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
-import type { StakingOperation } from "@ledgerhq/coin-evm/types/staking";
+import type { StakingOperation } from "@ledgerhq/coin-evm/types";
 import { getCurrencyConfiguration } from "../../../config";
 import type { Cursor, Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { StakingValidatorItem } from "@ledgerhq/types-live";

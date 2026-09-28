@@ -8,19 +8,17 @@ const SELECTION: PayVerifySelection = {
 };
 
 function renderVerifyAddress(ldmkEnabled = false) {
-  return renderHook(() => usePayTabVerifyAddress(undefined), {
+  return renderHook(() => usePayTabVerifyAddress(), {
     initialState: withFlagOverrides({ ldmkTransport: { enabled: ldmkEnabled } }),
   });
 }
 
 describe("usePayTabVerifyAddress", () => {
-  it("should start hidden with resolved copy", () => {
+  it("should start hidden", () => {
     const { result } = renderVerifyAddress();
 
     expect(result.current.phase).toBe("hidden");
     expect(result.current.verifyAddress.phase).toBe("hidden");
-    expect(result.current.verifyAddress.labels.introTitle).toBe("Verify your address");
-    expect(result.current.verifyAddress.labels.verifyCta).toBe("Verify address");
     expect(result.current.deviceIntent.active).toBe(false);
   });
 

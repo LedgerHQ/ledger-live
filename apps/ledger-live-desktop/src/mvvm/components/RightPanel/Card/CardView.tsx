@@ -7,23 +7,12 @@ export interface CardViewProps {
   readonly viewModel: CardViewModel;
 }
 
-export const CardView = ({ viewModel }: CardViewProps) => {
-  const { formatters, assets, login, onShowMore, onTopUp, cardSettingsActions } = viewModel;
-
-  return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden pb-32">
-      <PayCardContainer>
-        <div className="scrollbar-none min-h-0 flex-1 overflow-y-auto p-16">
-          <PayCard
-            login={login}
-            assets={assets}
-            formatters={formatters}
-            onShowMore={onShowMore}
-            onTopUp={onTopUp}
-            cardSettingsActions={cardSettingsActions}
-          />
-        </div>
-      </PayCardContainer>
-    </div>
-  );
-};
+export const CardView = ({ viewModel }: CardViewProps) => (
+  <div className="flex h-full min-h-0 flex-col overflow-hidden pb-32">
+    <PayCardContainer>
+      <div className="scrollbar-none min-h-0 flex-1 overflow-y-auto p-16">
+        <PayCard {...viewModel} />
+      </div>
+    </PayCardContainer>
+  </div>
+);

@@ -21,11 +21,11 @@ export function useCardWalletsTotal(
     skip: !isSignedIn || assets === undefined,
   });
 
-  const priceWallet = assets?.priceWallet;
+  const getCounterValue = assets?.getCounterValue;
 
   return useMemo(() => {
-    const total = selectCardWalletsTotal({ wallets, priceWallet });
+    const total = selectCardWalletsTotal({ wallets, getCounterValue });
 
     return { total, isLoading, isError };
-  }, [wallets, priceWallet, isLoading, isError]);
+  }, [wallets, getCounterValue, isLoading, isError]);
 }

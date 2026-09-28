@@ -1,4 +1,5 @@
 import { createPasswordVerifier } from "@shared/password-verifier";
+import { isPasswordLongEnough } from "../password";
 import {
   APP_LOCK_SCRYPT_PARAMS,
   derivePasswordDigest,
@@ -7,6 +8,7 @@ import {
 import {
   clearPasswordVerifier,
   hasStoredVerifier,
+  readStoredPassword,
   writePasswordVerifier,
 } from "./internals/store.native";
 import { verifyPassword } from "./internals/verify.native";
@@ -20,9 +22,10 @@ export function storeNewPassword(password: string, salt: Uint8Array): Promise<vo
   return serialiseDerivation(async () => {
     const digest = await derivePasswordDigest(password, salt, APP_LOCK_SCRYPT_PARAMS);
 
-    await writePasswordVerifier(
-      createPasswordVerifier({ digest, salt, scrypt: APP_LOCK_SCRYPT_PARAMS }),
-    );
+    await writePasswordVerifier({
+      verifier: createPasswordVerifier({ digest, salt, scrypt: APP_LOCK_SCRYPT_PARAMS }),
+      needsLongerPassword: !isPasswordLongEnough(password),
+    });
   });
 }
 
@@ -32,6 +35,12 @@ export function clearStoredPassword(): Promise<void> {
 
 export function hasPasswordVerifier(): Promise<boolean> {
   return hasStoredVerifier();
+}
+
+// For the unlock that never sees a password: biometrics prove the owner without revealing its
+// length.
+export async function needsLongerStoredPassword(): Promise<boolean> {
+  return (await readStoredPassword())?.needsLongerPassword === true;
 }
 
 export function checkPassword(password: string): Promise<PasswordCheck> {
