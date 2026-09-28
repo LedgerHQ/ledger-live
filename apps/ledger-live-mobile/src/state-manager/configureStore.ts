@@ -102,7 +102,8 @@ export const store = configureStore({
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
             ...swapApiExtra({
-              swapApiBaseUrl: getEnv("SWAP_API_BASE"),
+              // Read on every request, so the debug settings can change it without a restart.
+              getSwapApiBaseUrl: () => getEnv("SWAP_API_BASE"),
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
             ...authApiExtra({

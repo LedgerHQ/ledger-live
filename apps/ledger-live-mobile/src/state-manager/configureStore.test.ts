@@ -254,6 +254,31 @@ describe("mobile store", () => {
       );
     });
   });
+
+  describe("swap extraArgument", () => {
+    beforeEach(() => {
+      jest.resetModules();
+      // Re-seed after resetModules(), like the auth provider flow tests above: configureStore
+      // also builds calApiExtra/pushDevicesApiExtra, which require a non-empty LEDGER_CLIENT_VERSION.
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    it("re-reads SWAP_API_BASE on every request, so a runtime override reaches the swap api without a restart", () => {
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("SWAP_API_BASE", "https://before.test");
+
+      // Use the post-reset instance so configureStore reads this environment value.
+      const { store } = require("./configureStore");
+      const before = dispatchSwapExtra(store);
+
+      setEnv("SWAP_API_BASE", "https://after.test");
+      const after = dispatchSwapExtra(store);
+
+      expect(before).toBe("https://before.test");
+      expect(after).toBe("https://after.test");
+    });
+  });
 });
 
 type AuthThunk = (
@@ -265,6 +290,16 @@ type DispatchThunk = (thunk: AuthThunk) => Promise<unknown>;
 function dispatchThunk(store: unknown, thunk: AuthThunk): Promise<unknown> {
   const dispatch = (store as { dispatch: unknown }).dispatch as DispatchThunk;
   return dispatch(thunk);
+}
+
+type SwapThunk = (
+  dispatch: unknown,
+  getState: unknown,
+  extra: { getSwapApiBaseUrl: () => string },
+) => string;
+function dispatchSwapExtra(store: unknown): string {
+  const dispatch = (store as { dispatch: unknown }).dispatch as (thunk: SwapThunk) => string;
+  return dispatch((_dispatch, _getState, extra) => extra.getSwapApiBaseUrl());
 }
 
 function makeJwt(payload: Record<string, unknown>): string {
