@@ -389,6 +389,83 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
       expect(onUserCancel).toHaveBeenCalledTimes(1);
     });
 
+    it("WHEN a child screen reported a failure before the user cancels THEN it fires deviceflow_failed with that failure", () => {
+      // GIVEN
+      const { result } = renderViewModel();
+      act(() => {
+        result.current.trackingContextValue.reportFailure({
+          failureType: "InvalidProvider",
+          countsAsFailure: true,
+          modelId: DeviceModelId.stax,
+          transport: "usb",
+        });
+      });
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        failureType: "InvalidProvider",
+        modelId: DeviceModelId.stax,
+        transport: "usb",
+      });
+    });
+
+    it("WHEN the user retries after a disconnection and cancels THEN it fires deviceflow_aborted without failure", () => {
+      // GIVEN
+      const { result } = renderViewModel();
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({
+          type: "deviceDisconnected",
+          device: makeConnectionResult().connectedDevice,
+        });
+      });
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({ type: "connectingDevice" });
+      });
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+      });
+    });
+
+    it("WHEN a failure is left by a previous flow THEN the next flow does not report it", () => {
+      // GIVEN
+      const { result, rerenderWithProps } = renderViewModel();
+      act(() => {
+        result.current.trackingContextValue.reportFailure({
+          failureType: "DeviceNotOnboarded",
+          countsAsFailure: true,
+        });
+      });
+      rerenderWithProps({ enabled: false });
+      rerenderWithProps({ enabled: true });
+      mockedTrack.mockClear();
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+      });
+    });
+
     it("WHEN the device disconnected before the user cancels THEN it fires deviceflow_failed with the disconnected device", () => {
       // GIVEN
       const onUserCancel = jest.fn();

@@ -49,8 +49,6 @@ export {
   getEnsureAppReadyFailure,
   getErrorSubError,
   getInvalidOperationFailure,
-  setDeviceFlowFailure,
-  takeDeviceFlowFailure,
 } from "./deviceIntentTracking/deviceFlowFailure";
 export type {
   DeviceFlowDevice,

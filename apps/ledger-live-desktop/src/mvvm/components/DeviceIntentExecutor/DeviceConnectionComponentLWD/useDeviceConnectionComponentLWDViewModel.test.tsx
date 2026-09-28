@@ -3,6 +3,7 @@ import type {
   DeviceConnectionResult,
 } from "@features/platform-device-intent";
 import {
+  BaseConnectionErrorTypes,
   connectDevice,
   ConnectDeviceUIStateTypes,
   webHidTransportIdentifier,
@@ -26,6 +27,7 @@ import createStore, { type ReduxStore } from "~/state-manager/configureStore";
 import { useDeviceConnectionComponentLWDViewModel } from "./useDeviceConnectionComponentLWDViewModel";
 
 const mockHandleConnect = jest.fn();
+const mockReportFailure = jest.fn();
 const mockHandleBuyDevice = jest.fn();
 
 jest.mock("LLD/hooks/useLazyOnboardingActions", () => ({
@@ -115,7 +117,9 @@ function TestWrapper({ children, store }: { children: React.ReactNode; store: Re
   return (
     <Provider store={store}>
       <MemoryRouter>
-        <DeviceIntentTrackingProvider value={{ sourceFlow: "swap" }}>
+        <DeviceIntentTrackingProvider
+          value={{ sourceFlow: "swap", reportFailure: mockReportFailure }}
+        >
           {children}
         </DeviceIntentTrackingProvider>
       </MemoryRouter>
@@ -357,5 +361,60 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
       }),
     );
     expect(mockedConnectDevice).not.toHaveBeenCalled();
+  });
+  describe("failure reporting", () => {
+    const unknownConnectionErrorState: ConnectDeviceUIState = {
+      type: ConnectDeviceUIStateTypes.ConnectionError,
+      error: {
+        type: BaseConnectionErrorTypes.Unknown,
+        error: { _tag: "OpeningConnectionError" },
+      },
+      device: makeKnownDevice(),
+      retry: jest.fn(),
+      ignore: jest.fn(),
+    };
+
+    it("should report an unknown connection error as a failure when it is displayed", () => {
+      renderViewModel();
+
+      act(() => {
+        connectDeviceObserver?.next(unknownConnectionErrorState);
+      });
+
+      expect(mockReportFailure).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          failureType: "ConnectionError",
+          countsAsFailure: true,
+          subError: "OpeningConnectionError",
+          modelId: DeviceModelId.nanoX,
+        }),
+      );
+    });
+
+    it("should clear the reported failure when the flow leaves the error state", () => {
+      renderViewModel();
+      act(() => {
+        connectDeviceObserver?.next(unknownConnectionErrorState);
+      });
+
+      act(() => {
+        connectDeviceObserver?.next({
+          type: ConnectDeviceUIStateTypes.Connecting,
+          device: makeKnownDevice(),
+        });
+      });
+
+      expect(mockReportFailure).toHaveBeenLastCalledWith(null);
+    });
+  });
+
+  it("should report the missing Device Management Kit as a connect device unknown error", () => {
+    mockedUseDeviceManagementKit.mockReturnValue(null);
+
+    renderViewModel();
+
+    expect(mockReportFailure).toHaveBeenLastCalledWith(
+      expect.objectContaining({ failureType: "ConnectDeviceUnknownError", countsAsFailure: true }),
+    );
   });
 });

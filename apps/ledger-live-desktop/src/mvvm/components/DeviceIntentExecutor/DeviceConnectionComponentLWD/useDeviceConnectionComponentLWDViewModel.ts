@@ -3,7 +3,11 @@ import type {
   DeviceConnectionParams,
   DeviceConnectionResult,
 } from "@features/platform-device-intent";
-import { dmkToLedgerDeviceIdMap, useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
+import {
+  dmkToLedgerDeviceIdMap,
+  getConnectDeviceFailure,
+  useDeviceIntentTracking,
+} from "@ledgerhq/live-dmk-shared";
 import {
   connectDevice,
   ConnectDeviceUIStateTypes,
@@ -16,7 +20,7 @@ import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { addNewDeviceModel } from "~/renderer/actions/settings";
 import { knownDevicesSelector } from "~/renderer/reducers/knownDevices";
 import {
-  recordConnectDeviceFailure,
+  getTrackingTransport,
   trackDeviceConnected,
   trackDeviceConnecting,
   trackDevicePrompted,
@@ -46,7 +50,7 @@ export function useDeviceConnectionComponentLWDViewModel({
   // the update cannot restart dmk.connect and race the active WebHID connection.
   const knownDevicesRef = useRef(knownDevices);
   const { handleConnect, handleBuyDevice } = useLazyOnboardingActions();
-  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+  const { sourceFlow, analyticsProperties, reportFailure } = useDeviceIntentTracking();
   const [state, setState] = useState<ConnectDeviceUIState>({
     type: ConnectDeviceUIStateTypes.Loading,
   });
@@ -54,10 +58,6 @@ export function useDeviceConnectionComponentLWDViewModel({
     prompted: false,
     connecting: false,
   });
-
-  useEffect(() => {
-    recordConnectDeviceFailure(state);
-  }, [state]);
 
   useEffect(() => {
     switch (state.type) {
@@ -99,8 +99,13 @@ export function useDeviceConnectionComponentLWDViewModel({
   );
 
   useEffect(() => {
+    const handleState = (nextState: ConnectDeviceUIState) => {
+      setState(nextState);
+      reportFailure(getConnectDeviceFailure(nextState, getTrackingTransport));
+    };
+
     if (!dmk) {
-      setState({
+      handleState({
         type: ConnectDeviceUIStateTypes.UnknownError,
         error: missingDeviceManagementKitError,
       });
@@ -114,16 +119,12 @@ export function useDeviceConnectionComponentLWDViewModel({
       ),
       dmk,
       onConnected: wrappedOnConnected,
-    }).subscribe({
-      next: nextState => {
-        setState(nextState);
-      },
-    });
+    }).subscribe({ next: handleState });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, wrappedOnConnected]);
+  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, reportFailure, wrappedOnConnected]);
 
   return {
     state,

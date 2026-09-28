@@ -25,7 +25,6 @@ import {
   DeviceIntentTrackingProvider,
   type SourceFlow,
 } from "../utils/DeviceIntentTrackingContext";
-import { trackDeviceflowCanceled } from "../utils/trackDeviceIntent";
 import { useDeviceConnectionComponentLWMViewModel } from "./useDeviceConnectionComponentLWMViewModel";
 
 jest.mock("~/analytics", () => {
@@ -38,6 +37,7 @@ jest.mock("~/analytics", () => {
 });
 
 const mockedTrack = jest.mocked(track);
+const mockReportFailure = jest.fn();
 
 const mockNavigate = jest.fn();
 
@@ -124,7 +124,9 @@ const layerABaseProperties = {
 
 function SourceFlowWrapper({ children }: { children?: React.ReactNode }) {
   return (
-    <DeviceIntentTrackingProvider value={{ sourceFlow }}>{children}</DeviceIntentTrackingProvider>
+    <DeviceIntentTrackingProvider value={{ sourceFlow, reportFailure: mockReportFailure }}>
+      {children}
+    </DeviceIntentTrackingProvider>
   );
 }
 
@@ -582,7 +584,7 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
     });
   });
 
-  describe("deviceflow failure reporting", () => {
+  describe("failure reporting", () => {
     const unknownConnectionErrorState: ConnectDeviceUIState = {
       type: ConnectDeviceUIStateTypes.ConnectionError,
       error: {
@@ -594,51 +596,36 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
       ignore: jest.fn(),
     };
 
-    it("GIVEN a terminal connection error WHEN the component unmounts before the user cancels THEN deviceflow_failed reports the error", () => {
-      // GIVEN
-      const { unmount } = renderViewModel();
+    it("should report an unknown connection error as a failure when it is displayed", () => {
+      renderViewModel();
+
       act(() => {
         connectDeviceObserver?.next(unknownConnectionErrorState);
       });
-      unmount();
-      mockedTrack.mockClear();
 
-      // WHEN
-      trackDeviceflowCanceled({ sourceFlow, extraProperties: {} });
-
-      // THEN
-      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
-        ...layerABaseProperties,
-        sourceFlow,
+      expect(mockReportFailure).toHaveBeenLastCalledWith({
         failureType: "ConnectionError",
+        countsAsFailure: true,
         subError: "OpeningConnectionError",
         modelId: DeviceModelId.nanoX,
         transport: "ble",
       });
     });
 
-    it("GIVEN a connection error followed by a retry WHEN the user cancels THEN deviceflow_aborted carries no failure", () => {
-      // GIVEN
+    it("should clear the reported failure when the flow leaves the error state", () => {
       renderViewModel();
       act(() => {
         connectDeviceObserver?.next(unknownConnectionErrorState);
       });
+
       act(() => {
         connectDeviceObserver?.next({
           type: ConnectDeviceUIStateTypes.Connecting,
           device: makeKnownDevice(),
         });
       });
-      mockedTrack.mockClear();
 
-      // WHEN
-      trackDeviceflowCanceled({ sourceFlow, extraProperties: {} });
-
-      // THEN
-      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
-        ...layerABaseProperties,
-        sourceFlow,
-      });
+      expect(mockReportFailure).toHaveBeenLastCalledWith(null);
     });
   });
 });

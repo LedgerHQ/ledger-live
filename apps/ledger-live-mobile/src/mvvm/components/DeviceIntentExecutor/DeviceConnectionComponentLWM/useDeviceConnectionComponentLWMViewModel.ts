@@ -23,10 +23,10 @@ import { updateKnownBleDevice } from "~/actions/ble";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { urls } from "~/utils/urls";
-import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { dmkToLedgerDeviceIdMap, getConnectDeviceFailure } from "@ledgerhq/live-dmk-shared";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import {
-  recordConnectDeviceFailure,
+  getTrackingTransport,
   trackDeviceConnected,
   trackDeviceConnecting,
   trackDevicePrompted,
@@ -58,7 +58,7 @@ export function useDeviceConnectionComponentLWMViewModel({
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
   const knownDevices = useSelector(knownDevicesSelector);
-  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+  const { sourceFlow, analyticsProperties, reportFailure } = useDeviceIntentTracking();
   const [state, setState] = useState<ConnectDeviceUIState>({
     type: ConnectDeviceUIStateTypes.Loading,
   });
@@ -77,10 +77,6 @@ export function useDeviceConnectionComponentLWMViewModel({
     prompted: false,
     connecting: false,
   });
-
-  useEffect(() => {
-    recordConnectDeviceFailure(state);
-  }, [state]);
 
   useEffect(() => {
     switch (state.type) {
@@ -181,6 +177,11 @@ export function useDeviceConnectionComponentLWMViewModel({
   );
 
   useEffect(() => {
+    const handleState = (nextState: ConnectDeviceUIState) => {
+      setState(nextState);
+      reportFailure(getConnectDeviceFailure(nextState, getTrackingTransport));
+    };
+
     const subscription = connectDevice({
       knownDevices,
       acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds.map(
@@ -188,10 +189,16 @@ export function useDeviceConnectionComponentLWMViewModel({
       ),
       dmk,
       onConnected: wrappedOnConnected,
-    }).subscribe({ next: setState });
+    }).subscribe({ next: handleState });
 
     return () => subscription.unsubscribe();
-  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, knownDevices, wrappedOnConnected]);
+  }, [
+    deviceConnectionParams.acceptedDeviceModelIds,
+    dmk,
+    knownDevices,
+    reportFailure,
+    wrappedOnConnected,
+  ]);
 
   return {
     state,

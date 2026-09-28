@@ -10,15 +10,17 @@ import {
 import type { ConnectAppInitSideEffects } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/types";
 import {
   FinalStateType,
+  getEnsureAppReadyFailure,
   LoadingStateType,
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "../utils/DeviceIntentTrackingContext";
 import { identitiesSlice } from "@domain/entity-client-identity";
 import { setLastSeenDeviceInfo } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { InitializationInput } from "../types";
-import { recordEnsureAppReadyFailure } from "../utils/trackDeviceIntent";
+import { getConnectedDeviceTrackingProperties } from "../utils/trackDeviceIntent";
 import { buildInitializerDevice } from "./utils/buildInitializerDevice";
 import type { InitializerDevice } from "./types";
 
@@ -47,6 +49,7 @@ export function useDeviceContextInitializerComponentLWMViewModel({
     useSelector(settingsStoreSelector).deprecationDoNotRemind;
   const [state, setState] = useState<EnsureAppReadyState>(LOADING_STATE);
   const completedRef = useRef(false);
+  const { reportFailure } = useDeviceIntentTracking();
 
   const device = useMemo(() => buildInitializerDevice(connectionResult), [connectionResult]);
 
@@ -69,13 +72,14 @@ export function useDeviceContextInitializerComponentLWMViewModel({
   );
 
   useEffect(() => {
-    recordEnsureAppReadyFailure(state, connectionResult.connectedDevice);
-  }, [connectionResult.connectedDevice, state]);
-
-  useEffect(() => {
     const { dmk, sessionId } = connectionResult;
+    const trackingDevice = getConnectedDeviceTrackingProperties(connectionResult.connectedDevice);
+    const handleState = (nextState: EnsureAppReadyState) => {
+      setState(nextState);
+      reportFailure(getEnsureAppReadyFailure(nextState, trackingDevice));
+    };
     completedRef.current = false;
-    setState(LOADING_STATE);
+    handleState(LOADING_STATE);
 
     const subscription = ensureAppReadyUseCase({
       dmk,
@@ -86,7 +90,7 @@ export function useDeviceContextInitializerComponentLWMViewModel({
       dependencies,
     }).subscribe({
       next: nextState => {
-        setState(nextState);
+        handleState(nextState);
 
         if (nextState.type === FinalStateType.Success && !completedRef.current) {
           completedRef.current = true;
@@ -94,10 +98,7 @@ export function useDeviceContextInitializerComponentLWMViewModel({
         }
       },
       error: error => {
-        setState({
-          type: FinalStateType.Error,
-          error,
-        });
+        handleState({ type: FinalStateType.Error, error });
       },
     });
 
@@ -108,6 +109,7 @@ export function useDeviceContextInitializerComponentLWMViewModel({
     dependencies,
     deviceInitializationInput,
     onContextInitialized,
+    reportFailure,
     sideEffects,
   ]);
 

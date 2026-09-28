@@ -4,18 +4,13 @@ import type { ExecutorState } from "@features/platform-device-intent";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   dmkToLedgerDeviceIdMap,
-  getConnectDeviceFailure,
   getDeviceDisconnectedFailure,
   getDeviceFlowFailureProperties,
   getDeviceflowCancelEventName,
-  getEnsureAppReadyFailure,
   getInvalidOperationFailure,
-  setDeviceFlowFailure,
-  takeDeviceFlowFailure,
-  type EnsureAppReadyState,
+  type DeviceFlowFailure,
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
-import type { ConnectDeviceUIState } from "@ledgerhq/live-dmk-mobile";
 import { track } from "~/analytics";
 import type { DeviceIntentTrackingProperties, SourceFlow } from "./DeviceIntentTrackingContext";
 
@@ -124,31 +119,14 @@ export const getConnectedDeviceTrackingProperties = (
   transport: device.type === "USB" ? "usb" : "ble",
 });
 
-export const recordConnectDeviceFailure = (state: ConnectDeviceUIState): void => {
-  setDeviceFlowFailure(getConnectDeviceFailure(state, getTrackingTransport));
-};
-
-export const recordEnsureAppReadyFailure = (
-  state: EnsureAppReadyState,
-  device: ConnectedDevice,
-): void => {
-  setDeviceFlowFailure(
-    getEnsureAppReadyFailure(state, getConnectedDeviceTrackingProperties(device)),
-  );
-};
-
-export const recordExecutorStateFailure = (state: ExecutorState): void => {
+export const getExecutorStateFailure = (state: ExecutorState): DeviceFlowFailure | null => {
   switch (state.type) {
     case "deviceDisconnected":
-      setDeviceFlowFailure(
-        getDeviceDisconnectedFailure(getConnectedDeviceTrackingProperties(state.device)),
-      );
-      return;
+      return getDeviceDisconnectedFailure(getConnectedDeviceTrackingProperties(state.device));
     case "invalidOperation":
-      setDeviceFlowFailure(getInvalidOperationFailure(state.error));
-      return;
+      return getInvalidOperationFailure(state.error);
     default:
-      setDeviceFlowFailure(null);
+      return null;
   }
 };
 
@@ -156,7 +134,6 @@ export const trackDeviceflowStarted = (params: {
   sourceFlow: SourceFlow;
   extraProperties: DeviceIntentTrackingProperties;
 }): void => {
-  setDeviceFlowFailure(null);
   track(
     "deviceflow_started",
     getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
@@ -225,11 +202,11 @@ export const trackDeviceflowCompleted = (params: {
 export const trackDeviceflowCanceled = (params: {
   sourceFlow: SourceFlow;
   extraProperties: DeviceIntentTrackingProperties;
+  failure: DeviceFlowFailure | null;
 }): void => {
-  const failure = takeDeviceFlowFailure();
-  track(getDeviceflowCancelEventName(failure), {
+  track(getDeviceflowCancelEventName(params.failure), {
     ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
-    ...(failure ? getDeviceFlowFailureProperties(failure) : {}),
+    ...getDeviceFlowFailureProperties(params.failure),
   });
 };
 

@@ -9,9 +9,12 @@ import {
   type KnownDevice,
 } from "../connectDevice/types";
 import {
+  AppInteractionRequiredStateType,
   BlockingStateType,
+  DeviceInteractionRequiredType,
   FinalStateType,
   isRetryableState,
+  LoadingStateType,
   RetryableStateType,
   type EnsureAppReadyState,
 } from "../device-action/EnsureAppReady/state";
@@ -47,20 +50,20 @@ export type DeviceFlowFailureType =
   (typeof DeviceFlowFailureType)[keyof typeof DeviceFlowFailureType];
 
 /**
- * Failure displayed by the Device Intent Executor, captured when the error state is
- * shown so that closing the flow later reports what the user actually saw.
- * A terminal failure is reported as `deviceflow_failed`, any other as `deviceflow_aborted`.
+ * Error screen displayed by the Device Intent Executor, captured when it is shown.
+ * `countsAsFailure` decides whether closing the flow on it is reported as
+ * `deviceflow_failed` or `deviceflow_aborted`.
  */
 export type DeviceFlowFailure = Readonly<{
   failureType: DeviceFlowFailureType;
-  isTerminal: boolean;
+  countsAsFailure: boolean;
   subError?: string;
   modelId?: DeviceModelId;
   transport?: DeviceFlowTransport;
 }>;
 
 export type DeviceFlowFailureProperties = Readonly<{
-  failureType: DeviceFlowFailureType;
+  failureType?: DeviceFlowFailureType;
   subError?: string;
   modelId?: DeviceModelId;
   transport?: DeviceFlowTransport;
@@ -68,34 +71,8 @@ export type DeviceFlowFailureProperties = Readonly<{
 
 const UNKNOWN_SUB_ERROR = "Unknown";
 
-const ENSURE_APP_READY_FAILURE_TYPES: Partial<
-  Record<EnsureAppReadyState["type"], DeviceFlowFailureType>
-> = {
-  [RetryableStateType.DeviceLocked]: DeviceFlowFailureType.DeviceLocked,
-  [RetryableStateType.UserRefusedOnDevice]: DeviceFlowFailureType.UserRefusedOnDevice,
-  [RetryableStateType.DeviceBusy]: DeviceFlowFailureType.DeviceBusy,
-  [BlockingStateType.DeviceDeprecatedBlocking]: DeviceFlowFailureType.DeviceDeprecatedBlocking,
-  [BlockingStateType.DeviceOutOfStorageSpace]: DeviceFlowFailureType.DeviceOutOfStorageSpace,
-  [BlockingStateType.UnsupportedFirmwareVersion]: DeviceFlowFailureType.UnsupportedFirmwareVersion,
-  [BlockingStateType.UnsupportedApplication]: DeviceFlowFailureType.UnsupportedApplication,
-  [BlockingStateType.UnsupportedFeature]: DeviceFlowFailureType.UnsupportedFeature,
-  [BlockingStateType.WrongDeviceForAccount]: DeviceFlowFailureType.WrongDeviceForAccount,
-  [BlockingStateType.DeviceNotOnboarded]: DeviceFlowFailureType.DeviceNotOnboarded,
-  [BlockingStateType.InvalidProvider]: DeviceFlowFailureType.InvalidProvider,
-  [FinalStateType.Error]: DeviceFlowFailureType.ConnectAppError,
-};
-
-let currentDeviceFlowFailure: DeviceFlowFailure | null = null;
-
-export function setDeviceFlowFailure(failure: DeviceFlowFailure | null): void {
-  currentDeviceFlowFailure = failure;
-}
-
-/** Returns the current failure and clears it, so a failure is reported at most once. */
-export function takeDeviceFlowFailure(): DeviceFlowFailure | null {
-  const failure = currentDeviceFlowFailure;
-  currentDeviceFlowFailure = null;
-  return failure;
+function assertNever(value: never): never {
+  throw new Error(`Unhandled value: ${String(value)}`);
 }
 
 /** Identifies an error with its DMK `_tag`, else its `name`. Never uses the unbounded `message`. */
@@ -135,14 +112,15 @@ export function getConnectDeviceFailure(
     case ConnectDeviceUIStateTypes.DiscoveryError:
       return {
         failureType: DeviceFlowFailureType.DiscoveryError,
-        isTerminal: state.retry === undefined,
+        countsAsFailure: state.retry === undefined,
         subError: getConnectDeviceSubError(state.error),
         transport: getTransport(state.error.transportId),
       };
     case ConnectDeviceUIStateTypes.ConnectionError:
       return {
         failureType: DeviceFlowFailureType.ConnectionError,
-        isTerminal: state.error.type === BaseConnectionErrorTypes.Unknown,
+        // Known pairing errors are user-fixable; an unknown one counts as failed even with Retry.
+        countsAsFailure: state.error.type === BaseConnectionErrorTypes.Unknown,
         subError: getConnectDeviceSubError(state.error),
         modelId: state.device.deviceModelId,
         transport: getTransport(state.device.transport),
@@ -150,7 +128,7 @@ export function getConnectDeviceFailure(
     case ConnectDeviceUIStateTypes.UnknownError:
       return {
         failureType: DeviceFlowFailureType.ConnectDeviceUnknownError,
-        isTerminal: true,
+        countsAsFailure: true,
         subError: getErrorSubError(state.error),
       };
     default:
@@ -158,29 +136,73 @@ export function getConnectDeviceFailure(
   }
 }
 
+function getEnsureAppReadyFailureType(state: EnsureAppReadyState): DeviceFlowFailureType | null {
+  switch (state.type) {
+    case LoadingStateType.Loading:
+    case LoadingStateType.InstallingApp:
+    case DeviceInteractionRequiredType.UnlockDevice:
+    case DeviceInteractionRequiredType.AllowSecureConnection:
+    case DeviceInteractionRequiredType.ConfirmOpenApp:
+    case AppInteractionRequiredStateType.DeviceDeprecatedNonBlocking:
+    case AppInteractionRequiredStateType.OutdatedAppWarning:
+    case FinalStateType.Success:
+      return null;
+    case RetryableStateType.DeviceLocked:
+      return DeviceFlowFailureType.DeviceLocked;
+    case RetryableStateType.UserRefusedOnDevice:
+      return DeviceFlowFailureType.UserRefusedOnDevice;
+    case RetryableStateType.DeviceBusy:
+      return DeviceFlowFailureType.DeviceBusy;
+    case BlockingStateType.DeviceDeprecatedBlocking:
+      return DeviceFlowFailureType.DeviceDeprecatedBlocking;
+    case BlockingStateType.DeviceOutOfStorageSpace:
+      return DeviceFlowFailureType.DeviceOutOfStorageSpace;
+    case BlockingStateType.UnsupportedFirmwareVersion:
+      return DeviceFlowFailureType.UnsupportedFirmwareVersion;
+    case BlockingStateType.UnsupportedApplication:
+      return DeviceFlowFailureType.UnsupportedApplication;
+    case BlockingStateType.UnsupportedFeature:
+      return DeviceFlowFailureType.UnsupportedFeature;
+    case BlockingStateType.WrongDeviceForAccount:
+      return DeviceFlowFailureType.WrongDeviceForAccount;
+    case BlockingStateType.DeviceNotOnboarded:
+      return DeviceFlowFailureType.DeviceNotOnboarded;
+    case BlockingStateType.InvalidProvider:
+      return DeviceFlowFailureType.InvalidProvider;
+    case FinalStateType.Error:
+      return DeviceFlowFailureType.ConnectAppError;
+    default:
+      return assertNever(state);
+  }
+}
+
 export function getEnsureAppReadyFailure(
   state: EnsureAppReadyState,
   device: DeviceFlowDevice,
 ): DeviceFlowFailure | null {
-  const failureType = ENSURE_APP_READY_FAILURE_TYPES[state.type];
+  const failureType = getEnsureAppReadyFailureType(state);
   if (!failureType) return null;
 
   return {
     failureType,
-    isTerminal: !isRetryableState(state),
+    countsAsFailure: !isRetryableState(state),
     subError: state.type === FinalStateType.Error ? getErrorSubError(state.error) : undefined,
     ...device,
   };
 }
 
 export function getDeviceDisconnectedFailure(device: DeviceFlowDevice): DeviceFlowFailure {
-  return { failureType: DeviceFlowFailureType.DeviceDisconnected, isTerminal: true, ...device };
+  return {
+    failureType: DeviceFlowFailureType.DeviceDisconnected,
+    countsAsFailure: true,
+    ...device,
+  };
 }
 
 export function getInvalidOperationFailure(error: unknown): DeviceFlowFailure {
   return {
     failureType: DeviceFlowFailureType.InvalidOperation,
-    isTerminal: true,
+    countsAsFailure: true,
     subError: getErrorSubError(error),
   };
 }
@@ -188,12 +210,14 @@ export function getInvalidOperationFailure(error: unknown): DeviceFlowFailure {
 export function getDeviceflowCancelEventName(
   failure: DeviceFlowFailure | null,
 ): "deviceflow_failed" | "deviceflow_aborted" {
-  return failure?.isTerminal ? "deviceflow_failed" : "deviceflow_aborted";
+  return failure?.countsAsFailure ? "deviceflow_failed" : "deviceflow_aborted";
 }
 
 export function getDeviceFlowFailureProperties(
-  failure: DeviceFlowFailure,
+  failure: DeviceFlowFailure | null,
 ): DeviceFlowFailureProperties {
+  if (!failure) return {};
+
   return {
     failureType: failure.failureType,
     ...(failure.subError === undefined ? {} : { subError: failure.subError }),

@@ -1,4 +1,5 @@
 import React from "react";
+import type { DeviceFlowFailure } from "./deviceFlowFailure";
 
 /**
  * Originating user intent that initiated the device flow.
@@ -43,17 +44,21 @@ export type DeviceIntentTrackingProperties = Record<string, string | number | bo
 export type DeviceIntentTrackingContextValue = {
   sourceFlow: SourceFlow;
   analyticsProperties: DeviceIntentTrackingProperties;
+  /** Reports the error screen currently displayed, or `null` once the flow leaves it. */
+  reportFailure: (failure: DeviceFlowFailure | null) => void;
 };
 
 const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
+const ignoreFailure = () => undefined;
 
 const DeviceIntentTrackingContext = React.createContext<DeviceIntentTrackingContextValue | null>(
   null,
 );
 
 type DeviceIntentTrackingProviderProps = React.PropsWithChildren<{
-  value: Omit<DeviceIntentTrackingContextValue, "analyticsProperties"> & {
+  value: Omit<DeviceIntentTrackingContextValue, "analyticsProperties" | "reportFailure"> & {
     analyticsProperties?: DeviceIntentTrackingProperties;
+    reportFailure?: DeviceIntentTrackingContextValue["reportFailure"];
   };
 }>;
 
@@ -61,13 +66,14 @@ export function DeviceIntentTrackingProvider({
   value,
   children,
 }: DeviceIntentTrackingProviderProps): React.ReactNode {
-  const { sourceFlow, analyticsProperties } = value;
+  const { sourceFlow, analyticsProperties, reportFailure } = value;
   const contextValue = React.useMemo(
     () => ({
       sourceFlow,
       analyticsProperties: analyticsProperties ?? emptyAnalyticsProperties,
+      reportFailure: reportFailure ?? ignoreFailure,
     }),
-    [sourceFlow, analyticsProperties],
+    [sourceFlow, analyticsProperties, reportFailure],
   );
 
   return (

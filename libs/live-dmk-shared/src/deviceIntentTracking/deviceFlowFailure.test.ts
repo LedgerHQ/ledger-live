@@ -26,8 +26,6 @@ import {
   getEnsureAppReadyFailure,
   getErrorSubError,
   getInvalidOperationFailure,
-  setDeviceFlowFailure,
-  takeDeviceFlowFailure,
   type DeviceFlowDevice,
 } from "./deviceFlowFailure";
 
@@ -95,7 +93,7 @@ describe("getConnectDeviceSubError", () => {
 });
 
 describe("getConnectDeviceFailure", () => {
-  it("should report a discovery error without retry as terminal", () => {
+  it("should report a discovery error without retry as a failure", () => {
     const state: SharedConnectDeviceUIState = {
       type: ConnectDeviceUIStateTypes.DiscoveryError,
       error: { type: "bluetooth-unsupported", transportId: "RN_BLE" },
@@ -104,13 +102,13 @@ describe("getConnectDeviceFailure", () => {
 
     expect(getConnectDeviceFailure(state, getTransport)).toEqual({
       failureType: DeviceFlowFailureType.DiscoveryError,
-      isTerminal: true,
+      countsAsFailure: true,
       subError: "BluetoothUnsupported",
       transport: "ble",
     });
   });
 
-  it("should report a discovery error with retry as not terminal", () => {
+  it("should report a discovery error with retry as not a failure", () => {
     const state: SharedConnectDeviceUIState = {
       type: ConnectDeviceUIStateTypes.DiscoveryError,
       error: { type: "bluetooth-disabled-promptable" },
@@ -120,12 +118,12 @@ describe("getConnectDeviceFailure", () => {
 
     expect(getConnectDeviceFailure(state, getTransport)).toMatchObject({
       failureType: DeviceFlowFailureType.DiscoveryError,
-      isTerminal: false,
+      countsAsFailure: false,
       subError: "BluetoothDisabledPromptable",
     });
   });
 
-  it("should report an unknown connection error as terminal with the device", () => {
+  it("should report an unknown connection error as a failure with the device", () => {
     const state: SharedConnectDeviceUIState = {
       type: ConnectDeviceUIStateTypes.ConnectionError,
       error: { type: BaseConnectionErrorTypes.Unknown, error: dmkError },
@@ -136,14 +134,14 @@ describe("getConnectDeviceFailure", () => {
 
     expect(getConnectDeviceFailure(state, getTransport)).toEqual({
       failureType: DeviceFlowFailureType.ConnectionError,
-      isTerminal: true,
+      countsAsFailure: true,
       subError: "DeviceDisconnectedWhileSendingError",
       modelId: DeviceModelId.europa,
       transport: "ble",
     });
   });
 
-  it("should report a specific connection error as not terminal", () => {
+  it("should report a specific connection error as not a failure", () => {
     const state: SharedConnectDeviceUIState = {
       type: ConnectDeviceUIStateTypes.ConnectionError,
       error: { type: "ble-pairing-refused" },
@@ -153,12 +151,12 @@ describe("getConnectDeviceFailure", () => {
     };
 
     expect(getConnectDeviceFailure(state, getTransport)).toMatchObject({
-      isTerminal: false,
+      countsAsFailure: false,
       subError: "BlePairingRefused",
     });
   });
 
-  it("should report the connect device unknown error state as terminal", () => {
+  it("should report the connect device unknown error state as a failure", () => {
     const state: SharedConnectDeviceUIState = {
       type: ConnectDeviceUIStateTypes.UnknownError,
       error: new SyntaxError("boom"),
@@ -166,7 +164,7 @@ describe("getConnectDeviceFailure", () => {
 
     expect(getConnectDeviceFailure(state, getTransport)).toEqual({
       failureType: DeviceFlowFailureType.ConnectDeviceUnknownError,
-      isTerminal: true,
+      countsAsFailure: true,
       subError: "SyntaxError",
     });
   });
@@ -192,10 +190,10 @@ describe("getEnsureAppReadyFailure", () => {
       DeviceFlowFailureType.UserRefusedOnDevice,
     ],
     [{ type: RetryableStateType.DeviceBusy, retry: jest.fn() }, DeviceFlowFailureType.DeviceBusy],
-  ])("should report the retryable state %p as not terminal", (state, failureType) => {
+  ])("should report the retryable state %p as not a failure", (state, failureType) => {
     expect(getEnsureAppReadyFailure(state, device)).toEqual({
       failureType,
-      isTerminal: false,
+      countsAsFailure: false,
       subError: undefined,
       ...device,
     });
@@ -240,10 +238,10 @@ describe("getEnsureAppReadyFailure", () => {
       { type: BlockingStateType.DeviceOutOfStorageSpace, appNames: ["Bitcoin"] },
       DeviceFlowFailureType.DeviceOutOfStorageSpace,
     ],
-  ])("should report the blocking state %p as terminal", (state, failureType) => {
+  ])("should report the blocking state %p as a failure", (state, failureType) => {
     expect(getEnsureAppReadyFailure(state, device)).toMatchObject({
       failureType,
-      isTerminal: true,
+      countsAsFailure: true,
     });
   });
 
@@ -261,7 +259,7 @@ describe("getEnsureAppReadyFailure", () => {
       getEnsureAppReadyFailure({ type: FinalStateType.Error, error: dmkError }, device),
     ).toEqual({
       failureType: DeviceFlowFailureType.ConnectAppError,
-      isTerminal: true,
+      countsAsFailure: true,
       subError: "DeviceDisconnectedWhileSendingError",
       ...device,
     });
@@ -281,32 +279,20 @@ describe("getEnsureAppReadyFailure", () => {
 });
 
 describe("executor failures", () => {
-  it("should report a disconnection as terminal with the device", () => {
+  it("should report a disconnection as a failure with the device", () => {
     expect(getDeviceDisconnectedFailure(device)).toEqual({
       failureType: DeviceFlowFailureType.DeviceDisconnected,
-      isTerminal: true,
+      countsAsFailure: true,
       ...device,
     });
   });
 
-  it("should report an invalid operation as terminal with its sub error", () => {
+  it("should report an invalid operation as a failure with its sub error", () => {
     expect(getInvalidOperationFailure(new Error("boom"))).toEqual({
       failureType: DeviceFlowFailureType.InvalidOperation,
-      isTerminal: true,
+      countsAsFailure: true,
       subError: "Error",
     });
-  });
-});
-
-describe("failure store", () => {
-  afterEach(() => setDeviceFlowFailure(null));
-
-  it("should return the stored failure once and then null", () => {
-    const failure = getDeviceDisconnectedFailure(device);
-    setDeviceFlowFailure(failure);
-
-    expect(takeDeviceFlowFailure()).toBe(failure);
-    expect(takeDeviceFlowFailure()).toBeNull();
   });
 });
 
@@ -332,7 +318,7 @@ describe("getDeviceflowCancelEventName", () => {
 });
 
 describe("getDeviceFlowFailureProperties", () => {
-  it("should expose the failure without the internal terminal flag", () => {
+  it("should expose the failure without the internal countsAsFailure flag", () => {
     expect(getDeviceFlowFailureProperties(getDeviceDisconnectedFailure(device))).toEqual({
       failureType: DeviceFlowFailureType.DeviceDisconnected,
       modelId: DeviceModelId.stax,
@@ -346,5 +332,9 @@ describe("getDeviceFlowFailureProperties", () => {
     );
 
     expect(Object.keys(properties)).toEqual(["failureType", "subError"]);
+  });
+
+  it("should return no properties when no failure is displayed", () => {
+    expect(getDeviceFlowFailureProperties(null)).toEqual({});
   });
 });
