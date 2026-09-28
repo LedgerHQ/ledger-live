@@ -6,6 +6,8 @@ import type {
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { getEnv } from "@ledgerhq/live-env";
 import type { SuiCoinConfig, SuiContext } from "../config";
+import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
+import { STAKE_DELEGATOR } from "../test/fixtures";
 import { createApi } from ".";
 
 describe("Sui Api", () => {
@@ -366,14 +368,19 @@ describe("Sui Api", () => {
       expect((v.commissionRate as string).length).toBeGreaterThan(0);
       expect(typeof v.apy).toBe("number");
     });
+
+    // The stake flow preselects this validator and pins it to the top of the list; both silently
+    // stop working if it leaves the active set.
+    it("includes the default Ledger validator", async () => {
+      const page = await module.getValidators(context);
+
+      expect(page.items.map(v => v.address)).toContain(FIGMENT_SUI_VALIDATOR_ADDRESS);
+    });
   });
 
   describe("getStakes", () => {
-    test("Account 0x4d701858924b5aebce9e82e9aeca92266acfd5610896bfc1b042e7f87ba23c73", async () => {
-      const stakes = await module.getStakes(
-        context,
-        "0x4d701858924b5aebce9e82e9aeca92266acfd5610896bfc1b042e7f87ba23c73",
-      );
+    test("returns well-formed stakes for a live delegator", async () => {
+      const stakes = await module.getStakes(context, STAKE_DELEGATOR);
       expect(stakes.items.length).toBeGreaterThan(0);
       stakes.items.forEach(stake => {
         expect(stake.uid).toMatch(/0x[0-9a-z]+/);

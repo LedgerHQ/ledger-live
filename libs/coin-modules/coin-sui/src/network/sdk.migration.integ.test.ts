@@ -11,6 +11,7 @@ import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
 import { getStakes as logicGetStakes } from "../logic/staking";
+import { ACTIVE_ACCOUNT, STAKE_DELEGATOR, STEADY_ACCOUNT } from "../test/fixtures";
 import { createFixtureTransaction } from "../types/bridge.fixture";
 import { ACCOUNT_EMPTY } from "./graphql/constants";
 import {
@@ -33,16 +34,9 @@ const GRAPHQL_ID = "sui-graphql-mig";
 /** ~5 min lookback at ~3 cps: comfortably past finality on both transports. */
 const STABLE_CHECKPOINT_LOOKBACK = 1000n;
 
-/** Live mainnet account with a USDC balance and enough SUI for dry-run gas. */
-const ACTIVE_ACCOUNT = "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3";
-
-/**
- * History fixture for the unanchored "newest page" comparisons below. Each arm samples the head
- * independently, so the two windows only overlap while the account stays quieter than the gap
- * between the calls. `ACTIVE_ACCOUNT` turns over its whole 50-item page in ~7s and goes fully
- * disjoint on a slow run; this address spans ~20min for the same page.
- */
-const STEADY_ACCOUNT = "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9";
+// The unanchored "newest page" history comparisons below use `STEADY_ACCOUNT`, not `ACTIVE_ACCOUNT`:
+// each arm samples the head independently, so the two windows only overlap while the account stays
+// quieter than the gap between the calls.
 
 let stableCheckpointSequence: string;
 
@@ -423,20 +417,14 @@ describe("gRPC vs GraphQL shape parity (live mainnet)", () => {
       object: {
         validatorAddress: "non-empty-string",
         stakingPool: "non-empty-string",
-        stakes: { array: stakeItem },
+        stakes: { array: stakeItem, minLen: 1 },
       },
     };
 
     it("returns the same shape on both transports; stake IDs and principals match", async () => {
-      const rpc = await getDelegatedStakes(
-        coinConfig.getCoinConfig(GRPC_ID),
-        FIGMENT_SUI_VALIDATOR_ADDRESS,
-      );
-      const gql = await getDelegatedStakes(
-        coinConfig.getCoinConfig(GRAPHQL_ID),
-        FIGMENT_SUI_VALIDATOR_ADDRESS,
-      );
-      assertShapeBoth(rpc, gql, { array: delegationItem }, "getDelegatedStakes");
+      const rpc = await getDelegatedStakes(coinConfig.getCoinConfig(GRPC_ID), STAKE_DELEGATOR);
+      const gql = await getDelegatedStakes(coinConfig.getCoinConfig(GRAPHQL_ID), STAKE_DELEGATOR);
+      assertShapeBoth(rpc, gql, { array: delegationItem, minLen: 1 }, "getDelegatedStakes");
 
       // stakedSuiId + principal are deterministic (deposits don't change post-stake).
       const rpcStakes = new Map(
@@ -691,19 +679,19 @@ describe("gRPC vs GraphQL shape parity (live mainnet)", () => {
     };
     const pageShape: ShapeSpec = {
       object: {
-        items: { array: stakeShape },
+        items: { array: stakeShape, minLen: 1 },
       },
     };
 
     it("Page<Stake> shape matches across transports; uid + amountDeposited identical for matched stakes", async () => {
       const rpc = await logicGetStakes(
         coinConfig.getCoinConfig(GRPC_ID),
-        FIGMENT_SUI_VALIDATOR_ADDRESS,
+        STAKE_DELEGATOR,
         undefined,
       );
       const gql = await logicGetStakes(
         coinConfig.getCoinConfig(GRAPHQL_ID),
-        FIGMENT_SUI_VALIDATOR_ADDRESS,
+        STAKE_DELEGATOR,
         undefined,
       );
       assertShapeBoth(rpc, gql, pageShape, "logic.getStakes");
