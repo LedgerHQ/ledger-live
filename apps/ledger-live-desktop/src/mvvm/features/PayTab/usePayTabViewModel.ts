@@ -9,9 +9,9 @@ import { usePayTabVerifyAddress } from "./hooks/usePayTabVerifyAddress";
 
 export function usePayTabViewModel() {
   const balance = usePayCardBalance();
-  const deposit = usePayTabDepositOptions();
   const verify = usePayTabVerifyAddress();
   const request = usePayTabRequestReceive(verify.openIntro);
+  const deposit = usePayTabDepositOptions(request.open);
   const newPayment = usePayTabNewPayment();
   const actionTiles = usePayTabActionTiles(deposit.open, request.open, newPayment.open);
   const { contacts, ledgerSyncIntroduction, contactAddressPicker } = usePayTabContacts(

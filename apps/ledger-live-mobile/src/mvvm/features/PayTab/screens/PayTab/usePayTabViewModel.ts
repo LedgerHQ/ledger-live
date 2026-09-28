@@ -61,8 +61,8 @@ export function usePayTabViewModel() {
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
   const balance = usePayCardBalance();
-  const deposit = usePayTabDepositOptions();
   const request = usePayTabRequestReceive();
+  const deposit = usePayTabDepositOptions(request.open);
   const actionTiles = usePayTabActionTiles(deposit.open, request.open);
   const payment = usePayTabNewPayment();
   const contacts = usePayTabContacts(payment.open);
