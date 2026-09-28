@@ -1,8 +1,4 @@
-import {
-  getContentAbTestCopy,
-  subscribeToContentAbTestCopy,
-  type ContentAbTestCopy,
-} from "~/firebase/contentAbTestCopy";
+import { getContentAbTestCopy, subscribeToContentAbTestCopy } from "~/firebase/contentAbTestCopy";
 
 const ENGLISH_LANGUAGE = "en";
 
@@ -17,16 +13,14 @@ type TranslationEngine = {
     options: { silent: boolean },
   ): void;
   on(event: "languageChanged", callback: (language: string) => void): void;
-  off(event: "languageChanged", callback: (language: string) => void): void;
 };
 
 export function installContentAbTestCopyOverrides(
   i18nInstance: TranslationEngine,
   englishBaseline: object,
   namespace: string,
-): () => void {
+): void {
   const baselineSnapshot = cloneTranslationTree(englishBaseline);
-  let copyOverrides: ContentAbTestCopy = getContentAbTestCopy();
   let appliedKeys = new Set<string>();
 
   const applyCopyOverrides = (language: string) => {
@@ -39,7 +33,7 @@ export function installContentAbTestCopyOverrides(
     appliedKeys = new Set();
 
     if (!isEnglish(language)) return;
-    for (const [key, value] of Object.entries(copyOverrides)) {
+    for (const [key, value] of Object.entries(getContentAbTestCopy())) {
       if (getTranslationValue(baselineSnapshot, key) === undefined) continue;
       i18nInstance.addResource(ENGLISH_LANGUAGE, namespace, key, value, {
         silent: true,
@@ -55,15 +49,9 @@ export function installContentAbTestCopyOverrides(
   i18nInstance.on("languageChanged", onLanguageChanged);
   applyCopyOverrides(i18nInstance.resolvedLanguage ?? i18nInstance.language);
 
-  const unsubscribe = subscribeToContentAbTestCopy(nextCopyOverrides => {
-    copyOverrides = nextCopyOverrides;
+  subscribeToContentAbTestCopy(() => {
     applyCopyOverrides(i18nInstance.resolvedLanguage ?? i18nInstance.language);
   });
-
-  return () => {
-    unsubscribe();
-    i18nInstance.off("languageChanged", onLanguageChanged);
-  };
 }
 
 function isEnglish(language: string): boolean {

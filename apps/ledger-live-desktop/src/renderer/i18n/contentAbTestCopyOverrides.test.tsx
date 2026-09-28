@@ -29,8 +29,8 @@ async function createI18n(language = "en") {
       fr: { [namespace]: frenchBaseline },
     },
   });
-  const uninstall = installContentAbTestCopyOverrides(instance, englishBaseline, namespace);
-  return { instance, uninstall };
+  installContentAbTestCopyOverrides(instance, englishBaseline, namespace);
+  return { instance };
 }
 
 describe("content A/B test copy overrides", () => {
@@ -43,7 +43,7 @@ describe("content A/B test copy overrides", () => {
   });
 
   it("overrides t only in English and restores the app.json baseline", async () => {
-    const { instance, uninstall } = await createI18n();
+    const { instance } = await createI18n();
 
     setContentAbTestCopy(
       remoteExperiment({
@@ -68,15 +68,13 @@ describe("content A/B test copy overrides", () => {
 
     setContentAbTestCopy({});
     expect(instance.t("greeting")).toBe("Hello");
-    uninstall();
   });
 
   it("keeps the baseline when the experiment is disabled", async () => {
-    const { instance, uninstall } = await createI18n();
+    const { instance } = await createI18n();
 
     setContentAbTestCopy(remoteExperiment({ enabled: false, copy: { greeting: "Remote hello" } }));
 
     expect(instance.t("greeting")).toBe("Hello");
-    uninstall();
   });
 });
