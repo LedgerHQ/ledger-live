@@ -6,8 +6,6 @@ import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import NetInfo from "@react-native-community/netinfo";
-import { Platform } from "react-native";
-import VersionNumber from "react-native-version-number";
 import reducers from "~/reducers";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
@@ -18,7 +16,7 @@ import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
-import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings";
+import { canPushDeviceIdsSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
 import {
   calApiExtra,
@@ -39,14 +37,9 @@ import {
   refreshCardSession,
 } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
-import {
-  createFeatureFlagsMiddleware,
-  selectFeature,
-  type PartialFeatures,
-} from "@shared/feature-flags";
-import { fetchRemoteFlags, readCachedFlags } from "~/firebase/remoteConfig";
+import { selectFeature } from "@shared/feature-flags";
 import { sleepingListener } from "./sleepingListener";
-import { reportFeatureFlagsReadFailure } from "./reportFeatureFlagsReadFailure";
+import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 export const store = configureStore({
@@ -121,19 +114,7 @@ export const store = configureStore({
           getAnalyticsConsent: canPushDeviceIdsSelector,
         }),
       )
-      .concat(
-        createFeatureFlagsMiddleware<State>({
-          resolutionConfig: {
-            platform: Platform.OS === "ios" ? "ios" : "android",
-            appVersion: VersionNumber.appVersion ?? undefined,
-            envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
-          },
-          readCachedFlags,
-          fetchRemoteFlags,
-          getAppLanguage: languageSelector,
-          onRemoteFlagsError: reportFeatureFlagsReadFailure,
-        }),
-      )
+      .concat(createMobileFeatureFlagsMiddleware())
       .concat(sleepingListener.middleware),
 
   enhancers: getDefaultEnhancers => {

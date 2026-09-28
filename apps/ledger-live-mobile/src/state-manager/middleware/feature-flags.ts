@@ -1,6 +1,16 @@
-import type { FeatureFlagsReadFailure } from "@shared/feature-flags";
+import { Platform } from "react-native";
+import VersionNumber from "react-native-version-number";
 import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
+import { getEnv } from "@shared/env";
+import {
+  createFeatureFlagsMiddleware,
+  type FeatureFlagsReadFailure,
+  type PartialFeatures,
+} from "@shared/feature-flags";
 import { isDatadogEnabled } from "~/datadog";
+import { fetchRemoteFlags, readCachedFlags } from "~/firebase/remoteConfig";
+import { languageSelector } from "~/reducers/settings";
+import type { State } from "~/reducers/types";
 
 /**
  * Reports only the failures that actually degrade the session. A warm failure is routine: the
@@ -19,7 +29,7 @@ import { isDatadogEnabled } from "~/datadog";
  * starts intercepting `console.error`, hence the explicit `DdRum.addError`, which the SDK buffers
  * until initialization.
  */
-export function reportFeatureFlagsReadFailure(
+function reportFeatureFlagsReadFailure(
   error: unknown,
   { stage, attempt, isCold }: FeatureFlagsReadFailure,
 ) {
@@ -38,4 +48,18 @@ export function reportFeatureFlagsReadFailure(
   }
   if (!isCold) return;
   console.error(`Feature flags: ${stage} read failed, resolving on compiled defaults`, error);
+}
+
+export function createMobileFeatureFlagsMiddleware() {
+  return createFeatureFlagsMiddleware<State>({
+    resolutionConfig: {
+      platform: Platform.OS === "ios" ? "ios" : "android",
+      appVersion: VersionNumber.appVersion ?? undefined,
+      envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
+    },
+    readCachedFlags,
+    fetchRemoteFlags,
+    getAppLanguage: languageSelector,
+    onRemoteFlagsError: reportFeatureFlagsReadFailure,
+  });
 }
