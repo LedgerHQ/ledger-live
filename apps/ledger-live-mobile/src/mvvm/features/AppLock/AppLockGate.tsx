@@ -7,16 +7,19 @@ import {
   selectHasDecidedLaunchLock,
   selectIsLocked,
 } from "@features/platform-app-lock";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import Config from "react-native-config";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { isAppInBackground, onAppBackground } from "./adapters/appVisibility";
+import { isAppInBackground, onAppBackground, onAppForeground } from "./adapters/appVisibility";
 import { useAppLockHydration } from "./hooks/useAppLockHydration";
 import { useAppLockScheme } from "./hooks/useAppLockScheme";
 import { useLegacyPasswordMigration } from "./hooks/useLegacyPasswordMigration";
 import { LongerPasswordGate } from "./LongerPasswordGate";
 import { useLongerPasswordGateViewModel } from "./LongerPasswordGate/useLongerPasswordGateViewModel";
 import { UnlockScreen } from "./screens/Unlock";
+
+const LOCK_GRACE_MS = Config.DETOX ? 1_000 : 15_000;
 
 export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }>) {
   const dispatch = useDispatch();
@@ -29,6 +32,8 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
   const { dismissAll } = useBottomSheetModal();
   const longerPassword = useLongerPasswordGateViewModel();
   const hasDecidedLaunchLock = useSelector(selectHasDecidedLaunchLock);
+  const leftAtRef = useRef<number | null>(null);
+  const [isAway, setIsAway] = useState(false);
 
   const lockIfConfigured = useCallback(() => {
     if (isRevamped && isAppLockConfigured(protection)) {
@@ -52,14 +57,35 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
     }
   }, [dismissAll, isLocked]);
 
+  const leave = useCallback(() => {
+    leftAtRef.current ??= Date.now();
+    setIsAway(true);
+  }, []);
+
+  const comeBack = useCallback(() => {
+    const leftAt = leftAtRef.current;
+    leftAtRef.current = null;
+    setIsAway(false);
+
+    if (leftAt !== null && Date.now() - leftAt >= LOCK_GRACE_MS) {
+      lockIfConfigured();
+    }
+  }, [lockIfConfigured]);
+
   useEffect(() => {
     // Protection may have been enabled while the app was already backgrounded.
     if (!isLocked && isAppInBackground()) {
-      lockIfConfigured();
+      leftAtRef.current ??= Date.now();
     }
 
-    return onAppBackground(lockIfConfigured);
-  }, [isLocked, lockIfConfigured]);
+    const stopLeaving = onAppBackground(leave);
+    const stopComingBack = onAppForeground(comeBack);
+
+    return () => {
+      stopLeaving();
+      stopComingBack();
+    };
+  }, [comeBack, isLocked, leave]);
 
   // The initial state is unlocked, so anything rendered before the decision is reachable.
   if (scheme === undefined || !hasDecidedLaunchLock) {
@@ -68,7 +94,8 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
 
   // `accessibilityViewIsModal` hides nothing from TalkBack, so whatever covers the app has to take
   // the screen reader with it, or a mandatory prompt can be reached around.
-  const isCovered = isLocked || longerPassword.isHolding;
+  const isHidden = isAway && isRevamped && isAppLockConfigured(protection);
+  const isCovered = isLocked || isHidden || longerPassword.isHolding;
 
   return (
     <>
@@ -80,6 +107,7 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
         {children}
       </View>
       <LongerPasswordGate {...longerPassword} />
+      {isHidden && !isLocked ? <View style={[styles.cover, styles.overlay]} /> : null}
       {isLocked ? (
         <View style={styles.overlay} accessibilityViewIsModal>
           <UnlockScreen />
