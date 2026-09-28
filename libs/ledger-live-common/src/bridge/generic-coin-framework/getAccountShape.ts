@@ -738,8 +738,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const { maxOperations, pageSize } = resolveOperationHistoryBound(currency.id, network);
 
     // delegateNewOps is lazy: getAccountRawAssignHooks is only awaited when the coin-module path is taken
-    const delegateNewOps = async (): Promise<OperationCommon[]> => {
-      const coreOps = await paginateOperations(
+    const delegateNewOps = async (): Promise<{
+      operations: OperationCommon[];
+      bounded: boolean;
+    }> => {
+      const { items: coreOps, bounded } = await paginateOperations(
         cursor =>
           coinModuleApi.listOperations(context, address, {
             minHeight,
@@ -767,14 +770,22 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       // single definition of it. Loaded per sync rather than per operation; the registry caches the import.
       const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
       // Coin module returns NFT and failed-incoming ops; exclude them (A4 adapter handles this internally)
-      return coreOps
+      const operations = coreOps
         .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
         .map(op =>
           adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
         ) as OperationCommon[];
+      return { operations, bounded };
     };
 
     let newOps: OperationCommon[];
+    // True when this round's walk (A4 or delegate, whichever served it) stopped on the bound
+    // before finding out whether it reached back to `minHeight`. Merging its result with the
+    // older stored parent operations or sub-accounts would then leave a hole between the two --
+    // the same failure the block-cut inside `paginateOperations` exists to avoid one level down --
+    // so a bounded round is treated the same way a from-scratch sync already is: nothing older is
+    // carried over, only what this round actually saw.
+    let newOpsBounded = false;
 
     if (a4Network && a4ChainConfig?.read) {
       try {
@@ -782,7 +793,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         const a4Client = new A4Client(url, a4Network);
         const a4AccountId = deriveA4AccountId(address);
         // NFT and failed-incoming filtering is handled inside adaptA4OperationToLiveOperation (returns [])
-        newOps = (await fetchA4Operations(
+        const a4Result = await fetchA4Operations(
           a4Client,
           a4AccountId,
           accountId,
@@ -795,7 +806,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           // size, without which a single response can do the same on its own.
           maxOperations,
           pageSize,
-        )) as OperationCommon[];
+        );
+        newOps = a4Result.operations as OperationCommon[];
+        newOpsBounded = a4Result.bounded;
         logReadDecisionOnce(a4Network, "read_served_by_a4", "A4 is serving reads for this chain");
       } catch (e) {
         const status = toA4HttpError(e).status;
@@ -814,7 +827,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           status,
           error: e,
         });
-        newOps = await delegateNewOps();
+        ({ operations: newOps, bounded: newOpsBounded } = await delegateNewOps());
       }
     } else {
       if (a4Network) {
@@ -824,8 +837,16 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           "A4 read is off for this chain, delegate is used",
         );
       }
-      newOps = await delegateNewOps();
+      ({ operations: newOps, bounded: newOpsBounded } = await delegateNewOps());
     }
+
+    // A bounded round is treated the same way a from-scratch sync already is for both merges
+    // below: `newOpsBounded` means the walk stopped before finding out whether it reached back to
+    // `minHeight`, so nothing already stored can be assumed contiguous with what it fetched. The
+    // alternative -- merging anyway -- would leave a hole strictly between the old watermark and
+    // wherever this round's bound cut, which is worse than a short history: nothing revisits it,
+    // because the *next* watermark derives from this round's newest operation, past the hole.
+    const discardOld = syncFromScratch || newOpsBounded;
 
     const newAssetOperations = newOps.filter(
       operation =>
@@ -856,7 +877,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // bounded at N hands back up to N plus one page -- and all of that overshoot can belong to a
     // single token.
     const subAccounts = mergeSubAccounts(
-      syncFromScratch ? [] : (initialAccount?.subAccounts ?? []),
+      discardOld ? [] : (initialAccount?.subAccounts ?? []),
       newSubAccounts,
       maxOperations,
     );
@@ -880,10 +901,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ? await bridgeApi.refreshOperations(operationsToRefresh)
         : [];
     const newOperations = [...confirmedOperations, ...newOpsWithSubs];
-    const mergedOperations = mergeOps(
-      syncFromScratch ? [] : oldOps,
-      newOperations,
-    ) as OperationCommon[];
+    const mergedOperations = mergeOps(discardOld ? [] : oldOps, newOperations) as OperationCommon[];
     // Store bound: `mergeOps` returns newest-first (its own contract), so keeping the head keeps
     // the newest -- this also keeps `minHeight` correct on the next sync, since it derives from
     // the newest stored operation, which the head always retains. Cut on transactions rather than

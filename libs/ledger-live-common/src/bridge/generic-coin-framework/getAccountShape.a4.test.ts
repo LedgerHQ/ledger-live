@@ -143,7 +143,7 @@ describe("genericGetAccountShape - A4 read branch", () => {
       environment: "stg",
       maxDcRoamRetries: 5,
     });
-    fetchA4OperationsMock.mockResolvedValue([]);
+    fetchA4OperationsMock.mockResolvedValue({ operations: [], bounded: false });
   });
 
   const call = () =>
@@ -154,7 +154,7 @@ describe("genericGetAccountShape - A4 read branch", () => {
 
   it("calls fetchA4Operations and skips the coin-module delegate when read=true and A4 succeeds", async () => {
     const a4Op = { id: "a4-op-id", hash: "0xtx-a4", type: "IN", accountId: "js:1:ethereum:0xabc:" };
-    fetchA4OperationsMock.mockResolvedValue([a4Op]);
+    fetchA4OperationsMock.mockResolvedValue({ operations: [a4Op], bounded: false });
 
     await call();
 
@@ -163,7 +163,7 @@ describe("genericGetAccountShape - A4 read branch", () => {
   });
 
   it("passes the walk bound to the A4 pagination, not only to the coin-module delegate", async () => {
-    fetchA4OperationsMock.mockResolvedValue([]);
+    fetchA4OperationsMock.mockResolvedValue({ operations: [], bounded: false });
 
     await call();
 
@@ -182,7 +182,7 @@ describe("genericGetAccountShape - A4 read branch", () => {
   it("sends the page size too for a family that has one", async () => {
     // `size` bounds one A4 response the way `limit` bounds one explorer page; without it a single
     // response can materialise in full before the walk bound applies.
-    fetchA4OperationsMock.mockResolvedValue([]);
+    fetchA4OperationsMock.mockResolvedValue({ operations: [], bounded: false });
 
     await genericGetAccountShape("evm", currency.id)(
       { address: "0xabc", initialAccount: undefined, currency, derivationMode: "" } as any,

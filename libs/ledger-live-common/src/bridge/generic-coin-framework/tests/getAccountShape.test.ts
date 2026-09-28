@@ -3695,6 +3695,60 @@ describe("genericGetAccountShape", () => {
       // Store bound keeps the newest 5 of the 6 walked: h4 (height 4) is dropped.
       expect(result.operations?.map(op => op.blockHeight)).toEqual([9, 8, 7, 6, 5]);
     });
+
+    test("a resync whose walk is bound-truncated discards old parent operations and old sub-accounts instead of merging across the un-walked interval", async () => {
+      // Old watermark: newest stored operation at height 3, so this round resumes at minHeight 4.
+      // The walk is bound to 2 and the first page alone already reaches it with heights 10 and 9
+      // -- `dropTrailingBlock` then cuts the lowest of those (9), leaving one new operation at
+      // height 10. Naively merging that with the stored operation at height 3 would look
+      // contiguous (two entries, newest-first) while hiding a real gap: heights 4-9 were never
+      // walked, because the second page (which might hold them) was never fetched.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 2 });
+      listOperationsMock.mockResolvedValueOnce({
+        items: [coreOp("h10", 10), coreOp("h9", 9)],
+        next: "c1",
+      });
+      const oldSubAccounts = [{ id: "subOld", token: { id: "tok1" }, operations: [] }] as any;
+      buildSubAccountsMock.mockReturnValue([{ id: "subNew" }]);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: "addr1",
+          initialAccount: {
+            blockHeight: 3,
+            syncHash: "sync-hash",
+            operations: [
+              {
+                id: "old1",
+                accountId: "accId",
+                hash: "hold",
+                blockHeight: 3,
+                type: "IN",
+                date: new Date(3000),
+                extra: {},
+                senders: [],
+                recipients: [],
+              },
+            ],
+            pendingOperations: [],
+            subAccounts: oldSubAccounts,
+          },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // The second page was never fetched, so nothing here claims to know what, if anything, sits
+      // in [4, 9] -- the walk stopped on the bound, not on a clean end of stream.
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      // The old operation at height 3 is gone: kept, it would sit right below height 10 with no
+      // visible sign that heights 4-9 were skipped rather than empty.
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([10]);
+      // Same treatment for sub-accounts: the old list is not what this round's merge starts from.
+      expect(mergeSubAccountsMock.mock.calls[0][0]).toEqual([]);
+    });
   });
 
   describe("resumable token discovery", () => {

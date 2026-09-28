@@ -796,7 +796,7 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(
+    const { operations: ops, bounded } = await fetchA4Operations(
       client,
       "a4AccountId",
       "liveAccountId",
@@ -810,6 +810,7 @@ describe("fetchA4Operations", () => {
       expect.objectContaining({ hash: "0xtx1" }),
       expect.objectContaining({ hash: "0xtx2" }),
     ]);
+    expect(bounded).toBe(false);
   });
 
   it("bounds on adapted operations, not raw transactions, so a fanned-out transaction stops the walk on its own page", async () => {
@@ -840,7 +841,7 @@ describe("fetchA4Operations", () => {
       version: undefined,
     });
 
-    const ops = await fetchA4Operations(
+    const { operations: ops, bounded } = await fetchA4Operations(
       client,
       "a4AccountId",
       "liveAccountId",
@@ -857,6 +858,7 @@ describe("fetchA4Operations", () => {
     // transactions, is what tripped the bound.
     expect(ops).toEqual([expect.objectContaining({ hash: "0xtx-a" })]);
     expect(listOperationsSpy).toHaveBeenCalledTimes(1);
+    expect(bounded).toBe(true);
   });
 
   it("sends the resolved page size on every request, not just the first", async () => {
@@ -928,7 +930,7 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(
+    const { operations: ops } = await fetchA4Operations(
       client,
       "a4AccountId",
       "liveAccountId",
@@ -973,7 +975,7 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(
+    const { operations: ops } = await fetchA4Operations(
       client,
       "a4AccountId",
       "liveAccountId",
@@ -1005,7 +1007,7 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(
+    const { operations: ops } = await fetchA4Operations(
       client,
       "a4AccountId",
       "liveAccountId",
@@ -1028,7 +1030,7 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(
+    const { operations: ops } = await fetchA4Operations(
       client,
       "a4AccountId",
       "liveAccountId",

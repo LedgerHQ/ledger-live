@@ -55,6 +55,15 @@ export const EMPTY_PAGE_BUDGET = 1000;
  * returning what was collected so far, consistent with the "errors are not caught" principle above:
  * neither is a state this framework can be in legitimately, both leave a gap below the newest
  * retained operation, and that gap would seal on the next sync exactly like a swallowed error would.
+ *
+ * The return carries `bounded`, which is true only for that one intended-truncation stop -- never
+ * for a falsy-`next` end of stream. It is *not* a claim that the window reaches back to wherever
+ * the caller asked this walk to start: a caller resuming from a stored watermark passes that as a
+ * lower bound on the fetch itself (a `minHeight`-shaped parameter to `fetchPage`), and `bounded`
+ * true means the walk stopped before finding out whether it would have reached that low. The
+ * caller has to treat this round's result as if it were the whole history from scratch -- merging
+ * it with older stored data would leave a hole between the two, the same failure the block-cut
+ * above exists to avoid one level down.
  * **Why this terminates.** Every iteration fetches a page that either yields at least one operation
  * or yields none. Productive pages each add to the total, so at most `maxOperations` of them can be
  * fetched before the bound stops the walk. Unproductive ones are counted consecutively and capped by
@@ -72,11 +81,17 @@ export class PaginationIntegrityError extends Error {
   override name = "PaginationIntegrityError";
 }
 
+export interface PaginateOperationsResult<T> {
+  items: T[];
+  // See the docstring above `paginateOperations`: true only for the bound-triggered stop.
+  bounded: boolean;
+}
+
 export async function paginateOperations<T>(
   fetchPage: (cursor: string | undefined) => Promise<Page<T>>,
   maxOperations?: number,
   blockOf?: (item: T) => number | undefined,
-): Promise<T[]> {
+): Promise<PaginateOperationsResult<T>> {
   const items: T[] = [];
   const followed = new Set<string>();
   let cursor: string | undefined;
@@ -90,7 +105,7 @@ export async function paginateOperations<T>(
     consecutiveEmptyPages = pageItems.length === 0 ? consecutiveEmptyPages + 1 : 0;
     for (const item of pageItems) items.push(item);
 
-    if (!next) return items;
+    if (!next) return { items, bounded: false };
 
     // Checked before the bound: a module that stalls its cursor exactly on the page that reaches
     // `maxOperations` would otherwise pass for a clean bounded truncation, and the stall -- a
@@ -129,7 +144,7 @@ export async function paginateOperations<T>(
             pagesPastBound,
           },
         );
-        return kept;
+        return { items: kept, bounded: true };
       }
 
       // The cut emptied the list: everything collected is still one block, so the bound is smaller
