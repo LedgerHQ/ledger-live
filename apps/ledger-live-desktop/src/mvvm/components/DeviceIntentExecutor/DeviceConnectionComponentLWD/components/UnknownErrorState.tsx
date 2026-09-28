@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-desktop";
-import { getErrorSubError } from "@ledgerhq/live-dmk-shared";
+import { getErrorName } from "@ledgerhq/live-dmk-shared";
 
 import { InfoState } from "@shared/ui-info-state";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
@@ -18,7 +18,7 @@ export function UnknownErrorState({ state }: Readonly<UnknownErrorStateProps>): 
     <>
       <TrackDIEScreen
         category={PAGE_CONNECT_DEVICE.UnknownError}
-        subError={getErrorSubError(state.error)}
+        subError={getErrorName(state.error)}
         refreshSource
       />
       <InfoState

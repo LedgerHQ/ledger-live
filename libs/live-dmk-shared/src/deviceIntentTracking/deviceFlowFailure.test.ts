@@ -24,7 +24,7 @@ import {
   getDeviceFlowFailureProperties,
   getDeviceflowCancelEventName,
   getEnsureAppReadyFailure,
-  getErrorSubError,
+  getErrorName,
   getInvalidOperationFailure,
   type DeviceFlowDevice,
 } from "./deviceFlowFailure";
@@ -48,19 +48,19 @@ const device: DeviceFlowDevice = { modelId: DeviceModelId.stax, transport: "usb"
 
 const dmkError = { _tag: "DeviceDisconnectedWhileSendingError", message: "user-owned text" };
 
-describe("getErrorSubError", () => {
+describe("getErrorName", () => {
   it("should return the DMK tag when the error has one", () => {
-    expect(getErrorSubError(dmkError)).toBe("DeviceDisconnectedWhileSendingError");
+    expect(getErrorName(dmkError)).toBe("DeviceDisconnectedWhileSendingError");
   });
 
   it("should return the error name when the error has no DMK tag", () => {
-    expect(getErrorSubError(new TypeError("boom"))).toBe("TypeError");
+    expect(getErrorName(new TypeError("boom"))).toBe("TypeError");
   });
 
   it.each([undefined, null, "boom", 42, {}])(
     "should return Unknown when the error is %p",
     error => {
-      expect(getErrorSubError(error)).toBe("Unknown");
+      expect(getErrorName(error)).toBe("Unknown");
     },
   );
 });

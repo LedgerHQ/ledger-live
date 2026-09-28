@@ -69,18 +69,18 @@ export type DeviceFlowFailureProperties = Readonly<{
   transport?: DeviceFlowTransport;
 }>;
 
-const UNKNOWN_SUB_ERROR = "Unknown";
+const UNKNOWN_ERROR_NAME = "Unknown";
 
 function assertNever(value: never): never {
   throw new Error(`Unhandled value: ${String(value)}`);
 }
 
 /** Identifies an error with its DMK `_tag`, else its `name`. Never uses the unbounded `message`. */
-export function getErrorSubError(error: unknown): string {
-  if (typeof error !== "object" || error === null) return UNKNOWN_SUB_ERROR;
+export function getErrorName(error: unknown): string {
+  if (typeof error !== "object" || error === null) return UNKNOWN_ERROR_NAME;
   if ("_tag" in error && typeof error._tag === "string") return error._tag;
   if ("name" in error && typeof error.name === "string") return error.name;
-  return UNKNOWN_SUB_ERROR;
+  return UNKNOWN_ERROR_NAME;
 }
 
 /**
@@ -92,7 +92,7 @@ export function getConnectDeviceSubError(error: BaseDiscoveryError | BaseConnect
     error.type === BaseDiscoveryErrorTypes.Unknown ||
     error.type === BaseConnectionErrorTypes.Unknown;
   if (!isUnknownType) return error.type;
-  return error.error === undefined ? UNKNOWN_SUB_ERROR : getErrorSubError(error.error);
+  return error.error === undefined ? UNKNOWN_ERROR_NAME : getErrorName(error.error);
 }
 
 export function getConnectDeviceFailure(
@@ -122,7 +122,7 @@ export function getConnectDeviceFailure(
       return {
         failureType: DeviceFlowFailureType.ConnectDeviceUnknownError,
         countsAsFailure: true,
-        subError: getErrorSubError(state.error),
+        subError: getErrorName(state.error),
       };
     case ConnectDeviceUIStateTypes.Loading:
     case ConnectDeviceUIStateTypes.NoKnownDevice:
@@ -186,7 +186,7 @@ export function getEnsureAppReadyFailure(
   return {
     failureType,
     countsAsFailure: !isRetryableState(state),
-    subError: state.type === FinalStateType.Error ? getErrorSubError(state.error) : undefined,
+    subError: state.type === FinalStateType.Error ? getErrorName(state.error) : undefined,
     ...device,
   };
 }
@@ -203,7 +203,7 @@ export function getInvalidOperationFailure(error: unknown): DeviceFlowFailure {
   return {
     failureType: DeviceFlowFailureType.InvalidOperation,
     countsAsFailure: true,
-    subError: getErrorSubError(error),
+    subError: getErrorName(error),
   };
 }
 

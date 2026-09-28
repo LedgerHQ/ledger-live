@@ -47,7 +47,7 @@ export {
   getDeviceFlowFailureProperties,
   getDeviceflowCancelEventName,
   getEnsureAppReadyFailure,
-  getErrorSubError,
+  getErrorName,
   getInvalidOperationFailure,
 } from "./deviceIntentTracking/deviceFlowFailure";
 export type {
