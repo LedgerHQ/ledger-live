@@ -65,7 +65,7 @@ type SpeculosId = { deviceId: string };
 
 export const ARTIFACTS_DIR = path.resolve("artifacts");
 const SPECULOS_TRACKING_FILE = path.join(ARTIFACTS_DIR, `speculos-instances.${process.pid}.json`);
-export const SPECULOS_TRACKING_FILE_PATTERN = /^speculos-instances\.\d+\.json$/;
+export const SPECULOS_TRACKING_FILE_PATTERN = /^speculos-instances\.(?<ownerPid>\d+)\.json$/;
 
 // Register in tracking file for cross-process cleanup
 async function writeSpeculosInFile(deviceId: string) {
