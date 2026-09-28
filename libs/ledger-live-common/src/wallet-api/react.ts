@@ -23,6 +23,7 @@ import {
   getAccountIdFromWalletAccountId,
   setWalletApiIdForAccountId,
   resolveWalletApiSpendableBalance,
+  resolveWalletApiMaxSpendable,
 } from "./converters";
 import { AccountPublicKeyUnavailable } from "../errors";
 import { isWalletAPISupportedCurrency } from "./helpers";
@@ -608,11 +609,15 @@ export function useWalletAPIServer({
       const wapiAccounts = await Promise.all(
         filteredAccounts.map(async (account): Promise<WalletAPIAccount> => {
           const parentAccount = getParentAccount(account, accounts);
-          const spendableBalance = await resolveWalletApiSpendableBalance(account, parentAccount);
+          const [spendableBalance, maxSpendable] = await Promise.all([
+            resolveWalletApiSpendableBalance(account, parentAccount),
+            resolveWalletApiMaxSpendable(account, parentAccount),
+          ]);
 
           return {
             ...accountToWalletAPIAccount(accountNames, account, parentAccount),
             spendableBalance,
+            ...(maxSpendable !== undefined ? { maxSpendable } : {}),
           };
         }),
       );
@@ -641,15 +646,16 @@ export function useWalletAPIServer({
                 if (done) return;
                 done = true;
                 try {
-                  const spendableBalance = await resolveWalletApiSpendableBalance(
-                    account,
-                    parentAccount,
-                  );
+                  const [spendableBalance, maxSpendable] = await Promise.all([
+                    resolveWalletApiSpendableBalance(account, parentAccount),
+                    resolveWalletApiMaxSpendable(account, parentAccount),
+                  ]);
 
                   tracking.requestAccountSuccess(manifest);
                   resolve({
                     ...accountToWalletAPIAccount(accountNames, account, parentAccount),
                     spendableBalance,
+                    ...(maxSpendable !== undefined ? { maxSpendable } : {}),
                   });
                 } catch (error) {
                   tracking.requestAccountFail(manifest);

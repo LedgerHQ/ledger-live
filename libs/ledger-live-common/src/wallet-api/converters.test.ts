@@ -15,6 +15,7 @@ import {
   accountToWalletAPIAccount,
   getWalletAPITransactionSignFlowInfos,
   resolveWalletApiSpendableBalance,
+  resolveWalletApiMaxSpendable,
 } from "./converters";
 import type { WalletAPITransaction } from "./types";
 
@@ -180,6 +181,84 @@ describe("resolveWalletApiSpendableBalance", () => {
       "wallet-api/converters",
       expect.stringContaining("falling back to account.spendableBalance"),
       { error: "unsupported family" },
+    );
+  });
+});
+
+describe("resolveWalletApiMaxSpendable", () => {
+  const account = { spendableBalance: new BigNumber(100) } as AccountLike;
+
+  beforeEach(() => {
+    mockGetAccountBridge.mockReset();
+    mockLog.mockClear();
+  });
+
+  it("returns the bridge's estimateMaxSpendable result", async () => {
+    const maxSpendable = new BigNumber(42);
+
+    mockGetAccountBridge.mockResolvedValue({
+      estimateMaxSpendable: jest.fn().mockResolvedValue(maxSpendable),
+    } as never);
+
+    const result = await resolveWalletApiMaxSpendable(account);
+
+    expect(result).toEqual(maxSpendable);
+  });
+
+  it("returns undefined and logs when the bridge lookup fails", async () => {
+    mockGetAccountBridge.mockRejectedValue(new Error("unsupported family"));
+
+    const result = await resolveWalletApiMaxSpendable(account);
+
+    expect(result).toBeUndefined();
+    expect(mockLog).toHaveBeenCalledTimes(1);
+    expect(mockLog).toHaveBeenCalledWith(
+      "wallet-api/converters",
+      expect.stringContaining("omitting maxSpendable"),
+      { error: "unsupported family" },
+    );
+  });
+
+  it("returns undefined and logs when estimateMaxSpendable rejects", async () => {
+    mockGetAccountBridge.mockResolvedValue({
+      estimateMaxSpendable: jest.fn().mockRejectedValue(new Error("estimation failed")),
+    } as never);
+
+    const result = await resolveWalletApiMaxSpendable(account);
+
+    expect(result).toBeUndefined();
+    expect(mockLog).toHaveBeenCalledWith(
+      "wallet-api/converters",
+      expect.stringContaining("omitting maxSpendable"),
+      { error: "estimation failed" },
+    );
+  });
+
+  it("keeps a zero estimate when the account spendable balance is already zero", async () => {
+    const emptyAccount = { spendableBalance: new BigNumber(0) } as AccountLike;
+
+    mockGetAccountBridge.mockResolvedValue({
+      estimateMaxSpendable: jest.fn().mockResolvedValue(new BigNumber(0)),
+    } as never);
+
+    const result = await resolveWalletApiMaxSpendable(emptyAccount);
+
+    expect(result).toEqual(new BigNumber(0));
+    expect(mockLog).not.toHaveBeenCalled();
+  });
+
+  it("omits a zero estimate when the account still has a spendable balance", async () => {
+    mockGetAccountBridge.mockResolvedValue({
+      estimateMaxSpendable: jest.fn().mockResolvedValue(new BigNumber(0)),
+    } as never);
+
+    const result = await resolveWalletApiMaxSpendable(account);
+
+    expect(result).toBeUndefined();
+    expect(mockLog).toHaveBeenCalledWith(
+      "wallet-api/converters",
+      expect.stringContaining("omitting ambiguous zero maxSpendable"),
+      { spendableBalance: "100" },
     );
   });
 });
