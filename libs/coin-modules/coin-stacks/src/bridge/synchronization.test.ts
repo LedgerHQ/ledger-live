@@ -707,12 +707,20 @@ describe("getAccountShape", () => {
 
     const result = await getAccountShape(info, { paginationConfig: {} });
 
-    expect(result.stakingPositions).toEqual([]);
     expect(mockLog).toHaveBeenCalledWith(
       "error",
       "stacks error fetching stakes",
       expect.any(Error),
     );
+  });
+
+  it("omits stakingPositions (rather than reporting an empty array) when the stake lookup fails, so jsHelpers' merge preserves the account's last-known position instead of clobbering it", async () => {
+    (getStakes as jest.Mock).mockRejectedValue(new Error("pox lookup failed"));
+
+    const result = await getAccountShape(info, { paginationConfig: {} });
+
+    expect("stakingPositions" in result).toBe(false);
+    expect(result.stakingPositions).toBeUndefined();
   });
 
   it("derives the address for mainnet when API_STACKS_NETWORK is unset", async () => {

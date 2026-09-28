@@ -239,10 +239,15 @@ export const getAccountShape: GetAccountShape = async info => {
       getStakes(address)
         .then(page => page.items)
         .catch(e => {
-          // A failed stake lookup must not fail the whole account sync -- same fallback shape
-          // (empty) as no active stake, so the UI simply shows none until the next sync succeeds.
+          // A failed stake lookup must not fail the whole account sync, but it also must not be
+          // reported as "no active stake": jsHelpers merges `{ ...initialAccount, ...shape }`
+          // (same convention as the generic-coin-framework's own getAccountShape.ts), so including
+          // `stakingPositions: []` here would clobber a real, previously-known position on a
+          // transient `/v2/pox` failure -- hiding it and wrongly re-exposing the Stake action even
+          // though pox-5 would still reject a new stake with ERR_ALREADY_STAKED. `undefined` here
+          // (as opposed to `[]`) signals the caller to omit the key entirely instead.
           log("error", "stacks error fetching stakes", e);
-          return [] as Stake[];
+          return undefined;
         }),
     ]);
 
@@ -280,7 +285,10 @@ export const getAccountShape: GetAccountShape = async info => {
       ...tokenAccounts.flatMap(t => sip010OpToParentOp(t.operations, accountId)),
     ].sort((a, b) => b.date.getTime() - a.date.getTime()),
     blockHeight: blockHeight.chain_tip.block_height,
-    stakingPositions: stakes.map(toStakingPositionOnAccount),
+    // Key omitted (not set to `[]`) when the lookup failed -- see the `.catch` above: jsHelpers'
+    // `{ ...initialAccount, ...shape }` merge must fall through to the account's last-known value
+    // instead of being handed an empty, authoritative-looking overwrite.
+    ...(stakes !== undefined ? { stakingPositions: stakes.map(toStakingPositionOnAccount) } : {}),
   };
 
   return result;
