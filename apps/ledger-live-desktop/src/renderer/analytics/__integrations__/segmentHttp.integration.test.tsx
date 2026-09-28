@@ -100,6 +100,13 @@ describe("integration with segment.io", () => {
   it("does not identify the user when tracking is not enabled", async () => {
     await startAnalyticsWithTracking(false);
 
-    expect(endpoints.identify).not.toHaveBeenCalled();
+    await expect(
+      waitFor(
+        () => {
+          expect(endpoints.identify).toHaveBeenCalled();
+        },
+        { timeout: 1000 },
+      ),
+    ).rejects.toThrow(/toHaveBeenCalled/);
   });
 });
