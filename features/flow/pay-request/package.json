@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@features/platform-pay-analytics": "workspace:^",
+    "@features/platform-style": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@shared/i18n": "workspace:*",
@@ -37,7 +38,6 @@
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
-    "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",

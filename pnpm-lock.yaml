@@ -8298,6 +8298,9 @@ importers:
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../platform/pay-analytics
+      '@features/platform-style':
+        specifier: workspace:*
+        version: link:../../platform/style
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.6(@ledgerhq/lumen-design-core@0.1.29)(@ledgerhq/lumen-ui-react@0.1.59(@ledgerhq/lumen-design-core@0.1.29)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-ui-rnative@0.1.62(@ledgerhq/lumen-design-core@0.1.29)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native-reanimated@4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -8314,9 +8317,6 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/ui-queued-bottom-sheet
     devDependencies:
-      '@features/platform-style':
-        specifier: workspace:*
-        version: link:../../platform/style
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.29
