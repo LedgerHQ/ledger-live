@@ -12,9 +12,7 @@ export type TabNavigatorProps = CommonTabNavigatorProps & {
   navigateToRebornFlow: () => void;
 };
 
-export type Wallet40TabNavigatorProps = CommonTabNavigatorProps & {
-  isPayTabEnabled: boolean;
-};
+export type Wallet40TabNavigatorProps = CommonTabNavigatorProps;
 
 export type LegacyTabNavigatorProps = TabNavigatorProps & {
   openTransferDrawer: (params: { sourceScreenName: string }) => void;
