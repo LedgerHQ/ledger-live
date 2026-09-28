@@ -44,7 +44,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "encrypt this file / these env vars / publish tokens", "GPG alternative", "secret manager", "decrypt anywhere with my Ledger" | `ring init` -> `ring encrypt --key <name>` / `ring decrypt --key <name>` |
 | "what keys do I have on my ring", "list domains/projects I've encrypted under"       | `ring keys`                                                  |
 | "wipe my key ring", "destroy the ring", "tear down LKRP membership"                 | `ring destroy`                                               |
-| "enroll this agent", "let an agent propose intents", "set up Agent Intent for a bot" | `agent-intent enroll --profile <id> --name <name>` (no device) |
+| "enroll this agent", "let an agent propose intents", "set up Agent Intent for a bot" | `agent-intent enroll --profile <id> --name <name> --source <runtime>` (no device) |
 | "approve the agent's enrollment", "finish enrolling the agent"                       | `agent-intent complete --profile <id> --payload '<json>'`     |
 | "what agents are enrolled", "list agent profiles"                                    | `agent-intent list`                                            |
 | "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
@@ -308,8 +308,8 @@ printed, logged, or included in any command's output (human or `--output json`).
 
 ```bash
 # Create a pending profile and print its signed enrollment URL + public-key fingerprint:
-pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot"
-pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" \
+pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source claude-code
+pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source other \
   --environment production --expires-in 2h
 
 # After the human approves in the Agent Intent frontend, validate its completion JSON and record
@@ -321,6 +321,10 @@ echo '<json from frontend>' | pnpm --silent wallet-cli start agent-intent comple
 pnpm --silent wallet-cli start agent-intent list
 pnpm --silent wallet-cli start agent-intent show --profile my-bot
 ```
+
+**`--source` is required.** Pass the runtime or harness the agent runs in (not its model provider):
+`openclaw`, `hermes`, `claude-code`, `codex`, `cursor`, `muse`, `grok-bot`, or `other` when none
+matches. The frontend shows it as the agent's source; never pass a value outside this list.
 
 **Fingerprint is the safety check.** `enroll` prints a public-key fingerprint alongside the
 enrollment URL, and `show` prints the same fingerprint for any profile afterwards — compare it
