@@ -10998,6 +10998,9 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
+      bn.js:
+        specifier: 5.2.5
+        version: 5.2.5
       near-api-js:
         specifier: ^3.0.2
         version: 3.0.2
@@ -11020,6 +11023,9 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11)
+      '@types/bn.js':
+        specifier: 5.2.0
+        version: 5.2.0
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -12374,6 +12380,9 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
+      bn.js:
+        specifier: 5.2.5
+        version: 5.2.5
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -12393,6 +12402,9 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11)
+      '@types/bn.js':
+        specifier: 5.2.0
+        version: 5.2.0
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -29379,9 +29391,6 @@ packages:
   bn.js@5.2.1:
     resolution: {integrity: sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==}
 
-  bn.js@5.2.2:
-    resolution: {integrity: sha512-v2YAxEmKaBLahNwE1mjp4WON6huMNeuDvagFZW+ASCuA/ku0bXR9hSMw0XpiqMoA3+rmnyck/tPRSFQkoC9Cuw==}
-
   bn.js@5.2.5:
     resolution: {integrity: sha512-Vq886eXykuP5E6HcKSSStP3bJgrE6In5WKxVUvJ8XGpWWYs2xZHWqUwzCtGgEtBcxyd57KBFDPFoUfNzdaHCNg==}
 
@@ -43276,7 +43285,7 @@ snapshots:
     dependencies:
       '@ethersproject/bytes': 5.8.0
       '@ethersproject/logger': 5.7.0
-      bn.js: 5.2.2
+      bn.js: 5.2.5
 
   '@ethersproject/bignumber@5.8.0':
     dependencies:
@@ -55197,8 +55206,6 @@ snapshots:
   bn.js@5.1.1: {}
 
   bn.js@5.2.1: {}
-
-  bn.js@5.2.2: {}
 
   bn.js@5.2.5: {}
 

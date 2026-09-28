@@ -1,3 +1,4 @@
+import BN from "bn.js";
 import { Sandbox, DEFAULT_ACCOUNT_ID, DEFAULT_PRIVATE_KEY } from "near-sandbox";
 import { connect, keyStores, utils, type Account, type Near } from "near-api-js";
 import type { KeyPair } from "near-api-js/lib/utils/key_pair";
@@ -30,17 +31,26 @@ async function freePort(): Promise<number> {
   });
 }
 
+const toNearBn = (amount: bigint) => new BN(amount.toString());
+
 export async function startSandbox(): Promise<SandboxHandle> {
   // Genesis is left alone on purpose: shrinking `epoch_length` to speed the unstake lock up stops
   // the node from ever becoming ready. `fastForward` covers the same need without touching consensus.
-  const sandbox = await Sandbox.start({ config: { rpcPort: await freePort() } });
+  const sandbox = await Sandbox.start({
+    config: { rpcPort: await freePort() },
+  });
   const { rpcUrl } = sandbox;
 
   const rpc = async <T>(method: string, params: unknown): Promise<T> => {
     const response = await fetch(rpcUrl, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ jsonrpc: "2.0", id: "coin-tester", method, params }),
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: "coin-tester",
+        method,
+        params,
+      }),
     });
     const body = (await response.json()) as { result?: T; error?: unknown };
 
@@ -75,7 +85,11 @@ export async function startSandbox(): Promise<SandboxHandle> {
     utils.KeyPair.fromString(DEFAULT_PRIVATE_KEY),
   );
 
-  const near = await connect({ networkId: NETWORK_ID, nodeUrl: rpcUrl, keyStore });
+  const near = await connect({
+    networkId: NETWORK_ID,
+    nodeUrl: rpcUrl,
+    keyStore,
+  });
   const root = await near.account(DEFAULT_ACCOUNT_ID);
 
   return {
@@ -87,7 +101,7 @@ export async function startSandbox(): Promise<SandboxHandle> {
     async createFundedAccount(accountId, yocto, keyPair) {
       const key = keyPair ?? utils.KeyPair.fromRandom("ed25519");
       await keyStore.setKey(NETWORK_ID, accountId, key);
-      await root.createAccount(accountId, key.getPublicKey(), yocto);
+      await root.createAccount(accountId, key.getPublicKey(), toNearBn(yocto));
       await waitUntilFinal(accountId);
       return near.account(accountId);
     },
