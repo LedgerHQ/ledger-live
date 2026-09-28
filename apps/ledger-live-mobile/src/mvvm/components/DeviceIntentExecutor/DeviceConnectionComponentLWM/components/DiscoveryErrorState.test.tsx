@@ -333,7 +333,7 @@ describe("DiscoveryErrorState", () => {
         category: PAGE_CONNECT_DEVICE.DiscoveryError,
         sourceFlow: "my_ledger",
         transport: "ble",
-        subError: "BluetoothDisabledPromptable",
+        subError: "bluetooth-disabled-promptable",
         deviceUxV2: true,
       }),
       undefined,

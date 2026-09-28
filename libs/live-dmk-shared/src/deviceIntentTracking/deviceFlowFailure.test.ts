@@ -66,9 +66,9 @@ describe("getErrorSubError", () => {
 });
 
 describe("getConnectDeviceSubError", () => {
-  it("should convert a specific error type to PascalCase", () => {
+  it("should return a specific error type as is", () => {
     expect(getConnectDeviceSubError({ type: "ble-pairing-peer-removed-pairing" })).toBe(
-      "BlePairingPeerRemovedPairing",
+      "ble-pairing-peer-removed-pairing",
     );
   });
 
@@ -103,7 +103,7 @@ describe("getConnectDeviceFailure", () => {
     expect(getConnectDeviceFailure(state, getTransport)).toEqual({
       failureType: DeviceFlowFailureType.DiscoveryError,
       countsAsFailure: true,
-      subError: "BluetoothUnsupported",
+      subError: "bluetooth-unsupported",
       transport: "ble",
     });
   });
@@ -119,7 +119,7 @@ describe("getConnectDeviceFailure", () => {
     expect(getConnectDeviceFailure(state, getTransport)).toMatchObject({
       failureType: DeviceFlowFailureType.DiscoveryError,
       countsAsFailure: false,
-      subError: "BluetoothDisabledPromptable",
+      subError: "bluetooth-disabled-promptable",
     });
   });
 
@@ -152,7 +152,7 @@ describe("getConnectDeviceFailure", () => {
 
     expect(getConnectDeviceFailure(state, getTransport)).toMatchObject({
       countsAsFailure: false,
-      subError: "BlePairingRefused",
+      subError: "ble-pairing-refused",
     });
   });
 

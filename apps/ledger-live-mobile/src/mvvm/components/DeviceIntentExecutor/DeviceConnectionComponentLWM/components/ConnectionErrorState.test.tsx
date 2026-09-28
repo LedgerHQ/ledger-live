@@ -175,7 +175,7 @@ describe("ConnectionErrorState", () => {
 
     // THEN
     expect(mockedTrackScreen).toHaveBeenCalledWith(
-      expect.objectContaining({ subError: "BlePairingRefused" }),
+      expect.objectContaining({ subError: "ble-pairing-refused" }),
       undefined,
     );
   });

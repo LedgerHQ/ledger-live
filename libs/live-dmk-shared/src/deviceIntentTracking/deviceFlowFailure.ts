@@ -83,13 +83,6 @@ export function getErrorSubError(error: unknown): string {
   return UNKNOWN_SUB_ERROR;
 }
 
-function toPascalCase(kebabCaseValue: string): string {
-  return kebabCaseValue
-    .split("-")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join("");
-}
-
 /**
  * Identifies a Connect Device error with its type, or with the wrapped error when the
  * type is `unknown`, which is the only type desktop emits.
@@ -98,7 +91,7 @@ export function getConnectDeviceSubError(error: BaseDiscoveryError | BaseConnect
   const isUnknownType =
     error.type === BaseDiscoveryErrorTypes.Unknown ||
     error.type === BaseConnectionErrorTypes.Unknown;
-  if (!isUnknownType) return toPascalCase(error.type);
+  if (!isUnknownType) return error.type;
   return error.error === undefined ? UNKNOWN_SUB_ERROR : getErrorSubError(error.error);
 }
 
