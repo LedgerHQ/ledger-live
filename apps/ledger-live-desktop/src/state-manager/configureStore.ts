@@ -32,43 +32,26 @@ import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
-import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/settings";
-import {
-  createFeatureFlagsMiddleware,
-  selectFeature,
-  type PartialFeatures,
-} from "@shared/feature-flags";
-import {
-  fetchRemoteFlags as defaultFetchRemoteFlags,
-  readCachedFlags as defaultReadCachedFlags,
-} from "~/firebase/remoteConfig";
+import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
+import { selectFeature } from "@shared/feature-flags";
 import { sleepingListener } from "./sleepingListener";
-import { reportFeatureFlagsReadFailure } from "./reportFeatureFlagsReadFailure";
+import {
+  createDesktopFeatureFlagsMiddleware,
+  type FeatureFlagsSources,
+} from "./middleware/feature-flags";
 
-type Props = {
+type Props = FeatureFlagsSources & {
   state?: State;
   dbMiddleware?: Middleware;
   analyticsMiddleware?: Middleware;
-  /**
-   * Remote-flags fetcher driving the polling loop. Defaults to the Firebase fetcher.
-   * Pass `null` to disable polling (e.g. unit tests, which must not hit a live backend).
-   */
-  fetchRemoteFlags?: (() => Promise<PartialFeatures>) | null;
-  /**
-   * Network-free read of the flags Firebase already cached on this device, used to prime the
-   * slice before the first fetch. Defaults to the Firebase reader, or to `null` when
-   * `fetchRemoteFlags` is explicitly disabled, so opting out of the backend opts out of the
-   * whole Firebase path. Pass `null` to disable it on its own.
-   */
-  readCachedFlags?: (() => Promise<PartialFeatures>) | null;
 };
 
 const customCreateStore = ({
   state,
   dbMiddleware,
   analyticsMiddleware,
-  fetchRemoteFlags = defaultFetchRemoteFlags,
-  readCachedFlags = fetchRemoteFlags === null ? null : defaultReadCachedFlags,
+  fetchRemoteFlags,
+  readCachedFlags,
 }: Props) => {
   const store = configureStore({
     reducer: reducers,
@@ -142,19 +125,7 @@ const customCreateStore = ({
             getAnalyticsConsent: canPushDeviceIdsSelector,
           }),
         )
-        .concat(
-          createFeatureFlagsMiddleware<State>({
-            resolutionConfig: {
-              platform: "desktop",
-              appVersion: __APP_VERSION__,
-              envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
-            },
-            readCachedFlags: readCachedFlags ?? undefined,
-            fetchRemoteFlags: fetchRemoteFlags ?? undefined,
-            getAppLanguage: languageSelector,
-            onRemoteFlagsError: reportFeatureFlagsReadFailure,
-          }),
-        )
+        .concat(createDesktopFeatureFlagsMiddleware({ fetchRemoteFlags, readCachedFlags }))
         .concat(sleepingListener.middleware),
     devTools: __DEV__
       ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
