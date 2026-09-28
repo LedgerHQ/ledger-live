@@ -1,3 +1,4 @@
+import type { Stake } from "@ledgerhq/coin-module-framework/api/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   emptyHistoryCache,
@@ -11,6 +12,7 @@ import { getAddressFromPublicKey } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { getConfiguredStacksNetwork, validateAddress } from "../common-logic";
+import { getStakes } from "../logic/getStakes";
 import { TransactionResponse } from "../network";
 import {
   fetchAllTokenBalances,
@@ -26,6 +28,34 @@ import {
   sip010TxnToOperation,
   sip010OpToParentOp,
 } from "./utils/misc";
+
+/**
+ * On-Account shape for `stakingPositions`: framework `Stake` with `bigint` amounts converted to
+ * `BigNumber`, matching the convention used elsewhere on the Account (`balance`,
+ * `spendableBalance`) and matching exactly the shape the generic-coin-framework's own
+ * `getAccountShape.ts` (`toStakingPositionOnAccount`) will produce once this family is enrolled in
+ * `genericCoinFrameworkFamilies.json` -- this is a same-shape backport for the classic bridge that
+ * remains active until then, not a divergent implementation.
+ */
+type StakingPositionOnAccount = Omit<Stake, "amount" | "amountDeposited" | "amountRewarded"> & {
+  amount: BigNumber;
+  amountDeposited?: BigNumber;
+  amountRewarded?: BigNumber;
+};
+
+function toStakingPositionOnAccount(stake: Stake): StakingPositionOnAccount {
+  const { amount, amountDeposited, amountRewarded, ...rest } = stake;
+  return {
+    ...rest,
+    amount: new BigNumber(amount.toString()),
+    ...(amountDeposited !== undefined && {
+      amountDeposited: new BigNumber(amountDeposited.toString()),
+    }),
+    ...(amountRewarded !== undefined && {
+      amountRewarded: new BigNumber(amountRewarded.toString()),
+    }),
+  };
+}
 
 /**
  * Calculates the spendable balance by subtracting pending transactions from the total balance
@@ -199,13 +229,22 @@ export const getAccountShape: GetAccountShape = async info => {
     : getAddressFromPublicKey(pubKey, getConfiguredStacksNetwork());
 
   // Make API calls in parallel for better performance
-  const [blockHeight, balanceResp, txsResult, tokenBalances, mempoolTxs] = await Promise.all([
-    fetchBlockHeight(),
-    fetchBalances(address),
-    fetchFullTxs(address),
-    fetchAllTokenBalances(address),
-    fetchFullMempoolTxs(address),
-  ]);
+  const [blockHeight, balanceResp, txsResult, tokenBalances, mempoolTxs, stakes] =
+    await Promise.all([
+      fetchBlockHeight(),
+      fetchBalances(address),
+      fetchFullTxs(address),
+      fetchAllTokenBalances(address),
+      fetchFullMempoolTxs(address),
+      getStakes(address)
+        .then(page => page.items)
+        .catch(e => {
+          // A failed stake lookup must not fail the whole account sync -- same fallback shape
+          // (empty) as no active stake, so the UI simply shows none until the next sync succeeds.
+          log("error", "stacks error fetching stakes", e);
+          return [] as Stake[];
+        }),
+    ]);
 
   const [rawTxs, tokenTxs] = txsResult;
   const balance = new BigNumber(balanceResp.balance);
@@ -228,7 +267,7 @@ export const getAccountShape: GetAccountShape = async info => {
     initialAccount,
   );
 
-  const result: Partial<Account> = {
+  const result: Partial<Account> & { stakingPositions?: StakingPositionOnAccount[] } = {
     id: accountId,
     subAccounts: tokenAccounts,
     xpub: pubKey,
@@ -241,6 +280,7 @@ export const getAccountShape: GetAccountShape = async info => {
       ...tokenAccounts.flatMap(t => sip010OpToParentOp(t.operations, accountId)),
     ].sort((a, b) => b.date.getTime() - a.date.getTime()),
     blockHeight: blockHeight.chain_tip.block_height,
+    stakingPositions: stakes.map(toStakingPositionOnAccount),
   };
 
   return result;
