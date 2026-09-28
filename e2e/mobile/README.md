@@ -189,3 +189,20 @@ export E2E_MOBILE_FEATURE_FLAGS="some-preset"
 ```
 
 Or use the "Choose a feature flag set" options dropdown on the Github workflow.
+
+### 9. Stall watchdog
+
+A jest worker whose event loop freezes can't fire any jest or Detox timeout, so its shard would hang
+until the CI step times out. Each forked jest worker runs a watchdog thread
+([`helpers/workerWatchdog.ts`](helpers/workerWatchdog.ts)) that kills the worker after 90 seconds
+without a heartbeat. jest then fails the spec, Detox retries it, and global teardown releases the
+Speculos the dead worker held. Look for `[stall-watchdog] … stalled` in the log and
+`artifacts/stall-watchdog-<pid>.json` for the report.
+
+The watchdog only arms in forked workers. Local runs use one worker, which jest runs in-band, so it
+is off there by default. If you run with `--maxWorkers=2` or more and pause a worker in a debugger
+for over 90 seconds, the watchdog kills it like a frozen one. Turn it off for that session:
+
+```bash
+export E2E_STALL_WATCHDOG=0
+```
