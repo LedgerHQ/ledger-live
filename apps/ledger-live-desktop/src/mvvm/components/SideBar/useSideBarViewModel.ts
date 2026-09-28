@@ -292,8 +292,14 @@ export function useSideBarViewModel(): SideBarViewModel {
         location.pathname,
         referralProgramConfig?.params?.path,
         shouldDisplayAssetSection,
+        location.search,
       ),
-    [location.pathname, referralProgramConfig?.params?.path, shouldDisplayAssetSection],
+    [
+      location.pathname,
+      referralProgramConfig?.params?.path,
+      shouldDisplayAssetSection,
+      location.search,
+    ],
   );
 
   const handleActiveChange = useCallback(
