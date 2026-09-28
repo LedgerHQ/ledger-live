@@ -1,99 +1,9 @@
 import React from "react";
-import {
-  Box,
-  Link,
-  ListItem,
-  ListItemContent,
-  ListItemDescription,
-  ListItemLeading,
-  ListItemTitle,
-  ListItemTrailing,
-  Skeleton,
-  Subheader,
-  SubheaderInfo,
-  SubheaderRow,
-  SubheaderTitle,
-  Text,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@ledgerhq/lumen-ui-rnative";
-import CryptoIcon from "@ledgerhq/crypto-icons/native";
+import { Box, Link, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
-import { CardAssetsEmptyState } from "./CardAssetsEmptyState.native";
-import type { CardAssetRow, CardAssetsViewModel } from "./types";
-
-const ICON_SIZE = 48;
-const COUNTERVALUE_PLACEHOLDER = "\u00a0";
-
-function AssetRow({
-  row,
-  onPress,
-}: Readonly<{ row: CardAssetRow; onPress: (row: CardAssetRow) => void }>) {
-  return (
-    <ListItem
-      testID={`card-asset-${row.id}`}
-      lx={{ backgroundColor: "surface", borderRadius: "md" }}
-      onPress={() => onPress(row)}
-    >
-      <ListItemLeading>
-        <CryptoIcon ledgerId={row.ledgerId} ticker={row.ticker} size={ICON_SIZE} shape="circle" />
-        <ListItemContent>
-          <ListItemTitle>{row.name}</ListItemTitle>
-          <ListItemDescription>{row.ticker}</ListItemDescription>
-        </ListItemContent>
-      </ListItemLeading>
-      <ListItemTrailing>
-        <ListItemContent lx={{ alignItems: "flex-end" }}>
-          <ListItemTitle testID={`card-asset-countervalue-${row.id}`}>
-            {row.countervalue ?? COUNTERVALUE_PLACEHOLDER}
-          </ListItemTitle>
-          <ListItemDescription>{row.cryptoAmount}</ListItemDescription>
-        </ListItemContent>
-      </ListItemTrailing>
-    </ListItem>
-  );
-}
-
-type AssetsBodyProps = Readonly<
-  Pick<CardAssetsViewModel, "status" | "rows" | "onAssetPress" | "onRetryPress" | "onAddAssetPress">
->;
-
-function AssetsBody({
-  status,
-  rows,
-  onAssetPress,
-  onRetryPress,
-  onAddAssetPress,
-}: AssetsBodyProps) {
-  if (status === "error") {
-    return <CardAssetsEmptyState variant="error" onRetry={onRetryPress} />;
-  }
-
-  if (status === "empty") {
-    return (
-      <CardAssetsEmptyState variant="empty" onRetry={onRetryPress} onAddAsset={onAddAssetPress} />
-    );
-  }
-
-  if (status === "loading") {
-    return (
-      <Box testID="card-assets-loading-state">
-        <Skeleton component="list-item" />
-        <Skeleton component="list-item" />
-        <Skeleton component="list-item" />
-      </Box>
-    );
-  }
-
-  return (
-    <Box lx={{ gap: "s8" }}>
-      {rows.map(row => (
-        <AssetRow key={row.id} row={row} onPress={onAssetPress} />
-      ))}
-    </Box>
-  );
-}
+import { CardAssetsBody } from "./CardAssetsBody.native";
+import { CardAssetsInfoTooltip } from "./CardAssetsInfoTooltip.native";
+import type { CardAssetsViewModel } from "./types";
 
 export function CardAssetsView({
   isVisible,
@@ -116,19 +26,7 @@ export function CardAssetsView({
       <Subheader>
         <SubheaderRow>
           <SubheaderTitle>{title}</SubheaderTitle>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <SubheaderInfo accessibilityLabel={infoLabel} testID="card-assets-info" />
-            </TooltipTrigger>
-            <TooltipContent
-              title={title}
-              content={
-                <Text typography="body1" lx={{ color: "base" }}>
-                  {infoLabel}
-                </Text>
-              }
-            />
-          </Tooltip>
+          <CardAssetsInfoTooltip title={title} description={infoLabel} />
           {status === "ready" ? (
             <Box lx={{ flex: 1, alignItems: "flex-end" }}>
               <Link
@@ -145,7 +43,7 @@ export function CardAssetsView({
         </SubheaderRow>
       </Subheader>
 
-      <AssetsBody
+      <CardAssetsBody
         status={status}
         rows={rows}
         onAssetPress={onAssetPress}
