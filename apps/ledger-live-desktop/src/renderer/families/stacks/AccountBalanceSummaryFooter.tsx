@@ -56,6 +56,19 @@ type Props = {
   account: StacksAccount | TokenAccount;
 };
 
+const StakingDetail = ({ i18nKey, value }: { i18nKey: string; value: React.ReactNode }) => (
+  <BalanceDetail>
+    <TitleWrapper>
+      <Title>
+        <Trans i18nKey={i18nKey} />
+      </Title>
+    </TitleWrapper>
+    <AmountValue>
+      <Discreet>{value}</Discreet>
+    </AmountValue>
+  </BalanceDetail>
+);
+
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const unit = useAccountUnit(account);
@@ -84,26 +97,11 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
       </BalanceDetail>
       {stakingPosition ? (
         <>
-          <BalanceDetail>
-            <TitleWrapper>
-              <Title>
-                <Trans i18nKey="stacks.account.staked" />
-              </Title>
-            </TitleWrapper>
-            <AmountValue>
-              <Discreet>{format(stakingPosition.amount)}</Discreet>
-            </AmountValue>
-          </BalanceDetail>
-          <BalanceDetail>
-            <TitleWrapper>
-              <Title>
-                <Trans i18nKey="stacks.account.unlockCycle" />
-              </Title>
-            </TitleWrapper>
-            <AmountValue>
-              <Discreet>{getStacksUnlockCycle(stakingPosition)}</Discreet>
-            </AmountValue>
-          </BalanceDetail>
+          <StakingDetail i18nKey="stacks.account.staked" value={format(stakingPosition.amount)} />
+          <StakingDetail
+            i18nKey="stacks.account.unlockCycle"
+            value={getStacksUnlockCycle(stakingPosition)}
+          />
         </>
       ) : null}
     </Wrapper>
