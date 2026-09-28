@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { SEND_FLOW_STEP, type SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -8,12 +8,14 @@ import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-r
 import { useSelector } from "LLD/hooks/redux";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { trackPage } from "~/renderer/analytics/segment";
 import {
   counterValueCurrencySelector,
   discreetModeSelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 
 type FlowTransaction = NonNullable<SendFlowState["transaction"]["transaction"]>;
 
@@ -53,11 +55,19 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
 
   const bridge = useAccountBridgeOrNull<FlowTransaction>(account);
   const unit = useMaybeAccountUnit(account ?? undefined);
+  const trackingProperties = useSendFlowTrackingProperties();
 
   const balanceTypeConfig = useMemo(
     () => (account ? sendFeatures.getBalanceTypeConfig(getAccountCurrency(account)) : null),
     [account],
   );
+
+  const isReady = Boolean(account && transaction && bridge && balanceTypeConfig);
+  const hasTrackedRef = useRef(false);
+  if (!hasTrackedRef.current && isReady) {
+    hasTrackedRef.current = true;
+    trackPage("Modal send - step balance type", null, trackingProperties);
+  }
 
   const onSelect = useCallback(
     (optionId: string) => {

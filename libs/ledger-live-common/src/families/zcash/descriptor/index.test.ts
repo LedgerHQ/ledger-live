@@ -60,4 +60,32 @@ describe("zcash send descriptor", () => {
   it("declares its two balance pools", () => {
     expect(descriptor.send.balanceType).toBe(zcashBalanceTypeConfig);
   });
+
+  // The mapping itself is covered in `tracking.test.ts`; this only pins that the
+  // descriptor forwards to it and normalizes `undefined` to `{}`.
+  describe("getTrackingAttributes", () => {
+    it("maps every transferType once a source pool is picked", () => {
+      expect(
+        descriptor.send.getTrackingAttributes?.({
+          family: "zcash",
+          sender: "public",
+          transferType: "transparent",
+        }),
+      ).toEqual({ privacy: "public", flow: "public-to-public" });
+
+      expect(
+        descriptor.send.getTrackingAttributes?.({
+          family: "zcash",
+          sender: "private",
+          transferType: "shielded",
+        }),
+      ).toEqual({ privacy: "private", flow: "private-to-private" });
+    });
+
+    it("returns {} before a source pool is picked", () => {
+      expect(
+        descriptor.send.getTrackingAttributes?.({ family: "zcash", transferType: "transparent" }),
+      ).toEqual({});
+    });
+  });
 });
