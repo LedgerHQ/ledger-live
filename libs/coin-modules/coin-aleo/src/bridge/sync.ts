@@ -792,10 +792,13 @@ export function makeGetAccountShape(): GetAccountShapeStream<AleoAccount> {
 }
 
 // A date saved while the clock ran ahead must not win, or it would discard every sync until then.
-const isNewer = (date: Date | null | undefined, than: Date | null | undefined) => {
+const validTime = (date: Date | null | undefined) => {
   const time = date?.getTime() ?? 0;
-  return time > (than?.getTime() ?? 0) && time <= Date.now();
+  return time <= Date.now() ? time : 0;
 };
+
+const isNewer = (date: Date | null | undefined, than: Date | null | undefined) =>
+  validTime(date) > validTime(than);
 
 /**
  * A shape is computed from the snapshot its sync started with, but is applied to `initialAccount`:

@@ -2961,6 +2961,42 @@ describe("sync.ts", () => {
         );
         expect(result.aleoResources?.privateBalance).toEqual(new BigNumber(300));
       });
+
+      it("keeps the public fields of a public sync that landed while the private sync was running", async () => {
+        const account: AleoAccount = { ...startedFrom, lastSyncDate: aheadOfClock };
+        const afterPublicSync: AleoAccount = {
+          ...account,
+          lastSyncDate: newerSyncLandedAt,
+          aleoResources: { ...account.aleoResources!, transparentBalance: new BigNumber(400000) },
+        };
+
+        const result = await applySync(account, afterPublicSync, SYNC_TYPE_SHIELDED);
+
+        expect(result.lastSyncDate).toEqual(newerSyncLandedAt);
+        expect(result.aleoResources?.transparentBalance).toEqual(new BigNumber(400000));
+      });
+
+      it("keeps the private fields of a private sync that landed while the public sync was running", async () => {
+        const account: AleoAccount = {
+          ...startedFrom,
+          aleoResources: { ...startedFrom.aleoResources!, lastPrivateSyncDate: aheadOfClock },
+        };
+        const afterPrivateSync: AleoAccount = {
+          ...account,
+          aleoResources: {
+            ...account.aleoResources!,
+            privateBalance: new BigNumber(300),
+            lastPrivateSyncDate: newerSyncLandedAt,
+          },
+        };
+
+        const result = await applySync(account, afterPrivateSync, SYNC_TYPE_TRANSPARENT);
+
+        expect(result.aleoResources).toMatchObject({
+          privateBalance: new BigNumber(300),
+          lastPrivateSyncDate: newerSyncLandedAt,
+        });
+      });
     });
   });
 });
