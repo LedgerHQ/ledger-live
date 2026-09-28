@@ -3,6 +3,7 @@ import { flagNameOf, parseCliArgs } from "./cliArgs";
 import type { OutputFormat } from "./cliArgs";
 import { BaanxAuthError } from "./errors";
 import { getBaanxAuthToken } from "./auth/session";
+import { toPayCardSessionJson } from "./payCardSession";
 import type { BaanxAuthSession } from "./types";
 
 /**
@@ -72,28 +73,10 @@ async function main(argv: string[]): Promise<number> {
   return 0;
 }
 
-/**
- * The Baanx password login returns no refresh token, but the app treats a session as valid only when
- * the access token, the refresh token and the lifetimes all agree. The placeholder satisfies that
- * read; nothing can refresh with it, which is fine for a session shorter than the 6h token life.
- */
-const REFRESH_TOKEN_PLACEHOLDER = "no-refresh-token-from-password-login";
-
 function render(session: BaanxAuthSession, format: OutputFormat): string {
   if (format === "token") return session.accessToken;
   if (format === "json") return JSON.stringify(session, null, 2);
-
-  const expiresIn = Math.max(
-    1,
-    Math.floor((Date.parse(session.expiresAt) - Date.parse(session.issuedAt)) / 1000),
-  );
-
-  // Matches the app's PayCardSession exactly: accessToken, refreshToken, expiresIn.
-  return JSON.stringify({
-    accessToken: session.accessToken,
-    refreshToken: REFRESH_TOKEN_PLACEHOLDER,
-    expiresIn,
-  });
+  return toPayCardSessionJson(session);
 }
 
 main(process.argv.slice(2))

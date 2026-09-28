@@ -101,6 +101,13 @@ reports nothing back (LIVE-34740) — so a signed-in state has to be injected. M
 seam so E2E and local Metro can skip the hosted login. `-- --session` prints a `PayCardSession` for
 exactly that.
 
+`CARD_BAANX_API_URL` **must** point at the host that minted the token (Playwright spreads
+`process.env` into Electron). It defaults to the production Card backend
+(`https://card.api.live.ledger.com`), so a sandbox token left with the default is a bearer for the
+wrong audience and every Card call answers 401. The password login returns no refresh token, so
+`--session` / the helper fill that field with a placeholder: nothing can refresh with it, which is
+fine for a run shorter than the 6-hour token life but is not a substitute for the OAuth flow.
+
 Desktop:
 
 ```bash
@@ -127,31 +134,7 @@ where the staging files already point at `dev.api.baanx.com`). Mint the token on
 targets, or override both at runtime in Settings → Debug → Configuration → Env, which takes
 `NAME=value` one line at a time.
 
-Both variables are equally required for Playwright, which already spreads `process.env` into
-`electron.launch`:
-
-```bash
-export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client token -- --session)
-export CARD_BAANX_API_URL=https://<the Baanx host that minted the token>
-export CARD_BAANX_CLIENT_KEY=baanx-client-key-that-minted-the-token
-pnpm --filter ledger-live-desktop-e2e-tests test:playwright
-```
-
-Detox reads `CARD_SESSION_BOOTSTRAP` from the environment of the test run and forwards it as a launch
-argument, so no bundler restart is involved. A Detox launch without that argument also clears any
-leftover keychain session, so a run that wants no card cannot inherit one from a previous launch:
-
-```bash
-export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client token -- --session)
-pnpm --filter ledger-live-mobile-e2e-tests test:ios
-```
-
-Two things to know. On desktop `CARD_BAANX_API_URL` **must** point at the host that minted the token
-— in the Playwright run as much as in the `start` one. It defaults to the production Card backend
-(`https://card.api.live.ledger.com`), so a sandbox token left with the default is a bearer for the
-wrong audience and every Card call answers 401. And the password login returns no refresh token, so
-`--session` fills that field with a placeholder: nothing can refresh with it, which is fine for a run
-shorter than the 6-hour token life but is not a substitute for the OAuth flow.
+A pre-set `CARD_SESSION_BOOTSTRAP` is not expiry-checked. Unset it for long local sessions.
 
 Keep `CARD_SESSION_BOOTSTRAP` out of `@shared/env` so it does not appear in `getAllEnvs()`, exported
 logs, or Allure's environment tab. Do not put it in a committed mobile `.env` file: those ship inside
@@ -207,18 +190,21 @@ purpose. Bodies attached to errors pass through `redactBody` first. Variables ar
 
 ```text
 src/
-├── index.ts        barrel: the public contract, nothing else
-├── types.ts        public types and constants
-├── errors.ts       the typed errors
-├── config.ts       env resolution
-├── cli.ts          the CLI entry point (+ cliArgs.ts)
-├── auth/           login flow, TOTP, token cache, expiry
-└── http/           transport and response handling
+├── index.ts                        barrel: the public contract, nothing else
+├── types.ts                        public types and constants
+├── errors.ts                       the typed errors
+├── config.ts                       env resolution
+├── payCardSession.ts               Baanx session → PayCardSession JSON
+├── resolveCardSessionBootstrap.ts  preset CARD_SESSION_BOOTSTRAP, or mint one
+├── cli.ts                          the CLI entry point (+ cliArgs.ts)
+├── auth/                           login flow, TOTP, token cache, expiry
+└── http/                           transport and response handling
 ```
 
-Only `index.ts`, `types.ts`, `errors.ts`, `config.ts` and `auth/session.ts` are public.
-`auth/login.ts`, `auth/totp.ts`, `auth/expiry.ts`, `http/send.ts` and `http/body.ts` are
-implementation detail and are absent from the barrel.
+Only `index.ts`, `types.ts`, `errors.ts`, `config.ts`, `payCardSession.ts`,
+`resolveCardSessionBootstrap.ts` and `auth/session.ts` are public. `auth/login.ts`, `auth/totp.ts`,
+`auth/expiry.ts`, `http/send.ts` and `http/body.ts` are implementation detail and are absent from
+the barrel.
 
 ## Development
 
