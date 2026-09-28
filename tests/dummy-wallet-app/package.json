@@ -18,6 +18,7 @@
   },
   "scripts": {
     "start": "rspack serve",
+    "start:https": "HTTPS=true rspack serve",
     "build": "rspack build",
     "lint": "oxlint . --deny-warnings",
     "lint:fix": "oxfmt . && oxlint . --fix"
@@ -37,12 +38,14 @@
   "devDependencies": {
     "@rspack/cli": "catalog:",
     "@rspack/core": "catalog:",
+    "@rspack/dev-server": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "selfsigned": "5.5.0",
     "typescript": "catalog:"
   },
   "optionalDependencies": {

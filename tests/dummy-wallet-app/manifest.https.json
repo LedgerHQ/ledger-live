@@ -1,0 +1,43 @@
+{
+  "id": "dummy-https",
+  "name": "Dummy Wallet App (HTTPS)",
+  "url": "https://localhost:3000",
+  "homepageUrl": "https://localhost:3000",
+  "icon": "",
+  "platform": "all",
+  "apiVersion": "^2.0.0 || ~0.0.1",
+  "manifestVersion": "1",
+  "branch": "experimental",
+  "categories": [],
+  "currencies": ["**"],
+  "content": {
+    "shortDescription": {
+      "en": ""
+    },
+    "description": {
+      "en": ""
+    }
+  },
+  "permissions": [
+    "account.list",
+    "account.receive",
+    "account.request",
+    "currency.list",
+    "device.close",
+    "device.exchange",
+    "device.transport",
+    "message.sign",
+    "transaction.sign",
+    "transaction.signAndBroadcast",
+    "wallet.capabilities",
+    "wallet.userId",
+    "wallet.info",
+    "custom.logger.log",
+    "storage.get",
+    "storage.set",
+    "event.custom.test",
+    "bitcoin.getXPub",
+    "custom.deeplink.open"
+  ],
+  "domains": ["http://*", "https://*"]
+}
