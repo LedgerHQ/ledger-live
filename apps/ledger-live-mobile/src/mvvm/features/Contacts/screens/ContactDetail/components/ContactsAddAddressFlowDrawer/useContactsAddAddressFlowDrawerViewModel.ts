@@ -11,6 +11,7 @@ import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import { useContactsMeContact } from "@features/platform-contacts";
 import { useContactsCurrencySelectionAdapter } from "LLM/features/Contacts/hooks/useContactsCurrencySelectionAdapter";
+import { contactsAddressSupportsDomain } from "LLM/features/Contacts/adapters/contactsAddressSupportsDomain";
 import type { ContactsAddAddressDrawerStep, ContactsAddAddressFlowDrawerProps } from "./types";
 
 function resolveDrawerStep(
@@ -75,7 +76,11 @@ export function useContactsAddAddressFlowDrawerViewModel({
             addressEntry: state.addressEntry,
             labels: {
               title: t("contacts.addAddressEntry.title"),
-              addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
+              addressPlaceholder: t(
+                contactsAddressSupportsDomain(state.selectedCurrencyId)
+                  ? "contacts.addAddressEntry.addressPlaceholder"
+                  : "contacts.addAddressEntry.addressPlaceholderNoENS",
+              ),
               confirmAddress: t("contacts.addAddressEntry.confirmAddress"),
               validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
               validAddress: t("contacts.addAddressEntry.validAddress"),

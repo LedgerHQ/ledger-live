@@ -34,6 +34,7 @@ import {
   type PrefillAddAddressFlowVisibleState,
 } from "@features/flow-contacts-add-address";
 import { useContactsAddressValidationAdapter } from "LLD/features/Contacts/hooks/useContactsAddressValidationAdapter";
+import { contactsAddressSupportsDomain } from "LLD/features/Contacts/adapters/contactsAddressSupportsDomain";
 import { contactsIntentLWDDefinitions } from "LLD/features/Contacts/deviceIntents/contactsIntentPlatformDefinitions";
 import { useDispatch } from "LLD/hooks/redux";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
@@ -293,10 +294,17 @@ export function useSendPrefillAddAddressFlow({
     [navigation, recipientSearch.value, startWithPrefilled, state.account.currency],
   );
 
+  const supportsDomain = contactsAddressSupportsDomain(
+    "selectedCurrencyId" in addressFlowState ? addressFlowState.selectedCurrencyId : undefined,
+  );
   const entryLabels = useMemo<AddAddressEntryLabels>(
     () => ({
       title: t("contacts.addAddressEntry.title"),
-      addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
+      addressPlaceholder: t(
+        supportsDomain
+          ? "contacts.addAddressEntry.addressPlaceholder"
+          : "contacts.addAddressEntry.addressPlaceholderNoENS",
+      ),
       confirmAddress: t("contacts.addAddressEntry.confirmAddress"),
       validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
       validAddress: t("contacts.addAddressEntry.validAddress"),
@@ -309,7 +317,7 @@ export function useSendPrefillAddAddressFlow({
       duplicateAddress: (contactName: string) =>
         t("contacts.addAddressEntry.duplicateAddress", { contactName }),
     }),
-    [t],
+    [supportsDomain, t],
   );
   const nameLabels = useMemo<ContactsAddAddressNameLabels>(
     () => ({
