@@ -181,9 +181,8 @@ const useRatings = () => {
           dispatch(
             setRatingsHappyMoment({
               ...happyMoment,
-              // @ts-expect-error TYPINGS
               timeout,
-            }),
+            } as RatingsHappyMoment),
           );
           dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
           return true;

@@ -134,7 +134,9 @@ function renderRequestReceiveFromPayTab(payRequestVerifyHint?: {
   );
 }
 
-async function startVerify(user: { press: (element: unknown) => Promise<unknown> }): Promise<void> {
+async function startVerify(user: {
+  press: (element: ReturnType<typeof screen.getByText>) => Promise<unknown>;
+}): Promise<void> {
   await user.press(await screen.findByRole("button", { name: VERIFY }));
   await user.press(await screen.findByRole("button", { name: VERIFY_ADDRESS }));
   expect(await screen.findByText(DIE_LABEL)).toBeVisible();

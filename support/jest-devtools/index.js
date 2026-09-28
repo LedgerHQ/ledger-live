@@ -57,11 +57,13 @@ function createWebJestConfig({ moduleNameMapper, ...overrides } = {}) {
     transform: { "^.+\\.(t|j)sx?$": ["@swc/jest", { jsc: swcJsc }] },
     moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
     testPathIgnorePatterns: ["\\.native\\.test\\."],
-    // lets tests import the package's own `jest/…` helpers
+    // lets tests import the package's own `jest/…` helpers. modulePaths loses to the
+    // jest package once private hoist makes that package visible, so map the prefix.
     modulePaths: ["<rootDir>"],
     transformIgnorePatterns: [`node_modules/.pnpm/(?!(${WEB_TRANSFORM_ALLOWLIST.join("|")}))`],
     setupFilesAfterEnv: ["@testing-library/jest-dom", here("setup/web.js")],
     moduleNameMapper: {
+      "^jest/(.*)$": "<rootDir>/jest/$1",
       // Pin lumen to the consumer's copy. Two reasons: this package does not carry lumen's peer
       // graph (clsx, radix, …), and a second lumen instance would give the ThemeProvider rendered
       // here a different React context than the components under test.
@@ -100,6 +102,7 @@ function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
     transformIgnorePatterns: [`node_modules/(?!(${NATIVE_TRANSFORM_ALLOWLIST.join("|")})/.)`],
     modulePaths: ["<rootDir>"],
     moduleNameMapper: {
+      "^jest/(.*)$": "<rootDir>/jest/$1",
       // resolved in the consumer: each devtools package declares lumen itself
       "^@ledgerhq/lumen-ui-rnative$":
         "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
