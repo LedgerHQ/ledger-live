@@ -1,9 +1,9 @@
 import { setEnv } from "@shared/env";
-import { createFeatureFlagsMiddleware } from "@shared/feature-flags";
+import { createFeatureFlagsMiddleware, type FeatureFlagsReadFailure } from "@shared/feature-flags";
 import { fetchRemoteFlags, readCachedFlags } from "~/firebase/remoteConfig";
+import appLogger from "~/renderer/logger";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { createDesktopFeatureFlagsMiddleware } from "./feature-flags";
-import { reportFeatureFlagsReadFailure } from "./reportFeatureFlagsReadFailure";
 
 jest.mock("@shared/feature-flags", () => ({
   ...jest.requireActual("@shared/feature-flags"),
@@ -13,6 +13,10 @@ jest.mock("~/firebase/remoteConfig", () => ({
   fetchRemoteFlags: jest.fn(),
   readCachedFlags: jest.fn(),
 }));
+jest.mock("~/renderer/logger", () => ({
+  __esModule: true,
+  default: { critical: jest.fn() },
+}));
 
 function middlewareConfig() {
   const { calls } = jest.mocked(createFeatureFlagsMiddleware).mock;
@@ -20,12 +24,13 @@ function middlewareConfig() {
   return calls[0][0];
 }
 
-describe("createDesktopFeatureFlagsMiddleware", () => {
-  beforeEach(() => {
-    jest.mocked(createFeatureFlagsMiddleware).mockClear();
-    setEnv("FEATURE_FLAGS", {});
-  });
+beforeEach(() => {
+  jest.mocked(createFeatureFlagsMiddleware).mockClear();
+  jest.mocked(appLogger.critical).mockClear();
+  setEnv("FEATURE_FLAGS", {});
+});
 
+describe("createDesktopFeatureFlagsMiddleware", () => {
   it("resolves for the desktop platform, the app version and the env flags", () => {
     const envFlags = { mockFeature: { enabled: true } };
     setEnv("FEATURE_FLAGS", envFlags);
@@ -39,12 +44,10 @@ describe("createDesktopFeatureFlagsMiddleware", () => {
     });
   });
 
-  it("follows the app language and routes read failures to the desktop reporter", () => {
+  it("follows the app language", () => {
     createDesktopFeatureFlagsMiddleware();
 
-    const config = middlewareConfig();
-    expect(config.getAppLanguage).toBe(languageSelector);
-    expect(config.onRemoteFlagsError).toBe(reportFeatureFlagsReadFailure);
+    expect(middlewareConfig().getAppLanguage).toBe(languageSelector);
   });
 
   it("reads through Firebase by default", () => {
@@ -93,5 +96,55 @@ describe("createDesktopFeatureFlagsMiddleware", () => {
     const config = middlewareConfig();
     expect(config.fetchRemoteFlags).toBe(customFetcher);
     expect(config.readCachedFlags).toBe(customReader);
+  });
+});
+
+describe("feature flags read failure reporting", () => {
+  function report(error: unknown, failure: FeatureFlagsReadFailure) {
+    createDesktopFeatureFlagsMiddleware();
+    const { onRemoteFlagsError } = middlewareConfig();
+    if (!onRemoteFlagsError) throw new Error("onRemoteFlagsError is not wired");
+    onRemoteFlagsError(error, failure);
+  }
+
+  it.each<FeatureFlagsReadFailure>([
+    { stage: "cache", attempt: 1, isCold: true },
+    { stage: "remote", attempt: 1, isCold: true },
+    { stage: "remote", attempt: 3, isCold: true },
+  ])("reports a cold $stage failure at attempt $attempt", failure => {
+    const error = new Error("boom");
+
+    report(error, failure);
+
+    expect(appLogger.critical).toHaveBeenCalledWith(
+      error,
+      `Feature flags: ${failure.stage} read failed, resolving on compiled defaults`,
+    );
+  });
+
+  it.each<FeatureFlagsReadFailure>([
+    { stage: "remote", attempt: 1, isCold: false },
+    { stage: "remote", attempt: 2, isCold: false },
+  ])("ignores a warm remote failure at attempt $attempt", failure => {
+    report(new Error("boom"), failure);
+
+    expect(appLogger.critical).not.toHaveBeenCalled();
+  });
+
+  it.each([true, false])("reports a boot sync failure, isCold %s", isCold => {
+    const error = new Error("reducer blew up");
+
+    report(error, { stage: "sync", attempt: 1, isCold });
+
+    expect(appLogger.critical).toHaveBeenCalledWith(
+      error,
+      "Feature flags: re-resolution failed at boot, running on compiled defaults",
+    );
+  });
+
+  it.each([true, false])("ignores a sync failure after boot, isCold %s", isCold => {
+    report(new Error("boom"), { stage: "sync", attempt: 2, isCold });
+
+    expect(appLogger.critical).not.toHaveBeenCalled();
   });
 });
