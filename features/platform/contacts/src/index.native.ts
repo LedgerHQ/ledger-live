@@ -13,6 +13,7 @@ export * from "./components/ContactAvatar/index.native";
 export * from "./components/MeAvatar/meAvatarUrl";
 export * from "./contactDeviceIntentsPort";
 export * from "./device/addressBook/toEvmAddressBook";
+export * from "./device/addressBook/toTronAddressBook";
 export * from "./addressEntry/types";
 export * from "./addressEntry/validation";
 export * from "./addressEntry/state";
