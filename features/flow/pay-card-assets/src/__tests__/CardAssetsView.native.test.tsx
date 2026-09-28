@@ -1,10 +1,18 @@
 import React from "react";
 import { act, fireEvent, render, screen, userEvent } from "@testing-library/react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
+import { TooltipContent } from "@ledgerhq/lumen-ui-rnative";
 import { CardAssetsManageDrawer } from "../CardAssetsManageDrawer.native";
 import { CardAssetsView } from "../CardAssetsView.native";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 import type { CardAssetsViewModel } from "../types";
+
+const NAV_BAR_INSET = 48;
+const CONTENT_BOTTOM_SPACING = 24;
+
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ top: 0, bottom: 48, left: 0, right: 0 }),
+}));
 
 const usdc = {
   id: "w-usdc",
@@ -139,6 +147,14 @@ describe("CardAssetsView (native)", () => {
     await user.press(screen.getByText("USD Coin"));
 
     expect(onAssetPress).toHaveBeenCalledWith(usdc);
+  });
+
+  it("should keep the assets info clear of the navigation bar", () => {
+    render(<CardAssetsView {...ready} />, { wrapper: I18nWrapper });
+
+    expect(screen.UNSAFE_getByType(TooltipContent).props.content.props.style).toEqual({
+      paddingBottom: NAV_BAR_INSET + CONTENT_BOTTOM_SPACING,
+    });
   });
 
   it("should open asset management", async () => {

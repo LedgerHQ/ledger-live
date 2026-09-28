@@ -70,6 +70,7 @@
     "react-native-draggable-flatlist": "catalog:",
     "react-native-gesture-handler": "catalog:",
     "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
@@ -91,7 +92,8 @@
     "react-native": "catalog:",
     "react-native-draggable-flatlist": "catalog:",
     "react-native-gesture-handler": "catalog:",
-    "react-native-reanimated": "catalog:"
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": ">=4.0.0"
   },
   "peerDependenciesMeta": {
     "react-native": {
@@ -122,6 +124,9 @@
       "optional": true
     },
     "react-native-reanimated": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
       "optional": true
     }
   }
