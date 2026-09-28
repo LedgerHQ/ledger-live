@@ -74,8 +74,10 @@ export default defineCommand({
       z.string().min(1).max(280).default("Remote agent that proposes intents for review."),
       { description: "Agent description shown to the human reviewer, 1-280 characters." },
     ),
-    source: option(z.enum(SUPPORTED_AGENT_SOURCES).default("openclaw"), {
-      description: "Declared agent source.",
+    source: option(z.enum(SUPPORTED_AGENT_SOURCES), {
+      description:
+        `Runtime the agent runs in (not its model provider): ${SUPPORTED_AGENT_SOURCES.join(", ")}. ` +
+        "Use other if none matches.",
     }),
     "app-url": option(z.string().url().optional(), {
       description:

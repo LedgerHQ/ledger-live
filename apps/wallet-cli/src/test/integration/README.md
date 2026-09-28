@@ -15,7 +15,7 @@ The deployed test frontend (`https://agent-intent.ledger-test.com/`) currently t
 environment and point the handoff at the test frontend:
 
 ```bash
-wallet-cli agent-intent enroll --profile <profile-id> --name "<name>" \
+wallet-cli agent-intent enroll --profile <profile-id> --name "<name>" --source <runtime> \
   --environment production --app-url https://agent-intent.ledger-test.com/
 ```
 
