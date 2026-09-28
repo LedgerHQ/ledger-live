@@ -8,8 +8,6 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { DEFAULT_ACCOUNT_ID } from "near-sandbox";
 
-export const NETWORK_ID = "sandbox";
-
 /** Every account the scenario touches is a subaccount of the genesis account. */
 export const SENDER_ID = `sender.${DEFAULT_ACCOUNT_ID}`;
 export const NAMED_RECIPIENT_ID = `recipient.${DEFAULT_ACCOUNT_ID}`;

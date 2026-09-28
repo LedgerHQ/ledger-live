@@ -53,8 +53,7 @@ const typedStakingIntent = (type: string): StakingTransactionIntent =>
     recipient: VALIDATOR,
   }) as StakingTransactionIntent;
 
-const decode = (base64: string) =>
-  nearAPI.transactions.Transaction.decode(Buffer.from(base64, "base64"));
+const decode = (base64: string) => nearAPI.Transaction.decode(Buffer.from(base64, "base64"));
 
 const methodOf = (base64: string) =>
   (decode(base64).actions[0] as unknown as { functionCall: { methodName: string } }).functionCall
@@ -74,7 +73,7 @@ describe("craftTransaction", () => {
     expect(decoded.receiverId).toBe(RECIPIENT);
     // Borsh decoding yields a plain { keyType, data }, so compare the raw key bytes.
     expect(Buffer.from(decoded.publicKey.data).toString("hex")).toBe(
-      Buffer.from(nearAPI.utils.PublicKey.fromString(PUBLIC_KEY).data).toString("hex"),
+      Buffer.from(nearAPI.PublicKey.fromString(PUBLIC_KEY).data).toString("hex"),
     );
     expect(details).toMatchObject({ mode: "send", receiverId: RECIPIENT });
   });

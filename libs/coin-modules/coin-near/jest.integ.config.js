@@ -1,3 +1,6 @@
+// near-api-js v7 depends on ESM-only @noble/@scure packages, which have to be transpiled for Jest.
+const esmPackages = ["@noble", "@scure"];
+
 /** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: "node",
@@ -16,4 +19,5 @@ module.exports = {
       },
     ],
   },
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmPackages.join("|")}))`],
 };
