@@ -1,16 +1,20 @@
 # Analytics (mobile)
 
-How to emit events: [`@shared/analytics`](../../../shared/analytics/README.md) and [`@shared/analytics-react`](../../../shared/analytics-react/README.md).
+## Shared analytics
 
-Existing `~/analytics` imports are compatibility shims. New code imports the packages. [LIVE-35992](https://ledgerhq.atlassian.net/browse/LIVE-35992) removes the barrels.
+Mobile uses the shared packages for analytics: [`@shared/analytics`](../../../shared/analytics/README.md) and [`@shared/analytics-react`](../../../shared/analytics-react/README.md).
 
-## What stays in the app
+`~/analytics` imports are historical compatibility shims and will be removed with [LIVE-35992](https://ledgerhq.atlassian.net/browse/LIVE-35992). New code should call the shared packages directly.
 
-[`src/analytics/segment.ts`](../src/analytics/segment.ts) owns the React Native Segment client:
+## Setup
+
+[`src/analytics/segment.ts`](../src/analytics/segment.ts) wires in the React Native Segment client:
 
 - `start(store)` creates the client and registers it (`setAnalytics`, `setEnabledFn`, extra props)
 - `updateIdentify` sends Segment identify traits, including after consent changes
 
-Debug overlay: `ANALYTICS_CONSOLE` (see [Environment variables](../README.md#environment-variables)) renders [`src/components/AnalyticsConsole`](../src/components/AnalyticsConsole/index.tsx). Settings → Debug → Configuration toggles the same flag.
+## Debug
 
-`Button` and `Touchable` accept `event` and `eventProperties` and call `track` on press. That wrapper is app-only. New call sites that are not those components use `@shared/analytics`.
+The [`AnalyticsConsole`](../src/components/AnalyticsConsole/index.tsx). can be switched on via `ANALYTICS_CONSOLE` (see [Environment variables](../README.md#environment-variables)). It can also be toggled via settings in the app:
+
+Settings → Debug → Configuration
