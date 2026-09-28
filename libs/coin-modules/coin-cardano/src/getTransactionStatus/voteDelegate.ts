@@ -6,6 +6,7 @@ import {
   CardanoStakeKeyDepositError,
 } from "../errors";
 import { isHexString } from "../logic";
+import { isRecoverableBuildError } from "./buildErrors";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CardanoAccount, Transaction, TransactionStatus } from "../types";
 
@@ -48,11 +49,8 @@ export async function getVoteDelegateTransactionStatus(
   if (!errors.dRepHex) {
     try {
       await buildTransaction(account, transaction);
-    } catch (e: any) {
-      if (
-        e.message.toLowerCase() === "not enough ada" ||
-        e.message.toLowerCase() === "not enough tokens"
-      ) {
+    } catch (e: unknown) {
+      if (isRecoverableBuildError(e)) {
         errors.amount = new CardanoNotEnoughFunds();
       } else {
         throw e;

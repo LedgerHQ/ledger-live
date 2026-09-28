@@ -193,9 +193,10 @@ describe("getTyphonInputFromUtxo", () => {
     expect(typhonInput.index).toEqual(0);
     expect(typhonInput.amount).toEqual(new BigNumber(100));
     expect(typhonInput.tokens).toEqual([]);
-    expect((typhonInput.address as TyphonTypes.ShelleyAddress).paymentCredential.bipPath).toEqual(
-      mockUtxo.paymentCredential.path,
-    );
+    const { paymentCredential } = typhonInput.address as TyphonTypes.ShelleyAddress;
+    expect(paymentCredential.type).toEqual(TyphonTypes.HashType.ADDRESS);
+    if (paymentCredential.type !== TyphonTypes.HashType.ADDRESS) return;
+    expect(paymentCredential.bipPath).toEqual(mockUtxo.paymentCredential.path);
   });
 });
 

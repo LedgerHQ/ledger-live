@@ -145,4 +145,26 @@ describe("CardanoVoteDelegation", () => {
 
     expect(Linking.openURL).toHaveBeenCalledWith("https://explorer.com");
   });
+
+  it("should not open explorer for Always abstain", () => {
+    jest
+      .spyOn(Linking, "openURL")
+      .mockClear()
+      .mockResolvedValue(undefined as never);
+
+    const abstainAccount = {
+      ...mockAccount,
+      cardanoResources: {
+        delegation: {
+          dRepHex: "2",
+        },
+      },
+    };
+    render(<CardanoVoteDelegation account={abstainAccount} />);
+
+    fireEvent.press(screen.getByText("Always abstain"));
+    screen.getAllByText("Always abstain").forEach(el => fireEvent.press(el));
+
+    expect(Linking.openURL).not.toHaveBeenCalled();
+  });
 });

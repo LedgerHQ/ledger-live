@@ -87,6 +87,7 @@ const registeredDelegation = (over: Record<string, unknown> = {}) => ({
   deposit: "2000000",
   poolId: "pool1old",
   dRepHex: undefined,
+  dRepName: undefined,
   ticker: undefined,
   name: undefined,
   rewards: new BigNumber(0),

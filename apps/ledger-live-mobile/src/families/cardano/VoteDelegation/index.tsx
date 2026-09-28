@@ -107,7 +107,12 @@ function VoteDelegation({ account }: Props) {
           {
             label: t("cardano.voteDelegation.drepId"),
             Component: (
-              <Touchable onPress={() => onOpenExplorer(dRepHex)} event="VoteDelegationOpenExplorer">
+              <Touchable
+                onPress={
+                  dRepHex === "2" || dRepHex === "3" ? undefined : () => onOpenExplorer(dRepHex)
+                }
+                event="VoteDelegationOpenExplorer"
+              >
                 <LText
                   numberOfLines={1}
                   semiBold
