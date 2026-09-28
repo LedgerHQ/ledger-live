@@ -655,7 +655,7 @@ export class SwapPage extends WebViewAppPage {
     const dateOptionTexts = await dateOptions.allTextContents();
     await this.softExpect(async soft => {
       for (const label of ["1D", "1W", "1M", "1Y"]) {
-        soft(dateOptionTexts).toContain(label);
+        await soft(dateOptionTexts).toContain(label);
       }
     });
     const nextDateOption = dateOptions.filter({ hasNotText: initialDateLabel ?? "" }).first();
