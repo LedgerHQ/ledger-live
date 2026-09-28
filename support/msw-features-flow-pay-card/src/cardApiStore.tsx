@@ -22,6 +22,7 @@ export function makeCardApiStore({ signedIn = false }: { signedIn?: boolean } = 
         hasCard: signedIn,
         pendingLoginType: null,
         status: signedIn ? "signedIn" : "signedOut",
+        isSessionResolving: false,
       } satisfies PayCardAuthState,
     },
     middleware: getDefaultMiddleware =>

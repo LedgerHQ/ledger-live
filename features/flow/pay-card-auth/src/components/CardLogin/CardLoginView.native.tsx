@@ -21,6 +21,7 @@ export function CardLoginView({
   description,
   loginLabel,
   isLoading,
+  isResolving,
   error,
   onLoginPress,
   intro,
@@ -38,18 +39,20 @@ export function CardLoginView({
             <SubheaderRow>
               <SubheaderTitle>{title}</SubheaderTitle>
             </SubheaderRow>
-            <SubheaderDescription>{description}</SubheaderDescription>
+            {isResolving ? null : <SubheaderDescription>{description}</SubheaderDescription>}
           </Subheader>
-          <Button
-            appearance="base"
-            size="md"
-            loading={isLoading}
-            disabled={isLoading}
-            onPress={onLoginPress}
-            accessibilityLabel={loginLabel}
-          >
-            {loginLabel}
-          </Button>
+          {isResolving ? null : (
+            <Button
+              appearance="base"
+              size="md"
+              loading={isLoading}
+              disabled={isLoading}
+              onPress={onLoginPress}
+              accessibilityLabel={loginLabel}
+            >
+              {loginLabel}
+            </Button>
+          )}
         </Box>
       </Box>
       <CardAuthError error={error} />

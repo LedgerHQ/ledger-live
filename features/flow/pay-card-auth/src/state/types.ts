@@ -202,6 +202,7 @@ export type PayCardAuthState = Readonly<{
    * reads this instead, because two machines would each hydrate and neither would agree.
    */
   status: PayCardAuthStatus;
+  isSessionResolving: boolean;
 }>;
 
 export type PayCardLoginIntroState = Readonly<{

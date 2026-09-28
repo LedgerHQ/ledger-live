@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type {
   CardLoginOauthConfig,
   OpenCardHostedPage,
@@ -13,6 +14,7 @@ import type {
 export type RequestAppProtection = () => Promise<boolean>;
 
 export type CardLoginProps = {
+  readonly children?: ReactNode;
   readonly oauthConfig: CardLoginOauthConfig;
   /**
    * The redirect the app received, when it has one. The app's router owns the deep link, so it hands
@@ -82,6 +84,7 @@ export type CardAuthErrorProps = Readonly<{
 export type CardLoginViewProps = CardLoginCopy & {
   /** True while the machine works. The login action is not pressable then. */
   readonly isLoading: boolean;
+  readonly isResolving: boolean;
   readonly error: CardAuthErrorCopy | null;
   readonly onLoginPress: () => void;
   readonly onAlreadyHaveCardPress: () => void;

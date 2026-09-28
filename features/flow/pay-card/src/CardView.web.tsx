@@ -1,6 +1,11 @@
 import React from "react";
 import { CardLogin } from "@features/flow-pay-card-auth";
-import { CardArtwork, CardDetails, CardTopUpButton } from "@features/flow-pay-card-details";
+import {
+  CardArtwork,
+  CardDetails,
+  CardLoadingVisual,
+  CardTopUpButton,
+} from "@features/flow-pay-card-details";
 import { CardTransactions } from "@features/flow-pay-card-transactions";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import { CardAssets } from "@features/flow-pay-card-assets";
@@ -49,11 +54,13 @@ export function CardView({
           />
         </>
       ) : (
-        <>
-          <CardArtwork />
-
-          <CardLogin key={login.oauthConfig.apiUrl} {...login} />
-        </>
+        <CardLogin key={login.oauthConfig.apiUrl} {...login}>
+          {displayState === "resolving" && cardVisual ? (
+            <CardLoadingVisual {...cardVisual} />
+          ) : (
+            <CardArtwork />
+          )}
+        </CardLogin>
       )}
       <p
         className={
