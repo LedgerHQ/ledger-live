@@ -464,10 +464,12 @@ export async function performTransparentSync(
   const walletNetwork = toWalletNetwork(currency.id);
   const walletDerivationMode = toWalletDerivationMode(derivationMode);
 
-  const existingWalletAccount = initialAccount?.bitcoinResources?.walletAccount;
-  const walletAccount = existingWalletAccount
-    ? bindExplorer(existingWalletAccount, currency, config)
-    : await wallet.generateAccount(
+  // Bound in both cases: wallet-btc caches one explorer per currency id, first set wins, and
+  // deserialization seeds that cache unbound, so a freshly generated account can come back
+  // with a stale explorer too.
+  const walletAccount = bindExplorer(
+    initialAccount?.bitcoinResources?.walletAccount ??
+      (await wallet.generateAccount(
         {
           xpub,
           path: rootPath,
@@ -477,7 +479,10 @@ export async function performTransparentSync(
           derivationMode: walletDerivationMode,
         },
         toWalletBtcCurrency(currency, config),
-      );
+      )),
+    currency,
+    config,
+  );
 
   const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
   const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();

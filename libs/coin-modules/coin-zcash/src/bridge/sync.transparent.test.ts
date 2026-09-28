@@ -368,6 +368,12 @@ describe("performTransparentSync", () => {
       expect.anything(),
       expect.objectContaining({ explorerEndpoint: TEST_CONFIG.explorer.url }),
     );
+    // The generated account is bound too: wallet-btc may hand back a cached, stale explorer.
+    expect(bindExplorer).toHaveBeenCalledWith(
+      await generateAccount.mock.results[0].value,
+      currency,
+      TEST_CONFIG,
+    );
   });
 
   it("cannot compose an xpub without a device", async () => {
