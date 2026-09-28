@@ -17,7 +17,12 @@ import {
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import { TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 
-import { buildTransaction, messageParamsFromTransaction, txToMessages } from "./buildTransaction";
+import {
+  buildTransaction,
+  messageParamsFromTransaction,
+  resolveSourceValidator,
+  txToMessages,
+} from "./buildTransaction";
 import Babylon, { BABYLON_STAKING_MESSAGES } from "./chain/Babylon";
 import Cosmos from "./chain/Cosmos";
 import Zenrock from "./chain/Zenrock";
@@ -997,6 +1002,35 @@ describe("txToMessages — generic shape (valAddress/dstValAddress/compoundRewar
     } as Transaction;
     const { aminoMsgs } = txToMessages(messageParamsFromTransaction(account, transaction), cosmos);
     expect(aminoMsgs.length).toEqual(0);
+  });
+});
+
+const redelegate = (fields: Partial<Transaction>): Transaction =>
+  ({ mode: "redelegate", sourceValidator: "legacySrc", ...fields }) as Transaction;
+
+describe("resolveSourceValidator", () => {
+  it("uses valAddress as the source of a generic-shape redelegation", () => {
+    expect(resolveSourceValidator(redelegate({ valAddress: "src", dstValAddress: "dst" }))).toBe(
+      "src",
+    );
+  });
+
+  it("does not fall back to the legacy sourceValidator once dstValAddress is set without valAddress", () => {
+    expect(resolveSourceValidator(redelegate({ dstValAddress: "dst" }))).toBeUndefined();
+  });
+
+  it("falls back to the legacy sourceValidator when no generic field is set", () => {
+    expect(resolveSourceValidator(redelegate({}))).toBe("legacySrc");
+  });
+
+  it("ignores valAddress outside redelegate mode", () => {
+    expect(
+      resolveSourceValidator({
+        mode: "delegate",
+        valAddress: "val",
+        sourceValidator: "legacySrc",
+      } as Transaction),
+    ).toBe("legacySrc");
   });
 });
 

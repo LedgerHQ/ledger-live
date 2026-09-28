@@ -11,7 +11,10 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
     updateTransaction: (tx: object, patch: object) => ({ ...tx, ...patch }),
   }),
 }));
-jest.mock("~/renderer/analytics/TrackPage", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
 jest.mock("~/renderer/modals/Send/AccountFooter", () => ({
   __esModule: true,
   default: () => <div data-testid="account-footer" />,

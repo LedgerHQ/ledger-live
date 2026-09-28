@@ -14,7 +14,6 @@ import { BigNumber } from "bignumber.js";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "../../config/sharedConfig";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
-import type { Account } from "@ledgerhq/types-live";
 
 jest.mock("@ledgerhq/coin-cosmos/prepareTransaction", () => ({
   calculateFees: jest.fn(() => Promise.resolve({})),
@@ -224,7 +223,7 @@ describe("cosmos/banner", () => {
           pendingRewardsBalance: new BigNumber("112"),
           unbondingBalance: new BigNumber(0),
         },
-      } as Account;
+      } as unknown as CosmosAccount;
 
       const result = getAccountBannerState(genericAccount);
 
@@ -259,7 +258,7 @@ describe("cosmos/banner", () => {
           pendingRewardsBalance: new BigNumber(0),
           unbondingBalance: new BigNumber(0),
         },
-      } as Account;
+      } as unknown as CosmosAccount;
 
       const result = getAccountBannerState(genericAccount);
 

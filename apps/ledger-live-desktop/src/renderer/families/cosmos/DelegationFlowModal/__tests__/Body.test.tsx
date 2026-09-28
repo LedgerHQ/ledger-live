@@ -12,7 +12,10 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   __esModule: true,
   SyncSkipUnderPriority: () => null,
 }));
-jest.mock("~/renderer/analytics/Track", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  Track: () => null,
+}));
 jest.mock("@ledgerhq/live-common/families/cosmos/chain", () => ({
   __esModule: true,
   default: () => ({ ledgerValidator: "ledger-validator-address" }),

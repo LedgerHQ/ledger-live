@@ -50,7 +50,10 @@ export const resolveClaimRewardMode = (
   currencyId: string,
   mode: CosmosOperationMode,
 ): CosmosOperationMode =>
-  mode === "claimRewardCompound" && !isCompoundRewardSupported(currencyId) ? "claimReward" : mode;
+  (mode === "claimRewardCompound" || mode === "compoundReward") &&
+  !isCompoundRewardSupported(currencyId)
+    ? "claimReward"
+    : mode;
 
 export function mapDelegations(
   delegations: StakingDelegation[],
@@ -141,11 +144,14 @@ export const formatValue = (value: BigNumber, unit: Unit): number =>
     .toNumber();
 export const searchFilter: CosmosSearchFilter =
   query =>
-    ({ validator }) => {
-      const terms = `${validator?.name ?? ""} ${validator?.validatorAddress ?? ""}`;
-      return terms.toLowerCase().includes(query.toLowerCase().trim());
-    };
-export function getMaxDelegationAvailable(account: CosmosAccount, validatorsLength: number): BigNumber {
+  ({ validator }) => {
+    const terms = `${validator?.name ?? ""} ${validator?.validatorAddress ?? ""}`;
+    return terms.toLowerCase().includes(query.toLowerCase().trim());
+  };
+export function getMaxDelegationAvailable(
+  account: CosmosAccount,
+  validatorsLength: number,
+): BigNumber {
   const numberOfDelegations = Math.min(COSMOS_MAX_DELEGATIONS, validatorsLength || 1);
   const { spendableBalance } = account;
   return spendableBalance
@@ -183,18 +189,27 @@ export function canRedelegate(
   delegation: { validatorAddress: string },
 ): boolean {
   const { redelegations } = account.stakingResources;
+  const now = new Date();
+  const activeRedelegations = redelegations.filter(
+    redelegation => redelegation.completionDate > now,
+  );
   return (
-    redelegations.length < COSMOS_MAX_REDELEGATIONS &&
-    !redelegations.some(rd => rd.validatorDstAddress === delegation.validatorAddress)
+    activeRedelegations.length < COSMOS_MAX_REDELEGATIONS &&
+    !activeRedelegations.some(rd => rd.validatorDstAddress === delegation.validatorAddress)
   );
 }
 
 export function getRedelegation(
   account: CosmosAccount,
   delegation: CosmosMappedDelegation,
-): CosmosRedelegation | null | undefined {
+): CosmosRedelegation | undefined {
   const { redelegations } = account.stakingResources;
-  return redelegations.find(r => r.validatorDstAddress === delegation.validatorAddress);
+  const now = new Date();
+  return redelegations.find(
+    redelegation =>
+      redelegation.validatorDstAddress === delegation.validatorAddress &&
+      redelegation.completionDate > now,
+  );
 }
 
 export function getRedelegationCompletionDate(

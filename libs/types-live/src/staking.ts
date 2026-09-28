@@ -113,8 +113,8 @@ export function createEmptyStakingResources(): StakingResources {
     delegatedBalance: BigNumber(0),
     pendingRewardsBalance: BigNumber(0),
     unbondingBalance: BigNumber(0),
-  }
-};
+  };
+}
 
 export type StakingResourcesRaw = {
   delegations: StakingDelegationRaw[];

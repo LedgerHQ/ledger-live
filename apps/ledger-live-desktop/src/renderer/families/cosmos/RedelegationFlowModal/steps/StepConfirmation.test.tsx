@@ -3,13 +3,16 @@ import { act, render, screen } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import type { Operation } from "@ledgerhq/types-live";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import StepConfirmation from "./StepConfirmation";
 import type { StepProps } from "../types";
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({ __esModule: true, default: () => null }));
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({

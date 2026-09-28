@@ -222,6 +222,7 @@ export const Warning = ({
     case "redelegate":
     case "claimReward":
     case "claimRewardCompound":
+    case "compoundReward":
       return null;
     default:
       return (

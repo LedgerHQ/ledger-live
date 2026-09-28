@@ -23,7 +23,10 @@ jest.mock("@ledgerhq/coin-cosmos/chain/chain", () => ({
   __esModule: true,
   default: () => ({ unbondingPeriod: 21 }),
 }));
-jest.mock("~/renderer/analytics/TrackPage", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
 jest.mock("~/renderer/components/NotEnoughFundsToUnstake", () => ({
   __esModule: true,
   default: () => <div data-testid="not-enough-funds" />,

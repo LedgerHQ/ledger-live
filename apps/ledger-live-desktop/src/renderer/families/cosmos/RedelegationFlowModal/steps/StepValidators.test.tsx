@@ -23,7 +23,10 @@ jest.mock("@ledgerhq/live-common/families/cosmos/chain", () => ({
   __esModule: true,
   default: () => ({ unbondingPeriod: 21 }),
 }));
-jest.mock("~/renderer/analytics/TrackPage", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
 
 const VALIDATOR_A = { validatorAddress: "validatorA", name: "Validator A" };
 const VALIDATOR_B = { validatorAddress: "validatorB", name: "Validator B" };

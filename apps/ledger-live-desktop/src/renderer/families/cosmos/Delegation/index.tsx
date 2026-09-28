@@ -30,7 +30,7 @@ import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { useNavigate } from "react-router";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { getAccountUrl } from "~/renderer/utils";
-import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 
 type DelegationActionsModalName =
   | "MODAL_COSMOS_CLAIM_REWARDS"

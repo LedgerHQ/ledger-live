@@ -5,7 +5,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepProps } from "../types";
 import { CosmosMappedDelegation, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { ValidatorField, AmountField } from "../fields";
@@ -15,6 +15,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
+import { resolveTransactionValidators } from "@ledgerhq/coin-cosmos/buildTransaction";
 
 export default function StepAmount({
   account,
@@ -106,11 +107,11 @@ export function StepAmountFooter({
   transaction,
 }: StepProps) {
   const { t } = useTranslation();
-  invariant(account, "account required");
+  invariant(account && transaction, "account and transaction required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
-  const requestedDelegation = transaction?.validators?.[0];
-  const currentDelegation = getCosmosResources(account)?.delegations.find(
+  const requestedDelegation = resolveTransactionValidators(transaction)[0];
+  const currentDelegation = account.stakingResources.delegations.find(
     delegation => delegation.validatorAddress === requestedDelegation?.address,
   );
   const hasValidAmount =

@@ -24,6 +24,10 @@ import {
   type CosmosMappedDelegation,
   type Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  resolveSourceValidator,
+  resolveTransactionValidators,
+} from "@ledgerhq/coin-cosmos/buildTransaction";
 
 const SelectButton = styled(Base)`
   border-radius: 4px;
@@ -41,7 +45,7 @@ const Container = styled(Box).attrs<{ isOpen?: boolean }>(p => ({
   flow: 1,
   relative: true,
   mr: -p.theme.overflow.trackSize,
-})) <{
+}))<{
   isOpen?: boolean;
 }>`
   min-height: 330px;
@@ -188,12 +192,13 @@ export function StepValidatorsFooter({
   bridgePending,
   transaction,
 }: StepProps) {
-  invariant(account, "account required");
+  invariant(account && transaction, "account and transaction required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
-  const requestedAmount = transaction?.validators?.[0]?.amount;
-  const sourceDelegation = getCosmosResources(account)?.delegations.find(
-    delegation => delegation.validatorAddress === transaction?.sourceValidator,
+  const validators = resolveTransactionValidators(transaction);
+  const requestedAmount = validators.length > 0 ? validators[0].amount : new BigNumber(0);
+  const sourceDelegation = account.stakingResources.delegations.find(
+    delegation => delegation.validatorAddress === resolveSourceValidator(transaction),
   );
   const hasValidAmount =
     !!requestedAmount &&

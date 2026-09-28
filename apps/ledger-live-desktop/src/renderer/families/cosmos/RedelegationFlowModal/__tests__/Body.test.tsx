@@ -13,7 +13,10 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   __esModule: true,
   SyncSkipUnderPriority: () => null,
 }));
-jest.mock("~/renderer/analytics/Track", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  Track: () => null,
+}));
 jest.mock("../steps/StepStarter", () => ({
   __esModule: true,
   default: () => null,

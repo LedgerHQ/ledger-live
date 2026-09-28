@@ -128,6 +128,14 @@ describe("resolveClaimRewardMode", () => {
     expect(resolveClaimRewardMode("babylon", "claimRewardCompound")).toBe("claimReward");
   });
 
+  it("keeps compoundReward on chains that support it (cosmos)", () => {
+    expect(resolveClaimRewardMode("cosmos", "compoundReward")).toBe("compoundReward");
+  });
+
+  it("downgrades compoundReward to claimReward on epoching chains (babylon)", () => {
+    expect(resolveClaimRewardMode("babylon", "compoundReward")).toBe("claimReward");
+  });
+
   it("leaves non-compound modes untouched", () => {
     expect(resolveClaimRewardMode("babylon", "claimReward")).toBe("claimReward");
     expect(resolveClaimRewardMode("babylon", "delegate")).toBe("delegate");
@@ -157,10 +165,21 @@ describe("canRedelegate", () => {
       validatorSrcAddress: "validator-src",
       validatorDstAddress: `validator-dst-${i}`,
       amount: new BigNumber(1),
-      completionDate: new Date(),
+      completionDate: new Date(Date.now() + 60_000),
     }));
     const account = makeAccount({ redelegations });
     expect(canRedelegate(account, { validatorAddress: "validator-1" })).toBe(false);
+  });
+
+  it("ignores already-completed redelegations when checking the maximum", () => {
+    const redelegations = Array.from({ length: COSMOS_MAX_REDELEGATIONS }).map((_, i) => ({
+      validatorSrcAddress: "validator-src",
+      validatorDstAddress: `validator-dst-${i}`,
+      amount: new BigNumber(1),
+      completionDate: new Date(Date.now() - 60_000),
+    }));
+    const account = makeAccount({ redelegations });
+    expect(canRedelegate(account, { validatorAddress: "validator-1" })).toBe(true);
   });
 
   it("returns false when the target validator already has a pending redelegation", () => {
@@ -170,11 +189,25 @@ describe("canRedelegate", () => {
           validatorSrcAddress: "validator-src",
           validatorDstAddress: "validator-1",
           amount: new BigNumber(1),
-          completionDate: new Date(),
+          completionDate: new Date(Date.now() + 60_000),
         },
       ],
     });
     expect(canRedelegate(account, { validatorAddress: "validator-1" })).toBe(false);
+  });
+
+  it("returns true when the only redelegation to that validator has already completed", () => {
+    const account = makeAccount({
+      redelegations: [
+        {
+          validatorSrcAddress: "validator-src",
+          validatorDstAddress: "validator-1",
+          amount: new BigNumber(1),
+          completionDate: new Date(Date.now() - 60_000),
+        },
+      ],
+    });
+    expect(canRedelegate(account, { validatorAddress: "validator-1" })).toBe(true);
   });
 });
 
@@ -184,7 +217,7 @@ describe("getRedelegation", () => {
       validatorSrcAddress: "validator-src",
       validatorDstAddress: "validator-1",
       amount: new BigNumber(1),
-      completionDate: new Date(),
+      completionDate: new Date(Date.now() + 60_000),
     };
     const account = makeAccount({ redelegations: [redelegation] });
     expect(getRedelegation(account, { validatorAddress: "validator-1" } as never)).toEqual(
@@ -194,6 +227,17 @@ describe("getRedelegation", () => {
 
   it("returns undefined when there is no matching redelegation", () => {
     const account = makeAccount({ redelegations: [] });
+    expect(getRedelegation(account, { validatorAddress: "validator-1" } as never)).toBeUndefined();
+  });
+
+  it("ignores a redelegation to that validator that has already completed", () => {
+    const redelegation = {
+      validatorSrcAddress: "validator-src",
+      validatorDstAddress: "validator-1",
+      amount: new BigNumber(1),
+      completionDate: new Date(Date.now() - 60_000),
+    };
+    const account = makeAccount({ redelegations: [redelegation] });
     expect(getRedelegation(account, { validatorAddress: "validator-1" } as never)).toBeUndefined();
   });
 });
@@ -350,7 +394,11 @@ describe("getMaxDelegationAvailable", () => {
 
     const result = getMaxDelegationAvailable(account, 3);
 
-    expect(result.isEqualTo(new BigNumber(10_000_000).minus(COSMOS_MIN_FEES.multipliedBy(3)).minus(COSMOS_MIN_SAFE))).toBe(true);
+    expect(
+      result.isEqualTo(
+        new BigNumber(10_000_000).minus(COSMOS_MIN_FEES.multipliedBy(3)).minus(COSMOS_MIN_SAFE),
+      ),
+    ).toBe(true);
   });
 
   it("caps the fee scaling at COSMOS_MAX_DELEGATIONS even with more validators", () => {
@@ -360,7 +408,9 @@ describe("getMaxDelegationAvailable", () => {
 
     expect(
       result.isEqualTo(
-        new BigNumber(10_000_000).minus(COSMOS_MIN_FEES.multipliedBy(COSMOS_MAX_DELEGATIONS)).minus(COSMOS_MIN_SAFE),
+        new BigNumber(10_000_000)
+          .minus(COSMOS_MIN_FEES.multipliedBy(COSMOS_MAX_DELEGATIONS))
+          .minus(COSMOS_MIN_SAFE),
       ),
     ).toBe(true);
   });

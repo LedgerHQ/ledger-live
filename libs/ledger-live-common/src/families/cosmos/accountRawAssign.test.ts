@@ -91,23 +91,6 @@ describe("assignFromAccountRaw", () => {
     expect(mockedGenericAssignFromAccountRaw).toHaveBeenCalledWith(accountRaw, account);
   });
 
-  it("revives stakingResources from cosmosResources when the persisted raw predates the migration", () => {
-    const cosmosResources = { delegations: [], redelegations: [], unbondings: [] };
-    mockedCosmosAssignFromAccountRaw.mockImplementation((_raw, acc) => {
-      (acc as unknown as { cosmosResources: unknown }).cosmosResources = cosmosResources;
-    });
-    mockedGenericAssignFromAccountRaw.mockImplementation(() => {});
-
-    const account = {} as unknown as Account;
-    const accountRaw = { cosmosResources } as unknown as AccountRaw;
-
-    assignFromAccountRaw(accountRaw, account);
-
-    expect((account as unknown as { stakingResources: unknown }).stakingResources).toBe(
-      cosmosResources,
-    );
-  });
-
   it("does not override stakingResources when the raw already has the generic shape", () => {
     const stakingResources = { delegations: [] };
     mockedCosmosAssignFromAccountRaw.mockImplementation((_raw, acc) => {

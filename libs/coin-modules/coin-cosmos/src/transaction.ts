@@ -17,30 +17,32 @@ export const formatTransaction = (transaction: Transaction, account: Account): s
   const validators = resolveTransactionValidators(transaction);
   const sourceValidator = resolveSourceValidator(transaction);
   return `
-${mode.toUpperCase()} ${useAllAmount
+${mode.toUpperCase()} ${
+    useAllAmount
       ? "MAX"
       : amount.isZero()
         ? ""
         : " " +
-        formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
-          showCode: true,
-          disableRounding: true,
-        })
-    }
+          formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+            showCode: true,
+            disableRounding: true,
+          })
+  }
 TO ${recipient}
 ${validators
-      .map(
-        v =>
-          "  " +
-          formatCurrencyUnit(getAccountCurrency(account).units[0], v.amount, {
-            disableRounding: true,
-          }) +
-          " -> " +
-          v.address,
-      )
-      .join("\n")}${!sourceValidator ? "" : "\n  source validator=" + sourceValidator}
-with fees=${fees ? formatCurrencyUnit(getAccountCurrency(account).units[0], fees) : "?"}${!memo ? "" : `\n  memo=${memo}`
-    }`;
+  .map(
+    v =>
+      "  " +
+      formatCurrencyUnit(getAccountCurrency(account).units[0], v.amount, {
+        disableRounding: true,
+      }) +
+      " -> " +
+      v.address,
+  )
+  .join("\n")}${!sourceValidator ? "" : "\n  source validator=" + sourceValidator}
+with fees=${fees ? formatCurrencyUnit(getAccountCurrency(account).units[0], fees) : "?"}${
+    !memo ? "" : `\n  memo=${memo}`
+  }`;
 };
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {

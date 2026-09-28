@@ -5,7 +5,10 @@ import type { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/
 import StepStarter from "./StepStarter";
 import type { StepProps } from "../types";
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
 jest.mock("@ledgerhq/live-common/families/cosmos/chain", () => ({
   __esModule: true,
   default: jest.fn(() => ({ unbondingPeriod: 21 })),

@@ -15,17 +15,19 @@ const baseRaw = {
   gas: "7890",
   memo: "test memo",
   sourceValidator: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-  validators: [{
-    address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-    amount: "12345.67890",
-  }],
+  validators: [
+    {
+      address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
+      amount: "12345.67890",
+    },
+  ],
   amount: new BigNumber("1000000"),
   recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5lfh8mc2yatfu6jg3vcy94rk6",
   recipientDomain: {
     registry: "ens",
     domain: ".cosmos",
     address: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
-    type: "forward"
+    type: "forward",
   },
   valAddress: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
   dstValAddress: "cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d",
@@ -44,17 +46,19 @@ const baseTransaction = {
   memoType: "text",
   memoValue: "test memo",
   sourceValidator: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-  validators: [{
-    address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-    amount: "12345.67890",
-  }],
+  validators: [
+    {
+      address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
+      amount: "12345.67890",
+    },
+  ],
   amount: new BigNumber("1000000"),
   recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5lfh8mc2yatfu6jg3vcy94rk6",
   recipientDomain: {
     registry: "ens",
     domain: ".cosmos",
     address: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
-    type: "forward"
+    type: "forward",
   },
   valAddress: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
   dstValAddress: "cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d",
@@ -79,17 +83,19 @@ describe("fromTransactionRaw", () => {
       memoType: "text",
       memoValue: "test memo",
       sourceValidator: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-      validators: [{
-        address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-        amount: new BigNumber("12345.67890"),
-      }],
+      validators: [
+        {
+          address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
+          amount: new BigNumber("12345.67890"),
+        },
+      ],
       amount: new BigNumber("1000000"),
       recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5lfh8mc2yatfu6jg3vcy94rk6",
       recipientDomain: {
         registry: "ens",
         domain: ".cosmos",
         address: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
-        type: "forward"
+        type: "forward",
       },
       valAddress: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
       dstValAddress: "cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d",
@@ -171,17 +177,19 @@ describe("toTransactionRaw", () => {
       memoType: "text",
       memoValue: "test memo",
       sourceValidator: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-      validators: [{
-        address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-        amount: "12345.67890",
-      }],
+      validators: [
+        {
+          address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
+          amount: "12345.67890",
+        },
+      ],
       amount: "1000000",
       recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5lfh8mc2yatfu6jg3vcy94rk6",
       recipientDomain: {
         registry: "ens",
         domain: ".cosmos",
         address: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
-        type: "forward"
+        type: "forward",
       },
       valAddress: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
       dstValAddress: "cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d",
@@ -239,7 +247,10 @@ describe("formatTransaction", () => {
   });
 
   it("prints ? when fees are unknown and omits an empty memo", () => {
-    const formatted = formatTransaction({ ...baseTransaction, fees: null, memo: undefined }, account);
+    const formatted = formatTransaction(
+      { ...baseTransaction, fees: null, memo: undefined },
+      account,
+    );
     expect(formatted).toContain("with fees=?");
     expect(formatted).not.toContain("memo=");
   });
@@ -271,7 +282,9 @@ describe("formatTransaction", () => {
     const formatted = formatTransaction(transaction, account);
 
     expect(formatted).toContain("1 -> cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d");
-    expect(formatted).toContain("source validator=cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2");
+    expect(formatted).toContain(
+      "source validator=cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
+    );
   });
 
   it("resolves a single validator via valAddress on delegate (no dstValAddress)", () => {
@@ -306,9 +319,13 @@ describe("formatTransaction", () => {
   it("should format correctly a transaction", () => {
     const formatted = formatTransaction(baseTransaction, account);
     expect(formatted).toContain("SEND  1 ATOM");
-    expect(formatted).toContain("TO cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5lfh8mc2yatfu6jg3vcy94rk6");
+    expect(formatted).toContain(
+      "TO cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5lfh8mc2yatfu6jg3vcy94rk6",
+    );
     expect(formatted).toContain("1 -> cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2");
-    expect(formatted).toContain("source validator=cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2");
+    expect(formatted).toContain(
+      "source validator=cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
+    );
     expect(formatted).toContain("with fees=0");
     expect(formatted).toContain("memo=test memo");
   });

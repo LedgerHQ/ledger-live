@@ -6,7 +6,7 @@ import {
   toOperationExtraRaw,
 } from "@ledgerhq/coin-cosmos/serialization";
 import genericAccountRawAssign from "@ledgerhq/live-common/bridge/generic-coin-framework/accountRawAssign";
-import { Account, AccountRaw, isStakingAccount } from "@ledgerhq/types-live";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
 
 // The generic staking serializer/deserializer that runs after the cosmos-specific step
 // doesn't know about these legacy Cosmos-only fields, so it drops them if it runs last.
@@ -34,10 +34,6 @@ function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
   if (cosmosAccount.stakingResources) {
     if (sequence !== undefined) cosmosAccount.stakingResources.sequence = sequence;
     if (publicKey !== undefined) cosmosAccount.stakingResources.publicKey = publicKey;
-  }
-
-  if (!isStakingAccount(account) && cosmosAccount.cosmosResources) {
-    cosmosAccount.stakingResources = cosmosAccount.cosmosResources;
   }
 }
 

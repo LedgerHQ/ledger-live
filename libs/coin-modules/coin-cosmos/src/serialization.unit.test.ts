@@ -159,6 +159,33 @@ describe("assignToAccountRaw", () => {
 });
 
 describe("assignFromAccountRaw", () => {
+  it("revives stakingResources from cosmosResources when the persisted raw predates the migration", () => {
+    const accountRaw = {
+      cosmosResources: makeRawResources({
+        delegatedBalance: "42",
+        sequence: 7,
+        publicKey: "0xpub",
+      }),
+    } as unknown as CosmosAccountRaw;
+    const account = {} as CosmosAccount;
+
+    assignFromAccountRaw(accountRaw, account);
+
+    expect(account.stakingResources).toEqual(account.cosmosResources);
+    expect(account.stakingResources.delegatedBalance).toEqual(new BigNumber(42));
+    expect(account.stakingResources.sequence).toBe(7);
+    expect(account.stakingResources.publicKey).toBe("0xpub");
+  });
+
+  it("creates empty resources when the raw carries neither shape", () => {
+    const account = {} as CosmosAccount;
+
+    assignFromAccountRaw({} as unknown as CosmosAccountRaw, account);
+
+    expect(account.cosmosResources.delegations).toEqual([]);
+    expect(account.stakingResources.delegations).toEqual([]);
+  });
+
   it("should correctly persist empty cosmosResources and stakingResources", () => {
     const accountRaw = {
       cosmosResources: createEmptyStakingResources() as CosmosResources,
