@@ -1,5 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import type { SuiCoinConfig, SuiTransport } from "../config";
+import { STAKE_DELEGATOR } from "../test/fixtures";
 import {
   getAllBalancesCached,
   getBlock,
@@ -233,15 +234,12 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
   });
 
   describe("getDelegatedStakes", () => {
-    // Live delegator: the sender of `DELEGATE_TX_DIGEST` above.
-    const DELEGATOR = "0x13d73cab19d2cf14e39289b122ed93fb0f9edd00e4c829e0cefb1f0611c54a8f";
-
     // Stake ids and principals are immutable, so they must match exactly; estimatedReward moves
     // with the epoch's rates, so only its presence is asserted.
     it("reconstructs the same stakes as GraphQL", async () => {
-      const viaGraphql = await getDelegatedStakes(graphqlConfig, DELEGATOR);
+      const viaGraphql = await getDelegatedStakes(graphqlConfig, STAKE_DELEGATOR);
 
-      const viaGrpc = await getDelegatedStakes(grpcConfig, DELEGATOR);
+      const viaGrpc = await getDelegatedStakes(grpcConfig, STAKE_DELEGATOR);
 
       expect(viaGrpc.length).toBeGreaterThan(0);
       expect(viaGrpc.map(s => s.stakingPool).sort()).toEqual(
@@ -259,7 +257,7 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
     });
 
     it("populates estimatedReward for active stakes", async () => {
-      const stakes = await getDelegatedStakes(grpcConfig, DELEGATOR);
+      const stakes = await getDelegatedStakes(grpcConfig, STAKE_DELEGATOR);
 
       const active = stakes.flatMap(g => g.stakes).filter(s => s.status === "Active");
       expect(active.length).toBeGreaterThan(0);
