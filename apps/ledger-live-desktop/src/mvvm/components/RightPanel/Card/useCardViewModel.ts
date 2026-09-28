@@ -131,14 +131,12 @@ export function useCardViewModel(): CardViewModel {
   const isLegacyTopUp = !!useFeature("lwdPayTab")?.params?.legacyTopUp;
 
   const openHosted = useCallback(
-    (buildPath: CardAssetPathBuilder, failedToOpen: string, currency?: string) =>
-      openHostedCardPathSafely(
-        openHostedPage,
-        usAppId,
-        buildPath,
-        error => logger.warn(`[card] ${failedToOpen}`, error),
-        currency,
-      ),
+    async (buildPath: CardAssetPathBuilder, failedToOpen: string, currency?: string) => {
+      const result = await openHostedCardPathSafely(openHostedPage, usAppId, buildPath, currency);
+      if (!result.ok) {
+        logger.warn(`[card] ${failedToOpen}`, result.error);
+      }
+    },
     [openHostedPage, usAppId],
   );
 

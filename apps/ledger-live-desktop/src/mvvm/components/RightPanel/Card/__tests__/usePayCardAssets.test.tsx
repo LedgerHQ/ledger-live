@@ -118,6 +118,12 @@ describe("usePayCardAssets", () => {
     expect(result.current.formatters?.amount?.("-12.99", "EUR", "fiat")).toContain("€");
   });
 
+  it("refetches linked wallets whenever Pay mounts again", () => {
+    const { result } = renderHook(() => usePayCardAssets());
+
+    expect(result.current.refetchOnMount).toBe(true);
+  });
+
   it("looks the card currencies up once someone is signed in", () => {
     renderHook(() => usePayCardAssets());
 

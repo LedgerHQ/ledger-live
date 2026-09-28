@@ -49,6 +49,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     onShowHistory,
     onAddAsset,
     discreet = false,
+    refetchOnMount = false,
   } = props ?? {};
   const { t } = useTranslation();
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
@@ -67,6 +68,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
   const { wallets, isLoading, isError, refetch } = useCardLinkedWallets({
     currencies,
     skip: !isSignedIn,
+    refetchOnMount,
   });
 
   const unorderedRows = useMemo<readonly CardAssetRow[]>(

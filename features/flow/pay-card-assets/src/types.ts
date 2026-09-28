@@ -47,6 +47,7 @@ export type CardAssetsProps = Readonly<{
   onShowHistory?: (asset: CardAssetRow) => void;
   onAddAsset: () => void;
   discreet?: boolean;
+  refetchOnMount?: boolean;
 }>;
 
 export type CardAssetDialogState = "closed" | "details" | "withdraw" | "manage";

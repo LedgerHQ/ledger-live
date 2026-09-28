@@ -68,6 +68,7 @@ export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
       formatBalance,
       formatters,
       discreet,
+      refetchOnMount: true,
     }),
     [currencies, getCounterValue, formatCountervalue, formatBalance, formatters, discreet],
   );

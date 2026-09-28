@@ -126,7 +126,17 @@ describe("useCardAssetsViewModel", () => {
   it("should fetch wallets once signed in", () => {
     renderViewModel();
 
-    expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(expect.objectContaining({ skip: false }));
+    expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(
+      expect.objectContaining({ skip: false, refetchOnMount: false }),
+    );
+  });
+
+  it("should refetch wallets on mount when the host asks for it", () => {
+    renderViewModel({ refetchOnMount: true });
+
+    expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(
+      expect.objectContaining({ refetchOnMount: true }),
+    );
   });
 
   it("should report loading while the first wallets read is in flight", () => {

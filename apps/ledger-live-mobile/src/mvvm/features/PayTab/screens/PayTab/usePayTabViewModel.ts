@@ -26,12 +26,14 @@ import { useFeature } from "@features/platform-feature-flags";
 import { useContactsFeature } from "@features/platform-contacts";
 import { useTranslation } from "@shared/i18n";
 import type { CardAssetRow, CardAssetsProps } from "@features/flow-pay-card-assets";
+import { invalidateCardWalletQueries } from "@features/flow-pay-card-wallets";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { NavigatorName, ScreenName } from "~/const";
 import { CL_CARD_APP_ID } from "LLM/features/Card";
 import type { CardProps } from "@features/flow-pay-card";
 import type { FormatCardTransactionAmount } from "@features/flow-pay-card-transactions";
 import { useLocale } from "~/context/Locale";
+import { useDispatch } from "~/context/hooks";
 import { formatCardTransactionAmount } from "LLM/features/OperationsHistory/utils/formatCardTransactionAmount";
 import { useCardHostedPageOpener } from "../../hooks/useCardHostedPageOpener";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
@@ -53,6 +55,7 @@ import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequ
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
 export function usePayTabViewModel() {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const { bottom } = useNavigationBarHeights();
   const { top: safeAreaTop } = useAdjustedSafeAreaInsets();
@@ -126,19 +129,18 @@ export function usePayTabViewModel() {
   }, [navigation]);
 
   const openHostedWith = useCallback(
-    (
+    async (
       openPage: OpenCardHostedPage,
       buildPath: CardAssetPathBuilder,
       failedToOpen: string,
       currency?: string,
-    ) =>
-      openHostedCardPathSafely(
-        openPage,
-        usAppId,
-        buildPath,
-        error => console.warn(`[card] ${failedToOpen}`, error),
-        currency,
-      ),
+    ) => {
+      const result = await openHostedCardPathSafely(openPage, usAppId, buildPath, currency);
+      if (!result.ok) {
+        console.warn(`[card] ${failedToOpen}`, result.error);
+      }
+      return result;
+    },
     [usAppId],
   );
 
@@ -146,6 +148,16 @@ export function usePayTabViewModel() {
     (buildPath: CardAssetPathBuilder, failedToOpen: string, currency?: string) =>
       openHostedWith(openInSecureBrowser, buildPath, failedToOpen, currency),
     [openHostedWith, openInSecureBrowser],
+  );
+
+  const openHostedAndRefreshWallets = useCallback(
+    async (buildPath: CardAssetPathBuilder, failedToOpen: string) => {
+      const { ok } = await openHosted(buildPath, failedToOpen);
+      if (ok) {
+        invalidateCardWalletQueries(dispatch);
+      }
+    },
+    [dispatch, openHosted],
   );
 
   const isLegacyTopUp = !!useFeature("lwmPayTab")?.params?.legacyTopUp;
@@ -194,13 +206,13 @@ export function usePayTabViewModel() {
   );
 
   const onAccessBaanx = useCallback(
-    () => openHosted(buildAccessBaanxPath, "baanx page did not open"),
-    [openHosted],
+    () => openHostedAndRefreshWallets(buildAccessBaanxPath, "baanx page did not open"),
+    [openHostedAndRefreshWallets],
   );
 
   const onAddAsset = useCallback(
-    () => openHosted(buildAddAssetPath, "add asset page did not open"),
-    [openHosted],
+    () => openHostedAndRefreshWallets(buildAddAssetPath, "add asset page did not open"),
+    [openHostedAndRefreshWallets],
   );
 
   const cardSettingsActions: CardSettingsActions = useMemo(

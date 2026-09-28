@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { getEnv, getEnvDefault, setEnv } from "@shared/env";
 import { openHostedUrlInSecureBrowser } from "@features/flow-pay-card-auth";
+import { invalidateCardWalletQueries } from "@features/flow-pay-card-wallets";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import type { CardAssetRow } from "@features/flow-pay-card-assets";
 import { readCardUsEnv } from "@features/platform-card";
@@ -27,6 +28,10 @@ jest.mock("@ledgerhq/live-common/wallet-api/useLiveAppManifest", () => ({
 jest.mock("@features/platform-card", () => ({
   ...jest.requireActual("@features/platform-card"),
   readCardUsEnv: jest.fn(),
+}));
+
+jest.mock("@features/flow-pay-card-wallets", () => ({
+  invalidateCardWalletQueries: jest.fn(),
 }));
 
 // Untyped: the Base stub screen below does not belong to the Pay tab's own param list.
@@ -150,6 +155,7 @@ async function expectSecureBrowser(url: string) {
 
 describe("usePayTabViewModel", () => {
   beforeEach(() => {
+    jest.mocked(invalidateCardWalletQueries).mockClear();
     mockedOpenSecureBrowser.mockClear();
     setEnv("CARD_BAANX_HOSTED_UI", HOSTED_UI);
     mockedReadCardUsEnv.mockResolvedValue(false);
@@ -208,6 +214,7 @@ describe("usePayTabViewModel", () => {
 
     await expectHostedPage("https://ledger.baanxapi.test/topup");
     expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
+    expect(invalidateCardWalletQueries).not.toHaveBeenCalled();
   });
 
   it("should open the choose card type page of the hosted UI in the secure browser", async () => {
@@ -216,6 +223,7 @@ describe("usePayTabViewModel", () => {
     await user.press(screen.getByTestId("choose-card-type"));
 
     await expectSecureBrowser("https://hosted.test/order-card");
+    expect(invalidateCardWalletQueries).not.toHaveBeenCalled();
   });
 
   it("should name the US app on the choose card type page for a US card holder", async () => {
@@ -234,6 +242,7 @@ describe("usePayTabViewModel", () => {
     await user.press(screen.getByTestId("view-rewards"));
 
     await expectSecureBrowser("https://hosted.test/cashback");
+    expect(invalidateCardWalletQueries).not.toHaveBeenCalled();
   });
 
   it("should name the US app on the cashback page for a US card holder", async () => {
@@ -351,6 +360,7 @@ describe("usePayTabViewModel", () => {
     await user.press(screen.getByTestId("press-manage-pin"));
 
     await expectSecureBrowser("https://hosted.test/set-pin");
+    expect(invalidateCardWalletQueries).not.toHaveBeenCalled();
   });
 
   it("should name the US app on the manage PIN hosted page for a US card holder", async () => {
@@ -369,6 +379,7 @@ describe("usePayTabViewModel", () => {
     await user.press(screen.getByTestId("press-access-baanx"));
 
     await expectSecureBrowser("https://hosted.test/");
+    await waitFor(() => expect(invalidateCardWalletQueries).toHaveBeenCalledTimes(1));
   });
 
   it("should name the US app on the access Baanx hosted page for a US card holder", async () => {
@@ -387,6 +398,21 @@ describe("usePayTabViewModel", () => {
     await user.press(screen.getByTestId("press-add-asset"));
 
     await expectSecureBrowser("https://hosted.test/dashboard/accounts/crypto");
+    await waitFor(() => expect(invalidateCardWalletQueries).toHaveBeenCalledTimes(1));
+  });
+
+  it("should leave the linked wallets cached when the add asset browser fails to open", async () => {
+    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+    mockedOpenSecureBrowser.mockRejectedValueOnce(new Error("browser failed"));
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("press-add-asset"));
+
+    await waitFor(() =>
+      expect(warn).toHaveBeenCalledWith("[card] add asset page did not open", expect.any(Error)),
+    );
+    expect(invalidateCardWalletQueries).not.toHaveBeenCalled();
+    warn.mockRestore();
   });
 
   it("should name the US app on the add asset hosted crypto dashboard", async () => {

@@ -10,4 +10,9 @@ export const CARD_MANAGEMENT_TAGS = [
   "WalletHistory",
 ] as const;
 
+export const CARD_WALLET_QUERY_TAGS = [
+  "CardLinkedWallets",
+  "InternalWallets",
+] as const satisfies readonly (typeof CARD_MANAGEMENT_TAGS)[number][];
+
 export const OAUTH2_TOKEN_PATH = "/v1/auth/oauth2/token";

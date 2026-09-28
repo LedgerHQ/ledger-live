@@ -105,6 +105,21 @@ describe("useCardLinkedWallets", () => {
     expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, { skip: false });
   });
 
+  it("refetches both reads when the subscriber mounts again", () => {
+    stubQueries({ data: linkedWallets }, { data: internalWallets });
+
+    renderHook(() => useCardLinkedWallets({ currencies, refetchOnMount: true }));
+
+    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, {
+      skip: false,
+      refetchOnMountOrArgChange: true,
+    });
+    expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, {
+      skip: false,
+      refetchOnMountOrArgChange: true,
+    });
+  });
+
   it("passes skip through to both, so a signed-out host provokes no 401", () => {
     stubQueries({}, {});
 
