@@ -12,8 +12,7 @@
 .github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/platform  @ledgerhq/qaa
 .github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/platform  @ledgerhq/qaa
 .github/workflows/test-design-system-reusable.yml       @ledgerhq/platform  @ledgerhq/wallet-xp
-tools                                                   @ledgerhq/platform
-apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/platform
+/tools/                                                 @ledgerhq/platform
 
 # Platform & Wallet XP teams catchall
 CODEOWNERS                                               @ledgerhq/platform
@@ -28,7 +27,6 @@ apps/ledger-live-mobile/src/                             @ledgerhq/wallet-xp
 # Platform — desktop (overrides src catch-all)
 apps/ledger-live-desktop/src/main/                       @ledgerhq/platform
 apps/ledger-live-desktop/src/preloader/                  @ledgerhq/platform
-apps/ledger-live-desktop/src/sentry/                     @ledgerhq/platform
 apps/ledger-live-desktop/src/renderer/logger/            @ledgerhq/platform
 apps/ledger-live-desktop/tools/                          @ledgerhq/platform
 apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
@@ -47,7 +45,6 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/analytics-react/                                 @ledgerhq/platform
 /shared/feature-flags                                    @ledgerhq/platform
 /shared/schema-primitives                                @ledgerhq/platform
-/shared/qr-code                                          @ledgerhq/platform
 /shared/api-services/                                    @ledgerhq/platform
 /shared/auth/                                            @ledgerhq/platform
 /shared/cloud-sync/                                      @ledgerhq/platform
@@ -61,13 +58,10 @@ apps/ledger-live-mobile/ios/                             @ledgerhq/platform
 # Platform — libs
 libs/**/logs/                                            @ledgerhq/platform
 libs/**/types-live/                                      @ledgerhq/platform
-libs/identities/                                         @ledgerhq/platform
 libs/ledger-key-ring-protocol/                           @ledgerhq/platform
 libs/hw-ledger-key-ring-protocol/                        @ledgerhq/platform
-libs/ledger-live-common/src/featureFlags/                @ledgerhq/platform
 libs/disable-network-setup/                              @ledgerhq/platform
 libs/feature-flag-module/                                @ledgerhq/platform
-libs/ledger-auth/                                        @ledgerhq/platform
 libs/oxc-live-libs/                                      @ledgerhq/platform
 
 # Platform — devtools
@@ -94,7 +88,6 @@ libs/asset-detail/                                       @ledgerhq/wallet-xp
 libs/wallet-pnl/                                         @ledgerhq/wallet-xp
 libs/wallet-analytics/                                   @ledgerhq/wallet-xp
 libs/live-wallet/                                        @ledgerhq/wallet-xp
-libs/live-wallet/src/walletsync/                         @ledgerhq/platform
 shared/linking/                                          @ledgerhq/wallet-xp
 libs/ledger-live-common/src/featureFlags/walletFeaturesConfig/ @ledgerhq/wallet-xp
 libs/ledger-live-common/src/modularDrawer/               @ledgerhq/wallet-xp
@@ -604,6 +597,7 @@ apps/ledger-live-mobile/e2e/                                                @led
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 
 # Team-split convention: ownership of team-* folders (order: last match wins)
+# codeowners-check: allow-override
 **/team-qaa/                      @ledgerhq/qaa
 **/team-wallet-xp/                @ledgerhq/wallet-xp
 **/team-platform/                 @ledgerhq/platform
@@ -618,6 +612,7 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 **/team-engagement/               @ledgerhq/engagement
 
 # Platform — monorepo / toolchain (before cross-team opt-out so opt-out patterns win on overlapping paths)
+# codeowners-check: allow-override
 **/.oxlintrc.*                                        @ledgerhq/platform
 **/.oxfmtrc.*                                         @ledgerhq/platform
 **/.eslintrc.*                                        @ledgerhq/platform
@@ -628,7 +623,7 @@ mise.toml                                             @ledgerhq/platform
 /nx.json                                              @ledgerhq/platform
 
 # Platform — Agent files
-.agents/                           @ledgerhq/platform
+/.agents/                          @ledgerhq/platform
 .agents/skills/ledger-wallet-cli/                                             @ledgerhq/agentic-core
 .claude/                           @ledgerhq/platform
 .codex                             @ledgerhq/platform
@@ -643,7 +638,6 @@ AGENTS.md                          @ledgerhq/platform
 apps/ledger-live-desktop/src/datadog/                 @ledgerhq/platform
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
-libs/ledger-live-common/src/featureFlags/defaultFeatures.ts
 libs/types-live/src/feature.ts
 libs/ledger-live-common/src/modularDrawer/hooks/useCurrenciesUnderFeatureFlag.ts
 libs/ledger-live-common/src/__fixtures__/
