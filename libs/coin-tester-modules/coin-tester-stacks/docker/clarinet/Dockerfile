@@ -36,7 +36,7 @@ RUN apt-get update \
 
 # Pinned, not `main`/`master`: reproducibility, and this is the exact commit the fix was verified
 # against.
-ARG CLARINET_COMMIT=4220f34773a20960ce955a6b76590c97751e8a60
+ARG CLARINET_COMMIT=a83c93231fde5391912f88c98c4175b0f359a2ba
 RUN git clone https://github.com/stx-labs/clarinet.git /src \
   && cd /src && git checkout ${CLARINET_COMMIT}
 

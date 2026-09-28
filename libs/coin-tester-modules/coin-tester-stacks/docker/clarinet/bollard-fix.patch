@@ -58,21 +58,3 @@ index c05a5fe..0f786b5 100644
          };
  
          // Start stacks-api
-@@ -980,7 +997,7 @@ impl DevnetOrchestrator {
-             wallet_name = "{miner_wallet_name}"
-             username = "{bitcoin_node_username}"
-             password = "{bitcoin_node_password}"
--            rpc_port = {orchestrator_ingestion_port}
-+            rpc_port = {bitcoin_node_rpc_port}
-             peer_port = {bitcoin_node_p2p_port}
-             "#,
-             pox_prepare_length = DEFAULT_POX_PREPARE_LENGTH,
-@@ -988,7 +1005,7 @@ impl DevnetOrchestrator {
-             bitcoin_node_username = devnet_config.bitcoin_node_username,
-             bitcoin_node_password = devnet_config.bitcoin_node_password,
-             bitcoin_node_p2p_port = devnet_config.bitcoin_node_p2p_port,
--            orchestrator_ingestion_port = devnet_config.orchestrator_ingestion_port,
-+            bitcoin_node_rpc_port = devnet_config.bitcoin_node_rpc_port,
-             miner_wallet_name = devnet_config.miner_wallet_name,
-         ));
- 

@@ -122,7 +122,7 @@ Four of the fixes above are Rust source fixes, captured as patches
 (`docker/clarinet/bollard-fix.patch`, `docker/clarinet/bitcoin-node-patience.patch`,
 `docker/clarinet/bitcoin-node-no-autoremove.patch`,
 `docker/clarinet/bitcoin-node-datadir-permissions.patch`), applied on top of pinned commit
-`4220f34773a20960ce955a6b76590c97751e8a60` — see `docker/clarinet/Dockerfile` for the exact build.
+`a83c93231fde5391912f88c98c4175b0f359a2ba` (Clarinet v3.24.1) — see `docker/clarinet/Dockerfile` for the exact build.
 Epoch pinning is a `Clarinet.toml` config choice, not a source patch. Running
 `clarinet` itself was deliberately kept
 as a **native host process**, never inside a container: an earlier version of this fix ran

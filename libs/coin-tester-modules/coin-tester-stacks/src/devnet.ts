@@ -20,7 +20,7 @@ const PACKAGE_ROOT = path.resolve(__dirname, "..");
 const DOCKER_DIR = path.join(PACKAGE_ROOT, "docker", "clarinet");
 // Pinned upstream commit `docker/clarinet/Dockerfile` builds from -- kept in one place so the
 // cache key and the Dockerfile's own default stay in sync.
-const CLARINET_COMMIT = "4220f34773a20960ce955a6b76590c97751e8a60";
+const CLARINET_COMMIT = "a83c93231fde5391912f88c98c4175b0f359a2ba";
 const CACHE_DIR = path.join(PACKAGE_ROOT, ".clarinet-cache", CLARINET_COMMIT);
 const CACHED_BINARY = path.join(CACHE_DIR, "clarinet");
 
@@ -303,7 +303,7 @@ export async function spawnDevnet(): Promise<void> {
 
   clarinetProcess = spawn(
     binary,
-    ["integrate", "--no-dashboard", "--manifest-path", "Clarinet.toml", "--from-genesis"],
+    ["integrate", "--no-dashboard", "--manifest-path", "Clarinet.toml"],
     {
       cwd: PACKAGE_ROOT,
       // stdin piped (not ignored/closed): `Devnet.toml`'s own comment on `pox_stacking_orders`
@@ -359,7 +359,7 @@ export async function spawnDevnet(): Promise<void> {
   //   node-RPC-up instead, the burn height is still Clarinet's seeded #101 and the node mines its
   //   first block on the very next Bitcoin block, well before #110.
   await waitForStacksNodeRpc(bootDeadline);
-  startBitcoinMiningWorkaround();
+  if (process.env.STACKS_MINER_WORKAROUND) startBitcoinMiningWorkaround();
 
   try {
     await waitUntilReady(bootDeadline - Date.now());

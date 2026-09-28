@@ -124,6 +124,14 @@ epoch_4_0 = 162
 start_at_cycle = 1
 duration = 10
 auto_extend = true
+wallet = "stacker"
+slots = 10
+btc_address = "n3r661yy817HN3BZvec67XM1smryNTaizX"
+
+[[devnet.pox_stacking_orders]]
+start_at_cycle = 1
+duration = 10
+auto_extend = true
 wallet = "wallet_1"
 slots = 2
 btc_address = "mr1iPkD9N3RJZZxXRk7xF9d36gffa6exNC"
