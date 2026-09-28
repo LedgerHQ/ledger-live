@@ -1,5 +1,12 @@
 # @features/flow-pay-bank-transfer
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`871e485`](https://github.com/LedgerHQ/ledger-live/commit/871e4854284a0b21e31b53ff0ac312010093d914), [`c52af21`](https://github.com/LedgerHQ/ledger-live/commit/c52af21b622efa62774657e190abb9762cffac1c), [`48af604`](https://github.com/LedgerHQ/ledger-live/commit/48af6040c2835f067a2dfe38fb8fadde72e0787b), [`bc43337`](https://github.com/LedgerHQ/ledger-live/commit/bc433372ebed1990d81a87b109eeb4d928271315)]:
+  - @shared/ui-queued-bottom-sheet@0.5.0
+
 ## 0.3.2-next.1
 
 ### Patch Changes

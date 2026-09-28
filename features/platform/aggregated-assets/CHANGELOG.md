@@ -1,5 +1,14 @@
 # @features/platform-aggregated-assets
 
+## 0.5.4
+
+### Patch Changes
+
+- Updated dependencies [[`a62ad28`](https://github.com/LedgerHQ/ledger-live/commit/a62ad28e4900a887567fb61fb8f197af4fa5a23b)]:
+  - @features/platform-env@0.4.0
+  - @domain/api-aggregated-assets@0.5.2
+  - @domain/entity-currency@0.4.4
+
 ## 0.5.4-next.0
 
 ### Patch Changes
