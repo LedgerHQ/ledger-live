@@ -21,4 +21,4 @@ They invent a graph that `package.json` does not declare. That poisons `nx affec
 3. **`pnpm.overrides` / catalog** only pin versions; they do not replace a missing declaration.
 4. Existing entries: shrink them. Moving a `.pnpmfile.cjs` hook into `packageExtensions` is the same workaround.
 
-`pnpm.patchedDependencies` is a content fork, not this class of workaround. Prefer upstream; do not use a patch to inject undeclared deps.
+`pnpm.patchedDependencies` is a content fork, not this class of workaround. Prefer upstream; do not use a patch to inject undeclared deps. Read [dependency-patches](../dependency-patches/SKILL.md) before creating or changing one.
