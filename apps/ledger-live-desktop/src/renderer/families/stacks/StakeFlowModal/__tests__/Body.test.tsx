@@ -194,6 +194,17 @@ const connectedDeviceState = {
   devices: { currentDevice: { deviceId: "mock", modelId: "nanoX", wired: true }, devices: [] },
 };
 
+// `mode: "delegate"` is what StepValidator's onChangeValAddress sets the moment a pool address is
+// entered -- seeding it directly here simulates that, since StepValidator itself is mocked out.
+const seedDelegateTransaction = () => {
+  currentTransaction = {
+    family: "stacks",
+    familySpecificData: { numCycles: 1 },
+    mode: "delegate",
+  } as Transaction;
+  currentAccount = account;
+};
+
 describe("StakeFlowModal/Body", () => {
   it("renders the four-step Stepper in the documented order", () => {
     renderBody();
@@ -213,9 +224,14 @@ describe("StakeFlowModal/Body", () => {
     });
   });
 
-  it("merges the resolved startBurnHt into familySpecificData once the device step is entered", async () => {
+  it("resolves startBurnHt as soon as delegate mode is entered, without waiting for the device step", async () => {
+    // Regression test: coin-stacks's validateIntent/estimateFees require startBurnHt for any
+    // delegate intent, and mode turns "delegate" back on the validator step -- resolving it only
+    // once connectDevice is reached left the amount step's Continue button permanently disabled
+    // (status.errors.data never clears), so the flow could never get there in the first place.
     fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
-    renderBody({ stepId: "connectDevice" });
+    seedDelegateTransaction();
+    renderBody({ stepId: "validator" });
 
     await waitFor(() => {
       expect(setTransaction).toHaveBeenCalledWith(
@@ -226,42 +242,39 @@ describe("StakeFlowModal/Body", () => {
     });
   });
 
-  it("does not resolve startBurnHt while the user is still on the editing steps", async () => {
+  it("does not resolve startBurnHt when the transaction is not in delegate mode, regardless of step", async () => {
     fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
-    const { rerender, props } = renderBody();
+    const { rerender, props } = renderBody({ stepId: "validator" });
     rerender(<Body {...props} stepId="amount" />);
+    rerender(<Body {...props} stepId="connectDevice" />);
 
     await act(async () => {});
     expect(fetchPoxInfoMock).not.toHaveBeenCalled();
   });
 
-  it("resolves a fresh startBurnHt when the user steps back and re-enters the device step", async () => {
+  it("keeps the resolved startBurnHt across step navigation instead of clearing it on every visit to validator/amount", async () => {
     fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
-    const { rerender, props } = renderBody({ stepId: "connectDevice" });
+    seedDelegateTransaction();
+    const { rerender, props } = renderBody({ stepId: "validator" });
     await waitFor(() => expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1));
 
-    fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123999 });
     rerender(<Body {...props} stepId="amount" />);
-    await waitFor(() =>
-      expect(setTransaction).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          familySpecificData: { numCycles: 1, startBurnHt: undefined },
-        }),
-      ),
-    );
-
     rerender(<Body {...props} stepId="connectDevice" />);
-    await waitFor(() =>
-      expect(setTransaction).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          familySpecificData: { numCycles: 1, startBurnHt: 123999 },
-        }),
-      ),
+    await act(async () => {});
+
+    // Continuous refresh (while safe) already keeps the value fresh, so navigating between steps
+    // must not re-fetch or wipe the value that just unblocked the amount step's Continue button.
+    expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1);
+    expect(setTransaction).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        familySpecificData: expect.objectContaining({ startBurnHt: undefined }),
+      }),
     );
   });
 
   it("handleRetry clears error/optimisticOperation/signed state and re-resolves startBurnHt", async () => {
     fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
+    seedDelegateTransaction();
     const { user } = renderBody({ stepId: "connectDevice" });
     await waitFor(() => expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1));
 
@@ -291,6 +304,7 @@ describe("StakeFlowModal/Body", () => {
   it("sets up a 5-minute periodic refresh of startBurnHt while waiting on the device step", async () => {
     const setIntervalSpy = jest.spyOn(global, "setInterval");
     fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
+    seedDelegateTransaction();
     renderBody({ stepId: "connectDevice" });
     await waitFor(() => expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1));
 
@@ -301,6 +315,7 @@ describe("StakeFlowModal/Body", () => {
   it("stops refreshing startBurnHt once the device has signed", async () => {
     const clearIntervalSpy = jest.spyOn(global, "clearInterval");
     fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
+    seedDelegateTransaction();
     const { user } = renderBody({ stepId: "connectDevice" });
     await waitFor(() => expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1));
 
@@ -308,7 +323,7 @@ describe("StakeFlowModal/Body", () => {
       await user.click(screen.getByTestId("stepper-set-signed"));
     });
     // signed flips to true, re-running the effect: the previous interval's cleanup fires even
-    // though the effect body then bails out immediately (stepId !== "connectDevice" || signed).
+    // though the effect body then bails out immediately (mode !== "delegate" || signed || frozen).
     expect(clearIntervalSpy).toHaveBeenCalled();
     clearIntervalSpy.mockRestore();
   });
@@ -320,6 +335,7 @@ describe("StakeFlowModal/Body", () => {
     // from their device (no `devices.currentDevice` in this render's initial state).
     const clearIntervalSpy = jest.spyOn(global, "clearInterval");
     fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
+    seedDelegateTransaction();
     const { rerender, props } = renderBody({ stepId: "connectDevice" });
     await waitFor(() => expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1));
     clearIntervalSpy.mockClear();
@@ -341,6 +357,7 @@ describe("StakeFlowModal/Body", () => {
     // mutation may reach `transaction`, well before `signed` ever flips true.
     const clearIntervalSpy = jest.spyOn(global, "clearInterval");
     fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
+    seedDelegateTransaction();
     const { rerender, props } = renderBody(
       { stepId: "connectDevice" },
       { initialState: connectedDeviceState },
@@ -360,6 +377,7 @@ describe("StakeFlowModal/Body", () => {
 
   it("surfaces a pox info fetch failure instead of leaving the device step waiting", async () => {
     fetchPoxInfoMock.mockRejectedValue(new Error("pox unreachable"));
+    seedDelegateTransaction();
     renderBody({ stepId: "connectDevice" });
 
     await waitFor(() =>

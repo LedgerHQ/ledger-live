@@ -120,9 +120,9 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
   }, [bridge, setTransaction]);
 
   // pox-5.clar derives the reward cycle from `start-burn-ht` and rejects a stake whose height
-  // belongs to a past cycle, so the value is resolved against the live chain tip only once the
-  // device step is entered — the user may sit on the pool and amount steps across a cycle
-  // boundary. No forward buffer is needed: `stake` checks the real tip at mining time.
+  // belongs to a past cycle. No forward buffer is needed: `stake` checks the real tip at mining
+  // time, so this is just resolved against the live chain tip and kept fresh (see the refresh
+  // effect below for when).
   const startBurnHtRequest = useRef(0);
   const resolveStartBurnHt = useCallback(() => {
     const request = ++startBurnHtRequest.current;
@@ -160,30 +160,32 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
   // produced past that point.
   const mustFreezeTransaction = isReadyForDevice && !!device;
 
-  // Refreshed once on entry, then periodically while the user sits on this step waiting to connect
-  // -- that wait can take a while, and pox-5 validates start-burn-ht against the real chain tip at
-  // *mining* time (see resolveStartBurnHt above), so a value resolved long ago can belong to a
-  // reward cycle that has since rolled over. The interval is a small fraction of a reward cycle
-  // (~7-14 days), so this only ever narrows a rare edge case, not eliminates a routine one. Stops
-  // once a device connection makes further mutation unsafe (mustFreezeTransaction), not only once
-  // signed -- refreshing for as long as it's safe keeps the staleness window (a device the user
-  // hasn't even reached for yet) far smaller than the interrupt-signing window it must avoid.
-  // `handleRetry` resolves a fresh height again after a failed/refused attempt.
+  // `mode` turns "delegate" the moment a pool address is entered (StepValidator's
+  // onChangeValAddress), and coin-stacks's `validateIntent`/`estimateFees` require `startBurnHt`
+  // for any delegate intent -- so resolution must start there too, not only once the device step
+  // is reached: otherwise the amount step's status carries an unresolvable `errors.data` (missing
+  // startBurnHt) that its own Continue button gates on, and the flow can never reach connectDevice
+  // at all. Refreshed immediately once delegate mode starts, then periodically for as long as the
+  // user sits on the pool/amount/connect-device steps -- that wait can take a while, and pox-5
+  // validates start-burn-ht against the real chain tip at *mining* time (see resolveStartBurnHt
+  // above), so a value resolved long ago can belong to a reward cycle that has since rolled over.
+  // The interval is a small fraction of a reward cycle (~7-14 days), so this only ever narrows a
+  // rare edge case, not eliminates a routine one. Stops once a device connection makes further
+  // mutation unsafe (mustFreezeTransaction), not only once signed -- refreshing for as long as
+  // it's safe keeps the staleness window (a device the user hasn't even reached for yet) far
+  // smaller than the interrupt-signing window it must avoid. `handleRetry` resolves a fresh height
+  // again after a failed/refused attempt. Leaving delegate mode (pool address cleared) or signing
+  // stops the interval; the stale leftover `startBurnHt` is harmless since it's only ever read
+  // once `mode` is "delegate" again, at which point it's immediately refreshed here.
   useEffect(() => {
-    if (stepId !== "connectDevice" || signed || mustFreezeTransaction) return;
+    if (transaction?.mode !== "delegate" || signed || mustFreezeTransaction) return;
     resolveStartBurnHt();
     const intervalId = setInterval(resolveStartBurnHt, START_BURN_HT_REFRESH_INTERVAL_MS);
     return () => {
       startBurnHtRequest.current += 1;
       clearInterval(intervalId);
     };
-  }, [stepId, signed, mustFreezeTransaction, resolveStartBurnHt]);
-
-  // Going back to edit the pool or the amount invalidates the height already resolved, so the
-  // device step waits for a fresh one instead of reusing it.
-  useEffect(() => {
-    if (stepId === "validator" || stepId === "amount") clearStartBurnHt();
-  }, [stepId, clearStartBurnHt]);
+  }, [transaction?.mode, signed, mustFreezeTransaction, resolveStartBurnHt]);
 
   const handleOperationBroadcasted = useCallback(
     (op: Operation) => {
