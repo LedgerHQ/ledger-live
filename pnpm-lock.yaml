@@ -2848,6 +2848,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       '@types/w3c-web-usb':
         specifier: ^1.0.10
         version: 1.0.10
@@ -4204,6 +4207,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0
@@ -4508,7 +4514,7 @@ importers:
         version: link:../../entity/interest-rate
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -4534,6 +4540,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -4542,7 +4551,7 @@ importers:
         version: 19.1.4
       react-redux:
         specifier: 'catalog:'
-        version: 9.2.0(react@19.1.4)
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4554,7 +4563,7 @@ importers:
         version: link:../../entity/card-asset-mapping
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -4580,6 +4589,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -4591,7 +4603,7 @@ importers:
         version: 19.1.4
       react-redux:
         specifier: 'catalog:'
-        version: 9.2.0(react@19.1.4)
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4603,7 +4615,7 @@ importers:
         version: link:../../entity/currency-fiat
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -4629,6 +4641,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -4637,7 +4652,7 @@ importers:
         version: 19.1.4
       react-redux:
         specifier: 'catalog:'
-        version: 9.2.0(react@19.1.4)
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4655,7 +4670,7 @@ importers:
         version: link:../../entity/currency-unit
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -4687,6 +4702,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -4695,7 +4713,7 @@ importers:
         version: 19.1.4
       react-redux:
         specifier: 'catalog:'
-        version: 9.2.0(react@19.1.4)
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4707,7 +4725,7 @@ importers:
         version: link:../../entity/market-index-altcoin-season
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -4733,6 +4751,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -4741,7 +4762,7 @@ importers:
         version: 19.1.4
       react-redux:
         specifier: 'catalog:'
-        version: 9.2.0(react@19.1.4)
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4753,7 +4774,7 @@ importers:
         version: link:../../entity/market-index-fear-and-greed
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -4779,6 +4800,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -4787,7 +4811,7 @@ importers:
         version: 19.1.4
       react-redux:
         specifier: 'catalog:'
-        version: 9.2.0(react@19.1.4)
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4799,7 +4823,7 @@ importers:
         version: link:../../entity/client-identity
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -4822,6 +4846,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -4830,7 +4857,7 @@ importers:
         version: 19.1.4
       react-redux:
         specifier: 'catalog:'
-        version: 9.2.0(react@19.1.4)
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -5724,6 +5751,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       '@types/uuid':
         specifier: ^9.0.0
         version: 9.0.8
@@ -9193,6 +9223,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -9245,6 +9278,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -9490,7 +9526,7 @@ importers:
     dependencies:
       '@apollo/client':
         specifier: ^3.12.6
-        version: 3.12.6(graphql@16.10.0)(react@19.1.4)
+        version: 3.12.6(@types/react@19.0.14)(graphql@16.10.0)(react@19.1.4)
       '@aptos-labs/ts-sdk':
         specifier: ^3.1.3
         version: 3.1.3(got@11.8.5)
@@ -9567,6 +9603,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
@@ -13142,6 +13181,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -13282,13 +13324,16 @@ importers:
         version: 10.4.1
       '@testing-library/react':
         specifier: 'catalog:'
-        version: 16.3.1(@testing-library/dom@10.4.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -13405,6 +13450,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -13424,6 +13472,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -14889,6 +14940,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -15598,6 +15652,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       axios:
         specifier: 'catalog:'
         version: 1.13.5
@@ -15643,13 +15700,16 @@ importers:
         version: 10.4.1
       '@testing-library/react':
         specifier: 'catalog:'
-        version: 16.3.1(@testing-library/dom@10.4.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -15713,13 +15773,16 @@ importers:
         version: 6.9.1
       '@testing-library/react':
         specifier: 'catalog:'
-        version: 16.3.1(@testing-library/dom@10.4.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -15746,7 +15809,7 @@ importers:
         version: 1.10.0(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 'catalog:'
-        version: 1.3.2(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)
+        version: 1.3.2(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-speculos':
         specifier: 'catalog:'
         version: 1.2.1(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))(rxjs@7.8.2)
@@ -15774,7 +15837,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
-        version: 1.0.4(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)
+        version: 1.0.4(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -15792,13 +15855,16 @@ importers:
         version: 6.9.1
       '@testing-library/react':
         specifier: 'catalog:'
-        version: 16.3.1(@testing-library/dom@10.4.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -15813,10 +15879,10 @@ importers:
         version: 19.1.4(react@19.1.4)
       react-native:
         specifier: 'catalog:'
-        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4)
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
       react-native-ble-plx:
         specifier: 3.5.1
-        version: 3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4)
+        version: 3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -15877,13 +15943,16 @@ importers:
         version: 6.9.1
       '@testing-library/react':
         specifier: 'catalog:'
-        version: 16.3.1(@testing-library/dom@10.4.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -15941,13 +16010,16 @@ importers:
         version: 6.9.1
       '@testing-library/react':
         specifier: 'catalog:'
-        version: 16.3.1(@testing-library/dom@10.4.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -16127,13 +16199,16 @@ importers:
         version: 10.4.1
       '@testing-library/react':
         specifier: 'catalog:'
-        version: 16.3.1(@testing-library/dom@10.4.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -16229,6 +16304,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16327,6 +16405,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16431,6 +16512,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
@@ -16495,6 +16579,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16544,6 +16631,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16593,6 +16683,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16645,6 +16738,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16733,6 +16829,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
@@ -16822,6 +16921,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -16898,6 +17000,9 @@ importers:
       '@types/pako':
         specifier: ^2.0.0
         version: 2.0.3
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       '@types/ws':
         specifier: ^8.5.3
         version: 8.5.10
@@ -17046,6 +17151,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -17892,7 +18000,7 @@ importers:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@shared/auth':
         specifier: workspace:^
         version: link:../auth
@@ -17921,6 +18029,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -17929,7 +18040,7 @@ importers:
         version: 19.1.4
       react-redux:
         specifier: 'catalog:'
-        version: 9.2.0(react@19.1.4)
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -18409,6 +18520,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -18616,12 +18730,18 @@ importers:
         specifier: 'catalog:'
         version: 7.18.2
     devDependencies:
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       react:
         specifier: 19.1.4
         version: 19.1.4
 
   support/jest-shared:
     devDependencies:
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -39191,7 +39311,7 @@ snapshots:
     dependencies:
       graphql: 16.14.2
 
-  '@apollo/client@3.12.6(graphql@16.10.0)(react@19.1.4)':
+  '@apollo/client@3.12.6(@types/react@19.0.14)(graphql@16.10.0)(react@19.1.4)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.10.0)
       '@wry/caches': 1.0.1
@@ -39202,7 +39322,7 @@ snapshots:
       hoist-non-react-statics: 3.3.2
       optimism: 0.18.1
       prop-types: 15.8.1
-      rehackt: 0.1.0(react@19.1.4)
+      rehackt: 0.1.0(@types/react@19.0.14)(react@19.1.4)
       response-iterator: 0.2.11
       symbol-observable: 4.0.0
       ts-invariant: 0.10.3
@@ -45951,14 +46071,14 @@ snapshots:
       purify-ts: 2.1.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)':
     dependencies:
       '@ledgerhq/device-management-kit': 1.10.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       js-base64: 3.9.3
       purify-ts: 2.1.0
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4)
-      react-native-ble-plx: 3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4)
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
+      react-native-ble-plx: 3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       rxjs: 7.8.2
       uuid: 11.0.3
 
@@ -45971,12 +46091,12 @@ snapshots:
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.4(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-hid@1.0.4(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)':
     dependencies:
       '@ledgerhq/device-management-kit': 1.10.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4)
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
       rxjs: 7.8.2
       uuid: 11.0.3
 
@@ -49409,13 +49529,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.14
 
-  '@react-native/virtualized-lists@0.81.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4)':
-    dependencies:
-      invariant: 2.2.4
-      nullthrows: 1.1.1
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4)
-
   '@react-navigation/bottom-tabs@7.4.7(6dacadcad7e98fa19e44b59af653a592)':
     dependencies:
       '@react-navigation/elements': 2.6.4(e0d8a9de684112ea90a0371aef227016)
@@ -49840,18 +49953,6 @@ snapshots:
     optionalDependencies:
       react: 19.1.4
       react-redux: 9.2.0(@types/react@19.0.14)(react@19.1.4)
-
-  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)':
-    dependencies:
-      '@standard-schema/spec': 1.1.0
-      '@standard-schema/utils': 0.3.0
-      immer: 11.1.3
-      redux: 5.0.1
-      redux-thunk: 3.1.0(redux@5.0.1)
-      reselect: 5.1.1
-    optionalDependencies:
-      react: 19.1.4
-      react-redux: 9.2.0(react@19.1.4)
 
   '@reduxjs/toolkit@2.11.2(react@19.1.4)':
     dependencies:
@@ -52798,13 +52899,6 @@ snapshots:
       react-dom: 19.1.4(react@19.1.4)
     optionalDependencies:
       '@types/react': 19.0.14
-
-  '@testing-library/react@16.3.1(@testing-library/dom@10.4.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
-    dependencies:
-      '@babel/runtime': 7.28.4
-      '@testing-library/dom': 10.4.1
-      react: 19.1.4
-      react-dom: 19.1.4(react@19.1.4)
 
   '@testing-library/user-event@14.5.2(@testing-library/dom@10.4.1)':
     dependencies:
@@ -63994,10 +64088,10 @@ snapshots:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
 
-  react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4):
+  react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
     dependencies:
       react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4)
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
 
   react-native-config@1.7.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
     dependencies:
@@ -64539,51 +64633,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4):
-    dependencies:
-      '@jest/create-cache-key-function': 30.5.0
-      '@react-native/assets-registry': 0.81.6
-      '@react-native/codegen': 0.81.6
-      '@react-native/community-cli-plugin': 0.81.6
-      '@react-native/gradle-plugin': 0.81.6
-      '@react-native/js-polyfills': 0.81.6
-      '@react-native/normalize-colors': 0.81.6
-      '@react-native/virtualized-lists': 0.81.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4)
-      abort-controller: 3.0.0
-      anser: 1.4.10
-      ansi-regex: 5.0.1
-      babel-jest: 29.7.0
-      babel-plugin-syntax-hermes-parser: 0.29.1
-      base64-js: 1.5.1
-      commander: 12.1.0
-      flow-enums-runtime: 0.0.6
-      glob: 7.2.3
-      invariant: 2.2.4
-      jest-environment-node: 30.5.0
-      memoize-one: 5.2.1
-      metro-runtime: 0.83.7
-      metro-source-map: 0.83.7
-      nullthrows: 1.1.1
-      pretty-format: 29.7.0
-      promise: 8.3.0
-      react: 19.1.4
-      react-devtools-core: 6.1.5
-      react-refresh: 0.14.2
-      regenerator-runtime: 0.13.11
-      scheduler: 0.26.0
-      semver: 7.8.1
-      stacktrace-parser: 0.1.10
-      whatwg-fetch: 3.6.20
-      ws: 6.2.3
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@react-native-community/cli'
-      - '@react-native/metro-config'
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
   react-reconciler@0.32.0(react@19.1.4):
     dependencies:
       react: 19.1.4
@@ -64605,12 +64654,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.14
       redux: 5.0.1
-
-  react-redux@9.2.0(react@19.1.4):
-    dependencies:
-      '@types/use-sync-external-store': 0.0.6
-      react: 19.1.4
-      use-sync-external-store: 1.6.0(react@19.1.4)
 
   react-refresh@0.14.2: {}
 
@@ -64866,8 +64909,9 @@ snapshots:
     dependencies:
       jsesc: 3.0.2
 
-  rehackt@0.1.0(react@19.1.4):
+  rehackt@0.1.0(@types/react@19.0.14)(react@19.1.4):
     optionalDependencies:
+      '@types/react': 19.0.14
       react: 19.1.4
 
   release-zalgo@1.0.0:

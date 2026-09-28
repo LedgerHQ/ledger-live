@@ -25,6 +25,7 @@
     "@ledgerhq/live-env": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
