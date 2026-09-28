@@ -880,9 +880,10 @@
       "tile" : "詳細",
       "title" : "詳細",
       "rows" : {
-        "managePin" : "PINコードの管理",
+        "managePin" : "カードのPINコード",
         "accessBaanx" : "Baanxへのアクセス",
         "help" : "ヘルプ",
+        "legal" : "法的合意",
         "logout" : "ログアウト"
       }
     },
@@ -899,6 +900,7 @@
     },
     "card" : {
       "title" : "暗号資産カード",
+      "topUp" : "チャージ",
       "balanceLabel" : "残高",
       "freeze" : "凍結",
       "unfreeze" : "凍結解除",
@@ -918,11 +920,49 @@
         "description" : "何か問題が発生しました。もう一度お試しください。",
         "retry" : "再試行"
       },
+      "assets" : {
+        "title" : "資産",
+        "empty" : "まだ資産はありません",
+        "error" : "資産を読み込めませんでした。",
+        "info" : "これらの資産がカードの資金となります。引き落しの順を設定するか、追加します。",
+        "manage" : "管理",
+        "manageDialog" : {
+          "title" : "資産管理",
+          "description" : "ドラッグして、資金源の優先順位を設定します。 いずれかの資産の残高が少なくなると、次の資産が自動的に使用されます。",
+          "addAssetCaption" : "資産を追加するため、Baanxのページにリダイレクトされます。",
+          "addAsset" : "資産を追加"
+        },
+        "details" : {
+          "topUp" : "チャージ",
+          "withdraw" : "出金",
+          "transactions" : "トランザクション"
+        },
+        "withdraw" : {
+          "title" : "Baanxにリダイレクトされます。",
+          "description" : "BaanxアカウントからLedgerウォレットのアドレスに資金を出金します。",
+          "continue" : "続行"
+        },
+        "history" : {
+          "columns" : {
+            "amount" : "数量",
+            "value" : "価値"
+          }
+        }
+      },
+      "reward" : {
+        "title" : "キャッシュバック合計"
+      },
       "numbers" : {
         "reveal" : "表示",
         "hide" : "隠す",
         "failed" : "カード番号を読み込めませんでした。",
-        "imageAlt" : "カード番号"
+        "imageAlt" : "カード番号",
+        "unlockTitle" : "パスワードを入力してください",
+        "passwordRequired" : "パスワードが必要です",
+        "passwordMismatch" : "パスワードが一致しません",
+        "passwordIncorrect" : "パスワードが間違っています。",
+        "passwordUnavailable" : "パスワードを確認できませんでした",
+        "passwordCreateFailed" : "パスワードを設定できませんでした。"
       }
     },
     "cardTransactions" : {
@@ -954,6 +994,31 @@
           "DECLINED" : "拒否されました",
           "REVERTED" : "取り消されました"
         }
+      },
+      "history" : {
+        "today" : "今日",
+        "yesterday" : "昨日",
+        "unknownDate" : "日付利用不可",
+        "columns" : {
+          "transaction" : "トランザクション",
+          "cashback" : "キャッシュバック",
+          "fundingSources" : "資金源",
+          "amount" : "数量"
+        },
+        "paidWithAssets" : "{{count}}資産で支払い済みです",
+        "goToPay" : "支払いへ進む",
+        "signedOut" : {
+          "title" : "カードのトランザクションを確認するにはログインしてください",
+          "description" : "ログインすると、ここにカードのアクティビティが表示されます。"
+        },
+        "empty" : {
+          "title" : "まだカードのトランザクションがありません",
+          "description" : "後ほど、カードのトランザクションをご確認ください。"
+        },
+        "error" : {
+          "title" : "カードのトランザクションを読み込めませんでした。",
+          "description" : "接続を確認して、もう一度やり直してください。"
+        }
       }
     },
     "cardOnboarding" : {
@@ -965,6 +1030,28 @@
         "title" : "カードの登録を完了する",
         "stepComplete" : "完了",
         "gotIt" : "了解"
+      },
+      "steps" : {
+        "createAccount" : {
+          "title" : "アカウントを作成",
+          "description" : "開始するには本人認証を行ってください"
+        },
+        "chooseCardType" : {
+          "title" : "カードの種類を選択してください",
+          "description" : "バーチャルまたは物理から選択"
+        },
+        "topUpCard" : {
+          "title" : "カードにチャージ",
+          "description" : "USDC、USDT、BTCなどを使用して資金を追加"
+        },
+        "firstPurchase" : {
+          "title" : "暗号資産を初めての購入",
+          "description" : "オンラインまたは実店舗でのお支払い"
+        },
+        "appleGooglePay" : {
+          "title" : "Apple/Google Payに追加",
+          "description" : "店舗でスマートフォンで支払う"
+        }
       }
     },
     "contacts" : {
@@ -2069,6 +2156,13 @@
     "details" : "{{ currency }} 詳細",
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "extra" : {
+      "pltReject" : {
+        "title" : "理由",
+        "nonExistentToken" : "このトークンはConcordium上に存在しません。",
+        "recipientNotFound" : "受取人アカウントはConcordium上に存在しません。",
+        "insufficientBalance" : "アカウントに十分なトークンが保有されていませんでした。",
+        "rejected" : "Concordiumがこの操作を拒否しました。"
+      },
       "frozenAmount" : "凍結額",
       "unfreezeAmount" : "凍結解除額",
       "votes" : "{{number}} 票",
@@ -2760,7 +2854,7 @@
       "existingContact" : "既存の連絡先に追加",
       "selectContact" : "連絡先を選択",
       "syncWallet" : {
-        "title" : "連絡先を追加するには、ウォレットを同期してください",
+        "title" : "アドレスを登録するには、ウォレットを同期してください",
         "description" : "連絡先はエンドツーエンドで暗号化され、お使いのすべてのスマートフォンやコンピューターのLedger Wallet間で同期されます"
       }
     },
@@ -5316,6 +5410,29 @@
           "title" : "ローカルBrazeカードを生成",
           "add" : "追加",
           "dismiss" : "すべてのカードを破棄",
+          "inspect" : {
+            "tab" : "検証",
+            "snapshot" : "地域の利用条件",
+            "funnel" : "パイプライン",
+            "fetched" : "Brazeからフェッチ：{{count}}",
+            "removedEligibility" : "削除（ローカルの利用条件）：{{count}}",
+            "eligible" : "対象：{{count}}",
+            "yes" : "はい",
+            "no" : "いいえ",
+            "injectTitle" : "フェッチキャッシュにインジェクト",
+            "inject" : "フェッチキャッシュに注入",
+            "location" : "位置",
+            "requiredStates" : "必要な状態",
+            "cards" : "フェッチしたカード",
+            "empty" : "フェッチされたカードはありません。",
+            "none" : "なし",
+            "blockedBy" : "ブロック元：{{blockedBy}} ({{reason}})",
+            "eligibleStatus" : "対象",
+            "unevaluated" : "未評価：{{count}}",
+            "unevaluatedStatus" : "未評価",
+            "missingId" : "ID未検出",
+            "missingIdStatus" : "未評価（ID未検出）"
+          },
           "fields" : {
             "notification" : "通知コンテンツカード",
             "action" : "アクションコンテンツカード",
@@ -5492,7 +5609,7 @@
           "title" : "新機能の紹介",
           "label" : "連絡先の登録機能の紹介を表示",
           "dismissed" : "非表示 — オンにすると、連絡先の案内通知を再び表示します。",
-          "willShow" : "非表示にするまで「連絡先」に表示されます。"
+          "willShow" : "非表示にするまで「アドレス帳」に表示されます。"
         }
       },
       "deviceSimulationDevTool" : {
@@ -7918,7 +8035,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "このアカウントからは、このトークンを送信できません",
-      "description" : "トークンの発行元が送信者を制限しており、このアカウントは許可されていません。アクセス権については、トークン発行元にお問い合わせください。"
+      "description" : "トークン発行元が送信者を制限しています。詳細については、トークン発行元にお問い合わせください。"
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "このアカウントは、このトークンの送信を承認されていません。",
+      "description" : "トークンの発行元は承認された送信者のリストを保持しており、このアカウントはそのリストに登録されていません。承認はLedgerではなく、発行元によって管理されています。"
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "このアカウントは、このトークンの送信が制限されています。",
+      "description" : "トークン発行元がこのアカウントを制限しています。詳細については発行元にお問い合わせください。"
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "トークンの制限を認証できませんでした",
@@ -8171,6 +8296,30 @@
     },
     "AleoApiConfigurationResetError" : {
       "title" : "レコードスキャナーの設定がリセットされましたので、アカウントを再度同期してください。"
+    },
+    "AleoNoClaimableUnbondedFunds" : {
+      "title" : "請求可能なボンド解除済みALEOはまだありません。",
+      "description" : "ボンド解除済みのALEOは、ボンド解除期間が経過すると請求可能になります。期間が経過したら、再度お戻りください。"
+    },
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "すでに{{bondedValidator}}でステーキング中です。バリデーターを変更する前にステーキング解除してください。",
+      "description" : "Aleoでは、1アカウントにつき1つのバリデーターのみが許可されています。{{bondedValidator}}からステーキング解除してから、他の場所でステーキングしてください。"
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "一度に少なくとも{{minAmount}}をステーキングする必要があります。",
+      "description" : "最小ステーキング数量は {{minAmount}} です。"
+    },
+    "AleoClosedValidator" : {
+      "title" : "このバリデーターは新規のデリゲーターを受け入れていません。",
+      "description" : "このバリデーターは新規のデリゲーターを受け入れていません。続行するには、オープンなバリデーターを選択してください。"
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "ステーキングには、合計で少なくとも {{minAmount}} が必要です。",
+      "description" : "合計で少なくとも{{minAmount}}をステーキングしておく必要があります。"
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "このバリデーターはボンド解除中です。",
+      "description" : "このバリデーターは自身のステーキングを出金しているため、ネットワークはこのバリデーターへの新規ステーキングを拒否します。続行するには、別のバリデーターを選択してください。"
     },
     "BackupAppDataError" : {
       "title" : "アプリデータのバックアップ中にエラーが発生しました"
@@ -9139,7 +9288,11 @@
     "opted_out" : {
       "title" : "さらなるセキュリティ。より確実なコントロール",
       "description" : "セキュリティ機能についての詳細をご確認ください。",
-      "cta" : "詳細はこちら"
+      "cta" : "詳細はこちら",
+      "nanoS" : {
+        "title" : "ワンランク上のセキュリティ。より確実なコントロールへ。",
+        "description" : "最新のOSとセキュリティ機能についての詳細をご確認ください。"
+      }
     },
     "profile" : {
       "title" : "デバイスをアップグレード",
@@ -9237,6 +9390,7 @@
     "unsupportedNetworkTooltip" : "{{network}}ネットワークには未対応です。",
     "notAvailableYet" : "まだご利用いただけません",
     "selectAccount" : "アカウントを選択",
+    "selectAccountToPayFrom" : "支払元のアカウントを選択してください",
     "selectAccountPerpsTitle" : "Hyperliquidアカウントを選択",
     "selectAccountPerpsDescription" : "取引を行うために資金を入金するアカウントを選択してください。",
     "selectAccountPerpsEmptyDescription" : "無期限先物に資金を入金するには、Hyperliquidアカウントが必要です。続行するには追加してください。",
@@ -9670,10 +9824,70 @@
         "lastSync" : "最終同期：{{date}}"
       }
     },
+    "stake" : {
+      "table" : {
+        "header" : "ステーキング",
+        "status" : "ステータス",
+        "validator" : "バリデーター",
+        "amount" : "数量",
+        "staked" : "ステーキング済み",
+        "rate" : "推定報酬レート",
+        "completion" : "完了",
+        "source" : "ソース",
+        "estimatedRate" : "{{rate}}％（推定）。",
+        "unknownValidator" : "不明なバリデーター",
+        "manage" : "管理"
+      },
+      "status" : {
+        "earningTooltip" : "このポジションは報酬を獲得しています。",
+        "unknown" : "ステータス利用不可"
+      },
+      "stakedBalance" : "ステーキング済み",
+      "stakedBalanceTooltip" : "バリデーターにボンド中の残高。ステータス列は、報酬を獲得中であるかを示します。",
+      "unstakingBalance" : "ステーキング解除",
+      "unstakingBalanceTooltip" : "ボンド解除中であり、まだ請求できない残高",
+      "claimableBalance" : "獲得可能",
+      "claimableBalanceTooltip" : "ボンド解除が完了し、利用可能残高に請求できる残高",
+      "nonEarning" : {
+        "fullCommission" : "このバリデーターは100％のコミッションを徴収するため、お客様の取り分はありません。",
+        "overConcentrated" : "このバリデーターは、ステーキングされたすべてのALEOの25％を超える量を保有しています。プロトコルはその上限を超える分に対して支払わないため、報酬を獲得できません。",
+        "leftCommittee" : "このバリデーターはすでにコミッティに属していないため、ステーキングの報酬は発生しません。ステーキングを解除して別のバリデーターにボンドし、報酬の獲得を再開してください。",
+        "ownStakeBelowMinimum" : "このバリデーターへのステーキング総額が最小額の10,000 ALEO未満であるため、報酬は獲得できません。ステーキングを追加して、再び報酬を獲得しましょう。"
+      },
+      "unstaking" : {
+        "header" : "ステーキング解除",
+        "headerTooltip" : "ボンド解除済みのALEOは、チェーンがボンド解除ブロック高に達すると請求可能になります。",
+        "sourceTooltip" : "ボンド解除されたALEOは、請求可能になるまでバリデーターではなくプロトコルによって保持されます。チェーンは、それがどのバリデーターから来たものであるかを記録しません。",
+        "pendingTooltip" : "ボンド解除中 — まだ請求できません。",
+        "claimableTooltip" : "ボンド解除が完了しました。これらの資金を請求できます。",
+        "settling" : "あと少しです…",
+        "settlingTooltip" : "ボンド解除期間が終了しました。残高を更新しています。まもなく請求可能になります。",
+        "claimPending" : "申請中...",
+        "claimPendingTooltip" : "請求が送信されました。承認待ちです。これらの資金は、間もなく利用可能残高に反映されます。",
+        "unbondPending" : "ステーキング解除中...",
+        "unbondPendingTooltip" : "ステーキング解除が送信され、承認待ちです。同一のボンド解除ポジションを変更するため、処理が完了するまで申請はご利用いただけません。"
+      },
+      "claim" : "申請",
+      "claimableAtTooltip" : "ブロック{{height}}で申請可能（現在のブロック：{{current}}）",
+      "blocksRemaining_one" : "残り約{{count}}ブロック",
+      "blocksRemaining_other" : "残り約{{count}}ブロック",
+      "bondPendingTooltip" : "ステーキングが送信され、承認待ちです。Aleoはアカウントごとに1つのステーキングポジションを保持するため、処理が完了するまでステーキングはご利用いただけません。",
+      "emptyState" : {
+        "description" : "{{name}}をステーキングすることで、報酬を獲得できます。",
+        "earnRewards" : "報酬を獲得する"
+      }
+    },
     "operations" : {
       "type" : {
         "public" : "パブリック",
         "private" : "プライベート"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "バリデーター",
+        "bondedAmount" : "ステーキング済み量",
+        "unbondedAmount" : "ステーキング解除済み数量"
       }
     },
     "send" : {
@@ -9691,6 +9905,9 @@
         "errorTitle" : "プライベート同期に失敗しました。",
         "errorDesc" : "問題が発生しました。もう一度お試しください。"
       }
+    },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "申請"
     },
     "bond" : {
       "flow" : {
@@ -9735,7 +9952,6 @@
     "manage" : {
       "headerAction" : "報酬獲得",
       "title" : "ステーキングの管理",
-      "comingSoonTooltip" : "近日公開",
       "bond" : {
         "title" : "ボンド",
         "description" : "ALEOをバリデーターにボンドして、報酬を獲得しましょう。"
@@ -9748,7 +9964,10 @@
         "title" : "申請",
         "description" : "ボンド解除済みのALEOを利用可能残高に戻します。"
       },
-      "unbondPendingTooltip" : "ステーキング解除の承認待ちです。Aleoは一度に1つのボンド解除ポジションのみをチェックするため、処理が完了するまでボンド解除はご利用いただけません。"
+      "unbondPendingTooltip" : "ステーキング解除の承認待ちです。Aleoは一度に1つのボンド解除ポジションのみをチェックするため、処理が完了するまでボンド解除と請求はどちらもご利用いただけません。",
+      "claimPendingTooltip" : "請求の承認待ちです。Aleoは一度に1つのボンド解除ポジションのみをチェックするため、処理が完了するまでボンド解除と請求はどちらもご利用いただけません。",
+      "stillUnbondingTooltip" : "ボンド解除済みのALEOは、まだボンド解除期間中です。期間が経過すると、請求できるようになります。",
+      "nothingToClaimTooltip" : "クレームできるボンド解除済みのALEOはありません。最初に、ステーキングの一部をボンド解除してください。"
     },
     "unbond" : {
       "flow" : {
@@ -9773,6 +9992,30 @@
           }
         }
       }
+    },
+    "claim" : {
+      "flow" : {
+        "title" : "ALEOを請求",
+        "steps" : {
+          "summary" : {
+            "title" : "概要",
+            "info" : "これにより、ボンド解除期間が経過したすべてのALEOがアカウントに請求されます。",
+            "claimableAmountLabel" : "獲得可能な数量"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "請求を送信しました",
+              "text" : "申請がブロードキャストされました。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "ボンド解除のトランザクションは署名されましたが、ブロードキャストできませんでした。"
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9780,26 +10023,6 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "更新中にエラーが発生再試行",
     "installAndRelaunch" : "新しいアップデート。インストールして再起動"
-  },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "ポートフォリオがさらに見やすく",
-        "description" : "残高を一目で確認。「今日」をタップすると、さらに詳細を見ることができます。"
-      },
-      "navigation" : {
-        "title" : "主要な機能へすばやくアクセス",
-        "description" : "受け取る、購入、売却、送付のアクションに即座にアクセス。"
-      },
-      "actions" : {
-        "title" : "市場のトレンドをすばやくチェック",
-        "description" : "ポートフォリオからトレンドを直接確認。市場の動きをチェックして、すぐに次のアクションへ。"
-      }
-    },
-    "cta" : {
-      "continue" : "続行",
-      "explore" : "新しいポートフォリオを見る"
-    }
   },
   "q2Tour" : {
     "slides" : {
@@ -9837,11 +10060,11 @@
         "description" : "送金、決済、運用などの新しい方法。"
       },
       "contact" : {
-        "title" : "長いアドレスとはもうお別れです。",
-        "description" : "新機能の連絡先をご紹介します。ウォレットアドレスに名前を付けて保存します。見つけやすく、送信も簡単に。"
+        "title" : "長いアドレスが不要に",
+        "description" : "新機能のアドレス帳をご紹介します。ウォレットアドレスに名前を付けて保存します。見つけやすく、送信も簡単に。"
       },
       "contactNoPay" : {
-        "title" : "連絡先の登場",
+        "title" : "アドレス帳の登場",
         "description" : "長いアドレスとはもうお別れです。ウォレットアドレスに名前を付けて保存します。見つけやすく、送信も簡単に。"
       },
       "pay" : {
@@ -9853,8 +10076,8 @@
         "description" : "連絡先への支払いとお金の請求が、すべて1つのタブで行えます。"
       },
       "yield" : {
-        "title" : "暗号資産を保有したまま、プロジェクトの資金を調達。",
-        "description" : "Yield.xyz（Powered by Morpho）を介し、Wrapped BTCを担保にしてステーブルコインを借りる。"
+        "title" : "暗号資産を保有しながら、資金を調達",
+        "description" : "Yield.xyz（Powered by Morpho）を介し、Wrapped BTCを担保にステーブルコインを借りることができます。"
       }
     },
     "cta" : {
@@ -9898,6 +10121,8 @@
   },
   "history" : {
     "title" : "取引履歴",
+    "cardScope" : "カード",
+    "cardAssetScope" : "カード・{{assetName}}",
     "pending" : "保留中のトランザクション",
     "pending_other" : "保留中のトランザクション",
     "columns" : {
@@ -9913,6 +10138,11 @@
     "emptyState" : {
       "title" : "まだトランザクションがありません",
       "description" : "後ほど、トランザクションをご確認ください。"
+    },
+    "tabs" : {
+      "crypto" : "暗号資産",
+      "card" : "カード",
+      "accessibilityLabel" : "トランザクション履歴の種類"
     },
     "actionsBar" : {
       "csv" : "エクスポート",
@@ -9980,7 +10210,7 @@
       "description" : "Ledgerデバイスを管理する"
     },
     "contacts" : {
-      "title" : "お問い合せ",
+      "title" : "アドレス帳",
       "description" : "連絡先の管理"
     },
     "explore" : "すべてのLedgerデバイスを探索する"
@@ -10021,7 +10251,7 @@
         }
       }
     },
-    "title" : "お問い合せ",
+    "title" : "アドレス帳",
     "addContact" : "連絡先を追加",
     "addAddress" : "アドレスを追加",
     "addYourAddress" : "アドレスを追加",
@@ -10062,10 +10292,10 @@
       "continue" : "アドレスを確認"
     },
     "addContactDrawer" : {
-      "namePlaceholder" : "連絡先名",
+      "namePlaceholder" : "登録名",
       "namingDisclaimer" : "プライバシー保護のため、フルネームの入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S.」",
       "invalidNameError" : "特殊文字は使用できません。",
-      "duplicateNameError" : "この連絡先名はすでに使用されています。"
+      "duplicateNameError" : "この登録名はすでに使用されています。"
     },
     "searchPlaceholder" : "名前で検索",
     "searchNoResults" : "連絡先が見つかりません",
@@ -10099,7 +10329,7 @@
     },
     "editContact" : {
       "title" : "連絡先を編集",
-      "namePlaceholder" : "連絡先名",
+      "namePlaceholder" : "登録名",
       "namingDisclaimer" : "プライバシー保護のため、フルネームや姓の入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S」",
       "applyChanges" : "変更を適用",
       "confirmName" : "名前を確定",
@@ -10141,7 +10371,7 @@
       "highlights" : {
         "saveAddresses" : {
           "title" : "任意の名前でアドレスを保存",
-          "description" : "取引、友人、ご自身の外部アカウント。"
+          "description" : "取引、友人、ご自身の外部アカウントを保存しましょう。"
         },
         "sendToRightAddress" : {
           "title" : "正しいアドレスに送信",
@@ -10149,7 +10379,7 @@
         },
         "privateAcrossDevices" : {
           "title" : "Ledgerデバイス間でプライバシーを保護",
-          "description" : "Ledger Syncによりエンドツーエンドで暗号化。"
+          "description" : "Ledger Syncによりエンドツーエンドで暗号化します。"
         }
       }
     }
