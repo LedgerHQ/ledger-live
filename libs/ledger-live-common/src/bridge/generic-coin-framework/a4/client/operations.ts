@@ -321,6 +321,14 @@ export async function withDcRoamRetry<T>(
  * (nextToken cursors are DC-scoped and invalid across a datacenter switch). Any other error is
  * rethrown so the caller can fall back to the coin-module delegate.
  */
+export interface FetchA4OperationsResult {
+  operations: Operation[];
+  // See `PaginateOperationsResult` -- true only when the walk stopped on the bound, not on a
+  // clean end of stream. The caller must not merge this result with older stored data: the walk
+  // never found out whether it would have reached back to `minHeight`.
+  bounded: boolean;
+}
+
 export async function fetchA4Operations(
   client: A4Client,
   a4AccountId: string,
@@ -331,7 +339,7 @@ export async function fetchA4Operations(
   maxDcRoamRetries: number,
   maxOperations?: number,
   pageSize?: number,
-): Promise<Operation[]> {
+): Promise<FetchA4OperationsResult> {
   // `size` is what bounds one response, `maxOperations` what bounds the walk -- the same two
   // gates the delegate path has, and only the first protects against a single huge response
   // materialising before the walk gets a say. Omitted when unset, which is A4's own default.
@@ -350,7 +358,7 @@ export async function fetchA4Operations(
         next: r.data?.nextToken,
       }));
 
-  return withDcRoamRetry(
+  const { items, bounded } = await withDcRoamRetry(
     client,
     a4AccountId,
     address,
@@ -358,4 +366,5 @@ export async function fetchA4Operations(
     () => paginateOperations(fetchAdaptedPage, maxOperations, op => op.blockHeight ?? undefined),
     maxDcRoamRetries,
   );
+  return { operations: items, bounded };
 }
