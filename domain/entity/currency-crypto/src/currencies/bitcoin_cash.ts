@@ -40,5 +40,4 @@ export const bitcoin_cash = currency({
       address: "https://blockchair.com/bitcoin-cash/address/$address",
     },
   ],
-  explorerId: "bch",
 });

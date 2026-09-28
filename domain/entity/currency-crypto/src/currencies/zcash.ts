@@ -29,5 +29,4 @@ export const zcash = currency({
       address: "https://blockchair.com/zcash/address/$address",
     },
   ],
-  explorerId: "zec",
 });

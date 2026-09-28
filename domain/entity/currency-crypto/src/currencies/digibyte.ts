@@ -31,5 +31,4 @@ export const digibyte = currency({
       address: "https://digiexplorer.info/address/$address",
     },
   ],
-  explorerId: "dgb",
 });

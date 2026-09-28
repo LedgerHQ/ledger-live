@@ -31,5 +31,4 @@ export const dogecoin = currency({
     },
   ],
   keywords: ["doge", "dogecoin"],
-  explorerId: "doge",
 });

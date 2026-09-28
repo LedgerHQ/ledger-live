@@ -8,8 +8,6 @@ export type CryptoCurrencyId = z.infer<typeof CryptoCurrencyIdSchema>;
 export const TokenCurrencyIdSchema = z.string().min(1).brand<"TokenCurrencyId">();
 export type TokenCurrencyId = z.infer<typeof TokenCurrencyIdSchema>;
 
-export type LedgerExplorerId = string;
-
 export interface Unit {
   name: string;
   code: string;
@@ -46,7 +44,6 @@ export interface CryptoCurrency {
   ethereumLikeInfo?: { chainId: number };
   symbol?: string;
   keywords?: string[];
-  explorerId?: string;
   tokenTypes?: string[];
 }
 

@@ -8,9 +8,10 @@ import { prepareTransaction } from "@ledgerhq/coin-zcash/bridge/prepareTransacti
 import { estimateMaxSpendable } from "@ledgerhq/coin-zcash/bridge/estimateMaxSpendable";
 import { getSerializedAddressParameters } from "@ledgerhq/coin-zcash/bridge/exchange";
 import {
-  assignFromAccountRaw,
   assignToAccountRaw,
+  makeAssignFromAccountRaw,
 } from "@ledgerhq/coin-zcash/bridge/serialization";
+import type { ZcashConfigInfo } from "@ledgerhq/coin-zcash/config";
 import { validateAddress as validateZcashAddress } from "@ledgerhq/coin-zcash/logic/validateAddress";
 import { ZCASH_ESTIMATION_RECIPIENT } from "@ledgerhq/coin-zcash/constants";
 import {
@@ -22,6 +23,7 @@ import {
   sync,
 } from "../../../bridge/mockHelpers";
 import { delay } from "../../../promise";
+import { getCurrencyConfiguration } from "../../../config";
 
 // Everything above `sync`/`signOperation`/`broadcast`/`scanAccounts` below is
 // the real coin-zcash bridge logic (createTransaction, updateTransaction,
@@ -73,7 +75,9 @@ const accountBridge: ZcashMockAccountBridge = {
   signOperation,
   signRawOperation,
   broadcast,
-  assignFromAccountRaw,
+  assignFromAccountRaw: makeAssignFromAccountRaw(currencyId => ({
+    info: getCurrencyConfiguration<ZcashConfigInfo>(currencyId),
+  })),
   assignToAccountRaw,
   getSerializedAddressParameters,
   validateAddress: (address: string) =>

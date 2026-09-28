@@ -47,5 +47,4 @@ export const bitcoin = currency({
     },
   ],
   keywords: ["btc", "bitcoin"],
-  explorerId: "btc",
 });

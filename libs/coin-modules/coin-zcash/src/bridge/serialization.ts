@@ -17,6 +17,7 @@ import type {
 } from "../network/types";
 import { rehydrateOutput } from "../network/serialization/rehydrate";
 import { walletBtcCurrencyById } from "../walletBtcCurrency";
+import type { CoinConfig } from "../config";
 
 // ── Transparent (bitcoinResources) serialization ────────────────────────
 //
@@ -67,13 +68,19 @@ export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw 
   };
 }
 
-export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
+export function fromBitcoinResourcesRaw(
+  r: BitcoinResourcesRaw,
+  coinConfig: CoinConfig,
+): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
     ...(r.walletAccount && {
       walletAccount: wallet.importFromSerializedAccountSync(
         r.walletAccount,
-        walletBtcCurrencyById(r.walletAccount.params.currency),
+        walletBtcCurrencyById(
+          r.walletAccount.params.currency,
+          coinConfig(r.walletAccount.params.currency).info,
+        ),
       ),
     }),
   };
@@ -179,14 +186,17 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): vo
   }
 }
 
-export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
-  const zcashAccountRaw = accountRaw as ZcashAccountRaw;
-  if (zcashAccountRaw.bitcoinResources) {
-    (account as ZcashAccount).bitcoinResources = fromBitcoinResourcesRaw(
-      zcashAccountRaw.bitcoinResources,
-    );
-  }
-  if (zcashAccountRaw.privateInfo) {
-    (account as ZcashAccount).privateInfo = fromZcashPrivateInfoRaw(zcashAccountRaw.privateInfo);
-  }
-}
+export const makeAssignFromAccountRaw =
+  (coinConfig: CoinConfig) =>
+  (accountRaw: AccountRaw, account: Account): void => {
+    const zcashAccountRaw = accountRaw as ZcashAccountRaw;
+    if (zcashAccountRaw.bitcoinResources) {
+      (account as ZcashAccount).bitcoinResources = fromBitcoinResourcesRaw(
+        zcashAccountRaw.bitcoinResources,
+        coinConfig,
+      );
+    }
+    if (zcashAccountRaw.privateInfo) {
+      (account as ZcashAccount).privateInfo = fromZcashPrivateInfoRaw(zcashAccountRaw.privateInfo);
+    }
+  };

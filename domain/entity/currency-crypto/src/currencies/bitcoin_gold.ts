@@ -41,5 +41,4 @@ export const bitcoin_gold = currency({
       address: "https://btgexplorer.com/address/$address",
     },
   ],
-  explorerId: "btg",
 });

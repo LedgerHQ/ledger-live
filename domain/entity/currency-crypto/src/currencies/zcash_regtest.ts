@@ -14,7 +14,7 @@ import { currency } from "../define";
  * `"utest"`) would always fail classification and abort every scenario
  * transaction. Reusing the mainnet encoding keeps this currency's own
  * addresses (and the UFVK/PCZT derivation, which shares `coinType`) accepted
- * by that unmodified check; only `id`/`explorerId` differ, so the transparent
+ * by that unmodified check; only `id` differs, so the transparent
  * sync leg and the Zaino gRPC endpoint (set via `setZainoGrpcUrl`) still route
  * to the local regtest stack instead of production.
  */
@@ -43,5 +43,4 @@ export const zcash_regtest = currency({
   ],
   isTestnetFor: "zcash",
   explorerViews: [],
-  explorerId: "zcash_regtest",
 });

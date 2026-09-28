@@ -1,6 +1,8 @@
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
-export type ZcashConfigInfo = CurrencyConfig;
+export type ZcashConfigInfo = CurrencyConfig & {
+  explorerId?: string;
+};
 
 type ZcashCoinConfig = {
   info: ZcashConfigInfo;

@@ -1,7 +1,11 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
+import { assignToAccountRaw, makeAssignFromAccountRaw } from "./serialization";
 import type { ZcashAccount, ZcashAccountRaw } from "../types/bridge";
+import type { CoinConfig } from "../config";
+
+const coinConfig: CoinConfig = () => ({ info: { status: { type: "active" } } });
+const assignFromAccountRaw = makeAssignFromAccountRaw(coinConfig);
 
 // A bitcoin-shaped zcash AccountRaw, as produced today by coin-bitcoin's
 // assignToAccountRaw (bitcoinResources/utxos, no walletAccount populated in

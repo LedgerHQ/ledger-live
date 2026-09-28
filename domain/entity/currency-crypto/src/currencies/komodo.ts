@@ -29,5 +29,4 @@ export const komodo = currency({
       address: "https://kmdexplorer.io/address/$address",
     },
   ],
-  explorerId: "kmd",
 });
