@@ -1,3 +1,4 @@
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { IntentPlatformDefinition } from "@features/platform-device-intent";
 import {
   mockContact,
@@ -15,13 +16,21 @@ import { createRegisterExternalAddressOperation } from "./registerExternalAddres
 describe("createRegisterExternalAddressOperation", () => {
   const address = mockContactAddress();
   const contact = mockContact({ addresses: [] });
-  const contactWithCredentials = mockContactWithAddress({ addresses: [address] });
+  const contactWithCredentials = mockContactWithAddress({
+    addresses: [address],
+  });
   const intentDefinition = {} as IntentPlatformDefinition<
     RegisterExternalAddressJobState,
     RegisterExternalAddressIntentInput,
     undefined,
     ContactIntentResult<RegisterExternalAddressResult>
   >;
+  const config = {
+    status: { type: "active" as const },
+    name: "Ethereum",
+    unit: { name: "ether", code: "ETH", magnitude: 18 },
+    chainId: 1,
+  };
 
   it("GIVEN a new contact group WHEN creating a registration THEN it omits existing credentials", () => {
     const operation = createRegisterExternalAddressOperation(
@@ -30,6 +39,7 @@ describe("createRegisterExternalAddressOperation", () => {
         currencyId: address.currencyId,
         label: address.label,
         address: address.address,
+        config,
       },
       intentDefinition,
     );
@@ -43,6 +53,26 @@ describe("createRegisterExternalAddressOperation", () => {
     expect(operation.intentInput).not.toHaveProperty("existingContactGroup");
   });
 
+  it("GIVEN an EVM network config WHEN creating a registration THEN it forwards its chain id", () => {
+    const operation = createRegisterExternalAddressOperation(
+      {
+        contact,
+        currencyId: CryptoCurrencyIdSchema.parse("poa"),
+        label: address.label,
+        address: address.address,
+        config: {
+          status: { type: "active" },
+          name: "Ethereum",
+          unit: { name: "ether", code: "ETH", magnitude: 18 },
+          chainId: 99,
+        },
+      },
+      intentDefinition,
+    );
+
+    expect(operation.intentInput.chainId).toBe(99);
+  });
+
   it("GIVEN an existing contact group WHEN creating a registration THEN it includes its credentials", () => {
     const operation = createRegisterExternalAddressOperation(
       {
@@ -50,6 +80,7 @@ describe("createRegisterExternalAddressOperation", () => {
         currencyId: address.currencyId,
         label: address.label,
         address: address.address,
+        config,
       },
       intentDefinition,
     );
@@ -66,6 +97,7 @@ describe("createRegisterExternalAddressOperation", () => {
         currencyId: address.currencyId,
         label: address.label,
         address: address.address,
+        config,
       },
       intentDefinition,
     );
@@ -87,7 +119,11 @@ describe("createRegisterExternalAddressOperation", () => {
       }),
     ).toEqual({
       deviceCredentials: { groupHandle: "group-handle", hmacProof: "proof" },
-      addressDeviceContext: { blockchainFamily: "evm", chainId: 1, hmacRest: "rest" },
+      addressDeviceContext: {
+        blockchainFamily: "evm",
+        chainId: 1,
+        hmacRest: "rest",
+      },
     });
   });
 
@@ -98,6 +134,7 @@ describe("createRegisterExternalAddressOperation", () => {
         currencyId: address.currencyId,
         label: address.label,
         address: address.address,
+        config,
       },
       intentDefinition,
     );

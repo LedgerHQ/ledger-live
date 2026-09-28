@@ -1,5 +1,6 @@
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { t } from "~/renderer/i18n/init";
 import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
@@ -428,12 +429,14 @@ export function useSendHeaderModel({
   const transactionError = state.transaction.status?.errors?.transaction;
   const transactionErrorName = transactionError?.name;
 
+  const config = resolveCurrencyConfig(state.account.currency?.id);
   const canSearchContacts =
     isContactsFeatureEnabled &&
     isEligibleAddressCurrency(
       eligibleAddressFamilies,
       state.account.currency ?? undefined,
       excludedCurrencyIds,
+      config,
     );
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({

@@ -1,5 +1,6 @@
 import { ContactIdSchema, type ContactAddressId, type ContactId } from "@domain/entity-contact";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import {
   type ContactsDeleteAddressDialogProps,
   type ContactsEditSignerMismatchDialogProps,
@@ -64,7 +65,7 @@ export function useContactAddressDetailActionsAdapter(
 ): ContactAddressDetailActionsDialogProps {
   const { t } = useTranslation();
   const analytics = useContactsAnalytics();
-  const ports = useContactsAddressDetailActionsPorts(deviceIntents);
+  const ports = useContactsAddressDetailActionsPorts(deviceIntents, resolveCurrencyConfig);
   const addressValidation = useContactsAddressValidationAdapter();
   const openSendFlow = useOpenSendFlow();
   const isSelectionActive = contactId !== undefined && addressId !== undefined;
