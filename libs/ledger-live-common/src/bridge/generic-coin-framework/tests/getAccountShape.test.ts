@@ -3812,6 +3812,11 @@ describe("genericGetAccountShape", () => {
       // The same guard `vanishedTokenBalances` already needs (see above): a throwing family
       // implementation must not fail the whole sync over one sub-account it is merely trying to
       // describe to the module, on a call whose entire purpose is a caller-side optimization.
+      //
+      // Falls all the way back to an unscoped scan rather than a partial `knownAssets`: the
+      // module reads that list as *every* asset already held, and one that failed to convert
+      // would be missing from both the list and the scanned window if it hasn't moved since the
+      // watermark -- gone from the balance response, not merely stale.
       getAssetFromTokenMock.mockImplementationOnce(() => {
         throw new Error("boom");
       });
@@ -3826,10 +3831,21 @@ describe("genericGetAccountShape", () => {
         }),
       ).resolves.toBeDefined();
 
-      const options = getBalanceMock.mock.calls[0][2];
-      expect(options.knownAssets).toEqual([
-        { type: "erc20", assetReference: "ethereum/erc20/0xbbb" },
-      ]);
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({});
+    });
+
+    it("falls back the same way when a conversion returns undefined rather than throwing", async () => {
+      getAssetFromTokenMock.mockReturnValueOnce(undefined);
+
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "sync-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [subAccount("0xaaa"), subAccount("0xbbb")],
+      });
+
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({});
     });
   });
 });

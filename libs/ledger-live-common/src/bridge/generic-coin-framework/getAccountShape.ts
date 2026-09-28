@@ -542,17 +542,22 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       //
       // Guarded the same way as `vanishedTokenBalances` below: a throwing family implementation
       // must not fail the whole sync over one sub-account.
-      const knownAssets = ((initialAccount?.subAccounts ?? []) as TokenAccount[])
-        .map(sub => {
-          try {
-            return bridgeApi.getAssetFromToken?.(sub.token, address);
-          } catch {
-            return undefined;
-          }
-        })
-        .filter((asset): asset is AssetInfo => asset !== undefined);
+      const rawKnownAssets = ((initialAccount?.subAccounts ?? []) as TokenAccount[]).map(sub => {
+        try {
+          return bridgeApi.getAssetFromToken?.(sub.token, address);
+        } catch {
+          return undefined;
+        }
+      });
+      const knownAssets = rawKnownAssets.filter((asset): asset is AssetInfo => asset !== undefined);
 
-      if (knownAssets.length) {
+      // All or nothing: the module reads `knownAssets` as *every* asset already held, and scans
+      // only from `scanAssetsMinHeight` on that assumption. One stored sub-account that failed to
+      // convert would be missing from that list, and if it hasn't moved since the watermark it
+      // would be missing from the scanned window too -- gone from the balance response entirely,
+      // not merely stale (the vanished-token path downstream then either drops it or reports it at
+      // zero). A conversion failure falls back to a full scan instead.
+      if (knownAssets.length && knownAssets.length === rawKnownAssets.length) {
         const scoped: BalanceOptions = { ...balanceOptions };
         scoped.knownAssets = knownAssets;
         scoped.scanAssetsMinHeight = minHeight;
