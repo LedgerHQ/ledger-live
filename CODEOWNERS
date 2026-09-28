@@ -247,7 +247,6 @@ libs/coin-modules/coin-zcash/                                            @ledger
 ## Blockchain support 2
 libs/coin-modules/coin-hedera/                                           @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-aleo/                                             @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-xrp/                                              @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-algorand/                                         @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-icon/                                             @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-multiversx/                                       @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
