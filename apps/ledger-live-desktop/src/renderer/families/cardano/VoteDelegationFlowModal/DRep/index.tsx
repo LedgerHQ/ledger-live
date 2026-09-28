@@ -100,8 +100,7 @@ const DRepField = ({ account, onChangeDRep, selectedDRepHex }: Props) => {
       {<DRepSearchInput noMargin={true} search={inputValue} onSearch={onSearch} />}
       <DRepContainer>
         <Box p={1} data-testid="dRep-list">
-          {!isQueryTooShort &&
-          (isSearching || userAndLedgerDRepsLoading || (!dReps.length && !searchQuery)) ? (
+          {!isQueryTooShort && (isSearching || userAndLedgerDRepsLoading) ? (
             <Box flex={1} py={3} alignItems="center" justifyContent="center">
               <BigSpinner size={35} />
             </Box>

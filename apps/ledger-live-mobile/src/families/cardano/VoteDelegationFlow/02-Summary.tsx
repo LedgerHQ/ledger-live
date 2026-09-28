@@ -127,20 +127,27 @@ export default function VoteDelegationSummary({ navigation, route }: Props) {
       nextTransaction = tmpTransaction;
     }
 
+    // carried-over tx may still hold the previous vote target (after "Change"): clear the others
     if (chosenDRep) {
       nextTransaction = bridge.updateTransaction(nextTransaction, {
         mode: "voteDelegate",
         dRepHex: chosenDRep.hex,
+        dRepNoConfidence: undefined,
+        dRepAbstain: undefined,
       });
     } else if (route.params.option === "noConfidence") {
       nextTransaction = bridge.updateTransaction(nextTransaction, {
         mode: "voteDelegate",
         dRepNoConfidence: true,
+        dRepHex: undefined,
+        dRepAbstain: undefined,
       });
     } else if (route.params.option === "abstain") {
       nextTransaction = bridge.updateTransaction(nextTransaction, {
         mode: "voteDelegate",
         dRepAbstain: true,
+        dRepHex: undefined,
+        dRepNoConfidence: undefined,
       });
     }
 

@@ -117,7 +117,11 @@ describe("VoteDelegationSummary", () => {
     await waitFor(() => {
       expect(mockUpdateTransaction).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ dRepAbstain: true }),
+        expect.objectContaining({
+          dRepAbstain: true,
+          dRepHex: undefined,
+          dRepNoConfidence: undefined,
+        }),
       );
     });
 
@@ -159,7 +163,11 @@ describe("VoteDelegationSummary", () => {
     await waitFor(() => {
       expect(mockUpdateTransaction).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ dRepNoConfidence: true }),
+        expect.objectContaining({
+          dRepNoConfidence: true,
+          dRepHex: undefined,
+          dRepAbstain: undefined,
+        }),
       );
     });
 
@@ -202,7 +210,11 @@ describe("VoteDelegationSummary", () => {
     await waitFor(() => {
       expect(mockUpdateTransaction).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ dRepHex: "chosen_drep_123" }),
+        expect.objectContaining({
+          dRepHex: "chosen_drep_123",
+          dRepAbstain: undefined,
+          dRepNoConfidence: undefined,
+        }),
       );
     });
 

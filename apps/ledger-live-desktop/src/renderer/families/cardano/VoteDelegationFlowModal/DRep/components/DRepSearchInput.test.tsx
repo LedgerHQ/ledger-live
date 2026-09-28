@@ -60,4 +60,12 @@ describe("NoResultPlaceholder Component", () => {
     expect(screen.getByText(content => content.includes("No DRep found for"))).toBeInTheDocument();
     expect(screen.getByText("missing-drep")).toBeInTheDocument();
   });
+
+  it("renders the generic empty message when there is no search", () => {
+    render(<NoResultPlaceholder search="" />);
+
+    expect(
+      screen.getByText("No DReps available right now. Please try again later."),
+    ).toBeInTheDocument();
+  });
 });

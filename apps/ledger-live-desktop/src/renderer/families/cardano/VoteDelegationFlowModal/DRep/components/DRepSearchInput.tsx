@@ -63,14 +63,18 @@ export const NoResultPlaceholder = ({ search }: { search: string }) => (
       <ExclamationCircle size={30} />
     </Box>
     <Text ff="Inter|Medium" fontSize={4}>
-      <Trans
-        i18nKey="cardano.voteDelegation.noDRepFound"
-        values={{
-          search,
-        }}
-      >
-        <b></b>
-      </Trans>
+      {search ? (
+        <Trans
+          i18nKey="cardano.voteDelegation.noDRepFound"
+          values={{
+            search,
+          }}
+        >
+          <b></b>
+        </Trans>
+      ) : (
+        <Trans i18nKey="cardano.voteDelegation.noDRepAvailable" />
+      )}
     </Text>
   </Placeholder>
 );

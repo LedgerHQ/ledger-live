@@ -86,7 +86,8 @@ export function useCardanoFamilyDReps(currency: CryptoCurrency | undefined): {
 } {
   const [dReps, setDReps] = useState([] as Array<DRep>);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
+  // true until the first fetch settles, so the UI never flashes an empty state before it starts
+  const [isSearching, setIsSearching] = useState(true);
   const [isPaginating, setIsPaginating] = useState(false);
   const limit = 50;
   const pageNo = useRef(1);
@@ -104,11 +105,9 @@ export function useCardanoFamilyDReps(currency: CryptoCurrency | undefined): {
     setIsPaginating(false);
     pageNo.current = 1;
 
-    // account may not be resolved yet (e.g. first mobile render): don't query without a currency
-    if (!currency) {
-      setIsSearching(false);
-      return;
-    }
+    // account may not be resolved yet (e.g. first mobile render): don't query without a currency,
+    // stay in the loading state until currency is resolved
+    if (!currency) return;
 
     const delayDebounceFn = setTimeout(
       () => {

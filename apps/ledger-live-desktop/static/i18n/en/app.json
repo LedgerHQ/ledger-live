@@ -3197,6 +3197,7 @@
       "delegatingTo": "Delegating to",
       "search": "Search by name or DRep Id...",
       "noDRepFound": "No DRep found for \"<0>{{search}}</0>\".",
+      "noDRepAvailable": "No DReps available right now. Please try again later.",
       "tableHeader": {
         "dRep": "DRep",
         "lastActiveOn": "Last active on"

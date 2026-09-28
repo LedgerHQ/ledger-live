@@ -61,7 +61,8 @@ export default function SelectDRep({ navigation, route }: Props) {
 
   const renderItem = useCallback(
     ({ item }: { item: DRep }) => {
-      return <DRepRow drep={item} onPress={onSelectDRep} currencyId={currency!.id} />;
+      if (!currency) return null;
+      return <DRepRow drep={item} onPress={onSelectDRep} currencyId={currency.id} />;
     },
     [onSelectDRep, currency],
   );
@@ -83,20 +84,24 @@ export default function SelectDRep({ navigation, route }: Props) {
   }, [isPaginating]);
 
   const ListEmptyComponent = useCallback(() => {
-    if (isSearching || isPaginating || dReps.length > 0 || !searchQuery) return null;
+    if (isSearching || isPaginating || dReps.length > 0) return null;
     return (
       <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
         <NoResultsFound />
         <Text color="neutral.c100" fontWeight="medium" variant="body" mt={6} textAlign="center">
-          <Trans i18nKey="cardano.voteDelegation.noDRepFound" values={{ search: searchQuery }}>
-            <Text fontWeight="bold">{""}</Text>
-          </Trans>
+          {searchQuery ? (
+            <Trans i18nKey="cardano.voteDelegation.noDRepFound" values={{ search: searchQuery }}>
+              <Text fontWeight="bold">{""}</Text>
+            </Trans>
+          ) : (
+            <Trans i18nKey="cardano.voteDelegation.noDRepAvailable" />
+          )}
         </Text>
       </Flex>
     );
   }, [isSearching, isPaginating, dReps.length, searchQuery]);
 
-  const showLoader = !isQueryTooShort && (isSearching || (dReps.length === 0 && !searchQuery));
+  const showLoader = !isQueryTooShort && isSearching;
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>

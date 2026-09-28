@@ -120,6 +120,24 @@ describe("SelectDRep", () => {
     expect(mockSetSearchQuery).toHaveBeenCalledWith("");
   });
 
+  it("should render the empty state instead of the loader once an empty initial load settles", () => {
+    (useAccountScreen as jest.Mock).mockReturnValue({
+      account: { type: "Account", currency: { id: "cardano" } },
+    });
+    (useCardanoFamilyDReps as jest.Mock).mockReturnValue({
+      dReps: [],
+      searchQuery: "",
+      setSearchQuery: jest.fn(),
+      onScrollEndReached: jest.fn(),
+      isSearching: false,
+      isPaginating: false,
+    });
+
+    render(<SelectDRep navigation={mockNavigation} route={mockRoute} />);
+
+    expect(screen.getByText("No DReps available right now. Please try again later.")).toBeDefined();
+  });
+
   it("should navigate to Summary on DRep selection", () => {
     (useAccountScreen as jest.Mock).mockReturnValue({
       account: { type: "Account", currency: { id: "cardano" } },

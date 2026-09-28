@@ -116,6 +116,28 @@ describe("DRepField", () => {
     expect(screen.getByText("dRep2")).toBeInTheDocument();
   });
 
+  it("renders the empty state instead of the loader once an empty initial load settles", () => {
+    jest.mocked(useCardanoFamilyDReps).mockReturnValue({
+      dReps: [],
+      searchQuery: "",
+      setSearchQuery: jest.fn(),
+      onScrollEndReached: jest.fn(),
+      isSearching: false,
+      isPaginating: false,
+    });
+
+    render(
+      <DRepField
+        account={mockAccount}
+        status={mockStatus}
+        onChangeDRep={mockOnChangeDRep}
+        selectedDRepHex=""
+      />,
+    );
+
+    expect(screen.getByTestId("no-result")).toBeInTheDocument();
+  });
+
   it("calls setSearchQuery on search input change", async () => {
     const setSearchQueryMock = jest.fn();
     jest.mocked(useCardanoFamilyDReps).mockReturnValue({

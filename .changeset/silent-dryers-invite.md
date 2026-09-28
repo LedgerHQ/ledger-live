@@ -1,8 +1,10 @@
 ---
 "@ledgerhq/coin-cardano": minor
 "@ledgerhq/live-common": minor
-"@ledgerhq/live-env": minor
+"@domain/entity-currency-crypto": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 - Add vote delegation tx support, allowing users to delegate vote to dRep or always abstain or always no-confidence
-- update CARDANO_TESTNET_API_ENDPOINT
+- Add DRep vote delegation flow to Ledger Live Desktop and Mobile
