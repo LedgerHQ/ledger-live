@@ -15,6 +15,6 @@ Mobile uses the shared packages for analytics: [`@shared/analytics`](../../../sh
 
 ## Debug
 
-The [`AnalyticsConsole`](../src/components/AnalyticsConsole/index.tsx). can be switched on via `ANALYTICS_CONSOLE` (see [Environment variables](../README.md#environment-variables)). It can also be toggled via settings in the app:
+The [`AnalyticsConsole`](../src/components/AnalyticsConsole/index.tsx) can be switched on via `ANALYTICS_CONSOLE` (see [Environment variables](../README.md#environment-variables)). It can also be toggled via settings in the app:
 
 Settings → Debug → Configuration
