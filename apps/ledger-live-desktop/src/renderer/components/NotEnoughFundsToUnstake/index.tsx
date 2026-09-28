@@ -17,9 +17,12 @@ import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigati
 const NotEnoughFundsToUnstake = ({
   account,
   onClose,
+  page = "UndelegateFlowModal",
 }: {
   account: Account;
   onClose: () => void;
+  /** Flow the banner is shown in, reported as the source page of its Buy/Swap/Deposit clicks. */
+  page?: string;
 }) => {
   const currency = account.currency;
   const { t } = useTranslation();
@@ -45,9 +48,9 @@ const NotEnoughFundsToUnstake = ({
     () => ({
       currency: currency.ticker,
       currencyName: currency.name,
-      page: "UndelegateFlowModal",
+      page,
     }),
-    [currency],
+    [currency, page],
   );
 
   const onPressBuy = useCallback(() => {
