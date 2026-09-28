@@ -5,6 +5,7 @@ import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
 import { getAddressFromPublicKey } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
+import { getStakes } from "../logic/getStakes";
 import { TransactionResponse } from "../network";
 import {
   fetchAllTokenBalances,
@@ -29,6 +30,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
 }));
 jest.mock("@stacks/transactions", () => ({ getAddressFromPublicKey: jest.fn() }));
 jest.mock("../network/api");
+jest.mock("../logic/getStakes");
 
 let mockFindTokenById: jest.Mock;
 let mockFindTokenByAddressInCurrency: jest.Mock;
@@ -667,6 +669,50 @@ describe("getAccountShape", () => {
     (fetchAllTokenBalances as jest.Mock).mockResolvedValue({});
     (fetchFullMempoolTxs as jest.Mock).mockResolvedValue([]);
     (getAddressFromPublicKey as jest.Mock).mockReturnValue("SP_TEST_ADDRESS");
+    (getStakes as jest.Mock).mockResolvedValue({ items: [] });
+  });
+
+  it("attaches no stakingPositions when the address has no active stake", async () => {
+    const result = await getAccountShape(info, { paginationConfig: {} });
+
+    expect(result.stakingPositions).toEqual([]);
+  });
+
+  it("converts a stake's bigint amount to a BigNumber on the account shape", async () => {
+    (getStakes as jest.Mock).mockResolvedValue({
+      items: [
+        {
+          uid: "SP_TEST_ADDRESS",
+          address: "SP_TEST_ADDRESS",
+          delegate: "SP1pool.native-pool-signer-manager",
+          state: "active",
+          actions: ["undelegate"],
+          asset: { type: "native" },
+          amount: 1_000_000n,
+          details: { firstRewardCycle: 10, numCycles: 6, rewardAsset: "sbtc", amountRewarded: "0" },
+        },
+      ],
+    });
+
+    const result = await getAccountShape(info, { paginationConfig: {} });
+
+    expect(result.stakingPositions).toHaveLength(1);
+    expect(result.stakingPositions?.[0].amount).toBeInstanceOf(BigNumber);
+    expect(result.stakingPositions?.[0].amount.toString()).toBe("1000000");
+    expect(result.stakingPositions?.[0].state).toBe("active");
+  });
+
+  it("does not fail the whole account sync when the stake lookup fails", async () => {
+    (getStakes as jest.Mock).mockRejectedValue(new Error("pox lookup failed"));
+
+    const result = await getAccountShape(info, { paginationConfig: {} });
+
+    expect(result.stakingPositions).toEqual([]);
+    expect(mockLog).toHaveBeenCalledWith(
+      "error",
+      "stacks error fetching stakes",
+      expect.any(Error),
+    );
   });
 
   it("derives the address for mainnet when API_STACKS_NETWORK is unset", async () => {

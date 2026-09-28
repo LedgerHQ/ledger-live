@@ -5189,6 +5189,7 @@
     "unstake": {
       "flow": {
         "title": "Unstake",
+        "preparingTransaction": "Preparing transaction…",
         "steps": {
           "connectDevice": {
             "title": "Device"

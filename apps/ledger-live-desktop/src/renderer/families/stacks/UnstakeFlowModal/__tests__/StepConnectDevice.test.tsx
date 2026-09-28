@@ -25,12 +25,14 @@ const makeAccount = (): StacksAccount =>
     ...genAccount("stacks-unstake-stepconnectdevice-test", { currency }),
   }) as unknown as StacksAccount;
 
-const makeTx = (): Transaction =>
+const makeTx = (overrides: Partial<Transaction> = {}): Transaction =>
   ({
     family: "stacks",
     mode: "undelegate",
     valAddress: "SP1pool.native-pool-signer-manager",
     amount: new BigNumber(0),
+    fee: new BigNumber(300),
+    ...overrides,
   }) as unknown as Transaction;
 
 const makeProps = (overrides: Partial<StepProps> = {}): StepProps =>
@@ -63,10 +65,31 @@ describe("UnstakeFlowModal/StepConnectDevice", () => {
     genericStepMock.mockClear();
   });
 
-  it("mounts GenericStepConnectDevice for the MODAL_STACKS_UNSTAKE modal", () => {
+  it("renders the preparing spinner while the bridge is pending, instead of mounting the device step", () => {
+    act(() => {
+      render(<StepConnectDevice {...makeProps({ bridgePending: true })} />);
+    });
+    expect(screen.getByText("Preparing transaction…")).toBeInTheDocument();
+    expect(genericStepMock).not.toHaveBeenCalled();
+  });
+
+  it("renders the preparing spinner when neither fee nor fees is set yet (regression: avoids an already-connected device hitting FeeNotLoaded)", () => {
+    act(() => {
+      render(
+        <StepConnectDevice
+          {...makeProps({ transaction: makeTx({ fee: undefined, fees: undefined }) })}
+        />,
+      );
+    });
+    expect(screen.getByText("Preparing transaction…")).toBeInTheDocument();
+    expect(genericStepMock).not.toHaveBeenCalled();
+  });
+
+  it("mounts GenericStepConnectDevice for the MODAL_STACKS_UNSTAKE modal once the classic bridge's fee is populated", () => {
     act(() => {
       render(<StepConnectDevice {...makeProps()} />);
     });
+    expect(screen.queryByText("Preparing transaction…")).not.toBeInTheDocument();
     expect(screen.getByTestId("generic-step-connect-device")).toBeInTheDocument();
     expect(genericStepMock).toHaveBeenCalledTimes(1);
     expect(genericStepMock).toHaveBeenCalledWith(
@@ -74,7 +97,19 @@ describe("UnstakeFlowModal/StepConnectDevice", () => {
     );
   });
 
-  it("passes account, transaction, status and the callback props through unchanged", () => {
+  it("mounts GenericStepConnectDevice once only the generic bridge's fees is populated (post flag-flip shape)", () => {
+    act(() => {
+      render(
+        <StepConnectDevice
+          {...makeProps({ transaction: makeTx({ fee: undefined, fees: new BigNumber(300) }) })}
+        />,
+      );
+    });
+    expect(screen.queryByText("Preparing transaction…")).not.toBeInTheDocument();
+    expect(genericStepMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("passes account, transaction, status and the callback props through unchanged once ready", () => {
     const props = makeProps();
     act(() => {
       render(<StepConnectDevice {...props} />);
@@ -90,12 +125,5 @@ describe("UnstakeFlowModal/StepConnectDevice", () => {
         setSigned: props.setSigned,
       }),
     );
-  });
-
-  it("mounts unconditionally, unlike the Stake flow's variant (no bridgePending/startBurnHt gating)", () => {
-    act(() => {
-      render(<StepConnectDevice {...makeProps({ bridgePending: true })} />);
-    });
-    expect(genericStepMock).toHaveBeenCalledTimes(1);
   });
 });
