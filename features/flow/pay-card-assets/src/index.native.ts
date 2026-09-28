@@ -5,7 +5,7 @@ export * from "./CardAssetDetailsWithdrawDrawer.native";
 export * from "./CardAssetTransactionDetailDrawer.native";
 export * from "./CardAssetsManageDrawer.native";
 export * from "./CardAssetsManageFooter.native";
-export * from "./useCardAssetsViewModel.native";
+export * from "./useCardAssetsViewModel";
 export * from "./useCardWalletsTotal";
 export * from "./selectors/selectCardWalletsTotal";
 export type * from "./types";

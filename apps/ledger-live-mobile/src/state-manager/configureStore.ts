@@ -145,7 +145,6 @@ setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
       dispatch(onOffline());
     }
   });
-
   return unsubscribe;
 });
 connectRecentAddressesStore(store, recentAddressesSelector);

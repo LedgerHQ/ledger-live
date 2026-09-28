@@ -101,29 +101,29 @@ describe("useCardLinkedWallets", () => {
 
     renderHook(() => useCardLinkedWallets({ currencies }));
 
-    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, {
-      skip: false,
-      refetchOnFocus: false,
-    });
-    expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, {
-      skip: false,
-      refetchOnFocus: false,
-    });
+    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({ skip: false }),
+    );
+    expect(mockGetInternalWallets).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({ skip: false }),
+    );
   });
 
-  it("opts both endpoints into focus refetching when requested", () => {
+  it("fetches both reads again on each mount, so a Pay screen shows a wallet linked meanwhile", () => {
     stubQueries({ data: linkedWallets }, { data: internalWallets });
 
-    renderHook(() => useCardLinkedWallets({ currencies, refetchOnFocus: true }));
+    renderHook(() => useCardLinkedWallets({ currencies }));
 
-    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, {
-      skip: false,
-      refetchOnFocus: true,
-    });
-    expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, {
-      skip: false,
-      refetchOnFocus: true,
-    });
+    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({ refetchOnMountOrArgChange: true }),
+    );
+    expect(mockGetInternalWallets).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({ refetchOnMountOrArgChange: true }),
+    );
   });
 
   it("passes skip through to both, so a signed-out host provokes no 401", () => {
@@ -131,14 +131,14 @@ describe("useCardLinkedWallets", () => {
 
     const { result } = renderHook(() => useCardLinkedWallets({ currencies, skip: true }));
 
-    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, {
-      skip: true,
-      refetchOnFocus: false,
-    });
-    expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, {
-      skip: true,
-      refetchOnFocus: false,
-    });
+    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({ skip: true }),
+    );
+    expect(mockGetInternalWallets).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({ skip: true }),
+    );
     expect(result.current.wallets).toEqual([]);
   });
 

@@ -126,9 +126,7 @@ describe("useCardAssetsViewModel", () => {
   it("should fetch wallets once signed in", () => {
     renderViewModel();
 
-    expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(
-      expect.objectContaining({ skip: false, refetchOnFocus: true }),
-    );
+    expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(expect.objectContaining({ skip: false }));
   });
 
   it("should report loading while the first wallets read is in flight", () => {
