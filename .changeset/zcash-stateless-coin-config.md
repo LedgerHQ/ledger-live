@@ -12,7 +12,10 @@ hosts in `config_currency_zcash`; the mainnet Zaino default no longer points at 
 optional tuning fields `zaino.timeoutMs` (per-chunk budget of the automatic shielded sync) and
 `zaino.batchSize` (blocks per shielded scan chunk) fall back to the module defaults
 `ZCASH_SHIELDED_CHUNK_TIMEOUT_MS` (120000) and `ZCASH_SHIELDED_BATCH_SIZE` (5000). All of them can
-be changed through the remote currency config without a release. The explorer is bound from the
-config at use, so deserialization stays config-free. `setCoinConfig`, `getCoinConfig`,
-`setZainoGrpcUrl`, the `ZCASH_GRPC_URL_*` and `ZCASH_AUTO_SYNC_TIMEOUT_MS` constants and the
-`ZcashConfigInfo` type are removed in favour of `ZcashCoinConfig` / `ZcashContext`.
+be changed through the remote currency config without a release. The explorer (`explorer.url` and
+the optional `explorerId`) is bound from the config at use, so deserialization stays config-free.
+
+Breaking: `createBridges(signerContext, context)` takes a `Context` instead of a config getter;
+`setCoinConfig`, `getCoinConfig`, `setZainoGrpcUrl`, the `ZCASH_GRPC_URL_*` and
+`ZCASH_AUTO_SYNC_TIMEOUT_MS` constants and the `ZcashConfigInfo` type are removed in favour of
+`ZcashCoinConfig` / `ZcashContext`.
