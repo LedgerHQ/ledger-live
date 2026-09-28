@@ -2,7 +2,15 @@ import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { act, fireEvent, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+  withFlagOverrides,
+} from "tests/testSetup";
 import ContactsScreen from "LLD/features/Contacts";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { useContactsLedgerSyncStatus } from "LLD/features/Contacts/hooks/useContactsLedgerSyncStatus";
@@ -126,7 +134,11 @@ describe("Contacts device intents integration", () => {
     const { user } = renderContactsScreen();
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
-    await user.click(screen.getByTestId("contacts-detail-edit-action"));
+    await user.click(
+      within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+        "contacts-detail-edit-action",
+      ),
+    );
     const nameInput = await screen.findByTestId("contacts-rename-contact-name-input");
     await user.clear(nameInput);
     await user.type(nameInput, "Benjamin");
@@ -140,7 +152,11 @@ describe("Contacts device intents integration", () => {
     const { user } = renderContactsScreen();
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
-    await user.click(screen.getByTestId("contacts-detail-edit-action"));
+    await user.click(
+      within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+        "contacts-detail-edit-action",
+      ),
+    );
     const nameInput = await screen.findByTestId("contacts-rename-contact-name-input");
     await user.clear(nameInput);
     await user.type(nameInput, "Benjamin");
@@ -155,6 +171,10 @@ describe("Contacts device intents integration", () => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
       expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
     });
-    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Ben");
+    expect(
+      within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+        "contacts-detail-name",
+      ),
+    ).toHaveTextContent("Ben");
   });
 });

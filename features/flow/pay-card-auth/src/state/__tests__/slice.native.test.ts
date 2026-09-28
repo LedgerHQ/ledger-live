@@ -45,7 +45,7 @@ describe("payCardAuth slice", () => {
     // `hasCard` says the user owns a card. The status says where the session stands. Neither
     // implies the other.
     const state = reducer(reducer(undefined, setHasCard(true)), setSignedIn(false));
-    expect(state).toEqual({ hasCard: true, status: "signedOut" });
+    expect(state).toEqual({ hasCard: true, pendingLoginType: null, status: "signedOut" });
   });
 });
 

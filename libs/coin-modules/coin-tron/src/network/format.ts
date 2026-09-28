@@ -1,4 +1,4 @@
-import { log } from "@ledgerhq/logs";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import BigNumber from "bignumber.js";
 import bs58check from "bs58check";
 import get from "lodash/get";
@@ -10,7 +10,10 @@ export const decode58Check = (base58: string): string =>
 
 export const encode58Check = (hex: string): string => bs58check.encode(Buffer.from(hex, "hex"));
 
-export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | null | undefined => {
+export const formatTrongridTrc20TxResponse = (
+  logger: Logger,
+  tx: Trc20API,
+): TrongridTxInfo | null | undefined => {
   try {
     const { from, to, block_timestamp, detail, value, transaction_id, token_info, type } = tx;
     const txID = transaction_id;
@@ -59,12 +62,13 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
       feesPayer,
     };
   } catch (e) {
-    log("tron-error", `could not parse transaction ${tx}`);
+    logger("tron-error", `could not parse transaction ${tx}`);
     throw e;
   }
 };
 
 export const formatTrongridTxResponse = async (
+  logger: Logger,
   tx: TransactionTronAPI,
   getValidatorName: (address: string) => Promise<string | null | undefined>,
 ): Promise<TrongridTxInfo | null | undefined> => {
@@ -188,7 +192,7 @@ export const formatTrongridTxResponse = async (
 
     return txInfo;
   } catch {
-    log("tron-error", "could not parse transaction", tx);
+    logger("tron-error", "could not parse transaction", tx);
     return undefined;
   }
 };

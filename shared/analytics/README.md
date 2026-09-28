@@ -34,7 +34,10 @@ setPropsFilter((props) => myFilter(props));
 
 // register tracking client and logger
 setAnalytics({
-  track: (event, props) => segment.track(event, props),
+  track: async (event, props) => {
+    if (!segment) return "skipped_no_client";
+    await segment.track(event, props);
+  },
   log: console.log,
   flush: () => segment.flush(),
   closeAndFlush: () => segment.closeAndFlush(),
@@ -55,15 +58,15 @@ const sub = analyticsEvents$.subscribe((event) => myDebug.push(event));
 const unsubscribe = () => sub.unsubscribe();
 ```
 
-### Track
+## Functions
+
+### Tracking
 
 `track` emits events with a payload of props, e.g.
 
 ```ts
 track("Your Event", { foo: "bar" });
 ```
-
-### Track Page
 
 `trackPage` emits events named `Page ${category} ${name}` and a payload of props.
 
@@ -75,15 +78,30 @@ trackPage({
 });
 ```
 
-### Enabling and mandatory
+### Enabling analytics
 
 Tracking is off until enabled explicitly with `setEnabledFn`.
 
-In the example above it is switched on by default but more often you will store user consent in some dynamic state. In this case, pass a selector for that state, e.g.
+In the example above it is switched on by default. Often you will store user consent in some dynamic state, in this case pass a selector for that state to `setEnabledFn`, e.g.
 
 ```ts
 setEnabledFn(() => myAnalyticsEnabledSelector(store.getState()));
 ```
+
+Mandatory events can be used to bypass the `enabled` state. See [Additional options](#additional-options) below.
+
+`trackPage` emits events named `Page ${category} ${name}`. Use `updateRoutes` and `refreshSource` to keep route refs in sync for subsequent `page` and `source` props on other events.
+
+```ts
+trackPage(
+  { category: "Modal send", name: "step recipient", props: { flow: "send" } },
+  { updateRoutes: true, refreshSource: true },
+);
+
+trackPage({ category: "Mandatory Page" }, { mandatory: true });
+```
+
+Use `avoidDuplicates: true` when a screen component may remount and emit the same page event twice.
 
 ### Async and await
 
@@ -96,27 +114,13 @@ await track("My Crucial Event", { foo: "bar" });
 await trackPage({ category: "Market" });
 ```
 
-The registered analytics client may be sync or async.
+`deliver` **awaits** the registered `Analytics.track`. Return its promise (or `async`/`await` the vendor SDK). Discarding that promise makes every call look `enqueued` and leaves SDK rejections unobserved.
 
-### Page views
-
-`trackPage` emits events named `Page ${category} ${name}`. Use `updateRoutes` and `refreshSource` to keep route refs in sync for subsequent `page` and `source` props on other events.
-
-```ts
-trackPage(
-  "Modal send",
-  "step recipient",
-  { flow: "send" },
-  {
-    updateRoutes: true,
-    refreshSource: true,
-  }
-);
-
-trackPage("Mandatory Page", null, null, { mandatory: true });
-```
-
-Use `avoidDuplicates: true` when a screen component may remount and emit the same page event twice.
+- no registered client → `skipped_no_client`
+- return `"skipped_no_client"` when the SDK instance is missing
+- resolve `void` → `enqueued` (do **not** return the SDK payload — it is not a `DeliveryStatus`)
+- return another `DeliveryStatus` to override
+- throw or reject → `failed_tracking`
 
 ### Flush
 
@@ -138,7 +142,7 @@ setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
 await track("track", { theme: "light", sensitive: "from-enricher" });
 
 analyticsEvents$.subscribe((event) => {
-  console.log(event.eventProps);
+  console.log(event.eventProperties);
 });
 
 // { appVersion: "1.2.3", theme: "light" },
@@ -161,7 +165,13 @@ Tracking routes are used in analytics to provide props like `page` and `source`.
 > [!Note]
 > Exporting the raw refs is **interim** – [LIVE-36002](https://ledgerhq.atlassian.net/browse/LIVE-36002) narrows this to a function-only API. Also, names are overly-varied (`screenRef`, `routeName` and `trackingSource`) – [LIVE-37304](https://ledgerhq.atlassian.net/browse/LIVE-37304) addresses ambigious names and duplicate logic
 
-### Additional options
+## Analytics Events
+
+`analyticsEvents$` provides `.pipe` and `.subscribe` for reading events logged by analytics. Events emitted by the tracking pipeline include `deliveryStatus` (`enqueued`, `failed_tracking`, `skipped_no_client`, and related skip/fail values); manually published compatibility events may omit it.
+
+`publishAnalyticsEvent` (DEPRECATED) – this function allows events to be pushed to the `analyticsEvents$` observable directly. Today it is here to support unmigrated behaviour around `updateIdentify` but for more events client apps should use the events pushed to `analyticsEvents$` by the internal workings of the package.
+
+## Additional options
 
 ```ts
 // Track options
@@ -175,15 +185,10 @@ trackPage(
     mandatory: true,
     refreshSource: true,
     updateRoutes: true,
-  }
+  },
 );
 ```
 
-#### General options – for `track` and `trackPage`
-
 - `mandatory` – for events that do not require consent and should always be sent
-
-#### Route options: for `trackPage`
-
 - `avoidDuplicates` - to avoid resend the same event when a component mounts repeatedly
 - `updateRoutes` and `refreshSource` – to keep `page` and `source` values up to data

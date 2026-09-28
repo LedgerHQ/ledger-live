@@ -1,7 +1,8 @@
-import { useFeature } from "@features/platform-feature-flags";
 import { Switch } from "@ledgerhq/native-ui";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { AppLockBiometricsRow } from "LLM/features/AppLock/components/BiometricsRow";
 import { AppLockPasswordRow } from "LLM/features/AppLock/components/PasswordRow";
+import { useAppLockScheme } from "LLM/features/AppLock/hooks/useAppLockScheme";
 import React, { useCallback, useState } from "react";
 import { track } from "~/analytics";
 import SettingsRow from "~/components/SettingsRow";
@@ -56,11 +57,21 @@ function LegacyAuthSecurityToggle() {
 }
 
 export default function AuthSecurityToggle() {
-  const isRevampEnabled = useFeature("lwmPasswordRevamp")?.enabled ?? false;
+  const scheme = useAppLockScheme();
 
-  return (
+  if (scheme === undefined) {
+    return null;
+  }
+
+  // Both rows move together: the legacy biometrics row is disabled until a password exists.
+  return scheme === "revamped" ? (
     <>
-      {isRevampEnabled ? <AppLockPasswordRow /> : <LegacyAuthSecurityToggle />}
+      <AppLockPasswordRow />
+      <AppLockBiometricsRow />
+    </>
+  ) : (
+    <>
+      <LegacyAuthSecurityToggle />
       <BiometricsRow />
     </>
   );

@@ -52,7 +52,7 @@ export function formatCardTransactionDate(
   dateTime: string,
   formatDate: FormatCardTransactionDate = defaultFormatDate,
 ): string {
-  const date = parseTransactionDate(dateTime);
+  const date = parseCardTransactionDate(dateTime);
 
   return date ? formatDate(date) : dateTime;
 }
@@ -61,18 +61,42 @@ export function formatMaskedPanLast4(panLast4: string): string {
   return `***${panLast4}`;
 }
 
-function parseTransactionDate(dateTime: string): Date | undefined {
+export function parseCardTransactionDate(dateTime: string): Date | undefined {
   const date = new Date(dateTime);
 
   return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
-function isSameCalendarDay(left: Date, right: Date): boolean {
+export function formatCardTransactionTime(dateTime: string): string {
+  const date = parseCardTransactionDate(dateTime);
+
+  return date ? formatTimeOfDay(date) : dateTime;
+}
+
+export function isSameCalendarDay(left: Date, right: Date): boolean {
   return (
     left.getFullYear() === right.getFullYear() &&
     left.getMonth() === right.getMonth() &&
     left.getDate() === right.getDate()
   );
+}
+
+export type TranslateHistoryDay = (key: "today" | "yesterday" | "unknownDate") => string;
+
+export function formatHistoryDayLabel(
+  day: Date | undefined,
+  translate: TranslateHistoryDay,
+  formatDay: (date: Date) => string = defaultFormatDate,
+  now: Date = new Date(),
+): string {
+  if (!day) return translate("unknownDate");
+  if (isSameCalendarDay(day, now)) return translate("today");
+
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (isSameCalendarDay(day, yesterday)) return translate("yesterday");
+
+  return formatDay(day);
 }
 
 function formatTimeOfDay(date: Date): string {
@@ -94,7 +118,7 @@ export function formatTransactionDetailDateTime(
   formatDate: FormatCardTransactionDate = defaultFormatDate,
   now: Date = new Date(),
 ): string {
-  const date = parseTransactionDate(dateTime);
+  const date = parseCardTransactionDate(dateTime);
   if (!date) return dateTime;
 
   const time = formatTimeOfDay(date);

@@ -1,8 +1,8 @@
 // Encapsulate for LLD et LLM
-export * from "@ledgerhq/coin-tezos/types/index";
+export * from "@ledgerhq/coin-tezos/types";
 
 import type { Stake, StakeState } from "@ledgerhq/coin-module-framework/api/index";
-import type { Baker, TezosOperationMode } from "@ledgerhq/coin-tezos/types/index";
+import type { Baker, TezosOperationMode } from "@ledgerhq/coin-tezos/types";
 import type {
   Account,
   AccountRaw,

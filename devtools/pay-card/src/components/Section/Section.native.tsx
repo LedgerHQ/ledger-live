@@ -3,15 +3,29 @@ import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 
 export interface SectionProps {
   readonly title: string;
+  /** Tints the whole section, so adjacent sections stay told apart. */
+  readonly backgroundColor?: "activeSubtle" | "warning" | "success";
   readonly children: ReactNode;
 }
 
 const CONTAINER_LX = { gap: "s12", padding: "s16" } as const;
 const CONTENT_LX = { gap: "s8" } as const;
 
-export function Section({ title, children }: SectionProps) {
+const TINTS = {
+  activeSubtle: "activeSubtle",
+  warning: "warningTransparent",
+  success: "successTransparent",
+} as const;
+
+export function Section({ title, backgroundColor, children }: SectionProps) {
   return (
-    <Box lx={CONTAINER_LX}>
+    <Box
+      lx={
+        backgroundColor === undefined
+          ? CONTAINER_LX
+          : { ...CONTAINER_LX, backgroundColor: TINTS[backgroundColor] }
+      }
+    >
       <Text typography="body2" lx={{ color: "base" }}>
         {title}
       </Text>

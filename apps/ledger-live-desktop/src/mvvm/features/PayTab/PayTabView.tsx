@@ -13,7 +13,6 @@ import type { PayTabViewModel } from "./usePayTabViewModel";
 
 export function PayTabView({
   balance,
-  featureTour,
   actionTiles,
   depositOptions,
   bankTransferIntro,
@@ -55,7 +54,7 @@ export function PayTabView({
           onExit={deviceIntent.onExit}
         />
       )}
-      <FeatureTour {...featureTour} />
+      <FeatureTour />
     </div>
   );
 }

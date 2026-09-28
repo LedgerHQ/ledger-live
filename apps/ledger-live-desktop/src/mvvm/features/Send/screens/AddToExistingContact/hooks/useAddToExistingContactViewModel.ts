@@ -13,8 +13,7 @@ import {
 import type { AddNewContactHeaderState } from "LLD/features/Send/context/AddNewContactHeaderContext";
 import { useSendPrefillAddAddressFlow } from "LLD/features/Send/hooks/useSendPrefillAddAddressFlow";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
-import { useSendFlowData } from "../../../context/SendFlowContext";
-import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { track, trackPage } from "~/renderer/analytics/segment";
 
 const SELECT_CONTACT_HEADER_STATE: AddNewContactHeaderState = {
@@ -26,7 +25,6 @@ export function useAddToExistingContactViewModel() {
   const { t } = useTranslation();
   const contacts = useContacts();
   const meContact = useContactsMeContact();
-  const { state } = useSendFlowData();
   const [searchQuery, setSearchQuery] = useState("");
   const { addressPhase, isOpeningAddressFlow, startForContact } = useSendPrefillAddAddressFlow({
     idleHeaderState: SELECT_CONTACT_HEADER_STATE,
@@ -49,10 +47,7 @@ export function useAddToExistingContactViewModel() {
   );
 
   const listViewModel = useContactsSearchViewModel(searchQuery, labels.formatMeDisplayName);
-  const trackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
-    [state.account.account, state.account.parentAccount],
-  );
+  const trackingProperties = useSendFlowTrackingProperties();
 
   useEffect(() => {
     trackPage("Modal send - select existing contact", null, trackingProperties);

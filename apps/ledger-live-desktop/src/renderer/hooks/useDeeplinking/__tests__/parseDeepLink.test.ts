@@ -371,6 +371,7 @@ describe("parseDeepLink", () => {
       expect(route).toEqual({
         type: "paytab",
         code: "auth-code",
+        appId: "app-value",
       });
     });
 

@@ -21,6 +21,7 @@ function View({
   location: _location,
   isShown,
   tracking,
+  copyKeys,
   handleCTAPress,
   imageUrl,
   shouldUseLumenMediaBanner,
@@ -33,9 +34,9 @@ function View({
 
   if (!isShown) return null;
 
-  const title = t(`lnsUpsell.${tracking}.title`);
-  const description = t(`lnsUpsell.${tracking}.description`);
-  const cta = t(`lnsUpsell.${tracking}.cta`);
+  const title = t(copyKeys.title);
+  const description = t(copyKeys.description);
+  const cta = t(copyKeys.cta);
 
   if (shouldUseLumenMediaBanner) {
     return (

@@ -64,8 +64,7 @@ export function runSwapTokenApprovalFlow(
         true,
       );
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
-      // Allowance was revoked above, so the CTA reads "Continue".
-      await app.swapLiveApp.checkQuoteCardCta(provider.uiName, true);
+      await app.swapLiveApp.checkQuoteCardCtaPresence(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.expectTwoStepApprovalScreen();
       await app.swapLiveApp.tapGiveApprovalButton();

@@ -9,6 +9,7 @@ import { llmRTKApiReducers } from "./rtkQueryApi";
  * matching `@domain/api-*` use-case packages, which the view-models import directly.
  */
 const EXPECTED_REDUCER_PATHS = [
+  "aleoApi",
   "assetsDataApi",
   "calApi",
   "cardApi",

@@ -2,6 +2,7 @@ import React, { type PropsWithChildren } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
+import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { payCardAuthSlice, setSignedIn } from "../../../state/slice";
 import {
@@ -42,7 +43,7 @@ const intro: CardLoginIntroViewProps = {
 };
 
 describe("mapSnapshotToViewModel", () => {
-  it.each(["idle", "error", "awaitingCallback"] as const)(
+  it.each(["idle", "authError", "userFetchError", "awaitingCallback"] as const)(
     "offers the login action in %s",
     value => {
       const login = mapSnapshotToViewModel(
@@ -112,7 +113,7 @@ describe("mapSnapshotToViewModel", () => {
 
   it("shows the message it was handed", () => {
     const login = mapSnapshotToViewModel(
-      "error",
+      "authError",
       "The login page could not open. Please try again.",
       copy,
       onLoginPress,
@@ -143,6 +144,7 @@ const mockPorts: { [K in keyof CardLoginPorts]: jest.Mock } = {
   getUser: jest.fn(async () => user),
   setSignedIn: jest.fn(),
   markIntroSeen: jest.fn(),
+  setProviderAppId: jest.fn(),
   openHostedLogin: jest.fn(
     async (): Promise<HostedLoginResult> => ({ type: "dismissed" }) as HostedLoginResult,
   ),
@@ -168,10 +170,12 @@ function buildStore() {
   });
 }
 
-function withProviders(store: ReturnType<typeof buildStore>) {
+function withProviders(store: ReturnType<typeof buildStore>, track = jest.fn()) {
   return ({ children }: PropsWithChildren) => (
     <Provider store={store}>
-      <I18nTestProvider resources={CARD_LOGIN_INTRO_RESOURCES}>{children}</I18nTestProvider>
+      <PayAnalyticsProvider adapter={{ track }}>
+        <I18nTestProvider resources={CARD_LOGIN_INTRO_RESOURCES}>{children}</I18nTestProvider>
+      </PayAnalyticsProvider>
     </Provider>
   );
 }
@@ -179,8 +183,9 @@ function withProviders(store: ReturnType<typeof buildStore>) {
 async function renderIdleLogin(
   store: ReturnType<typeof buildStore>,
   mobileWallet: MobileWallet = "both",
-  onTrackEvent?: jest.Mock,
+  track = jest.fn(),
   openHostedPage?: jest.Mock,
+  requestProtection?: jest.Mock,
 ) {
   const rendered = renderHook(
     () =>
@@ -189,9 +194,9 @@ async function renderIdleLogin(
         openHostedPage,
         mobileWallet,
         oauthConfig,
-        onTrackEvent,
+        requestProtection,
       }),
-    { wrapper: withProviders(store) },
+    { wrapper: withProviders(store, track) },
   );
 
   await waitFor(() => expect(rendered.result.current?.isLoading).toBe(false));
@@ -263,7 +268,7 @@ describe("useCardLoginViewModel intro", () => {
     await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
     expect(result.current?.intro.isOpen).toBe(false);
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
-      button: "i already have a card",
+      button: "signin",
       flow: CARD_LOGIN_INTRO_FLOW,
       page: CARD_LOGIN_INTRO_PAGE,
     });
@@ -560,7 +565,7 @@ describe("useCardLoginViewModel intro", () => {
     act(() => result.current?.onLoginPress());
 
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
-      button: "login",
+      button: "signin",
       flow: CARD_LOGIN_INTRO_FLOW,
       page: CARD_LOGIN_INTRO_PAGE,
     });
@@ -568,8 +573,8 @@ describe("useCardLoginViewModel intro", () => {
   });
 
   it.each([
-    ["createAccount", "create an account"],
-    ["logIn", "log in to baanx"],
+    ["createAccount", "signup"],
+    ["logIn", "signin"],
   ] as const)("tracks the %s intro action", async (id, button) => {
     const onTrackEvent = jest.fn();
     const { result } = await renderIdleLogin(store, "both", onTrackEvent);
@@ -604,6 +609,40 @@ describe("useCardLoginViewModel intro", () => {
 // The hook resolves each machine error kind through `t(...)`, not a hardcoded map, so a renamed or
 // missing translation key would only show up by actually reading it back through i18n.
 const ERROR_MESSAGES = CARD_LOGIN_INTRO_RESOURCES.en.translation.payTab.cardLogin.errors;
+
+describe("useCardLoginViewModel provider app", () => {
+  let store: ReturnType<typeof buildStore>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockPorts.hasSession.mockResolvedValue(false);
+    mockPorts.loadAttempt.mockResolvedValue({ codeVerifier: "verifier-value" });
+    mockPorts.openHostedLogin.mockResolvedValue({ type: "pending" });
+    store = buildStore();
+    mockPorts.setSignedIn.mockImplementation((value: boolean) =>
+      store.dispatch(setSignedIn(value)),
+    );
+  });
+
+  const hostCallback = { code: "authorization-code", appId: "LEDGERUAT" };
+
+  it("forwards the app id of a redirect the host hands over", async () => {
+    // The desktop host reports the redirect through this prop, not through the browser session, so
+    // the forwarded event has to carry the app id as well as the code.
+    renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+          callback: hostCallback,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() => expect(mockPorts.setProviderAppId).toHaveBeenCalledWith("LEDGERUAT"));
+  });
+});
 
 describe("useCardLoginViewModel errors", () => {
   let store: ReturnType<typeof buildStore>;
@@ -705,5 +744,96 @@ describe("useCardLoginViewModel errors", () => {
     await waitFor(() =>
       expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.fetch_user_failed),
     );
+  });
+});
+
+describe("protecting the app before either way to the provider", () => {
+  let store: ReturnType<typeof buildStore>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    store = buildStore();
+    mockPorts.hasSession.mockResolvedValue(false);
+  });
+
+  it("logs in once the app is protected", async () => {
+    const requestProtection = jest.fn().mockResolvedValue(true);
+    const { result } = await renderIdleLogin(
+      store,
+      "both",
+      undefined,
+      undefined,
+      requestProtection,
+    );
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
+    expect(requestProtection).toHaveBeenCalledTimes(1);
+  });
+
+  it("holds the login where the app is left unprotected", async () => {
+    const requestProtection = jest.fn().mockResolvedValue(false);
+    const { result } = await renderIdleLogin(
+      store,
+      "both",
+      undefined,
+      undefined,
+      requestProtection,
+    );
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(requestProtection).toHaveBeenCalledTimes(1));
+    expect(mockPorts.openHostedLogin).not.toHaveBeenCalled();
+    expect(mockPorts.createAttempt).not.toHaveBeenCalled();
+  });
+
+  it("opens the signup page once the app is protected", async () => {
+    const requestProtection = jest.fn().mockResolvedValue(true);
+    const openHostedPage = jest.fn().mockResolvedValue(undefined);
+    const { result } = await renderIdleLogin(
+      store,
+      "both",
+      undefined,
+      openHostedPage,
+      requestProtection,
+    );
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+
+    await waitFor(() => expect(openHostedPage).toHaveBeenCalledWith("/onboarding/signup"));
+    expect(requestProtection).toHaveBeenCalledTimes(1);
+  });
+
+  it("holds the signup where the app is left unprotected", async () => {
+    const requestProtection = jest.fn().mockResolvedValue(false);
+    const openHostedPage = jest.fn().mockResolvedValue(undefined);
+    const { result } = await renderIdleLogin(
+      store,
+      "both",
+      undefined,
+      openHostedPage,
+      requestProtection,
+    );
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+
+    await waitFor(() => expect(requestProtection).toHaveBeenCalledTimes(1));
+    expect(openHostedPage).not.toHaveBeenCalled();
+    expect(mockPorts.openHostedLogin).not.toHaveBeenCalled();
+  });
+
+  it("carries on unprompted where the host has no app lock to ask about", async () => {
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
   });
 });

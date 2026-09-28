@@ -62,7 +62,7 @@ describe("composeXpub", () => {
     // Real hw-app-btc devices return uncompressed (0x04 ‖ X ‖ Y) keys, so the
     // legacy code path that this util mirrors must also handle them.
     const uncompressedParent = Buffer.from(
-      secp256k1.ProjectivePoint.fromHex(MASTER_PUBKEY_HEX).toRawBytes(false),
+      secp256k1.Point.fromHex(MASTER_PUBKEY_HEX).toBytes(false),
     ).toString("hex");
     expect(uncompressedParent).toHaveLength(65 * 2);
     expect(uncompressedParent.startsWith("04")).toBe(true);
@@ -81,7 +81,7 @@ describe("composeXpub", () => {
 
   it("compresses an uncompressed (65-byte) account SECP256K1 public key before serializing", () => {
     const uncompressedAccount = Buffer.from(
-      secp256k1.ProjectivePoint.fromHex(ACCOUNT_PUBKEY_HEX).toRawBytes(false),
+      secp256k1.Point.fromHex(ACCOUNT_PUBKEY_HEX).toBytes(false),
     ).toString("hex");
 
     const xpub = composeXpub({

@@ -2,7 +2,7 @@
 
 > [!WARNING]
 > **Status: DEPRECATED** — This package is now private and will not receive further npm releases.
-> It is being replaced by `@domain/` packages as part of the Ledger Live DDD migration.
+> It is being replaced by `@domain/` packages.
 > In-repo consumers continue to work; all new code should target the domain packages once available.
 
 `@ledgerhq/live-countervalues-react` is the React layer over `@ledgerhq/live-countervalues`. It provides a context provider and hooks so that components can subscribe to fiat countervalue data without managing rate-fetching or caching themselves.

@@ -39,8 +39,10 @@ export function ContactsMeListItem({
           testId="contacts-me-avatar"
         />
         <ListItemContent>
-          <ListItemTitle>{contact.name}</ListItemTitle>
-          <ListItemDescription>{formatAddressCount(contact.addressCount)}</ListItemDescription>
+          <ListItemTitle data-testid="contacts-me-name">{contact.name}</ListItemTitle>
+          <ListItemDescription data-testid="contacts-me-address-count">
+            {formatAddressCount(contact.addressCount)}
+          </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
     </ListItem>

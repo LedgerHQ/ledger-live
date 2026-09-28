@@ -1,8 +1,8 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
-import { getFeeRate } from "../logic";
+import { calcMaxSpendableAmount, getFeeRate } from "../logic";
 import { KaspaAccount, Transaction } from "../types";
+import { getCachedUtxos } from "./getTransactionStatus";
 
 export const estimateMaxSpendable: AccountBridge<
   Transaction,
@@ -10,14 +10,9 @@ export const estimateMaxSpendable: AccountBridge<
 >["estimateMaxSpendable"] = async ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
 
-  if (!mainAccount) {
-    return BigNumber(0);
-  }
-  const feeRate: BigNumber = getFeeRate(transaction);
+  const { utxos } = await getCachedUtxos(mainAccount).catch(() => ({ utxos: [] }));
+  const isEcdsaRecipient = transaction?.recipient ? transaction.recipient.length > 67 : true;
+  const feeRate = getFeeRate(transaction).toNumber() || 1;
 
-  const maxSpendable: BigNumber = mainAccount.spendableBalance
-    .minus(506 * feeRate.toNumber())
-    .minus(1118 * mainAccount.activeAddressCount * feeRate.toNumber());
-
-  return maxSpendable.lt(0) ? BigNumber(0) : maxSpendable;
+  return calcMaxSpendableAmount(utxos, isEcdsaRecipient, feeRate);
 };

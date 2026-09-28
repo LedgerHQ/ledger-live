@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import {
   Button,
   Dialog,
@@ -12,8 +12,9 @@ import {
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-react";
 import * as Icons from "@ledgerhq/lumen-ui-react/symbols";
+import { PayTrackPage } from "@features/platform-pay-analytics";
 import heroImage from "./payTabTour.webp";
-import type { FeatureTourViewModel } from "./useFeatureTourViewModel";
+import { FEATURE_TOUR_PAGE, type FeatureTourViewModel } from "./useFeatureTourViewModel";
 
 type FeatureTourViewProps = FeatureTourViewModel;
 
@@ -23,18 +24,9 @@ export function FeatureTourView({
   description,
   rows,
   ctaLabel,
-  onShown,
   onDismiss,
 }: FeatureTourViewProps) {
   const dismissed = useRef(false);
-  const shown = useRef(false);
-
-  useEffect(() => {
-    if (isVisible && !shown.current) {
-      shown.current = true;
-      onShown();
-    }
-  }, [isVisible, onShown]);
 
   const handleDismiss = useCallback(() => {
     if (dismissed.current) {
@@ -59,6 +51,7 @@ export function FeatureTourView({
 
   return (
     <Dialog open onOpenChange={handleOpenChange}>
+      <PayTrackPage page={FEATURE_TOUR_PAGE} />
       <DialogContent className="min-h-[696px]">
         <DialogHeader density="compact" onClose={handleDismiss} />
         <DialogBody className="flex flex-1 flex-col">

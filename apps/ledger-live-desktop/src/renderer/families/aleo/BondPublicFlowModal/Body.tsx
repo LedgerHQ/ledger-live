@@ -7,7 +7,6 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { createStakingFlowBody, StakingFlowData } from "../shared/createStakingFlowBody";
-import { DEFAULT_ALEO_VALIDATOR } from "../constants";
 import { getAleoCurrencyConfig } from "../shared/utils";
 
 export type Data = StakingFlowData;
@@ -50,11 +49,9 @@ export default createStakingFlowBody<StepId>({
   mode: TRANSACTION_TYPE.BOND_PUBLIC,
   // Aleo allows one validator per address and the chain rejects a bond to a second one, so an
   // account with an open position can only ever top that validator up.
-  initialRecipient: account => {
-    const bonded = account.aleoResources?.bondedValidator;
-    if (bonded) return bonded;
-    const networkType = getAleoCurrencyConfig(account.currency)?.networkType;
-    return networkType ? DEFAULT_ALEO_VALIDATOR[networkType] : "";
-  },
+  initialRecipient: account =>
+    account.aleoResources?.bondedValidator ??
+    getAleoCurrencyConfig(account.currency)?.defaultValidator ??
+    "",
   withdrawalFromFresh: true,
 });

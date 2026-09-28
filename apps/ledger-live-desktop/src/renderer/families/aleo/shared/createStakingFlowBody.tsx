@@ -33,7 +33,7 @@ export type StakingStepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
   device: Device | undefined | null;
-  account: Account | undefined | null;
+  account: AleoAccount | undefined | null;
   parentAccount: Account | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;

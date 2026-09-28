@@ -20,10 +20,18 @@ export interface TransferLog {
   meta: LogMeta;
 }
 
-export interface EventLog {
+/**
+ * A contract event log. Thor's `GET /blocks/{revision}?expanded=true` reports it without `meta` —
+ * the block, transaction and clause are already known from the position in the response — whereas
+ * `POST /logs/event` adds {@link LogMeta}. See {@link EventLog}.
+ */
+export interface BlockEventLog {
   address: string;
   topics: string[];
   data: string;
+}
+
+export interface EventLog extends BlockEventLog {
   meta: LogMeta;
 }
 
@@ -90,7 +98,7 @@ export interface ApiResponseBlockTransfer {
 /** A single clause output, part of an expanded block transaction. */
 export interface ApiResponseBlockOutput {
   contractAddress: string | null;
-  events: EventLog[];
+  events: BlockEventLog[];
   transfers: ApiResponseBlockTransfer[];
 }
 

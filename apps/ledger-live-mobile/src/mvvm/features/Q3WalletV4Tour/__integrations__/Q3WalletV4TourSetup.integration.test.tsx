@@ -65,6 +65,5 @@ describe("Q3WalletV4Tour setup", () => {
 
     expect(hasSeenQ3WalletV4TourSelector(store.getState())).toBe(true);
     expect(store.getState().settings.hasSeenQ2WalletV4Tour).toBe(false);
-    expect(store.getState().settings.hasSeenWalletV4Tour).toBe(false);
   });
 });

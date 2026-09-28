@@ -14,6 +14,7 @@ the `@domain/entity-currency-*` packages** (no slices here).
 | `buildCryptoAssetsStore(config)`    | Builds the `CryptoAssetsStore` over `@domain/api-currency-token`. Apps inject the result via the legacy `setCryptoAssetsStore` singleton. |
 | `CryptoAssetsStore`                 | Local port type (typed on the domain `TokenCurrency`).                                     |
 | `useCryptoCurrencyById(id)`         | Static crypto currency lookup from the domain registry.                                    |
+| `useCurrenciesByIds(ids)`           | Resolves many ids at once: coins from the registry, tokens dispatched to CAL one per id.    |
 | `useTokenById(id)`                  | CAL token lookup (RTK-Query).                                                               |
 | `useTokensData(params)`             | Paginated CAL token list (RTK-Query infinite query).                                       |
 | `useSupportedCurrencies(base, opts)`| Registry-backed supported set with feature-flag gating applied.                            |

@@ -18,6 +18,9 @@ export const BAANX_ASSET_LEDGER_IDS: Readonly<Record<AssetMappingKey, string | u
   "usdc.ethereum": "ethereum/erc20/usd__coin",
   "usdc.usdc": "ethereum/erc20/usd__coin",
 
+  "euroc.ethereum": "ethereum/erc20/euro_coin",
+  "euroc.euroc": "ethereum/erc20/euro_coin",
+
   "btc.bitcoin": "bitcoin",
   "btc.btc": "bitcoin",
 
@@ -41,3 +44,8 @@ export const BAANX_ASSET_LEDGER_IDS: Readonly<Record<AssetMappingKey, string | u
 export function baanxAssetLedgerId(currency: string, network: string): string | undefined {
   return BAANX_ASSET_LEDGER_IDS[assetMappingKey(currency, network)];
 }
+
+/** Every distinct Ledger id the catalog resolves to. */
+export const BAANX_LEDGER_CURRENCY_IDS: readonly string[] = [
+  ...new Set(Object.values(BAANX_ASSET_LEDGER_IDS).filter((id): id is string => id !== undefined)),
+];

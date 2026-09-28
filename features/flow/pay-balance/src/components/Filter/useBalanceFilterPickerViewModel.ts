@@ -28,7 +28,11 @@ export function useBalanceFilterPickerViewModel({
       draftFilter === PAY_CARD_BALANCE_FILTER_ALL
         ? PAY_CARD_BALANCE_FILTER_ALL
         : (options.find(option => option.id === draftFilter)?.ticker ?? draftFilter);
-    onTrackEvent?.("button_clicked", { button: "confirm_balance_filter", asset });
+    onTrackEvent?.("button_clicked", {
+      button: "confirm balance filter",
+      asset,
+      page: "Pay",
+    });
     onClose();
   }, [draftFilter, options, onConfirmFilter, onClose, onTrackEvent]);
 

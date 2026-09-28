@@ -13,7 +13,7 @@ import { useFlowEffects } from "@ledgerhq/live-common/flows/send/effects/hooks/u
 import { useAmountScreenViewModel } from "../hooks/useAmountScreenViewModel";
 import { AmountScreenView } from "./AmountScreenView";
 import { track } from "~/renderer/analytics/segment";
-import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 
 type AmountScreenInnerProps = Readonly<{
   account: AccountLike;
@@ -49,10 +49,7 @@ export function AmountScreenInner({
     [account, parentAccount],
   );
   const currency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
-  const sendFlowTrackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(account, parentAccount),
-    [account, parentAccount],
-  );
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   useFlowEffects({
     account,

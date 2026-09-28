@@ -1,57 +1,41 @@
 import type { PayCardInternalWallet, PayCardLinkedWallet } from "@domain/api-card-management";
-import type {
-  CardLinkedWalletBalance,
-  CardLinkedWallets,
-  ResolveWalletCounterValue,
-} from "../types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CardLinkedWalletBalance, CardLinkedWallets } from "../types";
 
 export type CombineCardLinkedWalletsParams = Readonly<{
   linked: readonly PayCardLinkedWallet[];
   internal: readonly PayCardInternalWallet[];
-  resolveCounterValue: ResolveWalletCounterValue;
+  currencies: ReadonlyMap<string, CryptoOrTokenCurrency>;
 }>;
 
 export function combineCardLinkedWallets({
   linked,
   internal,
-  resolveCounterValue,
+  currencies,
 }: CombineCardLinkedWalletsParams): CardLinkedWallets {
-  const balanceById = new Map(internal.map(wallet => [wallet.id, wallet.balance]));
-
-  const counterValueFor = (
-    wallet: Readonly<{ currency: string; network: string }>,
-    balance: string,
-  ): number | null => {
-    const resolved = resolveCounterValue(wallet, balance);
-    return resolved === null || !Number.isFinite(resolved) ? null : resolved;
-  };
+  const internalById = new Map(internal.map(wallet => [wallet.id, wallet]));
 
   const wallets: CardLinkedWalletBalance[] = linked
     // `linked` is the cache entry: never sort it in place.
     .slice()
     .sort((a, b) => a.priority - b.priority)
     .map(({ id, address, currency, network, priority, ledgerId }) => {
-      const balance = balanceById.get(id) ?? null;
+      const ledgerCurrency = ledgerId === undefined ? undefined : currencies.get(ledgerId);
+      const internalWallet = internalById.get(id);
 
       return {
         id,
+        ...(internalWallet?.addressId === undefined ? {} : { addressId: internalWallet.addressId }),
         address,
         currency,
         network,
         priority,
-        // Carried through, and left off when the link had none: an unmapped asset is a wallet
-        // without a `ledgerId`, not one holding `undefined`.
+        // Left off rather than held as `undefined`: an unmapped asset has no `ledgerId` at all.
         ...(ledgerId === undefined ? {} : { ledgerId }),
-        balance,
-        counterValue: balance === null ? null : counterValueFor({ currency, network }, balance),
+        ...(ledgerCurrency === undefined ? {} : { ledgerCurrency }),
+        balance: internalWallet?.balance ?? null,
       };
     });
 
-  const total = wallets.reduce((sum, { counterValue }) => sum + (counterValue ?? 0), 0);
-
-  return {
-    wallets,
-    total,
-    isPartialTotal: wallets.some(({ counterValue }) => counterValue === null),
-  };
+  return { wallets };
 }

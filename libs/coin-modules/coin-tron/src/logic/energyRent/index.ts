@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import coinConfig from "../../config";
 import { EnergyRentProviderNotConfigured } from "../../types/errors";
 import { tronifyProvider } from "./tronify";
@@ -30,21 +31,30 @@ export function getEnergyProvider(): EnergyProvider {
   }
 }
 
-export function getEnergyRentQuote(request: EnergyRentRequest): Promise<EnergyRentQuote> {
-  return getEnergyProvider().getQuote(request);
+export function getEnergyRentQuote(
+  logger: Logger,
+  request: EnergyRentRequest,
+): Promise<EnergyRentQuote> {
+  return getEnergyProvider().getQuote(logger, request);
 }
 
-export function craftEnergyRentTransaction(request: EnergyRentRequest): Promise<EnergyRentOrder> {
-  return getEnergyProvider().createOrder(request);
+export function craftEnergyRentTransaction(
+  logger: Logger,
+  request: EnergyRentRequest,
+): Promise<EnergyRentOrder> {
+  return getEnergyProvider().createOrder(logger, request);
 }
 
-export function broadcastEnergyRentTransaction(payment: {
-  orderId: string;
-  signedTransaction: EnergyRentSignedTransaction;
-}): Promise<void> {
-  return getEnergyProvider().submitPayment(payment);
+export function broadcastEnergyRentTransaction(
+  logger: Logger,
+  payment: { orderId: string; signedTransaction: EnergyRentSignedTransaction },
+): Promise<void> {
+  return getEnergyProvider().submitPayment(logger, payment);
 }
 
-export function getEnergyRentStatus(order: EnergyRentOrderRef): Promise<EnergyRentStatus> {
-  return getEnergyProvider().getOrderStatus(order);
+export function getEnergyRentStatus(
+  logger: Logger,
+  order: EnergyRentOrderRef,
+): Promise<EnergyRentStatus> {
+  return getEnergyProvider().getOrderStatus(logger, order);
 }

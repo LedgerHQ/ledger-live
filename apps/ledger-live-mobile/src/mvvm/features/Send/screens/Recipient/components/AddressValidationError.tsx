@@ -28,7 +28,7 @@ export const AddressValidationError = (props: AddressValidationErrorProps) => {
       <Spot appearance="icon" icon={Search} size={72} />
       {"error" in props && props.error !== null && props.error !== "sanctioned" && (
         <Text
-          typography={"error" in props ? "heading3SemiBold" : "body2"}
+          typography={"error" in props ? "heading4SemiBold" : "body2"}
           lx={{ marginTop: "s24", color: "base" }}
         >
           {errorMessages[props.error]}

@@ -4,9 +4,11 @@ import { Flex, Input, Text } from "@ledgerhq/react-ui";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useGenerateLocalBraze } from "../Hooks/useGenerateLocalBraze";
 import { HardwareCarouselBuilder } from "./HardwareCarouselBuilder";
+import { EligibilityInspect } from "./EligibilityInspect";
 import { useTranslation } from "react-i18next";
 
 type TabKey =
+  | "Inspect"
   | "NotificationContentCard"
   | "ActionContentCard"
   | "PortfolioContentCard"
@@ -167,6 +169,10 @@ export const ModalBody: React.FC = () => {
 
   const tabs: { key: TabKey; label: string }[] = [
     {
+      key: "Inspect",
+      label: t("settings.developer.brazeTools.modal.inspect.tab"),
+    },
+    {
       key: "NotificationContentCard",
       label: t("settings.developer.brazeTools.modal.fields.notification"),
     },
@@ -194,7 +200,7 @@ export const ModalBody: React.FC = () => {
   );
 
   const inputFields: Record<
-    Exclude<TabKey, "CategoryContentCard">,
+    Exclude<TabKey, "CategoryContentCard" | "Inspect">,
     { field: keyof FormState; placeholder: string; label: string }[]
   > = {
     PortfolioContentCard: [
@@ -333,6 +339,69 @@ export const ModalBody: React.FC = () => {
   };
 
   const isHardwareCarouselTab = selectedTab === "CategoryContentCard";
+  const isInspectTab = selectedTab === "Inspect";
+
+  const renderSelectedTab = () => {
+    if (isInspectTab) {
+      return <EligibilityInspect />;
+    }
+    if (isHardwareCarouselTab) {
+      return <HardwareCarouselBuilder />;
+    }
+    return (
+      <>
+        <Flex flexDirection="column" rowGap={12}>
+          <FormRow>
+            <Label> {t("settings.developer.brazeTools.modal.fields.title")}</Label>
+            <FullWidthInput
+              value={formData.title}
+              onChangeEvent={handleInputChange("title")}
+              placeholder="Title"
+            />
+          </FormRow>
+          <FormRow>
+            <Label>{t("settings.developer.brazeTools.modal.fields.description")}</Label>
+            <FullWidthInput
+              value={formData.description}
+              onChangeEvent={handleInputChange("description")}
+              placeholder="Description"
+            />
+          </FormRow>
+          <FormRow>
+            <Label> {t("settings.developer.brazeTools.modal.fields.order")}</Label>
+            <FullWidthInput
+              value={formData.order}
+              onChangeEvent={handleNumberChange("order")}
+              placeholder="Order"
+              type="number"
+            />
+          </FormRow>
+          {inputFields[selectedTab as Exclude<TabKey, "Inspect" | "CategoryContentCard">].map(
+            ({ field, placeholder, label }) => (
+              <FormRow key={field}>
+                <Label>{label}</Label>
+                <FullWidthInput
+                  value={formData[field] ?? ""}
+                  onChangeEvent={handleInputChange(field)}
+                  placeholder={placeholder}
+                />
+              </FormRow>
+            ),
+          )}
+        </Flex>
+        <Flex flexDirection="row" columnGap={24}>
+          <Button size="sm" appearance="accent" onClick={handleAddCard}>
+            {t("settings.developer.brazeTools.modal.add") +
+              " " +
+              tabs.find(tab => tab.key === selectedTab)?.label}
+          </Button>
+          <Button size="sm" appearance="red" onClick={dismissLocalCards}>
+            {t("settings.developer.brazeTools.modal.dismiss")}
+          </Button>
+        </Flex>
+      </>
+    );
+  };
 
   return (
     <Flex flexDirection="column" rowGap={24}>
@@ -347,59 +416,7 @@ export const ModalBody: React.FC = () => {
           </Button>
         ))}
       </div>
-      {isHardwareCarouselTab ? (
-        <HardwareCarouselBuilder />
-      ) : (
-        <>
-          <Flex flexDirection="column" rowGap={12}>
-            <FormRow>
-              <Label> {t("settings.developer.brazeTools.modal.fields.title")}</Label>
-              <FullWidthInput
-                value={formData.title}
-                onChangeEvent={handleInputChange("title")}
-                placeholder="Title"
-              />
-            </FormRow>
-            <FormRow>
-              <Label>{t("settings.developer.brazeTools.modal.fields.description")}</Label>
-              <FullWidthInput
-                value={formData.description}
-                onChangeEvent={handleInputChange("description")}
-                placeholder="Description"
-              />
-            </FormRow>
-            <FormRow>
-              <Label> {t("settings.developer.brazeTools.modal.fields.order")}</Label>
-              <FullWidthInput
-                value={formData.order}
-                onChangeEvent={handleNumberChange("order")}
-                placeholder="Order"
-                type="number"
-              />
-            </FormRow>
-            {inputFields[selectedTab].map(({ field, placeholder, label }) => (
-              <FormRow key={field}>
-                <Label>{label}</Label>
-                <FullWidthInput
-                  value={formData[field] ?? ""}
-                  onChangeEvent={handleInputChange(field)}
-                  placeholder={placeholder}
-                />
-              </FormRow>
-            ))}
-          </Flex>
-          <Flex flexDirection="row" columnGap={24}>
-            <Button size="sm" appearance="accent" onClick={handleAddCard}>
-              {t("settings.developer.brazeTools.modal.add") +
-                " " +
-                tabs.find(tab => tab.key === selectedTab)?.label}
-            </Button>
-            <Button size="sm" appearance="red" onClick={dismissLocalCards}>
-              {t("settings.developer.brazeTools.modal.dismiss")}
-            </Button>
-          </Flex>
-        </>
-      )}
+      {renderSelectedTab()}
     </Flex>
   );
 };

@@ -5,6 +5,7 @@ import {
   buildLargeScreenUpsellCtaLink,
   type LargeScreenUpsellUtmContent,
 } from "@features/flow-large-screen-upsell/utils/upsellCta";
+import { getLnsUpsellCopyKeys } from "@features/flow-large-screen-upsell/utils/getLnsUpsellCopyKeys";
 import {
   toLargeScreenUpsellDeviceModelAnalyticsValue,
   type LargeScreenUpsellDeviceModelAnalyticsValue,
@@ -46,6 +47,11 @@ export function useLNUpsellBannerModel(location: LNBannerLocation): LNBannerMode
     ? toLargeScreenUpsellDeviceModelAnalyticsValue(deviceModelId)
     : undefined;
   const personalRecoOptIn = tracking === "opted_in";
+  const copyKeys = getLnsUpsellCopyKeys({
+    tracking,
+    surface: "banner",
+    deviceModelId,
+  });
   const sharedAnalyticsProps = useMemo(
     () =>
       deviceModel
@@ -101,6 +107,7 @@ export function useLNUpsellBannerModel(location: LNBannerLocation): LNBannerMode
     isShown,
     discount,
     tracking,
+    copyKeys,
     handleCTAPress,
     imageUrl: lnUpsellImageByLocation[location],
   };

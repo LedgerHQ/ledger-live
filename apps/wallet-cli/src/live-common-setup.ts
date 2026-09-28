@@ -72,7 +72,9 @@ const walletCliLoaders: CoinModuleLoader[] = [
     loadBridgeApi: () =>
       import("@ledgerhq/live-common/families/evm/bridge/api").then(m => m.default),
     loadAccountRawAssign: () =>
-      import("@ledgerhq/live-common/families/evm/accountRawAssign").then(m => m.default),
+      import("@ledgerhq/live-common/bridge/generic-coin-framework/accountRawAssign").then(
+        m => m.default,
+      ),
     loadLocalApi: () =>
       import("@ledgerhq/live-common/families/evm/coinModuleApi").then(m => m.createLocalEvmApi),
   },

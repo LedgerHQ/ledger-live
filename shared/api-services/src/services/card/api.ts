@@ -10,6 +10,7 @@ import {
   CARD_REDUCER_PATH,
   CARD_STALE_REQUEST,
   HEADER_X_CLIENT_KEY,
+  HEADER_X_US_ENV,
   UNAUTHORIZED_STATUS,
 } from "./constants";
 import { CardApiExtraSchema } from "./schema";
@@ -29,9 +30,19 @@ export function getCardExtra(api: { extra: unknown }): CardApiExtra {
   return api.extra as CardApiExtra;
 }
 
-function cardHeaders(extra: CardApiExtra, token?: string | null, headers = new Headers()): Headers {
+function cardHeaders(
+  extra: CardApiExtra,
+  token: string | null | undefined,
+  isUsEnv: boolean,
+  headers = new Headers(),
+): Headers {
   headers.set("Content-Type", "application/json");
   headers.set(HEADER_X_CLIENT_KEY, extra.getCardBaanxClientKey());
+  // Only the US tenant is named. The other one is the provider's default, and a literal "false"
+  // reads as true to a header parser that only tests for presence.
+  if (isUsEnv) {
+    headers.set(HEADER_X_US_ENV, "true");
+  }
   if (token) {
     headers.set("authorization", `Bearer ${token}`);
   }
@@ -74,17 +85,17 @@ const cardBaseQuery: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   const extra = getCardExtra(api);
 
-  const send = async (token: string | null) => {
+  const send = async (token: string | null, isUsEnv: boolean) => {
     const answer = await fetchBaseQuery({
       baseUrl: extra.getCardApiBaseUrl(),
-      prepareHeaders: headers => cardHeaders(extra, token, headers),
+      prepareHeaders: headers => cardHeaders(extra, token, isUsEnv, headers),
     })(args, api, extraOptions);
 
     return answer.error ? { error: answer.error } : { data: answer.data };
   };
 
   if (extraOptions?.authenticated === false) {
-    return send(null);
+    return send(null, extra.isCardUsEnv());
   }
 
   let session: CardSessionSnapshot;
@@ -94,12 +105,19 @@ const cardBaseQuery: BaseQueryFn<
     return sessionPortError("read");
   }
 
+  /**
+   * Read in the same turn as the snapshot, and not again at header time. A login that records
+   * another tenant while this request is in flight must not move the header off the token this
+   * request already carries.
+   */
+  const isUsEnv = extra.isCardUsEnv();
+
   const sendForCurrentSession = async (token: string | null) => {
     if (!extra.isCardSessionCurrent(session.sessionId)) {
       return staleRequestResult;
     }
 
-    const answer = await send(token);
+    const answer = await send(token, isUsEnv);
     return extra.isCardSessionCurrent(session.sessionId) ? answer : staleRequestResult;
   };
 

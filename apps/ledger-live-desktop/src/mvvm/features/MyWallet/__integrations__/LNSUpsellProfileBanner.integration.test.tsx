@@ -30,12 +30,14 @@ async function renderMyWalletProfile({
   isOptIn = true,
   optedOutLink,
   devicesModelList = [DeviceModelId.nanoS],
+  onboardingDate = daysAgoIso(0),
 }: {
   ffEnabled?: boolean;
   profileBannerEnabled?: boolean;
   isOptIn?: boolean;
   optedOutLink?: string;
   devicesModelList?: DeviceModelId[];
+  onboardingDate?: string;
 } = {}) {
   const defaultParams = FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params;
 
@@ -73,7 +75,7 @@ async function renderMyWalletProfile({
         anonymousUserNotifications: {},
       },
       postOnboarding: {
-        onboardingDate: daysAgoIso(0),
+        onboardingDate,
       },
     },
   });
@@ -133,10 +135,22 @@ describe("My Wallet LNS upsell profile banner", () => {
   it("should show the compact banner when personalized recommendations are off", async () => {
     await renderMyWalletProfile({ isOptIn: false });
 
-    expect(screen.getByText("More security. More control")).toBeVisible();
-    expect(screen.getByText("Learn more about security features.")).toBeVisible();
+    expect(screen.getByText("More Security. More Control")).toBeVisible();
+    expect(screen.getByText("Learn more about latest OS and security features.")).toBeVisible();
     expect(screen.getByRole("button", { name: "Explore" })).toBeVisible();
     expect(screen.queryByText("Explore all Ledger devices")).toBeNull();
+  });
+
+  it("should keep the generic opted-out copy for Nano S Plus", async () => {
+    await renderMyWalletProfile({
+      isOptIn: false,
+      devicesModelList: [DeviceModelId.nanoSP],
+      onboardingDate: daysAgoIso(30),
+    });
+
+    expect(screen.getByText("More security. More control")).toBeVisible();
+    expect(screen.getByText("Learn more about security features.")).toBeVisible();
+    expect(screen.queryByText("More Security. More Control")).toBeNull();
   });
 
   it("should fire a Profile page event when the banner is shown", async () => {

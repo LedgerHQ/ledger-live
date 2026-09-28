@@ -152,6 +152,7 @@ export interface AleoResources {
   lastPrivateSyncDate: Date | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  hasMigratedStaking?: boolean;
   bondedBalance?: BigNumber;
   bondedValidator?: string | null;
   unbondingBalance?: BigNumber;
@@ -166,6 +167,7 @@ export interface AleoResourcesRaw {
   lastPrivateSyncDate: string | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  hasMigratedStaking?: boolean;
   bondedBalance?: string;
   bondedValidator?: string | null;
   unbondingBalance?: string;
@@ -207,8 +209,23 @@ export type AleoOperationExtra = {
   transactionType: AleoTransactionType;
   // this field is used to indicate that semi-public operation has been patched with private data after private sync
   patched?: boolean;
-  // token program id for token operations (CAL lookup, sub-account routing)
+  // source program of the operation (CAL lookup, sub-account routing, staking detection).
+  // Absent on operations persisted before it was recorded.
   programId?: string;
+  // BOND only: unbond_public/claim_unbond_public name no validator on-chain
+  validator?: string;
+  // BOND/UNBOND only: the bonded/unbonded principal. Staking only moves funds between the
+  // account's own balances, so a staking op's `value` is the fee and the principal is carried here.
+  stakedAmount?: BigNumber;
+};
+
+export type AleoOperationExtraRaw = {
+  functionId: string;
+  transactionType: AleoTransactionType;
+  patched?: boolean;
+  programId?: string;
+  validator?: string;
+  stakedAmount?: string;
 };
 
 export type OperationDetailsExtraField = {

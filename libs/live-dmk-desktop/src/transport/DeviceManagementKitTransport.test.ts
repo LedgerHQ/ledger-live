@@ -272,4 +272,61 @@ describe("DeviceManagementKitTransport", () => {
       }),
     );
   });
+
+  it("should emit the discovered device's own id as descriptor, not an empty string", async () => {
+    const mockAvailableDevices = new Observable<DiscoveredDevice[]>(subscriber => {
+      subscriber.next([testDevice1]);
+      subscriber.next([testDevice1, testDevice2]);
+      subscriber.next([testDevice2]);
+      subscriber.complete();
+    });
+
+    jest
+      .spyOn(deviceManagementKit, "listenToAvailableDevices")
+      .mockReturnValue(mockAvailableDevices);
+    jest
+      .spyOn(deviceManagementKit, "listenToConnectedDevice")
+      .mockReturnValue(new Observable<ConnectedDevice>());
+    jest.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(new Observable());
+
+    DeviceManagementKitTransport.listen(mockObserver);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    // DONJON-1409: each device must carry a distinct descriptor, not the previous
+    // hardcoded "" (which made every device indistinguishable here).
+    expect(mockObserver.next.mock.calls[0][0]).toEqual(
+      expect.objectContaining({ type: "add", descriptor: testDevice1.id }),
+    );
+    expect(mockObserver.next.mock.calls[1][0]).toEqual(
+      expect.objectContaining({ type: "add", descriptor: testDevice2.id }),
+    );
+    expect(mockObserver.next.mock.calls[2][0]).toEqual(
+      expect.objectContaining({ type: "remove", descriptor: testDevice1.id }),
+    );
+    expect(mockObserver.next.mock.calls[0][0].descriptor).not.toBe(
+      mockObserver.next.mock.calls[1][0].descriptor,
+    );
+  });
+
+  it("listenLegacyConnectApp should also emit the discovered device's own id as descriptor", async () => {
+    const mockAvailableDevices = new Observable<DiscoveredDevice[]>(subscriber => {
+      subscriber.next([testDevice1]);
+      subscriber.next([testDevice1, testDevice2]);
+      subscriber.complete();
+    });
+
+    jest
+      .spyOn(deviceManagementKit, "listenToAvailableDevices")
+      .mockReturnValue(mockAvailableDevices);
+
+    DeviceManagementKitTransport.listenLegacyConnectApp(mockObserver);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(mockObserver.next.mock.calls[0][0]).toEqual(
+      expect.objectContaining({ type: "add", descriptor: testDevice1.id }),
+    );
+    expect(mockObserver.next.mock.calls[1][0]).toEqual(
+      expect.objectContaining({ type: "add", descriptor: testDevice2.id }),
+    );
+  });
 });

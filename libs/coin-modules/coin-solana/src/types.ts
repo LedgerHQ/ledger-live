@@ -11,6 +11,11 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import type {
+  BufferTxData,
+  TxData,
+  TxDataNotSupported,
+} from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import { TokenAccountState } from "./network/chain/account/token";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
@@ -29,6 +34,7 @@ export type TokenCreateATACommand = {
   owner: string;
   mint: string;
   associatedTokenAccountAddress: string;
+  tokenProgram: SolanaTokenProgram;
 };
 
 export type TokenCreateApproveCommand = {
@@ -361,3 +367,15 @@ export type SolanaExtraDeviceTransactionField = {
   type: "solana.token.transferFee";
   label: string;
 };
+
+/** Not a chain payload, but the intent carries no other slot for a crafting input. */
+export interface SolanaStakeAccountSeedData extends TxData {
+  type: "stakeAccountSeed";
+  value: string;
+}
+
+/** A partner-built transaction and a stake seed never occur together. */
+export type SolanaTransactionIntentData =
+  | TxDataNotSupported
+  | BufferTxData
+  | SolanaStakeAccountSeedData;

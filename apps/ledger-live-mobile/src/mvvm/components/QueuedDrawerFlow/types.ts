@@ -20,6 +20,7 @@ export type QueuedDrawerFlowOptions = Readonly<
 
 export type QueuedDrawerFlowScreen = Readonly<{
   content: ReactNode;
+  footer?: ReactNode;
   options?: QueuedDrawerFlowOptions;
 }>;
 

@@ -23,6 +23,7 @@ export function QueuedDrawerFlow<Step extends string>({
       isRequestingToBeOpened={isOpen}
       onBack={onBack}
       onClose={onClose}
+      footer={currentScreen.footer}
       testID={testID}
     >
       <QueuedDrawerScreenTransition currentStep={currentStep} screens={screens} />

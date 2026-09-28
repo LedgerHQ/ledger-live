@@ -3,6 +3,7 @@ import {
   CARD_API_BASE_URL,
   cardApiWrapper as storeWrapper,
 } from "@support/msw-features-flow-pay-card";
+import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import { I18nTestProvider } from "@shared/i18n/testing";
 
 export const CARD_TRANSACTIONS_URL = `${CARD_API_BASE_URL}/v1/card/transactions`;
@@ -47,19 +48,52 @@ const CARD_TRANSACTIONS_RESOURCES = {
           categories: CATEGORY_LABELS,
           title: SECTION_TITLE,
           detail: DETAIL_COPY,
+          history: {
+            today: "Today",
+            yesterday: "Yesterday",
+            unknownDate: "Date unavailable",
+            columns: {
+              transaction: "Transaction",
+              cashback: "Cashback",
+              fundingSources: "Funding sources",
+              amount: "Amount",
+            },
+            paidWithAssets: "Paid with {{count}} assets",
+            goToPay: "Go to Pay",
+            signedOut: {
+              title: "Log in to see your card transactions",
+              description: "Your card activity appears here once you’re logged in.",
+            },
+            empty: {
+              title: "No card transactions yet",
+              description: "Come back later to see your card transactions.",
+            },
+            error: {
+              title: "Couldn't load card transactions",
+              description: "Check your connection and try again.",
+            },
+          },
         },
       },
     },
   },
 };
 
-export function cardApiWrapper({ signedIn = false }: { signedIn?: boolean } = {}) {
+export function cardApiWrapper({
+  signedIn = false,
+  track = jest.fn(),
+}: {
+  signedIn?: boolean;
+  track?: jest.Mock;
+} = {}) {
   const StoreWrapper = storeWrapper({ signedIn });
 
   return function CardApiWrapper({ children }: PropsWithChildren) {
     return (
       <StoreWrapper>
-        <I18nTestProvider resources={CARD_TRANSACTIONS_RESOURCES}>{children}</I18nTestProvider>
+        <PayAnalyticsProvider adapter={{ track }}>
+          <I18nTestProvider resources={CARD_TRANSACTIONS_RESOURCES}>{children}</I18nTestProvider>
+        </PayAnalyticsProvider>
       </StoreWrapper>
     );
   };

@@ -16,6 +16,7 @@ import { useLocale, useTranslation } from "~/context/Locale";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useTransferDrawerController } from "LLM/features/QuickActions/hooks/useTransferDrawerController";
+import { computeAvailableAndEarnDeposit } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 
 type EarnState =
   | { type: "hidden" }
@@ -33,32 +34,18 @@ export function useBalanceDetailsViewModel(
 
   const hasAccounts = (distributionItem?.accounts.length ?? 0) > 0;
 
-  // `buildAssetDistribution` already aggregates `amount` and `countervalue`
-  // across every network/sub-account of the asset (e.g. USDC on ETH + on
-  // Base). We just consume the pre-computed values — same approach as
-  // `apps/ledger-live-desktop/.../PortfolioSection/TotalBalance/useTotalBalanceViewModel.ts`.
   const totalBalance = useMemo(
     () => new BigNumber(distributionItem?.amount ?? 0),
     [distributionItem?.amount],
   );
 
-  // Spendable is summed locally because the distribution item only exposes the
-  // total amount, not the spendable balance per network.
-  const { availableBalance, earnDeposit } = useMemo(() => {
-    let spendable = new BigNumber(0);
-    let total = new BigNumber(0);
-    for (const acc of distributionItem?.accounts ?? []) {
-      total = total.plus(acc.balance);
-      spendable = spendable.plus(acc.spendableBalance);
-    }
-    const deposit = total.minus(spendable);
-    return {
-      availableBalance: spendable,
-      earnDeposit: deposit.isPositive() ? deposit : new BigNumber(0),
-    };
-  }, [distributionItem?.accounts]);
-
   const unit = distributionItem?.currency.units?.[0] ?? currency?.units?.[0];
+
+  const referenceMagnitude = unit?.magnitude ?? 0;
+  const { availableBalance, earnDeposit } = useMemo(
+    () => computeAvailableAndEarnDeposit(distributionItem?.accounts ?? [], referenceMagnitude),
+    [distributionItem?.accounts, referenceMagnitude],
+  );
 
   const formattedTotalBalance = useMemo(() => {
     if (!unit) return "";

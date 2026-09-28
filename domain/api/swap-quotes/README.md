@@ -71,5 +71,5 @@ mapping them to a caller-facing outcome is the caller's job.
 `@ledgerhq/wallet-api-exchange-module` is a published package supplying the
 wallet-api wire contract (`QuotesInput`, `ProviderErrorCodes`). It is the one
 `@ledgerhq/*` dependency here, and it is type-only apart from the
-`ProviderErrorCodes` enum. Pending confirmation that the DDD layers may depend
+`ProviderErrorCodes` enum. Pending confirmation that the monorepo layers may depend
 on published packages as ordinary npm dependencies.

@@ -96,29 +96,19 @@ export class CosmosAPI {
     delegations: CosmosDelegation[];
     redelegations: CosmosRedelegation[];
     unbondings: CosmosUnbonding[];
-    withdrawAddress: string;
     accountInfo: { sequence: number; accountNumber: number };
   }> => {
     try {
-      const [
-        accountInfo,
-        balances,
-        blockHeight,
-        txs,
-        delegations,
-        redelegations,
-        unbondings,
-        withdrawAddress,
-      ] = await Promise.all([
-        this.getAccount(address),
-        this.getAllBalances(address, currency),
-        this.getHeight(),
-        this.getTransactions(address, 100),
-        this.getDelegations(address, currency),
-        this.getRedelegations(address),
-        this.getUnbondings(address),
-        this.getWithdrawAddress(address),
-      ]);
+      const [accountInfo, balances, blockHeight, txs, delegations, redelegations, unbondings] =
+        await Promise.all([
+          this.getAccount(address),
+          this.getAllBalances(address, currency),
+          this.getHeight(),
+          this.getTransactions(address, 100),
+          this.getDelegations(address, currency),
+          this.getRedelegations(address),
+          this.getUnbondings(address),
+        ]);
 
       const staking = await this.mergeQueuedStaking(
         { delegations, redelegations, unbondings },
@@ -132,7 +122,6 @@ export class CosmosAPI {
         balances,
         blockHeight,
         txs,
-        withdrawAddress,
         ...staking,
       };
     } catch (e) {
@@ -527,20 +516,6 @@ export class CosmosAPI {
     }
 
     return unbondings;
-  };
-
-  /**
-   * @sdk https://docs.cosmos.network/api#tag/Query/operation/DelegatorWithdrawAddress
-   */
-  getWithdrawAddress = async (address: string): Promise<string> => {
-    const {
-      data: { withdraw_address: withdrawAddress },
-    } = await network<CosmosSDKTypes.GetDelegatorWithdrawAddress>({
-      method: "GET",
-      url: `${this.defaultEndpoint}/cosmos/distribution/${this.version}/delegators/${address}/withdraw_address`,
-    });
-
-    return withdrawAddress;
   };
 
   getTransactions = async (address: string, paginationSize: number): Promise<CosmosTx[]> => {

@@ -5,21 +5,21 @@ import { publishEvent } from "./eventLog";
 type Delivery = {
   type: EventType;
   eventName: string;
-  eventProps: Props;
-  eventPropsWithoutExtra: Props;
+  eventProperties: Props;
+  eventPropertiesWithoutExtra: Props;
 };
 
 export async function deliver({
   type: kind,
   eventName,
-  eventProps,
-  eventPropsWithoutExtra,
+  eventProperties,
+  eventPropertiesWithoutExtra,
 }: Delivery): Promise<void> {
   const publish = (deliveryStatus: DeliveryStatus) =>
     publishEvent({
       eventName,
-      eventProps,
-      eventPropsWithoutExtra,
+      eventProperties,
+      eventPropertiesWithoutExtra,
       deliveryStatus,
     });
 
@@ -30,11 +30,11 @@ export async function deliver({
   }
 
   try {
-    analytics.log?.(kind, eventName, eventProps);
+    analytics.log?.(kind, eventName, eventProperties);
   } catch {}
 
   try {
-    const status = await analytics.track(eventName, eventProps);
+    const status = await analytics.track(eventName, eventProperties);
     publish(status ?? "enqueued");
   } catch {
     publish("failed_tracking");

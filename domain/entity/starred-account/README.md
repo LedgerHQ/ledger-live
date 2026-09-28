@@ -1,6 +1,6 @@
 # @domain/entity-starred-account
 
-> **Status: UNSTABLE** — This package is incrementally shipping the validated WalletSync DDD architecture; API may change.
+> **Status: UNSTABLE** — This package is incrementally shipping the validated WalletSync architecture; API may change.
 
 > **⚠️ DEPRECATED** — The Wallet V4 implementation no longer uses the concept of starred accounts. This package is introduced for backwards compatibility and will not be actively developed further. Do not build new features on top of it.
 

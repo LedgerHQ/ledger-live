@@ -1,13 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import {
-  markCardAddedToWallet,
+  markAnalyticsMilestonesReported,
   markCardOnboardingCompleted,
   payCardOnboardingWidgetInitialState,
   payCardOnboardingWidgetPersistedSelector,
   payCardOnboardingWidgetSlice,
   resetCardOnboardingCompleted,
   restorePayCardOnboardingWidget,
-  selectHasAddedCardToWallet,
+  setAnalyticsCardId,
   selectHasCompletedCardOnboarding,
 } from "./index";
 
@@ -20,22 +20,14 @@ function makeStore() {
   return {
     dispatch: store.dispatch,
     hasCompletedOnboarding: () => selectHasCompletedCardOnboarding(store.getState()),
-    hasAddedCardToWallet: () => selectHasAddedCardToWallet(store.getState()),
     persisted: () => payCardOnboardingWidgetPersistedSelector(store.getState()),
   };
 }
 
 describe("payCardOnboardingWidgetSlice", () => {
-  it("starts with the onboarding uncompleted and the card outside the wallet", () => {
+  it("starts with the onboarding uncompleted", () => {
     expect(makeStore().hasCompletedOnboarding()).toBe(false);
-    expect(makeStore().hasAddedCardToWallet()).toBe(false);
     expect(makeStore().persisted()).toEqual(payCardOnboardingWidgetInitialState);
-  });
-
-  it("markCardAddedToWallet marks the wallet step done", () => {
-    const store = makeStore();
-    store.dispatch(markCardAddedToWallet());
-    expect(store.hasAddedCardToWallet()).toBe(true);
   });
 
   it("markCardOnboardingCompleted completes the onboarding", () => {
@@ -51,13 +43,24 @@ describe("payCardOnboardingWidgetSlice", () => {
     expect(store.hasCompletedOnboarding()).toBe(false);
   });
 
-  it("restorePayCardOnboardingWidget restores the persisted flags", () => {
+  it("restorePayCardOnboardingWidget restores the persisted flag", () => {
+    const store = makeStore();
+    store.dispatch(restorePayCardOnboardingWidget({ hasCompletedOnboarding: true }));
+    expect(store.hasCompletedOnboarding()).toBe(true);
+  });
+
+  it("restorePayCardOnboardingWidget ignores a blob still carrying the retired wallet flag", () => {
     const store = makeStore();
     store.dispatch(
-      restorePayCardOnboardingWidget({ hasCompletedOnboarding: true, hasAddedCardToWallet: true }),
+      restorePayCardOnboardingWidget({
+        hasCompletedOnboarding: true,
+        hasAddedCardToWallet: true,
+      } as unknown as RestorePayload),
     );
-    expect(store.hasCompletedOnboarding()).toBe(true);
-    expect(store.hasAddedCardToWallet()).toBe(true);
+    expect(store.persisted()).toEqual({
+      ...payCardOnboardingWidgetInitialState,
+      hasCompletedOnboarding: true,
+    });
   });
 
   it.each<[string, RestorePayload]>([
@@ -71,13 +74,28 @@ describe("payCardOnboardingWidgetSlice", () => {
     expect(store.hasCompletedOnboarding()).toBe(true);
   });
 
-  it("exposes the flags to persist", () => {
+  it("exposes the flag to persist", () => {
     const store = makeStore();
     store.dispatch(markCardOnboardingCompleted());
-    store.dispatch(markCardAddedToWallet());
+    store.dispatch(
+      markAnalyticsMilestonesReported(["card-onboarding-in-progress", "card-onboarding-completed"]),
+    );
     expect(store.persisted()).toEqual({
       hasCompletedOnboarding: true,
-      hasAddedCardToWallet: true,
+      analyticsCardId: null,
+      reportedAnalyticsMilestones: ["card-onboarding-completed"],
+    });
+  });
+
+  it("clears reported milestones when the card account changes", () => {
+    const store = makeStore();
+    store.dispatch(setAnalyticsCardId("card-1"));
+    store.dispatch(markAnalyticsMilestonesReported(["card-claimed"]));
+    store.dispatch(setAnalyticsCardId("card-2"));
+
+    expect(store.persisted()).toEqual({
+      ...payCardOnboardingWidgetInitialState,
+      analyticsCardId: "card-2",
     });
   });
 });

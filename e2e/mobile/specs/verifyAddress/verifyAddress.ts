@@ -2,7 +2,12 @@ import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
-export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], tags: string[]) {
+export function runVerifyAddressTest(
+  account: AccountType,
+  tmsLinks: string[],
+  tags: string[],
+  teamOwner: Team = Team.COIN_INTEGRATION,
+) {
   describe("Receive", () => {
     beforeAll(async () => {
       await app.init({
@@ -12,7 +17,7 @@ export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], t
       await app.mainNavigation.waitForWallet40Ready();
     });
 
-    setTeamOwner(Team.COIN_INTEGRATION);
+    setTeamOwner(teamOwner);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${account.currency.testLabel}] - Verify address`, async () => {

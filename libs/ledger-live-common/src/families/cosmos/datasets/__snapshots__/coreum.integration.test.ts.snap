@@ -3,7 +3,7 @@
 exports[`coreum currency bridge scanAccounts coreum seed 1 1`] = `
 [
   {
-    "balance": "2269408",
+    "balance": "2457355",
     "currencyId": "coreum",
     "derivationMode": "",
     "freshAddress": "core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2",

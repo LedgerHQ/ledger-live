@@ -101,6 +101,30 @@ const outgoingTx = (): TX =>
     ],
   }) as unknown as TX;
 
+/**
+ * Shields the account's own coin: the shielded output the account paid itself
+ * is invisible to the explorer, which sees nothing but the change coming back.
+ */
+const shieldingTx = (): TX =>
+  ({
+    id: "tx-shield",
+    fees: "60000",
+    received_at: "2026-07-03T00:00:00.000Z",
+    block: { height: 3_425_860, hash: "ef".repeat(32), time: "2026-07-03T00:00:00.000Z" },
+    inputs: [
+      {
+        address: OWN,
+        value: "70000",
+        sequence: 0xfffffffe,
+        output_hash: "aa".repeat(32),
+        output_index: 0,
+      },
+    ],
+    outputs: [
+      output({ address: CHANGE, output_hash: "fe".repeat(32), output_index: 0, value: "10000" }),
+    ],
+  }) as unknown as TX;
+
 const incomingShieldedTx = (id: string): ShieldedTransaction =>
   ({
     id,
@@ -112,6 +136,18 @@ const incomingShieldedTx = (id: string): ShieldedTransaction =>
     decryptedData: {
       orchard_outputs: [
         { amount: new BigNumber(5_000), memo: "", transfer_type: "incoming", isSpent: false },
+      ],
+      sapling_outputs: [],
+    },
+  }) as unknown as ShieldedTransaction;
+
+const selfShieldingTx = (id: string): ShieldedTransaction =>
+  ({
+    ...incomingShieldedTx(id),
+    hasTransparentInputs: true,
+    decryptedData: {
+      orchard_outputs: [
+        { amount: new BigNumber(5_000), memo: "", transfer_type: "internal", isSpent: false },
       ],
       sapling_outputs: [],
     },
@@ -371,6 +407,183 @@ describe("performTransparentSync", () => {
 
     expect(transactionDetails).toHaveBeenCalledWith(expect.anything(), undefined);
     expect(operations[0].recipients).toEqual([THEIRS]);
+  });
+
+  // A shielding send pays the account that signs it and nobody else, so the
+  // viewing key has no payee to recover from it. Left at that, the send read as
+  // a payment to the change address it paid itself -- sender and recipient the
+  // same address.
+  it("names the account's own shielded address as the destination of a shielding send", async () => {
+    getAccountTransactions.mockResolvedValue({ txs: [shieldingTx()] });
+    getZCashClient.mockResolvedValue({
+      transactionDetails: jest.fn(async () => [{ txid: "tx-shield", fee: "15000", payees: [] }]),
+    });
+    const shielding = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({
+          shieldedAddress: "u1ownshielded",
+          transactions: [selfShieldingTx("tx-shield")],
+        }),
+      },
+    });
+
+    const operations = (await performTransparentSync(shielding, signerContext)).operations ?? [];
+
+    expect(operations).toMatchObject([
+      {
+        type: "OUT",
+        recipients: ["u1ownshielded"],
+        extra: { zcashPrivate: true },
+      },
+    ]);
+  });
+
+  // Nothing identifies the destination as ours until the shielded scan has
+  // found the note the send created, and naming the account's shielded address
+  // before then would claim a destination for sends that paid someone else.
+  it("leaves a send the shielded leg has not credited the account for alone", async () => {
+    getAccountTransactions.mockResolvedValue({ txs: [shieldingTx()] });
+    getZCashClient.mockResolvedValue({
+      transactionDetails: jest.fn(async () => [{ txid: "tx-shield", fee: "15000", payees: [] }]),
+    });
+    const unscanned = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({ shieldedAddress: "u1ownshielded" }),
+      },
+    });
+
+    const operations = (await performTransparentSync(unscanned, signerContext)).operations ?? [];
+
+    expect(operations).toMatchObject([
+      {
+        type: "OUT",
+        recipients: [CHANGE],
+        extra: { zcashPrivate: true },
+      },
+    ]);
+  });
+
+  // A restored account starts out exactly like the unscanned case above; once
+  // the shielded leg catches up and credits the transaction, the next tick
+  // must replace the stored operation rather than keep reporting change.
+  it("moves the recipient from the change address to the shielded one once the shielded leg credits the transaction", async () => {
+    getAccountTransactions.mockResolvedValue({ txs: [shieldingTx()] });
+    getZCashClient.mockResolvedValue({
+      transactionDetails: jest.fn(async () => [{ txid: "tx-shield", fee: "15000", payees: [] }]),
+    });
+    const account = {
+      id: "js:2:zcash:xpub6DZ:",
+      bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+    };
+
+    const uncredited =
+      (
+        await performTransparentSync(
+          info({
+            initialAccount: {
+              ...account,
+              operations: [],
+              privateInfo: privateInfo({ shieldedAddress: "u1ownshielded" }),
+            },
+          }),
+          signerContext,
+        )
+      ).operations ?? [];
+    expect(uncredited).toMatchObject([{ type: "OUT", recipients: [CHANGE] }]);
+
+    const credited =
+      (
+        await performTransparentSync(
+          info({
+            initialAccount: {
+              ...account,
+              operations: uncredited,
+              privateInfo: privateInfo({
+                shieldedAddress: "u1ownshielded",
+                transactions: [selfShieldingTx("tx-shield")],
+              }),
+            },
+          }),
+          signerContext,
+        )
+      ).operations ?? [];
+
+    expect(credited).toMatchObject([{ type: "OUT", recipients: ["u1ownshielded"] }]);
+  });
+
+  it("stamps the private marker onto a stored OUT whose fee and recipients already match", async () => {
+    getAccountTransactions.mockResolvedValue({ txs: [shieldingTx()] });
+    getZCashClient.mockResolvedValue({
+      transactionDetails: jest.fn(async () => [{ txid: "tx-shield", fee: "15000", payees: [] }]),
+    });
+    const account = {
+      id: "js:2:zcash:xpub6DZ:",
+      bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+      privateInfo: privateInfo({ shieldedAddress: "u1ownshielded" }),
+    };
+    const [fetched] =
+      (
+        await performTransparentSync(
+          info({ initialAccount: { ...account, operations: [] } }),
+          signerContext,
+        )
+      ).operations ?? [];
+    const { zcashPrivate: _, ...restExtra } = (fetched.extra ?? {}) as {
+      zcashPrivate?: boolean;
+    };
+    const stored = { ...fetched, extra: { ...restExtra, memo: "keep-me" } };
+
+    const operations =
+      (
+        await performTransparentSync(
+          info({ initialAccount: { ...account, operations: [stored] } }),
+          signerContext,
+        )
+      ).operations ?? [];
+
+    expect(operations).toMatchObject([
+      {
+        type: "OUT",
+        recipients: [CHANGE],
+        extra: { zcashPrivate: true, memo: "keep-me" },
+      },
+    ]);
+  });
+
+  // The payee the chain reports is who the transaction actually paid; a
+  // shielded note coming back to the account in the same transaction is its
+  // change, not its destination.
+  it("prefers the payee the chain reports over the account's own shielded address", async () => {
+    getAccountTransactions.mockResolvedValue({ txs: [outgoingTx()] });
+    getZCashClient.mockResolvedValue({
+      transactionDetails: jest.fn(async () => [
+        { txid: "tx-out", fee: "10000", payees: ["u1realrecipient"] },
+      ]),
+    });
+    const withBoth = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({
+          shieldedAddress: "u1ownshielded",
+          transactions: [incomingShieldedTx("tx-out")],
+        }),
+      },
+    });
+
+    const operations = (await performTransparentSync(withBoth, signerContext)).operations ?? [];
+
+    expect(operations.find(op => op.type === "OUT")?.recipients).toEqual([
+      THEIRS,
+      "u1realrecipient",
+    ]);
   });
 
   // A coin still in the mempool is spendable, so it counts towards the balance

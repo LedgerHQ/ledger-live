@@ -1,4 +1,4 @@
-import { NobleCryptoSecp256k1 } from "../../NobleCrypto";
+import { eccWrapper, NobleCryptoSecp256k1 } from "../../NobleCrypto";
 
 describe("NobleCryptoSecp256k1", () => {
   const crypto = new NobleCryptoSecp256k1();
@@ -64,6 +64,37 @@ describe("NobleCryptoSecp256k1", () => {
         `Invalid DER component: 0000000000000000000000000000000000000000000000000000000000000000`,
       );
     });
+  });
+});
+
+// bip32's testEcc() already pins isPoint/pointAddScalar/pointFromScalar at BIP32Factory() time,
+// but nothing reaches pointMultiply or pointCompress, so they are covered here. G and its
+// uncompressed form are the SEC2 generator; the scalar's public key is OpenSSL's answer
+// (node:crypto createECDH), so neither expectation comes from @noble/curves.
+describe("eccWrapper", () => {
+  const G = "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798";
+  const G_UNCOMPRESSED =
+    "0479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798" +
+    "483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8";
+  const hex = (bytes: Uint8Array | null) => Buffer.from(bytes!).toString("hex");
+
+  it("pointMultiply scales the generator to the scalar's public key", () => {
+    const scalar = Buffer.from(
+      "b1121e4088a66a28f5b6b0f5844943ecd9f610196d7bb83b25214b60452c09af",
+      "hex",
+    );
+    expect(hex(eccWrapper.pointMultiply(Buffer.from(G, "hex"), scalar))).toBe(
+      "02b07ba9dca9523b7ef4bd97703d43d20399eb698e194704791a25ce77a400df99",
+    );
+  });
+
+  it("pointMultiply returns null for a scalar outside [1, n-1]", () => {
+    expect(eccWrapper.pointMultiply(Buffer.from(G, "hex"), Buffer.alloc(32))).toBeNull();
+  });
+
+  it("pointCompress converts both ways", () => {
+    expect(hex(eccWrapper.pointCompress(Buffer.from(G_UNCOMPRESSED, "hex"), true))).toBe(G);
+    expect(hex(eccWrapper.pointCompress(Buffer.from(G, "hex"), false))).toBe(G_UNCOMPRESSED);
   });
 });
 

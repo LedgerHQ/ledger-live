@@ -27,7 +27,7 @@ export function buildTronTestSignerFromPrivateKeyHex(privateKeyHex: string): {
     async sign(_path, rawTxHex, _tokenSignatures) {
       const sig = secp256k1.sign(sha256(Buffer.from(rawTxHex, "hex")), priv, { lowS: true });
       const out = new Uint8Array(65);
-      out.set(sig.toCompactRawBytes(), 0);
+      out.set(sig.toBytes("compact"), 0);
       out[64] = sig.recovery ?? 0;
       return Buffer.from(out).toString("hex");
     },

@@ -102,8 +102,6 @@ describe.each(testAccounts)("Testing synchronisation", testAccount => {
       sumOf(cosmosResources.unbondings.map(d => d.amount)),
     );
 
-    expect(cosmosResources.withdrawAddress).toEqual(address);
-
     if (result.operations) {
       expect(result.operationsCount).toEqual(result.operations.length);
       result.operations.forEach(operation => {

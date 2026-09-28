@@ -63,7 +63,10 @@ export const PayCardStatusResponseSchema = z.object({
   panLast4: z.string().min(1),
   status: z.enum(["ACTIVE", "FROZEN", "BLOCKED", "INACTIVE"]),
   type: z.enum(["VIRTUAL", "PHYSICAL", "METAL"]),
+  /** Whether this card may be frozen at all, as opposed to `status` saying whether it is. */
+  isFreezable: z.boolean().optional(),
   orderedAt: z.string().min(1),
+  cardAddedToDigitalWallet: z.boolean().optional(),
 });
 
 /** Hex colours the provider paints the details image with. Its own defaults apply when omitted. */
@@ -168,6 +171,25 @@ export const PayCardTransactionFundingSourceSchema = z.object({
 });
 
 /**
+ * What the transaction earned back, in the reward token and in the card's own currency.
+ *
+ * Both amounts stay strings for the same reason every other amount here does: a decimal that
+ * survived the wire should not be rounded into a number on the way in. `ratePercent` is the rate
+ * that produced them, so a caller can show the rate without recomputing it from the pair.
+ *
+ * `status` stays a plain string rather than an enum, so an accrual state this schema has not seen
+ * arrives with its amounts intact instead of costing the whole cashback.
+ */
+export const PayCardTransactionCashbackSchema = z.object({
+  amount: z.string().min(1),
+  currency: z.string().min(1),
+  fiatAmount: z.string().min(1),
+  fiatCurrency: z.string().min(1),
+  ratePercent: z.string().min(1),
+  status: z.string().min(1),
+});
+
+/**
  * One card transaction, narrowed to the list and the transaction detail sheet.
  *
  * The response also carries the provider card id, the MCC number, conversion and ECB rates, and
@@ -198,6 +220,7 @@ export const PayCardTransactionSchema = z.object({
   originalCurrency: z.string().min(1),
   amountInOriginalCurrency: z.string().min(1),
   fundingSources: z.array(PayCardTransactionFundingSourceSchema).optional(),
+  cashback: PayCardTransactionCashbackSchema.optional().catch(undefined),
 });
 
 export const PayCardTransactionsResponseSchema = z.array(PayCardTransactionSchema);
@@ -286,9 +309,29 @@ export const PayCardInternalWalletSchema = z.object({
   address: z.string().min(1),
   // Nullish because a wallet with no memo answers with the key absent, others with `null`.
   addressMemo: z.string().min(1).nullish(),
+  /**
+   * Names the wallet for the link and unlink endpoints.
+   *
+   * Optional because the response is an array: one item missing the field would fail the whole
+   * parse, so requiring it here would cost a caller every balance to protect a call it may never
+   * make. {@link PayCardLinkWalletRequestSchema} requires it, which is where it is needed.
+   */
+  addressId: z.string().min(1).optional(),
 });
 
 export const PayCardInternalWalletsResponseSchema = z.array(PayCardInternalWalletSchema);
+
+/**
+ * Names one custodial wallet for the link and unlink endpoints, by the `addressId` the internal
+ * wallets answer with. Not the wallet's `id`: the two agree on some wallets and not others.
+ */
+export const PayCardLinkWalletRequestSchema = z.object({
+  addressId: z.string().min(1),
+});
+
+export const PayCardLinkWalletResponseSchema = z.object({
+  success: z.boolean(),
+});
 
 export const PayCardLinkedWalletSchema = z.object({
   id: z.string().min(1),
@@ -300,16 +343,48 @@ export const PayCardLinkedWalletSchema = z.object({
 
 export const PayCardLinkedWalletsResponseSchema = z.array(PayCardLinkedWalletSchema);
 
-/** One onboarding step the card holder still has to complete, as the backend describes it. */
-export const PayCardOnboardingStepSchema = z.object({
+/**
+ * The wallet the card's rewards are paid into.
+ *
+ * One per holder, and the provider answers it as an object rather than a list. The balance stays a
+ * string for the same reason the custodial wallets' balance does: a decimal that survives the wire
+ * should not be rounded into a number on the way in.
+ */
+export const PayCardRewardWalletResponseSchema = z.object({
   id: z.string().min(1),
-  title: z.string().min(1),
-  description: z.string().min(1),
-  isDone: z.boolean(),
+  balance: z.string().min(1),
+  currency: z.string().min(1),
+  /** Whether the holder may move these funds out, which the provider decides per programme. */
+  isWithdrawable: z.boolean(),
 });
 
-export const PayCardOnboardingStatusResponseSchema = z.object({
-  steps: z.array(PayCardOnboardingStepSchema),
+const PayCardWalletPrioritySchema = z.object({
+  addressId: z.string().min(1),
+  /**
+   * Lower is charged first. Kept as loose as the linked wallet's own `priority`, so an order read
+   * from the provider can be reordered and written back unchanged.
+   */
+  priority: z.number().finite(),
+});
+
+/**
+ * The whole charging order, not one wallet: the priorities have to be unique across the set, so
+ * they can only be decided together.
+ */
+export const PayCardWalletPrioritiesRequestSchema = z.object({
+  wallets: z
+    .array(PayCardWalletPrioritySchema)
+    .min(1)
+    .refine(wallets => new Set(wallets.map(wallet => wallet.priority)).size === wallets.length, {
+      message: "each wallet needs a priority of its own",
+    })
+    .refine(wallets => new Set(wallets.map(wallet => wallet.addressId)).size === wallets.length, {
+      message: "each wallet may be given a priority once",
+    }),
+});
+
+export const PayCardWalletPrioritiesResponseSchema = z.object({
+  success: z.boolean(),
 });
 
 /**

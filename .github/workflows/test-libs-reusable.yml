@@ -218,46 +218,8 @@ jobs:
             ${{ github.workspace }}/summary-typecheck.txt
             ${{ github.workspace }}/summary-lint.txt
 
-  test-docs:
-    name: "Libraries Documentation Check"
-    permissions:
-      id-token: write
-      contents: read
-    runs-on: ubuntu-22.04
-    outputs:
-      fail: ${{ steps.diff.outputs.diff }}
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
-          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-          nx-key: ${{ secrets.NX_KEY }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-      - name: Install dependencies
-        run: pnpm i --frozen-lockfile --filter="!./apps/**"
-      - name: run doc
-        run: pnpm exec nx run-many -t doc --projects=tag:scope:libs-ledgerjs
-      - name: get diff
-        id: diff
-        run: |
-          diff=$(git diff --exit-code > /dev/null && echo 0 || echo 1)
-          echo "diff=$diff" >> $GITHUB_OUTPUT
-          if [ "$diff" = 1 ]; then
-            echo "::error::Generated ledgerjs documentation is out of date. Run 'pnpm exec nx run-many -t doc --projects=tag:scope:libs-ledgerjs' and commit the result."
-          fi
-          exit $diff
-
   report:
-    needs: [test-docs, test-libraries, codecheck-libraries]
+    needs: [test-libraries, codecheck-libraries]
     name: "Libraries Test > Report"
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-22.04
@@ -276,10 +238,6 @@ jobs:
             const resultLint = fs.readFileSync("${{ github.workspace }}/outputs/summary-lint.txt", "utf-8");
             const resultTypecheck = fs.readFileSync("${{ github.workspace }}/outputs/summary-typecheck.txt", "utf-8");
             const statuses = {
-              doc: {
-                pass: ${{ needs.test-docs.outputs.fail != '1' }},
-                status: "${{ needs.test-docs.result }}",
-              },
               codecheck: {
                 pass: ${{ needs.codecheck-libraries.result == 'success' }},
                 status: "${{ needs.codecheck-libraries.result }}",
@@ -298,13 +256,9 @@ jobs:
               },
             };
 
-            const summary = `### Test documentation files
-            ${statuses.doc.pass ? "Documentation files are fine" : "Documentation files are outdated — run \`pnpm exec nx run-many -t doc --projects=tag:scope:libs-ledgerjs\` and commit the result"}
-              - ${statuses.doc.pass ? "✅" : "❌"} **Test documentation files** ended with status \`${statuses.doc.status}\`
+            const summary = `### Codecheck Libraries
 
-            ### Codecheck Libraries
-
-            ${statuses.codecheck.pass ? "Codecheck was successfull" : "Codecheck failed"}
+            ${statuses.codecheck.pass ? "Codecheck was successful" : "Codecheck failed"}
               - ${statuses.codecheck.pass ? "✅" : "❌"} **Codecheck** ended with status \`${statuses.codecheck.status}\`
 
             | Lint | Typecheck |

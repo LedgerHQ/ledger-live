@@ -1,7 +1,11 @@
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
-export const DEVICE_TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"] as const;
+export const DEVICE_TAGS = ["@Stax", "@Flex", "@NanoGen5", "@NanoSP", "@NanoX", "@LNS"] as const;
+
+type DeviceTag = (typeof DEVICE_TAGS)[number];
+export const SCREEN_DEVICE_TAGS = ["@Stax", "@Flex", "@NanoGen5"] satisfies DeviceTag[];
+export const BUTTON_DEVICE_TAGS = ["@NanoSP", "@NanoX", "@LNS"] satisfies DeviceTag[];
 
 const LNS_UNSUPPORTED_CURRENCIES = new Set([
   Currency.SUI.id,
@@ -20,6 +24,10 @@ function deviceTags(): string[] {
 
 export function deviceTagsWithoutLNS(): string[] {
   return DEVICE_TAGS.filter(tag => tag !== "@LNS");
+}
+
+export function deviceWithScreenTags(): string[] {
+  return SCREEN_DEVICE_TAGS;
 }
 
 function currencyTags(currencyId: string): string[] {

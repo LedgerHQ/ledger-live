@@ -45,8 +45,11 @@ export type ContactsRenameContactDialogProps = RenameContactDialogViewModel &
 
 export type ContactsRenameContactDrawerProps = ContactsRenameContactDialogProps &
   Readonly<{
-    bottomInset?: number;
-    keyboardInset?: number;
-    /** Set once the hosting drawer has settled, so the keyboard does not interrupt it opening. */
     autoFocus?: boolean;
+    bottomInset?: number;
   }>;
+
+export type ContactsRenameContactFooterProps = Pick<
+  ContactsRenameContactDialogProps,
+  "isConfirmEnabled" | "isSaving" | "isDeviceRequired" | "labels" | "onConfirm"
+>;

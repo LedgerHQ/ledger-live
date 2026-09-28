@@ -13,7 +13,8 @@
     "coverage": "jest --config jest.config.js --coverage",
     "lint": "oxlint src",
     "format": "oxfmt src",
-    "format:check": "oxfmt --check src"
+    "format:check": "oxfmt --check src",
+    "unimported": "pnpm knip --directory ../.. -W devtools/relay"
   },
   "dependencies": {
     "@devtools/transport": "workspace:*",

@@ -172,3 +172,39 @@ describe("InputCurrency — percentage presets (LIVE-34511)", () => {
     expect(input.value).toBe("1.2");
   });
 });
+
+describe("InputCurrency — grouping separators", () => {
+  const fieldWithStatusAmount = (amount: string) => (
+    <InputCurrency unit={babyUnit} value={new BigNumber(amount)} onChange={() => {}} />
+  );
+
+  it("keeps a focused field ungrouped after the user clears it and types a new amount", async () => {
+    const { user, rerender } = render(fieldWithStatusAmount("0"));
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+
+    await user.click(input);
+    await user.type(input, "10000");
+    rerender(fieldWithStatusAmount("10000000000")); // 10000 BABY — the status echoes it back
+
+    await user.clear(input);
+    rerender(fieldWithStatusAmount("0")); // the status for the emptied field lands
+
+    await user.type(input, "9999");
+    rerender(fieldWithStatusAmount("9999000000")); // 9999 BABY
+
+    expect(input.value).toBe("9999");
+  });
+
+  it("keeps a focused field ungrouped when a status lands before the first keystroke", async () => {
+    const { user, rerender } = render(fieldWithStatusAmount("0"));
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+
+    await user.click(input);
+    rerender(fieldWithStatusAmount("0"));
+
+    await user.type(input, "10000");
+    rerender(fieldWithStatusAmount("10000000000")); // 10000 BABY
+
+    expect(input.value).toBe("10000");
+  });
+});

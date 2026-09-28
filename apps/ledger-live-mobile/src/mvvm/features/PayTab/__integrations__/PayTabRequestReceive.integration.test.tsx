@@ -287,6 +287,7 @@ describe("PayTab RequestReceive integration", () => {
       button: "verify",
       buttonLocation: "request",
       page: "Pay",
+      flow: "request",
     });
     expect(screen.getByRole("button", { name: VERIFY_ADDRESS })).toBeVisible();
     expect(screen.queryByRole("button", { name: "Skip" })).not.toBeOnTheScreen();
@@ -323,9 +324,10 @@ describe("PayTab RequestReceive integration", () => {
 
     expect(capturedExecutor?.intent.input.expectedAddress).toBe(payTabEthAccount.freshAddress);
     expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
-      button: "verify address",
+      button: "verify",
       buttonLocation: "verify address",
       page: "Request Address Verification",
+      flow: "request",
     });
 
     act(() => {

@@ -2,6 +2,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import invariant from "invariant";
 import { activateLedgerSync } from "../speculos";
 import { ledgerKeyRingProtocol, ledgerSync, restoreTrustchain } from "./cli";
+import { createSeededContactsDocument, type LedgerSyncContactGroupDescriptor } from "../contacts";
 import { cloudSyncApiBaseUrl, trustchainApiBaseUrl } from "./environment";
 import type { LedgerSyncAccountDescriptor } from "./testData";
 
@@ -159,6 +160,13 @@ export class LedgerSyncCliHelper {
       accounts: descriptors,
       accountNames,
     });
+    return LedgerSyncCliHelper.pushLedgerSyncData();
+  }
+
+  static async pushContactsToTrustchain(contactGroups: LedgerSyncContactGroupDescriptor[]) {
+    LedgerSyncCliHelper.ledgerSyncPushDataArgs.data = JSON.stringify(
+      createSeededContactsDocument(contactGroups),
+    );
     return LedgerSyncCliHelper.pushLedgerSyncData();
   }
 

@@ -1,5 +1,8 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import { lastBlock } from "./lastBlock";
+
+const mockLogger: Logger = jest.fn();
 
 const mockConfig = {
   status: { type: "active" },
@@ -9,7 +12,7 @@ const mockConfig = {
 describe("lastBlock", () => {
   it("returns last block info", async () => {
     // When
-    const result = await lastBlock(mockConfig);
+    const result = await lastBlock(mockLogger, mockConfig);
 
     // Then
     expect(result.hash?.length).toBeGreaterThan(0);

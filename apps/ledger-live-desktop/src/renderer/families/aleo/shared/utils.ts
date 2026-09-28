@@ -1,5 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
 import {
   formatCurrencyUnit,
   type formatCurrencyUnitOptions,
@@ -16,7 +16,7 @@ import type {
   AleoCoinConfig,
   Transaction as AleoTransaction,
 } from "@ledgerhq/live-common/families/aleo/types";
-import { type CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Unit } from "@domain/entity-currency-unit";
 
@@ -28,17 +28,10 @@ export {
 
 export const getAleoCurrencyConfig = (
   currency: CryptoCurrency | TokenCurrency,
-): AleoCoinConfig | undefined => {
-  try {
-    const cryptoCurrency =
-      currency.type === "CryptoCurrency"
-        ? currency
-        : getCryptoCurrencyById(currency.parentCurrencyId);
-    return getCurrencyConfiguration<AleoCoinConfig>(cryptoCurrency.id);
-  } catch {
-    return undefined;
-  }
-};
+): AleoCoinConfig | undefined =>
+  getAleoCurrencyConfigById(
+    currency.type === "CryptoCurrency" ? currency.id : currency.parentCurrencyId,
+  );
 
 export function getAleoAddressBadgeI18nKey(
   transaction: AleoTransaction,

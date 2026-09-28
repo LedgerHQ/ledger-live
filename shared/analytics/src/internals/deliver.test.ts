@@ -36,8 +36,8 @@ describe("deliver", () => {
     await deliver({
       type: "track",
       eventName: "Tracked",
-      eventProps: { foo: "bar" },
-      eventPropsWithoutExtra: { foo: "bar" },
+      eventProperties: { foo: "bar" },
+      eventPropertiesWithoutExtra: { foo: "bar" },
     });
 
     expect(analytics.track).toHaveBeenCalledWith("Tracked", { foo: "bar" });
@@ -50,8 +50,8 @@ describe("deliver", () => {
     await deliver({
       type: "track",
       eventName: "Logged",
-      eventProps: { foo: "bar" },
-      eventPropsWithoutExtra: { foo: "bar" },
+      eventProperties: { foo: "bar" },
+      eventPropertiesWithoutExtra: { foo: "bar" },
     });
 
     expect(analytics.log).toHaveBeenCalledWith("track", "Logged", {
@@ -71,8 +71,8 @@ describe("deliver", () => {
       deliver({
         type: "track",
         eventName: "Tracked",
-        eventProps: { foo: "bar" },
-        eventPropsWithoutExtra: { foo: "bar" },
+        eventProperties: { foo: "bar" },
+        eventPropertiesWithoutExtra: { foo: "bar" },
       }),
     ).resolves.toBeUndefined();
 
@@ -88,16 +88,16 @@ describe("deliver", () => {
     await deliver({
       type: "track",
       eventName: "Both Payloads",
-      eventProps: { foo: "bar", appVersion: "1.2.3" },
-      eventPropsWithoutExtra: { foo: "bar" },
+      eventProperties: { foo: "bar", appVersion: "1.2.3" },
+      eventPropertiesWithoutExtra: { foo: "bar" },
     });
 
     expect(events[0]).toEqual({
       date: expect.any(Date),
       deliveryStatus: "enqueued",
       eventName: "Both Payloads",
-      eventProps: { foo: "bar", appVersion: "1.2.3" },
-      eventPropsWithoutExtra: { foo: "bar" },
+      eventProperties: { foo: "bar", appVersion: "1.2.3" },
+      eventPropertiesWithoutExtra: { foo: "bar" },
     });
   });
 
@@ -108,8 +108,8 @@ describe("deliver", () => {
       await deliver({
         type: "track",
         eventName: "Enqueued",
-        eventProps: {},
-        eventPropsWithoutExtra: {},
+        eventProperties: {},
+        eventPropertiesWithoutExtra: {},
       });
 
       expect(events[0].deliveryStatus).toBe("enqueued");
@@ -125,8 +125,8 @@ describe("deliver", () => {
       await deliver({
         type: "track",
         eventName: "Overridden",
-        eventProps: {},
-        eventPropsWithoutExtra: {},
+        eventProperties: {},
+        eventPropertiesWithoutExtra: {},
       });
 
       expect(events[0].deliveryStatus).toBe("skipped_no_token");
@@ -138,8 +138,8 @@ describe("deliver", () => {
       await deliver({
         type: "track",
         eventName: "Async Void",
-        eventProps: {},
-        eventPropsWithoutExtra: {},
+        eventProperties: {},
+        eventPropertiesWithoutExtra: {},
       });
 
       expect(events[0].deliveryStatus).toBe("enqueued");
@@ -158,8 +158,8 @@ describe("deliver", () => {
         deliver({
           type: "track",
           eventName: "Throwing",
-          eventProps: {},
-          eventPropsWithoutExtra: {},
+          eventProperties: {},
+          eventPropertiesWithoutExtra: {},
         }),
       ).resolves.toBeUndefined();
       expect(events[0].deliveryStatus).toBe("failed_tracking");
@@ -176,8 +176,8 @@ describe("deliver", () => {
         deliver({
           type: "track",
           eventName: "Rejecting",
-          eventProps: {},
-          eventPropsWithoutExtra: {},
+          eventProperties: {},
+          eventPropertiesWithoutExtra: {},
         }),
       ).resolves.toBeUndefined();
       expect(events[0].deliveryStatus).toBe("failed_tracking");
@@ -189,8 +189,8 @@ describe("deliver", () => {
       await deliver({
         type: "track",
         eventName: "No Client",
-        eventProps: {},
-        eventPropsWithoutExtra: {},
+        eventProperties: {},
+        eventPropertiesWithoutExtra: {},
       });
 
       expect(events[0].deliveryStatus).toBe("skipped_no_client");

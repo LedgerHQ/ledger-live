@@ -27,7 +27,7 @@ const ENV_ROW_LX = {
 } as const;
 const ENV_BTN_LX = { flexDirection: "row", gap: "s4" } as const;
 
-export function Trustchain(props: TrustchainDevToolProps) {
+function Trustchain(props: TrustchainDevToolProps) {
   const vm = useTrustchainViewModel(props);
   const { theme } = useTheme();
 

@@ -9,7 +9,8 @@ import {
   ExchangeFill,
   CreditCard,
   CreditCardFill,
-  DollarConvert,
+  Dollar,
+  DollarFill,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName } from "~/const";
 import type { TabItemConfig, MainTabBarViewProps } from "./types";
@@ -32,7 +33,7 @@ const TAB_ICONS: Partial<Record<string, TabIconConfig>> = {
   [NavigatorName.Swap]: { icon: Exchange, activeIcon: ExchangeFill },
   [NavigatorName.Earn]: { icon: Chart5, activeIcon: Chart5Fill },
   [NavigatorName.CardTab]: { icon: CreditCard, activeIcon: CreditCardFill },
-  [NavigatorName.PayTab]: { icon: DollarConvert, activeIcon: DollarConvert },
+  [NavigatorName.PayTab]: { icon: Dollar, activeIcon: DollarFill },
 };
 
 const TAB_TEST_IDS: Partial<Record<string, string>> = {

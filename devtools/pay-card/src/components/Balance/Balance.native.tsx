@@ -1,11 +1,12 @@
 import { ScrollView } from "react-native";
-import { Box, Button, Divider, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Divider, IconButton, Tag, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Refresh } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type {
   PayCardBaanxWallet,
   PayCardBalanceProps,
   PayCardCombinedWallet,
   PayCardLinkedWallet,
+  PayCardMockWalletAsset,
 } from "../../types";
 import { Section } from "../Section/Section";
 
@@ -21,6 +22,7 @@ const HEADER_LX = {
 } as const;
 const BLOCK_LX = { gap: "s4" } as const;
 const FIELD_LX = { flexDirection: "row", gap: "s8" } as const;
+const MOCK_ASSETS: readonly PayCardMockWalletAsset[] = ["usdc", "btc", "sol"];
 
 function Field({ label, value }: { readonly label: string; readonly value: string }) {
   return (
@@ -79,6 +81,10 @@ function CombinedWallet({ wallet }: { readonly wallet: PayCardCombinedWallet }) 
         label="balance"
         value={wallet.balance ?? "null — still reading, or no Baanx wallet matched"}
       />
+      <Field
+        label="ledgerCurrencyId"
+        value={wallet.ledgerCurrencyId ?? "null — unmapped asset, or CAL has not answered"}
+      />
       <Field label="address" value={wallet.address} />
     </Box>
   );
@@ -90,6 +96,7 @@ export function BalanceScreen({
   combinedWallets,
   isFetching,
   errors,
+  mock,
   onBack,
   refresh,
 }: BalanceScreenProps) {
@@ -120,21 +127,60 @@ export function BalanceScreen({
         </Box>
       ))}
 
-      <Section title="Baanx wallets">
+      <Section title="Balance mock">
+        <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8" }}>
+          <Tag
+            size="sm"
+            appearance={mock.available ? "success" : "warning"}
+            label={mock.available ? "MSW enabled" : "MSW disabled"}
+          />
+          <Tag
+            size="sm"
+            appearance={mock.isOverridden ? "success" : "gray"}
+            label={mock.isOverridden ? "Mock balances active" : "Provider / mock session"}
+          />
+        </Box>
+        <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8" }}>
+          <Button appearance="gray" size="sm" disabled={!mock.available} onPress={mock.fill}>
+            Fund all
+          </Button>
+          <Button appearance="gray" size="sm" disabled={!mock.available} onPress={mock.empty}>
+            Empty balances
+          </Button>
+          <Button appearance="gray" size="sm" disabled={!mock.available} onPress={mock.clear}>
+            Use provider
+          </Button>
+        </Box>
+        <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8" }}>
+          {MOCK_ASSETS.map(asset => (
+            <Button
+              key={asset}
+              appearance="base"
+              size="sm"
+              disabled={!mock.available}
+              onPress={() => mock.fund(asset)}
+            >
+              Fund {asset.toUpperCase()}
+            </Button>
+          ))}
+        </Box>
+      </Section>
+
+      <Section title="Baanx wallets" backgroundColor="activeSubtle">
         <Count count={baanxWallets.length} />
         {baanxWallets.map(wallet => (
           <BaanxWallet key={wallet.id} wallet={wallet} />
         ))}
       </Section>
 
-      <Section title="Card linked wallets">
+      <Section title="Card linked wallets" backgroundColor="warning">
         <Count count={linkedWallets.length} />
         {linkedWallets.map(wallet => (
           <LinkedWallet key={wallet.id} wallet={wallet} />
         ))}
       </Section>
 
-      <Section title="Card linked combined wallets">
+      <Section title="Card linked combined wallets" backgroundColor="success">
         <Count count={combinedWallets.length} />
         {combinedWallets.map(wallet => (
           <CombinedWallet key={wallet.id} wallet={wallet} />

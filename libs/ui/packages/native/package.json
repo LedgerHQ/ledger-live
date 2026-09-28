@@ -123,7 +123,7 @@
     "babel-loader": "10.0.0",
     "babel-plugin-module-resolver": "5.0.2",
     "babel-plugin-react-docgen-typescript": "^1.5.1",
-    "buffer": "6.0.3",
+    "buffer": "catalog:",
     "camelcase": "^6.2.1",
     "csstype": "^3.0.11",
     "oxlint": "catalog:",

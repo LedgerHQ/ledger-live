@@ -123,7 +123,7 @@ export function deriveChildPublicKey(
   }
 
   // Ki = point(parse256(IL)) + Kpar
-  const parentPoint = secp256k1.Point.fromHex(parentPubkey);
+  const parentPoint = secp256k1.Point.fromBytes(parentPubkey);
   const tweakScalar = secp256k1.Point.Fn.fromBytes(IL);
   const tweakPoint = secp256k1.Point.BASE.multiply(tweakScalar);
   const childPoint = parentPoint.add(tweakPoint);

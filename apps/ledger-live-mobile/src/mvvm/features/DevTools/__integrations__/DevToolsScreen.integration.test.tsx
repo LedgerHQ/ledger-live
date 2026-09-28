@@ -23,6 +23,10 @@ jest.mock(
   }),
   { virtual: true },
 );
+jest.mock("@features/platform-currencies", () => ({
+  ...jest.requireActual("@features/platform-currencies"),
+  useCurrenciesByIds: () => new Map(),
+}));
 jest.mock("@devtools/transport-panel", () => ({ TransportPanel: () => null }), { virtual: true });
 jest.mock(
   "@devtools/wire",
@@ -60,7 +64,7 @@ describe("DevToolsScreen", () => {
     render(withBottomInset(<DevToolsScreen />));
 
     expect(devToolsSpy).toHaveBeenCalledTimes(1);
-    const props = devToolsSpy.mock.calls[0][0];
+    const props = devToolsSpy.mock.lastCall![0];
 
     expect(props.config).toEqual([
       { id: "feature-flags", config: { marker: "ff-props" } },

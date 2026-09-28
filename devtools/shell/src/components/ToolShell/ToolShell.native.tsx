@@ -20,5 +20,3 @@ export function ToolShell({ tool }: ToolShellProps) {
     </Box>
   );
 }
-
-export default ToolShell;

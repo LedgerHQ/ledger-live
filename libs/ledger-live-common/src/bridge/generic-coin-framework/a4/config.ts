@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { log } from "@ledgerhq/logs";
+import { logA4 } from "./log";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
 
@@ -148,7 +148,12 @@ export function resolveA4ChainConfig(network: string): A4ChainResolution {
   } catch {
     if (warnedConfigMissing) return A4_OFF;
     warnedConfigMissing = true;
-    log("a4", "config_generic_a4 not set in LiveConfig - A4 disabled");
+    logA4({
+      level: "warn",
+      message: "config_generic_a4 not set in LiveConfig - A4 disabled",
+      decision: "config_missing_disabled",
+      chain: network,
+    });
     return A4_OFF;
   }
 }

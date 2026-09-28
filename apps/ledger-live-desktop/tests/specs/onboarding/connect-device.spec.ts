@@ -5,7 +5,6 @@ import { OnboardingPage } from "../../page/onboarding.page";
 test.use({
   settings: {
     hasSeenAnalyticsOptInPrompt: false,
-    hasSeenWalletV4Tour: true,
   },
   featureFlags: {
     noah: { enabled: false },

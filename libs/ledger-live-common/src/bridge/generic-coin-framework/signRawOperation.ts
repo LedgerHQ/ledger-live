@@ -3,6 +3,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
+import { getBridgeApi } from "./bridge";
 import { buildOptimisticOperation } from "./utils";
 import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
@@ -13,7 +14,7 @@ import type { GenericTransaction } from "./types";
  * Sign Transaction with Ledger hardware
  */
 export const genericSignRawOperation =
-  (_network: string, kind: string) =>
+  (network: string, kind: string) =>
   (signerContext: SignerContext<any>): AccountBridge<GenericTransaction>["signRawOperation"] =>
   ({
     account,
@@ -28,9 +29,14 @@ export const genericSignRawOperation =
       async function main() {
         const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
         const context = buildContext(account.currency.id);
+        const bridgeApi = await getBridgeApi(account.currency, network);
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
-          const { publicKey } = (await signer.getAddress(derivationPath)) as GetAddressResult;
+          const deviceSignOptions = bridgeApi.getDeviceSignOptions?.({}, account);
+          const { publicKey } = (await signer.getAddress(
+            derivationPath,
+            deviceSignOptions,
+          )) as GetAddressResult;
 
           const sender = account.freshAddress;
 
@@ -49,7 +55,7 @@ export const genericSignRawOperation =
           /* Notify UI that the device is now showing the tx */
           o.next({ type: "device-signature-requested" });
           /* Sign on Ledger device */
-          const txnSig = await signer.signTransaction(derivationPath, unsigned);
+          const txnSig = await signer.signTransaction(derivationPath, unsigned, deviceSignOptions);
           return { unsigned, txnSig, publicKey, sequence: sequenceNumber };
         });
 

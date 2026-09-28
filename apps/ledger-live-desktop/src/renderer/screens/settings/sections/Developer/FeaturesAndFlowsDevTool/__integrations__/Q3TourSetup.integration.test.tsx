@@ -3,11 +3,7 @@ import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { selectFeature } from "@shared/feature-flags";
 import { Q3TourSection } from "../Q3TourSection";
 import { useReleaseToursDevToolViewModel } from "../useReleaseToursDevToolViewModel";
-import {
-  hasSeenQ2TourSelector,
-  hasSeenQ3TourSelector,
-  hasSeenWalletV4TourSelector,
-} from "~/renderer/reducers/settings";
+import { hasSeenQ2TourSelector, hasSeenQ3TourSelector } from "~/renderer/reducers/settings";
 
 function Q3TourSetupHarness() {
   const {
@@ -56,7 +52,6 @@ describe("Q3 Tour setup", () => {
 
     expect(hasSeenQ3TourSelector(store.getState())).toBe(true);
     expect(hasSeenQ2TourSelector(store.getState())).toBe(false);
-    expect(hasSeenWalletV4TourSelector(store.getState())).toBe(false);
   });
 
   it("should update the Q3 release tour variant without changing enabled state", async () => {

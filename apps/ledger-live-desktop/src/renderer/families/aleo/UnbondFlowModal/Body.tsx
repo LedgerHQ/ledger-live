@@ -1,5 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
+import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import { StepId, StepProps, St } from "./types";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
@@ -35,7 +36,7 @@ export default createStakingFlowBody<StepId>({
   initialStepId: "amount",
   title: "aleo.unbond.flow.title",
   trackCloseEvent: "CloseModalUnbond",
-  mode: "unbond_public",
+  mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
   // `recipient` carries the on-chain `staker`, which is always the account itself.
   // prepareTransaction re-pins it, so this is only a sensible starting value.
   initialRecipient: account => account.freshAddress,

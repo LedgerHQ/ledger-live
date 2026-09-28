@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useGetUserQuery } from "@domain/api-card-management";
 import type { PayCardUser } from "@domain/api-card-management";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
+import { useLocalizedUrl, useOpenLink } from "@shared/linking";
 import { useIsCardSignedIn, useCardLogout } from "@features/flow-pay-card-auth/hooks";
-import type { MoreRow, MoreRowId, MoreViewModel } from "./types";
+import { urls } from "../../urls";
+import type { CardSettingsActions, MoreRow, MoreRowId, MoreViewModel } from "./types";
 
-const ROW_ORDER: readonly MoreRowId[] = ["managePin", "accessBaanx", "help", "logout"];
+const ROW_ORDER: readonly MoreRowId[] = ["managePin", "accessBaanx", "help", "legal", "logout"];
 
 const noop = () => {};
 
@@ -58,10 +61,14 @@ export function mapUserToViewModel({
   };
 }
 
-export function useMoreViewModel(): MoreViewModel {
+export function useMoreViewModel(actions: CardSettingsActions = {}): MoreViewModel {
+  const { onManagePin, onAccessBaanx } = actions;
   const { t } = useTranslation();
+  const { trackButtonClicked } = usePayAnalyticsContext();
   const isSignedIn = useIsCardSignedIn();
   const logout = useCardLogout();
+  const openLink = useOpenLink();
+  const helpCenterUrl = useLocalizedUrl(urls.helpCenter);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [wasSignedIn, setWasSignedIn] = useState(isSignedIn);
 
@@ -72,13 +79,19 @@ export function useMoreViewModel(): MoreViewModel {
 
   const { data: user } = useGetUserQuery(undefined, { skip: !isSignedIn });
 
-  const onMorePress = () => setSheetOpen(true);
+  const onMorePress = () => {
+    trackButtonClicked({ button: "settings", page: "Card details" });
+    setSheetOpen(true);
+  };
   const onSheetClose = () => setSheetOpen(false);
 
   const onLogoutPress = () => {
     setSheetOpen(false);
     logout();
   };
+
+  const onHelpPress = () => openLink(helpCenterUrl);
+  const onLegalPress = () => openLink(urls.legalAgreement);
 
   const labels: MoreLabels = {
     more: t("payTab.cardMore.tile"),
@@ -87,11 +100,18 @@ export function useMoreViewModel(): MoreViewModel {
       managePin: t("payTab.cardMore.rows.managePin"),
       accessBaanx: t("payTab.cardMore.rows.accessBaanx"),
       help: t("payTab.cardMore.rows.help"),
+      legal: t("payTab.cardMore.rows.legal"),
       logout: t("payTab.cardMore.rows.logout"),
     },
   };
 
-  const handlers: MoreHandlers = { logout: onLogoutPress };
+  const handlers: MoreHandlers = {
+    managePin: onManagePin,
+    accessBaanx: onAccessBaanx,
+    help: onHelpPress,
+    legal: onLegalPress,
+    logout: onLogoutPress,
+  };
 
   return mapUserToViewModel({
     isSignedIn,

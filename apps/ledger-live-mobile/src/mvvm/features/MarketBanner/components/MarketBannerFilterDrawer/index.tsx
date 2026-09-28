@@ -3,12 +3,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   BottomSheetHeader,
   BottomSheetView,
-  OptionList,
-  OptionListContent,
-  OptionListItem,
-  OptionListItemContent,
-  OptionListItemDescription,
-  OptionListItemText,
+  SelectList,
+  SelectListContent,
+  SelectListItem,
+  SelectListItemContent,
+  SelectListItemDescription,
+  SelectListItemText,
 } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
@@ -44,31 +44,31 @@ export function MarketBannerFilterDrawer({ controller }: MarketBannerFilterDrawe
     >
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         <BottomSheetHeader title={t("marketBanner.filter.title")} />
-        <OptionList
+        <SelectList
           items={items}
           value={controller.filter}
           onValueChange={value => {
             if (value) controller.onSelect(value as MarketBannerRanking);
           }}
         >
-          <OptionListContent
+          <SelectListContent
             lx={{ marginBottom: "s24" }}
             renderItem={item => (
-              <OptionListItem
+              <SelectListItem
                 value={item.value}
                 disabled={item.disabled}
                 testID={`${MARKET_BANNER_TEST_IDS.filterDrawer}-${item.value}`}
               >
-                <OptionListItemContent>
-                  <OptionListItemText>{item.label}</OptionListItemText>
+                <SelectListItemContent>
+                  <SelectListItemText>{item.label}</SelectListItemText>
                   {item.description ? (
-                    <OptionListItemDescription>{item.description}</OptionListItemDescription>
+                    <SelectListItemDescription>{item.description}</SelectListItemDescription>
                   ) : null}
-                </OptionListItemContent>
-              </OptionListItem>
+                </SelectListItemContent>
+              </SelectListItem>
             )}
           />
-        </OptionList>
+        </SelectList>
       </BottomSheetView>
     </QueuedBottomSheet>
   );

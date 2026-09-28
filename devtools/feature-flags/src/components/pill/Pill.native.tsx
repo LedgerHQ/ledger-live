@@ -14,7 +14,7 @@ type BackgroundToken = NonNullable<ComponentProps<typeof Box>["lx"]>["background
 type TextColorToken = NonNullable<ComponentProps<typeof Text>["lx"]>["color"];
 
 const BACKGROUND: Record<PillVariant, BackgroundToken> = {
-  success: "success",
+  success: "successTransparent",
   muted: "muted",
   active: "activeSubtle",
   black: "black",

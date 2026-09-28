@@ -24,16 +24,17 @@ import { BalanceScreen } from "../components/Balance/Balance";
 import { CardOnboardingScreen } from "../components/CardOnboarding/CardOnboarding";
 import { CurrencyMappingScreen } from "../components/CurrencyMapping/CurrencyMapping";
 import { Interaction } from "../components/Interaction/Interaction";
+import { ReorderMock } from "../components/ReorderMock/ReorderMock";
 import { AuthSection } from "./AuthSection";
 
-export function PayCard(props: Readonly<PayCardToolProps>) {
+function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
-    onboarding,
     cardOnboarding,
     interaction,
     balance,
     currencyMapping,
+    reorder,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
     hasSeenReceiveVerifyHint,
@@ -165,33 +166,12 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
         />
       </Section>
 
-      <Divider />
-
-      <Section title="Onboarding">
-        <div className="flex flex-col gap-2">
-          {onboarding.steps.map(step => (
-            <ToggleRow
-              key={step.id}
-              label={step.label}
-              checked={step.done}
-              onChange={() => onboarding.setStepDone(step.id, !step.done)}
-            />
-          ))}
-        </div>
-      </Section>
-
-      <Divider />
-
-      <Section title="Reset onboarding">
-        <div className="flex flex-wrap gap-8">
-          <Button appearance="gray" size="sm" onClick={() => onboarding.setStepDone("all", true)}>
-            Set all done
-          </Button>
-          <Button appearance="gray" size="sm" onClick={() => onboarding.setStepDone("all", false)}>
-            Reset all
-          </Button>
-        </div>
-      </Section>
+      {reorder.available ? (
+        <>
+          <Divider />
+          <ReorderMock {...reorder} />
+        </>
+      ) : null}
 
       <Divider />
 

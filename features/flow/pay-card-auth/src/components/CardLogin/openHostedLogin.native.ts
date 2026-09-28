@@ -14,11 +14,11 @@ import type { HostedLoginResult } from "../../state/types";
  * The session's own answer carries the redirect, so it is the fastest of the two callback routes. The
  * app's deep link is the other one, and whichever arrives first wins.
  */
-export async function openHostedLoginInSecureBrowser(
-  loginUrl: string,
+export async function openHostedUrlInSecureBrowser(
+  hostedUrl: string,
   deepLink?: string,
 ): Promise<HostedLoginResult> {
-  const result = await openAuthSessionAsync(loginUrl, deepLink);
+  const result = await openAuthSessionAsync(hostedUrl, deepLink);
 
   return result.type === "success" ? { type: "success", url: result.url } : { type: "dismissed" };
 }

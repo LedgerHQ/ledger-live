@@ -13,7 +13,7 @@ const eccWrapper = {
     try {
       const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
       if (pointBytes.length !== 33 && pointBytes.length !== 65) return false;
-      secp256k1.ProjectivePoint.fromHex(pointBytes);
+      secp256k1.Point.fromBytes(pointBytes);
       return true;
     } catch {
       return false;
@@ -24,7 +24,7 @@ const eccWrapper = {
     try {
       const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
       if (keyBytes.length !== 32) return false;
-      return secp256k1.utils.isValidPrivateKey(keyBytes);
+      return secp256k1.utils.isValidSecretKey(keyBytes);
     } catch {
       return false;
     }
@@ -51,13 +51,13 @@ const eccWrapper = {
 
       if (!this.isPoint(pointBytes) || !this.isPrivate(scalarBytes)) return null;
 
-      const p = secp256k1.ProjectivePoint.fromHex(pointBytes);
+      const p = secp256k1.Point.fromBytes(pointBytes);
       const scalarBigInt = bytesToBigInt(scalarBytes);
-      const scalarPoint = secp256k1.ProjectivePoint.BASE.multiply(scalarBigInt);
+      const scalarPoint = secp256k1.Point.BASE.multiply(scalarBigInt);
       const result = p.add(scalarPoint);
 
       const isCompressed = compressed !== undefined ? compressed : pointBytes.length === 33;
-      return result.toRawBytes(isCompressed);
+      return result.toBytes(isCompressed);
     } catch {
       return null;
     }
@@ -96,12 +96,12 @@ const eccWrapper = {
 
       if (!this.isPoint(pointBytes) || !this.isPrivate(scalarBytes)) return null;
 
-      const p = secp256k1.ProjectivePoint.fromHex(pointBytes);
+      const p = secp256k1.Point.fromBytes(pointBytes);
       const scalarBigInt = bytesToBigInt(scalarBytes);
       const result = p.multiply(scalarBigInt);
 
       const isCompressed = compressed !== undefined ? compressed : pointBytes.length === 33;
-      return result.toRawBytes(isCompressed);
+      return result.toBytes(isCompressed);
     } catch {
       return null;
     }
@@ -109,8 +109,8 @@ const eccWrapper = {
 
   pointCompress(point: Uint8Array | Buffer, compressed = true): Uint8Array {
     const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
-    const p = secp256k1.ProjectivePoint.fromHex(pointBytes);
-    return p.toRawBytes(compressed);
+    const p = secp256k1.Point.fromBytes(pointBytes);
+    return p.toBytes(compressed);
   },
 
   isPointCompressed(point: Uint8Array | Buffer): boolean {
@@ -122,7 +122,7 @@ const eccWrapper = {
     const hashBytes = hash instanceof Buffer ? new Uint8Array(hash) : hash;
     const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
     const signature = secp256k1.sign(hashBytes, keyBytes, { prehash: false });
-    return signature.toCompactRawBytes();
+    return signature.toBytes("compact");
   },
 
   verify(

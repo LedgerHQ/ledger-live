@@ -112,7 +112,7 @@ function deriveChild(parent: Bip32Node, index: number): Bip32Node {
   const digest = hmac(sha512, parent.chainCode, data);
   const il = digest.slice(0, 32);
   const childPrivateKey = bigIntTo32Bytes(
-    (bytesToBigInt(il) + bytesToBigInt(parent.privateKey)) % secp256k1.CURVE.n,
+    (bytesToBigInt(il) + bytesToBigInt(parent.privateKey)) % secp256k1.Point.CURVE().n,
   );
   return { privateKey: childPrivateKey, chainCode: digest.slice(32, 64) };
 }

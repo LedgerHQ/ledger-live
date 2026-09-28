@@ -41,7 +41,7 @@ import {
 | Reducer | When to use |
 |---|---|
 | `initFromPersisted(payload)` | App boot — restores persisted identities; generates fresh IDs for missing/blank/dummy values |
-| `importFromLegacy({ userId, datadogId? })` | One-time migration from pre-DDD storage |
+| `importFromLegacy({ userId, datadogId? })` | One-time migration from legacy storage |
 | `initFromScratch()` | First launch — no persisted state |
 | `addDeviceId(deviceId)` | Paired device registered; marks sync as "unsynced" |
 | `markSyncCompleted(url)` | Push Devices Service confirmed receipt |

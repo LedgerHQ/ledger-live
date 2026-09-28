@@ -7,7 +7,8 @@ import type {
   TransactionQueryParams,
   WalletProxyTransaction,
 } from "../../types";
-import { decodeMemo } from "./memo";
+import { decodeMemo, decodePltMemo } from "./memo";
+import { pltRejectCode } from "./pltRejectCode";
 
 const DEFAULT_PAGE_SIZE = 100;
 
@@ -116,7 +117,12 @@ function parseRejectedTokenUpdate(
 ): RawOperation | null {
   if (!isFeePayer(tx)) return null;
 
-  return feeOnlyOperation(tx, address, true, rejectedTokenId(tx));
+  const operation = feeOnlyOperation(tx, address, true, rejectedTokenId(tx));
+  const rejectCode = pltRejectCode(tx.details.rawRejectReason);
+
+  // Set conditionally so a reason this layer cannot narrow leaves the field
+  // absent, rather than claiming a cause by defaulting to one.
+  return rejectCode === undefined ? operation : { ...operation, rejectCode };
 }
 
 /** Bounded because it only ever selects a power of ten to divide the amount by. */
@@ -165,7 +171,7 @@ function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOpera
     // The token amount alone: the fee is CCD and belongs to the parent
     // operation, so folding it in here would put µCCD into a token balance.
     value: tokenTransferAmount.value,
-    memo: tx.details.memo ? decodeMemo(tx.details.memo, tx.transactionHash) : undefined,
+    memo: tx.details.memo ? decodePltMemo(tx.details.memo, tx.transactionHash) : undefined,
     failed: false,
     tokenId,
     decimals: tokenTransferAmount.decimals,

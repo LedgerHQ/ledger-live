@@ -9,7 +9,7 @@ import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import type { SendFlowOperationResult, SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { track, trackPage } from "~/renderer/analytics/segment";
-import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 
 function getConfirmationStatus(
@@ -39,12 +39,13 @@ export function useConfirmationViewModel() {
   const { state } = useSendFlowData();
   const { recipientType, savedContactDuringFlow } = useSendFlowTracking();
   const { account, parentAccount } = state.account;
+  const sendFlowTrackingPropertiesBase = useSendFlowTrackingProperties();
   const sendFlowTrackingProperties = useMemo(
     () => ({
-      ...getSendFlowTrackingProperties(account, parentAccount),
+      ...sendFlowTrackingPropertiesBase,
       recipientType,
     }),
-    [account, parentAccount, recipientType],
+    [sendFlowTrackingPropertiesBase, recipientType],
   );
 
   const status = useMemo(

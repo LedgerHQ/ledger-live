@@ -55,8 +55,8 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Install dependencies
-        run: pnpm i --frozen-lockfile
+      - name: Install dev dependencies for root workspace
+        run: pnpm i --frozen-lockfile -D -F "ledger-live" --ignore-scripts
 
       - name: Enforce module boundaries
         run: pnpm exec nx run enforce-boundaries:lint:boundaries

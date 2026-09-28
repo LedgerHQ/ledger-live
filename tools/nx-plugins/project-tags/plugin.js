@@ -63,6 +63,10 @@ function inferTags(projectRoot, packageName) {
     tags.add("scope:e2e");
   }
 
+  if (projectRoot === "e2e/tooling" || projectRoot.startsWith("e2e/tooling/")) {
+    tags.add("scope:e2e-tooling");
+  }
+
   if (projectRoot.startsWith("tools/")) {
     tags.add("scope:tools");
   }

@@ -10,9 +10,16 @@ type SlideFooterButtonProps = Readonly<{
   copy: WalletV4Tour["copy"];
   page: string;
   variant?: string;
+  onContinueClick?: (slideIndex: number, isLastSlide: boolean) => void;
 }>;
 
-export const SlideFooterButton = ({ onComplete, copy, page, variant }: SlideFooterButtonProps) => {
+export const SlideFooterButton = ({
+  onComplete,
+  copy,
+  page,
+  variant,
+  onContinueClick,
+}: SlideFooterButtonProps) => {
   const {
     primaryLabel,
     doneLabel,
@@ -22,7 +29,7 @@ export const SlideFooterButton = ({ onComplete, copy, page, variant }: SlideFoot
     isDoneButtonInteractive,
     goNext,
     complete,
-  } = useSlideFooterButtonViewModel(onComplete, { copy, page, variant });
+  } = useSlideFooterButtonViewModel(onComplete, { copy, page, variant, onContinueClick });
 
   return (
     <Animated.View style={styles.container}>

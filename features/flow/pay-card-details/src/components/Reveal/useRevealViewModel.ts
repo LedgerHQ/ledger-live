@@ -2,7 +2,9 @@ import { useCallback, useRef, useState } from "react";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { cardManagementApi } from "@domain/api-card-management";
-import type { CardDetailsProps, RevealStatus, RevealViewModel } from "../../types";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { DETAILS_IMAGE_CSS } from "../CardArtwork/cardColors";
+import type { RevealStatus, RevealViewModel } from "../../types";
 
 type CardApiState = {
   [cardManagementApi.reducerPath]: ReturnType<typeof cardManagementApi.reducer>;
@@ -11,10 +13,9 @@ type CardApiState = {
 const useCardApiDispatch =
   useDispatch.withTypes<ThunkDispatch<CardApiState, unknown, UnknownAction>>();
 
-export function useRevealViewModel({
-  unlock,
-}: Pick<CardDetailsProps, "unlock">): RevealViewModel | null {
+export function useRevealViewModel(): RevealViewModel {
   const dispatch = useCardApiDispatch();
+  const { trackButtonClicked } = usePayAnalyticsContext();
   const [status, setStatus] = useState<RevealStatus>("idle");
   const [imageUrl, setImageUrl] = useState<string>();
   const inFlight = useRef(false);
@@ -26,9 +27,25 @@ export function useRevealViewModel({
     setStatus("idle");
   }, []);
 
+  const onImageLoad = useCallback(() => {
+    setStatus(current => {
+      if (current !== "loading") {
+        return current;
+      }
+      inFlight.current = false;
+      return "revealed";
+    });
+  }, []);
+
   const onImageError = useCallback(() => {
-    setImageUrl(undefined);
-    setStatus("failed");
+    setStatus(current => {
+      if (current !== "loading" && current !== "revealed") {
+        return current;
+      }
+      inFlight.current = false;
+      setImageUrl(undefined);
+      return "failed";
+    });
   }, []);
 
   const onReveal = useCallback(async () => {
@@ -37,29 +54,24 @@ export function useRevealViewModel({
     }
 
     inFlight.current = true;
+    trackButtonClicked({ button: "view_card_digits", page: "Card details" });
     const generationAtStart = generation.current;
     const isStale = () => generation.current !== generationAtStart;
     setStatus("loading");
     setImageUrl(undefined);
 
+    let waitForImage = false;
     try {
-      const unlocked = await unlock?.();
-      if (isStale()) {
-        return;
-      }
-      if (!unlocked) {
-        setStatus("idle");
-        return;
-      }
-
       const details = await dispatch(
-        cardManagementApi.endpoints.createCardDetailsToken.initiate(undefined, { track: false }),
+        cardManagementApi.endpoints.createCardDetailsToken.initiate(DETAILS_IMAGE_CSS, {
+          track: false,
+        }),
       ).unwrap();
       if (isStale()) {
         return;
       }
       setImageUrl(details.imageUrl);
-      setStatus("revealed");
+      waitForImage = true;
     } catch {
       if (isStale()) {
         return;
@@ -67,22 +79,20 @@ export function useRevealViewModel({
       setImageUrl(undefined);
       setStatus("failed");
     } finally {
-      if (!isStale()) {
+      if (!isStale() && !waitForImage) {
         inFlight.current = false;
       }
     }
-  }, [dispatch, unlock]);
-
-  if (!unlock) {
-    return null;
-  }
+  }, [dispatch, trackButtonClicked]);
 
   return {
     status,
-    isRevealed: status === "revealed" && Boolean(imageUrl),
+    isRevealed: status === "revealed",
+    canHide: status === "revealed",
     imageUrl,
     onReveal,
     onHide,
+    onImageLoad,
     onImageError,
   };
 }

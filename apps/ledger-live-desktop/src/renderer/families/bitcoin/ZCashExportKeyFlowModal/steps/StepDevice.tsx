@@ -135,7 +135,7 @@ export function StepDeviceFooter({ onRetry, error, closeModal }: Readonly<StepPr
   if (error) {
     return (
       <Box horizontal alignItems="right">
-        <Button data-testid="modal-close-button" ml={2} onClick={closeModal}>
+        <Button data-testid="modal-close-button-device-error" ml={2} onClick={closeModal}>
           <Trans i18nKey="common.close" />
         </Button>
         <RetryButton primary ml={2} onClick={onRetry} />

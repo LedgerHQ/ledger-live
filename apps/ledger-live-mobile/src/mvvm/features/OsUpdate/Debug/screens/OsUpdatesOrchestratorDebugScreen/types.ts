@@ -16,6 +16,8 @@ export type OsUpdatesOrchestratorDebugScreenViewModel = {
   sessionId: string | null;
   deviceStatus: DeviceStatus | null;
   hasBackup: boolean;
+  backupAge: string | null;
+  isSeedBackupSheetOpen: boolean;
   canStart: boolean;
   canStop: boolean;
   isBusy: boolean;
@@ -24,6 +26,9 @@ export type OsUpdatesOrchestratorDebugScreenViewModel = {
   history: ProgressHistoryEntry[];
   errorMessage: string | null;
   onSeedBackup: () => void;
+  onCloseSeedBackupSheet: () => void;
+  onSeedValidBackup: () => void;
+  onSeedExpiredBackup: () => void;
   onRemoveBackup: () => void;
   onStart: () => void;
   onStop: () => void;

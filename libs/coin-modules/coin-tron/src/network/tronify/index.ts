@@ -1,5 +1,5 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import network from "@ledgerhq/live-network";
-import { log } from "@ledgerhq/logs";
 import coinConfig, { type TronifyProviderConfig } from "../../config";
 import { EnergyRentProviderNotConfigured, TronifyApiError } from "../../types/errors";
 import type {
@@ -28,7 +28,11 @@ function getTronifyConfig(): TronifyProviderConfig {
   return tronify;
 }
 
-async function post<Body extends object, Data>(endpoint: string, body: Body): Promise<Data> {
+async function post<Body extends object, Data>(
+  logger: Logger,
+  endpoint: string,
+  body: Body,
+): Promise<Data> {
   const { url } = getTronifyConfig();
   const { data } = await network<TronifyResponse<Data>, Body>({
     method: "POST",
@@ -37,7 +41,7 @@ async function post<Body extends object, Data>(endpoint: string, body: Body): Pr
   });
 
   if (data.resCode !== TRONIFY_SUCCESS) {
-    log("tronify-error", data.resMsg, { endpoint, resCode: data.resCode });
+    logger("tronify-error", data.resMsg, { endpoint, resCode: data.resCode });
     throw new TronifyApiError(data.resMsg, { resCode: data.resCode });
   }
 
@@ -46,27 +50,35 @@ async function post<Body extends object, Data>(endpoint: string, body: Body): Pr
 
 /** Query a price quote for an energy rental. No order is created. */
 export async function queryPreorderInfo(
+  logger: Logger,
   params: TronifyEnergyOrderParams,
 ): Promise<QueryPreorderInfoData> {
   const { sourceFlag } = getTronifyConfig();
-  return post("queryPreorderInfo", { ...ENERGY_ORDER_DEFAULTS, ...params, sourceFlag });
+  return post(logger, "queryPreorderInfo", { ...ENERGY_ORDER_DEFAULTS, ...params, sourceFlag });
 }
 
 /** Create an energy-rent order; returns the order id and an unsigned payment transaction. */
 export async function addTronRentRecord(
+  logger: Logger,
   params: TronifyEnergyOrderParams,
 ): Promise<AddTronRentRecordData> {
   const { sourceFlag } = getTronifyConfig();
-  return post("addTronRentRecord", { ...ENERGY_ORDER_DEFAULTS, ...params, sourceFlag });
+  return post(logger, "addTronRentRecord", { ...ENERGY_ORDER_DEFAULTS, ...params, sourceFlag });
 }
 
 /** Submit the signed (not broadcast) payment; Tronify broadcasts it and delegates energy. */
-export async function uploadHash(request: UploadHashRequest): Promise<UploadHashData> {
-  return post("uploadHash", request);
+export async function uploadHash(
+  logger: Logger,
+  request: UploadHashRequest,
+): Promise<UploadHashData> {
+  return post(logger, "uploadHash", request);
 }
 
 /** List a buyer's own purchase orders, including each order's `orderStatus`. */
-export async function myPayOrder(request: MyPayOrderRequest): Promise<MyPayOrderData> {
+export async function myPayOrder(
+  logger: Logger,
+  request: MyPayOrderRequest,
+): Promise<MyPayOrderData> {
   const { sourceFlag } = getTronifyConfig();
-  return post("mypayorder", { ...request, sourceFlag });
+  return post(logger, "mypayorder", { ...request, sourceFlag });
 }

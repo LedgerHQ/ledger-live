@@ -54,6 +54,14 @@ import * as erc20Services from "../src/services/ledger/erc20";
 import * as nftServices from "../src/services/ledger/nfts";
 import * as uniswapModule from "../src/modules/Uniswap";
 
+// 4-byte big-endian length prefix, then the entry, base64 — the shape of an erc20-signatures file
+const asSignaturesBlob = (entryHex: string): string => {
+  const entry = Buffer.from(entryHex, "hex");
+  const length = Buffer.alloc(4);
+  length.writeUInt32BE(entry.length);
+  return Buffer.concat([length, entry]).toString("base64");
+};
+
 const loadConfig = getLoadConfig({ staticERC20Signatures: { 1: signatureCALEth } });
 const resolutionConfig: ResolutionConfig = {
   nft: true,
@@ -808,7 +816,37 @@ describe("Ledger Service", () => {
         expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
       });
 
-      it("should return empty resolution when additionalErc20SignaturesConfig contract is not found in blob", async () => {
+      it("should fall back to the CAL blob when the provided blob has no entry for the contract", async () => {
+        // ticker "TEST" | contract address | 18 decimals | chainId 1 | dummy signature
+        const calEntry = "0454455354c3f95102d5c8f2c83e49ce3acfb905edfb7f37de000000120000000100";
+        // @ts-expect-error not casted as jest mock
+        axios.get.mockImplementation(async () => ({ data: asSignaturesBlob(calEntry) }));
+
+        const txHash = getSerializedTransaction(transactionContracts.random, "0x");
+
+        const resolution = await ledgerService.resolveTransaction(
+          txHash,
+          loadConfig,
+          { nft: false, erc20: false, externalPlugins: false },
+          undefined,
+          {
+            additionalErc20SignaturesBlob: signatureCALEth, // holds no entry for this address
+            contractAddressToResolve: transactionContracts.random,
+          },
+        );
+
+        expect(resolution).toEqual({
+          domains: [],
+          erc20Tokens: [calEntry],
+          nfts: [],
+          externalPlugin: [],
+          plugin: [],
+        });
+        expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(1);
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(2);
+      });
+
+      it("should return empty resolution when neither the provided blob nor the CAL blob holds the contract", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async () => null);
 
@@ -832,7 +870,8 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [],
         });
-        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(1);
+        expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(1);
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(2);
       });
     });
   });

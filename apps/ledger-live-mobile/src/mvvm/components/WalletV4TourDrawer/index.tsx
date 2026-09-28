@@ -26,10 +26,14 @@ export const WalletV4TourDrawer = ({
   handleCloseDrawer,
   closeDrawer,
   onSlideChange,
+  onHeaderClosePressed,
+  dismissDrawer,
+  onContinueClick,
   source = "Portfolio",
 }: WalletV4TourDrawerProps) => {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const { layout } = tour;
+  const usesCarouselAnalytics = Boolean(onContinueClick);
   const styles = useStyleSheet(
     theme => ({
       content: {
@@ -53,19 +57,22 @@ export const WalletV4TourDrawer = ({
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isDrawerOpen}
-      onClose={closeDrawer}
+      onClose={dismissDrawer ?? closeDrawer}
+      onHeaderClosePressed={onHeaderClosePressed}
       enableDynamicSizing
       maxDynamicContentSize={Platform.OS === "ios" ? "fullWithOffset" : undefined}
     >
       {isDrawerOpen ? (
         <BottomSheetView style={styles.content}>
           <BottomSheetHeader />
-          <TrackScreen
-            category={tour.page}
-            source={source}
-            refreshSource={false}
-            {...(tour.variant ? { variant: tour.variant } : {})}
-          />
+          {usesCarouselAnalytics ? null : (
+            <TrackScreen
+              category={tour.page}
+              source={source}
+              refreshSource={false}
+              {...(tour.variant ? { variant: tour.variant } : {})}
+            />
+          )}
           <Slides
             bounces={false}
             as={AnimatedGestureHandlerFlatList}
@@ -91,6 +98,7 @@ export const WalletV4TourDrawer = ({
             <Slides.Footer>
               <SlideFooterButton
                 onComplete={handleCloseDrawer}
+                onContinueClick={onContinueClick}
                 copy={tour.copy}
                 page={tour.page}
                 variant={tour.variant}
@@ -105,3 +113,4 @@ export const WalletV4TourDrawer = ({
 
 export { useWalletV4TourDrawerViewModel } from "./hooks/useWalletV4TourDrawerViewModel";
 export type { WalletV4Tour, WalletV4TourDrawerViewModel, WalletV4TourSlide } from "./types";
+export type { WalletV4TourAnalytics, WalletV4TourAnalyticsContext } from "./analytics";

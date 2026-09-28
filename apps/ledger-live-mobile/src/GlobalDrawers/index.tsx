@@ -1,5 +1,6 @@
 import React from "react";
 import { DRAWER_ENTRIES } from "./registry";
+import { AppProtectionPromptProvider } from "LLM/features/AppLock/AppProtectionPrompt";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
 type GlobalDrawersProps = Readonly<{
@@ -39,10 +40,12 @@ type GlobalDrawersProps = Readonly<{
 function GlobalDrawers({ children }: GlobalDrawersProps) {
   return (
     <NotificationsPromptProvider>
-      {children}
-      {DRAWER_ENTRIES.map(({ key, component: DrawerWrapper }) => (
-        <DrawerWrapper key={key} />
-      ))}
+      <AppProtectionPromptProvider>
+        {children}
+        {DRAWER_ENTRIES.map(({ key, component: DrawerWrapper }) => (
+          <DrawerWrapper key={key} />
+        ))}
+      </AppProtectionPromptProvider>
     </NotificationsPromptProvider>
   );
 }

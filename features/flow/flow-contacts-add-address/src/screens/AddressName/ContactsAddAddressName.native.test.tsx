@@ -13,7 +13,7 @@ import { urls } from "../../urls";
 
 const mockOpenLink = jest.fn();
 
-jest.mock("@shared/platform-linking", () => ({
+jest.mock("@shared/linking", () => ({
   useOpenLink: () => mockOpenLink,
   useLocalizedUrl: (url: string) => url,
 }));

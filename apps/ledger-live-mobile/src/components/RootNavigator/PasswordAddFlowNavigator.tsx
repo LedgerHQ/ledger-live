@@ -1,8 +1,8 @@
-import { useFeature } from "@features/platform-feature-flags";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { AppLockPasswordAddNavigator } from "LLM/features/AppLock/Navigator";
+import { useAppLockScheme } from "LLM/features/AppLock/hooks/useAppLockScheme";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
@@ -37,9 +37,13 @@ function LegacyPasswordAddFlowNavigator() {
 }
 
 export default function PasswordAddFlowNavigator() {
-  const passwordRevamp = useFeature("lwmPasswordRevamp");
+  const scheme = useAppLockScheme();
 
-  return passwordRevamp?.enabled ? (
+  if (scheme === undefined) {
+    return null;
+  }
+
+  return scheme === "revamped" ? (
     <AppLockPasswordAddNavigator />
   ) : (
     <LegacyPasswordAddFlowNavigator />

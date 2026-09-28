@@ -50,9 +50,10 @@ import { I18nextProvider } from "react-i18next";
 Two providers, one instance, on purpose:
 
 - `I18nextProvider` serves the app's own `react-i18next` call sites (thousands of them today).
-- `I18nProvider` serves DDD packages. It deliberately does **not** re-mount `I18nextProvider`
-  itself: if a DDD package ever resolved a second physical copy of `react-i18next`, a shared
-  context would silently split in two, whereas passing the instance explicitly cannot.
+- `I18nProvider` serves `features/*` and `domain/*` packages. It deliberately does **not** re-mount
+  `I18nextProvider` itself: if such a package ever resolved a second physical copy of
+  `react-i18next`, a shared context would silently split in two, whereas passing the instance
+  explicitly cannot.
 
 ### The instance must be `createInstance()`
 
@@ -75,8 +76,9 @@ export function FeatureTour() {
 
 ### Namespaces and key typing
 
-Keys are typed as `string` inside DDD packages: `react-i18next`'s `CustomTypeOptions` augmentation
-is app-owned, and a shared package cannot see either app's resource shape. Passing a namespace
+Keys are typed as `string` inside `features/*` and `domain/*` packages: `react-i18next`'s
+`CustomTypeOptions` augmentation is app-owned, and a shared package cannot see either app's
+resource shape. Passing a namespace
 works (`useTranslation("myNamespace")`), but until translation keys are colocated per feature
 (a follow-up epic), features resolve keys in the host app's **default** namespace — `app` on
 Desktop, `common` on Mobile — so a migrated feature needs its keys present in both apps under the

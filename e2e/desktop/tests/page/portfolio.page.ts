@@ -266,6 +266,11 @@ export class PortfolioPage extends AppPage {
     await this.checkVisibility(this.connectQuickActionButton);
   }
 
+  @step("Start the connect-device flow from the portfolio")
+  async startConnectDeviceFlow() {
+    await this.connectQuickActionButton.click();
+  }
+
   @step("Check buy a ledger button is visible")
   async checkBuyALedgerButtonVisibility() {
     await this.checkVisibility(this.buyALedgerQuickActionButton);

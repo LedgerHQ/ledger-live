@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import { fetchTronAccountOrFail } from "../network";
 import type { AccountTronAPI } from "../network/types";
@@ -20,6 +21,8 @@ const mockedFetchTronAccountOrFail = fetchTronAccountOrFail as jest.MockedFuncti
   typeof fetchTronAccountOrFail
 >;
 const mockedGetTronResources = getTronResources as jest.MockedFunction<typeof getTronResources>;
+
+const mockLogger: Logger = jest.fn();
 
 const address = "41ae18eb0a9e067f8884058470ed187f44135d816d";
 
@@ -157,10 +160,10 @@ describe("getBalance", () => {
   it("returns a zeroed native balance when the account is inactive", async () => {
     mockedFetchTronAccountOrFail.mockResolvedValueOnce([]);
 
-    const balance = await getBalance(mockConfig, address);
+    const balance = await getBalance(mockLogger, mockConfig, address);
 
     expect(balance).toEqual([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
-    expect(mockedFetchTronAccountOrFail).toHaveBeenCalledWith(mockConfig, address);
+    expect(mockedFetchTronAccountOrFail).toHaveBeenCalledWith(mockLogger, mockConfig, address);
   });
 
   it("returns native + trc10 + trc20 balances", async () => {
@@ -179,7 +182,7 @@ describe("getBalance", () => {
       },
     ]);
 
-    const balance = await getBalance(mockConfig, address);
+    const balance = await getBalance(mockLogger, mockConfig, address);
 
     expect(balance).toEqual([
       { asset: { type: "native" }, value: 27_781_772n, locked: 0n },
@@ -213,7 +216,7 @@ describe("getBalance", () => {
   it("returns only the native balance when there is no assetV2 nor trc20", async () => {
     mockedFetchTronAccountOrFail.mockResolvedValueOnce([baseAccount]);
 
-    const balance = await getBalance(mockConfig, address);
+    const balance = await getBalance(mockLogger, mockConfig, address);
 
     expect(balance).toEqual([{ asset: { type: "native" }, value: 1_781_772n, locked: 0n }]);
   });
@@ -221,6 +224,6 @@ describe("getBalance", () => {
   it("propagates upstream API errors", async () => {
     mockedFetchTronAccountOrFail.mockRejectedValueOnce(new Error("upstream API error"));
 
-    await expect(getBalance(mockConfig, address)).rejects.toThrow("upstream API error");
+    await expect(getBalance(mockLogger, mockConfig, address)).rejects.toThrow("upstream API error");
   });
 });

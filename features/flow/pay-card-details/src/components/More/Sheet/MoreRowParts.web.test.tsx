@@ -1,6 +1,12 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { Asterisk, ExitLogout, Question, Settings } from "@ledgerhq/lumen-ui-react/symbols";
+import {
+  Asterisk,
+  ExitLogout,
+  Information,
+  Question,
+  Settings,
+} from "@ledgerhq/lumen-ui-react/symbols";
 import { MoreIcon, MoreListItem } from "./MoreRowParts";
 
 type SpotIcon = typeof Asterisk;
@@ -31,6 +37,7 @@ describe("MoreRowParts (Web)", () => {
     ["managePin", Asterisk],
     ["accessBaanx", Settings],
     ["help", Question],
+    ["legal", Information],
     ["logout", ExitLogout],
   ] as const)("gives the %s row its own icon", (rowId, expected) => {
     expect(iconOf(rowId)).toBe(expected);

@@ -102,7 +102,10 @@ describe("useBalanceViewModel", () => {
 
     if (result.current.displayMode !== "funded") throw new Error("expected funded");
     expect(result.current.isFilterOpen).toBe(true);
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", { button: "balance_filter" });
+    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+      button: "balance filter",
+      page: "Pay",
+    });
   });
 
   it("should close the filter", () => {

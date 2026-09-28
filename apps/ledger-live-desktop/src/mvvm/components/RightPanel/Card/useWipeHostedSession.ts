@@ -5,38 +5,51 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import logger from "~/renderer/logger";
 import { useCardHostedManifests } from "./useCardHostedManifests";
 
+let hostedSessionWipe: Promise<void> = Promise.resolve();
+
 /** Best effort on purpose: a provider session left behind must never hold the login back. */
-export function wipeHostedSessionForManifest(manifest: LiveAppManifest): Promise<void> {
+function wipeHostedSessionForManifest(manifest: LiveAppManifest): Promise<void> {
   return ipcRenderer
     .invoke("clearCardHostedSessionData", [String(manifest.url)])
     .catch(logger.error);
 }
 
-export function useWipeHostedSessionOnSignInChange(): void {
+export async function whenHostedSessionWiped(): Promise<void> {
+  let awaited: Promise<void> | undefined;
+
+  while (awaited !== hostedSessionWipe) {
+    awaited = hostedSessionWipe;
+    await awaited;
+  }
+}
+
+export function useWipeHostedSession(): void {
   const isSignedIn = useIsCardSignedIn();
   const { login, hosted } = useCardHostedManifests();
   const lastSeenSignedIn = useRef(isSignedIn);
-  // Set on any sign-in change seen before the manifests resolved, so a second change during that
-  // same wait (e.g. sign in then out again) still wipes once they do, instead of netting out to
-  // "nothing changed" and losing both.
-  const hasPendingWipe = useRef(false);
+  const wipedManifestUrls = useRef(new Set<string>());
 
   useEffect(() => {
     if (lastSeenSignedIn.current !== isSignedIn) {
       lastSeenSignedIn.current = isSignedIn;
-      hasPendingWipe.current = true;
+      wipedManifestUrls.current.clear();
     }
 
-    // Both manifests are needed: consuming the pending wipe on the first one to resolve would
-    // leave the other one's session standing until the next sign-in change.
-    if (!hasPendingWipe.current || !login || !hosted) {
+    const manifestsToWipe = [login, hosted].filter(
+      (manifest): manifest is LiveAppManifest =>
+        !!manifest && !wipedManifestUrls.current.has(String(manifest.url)),
+    );
+
+    if (manifestsToWipe.length === 0) {
       return;
     }
 
-    hasPendingWipe.current = false;
-
-    for (const manifest of [login, hosted]) {
-      void wipeHostedSessionForManifest(manifest);
+    for (const manifest of manifestsToWipe) {
+      wipedManifestUrls.current.add(String(manifest.url));
     }
+
+    hostedSessionWipe = Promise.all(manifestsToWipe.map(wipeHostedSessionForManifest))
+      .then(() => undefined)
+      .catch(() => undefined);
   }, [isSignedIn, login, hosted]);
 }

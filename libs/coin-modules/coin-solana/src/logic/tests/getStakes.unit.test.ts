@@ -97,10 +97,13 @@ describe("getStakes", () => {
     expect(stake.delegate).toBe(VOTER_PUBKEY.toBase58());
     expect(stake.state).toBe("active");
     expect(stake.asset).toEqual({ type: "native" });
-    expect(stake.amount).toBe(BigInt(5_000_000_000));
+    expect(stake.amount).toBe(BigInt(4_997_717_120));
     expect(stake.amountDeposited).toBe(BigInt(4_997_717_120));
-    expect(stake.details?.rentExemptReserve).toBe("2282880");
-    expect(stake.details?.activeStake).toBe(4_997_717_120);
+    expect(stake.amountRewarded).toBe(0n);
+    expect(stake.details?.lockedReserve).toBe(2_282_880);
+    expect(stake.details?.activeAmount).toBe(4_997_717_120);
+    expect(stake.details?.canStake).toBe(true);
+    expect(stake.details?.canWithdraw).toBe(true);
   });
 
   it("should map a deactivating stake account", async () => {
@@ -111,7 +114,7 @@ describe("getStakes", () => {
     const result = await getStakes(api, TEST_ADDRESS);
 
     expect(result.items[0].state).toBe("deactivating");
-    expect(result.items[0].details?.inactiveStake).toBe(2_997_717_120);
+    expect(result.items[0].details?.inactiveAmount).toBe(2_997_717_120);
   });
 
   it("should propagate errors from getStakeAccounts", async () => {
@@ -124,7 +127,7 @@ describe("getStakes", () => {
     it.each<[string[], string, Parameters<typeof makeStakeAccount>[0]]>([
       [["undelegate"], "active with no inactive lamports", { state: "active" }],
       [
-        ["claim_reward", "undelegate"],
+        ["withdraw", "undelegate"],
         "active with inactive lamports",
         { state: "active", lamports: 5_000_000_000, active: 4_000_000_000 },
       ],
@@ -134,12 +137,12 @@ describe("getStakes", () => {
         { state: "activating", active: 4_997_717_120, inactive: 0 },
       ],
       [
-        ["claim_reward", "delegate"],
+        ["withdraw", "delegate"],
         "deactivating with inactive lamports",
         { state: "deactivating", lamports: 5_000_000_000, active: 2_000_000_000 },
       ],
       [
-        ["claim_reward", "delegate"],
+        ["withdraw", "delegate"],
         "inactive",
         { state: "inactive", active: 0, inactive: 5_000_000_000 },
       ],
@@ -151,7 +154,7 @@ describe("getStakes", () => {
       expect(result.items[0].actions).toStrictEqual(expected);
     });
 
-    it("omits 'claim_reward' when the main address is not the withdraw authority", async () => {
+    it("omits 'withdraw' when the main address is not the withdraw authority", async () => {
       const stakeAccount = makeStakeAccount({
         state: "inactive",
         active: 0,
@@ -165,7 +168,7 @@ describe("getStakes", () => {
       expect(result.items[0].actions).toStrictEqual(["delegate"]);
     });
 
-    it("omits 'claim_reward' when the stake is locked up at the current epoch", async () => {
+    it("omits 'withdraw' when the stake is locked up at the current epoch", async () => {
       const stakeAccount = makeStakeAccount({
         state: "inactive",
         active: 0,

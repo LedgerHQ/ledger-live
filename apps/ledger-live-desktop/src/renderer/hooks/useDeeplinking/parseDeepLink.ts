@@ -279,6 +279,7 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
         type: "paytab",
         code: query.code,
         state: query.state,
+        appId: query.app_id,
       };
       return route;
     }

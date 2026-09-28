@@ -2,27 +2,14 @@ import { act, render, screen, waitFor } from "@tests/test-renderer";
 import React from "react";
 import { DeactivatePasswordScreen } from "../screens/DeactivatePassword";
 
-jest.mock("../adapters/passwordDigest", () => ({
-  derivePasswordDigest: jest.fn(async (password: string) =>
-    password === "longenough" ? Uint8Array.from([10, 20, 30, 40]) : Uint8Array.from([9, 9, 9, 9]),
-  ),
-  serialiseDerivation: <T,>(run: () => Promise<T>) => run(),
+jest.mock("@features/platform-app-lock", () => ({
+  ...jest.requireActual("@features/platform-app-lock"),
+  clearPasswordIfCorrect: jest.fn(),
 }));
 
-jest.mock("../adapters/verifierStore", () => ({
-  readPasswordVerifier: jest.fn(async () => ({
-    version: 1,
-    scrypt: { cost: 16384, blockSize: 8, parallelization: 1, digestLength: 4 },
-    salt: Uint8Array.from([1, 2, 3, 4]),
-    digest: Uint8Array.from([10, 20, 30, 40]),
-  })),
-  clearPasswordVerifier: jest.fn(async () => undefined),
-}));
+const { clearPasswordIfCorrect } = jest.requireMock("@features/platform-app-lock");
 
-const { derivePasswordDigest } = jest.requireMock("../adapters/passwordDigest");
-const { readPasswordVerifier, clearPasswordVerifier } = jest.requireMock(
-  "../adapters/verifierStore",
-);
+const correct = { status: "correct", verifier: { version: 1 } } as const;
 
 const PASSWORD = "longenough";
 
@@ -38,6 +25,8 @@ describe("deactivating a password", () => {
     });
 
   it("refuses a wrong password and keeps the verifier", async () => {
+    clearPasswordIfCorrect.mockResolvedValue({ status: "incorrect" });
+
     const { store, user } = renderDeactivate();
 
     const field = await screen.findByTestId("app-lock-deactivate-password-field");
@@ -45,22 +34,24 @@ describe("deactivating a password", () => {
     await user.press(screen.getByTestId("app-lock-deactivate-password-confirm"));
 
     expect(await screen.findByText("Incorrect password")).toBeVisible();
-    await waitFor(() => expect(clearPasswordVerifier).not.toHaveBeenCalled());
     expect(store.getState().appLock.hasPassword).toBe(true);
   });
 
   it("destroys the verifier once the password is proven", async () => {
+    clearPasswordIfCorrect.mockResolvedValue(correct);
+
     const { store, user } = renderDeactivate();
 
     const field = await screen.findByTestId("app-lock-deactivate-password-field");
     await user.type(field, PASSWORD);
     await user.press(screen.getByTestId("app-lock-deactivate-password-confirm"));
 
-    await waitFor(() => expect(clearPasswordVerifier).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(clearPasswordIfCorrect).toHaveBeenCalledWith(PASSWORD));
     await waitFor(() => expect(store.getState().appLock.hasPassword).toBe(false));
   });
 
   it("asks for focus on mount, so the keyboard comes up with the screen", async () => {
+    clearPasswordIfCorrect.mockResolvedValue(correct);
     renderDeactivate();
 
     expect(await screen.findByTestId("app-lock-deactivate-password-field")).toHaveProp(
@@ -70,11 +61,11 @@ describe("deactivating a password", () => {
   });
 
   it("locks the CTA while the digest is being derived", async () => {
-    let release = (_: Uint8Array) => {};
-    derivePasswordDigest.mockImplementationOnce(
+    let release = () => {};
+    clearPasswordIfCorrect.mockImplementationOnce(
       () =>
-        new Promise<Uint8Array>(resolve => {
-          release = resolve;
+        new Promise(resolve => {
+          release = () => resolve(correct);
         }),
     );
 
@@ -89,14 +80,16 @@ describe("deactivating a password", () => {
     );
 
     await act(async () => {
-      release(Uint8Array.from([10, 20, 30, 40]));
+      release();
     });
 
-    await waitFor(() => expect(clearPasswordVerifier).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(clearPasswordIfCorrect).toHaveBeenCalledTimes(1));
   });
 
   it("drops a previous failure once the user types again", async () => {
-    readPasswordVerifier.mockRejectedValueOnce(new Error("keychain unavailable"));
+    clearPasswordIfCorrect
+      .mockRejectedValueOnce(new Error("keychain unavailable"))
+      .mockResolvedValue({ status: "incorrect" });
 
     const { user } = renderDeactivate();
 
@@ -116,7 +109,7 @@ describe("deactivating a password", () => {
   });
 
   it("says so in place when the keychain will not give the verifier up", async () => {
-    readPasswordVerifier.mockRejectedValueOnce(new Error("keychain unavailable"));
+    clearPasswordIfCorrect.mockRejectedValueOnce(new Error("keychain unavailable"));
 
     const { store, user } = renderDeactivate();
 
@@ -124,7 +117,6 @@ describe("deactivating a password", () => {
     await user.type(field, PASSWORD);
     await user.press(screen.getByTestId("app-lock-deactivate-password-confirm"));
 
-    // A failed read must not read as a wrong password, and must leave the lock in place.
     expect(
       await screen.findByText("We couldn't deactivate your password. Please try again."),
     ).toBeVisible();

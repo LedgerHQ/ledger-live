@@ -12,6 +12,7 @@ import React, { useCallback } from "react";
 import { Keyboard, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
+import { equalCardActionWidth } from "./equalCardActionWidth";
 
 type AddContactActionProps = Readonly<{
   hasAddressBook: boolean;
@@ -66,7 +67,11 @@ export function AddContactAction({
   );
 
   if (hasAddressBook) {
-    return <Box lx={{ flex: 1 }}>{button}</Box>;
+    return (
+      <Box lx={{ flex: 1 }} style={equalCardActionWidth}>
+        {button}
+      </Box>
+    );
   }
 
   return (
@@ -77,7 +82,7 @@ export function AddContactAction({
         accessibilityHint={unsupportedTitle}
         onPress={openUnsupportedSheet}
         testID="send-recipient-card-add-contact-unsupported-trigger"
-        style={{ flex: 1 }}
+        style={equalCardActionWidth}
       >
         <Box
           pointerEvents="none"

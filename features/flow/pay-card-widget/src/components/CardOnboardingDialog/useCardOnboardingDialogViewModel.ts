@@ -1,9 +1,9 @@
-import { useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useCallback, useMemo, useState } from "react";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
-import type { PayCardOnboardingStep } from "@domain/api-card-management";
-import { markCardAddedToWallet } from "../../state";
-import { getStepIconId } from "./getStepIconId";
+import type { CardOnboardingStepWithCopy } from "../CardOnboardingWidget/useOnboardingSteps";
+import { getWalletPlatform } from "../getWalletPlatform";
+import { getStepIcon } from "./getStepIcon";
 import type {
   CardOnboardingOptionViewProps,
   StepStatus,
@@ -20,18 +20,18 @@ function toStepStatus(isDone: boolean, isFirstUndone: boolean): StepStatus {
 const STEP_ACTIONS: Record<string, () => void> = {
   "create-account": noop,
   "choose-card-type": noop,
-  "top-up-card": noop,
   "first-purchase": noop,
 };
 
 type Params = {
   isOpen: boolean;
-  steps: PayCardOnboardingStep[];
+  steps: CardOnboardingStepWithCopy[];
   completedCount: number;
   totalCount: number;
   onClose: () => void;
   onboardingCompleted: boolean;
   handleGotIt: () => void;
+  onTopUp?: () => void;
 };
 
 export type CardOnboardingDialogViewProps = {
@@ -44,6 +44,8 @@ export type CardOnboardingDialogViewProps = {
   readonly handleClose: () => void;
   readonly onboardingCompleted: boolean;
   readonly handleGotIt: () => void;
+  readonly isAddToWalletSceneOpen: boolean;
+  readonly onCloseAddToWalletScene: () => void;
 };
 
 export function useCardOnboardingDialogViewModel({
@@ -54,15 +56,33 @@ export function useCardOnboardingDialogViewModel({
   onClose,
   onboardingCompleted,
   handleGotIt,
+  onTopUp,
 }: Params): CardOnboardingDialogViewProps {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const { trackButtonClicked } = usePayAnalyticsContext();
   const dialogTitle = t("payTab.cardOnboarding.dialog.title");
   const gotItLabel = t("payTab.cardOnboarding.dialog.gotIt");
 
+  const [isAddToWalletSceneOpen, setIsAddToWalletSceneOpen] = useState(false);
+  const onCloseAddToWalletScene = useCallback(() => setIsAddToWalletSceneOpen(false), []);
+  const handleClose = useCallback(() => {
+    setIsAddToWalletSceneOpen(false);
+    onClose();
+  }, [onClose]);
+
   const stepActions = useMemo<Record<string, () => void>>(
-    () => ({ ...STEP_ACTIONS, "apple-google-pay": () => dispatch(markCardAddedToWallet()) }),
-    [dispatch],
+    () => ({
+      ...STEP_ACTIONS,
+      "top-up-card": onTopUp ?? noop,
+      "apple-google-pay": () => {
+        trackButtonClicked({
+          button: `add to ${getWalletPlatform().brand.toLowerCase()} pay`,
+          page: "Pay",
+        });
+        setIsAddToWalletSceneOpen(true);
+      },
+    }),
+    [onTopUp, trackButtonClicked],
   );
 
   const options = useMemo<CardOnboardingOptionViewProps[]>(() => {
@@ -76,7 +96,7 @@ export function useCardOnboardingDialogViewModel({
           ? t("payTab.cardOnboarding.dialog.stepComplete")
           : step.description,
         status,
-        iconId: getStepIconId(step.id),
+        iconId: getStepIcon(step.id),
         onAction: stepActions[step.id] ?? noop,
       };
     });
@@ -89,8 +109,10 @@ export function useCardOnboardingDialogViewModel({
     options,
     completedCount,
     totalCount,
-    handleClose: onClose,
+    handleClose,
     onboardingCompleted,
     handleGotIt,
+    isAddToWalletSceneOpen,
+    onCloseAddToWalletScene,
   };
 }

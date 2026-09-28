@@ -245,8 +245,8 @@ describe("LNSUpsellBanner", () => {
     it("should render opted-out MediaBanner copy when lwdWallet40 brazePlacement is on", () => {
       renderBanner({ brazePlacement: true, isOptIn: false });
 
-      expect(screen.getByText("More security. More control")).toBeVisible();
-      expect(screen.getByText("Learn more about security features.")).toBeVisible();
+      expect(screen.getByText("More Security. More Control")).toBeVisible();
+      expect(screen.getByText("Learn more about latest OS and security features.")).toBeVisible();
     });
 
     it("should render the banner for opted out users", () => {

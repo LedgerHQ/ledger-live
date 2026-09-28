@@ -1,7 +1,7 @@
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
+import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/logic-public";
 import type { TezosSigner, Curve } from "./types";
 
 const getAddress = (signerContext: SignerContext<TezosSigner>): GetAddressFn => {

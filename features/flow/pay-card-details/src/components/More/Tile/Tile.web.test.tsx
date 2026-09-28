@@ -36,6 +36,6 @@ describe("More Tile (Web)", () => {
     renderTile({ isSheetOpen: true });
 
     expect(screen.getByTestId("more-sheet")).toBeVisible();
-    expect(screen.getByText("Manage PIN Code")).toBeVisible();
+    expect(screen.getByText("Card PIN")).toBeVisible();
   });
 });

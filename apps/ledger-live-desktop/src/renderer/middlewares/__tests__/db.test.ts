@@ -95,6 +95,8 @@ type FakeState = {
   };
   payCardOnboardingWidget: {
     hasCompletedOnboarding: boolean;
+    analyticsCardId: string | null;
+    reportedAnalyticsMilestones: unknown[];
   };
   trustchain?: unknown;
 };
@@ -114,7 +116,11 @@ const baseState = (): FakeState => ({
   payCardFeatureTour: { hasSeenFeatureTour: false },
   payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
   payCardLoginIntro: { hasSeenLoginIntro: false },
-  payCardOnboardingWidget: { hasCompletedOnboarding: false },
+  payCardOnboardingWidget: {
+    hasCompletedOnboarding: false,
+    analyticsCardId: null,
+    reportedAnalyticsMilestones: [],
+  },
 });
 
 function runMiddleware(states: FakeState[], action: { type: string; payload?: unknown }) {
@@ -264,7 +270,11 @@ describe("DBMiddleware - payCard branch", () => {
     payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
     payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
     payCardLoginIntro: { hasSeenLoginIntro: true },
-    payCardOnboardingWidget: { hasCompletedOnboarding: true },
+    payCardOnboardingWidget: {
+      hasCompletedOnboarding: true,
+      analyticsCardId: null,
+      reportedAnalyticsMilestones: [],
+    },
   };
 
   const payCardBlob = {
@@ -273,6 +283,8 @@ describe("DBMiddleware - payCard branch", () => {
     balanceFilter: "ethereum/erc20/usd__coin",
     hasSeenLoginIntro: true,
     hasCompletedOnboarding: true,
+    analyticsCardId: null,
+    reportedAnalyticsMilestones: [],
   };
 
   it.each([

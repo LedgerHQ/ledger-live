@@ -10,8 +10,10 @@ jest.mock("react-router", () => ({
   useLocation: () => ({ pathname: "/pay" }),
 }));
 
+const mockSelectAddress = jest.fn();
+
 function renderContacts() {
-  return renderHook(() => usePayTabContacts());
+  return renderHook(() => usePayTabContacts(mockSelectAddress));
 }
 
 describe("usePayTabContacts", () => {
@@ -49,14 +51,16 @@ describe("usePayTabContacts", () => {
     expect(result.current.contactAddressPicker.contact).toBeNull();
   });
 
-  it("keeps the picker open when an address is selected", () => {
+  it("pays from the selected address and closes the picker", () => {
     const contact = mockContact({ id: "contact-ada", name: "Ada" });
+    const address = mockContactAddress();
     const { result } = renderContacts();
 
     act(() => result.current.contacts.onContactPress?.(contact));
-    act(() => result.current.contactAddressPicker.onSelectAddress(mockContactAddress()));
+    act(() => result.current.contactAddressPicker.onSelectAddress(address));
 
-    expect(result.current.contactAddressPicker.isOpen).toBe(true);
+    expect(mockSelectAddress).toHaveBeenCalledWith(address);
+    expect(result.current.contactAddressPicker.isOpen).toBe(false);
   });
 
   it("navigates to the add-address flow", () => {

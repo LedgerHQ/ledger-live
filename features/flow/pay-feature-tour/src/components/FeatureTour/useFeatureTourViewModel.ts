@@ -1,8 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "@shared/i18n";
+import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { markPayCardFeatureTourSeen, selectPayCardHasSeenFeatureTour } from "../../state";
-import type { FeatureTourProps, FeatureTourRow, FeatureTourRowIcon } from "./types";
+import type { FeatureTourRow, FeatureTourRowIcon } from "./types";
 
 export type FeatureTourViewModel = Readonly<{
   isVisible: boolean;
@@ -10,37 +11,34 @@ export type FeatureTourViewModel = Readonly<{
   description: string;
   rows: readonly FeatureTourRow[];
   ctaLabel: string;
-  onShown: () => void;
   onDismiss: () => void;
 }>;
 
-const TRACK_PAGE = "Page card feature intro";
+export const FEATURE_TOUR_PAGE = "card feature intro";
+const TRACK_FLOW = "card";
 
 const KEY_PREFIX = "payTab.featureTour";
 
-/** Icon per row, paired with the translation sub-key that carries its copy. */
 const ROWS: readonly { icon: FeatureTourRowIcon; key: string }[] = [
   { icon: "Contact", key: "global" },
   { icon: "Link", key: "volatility" },
   { icon: "CreditCard", key: "card" },
 ];
 
-export function useFeatureTourViewModel({
-  onTrackScreen,
-  onTrackEvent,
-}: FeatureTourProps): FeatureTourViewModel {
+export function useFeatureTourViewModel(): FeatureTourViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { trackButtonClicked } = usePayAnalyticsContext();
   const hasSeenFeatureTour = useSelector(selectPayCardHasSeenFeatureTour);
-
-  const onShown = useCallback(() => {
-    onTrackScreen?.(TRACK_PAGE);
-  }, [onTrackScreen]);
 
   const onDismiss = useCallback(() => {
     dispatch(markPayCardFeatureTourSeen());
-    onTrackEvent?.("button_clicked", { button: "got it", page: "$page" });
-  }, [dispatch, onTrackEvent]);
+    trackButtonClicked({
+      button: "got it",
+      flow: TRACK_FLOW,
+      page: FEATURE_TOUR_PAGE,
+    });
+  }, [dispatch, trackButtonClicked]);
 
   const rows = useMemo(
     () =>
@@ -59,9 +57,8 @@ export function useFeatureTourViewModel({
       description: t(`${KEY_PREFIX}.description`),
       rows,
       ctaLabel: t(`${KEY_PREFIX}.cta`),
-      onShown,
       onDismiss,
     }),
-    [hasSeenFeatureTour, t, rows, onShown, onDismiss],
+    [hasSeenFeatureTour, t, rows, onDismiss],
   );
 }

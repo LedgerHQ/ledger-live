@@ -30,7 +30,7 @@ import { type AccountNamesState } from "@domain/entity-account-name";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import type { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
+import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/logic-public";
 import { AccountPublicKeyUnavailable } from "../errors";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
@@ -366,9 +366,7 @@ const ACCOUNT_PUBLIC_KEY_RESOLVERS: Partial<Record<string, AccountPublicKeyResol
     if (publicKey) return publicKey;
     throw new AccountPublicKeyUnavailable();
   },
-  // cosmos seedIdentifier is seed-level (shared across accounts), so the per-account
-  // compressed pubkey (hex) is persisted in cosmosResources at scan time.
-  cosmos: account => (account as CosmosAccount).cosmosResources?.publicKey || null,
+  cosmos: account => (account as CosmosAccount).xpub || null,
 };
 
 export const accountGetPublicKeyLogic = async (

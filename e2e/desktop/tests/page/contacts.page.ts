@@ -1,0 +1,146 @@
+import { expect } from "@playwright/test";
+import { AppPage } from "tests/page/abstractClasses";
+import { ContactDetailPage } from "tests/page/contactDetail.page";
+import { ContactAddDialog } from "tests/page/dialog/contactAdd.dialog";
+import { ContactRenameDialog } from "tests/page/dialog/contactRename.dialog";
+import { step } from "tests/misc/reporters/step";
+
+const ME_CONTACT_DISPLAY_NAME = "My addresses";
+
+export class ContactsPage extends AppPage {
+  readonly detail = new ContactDetailPage(this.page);
+  readonly addDialog = new ContactAddDialog(this.page);
+  readonly renameDialog = new ContactRenameDialog(this.page);
+
+  private readonly pageRoot = this.page.getByTestId("contacts-page");
+  private readonly meName = this.page.getByTestId("contacts-me-name");
+  private readonly meAddressCount = this.page.getByTestId("contacts-me-address-count");
+  private readonly addContactHeaderButton = this.page.getByTestId("contacts-add-contact-header");
+  private readonly addContactRow = this.page.getByTestId("contacts-add-contact");
+  private readonly searchInput = this.page.getByTestId("contacts-list-search");
+  private readonly meRow = this.page.getByTestId("contacts-me-row");
+  private readonly savedContactRows = this.page.getByTestId(/^contacts-saved-row-/);
+  private readonly savedContactNames = this.page.getByTestId(/^contacts-saved-contact-.+-name$/);
+
+  private savedContactName(name: string) {
+    return this.savedContactNames.filter({ hasText: name });
+  }
+
+  private savedContactRow(contactId: string) {
+    return this.page.getByTestId(`contacts-saved-row-${contactId}`);
+  }
+
+  private savedContactRowName(contactId: string) {
+    return this.page.getByTestId(`contacts-saved-contact-${contactId}-name`);
+  }
+
+  private savedContactAddressCount(contactId: string) {
+    return this.page.getByTestId(`contacts-saved-contact-${contactId}-address-count`);
+  }
+
+  @step("Expect Contacts screen visible")
+  async expectScreenVisible() {
+    await expect(this.pageRoot).toBeVisible();
+  }
+
+  @step("Expect Me contact displayed")
+  async expectMeContactDisplayed() {
+    await expect(this.meName).toHaveText(ME_CONTACT_DISPLAY_NAME);
+  }
+
+  /** Me only survives a search when it matches the query itself — see `createContactsSearchViewModel`. */
+  @step("Expect Me contact hidden")
+  async expectMeContactHidden() {
+    await expect(this.meRow).toBeHidden();
+  }
+
+  @step("Expect Me contact address count to show $0")
+  async expectMeAddressCount(expectedLabel: string) {
+    await expect(this.meAddressCount).toHaveText(expectedLabel);
+  }
+
+  @step("Open the Add contact dialog")
+  async openAddContactDialog() {
+    await this.addContactHeaderButton.click();
+    await this.addDialog.expectVisible();
+  }
+
+  @step("Add the contact $0")
+  async addContact(name: string) {
+    await this.openAddContactDialog();
+    await this.addDialog.typeName(name);
+    await this.addDialog.confirm();
+  }
+
+  async getSavedContactId(name: string): Promise<string> {
+    const nameLocator = this.savedContactName(name);
+    await expect(nameLocator).toBeVisible();
+    const nameId = await nameLocator.getAttribute("data-testid");
+    if (!nameId) {
+      throw new Error(`Saved contact row for ${name} should expose a test id`);
+    }
+    return nameId.replace(/^contacts-saved-contact-/, "").replace(/-name$/, "");
+  }
+
+  @step("Expect contact $0 displayed")
+  async expectSavedContactDisplayed(name: string) {
+    await expect(this.savedContactName(name)).toBeVisible();
+  }
+
+  @step("Expect saved contacts in alphabetical order")
+  async expectSavedContactsInOrder(names: readonly string[]) {
+    await expect(this.savedContactNames).toHaveText([...names]);
+  }
+
+  @step("Expect contact $0 address count to show $1")
+  async expectSavedContactAddressCount(name: string, expectedLabel: string) {
+    const contactId = await this.getSavedContactId(name);
+    await expect(this.savedContactAddressCount(contactId)).toHaveText(expectedLabel);
+  }
+
+  @step("Open the contact row $0")
+  async openSavedContact(contactId: string) {
+    await this.savedContactRow(contactId).click();
+    await this.detail.expectScreenVisible();
+  }
+
+  @step("Delete contact $0")
+  async deleteContact(contactId: string) {
+    await this.openSavedContact(contactId);
+    await this.detail.deleteContact();
+  }
+
+  @step("Expect contact row $0 to be named $1")
+  async expectSavedContactRowName(contactId: string, name: string) {
+    await expect(this.savedContactRowName(contactId)).toHaveText(name);
+  }
+
+  @step("Expect contact row $0 removed")
+  async expectSavedContactRemoved(contactId: string) {
+    await expect(this.savedContactRow(contactId)).toHaveCount(0);
+  }
+
+  @step("Expect the empty contacts list")
+  async expectEmptyState() {
+    await expect(this.addContactRow).toBeVisible();
+    await expect(this.savedContactRows).toHaveCount(0);
+  }
+
+  @step("Search contacts for $0")
+  async search(name: string) {
+    await this.searchInput.fill(name);
+  }
+
+  @step("Clear the contacts search")
+  async clearSearch() {
+    await this.searchInput.fill("");
+  }
+
+  @step("Rename the contact to $0")
+  async renameContact(name: string) {
+    await this.detail.clickEditAction();
+    await this.renameDialog.expectVisible();
+    await this.renameDialog.typeName(name);
+    await this.renameDialog.confirm();
+  }
+}

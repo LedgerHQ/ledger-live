@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import coinConfig from "../../config";
 import {
   addTronRentRecord,
@@ -25,6 +26,8 @@ const mockedQueryPreorderInfo = queryPreorderInfo as jest.MockedFunction<typeof 
 const mockedAddTronRentRecord = addTronRentRecord as jest.MockedFunction<typeof addTronRentRecord>;
 const mockedUploadHash = uploadHash as jest.MockedFunction<typeof uploadHash>;
 const mockedMyPayOrder = myPayOrder as jest.MockedFunction<typeof myPayOrder>;
+
+const mockLogger: Logger = jest.fn();
 
 const purchaseOrder = (overrides: Record<string, unknown>) => ({
   orderId: "order-1",
@@ -91,7 +94,7 @@ describe("energyRent provider switch", () => {
         activeAccountFee: "0",
       } as never);
 
-      const quote = await getEnergyRentQuote(request);
+      const quote = await getEnergyRentQuote(mockLogger, request);
 
       expect(quote).toEqual({
         energy: 32000n,
@@ -106,10 +109,11 @@ describe("energyRent provider switch", () => {
       mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 32000 } as never);
 
       // 2h is not a window Tronify sells — it must be quoted (and priced) as the 3h one.
-      const quote = await getEnergyRentQuote({ ...request, durationSeconds: 2 * 3600 });
+      const quote = await getEnergyRentQuote(mockLogger, { ...request, durationSeconds: 2 * 3600 });
 
       expect(quote.durationSeconds).toBe(3 * 3600);
       expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(
+        mockLogger,
         expect.objectContaining({ pledgeDay: "0", pledgeHour: "3", pledgeMinute: "0" }),
       );
     });
@@ -117,9 +121,9 @@ describe("energyRent provider switch", () => {
     it("maps a 10-minute duration to the fastTrade window and defaults extraTrxNum to 0", async () => {
       mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 32000 } as never);
 
-      await getEnergyRentQuote(request);
+      await getEnergyRentQuote(mockLogger, request);
 
-      expect(mockedQueryPreorderInfo).toHaveBeenCalledWith({
+      expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(mockLogger, {
         fromAddress: request.payerAddress,
         pledgeAddress: request.receiverAddress,
         pledgeNum: 32000,
@@ -133,10 +137,14 @@ describe("energyRent provider switch", () => {
     it("rounds a duration past the hour windows up to whole days, capped at Tronify's 30", async () => {
       mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 32000 } as never);
 
-      const quote = await getEnergyRentQuote({ ...request, durationSeconds: 40 * 86_400 });
+      const quote = await getEnergyRentQuote(mockLogger, {
+        ...request,
+        durationSeconds: 40 * 86_400,
+      });
 
       expect(quote.durationSeconds).toBe(30 * 86_400);
       expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(
+        mockLogger,
         expect.objectContaining({ pledgeDay: "30", pledgeHour: "0", pledgeMinute: "0" }),
       );
     });
@@ -144,10 +152,11 @@ describe("energyRent provider switch", () => {
     it("rounds a sub-day duration past 3h up to a single day", async () => {
       mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 32000 } as never);
 
-      const quote = await getEnergyRentQuote({ ...request, durationSeconds: 4 * 3600 });
+      const quote = await getEnergyRentQuote(mockLogger, { ...request, durationSeconds: 4 * 3600 });
 
       expect(quote.durationSeconds).toBe(86_400);
       expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(
+        mockLogger,
         expect.objectContaining({ pledgeDay: "1", pledgeHour: "0", pledgeMinute: "0" }),
       );
     });
@@ -155,9 +164,10 @@ describe("energyRent provider switch", () => {
     it("forwards extraTrx as a string", async () => {
       mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 1 } as never);
 
-      await getEnergyRentQuote({ ...request, extraTrx: 0.8 });
+      await getEnergyRentQuote(mockLogger, { ...request, extraTrx: 0.8 });
 
       expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(
+        mockLogger,
         expect.objectContaining({ extraTrxNum: "0.8" }),
       );
     });
@@ -177,7 +187,7 @@ describe("energyRent provider switch", () => {
         activeAccountFee: "0",
       });
 
-      const order = await craftEnergyRentTransaction(request);
+      const order = await craftEnergyRentTransaction(mockLogger, request);
 
       expect(order).toEqual({
         orderId: "order-1",
@@ -199,9 +209,9 @@ describe("energyRent provider switch", () => {
         signature: ["sig"],
       };
 
-      await broadcastEnergyRentTransaction({ orderId: "order-1", signedTransaction });
+      await broadcastEnergyRentTransaction(mockLogger, { orderId: "order-1", signedTransaction });
 
-      expect(mockedUploadHash).toHaveBeenCalledWith({
+      expect(mockedUploadHash).toHaveBeenCalledWith(mockLogger, {
         orderId: "order-1",
         fromHash: "abc",
         signedData: signedTransaction,
@@ -218,15 +228,21 @@ describe("energyRent provider switch", () => {
 
     const statusOf = (orderStatus: string) => {
       respondWith([purchaseOrder({ orderStatus })]);
-      return getEnergyRentStatus({ orderId: "order-1", payerAddress: request.payerAddress });
+      return getEnergyRentStatus(mockLogger, {
+        orderId: "order-1",
+        payerAddress: request.payerAddress,
+      });
     };
 
     it("looks the order up by the payer address, requesting every order", async () => {
       respondWith([]);
 
-      await getEnergyRentStatus({ orderId: "order-1", payerAddress: request.payerAddress });
+      await getEnergyRentStatus(mockLogger, {
+        orderId: "order-1",
+        payerAddress: request.payerAddress,
+      });
 
-      expect(mockedMyPayOrder).toHaveBeenCalledWith({
+      expect(mockedMyPayOrder).toHaveBeenCalledWith(mockLogger, {
         fromAddress: request.payerAddress,
         orderType: "2",
         page: 1,
@@ -246,7 +262,7 @@ describe("energyRent provider switch", () => {
     it("returns 'unknown' when the order is not in the payer's records", async () => {
       respondWith([purchaseOrder({ orderId: "another-order" })]);
 
-      const status = await getEnergyRentStatus({
+      const status = await getEnergyRentStatus(mockLogger, {
         orderId: "order-1",
         payerAddress: request.payerAddress,
       });

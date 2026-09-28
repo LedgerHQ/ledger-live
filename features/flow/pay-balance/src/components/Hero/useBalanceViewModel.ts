@@ -37,7 +37,7 @@ export function useBalanceViewModel({
 
   const onOpenFilter = useCallback(() => {
     setIsFilterOpen(true);
-    onTrackEvent?.("button_clicked", { button: "balance_filter" });
+    onTrackEvent?.("button_clicked", { button: "balance filter", page: "Pay" });
   }, [onTrackEvent]);
 
   const onCloseFilter = useCallback(() => {

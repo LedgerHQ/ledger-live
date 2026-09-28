@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { TRANSACTION_TYPE } from "../constants";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import {
   getMockedEnrichedPrivateRecord,
@@ -483,5 +484,48 @@ describe("listOperations", () => {
     const { items } = await run({ minHeight: 0 });
 
     expect(items.map(op => op.id)).toEqual(["at1high", "at1low"]);
+  });
+
+  describe("enableStaking gating", () => {
+    const runWithStaking = () =>
+      listOperations({
+        config: { ...config, enableStaking: true },
+        address,
+        options: { minHeight: 0, order: "desc" },
+        provableId,
+        viewKey,
+      });
+
+    beforeEach(() => {
+      mockedFetchTransitionPage.mockResolvedValue({
+        transitions: [
+          getMockedPublicTransaction({
+            transaction_id: "at1bond",
+            block_number: 600,
+            function_id: TRANSACTION_TYPE.BOND_PUBLIC,
+            sender_address: "",
+            recipient_address: "",
+            amount: 0,
+          }),
+          getMockedPublicTransaction({ transaction_id: "at1transfer", block_number: 500 }),
+        ],
+        next: null,
+      });
+    });
+
+    it("should omit staking operations while staking is disabled", async () => {
+      const { items } = await run({ minHeight: 0 });
+
+      expect(items.map(op => op.id)).toEqual(["at1transfer"]);
+    });
+
+    it("should emit staking operations once staking is enabled", async () => {
+      const { items } = await runWithStaking();
+
+      expect(items).toEqual([
+        expect.objectContaining({ id: "at1bond", type: "BOND" }),
+        expect.objectContaining({ id: "at1transfer" }),
+      ]);
+    });
   });
 });

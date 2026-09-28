@@ -26,6 +26,8 @@ import { Interaction } from "../components/Interaction/Interaction";
 import { BalanceScreen } from "../components/Balance/Balance";
 import { CardOnboardingScreen } from "../components/CardOnboarding/CardOnboarding";
 import { CurrencyMappingScreen } from "../components/CurrencyMapping/CurrencyMapping";
+import { ReorderMock } from "../components/ReorderMock/ReorderMock";
+import { TransactionsScreen } from "../components/Transactions/Transactions";
 import { AuthSection } from "./AuthSection";
 import { ResultToast } from "./ResultToast";
 import { SecureBrowserSection } from "./SecureBrowserSection";
@@ -37,13 +39,40 @@ const BUTTON_ROW_STYLE = {
 } as const;
 const PANEL_STYLE = { flex: 1 } as const;
 
-export function PayCard(props: Readonly<PayCardToolProps>) {
+type SubScreenName = "interaction" | "balance" | "onboarding" | "mapping" | "transactions";
+
+function SubScreen({
+  screen,
+  interaction,
+  balance,
+  transactions,
+  cardOnboarding,
+  currencyMapping,
+  onBack,
+}: Readonly<{
+  screen: SubScreenName;
+  interaction: PayCardToolProps["interaction"];
+  balance: PayCardToolProps["balance"];
+  transactions: PayCardToolProps["transactions"];
+  cardOnboarding: PayCardToolProps["cardOnboarding"];
+  currencyMapping: PayCardToolProps["currencyMapping"];
+  onBack: () => void;
+}>) {
+  if (screen === "interaction") return <Interaction {...interaction} onBack={onBack} />;
+  if (screen === "balance") return <BalanceScreen {...balance} onBack={onBack} />;
+  if (screen === "onboarding") return <CardOnboardingScreen {...cardOnboarding} onBack={onBack} />;
+  if (screen === "transactions") return <TransactionsScreen {...transactions} onBack={onBack} />;
+  return <CurrencyMappingScreen rows={currencyMapping} onBack={onBack} />;
+}
+
+function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
-    onboarding,
     cardOnboarding,
     interaction,
     balance,
+    transactions,
+    reorder,
     currencyMapping,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
@@ -66,24 +95,20 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPaySuccess ||
     onNavigateToSendSuccess,
   );
-  const [screen, setScreen] = useState<
-    "tool" | "interaction" | "balance" | "onboarding" | "mapping"
-  >("tool");
+  const [screen, setScreen] = useState<"tool" | SubScreenName>("tool");
 
-  if (screen === "interaction") {
-    return <Interaction {...interaction} onBack={() => setScreen("tool")} />;
-  }
-
-  if (screen === "balance") {
-    return <BalanceScreen {...balance} onBack={() => setScreen("tool")} />;
-  }
-
-  if (screen === "onboarding") {
-    return <CardOnboardingScreen {...cardOnboarding} onBack={() => setScreen("tool")} />;
-  }
-
-  if (screen === "mapping") {
-    return <CurrencyMappingScreen rows={currencyMapping} onBack={() => setScreen("tool")} />;
+  if (screen !== "tool") {
+    return (
+      <SubScreen
+        screen={screen}
+        interaction={interaction}
+        balance={balance}
+        transactions={transactions}
+        cardOnboarding={cardOnboarding}
+        currencyMapping={currencyMapping}
+        onBack={() => setScreen("tool")}
+      />
+    );
   }
 
   return (
@@ -118,7 +143,19 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
             <ListItemLeading>
               <Spot appearance="icon" icon={CoinsCrypto} />
               <ListItemContent>
-                <ListItemTitle>Balance</ListItemTitle>
+                <ListItemTitle>Balance & Wallets</ListItemTitle>
+              </ListItemContent>
+            </ListItemLeading>
+            <ListItemTrailing>
+              <ChevronRight />
+            </ListItemTrailing>
+          </ListItem>
+
+          <ListItem onPress={() => setScreen("transactions")}>
+            <ListItemLeading>
+              <Spot appearance="icon" icon={CreditCard} />
+              <ListItemContent>
+                <ListItemTitle>Transactions</ListItemTitle>
               </ListItemContent>
             </ListItemLeading>
             <ListItemTrailing>
@@ -179,37 +216,12 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
           />
         </Section>
 
-        <Divider />
-
-        <Section title="Onboarding">
-          <Box lx={{ flexDirection: "column", gap: "s8" }}>
-            {onboarding.steps.map(step => (
-              <ToggleRow
-                key={step.id}
-                label={step.label}
-                checked={step.done}
-                onChange={() => onboarding.setStepDone(step.id, !step.done)}
-              />
-            ))}
-          </Box>
-        </Section>
-
-        <Divider />
-
-        <Section title="Reset onboarding">
-          <Box style={BUTTON_ROW_STYLE}>
-            <Button appearance="gray" size="sm" onPress={() => onboarding.setStepDone("all", true)}>
-              Set all done
-            </Button>
-            <Button
-              appearance="gray"
-              size="sm"
-              onPress={() => onboarding.setStepDone("all", false)}
-            >
-              Reset all
-            </Button>
-          </Box>
-        </Section>
+        {reorder.available ? (
+          <>
+            <Divider />
+            <ReorderMock {...reorder} />
+          </>
+        ) : null}
 
         <Divider />
 

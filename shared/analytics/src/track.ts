@@ -3,12 +3,16 @@
  * @description
  * This module exports the track function.
  *
+ * `await track()` waits until delivery has finished. Register `Analytics.track`
+ * so it awaits the vendor SDK — see that type.
+ *
  * @example
  * ```ts
  * import { track } from "@shared/analytics";
  *
  * track("myEvent", { prop: "value" });
  * track("myEvent", { prop: "value" }, { mandatory: true });
+ * await track("myEvent", { prop: "value" });
  * ```
  */
 

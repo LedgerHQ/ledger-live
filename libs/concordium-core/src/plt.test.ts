@@ -1,5 +1,5 @@
 import { AccountAddress } from "./address";
-import { PLT_CBOR_MAX_SIZE } from "./cbor";
+import { encodeMemoToCbor, MAX_MEMO_LENGTH, PLT_CBOR_MAX_SIZE } from "./cbor";
 import {
   encodePltAddress,
   encodePltAmount,
@@ -84,26 +84,31 @@ describe("plt/encodePltAddress", () => {
 });
 
 describe("plt/encodePltMemo", () => {
-  it("encodes a memo as a bare byte string by default", () => {
-    expect(encodePltMemo(Buffer.from("Hello")).toString("hex")).toBe("4548656c6c6f");
+  // Tag 24 declares that the byte string holds CBOR, which is what makes this
+  // the `Cbor` variant of the chain's `CborMemo` rather than the `Raw` one.
+  // d818 = tag 24, 46 = byte string(6), 6548656c6c6f = text string(5) "Hello".
+  it("wraps a CBOR text string in a byte string under tag 24", () => {
+    expect(encodePltMemo("Hello").toString("hex")).toBe("d818466548656c6c6f");
   });
 
-  it("wraps the memo in tag 24 when asked", () => {
-    expect(encodePltMemo(Buffer.from("Hello"), true).toString("hex")).toBe("d8184548656c6c6f");
+  it("produces the same content the CCD path signs", () => {
+    const encoded = encodePltMemo("Hello").toString("hex");
+
+    expect(encoded).toContain(encodeMemoToCbor("Hello").toString("hex"));
   });
 
-  it("encodes an empty memo as a zero-length byte string", () => {
-    expect(encodePltMemo(Buffer.alloc(0)).toString("hex")).toBe("40");
+  it("encodes an empty memo as a zero-length text string", () => {
+    expect(encodePltMemo("").toString("hex")).toBe("d8184160");
   });
 
-  // The chain caps the memo independently of the CBOR budget: a 400-byte memo
-  // fits the budget and still fails on chain.
-  it("accepts a memo at the chain's 256-byte limit", () => {
-    expect(() => encodePltMemo(Buffer.alloc(256))).not.toThrow();
+  // The cap counts the encoded bytes, so the 2-byte CBOR header comes out of
+  // the chain's 256-byte budget. Shared with the CCD path, not PLT-specific.
+  it("accepts a memo at the limit", () => {
+    expect(() => encodePltMemo("a".repeat(MAX_MEMO_LENGTH))).not.toThrow();
   });
 
-  it("rejects a memo above the chain's 256-byte limit", () => {
-    expect(() => encodePltMemo(Buffer.alloc(257))).toThrow(/exceeding the chain limit/);
+  it("rejects a memo above the limit", () => {
+    expect(() => encodePltMemo("a".repeat(MAX_MEMO_LENGTH + 1))).toThrow(/exceeds maximum/);
   });
 
   it("rejects an oversized memo through the transfer encoder too", () => {
@@ -112,9 +117,18 @@ describe("plt/encodePltMemo", () => {
         recipient: SEQ_ADDRESS,
         amount: 1n,
         decimals: 6,
-        memo: Buffer.alloc(400),
+        memo: "a".repeat(400),
       }),
-    ).toThrow(/exceeding the chain limit/);
+    ).toThrow(/exceeds maximum/);
+  });
+
+  // The budget is on UTF-8 bytes, so a multi-byte character costs more than one
+  // character's worth of it.
+  it("counts UTF-8 bytes, not characters", () => {
+    const twoByteCharacters = Math.floor(MAX_MEMO_LENGTH / 2);
+
+    expect(() => encodePltMemo("é".repeat(twoByteCharacters))).not.toThrow();
+    expect(() => encodePltMemo("é".repeat(twoByteCharacters + 1))).toThrow(/exceeds maximum/);
   });
 });
 
@@ -148,11 +162,11 @@ describe("plt/encodePltTransferOperations", () => {
       recipient: SEQ_ADDRESS,
       amount: 500_000n,
       decimals: 6,
-      memo: Buffer.from("Hello"),
+      memo: "Hello",
     });
 
     expect(encoded.toString("hex")).toBe(
-      `81a1687472616e73666572a3646d656d6f4548656c6c6f66616d6f756e74c482251a0007a12069726563697069656e74d99d73a1035820${SEQ_HEX}`,
+      `81a1687472616e73666572a3646d656d6fd818466548656c6c6f66616d6f756e74c482251a0007a12069726563697069656e74d99d73a1035820${SEQ_HEX}`,
     );
   });
 
@@ -161,11 +175,11 @@ describe("plt/encodePltTransferOperations", () => {
       recipient: SEQ_ADDRESS,
       amount: 1_000_000n,
       decimals: 6,
-      memo: Buffer.alloc(0),
+      memo: "",
     });
 
     expect(encoded.toString("hex")).toBe(
-      `81a1687472616e73666572a3646d656d6f4066616d6f756e74c482251a000f424069726563697069656e74d99d73a1035820${SEQ_HEX}`,
+      `81a1687472616e73666572a3646d656d6fd818416066616d6f756e74c482251a000f424069726563697069656e74d99d73a1035820${SEQ_HEX}`,
     );
   });
 
@@ -189,7 +203,7 @@ describe("plt/encodePltTransferOperations", () => {
       recipient: SEQ_ADDRESS,
       amount: 1n,
       decimals: 6,
-      memo: Buffer.from("x"),
+      memo: "x",
     }).toString("hex");
 
     expect(encoded.indexOf("646d656d6f")).toBeLessThan(encoded.indexOf("66616d6f756e74"));
@@ -213,22 +227,22 @@ describe("plt/encodePltTransferOperations", () => {
         recipient: SEQ_ADDRESS,
         amount: 42n,
         decimals: 2,
-        memo: Buffer.from("determinism"),
+        memo: "determinism",
       });
 
     expect(build().toString("hex")).toBe(build().toString("hex"));
   });
 
-  // With the memo capped at 256 the blob cannot reach 512 through this encoder,
-  // so the budget guard inside it is a backstop for future operation types
-  // rather than a reachable path. The reachable check is in serializeTokenUpdate,
-  // which takes the blob as opaque bytes.
+  // With the memo capped at MAX_MEMO_LENGTH the blob cannot reach 512 through
+  // this encoder, so the budget guard inside it is a backstop for future
+  // operation types rather than a reachable path. The reachable check is in
+  // serializeTokenUpdate, which takes the blob as opaque bytes.
   it("stays well inside the device CBOR budget at the worst case", () => {
     const encoded = encodePltTransferOperations({
       recipient: SEQ_ADDRESS,
       amount: 1_000_000n,
       decimals: 6,
-      memo: Buffer.alloc(256),
+      memo: "a".repeat(MAX_MEMO_LENGTH),
       includeCoinInfo: true,
     });
 

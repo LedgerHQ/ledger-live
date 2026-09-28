@@ -45,12 +45,11 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
         position: "absolute",
         top: 0,
         left: 0,
-        // Stops short of the trailing info icon so the disclaimer stays pressable.
-        right: DISCLAIMER_HIT_AREA,
+        right: viewModel.recipientContact ? 0 : DISCLAIMER_HIT_AREA,
         bottom: 0,
       },
     }),
-    [],
+    [viewModel.recipientContact],
   );
 
   return (

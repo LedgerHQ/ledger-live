@@ -7,12 +7,19 @@ import type {
   AleoOperation,
   AleoTransactionType,
 } from "@ledgerhq/live-common/families/aleo/types";
+import type { OperationType } from "@ledgerhq/types-live";
+import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import Ellipsis from "~/renderer/components/Ellipsis";
+import FormattedVal from "~/renderer/components/FormattedVal";
+import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import {
+  GradientHover,
+  HashContainer,
   OpDetailsData,
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import type { OperationDetailsExtraProps } from "~/renderer/families/types";
 import type { AleoFamily } from "./types";
 
@@ -40,10 +47,20 @@ const CustomMetadataCell: OperationDetails["customMetadataCell"] = props => {
   );
 };
 
+const STAKED_AMOUNT_LABEL: Partial<Record<OperationType, string>> = {
+  BOND: "aleo.operationDetails.extra.bondedAmount",
+  UNBOND: "aleo.operationDetails.extra.unbondedAmount",
+};
+
 const OperationDetailsExtra = ({
   operation,
+  type,
+  account,
 }: OperationDetailsExtraProps<AleoAccount, AleoOperation>) => {
   const extraFields = getOperationDetailsExtraFields(operation.extra);
+  const unit = useAccountUnit(account);
+  const { validator, stakedAmount } = operation.extra;
+  const stakedAmountLabel = STAKED_AMOUNT_LABEL[type];
 
   return (
     <>
@@ -57,6 +74,39 @@ const OperationDetailsExtra = ({
           </OpDetailsData>
         </OpDetailsSection>
       ))}
+      {validator && (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey="aleo.operationDetails.extra.validator" />
+          </OpDetailsTitle>
+          <OpDetailsData relative horizontal data-testid="operation-validator">
+            <HashContainer>
+              <SplitAddress value={validator} />
+            </HashContainer>
+            <GradientHover>
+              <CopyWithFeedback text={validator} />
+            </GradientHover>
+          </OpDetailsData>
+        </OpDetailsSection>
+      )}
+      {stakedAmount !== undefined && stakedAmountLabel && (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey={stakedAmountLabel} />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Box>
+              <FormattedVal
+                val={stakedAmount}
+                unit={unit}
+                disableRounding
+                showCode
+                color="neutral.c80"
+              />
+            </Box>
+          </OpDetailsData>
+        </OpDetailsSection>
+      )}
     </>
   );
 };

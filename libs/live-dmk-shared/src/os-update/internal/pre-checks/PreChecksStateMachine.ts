@@ -1,8 +1,6 @@
 import {
   BatteryStatusType,
   DeviceSessionId,
-  DeviceStatus,
-  GetAppAndVersionCommand,
   GetBatteryStatusCommand,
   GetOsVersionCommand,
   GoToDashboardDeviceAction,
@@ -10,26 +8,24 @@ import {
   isSuccessCommandResult,
   UserInteractionRequired,
   WaitForAppAndVersionDeviceAction,
-  type ConnectedDevice,
   type DeviceManagementKit,
   type GetOsVersionResponse,
   type GoToDashboardDAInput,
   type WaitForAppAndVersionDAInput,
 } from "@ledgerhq/device-management-kit";
 import type { Backup } from "@ledgerhq/dmk-ledger-wallet";
-import { assign, enqueueActions, fromCallback, fromPromise, sendTo, setup } from "xstate";
+import { assign, enqueueActions, fromPromise, sendTo, setup } from "xstate";
 import { createDeviceActionStateMachine } from "../../../device-action/CreateDeviceActionStateMachine/createDeviceActionStateMachine";
 import type { DeviceBackupStorage } from "../../api/model/DeviceBackupStorage";
 import { PreChecksStateType, type PreChecksState } from "../../api/model/PreChecksState";
 import { OsUpdatesOrchestratorStateMachineEventType } from "../orchestrator/types";
-import { isDeviceDisconnectedError } from "../utils/isDeviceDisconnectedError";
-import { isDeviceLockedError } from "../utils/isDeviceLockedError";
+import { checkErrorCauseStateMachine } from "../shared/checkErrorCauseStateMachine";
+import { POLL_INTERVAL_MS } from "../shared/constants";
+import { CheckErrorCauseResult, DeviceSituationEventType } from "../shared/types";
 import {
   CHARGING_MODE_NONE,
   DEVICE_MODELS_WITH_BATTERY,
   MIN_BATTERY_PERCENTAGE,
-  POLL_INTERVAL_MS,
-  SESSION_SETTLE_TIMEOUT_MS,
 } from "./constants";
 import {
   PreChecksNextAction,
@@ -45,6 +41,7 @@ import { asBatteryPercentage } from "./utils/asBatteryPercentage";
 import { asBatteryFlags } from "./utils/asBatteryFlags";
 import { isSameState } from "./utils/isSameState";
 import { resumeTarget } from "./utils/resumeTarget";
+import { toPreChecksState } from "./utils/toPreChecksState";
 
 export const preChecksStateMachine = setup({
   types: {
@@ -107,21 +104,7 @@ export const preChecksStateMachine = setup({
         };
       },
     ),
-    getAppAndVersion: fromPromise(
-      async ({
-        input,
-      }: {
-        input: { dmk: DeviceManagementKit; sessionId: DeviceSessionId };
-      }): Promise<void> => {
-        const result = await input.dmk.sendCommand({
-          sessionId: input.sessionId,
-          command: new GetAppAndVersionCommand(),
-        });
-        if (!isSuccessCommandResult(result)) {
-          throw result.error;
-        }
-      },
-    ),
+    checkErrorCause: checkErrorCauseStateMachine,
     getBackup: fromPromise(
       async ({
         input,
@@ -134,70 +117,6 @@ export const preChecksStateMachine = setup({
         return input.storage.getBackup(input.deviceId);
       },
     ),
-    listenUntilDisconnected: fromCallback<
-      PreChecksStateMachineEvent,
-      { dmk: DeviceManagementKit; sessionId: DeviceSessionId }
-    >(({ input, sendBack }) => {
-      let subscription: { unsubscribe: () => void } | undefined;
-      const notifyDisconnected = () => {
-        sendBack({ type: PreChecksStateMachineEventType.DEVICE_DISCONNECTED });
-        subscription?.unsubscribe();
-      };
-      try {
-        subscription = input.dmk.getDeviceSessionState({ sessionId: input.sessionId }).subscribe({
-          next: state => {
-            if (state.deviceStatus !== DeviceStatus.NOT_CONNECTED) {
-              return;
-            }
-            notifyDisconnected();
-          },
-          error: notifyDisconnected,
-          // DMK completes the state observable when it closes the session.
-          complete: notifyDisconnected,
-        });
-      } catch {
-        // `getDeviceSessionState` throws once DMK has dropped the session.
-        notifyDisconnected();
-      }
-      return () => {
-        subscription?.unsubscribe();
-      };
-    }),
-    // Nothing reconnects a device on its own once the transport gave up: the DMK only opens a
-    // session when someone calls `connect`. So watch for the device to advertise again, then
-    // connect from the device we captured, which makes the DMK reuse its session id.
-    reconnectToSameDevice: fromCallback<
-      PreChecksStateMachineEvent,
-      { dmk: DeviceManagementKit; connectedDevice: ConnectedDevice }
-    >(({ input, sendBack }) => {
-      let isConnecting = false;
-      const subscription = input.dmk
-        .listenToAvailableDevices({ transport: input.connectedDevice.transport })
-        .subscribe({
-          next: devices => {
-            if (isConnecting || !devices.some(({ id }) => id === input.connectedDevice.id)) {
-              return;
-            }
-            isConnecting = true;
-            input.dmk
-              .connect({
-                device: input.connectedDevice,
-                sessionRefresherOptions: { isRefresherDisabled: true },
-              })
-              .then(() => {
-                sendBack({
-                  type: PreChecksStateMachineEventType.DEVICE_RECONNECTED,
-                });
-              })
-              .catch(() => {
-                isConnecting = false;
-              });
-          },
-        });
-      return () => {
-        subscription.unsubscribe();
-      };
-    }),
   },
   actions: {
     sendStateUpdate: enqueueActions(({ context, enqueue }, state: PreChecksState) => {
@@ -219,12 +138,9 @@ export const preChecksStateMachine = setup({
       context.osVersion !== null && (context.osVersion.isBootloader || context.osVersion.isOsu),
     hasOsUpdateToPerform: ({ context }) => context.osUpdates.length > 0,
     hasBattery: ({ context }) => DEVICE_MODELS_WITH_BATTERY.has(context.connectedDevice.modelId),
-    isDeviceLocked: ({ context }) => isDeviceLockedError(context.error),
-    isDeviceDisconnected: ({ context }) => isDeviceDisconnectedError(context.error),
   },
   delays: {
     poll: POLL_INTERVAL_MS,
-    sessionSettleTimeout: SESSION_SETTLE_TIMEOUT_MS,
   },
 }).createMachine({
   id: "preChecks",
@@ -239,6 +155,14 @@ export const preChecksStateMachine = setup({
     send: self.send,
   }),
   initial: "WaitingForAppAndVersion",
+  on: {
+    [DeviceSituationEventType.DEVICE_SITUATION_UPDATE]: {
+      actions: {
+        type: "sendStateUpdate",
+        params: ({ event }) => toPreChecksState(event.situation),
+      },
+    },
+  },
   states: {
     WaitingForAppAndVersion: {
       entry: assign({ lastAction: PreChecksStateMachineLastAction.WaitForAppAndVersion }),
@@ -252,11 +176,21 @@ export const preChecksStateMachine = setup({
         onSnapshot: {
           actions: {
             type: "sendStateUpdate",
-            params: ({ event }) =>
-              event.snapshot.context.intermediateValue?.requiredUserInteraction ===
-              UserInteractionRequired.UnlockDevice
-                ? { type: PreChecksStateType.DEVICE_LOCKED }
-                : { type: PreChecksStateType.LOADING },
+            params: ({ event }) => {
+              const requiredUserInteraction =
+                event.snapshot.context.intermediateValue?.requiredUserInteraction;
+              switch (requiredUserInteraction) {
+                case UserInteractionRequired.UnlockDevice:
+                  return { type: PreChecksStateType.DEVICE_LOCKED };
+                case UserInteractionRequired.None:
+                case undefined:
+                  return { type: PreChecksStateType.LOADING };
+                default: {
+                  const unhandled: never = requiredUserInteraction;
+                  return unhandled;
+                }
+              }
+            },
           },
         },
         onDone: [
@@ -287,11 +221,21 @@ export const preChecksStateMachine = setup({
         onSnapshot: {
           actions: {
             type: "sendStateUpdate",
-            params: ({ event }) =>
-              event.snapshot.context.intermediateValue?.requiredUserInteraction ===
-              UserInteractionRequired.UnlockDevice
-                ? { type: PreChecksStateType.DEVICE_LOCKED }
-                : { type: PreChecksStateType.LOADING },
+            params: ({ event }) => {
+              const requiredUserInteraction =
+                event.snapshot.context.intermediateValue?.requiredUserInteraction;
+              switch (requiredUserInteraction) {
+                case UserInteractionRequired.UnlockDevice:
+                  return { type: PreChecksStateType.DEVICE_LOCKED };
+                case UserInteractionRequired.None:
+                case undefined:
+                  return { type: PreChecksStateType.LOADING };
+                default: {
+                  const unhandled: never = requiredUserInteraction;
+                  return unhandled;
+                }
+              }
+            },
           },
         },
         onDone: [
@@ -353,7 +297,7 @@ export const preChecksStateMachine = setup({
           target: "GetBatteryStatus",
         },
         {
-          actions: assign({ nextAction: PreChecksNextAction.PerformOsUpdates }),
+          actions: assign({ nextAction: PreChecksNextAction.CreateBackup }),
           target: "Done",
         },
       ],
@@ -395,7 +339,7 @@ export const preChecksStateMachine = setup({
             guard: ({ event }) =>
               event.output.percentage >= MIN_BATTERY_PERCENTAGE || event.output.isCharging,
             actions: assign({
-              nextAction: PreChecksNextAction.PerformOsUpdates,
+              nextAction: PreChecksNextAction.CreateBackup,
             }),
             target: "Done",
           },
@@ -429,116 +373,26 @@ export const preChecksStateMachine = setup({
       },
     },
     CheckErrorCause: {
-      always: [
-        {
-          guard: "isDeviceLocked",
-          target: "AwaitingDeviceUnlock",
-        },
-        {
-          guard: "isDeviceDisconnected",
-          target: "AwaitingDeviceReconnection",
-        },
-        {
-          target: "IdentifyConnectionLoss",
-        },
-      ],
-    },
-    // The session keeps reporting CONNECTED after an APDU already failed from a drop: it only
-    // flips to NOT_CONNECTED once the transport gives up reconnecting. Wait that window out
-    // instead of treating the lag as unexpected, and keep showing the last state meanwhile.
-    IdentifyConnectionLoss: {
       invoke: {
-        src: "listenUntilDisconnected",
-        input: ({ context }) => ({
-          dmk: context.dmk,
-          sessionId: context.connectedDevice.sessionId,
-        }),
-      },
-      on: {
-        [PreChecksStateMachineEventType.DEVICE_DISCONNECTED]: "AwaitingDeviceReconnection",
-      },
-      after: {
-        sessionSettleTimeout: "ProbeUnknownError",
-      },
-    },
-    // Disconnect is unlikely after IdentifyConnectionLoss timed out. This single GetAppAndVersion
-    // is a last attempt to catch a PIN lock swallowed into UnknownDAError (DA onError keeps the message, drops _tag).
-    // Do not loop back to IdentifyConnectionLoss. Stay on LOADING until the probe classifies.
-    ProbeUnknownError: {
-      invoke: {
-        src: "getAppAndVersion",
-        input: ({ context }) => ({
-          dmk: context.dmk,
-          sessionId: context.connectedDevice.sessionId,
-        }),
-        onDone: {
-          target: "ResumeLastAction",
-        },
-        onError: {
-          actions: assign({ error: ({ event }) => event.error }),
-          target: "CheckProbedErrorCause",
-        },
-      },
-    },
-    CheckProbedErrorCause: {
-      always: [
-        {
-          guard: "isDeviceLocked",
-          target: "AwaitingDeviceUnlock",
-        },
-        {
-          guard: "isDeviceDisconnected",
-          target: "AwaitingDeviceReconnection",
-        },
-        {
-          target: "UnrecoverableError",
-        },
-      ],
-    },
-    AwaitingDeviceUnlock: {
-      entry: {
-        type: "sendStateUpdate",
-        params: { type: PreChecksStateType.DEVICE_LOCKED },
-      },
-      initial: "Waiting",
-      states: {
-        Waiting: {
-          after: {
-            poll: "Probing",
-          },
-        },
-        Probing: {
-          invoke: {
-            src: "getAppAndVersion",
-            input: ({ context }) => ({
-              dmk: context.dmk,
-              sessionId: context.connectedDevice.sessionId,
-            }),
-            onDone: {
-              target: "#preChecks.ResumeLastAction",
-            },
-            onError: {
-              actions: assign({ error: ({ event }) => event.error }),
-              target: "#preChecks.CheckErrorCause",
-            },
-          },
-        },
-      },
-    },
-    AwaitingDeviceReconnection: {
-      entry: {
-        type: "sendStateUpdate",
-        params: { type: PreChecksStateType.DEVICE_DISCONNECTED },
-      },
-      invoke: {
-        src: "reconnectToSameDevice",
-        input: ({ context }) => ({
+        src: "checkErrorCause",
+        input: ({ context, self }) => ({
           dmk: context.dmk,
           connectedDevice: context.connectedDevice,
+          error: context.error,
+          hostRef: self,
         }),
-      },
-      on: {
-        [PreChecksStateMachineEventType.DEVICE_RECONNECTED]: "ResumeLastAction",
+        onDone: [
+          {
+            guard: ({ event }) => event.output === CheckErrorCauseResult.Recovered,
+            target: "ResumeLastAction",
+          },
+          {
+            target: "UnrecoverableError",
+          },
+        ],
+        onError: {
+          target: "UnrecoverableError",
+        },
       },
     },
     ResumeLastAction: {

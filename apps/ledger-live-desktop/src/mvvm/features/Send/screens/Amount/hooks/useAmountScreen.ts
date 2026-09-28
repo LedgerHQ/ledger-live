@@ -11,7 +11,7 @@ import {
   type SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
 import { trackPage } from "~/renderer/analytics/segment";
-import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { openURL } from "~/renderer/linking";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 
@@ -46,13 +46,14 @@ export function useAmountScreen(): AmountScreenViewModel {
   const location = useLocation();
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const trackingProperties = useMemo(
     () => ({
-      ...getSendFlowTrackingProperties(account, parentAccount ?? null),
+      ...sendFlowTrackingProperties,
       recipientType,
     }),
-    [account, parentAccount, recipientType],
+    [sendFlowTrackingProperties, recipientType],
   );
 
   const isReady = Boolean(account && transaction && status && uiConfig && transactionActions);

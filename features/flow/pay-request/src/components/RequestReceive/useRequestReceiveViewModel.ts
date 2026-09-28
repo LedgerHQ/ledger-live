@@ -8,7 +8,7 @@ import { splitAddress } from "../../utils/splitAddress";
 
 const TRACK_BUTTON: Readonly<Record<RequestReceiveActionId, string>> = {
   share: "share",
-  copy: "copy address",
+  copy: "copy",
   save: "save",
   verify: "verify",
 };
@@ -35,6 +35,7 @@ export function useRequestReceiveViewModel({
         button: TRACK_BUTTON[id],
         buttonLocation: "request",
         page,
+        flow: "request",
       });
       callback(address);
     },

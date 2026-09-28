@@ -5,8 +5,6 @@ import { ContactAvatar } from "@features/platform-contacts";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { ContactId } from "@domain/entity-contact";
 
-import { AddressDisclaimer } from "./AddressDisclaimer";
-
 type RecipientContactRowProps = Readonly<{
   contact: RecipientHeaderContact;
   label: string;
@@ -50,7 +48,6 @@ export function RecipientContactRow({ contact, label, value }: RecipientContactR
       <Text style={styles.name} numberOfLines={1}>
         {value}
       </Text>
-      <AddressDisclaimer />
     </View>
   );
 }

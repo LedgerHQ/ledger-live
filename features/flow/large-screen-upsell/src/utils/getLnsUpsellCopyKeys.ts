@@ -14,6 +14,7 @@ const LNS_UPSELL_COPY_ROOT = "lnsUpsell";
 
 const MODEL_SPECIFIC_COPY: ReadonlySet<string> = new Set([
   `${LNS_UPSELL_COPY_ROOT}.opted_in.nanoS`,
+  `${LNS_UPSELL_COPY_ROOT}.opted_out.nanoS`,
   `${LNS_UPSELL_COPY_ROOT}.profile.nanoS`,
 ]);
 

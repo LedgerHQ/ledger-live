@@ -8,7 +8,14 @@ import {
   mockAleoResourcesRaw,
 } from "../__tests__/fixtures/account.fixture";
 import { getMockedTokenCurrency } from "../__tests__/fixtures/currency.fixture";
-import type { AleoAccount, AleoAccountRaw, AleoResources, AleoResourcesRaw } from "../types";
+import type {
+  AleoAccount,
+  AleoAccountRaw,
+  AleoOperationExtra,
+  AleoOperationExtraRaw,
+  AleoResources,
+  AleoResourcesRaw,
+} from "../types";
 import {
   assignFromAccountRaw,
   assignFromTokenAccountRaw,
@@ -16,6 +23,8 @@ import {
   assignToTokenAccountRaw,
   toAleoResourcesRaw,
   fromAleoResourcesRaw,
+  toOperationExtraRaw,
+  fromOperationExtraRaw,
 } from "./serialization";
 
 describe("serialization", () => {
@@ -68,6 +77,18 @@ describe("serialization", () => {
 
       expect(result.hasMigratedPrivateTokens).toBe(true);
     });
+
+    it("should serialize hasMigratedStaking when present", () => {
+      const result = toAleoResourcesRaw({ ...mockAleoResources, hasMigratedStaking: true });
+
+      expect(result.hasMigratedStaking).toBe(true);
+    });
+
+    it("should leave hasMigratedStaking absent when unset", () => {
+      const result = toAleoResourcesRaw(mockAleoResources);
+
+      expect(result).not.toHaveProperty("hasMigratedStaking");
+    });
   });
 
   describe("fromAleoResourcesRaw", () => {
@@ -110,6 +131,18 @@ describe("serialization", () => {
       });
 
       expect(result.hasMigratedPrivateTokens).toBe(true);
+    });
+
+    it("should deserialize hasMigratedStaking when present", () => {
+      const result = fromAleoResourcesRaw({ ...mockAleoResourcesRaw, hasMigratedStaking: true });
+
+      expect(result.hasMigratedStaking).toBe(true);
+    });
+
+    it("should leave hasMigratedStaking absent when unset", () => {
+      const result = fromAleoResourcesRaw(mockAleoResourcesRaw);
+
+      expect(result).not.toHaveProperty("hasMigratedStaking");
     });
   });
 
@@ -252,6 +285,109 @@ describe("serialization", () => {
       const restoredTokenAccount = getMockedTokenAccount();
       assignFromTokenAccountRaw(tokenAccountRaw, restoredTokenAccount);
       expect(restoredTokenAccount.transparentBalance).toEqual(new BigNumber(123456));
+    });
+  });
+
+  describe("operation extra serialization", () => {
+    const validator = "aleo1validator123";
+
+    it.each<[string, AleoOperationExtra, AleoOperationExtraRaw]>([
+      [
+        "a public transfer",
+        { functionId: "transfer_public", transactionType: "public" },
+        { functionId: "transfer_public", transactionType: "public" },
+      ],
+      [
+        "a private transfer",
+        { functionId: "transfer_private", transactionType: "private" },
+        { functionId: "transfer_private", transactionType: "private" },
+      ],
+      [
+        "a patched operation",
+        { functionId: "transfer_public_to_private", transactionType: "private", patched: true },
+        { functionId: "transfer_public_to_private", transactionType: "private", patched: true },
+      ],
+      [
+        "a token transfer",
+        {
+          functionId: "transfer_token_public",
+          transactionType: "public",
+          programId: "usdc.aleo",
+        },
+        {
+          functionId: "transfer_token_public",
+          transactionType: "public",
+          programId: "usdc.aleo",
+        },
+      ],
+      [
+        "a bond",
+        {
+          functionId: "bond_public",
+          transactionType: "public",
+          validator,
+          stakedAmount: new BigNumber(5_000_000),
+        },
+        {
+          functionId: "bond_public",
+          transactionType: "public",
+          validator,
+          stakedAmount: "5000000",
+        },
+      ],
+      [
+        "an unbond",
+        {
+          functionId: "unbond_public",
+          transactionType: "public",
+          stakedAmount: new BigNumber(5_000_000),
+        },
+        { functionId: "unbond_public", transactionType: "public", stakedAmount: "5000000" },
+      ],
+      [
+        "a claim",
+        { functionId: "claim_unbond_public", transactionType: "public" },
+        { functionId: "claim_unbond_public", transactionType: "public" },
+      ],
+    ])("should round-trip the extra of %s", (_, extra, extraRaw) => {
+      expect(toOperationExtraRaw(extra)).toEqual(extraRaw);
+      expect(fromOperationExtraRaw(extraRaw)).toEqual(extra);
+    });
+
+    it("should omit absent optional fields rather than write them as undefined", () => {
+      const extraRaw = toOperationExtraRaw({
+        functionId: "transfer_public",
+        transactionType: "public",
+      }) as AleoOperationExtraRaw;
+
+      expect(Object.keys(extraRaw)).toEqual(["functionId", "transactionType"]);
+      expect(Object.keys(fromOperationExtraRaw(extraRaw) as AleoOperationExtra)).toEqual([
+        "functionId",
+        "transactionType",
+      ]);
+    });
+
+    it("should write a large stakedAmount in full rather than in exponential notation", () => {
+      const extraRaw = toOperationExtraRaw({
+        functionId: "bond_public",
+        transactionType: "public",
+        stakedAmount: new BigNumber("1e21"),
+      }) as AleoOperationExtraRaw;
+
+      expect(extraRaw.stakedAmount).toBe("1000000000000000000000");
+      expect(fromOperationExtraRaw(extraRaw)).toEqual({
+        functionId: "bond_public",
+        transactionType: "public",
+        stakedAmount: new BigNumber("1e21"),
+      });
+    });
+
+    it.each([
+      ["an empty extra", {}],
+      ["an extra of another family", { transactionType: "public" }],
+    ])("should throw on %s", (_, extra) => {
+      expect(() => toOperationExtraRaw(extra)).toThrow("aleo: unsupported OperationExtra");
+      expect(() => fromOperationExtraRaw(extra)).toThrow("aleo: unsupported OperationExtraRaw");
     });
   });
 });

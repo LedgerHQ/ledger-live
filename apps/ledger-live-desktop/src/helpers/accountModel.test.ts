@@ -81,7 +81,6 @@ describe("accountModel migrations", () => {
       };
       expect(cosmosResources).toBeDefined();
       expect(cosmosResources.delegations).toEqual([]);
-      expect(cosmosResources.withdrawAddress).toBe("cosmos1address");
     });
   });
 

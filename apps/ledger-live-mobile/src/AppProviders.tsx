@@ -2,6 +2,7 @@ import { BottomSheetModalProvider, GlobalTooltipBottomSheet } from "@ledgerhq/lu
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AppLockProvider } from "LLM/features/AppLock/AppLockProvider";
 import { InViewProvider } from "LLM/contexts/InViewContext";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import GlobalDrawers from "./GlobalDrawers";
@@ -28,15 +29,17 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
         <DeviceManagementKitProvider>
           <CountervaluesBridgedProvider initialState={initialCountervalues}>
             <BottomSheetModalProvider>
-              <PostOnboardingProviderWrapped>
-                <NotificationsProvider>
-                  <SnackbarContainer />
-                  <InViewProvider>
-                    <GlobalDrawers>{children}</GlobalDrawers>
-                  </InViewProvider>
-                </NotificationsProvider>
-              </PostOnboardingProviderWrapped>
-              <GlobalTooltipBottomSheet />
+              <AppLockProvider>
+                <PostOnboardingProviderWrapped>
+                  <NotificationsProvider>
+                    <SnackbarContainer />
+                    <InViewProvider>
+                      <GlobalDrawers>{children}</GlobalDrawers>
+                    </InViewProvider>
+                  </NotificationsProvider>
+                </PostOnboardingProviderWrapped>
+                <GlobalTooltipBottomSheet />
+              </AppLockProvider>
             </BottomSheetModalProvider>
           </CountervaluesBridgedProvider>
         </DeviceManagementKitProvider>

@@ -13,6 +13,7 @@ function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
   return {
     getCardApiBaseUrl: () => "https://card.test",
     getCardBaanxClientKey: () => "test-client-key",
+    isCardUsEnv: () => false,
     readCardSession: async () => ({
       token: "session-token",
       sessionId: SESSION_ID,
@@ -152,6 +153,7 @@ describe("cardApiExtra", () => {
   it("throws when the config accessors are not functions", () => {
     expect(() => cardApiExtra(buildExtra({ getCardApiBaseUrl: undefined }))).toThrow();
     expect(() => cardApiExtra(buildExtra({ getCardBaanxClientKey: undefined }))).toThrow();
+    expect(() => cardApiExtra(buildExtra({ isCardUsEnv: undefined }))).toThrow();
   });
 
   it("throws when a session accessor is not a function", () => {
@@ -216,6 +218,53 @@ describe("cardBaseQuery", () => {
     expect(sent.url).toBe("https://card.test/probe");
     expect(sent.headers.get("authorization")).toBe("Bearer session-token");
     expect(sent.headers.get("x-client-key")).toBe("test-client-key");
+    expect(sent.headers.get("x-us-env")).toBeNull();
+  });
+
+  it("names the US tenant only while the holder belongs to it", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra({ isCardUsEnv: () => true })));
+    await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(request(fetchSpy).headers.get("x-us-env")).toBe("true");
+  });
+
+  it("names the US tenant on a request that carries no session", async () => {
+    // The token exchange is the first request that has to reach the holder's own tenant, and it
+    // runs before any session exists.
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra({ isCardUsEnv: () => true })));
+    await store.dispatch(api.endpoints.probeGrant.initiate());
+
+    const sent = request(fetchSpy);
+    expect(sent.headers.get("authorization")).toBeNull();
+    expect(sent.headers.get("x-us-env")).toBe("true");
+  });
+
+  it("keeps the tenant of the token it carries when a login lands mid-request", async () => {
+    // A retry can start a new login while the previous session is still current. The header must
+    // stay with the token this request read, not follow the tenant the new login just recorded.
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
+    let isUsEnv = true;
+
+    const { api, store } = probeStore(
+      cardApiExtra(
+        buildExtra({
+          isCardUsEnv: () => isUsEnv,
+          // Stands in for the login that records another tenant: it runs after the snapshot is
+          // read and before the request leaves.
+          isCardSessionCurrent: () => {
+            isUsEnv = false;
+            return true;
+          },
+        }),
+      ),
+    );
+    await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(request(fetchSpy).headers.get("x-us-env")).toBe("true");
   });
 
   it("reads the base url and the client key again on every request", async () => {
@@ -224,22 +273,30 @@ describe("cardBaseQuery", () => {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
     let baseUrl = "https://card.first";
     let clientKey = "first-key";
+    let isUsEnv = false;
 
     const { api, store } = probeStore(
       cardApiExtra(
-        buildExtra({ getCardApiBaseUrl: () => baseUrl, getCardBaanxClientKey: () => clientKey }),
+        buildExtra({
+          getCardApiBaseUrl: () => baseUrl,
+          getCardBaanxClientKey: () => clientKey,
+          isCardUsEnv: () => isUsEnv,
+        }),
       ),
     );
     await store.dispatch(api.endpoints.probe.initiate());
 
     baseUrl = "https://card.second";
     clientKey = "second-key";
+    isUsEnv = true;
     await store.dispatch(api.endpoints.probe.initiate(undefined, { forceRefetch: true }));
 
     expect(request(fetchSpy, 0).url).toBe("https://card.first/probe");
     expect(request(fetchSpy, 0).headers.get("x-client-key")).toBe("first-key");
+    expect(request(fetchSpy, 0).headers.get("x-us-env")).toBeNull();
     expect(request(fetchSpy, 1).url).toBe("https://card.second/probe");
     expect(request(fetchSpy, 1).headers.get("x-client-key")).toBe("second-key");
+    expect(request(fetchSpy, 1).headers.get("x-us-env")).toBe("true");
   });
 
   it("renews nothing when the answer is not a 401", async () => {

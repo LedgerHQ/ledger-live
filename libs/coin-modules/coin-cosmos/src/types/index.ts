@@ -1,10 +1,13 @@
 import {
   Account,
   AccountRaw,
+  isStakingAccount,
   Operation,
   OperationExtra,
   OperationExtraRaw,
   OperationRaw,
+  StakingDelegation,
+  StakingResources,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -64,8 +67,7 @@ export type CosmosResources = {
   delegatedBalance: BigNumber;
   pendingRewardsBalance: BigNumber;
   unbondingBalance: BigNumber;
-  withdrawAddress: string;
-  sequence: number;
+  sequence?: number;
   // Compressed secp256k1 public key (hex) of this account, captured at scan from the
   // device. Optional/empty when unknown (e.g. accounts synced before this was persisted).
   publicKey?: string;
@@ -94,8 +96,7 @@ export type CosmosResourcesRaw = {
   delegatedBalance: string;
   pendingRewardsBalance: string;
   unbondingBalance: string;
-  withdrawAddress: string;
-  sequence: number;
+  sequence?: number;
   publicKey?: string;
 };
 // NB this must be serializable (no Date, no BigNumber)
@@ -264,6 +265,43 @@ export function isCosmosAccount(account: Account): account is CosmosAccount {
   return "cosmosResources" in account;
 }
 export type CosmosAccount = Account & { cosmosResources: CosmosResources };
+
+export function getCosmosResources(account: Account): CosmosResources | undefined {
+  if (isStakingAccount(account)) {
+    return toCosmosResources(account.stakingResources, account.xpub);
+  } else if (isCosmosAccount(account)) {
+    return account.cosmosResources;
+  } else {
+    return undefined;
+  }
+}
+
+export function toCosmosResources(
+  stakingResources: StakingResources,
+  xpub?: string,
+): CosmosResources {
+  return {
+    delegations: stakingResources.delegations.map(delegation => toCosmosDelegation(delegation)),
+    redelegations: stakingResources.redelegations,
+    unbondings: stakingResources.unbondings,
+    delegatedBalance: stakingResources.delegatedBalance,
+    pendingRewardsBalance: stakingResources.pendingRewardsBalance,
+    unbondingBalance: stakingResources.unbondingBalance,
+    ...(xpub !== undefined ? { publicKey: xpub } : {}),
+  };
+}
+
+function toCosmosDelegation(stakingDelegation: StakingDelegation): CosmosDelegation {
+  return {
+    validatorAddress: stakingDelegation.validatorAddress,
+    amount: stakingDelegation.amount,
+    pendingRewards: stakingDelegation.pendingRewards,
+    status: (stakingDelegation.status === "activating"
+      ? "bonded"
+      : stakingDelegation.status) as CosmosDelegationStatus,
+  };
+}
+
 export type CosmosAccountRaw = AccountRaw & {
   cosmosResources: CosmosResourcesRaw;
 };

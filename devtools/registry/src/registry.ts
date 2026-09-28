@@ -1,3 +1,4 @@
+import * as engagement from "./metadata/engagement";
 import * as platform from "./metadata/platform";
 import * as walletXp from "./metadata/wallet-xp";
 
@@ -7,6 +8,7 @@ export const tools = {
   "pay-card": walletXp.payCard,
   trustchain: platform.trustchain,
   "cloud-sync": platform.cloudSync,
+  "device-onboarding": engagement.deviceOnboarding,
 } as const;
 
 /**
@@ -29,4 +31,5 @@ export type DevToolConfig =
   | { id: "env"; config: platform.EnvDevToolProps }
   | { id: "pay-card"; config: walletXp.PayCardToolProps }
   | { id: "trustchain"; config: platform.TrustchainDevToolProps }
-  | { id: "cloud-sync"; config: platform.CloudSyncDevToolProps };
+  | { id: "cloud-sync"; config: platform.CloudSyncDevToolProps }
+  | { id: "device-onboarding"; config: engagement.DeviceOnboardingToolProps };

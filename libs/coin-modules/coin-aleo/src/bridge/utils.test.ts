@@ -11,6 +11,8 @@ import {
   getMockedEnrichedPrivateRecord,
   getMockedTransaction as getMockedPublicTransaction,
 } from "../__tests__/fixtures/api.fixture";
+import { PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
+import type { AleoPublicTransaction } from "../types";
 import { getCalTokens, toBridgeOperation, toPrivateBridgeOperation } from "./utils";
 
 jest.mock("@ledgerhq/logs", () => ({
@@ -85,14 +87,22 @@ describe("toBridgeOperation", () => {
     expect(result.id).toBe(encodeOperationId(ledgerAccountId, rawTx.transaction_id, "OUT"));
   });
 
-  it("should attach programId when the transaction is a token transfer", () => {
+  it("should attach the source program of a token transfer", () => {
     const rawTx = getMockedPublicTransaction({
       program_id: "usdcx_stablecoin.aleo",
     });
 
-    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress, true);
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
 
     expect(result.extra.programId).toBe("usdcx_stablecoin.aleo");
+  });
+
+  it("should attach the source program of a native transfer", () => {
+    const rawTx = getMockedPublicTransaction({ program_id: PROGRAM_ID.CREDITS });
+
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+    expect(result.extra.programId).toBe(PROGRAM_ID.CREDITS);
   });
 
   it.each([
@@ -130,6 +140,117 @@ describe("toBridgeOperation", () => {
     toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
 
     expect(log).not.toHaveBeenCalled();
+  });
+
+  describe("staking operations", () => {
+    const VALIDATOR = "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t";
+    const STAKED_AMOUNT = 2982828466682;
+    const stakingTx = (functionId: string, overrides?: Partial<AleoPublicTransaction>) =>
+      getMockedPublicTransaction({
+        function_id: functionId,
+        // the indexer blanks both sides of every staking call
+        sender_address: "",
+        recipient_address: "",
+        amount: 0,
+        ...overrides,
+      });
+
+    it.each([
+      [TRANSACTION_TYPE.BOND_PUBLIC, "BOND"],
+      [TRANSACTION_TYPE.UNBOND_PUBLIC, "UNBOND"],
+      [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, "WITHDRAW_UNBONDED"],
+    ])("should type %s as %s and leave both counterparties empty", (functionId, expectedType) => {
+      const result = toBridgeOperation(ledgerAccountId, stakingTx(functionId), senderAddress);
+
+      expect(result.type).toBe(expectedType);
+      expect(result.senders).toEqual([]);
+      expect(result.recipients).toEqual([]);
+    });
+
+    it.each([
+      TRANSACTION_TYPE.BOND_PUBLIC,
+      TRANSACTION_TYPE.UNBOND_PUBLIC,
+      TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+    ])("should value %s at the fee, never at the staked amount", functionId => {
+      const rawTx = stakingTx(functionId, { amount: STAKED_AMOUNT });
+
+      const result = toBridgeOperation(ledgerAccountId, rawTx, senderAddress);
+
+      expect(result.value).toEqual(new BigNumber(rawTx.fee));
+      expect(result.value).not.toEqual(new BigNumber(STAKED_AMOUNT));
+    });
+
+    it("should badge every staking operation as public", () => {
+      const result = toBridgeOperation(
+        ledgerAccountId,
+        stakingTx(TRANSACTION_TYPE.BOND_PUBLIC),
+        senderAddress,
+      );
+
+      expect(result.extra.transactionType).toBe("public");
+    });
+
+    it("should carry the fetched validator and amount for a bond", () => {
+      const result = toBridgeOperation(
+        ledgerAccountId,
+        stakingTx(TRANSACTION_TYPE.BOND_PUBLIC),
+        senderAddress,
+        { validator: VALIDATOR, amount: new BigNumber(STAKED_AMOUNT) },
+      );
+
+      expect(result.extra.validator).toBe(VALIDATOR);
+      expect(result.extra.stakedAmount).toEqual(new BigNumber(STAKED_AMOUNT));
+    });
+
+    it("should take the unbonded amount from the listing row, which does publish it", () => {
+      const result = toBridgeOperation(
+        ledgerAccountId,
+        stakingTx(TRANSACTION_TYPE.UNBOND_PUBLIC, { amount: 6939080344 }),
+        senderAddress,
+      );
+
+      expect(result.extra.stakedAmount).toEqual(new BigNumber(6939080344));
+      expect(result.extra.validator).toBeUndefined();
+    });
+
+    it("should carry no amount for a claim, which records none on-chain", () => {
+      const result = toBridgeOperation(
+        ledgerAccountId,
+        stakingTx(TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC),
+        senderAddress,
+      );
+
+      expect(result.extra.stakedAmount).toBeUndefined();
+      expect(result.extra.validator).toBeUndefined();
+    });
+
+    // A non-credits program may expose a same-named function; only credits.aleo staking counts.
+    it("should treat a bond_public on another program as a normal transfer", () => {
+      const rawTx = stakingTx(TRANSACTION_TYPE.BOND_PUBLIC, {
+        program_id: MOCK_TOKEN_PROGRAM_ID,
+        sender_address: senderAddress,
+        recipient_address: recipientAddress,
+        amount: STAKED_AMOUNT,
+      });
+
+      const result = toBridgeOperation(ledgerAccountId, rawTx, senderAddress);
+
+      expect(result.senders).toEqual([senderAddress]);
+      expect(result.recipients).toEqual([recipientAddress]);
+      expect(result.value).toEqual(new BigNumber(STAKED_AMOUNT));
+    });
+
+    it("should leave a plain credits.aleo transfer untouched", () => {
+      const rawTx = getMockedPublicTransaction();
+
+      const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+      expect(result.type).toBe("IN");
+      expect(result.senders).toEqual([rawTx.sender_address]);
+      expect(result.recipients).toEqual([rawTx.recipient_address]);
+      expect(result.value).toEqual(new BigNumber(rawTx.amount));
+      expect(result.extra.stakedAmount).toBeUndefined();
+    });
   });
 });
 

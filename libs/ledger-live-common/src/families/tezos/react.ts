@@ -2,14 +2,15 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
 import { log } from "@ledgerhq/logs";
-import { bakers } from "@ledgerhq/coin-tezos/network/index";
+import { bakers } from "@ledgerhq/coin-tezos/network";
+import type { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
 import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import {
   isDelegationPosition,
   isFinalizablePosition,
   isStakePosition,
   isUnstakingPosition,
-} from "@ledgerhq/coin-tezos/logic/positionUid";
+} from "./positionUid";
 import { isTezosAccount } from "./types";
 import type { Baker, Delegation, StakingPosition } from "./types";
 import { getAccountDelegationSync, loadAccountDelegation } from "./bakers";
@@ -21,7 +22,9 @@ export function useBakers(whitelistAddresses: string[]): Baker[] {
     bakers.listBakersWithDefault(whitelistAddresses),
   );
   useEffect(() => {
-    bakers.listBakers(buildContext("tezos"), whitelistAddresses).then(setWhitelistedBakers);
+    bakers
+      .listBakers(buildContext<TezosCoinConfig>("tezos"), whitelistAddresses)
+      .then(setWhitelistedBakers);
   }, [whitelistAddresses]);
 
   return whitelistedBakers;
@@ -66,7 +69,7 @@ export function useBaker(addr: string): Baker | undefined {
     }
     let cancelled = false;
     bakers
-      .loadBaker(buildContext("tezos"), addr)
+      .loadBaker(buildContext<TezosCoinConfig>("tezos"), addr)
       .then(b => {
         if (cancelled) return;
         setBaker(b);

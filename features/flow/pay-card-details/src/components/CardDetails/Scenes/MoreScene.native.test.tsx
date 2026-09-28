@@ -4,13 +4,14 @@ import { buildMoreRows, buildMoreViewProps } from "../../More/fixtures";
 import { MoreScene } from "./MoreScene";
 
 describe("MoreScene (native)", () => {
-  it("should render the four rows in the design order", () => {
+  it("should render the five rows in the design order", () => {
     render(<MoreScene viewModel={buildMoreViewProps()} />);
 
     expect(screen.getAllByTestId(/^more-row-/).map(row => row.props.testID)).toEqual([
       "more-row-managePin",
       "more-row-accessBaanx",
       "more-row-help",
+      "more-row-legal",
       "more-row-logout",
     ]);
   });

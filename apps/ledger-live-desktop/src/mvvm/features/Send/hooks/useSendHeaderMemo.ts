@@ -7,7 +7,7 @@ import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../context/SendFlowContext";
 import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
 import { track } from "~/renderer/analytics/segment";
-import { getSendFlowTrackingProperties } from "../utils/tracking";
+import { useSendFlowTrackingProperties } from "./useSendFlowTrackingProperties";
 
 export function useSendHeaderMemo() {
   const { state, uiConfig, recipientSearch, isRecipientAddressComplete } = useSendFlowData();
@@ -15,10 +15,7 @@ export function useSendHeaderMemo() {
   const { navigation } = useFlowWizard();
 
   const currencyId = getMemoFamilyCurrencyId(state.account.currency);
-  const sendFlowTrackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
-    [state.account.account, state.account.parentAccount],
-  );
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const memoDefaultOption = useMemo(() => {
     return sendFeatures.getMemoDefaultOption(state.account.currency ?? undefined);

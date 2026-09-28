@@ -39,7 +39,7 @@ describe("useActionTilesViewModel", () => {
     expect(onTrackEvent).toHaveBeenCalledTimes(1);
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
       button: "deposit",
-      buttonLocation: "quick_action",
+      buttonLocation: "quick action",
       page: "Pay",
     });
     expect(deposit.onPress).toHaveBeenCalledTimes(1);
@@ -53,7 +53,7 @@ describe("useActionTilesViewModel", () => {
 
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
       button: "request",
-      buttonLocation: "quick_action",
+      buttonLocation: "quick action",
       page: "Pay",
     });
   });

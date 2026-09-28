@@ -12,6 +12,12 @@ export function selectHasCard(state: PayCardAuthStateRoot): boolean {
   return state.payCardAuth.hasCard;
 }
 
+export function selectPendingLoginType(
+  state: PayCardAuthStateRoot,
+): PayCardAuthState["pendingLoginType"] {
+  return state.payCardAuth.pendingLoginType;
+}
+
 /**
  * Where the Card session stands. Hosts that must tell "still resolving" from "signed out" read this;
  * everything that only cares whether a session is live reads {@link selectIsSignedIn}.

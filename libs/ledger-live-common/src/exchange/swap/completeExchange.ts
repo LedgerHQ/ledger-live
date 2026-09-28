@@ -545,8 +545,8 @@ function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffe
   return exchangeType === ExchangeTypes.SwapNg
     ? base64UrlDecode(signature)
     : (() => {
-        const sig = secp256k1.Signature.fromCompact(Buffer.from(signature, "hex"));
-        return Buffer.from(sig.toDERRawBytes());
+        const sig = secp256k1.Signature.fromBytes(Buffer.from(signature, "hex"), "compact");
+        return Buffer.from(sig.toBytes("der"));
       })();
 }
 

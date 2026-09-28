@@ -14,10 +14,10 @@ type StatusColors = { bg: BgToken; dot: BgToken; text: TextToken };
 
 const STATUS_COLOR: Record<ConnectionStatus, StatusColors> = {
   idle: { bg: "muted", dot: "mutedStrong", text: "muted" },
-  connecting: { bg: "warning", dot: "warningStrong", text: "warning" },
-  open: { bg: "success", dot: "successStrong", text: "success" },
+  connecting: { bg: "warningTransparent", dot: "warningStrong", text: "warning" },
+  open: { bg: "successTransparent", dot: "successStrong", text: "success" },
   closed: { bg: "disabled", dot: "disabledStrong", text: "disabled" },
-  error: { bg: "error", dot: "errorStrong", text: "error" },
+  error: { bg: "errorTransparent", dot: "errorStrong", text: "error" },
 };
 
 export function TransportStateIndicator<M extends MessageMap>({

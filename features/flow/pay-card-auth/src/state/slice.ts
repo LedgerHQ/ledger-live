@@ -3,6 +3,7 @@ import type { PayCardAuthState } from "./types";
 
 export const payCardAuthInitialState: PayCardAuthState = {
   hasCard: false,
+  pendingLoginType: null,
   status: "unknown",
 };
 
@@ -12,6 +13,9 @@ export const payCardAuthSlice = createSlice({
   reducers: {
     setHasCard: (state, action: PayloadAction<boolean>) => {
       state.hasCard = action.payload;
+    },
+    setPendingLoginType: (state, action: PayloadAction<PayCardAuthState["pendingLoginType"]>) => {
+      state.pendingLoginType = action.payload;
     },
     /**
      * Written by the login machine, and by `More` once a logout is through. It is runtime
@@ -24,4 +28,4 @@ export const payCardAuthSlice = createSlice({
   },
 });
 
-export const { setHasCard, setSignedIn } = payCardAuthSlice.actions;
+export const { setHasCard, setPendingLoginType, setSignedIn } = payCardAuthSlice.actions;

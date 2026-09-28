@@ -32,6 +32,11 @@ export const PROVIDERS: ProviderSpec[] = [
  * `label` is what the page shows, and deliberately not the API's own `name`: the catalog
  * still carries internal codenames for devices that ship under another one. Device 136 is
  * "Apex P" in the API and Gen5 in marketing material.
+ *
+ * Nano S is the one device with several `device_versions` rows rather than one: ids 1, 2,
+ * 6 and 14 are the "club"/"das" and pre-1.5 firmware baselines and the bootloader, all
+ * superseded. Id 10 ("nanos-1.5") is the row every 1.5.x-and-later release — including the
+ * current 2.1.x line — is filed under, so it is the one that belongs here.
  */
 export const DEVICES: DeviceSpec[] = [
   { id: 16, key: "nanosp", label: "Nano S Plus" },
@@ -39,6 +44,7 @@ export const DEVICES: DeviceSpec[] = [
   { id: 17, key: "stax", label: "Stax" },
   { id: 135, key: "flex", label: "Flex" },
   { id: 136, key: "apex", label: "Gen5" },
+  { id: 10, key: "nanos", label: "Nano S" },
 ];
 
 /** The device selected on a first visit. Keep it first in DEVICES, so it also leads the

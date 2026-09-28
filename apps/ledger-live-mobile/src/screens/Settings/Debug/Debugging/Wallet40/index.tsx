@@ -4,13 +4,11 @@ import { Box, Text, Switch, Button, Tag, Divider } from "@ledgerhq/lumen-ui-rnat
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import { BaseNavigation, StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
-import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import SettingsRow from "~/components/SettingsRow";
 import { useWallet40ViewModel, WALLET_40_PARAMS } from "./useWallet40ViewModel";
 
 export default function DebugWallet40() {
-  const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   const rootNavigation = useNavigation<BaseNavigation>();
   const { isEnabled, params, allEnabled, handleToggleEnabled, handleToggleParam, handleToggleAll } =
     useWallet40ViewModel();
@@ -127,14 +125,6 @@ export default function DebugWallet40() {
               params: { currencyId: "bitcoin" },
             })
           }
-        />
-
-        <SettingsRow
-          title="Wallet V4 Tour"
-          desc="Test tour drawer"
-          iconLeft={<IconsLegacy.NewsMedium size={24} color="black" />}
-          arrowRight
-          onPress={() => navigation.navigate(ScreenName.DebugWalletV4Tour)}
         />
       </Box>
     </ScrollView>

@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-pay-analytics",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -38,7 +38,7 @@ describe("useRequestReceiveViewModel", () => {
 
   it.each([
     ["onShare", "share"],
-    ["onCopy", "copy address"],
+    ["onCopy", "copy"],
     ["onSave", "save"],
     ["onVerify", "verify"],
   ] as const)("tracks then invokes the injected callback for %s", (handler, button) => {
@@ -50,6 +50,7 @@ describe("useRequestReceiveViewModel", () => {
       button,
       buttonLocation: "request",
       page: "Pay",
+      flow: "request",
     });
     expect(props[handler]).toHaveBeenCalledWith(ADDRESS);
   });

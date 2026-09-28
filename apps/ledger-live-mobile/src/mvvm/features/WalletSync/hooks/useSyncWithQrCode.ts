@@ -23,6 +23,7 @@ function resolveSyncErrorStep(error: unknown, trustchainRootId?: string): Steps 
     case "ScannedInvalidQrCode":
       return Steps.ScannedInvalidQrCode;
     case "InvalidDigitsError":
+    case "QRCodeProtocolError":
       return Steps.SyncError;
     case "NoTrustchainInitialized":
       return Steps.UnbackedError;

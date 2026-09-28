@@ -6,6 +6,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useFeature } from "@features/platform-feature-flags";
 import { useAccountSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
+import { getUnbondingPeriodDays } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { Currency } from "@domain/entity-currency";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -113,6 +114,9 @@ const AccountBalanceSummaryFooter = ({
     account.stakingResources.delegatedBalance,
     formatConfig,
   );
+  const { unbondingBalance: rawUnbondingBalance } = account.stakingResources;
+  const unbondingBalance = formatCurrencyUnit(unit, rawUnbondingBalance, formatConfig);
+  const unbondingPeriodDays = getUnbondingPeriodDays(account.currency.id);
 
   return (
     <Wrapper>
@@ -142,6 +146,28 @@ const AccountBalanceSummaryFooter = ({
           <Discreet>{delegatedBalance}</Discreet>
         </AmountValue>
       </BalanceDetail>
+      {rawUnbondingBalance.gt(0) && (
+        <BalanceDetail>
+          <ToolTip
+            content={
+              <Trans
+                i18nKey="account.undelegatingTooltip"
+                values={{ timelockInDays: unbondingPeriodDays }}
+              />
+            }
+          >
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="account.undelegating" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{unbondingBalance}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      )}
     </Wrapper>
   );
 };

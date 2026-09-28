@@ -92,6 +92,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/coin-casper/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/casper/bridge/mock").then(m => m.default),
     loadSigner: () => import("../families/casper/signer").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/casper/bridgeExtensions").then(m => m.default),
   },
   {
     family: "celo",
@@ -131,6 +132,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "xion",
       "zenrock",
       "babylon",
+      "gonka",
     ],
     loadSetup: () => import("../families/cosmos/setup"),
     loadTransaction: () => import("@ledgerhq/coin-cosmos/transaction").then(m => m.default),
@@ -144,6 +146,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadLocalApi: () =>
       import("../families/cosmos/coinModuleApi").then(m => m.createLocalCosmosApi),
     loadBridgeApi: () => import("../families/cosmos/bridge/api").then(m => m.default),
+    loadSigner: () => import("../families/cosmos/signer").then(m => m.default),
   },
   {
     family: "evm",
@@ -224,7 +227,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => import("../families/evm/bridge/mock").then(m => m.default),
     loadSigner: () => import("../families/evm/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/evm/bridge/api").then(m => m.default),
-    loadAccountRawAssign: () => import("../families/evm/accountRawAssign").then(m => m.default),
+    loadAccountRawAssign: () =>
+      import("../bridge/generic-coin-framework/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/evm/bridgeExtensions").then(m => m.default),
   },
   {
@@ -310,10 +314,12 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadSetup: () => import("../families/near/setup"),
     loadLocalApi: () => import("../families/near/coinModuleApi").then(m => m.createLocalNearApi),
     loadBridgeApi: () => import("../families/near/bridge/api").then(m => m.default),
+    loadSigner: () => import("../families/near/signer").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-near/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-near/deviceTransactionConfig").then(m => m.default),
     loadAccount: () => import("@ledgerhq/coin-near/account").then(m => m.default),
+    loadMockBridge: () => import("../families/near/bridge/mock").then(m => m.default),
   },
   {
     family: "polkadot",

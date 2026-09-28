@@ -53,7 +53,8 @@ describe("I18nProvider", () => {
 
   it("ignores a foreign react-i18next provider wrapped around it", () => {
     // A UI library mounting its own <I18nextProvider> (Lumen does, for its a11y strings) must not
-    // retarget the DDD packages: this provider passes its instance explicitly on every call.
+    // retarget the `features/*` and `domain/*` consumers: this provider passes its instance
+    // explicitly on every call.
     const foreign = createI18nTestInstance({
       resources: { en: { common: { greeting: "Foreign" } } },
       defaultNS: "common",

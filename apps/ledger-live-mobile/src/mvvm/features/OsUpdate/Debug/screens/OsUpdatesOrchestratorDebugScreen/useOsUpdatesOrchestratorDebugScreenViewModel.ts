@@ -22,12 +22,24 @@ import type {
 type Backup = NonNullable<Awaited<ReturnType<DeviceBackupStorage["getBackup"]>>>;
 type OsUpdates = OsUpdatesOrchestratorUseCaseInput["osUpdates"];
 
-const DUMMY_BACKUP: Backup = {
-  languageId: undefined,
-  installedApps: [],
-  clsHexImage: undefined,
-  createdAt: new Date(0),
-};
+/** Under the 24h threshold: create backup reuses it without asking. */
+const VALID_BACKUP_AGE_MS = 60 * 60 * 1000;
+/** Past the 24h threshold: create backup asks whether to reuse it or make a new one. */
+const EXPIRED_BACKUP_AGE_MS = 25 * 60 * 60 * 1000;
+
+function dummyBackup(ageMs: number): Backup {
+  return {
+    languageId: undefined,
+    installedApps: [],
+    clsHexImage: undefined,
+    createdAt: new Date(Date.now() - ageMs),
+  };
+}
+
+function formatAge(createdAt: Date): string {
+  const hours = (Date.now() - createdAt.getTime()) / (60 * 60 * 1000);
+  return hours < 1 ? `${Math.round(hours * 60)} min old` : `${Math.round(hours)}h old`;
+}
 
 function getFirstConnectedDevice(dmk: DeviceManagementKit | null): ConnectedDevice | null {
   if (!dmk) {
@@ -57,6 +69,7 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
   );
   const [deviceStatus, setDeviceStatus] = useState<DeviceStatus | null>(null);
   const [backups, setBackups] = useState<Record<string, Backup>>({});
+  const [isSeedBackupSheetOpen, setSeedBackupSheetOpen] = useState(false);
   const [phase, setPhase] = useState<OrchestratorRunPhase>("idle");
   const [progress, setProgress] = useState<OsUpdatesProgress | null>(null);
   const [history, setHistory] = useState<ProgressHistoryEntry[]>([]);
@@ -73,6 +86,9 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
   const storage = useMemo<DeviceBackupStorage>(
     () => ({
       getBackup: async deviceId => backupsRef.current[deviceId],
+      saveBackup: async (deviceId, backup) => {
+        setBackups(current => ({ ...current, [deviceId]: backup }));
+      },
     }),
     [],
   );
@@ -148,12 +164,27 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     });
   }, []);
 
-  const onSeedBackup = useCallback(() => {
-    if (!connectedDevice) {
-      return;
-    }
-    setBackups(current => ({ ...current, [connectedDevice.id]: DUMMY_BACKUP }));
-  }, [connectedDevice]);
+  const seedBackup = useCallback(
+    (ageMs: number) => {
+      setSeedBackupSheetOpen(false);
+      if (!connectedDevice) {
+        return;
+      }
+      setBackups(current => ({
+        ...current,
+        [connectedDevice.id]: dummyBackup(ageMs),
+      }));
+    },
+    [connectedDevice],
+  );
+
+  const onSeedBackup = useCallback(() => setSeedBackupSheetOpen(true), []);
+
+  const onCloseSeedBackupSheet = useCallback(() => setSeedBackupSheetOpen(false), []);
+
+  const onSeedValidBackup = useCallback(() => seedBackup(VALID_BACKUP_AGE_MS), [seedBackup]);
+
+  const onSeedExpiredBackup = useCallback(() => seedBackup(EXPIRED_BACKUP_AGE_MS), [seedBackup]);
 
   const onRemoveBackup = useCallback(() => {
     if (!connectedDevice) {
@@ -239,13 +270,16 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
 
   const isBusy = phase === "resolving" || phase === "running";
   const deviceId = connectedDevice?.id ?? null;
+  const backup = deviceId !== null ? backups[deviceId] : undefined;
 
   return {
     dmkReady: Boolean(dmk),
     deviceId,
     sessionId: connectedDevice?.sessionId ?? null,
     deviceStatus,
-    hasBackup: deviceId !== null && backups[deviceId] !== undefined,
+    hasBackup: backup !== undefined,
+    backupAge: backup ? formatAge(backup.createdAt) : null,
+    isSeedBackupSheetOpen,
     canStart: Boolean(dmk && connectedDevice && !isBusy),
     canStop: isBusy,
     isBusy,
@@ -254,6 +288,9 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     history,
     errorMessage,
     onSeedBackup,
+    onCloseSeedBackupSheet,
+    onSeedValidBackup,
+    onSeedExpiredBackup,
     onRemoveBackup,
     onStart,
     onStop,

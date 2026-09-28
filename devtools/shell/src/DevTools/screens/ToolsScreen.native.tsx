@@ -17,5 +17,3 @@ export function ToolsScreen(props: ToolsScreenProps) {
     </Box>
   );
 }
-
-export default ToolsScreen;

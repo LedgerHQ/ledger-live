@@ -25,7 +25,7 @@ import { contactsIntentLWMDefinitions } from "LLM/features/Contacts/deviceIntent
 import { useContactsAddressValidationAdapter } from "LLM/features/Contacts/hooks/useContactsAddressValidationAdapter";
 import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
 import { useSendFlowTracking } from "LLM/features/Send/context/SendFlowTrackingContext";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowTrackingProperties } from "./useSendFlowTrackingProperties";
 import { screen, track } from "~/analytics";
 import { useDispatch } from "~/context/hooks";
 
@@ -85,14 +85,15 @@ export function useSendPrefillAddAddressFlow({
     otherContactsAddresses: allContactsAddresses,
   });
   const isAddressPhase = isPrefillAddAddressFlowOpen(addressFlowState);
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
   const trackingProperties = useMemo(
     () => ({
-      ...getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+      ...sendFlowTrackingProperties,
       ...buildContactsGlobalProperties({
         contacts,
       }),
     }),
-    [contacts, state.account.account, state.account.parentAccount],
+    [contacts, sendFlowTrackingProperties],
   );
 
   const trackedAddressPhaseRef = useRef("");

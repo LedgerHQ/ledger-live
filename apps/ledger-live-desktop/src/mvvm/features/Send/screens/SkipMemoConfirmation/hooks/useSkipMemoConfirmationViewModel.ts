@@ -1,10 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
-import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { track } from "~/renderer/analytics/segment";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
@@ -19,10 +19,7 @@ export function useSkipMemoConfirmationViewModel() {
   const [, setDoNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
   const [doNotAskAgain, setDoNotAskAgain] = useState(false);
 
-  const trackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
-    [state.account.account, state.account.parentAccount],
-  );
+  const trackingProperties = useSendFlowTrackingProperties();
   const memoCurrencyId = getMemoFamilyCurrencyId(state.account.currency);
   const memoLabel = t([`families.${memoCurrencyId}.memo`, "common.memo"]);
 

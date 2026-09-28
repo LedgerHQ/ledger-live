@@ -15,7 +15,3 @@ it("returns 0 when cosmosResources is undefined", () => {
   const account = {} as unknown as CosmosAccount;
   expect(getVotesCount(account)).toBe(0);
 });
-
-it("returns 0 when the account is undefined", () => {
-  expect(getVotesCount(undefined as any)).toBe(0);
-});

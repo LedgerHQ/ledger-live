@@ -79,6 +79,27 @@ describe("getValidators", () => {
     );
   });
 
+  it("sorts over-concentrated validators after bondable ones", async () => {
+    const OVER_CONCENTRATED = "aleo1over";
+    const SMALL_STAKE = "aleo1small";
+    const BIG_STAKE = "aleo1big";
+
+    // Total stake 200_000; "over" holds 50% of it, past MAX_VALIDATOR_STAKE_SHARE, while
+    // the other two stay under the 25% cap and remain bondable.
+    jest.mocked(apiClient.getCommittee).mockResolvedValue({
+      total_stake: 200_000,
+      members: {
+        [OVER_CONCENTRATED]: [100_000, true, 5],
+        [SMALL_STAKE]: [10_000, true, 5],
+        [BIG_STAKE]: [40_000, true, 5],
+      },
+    });
+
+    const validators = await getValidators(CURRENCY_ID);
+
+    expect(validators.map(v => v.address)).toEqual([BIG_STAKE, SMALL_STAKE, OVER_CONCENTRATED]);
+  });
+
   it("fetches committee, names and supply concurrently", async () => {
     await getValidators(CURRENCY_ID);
 

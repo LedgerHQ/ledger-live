@@ -48,7 +48,7 @@ jest.mock("@ledgerhq/coin-tron/network", () => {
     getTronSuperRepresentatives: jest.fn().mockImplementation(() => {
       return Promise.resolve(superRepresentatives);
     }),
-    accountNamesCache: jest.fn().mockImplementation((_config, address: string) => {
+    accountNamesCache: jest.fn().mockImplementation((_logger, _config, address: string) => {
       return Promise.resolve(accountNames[address]);
     }),
   };
@@ -158,7 +158,11 @@ describe("Tron vote names - useVoteNames", () => {
     await act(async () => {});
 
     expect(result.current).toEqual([{ ...nameless, name: "Binance Staking" }]);
-    expect(accountNamesCache).toHaveBeenCalledWith(expect.anything(), nameless.address);
+    expect(accountNamesCache).toHaveBeenCalledWith(
+      expect.any(Function),
+      expect.anything(),
+      nameless.address,
+    );
   });
 
   it("leaves a synced vote alone, so the common case costs no request", async () => {
@@ -178,7 +182,11 @@ describe("Tron vote names - useVoteNames", () => {
     await act(async () => {});
 
     expect(accountNamesCache).toHaveBeenCalledTimes(1);
-    expect(accountNamesCache).toHaveBeenCalledWith(expect.anything(), other.address);
+    expect(accountNamesCache).toHaveBeenCalledWith(
+      expect.any(Function),
+      expect.anything(),
+      other.address,
+    );
     // The second address has no name on chain, so it is left exactly as it arrived.
     expect(result.current).toEqual([named, other]);
   });

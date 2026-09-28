@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
@@ -6,7 +6,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import SelectDevice2, { type SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { track, usePageNameFromRoute } from "~/analytics";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowTrackingProperties } from "../../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
 import { SigningBody } from "./components/SigningBody";
 
@@ -44,10 +44,7 @@ export function SignatureDeviceActionView({
   const { bottom: bottomInset } = useSafeAreaInsets();
   const { recipientType } = useSendFlowTracking();
 
-  const trackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(account, parentAccount ?? undefined),
-    [account, parentAccount],
-  );
+  const trackingProperties = useSendFlowTrackingProperties();
 
   const page = usePageNameFromRoute();
 

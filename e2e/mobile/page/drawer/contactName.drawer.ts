@@ -19,13 +19,10 @@ export default class ContactNameDrawer {
     await waitForFullyVisibleById(this.contentId());
   }
 
-  @Step("Type contact name: {{0}}")
-  async typeName(name: string) {
-    await typeTextByElement(this.nameInput(), name);
-  }
-
-  @Step("Confirm the contact name")
-  async confirm() {
+  @Step("Type contact name: {{0}} and confirm")
+  async typeAndConfirm(name: string) {
+    // LIVE-37168 - confirm button should remain interactable when the keyboard is open
+    await typeTextByElement(this.nameInput(), name, false);
     await tapByElement(this.confirmButton());
   }
 }

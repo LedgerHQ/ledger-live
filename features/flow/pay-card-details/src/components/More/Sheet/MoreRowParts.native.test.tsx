@@ -27,8 +27,8 @@ describe("MoreRowParts (native)", () => {
   });
 
   it("gives each row its own icon", () => {
-    const icons = (["managePin", "accessBaanx", "help", "logout"] as const).map(iconOf);
+    const icons = (["managePin", "accessBaanx", "help", "legal", "logout"] as const).map(iconOf);
 
-    expect(new Set(icons).size).toBe(4);
+    expect(new Set(icons).size).toBe(5);
   });
 });

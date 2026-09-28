@@ -392,11 +392,6 @@ export const updateAnonymousUserNotifications = (payload: {
   };
 };
 
-export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
-  type: "SET_HAS_SEEN_WALLET_V4_TOUR",
-  payload: hasSeenWalletV4Tour,
-});
-
 export const setHasSeenQ2Tour = (hasSeenQ2Tour: boolean) => ({
   type: "SET_HAS_SEEN_Q2_TOUR",
   payload: hasSeenQ2Tour,

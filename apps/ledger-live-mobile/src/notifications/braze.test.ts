@@ -133,6 +133,30 @@ describe("applyBrazeConsentTransition", () => {
     );
   });
 
+  it("should skip identify and refresh when the identity is aborted after wipe", async () => {
+    let completeWipe: () => void = () => {};
+    mockedWipeData.mockImplementationOnce(
+      () =>
+        new Promise<void>(resolve => {
+          completeWipe = resolve;
+        }),
+    );
+    let aborted = false;
+
+    const transition = applyBrazeConsentTransition(
+      { isTrackedUser: true, userId: REAL_USER_ID },
+      { shouldAbort: () => aborted },
+    );
+
+    aborted = true;
+    completeWipe();
+    await transition;
+
+    expect(mockedEnableSDK).not.toHaveBeenCalled();
+    expect(mockedChangeUser).not.toHaveBeenCalled();
+    expect(mockedRequestContentCardsRefresh).not.toHaveBeenCalled();
+  });
+
   it("should skip the SDK when the user id is dummy", async () => {
     await applyBrazeConsentTransition({ isTrackedUser: true, userId: DUMMY_USER_ID });
 

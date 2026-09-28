@@ -145,14 +145,13 @@ describe("useRecipientScreenViewModel", () => {
     expect(setRecipient).toHaveBeenCalledWith({
       address: "destination",
       ensName: "name.eth",
-      memo: { type: "MEMO", value: "123" },
+      memo: undefined,
       displayLabel: undefined,
     });
-    expect(clearRecipientSearch).toHaveBeenCalledTimes(1);
     expect(navigate).toHaveBeenCalledWith(ScreenName.SendFlowAmount);
   });
 
-  it("clears the recipient search before proceeding after memo", () => {
+  it("updates the recipient without navigating when goToNextStep is false", () => {
     const { result } = renderHook(() => useRecipientScreenViewModel());
     if (!result.current.ready) {
       throw new Error("Expected a ready recipient screen");
@@ -160,11 +159,76 @@ describe("useRecipientScreenViewModel", () => {
     const viewModel = result.current;
 
     act(() => {
-      viewModel.onMemoProceed();
+      viewModel.onAddressSelected("destination", "name.eth", false);
     });
 
-    expect(clearRecipientSearch).toHaveBeenCalledTimes(1);
+    expect(setRecipient).toHaveBeenCalledWith({
+      address: "destination",
+      ensName: "name.eth",
+      memo: undefined,
+      displayLabel: undefined,
+    });
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("sets the provided memo and continues to amount", () => {
+    const { result } = renderHook(() => useRecipientScreenViewModel());
+    if (!result.current.ready) {
+      throw new Error("Expected a ready recipient screen");
+    }
+    const viewModel = result.current;
+
+    act(() => {
+      viewModel.onAddressSelected("destination", undefined, true, {
+        value: "",
+        type: "NO_MEMO",
+      });
+    });
+
+    expect(setRecipient).toHaveBeenCalledWith({
+      address: "destination",
+      ensName: undefined,
+      memo: { value: "", type: "NO_MEMO" },
+      displayLabel: undefined,
+    });
     expect(navigate).toHaveBeenCalledWith(ScreenName.SendFlowAmount);
+  });
+
+  it("keeps the memo when the selected address is the current recipient", () => {
+    mockedUseSendFlowData.mockReturnValue({
+      state: {
+        account: { account, parentAccount: null, currency: null },
+        recipient: {
+          address: "destination",
+          memo: { type: "MEMO", value: "123" },
+          displayLabel: "Private balance",
+        },
+        transaction: { transaction: null },
+      },
+      uiConfig: { recipientSupportsDomain: true },
+      recipientSearch: {
+        value: "",
+        setValue: jest.fn(),
+        clear: clearRecipientSearch,
+      },
+    } as never);
+
+    const { result } = renderHook(() => useRecipientScreenViewModel());
+    if (!result.current.ready) {
+      throw new Error("Expected a ready recipient screen");
+    }
+    const viewModel = result.current;
+
+    act(() => {
+      viewModel.onAddressSelected("destination");
+    });
+
+    expect(setRecipient).toHaveBeenCalledWith({
+      address: "destination",
+      ensName: undefined,
+      memo: { type: "MEMO", value: "123" },
+      displayLabel: undefined,
+    });
   });
 
   it("returns to the existing Amount screen instead of stacking another", () => {

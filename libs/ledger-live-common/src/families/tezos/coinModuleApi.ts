@@ -1,4 +1,4 @@
-import { createApi as createTezosApi } from "@ledgerhq/coin-tezos/api/index";
+import { createApi as createTezosApi } from "@ledgerhq/coin-tezos/api";
 import type { CoinModuleImpl } from "@ledgerhq/coin-module-framework/api/index";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 

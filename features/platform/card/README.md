@@ -2,7 +2,7 @@
 
 > [!CAUTION]
 >
-> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+> **Status: UNSTABLE** — Under active development.
 
 Cross-flow Card runtime. Owns the stored Card session and the three accessors the app injects into the
 shared `cardApi` service (`@shared/api-services`, `services/card`).
@@ -29,6 +29,10 @@ error instead and touches nothing.
 - `getCardSessionToken()` — returns the stored access token or `null`.
 - `refreshCardSession(sessionId, failedAccessToken)` — renews after a 401.
 - `configureCardSessionRenewal(config)` — installed once by each app store.
+- `setCardProviderAppId(appId)` — records the provider app the login redirect named. It shares the
+  session's lifetime, so it starts a session replacement and is cleared with the session.
+- `isCardUsEnv(usAppId)` — true while the recorded app id is the US one, which the Card base query
+  reads on every request to decide whether to send `x-us-env`.
 
 The refresh token has **no** public reader. It leaves this package only as the argument of the
 refresh grant the renewal dispatches.

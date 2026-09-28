@@ -19,6 +19,7 @@ describe("baanxAssetLedgerId", () => {
   it.each([
     ["usdt", "ethereum", "ethereum/erc20/usd_tether__erc20_"],
     ["usdc", "ethereum", "ethereum/erc20/usd__coin"],
+    ["euroc", "ethereum", "ethereum/erc20/euro_coin"],
     ["btc", "bitcoin", "bitcoin"],
     ["eth", "ethereum", "ethereum"],
     ["xrp", "ripple", "ripple"],
@@ -31,6 +32,7 @@ describe("baanxAssetLedgerId", () => {
   it.each([
     ["usdt", "usdt"],
     ["usdc", "usdc"],
+    ["euroc", "euroc"],
     ["btc", "btc"],
     ["eth", "eth"],
     ["xrp", "xrp"],
@@ -43,6 +45,7 @@ describe("baanxAssetLedgerId", () => {
         {
           usdt: "ethereum",
           usdc: "ethereum",
+          euroc: "ethereum",
           btc: "bitcoin",
           eth: "ethereum",
           xrp: "ripple",
@@ -60,9 +63,14 @@ describe("baanxAssetLedgerId", () => {
 
   it("never maps two provider assets onto the same wrong chain", () => {
     // Every stablecoin entry is an Ethereum token; every coin entry is its own chain.
-    expect(BAANX_ASSET_LEDGER_IDS["usdc.ethereum"]).not.toBe(
+    const stablecoinIds = [
+      BAANX_ASSET_LEDGER_IDS["usdc.ethereum"],
       BAANX_ASSET_LEDGER_IDS["usdt.ethereum"],
-    );
+      BAANX_ASSET_LEDGER_IDS["euroc.ethereum"],
+    ];
+    // Distinctness alone passes on a missing key, since two absent entries are one `undefined`.
+    expect(stablecoinIds).not.toContain(undefined);
+    expect(new Set(stablecoinIds).size).toBe(stablecoinIds.length);
     expect(BAANX_ASSET_LEDGER_IDS["eth.ethereum"]).toBe("ethereum");
   });
 });

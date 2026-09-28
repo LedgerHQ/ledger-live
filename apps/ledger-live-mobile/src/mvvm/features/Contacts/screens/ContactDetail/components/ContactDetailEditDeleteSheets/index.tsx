@@ -1,14 +1,15 @@
-import React, { useCallback, useState } from "react";
-import { Platform } from "react-native";
+import React, { useCallback } from "react";
 import {
   ContactDetailActionsMenu,
   ContactsEditSignerMismatchDialog,
 } from "@features/flow-contacts";
 import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-contact";
-import { ContactsRenameContactDrawer } from "@features/flow-contacts-edit-contact";
+import {
+  ContactsRenameContactDrawer,
+  ContactsRenameContactFooter,
+} from "@features/flow-contacts-edit-contact";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { resolveKeyboardBottomOffset, useKeyboardVisible } from "~/logic/keyboardVisible";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetFooterInset } from "@shared/ui-queued-bottom-sheet";
 import type { ContactDetailEditDeleteFlowProps } from "../../hooks/useContactDetailEditDeleteAdapter";
 
 type ContactDetailEditDeleteSheetsProps = ContactDetailEditDeleteFlowProps;
@@ -20,21 +21,6 @@ export function ContactDetailEditDeleteSheets({
   signerMismatchSheet,
 }: ContactDetailEditDeleteSheetsProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
-    eventTiming: Platform.OS === "ios" ? "will" : "did",
-  });
-  const keyboardInset = resolveKeyboardBottomOffset({
-    isKeyboardVisible,
-    keyboardHeight,
-    platform: Platform.OS,
-    version: Platform.Version,
-  });
-  const [hasRenameOpened, setHasRenameOpened] = useState(false);
-  const onRenameOpened = useCallback(() => setHasRenameOpened(true), []);
-  const onCloseRename = useCallback(() => {
-    setHasRenameOpened(false);
-    renameDrawer.onClose();
-  }, [renameDrawer]);
   const { onClose: onCloseActionsMenuFromMenu, ...actionsMenuProps } = actionsMenu;
   const onCloseActionsMenu = useCallback(() => {
     onCloseActionsMenuFromMenu();
@@ -59,17 +45,14 @@ export function ContactDetailEditDeleteSheets({
       <QueuedBottomSheet
         isRequestingToBeOpened={renameDrawer.isOpen}
         isForcingToBeOpened={renameDrawer.isOpen}
-        onOpened={onRenameOpened}
-        onClose={onCloseRename}
+        onClose={renameDrawer.onClose}
         testID="contacts-rename-contact-sheet"
-        enableDynamicSizing
+        // Fixed height, so raising the keyboard over the name field cannot re-snap the sheet
+        // mid-animation. The two then animate up together.
+        snapPoints="fullWithOffset"
+        footer={renameDrawer.isOpen ? <ContactsRenameContactFooter {...renameDrawer} /> : null}
       >
-        <ContactsRenameContactDrawer
-          {...renameDrawer}
-          bottomInset={bottomInset}
-          keyboardInset={keyboardInset}
-          autoFocus={hasRenameOpened}
-        />
+        <RenameContactDrawer {...renameDrawer} />
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={deleteDrawer.isOpen}
@@ -91,4 +74,11 @@ export function ContactDetailEditDeleteSheets({
       </QueuedBottomSheet>
     </>
   );
+}
+
+function RenameContactDrawer(
+  props: ContactDetailEditDeleteFlowProps["renameDrawer"],
+): React.JSX.Element {
+  const footerInset = useBottomSheetFooterInset();
+  return <ContactsRenameContactDrawer {...props} autoFocus bottomInset={footerInset} />;
 }

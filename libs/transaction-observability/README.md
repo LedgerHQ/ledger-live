@@ -24,7 +24,7 @@ silent.
 
 ## Why this lives in `libs/`
 
-The DDD guide treats `libs/*` as legacy and directs new packages to `shared/`, `domain/` or
+The architecture guide treats `libs/*` as legacy and directs new packages to `shared/`, `domain/` or
 `features/`. This one cannot go there: its whole job is to read `Account`, `Operation`,
 `SignedOperation`, `TransactionSource` and `OperationType`, and those types exist only in
 `libs/types-live` — which the new-architecture layers are forbidden to import. There is no

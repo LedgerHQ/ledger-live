@@ -16,11 +16,12 @@ export function DeactivatePasswordView({
 }: DeactivatePasswordViewProps): React.JSX.Element {
   const { t } = useTranslation();
 
-  const helperText = hasFailed
-    ? t("appLock.deactivatePassword.failed")
-    : hasWrongPassword
-      ? t("appLock.deactivatePassword.wrongPassword")
-      : undefined;
+  let helperText: string | undefined;
+  if (hasFailed) {
+    helperText = t("appLock.deactivatePassword.failed");
+  } else if (hasWrongPassword) {
+    helperText = t("appLock.deactivatePassword.wrongPassword");
+  }
 
   return (
     <Box

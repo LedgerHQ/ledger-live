@@ -94,7 +94,9 @@ describe("RightPanel", () => {
 
     it("hands the countervalue formatter and the balance label to the visual once signed in", () => {
       render(<RightPanel variant="card" />, {
-        initialState: { payCardAuth: { hasCard: true, status: "signedIn" } },
+        initialState: {
+          payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" },
+        },
       });
 
       expect(screen.getByTestId("pay-card-container")).toBeVisible();

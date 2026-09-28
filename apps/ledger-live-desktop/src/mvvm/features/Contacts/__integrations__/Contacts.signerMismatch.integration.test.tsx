@@ -1,7 +1,7 @@
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
-import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
+import { render, screen, waitFor, within, withFlagOverrides } from "tests/testSetup";
 import ContactsScreen from "LLD/features/Contacts";
 
 jest.mock("@features/flow-contacts", () => {
@@ -82,7 +82,11 @@ describe("Contacts signer mismatch integration", () => {
     const { user } = renderContactsScreen({ contacts: { contacts: mockPopulatedContacts() } });
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
-    await user.click(screen.getByTestId("contacts-detail-edit-action"));
+    await user.click(
+      within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+        "contacts-detail-edit-action",
+      ),
+    );
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-rename-contact-dialog")).toBeVisible();
@@ -100,7 +104,11 @@ describe("Contacts signer mismatch integration", () => {
     const { user } = renderContactsScreen({ contacts: { contacts: mockPopulatedContacts() } });
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
-    await user.click(screen.getByTestId("contacts-detail-edit-action"));
+    await user.click(
+      within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+        "contacts-detail-edit-action",
+      ),
+    );
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-rename-contact-dialog")).toBeVisible();

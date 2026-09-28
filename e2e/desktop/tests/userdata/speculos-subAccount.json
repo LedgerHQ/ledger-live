@@ -97,7 +97,6 @@
       "lastOnboardedDevice": null,
       "alwaysShowMemoTagInfo": true,
       "anonymousUserNotifications": {},
-      "hasSeenWalletV4Tour": false,
       "doNotAskAgainSkipMemo": false
     },
     "PLAYWRIGHT_RUN": {

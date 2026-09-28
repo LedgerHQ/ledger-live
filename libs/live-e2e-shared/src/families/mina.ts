@@ -40,9 +40,9 @@ export const delegateMina = withDeviceController(
           delegatingAccount.validatorAddress ?? delegatingAccount.account.address;
         if (!expectedAddress) {
           throw new Error(
-            "Mina delegation target address is not set: pass Delegate.validatorAddress for a " +
-              "new delegation, or populate Delegate.account.address (liveDataWithAddressCommand) " +
-              "for an undelegation.",
+            "Mina delegation target address is not set: pass Delegate.validatorAddress — the " +
+              "destination validator's for a delegation, the account's own for an undelegation, " +
+              "which the mina staking pickers return alongside the account.",
           );
         }
         expectSpeculosEventsContain(expectedAddress, events);

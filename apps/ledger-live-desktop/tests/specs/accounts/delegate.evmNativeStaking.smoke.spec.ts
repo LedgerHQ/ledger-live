@@ -213,6 +213,7 @@ async function mockSeiEvmRpc(page: Page) {
 }
 
 const MOCKED_SEI_EMPTY_REDELEGATIONS = { redelegation_responses: [] };
+const MOCKED_SEI_EMPTY_UNBONDINGS = { unbonding_responses: [] };
 const MOCKED_SEI_EMPTY_REWARDS = { rewards: [], total: [] };
 const MOCKED_SEI_VALIDATORS = {
   validators: [
@@ -268,6 +269,20 @@ async function mockSeiValidatorsApi(page: Page) {
         headers: { ...CORS_HEADERS, teststatus: "mocked" },
         contentType: "application/json",
         body: JSON.stringify(MOCKED_SEI_EMPTY_REDELEGATIONS),
+      });
+      return;
+    }
+
+    const isUnbondingsRequest =
+      request.method() === "GET" &&
+      pathname.includes("/cosmos/staking/v1beta1/delegators/") &&
+      pathname.endsWith("/unbonding_delegations");
+
+    if (isUnbondingsRequest) {
+      await route.fulfill({
+        headers: { ...CORS_HEADERS, teststatus: "mocked" },
+        contentType: "application/json",
+        body: JSON.stringify(MOCKED_SEI_EMPTY_UNBONDINGS),
       });
       return;
     }

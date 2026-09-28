@@ -115,7 +115,7 @@ export const MIN_DELEGATOR_STAKE_MICROCREDITS = 10_000 * MICROCREDITS_PER_CREDIT
 
 // credits.aleo `bond_public` rejects a bond of less than one credit outright, independently of
 // the delegator total above.
-export const MIN_BOND_AMOUNT = MICROCREDITS_PER_CREDIT;
+export const MIN_BOND_AMOUNT_MICROCREDITS = MICROCREDITS_PER_CREDIT;
 
 // snarkVM `block_reward_v2` adds a coinbase share and transaction fees on top, so
 // rates derived from this alone are a lower bound.
@@ -123,3 +123,6 @@ export const ANNUAL_INFLATION_RATE = 0.05;
 
 // A validator above this share of total stake earns zero, not a reduced rate.
 export const MAX_VALIDATOR_STAKE_SHARE = 0.25;
+
+// Short enough that a validator that has just closed is not offered for long.
+export const ALEO_VALIDATORS_CACHE_MINUTES = 5;

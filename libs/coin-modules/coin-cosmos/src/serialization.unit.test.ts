@@ -11,7 +11,6 @@ function makeResources(publicKey: string): CosmosResources {
     delegatedBalance: new BigNumber(0),
     pendingRewardsBalance: new BigNumber(0),
     unbondingBalance: new BigNumber(0),
-    withdrawAddress: "cosmos1xxx",
     sequence: 3,
     publicKey,
   };
@@ -25,7 +24,6 @@ function makeRawResources(publicKey?: string): CosmosResourcesRaw {
     delegatedBalance: "0",
     pendingRewardsBalance: "0",
     unbondingBalance: "0",
-    withdrawAddress: "cosmos1xxx",
     sequence: 3,
     ...(publicKey !== undefined ? { publicKey } : {}),
   };

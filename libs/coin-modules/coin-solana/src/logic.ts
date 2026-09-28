@@ -18,11 +18,8 @@ export {
 } from "./logic/stakingResources";
 
 export function isSolanaStakingTransactionIntent(intent: TransactionIntent): boolean {
-  return (
-    isStakingTransactionIntent(intent) ||
-    intent.type === "stake.createAccount" ||
-    intent.type === "stake.withdraw"
-  );
+  // Solana's own stake kinds do not all map to the framework's `intentType: "staking"`.
+  return isStakingTransactionIntent(intent) || intent.type.startsWith("stake.");
 }
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? U : T;

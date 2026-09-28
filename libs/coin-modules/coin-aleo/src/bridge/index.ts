@@ -30,6 +30,8 @@ import {
   assignToAccountRaw,
   assignToTokenAccountRaw,
   assignFromTokenAccountRaw,
+  toOperationExtraRaw,
+  fromOperationExtraRaw,
 } from "./serialization";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { buildSignOperation } from "./signOperation";
@@ -72,6 +74,8 @@ export function buildAccountBridge(
     assignToAccountRaw,
     assignToTokenAccountRaw,
     assignFromTokenAccountRaw,
+    toOperationExtraRaw,
+    fromOperationExtraRaw,
     getSerializedAddressParameters,
     validateAddress,
   };

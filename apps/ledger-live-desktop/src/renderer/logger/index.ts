@@ -271,10 +271,9 @@ export default {
       data: properties as Record<string, unknown>,
     });
   },
-  analyticsPage: (category: string, name?: string | null, properties?: object | null) => {
-    const message = name ? `${category} ${name}` : category;
+  analyticsPage: (message: string, properties?: object | null) => {
     if (logAnalytics) {
-      logger.log("info", `△ page ${message}`, {
+      logger.log("info", `△ ${message}`, {
         type: ANALYTICS_TYPE,
         data: properties,
       });

@@ -22,17 +22,22 @@ import aleoCoinConfig from "../config";
 import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
-  MIN_BOND_AMOUNT,
+  MIN_BOND_AMOUNT_MICROCREDITS,
   MIN_DELEGATOR_STAKE_MICROCREDITS,
   TRANSACTION_TYPE,
 } from "../constants";
 import {
+  AleoAlreadyBondedElsewhere,
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
+  AleoBondAmountTooLow,
+  AleoClosedValidator,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
+  AleoStakeAmountTooLow,
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
+  AleoUnbondingValidator,
 } from "../errors";
 import { prepareTransaction } from "./prepareTransaction";
 import { getTransactionStatus } from "./getTransactionStatus";
@@ -1018,7 +1023,7 @@ describe("getTransactionStatus", () => {
           stakingTransaction(TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC),
         );
 
-        expect(status.errors.amount?.message).toMatch(/no unbonded funds to claim/);
+        expect(status.errors.amount?.name).toBe("AleoNoClaimableUnbondedFunds");
       });
 
       it("resolves no amount for use-all, rather than the whole transparent balance", async () => {
@@ -1057,22 +1062,29 @@ describe("getTransactionStatus", () => {
       it("rejects a bond below the per-call one-credit floor", async () => {
         const { status } = await statusOf(
           makeAccount({ bondedBalance: new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS) }),
-          bond(new BigNumber(MIN_BOND_AMOUNT - 1)),
+          bond(new BigNumber(MIN_BOND_AMOUNT_MICROCREDITS - 1)),
         );
 
-        expect(status.errors.amount?.message).toMatch(/stake at least .* at a time/);
+        expect(status.errors.amount).toBeInstanceOf(AleoBondAmountTooLow);
+        // The i18n description interpolates `minAmount`; formatCurrencyUnit separates the
+        // amount from the code with a non-breaking space.
+        expect(status.errors.amount).toHaveProperty("minAmount", "1\u00a0ALEO");
       });
 
       it("rejects a bond leaving the delegator total below the minimum stake", async () => {
-        const { status } = await statusOf(makeAccount(), bond(new BigNumber(MIN_BOND_AMOUNT)));
+        const { status } = await statusOf(
+          makeAccount(),
+          bond(new BigNumber(MIN_BOND_AMOUNT_MICROCREDITS)),
+        );
 
-        expect(status.errors.amount?.message).toMatch(/total of at least/);
+        expect(status.errors.amount).toBeInstanceOf(AleoStakeAmountTooLow);
+        expect(status.errors.amount).toHaveProperty("minAmount", "10,000\u00a0ALEO");
       });
 
       it("accepts a top-up on a position that already clears the minimum stake", async () => {
         const { status } = await statusOf(
           makeAccount({ bondedBalance: new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS) }),
-          bond(new BigNumber(MIN_BOND_AMOUNT)),
+          bond(new BigNumber(MIN_BOND_AMOUNT_MICROCREDITS)),
         );
 
         expect(status.errors).toEqual({});
@@ -1086,7 +1098,7 @@ describe("getTransactionStatus", () => {
           bond(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS)),
         );
 
-        expect(status.errors.recipient?.message).toMatch(/not accepting new delegations/);
+        expect(status.errors.recipient).toBeInstanceOf(AleoClosedValidator);
       });
 
       it("rejects a bond to an open validator that is unbonding", async () => {
@@ -1097,7 +1109,7 @@ describe("getTransactionStatus", () => {
           bond(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS)),
         );
 
-        expect(status.errors.recipient?.message).toMatch(/not accepting new delegations/);
+        expect(status.errors.recipient).toBeInstanceOf(AleoUnbondingValidator);
       });
 
       it("does not block a bond when the committee cannot be fetched", async () => {
@@ -1130,9 +1142,8 @@ describe("getTransactionStatus", () => {
           bond(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS)),
         );
 
-        expect(status.errors.recipient?.message).toMatch(
-          new RegExp(`Already staking with ${OTHER_VALIDATOR}`),
-        );
+        expect(status.errors.recipient).toBeInstanceOf(AleoAlreadyBondedElsewhere);
+        expect(status.errors.recipient).toHaveProperty("bondedValidator", OTHER_VALIDATOR);
       });
 
       it("reports a missing recipient without running the validator checks", async () => {

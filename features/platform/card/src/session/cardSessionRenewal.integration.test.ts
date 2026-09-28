@@ -56,6 +56,7 @@ function setup(store: CardSessionStore = memoryStore()) {
           extraArgument: cardApiExtra({
             getCardApiBaseUrl: () => BASE_URL,
             getCardBaanxClientKey: () => "client-key",
+            isCardUsEnv: () => false,
             readCardSession: session.readCardSession,
             isCardSessionCurrent: session.isCardSessionCurrent,
             refreshCardSession: session.refreshCardSession,

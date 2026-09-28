@@ -41,7 +41,7 @@ function OptionRow({ data: { validatorId, validator, formattedAmount } }: Option
   return (
     <Box key={validatorId} horizontal alignItems="center" justifyContent="space-between">
       <Box horizontal alignItems="center">
-        <LedgerValidatorIcon validator={validator} />
+        <LedgerValidatorIcon validator={validator} validatorId={validatorId} />
         <Text ml={2} ff="Inter|Medium">
           {validatorId}
         </Text>

@@ -334,13 +334,34 @@ describe("resolveTokenSubAccounts", () => {
       expect(result.tokens[TOKEN_ID].transferStatus).toBe("allowed");
     });
 
-    it("is blocked for an allow-list token the account is not on", async () => {
+    it("is notAllowed for an allow-list token the account is not on", async () => {
       const result = await resolve({
         accountTokens: [makeEntry({ moduleState: { allowList: true } })],
       });
 
       if (result.kind !== "resolved") throw new Error("expected resolved");
+      expect(result.tokens[TOKEN_ID].transferStatus).toBe("notAllowed");
+    });
+
+    it("is denied for a deny-list token the account is on", async () => {
+      const result = await resolve({
+        accountTokens: [
+          makeEntry({ moduleState: { denyList: true }, accountState: { denyList: true } }),
+        ],
+      });
+
+      if (result.kind !== "resolved") throw new Error("expected resolved");
+      expect(result.tokens[TOKEN_ID].transferStatus).toBe("denied");
+    });
+
+    it("is blocked for a paused token even when a list would have refused it", async () => {
+      const result = await resolve({
+        accountTokens: [makeEntry({ moduleState: { paused: true, allowList: true } })],
+      });
+
+      if (result.kind !== "resolved") throw new Error("expected resolved");
       expect(result.tokens[TOKEN_ID].transferStatus).toBe("blocked");
+      expect(result.tokens[TOKEN_ID].paused).toBe(true);
     });
 
     it("is unknown, and omits paused, when the module state did not decode", async () => {

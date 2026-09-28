@@ -19,6 +19,7 @@ import {
 } from "~/actions/dynamicContent";
 import { clearDismissedContentCards, setDismissedDynamicCards } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
+import { useBrazeContentCards } from "LLM/features/DynamicContent/components/BrazeContentCardsProvider";
 import { useTranslation } from "~/context/Locale";
 import {
   buildDefaultGenericAwarenessModalFormValues,
@@ -227,6 +228,7 @@ export default function DebugContentCards() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { pushToast } = useToastsActions();
+  const { lastFetchedCards, eligibilityEvaluations, eligibilityContext } = useBrazeContentCards();
   const dynamicContent = useSelector(state => state.dynamicContent);
   const genericAwarenessModal = useSelector(state => state.genericAwarenessModal);
   const dismissedContentCards = useSelector(dismissedContentCardsSelector);
@@ -390,6 +392,7 @@ export default function DebugContentCards() {
     return categoryGroups;
   };
   const selectedRawCard =
+    lastFetchedCards?.find(card => card.id === selectedRawCardId) ??
     buckets.rawCards.find(card => card.id === selectedRawCardId) ??
     localCards.find(card => card.id === selectedRawCardId);
 
@@ -734,7 +737,10 @@ export default function DebugContentCards() {
     activeTabContent = (
       <CardsSection
         cardsFetched={{
-          fetched: buckets.rawCards.length,
+          fetched: (lastFetchedCards ?? buckets.rawCards).length,
+          eligibilityBlocked: eligibilityEvaluations.filter(
+            evaluation => evaluation.result.eligible === false,
+          ).length,
           dismissedRemoved: buckets.rawCards.length - buckets.filteredCards.length,
           wrongPlatformRemoved: buckets.filteredCards.length - buckets.mobileCards.length,
           mobileEligible: buckets.mobileCards.length,
@@ -742,8 +748,10 @@ export default function DebugContentCards() {
         dismissedIds={dismissedIds}
         onClearAllDismissed={dismissedIds.length > 0 ? clearAllDismissedCards : undefined}
         onUndismiss={undismissCard}
-        allCards={buckets.rawCards}
+        allCards={lastFetchedCards ?? buckets.rawCards}
         unmappedCards={unmappedCards}
+        eligibilityEvaluations={eligibilityEvaluations}
+        eligibilityContext={eligibilityContext}
         onSelectCard={setSelectedRawCardId}
         onCopyCards={(id, cards) => copyJson(id, cards)}
         localCardsCount={localCards.length}
@@ -778,6 +786,10 @@ export default function DebugContentCards() {
               getDismissalKey(selectedRawCard) ?? selectedRawCard.id,
             )}
             isUnmapped={unmappedCards.some(card => card.id === selectedRawCard.id)}
+            eligibilityEvaluation={eligibilityEvaluations.find(
+              evaluation => evaluation.id === selectedRawCard.id,
+            )}
+            eligibilityContext={eligibilityContext}
             onCopy={() => copyCardJson(selectedRawCard)}
           />
         ) : null}

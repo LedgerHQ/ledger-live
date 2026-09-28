@@ -149,9 +149,9 @@ describe("getStakes (MSW integration)", () => {
     expect(stake.delegate).toBe(VOTER_ADDRESS);
     expect(stake.state).toBe("active");
     expect(stake.asset).toEqual({ type: "native" });
-    expect(stake.amount).toBe(BigInt(5_000_000_000));
+    expect(stake.amount).toBe(BigInt(4_997_717_120));
     expect(stake.amountDeposited).toBe(BigInt(4_997_717_120));
-    expect(stake.details?.rentExemptReserve).toBe("2282880");
+    expect(stake.details?.lockedReserve).toBe(2_282_880);
   });
 
   it("should return an inactive stake when deactivation epoch has passed", async () => {
@@ -181,6 +181,7 @@ describe("getStakes (MSW integration)", () => {
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].state).toBe("inactive");
+    expect(result.items[0].amount).toBe(0n);
   });
 
   it("should propagate RPC errors", async () => {

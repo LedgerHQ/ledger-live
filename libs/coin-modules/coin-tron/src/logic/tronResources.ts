@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import get from "lodash/get";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import { accountNamesCache, getTronAccountNetwork, getUnwithdrawnReward } from "../network";
 import { encode58Check } from "../network/format";
@@ -64,19 +65,20 @@ export function extractBandwidthInfo(networkInfo: NetworkInfo | null | undefined
  * `acc.address` is the **hex** address as returned by TronGrid, not base58 (see network/types.ts).
  */
 export async function fetchTronResources(
+  logger: Logger,
   config: TronCoinConfig,
   acc: AccountInfo & { address: string },
 ): Promise<TronResources> {
   const encodedAddress = encode58Check(acc.address);
-  const tronNetworkInfo = await getTronAccountNetwork(config, encodedAddress);
-  const unwithdrawnReward = await getUnwithdrawnReward(config, encodedAddress);
+  const tronNetworkInfo = await getTronAccountNetwork(logger, config, encodedAddress);
+  const unwithdrawnReward = await getUnwithdrawnReward(logger, config, encodedAddress);
   const energy = tronNetworkInfo.energyLimit.minus(tronNetworkInfo.energyUsed);
   const bandwidth = extractBandwidthInfo(tronNetworkInfo);
 
   const rawVotes = [...get(acc, "votes", [])].sort((a, b) => b.vote_count - a.vote_count);
   const votes = await Promise.all(
     rawVotes.map(async v => ({
-      name: await accountNamesCache(config, v.vote_address),
+      name: await accountNamesCache(logger, config, v.vote_address),
       address: v.vote_address,
       voteCount: v.vote_count,
     })),

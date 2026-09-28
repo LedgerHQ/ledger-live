@@ -7,6 +7,7 @@ import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
+import { isValidatorBondable } from "@ledgerhq/live-common/families/aleo/utils";
 import { Flex, Icons } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
 import ValidatorRow, {
@@ -19,10 +20,6 @@ import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
-
-/** Still listed and explorer-linkable, but sorted below anything better and not selectable. */
-export const isDisabled = (validator: AleoValidator) =>
-  !validator.isOpen || validator.isUnbonding || validator.nonEarningReason === "overConcentrated";
 
 type Props = Readonly<{
   validator: AleoValidator;
@@ -51,7 +48,7 @@ export default function AleoValidatorRow({
     if (url) openURL(url);
   }, [currency, address]);
 
-  const pickable = !locked && !isDisabled(validator);
+  const pickable = !locked && isValidatorBondable(validator);
 
   let warning: React.ReactNode = null;
   if (isUnbonding) {

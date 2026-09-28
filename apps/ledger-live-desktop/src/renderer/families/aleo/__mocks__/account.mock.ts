@@ -4,9 +4,10 @@ import type {
   AleoTokenAccount,
   AleoUnspentRecord,
 } from "@ledgerhq/live-common/families/aleo/types";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { aleoCurrency, aleoTokenCurrency } from "./currency.mock";
+import { ALEO_VALIDATOR_ADDRESS } from "./validator.mock";
 
 export const ALEO_ACCOUNT_1 = { ...genAccount("aleo-1", { currency: aleoCurrency }), index: 0 };
 export const ALEO_ACCOUNT_2 = { ...genAccount("aleo-2", { currency: aleoCurrency }), index: 1 };
@@ -35,13 +36,66 @@ export const ALEO_MAIN_ACCOUNT: AleoAccount = {
   },
 };
 
+// `bondedValidator` comes from the same `credits.aleo` mapping as `bondedBalance`, so a bonded
+// position always names its validator — a mock without one is a state the chain cannot produce.
 export const ALEO_BONDED_ACCOUNT: AleoAccount = {
   ...ALEO_MAIN_ACCOUNT,
   aleoResources: {
     ...ALEO_MAIN_ACCOUNT.aleoResources!,
     bondedBalance: new BigNumber(20_000_000_000),
+    bondedValidator: ALEO_VALIDATOR_ADDRESS,
   },
 };
+
+export const ALEO_CLAIMABLE_ACCOUNT: AleoAccount = {
+  ...ALEO_MAIN_ACCOUNT,
+  blockHeight: 1_000,
+  aleoResources: {
+    ...ALEO_MAIN_ACCOUNT.aleoResources!,
+    unbondingBalance: new BigNumber(15_000_000_000),
+    unbondingHeight: 900,
+  },
+};
+
+export const ALEO_UNBONDING_ACCOUNT: AleoAccount = {
+  ...ALEO_CLAIMABLE_ACCOUNT,
+  aleoResources: {
+    ...ALEO_CLAIMABLE_ACCOUNT.aleoResources!,
+    unbondingHeight: 1_100,
+  },
+};
+
+export const ALEO_BONDED_CLAIMABLE_ACCOUNT: AleoAccount = {
+  ...ALEO_CLAIMABLE_ACCOUNT,
+  aleoResources: {
+    ...ALEO_CLAIMABLE_ACCOUNT.aleoResources!,
+    bondedBalance: new BigNumber(20_000_000_000),
+    bondedValidator: ALEO_VALIDATOR_ADDRESS,
+  },
+};
+
+const aleoPendingOperation = (type: OperationType): Operation => ({
+  id: `pending-${type}`,
+  hash: "",
+  type,
+  value: new BigNumber(1),
+  fee: new BigNumber(1),
+  senders: [],
+  recipients: [],
+  accountId: ALEO_MAIN_ACCOUNT.id,
+  date: new Date(),
+  blockHash: null,
+  blockHeight: null,
+  extra: {},
+});
+
+export const withPendingOperation = <A extends AleoAccount>(
+  account: A,
+  type: OperationType,
+): A => ({
+  ...account,
+  pendingOperations: [aleoPendingOperation(type)],
+});
 
 export const ALEO_TOKEN_ACCOUNT: AleoTokenAccount = {
   type: "TokenAccount",

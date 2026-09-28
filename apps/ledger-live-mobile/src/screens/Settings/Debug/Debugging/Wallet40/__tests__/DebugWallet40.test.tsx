@@ -8,10 +8,10 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 describe("DebugWallet40", () => {
-  it("should keep Wallet V4 Tour and omit Product, Q2, and Q3 tours", () => {
+  it("should omit all tour entries", () => {
     render(<DebugWallet40 />);
 
-    expect(screen.getByText("Wallet V4 Tour")).toBeVisible();
+    expect(screen.queryByText("Wallet V4 Tour")).toBeNull();
     expect(screen.queryByText("Product Tour")).toBeNull();
     expect(screen.queryByText("Q2 Wallet V4 Tour (Images)")).toBeNull();
     expect(screen.queryByText("Q3 Wallet V4 Tour")).toBeNull();

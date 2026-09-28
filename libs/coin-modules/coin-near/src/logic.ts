@@ -43,6 +43,52 @@ export const getStakingGas = (t?: StakingGasInput, multiplier = 5): BigNumber =>
   return stakingGasBase.multipliedBy(multiplier);
 };
 
+// Framework accounts (usesStakingPositions: true) carry per-state positions under
+// `stakingPositions`, not under `nearResources`. The type is generic-coin-framework internal
+// and not exported, so access it structurally.
+type FrameworkStakingPositionOnAccount = { state: string; delegate?: string; amount: BigNumber };
+type FrameworkAccount = { stakingPositions?: FrameworkStakingPositionOnAccount[] };
+
+/**
+ * The single place that answers "what is this account staking?", for both account shapes.
+ *
+ * NEAR is mid-migration: the generic bridge writes per-(validator, state) entries to
+ * `account.stakingPositions`, while the legacy bridge writes per-validator aggregates to
+ * `account.nearResources`. Which one is populated depends on the routing flag, and a migrated
+ * account can briefly carry both — so the framework field wins when present and the legacy blob
+ * is the fallback. Callers get the legacy-shaped `NearStakingPosition[]` either way.
+ *
+ * Once the flag flip lands and no account carries `nearResources` any more, the fallback branch
+ * becomes dead and can be dropped.
+ *
+ * The presence test is `!== undefined`, not `.length`: `getAccountShape` always writes the field
+ * under the generic route, so an empty array is a real answer ("nothing staked") and must not fall
+ * back to a stale `nearResources` blob left over from before the migration.
+ */
+export const getNearStakingPositions = (account: NearAccount): NearStakingPosition[] => {
+  const rawPositions = (account as unknown as FrameworkAccount).stakingPositions;
+
+  if (rawPositions !== undefined) {
+    const byDelegate = new Map<string, NearStakingPosition>();
+    for (const pos of rawPositions) {
+      if (!pos.delegate) continue;
+      const cur = byDelegate.get(pos.delegate) ?? {
+        validatorId: pos.delegate,
+        staked: new BigNumber(0),
+        available: new BigNumber(0),
+        pending: new BigNumber(0),
+      };
+      if (pos.state === "active") cur.staked = cur.staked.plus(pos.amount);
+      else if (pos.state === "deactivating") cur.pending = cur.pending.plus(pos.amount);
+      else if (pos.state === "withdrawable") cur.available = cur.available.plus(pos.amount);
+      byDelegate.set(pos.delegate, cur);
+    }
+    return [...byDelegate.values()];
+  }
+
+  return account.nearResources?.stakingPositions ?? [];
+};
+
 /*
  * Get the max amount that can be spent, taking into account tx type and pending operations.
  */
@@ -52,7 +98,7 @@ export const getMaxAmount = (
   fees?: BigNumber,
 ): BigNumber => {
   let maxAmount;
-  const selectedValidator = account.nearResources?.stakingPositions.find(
+  const selectedValidator = getNearStakingPositions(account).find(
     ({ validatorId }) => validatorId === transaction.recipient,
   );
 
@@ -62,7 +108,7 @@ export const getMaxAmount = (
   account.pendingOperations.forEach(({ type, value, recipients }) => {
     const recipient = recipients[0];
 
-    if (recipient === selectedValidator?.validatorId) {
+    if (selectedValidator && recipient === transaction.recipient) {
       if (type === "UNSTAKE") {
         pendingUnstakingAmount = pendingUnstakingAmount.plus(value);
       } else if (type === "WITHDRAW_UNSTAKED") {

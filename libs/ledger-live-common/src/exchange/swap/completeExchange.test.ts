@@ -120,7 +120,7 @@ describe("enrichSwapSignatureVerificationError", () => {
   // must not hash it again (guards against a double-hash if the @noble/curves default ever changes).
   const signCompact = (curve: NobleCurve, message: Buffer): Buffer =>
     Buffer.from(
-      curve.sign(sha256(message), PRIVATE_KEY, { lowS: false, prehash: false }).toCompactRawBytes(),
+      curve.sign(sha256(message), PRIVATE_KEY, { lowS: false, prehash: false }).toBytes("compact"),
     );
 
   const publicKeyFor = (curve: NobleCurve, curveName: "secp256k1" | "secp256r1") => ({

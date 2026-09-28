@@ -15,7 +15,6 @@ import {
   AccountAddress,
   encodePltTransferOperations,
   PLT_MAX_DECIMALS,
-  PLT_MAX_MEMO_SIZE,
   PLT_TOKEN_ID_MAX_LENGTH,
   PLT_TOKEN_ID_MIN_LENGTH,
 } from "@ledgerhq/concordium-core";
@@ -31,6 +30,8 @@ import type {
   TransactionStatus,
 } from "../types";
 import {
+  ConcordiumAccountDenied,
+  ConcordiumAccountNotAllowed,
   ConcordiumInsufficientCcdForFee,
   ConcordiumInsufficientFunds,
   ConcordiumInvalidPltPayloadError,
@@ -83,8 +84,20 @@ function validateFee(estimatedFees: BigNumber): Error | undefined {
   }
 }
 
+/**
+ * Bounds a memo on either path.
+ *
+ * Both are carried as a CBOR text string inside the chain's `Memo`, under the
+ * same 256-byte cap, and a text string costs up to 2 bytes of header — so
+ * {@link MAX_MEMO_LENGTH} bounds either. The PLT path's extra tag-24 envelope
+ * counts against the operations blob, not this cap.
+ *
+ * The device signs the full length either way, and its signing screen shows only
+ * the first few bytes. That bounds what the user reads rather than what may be
+ * sent, so it is not a limit to enforce here.
+ */
 function validateMemo(memo: string): Error | undefined {
-  const memoBytes = Buffer.from(memo, "utf-8").length;
+  const memoBytes = Buffer.byteLength(memo, "utf-8");
 
   if (memoBytes > MAX_MEMO_LENGTH) {
     return new ConcordiumMemoTooLong("", {
@@ -111,24 +124,35 @@ function validateRecipient(transaction: Transaction, account: Account): Error | 
 }
 
 /**
- * Folds the token's own restrictions into one blocking error.
+ * Turns the token's own restrictions into a blocking error, naming the cause when
+ * the stored verdict carries it.
  *
- * Pause is read before the verdict because sync folds it in: `resolveTransferStatus`
- * returns `"blocked"` for a paused token, so the verdict alone cannot mean "a
- * list refused you".
+ * Pause is read first, from its own flag: `resolveTransferStatus` collapses a
+ * paused token to `"blocked"`, so the verdict alone cannot mean "a list refused
+ * you".
  *
- * Neither {@link ConcordiumAccountNotAllowed} nor {@link ConcordiumAccountDenied}
- * is reachable from here — see {@link ConcordiumTokenTransferNotPermitted}.
- *
- * Gates on `!== "allowed"` rather than `=== "blocked"`, so a value from a
- * corrupted store or a newer app version blocks instead of passing.
+ * Only `"allowed"` passes. Every other value blocks, including one off the union
+ * — a corrupted store or a newer app version must not read as permission. An
+ * account synced before the cause was carried stores `"blocked"` and falls to
+ * {@link ConcordiumTokenTransferNotPermitted}, which names no cause.
  */
 function validateTokenPolicy(state: ConcordiumTokenResources | undefined): Error | undefined {
   if (!state) return new ConcordiumTokenRestrictionsUnverified();
   if (state.paused === true) return new ConcordiumTokenPaused();
-  if (state.transferStatus === "allowed") return undefined;
-  if (state.transferStatus === "unknown") return new ConcordiumTokenRestrictionsUnverified();
-  return new ConcordiumTokenTransferNotPermitted();
+
+  switch (state.transferStatus) {
+    case "allowed":
+      return undefined;
+    case "unknown":
+      return new ConcordiumTokenRestrictionsUnverified();
+    case "notAllowed":
+      return new ConcordiumAccountNotAllowed();
+    case "denied":
+      return new ConcordiumAccountDenied();
+    case "blocked":
+    default:
+      return new ConcordiumTokenTransferNotPermitted();
+  }
 }
 
 /**
@@ -165,31 +189,17 @@ function validateTokenId(tokenId: string): Error | undefined {
 }
 
 /**
- * {@link MAX_MEMO_LENGTH} is the CCD cap and does not apply here. The device's
- * 14-byte display limit is not enforced either — see {@link PLT_MAX_MEMO_SIZE}.
- */
-function validatePltMemo(memo: string): Error | undefined {
-  const memoBytes = Buffer.byteLength(memo, "utf-8");
-
-  if (memoBytes > PLT_MAX_MEMO_SIZE) {
-    return new ConcordiumMemoTooLong("", {
-      memoLength: memoBytes.toString(),
-      maxLength: PLT_MAX_MEMO_SIZE.toString(),
-    });
-  }
-}
-
-/**
  * Confirms the payload the send would build stays inside the device's CBOR
  * budget.
  *
- * Close to reachable now that the memo may run to 256 bytes: `app_sizes.h` puts
- * a worst-case single transfer at ~355 of the 512 bytes. The token id is not in
- * this blob — it is a separate field, bounded by {@link validateTokenId} — so
- * the memo is what moves the total.
+ * Not reachable through a transfer: the worst case — longest memo, widest
+ * amount, coin info included — measures 355 of the device's 512 bytes. The
+ * token id is not in this blob, being a separate field bounded by
+ * {@link validateTokenId}, so the memo is what moves the total.
  *
  * Runs only once its inputs are known good, so a throw here means the size, not
- * an invalid recipient or exponent.
+ * an invalid recipient or exponent. Kept as a backstop for future operation
+ * types, hence excluded from coverage.
  */
 function validatePayloadSize(
   subAccount: TokenAccount,
@@ -201,7 +211,7 @@ function validatePayloadSize(
       recipient: AccountAddress.fromBase58(transaction.recipient),
       amount: effectivePltAmount(subAccount, transaction),
       decimals,
-      ...(transaction.memo ? { memo: Buffer.from(transaction.memo, "utf-8") } : {}),
+      ...(transaction.memo ? { memo: transaction.memo } : {}),
     });
   } catch (error) {
     return new ConcordiumInvalidPltPayloadError("", {
@@ -263,7 +273,7 @@ async function getTokenTransactionStatus(
         ticker: subAccount.token.ticker,
       });
 
-  const memoError = transaction.memo ? validatePltMemo(transaction.memo) : undefined;
+  const memoError = transaction.memo ? validateMemo(transaction.memo) : undefined;
 
   // `validatePayloadSize` encodes, so it runs last: it can only mean the size
   // once the exponent, recipient and memo have each been cleared. An over-long

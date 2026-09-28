@@ -2,6 +2,8 @@ export const CARD_REDUCER_PATH = "cardApi";
 
 export const HEADER_X_CLIENT_KEY = "x-client-key";
 
+export const HEADER_X_US_ENV = "x-us-env";
+
 export const UNAUTHORIZED_STATUS = 401;
 
 export const CARD_STALE_REQUEST = "card_stale_request";

@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 
-jest.mock("@shared/platform-linking", () => ({
+jest.mock("@shared/linking", () => ({
   useOpenLink: () => jest.fn(),
   useLocalizedUrl: (url: string) => url,
 }));

@@ -71,11 +71,7 @@ export function trackLargeScreenUpsellModalDismissed(
   });
 }
 
-export type LargeScreenUpsellBlockedCompetitor =
-  | "wallet_v4_tour"
-  | "q2_tour"
-  | "q3_tour"
-  | "generic_awareness";
+export type LargeScreenUpsellBlockedCompetitor = "q2_tour" | "q3_tour" | "generic_awareness";
 
 export function trackLargeScreenUpsellModalBlockedByCompeting(
   competitor: LargeScreenUpsellBlockedCompetitor,

@@ -35,8 +35,14 @@ export function ContactsSavedListItem({
           testId={`contacts-saved-avatar-${contact.contactId}`}
         />
         <ListItemContent>
-          <ListItemTitle>{contact.name}</ListItemTitle>
-          <ListItemDescription>{formatAddressCount(contact.addressCount)}</ListItemDescription>
+          <ListItemTitle data-testid={`contacts-saved-contact-${contact.contactId}-name`}>
+            {contact.name}
+          </ListItemTitle>
+          <ListItemDescription
+            data-testid={`contacts-saved-contact-${contact.contactId}-address-count`}
+          >
+            {formatAddressCount(contact.addressCount)}
+          </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
     </ListItem>

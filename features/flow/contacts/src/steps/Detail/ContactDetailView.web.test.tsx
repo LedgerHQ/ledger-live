@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { CONTACT_NAME_MAX_LENGTH } from "@domain/entity-contact";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -29,6 +29,23 @@ const defaultProps = {
 };
 
 describe("ContactDetailView", () => {
+  let ioCallback: IntersectionObserverCallback;
+
+  beforeEach(() => {
+    globalThis.IntersectionObserver = jest
+      .fn()
+      .mockImplementation((cb: IntersectionObserverCallback) => {
+        ioCallback = cb;
+        return { observe: jest.fn(), disconnect: jest.fn(), unobserve: jest.fn() };
+      }) as unknown as typeof IntersectionObserver;
+  });
+
+  function fireIntersection(isIntersecting: boolean) {
+    act(() => {
+      ioCallback([{ isIntersecting } as IntersectionObserverEntry], {} as IntersectionObserver);
+    });
+  }
+
   it("should render the Me empty state", () => {
     render(<ContactDetailView {...defaultProps} contact={mockMeContact()} />);
 
@@ -114,10 +131,11 @@ describe("ContactDetailView", () => {
       />,
     );
 
-    expect(screen.getByTestId("contacts-detail-address-list")).toBeVisible();
+    const addressList = screen.getByTestId("contacts-detail-address-list");
+    expect(addressList).toBeVisible();
     expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
     expect(screen.getByTestId(`contacts-detail-address-row-${address.id}`)).toBeVisible();
-    expect(screen.getByText("1 address")).toBeVisible();
+    expect(within(addressList).getByText("1 address")).toBeVisible();
     expect(screen.queryByTestId("contacts-detail-empty-state")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId(`contacts-detail-address-row-${address.id}`));
@@ -148,7 +166,7 @@ describe("ContactDetailView", () => {
     );
   });
 
-  it("should compact the header when scrolling addresses and expand it at the top", () => {
+  it("should show the compact sticky bar when the header scrolls away and hide it when it returns", () => {
     const contact = mockContact({
       id: "contact-scroll",
       name: "Benoit",
@@ -180,33 +198,48 @@ describe("ContactDetailView", () => {
       />,
     );
 
-    const header = screen.getByTestId("contacts-detail-header");
-    const addressList = screen.getByTestId("contacts-detail-address-list");
+    const stickyBar = screen.getByTestId("contacts-detail-sticky-bar");
 
-    expect(header).toHaveAttribute("data-state", "expanded");
+    // Initially the sticky bar is hidden and the expanded header is visible in the scroll area.
+    expect(stickyBar).toHaveAttribute("aria-hidden", "true");
+    expect(
+      within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+        "contacts-detail-header",
+      ),
+    ).toHaveAttribute("data-state", "expanded");
 
-    fireEvent.scroll(addressList, { target: { scrollTop: 150 } });
-
-    expect(header).toHaveAttribute("data-state", "expanded");
-
-    fireEvent.scroll(addressList, { target: { scrollTop: 151 } });
-
-    expect(header).toHaveAttribute("data-state", "collapsed");
-    expect(screen.getByTestId("contacts-detail-name")).toHaveClass("heading-5-semi-bold");
-    expect(screen.getByText("1 address")).toHaveClass("body-2");
-    expect(screen.getByTestId("contacts-detail-add-address-icon")).toHaveAttribute(
+    // Header scrolls out of view → sticky bar slides in.
+    fireIntersection(false);
+    expect(stickyBar).not.toHaveAttribute("aria-hidden");
+    expect(within(stickyBar).getByTestId("contacts-detail-header")).toHaveAttribute(
+      "data-state",
+      "collapsed",
+    );
+    expect(within(stickyBar).getByTestId("contacts-detail-name")).toHaveClass(
+      "heading-5-semi-bold",
+    );
+    expect(within(stickyBar).getByText("1 address")).toHaveClass("body-2");
+    expect(within(stickyBar).getByTestId("contacts-detail-add-address-icon")).toHaveAttribute(
       "aria-label",
       "Add address",
     );
 
-    fireEvent.scroll(addressList, { target: { scrollTop: 0 } });
-
-    expect(header).toHaveAttribute("data-state", "expanded");
-    expect(screen.getByTestId("contacts-detail-name")).toHaveClass("heading-3-semi-bold");
-    expect(screen.queryByTestId("contacts-detail-add-address-icon")).not.toBeInTheDocument();
+    // Header scrolls back into view → sticky bar hides.
+    fireIntersection(true);
+    expect(stickyBar).toHaveAttribute("aria-hidden", "true");
+    expect(
+      within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
+        "contacts-detail-name",
+      ),
+    ).toHaveClass("heading-3-semi-bold");
+    expect(
+      within(screen.getByTestId("contacts-detail-address-list")).queryByTestId(
+        "contacts-detail-add-address-icon",
+      ),
+    ).not.toBeInTheDocument();
   });
 
-  it("should reset the expanded header and address list when changing contact", () => {
+  it("should reset the sticky bar and address list when changing contact", () => {
     const firstContact = mockContact({
       id: "contact-first",
       name: "Benoit",
@@ -246,7 +279,10 @@ describe("ContactDetailView", () => {
     );
 
     const firstAddressList = screen.getByTestId("contacts-detail-address-list");
-    fireEvent.scroll(firstAddressList, { target: { scrollTop: 24 } });
+
+    // Scroll past header on first contact so the sticky bar is visible.
+    fireIntersection(false);
+    expect(screen.getByTestId("contacts-detail-sticky-bar")).not.toHaveAttribute("aria-hidden");
 
     rerender(
       <ContactDetailView
@@ -257,7 +293,9 @@ describe("ContactDetailView", () => {
       />,
     );
 
-    expect(screen.getByTestId("contacts-detail-header")).toHaveAttribute("data-state", "expanded");
+    // Sticky bar is instantly hidden on contact switch (no animation).
+    expect(screen.getByTestId("contacts-detail-sticky-bar")).toHaveAttribute("aria-hidden", "true");
+    // Address list was remounted for the new contact.
     expect(screen.getByTestId("contacts-detail-address-list")).not.toBe(firstAddressList);
   });
 
@@ -303,12 +341,12 @@ describe("ContactDetailView", () => {
       />,
     );
 
-    fireEvent.scroll(screen.getByTestId("contacts-detail-address-list"), {
-      target: { scrollTop: 24 },
-    });
-    fireEvent.click(screen.getByTestId("contacts-detail-add-address"));
-    fireEvent.click(screen.getByTestId("contacts-detail-edit-action"));
-    fireEvent.click(screen.getByTestId("contacts-detail-delete-action"));
+    fireIntersection(false);
+
+    const stickyBar = screen.getByTestId("contacts-detail-sticky-bar");
+    fireEvent.click(within(stickyBar).getByTestId("contacts-detail-add-address"));
+    fireEvent.click(within(stickyBar).getByTestId("contacts-detail-edit-action"));
+    fireEvent.click(within(stickyBar).getByTestId("contacts-detail-delete-action"));
 
     expect(onCompactAddAddress).toHaveBeenCalledTimes(1);
     expect(onEdit).toHaveBeenCalledTimes(1);

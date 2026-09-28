@@ -18,7 +18,18 @@ jest.mock("~/analytics", () => ({
   usePageNameFromRoute: () => "step amount",
   track: jest.fn(),
 }));
-jest.mock("../AddressDisclaimer", () => ({ AddressDisclaimer: () => null }));
+jest.mock("../AddressDisclaimer", () => ({
+  AddressDisclaimer: () => {
+    const { View } = jest.requireActual<typeof import("react-native")>("react-native");
+    return <View testID="send-address-disclaimer-button" />;
+  },
+}));
+jest.mock("@features/platform-contacts", () => ({
+  ContactAvatar: ({ name, testId }: { name: string; testId?: string }) => {
+    const RN = jest.requireActual<typeof import("react-native")>("react-native");
+    return <RN.Text testID={testId}>{name}</RN.Text>;
+  },
+}));
 
 function render(ui: React.ReactElement) {
   return rntlRender(
@@ -70,9 +81,9 @@ describe("SendHeader", () => {
 
     render(<SendHeader />);
 
-    expect(screen.getByTestId("recipient-contact-avatar")).toBeVisible();
-    expect(screen.getByText("BJ")).toBeVisible();
-    expect(screen.getByText("Benoit Jean")).toBeVisible();
+    expect(screen.getByTestId("recipient-contact-avatar")).toHaveTextContent("Benoit Jean");
+    expect(screen.getByTestId("recipient-contact-row")).toHaveTextContent(/Benoit Jean/);
+    expect(screen.queryByTestId("send-address-disclaimer-button")).toBeNull();
   });
 
   it("falls back to the address input when the recipient is not a contact", () => {
@@ -82,6 +93,7 @@ describe("SendHeader", () => {
 
     expect(screen.queryByTestId("recipient-contact-row")).toBeNull();
     expect(screen.getByDisplayValue("0x123456...12345678")).toBeVisible();
+    expect(screen.getByTestId("send-address-disclaimer-button")).toBeVisible();
   });
 
   it.each([

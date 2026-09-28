@@ -11,8 +11,8 @@ export default class NewSendFlowPage {
   }
 
   recipientInputId = "recipient-input";
-  skipMemoLinkId = "new-send-flow-skip-memo-link";
-  skipMemoConfirmId = "new-send-flow-skip-memo-confirm";
+  skipMemoContentId = "send-skip-memo-content";
+  skipMemoConfirmId = "send-skip-memo-confirm";
   addressConfirmId = "new-send-flow-address-confirm";
   memoInputId = "send-memo-input";
   memoTypeSelectId = "send-memo-type-select";
@@ -26,19 +26,18 @@ export default class NewSendFlowPage {
     if (!address) throw new Error("Recipient address is not set");
     await typeTextById(this.recipientInputId, address);
 
-    if (memoTag === "noTag") {
-      if (await IsIdVisible(this.skipMemoLinkId)) {
-        await tapById(this.skipMemoLinkId);
-        await tapById(this.skipMemoConfirmId);
-      } else {
-        await tapById(this.addressConfirmId);
-      }
-    } else if (memoTag) {
+    if (memoTag && memoTag !== "noTag") {
       await waitForElementById(this.memoInputId);
       await typeTextById(this.memoInputId, memoTag);
-      await tapById(this.addressConfirmId);
-    } else {
-      await tapById(this.addressConfirmId);
+    }
+
+    await tapById(this.addressConfirmId);
+
+    if (memoTag === "noTag") {
+      await waitForFullyVisibleById(this.skipMemoContentId);
+      await tapById(this.skipMemoConfirmId);
+      const dismissed = await waitForElementNotVisible(this.skipMemoContentId);
+      jestExpect(dismissed).toBe(true);
     }
   }
 

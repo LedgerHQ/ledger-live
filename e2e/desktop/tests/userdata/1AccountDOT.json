@@ -7,7 +7,6 @@
     },
     "settings": {
       "hasCompletedOnboarding": true,
-      "hasSeenWalletV4Tour": true,
       "lastSeenDevice": {
         "modelId": "nanoSP",
         "deviceInfo": {

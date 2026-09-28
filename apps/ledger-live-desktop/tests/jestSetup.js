@@ -133,6 +133,11 @@ jest.mock("src/renderer/analytics/segment", () => ({
   updateIdentify: jest.fn().mockResolvedValue(undefined),
 }));
 
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  trackPage: jest.fn(),
+}));
+
 jest.mock("src/renderer/analytics/originFlow", () => ({
   getOriginFlow: jest.fn(() => ""),
   setOriginFlow: jest.fn(),

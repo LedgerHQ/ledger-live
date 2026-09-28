@@ -25,7 +25,7 @@ function View({
   return (
     <Pressable onPress={onRedirectRecover} lx={{ paddingHorizontal }}>
       <ContentBanner onClose={onCloseBanner}>
-        <Spot appearance="icon" icon={ShieldLock} lx={{ backgroundColor: "warning" }} />
+        <Spot appearance="icon" icon={ShieldLock} lx={{ backgroundColor: "warningTransparent" }} />
         <ContentBannerContent>
           <ContentBannerTitle>{title}</ContentBannerTitle>
           <ContentBannerDescription>{description}</ContentBannerDescription>

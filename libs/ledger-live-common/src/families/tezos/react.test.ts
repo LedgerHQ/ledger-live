@@ -6,7 +6,7 @@ import { renderHook } from "@testing-library/react";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Baker, StakingPosition, TezosAccount } from "./types";
 
-jest.mock("@ledgerhq/coin-tezos/network/index", () => ({
+jest.mock("@ledgerhq/coin-tezos/network", () => ({
   bakers: {
     listBakersWithDefault: () => [],
     listBakers: jest.fn().mockResolvedValue([]),
@@ -27,7 +27,7 @@ jest.mock("../../config", () => ({
   getCurrencyConfiguration: jest.fn(() => ({ status: { type: "active" } })),
 }));
 
-import { bakers } from "@ledgerhq/coin-tezos/network/index";
+import { bakers } from "@ledgerhq/coin-tezos/network";
 import { getAccountDelegationSync } from "./bakers";
 import { isAwaitingDelegation, useBaker, useTezosStakingInfo } from "./react";
 

@@ -34,6 +34,17 @@ describe("payTab.handler", () => {
       });
     });
 
+    it("carries the provider app id alongside the authorization code", () => {
+      const context = createMockContext({ isPayTabEnabled: true });
+
+      payTabHandler({ type: "paytab", code: "auth-code", appId: "app-value" }, context);
+
+      expect(context.navigate).toHaveBeenCalledWith("/paytab", {
+        code: "auth-code",
+        appId: "app-value",
+      });
+    });
+
     it("falls back to the default handler when the lwdPayTab flag is disabled", () => {
       const context = createMockContext({ isPayTabEnabled: false });
 

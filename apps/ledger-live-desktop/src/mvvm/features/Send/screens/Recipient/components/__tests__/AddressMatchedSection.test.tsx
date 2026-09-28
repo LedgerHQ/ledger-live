@@ -526,6 +526,34 @@ describe("AddressMatchedSection", () => {
     expect(screen.getByTestId("send-recipient-card-add-contact")).toBeDisabled();
   });
 
+  it("disables the add contact action on a network outside the eligible families", () => {
+    const searchResult: AddressSearchResult = {
+      status: "valid",
+      error: null,
+      resolvedAddress: address,
+      ensName: undefined,
+      isLedgerAccount: false,
+      accountName: undefined,
+      accountBalance: undefined,
+      accountBalanceFormatted: undefined,
+      isFirstInteraction: false,
+      matchedRecentAddress: undefined,
+      matchedAccounts: [],
+      matchedContact: undefined,
+      bridgeErrors: undefined,
+      bridgeWarnings: undefined,
+      hasBridgeValidationResult: true,
+    };
+
+    renderAddressMatchedSection(searchResult, {
+      isContactsFeatureEnabled: true,
+      hasAddressBook: false,
+    });
+
+    expect(screen.getByTestId("send-recipient-card-send")).toBeEnabled();
+    expect(screen.getByTestId("send-recipient-card-add-contact")).toBeDisabled();
+  });
+
   it("keeps legacy suggestions for partial matches", () => {
     const searchResult: AddressSearchResult = {
       status: "valid",

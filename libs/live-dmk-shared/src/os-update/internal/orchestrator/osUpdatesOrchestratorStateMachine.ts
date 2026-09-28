@@ -1,14 +1,19 @@
-import { assign, setup, stopChild } from "xstate";
+import { assign, enqueueActions, setup } from "xstate";
 import { OsUpdatesSteps } from "../../api/model/OsUpdatesSteps";
-import { PreChecksStateType } from "../../api/model/PreChecksState";
+import { createBackupStateMachine } from "../create-backup/CreateBackupStateMachine";
+import type { CreateBackupStateMachineInput } from "../create-backup/types";
 import { preChecksStateMachine } from "../pre-checks/PreChecksStateMachine";
-import type { PreChecksStateMachineInput } from "../pre-checks/types";
+import { PreChecksNextAction, type PreChecksStateMachineInput } from "../pre-checks/types";
 import {
   OsUpdatesOrchestratorStateMachineContext,
   OsUpdatesOrchestratorStateMachineEventType,
   OsUpdatesOrchestratorStateMachineInput,
   type OsUpdatesOrchestratorStateMachineEvent,
 } from "./types";
+import { stepLoadingState } from "./utils/stepLoadingState";
+import { unexpectedErrorState } from "./utils/unexpectedErrorState";
+
+const INITIAL_STEP = OsUpdatesSteps.PRE_CHECKS;
 
 export const osUpdatesOrchestratorStateMachine = setup({
   types: {
@@ -19,9 +24,17 @@ export const osUpdatesOrchestratorStateMachine = setup({
   },
   actors: {
     preChecks: preChecksStateMachine,
+    createBackup: createBackupStateMachine,
   },
   actions: {
-    stopChildren: stopChild("preChecks"),
+    enterStep: assign({
+      currentStep: (_, step: OsUpdatesSteps) => step,
+      currentState: (_, step: OsUpdatesSteps) => stepLoadingState(step),
+    }),
+    stopChildren: enqueueActions(({ enqueue }) => {
+      enqueue.stopChild("preChecks");
+      enqueue.stopChild("createBackup");
+    }),
     callOnStop: ({ context }) => {
       context.onStop();
     },
@@ -30,24 +43,22 @@ export const osUpdatesOrchestratorStateMachine = setup({
         if (event.type !== OsUpdatesOrchestratorStateMachineEventType.STATE_UPDATE) {
           return context.currentState;
         }
-        return { ...context.currentState, state: event.state };
+        return event.state;
       },
     }),
     assignUnexpectedError: assign({
-      currentState: ({ context, self }) => ({
-        ...context.currentState,
-        state: {
-          type: PreChecksStateType.UNEXPECTED_ERROR,
-          cancel: () => self.send({ type: OsUpdatesOrchestratorStateMachineEventType.STOP }),
-        },
-      }),
+      currentState: ({ context, self }) =>
+        unexpectedErrorState(context.currentStep, () =>
+          self.send({ type: OsUpdatesOrchestratorStateMachineEventType.STOP }),
+        ),
     }),
   },
 }).createMachine({
   id: "osUpdatesOrchestrator",
   context: ({ input }) => ({
     ...input,
-    currentState: { step: OsUpdatesSteps.PRE_CHECKS, state: { type: PreChecksStateType.LOADING } },
+    currentStep: INITIAL_STEP,
+    currentState: stepLoadingState(INITIAL_STEP),
   }),
   initial: "PreChecks",
   on: {
@@ -61,6 +72,7 @@ export const osUpdatesOrchestratorStateMachine = setup({
   },
   states: {
     PreChecks: {
+      entry: { type: "enterStep", params: OsUpdatesSteps.PRE_CHECKS },
       invoke: {
         id: "preChecks",
         src: "preChecks",
@@ -68,6 +80,32 @@ export const osUpdatesOrchestratorStateMachine = setup({
           dmk: context.dmk,
           connectedDevice: context.connectedDevice,
           osUpdates: context.osUpdates,
+          storage: context.storage,
+          unlockTimeout: context.unlockTimeout,
+          parentRef: self,
+        }),
+        onDone: [
+          {
+            guard: ({ event }) => event.output === PreChecksNextAction.CreateBackup,
+            target: "CreateBackup",
+          },
+          {
+            target: "Done",
+          },
+        ],
+        onError: {
+          target: "Failed",
+        },
+      },
+    },
+    CreateBackup: {
+      entry: { type: "enterStep", params: OsUpdatesSteps.CREATE_BACKUP },
+      invoke: {
+        id: "createBackup",
+        src: "createBackup",
+        input: ({ context, self }): CreateBackupStateMachineInput => ({
+          dmk: context.dmk,
+          connectedDevice: context.connectedDevice,
           storage: context.storage,
           unlockTimeout: context.unlockTimeout,
           parentRef: self,

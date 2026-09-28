@@ -23,7 +23,7 @@ import { I18nProvider } from "@shared/i18n";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import { config } from "react-transition-group";
-import { LinkingProvider } from "@shared/platform-linking";
+import { LinkingProvider } from "@shared/linking";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
 import type { ReduxStore } from "~/state-manager/configureStore";
@@ -50,6 +50,8 @@ interface ExtraOptions {
   userEventOptions?: Parameters<typeof userEvent.setup>[0];
   skipRouter?: boolean;
   withRampCatalog?: boolean;
+  /** Seeds the countervalues state, for a test that asserts on a rate rather than waiting for one. */
+  initialCountervalues?: CounterValuesStateRaw;
 }
 
 interface RenderReturn {
@@ -272,6 +274,7 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
     skipRouter = false,
     initialRoute,
     withRampCatalog = false,
+    initialCountervalues,
     ...renderOptions
   } = options;
 
@@ -286,6 +289,7 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
           skipRouter={skipRouter}
           initialRoute={initialRoute}
           withRampCatalog={withRampCatalog}
+          initialCountervalues={initialCountervalues}
         >
           {children}
         </Providers>

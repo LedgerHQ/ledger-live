@@ -16,7 +16,7 @@ const Wrapper = cardApiWrapper({ signedIn: true });
 
 const reveal: RevealTileProps = {
   status: "idle",
-  isRevealed: false,
+  canHide: false,
   onReveal: jest.fn(),
   onHide: jest.fn(),
 };

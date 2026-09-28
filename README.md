@@ -76,14 +76,16 @@ What to run next depends on the workspace you're targeting. See [repo commands](
 | `domain/`   | Domain packages (`entity/`, `api/`)\*                                                                      |
 | `e2e/`      | E2E tests using [Detox](https://wix.github.io/Detox/) and [Speculos](https://github.com/LedgerHQ/speculos) |
 | `features/` | Features shared across apps\*                                                                              |
-| `libs/`     | Shared libraries — the home for new shared code; `ledger-live-common` is maintenance-only\*               |
+| `libs/`     | Legacy shared libraries — maintained, not grown\*\*                                                        |
 | `patches/`  | `patchedDependencies` auto-applied during pnpm install                                                     |
 | `scripts/`  | Repo-level utility scripts                                                                                 |
 | `shared/`   | Cross-cutting packages used in domain/, features/ and apps/\*                                              |
 | `tests/`    | Dummy apps for testing (dapps, wallet)                                                                     |
 | `tools/`    | CI actions, GitHub bots and Nx plugins                                                                     |
 
-\*Adding new code? See [libs/README.md](./libs/README.md).
+\*[Monorepo architecture](docs/monorepo-architecture.md) — where new code goes.
+
+\*\*See [libs/README.md](./libs/README.md).
 
 ## Nightly releases
 

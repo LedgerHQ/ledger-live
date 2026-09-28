@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "~/context/Locale";
 
-import { validateMemo } from "@ledgerhq/live-common/families/stellar/bridge/logic";
+import { validateMemo } from "@ledgerhq/live-common/families/stellar/logicPublic";
 import {
   StellarWrongMemoFormat,
   type Transaction as StellarTransaction,

@@ -14,6 +14,10 @@ import type { AccountResponse, VechainSDKTransaction } from "../types";
 import { mockVechainConfig } from "../test/context";
 
 const LAST_BLOCK_COUNT = 24580112;
+// keccak256("Transfer(address,address,uint256)") -- spelled out rather than imported, so the
+// assertion below pins the wire value instead of restating whatever the module happens to export.
+const TRANSFER_EVENT_SIGNATURE =
+  "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 const mockAccount = {
   balance: "",
   energy: "",
@@ -24,6 +28,9 @@ const mockTransaction: VechainSDKTransaction = {
     return new Uint8Array();
   },
 } as unknown as VechainSDKTransaction;
+
+// Raw bodies of every POST /logs/event, so the serialized Thor criteria can be asserted.
+const eventLogRequestBodies: string[] = [];
 
 const mockGetTransferLogs = jest.fn(async (): Promise<{ data: Operation[] }> => ({ data: [] }));
 const mockGetEventLogs = jest.fn(async (): Promise<{ data: Operation[] }> => ({ data: [] }));
@@ -42,10 +49,18 @@ const mockSubmit = jest.fn(async (): Promise<{ data: { id?: string } }> => ({
   data: { id: "123" },
 }));
 
+// This factory replaces the whole `../common-logic` barrel, so every binding `sdk.ts` imports
+// from it has to be listed here. `VIP180_TRANSFER_TOPIC` is taken from the real module instead of
+// being hardcoded, so it cannot drift: were it missing it would be `undefined`, JSON.stringify
+// would drop `topic0` from the criteria, and the token-operation tests below would silently
+// exercise a Thor query with no topic filter at all. `./vip180` is required directly rather than
+// through the barrel so the rest of it (and its network imports) stays out of the mock.
 jest.mock("../common-logic", () => ({
   mapTokenTransfersToOperations: jest.fn(() => [{}]),
   mapVetTransfersToOperations: jest.fn(() => [{}]),
-  padAddress: jest.fn(),
+  // Deterministic so the serialized criteria can be asserted below.
+  padAddress: jest.fn((address: string) => `0x${address.replace(/^0x/, "").padStart(64, "0")}`),
+  VIP180_TRANSFER_TOPIC: jest.requireActual("../common-logic/vip180").VIP180_TRANSFER_TOPIC,
 }));
 
 jest.mock("@ledgerhq/live-network", () => {
@@ -55,6 +70,7 @@ jest.mock("@ledgerhq/live-network", () => {
     }
 
     if (args.url.match(/\/logs\/event$/)) {
+      eventLogRequestBodies.push(args.data);
       return mockGetEventLogs();
     }
 
@@ -296,6 +312,41 @@ describe("sdk", () => {
 
         expect(operations.length > 0).toBe(true);
         expect(operations.length).toBe(1);
+      });
+    });
+
+    describe("the Thor query it sends", () => {
+      test("filters on the VIP-180 Transfer topic for both the sender and the recipient", async () => {
+        eventLogRequestBodies.length = 0;
+
+        await getTokenOperations(
+          mockVechainConfig,
+          "my-account-id",
+          "0xmy-address",
+          "0xmy-token-address",
+          LAST_BLOCK_COUNT - 1,
+          LAST_BLOCK_COUNT,
+        );
+
+        expect(eventLogRequestBodies).toHaveLength(1);
+        const { criteriaSet } = JSON.parse(eventLogRequestBodies[0]);
+
+        // Two criteria: the address as topic1 (sender) and as topic2 (recipient). `topic0` must be
+        // present on both -- an undefined topic is dropped by JSON.stringify, which would widen the
+        // query from the token's Transfer logs to every event it emits.
+        const paddedAddress = `0x${"my-address".padStart(64, "0")}`;
+        expect(criteriaSet).toEqual([
+          {
+            address: "0xmy-token-address",
+            topic0: TRANSFER_EVENT_SIGNATURE,
+            topic1: paddedAddress,
+          },
+          {
+            address: "0xmy-token-address",
+            topic0: TRANSFER_EVENT_SIGNATURE,
+            topic2: paddedAddress,
+          },
+        ]);
       });
     });
 

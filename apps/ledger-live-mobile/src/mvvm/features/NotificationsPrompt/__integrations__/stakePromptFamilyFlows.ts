@@ -6,6 +6,7 @@ type MobileFamilyFlow = {
 };
 
 const familyModuleNameByAccountKey: Record<StakePromptCase["accountKey"], string> = {
+  aleo: "aleo",
   algorand: "algorand",
   cardano: "cardano",
   celo: "celo",

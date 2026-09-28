@@ -18,7 +18,7 @@ import { useInitialTransactionPreparation } from "../../../hooks/useInitialTrans
 import { useAmountScreenMessage } from "./useAmountScreenMessage";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
 import { track } from "~/renderer/analytics/segment";
-import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 
 type UseAmountScreenViewModelParams = Readonly<{
   account: AccountLike;
@@ -46,10 +46,7 @@ export function useAmountScreenViewModel({
   const { t } = useTranslation();
   const { navigation } = useFlowWizard();
 
-  const sendFlowTrackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(account, parentAccount),
-    [account, parentAccount],
-  );
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const amountReviewCore = useSendFlowAmountReviewCore({
     account,

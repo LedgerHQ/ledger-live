@@ -1,5 +1,17 @@
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import { LLDCoinFamily } from "../types";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/concordium/types";
+import {
+  ConcordiumOperation,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/concordium/types";
 
-export type ConcordiumFamily = LLDCoinFamily<Account, Transaction, TransactionStatus, Operation>;
+// `ConcordiumOperation` rather than `Operation` so the family's own renderers see
+// a typed `extra`; the base type leaves it `unknown`, which narrows to `{}` at a
+// property read.
+export type ConcordiumFamily = LLDCoinFamily<
+  Account,
+  Transaction,
+  TransactionStatus,
+  ConcordiumOperation
+>;

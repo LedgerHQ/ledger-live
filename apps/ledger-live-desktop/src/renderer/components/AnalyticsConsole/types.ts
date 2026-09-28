@@ -1,4 +1,4 @@
-import { LoggableEvent } from "~/renderer/analytics/segment";
+import type { LoggableEvent } from "@shared/analytics";
 
 export type LoggableEventRenderable = LoggableEvent & {
   id: number;

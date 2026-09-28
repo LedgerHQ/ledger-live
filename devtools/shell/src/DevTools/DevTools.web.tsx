@@ -20,7 +20,7 @@ function DevToolsView({
 }: DevToolsViewProps & { onClose?: () => void }) {
   return (
     <div data-testid="devtools" className="flex flex-col h-full bg-canvas text-base">
-      <div className="flex items-center gap-8 px-16 py-6 bg-warning text-warning body-3 font-semibold border-b border-muted shrink-0">
+      <div className="flex items-center gap-8 px-16 py-6 bg-warning-transparent text-warning body-3 font-semibold border-b border-muted shrink-0">
         <span className="w-6 h-6 rounded-full bg-warning-strong shrink-0" />
         Internal tools. Changes here affect only this install.
       </div>

@@ -6,7 +6,7 @@ import {
   LEDGER_URL_LANGUAGES,
   DEFAULT_LANGUAGE,
   type LinkingConfig,
-} from "@shared/platform-linking";
+} from "@shared/linking";
 import { track } from "~/analytics/segment";
 import { languageSelector } from "~/reducers/settings";
 

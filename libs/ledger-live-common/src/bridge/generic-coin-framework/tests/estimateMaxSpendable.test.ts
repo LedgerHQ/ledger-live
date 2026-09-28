@@ -323,4 +323,36 @@ describe("genericEstimateMaxSpendable", () => {
 
     expect(result.toString()).toBe("49975000");
   });
+
+  describe("NEAR: staked balance does not inflate send-max", () => {
+    // NEAR accounts have balance > spendableBalance when tokens are staked or storage-reserved.
+    // The framework must use spendableBalance (not balance) for max-spendable computation.
+    it("returns spendableBalance - fee for a NEAR account with locked staking funds", async () => {
+      const nearAccount = {
+        ...dummyAccount,
+        currency: {
+          id: "near",
+          family: "near",
+          name: "NEAR",
+          units: [{ code: "NEAR", magnitude: 24 }],
+        },
+        balance: new BigNumber(100_000_000),
+        spendableBalance: new BigNumber(30_000_000),
+      } as unknown as Account;
+
+      mockedGetCoinModuleApi.mockReturnValue({
+        craftTransactionData,
+        estimateFees: estimateFeesMock.mockResolvedValue({ value: 1_000_000n }),
+      });
+
+      const estimate = genericEstimateMaxSpendable("mainnet", "near");
+      const result = await estimate({
+        account: nearAccount,
+        parentAccount: null,
+        transaction: {} as any,
+      });
+
+      expect(result.toString()).toBe("29000000");
+    });
+  });
 });

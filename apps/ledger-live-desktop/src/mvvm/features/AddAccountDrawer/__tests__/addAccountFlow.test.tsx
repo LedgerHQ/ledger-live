@@ -2,6 +2,7 @@ import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React from "react";
 import { act, render, screen, userEvent, waitFor } from "tests/testSetup";
+import { trackPage } from "@shared/analytics";
 import {
   selectCurrencyRegionRestrictedDialogParams,
   selectIsCurrencyRegionRestrictedDialogOpen,
@@ -9,7 +10,7 @@ import {
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { CurrencyRegionRestrictedError } from "@ledgerhq/live-common/errors";
 import { openModal } from "~/renderer/actions/modals";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track } from "~/renderer/analytics/segment";
 import { State } from "~/renderer/reducers";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { ARB_ACCOUNT, BTC_ACCOUNT, HEDERA_ACCOUNT } from "../../__mocks__/accounts.mock";
@@ -176,7 +177,6 @@ jest.mock("~/renderer/drawers/Provider", () => ({
 jest.mock("~/renderer/analytics/segment", () => ({
   ...jest.requireActual("~/renderer/analytics/segment"),
   track: jest.fn(),
-  trackPage: jest.fn(),
 }));
 
 const setup = (currency = arbitrumCurrency, state?: Partial<State>) => {
@@ -201,12 +201,8 @@ function expectTrackPage(
 ) {
   expect(trackPage).toHaveBeenNthCalledWith(
     n,
-    page,
-    undefined,
-    { ...props, source },
-    true,
-    true,
-    false,
+    { category: page, name: undefined, props: { ...props, source } },
+    { mandatory: false, refreshSource: true, updateRoutes: true },
   );
 }
 

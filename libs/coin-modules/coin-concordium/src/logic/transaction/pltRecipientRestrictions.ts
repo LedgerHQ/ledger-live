@@ -88,9 +88,9 @@ async function resolveRestrictions({
   if (verdict === "denied") return new ConcordiumRecipientDenied("", { ticker });
   if (verdict === "notAllowed") return new ConcordiumRecipientNotAllowed("", { ticker });
 
-  // Gated on `!== "allowed"` rather than on `=== "unknown"`, matching
-  // `validateTokenPolicy`: a verdict this does not recognise — a member added to
-  // the union later, most likely — blocks as unverifiable instead of falling
-  // through to the `undefined` that means allowed.
+  // A bare `return`, not an `if (verdict === "unknown")`: a member added to the
+  // union later lands here and blocks as unverifiable, rather than falling past
+  // every branch. `validateTokenPolicy`'s `default` arm does the same for the
+  // sender.
   return new ConcordiumRecipientRestrictionsUnverified("", { ticker });
 }

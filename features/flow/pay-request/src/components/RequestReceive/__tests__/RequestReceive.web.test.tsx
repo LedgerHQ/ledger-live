@@ -69,6 +69,7 @@ describe("RequestReceive (Web)", () => {
       button: "save",
       buttonLocation: "request",
       page: "Pay",
+      flow: "request",
     });
     expect(props.onSave).toHaveBeenCalledWith(REQUEST_RECEIVE_ADDRESS);
 
