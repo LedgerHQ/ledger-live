@@ -94,6 +94,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
+          skip_ruby: true
           skip_builds: true
 
       - name: format check
