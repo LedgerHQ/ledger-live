@@ -79,7 +79,7 @@ await closeAndFlush();
 
 ## Host registration (apps only)
 
-Feature code does not call these. Each app registers its Segment client, consent, extra props, and filter in its `segment.ts`.
+Desktop and mobile register their Segment clients, consent, extra props, and filters in their app `segment.ts`; other hosts such as wallet-cli may register only the callbacks relevant to their runtime.
 
 ```ts
 import {
