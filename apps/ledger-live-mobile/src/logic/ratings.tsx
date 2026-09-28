@@ -182,7 +182,7 @@ const useRatings = () => {
             setRatingsHappyMoment({
               ...happyMoment,
               timeout,
-            } as RatingsHappyMoment),
+            } as unknown as RatingsHappyMoment),
           );
           dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
           return true;
