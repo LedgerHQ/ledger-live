@@ -322,21 +322,6 @@
         "dependencies": {
           "@ledgerhq/device-mockserver-client": "1.3.0"
         }
-      },
-      "detox-allure2-adapter": {
-        "dependencies": {
-          "tslib": "*"
-        }
-      },
-      "detox": {
-        "dependencies": {
-          "expect": "*"
-        }
-      },
-      "jest-allure2-reporter": {
-        "dependencies": {
-          "tslib": "*"
-        }
       }
     },
     "onlyBuiltDependencies": [
