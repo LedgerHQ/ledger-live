@@ -10983,8 +10983,9 @@
         "verifyCta": "Verify address",
         "successTitle": "Address displayed on the device's Secure Screen",
         "nextStepsLabel": "Next steps",
-        "nextStepShare": "Share your address via your desired app.",
-        "nextStepMatch": "Ensure the shared address matches the one on your Ledger Device.",
+        "nextStepKeepDisplayed": "Keep your address displayed on your Ledger device. Don’t confirm it yet.",
+        "nextStepPaste": "Tap “Got it,” then paste your address into the app you’re sharing it with.",
+        "nextStepCheckMatch": "Before sending, check that it matches the one on your Ledger device.",
         "gotItCta": "Got it",
         "device": {
           "cancelledTitle": "Address verification cancelled",

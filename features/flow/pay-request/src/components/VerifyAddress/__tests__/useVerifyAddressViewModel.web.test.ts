@@ -47,12 +47,13 @@ describe("useVerifyAddressViewModel", () => {
     });
   });
 
-  it("builds the two ordered next steps from translations", () => {
+  it("builds the three ordered next steps from translations", () => {
     const { result } = setup();
 
     expect(result.current.nextSteps).toEqual([
-      { index: 1, label: VERIFY_ADDRESS_COPY.nextStepShare },
-      { index: 2, label: VERIFY_ADDRESS_COPY.nextStepMatch },
+      { index: 1, label: VERIFY_ADDRESS_COPY.nextStepKeepDisplayed },
+      { index: 2, label: VERIFY_ADDRESS_COPY.nextStepPaste },
+      { index: 3, label: VERIFY_ADDRESS_COPY.nextStepCheckMatch },
     ]);
   });
 

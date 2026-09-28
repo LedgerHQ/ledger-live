@@ -21,8 +21,9 @@ export function useVerifyAddressViewModel({
 
   const nextSteps = useMemo<readonly VerifyAddressNextStep[]>(
     () => [
-      { index: 1, label: t(`${KEY_PREFIX}.nextStepShare`) },
-      { index: 2, label: t(`${KEY_PREFIX}.nextStepMatch`) },
+      { index: 1, label: t(`${KEY_PREFIX}.nextStepKeepDisplayed`) },
+      { index: 2, label: t(`${KEY_PREFIX}.nextStepPaste`) },
+      { index: 3, label: t(`${KEY_PREFIX}.nextStepCheckMatch`) },
     ],
     [t],
   );

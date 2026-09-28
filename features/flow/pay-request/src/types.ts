@@ -4,7 +4,7 @@ import type { AddressParts } from "./utils/splitAddress";
 export type VerifyAddressPhase = "hidden" | "intro" | "success";
 
 /** Single digit index of a "Next steps" entry, matching the design-system numbered Spot. */
-export type VerifyAddressNextStepIndex = 1 | 2;
+export type VerifyAddressNextStepIndex = 1 | 2 | 3;
 
 export type VerifyAddressNextStep = Readonly<{
   index: VerifyAddressNextStepIndex;
