@@ -10,7 +10,10 @@ import { useRecipientScreenViewModel } from "../useRecipientScreenViewModel";
 
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
-  sendFeatures: { getBalanceTypeConfig: jest.fn(() => null) },
+  sendFeatures: {
+    getBalanceTypeConfig: jest.fn(() => null),
+    getTrackingAttributes: jest.fn(() => ({})),
+  },
 }));
 jest.mock("../../../../../FlowWizard/FlowWizardContext");
 jest.mock("../../../../context/SendFlowContext");
