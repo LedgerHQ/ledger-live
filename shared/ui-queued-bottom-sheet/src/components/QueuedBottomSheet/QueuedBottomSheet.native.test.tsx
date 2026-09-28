@@ -1,9 +1,10 @@
 import React from "react";
 import { Platform, Text, View } from "react-native";
-import { render } from "@testing-library/react-native";
+import { render, screen } from "@testing-library/react-native";
 import { QueuedBottomSheet } from ".";
 import { QueuedBottomSheetsProvider } from "../QueuedBottomSheetsProvider";
 import { useBottomSheetBottomInset } from "../../contexts/BottomSheetBottomInsetContext";
+import type { QueuedBottomSheetProps } from "./types";
 
 const BOTTOM_INSET = 48;
 
@@ -131,6 +132,22 @@ describe("QueuedBottomSheet (native)", () => {
     it("leaves nothing when the footer already pads over the area", () => {
       expect(renderContentBottomInset({ enableDynamicSizing: true, footer: <View /> })).toBe(0);
     });
+
+    it("does not add bottom space when the content already has it", () => {
+      Platform.OS = "android";
+
+      renderSheet({ enableDynamicSizing: true, contentHasBottomSpace: true });
+
+      expect(screen.queryByTestId("queued-bottom-sheet-bottom-space")).toBeNull();
+    });
+
+    it("still adds bottom space when the content does not have it", () => {
+      Platform.OS = "android";
+
+      renderSheet({ enableDynamicSizing: true });
+
+      expect(screen.getByTestId("queued-bottom-sheet-bottom-space")).toBeVisible();
+    });
   });
 
   // Keeping gorhom off the Android keyboard leaves the footer free to rise over it on its own,
@@ -161,10 +178,10 @@ function renderContentBottomInset(
   return Number(getByTestId("inset").props.children);
 }
 
-function renderSheet() {
+function renderSheet(props: Partial<QueuedBottomSheetProps> = {}) {
   return render(
     <QueuedBottomSheetsProvider>
-      <QueuedBottomSheet testID="sheet" isRequestingToBeOpened>
+      <QueuedBottomSheet testID="sheet" isRequestingToBeOpened {...props}>
         <View testID="sheet-content" />
       </QueuedBottomSheet>
     </QueuedBottomSheetsProvider>,

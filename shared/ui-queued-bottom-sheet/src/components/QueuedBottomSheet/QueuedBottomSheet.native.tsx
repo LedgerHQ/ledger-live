@@ -48,6 +48,7 @@ export function QueuedBottomSheet({
   enableHandlePanningGesture,
   enableContentPanningGesture,
   maxDynamicContentSize,
+  contentHasBottomSpace = false,
   footer,
   testID,
 }: QueuedBottomSheetProps) {
@@ -78,6 +79,7 @@ export function QueuedBottomSheet({
   const [footerHeight, setFooterHeight] = useState(0);
   const hasFooter = footer !== null && footer !== undefined;
   const contentBottomInset = useContentBottomInset(hasFooter, enableDynamicSizing);
+  const showBottomSpace = !hasFooter && !(enableDynamicSizing && contentHasBottomSpace);
 
   const footerStoreRef = useRef<FooterContentStore | null>(null);
   if (footerStoreRef.current === null) {
@@ -133,7 +135,7 @@ export function QueuedBottomSheet({
           </BottomSheetFooterInsetContext.Provider>
         </BottomSheetBackgroundContext.Provider>
       </BottomSheetInstanceContext.Provider>
-      {hasFooter ? null : <OnscreenNavigationSafeArea />}
+      {showBottomSpace ? <OnscreenNavigationSafeArea /> : null}
     </GorhomForwardingBottomSheet>
   );
 }
@@ -161,7 +163,12 @@ function FooterSlot({
 
 function OnscreenNavigationSafeArea() {
   const insets = useSafeAreaInsets();
-  return <View style={{ height: Platform.OS === "android" ? insets.bottom : 0 }} />;
+  return (
+    <View
+      style={{ height: Platform.OS === "android" ? insets.bottom : 0 }}
+      testID="queued-bottom-sheet-bottom-space"
+    />
+  );
 }
 
 /**
