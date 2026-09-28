@@ -84,6 +84,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
   return {
     sendFeatures: {
       isUserRefusedTransactionError: global.__isUserRefusedTransactionErrorMock,
+      getTrackingAttributes: jest.fn(() => ({})),
     },
   };
 });

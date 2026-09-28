@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { SEND_FLOW_STEP, type SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -64,10 +64,15 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
 
   const isReady = Boolean(account && transaction && bridge && balanceTypeConfig);
   const hasTrackedRef = useRef(false);
-  if (!hasTrackedRef.current && isReady) {
+  // A render can be discarded or retried without committing (StrictMode, a concurrent
+  // interruption); running only in an effect guarantees the page event fires at most once,
+  // and only after this screen actually mounted -- see useRecipientScreenViewModel's
+  // equivalent tracking effect for the sibling convention this follows.
+  useEffect(() => {
+    if (hasTrackedRef.current || !isReady) return;
     hasTrackedRef.current = true;
     trackPage("Modal send - step balance type", null, trackingProperties);
-  }
+  }, [isReady, trackingProperties]);
 
   const onSelect = useCallback(
     (optionId: string) => {

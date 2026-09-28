@@ -19,6 +19,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     hasMemoForRecipient: jest.fn(() => true),
     getMemoDefaultOption: jest.fn(() => undefined),
+    getTrackingAttributes: jest.fn(() => ({})),
   },
 }));
 jest.mock("@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId", () => ({
