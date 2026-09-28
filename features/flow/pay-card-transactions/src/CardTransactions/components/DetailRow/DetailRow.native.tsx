@@ -7,12 +7,9 @@ import {
   DescriptionItemValue,
   InteractiveIcon,
   Tag,
-  Text,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
 } from "@ledgerhq/lumen-ui-rnative";
-import { Copy, Information } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Copy } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { InfoTooltip } from "../InfoTooltip/InfoTooltip";
 import type { DetailRowProps } from "./types";
 
 export function DetailRow({ row }: DetailRowProps) {
@@ -28,26 +25,11 @@ export function DetailRow({ row }: DetailRowProps) {
           <DescriptionItemValue>{row.value}</DescriptionItemValue>
         )}
         {row.infoLabel ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <InteractiveIcon
-                icon={Information}
-                size={16}
-                iconType="stroked"
-                accessibilityLabel={row.infoLabel}
-                testID={`card-transaction-detail-info-${row.id}`}
-                appearance="base"
-              />
-            </TooltipTrigger>
-            <TooltipContent
-              title={row.label}
-              content={
-                <Text typography="body1" lx={{ color: "base" }}>
-                  {row.infoLabel}
-                </Text>
-              }
-            />
-          </Tooltip>
+          <InfoTooltip
+            title={row.label}
+            description={row.infoLabel}
+            testID={`card-transaction-detail-info-${row.id}`}
+          />
         ) : null}
         {row.copyLabel && row.onCopy ? (
           <InteractiveIcon
