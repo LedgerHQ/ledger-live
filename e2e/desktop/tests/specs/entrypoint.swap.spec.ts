@@ -385,7 +385,7 @@ test.describe("Swap - blacklisted address", () => {
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+      await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
       const provider = await app.swap.selectExchangeWithoutKyc();
       await app.swap.clickExchangeButton(provider.name);
 

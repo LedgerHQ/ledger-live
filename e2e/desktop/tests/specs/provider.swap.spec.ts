@@ -75,7 +75,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
         await ensureTokenApproval(fromAccount, provider, minAmount);
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);
 
-        await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
         await app.swap.selectSpecificProvider(provider);
         await app.swap.checkQuoteCardCtaPresence(provider.uiName);
 
@@ -138,7 +138,7 @@ test.describe("Swap - landing page", () => {
 
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, swap, minAmount, true);
+      await performSwapUntilQuoteSelectionStep({ app, swap, minAmount, checkLandingPage: true });
       const providerList = await app.swap.getProviderList();
       await app.swap.checkQuotesContainerInfos(providerList, toAccount.currency.ticker);
       await app.swap.checkBestOffer();

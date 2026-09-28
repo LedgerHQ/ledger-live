@@ -72,7 +72,7 @@ test.describe("Swap - default currency", () => {
         }
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
-        await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.expectAccountsTitleVisibility();
         await app.swap.goAndWaitForSwapToBeReady(() =>
@@ -128,7 +128,7 @@ test.describe("Swap - rejected on device", () => {
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, rejectedSwap, minAmount);
+      await performSwapUntilQuoteSelectionStep({ app, swap: rejectedSwap, minAmount });
       const provider = await app.swap.selectExchangeWithoutKyc();
 
       await app.swap.clickExchangeButton(provider.name);
@@ -225,7 +225,7 @@ for (const {
           swap.accountToCredit,
         );
 
-        await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
 
         await handleSwapErrorOrSuccess(
           app,
@@ -443,7 +443,7 @@ test.describe("Swap - switch currencies", () => {
       },
     },
     async ({ app }) => {
-      await performSwapUntilQuoteSelectionStep(app, swap, swap.amount ?? "0");
+      await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: swap.amount ?? "0" });
       await app.swap.switchYouSendAndYouReceive();
       await app.swap.checkAssetFromContains(swap.accountToCredit.currency.ticker);
       await app.swap.checkAssetToContains(swap.accountToDebit.currency.ticker);
