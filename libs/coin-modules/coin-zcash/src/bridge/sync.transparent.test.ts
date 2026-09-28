@@ -13,18 +13,23 @@ import {
   zcashSyncShielded,
 } from "./sync";
 import { clearTransactionDetailsCache } from "./transaction-details";
-import { ZCASH_AUTO_SYNC_TIMEOUT_MS } from "../constants";
 import type { ZcashAccount } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
-import type { CoinConfig } from "../config";
-
-const coinConfig: CoinConfig = () => ({ info: { status: { type: "active" } } });
+import { TEST_CONFIG, TEST_ZAINO_ENDPOINT, testContext } from "../test/coinConfig";
+import { ZCASH_SHIELDED_BATCH_SIZE, ZCASH_SHIELDED_CHUNK_TIMEOUT_MS } from "../constants";
+import { bindExplorer } from "./explorer";
 
 const generateAccount = jest.fn((..._args: unknown[]): unknown => undefined);
 const syncAccount = jest.fn(async (..._args: unknown[]) => undefined);
 const getAccountTransactions = jest.fn(async (..._args: unknown[]) => ({ txs: [] as TX[] }));
 const getAccountUnspentUtxos = jest.fn(async (..._args: unknown[]) => [] as WalletOutput[]);
+
+// bindExplorer itself is covered by explorer.test.ts; here it hands the account back unchanged so
+// these tests drive the account's own (fake) explorer, and they assert what the sync passes it.
+jest.mock("./explorer", () => ({
+  bindExplorer: jest.fn((walletAccount: unknown) => walletAccount),
+}));
 
 jest.mock("@ledgerhq/wallet-btc/index", () => ({
   ...jest.requireActual("@ledgerhq/wallet-btc/index"),
@@ -241,7 +246,7 @@ describe("performTransparentSync", () => {
     getAccountTransactions.mockResolvedValue({ txs: [incomingTx()] });
     getAccountUnspentUtxos.mockResolvedValue([output()]);
 
-    const shape = await performTransparentSync(info(), signerContext, coinConfig);
+    const shape = await performTransparentSync(info(), signerContext, testContext);
 
     expect(shape).toMatchObject({
       id: "js:2:zcash:xpub6DZ:",
@@ -272,7 +277,7 @@ describe("performTransparentSync", () => {
     getAccountTransactions.mockResolvedValue({ txs: [incomingTx()] });
 
     const [operation] =
-      (await performTransparentSync(info(), signerContext, coinConfig)).operations ?? [];
+      (await performTransparentSync(info(), signerContext, testContext)).operations ?? [];
 
     expect(operation).toMatchObject({
       hash: "tx-in",
@@ -292,7 +297,7 @@ describe("performTransparentSync", () => {
     getAccountTransactions.mockResolvedValue({ txs: [outgoingTx()] });
 
     const operations =
-      (await performTransparentSync(info(), signerContext, coinConfig)).operations ?? [];
+      (await performTransparentSync(info(), signerContext, testContext)).operations ?? [];
 
     expect(operations).toHaveLength(1);
     expect(operations[0]).toMatchObject({
@@ -320,7 +325,7 @@ describe("performTransparentSync", () => {
       },
     });
 
-    expect((await performTransparentSync(shielded, signerContext, coinConfig)).balance).toEqual(
+    expect((await performTransparentSync(shielded, signerContext, testContext)).balance).toEqual(
       new BigNumber(75_000),
     );
   });
@@ -335,17 +340,19 @@ describe("performTransparentSync", () => {
       },
     });
 
-    const shape = await performTransparentSync(existing, signerContext, coinConfig);
+    const shape = await performTransparentSync(existing, signerContext, testContext);
 
     // Re-deriving it would mean rescanning the gap limit on every sync.
     expect(shape.bitcoinResources?.walletAccount).toBe(previous);
     expect(generateAccount).not.toHaveBeenCalled();
+    // The stored account is pointed at the explorer the coin config names now.
+    expect(bindExplorer).toHaveBeenCalledWith(previous, currency, TEST_CONFIG);
   });
 
   it("composes the xpub on the device for an account that has none yet", async () => {
     const fresh = info({ initialAccount: undefined });
 
-    const shape = await performTransparentSync(fresh, signerContext, coinConfig);
+    const shape = await performTransparentSync(fresh, signerContext, testContext);
 
     // Both keys of the BIP-32 serialization come from one device session, and
     // the account path is `44'/133'/0'`: depth 3, hardened child. Losing the
@@ -357,6 +364,16 @@ describe("performTransparentSync", () => {
       childNumber: 0x8000_0000,
     });
     expect(shape.id).toContain(shape.xpub as string);
+    expect(generateAccount).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ explorerEndpoint: TEST_CONFIG.explorer.url }),
+    );
+    // The generated account is bound too: wallet-btc may hand back a cached, stale explorer.
+    expect(bindExplorer).toHaveBeenCalledWith(
+      await generateAccount.mock.results[0].value,
+      currency,
+      TEST_CONFIG,
+    );
   });
 
   it("cannot compose an xpub without a device", async () => {
@@ -364,7 +381,7 @@ describe("performTransparentSync", () => {
       performTransparentSync(
         info({ initialAccount: undefined, deviceId: undefined }),
         signerContext,
-        coinConfig,
+        testContext,
       ),
     ).rejects.toThrow("deviceId required to generate the xpub");
   });
@@ -375,7 +392,7 @@ describe("performTransparentSync", () => {
     getAccountTransactions.mockResolvedValue({ txs: [incomingTx()] });
     getZCashClient.mockRejectedValue(new Error("zaino unreachable"));
 
-    const shape = await performTransparentSync(info(), signerContext, coinConfig);
+    const shape = await performTransparentSync(info(), signerContext, testContext);
 
     expect(shape.operations).toMatchObject([{ hash: "tx-in", recipients: [OWN] }]);
   });
@@ -399,7 +416,7 @@ describe("performTransparentSync", () => {
     });
 
     const operations =
-      (await performTransparentSync(withKey, signerContext, coinConfig)).operations ?? [];
+      (await performTransparentSync(withKey, signerContext, testContext)).operations ?? [];
 
     expect(operations.find(op => op.type === "OUT")?.recipients).toEqual([
       THEIRS,
@@ -415,7 +432,7 @@ describe("performTransparentSync", () => {
     getZCashClient.mockResolvedValue({ transactionDetails });
 
     const operations =
-      (await performTransparentSync(info(), signerContext, coinConfig)).operations ?? [];
+      (await performTransparentSync(info(), signerContext, testContext)).operations ?? [];
 
     expect(transactionDetails).toHaveBeenCalledWith(expect.anything(), undefined);
     expect(operations[0].recipients).toEqual([THEIRS]);
@@ -443,7 +460,7 @@ describe("performTransparentSync", () => {
     });
 
     const operations =
-      (await performTransparentSync(shielding, signerContext, coinConfig)).operations ?? [];
+      (await performTransparentSync(shielding, signerContext, testContext)).operations ?? [];
 
     expect(operations).toMatchObject([
       {
@@ -472,7 +489,7 @@ describe("performTransparentSync", () => {
     });
 
     const operations =
-      (await performTransparentSync(unscanned, signerContext, coinConfig)).operations ?? [];
+      (await performTransparentSync(unscanned, signerContext, testContext)).operations ?? [];
 
     expect(operations).toMatchObject([
       {
@@ -507,7 +524,7 @@ describe("performTransparentSync", () => {
             },
           }),
           signerContext,
-          coinConfig,
+          testContext,
         )
       ).operations ?? [];
     expect(uncredited).toMatchObject([{ type: "OUT", recipients: [CHANGE] }]);
@@ -526,7 +543,7 @@ describe("performTransparentSync", () => {
             },
           }),
           signerContext,
-          coinConfig,
+          testContext,
         )
       ).operations ?? [];
 
@@ -548,7 +565,7 @@ describe("performTransparentSync", () => {
         await performTransparentSync(
           info({ initialAccount: { ...account, operations: [] } }),
           signerContext,
-          coinConfig,
+          testContext,
         )
       ).operations ?? [];
     const { zcashPrivate: _, ...restExtra } = (fetched.extra ?? {}) as {
@@ -561,7 +578,7 @@ describe("performTransparentSync", () => {
         await performTransparentSync(
           info({ initialAccount: { ...account, operations: [stored] } }),
           signerContext,
-          coinConfig,
+          testContext,
         )
       ).operations ?? [];
 
@@ -597,7 +614,7 @@ describe("performTransparentSync", () => {
     });
 
     const operations =
-      (await performTransparentSync(withBoth, signerContext, coinConfig)).operations ?? [];
+      (await performTransparentSync(withBoth, signerContext, testContext)).operations ?? [];
 
     expect(operations.find(op => op.type === "OUT")?.recipients).toEqual([
       THEIRS,
@@ -613,7 +630,7 @@ describe("performTransparentSync", () => {
       output({ block_height: null, rbf: true, output_hash: "ff".repeat(32) }),
     ]);
 
-    const shape = await performTransparentSync(info(), signerContext, coinConfig);
+    const shape = await performTransparentSync(info(), signerContext, testContext);
 
     expect(shape.bitcoinResources?.utxos).toEqual([
       {
@@ -643,7 +660,14 @@ describe("zcashSyncShielded", () => {
 
   it("refuses to scan without a viewing key", async () => {
     await expect(
-      firstValueFrom(zcashSyncShielded(info({ initialAccount: {} }), syncConfig)),
+      firstValueFrom(
+        zcashSyncShielded(
+          info({ initialAccount: {} }),
+          syncConfig,
+          TEST_ZAINO_ENDPOINT,
+          ZCASH_SHIELDED_BATCH_SIZE,
+        ),
+      ),
     ).rejects.toThrow("Missing unified full viewing key (ufvk) for ZCash shielded sync");
   });
 
@@ -651,7 +675,14 @@ describe("zcashSyncShielded", () => {
     const { syncShielded, findBlockHeight } = clientSpy();
     const account = { privateInfo: privateInfo({ lastProcessedBlock: 3_425_000 }) };
 
-    await firstValueFrom(zcashSyncShielded(info({ initialAccount: account }), syncConfig));
+    await firstValueFrom(
+      zcashSyncShielded(
+        info({ initialAccount: account }),
+        syncConfig,
+        TEST_ZAINO_ENDPOINT,
+        ZCASH_SHIELDED_BATCH_SIZE,
+      ),
+    );
 
     expect(syncShielded).toHaveBeenCalledWith(
       expect.objectContaining({ startBlockHeight: 3_425_001, viewingKey: "uview1key" }),
@@ -663,7 +694,14 @@ describe("zcashSyncShielded", () => {
     const { syncShielded, findBlockHeight } = clientSpy();
     const account = { privateInfo: privateInfo({ birthday: "2022-05-31" }) };
 
-    await firstValueFrom(zcashSyncShielded(info({ initialAccount: account }), syncConfig));
+    await firstValueFrom(
+      zcashSyncShielded(
+        info({ initialAccount: account }),
+        syncConfig,
+        TEST_ZAINO_ENDPOINT,
+        ZCASH_SHIELDED_BATCH_SIZE,
+      ),
+    );
 
     expect(findBlockHeight).toHaveBeenCalledWith(Math.floor(Date.parse("2022-05-31") / 1000));
     expect(syncShielded).toHaveBeenCalledWith(
@@ -675,10 +713,17 @@ describe("zcashSyncShielded", () => {
     const { syncShielded } = clientSpy();
 
     await firstValueFrom(
-      zcashSyncShielded(info({ initialAccount: { privateInfo: privateInfo() } }), syncConfig),
+      zcashSyncShielded(
+        info({ initialAccount: { privateInfo: privateInfo() } }),
+        syncConfig,
+        TEST_ZAINO_ENDPOINT,
+        ZCASH_SHIELDED_BATCH_SIZE,
+      ),
     );
 
-    expect(syncShielded).toHaveBeenCalledWith(expect.objectContaining({ startBlockHeight: 0 }));
+    expect(syncShielded).toHaveBeenCalledWith(
+      expect.objectContaining({ startBlockHeight: 0, maxBatchSize: ZCASH_SHIELDED_BATCH_SIZE }),
+    );
   });
 
   // The scanner needs the nullifiers to tell which of our notes a block spends,
@@ -712,7 +757,14 @@ describe("zcashSyncShielded", () => {
       }),
     };
 
-    await firstValueFrom(zcashSyncShielded(info({ initialAccount: account }), syncConfig));
+    await firstValueFrom(
+      zcashSyncShielded(
+        info({ initialAccount: account }),
+        syncConfig,
+        TEST_ZAINO_ENDPOINT,
+        ZCASH_SHIELDED_BATCH_SIZE,
+      ),
+    );
 
     expect(syncShielded).toHaveBeenCalledWith(
       expect.objectContaining({ knownNullifiers: ["aa", "cc"] }),
@@ -723,7 +775,11 @@ describe("zcashSyncShielded", () => {
 describe("buildExtraSyncObservable", () => {
   it("stays out of a sync that did not ask for the shielded leg", () => {
     expect(
-      buildExtraSyncObservable(info(), { syncType: SYNC_TYPE_TRANSPARENT } as SyncConfig),
+      buildExtraSyncObservable(
+        info(),
+        { syncType: SYNC_TYPE_TRANSPARENT } as SyncConfig,
+        testContext,
+      ),
     ).toBe(undefined);
   });
 
@@ -735,9 +791,13 @@ describe("buildExtraSyncObservable", () => {
     ["there is no account to scan yet", undefined],
   ])("stays out when %s", (_label, info_) => {
     expect(
-      buildExtraSyncObservable(info({ initialAccount: info_ && { privateInfo: info_ } }), {
-        syncType: SYNC_TYPE_SHIELDED,
-      } as SyncConfig),
+      buildExtraSyncObservable(
+        info({ initialAccount: info_ && { privateInfo: info_ } }),
+        {
+          syncType: SYNC_TYPE_SHIELDED,
+        } as SyncConfig,
+        testContext,
+      ),
     ).toBe(undefined);
   });
 
@@ -763,6 +823,7 @@ describe("buildExtraSyncObservable", () => {
           },
         }),
         { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+        testContext,
       );
 
       // The scan reported no block left, so it reaches the account as complete,
@@ -799,6 +860,7 @@ describe("buildExtraSyncObservable", () => {
         },
       }),
       { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+      testContext,
     );
 
     expect((await firstValueFrom(observable!)).privateInfo).toMatchObject({
@@ -823,6 +885,7 @@ describe("buildExtraSyncObservable", () => {
           },
         }),
         { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+        testContext,
       ),
     ).toBe(undefined);
   });
@@ -841,6 +904,7 @@ describe("buildExtraSyncObservable", () => {
         },
       }),
       { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+      testContext,
     );
 
     const emissions = await lastValueFrom(observable!.pipe(toArray()));
@@ -849,14 +913,17 @@ describe("buildExtraSyncObservable", () => {
     expect(emissions[0].privateInfo).toMatchObject({ syncState: "stopped" });
   });
 
-  it("times out rather than hanging when the shielded leg never emits or completes", async () => {
-    jest.useFakeTimers();
-    try {
-      getZCashClient.mockResolvedValue({
-        syncShielded: () => new Observable<never>(() => {}),
-        findBlockHeight: jest.fn(),
-      });
-      const observable = buildExtraSyncObservable(
+  it.each([
+    ["the coin config's", 42, 42],
+    ["the module default", undefined, ZCASH_SHIELDED_BATCH_SIZE],
+  ])("scans in batches of %s size", async (_label, batchSize, expected) => {
+    const syncShielded = jest.fn(() =>
+      of({ transactions: [], processedBlocks: 5, remainingBlocks: 0, lastProcessedBlock: 5 }),
+    );
+    getZCashClient.mockResolvedValue({ syncShielded, findBlockHeight: jest.fn() });
+
+    await firstValueFrom(
+      buildExtraSyncObservable(
         info({
           initialAccount: {
             id: "js:2:zcash:xpub6DZ:",
@@ -865,22 +932,72 @@ describe("buildExtraSyncObservable", () => {
           },
         }),
         { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
-      );
+        {
+          ...testContext,
+          config: async () => ({
+            ...TEST_CONFIG,
+            zaino: { ...TEST_CONFIG.zaino, ...(batchSize === undefined ? {} : { batchSize }) },
+          }),
+        },
+      )!,
+    );
 
-      const resultPromise = firstValueFrom(observable!);
-      // Let the getZCashClient()/resolveStartBlockHeight() promise chain settle
-      // before the timeout window is exhausted, native promises are not
-      // affected by fake timers.
-      await Promise.resolve();
-      await Promise.resolve();
-      jest.advanceTimersByTime(ZCASH_AUTO_SYNC_TIMEOUT_MS + 1);
-
-      const result = await resultPromise;
-      expect(result.privateInfo).toMatchObject({ syncState: "stopped" });
-    } finally {
-      jest.useRealTimers();
-    }
+    expect(syncShielded).toHaveBeenCalledWith(expect.objectContaining({ maxBatchSize: expected }));
   });
+
+  it.each([
+    ["the coin config's", 1_000, 1_000],
+    ["the module default", undefined, ZCASH_SHIELDED_CHUNK_TIMEOUT_MS],
+  ])(
+    "stops a chunk that outlives %s budget rather than hanging",
+    async (_label, timeoutMs, budget) => {
+      jest.useFakeTimers();
+      try {
+        getZCashClient.mockResolvedValue({
+          syncShielded: () => new Observable<never>(() => {}),
+          findBlockHeight: jest.fn(),
+        });
+        const observable = buildExtraSyncObservable(
+          info({
+            initialAccount: {
+              id: "js:2:zcash:xpub6DZ:",
+              operations: [],
+              privateInfo: privateInfo({ syncState: "ready", lastProcessedBlock: 1 }),
+            },
+          }),
+          { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+          {
+            ...testContext,
+            config: async () => ({
+              ...TEST_CONFIG,
+              zaino: { ...TEST_CONFIG.zaino, ...(timeoutMs === undefined ? {} : { timeoutMs }) },
+            }),
+          },
+        );
+
+        let settled = false;
+        const resultPromise = firstValueFrom(observable!).finally(() => {
+          settled = true;
+        });
+        // Let the config / getZCashClient() / resolveStartBlockHeight() promise chain
+        // settle before the timeout window is exhausted, native promises are not
+        // affected by fake timers.
+        const flush = async () => {
+          for (let i = 0; i < 5; i++) await Promise.resolve();
+        };
+        await flush();
+        jest.advanceTimersByTime(budget - 1);
+        await flush();
+        expect(settled).toBe(false);
+        jest.advanceTimersByTime(2);
+
+        const result = await resultPromise;
+        expect(result.privateInfo).toMatchObject({ syncState: "stopped" });
+      } finally {
+        jest.useRealTimers();
+      }
+    },
+  );
 });
 
 describe("buildSyncObservables", () => {
@@ -891,7 +1008,7 @@ describe("buildSyncObservables", () => {
       info(),
       {} as SyncConfig,
       signerContext,
-      coinConfig,
+      testContext,
     );
 
     expect(syncType).toBe(SYNC_TYPE_TRANSPARENT);
@@ -919,7 +1036,7 @@ describe("buildSyncObservables", () => {
       eligible,
       { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED } as SyncConfig,
       signerContext,
-      coinConfig,
+      testContext,
     );
 
     // Two legs, in that order: the transparent one reports a balance, the
@@ -949,7 +1066,7 @@ describe("buildSyncObservables", () => {
       eligible,
       { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED } as SyncConfig,
       signerContext,
-      coinConfig,
+      testContext,
     );
 
     // Isolation proof: the shielded leg failing does not stop the transparent
@@ -987,7 +1104,7 @@ describe("buildSyncObservables", () => {
       eligible,
       { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED } as SyncConfig,
       signerContext,
-      coinConfig,
+      testContext,
     );
     const [transparentSync, shieldedSync] = syncs;
 
@@ -997,8 +1114,8 @@ describe("buildSyncObservables", () => {
     // The shielded leg's own emission is still anchored to the pre-tick (empty)
     // snapshot: it knows nothing about the transparent op just found above.
     const shieldedShapePromise = firstValueFrom(shieldedSync);
-    await Promise.resolve();
-    await Promise.resolve();
+    // Emit only once the shielded leg has resolved its config and subscribed to the scan.
+    while (!shieldedChunk.observed) await Promise.resolve();
     shieldedChunk.next({
       transactions: [],
       processedBlocks: 1,
@@ -1050,7 +1167,7 @@ describe("buildSyncObservables", () => {
       eligible,
       { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED } as SyncConfig,
       signerContext,
-      coinConfig,
+      testContext,
     );
     const [transparentSync, shieldedSync] = syncs;
 
@@ -1097,7 +1214,7 @@ describe("buildSyncObservables", () => {
       eligible,
       { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED } as SyncConfig,
       signerContext,
-      coinConfig,
+      testContext,
     );
 
     const [transparentShape, shieldedShape] = await Promise.all(
@@ -1114,7 +1231,7 @@ describe("makeGetAccountShape", () => {
     getAccountUnspentUtxos.mockResolvedValue([output()]);
 
     const shapes = await lastValueFrom(
-      makeGetAccountShape(signerContext, coinConfig)(info(), {} as SyncConfig).pipe(toArray()),
+      makeGetAccountShape(signerContext, testContext)(info(), {} as SyncConfig).pipe(toArray()),
     );
 
     expect(shapes).toHaveLength(1);
@@ -1123,9 +1240,9 @@ describe("makeGetAccountShape", () => {
 
   it("completes without emitting when no leg was selected", async () => {
     const shapes = await lastValueFrom(
-      makeGetAccountShape(signerContext, coinConfig)(info(), { syncType: 0 } as SyncConfig).pipe(
-        toArray(),
-      ),
+      makeGetAccountShape(signerContext, testContext)(info(), {
+        syncType: 0,
+      } as SyncConfig).pipe(toArray()),
     );
 
     expect(shapes).toEqual([]);
@@ -1135,7 +1252,7 @@ describe("makeGetAccountShape", () => {
     getAccountTransactions.mockRejectedValue(new Error("explorer down"));
 
     await expect(
-      firstValueFrom(makeGetAccountShape(signerContext, coinConfig)(info(), {} as SyncConfig)),
+      firstValueFrom(makeGetAccountShape(signerContext, testContext)(info(), {} as SyncConfig)),
     ).rejects.toThrow("explorer down");
   });
 
@@ -1159,7 +1276,7 @@ describe("makeGetAccountShape", () => {
     // proof that the merged observable completed rather than propagating the
     // shielded leg's failure.
     const shapes = await lastValueFrom(
-      makeGetAccountShape(signerContext, coinConfig)(eligible, {
+      makeGetAccountShape(signerContext, testContext)(eligible, {
         syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
       } as SyncConfig).pipe(toArray()),
     );
@@ -1190,7 +1307,7 @@ describe("makeGetAccountShape", () => {
     const shapes: Partial<ZcashAccount>[] = [];
     let shieldedTriggered = false;
     const done = new Promise<void>(resolve => {
-      makeGetAccountShape(signerContext, coinConfig)(eligible, {
+      makeGetAccountShape(signerContext, testContext)(eligible, {
         syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
       } as SyncConfig).subscribe({
         next: shape => {

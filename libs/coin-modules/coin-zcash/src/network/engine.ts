@@ -11,7 +11,7 @@
  */
 
 import { log } from "@ledgerhq/logs";
-import { ZCASH_LOG_TYPE } from "../constants";
+import { ZCASH_LOG_TYPE, sanitizeEndpointForLog } from "../constants";
 import type {
   ShieldedSyncResultRaw,
   ShieldedTransactionRaw,
@@ -397,7 +397,8 @@ export async function startSyncJob(
   const endHeight = await native.getChainTip(grpcUrl);
 
   log(ZCASH_LOG_TYPE, "syncShielded start", {
-    grpcUrl,
+    // The endpoint comes from the remote coin config: log its origin only.
+    grpcUrl: sanitizeEndpointForLog(grpcUrl),
     network,
     startBlockHeight,
     endHeight,

@@ -16,8 +16,7 @@ import type {
   ZcashPrivateInfoRaw,
 } from "../network/types";
 import { rehydrateOutput } from "../network/serialization/rehydrate";
-import { walletBtcCurrencyById } from "../walletBtcCurrency";
-import type { CoinConfig } from "../config";
+import { walletBtcCurrencyById, type ExplorerConfig } from "../walletBtcCurrency";
 
 // ── Transparent (bitcoinResources) serialization ────────────────────────
 //
@@ -68,19 +67,17 @@ export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw 
   };
 }
 
-export function fromBitcoinResourcesRaw(
-  r: BitcoinResourcesRaw,
-  coinConfig: CoinConfig,
-): BitcoinResources {
+// No explorer endpoint at deserialization: sync and broadcast bind it from the coin config
+// before first use (see bridge/explorer.ts), so a remote endpoint change is not frozen here.
+const UNBOUND_EXPLORER: ExplorerConfig = { explorer: { url: "" } };
+
+export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
     ...(r.walletAccount && {
       walletAccount: wallet.importFromSerializedAccountSync(
         r.walletAccount,
-        walletBtcCurrencyById(
-          r.walletAccount.params.currency,
-          coinConfig(r.walletAccount.params.currency).info,
-        ),
+        walletBtcCurrencyById(r.walletAccount.params.currency, UNBOUND_EXPLORER),
       ),
     }),
   };
@@ -186,17 +183,14 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): vo
   }
 }
 
-export const makeAssignFromAccountRaw =
-  (coinConfig: CoinConfig) =>
-  (accountRaw: AccountRaw, account: Account): void => {
-    const zcashAccountRaw = accountRaw as ZcashAccountRaw;
-    if (zcashAccountRaw.bitcoinResources) {
-      (account as ZcashAccount).bitcoinResources = fromBitcoinResourcesRaw(
-        zcashAccountRaw.bitcoinResources,
-        coinConfig,
-      );
-    }
-    if (zcashAccountRaw.privateInfo) {
-      (account as ZcashAccount).privateInfo = fromZcashPrivateInfoRaw(zcashAccountRaw.privateInfo);
-    }
-  };
+export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
+  const zcashAccountRaw = accountRaw as ZcashAccountRaw;
+  if (zcashAccountRaw.bitcoinResources) {
+    (account as ZcashAccount).bitcoinResources = fromBitcoinResourcesRaw(
+      zcashAccountRaw.bitcoinResources,
+    );
+  }
+  if (zcashAccountRaw.privateInfo) {
+    (account as ZcashAccount).privateInfo = fromZcashPrivateInfoRaw(zcashAccountRaw.privateInfo);
+  }
+}
