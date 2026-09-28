@@ -32,15 +32,14 @@ import type {
 export * from "./types";
 export * from "./signing";
 
-/** Resolve the energy-rent provider selected in coin-config (the single provider dispatch point). */
+/** The sole config-driven energy-rent provider resolver (energyProviders.ts's lookup is display-only). */
 export function getEnergyProvider(config: TronCoinConfig): EnergyProvider {
   const energyRent = config.energyRent;
   if (!energyRent) {
     throw new EnergyRentProviderNotConfigured("No energy-rent provider configured");
   }
   if (energyRent.provider === "tronify") {
-    // Name alone is not proof of configuration: this gate opens raw-signing (craftRawTransaction), so
-    // reject an under-configured provider here — getTronifyConfig throws unless url + sourceFlag exist.
+    // Gates raw-signing (craftRawTransaction): getTronifyConfig throws unless url + sourceFlag exist.
     getTronifyConfig(config);
     return tronifyProvider;
   }
@@ -58,27 +57,18 @@ export function getEnergyRentQuote(
   return getEnergyProvider(config).getQuote(logger, config, request);
 }
 
-/**
- * Reject an order that would charge more than the amount already approved. Pricing
- * (`getQuote`) and ordering (`createOrder`) are independent provider calls that each return their
- * own `payCoinAmt`, so without this the device could be handed payment bytes for a different (or
- * arbitrarily larger) sum than the one the user agreed to, with the device screen as the only
- * remaining backstop. No ceiling on the request means no approved amount to check against.
- */
+// getQuote and createOrder price independently; unchecked, the device could be handed payment
+// bytes for more than the user approved.
 function assertOrderWithinApprovedCost(request: EnergyRentRequest, order: EnergyRentOrder): void {
   const { maxPayCoinAmt, maxPayCoinCode } = request;
   if (maxPayCoinAmt === undefined) return;
 
-  // Fail closed on a ceiling amount with no coin code: an amount alone means nothing across
-  // denominations, so a provider could price the order in a cheaper-looking coin and slip under it.
+  // No coin code with a ceiling fails closed: an amount alone can't rule out a cheaper-denomination underprice.
   if (maxPayCoinCode === undefined) {
     throw new TronifyApiError(
       `Energy-rent cost ceiling "${maxPayCoinAmt}" has no approved coin code to compare against`,
     );
   }
-  // Case-insensitive: the approved code is normalized to upper case at the ceiling's source
-  // (buildEnergyRentRequest), so a differently-cased order code from the provider must not
-  // false-mismatch a genuinely matching denomination.
   if (String(order.payCoinCode).toUpperCase() !== maxPayCoinCode.toUpperCase()) {
     throw new TronifyApiError(
       `Energy-rent order is priced in ${String(order.payCoinCode)}, but ${maxPayCoinCode} was approved`,
@@ -87,8 +77,7 @@ function assertOrderWithinApprovedCost(request: EnergyRentRequest, order: Energy
 
   const approved = new BigNumber(maxPayCoinAmt);
   const charged = new BigNumber(order.payCoinAmt);
-  // An unparseable amount is not "within budget" — a non-numeric payCoinAmt would otherwise slip
-  // through every comparison below as false.
+  // Unparseable/negative payCoinAmt must fail, not silently compare false.
   if (!approved.isFinite() || !charged.isFinite() || charged.isNegative()) {
     throw new TronifyApiError(
       `Cannot verify energy-rent cost: approved "${maxPayCoinAmt}", order returned "${order.payCoinAmt}"`,
@@ -101,16 +90,8 @@ function assertOrderWithinApprovedCost(request: EnergyRentRequest, order: Energy
   }
 }
 
-/**
- * Verify the bytes the device will actually sign encode the approved TRX rent payment.
- * `assertOrderWithinApprovedCost` checks only the provider-declared `payCoinAmt`/`payCoinCode`
- * metadata, not the `raw_data_hex` that `craftRawTransaction` hands to the signer verbatim, so
- * decode the bytes and bind them to the approved request here.
- *
- * coin-tron supports only TRX-denominated rent (estimateTronifyFees/buildEnergyRentRequest reject a
- * non-TRX quote), so the payment must be exactly one native-TRX `TransferContract`, spending from
- * the approved payer, for no more TRX than the approved cost. Anything else fails closed.
- */
+// Verifies the signed bytes themselves (not just provider-declared payCoinAmt/payCoinCode) match the
+// approved TRX transfer — otherwise the device could sign a payment other than what was approved.
 async function assertSignableTransferMatchesRequest(
   request: EnergyRentRequest,
   order: EnergyRentOrder,
@@ -145,8 +126,7 @@ async function assertSignableTransferMatchesRequest(
   }
 
   const value = contracts[0].parameter?.value ?? {};
-  // The signed bytes must spend from the approved payer. `decode58Check` and the decoder both yield
-  // lower-case hex (with the 0x41 prefix), so compare directly.
+  // decode58Check and the decoder both yield lower-case 0x41-prefixed hex, so compare directly.
   const signedOwner = (value.owner_address ?? "").toLowerCase();
   const approvedOwner = decode58Check(request.payerAddress).toLowerCase();
   if (signedOwner !== approvedOwner) {
@@ -155,15 +135,14 @@ async function assertSignableTransferMatchesRequest(
     );
   }
 
-  // `to_address` is deliberately not validated: there is no trusted destination to bind to (neither
-  // coin-config nor the order carries Tronify's collection address), so Tronify's TLS API is the only
-  // anchor — the same trust we place in it for the amount, energy and order. The backstop is the
-  // on-chain energy gate (ADR-058 C4): a redirected payment delivers no energy, so TX-C never releases.
+  // `to_address` isn't validated (no trusted destination to bind to); the on-chain energy gate
+  // (ADR-058 C4) is the backstop — a redirected payment delivers no energy, so TX-C never releases.
 
-  // …and move no more TRX than approved. `order.payCoinAmt` is already bounded by the request
-  // ceiling (assertOrderWithinApprovedCost); this binds the actual signed sun amount to it.
+  // Binds the signed sun amount to the approved ceiling; rounds up so a sub-sun quote isn't rejected.
   const signedSun = new BigNumber(value.amount ?? "");
-  const approvedSun = new BigNumber(order.payCoinAmt).multipliedBy(SUN_PER_TRX);
+  const approvedSun = new BigNumber(order.payCoinAmt)
+    .multipliedBy(SUN_PER_TRX)
+    .integerValue(BigNumber.ROUND_CEIL);
   if (!signedSun.isFinite() || signedSun.isNegative() || !approvedSun.isFinite()) {
     throw new TronifyApiError(
       `Cannot verify energy-rent payment amount: signed "${String(value.amount)}", approved "${order.payCoinAmt}"`,
@@ -203,15 +182,10 @@ export function getEnergyRentStatus(
   return getEnergyProvider(config).getOrderStatus(logger, config, order);
 }
 
-/** Rejection marker for a poll that outlived the hard deadline; caught by identity below and never
- * escapes this module. An Error instance so it is a valid Promise rejection reason. */
+// Identity-checked deadline marker for countPollError; never escapes this module.
 const POLL_DEADLINE_REACHED = new Error("energy-rent-poll-deadline");
 
-/**
- * The deadline is enforced even while the request is in flight — a hung status call would otherwise
- * keep the poll pending forever and the hard timeout would never fire. The timer is cleared once
- * the race settles so nothing stays scheduled.
- */
+// Enforced even mid-request: otherwise a hung status call would keep the poll pending forever.
 function withDeadline<T>(promise: Promise<T>, ms: number): Promise<T> {
   let timer: ReturnType<typeof setTimeout>;
   const expiry = new Promise<never>((_resolve, reject) => {
@@ -226,14 +200,8 @@ const energyDeliveryTimeout = (paymentTxId?: string, cause?: unknown) =>
     ...(cause !== undefined ? { cause } : {}),
   });
 
-/**
- * One caught poll error, against the consecutive-error budget. Returns the new error count when the
- * error is tolerated; throws {@link EnergyDelegationTimeoutError} on both terminal branches — the
- * module deadline, and budget exhaustion. Read exhaustion is uncertain delivery, not a definitive
- * failure: the paid rental may already have delivered energy the failing reads couldn't see, so throw
- * the timeout (raw cause preserved) to run the caller's on-chain reconciliation — a definitive failure
- * would re-craft on retry and charge a second rental (LIVE-32780 AC2).
- */
+/** Budget exhaustion surfaces as the timeout, not a failure, so a retry never charges a second
+ * rental (LIVE-32780 AC2). */
 function countPollError(
   error: unknown,
   consecutiveErrors: number,
@@ -242,21 +210,12 @@ function countPollError(
 ): number {
   if (error === POLL_DEADLINE_REACHED) throw energyDeliveryTimeout(paymentTxId);
   const next = consecutiveErrors + 1;
-  if (next >= maxConsecutiveErrors) throw energyDeliveryTimeout(paymentTxId, error);
+  if (next > maxConsecutiveErrors) throw energyDeliveryTimeout(paymentTxId, error);
   return next;
 }
 
-/**
- * Poll an energy-rent order until the delegated energy is delivered on-chain. Resolves on
- * "delivered"; throws TronifyApiError on "failed"; throws EnergyDelegationTimeoutError once the
- * hard timeout passes — including while a status request is still in flight. `getStatus` is
- * injected so callers/tests can drive it without the network.
- *
- * The caller has already paid for the rental by the time we poll, so a transient status failure
- * must not abandon it: rejections are tolerated up to `maxConsecutiveErrors` in a row (reset by any
- * successful read) by {@link countPollError}, which surfaces exhaustion as the timeout so the caller
- * reconciles on-chain. An explicit "failed" status is a verdict, not a blip, and still throws.
- */
+/** Polls `getStatus` until delivered/failed/timeout. Tolerates up to `maxConsecutiveErrors`
+ * transient failures in a row so a status blip doesn't abandon an already-paid rental. */
 export async function awaitEnergyDeliveryWith(
   getStatus: () => Promise<EnergyRentStatus>,
   opts?: {
@@ -277,10 +236,7 @@ export async function awaitEnergyDeliveryWith(
 
   let consecutiveErrors = 0;
   for (;;) {
-    // Stop before the next status read once the caller abandons the flow (reset/unmount): the result
-    // is discarded anyway, so further reads would just burn network calls until the timeout. Checked
-    // between reads, not threaded into the in-flight fetch, so at most one more read completes. Abort
-    // is distinct from the timeout so the caller skips the on-chain reconciliation a timeout triggers.
+    // Abort (reset/unmount) stops before the next read and skips the on-chain reconciliation a timeout triggers.
     if (opts?.signal?.aborted) throw new EnergyDeliveryAbortedError();
     if (remaining() <= 0) throw energyDeliveryTimeout(opts?.paymentTxId);
 
@@ -327,12 +283,10 @@ export function awaitEnergyDelivery(
 ): Promise<void> {
   const needed = new BigNumber(target.energyNeeded.toString());
   return awaitEnergyDeliveryWith(async () => {
-    // On-chain is the sole authority for "delivered": check it first and short-circuit so the
-    // advisory provider call is skipped once the energy is present.
+    // On-chain is the sole authority for "delivered"; short-circuits the advisory provider call.
     const available = await getOnChainEnergyAvailable(logger, config, target.receiverAddress);
     if (available.gte(needed)) return "delivered";
-    // Provider is advisory: only an explicit "failed" counts; anything else, or a thrown call, stays
-    // "pending" so provider downtime can't abort a delivery the on-chain read would confirm.
+    // Provider is advisory: only explicit "failed" counts, so its downtime can't abort a real delivery.
     try {
       const status = await getEnergyRentStatus(logger, config, ref);
       return status === "failed" ? "failed" : "pending";

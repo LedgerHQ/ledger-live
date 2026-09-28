@@ -20,12 +20,7 @@ export function createLocalTronApi(_currencyId: string): CoinModuleApi<any, any>
   return createTronApi() as unknown as CoinModuleApi<any, any> & BridgeApi;
 }
 
-/**
- * Sponsored-send seam factory (TRON Tronify energy rental), separate from {@link createLocalTronApi}
- * so the main coin-module api stays exactly the generic contract. The cast goes through `unknown`
- * because coin-tron types the methods against its own `TronTxData`/energy-rent shapes, which the
- * repo-local `SponsoredCoinApi` interface mirrors structurally without importing.
- */
+/** Cast through `unknown`: `SponsoredCoinApi` mirrors coin-tron's energy-rent types structurally. */
 export function createLocalTronSponsoredApi(currencyId: string): SponsoredCoinApi {
   return createTronSponsoredApi(
     buildContext<TronCoinConfig>(currencyId),

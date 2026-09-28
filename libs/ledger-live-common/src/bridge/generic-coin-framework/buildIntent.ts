@@ -8,16 +8,8 @@ import type { GenericTransaction } from "./types";
 import { getPendingTokenSpent, transactionToIntent } from "./utils";
 
 /**
- * Build the `TransactionIntent` for a generic-coin-framework transaction the same way
- * `prepareTransaction` does — resolving the family's asset info (`assetReference`/`assetOwner`) and
- * running the shared `transactionToIntent` with the family's `computeIntentType`/`buildIntentData`.
- *
- * The sponsored-send seam methods (`listFeeOptions`, `estimateSponsoredFeeQuote`,
- * `buildEnergyRentRequest`) take a `TransactionIntent`, but the app holds a bridge `Transaction`; this
- * is the one place that turns the latter into the former without the app touching family internals or
- * re-deriving the token asset by hand. `network` is the family string and `kind` the coin-module
- * kind (`"local"` for a generic-coin-framework family). Kept a thin standalone helper rather than
- * refactoring that hot path.
+ * Converts a bridge `Transaction` into the `TransactionIntent` the sponsored-send seam methods take,
+ * mirroring `prepareTransaction`. `network` is the family string; `kind` is the coin-module kind.
  */
 export async function buildGenericTransactionIntent(
   network: string,
@@ -39,11 +31,8 @@ export async function buildGenericTransactionIntent(
         assetOwner: transaction.assetOwner ?? "",
       };
 
-  // Mirror prepareTransaction: a token max-send zeroes `amount`, but fee/energy estimation needs the
-  // real spendable, so read it from the sub-account when `useAllAmount` is set on a token transfer.
-  // Subtract pending outgoing token ops (as prepareTransaction does) — optimistic pendingOperations
-  // don't hit spendableBalance until the next sync, so the raw balance would over-state what the
-  // prepared transaction can actually send and inflate the requested energy/quote/order.
+  // Mirror prepareTransaction: subtract pending outgoing token ops, or a max-send inflates the
+  // requested energy/quote/order (pendingOperations aren't yet reflected in spendableBalance).
   let amount = transaction.amount;
   if (transaction.useAllAmount && transaction.subAccountId) {
     const subAccount = account.subAccounts?.find(acc => acc.id === transaction.subAccountId);

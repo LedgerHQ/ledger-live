@@ -49,9 +49,6 @@ describe("createApi", () => {
   it("omits the capabilities the chain has none of", () => {
     const impl = createApi();
 
-    // Kept out rather than stubbed: Tron contract reads are unsupported, withdrawals already show
-    // up in listOperations, and there is no enrollment step. The consumer resolver answers "not
-    // supported" for each. (craftRawTransaction IS implemented — see the sponsored-flow test below.)
     for (const method of ["call", "register", "getRewards"] as const) {
       expect(impl).not.toHaveProperty(method);
     }
@@ -65,8 +62,7 @@ describe("createApi", () => {
       energyRent,
     } as unknown as TronCoinConfig);
 
-  // craftRawTransaction resolves the energy-rent provider from `await context.config()`, so this
-  // context's config() must resolve to what withEnergyRentConfigured seeded.
+  // craftRawTransaction resolves the provider from `await context.config()` — must seed via this.
   const rawTxContext: TronContext = {
     logger: jest.fn(),
     config: mockRawConfig,

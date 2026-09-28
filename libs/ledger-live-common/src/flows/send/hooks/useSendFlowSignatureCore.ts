@@ -40,7 +40,7 @@ export type UseSendFlowSignatureCoreParams = Readonly<{
   }>;
   /**
    * Advances the flow once signature resolves; the outcome lets platforms branch success vs failure.
-   * `error` is passed on FAILURE only; a platform that does not need it can ignore it.
+   * `error` is set only on FAILURE.
    */
   onFinish: (completion: SendFlowCompletion, error?: Error) => void;
   /** Persists the optimistic operation as pending on the (main) account, app-side. */

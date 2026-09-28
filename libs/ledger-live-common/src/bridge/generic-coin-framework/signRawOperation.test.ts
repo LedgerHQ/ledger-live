@@ -25,12 +25,10 @@ describe("genericSignRawOperation", () => {
       }),
     );
 
-    // The bridge is built per family, so the network/family param is "evm" — NOT a currency id.
     const signRaw = genericSignRawOperation("evm", "local")(signerContext as any);
 
     await new Promise<void>((resolve, reject) => {
       signRaw({
-        // A base account: currency.id is the chain currency id ("ethereum"), distinct from family "evm".
         account: {
           currency: { id: "ethereum", family: "evm" },
           freshAddress: "0xAddr",
@@ -41,8 +39,6 @@ describe("genericSignRawOperation", () => {
       } as any).subscribe({ error: reject, complete: () => resolve() });
     });
 
-    // Must resolve by the currency id ("ethereum"); resolving by the family ("evm") finds no currency
-    // configuration and raw signing falls through to the unsupported network coin-service API.
     expect(getCoinModuleApi).toHaveBeenCalledWith("ethereum", "local");
     expect(buildContext).toHaveBeenCalledWith("ethereum");
     expect(coinModuleApi.craftRawTransaction).toHaveBeenCalled();

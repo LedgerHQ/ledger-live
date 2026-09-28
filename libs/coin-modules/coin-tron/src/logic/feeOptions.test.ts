@@ -29,8 +29,6 @@ const notActivatedConfig = {
 } as unknown as TronCoinConfig;
 
 const mockLogger: Logger = jest.fn();
-// One mockConfig seed covers both consumers — listFeeOptions resolves config once and threads it
-// into estimateFees and getEnergyProvider.
 const mockConfig = jest.fn<Promise<TronCoinConfig>, []>();
 const mockContext = { logger: mockLogger, config: mockConfig } as unknown as TronContext;
 
@@ -70,9 +68,7 @@ const sendTrc10: TransactionIntent<TronMemo, TronTxData> = {
   data: { type: "tron" },
 };
 
-// The Tronify offer is gated on an ENERGY shortfall (energyRequired > energyAvailable), so every
-// estimate carries a resource breakdown. Default to a shortfall so the activated cases offer Tronify;
-// pass equal/greater available energy to model a sender who needs no rental.
+// Defaults to an energy shortfall (offers Tronify); pass equal/greater available energy for a sender who needs no rental.
 const fee = (
   value: bigint,
   energy: { required: string; available: string } = { required: "10000", available: "0" },
@@ -123,6 +119,7 @@ describe("listFeeOptions", () => {
     mockConfig.mockResolvedValue(notActivatedConfig);
     await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
     expect(mockEstimateFees).not.toHaveBeenCalled();
+    expect(mockLogger).not.toHaveBeenCalled();
   });
 
   it("returns [standard] when the Tronify provider is present but under-configured", async () => {
@@ -138,8 +135,6 @@ describe("listFeeOptions", () => {
   });
 
   it("returns [standard] when the sender already has enough energy, even if a bandwidth/activation fee remains", async () => {
-    // A nonzero fee that is NOT an energy shortfall (bandwidth/activation only): renting energy would
-    // not help, and the account already clears the absolute delivery threshold — so Tronify is not offered.
     mockEstimateFees.mockResolvedValue(fee(1_000_000n, { required: "5000", available: "5000" }));
     await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
   });

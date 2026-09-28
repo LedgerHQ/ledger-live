@@ -64,8 +64,6 @@ describe("tronify network client", () => {
     );
   });
 
-  // Remote coin-config is untyped JSON, so url/sourceFlag may arrive as non-strings or blank; the guard
-  // must reject them before it opens raw-signing.
   it.each([
     { url: "", sourceFlag: SOURCE_FLAG },
     { url: "   ", sourceFlag: SOURCE_FLAG },

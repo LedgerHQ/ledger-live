@@ -8,6 +8,6 @@ export const TRONIFY_PROVIDER: Readonly<EnergyProviderInfo> = { id: "tronify", n
 
 export const ENERGY_PROVIDERS: ReadonlyArray<Readonly<EnergyProviderInfo>> = [TRONIFY_PROVIDER];
 
-// Display metadata only — not a config gate; raw-signing is gated by energyRent's getEnergyProvider(config).
+// Display metadata only, not a config gate — that's energyRent's getEnergyProvider(config).
 export const findEnergyProvider = (id: string): EnergyProviderInfo | undefined =>
   ENERGY_PROVIDERS.find(p => p.id === id);

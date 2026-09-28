@@ -25,21 +25,9 @@ const feeOption = (id: string): FeeOptionMeta => ({
 // Fresh array per call so a caller can't mutate a shared module-level list.
 const standardOnly = (): FeeOptionMeta[] => [feeOption(STANDARD_FEE_OPTION_ID)];
 
-/**
- * List the fee-payment options available for an intent (ADR-050 Option 3) — availability metadata
- * only, no amounts. The Tronify energy-rent option is offered alongside the standard TRX burn only
- * when all of the following hold:
- *   - the intent is a TRC-20 transfer (Tronify covers nothing else — never native or TRC-10 sends),
- *   - a fully-configured Tronify provider resolves from remote coin-config (getEnergyProvider's predicate),
- *   - the sender has a genuine **energy** shortfall (`energyRequired > energyAvailable`) — renting energy
- *     does nothing for a bandwidth-/activation-only cost, and the on-chain delivery gate reads *absolute*
- *     energy, so offering it when energy is already sufficient could release TX-C on an undelivered rental.
- *
- * Never throws: any failure (unreadable config, a failed energy simulation) degrades to the
- * standard-only list, so the standard path always works (ADR-050 Option 3 AC). Availability is not
- * probed over the network here — the actual Tronify price (and hence its live availability) is
- * fetched later by `estimateFees(intent, "tronify")`, which surfaces any failure explicitly.
- */
+/** Fee-payment options (ADR-050 Option 3); never throws — any failure degrades to standard-only.
+ * Tronify is offered only on a genuine energy shortfall, since the on-chain delivery gate reads
+ * absolute energy and would otherwise risk releasing TX-C on an undelivered rental. */
 export async function listFeeOptions(
   context: TronContext,
   intent: TronIntent,
@@ -55,18 +43,13 @@ export async function listFeeOptions(
 
     const config = await context.config();
 
-    // Activation gate: offer Tronify only when a fully-configured provider resolves — the same predicate
-    // getEnergyProvider dispatches on (provider name + required url/sourceFlag). A malformed energyRent
-    // block (missing url/sourceFlag, unknown provider) throws, degrading to standard-only in the catch
-    // instead of advertising an option that only fails later in estimate/craft. Bare call, not `void`:
-    // this is synchronous and called only for that throw, and `void` is the floating-Promise idiom that
-    // would mislead here (the resolved provider is re-read where it's used).
+    // Not enabled is the normal state, not a failure — return before the gate so it isn't logged below.
+    if (!config.energyRent) return standardOnly();
+
+    // A malformed energyRent block (missing url/sourceFlag, unknown provider) throws here, degrading
+    // to standard-only in the catch instead of advertising an option that only fails later.
     getEnergyProvider(config);
 
-    // Offer Tronify only on a genuine ENERGY shortfall (not `value`, which also counts bandwidth/
-    // activation): the delivery gate reads absolute energy, so a pre-met threshold could release TX-C on
-    // an unpaid rental — gating here keeps that threshold starting unmet. A failed estimate reports a
-    // pessimistic shortfall, so it still offers Tronify and surfaces the price error later.
     const standard = await estimateFees(context.logger, config, intent);
     const energyRequired = standard.parameters?.energyRequired;
     const energyAvailable = standard.parameters?.energyAvailable;

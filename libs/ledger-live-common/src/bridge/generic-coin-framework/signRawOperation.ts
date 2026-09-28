@@ -10,8 +10,6 @@ import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import type { GenericTransaction } from "./types";
 
-// The signer type stays `any` here, as the pre-existing bridge signature did — the raw-sign path is
-// signer-agnostic. Aliased so the one `any` isn't repeated across the deps type and the factory.
 type RawSignerContext = SignerContext<any>;
 
 type SignRawDeps = {
@@ -23,15 +21,9 @@ type SignRawDeps = {
   deviceId: DeviceId;
 };
 
-// Hoisted out of the Observable/curried closures so the on-device signing callback stays a shallow
-// nesting level (keeps the whole flow under the max-nesting bound); the subscriber `o` and everything
-// the closures used are threaded in as `deps`.
 async function signRawAndEmit(o: Subscriber<SignOperationEvent>, deps: SignRawDeps): Promise<void> {
   const { network, kind, signerContext, account, transaction, deviceId } = deps;
-  // Resolve the coin-module and context from `account.currency.id`, mirroring genericSignOperation:
-  // `network` here is the family string (buildAccountBridgeForFamily passes it), so for a multi-currency
-  // family it isn't a currency id — buildContext/getCoinModuleApi would fail to resolve a config (e.g.
-  // "evm" ≠ "ethereum"). `network` is only for getBridgeApi, whose lookup is family-keyed.
+  // Coin-module/context resolve by account.currency.id; getBridgeApi (network) is family-keyed.
   const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
   const context = buildContext(account.currency.id);
   const bridgeApi = await getBridgeApi(account.currency, network);

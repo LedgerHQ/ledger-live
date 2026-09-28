@@ -7,11 +7,7 @@ import type {
   EnergyRentUnsignedTransaction,
 } from "./types";
 
-/**
- * The device-signable payload for an energy-rent order's unsigned payment tx: the hex the device signs
- * (`raw_data_hex`) and TX-A's id (`txID`, stable across signing). Lets the generic sponsored flow drive
- * the signature and native reservation without knowing coin-tron's Tronify wire shape.
- */
+/** Lets the generic sponsored flow drive signing without knowing coin-tron's Tronify wire shape. */
 export function getEnergyRentSignaturePayload(transaction: EnergyRentUnsignedTransaction): {
   toSign: string;
   paymentTxId: string;
@@ -19,10 +15,8 @@ export function getEnergyRentSignaturePayload(transaction: EnergyRentUnsignedTra
   return { toSign: transaction.raw_data_hex, paymentTxId: transaction.txID };
 }
 
-/**
- * Rebuild the Tronify-signed payment payload from the device's combined signature — the inverse-of-
- * `combine` reconstruction the generic flow can't do because the wire shape is coin-tron's.
- */
+/** Inverse of `combine`: rebuilds the Tronify-signed payload the generic flow can't, since the wire
+ * shape is coin-tron's. */
 export function buildSignedEnergyRentTransaction(
   transaction: EnergyRentUnsignedTransaction,
   combinedSignature: string,
@@ -33,13 +27,8 @@ export function buildSignedEnergyRentTransaction(
   };
 }
 
-/**
- * Native amount (in sun) the rent payment debits, for the platform to lock against the payer's balance
- * until TX-A syncs. TX-A is always a native-TRX debit, so `payCoinAmt` (TRX) converts by SUN_PER_TRX;
- * the generic reservation layer stays unit-agnostic and receives smallest-unit sun. Rounds up: TRX is
- * 6-dp so the conversion is normally exact, but a provider quote with sub-sun precision must never
- * under-reserve the lock.
- */
+/** Sun the platform should lock against the payer's balance until TX-A syncs. Rounds up: a sub-sun
+ * quote must never under-reserve the lock. */
 export function nativeRentAmount(order: EnergyRentOrder): bigint {
   return BigInt(
     new BigNumber(order.payCoinAmt).times(SUN_PER_TRX).toFixed(0, BigNumber.ROUND_CEIL),

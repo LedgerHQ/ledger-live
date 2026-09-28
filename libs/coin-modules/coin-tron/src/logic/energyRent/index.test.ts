@@ -29,8 +29,7 @@ import {
 import { getTronAccountNetwork } from "../../network";
 
 jest.mock("../../network/tronify", () => ({
-  // Keep the real getTronifyConfig (validates the config passed to getEnergyProvider) so the
-  // configuration gate is exercised for real; only the network calls are stubbed.
+  // Keep the real getTronifyConfig so the configuration gate is exercised for real.
   ...jest.requireActual("../../network/tronify"),
   queryPreorderInfo: jest.fn(),
   addTronRentRecord: jest.fn(),
@@ -38,15 +37,13 @@ jest.mock("../../network/tronify", () => ({
   myPayOrder: jest.fn(),
 }));
 
-// craftEnergyRentTransaction decodes raw_data_hex to verify the signed bytes, so mock the decoder
-// to drive the decoded shape without constructing real TRON tx bytes.
+// Mocked so tests can drive the decoded shape without constructing real TRON tx bytes.
 jest.mock("../utils", () => ({
   ...jest.requireActual("../utils"),
   decodeTransaction: jest.fn(),
 }));
 
-// The on-chain delivery gate reads the receiver's resource state via getTronAccountNetwork; stub it
-// to drive the energy the receiver holds mid-poll without hitting a node.
+// Stubbed to drive the energy the receiver holds mid-poll without hitting a node.
 jest.mock("../../network", () => ({
   ...jest.requireActual("../../network"),
   getTronAccountNetwork: jest.fn(),
@@ -97,14 +94,11 @@ const request = {
   durationSeconds: 600,
 };
 
-// A signable order's txID must be sha256(raw_data), which assertSignableOrder recomputes from
-// raw_data_hex. These are a matching pair (SIGNABLE_TX_ID = sha256("abcd")), hardcoded rather than
-// derived so a wrong production hash breaks the success-path fixtures instead of silently tracking it.
+// A Tron txID is sha256(raw_data): hardcoded as a matching pair (not derived) so a wrong production
+// hash breaks these fixtures instead of silently tracking it.
 const SIGNABLE_RAW_DATA_HEX = "abcd";
 const SIGNABLE_TX_ID = "123d4c7ef2d1600a1b3a0f6addc60a10f05a3495c9409f2ecbf4cc095d000a6b";
 
-// A decoded native-TRX TransferContract from the payer for `amount` sun — the shape
-// craftEnergyRentTransaction's signed-bytes check expects. Overridable to drive the negative cases.
 const decodedTransfer = (
   overrides: { type?: string; owner_address?: string; amount?: number } = {},
 ) => ({
@@ -148,8 +142,6 @@ describe("energyRent provider switch", () => {
       expect(() => getEnergyProvider(config)).toThrow(EnergyRentProviderNotConfigured);
     });
 
-    // Remote coin-config is unvalidated: a provider named "tronify" whose nested settings are absent
-    // or incomplete must not resolve, or the raw-signing gate would open with no configured provider.
     it.each([
       ["the tronify settings are absent", undefined],
       ["the tronify settings are empty", {}],
@@ -439,6 +431,15 @@ describe("energyRent provider switch", () => {
         ).rejects.toBeInstanceOf(TronifyApiError);
       });
 
+      it("accepts a sub-sun quote paid as the next whole sun", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("3.1245271"));
+        mockedDecodeTransaction.mockResolvedValueOnce(decodedTransfer({ amount: 3_124_528 }));
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, request),
+        ).resolves.toMatchObject({ orderId: "order-1" });
+      });
+
       it("rejects when the signed amount exceeds the approved cost", async () => {
         mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
         mockedDecodeTransaction.mockResolvedValueOnce(decodedTransfer({ amount: 1_000_001 }));
@@ -574,7 +575,6 @@ describe("awaitEnergyDeliveryWith", () => {
     await expect(p).rejects.toBeInstanceOf(TronifyApiError);
   });
 
-  // The rental is paid for before polling starts, so a transient status failure must not abandon it.
   test("rides out transient status failures and still resolves on delivery", async () => {
     const outcomes: Array<() => Promise<EnergyRentStatus>> = [
       () => Promise.reject(new Error("503 Service Unavailable")),
@@ -590,9 +590,23 @@ describe("awaitEnergyDeliveryWith", () => {
     await expect(p).resolves.toBeUndefined();
   });
 
-  // Exhaustion must not surface a raw error: that reaches DELIVERY_FAILED and re-crafts on retry
-  // (double charge). This test locks it onto the uncertain-delivery timeout path instead (LIVE-32780 AC2).
-  test("read exhaustion surfaces an uncertain-delivery timeout with the cause preserved", async () => {
+  test("tolerates exactly maxConsecutiveErrors failures in a row", async () => {
+    const outcomes: Array<() => Promise<EnergyRentStatus>> = [
+      () => Promise.reject(new Error("503 Service Unavailable")),
+      () => Promise.reject(new Error("503 Service Unavailable")),
+      () => Promise.resolve("delivered"),
+    ];
+    let i = 0;
+    const p = awaitEnergyDeliveryWith(() => outcomes[i++](), {
+      intervalMs: 10,
+      timeoutMs: 1000,
+      maxConsecutiveErrors: 2,
+    });
+    await jest.advanceTimersByTimeAsync(30);
+    await expect(p).resolves.toBeUndefined();
+  });
+
+  test("read exhaustion surfaces a timeout (not DELIVERY_FAILED, which would double-charge a retry), cause preserved", async () => {
     const cause = new Error("503 Service Unavailable");
     const p = awaitEnergyDeliveryWith(() => Promise.reject(cause), {
       intervalMs: 10,
@@ -609,8 +623,6 @@ describe("awaitEnergyDeliveryWith", () => {
     await assertion;
   });
 
-  // Reset/unmount aborts the poll: it stops before any status read and throws EnergyDeliveryAbortedError
-  // (not the timeout), so the caller drops the cycle without an on-chain reconciliation.
   test("a pre-aborted signal stops the poll before any status read", async () => {
     const controller = new AbortController();
     controller.abort();
@@ -641,8 +653,6 @@ describe("awaitEnergyDeliveryWith", () => {
     expect(getStatus.mock.calls.length).toBeLessThanOrEqual(callsBeforeAbort + 1);
   });
 
-  // The deadline is enforced even while a request is in flight: a hung request surfaces
-  // EnergyDelegationTimeoutError instead of stranding the POLLING screen.
   test("times out while a status request is still in flight", async () => {
     const p = awaitEnergyDeliveryWith(() => new Promise<EnergyRentStatus>(() => {}), {
       intervalMs: 10,
@@ -686,12 +696,11 @@ describe("awaitEnergyDelivery (on-chain gate)", () => {
   afterEach(() => jest.useRealTimers());
 
   test("resolves once the receiver's on-chain available energy covers energyNeeded", async () => {
-    // Deficient, then the delegation lands and available (EnergyLimit − EnergyUsed) crosses the need.
     mockedGetTronAccountNetwork
       .mockResolvedValueOnce(netInfo(0))
-      .mockResolvedValueOnce(netInfo(200, 100)) // 100 available, still < 1000
-      .mockResolvedValueOnce(netInfo(1200, 100)); // 1100 available ≥ 1000
-    providerStatus("wait_sale"); // provider still "paid", not the gate
+      .mockResolvedValueOnce(netInfo(200, 100))
+      .mockResolvedValueOnce(netInfo(1200, 100));
+    providerStatus("wait_sale");
     const p = awaitEnergyDelivery(mockLogger, config, ref, target, {
       intervalMs: 10,
       timeoutMs: 1000,
@@ -701,8 +710,8 @@ describe("awaitEnergyDelivery (on-chain gate)", () => {
   });
 
   test("does NOT resolve on the provider reporting delivered — only the on-chain threshold releases TX-C", async () => {
-    mockedGetTronAccountNetwork.mockResolvedValue(netInfo(100)); // 100 < 1000, forever
-    providerStatus("complete"); // provider says delivered the whole time
+    mockedGetTronAccountNetwork.mockResolvedValue(netInfo(100));
+    providerStatus("complete");
     const p = awaitEnergyDelivery(mockLogger, config, ref, target, {
       intervalMs: 10,
       timeoutMs: 50,
@@ -715,7 +724,7 @@ describe("awaitEnergyDelivery (on-chain gate)", () => {
 
   test("fails fast when the provider reports the order failed before energy lands", async () => {
     mockedGetTronAccountNetwork.mockResolvedValue(netInfo(0));
-    providerStatus("timeout"); // maps to "failed"
+    providerStatus("timeout");
     const p = awaitEnergyDelivery(mockLogger, config, ref, target, {
       intervalMs: 10,
       timeoutMs: 1000,
@@ -724,7 +733,7 @@ describe("awaitEnergyDelivery (on-chain gate)", () => {
   });
 
   test("skips the advisory provider call once energy is already on-chain", async () => {
-    mockedGetTronAccountNetwork.mockResolvedValue(netInfo(5000)); // 5000 ≥ 1000 immediately
+    mockedGetTronAccountNetwork.mockResolvedValue(netInfo(5000));
     const p = awaitEnergyDelivery(mockLogger, config, ref, target, {
       intervalMs: 10,
       timeoutMs: 1000,
@@ -734,9 +743,6 @@ describe("awaitEnergyDelivery (on-chain gate)", () => {
   });
 
   test("a provider-status outage does not abort a delivery the on-chain read then confirms", async () => {
-    // The provider throws on every poll — more than maxConsecutiveErrors in a row — while on-chain is
-    // still deficient; the outage must degrade to pending, not burn the error budget, so the delivery
-    // still resolves once the on-chain threshold is crossed.
     mockedGetTronAccountNetwork
       .mockResolvedValueOnce(netInfo(0))
       .mockResolvedValueOnce(netInfo(0))
@@ -744,7 +750,7 @@ describe("awaitEnergyDelivery (on-chain gate)", () => {
       .mockResolvedValueOnce(netInfo(0))
       .mockResolvedValueOnce(netInfo(0))
       .mockResolvedValueOnce(netInfo(0))
-      .mockResolvedValue(netInfo(2000)); // ≥ 1000 from the 7th poll on
+      .mockResolvedValue(netInfo(2000));
     mockedMyPayOrder.mockRejectedValue(new Error("provider status 503"));
     const p = awaitEnergyDelivery(mockLogger, config, ref, target, {
       intervalMs: 10,
@@ -774,9 +780,9 @@ describe("isEnergyDeliveredOnChain (one-shot gate for reconcile paths)", () => {
   beforeEach(() => mockedGetTronAccountNetwork.mockReset());
 
   test("true once available energy covers energyNeeded, false while it does not", async () => {
-    mockedGetTronAccountNetwork.mockResolvedValueOnce(netInfo(1200, 100)); // 1100 available ≥ 1000
+    mockedGetTronAccountNetwork.mockResolvedValueOnce(netInfo(1200, 100));
     await expect(isEnergyDeliveredOnChain(mockLogger, config, target)).resolves.toBe(true);
-    mockedGetTronAccountNetwork.mockResolvedValueOnce(netInfo(900)); // 900 < 1000
+    mockedGetTronAccountNetwork.mockResolvedValueOnce(netInfo(900));
     await expect(isEnergyDeliveredOnChain(mockLogger, config, target)).resolves.toBe(false);
   });
 });

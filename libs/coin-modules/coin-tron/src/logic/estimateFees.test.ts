@@ -863,8 +863,6 @@ describe("estimateTronifyFees", () => {
     );
   });
 
-  // extraTrxNum's wire range is discontinuous: 0 or [0.8, 500]. A value in the gap or above the max
-  // must fall back to the default rather than reach the order API.
   it.each([[0.1], [0.5], [600], [500.5]])(
     "should reject an out-of-range coin-config rentalExtraTrx (%p) and use the default",
     async invalidExtraTrx => {
@@ -1098,14 +1096,11 @@ describe("buildEnergyRentRequest", () => {
       energy: BigInt(ENERGY_USED),
       durationSeconds: 600,
       extraTrx: 0.8,
-      // Ceiling stamped from the quote for these exact params, enforced at craft time.
       maxPayCoinAmt: "12.5",
       maxPayCoinCode: "TRX",
     });
   });
 
-  // Fail closed: a request with no ceiling is exactly the unbounded case the ceiling guards
-  // against, so a quote failure must not degrade into crafting without one.
   it("propagates a quote failure rather than building an unbounded request", async () => {
     mockGetEnergyRentQuote.mockRejectedValue(new Error("tronify down"));
 
@@ -1126,8 +1121,6 @@ describe("buildEnergyRentRequest", () => {
     ).rejects.toThrow("Energy rent requires a recipient");
   });
 
-  // Same TRX-only guard estimateTronifyFees applies to the display quote: the order-creation path
-  // must also reject a non-TRX (Flow-2 USDT) quote before it reaches the ceiling / signing.
   it("throws on a non-TRX quote rather than stamping a non-TRX ceiling", async () => {
     mockGetEnergyRentQuote.mockResolvedValue({
       ...trxQuote,

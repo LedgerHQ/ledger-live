@@ -12,7 +12,6 @@ jest.mock("./bridge", () => ({ getBridgeApi: jest.fn() }));
 jest.mock("./prepareTransaction", () => ({ getAssetInfos: jest.fn() }));
 jest.mock("./utils", () => ({
   transactionToIntent: jest.fn(() => ({ type: "send" })),
-  // Returns the pending-token spend to subtract; 0 for these fixtures (no pending ops).
   getPendingTokenSpent: jest.fn(() => 0),
 }));
 
@@ -72,7 +71,6 @@ test("a token max-send reads the sub-account spendable balance as the amount", a
 });
 
 test("resolves the coin-module and context by currency id, and the bridge by the family network", async () => {
-  // A multi-currency family: the family string ("evm") differs from the currency id ("ethereum").
   const evmAccount = {
     currency: { id: "ethereum" },
     freshAddress: "0xSender",

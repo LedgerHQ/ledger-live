@@ -34,7 +34,6 @@ export async function decodeTransaction(rawTx: string): Promise<{
   };
 }
 
-/** A Tron txID is the sha256 of the transaction's raw_data bytes (`raw_data_hex`). */
 export function tronTxIdFromRawDataHex(rawDataHex: string): string {
   return createHash("sha256")
     .update(new Uint8Array(Buffer.from(rawDataHex, "hex")))

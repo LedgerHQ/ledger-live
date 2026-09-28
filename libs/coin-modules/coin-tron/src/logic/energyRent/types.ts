@@ -23,18 +23,10 @@ export type EnergyRentRequest = {
   durationSeconds: number;
   /** Extra TRX to bundle for bandwidth, in TRX (e.g. 0.8). Defaults to 0. */
   extraTrx?: number;
-  /**
-   * Ceiling on what the created order may cost, as a provider-native decimal string in the same
-   * unit as {@link EnergyRentOrder.payCoinAmt}. Pricing and ordering are two separate provider
-   * calls that each return their own amount, so without a ceiling the device could be handed
-   * payment bytes for more than the price the user approved. `craftEnergyRentTransaction` rejects
-   * an order that exceeds it. Omit only when no approved amount exists yet.
-   */
+  /** Ceiling on what the created order may cost (provider-native decimal string, same unit as
+   * {@link EnergyRentOrder.payCoinAmt}); `craftEnergyRentTransaction` rejects an order exceeding it. */
   maxPayCoinAmt?: string;
-  /**
-   * Currency {@link maxPayCoinAmt} is denominated in. A ceiling means nothing against an order
-   * priced in a different coin, so the check also requires the order's `payCoinCode` to match.
-   */
+  /** Currency {@link maxPayCoinAmt} is denominated in; the order's `payCoinCode` must match it. */
   maxPayCoinCode?: string;
 };
 

@@ -51,7 +51,6 @@ describe("nativeRentAmount", () => {
       orderId: "o1",
       transaction: unsigned,
       payCoinCode: "TRX",
-      // 7 dp — the 0.0000001 TRX tail is below one sun and must round the reservation up, not down.
       payCoinAmt: "3.1245271",
     };
 
