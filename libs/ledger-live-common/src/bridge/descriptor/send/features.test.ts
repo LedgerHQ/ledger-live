@@ -54,12 +54,25 @@ describe("sendFeatures.getTrackingAttributes", () => {
     setZcashShieldedEnabled(previousShieldedEnabled);
   });
 
-  it("Zcash: forwards the descriptor's privacy/transferFlow attributes once a source pool is picked", () => {
+  it("Zcash: forwards the descriptor's privacy/transferFlow attributes once the recipient is classified", () => {
+    const transaction = {
+      family: "zcash",
+      sender: "private",
+      recipientType: "public",
+      transferType: "shielded-to-transparent",
+    };
+
+    expect(sendFeatures.getTrackingAttributes(zcash, transaction)).toEqual({
+      privacy: "private",
+      transferFlow: "private-to-public",
+    });
+  });
+
+  it("Zcash: forwards only privacy between the source pool pick and the recipient", () => {
     const transaction = { family: "zcash", sender: "private", transferType: "shielded" };
 
     expect(sendFeatures.getTrackingAttributes(zcash, transaction)).toEqual({
       privacy: "private",
-      transferFlow: "private-to-private",
     });
   });
 

@@ -6,45 +6,53 @@ import type { CoinDescriptor } from "../../../bridge/descriptor/types";
 import { zcashBalanceTypeConfig } from "./balanceType";
 import { memo } from "./memo";
 
+type ZcashTransferFlow =
+  | "public-to-public"
+  | "public-to-private"
+  | "private-to-public"
+  | "private-to-private";
+
 export type ZcashPrivacyAttributes = Readonly<{
   privacy: "public" | "private";
-  transferFlow:
-    | "public-to-public"
-    | "public-to-private"
-    | "private-to-public"
-    | "private-to-private";
+  transferFlow?: ZcashTransferFlow;
 }>;
 
 /**
- * Chain-neutral privacy attributes keyed off `transferType`. The send-flow page events
- * read them through `getTrackingAttributes` below; any other analytics sink reporting a
- * Zcash send's privacy should reuse this mapping rather than derive its own. Named
+ * Chain-neutral privacy attributes of a Zcash send. The send-flow page events read them
+ * through `getTrackingAttributes` below; any other analytics sink reporting a Zcash
+ * send's privacy should reuse this mapping rather than derive its own. Named
  * `transferFlow` rather than the generic `flow`: every send-flow Segment event already
  * carries a `flow: "send"` property (the funnel name), and this would silently
  * overwrite it.
  */
-const ATTRIBUTES_BY_TRANSFER_TYPE: Record<ZcashTransferType, ZcashPrivacyAttributes> = {
-  transparent: { privacy: "public", transferFlow: "public-to-public" },
-  "transparent-to-shielded": { privacy: "public", transferFlow: "public-to-private" },
-  "shielded-to-transparent": { privacy: "private", transferFlow: "private-to-public" },
-  shielded: { privacy: "private", transferFlow: "private-to-private" },
+const TRANSFER_FLOW_BY_TRANSFER_TYPE: Record<ZcashTransferType, ZcashTransferFlow> = {
+  transparent: "public-to-public",
+  "transparent-to-shielded": "public-to-private",
+  "shielded-to-transparent": "private-to-public",
+  shielded: "private-to-private",
 };
 
 function isZcashSendTransaction(
   transaction: unknown,
-): transaction is Pick<ZcashTransaction, "family" | "sender" | "transferType"> {
+): transaction is Pick<ZcashTransaction, "family" | "sender" | "recipientType" | "transferType"> {
   if (typeof transaction !== "object" || transaction === null) return false;
   return "family" in transaction && transaction.family === "zcash";
 }
 
 /**
  * `undefined` until the user has picked a source pool (`sender`): before that,
- * `transferType` defaults to "transparent" without reflecting an actual choice,
- * so neither the broadcast event nor a page event should attach it yet.
+ * `transferType` defaults to "transparent" without reflecting an actual choice.
+ * `transferFlow` additionally waits for the recipient to be classified
+ * (`recipientType`): the balance-type step comes before the recipient step, and until
+ * then `transferType` assumes a same-pool send whatever the eventual destination.
  */
 export function getPrivacyAttributes(transaction: unknown): ZcashPrivacyAttributes | undefined {
   if (!isZcashSendTransaction(transaction) || !transaction.sender) return undefined;
-  return ATTRIBUTES_BY_TRANSFER_TYPE[transaction.transferType];
+  if (!transaction.recipientType) return { privacy: transaction.sender };
+  return {
+    privacy: transaction.sender,
+    transferFlow: TRANSFER_FLOW_BY_TRANSFER_TYPE[transaction.transferType],
+  };
 }
 
 // ZIP-317 defines one conventional fee computed from the transaction's action
