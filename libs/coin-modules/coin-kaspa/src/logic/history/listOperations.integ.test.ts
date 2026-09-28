@@ -96,11 +96,12 @@ describe("listOperations (integration)", () => {
         pages: [ids(NEWEST, SECOND), []],
       },
       {
-        // synced up to SECOND: page 1 already reaches known history → stop without a 2nd call
-        name: "incremental, known history on the first page, single call",
+        // synced up to SECOND: page 1 holds it, but SECOND..THIRD all fall on 2026-07-08 21:1x, inside
+        // the 2 h late-acceptance window — so the walk goes on until OLDEST (14:39) is past it
+        name: "incremental, known history on the first page, walks the lookback window",
         minHeight: SECOND.score + 1,
         limit: 2,
-        pages: [ids(NEWEST)],
+        pages: [ids(NEWEST), []],
       },
       {
         name: "incremental, nothing new since the last sync",

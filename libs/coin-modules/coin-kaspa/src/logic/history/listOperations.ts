@@ -46,6 +46,14 @@ function toFrameworkOperation(t: KaspaTransfer): Operation<MemoNotSupported> {
   };
 }
 
+// A block carrying a valid tx can be merged into the BlockDAG up to ~1 h after its own timestamp, so
+// that tx gets a higher accepting blue score than txs with newer block times. The legacy bridge
+// covers it by rescanning 2 h before the last sync (bridge/synchronization.ts); the same window is
+// applied here, counted back from the newest already-synced tx the walk has seen.
+export const LATE_ACCEPTANCE_WINDOW_MS = 2 * 60 * 60 * 1000;
+
+// The cursor is `<before>` or `<before>:<anchor>`: the indexer's X-Next-Page-Before block time, and
+// the block time of the newest already-synced tx seen so far (the start of the lookback window).
 export function parseCursor(options: ListOperationsOptions): number | undefined {
   let before: number | undefined;
   if (options.cursor) {
@@ -57,11 +65,20 @@ export function parseCursor(options: ListOperationsOptions): number | undefined 
   return before;
 }
 
+export function parseAnchor(options: ListOperationsOptions): number | undefined {
+  const [, anchor] = (options.cursor ?? "").split(":");
+  const parsed = Number.parseInt(anchor ?? "", 10);
+  return Number.isNaN(parsed) || parsed < 1 ? undefined : parsed;
+}
+
 /**
- * List native KAS operations for a Kaspa address, one indexer page at a time, newest first.
- * Without a cursor it reads the newest page; the indexer's `X-Next-Page-Before` cursor (surfaced by
- * `network/getTransactions` as `nextPageBefore`) is returned as `next` and fed back as `before`, so
- * each page walks further into the past.
+ * List native KAS operations for a Kaspa address, newest first. Without a cursor it reads the newest
+ * indexer page; the indexer's `X-Next-Page-Before` cursor (surfaced by `network/getTransactions` as
+ * `nextPageBefore`) is returned in `next` and fed back as `before`, so each call walks further into
+ * the past.
+ *
+ * With `minHeight`, the walk stops once it is LATE_ACCEPTANCE_WINDOW_MS older than the newest
+ * already-synced tx: anything older was accepted before that tx, hence below `minHeight`.
  */
 export async function listOperations(
   address: string,
@@ -83,25 +100,44 @@ export async function listOperations(
   }
   const limit = options.limit === undefined ? undefined : Math.min(options.limit, MAX_PAGE_LIMIT);
 
-  const before = parseCursor(options);
-
-  const { transactions, nextPageBefore } = await getTransactions(address, { before, limit });
-  const pageTransactions = transactions ?? [];
-  const addressSet = new Set([address]);
   const { minHeight } = options;
+  const addressSet = new Set([address]);
+  const items: Operation<MemoNotSupported>[] = [];
+  let before = parseCursor(options);
+  let anchor = parseAnchor(options);
 
-  const items = pageTransactions
-    .filter(tx => !minHeight || tx.accepting_block_blue_score >= minHeight)
-    .map(tx => toFrameworkOperation(parseKaspaTransfer(tx, addressSet)));
+  for (;;) {
+    const { transactions, nextPageBefore } = await getTransactions(address, { before, limit });
+    const page = transactions ?? [];
 
-  // Pages come newest first: once a page holds anything below minHeight, every later page is older
-  // still, so stop here instead of fetching (and discarding) the next one. The whole page is
-  // filtered first, so a late-accepted tx sitting among older ones on this page is still kept.
-  const reachedKnownHistory =
-    !!minHeight && pageTransactions.some(tx => tx.accepting_block_blue_score < minHeight);
+    // The whole page is filtered, so a late-accepted tx sitting among older ones is still kept.
+    for (const tx of page) {
+      if (!minHeight || tx.accepting_block_blue_score >= minHeight) {
+        items.push(toFrameworkOperation(parseKaspaTransfer(tx, addressSet)));
+      } else if (anchor === undefined || tx.block_time > anchor) {
+        anchor = tx.block_time;
+      }
+    }
 
-  return {
-    items,
-    next: reachedKnownHistory ? undefined : (nextPageBefore ?? undefined),
-  };
+    // Full sync: nothing is known yet, so every page is new — pass the indexer's cursor through.
+    if (!minHeight) {
+      return { items, next: nextPageBefore ?? undefined };
+    }
+
+    const oldestBlockTime = Math.min(...page.map(tx => tx.block_time));
+    const pastLookback =
+      anchor !== undefined && oldestBlockTime <= anchor - LATE_ACCEPTANCE_WINDOW_MS;
+    if (!nextPageBefore || page.length === 0 || pastLookback) {
+      return { items, next: undefined };
+    }
+
+    const next = anchor === undefined ? nextPageBefore : `${nextPageBefore}:${anchor}`;
+    // Inside the lookback window pages are often all already-synced. An empty page that still has a
+    // cursor ends generic-coin-framework's paginateOperations walk, so keep reading here until there
+    // is something to return or the window is behind us.
+    if (items.length > 0) {
+      return { items, next };
+    }
+    before = Number.parseInt(nextPageBefore, 10);
+  }
 }

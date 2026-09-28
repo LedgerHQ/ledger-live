@@ -57,10 +57,11 @@ let firstSyncHashes = new Set<string>();
  * Invariants of every sync after the first, checked right after it:
  * - nothing is duplicated and nothing already synced disappears (the new ops are merged in, not
  *   replacing or repeating history);
- * - on the generic adapter, the sync reads exactly one history page: the newest page holds the new
- *   ops *and* already-synced ones, so listOperations' stop rule ends the walk there instead of
- *   re-reading the whole (multi-page) history. Legacy fetches per used address, so its request
- *   count is not a fixed number.
+ * - on the generic adapter, the walk reads each history page at most once. listOperations keeps
+ *   going for a 2 h late-acceptance window past the newest already-synced tx (as legacy rescans 2 h);
+ *   simnet mines the whole history within seconds, so here that window covers all of it and the walk
+ *   reaches the end — but it must never re-read or loop over pages. Legacy fetches per used address,
+ *   so its request count is not a fixed number.
  */
 function expectHealthySync(prev: Account, curr: Account, strategy: BridgeStrategy): void {
   const hashes = curr.operations.map(op => op.hash);
@@ -68,7 +69,10 @@ function expectHealthySync(prev: Account, curr: Account, strategy: BridgeStrateg
   const currHashes = new Set(hashes);
   expect(prev.operations.filter(op => !currHashes.has(op.hash)).map(op => op.hash)).toEqual([]);
   if (strategy === "generic-adapter") {
-    expect(historyPages.count()).toBe(1);
+    // +1: the indexer may widen a page to keep same-block-time txs together.
+    const wholeHistoryPages = Math.ceil(curr.operationsCount / INDEXER_PAGE_SIZE) + 1;
+    expect(historyPages.count()).toBeGreaterThanOrEqual(1);
+    expect(historyPages.count()).toBeLessThanOrEqual(wholeHistoryPages);
   }
 }
 

@@ -1,4 +1,4 @@
-import { listOperations, parseCursor } from "./listOperations";
+import { listOperations, parseAnchor, parseCursor } from "./listOperations";
 
 const mockGetTransactions = jest.fn();
 jest.mock("../../network", () => ({
@@ -42,19 +42,39 @@ describe("parseCursor", () => {
   });
 });
 
+describe("parseAnchor", () => {
+  it.each([
+    { cursor: undefined, anchor: undefined },
+    { cursor: "1720440515512", anchor: undefined },
+    { cursor: "1720440515512:1720440000000", anchor: 1720440000000 },
+    { cursor: "1720440515512:", anchor: undefined },
+    { cursor: "1720440515512:abc", anchor: undefined },
+    { cursor: "1720440515512:0", anchor: undefined },
+  ])("$cursor → $anchor", ({ cursor, anchor }) => {
+    expect(parseAnchor(baseOptions(cursor === undefined ? {} : { cursor }))).toBe(anchor);
+  });
+
+  it("leaves parseCursor reading only the `before` part", () => {
+    expect(parseCursor(baseOptions({ cursor: "1720440515512:1720440000000" }))).toBe(1720440515512);
+  });
+});
+
 describe("listOperations", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  // Minimal indexer tx: an IN of 1 sompi to ADDRESS. Its score doubles as the block time (in s)
-  // so pages built from it are ordered the way the indexer orders them.
-  function tx(score: number) {
+  const HOUR = 60 * 60 * 1000;
+
+  // Minimal indexer tx: an IN of 1 sompi to ADDRESS. Its block time defaults to `score` hours, so
+  // score order and block-time order agree; pass `hours` to model a late-accepted tx (older block
+  // time, higher score). The lookback window is LATE_ACCEPTANCE_WINDOW_MS = 2 h.
+  function tx(score: number, hours = score) {
     return {
       transaction_id: `tx-${score}`,
       hash: `tx-${score}`,
       block_hash: ["h"],
-      block_time: score * 1000,
+      block_time: hours * HOUR,
       accepting_block_blue_score: score,
       inputs: [],
       outputs: [{ script_public_key_address: ADDRESS, amount: 1 }],
@@ -257,89 +277,162 @@ describe("listOperations", () => {
     });
   });
 
-  describe("minHeight filter and stop rule (one page)", () => {
+  describe("minHeight filter and late-acceptance lookback", () => {
+    type Tx = number | [score: number, hours: number];
+    const toTx = (t: Tx) => (typeof t === "number" ? tx(t) : tx(t[0], t[1]));
+
     it.each([
+      // Full sync: no filtering, the indexer's cursor passes through.
       {
         name: "full sync, more pages",
         minHeight: 0,
-        scores: [50, 40, 30],
-        serverNext: "c",
+        pages: [{ txs: [50, 40, 30], next: "1" }],
         kept: [50, 40, 30],
-        next: "c",
+        next: "1",
+        calls: 1,
       },
       {
         name: "full sync, last page",
         minHeight: 0,
-        scores: [50, 40],
-        serverNext: null,
+        pages: [{ txs: [50, 40], next: null }],
         kept: [50, 40],
         next: undefined,
+        calls: 1,
       },
+      // Nothing already-synced on the page yet: keep walking, no anchor in the cursor.
       {
         name: "incremental, whole page new",
         minHeight: 10,
-        scores: [50, 40, 30],
-        serverNext: "c",
+        pages: [{ txs: [50, 40, 30], next: "1" }],
         kept: [50, 40, 30],
-        next: "c",
+        next: "1",
+        calls: 1,
       },
       {
-        name: "incremental, page reaches below minHeight",
+        name: "incremental, lowest item exactly at minHeight",
+        minHeight: 30,
+        pages: [{ txs: [50, 40, 30], next: "1" }],
+        kept: [50, 40, 30],
+        next: "1",
+        calls: 1,
+      },
+      // Already-synced txs on the page and the page reaches > 2 h below the newest of them: stop.
+      {
+        name: "incremental, page runs past the lookback window",
         minHeight: 35,
-        scores: [50, 40, 30, 20],
-        serverNext: "c",
+        pages: [{ txs: [50, 40, 30, 20], next: "1" }],
         kept: [50, 40],
         next: undefined,
+        calls: 1,
       },
       {
-        name: "incremental, page entirely below minHeight",
+        name: "incremental, an item exactly at minHeight is kept",
+        minHeight: 40,
+        pages: [{ txs: [50, 40, 30, 10], next: "1" }],
+        kept: [50, 40],
+        next: undefined,
+        calls: 1,
+      },
+      {
+        name: "incremental, late-accepted tx among older ones on the same page",
+        minHeight: 35,
+        pages: [{ txs: [50, 20, 40, 10], next: "1" }],
+        kept: [50, 40],
+        next: undefined,
+        calls: 1,
+      },
+      {
+        name: "incremental, page entirely below minHeight and past the window",
         minHeight: 100,
-        scores: [50, 40],
-        serverNext: "c",
+        pages: [{ txs: [50, 40], next: "1" }],
         kept: [],
         next: undefined,
+        calls: 1,
       },
+      // Inside the window with new items: return them, and carry the anchor (30 h) in the cursor.
       {
-        name: "an item exactly at minHeight is kept",
-        minHeight: 40,
-        scores: [50, 40, 30],
-        serverNext: "c",
-        kept: [50, 40],
-        next: undefined,
-      },
-      {
-        name: "lowest item exactly at minHeight, nothing below",
-        minHeight: 30,
-        scores: [50, 40, 30],
-        serverNext: "c",
-        kept: [50, 40, 30],
-        next: "c",
-      },
-      {
-        name: "late-accepted tx out of order on the page",
+        name: "incremental, inside the window, returns new items and the anchor",
         minHeight: 35,
-        scores: [50, 20, 40],
-        serverNext: "c",
+        pages: [{ txs: [50, 40, 30], next: "1000" }],
         kept: [50, 40],
+        next: `1000:${30 * HOUR}`,
+        calls: 1,
+      },
+      // Inside the window with nothing new: keep reading pages here rather than return an empty page.
+      {
+        name: "incremental, late-accepted tx on the next page is not lost",
+        minHeight: 100,
+        pages: [
+          { txs: [99, 98], next: "2000" }, // all already synced, anchor 99 h, oldest 98 h: inside the window
+          { txs: [[150, 97], 90], next: "3000" }, // 150 was accepted late (block time 97 h); 90 h is past the window
+        ],
+        kept: [150],
         next: undefined,
+        calls: 2,
       },
       {
         name: "empty page, no further pages",
         minHeight: 10,
-        scores: [],
-        serverNext: null,
+        pages: [{ txs: [], next: null }],
         kept: [],
         next: undefined,
+        calls: 1,
       },
-    ])("$name", async ({ minHeight, scores, serverNext, kept, next }) => {
-      mockPage(scores, serverNext);
+    ])("$name", async ({ minHeight, pages, kept, next, calls }) => {
+      for (const page of pages) {
+        mockGetTransactions.mockResolvedValueOnce({
+          transactions: (page.txs as Tx[]).map(toTx),
+          nextPageBefore: page.next,
+          nextPageAfter: null,
+        });
+      }
 
-      const page = await listOperations(ADDRESS, baseOptions({ minHeight }));
+      const result = await listOperations(ADDRESS, baseOptions({ minHeight }));
 
-      expect(page.items.map(op => op.tx.block.height)).toEqual(kept);
-      expect(page.next).toBe(next);
+      expect(result.items.map(op => op.tx.block.height)).toEqual(kept);
+      expect(result.next).toBe(next);
+      expect(mockGetTransactions).toHaveBeenCalledTimes(calls);
       // generic-coin-framework's paginateOperations treats "empty page + cursor" as a broken module.
-      expect(page.items.length === 0 && page.next !== undefined).toBe(false);
+      expect(result.items.length === 0 && result.next !== undefined).toBe(false);
+    });
+
+    it("reads the next page from the cursor's `before` part when it walks on", async () => {
+      mockGetTransactions
+        .mockResolvedValueOnce({
+          transactions: [tx(99), tx(98)],
+          nextPageBefore: "2000",
+          nextPageAfter: null,
+        })
+        .mockResolvedValueOnce({
+          transactions: [tx(90)],
+          nextPageBefore: null,
+          nextPageAfter: null,
+        });
+
+      await listOperations(ADDRESS, baseOptions({ minHeight: 100 }));
+
+      expect(mockGetTransactions).toHaveBeenNthCalledWith(2, ADDRESS, {
+        before: 2000,
+        limit: undefined,
+      });
+    });
+
+    it("keeps the anchor from the cursor across calls", async () => {
+      // A previous call saw an already-synced tx at 30 h; this page only reaches 29 h: still inside.
+      mockGetTransactions.mockResolvedValueOnce({
+        transactions: [tx(60, 29.5), tx(20, 29)],
+        nextPageBefore: "4000",
+        nextPageAfter: null,
+      });
+
+      const result = await listOperations(
+        ADDRESS,
+        baseOptions({ minHeight: 35, cursor: `5000:${30 * HOUR}` }),
+      );
+
+      expect(mockGetTransactions).toHaveBeenCalledWith(ADDRESS, { before: 5000, limit: undefined });
+      expect(result.items.map(op => op.tx.block.height)).toEqual([60]);
+      expect(result.next).toBe(`4000:${30 * HOUR}`);
     });
   });
 });
