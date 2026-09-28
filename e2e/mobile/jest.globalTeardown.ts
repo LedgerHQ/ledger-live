@@ -18,6 +18,7 @@ import { Subject } from "rxjs";
 import { NativeElementHelpers } from "@e2e/helpers/elementHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { withTimeout } from "@e2e/utils/withTimeout";
+import { releaseTrackedSpeculos } from "@e2e/utils/speculosSweep";
 
 const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
 const USERDATA_DIR = path.resolve(__dirname, "userdata");
@@ -34,6 +35,12 @@ globalThis.webSocket = {
 globalThis.pendingCallbacks = new Map<string, { callback: (data: string) => void }>();
 
 export default async () => {
+  await withTimeout(
+    releaseTrackedSpeculos({ orphansOnly: true }),
+    30_000,
+    "releaseTrackedSpeculos",
+  );
+
   if (process.env.CI && process.env.SHARD_INDEX === "1") {
     try {
       await initDetox();
