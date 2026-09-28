@@ -24,5 +24,16 @@ export function combine(tx: string, signature: string[]): string {
 
 /** Inverse of {@link combine}: strips the length prefix and echoed tx to recover the raw signature. */
 export function recoverDeviceSignature(rawDataHex: string, combinedSignature: string): string {
-  return combinedSignature.slice(TX_LEN_PREFIX_HEX_WIDTH + rawDataHex.length);
+  const txLength = Number.parseInt(combinedSignature.slice(0, TX_LEN_PREFIX_HEX_WIDTH), 16);
+  const txEnd = TX_LEN_PREFIX_HEX_WIDTH + rawDataHex.length;
+  const signature = combinedSignature.slice(txEnd);
+  // A signature over other bytes must not be attached to this transaction.
+  if (
+    txLength !== rawDataHex.length ||
+    combinedSignature.slice(TX_LEN_PREFIX_HEX_WIDTH, txEnd) !== rawDataHex ||
+    signature.length === 0
+  ) {
+    throw new InvalidRawDataHex("Combined signature does not match the transaction to sign");
+  }
+  return signature;
 }

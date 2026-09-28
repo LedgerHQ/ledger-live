@@ -72,9 +72,14 @@ const sendTrc10: TransactionIntent<TronMemo, TronTxData> = {
 const fee = (
   value: bigint,
   energy: { required: string; available: string } = { required: "10000", available: "0" },
+  energyEstimated = true,
 ): FeeEstimation => ({
   value,
-  parameters: { energyRequired: energy.required, energyAvailable: energy.available },
+  parameters: {
+    energyRequired: energy.required,
+    energyAvailable: energy.available,
+    energyEstimated,
+  },
 });
 
 const standardOption = {
@@ -144,6 +149,11 @@ describe("listFeeOptions", () => {
       tronifyOption,
       standardOption,
     ]);
+  });
+
+  it("returns [standard] when the energy simulation failed (shortfall is a sentinel)", async () => {
+    mockEstimateFees.mockResolvedValue(fee(1_000_000n, { required: "1", available: "0" }, false));
+    await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
   });
 
   it("reports the fee asset as native TRX for every option", async () => {

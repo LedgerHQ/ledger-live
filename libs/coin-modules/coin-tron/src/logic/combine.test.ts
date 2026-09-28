@@ -37,6 +37,16 @@ describe("recoverDeviceSignature", () => {
 
     expect(recoverDeviceSignature(rawTx, combine(rawTx, [signature]))).toEqual(signature);
   });
+
+  it.each([
+    ["signed for other bytes", combine("0a02beef", ["aa"]), "0a02dead"],
+    ["length prefix mismatch", `0005${"0a02beef"}aa`, "0a02beef"],
+    ["no signature after the tx", combine("0a02beef", [""]), "0a02beef"],
+  ])("throws InvalidRawDataHex when %s", (_, combined, rawTx) => {
+    expect(() => recoverDeviceSignature(rawTx, combined)).toThrow(
+      expect.objectContaining({ name: "InvalidRawDataHex" }),
+    );
+  });
 });
 
 describe("decodeTransaction", () => {

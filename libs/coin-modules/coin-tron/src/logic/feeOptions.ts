@@ -54,6 +54,7 @@ export async function listFeeOptions(
     const energyRequired = standard.parameters?.energyRequired;
     const energyAvailable = standard.parameters?.energyAvailable;
     if (
+      standard.parameters?.energyEstimated !== true ||
       typeof energyRequired !== "string" ||
       typeof energyAvailable !== "string" ||
       BigInt(energyRequired) <= BigInt(energyAvailable)
