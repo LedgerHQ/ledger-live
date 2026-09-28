@@ -14,6 +14,7 @@ import { trackPage } from "~/renderer/analytics/segment";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { openURL } from "~/renderer/linking";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 
 type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;
@@ -47,6 +48,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const { selectedFeeOptionId, available: sponsoredAvailable } = useSponsoredSend();
 
   const trackingProperties = useMemo(
     () => ({
@@ -131,8 +133,12 @@ export function useAmountScreen(): AmountScreenViewModel {
   );
 
   const onReview = useCallback(() => {
+    if (selectedFeeOptionId === "tronify" && sponsoredAvailable) {
+      navigation.goToStep(SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE);
+      return;
+    }
     navigation.goToStep(SEND_FLOW_STEP.SIGNATURE);
-  }, [navigation]);
+  }, [navigation, selectedFeeOptionId, sponsoredAvailable]);
 
   const onSelectCoinControl = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.COIN_CONTROL);

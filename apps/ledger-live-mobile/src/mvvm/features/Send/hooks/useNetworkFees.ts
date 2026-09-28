@@ -121,11 +121,13 @@ export function useNetworkFees({
       label: t("send.fees.title"),
       value: core.feesRowValue,
       secondaryValue: core.feesRowSecondaryValue,
+      secondaryValueStrikethrough: false,
       strategyLabel: t(`send.fees.${feeSelectorLabelKeySuffix(core.selectedFeeStrategyId)}`),
       selectedFeeStrategy: core.selectedFeeStrategy,
       displayOptions,
       canOpenSelector: displayOptions.length > 0,
       networkFeesInfo,
+      tronify: null,
     }),
     [
       core.feesRowSecondaryValue,

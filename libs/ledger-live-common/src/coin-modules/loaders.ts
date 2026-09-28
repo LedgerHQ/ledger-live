@@ -408,6 +408,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["tron"],
     loadSetup: () => import("../families/tron/setup"),
     loadLocalApi: () => import("../families/tron/coinModuleApi").then(m => m.createLocalTronApi),
+    loadSponsoredApi: () =>
+      import("../families/tron/coinModuleApi").then(m => m.createLocalTronSponsoredApi),
     loadTransaction: () => import("../families/tron/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("../families/tron/deviceTransactionConfig").then(m => m.default),
