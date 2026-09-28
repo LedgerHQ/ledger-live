@@ -23,7 +23,7 @@ import { getNodeApi } from "@ledgerhq/coin-evm/network";
 import { getNextSequence } from "@ledgerhq/coin-evm/logic";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { getCurrencyConfiguration } from "../../../config";
-import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
+import { buildContext, contextLogger } from "../../../bridge/generic-coin-framework/api/context";
 
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
@@ -100,11 +100,21 @@ async function enrichStakingResources(
   // Fetch redelegations from the Cosmos REST API (may return empty for
   // EVM-precompile-originated redelegations on chains like Sei).
   const config = getCurrencyConfiguration<EvmConfigInfo>(currency.id);
-  const apiRedelegations = await fetchRedelegations(config, currency.id, address).catch(() => []);
+  const apiRedelegations = await fetchRedelegations(
+    config,
+    currency.id,
+    address,
+    contextLogger,
+  ).catch(() => []);
 
   // Reconstruct active redelegations from the REDELEGATE operation history by
   // decoding the ABI-encoded calldata fetched directly from the RPC node.
-  const opsRedelegations = await buildRedelegationsFromOps(config, currency.id, operations);
+  const opsRedelegations = await buildRedelegationsFromOps(
+    config,
+    currency.id,
+    operations,
+    contextLogger,
+  );
 
   // Merge both sources, deduplicating by (src, dst) validator pair.
   const key = (r: StakingRedelegation) => `${r.validatorSrcAddress}|${r.validatorDstAddress}`;
@@ -197,10 +207,14 @@ export async function validateTransaction(
         transaction.hash,
       );
       if (blockHeight) {
-        return { error: new InvalidTransactionError("transaction is already mined") };
+        return {
+          error: new InvalidTransactionError("transaction is already mined"),
+        };
       }
       if (hash) {
-        return { error: new InvalidTransactionError("transaction is already known") };
+        return {
+          error: new InvalidTransactionError("transaction is already known"),
+        };
       }
     } catch {
       // eslint-disable-next-line no-empty

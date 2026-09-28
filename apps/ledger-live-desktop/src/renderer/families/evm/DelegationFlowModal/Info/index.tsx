@@ -14,6 +14,7 @@ import {
   prefetchValidators,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
+import { contextLogger } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/context";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 
@@ -33,7 +34,11 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
   // Warm the validators cache while the user is reading the info screen so
   // the validator list in the next step appears instantly instead of empty.
   useEffect(() => {
-    prefetchValidators(getCurrencyConfiguration<EvmConfigInfo>(currencyId), currencyId);
+    prefetchValidators(
+      getCurrencyConfiguration<EvmConfigInfo>(currencyId),
+      currencyId,
+      contextLogger,
+    );
   }, [currencyId]);
 
   const onNext = useCallback(() => {

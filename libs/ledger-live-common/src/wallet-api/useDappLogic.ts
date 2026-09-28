@@ -13,6 +13,7 @@ import { prepareMessageToSign } from "../hw/signMessage/index";
 import { UiHook, SetCurrentAccountHistDb } from "./react";
 import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic-public";
+import { contextLogger } from "../bridge/generic-coin-framework/api/context";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
@@ -64,7 +65,7 @@ function convertEthToLiveTX(ethTX: any): WalletAPITransaction {
       ethTX.value !== undefined
         ? new BigNumber(ethTX.value.replace("0x", ""), 16)
         : new BigNumber(0),
-    recipient: safeEncodeEIP55(ethTX.to),
+    recipient: safeEncodeEIP55(ethTX.to, contextLogger),
     gasPrice:
       ethTX.gasPrice !== undefined
         ? new BigNumber(ethTX.gasPrice.replace("0x", ""), 16)

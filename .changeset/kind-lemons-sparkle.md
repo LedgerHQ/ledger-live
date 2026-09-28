@@ -4,4 +4,4 @@
 "@ledgerhq/coin-celo": patch
 ---
 
-chore(llc): Backfill the now-mandatory `name`/`unit` fields
+chore(llc): adopt the coin-modules release that requires currency name and unit, and pass the EVM logger

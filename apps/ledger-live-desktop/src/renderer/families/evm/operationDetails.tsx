@@ -9,6 +9,7 @@ import {
   resolveStakingValidator,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
+import { contextLogger } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/context";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { Divider } from "@ledgerhq/react-ui/index";
@@ -62,6 +63,7 @@ function DelegateDetails({ operation, account }: { operation: Operation; account
       account.currency.id,
       operation,
       "delegate",
+      contextLogger,
     ).then(result => {
       if (!cancelled) setResolved(result);
     });
@@ -115,6 +117,7 @@ function UndelegateDetails({ operation, account }: { operation: Operation; accou
       account.currency.id,
       operation,
       "undelegate",
+      contextLogger,
     ).then(result => {
       if (!cancelled) setResolved(result);
     });
@@ -171,6 +174,7 @@ function RedelegateDetails({ operation, account }: { operation: Operation; accou
       getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
       account.currency.id,
       operation,
+      contextLogger,
     ).then(result => {
       if (!cancelled) setResolved(result);
     });
@@ -226,6 +230,7 @@ function RedelegateAmountCell({ operation, unit, currency }: AmountCellExtraProp
       getCurrencyConfiguration<EvmConfigInfo>(currency.id),
       currency.id,
       operation,
+      contextLogger,
     ).then(result => {
       if (!cancelled && result) setAmount(result.amount);
     });

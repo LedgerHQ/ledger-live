@@ -39,9 +39,30 @@ const mockedGetValidators = jest.mocked(stakingIndex.getValidators);
 const mockedGetAccountCurrency = jest.mocked(accountModule.getAccountCurrency);
 
 const sampleValidators: Validator[] = [
-  { id: "addr-a", address: "addr-a", name: "Joe", commissionRate: "0.05", balance: 100n, apy: 0 },
-  { id: "addr-b", address: "addr-b", name: "Moxie", commissionRate: "1", balance: 999n, apy: 0 },
-  { id: "addr-c", address: "addr-c", name: "Bruce", commissionRate: "0.1", balance: 500n, apy: 0 },
+  {
+    id: "addr-a",
+    address: "addr-a",
+    name: "Joe",
+    commissionRate: "0.05",
+    balance: 100n,
+    apy: 0,
+  },
+  {
+    id: "addr-b",
+    address: "addr-b",
+    name: "Moxie",
+    commissionRate: "1",
+    balance: 999n,
+    apy: 0,
+  },
+  {
+    id: "addr-c",
+    address: "addr-c",
+    name: "Bruce",
+    commissionRate: "0.1",
+    balance: 500n,
+    apy: 0,
+  },
 ];
 
 describe("useEvmStakingValidators", () => {
@@ -50,7 +71,10 @@ describe("useEvmStakingValidators", () => {
   });
 
   it("should filter out 100% commission validators, sort by total stake desc, and finish loading", async () => {
-    mockedGetValidators.mockResolvedValue({ items: sampleValidators, next: undefined });
+    mockedGetValidators.mockResolvedValue({
+      items: sampleValidators,
+      next: undefined,
+    });
 
     const { result } = renderHook(() => useEvmStakingValidators("sei_evm"));
 
@@ -59,7 +83,12 @@ describe("useEvmStakingValidators", () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(mockedGetValidators).toHaveBeenCalledWith(expect.anything(), "sei_evm", undefined);
+    expect(mockedGetValidators).toHaveBeenCalledWith(
+      expect.anything(),
+      "sei_evm",
+      expect.anything(),
+      undefined,
+    );
     expect(result.current.error).toBeNull();
     expect(result.current.validators.map(v => v.validatorAddress)).toEqual(["addr-c", "addr-a"]);
   });
@@ -74,8 +103,20 @@ describe("useEvmStakingValidators", () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     expect(mockedGetValidators).toHaveBeenCalledTimes(2);
-    expect(mockedGetValidators).toHaveBeenNthCalledWith(1, expect.anything(), "sei_evm", undefined);
-    expect(mockedGetValidators).toHaveBeenNthCalledWith(2, expect.anything(), "sei_evm", "1");
+    expect(mockedGetValidators).toHaveBeenNthCalledWith(
+      1,
+      expect.anything(),
+      "sei_evm",
+      expect.anything(),
+      undefined,
+    );
+    expect(mockedGetValidators).toHaveBeenNthCalledWith(
+      2,
+      expect.anything(),
+      "sei_evm",
+      expect.anything(),
+      "1",
+    );
     expect(result.current.validators.map(v => v.validatorAddress)).toEqual(["addr-c", "addr-a"]);
   });
 
@@ -146,7 +187,10 @@ describe("useEvmStakingValidators", () => {
   });
 
   it("should narrow validators by case-insensitive name search", async () => {
-    mockedGetValidators.mockResolvedValue({ items: sampleValidators, next: undefined });
+    mockedGetValidators.mockResolvedValue({
+      items: sampleValidators,
+      next: undefined,
+    });
 
     const { result, rerender } = renderHook(
       ({ search }: { search?: string }) => useEvmStakingValidators("sei_evm", search),
@@ -295,7 +339,10 @@ describe("useEvmFamilyPreloadData", () => {
   });
 
   it("should return validators once loaded", async () => {
-    mockedGetValidators.mockResolvedValue({ items: sampleValidators, next: undefined });
+    mockedGetValidators.mockResolvedValue({
+      items: sampleValidators,
+      next: undefined,
+    });
 
     const { result } = renderHook(() => useEvmFamilyPreloadData("sei_evm"));
 
@@ -313,7 +360,10 @@ describe("useEvmFamilyPreloadData", () => {
   });
 
   it("should not expose loading or error fields", async () => {
-    mockedGetValidators.mockResolvedValue({ items: sampleValidators, next: undefined });
+    mockedGetValidators.mockResolvedValue({
+      items: sampleValidators,
+      next: undefined,
+    });
 
     const { result } = renderHook(() => useEvmFamilyPreloadData("sei_evm"));
 
@@ -333,7 +383,10 @@ describe("useEvmFamilyMappedDelegations", () => {
   });
 
   it("should return mapped delegations enriched with matching validator and rank", async () => {
-    mockedGetValidators.mockResolvedValue({ items: sampleValidators, next: undefined });
+    mockedGetValidators.mockResolvedValue({
+      items: sampleValidators,
+      next: undefined,
+    });
 
     const delegations: StakingDelegation[] = [
       {
@@ -358,7 +411,10 @@ describe("useEvmFamilyMappedDelegations", () => {
   });
 
   it("should set validator to undefined when no matching validator is found", async () => {
-    mockedGetValidators.mockResolvedValue({ items: sampleValidators, next: undefined });
+    mockedGetValidators.mockResolvedValue({
+      items: sampleValidators,
+      next: undefined,
+    });
 
     const delegations: StakingDelegation[] = [
       {
@@ -379,7 +435,10 @@ describe("useEvmFamilyMappedDelegations", () => {
   });
 
   it("should return an empty array when account has no delegations", async () => {
-    mockedGetValidators.mockResolvedValue({ items: sampleValidators, next: undefined });
+    mockedGetValidators.mockResolvedValue({
+      items: sampleValidators,
+      next: undefined,
+    });
 
     const account = makeAccount([]);
 
@@ -391,7 +450,10 @@ describe("useEvmFamilyMappedDelegations", () => {
   });
 
   it("should return an empty array when stakingResources is absent", async () => {
-    mockedGetValidators.mockResolvedValue({ items: sampleValidators, next: undefined });
+    mockedGetValidators.mockResolvedValue({
+      items: sampleValidators,
+      next: undefined,
+    });
 
     const account = {
       currency: { id: "sei_evm" },

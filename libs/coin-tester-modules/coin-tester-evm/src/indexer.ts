@@ -4,6 +4,8 @@ import { http, HttpResponse } from "msw";
 import { AbiCoder, ethers } from "ethers";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic-public";
+
+const encodeAddress = (address: string) => safeEncodeEIP55(address, () => undefined);
 import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type {
   EtherscanERC1155Event,
@@ -140,7 +142,10 @@ const safeReadString = async (
   fallback: string,
 ): Promise<string> => {
   try {
-    const res = await provider.call({ to, data: ERC20Interface.encodeFunctionData(fnName) });
+    const res = await provider.call({
+      to,
+      data: ERC20Interface.encodeFunctionData(fnName),
+    });
     if (!res || res === "0x") return fallback;
     return abiCoder.decode(["string"], res)[0];
   } catch {
@@ -178,8 +183,8 @@ const handleERC20Log = async (log: ethers.Log, provider: ethers.JsonRpcProvider)
     provider.getTransactionReceipt(log.transactionHash),
   ]);
 
-  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0]);
-  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0]);
+  const from = encodeAddress(abiCoder.decode(["address"], log.topics[1])[0]);
+  const to = encodeAddress(abiCoder.decode(["address"], log.topics[2])[0]);
   const amount = BigInt(log.data === "0x" ? 0 : log.data).toString();
 
   const etherscanErc20Event: EtherscanERC20Event = {
@@ -282,8 +287,8 @@ const handleERC721Log = async (log: ethers.Log, provider: ethers.JsonRpcProvider
     provider.getTransactionReceipt(log.transactionHash),
   ]);
 
-  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0]);
-  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0]);
+  const from = encodeAddress(abiCoder.decode(["address"], log.topics[1])[0]);
+  const to = encodeAddress(abiCoder.decode(["address"], log.topics[2])[0]);
   const tokenID = abiCoder.decode(["uint256"], log.topics[3])[0].toString();
 
   const erc721Event: EtherscanERC721Event = {
@@ -387,9 +392,9 @@ const handleERC1155Log = async (log: ethers.Log, provider: ethers.JsonRpcProvide
     provider.getTransactionReceipt(log.transactionHash),
   ]);
 
-  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0]);
-  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[3])[0]);
-  const operator = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0]);
+  const from = encodeAddress(abiCoder.decode(["address"], log.topics[2])[0]);
+  const to = encodeAddress(abiCoder.decode(["address"], log.topics[3])[0]);
+  const operator = encodeAddress(abiCoder.decode(["address"], log.topics[1])[0]);
 
   const transfersMap: [string, string][] = abiCoder
     .decode(["uint256", "uint256"], log.data)
@@ -507,8 +512,8 @@ const handleBlock = async (blockNumber: number, provider: ethers.JsonRpcProvider
     ]);
 
     const code = tx?.to ? await provider.getCode(tx?.to) : false;
-    const from = safeEncodeEIP55(tx?.from || "");
-    const to = safeEncodeEIP55(tx?.to || "");
+    const from = encodeAddress(tx?.from || "");
+    const to = encodeAddress(tx?.to || "");
     const etherscanOperation: EtherscanOperation = {
       blockNumber: block?.number.toString() || "0",
       timeStamp: block?.timestamp.toString() || "0",
@@ -594,8 +599,8 @@ const handleBlock = async (blockNumber: number, provider: ethers.JsonRpcProvider
        */
       if (!traceAddress.length) continue;
       const code = action.to ? await provider.getCode(action.to) : false;
-      const from = safeEncodeEIP55(action.from || "");
-      const to = safeEncodeEIP55(action.to || "");
+      const from = encodeAddress(action.from || "");
+      const to = encodeAddress(action.to || "");
       const etherscanInternalTransaction: EtherscanInternalTransaction = {
         blockNumber: blockNumber.toString(),
         timeStamp: block?.timestamp.toString() || "0",
@@ -783,7 +788,9 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
           response.push({ id, type: "coin" });
       }
 
-      return HttpResponse.json(response, { headers: { "X-Ledger-Commit": "hash" } });
+      return HttpResponse.json(response, {
+        headers: { "X-Ledger-Commit": "hash" },
+      });
     }),
     http.get("https://global.api.prd.ledger.com/cal/v1/tokens", ({ request }) => {
       const response: Array<{
@@ -923,7 +930,9 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         });
       }
 
-      return HttpResponse.json(response, { headers: { "X-Ledger-Commit": "hash" } });
+      return HttpResponse.json(response, {
+        headers: { "X-Ledger-Commit": "hash" },
+      });
     }),
     http.get<{ explorerId: "eth" | "matic" | "bnb" }>(
       "https://explorers.api.live.ledger.com/blockchain/v4/:explorerId/gastracker/barometer",

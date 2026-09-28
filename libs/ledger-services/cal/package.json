@@ -61,7 +61,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/live-network": "catalog:",
-    "@shared/env": "workspace:*"
+    "@shared/env": "workspace:*",
+    "axios": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -69,7 +70,6 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "axios": "catalog:",
     "dotenv": "^16.4.5",
     "expect": "catalog:",
     "jest": "catalog:",
