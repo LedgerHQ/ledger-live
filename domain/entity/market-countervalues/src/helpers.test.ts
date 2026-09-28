@@ -71,3 +71,9 @@ describe("magFromTo", () => {
     expect(magFromTo(usd, bitcoin)).toBe(1e6);
   });
 });
+
+describe("sonar gate probe", () => {
+  it("probe", () => {
+    expect(true).toBe(false);
+  });
+});
