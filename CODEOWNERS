@@ -416,8 +416,7 @@ apps/ledger-live-desktop/src/renderer/components/RecoverRestore/                
 apps/ledger-live-desktop/src/renderer/components/WebRecoverPlayer/                             @ledgerhq/recover-software
 apps/ledger-live-desktop/src/renderer/modals/ProtectDiscover/                                  @ledgerhq/recover-software
 apps/ledger-live-desktop/src/renderer/screens/recover/                                         @ledgerhq/recover-software
-apps/ledger-live-mobile/src/components/RecoverBanner/                                          @ledgerhq/recover-software
-apps/ledger-live-mobile/src/components/ServicesWidget/Protect/                                 @ledgerhq/recover-software
+apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/RecoverBanner/                  @ledgerhq/recover-software
 apps/ledger-live-mobile/src/components/WebRecoverPlayer/                                       @ledgerhq/recover-software
 apps/ledger-live-mobile/src/screens/Protect/                                                   @ledgerhq/recover-software
 libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                                        @ledgerhq/recover-software
