@@ -21,10 +21,11 @@
 #    `user: "1000"` cannot write into it -- bitcoind crashes on boot. Fixed by
 #    `bitcoin-node-datadir-permissions.patch` (chmod 777 right after creation).
 # 6. When booting from the snapshot, the bitcoin snapshot is copied into the bind-mounted data
-#    directory with a plain `docker cp`, which creates the files as root, while bitcoind runs as uid
-#    1000. A Linux host enforces that ownership, so bitcoind can't write its chain state and never
-#    becomes ready (Docker Desktop doesn't enforce it, so it only fails on Linux). Fixed by
-#    `bitcoin-node-snapshot-ownership.patch` (chown -R 1000:1000 as root right after the copy).
+#    directory with a plain `docker cp`, which does not give the files an owner bitcoind (uid 1000)
+#    can use. A Linux host enforces ownership, so bitcoind can't read its own settings.json and
+#    exits (Docker Desktop doesn't enforce it, so it only fails on Linux). Fixed by
+#    `bitcoin-node-snapshot-ownership.patch`: `chmod -R a+rwX` on the extracted snapshot before
+#    the copy (the copy keeps mode bits). A chown after the copy races bitcoind, already running.
 # Built locally/in CI rather than depending on an upstream release picking up any of these.
 # Base image and nightly pinned (not `rust:1-bookworm` / plain `nightly`): both floated, and the
 # build needs nightly-only features (see the build step below), so a moved nightly can break it with

@@ -1,26 +1,30 @@
 diff --git a/components/stacks-network/src/orchestrator.rs b/components/stacks-network/src/orchestrator.rs
 --- a/components/stacks-network/src/orchestrator.rs
 +++ b/components/stacks-network/src/orchestrator.rs
-@@ -907,6 +907,22 @@ impl DevnetOrchestrator {
-                 docker_host,
-             )
-             .await?;
-+
-+            // `docker cp` creates the copied snapshot files as root, but bitcoind runs as uid 1000.
-+            // On a Linux host the bind-mounted data directory enforces that ownership, so bitcoind
-+            // can't write its own chain state and never becomes ready. Docker Desktop's file sharing
-+            // doesn't enforce ownership, which is why this only fails on Linux.
-+            let chown_command = format!(
-+                "docker exec -u root {container} chown -R 1000:1000 {BITCOIND_DATA_DIR}"
-+            );
-+            let output = run_docker_command(&chown_command, docker_host)
-+                .map_err(|e| format!("Failed to execute docker exec chown: {e}"))?;
-+            if !output.status.success() {
-+                return Err(format!(
-+                    "chown of the bitcoin snapshot failed: {}",
-+                    String::from_utf8_lossy(&output.stderr)
-+                ));
-+            }
-         }
+@@ -898,6 +898,26 @@ impl DevnetOrchestrator {
+             // Ensure the destination directory exists in the container
+             let docker_host = self.get_devnet_config()?.docker_host.as_deref();
  
-         Ok(())
++            // `docker cp` keeps the snapshot files' mode bits but not an owner bitcoind can use: it
++            // runs as uid 1000, and on a Linux host the bind-mounted data directory enforces
++            // ownership, so bitcoind can't read its own `settings.json` and exits. Make the
++            // extracted snapshot (owned by the user running clarinet) world-readable and writable
++            // before copying, so the files are usable the moment they land; fixing ownership
++            // afterwards races bitcoind, which is already running. Harmless on Docker Desktop.
++            if bitcoin_snapshot.exists() {
++                let status = std::process::Command::new("chmod")
++                    .args(["-R", "a+rwX"])
++                    .arg(&bitcoin_snapshot)
++                    .status()
++                    .map_err(|e| format!("Failed to run chmod on the bitcoin snapshot: {e}"))?;
++                if !status.success() {
++                    return Err(format!(
++                        "chmod of the bitcoin snapshot failed ({status}): {}",
++                        bitcoin_snapshot.display()
++                    ));
++                }
++            }
++
+             copy_snapshot_to_container(
+                 container,
+                 &bitcoin_snapshot,
