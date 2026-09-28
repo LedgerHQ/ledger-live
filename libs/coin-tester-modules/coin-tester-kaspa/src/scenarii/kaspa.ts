@@ -12,19 +12,16 @@ import {
   initMSW,
   historyPages,
 } from "../fixtures";
-import { mineBlocks, waitForTransactionCount } from "../kaspaNode";
-import { SETUP_BLOCKS } from "../chainSetup";
+import { MAX_UTXOS_PER_TX } from "@ledgerhq/coin-kaspa/logic/constants";
+import { getTransactionCount, mineBlocks, waitForTransactionCount } from "../kaspaNode";
+import { BLOCK_REWARD_SOMPI, SETUP_BLOCKS } from "../chainSetup";
 import { getBridges } from "../helpers";
-import {
-  buildSigners,
-  deriveAddress,
-  KASPA_TEST_MNEMONIC,
-  KASPA_RECIPIENT_MNEMONIC,
-} from "../signer";
+import { buildSigners, deriveAddress, KASPA_RECIPIENT_MNEMONIC } from "../signer";
 import type { Signers } from "../signer";
+import { accountAddress, TEST_MNEMONICS } from "../testAccounts";
 
-// The chain is funded once for the whole run by globalSetup (see chainSetup.ts): SETUP_BLOCKS
-// coinbase txs to testAddress, which is more than one indexer page. That history must come back
+// Each strategy syncs its own history account (see testAccounts.ts), funded once for the whole run
+// by globalSetup (see chainSetup.ts): SETUP_BLOCKS coinbase txs, which is more than one indexer page. That history must come back
 // whole across the page boundary: more than one page, no duplicates.
 const INDEXER_PAGE_SIZE = 500;
 
@@ -47,9 +44,6 @@ let signers: Signers;
 let testAddress: string;
 let recipient: string;
 let stopMSW: (() => void) | null = null;
-// Hashes synced by the legacy run's first sync. The generic-adapter run comes second on the same
-// chain, so its first sync must contain every one of them (past txs never change).
-let legacyFirstSyncHashes: Set<string> | null = null;
 // Hashes returned by the current run's first sync; every later sync must still contain them all.
 let firstSyncHashes = new Set<string>();
 
@@ -138,12 +132,12 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
       },
     });
 
-    testAddress = await deriveAddress(KASPA_TEST_MNEMONIC, 0, 0);
+    testAddress = await accountAddress("history", strategy);
     // Recipient from a different mnemonic so the legacy bridge's HD scanner never discovers
     // it as a wallet address (which would turn outgoing sends into internal-transfer ops). Never
     // synced, so globalSetup also uses it as the sink for the maturity-gap blocks.
     recipient = await deriveAddress(KASPA_RECIPIENT_MNEMONIC, 0, 0);
-    signers = await buildSigners(KASPA_TEST_MNEMONIC);
+    signers = await buildSigners(TEST_MNEMONICS.history[strategy]);
 
     // Infra is up and testAddress already funded — both done once by globalSetup, before any test
     // file. Re-check the indexer's history here so a slow indexer can't leave the first sync short.
@@ -180,7 +174,7 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
     historyPages.reset();
   },
 
-  beforeAll: async (account: Account, strategy: BridgeStrategy) => {
+  beforeAll: async (account: Account) => {
     // 600 mature UTXOs × 50 KAS = 30,000 KAS — well above the 1,000 KAS threshold.
     expect(account.balance.toNumber()).toBeGreaterThanOrEqual(Number(INITIAL_FUND_SOMPI));
 
@@ -195,16 +189,9 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
     expect(historyPages.count()).toBeGreaterThanOrEqual(2);
     firstSyncHashes = new Set(hashes);
 
-    // Parity across the page boundary: whatever legacy's own `after` loop saw, the generic
-    // adapter's `before` walk sees too. Compared by tx hash — operation ids embed the account id,
-    // which differs between the two strategies.
-    if (strategy === "legacy") {
-      legacyFirstSyncHashes = new Set(hashes);
-    } else if (legacyFirstSyncHashes) {
-      const genericHashes = new Set(hashes);
-      const missing = [...legacyFirstSyncHashes].filter(hash => !genericHashes.has(hash));
-      expect(missing).toEqual([]);
-    }
+    // Exactly the history the indexer holds for this address — the same bar for both strategies
+    // (legacy's in-module `after` loop, the generic adapter's `before` walk), each on its own account.
+    expect(account.operationsCount).toBe(await getTransactionCount(testAddress));
   },
 
   afterAll: async (account: Account) => {
@@ -260,11 +247,12 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
     // customFeeTransactionGenericAdapter above.
     strategy === "legacy" ? customFeeTransactionLegacy() : customFeeTransactionGenericAdapter(),
 
-    // #4 — Send max: Kaspa caps a transaction at MAX_UTXOS_PER_TX = 88 inputs.
-    // Each coinbase UTXO is 50 KAS, so one send-max moves at most 88 × 50 KAS = 4,400 KAS.
+    // #4 — Send max on an account holding more UTXOs than one transaction can spend: Kaspa caps a
+    // transaction at MAX_UTXOS_PER_TX = 88 inputs, so it moves at most 88 × 50 KAS = 4,400 KAS and the
+    // account keeps the rest. Emptying an account is covered by the drain scenario (kaspaDrain.ts).
     // Lower-bound at 4,000 KAS to allow for fees (~1 KAS).
     {
-      name: "Send max (drain)",
+      name: "Send max (capped at 88 inputs)",
       amount: new BigNumber(0),
       recipient,
       useAllAmount: true,
@@ -274,6 +262,10 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
         const op = curr.operations.find(o => !prevIds.has(o.id) && o.type === "OUT");
         expect(op).toBeDefined();
         expect(op!.value.toNumber()).toBeGreaterThan(4_000 * ONE_KAS);
+        expect(op!.value.toNumber()).toBeLessThanOrEqual(
+          MAX_UTXOS_PER_TX * Number(BLOCK_REWARD_SOMPI),
+        );
+        expect(curr.balance.toNumber()).toBeGreaterThan(0);
       },
     },
   ],

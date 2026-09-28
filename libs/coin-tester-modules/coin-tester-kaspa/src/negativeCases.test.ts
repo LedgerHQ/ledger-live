@@ -3,6 +3,7 @@ import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ONE_KAS, makeAccount, makeGenericAdapterAccount, initMSW } from "./fixtures";
 import { getBridges } from "./helpers";
+import { toSimnetAddress } from "./addressUtils";
 import { mineBlocks, waitForBalance, getBalance } from "./kaspaNode";
 import {
   buildSigners,
@@ -42,13 +43,15 @@ describe("Kaspa negative cases (simnet devnet)", () => {
     const testAddress = await deriveAddress(KASPA_TEST_MNEMONIC, 0, 0);
     recipient = await deriveAddress(KASPA_RECIPIENT_MNEMONIC, 0, 0);
 
-    // Safety net only: globalSetup funds testAddress with 30,000 KAS before any test file runs, and
-    // the scenario's sends never come close to spending it (each "Send max" moves at most 88
-    // inputs). These tests never broadcast (getTransactionStatus/prepareTransaction only) and use
-    // tiny amounts, so 50 blocks (2,500 KAS) is plenty if it ever fires.
+    // Read-only use of the legacy history account (testAccounts.ts): these tests never broadcast
+    // (getTransactionStatus/prepareTransaction only), so they leave its history untouched.
+    // Safety net only: globalSetup funds it with 30,000 KAS before any test file runs, and the
+    // scenario's sends never come close to spending it (each "Send max" moves at most 88 inputs).
+    // 50 blocks (2,500 KAS) is plenty if it ever fires — paid to it explicitly, since the miner's
+    // default address is the recipient.
     const currentBalance = await getBalance(testAddress);
     if (currentBalance < BigInt(100 * ONE_KAS)) {
-      await mineBlocks(50, 50);
+      await mineBlocks(50, 50, toSimnetAddress(testAddress));
       await waitForBalance(testAddress, BigInt(100 * ONE_KAS), 120_000);
     }
 
