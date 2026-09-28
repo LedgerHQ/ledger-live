@@ -1,7 +1,7 @@
 diff --git a/components/stacks-network/src/orchestrator.rs b/components/stacks-network/src/orchestrator.rs
 --- a/components/stacks-network/src/orchestrator.rs
 +++ b/components/stacks-network/src/orchestrator.rs
-@@ -898,6 +898,26 @@ impl DevnetOrchestrator {
+@@ -898,6 +898,41 @@ impl DevnetOrchestrator {
              // Ensure the destination directory exists in the container
              let docker_host = self.get_devnet_config()?.docker_host.as_deref();
  
@@ -12,6 +12,21 @@ diff --git a/components/stacks-network/src/orchestrator.rs b/components/stacks-n
 +            // before copying, so the files are usable the moment they land; fixing ownership
 +            // afterwards races bitcoind, which is already running. Harmless on Docker Desktop.
 +            if bitcoin_snapshot.exists() {
++                // Clarinet's own `mkdir` above is a detached exec, so it can still be running when
++                // `docker cp` below needs the destination ("Could not find the file
++                // /home/bitcoin/.bitcoin in container", seen intermittently). Create it with a
++                // blocking exec first; if the container already died, this fails with that error.
++                let mkdir_command =
++                    format!("docker exec {container} mkdir -p {BITCOIND_DATA_DIR}");
++                let output = run_docker_command(&mkdir_command, docker_host)
++                    .map_err(|e| format!("Failed to execute docker exec mkdir: {e}"))?;
++                if !output.status.success() {
++                    return Err(format!(
++                        "bitcoin data directory not available for the snapshot copy: {}",
++                        String::from_utf8_lossy(&output.stderr)
++                    ));
++                }
++
 +                let status = std::process::Command::new("chmod")
 +                    .args(["-R", "a+rwX"])
 +                    .arg(&bitcoin_snapshot)

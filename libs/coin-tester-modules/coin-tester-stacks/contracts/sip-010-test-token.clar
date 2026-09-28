@@ -1,7 +1,7 @@
 ;; sip-010-test-token
 ;;
-;; Minimal SIP-010-compliant fungible token, deployed at devnet genesis for this package's token
-;; send/send-max scenario transactions. A fresh Clarinet devnet starts from genesis with no
+;; Minimal SIP-010-compliant fungible token, deployed when the devnet boots for this package's token
+;; send/send-max scenario transactions. A fresh Clarinet devnet has no
 ;; fungible token deployed at all (unlike VeChain's VTHO or NEAR's staking-pool WASM, which
 ;; pre-exist on their respective test networks), so the token scenario block has nothing to send
 ;; unless this package deploys one itself.

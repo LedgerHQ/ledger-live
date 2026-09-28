@@ -81,10 +81,9 @@ disable_postgres = false
 # Left at Clarinet's own default (matches `@stacks/network`'s StacksDevnet/StacksMocknet default
 # URL, http://localhost:3999 — see `src/devnet.ts`).
 # stacks_api_port = 3999
-# Not actually consumed by Clarinet's own scheduler on this branch anymore -- see
-# `scripts/bitcoin-miner.js`'s `BLOCK_TIME_MS` (kept equal to this value for anyone reading this
-# file) for why and what drives mining instead, including why it's slower than the 3s this was
-# originally set to (a middle ground vs. docs.stacks.co's "High resource usage" 60s suggestion).
+# Interval of Clarinet's own periodic Bitcoin miner (the "Bitcoin mining runloop" in
+# `chains_coordinator.rs`, default 60s). Clarinet also mines a block whenever its Bitcoin RPC proxy
+# relays a miner's block-commit, so this is a floor on block production, not its only driver.
 bitcoin_controller_block_time = 10_000
 # Default 5432 collides with other local Postgres instances/containers on dev machines.
 postgres_port = 27432
@@ -92,34 +91,25 @@ postgres_port = 27432
 # Pinned by tag + digest. At the pinned clarinet commit these two default to floating tags
 # (`hirosystems/stacks-blockchain-api:latest`, `postgres:alpine`, `network_manifest.rs`), and
 # `latest` moving to 9.3.0 on 2026-09-15 turned every run red for a week with no change on our side
-# (see the README's "Known limitations"). These are the exact images the green runs of
+# (see the README). These are the exact images the green runs of
 # 2026-09-23..25 pulled. The other images (stacks-node, stacks-signer, bitcoind) are already pinned
 # to exact versions by that clarinet commit. Bump deliberately, alongside a green run.
 stacks_api_image_url = "hirosystems/stacks-blockchain-api:9.3.1@sha256:80b553ac7321a56aed95c7a693a9917baa44181dc1200676facd83599a8ee22d"
 postgres_image_url = "postgres:18.6-alpine@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873"
 
-# Explicit (not left as the implicit `DEFAULT_EPOCH_4_0 = 162` from `network_manifest.rs`):
-# `stx-labs/clarinet` PR #2428 ("pox-5 devnet capabilities") only generates the pox-5-specific
-# stacks-node config (`pox_5_sbtc_contract`/`pox_5_bond_admin`) "when epoch 4.0 is configured" --
-# an *explicit* Devnet.toml value, not merely reaching that burn height under the implicit default.
-# Without this, the staking scenario's devnet never transitions `.pox` off the pox-4-style interface
-# no matter how many blocks pass (verified empirically: still pox-4-style at burn height 194, well
-# past 162). This intentionally makes Devnet.toml differ from the bundled snapshot's `epoch_*`
-# fields -- see the `pox_stacking_orders` comment below for why that's now handled instead of
-# avoided.
+# Written out for readers (pox-5 staking needs epoch 4.0), but it must stay equal to Clarinet's own
+# `DEFAULT_EPOCH_4_0 = 162` (`network_manifest.rs`): every `epoch_*` height is a significant field
+# of the snapshot compatibility check below, and the snapshot starts at burn height 163, right
+# after it. At the pinned Clarinet, the pox-5 stacks-node config is generated whatever this value.
 epoch_4_0 = 162
 
-# Clarinet ships a pre-baked chain-state snapshot for faster devnet boot, keyed to this exact set
-# of stacking orders (verified against `DevnetDiffConfig`'s `default_significant_fields` in the
-# `clarinet` source — `epoch_*`/`stacks_signers_keys`/`pox_stacking_orders` are the only fields it
-# compares). Any Devnet.toml that omits or changes them is treated as "incompatible with the
-# snapshot" and — regardless of `--from-genesis`, verified empirically: the confirmation fires
-# unconditionally before that flag is even consulted — drops into an interactive
-# "Do you want to continue? (y/N)" prompt on stdin. The explicit `epoch_4_0` above now deliberately
-# triggers that mismatch (pox-5 staking needs it), so `src/devnet.ts`'s `spawnDevnet` pre-answers
-# "y" on a piped stdin instead of the previous "keep everything identical so it never fires"
-# approach. These three stacking orders stay verbatim regardless -- removing them would be a
-# second, unrelated source of mismatch on top of the intentional `epoch_4_0` one.
+# Clarinet's own default stacking orders (`get_default_stacking_orders` in `network_manifest.rs`),
+# copied verbatim, including the built-in `stacker` account. Clarinet boots from its embedded
+# chain-state snapshot (burn height 163, past epoch 4.0) only when `epoch_*`,
+# `stacks_signers_keys` and `pox_stacking_orders` all match its defaults (`DevnetDiffConfig` in
+# `devnet_diff.rs`). Any difference silently falls back to a genesis boot, ~10 minutes slower:
+# the missing `stacker` order is what kept this package off the snapshot before. The stacking
+# wallets' STX is locked by these orders, which is why the scenarios sign with wallet_4..6.
 [[devnet.pox_stacking_orders]]
 start_at_cycle = 1
 duration = 10

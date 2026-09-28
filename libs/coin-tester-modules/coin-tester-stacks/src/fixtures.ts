@@ -48,7 +48,7 @@ export const TOKEN_CONTRACT_NAME = "sip-010-test-token";
 const TOKEN_ASSET_NAME = "test-token";
 
 /**
- * The SIP-010 test token deployed at devnet genesis by `contracts/sip-010-test-token.clar`
+ * The SIP-010 test token deployed when the devnet boots by `contracts/sip-010-test-token.clar`
  * (`Clarinet.toml`'s `[contracts.sip-010-test-token]` entry, deployed by the manifest's own
  * `deployer` account since no per-contract `deployer` override is set there). Composite id format
  * ("ADDRESS.CONTRACT::ASSET") verified against `parseSip010AssetReference`-equivalent logic in

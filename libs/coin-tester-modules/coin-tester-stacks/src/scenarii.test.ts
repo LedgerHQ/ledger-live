@@ -3,22 +3,18 @@ import { killDevnet, spawnDevnet } from "./devnet";
 import { scenarioStacks, scenarioStacksStaking } from "./scenarii/stacks";
 
 global.console = require("console");
-// Per-scenario budget. Real block confirmations on a Clarinet devnet are slow; this must stay
-// comfortably above the inner `waitForContractDeployment` timeouts (15 min for the send
-// scenario's token, 25 min for the staking scenario's epoch-4.0-gated signer-manager-stub,
-// `scenarii/stacks.ts`) plus the per-transaction retry budget (up to 7.5 min each,
-// `retryLimit`/`retryInterval`) and the staking scenario's own signer-manager setup (two more
-// confirmed transactions) -- or this outer limit would cut a scenario off before its own, more
-// specific timeouts get a chance to.
-jest.setTimeout(50 * 60 * 1000);
+// Per-scenario budget. A scenario takes well under a minute on the snapshot-booted devnet
+// (`spawnDevnet`); 20 minutes stays above its own contract wait (5 min, `scenarii/stacks.ts`) and
+// several transactions' worth of indexer retries (up to 7.5 min each, `retryLimit`/
+// `retryInterval`), so a stuck scenario fails on its own, more specific timeout first.
+jest.setTimeout(20 * 60 * 1000);
 
-// One devnet for every scenario below, instead of one booted from genesis per scenario: each boot
-// and its wait for the contract batches cost minutes of 10s blocks. Scenarios share the chain but
-// never an account -- each signs with its own sender (`fixtures.ts`'s `SENDER_PRIVATE_KEYS`,
-// `STAKER_PRIVATE_KEY`), so none starts on another's history or drained balance.
-// `spawnDevnet`'s own boot deadline is 15 min; the extra 5 covers the clarinet binary build when
-// it isn't cached yet.
-beforeAll(() => spawnDevnet(), 20 * 60 * 1000);
+// One devnet for every scenario below. Scenarios share the chain but never an account -- each
+// signs with its own sender (`fixtures.ts`'s `SENDER_PRIVATE_KEYS`, `STAKER_PRIVATE_KEY`), so none
+// starts on another's history or drained balance.
+// 30 minutes: when the patched clarinet binary isn't cached yet, `spawnDevnet` first builds it
+// (~13 min in CI) and only then starts its own 5-minute boot deadline.
+beforeAll(() => spawnDevnet(), 30 * 60 * 1000);
 afterAll(() => killDevnet());
 
 // `exit` deliberately excluded: its handler must be synchronous (the event loop is already
@@ -40,8 +36,7 @@ afterAll(() => killDevnet());
 // identical 4-transaction scenario exercises both `coin-stacks`'s legacy bridge and its Alpaca
 // (CoinModuleApi) transfer path, each strategy with its own sender. Staking below is
 // generic-adapter-only (the legacy bridge has no staking code at all), so it is a separate
-// scenario with its own staker. Order matters only for timing: the staking scenario's wait for
-// epoch 4.0 runs after the send scenarios instead of from a fresh boot.
+// scenario with its own staker.
 describe.each([["legacy"], ["generic-adapter"]] as const)("Stacks (%s strategy)", strategy => {
   it("scenario stacks", async () => {
     try {

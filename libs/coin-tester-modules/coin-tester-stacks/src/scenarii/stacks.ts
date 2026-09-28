@@ -127,11 +127,9 @@ export const scenarioStacks: Scenario<GenericTransaction, Account> = {
   // for what this scenario needs. Each strategy's sender already holds 100 CTT, minted to it when
   // `sip-010-test-token.clar` deploys.
   setup: async strategy => {
-    // 15 minutes: at the 10s-per-block cadence (`scripts/bitcoin-miner.js`), reaching the
-    // contract's deployment batch (epoch 3.0, ~42 blocks past genesis) needs ~7 minutes in the
-    // worst case. Generous margin above that, not a different mechanism. Returns at once when an
-    // earlier scenario already waited for it.
-    await waitForContractDeployment(DEPLOYER_ADDRESS, TOKEN_CONTRACT_NAME, 15 * 60 * 1000);
+    // The devnet boots from a snapshot already past epoch 3.0, so the deployment is mined within
+    // about a minute of boot. Returns at once when an earlier scenario already waited for it.
+    await waitForContractDeployment(DEPLOYER_ADDRESS, TOKEN_CONTRACT_NAME, 5 * 60 * 1000);
 
     const senderKey = SENDER_PRIVATE_KEYS[strategy];
     const sender = buildStacksTestSigner(senderKey);
@@ -278,11 +276,9 @@ export const scenarioStacksStaking: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Stacks (pox-5 staking, generic-adapter)",
 
   setup: async strategy => {
-    // 25 minutes, not 15: `signer-manager-stub` is pinned at epoch 4.0 (`Clarinet.toml`), which the
-    // chain must first cross (`DEFAULT_EPOCH_4_0 = 162` burn blocks) before its deployment batch
-    // even attempts -- empirically ~14-17 minutes after devnet boot at this mining cadence. Counted
-    // from here, after the send scenarios have already used part of that time on the shared devnet.
-    await waitForContractDeployment(DEPLOYER_ADDRESS, SIGNER_MANAGER_CONTRACT_NAME, 25 * 60 * 1000);
+    // `signer-manager-stub` is pinned at epoch 4.0 (`Clarinet.toml`); the snapshot starts past it
+    // (burn height 163 vs `epoch_4_0 = 162`), so this batch deploys right after boot too.
+    await waitForContractDeployment(DEPLOYER_ADDRESS, SIGNER_MANAGER_CONTRACT_NAME, 5 * 60 * 1000);
 
     // The deployer pays for the signer-manager setup below (it deployed the stub); the stake itself
     // is signed by a separate staker -- `validate-stake!` accepts any `staker`. This is the first
