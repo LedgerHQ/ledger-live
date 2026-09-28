@@ -43,27 +43,37 @@ describe("useSendFlowTrackingProperties", () => {
     mockedGetAccountCurrency.mockReturnValue(zcashCurrency as never);
   });
 
-  it("spreads the family-agnostic tracking attributes into the base properties", () => {
+  it("spreads the family-agnostic tracking attributes into the base properties without overwriting the generic flow", () => {
     const transaction = { family: "zcash", sender: "private", transferType: "shielded" };
-    mockedGetTrackingAttributes.mockReturnValue({ privacy: "private", flow: "private-to-private" });
+    mockedGetTrackingAttributes.mockReturnValue({
+      privacy: "private",
+      transferFlow: "private-to-private",
+    });
     mockFlow({ currency: zcashCurrency, transaction });
 
     const { result } = renderHook(() => useSendFlowTrackingProperties());
 
     expect(mockedGetTrackingAttributes).toHaveBeenCalledWith(zcashCurrency, transaction);
+    // `flow: "send"` is the base send-flow funnel property (see utils/tracking.ts); the
+    // family-specific attributes must be additive, never clobber it.
     expect(result.current).toEqual(
-      expect.objectContaining({ privacy: "private", flow: "private-to-private" }),
+      expect.objectContaining({
+        flow: "send",
+        privacy: "private",
+        transferFlow: "private-to-private",
+      }),
     );
   });
 
-  it("adds no attribute when the descriptor returns none (e.g. before a source pool is picked)", () => {
+  it("adds no attribute when the descriptor returns none (e.g. before a source pool is picked), and keeps the generic flow", () => {
     mockedGetTrackingAttributes.mockReturnValue({});
     mockFlow({ currency: zcashCurrency, transaction: { family: "zcash" } });
 
     const { result } = renderHook(() => useSendFlowTrackingProperties());
 
+    expect(result.current).toEqual(expect.objectContaining({ flow: "send" }));
     expect(result.current).not.toHaveProperty("privacy");
-    expect(result.current).not.toHaveProperty("flow");
+    expect(result.current).not.toHaveProperty("transferFlow");
   });
 
   it("falls back to deriving the currency from the account when state.account.currency is unset", () => {

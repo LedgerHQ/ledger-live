@@ -1,5 +1,5 @@
 import { zcashBalanceTypeConfig } from "./balanceType";
-import { descriptor } from "./index";
+import { descriptor, getPrivacyAttributes } from "./index";
 
 // Vectors shared with coin-zcash's `logic/address.test.ts`.
 const UA_WITH_ORCHARD =
@@ -61,31 +61,43 @@ describe("zcash send descriptor", () => {
     expect(descriptor.send.balanceType).toBe(zcashBalanceTypeConfig);
   });
 
-  // The mapping itself is covered in `tracking.test.ts`; this only pins that the
-  // descriptor forwards to it and normalizes `undefined` to `{}`.
-  describe("getTrackingAttributes", () => {
-    it("maps every transferType once a source pool is picked", () => {
-      expect(
-        descriptor.send.getTrackingAttributes?.({
-          family: "zcash",
-          sender: "public",
-          transferType: "transparent",
-        }),
-      ).toEqual({ privacy: "public", flow: "public-to-public" });
+  describe("getTrackingAttributes / getPrivacyAttributes", () => {
+    it.each([
+      ["transparent", "public", "public-to-public"],
+      ["transparent-to-shielded", "public", "public-to-private"],
+      ["shielded-to-transparent", "private", "private-to-public"],
+      ["shielded", "private", "private-to-private"],
+    ] as const)(
+      "maps transferType %s to privacy %s / transferFlow %s",
+      (transferType, sender, transferFlow) => {
+        expect(
+          descriptor.send.getTrackingAttributes?.({ family: "zcash", sender, transferType }),
+        ).toEqual({ privacy: sender, transferFlow });
+        expect(getPrivacyAttributes({ family: "zcash", sender, transferType })).toEqual({
+          privacy: sender,
+          transferFlow,
+        });
+      },
+    );
 
-      expect(
-        descriptor.send.getTrackingAttributes?.({
-          family: "zcash",
-          sender: "private",
-          transferType: "shielded",
-        }),
-      ).toEqual({ privacy: "private", flow: "private-to-private" });
-    });
-
-    it("returns {} before a source pool is picked", () => {
+    it("returns {} / undefined before a source pool is picked", () => {
       expect(
         descriptor.send.getTrackingAttributes?.({ family: "zcash", transferType: "transparent" }),
       ).toEqual({});
+      expect(
+        getPrivacyAttributes({ family: "zcash", transferType: "transparent" }),
+      ).toBeUndefined();
+    });
+
+    it("returns undefined for a non-zcash transaction", () => {
+      expect(
+        getPrivacyAttributes({ family: "bitcoin", sender: "public", transferType: "transparent" }),
+      ).toBeUndefined();
+    });
+
+    it("returns undefined for a non-transaction value", () => {
+      expect(getPrivacyAttributes(null)).toBeUndefined();
+      expect(getPrivacyAttributes(undefined)).toBeUndefined();
     });
   });
 });
