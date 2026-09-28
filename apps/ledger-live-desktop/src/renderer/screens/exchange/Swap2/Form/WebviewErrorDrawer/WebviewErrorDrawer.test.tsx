@@ -2,9 +2,9 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import WebviewErrorDrawer from "./index";
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
-  __esModule: true,
-  default: jest.fn(({ children }: { children?: React.ReactNode }) => <>{children}</>),
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: jest.fn(({ children }: { children?: React.ReactNode }) => <>{children}</>),
 }));
 
 jest.mock("../../utils/index", () => ({

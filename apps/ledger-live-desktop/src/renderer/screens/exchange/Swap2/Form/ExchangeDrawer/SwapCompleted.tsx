@@ -12,7 +12,7 @@ import { GradientHover } from "~/renderer/drawers/OperationDetails/styledCompone
 import IconCheck from "~/renderer/icons/Check";
 import IconClock from "~/renderer/icons/Clock";
 import { openURL } from "~/renderer/linking";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import {
   getSwapProvider,
   AdditionalProviderConfig,
