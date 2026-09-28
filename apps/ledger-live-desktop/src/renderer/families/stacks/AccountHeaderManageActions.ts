@@ -31,14 +31,19 @@ const AccountHeaderManageActions: StacksFamily["accountHeaderManageActions"] = (
 
   const stakingPosition = getStacksStakingPosition(account);
   // pox-5's `stake` aborts with ERR_ALREADY_STAKED as long as `get-staker-info` still returns a
-  // record for the address -- true for both "active" and "deactivating" (get-staker-info only goes
-  // to none once the lock period fully elapses, per getStakes.ts) -- so Stake must stay hidden for
-  // any existing position, not just an active one. `getStakes` only sets `actions: ["undelegate"]`
-  // while the position is "active"; once it enters "deactivating" (its final reward cycle) a fresh
-  // `unstake` call is redundant/invalid too -- so a "deactivating" position shows neither action,
-  // matching getStakes.ts's own "nothing useful to do once already deactivating" comment.
+  // record for the address (true for both "active" and "deactivating" -- get-staker-info only goes
+  // to none once the lock period fully elapses) -- so Stake must stay hidden for any existing
+  // position, not just an active one.
+  //
+  // Unstake follows `stakingPosition.actions` rather than re-deriving its own "active" check on
+  // `state`: `state` is itself a heuristic (getStakes.ts's own comment: it can't distinguish a stake
+  // in its natural final "deactivating" cycle from a full-term stake that already called `unstake`
+  // but hasn't reached that cycle yet), and `actions` is the one place that assumption is already
+  // decided, authoritatively, by the API layer. Deriving a second, independent "active" check here
+  // would duplicate that same uncertain assumption instead of just reading its outcome -- if the
+  // heuristic or its mapping to `actions` ever changes, this follows it automatically.
   const canStake = !stakingPosition;
-  const canUnstake = stakingPosition?.state === "active";
+  const canUnstake = !!stakingPosition?.actions?.includes("undelegate");
 
   return [
     ...(canStake
