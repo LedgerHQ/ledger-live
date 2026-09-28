@@ -508,6 +508,71 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
       );
       expect(onUserCancel).toHaveBeenCalledTimes(1);
     });
+
+    it("WHEN the unmounting initializer reports an error after the disconnection THEN it still fires deviceflow_failed with the disconnection", () => {
+      // GIVEN
+      const { result } = renderViewModel();
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({
+          type: "deviceDisconnected",
+          device: makeConnectionResult({ type: "USB" }).connectedDevice,
+        });
+      });
+      act(() => {
+        result.current.trackingContextValue.reportFailure({
+          failureType: "ConnectAppError",
+          countsAsFailure: true,
+          subError: "DeviceDisconnectedWhileSendingError",
+        });
+      });
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith(
+        "deviceflow_failed",
+        expect.objectContaining({ failureType: "DeviceDisconnected", transport: "usb" }),
+      );
+      expect(mockedTrack).not.toHaveBeenCalledWith(
+        "deviceflow_failed",
+        expect.objectContaining({ subError: "DeviceDisconnectedWhileSendingError" }),
+      );
+    });
+
+    it("WHEN a screen reports a failure after a retry reconnects THEN it fires deviceflow_failed with that failure", () => {
+      // GIVEN
+      const { result } = renderViewModel();
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({
+          type: "deviceDisconnected",
+          device: makeConnectionResult().connectedDevice,
+        });
+      });
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({ type: "connectingDevice" });
+      });
+      act(() => {
+        result.current.trackingContextValue.reportFailure({
+          failureType: "ConnectionError",
+          countsAsFailure: true,
+          subError: "Unknown",
+        });
+      });
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith(
+        "deviceflow_failed",
+        expect.objectContaining({ failureType: "ConnectionError", subError: "Unknown" }),
+      );
+    });
   });
 
   describe("GIVEN a ViewModel that has already completed (executingIntent observed)", () => {

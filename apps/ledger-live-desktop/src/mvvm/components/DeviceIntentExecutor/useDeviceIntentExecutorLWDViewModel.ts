@@ -18,6 +18,7 @@ import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlock
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
 import {
+  acceptsScreenFailureReports,
   getExecutorStateFailure,
   trackAppReady,
   trackDeviceflowCanceled,
@@ -98,6 +99,7 @@ export function useDeviceIntentExecutorLWDViewModel<
   const initializationCompletedRef = useRef(false);
   const cancelTrackedRef = useRef(false);
   const failureRef = useRef<DeviceFlowFailure | null>(null);
+  const acceptsScreenFailureReportsRef = useRef(true);
   const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
   const isDeviceBlocked = useDeviceBlocked();
 
@@ -107,6 +109,7 @@ export function useDeviceIntentExecutorLWDViewModel<
       initializationCompletedRef.current = false;
       cancelTrackedRef.current = false;
       failureRef.current = null;
+      acceptsScreenFailureReportsRef.current = true;
       return;
     }
 
@@ -119,6 +122,7 @@ export function useDeviceIntentExecutorLWDViewModel<
   const wrappedOnExecutorStateChanged = useCallback(
     (state: ExecutorState) => {
       failureRef.current = getExecutorStateFailure(state);
+      acceptsScreenFailureReportsRef.current = acceptsScreenFailureReports(state);
       if (enabled && state.type === "executingIntent" && !initializationCompletedRef.current) {
         initializationCompletedRef.current = true;
         const { modelId, transport } = mapConnectionResult(state.connectionResult);
@@ -136,7 +140,7 @@ export function useDeviceIntentExecutorLWDViewModel<
   );
 
   const reportFailure = useCallback((failure: DeviceFlowFailure | null) => {
-    failureRef.current = failure;
+    if (acceptsScreenFailureReportsRef.current) failureRef.current = failure;
   }, []);
 
   const trackingContextValue = useMemo<DeviceIntentTrackingContextValue>(

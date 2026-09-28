@@ -130,6 +130,13 @@ export const getExecutorStateFailure = (state: ExecutorState): DeviceFlowFailure
   }
 };
 
+/**
+ * Error screens that report failures are shown only in these executor states. A report received
+ * in any other state is a late emission from an unmounting screen, e.g. after a disconnection.
+ */
+export const acceptsScreenFailureReports = (state: ExecutorState): boolean =>
+  state.type === "connectingDevice" || state.type === "initializingDeviceContext";
+
 export const trackDeviceflowStarted = (params: {
   sourceFlow: SourceFlow;
   extraProperties: DeviceIntentTrackingProperties;

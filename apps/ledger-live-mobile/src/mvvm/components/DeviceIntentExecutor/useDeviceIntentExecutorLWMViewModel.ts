@@ -12,6 +12,7 @@ import {
 } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import {
+  acceptsScreenFailureReports,
   getExecutorStateFailure,
   trackAppReady,
   trackDeviceflowCanceled,
@@ -93,6 +94,7 @@ export function useDeviceIntentExecutorLWMViewModel<
   const initializationCompletedRef = useRef(false);
   const cancelTrackedRef = useRef(false);
   const failureRef = useRef<DeviceFlowFailure | null>(null);
+  const acceptsScreenFailureReportsRef = useRef(true);
   const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
 
   useKeepScreenAwake(enabled);
@@ -103,6 +105,7 @@ export function useDeviceIntentExecutorLWMViewModel<
       initializationCompletedRef.current = false;
       cancelTrackedRef.current = false;
       failureRef.current = null;
+      acceptsScreenFailureReportsRef.current = true;
       return;
     }
 
@@ -115,6 +118,7 @@ export function useDeviceIntentExecutorLWMViewModel<
   const wrappedOnExecutorStateChanged = useCallback(
     (state: ExecutorState) => {
       failureRef.current = getExecutorStateFailure(state);
+      acceptsScreenFailureReportsRef.current = acceptsScreenFailureReports(state);
       if (enabled && state.type === "executingIntent" && !initializationCompletedRef.current) {
         initializationCompletedRef.current = true;
         const { modelId, transport } = mapConnectionResult(state.connectionResult);
@@ -132,7 +136,7 @@ export function useDeviceIntentExecutorLWMViewModel<
   );
 
   const reportFailure = useCallback((failure: DeviceFlowFailure | null) => {
-    failureRef.current = failure;
+    if (acceptsScreenFailureReportsRef.current) failureRef.current = failure;
   }, []);
 
   const trackingContextValue = useMemo<DeviceIntentTrackingContextValue>(
