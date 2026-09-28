@@ -31,7 +31,7 @@ describe("paginateOperations", () => {
     (item as unknown as { tx: { block?: { height: number } } }).tx.block?.height;
 
   it("drops the lowest block when the bound stops the walk inside it", async () => {
-    const items = await paginateOperations(
+    const { items } = await paginateOperations(
       pages({ items: [at("a", 9), at("b", 9), at("c", 8), at("d", 8)], next: "c1" }),
       3,
       blockOf,
@@ -44,7 +44,7 @@ describe("paginateOperations", () => {
     // Two pages, bound 4: the walk stops after the second. Dropping only the last item's
     // transaction would keep `d` and `e`, either of which can have a sibling on the page never
     // fetched -- rows of one transaction interleave inside a block, since they share its date.
-    const items = await paginateOperations(
+    const { items } = await paginateOperations(
       pages(
         { items: [at("a", 9), at("b", 9), at("c", 9)], next: "c1" },
         { items: [at("d", 8), at("e", 8), at("f", 8)], next: "c2" },
@@ -60,7 +60,7 @@ describe("paginateOperations", () => {
     // Cutting here would empty the list, and an empty list is not a short history: the shape
     // stores blockHeight 0, the next sync reads as from-scratch and rewalks the same blocks to
     // retain nothing again. The bound gives way until a whole block can be kept.
-    const items = await paginateOperations(
+    const { items } = await paginateOperations(
       pages(
         { items: [at("a", 9), at("b", 9), at("c", 9)], next: "c1" },
         { items: [at("d", 9), at("e", 8)], next: "c2" },
@@ -88,7 +88,7 @@ describe("paginateOperations", () => {
   });
 
   it("leaves the list untouched when the items carry no block height", async () => {
-    const items = await paginateOperations(
+    const { items } = await paginateOperations(
       pages({ items: [op("a"), op("b"), op("b")], next: "c1" }),
       2,
       blockOf,
@@ -99,13 +99,16 @@ describe("paginateOperations", () => {
 
   it("keeps every row when the walk ends on a falsy cursor, bound or not", async () => {
     // No next page exists, so nothing can be missing: the trailing transaction is whole.
-    const items = await paginateOperations(
+    const { items, bounded } = await paginateOperations(
       pages({ items: [at("a", 9), at("b", 8), at("c", 8)], next: undefined }),
       2,
       blockOf,
     );
 
     expect(items).toHaveLength(3);
+    // A falsy `next` is a clean end of stream even though the item count matches the bound --
+    // `bounded` has to reflect *why* the walk stopped, not just whether the count was reached.
+    expect(bounded).toBe(false);
   });
 
   it("fails on a stalled cursor even when that page reaches the bound, rather than passing it off as a clean truncation", async () => {
@@ -120,7 +123,7 @@ describe("paginateOperations", () => {
   });
 
   it("continues past an empty page as long as the cursor still advances (coin-stellar's and coin-xrp's shape: a filtered page can legitimately be empty)", async () => {
-    const items = await paginateOperations(
+    const { items } = await paginateOperations(
       pages(
         { items: [op("a")], next: "c1" },
         // Empty on purpose -- a page filtered down to nothing for this address, with a truthy,
@@ -136,21 +139,21 @@ describe("paginateOperations", () => {
   });
 
   it("stops on an absent cursor", async () => {
-    const items = await paginateOperations(pages({ items: [op("a")] }));
+    const { items } = await paginateOperations(pages({ items: [op("a")] }));
 
     expect(items.map(o => o.tx.hash)).toEqual(["a"]);
     expect(calls).toEqual([undefined]);
   });
 
   it("stops on an empty-string cursor (coin-evm's Ledger explorer arm, coin-algorand)", async () => {
-    const items = await paginateOperations(pages({ items: [op("a")], next: "" }));
+    const { items } = await paginateOperations(pages({ items: [op("a")], next: "" }));
 
     expect(items.map(o => o.tx.hash)).toEqual(["a"]);
     expect(calls).toEqual([undefined]);
   });
 
   it("follows the chain across pages, threading each cursor into the next request", async () => {
-    const items = await paginateOperations(
+    const { items } = await paginateOperations(
       pages(
         { items: [op("a")], next: "c1" },
         { items: [op("b")], next: "c2" },
@@ -210,7 +213,7 @@ describe("paginateOperations", () => {
 
   describe("with a bound", () => {
     it("resolves with the collected operations when the bound stops the walk -- an intended truncation, not an error -- without fetching further pages or trimming that page", async () => {
-      const items = await paginateOperations(
+      const { items, bounded } = await paginateOperations(
         pages(
           { items: [op("a"), op("b"), op("c")], next: "c1" },
           // "d" appears twice in this page, straddling the exact position where the bound (4)
@@ -227,6 +230,9 @@ describe("paginateOperations", () => {
       expect(items.length).toBeGreaterThanOrEqual(4);
       // The third page (only reachable had the bound not stopped the walk) was never fetched.
       expect(calls).toEqual([undefined, "c1"]);
+      // A caller merging this into older stored data must be told this round may not reach back
+      // to wherever it asked the walk to start.
+      expect(bounded).toBe(true);
 
       const grouped = new Map<string, number>();
       for (const o of items) grouped.set(o.tx.hash, (grouped.get(o.tx.hash) ?? 0) + 1);
@@ -268,12 +274,15 @@ describe("paginateOperations", () => {
         undefined,
       );
 
-      expect(withUndefinedBound.map(o => o.tx.hash)).toEqual(withoutBound.map(o => o.tx.hash));
+      expect(withUndefinedBound.items.map(o => o.tx.hash)).toEqual(
+        withoutBound.items.map(o => o.tx.hash),
+      );
+      expect(withUndefinedBound.bounded).toBe(withoutBound.bounded);
       expect(logMock).not.toHaveBeenCalled();
     });
 
     it("changes nothing when the bound is larger than the whole stream", async () => {
-      const items = await paginateOperations(
+      const { items, bounded } = await paginateOperations(
         pages({ items: [op("a")], next: "c1" }, { items: [op("b")] }),
         1000,
       );
@@ -281,6 +290,8 @@ describe("paginateOperations", () => {
       expect(items.map(o => o.tx.hash)).toEqual(["a", "b"]);
       expect(calls).toEqual([undefined, "c1"]);
       expect(logMock).not.toHaveBeenCalled();
+      // The stream ended on its own (falsy `next`) before the bound ever mattered.
+      expect(bounded).toBe(false);
     });
   });
 
@@ -307,7 +318,7 @@ describe("paginateOperations", () => {
     });
 
     it("does not fire on a walk shorter than the budget", async () => {
-      const items = await paginateOperations(
+      const { items } = await paginateOperations(
         pages({ items: [op("a")], next: "c1" }, { items: [op("b")] }),
       );
 
@@ -323,7 +334,7 @@ describe("paginateOperations", () => {
       const pageSize = 10;
       const maxOperations = 20_000;
       let fetches = 0;
-      const items = await paginateOperations(async () => {
+      const { items, bounded } = await paginateOperations(async () => {
         fetches++;
         return {
           items: Array.from({ length: pageSize }, (_, i) => op(`p${fetches}-${i}`)),
@@ -332,6 +343,7 @@ describe("paginateOperations", () => {
       }, maxOperations);
 
       expect(items).toHaveLength(maxOperations);
+      expect(bounded).toBe(true);
       expect(fetches).toBeGreaterThan(PAGE_BUDGET);
       expect(logMock).toHaveBeenCalledWith(
         "generic-coin-framework",
@@ -370,7 +382,7 @@ describe("paginateOperations", () => {
       // budget, never that many in a row. The bound is what must stop this walk.
       const maxOperations = 5;
       let fetches = 0;
-      const items = await paginateOperations(async () => {
+      const { items, bounded } = await paginateOperations(async () => {
         fetches++;
         return fetches % 2 === 1
           ? { items: [op(`op${fetches}`)], next: `c${fetches}` }
@@ -378,6 +390,7 @@ describe("paginateOperations", () => {
       }, maxOperations);
 
       expect(items).toHaveLength(maxOperations);
+      expect(bounded).toBe(true);
       expect(logMock).toHaveBeenCalledWith(
         "generic-coin-framework",
         expect.stringContaining("operation-history bound reached"),
