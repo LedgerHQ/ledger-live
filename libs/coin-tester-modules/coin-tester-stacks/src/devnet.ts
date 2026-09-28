@@ -1,6 +1,7 @@
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { exec } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import chalk from "chalk";
 
@@ -23,6 +24,9 @@ const DOCKER_DIR = path.join(PACKAGE_ROOT, "docker", "clarinet");
 const CLARINET_COMMIT = "a83c93231fde5391912f88c98c4175b0f359a2ba";
 const CACHE_DIR = path.join(PACKAGE_ROOT, ".clarinet-cache", CLARINET_COMMIT);
 const CACHED_BINARY = path.join(CACHE_DIR, "clarinet");
+// Clarinet's own output when `DEBUG` is unset: kept on disk (not in `.clarinet-cache/`, which CI
+// uploads as a cache) so a boot failure can still print it -- see `dumpBootDiagnostics`.
+const CLARINET_LOG = path.join(os.tmpdir(), "coin-tester-stacks-clarinet.log");
 
 /**
  * The pinned nightly, read from `docker/clarinet/Dockerfile`'s `ARG RUST_TOOLCHAIN=` so it is
@@ -112,6 +116,7 @@ function ensureClarinetBinary(): string {
         "bitcoin-node-patience.patch",
         "bitcoin-node-no-autoremove.patch",
         "bitcoin-node-datadir-permissions.patch",
+        "bitcoin-node-snapshot-ownership.patch",
       ]) {
         const apply = spawnSync("git", ["apply", path.join(DOCKER_DIR, patch)], {
           cwd: sourceDir,
@@ -301,6 +306,7 @@ export async function spawnDevnet(): Promise<void> {
 
   const binary = ensureClarinetBinary();
 
+  const clarinetOutput = process.env.DEBUG ? "inherit" : fs.openSync(CLARINET_LOG, "w");
   clarinetProcess = spawn(
     binary,
     ["integrate", "--no-dashboard", "--manifest-path", "Clarinet.toml"],
@@ -313,11 +319,7 @@ export async function spawnDevnet(): Promise<void> {
       // the staking scenario's explicit `epoch_4_0` now does on purpose. Pre-answering "y\n" makes
       // that prompt (if it fires) resolve immediately instead of blocking on a closed stdin; it's a
       // harmless no-op on runs where the prompt never appears.
-      stdio: [
-        "pipe",
-        process.env.DEBUG ? "inherit" : "ignore",
-        process.env.DEBUG ? "inherit" : "ignore",
-      ],
+      stdio: ["pipe", clarinetOutput, clarinetOutput],
     },
   );
 
@@ -358,17 +360,46 @@ export async function spawnDevnet(): Promise<void> {
   //   (`FATAL: Signer sets are empty in a reward set that will be used in nakamoto`). Started at
   //   node-RPC-up instead, the burn height is still Clarinet's seeded #101 and the node mines its
   //   first block on the very next Bitcoin block, well before #110.
-  await waitForStacksNodeRpc(bootDeadline);
-  if (process.env.STACKS_MINER_WORKAROUND) startBitcoinMiningWorkaround();
-
   try {
+    await waitForStacksNodeRpc(bootDeadline);
+    if (process.env.STACKS_MINER_WORKAROUND) startBitcoinMiningWorkaround();
     await waitUntilReady(bootDeadline - Date.now());
   } catch (error) {
     bitcoinMinerProcess?.kill("SIGTERM");
     bitcoinMinerProcess = null;
+    await dumpBootDiagnostics();
     throw error;
   }
   console.log(chalk.bgBlueBright(" -  STACKS DEVNET READY ✅  - "));
+}
+
+/**
+ * Prints why the devnet failed to boot, without needing `DEBUG`: the tail of Clarinet's own output
+ * and, for every container on the devnet network, its exit state and last log lines. Runs before
+ * `killDevnet` removes the containers. In CI this is the only place the actual cause shows up.
+ */
+async function dumpBootDiagnostics(): Promise<void> {
+  if (!process.env.DEBUG && fs.existsSync(CLARINET_LOG)) {
+    const lines = fs.readFileSync(CLARINET_LOG, "utf8").trimEnd().split("\n");
+    console.log(`[boot diagnostic] last clarinet output:\n${lines.slice(-80).join("\n")}`);
+  }
+  await dumpContainerDiagnostics("boot diagnostic");
+}
+
+async function dumpContainerDiagnostics(label: string): Promise<void> {
+  const containerIds = await execAsync(`docker ps -aq --filter "network=${DEVNET_NETWORK_NAME}"`);
+  if (!containerIds) {
+    console.log(`[${label}] no container on ${DEVNET_NETWORK_NAME}`);
+    return;
+  }
+  for (const id of containerIds.split("\n")) {
+    const info = await execAsync(
+      `docker inspect ${id} --format '{{.Name}} status={{.State.Status}} exitCode={{.State.ExitCode}} error={{.State.Error}}'`,
+    );
+    console.log(`[${label}] ${info}`);
+    const logs = await execAsync(`docker logs --tail 50 ${id} 2>&1`);
+    console.log(`[${label}] logs for ${id}:\n${logs}`);
+  }
 }
 
 function execAsync(command: string): Promise<string> {
@@ -403,14 +434,7 @@ export async function killDevnet(): Promise<void> {
     // and only useful when actively investigating a devnet-boot failure like the one this surfaced
     // (see the README's "Known limitations").
     if (process.env.DEBUG) {
-      for (const id of containerIds.split("\n")) {
-        const info = await execAsync(
-          `docker inspect ${id} --format '{{.Name}} status={{.State.Status}} exitCode={{.State.ExitCode}} error={{.State.Error}}'`,
-        );
-        console.log(`[killDevnet diagnostic] ${info}`);
-        const logs = await execAsync(`docker logs --tail 100 ${id} 2>&1`);
-        console.log(`[killDevnet diagnostic] logs for ${id}:\n${logs}`);
-      }
+      await dumpContainerDiagnostics("killDevnet diagnostic");
     }
     await execAsync(`docker rm -f ${containerIds.split("\n").join(" ")}`);
   }

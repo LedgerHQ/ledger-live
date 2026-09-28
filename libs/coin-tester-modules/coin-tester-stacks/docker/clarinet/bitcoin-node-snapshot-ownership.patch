@@ -1,0 +1,26 @@
+diff --git a/components/stacks-network/src/orchestrator.rs b/components/stacks-network/src/orchestrator.rs
+--- a/components/stacks-network/src/orchestrator.rs
++++ b/components/stacks-network/src/orchestrator.rs
+@@ -907,6 +907,22 @@ impl DevnetOrchestrator {
+                 docker_host,
+             )
+             .await?;
++
++            // `docker cp` creates the copied snapshot files as root, but bitcoind runs as uid 1000.
++            // On a Linux host the bind-mounted data directory enforces that ownership, so bitcoind
++            // can't write its own chain state and never becomes ready. Docker Desktop's file sharing
++            // doesn't enforce ownership, which is why this only fails on Linux.
++            let chown_command = format!(
++                "docker exec -u root {container} chown -R 1000:1000 {BITCOIND_DATA_DIR}"
++            );
++            let output = run_docker_command(&chown_command, docker_host)
++                .map_err(|e| format!("Failed to execute docker exec chown: {e}"))?;
++            if !output.status.success() {
++                return Err(format!(
++                    "chown of the bitcoin snapshot failed: {}",
++                    String::from_utf8_lossy(&output.stderr)
++                ));
++            }
+         }
+ 
+         Ok(())

@@ -20,6 +20,11 @@
 #    permissions, so on a real Linux Docker host (unlike Docker Desktop for Mac) the container's
 #    `user: "1000"` cannot write into it -- bitcoind crashes on boot. Fixed by
 #    `bitcoin-node-datadir-permissions.patch` (chmod 777 right after creation).
+# 6. When booting from the snapshot, the bitcoin snapshot is copied into the bind-mounted data
+#    directory with a plain `docker cp`, which creates the files as root, while bitcoind runs as uid
+#    1000. A Linux host enforces that ownership, so bitcoind can't write its chain state and never
+#    becomes ready (Docker Desktop doesn't enforce it, so it only fails on Linux). Fixed by
+#    `bitcoin-node-snapshot-ownership.patch` (chown -R 1000:1000 as root right after the copy).
 # Built locally/in CI rather than depending on an upstream release picking up any of these.
 # Base image and nightly pinned (not `rust:1-bookworm` / plain `nightly`): both floated, and the
 # build needs nightly-only features (see the build step below), so a moved nightly can break it with
@@ -51,6 +56,9 @@ RUN cd /src && git apply /tmp/bitcoin-node-no-autoremove.patch
 
 COPY bitcoin-node-datadir-permissions.patch /tmp/bitcoin-node-datadir-permissions.patch
 RUN cd /src && git apply /tmp/bitcoin-node-datadir-permissions.patch
+
+COPY bitcoin-node-snapshot-ownership.patch /tmp/bitcoin-node-snapshot-ownership.patch
+RUN cd /src && git apply /tmp/bitcoin-node-snapshot-ownership.patch
 
 # Nightly is required (not just installed defensively): a transitive `stacks-core`/`stacks-common`
 # git dependency at this commit uses unstable features (`debug_closure_helpers`, `slice_as_array`)

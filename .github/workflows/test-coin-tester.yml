@@ -141,9 +141,11 @@ jobs:
 
       # coin-tester-stacks builds a patched clarinet from source (~13 min) when its binary is missing.
       # The key hashes docker/clarinet/**, which holds the pinned commit, patches and toolchain.
-      - name: Cache the patched clarinet binary
+      # Restore and save are split so a successful build is kept even when the tests fail.
+      - name: Restore the patched clarinet binary
+        id: clarinet-cache
         if: matrix.chain == 'stacks'
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: libs/coin-tester-modules/coin-tester-stacks/.clarinet-cache
           key: ${{ runner.os }}-${{ runner.arch }}-clarinet-${{ hashFiles('libs/coin-tester-modules/coin-tester-stacks/docker/clarinet/**') }}
@@ -152,3 +154,10 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@develop
         with:
           chain: ${{ matrix.chain }}
+
+      - name: Save the patched clarinet binary
+        if: always() && matrix.chain == 'stacks' && steps.clarinet-cache.outputs.cache-hit != 'true' && hashFiles('libs/coin-tester-modules/coin-tester-stacks/.clarinet-cache/*/clarinet') != ''
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: libs/coin-tester-modules/coin-tester-stacks/.clarinet-cache
+          key: ${{ steps.clarinet-cache.outputs.cache-primary-key }}
