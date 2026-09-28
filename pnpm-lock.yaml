@@ -2064,9 +2064,6 @@ importers:
       '@ledgerhq/live-engagement':
         specifier: workspace:^
         version: link:../../libs/live-engagement
-      '@ledgerhq/live-hooks':
-        specifier: workspace:^
-        version: link:../../libs/live-hooks
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -13868,9 +13865,6 @@ importers:
       '@ledgerhq/live-env':
         specifier: 'catalog:'
         version: 4.1.0
-      '@ledgerhq/live-hooks':
-        specifier: workspace:*
-        version: link:../live-hooks
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -15610,9 +15604,6 @@ importers:
       '@ledgerhq/live-countervalues':
         specifier: workspace:*
         version: link:../live-countervalues
-      '@ledgerhq/live-hooks':
-        specifier: workspace:*
-        version: link:../live-hooks
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../types-live
@@ -16104,42 +16095,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0
-
-  libs/live-hooks:
-    devDependencies:
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../support/test-quarantine
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@testing-library/dom':
-        specifier: 'catalog:'
-        version: 10.4.1
-      '@testing-library/react':
-        specifier: 'catalog:'
-        version: 16.3.1(@testing-library/dom@10.4.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.0(@types/node@24.12.0)
-      jest-environment-jsdom:
-        specifier: 'catalog:'
-        version: 30.5.0
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
-      react-dom:
-        specifier: 19.1.4
-        version: 19.1.4(react@19.1.4)
 
   libs/live-send:
     dependencies:
@@ -23467,6 +23422,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}

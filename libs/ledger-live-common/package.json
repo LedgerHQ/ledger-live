@@ -348,7 +348,6 @@
     "@ledgerhq/live-currency-format": "catalog:",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-env": "catalog:",
-    "@ledgerhq/live-hooks": "workspace:*",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/live-promise": "catalog:",
     "@ledgerhq/live-signer-aleo": "workspace:^",
