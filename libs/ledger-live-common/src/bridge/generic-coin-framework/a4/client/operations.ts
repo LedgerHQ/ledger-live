@@ -304,10 +304,18 @@ export async function withDcRoamRetry<T>(
 }
 
 /*
- * We paginate over raw A4OperationView[] before adapting. Adapting inside the page fetcher means
- * a page whose raw items all map to [] (NFT or failed-incoming) looks empty to paginateOperations,
- * which stops pagination even when nextToken is present. Paginating raw items first ensures
- * paginateOperations sees the true A4 item count.
+ * We adapt each page before handing it to paginateOperations, not after. One A4OperationView is
+ * one transaction, but `adaptA4OperationToLiveOperation` can expand it into several Live
+ * operations (`parts`/`assets`) -- bounding the walk on raw views, then adapting the whole result
+ * in one flatMap afterward, would let `maxOperations` transactions with a heavy fan-out still
+ * produce millions of operations, the same nested-payload shape the delegate path's own bound
+ * exists to prevent. Adapting per page means `items.length` inside `paginateOperations` already
+ * counts what actually gets retained.
+ *
+ * This relies on `paginateOperations` following an advancing cursor through an empty page (a page
+ * whose raw views all map to `[]` -- NFT or failed-incoming -- looks empty once adapted) rather
+ * than reading it as end of stream; adapting afterward used to be required to avoid exactly that
+ * misread, before that case was supported.
  *
  * DC roaming is handled by withDcRoamRetry: on 412 the full pagination is restarted from page 1
  * (nextToken cursors are DC-scoped and invalid across a datacenter switch). Any other error is
@@ -327,7 +335,7 @@ export async function fetchA4Operations(
   // `size` is what bounds one response, `maxOperations` what bounds the walk -- the same two
   // gates the delegate path has, and only the first protects against a single huge response
   // materialising before the walk gets a say. Omitted when unset, which is A4's own default.
-  const fetchRawPage = (cursor: string | undefined) =>
+  const fetchAdaptedPage = (cursor: string | undefined) =>
     client
       .listOperations(a4AccountId, {
         blocks: [minHeight, "latest"],
@@ -335,17 +343,19 @@ export async function fetchA4Operations(
         token: cursor,
         ...(pageSize !== undefined ? { size: pageSize } : {}),
       })
-      .then(r => ({ items: r.data?.items ?? [], next: r.data?.nextToken }));
-
-  const adapt = (rawOps: A4OperationView[]) =>
-    rawOps.flatMap(a4Op => adaptA4OperationToLiveOperation(liveAccountId, address, a4Op));
+      .then(r => ({
+        items: (r.data?.items ?? []).flatMap(a4Op =>
+          adaptA4OperationToLiveOperation(liveAccountId, address, a4Op),
+        ),
+        next: r.data?.nextToken,
+      }));
 
   return withDcRoamRetry(
     client,
     a4AccountId,
     address,
     chain,
-    () => paginateOperations(fetchRawPage, maxOperations, a4Op => a4Op.block?.height).then(adapt),
+    () => paginateOperations(fetchAdaptedPage, maxOperations, op => op.blockHeight ?? undefined),
     maxDcRoamRetries,
   );
 }
