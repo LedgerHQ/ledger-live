@@ -1,4 +1,5 @@
 import { API_BASE } from "./config";
+import { fetchWithRetry } from "./fetchWithRetry";
 import { ApiResponseBlockInfo } from "../types";
 
 // The endpoint returns an array: a blue score can map to several blocks (BlockDAG).
@@ -19,7 +20,7 @@ export const getBlocksFromBlueScore = async (
     includeTransactions: String(includeTransactions),
   });
 
-  const response = await fetch(`${API_BASE}/blocks-from-bluescore?${query}`, {
+  const response = await fetchWithRetry(`${API_BASE}/blocks-from-bluescore?${query}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });

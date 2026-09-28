@@ -1,6 +1,6 @@
-import { retry } from "@ledgerhq/coin-module-framework/promises";
 import { ApiResponseTransaction } from "../types";
 import { API_BASE } from "./config";
+import { fetchWithRetry } from "./fetchWithRetry";
 
 // The indexer rejects `before` and `after` together (HTTP 400), so the type allows only one.
 type PageDirection =
@@ -11,23 +11,9 @@ type PageDirection =
 export const MAX_PAGE_LIMIT = 500;
 
 type GetTransactionsOptions = PageDirection & {
-  // Page size; the indexer accepts 1–500.
+  // Page size, passed through as-is: the indexer answers 422 outside 1–MAX_PAGE_LIMIT, so callers
+  // validate it first (listOperations rejects non-positive values and caps at MAX_PAGE_LIMIT).
   limit?: number | undefined;
-};
-
-// Only retry transient failures: network-level errors (e.g. ECONNRESET, surfaced
-// as a TypeError by fetch) and 5xx responses. Not 4xx or response-parsing errors.
-const isRetriableError = (error: unknown): boolean => {
-  if (error instanceof TypeError) {
-    return true;
-  }
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "status" in error &&
-    typeof error.status === "number" &&
-    error.status >= 500
-  );
 };
 
 /**
@@ -60,26 +46,22 @@ export const getTransactions = async (
     url.searchParams.set("after", String(after));
   }
 
-  return retry(
-    async () => {
-      const response = await fetch(url, {
-        headers: {
-          Accept: "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw Object.assign(new Error("Network response was not ok."), {
-          status: response.status,
-        });
-      }
-
-      const nextPageBefore = response.headers.get("X-Next-Page-Before") || null;
-      const nextPageAfter = response.headers.get("X-Next-Page-After") || null;
-      const transactions = await response.json();
-
-      return { transactions, nextPageBefore, nextPageAfter };
-    },
-    { maxRetry: 3, context: "kaspa-getTransactions", retryCondition: isRetriableError },
+  // "transient": besides 429, retry 5xx and network-level errors, not other 4xx.
+  const response = await fetchWithRetry(
+    url,
+    { headers: { Accept: "application/json" } },
+    "transient",
   );
+
+  if (!response.ok) {
+    throw Object.assign(new Error("Network response was not ok."), {
+      status: response.status,
+    });
+  }
+
+  const nextPageBefore = response.headers.get("X-Next-Page-Before") || null;
+  const nextPageAfter = response.headers.get("X-Next-Page-After") || null;
+  const transactions = await response.json();
+
+  return { transactions, nextPageBefore, nextPageAfter };
 };

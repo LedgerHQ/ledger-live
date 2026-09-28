@@ -48,4 +48,20 @@ describe("getBlocksFromBlueScore", () => {
       "kaspa: getBlocksFromBlueScore: status 500",
     );
   });
+
+  it("waits out a 429 (rate limit) and returns the blocks once the indexer answers", async () => {
+    jest.useFakeTimers();
+    const blocks = [{ verboseData: { hash: "a".repeat(64), isChainBlock: true } }];
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: false, status: 429, headers: { get: () => null } })
+      .mockResolvedValueOnce({ ok: true, status: 200, json: async () => blocks });
+
+    const promise = getBlocksFromBlueScore(480818084);
+    await jest.advanceTimersByTimeAsync(1_000);
+
+    await expect(promise).resolves.toEqual(blocks);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    jest.useRealTimers();
+  });
 });

@@ -1,11 +1,12 @@
 import { ApiResponseAddressActive } from "../types";
 import { API_BASE } from "./config";
+import { fetchWithRetry } from "./fetchWithRetry";
 
 export const getAddressesActive = async (
   addresses: string[],
 ): Promise<ApiResponseAddressActive[]> => {
   try {
-    const response = await fetch(`${API_BASE}/addresses/active`, {
+    const response = await fetchWithRetry(`${API_BASE}/addresses/active`, {
       method: "POST",
       headers: {
         Accept: "application/json",

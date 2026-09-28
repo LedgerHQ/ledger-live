@@ -1,11 +1,12 @@
 import { ApiResponseBalance } from "../types";
 import { API_BASE } from "./config";
+import { fetchWithRetry } from "./fetchWithRetry";
 
 export const getBalancesForAddresses = async (
   addresses: string[],
 ): Promise<ApiResponseBalance[]> => {
   try {
-    const response = await fetch(`${API_BASE}/addresses/balances`, {
+    const response = await fetchWithRetry(`${API_BASE}/addresses/balances`, {
       method: "POST",
       headers: {
         Accept: "application/json",

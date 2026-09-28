@@ -188,9 +188,30 @@ describe("getTransactions function", () => {
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
     const promise = getTransactions(address);
     const assertion = expect(promise).rejects.toThrow("Network response was not ok.");
-    await jest.advanceTimersByTimeAsync(2000);
+    // 5 attempts, backing off 1 s + 2 s + 4 s + 8 s between them.
+    await jest.advanceTimersByTimeAsync(15_000);
     await assertion;
-    expect(global.fetch).toHaveBeenCalledTimes(4);
+    expect(global.fetch).toHaveBeenCalledTimes(5);
+  });
+
+  it("should retry a 429 and then succeed", async () => {
+    jest.useFakeTimers();
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: false, status: 429, headers: { get: () => null } })
+      .mockResolvedValueOnce({
+        ok: true,
+        headers: { get: jest.fn(() => "") },
+        json: async () => [{ transaction_id: "abc" }],
+      });
+
+    const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
+    const promise = getTransactions(address);
+    await jest.advanceTimersByTimeAsync(1_000);
+    const result = await promise;
+
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(result.transactions.length).toBe(1);
   });
 
   it("should retry a transient network failure and then succeed", async () => {

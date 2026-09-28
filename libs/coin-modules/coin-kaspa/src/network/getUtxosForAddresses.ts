@@ -1,9 +1,10 @@
 import { ApiResponseUtxo } from "../types";
 import { API_BASE } from "./config";
+import { fetchWithRetry } from "./fetchWithRetry";
 
 export const getUtxosForAddresses = async (addresses: string[]): Promise<ApiResponseUtxo[]> => {
   try {
-    const response = await fetch(`${API_BASE}/addresses/utxos`, {
+    const response = await fetchWithRetry(`${API_BASE}/addresses/utxos`, {
       method: "POST",
       headers: {
         Accept: "application/json",

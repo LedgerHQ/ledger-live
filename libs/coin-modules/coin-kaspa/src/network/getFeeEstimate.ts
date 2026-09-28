@@ -1,9 +1,10 @@
 import { ApiResponseFeeEstimate } from "../types";
 import { API_BASE } from "./config";
+import { fetchWithRetry } from "./fetchWithRetry";
 
 export const getFeeEstimate = async (): Promise<ApiResponseFeeEstimate> => {
   try {
-    const response = await fetch(`${API_BASE}/info/fee-estimate`, {
+    const response = await fetchWithRetry(`${API_BASE}/info/fee-estimate`, {
       headers: {
         Accept: "application/json",
       },

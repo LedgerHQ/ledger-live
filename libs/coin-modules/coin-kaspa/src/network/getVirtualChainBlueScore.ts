@@ -1,8 +1,9 @@
 import { API_BASE } from "./config";
+import { fetchWithRetry } from "./fetchWithRetry";
 
 export const getVirtualChainBlueScore = async (): Promise<number> => {
   try {
-    const response = await fetch(`${API_BASE}/info/virtual-chain-blue-score`, {
+    const response = await fetchWithRetry(`${API_BASE}/info/virtual-chain-blue-score`, {
       method: "GET",
       headers: {
         Accept: "application/json",

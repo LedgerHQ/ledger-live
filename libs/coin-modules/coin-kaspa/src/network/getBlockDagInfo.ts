@@ -1,9 +1,10 @@
 import { ApiResponseBlockDagInfo } from "../types";
 import { API_BASE } from "./config";
+import { fetchWithRetry } from "./fetchWithRetry";
 
 export const getBlockDagInfo = async (): Promise<ApiResponseBlockDagInfo> => {
   try {
-    const response = await fetch(`${API_BASE}/info/blockdag`, {
+    const response = await fetchWithRetry(`${API_BASE}/info/blockdag`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
