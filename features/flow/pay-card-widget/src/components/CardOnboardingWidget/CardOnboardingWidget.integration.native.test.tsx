@@ -62,6 +62,13 @@ describe("CardOnboardingWidget (integration)", () => {
     expect(screen.queryByTestId("pay-card-onboarding-widget-card")).toBeNull();
   });
 
+  it("should show the widget while the holder still has to choose a card type", () => {
+    setQuery({ data: { steps: stepsWith(true, false) } });
+    renderWidget({ hasCompletedOnboarding: true });
+
+    expect(screen.getByTestId("pay-card-onboarding-widget-card")).toBeVisible();
+  });
+
   it("should hide the widget when onboarding is already completed in the store", () => {
     setQuery({ data: { steps: stepsWith(false) } });
     renderWidget({ hasCompletedOnboarding: true });

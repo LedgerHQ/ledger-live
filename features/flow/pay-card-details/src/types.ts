@@ -24,6 +24,22 @@ export type CardVisualViewProps = CardVisualProps &
     fadeColor?: string;
   }>;
 
+/**
+ * Where the holder stands with their card.
+ *
+ * - `choosingCardType` — signed in, no card ordered yet: only Choose card type is offered.
+ * - `ready` — a card exists, or the answer is not settled yet: the usual card actions show.
+ */
+export type CardState = "choosingCardType" | "ready";
+
+export type CardFaceAction = Readonly<{
+  key: string;
+  label: string;
+  appearance: "base" | "gray";
+  onPress: () => void;
+  testID?: string;
+}>;
+
 export type CardDetailsProps = Readonly<{
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   cardVisual?: CardVisualProps;
@@ -36,16 +52,18 @@ export type CardDetailsProps = Readonly<{
   formatters?: CardTransactionFormatters;
   onShowMore?: () => void;
   onTopUp?: () => void;
+  onChooseCardType?: () => void;
+  cardState?: CardState;
   onViewRewards?: () => void;
   cardSettingsActions?: CardSettingsActions;
 }>;
 
 export type CardDetailsViewProps = CardDetailsProps &
   Readonly<{
-    detailsLabel: string;
+    faceActions: readonly CardFaceAction[];
     isSheetOpen: boolean;
     scene: CardDetailsSceneProps;
-    onDetailsPress: () => void;
+    onFacePress?: () => void;
     onSheetClose: () => void;
     onSceneBack: () => void;
   }>;

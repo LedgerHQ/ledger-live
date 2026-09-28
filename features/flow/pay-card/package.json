@@ -39,6 +39,7 @@
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

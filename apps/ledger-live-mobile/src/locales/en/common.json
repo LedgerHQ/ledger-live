@@ -10872,6 +10872,7 @@
       },
       "title": "Crypto card",
       "topUp": "Top up",
+      "chooseCardType": "Choose card type",
       "details": "Details",
       "addToWallet": "Add to {{wallet}} Pay",
       "freeze": "Freeze",

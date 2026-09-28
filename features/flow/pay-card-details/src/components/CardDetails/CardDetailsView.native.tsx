@@ -1,21 +1,22 @@
 import React from "react";
-import { Box, Button, useTheme } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Pressable, useTheme } from "@ledgerhq/lumen-ui-rnative";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { PayTrackPage } from "@features/platform-pay-analytics";
 import { CardArtwork } from "../CardArtwork/CardArtwork";
 import { CardFade } from "../CardArtwork/CardFade";
 import { CardVisual } from "../CardVisual/CardVisual";
-import { CardTopUpButton } from "../CardTopUp";
 import { CardDetailsSheet } from "./CardDetailsSheet";
 import type { CardDetailsViewProps } from "../../types";
 
+const FACE_ACTIONS_INSET = { bottom: 0, left: 0, right: 0 };
+
 export function CardDetailsView({
   cardVisual,
-  detailsLabel,
   isSheetOpen,
   scene,
+  faceActions,
+  onFacePress,
   onTopUp,
-  onDetailsPress,
   onSheetClose,
   onSceneBack,
 }: CardDetailsViewProps) {
@@ -26,35 +27,41 @@ export function CardDetailsView({
     <Box>
       {isSheetOpen ? <PayTrackPage page="Card details" /> : null}
       <Box lx={{ position: "relative" }}>
-        {cardVisual ? (
-          <CardVisual {...cardVisual} fadeColor={fadeColor} />
-        ) : (
-          <Box lx={{ borderRadius: "lg" }} style={{ overflow: "hidden" }}>
-            <CardArtwork />
-            <CardFade color={fadeColor} />
-          </Box>
-        )}
+        <Pressable
+          accessible={false}
+          disabled={!onFacePress}
+          onPress={onFacePress}
+          testID="card-details-face"
+        >
+          {cardVisual ? (
+            <CardVisual {...cardVisual} fadeColor={fadeColor} />
+          ) : (
+            <Box lx={{ borderRadius: "lg" }} style={{ overflow: "hidden" }}>
+              <CardArtwork />
+              <CardFade color={fadeColor} />
+            </Box>
+          )}
+        </Pressable>
 
         <Box
+          pointerEvents="box-none"
           lx={{ flexDirection: "row", gap: "s8", position: "absolute" }}
-          style={{ bottom: 0, left: 0, right: 0 }}
+          style={FACE_ACTIONS_INSET}
         >
-          {onTopUp ? (
-            <Box lx={{ flex: 1 }}>
-              <CardTopUpButton onTopUp={onTopUp} />
+          {faceActions.map(action => (
+            <Box key={action.key} lx={{ flex: 1 }}>
+              <Button
+                appearance={action.appearance}
+                size="md"
+                isFull
+                onPress={action.onPress}
+                accessibilityLabel={action.label}
+                testID={action.testID}
+              >
+                {action.label}
+              </Button>
             </Box>
-          ) : null}
-          <Button
-            appearance="gray"
-            size="md"
-            isFull
-            lx={{ flex: 1 }}
-            onPress={onDetailsPress}
-            accessibilityLabel={detailsLabel}
-            testID="card-details-button"
-          >
-            {detailsLabel}
-          </Button>
+          ))}
         </Box>
       </Box>
 

@@ -7135,6 +7135,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.63(@ledgerhq/lumen-design-core@0.1.30)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
@@ -43483,7 +43486,7 @@ snapshots:
       structured-headers: 0.4.1
       tar: 7.5.16
       terminal-link: 2.1.1
-      undici: 6.21.1
+      undici: 6.28.1
       wrap-ansi: 7.0.0
       ws: 8.21.0
     optionalDependencies:
@@ -56898,7 +56901,7 @@ snapshots:
       serialize-error: 8.1.0
       shell-quote: 1.10.0
       signal-exit: 3.0.7
-      stream-json: 1.8.0
+      stream-json: 1.9.1
       strip-ansi: 6.0.1
       telnet-client: 1.2.8
       tmp: 0.2.7
@@ -56949,7 +56952,7 @@ snapshots:
       serialize-error: 8.1.0
       shell-quote: 1.10.0
       signal-exit: 3.0.7
-      stream-json: 1.8.0
+      stream-json: 1.9.1
       strip-ansi: 6.0.1
       telnet-client: 1.2.8
       tmp: 0.2.7
@@ -67424,12 +67427,12 @@ snapshots:
 
   xml2js@0.5.0:
     dependencies:
-      sax: 1.2.4
+      sax: 1.6.1
       xmlbuilder: 11.0.1
 
   xml2js@0.6.0:
     dependencies:
-      sax: 1.2.4
+      sax: 1.6.1
       xmlbuilder: 11.0.1
 
   xmlbuilder@11.0.1: {}

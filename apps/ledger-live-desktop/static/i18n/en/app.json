@@ -902,6 +902,7 @@
     "card": {
       "title": "Crypto card",
       "topUp": "Top up",
+      "chooseCardType": "Choose card type",
       "balanceLabel": "Balance",
       "freeze": "Freeze",
       "unfreeze": "Unfreeze",
