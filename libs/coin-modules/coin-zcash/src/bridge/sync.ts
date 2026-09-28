@@ -507,7 +507,11 @@ export async function performTransparentSync(
   // the explorer's answer must not be lost because that reach failed.
   let resolved: ResolvedTransactions | undefined;
   try {
-    resolved = await recoverTransactionDetails(zainoEndpoint(config), transactions, initialAccount);
+    resolved = await recoverTransactionDetails(
+      zainoEndpoint(config.zaino.url),
+      transactions,
+      initialAccount,
+    );
   } catch (error) {
     log(ZCASH_LOG_TYPE, "keeping the explorer's view of the transactions", { error });
   }
@@ -1059,7 +1063,7 @@ export function buildExtraSyncObservable(
         zcashSyncShielded(
           info,
           syncConfig,
-          zainoEndpoint(config),
+          zainoEndpoint(config.zaino.url),
           config.zaino.batchSize ?? ZCASH_SHIELDED_BATCH_SIZE,
         ),
       ).pipe(timeout(config.zaino.timeoutMs ?? ZCASH_SHIELDED_CHUNK_TIMEOUT_MS)),

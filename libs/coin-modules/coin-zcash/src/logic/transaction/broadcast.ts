@@ -1,6 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
-import { ZCASH_LOG_TYPE, sanitizeEndpointForLog, type ZainoEndpoint } from "../../constants";
+import type { ZcashContext } from "../../config";
+import { ZCASH_LOG_TYPE, sanitizeEndpointForLog, zainoEndpoint } from "../../constants";
 import { getZCashClient } from "../engineClient";
 
 /**
@@ -72,7 +73,8 @@ export async function assertTransparentInputsUnspent({
  * spends no transparent outpoint (fully shielded) has nothing to guard.
  */
 export async function broadcast(
-  endpoint: ZainoEndpoint,
+  context: ZcashContext,
+  currencyId: string,
   txHex: string,
   transparentInputs?: TransparentInputs,
 ): Promise<string> {
@@ -80,6 +82,8 @@ export async function broadcast(
     await assertTransparentInputsUnspent(transparentInputs);
   }
 
+  const { zaino } = await context.config(currencyId);
+  const endpoint = zainoEndpoint(zaino.url);
   const { grpcUrl } = endpoint;
   const client = await getZCashClient(endpoint);
 

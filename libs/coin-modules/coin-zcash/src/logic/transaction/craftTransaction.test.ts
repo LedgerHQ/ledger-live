@@ -1,6 +1,6 @@
 import { craftIronwoodTransaction, craftTransaction } from "./craftTransaction";
 import { combine } from "./combine";
-import { TEST_ZAINO_ENDPOINT } from "../../test/coinConfig";
+import { contextWithZaino, TEST_ZAINO_ENDPOINT, testContext } from "../../test/coinConfig";
 import type { CraftPlan, IronwoodCraftPlan } from "./craftTransaction";
 
 const buildTransaction = jest.fn(async () => ({ pcztHex: "01", nActionsOrchard: 2 }));
@@ -32,7 +32,7 @@ beforeEach(() => {
 
 describe("craftTransaction", () => {
   it("builds a PCZT v1 through the engine, on the endpoint it is given", async () => {
-    expect(await craftTransaction(TEST_ZAINO_ENDPOINT, plan)).toEqual({
+    expect(await craftTransaction(testContext, "zcash", plan)).toEqual({
       pcztHex: "01",
       nActionsOrchard: 2,
     });
@@ -46,7 +46,7 @@ describe("craftTransaction", () => {
   });
 
   it("carries the endpoint's network into the build arguments", async () => {
-    await craftTransaction({ grpcUrl: "https://testnet.zec.rocks", network: "testnet" }, plan);
+    await craftTransaction(contextWithZaino("https://testnet.zec.rocks"), "zcash", plan);
 
     expect(buildTransaction).toHaveBeenCalledWith(
       expect.objectContaining({ grpcUrl: "https://testnet.zec.rocks", network: "testnet" }),
@@ -54,7 +54,7 @@ describe("craftTransaction", () => {
   });
 
   it("prefers a caller-supplied seed fingerprint over the placeholder", async () => {
-    await craftTransaction(TEST_ZAINO_ENDPOINT, { ...plan, seedFingerprint: "ab".repeat(32) });
+    await craftTransaction(testContext, "zcash", { ...plan, seedFingerprint: "ab".repeat(32) });
 
     expect(buildTransaction).toHaveBeenCalledWith(
       expect.objectContaining({ seedFingerprint: "ab".repeat(32) }),
@@ -71,7 +71,7 @@ describe("craftTransaction", () => {
       outputs: [{ address: "t1recipient", valueZat: "50000" }],
     } as unknown as CraftPlan;
 
-    await craftTransaction(TEST_ZAINO_ENDPOINT, transparentPlan);
+    await craftTransaction(testContext, "zcash", transparentPlan);
 
     expect(buildTransaction).toHaveBeenCalledWith(
       expect.objectContaining({ transparentAccountPubkey: "ab".repeat(65) }),
@@ -84,7 +84,7 @@ describe("craftTransaction", () => {
   it("reports an engine that cannot build, rather than failing later", async () => {
     createZCashClient.mockImplementation(() => ({ finalizeTransaction }));
 
-    await expect(craftTransaction(TEST_ZAINO_ENDPOINT, plan)).rejects.toThrow(
+    await expect(craftTransaction(testContext, "zcash", plan)).rejects.toThrow(
       "Shielded Zcash transactions are not supported in this environment",
     );
   });
@@ -92,7 +92,7 @@ describe("craftTransaction", () => {
 
 describe("craftIronwoodTransaction", () => {
   it("builds through the V6 builder, the only encoding an Ironwood bundle fits in", async () => {
-    expect(await craftIronwoodTransaction(TEST_ZAINO_ENDPOINT, plan)).toEqual({
+    expect(await craftIronwoodTransaction(testContext, "zcash", plan)).toEqual({
       pcztHex: "02",
       nActionsIronwood: 2,
     });
@@ -106,7 +106,7 @@ describe("craftIronwoodTransaction", () => {
   it("reports an engine with no V6 builder", async () => {
     createZCashClient.mockImplementation(() => ({ buildTransaction }));
 
-    await expect(craftIronwoodTransaction(TEST_ZAINO_ENDPOINT, plan)).rejects.toThrow(
+    await expect(craftIronwoodTransaction(testContext, "zcash", plan)).rejects.toThrow(
       "Zcash V6 (Ironwood) transactions are not supported in this environment",
     );
   });
@@ -120,14 +120,14 @@ describe("combine", () => {
   };
 
   it("injects the device signatures and extracts the signed transaction", async () => {
-    expect(await combine(TEST_ZAINO_ENDPOINT, signatures)).toEqual({ txHex: "raw", txid: "id" });
+    expect(await combine(testContext, "zcash", signatures)).toEqual({ txHex: "raw", txid: "id" });
     expect(finalizeTransaction).toHaveBeenCalledWith(signatures);
   });
 
   it("reports an engine that cannot finalize", async () => {
     createZCashClient.mockImplementation(() => ({ buildTransaction }));
 
-    await expect(combine(TEST_ZAINO_ENDPOINT, signatures)).rejects.toThrow(
+    await expect(combine(testContext, "zcash", signatures)).rejects.toThrow(
       "Shielded Zcash transactions are not supported in this environment",
     );
   });

@@ -22,7 +22,7 @@ import type { SpendableNote } from "../network/types";
 import type { SignerContext } from "../types/signer";
 import type { Transaction, ZcashAccount, ZcashOperationExtra } from "../types/bridge";
 import { ZcashNotesNotYetSpendable, ZcashShieldedKeyMissing } from "../types/errors";
-import { TEST_ZAINO_ENDPOINT, testContext } from "../test/coinConfig";
+import { testContext } from "../test/coinConfig";
 
 jest.mock("../logic/transaction/craftTransaction");
 jest.mock("../logic/transaction/combine");
@@ -233,11 +233,12 @@ describe("bridge/signOperation", () => {
           ? [mockCraftTransaction, mockCraftIronwoodTransaction, MOCK_PCZT_HEX]
           : [mockCraftIronwoodTransaction, mockCraftTransaction, MOCK_PCZT_V2_HEX];
       expect(expectedCraft).toHaveBeenCalledWith(
-        TEST_ZAINO_ENDPOINT,
+        testContext,
+        "zcash",
         expect.objectContaining({ ufvk: MOCK_UFVK, feeZat: "5000" }),
       );
       expect(unusedCraft).not.toHaveBeenCalled();
-      expect(mockCombine).toHaveBeenCalledWith(TEST_ZAINO_ENDPOINT, {
+      expect(mockCombine).toHaveBeenCalledWith(testContext, "zcash", {
         pczt: expectedPczt,
         orchardSignatures: [
           Buffer.from(defaultSigResult.orchard[0].spendAuthSig).toString("hex"),
@@ -280,7 +281,7 @@ describe("bridge/signOperation", () => {
       transaction: makeTx("shielded"),
     } as never);
 
-    expect(mockCombine).toHaveBeenCalledWith(TEST_ZAINO_ENDPOINT, {
+    expect(mockCombine).toHaveBeenCalledWith(testContext, "zcash", {
       pczt: MOCK_PCZT_V2_HEX,
       orchardSignatures: [],
       transparentSignatures: [],
@@ -310,7 +311,7 @@ describe("bridge/signOperation", () => {
     } as never);
 
     expect(mockCombine).toHaveBeenCalledTimes(1);
-    const args = mockCombine.mock.calls[0][1];
+    const args = mockCombine.mock.calls[0][2];
     expect(Object.keys(args).sort()).toEqual([
       "orchardSignatures",
       "pczt",
@@ -409,13 +410,15 @@ describe("bridge/signOperation", () => {
       // The transparent account pubkey stands in for the UFVK: same account, and
       // the only key material a transparent build reads.
       expect(mockCraftTransaction).toHaveBeenCalledWith(
-        TEST_ZAINO_ENDPOINT,
+        testContext,
+        "zcash",
         expect.objectContaining({
           transparentAccountPubkey: ACCOUNT_CHAIN_CODE_HEX + ACCOUNT_PUBKEY_HEX,
         }),
       );
       expect(mockCraftTransaction).toHaveBeenCalledWith(
-        TEST_ZAINO_ENDPOINT,
+        testContext,
+        "zcash",
         expect.not.objectContaining({ ufvk: expect.anything() }),
       );
     });
@@ -448,11 +451,13 @@ describe("bridge/signOperation", () => {
     } as never);
 
     expect(mockCraftTransaction).toHaveBeenCalledWith(
-      TEST_ZAINO_ENDPOINT,
+      testContext,
+      "zcash",
       expect.objectContaining({ ufvk: MOCK_UFVK }),
     );
     expect(mockCraftTransaction).toHaveBeenCalledWith(
-      TEST_ZAINO_ENDPOINT,
+      testContext,
+      "zcash",
       expect.not.objectContaining({ transparentAccountPubkey: expect.anything() }),
     );
   });

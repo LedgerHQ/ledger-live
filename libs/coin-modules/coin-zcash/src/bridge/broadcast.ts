@@ -2,7 +2,7 @@ import { log } from "@ledgerhq/logs";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { ZcashContext } from "../config";
-import { ZCASH_LOG_TYPE, zainoEndpoint } from "../constants";
+import { ZCASH_LOG_TYPE } from "../constants";
 import type { BtcOperationExtra, Transaction, ZcashAccount } from "../types/bridge";
 import { getWalletAccount } from "./getWalletAccount";
 import { bindExplorer } from "./explorer";
@@ -34,7 +34,8 @@ export const buildBroadcast =
       // out, and must hand the reserved notes back like any other.
       const config = await context.config(account.currency.id);
       txid = await broadcastLogic(
-        zainoEndpoint(config),
+        context,
+        account.currency.id,
         signature,
         inputRefs.length > 0
           ? {

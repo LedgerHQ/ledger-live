@@ -6,7 +6,7 @@
 import { log } from "@ledgerhq/logs";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { buildBroadcast } from "./broadcast";
-import { TEST_CONFIG, TEST_ZAINO_ENDPOINT, testContext } from "../test/coinConfig";
+import { TEST_CONFIG, testContext } from "../test/coinConfig";
 import { bindExplorer } from "./explorer";
 import { getWalletAccount } from "./getWalletAccount";
 import { broadcast as broadcastLogic } from "../logic/transaction/broadcast";
@@ -70,12 +70,12 @@ describe("broadcast", () => {
 
     await submit({ zcashShielded: true, inputs: [`${PREVOUT_HASH}-0`], inputRefs });
 
-    expect(mockBroadcastLogic).toHaveBeenCalledWith(TEST_ZAINO_ENDPOINT, TX_HEX, {
+    expect(mockBroadcastLogic).toHaveBeenCalledWith(testContext, "zcash", TX_HEX, {
       inputRefs,
       fetchUtxoTx: expect.any(Function),
     });
 
-    const { fetchUtxoTx: forwarded } = mockBroadcastLogic.mock.calls[0][2]!;
+    const { fetchUtxoTx: forwarded } = mockBroadcastLogic.mock.calls[0][3]!;
     await forwarded(PREVOUT_HASH);
     expect(fetchUtxoTx).toHaveBeenCalledWith(PREVOUT_HASH);
     expect(bindExplorer).toHaveBeenCalledWith(expect.anything(), account.currency, TEST_CONFIG);
@@ -84,7 +84,7 @@ describe("broadcast", () => {
   it("passes no guard context for a fully shielded send", async () => {
     await submit({ zcashShielded: true });
 
-    expect(mockBroadcastLogic).toHaveBeenCalledWith(TEST_ZAINO_ENDPOINT, TX_HEX, undefined);
+    expect(mockBroadcastLogic).toHaveBeenCalledWith(testContext, "zcash", TX_HEX, undefined);
     expect(mockGetWalletAccount).not.toHaveBeenCalled();
   });
 

@@ -1,4 +1,5 @@
-import type { ZainoEndpoint } from "../../constants";
+import type { ZcashContext } from "../../config";
+import { zainoEndpoint } from "../../constants";
 import { getZCashClient } from "../engineClient";
 import type { FinalizeTransactionResult } from "../../network/types";
 
@@ -13,7 +14,8 @@ import type { FinalizeTransactionResult } from "../../network/types";
  * the PCZT, so an empty list for a pool the PCZT does not spend fails closed.
  */
 export async function combine(
-  endpoint: ZainoEndpoint,
+  context: ZcashContext,
+  currencyId: string,
   args: {
     pczt: string;
     orchardSignatures: string[];
@@ -21,7 +23,8 @@ export async function combine(
     ironwoodSignatures?: string[];
   },
 ): Promise<FinalizeTransactionResult> {
-  const client = await getZCashClient(endpoint);
+  const { zaino } = await context.config(currencyId);
+  const client = await getZCashClient(zainoEndpoint(zaino.url));
 
   if (!client.finalizeTransaction) {
     throw new Error("Shielded Zcash transactions are not supported in this environment");

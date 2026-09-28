@@ -1,5 +1,5 @@
 import { assertCanSend, getZCashClient, getZCashModule } from "./engineClient";
-import { TEST_ZAINO_ENDPOINT } from "../test/coinConfig";
+import { contextWithZaino, TEST_ZAINO_ENDPOINT, testContext } from "../test/coinConfig";
 import type { ZCashClient } from "../network/types";
 
 const createZCashClient = jest.fn();
@@ -42,7 +42,7 @@ describe("getZCashClient", () => {
 
 describe("assertCanSend", () => {
   it("accepts an engine that can build, finalize and broadcast", async () => {
-    await expect(assertCanSend(TEST_ZAINO_ENDPOINT)).resolves.toBe(undefined);
+    await expect(assertCanSend(testContext, "zcash")).resolves.toBe(undefined);
     expect(createZCashClient).toHaveBeenCalledWith(TEST_ZAINO_ENDPOINT);
   });
 
@@ -60,16 +60,17 @@ describe("assertCanSend", () => {
       return client;
     });
 
-    await expect(assertCanSend(TEST_ZAINO_ENDPOINT)).rejects.toThrow(
+    await expect(assertCanSend(testContext, "zcash")).rejects.toThrow(
       "Shielded Zcash transactions are not supported in this environment",
     );
   });
 
-  it("builds the client for the endpoint it is given", async () => {
-    const endpoint = { grpcUrl: "https://testnet.zec.rocks", network: "testnet" } as const;
+  it("builds the client for the endpoint its context resolves", async () => {
+    await assertCanSend(contextWithZaino("https://testnet.zec.rocks"), "zcash");
 
-    await assertCanSend(endpoint);
-
-    expect(createZCashClient).toHaveBeenCalledWith(endpoint);
+    expect(createZCashClient).toHaveBeenCalledWith({
+      grpcUrl: "https://testnet.zec.rocks",
+      network: "testnet",
+    });
   });
 });

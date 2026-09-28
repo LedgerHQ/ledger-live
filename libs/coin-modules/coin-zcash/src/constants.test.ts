@@ -1,13 +1,11 @@
 import { sanitizeEndpointForLog, zainoEndpoint } from "./constants";
 import { TEST_CONFIG } from "./test/coinConfig";
 
-const withZainoUrl = (url: string) => ({ ...TEST_CONFIG, zaino: { ...TEST_CONFIG.zaino, url } });
-
 // Sync and send must resolve the same endpoint, or a send would be built
 // against a chain the account was never scanned on: both derive it here.
 describe("zainoEndpoint", () => {
-  it("reads the gRPC URL from the coin config", () => {
-    expect(zainoEndpoint(TEST_CONFIG).grpcUrl).toBe(TEST_CONFIG.zaino.url);
+  it("keeps the gRPC URL it is given", () => {
+    expect(zainoEndpoint(TEST_CONFIG.zaino.url).grpcUrl).toBe(TEST_CONFIG.zaino.url);
   });
 
   it.each([
@@ -15,7 +13,7 @@ describe("zainoEndpoint", () => {
     ["https://my-testnet-node.example:443", "testnet"],
     ["https://zec-indexer.coin.ledger.com", "mainnet"],
   ])("infers the network of %s as %s", (url, network) => {
-    expect(zainoEndpoint(withZainoUrl(url))).toEqual({ grpcUrl: url, network });
+    expect(zainoEndpoint(url)).toEqual({ grpcUrl: url, network });
   });
 });
 

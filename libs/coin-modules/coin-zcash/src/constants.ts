@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import type { ZcashCoinConfig } from "./config";
 import type { ZcashPrivateInfo } from "./network/types";
 
 export const ZCASH_LOG_TYPE = "zcash";
@@ -9,8 +8,8 @@ export const ZCASH_XPUB_VERSION = 0x0488b21e;
 //
 // The shielded sync path (bridge/sync.ts) and the shielded send path
 // (bridge/signOperation.ts) MUST target the same endpoint and network. Both
-// derive it with `zainoEndpoint` from the coin config resolved through the
-// bridge's context (`zaino.url`), so one config change reaches both.
+// derive it with `zainoEndpoint` from the coin config's `zaino.url`, so one config
+// change reaches both.
 
 export type ZcashNetwork = "mainnet" | "testnet";
 
@@ -19,11 +18,11 @@ export type ZainoEndpoint = { grpcUrl: string; network: ZcashNetwork };
 const inferZainoNetwork = (url: string): ZcashNetwork =>
   /testnet/i.test(url) ? "testnet" : "mainnet";
 
-/** Zaino endpoint (URL + network) shared by shielded sync and sends. */
-export const zainoEndpoint = (config: ZcashCoinConfig): ZainoEndpoint => {
-  const grpcUrl = config.zaino.url;
-  return { grpcUrl, network: inferZainoNetwork(grpcUrl) };
-};
+/** Zaino endpoint (URL + network) shared by shielded sync and sends, from `zaino.url`. */
+export const zainoEndpoint = (grpcUrl: string): ZainoEndpoint => ({
+  grpcUrl,
+  network: inferZainoNetwork(grpcUrl),
+});
 
 /**
  * Strips anything a log line or an error-context extraction (which can reach

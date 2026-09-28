@@ -11,7 +11,6 @@ import type { Transaction, ZcashAccount, BtcInputRef, ZcashOperationExtra } from
 import { isShieldedTransfer } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import type { ZcashContext } from "../config";
-import { zainoEndpoint } from "../constants";
 import {
   ZcashNotesNotYetSpendable,
   ZcashShieldedKeyMissing,
@@ -141,8 +140,8 @@ export const buildSignOperation =
         if (transaction.zcashFee === undefined)
           throw new Error("Missing zcashFee -- run prepareTransaction first");
 
-        const endpoint = zainoEndpoint(await context.config(account.currency.id));
-        await assertCanSend(endpoint);
+        const currencyId = account.currency.id;
+        await assertCanSend(context, currencyId);
 
         const accountIndex = getWalletAccount(account).params.index;
         const transparentUtxos = resolveTransparentUtxos(account, transaction);
@@ -158,13 +157,17 @@ export const buildSignOperation =
         };
 
         const buildResult = useIronwood
-          ? await craftIronwoodTransaction(endpoint, { ...plan, ufvk: requireUfvk(ufvk) }).catch(
-              err => {
-                if (isNotePositionPastAnchor(err)) throw new ZcashNotesNotYetSpendable();
-                throw err;
-              },
-            )
-          : await craftTransaction(endpoint, { ...plan, ...resolveAccountKey(account, ufvk) });
+          ? await craftIronwoodTransaction(context, currencyId, {
+              ...plan,
+              ufvk: requireUfvk(ufvk),
+            }).catch(err => {
+              if (isNotePositionPastAnchor(err)) throw new ZcashNotesNotYetSpendable();
+              throw err;
+            })
+          : await craftTransaction(context, currencyId, {
+              ...plan,
+              ...resolveAccountKey(account, ufvk),
+            });
 
         const { pcztTransaction } = buildResult;
 
@@ -193,7 +196,7 @@ export const buildSignOperation =
           Buffer.from(a.spendAuthSig).toString("hex"),
         );
 
-        const finalizeResult = await combine(endpoint, {
+        const finalizeResult = await combine(context, currencyId, {
           pczt: buildResult.pcztHex,
           orchardSignatures,
           transparentSignatures,

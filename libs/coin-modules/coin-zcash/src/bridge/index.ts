@@ -105,7 +105,7 @@ export function createBridges(signerContext: SignerContext, context: ZcashContex
         path: path ?? account.freshAddressPath,
       }),
     deriveShieldedAddress: async (ufvk: string) => {
-      const client = await getZCashClient(zainoEndpoint(await context.config("zcash")));
+      const client = await getZCashClient(zainoEndpoint((await context.config("zcash")).zaino.url));
       return client.deriveShieldedAddress(ufvk);
     },
     getShieldedAddress: (account, { deviceId, path, display }) =>
