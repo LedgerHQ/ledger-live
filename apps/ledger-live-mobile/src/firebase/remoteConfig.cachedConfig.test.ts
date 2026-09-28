@@ -60,6 +60,9 @@ describe("readCachedFlags", () => {
           params: { environment: "PROD", watchConfig: {}, learnMoreLink: "" },
         }),
       ),
+      feature_copy_upgrade_banner: value(
+        JSON.stringify({ enabled: true, copy: { "upgrade.banner.title": "Cached title" } }),
+      ),
     });
 
     const { readCachedFlags } = await loadModule();
@@ -71,6 +74,9 @@ describe("readCachedFlags", () => {
       },
     });
     expect(mockFetchAndActivate).not.toHaveBeenCalled();
+    const { getContentAbTestCopy } = await import("./contentAbTestCopy");
+    expect(getContentAbTestCopy()).toEqual({ "upgrade.banner.title": "Cached title" });
+    expect(mockGetAll).toHaveBeenCalledTimes(1);
   });
 
   it("does not call ensureInitialized, which fetches over the network on Android", async () => {

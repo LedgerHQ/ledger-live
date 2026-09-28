@@ -1,6 +1,8 @@
 import { createInstance } from "i18next";
 import { initReactI18next } from "react-i18next";
 import { DEFAULT_LANGUAGE_LOCALE, locales } from "../languages";
+import { en } from "../locales";
+import { installContentAbTestCopyOverrides } from "./contentAbTestCopyOverrides";
 
 /**
  * The app's translation engine.
@@ -25,5 +27,6 @@ i18n.use(initReactI18next).init({
     escapeValue: false, // not needed for react as it does escape per default to prevent xss!
   },
 });
+installContentAbTestCopyOverrides(i18n, en.common, "common");
 
 export default i18n;
