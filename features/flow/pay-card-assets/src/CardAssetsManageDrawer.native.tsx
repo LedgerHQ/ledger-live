@@ -78,7 +78,7 @@ function AssetRow({
                         if (event.nativeEvent.actionName === "increment") onMoveDown();
                       }}
                       onLongPress={onDrag}
-                      delayLongPress={300}
+                      delayLongPress={200}
                       testID={`card-asset-reorder-handle-${row.id}`}
                     >
                       {/* Bigger touch target for the long-press-to-drag gesture. */}
