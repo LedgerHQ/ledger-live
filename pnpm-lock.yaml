@@ -11361,9 +11361,6 @@ importers:
       gql.tada:
         specifier: ^1.9.2
         version: 1.9.2(@typescript/typescript6@6.0.2)(graphql@16.13.2)
-      lodash:
-        specifier: 'catalog:'
-        version: 4.17.21
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -11395,9 +11392,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0

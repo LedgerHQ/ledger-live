@@ -3,7 +3,6 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { LedgerSigner } from "@mysten/signers/ledger";
 import { messageWithIntent as mockMessageWithIntent } from "@mysten/sui/cryptography";
 import { toSerializedSignature as mockToSerializedSignature } from "@mysten/sui/cryptography";
-import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import { verifyTransactionSignature as mockVerifyTransactionSignature } from "@mysten/sui/verify";
 import { BigNumber } from "bignumber.js";
 import { take } from "rxjs/operators";
@@ -36,7 +35,7 @@ function makeUnknownDeviceError(): Error {
 jest.mock("../config", () => ({
   __esModule: true,
   default: {
-    getCoinConfig: jest.fn(() => ({ node: { url: "http://test.com" } })),
+    getCoinConfig: jest.fn(() => ({ node: { grpcUrl: "http://test.com" } })),
     setCoinConfig: jest.fn(),
   },
 }));
@@ -88,11 +87,10 @@ beforeAll(() => {
   coinConfig.setCoinConfig(() => ({
     status: { type: "active" },
     node: {
-      url: getJsonRpcFullnodeUrl("mainnet"),
       graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
-      grpcUrl: getJsonRpcFullnodeUrl("mainnet"),
+      grpcUrl: "https://fullnode.mainnet.sui.io:443",
     },
-    features: { transport: "json" },
+    features: { transport: "grpc" },
   }));
 });
 

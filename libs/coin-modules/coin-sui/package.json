@@ -167,7 +167,6 @@
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "gql.tada": "^1.9.2",
-    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -180,7 +179,6 @@
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "graphql": "^16.10.0",
     "jest": "catalog:",

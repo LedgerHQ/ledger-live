@@ -15,11 +15,10 @@ describe("Sui Api", () => {
 
   const config: SuiCoinConfig = {
     node: {
-      url: getEnv("API_SUI_NODE_PROXY"),
       graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
       grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
     },
-    features: { transport: "json" },
+    features: { transport: "grpc" },
     status: { type: "active" },
   };
 
@@ -252,13 +251,12 @@ describe("Sui Api", () => {
     });
 
     it("should fail when address is invalid", async () => {
-      // capture exception with jest
       await expect(
         module.listOperations(context, "0xABCDEF0000000000000000000000000000000001", {
           minHeight: 0,
           order: "asc",
         }),
-      ).rejects.toThrow("Invalid params");
+      ).rejects.toThrow("sui: invalid address");
     });
   });
 

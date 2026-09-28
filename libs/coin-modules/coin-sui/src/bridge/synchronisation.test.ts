@@ -1,7 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { mist, ONE_SUI } from "../constants";
@@ -43,11 +42,10 @@ describe("getAccountShape", () => {
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
       node: {
-        url: getJsonRpcFullnodeUrl("mainnet"),
         graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
-        grpcUrl: getJsonRpcFullnodeUrl("mainnet"),
+        grpcUrl: "https://fullnode.mainnet.sui.io:443",
       },
-      features: { transport: "json" },
+      features: { transport: "grpc" },
     }));
   });
 
