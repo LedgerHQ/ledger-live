@@ -67,8 +67,8 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
-    runs-on: ubuntu-22.04
-    timeout-minutes: 40
+    runs-on: ledger-wallet-4cpu-aws-public
+    timeout-minutes: 11
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -85,6 +85,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
