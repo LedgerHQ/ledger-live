@@ -251,6 +251,23 @@ describe("PayTab integration", () => {
     expect(screen.getByTestId("pay-card-deposit-option-swap")).toBeVisible();
   });
 
+  it("should open the request card when Crypto address is selected", async () => {
+    mockFundedPayStablecoins();
+    const { user, store } = renderWithMockedCounterValuesProvider(<PayTab />, {
+      initialState: fundedState,
+    });
+
+    await user.click(await screen.findByRole("button", { name: "Add stablecoin" }));
+    await user.click(await screen.findByTestId("pay-card-deposit-option-receive"));
+
+    expect(await screen.findByTestId("pay-request-receive")).toBeVisible();
+    expect(openAssetAndAccount).toHaveBeenCalledWith(
+      expect.objectContaining({ categories: [AssetCategory.Stablecoins] }),
+    );
+    expect(store.getState().modularDialog.flow).toBe("request");
+    expect(store.getState().modals.MODAL_RECEIVE?.isOpened).toBeFalsy();
+  });
+
   it("should show the cash-to-stable intro when Bank transfer is selected", async () => {
     await openBankTransferIntro();
 

@@ -333,7 +333,7 @@ describe("PayTab integration", () => {
       });
     });
 
-    it("opens the modular asset drawer for the receive flow when the receive option is selected", async () => {
+    it("opens the request flow when the crypto address option is selected", async () => {
       const { user, store } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-deposit"));
@@ -342,9 +342,10 @@ describe("PayTab integration", () => {
       await waitFor(() => {
         expect(store.getState().modularDrawer).toMatchObject({
           isOpen: true,
-          flow: "receive_flow",
-          source: "Pay",
+          flow: "request",
+          source: "pay",
           categories: [AssetCategory.Stablecoins],
+          enableAccountSelection: true,
         });
       });
     });

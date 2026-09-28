@@ -1,7 +1,5 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { AssetCategory } from "@domain/api-aggregated-assets";
 import {
   useBankTransferIntroAdapter,
   type BankTransferHandoff,
@@ -12,35 +10,15 @@ import {
   type DepositOptionId,
   type UseDepositOptionsAdapter,
 } from "@features/flow-pay-deposit";
-import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
-import { useOpenAssetAndAccount } from "../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 const DEPOSIT_PAGE = "Pay";
-
-const DEPOSIT_CATEGORIES = [AssetCategory.Stablecoins] as const;
 
 export type UsePayTabDepositOptions = UseDepositOptionsAdapter & {
   bankTransferIntro: BankTransferIntroProps;
 };
 
-export function usePayTabDepositOptions(): UsePayTabDepositOptions {
+export function usePayTabDepositOptions(onCryptoAddress: () => void): UsePayTabDepositOptions {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { openAssetAndAccount } = useOpenAssetAndAccount();
-
-  const onReceive = useCallback(
-    (account: AccountLike, parentAccount?: Account) => {
-      dispatch(
-        openModal("MODAL_RECEIVE", {
-          account,
-          parentAccount,
-          shouldUseReceiveOptions: false,
-        }),
-      );
-    },
-    [dispatch],
-  );
 
   const onBankTransfer = useCallback(
     (handoff: BankTransferHandoff) => {
@@ -69,14 +47,11 @@ export function usePayTabDepositOptions(): UsePayTabDepositOptions {
           navigate("/exchange", { state: { mode: "buy", returnTo: "/paytab" } });
           break;
         case "receive":
-          openAssetAndAccount({
-            categories: DEPOSIT_CATEGORIES,
-            onSuccess: onReceive,
-          });
+          onCryptoAddress();
           break;
       }
     },
-    [openBankTransferIntro, navigate, openAssetAndAccount, onReceive],
+    [openBankTransferIntro, navigate, onCryptoAddress],
   );
 
   const { open, depositOptions } = useDepositOptionsAdapter({
