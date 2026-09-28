@@ -87,7 +87,7 @@ export function RecipientAddressModalView({
   const showMatched = showMatchedAddress && !hasMemoValidationError;
 
   return (
-    <DialogBody className="flex min-h-[156px] flex-col py-16">
+    <DialogBody scrollbarWidth="auto" className="min-h-0 pt-16">
       <SelfTransferSection />
       <FamilySendRecipientNotice />
       <ContactsFeatureIntroductionDialog {...featureIntroduction} />
