@@ -102,11 +102,11 @@ export class SwapPage extends WebViewAppPage {
   private readonly topGainersContainer = "top-gainers-container";
   private readonly topGainersInfoIcon = "top-gainers-info-icon";
   private readonly topGainersDateTrigger = "top-gainers-date-select-trigger";
-  private readonly topGainersItemsSelector = '[data-testid^="top-gainers-item-"]';
-  private readonly topGainersDateOptionsSelector = '[data-testid^="top-gainers-date-option-"]';
+  private readonly topGainersItems = '[data-testid^="top-gainers-item-"]';
+  private readonly topGainersDateOptions = '[data-testid^="top-gainers-date-option-"]';
   private readonly topStablecoinsContainer = "top-stablecoins-container";
   private readonly topStablecoinsInfoIcon = "top-stablecoins-info-icon";
-  private readonly topStablecoinsItemsSelector = '[data-testid^="top-stablecoins-item-"]';
+  private readonly topStablecoinsItems = '[data-testid^="top-stablecoins-item-"]';
 
   private async waitForSelectorPopulated(webview: Page, testId: string, timeout: number) {
     await webview.waitForFunction(
@@ -613,29 +613,23 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.bestValueInfoIcon)).toBeVisible();
   }
 
-  // Non-critical panel: failures are reported, not thrown.
-  @step("Check landing page Trending Assets and Stablecoins panel")
-  async checkLandingPageTrendingAssets() {
-    await this.runPanelCheckSoftly(() => this.checkTrendingAssetsPanel());
-    await this.runPanelCheckSoftly(() => this.checkStablecoinsPanel());
-  }
-
-  private async runPanelCheckSoftly(check: () => Promise<void>) {
+  // Non-critical panel: errors are caught and attached, not thrown.
+  @step("Soft-assert Trending Assets panel")
+  async softAssertTrendingAssetsPanel() {
     try {
-      await check();
+      await this.assertTrendingAssetsPanel();
     } catch (error) {
-      await test.info().attach("Landing page panel check failed (non-blocking)", {
+      await test.info().attach("Trending Assets panel check failed (non-blocking)", {
         body: String(error),
         contentType: "text/plain",
       });
     }
   }
 
-  @step("Check Trending Assets panel")
-  private async checkTrendingAssetsPanel() {
+  private async assertTrendingAssetsPanel() {
     const webview = await this.getWebView();
 
-    const topGainersRows = webview.locator(this.topGainersItemsSelector);
+    const topGainersRows = webview.locator(this.topGainersItems);
     await this.softExpect(async soft => {
       await soft(webview.getByTestId(this.topGainersContainer)).toBeVisible();
       await soft(webview.getByTestId(this.topGainersContainer)).toContainText("Trending Assets");
@@ -649,7 +643,7 @@ export class SwapPage extends WebViewAppPage {
     });
 
     const dateTrigger = webview.getByTestId(this.topGainersDateTrigger);
-    const dateOptions = webview.locator(this.topGainersDateOptionsSelector);
+    const dateOptions = webview.locator(this.topGainersDateOptions);
     await this.softExpect(async soft => {
       await soft(dateTrigger).toBeVisible();
     });
@@ -676,11 +670,23 @@ export class SwapPage extends WebViewAppPage {
     });
   }
 
-  @step("Check Stablecoins panel")
-  private async checkStablecoinsPanel() {
+  // Non-critical panel: errors are caught and attached, not thrown.
+  @step("Soft-assert Stablecoins panel")
+  async softAssertStablecoinsPanel() {
+    try {
+      await this.assertStablecoinsPanel();
+    } catch (error) {
+      await test.info().attach("Stablecoins panel check failed (non-blocking)", {
+        body: String(error),
+        contentType: "text/plain",
+      });
+    }
+  }
+
+  private async assertStablecoinsPanel() {
     const webview = await this.getWebView();
 
-    const topStablecoinsRows = webview.locator(this.topStablecoinsItemsSelector);
+    const topStablecoinsRows = webview.locator(this.topStablecoinsItems);
     await this.softExpect(async soft => {
       await soft(webview.getByTestId(this.topStablecoinsContainer)).toBeVisible();
       await soft(webview.getByTestId(this.topStablecoinsContainer)).toContainText("Stablecoins");
