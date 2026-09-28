@@ -16,6 +16,7 @@ import {
   useContactAddressEditAnalytics,
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
+  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
 import type {
   ContactAddressEditSavePayload,
@@ -32,7 +33,7 @@ import {
   useContactsAnalytics,
 } from "../analytics";
 import { useContactsAddressValidationAdapter } from "./useContactsAddressValidationAdapter";
-import { contactsAddressSupportsDomain } from "../adapters/contactsAddressSupportsDomain";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
@@ -134,7 +135,10 @@ export function useContactAddressDetailActionsAdapter(
     onCloseAddressDetail,
     onEditAddressSaved,
   });
-  const supportsDomain = contactsAddressSupportsDomain(currencyId);
+  const supportsDomain = resolveContactAddressSupportsDomain(
+    currencyId,
+    sendFeatures.supportsDomain,
+  );
   const labels = useMemo(
     () =>
       resolveContactAddressDetailActionsLabels({

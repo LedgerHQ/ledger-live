@@ -27,6 +27,7 @@ import {
   useContactsListPageAnalytics,
   useContactsLedgerSyncMutationGuard,
   trackContactsLedgerSyncDismiss,
+  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
 import {
   useAddAddressCurrencySelectionViewModel,
@@ -64,7 +65,7 @@ import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteA
 import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import type { ContactsAddAddressFlowDialogProps } from "./components/ContactsAddAddressFlowDialog";
-import { contactsAddressSupportsDomain } from "../../adapters/contactsAddressSupportsDomain";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact" | "addContactDialog"> &
   Readonly<{
@@ -305,10 +306,11 @@ export function useContactsViewModel(): ContactsPageViewModel {
     goBackAddAddress();
     selectCurrencyForContact(selectedContactId);
   }, [addAddressFlowState, goBackAddAddress, selectCurrencyForContact]);
-  const addAddressSupportsDomain = contactsAddressSupportsDomain(
+  const addAddressSupportsDomain = resolveContactAddressSupportsDomain(
     "selectedCurrencyId" in addAddressFlowState
       ? addAddressFlowState.selectedCurrencyId
       : undefined,
+    sendFeatures.supportsDomain,
   );
   const addAddressEntryLabels = useMemo<AddAddressEntryLabels>(
     () => ({

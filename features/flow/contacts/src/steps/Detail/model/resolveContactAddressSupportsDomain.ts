@@ -1,10 +1,10 @@
 import type { ContactAddress } from "@domain/entity-contact";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { defaultContactAddressCurrencyPort } from "@features/flow-contacts";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import { defaultContactAddressCurrencyPort } from "./defaultContactAddressCurrencyPort";
 
-export function contactsAddressSupportsDomain(
+export function resolveContactAddressSupportsDomain(
   currencyId: ContactAddress["currencyId"] | undefined,
+  supportsDomain: (network: CryptoCurrency) => boolean,
 ): boolean {
   const networkId =
     currencyId === undefined
@@ -12,5 +12,5 @@ export function contactsAddressSupportsDomain(
       : defaultContactAddressCurrencyPort.resolveNetworkId(currencyId);
   const network = networkId === undefined ? undefined : findCryptoCurrencyById(networkId);
 
-  return network !== undefined && sendFeatures.supportsDomain(network);
+  return network !== undefined && supportsDomain(network);
 }

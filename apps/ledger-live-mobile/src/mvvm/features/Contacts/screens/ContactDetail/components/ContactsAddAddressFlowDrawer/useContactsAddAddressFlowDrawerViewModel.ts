@@ -11,7 +11,8 @@ import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import { useContactsMeContact } from "@features/platform-contacts";
 import { useContactsCurrencySelectionAdapter } from "LLM/features/Contacts/hooks/useContactsCurrencySelectionAdapter";
-import { contactsAddressSupportsDomain } from "LLM/features/Contacts/adapters/contactsAddressSupportsDomain";
+import { resolveContactAddressSupportsDomain } from "@features/flow-contacts";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { ContactsAddAddressDrawerStep, ContactsAddAddressFlowDrawerProps } from "./types";
 
 function resolveDrawerStep(
@@ -77,7 +78,10 @@ export function useContactsAddAddressFlowDrawerViewModel({
             labels: {
               title: t("contacts.addAddressEntry.title"),
               addressPlaceholder: t(
-                contactsAddressSupportsDomain(state.selectedCurrencyId)
+                resolveContactAddressSupportsDomain(
+                  state.selectedCurrencyId,
+                  sendFeatures.supportsDomain,
+                )
                   ? "contacts.addAddressEntry.addressPlaceholder"
                   : "contacts.addAddressEntry.addressPlaceholderNoENS",
               ),
