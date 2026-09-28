@@ -18,7 +18,6 @@ type TranslationEngine = {
   ): void;
   on(event: "languageChanged", callback: (language: string) => void): void;
   off(event: "languageChanged", callback: (language: string) => void): void;
-  emit(event: "languageChanged", language: string): void;
 };
 
 export function installContentAbTestCopyOverrides(
@@ -29,7 +28,6 @@ export function installContentAbTestCopyOverrides(
   const baselineSnapshot = cloneTranslationTree(englishBaseline);
   let copyOverrides: ContentAbTestCopy = getContentAbTestCopy();
   let appliedKeys = new Set<string>();
-  let isNotifyingCopyUpdate = false;
 
   const applyCopyOverrides = (language: string) => {
     for (const key of appliedKeys) {
@@ -51,7 +49,7 @@ export function installContentAbTestCopyOverrides(
   };
 
   const onLanguageChanged = (language: string) => {
-    if (!isNotifyingCopyUpdate) applyCopyOverrides(language);
+    applyCopyOverrides(language);
   };
 
   i18nInstance.on("languageChanged", onLanguageChanged);
@@ -59,17 +57,7 @@ export function installContentAbTestCopyOverrides(
 
   const unsubscribe = subscribeToContentAbTestCopy(nextCopyOverrides => {
     copyOverrides = nextCopyOverrides;
-    const language = i18nInstance.resolvedLanguage ?? i18nInstance.language;
-    applyCopyOverrides(language);
-
-    if (isEnglish(language)) {
-      isNotifyingCopyUpdate = true;
-      try {
-        i18nInstance.emit("languageChanged", language);
-      } finally {
-        isNotifyingCopyUpdate = false;
-      }
-    }
+    applyCopyOverrides(i18nInstance.resolvedLanguage ?? i18nInstance.language);
   });
 
   return () => {
