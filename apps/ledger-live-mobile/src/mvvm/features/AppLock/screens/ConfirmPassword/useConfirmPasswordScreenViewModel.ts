@@ -1,8 +1,8 @@
 import {
   useConfirmPasswordViewModel,
-  usePasswordDraft,
   type ConfirmPasswordViewModel,
 } from "@features/flow-app-lock";
+import { usePasswordDraft } from "@features/platform-app-lock";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";

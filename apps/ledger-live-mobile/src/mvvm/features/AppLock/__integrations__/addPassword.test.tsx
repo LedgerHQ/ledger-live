@@ -1,4 +1,4 @@
-import { PasswordDraftProvider, usePasswordDraft } from "@features/flow-app-lock";
+import { PasswordDraftProvider, usePasswordDraft } from "@features/platform-app-lock";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { track } from "@shared/analytics";
 import { render, screen, waitFor } from "@tests/test-renderer";
