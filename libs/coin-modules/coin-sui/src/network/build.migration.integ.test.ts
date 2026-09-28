@@ -34,7 +34,6 @@ const ACTIVE_ACCOUNT = "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f3
 beforeAll(() => {
   coinConfig.setCoinConfig(id => {
     const node = {
-      url: getEnv("API_SUI_NODE_PROXY"),
       graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
       grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
     };
@@ -99,8 +98,7 @@ const assertShapeBothBuilt = (grpcBytes: Uint8Array, gqlBytes: Uint8Array, label
   expect(label).not.toBe("");
 };
 
-// gRPC is the reference leg. It replaced JSON-RPC here after the Sui Foundation retired the public
-// mainnet fullnode (wk of 2026-07-20), which left this suite skipped with no runnable baseline.
+// gRPC is the reference leg.
 //
 // Disabled: every case compares a GraphQL build against the gRPC one, and the GraphQL transport is
 // being deprecated.

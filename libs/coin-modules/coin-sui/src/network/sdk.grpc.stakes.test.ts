@@ -1,6 +1,6 @@
 import type { SuiGrpcClient } from "@mysten/sui/grpc";
 import { deriveDynamicFieldID } from "@mysten/sui/utils";
-import type { StakeObject } from "@mysten/sui/jsonRpc";
+import type { StakeObject } from "../types";
 import { getDelegatedStakesGrpc, getSystemStateGrpc, getValidatorsGrpc } from "./sdk.grpc";
 
 const SYSTEM_STATE_ID = `0x${"0".repeat(63)}5`;
@@ -279,7 +279,7 @@ describe("getDelegatedStakesGrpc", () => {
   });
 
   // A stake activating in a future epoch has no activation rate yet, so it must trigger no lookup
-  // and carry no `estimatedReward` — the JSON-RPC convention the other transports also follow.
+  // and carry no `estimatedReward`, matching the GraphQL arm.
   it("marks a future-epoch stake Pending without fetching a rate", async () => {
     const { api, batchGetObjects } = stubApi({
       owned: [stakedSui(POOL_A, "0xstake-a", "501")],

@@ -1,10 +1,10 @@
 /**
  * Hand-written GraphQL documents typed via `gql.tada`. Each export pairs
- * with a runtime mapper in `sdk.graphql.ts` that re-shapes results to JSON-RPC types.
+ * with a runtime mapper in `sdk.graphql.ts` that re-shapes results to the coin-sui network types.
  */
 import { graphql, type ResultOf } from "./tada";
 
-/** GraphQL accepts only UInt53; digest lookups must stay on JSON-RPC. `null` sequence returns latest. */
+/** GraphQL accepts only UInt53; digest lookups route to gRPC. `null` sequence returns latest. */
 export const CHECKPOINT_BY_SEQUENCE = graphql(`
   query CheckpointBySequence($sequenceNumber: UInt53) {
     checkpoint(sequenceNumber: $sequenceNumber) {
