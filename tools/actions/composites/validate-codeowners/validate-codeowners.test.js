@@ -82,6 +82,17 @@ test("counts only files taken from narrower rules", () => {
   assert.match(findings[0].message, /takes 1 file\(s\) from 1 narrower earlier rule\(s\): L2 /);
 });
 
+test("treats owner order and case as the same ownership", () => {
+  const files = [
+    "libs/a/src/x.ts",
+    "libs/a/tsconfig.json",
+    "libs/b/tsconfig.json",
+    "libs/c/tsconfig.json",
+  ];
+  assert.deepStrictEqual(run("libs/a/ @team/a @team/b\n**/tsconfig* @team/b @team/a\n", files), []);
+  assert.deepStrictEqual(run("libs/a/ @Team/A\n**/tsconfig* @team/a\n", files), []);
+});
+
 test("accepts a narrower rule placed after a broad one", () => {
   const files = [
     "libs/a/src/x.ts",

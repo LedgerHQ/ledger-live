@@ -75,6 +75,10 @@ function compilePattern(pattern) {
   return { regex, bareName, segment };
 }
 
+function ownerKey(owners) {
+  return [...new Set(owners.map(owner => owner.toLowerCase()))].sort().join(" ");
+}
+
 function compileRules(rules) {
   return rules.map(rule => ({ ...rule, ...compilePattern(rule.pattern) }));
 }
@@ -125,7 +129,7 @@ function analyse(rules, files) {
     for (let k = hits.length - 2; k >= 0; k--) {
       const loser = hits[k];
       if (!loser.owners.length) break;
-      if (loser.owners.join(" ") === winner.owners.join(" ")) continue;
+      if (ownerKey(loser.owners) === ownerKey(winner.owners)) continue;
       const taken = winner.takenFrom.get(loser.line) || { rule: loser, files: [] };
       taken.files.push(file);
       winner.takenFrom.set(loser.line, taken);
