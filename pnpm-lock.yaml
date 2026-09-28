@@ -12380,6 +12380,9 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
+      bn.js:
+        specifier: 5.2.5
+        version: 5.2.5
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -12399,6 +12402,9 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11)
+      '@types/bn.js':
+        specifier: 5.2.0
+        version: 5.2.0
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
