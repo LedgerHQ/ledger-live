@@ -205,6 +205,30 @@ describe("getEnsureAppReadyFailure", () => {
     [{ type: BlockingStateType.DeviceNotOnboarded }, DeviceFlowFailureType.DeviceNotOnboarded],
     [{ type: BlockingStateType.InvalidProvider }, DeviceFlowFailureType.InvalidProvider],
     [
+      {
+        type: BlockingStateType.DeviceDeprecatedBlocking,
+        decision: {
+          status: "block",
+          currencyName: "Bitcoin",
+          deviceModelId: DeviceModelId.nanoS,
+          supportEndDate: new Date("2026-01-01"),
+        },
+      },
+      DeviceFlowFailureType.DeviceDeprecatedBlocking,
+    ],
+    [
+      {
+        type: BlockingStateType.UnsupportedApplication,
+        appName: "Bitcoin",
+        deviceModelId: DeviceModelId.nanoS,
+      },
+      DeviceFlowFailureType.UnsupportedApplication,
+    ],
+    [
+      { type: BlockingStateType.UnsupportedFeature, deviceModelId: DeviceModelId.nanoS },
+      DeviceFlowFailureType.UnsupportedFeature,
+    ],
+    [
       { type: BlockingStateType.UnsupportedFirmwareVersion },
       DeviceFlowFailureType.UnsupportedFirmwareVersion,
     ],
