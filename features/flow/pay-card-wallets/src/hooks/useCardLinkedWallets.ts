@@ -10,6 +10,7 @@ import type { CardLinkedWallets } from "../types";
 export type UseCardLinkedWalletsParams = Readonly<{
   currencies: ReadonlyMap<string, CryptoOrTokenCurrency>;
   skip?: boolean;
+  refetchOnFocus?: boolean;
 }>;
 
 export type UseCardLinkedWalletsResult = CardLinkedWallets &
@@ -26,9 +27,10 @@ const NO_WALLETS: readonly [] = [];
 export function useCardLinkedWallets({
   currencies,
   skip = false,
+  refetchOnFocus = false,
 }: UseCardLinkedWalletsParams): UseCardLinkedWalletsResult {
-  const linkedQuery = useGetCardLinkedWalletsQuery(undefined, { skip, refetchOnFocus: true });
-  const internalQuery = useGetInternalWalletsQuery(undefined, { skip, refetchOnFocus: true });
+  const linkedQuery = useGetCardLinkedWalletsQuery(undefined, { skip, refetchOnFocus });
+  const internalQuery = useGetInternalWalletsQuery(undefined, { skip, refetchOnFocus });
 
   const combined = useMemo(
     () =>

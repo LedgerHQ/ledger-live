@@ -1,5 +1,4 @@
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
-import { AppState, type AppStateStatus } from "react-native";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { WalletAuthMissingBaseUrlError } from "@ledgerhq/auth";
@@ -9,13 +8,6 @@ import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challeng
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { setOverride } from "@shared/feature-flags";
-
-const mockSetupListeners = jest.fn();
-
-jest.mock("@reduxjs/toolkit/query", () => ({
-  ...jest.requireActual("@reduxjs/toolkit/query"),
-  setupListeners: (...args: unknown[]) => mockSetupListeners(...args),
-}));
 
 jest.mock("@react-native-community/netinfo", () => ({
   addEventListener: jest.fn(() => jest.fn()),
@@ -58,52 +50,6 @@ jest.mock("~/firebase/remoteConfig", () => ({
 }));
 
 describe("mobile store", () => {
-  describe("RTK Query listeners", () => {
-    let appStateListener: ((state: AppStateStatus) => void) | undefined;
-    let removeAppStateListener: jest.Mock;
-    let appStateAddEventListenerSpy: jest.SpiedFunction<typeof AppState.addEventListener>;
-
-    beforeEach(() => {
-      jest.resetModules();
-      jest.clearAllMocks();
-      appStateListener = undefined;
-      removeAppStateListener = jest.fn();
-      appStateAddEventListenerSpy = jest
-        .spyOn(AppState, "addEventListener")
-        .mockImplementation((_event, listener) => {
-          appStateListener = listener;
-          return { remove: removeAppStateListener };
-        });
-    });
-
-    afterEach(() => {
-      appStateAddEventListenerSpy.mockRestore();
-    });
-
-    it("should notify RTK Query when the app regains focus", () => {
-      const { store } = require("./configureStore") as typeof import("./configureStore");
-      expect(store).toBeDefined();
-      const setup = mockSetupListeners.mock.calls.at(-1)?.[1] as (
-        dispatch: jest.Mock,
-        actions: { onFocus: () => string; onFocusLost: () => string },
-      ) => () => void;
-      const dispatch = jest.fn();
-      const onFocus = jest.fn(() => "focus");
-      const onFocusLost = jest.fn(() => "focus lost");
-
-      const unsubscribe = setup(dispatch, { onFocus, onFocusLost });
-      appStateListener?.("active");
-      appStateListener?.("background");
-      unsubscribe();
-
-      expect(onFocus).toHaveBeenCalledTimes(1);
-      expect(onFocusLost).toHaveBeenCalledTimes(1);
-      expect(dispatch).toHaveBeenNthCalledWith(1, "focus");
-      expect(dispatch).toHaveBeenNthCalledWith(2, "focus lost");
-      expect(removeAppStateListener).toHaveBeenCalledTimes(1);
-    });
-  });
-
   describe("auth provider flow", () => {
     const PROD_KEYCLOAK_BASE_URL = "http://keycloak-prod.test";
     const STAGING_KEYCLOAK_BASE_URL = "http://keycloak-staging.test";

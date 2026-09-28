@@ -103,6 +103,21 @@ describe("useCardLinkedWallets", () => {
 
     expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, {
       skip: false,
+      refetchOnFocus: false,
+    });
+    expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, {
+      skip: false,
+      refetchOnFocus: false,
+    });
+  });
+
+  it("opts both endpoints into focus refetching when requested", () => {
+    stubQueries({ data: linkedWallets }, { data: internalWallets });
+
+    renderHook(() => useCardLinkedWallets({ currencies, refetchOnFocus: true }));
+
+    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, {
+      skip: false,
       refetchOnFocus: true,
     });
     expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, {
@@ -118,11 +133,11 @@ describe("useCardLinkedWallets", () => {
 
     expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, {
       skip: true,
-      refetchOnFocus: true,
+      refetchOnFocus: false,
     });
     expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, {
       skip: true,
-      refetchOnFocus: true,
+      refetchOnFocus: false,
     });
     expect(result.current.wallets).toEqual([]);
   });
