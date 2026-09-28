@@ -160,6 +160,14 @@ describe("validateIntent", () => {
       expect(errors.data?.message).toMatch(/numCycles must be between/);
     });
 
+    it("flags a zero amount for delegate (craftTransaction would otherwise stake 0 on-chain)", async () => {
+      const { errors } = await validateIntent(
+        stakingIntent({ amount: 0n }),
+        nativeBalance(10000000n),
+      );
+      expect(errors.amount).toBeInstanceOf(AmountRequired);
+    });
+
     it("flags an amount exceeding the spendable balance for delegate", async () => {
       const { errors } = await validateIntent(
         stakingIntent({ amount: 20000000n }),

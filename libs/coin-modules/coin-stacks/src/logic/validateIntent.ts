@@ -74,8 +74,13 @@ function validateStaking(
   }
 
   // The fee is paid from the unlocked balance, separately from the amount being locked -- so the
-  // amount check must reserve room for it, same as the transfer path below.
-  if (intent.amount > maxSpendableAfterFees(availableNative, estimatedFees)) {
+  // amount check must reserve room for it, same as the transfer path below. A zero/negative amount
+  // is checked explicitly first: buildUnsignedTx's delegate branch crafts `uintCV(intent.amount)`
+  // directly with no floor, so an unchecked 0 would reach the chain as a fee-paying `stake(..., 0,
+  // ...)` abort instead of being caught client-side, same as validateTransfer's `amount <= 0n` check.
+  if (intent.amount <= 0n) {
+    errors.amount = new AmountRequired();
+  } else if (intent.amount > maxSpendableAfterFees(availableNative, estimatedFees)) {
     errors.amount = new NotEnoughBalance();
   }
 
