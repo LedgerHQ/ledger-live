@@ -68,10 +68,10 @@ catalog:
   "@ledgerhq/live-currency-format": 0.16.0
   "@ledgerhq/domain-service": 1.9.0
   "@ledgerhq/evm-tools": 1.15.0
-  "@ledgerhq/lumen-design-core": 0.1.29
-  "@ledgerhq/lumen-ui-react": 0.1.59
-  "@ledgerhq/lumen-ui-rnative": 0.1.62
-  "@ledgerhq/lumen-utils-shared": 0.1.13
+  "@ledgerhq/lumen-design-core": 0.1.30
+  "@ledgerhq/lumen-ui-react": 0.1.60
+  "@ledgerhq/lumen-ui-rnative": 0.1.63
+  "@ledgerhq/lumen-utils-shared": 0.1.14
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.15.3
   "@ledgerhq/wallet-api-client-react": 1.4.34
