@@ -65,7 +65,7 @@ describe("readCachedFlags", () => {
         }),
       ),
       feature_copy_upgrade_banner: value(
-        JSON.stringify({ enabled: true, "upgrade.banner.title": "Cached title" }),
+        JSON.stringify({ enabled: true, copy: { "upgrade.banner.title": "Cached title" } }),
       ),
     });
 

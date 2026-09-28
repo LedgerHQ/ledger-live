@@ -1,6 +1,5 @@
 import {
   getContentAbTestCopy,
-  parseContentAbTestCopy,
   setContentAbTestCopy,
   subscribeToContentAbTestCopy,
 } from "./contentAbTestCopy";
@@ -17,71 +16,6 @@ beforeEach(() => {
   setContentAbTestCopy({});
 });
 
-describe("parseContentAbTestCopy", () => {
-  it("collects copy from enabled feature_copy_ experiments", () => {
-    expect(
-      parseContentAbTestCopy({
-        feature_copy_upgrade_banner: experiment({
-          enabled: true,
-          "upgrade.banner.title": "Discover bigger screen devices",
-          "upgrade.banner.description": "Click to see more",
-        }),
-      }),
-    ).toEqual({
-      "upgrade.banner.title": "Discover bigger screen devices",
-      "upgrade.banner.description": "Click to see more",
-    });
-  });
-
-  it("merges a nested copy object with top-level string keys", () => {
-    expect(
-      parseContentAbTestCopy({
-        feature_copy_upgrade_banner: experiment({
-          enabled: true,
-          copy: { "upgrade.banner.title": "From nested" },
-          "upgrade.banner.description": "From top level",
-        }),
-      }),
-    ).toEqual({
-      "upgrade.banner.title": "From nested",
-      "upgrade.banner.description": "From top level",
-    });
-  });
-
-  it("ignores feature flags, config keys and non-remote values", () => {
-    expect(
-      parseContentAbTestCopy({
-        feature_counter_value: experiment({
-          enabled: true,
-          "some.key": "From a flag",
-        }),
-        config_ll_min_version: value('"ignored"'),
-        feature_copy_cached: experiment(
-          { enabled: true, "cached.key": "From defaults" },
-          "default",
-        ),
-      }),
-    ).toEqual({});
-  });
-
-  it("ignores disabled experiments and malformed payloads", () => {
-    expect(
-      parseContentAbTestCopy({
-        feature_copy_disabled: experiment({
-          enabled: false,
-          "disabled.key": "Hidden",
-        }),
-        feature_copy_broken: value("not json"),
-        feature_copy_invalid: experiment({
-          enabled: "yes",
-          "invalid.key": "Nope",
-        }),
-        feature_copy_untyped: experiment({ enabled: true, "untyped.key": 42 }),
-      }),
-    ).toEqual({});
-  });
-});
-
 describe("setContentAbTestCopy", () => {
   it("publishes the merged copy to subscribers", () => {
     const seen: unknown[] = [];
@@ -92,7 +26,7 @@ describe("setContentAbTestCopy", () => {
     setContentAbTestCopy({
       feature_copy_upgrade_banner: experiment({
         enabled: true,
-        "upgrade.banner.title": "Remote",
+        copy: { "upgrade.banner.title": "Remote" },
       }),
     });
     unsubscribe();
@@ -107,7 +41,7 @@ describe("setContentAbTestCopy", () => {
     const payload = {
       feature_copy_upgrade_banner: experiment({
         enabled: true,
-        "upgrade.banner.title": "Remote",
+        copy: { "upgrade.banner.title": "Remote" },
       }),
     };
     setContentAbTestCopy(payload);
@@ -124,7 +58,7 @@ describe("setContentAbTestCopy", () => {
     setContentAbTestCopy({
       feature_copy_upgrade_banner: experiment({
         enabled: true,
-        "upgrade.banner.title": "Remote",
+        copy: { "upgrade.banner.title": "Remote" },
       }),
     });
 

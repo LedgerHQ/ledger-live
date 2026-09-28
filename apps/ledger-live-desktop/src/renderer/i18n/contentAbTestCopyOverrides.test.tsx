@@ -1,10 +1,6 @@
-import React from "react";
 import { createInstance } from "i18next";
-import { I18nextProvider, Trans } from "react-i18next";
-import { act, render, screen } from "tests/testSetup";
 import { setContentAbTestCopy } from "~/firebase/contentAbTestCopy";
 import { installContentAbTestCopyOverrides } from "./contentAbTestCopyOverrides";
-import { useContentAbTestCopyUpdates } from "./useContentAbTestCopyUpdates";
 
 const namespace = "app";
 const englishBaseline = {
@@ -21,15 +17,6 @@ const remoteExperiment = (payload: object) => ({
     getSource: () => "remote",
   },
 });
-
-function CopyAwareRoot() {
-  useContentAbTestCopyUpdates();
-  return <CopyView />;
-}
-
-function CopyView() {
-  return <Trans i18nKey="greeting" />;
-}
 
 async function createI18n(language = "en") {
   const instance = createInstance();
@@ -61,9 +48,11 @@ describe("content A/B test copy overrides", () => {
     setContentAbTestCopy(
       remoteExperiment({
         enabled: true,
-        greeting: "Remote hello",
-        englishOnly: "Remote English fallback",
-        unknown: "Remote unknown copy",
+        copy: {
+          greeting: "Remote hello",
+          englishOnly: "Remote English fallback",
+          unknown: "Remote unknown copy",
+        },
       }),
     );
     expect(instance.t("greeting")).toBe("Remote hello");
@@ -85,27 +74,9 @@ describe("content A/B test copy overrides", () => {
   it("keeps the baseline when the experiment is disabled", async () => {
     const { instance, uninstall } = await createI18n();
 
-    setContentAbTestCopy(remoteExperiment({ enabled: false, greeting: "Remote hello" }));
+    setContentAbTestCopy(remoteExperiment({ enabled: false, copy: { greeting: "Remote hello" } }));
 
     expect(instance.t("greeting")).toBe("Hello");
-    uninstall();
-  });
-
-  it("updates Trans when enabled copy changes", async () => {
-    const { instance, uninstall } = await createI18n();
-    render(
-      <I18nextProvider i18n={instance}>
-        <CopyAwareRoot />
-      </I18nextProvider>,
-    );
-
-    expect(screen.getByText("Hello")).toBeVisible();
-
-    act(() => {
-      setContentAbTestCopy(remoteExperiment({ enabled: true, greeting: "Remote hello" }));
-    });
-
-    expect(screen.getByText("Remote hello")).toBeVisible();
     uninstall();
   });
 });

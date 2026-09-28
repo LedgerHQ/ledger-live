@@ -48,7 +48,10 @@ describe("fetchRemoteFlags", () => {
       feature_counter_value: value(JSON.stringify({ enabled: true })),
       feature_lwd_wallet_40: value(JSON.stringify({ enabled: false, params: { mainNav: true } })),
       feature_copy_upgrade_banner: value(
-        JSON.stringify({ enabled: true, "upgrade.banner.title": "Discover Ledger Flex" }),
+        JSON.stringify({
+          enabled: true,
+          copy: { "upgrade.banner.title": "Discover Ledger Flex" },
+        }),
       ),
       config_unrelated: value('"ignored"'),
       stranger_key: value('"ignored"'),
