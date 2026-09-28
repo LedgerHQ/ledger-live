@@ -11,21 +11,23 @@ pnpm coin:tester:stacks start
 
 ## Scope
 
-This package tests the **legacy bridge only**, against a **local Clarinet devnet**, covering:
+This package tests `coin-stacks` against a **local Clarinet devnet**, through both bridge
+strategies (`src/scenarii.test.ts`):
 
-- Native STX send (fixed amount and send-max).
-- SIP-010 token send (fixed amount and send-max), against `contracts/sip-010-test-token.clar`, a
-  minimal SIP-010 contract deployed at devnet genesis (a fresh devnet has no fungible token
-  deployed at all, unlike VeChain's VTHO or NEAR's staking-pool WASM, which pre-exist on their
-  respective test networks).
+- **Send scenario**, run once with the legacy bridge and once with the generic-adapter
+  (`CoinModuleApi`) path:
+  - Native STX send (fixed amount and send-max).
+  - SIP-010 token send (fixed amount and send-max), against `contracts/sip-010-test-token.clar`, a
+    minimal SIP-010 contract deployed at devnet genesis (a fresh devnet has no fungible token
+    deployed at all, unlike VeChain's VTHO or NEAR's staking-pool WASM, which pre-exist on their
+    respective test networks).
+- **pox-5 staking scenario** (delegate/undelegate), generic-adapter only (the legacy bridge has no
+  staking code), against `contracts/signer-manager-stub.clar` as the signer manager.
 
-There is no `generic-adapter` coverage and no staking (delegate/undelegate) coverage. Both are
-absent for the same underlying reason, not two separate decisions: on this branch, `coin-stacks`
-(`libs/coin-modules/coin-stacks`) has no `generic-adapter`/`CoinModuleApi` wiring and no pox-5
-staking support at all — `supportedFeatures.blockchain_txs` is `["send"]`. (A separate,
-already-in-review branch adds an Alpaca/`CoinModuleApi` migration with staking support; this
-package was scoped and implemented against `develop`, independently of that branch, per the task
-that produced it.)
+All three runs share **one devnet**, started once in `scenarii.test.ts`'s `beforeAll`. Booting it
+and waiting for the contract deployment batches takes minutes of 10s blocks, so it is not repeated
+per run. Runs share the chain but **never an account**: each signs with its own sender (see
+"Accounts" below), so no run starts on another's history or drained balance.
 
 ## Known limitations (discovered while implementing)
 
@@ -228,12 +230,18 @@ Stacks block on the next Bitcoin block, `/v2/pox` works by #110, and the API com
 ## Accounts
 
 `settings/Devnet.toml` funds several of Clarinet's own well-known, public, deterministic devnet
-accounts — not a secret specific to this package. The `deployer` account doubles as the scenario's
-funder: `contracts/sip-010-test-token.clar` mints its entire test-token supply to `tx-sender` at
-deploy time, i.e. to whichever account the deployment plan uses to publish it (the manifest's
-`deployer`, since the contract entry sets no override) — reusing it as the sender avoids a separate
-on-chain token-funding transaction before the scenario starts. `wallet_2` is the scenario's
-recipient. `wallet_1`/`wallet_3` and the `[[devnet.pox_stacking_orders]]` block are **not used by
+accounts — not a secret specific to this package.
+
+| Account | Role |
+|---|---|
+| `deployer` | Funder only. `contracts/sip-010-test-token.clar` mints its entire test-token supply to `tx-sender` at deploy time (the manifest's `deployer`, since the contract entry sets no override), and the contract has no public mint, so each send run's sender gets its tokens from here (`src/funding.ts`). Also deploys `signer-manager-stub` and pays for the staking run's signer-manager setup. |
+| `wallet_4` | Sender, send scenario, legacy strategy |
+| `wallet_5` | Sender, send scenario, generic-adapter strategy |
+| `wallet_6` | Staker, pox-5 staking scenario (`validate-stake!` accepts any staker) |
+| `wallet_2` | Recipient of every send |
+
+`wallet_4`..`6` were chosen because they are **not** in `[[devnet.pox_stacking_orders]]`, so none
+of their STX is locked. `wallet_1`/`wallet_3` and the `[[devnet.pox_stacking_orders]]` block are **not used by
 the scenario** — they exist only because Clarinet's bundled devnet snapshot is keyed to that exact
 default stacking configuration (see "Known limitations" above); removing them reintroduces an
 interactive confirmation prompt on `clarinet integrate`.

@@ -7,6 +7,8 @@ import {
   DEPLOYER_ADDRESS,
   DEPLOYER_PRIVATE_KEY,
   RECIPIENT_PRIVATE_KEY,
+  SENDER_PRIVATE_KEYS,
+  STAKER_PRIVATE_KEY,
   STACKS,
   TEST_TOKEN,
   TOKEN_CONTRACT_NAME,
@@ -17,7 +19,8 @@ import { getBridges } from "../helpers";
 import { initMSW } from "../indexer";
 import { buildStacksTestSigner } from "../signer";
 import { buildStacksGenericTestSigner } from "../genericSigner";
-import { killDevnet, spawnDevnet, waitForContractDeployment } from "../devnet";
+import { waitForContractDeployment } from "../devnet";
+import { fundTestToken } from "../funding";
 import { setupSignerManager } from "../signerManager";
 
 let closeMsw: (() => void) | null = null;
@@ -30,6 +33,9 @@ type Tx = ScenarioTransaction<GenericTransaction, Account>;
 type StakingTx = ScenarioTransaction<GenericTransaction, Account>;
 
 const SIGNER_MANAGER_CONTRACT_NAME = "signer-manager-stub";
+// 100 CTT (6 decimals): what each send scenario's sender starts with; the scenario sends 10, then
+// the rest via send-max.
+const SENDER_TOKEN_FUNDING = 100_000_000n;
 
 function makeTransactions(): Tx[] {
   // A fresh devnet has never mined a plain STX transfer or a call to this specific contract, and
@@ -121,26 +127,31 @@ function makeTransactions(): Tx[] {
 export const scenarioStacks: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Stacks (STX + SIP-010 token)",
 
+  // The devnet is shared by every scenario and started once by `scenarii.test.ts`; setup only waits
+  // for what this scenario needs, then funds this strategy's own sender.
   setup: async strategy => {
-    await spawnDevnet();
     // 15 minutes: at the 10s-per-block cadence (`scripts/bitcoin-miner.js`), reaching the
     // contract's deployment batch (epoch 3.0, ~42 blocks past genesis) needs ~7 minutes in the
-    // worst case. Generous margin above that, not a different mechanism.
+    // worst case. Generous margin above that, not a different mechanism. Returns at once when an
+    // earlier scenario already waited for it.
     await waitForContractDeployment(DEPLOYER_ADDRESS, TOKEN_CONTRACT_NAME, 15 * 60 * 1000);
 
-    const funder = buildStacksTestSigner(DEPLOYER_PRIVATE_KEY);
-    const genericFunder = buildStacksGenericTestSigner(DEPLOYER_PRIVATE_KEY);
+    const senderKey = SENDER_PRIVATE_KEYS[strategy];
+    const sender = buildStacksTestSigner(senderKey);
+    const genericSender = buildStacksGenericTestSigner(senderKey);
     const recipient = buildStacksTestSigner(RECIPIENT_PRIVATE_KEY);
     recipientAddress = recipient.address;
+
+    await fundTestToken(sender.address, SENDER_TOKEN_FUNDING);
 
     registerTestTokenInMockStore();
     closeMsw = initMSW();
 
     const { currencyBridge, accountBridge } = await getBridges(strategy, {
-      legacy: funder.signer,
-      generic: genericFunder.signer,
+      legacy: sender.signer,
+      generic: genericSender.signer,
     });
-    const account = makeAccount(funder.publicKey, funder.address);
+    const account = makeAccount(sender.publicKey, sender.address);
 
     // retryLimit bumped from 40 to 90 (200s -> 450s headroom): occasionally, a balance/
     // spendableBalance assertion took longer than 300s to catch up through the indexer during
@@ -184,17 +195,16 @@ export const scenarioStacks: Scenario<GenericTransaction, Account> = {
     expect(token!.operations.filter(op => op.type === "OUT")).toHaveLength(2);
   },
 
-  teardown: async () => {
+  teardown: () => {
     closeMsw?.();
     closeMsw = null;
-    await killDevnet();
   },
 };
 
 /**
  * Staking (pox-5 `stake`/`unstake`) only exists through `generic-adapter` -- the legacy bridge has
- * no staking code at all -- so this runs as its own scenario/devnet lifecycle rather than a second
- * `describe.each` branch of `scenarioStacks`. `startBurnHt` just needs to fall within the *current*
+ * no staking code at all -- so this runs as its own scenario rather than a second `describe.each`
+ * branch of `scenarioStacks`, on the same shared devnet with its own staker account. `startBurnHt` just needs to fall within the *current*
  * reward cycle (verified by reading `pox-5.clar`'s `stake`: it always locks starting at
  * `current-cycle + 1` and only validates that the caller's `startBurnHt` maps back to
  * `current-cycle`), so the live `current_burnchain_block_height` captured once at setup time is
@@ -273,16 +283,16 @@ export const scenarioStacksStaking: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Stacks (pox-5 staking, generic-adapter)",
 
   setup: async strategy => {
-    await spawnDevnet();
-    await waitForContractDeployment(DEPLOYER_ADDRESS, TOKEN_CONTRACT_NAME, 15 * 60 * 1000);
     // 25 minutes, not 15: `signer-manager-stub` is pinned at epoch 4.0 (`Clarinet.toml`), which the
     // chain must first cross (`DEFAULT_EPOCH_4_0 = 162` burn blocks) before its deployment batch
-    // even attempts -- empirically ~14-17 minutes at this devnet's mining cadence, so 15 minutes
-    // left no margin at all.
+    // even attempts -- empirically ~14-17 minutes after devnet boot at this mining cadence. Counted
+    // from here, after the send scenarios have already used part of that time on the shared devnet.
     await waitForContractDeployment(DEPLOYER_ADDRESS, SIGNER_MANAGER_CONTRACT_NAME, 25 * 60 * 1000);
 
-    const funder = buildStacksTestSigner(DEPLOYER_PRIVATE_KEY);
-    const genericFunder = buildStacksGenericTestSigner(DEPLOYER_PRIVATE_KEY);
+    // The deployer still pays for the signer-manager setup below (it deployed the stub); the stake
+    // itself is signed by a separate staker -- `validate-stake!` accepts any `staker`.
+    const staker = buildStacksTestSigner(STAKER_PRIVATE_KEY);
+    const genericStaker = buildStacksGenericTestSigner(STAKER_PRIVATE_KEY);
 
     // Read first: pox-5 is a separate, literally-named contract (`...pox-5`), not something `.pox`
     // ever aliases to -- `poxInfo.contract_id` is the live source of truth for its current address,
@@ -298,10 +308,10 @@ export const scenarioStacksStaking: Scenario<GenericTransaction, Account> = {
     stakingValAddress = valAddress;
 
     const { currencyBridge, accountBridge } = await getBridges(strategy, {
-      legacy: funder.signer,
-      generic: genericFunder.signer,
+      legacy: staker.signer,
+      generic: genericStaker.signer,
     });
-    const account = makeAccount(funder.publicKey, funder.address);
+    const account = makeAccount(staker.publicKey, staker.address);
 
     return {
       currencyBridge,
@@ -324,7 +334,5 @@ export const scenarioStacksStaking: Scenario<GenericTransaction, Account> = {
     expect(account.operations.some(op => (op.type as string) === "unstake")).toBe(true);
   },
 
-  teardown: async () => {
-    await killDevnet();
-  },
+  teardown: () => {},
 };

@@ -1,17 +1,25 @@
 import { executeScenario } from "@ledgerhq/coin-tester/main";
-import { killDevnet } from "./devnet";
+import { killDevnet, spawnDevnet } from "./devnet";
 import { scenarioStacks, scenarioStacksStaking } from "./scenarii/stacks";
 
 global.console = require("console");
-// Clarinet devnet boot (bitcoind + stacks-node + stacks-signer + the bundled
-// stacks-blockchain-api/Postgres pair) plus real block confirmations is slower than VeChain's
-// single-container thor-solo; budget generously. Must stay comfortably above the inner
-// `waitForContractDeployment` timeouts (15 min for the send scenario's token, 25 min for the
-// staking scenario's epoch-4.0-gated signer-manager-stub, `scenarii/stacks.ts`) plus the per-
-// transaction retry budget (up to 7.5 min each, `retryLimit`/`retryInterval`) and the staking
-// scenario's own signer-manager setup (two more confirmed transactions) -- or this outer limit
-// would cut a scenario off before its own, more specific timeouts get a chance to.
+// Per-scenario budget. Real block confirmations on a Clarinet devnet are slow; this must stay
+// comfortably above the inner `waitForContractDeployment` timeouts (15 min for the send
+// scenario's token, 25 min for the staking scenario's epoch-4.0-gated signer-manager-stub,
+// `scenarii/stacks.ts`) plus the per-transaction retry budget (up to 7.5 min each,
+// `retryLimit`/`retryInterval`) and the staking scenario's own signer-manager setup (two more
+// confirmed transactions) -- or this outer limit would cut a scenario off before its own, more
+// specific timeouts get a chance to.
 jest.setTimeout(50 * 60 * 1000);
+
+// One devnet for every scenario below, instead of one booted from genesis per scenario: each boot
+// and its wait for the contract batches cost minutes of 10s blocks. Scenarios share the chain but
+// never an account -- each signs with its own sender (`fixtures.ts`'s `SENDER_PRIVATE_KEYS`,
+// `STAKER_PRIVATE_KEY`), so none starts on another's history or drained balance.
+// `spawnDevnet`'s own boot deadline is 15 min; the extra 5 covers the clarinet binary build when
+// it isn't cached yet.
+beforeAll(() => spawnDevnet(), 20 * 60 * 1000);
+afterAll(() => killDevnet());
 
 // `exit` deliberately excluded: its handler must be synchronous (the event loop is already
 // unwinding), so an `await killDevnet()` there would never get a chance to finish. Signals and
@@ -30,8 +38,10 @@ jest.setTimeout(50 * 60 * 1000);
 // `helpers.ts`'s `adaptLegacyBridge` wraps the legacy bridge behind the same
 // `AccountBridge<GenericTransaction>` shape the generic-adapter path already exposes, so the
 // identical 4-transaction scenario exercises both `coin-stacks`'s legacy bridge and its Alpaca
-// (CoinModuleApi) transfer path. Staking below is generic-adapter-only (the legacy bridge has no
-// staking code at all), so it keeps its own scenario/devnet lifecycle.
+// (CoinModuleApi) transfer path, each strategy with its own sender. Staking below is
+// generic-adapter-only (the legacy bridge has no staking code at all), so it is a separate
+// scenario with its own staker. Order matters only for timing: the staking scenario's wait for
+// epoch 4.0 runs after the send scenarios instead of from a fresh boot.
 describe.each([["legacy"], ["generic-adapter"]] as const)("Stacks (%s strategy)", strategy => {
   it("scenario stacks", async () => {
     try {
@@ -40,10 +50,9 @@ describe.each([["legacy"], ["generic-adapter"]] as const)("Stacks (%s strategy)"
         strategy,
       );
     } catch (e) {
-      if (e !== "done") {
-        await killDevnet();
-        throw e;
-      }
+      // No `killDevnet()` here: later scenarios still need the shared devnet; `afterAll` tears it
+      // down (and dumps container diagnostics under `DEBUG`).
+      if (e !== "done") throw e;
     }
   });
 });
@@ -53,10 +62,9 @@ describe("Stacks staking (generic-adapter strategy)", () => {
     try {
       await executeScenario(scenarioStacksStaking, "generic-adapter");
     } catch (e) {
-      if (e !== "done") {
-        await killDevnet();
-        throw e;
-      }
+      // No `killDevnet()` here: later scenarios still need the shared devnet; `afterAll` tears it
+      // down (and dumps container diagnostics under `DEBUG`).
+      if (e !== "done") throw e;
     }
   });
 });

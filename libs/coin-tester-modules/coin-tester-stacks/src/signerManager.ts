@@ -25,7 +25,7 @@ const AUTH_ID = 0;
  * throw -- silently waiting on a rejected broadcast's `.txid` (present on every rejection variant
  * too) just times out with no diagnostic, which is exactly what happened before this check
  * existed. */
-function assertBroadcastOk(result: TxBroadcastResult, context: string): void {
+export function assertBroadcastOk(result: TxBroadcastResult, context: string): void {
   if (result.error !== undefined) {
     throw new Error(
       `coin-tester-stacks: ${context} broadcast rejected: ${result.reason} - ${result.error}`,
@@ -33,7 +33,7 @@ function assertBroadcastOk(result: TxBroadcastResult, context: string): void {
   }
 }
 
-async function waitForTxSuccess(txid: string, timeoutMs: number): Promise<void> {
+export async function waitForTxSuccess(txid: string, timeoutMs: number): Promise<void> {
   const deadline = Date.now() + timeoutMs;
   const url = `${STACKS_DEVNET_URL}/extended/v1/tx/${txid}`;
 
