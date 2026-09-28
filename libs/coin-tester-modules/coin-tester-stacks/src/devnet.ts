@@ -25,6 +25,22 @@ const CACHE_DIR = path.join(PACKAGE_ROOT, ".clarinet-cache", CLARINET_COMMIT);
 const CACHED_BINARY = path.join(CACHE_DIR, "clarinet");
 
 /**
+ * The pinned nightly, read from `docker/clarinet/Dockerfile`'s `ARG RUST_TOOLCHAIN=` so it is
+ * defined once: the Docker build uses it directly, the local (non-Linux) build below reads it here,
+ * and CI's clarinet cache key hashes `docker/clarinet/**` -- bumping it there rebuilds everywhere.
+ */
+function readRustToolchain(): string {
+  const dockerfile = fs.readFileSync(path.join(DOCKER_DIR, "Dockerfile"), "utf8");
+  const match = /^ARG RUST_TOOLCHAIN=(\S+)$/m.exec(dockerfile);
+  if (!match) {
+    throw new Error(
+      "coin-tester-stacks: no `ARG RUST_TOOLCHAIN=` found in docker/clarinet/Dockerfile",
+    );
+  }
+  return match[1];
+}
+
+/**
  * Produces a patched `clarinet` binary (see `docker/clarinet/bollard-fix.patch` for the two real
  * upstream bugs it fixes) and returns its path, building/caching it on first use only.
  *
@@ -42,8 +58,8 @@ const CACHED_BINARY = path.join(CACHE_DIR, "clarinet");
  * - On Linux, the binary is built *inside* Docker (matching the host architecture exactly) and
  *   extracted with `docker cp` -- no Rust toolchain needs to be installed on the host/CI runner.
  * - Elsewhere (e.g. macOS, where a container-built binary is a Linux ELF that can't run on the
- *   host at all), it's built with a local `cargo +nightly` instead -- requires `rustup` with the
- *   `nightly` toolchain installed locally; there is no way around a host-matching compile here.
+ *   host at all), it's built with a local `cargo +<RUST_TOOLCHAIN>` instead -- requires `rustup`;
+ *   there is no way around a host-matching compile here.
  */
 function ensureClarinetBinary(): string {
   if (fs.existsSync(CACHED_BINARY)) {
@@ -107,14 +123,23 @@ function ensureClarinetBinary(): string {
       }
     }
 
-    const build = spawnSync("cargo", ["+nightly", "build", "--release", "-p", "clarinet-cli"], {
-      cwd: sourceDir,
+    const RUST_TOOLCHAIN = readRustToolchain();
+    // `rustup` installs the pinned toolchain on first use if it's missing; a no-op afterwards.
+    spawnSync("rustup", ["toolchain", "install", RUST_TOOLCHAIN, "--profile", "minimal"], {
       stdio: "inherit",
     });
+    const build = spawnSync(
+      "cargo",
+      [`+${RUST_TOOLCHAIN}`, "build", "--release", "-p", "clarinet-cli"],
+      {
+        cwd: sourceDir,
+        stdio: "inherit",
+      },
+    );
     if (build.status !== 0) {
       throw new Error(
         "coin-tester-stacks: failed to build clarinet-cli locally -- requires `rustup` with the " +
-          "`nightly` toolchain installed (`rustup toolchain install nightly`)",
+          `\`${RUST_TOOLCHAIN}\` toolchain installed (\`rustup toolchain install ${RUST_TOOLCHAIN}\`)`,
       );
     }
     fs.copyFileSync(path.join(sourceDir, "target", "release", "clarinet"), CACHED_BINARY);

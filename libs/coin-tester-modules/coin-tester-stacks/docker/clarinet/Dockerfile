@@ -21,9 +21,15 @@
 #    `user: "1000"` cannot write into it -- bitcoind crashes on boot. Fixed by
 #    `bitcoin-node-datadir-permissions.patch` (chmod 777 right after creation).
 # Built locally/in CI rather than depending on an upstream release picking up any of these.
-FROM rust:1-bookworm AS builder
+# Base image and nightly pinned (not `rust:1-bookworm` / plain `nightly`): both floated, and the
+# build needs nightly-only features (see the build step below), so a moved nightly can break it with
+# no change on our side. These are the exact versions the last green CI runs built with.
+# RUST_TOOLCHAIN is the single source: `src/devnet.ts` reads this line for the local (non-Docker)
+# build, and CI's clarinet cache key hashes this directory, so bumping it here rebuilds everywhere.
+FROM rust:1.98.1-bookworm@sha256:93ce27a88655056a51dbdd8f5f2d7ddc071c7b0070fb288a37b5a285fc83971e AS builder
 
-RUN rustup toolchain install nightly && rustup default nightly
+ARG RUST_TOOLCHAIN=nightly-2026-09-25
+RUN rustup toolchain install ${RUST_TOOLCHAIN} && rustup default ${RUST_TOOLCHAIN}
 RUN apt-get update \
   && apt-get install -y --no-install-recommends git pkg-config libssl-dev \
   && rm -rf /var/lib/apt/lists/*
@@ -49,7 +55,7 @@ RUN cd /src && git apply /tmp/bitcoin-node-datadir-permissions.patch
 # Nightly is required (not just installed defensively): a transitive `stacks-core`/`stacks-common`
 # git dependency at this commit uses unstable features (`debug_closure_helpers`, `slice_as_array`)
 # that don't compile on stable.
-RUN cd /src && cargo +nightly build --release -p clarinet-cli
+RUN cd /src && cargo +${RUST_TOOLCHAIN} build --release -p clarinet-cli
 
 FROM debian:bookworm-slim
 RUN apt-get update \

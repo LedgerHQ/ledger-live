@@ -32,8 +32,9 @@ that produced it.)
 Several real, upstream `clarinet` bugs were found and fixed via a pinned, patched build (see
 `docker/clarinet/`) — no manual local setup needed, `spawnDevnet()` (`src/devnet.ts`) builds and
 caches the patched binary automatically on first use (via Docker on Linux, extracting the built
-binary — no host Rust toolchain needed there; via a local `cargo +nightly` build elsewhere, e.g.
-macOS, since a container-built Linux binary can't run natively there). One further `clarinet` bug
+binary — no host Rust toolchain needed there; via a local `cargo` build elsewhere, e.g.
+macOS, since a container-built Linux binary can't run natively there — both with the dated nightly pinned
+in `docker/clarinet/Dockerfile`). One further `clarinet` bug
 (sustained block mining sometimes stalling, see below) could not be source-patched the same way —
 its root cause inside `clarinet`'s own Rust orchestrator was not found despite substantial
 investigation — so it is **worked around** instead, from this package's own code

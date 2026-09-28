@@ -60,6 +60,15 @@ bitcoin_controller_block_time = 10_000
 # Default 5432 collides with other local Postgres instances/containers on dev machines.
 postgres_port = 27432
 
+# Pinned by tag + digest. At the pinned clarinet commit these two default to floating tags
+# (`hirosystems/stacks-blockchain-api:latest`, `postgres:alpine`, `network_manifest.rs`), and
+# `latest` moving to 9.3.0 on 2026-09-15 turned every run red for a week with no change on our side
+# (see the README's "Known limitations"). These are the exact images the green runs of
+# 2026-09-23..25 pulled. The other images (stacks-node, stacks-signer, bitcoind) are already pinned
+# to exact versions by that clarinet commit. Bump deliberately, alongside a green run.
+stacks_api_image_url = "hirosystems/stacks-blockchain-api:9.3.1@sha256:80b553ac7321a56aed95c7a693a9917baa44181dc1200676facd83599a8ee22d"
+postgres_image_url = "postgres:18.6-alpine@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873"
+
 # Explicit (not left as the implicit `DEFAULT_EPOCH_4_0 = 162` from `network_manifest.rs`):
 # `stx-labs/clarinet` PR #2428 ("pox-5 devnet capabilities") only generates the pox-5-specific
 # stacks-node config (`pox_5_sbtc_contract`/`pox_5_bond_admin`) "when epoch 4.0 is configured" --
