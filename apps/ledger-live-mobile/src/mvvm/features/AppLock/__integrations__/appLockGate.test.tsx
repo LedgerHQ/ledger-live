@@ -39,6 +39,7 @@ const { hasKnownInstall, writeInstallMarker } = jest.requireMock("../adapters/in
 
 let mockIsInBackground = false;
 let mockBackgroundListeners: (() => void)[] = [];
+let mockForegroundListeners: (() => void)[] = [];
 
 jest.mock("../adapters/appVisibility", () => ({
   isAppInBackground: () => mockIsInBackground,
@@ -48,7 +49,15 @@ jest.mock("../adapters/appVisibility", () => ({
       mockBackgroundListeners = mockBackgroundListeners.filter(other => other !== listener);
     };
   },
+  onAppForeground: (listener: () => void) => {
+    mockForegroundListeners.push(listener);
+    return () => {
+      mockForegroundListeners = mockForegroundListeners.filter(other => other !== listener);
+    };
+  },
 }));
+
+let now = 0;
 
 let appStateSpy: jest.SpyInstance | undefined;
 
@@ -86,6 +95,13 @@ const renderGate = () => {
         mockIsInBackground = true;
         mockBackgroundListeners.forEach(listener => listener());
       }),
+    foregroundAfter: (awayMs: number) =>
+      act(() => {
+        now += awayMs;
+        Object.assign(AppState, { currentState: "active" });
+        mockIsInBackground = false;
+        mockForegroundListeners.forEach(listener => listener());
+      }),
   };
 };
 
@@ -100,12 +116,16 @@ beforeEach(() => {
   Object.assign(AppState, { currentState: "active" });
   mockIsInBackground = false;
   mockBackgroundListeners = [];
+  mockForegroundListeners = [];
+  now = 1_000_000;
+  jest.spyOn(Date, "now").mockImplementation(() => now);
 });
 
 afterEach(() => {
   // Not restoreAllMocks: it would undo the jest setup's own spies for every later test.
   appStateSpy?.mockRestore();
   appStateSpy = undefined;
+  jest.mocked(Date.now).mockRestore();
 });
 
 describe("the app lock gate", () => {
@@ -240,10 +260,10 @@ describe("the app lock gate", () => {
     expect(screen.queryByText(APP_CONTENT)).toBeNull();
   });
 
-  it("locks when the app goes to the background", async () => {
+  it("locks when the app comes back after 15 seconds away", async () => {
     hasPasswordVerifier.mockResolvedValue(true);
 
-    const { store, background } = renderGate();
+    const { store, background, foregroundAfter } = renderGate();
 
     await screen.findByTestId(UNLOCK_SCREEN);
 
@@ -254,12 +274,63 @@ describe("the app lock gate", () => {
 
     background();
 
+    expect(store.getState().appLock.isLocked).toBe(false);
+
+    foregroundAfter(15_000);
+
     expect(store.getState().appLock.isLocked).toBe(true);
+    expect(await screen.findByTestId(UNLOCK_SCREEN)).toBeVisible();
+  });
+
+  it("stays unlocked when the app comes back within 15 seconds", async () => {
+    hasPasswordVerifier.mockResolvedValue(true);
+
+    const { store, background, foregroundAfter } = renderGate();
+
+    await screen.findByTestId(UNLOCK_SCREEN);
+    await act(async () => {
+      store.dispatch(unlockApp());
+    });
+
+    background();
+    foregroundAfter(14_999);
+
+    expect(store.getState().appLock.isLocked).toBe(false);
+    expect(await screen.findByText(APP_CONTENT)).toBeVisible();
+  });
+
+  it("hides the app while it is away, so the app switcher does not show it", async () => {
+    hasPasswordVerifier.mockResolvedValue(true);
+
+    const { store, background, foregroundAfter } = renderGate();
+
+    await screen.findByTestId(UNLOCK_SCREEN);
+    await act(async () => {
+      store.dispatch(unlockApp());
+    });
+
+    background();
+
+    expect(screen.queryByText(APP_CONTENT)).toBeNull();
+
+    foregroundAfter(1_000);
+
+    expect(await screen.findByText(APP_CONTENT)).toBeVisible();
+  });
+
+  it("leaves an unprotected app visible while it is away", async () => {
+    const { background } = renderGate();
+
+    expect(await screen.findByText(APP_CONTENT)).toBeVisible();
+
+    background();
+
+    expect(screen.getByText(APP_CONTENT)).toBeVisible();
   });
 
   // The unlock screen dispatches on a successful check without knowing the app was backgrounded
-  // meanwhile; the lock has to survive that, and it is this effect that makes it.
-  it("re-locks an unlock that lands while the app is backgrounded", async () => {
+  // meanwhile; the time away still counts once it lands.
+  it("re-locks an unlock that lands while the app is away, once it has been gone 15 seconds", async () => {
     hasPasswordVerifier.mockResolvedValue(true);
 
     let release = (_: { status: string }) => {};
@@ -270,7 +341,7 @@ describe("the app lock gate", () => {
         }),
     );
 
-    const { store, background, user } = renderGate();
+    const { store, background, foregroundAfter, user } = renderGate();
 
     await screen.findByTestId(UNLOCK_SCREEN);
     await user.type(screen.getByTestId("app-lock-unlock-field"), "longenough");
@@ -281,6 +352,8 @@ describe("the app lock gate", () => {
     await act(async () => {
       release({ status: "correct" });
     });
+
+    foregroundAfter(15_000);
 
     expect(store.getState().appLock.isLocked).toBe(true);
   });

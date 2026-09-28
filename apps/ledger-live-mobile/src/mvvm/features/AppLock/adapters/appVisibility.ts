@@ -61,6 +61,25 @@ export function onAppBackground(listener: () => void): () => void {
   return () => subscription.remove();
 }
 
+export function onAppForeground(listener: () => void): () => void {
+  if (Platform.OS === "android") {
+    const subscription = new NativeEventEmitter(NativeModules.AppVisibilityModule).addListener(
+      "appDidEnterForeground",
+      listener,
+    );
+
+    return () => subscription.remove();
+  }
+
+  const subscription = AppState.addEventListener("change", state => {
+    if (state === "active") {
+      listener();
+    }
+  });
+
+  return () => subscription.remove();
+}
+
 export function isAppInBackground(): boolean {
   return Platform.OS === "android"
     ? tasksOutsideApp === 0 && !NativeModules.AppVisibilityModule.isInForeground()

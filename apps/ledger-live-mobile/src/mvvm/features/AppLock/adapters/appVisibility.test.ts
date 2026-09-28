@@ -5,7 +5,7 @@ import {
   Platform,
   type AppStateStatus,
 } from "react-native";
-import { isAppInBackground, leaveAppFor, onAppBackground } from "./appVisibility";
+import { isAppInBackground, leaveAppFor, onAppBackground, onAppForeground } from "./appVisibility";
 
 let appStateListeners: ((state: AppStateStatus) => void)[] = [];
 
@@ -13,6 +13,7 @@ const changeAppState = (state: AppStateStatus) =>
   appStateListeners.forEach(listener => listener(state));
 
 const stopProcess = () => DeviceEventEmitter.emit("appDidEnterBackground");
+const startProcess = () => DeviceEventEmitter.emit("appDidEnterForeground");
 
 const onPlatform = (os: typeof Platform.OS) => Object.assign(Platform, { OS: os });
 
@@ -184,6 +185,41 @@ describe("leaving the app for a task, on iOS", () => {
 
     await expect(leaveAppFor(async () => "shared")).resolves.toBe("shared");
     changeAppState("background");
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("the app coming back", () => {
+  const listenForReturn = () => {
+    const listener = jest.fn();
+    unsubscribers.push(onAppForeground(listener));
+    return listener;
+  };
+
+  it("is reported on Android when the process starts again", () => {
+    onPlatform("android");
+    const listener = listenForReturn();
+
+    startProcess();
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it("is not reported on Android when only the activity resumes", () => {
+    onPlatform("android");
+    const listener = listenForReturn();
+
+    changeAppState("active");
+
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it("is reported on iOS when the app is active again", () => {
+    onPlatform("ios");
+    const listener = listenForReturn();
+
+    changeAppState("active");
 
     expect(listener).toHaveBeenCalledTimes(1);
   });
