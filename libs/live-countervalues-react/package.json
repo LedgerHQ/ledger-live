@@ -28,6 +28,7 @@
     "bignumber.js": "9"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@types/node": "catalog:",

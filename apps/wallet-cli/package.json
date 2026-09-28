@@ -49,6 +49,7 @@
     "@ledgerhq/wallet-cli-windows-x64": "workspace:*"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@bunli/core": "0.9.1",
     "@bunli/utils": "0.6.0",
     "@domain/entity-currency": "workspace:^",

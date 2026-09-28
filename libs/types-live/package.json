@@ -28,6 +28,7 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-devices": "workspace:^",
     "@types/jest": "catalog:",
+    "@types/react": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
     "rimraf": "^4.4.1",
