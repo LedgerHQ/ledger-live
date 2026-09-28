@@ -42,6 +42,7 @@ import type { ServerData } from "~/e2e/bridge/types";
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 import { withTimeout } from "@e2e/utils/withTimeout";
+import { armWorkerWatchdog, setWatchdogState, watchdogPhase } from "@e2e/helpers/workerWatchdog";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
@@ -166,8 +167,12 @@ function installSpeculosTerminationHandlers() {
 
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
+  declare readonly testPath: string;
 
   async setup() {
+    await armWorkerWatchdog();
+    setWatchdogState({ spec: this.testPath, phase: "environment setup" });
+
     const workerId = Number(process.env.JEST_WORKER_ID ?? "1");
     if (workerId > 1) this.setupDeviceForSecondaryWorker(workerId);
     await super.setup();
@@ -302,6 +307,8 @@ export default class TestEnvironment extends DetoxEnvironment {
   }
 
   async teardown() {
+    setWatchdogState({ phase: "teardown" });
+
     try {
       await withTimeout(cleanupAllSpeculos(), SLOW_DIAGNOSTIC_TIMEOUT_MS, "cleanupAllSpeculos");
     } catch (error) {
@@ -337,9 +344,13 @@ export default class TestEnvironment extends DetoxEnvironment {
     }
 
     await super.teardown();
+    setWatchdogState({ spec: "<idle>", phase: "idle" });
   }
 
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
+    const phase = watchdogPhase(event, state);
+    if (phase) setWatchdogState({ phase });
+
     if (event.name === "hook_failure") {
       this.global.IS_FAILED = true;
       await captureFailureDiagnostics(this.global.mergedFeatureFlags);

@@ -13,6 +13,7 @@ if (!process.env.NODE_OPTIONS?.includes(tsconfigPathsRegister)) {
     .join(" ");
 }
 
+const fs = require("node:fs");
 const path = require("node:path");
 const { parseExtraFeatureFlags } = require("@ledgerhq/live-e2e-shared/featureFlagsJsonUtils");
 // Node strips the types at require time, so specs that extend the default budget read the same value.
@@ -45,6 +46,22 @@ const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
 // jest-allure2-reporter appends descriptions rather than replacing — QAA-1547
 const dedupeParagraphs = paragraphs => [...new Set(paragraphs ?? [])];
 
+const WORKER_KILLED = /A jest worker process \(pid=(?<pid>\d+)\) was terminated/;
+
+function stallReportFor(testFile) {
+  const pid = WORKER_KILLED.exec(testFile.testExecError?.message ?? "")?.groups?.pid;
+  if (!pid) return undefined;
+  try {
+    const report = JSON.parse(
+      fs.readFileSync(path.join(__dirname, "artifacts", `stall-watchdog-${pid}.json`), "utf8"),
+    );
+    const reportNamesThisSpec = path.resolve(report.spec) === testFile.testFilePath;
+    return reportNamesThisSpec ? report : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 const jestAllure2ReporterOptions = {
   extends: "detox-allure2-adapter/preset-detox",
   resultsDir: "artifacts",
@@ -76,6 +93,23 @@ const jestAllure2ReporterOptions = {
     // Inert outside a retry pass, when retryTestNames is undefined.
     ignored: ({ value, testCase }) =>
       value || (!!retryTestNames && !retryTestNames.has(testCase.fullName)),
+  },
+  testFile: {
+    statusDetails: ({ testFile, value }) => {
+      const report = stallReportFor(testFile);
+      if (!report) return value;
+      return {
+        message: `Stall watchdog: event loop frozen for ${report.staleSeconds}s during "${report.phase}", so the worker was killed and Detox retried the spec.`,
+        trace: report.stack.length
+          ? report.stack.join("\n")
+          : "no JS frames (blocked in native code)",
+      };
+    },
+    labels: {
+      host: process.env.RUNNER_NAME,
+      tag: ({ testFile, value }) =>
+        stallReportFor(testFile) ? [...[value ?? []].flat(), "stall-watchdog"] : value,
+    },
   },
   overwrite: false,
   environment: async ({ $ }) => ({
