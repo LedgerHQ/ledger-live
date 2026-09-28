@@ -101,8 +101,14 @@ describe("useCardLinkedWallets", () => {
 
     renderHook(() => useCardLinkedWallets({ currencies }));
 
-    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, { skip: false });
-    expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, { skip: false });
+    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, {
+      skip: false,
+      refetchOnFocus: true,
+    });
+    expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, {
+      skip: false,
+      refetchOnFocus: true,
+    });
   });
 
   it("passes skip through to both, so a signed-out host provokes no 401", () => {
@@ -110,8 +116,14 @@ describe("useCardLinkedWallets", () => {
 
     const { result } = renderHook(() => useCardLinkedWallets({ currencies, skip: true }));
 
-    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, { skip: true });
-    expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, { skip: true });
+    expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, {
+      skip: true,
+      refetchOnFocus: true,
+    });
+    expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, {
+      skip: true,
+      refetchOnFocus: true,
+    });
     expect(result.current.wallets).toEqual([]);
   });
 

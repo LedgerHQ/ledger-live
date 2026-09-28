@@ -1,4 +1,5 @@
 import Config from "react-native-config";
+import { AppState } from "react-native";
 import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
@@ -137,15 +138,22 @@ configureCardSessionRenewal({
   },
 });
 
-setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
-  const unsubscribe = NetInfo.addEventListener(state => {
+setupListeners(store.dispatch, (dispatch, { onFocus, onFocusLost, onOnline, onOffline }) => {
+  const appStateSubscription = AppState.addEventListener("change", state => {
+    dispatch(state === "active" ? onFocus() : onFocusLost());
+  });
+  const unsubscribeNetwork = NetInfo.addEventListener(state => {
     if (state.isConnected) {
       dispatch(onOnline());
     } else {
       dispatch(onOffline());
     }
   });
-  return unsubscribe;
+
+  return () => {
+    appStateSubscription.remove();
+    unsubscribeNetwork();
+  };
 });
 connectRecentAddressesStore(store, recentAddressesSelector);
 setupCryptoAssetsStore(store);

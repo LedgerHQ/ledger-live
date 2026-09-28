@@ -27,8 +27,8 @@ export function useCardLinkedWallets({
   currencies,
   skip = false,
 }: UseCardLinkedWalletsParams): UseCardLinkedWalletsResult {
-  const linkedQuery = useGetCardLinkedWalletsQuery(undefined, { skip });
-  const internalQuery = useGetInternalWalletsQuery(undefined, { skip });
+  const linkedQuery = useGetCardLinkedWalletsQuery(undefined, { skip, refetchOnFocus: true });
+  const internalQuery = useGetInternalWalletsQuery(undefined, { skip, refetchOnFocus: true });
 
   const combined = useMemo(
     () =>
