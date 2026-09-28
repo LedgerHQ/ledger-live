@@ -8,6 +8,7 @@ import { setEnv } from "@shared/env";
 
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
+import { PAYTAB_SPECS_DIR } from "tests/reporters/cardSessionReporter";
 import { launchApp } from "tests/utils/electronUtils";
 import {
   captureArtifacts,
@@ -56,7 +57,6 @@ type TestFixtures = {
   userdataOriginalFile?: string;
   userdataFile: string;
   env: Record<string, string>;
-  injectCardSession: boolean;
   electronApp: ElectronApplication;
   page: Page;
   featureFlags: PartialFeatures;
@@ -95,7 +95,6 @@ async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: stri
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
-  injectCardSession: [false, { option: true }],
   lang: "en-US",
   theme: "dark",
   userdata: undefined,
@@ -227,16 +226,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   electronApp: async (
-    {
-      lang,
-      theme,
-      userdataDestinationPath,
-      env,
-      injectCardSession,
-      featureFlags,
-      simulateCamera,
-      speculos,
-    },
+    { lang, theme, userdataDestinationPath, env, featureFlags, simulateCamera, speculos },
     use,
     testInfo,
   ) => {
@@ -268,7 +258,7 @@ export const test = base.extend<TestFixtures>({
     );
     delete env[CARD_SESSION_BOOTSTRAP_ENV];
 
-    if (injectCardSession) {
+    if (testInfo.file.replaceAll("\\", "/").includes(`/${PAYTAB_SPECS_DIR}/`)) {
       const { BAANX_TEST_API_URL, BAANX_TEST_CLIENT_KEY } = process.env;
       env["CARD_BAANX_API_URL"] = BAANX_TEST_API_URL || "https://dev.api.baanx.com";
       env["CARD_BAANX_CLIENT_KEY"] =
