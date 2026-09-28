@@ -553,8 +553,8 @@ libs/ui/packages/native/src/components/Layout/Slides/                           
 **/BleDevicePairing*                                               @ledgerhq/live-devices
 
 # UI tests
-e2e/                                                                        @ledgerhq/qaa
-libs/ledger-live-common/src/e2e/                                            @ledgerhq/qaa
+/e2e/                                                                       @ledgerhq/qaa
+apps/ledger-live-mobile/src/e2e/                                            @ledgerhq/qaa
 libs/live-e2e-shared/                                                       @ledgerhq/qaa
 apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
