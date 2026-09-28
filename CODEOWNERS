@@ -341,8 +341,6 @@ apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/bridge.handl
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/discover.handler.ts @ledgerhq/coin-integration
 
 # Devices team
-**/useTrackDmkErrorsEvents*                                        @ledgerhq/live-devices
-apps/cli/src/commands/devices                                      @ledgerhq/live-devices
 **/src/renderer/screens/manager/                                   @ledgerhq/live-devices
 **/screens/customImage 																				 		 @ledgerhq/live-devices
 libs/ledger-live-common/src/customImage/                            @ledgerhq/live-devices
@@ -364,14 +362,11 @@ apps/ledger-live-mobile/android/**/LocationHelperModule.kt         @ledgerhq/liv
 apps/ledger-live-mobile/src/components/RequiresBLE/                @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/RequiresLocation/           @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/SelectDevice2/              @ledgerhq/live-devices
-apps/ledger-live-mobile/src/components/BleDevicePairingFlow/       @ledgerhq/live-devices
-**/BleDevicePairing*                                               @ledgerhq/live-devices
 apps/ledger-live-mobile/src/reducers/knownDevices.ts               @ledgerhq/live-devices
 apps/ledger-live-mobile/src/reducers/__tests__/knownDevices.test.ts @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/reducers/knownDevices.ts     @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/reducers/knownDevices.test.ts @ledgerhq/live-devices
 apps/ledger-live-mobile/src/transport/                             @ledgerhq/live-devices
-apps/ledger-live-mobile/src/react-native-hw-transport-ble/         @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/Settings/Debug/Features/DeviceIntentExecutor/ @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/DeviceIntentExecutorDevTool/ @ledgerhq/live-devices
@@ -379,11 +374,7 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/Device
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/features/FirmwareUpdate/       @ledgerhq/live-devices
 apps/ledger-live-mobile/ios/BluetoothHelperModule.swift            @ledgerhq/live-devices
-apps/web-tools/repl/                                               @ledgerhq/live-devices
-libs/**/devices/                                                   @ledgerhq/live-devices
 libs/**/hw-transport-*/                                            @ledgerhq/live-devices
-libs/**/react-native-*/                                            @ledgerhq/live-devices
-libs/**/swift-*/                                                   @ledgerhq/live-devices
 libs/**/types-devices/                                             @ledgerhq/live-devices
 libs/ledger-live-common/src/apps/                                  @ledgerhq/live-devices
 libs/ledger-live-common/src/apps/config.ts                         @ledgerhq/coin-integration
@@ -392,13 +383,11 @@ libs/ledger-live-common/src/manager/                               @ledgerhq/liv
 libs/ledger-live-common/src/device/                                @ledgerhq/live-devices
 libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/live-devices
 libs/device-core/                                                  @ledgerhq/live-devices
-libs/device-intent/                                                @ledgerhq/live-devices
 libs/device-onboarding/                                            @ledgerhq/engagement
 features/platform/device-intent/                                   @ledgerhq/live-devices
 features/platform/device-action-content/                           @ledgerhq/live-devices
 features/platform/contacts/src/device/                             @ledgerhq/live-devices
 libs/device-react/                                                 @ledgerhq/live-devices
-libs/live-dmk/                                                     @ledgerhq/live-devices
 libs/speculos-transport/                                           @ledgerhq/live-devices @ledgerhq/qaa
 libs/live-dmk-mobile/                                              @ledgerhq/live-devices
 libs/live-dmk-desktop/                                             @ledgerhq/live-devices
@@ -572,6 +561,10 @@ libs/ledger-live-common/src/postOnboarding/                                     
 libs/ledger-live-common/src/transactionsAlerts/                                                @ledgerhq/engagement
 libs/ledger-live-common/src/genericAwarenessModal/                                             @ledgerhq/engagement
 libs/ui/packages/native/src/components/Layout/Slides/                                          @ledgerhq/engagement
+
+# Devices — file globs inside other teams' directories
+**/useTrackDmkErrorsEvents*                                        @ledgerhq/live-devices
+**/BleDevicePairing*                                               @ledgerhq/live-devices
 
 # UI tests
 e2e/                                                                        @ledgerhq/qaa
