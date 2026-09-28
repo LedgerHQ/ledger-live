@@ -172,6 +172,8 @@ describe("getConnectDeviceFailure", () => {
   it.each<SharedConnectDeviceUIState>([
     { type: ConnectDeviceUIStateTypes.Loading },
     { type: ConnectDeviceUIStateTypes.NoKnownDevice },
+    { type: ConnectDeviceUIStateTypes.Discovering, devices: [] },
+    { type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice, device: knownDevice },
     { type: ConnectDeviceUIStateTypes.Connecting, device: knownDevice },
     { type: ConnectDeviceUIStateTypes.Connected },
   ])("should return null for the non-error state $type", state => {

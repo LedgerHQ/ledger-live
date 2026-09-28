@@ -131,8 +131,15 @@ export function getConnectDeviceFailure(
         countsAsFailure: true,
         subError: getErrorSubError(state.error),
       };
-    default:
+    case ConnectDeviceUIStateTypes.Loading:
+    case ConnectDeviceUIStateTypes.NoKnownDevice:
+    case ConnectDeviceUIStateTypes.Discovering:
+    case ConnectDeviceUIStateTypes.WaitingForSelectedDevice:
+    case ConnectDeviceUIStateTypes.Connecting:
+    case ConnectDeviceUIStateTypes.Connected:
       return null;
+    default:
+      return assertNever(state);
   }
 }
 
