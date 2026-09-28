@@ -138,12 +138,17 @@ export const recordEnsureAppReadyFailure = (
 };
 
 export const recordExecutorStateFailure = (state: ExecutorState): void => {
-  if (state.type === "deviceDisconnected") {
-    setDeviceFlowFailure(
-      getDeviceDisconnectedFailure(getConnectedDeviceTrackingProperties(state.device)),
-    );
-  } else if (state.type === "invalidOperation") {
-    setDeviceFlowFailure(getInvalidOperationFailure(state.error));
+  switch (state.type) {
+    case "deviceDisconnected":
+      setDeviceFlowFailure(
+        getDeviceDisconnectedFailure(getConnectedDeviceTrackingProperties(state.device)),
+      );
+      return;
+    case "invalidOperation":
+      setDeviceFlowFailure(getInvalidOperationFailure(state.error));
+      return;
+    default:
+      setDeviceFlowFailure(null);
   }
 };
 

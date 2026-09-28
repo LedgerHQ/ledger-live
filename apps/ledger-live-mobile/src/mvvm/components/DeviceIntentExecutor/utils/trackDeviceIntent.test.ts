@@ -283,6 +283,18 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
       });
     });
 
+    it("GIVEN the user retried after a disconnection WHEN called THEN it tracks deviceflow_aborted without failure", () => {
+      recordExecutorStateFailure({ type: "deviceDisconnected", device: connectedDevice });
+      recordExecutorStateFailure({ type: "connectingDevice" });
+
+      trackDeviceflowCanceled({ sourceFlow: "send", extraProperties: {} });
+
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
+        ...layerABaseProperties,
+        sourceFlow: "send",
+      });
+    });
+
     it("GIVEN an invalid executor operation WHEN called THEN it tracks deviceflow_failed with the error name", () => {
       recordExecutorStateFailure({ type: "invalidOperation", error: new TypeError("boom") });
 
