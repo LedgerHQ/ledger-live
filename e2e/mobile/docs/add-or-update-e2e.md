@@ -145,6 +145,37 @@ signed out.
 17. **Mind cross-platform text rewriting.** iOS smart punctuation turns a typed `'` into `’`, so a
     straight apostrophe in a fixture fails on iOS only. Keep such characters out, and say why.
 
+## Known failures
+
+A test that fails because of a tracked bug is flagged with `$KnownFailure`, not skipped. It still
+runs once and still fails the run, but Detox does not retry it, so it costs one attempt instead of
+three.
+
+```ts
+import { $KnownFailure } from "@e2e/helpers/knownFailure";
+
+// Whole spec: right before the test function call, like $TmsLink / $Tag.
+$KnownFailure("LIVE-12345");
+runSendTest(transaction, ["B2CQA-4225"], ["@NanoX", "@family-evm"]);
+
+// One test: right before its it(), inside the describe.
+$KnownFailure("LIVE-12345");
+it("shows the network fee", async () => {
+  /* ... */
+});
+```
+
+- **Pass the Jira key of the bug.** It also becomes the test's Allure issue link.
+- **Place it immediately before** the `describe`, `it` or test function call. A hook (`beforeAll`,
+  `beforeEach`, …) in between takes the flag instead, and the run log warns that it "landed on a
+  hook".
+- **Only for deterministic failures with a ticket.** A flake gets fixed (rule 12); a test that must
+  not run at all is skipped (`.skip.spec.ts`, `describe.skip`).
+- **Remove it in the fix.** A flagged test that passes just reports green, and nothing flags it.
+
+The run log lists what was left out of the retry under `[known-failure]`. Mechanism:
+[`jest.reporter.js`](../jest.reporter.js).
+
 ## Test IDs in product code
 
 A testID is preferred over clever matching. Add:
