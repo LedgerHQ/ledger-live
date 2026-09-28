@@ -59,6 +59,7 @@ import { initHistory } from "~/reducers/history";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
 import { initIdentities } from "../helpers/identities";
+import { whenCachedFlagsSettled } from "./whenCachedFlagsSettled";
 
 interface Props {
   onInitFinished: () => void;
@@ -95,6 +96,9 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
   const init = useCallback(async () => {
     try {
+      // Everything rendered once `ready` flips, including the providers above `WaitForAppReady`,
+      // must resolve flags from the Firebase cache rather than from the compiled defaults.
+      const cachedFlagsSettled = whenCachedFlagsSettled(store);
       const readStorageStart = Date.now();
       mmkvStorageWrapper.monitor(true);
       const [
@@ -145,6 +149,9 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
           mmkvRead: mmkvStorageWrapper.flushAccessedKeys(false),
         });
       });
+
+      await cachedFlagsSettled;
+      logStartupEvent("Feature flags cache settled");
 
       store.dispatch(importBle(bleData));
       if (persistedKnownDevices) {

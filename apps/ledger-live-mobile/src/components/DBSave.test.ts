@@ -2,13 +2,14 @@ import { featureFlagsLense, payCardDbSaveSliceSelector, payCardPersistedSelector
 import type { State } from "~/reducers/types";
 
 describe("featureFlagsLense", () => {
-  it("projects only { overrides, bannerVisible } — never the transient remoteFlagsReady gate", () => {
+  it("projects only { overrides, bannerVisible } — never the transient readiness flags", () => {
     const overrides = { mockFeature: { enabled: true } };
     const state = {
       featureFlags: {
         overrides,
         bannerVisible: false,
         remoteFlagsReady: true,
+        cachedFlagsSettled: true,
       },
     } as unknown as State;
 
@@ -16,6 +17,7 @@ describe("featureFlagsLense", () => {
 
     expect(projected).toEqual({ overrides, bannerVisible: false });
     expect(projected).not.toHaveProperty("remoteFlagsReady");
+    expect(projected).not.toHaveProperty("cachedFlagsSettled");
   });
 });
 
