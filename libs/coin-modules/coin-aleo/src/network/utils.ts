@@ -42,6 +42,43 @@ import { apiClient } from "./api";
 export async function getStakingPosition(
   config: AleoCoinConfig,
   address: string,
+  height: number,
+): Promise<AleoStakingPosition> {
+  try {
+    return await getStakingPositionAt(config, address, height);
+  } catch (error) {
+    log(
+      "aleo/sync",
+      `getStakingPosition: no staking history at block ${height}, reading the live mappings: ${String(error)}`,
+    );
+    return getLiveStakingPosition(config, address);
+  }
+}
+
+async function getStakingPositionAt(
+  config: AleoCoinConfig,
+  address: string,
+  height: number,
+): Promise<AleoStakingPosition> {
+  const [bonded, unbonding, withdraw] = await Promise.all([
+    apiClient.getStakingMappingAt(config, "bonded", height),
+    apiClient.getStakingMappingAt(config, "unbonding", height),
+    apiClient.getStakingMappingAt(config, "withdraw", height),
+  ]);
+
+  const valueOf = (entries: [string, string][]) =>
+    entries.find(([staker]) => staker === address)?.[1] ?? null;
+
+  return toStakingPosition({
+    bondedRaw: valueOf(bonded),
+    unbondingRaw: valueOf(unbonding),
+    withdrawRaw: valueOf(withdraw),
+  });
+}
+
+async function getLiveStakingPosition(
+  config: AleoCoinConfig,
+  address: string,
 ): Promise<AleoStakingPosition> {
   const [bondedRaw, unbondingRaw, withdrawRaw] = await Promise.all([
     apiClient.getBondedMapping(config, address),

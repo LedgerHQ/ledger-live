@@ -3359,44 +3359,84 @@ describe("network/utils", () => {
 describe("getStakingPosition", () => {
   const config = getMockedConfig("mainnet");
   const ADDRESS = "aleo1d37xxnms3sq5qxcnnh3dtvzr35xemjzas4jcytjr8uvymfetnu9salav5n";
+  const OTHER = "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t";
   const BONDED_RAW = `{\n  validator: ${ADDRESS},\n  microcredits: 39339243096u64\n}`;
+  const LIVE_BONDED_RAW = `{\n  validator: ${ADDRESS},\n  microcredits: 7u64\n}`;
   const WITHDRAW_RAW = "aleo1g5wrxvgyvckgtuceg36eg6pf024x3p6nex05lcefz0h6576rmgrs22dr4w";
+  const HEIGHT = 19918275;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(apiClient.getBondedMapping).mockResolvedValue(null);
+    jest.mocked(apiClient.getStakingMappingAt).mockResolvedValue([]);
+    jest.mocked(apiClient.getBondedMapping).mockResolvedValue(LIVE_BONDED_RAW);
     jest.mocked(apiClient.getUnbondingMapping).mockResolvedValue(null);
     jest.mocked(apiClient.getWithdrawMapping).mockResolvedValue(null);
   });
 
-  it("reads all three mappings for the address", async () => {
-    await getStakingPosition(config, ADDRESS);
+  it("reads all three mappings at the given height", async () => {
+    await getStakingPosition(config, ADDRESS, HEIGHT);
 
-    expect(apiClient.getBondedMapping).toHaveBeenCalledTimes(1);
-    expect(apiClient.getBondedMapping).toHaveBeenCalledWith(config, ADDRESS);
-    expect(apiClient.getUnbondingMapping).toHaveBeenCalledTimes(1);
-    expect(apiClient.getUnbondingMapping).toHaveBeenCalledWith(config, ADDRESS);
-    expect(apiClient.getWithdrawMapping).toHaveBeenCalledTimes(1);
-    expect(apiClient.getWithdrawMapping).toHaveBeenCalledWith(config, ADDRESS);
+    expect(apiClient.getStakingMappingAt).toHaveBeenCalledTimes(3);
+    for (const mapping of ["bonded", "unbonding", "withdraw"]) {
+      expect(apiClient.getStakingMappingAt).toHaveBeenCalledWith(config, mapping, HEIGHT);
+    }
   });
 
-  it("returns the assembled position", async () => {
-    jest.mocked(apiClient.getBondedMapping).mockResolvedValue(BONDED_RAW);
-    jest.mocked(apiClient.getWithdrawMapping).mockResolvedValue(WITHDRAW_RAW);
+  it("returns the address's entries and ignores other stakers", async () => {
+    jest.mocked(apiClient.getStakingMappingAt).mockImplementation(async (_config, mapping) => {
+      if (mapping === "bonded") {
+        return [
+          [OTHER, `{\n  validator: ${OTHER},\n  microcredits: 1u64\n}`],
+          [ADDRESS, BONDED_RAW],
+        ];
+      }
+      if (mapping === "withdraw") return [[ADDRESS, WITHDRAW_RAW]];
+      return [[OTHER, "{\n  microcredits: 5u64,\n  height: 1u32\n}"]];
+    });
 
-    const position = await getStakingPosition(config, ADDRESS);
+    const position = await getStakingPosition(config, ADDRESS, HEIGHT);
 
     expect(position.bondedBalance.toString()).toBe("39339243096");
     expect(position.bondedValidator).toBe(ADDRESS);
+    expect(position.unbondingBalance.toString()).toBe("0");
+    expect(position.unbondingHeight).toBeNull();
     expect(position.withdrawalAddress).toBe(WITHDRAW_RAW);
   });
 
-  it("propagates a failure on any one of the three reads", async () => {
+  it("never reads the live mappings when the history answers", async () => {
+    await getStakingPosition(config, ADDRESS, HEIGHT);
+
+    expect(apiClient.getBondedMapping).not.toHaveBeenCalled();
+    expect(apiClient.getUnbondingMapping).not.toHaveBeenCalled();
+    expect(apiClient.getWithdrawMapping).not.toHaveBeenCalled();
+  });
+
+  it("reads the live mappings once, without retrying, when the history lacks the block", async () => {
+    jest
+      .mocked(apiClient.getStakingMappingAt)
+      .mockRejectedValueOnce(new LedgerAPI5xx("Could not load mapping"));
+
+    const position = await getStakingPosition(config, ADDRESS, HEIGHT);
+
+    expect(apiClient.getStakingMappingAt).toHaveBeenCalledTimes(3);
+    expect(apiClient.getBondedMapping).toHaveBeenCalledTimes(1);
+    expect(apiClient.getBondedMapping).toHaveBeenCalledWith(config, ADDRESS);
+    expect(apiClient.getUnbondingMapping).toHaveBeenCalledTimes(1);
+    expect(apiClient.getWithdrawMapping).toHaveBeenCalledTimes(1);
+    expect(position.bondedBalance.toString()).toBe("7");
+  });
+
+  it("propagates a failure of the live read", async () => {
+    jest
+      .mocked(apiClient.getStakingMappingAt)
+      .mockRejectedValue(new LedgerAPI5xx("Could not load mapping"));
     jest
       .mocked(apiClient.getWithdrawMapping)
       .mockRejectedValue(new LedgerAPI5xx("Internal Server Error"));
 
-    await expect(getStakingPosition(config, ADDRESS)).rejects.toThrow("Internal Server Error");
+    await expect(getStakingPosition(config, ADDRESS, HEIGHT)).rejects.toThrow(
+      "Internal Server Error",
+    );
   });
 });
 

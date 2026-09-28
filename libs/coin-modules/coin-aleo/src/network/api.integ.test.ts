@@ -29,17 +29,17 @@ describe("getLatestBlock", () => {
 });
 
 describe("getAccountBalance", () => {
-  it("returns a u64 balance string for an account with public funds", async () => {
-    const balance = await apiClient.getAccountBalance(config, testnetAddress);
+  it("returns a u64 balance string and its block height for an account with public funds", async () => {
+    const { data, height } = await apiClient.getAccountBalance(config, testnetAddress);
 
-    expect(typeof balance).toBe("string");
-    expect(balance).toMatch(/^\d+u64$/);
+    expect(data).toMatch(/^\d+u64$/);
+    expect(height).toBeGreaterThan(0);
   });
 
   it("returns null for an account with no public credits balance", async () => {
-    const balance = await apiClient.getAccountBalance(config, emptyAddress);
+    const { data } = await apiClient.getAccountBalance(config, emptyAddress);
 
-    expect(balance).toBeNull();
+    expect(data).toBeNull();
   });
 });
 

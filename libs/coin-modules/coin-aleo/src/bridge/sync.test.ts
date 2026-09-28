@@ -128,12 +128,15 @@ describe("sync.ts", () => {
     mockGetSyncHash.mockResolvedValue(mockSyncHash);
     coinConfig.setCoinConfig(() => mockConfig);
 
-    mockGetPublicBalance.mockResolvedValue([
-      {
-        asset: { type: "native" as const },
-        value: BigInt(mockAccount.balance.toString()),
-      },
-    ]);
+    mockGetPublicBalance.mockResolvedValue({
+      balances: [
+        {
+          asset: { type: "native" as const },
+          value: BigInt(mockAccount.balance.toString()),
+        },
+      ],
+      height: 99,
+    });
 
     mockLastBlock.mockResolvedValue({
       height: 100,
@@ -219,7 +222,7 @@ describe("sync.ts", () => {
     });
 
     it("should handle empty balance array", async () => {
-      mockGetPublicBalance.mockResolvedValue([]);
+      mockGetPublicBalance.mockResolvedValue({ balances: [], height: 99 });
 
       const result = await performPublicSync(
         {
@@ -239,12 +242,15 @@ describe("sync.ts", () => {
 
     it("should update balance when it changes", async () => {
       const mockUpdatedBalance = 10;
-      mockGetPublicBalance.mockResolvedValue([
-        {
-          asset: { type: "native" as const },
-          value: BigInt(mockUpdatedBalance),
-        },
-      ]);
+      mockGetPublicBalance.mockResolvedValue({
+        balances: [
+          {
+            asset: { type: "native" as const },
+            value: BigInt(mockUpdatedBalance),
+          },
+        ],
+        height: 99,
+      });
 
       const result = await performPublicSync(
         {
@@ -361,12 +367,15 @@ describe("sync.ts", () => {
         operations: [oldOperation],
       };
 
-      mockGetPublicBalance.mockResolvedValue([
-        {
-          asset: { type: "native" as const },
-          value: BigInt(1000),
-        },
-      ]);
+      mockGetPublicBalance.mockResolvedValue({
+        balances: [
+          {
+            asset: { type: "native" as const },
+            value: BigInt(1000),
+          },
+        ],
+        height: 99,
+      });
 
       mockListOperations.mockResolvedValue({
         operations: [newOperation as any],
@@ -918,6 +927,17 @@ describe("sync.ts", () => {
           unbondingHeight: 250,
           withdrawalAddress: mockAccount.freshAddress,
         });
+      });
+
+      it("reads the position at the block the balance came from", async () => {
+        await performPublicSync(publicSyncInfo, mockSyncConfig);
+
+        expect(mockGetStakingPosition).toHaveBeenCalledTimes(1);
+        expect(mockGetStakingPosition).toHaveBeenCalledWith(
+          expect.anything(),
+          mockAccount.freshAddress,
+          99,
+        );
       });
 
       it("persists the position onto aleoResources", async () => {

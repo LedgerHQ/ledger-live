@@ -6,11 +6,11 @@ import { parseMicrocredits } from "./utils";
 export async function getPublicBalance(
   config: AleoCoinConfig,
   address: string,
-): Promise<Balance[]> {
-  const microcreditsU64 = await apiClient.getAccountBalance(config, address);
+): Promise<{ balances: Balance[]; height: number }> {
+  const { data: microcreditsU64, height } = await apiClient.getAccountBalance(config, address);
 
   if (!microcreditsU64) {
-    return [];
+    return { balances: [], height };
   }
 
   const microcredits = parseMicrocredits(microcreditsU64);
@@ -22,5 +22,5 @@ export async function getPublicBalance(
     },
   ];
 
-  return balances;
+  return { balances, height };
 }

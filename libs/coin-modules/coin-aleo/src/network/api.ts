@@ -15,6 +15,7 @@ import type {
   AleoCommitteeResponse,
   AleoValidatorMetadataResponse,
   AleoTotalSupplyResponse,
+  AleoMappingValueWithHeightResponse,
 } from "../types/api";
 import type { AleoCoinConfig } from "../types";
 import { MAX_TRANSITIONS_PER_PAGE, PROGRAM_ID } from "../constants";
@@ -30,12 +31,15 @@ async function getLatestBlock(config: AleoCoinConfig): Promise<AleoLatestBlockRe
   return res.data;
 }
 
-async function getAccountBalance(config: AleoCoinConfig, address: string): Promise<string | null> {
+async function getAccountBalance(
+  config: AleoCoinConfig,
+  address: string,
+): Promise<AleoMappingValueWithHeightResponse> {
   const { apiUrls, networkType } = config;
 
-  const res = await network<string | null>({
+  const res = await network<AleoMappingValueWithHeightResponse>({
     method: "GET",
-    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/account/${address}`,
+    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/account/${address}?metadata=true`,
   });
 
   return res.data;
@@ -72,6 +76,21 @@ async function getWithdrawMapping(config: AleoCoinConfig, address: string): Prom
   const res = await network<string | null>({
     method: "GET",
     url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/withdraw/${address}`,
+  });
+
+  return res.data;
+}
+
+async function getStakingMappingAt(
+  config: AleoCoinConfig,
+  mapping: "bonded" | "unbonding" | "withdraw",
+  height: number,
+): Promise<[string, string][]> {
+  const { apiUrls, networkType } = config;
+
+  const res = await network<[string, string][]>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/block/${height}/history/${mapping}`,
   });
 
   return res.data;
@@ -404,6 +423,7 @@ export const apiClient = {
   getBondedMapping,
   getUnbondingMapping,
   getWithdrawMapping,
+  getStakingMappingAt,
   getCommittee,
   getValidatorMetadata,
   getTotalSupply,

@@ -86,7 +86,7 @@ export async function getBalance(context: AleoContext, address: string): Promise
     };
   });
 
-  const publicNativeValue = publicBalance[0]?.value ?? 0n;
+  const publicNativeValue = publicBalance.balances[0]?.value ?? 0n;
   const nativeValue = publicNativeValue + BigInt(privateNativeSum.toFixed(0));
 
   return [{ value: nativeValue, asset: { type: "native" } }, ...tokenBalances];

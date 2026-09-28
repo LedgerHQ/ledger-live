@@ -43,7 +43,7 @@ describe("getBalance", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetAccountBalance.mockResolvedValue("5000000u64");
+    mockGetAccountBalance.mockResolvedValue({ data: "5000000u64", height: 1 });
     mockGetTokenBalance.mockResolvedValue(null);
     mockGetTokens.mockResolvedValue(
       getMockedGetTokensResponse({
@@ -72,7 +72,7 @@ describe("getBalance", () => {
   });
 
   it("address never indexed, no private funds or tokens — still returns a zero native entry", async () => {
-    mockGetAccountBalance.mockResolvedValue(null);
+    mockGetAccountBalance.mockResolvedValue({ data: null, height: 1 });
     mockGetRecordScannerStatus.mockResolvedValue(getMockedRecordScannerStatus());
 
     const result = await getBalance({ ...context, provableId, viewKey }, address);

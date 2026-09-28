@@ -87,15 +87,18 @@ export async function performPublicSync(
   });
   const config = resolveConfig(currency.id);
 
-  const [balances, latestBlock, stakingPosition] = await Promise.all([
+  const [{ balances, height: balanceHeight }, latestBlock] = await Promise.all([
     getPublicBalance(config, address),
     lastBlock(config),
-    config.enableStaking ? getStakingPosition(config, address) : undefined,
   ]);
 
   const blockHeight = latestBlock?.height ?? initialAccount?.blockHeight ?? 0;
   const nativeBalance = balances.find(b => b.asset.type === "native")?.value ?? BigInt(0);
   const transparentBalance = new BigNumber(nativeBalance.toString());
+
+  const stakingPosition = config.enableStaking
+    ? await getStakingPosition(config, address, balanceHeight)
+    : undefined;
 
   // Migration: if tokens were never synced (legacy account) or were previously disabled,
   // reset the cursor to 0 so the full history is re-fetched and all operations get

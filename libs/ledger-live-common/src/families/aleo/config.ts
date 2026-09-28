@@ -58,7 +58,7 @@ const ENABLE_TOKENS = false;
 /**
  * Controls whether Aleo staking features (bond/unbond/claim) are enabled.
  */
-const ENABLE_STAKING = false;
+const ENABLE_STAKING = true;
 
 /** Both are required on the config, so these only stand in until it has loaded. */
 export const LIVE_BLOCK_HEIGHT_POLL_MS = 10_000;

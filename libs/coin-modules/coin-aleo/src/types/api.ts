@@ -22,6 +22,11 @@ export type AleoValidatorMetadataResponse = Record<string, string>;
  */
 export type AleoTotalSupplyResponse = number | string;
 
+export interface AleoMappingValueWithHeightResponse {
+  data: string | null;
+  height: number;
+}
+
 export type AleoTransitionValue =
   | {
       id: string;

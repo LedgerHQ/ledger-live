@@ -321,8 +321,8 @@ describe("apiClient", () => {
   });
 
   describe("getAccountBalance", () => {
-    it("should fetch the account balance successfully", async () => {
-      const mockBalance = "1000000u64";
+    it("should fetch the account balance with the height it was read at", async () => {
+      const mockBalance = { data: "1000000u64", height: 42 };
       jest.mocked(network).mockResolvedValue({ data: mockBalance, status: 200 });
 
       const result = await apiClient.getAccountBalance(mockConfig, MOCK_ALEO_ADDRESS);
@@ -330,17 +330,17 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/program/credits.aleo/mapping/account/${MOCK_ALEO_ADDRESS}`,
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/program/credits.aleo/mapping/account/${MOCK_ALEO_ADDRESS}?metadata=true`,
       });
       expect(result).toEqual(mockBalance);
     });
 
-    it("should return null when account has no balance", async () => {
-      jest.mocked(network).mockResolvedValue({ data: null, status: 200 });
+    it("should return null data when account has no balance", async () => {
+      jest.mocked(network).mockResolvedValue({ data: { data: null, height: 42 }, status: 200 });
 
       const result = await apiClient.getAccountBalance(mockConfig, MOCK_ALEO_ADDRESS);
 
-      expect(result).toBeNull();
+      expect(result).toEqual({ data: null, height: 42 });
     });
 
     it("should throw an error when network request fails", async () => {
@@ -353,14 +353,16 @@ describe("apiClient", () => {
     });
 
     it("should use correct network configuration for testnet", async () => {
-      jest.mocked(network).mockResolvedValue({ data: "500000u64", status: 200 });
+      jest
+        .mocked(network)
+        .mockResolvedValue({ data: { data: "500000u64", height: 42 }, status: 200 });
 
       await apiClient.getAccountBalance(testnetConfig, MOCK_ALEO_ADDRESS);
 
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${testnetConfig.apiUrls.node}/v2/${testnetConfig.networkType}/program/credits.aleo/mapping/account/${MOCK_ALEO_ADDRESS}`,
+        url: `${testnetConfig.apiUrls.node}/v2/${testnetConfig.networkType}/program/credits.aleo/mapping/account/${MOCK_ALEO_ADDRESS}?metadata=true`,
       });
     });
   });
@@ -1324,6 +1326,31 @@ describe("apiClient", () => {
       jest.mocked(network).mockRejectedValue(new Error("Network error"));
 
       await expect(apiClient[method](mockConfig, MOCK_ALEO_ADDRESS)).rejects.toThrow(
+        "Network error",
+      );
+    });
+  });
+
+  describe("getStakingMappingAt", () => {
+    it.each(["bonded", "unbonding", "withdraw"] as const)(
+      "reads the %s snapshot at the given height",
+      async mapping => {
+        const entries = [[MOCK_ALEO_ADDRESS, "{\n  microcredits: 111468399u64\n}"]];
+        jest.mocked(network).mockResolvedValue({ data: entries, status: 200 });
+
+        await expect(apiClient.getStakingMappingAt(mockConfig, mapping, 42)).resolves.toBe(entries);
+        expect(network).toHaveBeenCalledTimes(1);
+        expect(network).toHaveBeenCalledWith({
+          method: "GET",
+          url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/block/42/history/${mapping}`,
+        });
+      },
+    );
+
+    it("propagates network failures", async () => {
+      jest.mocked(network).mockRejectedValue(new Error("Network error"));
+
+      await expect(apiClient.getStakingMappingAt(mockConfig, "bonded", 42)).rejects.toThrow(
         "Network error",
       );
     });
