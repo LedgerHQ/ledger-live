@@ -116,6 +116,10 @@ jest.mock("./useCardLifecycleTracking", () => ({
   useCardLifecycleTracking: jest.fn(),
 }));
 
+jest.mock("./useCardStatusRefresh", () => ({
+  useCardStatusRefresh: jest.fn(),
+}));
+
 import { Card } from "./Card";
 
 function renderCard(card: React.ReactElement, store = createCardTestStore()) {
