@@ -54,6 +54,7 @@ function mockFlow({
         parentAccount: null,
         currency: { id: "ripple" },
       },
+      transaction: { transaction: null },
       recipient,
     } as never,
     uiConfig: { hasMemo: true, memoType: "text", memoOptions: [] } as never,

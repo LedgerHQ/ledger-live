@@ -63,6 +63,7 @@ describe("SendFlowLayout", () => {
     (useSendFlowData as jest.Mock).mockReturnValue({
       state: {
         account: { account: null, parentAccount: null },
+        transaction: { transaction: null },
         flowStatus: "idle",
       },
     });

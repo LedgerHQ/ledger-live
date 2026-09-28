@@ -16,13 +16,12 @@ export type ZcashPrivacyAttributes = Readonly<{
 }>;
 
 /**
- * Chain-neutral privacy attributes keyed off `transferType`, meant as the single source
- * both the Segment send-flow page events (wired below) and the Datadog broadcast event
- * (LIVE-37992, not yet implemented -- `useBroadcast`/`AccountBridgeExtensions` have no
- * caller for this helper today) are meant to read, so the two can't diverge once both
- * exist. Named `transferFlow` rather than the generic `flow`: every send-flow Segment
- * event already carries a `flow: "send"` property (the funnel name), and this would
- * silently overwrite it.
+ * Chain-neutral privacy attributes keyed off `transferType`. The send-flow page events
+ * read them through `getTrackingAttributes` below; any other analytics sink reporting a
+ * Zcash send's privacy should reuse this mapping rather than derive its own. Named
+ * `transferFlow` rather than the generic `flow`: every send-flow Segment event already
+ * carries a `flow: "send"` property (the funnel name), and this would silently
+ * overwrite it.
  */
 const ATTRIBUTES_BY_TRANSFER_TYPE: Record<ZcashTransferType, ZcashPrivacyAttributes> = {
   transparent: { privacy: "public", transferFlow: "public-to-public" },

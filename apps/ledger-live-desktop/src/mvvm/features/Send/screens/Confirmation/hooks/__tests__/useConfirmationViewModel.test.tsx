@@ -72,7 +72,9 @@ const mockNavigation = () => {
 };
 
 const mockData = (state: unknown) => {
-  (useSendFlowData as jest.Mock).mockReturnValue({ state });
+  (useSendFlowData as jest.Mock).mockReturnValue({
+    state: { transaction: { transaction: null }, ...(state as object) },
+  });
 };
 
 beforeEach(() => {

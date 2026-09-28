@@ -84,7 +84,7 @@ describe("useAddToExistingContactViewModel", () => {
       isDomain: false,
     });
     mockedUseSendFlowData.mockReturnValue({
-      state: { account: { currency: ethereum } },
+      state: { account: { currency: ethereum }, transaction: { transaction: null } },
       recipientSearch: { value: address },
     } as never);
   });
