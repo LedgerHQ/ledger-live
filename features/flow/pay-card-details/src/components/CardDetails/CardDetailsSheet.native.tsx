@@ -39,7 +39,13 @@ export function CardDetailsSheet({
   const sizingProps =
     sizing === "full"
       ? ({ snapPoints: "fullWithOffset" } as const)
-      : ({ enableDynamicSizing: true, maxDynamicContentSize: "fullWithOffset" } as const);
+      : ({
+          enableDynamicSizing: true,
+          maxDynamicContentSize: "fullWithOffset",
+          // Our content already has the bottom space. If the sheet adds it again, the list scrolls a
+          // little, and on Android the next tap only stops the scroll instead of pressing a row.
+          contentHasBottomSpace: true,
+        } as const);
 
   useEffect(() => {
     if (isOpen) {

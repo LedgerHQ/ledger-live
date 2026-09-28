@@ -62,6 +62,12 @@ export type QueuedBottomSheetProps = Readonly<{
   /** Maximum dynamic content size. */
   maxDynamicContentSize?: BottomSheetProps["maxDynamicContentSize"];
   /**
+   * Set it when the content already adds space at the bottom for the Android navigation bar (with
+   * `useBottomSheetBottomInset`). A sheet with dynamic size then does not add this space again.
+   * Without it, the space is added twice: a list gets too small and scrolls even when it fits.
+   */
+  contentHasBottomSpace?: boolean;
+  /**
    * Sticky area pinned to the bottom of the sheet, for a primary action that has to stay reachable
    * while a field inside the sheet is being edited. It tracks the keyboard, so unlike content
    * inside the sheet it is never covered.
