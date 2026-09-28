@@ -410,3 +410,39 @@ index da29ae99c8b90877f15715cdeb692ed8a2b47569..ce884adcafa10e78b0b040dbbbe3c4ee
  
        this._isLocked = true;
        this._invalidate();
+diff --git a/src/pilot/DetoxPilot.js b/src/pilot/DetoxPilot.js
+index 6fc0456..fca2e1b 100644
+--- a/src/pilot/DetoxPilot.js
++++ b/src/pilot/DetoxPilot.js
+@@ -1,8 +1,19 @@
+-const { Pilot } = require('@wix-pilot/core');
+-const { DetoxFrameworkDriver }  = require('@wix-pilot/detox');
+-
+ const detox = require('../..');
+ 
++// @wix-pilot/detox calls require('expect') at import time without declaring it.
++// Loading it here would make every Detox worker resolve `expect`, including
++// projects that never call pilot.init(). pnpm (hoist=false) then fails with
++// "Cannot find module 'expect'". Load Pilot only when it is initialized.
++let Pilot;
++let DetoxFrameworkDriver;
++
++function loadPilotModules() {
++  if (!Pilot) {
++    ({ Pilot } = require('@wix-pilot/core'));
++    ({ DetoxFrameworkDriver } = require('@wix-pilot/detox'));
++  }
++}
++
+ /** @type {Detox.PilotFacade} */
+ class DetoxPilot {
+   /**
+@@ -13,6 +24,8 @@ class DetoxPilot {
+   }
+ 
+   init(promptHandler) {
++    loadPilotModules();
++
+     this.pilot = new Pilot({
+       ...this._defaults,
+       frameworkDriver: new DetoxFrameworkDriver(detox),
