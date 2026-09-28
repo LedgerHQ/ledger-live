@@ -3657,7 +3657,9 @@
       "title": "Withdraw assets",
       "steps": {
         "amount": {
-          "title": "Withdraw"
+          "title": "Withdraw",
+          "unlockedOn": "Unlocked on {{date}}",
+          "unlocksOn": "Unlocks on {{date}}"
         },
         "connectDevice": {
           "title": "Device"
