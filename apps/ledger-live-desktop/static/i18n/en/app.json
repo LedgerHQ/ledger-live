@@ -10358,6 +10358,7 @@
     "addAddressEntry": {
       "title": "Enter address",
       "addressPlaceholder": "Address or ENS",
+      "addressPlaceholderNoENS": "Address",
       "confirmAddress": "Continue to review",
       "validatingAddress": "Validating address",
       "validAddress": "Valid address",

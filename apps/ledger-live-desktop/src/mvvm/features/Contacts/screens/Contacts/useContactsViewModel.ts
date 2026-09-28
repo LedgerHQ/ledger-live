@@ -27,6 +27,7 @@ import {
   useContactsListPageAnalytics,
   useContactsLedgerSyncMutationGuard,
   trackContactsLedgerSyncDismiss,
+  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
 import {
   useAddAddressCurrencySelectionViewModel,
@@ -64,6 +65,7 @@ import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteA
 import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import type { ContactsAddAddressFlowDialogProps } from "./components/ContactsAddAddressFlowDialog";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact" | "addContactDialog"> &
   Readonly<{
@@ -304,10 +306,20 @@ export function useContactsViewModel(): ContactsPageViewModel {
     goBackAddAddress();
     selectCurrencyForContact(selectedContactId);
   }, [addAddressFlowState, goBackAddAddress, selectCurrencyForContact]);
+  const addAddressSupportsDomain = resolveContactAddressSupportsDomain(
+    "selectedCurrencyId" in addAddressFlowState
+      ? addAddressFlowState.selectedCurrencyId
+      : undefined,
+    sendFeatures.supportsDomain,
+  );
   const addAddressEntryLabels = useMemo<AddAddressEntryLabels>(
     () => ({
       title: t("contacts.addAddressEntry.title"),
-      addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
+      addressPlaceholder: t(
+        addAddressSupportsDomain
+          ? "contacts.addAddressEntry.addressPlaceholder"
+          : "contacts.addAddressEntry.addressPlaceholderNoENS",
+      ),
       confirmAddress: t("contacts.addAddressEntry.confirmAddress"),
       validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
       validAddress: t("contacts.addAddressEntry.validAddress"),
@@ -320,7 +332,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       duplicateAddress: (contactName: string) =>
         t("contacts.addAddressEntry.duplicateAddress", { contactName }),
     }),
-    [t],
+    [addAddressSupportsDomain, t],
   );
   const addAddressNameLabels = useMemo<ContactsAddAddressNameLabels>(
     () => ({

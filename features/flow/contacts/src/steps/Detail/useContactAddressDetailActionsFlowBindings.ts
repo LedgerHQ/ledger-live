@@ -86,5 +86,5 @@ export function useContactAddressDetailActionsFlowBindings({
     onSaveSuccess: onEditAddressSaved,
   });
 
-  return { flow, renameViewModel };
+  return { flow, renameViewModel, currencyId: contactAddress?.currencyId };
 }

@@ -19,6 +19,7 @@ import {
 import {
   buildContactsSaveAddressClickProperties,
   CONTACTS_EVENT_SOURCE,
+  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
 import {
   buildContactsGlobalProperties,
@@ -34,6 +35,7 @@ import {
   type PrefillAddAddressFlowVisibleState,
 } from "@features/flow-contacts-add-address";
 import { useContactsAddressValidationAdapter } from "LLD/features/Contacts/hooks/useContactsAddressValidationAdapter";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { contactsIntentLWDDefinitions } from "LLD/features/Contacts/deviceIntents/contactsIntentPlatformDefinitions";
 import { useDispatch } from "LLD/hooks/redux";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
@@ -293,10 +295,18 @@ export function useSendPrefillAddAddressFlow({
     [navigation, recipientSearch.value, startWithPrefilled, state.account.currency],
   );
 
+  const supportsDomain = resolveContactAddressSupportsDomain(
+    "selectedCurrencyId" in addressFlowState ? addressFlowState.selectedCurrencyId : undefined,
+    sendFeatures.supportsDomain,
+  );
   const entryLabels = useMemo<AddAddressEntryLabels>(
     () => ({
       title: t("contacts.addAddressEntry.title"),
-      addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
+      addressPlaceholder: t(
+        supportsDomain
+          ? "contacts.addAddressEntry.addressPlaceholder"
+          : "contacts.addAddressEntry.addressPlaceholderNoENS",
+      ),
       confirmAddress: t("contacts.addAddressEntry.confirmAddress"),
       validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
       validAddress: t("contacts.addAddressEntry.validAddress"),
@@ -309,7 +319,7 @@ export function useSendPrefillAddAddressFlow({
       duplicateAddress: (contactName: string) =>
         t("contacts.addAddressEntry.duplicateAddress", { contactName }),
     }),
-    [t],
+    [supportsDomain, t],
   );
   const nameLabels = useMemo<ContactsAddAddressNameLabels>(
     () => ({

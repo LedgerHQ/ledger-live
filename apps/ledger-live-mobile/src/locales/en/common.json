@@ -11595,6 +11595,7 @@
     "addAddressEntry": {
       "title": "Enter address",
       "addressPlaceholder": "Address or ENS",
+      "addressPlaceholderNoENS": "Address",
       "confirmAddress": "Confirm address",
       "validatingAddress": "Validating address",
       "validAddress": "Valid address",
