@@ -10,7 +10,52 @@ import { useFreezeCardViewModel } from "../Freeze/useFreezeCardViewModel";
 import { useMoreViewModel } from "../More/useMoreViewModel";
 import { useCardDetailsNavigation } from "./Scenes/navigation";
 import type { CardDetailsSceneProps } from "./Scenes/types";
-import type { CardDetailsProps, CardDetailsViewProps } from "../../types";
+import type { CardDetailsProps, CardDetailsViewProps, CardFaceAction } from "../../types";
+
+function cardFaceActions({
+  choosingCardType,
+  onChooseCardType,
+  onTopUp,
+  onDetailsPress,
+  chooseCardTypeLabel,
+  topUpLabel,
+  detailsLabel,
+}: {
+  choosingCardType: boolean;
+  onChooseCardType?: () => void;
+  onTopUp?: () => void;
+  onDetailsPress: () => void;
+  chooseCardTypeLabel: string;
+  topUpLabel: string;
+  detailsLabel: string;
+}): readonly CardFaceAction[] {
+  if (choosingCardType && onChooseCardType) {
+    return [
+      {
+        key: "choose-card-type",
+        label: chooseCardTypeLabel,
+        appearance: "base",
+        onPress: onChooseCardType,
+      },
+    ];
+  }
+
+  const actions: CardFaceAction[] = [];
+
+  if (onTopUp) {
+    actions.push({ key: "top-up", label: topUpLabel, appearance: "base", onPress: onTopUp });
+  }
+
+  actions.push({
+    key: "details",
+    label: detailsLabel,
+    appearance: "gray",
+    onPress: onDetailsPress,
+    testID: "card-details-button",
+  });
+
+  return actions;
+}
 
 export function useCardDetailsViewModel({
   cardVisual,
@@ -18,11 +63,14 @@ export function useCardDetailsViewModel({
   formatters,
   onShowMore,
   onTopUp,
+  onChooseCardType,
   onViewRewards,
   cardSettingsActions,
+  cardState = "ready",
 }: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const choosingCardType = cardState === "choosingCardType" && onChooseCardType !== undefined;
   const { route, goTo, goBack } = useCardDetailsNavigation();
   const assetsViewModel = useCardAssetsViewModel(assets);
   const freezeViewModel = useFreezeCardViewModel(goBack);
@@ -180,11 +228,19 @@ export function useCardDetailsViewModel({
 
   return {
     cardVisual,
-    detailsLabel: t("payTab.card.details"),
-    isSheetOpen,
+    faceActions: cardFaceActions({
+      choosingCardType,
+      onChooseCardType,
+      onTopUp,
+      onDetailsPress: openSheet,
+      chooseCardTypeLabel: t("payTab.card.chooseCardType"),
+      topUpLabel: t("payTab.card.topUp"),
+      detailsLabel: t("payTab.card.details"),
+    }),
+    isSheetOpen: isSheetOpen && !choosingCardType,
     scene,
     onTopUp,
-    onDetailsPress: openSheet,
+    onFacePress: choosingCardType ? undefined : openSheet,
     onSheetClose: closeSheet,
     onSceneBack,
   };

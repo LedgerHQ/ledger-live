@@ -1,6 +1,7 @@
 import type { CardLoginProps } from "@features/flow-pay-card-auth";
 import type {
   CardSettingsActions,
+  CardState,
   CardVisualProps,
   FormattedValue,
 } from "@features/flow-pay-card-details";
@@ -24,7 +25,8 @@ export type CardProps = {
   readonly formatters?: CardFormatters;
   readonly onShowMore?: () => void;
   readonly onTopUp?: () => void;
-  readonly onChooseCardType?: () => void;
+  /** Resolves once the hosted order page hands back, when the card status is read again. */
+  readonly onChooseCardType?: () => void | Promise<void>;
   readonly onViewRewards?: () => void;
   readonly cardSettingsActions?: CardSettingsActions;
   readonly discreet?: boolean;
@@ -40,6 +42,11 @@ export type CardProps = {
  */
 export type CardDisplayState = "resolving" | "signedOut" | "signedIn";
 
+export type CardPrimaryAction = Readonly<{
+  label: string;
+  onPress: () => void;
+}>;
+
 export type CardViewProps = {
   readonly title: string;
   readonly disclaimer: string;
@@ -52,6 +59,8 @@ export type CardViewProps = {
   readonly onShowMore?: () => void;
   readonly onTopUp?: () => void;
   readonly onChooseCardType?: () => void;
+  readonly primaryAction?: CardPrimaryAction;
+  readonly cardState: CardState;
   readonly onViewRewards?: () => void;
   readonly cardSettingsActions?: CardSettingsActions;
 };

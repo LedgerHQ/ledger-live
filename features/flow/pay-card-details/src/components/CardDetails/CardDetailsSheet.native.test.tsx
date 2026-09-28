@@ -103,7 +103,8 @@ function renderSheet(overrides: SheetOverrides = {}) {
     onBack,
     pressDismiss: () => user.press(screen.getByTestId("card-details-sheet-dismiss")),
     pressBack: () => user.press(screen.getByTestId("card-details-sheet-back")),
-    pressAddToWallet: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta-entry")),
+    pressAddToWallet: async () =>
+      user.press(await screen.findByTestId("pay-card-add-to-wallet-cta-entry")),
     pressOpenWallet: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta")),
     goTo: (next: SheetOverrides) => view.rerender(sheet(next)),
   };
@@ -144,10 +145,10 @@ describe("CardDetailsSheet (native)", () => {
     expect(screen.getByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 
-  it("should float the add-to-wallet CTA over the overview", () => {
+  it("should float the add-to-wallet CTA over the overview", async () => {
     renderSheet();
 
-    expect(screen.getByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
+    expect(await screen.findByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
   });
 
   it("should show the disclaimer after transactions on the overview", () => {

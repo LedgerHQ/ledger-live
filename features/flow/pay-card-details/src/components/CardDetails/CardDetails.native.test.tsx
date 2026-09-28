@@ -15,7 +15,7 @@ import {
 } from "@support/msw-features-flow-pay-card";
 import { ADD_TO_WALLET_COPY, CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardDetails } from "./CardDetails";
-import type { CardVisualProps } from "../../types";
+import type { CardDetailsProps, CardVisualProps } from "../../types";
 
 jest.mock("@features/platform-pay-analytics", () =>
   jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
@@ -49,10 +49,10 @@ function Wrapper({ children }: PropsWithChildren) {
   );
 }
 
-function renderCardDetails({ onTopUp }: { onTopUp?: () => void } = {}) {
+function renderCardDetails(props: Partial<CardDetailsProps> = {}) {
   return {
     user: userEvent.setup(),
-    ...render(<CardDetails onTopUp={onTopUp} />, { wrapper: Wrapper }),
+    ...render(<CardDetails {...props} />, { wrapper: Wrapper }),
   };
 }
 
@@ -109,6 +109,26 @@ describe("CardDetails (native)", () => {
     expect(screen.getByLabelText(CARD_COPY.topUp)).toBeVisible();
     expect(screen.getByLabelText(CARD_COPY.details)).toBeVisible();
     expect(screen.getByTestId("card-visual-fade")).toBeVisible();
+  });
+
+  it("should replace top up and details with choose card type when that step is current", async () => {
+    const onChooseCardType = jest.fn();
+    const { user } = renderCardDetails({
+      onTopUp: jest.fn(),
+      onChooseCardType,
+      cardState: "choosingCardType",
+    });
+
+    await user.press(screen.getByLabelText(CARD_COPY.chooseCardType));
+
+    expect(onChooseCardType).toHaveBeenCalledTimes(1);
+    expect(screen.queryByLabelText(CARD_COPY.topUp)).toBeNull();
+    expect(screen.queryByLabelText(CARD_COPY.details)).toBeNull();
+    expect(screen.queryByTestId("card-details-button")).toBeNull();
+
+    await user.press(screen.getByTestId("card-details-face"));
+
+    expect(screen.queryByText(CARD_COPY.freeze)).toBeNull();
   });
 
   it("should show no top up action when the host wires none", () => {
@@ -175,6 +195,19 @@ describe("CardDetails (native)", () => {
     expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
     expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
     expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
+  });
+
+  it("should open the details sheet when the card is pressed", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByTestId("card-details-face"));
+
+    expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
+    expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
+    expect(trackButtonClicked).toHaveBeenCalledWith({
+      button: "card_details",
+      page: "Pay",
+    });
   });
 
   it("should open add-to-wallet instructions from the details footer", async () => {

@@ -42,6 +42,7 @@ function setupMocks({
   areWalletsFetching = false,
   isUserError = false,
   isCardStatusError = false,
+  cardStatusError = undefined as unknown,
   areTransactionsError = false,
   areWalletsError = false,
 } = {}) {
@@ -59,6 +60,7 @@ function setupMocks({
     isLoading: isCardStatusLoading,
     isFetching: isCardStatusLoading || isCardStatusFetching,
     isError: isCardStatusError,
+    error: cardStatusError,
   } as unknown as ReturnType<typeof useGetCardStatusQuery>);
 
   jest.mocked(useGetCardTransactionsInfiniteQuery).mockReturnValue({
@@ -270,6 +272,36 @@ describe("useCardOnboardingStatus", () => {
       setupMocks({ isUserError: true });
 
       expect(stepsById().status.isError).toBe(true);
+    });
+
+    it("answers a missing card without waiting on the card's other reads", () => {
+      setupMocks({
+        hasCard: false,
+        isCardStatusError: true,
+        cardStatusError: { status: 404 },
+        areTransactionsLoading: true,
+        areTransactionsFetching: true,
+        areTransactionsError: true,
+        areWalletsLoading: true,
+        areWalletsError: true,
+      });
+
+      const steps = stepsById();
+      expect(steps.isDone("choose-card-type")).toBe(false);
+      expect(steps.status.isLoading).toBe(false);
+      expect(steps.status.isFetching).toBe(false);
+      expect(steps.status.isError).toBe(false);
+      expect(steps.status.hasSourceError).toBe(false);
+    });
+
+    it("still reports a failed card read", () => {
+      setupMocks({
+        hasCard: false,
+        isCardStatusError: true,
+        cardStatusError: { status: 500 },
+      });
+
+      expect(stepsById().status.hasSourceError).toBe(true);
     });
 
     it("hides a failed wallet read, which only leaves the top-up step not done", () => {

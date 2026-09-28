@@ -44,6 +44,13 @@ describe("CardOnboardingWidget (integration)", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("should show the widget while the holder still has to choose a card type", () => {
+    setQuery({ data: { steps: stepsWith(true, false) } });
+    renderWidget({ hasCompletedOnboarding: true });
+
+    expect(screen.getByRole("button", { name: CARD_ONBOARDING_COPY.widgetTitle })).toBeVisible();
+  });
+
   it("should hide the widget when onboarding is already completed in the store", () => {
     setQuery({ data: { steps: stepsWith(false) } });
     renderWidget({ hasCompletedOnboarding: true });

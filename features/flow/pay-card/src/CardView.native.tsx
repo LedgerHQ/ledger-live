@@ -16,6 +16,7 @@ export function CardView({
   onShowMore,
   onTopUp,
   onChooseCardType,
+  cardState,
   onViewRewards,
   cardSettingsActions,
 }: CardViewProps) {
@@ -38,11 +39,13 @@ export function CardView({
             }}
             onShowMore={onShowMore}
             onTopUp={onTopUp}
+            onChooseCardType={onChooseCardType}
+            cardState={cardState}
             onViewRewards={onViewRewards}
             cardSettingsActions={cardSettingsActions}
           />
 
-          <AddToWalletCtaWithBottomSheet appearance="base" />
+          {cardState === "ready" ? <AddToWalletCtaWithBottomSheet appearance="base" /> : null}
         </>
       ) : (
         <CardLogin key={login.oauthConfig.apiUrl} {...login}>
