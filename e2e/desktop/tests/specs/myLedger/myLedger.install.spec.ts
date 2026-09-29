@@ -21,14 +21,20 @@ test.describe("My Ledger — install an app", () => {
 
       await app.myLedger.openInstalledAppsTab();
       await app.myLedger.expectNoAppsInstalled();
+      const storageBefore = await app.myLedger.readStorage();
 
       await app.myLedger.openCatalogTab();
       await app.myLedger.searchCatalog(AppInfos.BITCOIN.name);
       await app.myLedger.installApp(AppInfos.BITCOIN);
 
+      await app.myLedger.expectInstallSuccessBanner(AppInfos.BITCOIN);
+      await app.myLedger.expectAddAccountOffered(AppInfos.BITCOIN);
+
       // The catalog never renders an uninstall button, so the install is confirmed on the other tab.
       await app.myLedger.openInstalledAppsTab();
       await app.myLedger.expectAppInstalled(AppInfos.BITCOIN);
+      await app.myLedger.expectStorageSummary(1);
+      await app.myLedger.expectStorageChangedFrom(storageBefore);
 
       await mockServer.expectInstalledApps([AppInfos.BITCOIN.name]);
     },
