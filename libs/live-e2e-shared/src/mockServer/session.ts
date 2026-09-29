@@ -80,6 +80,12 @@ export class MockServerSessionHandle {
     });
   }
 
+  /** Language pack the device runs, `undefined` while it runs its built-in English. */
+  async deviceLanguage(): Promise<string | undefined> {
+    const { language } = await this.firstDevice();
+    return language;
+  }
+
   /**
    * Edits the mock covering a prefix in place rather than clearing and re-adding it:
    * `addMock` does not replace a prefix it already holds, and dropping the mock first
