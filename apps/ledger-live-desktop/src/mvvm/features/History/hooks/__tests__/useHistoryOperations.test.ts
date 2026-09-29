@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { calculate } from "@domain/entity-market-countervalues";
+import { calculate } from "@ledgerhq/live-countervalues/logic";
 import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { Contact } from "@domain/entity-contact";
@@ -10,8 +10,8 @@ import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useHistoryOperations } from "../useHistoryOperations";
 import { BTC_ACCOUNT, ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
-jest.mock("@domain/entity-market-countervalues", () => ({
-  ...jest.requireActual("@domain/entity-market-countervalues"),
+jest.mock("@ledgerhq/live-countervalues/logic", () => ({
+  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
   calculate: jest.fn(),
 }));
 
