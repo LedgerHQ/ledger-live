@@ -66,7 +66,7 @@ const e2eDelegationAccounts: Array<{
   },
   {
     delegate: new Delegate(Account.BABY_1, "0.001", "Figment"),
-    xrayTicket: "B2CQA-XXXX",
+    xrayTicket: "B2CQA-6679",
     transactionType: "Delegated",
     requiresValidatorSelection: true,
     featureFlags: FF_BABYLON_STAKING_ENABLED,
@@ -113,7 +113,7 @@ const validators: Array<{
   },
   {
     delegate: new Delegate(Account.BABY_2, "1", "Figment"),
-    xrayTicket: "B2CQA-XXXX",
+    xrayTicket: "B2CQA-6678",
     featureFlags: FF_BABYLON_STAKING_ENABLED,
   },
 ];
