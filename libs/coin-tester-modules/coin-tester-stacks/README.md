@@ -46,8 +46,9 @@ patched Clarinet binary is built.
 - **Snapshot boot.** Clarinet embeds a chain-state snapshot that starts at burn height 163, past
   epoch 3.0 (Nakamoto, 142) and epoch 4.0 (pox-5, 162), so neither the send nor the staking
   scenario waits for an epoch transition. Clarinet extracts it to `~/.clarinet/cache/devnet/` on
-  first use and copies it into the bitcoind and stacks-node containers at boot, then publishes this
-  package's contracts through its deployment plan.
+  first use; the bitcoin chain state is copied into bitcoind's data directory before bitcoind starts
+  (patch 5), the stacks chain state into the stacks-node container at boot. Clarinet then publishes
+  this package's contracts through its deployment plan.
 - **Clarinet mines the blocks.** The stacks-node reaches bitcoind through Clarinet's Bitcoin RPC
   proxy; Clarinet mines the next block whenever it relays a miner's block-commit, and on its own
   timer (`bitcoin_controller_block_time`) otherwise.
@@ -77,13 +78,13 @@ Applied in this order on top of Clarinet v3.24.1 (`ARG CLARINET_COMMIT` in
    host path Clarinet creates, owned by the user running it, while bitcoind runs as uid 1000. A
    Linux host enforces that ownership (Docker Desktop doesn't), so bitcoind couldn't create its
    directories. `chmod 777` right after Clarinet creates it.
-5. **`bitcoin-node-snapshot-ownership.patch`**: the bitcoin snapshot is copied into that data
-   directory with a plain `docker cp`, which keeps mode bits but not an owner bitcoind can use, so
-   on Linux bitcoind couldn't read its own `settings.json` and exited. The extracted snapshot is
-   made world-readable and writable before the copy. A chown after the copy does not work: bitcoind
-   is already running and exits within milliseconds. The destination is also created with a
-   blocking `mkdir -p` first, since Clarinet's own is a detached exec and `docker cp` intermittently
-   found no destination.
+5. **`bitcoin-node-snapshot-host-copy.patch`**: Clarinet copied the bitcoin snapshot into the
+   bitcoind container with `docker cp` *after* starting it, which races bitcoind two ways. On Linux
+   it couldn't read the copied files (no owner uid 1000 can use) and exited; and when it had
+   already begun its own chain state, it served blocks the stacks-node's snapshot didn't expect
+   (`Non-contiguous header`, intermittent). The snapshot is now copied on the host into the
+   bind-mounted data directory before the container is created, and made world-readable and
+   writable, so bitcoind starts on it.
 
 **Deliberately not patched:** the generated `Stacks.toml`'s `[burnchain].rpc_port` points at
 Clarinet's ingestion port. That is Clarinet's Bitcoin RPC proxy, not a typo. An earlier version of

@@ -11,5 +11,4 @@ allows 30 minutes to cover a Clarinet build on a cache miss.
 
 The pinned Clarinet commit and Rust toolchain are now read from `docker/clarinet/Dockerfile` only,
 and the local binary cache is keyed on a hash of `docker/clarinet/**`, so changing the commit, a
-patch or the toolchain rebuilds it. The snapshot-copy patch also creates the destination with a
-blocking `mkdir -p`, as Clarinet's own mkdir is a detached exec that `docker cp` could outrun.
+patch or the toolchain rebuilds it.

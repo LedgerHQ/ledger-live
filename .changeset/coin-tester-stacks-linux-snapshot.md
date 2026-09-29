@@ -2,14 +2,15 @@
 "@ledgerhq/coin-tester-stacks": patch
 ---
 
-fix: let bitcoind own its snapshot data on Linux, and print why the devnet failed to boot
+fix: put the bitcoin snapshot in place before bitcoind starts, and print why the devnet failed to boot
 
-Booting from the snapshot, Clarinet copies the bitcoin chain state into bitcoind's bind-mounted data
-directory with a plain `docker cp`, which does not give the files an owner bitcoind (uid 1000) can
-use. A Linux host enforces ownership, so bitcoind could not read its own `settings.json` and exited;
-Docker Desktop does not enforce it, which is why the snapshot boot passed on macOS. A new Clarinet
-patch makes the extracted snapshot world-readable and writable before the copy, which keeps mode
-bits, so the files are usable the moment they land.
+Booting from the snapshot, Clarinet copied the bitcoin chain state into the bitcoind container with
+`docker cp` after starting it. That raced bitcoind: on Linux, which enforces bind-mount ownership
+unlike Docker Desktop, bitcoind (uid 1000) could not read the copied files and exited; and when it
+had already begun its own chain state, the stacks-node's snapshot no longer matched its blocks
+(`Non-contiguous header`, intermittent). A Clarinet patch now copies the snapshot on the host into
+the bind-mounted data directory before the container is created, and makes it world-readable and
+writable.
 
 A failed boot now prints the tail of Clarinet's output and every devnet container's exit state and
 logs, without `DEBUG`. Before, the error pointed at "the clarinet output above", which was never

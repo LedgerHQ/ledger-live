@@ -24,7 +24,7 @@ const CLARINET_PATCHES = [
   "bitcoin-node-patience.patch",
   "bitcoin-node-no-autoremove.patch",
   "bitcoin-node-datadir-permissions.patch",
-  "bitcoin-node-snapshot-ownership.patch",
+  "bitcoin-node-snapshot-host-copy.patch",
 ];
 
 /**

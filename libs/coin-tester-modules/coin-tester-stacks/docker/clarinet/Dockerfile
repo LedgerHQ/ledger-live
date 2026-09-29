@@ -20,14 +20,13 @@
 #    permissions, so on a real Linux Docker host (unlike Docker Desktop for Mac) the container's
 #    `user: "1000"` cannot write into it -- bitcoind crashes on boot. Fixed by
 #    `bitcoin-node-datadir-permissions.patch` (chmod 777 right after creation).
-# 6. When booting from the snapshot, the bitcoin snapshot is copied into the bind-mounted data
-#    directory with a plain `docker cp`, which does not give the files an owner bitcoind (uid 1000)
-#    can use. A Linux host enforces ownership, so bitcoind can't read its own settings.json and
-#    exits (Docker Desktop doesn't enforce it, so it only fails on Linux). Fixed by
-#    `bitcoin-node-snapshot-ownership.patch`: `chmod -R a+rwX` on the extracted snapshot before
-#    the copy (the copy keeps mode bits). A chown after the copy races bitcoind, already running.
-#    The same patch creates the destination with a blocking `mkdir -p` first: Clarinet's own mkdir
-#    is a detached exec, and `docker cp` intermittently found no destination.
+# 6. When booting from the snapshot, Clarinet copies the bitcoin chain state into the bitcoind
+#    container with `docker cp` after starting it. That races bitcoind: on Linux it can't read the
+#    copied files (they don't get an owner uid 1000 can use), and when it has already begun its own
+#    chain state the stacks-node's snapshot no longer matches its blocks ("Non-contiguous header",
+#    intermittent). Fixed by `bitcoin-node-snapshot-host-copy.patch`: with the data directory
+#    bind-mounted, the snapshot is copied on the host into that directory before the container is
+#    created, and made world-readable and writable.
 # Built locally/in CI rather than depending on an upstream release picking up any of these.
 # Base image and nightly pinned (not `rust:1-bookworm` / plain `nightly`): both floated, so a moved
 # image or nightly could break the build with no change on our side.
@@ -59,8 +58,8 @@ RUN cd /src && git apply /tmp/bitcoin-node-no-autoremove.patch
 COPY bitcoin-node-datadir-permissions.patch /tmp/bitcoin-node-datadir-permissions.patch
 RUN cd /src && git apply /tmp/bitcoin-node-datadir-permissions.patch
 
-COPY bitcoin-node-snapshot-ownership.patch /tmp/bitcoin-node-snapshot-ownership.patch
-RUN cd /src && git apply /tmp/bitcoin-node-snapshot-ownership.patch
+COPY bitcoin-node-snapshot-host-copy.patch /tmp/bitcoin-node-snapshot-host-copy.patch
+RUN cd /src && git apply /tmp/bitcoin-node-snapshot-host-copy.patch
 
 # Nightly because the previous Clarinet pin needed unstable features (`debug_closure_helpers`,
 # `slice_as_array`) through a transitive `stacks-core` git dependency. v3.24.1 declares
