@@ -609,15 +609,11 @@ export function useWalletAPIServer({
       const wapiAccounts = await Promise.all(
         filteredAccounts.map(async (account): Promise<WalletAPIAccount> => {
           const parentAccount = getParentAccount(account, accounts);
-          const [spendableBalance, maxSpendable] = await Promise.all([
-            resolveWalletApiSpendableBalance(account, parentAccount),
-            resolveWalletApiMaxSpendable(account, parentAccount),
-          ]);
+          const spendableBalance = await resolveWalletApiSpendableBalance(account, parentAccount);
 
           return {
             ...accountToWalletAPIAccount(accountNames, account, parentAccount),
             spendableBalance,
-            ...(maxSpendable !== undefined ? { maxSpendable } : {}),
           };
         }),
       );
@@ -646,16 +642,15 @@ export function useWalletAPIServer({
                 if (done) return;
                 done = true;
                 try {
-                  const [spendableBalance, maxSpendable] = await Promise.all([
-                    resolveWalletApiSpendableBalance(account, parentAccount),
-                    resolveWalletApiMaxSpendable(account, parentAccount),
-                  ]);
+                  const spendableBalance = await resolveWalletApiSpendableBalance(
+                    account,
+                    parentAccount,
+                  );
 
                   tracking.requestAccountSuccess(manifest);
                   resolve({
                     ...accountToWalletAPIAccount(accountNames, account, parentAccount),
                     spendableBalance,
-                    ...(maxSpendable !== undefined ? { maxSpendable } : {}),
                   });
                 } catch (error) {
                   tracking.requestAccountFail(manifest);
@@ -1293,6 +1288,35 @@ export function useWalletAPIServer({
       );
     });
   }, [accounts, manifest, server, tracking]);
+
+  useEffect(() => {
+    // Registered by name until @ledgerhq/wallet-api-server exposes account.getMaxSpendable
+    // (wallet-api#612). The installed handler map does not include the method yet.
+    const setGetMaxSpendable = server.setHandler as (
+      method: "account.getMaxSpendable",
+      handler: (params: { accountId: string }) => Promise<string>,
+    ) => void;
+
+    setGetMaxSpendable("account.getMaxSpendable", async ({ accountId }) => {
+      const localAccountId = getAccountIdFromWalletAccountId(accountId);
+      if (!localAccountId) {
+        throw new Error(`accountId ${accountId} unknown`);
+      }
+
+      const account = accounts.find(item => item.id === localAccountId);
+      if (!account) {
+        throw new Error("account not found");
+      }
+
+      const parentAccount = getParentAccount(account, accounts);
+      const maxSpendable = await resolveWalletApiMaxSpendable(account, parentAccount);
+      if (maxSpendable === undefined) {
+        throw new Error("account.getMaxSpendable failed");
+      }
+
+      return maxSpendable.toString();
+    });
+  }, [accounts, server]);
 
   useEffect(() => {
     server.setHandler("account.getPublicKey", async ({ accountId }) => {

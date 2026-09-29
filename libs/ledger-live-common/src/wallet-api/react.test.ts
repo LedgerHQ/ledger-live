@@ -336,7 +336,6 @@ describe("account.list handler", () => {
     const options = createDefaultOptions({ accounts: [account] });
 
     jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(spendableBalance);
-    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(undefined);
 
     renderHook(() => useWalletAPIServer(options));
     const result = await getHandler()({});
@@ -344,37 +343,7 @@ describe("account.list handler", () => {
     expect(result).toEqual([expect.objectContaining({ spendableBalance })]);
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledTimes(1);
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, account);
-  });
-
-  it("includes maxSpendable when resolveWalletApiMaxSpendable returns a value", async () => {
-    const account = createFixtureAccount("01");
-    const spendableBalance = new BigNumber(999);
-    const maxSpendable = new BigNumber(800);
-    const options = createDefaultOptions({ accounts: [account] });
-
-    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(spendableBalance);
-    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(maxSpendable);
-
-    renderHook(() => useWalletAPIServer(options));
-    const result = await getHandler()({});
-
-    expect(result).toEqual([expect.objectContaining({ spendableBalance, maxSpendable })]);
-    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account);
-  });
-
-  it("omits maxSpendable when resolveWalletApiMaxSpendable returns undefined", async () => {
-    const account = createFixtureAccount("01");
-    const spendableBalance = new BigNumber(999);
-    const options = createDefaultOptions({ accounts: [account] });
-
-    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(spendableBalance);
-    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(undefined);
-
-    renderHook(() => useWalletAPIServer(options));
-    const result = await getHandler()({});
-
-    expect(result[0]).toEqual(expect.objectContaining({ spendableBalance }));
-    expect(result[0]).not.toHaveProperty("maxSpendable");
+    expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
   });
 });
 
@@ -449,7 +418,6 @@ describe("account.request handler", () => {
     const spendableBalance = new BigNumber(777);
 
     jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(spendableBalance);
-    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(undefined);
     const uiAccountRequest = jest.fn(({ onSuccess }) => {
       onSuccess(account, undefined);
     });
@@ -465,29 +433,57 @@ describe("account.request handler", () => {
     expect(result).toEqual(expect.objectContaining({ spendableBalance }));
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledTimes(1);
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, undefined);
+    expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
+  });
+});
+
+describe("account.getMaxSpendable handler", () => {
+  const getHandler = () => {
+    const call = mockSetHandler.mock.calls.find(([name]) => name === "account.getMaxSpendable");
+    if (!call) {
+      throw new Error("account.getMaxSpendable was not registered");
+    }
+    return call[1] as (params: { accountId: string }) => Promise<string>;
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it("includes maxSpendable when resolveWalletApiMaxSpendable returns a value", async () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("returns the estimate for the requested account", async () => {
     const account = createFixtureAccount("01");
-    const spendableBalance = new BigNumber(777);
-    const maxSpendable = new BigNumber(500);
-
-    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(spendableBalance);
+    const maxSpendable = new BigNumber(800);
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
     jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(maxSpendable);
-    const uiAccountRequest = jest.fn(({ onSuccess }) => {
-      onSuccess(account, undefined);
-    });
 
-    const options = createDefaultOptions({
-      accounts: [account],
-      uiHook: { "account.request": uiAccountRequest },
-    });
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
 
-    renderHook(() => useWalletAPIServer(options));
-    const result = await getHandler()({});
+    await expect(getHandler()({ accountId: "wallet-account-id" })).resolves.toBe("800");
+    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account);
+  });
 
-    expect(result).toEqual(expect.objectContaining({ spendableBalance, maxSpendable }));
-    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, undefined);
+  it("rejects when the estimate cannot be computed", async () => {
+    const account = createFixtureAccount("01");
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(undefined);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    await expect(getHandler()({ accountId: "wallet-account-id" })).rejects.toThrow(
+      "account.getMaxSpendable failed",
+    );
+  });
+
+  it("rejects when the wallet account id is unknown", async () => {
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(undefined);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions()));
+
+    await expect(getHandler()({ accountId: "missing" })).rejects.toThrow("accountId missing unknown");
   });
 });
 
