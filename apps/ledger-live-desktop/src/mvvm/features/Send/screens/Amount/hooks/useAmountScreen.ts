@@ -10,7 +10,7 @@ import {
   type SendFlowTransactionActions,
   type SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { openURL } from "~/renderer/linking";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
@@ -61,7 +61,10 @@ export function useAmountScreen(): AmountScreenViewModel {
   const hasTrackedRef = useRef(false);
   if (!hasTrackedRef.current && isReady) {
     hasTrackedRef.current = true;
-    trackPage("Modal send - step amount", null, trackingProperties);
+    trackPage({
+      category: "Modal send - step amount",
+      props: trackingProperties,
+    });
   }
 
   const onGetFunds = useCallback(() => {

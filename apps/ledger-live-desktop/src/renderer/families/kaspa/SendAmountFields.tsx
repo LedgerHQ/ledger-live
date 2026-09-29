@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import SelectFeeStrategyKaspa, { OnClickType } from "./SelectFeeStrategyKaspa";
 import { KaspaFamily } from "~/renderer/families/kaspa/types";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { FeesField } from "./FeesField";
 import BigNumber from "bignumber.js";
 

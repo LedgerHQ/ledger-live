@@ -4,7 +4,7 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/s
 import SendFeeMode from "./SendFeeMode";
 import FeeField from "./FeeField";
 import Box from "~/renderer/components/Box";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { Account } from "@ledgerhq/types-live";
 
 type Props = {

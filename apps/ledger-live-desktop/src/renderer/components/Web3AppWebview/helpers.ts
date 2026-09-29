@@ -16,7 +16,7 @@ import {
   useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";

@@ -9,7 +9,7 @@ import {
 import type { AddNewContactHeaderState } from "LLD/features/Send/context/AddNewContactHeaderContext";
 import { useSendPrefillAddAddressFlow } from "LLD/features/Send/hooks/useSendPrefillAddAddressFlow";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 
 const SELECT_CONTACT_HEADER_STATE: AddNewContactHeaderState = {
   titleKey: "newSendFlow.addContact.selectContact",
@@ -42,7 +42,10 @@ export function useAddToExistingContactViewModel() {
   const trackingProperties = useSendFlowTrackingProperties();
 
   useEffect(() => {
-    trackPage("Modal send - select existing contact", null, trackingProperties);
+    trackPage({
+      category: "Modal send - select existing contact",
+      props: trackingProperties,
+    });
   }, [trackingProperties]);
 
   const onSearchInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {

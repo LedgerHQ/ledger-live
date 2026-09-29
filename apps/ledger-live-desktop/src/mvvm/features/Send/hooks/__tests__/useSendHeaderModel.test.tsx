@@ -18,7 +18,8 @@ jest.mock("~/renderer/reducers/wallet", () => ({
   ...jest.requireActual("~/renderer/reducers/wallet"),
   useMaybeAccountName: jest.fn(),
 }));
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
@@ -70,7 +71,7 @@ jest.mock("../../context/SendFlowTrackingContext", () => ({
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { RecipientScannerProvider } from "../../context/RecipientScannerContext";
 import { useSelector } from "LLD/hooks/redux";

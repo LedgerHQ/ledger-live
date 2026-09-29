@@ -27,7 +27,7 @@ import { useContactsFeatureIntroductionViewModel } from "../useContactsFeatureIn
 import { useDoNotAskAgainSkipMemo } from "../../../../hooks/useDoNotAskAgainSkipMemo";
 import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../../hooks/useSendFlowTrackingProperties";
 
 jest.mock("../useAddressValidation");
@@ -52,7 +52,8 @@ jest.mock("../../../../context/RecipientContinuationContext");
 jest.mock("../../../../context/SendFlowTrackingContext");
 jest.mock("../useContactsFeatureIntroductionViewModel");
 jest.mock("../../../../hooks/useDoNotAskAgainSkipMemo");
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
@@ -266,19 +267,18 @@ describe("useRecipientAddressModalViewModel", () => {
       }),
     );
 
-    expect(mockedTrackPage).toHaveBeenCalledWith(
-      "Modal send - recipient result",
-      null,
-      expect.objectContaining({
+    expect(mockedTrackPage).toHaveBeenCalledWith({
+      category: "Modal send - recipient result",
+      props: expect.objectContaining({
         queryType: "address",
         resultType: "unknown address",
         inputMethod: "manual",
         queryLength: 5,
         addressAlreadyUsed: false,
       }),
-    );
+    });
     expect(setRecipientResolution).toHaveBeenCalledWith("unknown address", "external address");
-    expect(mockedTrackPage.mock.calls[0]?.[2]).not.toHaveProperty("query");
+    expect(mockedTrackPage.mock.calls[0]?.[0]?.props).not.toHaveProperty("query");
   });
 
   it("shows empty contacts state when the contacts feature is enabled and no contact matches the network", () => {
