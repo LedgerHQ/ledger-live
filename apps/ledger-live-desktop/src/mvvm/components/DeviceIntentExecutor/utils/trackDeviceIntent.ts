@@ -1,19 +1,19 @@
-import type { DeviceDisconnectedComponent } from "@features/platform-device-intent";
+import type { DeviceDisconnectedComponent, ExecutorState } from "@features/platform-device-intent";
 import {
   dmkToLedgerDeviceIdMap,
+  getDeviceDisconnectedFailure,
+  getDeviceFlowFailureProperties,
+  getDeviceflowCancelEventName,
+  getInvalidOperationFailure,
+  type DeviceFlowFailure,
   type DeviceIntentTrackingProperties,
   type KnownDevice,
   type SourceFlow,
 } from "@ledgerhq/live-dmk-shared";
-import {
-  BaseConnectionErrorTypes,
-  BaseDiscoveryErrorTypes,
-  webHidTransportIdentifier,
-} from "@ledgerhq/live-dmk-desktop";
+import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { ComponentProps } from "react";
 import { track } from "~/renderer/analytics/segment";
-import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 
 type ConnectedDevice = ComponentProps<DeviceDisconnectedComponent>["device"];
 
@@ -24,6 +24,7 @@ export const PAGE_CONNECT_DEVICE = {
   Connecting: "Connect Device - Connecting",
   DiscoveryError: "Connect Device - Discovery Error",
   ConnectionError: "Connect Device - Connection Error",
+  UnknownError: "Connect Device - Unknown Error",
 } as const;
 
 export const PAGE_CONNECT_APP = {
@@ -84,23 +85,6 @@ export const CONNECT_APP_BUTTON = {
   GoToSettings: "Go To Settings",
 } as const;
 
-let isInTerminalConnectDeviceError = false;
-
-const DEVICEFLOW_FAILED_CLOSE_PAGES = new Set<string>([
-  PAGE_CONNECT_APP.DeviceNotOnboarded,
-  PAGE_CONNECT_APP.UnsupportedFirmware,
-  PAGE_CONNECT_APP.UnsupportedApplication,
-  PAGE_CONNECT_APP.UnsupportedFeature,
-  PAGE_CONNECT_APP.DeviceDeprecatedBlocking,
-  PAGE_CONNECT_APP.WrongDeviceForAccount,
-  PAGE_CONNECT_APP.OutOfStorage,
-  PAGE_CONNECT_APP.InvalidProvider,
-  PAGE_CONNECT_APP.Error,
-  PAGE_DEVICE_ACTION.Disconnected,
-  PAGE_DEVICE_ACTION.UnknownIntentError,
-  PAGE_DEVICE_ACTION.InvalidState,
-]);
-
 export type TrackingTransport = "ble" | "usb";
 
 export const getTrackingTransport = (
@@ -110,10 +94,6 @@ export const getTrackingTransport = (
 
   return transportId === webHidTransportIdentifier ? "usb" : "ble";
 };
-
-export const getTrackingSubError = (
-  _errorType: BaseDiscoveryErrorTypes | BaseConnectionErrorTypes,
-): string => "Unknown";
 
 export const getDeviceUxV2BaseProperties = (
   sourceFlow: SourceFlow,
@@ -131,9 +111,23 @@ export const getConnectedDeviceTrackingProperties = (
   transport: device.type === "USB" ? "usb" : "ble",
 });
 
-export const setIsInTerminalConnectDeviceError = (value: boolean): void => {
-  isInTerminalConnectDeviceError = value;
+export const getExecutorStateFailure = (state: ExecutorState): DeviceFlowFailure | null => {
+  switch (state.type) {
+    case "deviceDisconnected":
+      return getDeviceDisconnectedFailure(getConnectedDeviceTrackingProperties(state.device));
+    case "invalidOperation":
+      return getInvalidOperationFailure(state.error);
+    default:
+      return null;
+  }
 };
+
+/**
+ * Error screens that report failures are shown only in these executor states. A report received
+ * in any other state is a late emission from an unmounting screen, e.g. after a disconnection.
+ */
+export const acceptsScreenFailureReports = (state: ExecutorState): boolean =>
+  state.type === "connectingDevice" || state.type === "initializingDeviceContext";
 
 export const trackDeviceflowStarted = (params: {
   sourceFlow: SourceFlow;
@@ -204,44 +198,15 @@ export const trackDeviceflowCompleted = (params: {
   });
 };
 
-export const trackDeviceflowAborted = (params: {
-  sourceFlow: SourceFlow;
-  extraProperties: DeviceIntentTrackingProperties;
-}): void => {
-  track(
-    "deviceflow_aborted",
-    getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
-  );
-};
-
-export const trackDeviceflowFailed = (params: {
-  sourceFlow: SourceFlow;
-  extraProperties: DeviceIntentTrackingProperties;
-}): void => {
-  track(
-    "deviceflow_failed",
-    getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
-  );
-};
-
 export const trackDeviceflowCanceled = (params: {
   sourceFlow: SourceFlow;
   extraProperties: DeviceIntentTrackingProperties;
+  failure: DeviceFlowFailure | null;
 }): void => {
-  const currentPage = getCurrentTrackingPage();
-  const isTerminalConnectDeviceErrorPage =
-    currentPage === PAGE_CONNECT_DEVICE.DiscoveryError ||
-    currentPage === PAGE_CONNECT_DEVICE.ConnectionError;
-
-  if (
-    (isTerminalConnectDeviceErrorPage && isInTerminalConnectDeviceError) ||
-    (currentPage && DEVICEFLOW_FAILED_CLOSE_PAGES.has(currentPage))
-  ) {
-    trackDeviceflowFailed(params);
-    return;
-  }
-
-  trackDeviceflowAborted(params);
+  track(getDeviceflowCancelEventName(params.failure), {
+    ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
+    ...getDeviceFlowFailureProperties(params.failure),
+  });
 };
 
 export const trackDeviceActionButtonClicked = (params: {
