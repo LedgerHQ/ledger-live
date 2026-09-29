@@ -76,37 +76,25 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
     () =>
       assetsData
         ? buildPlaceholderAssetItemsFromAssetsData(assetsData, stablecoinTickers)
-        : {
-            cryptos: [] as AssetTableItem[],
-            stablecoins: [] as AssetTableItem[],
-          },
+        : { cryptos: [] as AssetTableItem[], stablecoins: [] as AssetTableItem[] },
     [assetsData, stablecoinTickers],
   );
 
   const items = useMemo((): AssetTableItem[] => {
     if (category === ASSETS_PAGE_CATEGORY_STOCKS) {
-      return categorizedAssets.stocks.map(item => ({
-        ...item,
-        isPlaceholder: false,
-      }));
+      return categorizedAssets.stocks.map(item => ({ ...item, isPlaceholder: false }));
     }
     if (category === ASSETS_PAGE_CATEGORY_CRYPTOS) {
       if (isEmptyState) {
         return padItems([], resolvedDefaults.cryptos, EMPTY_STATE_CRYPTOS);
       }
-      const real = categorizedAssets.cryptos.map(item => ({
-        ...item,
-        isPlaceholder: false,
-      }));
+      const real = categorizedAssets.cryptos.map(item => ({ ...item, isPlaceholder: false }));
       return padItems(real, resolvedDefaults.cryptos, EMPTY_STATE_CRYPTOS);
     }
     if (isEmptyState) {
       return padItems([], resolvedDefaults.stablecoins, EMPTY_STATE_STABLECOINS);
     }
-    const real = categorizedAssets.stablecoins.map(item => ({
-      ...item,
-      isPlaceholder: false,
-    }));
+    const real = categorizedAssets.stablecoins.map(item => ({ ...item, isPlaceholder: false }));
     return padItems(real, resolvedDefaults.stablecoins, EMPTY_STATE_STABLECOINS);
   }, [
     category,
@@ -127,11 +115,7 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
 
   const trends = useAllCurrencyTrends(items, "day");
   const itemsWithTrend = useMemo(
-    () =>
-      items.map(item => ({
-        ...item,
-        trend: trends.get(item.currency.id) ?? null,
-      })),
+    () => items.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
     [items, trends],
   );
 

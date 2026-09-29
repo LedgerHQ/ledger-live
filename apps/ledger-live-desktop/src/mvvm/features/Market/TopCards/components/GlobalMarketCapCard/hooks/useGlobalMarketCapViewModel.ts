@@ -12,9 +12,7 @@ export const useGlobalMarketCapViewModel = () => {
   const locale = useSelector(localeSelector);
 
   // /v3/markets/global currently returns a USD-denominated market cap regardless of `to`.
-  const { data, isLoading, isError } = useGlobalMarketData({
-    counterCurrency: "usd",
-  });
+  const { data, isLoading, isError } = useGlobalMarketData({ counterCurrency: "usd" });
   const { rate, status: rateStatus } = useUsdToFiatRate(counterCurrency);
 
   const onClick = () => {

@@ -75,9 +75,7 @@ describe("useMarketCoin", () => {
   });
 
   it("should return isStarred=true when currencyId is in starredMarketCoins", () => {
-    const { result } = renderMarketCoinHook({
-      starredMarketCoins: ["bitcoin"],
-    });
+    const { result } = renderMarketCoinHook({ starredMarketCoins: ["bitcoin"] });
 
     expect(result.current.isStarred).toBe(true);
   });
@@ -91,17 +89,13 @@ describe("useMarketCoin", () => {
   it("should return isStarred=false when currencyId is undefined", () => {
     useParams.mockReturnValue({});
 
-    const { result } = renderMarketCoinHook({
-      starredMarketCoins: ["bitcoin"],
-    });
+    const { result } = renderMarketCoinHook({ starredMarketCoins: ["bitcoin"] });
 
     expect(result.current.isStarred).toBe(false);
   });
 
   it("should dispatch removeStarredMarketCoins when coin is starred", async () => {
-    const { result, store } = renderMarketCoinHook({
-      starredMarketCoins: ["bitcoin"],
-    });
+    const { result, store } = renderMarketCoinHook({ starredMarketCoins: ["bitcoin"] });
 
     await waitFor(() => {
       expect(result.current.currency).toBeDefined();

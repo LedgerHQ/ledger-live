@@ -32,9 +32,7 @@ export const useModularDialogAnalytics = () => {
         dialogConfig || {};
       const analyticsParams = {
         ...params,
-        ...(formatAssetConfig && {
-          asset_component_features: formatAssetsConfig(assetsConfig),
-        }),
+        ...(formatAssetConfig && { asset_component_features: formatAssetsConfig(assetsConfig) }),
         ...(formatNetworkConfig && {
           network_component_features: formatNetworksConfig(networksConfig),
         }),

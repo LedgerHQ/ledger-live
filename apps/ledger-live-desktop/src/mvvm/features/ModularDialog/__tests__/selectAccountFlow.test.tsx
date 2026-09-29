@@ -508,10 +508,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
         accounts,
         modularDialog: {
           ...defaultModularDialogState,
-          dialogParams: {
-            ...defaultModularDialogState.dialogParams,
-            uiUseCase,
-          },
+          dialogParams: { ...defaultModularDialogState.dialogParams, uiUseCase },
         },
       },
     });

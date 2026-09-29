@@ -35,12 +35,7 @@ export function useMarketStatsViewModel(currencyData: MarketDataSectionCurrencyD
       maxSupply: data?.maxSupply,
       circulatingSupply: data?.circulatingSupply,
       formatValue: value =>
-        counterValueFormatter({
-          value,
-          locale,
-          shorten: true,
-          ticker: data?.ticker,
-        }),
+        counterValueFormatter({ value, locale, shorten: true, ticker: data?.ticker }),
     });
 
     const volume24h = counterValueFormatter({

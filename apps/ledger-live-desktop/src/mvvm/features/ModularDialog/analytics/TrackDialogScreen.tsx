@@ -31,9 +31,7 @@ const TrackDialogScreen = <T extends ModularDialogEventName>({
     return {
       source,
       flow,
-      ...(formatAssetConfig && {
-        asset_component_features: formatAssetsConfig(assetsConfig),
-      }),
+      ...(formatAssetConfig && { asset_component_features: formatAssetsConfig(assetsConfig) }),
       ...(formatNetworkConfig && {
         network_component_features: formatNetworksConfig(networksConfig),
       }),

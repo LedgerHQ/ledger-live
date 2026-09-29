@@ -41,10 +41,7 @@ export const EditCryptoAddressNameDialog = ({
     if (newOpen) {
       openedAtRef.current = Date.now();
       setValue(initialValue);
-      track("button_clicked", {
-        button: "edit_account_name",
-        page: CRYPTO_TRACKING_PAGE_NAME,
-      });
+      track("button_clicked", { button: "edit_account_name", page: CRYPTO_TRACKING_PAGE_NAME });
     }
     setOpen(newOpen);
   };

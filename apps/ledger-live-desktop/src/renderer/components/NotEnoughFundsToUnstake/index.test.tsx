@@ -41,10 +41,7 @@ describe("NotEnoughFundsToUnstake", () => {
 
     expect(track).toHaveBeenCalledWith(
       "button_clicked2",
-      expect.objectContaining({
-        button: "receive",
-        page: "WithdrawingFlowModal",
-      }),
+      expect.objectContaining({ button: "receive", page: "WithdrawingFlowModal" }),
     );
   });
 

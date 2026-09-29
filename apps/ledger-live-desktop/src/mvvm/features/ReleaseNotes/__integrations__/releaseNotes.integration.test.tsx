@@ -78,9 +78,7 @@ describe("ReleaseNotes Integration", () => {
       store.dispatch(openReleaseNotes());
     });
 
-    expect(track).toHaveBeenCalledWith("page_viewed", {
-      page: "Release Notes Dialog",
-    });
+    expect(track).toHaveBeenCalledWith("page_viewed", { page: "Release Notes Dialog" });
   });
 
   it("should track analytics when Got it is clicked", async () => {
@@ -94,9 +92,7 @@ describe("ReleaseNotes Integration", () => {
 
     await user.click(screen.getByTestId("release-notes-got-it"));
 
-    expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "release_notes_got_it",
-    });
+    expect(track).toHaveBeenCalledWith("button_clicked", { button: "release_notes_got_it" });
   });
 
   it("should render all release notes entries", () => {

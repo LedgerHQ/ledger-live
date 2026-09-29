@@ -22,17 +22,11 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 }));
 
 const accountPageFlags = withFlagOverrides({
-  lwdWallet40: {
-    enabled: true,
-    params: { assetSection: false, aggregatedAssets: false },
-  },
+  lwdWallet40: { enabled: true, params: { assetSection: false, aggregatedAssets: false } },
 });
 
 jest.mock("./hooks/useAccountBackNavigation", () => ({
-  useAccountBackNavigation: () => ({
-    showBackButton: false,
-    navigateBack: jest.fn(),
-  }),
+  useAccountBackNavigation: () => ({ showBackButton: false, navigateBack: jest.fn() }),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
@@ -65,11 +59,7 @@ const stub = (testId: string) => () => <div data-testid={testId} />;
 
 beforeEach(() => {
   jest.clearAllMocks();
-  useParams.mockReturnValue({
-    id: account.id,
-    parentId: undefined,
-    "*": undefined,
-  });
+  useParams.mockReturnValue({ id: account.id, parentId: undefined, "*": undefined });
 });
 
 describe("AccountPage — useLLDCoinFamily slots", () => {

@@ -34,10 +34,7 @@ export type UsePnlViewModelBaseInput = {
   accountsCount: number;
 } & (
   | { secondaryCard: PnlSecondaryCardConfig; buildCards?: never }
-  | {
-      buildCards: (context: BuildCardsContext) => PnLCardProps[];
-      secondaryCard?: never;
-    }
+  | { buildCards: (context: BuildCardsContext) => PnLCardProps[]; secondaryCard?: never }
 );
 
 export function usePnlViewModelBase({

@@ -49,9 +49,7 @@ describe("useReleaseNotesViewModel", () => {
       store.dispatch(openReleaseNotes());
     });
 
-    expect(track).toHaveBeenCalledWith("page_viewed", {
-      page: "Release Notes Dialog",
-    });
+    expect(track).toHaveBeenCalledWith("page_viewed", { page: "Release Notes Dialog" });
   });
 
   it("should not track analytics when dismissed via onClose", () => {
@@ -83,9 +81,7 @@ describe("useReleaseNotesViewModel", () => {
       result.current.onGotIt();
     });
 
-    expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "release_notes_got_it",
-    });
+    expect(track).toHaveBeenCalledWith("button_clicked", { button: "release_notes_got_it" });
     expect(result.current.isOpen).toBe(false);
   });
 

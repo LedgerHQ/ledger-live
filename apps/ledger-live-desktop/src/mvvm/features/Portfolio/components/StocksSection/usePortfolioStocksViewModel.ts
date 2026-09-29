@@ -26,11 +26,7 @@ export function usePortfolioStocksViewModel(): PortfolioStocksViewModelResult {
   const { categorizedAssets, isLoadingStocks, isStocksError } = useCategorizedAssetsFromPortfolio();
 
   const items = useMemo<AssetTableItem[]>(
-    () =>
-      categorizedAssets.stocks.map(item => ({
-        ...item,
-        isPlaceholder: false,
-      })),
+    () => categorizedAssets.stocks.map(item => ({ ...item, isPlaceholder: false })),
     [categorizedAssets.stocks],
   );
 
@@ -42,20 +38,12 @@ export function usePortfolioStocksViewModel(): PortfolioStocksViewModelResult {
 
   const trends = useAllCurrencyTrends(stocksToDisplay, "day");
   const itemsWithTrend = useMemo(
-    () =>
-      stocksToDisplay.map(item => ({
-        ...item,
-        trend: trends.get(item.currency.id) ?? null,
-      })),
+    () => stocksToDisplay.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
     [stocksToDisplay, trends],
   );
 
   const onNavigate = useCallback(() => {
-    track("button_clicked", {
-      button: "asset_list",
-      type: "stocks",
-      page: TRACKING_SOURCE,
-    });
+    track("button_clicked", { button: "asset_list", type: "stocks", page: TRACKING_SOURCE });
     navigate(buildAssetsPagePath(ASSETS_PAGE_CATEGORY_STOCKS));
   }, [navigate]);
 

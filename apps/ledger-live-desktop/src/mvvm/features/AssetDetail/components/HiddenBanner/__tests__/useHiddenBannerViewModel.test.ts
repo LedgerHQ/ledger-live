@@ -27,25 +27,19 @@ describe("useHiddenBannerViewModel", () => {
   });
 
   it("reports a coin as hidden when its currency.id is blacklisted", () => {
-    const { result } = renderViewModel(btc, {
-      blacklistedTokenIds: ["bitcoin"],
-    });
+    const { result } = renderViewModel(btc, { blacklistedTokenIds: ["bitcoin"] });
 
     expect(result.current.isHidden).toBe(true);
   });
 
   it("reports a token as hidden when its currency.id is blacklisted", () => {
-    const { result } = renderViewModel(usdcToken, {
-      blacklistedTokenIds: [usdcToken.id],
-    });
+    const { result } = renderViewModel(usdcToken, { blacklistedTokenIds: [usdcToken.id] });
 
     expect(result.current.isHidden).toBe(true);
   });
 
   it("dispatches showToken and tracks analytics when onShowAsset is invoked", () => {
-    const { result, store } = renderViewModel(btc, {
-      blacklistedTokenIds: ["bitcoin"],
-    });
+    const { result, store } = renderViewModel(btc, { blacklistedTokenIds: ["bitcoin"] });
 
     act(() => result.current.onShowAsset());
 

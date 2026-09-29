@@ -390,9 +390,7 @@ class ButtonInner extends PureComponent<
   }
 }
 const Button = React.forwardRef<HTMLButtonElement, Props>((props, ref) => {
-  const { ref: _, ...restProps } = props as Props & {
-    ref?: React.Ref<HTMLButtonElement>;
-  };
+  const { ref: _, ...restProps } = props as Props & { ref?: React.Ref<HTMLButtonElement> };
   return <ButtonInner {...restProps} innerRef={ref} />;
 });
 Button.displayName = "Button";

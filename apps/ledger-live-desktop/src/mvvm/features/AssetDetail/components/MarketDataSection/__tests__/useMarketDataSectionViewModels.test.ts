@@ -12,12 +12,7 @@ jest.mock("~/renderer/hooks/useDateFormatter", () => ({
   fromNow: jest.fn(() => "2 years ago"),
 }));
 
-const usdUnit = {
-  code: "$",
-  name: "US Dollar",
-  magnitude: 2,
-  prefixCode: true,
-};
+const usdUnit = { code: "$", name: "US Dollar", magnitude: 2, prefixCode: true };
 
 const buildCurrencyData = (
   overrides: Partial<MarketDataSectionCurrencyData> = {},
@@ -82,9 +77,7 @@ describe("useMarketStatsViewModel", () => {
     const { result } = renderHook(
       () =>
         useMarketStatsViewModel(
-          buildCurrencyData({
-            data: createMockMarketCurrencyData({ marketcapRank: 3 }),
-          }),
+          buildCurrencyData({ data: createMockMarketCurrencyData({ marketcapRank: 3 }) }),
         ),
       hookOptions(),
     );
@@ -97,9 +90,7 @@ describe("useMarketStatsViewModel", () => {
     const { result } = renderHook(
       () =>
         useMarketStatsViewModel(
-          buildCurrencyData({
-            data: createMockMarketCurrencyData({ marketcapRank: 0 }),
-          }),
+          buildCurrencyData({ data: createMockMarketCurrencyData({ marketcapRank: 0 }) }),
         ),
       hookOptions(),
     );
@@ -160,10 +151,7 @@ describe("useMarketStatsViewModel", () => {
       () =>
         useMarketStatsViewModel(
           buildCurrencyData({
-            data: createMockMarketCurrencyData({
-              maxSupply: 0,
-              circulatingSupply: 19_000_000,
-            }),
+            data: createMockMarketCurrencyData({ maxSupply: 0, circulatingSupply: 19_000_000 }),
           }),
         ),
       hookOptions(),
@@ -177,10 +165,7 @@ describe("useMarketStatsViewModel", () => {
       () =>
         useMarketStatsViewModel(
           buildCurrencyData({
-            data: createMockMarketCurrencyData({
-              maxSupply: 0,
-              circulatingSupply: 0,
-            }),
+            data: createMockMarketCurrencyData({ maxSupply: 0, circulatingSupply: 0 }),
           }),
         ),
       hookOptions(),
@@ -221,9 +206,7 @@ describe("usePricePerformanceViewModel", () => {
     const { result } = renderHook(
       () =>
         usePricePerformanceViewModel(
-          buildCurrencyData({
-            data: createMockMarketCurrencyData({ price: 50_000, ath: 0 }),
-          }),
+          buildCurrencyData({ data: createMockMarketCurrencyData({ price: 50_000, ath: 0 }) }),
         ),
       hookOptions(),
     );
