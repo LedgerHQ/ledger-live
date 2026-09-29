@@ -71,6 +71,11 @@ describe("cryptoFactory test", () => {
     expect(featureIds).not.toContain("staking_txs");
   });
 
+  it("should leave babylon's delegation enabled when no remote config disables it", () => {
+    const babylonDefault = cosmosConfig.config_currency_babylon.default as Record<string, unknown>;
+    expect("disableDelegation" in babylonDefault).toBe(false);
+  });
+
   it("should opt crypto_org out of sending the prefix on the sign APDU", () => {
     // The only chains here not served by app-cosmos: coin type 394 runs the "Cronos POS Chain"
     // app, whose handling of the prefix field on signing is unverified.
