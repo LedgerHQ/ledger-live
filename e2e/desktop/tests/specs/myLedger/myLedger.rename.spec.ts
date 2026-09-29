@@ -23,7 +23,7 @@ test.describe("My Ledger — rename the device", () => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.waitForDashboard();
 
-      await app.myLedger.expectDeviceName(mockDevice.name);
+      await app.myLedger.expectDeviceName(mockDevice.name!);
       await app.myLedger.renameDevice(RENAMED);
       await app.myLedger.expectDeviceName(RENAMED);
     },
