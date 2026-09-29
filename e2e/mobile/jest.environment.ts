@@ -43,6 +43,7 @@ import type { ServerData } from "~/e2e/bridge/types";
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 import { withTimeout } from "@e2e/utils/withTimeout";
 import { armWorkerWatchdog, setWatchdogState, watchdogPhase } from "@e2e/helpers/workerWatchdog";
+import { recordPerfProbe, startPerfProbe } from "@e2e/helpers/perfProbe";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
@@ -167,8 +168,10 @@ function installSpeculosTerminationHandlers() {
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
   declare readonly testPath: string;
+  private perfStart?: ReturnType<typeof startPerfProbe>;
 
   async setup() {
+    this.perfStart = startPerfProbe();
     await armWorkerWatchdog();
     setWatchdogState({ spec: this.testPath, phase: "environment setup" });
 
@@ -344,6 +347,7 @@ export default class TestEnvironment extends DetoxEnvironment {
 
     await super.teardown();
     setWatchdogState({ spec: "<idle>", phase: "idle" });
+    recordPerfProbe(this.perfStart, this.testPath);
   }
 
   async handleTestEvent(event: Circus.Event, state: Circus.State) {

@@ -5,7 +5,8 @@ import type { Circus } from "@jest/types";
 // Kills a jest worker whose event loop froze, see docs/stall-watchdog.md.
 
 const STALL_MS = 90_000;
-const BEAT_MS = 1_000;
+// Probe only, never merged: the perf A/B's stress arm beats every 10ms.
+const BEAT_MS = Number(process.env.E2E_STALL_BEAT_MS) || 1_000;
 const THREAD_NAME = "main";
 
 type WatchdogState = { spec: string; phase: string };

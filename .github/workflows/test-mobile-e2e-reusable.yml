@@ -103,6 +103,15 @@ on:
         required: false
         type: string
         default: ""
+      perf_arm:
+        description: "QAA-1365 perf A/B (probe only): on = stall watchdog as shipped, off = E2E_STALL_WATCHDOG=0, stress = 10ms heartbeat"
+        required: false
+        type: choice
+        options:
+          - "on"
+          - "off"
+          - stress
+        default: "on"
 
   workflow_call:
     inputs:
@@ -790,6 +799,9 @@ jobs:
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
+          E2E_PERF_ARM: ${{ inputs.perf_arm || 'on' }}
+          E2E_STALL_WATCHDOG: ${{ inputs.perf_arm == 'off' && '0' || '' }}
+          E2E_STALL_BEAT_MS: ${{ inputs.perf_arm == 'stress' && '10' || '' }}
         run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
@@ -1053,6 +1065,9 @@ jobs:
           REMOTE_SPECULOS: "true"
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
+          E2E_PERF_ARM: ${{ inputs.perf_arm || 'on' }}
+          E2E_STALL_WATCHDOG: ${{ inputs.perf_arm == 'off' && '0' || '' }}
+          E2E_STALL_BEAT_MS: ${{ inputs.perf_arm == 'stress' && '10' || '' }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Stop emulator watchdog
