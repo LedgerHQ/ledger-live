@@ -1,0 +1,187 @@
+name: "[TMP] Determine Builds timing"
+
+on:
+  push:
+    branches:
+      - ci/determine-builds-1cpu-timing
+
+permissions:
+  contents: read
+
+env:
+  cache-bucket: ll-nx-cache
+  ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
+  ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
+  IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
+  IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+  # Android AVD configuration (shared by determine-builds cache key + Detox Android job)
+  AVD_API: 36
+  AVD_ARCH: x86_64
+  AVD_PROFILE: pixel_9_pro
+  AVD_TARGET: google_apis
+  AVD_NAME: "Android_Emulator"
+  AVD_CORES: 4
+  AVD_RAM_SIZE: 5120
+  AVD_HEAP_SIZE: 1024
+  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
+  E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
+jobs:
+  determine-builds:
+    name: "Determine Builds (${{ matrix.runner }} #${{ matrix.attempt }})"
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-22.04, ledger-wallet-1cpu-aws-public]
+        attempt: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+          sparse-checkout: |
+            apps/ledger-live-mobile
+            e2e/mobile
+            e2e/tooling
+            pnpm-lock.yaml
+            pnpm-workspace.yaml
+            .pnpmfile.cjs
+            tools
+            .mise/tasks
+
+      - name: Determine cache keys
+        id: cache-keys
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          MAX_SHARDS: 2
+          MACOS_RUNNER_LABEL: general-pool
+        run: |
+          PREFIX=""
+          if [ "$REF_NAME" = "develop" ]; then
+            PREFIX="develop/"
+          fi
+          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}-detox-native-android-3" >> $GITHUB_OUTPUT
+          HEAD_SHA=$(git rev-parse HEAD)
+          echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
+          echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
+          echo "android_timing_cache_key=${PREFIX}android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${MAX_SHARDS}shards" >> $GITHUB_OUTPUT
+          echo "ios_timing_cache_key=${PREFIX}ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${MAX_SHARDS}shards-$MACOS_RUNNER_LABEL" >> $GITHUB_OUTPUT
+          echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> $GITHUB_OUTPUT
+          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          skip-pnpm-cache: "true"
+          skip-pod-cache: "true"
+          skip-nx-cache: "true"
+
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Generate shards matrix and test files
+        id: generate-shards
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        with:
+          test_directory: apps/ledger-live-mobile/e2e
+          event_name: ${{ github.event_name }}
+          ref: ${{ github.ref_name }}
+          ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
+          android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
+          aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
+          cache_bucket: ${{ env.cache-bucket }}
+          aws_region: ${{ secrets.AWS_CACHE_REGION }}
+          max_shards: 2
+
+      - name: Check if Android AVD cache exists
+        id: check-avd
+        if: ${{ steps.generate-shards.outputs.matrix_android != '[]' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        with:
+          key: ${{ steps.cache-keys.outputs.avd_cache_key }}
+          accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
+          secretKey: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          bucket: ledger-live-cache
+          endpoint: ${{ secrets.R2_ENDPOINT }}
+          region: auto
+
+      - name: Check if iOS Native Build exists already
+        id: check-ios-native
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        with:
+          key: ${{ steps.cache-keys.outputs.ios_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
+
+      - name: Check if Android Native Build exists already
+        id: check-android-native
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        with:
+          key: ${{ steps.cache-keys.outputs.android_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
+
+      - name: Check if iOS JS Build exists already
+        id: check-ios-js
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        with:
+          key: ${{ steps.cache-keys.outputs.ios_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
+
+      - name: Check if Android JS Build exists already
+        id: check-android-js
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        with:
+          key: ${{ steps.cache-keys.outputs.android_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
+
+      - name: Check if pod lockfile has been validated
+        id: check-lockfile-status
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        with:
+          key: ${{ steps.cache-keys.outputs.pod_check_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
+
