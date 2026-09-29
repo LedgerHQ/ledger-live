@@ -74,14 +74,17 @@ export function makeGenericAdapterAccount(address: string): KaspaAccount {
 
 const KASPA_REST_BASE = "http://localhost:8080";
 
-// History page requests (`full-transactions-page`) seen by the MSW proxy since the last reset —
-// lets the scenario check how many pages a single sync walked.
-let historyPageRequests = 0;
+// History page requests (`full-transactions-page`) seen by the MSW proxy since the last reset, as
+// the page each one asked for — lets the scenario check how many pages a sync walked, and that it
+// never asked for the same page twice.
+let historyPageRequests: string[] = [];
 export const historyPages = {
   reset: (): void => {
-    historyPageRequests = 0;
+    historyPageRequests = [];
   },
-  count: (): number => historyPageRequests,
+  count: (): number => historyPageRequests.length,
+  // Each request's paging position: `before=<ms>`, `after=<ms>`, or "newest" for the first page.
+  requested: (): readonly string[] => historyPageRequests,
 };
 
 // Intercept external Ledger-service calls and reject unhandled non-local requests.
@@ -103,8 +106,14 @@ export function initMSW(): () => void {
     // that will never match any real kaspa: address the wallet knows about. Coin-tester-only
     // normalization — zero coin-module changes.
     http.all(`${KASPA_REST_BASE}/*`, async ({ request }) => {
-      if (new URL(request.url).pathname.endsWith("/full-transactions-page")) historyPageRequests++;
       const response = await fetch(bypass(request));
+      // Only served pages count: a rate-limited request retried by the coin module is not a re-read.
+      const url = new URL(request.url);
+      if (response.ok && url.pathname.endsWith("/full-transactions-page")) {
+        const before = url.searchParams.get("before");
+        const after = url.searchParams.get("after");
+        historyPageRequests.push(before ? `before=${before}` : after ? `after=${after}` : "newest");
+      }
       const body = await response.text();
       const normalized = body.replace(/kaspasim:[a-z0-9]+/g, match => toMainnetAddress(match));
 

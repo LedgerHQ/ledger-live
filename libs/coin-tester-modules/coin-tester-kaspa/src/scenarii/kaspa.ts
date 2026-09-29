@@ -54,8 +54,9 @@ let firstSyncHashes = new Set<string>();
  * - on the generic adapter, the walk reads each history page at most once. listOperations keeps
  *   going for a 2 h late-acceptance window past the newest already-synced tx (as legacy rescans 2 h);
  *   simnet mines the whole history within seconds, so here that window covers all of it and the walk
- *   reaches the end — but it must never re-read or loop over pages. Legacy fetches per used address,
- *   so its request count is not a fixed number.
+ *   reaches the end — but it must never re-read or loop over pages: every page it asks for is
+ *   distinct, and there are no more of them than the whole history spans. Legacy fetches per used
+ *   address, so its request count is not a fixed number.
  */
 function expectHealthySync(prev: Account, curr: Account, strategy: BridgeStrategy): void {
   const hashes = curr.operations.map(op => op.hash);
@@ -65,8 +66,10 @@ function expectHealthySync(prev: Account, curr: Account, strategy: BridgeStrateg
   if (strategy === "generic-adapter") {
     // +1: the indexer may widen a page to keep same-block-time txs together.
     const wholeHistoryPages = Math.ceil(curr.operationsCount / INDEXER_PAGE_SIZE) + 1;
-    expect(historyPages.count()).toBeGreaterThanOrEqual(1);
-    expect(historyPages.count()).toBeLessThanOrEqual(wholeHistoryPages);
+    const requested = historyPages.requested();
+    expect(requested.length).toBeGreaterThanOrEqual(1);
+    expect(requested.length).toBeLessThanOrEqual(wholeHistoryPages);
+    expect(new Set(requested).size).toBe(requested.length);
   }
 }
 
@@ -185,8 +188,10 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
     expect(account.operations).toHaveLength(account.operationsCount);
     // Nothing duplicated where two pages meet.
     expect(new Set(hashes).size).toBe(hashes.length);
-    // ...and it really took more than one history page to get there.
-    expect(historyPages.count()).toBeGreaterThanOrEqual(2);
+    // ...and it really took more than one history page to get there, none of them twice.
+    const requested = historyPages.requested();
+    expect(requested.length).toBeGreaterThanOrEqual(2);
+    expect(new Set(requested).size).toBe(requested.length);
     firstSyncHashes = new Set(hashes);
 
     // Exactly the history the indexer holds for this address — the same bar for both strategies

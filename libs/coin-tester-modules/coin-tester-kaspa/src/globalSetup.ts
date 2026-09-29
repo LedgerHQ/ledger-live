@@ -17,5 +17,11 @@ export default async function globalSetup(): Promise<void> {
   // explicit payAddress — every beforeSync confirmation block — never add to a test account.
   await spawnKaspaNode(toSimnetAddress(recipient));
   // Mined once for the whole run: every scenario run and negativeCases.test.ts use this state.
-  await fundTestAccounts(recipient);
+  try {
+    await fundTestAccounts(recipient);
+  } catch (error) {
+    // A failed globalSetup skips globalTeardown, so stop the stack here rather than leave it running.
+    await killKaspaNode().catch(() => {});
+    throw error;
+  }
 }
