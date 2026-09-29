@@ -257,6 +257,46 @@ describe("hgraphClient", () => {
         "2000000000000000000",
         "3000000000000000000",
       ]);
+      expect(getRequestData(0).query).not.toContain("consensus_timestamp: {");
+      expect(getRequestData(0).variables).not.toHaveProperty("cursor");
+      [1, 2, 3].forEach(callIndex => {
+        expect(getRequestData(callIndex).query).toContain("consensus_timestamp: { _gt: $cursor }");
+        expect(getRequestData(callIndex).variables.cursor).toBe(
+          mockTransfers1.concat(mockTransfers2, mockTransfers3)[callIndex - 1].consensus_timestamp,
+        );
+      });
+    });
+
+    it("keeps the minTimestamp floor alongside the advanced cursor on every page", async () => {
+      mockedNetwork
+        .mockResolvedValueOnce(
+          getMockResponse({
+            data: {
+              erc_token_transfer: [
+                { consensus_timestamp: "1000000000000000000", transaction_hash: "0xhash1" },
+              ],
+            },
+          }),
+        )
+        .mockResolvedValueOnce(getMockResponse({ data: { erc_token_transfer: [] } }));
+
+      await hgraphClient.getERC20Transfers({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        tokenEvmAddresses: ["0xabc123"],
+        limit: 1,
+        fetchAllPages: true,
+        minTimestamp: "900000000.000000000",
+      });
+
+      expect(getRequestData(0).query).toContain("consensus_timestamp: { _gte: $minTimestamp }");
+      expect(getRequestData(1).query).toContain(
+        "consensus_timestamp: { _gt: $cursor, _gte: $minTimestamp }",
+      );
+      expect(getRequestData(1).variables).toMatchObject({
+        cursor: "1000000000000000000",
+        minTimestamp: "900000000000000000",
+      });
     });
 
     it("should paginate when fetchAllPages is false", async () => {
@@ -374,6 +414,44 @@ describe("hgraphClient", () => {
 
       const query = getRequestData(0).query;
       expect(query).toContain("consensus_timestamp: { _lt: $cursor }");
+    });
+
+    it("adds a '_gte' minTimestamp floor independent of timestamp/cursor's own direction", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          data: { erc_token_transfer: [] },
+        }),
+      );
+
+      await hgraphClient.getERC20Transfers({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        tokenEvmAddresses: ["0xabc123"],
+        minTimestamp: "1787236926.768102104",
+        fetchAllPages: false,
+      });
+
+      const { query, variables } = getRequestData(0);
+      expect(query).toContain("consensus_timestamp: { _gte: $minTimestamp }");
+      expect(variables.minTimestamp).toBe("1787236926768102104");
+    });
+
+    it("pads a whole-seconds minTimestamp to nanoseconds", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          data: { erc_token_transfer: [] },
+        }),
+      );
+
+      await hgraphClient.getERC20Transfers({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        tokenEvmAddresses: ["0xabc123"],
+        minTimestamp: "1789118690",
+        fetchAllPages: false,
+      });
+
+      expect(getRequestData(0).variables.minTimestamp).toBe("1789118690000000000");
     });
 
     it("throws with empty message when error object has no message", async () => {
