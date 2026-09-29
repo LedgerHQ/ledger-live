@@ -41,8 +41,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch": "pnpm build && tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
