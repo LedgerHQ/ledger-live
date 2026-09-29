@@ -24,6 +24,15 @@ export class InvalidSpeculosConfigError extends Error {
   override name = "InvalidSpeculosConfigError";
 }
 
+export class SpeculosUnreachableError extends Error {
+  override name = "SpeculosUnreachableError";
+  readonly url: string;
+  constructor(url: string, cause: unknown) {
+    super(`Speculos is not reachable at ${url}.`, { cause });
+    this.url = url;
+  }
+}
+
 /**
  * Speculos target from `SPECULOS_API_PORT`, `SPECULOS_ADDRESS` and `SPECULOS_DEVICE`, or `null`
  * when neither of the first two is set, in which case wallet-cli talks to a USB device.

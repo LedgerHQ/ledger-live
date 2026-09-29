@@ -10,6 +10,7 @@ import { SendApduTimeoutError } from "@ledgerhq/device-management-kit";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { EmptyError } from "rxjs";
 import type { DeviceState, RejectedContext } from "./device-state";
+import { speculosTarget } from "./dmk-transport-factory";
 
 export type ClassifyContext = {
   /** App name we attempted to open/use. Used for `app_not_installed` / `wrong_app`. */
@@ -95,10 +96,14 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
   // Null/undefined can't be classified by name; fall through to unknown.
   if (error == null) return { code: "unknown", cause: error };
 
+  if ((error as { name?: string }).name === "SpeculosUnreachableError") {
+    return { code: "disconnected", speculosUrl: (error as { url: string }).url };
+  }
+
   // Device-not-detected: rxjs EmptyError is thrown when lastValueFrom sees no emission,
   // Disconnected* covers USB unplug / transport close.
   if (isDisconnectedError(error)) {
-    return { code: "disconnected" };
+    return { code: "disconnected", ...speculosTarget() };
   }
 
   // Device locked (multiple representations across stacks).
@@ -116,13 +121,13 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
 
   // Timeouts talking to the device — surface as a retriable timeout.
   if (error instanceof SendApduTimeoutError || hasTag(error, "SendApduTimeoutError")) {
-    return { code: "timeout" };
+    return { code: "timeout", ...speculosTarget() };
   }
 
   // Transport framing errors (garbled APDU). Surfaced as timeout since root cause is
   // typically lock / busy and the fix is the same: retry.
   if (hasAnyTag(error, TRANSPORT_FRAMING_TAGS)) {
-    return { code: "timeout" };
+    return { code: "timeout", ...speculosTarget() };
   }
 
   // DMK refused-by-user (RefusedByUserDAError) happens when the user declines the OpenApp prompt.

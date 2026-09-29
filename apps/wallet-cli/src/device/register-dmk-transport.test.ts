@@ -3,6 +3,7 @@ import {
   DeviceModelId as DmkDeviceModelId,
   DeviceStatus,
   type DeviceManagementKit,
+  type TransportFactory,
 } from "@ledgerhq/device-management-kit";
 import {
   disconnect as disconnectTransport,
@@ -10,6 +11,11 @@ import {
 } from "@ledgerhq/live-common/hw/index";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { of } from "rxjs";
+import { walletCliTransportFactory } from "./dmk-transport-factory";
+
+const unusedUsbFactory: TransportFactory = () => {
+  throw new Error("unused");
+};
 
 let createDeviceManagementKitImpl: () => Promise<{
   dmk: DeviceManagementKit;
@@ -202,6 +208,30 @@ describe("ensureWalletCliDmkTransport", () => {
       sessionId: "session-1",
     });
     expect(createDeviceManagementKit).toHaveBeenCalledTimes(2);
+  });
+
+  it("names the Speculos URL when connecting to the emulator fails", async () => {
+    const connectError = new Error("Unable to connect. Is the computer able to access the url?");
+    const fake = makeDmk({
+      connect: async () => {
+        throw connectError;
+      },
+    });
+    createDeviceManagementKitImpl = async () => fake.kit;
+    walletCliTransportFactory(unusedUsbFactory, {
+      url: "http://127.0.0.1:40000",
+      deviceModelId: DmkDeviceModelId.NANO_SP,
+    });
+
+    try {
+      await expect(ensureWalletCliDmkTransport()).rejects.toMatchObject({
+        name: "SpeculosUnreachableError",
+        url: "http://127.0.0.1:40000",
+        cause: connectError,
+      });
+    } finally {
+      walletCliTransportFactory(unusedUsbFactory, null);
+    }
   });
 
   it("asks the user to retry when the initial session is busy", async () => {

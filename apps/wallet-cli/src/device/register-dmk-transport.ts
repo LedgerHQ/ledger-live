@@ -5,6 +5,8 @@ import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { firstValueFrom } from "rxjs";
 import { filter, timeout } from "rxjs/operators";
 import { WalletCliDmkTransport } from "./wallet-cli-dmk-transport";
+import { getActiveSpeculosUrl } from "./dmk-transport-factory";
+import { SpeculosUnreachableError } from "./speculos-config";
 import type { WalletCliDmk } from "./dmk";
 import {
   hasWalletCliDeviceInterruptScope,
@@ -179,10 +181,16 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
   if (!device) {
     throw new Error(NO_LEDGER_DEVICE_FOUND_MESSAGE);
   }
-  const sessionId = await dmk.connect({
-    device,
-    sessionRefresherOptions: { isRefresherDisabled: true },
-  });
+  const sessionId = await dmk
+    .connect({
+      device,
+      sessionRefresherOptions: { isRefresherDisabled: true },
+    })
+    .catch(error => {
+      // The Speculos transport always discovers its device, so a dead emulator only shows here.
+      const speculosUrl = getActiveSpeculosUrl();
+      throw speculosUrl ? new SpeculosUnreachableError(speculosUrl, error) : error;
+    });
 
   const sessionState = await firstValueFrom(dmk.getDeviceSessionState({ sessionId })).catch(
     () => null,

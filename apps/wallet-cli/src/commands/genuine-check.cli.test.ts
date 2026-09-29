@@ -158,3 +158,26 @@ describe("genuine-check command (mock DMK)", () => {
     });
   });
 });
+
+describe("genuine-check command on Speculos", () => {
+  it("fails with a stable error before opening a device session", async () => {
+    const genuineCheck = mock(() => new Observable<GetGenuineCheckFromDeviceIdResult>());
+    genuineCheckImpl = genuineCheck;
+
+    const { stdout, exitCode } = await runCli(["genuine-check", "--output", "json"], {
+      SPECULOS_API_PORT: "5000",
+    });
+
+    expect(exitCode).toBe(1);
+    expect(parseNdjson(stdout).at(-1)).toEqual({
+      ok: false,
+      error: {
+        command: "genuine-check",
+        message:
+          "genuine-check needs a physical Ledger: Speculos has no attestation keys. " +
+          "Unset SPECULOS_API_PORT and SPECULOS_ADDRESS to check a USB device.",
+      },
+    });
+    expect(genuineCheck).not.toHaveBeenCalled();
+  });
+});

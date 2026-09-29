@@ -1,5 +1,9 @@
-import { describe, expect, it } from "bun:test";
-import { SendApduTimeoutError } from "@ledgerhq/device-management-kit";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import {
+  DeviceModelId,
+  SendApduTimeoutError,
+  type TransportFactory,
+} from "@ledgerhq/device-management-kit";
 import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
@@ -9,6 +13,8 @@ import { ManagerDeviceLockedError } from "@ledgerhq/live-common/errors";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { EmptyError } from "rxjs";
 import { classifyDeviceError } from "./classify-device-error";
+import { walletCliTransportFactory } from "./dmk-transport-factory";
+import { SpeculosUnreachableError } from "./speculos-config";
 
 describe("classifyDeviceError", () => {
   it("rxjs EmptyError → disconnected", () => {
@@ -114,5 +120,46 @@ describe("classifyDeviceError", () => {
     const state = classifyDeviceError(err);
     expect(state.code).toBe("unknown");
     if (state.code === "unknown") expect(state.cause).toBe(err);
+  });
+});
+
+describe("classifyDeviceError on Speculos", () => {
+  const speculosUrl = "http://127.0.0.1:40000";
+  const unusedUsbFactory: TransportFactory = () => {
+    throw new Error("unused");
+  };
+
+  beforeEach(() => {
+    walletCliTransportFactory(unusedUsbFactory, {
+      url: speculosUrl,
+      deviceModelId: DeviceModelId.NANO_SP,
+    });
+  });
+
+  afterEach(() => {
+    walletCliTransportFactory(unusedUsbFactory, null);
+  });
+
+  it("SpeculosUnreachableError → disconnected with its URL", () => {
+    const error = new SpeculosUnreachableError("http://speculos:5000", new Error("refused"));
+    expect(classifyDeviceError(error)).toEqual({
+      code: "disconnected",
+      speculosUrl: "http://speculos:5000",
+    });
+  });
+
+  it("disconnects and timeouts name the active Speculos", () => {
+    expect(classifyDeviceError(new DisconnectedDevice())).toEqual({
+      code: "disconnected",
+      speculosUrl,
+    });
+    expect(classifyDeviceError(new SendApduTimeoutError("slow"))).toEqual({
+      code: "timeout",
+      speculosUrl,
+    });
+    expect(classifyDeviceError({ _tag: "ReceiverApduError" })).toEqual({
+      code: "timeout",
+      speculosUrl,
+    });
   });
 });

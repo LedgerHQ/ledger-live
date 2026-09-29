@@ -108,6 +108,23 @@ describe("renderDeviceState", () => {
     expect(exitCode).toBe(DEVICE_EXIT_CODES.timeout);
   });
 
+  it("names Speculos instead of USB in disconnected and timeout states", () => {
+    const speculosUrl = "http://127.0.0.1:40000";
+
+    const disconnected = renderDeviceState({ code: "disconnected", speculosUrl });
+    const timedOut = renderDeviceState({ code: "timeout", speculosUrl });
+
+    expect(disconnected.message).toBe(
+      "Speculos not reachable at http://127.0.0.1:40000. Start Speculos or fix SPECULOS_API_PORT / SPECULOS_ADDRESS, then retry.",
+    );
+    expect(disconnected.exitCode).toBe(DEVICE_EXIT_CODES.disconnected);
+    expect(timedOut.message).toMatch(
+      /^Timed out talking to Speculos at http:\/\/127\.0\.0\.1:40000\./,
+    );
+    expect(timedOut.message).not.toMatch(/USB/);
+    expect(timedOut.exitCode).toBe(DEVICE_EXIT_CODES.timeout);
+  });
+
   it("renders unknown from an Error cause using its message", () => {
     const { message, exitCode } = renderDeviceState({
       code: "unknown",
