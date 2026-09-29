@@ -1,16 +1,12 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import {
-  resetTrackingPages,
-  setTrackingSource,
-  setTrackingSource as setTrackingPageSource,
-  track,
-} from "@shared/analytics";
+import { resetTrackingPages, setTrackingSource, track } from "@shared/analytics";
 import { ContextMenu } from "../components/ContextMenu";
 import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../constants";
 
 const mockNavigate = jest.fn();
+const SEEDED_TRACKING_PAGE = "Portfolio";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -24,12 +20,15 @@ jest.mock("react-router", () => ({
   })),
 }));
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-  trackPage: jest.fn(),
-  setTrackingSource: jest.fn(),
-}));
+jest.mock("@shared/analytics", () => {
+  const actual = jest.requireActual<typeof import("@shared/analytics")>("@shared/analytics");
+  return {
+    ...actual,
+    track: jest.fn(),
+    trackPage: jest.fn(),
+    setTrackingSource: jest.fn((source?: string) => actual.setTrackingSource(source)),
+  };
+});
 
 jest.mock("~/renderer/store", () => ({
   getStoreValue: jest.fn(),
@@ -45,7 +44,7 @@ describe("MyWallet ContextMenu", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseNavigate.mockReturnValue(mockNavigate);
-    setTrackingPageSource("/");
+    setTrackingSource(SEEDED_TRACKING_PAGE);
   });
 
   afterEach(() => {
@@ -71,7 +70,7 @@ describe("MyWallet ContextMenu", () => {
 
     expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
       button: MY_WALLET_TRACKING_BUTTON.menu,
-      page: "/",
+      page: SEEDED_TRACKING_PAGE,
     });
   });
 
