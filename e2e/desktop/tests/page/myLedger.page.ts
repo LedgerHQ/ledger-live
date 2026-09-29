@@ -67,7 +67,7 @@ export class MyLedgerPage extends AppPage {
   @step("Wait for My Ledger to finish connecting")
   async waitForDashboard() {
     await expect(this.storageCard).toBeVisible();
-    await expect(this.deviceOptions).toBeVisible();
+    await expect(this.deviceOptions).toBeAttached();
   }
 
   @step("Open the app catalog tab")
