@@ -101,6 +101,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
     },
     permissions: {
       camera: "YES",
+      notifications: "YES",
     },
     ...customConfig,
   });
