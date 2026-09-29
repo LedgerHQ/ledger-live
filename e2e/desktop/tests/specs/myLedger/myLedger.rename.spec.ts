@@ -2,8 +2,8 @@ import test from "tests/fixtures/mockServerDevice";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
-// getDeviceNameMaxLength caps names at 17 characters on every model except nanoX from 2.2.0,
-// so the new name is kept well inside that floor.
+// getDeviceNameMaxLength allows 17 characters on nanoSP and nanoX before 2.2.0, and 20 elsewhere,
+// so the new name stays below the smallest limit.
 const RENAMED = "QAA Renamed";
 
 // isEditDeviceNameSupported excludes nanoS, so the LNS tag is dropped from this spec.
