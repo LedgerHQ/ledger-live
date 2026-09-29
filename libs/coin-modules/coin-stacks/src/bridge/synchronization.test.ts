@@ -678,6 +678,15 @@ describe("getAccountShape", () => {
     expect(result.stakingPositions).toEqual([]);
   });
 
+  it("excludes the locked (staked) STX from spendableBalance, while `balance` keeps the full total", async () => {
+    (fetchBalances as jest.Mock).mockResolvedValue({ balance: "1000000", locked: "400000" });
+
+    const result = await getAccountShape(info, { paginationConfig: {} });
+
+    expect(result.balance).toEqual(new BigNumber(1_000_000));
+    expect(result.spendableBalance).toEqual(new BigNumber(1_000_000 - 400_000));
+  });
+
   it("converts a stake's bigint amount to a BigNumber on the account shape", async () => {
     (getStakes as jest.Mock).mockResolvedValue({
       items: [

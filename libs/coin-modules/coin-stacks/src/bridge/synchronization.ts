@@ -254,8 +254,11 @@ export const getAccountShape: GetAccountShape = async info => {
   const [rawTxs, tokenTxs] = txsResult;
   const balance = new BigNumber(balanceResp.balance);
 
-  // Calculate spendable balance by considering pending transactions
-  const spendableBalance = calculateSpendableBalance(balance, mempoolTxs);
+  // `balanceResp.locked` (the staked/locked amount) is not spendable -- same treatment as
+  // getBalance.ts and buildUnsignedTx.ts's `balance.value - balance.locked`. Subtract it before
+  // accounting for pending transactions.
+  const lockedBalance = new BigNumber(balanceResp.locked || "0");
+  const spendableBalance = calculateSpendableBalance(balance.minus(lockedBalance), mempoolTxs);
 
   // Process pending operations
   const pendingOperations = mempoolTxs.flatMap(mapPendingTxToOps(accountId, address));
