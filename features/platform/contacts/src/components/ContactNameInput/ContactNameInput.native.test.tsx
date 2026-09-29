@@ -34,7 +34,7 @@ describe("ContactNameInput", () => {
 
     expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveProp("value", "Ada");
     expect(screen.getByPlaceholderText("Contact name")).toBeVisible();
-    expect(screen.getByText("3/128")).toBeVisible();
+    expect(screen.getByText("3/32")).toBeVisible();
   });
 
   it("should capitalize each word of the name", () => {
