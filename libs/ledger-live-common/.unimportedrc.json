@@ -373,7 +373,9 @@
     "src/domain/isMinEarnUiVersion.ts",
     "src/domain/computeEarnUiVersion.ts",
     "src/domain/earnUiVersion.ts",
-    "src/errors/helpers.ts"
+    "src/errors/helpers.ts",
+    "src/account-data/FullSyncSource.ts",
+    "src/legacy-mapping/accountRef.ts"
   ],
   "extensions": [
     ".ts",
