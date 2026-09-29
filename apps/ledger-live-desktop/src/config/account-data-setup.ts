@@ -13,6 +13,15 @@ import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import type { State } from "~/renderer/reducers";
 
 /**
+ * The families the coin module source serves, per datum. Operations stay on the full sync until the
+ * coin module history is proven on par.
+ */
+export const coinModuleFamilies = {
+  balance: getEnabledGenericCoinFrameworkFamilies,
+  operations: (): string[] => [],
+};
+
+/**
  * The app's sources, in rank order: the coin module for balances on the enabled families, then the
  * full sync for everything else. Spread into the thunk `extraArgument`.
  */
@@ -23,8 +32,7 @@ export function accountDataExtra(getState: () => State): AccountDataExtra {
       new CoinModuleSource({
         loadCoinModule,
         tokenAccountIdOf,
-        // Operations stay on the full sync until the coin module history is proven on par.
-        families: { balance: getEnabledGenericCoinFrameworkFamilies },
+        families: coinModuleFamilies,
         blacklistedTokenIds,
       }),
       new FullSyncSource({
