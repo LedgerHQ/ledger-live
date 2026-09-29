@@ -289,6 +289,11 @@ export default class PortfolioPage {
     await tapByElement(this.operationByType(operationType, accountName).atIndex(0));
   }
 
+  @Step("Tap on Connect button")
+  async tapConnectButton() {
+    await tapById(this.connectButtonId);
+  }
+
   @Step("Tap on tab selector {{{0}}}")
   async tapTabSelector(id: "Accounts" | "Assets") {
     if (await isAssetSectionEnabled()) {

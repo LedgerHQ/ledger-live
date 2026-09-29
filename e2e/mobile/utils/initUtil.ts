@@ -38,7 +38,7 @@ export type InitOptions = {
     app: SpeculosAppType;
     cmd: CliCommand;
   }[];
-  userdata?: string;
+  userdata?: string | null;
   testedCurrencies?: string[];
   featureFlags?: PartialFeatures;
   speculosForSetupOnly?: boolean;
@@ -369,6 +369,18 @@ export class InitializationManager {
     await executeCliCommands(cliCommands, userdataPath, speculosApp, speculosDevices);
 
     await InitializationManager.finalizeSetup(userdataSpeculos);
+  }
+
+  static async initializeFreshInstall(options: InitOptions): Promise<void> {
+    const { speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags = {} } = options;
+
+    if (speculosApp || cliCommands.length > 0 || cliCommandsOnApp.length > 0) {
+      throw new Error(
+        "A fresh install has no userdata for Speculos or CLI commands to write into: pass a userdata fixture instead of null",
+      );
+    }
+
+    await InitializationManager.setFeatureFlags(featureFlags);
   }
 
   private static async finalizeSetup(userdataSpeculos: string): Promise<void> {

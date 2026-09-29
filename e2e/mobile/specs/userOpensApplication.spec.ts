@@ -11,6 +11,10 @@ describe("Settings", () => {
   testConfig.tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   testConfig.tags.forEach(tag => $Tag(tag));
 
+  beforeAll(async () => {
+    await app.init({ userdata: null });
+  });
+
   test("Open the application", async () => {
     await app.onboarding.waitForOnboardingToLoad();
     await app.onboarding.expectGetStartedButtonToBeVisible();
@@ -19,6 +23,7 @@ describe("Settings", () => {
 
     await app.onboarding.waitForAnalyticsButtonToBeVisible();
     await app.onboarding.acceptAnalytics();
+    await app.portfolio.tapConnectButton();
     await app.onboarding.selectStartingOption("setupLedger");
 
     await app.onboarding.checkDeviceCards();
