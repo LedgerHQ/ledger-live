@@ -17235,6 +17235,8 @@ importers:
         specifier: ^8.16.0
         version: 8.17.1
 
+  libs/nx-affected-probe: {}
+
   libs/speculos-transport:
     dependencies:
       '@ledgerhq/devices':

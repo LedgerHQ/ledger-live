@@ -1,0 +1,6 @@
+{
+  "name": "@ledgerhq/nx-affected-probe",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Throwaway package for an Nx affected probe. Do not merge."
+}
