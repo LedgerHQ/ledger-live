@@ -110,6 +110,10 @@ export const FF_BABYLON_STAKING_ENABLED = {
   },
 } satisfies PartialFeatures;
 
+export const FF_TEZOS_STAKING_ENABLED = {
+  llmTezosStaking: { enabled: true },
+} satisfies PartialFeatures;
+
 export const FF_CONTACTS_ENABLED = {
   lwmContacts: {
     enabled: true,
