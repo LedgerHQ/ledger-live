@@ -12,6 +12,11 @@ import { PostOnboardingState } from "@ledgerhq/types-live";
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import market, { MarketState } from "./market";
 import marketBanner, { MarketBannerState } from "./marketBanner";
+import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
+import {
+  accountOperationsSlice,
+  type AccountOperationsState,
+} from "@domain/entity-account-operations";
 import wallet from "./wallet";
 import type { WalletState } from "./wallet";
 import { authEnvironmentReducer, type AuthEnvironmentState } from "@shared/auth";
@@ -93,6 +98,8 @@ export type State = LLDRTKApiState & {
   trustchain: TrustchainStore;
   UI: UIState;
   wallet: WalletState;
+  accountBalances: AccountBalancesState;
+  accountOperations: AccountOperationsState;
   walletSync: WalletSyncState;
   dialogs: DialogsState;
   dialogsWithData: DialogsWithDataState;
@@ -138,6 +145,8 @@ const appReducer = combineReducers({
   market,
   marketBanner,
   wallet,
+  accountBalances: accountBalancesSlice.reducer,
+  accountOperations: accountOperationsSlice.reducer,
   walletSync,
   trustchain,
   dialogs,

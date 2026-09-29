@@ -1,6 +1,8 @@
-import React, { useEffect, useState, ReactNode, useCallback } from "react";
+import React, { useEffect, useMemo, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
+import { AccountDataProvider } from "@features/platform-account-data/react";
+import { createAppAccountDataRouter } from "~/config/account-data-setup";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
@@ -305,9 +307,13 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
     init();
   }, [init]);
 
+  const accountDataRouter = useMemo(() => createAppAccountDataRouter(store), [store]);
+
   return (
     <Provider store={store}>
-      {children({ ready, initialCountervalues, currencyInitialized })}
+      <AccountDataProvider router={accountDataRouter}>
+        {children({ ready, initialCountervalues, currencyInitialized })}
+      </AccountDataProvider>
     </Provider>
   );
 };

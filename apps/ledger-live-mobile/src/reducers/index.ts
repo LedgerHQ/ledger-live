@@ -36,6 +36,8 @@ import sendFlow from "./sendFlow";
 import toasts from "./toast";
 import trustchain from "./trustchain";
 import type { State } from "./types";
+import { accountBalancesSlice } from "@domain/entity-account-balance";
+import { accountOperationsSlice } from "@domain/entity-account-operations";
 import wallet from "./wallet";
 import walletconnect from "./walletconnect";
 import walletSync from "./walletSync";
@@ -103,6 +105,8 @@ const appReducer = combineReducers({
   toasts,
   trustchain,
   wallet,
+  accountBalances: accountBalancesSlice.reducer,
+  accountOperations: accountOperationsSlice.reducer,
   walletconnect,
   walletSync,
   portfolioRefresh,

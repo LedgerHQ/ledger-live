@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Provider } from "react-redux";
 import { useSelector } from "LLD/hooks/redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-desktop";
 import { useFeature } from "@features/platform-feature-flags";
+import { AccountDataProvider } from "@features/platform-account-data/react";
+import { createAppAccountDataRouter } from "~/config/account-data-setup";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
@@ -124,6 +126,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
 };
 
 const App = ({ store, initialCountervalues }: Props) => {
+  const accountDataRouter = useMemo(() => createAppAccountDataRouter(store), [store]);
   return (
     <LiveStyleSheetManager>
       {/* Two providers, one instance: `I18nextProvider` serves the app's own react-i18next call
@@ -131,9 +134,11 @@ const App = ({ store, initialCountervalues }: Props) => {
       <I18nextProvider i18n={i18n}>
         <I18nProvider i18n={i18n}>
           <Provider store={store}>
-            <LinkingProviderWrapper>
-              <InnerApp initialCountervalues={initialCountervalues} />
-            </LinkingProviderWrapper>
+            <AccountDataProvider router={accountDataRouter}>
+              <LinkingProviderWrapper>
+                <InnerApp initialCountervalues={initialCountervalues} />
+              </LinkingProviderWrapper>
+            </AccountDataProvider>
           </Provider>
         </I18nProvider>
       </I18nextProvider>

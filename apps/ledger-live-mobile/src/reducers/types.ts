@@ -22,6 +22,8 @@ import {
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
+import type { AccountBalancesState } from "@domain/entity-account-balance";
+import type { AccountOperationsState } from "@domain/entity-account-operations";
 import type { WalletState } from "./wallet";
 import type { AuthEnvironmentState } from "@shared/auth";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -493,6 +495,8 @@ export type State = LLMRTKApiState & {
   toasts: ToastState;
   trustchain: TrustchainStore;
   wallet: WalletState;
+  accountBalances: AccountBalancesState;
+  accountOperations: AccountOperationsState;
   walletconnect: WalletConnectState;
   walletSync: WalletSyncState;
   portfolioRefresh: PortfolioRefreshState;
