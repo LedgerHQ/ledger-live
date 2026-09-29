@@ -16,6 +16,7 @@ export function TransactionsScreen({
   fill,
   empty,
   receive,
+  receiveMultiAsset,
   clear,
   onBack,
 }: TransactionsScreenProps) {
@@ -59,7 +60,8 @@ export function TransactionsScreen({
 
       <Section title="Receive transaction">
         <Text typography="body3" lx={{ color: "muted" }}>
-          Adds one newest charge funded only by that asset. Repeat to build a longer history.
+          Adds one newest charge funded only by that asset, or one funded by several. Repeat to
+          build a longer history.
         </Text>
         <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8" }}>
           {ASSETS.map(asset => (
@@ -73,6 +75,9 @@ export function TransactionsScreen({
               Receive {asset.toUpperCase()}
             </Button>
           ))}
+          <Button appearance="base" size="sm" disabled={!available} onPress={receiveMultiAsset}>
+            Receive multi-asset
+          </Button>
         </Box>
       </Section>
     </ScrollView>

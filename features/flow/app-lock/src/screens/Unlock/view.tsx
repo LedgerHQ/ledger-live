@@ -2,7 +2,7 @@ import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
 import React, { useEffect, useRef } from "react";
 import { Keyboard, Pressable, StyleSheet, View, type TextInput } from "react-native";
-import { PasswordField } from "../../components/PasswordField";
+import { PasswordField } from "@features/platform-app-lock";
 import { shouldFocusPasswordField } from "./internals/focus";
 import { isOfferingBiometricsRetry, isShowingSplash } from "./splash";
 import type { UnlockViewProps } from "./types";

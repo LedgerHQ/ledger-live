@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-cli",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "private": true,
   "description": "Ledger Wallet CLI using Device Management Kit (USB)",
   "license": "Apache-2.0",
@@ -49,6 +49,7 @@
     "@ledgerhq/wallet-cli-windows-x64": "workspace:*"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@bunli/core": "0.9.1",
     "@bunli/utils": "0.6.0",
     "@domain/entity-currency": "workspace:^",
@@ -71,7 +72,7 @@
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "catalog:",
@@ -83,6 +84,7 @@
     "@oxlint/binding-linux-x64-gnu": "1.51.0",
     "@oxlint/binding-win32-x64-msvc": "1.51.0",
     "@segment/analytics-node": "3.1.0",
+    "@shared/analytics": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/schema-primitives": "workspace:^",
     "@types/debug": "4.1.12",

@@ -10,7 +10,7 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { TrackScreen, track } from "~/analytics";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import { urls } from "~/utils/urls";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import {
@@ -95,9 +95,11 @@ describe("ConnectionErrorState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     setIsInTerminalConnectDeviceError(false);
-    currentRouteNameRef.current = PAGE_CONNECT_DEVICE.ConnectionError;
+    setTrackingSource(PAGE_CONNECT_DEVICE.ConnectionError);
     jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
+
+  afterEach(resetTrackingPages);
 
   it.each(errorCases)("should render the $type error title and CTA", ({ type, title, cta }) => {
     renderState(type);

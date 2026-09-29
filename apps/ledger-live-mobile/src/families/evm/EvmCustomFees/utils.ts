@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getEnv } from "@shared/env";
 import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
-import { GasOptions } from "@ledgerhq/coin-evm/types/index";
+import { GasOptions } from "@ledgerhq/coin-evm/types";
 import invariant from "invariant";
 
 const TEN_GWEI = new BigNumber(10e9);

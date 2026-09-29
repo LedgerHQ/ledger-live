@@ -12,6 +12,8 @@ const CARD_RESOURCES = {
         card: {
           title: CARD_TITLE,
           balanceLabel: "Balance",
+          topUp: "Top up",
+          chooseCardType: "Choose card type",
         },
       },
     },

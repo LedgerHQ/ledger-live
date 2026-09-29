@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { fireEvent, within } from "tests/testSetup";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -156,6 +157,62 @@ describe("Send Flow Integration", () => {
 
       await user.click(screen.getByTestId("contacts-compact-row-contact-vincent"));
       expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+    });
+
+    it("replaces the Pay contact from the recipient bar without stacking back history", async () => {
+      const contacts = [
+        mockContact({
+          id: "contact-alice",
+          name: "Alice",
+          addresses: [
+            mockContactAddress({
+              id: "address-alice",
+              currencyId: "ethereum",
+              address: VALID_EVM_RECIPIENT,
+            }),
+          ],
+        }),
+        mockContact({
+          id: "contact-bob",
+          name: "Bob",
+          addresses: [
+            mockContactAddress({
+              id: "address-bob",
+              currencyId: "ethereum",
+              address: VALID_EVM_RECIPIENT,
+            }),
+          ],
+        }),
+      ];
+      setMockContacts(contacts);
+      const { user } = renderSendFlow(
+        ethereumAccount,
+        {
+          recipient: VALID_EVM_RECIPIENT,
+          skipRecipientStep: true,
+          source: SEND_FLOW_SOURCE.PAY,
+        },
+        contacts,
+      );
+
+      expect(await screen.findByDisplayValue("Alice")).toBeVisible();
+      await user.click(screen.getByTestId("send-edit-recipient-button"));
+      fireEvent.change(await screen.findByTestId("send-recipient-input"), {
+        target: { value: "" },
+      });
+      const introduction = await screen.findByTestId("contacts-feature-introduction-dialog");
+      await user.click(within(introduction).getByRole("button", { name: "Close" }));
+      expect(screen.queryByRole("button", { name: /back/i })).not.toBeInTheDocument();
+
+      await user.click(await screen.findByTestId("contacts-compact-row-contact-bob"));
+
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+      expect(await screen.findByDisplayValue("Bob")).toBeVisible();
+      expect(screen.queryByDisplayValue("Alice")).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("send-edit-recipient-button"));
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByRole("button", { name: /back/i })).not.toBeInTheDocument();
     });
 
     it("opens address selection when a contact has several addresses on the recipient network", async () => {

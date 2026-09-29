@@ -33,6 +33,7 @@ export type ReadyRecipientScreenViewModel = Readonly<{
     ensName?: string,
     goToNextStep?: boolean,
     memo?: Memo,
+    contactId?: string,
   ) => void;
 }>;
 
@@ -88,7 +89,13 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
   }, [account, currency, trackingProperties]);
 
   const onAddressSelected = useCallback(
-    (address: string, ensName?: string, goToNextStep?: boolean, memo?: Memo) => {
+    (
+      address: string,
+      ensName?: string,
+      goToNextStep?: boolean,
+      memo?: Memo,
+      contactId?: string,
+    ) => {
       // A typed/pasted address can be the account's own self-transfer target (its
       // other pool) without going through the self-transfer shortcut. Recognize it
       // the same way the shortcut does, so it gets the same pool label and locks
@@ -106,6 +113,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
         ...state.recipient,
         address,
         ensName,
+        contactId,
         displayLabel: matchedSelfTransferTarget
           ? t(`newSendFlow.${matchedSelfTransferTarget.translationKey}.label`)
           : undefined,

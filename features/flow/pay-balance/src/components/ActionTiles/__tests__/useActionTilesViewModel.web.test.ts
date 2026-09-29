@@ -2,6 +2,11 @@ import { renderHook } from "@testing-library/react";
 import { useActionTilesViewModel } from "../useActionTilesViewModel";
 import type { ActionTileInput, ActionTilesProps } from "../types";
 import { i18nWrapper } from "../../../__tests__/i18nWrapper";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 const deposit: ActionTileInput = {
   id: "deposit",
@@ -31,13 +36,12 @@ describe("useActionTilesViewModel", () => {
   });
 
   it("should fire tracking then call the original handler on press", () => {
-    const onTrackEvent = jest.fn();
-    const { result } = renderActionTilesViewModel(buildProps({ onTrackEvent }));
+    const { result } = renderActionTilesViewModel(buildProps());
 
     result.current.tiles[0].onPress();
 
-    expect(onTrackEvent).toHaveBeenCalledTimes(1);
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledTimes(1);
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "deposit",
       buttonLocation: "quick action",
       page: "Pay",
@@ -46,23 +50,15 @@ describe("useActionTilesViewModel", () => {
   });
 
   it("should fire tracking with the correct button id per tile", () => {
-    const onTrackEvent = jest.fn();
-    const { result } = renderActionTilesViewModel(buildProps({ onTrackEvent }));
+    const { result } = renderActionTilesViewModel(buildProps());
 
     result.current.tiles[1].onPress();
 
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "request",
       buttonLocation: "quick action",
       page: "Pay",
     });
-  });
-
-  it("should not throw when onTrackEvent is absent", () => {
-    const { result } = renderActionTilesViewModel(buildProps());
-
-    expect(() => result.current.tiles[0].onPress()).not.toThrow();
-    expect(deposit.onPress).toHaveBeenCalledTimes(1);
   });
 
   it("should expose all input tiles in the output", () => {

@@ -21,4 +21,20 @@ describe("BalanceFundedState (Native)", () => {
 
     expect(onOpenFilter).toHaveBeenCalledTimes(1);
   });
+
+  it("should toggle discreet mode when the amount is pressed", async () => {
+    const user = userEvent.setup();
+    const onToggleDiscreetMode = jest.fn();
+    render(
+      <BalanceFundedState
+        {...fundedStateProps}
+        discreet
+        onToggleDiscreetMode={onToggleDiscreetMode}
+      />,
+    );
+
+    await user.press(screen.getByTestId("pay-card-balance-toggle"));
+
+    expect(onToggleDiscreetMode).toHaveBeenCalledTimes(1);
+  });
 });

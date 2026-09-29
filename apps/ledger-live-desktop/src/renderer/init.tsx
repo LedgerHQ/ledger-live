@@ -27,7 +27,7 @@ import { getMockServerSessionToken } from "@ledgerhq/live-dmk-desktop";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
-import { setupCryptoAssetsStore } from "~/config/bridge-setup";
+import { setupCryptoAssetsStore, setupRateLookups } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
@@ -52,7 +52,8 @@ import {
 } from "~/renderer/reducers/settings";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { evmAddressBookProvider } from "@ledgerhq/live-signer-evm";
-import { toEvmAddressBook } from "@features/platform-contacts";
+import { tronAddressBookProvider } from "@ledgerhq/live-signer-tron";
+import { toEvmAddressBook, toTronAddressBook } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
@@ -84,7 +85,9 @@ import {
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { installLiveConfigProvider } from "~/firebase/remoteConfig";
 import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
+import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
+import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
 
 const rootNode = document.getElementById("react-root");
 
@@ -146,6 +149,7 @@ async function init() {
   setupListeners(store.dispatch);
   connectRecentAddressesStore(store, recentAddressesSelector);
   setupCryptoAssetsStore(store);
+  setupRateLookups();
   setSwapQuotesStore(store.dispatch);
 
   // Feature flags: install the LiveConfig provider (serves non-feature `config_*` keys) and
@@ -157,6 +161,17 @@ async function init() {
     ((key: FeatureId) => selectFeature(store.getState(), key) ?? null) as Parameters<
       typeof setAnalyticsFeatureFlagMethod
     >[0],
+  );
+  store.subscribe(
+    installEarnLifecycleHost({
+      platform: "desktop",
+      readEnabled: () =>
+        selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false,
+      readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
+      resolveVersionedRedirects: getVersionedRedirects,
+      readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+      apiBaseUrl: process.env.EARN_API_BASE_URL,
+    }),
   );
 
   // Hydrate persisted crypto assets tokens from app.json
@@ -195,6 +210,7 @@ async function init() {
 
   liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
   evmAddressBookProvider.setSource(() => toEvmAddressBook(selectContacts(store.getState())));
+  tronAddressBookProvider.setSource(() => toTronAddressBook(selectContacts(store.getState())));
 
   const settingsToLoad = { ...initialSettings };
 

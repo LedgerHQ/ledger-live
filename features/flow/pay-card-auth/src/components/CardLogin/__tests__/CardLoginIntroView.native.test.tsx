@@ -1,7 +1,12 @@
 import React from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
+import { trackedPages } from "@features/platform-pay-analytics/testing/module-mock";
 import { CardLoginIntroView } from "../CardLoginIntroView.native";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: ({
@@ -73,6 +78,13 @@ describe("CardLoginIntroView (Native)", () => {
     expect(screen.getByTestId("pay-card-login-intro-sheet")).toBeTruthy();
     expect(screen.queryByTestId("pay-card-login-intro-content")).toBeNull();
     expect(screen.queryByText("Spend crypto, earn cashback")).toBeNull();
+    expect(trackedPages()).toHaveLength(0);
+  });
+
+  it("tracks the card feature intro page once open", () => {
+    renderIntro();
+
+    expect(trackedPages()).toContainEqual({ page: "Feature Intro", name: "card", flow: "card" });
   });
 
   it("opens the sheet at full height", () => {
@@ -96,6 +108,23 @@ describe("CardLoginIntroView (Native)", () => {
     expect(screen.getByText("Every transfer approved with your Ledger signer.")).toBeTruthy();
     expect(screen.getByTestId("pay-card-login-intro-provided-by")).toBeTruthy();
     expect(screen.getByText("Card provided by Baanx")).toBeTruthy();
+  });
+
+  it("keeps the hero at the aspect ratio of the artwork", () => {
+    renderIntro();
+
+    // The Lumen native stub passes `lx` straight through, so it carries the resolved style here.
+    expect(screen.getByTestId("pay-card-login-intro-hero").props.lx).toEqual(
+      expect.objectContaining({ aspectRatio: 1028 / 576 }),
+    );
+  });
+
+  it("fits the hero image to the hero instead of its intrinsic size", () => {
+    renderIntro();
+
+    expect(
+      StyleSheet.flatten(screen.getByTestId("pay-card-login-intro-hero-image").props.style),
+    ).toEqual(expect.objectContaining({ width: "100%", height: "100%" }));
   });
 
   it("renders one row per icon", () => {

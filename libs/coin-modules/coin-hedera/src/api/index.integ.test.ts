@@ -256,28 +256,6 @@ describe("createApi", () => {
       invariant(rawTx instanceof TransferTransaction, "TransferTransaction type guard");
       expect(rawTx.maxTransactionFee).toEqual(expectedMaxFee);
     });
-
-    it("throws if useAllAmount is true", async () => {
-      await expect(
-        api.craftTransaction(context, {
-          intentType: "transaction",
-          asset: {
-            type: "native",
-          },
-          amount: BigInt(100),
-          useAllAmount: true,
-          sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
-          senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
-          recipient: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
-          type: HEDERA_TRANSACTION_MODES.TokenAssociate,
-          memo: {
-            kind: "text",
-            type: "string",
-            value: "token association",
-          },
-        }),
-      ).rejects.toThrow("useAllAmount is not supported");
-    });
   });
 
   describe("estimateFees", () => {

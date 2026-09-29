@@ -7,7 +7,7 @@ import {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { GasOptions, GasOptionsRaw } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions, GasOptionsRaw } from "@ledgerhq/coin-evm/types";
 
 export type EvmTransactionMode = "send" | "erc721" | "erc1155";
 

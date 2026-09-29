@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react-native";
 import React from "react";
-import { PasswordDraftProvider, usePasswordDraft } from "../../state/passwordDraft";
+import { PasswordDraftProvider, usePasswordDraft } from "@features/platform-app-lock";
 import { useConfirmPasswordViewModel } from "./viewModel";
 
 function wrapper({ children }: Readonly<{ children: React.ReactNode }>) {

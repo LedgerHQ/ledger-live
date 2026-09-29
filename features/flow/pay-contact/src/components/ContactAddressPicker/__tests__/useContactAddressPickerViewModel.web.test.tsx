@@ -1,6 +1,6 @@
 import React, { type ReactNode } from "react";
 import { act, renderHook } from "@testing-library/react";
-import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
+import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { I18nTestProvider, type I18nTestProviderProps } from "@shared/i18n/testing";
 import {
   useContactAddressPickerViewModel,
@@ -14,6 +14,7 @@ const resources: I18nTestProviderProps["resources"] = {
         contacts: {
           addressPicker: {
             title: "Select {{name}}'s address",
+            meTitle: "Select my address",
             addAddress: "Add address",
           },
         },
@@ -47,6 +48,14 @@ describe("useContactAddressPickerViewModel", () => {
     expect(result.current.contactAddressPicker.contact).toBeNull();
     expect(result.current.contactAddressPicker.groups).toEqual([]);
     expect(result.current.contactAddressPicker.title).toBe("");
+  });
+
+  it("titles the picker 'Select my address' for the me contact", () => {
+    const { result } = renderViewModel();
+
+    act(() => result.current.open(mockMeContact({ name: "Alice" })));
+
+    expect(result.current.contactAddressPicker.title).toBe("Select my address");
   });
 
   it("opens with the selected contact", () => {

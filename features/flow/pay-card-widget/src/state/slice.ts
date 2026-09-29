@@ -1,10 +1,16 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { PayCardAnalyticsMilestone, PayCardOnboardingWidgetState } from "./types";
+import type {
+  PayCardAnalyticsMilestone,
+  PayCardOnboardingWidgetPersistedState,
+  PayCardOnboardingWidgetState,
+} from "./types";
 
 export const payCardOnboardingWidgetInitialState: PayCardOnboardingWidgetState = {
   hasCompletedOnboarding: false,
   analyticsCardId: null,
   reportedAnalyticsMilestones: [],
+  hasReadCardAccount: false,
+  digitalWalletProvisioningStartedAt: null,
 };
 
 export const payCardOnboardingWidgetSlice = createSlice({
@@ -18,10 +24,16 @@ export const payCardOnboardingWidgetSlice = createSlice({
       state.hasCompletedOnboarding = false;
     },
     setAnalyticsCardId: (state, action: PayloadAction<string>) => {
-      if (state.analyticsCardId !== action.payload) {
-        state.analyticsCardId = action.payload;
-        state.reportedAnalyticsMilestones = [];
+      if (state.analyticsCardId === action.payload) return;
+
+      if (state.analyticsCardId !== null) {
+        state.hasReadCardAccount = false;
       }
+      state.analyticsCardId = action.payload;
+      state.reportedAnalyticsMilestones = [];
+    },
+    markCardAccountRead: state => {
+      state.hasReadCardAccount = true;
     },
     markAnalyticsMilestonesReported: (
       state,
@@ -33,14 +45,30 @@ export const payCardOnboardingWidgetSlice = createSlice({
         }
       }
     },
+    startDigitalWalletProvisioning: {
+      reducer: (state, action: PayloadAction<number>) => {
+        state.digitalWalletProvisioningStartedAt = action.payload;
+      },
+      prepare: () => ({ payload: Date.now() }),
+    },
+    endDigitalWalletProvisioning: state => {
+      state.digitalWalletProvisioningStartedAt = null;
+    },
     restorePayCardOnboardingWidget: (
       state,
-      action: PayloadAction<Partial<PayCardOnboardingWidgetState> | undefined>,
+      action: PayloadAction<Partial<PayCardOnboardingWidgetPersistedState> | undefined>,
     ) => {
-      const { hasCompletedOnboarding, analyticsCardId, reportedAnalyticsMilestones } =
-        action.payload ?? {};
+      const {
+        hasCompletedOnboarding,
+        analyticsCardId,
+        reportedAnalyticsMilestones,
+        hasReadCardAccount,
+      } = action.payload ?? {};
       if (typeof hasCompletedOnboarding === "boolean") {
         state.hasCompletedOnboarding = hasCompletedOnboarding;
+      }
+      if (typeof hasReadCardAccount === "boolean") {
+        state.hasReadCardAccount = hasReadCardAccount;
       }
       if (typeof analyticsCardId === "string") {
         state.analyticsCardId = analyticsCardId;
@@ -56,6 +84,9 @@ export const {
   markCardOnboardingCompleted,
   resetCardOnboardingCompleted,
   setAnalyticsCardId,
+  markCardAccountRead,
   markAnalyticsMilestonesReported,
+  startDigitalWalletProvisioning,
+  endDigitalWalletProvisioning,
   restorePayCardOnboardingWidget,
 } = payCardOnboardingWidgetSlice.actions;

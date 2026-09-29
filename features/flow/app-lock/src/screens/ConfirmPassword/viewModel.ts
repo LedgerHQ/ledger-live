@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { usePasswordDraft } from "../../state/passwordDraft";
+import { usePasswordDraft } from "@features/platform-app-lock";
 import type { ConfirmPasswordViewModel, UseConfirmPasswordViewModelOptions } from "./types";
 
 export function useConfirmPasswordViewModel({

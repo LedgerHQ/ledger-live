@@ -7,7 +7,7 @@ export * from "./sharedTypes";
 type LumenIconSpotProps = Extract<SpotProps, { appearance: "icon" }>;
 
 /** Props forwarded to the Lumen Spot for the custom spot preset (native). */
-export type InfoStateSpotProps = Pick<LumenIconSpotProps, "icon">;
+export type InfoStateSpotProps = Pick<LumenIconSpotProps, "icon" | "size">;
 
 /** Props for the native InfoState layout. */
 export type InfoStateProps =

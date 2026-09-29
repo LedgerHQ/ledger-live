@@ -86,7 +86,7 @@ export const buildOptimisticOperation = (
   const type = MODE_TO_TYPE[transaction.mode] ?? MODE_TO_TYPE.default;
   const value = type === "OUT" ? new BigNumber(transaction.amount).plus(fee) : new BigNumber(fee);
   const extra = getExtra(type, account, transaction);
-  const operation: PolkadotOperation = {
+  return {
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
@@ -101,5 +101,4 @@ export const buildOptimisticOperation = (
     date: new Date(),
     extra,
   };
-  return operation;
 };

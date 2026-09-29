@@ -1,8 +1,16 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render as renderWithoutI18n, screen } from "@testing-library/react";
+import {
+  ContactsI18nTestProvider,
+  formatTestContactDisplayName,
+} from "@features/platform-contacts/testing";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
+import type { Contact } from "@domain/entity-contact";
 import { createContactsSearchViewModel } from "@features/flow-contacts-list";
 import { ContactsView } from "./ContactsView.web";
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 const labels = {
   title: "Contacts",
@@ -20,10 +28,14 @@ describe("ContactsView", () => {
 
     render(
       <ContactsView
-        viewModel={createContactsSearchViewModel(me, contacts, "unknown")}
+        viewModel={createContactsSearchViewModel(
+          me,
+          contacts,
+          "unknown",
+          formatTestContactDisplayName,
+        )}
         labels={labels}
         searchQuery="unknown"
-        meAvatarSrc="https://example.com/black/user.png"
         onSearchInputChange={jest.fn()}
         onOpenMe={jest.fn()}
         onOpenContact={jest.fn()}
@@ -60,10 +72,9 @@ describe("ContactsView", () => {
 
     render(
       <ContactsView
-        viewModel={createContactsSearchViewModel(me, contacts, "")}
+        viewModel={createContactsSearchViewModel(me, contacts, "", formatTestContactDisplayName)}
         labels={labels}
         searchQuery=""
-        meAvatarSrc="https://example.com/black/user.png"
         onSearchInputChange={jest.fn()}
         onOpenMe={jest.fn()}
         onOpenContact={jest.fn()}

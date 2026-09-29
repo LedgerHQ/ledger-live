@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { METACHAIN_SHARD, MAX_PAGINATION_SIZE } from "../constants";
+import { METACHAIN_SHARD, MAX_PAGINATION_SIZE, MAX_PAGINATION_RESULT_WINDOW } from "../constants";
 import type {
   ESDTToken,
   MultiversXApiTransaction,
@@ -41,6 +41,47 @@ const decodeTransactionMode = (action?: MultiversXTransactionAction): string => 
   if (action.category !== "stake") return "send";
   return action.name;
 };
+
+async function fetchAllTransactions(
+  url: string,
+  totalCount: number,
+): Promise<MultiversXApiTransaction[]> {
+  const allTransactions: MultiversXApiTransaction[] = [];
+  const seenHashes = new Set<string>();
+  let from = 0;
+  let before: number | undefined;
+
+  while (allTransactions.length < totalCount) {
+    const beforeParam = before ? `&before=${before}` : "";
+    const { data } = await network<MultiversXApiTransaction[]>({
+      method: "GET",
+      url: `${url}&from=${from}&size=${MAX_PAGINATION_SIZE}${beforeParam}`,
+    });
+    const transactions = data ?? [];
+
+    for (const transaction of transactions) {
+      if (transaction.txHash && seenHashes.has(transaction.txHash)) continue;
+      if (transaction.txHash) seenHashes.add(transaction.txHash);
+      allTransactions.push(transaction);
+    }
+
+    if (transactions.length < MAX_PAGINATION_SIZE) break;
+
+    from += MAX_PAGINATION_SIZE;
+    if (from + MAX_PAGINATION_SIZE <= MAX_PAGINATION_RESULT_WINDOW) continue;
+
+    const oldest = transactions[transactions.length - 1].timestamp;
+    if (oldest === undefined || oldest + 1 === before) {
+      throw new Error("MultiversX pagination cannot move past the API result window");
+    }
+
+    // `before` is exclusive: re-read the oldest second so same-timestamp transactions are kept
+    before = oldest + 1;
+    from = 0;
+  }
+
+  return allTransactions;
+}
 
 export class MultiversXNetworkApi {
   private readonly API_URL: string;
@@ -116,18 +157,12 @@ export class MultiversXNetworkApi {
       url: `${this.API_URL}/accounts/${addr}/transactions/count?after=${after}`,
     });
 
-    const allTransactions: MultiversXApiTransaction[] = [];
-    let from = 0;
-    while (from < transactionsCount) {
-      const { data: transactions } = await network<MultiversXApiTransaction[]>({
-        method: "GET",
-        url: `${this.API_URL}/accounts/${addr}/transactions?after=${after}&from=${from}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
-      });
-      for (const transaction of transactions ?? []) {
-        transaction.mode = decodeTransactionMode(transaction.action) as MultiversXTransactionMode;
-      }
-      allTransactions.push(...(transactions ?? []));
-      from = from + MAX_PAGINATION_SIZE;
+    const allTransactions = await fetchAllTransactions(
+      `${this.API_URL}/accounts/${addr}/transactions?after=${after}&withOperations=true&withScResults=true`,
+      transactionsCount,
+    );
+    for (const transaction of allTransactions) {
+      transaction.mode = decodeTransactionMode(transaction.action) as MultiversXTransactionMode;
     }
     return allTransactions;
   }
@@ -151,16 +186,10 @@ export class MultiversXNetworkApi {
       url: `${this.API_URL}/accounts/${addr}/transactions/count?token=${token}&after=${after}`,
     });
 
-    const allTokenTransactions: MultiversXApiTransaction[] = [];
-    let from = 0;
-    while (from < tokenTransactionsCount) {
-      const { data: tokenTransactions } = await network<MultiversXApiTransaction[]>({
-        method: "GET",
-        url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&from=${from}&after=${after}&size=${MAX_PAGINATION_SIZE}`,
-      });
-      allTokenTransactions.push(...(tokenTransactions ?? []));
-      from = from + MAX_PAGINATION_SIZE;
-    }
+    const allTokenTransactions = await fetchAllTransactions(
+      `${this.API_URL}/accounts/${addr}/transactions?token=${token}&after=${after}`,
+      tokenTransactionsCount,
+    );
 
     for (const esdtTransaction of allTokenTransactions) {
       (esdtTransaction as { transfer?: string }).transfer =

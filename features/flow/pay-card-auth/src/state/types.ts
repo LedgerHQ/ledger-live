@@ -179,6 +179,7 @@ export type CardLoginContext = {
 export type CardLoginEvent =
   | { type: "LOGIN" }
   | { type: "RETRY" }
+  | { type: "DISMISS" }
   | { type: "SESSION_ENDED" }
   | { type: "CALLBACK_RECEIVED"; code: string; state?: string; appId?: string };
 
@@ -201,6 +202,7 @@ export type PayCardAuthState = Readonly<{
    * reads this instead, because two machines would each hydrate and neither would agree.
    */
   status: PayCardAuthStatus;
+  isSessionResolving: boolean;
 }>;
 
 export type PayCardLoginIntroState = Readonly<{

@@ -11,7 +11,7 @@ export type PayGlobalPropertiesSource = Readonly<{
   cardStatus?: Readonly<{ cardAddedToDigitalWallet?: boolean }>;
   hasCardTransactions?: boolean;
   cardWallets?: readonly Readonly<{ priority: number; currency: string }>[];
-  rewardWallet?: Readonly<{ balance: string; currency: string }>;
+  cashback?: Readonly<{ amount: string; currency?: string | null }>;
 }>;
 
 function countHeldStablecoins(tickers: readonly string[]): number {
@@ -27,26 +27,41 @@ export function toPayGlobalProperties({
   cardStatus,
   hasCardTransactions,
   cardWallets,
-  rewardWallet,
+  cashback,
 }: PayGlobalPropertiesSource): PayGlobalProperties {
   if (!featureFlagPay) {
     return { featureFlagPay: false };
   }
 
-  const cardDebitOrder = [...(cardWallets ?? [])]
-    .sort((a, b) => a.priority - b.priority)
-    .map(wallet => wallet.currency.toUpperCase());
-
-  return {
+  const properties: PayGlobalProperties = {
     featureFlagPay: true,
     hasStable: countHeldStablecoins(accountTickers) > 0,
     hasCard,
     cardLoggedIn: isSignedIn,
-    hasFundsOnCard: (internalWalletBalances ?? []).some(balance => Number(balance) > 0),
-    has_tx: hasCardTransactions ?? false,
-    cardAddedToOsWallet: cardStatus?.cardAddedToDigitalWallet ?? false,
-    cardDebitOrder,
-    cardRewardsAvailable: Number(rewardWallet?.balance ?? 0) > 0,
-    cardRewardCurrency: rewardWallet?.currency ?? null,
   };
+
+  if (internalWalletBalances !== undefined) {
+    properties.hasFundsOnCard = internalWalletBalances.some(balance => Number(balance) > 0);
+  }
+
+  if (hasCardTransactions !== undefined) {
+    properties.has_tx = hasCardTransactions;
+  }
+
+  if (cardStatus !== undefined) {
+    properties.cardAddedToOsWallet = cardStatus.cardAddedToDigitalWallet ?? false;
+  }
+
+  if (cardWallets !== undefined) {
+    properties.cardDebitOrder = [...cardWallets]
+      .sort((a, b) => a.priority - b.priority)
+      .map(wallet => wallet.currency.toUpperCase());
+  }
+
+  if (cashback !== undefined) {
+    properties.cardRewardsAvailable = Number(cashback.amount ?? 0) > 0;
+    properties.cardRewardCurrency = cashback.currency ?? null;
+  }
+
+  return properties;
 }

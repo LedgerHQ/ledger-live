@@ -4,6 +4,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   rnBleTransportIdentifier,
   rnHidTransportIdentifier,
+  speculosIdentifier,
   type DeviceBaseInfo,
   findMatchingOldDevice,
 } from "@ledgerhq/live-dmk-mobile";
@@ -124,7 +125,10 @@ function findMatchingKnownDevice(
     device => device.transport === newDevice.transport,
   );
 
-  if (newDevice.transport === rnHidTransportIdentifier) {
+  const transportReportsUnstableDeviceId =
+    newDevice.transport === rnHidTransportIdentifier || newDevice.transport === speculosIdentifier;
+
+  if (transportReportsUnstableDeviceId) {
     return (
       oldDevicesForTransport.find(device => device.deviceModelId === newDevice.deviceModelId) ??
       null

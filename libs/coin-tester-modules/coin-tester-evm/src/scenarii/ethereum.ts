@@ -155,7 +155,7 @@ export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks(ethereum.ethereumLikeInfo?.chainId || 1);
+    await indexBlocks(1);
   },
   afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);

@@ -9,7 +9,7 @@ const AVATAR_SIZE = "xl";
 export type PaySuccessRecipient = Readonly<{
   id: ContactId;
   name: string;
-  isMe?: boolean;
+  isMe: boolean;
 }>;
 
 export type PaySuccessHeroProps = Readonly<{

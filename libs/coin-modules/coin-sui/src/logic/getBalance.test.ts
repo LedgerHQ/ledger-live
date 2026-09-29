@@ -1,4 +1,4 @@
-import type { DelegatedStake } from "@mysten/sui/jsonRpc";
+import type { DelegatedStake } from "../types";
 import { getAllBalancesCached, getDelegatedStakes } from "../network";
 import type { SuiCoinConfig } from "../config";
 import { getBalance } from "./getBalance";

@@ -23,7 +23,7 @@ import type {
   GasOptions,
   GasOptionsRaw,
   Strategy,
-} from "@ledgerhq/coin-evm/types/index";
+} from "@ledgerhq/coin-evm/types";
 
 /* istanbul ignore next: don't test CLI text helpers */
 /**

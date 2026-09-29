@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text, TileButton } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Spinner, Text, TileButton } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
 import { CardAssetsView } from "@features/flow-pay-card-assets";
@@ -41,6 +41,7 @@ function OverviewActions({
 }: OverviewActionsProps) {
   const { t } = useTranslation();
   const canHide = reveal.canHide;
+  const isLoading = reveal.status === "loading";
   const viewLabel = canHide ? t("payTab.card.numbers.hide") : t("payTab.card.numbers.reveal");
 
   return (
@@ -48,9 +49,9 @@ function OverviewActions({
       <Box lx={{ flexDirection: "row", gap: "s8" }}>
         <Box lx={{ flex: 1, minWidth: "s0" }}>
           <TileButton
-            icon={canHide ? EyeCross : Eye}
+            icon={isLoading ? Spinner : canHide ? EyeCross : Eye}
             isFull
-            disabled={reveal.status === "loading"}
+            disabled={isLoading}
             onPress={canHide ? reveal.onHide : reveal.onReveal}
             accessibilityLabel={viewLabel}
           >
@@ -87,6 +88,7 @@ export function OverviewScene({
   onMorePress,
   onTransactionPress,
   onShowMore,
+  onViewRewards,
   formatters,
   disclaimer,
 }: OverviewSceneProps) {
@@ -105,14 +107,15 @@ export function OverviewScene({
         reveal={reveal}
       />
 
-      {assetsViewModel ? <CardAssetsView {...assetsViewModel} /> : null}
-
       <Reward
         formatters={formatters}
         currencies={assets?.currencies}
         getCounterValue={assets?.getCounterValue}
         formatCountervalue={assets?.formatCountervalue}
+        onViewRewards={onViewRewards}
       />
+
+      {assetsViewModel ? <CardAssetsView {...assetsViewModel} /> : null}
 
       <CardTransactions
         formatters={formatters}

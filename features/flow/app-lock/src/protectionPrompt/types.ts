@@ -6,6 +6,7 @@ export type ProtectionPromptViewModel = Readonly<{
   isOpen: boolean;
   variant: ProtectionPromptVariant;
   biometricsKind?: BiometricsKind;
+  isConfirming: boolean;
   onConfirm: () => void;
   onClose: () => void;
 }>;
@@ -14,7 +15,7 @@ export type UseProtectionPromptViewModelOptions = Readonly<{
   isRequested: boolean;
   isProtected: boolean;
   biometrics: BiometricsAvailability | undefined;
-  onEnableBiometrics: () => void;
+  onEnableBiometrics: () => Promise<void> | void;
   onCreatePassword: () => void;
   onDismiss: () => void;
 }>;

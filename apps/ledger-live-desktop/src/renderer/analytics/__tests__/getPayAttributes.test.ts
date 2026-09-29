@@ -1,26 +1,36 @@
 import { cardManagementApi } from "@domain/api-card-management";
+import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashback";
 import { documentedPayCardTransaction } from "@domain/api-card-management/mock/card-transactions";
 import { getPayAttributes } from "../getPayAttributes";
 
 describe("getPayAttributes", () => {
   const unsigned = {
-    payCardAuth: { hasCard: false, pendingLoginType: null, status: "signedOut" as const },
+    payCardAuth: {
+      hasCard: false,
+      pendingLoginType: null,
+      status: "signedOut" as const,
+      isSessionResolving: false,
+    },
   };
+  const accountsWithUsdc = [
+    {
+      balance: { gt: () => false },
+      currency: { ticker: "ETH" },
+      subAccounts: [{ balance: { gt: () => true }, token: { ticker: "USDC" } }],
+    },
+  ];
 
   it("should send only featureFlagPay when the Pay flag is off", () => {
-    expect(getPayAttributes(unsigned, false, ["USDC"])).toEqual({ featureFlagPay: false });
+    expect(getPayAttributes(unsigned, false, accountsWithUsdc)).toEqual({ featureFlagPay: false });
   });
 
   it("should send Pay user properties when the Pay flag is on", () => {
-    expect(getPayAttributes(unsigned, true, ["USDC"])).toEqual(
-      expect.objectContaining({
-        featureFlagPay: true,
-        hasStable: true,
-        hasCard: false,
-        cardLoggedIn: false,
-        cardRewardCurrency: null,
-      }),
-    );
+    expect(getPayAttributes(unsigned, true, accountsWithUsdc)).toEqual({
+      featureFlagPay: true,
+      hasStable: true,
+      hasCard: false,
+      cardLoggedIn: false,
+    });
   });
 
   it("counts the cached transactions, which the endpoint holds in pages", () => {
@@ -38,8 +48,26 @@ describe("getPayAttributes", () => {
       },
     };
 
-    expect(getPayAttributes(withOnePage, true, ["USDC"])).toEqual(
+    expect(getPayAttributes(withOnePage, true, accountsWithUsdc)).toEqual(
       expect.objectContaining({ has_tx: true }),
+    );
+  });
+
+  it("reads the cached cashback, which is what the reward banner fetches", () => {
+    const withCashback = {
+      ...unsigned,
+      [cardManagementApi.reducerPath]: {
+        queries: {
+          "getCardCashback(undefined)": {
+            status: "fulfilled",
+            data: mockPayCardCashback(),
+          },
+        },
+      },
+    };
+
+    expect(getPayAttributes(withCashback, true, accountsWithUsdc)).toEqual(
+      expect.objectContaining({ cardRewardsAvailable: true, cardRewardCurrency: "BTC" }),
     );
   });
 });

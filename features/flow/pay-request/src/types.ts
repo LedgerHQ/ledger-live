@@ -1,12 +1,10 @@
 import type { RefObject } from "react";
 import type { AddressParts } from "./utils/splitAddress";
 
-export type PayRequestTrackEvent = (event: string, params: Record<string, unknown>) => void;
-
 export type VerifyAddressPhase = "hidden" | "intro" | "success";
 
 /** Single digit index of a "Next steps" entry, matching the design-system numbered Spot. */
-export type VerifyAddressNextStepIndex = 1 | 2;
+export type VerifyAddressNextStepIndex = 1 | 2 | 3;
 
 export type VerifyAddressNextStep = Readonly<{
   index: VerifyAddressNextStepIndex;
@@ -26,9 +24,6 @@ export type VerifyAddressProps = Readonly<{
   /** Host closes the success overlay. */
   onGotIt: () => void;
   onClose: () => void;
-  onTrackEvent?: PayRequestTrackEvent;
-  /** Native only: Android 3-button nav / iOS home indicator. */
-  bottomInset?: number;
 }>;
 
 export type VerifyAddressViewModel = Readonly<{
@@ -53,7 +48,6 @@ export type VerifyAddressIntroViewProps = Readonly<{
   verifyCta: string;
   onVerify: () => void;
   onClose: () => void;
-  bottomInset?: number;
 }>;
 
 export type VerifyAddressSuccessViewProps = Readonly<{
@@ -64,7 +58,6 @@ export type VerifyAddressSuccessViewProps = Readonly<{
   gotItCta: string;
   onGotIt: () => void;
   onClose: () => void;
-  bottomInset?: number;
 }>;
 
 /**
@@ -90,7 +83,6 @@ export type RequestReceiveViewModelParams = RequestActionCallbacks &
     asset: RequestReceiveAsset;
     network: string;
     page: string;
-    onTrackEvent?: PayRequestTrackEvent;
   }>;
 
 export type RequestReceiveViewModel = Readonly<{

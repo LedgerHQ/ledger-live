@@ -332,7 +332,7 @@ describe("groupStakedSuiByPool", () => {
     expect(result[0].stakes[0].status).toBe("Active");
   });
 
-  it("should derive stakeRequestEpoch as activation - 1 (JSON-RPC convention)", () => {
+  it("should derive stakeRequestEpoch as activation - 1", () => {
     // GIVEN / WHEN
     const result = groupStakedSuiByPool(
       [stake("0xs", "0xp", 50)],
@@ -596,7 +596,7 @@ describe("computeApy", () => {
     expect(apy).toBe(0);
   });
 
-  it("should match known JSON-RPC values within tolerance for a realistic pool", () => {
+  it("should match known reference values within tolerance for a realistic pool", () => {
     // GIVEN
     // 0.3% growth over 30 epochs annualises to ~3.7%, in the 2-4% real-world band.
     const currentRate = { sui_amount: "10030000000000000", pool_token_amount: "10000000000000000" };

@@ -23,7 +23,7 @@ const INPUT: RegisterExternalAddressIntentInput = {
   chainId: 1,
 };
 
-function startJob(input: RegisterExternalAddressIntentInput = INPUT) {
+function startJob(input: RegisterExternalAddressIntentInput = INPUT, currentAppName = "Ethereum") {
   const subject = new Subject<unknown>();
   const cancel = jest.fn();
   const registerExternalAddress = jest.fn(() => ({ observable: subject.asObservable(), cancel }));
@@ -47,7 +47,7 @@ function startJob(input: RegisterExternalAddressIntentInput = INPUT) {
     deviceExtractedContext: {
       currentOsVersion: "1.0.0",
       osUpdateAvailable: false,
-      currentAppName: "Ethereum",
+      currentAppName,
       currentAppVersion: "1.16.0",
     },
     input,
@@ -98,6 +98,20 @@ const REJECTION = {
     message: "SWO_INCORRECT_DATA",
   },
 };
+
+const TRON_INPUT: RegisterExternalAddressIntentInput = {
+  contactName: "Alice",
+  scope: "Main",
+  address: "TUjT4fqfNmuCq5wnPfgZayswhGTBcF3U11",
+  blockchainFamily: "tron",
+  chainId: 195,
+};
+
+// The 21-byte 0x41-prefixed form of TRON_INPUT.address.
+const TRON_IDENTIFIER = new Uint8Array([
+  0x41, 0xcd, 0xd0, 0x4e, 0x15, 0x80, 0xf2, 0xae, 0x34, 0x47, 0xaa, 0x71, 0x29, 0xa2, 0x1a, 0xa5,
+  0x7a, 0x92, 0xbe, 0x6c, 0x14,
+]);
 
 function lastRejection(job: ReturnType<typeof startJob>) {
   const state = [...job.states].reverse().find(s => s.type === "device-rejected");
@@ -466,5 +480,51 @@ describe("registerExternalAddressIntentJob", () => {
     });
     expect(job.isCompleted()).toBe(true);
     expect(job.getError()).toBeUndefined();
+  });
+
+  describe("GIVEN a Tron address", () => {
+    it("WHEN registering THEN it sends the decoded 21-byte identifier and no chainId", () => {
+      // WHEN
+      const job = startJob(TRON_INPUT, "Tron");
+
+      // THEN
+      expect(job.registerExternalAddress).toHaveBeenCalledWith(
+        expect.objectContaining({
+          identifier: TRON_IDENTIFIER,
+          blockchainFamily: "tron",
+          chainId: undefined,
+        }),
+      );
+    });
+
+    it("WHEN the device completes THEN the result keeps the base58 address and Ledger Wallet's chainId", () => {
+      // GIVEN
+      const job = startJob(TRON_INPUT, "Tron");
+
+      // WHEN
+      job.emit(COMPLETION);
+
+      // THEN
+      expect(job.onResult).toHaveBeenCalledWith({
+        type: "success",
+        result: expect.objectContaining({
+          address: TRON_INPUT.address,
+          blockchainFamily: "tron",
+          chainId: 195,
+        }),
+      });
+    });
+
+    it("WHEN its checksum is wrong THEN it fails immediately without calling the kit", () => {
+      // WHEN
+      const job = startJob(
+        { ...TRON_INPUT, address: "TUjT4fqfNmuCq5wnPfgZayswhGTBcF3U12" },
+        "Tron",
+      );
+
+      // THEN
+      expect(job.registerExternalAddress).not.toHaveBeenCalled();
+      expect(job.states).toContainEqual({ type: "invalid-input", error: expect.any(Error) });
+    });
   });
 });

@@ -12,7 +12,7 @@ import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { UiHook, SetCurrentAccountHistDb } from "./react";
 import BigNumber from "bignumber.js";
-import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
+import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic-public";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";

@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   changeset-validation:
-    name: Changeset Validation
+    name: CODEOWNERS & Changeset Validation
     runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -42,6 +42,10 @@ jobs:
 
       - name: Validate Changesets
         uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@develop
+
+      - name: Validate CODEOWNERS
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-codeowners@develop
 
   changes:
     name: Detect Workflow File Changes

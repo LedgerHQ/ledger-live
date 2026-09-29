@@ -19,6 +19,7 @@ export function EnableProtectionSheet({
   isOpen,
   variant,
   biometricsKind,
+  isConfirming,
   reason,
   bottomInset = 0,
   onConfirm,
@@ -66,6 +67,7 @@ export function EnableProtectionSheet({
               primaryCta={{
                 label: cta,
                 onPress: onConfirm,
+                loading: isConfirming,
                 testID: "app-lock-enable-protection-confirm",
               }}
               testID="app-lock-enable-protection-content"

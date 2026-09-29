@@ -3,6 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { contactsSlice } from "@domain/entity-contact";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import {
   mockContactWithAddress,
   mockContactWithMultipleAddresses,
@@ -34,7 +35,10 @@ function makeWrapper(contacts: ReturnType<typeof contactsSlice.getInitialState>[
   });
 
   return function Wrapper({ children }: { readonly children: ReactNode }) {
-    return createElement(Provider, { store, children });
+    return createElement(Provider, {
+      store,
+      children: createElement(ContactsI18nTestProvider, { children }),
+    });
   };
 }
 
