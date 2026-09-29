@@ -13,4 +13,4 @@ boot (fixed upstream in v3.24.0, stx-labs/clarinet#2529).
 The patched Clarinet build also redirected the stacks-node's burnchain RPC straight to bitcoind.
 That port is Clarinet's own Bitcoin RPC proxy, which mines the next block whenever it relays a
 miner's block-commit; bypassing it is what stalled mining and required the external
-`bitcoin-miner.js` workaround, now opt-in only.
+`bitcoin-miner.js` workaround, which is removed.

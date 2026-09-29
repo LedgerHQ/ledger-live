@@ -118,16 +118,21 @@ function ensureClarinetBinary(): string {
   } else {
     const sourceDir = path.join(CACHE_DIR, "src");
     if (!fs.existsSync(sourceDir)) {
+      // Prepared in a scratch directory and only renamed to `src` once cloned, checked out and
+      // fully patched, so an existing `src` always is the pinned, patched tree: a clone or patch
+      // that fails halfway leaves only `src.partial`, which the next attempt starts over from.
+      const partialDir = `${sourceDir}.partial`;
+      fs.rmSync(partialDir, { recursive: true, force: true });
       const clone = spawnSync(
         "git",
-        ["clone", "https://github.com/stx-labs/clarinet.git", sourceDir],
+        ["clone", "https://github.com/stx-labs/clarinet.git", partialDir],
         { stdio: "inherit" },
       );
       if (clone.status !== 0) {
         throw new Error("coin-tester-stacks: failed to clone stx-labs/clarinet");
       }
       const checkout = spawnSync("git", ["checkout", readDockerfileArg("CLARINET_COMMIT")], {
-        cwd: sourceDir,
+        cwd: partialDir,
         stdio: "inherit",
       });
       if (checkout.status !== 0) {
@@ -135,13 +140,14 @@ function ensureClarinetBinary(): string {
       }
       for (const patch of CLARINET_PATCHES) {
         const apply = spawnSync("git", ["apply", path.join(DOCKER_DIR, patch)], {
-          cwd: sourceDir,
+          cwd: partialDir,
           stdio: "inherit",
         });
         if (apply.status !== 0) {
           throw new Error(`coin-tester-stacks: failed to apply ${patch}`);
         }
       }
+      fs.renameSync(partialDir, sourceDir);
     }
 
     const RUST_TOOLCHAIN = readDockerfileArg("RUST_TOOLCHAIN");

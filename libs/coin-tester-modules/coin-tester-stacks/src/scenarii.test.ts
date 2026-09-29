@@ -4,10 +4,12 @@ import { scenarioStacks, scenarioStacksStaking } from "./scenarii/stacks";
 
 global.console = require("console");
 // Per-scenario budget. A scenario takes well under a minute on the snapshot-booted devnet
-// (`spawnDevnet`); 20 minutes stays above its own contract wait (5 min, `scenarii/stacks.ts`) and
-// several transactions' worth of indexer retries (up to 7.5 min each, `retryLimit`/
-// `retryInterval`), so a stuck scenario fails on its own, more specific timeout first.
-jest.setTimeout(20 * 60 * 1000);
+// (`spawnDevnet`), but this must stay above its own worst case so a slow indexer fails on the
+// scenario's own, more specific timeouts first: the send scenario's 5-minute contract wait plus
+// four transactions of up to 7.5 minutes of retries each (`retryLimit`/`retryInterval`, 35 min);
+// the staking scenario's contract wait, two signer-manager setup transactions (up to 5 min each)
+// and two retried transactions (30 min).
+jest.setTimeout(40 * 60 * 1000);
 
 // One devnet for every scenario below. Scenarios share the chain but never an account -- each
 // signs with its own sender (`fixtures.ts`'s `SENDER_PRIVATE_KEYS`, `STAKER_PRIVATE_KEY`), so none
