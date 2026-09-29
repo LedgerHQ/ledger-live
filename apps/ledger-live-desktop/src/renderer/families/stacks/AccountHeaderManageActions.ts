@@ -42,7 +42,12 @@ const AccountHeaderManageActions: StacksFamily["accountHeaderManageActions"] = (
   // decided, authoritatively, by the API layer. Deriving a second, independent "active" check here
   // would duplicate that same uncertain assumption instead of just reading its outcome -- if the
   // heuristic or its mapping to `actions` ever changes, this follows it automatically.
-  const canStake = !stakingPosition;
+  //
+  // `stakingPositions` is omitted (not `[]`) when the lookup itself failed -- see
+  // synchronization.ts's getAccountShape -- so `!stakingPosition` alone can't tell "no position"
+  // apart from "position unknown". Gate on the key's presence too, so a transient lookup failure
+  // hides Stake instead of wrongly re-exposing it.
+  const canStake = account.stakingPositions !== undefined && !stakingPosition;
   const canUnstake = !!stakingPosition?.actions?.includes("undelegate");
 
   return [

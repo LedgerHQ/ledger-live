@@ -27,8 +27,8 @@ describe("AccountHeaderManageActions (stacks)", () => {
     expect(result.current).toBeNull();
   });
 
-  it("returns exactly one action (Stake) when there is no staking position", () => {
-    const account = makeAccount(undefined);
+  it("returns exactly one action (Stake) when the lookup succeeded with no staking position", () => {
+    const account = makeAccount([]);
     const { result, store } = renderHook(() =>
       hook({ account, parentAccount: null, source: "Account Page" }),
     );
@@ -47,6 +47,15 @@ describe("AccountHeaderManageActions (stacks)", () => {
         data: expect.objectContaining({ account }),
       }),
     );
+  });
+
+  it("returns zero actions when the staking lookup itself failed (stakingPositions omitted): a stale sync must not re-expose Stake, since pox-5 may still reject it with ERR_ALREADY_STAKED", () => {
+    const account = makeAccount(undefined);
+    const { result } = renderHook(() =>
+      hook({ account, parentAccount: null, source: "Account Page" }),
+    );
+
+    expect(result.current).toHaveLength(0);
   });
 
   it("returns exactly one action (Unstake, not Stake) when an active staking position exists; a second `stake` would abort on-chain with ERR_ALREADY_STAKED", () => {
