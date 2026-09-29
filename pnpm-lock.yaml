@@ -5925,6 +5925,9 @@ importers:
       '@shared/analytics':
         specifier: workspace:*
         version: link:../../../shared/analytics
+      '@shared/analytics-react':
+        specifier: workspace:*
+        version: link:../../../shared/analytics-react
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n

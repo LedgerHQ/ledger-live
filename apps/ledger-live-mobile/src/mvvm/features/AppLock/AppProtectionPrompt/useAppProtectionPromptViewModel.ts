@@ -96,12 +96,19 @@ export function useAppProtectionPromptViewModel(): AppProtectionPromptViewModel 
   const biometricsType = useBiometricsTypeLabel(biometricsKind);
 
   const onEnableBiometrics = useCallback(async () => {
-    await enable({
-      reason: t("appLock.biometrics.prompt", { biometricsType }),
-      fallback: t("appLock.biometrics.useDeviceCredential"),
-      cancel: t("common.cancel"),
-    });
-  }, [biometricsType, enable, t]);
+    if (!request) {
+      return;
+    }
+
+    await enable(
+      {
+        reason: t("appLock.biometrics.prompt", { biometricsType }),
+        fallback: t("appLock.biometrics.useDeviceCredential"),
+        cancel: t("common.cancel"),
+      },
+      request.source,
+    );
+  }, [biometricsType, enable, request, t]);
 
   const pendingExitRef = useRef<Readonly<{
     timer: ReturnType<typeof setTimeout>;
