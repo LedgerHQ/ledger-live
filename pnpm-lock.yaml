@@ -397,8 +397,8 @@ catalogs:
       specifier: 3.9.0
       version: 3.9.0
     axios:
-      specifier: 1.13.5
-      version: 1.13.5
+      specifier: 1.20.0
+      version: 1.20.0
     babel-jest:
       specifier: 30.5.0
       version: 30.5.0
@@ -857,7 +857,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -1132,13 +1132,13 @@ importers:
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 7.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
+        version: 7.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-zcash
@@ -1204,7 +1204,7 @@ importers:
         version: link:../../libs/live-dmk-speculos
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/live-send':
         specifier: workspace:^
         version: link:../../libs/live-send
@@ -1637,7 +1637,7 @@ importers:
         version: 10.4.22(postcss@8.5.6)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       buffer:
         specifier: 'catalog:'
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -1989,13 +1989,13 @@ importers:
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 7.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
+        version: 7.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-multiversx
@@ -2079,7 +2079,7 @@ importers:
         version: link:../../libs/live-hooks
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/live-send':
         specifier: workspace:^
         version: link:../../libs/live-send
@@ -2229,7 +2229,7 @@ importers:
         version: 1.3.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -5616,7 +5616,7 @@ importers:
         version: 3.9.0(@playwright/test@1.60.0)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -9386,7 +9386,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       command-line-args:
         specifier: 6.0.1
         version: 6.0.1
@@ -9396,7 +9396,7 @@ importers:
     devDependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
@@ -9429,7 +9429,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -9444,7 +9444,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -9456,7 +9456,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -9465,7 +9465,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -9520,7 +9520,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -9529,7 +9529,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -9538,7 +9538,7 @@ importers:
         version: 3.5.2
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -9602,7 +9602,7 @@ importers:
         version: 3.1.3(got@11.8.5)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -9614,7 +9614,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -9626,7 +9626,7 @@ importers:
         version: 1.8.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -9696,7 +9696,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -9705,7 +9705,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/live-signer-zcash':
         specifier: workspace:^
         version: link:../../live-signer-zcash
@@ -9726,7 +9726,7 @@ importers:
         version: 1.8.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -9841,7 +9841,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -9856,7 +9856,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -9865,7 +9865,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -9926,7 +9926,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -9935,7 +9935,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -9953,7 +9953,7 @@ importers:
         version: 3.0.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -10014,13 +10014,13 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -10029,7 +10029,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10093,10 +10093,10 @@ importers:
         version: 14.0.1
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 7.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
+        version: 7.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -10114,7 +10114,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -10123,7 +10123,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10202,7 +10202,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/concordium-core':
         specifier: workspace:^
         version: link:../../concordium-core
@@ -10214,7 +10214,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -10229,7 +10229,7 @@ importers:
         version: 2.23.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10302,7 +10302,7 @@ importers:
         version: 0.12.306
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -10314,7 +10314,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -10323,7 +10323,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -10393,7 +10393,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -10405,7 +10405,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -10417,7 +10417,7 @@ importers:
         version: 8.1.0-zondax-no-bigint
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10484,7 +10484,7 @@ importers:
         version: 2.78.0
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -10496,7 +10496,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -10505,7 +10505,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10569,7 +10569,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -10578,7 +10578,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -10587,7 +10587,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10715,7 +10715,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -10733,7 +10733,7 @@ importers:
         version: 1.2.0
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -10745,7 +10745,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -10754,7 +10754,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10839,13 +10839,13 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -10854,7 +10854,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -10921,7 +10921,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -10933,7 +10933,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -10973,7 +10973,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -10997,7 +10997,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -11009,7 +11009,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11021,7 +11021,7 @@ importers:
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -11088,13 +11088,13 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11103,7 +11103,7 @@ importers:
         version: link:../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11161,13 +11161,13 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11197,7 +11197,7 @@ importers:
         version: 14.0.1(@polkadot/util@14.0.1)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11270,7 +11270,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -11282,7 +11282,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11297,7 +11297,7 @@ importers:
         version: 1.99.0(@typescript/typescript6@6.0.2)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11376,7 +11376,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -11385,7 +11385,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11403,7 +11403,7 @@ importers:
         version: 1.0.4
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11476,7 +11476,7 @@ importers:
         version: 1.0.11(graphql@16.13.2)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/hw-app-sui':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-sui
@@ -11488,7 +11488,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11506,7 +11506,7 @@ importers:
         version: 2.11.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11564,7 +11564,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -11573,7 +11573,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -11591,7 +11591,7 @@ importers:
         version: 15.4.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11646,13 +11646,13 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11713,7 +11713,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -11722,7 +11722,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@vechain/sdk-core':
         specifier: 2.0.0
         version: 2.0.0(@typescript/typescript6@6.0.2)
@@ -11731,7 +11731,7 @@ importers:
         version: 2.0.0(@typescript/typescript6@6.0.2)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11889,7 +11889,7 @@ importers:
     dependencies:
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -11947,7 +11947,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.6.0
@@ -11996,7 +11996,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -12242,7 +12242,7 @@ importers:
         version: link:../../../features/platform/currencies
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 7.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
+        version: 7.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -12257,7 +12257,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../../live-signer-evm
@@ -12300,7 +12300,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -12811,7 +12811,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -13106,7 +13106,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -13142,7 +13142,7 @@ importers:
         version: 3.9.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/live-signer-zcash':
         specifier: workspace:^
         version: link:../../live-signer-zcash
@@ -13200,7 +13200,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bs58check:
         specifier: ^4.0.0
         version: 4.0.0
@@ -13283,7 +13283,7 @@ importers:
         version: 6.36.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -13326,7 +13326,7 @@ importers:
         version: 2.4.4
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -13454,7 +13454,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -13617,7 +13617,7 @@ importers:
         version: 6.19.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       ws:
         specifier: 'catalog:'
         version: 8.18.3
@@ -13663,7 +13663,7 @@ importers:
         version: 6.36.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -13718,7 +13718,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bip39:
         specifier: ^3.0.4
         version: 3.1.0
@@ -13832,7 +13832,7 @@ importers:
         version: link:../coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 7.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
+        version: 7.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../coin-modules/coin-filecoin
@@ -13841,7 +13841,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 3.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 3.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -13856,7 +13856,7 @@ importers:
         version: link:../coin-modules/coin-mina
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../coin-modules/coin-multiversx
@@ -13874,13 +13874,13 @@ importers:
         version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 10.0.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 10.0.1(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/coin-sui':
         specifier: workspace:^
         version: link:../coin-modules/coin-sui
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 12.0.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 12.0.2(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/coin-ton':
         specifier: workspace:^
         version: link:../coin-modules/coin-ton
@@ -13892,7 +13892,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 11.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 11.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -14012,7 +14012,7 @@ importers:
         version: link:../live-hooks
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/live-promise':
         specifier: 'catalog:'
         version: 0.4.0
@@ -14141,7 +14141,7 @@ importers:
         version: 3.2.5
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -14407,7 +14407,7 @@ importers:
     dependencies:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
@@ -14429,7 +14429,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -14456,7 +14456,7 @@ importers:
     dependencies:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
@@ -14478,7 +14478,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -14505,7 +14505,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -14523,7 +14523,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -14532,7 +14532,7 @@ importers:
         version: link:../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -14623,7 +14623,7 @@ importers:
     dependencies:
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -14801,7 +14801,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -14993,7 +14993,7 @@ importers:
         version: link:../../../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -15238,7 +15238,7 @@ importers:
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -15711,7 +15711,7 @@ importers:
         version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/live-promise':
         specifier: 'catalog:'
         version: 0.4.0
@@ -15751,7 +15751,7 @@ importers:
         version: 19.0.14
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
@@ -16206,7 +16206,7 @@ importers:
         version: link:../../shared/feature-flags
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       ethers:
         specifier: 6.15.0
         version: 6.15.0
@@ -17836,10 +17836,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
       '@ledgerhq/live-network':
         specifier: 'catalog:'
-        version: 3.1.0(axios@1.13.5)
+        version: 3.1.0(axios@1.20.0)
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
@@ -17851,7 +17851,7 @@ importers:
         version: 1.8.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.20.0
       bchaddrjs:
         specifier: ^0.5.2
         version: 0.5.2
@@ -45796,11 +45796,11 @@ snapshots:
       jwt-decode: 4.0.0
       zod: 4.4.3
 
-  '@ledgerhq/coin-evm@7.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-evm@7.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
-      '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
+      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
+      '@ledgerhq/live-network': 3.1.0(axios@1.20.0)
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.5
       bignumber.js: 9.1.2
@@ -45813,11 +45813,11 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@7.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))':
+  '@ledgerhq/coin-evm@7.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
-      '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
+      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
+      '@ledgerhq/live-network': 3.1.0(axios@1.20.0)
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.5
       bignumber.js: 9.1.2
@@ -45830,11 +45830,11 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@7.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))':
+  '@ledgerhq/coin-evm@7.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
-      '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
+      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
+      '@ledgerhq/live-network': 3.1.0(axios@1.20.0)
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.5
       bignumber.js: 9.1.2
@@ -45863,34 +45863,35 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-hypercore@3.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
+  '@ledgerhq/coin-hypercore@3.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))':
     dependencies:
-      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
-      '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
+      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
+      '@ledgerhq/live-network': 3.1.0(axios@1.20.0)
 
   '@ledgerhq/coin-module-framework@9.2.0':
     dependencies:
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-module-framework@9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
+  '@ledgerhq/coin-module-framework@9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))':
     dependencies:
-      '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
+      '@ledgerhq/live-network': 3.1.0(axios@1.20.0)
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-stellar@10.0.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
+  '@ledgerhq/coin-stellar@10.0.1(@ledgerhq/live-network@3.1.0(axios@1.20.0))':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
-      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
-      '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
+      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
+      '@ledgerhq/live-network': 3.1.0(axios@1.20.0)
       '@stellar/stellar-sdk': 14.0.0
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - debug
+      - supports-color
 
-  '@ledgerhq/coin-tezos@12.0.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
+  '@ledgerhq/coin-tezos@12.0.2(@ledgerhq/live-network@3.1.0(axios@1.20.0))':
     dependencies:
-      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
-      '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
+      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
+      '@ledgerhq/live-network': 3.1.0(axios@1.20.0)
       '@taquito/ledger-signer': 23.0.1
       '@taquito/rpc': 23.0.1
       '@taquito/taquito': 23.0.1
@@ -45898,10 +45899,10 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-xrp@11.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
+  '@ledgerhq/coin-xrp@11.0.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))':
     dependencies:
-      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
-      '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
+      '@ledgerhq/coin-module-framework': 9.2.0(@ledgerhq/live-network@3.1.0(axios@1.20.0))
+      '@ledgerhq/live-network': 3.1.0(axios@1.20.0)
       bignumber.js: 9.1.2
       invariant: 2.2.4
       ripple-address-codec: 5.0.0
@@ -46382,11 +46383,11 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@ledgerhq/live-network@3.1.0(axios@1.13.5)':
+  '@ledgerhq/live-network@3.1.0(axios@1.20.0)':
     dependencies:
       '@ledgerhq/live-promise': 0.4.0
       '@ledgerhq/logs': 6.19.0
-      axios: 1.13.5
+      axios: 1.20.0
       lru-cache: 7.18.3
 
   '@ledgerhq/live-promise@0.2.2':
@@ -47055,10 +47056,11 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       '@multiversx/sdk-bls-wasm': 0.3.5
-      axios: 1.13.5
+      axios: 1.20.0
       bip39: 3.1.0
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   '@multiversx/sdk-core@13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)':
     dependencies:
@@ -47079,10 +47081,11 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       '@multiversx/sdk-bls-wasm': 0.3.5
-      axios: 1.13.5
+      axios: 1.20.0
       bip39: 3.1.0
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
     dependencies:
@@ -52499,7 +52502,7 @@ snapshots:
   '@stellar/stellar-sdk@14.0.0':
     dependencies:
       '@stellar/stellar-base': 14.0.0
-      axios: 1.13.5
+      axios: 1.20.0
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       feaxios: 0.0.23
@@ -52508,6 +52511,7 @@ snapshots:
       urijs: 1.19.11
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   '@stricahq/bip32ed25519@1.0.4':
     dependencies:
@@ -53102,13 +53106,14 @@ snapshots:
     dependencies:
       '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.13.5
+      axios: 1.20.0
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
       zod: 4.4.3
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   '@toon-format/toon@2.1.0': {}
 
@@ -54431,9 +54436,10 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': 6.36.0
       '@zondax/ledger-js': 0.8.2
-      axios: 1.13.5
+      axios: 1.20.0
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   JSONStream@1.3.5:
     dependencies:
