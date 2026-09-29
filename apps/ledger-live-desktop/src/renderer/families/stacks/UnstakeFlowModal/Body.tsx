@@ -76,8 +76,11 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
     setTransactionError(null);
     setOptimisticOperation(null);
     setSigned(false);
+    // A fresh reference re-runs prepareTransaction now, instead of waiting out
+    // useBridgeTransaction's own error back-off, so a failed fee preparation is actually retried.
+    if (transaction) setTransaction({ ...transaction });
     onChangeStepId("connectDevice");
-  }, [onChangeStepId]);
+  }, [onChangeStepId, transaction, setTransaction]);
 
   const handleTransactionError = useCallback((error: Error) => {
     if (error?.name !== "UserRefusedOnDevice") {

@@ -68,6 +68,7 @@ type StepperPropsShape = {
   optimisticOperation: unknown;
   error: unknown;
   signed: boolean;
+  transaction: unknown;
 };
 
 const stepperPropsCapture = jest.fn<void, [StepperPropsShape]>();
@@ -200,6 +201,16 @@ describe("UnstakeFlowModal/Body", () => {
     const { props, user } = renderBody();
     await user.click(screen.getByTestId("stepper-retry"));
     expect(props.onChangeStepId).toHaveBeenCalledWith("connectDevice");
+  });
+
+  it("handleRetry hands useBridgeTransaction a fresh transaction reference so a failed fee preparation re-runs now", async () => {
+    const { user } = renderBody();
+    const before = stepperPropsCapture.mock.calls.at(-1)![0].transaction;
+    await user.click(screen.getByTestId("stepper-retry"));
+    expect(setTransaction).toHaveBeenCalledTimes(1);
+    const retried = setTransaction.mock.calls[0][0];
+    expect(retried).toEqual(before);
+    expect(retried).not.toBe(before);
   });
 
   it("clears optimisticOperation and error state when retry is clicked after broadcast/error", async () => {

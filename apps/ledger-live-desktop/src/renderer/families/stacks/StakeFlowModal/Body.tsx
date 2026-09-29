@@ -95,6 +95,9 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
 
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
+  // Kept apart from transactionError so a later successful refresh can clear it without also
+  // wiping a device/signing error.
+  const [poxError, setPoxError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
 
   const handleTransactionError = useCallback((error: Error) => {
@@ -131,6 +134,7 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
       .then(poxInfo => {
         const tx = transactionRef.current;
         if (!isCurrent() || !tx) return;
+        setPoxError(null);
         setTransaction(
           bridge.updateTransaction(tx, {
             familySpecificData: {
@@ -141,9 +145,11 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
         );
       })
       .catch((error: Error) => {
-        if (isCurrent()) handleTransactionError(error);
+        if (!isCurrent()) return;
+        logger.critical(error);
+        setPoxError(error);
       });
-  }, [bridge, setTransaction, handleTransactionError]);
+  }, [bridge, setTransaction]);
 
   // Mirrors StepConnectDevice's own gate: once this is true on the connectDevice step,
   // GenericStepConnectDevice mounts.
@@ -202,6 +208,7 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
 
   const handleRetry = useCallback(() => {
     setTransactionError(null);
+    setPoxError(null);
     setOptimisticOperation(null);
     setSigned(false);
     clearStartBurnHt();
@@ -210,7 +217,7 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
 
   const handleStepChange = useCallback((e: Step) => onChangeStepId(e.id), [onChangeStepId]);
 
-  const error = transactionError || bridgeError;
+  const error = transactionError || poxError || bridgeError;
 
   const stepperProps = {
     title: t("stacks.stake.flow.title"),

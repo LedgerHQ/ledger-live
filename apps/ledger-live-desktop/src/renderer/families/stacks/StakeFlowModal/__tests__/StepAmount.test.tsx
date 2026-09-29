@@ -156,4 +156,22 @@ describe("StakeFlowModal/StepAmountFooter", () => {
     await user.click(button);
     expect(props.transitionTo).toHaveBeenCalledWith("connectDevice");
   });
+
+  it("offers a Retry that calls onRetry when a flow error (e.g. a failed startBurnHt fetch) is present", async () => {
+    // A failed pox fetch leaves startBurnHt unset, so status.errors blocks Continue -- without a
+    // retry here the user would be stuck until the next periodic refresh.
+    const props = makeProps({
+      error: new Error("pox unreachable"),
+      status: makeStatus({ data: new Error("missing startBurnHt") }),
+    });
+    const { container, user } = render(<StepAmountFooter {...props} />);
+    expect(container.querySelector("#stacks-stake-amount-continue-button")).toBeDisabled();
+    await user.click(container.querySelector("#stacks-stake-amount-retry-button")!);
+    expect(props.onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not render Retry when there is no flow error", () => {
+    const { container } = render(<StepAmountFooter {...makeProps()} />);
+    expect(container.querySelector("#stacks-stake-amount-retry-button")).toBeNull();
+  });
 });

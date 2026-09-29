@@ -9,6 +9,7 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
+import RetryButton from "~/renderer/components/RetryButton";
 import { StepProps } from "../types";
 
 const StepAmount = ({
@@ -45,13 +46,25 @@ const StepAmount = ({
   );
 };
 
-export const StepAmountFooter = ({ account, status, bridgePending, transitionTo }: StepProps) => {
+export const StepAmountFooter = ({
+  account,
+  status,
+  bridgePending,
+  error,
+  onRetry,
+  transitionTo,
+}: StepProps) => {
   if (!account) return null;
   const hasErrors = Object.keys(status.errors).length > 0;
   const canNext = !bridgePending && !hasErrors;
   return (
     <>
       <AccountFooter account={account} status={status} />
+      {/* A failed startBurnHt fetch blocks Continue (status.errors.data) -- retry it here rather
+          than leaving the user waiting on the periodic refresh. */}
+      {error ? (
+        <RetryButton id="stacks-stake-amount-retry-button" outlineGrey onClick={onRetry} />
+      ) : null}
       <Button
         id="stacks-stake-amount-continue-button"
         isLoading={bridgePending}

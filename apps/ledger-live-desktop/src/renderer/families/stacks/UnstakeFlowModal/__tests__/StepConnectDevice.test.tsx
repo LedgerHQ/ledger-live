@@ -15,6 +15,14 @@ jest.mock("~/renderer/modals/Send/steps/GenericStepConnectDevice", () => ({
   __esModule: true,
   default: (props: Record<string, unknown>) => genericStepMock(props),
 }));
+jest.mock("~/renderer/components/ErrorDisplay", () => ({
+  __esModule: true,
+  default: ({ onRetry }: { onRetry: () => void }) => (
+    <button data-testid="error-display-retry" onClick={onRetry}>
+      retry
+    </button>
+  ),
+}));
 
 import StepConnectDevice from "../steps/StepConnectDevice";
 
@@ -107,6 +115,36 @@ describe("UnstakeFlowModal/StepConnectDevice", () => {
     });
     expect(screen.queryByText("Preparing transaction…")).not.toBeInTheDocument();
     expect(genericStepMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows a retryable error instead of an endless spinner when fee preparation failed", async () => {
+    // Failed prepare: bridgePending is back to false but fee was never set -- the spinner gate alone
+    // would keep the modal waiting with no way out.
+    const props = makeProps({
+      error: new Error("fee estimation failed"),
+      transaction: makeTx({ fee: undefined, fees: undefined }),
+    });
+    const { user } = render(<StepConnectDevice {...props} />);
+    expect(screen.queryByText("Preparing transaction…")).not.toBeInTheDocument();
+    expect(genericStepMock).not.toHaveBeenCalled();
+    await user.click(screen.getByTestId("error-display-retry"));
+    expect(props.onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the preparing spinner, not the stale error, while a retry's re-prepare is pending", () => {
+    act(() => {
+      render(
+        <StepConnectDevice
+          {...makeProps({
+            error: new Error("fee estimation failed"),
+            bridgePending: true,
+            transaction: makeTx({ fee: undefined }),
+          })}
+        />,
+      );
+    });
+    expect(screen.getByText("Preparing transaction…")).toBeInTheDocument();
+    expect(screen.queryByTestId("error-display-retry")).not.toBeInTheDocument();
   });
 
   it("passes account, transaction, status and the callback props through unchanged once ready", () => {

@@ -412,6 +412,34 @@ describe("StakeFlowModal/Body", () => {
     );
   });
 
+  it("clears a pox fetch failure once a later refresh succeeds, so the amount step isn't left showing a stale error", async () => {
+    fetchPoxInfoMock.mockRejectedValueOnce(new Error("pox unreachable"));
+    seedDelegateTransaction();
+    const { rerender, props } = renderBody({ stepId: "amount" });
+    await waitFor(() =>
+      expect(stepperPropsCapture).toHaveBeenLastCalledWith(
+        expect.objectContaining({ error: expect.any(Error) }),
+      ),
+    );
+
+    // Re-run the refresh effect without going through handleRetry (which clears the error itself),
+    // so this proves the successful refresh is what clears it.
+    fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 124000 });
+    currentTransaction = { ...currentTransaction, mode: undefined } as Transaction;
+    rerender(<Body {...props} stepId="amount" />);
+    currentTransaction = { ...currentTransaction, mode: "delegate" } as Transaction;
+    rerender(<Body {...props} stepId="amount" />);
+
+    await waitFor(() =>
+      expect(stepperPropsCapture).toHaveBeenLastCalledWith(
+        expect.objectContaining({ error: null }),
+      ),
+    );
+    expect(setTransaction).toHaveBeenLastCalledWith(
+      expect.objectContaining({ familySpecificData: { numCycles: 1, startBurnHt: 124000 } }),
+    );
+  });
+
   it("logs critical when transaction error is not a UserRefusedOnDevice", async () => {
     const { user } = renderBody();
     await user.click(screen.getByTestId("stepper-tx-error"));
