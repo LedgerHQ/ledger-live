@@ -22,7 +22,7 @@ test.describe("My Ledger — device information", () => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.waitForDashboard();
 
-      await app.myLedger.expectDeviceSummary(mockDevice.name);
+      await app.myLedger.expectDeviceSummary(mockDevice.name!);
       await app.myLedger.expectStorageSummary(2);
     },
   );
