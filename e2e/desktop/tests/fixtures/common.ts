@@ -269,7 +269,10 @@ export const test = base.extend<TestFixtures>({
     delete env[CARD_SESSION_BOOTSTRAP_ENV];
 
     if (injectCardSession) {
-      // only inject card session if requested
+      const { BAANX_TEST_API_URL, BAANX_TEST_CLIENT_KEY } = process.env;
+      env["CARD_BAANX_API_URL"] = BAANX_TEST_API_URL || "https://dev.api.baanx.com";
+      env["CARD_BAANX_CLIENT_KEY"] =
+        BAANX_TEST_CLIENT_KEY || "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6";
       env[CARD_SESSION_BOOTSTRAP_ENV] = await resolveCardSessionBootstrap();
     }
 
