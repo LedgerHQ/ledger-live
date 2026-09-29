@@ -68,6 +68,15 @@
         },
         "release": {
           "args": "--release"
+        },
+        "nightly-mas": {
+          "args": "--nightly --mas"
+        },
+        "pre-mas": {
+          "args": "--pre --mas"
+        },
+        "release-mas": {
+          "args": "--release --mas"
         }
       }
     },
@@ -87,6 +96,15 @@
         },
         "release": {
           "args": "--release"
+        },
+        "nightly-mas": {
+          "args": "--nightly --mas"
+        },
+        "pre-mas": {
+          "args": "--pre --mas"
+        },
+        "release-mas": {
+          "args": "--release --mas"
         }
       }
     }
