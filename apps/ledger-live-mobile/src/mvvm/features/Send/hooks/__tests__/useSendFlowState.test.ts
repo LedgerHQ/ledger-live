@@ -28,6 +28,7 @@ const mockBusinessLogicResult = {
     setTransaction: jest.fn(),
     setRecipient: jest.fn(),
     setAccount: jest.fn(),
+    updateAccount: jest.fn(),
   },
   operation: {
     onOperationBroadcasted: jest.fn(),
