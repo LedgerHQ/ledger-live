@@ -45,6 +45,30 @@ describe("usePendingTransferProposalsDetailsViewModel", () => {
     });
   });
 
+  describe("isExpired", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it("should flip to true when the deadline passes while the drawer is open", () => {
+      const proposal = createProcessedProposal({
+        expiresAtMicros: (Date.now() + 1000) * 1000,
+        isExpired: false,
+      });
+      const { result } = renderViewModel(proposal);
+      expect(result.current.isExpired).toBe(false);
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      expect(result.current.isExpired).toBe(true);
+    });
+  });
+
   describe("handleAction", () => {
     it("should call onOpenModal with the proposal contractId and the given action", () => {
       const proposal = createProcessedProposal({ contractId: "contract-xyz" });

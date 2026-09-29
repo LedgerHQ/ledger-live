@@ -7634,6 +7634,10 @@
       "title": "Operation denied on device",
       "description": "Please retry or contact Ledger Support if in doubt"
     },
+    "TransferOfferExpiredError": {
+      "title": "This offer has expired",
+      "description": "The transfer offer expired before it was accepted. Ask the sender to send a new one."
+    },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
       "description": "Please try again or contact Ledger Support if in doubt"

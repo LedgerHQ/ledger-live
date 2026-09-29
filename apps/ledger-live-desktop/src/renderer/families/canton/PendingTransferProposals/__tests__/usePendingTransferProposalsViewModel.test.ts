@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { TopologyChangeError } from "@ledgerhq/coin-canton";
+import { TopologyChangeError, TransferOfferExpiredError } from "@ledgerhq/coin-canton";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCantonAcceptOrRejectOffer } from "@ledgerhq/live-common/families/canton/react";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
@@ -177,6 +177,34 @@ describe("usePendingTransferProposalsViewModel", () => {
       await waitFor(() => {
         expect(mockHandleTopologyChangeError).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe("TransferOfferExpiredError", () => {
+    it("should sync the account and rethrow so the modal shows the error", async () => {
+      const error = new TransferOfferExpiredError();
+      mockPerformTransferInstruction.mockRejectedValue(error);
+
+      const { result } = renderHook(
+        () => usePendingTransferProposalsViewModel(mockAccount, mockAccount),
+        { initialState: buildInitialState() },
+      );
+
+      act(() => {
+        result.current.onOpenModal("contract-123", "accept");
+      });
+
+      await act(async () => {
+        await expect(result.current.onDeviceConfirm("device-id")).rejects.toBe(error);
+      });
+
+      expect(mockSync).toHaveBeenCalledWith({
+        type: "SYNC_ONE_ACCOUNT",
+        accountId: mockAccount.id,
+        priority: 10,
+        reason: "canton-pending-transaction-action",
+      });
+      expect(mockHandleTopologyChangeError).not.toHaveBeenCalled();
     });
   });
 

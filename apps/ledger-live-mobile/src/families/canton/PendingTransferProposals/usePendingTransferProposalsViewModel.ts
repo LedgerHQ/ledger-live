@@ -194,6 +194,14 @@ export function usePendingTransferProposalsViewModel({
           redirectToReonboarding(action, contractId);
           return;
         }
+        if ((error as { name?: string })?.name === "TransferOfferExpiredError") {
+          sync({
+            type: "SYNC_ONE_ACCOUNT",
+            accountId: account.id,
+            priority: 10,
+            reason: "canton-pending-transaction-action",
+          });
+        }
         throw error;
       }
     },

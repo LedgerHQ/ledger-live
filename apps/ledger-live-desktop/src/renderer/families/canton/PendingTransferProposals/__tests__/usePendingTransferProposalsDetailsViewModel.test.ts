@@ -55,6 +55,25 @@ describe("usePendingTransferProposalsDetailsViewModel", () => {
     expect(result.current.timeRemaining).toBe("");
   });
 
+  it("should flip isExpired when the deadline passes while the drawer is open", () => {
+    jest.useFakeTimers();
+    try {
+      const proposal = createProcessedProposal({
+        expiresAtMicros: (Date.now() + 1000) * 1000,
+        isExpired: false,
+      });
+      const { result } = renderViewModel(proposal);
+      expect(result.current.isExpired).toBe(false);
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      expect(result.current.isExpired).toBe(true);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it("should return an empty string for timeRemaining when proposal is null", () => {
     const { result } = renderHook(() =>
       usePendingTransferProposalsDetailsViewModel({

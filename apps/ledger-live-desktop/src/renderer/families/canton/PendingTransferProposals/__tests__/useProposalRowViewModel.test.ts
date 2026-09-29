@@ -124,6 +124,38 @@ describe("useProposalRowViewModel", () => {
     expect(mockOnOpenModal).not.toHaveBeenCalled();
   });
 
+  describe("when the deadline passes while the row is mounted", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it("should flip isExpired and stop opening the accept modal", () => {
+      const proposal = createProcessedProposal({
+        contractId: "contract-abc",
+        expiresAtMicros: (Date.now() + 2000) * 1000,
+        isExpired: false,
+      });
+      const mockEvent = { stopPropagation: jest.fn() } as unknown as React.MouseEvent;
+
+      const { result } = renderVM(proposal);
+      expect(result.current.isExpired).toBe(false);
+
+      act(() => {
+        jest.advanceTimersByTime(2000);
+      });
+      expect(result.current.isExpired).toBe(true);
+
+      act(() => {
+        result.current.handleAcceptClick(mockEvent);
+      });
+      expect(mockOnOpenModal).not.toHaveBeenCalled();
+    });
+  });
+
   it("should call onOpenModal with withdraw on handleWithdrawClick", () => {
     const proposal = createProcessedProposal({
       contractId: "contract-abc",

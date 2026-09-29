@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-explicit-any */
-import { TopologyChangeError } from "@ledgerhq/coin-canton/types/errors";
+import { TopologyChangeError, TransferOfferExpiredError } from "@ledgerhq/coin-canton/types/errors";
 import { useFeature } from "@features/platform-feature-flags";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
@@ -288,6 +288,29 @@ describe("usePendingTransferProposalsViewModel", () => {
           await result.current.onDeviceConfirm("device-1");
         }),
       ).rejects.toThrow("network failure");
+      expect(mockSync).not.toHaveBeenCalled();
+    });
+
+    it("should sync the account and re-throw on TransferOfferExpiredError", async () => {
+      mockPerformTransferInstruction.mockRejectedValueOnce(new TransferOfferExpiredError());
+      const { result } = renderViewModel();
+
+      act(() => {
+        result.current.onOpenModal("contract-abc", "accept");
+      });
+
+      await expect(
+        act(async () => {
+          await result.current.onDeviceConfirm("device-1");
+        }),
+      ).rejects.toThrow(TransferOfferExpiredError);
+      expect(mockSync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "SYNC_ONE_ACCOUNT",
+          accountId: account.id,
+          reason: "canton-pending-transaction-action",
+        }),
+      );
     });
   });
 

@@ -1163,6 +1163,10 @@
       "title": "Transaction refused on device",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "TransferOfferExpiredError": {
+      "title": "This offer has expired",
+      "description": "The transfer offer expired before it was accepted. Ask the sender to send a new one."
+    },
     "TransportError": {
       "title": "Something went wrong. Please reconnect your device.",
       "description": "{{message}} Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."

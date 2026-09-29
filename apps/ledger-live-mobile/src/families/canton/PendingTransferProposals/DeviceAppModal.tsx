@@ -82,6 +82,19 @@ export function View({
   }
 
   if (confirmationState === "error" && error) {
+    if (error.name === "TransferOfferExpiredError") {
+      return (
+        <GenericErrorBottomModal
+          error={error}
+          onClose={onClose}
+          footerButtons={
+            <Button type="main" onPress={onClose} mt={4}>
+              <Trans i18nKey="common.close" />
+            </Button>
+          }
+        />
+      );
+    }
     return (
       <GenericErrorBottomModal
         error={error}
