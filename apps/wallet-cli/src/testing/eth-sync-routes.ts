@@ -1,7 +1,7 @@
 import type { Route } from "./mock-server";
 
 // HTTP routes required by EVM bridge sync (getAccountShape + getTokensSyncHash).
-// Used by discover, receive --verify, and send command contract tests.
+// Used by discover, receive --verify, and send command CLI tests.
 export const ETH_SYNC_ROUTES: Route[] = [
   {
     method: "GET",

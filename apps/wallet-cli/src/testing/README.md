@@ -14,9 +14,9 @@ binary.
 | `constants`, `cal-fixtures`, `eth-sync-routes` | Fixed addresses, descriptors, token info and sync routes |
 | `human-device-error-exit` | Standalone script spawned to assert human-output exit codes |
 
-## Contract tests
+## CLI tests
 
-Tests that drive the CLI through `runCli` carry a `.contract.test.ts` suffix to
+Tests that drive the CLI through `runCli` carry a `.cli.test.ts` suffix to
 set them apart from unit tests. Each treats the CLI as a black box: given known
 flags and mocked infrastructure, it must produce the expected output and exit
 code. A test that calls a command's function directly is a unit test and keeps
