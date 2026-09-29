@@ -30,9 +30,17 @@ import { Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import KeyboardView from "~/components/KeyboardView";
+import {
+  clearContentAbTestOverrides,
+  hasContentAbTestOverrides,
+} from "@features/platform-content-ab-tests";
 import FeatureFlagDetails, { TagDisabled, TagEnabled } from "./FeatureFlagDetails";
 import Alert from "~/components/Alert";
 import GroupedFeatures from "./GroupedFeatures";
+import ContentAbTestDetails, { CONTENT_AB_TESTS_GROUP } from "./ContentAbTestDetails";
+import ContentAbTestsGroup from "./ContentAbTestsGroup";
+import { refreshMountedScreens } from "./refreshMountedScreens";
+import { useContentAbTests } from "./useContentAbTests";
 import { objectKeysType } from "@ledgerhq/live-common/helpers";
 
 const addFlagHint = `\
@@ -43,8 +51,10 @@ the search field.`;
 export default function DebugFeatureFlags() {
   const { t } = useTranslation();
   const [focusedName, setFocusedName] = useState<string | undefined>();
+  const [focusedContentAbTest, setFocusedContentAbTest] = useState<string | undefined>();
   const [focusedGroupName, setFocusedGroupName] = useState<string | undefined>();
   const [searchInput, setSearchInput] = useState<string>("");
+  const contentAbTests = useContentAbTests();
   const searchInputTrimmed = trim(searchInput);
   const [activeTab, setActiveTab] = useState(0);
   const dispatch = useDispatch();
@@ -87,35 +97,92 @@ export default function DebugFeatureFlags() {
       );
   }, [searchInput]);
 
-  const flagsList = useMemo(
-    () =>
-      filteredFlags.map((flagName, index, arr) => (
-        <FeatureFlagDetails
-          key={flagName}
-          focused={focusedName === flagName}
-          flagName={flagName as FeatureId}
-          setFocusedName={setFocusedName}
-          isLast={index === arr.length - 1}
-        />
-      )),
-    [filteredFlags, focusedName],
+  const contentAbTestNames = useMemo(
+    () => Object.keys(contentAbTests).sort((a, b) => a.localeCompare(b)),
+    [contentAbTests],
   );
 
-  const groupsList = useMemo(
+  const filteredContentAbTests = useMemo(
     () =>
-      filteredGroups
-        .sort()
-        .map((groupName, index, arr) => (
-          <GroupedFeatures
-            key={groupName}
-            groupName={groupName}
-            focused={focusedGroupName === groupName}
-            setFocusedGroupName={setFocusedGroupName}
-            isLast={index === arr.length - 1}
-          />
-        )),
-    [filteredGroups, focusedGroupName],
+      contentAbTestNames.filter(
+        name => !searchInput || includes(lowerCase(name), lowerCase(searchInput)),
+      ),
+    [contentAbTestNames, searchInput],
   );
+
+  const flagsList = useMemo(() => {
+    const rows = [
+      ...filteredContentAbTests.map(name => ({ kind: "ab" as const, name })),
+      ...filteredFlags.map(name => ({ kind: "ff" as const, name })),
+    ].sort((a, b) => a.name.localeCompare(b.name));
+
+    return rows.map((row, index) =>
+      row.kind === "ab" ? (
+        <ContentAbTestDetails
+          key={`ab-${row.name}`}
+          testName={row.name}
+          testValue={contentAbTests[row.name]}
+          focused={focusedContentAbTest === row.name}
+          setFocusedName={setFocusedContentAbTest}
+          isLast={index === rows.length - 1}
+        />
+      ) : (
+        <FeatureFlagDetails
+          key={`ff-${row.name}`}
+          focused={focusedName === row.name}
+          flagName={row.name as FeatureId}
+          setFocusedName={setFocusedName}
+          isLast={index === rows.length - 1}
+        />
+      ),
+    );
+  }, [filteredContentAbTests, filteredFlags, contentAbTests, focusedContentAbTest, focusedName]);
+
+  const contentAbTestsGroupVisible =
+    contentAbTestNames.length > 0 &&
+    (!searchInput ||
+      filteredContentAbTests.length > 0 ||
+      includes(lowerCase(CONTENT_AB_TESTS_GROUP), lowerCase(searchInput)));
+
+  const groupsList = useMemo(() => {
+    const items: Array<
+      { kind: "ab" } | { kind: "ff"; groupName: (typeof filteredGroups)[number] }
+    > = filteredGroups.map(groupName => ({ kind: "ff" as const, groupName }));
+    if (contentAbTestsGroupVisible) items.push({ kind: "ab" });
+
+    items.sort((a, b) => {
+      const nameA = a.kind === "ab" ? CONTENT_AB_TESTS_GROUP : a.groupName;
+      const nameB = b.kind === "ab" ? CONTENT_AB_TESTS_GROUP : b.groupName;
+      return nameA.localeCompare(nameB);
+    });
+
+    return items.map((item, index) =>
+      item.kind === "ab" ? (
+        <ContentAbTestsGroup
+          key={CONTENT_AB_TESTS_GROUP}
+          contentAbTests={contentAbTests}
+          testNames={contentAbTestNames}
+          focused={focusedGroupName === CONTENT_AB_TESTS_GROUP}
+          setFocusedGroupName={setFocusedGroupName}
+          isLast={index === items.length - 1}
+        />
+      ) : (
+        <GroupedFeatures
+          key={item.groupName}
+          groupName={item.groupName}
+          focused={focusedGroupName === item.groupName}
+          setFocusedGroupName={setFocusedGroupName}
+          isLast={index === items.length - 1}
+        />
+      ),
+    );
+  }, [
+    filteredGroups,
+    contentAbTestsGroupVisible,
+    contentAbTests,
+    contentAbTestNames,
+    focusedGroupName,
+  ]);
 
   // From the bundled Firebase config: the remote flag value is set by hand and can be wrong.
   const project = getApp().options.projectId;
@@ -176,15 +243,19 @@ export default function DebugFeatureFlags() {
               size="small"
               type="main"
               outline
-              onPress={() => dispatch(setAllOverrides({}))}
-              disabled={!hasLocallyOverriddenFlags}
+              onPress={() => {
+                dispatch(setAllOverrides({}));
+                clearContentAbTestOverrides();
+                refreshMountedScreens();
+              }}
+              disabled={!hasLocallyOverriddenFlags && !hasContentAbTestOverrides()}
             >
               {t("settings.debug.featureFlagsRestoreAll")}
             </Button>
             <Divider />
             {activeTab === 0 ? (
               <>
-                {filteredFlags.length === 0 ? (
+                {filteredFlags.length === 0 && filteredContentAbTests.length === 0 ? (
                   <>
                     <Text>{`No flag matching "${searchInput}"`}</Text>
                     {additionalInfo}
