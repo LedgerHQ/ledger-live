@@ -1,0 +1,34 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "libs",
+    "features",
+    "shared",
+    "domain",
+    "devtools",
+    "apps/cli",
+    "apps/wallet-cli",
+    "e2e/tooling"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/lib",
+    "**/lib-es",
+    "**/dist",
+    "**/build",
+    "**/coverage",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__",
+    "**/__mocks__",
+    "**/__integration__",
+    "**/__integrations__",
+    "libs/coin-tester*"
+  ]
+}
