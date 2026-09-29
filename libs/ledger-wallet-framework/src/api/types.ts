@@ -4,6 +4,7 @@ import type {
   BalanceOptions,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
+import type { GetAddressResult } from "../derivation";
 import type { CryptoCurrency, TokenCurrency } from "../types";
 import type {
   Account,
@@ -42,6 +43,18 @@ export type ChainSpecificRules = {
   getTransactionStatus: {
     throwIfPendingOperation?: boolean;
   };
+};
+
+export type AddressLookup = {
+  /**
+   * The addresses the device key `derived.publicKey` controls, in the order to offer them.
+   *
+   * `[]` ends the scan. If the wallet can create the account, return a placeholder instead: it
+   * comes back unused and is offered as the new account.
+   */
+  getAddresses: (derived: GetAddressResult) => Promise<string[]>;
+  /** Lets `receive()` verify the device offline. */
+  keyControlsAccount: (publicKey: string, account: Account) => boolean;
 };
 
 export type BridgeApi = {
@@ -170,4 +183,10 @@ export type BridgeApi = {
    * @returns The readiness of the account (ready flag + optional reason).
    */
   getAccountReadiness?: (currency: CryptoCurrency, address: string) => Promise<AccountReadiness>;
+  /**
+   * For chains whose address is handed out by the network, not derived from the path (ADR-055).
+   * When present, scan asks it for the addresses a device key controls, and `receive()` verifies the
+   * device through `keyControlsAccount`.
+   */
+  addressLookup?: AddressLookup;
 };
