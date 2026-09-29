@@ -266,19 +266,7 @@ describe("useSendHeaderModel", () => {
   });
 
   describe("recipient input placeholder", () => {
-    const renderOnRecipientStep = ({
-      supportsDomain,
-      isContactsFeatureEnabled,
-      eligibleAddressFamilies = ["evm"],
-    }: {
-      supportsDomain: boolean;
-      isContactsFeatureEnabled: boolean;
-      eligibleAddressFamilies?: string[];
-    }) => {
-      (useContactsFeature as jest.Mock).mockReturnValue({
-        isEnabled: isContactsFeatureEnabled,
-        eligibleAddressFamilies,
-      });
+    const renderOnRecipientStep = ({ family = "evm" }: { family?: string }) => {
       mockActions();
       mockData(
         {
@@ -287,14 +275,14 @@ describe("useSendHeaderModel", () => {
               type: "CryptoCurrency",
               ticker: "ETH",
               id: "ethereum",
-              family: "evm",
+              family,
             },
             account: {},
           },
           recipient: null,
           transaction: { status: {} },
         },
-        { hasMemo: false, recipientSupportsDomain: supportsDomain },
+        { hasMemo: false, recipientSupportsDomain: false },
       );
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.RECIPIENT,
@@ -309,41 +297,16 @@ describe("useSendHeaderModel", () => {
       renderHook();
     };
 
-    it("mentions contacts and ENS when the network supports both", () => {
-      renderOnRecipientStep({
-        supportsDomain: true,
-        isContactsFeatureEnabled: true,
-      });
+    it("uses the Ethereum-like address example", () => {
+      renderOnRecipientStep({});
 
-      expect(latestVM?.recipientPlaceholder).toBe("Enter address, ENS or contact");
+      expect(latestVM?.recipientPlaceholder).toBe("e.g. 0x4F10eb44…");
     });
 
-    it("mentions contacts only when the network has no ENS support", () => {
-      renderOnRecipientStep({
-        supportsDomain: false,
-        isContactsFeatureEnabled: true,
-      });
+    it("uses the sending main account family for the address example", () => {
+      renderOnRecipientStep({ family: "bitcoin" });
 
-      expect(latestVM?.recipientPlaceholder).toBe("Enter address or contact");
-    });
-
-    it("keeps the default placeholder when the currency family is not eligible", () => {
-      renderOnRecipientStep({
-        supportsDomain: true,
-        isContactsFeatureEnabled: true,
-        eligibleAddressFamilies: ["bitcoin"],
-      });
-
-      expect(latestVM?.recipientPlaceholder).toBe("Enter address or ENS");
-    });
-
-    it("keeps the default placeholder when the contacts feature is disabled", () => {
-      renderOnRecipientStep({
-        supportsDomain: false,
-        isContactsFeatureEnabled: false,
-      });
-
-      expect(latestVM?.recipientPlaceholder).toBe("Enter address");
+      expect(latestVM?.recipientPlaceholder).toBe("e.g. bc1qar0srrr7…");
     });
   });
 

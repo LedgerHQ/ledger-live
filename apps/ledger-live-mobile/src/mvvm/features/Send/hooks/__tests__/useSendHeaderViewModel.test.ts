@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { renderHook } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { useMaybeAccountName } from "~/reducers/wallet";
 
@@ -382,15 +382,15 @@ describe("useSendHeaderViewModel", () => {
   });
 
   describe("recipient input placeholder", () => {
-    const mockRecipientStep = ({ supportsDomain }: { supportsDomain: boolean }) => {
+    const mockRecipientStep = ({ family = "evm" }: { family?: string } = {}) => {
       mockedUseSendFlowData.mockReturnValue({
-        uiConfig: { recipientSupportsDomain: supportsDomain },
+        uiConfig: { recipientSupportsDomain: true },
         recipientSearch: mockRecipientSearch,
         state: {
           account: {
-            account: mockAccount,
+            account: { ...mockAccount, currency: { ...mockAccount.currency, family } },
             parentAccount: null,
-            currency: { ...mockAccount.currency, id: "ethereum" },
+            currency: { ...mockAccount.currency, id: "ethereum", family },
           },
           transaction: { transaction: null, status: {} },
           recipient: null,
@@ -398,54 +398,20 @@ describe("useSendHeaderViewModel", () => {
       } as never);
     };
 
-    const withContactsFlag = (enabled: boolean, eligibleAddressFamilies: string[] = ["evm"]) =>
-      withFlagOverrides({
-        lwmContacts: {
-          enabled,
-          params: { newBadge: false, eligibleAddressFamilies },
-        },
-      });
+    it("uses the Ethereum-like address example", () => {
+      mockRecipientStep();
 
-    it("mentions contacts and ENS when the network supports both", () => {
-      mockRecipientStep({ supportsDomain: true });
+      const { result } = renderHook(() => useSendHeaderViewModel());
 
-      const { result } = renderHook(() => useSendHeaderViewModel(), {
-        overrideInitialState: withContactsFlag(true),
-      });
-
-      expect(result.current.recipientPlaceholder).toBe("send.newSendFlow.placeholderWithContacts");
+      expect(result.current.recipientPlaceholder).toBe("e.g. 0x4F10eb44…");
     });
 
-    it("mentions contacts only when the network has no ENS support", () => {
-      mockRecipientStep({ supportsDomain: false });
+    it("uses the sending main account family for the address example", () => {
+      mockRecipientStep({ family: "bitcoin" });
 
-      const { result } = renderHook(() => useSendHeaderViewModel(), {
-        overrideInitialState: withContactsFlag(true),
-      });
+      const { result } = renderHook(() => useSendHeaderViewModel());
 
-      expect(result.current.recipientPlaceholder).toBe(
-        "send.newSendFlow.placeholderNoEnsWithContacts",
-      );
-    });
-
-    it("keeps the default placeholder when the currency family is not eligible", () => {
-      mockRecipientStep({ supportsDomain: true });
-
-      const { result } = renderHook(() => useSendHeaderViewModel(), {
-        overrideInitialState: withContactsFlag(true, ["bitcoin"]),
-      });
-
-      expect(result.current.recipientPlaceholder).toBe("send.newSendFlow.placeholder");
-    });
-
-    it("keeps the default placeholder when the contacts feature is disabled", () => {
-      mockRecipientStep({ supportsDomain: false });
-
-      const { result } = renderHook(() => useSendHeaderViewModel(), {
-        overrideInitialState: withContactsFlag(false),
-      });
-
-      expect(result.current.recipientPlaceholder).toBe("send.newSendFlow.placeholderNoENS");
+      expect(result.current.recipientPlaceholder).toBe("e.g. bc1qar0srrr7…");
     });
   });
 

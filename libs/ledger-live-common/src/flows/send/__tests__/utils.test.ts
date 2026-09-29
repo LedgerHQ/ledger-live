@@ -1,5 +1,6 @@
 import {
   buildRecipientForMemoChange,
+  getRecipientAddressPlaceholder,
   getRecipientDisplayValue,
   getRecipientSearchPrefillValue,
   saveRecentSendRecipient,
@@ -59,6 +60,30 @@ describe("saveRecentSendRecipient", () => {
 });
 
 const ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";
+
+describe("getRecipientAddressPlaceholder", () => {
+  it.each([
+    ["evm", "e.g. 0x4F10eb44…"],
+    ["ethereum", "e.g. 0x4F10eb44…"],
+    ["bitcoin", "e.g. bc1qar0srrr7…"],
+    ["solana", "e.g. 7xKXtg2CW87d…"],
+    ["tron", "e.g. TR7NHqjeKQxG…"],
+    ["xrp", "e.g. rEb8TK3gBgk5…"],
+    ["stellar", "e.g. GAAZI4TCR3TY…"],
+    ["sui", "e.g. 0x02a212de6a9d…"],
+    ["hedera", "e.g. 0.0.1234567"],
+    ["tezos", "e.g. tz1VSUr8wwNh…"],
+    ["cardano", "e.g. addr1qx2fxv2u…"],
+    ["canton", "e.g. alice::1220a1b2c3…"],
+  ])("should return the %s recipient address example", (family, placeholder) => {
+    expect(getRecipientAddressPlaceholder(family)).toBe(placeholder);
+  });
+
+  it("should fall back to the Ethereum-like recipient address example", () => {
+    expect(getRecipientAddressPlaceholder(undefined)).toBe("e.g. 0x4F10eb44…");
+    expect(getRecipientAddressPlaceholder("unknown")).toBe("e.g. 0x4F10eb44…");
+  });
+});
 
 describe("getRecipientDisplayValue", () => {
   it("should return empty for null recipient", () => {

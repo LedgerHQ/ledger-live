@@ -3,15 +3,14 @@ import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { t } from "~/renderer/i18n/init";
 import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
-import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send/utils";
+import {
+  getRecipientSearchPrefillValue,
+  getRecipientAddressPlaceholder,
+} from "@ledgerhq/live-common/flows/send/utils";
 import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
-import {
-  isEligibleAddressCurrency,
-  useContactsFeature,
-  useContactDisplayName,
-} from "@features/platform-contacts";
+import { useContactsFeature, useContactDisplayName } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "LLD/hooks/redux";
 import { buildTransactionPatchFromURIScheme } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
@@ -57,18 +56,6 @@ type UseSendHeaderModelResult = Readonly<{
   transactionError: Error | undefined;
 }>;
 
-function getRecipientPlaceholderKey({
-  supportsDomain,
-  canSearchContacts,
-}: Readonly<{ supportsDomain: boolean; canSearchContacts: boolean }>): string {
-  if (canSearchContacts) {
-    return supportsDomain
-      ? "newSendFlow.placeholderWithContacts"
-      : "newSendFlow.placeholderNoEnsWithContacts";
-  }
-  return supportsDomain ? "newSendFlow.placeholder" : "newSendFlow.placeholderNoENS";
-}
-
 function resolveHeaderTitle({
   isSelectingContactAddress,
   showTitle,
@@ -110,17 +97,13 @@ export function useSendHeaderModel({
   resetViewState,
 }: UseSendHeaderModelParams): UseSendHeaderModelResult {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
-  const { state, uiConfig, recipientSearch, isRecipientAddressComplete } = useSendFlowData();
+  const { state, recipientSearch, isRecipientAddressComplete } = useSendFlowData();
   const { close, transaction } = useSendFlowActions();
   const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
   const { recipientType, setInputMethod } = useSendFlowTracking();
   const addNewContactHeader = useAddNewContactHeaderState();
-  const {
-    isEnabled: isContactsFeatureEnabled,
-    eligibleAddressFamilies,
-    excludedCurrencyIds,
-  } = useContactsFeature("desktop");
+  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
   const contacts = useSelector(selectContacts);
 
   const currencyName = state.account.currency?.ticker ?? "";
@@ -402,19 +385,13 @@ export function useSendHeaderModel({
   const transactionError = state.transaction.status?.errors?.transaction;
   const transactionErrorName = transactionError?.name;
 
-  const canSearchContacts =
-    isContactsFeatureEnabled &&
-    isEligibleAddressCurrency(
-      eligibleAddressFamilies,
-      state.account.currency ?? undefined,
-      excludedCurrencyIds,
-    );
-  const recipientPlaceholder = t(
-    getRecipientPlaceholderKey({
-      supportsDomain: uiConfig.recipientSupportsDomain,
-      canSearchContacts,
-    }),
-  );
+  const mainAccountFamily = useMemo(() => {
+    const { account, parentAccount, currency } = state.account;
+    if (account?.type === "Account") return account.currency.family;
+    if (account?.type === "TokenAccount" && parentAccount) return parentAccount.currency.family;
+    return currency?.family;
+  }, [state.account]);
+  const recipientPlaceholder = getRecipientAddressPlaceholder(mainAccountFamily);
 
   return {
     addressInputValue,

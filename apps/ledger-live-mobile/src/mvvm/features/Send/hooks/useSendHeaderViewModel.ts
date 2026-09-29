@@ -19,16 +19,13 @@ import { useSendMemoReset } from "../context/SendMemoResetContext";
 import { useAvailableBalance } from "./useAvailableBalance";
 import { useCurrentSendFlowStep } from "./useCurrentSendFlowStep";
 import {
+  getRecipientAddressPlaceholder,
   getRecipientSearchPrefillValue,
   SEND_ADDRESS_FORMAT_OPTIONS,
 } from "@ledgerhq/live-common/flows/send/utils";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
-import {
-  isEligibleAddressCurrency,
-  useContactsFeature,
-  useContactDisplayName,
-} from "@features/platform-contacts";
+import { useContactsFeature, useContactDisplayName } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "~/context/hooks";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
@@ -63,31 +60,15 @@ export type SendHeaderViewModel = {
   handleRecipientInputChange: (value: string) => void;
 };
 
-function getRecipientPlaceholderKey({
-  supportsDomain,
-  canSearchContacts,
-}: Readonly<{ supportsDomain: boolean; canSearchContacts: boolean }>): string {
-  if (canSearchContacts) {
-    return supportsDomain
-      ? "send.newSendFlow.placeholderWithContacts"
-      : "send.newSendFlow.placeholderNoEnsWithContacts";
-  }
-  return supportsDomain ? "send.newSendFlow.placeholder" : "send.newSendFlow.placeholderNoENS";
-}
-
 export function useSendHeaderViewModel(): SendHeaderViewModel {
   const navigation = useNavigation<BaseNavigationComposite<SendFlowNavigationProp>>();
   const { t } = useTranslation();
-  const { uiConfig, recipientSearch, state } = useSendFlowData();
+  const { recipientSearch, state } = useSendFlowData();
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
   const { resetViewState } = useSendMemoReset();
   const { displayMode } = useSendAmountDisplayMode();
-  const {
-    isEnabled: isContactsFeatureEnabled,
-    eligibleAddressFamilies,
-    excludedCurrencyIds,
-  } = useContactsFeature("mobile");
+  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("mobile");
   const contacts = useSelector(selectContacts);
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
   const { recipientType, setInputMethod } = useSendFlowTracking();
@@ -320,19 +301,13 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     [recipientSearch, setInputMethod],
   );
 
-  const canSearchContacts =
-    isContactsFeatureEnabled &&
-    isEligibleAddressCurrency(
-      eligibleAddressFamilies,
-      state.account.currency ?? undefined,
-      excludedCurrencyIds,
-    );
-  const recipientPlaceholder = t(
-    getRecipientPlaceholderKey({
-      supportsDomain: uiConfig.recipientSupportsDomain,
-      canSearchContacts,
-    }),
-  );
+  const mainAccountFamily = useMemo(() => {
+    const { account, parentAccount, currency } = state.account;
+    if (account?.type === "Account") return account.currency.family;
+    if (account?.type === "TokenAccount" && parentAccount) return parentAccount.currency.family;
+    return currency?.family;
+  }, [state.account]);
+  const recipientPlaceholder = getRecipientAddressPlaceholder(mainAccountFamily);
 
   return {
     title,

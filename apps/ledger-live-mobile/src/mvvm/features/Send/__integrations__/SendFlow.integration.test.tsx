@@ -196,9 +196,7 @@ describe("Send flow integration tests", () => {
     user: ReturnType<typeof renderForAccount>["user"],
     opts: DriveOpts,
   ): Promise<void> {
-    // EVM enables ENS resolution so the placeholder is "Enter address or ENS";
-    // every other family uses "Enter address".
-    const recipientInput = await screen.findByPlaceholderText(/^Enter address( or ENS)?$/);
+    const recipientInput = await screen.findByPlaceholderText(/^e\.g\. /);
     await user.paste(recipientInput, opts.recipient);
     await flushTimers();
     if (opts.memo !== undefined) {
@@ -607,7 +605,10 @@ describe("Send flow integration tests", () => {
   it("should explain why add contact is unavailable on an unsupported network", async () => {
     const { user } = renderForAccount(accountBitcoin, {}, { contactsEnabled: true });
 
-    await user.paste(await screen.findByPlaceholderText("Enter address"), VALID_BITCOIN_RECIPIENT);
+    await user.paste(
+      await screen.findByPlaceholderText("e.g. bc1qar0srrr7…"),
+      VALID_BITCOIN_RECIPIENT,
+    );
     await flushTimers();
 
     await user.press(await screen.findByRole("button", { name: "Add contact" }));
@@ -638,7 +639,10 @@ describe("Send flow integration tests", () => {
     it("Should stop with invalid recipient", async () => {
       const { user } = renderForAccount(accountStellar);
 
-      await user.type(await screen.findByPlaceholderText("Enter address"), "invalid-recipient");
+      await user.type(
+        await screen.findByPlaceholderText("e.g. GAAZI4TCR3TY…"),
+        "invalid-recipient",
+      );
 
       expect(await screen.findByText("Incorrect address format")).toBeOnTheScreen();
     });
@@ -663,7 +667,7 @@ describe("Send flow integration tests", () => {
       const { user } = renderForAccount(accountStellar);
 
       await user.paste(
-        await screen.findByPlaceholderText("Enter address"),
+        await screen.findByPlaceholderText("e.g. GAAZI4TCR3TY…"),
         VALID_STELLAR_RECIPIENT,
       );
       await flushTimers();
@@ -679,7 +683,7 @@ describe("Send flow integration tests", () => {
       const { user } = renderForAccount(accountStellar);
 
       await user.paste(
-        await screen.findByPlaceholderText("Enter address"),
+        await screen.findByPlaceholderText("e.g. GAAZI4TCR3TY…"),
         VALID_STELLAR_RECIPIENT,
       );
       await flushTimers();
@@ -696,7 +700,7 @@ describe("Send flow integration tests", () => {
       const { user } = renderForAccount(accountStellar);
 
       await user.paste(
-        await screen.findByPlaceholderText("Enter address"),
+        await screen.findByPlaceholderText("e.g. GAAZI4TCR3TY…"),
         VALID_STELLAR_RECIPIENT,
       );
       await flushTimers();
@@ -730,7 +734,7 @@ describe("Send flow integration tests", () => {
       await user.press(await screen.findByLabelText("Edit recipient"));
 
       await user.paste(
-        await screen.findByPlaceholderText("Enter address"),
+        await screen.findByPlaceholderText("e.g. GAAZI4TCR3TY…"),
         OTHER_VALID_STELLAR_RECIPIENT,
       );
       await flushTimers();
