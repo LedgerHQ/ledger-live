@@ -3,9 +3,9 @@ import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
 import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import {
+  calculate,
+  type CounterValuesState,
   historyKey,
   inferCurrencyAPIID,
   type CounterValuesState as MarketCounterValuesState,

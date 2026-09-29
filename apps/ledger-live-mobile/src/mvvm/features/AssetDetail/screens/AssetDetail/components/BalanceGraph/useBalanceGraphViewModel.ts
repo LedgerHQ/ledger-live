@@ -9,7 +9,7 @@ import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account/helpe
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useAssetChartDataInCounterValue } from "@ledgerhq/live-common/market/hooks/useAssetChartDataInCounterValue";
 import { buildMarketChartSeries } from "@ledgerhq/live-common/market/utils/buildMarketChartSeries";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate } from "@domain/entity-market-countervalues";
 import {
   formatPrice,
   formatPriceFragment,

@@ -9,7 +9,7 @@ import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
 import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
-import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
