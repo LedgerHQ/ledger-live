@@ -12,6 +12,8 @@ The account **identity**: the branded id every `@domain/entity-account-*` packag
 - `AnyAccountId` / `AnyAccountIdSchema` — either kind, for the many places that hold both.
 - `parseAnyAccountId` / `safeParseAnyAccountId` — parse a raw string, throwing or missing.
 - `encodeTokenAccountId` / `getParentId` — move between an account and its token accounts.
+- `AccountRef` / `AccountRefSchema` — the id plus what a source needs to read it (currency, address,
+  derivation mode). `accountRefKey` gives its identity.
 
 The two ids are distinct types, so a function that only accepts a main account says so in its
 signature rather than checking for a `+` at runtime.
