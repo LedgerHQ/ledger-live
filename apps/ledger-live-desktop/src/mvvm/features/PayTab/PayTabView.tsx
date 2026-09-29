@@ -29,7 +29,7 @@ export function PayTabView({
   const [initialBalanceFilter] = useState(balance.filter);
 
   return (
-    <div className="flex flex-col pb-32">
+    <div className="flex flex-col pb-32" data-testid="paytab-screen">
       <TrackPage category="Pay" balance_filter={initialBalanceFilter} />
       {requestReceive.isOpen && requestReceive.address ? (
         <TrackPage
