@@ -43,8 +43,8 @@ export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) 
 
 function trackAnalytics(
   event: string,
-  properties: Record<string, unknown>,
-  mandatory: boolean,
+  properties?: Record<string, unknown> | null,
+  mandatory?: boolean,
 ): void {
   void track(event, properties, { mandatory: !!mandatory });
 }
