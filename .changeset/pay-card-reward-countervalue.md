@@ -4,8 +4,8 @@
 "@features/flow-pay-card-assets": minor
 "@features/flow-pay-card": minor
 "@domain/api-card-management": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Show a counter-value on the card rewards banner.

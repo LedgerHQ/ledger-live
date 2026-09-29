@@ -1,7 +1,7 @@
 ---
 "@features/flow-pay-card-transactions": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Let the card transaction history read past its first page.

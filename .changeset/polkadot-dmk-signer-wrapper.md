@@ -1,7 +1,7 @@
 ---
 "@ledgerhq/live-signer-polkadot": minor
-"@ledgerhq/live-common": patch
-"@ledgerhq/types-live": patch
+"@ledgerhq/live-common": minor
+"@ledgerhq/types-live": minor
 ---
 
 Add the DMK-backed Polkadot signer wrapper behind the `ldmkPolkadotSigner` feature flag

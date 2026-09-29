@@ -210,16 +210,4 @@
 
 - [#18012](https://github.com/LedgerHQ/ledger-live/pull/18012) [`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: add hedera_testnet
 
-## 0.3.0
-
-### Minor Changes
-
-- [#17657](https://github.com/LedgerHQ/ledger-live/pull/17657) [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Trigger Sei app instead of Ethereum app for SEI EVM send & receive
-
-## 0.3.0-next.0
-
-### Minor Changes
-
-- [#17657](https://github.com/LedgerHQ/ledger-live/pull/17657) [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Trigger Sei app instead of Ethereum app for SEI EVM send & receive
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

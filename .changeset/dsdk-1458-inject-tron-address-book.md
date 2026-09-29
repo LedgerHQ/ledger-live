@@ -2,9 +2,9 @@
 "@ledgerhq/live-dmk-shared": minor
 "@ledgerhq/live-signer-tron": minor
 "@features/platform-contacts": minor
-"@ledgerhq/live-signer-evm": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/live-signer-evm": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Inject the Tron address book into the DMK Tron signer so Tron transactions can clear-sign saved contact names.

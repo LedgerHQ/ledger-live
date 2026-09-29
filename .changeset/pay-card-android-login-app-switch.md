@@ -1,5 +1,5 @@
 ---
-"@features/flow-pay-card-auth": patch
+"@features/flow-pay-card-auth": minor
 ---
 
 Keep the Android Card login browser open when the user switches app

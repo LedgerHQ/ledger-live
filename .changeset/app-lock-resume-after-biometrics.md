@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 "@shared/ui-info-state": minor
 ---
 

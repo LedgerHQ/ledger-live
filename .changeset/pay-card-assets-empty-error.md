@@ -1,7 +1,7 @@
 ---
-"@features/flow-pay-card-assets": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@features/flow-pay-card-assets": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Show a dedicated empty and error state in Pay card assets and hide Manage until the list is ready.

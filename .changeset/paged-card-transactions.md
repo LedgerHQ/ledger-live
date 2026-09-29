@@ -2,10 +2,10 @@
 "@domain/api-card-management": minor
 "@features/flow-pay-card-transactions": minor
 "@features/platform-pay-analytics": minor
-"@features/flow-pay-card-widget": patch
-"@features/flow-pay-card": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@features/flow-pay-card-widget": minor
+"@features/flow-pay-card": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Read the Pay Card transaction history one page at a time.

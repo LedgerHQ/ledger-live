@@ -1,7 +1,7 @@
 ---
-"@features/flow-pay-card-transactions": patch
-"@features/flow-pay-card-details": patch
-"@features/flow-pay-card-assets": patch
+"@features/flow-pay-card-transactions": minor
+"@features/flow-pay-card-details": minor
+"@features/flow-pay-card-assets": minor
 ---
 
 Size the card transaction detail sheet to its content on mobile, so it no longer scrolls under its own header

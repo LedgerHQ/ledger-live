@@ -1,7 +1,7 @@
 ---
-"@features/flow-pay-card-widget": patch
-"@features/flow-pay-card": patch
-"@devtools/bindings": patch
+"@features/flow-pay-card-widget": minor
+"@features/flow-pay-card": minor
+"@devtools/bindings": minor
 ---
 
 fix(pay-card): keep lifecycle tracking waiting on onboarding refetches

@@ -2,8 +2,8 @@
 "@ledgerhq/types-live": minor
 "@ledgerhq/ledger-wallet-framework": minor
 "@domain/entity-currency-crypto": minor
-"@ledgerhq/coin-bitcoin": patch
-"@ledgerhq/coin-zcash": patch
+"@ledgerhq/coin-bitcoin": minor
+"@ledgerhq/coin-zcash": minor
 ---
 
 chore(currency): drop `CryptoCurrency#bitcoinLikeInfo`
