@@ -289,7 +289,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       }
 
       await bootstrapCardSession(store.dispatch);
-      void restoreCardAuthStatus(store.dispatch, store.getState);
+      await restoreCardAuthStatus(store.dispatch, store.getState);
 
       setInitialCountervalues(initialCountervalues);
       setReady(true);
