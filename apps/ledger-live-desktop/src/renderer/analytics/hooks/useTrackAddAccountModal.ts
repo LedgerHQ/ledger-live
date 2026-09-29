@@ -59,35 +59,36 @@ export const useTrackAddAccountModal = ({
       platform: "LLD",
       page: "Add account modal",
     };
+    const mandatory = isTrackingEnabled ?? undefined;
 
     if (error?.name === "CantOpenDevice") {
       // device disconnected during account creation
-      track("Connection failed", defaultPayload, { mandatory: isTrackingEnabled });
+      track("Connection failed", defaultPayload, { mandatory });
     }
 
     if (error?.name === "TransportRaceCondition") {
       // transport race condition during account creation
-      track("Transport race condition", defaultPayload, { mandatory: isTrackingEnabled });
+      track("Transport race condition", defaultPayload, { mandatory });
     }
 
     if (error?.name === "TransportError") {
       // transport error during account creation
-      track("Transport error", defaultPayload, { mandatory: isTrackingEnabled });
+      track("Transport error", defaultPayload, { mandatory });
     }
 
     if (previousOpenAppRequested.current && error?.name === "UserRefusedOnDevice") {
       // user refused to open app during account creation
-      track("Open app denied", defaultPayload, { mandatory: isTrackingEnabled });
+      track("Open app denied", defaultPayload, { mandatory });
     }
 
     if (userMustConnectDevice) {
       // device disconnected during account creation
-      track("Device connection lost", defaultPayload, { mandatory: isTrackingEnabled });
+      track("Device connection lost", defaultPayload, { mandatory });
     }
 
     if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during account creation
-      track("Device locked", defaultPayload, { mandatory: isTrackingEnabled });
+      track("Device locked", defaultPayload, { mandatory });
     }
 
     previousOpenAppRequested.current = requestOpenApp;
