@@ -1,4 +1,13 @@
-import { getContentAbTestCopy, setContentAbTestCopy, subscribeToContentAbTestCopy } from "./store";
+import {
+  clearContentAbTestOverrides,
+  getContentAbTestCopy,
+  getContentAbTests,
+  isContentAbTestOverridden,
+  parseContentAbTestPayload,
+  setContentAbTestCopy,
+  setContentAbTestOverride,
+  subscribeToContentAbTestCopy,
+} from "./store";
 
 const value = (raw: string, source: "remote" | "default" | "static" = "remote") => ({
   asString: () => raw,
@@ -9,6 +18,7 @@ const experiment = (payload: object, source: "remote" | "default" | "static" = "
   value(JSON.stringify(payload), source);
 
 beforeEach(() => {
+  clearContentAbTestOverrides();
   setContentAbTestCopy({});
 });
 
@@ -59,5 +69,81 @@ describe("setContentAbTestCopy", () => {
     });
 
     expect(setContentAbTestCopy({})).toEqual({});
+  });
+});
+
+describe("content A/B test debug overrides", () => {
+  it("keeps disabled experiments in the debug list without applying copy", () => {
+    setContentAbTestCopy({
+      feature_copy_upgrade_banner: experiment({
+        enabled: false,
+        copy: { "upgrade.banner.title": "Hidden" },
+      }),
+    });
+
+    expect(getContentAbTests()).toEqual({
+      upgradeBanner: { enabled: false, copy: { "upgrade.banner.title": "Hidden" } },
+    });
+    expect(getContentAbTestCopy()).toEqual({});
+  });
+
+  it("applies a local override and restores the remote payload", () => {
+    setContentAbTestCopy({
+      feature_copy_upgrade_banner: experiment({
+        enabled: true,
+        copy: { "upgrade.banner.title": "Remote" },
+      }),
+    });
+
+    setContentAbTestOverride("upgradeBanner", {
+      enabled: false,
+      copy: { "upgrade.banner.title": "Mocked" },
+    });
+
+    expect(isContentAbTestOverridden("upgradeBanner")).toBe(true);
+    expect(getContentAbTestCopy()).toEqual({});
+
+    setContentAbTestOverride("upgradeBanner", undefined);
+
+    expect(isContentAbTestOverridden("upgradeBanner")).toBe(false);
+    expect(getContentAbTestCopy()).toEqual({ "upgrade.banner.title": "Remote" });
+  });
+
+  it("keeps a local override when a later poll returns the same remote payload", () => {
+    const payload = {
+      feature_copy_upgrade_banner: experiment({
+        enabled: true,
+        copy: { "upgrade.banner.title": "Remote" },
+      }),
+    };
+    setContentAbTestCopy(payload);
+    setContentAbTestOverride("upgradeBanner", {
+      enabled: true,
+      copy: { "upgrade.banner.title": "Mocked" },
+    });
+
+    setContentAbTestCopy(payload);
+
+    expect(getContentAbTestCopy()).toEqual({ "upgrade.banner.title": "Mocked" });
+    expect(isContentAbTestOverridden("upgradeBanner")).toBe(true);
+  });
+
+  it("drops a malformed trackingConfiguration and still applies the copy", () => {
+    setContentAbTestCopy({
+      feature_copy_upgrade_banner: experiment({
+        enabled: true,
+        copy: { "upgrade.banner.title": "Remote" },
+        trackingConfiguration: {},
+      }),
+    });
+
+    expect(getContentAbTests()).toEqual({
+      upgradeBanner: { enabled: true, copy: { "upgrade.banner.title": "Remote" } },
+    });
+    expect(getContentAbTestCopy()).toEqual({ "upgrade.banner.title": "Remote" });
+    expect(parseContentAbTestPayload({ enabled: true, copy: { "banner.title": "Hi" } })).toEqual({
+      enabled: true,
+      copy: { "banner.title": "Hi" },
+    });
   });
 });
