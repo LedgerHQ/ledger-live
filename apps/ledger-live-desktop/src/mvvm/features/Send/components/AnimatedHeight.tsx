@@ -1,56 +1,121 @@
-import React, { useRef, useEffect, useCallback, type ReactNode } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { cn } from "LLD/utils/cn";
+import {
+  isAnimatedHeightCapped,
+  measureStackedHeight,
+  readAvailableHeight,
+  resolveAnimatedHeight,
+} from "./animatedHeightLayout";
+
+const AnimatedHeightCappedContext = createContext(false);
+
+export function useAnimatedHeightCapped(): boolean {
+  return useContext(AnimatedHeightCappedContext);
+}
 
 type AnimatedHeightProps = Readonly<{
+  header: ReactNode;
   children: ReactNode;
   /** Transition duration in ms. Defaults to 300. */
   duration?: number;
 }>;
 
 /**
- * Wrapper whose height smoothly transitions when the content size changes
+ * Animates dialog height to fit the content, and stops at the dialog max height
+ * so the body can scroll instead of being clipped.
  */
-export function AnimatedHeight({ children, duration = 300 }: AnimatedHeightProps) {
+export function AnimatedHeight({ header, children, duration = 300 }: AnimatedHeightProps) {
   const outerRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const heightRef = useRef<number | undefined>(undefined);
+  const cappedRef = useRef(false);
+  const [height, setHeight] = useState<number | undefined>(undefined);
+  const [isCapped, setIsCapped] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const syncHeight = useCallback(() => {
+    const outer = outerRef.current;
+    const content = contentRef.current;
+    if (!outer || !content) return;
+
+    const natural = measureStackedHeight(content);
+    if (natural <= 0) return;
+
+    const available = readAvailableHeight(outer);
+    const next = resolveAnimatedHeight(natural, available);
+    const capped = isAnimatedHeightCapped(natural, available);
+
+    if (cappedRef.current !== capped) {
+      cappedRef.current = capped;
+      setIsCapped(capped);
+    }
+
+    const current = heightRef.current;
+    if (current !== undefined && Math.abs(current - next) <= 0.5) return;
+
+    if (current !== undefined) setIsAnimating(true);
+    heightRef.current = next;
+    setHeight(next);
+  }, []);
 
   const handleTransitionEnd = useCallback((event: React.TransitionEvent<HTMLDivElement>) => {
-    const outer = outerRef.current;
-    if (!outer) return;
-    // Only react to the height transition on the outer element itself
-    if (event.target !== outer) return;
+    if (event.target !== outerRef.current) return;
     if (event.propertyName !== "height") return;
-    outer.style.overflow = "visible";
+    setIsAnimating(false);
   }, []);
 
-  useEffect(() => {
-    const inner = innerRef.current;
-    const outer = outerRef.current;
-    if (!inner || !outer) return;
+  useLayoutEffect(() => {
+    const content = contentRef.current;
+    if (!content) return;
 
-    outer.style.height = `${inner.offsetHeight}px`;
+    syncHeight();
 
-    const observer = new ResizeObserver(() => {
-      if (!inner || !outer) return;
-      const newHeight = inner.offsetHeight;
-      const currentHeight = Number.parseFloat(outer.style.height) || 0;
-
-      if (Math.abs(newHeight - currentHeight) > 0.5) {
-        outer.style.overflow = "hidden";
-        outer.style.height = `${newHeight}px`;
+    const observer = new ResizeObserver(syncHeight);
+    const observeTree = (element: HTMLElement) => {
+      observer.observe(element);
+      for (const child of element.children) {
+        if (child instanceof HTMLElement) observeTree(child);
       }
-    });
+    };
+    observeTree(content);
 
-    observer.observe(inner);
-    return () => observer.disconnect();
-  }, []);
+    const mutations = new MutationObserver(() => {
+      observeTree(content);
+      syncHeight();
+    });
+    mutations.observe(content, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mutations.disconnect();
+    };
+  }, [syncHeight]);
 
   return (
-    <div
-      ref={outerRef}
-      onTransitionEnd={handleTransitionEnd}
-      style={{ overflow: "visible", transition: `height ${duration}ms ease` }}
-    >
-      <div ref={innerRef}>{children}</div>
-    </div>
+    <AnimatedHeightCappedContext.Provider value={isCapped}>
+      <div
+        ref={outerRef}
+        onTransitionEnd={handleTransitionEnd}
+        className="flex w-full min-h-0 flex-col"
+        style={{
+          height: height === undefined ? undefined : `${height}px`,
+          overflow: isCapped || isAnimating ? "hidden" : "visible",
+          transition: `height ${duration}ms ease`,
+        }}
+      >
+        <div ref={contentRef} className={cn("flex w-full min-h-0 flex-col", isCapped && "h-full")}>
+          <div className="shrink-0">{header}</div>
+          {children}
+        </div>
+      </div>
+    </AnimatedHeightCappedContext.Provider>
   );
 }
