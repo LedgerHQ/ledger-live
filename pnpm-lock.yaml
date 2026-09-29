@@ -15886,12 +15886,12 @@ importers:
       '@domain/api-market-countervalues':
         specifier: workspace:*
         version: link:../../domain/api/market-countervalues
+      '@domain/entity-market-countervalues':
+        specifier: workspace:*
+        version: link:../../domain/entity/market-countervalues
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
-      '@ledgerhq/live-countervalues':
-        specifier: workspace:*
-        version: link:../live-countervalues
       '@ledgerhq/live-hooks':
         specifier: workspace:*
         version: link:../live-hooks
