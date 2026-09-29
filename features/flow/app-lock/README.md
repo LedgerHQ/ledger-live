@@ -12,7 +12,8 @@ What it holds today, from [LIVE-35961](https://ledgerhq.atlassian.net/browse/LIV
 
 - `screens/SetupPassword` and `screens/ConfirmPassword` — the two steps of adding a password.
 
-**Unlock**, **DeactivatePassword** and the migration views arrive with their own tickets.
+The unlock journey lives in [`@features/flow-app-unlock`](../app-unlock/README.md); the rest of
+this package moves to one package per journey in the tasks of [LIVE-35505](https://ledgerhq.atlassian.net/browse/LIVE-35505).
 
 `PasswordField` and the password draft come from
 [`@features/platform-app-lock`](../../platform/app-lock/README.md), along with the protection
@@ -55,7 +56,7 @@ Target, as the remaining tickets land:
 src/
 ├── components/                 # shared by several views
 ├── hooks/
-├── screens/<Name>/             # Unlock, SetupPassword, Confirm, Migration
+├── screens/<Name>/             # SetupPassword, Confirm, Migration
 │   ├── components/             # used only by this view
 │   ├── viewModel.ts
 │   ├── view.tsx

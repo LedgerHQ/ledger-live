@@ -1,6 +1,5 @@
 export * from "./components/ChangePasswordSheet";
 export * from "./components/EnableProtectionSheet";
-export * from "./components/ForgotPasswordSheet";
 export * from "./components/KeepProtectionSheet";
 export * from "./components/PasswordChangedSheet";
 export * from "./components/ProtectionEnabledSheet";
@@ -9,4 +8,3 @@ export * from "./protectionPrompt";
 export * from "./screens/SetupPassword";
 export * from "./screens/ConfirmPassword";
 export * from "./screens/DeactivatePassword";
-export * from "./screens/Unlock";
