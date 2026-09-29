@@ -19,7 +19,7 @@ export const ContactCurrencyIdSchema = z.union([CryptoCurrencyIdSchema, TokenCur
 const ContactNamePattern = /^(?=.*[^ ])[\x20-\x7E]+$/;
 const ContactAddressLabelPattern = /^(?=.*[A-Za-z0-9])[\x20-\x7E]+$/;
 
-export const CONTACT_NAME_MAX_LENGTH = 128;
+export const CONTACT_NAME_MAX_LENGTH = 32;
 export const CONTACT_ADDRESS_LABEL_MAX_LENGTH = 32;
 
 export const ContactNameSchema = z
