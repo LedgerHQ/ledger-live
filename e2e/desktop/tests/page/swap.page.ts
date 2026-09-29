@@ -617,7 +617,47 @@ export class SwapPage extends WebViewAppPage {
   @step("Soft-assert Trending Assets panel")
   async softAssertTrendingAssetsPanel() {
     try {
-      await this.assertTrendingAssetsPanel();
+      const webview = await this.getWebView();
+
+      const topGainersRows = webview.locator(this.topGainersItems);
+      await this.softExpect(async soft => {
+        await soft(webview.getByTestId(this.topGainersContainer)).toBeVisible();
+        await soft(webview.getByTestId(this.topGainersContainer)).toContainText("Trending Assets");
+        await soft(topGainersRows).toHaveCount(5);
+      });
+      const topGainersTexts = await topGainersRows.allTextContents();
+      await this.softExpect(async soft => {
+        for (const text of topGainersTexts) {
+          await soft(text).toMatch(/[-+]?\d{1,10}\.\d{2}%$/);
+        }
+      });
+
+      const dateTrigger = webview.getByTestId(this.topGainersDateTrigger);
+      const dateOptions = webview.locator(this.topGainersDateOptions);
+      await this.softExpect(async soft => {
+        await soft(dateTrigger).toBeVisible();
+      });
+      const initialDateLabel = await dateTrigger.textContent();
+      await dateTrigger.click();
+      await this.softExpect(async soft => {
+        await soft(dateOptions).toHaveCount(4);
+      });
+      const dateOptionTexts = await dateOptions.allTextContents();
+      await this.softExpect(async soft => {
+        for (const label of ["1D", "1W", "1M", "1Y"]) {
+          await soft(dateOptionTexts).toContain(label);
+        }
+      });
+      const nextDateOption = dateOptions.filter({ hasNotText: initialDateLabel ?? "" }).first();
+      await nextDateOption.click();
+      await this.softExpect(async soft => {
+        await soft(dateTrigger).not.toContainText(initialDateLabel ?? "");
+        await soft(topGainersRows).toHaveCount(5);
+      });
+
+      await this.softExpect(async soft => {
+        await soft(webview.getByTestId(this.topGainersInfoIcon)).toBeVisible();
+      });
     } catch (error) {
       await test.info().attach("Trending Assets panel check failed (non-blocking)", {
         body: String(error),
@@ -626,82 +666,34 @@ export class SwapPage extends WebViewAppPage {
     }
   }
 
-  private async assertTrendingAssetsPanel() {
-    const webview = await this.getWebView();
-
-    const topGainersRows = webview.locator(this.topGainersItems);
-    await this.softExpect(async soft => {
-      await soft(webview.getByTestId(this.topGainersContainer)).toBeVisible();
-      await soft(webview.getByTestId(this.topGainersContainer)).toContainText("Trending Assets");
-      await soft(topGainersRows).toHaveCount(5);
-    });
-    const topGainersTexts = await topGainersRows.allTextContents();
-    await this.softExpect(async soft => {
-      for (const text of topGainersTexts) {
-        await soft(text).toMatch(/[-+]?\d{1,10}\.\d{2}%$/);
-      }
-    });
-
-    const dateTrigger = webview.getByTestId(this.topGainersDateTrigger);
-    const dateOptions = webview.locator(this.topGainersDateOptions);
-    await this.softExpect(async soft => {
-      await soft(dateTrigger).toBeVisible();
-    });
-    const initialDateLabel = await dateTrigger.textContent();
-    await dateTrigger.click();
-    await this.softExpect(async soft => {
-      await soft(dateOptions).toHaveCount(4);
-    });
-    const dateOptionTexts = await dateOptions.allTextContents();
-    await this.softExpect(async soft => {
-      for (const label of ["1D", "1W", "1M", "1Y"]) {
-        await soft(dateOptionTexts).toContain(label);
-      }
-    });
-    const nextDateOption = dateOptions.filter({ hasNotText: initialDateLabel ?? "" }).first();
-    await nextDateOption.click();
-    await this.softExpect(async soft => {
-      await soft(dateTrigger).not.toContainText(initialDateLabel ?? "");
-      await soft(topGainersRows).toHaveCount(5);
-    });
-
-    await this.softExpect(async soft => {
-      await soft(webview.getByTestId(this.topGainersInfoIcon)).toBeVisible();
-    });
-  }
-
   // Non-critical panel: errors are caught and attached, not thrown.
   @step("Soft-assert Stablecoins panel")
   async softAssertStablecoinsPanel() {
     try {
-      await this.assertStablecoinsPanel();
+      const webview = await this.getWebView();
+
+      const topStablecoinsRows = webview.locator(this.topStablecoinsItems);
+      await this.softExpect(async soft => {
+        await soft(webview.getByTestId(this.topStablecoinsContainer)).toBeVisible();
+        await soft(webview.getByTestId(this.topStablecoinsContainer)).toContainText("Stablecoins");
+        await soft(topStablecoinsRows).toHaveCount(2);
+      });
+      const topStablecoinsTexts = await topStablecoinsRows.allTextContents();
+      await this.softExpect(async soft => {
+        for (const text of topStablecoinsTexts) {
+          await soft(text).toMatch(/\d{1,10}\.\d{2}% APY$/);
+        }
+      });
+
+      await this.softExpect(async soft => {
+        await soft(webview.getByTestId(this.topStablecoinsInfoIcon)).toBeVisible();
+      });
     } catch (error) {
       await test.info().attach("Stablecoins panel check failed (non-blocking)", {
         body: String(error),
         contentType: "text/plain",
       });
     }
-  }
-
-  private async assertStablecoinsPanel() {
-    const webview = await this.getWebView();
-
-    const topStablecoinsRows = webview.locator(this.topStablecoinsItems);
-    await this.softExpect(async soft => {
-      await soft(webview.getByTestId(this.topStablecoinsContainer)).toBeVisible();
-      await soft(webview.getByTestId(this.topStablecoinsContainer)).toContainText("Stablecoins");
-      await soft(topStablecoinsRows).toHaveCount(2);
-    });
-    const topStablecoinsTexts = await topStablecoinsRows.allTextContents();
-    await this.softExpect(async soft => {
-      for (const text of topStablecoinsTexts) {
-        await soft(text).toMatch(/\d{1,10}\.\d{2}% APY$/);
-      }
-    });
-
-    await this.softExpect(async soft => {
-      await soft(webview.getByTestId(this.topStablecoinsInfoIcon)).toBeVisible();
-    });
   }
 
   @step("Go and wait for Swap app to be ready")
