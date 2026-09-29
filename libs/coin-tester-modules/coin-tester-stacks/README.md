@@ -144,10 +144,10 @@ Bump any of these deliberately, alongside a green run.
 
 ### Other
 
-- **`@stacks/network`/`@stacks/transactions` are pinned at `6.17.0`** in this package, while
-  `coin-stacks` itself is on `7.x`. `StacksDevnet` is the `StacksMocknet` alias in this version,
-  with the same default URL (`http://localhost:3999`, matching Clarinet's own default
-  `stacks_api_port`).
+- **`@stacks/transactions` comes from the pnpm catalog**, the same entry `coin-stacks` uses, so the
+  test signers and setup transactions can't drift to another major: `coin-stacks`'s pox-5 staking
+  transactions carry a post-condition type v6 can't deserialize. `@stacks/network`'s
+  `STACKS_DEVNET` defaults to `http://localhost:3999`, matching Clarinet's own `stacks_api_port`.
 
 ## Accounts
 

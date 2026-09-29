@@ -7,8 +7,8 @@ import path from "node:path";
 import chalk from "chalk";
 
 // Matches `settings/Devnet.toml`'s `stacks_api_port` (left at Clarinet's own default), which in
-// turn matches `@stacks/network`'s `HIRO_MOCKNET_DEFAULT`/`StacksDevnet` default URL — a
-// reassuring cross-check, not a coincidence this package relies on.
+// turn matches `@stacks/network`'s `STACKS_DEVNET` default URL (`DEVNET_URL`) — a reassuring
+// cross-check, not a coincidence this package relies on.
 export const STACKS_DEVNET_URL = "http://127.0.0.1:3999";
 
 // Matches `Clarinet.toml`'s `[project].name` + `settings/Devnet.toml`'s `[network].name` --

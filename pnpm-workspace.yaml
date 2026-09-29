@@ -125,6 +125,8 @@ catalog:
   "@rspack/plugin-react-refresh": 2.0.2
   "@rslib/core": 0.23.2
   react-refresh: 0.18.0
+  "@stacks/network": 7.6.0
+  "@stacks/transactions": 7.6.0
   "@swc/core": 1.15.11
   "@swc/helpers": 0.5.23
   "@swc/jest": 0.2.39
