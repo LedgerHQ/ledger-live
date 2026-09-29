@@ -33,7 +33,7 @@ import { urls } from "~/config/urls";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
 import { useNavigate } from "react-router";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getAccountUrl } from "~/renderer/utils";
 

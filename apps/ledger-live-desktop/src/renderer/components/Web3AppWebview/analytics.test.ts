@@ -1,4 +1,4 @@
-import { resetTrackingPages, setTrackingSource } from "~/renderer/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource } from "@shared/analytics";
 import { getTrackingRouteLiveAppSource } from "./analytics";
 
 describe("getTrackingRouteLiveAppSource", () => {

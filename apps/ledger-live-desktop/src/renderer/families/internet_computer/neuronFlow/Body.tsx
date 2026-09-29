@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
 import { bindActionCreators } from "redux";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { openModal } from "~/renderer/actions/modals";
 import Stepper from "~/renderer/components/Stepper";
 import logger from "~/renderer/logger";

@@ -11,7 +11,7 @@ import {
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientScanner } from "../../../context/RecipientScannerContext";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import { t } from "~/renderer/i18n/init";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
@@ -85,7 +85,10 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
       return;
     }
     hasTrackedRef.current = true;
-    trackPage("Modal send - step recipient", null, trackingProperties);
+    trackPage({
+      category: "Modal send - step recipient",
+      props: trackingProperties,
+    });
   }, [account, currency, trackingProperties]);
 
   const onAddressSelected = useCallback(

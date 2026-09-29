@@ -16,11 +16,13 @@ import { isPlatformSupportedCurrency } from "@ledgerhq/live-common/platform/help
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { type AccountNamesState } from "@domain/entity-account-name";
 import { AssetAndAccountResult } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
-const trackingLiveAppSDKLogic = trackingWrapper(track);
+const trackingLiveAppSDKLogic = trackingWrapper((eventName, properties, mandatory) => {
+  track(eventName, properties, { mandatory: !!mandatory });
+});
 
 type WebPlatformContext = {
   manifest: LiveAppManifest;

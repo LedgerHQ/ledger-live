@@ -5,7 +5,7 @@ import { Flex, Text, IconsLegacy, Link } from "@ledgerhq/react-ui";
 import { useFeature } from "@features/platform-feature-flags";
 import { StepProps } from "../Body";
 import StakingIllustration from "../assets/StakingIllustration";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Button from "~/renderer/components/ButtonV3";

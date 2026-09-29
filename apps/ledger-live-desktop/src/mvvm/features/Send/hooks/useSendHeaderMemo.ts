@@ -6,7 +6,7 @@ import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../context/SendFlowContext";
 import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "./useSendFlowTrackingProperties";
 
 export function useSendHeaderMemo() {

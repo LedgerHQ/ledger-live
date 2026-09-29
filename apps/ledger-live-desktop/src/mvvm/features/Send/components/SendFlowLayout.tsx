@@ -13,7 +13,7 @@ import {
 import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
 import { AnimatedHeight } from "./AnimatedHeight";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
