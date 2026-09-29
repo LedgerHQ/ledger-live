@@ -47,7 +47,7 @@ import {
 } from "../context/AddNewContactHeaderContext";
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
 import { useSendFlowTrackingProperties } from "./useSendFlowTrackingProperties";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 
 export type SendPrefillAddAddressPhase = Readonly<{
   state: PrefillAddAddressFlowVisibleState;
@@ -140,10 +140,13 @@ export function useSendPrefillAddAddressFlow({
     }
     trackedAddressPhaseRef.current = phaseKey;
 
-    trackPage("Modal send - name address", null, {
-      ...trackingProperties,
-      network: addressFlowState.displayContext.network.networkId,
-      asset: addressFlowState.selectedCurrencyId,
+    trackPage({
+      category: "Modal send - name address",
+      props: {
+        ...trackingProperties,
+        network: addressFlowState.displayContext.network.networkId,
+        asset: addressFlowState.selectedCurrencyId,
+      },
     });
   }, [addressFlowState, isAddressPhase, trackingProperties]);
 
@@ -240,10 +243,13 @@ export function useSendPrefillAddAddressFlow({
       close();
       navigation.resetToStep(SEND_FLOW_STEP.RECIPIENT);
     } catch {
-      trackPage("Modal send - address signing rejected", null, {
-        ...trackingProperties,
-        network: displayContext.network.networkId,
-        asset: addressFlowState.selectedCurrencyId,
+      trackPage({
+        category: "Modal send - address signing rejected",
+        props: {
+          ...trackingProperties,
+          network: displayContext.network.networkId,
+          asset: addressFlowState.selectedCurrencyId,
+        },
       });
       return;
     } finally {
@@ -384,10 +390,13 @@ export function useSendPrefillAddAddressFlow({
               inputMethod,
             }),
           );
-          trackPage("Modal send - address signing device", null, {
-            ...trackingProperties,
-            network: addressFlowState.displayContext.network.networkId,
-            asset: addressFlowState.selectedCurrencyId,
+          trackPage({
+            category: "Modal send - address signing device",
+            props: {
+              ...trackingProperties,
+              network: addressFlowState.displayContext.network.networkId,
+              asset: addressFlowState.selectedCurrencyId,
+            },
           });
           void saveFromReview();
         },

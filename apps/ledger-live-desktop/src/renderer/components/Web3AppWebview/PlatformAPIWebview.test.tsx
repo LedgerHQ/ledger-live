@@ -114,7 +114,11 @@ jest.mock("~/renderer/analytics/originFlow", () => ({
   setOriginFlow: jest.fn(),
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({ track: jest.fn() }));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 jest.mock("~/renderer/analytics/hooks/variables", () => ({
   HOOKS_TRACKING_LOCATIONS: {},

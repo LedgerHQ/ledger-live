@@ -17,7 +17,7 @@ import { useQuickActions } from "./useQuickActions";
 import { useInitialTransactionPreparation } from "../../../hooks/useInitialTransactionPreparation";
 import { useAmountScreenMessage } from "./useAmountScreenMessage";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 
 type UseAmountScreenViewModelParams = Readonly<{

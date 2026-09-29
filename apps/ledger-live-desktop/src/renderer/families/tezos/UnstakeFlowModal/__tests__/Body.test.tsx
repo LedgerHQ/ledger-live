@@ -43,7 +43,10 @@ jest.mock("~/renderer/logger", () => {
   };
   return { __esModule: true, default: loggerMock };
 });
-jest.mock("~/renderer/analytics/Track", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  Track: () => null,
+}));
 jest.mock("../steps/StepAmount", () => ({
   __esModule: true,
   default: () => null,

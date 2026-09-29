@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
@@ -51,7 +51,10 @@ export function useSignatureViewModel() {
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const onDeviceConfirmationShown = useCallback(() => {
-    trackPage("Modal send - step device review", null, sendFlowTrackingProperties);
+    trackPage({
+      category: "Modal send - step device review",
+      props: sendFlowTrackingProperties,
+    });
   }, [sendFlowTrackingProperties]);
 
   const action = useTransactionAction();

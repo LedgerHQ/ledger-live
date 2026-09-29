@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { openExchangeDrawer } from "~/renderer/actions/UI";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { mevProtectionSelector, shareAnalyticsSelector } from "~/renderer/reducers/settings";
@@ -451,7 +451,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 ...properties,
                 flowInitiatedFrom: getTrackingRouteLiveAppSource(),
               },
-              mandatory,
+              { mandatory: !!mandatory },
             ),
         ),
       [],

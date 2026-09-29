@@ -24,7 +24,7 @@ import {
 import { SendStepConfig } from "../types";
 import BigNumber from "bignumber.js";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { useRecipientScanner } from "../context/RecipientScannerContext";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
@@ -154,7 +154,10 @@ export function useSendHeaderModel({
   const hasFiredMemoPageViewRef = useRef(false);
   if (showMemoControls && !hasFiredMemoPageViewRef.current) {
     hasFiredMemoPageViewRef.current = true;
-    trackPage("Modal send - step memo", null, trackingProperties);
+    trackPage({
+      category: "Modal send - step memo",
+      props: trackingProperties,
+    });
   } else if (!showMemoControls) {
     hasFiredMemoPageViewRef.current = false;
   }
