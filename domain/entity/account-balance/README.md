@@ -1,9 +1,9 @@
 # @domain/entity-account-balance
 
 > [!CAUTION]
-> **Status: EXPLORATION** — first slice carved out of the `Account` god object by the [account domain migration](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7389904957/Account+domain+migration+discovery).
+> **Status: EXPLORATION.** First slice carved out of the `Account` god object by the [account domain migration](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7389904957/Account+domain+migration+discovery).
 
-The `balance` / `spendableBalance` table for wallet accounts — the cheapest and most frequently
+The `balance` / `spendableBalance` table for wallet accounts: the cheapest and most frequently
 changing part of an account, given a home of its own so that rendering a balance no longer requires
 holding a whole `Account` (and therefore its full operation history).
 
@@ -17,7 +17,7 @@ holding a whole `Account` (and therefore its full operation history).
 ```
 
 Main accounts and token accounts are **sibling rows** in `rows`, hence `AnyAccountId` as its key.
-`status` is keyed by `AccountId` because a read is always addressed to a main account — one chain
+`status` is keyed by `AccountId` because a read is always addressed to a main account: one chain
 call returns every asset held at an address.
 
 Four deliberate choices:
@@ -25,11 +25,11 @@ Four deliberate choices:
 - **Normalised, not nested.** A token account is a row with `parentId` set, not a member of a
   parent's `subAccounts` array. A token account's balance is reachable without walking a tree.
 - **Serializable throughout.** Ids and decimal strings (`BigNumberStr`), never `BigNumber`, `Date` or
-  resolved currency objects — and `error` is a message, not an `Error`. The whole state can go into
+  resolved currency objects, and `error` is a message, not an `Error`. The whole state can go into
   Redux and to disk untouched; callers parse amounts with their own BigNumber implementation at the
   edge.
 - **`at` on every row.** Freshness is a property of the balance, not of a whole account sync, which
-  is what lets a caller decide whether a value is worth refetching — and what let the fetch layer
+  is what lets a caller decide whether a value is worth refetching, and what let the fetch layer
   drop its bespoke bookkeeping.
 - **Status next to the rows it describes.** A shimmer and a retry button are ordinary derived state.
   Keeping them here is what removed the subscription layer this slice used to need.
@@ -45,12 +45,12 @@ Four deliberate choices:
 | `accountBalancesSlice.selectors` | `selectAccountBalance`, `selectSubAccountBalances`, `selectAccountBalanceStatus`, `selectAccountBalanceAt`, `selectAccountBalanceRows` |
 
 Selectors are declared **inside** the slice (RTK 2), so `accountBalancesSlice.selectors.*` takes the
-app's root state and `accountBalancesSlice.getSelectors()` takes the slice state alone — which is
+app's root state and `accountBalancesSlice.getSelectors()` takes the slice state alone, which is
 what lets wallet-cli run this reducer over a local variable.
 
 ### Why `accountBalanceReceived` replaces the whole set
 
-Chains that return every asset held at an address in a single call — EVM and friends — report a token
+Chains that return every asset held at an address in a single call (EVM and friends) report a token
 swept to zero by *omitting* it from the response, not by sending a zero. An upsert-only API would
 freeze that token's row at its pre-sweep value forever. `accountBalanceReceived` diffs the account's
 own row plus all rows parented to it, so a vanished token account vanishes from the table and no

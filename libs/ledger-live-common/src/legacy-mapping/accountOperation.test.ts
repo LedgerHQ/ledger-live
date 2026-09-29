@@ -92,7 +92,7 @@ describe("flattenOperation", () => {
     expect(rows[2]).toMatchObject({ accountId: ACCOUNT_ID, parentOperationId: "op-1" });
   });
 
-  it("drops nftOperations — this entity does not model them", () => {
+  it("drops nftOperations: this entity does not model them", () => {
     const rows = flattenOperation(
       operation({ nftOperations: [operation({ id: "nft-1" })] }),
       assetIdOf,

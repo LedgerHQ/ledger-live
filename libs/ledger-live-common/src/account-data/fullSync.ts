@@ -42,7 +42,7 @@ function runSync({ account, bridge, blacklistedTokenIds = [] }: SyncAccountOnceI
 /**
  * Run one full `AccountBridge.sync()` per account, per instant: on a family with no granular coin
  * module both the balance and the operations slice fall back here, and their thunks cannot see each
- * other. In flight only — freshness stays each slice's own business. A caller's `signal` stops that
+ * other. In flight only: freshness stays each slice's own business. A caller's `signal` stops that
  * caller waiting; it does not cancel the shared run.
  */
 export async function syncAccountOnce(input: SyncAccountOnceInput): Promise<Account> {

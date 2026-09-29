@@ -104,7 +104,7 @@ export const accountBalancesSlice = createSlice({
       const at = state.rows[accountId]?.at;
       if (at === undefined) return undefined;
       const ms = Date.parse(at);
-      // Persisted state can hold anything: an unparseable stamp is "not read", never `NaN` — every
+      // Persisted state can hold anything: an unparseable stamp is "not read", never `NaN`: every
       // caller compares this against a freshness window.
       return Number.isNaN(ms) ? undefined : ms;
     },
