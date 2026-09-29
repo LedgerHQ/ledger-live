@@ -17,6 +17,7 @@ import {
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } from "tests/utils/featureFlagUtils";
 import { NEW_SEND_FLOW_FAMILIES } from "tests/utils/newSendFlowUtils";
+import { unfreezeCard } from "tests/utils/payCardState";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const ALL_STABLECOINS = "All stablecoins";
