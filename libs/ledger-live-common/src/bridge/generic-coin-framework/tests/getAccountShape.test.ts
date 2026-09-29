@@ -3746,8 +3746,122 @@ describe("genericGetAccountShape", () => {
       // The old operation at height 3 is gone: kept, it would sit right below height 10 with no
       // visible sign that heights 4-9 were skipped rather than empty.
       expect(result.operations?.map(op => op.blockHeight)).toEqual([10]);
-      // Same treatment for sub-accounts: the old list is not what this round's merge starts from.
-      expect(mergeSubAccountsMock.mock.calls[0][0]).toEqual([]);
+      // Same treatment for the sub-account's operations -- zeroed, not the sub-account itself
+      // dropped, so `mergeSubAccounts` still matches it against `newSubAccounts` and carries over
+      // what an empty `oldSubAccounts` array would otherwise skip (see the dedicated test below).
+      expect(mergeSubAccountsMock.mock.calls[0][0]).toEqual([
+        { ...oldSubAccounts[0], operations: [] },
+      ]);
+    });
+
+    test("a bounded (not from-scratch) round zeroes only a sub-account's operations, keeping pendingOperations, swapHistory, balanceHistoryCache and creationDate carried over", async () => {
+      // An empty `oldSubAccounts` array (the fix two tests up, before this one) takes
+      // `mergeSubAccounts`'s early-return path, which hands back the freshly built sub-account
+      // as-is -- skipping the carry-over of these four fields from the stored one, none of which
+      // `buildSubAccounts` can reconstruct (`swapHistory` in particular is local-only, never
+      // re-derivable from chain data). Zeroing `operations` alone starves the merge of the old
+      // rows without also losing that state.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 1 });
+      listOperationsMock.mockResolvedValueOnce({
+        items: [coreOp("h10", 10), coreOp("h9", 9)],
+        next: "c1",
+      });
+      const creationDate = new Date("2020-01-01");
+      const oldSubAccounts = [
+        {
+          id: "subOld",
+          token: { id: "tok1" },
+          operations: [{ id: "stale-op" }],
+          pendingOperations: [{ id: "pending-1" }],
+          swapHistory: [{ swapId: "swap-1" }],
+          balanceHistoryCache: { HOUR: { balances: [1], latestDate: 0 } },
+          creationDate,
+        },
+      ] as any;
+      buildSubAccountsMock.mockReturnValue([
+        { id: "subNew", token: { id: "tok1" }, operations: [] },
+      ]);
+      // The real merge is what actually carries these fields over -- a mock replacing it would
+      // only prove the call argument looks right, not that the fields survive.
+      const { mergeSubAccounts: realMergeSubAccounts } = jest.requireActual("../buildSubAccounts");
+      mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: "addr1",
+          initialAccount: {
+            blockHeight: 3,
+            syncHash: "sync-hash",
+            operations: [],
+            pendingOperations: [],
+            subAccounts: oldSubAccounts,
+          },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const subAccount = (result.subAccounts as any[])[0];
+      expect(subAccount.operations).toEqual([]);
+      expect(subAccount.pendingOperations).toEqual([{ id: "pending-1" }]);
+      expect(subAccount.swapHistory).toEqual([{ swapId: "swap-1" }]);
+      expect(subAccount.balanceHistoryCache).toEqual({ HOUR: { balances: [1], latestDate: 0 } });
+      expect(subAccount.creationDate).toBe(creationDate);
+    });
+
+    test("a bounded round that filters down to nothing (failed-incoming rows) does not discard old data or blank the watermark", async () => {
+      // The delegate walk bounds *raw* core operations, before the NFT/failed-incoming filter
+      // runs. Both raw rows here are failed-incoming, so `operations` is empty even though
+      // `bounded` is true -- discarding old data on that empty result would wipe the stored
+      // history for nothing to show, persist `blockHeight: 0`, and read as from-scratch next
+      // time, repeating the same all-filtered walk forever.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 1 });
+      const failed = (hash: string, height: number) => ({
+        ...coreOp(hash, height),
+        tx: { failed: true, block: { height } },
+      });
+      listOperationsMock.mockResolvedValueOnce({
+        items: [failed("h10", 10), failed("h9", 9)],
+        next: "c1",
+      });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: "addr1",
+          initialAccount: {
+            blockHeight: 3,
+            syncHash: "sync-hash",
+            operations: [
+              {
+                id: "old1",
+                accountId: "accId",
+                hash: "hold",
+                blockHeight: 3,
+                type: "IN",
+                date: new Date(3000),
+                extra: {},
+                senders: [],
+                recipients: [],
+              },
+            ],
+            pendingOperations: [],
+            subAccounts: [],
+          },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // The second page (never reachable had the bound not stopped the walk on the first) is
+      // still never fetched -- the bound did stop the walk, it just retained nothing usable.
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      // The old operation survives: with nothing new to show for this round, it is a no-op retry,
+      // not a from-scratch reset.
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([3]);
     });
   });
 

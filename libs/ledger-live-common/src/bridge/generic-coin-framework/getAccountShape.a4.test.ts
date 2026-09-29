@@ -1,6 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { A4HttpError } from "./a4/client/errors";
 import { adaptA4OperationToLiveOperation } from "./a4/client/operations";
+import { PaginationIntegrityError } from "./paginateOperations";
 import { toA4Network } from "./a4/client/utils";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { genericGetAccountShape } from "./getAccountShape";
@@ -209,6 +210,26 @@ describe("genericGetAccountShape - A4 read branch", () => {
 
     expect(fetchA4OperationsMock).toHaveBeenCalledTimes(1);
     expect(listOperationsMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to the coin-module delegate and logs a malformed history, not a network blip, on a PaginationIntegrityError", async () => {
+    // A stalled A4 cursor is a defect in A4, not a transport failure -- the only other fallback
+    // tests reject with `A4HttpError`, which never exercises the `integrity` branch that picks
+    // `read_failover_integrity` over `read_failover_to_delegate` and the "malformed history"
+    // wording over "read failed".
+    fetchA4OperationsMock.mockRejectedValue(
+      new PaginationIntegrityError("cursor c1 was served twice"),
+    );
+
+    await call();
+
+    expect(fetchA4OperationsMock).toHaveBeenCalledTimes(1);
+    expect(listOperationsMock).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(log)).toHaveBeenCalledWith(
+      "a4",
+      expect.stringContaining("A4 returned a malformed history"),
+      expect.objectContaining({ decision: "read_failover_integrity" }),
+    );
   });
 
   it("skips fetchA4Operations and uses the coin-module delegate when read=false", async () => {
