@@ -1292,10 +1292,13 @@ export function useWalletAPIServer({
   useEffect(() => {
     // Registered by name until @ledgerhq/wallet-api-server exposes account.getMaxSpendable
     // (wallet-api#612). The installed handler map does not include the method yet.
-    const setGetMaxSpendable = server.setHandler as (
-      method: "account.getMaxSpendable",
-      handler: (params: { accountId: string }) => Promise<string>,
-    ) => void;
+    // bind keeps WalletAPIServer.setHandler's `this` (it writes this.walletHandlers).
+    const setGetMaxSpendable = (
+      server.setHandler as (
+        method: "account.getMaxSpendable",
+        handler: (params: { accountId: string }) => Promise<string>,
+      ) => void
+    ).bind(server);
 
     setGetMaxSpendable("account.getMaxSpendable", async ({ accountId }) => {
       const localAccountId = getAccountIdFromWalletAccountId(accountId);
