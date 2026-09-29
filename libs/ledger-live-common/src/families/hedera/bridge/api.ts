@@ -1,10 +1,14 @@
+import BigNumber from "bignumber.js";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/coin-hedera/constants";
+import type { HederaAccountInfo } from "@ledgerhq/coin-hedera/logic/getAccountInfo";
 import { getAssetFromToken } from "@ledgerhq/coin-hedera/logic/getAssetFromToken";
 import { getTokenFromAsset } from "@ledgerhq/coin-hedera/logic/getTokenFromAsset";
 import { apiClient } from "@ledgerhq/coin-hedera/network/api";
-import type { HederaCoinConfig, HederaTxData } from "@ledgerhq/coin-hedera/types";
+import type { HederaCoinConfig, HederaResources, HederaTxData } from "@ledgerhq/coin-hedera/types";
+import type { AccountInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type {
   BridgeApi,
+  FamilyAccountShape,
   OptimisticOperationDescriptor,
 } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -27,6 +31,38 @@ export async function getAddressesForPublicKey(
 // Every Hedera account sits on the seed path (`44/3030`), so its key is `seedIdentifier`.
 export function keyControlsAccount(publicKey: string, account: Account): boolean {
   return publicKey === account.seedIdentifier;
+}
+
+function isHederaAccountInfo(
+  accountInfo: AccountInfo | undefined,
+): accountInfo is HederaAccountInfo {
+  return accountInfo?.type === "hedera";
+}
+
+export function buildAccountShape(
+  _address: string,
+  accountInfo?: AccountInfo,
+): FamilyAccountShape | undefined {
+  if (!isHederaAccountInfo(accountInfo)) return undefined;
+
+  // The Mirror Node reports `-1` once an account is undelegated.
+  const delegation =
+    typeof accountInfo.stakedNodeId === "number" && accountInfo.stakedNodeId >= 0
+      ? {
+          nodeId: accountInfo.stakedNodeId,
+          // Hedera stakes the whole balance to the node: there is no separate staked amount.
+          delegated: new BigNumber(accountInfo.balance),
+          pendingReward: new BigNumber(accountInfo.pendingReward),
+        }
+      : null;
+
+  const hederaResources: HederaResources = {
+    maxAutomaticTokenAssociations: accountInfo.maxAutomaticTokenAssociations,
+    isAutoTokenAssociationEnabled: accountInfo.maxAutomaticTokenAssociations === -1,
+    delegation,
+  };
+
+  return { hederaResources };
 }
 
 export function computeIntentType(transaction: Record<string, unknown>): HEDERA_TRANSACTION_MODES {
@@ -89,6 +125,7 @@ export default function hederaBridge(currency: CryptoCurrency): BridgeApi {
     },
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     getAssetFromToken,
+    buildAccountShape,
     computeIntentType,
     buildIntentData,
     describeOptimisticOperation,

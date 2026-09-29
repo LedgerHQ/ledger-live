@@ -799,6 +799,7 @@
     "src/families/evm/signerMessage.ts",
     "src/families/evm/transaction.ts",
     "src/families/filecoin/config.ts",
+    "src/families/hedera/accountRawAssign.ts",
     "src/families/hedera/bridge/api.ts",
     "src/families/hedera/coinModuleApi.ts",
     "src/families/hedera/config.ts",
