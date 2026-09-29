@@ -53,12 +53,16 @@ import { payCardAuthSlice, payCardLoginIntroSlice } from "@features/flow-pay-car
 import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
 import { contactsSlice } from "@domain/entity-contact";
 import { appLockSlice } from "@features/platform-app-lock";
+import { accountBalancesSlice } from "@domain/entity-account-balance";
+import { accountOperationsSlice } from "@domain/entity-account-operations";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
 export type AppStore = Store<State>;
 
 const appReducer = combineReducers({
   accounts,
+  accountBalances: accountBalancesSlice.reducer,
+  accountOperations: accountOperationsSlice.reducer,
   appstate,
   auth,
   ble,

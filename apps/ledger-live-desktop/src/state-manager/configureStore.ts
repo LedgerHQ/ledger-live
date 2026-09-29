@@ -33,7 +33,22 @@ import appLogger from "~/renderer/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
-import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/settings";
+import {
+  blacklistedTokenIdsSelector,
+  canPushDeviceIdsSelector,
+  languageSelector,
+} from "~/renderer/reducers/settings";
+import { prepareCurrency } from "~/renderer/bridge/cache";
+import { accountSelector } from "~/renderer/reducers/accounts";
+import type { Account } from "@ledgerhq/types-live";
+import { createAccountDataRouter } from "@domain/api-account-data-source";
+import { CoinModuleSource } from "@features/platform-account-source-coin-module";
+import { FullSyncSource } from "@ledgerhq/live-common/account-data/FullSyncSource";
+import {
+  loadCoinModule,
+  tokenAccountIdOf,
+} from "@ledgerhq/live-common/account-data/coinModulePorts";
+import { getEnabledGenericCoinFrameworkFamilies } from "@ledgerhq/live-common/bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import {
   createFeatureFlagsMiddleware,
   selectFeature,
@@ -122,6 +137,23 @@ const customCreateStore = ({
                 swapApiBaseUrl: getEnv("SWAP_API_BASE"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
               }),
+              accountData: createAccountDataRouter([
+                new CoinModuleSource({
+                  loadCoinModule,
+                  tokenAccountIdOf,
+                  // Operations stay on the full sync until the coin module history is proven on par.
+                  families: { balance: getEnabledGenericCoinFrameworkFamilies },
+                  blacklistedTokenIds: (): string[] =>
+                    blacklistedTokenIdsSelector(store.getState()),
+                }),
+                new FullSyncSource({
+                  getAccount: (accountId): Account | undefined =>
+                    accountSelector(store.getState(), { accountId }),
+                  prepareCurrency,
+                  blacklistedTokenIds: (): string[] =>
+                    blacklistedTokenIdsSelector(store.getState()),
+                }),
+              ]),
               ...authApiExtra({
                 isFeatureEnabled: (): boolean =>
                   selectFeature(store.getState(), "lwdAuth").enabled ?? false,
