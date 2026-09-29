@@ -17,7 +17,7 @@ import { useNavigate } from "react-router";
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { createMockCategorizedAssets } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 import { mockStocksResponse } from "@domain/api-aggregated-assets/mock/stocks";
 
@@ -26,8 +26,8 @@ const DADA_API_ENDPOINT = "https://dada.api.ledger-test.com/v1/assets";
 
 const mockNavigate = jest.fn();
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 

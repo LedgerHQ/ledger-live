@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { BoxedIcon, Text } from "@ledgerhq/react-ui";
