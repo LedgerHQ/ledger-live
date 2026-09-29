@@ -1,5 +1,26 @@
 # @ledgerhq/coin-tron
 
+## 10.0.0-next.0
+
+### Major Changes
+
+- [#22227](https://github.com/LedgerHQ/ledger-live/pull/22227) [`2bc48af`](https://github.com/LedgerHQ/ledger-live/commit/2bc48af37bde7d5d66cba4f48dc186d06e4b08df) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-tron): remove stateful coin config
+
+### Minor Changes
+
+- [#22226](https://github.com/LedgerHQ/ledger-live/pull/22226) [`a503ca1`](https://github.com/LedgerHQ/ledger-live/commit/a503ca185ae15738cd8ec77949d0964baa8c679b) Thanks [@ishaba](https://github.com/ishaba)! - Fix broken TRC10 sends on Tron
+
+  A TRC10 transfer is crafted with the token's numeric asset id (encoded into the
+  TransferAssetContract `asset_name`), but the Tron family's `getAssetFromToken` returned the token's
+  `contractAddress` — which, for a TRC10 token from CAL, is the issuer address, not the asset id. The
+  crafted transfer then named a non-existent asset and the send failed. TRC10 now derives its asset
+  reference from the token id (`tron/trc10/<id>`), mirroring `getTokenFromAsset`; TRC20 keeps using its
+  contract address.
+
+- [#22410](https://github.com/LedgerHQ/ledger-live/pull/22410) [`4efbefe`](https://github.com/LedgerHQ/ledger-live/commit/4efbefe6bf557124596a33f4a94849056953c391) Thanks [@YazhuEth](https://github.com/YazhuEth)! - chore: bump tronweb to 6.5.1 and @zondax/ledger-cosmos-js to 4.2.0, and drop their pnpmfile patches
+
+- [#22026](https://github.com/LedgerHQ/ledger-live/pull/22026) [`88bae04`](https://github.com/LedgerHQ/ledger-live/commit/88bae04e2f7e7a3de8d55c340fe32b48e37bd78d) Thanks [@ishaba](https://github.com/ishaba)! - fix(coin-tron): take the TRC20 fee_limit from the estimate's ceiling
+
 ## 9.0.0
 
 ### Major Changes

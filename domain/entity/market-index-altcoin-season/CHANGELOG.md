@@ -1,5 +1,19 @@
 # @domain/entity-altcoins-sentiment
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#22369](https://github.com/LedgerHQ/ledger-live/pull/22369) [`8475c70`](https://github.com/LedgerHQ/ledger-live/commit/8475c704ed5cc75bcfddc9789130281ad0c2aca5) Thanks [@ysitbon](https://github.com/ysitbon)! - refactor(domain): rename the altcoins-sentiment entity to market-index-altcoin-season
+
+  `@domain/entity-altcoins-sentiment` becomes `@domain/entity-market-index-altcoin-season`. The
+  package holds the CoinMarketCap Altcoin Season Index, so the new name puts it in a
+  `market-index-*` namespace alongside the other CoinMarketCap index rather than using
+  `sentiment` as a second top-level name for the same kind of thing.
+
+  Pure rename: the exported `AltcoinSeasonIndexSchema` and `AltcoinSeasonIndex` are unchanged,
+  and every call site now imports from the new specifier.
+
 ## 0.2.0
 
 ### Minor Changes

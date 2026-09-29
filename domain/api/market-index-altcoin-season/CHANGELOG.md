@@ -1,5 +1,28 @@
 # @domain/api-altcoins-sentiment
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#22378](https://github.com/LedgerHQ/ledger-live/pull/22378) [`87de096`](https://github.com/LedgerHQ/ledger-live/commit/87de096183309fa2152abe838f09a537b681e8eb) Thanks [@ysitbon](https://github.com/ysitbon)! - refactor(domain): rename `@domain/api-altcoins-sentiment` to `@domain/api-market-index-altcoin-season`
+
+  The package wraps one specific CoinMarketCap product, the Altcoin Season Index, so the old name
+  used `sentiment` as a top-level leaf for something that measures capital rotation rather than
+  sentiment. The new name places it in the `market-index-*` namespace alongside its Fear and Greed
+  sibling and uses the provider's own product name for the leaf.
+
+  The exported api follows the package leaf: `altcoinsSentimentApi` becomes `altcoinSeasonApi` and
+  the `AltcoinsSentimentApi` type becomes `AltcoinSeasonApi`. `ALTCOIN_SEASON_INDEX_TAGS`,
+  `transformAltcoinSeasonIndexResponse` and `useGetAltcoinSeasonIndexLatestQuery` are unchanged.
+  The README, which documented an implementation the package never had, is rewritten against the
+  code. No behaviour change.
+
+### Patch Changes
+
+- Updated dependencies [[`8475c70`](https://github.com/LedgerHQ/ledger-live/commit/8475c704ed5cc75bcfddc9789130281ad0c2aca5), [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43)]:
+  - @domain/entity-market-index-altcoin-season@0.3.0-next.0
+  - @shared/api-services@0.9.0-next.0
+
 ## 0.3.6
 
 ### Patch Changes

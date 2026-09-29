@@ -1,5 +1,12 @@
 # @devtools/shell
 
+## 0.10.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/registry@0.5.1-next.0
+
 ## 0.10.0
 
 ### Minor Changes

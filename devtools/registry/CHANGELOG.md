@@ -1,5 +1,14 @@
 # @devtools/registry
 
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c1f5830`](https://github.com/LedgerHQ/ledger-live/commit/c1f5830bc23997b2b965b2619d6a79935b3f5ba5), [`e19e6cf`](https://github.com/LedgerHQ/ledger-live/commit/e19e6cf36074363d22085b6c85c54ef964eb382c)]:
+  - @devtools/pay-card@0.8.0-next.0
+  - @devtools/device-onboarding@0.2.1-next.0
+  - @devtools/feature-flags@0.10.1-next.0
+
 ## 0.5.0
 
 ### Minor Changes

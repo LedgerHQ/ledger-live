@@ -1,5 +1,55 @@
 # @features/flow-pay-card-assets
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#22622](https://github.com/LedgerHQ/ledger-live/pull/22622) [`3e7bbe9`](https://github.com/LedgerHQ/ledger-live/commit/3e7bbe93f6075a2a6783e05d36459c166366c910) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Start dragging a card asset after a 200 ms long press instead of 500 ms
+
+- [#22511](https://github.com/LedgerHQ/ledger-live/pull/22511) [`c32cde3`](https://github.com/LedgerHQ/ledger-live/commit/c32cde31461523c72df4f67cd18288c6f65c9951) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix drag-and-drop reordering in the card's manage-assets sheet, which never got the gesture
+
+  - `QueuedBottomSheet` takes `enableContentPanningGesture`, so content that owns a drag gesture can stop the sheet's own pan from claiming it.
+  - The manage-assets scene turns that gesture off and its list is no longer scrollable, leaving the drag uncontested and letting the sheet size to its rows.
+  - The row being dragged takes a `surfacePressed` background.
+  - The balance filter sheet sizes to its options instead of always opening at full height, with the confirm button pinned in the sheet's own footer slot.
+
+- [#22528](https://github.com/LedgerHQ/ledger-live/pull/22528) [`6baab2e`](https://github.com/LedgerHQ/ledger-live/commit/6baab2e7989b00bec4c361cee3535f76cb919915) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Size the card transaction detail sheet to its content on mobile, so it no longer scrolls under its own header
+
+  - The transaction and asset-transaction scenes size the sheet to their rows instead of opening at full height, and hold their content in a plain view rather than a scrollable, so the sheet has nowhere to scroll and its header stays put.
+  - The card-details scenes declare whether they are scrollable next to their sizing, the way the manage-assets scene already behaved.
+  - Content-sized sheets reserve the bottom safe area, which their own height no longer leaves room for.
+
+- [#22619](https://github.com/LedgerHQ/ledger-live/pull/22619) [`4d84f2b`](https://github.com/LedgerHQ/ledger-live/commit/4d84f2b23f3bc04c06770e390e22cd4e35ee3fe3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Keep the card assets info tooltip clear of the Android navigation bar
+
+- [#22592](https://github.com/LedgerHQ/ledger-live/pull/22592) [`46f0f94`](https://github.com/LedgerHQ/ledger-live/commit/46f0f9447e12faa953268bf2a19fbdfd85a43da9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show a dedicated empty and error state in Pay card assets and hide Manage until the list is ready.
+
+- [#22353](https://github.com/LedgerHQ/ledger-live/pull/22353) [`ae229f2`](https://github.com/LedgerHQ/ledger-live/commit/ae229f27b250d6bdd06af1b06a2912a8c556a27c) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Show a counter-value on the card rewards banner.
+
+  - The reward wallet now carries the currency it is denominated in, like a linked wallet does.
+  - The banner prices it with the host's rates and leads with the counter-value.
+  - The amount is formatted as a token, not as fiat.
+  - A reward nothing can price shows the asset amount alone.
+  - `priceWallet` is renamed `getCounterValue`: it converts an amount, it does not price a wallet.
+
+- [#22440](https://github.com/LedgerHQ/ledger-live/pull/22440) [`a39ba90`](https://github.com/LedgerHQ/ledger-live/commit/a39ba900d889155ebc4fe2cab88f82a715e3f605) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix remaining Pay Mixpanel events and user properties from the tracking plan
+
+- [#22549](https://github.com/LedgerHQ/ledger-live/pull/22549) [`24e881b`](https://github.com/LedgerHQ/ledger-live/commit/24e881b41d4199d9cf257a7450d139aa5f076a1d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hide Pay and card history amounts when discreet mode is enabled, and toggle it from the Pay balance
+
+- [#22522](https://github.com/LedgerHQ/ledger-live/pull/22522) [`e19e6cf`](https://github.com/LedgerHQ/ledger-live/commit/e19e6cf36074363d22085b6c85c54ef964eb382c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix the cropped transaction name and date on a card charge funded by several assets, and round card crypto amounts like the rest of the product. A devtool action and a mock fixture now produce such a charge.
+
+- [#22327](https://github.com/LedgerHQ/ledger-live/pull/22327) [`df5d8c9`](https://github.com/LedgerHQ/ledger-live/commit/df5d8c96892094fc6faf06992f415e88ff64b5c8) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Open the hosted crypto accounts dashboard when adding a card asset.
+
+### Patch Changes
+
+- Updated dependencies [[`b42673e`](https://github.com/LedgerHQ/ledger-live/commit/b42673eed68aba6b2885486d7294f5f9163f721d), [`ad2f1de`](https://github.com/LedgerHQ/ledger-live/commit/ad2f1deb73d1fd6fed1383133a7f2b259630cd06), [`6baab2e`](https://github.com/LedgerHQ/ledger-live/commit/6baab2e7989b00bec4c361cee3535f76cb919915), [`cfb7566`](https://github.com/LedgerHQ/ledger-live/commit/cfb756682290e9940d65f3b6417d6b111449e546), [`d6866e7`](https://github.com/LedgerHQ/ledger-live/commit/d6866e7dc7ced8898ac585d4e34d9667d9ad7f17), [`05715d2`](https://github.com/LedgerHQ/ledger-live/commit/05715d221f3e9651e95b811419373ad77718bab4), [`83fac3e`](https://github.com/LedgerHQ/ledger-live/commit/83fac3e00782840d1f118180dfb9afb9a484952c), [`b6a9b53`](https://github.com/LedgerHQ/ledger-live/commit/b6a9b531267360fdca64b8db22dd8781aa414dd9), [`68f4179`](https://github.com/LedgerHQ/ledger-live/commit/68f41798cae68cd1b91f291d5447514b80fd6f49), [`ea90542`](https://github.com/LedgerHQ/ledger-live/commit/ea90542540f47a76c18cf5f440bb98b9be71c837), [`e8518d7`](https://github.com/LedgerHQ/ledger-live/commit/e8518d7f0b88096552c6a8f74ffe5752bc517a39), [`912b087`](https://github.com/LedgerHQ/ledger-live/commit/912b0877538bd06cc7187b90e2eab8182fe55034), [`defb949`](https://github.com/LedgerHQ/ledger-live/commit/defb949c02d9d0d935882eb8e8617d000e18b163), [`3d41eab`](https://github.com/LedgerHQ/ledger-live/commit/3d41eab30728e94a21c53d4d4d9fe6eec27a5ce1), [`ae229f2`](https://github.com/LedgerHQ/ledger-live/commit/ae229f27b250d6bdd06af1b06a2912a8c556a27c), [`a39ba90`](https://github.com/LedgerHQ/ledger-live/commit/a39ba900d889155ebc4fe2cab88f82a715e3f605), [`dccea32`](https://github.com/LedgerHQ/ledger-live/commit/dccea322ed808abfa4e6829364fe945cd0a58383), [`c119e0d`](https://github.com/LedgerHQ/ledger-live/commit/c119e0d38f626314cf679bfa06420ce0e4bca03b), [`e19e6cf`](https://github.com/LedgerHQ/ledger-live/commit/e19e6cf36074363d22085b6c85c54ef964eb382c), [`df5d8c9`](https://github.com/LedgerHQ/ledger-live/commit/df5d8c96892094fc6faf06992f415e88ff64b5c8), [`f7ba21f`](https://github.com/LedgerHQ/ledger-live/commit/f7ba21f7df883e71102a0949c8a3d23e20fb4cbd)]:
+  - @domain/api-card-management@0.8.0-next.0
+  - @features/flow-pay-card-wallets@0.5.0-next.0
+  - @features/platform-pay-analytics@0.3.0-next.0
+  - @features/flow-pay-card-transactions@0.4.0-next.0
+  - @features/flow-pay-card-auth@0.9.0-next.0
+  - @shared/ui-list-reorder@0.2.0-next.0
+  - @domain/entity-currency@0.4.5-next.0
+
 ## 0.2.0
 
 ### Minor Changes
