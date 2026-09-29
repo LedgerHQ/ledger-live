@@ -7,6 +7,7 @@ import type { BigNumber } from "bignumber.js";
 /** The framework's mode spelling, not coin-hedera's `HEDERA_TRANSACTION_MODES`. */
 export type HederaTransactionMode =
   | "send"
+  | "tokenAssociate"
   | "delegate"
   | "undelegate"
   | "redelegate"
