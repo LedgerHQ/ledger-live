@@ -22,8 +22,7 @@ import {
   isDataStale,
 } from "~/renderer/screens/market/utils";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
-import { track } from "~/renderer/analytics/segment";
-import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage, track } from "@shared/analytics";
 import { useMarketCategories } from "LLD/features/Market/hooks/useMarketCategories";
 import {
   getMarketCategoriesParam,
@@ -144,7 +143,10 @@ export function useMarket() {
   // the counter value's unit. `null` defers the conversion (rows stay empty + loading).
   const rate = needsUsdFallback ? usdToCounterValueRate : 1;
 
-  const resolvedMarketParams = { ...marketParams, counterCurrency: displayCounterCurrency };
+  const resolvedMarketParams = {
+    ...marketParams,
+    counterCurrency: displayCounterCurrency,
+  };
 
   const marketResult = useMarketDataHook(
     {
@@ -164,7 +166,10 @@ export function useMarket() {
     () =>
       Object.keys(rangeDataTable)
         .filter(k => k !== "1h")
-        .map(key => ({ value: key, label: t(`market.range.${rangeDataTable[key].label}`) }))
+        .map(key => ({
+          value: key,
+          label: t(`market.range.${rangeDataTable[key].label}`),
+        }))
         .reverse(),
     [t],
   );

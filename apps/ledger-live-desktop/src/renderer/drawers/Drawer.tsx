@@ -3,7 +3,7 @@ import { analyticsDrawerContext, context, State } from "./Provider";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
 import { Transition, TransitionGroup, TransitionStatus } from "react-transition-group";
-import { track } from "../analytics/segment";
+import { track } from "@shared/analytics";
 const transitionStyles = {
   entering: {},
   entered: {
@@ -18,7 +18,10 @@ const transitionStyles = {
   },
 };
 const DURATION = 200;
-const Bar = styled.div.attrs<{ state: TransitionStatus; withPaddingTop: boolean }>(props => ({
+const Bar = styled.div.attrs<{
+  state: TransitionStatus;
+  withPaddingTop: boolean;
+}>(props => ({
   style: {
     ...transitionStyles[props.state as keyof typeof transitionStyles],
   },

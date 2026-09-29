@@ -1,7 +1,7 @@
 import { renderHook, act, waitFor, withFlagOverrides } from "tests/testSetup";
 import { useNavigate, useLocation } from "react-router";
 import { useHistoryViewModel } from "../useHistoryViewModel";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),

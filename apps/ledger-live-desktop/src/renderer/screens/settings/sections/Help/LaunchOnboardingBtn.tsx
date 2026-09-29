@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Button from "~/renderer/components/Button";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 

@@ -2,10 +2,11 @@ import React from "react";
 import { fireEvent, render, screen } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import NotEnoughFundsToUnstake from "./index";
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
@@ -40,7 +41,10 @@ describe("NotEnoughFundsToUnstake", () => {
 
     expect(track).toHaveBeenCalledWith(
       "button_clicked2",
-      expect.objectContaining({ button: "receive", page: "WithdrawingFlowModal" }),
+      expect.objectContaining({
+        button: "receive",
+        page: "WithdrawingFlowModal",
+      }),
     );
   });
 

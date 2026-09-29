@@ -3,7 +3,7 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Search } from "LLD/components/Search";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 type Props = {
   search: string;

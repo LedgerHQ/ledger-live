@@ -17,7 +17,7 @@ import { useNavigate, useLocation } from "react-router";
 import { compose } from "redux";
 import styled from "styled-components";
 import { openModal } from "~/renderer/actions/modals";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource, track } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import Star from "~/renderer/components/Stars/Star";
@@ -27,7 +27,6 @@ import useTheme from "~/renderer/hooks/useTheme";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
 import IconWalletConnect from "~/renderer/icons/WalletConnect";
 import { rgba } from "~/renderer/styles/helpers";
-import { track } from "~/renderer/analytics/segment";
 import {
   ActionDefault,
   BuyActionDefault,

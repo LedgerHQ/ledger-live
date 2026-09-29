@@ -6,7 +6,7 @@ import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
 import logger from "~/renderer/logger";
 import { useNavigate } from "react-router";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { openModal, closeModal } from "~/renderer/actions/modals";
 import { Subscription } from "rxjs";
 

@@ -1,12 +1,12 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import {
   resetTrackingPages,
+  setTrackingSource,
   setTrackingSource as setTrackingPageSource,
-} from "~/renderer/analytics/screenRefs";
-import { track } from "~/renderer/analytics/segment";
+  track,
+} from "@shared/analytics";
 import { ContextMenu } from "../components/ContextMenu";
 import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../constants";
 
@@ -24,11 +24,10 @@ jest.mock("react-router", () => ({
   })),
 }));
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
-  __esModule: true,
-  ...jest.requireActual<typeof import("~/renderer/analytics/TrackPage")>(
-    "~/renderer/analytics/TrackPage",
-  ),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
   setTrackingSource: jest.fn(),
 }));
 

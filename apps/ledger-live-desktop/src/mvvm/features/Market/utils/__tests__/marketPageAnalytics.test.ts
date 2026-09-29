@@ -1,6 +1,6 @@
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { renderHook } from "tests/testSetup";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import {
   getMarketDiscoverabilityPageAnalytics,
   getMarketPageCategoryAnalytics,
@@ -12,7 +12,9 @@ import {
   useTrackMarketDiscoverabilityPage,
 } from "../marketPageAnalytics";
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
   trackPage: jest.fn(),
 }));
 
@@ -146,18 +148,17 @@ describe("marketPageAnalytics", () => {
       );
 
       expect(trackPage).toHaveBeenCalledWith(
-        "Market",
-        undefined,
         {
-          sortVolume: "desc",
-          sortMarketCap: "desc",
-          sortChange: "desc",
-          timeframe: "7D",
-          category: "favorites",
+          category: "Market",
+          props: {
+            sortVolume: "desc",
+            sortMarketCap: "desc",
+            sortChange: "desc",
+            timeframe: "7D",
+            category: "favorites",
+          },
         },
-        true,
-        true,
-        false,
+        { updateRoutes: true, refreshSource: true },
       );
     });
 

@@ -1,8 +1,7 @@
 import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import { track } from "~/renderer/analytics/segment";
-import { resetTrackingPages, setTrackingSource } from "~/renderer/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource, track } from "@shared/analytics";
 import { useSearchOverlayViewModel } from "../useSearchOverlayViewModel";
 import { useAssetSearchBar } from "../useAssetSearchBar";
 import { SearchMode, SearchResults, SearchSuggestions } from "../types";
@@ -135,7 +134,11 @@ describe("useSearchOverlayViewModel", () => {
 
       expect(mockedTrack).toHaveBeenCalledWith(
         "asset_clicked",
-        expect.objectContaining({ asset: "Bitcoin", flow: "global_search", searched: false }),
+        expect.objectContaining({
+          asset: "Bitcoin",
+          flow: "global_search",
+          searched: false,
+        }),
       );
     });
 
@@ -165,7 +168,9 @@ describe("useSearchOverlayViewModel", () => {
       ["/asset/bitcoin", true],
       ["/market/bitcoin", true],
     ])("navigates from %s with replace=%s", (pathname, replace) => {
-      const { result } = renderHook(() => useSearchOverlayViewModel(), { initialRoute: pathname });
+      const { result } = renderHook(() => useSearchOverlayViewModel(), {
+        initialRoute: pathname,
+      });
 
       act(() => result.current.contextValue.navigateToAsset("ethereum"));
 
