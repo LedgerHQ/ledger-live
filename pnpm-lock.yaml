@@ -920,6 +920,9 @@ importers:
       '@dnd-kit/utilities':
         specifier: 'catalog:'
         version: 3.2.2(react@19.1.4)
+      '@domain/api-account-data-source':
+        specifier: workspace:^
+        version: link:../../domain/api/account-data-source
       '@domain/api-aggregated-assets':
         specifier: workspace:*
         version: link:../../domain/api/aggregated-assets
@@ -947,9 +950,15 @@ importers:
       '@domain/entity-account-alias':
         specifier: workspace:^
         version: link:../../domain/entity/account-alias
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
+      '@domain/entity-account-operations':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-operations
       '@domain/entity-analytics-consent':
         specifier: workspace:*
         version: link:../../domain/entity/analytics-consent
@@ -1067,6 +1076,9 @@ importers:
       '@features/flow-pay-request':
         specifier: workspace:^
         version: link:../../features/flow/pay-request
+      '@features/platform-account-source-coin-module':
+        specifier: workspace:^
+        version: link:../../features/platform/account-source-coin-module
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
@@ -1768,6 +1780,9 @@ importers:
       '@devtools/wire':
         specifier: workspace:*
         version: link:../../devtools/wire
+      '@domain/api-account-data-source':
+        specifier: workspace:^
+        version: link:../../domain/api/account-data-source
       '@domain/api-aggregated-assets':
         specifier: workspace:*
         version: link:../../domain/api/aggregated-assets
@@ -1792,9 +1807,15 @@ importers:
       '@domain/entity-account':
         specifier: workspace:^
         version: link:../../domain/entity/account
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
+      '@domain/entity-account-operations':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-operations
       '@domain/entity-analytics-consent':
         specifier: workspace:*
         version: link:../../domain/entity/analytics-consent
@@ -1918,6 +1939,9 @@ importers:
       '@features/flow-pay-request':
         specifier: workspace:^
         version: link:../../features/flow/pay-request
+      '@features/platform-account-source-coin-module':
+        specifier: workspace:^
+        version: link:../../features/platform/account-source-coin-module
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
