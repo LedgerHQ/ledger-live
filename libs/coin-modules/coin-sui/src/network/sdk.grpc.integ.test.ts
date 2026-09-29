@@ -8,11 +8,12 @@ describe("gRPC-web transport (live mainnet)", () => {
   const config: SuiCoinConfig = {
     status: { type: "active" },
     node: {
-      url: getEnv("API_SUI_NODE_PROXY"),
       graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
       grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
     },
     features: { transport: "grpc" },
+    name: "Sui",
+    unit: { name: "Sui", code: "SUI", magnitude: 9 },
   };
 
   // Liveness is asserted through GetEpoch rather than the more obvious GetServiceInfo:

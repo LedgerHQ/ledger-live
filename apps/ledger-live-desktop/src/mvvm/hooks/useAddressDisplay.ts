@@ -3,6 +3,7 @@ import { useSelector } from "LLD/hooks/redux";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { findMatchedContact } from "@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact";
 import { selectContacts } from "@domain/entity-contact";
+import { useContactDisplayName } from "@features/platform-contacts";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { truncateAddress } from "LLD/features/History/utils/truncateAddress";
@@ -67,12 +68,15 @@ export function useAddressDisplay(
   const matchingAccount = useMatchingAccount(address, currencyId);
   const accountName = useMaybeAccountName(matchingAccount);
   const matchingContact = useMatchingContact(address, currencyId);
+  const getDisplayName = useContactDisplayName();
 
   return useMemo(() => {
     if (!address) return EMPTY_RESULT;
 
     const contact = includeContacts ? matchingContact : undefined;
-    const contactName = contact?.contactName;
+    const contactName = contact
+      ? getDisplayName({ name: contact.contactName, isMe: contact.isMe })
+      : undefined;
     const displayName = accountName ?? contactName ?? truncateAddress(address);
 
     return {
@@ -82,5 +86,5 @@ export function useAddressDisplay(
       contactName,
       contactAddressLabel: contact?.addressLabel,
     };
-  }, [address, matchingAccount, accountName, matchingContact, includeContacts]);
+  }, [address, matchingAccount, accountName, matchingContact, includeContacts, getDisplayName]);
 }

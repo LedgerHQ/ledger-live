@@ -1,5 +1,6 @@
 import type {
   PayCardTransaction,
+  PayCardTransactionCashback,
   PayCardTransactionFundingSource,
 } from "@domain/api-card-management";
 import type { FormatCardTransactionAmount, FormatCardTransactionDate } from "../../../types";
@@ -34,6 +35,28 @@ export function formatFundingSources(
       formatAmount(signedValue(amount, sign), currency, "crypto"),
     )
     .join(" · ");
+}
+
+/** Several sources would not fit a row beside the merchant name and date, so they get a count. */
+export function formatFundingLabel(
+  fundingSources: readonly PayCardTransactionFundingSource[] | undefined,
+  translatePaidWithAssets: (count: number) => string,
+  formatAmount?: FormatCardTransactionAmount,
+): string | undefined {
+  if (!fundingSources?.length) return undefined;
+
+  return fundingSources.length > 1
+    ? translatePaidWithAssets(fundingSources.length)
+    : formatFundingSources(fundingSources, formatAmount);
+}
+
+export function formatCashback(
+  cashback: PayCardTransactionCashback | undefined,
+  formatAmount: FormatCardTransactionAmount = defaultFormatAmount,
+): string | undefined {
+  if (!cashback) return undefined;
+
+  return formatAmount(cashback.amount, cashback.currency, "crypto");
 }
 
 export function formatMerchantName(merchantNameLocation: string): string {

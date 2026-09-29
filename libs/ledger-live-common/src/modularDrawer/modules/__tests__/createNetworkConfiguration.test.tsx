@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import "../../../__tests__/test-helpers/rateLookup";
 import React from "react";
 import { renderHook } from "@testing-library/react";
 import { BigNumber } from "bignumber.js";

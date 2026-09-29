@@ -30,7 +30,11 @@ describe("Kaspa negative cases (simnet devnet)", () => {
     LiveConfig.setConfig({
       config_currency_kaspa: {
         type: "object",
-        default: { status: { type: "active" } },
+        default: {
+          status: { type: "active" },
+          name: "KASPA",
+          unit: { name: "KAS", code: "KAS", magnitude: 8 },
+        },
       },
     });
 

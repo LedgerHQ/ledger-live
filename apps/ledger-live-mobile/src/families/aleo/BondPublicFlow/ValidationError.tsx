@@ -1,16 +1,7 @@
-import React, { useCallback } from "react";
-import { StyleSheet } from "react-native";
-import { useTheme } from "styled-components/native";
-import SafeAreaView from "~/components/SafeAreaView";
-import { TrackScreen } from "~/analytics";
-import ValidateError from "~/components/ValidateError";
+import React from "react";
 import { ScreenName } from "~/const";
-import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import type {
-  BaseComposite,
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "~/components/RootNavigator/types/helpers";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import AleoValidationError from "../shared/ValidationError";
 import type { AleoBondPublicFlowParamList } from "./types";
 
 type Props = BaseComposite<
@@ -18,30 +9,13 @@ type Props = BaseComposite<
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
-  const { colors } = useTheme();
-
-  const onClose = useCallback(() => {
-    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
-  }, [navigation]);
-
-  const onRetry = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
-      <TrackScreen
-        category="BondPublicFlow"
-        name="ValidationError"
-        flow="stake"
-        action="bond"
-        currency="aleo"
-      />
-      <ValidateError error={route.params.error} onRetry={onRetry} onClose={onClose} />
-    </SafeAreaView>
+    <AleoValidationError
+      navigation={navigation}
+      error={route.params.error}
+      category="BondPublicFlow"
+      flow="stake"
+      action="bond"
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  root: { flex: 1 },
-});

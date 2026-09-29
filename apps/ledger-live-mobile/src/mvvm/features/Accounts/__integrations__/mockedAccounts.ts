@@ -29,7 +29,6 @@ export const MockedAccounts: AccountsState = {
         scheme: "cro",
         color: "#002D74",
         family: "evm",
-        ethereumLikeInfo: { chainId: 25 },
         units: [{ name: "CRO", code: "CRO", magnitude: 18 }],
         explorerViews: [
           {
@@ -114,11 +113,6 @@ export const MockedAccounts: AccountsState = {
         color: "#0e76aa",
         family: "bitcoin",
         blockAvgTime: 150,
-        bitcoinLikeInfo: {
-          P2PKH: 76,
-          P2SH: 16,
-          XPUBVersion: 50221816,
-        },
         units: [
           { name: "dash", code: "DASH", magnitude: 8 },
           { name: "satoshi", code: "sat", magnitude: 0 },
@@ -129,7 +123,6 @@ export const MockedAccounts: AccountsState = {
             address: "https://explorer.dash.org/insight/address/$address",
           },
         ],
-        explorerId: "dash",
       },
       lastSyncDate: new Date("2024-12-11T09:54:36.544Z"),
       swapHistory: [],
@@ -206,11 +199,6 @@ export const MockedAccounts: AccountsState = {
         color: "#65d196",
         family: "bitcoin",
         blockAvgTime: 60,
-        bitcoinLikeInfo: {
-          P2PKH: 30,
-          P2SH: 22,
-          XPUBVersion: 49990397,
-        },
         symbol: "Ð",
         units: [
           { name: "dogecoin", code: "DOGE", magnitude: 8 },
@@ -223,7 +211,6 @@ export const MockedAccounts: AccountsState = {
           },
         ],
         keywords: ["doge", "dogecoin"],
-        explorerId: "doge",
       },
       lastSyncDate: new Date("2024-12-11T09:54:35.262Z"),
       swapHistory: [],
@@ -319,7 +306,6 @@ export const MockedAccounts: AccountsState = {
           { name: "Kwei", code: "Kwei", magnitude: 3 },
           { name: "wei", code: "wei", magnitude: 0 },
         ],
-        ethereumLikeInfo: { chainId: 246 },
         explorerViews: [
           {
             tx: "https://explorer.energyweb.org/tx/$hash",
@@ -409,7 +395,6 @@ export const MockedAccounts: AccountsState = {
         ],
         family: "evm",
         blockAvgTime: 15,
-        ethereumLikeInfo: { chainId: 61 },
         explorerViews: [
           {
             tx: "https://blockscout.com/etc/mainnet/tx/$hash/internal-transactions",
@@ -417,7 +402,6 @@ export const MockedAccounts: AccountsState = {
           },
         ],
         keywords: ["etc", "ethereum classic"],
-        explorerId: "etc",
       },
       lastSyncDate: new Date("2024-12-11T09:54:36.743Z"),
       swapHistory: [],
@@ -599,7 +583,6 @@ export const MockedAccounts: AccountsState = {
           { name: "Kwei", code: "Kwei", magnitude: 3 },
           { name: "wei", code: "wei", magnitude: 0 },
         ],
-        ethereumLikeInfo: { chainId: 59144 },
         explorerViews: [
           {
             tx: "https://lineascan.build/tx/$hash",

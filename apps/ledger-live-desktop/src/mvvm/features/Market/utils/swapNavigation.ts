@@ -31,7 +31,9 @@ export function buildSwapNavigationState({
     defaultCurrency: { toCurrencyId: defaultCurrency.id },
   };
 
-  if (isTokenCurrency(defaultCurrency) && !account) {
+  // A token is identified by `toTokenId`, whether or not an account comes with it:
+  // `toCurrencyId` alone leaves the Swap live app's receive field empty for tokens.
+  if (isTokenCurrency(defaultCurrency)) {
     baseState.defaultToken = { toTokenId: defaultCurrency.id };
   }
 

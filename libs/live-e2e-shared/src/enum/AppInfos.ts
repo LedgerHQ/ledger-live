@@ -15,6 +15,9 @@ export class AppInfos {
 
   static readonly ETHEREUM = new AppInfos("Ethereum");
 
+  /** Pinned Ethereum build for contacts device intents. */
+  static readonly ETHEREUM_CONTACTS = new AppInfos("Ethereum Contacts");
+
   static readonly ETHEREUM_SEPOLIA = new AppInfos("Ethereum Sepolia");
 
   static readonly ETHEREUM_CLASSIC = new AppInfos("Ethereum Classic");
@@ -50,6 +53,8 @@ export class AppInfos {
   static readonly MULTIVERS_X = new AppInfos("Multivers X");
 
   static readonly OSMOSIS = new AppInfos("Osmosis");
+
+  static readonly BABYLON = new AppInfos("Babylon");
 
   static readonly LS = new AppInfos("LedgerSync");
 

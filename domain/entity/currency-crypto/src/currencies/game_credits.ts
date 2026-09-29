@@ -17,9 +17,5 @@ export const game_credits = currency({
       magnitude: 8,
     },
   ],
-  bitcoinLikeInfo: {
-    P2PKH: 38,
-    P2SH: 62,
-  },
   explorerViews: [],
 });

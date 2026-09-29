@@ -251,7 +251,6 @@ export function usePerpsDepositViewModel({
       uiUseCase: PERPS_UI_USE_CASE.fund,
       onAccountSelected: account => {
         setDepositAccountId(account.id);
-        setAmountText("");
       },
     });
   }, [openDrawer]);

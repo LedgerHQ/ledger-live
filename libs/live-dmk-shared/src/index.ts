@@ -39,10 +39,29 @@ export type {
   DeviceIntentTrackingProperties,
   SourceFlow,
 } from "./deviceIntentTracking/DeviceIntentTrackingContext";
+export {
+  DeviceFlowFailureType,
+  getConnectDeviceFailure,
+  getConnectDeviceSubError,
+  getDeviceDisconnectedFailure,
+  getDeviceFlowFailureProperties,
+  getDeviceflowCancelEventName,
+  getEnsureAppReadyFailure,
+  getErrorName,
+  getInvalidOperationFailure,
+} from "./deviceIntentTracking/deviceFlowFailure";
+export type {
+  DeviceFlowDevice,
+  DeviceFlowFailure,
+  DeviceFlowFailureProperties,
+  DeviceFlowTransport,
+} from "./deviceIntentTracking/deviceFlowFailure";
 export { OverrideDeviceIntentExecutorHeader } from "./deviceIntentHeader/OverrideDeviceIntentExecutorHeader";
 export { DeviceIntentExecutorHeaderContext } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
 export type { DeviceIntentExecutorHeaderContextValue } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
 export { useDeviceIntentExecutorHeaderOverrideRequests } from "./deviceIntentHeader/useDeviceIntentExecutorHeaderOverrideRequests";
+export { AddressBookProvider } from "./services/AddressBookProvider";
+export type { AddressBookSource } from "./services/AddressBookProvider";
 export { LedgerLiveLogger } from "./services/LedgerLiveLogger";
 export { UserHashService } from "./services/UserHashService";
 export {

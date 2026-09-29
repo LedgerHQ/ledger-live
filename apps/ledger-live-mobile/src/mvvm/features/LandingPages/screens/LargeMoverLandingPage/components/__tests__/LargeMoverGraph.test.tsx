@@ -52,7 +52,6 @@ const mockBitcoinCurrency: CryptoCurrency = {
   ],
   keywords: ["btc", "bitcoin"],
   explorerViews: [],
-  explorerId: "btc",
 };
 
 describe("LargeMoverGraph", () => {

@@ -126,7 +126,7 @@ export function createRendererConfig(
           "..",
           "node_modules",
           ".pnpm",
-          "casper-js-sdk@5.0.5",
+          "casper-js-sdk@5.1.1",
           "node_modules",
           "casper-js-sdk",
           "dist",

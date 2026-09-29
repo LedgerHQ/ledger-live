@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { PayRequestTrackEvent } from "@features/flow-pay-request";
+import { trackEvent } from "@features/platform-pay-analytics";
 import { createIntent, type DeviceConnectionParams } from "@features/platform-device-intent";
 import type {
   VerifyAddressIntentInput,
@@ -32,7 +32,6 @@ export type VerifyAddressExecutorLWMProps = Readonly<{
   page: string;
   onReady: () => void;
   onExit: (outcome: PayVerifyOutcome) => void;
-  onTrackEvent?: PayRequestTrackEvent;
 }>;
 
 const noop = () => undefined;
@@ -56,7 +55,6 @@ export function VerifyAddressExecutorLWM({
   page,
   onReady,
   onExit,
-  onTrackEvent,
 }: VerifyAddressExecutorLWMProps): React.ReactElement | null {
   const [initInput, setInitInput] = useState<InitializationInput | null>(null);
   const lastJobStateRef = useRef<VerifyAddressIntentJobState | undefined>(undefined);
@@ -100,7 +98,7 @@ export function VerifyAddressExecutorLWM({
       lastJobStateRef.current = jobState;
       const event = JOB_TRACK_EVENT[jobState.type];
       if (event) {
-        onTrackEvent?.(event, {
+        trackEvent(event, {
           page,
           flow: "request",
           asset: tokenCurrency?.ticker ?? mainAccount.currency.ticker,
@@ -109,26 +107,19 @@ export function VerifyAddressExecutorLWM({
       }
       if (jobState.type === "verified") exit("verified");
     },
-    [exit, mainAccount.currency.id, mainAccount.currency.ticker, onTrackEvent, page, tokenCurrency],
+    [exit, mainAccount.currency.id, mainAccount.currency.ticker, page, tokenCurrency],
   );
 
   const onUserCancel = useCallback(() => {
     if (exitedRef.current) return;
-    onTrackEvent?.("request_verification_dismiss", {
+    trackEvent("request_verification_dismiss", {
       page,
       flow: "request",
       asset: tokenCurrency?.ticker ?? mainAccount.currency.ticker,
       network: mainAccount.currency.id,
     });
     exit(outcomeFromLastState(lastJobStateRef.current));
-  }, [
-    exit,
-    mainAccount.currency.id,
-    mainAccount.currency.ticker,
-    onTrackEvent,
-    page,
-    tokenCurrency,
-  ]);
+  }, [exit, mainAccount.currency.id, mainAccount.currency.ticker, page, tokenCurrency]);
 
   const intent = useMemo(
     () =>

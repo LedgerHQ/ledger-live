@@ -120,7 +120,6 @@ export enum ScreenName {
   Card = "Card",
   PayTab = "PayTab",
   PayTabRequestReceive = "PayTabRequestReceive",
-  PayTabSelectContact = "PayTabSelectContact",
   PayTabPayContact = "PayTabPayContact",
   ExchangeBuy = "ExchangeBuy",
   ExchangeDeveloperMode = "ExchangeDeveloperMode",
@@ -478,6 +477,11 @@ export enum ScreenName {
   AleoClaimUnbondConnectDevice = "AleoClaimUnbondConnectDevice",
   AleoClaimUnbondValidationError = "AleoClaimUnbondValidationError",
   AleoClaimUnbondValidationSuccess = "AleoClaimUnbondValidationSuccess",
+  AleoUnbondAmount = "AleoUnbondAmount",
+  AleoUnbondSelectDevice = "AleoUnbondSelectDevice",
+  AleoUnbondConnectDevice = "AleoUnbondConnectDevice",
+  AleoUnbondValidationError = "AleoUnbondValidationError",
+  AleoUnbondValidationSuccess = "AleoUnbondValidationSuccess",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
@@ -825,6 +829,7 @@ export enum NavigatorName {
   // Aleo
   AleoBondPublicFlow = "AleoBondPublicFlow",
   AleoClaimUnbondFlow = "AleoClaimUnbondFlow",
+  AleoUnbondFlow = "AleoUnbondFlow",
   // SUI
   SuiDelegateFlow = "SuiDelegationFlow",
   SuiUndelegateFlow = "SuiUndelegateFlow",

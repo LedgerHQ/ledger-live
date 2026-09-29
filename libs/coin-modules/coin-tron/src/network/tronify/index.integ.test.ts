@@ -13,17 +13,23 @@ const run = TRONIFY_URL && TRONIFY_SOURCE_FLAG ? describe : describe.skip;
 const RECEIVER = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
 run("tronify queryPreorderInfo [integ]", () => {
-  const config: TronCoinConfig = {
-    status: { type: "active" },
-    explorer: { url: "https://tron.coin.ledger.com" },
-    energyRent: {
-      provider: "tronify",
-      tronify: {
-        url: TRONIFY_URL as string,
-        sourceFlag: TRONIFY_SOURCE_FLAG as string,
+  let config: TronCoinConfig;
+
+  beforeAll(() => {
+    config = {
+      status: { type: "active" },
+      name: "Tron",
+      unit: { name: "TRX", code: "TRX", magnitude: 6 },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: {
+        provider: "tronify",
+        tronify: {
+          url: TRONIFY_URL as string,
+          sourceFlag: TRONIFY_SOURCE_FLAG as string,
+        },
       },
-    },
-  };
+    } as unknown as TronCoinConfig;
+  });
 
   it("returns a priced quote for a 10-minute, 32000-energy rental", async () => {
     const quote = await queryPreorderInfo(logger, config, {

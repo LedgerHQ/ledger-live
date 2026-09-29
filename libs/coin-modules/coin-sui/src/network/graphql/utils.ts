@@ -31,7 +31,7 @@ export function unwrapGraphQL<T>(
 // ----- Move type-tag normalisation ----------------------------------------
 
 /**
- * Normalise GraphQL's long padded Move type tags to JSON-RPC short form.
+ * Normalise GraphQL's long padded Move type tags to short form.
  * coin-sui compares against `DEFAULT_COIN_TYPE` everywhere; long forms
  * silently miss `===` checks if any GraphQL response skips this.
  */

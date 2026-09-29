@@ -8,8 +8,9 @@ const ADDRESS = "0xAbC0000000000000000000000000000000000001";
 
 const COPY = {
   nextStepsTitle: "Address displayed on the device's Secure Screen",
-  nextStepShare: "Share your address via your desired app.",
-  nextStepMatch: "Ensure the shared address matches the one on your Ledger Device.",
+  nextStepKeepDisplayed: "Keep your address displayed on your Ledger device. Don’t confirm it yet.",
+  nextStepPaste: "Tap “Got it,” then paste your address into the app you’re sharing it with.",
+  nextStepCheckMatch: "Before sending, check that it matches the one on your Ledger device.",
   cancelledTitle: "Address verification cancelled",
   cancelledDescription:
     "You declined the address on your device. You can display it again to verify it.",
@@ -75,8 +76,9 @@ describe("VerifyAddressIntentComponentLWM", () => {
       renderComponent(buildJobState());
 
       expect(screen.getByText(COPY.nextStepsTitle)).toBeVisible();
-      expect(screen.getByText(COPY.nextStepShare)).toBeVisible();
-      expect(screen.getByText(COPY.nextStepMatch)).toBeVisible();
+      expect(screen.getByText(COPY.nextStepKeepDisplayed)).toBeVisible();
+      expect(screen.getByText(COPY.nextStepPaste)).toBeVisible();
+      expect(screen.getByText(COPY.nextStepCheckMatch)).toBeVisible();
     });
 
     it("should hand the flow back when the user presses Got it", async () => {

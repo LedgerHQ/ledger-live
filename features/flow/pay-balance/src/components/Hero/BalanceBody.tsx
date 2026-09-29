@@ -18,6 +18,8 @@ export function BalanceBody(props: BalanceViewProps) {
         allStablecoinsLabel={props.labels.allStablecoins}
         selectedOption={props.selectedOption}
         onOpenFilter={props.onOpenFilter}
+        discreet={props.discreet}
+        onToggleDiscreetMode={props.onToggleDiscreetMode}
       />
       <BalanceFilterPicker
         isOpen={props.isFilterOpen}
@@ -26,7 +28,6 @@ export function BalanceBody(props: BalanceViewProps) {
         labels={props.labels}
         onClose={props.onCloseFilter}
         onConfirmFilter={props.onConfirmFilter}
-        onTrackEvent={props.onTrackEvent}
       />
     </>
   );

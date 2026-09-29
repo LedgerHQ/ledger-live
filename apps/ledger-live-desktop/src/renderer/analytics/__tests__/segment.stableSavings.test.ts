@@ -41,9 +41,21 @@ const createTestState = (): State =>
 const createStoreWithAnalytics = () =>
   createStore({ state: createTestState(), fetchRemoteFlags: null });
 
-const stubFeatureFlagMethod = (stableSavings: { enabled: boolean; params?: unknown } | null) =>
+type FlagValue = { enabled: boolean; params?: unknown } | null;
+
+const stubFeatureFlagMethod = ({
+  stableSavings = null,
+  ptxEarnCtaOnMobile = null,
+}: {
+  stableSavings?: FlagValue;
+  ptxEarnCtaOnMobile?: FlagValue;
+}) =>
   setAnalyticsFeatureFlagMethod(<T extends FeatureId>(key: T) =>
-    key === "stableSavings" ? (stableSavings as never) : null,
+    key === "stableSavings"
+      ? (stableSavings as never)
+      : key === "ptxEarnCtaOnMobile"
+        ? (ptxEarnCtaOnMobile as never)
+        : null,
   );
 
 const lastIdentifyTraits = () => mockIdentify.mock.calls.at(-1)![1];
@@ -58,7 +70,7 @@ describe("segment stableSavings trait", () => {
   });
 
   it("should send stableSavings true when the flag is enabled", async () => {
-    stubFeatureFlagMethod({ enabled: true, params: { cohort: "a" } });
+    stubFeatureFlagMethod({ stableSavings: { enabled: true, params: { cohort: "a" } } });
 
     await startAnalytics(createStoreWithAnalytics());
 
@@ -66,7 +78,7 @@ describe("segment stableSavings trait", () => {
   });
 
   it("should send stableSavings false when the flag is disabled", async () => {
-    stubFeatureFlagMethod({ enabled: false });
+    stubFeatureFlagMethod({ stableSavings: { enabled: false } });
 
     await startAnalytics(createStoreWithAnalytics());
 
@@ -74,10 +86,18 @@ describe("segment stableSavings trait", () => {
   });
 
   it("should send stableSavings false when the flag is unresolved", async () => {
-    stubFeatureFlagMethod(null);
+    stubFeatureFlagMethod({});
 
     await startAnalytics(createStoreWithAnalytics());
 
     expect(lastIdentifyTraits()).toEqual(expect.objectContaining({ stableSavings: false }));
+  });
+
+  it("should send ptxEarnCtaOnMobile as a boolean trait", async () => {
+    stubFeatureFlagMethod({ ptxEarnCtaOnMobile: { enabled: true } });
+
+    await startAnalytics(createStoreWithAnalytics());
+
+    expect(lastIdentifyTraits()).toEqual(expect.objectContaining({ ptxEarnCtaOnMobile: true }));
   });
 });

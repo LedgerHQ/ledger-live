@@ -11,6 +11,7 @@ import {
   emptyPayCardTransactionsMock,
   fillPayCardTransactionsMock,
   readPayCardTransactionsMock,
+  receiveMultiAssetPayCardTransactionMock,
   receivePayCardTransactionMock,
   type PayCardMockTransactionAsset,
 } from "@domain/api-card-management/mock/card-transactions";
@@ -246,7 +247,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
         canToggle: isMockingEnabled && step.id in STEP_ANSWERS,
       })),
       completedCount: derivedOnboarding.completedCount,
-      isFetching: onboardingStatus.isLoading,
+      isFetching: onboardingStatus.isFetching,
       error: onboardingStatus.isError ? "the account could not be read" : undefined,
       raw: JSON.stringify(derivedOnboarding, null, 2),
       refresh: refreshCardOnboarding,
@@ -256,7 +257,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     };
   }, [
     derivedOnboarding,
-    onboardingStatus.isLoading,
+    onboardingStatus.isFetching,
     onboardingStatus.isError,
     refreshCardOnboarding,
     setDerivedStepDone,
@@ -407,6 +408,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     empty: () => updateTransactions(emptyPayCardTransactionsMock),
     receive: (asset: PayCardMockTransactionAsset) =>
       updateTransactions(() => receivePayCardTransactionMock(asset)),
+    receiveMultiAsset: () => updateTransactions(receiveMultiAssetPayCardTransactionMock),
     clear: () => updateTransactions(clearPayCardTransactionsMock),
   };
 

@@ -29,7 +29,7 @@ This registry is the **sole** source of truth for crypto-currency data — add o
 ```typescript
 // Schema + types (derived via z.infer)
 import { CryptoCurrencySchema } from "@domain/entity-currency-crypto";
-import type { CryptoCurrency, ExplorerView, EthereumLikeInfo, BitcoinLikeInfo } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency, ExplorerView, EthereumLikeInfo } from "@domain/entity-currency-crypto";
 
 // Registry
 import { CRYPTO_CURRENCIES_REGISTRY, CRYPTO_CURRENCIES_IDS } from "@domain/entity-currency-crypto";

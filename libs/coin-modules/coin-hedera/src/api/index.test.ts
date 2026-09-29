@@ -29,6 +29,7 @@ const mockBroadcast = jest.mocked(logic.broadcast);
 const mockCombine = jest.mocked(logic.combine);
 const mockCraftTransaction = jest.mocked(logic.craftTransaction);
 const mockEstimateFees = jest.mocked(logic.estimateFees);
+const mockGetAccountInfo = jest.mocked(logic.getAccountInfo);
 const mockGetBalance = jest.mocked(logic.getBalance);
 const mockLastBlockV2 = jest.mocked(logic.lastBlockV2);
 const mockGetBlockV2 = jest.mocked(logic.getBlockV2);
@@ -68,6 +69,7 @@ describe("createApi", () => {
     expect(impl.craftTransaction).toBeInstanceOf(Function);
     expect(impl.craftTransactionData).toBeInstanceOf(Function);
     expect(impl.estimateFees).toBeInstanceOf(Function);
+    expect(impl.getAccountInfo).toBeInstanceOf(Function);
     expect(impl.getBalance).toBeInstanceOf(Function);
     expect(impl.getBlock).toBeInstanceOf(Function);
     expect(impl.getBlockInfo).toBeInstanceOf(Function);
@@ -104,60 +106,68 @@ describe("createApi", () => {
   });
 
   describe("craftTransaction", () => {
-    it("should call craftTransaction from logic and return serializedTx", async () => {
-      // @ts-expect-error - partial mock
-      mockCraftTransaction.mockResolvedValue({ serializedTx: "serialized" });
-      // @ts-expect-error - partial intent
-      const txIntent: TransactionIntent<HederaMemo> = {
-        useAllAmount: false,
-        recipient: "0.0.1234",
-        amount: 100n,
-      };
+    it.each([false, true])(
+      "should pass the intent amount to craftTransaction from logic when useAllAmount=%s",
+      async useAllAmount => {
+        // @ts-expect-error - partial mock
+        mockCraftTransaction.mockResolvedValue({ serializedTx: "serialized" });
+        // @ts-expect-error - partial intent
+        const txIntent: TransactionIntent<HederaMemo> = {
+          useAllAmount,
+          recipient: "0.0.1234",
+          amount: 900n,
+        };
 
-      const result = await api.craftTransaction(mockContext, txIntent);
+        const result = await api.craftTransaction(mockContext, txIntent);
 
-      expect(mockCraftTransaction).toHaveBeenCalledTimes(1);
-      expect(result).toEqual({ transaction: "serialized" });
-    });
-
-    it("should throw when craftTransaction is called with useAllAmount", async () => {
-      // @ts-expect-error - testing unsupported useAllAmount
-      const txIntent: TransactionIntent<HederaMemo> = { useAllAmount: true };
-
-      await expect(api.craftTransaction(mockContext, txIntent)).rejects.toThrow(
-        "useAllAmount is not supported",
-      );
-    });
+        expect(mockCraftTransaction).toHaveBeenCalledTimes(1);
+        expect(mockCraftTransaction).toHaveBeenCalledWith(expect.objectContaining({ txIntent }));
+        expect(result).toEqual({ transaction: "serialized" });
+      },
+    );
   });
 
   describe("estimateFees", () => {
-    it("should call estimateFees from logic and return FeeEstimation for non-ContractCall", async () => {
-      // @ts-expect-error - testing with minimal required fields for TransactionIntent
-      mockMapIntentToSDKOperation.mockReturnValue("CRYPTOTRANSFER");
-      mockEstimateFees.mockResolvedValue({ tinybars: new BigNumber(5000) });
+    it.each([
+      { amount: 100n, useAllAmount: false },
+      { amount: 0n, useAllAmount: true },
+    ])(
+      "should estimate a non-ContractCall intent without forwarding it (%o)",
+      async ({ amount, useAllAmount }) => {
+        mockMapIntentToSDKOperation.mockReturnValue(HEDERA_OPERATION_TYPES.CryptoTransfer);
+        mockEstimateFees.mockResolvedValue({ tinybars: new BigNumber(5000) });
 
-      // @ts-expect-error - testing with minimal required fields for TransactionIntent
-      const txIntent: TransactionIntent<HederaMemo> = { recipient: "0.0.1234", amount: 100n };
+        // @ts-expect-error - testing with minimal required fields for TransactionIntent
+        const txIntent: TransactionIntent<HederaMemo> = {
+          recipient: "0.0.1234",
+          amount,
+          useAllAmount,
+        };
 
-      const result = await api.estimateFees(mockContext, txIntent);
+        const result = await api.estimateFees(mockContext, txIntent);
 
-      expect(result).toEqual({ value: BigInt("5000") });
-      expect(mockEstimateFees).toHaveBeenCalledTimes(1);
-      expect(mockEstimateFees).toHaveBeenCalledWith(
-        expect.objectContaining({ operationType: "CRYPTOTRANSFER" }),
-      );
-    });
+        expect(result).toEqual({ value: 5000n });
+        expect(mockEstimateFees).toHaveBeenCalledTimes(1);
+        expect(mockEstimateFees).toHaveBeenCalledWith({
+          currencyId: "hedera",
+          operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
+        });
+      },
+    );
 
     it("should pass txIntent in estimateFeesParams for ContractCall operation type", async () => {
       mockMapIntentToSDKOperation.mockReturnValue(HEDERA_OPERATION_TYPES.ContractCall);
-      mockEstimateFees.mockResolvedValue({ tinybars: new BigNumber(9000) });
+      mockEstimateFees.mockResolvedValue({
+        tinybars: new BigNumber(9000),
+        gas: new BigNumber(123456),
+      });
 
       // @ts-expect-error - testing with minimal required fields for TransactionIntent
       const txIntent: TransactionIntent<HederaMemo> = { recipient: "0.0.1234", amount: 100n };
 
       const result = await api.estimateFees(mockContext, txIntent);
 
-      expect(result).toEqual({ value: BigInt("9000") });
+      expect(result).toEqual({ value: 9000n, parameters: { gasLimit: 123456n } });
       expect(mockEstimateFees).toHaveBeenCalledTimes(1);
       expect(mockEstimateFees).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -165,6 +175,25 @@ describe("createApi", () => {
           txIntent,
         }),
       );
+    });
+  });
+
+  describe("getAccountInfo", () => {
+    it("should call getAccountInfo from logic with the context config", async () => {
+      const accountInfo = {
+        type: "hedera",
+        maxAutomaticTokenAssociations: -1,
+        stakedNodeId: 3,
+        balance: 1000,
+        pendingReward: 42,
+      };
+      mockGetAccountInfo.mockResolvedValue(accountInfo);
+
+      const result = await api.getAccountInfo(mockContext, "0.0.1234");
+
+      expect(mockGetAccountInfo).toHaveBeenCalledTimes(1);
+      expect(mockGetAccountInfo).toHaveBeenCalledWith(await mockContext.config(), "0.0.1234");
+      expect(result).toEqual(accountInfo);
     });
   });
 

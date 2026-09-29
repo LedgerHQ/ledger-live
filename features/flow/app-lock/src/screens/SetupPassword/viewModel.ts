@@ -1,6 +1,5 @@
-import { isPasswordLongEnough } from "@features/platform-app-lock";
+import { isPasswordLongEnough, usePasswordDraft } from "@features/platform-app-lock";
 import { useCallback, useState } from "react";
-import { usePasswordDraft } from "../../state/passwordDraft";
 import type { SetupPasswordViewModel, UseSetupPasswordViewModelOptions } from "./types";
 
 export function useSetupPasswordViewModel({

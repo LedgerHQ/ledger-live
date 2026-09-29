@@ -1,11 +1,12 @@
 import { useCallback, useRef } from "react";
 import Share from "react-native-share";
-import RNFetchBlob from "rn-fetch-blob";
+import { File, Paths } from "expo-file-system";
 import logger from "../logger";
 import logReport from "../log-report";
 import getFullAppVersion from "~/logic/version";
 import { getEnv } from "@shared/env";
 import { sendFile } from "~/e2e/bridge/client";
+import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
 const getJSONStringifyReplacer: () => (key: string, value: unknown) => unknown = () => {
   const ancestors: unknown[] = [];
@@ -58,21 +59,23 @@ export default function useExportLogs() {
       const date = new Date().toISOString().split("T")[0];
 
       const humanReadableName = `ledgerwallet-mob-${version}-${date}-logs.txt`;
-      const filePath = `${RNFetchBlob.fs.dirs.DocumentDir}/${humanReadableName}`;
+      const file = new File(Paths.document, humanReadableName);
 
-      await RNFetchBlob.fs.writeFile(filePath, serialized, "utf8");
+      file.create({ overwrite: true });
+      file.write(serialized);
+
       const options = {
         failOnCancel: false,
         saveToFiles: true,
         type: "text/plain",
-        url: `file://${filePath}`,
+        url: file.uri,
       };
 
       if (getEnv("DETOX")) {
-        const fileContent = await RNFetchBlob.fs.readFile(filePath, "base64");
+        const fileContent = await file.base64();
         sendFile({ fileName: "ledgerwallet-logs.txt", fileContent });
       } else {
-        await Share.open(options);
+        await leaveAppFor(() => Share.open(options));
       }
     } catch (err) {
       if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {

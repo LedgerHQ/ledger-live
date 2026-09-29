@@ -12,8 +12,10 @@ import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-fra
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import {
+  CLAIM_REWARDS_TRIGGER_TINYBARS,
   DEFAULT_GAS_LIMIT,
   HEDERA_TRANSACTION_MODES,
+  MAP_STAKING_MODE_TO_MEMO,
   TRANSACTION_VALID_DURATION_SECONDS,
 } from "../constants";
 import { rpcClient } from "../network/rpc";
@@ -299,23 +301,32 @@ export async function craftTransaction({
       transaction: {
         type: txIntent.type,
         transactionId,
-        memo: txIntent.memo.value,
+        memo: MAP_STAKING_MODE_TO_MEMO[txIntent.type],
         maxFee,
         stakingNodeId,
       },
     });
-  }
-  // HEDERA_TRANSACTION_MODES.ClaimRewards is just a coin transfer that triggers staking rewards claim
-  else {
-    const amount = new BigNumber(txIntent.amount.toString());
-
+  } else if (txIntent.type === HEDERA_TRANSACTION_MODES.ClaimRewards) {
     tx = await buildUnsignedCoinTransaction({
       config,
       account,
       transaction: {
         type: HEDERA_TRANSACTION_MODES.Send,
         transactionId,
-        amount,
+        amount: new BigNumber(CLAIM_REWARDS_TRIGGER_TINYBARS),
+        recipient: config.claimRewardsRecipient,
+        memo: MAP_STAKING_MODE_TO_MEMO[txIntent.type],
+        maxFee,
+      },
+    });
+  } else {
+    tx = await buildUnsignedCoinTransaction({
+      config,
+      account,
+      transaction: {
+        type: HEDERA_TRANSACTION_MODES.Send,
+        transactionId,
+        amount: new BigNumber(txIntent.amount.toString()),
         recipient: txIntent.recipient,
         memo: txIntent.memo.value,
         maxFee,

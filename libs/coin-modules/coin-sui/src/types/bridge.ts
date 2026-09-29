@@ -7,7 +7,7 @@ import type {
   OperationRaw,
 } from "@ledgerhq/types-live";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import { DelegatedStake, StakeObject } from "@mysten/sui/jsonRpc";
+import type { DelegatedStake, StakeObject } from "./model";
 import type { BigNumber } from "bignumber.js";
 
 export type MappedStake = StakeObject & {
@@ -85,7 +85,7 @@ export type TransactionRaw = TransactionCommonRaw & {
 
 /**
  * Narrow validator shape — only fields any data consumer (logic / hooks / UI) reads.
- * Shared between the JSON-RPC and GraphQL transports so the type layer stays
+ * Shared between the gRPC and GraphQL transports so the type layer stays
  * transport-agnostic.
  */
 export type SuiValidatorSummary = {

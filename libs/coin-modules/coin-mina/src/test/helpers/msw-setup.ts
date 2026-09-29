@@ -7,6 +7,8 @@ import {
 
 setCoinConfig(() => ({
   status: { type: "active" },
+  name: "Mina",
+  unit: { name: "MINA", code: "MINA", magnitude: 9 },
   infra: {
     API_MINA_ROSETTA_NODE: TEST_ROSETTA_ENDPOINT,
     API_MINA_GRAPHQL_NODE: TEST_GRAPHQL_ENDPOINT,

@@ -11,7 +11,13 @@ import {
 } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { setContacts } from "@domain/entity-contact";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
+import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
+import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
+import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
+import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { saveAccounts } from "~/db";
 import { acceptGeneralTerms } from "~/logic/terms";
@@ -31,6 +37,15 @@ import { getAllEnvs, setEnv } from "@shared/env";
 import Config from "react-native-config";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";
+import { addKnownDevice, knownDevicesSelector, removeKnownDevices } from "~/reducers/knownDevices";
+import {
+  buildSpeculosLegacyDeviceId,
+  isSpeculosLegacyDeviceId,
+  speculosIdentifier,
+  speculosTargetSubject,
+} from "@ledgerhq/live-dmk-mobile";
+import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { setSpeculosDeviceModel } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
@@ -44,6 +59,16 @@ const retryDelay = 500; // Initial retry delay in milliseconds
 
 async function disconnectAllSpeculosSessions() {
   await DeviceManagementKitTransportSpeculos.disconnectAll();
+}
+
+function removeKnownSpeculosDevices() {
+  const deviceIds = knownDevicesSelector(store.getState())
+    .filter(device => device.transport === speculosIdentifier)
+    .map(device => device.id);
+
+  if (deviceIds.length) {
+    store.dispatch(removeKnownDevices(deviceIds));
+  }
 }
 
 function overrideLedgerSyncEnvironment() {
@@ -143,6 +168,11 @@ async function onMessage(event: WebSocketMessageEvent) {
         store.dispatch(importTrustchainStoreState(msg.payload));
         break;
       }
+      case "importContacts": {
+        store.dispatch(setContacts(msg.payload));
+        postMessage({ type: "contactsImported", id: msg.id, payload: "" });
+        break;
+      }
       case "mockDeviceEvent": {
         msg.payload.forEach(e => mockDeviceEventSubject.next(e));
         break;
@@ -157,6 +187,15 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "importPostOnboarding": {
         store.dispatch(importPostOnboardingState({ newState: msg.payload }));
+        break;
+      }
+      case "importPayCard": {
+        // The same fan-out LedgerStore performs on the persisted blob: one payload, one slice each.
+        store.dispatch(restorePayCardFeatureTour(msg.payload));
+        store.dispatch(restoreReceiveVerifyHint(msg.payload));
+        store.dispatch(restorePayCardBalanceFilter(msg.payload));
+        store.dispatch(restorePayCardLoginIntro(msg.payload));
+        store.dispatch(restorePayCardOnboardingWidget(msg.payload));
         break;
       }
       case "overrideFeatureFlags": {
@@ -219,28 +258,42 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "addKnownSpeculos": {
-        const { address, model } = JSON.parse(msg.payload);
+        const { address, model }: { address: string; model: DeviceModelId } = JSON.parse(
+          msg.payload,
+        );
         setSpeculosDeviceModel(model);
         await disconnectAllSpeculosSessions();
+        const speculosDeviceId = buildSpeculosLegacyDeviceId(address);
         const knownSpeculosIds = bleDevicesSelector(store.getState())
           .map(device => device.id)
-          .filter(id => id.startsWith("speculos|"));
+          .filter(isSpeculosLegacyDeviceId);
         if (knownSpeculosIds.length) {
           store.dispatch(removeKnownBleDevices(knownSpeculosIds));
         }
         store.dispatch(
           setLastConnectedDevice({
-            deviceId: `speculos|${address}`,
-            deviceName: `${address}`,
+            deviceId: speculosDeviceId,
+            deviceName: address,
             wired: false,
             modelId: model,
           }),
         );
         store.dispatch(
           addKnownBleDevice({
-            id: `speculos|${address}`,
-            name: `${address}`,
+            id: speculosDeviceId,
+            name: address,
             modelId: model,
+          }),
+        );
+        // Device intents only offer DMK-known devices, so Speculos is registered here too.
+        speculosTargetSubject.next({ url: address, deviceModelId: ledgerToDmkDeviceIdMap[model] });
+        removeKnownSpeculosDevices();
+        store.dispatch(
+          addKnownDevice({
+            transport: speculosIdentifier,
+            id: speculosDeviceId,
+            name: address,
+            deviceModelId: model,
           }),
         );
         setEnv("DEVICE_PROXY_URL", address);
@@ -250,7 +303,9 @@ async function onMessage(event: WebSocketMessageEvent) {
         const address = msg.payload;
         setSpeculosDeviceModel(undefined);
         await disconnectAllSpeculosSessions();
-        store.dispatch(removeKnownBleDevice(`speculos|${address}`));
+        store.dispatch(removeKnownBleDevice(buildSpeculosLegacyDeviceId(address)));
+        speculosTargetSubject.next(null);
+        removeKnownSpeculosDevices();
         setEnv("DEVICE_PROXY_URL", "");
         break;
       }

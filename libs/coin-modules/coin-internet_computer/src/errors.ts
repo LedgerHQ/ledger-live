@@ -144,6 +144,67 @@ export class ICPFollowTopicNotAllowed extends Error {
   }
 }
 
+// More followees than a topic may hold (passed as { max } at throw time).
+export class ICPTooManyFollowees extends Error {
+  override name = "ICPTooManyFollowees";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPTooManyFollowees");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// A followee entry that is not a neuron id ({ id } is the entry as given).
+export class ICPInvalidFolloweeId extends Error {
+  override name = "ICPInvalidFolloweeId";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPInvalidFolloweeId");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// A neuron listed twice on one topic ({ id }, canonical): the tally would count it twice.
+export class ICPDuplicateFollowee extends Error {
+  override name = "ICPDuplicateFollowee";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPDuplicateFollowee");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The neuron lists itself ({ id }, canonical): accepted by the canister, but always an abstention
+// in the tally.
+export class ICPFolloweeIsSelf extends Error {
+  override name = "ICPFolloweeIsSelf";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPFolloweeIsSelf");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// Only a locked neuron can start dissolving (RequiresNotDissolving otherwise).
+export class ICPStartDissolvingNotAllowed extends Error {
+  override name = "ICPStartDissolvingNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPStartDissolvingNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// Only a dissolving neuron can stop dissolving (RequiresDissolving on a locked or dissolved one).
+export class ICPStopDissolvingNotAllowed extends Error {
+  override name = "ICPStopDissolvingNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPStopDissolvingNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 // The neuron is not dissolved, or its stake is at or under the ledger fee, so the transfer disburse
 // makes cannot be funded: the ledger refuses it after the signature.
 export class ICPDisburseNotAllowed extends Error {

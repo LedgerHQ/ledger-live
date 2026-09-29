@@ -4,7 +4,7 @@ import {
   mockEthCryptoCurrency,
   usdcToken,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import {
   openSwapTransactionStatusDialog,
   selectIsSwapTransactionStatusDialogOpen,
@@ -14,6 +14,12 @@ import { useEarnBannerViewModel } from "../hooks/useEarnBannerViewModel";
 const mockNavigate = jest.fn();
 const mockUseInterestRatesByCurrencies = jest.fn().mockReturnValue({});
 const mockUseAssetsData = jest.fn();
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -62,14 +68,17 @@ describe("useEarnBannerViewModel", () => {
     expect(result.current.title).toBe("Earn up to 5.00% APY");
     expect(result.current.description).toBe("Explore Earn opportunities");
     expect(result.current.buttonLabel).toBe("Explore");
-    expect(trackPage).toHaveBeenCalledWith("swap earn promoter", null, {
-      page: "swapTransactionSuccess",
-      flow: "swap",
-      sourceCurrency: "BTC",
-      targetCurrency: "ETH",
-      targetCurrencyID: ethereum.id,
-      provider,
-      promotedToken: "ETH",
+    expect(trackPage).toHaveBeenCalledWith({
+      category: "swap earn promoter",
+      props: {
+        page: "swapTransactionSuccess",
+        flow: "swap",
+        sourceCurrency: "BTC",
+        targetCurrency: "ETH",
+        targetCurrencyID: ethereum.id,
+        provider,
+        promotedToken: "ETH",
+      },
     });
   });
 

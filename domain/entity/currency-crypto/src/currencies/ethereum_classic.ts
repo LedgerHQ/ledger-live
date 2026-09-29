@@ -48,5 +48,4 @@ export const ethereum_classic = currency({
     },
   ],
   keywords: ["etc", "ethereum classic"],
-  explorerId: "etc",
 });

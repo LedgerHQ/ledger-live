@@ -247,6 +247,11 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-hedera/deviceTransactionConfig").then(m => m.default),
     loadSigner: () => import("../families/hedera/signer").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/hedera/coinModuleApi").then(m => m.createLocalHederaApi),
+    loadBridgeApi: () => import("../families/hedera/bridge/api").then(m => m.default),
+    loadAccountRawAssign: () => import("../families/hedera/accountRawAssign").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/hedera/bridgeExtensions").then(m => m.default),
   },
   {
     // HyperCore (generic framework): eth-format address, no send. setup/signer only derive the
@@ -408,6 +413,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["tron"],
     loadSetup: () => import("../families/tron/setup"),
     loadLocalApi: () => import("../families/tron/coinModuleApi").then(m => m.createLocalTronApi),
+    loadSponsoredApi: () =>
+      import("../families/tron/coinModuleApi").then(m => m.createLocalTronSponsoredApi),
     loadTransaction: () => import("../families/tron/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("../families/tron/deviceTransactionConfig").then(m => m.default),
@@ -460,5 +467,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-zcash/deviceTransactionConfig").then(m => m.default),
     loadBridgeExtensions: () => import("../families/zcash/bridgeExtensions").then(m => m.default),
+    loadMockBridge: () => import("../families/zcash/bridge/mock").then(m => m.default),
   },
 ];

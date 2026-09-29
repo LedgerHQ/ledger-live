@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { STAKING_GAS_BASE } from "../../constants";
+import { STAKING_FEE_OVERHEAD_GAS, STAKING_GAS } from "../../constants";
 import { computeFees, type NearFeeCosts } from "../fees";
 
 const GAS_PRICE = new BigNumber(100_000_000);
@@ -51,20 +51,42 @@ describe("computeFees", () => {
       costs,
     });
 
-    const expected = new BigNumber(STAKING_GAS_BASE).multipliedBy(6).multipliedBy(GAS_PRICE);
+    const expected = new BigNumber(STAKING_GAS)
+      .plus(STAKING_FEE_OVERHEAD_GAS)
+      .multipliedBy(GAS_PRICE);
     expect(fees.toFixed()).toBe(expected.toFixed());
   });
 
-  it("uses the higher gas multiplier for a withdraw-all", () => {
-    const fees = computeFees({
+  it("prices a withdraw-all the same as a partial withdraw", () => {
+    const all = computeFees({
       mode: "withdraw",
       recipient: "pool.poolv1.near",
       useAllAmount: true,
       gasPrice: GAS_PRICE,
       costs,
     });
+    const partial = computeFees({
+      mode: "withdraw",
+      recipient: "pool.poolv1.near",
+      gasPrice: GAS_PRICE,
+      costs,
+    });
 
-    const expected = new BigNumber(STAKING_GAS_BASE).multipliedBy(8).multipliedBy(GAS_PRICE);
+    expect(all.toFixed()).toBe(partial.toFixed());
+  });
+
+  it("buys staking gas at minGasPurchasePrice when it exceeds the current price", () => {
+    const floorPrice = GAS_PRICE.multipliedBy(10);
+    const fees = computeFees({
+      mode: "unstake",
+      recipient: "pool.poolv1.near",
+      gasPrice: GAS_PRICE,
+      costs: { ...costs, minGasPurchasePrice: floorPrice },
+    });
+
+    const expected = new BigNumber(STAKING_GAS)
+      .plus(STAKING_FEE_OVERHEAD_GAS)
+      .multipliedBy(floorPrice);
     expect(fees.toFixed()).toBe(expected.toFixed());
   });
 

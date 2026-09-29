@@ -16,6 +16,7 @@
     "unimported": "pnpm knip --directory ../.. -W devtools/transport"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

@@ -5,8 +5,8 @@ import { captureRef } from "react-native-view-shot";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { PayRequestTrackEvent, RequestReceiveProps } from "@features/flow-pay-request";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import type { RequestReceiveProps } from "@features/flow-pay-request";
+import { trackButtonClicked, trackEvent } from "@features/platform-pay-analytics";
 import {
   markReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
@@ -19,6 +19,7 @@ import type { PayTabNavigatorParamList } from "../../types";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { ScreenName } from "~/const";
 import type { PayTabRequestReceiveViewProps } from "./PayTabRequestReceiveView";
+import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 
 const REQUEST_PAGE = "Request complete";
 const VERIFY_HINT = "verify";
@@ -26,8 +27,6 @@ const VERIFY_HINT = "verify";
 export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProps {
   useHideTabBar();
 
-  const analytics = usePayAnalyticsContext();
-  const onTrackEvent: PayRequestTrackEvent = analytics.trackEvent;
   const dispatch = useDispatch();
   const hasSeenReceiveVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
   const { goBack, addListener, setOptions } =
@@ -37,10 +36,7 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const { account } = useAccountScreen(route);
   const currency = route.params.currency;
   const cardRef = useRef<View>(null);
-  const { openIntro, verifyAddress, dieActive, onReady, onExit } = usePayTabVerifyAddress(
-    onTrackEvent,
-    goBack,
-  );
+  const { openIntro, verifyAddress, dieActive, onReady, onExit } = usePayTabVerifyAddress(goBack);
 
   const data = useMemo(
     () => (account?.type === "Account" ? deriveRequestReceiveData(account, currency) : undefined),
@@ -56,7 +52,7 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const onShare = useCallback(async (address: string) => {
     try {
       const imageUrl = await captureRef(cardRef, { format: "png" });
-      await Share.open({ url: imageUrl, message: address, failOnCancel: false });
+      await leaveAppFor(() => Share.open({ url: imageUrl, message: address, failOnCancel: false }));
     } catch {
       // TODO: handle share/capture errors
     }
@@ -88,16 +84,16 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   }, [addListener, hasSeenReceiveVerifyHint]);
 
   const onHintShown = useCallback(() => {
-    onTrackEvent("hint_impression", {
+    trackEvent("hint_impression", {
       hint: VERIFY_HINT,
       buttonLocation: "request",
       page: REQUEST_PAGE,
       flow: "request",
     });
-  }, [onTrackEvent]);
+  }, []);
 
   const onGotIt = useCallback(() => {
-    onTrackEvent("button_clicked", {
+    trackButtonClicked({
       button: "got it",
       hint: VERIFY_HINT,
       buttonLocation: "request",
@@ -105,7 +101,7 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
       flow: "request",
     });
     markHintSeen();
-  }, [markHintSeen, onTrackEvent]);
+  }, [markHintSeen]);
 
   const onVerify = useCallback(() => {
     if (!account) return;
@@ -128,7 +124,6 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
       onCopy,
       onVerify,
       onClose: goBack,
-      onTrackEvent,
       verifyHint: hasSeenReceiveVerifyHint
         ? undefined
         : {
@@ -147,7 +142,6 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
       hasNavigationSettled,
       onGotIt,
       onHintShown,
-      onTrackEvent,
     ],
   );
 
@@ -162,7 +156,6 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
             page: verifyAddress.page,
             onReady,
             onExit,
-            onTrackEvent,
           }
         : undefined,
   };

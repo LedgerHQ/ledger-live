@@ -39,12 +39,9 @@ async function getLatestIndexedConsensusTimestamp({
     method: "POST",
     data: {
       query: `
-        query LatestTransaction {
-          ethereum_transaction(
-            limit: 1, 
-            order_by: { consensus_timestamp: desc }
-          ) {
-            consensus_timestamp
+        query ErcWatermark {
+          erc_watermark(where: { job_name: { _eq: "transfer_indexing" } }) {
+            last_processed_ns
           }
         }
       `,
@@ -53,10 +50,10 @@ async function getLatestIndexedConsensusTimestamp({
 
   throwOnGraphQLErrors(res, "latest indexed consensus timestamp");
 
-  const lastTransactionTimestamp = res.data.data.ethereum_transaction[0]?.consensus_timestamp;
-  invariant(lastTransactionTimestamp, "No transactions found in Hgraph");
+  const lastProcessedNs = res.data.data.erc_watermark[0]?.last_processed_ns;
+  invariant(lastProcessedNs, "No ERC20 watermark found in Hgraph");
 
-  return new BigNumber(lastTransactionTimestamp);
+  return new BigNumber(lastProcessedNs);
 }
 
 async function getERC20Balances({

@@ -3,7 +3,7 @@ import { Image, StyleSheet } from "react-native";
 import Animated from "react-native-reanimated";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
-import { CARD_FACE_BORDER, CARD_GRADIENT_END } from "../CardArtwork/cardColors";
+import { CARD_GRADIENT_END } from "../CardArtwork/cardColors";
 import type { CardFlipProps } from "../../types";
 
 const FLIP_TRANSITION = {
@@ -67,11 +67,8 @@ function DetailsImage({
 
   return (
     <Box
-      lx={{ padding: "s1", borderRadius: "lg", borderWidth: "s1" }}
-      style={[
-        styles.imageFrame,
-        { backgroundColor: CARD_GRADIENT_END, borderColor: CARD_FACE_BORDER },
-      ]}
+      lx={{ padding: "s1", borderRadius: "lg" }}
+      style={[styles.imageFrame, { backgroundColor: CARD_GRADIENT_END }]}
     >
       <Image
         source={{ uri: imageUrl, cache: "reload" }}

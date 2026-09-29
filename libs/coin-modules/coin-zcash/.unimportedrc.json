@@ -30,7 +30,8 @@
   ],
   "ignoreUnimported": [
     "src/network/stubs/ZCash.native.ts",
-    "src/types/assets.ts"
+    "src/types/assets.ts",
+    "src/test/coinConfig.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",

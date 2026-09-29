@@ -21,6 +21,7 @@ jest.mock("@rozenite/redux-devtools-plugin", () => ({
 
 jest.mock("~/config/bridge-setup", () => ({
   setupCryptoAssetsStore: jest.fn(),
+  setupRateLookups: jest.fn(),
 }));
 
 jest.mock("@domain/entity-recent-addresses", () => ({
@@ -253,6 +254,86 @@ describe("mobile store", () => {
       );
     });
   });
+
+  describe("swap extraArgument", () => {
+    beforeEach(() => {
+      jest.resetModules();
+      // Re-seed after resetModules(), like the auth provider flow tests above: configureStore
+      // also builds calApiExtra/pushDevicesApiExtra, which require a non-empty LEDGER_CLIENT_VERSION.
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    it("resolves the swap api base url from the build's SWAP_API_BASE", () => {
+      const Config = require("react-native-config").default as Record<string, unknown>;
+      Config.SWAP_API_BASE = "https://swap-stg.test/v5";
+
+      const { store } = require("./configureStore");
+
+      expect(dispatchSwapExtra(store)).toBe("https://swap-stg.test/v5");
+    });
+
+    it("falls back to the production swap api when the build sets no SWAP_API_BASE", () => {
+      const { store } = require("./configureStore");
+
+      expect(dispatchSwapExtra(store)).toBe("https://swap.ledger.com/v5");
+    });
+  });
+
+  describe("startup wiring", () => {
+    beforeEach(() => {
+      jest.resetModules();
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    it("registers the rate lookups when the store module loads", () => {
+      const { store } = require("./configureStore");
+      const { setupRateLookups } = require("~/config/bridge-setup");
+
+      expect(store).toBeDefined();
+      expect(setupRateLookups).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("countervalues", () => {
+    it("sends rate requests to the url the developer staging toggle switches to", async () => {
+      jest.resetModules();
+      const { getEnv, setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+      const { store } = require("./configureStore");
+      const { marketCountervaluesApi } =
+        require("@domain/api-market-countervalues") as typeof import("@domain/api-market-countervalues");
+      const production = getEnv("LEDGER_COUNTERVALUES_API");
+      const requested: string[] = [];
+      const fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(input => {
+        requested.push((input as Request).url);
+        return Promise.resolve(
+          new Response(JSON.stringify({ bitcoin: 9000 }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      });
+
+      setEnv("LEDGER_COUNTERVALUES_API", "https://countervalues.staging.test");
+      try {
+        await store.dispatch(
+          marketCountervaluesApi.endpoints.getSpotRates.initiate(
+            { to: "USD", froms: ["bitcoin"] },
+            { forceRefetch: true },
+          ),
+        );
+      } finally {
+        setEnv("LEDGER_COUNTERVALUES_API", production);
+        fetchSpy.mockRestore();
+      }
+
+      expect(requested).toEqual([
+        expect.stringContaining("https://countervalues.staging.test/v3/spot/simple"),
+      ]);
+    });
+  });
 });
 
 type AuthThunk = (
@@ -264,6 +345,16 @@ type DispatchThunk = (thunk: AuthThunk) => Promise<unknown>;
 function dispatchThunk(store: unknown, thunk: AuthThunk): Promise<unknown> {
   const dispatch = (store as { dispatch: unknown }).dispatch as DispatchThunk;
   return dispatch(thunk);
+}
+
+type SwapThunk = (
+  dispatch: unknown,
+  getState: unknown,
+  extra: { getSwapApiBaseUrl: () => string },
+) => string;
+function dispatchSwapExtra(store: unknown): string {
+  const dispatch = (store as { dispatch: unknown }).dispatch as (thunk: SwapThunk) => string;
+  return dispatch((_dispatch, _getState, extra) => extra.getSwapApiBaseUrl());
 }
 
 function makeJwt(payload: Record<string, unknown>): string {

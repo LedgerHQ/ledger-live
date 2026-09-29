@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Linking } from "react-native";
 import {
   BaseConnectionErrorTypes,
@@ -6,6 +6,7 @@ import {
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
+import { getConnectDeviceSubError } from "@ledgerhq/live-dmk-shared";
 import { InfoState } from "@shared/ui-info-state";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { useTranslation } from "~/context/Locale";
@@ -14,10 +15,8 @@ import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { useDeviceIntentTracking } from "../../utils/DeviceIntentTrackingContext";
 import {
   CONNECT_DEVICE_BUTTON,
-  getTrackingSubError,
   getTrackingTransport,
   PAGE_CONNECT_DEVICE,
-  setIsInTerminalConnectDeviceError,
   trackConnectDeviceButtonClicked,
 } from "../../utils/trackDeviceIntent";
 import { PeerRemovedPairingState } from "./PeerRemovedPairingState";
@@ -55,10 +54,6 @@ type ConnectionErrorViewStates = {
   ConnectionErrorViewState
 >;
 
-function isTerminalConnectionError(errorType: ConnectionErrorType): boolean {
-  return errorType === BaseConnectionErrorTypes.Unknown;
-}
-
 const connectionErrorTranslationBaseKey =
   "deviceIntentExecutor.connectDevice.states.connectionError.errors";
 
@@ -71,17 +66,12 @@ export function ConnectionErrorState({
   const pairingIssuesUrl = useLocalizedUrl(urls.pairingIssues);
   const productName = t("deviceIntentExecutor.connectDevice.common.ledgerDevice");
 
-  useEffect(() => {
-    setIsInTerminalConnectDeviceError(isTerminalConnectionError(state.error.type));
-    return () => setIsInTerminalConnectDeviceError(false);
-  }, [state.error]);
-
   const trackingScreen = (
     <TrackDIEScreen
       category={PAGE_CONNECT_DEVICE.ConnectionError}
       modelId={state.device.deviceModelId}
       transport={getTrackingTransport(state.device.transport)}
-      subError={getTrackingSubError(state.error.type)}
+      subError={getConnectDeviceSubError(state.error)}
       refreshSource
     />
   );

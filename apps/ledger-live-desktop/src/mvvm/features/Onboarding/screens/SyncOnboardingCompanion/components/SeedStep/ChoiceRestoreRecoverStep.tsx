@@ -19,7 +19,7 @@ const ChoiceRestoreRecoverStep = ({ productName, deviceIcon, charonSupported }: 
       <Flex flexDirection="column">
         <StepText mb={6}>{t("syncOnboarding.manual.seedContent.restoreDescription")}</StepText>
 
-        <Flex mb={8}>
+        <Flex mb={8} data-testid="choice-restore-recover-srp">
           <Icons.Note size="M" color="white" />
           <Flex ml={5} flexDirection="column" flex={1}>
             <SubtitleText mb={2}>
@@ -45,7 +45,7 @@ const ChoiceRestoreRecoverStep = ({ productName, deviceIcon, charonSupported }: 
           </Flex>
         )}
 
-        <Flex mb={0}>
+        <Flex mb={0} data-testid="choice-restore-recover-subscription">
           <Icons.ShieldCheck size="M" color="white" />
 
           <Flex ml={5} flexDirection="column" flex={1}>

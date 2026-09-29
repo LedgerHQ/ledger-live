@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { AssetCategory } from "@domain/api-aggregated-assets";
-import type { PayRequestTrackEvent, RequestReceiveProps } from "@features/flow-pay-request";
+import type { RequestReceiveProps } from "@features/flow-pay-request";
+import { trackButtonClicked, trackEvent } from "@features/platform-pay-analytics";
 import {
   markReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
@@ -29,7 +30,6 @@ export type UsePayTabRequestReceive = Readonly<{
 }>;
 
 export function usePayTabRequestReceive(
-  onTrackEvent: PayRequestTrackEvent | undefined,
   onVerify: (selection: PayVerifySelection, onDone: () => void) => void,
 ): UsePayTabRequestReceive {
   const dispatch = useDispatch();
@@ -62,16 +62,16 @@ export function usePayTabRequestReceive(
   }, [dispatch]);
 
   const onHintShown = useCallback(() => {
-    onTrackEvent?.("hint_impression", {
+    trackEvent("hint_impression", {
       hint: VERIFY_HINT,
       buttonLocation: "request",
       page: REQUEST_PAGE,
       flow: "request",
     });
-  }, [onTrackEvent]);
+  }, []);
 
   const onGotIt = useCallback(() => {
-    onTrackEvent?.("button_clicked", {
+    trackButtonClicked({
       button: "got it",
       hint: VERIFY_HINT,
       buttonLocation: "request",
@@ -79,7 +79,7 @@ export function usePayTabRequestReceive(
       flow: "request",
     });
     markHintSeen();
-  }, [markHintSeen, onTrackEvent]);
+  }, [markHintSeen]);
 
   const handleVerify = useCallback(() => {
     if (!selection) return;
@@ -109,7 +109,6 @@ export function usePayTabRequestReceive(
       onSave: saveCard,
       onVerify: handleVerify,
       onClose,
-      onTrackEvent,
       verifyHint: hasSeenReceiveVerifyHint
         ? undefined
         : {
@@ -125,7 +124,6 @@ export function usePayTabRequestReceive(
       saveCard,
       handleVerify,
       onClose,
-      onTrackEvent,
       hasSeenReceiveVerifyHint,
       onGotIt,
       onHintShown,

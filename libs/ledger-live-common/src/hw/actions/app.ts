@@ -69,6 +69,7 @@ export type State = {
   isLocked: boolean;
   skippedAppOps: SkippedAppOp[];
   listedApps?: boolean;
+  installedAppVersions?: { name: string; version: string }[];
   deviceDeprecationRules?: DeviceDeprecationRules;
 };
 
@@ -160,7 +161,21 @@ const getInitialState = (device?: Device | null | undefined, request?: AppReques
   progress: undefined,
 });
 
-const reducer = (state: State, e: Event): State => {
+function shouldDropInstalledAppVersions(event: Event): boolean {
+  if (event.type === "error" || event.type === "deviceChange") return true;
+  if (event.type === "disconnected") return !event.expected;
+  return false;
+}
+
+function preserveInstalledAppVersions(previous: State, event: Event, next: State): State {
+  if (event.type === "installed-app-versions" || shouldDropInstalledAppVersions(event)) {
+    return next;
+  }
+  if (!previous.installedAppVersions || next.installedAppVersions) return next;
+  return { ...next, installedAppVersions: previous.installedAppVersions };
+}
+
+const appEventReducer = (state: State, e: Event): State => {
   switch (e.type) {
     case "deprecation":
       return { ...state, deviceDeprecationRules: e.deprecate };
@@ -345,6 +360,12 @@ const reducer = (state: State, e: Event): State => {
         installQueue: e.installQueue,
       };
 
+    case "installed-app-versions":
+      return {
+        ...state,
+        installedAppVersions: e.apps,
+      };
+
     case "opened":
       return {
         ...getInitialState(state.device, state.request),
@@ -371,6 +392,9 @@ const reducer = (state: State, e: Event): State => {
 
   return state;
 };
+
+const reducer = (state: State, e: Event): State =>
+  preserveInstalledAppVersions(state, e, appEventReducer(state, e));
 
 export let currentMode: keyof typeof ImplementationType = "event";
 export function setDeviceMode(mode: keyof typeof ImplementationType): void {

@@ -28,7 +28,7 @@ import { useStartExchangeAction, useTransactionAction } from "~/renderer/hooks/u
 import type { States } from "~/renderer/components/DeviceAction";
 import { openPerpsTransactionSigned } from "LLD/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedDialog";
 import { broadcastLogger } from "~/datadog/logs";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { isUserRefusal } from "../utils/isUserRefusal";
 
 type StartResult = StartExchangeResult;
@@ -70,7 +70,7 @@ const FEE_STRATEGY = "medium";
 
 /** The swap orchestration's analytics sink, pointed at the perps flow. */
 const tracking = trackingWrapper((eventName, properties, mandatory) =>
-  track(eventName, { ...properties, flowInitiatedFrom: "Perps" }, mandatory),
+  track(eventName, { ...properties, flowInitiatedFrom: "Perps" }, { mandatory: !!mandatory }),
 );
 
 /**

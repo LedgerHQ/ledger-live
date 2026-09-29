@@ -1,8 +1,4 @@
-import {
-  PayCardInternalWalletsResponseSchema,
-  PayCardLinkedWalletsResponseSchema,
-  PayCardRewardWalletResponseSchema,
-} from "./schema";
+import { PayCardInternalWalletsResponseSchema, PayCardLinkedWalletsResponseSchema } from "./schema";
 import { transformPayCardLinkedWallets } from "./transforms";
 import {
   applyPayCardWalletPrioritiesMock,
@@ -12,7 +8,6 @@ import {
   fundPayCardWalletMock,
   mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
-  mockPayCardRewardWallet,
   readPayCardReorderMockEnabled,
   readPayCardWalletsMock,
   reorderPayCardLinkedWalletsMock,
@@ -31,9 +26,6 @@ describe("the mocked wallet responses", () => {
       PayCardInternalWalletsResponseSchema.safeParse(mockPayCardInternalWallets(true)).success,
     ).toBe(true);
     expect(PayCardLinkedWalletsResponseSchema.safeParse(mockPayCardLinkedWallets()).success).toBe(
-      true,
-    );
-    expect(PayCardRewardWalletResponseSchema.safeParse(mockPayCardRewardWallet()).success).toBe(
       true,
     );
   });
@@ -82,12 +74,6 @@ describe("the mocked wallet responses", () => {
     for (const { balance } of mockPayCardInternalWallets(false)) {
       expect(Number(balance)).toBe(0);
     }
-  });
-
-  it("does not collide the reward wallet's id with a linked wallet's", () => {
-    const linkedIds = new Set(mockPayCardLinkedWallets().map(({ id }) => id));
-
-    expect(linkedIds.has(mockPayCardRewardWallet().id)).toBe(false);
   });
 
   it("switches between funded, empty and provider wallet answers", () => {

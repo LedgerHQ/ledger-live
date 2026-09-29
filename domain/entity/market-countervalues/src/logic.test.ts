@@ -7,17 +7,30 @@ import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import type { Currency } from "@domain/entity-currency";
 import {
+  applyRatePatches,
   calculate,
   calculateMany,
   exportCountervalues,
   filterSupportedTrackingPairs,
   hasNewCountervaluesToExport,
+  historyKey,
   importCountervalues,
+  initialState,
   resolveTrackingPairs,
   trackingPairIds,
 } from "./logic";
-import type { CounterValuesState, CountervaluesSettings, TrackingPair } from "./types";
-import { datapointRetention, formatCounterValueDay, formatCounterValueHour } from "./helpers";
+import type {
+  CounterValuesState,
+  CountervaluesSettings,
+  RateMapStats,
+  TrackingPair,
+} from "./types";
+import {
+  datapointRetention,
+  formatCounterValueDay,
+  formatCounterValueHour,
+  pairId,
+} from "./helpers";
 
 describe("filterSupportedTrackingPairs", () => {
   const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -489,5 +502,160 @@ describe("resolveTrackingPairs", () => {
     ]);
 
     expect(trackingPairIds(resolved)).toEqual(["USD bitcoin", "USD ethereum"]);
+  });
+});
+
+describe("historyKey", () => {
+  const bitcoin = getCryptoCurrencyById("bitcoin");
+  const usd = getFiatCurrencyByTicker("USD");
+  const eur = getFiatCurrencyByTicker("EUR");
+  const stableDate = new Date("2024-06-01T00:00:00.000Z");
+
+  function stateWithStats(stats: Partial<RateMapStats>): CounterValuesState {
+    return {
+      data: {},
+      status: {},
+      cache: {
+        [pairId({ from: bitcoin, to: usd })]: {
+          map: new Map(),
+          fallback: 0,
+          stats: {
+            oldest: undefined,
+            earliest: undefined,
+            oldestDate: null,
+            earliestDate: null,
+            earliestStableDate: null,
+            ...stats,
+          },
+        },
+      },
+    };
+  }
+
+  test("short-circuits to identity when both sides share an API id", () => {
+    expect(historyKey(stateWithStats({}), usd, usd, null)).toBe("identity");
+  });
+
+  test("returns noCV when the pair is absent from the cache", () => {
+    expect(historyKey(stateWithStats({}), bitcoin, eur, null)).toBe("noCV");
+  });
+
+  test("joins oldest, earliestStableDate and the relevant earliest with a pipe", () => {
+    const state = stateWithStats({
+      oldest: "2024-01-01",
+      earliest: "2024-05-01",
+      earliestStableDate: stableDate,
+    });
+
+    expect(
+      historyKey(state, bitcoin, usd, new Date("2024-07-01T00:00:00.000Z")).split("|"),
+    ).toEqual(["2024-01-01", String(stableDate), "2024-05-01"]);
+  });
+
+  test("substitutes an underscore for a missing oldest or earliestStableDate", () => {
+    expect(historyKey(stateWithStats({}), bitcoin, usd, null)).toBe("_|_|");
+  });
+
+  test("drops earliest when it is newer than the last operation's day", () => {
+    const state = stateWithStats({ oldest: "2024-01-01", earliest: "2024-12-01" });
+
+    expect(historyKey(state, bitcoin, usd, new Date("2024-07-01T00:00:00.000Z"))).toBe(
+      "2024-01-01|_|",
+    );
+  });
+
+  test("treats a null last operation date as the zero bucket, dropping earliest", () => {
+    const state = stateWithStats({ oldest: "2024-01-01", earliest: "2024-05-01" });
+
+    expect(historyKey(state, bitcoin, usd, null)).toBe("2024-01-01|_|");
+  });
+
+  test("keeps earliest when it falls exactly on the last operation's day", () => {
+    const state = stateWithStats({ oldest: "2024-01-01", earliest: "2024-07-01" });
+
+    expect(historyKey(state, bitcoin, usd, new Date("2024-07-01T12:00:00.000Z"))).toBe(
+      "2024-01-01|_|2024-07-01",
+    );
+  });
+});
+
+describe("applyRatePatches", () => {
+  const bitcoin = getCryptoCurrencyById("bitcoin");
+  const ethereum = getCryptoCurrencyById("ethereum");
+  const usd = getFiatCurrencyByTicker("USD");
+  const btcUsd = pairId({ from: bitcoin, to: usd });
+  const ethUsd = pairId({ from: ethereum, to: usd });
+  const settings: CountervaluesSettings = {
+    trackingPairs: [{ from: bitcoin, to: usd, startDate: new Date("2018-01-01") }],
+    autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
+  };
+
+  function emptyNext() {
+    return { data: {}, cache: {}, status: {} } as Pick<
+      CounterValuesState,
+      "data" | "cache" | "status"
+    >;
+  }
+
+  it("merges rates into a new pair and builds its cache", () => {
+    const state = applyRatePatches(
+      initialState,
+      emptyNext(),
+      [{ [btcUsd]: { "2018-03-01": 9000, "2018-03-02": 9100 } }],
+      settings,
+    );
+
+    expect([...(state.data[btcUsd]?.entries() ?? [])]).toEqual([
+      ["2018-03-01", 9000],
+      ["2018-03-02", 9100],
+    ]);
+    expect(state.cache[btcUsd]?.stats.oldest).toBe("2018-03-01");
+  });
+
+  it("skips non-numeric values, such as a missing latest rate", () => {
+    const state = applyRatePatches(
+      initialState,
+      emptyNext(),
+      [{ [btcUsd]: { latest: null, "2018-03-01": 9000 } }],
+      settings,
+    );
+
+    expect(state.data[btcUsd]?.has("latest")).toBe(false);
+    expect(state.data[btcUsd]?.get("2018-03-01")).toBe(9000);
+  });
+
+  it("leaves the cache of pairs no patch touched alone", () => {
+    const next = emptyNext();
+    const ethCache = { map: new Map(), stats: {} };
+    next.cache[ethUsd] = ethCache;
+
+    const state = applyRatePatches(
+      initialState,
+      next,
+      [{ [btcUsd]: { "2018-03-01": 9000 } }],
+      settings,
+    );
+
+    expect(state.cache[ethUsd]).toBe(ethCache);
+    expect(state.cache[btcUsd]).toBeDefined();
+  });
+
+  it("clears checkHolesOnNextLoad once the patches are applied", () => {
+    const state = applyRatePatches(
+      { ...initialState, checkHolesOnNextLoad: true },
+      emptyNext(),
+      [{ [btcUsd]: { "2018-03-01": 9000 } }],
+      settings,
+    );
+
+    expect(state.checkHolesOnNextLoad).toBe(false);
+  });
+
+  it("returns the state unchanged in shape when there is nothing to apply", () => {
+    const state = applyRatePatches(initialState, emptyNext(), [], settings);
+
+    expect(state).toEqual({ data: {}, cache: {}, status: {}, checkHolesOnNextLoad: false });
   });
 });

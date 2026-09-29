@@ -24,7 +24,7 @@ import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import HistoryLoading from "./HistoryLoading";
 import HistoryPlaceholder from "./HistoryPlaceholder";
 import { useLocation } from "react-router";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
 import { useAutoOpenSwapDialog } from "./useAutoOpenSwapDialog";
 import { getEnv } from "@shared/env";

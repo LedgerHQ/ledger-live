@@ -5,14 +5,9 @@
  * importing from `graphql/` — which disappears when GraphQL is retired. Everything here operates on
  * the Move JSON of `SuiSystemStateInner` / `StakedSui`, which every transport can produce, so no
  * transport *client* is reachable from this module.
- *
- * `DelegatedStake` / `StakeObject` are type-only imports from `@mysten/sui/jsonRpc`: they name the
- * legacy staking shapes our public API returns on every transport. Retiring JSON-RPC re-homes those
- * two type names; nothing here changes.
  */
 import { log } from "@ledgerhq/logs";
-import type { DelegatedStake, StakeObject } from "@mysten/sui/jsonRpc";
-import type { SuiValidatorSummary } from "../types";
+import type { DelegatedStake, StakeObject, SuiValidatorSummary } from "../types";
 
 /**
  * Transport that produced the data, used only to build telemetry keys.
@@ -181,7 +176,7 @@ export function groupStakedSuiByPool(
 
   for (const item of items) {
     const stakeActiveEpoch = BigInt(item.stake_activation_epoch);
-    // JSON-RPC convention: requestEpoch = activeEpoch − 1.
+    // A stake activates the epoch after its request: requestEpoch = activeEpoch − 1.
     const base = {
       stakedSuiId: item.id,
       stakeRequestEpoch: (stakeActiveEpoch - 1n).toString(),

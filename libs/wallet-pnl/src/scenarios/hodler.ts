@@ -3,8 +3,8 @@ import type { Account } from "@ledgerhq/types-live";
 import { BTC, SAT, USD } from "./currencies";
 import { makeAccount } from "./accounts";
 import { buy, sell } from "./operations";
-import { buildCV, dailyHistory } from "./countervalues";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { buildCV, dailyHistory } from "@domain/entity-market-countervalues/mock";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 
 // Monthly close prices for 2024 + 2025 (USD).
 const MONTHLY_PRICES = [

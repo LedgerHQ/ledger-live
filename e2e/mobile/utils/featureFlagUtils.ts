@@ -39,6 +39,10 @@ export const FF_LWM_WALLET_40_Q2 = {
   },
 } satisfies PartialFeatures;
 
+export const FF_PASSWORD_REVAMP = {
+  lwmPasswordRevamp: { enabled: true },
+} satisfies PartialFeatures;
+
 export const FF_BORROW_ENABLED = {
   ...FF_LWM_WALLET_40_Q2,
   ptxBorrowLiveApp: {
@@ -63,6 +67,13 @@ export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies PartialFeatures;
 
+export const FF_LWM_CONTACTS_ENABLED = {
+  lwmContacts: {
+    enabled: true,
+    params: { newBadge: false, eligibleAddressFamilies: ["evm", "tron"] },
+  },
+} satisfies PartialFeatures;
+
 export const FF_NEW_SEND_FLOW_ENABLED = {
   newSendFlow: {
     enabled: true,
@@ -84,6 +95,23 @@ export const FF_MINA_STAKING_ENABLED = {
     params: {
       list: ["mina"],
       redirects: {},
+    },
+  },
+} satisfies PartialFeatures;
+
+export const FF_CONTACTS_ENABLED = {
+  lwmContacts: {
+    enabled: true,
+    params: { newBadge: false, eligibleAddressFamilies: ["evm", "tron"] },
+  },
+} satisfies PartialFeatures;
+
+export const FF_PAY_TAB = {
+  lwmPayTab: {
+    enabled: true,
+    params: {
+      card: true,
+      legacyTopUp: false,
     },
   },
 } satisfies PartialFeatures;

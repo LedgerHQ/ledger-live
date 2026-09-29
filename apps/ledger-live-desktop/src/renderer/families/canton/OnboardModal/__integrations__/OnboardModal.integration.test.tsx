@@ -107,6 +107,8 @@ describe("OnboardModal Integration", () => {
 
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
+      name: "Canton Network (Devnet)",
+      unit: { name: "cc", code: "CC", magnitude: 38 },
       networkType: "devnet",
       gatewayUrl: CANTON_DEVNET_GATEWAY,
       nodeId: CANTON_DEVNET_NODE_ID,
@@ -152,13 +154,21 @@ describe("OnboardModal Integration", () => {
 
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("add-accounts-finish-close-button")).toBeVisible();
-      },
-      { timeout: 20_000 },
+    // Onboarding starts synchronously (status → PREPARE) before the async observable runs;
+    // asserting a processing state here proves the click registered the flow.
+    await screen.findByText(
+      /Preparing account onboarding|Onboarding account|Processing/,
+      {},
+      { timeout: 10_000 },
     );
-  }, 25_000);
+
+    // On success the flow auto-advances to the FINISH step (onOnboardingComplete → transitionTo).
+    expect(
+      await screen.findByTestId("add-accounts-finish-close-button", {}, { timeout: 30_000 }),
+    ).toBeVisible();
+    // Test timeout stays above the 10s + 30s query budgets so render/click/scheduling overhead
+    // outside the findBy polling can't hit the Jest deadline before the final query resolves.
+  }, 45_000);
 
   it("should show try again when onboarding prepare fails", async () => {
     server.use(

@@ -5,6 +5,7 @@ import net from "net";
 import merge from "lodash/merge";
 
 import { NavigatorName } from "~/const";
+import type { Contact } from "@domain/entity-contact";
 import type { MessageData, OverrideFeatureFlagPayload, ServerData } from "~/e2e/bridge/types";
 import type { PartialFeatures, FeatureId } from "@shared/feature-flags";
 import { FeatureIdSchema } from "@shared/feature-flags";
@@ -124,6 +125,10 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
     postMessage({ type: "importPostOnboarding", id: uniqueId(), payload: data.postOnboarding });
   }
 
+  if (data.payCard) {
+    postMessage({ type: "importPayCard", id: uniqueId(), payload: data.payCard });
+  }
+
   if (data.featureFlags?.overrides) {
     await setFeatureFlags(data.featureFlags.overrides);
   }
@@ -140,6 +145,10 @@ export async function setFeatureFlags(flags: PartialFeatures) {
 
 export async function setFeatureFlag(flag: OverrideFeatureFlagPayload) {
   postMessage({ type: "overrideFeatureFlag", id: uniqueId(), payload: flag });
+}
+
+export async function importContacts(contacts: Contact[]) {
+  await fetchData({ type: "importContacts", id: uniqueId(), payload: contacts });
 }
 
 async function navigate(name: string) {
@@ -250,6 +259,7 @@ function onMessage(messageStr: string) {
     case "ptxHandoff":
     case "appFlags":
     case "appEnvs":
+    case "contactsImported":
       resolvePending(msg.id, msg.payload);
       break;
     case "swapSetupDone":

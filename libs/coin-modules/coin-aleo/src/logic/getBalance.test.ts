@@ -1,6 +1,7 @@
 import { apiClient } from "../network/api";
 import { sdkClient } from "../network/sdk";
 import { fetchAccountTransactionsFromHeight, fetchAllOwnedRecords } from "../network/utils";
+import type { Stake } from "@ledgerhq/coin-module-framework/api/index";
 import { PROGRAM_ID } from "../constants";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
@@ -14,7 +15,9 @@ import {
 } from "../__tests__/fixtures/api.fixture";
 import type { AleoContext } from "../types";
 import { getBalance } from "./getBalance";
+import { getStakes } from "./getStakes";
 
+jest.mock("./getStakes");
 jest.mock("../network/api");
 jest.mock("../network/sdk");
 jest.mock("../network/utils", () => ({
@@ -30,6 +33,7 @@ const mockGetRecordScannerStatus = jest.mocked(apiClient.getRecordScannerStatus)
 const mockDecryptRecord = jest.mocked(sdkClient.decryptRecord);
 const mockFetchAccountTransactionsFromHeight = jest.mocked(fetchAccountTransactionsFromHeight);
 const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
+const mockGetStakes = jest.mocked(getStakes);
 
 describe("getBalance", () => {
   const mockConfig = getMockedConfig("mainnet");
@@ -60,6 +64,7 @@ describe("getBalance", () => {
       nextCursor: null,
     });
     mockFetchAllOwnedRecords.mockResolvedValue([]);
+    mockGetStakes.mockResolvedValue({ items: [] });
   });
 
   it("no provableId/viewKey — throws before any network call", async () => {
@@ -360,5 +365,42 @@ describe("getBalance", () => {
     expect(thrownForViewKey).toBeInstanceOf(Error);
     expect((thrownForViewKey as Error).message).not.toContain(secretViewKey);
     expect(Object.keys(thrownForViewKey as Error)).not.toContain("viewKey");
+  });
+
+  describe("staked and unbonding components", () => {
+    beforeEach(() => {
+      mockGetRecordScannerStatus.mockResolvedValue(getMockedRecordScannerStatus());
+    });
+
+    it("adds bonded and unbonding to the native total as locked, and reports each as a stake entry", async () => {
+      const bonded: Stake = {
+        uid: address,
+        address,
+        delegate: "aleo1validator",
+        state: "active",
+        actions: ["delegate", "undelegate"],
+        asset: { type: "native" },
+        amount: 10_000_000n,
+      };
+      const unbonding: Stake = {
+        uid: `${address}:unbonding`,
+        address,
+        state: "withdrawable",
+        actions: ["withdraw"],
+        asset: { type: "native" },
+        amount: 3_000_000n,
+      };
+      mockGetStakes.mockResolvedValue({ items: [bonded, unbonding] });
+
+      const result = await getBalance({ ...context, provableId, viewKey }, address);
+
+      expect(mockGetStakes).toHaveBeenCalledTimes(1);
+      expect(mockGetStakes).toHaveBeenCalledWith(mockConfig, address);
+      expect(result.filter(balance => balance.asset.type === "native")).toEqual([
+        { value: 18_000_000n, locked: 13_000_000n, asset: { type: "native" } },
+        { value: 10_000_000n, asset: { type: "native" }, stake: bonded },
+        { value: 3_000_000n, asset: { type: "native" }, stake: unbonding },
+      ]);
+    });
   });
 });

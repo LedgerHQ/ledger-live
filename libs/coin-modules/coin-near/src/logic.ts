@@ -3,7 +3,13 @@ import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHe
 import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import { utils } from "near-api-js";
-import { FRACTIONAL_DIGITS, STAKING_GAS_BASE, YOCTO_THRESHOLD_VARIATION } from "./constants";
+import {
+  FRACTIONAL_DIGITS,
+  MIN_ACCOUNT_BALANCE_BUFFER,
+  STAKING_FEE_OVERHEAD_GAS,
+  STAKING_GAS,
+  YOCTO_THRESHOLD_VARIATION,
+} from "./constants";
 import { createTransaction } from "./createTransaction";
 import { getCurrentNearPreloadData } from "./preload-data";
 import {
@@ -29,18 +35,9 @@ export const isImplicitAccount = (address: string): boolean => {
   return !address.includes(".");
 };
 
-/** Only the mode and useAllAmount flag drive staking gas, so callers outside the account bridge
- * (which has no `Transaction`) can pass just those two fields. */
-export type StakingGasInput = { mode?: string; useAllAmount?: boolean };
-
-export const getStakingGas = (t?: StakingGasInput, multiplier = 5): BigNumber => {
-  const stakingGasBase = new BigNumber(STAKING_GAS_BASE);
-
-  if (t?.mode === "withdraw" && t?.useAllAmount) {
-    multiplier = 7;
-  }
-
-  return stakingGasBase.multipliedBy(multiplier);
+/** One budget for every staking-pool call, see {@link STAKING_GAS} for how it was sized. */
+export const getStakingGas = (): BigNumber => {
+  return new BigNumber(STAKING_GAS);
 };
 
 // Framework accounts (usesStakingPositions: true) carry per-state positions under
@@ -139,6 +136,39 @@ export const getMaxAmount = (
   return maxAmount;
 };
 
+/*
+ * The liquid balance a transaction can actually pay gas from.
+ *
+ * `spendableBalance` subtracts two different things: the storage-staking deposit, which the
+ * protocol refuses to let an account spend under, and MIN_ACCOUNT_BALANCE_BUFFER, a reserve kept
+ * on our side so an account always has something left to operate with. Only the first is a real
+ * floor. Gas for an unstake or a withdraw is exactly the operation the reserve is held for, and a
+ * withdraw puts funds back on top, so those two may be priced against the reserve as well.
+ *
+ * Derived rather than stored: `balance` is the total including the delegated buckets, and
+ * `storageUsageBalance` is the deposit plus the reserve, so removing the buckets and the deposit
+ * leaves the liquid funds above the protocol floor. Accounts that carry no `nearResources` fall
+ * back to `spendableBalance`, which under-reports rather than over-reports.
+ */
+export const getFeeAvailableBalance = (account: NearAccount): BigNumber => {
+  const resources = account.nearResources;
+
+  if (!resources?.storageUsageBalance || !account.balance) {
+    return account.spendableBalance;
+  }
+
+  const storageDeposit = BigNumber.max(
+    resources.storageUsageBalance.minus(MIN_ACCOUNT_BALANCE_BUFFER),
+    0,
+  );
+  const liquidBalance = account.balance
+    .minus(resources.stakedBalance ?? 0)
+    .minus(resources.availableBalance ?? 0)
+    .minus(resources.pendingBalance ?? 0);
+
+  return BigNumber.max(liquidBalance.minus(storageDeposit), 0);
+};
+
 export const getTotalSpent = (a: NearAccount, t: Transaction, fees: BigNumber): BigNumber => {
   if (["unstake", "withdraw"].includes(t.mode)) {
     return fees;
@@ -185,9 +215,9 @@ export const canStake = (account: NearAccount): boolean => {
     mode: "stake",
   });
 
-  const { gasPrice } = getCurrentNearPreloadData();
+  const { gasPrice, minGasPurchasePrice } = getCurrentNearPreloadData();
 
-  const fees = getStakingFees(transaction, gasPrice).multipliedBy(3);
+  const fees = getStakingFees(gasPrice, minGasPurchasePrice).multipliedBy(3);
 
   return getMaxAmount(account, transaction, fees).gt(0);
 };
@@ -215,15 +245,23 @@ export const getYoctoThreshold = (): BigNumber => {
 };
 
 /*
- * An estimation for the fee by using the staking gas and scaling accordingly.
- * Buffer added so that the transaction never fails - we'll always overestimate.
+ * What the chain makes the account hold for a staking call, in yoctoNEAR.
  *
- * The runtime locks the whole prepaid gas at conversion time and refunds the unburnt part
- * afterwards, so the fee charges the full prepaid amount rather than a fraction of it — the
- * refund shows up on-chain the same way it does for the account bridge.
+ * The runtime locks the whole attached gas at conversion time and refunds the unburnt part
+ * afterwards, so the fee is the full attached amount, not the fraction that ends up burnt. That
+ * gas is bought at `min_gas_purchase_price`, not at the current gas price: nearcore's
+ * `calculate_tx_cost` prices the gas attached to the receipt at
+ * `max(current_gas_price, min_gas_purchase_price)` and only the gas burnt converting the
+ * transaction at the current price. The floor sits an order of magnitude above the current price
+ * on mainnet, so pricing at the current price alone under-reported what the account had to hold
+ * and the chain rejected the transaction with `NotEnoughBalance` (observed: 0.02 quoted against
+ * 0.1759 required, with 175 TGas attached).
+ *
+ * The overhead term covers the action's own send/exec/receipt fees, which are also bought at the
+ * floor; the conversion gas burnt at the current price is a rounding error next to it.
  */
-export const getStakingFees = (t: StakingGasInput, gasPrice: BigNumber): BigNumber => {
-  const stakingGas = getStakingGas(t);
+export const getStakingFees = (gasPrice: BigNumber, minGasPurchasePrice: BigNumber): BigNumber => {
+  const receiptGasPrice = BigNumber.max(gasPrice, minGasPurchasePrice);
 
-  return stakingGas.plus(STAKING_GAS_BASE).multipliedBy(gasPrice); // Buffer
+  return getStakingGas().plus(STAKING_FEE_OVERHEAD_GAS).multipliedBy(receiptGasPrice);
 };

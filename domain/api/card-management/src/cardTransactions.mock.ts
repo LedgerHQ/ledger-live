@@ -72,11 +72,14 @@ const PAYMENT_BY_CATEGORY = {
     fiatAmount: "4.75",
     assets: [{ currency: "btc", amount: "0.00005231" }],
   },
+  // Three assets, each with the digits the provider actually sends, so a row has to cope with both
+  // a multi-asset charge and an amount longer than the product shows.
   TRAVEL: {
     fiatAmount: "349.90",
     assets: [
-      { currency: "eth", amount: "0.1" },
-      { currency: "usdc", amount: "14.82" },
+      { currency: "eth", amount: "0.104873912345678901" },
+      { currency: "usdc", amount: "14.821903" },
+      { currency: "btc", amount: "0.00218734" },
     ],
   },
   ENTERTAINMENT: {
@@ -222,6 +225,34 @@ export function receivePayCardTransactionMock(asset: PayCardMockTransactionAsset
         id: `devtool-${asset}-source-${serial}`,
         dateTime: new Date().toISOString(),
       })),
+  };
+
+  transactionOverride = [received, ...(transactionOverride ?? [])];
+}
+
+/**
+ * Adds one newest transaction funded by several assets, the case a row has the least space for.
+ */
+export function receiveMultiAssetPayCardTransactionMock(): void {
+  const template = mockPayCardTransactions().find(
+    transaction => transaction.fundingSources.length > 1,
+  );
+
+  if (!template) return;
+
+  receivedTransactionSerial += 1;
+  const serial = receivedTransactionSerial;
+  const dateTime = new Date().toISOString();
+  const received = {
+    ...template,
+    id: `devtool-multi-${serial}`,
+    transactionId: `devtool-multi-${serial}`,
+    dateTime,
+    fundingSources: template.fundingSources.map((source, index) => ({
+      ...source,
+      id: `devtool-multi-source-${serial}-${index}`,
+      dateTime,
+    })),
   };
 
   transactionOverride = [received, ...(transactionOverride ?? [])];

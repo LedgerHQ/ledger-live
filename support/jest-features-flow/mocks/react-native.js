@@ -21,6 +21,12 @@ module.exports = {
     isVisible: () => false,
     dismiss: () => {},
   },
+  // Foreground by default; a test that drives the lifecycle overrides addEventListener to keep
+  // the listener it is handed.
+  AppState: {
+    currentState: "active",
+    addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+  },
   Linking: {
     openURL: jest.fn(() => Promise.resolve()),
     sendIntent: jest.fn(() => Promise.resolve()),
