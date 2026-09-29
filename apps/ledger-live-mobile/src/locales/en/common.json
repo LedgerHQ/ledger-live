@@ -11541,6 +11541,9 @@
         "unbondedAmount": "Unstaked amount"
       }
     },
+    "operationTypes": {
+      "WITHDRAW_UNBONDED": "Claim"
+    },
     "shared": {
       "sponsoredByProvable": "Sponsored by Provable"
     }
