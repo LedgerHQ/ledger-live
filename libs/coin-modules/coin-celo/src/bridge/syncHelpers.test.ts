@@ -322,22 +322,18 @@ describe("Celo sync helpers", () => {
       const hash1 = await getSyncHash({
         ...currency,
         id: CryptoCurrencyIdSchema.parse("celo"),
-        ethereumLikeInfo: { chainId: 42220 },
       });
       const hash2 = await getSyncHash({
         ...currency,
         id: "matic" as CryptoCurrencyId,
-        ethereumLikeInfo: { chainId: 42220 },
       });
       const hash3 = await getSyncHash({
         ...currency,
         id: "anything" as CryptoCurrencyId,
-        ethereumLikeInfo: { chainId: 42220 },
       });
       const hash4 = await getSyncHash({
         ...currency,
         id: "somethingelse" as CryptoCurrencyId,
-        ethereumLikeInfo: { chainId: 42220 },
       });
 
       const hashes = [hash1, hash2, hash3, hash4];

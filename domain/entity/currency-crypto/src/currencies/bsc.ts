@@ -10,9 +10,6 @@ export const bsc = currency({
   scheme: "bsc",
   color: "#F0B90A",
   family: "evm",
-  ethereumLikeInfo: {
-    chainId: 56,
-  },
   units: [
     {
       name: "BNB",

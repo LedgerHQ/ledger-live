@@ -6,9 +6,8 @@ import type { CeloSigner } from "../../signer/signer";
 
 describe("hw-getAddress resolver", () => {
   it("passes the coin config's chain id to the signer, not the currency's stale chain id", async () => {
-    // A deliberately non-default chain id: celo's own currency data (and its old
-    // `ethereumLikeInfo.chainId`) is 42220, so getting this value back proves the
-    // resolver reads the coin config and not the currency model.
+    // A deliberately non-default chain id: celo's default is 42220, so getting this value back
+    // proves the resolver reads the coin config and not the currency model.
     const configuredChainId = 999999;
     setCoinConfig(
       () => ({ info: { chainId: configuredChainId, name: "Celo" } }) as unknown as EvmCoinConfig,

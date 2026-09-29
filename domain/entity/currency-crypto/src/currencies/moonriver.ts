@@ -37,9 +37,6 @@ export const moonriver = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 1285,
-  },
   explorerViews: [
     {
       tx: "https://moonriver.moonscan.io/tx/$hash",
