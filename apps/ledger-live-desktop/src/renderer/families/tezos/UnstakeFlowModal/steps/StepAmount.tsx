@@ -10,7 +10,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Label from "~/renderer/components/Label";
 import Text from "~/renderer/components/Text";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
