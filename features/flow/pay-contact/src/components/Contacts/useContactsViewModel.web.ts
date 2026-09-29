@@ -24,10 +24,9 @@ export function useContactsViewModel({
   const { t } = useTranslation();
   const contacts = useContacts();
   const rows = useMemo<readonly ContactRowViewModel[]>(() => {
-    const savedContacts = contacts.filter(contact => !contact.isMe);
-    const summaries = summarizeContactOperationsByContact(savedContacts, operations);
+    const summaries = summarizeContactOperationsByContact(contacts, operations);
 
-    return sortContactsByLastSentThenLastAdded(savedContacts, summaries).map(contact => ({
+    return sortContactsByLastSentThenLastAdded(contacts, summaries).map(contact => ({
       contact,
       transactionCount: summaries[contact.id]?.txCount ?? 0,
     }));

@@ -25,7 +25,7 @@ import {
   type ContactAddressPickerProps,
   type ContactsProps,
 } from "@features/flow-pay-contact";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { useContactsAnalytics } from "LLD/features/Contacts/analytics";
@@ -47,7 +47,6 @@ export function usePayTabContacts(
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pathname: payTabPath } = useLocation();
-  const { trackButtonClicked } = usePayAnalyticsContext();
   const analytics = useContactsAnalytics();
   const { openDrawer } = useActivationDrawer();
   const ledgerSyncStatus = useContactsLedgerSyncStatus();
@@ -69,7 +68,7 @@ export function usePayTabContacts(
       });
       onSelectAddress(address);
     },
-    [onSelectAddress, trackButtonClicked],
+    [onSelectAddress],
   );
   const { open: openContactAddressPicker, contactAddressPicker } = useContactAddressPickerViewModel(
     {

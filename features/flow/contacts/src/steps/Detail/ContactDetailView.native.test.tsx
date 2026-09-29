@@ -1,8 +1,8 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { fireEvent, render as renderWithoutI18n, screen } from "@testing-library/react-native";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { createMeDisplayNameFormatter } from "@features/platform-contacts";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
 import type { ContactDetailLabels } from "./types";
@@ -16,16 +16,17 @@ const labels: ContactDetailLabels = {
   emptyMeDescription: "Save external addresses for Me.",
   emptyContactDescription: () => "Save their wallet addresses to send to them by name next time",
   ledgerWalletAddresses: "Ledger Wallet addresses",
-  formatMeDisplayName: createMeDisplayNameFormatter("My addresses", name => `${name} (Me)`),
   formatAddressCount: count => `${count} address`,
 };
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 const onAddAddress = () => undefined;
 const onLedgerWalletAccountsPress = () => undefined;
 
 const defaultProps = {
   labels,
-  meAvatarSrc: "https://example.com/avatar.png",
   onAddAddress,
 };
 
@@ -40,7 +41,7 @@ describe("ContactDetailPage", () => {
     render(<ContactDetailView {...meDetailProps} contact={mockMeContact()} />);
 
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
-    expect(screen.getByText("My addresses")).toBeVisible();
+    expect(screen.getByText("My addresses (Me)")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add your address");
     expect(screen.getByTestId("contacts-detail-ledger-wallet-addresses")).toHaveTextContent(
       "Ledger Wallet addresses",
@@ -87,12 +88,12 @@ describe("ContactDetailPage", () => {
       <ContactDetailView
         contact={mockMeContact()}
         labels={sharedLabels}
-        meAvatarSrc={defaultProps.meAvatarSrc}
+
         onAddAddress={onAddAddress}
       />,
     );
 
-    expect(screen.getByText("Me")).toBeVisible();
+    expect(screen.getByText("My addresses (Me)")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add address");
     expect(screen.queryByTestId("contacts-detail-ledger-wallet-addresses")).toBeNull();
   });

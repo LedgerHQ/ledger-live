@@ -12,6 +12,7 @@ const sections: readonly ContactsListSection[] = [
       {
         contactId: ContactIdSchema.parse("contact-ada"),
         name: "Ada",
+        isMe: false,
         initial: "A",
         addressCount: 0,
       },
@@ -23,6 +24,7 @@ const sections: readonly ContactsListSection[] = [
       {
         contactId: ContactIdSchema.parse("contact-zoya"),
         name: "Зоя",
+        isMe: false,
         initial: "З",
         addressCount: 1,
       },
@@ -34,6 +36,7 @@ const sections: readonly ContactsListSection[] = [
       {
         contactId: ContactIdSchema.parse("contact-ali"),
         name: "علي",
+        isMe: false,
         initial: "ع",
         addressCount: 2,
       },

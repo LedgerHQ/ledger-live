@@ -1,7 +1,7 @@
 import { setHasPassword } from "@features/platform-app-lock";
 import { act, fireEvent, render, screen, withFlagOverrides } from "@tests/test-renderer";
 import React from "react";
-import { NavigatorName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import AuthSecurityToggle from "~/screens/Settings/General/AuthSecurityToggle";
 
 const mockNavigate = jest.fn();
@@ -41,7 +41,10 @@ describe("the password row in Settings", () => {
 
     await toggle(true);
 
-    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.PasswordAddFlow);
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.PasswordAddFlow, {
+      screen: ScreenName.PasswordAdd,
+      params: { source: "settings" },
+    });
     expect(screen.getByTestId("password-settings-switch")).not.toBeChecked();
   });
 

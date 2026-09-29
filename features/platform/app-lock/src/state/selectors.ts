@@ -25,6 +25,10 @@ export function selectIsLocked(state: WithAppLock): boolean {
   return selectAppLock(state).isLocked;
 }
 
+export function selectHasDecidedLaunchLock(state: WithAppLock): boolean {
+  return selectAppLock(state).hasDecidedLaunchLock;
+}
+
 export function selectNeedsLongerPassword(state: WithAppLock): boolean {
   return selectAppLock(state).needsLongerPassword;
 }

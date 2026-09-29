@@ -50,7 +50,7 @@ function DetailsImage({
 
   return (
     <div
-      className="size-full h-[195px] w-full overflow-hidden rounded-lg border border-muted p-2"
+      className="size-full h-[195px] w-full overflow-hidden rounded-lg p-2"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <img

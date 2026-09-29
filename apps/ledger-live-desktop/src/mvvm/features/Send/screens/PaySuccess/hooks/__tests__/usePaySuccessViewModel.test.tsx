@@ -72,6 +72,10 @@ function renderPaySuccess(state = buildFlowState(), { isContactsEnabled = true }
 }
 
 describe("usePaySuccessViewModel", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should expose the contact as recipient when the address belongs to one", () => {
     const { result } = renderPaySuccess();
 

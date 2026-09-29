@@ -90,14 +90,14 @@ describe("usePaySuccessViewModel", () => {
   it("should expose the contact as recipient when the address belongs to one", () => {
     const { result } = renderPaySuccess();
 
-    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada" });
+    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada", isMe: false });
     expect(result.current.recipientLabel).toBe("Ada");
   });
 
   it("should fall back to the input recipient when the signed transaction has no address", () => {
     const { result } = renderPaySuccess(buildFlowState({ signedRecipient: "" }));
 
-    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada" });
+    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada", isMe: false });
     expect(result.current.recipientLabel).toBe("Ada");
   });
 
@@ -106,7 +106,7 @@ describe("usePaySuccessViewModel", () => {
       buildFlowState({ address: "ada.eth", signedRecipient: ADA_ADDRESS }),
     );
 
-    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada" });
+    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada", isMe: false });
     expect(result.current.recipientLabel).toBe("Ada");
   });
 

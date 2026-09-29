@@ -59,7 +59,7 @@ export function AppProtectionPromptProvider({
   }, [isLocked, settle]);
 
   const requestProtection = useCallback(
-    async (next: AppProtectionRequest = {}) => {
+    async (next: AppProtectionRequest) => {
       if (selectIsAppLockConfigured(store.getState())) {
         return true;
       }

@@ -21,6 +21,7 @@ jest.mock("@rozenite/redux-devtools-plugin", () => ({
 
 jest.mock("~/config/bridge-setup", () => ({
   setupCryptoAssetsStore: jest.fn(),
+  setupRateLookups: jest.fn(),
 }));
 
 jest.mock("@domain/entity-recent-addresses", () => ({
@@ -253,6 +254,31 @@ describe("mobile store", () => {
       );
     });
   });
+
+  describe("swap extraArgument", () => {
+    beforeEach(() => {
+      jest.resetModules();
+      // Re-seed after resetModules(), like the auth provider flow tests above: configureStore
+      // also builds calApiExtra/pushDevicesApiExtra, which require a non-empty LEDGER_CLIENT_VERSION.
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    it("resolves the swap api base url from the build's SWAP_API_BASE", () => {
+      const Config = require("react-native-config").default as Record<string, unknown>;
+      Config.SWAP_API_BASE = "https://swap-stg.test/v5";
+
+      const { store } = require("./configureStore");
+
+      expect(dispatchSwapExtra(store)).toBe("https://swap-stg.test/v5");
+    });
+
+    it("falls back to the production swap api when the build sets no SWAP_API_BASE", () => {
+      const { store } = require("./configureStore");
+
+      expect(dispatchSwapExtra(store)).toBe("https://swap.ledger.com/v5");
+    });
+  });
 });
 
 type AuthThunk = (
@@ -264,6 +290,16 @@ type DispatchThunk = (thunk: AuthThunk) => Promise<unknown>;
 function dispatchThunk(store: unknown, thunk: AuthThunk): Promise<unknown> {
   const dispatch = (store as { dispatch: unknown }).dispatch as DispatchThunk;
   return dispatch(thunk);
+}
+
+type SwapThunk = (
+  dispatch: unknown,
+  getState: unknown,
+  extra: { getSwapApiBaseUrl: () => string },
+) => string;
+function dispatchSwapExtra(store: unknown): string {
+  const dispatch = (store as { dispatch: unknown }).dispatch as (thunk: SwapThunk) => string;
+  return dispatch((_dispatch, _getState, extra) => extra.getSwapApiBaseUrl());
 }
 
 function makeJwt(payload: Record<string, unknown>): string {

@@ -3,7 +3,9 @@ import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 // Side-effect: register the zcash chain adapter
 import "./chain-adapters/zcash";
 
-export type BitcoinConfigInfo = CurrencyConfig;
+export type BitcoinConfigInfo = CurrencyConfig & {
+  explorerId?: string;
+};
 
 type BitcoinCoinConfig = {
   info: BitcoinConfigInfo;

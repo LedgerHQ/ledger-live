@@ -31,7 +31,9 @@ const trc20Token = {
 const trc10Token = {
   id: "tron/trc10/1002000",
   tokenType: "trc10",
-  contractAddress: "1002000",
+  parentCurrencyId: "tron",
+  // CAL stores the issuer address here, not the numeric asset id, which lives in `id`.
+  contractAddress: "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
   name: "BitTorrent",
   units: [{ name: "BTT", code: "BTT", magnitude: 6 }],
 } as unknown as TokenCurrency;
@@ -305,6 +307,20 @@ describe("tron bridge", () => {
         name: "BitTorrent",
         unit: { name: "BTT", code: "BTT", magnitude: 6 },
       });
+    });
+
+    it.each([
+      ["a non-<currency>/trc10/<id> layout", "tron:trc10:1002000"],
+      ["a mismatched currency prefix", "ethereum/trc10/1002000"],
+      ["a non-trc10 standard segment", "tron/trc20/1002000"],
+      ["a non-numeric asset id", "tron/trc10/BTT"],
+      ["extra trailing segments", "tron/trc10/1002000/x"],
+    ])("should throw when the TRC10 token id has %s", (_case, id) => {
+      const malformed = { ...trc10Token, id } as TokenCurrency;
+
+      expect(() => getAssetFromToken(malformed, owner)).toThrow(
+        `Unexpected TRC10 token id, cannot derive asset id: ${id}`,
+      );
     });
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "8.1.0",
+  "version": "9.0.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -59,7 +59,7 @@
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",
     "lodash": "catalog:",
-    "tronweb": "6.2.0"
+    "tronweb": "6.5.1"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

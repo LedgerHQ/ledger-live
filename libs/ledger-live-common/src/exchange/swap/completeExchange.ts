@@ -34,6 +34,8 @@ import { CEXProviderConfig } from "../providers/swap";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { Unit } from "@domain/entity-currency-unit";
+import { formatCurrencyUnit } from "../../currencies";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;
@@ -70,6 +72,139 @@ export function shouldForceZeroAmountForDexSwap({
 }): boolean {
   if (!isDex || family !== "evm") return false;
   return hasSubAccountId || ARC_CURRENCY_IDS.has(fromCurrencyId);
+}
+
+const EVM_NOT_ENOUGH_GAS_DIAGNOSTIC_KEYS = [
+  "nativeBalance",
+  "nativeCurrency",
+  "totalFees",
+  "gasLimit",
+  "gasPrice",
+  "maxFeePerGas",
+  "maxPriorityFeePerGas",
+] as const;
+
+export type EvmNotEnoughGasDiagnostics = Partial<
+  Record<(typeof EVM_NOT_ENOUGH_GAS_DIAGNOSTIC_KEYS)[number], string>
+>;
+
+type EvmNotEnoughGasContext = {
+  family: string;
+  nativeBalance: BigNumber;
+  nativeCurrency: string;
+  totalFees: BigNumber;
+  gasLimit?: BigNumber;
+  gasPrice?: BigNumber;
+  maxFeePerGas?: BigNumber;
+  maxPriorityFeePerGas?: BigNumber;
+};
+
+function assignBigNumber<Key extends string>(
+  target: Partial<Record<Key, string>>,
+  key: Key,
+  value: BigNumber | undefined,
+) {
+  if (BigNumber.isBigNumber(value)) {
+    target[key] = value.toString();
+  }
+}
+
+export function enrichEvmNotEnoughGasError(error: Error, context: EvmNotEnoughGasContext): Error {
+  if (context.family !== "evm" || error.name !== "NotEnoughGas") return error;
+
+  const diagnostics: EvmNotEnoughGasDiagnostics = {
+    nativeBalance: context.nativeBalance.toString(),
+    nativeCurrency: context.nativeCurrency,
+    totalFees: context.totalFees.toString(),
+  };
+  assignBigNumber(diagnostics, "gasLimit", context.gasLimit);
+  assignBigNumber(diagnostics, "gasPrice", context.gasPrice);
+  assignBigNumber(diagnostics, "maxFeePerGas", context.maxFeePerGas);
+  assignBigNumber(diagnostics, "maxPriorityFeePerGas", context.maxPriorityFeePerGas);
+  Object.assign(error, diagnostics);
+  return error;
+}
+
+export function readEvmNotEnoughGasDiagnostics(
+  error: unknown,
+): EvmNotEnoughGasDiagnostics | undefined {
+  if (!error || typeof error !== "object") return undefined;
+  const source = error as { name?: unknown } & Record<string, unknown>;
+  if (source.name !== "NotEnoughGas") return undefined;
+
+  const diagnostics: EvmNotEnoughGasDiagnostics = {};
+  for (const key of EVM_NOT_ENOUGH_GAS_DIAGNOSTIC_KEYS) {
+    const value = source[key];
+    if (typeof value === "string" && value.length > 0) {
+      diagnostics[key] = value;
+    }
+  }
+  if (typeof diagnostics.nativeBalance !== "string") return undefined;
+  return diagnostics;
+}
+
+const NOT_ENOUGH_BALANCE_DIAGNOSTIC_KEYS = [
+  "balance",
+  "spendableBalance",
+  "pendingOperationsCount",
+] as const;
+
+export type NotEnoughBalanceDiagnostics = Partial<
+  Record<(typeof NOT_ENOUGH_BALANCE_DIAGNOSTIC_KEYS)[number], string>
+>;
+
+type NotEnoughBalanceContext = {
+  balance: BigNumber;
+  spendableBalance: BigNumber;
+  pendingOperationsCount: number;
+  unit: Unit;
+};
+
+function formatDiagnosticBalance(unit: Unit, value: BigNumber): string {
+  return formatCurrencyUnit(unit, value, {
+    disableRounding: true,
+    useGrouping: false,
+  });
+}
+
+export function enrichNotEnoughBalanceError(error: Error, context: NotEnoughBalanceContext): Error {
+  if (error.name !== "NotEnoughBalance") return error;
+
+  const diagnostics: NotEnoughBalanceDiagnostics = {
+    balance: formatDiagnosticBalance(context.unit, context.balance),
+    spendableBalance: formatDiagnosticBalance(context.unit, context.spendableBalance),
+    pendingOperationsCount: String(context.pendingOperationsCount),
+  };
+  Object.assign(error, diagnostics);
+  return error;
+}
+
+export function readNotEnoughBalanceDiagnostics(
+  error: unknown,
+): NotEnoughBalanceDiagnostics | undefined {
+  if (!error || typeof error !== "object") return undefined;
+  const source = error as { name?: unknown } & Record<string, unknown>;
+  if (source.name !== "NotEnoughBalance") return undefined;
+
+  const diagnostics: NotEnoughBalanceDiagnostics = {};
+  for (const key of NOT_ENOUGH_BALANCE_DIAGNOSTIC_KEYS) {
+    const value = source[key];
+    if (typeof value === "string" && value.length > 0) {
+      diagnostics[key] = value;
+    }
+  }
+  if (typeof diagnostics.balance !== "string") return undefined;
+  return diagnostics;
+}
+
+function readOptionalBigNumber(source: object, key: string): BigNumber | undefined {
+  const value = (source as Record<string, unknown>)[key];
+  return BigNumber.isBigNumber(value) ? value : undefined;
+}
+
+function readTotalFees(status: object, estimatedFees: BigNumber): BigNumber {
+  const totalFees = (status as { totalFees?: unknown }).totalFees;
+  return BigNumber.isBigNumber(totalFees) ? totalFees : estimatedFees;
 }
 
 /**
@@ -344,15 +479,38 @@ const completeExchange = (
           transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
         }
 
-        const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
-          refundAccount,
-          transaction,
-        );
+        const status = await accountBridge.getTransactionStatus(refundAccount, transaction);
+        const { errors, estimatedFees } = status;
         if (unsubscribed) return;
 
         const errorsKeys = Object.keys(errors);
 
-        if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
+        if (errorsKeys.length > 0) {
+          const firstError = errors[errorsKeys[0]];
+          if (firstError instanceof Error) {
+            throw enrichNotEnoughBalanceError(
+              enrichEvmNotEnoughGasError(firstError, {
+                family: transaction.family,
+                nativeBalance: refundAccount.balance,
+                nativeCurrency: mainRefundCurrency.ticker,
+                totalFees: readTotalFees(status, estimatedFees),
+                gasLimit:
+                  readOptionalBigNumber(transaction, "customGasLimit") ??
+                  readOptionalBigNumber(transaction, "gasLimit"),
+                gasPrice: readOptionalBigNumber(transaction, "gasPrice"),
+                maxFeePerGas: readOptionalBigNumber(transaction, "maxFeePerGas"),
+                maxPriorityFeePerGas: readOptionalBigNumber(transaction, "maxPriorityFeePerGas"),
+              }),
+              {
+                balance: fromAccount.balance,
+                spendableBalance: fromAccount.spendableBalance,
+                pendingOperationsCount: fromAccount.pendingOperations.length,
+                unit: getAccountCurrency(fromAccount).units[0],
+              },
+            );
+          }
+          throw firstError;
+        }
 
         currentStep = "SET_PARTNER_KEY";
         await exchange.setPartnerKey(

@@ -11,11 +11,11 @@ import type {
   TransactionStatus as ZcashTransactionStatus,
   ZcashAccount,
 } from "@ledgerhq/coin-zcash/types/bridge";
-import type { ZcashConfigInfo } from "@ledgerhq/coin-zcash/config";
+import type { ZcashCoinConfig } from "@ledgerhq/coin-zcash/config";
 import type Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { createResolver, executeWithSigner, type CreateSigner } from "../../bridge/setup";
-import { getCurrencyConfiguration } from "../../config";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 
 type TransportWithDmk = Transport &
   Partial<{
@@ -31,14 +31,9 @@ const createSigner: CreateSigner<ZcashSigner> = (transport: TransportWithDmk) =>
 
 const signerContext = executeWithSigner(createSigner);
 
-const getCurrencyConfig = (currencyId?: string) => {
-  invariant(currencyId, "zcash: currencyId is required in getCurrencyConfig");
-  return { info: getCurrencyConfiguration<ZcashConfigInfo>(currencyId) };
-};
-
 const bridge: Bridge<ZcashTransaction, ZcashAccount, ZcashTransactionStatus> = createBridges(
   signerContext,
-  getCurrencyConfig,
+  buildContext<ZcashCoinConfig>("zcash"),
 );
 
 const resolver = createResolver(createSigner, zcashAddressResolver);

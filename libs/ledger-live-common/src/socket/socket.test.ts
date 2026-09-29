@@ -21,7 +21,7 @@ describe("Scriptrunner logic", () => {
       // Generate a transport replayer with the data from the test
       const transport = await openTransportReplayer(RecordStore.fromString(device));
 
-      WS.mockImplementation(() => {
+      (WS as unknown as jest.Mock).mockImplementation(() => {
         let msgIndex = 0;
 
         // Exposed WebSocket callbacks:

@@ -14,7 +14,7 @@ import { AppManifest } from "./types";
  * scope or lifetime here changes both. LIVE-36571 removes the funnel's dependency on it.
  */
 export async function withLiveAppContext<T>(
-  manifest: AppManifest,
+  manifest: Pick<AppManifest, "id">,
   fn: () => Promise<T>,
 ): Promise<T> {
   const previous = liveBlindSigningReporter.getContext().liveAppContext ?? null;

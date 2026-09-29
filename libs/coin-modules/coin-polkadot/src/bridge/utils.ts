@@ -167,9 +167,7 @@ export const getNonce = (a: PolkadotAccount): number => {
       ? seq + 1
       : 0;
 
-  const nonce = Math.max(a.polkadotResources?.nonce ?? 0, nextSeq);
-
-  return nonce;
+  return Math.max(a.polkadotResources?.nonce ?? 0, nextSeq);
 };
 
 /**

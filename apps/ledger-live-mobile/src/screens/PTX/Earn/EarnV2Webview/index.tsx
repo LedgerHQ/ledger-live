@@ -4,7 +4,8 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Flex } from "@ledgerhq/native-ui";
 import React, { ComponentProps, Fragment, useRef, useCallback, useState } from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 import type WebView from "react-native-webview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
@@ -17,6 +18,8 @@ import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUi
 import type { WebviewState } from "~/components/Web3AppWebview/types";
 import { useEarnIntentFlowPresentation } from "../useEarnIntentFlowPresentation";
 import { shouldDisplayEarnBackgroundCanvas } from "~/components/RootNavigator/getEarnScreenOptions";
+
+const BACKGROUND_FADE_DISTANCE = 150;
 
 type Props = {
   manifest?: LiveAppManifest;
@@ -60,10 +63,10 @@ export const EarnV2Webview = ({
 
   const isPtxUiMinV2 = isMinEarnUiVersion(computedUiVersion, "v2");
 
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollY = useSharedValue(0);
   const handleScroll = useCallback<NonNullable<ComponentProps<typeof WebView>["onScroll"]>>(
     event => {
-      scrollY.setValue(event.nativeEvent.contentOffset.y);
+      scrollY.value = event.nativeEvent.contentOffset.y;
     },
     [scrollY],
   );
@@ -107,7 +110,9 @@ export const EarnV2Webview = ({
       testID="earn-screen"
       style={[styles.container, displayBackgroundCanvas && { backgroundColor: canvasColor }]}
     >
-      {showsBackground && <Wallet40Background type="earn" scrollY={scrollY} />}
+      {showsBackground && (
+        <Wallet40Background type="earn" scrollY={scrollY} fadeDistance={BACKGROUND_FADE_DISTANCE} />
+      )}
       <View style={styles.contentContainer} pointerEvents="box-none">
         {manifest ? (
           <Fragment>

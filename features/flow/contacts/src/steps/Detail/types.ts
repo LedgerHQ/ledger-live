@@ -61,7 +61,6 @@ export type ContactDetailLabels = Readonly<{
   emptyContactDescription: (name: string) => string;
   ledgerWalletAddresses?: string;
   myAddresses?: string;
-  formatMeDisplayName?: (name: string) => string;
   formatAddressCount: (count: number) => string;
 }>;
 
@@ -73,7 +72,6 @@ export type ContactDetailActionsLabels = Readonly<{
 export type ContactDetailViewProps = Readonly<{
   contact: Contact;
   labels: ContactDetailLabels;
-  meAvatarSrc: string;
   onAddAddress: () => void;
   ledgerWalletAccountsIntent?: ContactDetailLedgerWalletAccountsIntent;
   onLedgerWalletAccountsPress?: (intent: ContactDetailLedgerWalletAccountsIntent) => void;

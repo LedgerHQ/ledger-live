@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-live",
-  "version": "6.124.0",
+  "version": "6.125.0",
   "description": "Ledger Live main types.",
   "keywords": [
     "Ledger"
@@ -28,6 +28,7 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-devices": "workspace:^",
     "@types/jest": "catalog:",
+    "@types/react": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
     "rimraf": "^4.4.1",

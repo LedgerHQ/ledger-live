@@ -193,6 +193,7 @@ const getPtxAttributes = () => {
   const ptxSwapLiveAppOnAsset = analyticsFeatureFlagMethod("ptxSwapLiveAppOnAsset");
   const ptxBorrowLiveApp = analyticsFeatureFlagMethod("ptxBorrowLiveApp");
   const stableSavings = analyticsFeatureFlagMethod("stableSavings");
+  const ptxEarnCtaOnMobile = analyticsFeatureFlagMethod("ptxEarnCtaOnMobile");
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -235,6 +236,7 @@ const getPtxAttributes = () => {
     ptxSwapLiveAppOnAsset: ptxSwapLiveAppOnAsset?.enabled,
     borrowFeature: !!ptxBorrowLiveApp?.enabled,
     stableSavings: !!stableSavings?.enabled,
+    ptxEarnCtaOnMobile: !!ptxEarnCtaOnMobile?.enabled,
     stablecoinYield,
     bitcoinYield,
     ethDepositScreen,
@@ -297,6 +299,12 @@ const extraProperties = (store: ReduxStore) => {
   const ldmkCosmosSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkCosmosSigner")
     : { enabled: false };
+  const ldmkPolkadotSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkPolkadotSigner")
+    : { enabled: false };
+  const ldmkTronSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkTronSigner")
+    : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -355,7 +363,7 @@ const extraProperties = (store: ReduxStore) => {
   const payAttributes = getPayAttributes(
     state,
     analyticsFeatureFlagMethod?.("lwdPayTab")?.enabled ?? false,
-    accountsWithFunds,
+    accounts ?? [],
   );
 
   return {
@@ -399,6 +407,8 @@ const extraProperties = (store: ReduxStore) => {
     ),
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
+    isLDMKPolkadotSignerEnabled: ldmkPolkadotSigner?.enabled,
+    isLDMKTronSignerEnabled: ldmkTronSigner?.enabled,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,

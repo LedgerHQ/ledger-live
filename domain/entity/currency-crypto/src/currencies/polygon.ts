@@ -48,6 +48,5 @@ export const polygon = currency({
     },
   ],
   keywords: ["matic", "polygon"],
-  explorerId: "matic",
   tokenTypes: ["erc20"],
 });

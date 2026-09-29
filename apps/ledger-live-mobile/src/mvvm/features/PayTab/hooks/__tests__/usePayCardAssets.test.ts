@@ -154,6 +154,21 @@ describe("usePayCardAssets", () => {
     expect(result.current.assets.formatCountervalue(1250)).toContain("12.50");
   });
 
+  it("hides formatted counter values in discreet mode", () => {
+    const { result } = renderHook(
+      () => ({ assets: usePayCardAssets(), tracked: useExtraSessionTrackingPair() }),
+      {
+        overrideInitialState: state => ({
+          ...withRates(state),
+          settings: { ...withRates(state).settings, discreetMode: true },
+        }),
+      },
+    );
+
+    expect(result.current.assets.formatCountervalue(1250)).toContain("***");
+    expect(result.current.assets.discreet).toBe(true);
+  });
+
   it("looks the card currencies up once someone is signed in", () => {
     renderAssets();
 

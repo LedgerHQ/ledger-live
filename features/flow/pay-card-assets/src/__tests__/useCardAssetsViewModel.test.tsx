@@ -1,15 +1,20 @@
+import React, { type PropsWithChildren } from "react";
 import { act, renderHook } from "@testing-library/react";
 import type { CardLinkedWalletBalance } from "@features/flow-pay-card-wallets";
+import { trackDebitOrderChanged } from "@features/platform-pay-analytics/testing/module-mock";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 import type { CardAssetsProps } from "../types";
 import { I18nWrapper } from "./i18nWrapper";
 import { formatCardAssetCryptoAmount, useCardAssetsViewModel } from "../useCardAssetsViewModel";
 
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
+
 const mockUseIsCardSignedIn = jest.fn();
 const mockUseCardLinkedWallets = jest.fn();
 const mockUpdateCardWalletPriorities = jest.fn();
 const mockUnwrapUpdate = jest.fn();
-
 jest.mock("@domain/api-card-management", () => ({
   useUpdateCardWalletPrioritiesMutation: () => [
     mockUpdateCardWalletPriorities,
@@ -37,6 +42,7 @@ function stubWallets(
     >[];
     isLoading: boolean;
     isError: boolean;
+    refetch: () => void;
   }> = {},
 ) {
   mockUseCardLinkedWallets.mockReturnValue({
@@ -63,6 +69,10 @@ const CURRENCIES = new Map([["ethereum/erc20/usd__coin", USDC]]);
 const getCounterValue = jest.fn(() => 12540);
 const formatCountervalue = jest.fn((value: number) => `$${value}`);
 
+function Wrapper({ children }: PropsWithChildren) {
+  return <I18nWrapper>{children}</I18nWrapper>;
+}
+
 function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
   return renderHook(
     () =>
@@ -73,7 +83,7 @@ function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
         onAddAsset: jest.fn(),
         ...overrides,
       }),
-    { wrapper: I18nWrapper },
+    { wrapper: Wrapper },
   );
 }
 
@@ -84,6 +94,14 @@ describe("formatCardAssetCryptoAmount", () => {
 
   it("should keep the ticker when the balance is missing", () => {
     expect(formatCardAssetCryptoAmount(null, "usdt")).toBe("USDT");
+  });
+
+  it("should hide the balance and keep the ticker in discreet mode", () => {
+    expect(formatCardAssetCryptoAmount("125.40", "usdc", true)).toBe("*** USDC");
+  });
+
+  it("should keep a missing balance as the ticker in discreet mode", () => {
+    expect(formatCardAssetCryptoAmount(null, "usdt", true)).toBe("USDT");
   });
 });
 
@@ -130,6 +148,19 @@ describe("useCardAssetsViewModel", () => {
     expect(result.current).toMatchObject({
       status: "error",
     });
+  });
+
+  it("should refetch linked wallets when retry is pressed", () => {
+    const refetch = jest.fn();
+    stubWallets({ isError: true, refetch });
+
+    const { result } = renderViewModel();
+
+    act(() => {
+      result.current.onRetryPress();
+    });
+
+    expect(refetch).toHaveBeenCalledTimes(1);
   });
 
   it("should report empty when the card has no linked wallets", () => {
@@ -189,6 +220,28 @@ describe("useCardAssetsViewModel", () => {
     ]);
     expect(getCounterValue).toHaveBeenCalledWith(USDC, "125.40");
     expect(getCounterValue).toHaveBeenCalledTimes(1);
+  });
+
+  it("should hide crypto amounts in discreet mode and leave a missing balance as the ticker", () => {
+    stubWallets({
+      wallets: [
+        {
+          id: "w-usdc",
+          addressId: "address-usdc",
+          balance: "125.40",
+          currency: "usdc",
+          network: "ethereum",
+          ledgerId: "ethereum/erc20/usd__coin",
+          ledgerCurrency: USDC,
+        },
+        { id: "w-usdt", balance: null, currency: "usdt", network: "ethereum" },
+      ],
+    });
+
+    const { result } = renderViewModel({ discreet: true });
+
+    expect(result.current.rows.map(row => row.cryptoAmount)).toEqual(["*** USDC", "USDT"]);
+    expect(result.current.discreet).toBe(true);
   });
 
   it("should refresh the selected asset when its wallet balance changes", () => {
@@ -272,6 +325,40 @@ describe("useCardAssetsViewModel", () => {
         { addressId: "address-usdc", priority: 2 },
         { addressId: "address-usdt", priority: 3 },
       ],
+    });
+  });
+
+  it("should track the changed debit order when the manage dialog closes", async () => {
+    stubWallets({
+      wallets: [
+        {
+          id: "w-usdc",
+          addressId: "address-usdc",
+          balance: "125.40",
+          currency: "usdc",
+          network: "ethereum",
+        },
+        {
+          id: "w-usdt",
+          addressId: "address-usdt",
+          balance: "75",
+          currency: "usdt",
+          network: "ethereum",
+        },
+      ],
+    });
+    const { result } = renderViewModel();
+
+    act(() => result.current.onManagePress());
+    await act(() => result.current.onMoveAsset("w-usdt", 0));
+    act(() => result.current.onDialogClose());
+
+    expect(trackDebitOrderChanged).toHaveBeenCalledWith({
+      asset1: "USDT",
+      asset2: "USDC",
+      asset3: null,
+      asset4: null,
+      asset5: null,
     });
   });
 

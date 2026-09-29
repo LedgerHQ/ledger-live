@@ -35,7 +35,7 @@ describe("Broadcast", () => {
     const { txHex, address } = buildSignedTxHex();
 
     const explorer = new BitcoinLikeExplorer({
-      cryptoCurrency: walletBtcCurrencyById("bitcoin"),
+      cryptoCurrency: walletBtcCurrencyById("bitcoin", { explorerId: "btc" }),
     } as any);
 
     const xpub = new Xpub({ explorer } as any);
@@ -59,7 +59,7 @@ describe("Broadcast", () => {
     const { txHex, address } = buildSignedTxHex();
 
     const explorer = new BitcoinLikeExplorer({
-      cryptoCurrency: walletBtcCurrencyById("bitcoin"),
+      cryptoCurrency: walletBtcCurrencyById("bitcoin", { explorerId: "btc" }),
     } as any);
 
     const xpub = new Xpub({ explorer } as any);
@@ -94,7 +94,7 @@ describe("Broadcast", () => {
     const { txHex, address } = buildSignedTxHex();
 
     const explorer = new BitcoinLikeExplorer({
-      cryptoCurrency: walletBtcCurrencyById("bitcoin"),
+      cryptoCurrency: walletBtcCurrencyById("bitcoin", { explorerId: "btc" }),
     } as any);
 
     const xpub = new Xpub({ explorer } as any);

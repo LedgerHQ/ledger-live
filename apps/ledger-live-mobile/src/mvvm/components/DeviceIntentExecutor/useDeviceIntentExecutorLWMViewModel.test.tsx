@@ -8,7 +8,7 @@ import type {
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/analytics";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
@@ -101,8 +101,10 @@ function executingIntentState(
 describe("useDeviceIntentExecutorLWMViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    currentRouteNameRef.current = "Connect Device - Connecting";
+    setTrackingSource("Connect Device - Connecting");
   });
+
+  afterEach(resetTrackingPages);
 
   describe("GIVEN the ViewModel mounts", () => {
     it("WHEN the hook renders again THEN it fires deviceflow_started exactly once with the sourceFlow", () => {
@@ -390,7 +392,7 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
 
     it("WHEN the user cancels from a blocking page THEN it fires deviceflow_failed and forwards to the original onUserCancel", () => {
       // GIVEN
-      currentRouteNameRef.current = PAGE_CONNECT_APP.UnsupportedFirmware;
+      setTrackingSource(PAGE_CONNECT_APP.UnsupportedFirmware);
       const onUserCancel = jest.fn();
       const { result } = renderViewModel({ onUserCancel });
 

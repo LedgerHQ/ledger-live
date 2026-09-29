@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Spot } from "@ledgerhq/lumen-ui-rnative";
 import { Search } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { BottomSheetBackgroundContext } from "@shared/ui-queued-bottom-sheet";
 import { InfoState } from "./InfoState.native";
@@ -97,6 +97,20 @@ describe("InfoState", () => {
       expect(screen.getByText(`${preset} title`)).toBeVisible();
     },
   );
+
+  it("GIVEN the spot preset with a custom size WHEN the InfoState renders THEN the spot uses that size", () => {
+    const { UNSAFE_getByType } = render(
+      <InfoState preset="spot" spotProps={{ icon: Search, size: 56 }} />,
+    );
+
+    expect(UNSAFE_getByType(Spot).props.size).toBe(56);
+  });
+
+  it("GIVEN the spot preset without a size WHEN the InfoState renders THEN the spot keeps the default size", () => {
+    const { UNSAFE_getByType } = render(<InfoState preset="spot" spotProps={{ icon: Search }} />);
+
+    expect(UNSAFE_getByType(Spot).props.size).toBe(72);
+  });
 
   it("GIVEN the text preset WHEN the InfoState is rendered THEN the title is visible without a preset visual gap", () => {
     // GIVEN / WHEN

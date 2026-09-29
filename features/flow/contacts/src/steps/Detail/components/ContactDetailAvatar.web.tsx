@@ -4,13 +4,11 @@ import { ContactAvatar, type ContactAvatarProps } from "@features/platform-conta
 
 type ContactDetailAvatarProps = Readonly<{
   contact: Contact;
-  meAvatarSrc: string;
   size?: ContactAvatarProps["size"];
 }>;
 
 export function ContactDetailAvatar({
   contact,
-  meAvatarSrc,
   size = "xl",
 }: ContactDetailAvatarProps): React.ReactNode {
   const isCompact = size === "md";
@@ -30,7 +28,6 @@ export function ContactDetailAvatar({
           contactId={contact.id}
           name={contact.name}
           isMe={contact.isMe}
-          src={meAvatarSrc}
           ariaHidden
           size="xl"
           testId={contact.isMe ? "contacts-detail-me-avatar" : "contacts-detail-avatar"}

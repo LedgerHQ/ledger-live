@@ -29,7 +29,6 @@ const vm = useRequestReceiveViewModel({
   onCopy: copyToClipboard,
   onSave: saveCardImage,
   onVerify: verifyOnDevice,
-  onTrackEvent: track,
 });
 ```
 
@@ -41,8 +40,8 @@ without masking the middle.
 
 ### Tracking
 
-Each action emits `button_clicked { button, buttonLocation: "request", page }` via the injected
-`onTrackEvent`, where `button` is `share` | `copy` | `save` | `verify`.
+Each action calls `trackButtonClicked({ button, buttonLocation: "request", page, flow: "request" })`
+from `@features/platform-pay-analytics`, where `button` is `share` | `copy` | `save` | `verify`.
 
 ## Components
 
@@ -70,7 +69,6 @@ import { RequestReceive } from "@features/flow-pay-request";
   onSave={saveCardImage}
   onVerify={verifyOnDevice}
   onClose={close}
-  onTrackEvent={track}
 />;
 ```
 
@@ -81,7 +79,7 @@ use.
 ### `VerifyAddress`
 
 On-device address-verification overlay used by the Pay Request receive screen. It renders two
-phases; the host owns tracking and the device interaction:
+phases; the host owns the device interaction:
 
 - `intro` — "Verify your address" sheet/dialog with the **Verify address** CTA. Pressing it calls
   `onVerify`, which the app wires to the shared `verifyAddressIntent` device intent (DIE lives in
@@ -102,7 +100,6 @@ import { VerifyAddress } from "@features/flow-pay-request";
   onVerify={startDeviceIntent}
   onGotIt={close}
   onClose={close}
-  onTrackEvent={track}
 />;
 ```
 

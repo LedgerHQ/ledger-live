@@ -18,6 +18,7 @@ type RecipientAddressModalProps = Readonly<{
     ensName?: string,
     goToNextStep?: boolean,
     memo?: Memo,
+    contactId?: string,
   ) => void;
   recipientSupportsDomain: boolean;
 }>;

@@ -32,7 +32,7 @@ jest.mock("@ledgerhq/live-common/csvExport", () => ({
 
 jest.mock("~/renderer/logger", () => ({
   __esModule: true,
-  default: { error: jest.fn() },
+  default: { error: jest.fn(), onReduxAction: jest.fn() },
 }));
 
 const mockedIpcInvoke = jest.mocked(ipcRenderer.invoke);

@@ -141,7 +141,7 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks(polygon.ethereumLikeInfo?.chainId || 137);
+    await indexBlocks(137);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());

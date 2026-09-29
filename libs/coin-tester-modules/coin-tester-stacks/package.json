@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-stacks",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "description": "Ledger Stacks Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -61,7 +61,7 @@
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@stacks/network": "6.17.0",
     "@stacks/transactions": "6.17.0",

@@ -14,7 +14,10 @@ jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
 }));
 jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowData: () => ({
-    state: { account: { account: null, parentAccount: null } },
+    state: {
+      account: { account: null, parentAccount: null },
+      transaction: { transaction: null },
+    },
   }),
 }));
 

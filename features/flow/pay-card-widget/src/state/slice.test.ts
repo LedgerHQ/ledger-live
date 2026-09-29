@@ -1,17 +1,27 @@
 import { configureStore } from "@reduxjs/toolkit";
 import {
+  endDigitalWalletProvisioning,
   markAnalyticsMilestonesReported,
+  markCardAccountRead,
   markCardOnboardingCompleted,
-  payCardOnboardingWidgetInitialState,
   payCardOnboardingWidgetPersistedSelector,
   payCardOnboardingWidgetSlice,
   resetCardOnboardingCompleted,
   restorePayCardOnboardingWidget,
   setAnalyticsCardId,
+  selectDigitalWalletProvisioningStartedAt,
   selectHasCompletedCardOnboarding,
+  startDigitalWalletProvisioning,
 } from "./index";
 
 type RestorePayload = Parameters<typeof restorePayCardOnboardingWidget>[0];
+
+const initialPersisted = {
+  hasCompletedOnboarding: false,
+  analyticsCardId: null,
+  reportedAnalyticsMilestones: [],
+  hasReadCardAccount: false,
+};
 
 function makeStore() {
   const store = configureStore({
@@ -20,14 +30,49 @@ function makeStore() {
   return {
     dispatch: store.dispatch,
     hasCompletedOnboarding: () => selectHasCompletedCardOnboarding(store.getState()),
+    provisioningStartedAt: () => selectDigitalWalletProvisioningStartedAt(store.getState()),
     persisted: () => payCardOnboardingWidgetPersistedSelector(store.getState()),
   };
 }
 
 describe("payCardOnboardingWidgetSlice", () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it("starts with the onboarding uncompleted", () => {
     expect(makeStore().hasCompletedOnboarding()).toBe(false);
-    expect(makeStore().persisted()).toEqual(payCardOnboardingWidgetInitialState);
+    expect(makeStore().persisted()).toEqual(initialPersisted);
+  });
+
+  it("starts with no wallet provisioning pending", () => {
+    expect(makeStore().provisioningStartedAt()).toBeNull();
+  });
+
+  it("startDigitalWalletProvisioning records when the holder came back from the wallet", () => {
+    jest.useFakeTimers({ now: 1_700_000_000_000 });
+    const store = makeStore();
+
+    store.dispatch(startDigitalWalletProvisioning());
+
+    expect(store.provisioningStartedAt()).toBe(1_700_000_000_000);
+  });
+
+  it("endDigitalWalletProvisioning clears the pending provisioning", () => {
+    const store = makeStore();
+    store.dispatch(startDigitalWalletProvisioning());
+
+    store.dispatch(endDigitalWalletProvisioning());
+
+    expect(store.provisioningStartedAt()).toBeNull();
+  });
+
+  it("keeps a pending provisioning out of what is persisted", () => {
+    const store = makeStore();
+
+    store.dispatch(startDigitalWalletProvisioning());
+
+    expect(store.persisted()).toEqual(initialPersisted);
   });
 
   it("markCardOnboardingCompleted completes the onboarding", () => {
@@ -58,7 +103,7 @@ describe("payCardOnboardingWidgetSlice", () => {
       } as unknown as RestorePayload),
     );
     expect(store.persisted()).toEqual({
-      ...payCardOnboardingWidgetInitialState,
+      ...initialPersisted,
       hasCompletedOnboarding: true,
     });
   });
@@ -84,7 +129,35 @@ describe("payCardOnboardingWidgetSlice", () => {
       hasCompletedOnboarding: true,
       analyticsCardId: null,
       reportedAnalyticsMilestones: ["card-onboarding-completed"],
+      hasReadCardAccount: false,
     });
+  });
+
+  it("remembers a read account across restarts", () => {
+    const store = makeStore();
+    store.dispatch(markCardAccountRead());
+
+    const restored = makeStore();
+    restored.dispatch(restorePayCardOnboardingWidget(store.persisted()));
+
+    expect(restored.persisted().hasReadCardAccount).toBe(true);
+  });
+
+  it("keeps the account read once its first card shows up", () => {
+    const store = makeStore();
+    store.dispatch(markCardAccountRead());
+    store.dispatch(setAnalyticsCardId("card-1"));
+
+    expect(store.persisted().hasReadCardAccount).toBe(true);
+  });
+
+  it("reads the account again when another account's card shows up", () => {
+    const store = makeStore();
+    store.dispatch(setAnalyticsCardId("card-1"));
+    store.dispatch(markCardAccountRead());
+    store.dispatch(setAnalyticsCardId("card-2"));
+
+    expect(store.persisted().hasReadCardAccount).toBe(false);
   });
 
   it("clears reported milestones when the card account changes", () => {
@@ -94,7 +167,7 @@ describe("payCardOnboardingWidgetSlice", () => {
     store.dispatch(setAnalyticsCardId("card-2"));
 
     expect(store.persisted()).toEqual({
-      ...payCardOnboardingWidgetInitialState,
+      ...initialPersisted,
       analyticsCardId: "card-2",
     });
   });

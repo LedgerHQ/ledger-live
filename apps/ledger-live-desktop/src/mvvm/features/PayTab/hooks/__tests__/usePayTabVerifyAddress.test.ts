@@ -8,7 +8,7 @@ const SELECTION: PayVerifySelection = {
 };
 
 function renderVerifyAddress(ldmkEnabled = false) {
-  return renderHook(() => usePayTabVerifyAddress(undefined), {
+  return renderHook(() => usePayTabVerifyAddress(), {
     initialState: withFlagOverrides({ ldmkTransport: { enabled: ldmkEnabled } }),
   });
 }

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-modules-monitoring",
-  "version": "2.26.4",
+  "version": "2.26.5",
   "private": true,
   "description": "Push monitoring metrics to Datadog",
   "license": "Apache-2.0",
@@ -20,7 +20,7 @@
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "command-line-args": "6.0.1",
     "rxjs": "catalog:"

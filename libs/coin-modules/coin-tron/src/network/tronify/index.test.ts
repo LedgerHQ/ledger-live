@@ -14,11 +14,12 @@ const mockLogger: Logger = jest.fn();
 const TRONIFY_URL = "https://open.tronify.io";
 const SOURCE_FLAG = "ledgerLive";
 
-const buildConfig = (tronify?: { url: string; sourceFlag: string }): TronCoinConfig => ({
-  status: { type: "active" },
-  explorer: { url: "https://tron.coin.ledger.com" },
-  energyRent: tronify ? { provider: "tronify", tronify } : undefined,
-});
+const buildConfig = (tronify?: { url: string; sourceFlag: string }): TronCoinConfig =>
+  ({
+    status: { type: "active" },
+    explorer: { url: "https://tron.coin.ledger.com" },
+    energyRent: tronify ? { provider: "tronify", tronify } : undefined,
+  }) as unknown as TronCoinConfig;
 
 const envelope = <T>(data: T, resCode = 100, resMsg = "Success") => ({
   data: { resCode, resMsg, data },
@@ -61,6 +62,24 @@ describe("tronify network client", () => {
     await expect(queryPreorderInfo(mockLogger, config, orderParams)).rejects.toBeInstanceOf(
       EnergyRentProviderNotConfigured,
     );
+  });
+
+  it.each([
+    { url: "", sourceFlag: SOURCE_FLAG },
+    { url: "   ", sourceFlag: SOURCE_FLAG },
+    { url: TRONIFY_URL, sourceFlag: "" },
+    { url: {}, sourceFlag: SOURCE_FLAG },
+    { url: TRONIFY_URL, sourceFlag: 1 },
+  ])("rejects a tronify config with url/sourceFlag %o (no network call)", async tronify => {
+    config = {
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: { provider: "tronify", tronify },
+    } as never;
+    await expect(queryPreorderInfo(mockLogger, config, orderParams)).rejects.toBeInstanceOf(
+      EnergyRentProviderNotConfigured,
+    );
+    expect(mockedNetwork).not.toHaveBeenCalled();
   });
 
   describe("queryPreorderInfo", () => {

@@ -1,8 +1,7 @@
 import React from "react";
 import { ScrollView } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import type { ContactAddressPickerProps } from "../../types";
 import { ContactAddressPickerAddAddress } from "./components/ContactAddressPickerAddAddress/ContactAddressPickerAddAddress.native";
 import { ContactAddressPickerNetworkSection } from "./components/ContactAddressPickerNetworkSection/ContactAddressPickerNetworkSection.native";
@@ -17,12 +16,10 @@ export function ContactAddressPicker({
   onSelectAddress,
   onAddNewAddress,
 }: ContactAddressPickerProps) {
-  const { bottom } = useSafeAreaInsets();
-
   return (
     <QueuedBottomSheet isRequestingToBeOpened={isOpen} enableDynamicSizing onClose={onClose}>
       {isOpen && contact ? (
-        <BottomSheetView style={{ paddingBottom: bottom + 24 }}>
+        <ContactAddressPickerContent>
           <BottomSheetHeader spacing title={title} density="expanded" />
           <ScrollView
             testID="pay-contact-address-picker"
@@ -47,8 +44,14 @@ export function ContactAddressPicker({
               ) : null}
             </Box>
           </ScrollView>
-        </BottomSheetView>
+        </ContactAddressPickerContent>
       ) : null}
     </QueuedBottomSheet>
   );
+}
+
+function ContactAddressPickerContent({ children }: Readonly<{ children: React.ReactNode }>) {
+  const bottomInset = useBottomSheetBottomInset();
+
+  return <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>{children}</BottomSheetView>;
 }

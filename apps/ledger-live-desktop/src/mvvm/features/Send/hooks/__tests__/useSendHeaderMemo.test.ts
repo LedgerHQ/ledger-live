@@ -19,6 +19,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     hasMemoForRecipient: jest.fn(() => true),
     getMemoDefaultOption: jest.fn(() => undefined),
+    getTrackingAttributes: jest.fn(() => ({})),
   },
 }));
 jest.mock("@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId", () => ({
@@ -53,6 +54,7 @@ function mockFlow({
         parentAccount: null,
         currency: { id: "ripple" },
       },
+      transaction: { transaction: null },
       recipient,
     } as never,
     uiConfig: { hasMemo: true, memoType: "text", memoOptions: [] } as never,

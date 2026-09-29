@@ -3,11 +3,12 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { FF_LWD_CONTACTS, FF_LWD_PAY_TAB } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
-// Skipped: proves the Baanx client and token injection work; not a Pay tab UI assertion yet.
-test.describe.skip("Pay tab", () => {
+// Proves the Baanx client and token injection work; not a Pay tab UI assertion yet.
+test.describe("Pay tab", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "portfolioWithManyStablecoins",
+    injectCardSession: true,
     featureFlags: {
       ...FF_LWD_PAY_TAB,
       ...FF_LWD_CONTACTS,

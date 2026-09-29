@@ -23,8 +23,10 @@ class MainApplication : Application(), ReactApplication, ShareApplication {
   }
 
 
+  // Must match the FileProvider declared in AndroidManifest.xml: its filepaths.xml is the only
+  // one covering the app's internal files/ directory, where exported files are written.
   override fun getFileProviderAuthority(): String {
-          return "$packageName.provider"
+          return "$packageName.fileprovider"
   }
 
   override val reactNativeHost: ReactNativeHost by lazy {

@@ -4,7 +4,6 @@ import { ScreenName } from "~/const";
 // Nested Pay screens that hide the Wallet 4.0 tab header.
 const PAY_TAB_FULL_SCREEN_ROUTES = new Set<string>([
   ScreenName.PayTabRequestReceive,
-  ScreenName.PayTabSelectContact,
   ScreenName.PayTabPayContact,
 ]);
 

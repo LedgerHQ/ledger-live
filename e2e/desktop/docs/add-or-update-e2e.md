@@ -177,6 +177,19 @@ test.use({
 - **Speculos:** `Account.currency.speculosApp`
 - **CLI commands:** `liveDataCommand`, `liveDataWithAddressCommand`, `liveDataWithRecipientAddressCommand`
 
+### Pay tab
+
+Injection is opt-in on the Playwright fixture. The default is off, and the spec path does nothing.
+A Pay tab spec sets:
+
+```typescript
+test.use({
+  injectCardSession: true,
+});
+```
+
+Without that option, the spec launches signed out.
+
 ---
 
 ## Commands

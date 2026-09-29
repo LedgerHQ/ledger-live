@@ -17,7 +17,7 @@ import type { SolanaAccount, SolanaStakingPosition } from "@ledgerhq/coin-solana
 import { listSolanaStakingPositions } from "@ledgerhq/coin-solana/logic";
 import BigNumber from "bignumber.js";
 import { setEnv } from "@shared/env";
-import { airdrop, killAgave, spawnAgave } from "../agave";
+import { type AgaveCluster, airdrop, killAgave, spawnAgave } from "../agave";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { encodeAccountIdWithTokenAccountAddress } from "@ledgerhq/coin-solana/logic";
 import {
@@ -520,10 +520,10 @@ function makeScenarioTransactions(
 
 let closeMSW: (() => void) | null = null;
 
-export const scenarioSolana: Scenario<GenericTransaction, Account> = {
-  name: "Ledger Live Basic Solana Transactions",
+export const scenarioSolana = (cluster: AgaveCluster): Scenario<GenericTransaction, Account> => ({
+  name: `Ledger Live Basic Solana Transactions (${cluster})`,
   setup: async strategy => {
-    await spawnAgave();
+    await spawnAgave(cluster);
 
     setEnv("API_SOLANA_PROXY", "http://localhost:8899");
 
@@ -549,8 +549,8 @@ export const scenarioSolana: Scenario<GenericTransaction, Account> = {
 
     const account = makeAccount(address, SOLANA);
 
-    await airdrop(account.freshAddress, 5);
-    await airdrop(PAYER.publicKey.toBase58(), 5);
+    await airdrop(cluster, account.freshAddress, 5);
+    await airdrop(cluster, PAYER.publicKey.toBase58(), 5);
     await createSplAccount(account.freshAddress, SOLANA_USDC, 5, "spl-token");
     await createSplAccount(account.freshAddress, SOLANA_CWIF, 5, "spl-token-2022");
     await createSplAccount(account.freshAddress, SOLANA_VIRTUAL, 5, "spl-token");
@@ -572,4 +572,4 @@ export const scenarioSolana: Scenario<GenericTransaction, Account> = {
     closeMSW = null;
     await killAgave();
   },
-};
+});
