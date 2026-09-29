@@ -27,6 +27,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

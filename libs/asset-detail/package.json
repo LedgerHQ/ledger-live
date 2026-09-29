@@ -30,6 +30,7 @@
     "react": ">=19"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/env": "workspace:*",
     "@swc/core": "catalog:",

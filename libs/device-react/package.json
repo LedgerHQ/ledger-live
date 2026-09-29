@@ -25,6 +25,7 @@
     "@ledgerhq/device-core": "workspace:^"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
