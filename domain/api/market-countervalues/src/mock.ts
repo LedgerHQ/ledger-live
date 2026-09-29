@@ -1,0 +1,113 @@
+// Deterministic rate source for tests and for the apps' mocked E2E runs. Derived from the
+// reference table in @domain/entity-market-countervalues/mock; it performs no I/O.
+
+import {
+  BTCtoUSD,
+  getBTCValues,
+  referenceSnapshotDate,
+} from "@domain/entity-market-countervalues/mock";
+import type { RateGranularity } from "@domain/entity-market-countervalues";
+import Prando from "prando";
+import { formatPerGranularity } from "./internals/granularity";
+import type { RateSource } from "./types";
+
+const DAY = 24 * 60 * 60 * 1000;
+
+const increment: Record<RateGranularity, number> = {
+  daily: DAY,
+  hourly: 60 * 60 * 1000,
+};
+
+function btcTrend(t: number) {
+  const daysSinceGenesis = (t - 1230937200000) / DAY;
+  return Math.pow(daysSinceGenesis / 693, 5.526);
+}
+
+function getDates(granularity: RateGranularity, start: Date): Date[] {
+  const array: Date[] = [];
+  const f = formatPerGranularity[granularity];
+  const incr = increment[granularity];
+  const initial = new Date(f(start || new Date())).getTime();
+  const now = Date.now();
+
+  for (let t = initial; t < now; t += incr) {
+    array.push(new Date(t));
+  }
+
+  return array;
+}
+
+/**
+ * Builds a deterministic {@link RateSource}.
+ *
+ * `seed` replaces the `MOCK` env read the mock API used to do, so this package holds no env
+ * dependency and a caller can vary the series without touching global state.
+ */
+export function createMockRateSource(seed = ""): RateSource {
+  const randomCache: Record<string, number> = {};
+
+  function fromToRandom(id: string) {
+    if (randomCache[id]) return randomCache[id];
+    randomCache[id] = new Prando(seed + id).next();
+    return randomCache[id];
+  }
+
+  function temporalFactor(from: string, maybeDate: Date | undefined) {
+    const t = (maybeDate || new Date()).getTime();
+    const r = fromToRandom(from); // make it varies between rates...
+
+    // long term wave
+    const wave1 = Math.cos(r * 0.5 + t / (200 * DAY * (0.5 + 0.5 * r)));
+    const wave2 = Math.sin(r + t / (30 * DAY)); // short term wave
+
+    const wave3 = // random market perturbation
+      Math.max(0, Math.sin(t / (66 * DAY))) *
+      Math.cos(wave2 + Math.cos(r) + t / (3 * DAY * (1 - 0.1 * r)));
+
+    // This is essentially randomness!
+    if (maybeDate && Math.cos(7 * r + t * 0.1) > 0.9 + 0.1 * r) {
+      return 0; // intentionally set a GAP into the data
+    }
+
+    return Math.max(
+      0,
+      (0.2 - 0.2 * r * r) * wave1 +
+        (0.1 + 0.05 * Math.sin(r)) * wave2 +
+        0.05 * wave3 +
+        btcTrend(t) / btcTrend(referenceSnapshotDate.getTime()),
+    );
+  }
+
+  function rate(from: string, to: string, date?: Date): number | undefined {
+    const asBTC = getBTCValues()[from];
+    if (!asBTC) return;
+
+    if (to === "BTC") return asBTC * temporalFactor(from, date);
+    if (to === "USD") return asBTC * BTCtoUSD * temporalFactor(from, date);
+
+    if (from === "BTC") {
+      const r = rate(to, "BTC", date);
+      if (!r) return;
+      return 1 / r;
+    }
+
+    const btcTO = rate("BTC", to, date);
+    if (btcTO) return asBTC * btcTO * temporalFactor(from, date);
+  }
+
+  return {
+    fetchHistorical: (granularity, { from, to, startDate }) => {
+      const r: Record<string, number> = {};
+      const f = formatPerGranularity[granularity];
+      getDates(granularity, startDate).forEach(date => {
+        const v = rate(from.ticker, to.ticker, date);
+        if (v) {
+          r[f(date)] = v;
+        }
+      });
+      return Promise.resolve(r);
+    },
+    fetchLatest: pairs =>
+      Promise.resolve(pairs.map(({ from, to }) => rate(from.ticker, to.ticker))),
+  };
+}

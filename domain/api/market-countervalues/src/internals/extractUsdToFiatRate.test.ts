@@ -1,4 +1,4 @@
-import { extractUsdToFiatRate } from "../extractUsdToFiatRate";
+import { extractUsdToFiatRate } from "./extractUsdToFiatRate";
 
 describe("extractUsdToFiatRate", () => {
   it("returns the USD rate from the spot payload", () => {

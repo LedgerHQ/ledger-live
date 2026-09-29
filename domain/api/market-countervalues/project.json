@@ -1,0 +1,8 @@
+{
+  "name": "@domain/api-market-countervalues",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
