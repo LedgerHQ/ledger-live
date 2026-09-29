@@ -31,7 +31,11 @@ function useConfirmPasswordScreenViewModel(): ConfirmPasswordScreenViewModel {
         return;
       }
 
-      track("encryption_activated", { type: "password", source: params.source });
+      track("encryption_updated", {
+        status: "activated",
+        type: "password",
+        source: params.source,
+      });
       updateIdentify();
       draft.clear();
       // The parent, not this stack: goBack() here would land on the enter-password step.
