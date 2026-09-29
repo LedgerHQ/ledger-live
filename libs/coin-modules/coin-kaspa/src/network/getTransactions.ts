@@ -3,9 +3,7 @@ import { API_BASE } from "./config";
 import { fetchWithRetry } from "./fetchWithRetry";
 
 // The indexer rejects `before` and `after` together (HTTP 400), so the type allows only one.
-type PageDirection =
-  | { after: number; before?: never }
-  | { before?: number | undefined; after?: never };
+type PageDirection = { after: number; before?: never } | { before?: number; after?: never };
 
 // The indexer's own maximum page size, and the size used whenever a caller doesn't ask for one.
 export const MAX_PAGE_LIMIT = 500;
@@ -13,7 +11,7 @@ export const MAX_PAGE_LIMIT = 500;
 type GetTransactionsOptions = PageDirection & {
   // Page size, passed through as-is: the indexer answers 422 outside 1–MAX_PAGE_LIMIT, so callers
   // validate it first (listOperations rejects non-positive values and caps at MAX_PAGE_LIMIT).
-  limit?: number | undefined;
+  limit?: number;
 };
 
 /**
@@ -32,7 +30,7 @@ export const getTransactions = async (
 }> => {
   const before = options?.before;
   const after = options?.after;
-  const limit = options?.limit || MAX_PAGE_LIMIT;
+  const limit = options?.limit ?? MAX_PAGE_LIMIT;
 
   const url = new URL(`/addresses/${encodeURIComponent(address)}/full-transactions-page`, API_BASE);
   url.searchParams.set("resolve_previous_outpoints", "light");

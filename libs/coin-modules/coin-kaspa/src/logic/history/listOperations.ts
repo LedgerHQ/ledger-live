@@ -6,6 +6,7 @@ import type {
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { getTransactions, MAX_PAGE_LIMIT } from "../../network";
+import type { ApiResponseTransaction } from "../../types";
 import { KaspaTransfer, parseKaspaTransfer } from "./scanOperations";
 
 const NATIVE_ASSET: AssetInfo = { type: "native", name: "KAS" };
@@ -71,6 +72,56 @@ export function parseAnchor(options: ListOperationsOptions): number | undefined 
   return Number.isNaN(parsed) || parsed < 1 ? undefined : parsed;
 }
 
+// `asc` is not supported. The indexer's `after` mode could walk forward in time, but with minHeight >
+// 0 its first pages hold only operations below minHeight, which come back empty with a cursor — and
+// the generic framework's paginateOperations treats that as the end of history. Honoring `asc` would
+// need minHeight mapped to a block time (an extra block lookup) first.
+//
+// The indexer answers 422 for any limit outside 1–MAX_PAGE_LIMIT. `limit` is an upper bound per page,
+// so a larger request is served in MAX_PAGE_LIMIT-sized pages and the rest follows through `next`. A
+// non-positive or fractional value can only be a caller bug.
+function pageLimit(options: ListOperationsOptions): number | undefined {
+  if (options.order === "asc") {
+    throw new Error("kaspa: listOperations does not support ascending order");
+  }
+  if (options.limit === undefined) return undefined;
+  if (!Number.isInteger(options.limit) || options.limit < 1) {
+    throw new Error(`kaspa: listOperations limit must be a positive integer, got ${options.limit}`);
+  }
+  return Math.min(options.limit, MAX_PAGE_LIMIT);
+}
+
+/**
+ * Append the page's operations at or above `minHeight` to `items` and return the updated anchor: the
+ * block time of the newest already-synced tx seen so far. The whole page is filtered, so a
+ * late-accepted tx sitting among older ones is still kept.
+ */
+function collectPage(
+  page: ApiResponseTransaction[],
+  minHeight: number,
+  addressSet: Set<string>,
+  items: Operation<MemoNotSupported>[],
+  anchor: number | undefined,
+): number | undefined {
+  let newestSynced = anchor;
+  for (const tx of page) {
+    if (!minHeight || tx.accepting_block_blue_score >= minHeight) {
+      items.push(toFrameworkOperation(parseKaspaTransfer(tx, addressSet)));
+    } else if (newestSynced === undefined || tx.block_time > newestSynced) {
+      newestSynced = tx.block_time;
+    }
+  }
+  return newestSynced;
+}
+
+// Pages come newest first, so once this one reaches LATE_ACCEPTANCE_WINDOW_MS below the anchor,
+// every later page is older still and cannot hold a tx accepted at or above minHeight.
+function isPastLookback(page: ApiResponseTransaction[], anchor: number | undefined): boolean {
+  if (anchor === undefined) return false;
+  const oldestBlockTime = Math.min(...page.map(tx => tx.block_time));
+  return oldestBlockTime <= anchor - LATE_ACCEPTANCE_WINDOW_MS;
+}
+
 /**
  * List native KAS operations for a Kaspa address, newest first. Without a cursor it reads the newest
  * indexer page; the indexer's `X-Next-Page-Before` cursor (surfaced by `network/getTransactions` as
@@ -84,22 +135,7 @@ export async function listOperations(
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation<MemoNotSupported>>> {
-  // `asc` is not supported. The indexer's `after` mode could walk forward in time, but with
-  // minHeight > 0 its first pages hold only operations below minHeight, which come back empty with
-  // a cursor — and the generic framework's paginateOperations treats that as the end of history.
-  // Honoring `asc` would need minHeight mapped to a block time (an extra block lookup) first.
-  if (options.order === "asc") {
-    throw new Error("kaspa: listOperations does not support ascending order");
-  }
-
-  // The indexer answers 422 for any limit outside 1–MAX_PAGE_LIMIT. `limit` is an upper bound per
-  // page, so a larger request is served in MAX_PAGE_LIMIT-sized pages and the rest follows through
-  // `next`. A non-positive or fractional value can only be a caller bug.
-  if (options.limit !== undefined && (!Number.isInteger(options.limit) || options.limit < 1)) {
-    throw new Error(`kaspa: listOperations limit must be a positive integer, got ${options.limit}`);
-  }
-  const limit = options.limit === undefined ? undefined : Math.min(options.limit, MAX_PAGE_LIMIT);
-
+  const limit = pageLimit(options);
   const { minHeight } = options;
   const addressSet = new Set([address]);
   const items: Operation<MemoNotSupported>[] = [];
@@ -109,34 +145,20 @@ export async function listOperations(
   for (;;) {
     const { transactions, nextPageBefore } = await getTransactions(address, { before, limit });
     const page = transactions ?? [];
-
-    // The whole page is filtered, so a late-accepted tx sitting among older ones is still kept.
-    for (const tx of page) {
-      if (!minHeight || tx.accepting_block_blue_score >= minHeight) {
-        items.push(toFrameworkOperation(parseKaspaTransfer(tx, addressSet)));
-      } else if (anchor === undefined || tx.block_time > anchor) {
-        anchor = tx.block_time;
-      }
-    }
+    anchor = collectPage(page, minHeight, addressSet, items, anchor);
 
     // Full sync: nothing is known yet, so every page is new — pass the indexer's cursor through.
     if (!minHeight) {
       return { items, next: nextPageBefore ?? undefined };
     }
-
-    const oldestBlockTime = Math.min(...page.map(tx => tx.block_time));
-    const pastLookback =
-      anchor !== undefined && oldestBlockTime <= anchor - LATE_ACCEPTANCE_WINDOW_MS;
-    if (!nextPageBefore || page.length === 0 || pastLookback) {
+    if (!nextPageBefore || page.length === 0 || isPastLookback(page, anchor)) {
       return { items, next: undefined };
     }
-
-    const next = anchor === undefined ? nextPageBefore : `${nextPageBefore}:${anchor}`;
     // Inside the lookback window pages are often all already-synced. An empty page that still has a
     // cursor ends generic-coin-framework's paginateOperations walk, so keep reading here until there
     // is something to return or the window is behind us.
     if (items.length > 0) {
-      return { items, next };
+      return { items, next: anchor === undefined ? nextPageBefore : `${nextPageBefore}:${anchor}` };
     }
     before = Number.parseInt(nextPageBefore, 10);
   }
