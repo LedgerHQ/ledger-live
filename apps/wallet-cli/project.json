@@ -17,6 +17,10 @@
     "test": {
       "dependsOn": ["generate"]
     },
+    "test:speculos": {
+      "dependsOn": ["generate"],
+      "cache": false
+    },
     "build": {
       "cache": false
     },
