@@ -4,7 +4,7 @@ import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { urls } from "~/config/urls";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 type Props = {
   children: React.ReactNode;

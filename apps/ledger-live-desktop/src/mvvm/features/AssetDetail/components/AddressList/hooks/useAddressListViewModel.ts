@@ -5,7 +5,7 @@ import type { Account, AccountLike, DistributionItem } from "@ledgerhq/types-liv
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource, track } from "@shared/analytics";
 import { useSortAccountsComparator } from "~/renderer/actions/general";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -13,7 +13,6 @@ import { getAccountUrl } from "~/renderer/utils/accountUrl";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDialog.types";
-import { track } from "~/renderer/analytics/segment";
 import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
@@ -125,7 +124,9 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
     allAddressesDialog: {
       open: isAllAddressesDialogOpen,
       title: t("assetDetails.addressesDialog.title"),
-      description: t("assetDetails.addressesDialog.description", { ticker: assetTicker }),
+      description: t("assetDetails.addressesDialog.description", {
+        ticker: assetTicker,
+      }),
       onOpenChange: onAllAddressesDialogOpenChange,
     },
   };

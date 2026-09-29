@@ -6,11 +6,11 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
-import { track } from "~/renderer/analytics/segment";
-import { trackPage } from "@shared/analytics";
+import { track, trackPage } from "@shared/analytics";
 
 jest.mock("@shared/analytics", () => ({
   ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
   trackPage: jest.fn(),
 }));
 
@@ -408,7 +408,11 @@ describe("History integration", () => {
       initialState: {
         accounts: [BTC_ACCOUNT],
         settings: AFTER_ONBOARDING_STATE,
-        payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" },
+        payCardAuth: {
+          hasCard: true,
+          pendingLoginType: null,
+          status: "signedIn",
+        },
         ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
       },
     });
@@ -438,7 +442,9 @@ describe("History integration", () => {
     expect(mockedTrackPage).toHaveBeenCalledWith(
       expect.objectContaining({
         category: "OperationList",
-        props: expect.objectContaining({ operationsCount: operationRows.length }),
+        props: expect.objectContaining({
+          operationsCount: operationRows.length,
+        }),
       }),
       expect.anything(),
     );

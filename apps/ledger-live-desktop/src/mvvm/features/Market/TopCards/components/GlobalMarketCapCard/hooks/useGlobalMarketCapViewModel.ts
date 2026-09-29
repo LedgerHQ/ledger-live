@@ -3,7 +3,7 @@ import { useGlobalMarketData } from "@ledgerhq/live-common/market/hooks/useMarke
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 export const useGlobalMarketCapViewModel = () => {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -12,7 +12,9 @@ export const useGlobalMarketCapViewModel = () => {
   const locale = useSelector(localeSelector);
 
   // /v3/markets/global currently returns a USD-denominated market cap regardless of `to`.
-  const { data, isLoading, isError } = useGlobalMarketData({ counterCurrency: "usd" });
+  const { data, isLoading, isError } = useGlobalMarketData({
+    counterCurrency: "usd",
+  });
   const { rate, status: rateStatus } = useUsdToFiatRate(counterCurrency);
 
   const onClick = () => {

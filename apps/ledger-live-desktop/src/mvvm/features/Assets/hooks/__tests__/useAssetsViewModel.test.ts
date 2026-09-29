@@ -32,7 +32,10 @@ const mockNavigate = jest.fn();
 const mockSetTrackingSource = jest.fn();
 const mockSearchParamsRef = { current: new URLSearchParams() };
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
   setTrackingSource: (...args: unknown[]) => mockSetTrackingSource(...args),
 }));
 
@@ -92,7 +95,10 @@ const MAKE_ITEMS_CURRENCIES = [
 ].map(getCryptoCurrencyById);
 
 function makeItems(count: number): CategorizedAssetItem[] {
-  return MAKE_ITEMS_CURRENCIES.slice(0, count).map(currency => ({ ...BITCOIN_ASSET, currency }));
+  return MAKE_ITEMS_CURRENCIES.slice(0, count).map(currency => ({
+    ...BITCOIN_ASSET,
+    currency,
+  }));
 }
 
 function makeStablecoinItems(count: number): CategorizedAssetItem[] {
@@ -206,7 +212,11 @@ describe("padItems", () => {
 describe("buildPlaceholderAssetItemsFromAssetsData", () => {
   it("classifies tickers present in stablecoinTickers as stablecoin placeholders", () => {
     const data = buildMockAssetsData([
-      { id: STABLECOIN_ASSET.currency.id, ticker: "USDC", currencyObj: STABLECOIN_ASSET.currency },
+      {
+        id: STABLECOIN_ASSET.currency.id,
+        ticker: "USDC",
+        currencyObj: STABLECOIN_ASSET.currency,
+      },
     ]);
     const { cryptos, stablecoins } = buildPlaceholderAssetItemsFromAssetsData(
       data,
@@ -221,7 +231,11 @@ describe("buildPlaceholderAssetItemsFromAssetsData", () => {
 
   it("classifies tickers not in stablecoinTickers as crypto placeholders", () => {
     const data = buildMockAssetsData([
-      { id: BITCOIN_ASSET.currency.id, ticker: "BTC", currencyObj: BITCOIN_ASSET.currency },
+      {
+        id: BITCOIN_ASSET.currency.id,
+        ticker: "BTC",
+        currencyObj: BITCOIN_ASSET.currency,
+      },
     ]);
     const { cryptos, stablecoins } = buildPlaceholderAssetItemsFromAssetsData(data, new Set());
 
@@ -432,12 +446,18 @@ describe("useAssetsViewModel", () => {
     ]);
 
     beforeEach(() => {
-      mockUseAssetsData.mockReturnValue({ data: mockAssetsData, isLoading: false });
+      mockUseAssetsData.mockReturnValue({
+        data: mockAssetsData,
+        isLoading: false,
+      });
     });
 
     it("should pad cryptos with placeholder items in empty state", () => {
       mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
-        categorizedAssets: createMockCategorizedAssets({ cryptos: [], stablecoins: [] }),
+        categorizedAssets: createMockCategorizedAssets({
+          cryptos: [],
+          stablecoins: [],
+        }),
         isLoadingStablecoinTickers: false,
         stablecoinTickers: new Set<string>(),
       });
@@ -493,7 +513,10 @@ describe("useAssetsViewModel", () => {
 
     it("should include marketId from market data on placeholder items", () => {
       mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
-        categorizedAssets: createMockCategorizedAssets({ cryptos: [], stablecoins: [] }),
+        categorizedAssets: createMockCategorizedAssets({
+          cryptos: [],
+          stablecoins: [],
+        }),
         isLoadingStablecoinTickers: false,
         stablecoinTickers: new Set<string>(),
       });
@@ -507,7 +530,10 @@ describe("useAssetsViewModel", () => {
 
     it("should attach converted marketPrice (USD price × rate) to placeholder items", () => {
       mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
-        categorizedAssets: createMockCategorizedAssets({ cryptos: [], stablecoins: [] }),
+        categorizedAssets: createMockCategorizedAssets({
+          cryptos: [],
+          stablecoins: [],
+        }),
         isLoadingStablecoinTickers: false,
         stablecoinTickers: new Set<string>(),
       });
@@ -522,7 +548,10 @@ describe("useAssetsViewModel", () => {
     it("should multiply the USD price by a non-USD rate (e.g. MAD)", () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 10 });
       mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
-        categorizedAssets: createMockCategorizedAssets({ cryptos: [], stablecoins: [] }),
+        categorizedAssets: createMockCategorizedAssets({
+          cryptos: [],
+          stablecoins: [],
+        }),
         isLoadingStablecoinTickers: false,
         stablecoinTickers: new Set<string>(),
       });
@@ -557,7 +586,10 @@ describe("useAssetsViewModel", () => {
     it("should leave marketPrice undefined while the USD→fiat rate is loading", () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "loading", rate: null });
       mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
-        categorizedAssets: createMockCategorizedAssets({ cryptos: [], stablecoins: [] }),
+        categorizedAssets: createMockCategorizedAssets({
+          cryptos: [],
+          stablecoins: [],
+        }),
         isLoadingStablecoinTickers: false,
         stablecoinTickers: new Set<string>(),
       });
@@ -667,7 +699,10 @@ describe("useCryptoAssetsViewModel", () => {
       isLoading: false,
     });
     mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
-      categorizedAssets: createMockCategorizedAssets({ cryptos: [], stablecoins: [] }),
+      categorizedAssets: createMockCategorizedAssets({
+        cryptos: [],
+        stablecoins: [],
+      }),
       isLoadingStablecoinTickers: false,
       stablecoinTickers: new Set(["USDC"]),
     });
@@ -684,7 +719,9 @@ describe("useCryptoAssetsViewModel", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      `/market/${encodeURIComponent(dadaIdToMarketId(placeholder!.marketId ?? placeholder!.currency.id))}`,
+      `/market/${encodeURIComponent(
+        dadaIdToMarketId(placeholder!.marketId ?? placeholder!.currency.id),
+      )}`,
     );
   });
 

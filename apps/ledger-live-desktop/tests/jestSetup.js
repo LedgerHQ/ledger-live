@@ -141,6 +141,7 @@ jest.mock("src/renderer/analytics/segment", () => ({
 
 jest.mock("@shared/analytics", () => ({
   ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
   trackPage: jest.fn(),
 }));
 

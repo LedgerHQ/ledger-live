@@ -1,7 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { MarketTableData, useMarketTableViewModel } from "../useMarketTableViewModel";
 import { mockT } from "../../__tests__/shared";
 
@@ -20,7 +20,11 @@ jest.mock("../../../hooks/useMarketListVirtualization", () => ({
 function createData(overrides: Partial<MarketTableData> = {}): MarketTableData {
   return {
     marketData: MOCK_MARKET_CURRENCY_DATA,
-    marketParams: { order: Order.MarketCapDesc, counterCurrency: "usd", range: "24h" },
+    marketParams: {
+      order: Order.MarketCapDesc,
+      counterCurrency: "usd",
+      range: "24h",
+    },
     locale: "en",
     freshLoading: false,
     isError: false,

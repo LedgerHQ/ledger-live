@@ -5,7 +5,7 @@ import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { recentlyChangedExperimental } from "~/renderer/experimental";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { prepareCurrency, hydrateCurrency } from "./cache";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { Account } from "@ledgerhq/types-live";
@@ -31,7 +31,9 @@ export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) 
       accounts={accounts}
       updateAccountWithUpdater={updateAccount}
       recoverError={recoverError}
-      trackAnalytics={track}
+      trackAnalytics={(event, properties, mandatory) => {
+        void track(event, properties, { mandatory: !!mandatory });
+      }}
       prepareCurrency={prepareCurrency}
       hydrateCurrency={hydrateCurrency}
       blacklistedTokenIds={blacklistedTokenIds}

@@ -6,8 +6,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useAllCurrencyTrends } from "LLD/features/Assets/hooks/useAllCurrencyTrends";
 import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
+import { setTrackingSource, track } from "@shared/analytics";
 import { buildAssetsPagePath } from "LLD/features/Assets/utils/buildAssetsPagePath";
 import { ASSETS_PAGE_CATEGORY_STOCKS, MAX_STOCKS_TO_DISPLAY } from "LLD/features/Assets/constants";
 import type { AssetSectionData, AssetTableItem } from "LLD/features/Assets/types";
@@ -27,7 +26,11 @@ export function usePortfolioStocksViewModel(): PortfolioStocksViewModelResult {
   const { categorizedAssets, isLoadingStocks, isStocksError } = useCategorizedAssetsFromPortfolio();
 
   const items = useMemo<AssetTableItem[]>(
-    () => categorizedAssets.stocks.map(item => ({ ...item, isPlaceholder: false })),
+    () =>
+      categorizedAssets.stocks.map(item => ({
+        ...item,
+        isPlaceholder: false,
+      })),
     [categorizedAssets.stocks],
   );
 
@@ -39,12 +42,20 @@ export function usePortfolioStocksViewModel(): PortfolioStocksViewModelResult {
 
   const trends = useAllCurrencyTrends(stocksToDisplay, "day");
   const itemsWithTrend = useMemo(
-    () => stocksToDisplay.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
+    () =>
+      stocksToDisplay.map(item => ({
+        ...item,
+        trend: trends.get(item.currency.id) ?? null,
+      })),
     [stocksToDisplay, trends],
   );
 
   const onNavigate = useCallback(() => {
-    track("button_clicked", { button: "asset_list", type: "stocks", page: TRACKING_SOURCE });
+    track("button_clicked", {
+      button: "asset_list",
+      type: "stocks",
+      page: TRACKING_SOURCE,
+    });
     navigate(buildAssetsPagePath(ASSETS_PAGE_CATEGORY_STOCKS));
   }, [navigate]);
 

@@ -42,18 +42,20 @@ describe("useReleaseNotesViewModel", () => {
   });
 
   it("should track analytics when dialog opens", () => {
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
+    const { track } = jest.requireMock("@shared/analytics");
     const { store } = renderHook(() => useReleaseNotesViewModel());
 
     act(() => {
       store.dispatch(openReleaseNotes());
     });
 
-    expect(track).toHaveBeenCalledWith("page_viewed", { page: "Release Notes Dialog" });
+    expect(track).toHaveBeenCalledWith("page_viewed", {
+      page: "Release Notes Dialog",
+    });
   });
 
   it("should not track analytics when dismissed via onClose", () => {
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
+    const { track } = jest.requireMock("@shared/analytics");
     const { result, store } = renderHook(() => useReleaseNotesViewModel());
 
     act(() => {
@@ -69,7 +71,7 @@ describe("useReleaseNotesViewModel", () => {
   });
 
   it("should track analytics when Got it button is clicked via onGotIt", () => {
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
+    const { track } = jest.requireMock("@shared/analytics");
     const { result, store } = renderHook(() => useReleaseNotesViewModel());
 
     act(() => {
@@ -81,7 +83,9 @@ describe("useReleaseNotesViewModel", () => {
       result.current.onGotIt();
     });
 
-    expect(track).toHaveBeenCalledWith("button_clicked", { button: "release_notes_got_it" });
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "release_notes_got_it",
+    });
     expect(result.current.isOpen).toBe(false);
   });
 
