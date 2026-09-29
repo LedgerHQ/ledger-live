@@ -189,4 +189,9 @@ export type BridgeApi = {
    * device through `keyControlsAccount`.
    */
   addressLookup?: AddressLookup;
+  /**
+   * Defaults to `true`. Set `false` when the account shape returns the whole operation list, or the
+   * merge puts back the operations the shape left out.
+   */
+  shouldMergeOps?: boolean;
 };
