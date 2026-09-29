@@ -11,6 +11,10 @@ const HEDERA_STAKING_LEDGER_NODE_ID = -1;
 const HEDERA_TOKEN_ASSOCIATION_MIN_USD = 0.05;
 
 export const hederaConfig: Record<string, ConfigInfo> = {
+  config_hedera_generic_bridge: {
+    type: "boolean",
+    default: false,
+  },
   config_currency_hedera: {
     type: "object",
     default: {
