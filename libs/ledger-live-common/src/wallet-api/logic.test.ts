@@ -1094,7 +1094,8 @@ describe("accountGetPublicKeyLogic (cosmos)", () => {
 
   const cosmosCrypto = CRYPTO_CURRENCIES_REGISTRY["cosmos"];
   const cosmosAccountId = "js:2:cosmos:0x013:";
-  const cosmosPublicKey = "03a1b2c3";
+  const cosmosPublicKey = `03${"ab".repeat(32)}`;
+  const cosmosAddress = "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl";
 
   const context = createContextContainingAccountId({
     tracking: {
@@ -1111,6 +1112,7 @@ describe("accountGetPublicKeyLogic (cosmos)", () => {
     const account = context.accounts.find(a => a.id === cosmosAccountId);
     if (account?.type === "Account") {
       account.xpub = publicKey;
+      Object.assign(account, { cosmosResources: undefined });
     }
   };
 
@@ -1132,7 +1134,19 @@ describe("accountGetPublicKeyLogic (cosmos)", () => {
     expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(1);
   });
 
+  it("returns the legacy account's key, not the address its xpub holds", async () => {
+    setCosmosPublicKey(cosmosAddress);
+    const account = context.accounts.find(a => a.id === cosmosAccountId);
+    Object.assign(account ?? {}, { cosmosResources: { publicKey: cosmosPublicKey } });
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(cosmosAccountId);
+
+    await expect(accountGetPublicKeyLogic(context, walletAccountId)).resolves.toEqual(
+      cosmosPublicKey,
+    );
+  });
+
   it.each([
+    { desc: "the account address (no key persisted)", publicKey: cosmosAddress },
     { desc: "empty (account synced before publicKey was persisted)", publicKey: "" },
     { desc: "absent (publicKey field unset)", publicKey: undefined },
   ])("rejects when the persisted public key is $desc", async ({ publicKey }) => {
