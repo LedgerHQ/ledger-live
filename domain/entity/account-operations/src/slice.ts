@@ -24,7 +24,7 @@ export const compareAccountOperations = (a: AccountOperation, b: AccountOperatio
 };
 
 /**
- * A window for one account holds its own operations *and* its token accounts' — that is the fan-out.
+ * A window for one account holds its own operations *and* its token accounts': that is the fan-out.
  * Anything else is a source bug, and storing it would pollute a window this read never asked about.
  */
 const ownedBy = (accountId: AccountId) => (operation: AccountOperation) =>
@@ -130,7 +130,7 @@ export const accountOperationsSlice = createSlice({
       const at = state.byAccount[accountId]?.at;
       if (at === undefined) return undefined;
       const ms = Date.parse(at);
-      // Persisted state can hold anything: an unparseable stamp is "not read", never `NaN` — every
+      // Persisted state can hold anything: an unparseable stamp is "not read", never `NaN`: every
       // caller compares this against a freshness window.
       return Number.isNaN(ms) ? undefined : ms;
     },

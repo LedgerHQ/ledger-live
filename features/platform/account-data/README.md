@@ -1,7 +1,7 @@
 # @features/platform-account-data
 
 > [!CAUTION]
-> **Status: EXPLORATION** — API still being designed.
+> **Status: EXPLORATION.** API still being designed.
 
 The React glue for account data, and nothing else.
 

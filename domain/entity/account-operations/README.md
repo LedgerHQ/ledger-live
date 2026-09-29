@@ -1,11 +1,10 @@
 # @domain/entity-account-operations
 
 > [!CAUTION]
-> **Status: EXPLORATION** — the second slice of the [account domain migration](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7389904957/Account+domain+migration+discovery).
+> **Status: EXPLORATION.** The second slice of the [account domain migration](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7389904957/Account+domain+migration+discovery).
 
-The operation history for wallet accounts — the first slice whose data is **unbounded**, which is
-what makes it worth building. See
-[what survived and what broke](../../../docs/account-data-layer.md#the-second-slice-what-survived-and-what-broke).
+The operation history for wallet accounts: the first slice whose data is **unbounded**, which is
+what makes it worth building. See [the account data layer](../../../docs/account-data-layer.md).
 
 ## What it owns
 
@@ -30,7 +29,7 @@ consumer wrong, so the four fields around `operations` exist to keep it honest.
 - **Flat, not nested.** The legacy `Operation` nests `subOperations` (a token transfer inside a
   transaction) and `internalOperations` inside their parent, which is why reading a token account's
   history means walking its parent's. Here they are ordinary rows carrying `parentOperationId`, and a
-  sub-operation's `accountId` is the token account's. Nothing has to be walked — and the legacy shape
+  sub-operation's `accountId` is the token account's. Nothing has to be walked, and the legacy shape
   can still be reconstructed from the flat one (wallet-cli does exactly that).
 - **`assetId` on the row.** Duplicated from the balance entity on purpose: deriving it would mean
   decoding a token account id, which is not decodable, or joining against the balance table, which
@@ -57,7 +56,7 @@ consumer wrong, so the four fields around `operations` exist to keep it honest.
 
 ### Why a head read replaces and a next page merges
 
-A head read is the only honest answer to "what is the history now" — there is no cursor meaning
+A head read is the only honest answer to "what is the history now": there is no cursor meaning
 "everything after this", and merging would keep operations a chain reorganisation has since dropped.
 A page read is the opposite: it reaches further back into a past that does not change, so it appends,
 deduplicating by id because a paginated source can legitimately repeat an operation at a page

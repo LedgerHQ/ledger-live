@@ -134,7 +134,7 @@ describe("accountOperationsSlice", () => {
       expect(select.selectAccountOperationsAt(next, accountId)).toBeDefined();
     });
 
-    it("leaves `at` alone — reading further back says nothing about newer operations", () => {
+    it("leaves `at` alone: reading further back says nothing about newer operations", () => {
       const first = reducer(undefined, accountOperationsReceived(page([newest])));
       const at = select.selectAccountOperationsAt(first, accountId);
       const next = reducer(
@@ -170,7 +170,7 @@ describe("accountOperationsSlice", () => {
   });
 
   describe("selectAccountOperationsTotal", () => {
-    it("is undefined on a partial window — the count is not knowable from one page", () => {
+    it("is undefined on a partial window: the count is not knowable from one page", () => {
       const next = reducer(
         undefined,
         accountOperationsReceived(page([newest], { nextCursor: "c1" })),
