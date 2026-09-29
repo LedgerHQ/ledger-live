@@ -191,6 +191,7 @@ export class MyLedgerPage extends AppPage {
   async expectInstallSuccessBanner(app: AppInfos) {
     await expect(this.installSuccessBanner).toContainText(app.name);
     await expect(this.manageAccountsButton).toBeVisible();
+    await expect(this.manageAccountsButton).toContainText("Manage my accounts");
   }
 
   /** A supported asset reads supported and offers Add account where an unsupported one offers Learn more. */
