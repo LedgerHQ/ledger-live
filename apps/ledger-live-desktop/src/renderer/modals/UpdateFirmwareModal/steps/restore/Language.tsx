@@ -6,7 +6,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { DEFAULT_LANGUAGE, Languages } from "~/config/languages";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
 import { renderLoading } from "~/renderer/components/DeviceAction/rendering";
 import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";

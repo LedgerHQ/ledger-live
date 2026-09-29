@@ -1,5 +1,5 @@
 import { useTrackDmkErrorsEvents } from "./useTrackDmkErrorsEvents";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 
 describe("useTrackDmkErrorsEvents", () => {
   describe.each([
@@ -127,9 +127,13 @@ describe("useTrackDmkErrorsEvents", () => {
         track,
       });
       // then
-      expect(track).toHaveBeenCalledWith("Error:", expectedErrorName, {
-        error: expectedErrorName,
-        subError: error._tag,
+      expect(track).toHaveBeenCalledWith({
+        category: "Error:",
+        name: expectedErrorName,
+        props: {
+          error: expectedErrorName,
+          subError: error._tag,
+        },
       });
     });
   });
@@ -159,9 +163,13 @@ describe("useTrackDmkErrorsEvents", () => {
       track,
     });
     // then
-    expect(track).toHaveBeenCalledWith("Error:", "UnregisteredDmkErrorEvent", {
-      error: "UnregisteredDmkErrorEvent",
-      subError: error._tag,
+    expect(track).toHaveBeenCalledWith({
+      category: "Error:",
+      name: "UnregisteredDmkErrorEvent",
+      props: {
+        error: "UnregisteredDmkErrorEvent",
+        subError: error._tag,
+      },
     });
   });
 });

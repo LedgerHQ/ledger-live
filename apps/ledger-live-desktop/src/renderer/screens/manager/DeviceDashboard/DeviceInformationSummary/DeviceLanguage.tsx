@@ -3,7 +3,7 @@ import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/react-ui";
 import DeviceLanguageInstallation from "./DeviceLanguageInstallation";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { idsToLanguage, Language, DeviceInfo } from "@ledgerhq/types-live";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useTranslation } from "react-i18next";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { setDrawer } from "~/renderer/drawers/Provider";

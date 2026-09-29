@@ -1,11 +1,11 @@
 import React from "react";
 import { render, screen, fireEvent } from "tests/testSetup";
 import { HardwareUpdate } from "./rendering";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
-import { trackPage } from "@shared/analytics";
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
