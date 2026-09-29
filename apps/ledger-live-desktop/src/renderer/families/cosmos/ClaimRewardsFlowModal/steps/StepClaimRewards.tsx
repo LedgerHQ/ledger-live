@@ -8,7 +8,7 @@ import { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { isCompoundRewardSupported } from "@ledgerhq/live-common/families/cosmos/logic";
 import { localeSelector } from "~/renderer/reducers/settings";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ModeSelectorField from "../fields/ModeSelectorField";
