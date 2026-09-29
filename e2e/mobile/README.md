@@ -41,7 +41,7 @@ export SPECULOS_DEVICE="nanoX"          # Options: nanoSP | nanoX | nanoS | stax
 
 Consider adding these exports to your profile so they persist.
 
-Specs under `specs/paytab/` also need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET`. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md).
+Specs under `specs/paytab/` also need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET`. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md). CI mints one session before workers when its selected spec paths include `/paytab/`. Locally, login happens only when a selected Pay tab test reaches `launchApp`.
 
 ### 3. Build
 

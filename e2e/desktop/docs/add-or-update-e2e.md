@@ -179,16 +179,10 @@ test.use({
 
 ### Pay tab
 
-Injection is opt-in on the Playwright fixture. The default is off, and the spec path does nothing.
-A Pay tab spec sets:
-
-```typescript
-test.use({
-  injectCardSession: true,
-});
-```
-
-Without that option, the spec launches signed out.
+A spec that needs an injected Card session must live under `specs/paytab/`. The card-session reporter
+mints once before workers when a selected spec path contains `/paytab/`. `--grep` is already applied,
+so a smoke run that does not select that spec does not log in. The fixture injects the session when
+the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
 
 ---
 
