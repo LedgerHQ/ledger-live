@@ -165,7 +165,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     await expectModalNotOpen();
 
     expect(
-      jest.mocked(trackPage).mock.calls.filter(([page]) => page === "Modal - Upgrade"),
+      jest.mocked(trackPage).mock.calls.filter(([page]) => page.category === "Modal - Upgrade"),
     ).toHaveLength(1);
   });
 
