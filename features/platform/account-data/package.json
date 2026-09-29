@@ -28,10 +28,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
-    "@domain/entity-account-balance": "workspace:^",
-    "@domain/entity-account-operations": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@shared/schema-primitives": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

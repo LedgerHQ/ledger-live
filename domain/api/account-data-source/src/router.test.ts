@@ -1,79 +1,62 @@
-import { AccountRefSchema, type AccountRef } from "@domain/entity-account";
-import type { AccountBalance } from "@domain/entity-account-balance";
-import { mockAccountBalance } from "@domain/entity-account-balance/schema.mock";
+import type { AccountRef } from "@domain/entity-account";
+import { ref } from "./testing/toyData";
 import { NoAccountSourceError } from "./errors";
 import { createAccountDataRouter } from "./router";
 import type { AccountDataSource } from "./source";
 
-const ref: AccountRef = AccountRefSchema.parse({
-  accountId: "js:2:ethereum:0xabc:",
-  currencyId: "ethereum",
-  address: "0xabc",
-  derivationMode: "",
-});
-
-const rows = (balance: string): AccountBalance[] => [
-  mockAccountBalance({ balance: balance as AccountBalance["balance"] }),
-];
-
 describe("createAccountDataRouter", () => {
   it("asks the first source that has the method and supports the ref", async () => {
     const router = createAccountDataRouter([
-      { id: "a", supports: () => false, balance: async () => rows("1") },
-      { id: "b", supports: () => true, balance: async () => rows("2") },
-      { id: "c", supports: () => true, balance: async () => rows("3") },
+      { id: "a", supports: () => false, counter: async () => 1 },
+      { id: "b", supports: () => true, counter: async () => 2 },
+      { id: "c", supports: () => true, counter: async () => 3 },
     ]);
-    const { data, sourceId } = await router.read("balance", ref);
-    expect(sourceId).toBe("b");
-    expect(data[0].balance).toBe("2");
+    expect(await router.read("counter", ref)).toEqual({ data: 2, sourceId: "b" });
   });
 
   it("skips a source that does not implement the datum, without asking it", async () => {
     const supports = jest.fn(() => true);
     const router = createAccountDataRouter([
-      {
-        id: "operations-only",
-        supports,
-        operations: async () => ({ operations: [], complete: true }),
-      },
-      { id: "full", supports: () => true, balance: async () => rows("1") },
+      { id: "feed-only", supports, feed: async () => ({ items: [] }) },
+      { id: "full", supports: () => true, counter: async () => 1 },
     ]);
-    expect((await router.read("balance", ref)).sourceId).toBe("full");
+    expect((await router.read("counter", ref)).sourceId).toBe("full");
     expect(supports).not.toHaveBeenCalled();
   });
 
   it("lets a source support one datum and not another for the same account", async () => {
     const granular: AccountDataSource = {
       id: "granular",
-      supports: (_ref, datum) => datum === "balance",
-      balance: async () => rows("1"),
-      operations: async () => ({ operations: [], complete: false, nextCursor: "c1" }),
+      supports: (_ref, datum) => datum === "counter",
+      counter: async () => 1,
+      feed: async () => ({ items: ["granular"] }),
     };
-    const legacy: AccountDataSource = {
-      id: "full-sync",
+    const fallback: AccountDataSource = {
+      id: "fallback",
       supports: () => true,
-      operations: async () => ({ operations: [], complete: true }),
+      feed: async () => ({ items: ["fallback"] }),
     };
-    const router = createAccountDataRouter([granular, legacy]);
-    expect((await router.read("balance", ref)).sourceId).toBe("granular");
-    expect((await router.read("operations", ref)).sourceId).toBe("full-sync");
+    const router = createAccountDataRouter([granular, fallback]);
+    expect((await router.read("counter", ref)).sourceId).toBe("granular");
+    expect((await router.read("feed", ref)).sourceId).toBe("fallback");
   });
 
   it("throws NoAccountSourceError when nobody can answer", async () => {
     const router = createAccountDataRouter([{ id: "a", supports: () => false }]);
-    await expect(router.read("balance", ref)).rejects.toBeInstanceOf(NoAccountSourceError);
+    await expect(router.read("counter", ref)).rejects.toBeInstanceOf(NoAccountSourceError);
   });
 
   it("only asks the pinned source, even if a higher-ranked one could answer", async () => {
     const router = createAccountDataRouter([
-      { id: "first", supports: () => true, balance: async () => rows("1") },
-      { id: "second", supports: () => true, balance: async () => rows("2") },
+      { id: "first", supports: () => true, counter: async () => 1 },
+      { id: "second", supports: () => true, counter: async () => 2 },
     ]);
-    expect((await router.read("balance", ref, undefined, { sourceId: "second" })).sourceId).toBe(
-      "second",
-    );
+    expect(await router.read("counter", ref, undefined, { sourceId: "second" })).toEqual({
+      data: 2,
+      sourceId: "second",
+    });
     await expect(
-      router.read("balance", ref, undefined, { sourceId: "gone" }),
+      router.read("counter", ref, undefined, { sourceId: "gone" }),
     ).rejects.toBeInstanceOf(NoAccountSourceError);
   });
 
@@ -84,21 +67,13 @@ describe("createAccountDataRouter", () => {
       supports() {
         return true;
       }
-      async operations(
-        _ref: AccountRef,
-        query: { cursor?: string } | undefined,
-        signal?: AbortSignal,
-      ) {
-        return {
-          operations: [],
-          complete: false,
-          nextCursor: `${query?.cursor}:${this.pageSize}:${signal?.aborted}`,
-        };
+      async feed(_ref: AccountRef, query: { cursor?: string } | undefined, signal?: AbortSignal) {
+        return { items: [], nextCursor: `${query?.cursor}:${this.pageSize}:${signal?.aborted}` };
       }
     }
     const router = createAccountDataRouter([new PagedSource()]);
     const { data } = await router.read(
-      "operations",
+      "feed",
       ref,
       { cursor: "c1" },
       {
