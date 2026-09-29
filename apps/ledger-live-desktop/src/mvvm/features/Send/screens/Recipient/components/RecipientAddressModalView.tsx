@@ -88,6 +88,7 @@ export function RecipientAddressModalView({
 
   return (
     <DialogBody
+      scrollbarWidth="auto"
       className="flex min-h-[156px] flex-col py-16"
       data-testid="send-recipient-step"
       data-recipient-validation={isLoading ? "pending" : "settled"}
