@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import React, { type ComponentProps, type ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import type { Account } from "@ledgerhq/types-live";
-import { TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
 import Button from "~/components/Button";
 import ConfirmationModal from "~/components/ConfirmationModal";

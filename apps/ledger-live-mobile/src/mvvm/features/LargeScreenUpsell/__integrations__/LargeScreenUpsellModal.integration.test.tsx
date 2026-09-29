@@ -1,9 +1,9 @@
+import { trackPage, track } from "@shared/analytics";
 import React, { useEffect } from "react";
 import { Linking, View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { act, fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
-import { screen as analyticsScreen, track } from "~/analytics";
 import { useDispatch } from "~/context/hooks";
 import { openBackupHubFeatureIntro } from "~/reducers/backupHubFeatureIntro";
 import { handleProductTourDeeplink } from "~/navigation/deeplinks/handleProductTourDeeplink";
@@ -191,11 +191,14 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
       expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
     });
 
-    expect(jest.mocked(analyticsScreen)).toHaveBeenCalledWith("Modal - Upgrade", undefined, {
-      name: "Modal - Upgrade",
-      sourceFlow: "app start",
-      modalFrequencyState: "every start",
-      ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
+    expect(jest.mocked(trackPage)).toHaveBeenCalledWith({
+      category: "Modal - Upgrade",
+      props: {
+        name: "Modal - Upgrade",
+        sourceFlow: "app start",
+        modalFrequencyState: "every start",
+        ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
+      },
     });
   });
 
@@ -226,11 +229,14 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
       expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
     });
 
-    expect(jest.mocked(analyticsScreen)).toHaveBeenCalledWith("Modal - Upgrade", undefined, {
-      name: "Modal - Upgrade",
-      sourceFlow: "app start",
-      modalFrequencyState: "every start",
-      ...NANO_S_OPTED_IN_ANALYTICS_PROPS,
+    expect(jest.mocked(trackPage)).toHaveBeenCalledWith({
+      category: "Modal - Upgrade",
+      props: {
+        name: "Modal - Upgrade",
+        sourceFlow: "app start",
+        modalFrequencyState: "every start",
+        ...NANO_S_OPTED_IN_ANALYTICS_PROPS,
+      },
     });
   });
 
@@ -259,7 +265,7 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
     act(() => jest.runOnlyPendingTimers());
     expect(screen.queryByTestId("large-screen-upsell-modal-drawer")).toBeNull();
     expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
-    expect(jest.mocked(analyticsScreen)).not.toHaveBeenCalled();
+    expect(jest.mocked(trackPage)).not.toHaveBeenCalled();
   });
 
   it("should not open when the opted-in variant is disabled", async () => {
@@ -289,7 +295,7 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
     act(() => jest.runOnlyPendingTimers());
     expect(screen.queryByTestId("large-screen-upsell-modal-drawer")).toBeNull();
     expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
-    expect(jest.mocked(analyticsScreen)).not.toHaveBeenCalled();
+    expect(jest.mocked(trackPage)).not.toHaveBeenCalled();
   });
 
   it("should track button_clicked with shared analytics properties when the CTA is pressed", async () => {

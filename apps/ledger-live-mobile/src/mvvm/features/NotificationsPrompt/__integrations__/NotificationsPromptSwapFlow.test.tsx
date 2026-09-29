@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useEffect } from "react";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
@@ -18,20 +19,24 @@ import SwapSubScreensNavigator from "~/components/RootNavigator/SwapSubScreensNa
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import GlobalDrawers from "~/GlobalDrawers";
-import { track } from "~/analytics";
 import { closeSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
 import { createNotificationsPromptFeatureFlags } from "../testUtils";
 
-jest.mock("~/analytics", () => {
+jest.mock("@shared/analytics", () => {
   const track = jest.fn();
-
   return {
+    ...jest.requireActual("@shared/analytics"),
     track,
-    TrackScreen: () => null,
-    updateIdentify: jest.fn(),
   };
 });
+
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackScreen: () => null,
+}));
+
+jest.mock("~/analytics", () => ({ updateIdentify: jest.fn() }));
 
 // Exception: this test only needs native beforeRemove behavior; real SwapLiveAppWallet40
 // would boot the webview and require unrelated manifest/webview setup.

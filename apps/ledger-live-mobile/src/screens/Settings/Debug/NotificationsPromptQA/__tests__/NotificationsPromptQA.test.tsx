@@ -9,7 +9,8 @@ jest.mock("../useNotificationsPromptQaViewModel", () => ({
   useNotificationsPromptQaViewModel: jest.fn(),
 }));
 
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
   TrackScreen: () => null,
 }));
 

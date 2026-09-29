@@ -13,7 +13,8 @@ jest.mock("@react-navigation/native", () => ({
   useRoute: jest.fn(),
 }));
 
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
   TrackScreen: ({ category, name }: { category: string; name?: string }) => {
     capturedCategory = category;
     capturedName = name;

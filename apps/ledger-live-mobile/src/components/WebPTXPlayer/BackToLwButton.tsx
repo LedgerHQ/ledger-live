@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useMemo } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { useTranslation } from "~/context/Locale";
@@ -9,7 +10,6 @@ import { useNavigation } from "@react-navigation/native";
 
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { handleBackToLwEntryPoint } from "./handleBackToLwEntryPoint";
 

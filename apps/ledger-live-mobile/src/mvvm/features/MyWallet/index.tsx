@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { TrackScreen } from "~/analytics";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ProfileSection } from "./views/ProfileSection";
 import { QuickActionsRow } from "./views/QuickActionsRow";

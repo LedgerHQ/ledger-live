@@ -1,18 +1,15 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Linking } from "react-native";
 import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import SeedCompanionStep from "../components/SeedCompanionStep";
 
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    track: jest.fn(),
-  };
-});
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 const baseProps = {
   productName: "Ledger Stax",

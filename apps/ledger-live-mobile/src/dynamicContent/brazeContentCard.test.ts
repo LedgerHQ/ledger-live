@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import type { ContentCard } from "@braze/react-native-sdk";
 import Braze from "@braze/react-native-sdk";
 import { renderHook } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { ContentCardLocation, type WalletContentCard } from "~/dynamicContent/types";
 import { useBrazeContentCard } from "./brazeContentCard";
@@ -16,7 +16,8 @@ jest.mock("@braze/react-native-sdk", () => ({
   },
 }));
 
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 

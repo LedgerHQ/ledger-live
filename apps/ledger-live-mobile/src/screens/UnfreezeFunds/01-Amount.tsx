@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
@@ -14,7 +15,6 @@ import type {
   Transaction as TronTransaction,
 } from "@ledgerhq/live-common/families/tron/types";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
 import Button from "~/components/Button";
 import RetryButton from "~/components/RetryButton";

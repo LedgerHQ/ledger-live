@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setHideTransactionsOnChart } from "~/actions/market";
 import { hideTransactionsOnChartSelector } from "~/reducers/market";
-import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 
 type Params = Readonly<{

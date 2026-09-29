@@ -3,11 +3,13 @@
  * observer is registered as an import side effect, so a broken import or a mapping change
  * would otherwise fail silently in production rather than in CI.
  *
- * `./segment` is mocked rather than imported: it sits in a require cycle with `~/analytics`,
- * and this test needs only the `track` call it makes.
+ * `@shared/analytics` is mocked so this test can assert the `track` call without starting Segment.
  */
 const track = jest.fn();
-jest.mock("./segment", () => ({ track: (...args: unknown[]) => track(...args) }));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: (...args: unknown[]) => track(...args),
+}));
 
 import {
   clearPendingTxLifecycle,

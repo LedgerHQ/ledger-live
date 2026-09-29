@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -8,7 +9,6 @@ import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";

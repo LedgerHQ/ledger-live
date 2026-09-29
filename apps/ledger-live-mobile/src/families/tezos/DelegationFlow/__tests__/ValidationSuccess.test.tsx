@@ -14,7 +14,15 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   useBaker: () => ({ name: "Ledger by Kiln" }),
 }));
 
-jest.mock("~/analytics", () => ({ TrackScreen: () => null, track: jest.fn() }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackScreen: () => null,
+}));
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("~/components/PreventNativeBack", () => () => null);
 

@@ -1,16 +1,19 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { track } from "~/analytics/segment";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { useContactsCurrencySelectionAdapter } from "./useContactsCurrencySelectionAdapter";
 
 jest.mock("LLM/features/ModularDrawer", () => ({
   useModularDrawerController: jest.fn(),
 }));
-jest.mock("~/analytics/segment", () => ({ track: jest.fn() }));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 const openDrawer = jest.fn();
 const closeDrawer = jest.fn();

@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { BackToInternalDomain } from "./BackToLwButton";
 import { NavigatorName, ScreenName } from "~/const";
 import storage from "LLM/storage";
-import { track } from "~/analytics";
 import { handleBackToLwEntryPoint } from "./handleBackToLwEntryPoint";
 
 const mockNavigate = jest.fn();
@@ -20,7 +20,8 @@ jest.mock("LLM/storage", () => ({
   },
 }));
 
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 

@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
@@ -16,7 +17,6 @@ import { ManageInstancesProcess } from "./screens/ManageInstances/ManageInstance
 import { WalletSyncManageInstanceDeletionSuccess } from "./screens/ManageInstances/DeletionSuccess";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import { useClose } from "./hooks/useClose";
-import { track } from "~/analytics";
 import { AnalyticsPage } from "./hooks/useLedgerSyncAnalytics";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";

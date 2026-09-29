@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 
 import useQuickActions from "~/hooks/useQuickActions";
@@ -9,7 +10,6 @@ import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpe
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { useFeature } from "@features/platform-feature-flags";
 import { StyleProp, ViewStyle } from "react-native";
-import { track } from "~/analytics";
 import { AnalyticButtons, AnalyticEvents } from "LLM/hooks/useAnalytics/enums";
 import { NavigatorName, ScreenName } from "~/const";
 

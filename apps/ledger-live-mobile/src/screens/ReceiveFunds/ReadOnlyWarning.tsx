@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
-import TrackScreen from "~/analytics/TrackScreen";
 import LText from "~/components/LText";
 import Button from "~/components/Button";
 import AlertTriangle from "~/icons/AlertTriangle";

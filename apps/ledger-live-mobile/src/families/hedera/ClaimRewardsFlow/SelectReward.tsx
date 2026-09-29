@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
@@ -5,7 +6,6 @@ import { View, StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { HederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/types";
-import { TrackScreen } from "~/analytics";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import DelegationRow from "../shared/DelegationRow";

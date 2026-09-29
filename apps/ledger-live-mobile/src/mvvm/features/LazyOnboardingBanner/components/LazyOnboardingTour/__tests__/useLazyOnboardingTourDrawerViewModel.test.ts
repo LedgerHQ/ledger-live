@@ -1,6 +1,6 @@
+import { trackPage, track } from "@shared/analytics";
 import { Linking } from "react-native";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
-import { screen, track } from "~/analytics";
 import {
   LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
   LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
@@ -13,10 +13,10 @@ import {
 } from "../lazyOnboardingTourController";
 import { useLazyOnboardingTourDrawerViewModel } from "../useLazyOnboardingTourDrawerViewModel";
 
-jest.mock("~/analytics", () => ({
-  ...jest.requireActual("~/analytics"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
-  screen: jest.fn(),
+  trackPage: jest.fn(),
 }));
 
 const SHOP_LINK = "https://shop.ledger.com/?product=flex";
@@ -122,16 +122,14 @@ describe("useLazyOnboardingTourDrawerViewModel dismiss analytics", () => {
       lazyOnboardingTourController.open();
     });
 
-    expect(screen).toHaveBeenCalledWith(
-      LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
-      undefined,
-      expect.objectContaining({
+    expect(trackPage).toHaveBeenCalledWith({
+      category: LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
+      props: expect.objectContaining({
         name: LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
         sourceFlow: LAZY_ONBOARDING_SOURCE_FLOW,
         abLazyBannerFlow: "feature intro",
       }),
-      false,
-    );
+    });
 
     act(() => {
       result.current?.onContinue(0);
@@ -152,11 +150,10 @@ describe("useLazyOnboardingTourDrawerViewModel dismiss analytics", () => {
       expect.objectContaining({ button: "Buy a Ledger device", card: 2 }),
     );
     expect(Linking.openURL).toHaveBeenCalled();
-    expect(screen).toHaveBeenCalledWith(
-      LAZY_ONBOARDING_TOUR_SHOP_PAGE,
-      undefined,
-      expect.objectContaining({ name: "shop", source: "lazy onboarding tour" }),
-    );
+    expect(trackPage).toHaveBeenCalledWith({
+      category: LAZY_ONBOARDING_TOUR_SHOP_PAGE,
+      props: expect.objectContaining({ name: "shop", source: "lazy onboarding tour" }),
+    });
   });
 
   it("should return null when the feature is disabled", () => {

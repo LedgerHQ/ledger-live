@@ -1,3 +1,4 @@
+import { track, resetTrackingPages, setTrackingSource } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import type {
   DeviceConnectionResult,
@@ -7,20 +8,15 @@ import type {
 } from "@features/platform-device-intent";
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { track } from "~/analytics";
-import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorLWMViewModel } from "./useDeviceIntentExecutorLWMViewModel";
 
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    track: jest.fn(),
-  };
-});
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("~/hooks/useKeepScreenAwake", () => ({
   useKeepScreenAwake: jest.fn(),

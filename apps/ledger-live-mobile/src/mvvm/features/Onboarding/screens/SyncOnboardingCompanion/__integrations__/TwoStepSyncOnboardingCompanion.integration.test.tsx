@@ -26,13 +26,10 @@ jest.mock("~/hooks/useKeepScreenAwake", () => ({
   useKeepScreenAwake: jest.fn(),
 }));
 
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    track: jest.fn(),
-  };
-});
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 const onboardedState = (): OnboardingState => ({
   isOnboarded: true,

@@ -30,7 +30,8 @@ jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
   resetTrustchainStore: () => mockResetTrustchainStore(),
 }));
 
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: (...args: unknown[]) => mockTrack(...args),
 }));
 

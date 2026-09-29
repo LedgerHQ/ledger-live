@@ -22,7 +22,10 @@ jest.mock("~/context/Locale", () => {
   };
 });
 
-jest.mock("~/analytics", () => ({ TrackScreen: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackScreen: () => null,
+}));
 
 jest.mock("~/components/Alert", () => () => null);
 

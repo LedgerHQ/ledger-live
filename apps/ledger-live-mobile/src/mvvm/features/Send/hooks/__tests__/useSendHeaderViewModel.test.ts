@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { Account } from "@ledgerhq/types-live";
@@ -15,7 +16,6 @@ import { useSendHeaderViewModel } from "../useSendHeaderViewModel";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
 import { useSendFlowTracking } from "../../context/SendFlowTrackingContext";
-import { track } from "~/analytics";
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
@@ -42,9 +42,10 @@ jest.mock("../../context/SendFlowTrackingContext");
 jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext");
 jest.mock("../useAvailableBalance");
 jest.mock("../useCurrentSendFlowStep");
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
-  screen: jest.fn(),
+  trackPage: jest.fn(),
 }));
 const mockedUseNavigation = jest.mocked(useNavigation);
 const mockedUseMaybeAccountName = jest.mocked(useMaybeAccountName);

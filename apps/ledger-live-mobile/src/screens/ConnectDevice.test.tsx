@@ -24,7 +24,8 @@ jest.mock("~/components/DeviceAction/rendering", () => ({
   renderLoading: () => null,
 }));
 
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
   TrackScreen: () => null,
 }));
 

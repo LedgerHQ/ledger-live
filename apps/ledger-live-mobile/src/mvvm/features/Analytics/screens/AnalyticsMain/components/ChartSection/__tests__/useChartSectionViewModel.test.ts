@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 import { useChartSectionViewModel } from "../useChartSectionViewModel";
 import { chartSectionInitialState, portfolioWithHistory } from "./fixtures";
@@ -8,7 +8,8 @@ jest.mock("~/hooks/portfolio", () => ({
   usePortfolioAllAccounts: jest.fn(),
 }));
 
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 

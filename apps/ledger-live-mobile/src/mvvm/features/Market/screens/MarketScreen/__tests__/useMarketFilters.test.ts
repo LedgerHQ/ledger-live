@@ -1,8 +1,11 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { useMarketFilters } from "../useMarketFilters";
 
-jest.mock("~/analytics", () => ({ track: jest.fn() }));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 describe("useMarketFilters", () => {
   beforeEach(() => {

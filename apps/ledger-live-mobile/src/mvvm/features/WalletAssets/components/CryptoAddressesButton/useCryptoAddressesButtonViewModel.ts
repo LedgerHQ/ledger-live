@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -8,7 +9,6 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { NavigatorName, ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { shallowAccountsSelector } from "~/reducers/accounts";
-import { track } from "~/analytics";
 
 interface CryptoAddressesButtonViewModelResult {
   accountsCount: number;

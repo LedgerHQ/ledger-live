@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo } from "react";
 import { View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
@@ -8,7 +9,6 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import getWindowDimensions from "~/logic/getWindowDimensions";
-import { TrackScreen } from "~/analytics";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import Alert from "~/components/Alert";

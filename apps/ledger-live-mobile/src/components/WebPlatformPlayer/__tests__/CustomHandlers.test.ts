@@ -1,7 +1,8 @@
+import { track } from "@shared/analytics";
 import { createDeeplinkOpenHandler } from "../CustomHandlers";
-import { track } from "~/analytics";
 
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 

@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import { renderHook, act } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { useTradeAvailability, type TradeAvailability } from "@ledgerhq/asset-detail";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { track } from "~/analytics";
 import { useFooterViewModel } from "../useFooterViewModel";
 
 let mockAccounts: Account[] = [];

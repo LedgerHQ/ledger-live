@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
@@ -7,7 +8,6 @@ import styled, { useTheme } from "styled-components/native";
 import { Incident } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/types";
 
 import { FlatList } from "react-native";
-import { TrackScreen } from "~/analytics";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
 import { HtmlTextRenderer } from "./HtmlTextRenderer";
 

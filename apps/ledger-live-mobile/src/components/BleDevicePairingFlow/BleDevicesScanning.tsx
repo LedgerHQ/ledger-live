@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { Linking, FlatList } from "react-native";
 import { Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
@@ -8,7 +10,6 @@ import BleDeviceItem from "./BleDeviceItem";
 import Link from "~/components/wrappedUi/Link";
 import lottie from "./assets/bluetooth.json";
 import { urls } from "~/utils/urls";
-import { TrackScreen, track } from "~/analytics";
 import { ScannedDevice } from "@ledgerhq/live-dmk-mobile";
 import { useOrderedBleScannedDevices } from "./hooks/useOrderedBleScannedDevices";
 import { FilterByDeviceModelId } from "./FilterByDeviceModelId";

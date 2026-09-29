@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Button, Flex, Text, InfiniteLoader } from "@ledgerhq/native-ui";
 import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
-import { TrackScreen } from "~/analytics";
 import styled from "styled-components/native";
 import { HookResult, useGeneralLandingPage } from "./useGeneralLandingPageViewModel";
 import { useWindowDimensions } from "react-native";

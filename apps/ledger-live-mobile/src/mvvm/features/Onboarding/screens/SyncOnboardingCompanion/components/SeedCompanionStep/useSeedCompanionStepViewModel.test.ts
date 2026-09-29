@@ -1,9 +1,10 @@
+import { track } from "@shared/analytics";
 import { Linking } from "react-native";
 import { act, renderHook } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { useSeedCompanionStepViewModel } from "./useSeedCompanionStepViewModel";
 
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 

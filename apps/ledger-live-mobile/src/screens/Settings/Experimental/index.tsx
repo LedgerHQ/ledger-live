@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { isEnvDefault } from "@shared/env";
 
 import { Alert } from "@ledgerhq/native-ui";
-import { TrackScreen } from "~/analytics";
 import { experimentalFeatures } from "../../../experimental";
 import FeatureRow from "./FeatureRow";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";

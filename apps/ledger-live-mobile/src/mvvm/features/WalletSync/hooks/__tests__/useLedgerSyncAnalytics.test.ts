@@ -11,7 +11,8 @@ import {
 
 const mockedTrack = jest.fn();
 
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: (...args: unknown[]) => mockedTrack(...args),
 }));
 

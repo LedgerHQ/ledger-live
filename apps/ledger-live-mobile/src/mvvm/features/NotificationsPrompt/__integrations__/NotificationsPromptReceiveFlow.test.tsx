@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -13,7 +14,6 @@ import ReceiveFundsNavigator from "~/components/RootNavigator/ReceiveFundsNaviga
 import { NavigatorName, ScreenName } from "~/const";
 import { BTC_ACCOUNT } from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
 import GlobalDrawers from "~/GlobalDrawers";
-import { track } from "~/analytics";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import {
   createNotificationsPromptFeatureFlags,

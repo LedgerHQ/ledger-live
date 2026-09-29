@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import SelectAddAccountMethod from "./SelectAddAccountMethod";
 import ChooseSyncMethod from "LLM/features/WalletSync/screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMethod";
-import { TrackScreen } from "~/analytics";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { AnalyticsPage } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";

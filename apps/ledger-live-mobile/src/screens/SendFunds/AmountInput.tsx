@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "~/context/hooks";
@@ -5,7 +6,6 @@ import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useSendAmount } from "@ledgerhq/live-countervalues-react";
 import { Trans, useTranslation } from "~/context/Locale";
-import { track } from "~/analytics";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import LText from "~/components/LText/index";
 import CounterValuesSeparator from "./CounterValuesSeparator";

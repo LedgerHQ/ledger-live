@@ -1,3 +1,4 @@
+import { trackPage } from "@shared/analytics";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { LayoutChangeEvent } from "react-native";
 import {
@@ -24,7 +25,6 @@ import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { FirstStepCompanionStepKey, SEED_STATE } from "../../types";
 import useFirstStepCompanionState from "../../hooks/useFirstStepCompanionState";
 import useCompanionSteps from "../../hooks/useCompanionSteps";
-import { screen } from "~/analytics";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { SeedPathStatus, UseFirstStepSyncOnboardingViewModelProps } from "./types";
@@ -236,18 +236,18 @@ export const useFirstStepSyncOnboardingViewModel = ({
        * Three of them will trigger the Backup Recovery Key step, but the last one
        * will trigger directly the install apps step, so its tracking is treated separately.
        */
-      screen(
-        "Set up device: Step 3 Seed Success",
-        undefined,
+      trackPage(
         {
-          seedPhraseType: analyticsSeedPhraseType.current
-            ? fromSeedPhraseTypeToAnalyticsPropertyString.get(analyticsSeedPhraseType.current)
-            : undefined,
-          seedConfiguration: analyticsSeedConfiguration.current,
-          flow: "onboarding",
+          category: "Set up device: Step 3 Seed Success",
+          props: {
+            seedPhraseType: analyticsSeedPhraseType.current
+              ? fromSeedPhraseTypeToAnalyticsPropertyString.get(analyticsSeedPhraseType.current)
+              : undefined,
+            seedConfiguration: analyticsSeedConfiguration.current,
+            flow: "onboarding",
+          },
         },
-        true,
-        true,
+        { updateRoutes: true, refreshSource: true },
       );
 
       analyticsSeedingTracked.current = true;
@@ -384,15 +384,15 @@ export const useFirstStepSyncOnboardingViewModel = ({
 
   useEffect(() => {
     if (isFocused && activeStep === FirstStepCompanionStepKey.Sync && isLedgerSyncActive) {
-      screen(
-        "Set up device: Step 4 Ledger Sync Success",
-        undefined,
+      trackPage(
         {
-          seedConfiguration: analyticsSeedConfiguration.current,
-          flow: "onboarding",
+          category: "Set up device: Step 4 Ledger Sync Success",
+          props: {
+            seedConfiguration: analyticsSeedConfiguration.current,
+            flow: "onboarding",
+          },
         },
-        true,
-        true,
+        { updateRoutes: true, refreshSource: true },
       );
       const timer = setTimeout(() => setCompanionStep(FirstStepCompanionStepKey.Ready), 1000);
       return () => clearTimeout(timer);

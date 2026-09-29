@@ -13,10 +13,14 @@ jest.mock("../../context/SendFlowContext");
 jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
+
 jest.mock("~/analytics", () => ({
   useAnalytics: () => ({ track: jest.fn() }),
   usePageNameFromRoute: () => "step amount",
-  track: jest.fn(),
 }));
 jest.mock("../AddressDisclaimer", () => ({
   AddressDisclaimer: () => {

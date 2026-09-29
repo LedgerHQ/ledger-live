@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "~/context/Locale";
@@ -9,7 +10,6 @@ import { usePolkadotBondLoading } from "@ledgerhq/live-common/families/polkadot/
 import { useTheme } from "@react-navigation/native";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";

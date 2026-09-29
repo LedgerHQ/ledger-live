@@ -1,4 +1,4 @@
-import { screen, track } from "~/analytics";
+import { trackPage, track } from "@shared/analytics";
 import {
   LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
   LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
@@ -17,8 +17,9 @@ import {
 } from "../analytics";
 import { LAZY_ONBOARDING_TOUR_PAGE, LAZY_ONBOARDING_TOUR_SHOP_PAGE } from "../const";
 
-jest.mock("~/analytics", () => ({
-  screen: jest.fn(),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  trackPage: jest.fn(),
   track: jest.fn(),
 }));
 
@@ -38,19 +39,17 @@ describe("LazyOnboardingTour analytics", () => {
 
   it("tracks tour open once and ignores duplicate opens", () => {
     expect(trackLazyOnboardingTourOpened(sharedProps, false)).toBe(true);
-    expect(screen).toHaveBeenCalledWith(
-      LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
-      undefined,
-      {
+    expect(trackPage).toHaveBeenCalledWith({
+      category: LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
+      props: {
         name: LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
         sourceFlow: LAZY_ONBOARDING_SOURCE_FLOW,
         ...sharedProps,
       },
-      false,
-    );
+    });
 
     expect(trackLazyOnboardingTourOpened(sharedProps, true)).toBe(false);
-    expect(screen).toHaveBeenCalledTimes(1);
+    expect(trackPage).toHaveBeenCalledTimes(1);
   });
 
   it("tracks product_tour_card for new slides and skips duplicates", () => {
@@ -96,10 +95,13 @@ describe("LazyOnboardingTour analytics", () => {
     );
 
     trackLazyOnboardingTourShopReached(sharedProps);
-    expect(screen).toHaveBeenCalledWith(LAZY_ONBOARDING_TOUR_SHOP_PAGE, undefined, {
-      name: "shop",
-      ...sharedProps,
-      source: "lazy onboarding tour",
+    expect(trackPage).toHaveBeenCalledWith({
+      category: LAZY_ONBOARDING_TOUR_SHOP_PAGE,
+      props: {
+        name: "shop",
+        ...sharedProps,
+        source: "lazy onboarding tour",
+      },
     });
   });
 });

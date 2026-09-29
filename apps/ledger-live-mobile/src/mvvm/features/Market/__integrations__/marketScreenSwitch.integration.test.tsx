@@ -1,16 +1,16 @@
+import { trackPage } from "@shared/analytics";
 import * as React from "react";
 import { renderWithReactQuery, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { screen as trackScreen } from "~/analytics";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import MarketNavigator from "../Navigator";
 import MarketWalletTabNavigator from "../WalletTabNavigator";
 import { MARKET_SCREEN_TEST_IDS } from "../screens/MarketScreen/testIds";
 
-jest.mock("~/analytics", () => ({
-  ...jest.requireActual("~/analytics"),
-  screen: jest.fn(),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  trackPage: jest.fn(),
 }));
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
@@ -60,18 +60,18 @@ describe("Market screen navigator switch", () => {
     });
 
     await waitFor(() => {
-      expect(trackScreen).toHaveBeenCalledWith(
-        "Market",
-        undefined,
-        expect.objectContaining({
-          category: "all",
-          sortVolume: "desc",
-          sortMarketCap: "desc",
-          sortChange: "desc",
-          timeframe: "1D",
-        }),
-        true,
-        true,
+      expect(trackPage).toHaveBeenCalledWith(
+        {
+          category: "Market",
+          props: expect.objectContaining({
+            category: "all",
+            sortVolume: "desc",
+            sortMarketCap: "desc",
+            sortChange: "desc",
+            timeframe: "1D",
+          }),
+        },
+        { updateRoutes: true, refreshSource: true },
       );
     });
   });

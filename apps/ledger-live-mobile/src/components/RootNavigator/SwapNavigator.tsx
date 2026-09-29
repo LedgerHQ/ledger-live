@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useMemo } from "react";
@@ -5,7 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import SwapHistory from "~/screens/Swap/History";
 
 import { useTheme } from "styled-components/native";
-import { track, usePageNameFromRoute } from "~/analytics";
+import { usePageNameFromRoute } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";

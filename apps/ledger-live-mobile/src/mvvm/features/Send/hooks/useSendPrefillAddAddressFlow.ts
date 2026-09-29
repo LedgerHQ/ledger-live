@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { addAddress, contactAddress, type Contact } from "@domain/entity-contact";
@@ -26,7 +27,6 @@ import { useContactsAddressValidationAdapter } from "LLM/features/Contacts/hooks
 import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
 import { useSendFlowTracking } from "LLM/features/Send/context/SendFlowTrackingContext";
 import { useSendFlowTrackingProperties } from "./useSendFlowTrackingProperties";
-import { screen, track } from "~/analytics";
 import { useDispatch } from "~/context/hooks";
 
 export type SendPrefillAddAddressPhase = Readonly<{
@@ -110,10 +110,13 @@ export function useSendPrefillAddAddressFlow({
     }
     trackedAddressPhaseRef.current = phaseKey;
 
-    void screen("Modal send - name address", undefined, {
-      ...trackingProperties,
-      network: addressFlowState.displayContext.network.networkId,
-      asset: addressFlowState.selectedCurrencyId,
+    void trackPage({
+      category: "Modal send - name address",
+      props: {
+        ...trackingProperties,
+        network: addressFlowState.displayContext.network.networkId,
+        asset: addressFlowState.selectedCurrencyId,
+      },
     });
   }, [addressFlowState, isAddressPhase, trackingProperties]);
 
@@ -200,10 +203,13 @@ export function useSendPrefillAddAddressFlow({
       close();
       onSaved?.();
     } catch {
-      void screen("Modal send - address signing rejected", undefined, {
-        ...trackingProperties,
-        network: displayContext.network.networkId,
-        asset: addressFlowState.selectedCurrencyId,
+      void trackPage({
+        category: "Modal send - address signing rejected",
+        props: {
+          ...trackingProperties,
+          network: displayContext.network.networkId,
+          asset: addressFlowState.selectedCurrencyId,
+        },
       });
       return;
     } finally {
@@ -264,10 +270,13 @@ export function useSendPrefillAddAddressFlow({
         inputMethod,
       }),
     );
-    void screen("Modal send - address signing device", undefined, {
-      ...trackingProperties,
-      network: addressFlowState.displayContext.network.networkId,
-      asset: addressFlowState.selectedCurrencyId,
+    void trackPage({
+      category: "Modal send - address signing device",
+      props: {
+        ...trackingProperties,
+        network: addressFlowState.displayContext.network.networkId,
+        asset: addressFlowState.selectedCurrencyId,
+      },
     });
     void saveFromReview();
   }, [addressFlowState, inputMethod, saveFromReview, trackingProperties]);

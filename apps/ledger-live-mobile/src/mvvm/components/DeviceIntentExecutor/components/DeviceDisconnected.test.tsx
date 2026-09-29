@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import {
@@ -5,19 +7,19 @@ import {
   DeviceModelId as DMKDeviceModelId,
 } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { TrackScreen, track } from "~/analytics";
 import { DeviceIntentTrackingProvider } from "../utils/DeviceIntentTrackingContext";
 import { PAGE_DEVICE_ACTION } from "../utils/trackDeviceIntent";
 import { DeviceDisconnected } from "./DeviceDisconnected";
 
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    TrackScreen: jest.fn(() => null),
-    track: jest.fn(),
-  };
-});
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackScreen: jest.fn(() => null),
+}));
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 const mockedTrack = jest.mocked(track);

@@ -1,19 +1,16 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { TrackScreen } from "~/analytics";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { InstallingAppState } from "./InstallingAppState";
 import type { InitializerDevice } from "../types";
 
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    TrackScreen: jest.fn(() => null),
-  };
-});
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackScreen: jest.fn(() => null),
+}));
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 

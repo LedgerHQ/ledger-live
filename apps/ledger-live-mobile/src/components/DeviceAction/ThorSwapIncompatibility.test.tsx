@@ -11,8 +11,13 @@ import {
 const mockTrack = jest.fn();
 const mockTrackScreen = jest.fn();
 
-jest.mock("~/analytics", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: (...args: unknown[]) => mockTrack(...args),
+}));
+
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
   TrackScreen: (props: Record<string, unknown>) => {
     mockTrackScreen(props);
     return null;

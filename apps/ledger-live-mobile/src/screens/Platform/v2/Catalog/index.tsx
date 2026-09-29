@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeInUp, FadeOut } from "react-native-reanimated";
@@ -10,7 +11,6 @@ import ArrowLeft from "~/icons/ArrowLeft";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Layout } from "./Layout";
 import { useCatalog } from "../hooks";
-import TrackScreen from "~/analytics/TrackScreen";
 import { Search, SearchBar } from "./Search";
 import { ManifestList } from "./ManifestList";
 import { RecentlyUsed } from "./RecentlyUsed";

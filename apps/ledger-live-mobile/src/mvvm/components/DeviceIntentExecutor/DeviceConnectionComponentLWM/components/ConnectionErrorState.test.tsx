@@ -1,3 +1,5 @@
+import { track, resetTrackingPages, setTrackingSource } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Linking } from "react-native";
 import { render, screen } from "@tests/test-renderer";
@@ -9,21 +11,20 @@ import {
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
-import { TrackScreen, track } from "~/analytics";
-import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import { urls } from "~/utils/urls";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { ConnectionErrorState } from "./ConnectionErrorState";
 
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    TrackScreen: jest.fn(() => null),
-    track: jest.fn(),
-  };
-});
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackScreen: jest.fn(() => null),
+}));
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 const mockedTrack = jest.mocked(track);

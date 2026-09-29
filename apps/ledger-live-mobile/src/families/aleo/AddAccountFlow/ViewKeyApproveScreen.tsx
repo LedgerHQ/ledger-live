@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet } from "react-native";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
@@ -24,7 +25,6 @@ import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDevic
 import { useAccountName } from "~/reducers/wallet";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
-import { TrackScreen } from "~/analytics";
 import type { AleoViewKeyFlowParamList } from "./types";
 import QuitConfirmationModal from "./QuitConfirmationModal";
 import useQuitConfirmation from "./useQuitConfirmation";

@@ -1,11 +1,14 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@testing-library/react-native";
 import { Linking } from "react-native";
-import { track } from "~/analytics";
 import { useSkipMemoConfirmationViewModel } from "../useSkipMemoConfirmationViewModel";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { useDoNotAskAgainSkipMemo } from "../../../../hooks/useDoNotAskAgainSkipMemo";
 
-jest.mock("~/analytics", () => ({ track: jest.fn() }));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("../../../../hooks/useDoNotAskAgainSkipMemo");
 jest.mock("LLM/hooks/useLocalizedUrls", () => ({

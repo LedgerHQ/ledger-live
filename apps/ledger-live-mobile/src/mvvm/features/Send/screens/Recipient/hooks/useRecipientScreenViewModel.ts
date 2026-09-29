@@ -1,3 +1,4 @@
+import { trackPage } from "@shared/analytics";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -11,7 +12,6 @@ import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipi
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { screen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
@@ -83,7 +83,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
       return;
     }
     hasTrackedRef.current = true;
-    void screen("Modal send - step recipient", undefined, trackingProperties);
+    void trackPage({ category: "Modal send - step recipient", props: trackingProperties });
   }, [account, currency, trackingProperties]);
 
   const goToAmount = useCallback(() => {

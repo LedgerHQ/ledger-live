@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
-import { TrackScreen } from "~/analytics";
 import { OptionButton } from "../components/OptionButton";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import useReceiveFundsOptionsViewModel from "./useReceiveFundsOptionsViewModel";

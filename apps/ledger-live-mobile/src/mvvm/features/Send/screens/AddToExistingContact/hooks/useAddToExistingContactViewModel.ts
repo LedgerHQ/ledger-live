@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
 import type { Contact, ContactId } from "@domain/entity-contact";
 import { useContacts, useContactsMeContact } from "@features/platform-contacts";
@@ -6,7 +7,6 @@ import {
   type ContactsListViewLabels,
 } from "@features/flow-contacts-list";
 import { useSendFlowTrackingProperties } from "LLM/features/Send/hooks/useSendFlowTrackingProperties";
-import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 
 export type UseAddToExistingContactViewModelOptions = Readonly<{

@@ -6,8 +6,9 @@ import { SigningBody } from "./SigningBody";
 
 const trackScreen = jest.fn();
 
-jest.mock("~/analytics", () => ({
-  screen: (...args: unknown[]) => trackScreen(...args),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  trackPage: (...args: unknown[]) => trackScreen(...args),
 }));
 
 const device: Device = {
@@ -63,9 +64,12 @@ describe("SigningBody", () => {
       transactionSignError: { name: "UserRefusedOnDevice" },
     });
 
-    expect(trackScreen).toHaveBeenCalledWith("Modal send - action rejected", undefined, {
-      ...trackingProperties,
-      recipientType: "contact",
+    expect(trackScreen).toHaveBeenCalledWith({
+      category: "Modal send - action rejected",
+      props: {
+        ...trackingProperties,
+        recipientType: "contact",
+      },
     });
   });
 });
