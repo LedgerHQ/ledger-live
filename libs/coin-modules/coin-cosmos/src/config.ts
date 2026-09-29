@@ -187,7 +187,6 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
-      disableDelegation: true,
     },
   },
   config_currency_gonka: {
