@@ -375,7 +375,8 @@
     "src/domain/earnUiVersion.ts",
     "src/errors/helpers.ts",
     "src/account-data/FullSyncSource.ts",
-    "src/legacy-mapping/accountRef.ts"
+    "src/legacy-mapping/accountRef.ts",
+    "src/account-data/coinModulePorts.ts"
   ],
   "extensions": [
     ".ts",

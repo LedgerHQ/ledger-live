@@ -278,6 +278,7 @@
     "@domain/entity-currency-unit": "workspace:^",
     "@domain/entity-interest-rate": "workspace:^",
     "@domain/entity-recent-addresses": "workspace:^",
+    "@features/platform-account-source-coin-module": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
     "@features/platform-env": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
