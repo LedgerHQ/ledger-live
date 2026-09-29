@@ -61,21 +61,55 @@ runs:
       id: mise-preinstalled
       if: inputs.use-mise == 'true'
       shell: bash
+      env:
+        MISE_PINNED_VERSION: "2026.9.1"
       run: |
-        if command -v mise >/dev/null 2>&1; then
-          echo "found=true" >> "$GITHUB_OUTPUT"
-        else
-          echo "found=false" >> "$GITHUB_OUTPUT"
+        found=false
+        if [ "$RUNNER_ENVIRONMENT" = "self-hosted" ] && [ "$RUNNER_OS" = "Linux" ] && command -v mise >/dev/null 2>&1; then
+          installed=$(mise --version | cut -d' ' -f1)
+          if [ "$installed" = "$MISE_PINNED_VERSION" ]; then
+            found=true
+          else
+            echo "Pre-installed mise $installed does not match $MISE_PINNED_VERSION, using mise-action"
+          fi
         fi
+        echo "found=$found" >> "$GITHUB_OUTPUT"
+
+    - name: Install tools with pre-installed mise
+      if: inputs.use-mise == 'true' && steps.mise-preinstalled.outputs.found == 'true'
+      shell: bash
+      env:
+        GH_TOKEN_INPUT: ${{ inputs['gh-token'] }}
+      run: | # zizmor: ignore[github-env]
+        export MISE_EXPERIMENTAL="${MISE_EXPERIMENTAL:-1}"
+        export MISE_LOG_LEVEL="${MISE_LOG_LEVEL:-info}"
+        export MISE_TRUSTED_CONFIG_PATHS="${MISE_TRUSTED_CONFIG_PATHS:-$PWD}"
+        export MISE_YES="${MISE_YES:-1}"
+        [ -n "$GH_TOKEN_INPUT" ] && export MISE_GITHUB_TOKEN="${MISE_GITHUB_TOKEN:-$GH_TOKEN_INPUT}"
+        for k in MISE_EXPERIMENTAL MISE_LOG_LEVEL MISE_TRUSTED_CONFIG_PATHS MISE_YES MISE_GITHUB_TOKEN; do
+          [ -n "${!k:-}" ] && echo "$k=${!k}" >> "$GITHUB_ENV"
+        done
+        echo "${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims" >> "$GITHUB_PATH"
+        mise install
+        mise ls
+        mise env --json | mise exec -- node -e '
+          const fs = require("fs");
+          const vars = JSON.parse(fs.readFileSync(0, "utf8"));
+          const out = Object.entries(vars)
+            .filter(([, v]) => typeof v === "string")
+            .map(([k, v]) => `${k}<<__MISE_ENV_EOF__\n${v}\n__MISE_ENV_EOF__\n`)
+            .join("");
+          fs.appendFileSync(process.env.GITHUB_ENV, out);
+        '
 
     - name: Install mise and tools
-      if: inputs.use-mise == 'true'
+      if: inputs.use-mise == 'true' && steps.mise-preinstalled.outputs.found != 'true'
       uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       with:
         # pinned: following latest mise once broke plugin installs (TSDINT-1644)
         version: "2026.9.1"
         install: true
-        cache: ${{ steps.mise-preinstalled.outputs.found != 'true' }}
+        cache: true
         reshim: true
         experimental: true
         github_token: ${{ inputs['gh-token'] }}

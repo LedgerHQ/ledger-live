@@ -93,6 +93,13 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: Verify mise environment
+        run: |
+          command -v node pnpm
+          node --version
+          echo "BIN_PATH=$BIN_PATH PROJECT_NAME=$PROJECT_NAME HK_MISE=$HK_MISE MISE_YES=$MISE_YES MISE_EXPERIMENTAL=$MISE_EXPERIMENTAL"
+          echo "$PATH" | tr ':' '\n' | head -6
+
       - name: Generate shards matrix and test files
         id: generate-shards
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
