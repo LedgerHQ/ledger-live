@@ -41,8 +41,11 @@
     "@features/platform-device-intent": "workspace:*",
     "@ledgerhq/device-contacts-kit": "catalog:",
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
+    "@ledgerhq/device-signer-kit-tron": "catalog:",
     "rxjs": "catalog:",
-    "semver": "catalog:"
+    "semver": "catalog:",
+    "@noble/hashes": "catalog:",
+    "bs58": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -86,6 +89,7 @@
     "react-native": "catalog:",
     "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@types/bs58": "catalog:"
   }
 }
