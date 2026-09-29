@@ -1,5 +1,5 @@
 import type { ContactsFlow } from "@features/flow-contacts";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { Step } from "~/renderer/reducers/walletSync";
 
 export enum AnalyticsPage {

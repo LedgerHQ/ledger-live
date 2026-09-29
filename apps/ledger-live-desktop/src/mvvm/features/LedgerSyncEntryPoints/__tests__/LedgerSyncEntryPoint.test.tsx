@@ -7,10 +7,10 @@ import { INITIAL_STATE, LedgerSyncEntryPointShared } from "./shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { EntryPoint } from "../types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 
