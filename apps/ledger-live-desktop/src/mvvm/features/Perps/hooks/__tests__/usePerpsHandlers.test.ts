@@ -2,7 +2,7 @@ import { renderHook } from "tests/testSetup";
 import { usePerpsHandlers } from "../usePerpsHandlers";
 import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { settleDepositRequest } from "../../utils/perpsDepositRequest";
+import { getDepositRequestId, settleDepositRequest } from "../../utils/perpsDepositRequest";
 
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
   handlers: jest.fn().mockReturnValue({ "custom.perps.signActions": jest.fn() }),
@@ -66,7 +66,7 @@ describe("usePerpsHandlers", () => {
     const params = { receiverAccount };
 
     const request = depositExecute?.(params);
-    settleDepositRequest({ swapId: "swap-1" });
+    settleDepositRequest(getDepositRequestId(), { swapId: "swap-1" });
 
     expect(mockOpenPerpsDeposit).toHaveBeenCalledWith(params);
     await expect(request).resolves.toEqual({ swapId: "swap-1" });
