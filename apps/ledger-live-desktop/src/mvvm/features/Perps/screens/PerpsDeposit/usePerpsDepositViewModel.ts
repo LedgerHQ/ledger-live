@@ -6,7 +6,7 @@ import {
   useCalculateCountervalueCallback,
   useCountervaluesState,
 } from "@ledgerhq/live-countervalues-react";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import type { PerpsDepositUiParams } from "@ledgerhq/live-common/wallet-api/Perps/server";

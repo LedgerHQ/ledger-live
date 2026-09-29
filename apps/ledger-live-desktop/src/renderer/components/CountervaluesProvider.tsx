@@ -9,13 +9,13 @@ import { createMockRateSource } from "@domain/api-market-countervalues/mock";
 import {
   exportCountervalues,
   hasNewCountervaluesToExport,
-} from "@ledgerhq/live-countervalues/logic";
+  type CounterValuesStateRaw,
+} from "@domain/entity-market-countervalues";
 import {
   CountervaluesBridge,
   CountervaluesProvider,
   useCountervaluesPolling,
 } from "@ledgerhq/live-countervalues-react";
-import type { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { useGetCounterValueIdsPolling } from "@ledgerhq/live-common/counterValues/state-manager/useGetCounterValueIdsPolling";
 import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "LLD/hooks/redux";

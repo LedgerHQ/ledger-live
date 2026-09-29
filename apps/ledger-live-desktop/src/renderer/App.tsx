@@ -26,7 +26,7 @@ import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { BrazeProvider } from "LLD/features/DynamicContent/components/BrazeProvider";
 import { useResetTimeRangeOnGraphRework } from "LLD/hooks/useResetTimeRangeOnGraphRework";
-import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
