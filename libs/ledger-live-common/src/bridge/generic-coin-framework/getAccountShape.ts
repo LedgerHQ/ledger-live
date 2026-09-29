@@ -849,11 +849,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         // a fragment. What it must not do is read as a network blip -- an A4 walk that stalls its
         // cursor is a defect in A4, and the log has to say so or nobody goes looking.
         const integrity = e instanceof PaginationIntegrityError;
+        const errorMessage = e instanceof Error ? e.message : String(e);
         logA4({
           level: "warn",
           message: integrity
-            ? `A4 returned a malformed history, falling back to delegate: ${e instanceof Error ? e.message : String(e)}`
-            : `A4 read failed, falling back to delegate: ${e instanceof Error ? e.message : String(e)}`,
+            ? `A4 returned a malformed history, falling back to delegate: ${errorMessage}`
+            : `A4 read failed, falling back to delegate: ${errorMessage}`,
           decision: integrity ? "read_failover_integrity" : "read_failover_to_delegate",
           chain: a4Network,
           status,
@@ -882,7 +883,17 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // alternative -- merging anyway -- would leave a hole strictly between the old watermark and
     // wherever this round's bound cut, which is worse than a short history: nothing revisits it,
     // because the *next* watermark derives from this round's newest operation, past the hole.
-    const discardOld = syncFromScratch || newOpsBounded;
+    //
+    // Gated on `newOps.length` too: the delegate walk bounds *raw* core operations, before the
+    // NFT/failed-incoming filter just above runs, so a bounded prefix can filter down to nothing.
+    // Discarding old data on an empty result would carry no new operation to replace it with,
+    // wiping the stored history for no gain -- the shape then persists `blockHeight: 0`, which
+    // reads as from-scratch next time and repeats the same bounded, all-filtered walk forever.
+    // With nothing new, the round is better left a no-op: `mergeOps(oldOps, [])` keeps the old
+    // watermark unchanged, so the next sync simply retries the same interval instead of erasing
+    // what was already known. The A4 path never reaches this corner -- it filters per page,
+    // before pagination counts anything, so `bounded` there already reflects the adapted count.
+    const discardOld = syncFromScratch || (newOpsBounded && newOps.length > 0);
 
     const newAssetOperations = newOps.filter(
       operation =>
@@ -912,8 +923,21 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // returns the whole page that reached the bound rather than splitting a transaction, so a walk
     // bounded at N hands back up to N plus one page -- and all of that overshoot can belong to a
     // single token.
+    //
+    // A bounded (but not from-scratch) round zeroes each sub-account's *operations* rather than
+    // dropping the sub-account itself: an empty `oldSubAccounts` array takes `mergeSubAccounts`'s
+    // early-return path, which hands back the freshly built sub-account as-is and skips the
+    // carry-over of `pendingOperations`, `swapHistory`, `balanceHistoryCache` and `creationDate`
+    // from the stored one -- fields `buildSubAccounts` cannot reconstruct (`swapHistory` in
+    // particular is local-only, never re-derivable from chain data). Emptying `operations` alone
+    // still starves `mergeOps` of the old rows that would otherwise straddle the un-walked
+    // interval, while keeping every sub-account matched so that carry-over still runs.
     const subAccounts = mergeSubAccounts(
-      discardOld ? [] : (initialAccount?.subAccounts ?? []),
+      syncFromScratch
+        ? []
+        : (initialAccount?.subAccounts ?? []).map(sa =>
+            newOpsBounded ? { ...sa, operations: [] } : sa,
+          ),
       newSubAccounts,
       maxOperations,
     );
