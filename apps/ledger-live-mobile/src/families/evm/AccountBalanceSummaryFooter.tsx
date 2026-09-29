@@ -1,4 +1,4 @@
-import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking/index";
+import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import {
   isStakingAccount,

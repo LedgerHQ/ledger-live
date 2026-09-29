@@ -2,6 +2,8 @@ import { createInstance, type InitOptions } from "i18next";
 import { initReactI18next } from "react-i18next";
 import locales, { i18_DEFAULT_NAMESPACE } from ".";
 import { DEFAULT_LANGUAGE } from "~/config/languages";
+import en from "../../../static/i18n/en/app.json";
+import { installContentAbTestCopyOverrides } from "./contentAbTestCopyOverrides";
 
 const config: InitOptions = {
   resources: locales,
@@ -23,6 +25,7 @@ const config: InitOptions = {
 const i18n = createInstance();
 
 i18n.use(initReactI18next).init(config);
+installContentAbTestCopyOverrides(i18n, en, i18_DEFAULT_NAMESPACE);
 
 // The app instance's `t`, for the non-React call sites that used to import `t` from `i18next`.
 // i18next already binds its prototype methods at construction and never reassigns `t`, so this

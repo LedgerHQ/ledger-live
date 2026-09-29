@@ -4,6 +4,11 @@ import userEvent from "@testing-library/user-event";
 import { DepositOptions } from "../DepositOptions";
 import type { DepositOptionsProps } from "../../../types";
 import { DEPOSIT_RESOURCES, i18nWrapper } from "./i18nWrapper";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 function renderDeposit(overrides: Partial<DepositOptionsProps> = {}) {
   const props: DepositOptionsProps = {
@@ -11,7 +16,6 @@ function renderDeposit(overrides: Partial<DepositOptionsProps> = {}) {
     page: "Pay",
     onClose: jest.fn(),
     onSelect: jest.fn(),
-    onTrackEvent: jest.fn(),
     ...overrides,
   };
   return {
@@ -21,6 +25,10 @@ function renderDeposit(overrides: Partial<DepositOptionsProps> = {}) {
 }
 
 describe("DepositOptions (Web)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterEach(() => {
     cleanup();
   });
@@ -31,7 +39,7 @@ describe("DepositOptions (Web)", () => {
 
     await user.click(screen.getByTestId("pay-card-deposit-option-swap"));
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "swap",
       buttonLocation: "deposit",
       page: "Pay",

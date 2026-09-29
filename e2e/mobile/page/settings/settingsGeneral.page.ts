@@ -2,6 +2,8 @@ import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { delay, isAndroid } from "@e2e/helpers/commonHelpers";
 
+const REVAMPED_LOCK_GRACE_MS = 2_000;
+
 export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");
   passwordTextInput = () => getElementById("password-text-input");
@@ -101,10 +103,25 @@ export default class SettingsGeneralPage {
     await this.enterNewPassword(password);
     await this.enterNewPassword(password);
     await this.expectPasswordToggleValue("ON");
+    await this.sendToBackgroundAndBack();
+  }
+
+  @Step("Set up a revamped password and lock the app")
+  async setupRevampedPasswordAndLock(password: string) {
+    await app.appLock.choosePassword(password);
+    await app.appLock.confirmPassword(password);
+    await this.expectPasswordToggleValue("ON");
+    await this.sendToBackgroundAndBack(REVAMPED_LOCK_GRACE_MS);
+  }
+
+  private async sendToBackgroundAndBack(awayMs = 0) {
     // Recurring JS timers post-RN-0.81 keep Detox's idle sync from completing during
     // background transitions; opt out around sendToHome/launchApp to avoid the hang.
     await app.common.disableSynchronizationForiOS();
     await device.sendToHome();
+    if (awayMs > 0) {
+      await delay(awayMs);
+    }
     if (isAndroid()) {
       /*
        * delay for android due to state management workaround

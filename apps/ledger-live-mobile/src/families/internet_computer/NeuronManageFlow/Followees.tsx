@@ -2,6 +2,7 @@ import {
   KNOWN_TOPICS,
   MAX_FOLLOWEES_PER_TOPIC,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
+import { parseNeuronId } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import { BaseInput, Button, Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useMemo, useState } from "react";
 import { TrackScreen } from "~/analytics";
@@ -27,16 +28,12 @@ const EMPTY_FOLLOWEES: string[] = [];
 
 type DraftIssue = "notANeuronId" | "outOfRange" | "duplicate" | "self" | "unadded";
 
-// A followee id is a nat64. Bounding it here rather than letting Candid refuse it keeps the fault on
-// the form: encoding happens inside signOperation, which would surface a developer string instead.
-const MAX_NEURON_ID = 2n ** 64n - 1n;
-
 /**
  * Reads the entry, reporting what is wrong with it and the id to add when nothing is.
  *
  * The entry is submitted as written, so it is validated rather than repaired: stripping non-digits
  * read `12a3` as neuron 123 and would delegate this neuron's voting power to a target the user never
- * typed. `follow` checks only the cap and that the topic exists, so nothing else catches any of it.
+ * typed.
  */
 const readDraft = (
   draft: string,
@@ -45,12 +42,11 @@ const readDraft = (
 ): { issue?: DraftIssue; id?: string } => {
   const entry = draft.trim();
   if (!entry) return {};
-  if (!/^\d+$/.test(entry)) return { issue: "notANeuronId" };
-  const value = BigInt(entry);
-  if (value === 0n || value > MAX_NEURON_ID) return { issue: "outOfRange" };
+  const parsed = parseNeuronId(entry);
+  if (parsed.issue) return { issue: parsed.issue };
   // Canonical, which is not the repair refused above: `0123` and `123` are the same neuron, so
   // comparing the entry as typed let a leading zero past both checks below and submitted it twice.
-  const id = value.toString();
+  const { id } = parsed;
   if (followeesIds.includes(id)) return { issue: "duplicate", id };
   // The canister accepts a neuron following itself; it just gains nothing by it, since a neuron
   // never sees its own ballot as a followee's.

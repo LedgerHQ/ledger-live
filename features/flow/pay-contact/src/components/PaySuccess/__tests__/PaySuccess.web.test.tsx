@@ -23,7 +23,7 @@ describe("PaySuccess (Web)", () => {
     renderStep();
 
     expect(screen.getByTestId("pay-success-step")).toBeVisible();
-    expect(screen.getByText("You paid (Ada)")).toBeVisible();
+    expect(screen.getByText("You paid Ada")).toBeVisible();
     expect(screen.getAllByText("100 USDC")[0]).toBeVisible();
     expect(screen.getByText("Ethereum 1")).toBeVisible();
   });
@@ -51,7 +51,7 @@ describe("PaySuccess (Web)", () => {
     renderStep({ recipient: undefined, recipientLabel: "0x1ad2...c53034" });
 
     expect(screen.getByTestId("pay-success-step")).toBeVisible();
-    expect(screen.getByText("You paid (0x1ad2...c53034)")).toBeVisible();
+    expect(screen.getByText("You paid 0x1ad2...c53034")).toBeVisible();
     expect(screen.getAllByText("100 USDC")[0]).toBeVisible();
   });
 

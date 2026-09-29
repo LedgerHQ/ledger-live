@@ -11,9 +11,13 @@ import {
 import { DollarConvert } from "@ledgerhq/lumen-ui-react/symbols";
 import type { RewardViewProps } from "./types";
 
-export function RewardView({ amount, countervalue, subtitle }: RewardViewProps) {
+export function RewardView({ amount, countervalue, subtitle, onPress }: RewardViewProps) {
   return (
-    <Card type="info" data-testid="card-details-reward">
+    <Card
+      type={onPress ? "interactive" : "info"}
+      onClick={onPress}
+      data-testid="card-details-reward"
+    >
       <CardHeader>
         <CardLeading>
           <Spot appearance="icon" icon={DollarConvert} size={48} />

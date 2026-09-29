@@ -1,67 +1,67 @@
 import React from "react";
-import { Box, Button, LinearGradient } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Pressable, useTheme } from "@ledgerhq/lumen-ui-rnative";
+import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { PayTrackPage } from "@features/platform-pay-analytics";
 import { CardArtwork } from "../CardArtwork/CardArtwork";
+import { CardFade } from "../CardArtwork/CardFade";
 import { CardVisual } from "../CardVisual/CardVisual";
-import { CardTopUpButton } from "../CardTopUp";
 import { CardDetailsSheet } from "./CardDetailsSheet";
-import { CARD_FADE } from "../CardArtwork/cardColors";
 import type { CardDetailsViewProps } from "../../types";
 
-const CARD_FADE_HEIGHT = "55%";
-
-const CARD_FADE_STOPS = [
-  { color: CARD_FADE, offset: 0, opacity: 0 },
-  { color: CARD_FADE, offset: 1, opacity: 1 },
-];
+const FACE_ACTIONS_INSET = { bottom: 0, left: 0, right: 0 };
 
 export function CardDetailsView({
   cardVisual,
-  detailsLabel,
   isSheetOpen,
   scene,
+  faceActions,
+  onFacePress,
   onTopUp,
-  onDetailsPress,
   onSheetClose,
   onSceneBack,
 }: CardDetailsViewProps) {
+  const { theme } = useTheme();
+  const fadeColor = theme.colors.bg?.base ?? ledgerLiveThemes.light.colors.bg.base;
+
   return (
     <Box>
       {isSheetOpen ? <PayTrackPage page="Card details" /> : null}
       <Box lx={{ position: "relative" }}>
-        {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
-
-        <LinearGradient
-          direction="to-bottom"
-          stops={CARD_FADE_STOPS}
-          pointerEvents="none"
-          lx={{
-            position: "absolute",
-            borderBottomLeftRadius: "lg",
-            borderBottomRightRadius: "lg",
-          }}
-          style={{ bottom: 0, left: 0, right: 0, height: CARD_FADE_HEIGHT }}
-        />
+        <Pressable
+          accessible={false}
+          disabled={!onFacePress}
+          onPress={onFacePress}
+          testID="card-details-face"
+        >
+          {cardVisual ? (
+            <CardVisual {...cardVisual} fadeColor={fadeColor} />
+          ) : (
+            <Box lx={{ borderRadius: "lg" }} style={{ overflow: "hidden" }}>
+              <CardArtwork />
+              <CardFade color={fadeColor} />
+            </Box>
+          )}
+        </Pressable>
 
         <Box
-          lx={{ flexDirection: "row", gap: "s8", padding: "s16", position: "absolute" }}
-          style={{ bottom: 0, left: 0, right: 0 }}
+          pointerEvents="box-none"
+          lx={{ flexDirection: "row", gap: "s8", position: "absolute" }}
+          style={FACE_ACTIONS_INSET}
         >
-          {onTopUp ? (
-            <Box lx={{ flex: 1 }}>
-              <CardTopUpButton onTopUp={onTopUp} />
+          {faceActions.map(action => (
+            <Box key={action.key} lx={{ flex: 1 }}>
+              <Button
+                appearance={action.appearance}
+                size="md"
+                isFull
+                onPress={action.onPress}
+                accessibilityLabel={action.label}
+                testID={action.testID}
+              >
+                {action.label}
+              </Button>
             </Box>
-          ) : null}
-          <Button
-            appearance="gray"
-            size="lg"
-            isFull
-            lx={{ flex: 1 }}
-            onPress={onDetailsPress}
-            accessibilityLabel={detailsLabel}
-          >
-            {detailsLabel}
-          </Button>
+          ))}
         </Box>
       </Box>
 

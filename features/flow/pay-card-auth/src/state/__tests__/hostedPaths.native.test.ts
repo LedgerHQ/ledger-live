@@ -2,6 +2,7 @@ import {
   buildAccessBaanxPath,
   buildAddAssetPath,
   buildOrderCardPath,
+  buildCashbackPath,
   buildTopUpPath,
   buildWithdrawalPath,
 } from "../hostedPaths";
@@ -90,6 +91,23 @@ describe("buildOrderCardPath", () => {
     ["an empty value", ""],
   ])("names no app when the US app id is %s", (_case, usAppId) => {
     expect(buildOrderCardPath(usAppId)).toBe("/order-card");
+  });
+});
+
+describe("buildCashbackPath", () => {
+  it("addresses the cashback page", () => {
+    expect(buildCashbackPath()).toBe("/cashback");
+  });
+
+  it("names the US app when the holder belongs to it", () => {
+    expect(buildCashbackPath("LEDGERUS")).toBe("/cashback?app_id=LEDGERUS");
+  });
+
+  it.each([
+    ["null", null],
+    ["an empty value", ""],
+  ])("names no app when the US app id is %s", (_case, usAppId) => {
+    expect(buildCashbackPath(usAppId)).toBe("/cashback");
   });
 });
 

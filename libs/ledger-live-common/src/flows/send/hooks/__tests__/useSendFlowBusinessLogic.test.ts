@@ -18,6 +18,7 @@ const transactionActions: SendFlowTransactionActions = {
   updateTransaction: jest.fn(),
   setRecipient: jest.fn(),
   setAccount: jest.fn(),
+  updateAccount: jest.fn(),
 };
 
 const operationActions: SendFlowOperationActions = {

@@ -148,6 +148,29 @@ export function lenseRate(
   return map.get(hour) || map.get(day) || fallback;
 }
 
+/**
+ * Fingerprint of the rate history that is relevant to a (from, to) pair up to `lastOpDate`.
+ *
+ * Two states sharing this key produce the same conversions for that pair over that span, so
+ * consumers can memoise derived results against it. Changing the format invalidates their caches.
+ * `earliestStableDate` is interpolated as a `Date`, so the key depends on the process timezone:
+ * compare keys only within one process.
+ */
+export function historyKey(
+  state: CounterValuesState,
+  from: Currency,
+  to: Currency,
+  lastOpDate: Date | null,
+): string {
+  if (inferCurrencyAPIID(from) === inferCurrencyAPIID(to)) return "identity";
+  const pairCache = lenseRateMap(state, { from, to });
+  if (!pairCache) return "noCV";
+  const { oldest, earliest, earliestStableDate } = pairCache.stats;
+  const bucket = lastOpDate ? formatCounterValueDay(lastOpDate) : "0";
+  const earliestRelevant = earliest && earliest <= bucket ? earliest : "";
+  return `${oldest ?? "_"}|${earliestStableDate ?? "_"}|${earliestRelevant}`;
+}
+
 export function calculate(
   state: CounterValuesState,
   initialQuery: {
@@ -221,6 +244,51 @@ export function calculateMany(
     const val = rate ? value * rate * mult : 0;
     return disableRounding ? val : Math.round(val);
   });
+}
+
+/**
+ * Merges fetched rate patches into `next` and regenerates the cache of every pair they touch.
+ *
+ * `patches` are keyed by pair id, each holding date keys (and `latest`) to rates; non-numeric values
+ * are skipped. `previous` supplies the cache stats to extend and the post-restore hole check.
+ */
+export function applyRatePatches(
+  previous: CounterValuesState,
+  next: Pick<CounterValuesState, "data" | "cache" | "status">,
+  patches: Array<Record<string, Record<string, unknown>>>,
+  settings: CountervaluesSettings,
+): CounterValuesState {
+  const { data, cache, status } = next;
+  const changesKeys: Record<string, unknown> = {};
+  patches.forEach(patch => {
+    Object.keys(patch).forEach(key => {
+      changesKeys[key] = 1;
+
+      if (!data[key]) {
+        data[key] = new Map();
+      }
+
+      const map = data[key];
+      Object.entries(patch[key]).forEach(([k, v]) => {
+        if (typeof v === "number") map.set(k, v);
+      });
+    });
+  });
+
+  // Synchronize cache. checkHoles on first run after restore (checkHolesOnNextLoad) or for new pairs (no status).
+  const checkHolesOnNextLoad = previous.checkHolesOnNextLoad === true;
+  Object.keys(changesKeys).forEach(pair => {
+    const checkHoles = checkHolesOnNextLoad || !status[pair];
+    const previousStats = previous.cache[pair]?.stats;
+    cache[pair] = generateCache(pair, data[pair], settings, checkHoles, previousStats);
+  });
+
+  return {
+    data,
+    cache,
+    status,
+    checkHolesOnNextLoad: false,
+  };
 }
 
 function generateCache(

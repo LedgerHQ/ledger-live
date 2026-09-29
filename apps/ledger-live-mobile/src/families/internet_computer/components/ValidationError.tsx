@@ -1,3 +1,4 @@
+import { canRetryNeuronCommand } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import type { ICPTransactionType } from "@ledgerhq/live-common/families/internet_computer/types";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
@@ -56,33 +57,6 @@ type Props = Readonly<
   }
 >;
 
-/**
- * Errors that say the command did not take effect: the canister refused it, the replica refused the
- * message before the canister saw it, or the node never took the message at all. Nothing ran, so
- * re-signing repeats nothing.
- */
-const NOTHING_EXECUTED = new Set(["ICPGovernanceRejected", "ICPCallRejected", "ICPNodeRefused"]);
-
-/**
- * Commands a second execution leaves in the same state as the first, so re-signing one is safe even
- * when the first may already have run.
- *
- * The dissolve-delay commands are the counter-example and the reason this is a whitelist: both land
- * on the canister's `increase_dissolve_delay`, which *adds* to the delay the neuron already has, so
- * a second one that executes doubles the change. Split, spawn, disburse and stake_maturity each move
- * funds or mint a neuron, and are equally not repeatable.
- */
-const IDEMPOTENT_COMMANDS = new Set<ICPTransactionType>([
-  "list_neurons",
-  "refresh_voting_power",
-  "start_dissolving",
-  "stop_dissolving",
-  "add_hot_key",
-  "remove_hot_key",
-  "auto_stake_maturity",
-  "follow",
-]);
-
 /** The failure tail both ICP flows share. Close leaves the flow; Retry is offered only when safe. */
 export default function ICPValidationError({
   navigation,
@@ -118,17 +92,7 @@ export default function ICPValidationError({
     navigation.goBack();
   }, [navigation, retryScreen, route.params]);
 
-  /*
-   * Three ways a retry is safe: the signature never left the device, so nothing was sent; the network
-   * answered that the command did not run; or running it twice makes no difference.
-   *
-   * Everything else is a request that may already be executing, and a retry cannot be a redelivery —
-   * the expiry is minted when the call is built, so re-signing produces a new request id and the IC's
-   * own de-duplication no longer covers it. Both copies can then take effect, which for an additive
-   * command like increase_dissolve_delay means the change applies twice.
-   */
-  const canRetry =
-    !signed || NOTHING_EXECUTED.has(error.name) || (!!command && IDEMPOTENT_COMMANDS.has(command));
+  const canRetry = canRetryNeuronCommand({ signed: !!signed, errorName: error.name, command });
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>

@@ -3,7 +3,9 @@ import type { Contact, ContactId } from "@domain/entity-contact";
 
 export type ContactsListItem = Readonly<{
   contactId: ContactId;
+  /** Raw name: render it with useContactDisplayName. */
   name: string;
+  isMe: boolean;
   initial: string;
   addressCount: number;
 }>;
@@ -53,7 +55,6 @@ export type ContactsListViewLabels = Readonly<{
   addContact: string;
   ledgerSyncCheckingAccessibilityLabel?: string;
   formatAddressCount: (count: number) => string;
-  formatMeDisplayName?: (name: string) => string;
 }>;
 
 export type ContactsCompactListLabels = Readonly<{
@@ -78,7 +79,6 @@ export type ContactsPageSharedProps = Readonly<{
   viewModel: ContactsPageViewModel;
   labels: ContactsListViewLabels;
   searchQuery: string;
-  meAvatarSrc: string;
   onOpenContact: (contactId: ContactId) => void;
   onAddContact: () => void;
   isLedgerSyncChecking: boolean;
@@ -96,7 +96,8 @@ export type ContactsListViewProps = ContactsPageSharedProps &
 /**
  * Surface the list is painted on. `base` is the app canvas (full page), `canvasSheet` the bottom
  * sheet canvas. The list owns opaque backgrounds (root, pinned search bar, sticky section headers)
- * that must match their host, otherwise two different blacks are visible.
+ * that must match their host, otherwise two different blacks are visible. It also tells the list who
+ * owns the bottom safe area: `base` pads for it, `canvasSheet` leaves it to the sheet host.
  */
 export type ContactsListSurface = "base" | "canvasSheet";
 

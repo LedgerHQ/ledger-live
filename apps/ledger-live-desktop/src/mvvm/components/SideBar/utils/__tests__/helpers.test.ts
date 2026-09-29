@@ -29,6 +29,18 @@ describe("pathnameToActive", () => {
     expect(pathnameToActive("/cryptos", undefined, false)).toBe("");
   });
 
+  it('should return "paytab" for a live app opened from the Pay tab', () => {
+    expect(pathnameToActive("/platform/some-app", undefined, false, "?returnTo=%2Fpaytab")).toBe(
+      "paytab",
+    );
+  });
+
+  it('should return "discover" for a live app with another returnTo', () => {
+    expect(pathnameToActive("/platform/some-app", undefined, false, "?returnTo=%2Fswap")).toBe(
+      "discover",
+    );
+  });
+
   it.each([
     { pathname: "/refer-a-friend", referPath: "/refer-a-friend" },
     { pathname: "/refer-a-friend/details", referPath: "/refer-a-friend" },

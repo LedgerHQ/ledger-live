@@ -95,6 +95,7 @@ export const scenarioBnb: Scenario<GenericTransaction, Account> = {
       },
       chainId: 56,
       name: "BNB Chain",
+      unit: { name: "BNB", code: "BNB", magnitude: 18 },
       gasTracker: {
         type: "ledger",
         explorerId: "bnb",
@@ -140,7 +141,7 @@ export const scenarioBnb: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks(bnb.ethereumLikeInfo?.chainId || 56);
+    await indexBlocks(56);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());

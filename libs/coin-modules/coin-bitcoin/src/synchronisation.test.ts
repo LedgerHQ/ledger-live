@@ -25,6 +25,15 @@ import type { Operation, SyncConfig } from "@ledgerhq/types-live";
 import { SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import { firstValueFrom } from "rxjs";
 import { registerChainAdapter } from "./chain-adapters/registry";
+import type { CoinConfig } from "./config";
+
+const coinConfig: CoinConfig = () => ({
+  info: {
+    status: { type: "active" },
+    name: "Bitcoin",
+    unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
+  },
+});
 
 describe("removeReplaced", () => {
   const baseTx: Omit<BtcOperation, "hash" | "id" | "blockHeight" | "date" | "extra"> = {
@@ -561,7 +570,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       },
     };
 
-    const observable = createTransparentSyncObservable(info, mockSignerContext);
+    const observable = createTransparentSyncObservable(info, mockSignerContext, coinConfig);
     const result = await firstValueFrom(observable);
 
     expect(result).toMatchObject({
@@ -586,7 +595,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       },
     };
 
-    const result = await performTransparentSync(info, mockSignerContext);
+    const result = await performTransparentSync(info, mockSignerContext, coinConfig);
 
     expect(result).toMatchObject({
       operationsCount: expect.any(Number),
@@ -620,7 +629,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       },
     };
 
-    const result = await performTransparentSync(info, mockSignerContext);
+    const result = await performTransparentSync(info, mockSignerContext, coinConfig);
 
     expect(result.balance).toEqual(new BigNumber(943_170));
     expect(result.spendableBalance).toEqual(new BigNumber(943_170));
@@ -677,7 +686,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       },
     };
 
-    const result = await performTransparentSync(info, mockSignerContext);
+    const result = await performTransparentSync(info, mockSignerContext, coinConfig);
 
     expect(result.operations?.[0].fee).toEqual(new BigNumber(55_000));
   });
@@ -698,7 +707,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       txs: [shieldingTransaction({ outputs: [changeOutput] })],
     });
 
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext);
+    const result = await performTransparentSync(shieldingInfo, mockSignerContext, coinConfig);
 
     expect(result.operations?.[0].recipients).toEqual(["u1theactualpayee"]);
   });
@@ -730,7 +739,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       ],
     });
 
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext);
+    const result = await performTransparentSync(shieldingInfo, mockSignerContext, coinConfig);
 
     expect(result.operations?.[0].recipients).toEqual(["tb1someoneelse", "u1theactualpayee"]);
   });
@@ -765,7 +774,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       ],
     });
 
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext);
+    const result = await performTransparentSync(shieldingInfo, mockSignerContext, coinConfig);
 
     const incoming = result.operations?.find(op => op.type === "IN");
     const outgoing = result.operations?.find(op => op.type === "OUT");
@@ -787,7 +796,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       txs: [shieldingTransaction({ outputs: [changeOutput] })],
     });
 
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext);
+    const result = await performTransparentSync(shieldingInfo, mockSignerContext, coinConfig);
 
     expect(result.operations?.[0].recipients).toEqual(["bc1change"]);
   });
@@ -808,7 +817,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       },
     };
 
-    const result = await performTransparentSync(info, mockSignerContext);
+    const result = await performTransparentSync(info, mockSignerContext, coinConfig);
 
     expect(result.spendableBalance).toEqual(result.balance);
   });
@@ -919,7 +928,12 @@ describe("buildSyncObservables", () => {
 
   it("should return only transparent sync for non-Zcash currency", () => {
     const signerContext = jest.fn();
-    const { syncs, syncType } = buildSyncObservables(baseInfo, defaultSyncConfig, signerContext);
+    const { syncs, syncType } = buildSyncObservables(
+      baseInfo,
+      defaultSyncConfig,
+      signerContext,
+      coinConfig,
+    );
 
     expect(syncType).toBe(SYNC_TYPE_TRANSPARENT);
     expect(syncs).toHaveLength(1);
@@ -927,7 +941,7 @@ describe("buildSyncObservables", () => {
 
   it("buildSyncObservables for bitcoin produces only transparent sync (isolation test)", () => {
     const signerContext = jest.fn();
-    const { syncs } = buildSyncObservables(baseInfo, defaultSyncConfig, signerContext);
+    const { syncs } = buildSyncObservables(baseInfo, defaultSyncConfig, signerContext, coinConfig);
     expect(syncs).toHaveLength(1); // only transparent, no shielded
   });
 });

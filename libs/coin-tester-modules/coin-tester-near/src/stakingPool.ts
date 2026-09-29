@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import BN from "bn.js";
 import { utils, type Account } from "near-api-js";
 import { NETWORK_ID, POOL_BALANCE, POOL_ID } from "./fixtures";
 import type { SandboxHandle } from "./sandbox";
@@ -15,6 +16,7 @@ const CACHE_DIR = join(__dirname, "..", ".cache");
 const WASM_PATH = join(CACHE_DIR, "staking_pool.wasm");
 
 const TGAS = 1_000_000_000_000n;
+const toNearBn = (amount: bigint) => new BN(amount.toString());
 
 const digestOf = (wasm: Buffer): string => createHash("sha256").update(wasm).digest("hex");
 
@@ -49,7 +51,7 @@ async function stakingPoolWasm(): Promise<Buffer> {
 export async function deployStakingPool(sandbox: SandboxHandle): Promise<Account> {
   const keyPair = utils.KeyPair.fromRandom("ed25519");
   await sandbox.keyStore.setKey(NETWORK_ID, POOL_ID, keyPair);
-  await sandbox.root.createAccount(POOL_ID, keyPair.getPublicKey(), POOL_BALANCE);
+  await sandbox.root.createAccount(POOL_ID, keyPair.getPublicKey(), toNearBn(POOL_BALANCE));
 
   const pool = await sandbox.near.account(POOL_ID);
   await pool.deployContract(await stakingPoolWasm());
@@ -62,7 +64,7 @@ export async function deployStakingPool(sandbox: SandboxHandle): Promise<Account
       stake_public_key: keyPair.getPublicKey().toString(),
       reward_fee_fraction: { numerator: 10, denominator: 100 },
     },
-    gas: 300n * TGAS,
+    gas: toNearBn(300n * TGAS),
   });
 
   return pool;
@@ -74,6 +76,6 @@ export async function pingPool(account: Account): Promise<void> {
     contractId: POOL_ID,
     methodName: "ping",
     args: {},
-    gas: 125n * TGAS,
+    gas: toNearBn(125n * TGAS),
   });
 }

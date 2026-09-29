@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router";
 import styled from "styled-components";
 import { Chip, Text } from "@ledgerhq/react-ui";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

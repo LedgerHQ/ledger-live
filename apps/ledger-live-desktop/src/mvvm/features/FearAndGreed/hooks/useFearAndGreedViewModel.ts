@@ -1,4 +1,4 @@
-import { useGetFearAndGreedLatestQuery } from "@domain/api-market-sentiment";
+import { useGetFearAndGreedLatestQuery } from "@domain/api-market-index-fear-and-greed";
 import { FEAR_AND_GREED_REFRESH_INTERVAL_MS } from "../constants";
 
 export const useFearAndGreedViewModel = () => {

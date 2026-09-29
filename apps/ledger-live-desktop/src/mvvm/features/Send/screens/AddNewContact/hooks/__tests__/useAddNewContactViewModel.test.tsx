@@ -153,7 +153,7 @@ describe("useAddNewContactViewModel", () => {
       isDomain: false,
     });
     mockedUseSendFlowData.mockReturnValue({
-      state: { account: { currency: ethereum } },
+      state: { account: { currency: ethereum }, transaction: { transaction: null } },
       recipientSearch: { value: address },
     } as never);
   });
@@ -192,7 +192,7 @@ describe("useAddNewContactViewModel", () => {
 
   it("should return to recipient when the address cannot be mapped", async () => {
     mockedUseSendFlowData.mockReturnValue({
-      state: { account: { currency: ethereum } },
+      state: { account: { currency: ethereum }, transaction: { transaction: null } },
       recipientSearch: { value: "   " },
     } as never);
 

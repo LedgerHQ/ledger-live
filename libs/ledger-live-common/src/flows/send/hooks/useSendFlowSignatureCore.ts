@@ -38,8 +38,11 @@ export type UseSendFlowSignatureCoreParams = Readonly<{
     setError: () => void;
     setSuccess: () => void;
   }>;
-  /** Advances the flow once signature resolves; the outcome lets platforms branch success vs failure. */
-  onFinish: (completion: SendFlowCompletion) => void;
+  /**
+   * Advances the flow once signature resolves; the outcome lets platforms branch success vs failure.
+   * `error` is set only on FAILURE.
+   */
+  onFinish: (completion: SendFlowCompletion, error?: Error) => void;
   /** Persists the optimistic operation as pending on the (main) account, app-side. */
   registerPendingOperation: (mainAccount: Account, operation: Operation) => void;
   /** Optional ENS name from the flow recipient state (fallback: transaction.recipientDomain). */
@@ -123,7 +126,7 @@ export function useSendFlowSignatureCore({
         statusActions.setError();
       }
 
-      onFinish(SEND_FLOW_COMPLETION.FAILURE);
+      onFinish(SEND_FLOW_COMPLETION.FAILURE, error);
     },
     [currency, operation, statusActions, onFinish],
   );

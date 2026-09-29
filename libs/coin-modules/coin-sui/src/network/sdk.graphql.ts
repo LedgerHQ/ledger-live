@@ -1,15 +1,10 @@
 import { log } from "@ledgerhq/logs";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
-import type {
-  CoinBalance,
-  Checkpoint,
-  DelegatedStake,
-  SuiTransactionBlockResponse,
-} from "@mysten/sui/jsonRpc";
 import { normalizeSuiAddress, toBase64 } from "@mysten/sui/utils";
 import { createSuiGraphQLClient, type SuiGraphQLClient } from "./graphql/client";
 import { type SuiCoinConfig } from "../config";
-import type { SuiValidator } from "../types";
+import type { DelegatedStake, SuiValidator } from "../types";
+import type { MinimalCheckpoint, SuiCoinBalance, SuiTransactionResponse } from "./types";
 import { fetcher } from "./fetcher";
 import {
   ALL_BALANCES_BY_OWNER,
@@ -28,7 +23,7 @@ import {
   type SuiSystemStateResult,
 } from "./graphql/queries";
 import {
-  graphqlTxToJsonRpcResponse,
+  graphqlTxToSuiTransaction,
   isFinalizedTxNode,
   mapEventNodeContents,
 } from "./graphql/transactions";
@@ -317,7 +312,7 @@ async function fetchSystemStateAndStakesPage(
   };
 }
 
-/** Page size 50 matches server default + JSON-RPC chunking. */
+/** Page size 50 matches the server default. */
 async function paginateRemainingStakes(
   api: SuiGraphQLClient,
   ownerAddr: string,
@@ -474,15 +469,14 @@ async function fetchRateChunk(
 // Public per-function GraphQL handlers (passed to `withTransport` from sdk.ts)
 // ============================================================================
 
-/** Paginates `BalanceConnection`; JSON-RPC-only `coinObjectCount`/`lockedBalance` are stubbed. */
+/** Paginates `BalanceConnection`. */
 export const getAllBalancesCachedGraphQL = async (
   api: SuiGraphQLClient,
   owner: string,
-): Promise<CoinBalance[]> => {
-  // GraphQL's `SuiAddress!` requires the canonical 32-byte form;
-  // JSON-RPC was tolerant. Normalise once at the boundary.
+): Promise<SuiCoinBalance[]> => {
+  // GraphQL's `SuiAddress!` requires the canonical 32-byte form. Normalise once at the boundary.
   const ownerAddr = normalizeSuiAddress(owner);
-  const { items } = await paginateWithCursorRecovery<CoinBalance>({
+  const { items } = await paginateWithCursorRecovery<SuiCoinBalance>({
     source: "balances",
     fetchPage: async cursor => {
       const res = await api.query({
@@ -493,8 +487,7 @@ export const getAllBalancesCachedGraphQL = async (
       return {
         // Drop nodes with no `coinType.repr` — the schema marks `Balance.coinType` nullable,
         // and a missing identifier would surface as a malformed entry downstream.
-        // `BigInt`-typed wire fields are nullable; "0" matches the JSON-RPC contract
-        // that downstream stringly-typed maths assumes.
+        // `BigInt`-typed wire fields are nullable; "0" keeps the downstream string maths total.
         items: (conn?.nodes ?? []).flatMap(b => {
           const repr = b.coinType?.repr;
           return repr
@@ -502,9 +495,7 @@ export const getAllBalancesCachedGraphQL = async (
                 {
                   // long → short coin type; consumers compare against `DEFAULT_COIN_TYPE`.
                   coinType: shortenCoinType(repr),
-                  coinObjectCount: 0,
                   totalBalance: b.totalBalance ?? "0",
-                  lockedBalance: {},
                   fundsInAddressBalance: b.addressBalance ?? "0",
                 },
               ]
@@ -538,8 +529,8 @@ export const getDelegatedStakesGraphQL = async (
  * Checkpoint metadata with the schema's nullable fields resolved, or a throw.
  *
  * `Checkpoint.digest` is `String` and `timestamp` is `DateTime` — both nullable — so coercing them
- * would hand sync an empty block hash or a 1970 timestamp: a silently invalid "block" that JSON-RPC
- * can never produce. Failing here keeps the transports at parity and makes the fault retryable.
+ * would hand sync an empty block hash or a 1970 timestamp: a silently invalid "block" that gRPC
+ * never produces either. Failing here keeps the transports at parity and makes the fault retryable.
  *
  * `sequenceNumber` is `UInt53!`, and `previousCheckpointDigest` is legitimately null at genesis, so
  * neither is checked.
@@ -551,7 +542,7 @@ const checkpointMetadata = (
   const seq = String(cp.sequenceNumber);
   if (!cp.digest) throw new Error(`${context}: checkpoint ${seq} has no digest`);
   if (!cp.timestamp) throw new Error(`${context}: checkpoint ${seq} has no timestamp`);
-  // RFC3339 → epoch-ms string (JSON-RPC convention).
+  // RFC3339 → epoch-ms string.
   const timestampMs = new Date(cp.timestamp).getTime();
   if (!Number.isFinite(timestampMs)) {
     throw new TypeError(
@@ -561,19 +552,19 @@ const checkpointMetadata = (
   return { digest: cp.digest, sequenceNumber: seq, timestampMs: String(timestampMs) };
 };
 
-/** GraphQL's `Query.checkpoint(sequenceNumber:)` only accepts UInt53; digests must route to JSON-RPC. */
+/** GraphQL's `Query.checkpoint(sequenceNumber:)` only accepts UInt53; digests must route to gRPC. */
 export const getCheckpointGraphQL = async (
   api: SuiGraphQLClient,
   id: string | number,
-): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> => {
+): Promise<MinimalCheckpoint> => {
   // UInt53 is a JSON number both directions; server rejects quoted strings.
   // `isSafeInteger` rules out NaN, digests, fractions, and out-of-range values
   // that would silently lose precision via `Number(id)`.
   const seq = typeof id === "number" ? id : Number(id);
   if (!Number.isSafeInteger(seq) || seq < 0) {
-    // Defence in depth: the dispatcher in sdk.ts already routes digests to JSON-RPC.
+    // Defence in depth: the dispatcher in sdk.ts already rejects digests on GraphQL.
     throw new TypeError(
-      `getCheckpointGraphQL: not a sequence number (id=${id}); digest lookups must route to JSON-RPC.`,
+      `getCheckpointGraphQL: not a sequence number (id=${id}); digest lookups must route to gRPC.`,
     );
   }
   const res = await api.query({
@@ -588,9 +579,7 @@ export const getCheckpointGraphQL = async (
 };
 
 /** Latest checkpoint in one round trip: `LATEST_CHECKPOINT_SEQUENCE` selects the fields directly. */
-export const getLastBlockGraphQL = async (
-  api: SuiGraphQLClient,
-): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> => {
+export const getLastBlockGraphQL = async (api: SuiGraphQLClient): Promise<MinimalCheckpoint> => {
   const res = await api.query({
     query: LATEST_CHECKPOINT_SEQUENCE,
   });
@@ -681,12 +670,12 @@ export const getTransactionsByAddressGraphQL = async (
   filter?: { beforeCheckpoint?: number; afterCheckpoint?: number },
   order: "asc" | "desc" = "desc",
 ): Promise<{
-  items: SuiTransactionBlockResponse[];
+  items: SuiTransactionResponse[];
   startCursor: string | null;
 }> => {
   const ownerAddr = normalizeSuiAddress(address);
   const ascending = order === "asc";
-  const accumulated: SuiTransactionBlockResponse[] = [];
+  const accumulated: SuiTransactionResponse[] = [];
   let pageCursor: string | null = cursor;
   let pages = 0;
 
@@ -713,15 +702,15 @@ export const getTransactionsByAddressGraphQL = async (
     const conn = unwrapGraphQL("TransactionsByAffectedAddress", res).transactions;
     if (!conn) break;
     // A page arrives oldest-first either way, so a descending walk reverses it to keep the
-    // accumulated array newest-first across pages, matching the JSON-RPC contract; an ascending walk
-    // keeps it as delivered. Skip not-yet-finalized nodes (indexing lag right after broadcast) —
-    // mapping them yields bogus Failed/1970 ops; they reappear, complete, on a later sync. Then cap
-    // the accumulator at `limit`.
+    // accumulated array newest-first across pages; an ascending walk keeps it as delivered. Skip
+    // not-yet-finalized nodes (indexing lag right after broadcast) — mapping them yields bogus
+    // Failed/1970 ops; they reappear, complete, on a later sync. Then cap the accumulator at
+    // `limit`.
     const nodes = conn.nodes ?? [];
     accumulated.push(
       ...(ascending ? nodes.slice() : nodes.slice().reverse())
         .filter(isFinalizedTxNode)
-        .map(graphqlTxToJsonRpcResponse),
+        .map(graphqlTxToSuiTransaction),
     );
     if (accumulated.length > limit) accumulated.length = limit;
 
@@ -760,10 +749,9 @@ export const resolveCheckpointSequenceForDigestGraphQL = async (
 };
 
 /**
- * Fetch just the events for a single digest, projected to the JSON-RPC event
- * shape (`{ type, parsedJson }`) that `stakingExtraFromEvents` consumes. Backs
- * the legacy `getStakingExtraByDigest` backfill path — operations synced before
- * staking extras were persisted on `op.extra`.
+ * Fetch just the events for a single digest, projected to the `{ type, parsedJson }` shape that
+ * `stakingExtraFromEvents` consumes. Backs the legacy `getStakingExtraByDigest` backfill path —
+ * operations synced before staking extras were persisted on `op.extra`.
  */
 export const getStakingEventsByDigestGraphQL = async (
   api: SuiGraphQLClient,
@@ -781,8 +769,8 @@ export const getStakingEventsByDigestGraphQL = async (
 /**
  * Per-page transaction history with the per-tx checkpoint digest exposed
  * alongside (which `transactionToCoinFrameworkOperation` needs as a synthetic blockHash).
- * Cheaper than the JSON-RPC version's separate per-checkpoint lookup —
- * `checkpoint.digest` is fetched in the same `transactions` round-trip.
+ * `checkpoint.digest` comes back in the same `transactions` round-trip, so no per-checkpoint
+ * lookup is needed.
  */
 export const getTransactionsWithCheckpointDigestsGraphQL = async (
   api: SuiGraphQLClient,
@@ -796,7 +784,7 @@ export const getTransactionsWithCheckpointDigestsGraphQL = async (
    */
   order: "asc" | "desc" = "desc",
 ): Promise<{
-  pairs: { tx: SuiTransactionBlockResponse; checkpointDigest: string | undefined }[];
+  pairs: { tx: SuiTransactionResponse; checkpointDigest: string | undefined }[];
   /** Older transactions exist beyond this page — the "more to come" signal for a `desc` walk. */
   hasPreviousPage: boolean;
   /** Newer transactions exist beyond this page — the same signal for an `asc` walk. */
@@ -830,7 +818,7 @@ export const getTransactionsWithCheckpointDigestsGraphQL = async (
   return {
     // Skip not-yet-finalized nodes (indexing lag) — they'd map to bogus Failed/1970 ops.
     pairs: nodes.filter(isFinalizedTxNode).map(node => ({
-      tx: graphqlTxToJsonRpcResponse(node),
+      tx: graphqlTxToSuiTransaction(node),
       checkpointDigest: node.effects?.checkpoint?.digest ?? undefined,
     })),
     // Surfaced so the caller can ask the server whether more history exists rather than inferring it
@@ -867,7 +855,7 @@ export const getBlockInfoFieldsGraphQL = async (
 
 /**
  * Checkpoint + every transaction in the block. Each tx is run through the
- * shared `graphqlTxToJsonRpcResponse` adapter so `toBlockTransaction` works
+ * shared `graphqlTxToSuiTransaction` adapter so `toBlockTransaction` works
  * unchanged. Paginates `transactions` until `hasNextPage` is false, bounded by
  * `MAX_PAGES`; the block's metadata is taken from the first page.
  */
@@ -881,9 +869,9 @@ export const getBlockGraphQL = async (
     timestampMs: string;
     previousDigest: string | null;
   };
-  transactions: SuiTransactionBlockResponse[];
+  transactions: SuiTransactionResponse[];
 } | null> => {
-  const transactions: SuiTransactionBlockResponse[] = [];
+  const transactions: SuiTransactionResponse[] = [];
   let info: {
     digest: string;
     sequenceNumber: string;
@@ -908,7 +896,7 @@ export const getBlockGraphQL = async (
       ...checkpointMetadata(cp, "GraphQL BlockBySequence"),
       previousDigest: cp.previousCheckpointDigest ?? null,
     };
-    transactions.push(...(cp.transactions?.nodes ?? []).map(graphqlTxToJsonRpcResponse));
+    transactions.push(...(cp.transactions?.nodes ?? []).map(graphqlTxToSuiTransaction));
     const pageInfo = cp.transactions?.pageInfo;
     if (!pageInfo?.hasNextPage || !pageInfo.endCursor) break;
     after = pageInfo.endCursor;
@@ -934,7 +922,7 @@ function bcsToBase64(transactionBlock: Uint8Array | string): string {
   return typeof transactionBlock === "string" ? transactionBlock : toBase64(transactionBlock);
 }
 
-/** Dry-run via `simulateTransaction`; returns the gas summary in the shape `paymentInfo` consumes from JSON-RPC. */
+/** Dry-run via `simulateTransaction`; returns the gas summary in the shape `paymentInfo` consumes. */
 export const simulateTransactionGraphQL = async (
   api: SuiGraphQLClient,
   transactionBlock: Uint8Array | string,

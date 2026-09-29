@@ -17,7 +17,7 @@ import {
   toTransactionRaw,
   toTransactionStatusRaw,
 } from "./transaction";
-import { FeeData } from "@ledgerhq/coin-evm/types/index";
+import { FeeData } from "@ledgerhq/coin-evm/types";
 import type {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,

@@ -55,5 +55,3 @@ export type TrackPagePayload = {
   name?: string | null;
   props?: Error | Props | null;
 };
-
-export type TrackingRouteRef = { current: string | null | undefined };

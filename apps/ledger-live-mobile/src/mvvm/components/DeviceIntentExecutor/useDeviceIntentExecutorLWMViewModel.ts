@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type {
   DeviceConnectionResult,
   DeviceIntentExecutorProps,
@@ -6,11 +6,14 @@ import type {
 } from "@features/platform-device-intent";
 import {
   dmkToLedgerDeviceIdMap,
+  type DeviceFlowFailure,
   type DeviceIntentExecutorHeaderContextValue,
   useDeviceIntentExecutorHeaderOverrideRequests,
 } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import {
+  acceptsScreenFailureReports,
+  getExecutorStateFailure,
   trackAppReady,
   trackDeviceflowCanceled,
   trackDeviceflowCompleted,
@@ -21,6 +24,7 @@ import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import type {
+  DeviceIntentTrackingContextValue,
   DeviceIntentTrackingProperties,
   SourceFlow,
 } from "./utils/DeviceIntentTrackingContext";
@@ -38,10 +42,10 @@ type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecut
 };
 
 export type DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps, Result = undefined> = {
-  sourceFlow: SourceFlow;
   wrappedProps: Props<JobState, Input, ExtraProps, Result>;
   hasHeaderOverride: boolean;
   headerContextValue: DeviceIntentExecutorHeaderContextValue;
+  trackingContextValue: DeviceIntentTrackingContextValue;
   /**
    * Tracks the "Close" `button_clicked` event when the drawer header close button is pressed.
    * Wired to the drawer's `onHeaderClosePressed` so tracking reflects real user intent, unlike
@@ -89,6 +93,8 @@ export function useDeviceIntentExecutorLWMViewModel<
   const flowStartedRef = useRef(false);
   const initializationCompletedRef = useRef(false);
   const cancelTrackedRef = useRef(false);
+  const failureRef = useRef<DeviceFlowFailure | null>(null);
+  const acceptsScreenFailureReportsRef = useRef(true);
   const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
 
   useKeepScreenAwake(enabled);
@@ -98,6 +104,8 @@ export function useDeviceIntentExecutorLWMViewModel<
       flowStartedRef.current = false;
       initializationCompletedRef.current = false;
       cancelTrackedRef.current = false;
+      failureRef.current = null;
+      acceptsScreenFailureReportsRef.current = true;
       return;
     }
 
@@ -109,6 +117,8 @@ export function useDeviceIntentExecutorLWMViewModel<
 
   const wrappedOnExecutorStateChanged = useCallback(
     (state: ExecutorState) => {
+      failureRef.current = getExecutorStateFailure(state);
+      acceptsScreenFailureReportsRef.current = acceptsScreenFailureReports(state);
       if (enabled && state.type === "executingIntent" && !initializationCompletedRef.current) {
         initializationCompletedRef.current = true;
         const { modelId, transport } = mapConnectionResult(state.connectionResult);
@@ -125,6 +135,15 @@ export function useDeviceIntentExecutorLWMViewModel<
     [enabled, onExecutorStateChanged, sourceFlow, analyticsProperties],
   );
 
+  const reportFailure = useCallback((failure: DeviceFlowFailure | null) => {
+    if (acceptsScreenFailureReportsRef.current) failureRef.current = failure;
+  }, []);
+
+  const trackingContextValue = useMemo<DeviceIntentTrackingContextValue>(
+    () => ({ sourceFlow, analyticsProperties, reportFailure }),
+    [sourceFlow, analyticsProperties, reportFailure],
+  );
+
   const trackClose = useCallback(() => {
     trackDrawerCloseButtonClicked({ sourceFlow, extraProperties: analyticsProperties });
   }, [sourceFlow, analyticsProperties]);
@@ -133,16 +152,20 @@ export function useDeviceIntentExecutorLWMViewModel<
     if (!cancelTrackedRef.current) {
       cancelTrackedRef.current = true;
       if (!initializationCompletedRef.current) {
-        trackDeviceflowCanceled({ sourceFlow, extraProperties: analyticsProperties });
+        trackDeviceflowCanceled({
+          sourceFlow,
+          extraProperties: analyticsProperties,
+          failure: failureRef.current,
+        });
       }
     }
     onUserCancel();
   }, [onUserCancel, sourceFlow, analyticsProperties]);
 
   return {
-    sourceFlow,
     hasHeaderOverride,
     headerContextValue,
+    trackingContextValue,
     onHeaderClosePressed: trackClose,
     onBackdropPress: trackClose,
     wrappedProps: {

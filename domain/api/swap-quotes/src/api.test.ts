@@ -8,7 +8,10 @@ import { makeQuotesInput } from "./fixtures/quotesInput";
 import { makeRawQuote, makeRawQuoteError } from "./fixtures/rawQuotes";
 import { buildQuotesParams, splitQuotes, swapQuotesApi, transformFetchQuotesResponse } from "./api";
 
-const EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-3.2.1" };
+const EXTRA = {
+  getSwapApiBaseUrl: () => "https://swap.test",
+  ledgerClientVersion: "test-3.2.1",
+};
 
 function createTestStore(extra: unknown) {
   return configureStore({
@@ -227,6 +230,65 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
     await initiate();
 
     expect(new URL(seen!.url).origin).toBe("https://swap.test");
+  });
+
+  it("re-reads the base url getter on every request, so a runtime override reaches the next call", async () => {
+    const origins: string[] = [];
+    server.use(
+      http.get("https://swap-one.test/quote", ({ request }) => {
+        origins.push(new URL(request.url).origin);
+        return HttpResponse.json([]);
+      }),
+      http.get("https://swap-two.test/quote", ({ request }) => {
+        origins.push(new URL(request.url).origin);
+        return HttpResponse.json([]);
+      }),
+    );
+
+    let baseUrl = "https://swap-one.test";
+    const dynamicStore = createTestStore({
+      getSwapApiBaseUrl: () => baseUrl,
+      ledgerClientVersion: "test-3.2.1",
+      authProvider: unauthenticatedProvider,
+    });
+    const initiateOnce = () =>
+      dynamicStore.dispatch(
+        swapQuotesApi.endpoints.fetchQuotes.initiate(
+          { providers: ["lifi"], quotesInput: makeQuotesInput(), counterValueCurrency: "usd" },
+          { forceRefetch: true },
+        ),
+      );
+
+    await initiateOnce();
+    baseUrl = "https://swap-two.test";
+    await initiateOnce();
+
+    expect(origins).toEqual(["https://swap-one.test", "https://swap-two.test"]);
+  });
+
+  it("rejects with a CUSTOM_ERROR and sends no request when the base url getter resolves empty", async () => {
+    let hits = 0;
+    server.use(
+      http.get("https://swap.test/quote", () => {
+        hits++;
+        return HttpResponse.json([]);
+      }),
+    );
+    const emptyBaseUrlStore = createTestStore({
+      getSwapApiBaseUrl: () => "",
+      ledgerClientVersion: "test-3.2.1",
+      authProvider: unauthenticatedProvider,
+    });
+
+    const result = await emptyBaseUrlStore.dispatch(
+      swapQuotesApi.endpoints.fetchQuotes.initiate(
+        { providers: ["lifi"], quotesInput: makeQuotesInput(), counterValueCurrency: "usd" },
+        { forceRefetch: true },
+      ),
+    );
+
+    expect(hits).toBe(0);
+    expect(result.error).toMatchObject({ status: "CUSTOM_ERROR" });
   });
 
   it("keeps customHeaders out of the cache key", async () => {

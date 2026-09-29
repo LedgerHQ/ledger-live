@@ -12,6 +12,9 @@ import { AddressMatchedSection } from "../AddressMatchedSection";
 import { useAddressMatchedSectionViewModel } from "../../hooks/useAddressMatchedSectionViewModel";
 
 jest.mock("@features/platform-contacts", () => ({
+  useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).useContactDisplayName,
   ContactAvatar: ({ testId }: { testId?: string }) => <span data-testid={testId} />,
 }));
 
@@ -188,6 +191,7 @@ describe("AddressMatchedSection", () => {
       matchedContact: {
         contactId: "contact-remi",
         contactName: "Remi",
+        isMe: false,
         addressId: "address-remi-ethereum",
         addressLabel: "Ethereum Network",
         address,

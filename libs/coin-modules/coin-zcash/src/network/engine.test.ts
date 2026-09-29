@@ -1,3 +1,4 @@
+import { log } from "@ledgerhq/logs";
 import type { ShieldedSyncResultRaw } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -188,6 +189,21 @@ describe("startSyncJob", () => {
       transactions: [],
     });
     expect(mockStartSync).not.toHaveBeenCalled();
+  });
+
+  it("logs only the endpoint's origin, while the native engine gets the full URL", async () => {
+    const grpcUrl = "https://user:secret@grpc.example.com/token/abc?key=xyz";
+    mockGetChainTip.mockResolvedValue(50);
+
+    await startSyncJob({ ...baseArgs, grpcUrl }, jest.fn(), { isCancelled: () => false });
+
+    expect(mockGetChainTip).toHaveBeenCalledWith(grpcUrl);
+    expect(log).toHaveBeenCalledWith(
+      "zcash",
+      "syncShielded start",
+      expect.objectContaining({ grpcUrl: "https://grpc.example.com" }),
+    );
+    expect(JSON.stringify((log as jest.Mock).mock.calls)).not.toContain("secret");
   });
 
   it("short-circuits when cancelled before getChainTip resolves", async () => {

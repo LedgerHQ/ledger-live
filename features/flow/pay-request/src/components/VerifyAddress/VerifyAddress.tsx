@@ -29,7 +29,6 @@ export function VerifyAddress(props: VerifyAddressProps) {
         verifyCta={verifyCta}
         onVerify={onVerify}
         onClose={onClose}
-        bottomInset={props.bottomInset}
       />
       <VerifyAddressSuccessView
         isOpen={isSuccessOpen}
@@ -39,7 +38,6 @@ export function VerifyAddress(props: VerifyAddressProps) {
         gotItCta={gotItCta}
         onGotIt={onGotIt}
         onClose={onClose}
-        bottomInset={props.bottomInset}
       />
     </>
   );

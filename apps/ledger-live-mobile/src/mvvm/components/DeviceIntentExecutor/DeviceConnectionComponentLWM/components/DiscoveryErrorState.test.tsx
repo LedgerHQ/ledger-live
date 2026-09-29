@@ -10,9 +10,9 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import { TrackScreen, track } from "~/analytics";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
-import { PAGE_CONNECT_DEVICE, trackDeviceflowCanceled } from "../../utils/trackDeviceIntent";
+import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { DiscoveryErrorState } from "./DiscoveryErrorState";
 
 jest.mock("~/analytics", () => {
@@ -230,8 +230,10 @@ function renderState({
 describe("DiscoveryErrorState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    currentRouteNameRef.current = PAGE_CONNECT_DEVICE.DiscoveryError;
+    setTrackingSource(PAGE_CONNECT_DEVICE.DiscoveryError);
   });
+
+  afterEach(resetTrackingPages);
 
   it.each(errorCases)("should render the $type error title", ({ type, title }) => {
     renderState({ type });
@@ -331,7 +333,7 @@ describe("DiscoveryErrorState", () => {
         category: PAGE_CONNECT_DEVICE.DiscoveryError,
         sourceFlow: "my_ledger",
         transport: "ble",
-        subError: "BluetoothDisabledPromptable",
+        subError: "bluetooth-disabled-promptable",
         deviceUxV2: true,
       }),
       undefined,
@@ -355,72 +357,21 @@ describe("DiscoveryErrorState", () => {
     expect(mockedTrackScreen.mock.calls[0]?.[0]).not.toHaveProperty("transport");
   });
 
-  it("GIVEN an unknown discovery error without resolution WHEN cancelling THEN it tracks deviceflow_failed", () => {
-    // GIVEN
-    renderState({ type: BaseDiscoveryErrorTypes.Unknown });
-    mockedTrack.mockClear();
-
-    // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
-
-    // THEN
-    expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
-      sourceFlow: "my_ledger",
-      deviceUxV2: true,
-    });
-  });
-
-  it("GIVEN a discovery error with no recovery resolution WHEN cancelling THEN it tracks deviceflow_failed", () => {
-    // GIVEN
-    renderState({ type: DiscoveryErrorTypes.BluetoothUnsupported });
-    mockedTrack.mockClear();
-
-    // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
-
-    // THEN
-    expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
-      sourceFlow: "my_ledger",
-      deviceUxV2: true,
-    });
-  });
-
-  it("GIVEN a discovery error with a retryable resolution WHEN cancelling THEN it tracks deviceflow_aborted", () => {
-    // GIVEN
+  it("GIVEN an unknown discovery error wrapping a DMK error WHEN rendering THEN it tracks the wrapped error as subError", () => {
+    // GIVEN / WHEN
     renderState({
-      type: DiscoveryErrorTypes.BluetoothDisabledPromptable,
+      type: BaseDiscoveryErrorTypes.Unknown,
       error: {
-        type: DiscoveryErrorTypes.BluetoothDisabledPromptable,
-        transportId: rnBleTransportIdentifier,
-        resolution: { type: "prompt", retry: jest.fn() },
+        type: BaseDiscoveryErrorTypes.Unknown,
+        error: { _tag: "TransportNotSupportedError" },
       },
     });
-    mockedTrack.mockClear();
-
-    // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
 
     // THEN
-    expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
-      sourceFlow: "my_ledger",
-      deviceUxV2: true,
-    });
-  });
-
-  it("GIVEN a terminal discovery error unmounted WHEN cancelling THEN it tracks deviceflow_aborted", () => {
-    // GIVEN
-    const { unmount } = renderState({ type: BaseDiscoveryErrorTypes.Unknown });
-    unmount();
-    mockedTrack.mockClear();
-
-    // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
-
-    // THEN
-    expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
-      sourceFlow: "my_ledger",
-      deviceUxV2: true,
-    });
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({ subError: "TransportNotSupportedError" }),
+      undefined,
+    );
   });
 
   it.each(primaryCtaButtonCases)(

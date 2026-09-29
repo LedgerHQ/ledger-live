@@ -41,16 +41,6 @@ const teamLedgerPartnerHoodies = {
     parser: intParser,
     desc: "safe max on maximum number of queries to synchronize a tezos account",
   },
-  API_SUI_TESTNET_NODE_PROXY: {
-    parser: stringParser,
-    def: "https://fullnode.testnet.sui.io:443",
-    desc: "public fullnode url for sui testnet node",
-  },
-  API_SUI_NODE_PROXY: {
-    parser: stringParser,
-    def: "https://sui.coin.ledger.com",
-    desc: "reverse proxy url for sui node",
-  },
   API_SUI_GRAPHQL_PROXY: {
     parser: stringParser,
     def: "https://sui.coin.ledger.com/graphql",

@@ -10,6 +10,7 @@ import {
   cardManagementApi,
   initiatePayCardLogout,
   useFreezeCardMutation,
+  useGetCardCashbackQuery,
   useGetCardLinkedWalletsQuery,
   useLinkWalletToCardMutation,
   useUnlinkWalletFromCardMutation,
@@ -20,7 +21,6 @@ import {
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
   useGetInternalWalletsQuery,
-  useGetRewardWalletQuery,
   useOrderCardMutation,
   useUnfreezeCardMutation,
 } from "./api";
@@ -68,15 +68,12 @@ const internalWalletsOnTheWire = [
   },
 ];
 
-const rewardWalletOnTheWire = {
-  id: "098aeb90-e7f7-4f81-bc2e-4963330122c5",
-  balance: "45.75",
-  currency: "usdc",
-  isWithdrawable: true,
-  type: "REWARD",
+const cashback = {
+  amount: "0.00294697",
+  currency: "BTC",
+  network: "bitcoin",
+  ratePercent: "1",
 };
-
-const { type: _rewardType, ...rewardWallet } = rewardWalletOnTheWire;
 
 const internalWallets = internalWalletsOnTheWire.map(({ type: _type, ...wallet }) => wallet);
 
@@ -144,11 +141,11 @@ describe("cardManagementApi configuration", () => {
       "createCardSetPinToken",
       "exchangeAuthorizationCode",
       "freezeCard",
+      "getCardCashback",
       "getCardLinkedWallets",
       "getCardStatus",
       "getCardTransactions",
       "getInternalWallets",
-      "getRewardWallet",
       "getUser",
       "getWalletHistory",
       "linkWalletToCard",
@@ -221,13 +218,11 @@ describe("cardManagementApi configuration", () => {
     expect(useUnlinkWalletFromCardMutation).toBeDefined();
     expect(cardManagementApi.endpoints.updateCardWalletPriorities).toBeDefined();
     expect(useUpdateCardWalletPrioritiesMutation).toBeDefined();
-    expect(cardManagementApi.endpoints.getRewardWallet).toBeDefined();
-    expect(useGetRewardWalletQuery).toBeDefined();
   });
 
-  it("exposes getRewardWallet and its hook", () => {
-    expect(cardManagementApi.endpoints.getRewardWallet).toBeDefined();
-    expect(useGetRewardWalletQuery).toBeDefined();
+  it("exposes getCardCashback and its hook", () => {
+    expect(cardManagementApi.endpoints.getCardCashback).toBeDefined();
+    expect(useGetCardCashbackQuery).toBeDefined();
   });
 
   it("registers under the shared cardApi reducer path", () => {
@@ -933,65 +928,76 @@ describe("cardManagementApi requests", () => {
     });
   });
 
-  describe("getRewardWallet", () => {
-    const REWARD_WALLET_PATH = "/v1/wallet/reward";
+  describe("getCardCashback", () => {
+    const CASHBACK_PATH = "/v1/card/cashback";
 
-    const readRewardWallet = () =>
-      makeStore("session-token").dispatch(cardManagementApi.endpoints.getRewardWallet.initiate());
+    const readCashback = () =>
+      makeStore("session-token").dispatch(cardManagementApi.endpoints.getCardCashback.initiate());
 
-    it("reads the wallet the rewards are paid into", async () => {
-      provider.get(REWARD_WALLET_PATH, () => jsonResponse(rewardWalletOnTheWire));
+    it("reads the cashback the card has earned and the rate it earns at", async () => {
+      provider.get(CASHBACK_PATH, () => jsonResponse(cashback));
 
-      const result = await readRewardWallet();
+      const result = await readCashback();
 
-      expectSessionRequest("GET", REWARD_WALLET_PATH);
-      // The wire fields, plus the Ledger currency the reward's asset resolves to.
-      expect(result.data).toEqual({ ...rewardWallet, ledgerId: expect.any(String) });
+      expectSessionRequest("GET", CASHBACK_PATH);
+      expect(result.data).toEqual({ ...cashback, ledgerId: "bitcoin" });
     });
 
-    it("resolves the reward to its Ledger currency, so no consumer has to map it again", async () => {
-      provider.get(REWARD_WALLET_PATH, () => jsonResponse(rewardWalletOnTheWire));
+    it("resolves the asset by its currency and network, as a linked wallet does", async () => {
+      provider.get(CASHBACK_PATH, () =>
+        jsonResponse({ ...cashback, currency: "usdc", network: "ethereum" }),
+      );
 
-      const result = await readRewardWallet();
+      const result = await readCashback();
 
-      // The reward names no network, so the catalog pair is completed by repeating the currency.
       expect(result.data?.ledgerId).toBe("ethereum/erc20/usd__coin");
     });
 
+    it("resolves an asset that names no network by its currency alone", async () => {
+      const { network: _network, ...withoutNetwork } = cashback;
+      provider.get(CASHBACK_PATH, () => jsonResponse(withoutNetwork));
+
+      const result = await readCashback();
+
+      expect(result.data).toEqual({ ...withoutNetwork, ledgerId: "bitcoin" });
+    });
+
+    it("resolves an asset whose network is null by its currency alone", async () => {
+      provider.get(CASHBACK_PATH, () => jsonResponse({ ...cashback, network: null }));
+
+      const result = await readCashback();
+
+      expect(result.data?.ledgerId).toBe("bitcoin");
+    });
+
+    it.each([
+      ["absent", (({ currency: _currency, ...rest }) => rest)(cashback)],
+      ["null", { ...cashback, currency: null }],
+    ])("keeps a cashback whose currency is %s, with nothing to resolve", async (_name, body) => {
+      provider.get(CASHBACK_PATH, () => jsonResponse(body));
+
+      const result = await readCashback();
+
+      expect(result.data?.amount).toBe(cashback.amount);
+      expect(result.data?.ledgerId).toBeUndefined();
+    });
+
     it("leaves the currency unresolved for an asset the catalog does not cover", async () => {
-      provider.get(REWARD_WALLET_PATH, () =>
-        jsonResponse({ ...rewardWalletOnTheWire, currency: "doge" }),
+      provider.get(CASHBACK_PATH, () =>
+        jsonResponse({ ...cashback, currency: "BXX", network: "ethereum" }),
       );
 
-      const result = await readRewardWallet();
+      const result = await readCashback();
 
       expect(result.data?.ledgerId).toBeUndefined();
-      expect(result.data?.balance).toBe(rewardWallet.balance);
+      expect(result.data?.amount).toBe(cashback.amount);
     });
 
-    it("keeps the balance a string, so its precision survives", async () => {
-      provider.get(REWARD_WALLET_PATH, () =>
-        jsonResponse({ ...rewardWalletOnTheWire, balance: "9007199254740993.000001" }),
-      );
+    it("rejects an answer without a rate", async () => {
+      const { ratePercent: _ratePercent, ...withoutRate } = cashback;
+      provider.get(CASHBACK_PATH, () => jsonResponse(withoutRate));
 
-      const result = await readRewardWallet();
-
-      expect(result.data?.balance).toBe("9007199254740993.000001");
-    });
-
-    it("drops the keys the wire contract does not declare", async () => {
-      provider.get(REWARD_WALLET_PATH, () => jsonResponse(rewardWalletOnTheWire));
-
-      const result = await readRewardWallet();
-
-      expect(result.data).not.toHaveProperty("type");
-    });
-
-    it("rejects an answer that does not say whether the rewards can be withdrawn", async () => {
-      const { isWithdrawable: _isWithdrawable, ...withoutFlag } = rewardWalletOnTheWire;
-      provider.get(REWARD_WALLET_PATH, () => jsonResponse(withoutFlag));
-
-      const result = await readRewardWallet();
+      const result = await readCashback();
 
       expect(result.data).toBeUndefined();
       expect(result.error).toBeDefined();

@@ -3,7 +3,6 @@ import {
   CARD_API_BASE_URL,
   cardApiWrapper as storeWrapper,
 } from "@support/msw-features-flow-pay-card";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import { I18nTestProvider } from "@shared/i18n/testing";
 
 export const CARD_TRANSACTIONS_URL = `${CARD_API_BASE_URL}/v1/card/transactions`;
@@ -26,7 +25,9 @@ export const DETAIL_COPY = {
   status: "Status",
   card: "Card",
   cardInfo: "The last four digits of the card used for this payment.",
-  fundingSource: "Funding source",
+  fundingSource_one: "Funding source",
+  fundingSource_other: "Funding sources",
+  cashback: "Cashback",
   transactionId: "Transaction ID",
   copyTransactionId: "Copy transaction ID",
   today: "Today {{time}}",
@@ -79,21 +80,13 @@ const CARD_TRANSACTIONS_RESOURCES = {
   },
 };
 
-export function cardApiWrapper({
-  signedIn = false,
-  track = jest.fn(),
-}: {
-  signedIn?: boolean;
-  track?: jest.Mock;
-} = {}) {
+export function cardApiWrapper({ signedIn = false }: { signedIn?: boolean } = {}) {
   const StoreWrapper = storeWrapper({ signedIn });
 
   return function CardApiWrapper({ children }: PropsWithChildren) {
     return (
       <StoreWrapper>
-        <PayAnalyticsProvider adapter={{ track }}>
-          <I18nTestProvider resources={CARD_TRANSACTIONS_RESOURCES}>{children}</I18nTestProvider>
-        </PayAnalyticsProvider>
+        <I18nTestProvider resources={CARD_TRANSACTIONS_RESOURCES}>{children}</I18nTestProvider>
       </StoreWrapper>
     );
   };

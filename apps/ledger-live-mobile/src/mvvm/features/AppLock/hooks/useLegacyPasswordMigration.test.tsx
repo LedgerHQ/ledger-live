@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { act, render, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import React from "react";
 import type { State } from "~/reducers/types";
@@ -49,6 +50,11 @@ describe("migrating a legacy password", () => {
     await waitFor(() => expect(store.getState().appLock.hasPassword).toBe(true));
 
     expect(store.getState().settings.privacy?.hasPassword).toBeFalsy();
+    expect(track).toHaveBeenCalledWith("encryption_updated", {
+      status: "migrated",
+      type: "password",
+      source: "migration",
+    });
   });
 
   it("waits while the legacy lock still holds, when the password is not yet in hand", async () => {
@@ -75,6 +81,11 @@ describe("migrating a legacy password", () => {
     const { store } = render(<Probe />, { overrideInitialState: legacyUser() });
 
     await waitFor(() => expect(store.getState().appLock.needsLongerPassword).toBe(true));
+    expect(track).toHaveBeenCalledWith("encryption_updated", {
+      status: "migrated",
+      type: "password",
+      source: "migration",
+    });
   });
 
   it("keeps the legacy lock when the migration defers, so the user still has a way in", async () => {
@@ -86,6 +97,7 @@ describe("migrating a legacy password", () => {
 
     expect(store.getState().settings.privacy?.hasPassword).toBe(true);
     expect(store.getState().appLock.hasPassword).toBe(false);
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("leaves both locks alone when the migration throws", async () => {
@@ -97,6 +109,7 @@ describe("migrating a legacy password", () => {
 
     expect(store.getState().settings.privacy?.hasPassword).toBe(true);
     expect(store.getState().appLock.hasPassword).toBe(false);
+    expect(track).not.toHaveBeenCalled();
   });
 });
 
@@ -111,6 +124,7 @@ describe("a migration an earlier run left half-recorded", () => {
     await waitFor(() => expect(store.getState().settings.privacy?.hasPassword).toBe(false));
     expect(store.getState().appLock.hasPassword).toBe(true);
     expect(migrateLegacyPassword).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("leaves a legacy user alone while their entry is still there", async () => {

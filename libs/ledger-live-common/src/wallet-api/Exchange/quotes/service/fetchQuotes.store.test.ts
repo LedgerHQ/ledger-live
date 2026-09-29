@@ -10,7 +10,10 @@ import { swapQuotesApi } from "../state-manager/api";
 import { resetSwapQuotesStore, setSwapQuotesStore } from "../state-manager/store";
 import { fetchQuotes } from "./fetchQuotes";
 
-const API_EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-1.0.0" };
+const API_EXTRA = {
+  getSwapApiBaseUrl: () => "https://swap.test",
+  ledgerClientVersion: "test-1.0.0",
+};
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const unauthenticatedProvider = {

@@ -9,7 +9,7 @@ describe("resolveContactAddressDetailActionsLabels", () => {
   it("maps translation keys to address detail action labels", () => {
     const t = jest.fn((key: string) => key);
 
-    const labels = resolveContactAddressDetailActionsLabels({ t });
+    const labels = resolveContactAddressDetailActionsLabels({ t, supportsDomain: true });
 
     expect(labels.delete.title).toBe("contacts.deleteAddress.title");
     expect(labels.rename.labelValidationErrors).toEqual({
@@ -23,12 +23,23 @@ describe("resolveContactAddressDetailActionsLabels", () => {
     expect(labels.signerMismatch.title).toBe("contacts.editSignerMismatch.title");
   });
 
+  it("uses the address-only placeholder when the network does not support domains", () => {
+    const t = jest.fn((key: string) => key);
+
+    const labels = resolveContactAddressDetailActionsLabels({ t, supportsDomain: false });
+
+    expect(labels.rename.addressValidation.addressPlaceholder).toBe(
+      "contacts.addAddressEntry.addressPlaceholderNoENS",
+    );
+  });
+
   it("allows overriding the address label too long translation key", () => {
     const t = jest.fn((key: string) => key);
 
     const labels = resolveContactAddressDetailActionsLabels({
       t,
       addressLabelTooLongKey: "contacts.addAddressName.labelTooLong",
+      supportsDomain: true,
     });
 
     expect(labels.rename.labelValidationErrors[CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]).toBe(

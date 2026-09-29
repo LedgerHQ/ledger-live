@@ -1,4 +1,4 @@
-import type { PayCardOnboardingWidgetState } from "./types";
+import type { PayCardOnboardingWidgetPersistedState, PayCardOnboardingWidgetState } from "./types";
 
 type PayCardOnboardingWidgetStateRoot = {
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
@@ -18,9 +18,19 @@ export function selectAnalyticsCardId(state: PayCardOnboardingWidgetStateRoot): 
   return state.payCardOnboardingWidget.analyticsCardId ?? null;
 }
 
+export function selectHasReadCardAccount(state: PayCardOnboardingWidgetStateRoot): boolean {
+  return state.payCardOnboardingWidget.hasReadCardAccount ?? false;
+}
+
+export function selectDigitalWalletProvisioningStartedAt(
+  state: PayCardOnboardingWidgetStateRoot,
+): number | null {
+  return state.payCardOnboardingWidget.digitalWalletProvisioningStartedAt ?? null;
+}
+
 export function payCardOnboardingWidgetPersistedSelector(
   state: PayCardOnboardingWidgetStateRoot,
-): PayCardOnboardingWidgetState {
+): PayCardOnboardingWidgetPersistedState {
   const reportedAnalyticsMilestones = (
     state.payCardOnboardingWidget.reportedAnalyticsMilestones ?? []
   ).filter(milestone => milestone !== "card-onboarding-in-progress");
@@ -29,5 +39,6 @@ export function payCardOnboardingWidgetPersistedSelector(
     hasCompletedOnboarding: state.payCardOnboardingWidget.hasCompletedOnboarding,
     analyticsCardId: state.payCardOnboardingWidget.analyticsCardId ?? null,
     reportedAnalyticsMilestones,
+    hasReadCardAccount: selectHasReadCardAccount(state),
   };
 }

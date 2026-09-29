@@ -880,9 +880,10 @@
       "tile" : "더 보기",
       "title" : "더 보기",
       "rows" : {
-        "managePin" : "PIN 코드 관리",
+        "managePin" : "카드 PIN",
         "accessBaanx" : "Baanx 액세스",
         "help" : "도움말",
+        "legal" : "법적 계약",
         "logout" : "로그아웃"
       }
     },
@@ -899,6 +900,7 @@
     },
     "card" : {
       "title" : "크립토 카드",
+      "topUp" : "충전",
       "balanceLabel" : "잔액",
       "freeze" : "동결",
       "unfreeze" : "동결 해제",
@@ -918,11 +920,49 @@
         "description" : "문제가 발생했습니다. 다시 시도하세요.",
         "retry" : "다시 시도하세요"
       },
+      "assets" : {
+        "title" : "자산",
+        "empty" : "아직 자산이 없습니다",
+        "error" : "자산을 로드할 수 없습니다",
+        "info" : "이 자산은 카드 결제에 사용됩니다. 결제 순서를 설정하거나 자산을 더 추가하세요.",
+        "manage" : "관리",
+        "manageDialog" : {
+          "title" : "자산 관리",
+          "description" : "드래그하여 자금 조달 순서를 설정하세요. 한 자산이 부족해지면 다음 자산이 자동으로 사용됩니다.",
+          "addAssetCaption" : "자산을 추가하기 위해 Baanx 페이지로 리디렉션됩니다.",
+          "addAsset" : "자산 추가"
+        },
+        "details" : {
+          "topUp" : "충전",
+          "withdraw" : "출금",
+          "transactions" : "트랜잭션"
+        },
+        "withdraw" : {
+          "title" : "Baanx로 리디렉션됩니다.",
+          "description" : "Baanx 계정에서 사용 중인 Ledger 지갑 주소로 자산을 출금하세요.",
+          "continue" : "계속"
+        },
+        "history" : {
+          "columns" : {
+            "amount" : "수량",
+            "value" : "가치"
+          }
+        }
+      },
+      "reward" : {
+        "title" : "총 캐시백"
+      },
       "numbers" : {
         "reveal" : "보기",
         "hide" : "숨기기",
         "failed" : "카드 번호를 불러올 수 없습니다",
-        "imageAlt" : "카드 번호"
+        "imageAlt" : "카드 번호",
+        "unlockTitle" : "패스워드를 입력하세요",
+        "passwordRequired" : "패스워드가 필요합니다",
+        "passwordMismatch" : "패스워드가 일치하지 않습니다",
+        "passwordIncorrect" : "잘못된 패스워드",
+        "passwordUnavailable" : "패스워드를 확인할 수 없습니다",
+        "passwordCreateFailed" : "패스워드를 설정하지 못했습니다"
       }
     },
     "cardTransactions" : {
@@ -954,6 +994,31 @@
           "DECLINED" : "거절됨",
           "REVERTED" : "실행 취소"
         }
+      },
+      "history" : {
+        "today" : "오늘",
+        "yesterday" : "어제",
+        "unknownDate" : "날짜 정보 없음",
+        "columns" : {
+          "transaction" : "트랜잭션",
+          "cashback" : "캐시백",
+          "fundingSources" : "사용 자산",
+          "amount" : "수량"
+        },
+        "paidWithAssets" : "{{count}}개 자산으로 결제",
+        "goToPay" : "결제 화면으로 이동",
+        "signedOut" : {
+          "title" : "로그인하여 카드 결제 내역을 확인하세요.",
+          "description" : "로그인하면 이곳에 카드 사용 내역이 표시됩니다."
+        },
+        "empty" : {
+          "title" : "아직 카드 결제 내역이 없습니다.",
+          "description" : "결제 내역이 생기면 이곳에 표시됩니다."
+        },
+        "error" : {
+          "title" : "카드 결제 내역을 불러올 수 없습니다.",
+          "description" : "네트워크 연결 상태를 확인하고 다시 시도하세요."
+        }
       }
     },
     "cardOnboarding" : {
@@ -965,6 +1030,28 @@
         "title" : "카드 설정을 완료하세요",
         "stepComplete" : "완료",
         "gotIt" : "확인"
+      },
+      "steps" : {
+        "createAccount" : {
+          "title" : "계정 만들기",
+          "description" : "시작하려면 본인 인증을 완료하세요."
+        },
+        "chooseCardType" : {
+          "title" : "카드 종류 선택",
+          "description" : "가상 카드와 실물 카드 중 하나를 선택해 주세요."
+        },
+        "topUpCard" : {
+          "title" : "카드 충전하기",
+          "description" : "USDC, USDT, BTC 등 다양한 자산으로 충전할 수 있습니다."
+        },
+        "firstPurchase" : {
+          "title" : "첫 결제하기",
+          "description" : "온라인 및 오프라인 매장에서 결제해 보세요."
+        },
+        "appleGooglePay" : {
+          "title" : "Apple/Google Pay에 추가하기",
+          "description" : "오프라인 매장에서 스마트폰으로 간편하게 결제해 보세요."
+        }
       }
     },
     "contacts" : {
@@ -2069,6 +2156,13 @@
     "details" : "{{ currency }} 세부정보",
     "multipleAddresses" : "왜 주소가 여러 개인가요?",
     "extra" : {
+      "pltReject" : {
+        "title" : "실패 사유",
+        "nonExistentToken" : "Concordium 네트워크에 존재하지 않는 토큰입니다.",
+        "recipientNotFound" : "Concordium에 수령인 계정이 존재하지 않습니다.",
+        "insufficientBalance" : "계정 토큰 잔액이 부족합니다.",
+        "rejected" : "Concordium에서 해당 작업을 거부했습니다."
+      },
       "frozenAmount" : "동결 금액",
       "unfreezeAmount" : "동결 해제 금액",
       "votes" : "투표 ({{number}})",
@@ -2799,7 +2893,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "{{memoLabel}} 입력",
-      "description" : "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} may result in a loss of funds."
+      "description" : "거래소로 {{currency}} 전송 시 {{memoLabel}} 입력이 필요합니다. 이는 트랜잭션 수신자를 식별하는 기능으로, {{memoLabel}} 미입력 시 자산을 분실할 수 있습니다."
     },
     "networkFeesInFiat" : "네트워크 수수료 {{currency}}",
     "feesAmount" : "수수료({{unit}})",
@@ -5316,6 +5410,29 @@
           "title" : "로컬 브레이즈 카드 생성",
           "add" : "추가",
           "dismiss" : "모든 카드 무시",
+          "inspect" : {
+            "tab" : "검사",
+            "snapshot" : "현지 적격성",
+            "funnel" : "파이프라인",
+            "fetched" : "Braze에서 페치됨: {{count}}",
+            "removedEligibility" : "제거됨(로컬 적격성): {{count}}",
+            "eligible" : "적격: {{count}}",
+            "yes" : "예",
+            "no" : "아니오",
+            "injectTitle" : "페치 캐시(cache)에 주입",
+            "inject" : "페치 캐시(cache)에 주입",
+            "location" : "위치",
+            "requiredStates" : "필수 상태",
+            "cards" : "페치된 카드",
+            "empty" : "가져온 카드가 없습니다.",
+            "none" : "없음",
+            "blockedBy" : "차단 요인: {{blockedBy}} ({{reason}})",
+            "eligibleStatus" : "적격",
+            "unevaluated" : "평가되지 않음: {{count}}",
+            "unevaluatedStatus" : "평가되지 않음",
+            "missingId" : "ID 누락",
+            "missingIdStatus" : "평가되지 않음(ID 누락)"
+          },
           "fields" : {
             "notification" : "알림 콘텐츠 카드",
             "action" : "액션 콘텐츠 카드",
@@ -6941,7 +7058,7 @@
       "memo" : "태그"
     },
     "zcash" : {
-      "memoTooltip" : "A {{memoLabel}} is optional when sending {{currency}}. It is encrypted and only the recipient can read it. Some exchanges require one to identify your transaction."
+      "memoTooltip" : "{{currency}} 전송 시 {{memoLabel}}은(는) 선택 사항입니다. 이 내용은 암호화되며 수령인만 읽을 수 있습니다. 일부 거래소에서는 트랜잭션 식별을 위해 이를 요구합니다."
     }
   },
   "errors" : {
@@ -7918,7 +8035,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "이 토큰을 전송할 수 없는 계정입니다",
-      "description" : "토큰 발행자가 전송 가능 대상을 제한하고 있으며, 이 계정에는 권한이 없습니다. 액세스 권한에 대해서는 토큰 발행자에게 문의하세요."
+      "description" : "토큰 발행자가 전송 권한을 제한하고 있습니다. 자세한 내용은 토큰 발행자에게 문의하세요."
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "이 계정에는 해당 토큰을 전송할 권한(승인)이 없습니다",
+      "description" : "토큰 발행자가 승인된 발신자 목록을 관리하고 있으며, 이 계정은 해당 목록에 없습니다. 승인 권한은 Ledger가 아닌 토큰 발행자에게 있습니다."
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "승인 권한은 Ledger가 아닌 토큰 발행자에게 있습니다",
+      "description" : "토큰 발행자가 제한한 계정입니다. 자세한 내용은 발행자에게 문의하세요."
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "토큰 관련 제한 사항을 확인할 수 없습니다",
@@ -8171,6 +8296,30 @@
     },
     "AleoApiConfigurationResetError" : {
       "title" : "레코드 스캐너 설정이 초기화되었습니다. 계정을 다시 동기화하세요."
+    },
+    "AleoNoClaimableUnbondedFunds" : {
+      "title" : "아직 수령할 수 있는 ALEO가 없습니다.",
+      "description" : "언본딩 대기 기간이 지나야 ALEO를 수령할 수 있습니다. 대기 기간 종료 후 다시 확인하세요."
+    },
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "이미 {{bondedValidator}}에 스테이킹 중입니다. 검증인을 변경하려면 먼저 스테이킹을 해제하세요.",
+      "description" : "Aleo는 계정당 하나의 검증인만 허용합니다. 다른 곳에 스테이킹하려면 먼저 {{bondedValidator}}에서 스테이킹을 해제하세요."
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "한 번에 {{minAmount}} 이상 스테이킹해야 합니다.",
+      "description" : "최소 스테이킹 수량은 {{minAmount}}입니다."
+    },
+    "AleoClosedValidator" : {
+      "title" : "이 검증인은 신규 위임자를 받지 않습니다.",
+      "description" : "이 검증인은 신규 위임자를 받지 않습니다. 계속하려면 스테이킹이 가능한 다른 검증인을 선택하세요."
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "스테이킹하려면 총 최소 {{minAmount}}이 필요합니다.",
+      "description" : "총 스테이킹 수량이 최소 {{minAmount}} 이상이어야 합니다."
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "이 검증인은 언본딩 중입니다.",
+      "description" : "해당 검증인이 자신의 자산을 회수하고 있어 신규 스테이킹이 제한된 상태입니다. 다른 검증인을 선택해 주세요."
     },
     "BackupAppDataError" : {
       "title" : "앱 데이터 백업 중 오류가 발생했습니다"
@@ -9139,7 +9288,11 @@
     "opted_out" : {
       "title" : "더 안전하게, 더 자유롭게",
       "description" : "보안 기능에 대해 자세히 알아보세요.",
-      "cta" : "자세히 알아보기"
+      "cta" : "자세히 알아보기",
+      "nanoS" : {
+        "title" : "더 안전하게, 더 자유롭게",
+        "description" : "최신 OS 및 보안 기능에 대해 자세히 알아보세요."
+      }
     },
     "profile" : {
       "title" : "장치 업그레이드",
@@ -9237,6 +9390,7 @@
     "unsupportedNetworkTooltip" : "{{network}} 네트워크는 아직 지원되지 않습니다",
     "notAvailableYet" : "지원 예정",
     "selectAccount" : "계정 선택",
+    "selectAccountToPayFrom" : "출금 계정 선택",
     "selectAccountPerpsTitle" : "Hyperliquid 계정 선택",
     "selectAccountPerpsDescription" : "거래를 시작하려면 입금 계좌를 선택해 주세요",
     "selectAccountPerpsEmptyDescription" : "무기한 선물 거래 자금을 입금하려면 Hyperliquid 계정이 필요합니다. 먼저 계정을 추가하세요.",
@@ -9670,10 +9824,70 @@
         "lastSync" : "마지막 동기화: {{date}}"
       }
     },
+    "stake" : {
+      "table" : {
+        "header" : "스테이킹",
+        "status" : "상태",
+        "validator" : "검증인",
+        "amount" : "수량",
+        "staked" : "스테이킹 완료",
+        "rate" : "예상 보상 비율",
+        "completion" : "완료",
+        "source" : "출처",
+        "estimatedRate" : "{{rate}}% 예상",
+        "unknownValidator" : "알 수 없는 검증인",
+        "manage" : "관리"
+      },
+      "status" : {
+        "earningTooltip" : "이 포지션에서 보상이 적립되고 있습니다.",
+        "unknown" : "상태 확인 불가"
+      },
+      "stakedBalance" : "스테이킹 완료",
+      "stakedBalanceTooltip" : "검증인에 본딩된 수량입니다. 상태 열에서 보상을 받고 있는지 확인할 수 있습니다.",
+      "unstakingBalance" : "언스테이킹",
+      "unstakingBalanceTooltip" : "언본딩 중이며 아직 수령할 수 없는 수량",
+      "claimableBalance" : "수령 가능",
+      "claimableBalanceTooltip" : "언본딩이 완료되어 이용 가능한 잔액으로 돌려받을 수 있는 수량",
+      "nonEarning" : {
+        "fullCommission" : "이 검증인은 수수료를 100% 부과하므로 귀하에게 분배되는 보상이 없습니다.",
+        "overConcentrated" : "이 검증인은 전체 예치된 ALEO의 25% 이상을 보유하고 있습니다. 프로토콜은 해당 한도를 초과하는 수량에 대해 보상을 지급하지 않으므로 받을 수 있는 보상이 없습니다.",
+        "leftCommittee" : "이 검증인은 더 이상 위원회에 속해 있지 않아 스테이킹 보상이 지급되지 않습니다. 다시 보상을 받으려면 언스테이킹 후 다른 검증인에게 본딩하세요.",
+        "ownStakeBelowMinimum" : "이 검증인에게 예치한 총 스테이킹 수량이 최소 기준인 10,000 ALEO 미만이므로 보상을 받을 수 없습니다. 다시 보상을 받으려면 스테이킹 수량을 추가하세요."
+      },
+      "unstaking" : {
+        "header" : "언스테이킹",
+        "headerTooltip" : "체인이 언본딩 블록 높이에 도달하면 언본딩된 ALEO를 수령할 수 있습니다.",
+        "sourceTooltip" : "언본딩된 ALEO는 검증인이 아닌, 프로토콜이 수령 가능할 때까지 보유합니다. 체인은 어느 검증인으로부터 온 것인지 기록하지 않습니다.",
+        "pendingTooltip" : "아직 언본딩 중 - 아직 수령할 수 없습니다.",
+        "claimableTooltip" : "언본딩이 완료되었습니다. 이 자산을 수령할 수 있습니다.",
+        "settling" : "거의 완료되었어요...",
+        "settlingTooltip" : "언본딩 기간이 종료되었습니다. 수량을 새로고침하는 중 - 곧 수령할 수 있습니다.",
+        "claimPending" : "수령 중...",
+        "claimPendingTooltip" : "수령 요청이 전송되었으며 승인 대기 중입니다. 이 자산은 곧 이용 가능한 수량에 반영됩니다.",
+        "unbondPending" : "언스테이킹 중...",
+        "unbondPendingTooltip" : "언스테이킹 요청이 전송되었으며 승인 대기 중입니다. 이 작업은 동일한 언본딩 포지션을 변경하므로, 완료될 때까지 수령을 진행할 수 없습니다."
+      },
+      "claim" : "수령",
+      "claimableAtTooltip" : "블록 {{height}}에서 수령 가능 (현재 블록: {{current}})",
+      "blocksRemaining_one" : "약 {{count}}개 블록(Block) 남음",
+      "blocksRemaining_other" : "약 {{count}}개 블록(Block) 남음",
+      "bondPendingTooltip" : "스테이킹이 전송되었으며 확인 대기 중입니다. Aleo는 계정당 하나의 스테이킹 포지션만 유지하므로, 현재 진행 중인 작업이 완료될 때까지 스테이킹을 진행할 수 없습니다.",
+      "emptyState" : {
+        "description" : "{{name}}을(를) 스테이킹하여 보상을 적립할 수 있습니다.",
+        "earnRewards" : "보상 받기"
+      }
+    },
     "operations" : {
       "type" : {
         "public" : "공개",
         "private" : "비공개"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "검증인",
+        "bondedAmount" : "스테이킹 수량",
+        "unbondedAmount" : "스테이킹 해제 수량"
       }
     },
     "send" : {
@@ -9691,6 +9905,9 @@
         "errorTitle" : "비공개 수량 동기화 실패",
         "errorDesc" : "문제가 발생했습니다. 잠시 후 다시 시도하세요"
       }
+    },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "수령"
     },
     "bond" : {
       "flow" : {
@@ -9735,7 +9952,6 @@
     "manage" : {
       "headerAction" : "수익 창출",
       "title" : "스테이킹 관리",
-      "comingSoonTooltip" : "곧 공개 예정",
       "bond" : {
         "title" : "본딩",
         "description" : "ALEO를 검증인에게 본딩하고 보상을 받으세요."
@@ -9748,7 +9964,10 @@
         "title" : "수령",
         "description" : "본딩 해제된 ALEO를 사용 가능한 잔액으로 가져옵니다."
       },
-      "unbondPendingTooltip" : "언스테이킹 승인 대기 중. Aleo는 한 번에 하나의 언본딩 포지션만 추적하므로, 현재 진행 중인 작업이 완료될 때까지 추가 언본딩을 진행할 수 없습니다."
+      "unbondPendingTooltip" : "언스테이킹 승인 대기 중. Aleo 네트워크는 한 번에 하나의 작업만 처리할 수 있어, 현재 진행 중인 작업이 완료될 때까지 추가 언본딩이나 수령 절차가 제한됩니다.",
+      "claimPendingTooltip" : "수령 승인 대기 중. Aleo 네트워크는 한 번에 하나의 작업만 처리할 수 있어, 현재 진행 중인 작업이 완료될 때까지 추가 언본딩이나 수령 절차가 제한됩니다.",
+      "stillUnbondingTooltip" : "아직 언본딩 대기 기간이 종료되지 않았습니다. 이 기간이 지나면 ALEO를 수령할 수 있습니다.",
+      "nothingToClaimTooltip" : "수령할 수 있는 ALEO가 없습니다. 먼저 스테이킹된 자산을 언본딩하세요."
     },
     "unbond" : {
       "flow" : {
@@ -9773,6 +9992,30 @@
           }
         }
       }
+    },
+    "claim" : {
+      "flow" : {
+        "title" : "ALEO 수령하기",
+        "steps" : {
+          "summary" : {
+            "title" : "요약",
+            "info" : "언본딩 대기 기간이 종료된 모든 ALEO를 내 지갑으로 가져옵니다.",
+            "claimableAmountLabel" : "수령 가능 수량"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "수령 요청 완료",
+              "text" : "수령 요청이 네트워크에 전송되었습니다.",
+              "cta" : "상세 내역 보기"
+            },
+            "broadcastError" : "수령 트랜잭션 서명은 완료되었으나, 네트워크로 전송하지 못했습니다."
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9780,26 +10023,6 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "업데이트 중 오류가 발생했습니다. 다시 시도하세요",
     "installAndRelaunch" : "새로운 업데이트. 설치하고 다시 시작하기"
-  },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "내 포트폴리오 한눈에 보기",
-        "description" : "전체 잔액을 한눈에 확인하고, \"오늘(Today)\" 탭에서 자세한 내용을 살펴보세요."
-      },
-      "navigation" : {
-        "title" : "핵심 기능을 더 빠르게",
-        "description" : "받기, 매수, 매도 및 전송 기능을 빠르게 이용해 보세요."
-      },
-      "actions" : {
-        "title" : "즉각적인 시장 트렌드 확인",
-        "description" : "포트폴리오에서 시장 동향을 빠르게 확인하고, 인사이트를 바탕으로 빠르게 대응하세요."
-      }
-    },
-    "cta" : {
-      "continue" : "계속",
-      "explore" : "새로워진 포트폴리오 살펴보기"
-    }
   },
   "q2Tour" : {
     "slides" : {
@@ -9898,6 +10121,8 @@
   },
   "history" : {
     "title" : "거래 내역",
+    "cardScope" : "카드",
+    "cardAssetScope" : "카드 · {{assetName}}",
     "pending" : "보류 중인 트랜잭션",
     "pending_other" : "보류 중인 트랜잭션",
     "columns" : {
@@ -9913,6 +10138,11 @@
     "emptyState" : {
       "title" : "아직 트랜잭션 내역이 없습니다",
       "description" : "트랜잭션 내역을 확인하려면 나중에 다시 방문하세요."
+    },
+    "tabs" : {
+      "crypto" : "암호화폐",
+      "card" : "카드",
+      "accessibilityLabel" : "트랜잭션 내역 유형"
     },
     "actionsBar" : {
       "csv" : "내보내기",

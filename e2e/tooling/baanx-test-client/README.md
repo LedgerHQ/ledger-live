@@ -16,9 +16,9 @@ credential for the Baanx API; it is not an equivalent of `cardSession` and canno
 the password login returns no refresh token.
 
 There is one deliberate bridge, and it is a test scaffold rather than an equivalence:
-[`--session`](#starting-ledger-wallet-desktop-already-signed-in) synthesises a `PayCardSession` with
-a placeholder refresh token so Desktop can be started already signed in for local development and
-E2E. Read that section before using it, in particular the one about `CARD_BAANX_API_URL` having to match
+[`--session`](#starting-the-app-already-signed-in) synthesises a `PayCardSession` with a placeholder
+refresh token so Desktop and Mobile can be started already signed in for local development and E2E.
+Read that section before using it, in particular the one about `CARD_BAANX_API_URL` having to match
 the host that minted the token.
 
 ## Assumption: our test users are authenticator-based, not SMS
@@ -94,11 +94,21 @@ TOKEN=$(pnpm --silent --filter @ledgerhq/baanx-test-client token)
 
 `-- --json` prints the full session, `-- --help` lists the variables.
 
-### Starting Ledger Wallet Desktop already signed in
+### Starting the app already signed in
 
 Desktop cannot finish the OAuth login today — the hosted page opens in the user's own browser and
-reports nothing back (LIVE-34740) — so a signed-in state has to be injected. `-- --session` prints a
-`PayCardSession` for exactly that:
+reports nothing back (LIVE-34740) — so a signed-in state has to be injected. Mobile uses the same
+seam so E2E and local Metro can skip the hosted login. `-- --session` prints a `PayCardSession` for
+exactly that.
+
+`CARD_BAANX_API_URL` **must** point at the host that minted the token (Playwright spreads
+`process.env` into Electron). It defaults to the production Card backend
+(`https://card.api.live.ledger.com`), so a sandbox token left with the default is a bearer for the
+wrong audience and every Card call answers 401. The password login returns no refresh token, so
+`--session` / the helper fill that field with a placeholder: nothing can refresh with it, which is
+fine for a run shorter than the 6-hour token life but is not a substitute for the OAuth flow.
+
+Desktop:
 
 ```bash
 export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client token -- --session)
@@ -107,31 +117,33 @@ export CARD_BAANX_CLIENT_KEY=baanx-client-key-that-minted-the-token
 pnpm --filter ledger-live-desktop start
 ```
 
-Both variables are equally required for Playwright, which already spreads `process.env` into
-`electron.launch`:
+Mobile, where the variable is read by **Metro**, not by the app process — the babel inline plugin
+substitutes it while bundling, so export it in the terminal that runs the bundler and reset the
+transform cache:
 
 ```bash
 export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client token -- --session)
-export CARD_BAANX_API_URL=https://<the Baanx host that minted the token>
-export CARD_BAANX_CLIENT_KEY=baanx-client-key-that-minted-the-token
-pnpm --filter ledger-live-desktop-e2e-tests test:playwright
+pnpm mobile start --reset-cache
+# second terminal, no exports needed:
+pnpm mobile ios:staging
 ```
 
-Two things to know. `CARD_BAANX_API_URL` **must** point at the host that minted the token — in both
-snippets above, not just the first. It defaults to the production Card backend
-(`https://card.api.live.ledger.com`), so a sandbox token left with the default is a bearer for the
-wrong audience and every Card call answers 401. And the password login returns no refresh token, so
-`--session` fills that field with a placeholder: nothing can refresh with it, which is fine for a run
-shorter than the 6-hour token life but is not a substitute for the OAuth flow.
+`CARD_BAANX_API_URL` and `CARD_BAANX_CLIENT_KEY` do **not** travel by shell export on mobile: they
+come from the `ENVFILE` compiled into the build (`apps/ledger-live-mobile/.env.<platform>.<variant>`,
+where the staging files already point at `dev.api.baanx.com`). Mint the token on the host that build
+targets, or override both at runtime in Settings → Debug → Configuration → Env, which takes
+`NAME=value` one line at a time.
 
-The app reads `process.env.CARD_SESSION_BOOTSTRAP` at boot. Keeping it out of `@shared/env` keeps it
-out of `getAllEnvs()`, exported logs, and Allure's environment tab. After the read, that Electron
-process drops the variable; a later launch still receives it if the parent environment still has it.
-Honour it in a development build, or in any build launched with `PLAYWRIGHT_RUN` — a packaged one
-included, since that check happens at runtime. Treat a machine where you export it as one holding a
-live credential. The runtime check is deliberate: release-mode E2E runs against the release bundle,
-where a build-time marker would be absent. Mint once per run and reuse it — Baanx rate limits the
-OTP trigger.
+A pre-set `CARD_SESSION_BOOTSTRAP` is not expiry-checked. Unset it for long local sessions.
+
+Keep `CARD_SESSION_BOOTSTRAP` out of `@shared/env` so it does not appear in `getAllEnvs()`, exported
+logs, or Allure's environment tab. Do not put it in a committed mobile `.env` file: those ship inside
+the artifact. Desktop reads `process.env` at boot and then drops it from that Electron process.
+Mobile reads Detox launch arguments at runtime, and `process.env` only in `__DEV__` (Metro). Honour
+it in a development build, or in any build launched with `PLAYWRIGHT_RUN` (desktop) / `Config.DETOX`
+(mobile). Treat a machine where you export it as one holding a live credential. The runtime check is
+deliberate: release-mode E2E runs against the release bundle, where a build-time marker would be
+absent. Mint once per run and reuse it — Baanx rate limits the OTP trigger.
 
 ## The login flow
 
@@ -178,18 +190,21 @@ purpose. Bodies attached to errors pass through `redactBody` first. Variables ar
 
 ```text
 src/
-├── index.ts        barrel: the public contract, nothing else
-├── types.ts        public types and constants
-├── errors.ts       the typed errors
-├── config.ts       env resolution
-├── cli.ts          the CLI entry point (+ cliArgs.ts)
-├── auth/           login flow, TOTP, token cache, expiry
-└── http/           transport and response handling
+├── index.ts                        barrel: the public contract, nothing else
+├── types.ts                        public types and constants
+├── errors.ts                       the typed errors
+├── config.ts                       env resolution
+├── payCardSession.ts               Baanx session → PayCardSession JSON
+├── resolveCardSessionBootstrap.ts  preset CARD_SESSION_BOOTSTRAP, or mint one
+├── cli.ts                          the CLI entry point (+ cliArgs.ts)
+├── auth/                           login flow, TOTP, token cache, expiry
+└── http/                           transport and response handling
 ```
 
-Only `index.ts`, `types.ts`, `errors.ts`, `config.ts` and `auth/session.ts` are public.
-`auth/login.ts`, `auth/totp.ts`, `auth/expiry.ts`, `http/send.ts` and `http/body.ts` are
-implementation detail and are absent from the barrel.
+Only `index.ts`, `types.ts`, `errors.ts`, `config.ts`, `payCardSession.ts`,
+`resolveCardSessionBootstrap.ts` and `auth/session.ts` are public. `auth/login.ts`, `auth/totp.ts`,
+`auth/expiry.ts`, `http/send.ts` and `http/body.ts` are implementation detail and are absent from
+the barrel.
 
 ## Development
 

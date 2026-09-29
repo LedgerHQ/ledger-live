@@ -1099,6 +1099,8 @@ describe("getTransactionStatus", () => {
         );
 
         expect(status.errors.recipient).toBeInstanceOf(AleoClosedValidator);
+        expect(mockGetValidators).toHaveBeenCalledTimes(1);
+        expect(mockGetValidators).toHaveBeenCalledWith(getMockedConfig("mainnet"));
       });
 
       it("rejects a bond to an open validator that is unbonding", async () => {

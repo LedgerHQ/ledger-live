@@ -19,8 +19,9 @@ type Props = Readonly<{
 function NextStepsScreen({ onGotIt }: Readonly<{ onGotIt: () => void }>) {
   const { t } = useTranslation();
   const steps = [
-    { index: 1, label: t("payTab.request.verifyAddress.nextStepShare") },
-    { index: 2, label: t("payTab.request.verifyAddress.nextStepMatch") },
+    { index: 1, label: t("payTab.request.verifyAddress.nextStepKeepDisplayed") },
+    { index: 2, label: t("payTab.request.verifyAddress.nextStepPaste") },
+    { index: 3, label: t("payTab.request.verifyAddress.nextStepCheckMatch") },
   ] as const;
 
   return (

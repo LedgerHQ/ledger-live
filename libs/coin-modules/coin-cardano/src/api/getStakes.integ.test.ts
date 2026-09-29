@@ -4,7 +4,12 @@ import { type CardanoCoinConfig, type CardanoConfig } from "../config";
 
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
 const mockCtx: Context<CardanoCoinConfig> = {
-  config: async () => ({ ...config, status: { type: "active" } }),
+  config: async () => ({
+    ...config,
+    status: { type: "active" },
+    name: "Cardano",
+    unit: { name: "ada", code: "ADA", magnitude: 6 },
+  }),
   logger: () => {},
 };
 

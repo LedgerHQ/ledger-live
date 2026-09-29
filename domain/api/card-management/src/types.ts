@@ -1,10 +1,10 @@
 import { z } from "zod";
 import {
+  PayCardCashbackCanonicalSchema,
+  PayCardCashbackResponseSchema,
   PayCardErrorResponseSchema,
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletSchema,
-  PayCardRewardWalletCanonicalSchema,
-  PayCardRewardWalletResponseSchema,
   PayCardLinkWalletRequestSchema,
   PayCardLinkWalletResponseSchema,
   PayCardLinkedWalletSchema,
@@ -118,11 +118,11 @@ export type PayCardLinkWalletRequest = z.infer<typeof PayCardLinkWalletRequestSc
 
 export type PayCardLinkWalletResult = z.infer<typeof PayCardLinkWalletResponseSchema>;
 
-/** The wallet the card's rewards are paid into. */
-export type PayCardRewardWalletResponse = z.infer<typeof PayCardRewardWalletResponseSchema>;
+/** The cashback the card has earned, and the rate it earns at. */
+export type PayCardCashbackResponse = z.infer<typeof PayCardCashbackResponseSchema>;
 
-/** The reward wallet as the app uses it: the wire answer plus the Ledger currency it resolves to. */
-export type PayCardRewardWallet = z.infer<typeof PayCardRewardWalletCanonicalSchema>;
+/** The cashback as the app uses it: the wire answer plus the Ledger currency it resolves to. */
+export type PayCardCashback = z.infer<typeof PayCardCashbackCanonicalSchema>;
 
 /** One card-linked wallet exactly as the wire sent it. */
 export type PayCardLinkedWalletResponse = z.infer<typeof PayCardLinkedWalletSchema>;

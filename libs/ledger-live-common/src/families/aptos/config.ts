@@ -11,6 +11,8 @@ const aptosConfig: CurrencyLiveConfigDefinition = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Aptos",
+      unit: { name: "APT", code: "APT", magnitude: 8 },
     },
   },
 };
