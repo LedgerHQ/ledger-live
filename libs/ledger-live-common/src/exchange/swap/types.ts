@@ -211,6 +211,19 @@ type SwapStateRequest = {
   payoutAddress?: string;
   sponsored?: boolean;
   flags?: FeatureFlags;
+  exchangeAppVersion?: string;
+  signingAppName?: string;
+  signingAppVersion?: string;
+  nativeBalance?: string;
+  nativeCurrency?: string;
+  totalFees?: string;
+  gasLimit?: string;
+  gasPrice?: string;
+  maxFeePerGas?: string;
+  maxPriorityFeePerGas?: string;
+  balance?: string;
+  spendableBalance?: string;
+  pendingOperationsCount?: string;
 }>;
 
 export type SwapStateAcceptedRequest = SwapStateRequest & {

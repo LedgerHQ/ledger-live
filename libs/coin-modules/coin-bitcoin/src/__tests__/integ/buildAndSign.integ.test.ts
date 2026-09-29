@@ -26,7 +26,7 @@ describe("buildAccountTx / signAccountTx", () => {
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
       },
-      walletBtcCurrencyById("bitcoin"),
+      walletBtcCurrencyById("bitcoin", { explorerId: "btc" }),
     );
     await wallet.syncAccount(account);
   });

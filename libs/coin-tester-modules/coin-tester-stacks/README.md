@@ -191,6 +191,32 @@ shared event loop long enough to occasionally miss ticks for minutes, indistingu
 original bug from the test's point of view. A separate process has its own event loop, unaffected
 by Jest's load. Verified via multiple consecutive full scenario runs after this fix.
 
+**The workaround must start exactly when the stacks-node's RPC comes up** (`waitForStacksNodeRpc`
+in `src/devnet.ts`), not after readiness and not at spawn time:
+
+- *Not after readiness* (the original order). `stacks-blockchain-api` 9.3.0 (published to the
+  unpinned `hirosystems/stacks-blockchain-api:latest` tag Clarinet's defaults pull, 2026-09-15)
+  added `ensurePoxConstants` to its startup: the writer blocks its own HTTP server until the
+  stacks-node answers `GET /v2/pox`, retrying every 5s forever. stacks-core 4.0.1 answers that with
+  `Failed to load PoX info: DBError(Overflow)` (HTTP 500) until a first Stacks block exists, and
+  that block needs a Bitcoin block past #101 -- which, with Clarinet's scheduler stalled as described
+  above, only this workaround produces. Waiting for the API before starting the miner turned into a
+  circular wait the moment `latest` moved: every `Coin Tester - stacks` run since 2026-09-15 failed
+  with `devnet never became ready ... within 900000ms` and no other output (the API's `Unable to
+  load PoX constants from the Stacks node ... retrying` warnings are only visible under `DEBUG=1`).
+- *Not at spawn time* (tried first, breaks the chain). Clarinet publishes `Devnet.toml`'s
+  `pox_stacking_orders` exactly once, when it observes Bitcoin block #110
+  (`DEFAULT_FIRST_BURN_HEADER_HEIGHT + 10`, `pox_cycle_position == 10` in
+  `chains_coordinator.rs`'s `publish_stacking_orders`), reading the node's `/v2/pox` first. A
+  miner racing ahead from #101 reaches #110 before the node has its first Stacks block, that read
+  fails (`unable to parse pox info`), the orders are silently dropped, cycle 1 gets no stackers,
+  cycle 2 no signer set, and the node dies at the Nakamoto transition (`FATAL: Signer sets are
+  empty in a reward set that will be used in nakamoto`, Stacks tip frozen at #28 while Bitcoin
+  keeps advancing).
+
+Started at node-RPC-up, the burn height is still Clarinet's seeded #101, the node mines its first
+Stacks block on the next Bitcoin block, `/v2/pox` works by #110, and the API comes up on its own.
+
 ### Other
 
 - **`@stacks/network`/`@stacks/transactions` are pinned at `6.17.0`** (matching what `coin-stacks`

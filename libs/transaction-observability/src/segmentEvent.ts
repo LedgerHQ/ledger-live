@@ -27,6 +27,9 @@ const UNMAPPED_ACTION = "unknown";
  * `error_reason`.
  */
 export function toSegmentTrackEvent(event: LogEvent): SegmentTrackEvent | null {
+  if (event.status === "intent") return null;
+  if (event.status === "failure" && event.operationalOnly) return null;
+
   // The bridge seam sees every transaction, including plain sends and swaps. Two things put
   // one in the earn funnel: a recognised staking action, or a transaction inside an app whose
   // whole purpose is staking. The second arm is what admits dApp contract calls, whose action

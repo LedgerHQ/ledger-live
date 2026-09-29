@@ -14,9 +14,30 @@ import {
 
 jest.mock("./grpc/transactions", () => ({
   ...jest.requireActual("./grpc/transactions"),
-  // The proto→legacy mapping is covered by `grpc/transactions.response.test.ts`; here only the
-  // frame draining and request shaping are under test, so frames pass through as-is.
-  grpcTxToJsonRpcResponse: jest.fn((tx: Record<string, unknown>) => ({ ...tx })),
+  // The proto mapping is covered by `grpc/transactions.response.test.ts`; here only the frame
+  // draining and request shaping are under test, so frames pass through, completed with the
+  // required fields they leave out.
+  grpcTxToSuiTransaction: jest.fn(
+    (tx: {
+      effects?: Record<string, unknown>;
+      transaction?: { data?: Record<string, unknown> };
+    }) => ({
+      events: [],
+      balanceChanges: [],
+      timestampMs: null,
+      checkpoint: null,
+      ...tx,
+      effects: { accumulatorEvents: [], ...tx.effects },
+      transaction: {
+        data: {
+          sender: "",
+          gasData: {},
+          transaction: { kind: "System", name: "Test" },
+          ...tx.transaction?.data,
+        },
+      },
+    }),
+  ),
 }));
 
 jest.mock("./grpc/client", () => ({ createSuiGrpcClient: jest.fn() }));
@@ -609,8 +630,8 @@ describe("resolveCheckpointForDigestGrpc", () => {
   });
 });
 
-// The other transports report the real checkpoint digest, so the gRPC arm must too — otherwise
-// retiring them would silently downgrade every `blockHash`.
+// The GraphQL arm reports the real checkpoint digest, so the gRPC arm must too — otherwise every
+// `blockHash` would silently downgrade to the synthetic one.
 describe("getListOperations on the gRPC transport", () => {
   const tx = (digest: string, checkpoint: string) => ({
     transaction: {
@@ -641,7 +662,6 @@ describe("getListOperations on the gRPC transport", () => {
 
   const grpcConfig = {
     node: {
-      url: "https://json-rpc.example.test",
       graphqlUrl: "https://graphql.example.test/graphql",
       grpcUrl: "https://grpc.example.test",
     },
@@ -659,7 +679,7 @@ describe("getListOperations on the gRPC transport", () => {
       { checkpoint: { sequenceNumber: 12n, digest: "cp-12" } },
     ]);
 
-    const page = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, undefined);
+    const page = await getListOperations(grpcConfig, ADDRESS, "desc", undefined);
 
     expect(page.items.map(op => op.tx.block.hash)).toEqual(["cp-12", "cp-10"]);
   });
@@ -667,7 +687,7 @@ describe("getListOperations on the gRPC transport", () => {
   it("falls back to a synthetic hash for a checkpoint the stream did not return", async () => {
     stubApi([{ checkpoint: { sequenceNumber: 10n, digest: "cp-10" } }]);
 
-    const page = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, undefined);
+    const page = await getListOperations(grpcConfig, ADDRESS, "desc", undefined);
 
     expect(page.items.map(op => op.tx.block.hash)).toEqual(["synthetic-12", "cp-10"]);
   });
@@ -678,7 +698,7 @@ describe("getListOperations on the gRPC transport", () => {
       { checkpoint: { sequenceNumber: 12n, digest: "cp-12" } },
     ]);
 
-    await getListOperations(grpcConfig, ADDRESS, "desc", undefined, undefined);
+    await getListOperations(grpcConfig, ADDRESS, "desc", undefined);
 
     expect(listCheckpoints).toHaveBeenCalledTimes(1);
   });
@@ -737,7 +757,6 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
 
   const grpcConfig = {
     node: {
-      url: "https://json-rpc.example.test",
       graphqlUrl: "https://graphql.example.test/graphql",
       grpcUrl: "https://grpc.example.test",
     },
@@ -752,7 +771,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
   it("keeps the cursor's own checkpoint in range when descending", async () => {
     const { requests } = stubApi([[txFrame("tx-m", "12"), txFrame("tx-a", "12")]], 12n);
 
-    const page = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, `${TS}:tx-m`);
+    const page = await getListOperations(grpcConfig, ADDRESS, "desc", `${TS}:tx-m`);
 
     // `endCheckpoint` is exclusive, so 13 is what keeps checkpoint 12 in range.
     expect(requests[0].endCheckpoint).toBe(13n);
@@ -763,7 +782,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
   it("keeps the cursor's own checkpoint in range when ascending", async () => {
     const { requests } = stubApi([[txFrame("tx-a", "12"), txFrame("tx-m", "12")]], 12n);
 
-    const page = await getListOperations(grpcConfig, ADDRESS, "asc", undefined, `${TS}:tx-a`);
+    const page = await getListOperations(grpcConfig, ADDRESS, "asc", `${TS}:tx-a`);
 
     // `startCheckpoint` is inclusive, so 12 itself is the bound.
     expect(requests[0].startCheckpoint).toBe(12n);
@@ -778,7 +797,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
     );
     const { requests } = stubApi([stalled, [txFrame("tx-older", "11", TS - 1000)]], 12n);
 
-    const page = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, `${TS}:tx-000`);
+    const page = await getListOperations(grpcConfig, ADDRESS, "desc", `${TS}:tx-000`);
 
     expect(requests).toHaveLength(2);
     expect(requests[0].endCheckpoint).toBe(13n);
@@ -789,7 +808,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
   it("does not retry when the page still yields unseen operations", async () => {
     const { requests } = stubApi([[txFrame("tx-m", "12"), txFrame("tx-a", "12")]], 12n);
 
-    await getListOperations(grpcConfig, ADDRESS, "desc", undefined, `${TS}:tx-m`);
+    await getListOperations(grpcConfig, ADDRESS, "desc", `${TS}:tx-m`);
 
     expect(requests).toHaveLength(1);
   });
@@ -797,7 +816,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
   it("falls back to an unbounded page when the cursor digest is unknown", async () => {
     const { requests } = stubApi([[txFrame("tx-a", "10")]], undefined);
 
-    await getListOperations(grpcConfig, ADDRESS, "desc", undefined, `${TS}:tx-missing`);
+    await getListOperations(grpcConfig, ADDRESS, "desc", `${TS}:tx-missing`);
 
     expect(requests[0]).not.toHaveProperty("endCheckpoint");
     expect(requests[0]).not.toHaveProperty("startCheckpoint");
@@ -814,13 +833,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
     ];
     stubApi([page], 12n);
 
-    const result = await getListOperations(
-      grpcConfig,
-      ADDRESS,
-      "desc",
-      undefined,
-      `${TS}:tx-cursor`,
-    );
+    const result = await getListOperations(grpcConfig, ADDRESS, "desc", `${TS}:tx-cursor`);
 
     expect(result.items).toHaveLength(49);
     // Equal timestamps sort by digest descending, so the oldest delivered item is `tx-000`.
@@ -833,7 +846,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
     // QueryEndReason: SCAN_LIMIT = 2.
     stubApi([[txFrame("tx-a", "12"), { end: { reason: 2 } }]], undefined);
 
-    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, undefined);
+    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined);
 
     expect(result.next).toBe(`${TS}:tx-a`);
   });
@@ -864,7 +877,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
     // QueryEndReason: ITEM_LIMIT = 1.
     stubApi([[settlement, { end: { reason: 1 } }]], undefined);
 
-    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, undefined);
+    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined);
 
     expect(result.items).toHaveLength(0);
     expect(result.next).toBe(`${TS}:tx-settlement`);
@@ -882,7 +895,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
     };
     stubApi([[txFrame("tx-dated", "12"), undated, { end: { reason: 5 } }]], undefined);
 
-    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, undefined);
+    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined);
 
     expect(result.items.map(op => op.tx.hash)).toEqual(["tx-dated"]);
   });
@@ -894,7 +907,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
     );
     stubApi([[...full, { end: { reason: 5 } }]], undefined);
 
-    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, undefined);
+    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined);
 
     expect(result.items).toHaveLength(50);
     expect(result.next).toBeUndefined();
@@ -903,7 +916,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
   it("stops when the server returns a short page", async () => {
     stubApi([[txFrame("tx-m", "12"), txFrame("tx-a", "12")]], 12n);
 
-    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, `${TS}:tx-m`);
+    const result = await getListOperations(grpcConfig, ADDRESS, "desc", `${TS}:tx-m`);
 
     expect(result.items).toHaveLength(1);
     expect(result.next).toBeUndefined();
@@ -915,7 +928,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
   it("keeps the cursor's own checkpoint in range on an incremental sync", async () => {
     const { requests } = stubApi([[txFrame("tx-a", "42")]], 42n);
 
-    await getOperations(grpcConfig, "acc-1", ADDRESS, "0xcursorDigest", undefined);
+    await getOperations(grpcConfig, "acc-1", ADDRESS, "0xcursorDigest");
 
     // `startCheckpoint` is inclusive, so the cursor's checkpoint is the bound itself.
     expect(requests[0].startCheckpoint).toBe(42n);
@@ -926,7 +939,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
   it("walks forward from the cursor on an incremental sync", async () => {
     const { requests } = stubApi([[txFrame("tx-a", "42")]], 42n);
 
-    await getOperations(grpcConfig, "acc-1", ADDRESS, "0xcursorDigest", undefined);
+    await getOperations(grpcConfig, "acc-1", ADDRESS, "0xcursorDigest");
 
     expect(requests[0].options?.ordering).toBe(0);
   });
@@ -936,7 +949,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
   it("walks back from the tip when there is no cursor", async () => {
     const { requests } = stubApi([[txFrame("tx-a", "42")]], undefined);
 
-    await getOperations(grpcConfig, "acc-1", ADDRESS, undefined, undefined);
+    await getOperations(grpcConfig, "acc-1", ADDRESS, undefined);
 
     expect(requests[0].options?.ordering).toBe(1);
     expect(requests[0]).not.toHaveProperty("startCheckpoint");
@@ -958,7 +971,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
     ];
     const { requests } = stubApi([firstPage, secondPage], undefined);
 
-    const ops = await getOperations(grpcConfig, "acc-1", ADDRESS, undefined, undefined);
+    const ops = await getOperations(grpcConfig, "acc-1", ADDRESS, undefined);
 
     expect(requests).toHaveLength(2);
     expect(requests[1].options?.before).toEqual(new Uint8Array([51]));

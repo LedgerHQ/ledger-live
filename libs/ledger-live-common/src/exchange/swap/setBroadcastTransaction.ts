@@ -15,6 +15,9 @@ export const setBroadcastTransaction = ({
   fromAccountAddress,
   toAccountAddress,
   fromAmount,
+  exchangeAppVersion,
+  signingAppName,
+  signingAppVersion,
   flags,
 }: {
   result: { operation: Operation | string; swapId: string };
@@ -27,6 +30,9 @@ export const setBroadcastTransaction = ({
   fromAccountAddress?: string;
   toAccountAddress?: string;
   fromAmount?: string;
+  exchangeAppVersion?: string;
+  signingAppName?: string;
+  signingAppVersion?: string;
   flags?: FeatureFlags;
 }) => {
   const { operation, swapId } = result;
@@ -50,6 +56,9 @@ export const setBroadcastTransaction = ({
       fromAccountAddress,
       toAccountAddress,
       fromAmount,
+      exchangeAppVersion,
+      signingAppName,
+      signingAppVersion,
       flags,
     });
   } else {

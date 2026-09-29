@@ -5,7 +5,6 @@ import type { CardTransactionHistoryUiState } from "./cardTransactionHistoryUiSt
 export type CardTransactionHistoryProps = Readonly<{
   asset?: string;
   formatters?: CardTransactionFormatters;
-  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
   formatDay?: (date: Date) => string;
   onGoToPay?: () => void;
   cardVisual?: ReactNode;

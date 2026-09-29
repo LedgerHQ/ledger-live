@@ -65,7 +65,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
 
   return (
     <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>
-      <DialogContent className="text-base">
+      <DialogContent className={cn("text-base", shouldAnimateHeight && "max-h-[calc(100vh-2rem)]")}>
         {shouldShowStatusGradient && (
           <div
             className={cn("pointer-events-none absolute inset-x-0 top-0 h-full", {

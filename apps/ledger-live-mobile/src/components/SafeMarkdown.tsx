@@ -1,48 +1,49 @@
-import React, { PureComponent } from "react";
+import React, { Component, type ReactNode } from "react";
 import { StyleSheet } from "react-native";
-import Markdown from "react-native-easy-markdown";
-import { Theme, withTheme } from "../colors";
+import Markdown from "@ronradtke/react-native-markdown-display";
+import { useTheme } from "@react-navigation/native";
+import type { Theme } from "../colors";
 import LText, { getFontStyle } from "./LText";
 
-class SafeMarkdown extends PureComponent<
-  {
-    markdown: string;
-    colors: Theme["colors"];
-  },
-  {
-    error: Error | null | undefined;
-  }
-> {
-  state = {
-    error: null,
-  };
+type SafeMarkdownProps = {
+  markdown: string;
+};
 
-  componentDidCatch(error: Error | null | undefined) {
-    this.setState({
-      error,
-    });
+export class MarkdownRenderBoundary extends Component<
+  { markdown: string; children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
   }
 
   render() {
-    const { markdown, colors } = this.props;
-    const { error } = this.state;
-
-    if (error) {
-      return <LText style={markdownStyles.text}>{markdown}</LText>; // :(
+    if (this.state.hasError) {
+      return <LText style={markdownStyles.text}>{this.props.markdown}</LText>;
     }
+    return this.props.children;
+  }
+}
 
-    return (
-      // @ts-expect-error children is not on Markdown props
+function SafeMarkdown({ markdown }: SafeMarkdownProps) {
+  const { colors } = useTheme() as Theme;
+  const textStyle = { ...markdownStyles.text, color: colors.darkBlue };
+
+  return (
+    <MarkdownRenderBoundary markdown={markdown}>
       <Markdown
-        markdownStyles={{
-          text: { ...markdownStyles.text, color: colors.darkBlue },
+        style={{
+          body: textStyle,
+          text: textStyle,
           strong: markdownStyles.strong,
         }}
       >
         {markdown}
       </Markdown>
-    );
-  }
+    </MarkdownRenderBoundary>
+  );
 }
 
 const markdownStyles = StyleSheet.create({
@@ -53,4 +54,5 @@ const markdownStyles = StyleSheet.create({
     }),
   },
 });
-export default withTheme(SafeMarkdown);
+
+export default SafeMarkdown;

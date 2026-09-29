@@ -3,6 +3,11 @@ import { useBalanceViewModel } from "../components/Hero/useBalanceViewModel";
 import type { BalanceProps } from "../types";
 import { USDC_ID, formatCountervalue, options } from "./fixtures";
 import { i18nWrapper } from "./i18nWrapper";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 function buildProps(overrides: Partial<BalanceProps> = {}): BalanceProps {
   return {
@@ -43,6 +48,23 @@ describe("useBalanceViewModel", () => {
       filter: "all",
       isLoading: false,
     });
+  });
+
+  it("should pass discreet mode through to the funded view", () => {
+    const { result } = renderBalanceViewModel(
+      buildProps({ hasBalance: true, stableBalance: 1250.5, discreet: true }),
+    );
+
+    expect(result.current).toMatchObject({ displayMode: "funded", discreet: true });
+  });
+
+  it("should pass discreet toggle through to the funded view", () => {
+    const onToggleDiscreetMode = jest.fn();
+    const { result } = renderBalanceViewModel(
+      buildProps({ hasBalance: true, stableBalance: 1250.5, onToggleDiscreetMode }),
+    );
+
+    expect(result.current).toMatchObject({ displayMode: "funded", onToggleDiscreetMode });
   });
 
   it("should keep funded chrome and skeleton the amount while funded data loads", () => {
@@ -92,8 +114,7 @@ describe("useBalanceViewModel", () => {
   });
 
   it("should open the filter and track the open event", () => {
-    const onTrackEvent = jest.fn();
-    const { result } = renderBalanceViewModel(buildProps({ hasBalance: true, onTrackEvent }));
+    const { result } = renderBalanceViewModel(buildProps({ hasBalance: true }));
 
     if (result.current.displayMode !== "funded") throw new Error("expected funded");
     expect(result.current.isFilterOpen).toBe(false);
@@ -102,7 +123,7 @@ describe("useBalanceViewModel", () => {
 
     if (result.current.displayMode !== "funded") throw new Error("expected funded");
     expect(result.current.isFilterOpen).toBe(true);
-    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "balance filter",
       page: "Pay",
     });

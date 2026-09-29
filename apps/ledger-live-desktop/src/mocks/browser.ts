@@ -4,7 +4,7 @@ import { mockAssets } from "./dada/mockAssets";
 import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stablecoins";
 import { mockStocksResponse } from "@domain/api-aggregated-assets/mock/stocks";
 import { mockLedgerStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/mocks/ledgerStatus";
-import { mockFearAndGreedLatest } from "@domain/api-market-sentiment/mock";
+import { mockFearAndGreedLatest } from "@domain/api-market-index-fear-and-greed/mock";
 import countervaluesHandlers from "../../tests/handlers/countervalues";
 import marketHandlers from "../../tests/handlers/market";
 import cardHandlers from "./card/handler";

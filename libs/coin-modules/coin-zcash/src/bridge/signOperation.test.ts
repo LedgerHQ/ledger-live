@@ -22,6 +22,7 @@ import type { SpendableNote } from "../network/types";
 import type { SignerContext } from "../types/signer";
 import type { Transaction, ZcashAccount, ZcashOperationExtra } from "../types/bridge";
 import { ZcashNotesNotYetSpendable, ZcashShieldedKeyMissing } from "../types/errors";
+import { testContext } from "../test/coinConfig";
 
 jest.mock("../logic/transaction/craftTransaction");
 jest.mock("../logic/transaction/combine");
@@ -214,7 +215,7 @@ describe("bridge/signOperation", () => {
       const account = makeAccount();
       const tx = makeTx(transferType);
       const signerContext = makeSignerContext();
-      const signOp = buildSignOperation(signerContext);
+      const signOp = buildSignOperation(signerContext, testContext);
 
       const events = await collectEvents(signOp, {
         account,
@@ -232,10 +233,12 @@ describe("bridge/signOperation", () => {
           ? [mockCraftTransaction, mockCraftIronwoodTransaction, MOCK_PCZT_HEX]
           : [mockCraftIronwoodTransaction, mockCraftTransaction, MOCK_PCZT_V2_HEX];
       expect(expectedCraft).toHaveBeenCalledWith(
+        testContext,
+        "zcash",
         expect.objectContaining({ ufvk: MOCK_UFVK, feeZat: "5000" }),
       );
       expect(unusedCraft).not.toHaveBeenCalled();
-      expect(mockCombine).toHaveBeenCalledWith({
+      expect(mockCombine).toHaveBeenCalledWith(testContext, "zcash", {
         pczt: expectedPczt,
         orchardSignatures: [
           Buffer.from(defaultSigResult.orchard[0].spendAuthSig).toString("hex"),
@@ -269,6 +272,7 @@ describe("bridge/signOperation", () => {
     ];
     const signOp = buildSignOperation(
       makeSignerContext({ orchard: [], transparentInputSigs: [], ironwood: ironwoodSigs }),
+      testContext,
     );
 
     await collectEvents(signOp, {
@@ -277,7 +281,7 @@ describe("bridge/signOperation", () => {
       transaction: makeTx("shielded"),
     } as never);
 
-    expect(mockCombine).toHaveBeenCalledWith({
+    expect(mockCombine).toHaveBeenCalledWith(testContext, "zcash", {
       pczt: MOCK_PCZT_V2_HEX,
       orchardSignatures: [],
       transparentSignatures: [],
@@ -298,7 +302,7 @@ describe("bridge/signOperation", () => {
   // matches `undefined`), which is exactly the case the conditional spread
   // exists to avoid, and it constrains none of the keys that must be present.
   it("omits ironwoodSignatures entirely when the device signed no Ironwood action", async () => {
-    const signOp = buildSignOperation(makeSignerContext());
+    const signOp = buildSignOperation(makeSignerContext(), testContext);
 
     await collectEvents(signOp, {
       account: makeAccount(),
@@ -307,7 +311,7 @@ describe("bridge/signOperation", () => {
     } as never);
 
     expect(mockCombine).toHaveBeenCalledTimes(1);
-    const args = mockCombine.mock.calls[0][0];
+    const args = mockCombine.mock.calls[0][2];
     expect(Object.keys(args).sort()).toEqual([
       "orchardSignatures",
       "pczt",
@@ -330,7 +334,7 @@ describe("bridge/signOperation", () => {
       new Error("Shielded Zcash transactions are not supported in this environment"),
     );
     const signerContext = makeSignerContext();
-    const signOp = buildSignOperation(signerContext);
+    const signOp = buildSignOperation(signerContext, testContext);
 
     await expect(
       collectEvents(signOp, {
@@ -374,7 +378,7 @@ describe("bridge/signOperation", () => {
     it.each(["shielded", "shielded-to-transparent", "transparent-to-shielded"] as const)(
       "refuses a %s send, which cannot be built without the shielded keys",
       async transferType => {
-        const signOp = buildSignOperation(makeSignerContext());
+        const signOp = buildSignOperation(makeSignerContext(), testContext);
 
         await expect(
           lastValueFrom(
@@ -390,7 +394,7 @@ describe("bridge/signOperation", () => {
     );
 
     it("signs a transparent send from the account xpub alone (LIVE-36260)", async () => {
-      const signOp = buildSignOperation(makeSignerContext());
+      const signOp = buildSignOperation(makeSignerContext(), testContext);
 
       const events = await collectEvents(signOp, {
         account: accountWithoutUfvk(),
@@ -406,11 +410,15 @@ describe("bridge/signOperation", () => {
       // The transparent account pubkey stands in for the UFVK: same account, and
       // the only key material a transparent build reads.
       expect(mockCraftTransaction).toHaveBeenCalledWith(
+        testContext,
+        "zcash",
         expect.objectContaining({
           transparentAccountPubkey: ACCOUNT_CHAIN_CODE_HEX + ACCOUNT_PUBKEY_HEX,
         }),
       );
       expect(mockCraftTransaction).toHaveBeenCalledWith(
+        testContext,
+        "zcash",
         expect.not.objectContaining({ ufvk: expect.anything() }),
       );
     });
@@ -418,7 +426,7 @@ describe("bridge/signOperation", () => {
     it("reports a missing xpub rather than building from no key at all", async () => {
       const account = accountWithoutUfvk();
       delete (account as { xpub?: unknown }).xpub;
-      const signOp = buildSignOperation(makeSignerContext());
+      const signOp = buildSignOperation(makeSignerContext(), testContext);
 
       await expect(
         lastValueFrom(
@@ -434,7 +442,7 @@ describe("bridge/signOperation", () => {
   });
 
   it("prefers the UFVK for a transparent send when the account has one", async () => {
-    const signOp = buildSignOperation(makeSignerContext());
+    const signOp = buildSignOperation(makeSignerContext(), testContext);
 
     await collectEvents(signOp, {
       account: makeAccount(),
@@ -442,8 +450,14 @@ describe("bridge/signOperation", () => {
       transaction: makeTx("transparent"),
     } as never);
 
-    expect(mockCraftTransaction).toHaveBeenCalledWith(expect.objectContaining({ ufvk: MOCK_UFVK }));
     expect(mockCraftTransaction).toHaveBeenCalledWith(
+      testContext,
+      "zcash",
+      expect.objectContaining({ ufvk: MOCK_UFVK }),
+    );
+    expect(mockCraftTransaction).toHaveBeenCalledWith(
+      testContext,
+      "zcash",
       expect.not.objectContaining({ transparentAccountPubkey: expect.anything() }),
     );
   });
@@ -453,7 +467,7 @@ describe("bridge/signOperation", () => {
     const tx = makeTx("shielded");
     delete (tx as { selectedNotes?: unknown }).selectedNotes;
     delete (tx as { zcashFee?: unknown }).zcashFee;
-    const signOp = buildSignOperation(makeSignerContext());
+    const signOp = buildSignOperation(makeSignerContext(), testContext);
 
     await expect(
       lastValueFrom(signOp({ account, deviceId: "device-1", transaction: tx } as never)),
@@ -465,7 +479,7 @@ describe("bridge/signOperation", () => {
     const account = makeAccount();
     // t→t is the only flow that builds through the V5 craftTransaction path.
     const tx = makeTx("transparent");
-    const signOp = buildSignOperation(makeSignerContext());
+    const signOp = buildSignOperation(makeSignerContext(), testContext);
 
     await expect(
       lastValueFrom(signOp({ account, deviceId: "device-1", transaction: tx } as never)),
@@ -476,7 +490,7 @@ describe("bridge/signOperation", () => {
     mockCraftIronwoodTransaction.mockRejectedValue(
       new Error("Zcash V6 (Ironwood) transactions are not supported in this environment"),
     );
-    const signOp = buildSignOperation(makeSignerContext());
+    const signOp = buildSignOperation(makeSignerContext(), testContext);
 
     await expect(
       lastValueFrom(
@@ -499,7 +513,7 @@ describe("bridge/signOperation", () => {
           "compute_ironwood_witnesses: note position 55985 is at or past anchor_total_leaves 55976 at anchor height 3447474",
       ),
     );
-    const signOp = buildSignOperation(makeSignerContext());
+    const signOp = buildSignOperation(makeSignerContext(), testContext);
 
     await expect(
       lastValueFrom(
@@ -518,7 +532,7 @@ describe("bridge/signOperation", () => {
     const signerContext = jest.fn(async (_deviceId, fn) =>
       fn({ getAddress: jest.fn(), getFullViewingKey: jest.fn() }),
     ) as unknown as SignerContext;
-    const signOp = buildSignOperation(signerContext);
+    const signOp = buildSignOperation(signerContext, testContext);
 
     await expect(
       lastValueFrom(signOp({ account, deviceId: "device-1", transaction: tx } as never)),
@@ -531,7 +545,7 @@ describe("bridge/signOperation", () => {
     it("includes memo in extra when the transaction carries one", async () => {
       const account = makeAccount();
       const tx = makeTx("shielded", { memo: "Hello shielded receiver" });
-      const signOp = buildSignOperation(makeSignerContext());
+      const signOp = buildSignOperation(makeSignerContext(), testContext);
 
       const events = await collectEvents(signOp, {
         account,
@@ -550,7 +564,7 @@ describe("bridge/signOperation", () => {
     it("omits memo from extra when the transaction has none", async () => {
       const account = makeAccount();
       const tx = makeTx("shielded"); // no memo field
-      const signOp = buildSignOperation(makeSignerContext());
+      const signOp = buildSignOperation(makeSignerContext(), testContext);
 
       const events = await collectEvents(signOp, {
         account,
@@ -585,7 +599,7 @@ describe("bridge/signOperation", () => {
         zcashFee: new BigNumber(10_000),
         amount: new BigNumber(290_000),
       });
-      const signOp = buildSignOperation(makeSignerContext());
+      const signOp = buildSignOperation(makeSignerContext(), testContext);
 
       const events = await collectEvents(signOp, {
         account,
@@ -610,6 +624,7 @@ describe("bridge/signOperation", () => {
       });
       const signOp = buildSignOperation(
         makeSignerContext({ orchard: [], transparentInputSigs: [], ironwood: [] }),
+        testContext,
       );
 
       const events = await collectEvents(signOp, {
@@ -635,7 +650,7 @@ describe("bridge/signOperation", () => {
         selectedNotes: [makeSpendableNote({ nullifier })],
         zcashFee: new BigNumber(10_000),
       });
-      const signOp = buildSignOperation(makeSignerContext());
+      const signOp = buildSignOperation(makeSignerContext(), testContext);
 
       const events = await collectEvents(signOp, {
         account,

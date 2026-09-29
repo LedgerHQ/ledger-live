@@ -34,9 +34,7 @@ describe("getAllBalancesGrpc", () => {
     await expect(getAllBalancesGrpc(api, OWNER_SHORT)).resolves.toEqual([
       {
         coinType: "0x2::sui::SUI",
-        coinObjectCount: 0,
         totalBalance: "300",
-        lockedBalance: {},
         fundsInAddressBalance: "100",
       },
     ]);
@@ -131,7 +129,7 @@ function stubCheckpointApi(checkpoint?: GrpcCheckpoint) {
 const SUMMARY = { timestamp: { seconds: 1784368593n, nanos: 664_000_000 }, previousDigest: "prev" };
 
 describe("getCheckpointGrpc", () => {
-  it("converts protobuf seconds+nanos into JSON-RPC's millisecond string", async () => {
+  it("converts protobuf seconds+nanos into a millisecond string", async () => {
     const { api } = stubCheckpointApi({
       sequenceNumber: 300000000n,
       digest: "d",
@@ -233,7 +231,7 @@ describe("getStakingEventsByDigestGrpc", () => {
     };
   };
 
-  it("renames Core's eventType/json onto the JSON-RPC event view", async () => {
+  it("renames Core's eventType/json onto the { type, parsedJson } event view", async () => {
     const { api } = stubCore({
       $kind: "Transaction",
       Transaction: {

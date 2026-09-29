@@ -1,15 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Contact, ContactId } from "@domain/entity-contact";
-import {
-  createMeDisplayNameFormatter,
-  useContacts,
-  useContactsMeContact,
-} from "@features/platform-contacts";
+import { useContacts, useContactsMeContact } from "@features/platform-contacts";
 import {
   useContactsSearchViewModel,
   type ContactsListViewLabels,
 } from "@features/flow-contacts-list";
-import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import { useSendFlowTrackingProperties } from "LLM/features/Send/hooks/useSendFlowTrackingProperties";
 import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
@@ -34,14 +29,11 @@ export function useAddToExistingContactViewModel({
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
     }),
     [t],
   );
 
-  const listViewModel = useContactsSearchViewModel(searchQuery, labels.formatMeDisplayName);
+  const listViewModel = useContactsSearchViewModel(searchQuery);
 
   const onSearchQueryChange = useCallback((query: string) => {
     setSearchQuery(query);
@@ -75,7 +67,6 @@ export function useAddToExistingContactViewModel({
     listViewModel,
     labels,
     searchQuery,
-    meAvatarSrc: USER_AVATAR_URL,
     onSearchQueryChange,
     onSelectContact,
     resetSearch,

@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Pay Card flow orchestrator: composes the Pay Card auth and details leaves for Ledger Wallet",
   "main": "src/index.ts",
@@ -39,6 +39,7 @@
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -49,6 +50,9 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "8.57.0",
+    "eslint-plugin-better-tailwindcss": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
@@ -57,6 +61,7 @@
     "react-native": "catalog:",
     "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

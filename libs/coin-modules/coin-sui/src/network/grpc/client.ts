@@ -9,7 +9,7 @@ import { grpcWebFetch } from "./fetch";
  * `SuiGrpcClient`'s constructor forwards only `baseUrl` and `fetchInit` to
  * `GrpcWebFetchTransport`, silently dropping `fetch`, `format`, `meta`, `interceptors` and
  * `timeout`. Injecting the transport is the only construction path that keeps the
- * retry-aware `fetcher` the other two transports use; `baseUrl` would lose it with no error.
+ * retry-aware `fetcher` the GraphQL transport uses too; `baseUrl` would lose it with no error.
  *
  * The injected fetch is {@link grpcWebFetch}: the shared `fetcher` plus a buffered-body fallback.
  *

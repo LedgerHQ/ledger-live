@@ -3,6 +3,8 @@ import { useTranslation } from "~/context/Locale";
 import { Operation } from "@ledgerhq/types-live";
 import Section from "./Section";
 
+const INTERNAL_EXTRA_KEYS = new Set(["inputRefs"]);
+
 type Props = {
   operation: Operation;
 };
@@ -14,9 +16,11 @@ export default function OperationDetailsExtra({ operation }: Props) {
     typeof operation.extra === "object" &&
     !Array.isArray(operation.extra) ? (
     <>
-      {Object.entries(operation.extra as object).map(([key, value]) => (
-        <Section title={t(`operationDetails.extra.${key}`)} value={String(value)} key={key} />
-      ))}
+      {Object.entries(operation.extra as object)
+        .filter(([key]) => !INTERNAL_EXTRA_KEYS.has(key))
+        .map(([key, value]) => (
+          <Section title={t(`operationDetails.extra.${key}`)} value={String(value)} key={key} />
+        ))}
     </>
   ) : (
     <></>

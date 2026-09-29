@@ -16,6 +16,7 @@ import {
   useContactAddressEditAnalytics,
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
+  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
 import type {
   ContactAddressEditSavePayload,
@@ -32,6 +33,7 @@ import {
   useContactsAnalytics,
 } from "../analytics";
 import { useContactsAddressValidationAdapter } from "./useContactsAddressValidationAdapter";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
@@ -72,14 +74,6 @@ export function useContactAddressDetailActionsAdapter(
     sourceScreenName: ScreenName.MyWalletContactDetail,
   });
   const isSelectionActive = contactId !== undefined && addressId !== undefined;
-  const labels = useMemo(
-    () =>
-      resolveContactAddressDetailActionsLabels({
-        t,
-        addressLabelTooLongKey: "contacts.addAddressName.labelTooLong",
-      }),
-    [t],
-  );
   const trackQuickAction = useCallback(
     (
       button:
@@ -131,7 +125,7 @@ export function useContactAddressDetailActionsAdapter(
     },
     [handleOpenSendFlow, onCloseAddressDetail, trackQuickAction],
   );
-  const { flow, renameViewModel } = useContactAddressDetailActionsFlowBindings({
+  const { flow, renameViewModel, currencyId } = useContactAddressDetailActionsFlowBindings({
     contactId: contactId ?? ContactIdSchema.parse("contact-me"),
     addressId: isSelectionActive ? addressId : undefined,
     ports,
@@ -141,6 +135,19 @@ export function useContactAddressDetailActionsAdapter(
     onCloseAddressDetail,
     onEditAddressSaved,
   });
+  const supportsDomain = resolveContactAddressSupportsDomain(
+    currencyId,
+    sendFeatures.supportsDomain,
+  );
+  const labels = useMemo(
+    () =>
+      resolveContactAddressDetailActionsLabels({
+        t,
+        addressLabelTooLongKey: "contacts.addAddressName.labelTooLong",
+        supportsDomain,
+      }),
+    [t, supportsDomain],
+  );
   const { onClose: closeRenameViewModel } = renameViewModel;
   const { editUiState } = flow;
   // Closing the edit sheet returns to the address detail it was opened from, the same way

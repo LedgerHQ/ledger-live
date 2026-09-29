@@ -62,6 +62,8 @@ export type Memo = { value: string; type?: string };
 export type RecipientData = Readonly<{
   address?: string;
   ensName?: string;
+  /** Contact explicitly selected for this recipient; disambiguates duplicate saved addresses. */
+  contactId?: string;
   /** Overrides address/ensName display. Clear when address or ensName changes unless setting a new label. */
   displayLabel?: string;
   /**
@@ -107,6 +109,7 @@ export type SendFlowTransactionActions = Readonly<{
   updateTransaction: (updater: (tx: Transaction) => Transaction) => void;
   setRecipient: (recipient: RecipientData) => void;
   setAccount: (account: AccountLike, parentAccount?: Account | null) => void;
+  updateAccount: (account: AccountLike, parentAccount?: Account | null) => void;
 }>;
 
 export type SendFlowOperationActions = Readonly<{

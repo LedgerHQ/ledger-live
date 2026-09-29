@@ -85,6 +85,10 @@ export const MAX_NEURON_AGE_FOR_AGE_BONUS = SECONDS_IN_FOUR_YEARS;
 // (dfinity/ic governance.rs:213 MAX_FOLLOWEES_PER_TOPIC).
 export const MAX_FOLLOWEES_PER_TOPIC = 15;
 
+// A neuron id is a nat64, and the canister never assigns 0 to a new neuron
+// (dfinity/ic neuron_store.rs new_neuron_id).
+export const MAX_NEURON_ID = 2n ** 64n - 1n;
+
 // Hot keys one neuron may hold; at the cap the canister refuses add_hot_key with ResourceExhausted
 // (dfinity/ic governance.rs:258 MAX_NUM_HOT_KEYS_PER_NEURON, checked in neuron/types.rs add_hot_key).
 export const MAX_HOT_KEYS_PER_NEURON = 10;

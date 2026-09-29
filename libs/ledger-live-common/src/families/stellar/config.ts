@@ -9,6 +9,8 @@ export const stellarConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Stellar",
+      unit: { name: "Lumen", code: "XLM", magnitude: 7 },
       explorer: {
         url: getEnv("API_STELLAR_HORIZON"),
         fetchLimit: getEnv("API_STELLAR_HORIZON_FETCH_LIMIT"),

@@ -137,6 +137,7 @@ function randomIntFromInterval(min: any, max: any): string {
   return randomInt.toString();
 }
 
+// isOwnStakeTransfer, reassignOperationType and recoverStakeMemo all treat memo 0 as a top-up.
 export function getRandomTransferID(): string {
-  return randomIntFromInterval(0, MAX_MEMO_VALUE);
+  return randomIntFromInterval(1, MAX_MEMO_VALUE);
 }

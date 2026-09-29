@@ -1,5 +1,8 @@
-import { SuiJsonRpcClient, getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
+import type { SuiGrpcClient } from "@mysten/sui/grpc";
 import { Transaction } from "@mysten/sui/transactions";
+import { createSuiGrpcClient } from "../network/grpc/client";
+
+const MAINNET_GRPC_URL = "https://fullnode.mainnet.sui.io:443";
 
 export async function extractCoinTypeFromUnsignedTx(
   unsignedTxBytes: Uint8Array,
@@ -16,51 +19,31 @@ export async function extractCoinTypeFromUnsignedTx(
     })
     .filter((objectId): objectId is string => !!objectId);
 
-  const suiClient = new SuiJsonRpcClient({
-    url: getJsonRpcFullnodeUrl("mainnet"),
-    network: "mainnet",
-  });
-  const objects = await suiClient.multiGetObjects({
-    ids: [...gasObjectIds, ...inputObjectIds],
-    options: {
-      showBcs: true,
-      showPreviousTransaction: true,
-      showStorageRebate: true,
-      showOwner: true,
-    },
+  const client = createSuiGrpcClient({ url: MAINNET_GRPC_URL });
+  const { objects } = await client.core.getObjects({
+    objectIds: [...gasObjectIds, ...inputObjectIds],
   });
 
-  const coinObjects = objects.filter(obj => {
-    const bcsData = obj.data?.bcs as any;
-    return bcsData.type.includes("coin");
-  });
-
-  const coinTypes: string[] = coinObjects.map(obj => (obj.data?.bcs as any).type);
-
-  return coinTypes;
+  return objects.flatMap(obj =>
+    obj instanceof Error || !obj.type.includes("coin") ? [] : [obj.type],
+  );
 }
 
 /**
  * Fetches a live SUI coin owned by dead address to use as gas payment in
  * integration tests that assert "sender does not own gas" failures.
  */
-export async function fetchForeignOwnedSuiGasPayment(client: SuiJsonRpcClient) {
-  const { data } = await client.getCoins({
+export async function fetchForeignOwnedSuiGasPayment(client: SuiGrpcClient) {
+  const { objects } = await client.core.listCoins({
     owner: "0x000000000000000000000000000000000000000000000000000000000000dead",
     coinType: "0x2::sui::SUI",
     limit: 1,
   });
-  const coin = data[0];
+  const coin = objects[0];
   if (!coin) {
     throw new Error(
       "sui integ: no SUI coin returned for burn address; cannot build foreign-owned gas fixture",
     );
   }
-  return [
-    {
-      objectId: coin.coinObjectId,
-      version: coin.version,
-      digest: coin.digest,
-    },
-  ];
+  return [{ objectId: coin.objectId, version: coin.version, digest: coin.digest }];
 }

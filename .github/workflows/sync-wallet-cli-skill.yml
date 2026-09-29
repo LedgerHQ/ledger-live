@@ -36,7 +36,7 @@ permissions:
 jobs:
   sync-wallet-cli-skill:
     name: Sync wallet-cli skill
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-4cpu-aws-public-docker
     timeout-minutes: 10
     env:
       SOURCE_SKILL_DIR: .agents/skills/ledger-wallet-cli

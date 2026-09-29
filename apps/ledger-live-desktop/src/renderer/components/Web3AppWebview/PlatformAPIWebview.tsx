@@ -39,7 +39,6 @@ import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { NetworkErrorScreen } from "./NetworkError";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -47,6 +46,7 @@ import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog"
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { useFeature } from "@features/platform-feature-flags";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
+import { getTrackingRouteLiveAppSource } from "./analytics";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
@@ -79,10 +79,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               eventName,
               {
                 ...properties,
-                flowInitiatedFrom:
-                  currentRouteNameRef.current === "Platform Catalog"
-                    ? "Discover"
-                    : currentRouteNameRef.current,
+                flowInitiatedFrom: getTrackingRouteLiveAppSource(),
               },
               mandatory,
             ),
@@ -128,10 +125,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const requestAccount = useCallback(
       (request: RequestAccountParams) => {
-        const source =
-          currentRouteNameRef.current === "Platform Catalog"
-            ? "Discover"
-            : (currentRouteNameRef.current ?? "Unknown");
+        const source = getTrackingRouteLiveAppSource();
 
         const flow = manifest.name;
 

@@ -32,40 +32,50 @@ function setupMocks({
   cardStatus = "ACTIVE",
   balances = [] as (string | null)[],
   transactions = [] as { status: "CONFIRMED" | "PENDING" | "DECLINED" | "REVERTED" }[],
+  isUserLoading = false,
+  isCardStatusLoading = false,
+  areTransactionsLoading = false,
+  areWalletsLoading = false,
   isUserFetching = false,
   isCardStatusFetching = false,
   areTransactionsFetching = false,
   areWalletsFetching = false,
   isUserError = false,
   isCardStatusError = false,
+  cardStatusError = undefined as unknown,
   areTransactionsError = false,
   areWalletsError = false,
 } = {}) {
   jest.mocked(useGetUserQuery).mockReturnValue({
     refetch: refetchUser,
     data: verificationState === null ? undefined : { verificationState },
-    isFetching: isUserFetching,
+    isLoading: isUserLoading,
+    isFetching: isUserLoading || isUserFetching,
     isError: isUserError,
   } as unknown as ReturnType<typeof useGetUserQuery>);
 
   jest.mocked(useGetCardStatusQuery).mockReturnValue({
     refetch: refetchCardStatus,
     data: hasCard ? { status: cardStatus } : undefined,
-    isFetching: isCardStatusFetching,
+    isLoading: isCardStatusLoading,
+    isFetching: isCardStatusLoading || isCardStatusFetching,
     isError: isCardStatusError,
+    error: cardStatusError,
   } as unknown as ReturnType<typeof useGetCardStatusQuery>);
 
   jest.mocked(useGetCardTransactionsInfiniteQuery).mockReturnValue({
     refetch: refetchTransactions,
     data: { pages: [transactions], pageParams: [0] },
-    isFetching: areTransactionsFetching,
+    isLoading: areTransactionsLoading,
+    isFetching: areTransactionsLoading || areTransactionsFetching,
     isError: areTransactionsError,
   } as unknown as ReturnType<typeof useGetCardTransactionsInfiniteQuery>);
 
   jest.mocked(useCardLinkedWallets).mockReturnValue({
     refetch: refetchWallets,
     wallets: balances.map((balance, index) => ({ id: `w${index}`, balance })),
-    isFetching: areWalletsFetching,
+    isLoading: areWalletsLoading,
+    isFetching: areWalletsLoading || areWalletsFetching,
     isError: areWalletsError,
   } as unknown as ReturnType<typeof useCardLinkedWallets>);
 }
@@ -217,18 +227,43 @@ describe("useCardOnboardingStatus", () => {
 
   describe("what it reports while asking", () => {
     it.each([
+      ["the account", { isUserLoading: true }],
+      ["the card", { isCardStatusLoading: true }],
+      ["the transactions", { areTransactionsLoading: true }],
+      ["the wallets", { areWalletsLoading: true }],
+    ])("is loading while %s has its first read in flight", (_source, loading) => {
+      setupMocks(loading);
+
+      expect(stepsById().status.isLoading).toBe(true);
+      expect(stepsById().status.isFetching).toBe(true);
+    });
+
+    it.each([
       ["the account", { isUserFetching: true }],
       ["the card", { isCardStatusFetching: true }],
       ["the transactions", { areTransactionsFetching: true }],
       ["the wallets", { areWalletsFetching: true }],
-    ])("is loading while %s is in flight, refetches included", (_source, fetching) => {
+    ])("keeps its answers on screen while %s refetches", (_source, fetching) => {
       setupMocks(fetching);
 
-      expect(stepsById().status.isLoading).toBe(true);
+      expect(stepsById().status.isLoading).toBe(false);
+      expect(stepsById().status.isFetching).toBe(true);
     });
 
-    it("is not loading once every source has answered", () => {
+    it("is neither loading nor fetching once every source has answered", () => {
       setupMocks();
+
+      expect(stepsById().status.isLoading).toBe(false);
+      expect(stepsById().status.isFetching).toBe(false);
+    });
+
+    it("is not loading during a refetch", () => {
+      setupMocks({
+        isUserFetching: true,
+        isCardStatusFetching: true,
+        areTransactionsFetching: true,
+        areWalletsFetching: true,
+      });
 
       expect(stepsById().status.isLoading).toBe(false);
     });
@@ -237,6 +272,36 @@ describe("useCardOnboardingStatus", () => {
       setupMocks({ isUserError: true });
 
       expect(stepsById().status.isError).toBe(true);
+    });
+
+    it("answers a missing card without waiting on the card's other reads", () => {
+      setupMocks({
+        hasCard: false,
+        isCardStatusError: true,
+        cardStatusError: { status: 404 },
+        areTransactionsLoading: true,
+        areTransactionsFetching: true,
+        areTransactionsError: true,
+        areWalletsLoading: true,
+        areWalletsError: true,
+      });
+
+      const steps = stepsById();
+      expect(steps.isDone("choose-card-type")).toBe(false);
+      expect(steps.status.isLoading).toBe(false);
+      expect(steps.status.isFetching).toBe(false);
+      expect(steps.status.isError).toBe(false);
+      expect(steps.status.hasSourceError).toBe(false);
+    });
+
+    it("still reports a failed card read", () => {
+      setupMocks({
+        hasCard: false,
+        isCardStatusError: true,
+        cardStatusError: { status: 500 },
+      });
+
+      expect(stepsById().status.hasSourceError).toBe(true);
     });
 
     it("hides a failed wallet read, which only leaves the top-up step not done", () => {

@@ -13,7 +13,7 @@ const getTransaction = jest.fn();
 const getNodeApi = jest.fn();
 getNodeApi.mockReturnValue({ broadcastTransaction, getTransaction });
 
-jest.mock("@ledgerhq/coin-evm/network/node/index", () => ({
+jest.mock("@ledgerhq/coin-evm/network", () => ({
   getNodeApi: (...args: unknown[]) => getNodeApi(...args),
 }));
 

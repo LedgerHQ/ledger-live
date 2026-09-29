@@ -9,7 +9,7 @@ import {
 import {
   buildContactsGlobalProperties,
   useContacts,
-  type OtherContactAddress,
+  useOtherContactsAddresses,
 } from "@features/platform-contacts";
 import {
   useContactsIntentsOrchestrator,
@@ -66,13 +66,7 @@ export function useSendPrefillAddAddressFlow({
     intents: contactsIntentLWMDefinitions,
     getLiveConfigMinVersion: getMinVersion,
   });
-  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
-    () =>
-      contacts.flatMap(c =>
-        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
-      ),
-    [contacts],
-  );
+  const allContactsAddresses = useOtherContactsAddresses();
   const {
     state: addressFlowState,
     startWithPrefilled,

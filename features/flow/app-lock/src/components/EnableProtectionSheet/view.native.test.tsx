@@ -1,8 +1,13 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import React from "react";
 import { EnableProtectionSheet } from "./view";
 import type { EnableProtectionSheetProps } from "./types";
+
+jest.mock("@shared/analytics-react", () => ({
+  TrackScreen: jest.fn(() => null),
+}));
 
 const COPY = {
   en: {
@@ -28,6 +33,7 @@ const renderSheet = (overrides: Partial<EnableProtectionSheetProps> = {}) => {
         isOpen
         variant="biometrics"
         biometricsKind="FaceID"
+        isConfirming={false}
         onConfirm={onConfirm}
         onClose={jest.fn()}
         {...overrides}
@@ -39,8 +45,19 @@ const renderSheet = (overrides: Partial<EnableProtectionSheetProps> = {}) => {
 };
 
 describe("the enable-protection sheet", () => {
+  beforeEach(() => jest.clearAllMocks());
+
   it("names the device's own biometrics in every line it shows", () => {
     renderSheet();
+
+    expect(TrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: "LW encryption",
+        type: "biometrics",
+        avoidDuplicates: true,
+      }),
+      undefined,
+    );
 
     // Title and button carry the same words by design, which is why this counts them.
     expect(screen.getAllByText("Enable Face ID")).toHaveLength(2);
@@ -50,6 +67,10 @@ describe("the enable-protection sheet", () => {
   it("asks for a password where that is the variant", () => {
     renderSheet({ variant: "password", biometricsKind: undefined });
 
+    expect(TrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({ category: "LW encryption", type: "password" }),
+      undefined,
+    );
     expect(screen.getByText("Create a password")).toBeTruthy();
     expect(screen.getByText("Create password")).toBeTruthy();
   });
@@ -64,6 +85,7 @@ describe("the enable-protection sheet", () => {
   it("shows nothing while closed, so a caller cannot read it off the screen", () => {
     renderSheet({ isOpen: false });
 
+    expect(TrackScreen).not.toHaveBeenCalled();
     expect(screen.queryByText("Enable Face ID")).toBeNull();
   });
 

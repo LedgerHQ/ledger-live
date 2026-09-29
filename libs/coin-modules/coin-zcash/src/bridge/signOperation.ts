@@ -10,6 +10,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Transaction, ZcashAccount, BtcInputRef, ZcashOperationExtra } from "../types/bridge";
 import { isShieldedTransfer } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
+import type { ZcashContext } from "../config";
 import {
   ZcashNotesNotYetSpendable,
   ZcashShieldedKeyMissing,
@@ -105,7 +106,10 @@ function resolveAccountKey(
  * zcash-utils release carries that fix.
  */
 export const buildSignOperation =
-  (signerContext: SignerContext): AccountBridge<Transaction, ZcashAccount>["signOperation"] =>
+  (
+    signerContext: SignerContext,
+    context: ZcashContext,
+  ): AccountBridge<Transaction, ZcashAccount>["signOperation"] =>
   ({ account, deviceId, transaction }) =>
     new Observable<SignOperationEvent>(subscriber => {
       let cancelled = false;
@@ -136,7 +140,8 @@ export const buildSignOperation =
         if (transaction.zcashFee === undefined)
           throw new Error("Missing zcashFee -- run prepareTransaction first");
 
-        await assertCanSend();
+        const currencyId = account.currency.id;
+        await assertCanSend(context, currencyId);
 
         const accountIndex = getWalletAccount(account).params.index;
         const transparentUtxos = resolveTransparentUtxos(account, transaction);
@@ -152,11 +157,17 @@ export const buildSignOperation =
         };
 
         const buildResult = useIronwood
-          ? await craftIronwoodTransaction({ ...plan, ufvk: requireUfvk(ufvk) }).catch(err => {
+          ? await craftIronwoodTransaction(context, currencyId, {
+              ...plan,
+              ufvk: requireUfvk(ufvk),
+            }).catch(err => {
               if (isNotePositionPastAnchor(err)) throw new ZcashNotesNotYetSpendable();
               throw err;
             })
-          : await craftTransaction({ ...plan, ...resolveAccountKey(account, ufvk) });
+          : await craftTransaction(context, currencyId, {
+              ...plan,
+              ...resolveAccountKey(account, ufvk),
+            });
 
         const { pcztTransaction } = buildResult;
 
@@ -185,7 +196,7 @@ export const buildSignOperation =
           Buffer.from(a.spendAuthSig).toString("hex"),
         );
 
-        const finalizeResult = await combine({
+        const finalizeResult = await combine(context, currencyId, {
           pczt: buildResult.pcztHex,
           orchardSignatures,
           transparentSignatures,

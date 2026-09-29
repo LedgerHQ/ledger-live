@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-module-boilerplate",
-  "version": "5.1.2",
+  "version": "5.2.0",
   "private": true,
   "description": "Boilerplate coin integration",
   "keywords": [
@@ -103,7 +103,7 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",

@@ -12,7 +12,6 @@ import {
   NearStakingThresholdNotMet,
   NearNotEnoughStaked,
   NearNotEnoughAvailable,
-  NearUseAllAmountStakeWarning,
 } from "../errors";
 import { fromTransactionRaw } from "../transaction";
 import type { Transaction } from "../types";
@@ -151,13 +150,17 @@ const near: CurrenciesData<Transaction> = {
             },
           },
         },
+        // The seed account holds about 0.015 NEAR above the minimum-balance reserve, under the
+        // floor-priced staking fee, so a stake is refused before the amount is even looked at.
+        // The threshold check is shared by stake, unstake and withdraw; unstake only needs the
+        // fee to fit above the storage deposit, which this account covers.
         {
-          name: "Staking threshold not met",
+          name: "Unstaking below the staking threshold",
           transaction: fromTransactionRaw({
             family: "near",
             recipient: VALIDATOR_ADDRESS,
             amount: "1",
-            mode: "stake",
+            mode: "unstake",
           }),
           expectedStatus: {
             errors: {
@@ -197,7 +200,7 @@ const near: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "Staking max",
+          name: "Staking max with a balance under the reserve plus the fee",
           transaction: fromTransactionRaw({
             family: "near",
             recipient: VALIDATOR_ADDRESS,
@@ -206,10 +209,10 @@ const near: CurrenciesData<Transaction> = {
             mode: "stake",
           }),
           expectedStatus: {
-            errors: {},
-            warnings: {
-              amount: new NearUseAllAmountStakeWarning(),
+            errors: {
+              amount: new NotEnoughBalance(),
             },
+            warnings: {},
           },
         },
       ],

@@ -35,7 +35,7 @@ describe("hgraphClient", () => {
         apiUrls: { ...mockConfig.apiUrls, hgraph: customUrl },
       });
       mockedNetwork.mockResolvedValueOnce(
-        getMockResponse({ data: { ethereum_transaction: [{ consensus_timestamp: "1" }] } }),
+        getMockResponse({ data: { erc_watermark: [{ last_processed_ns: "1" }] } }),
       );
 
       await hgraphClient.getLatestIndexedConsensusTimestamp({ configOrCurrencyId: mockConfig });
@@ -48,7 +48,7 @@ describe("hgraphClient", () => {
       mockedNetwork.mockResolvedValueOnce(
         getMockResponse({
           data: {
-            ethereum_transaction: [{ consensus_timestamp: mockTimestamp }],
+            erc_watermark: [{ last_processed_ns: mockTimestamp }],
           },
         }),
       );
@@ -73,11 +73,11 @@ describe("hgraphClient", () => {
       ).rejects.toThrow();
     });
 
-    it("should throw error when no transactions found", async () => {
+    it("should throw error when no ERC20 watermark found", async () => {
       mockedNetwork.mockResolvedValueOnce(
         getMockResponse({
           data: {
-            ethereum_transaction: [],
+            erc_watermark: [],
           },
         }),
       );

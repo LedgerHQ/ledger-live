@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
 import {
-  createMeDisplayNameFormatter,
+  useContactDisplayName,
   useContacts,
   useContactsMeContact,
   type ContactDeviceIntentsPort,
@@ -24,7 +24,6 @@ import {
   trackContactsListContactOpen,
 } from "@features/flow-contacts";
 import type { AddAddressContact } from "@features/flow-contacts-add-address";
-import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { useContactsAnalytics } from "../../analytics";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
@@ -103,17 +102,11 @@ export function useContactDetailPaneAdapter(
       emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
       emptyContactDescription: () => t("contacts.detail.emptyState.contactDescription"),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
   );
-  const detailSharedState = useContactDetailSharedState(
-    detailContactId,
-    labels.formatMeDisplayName,
-  );
+  const detailSharedState = useContactDetailSharedState(detailContactId);
   const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogLabels>(
     () => ({
       send: t("contacts.addressDetail.send"),
@@ -162,7 +155,6 @@ export function useContactDetailPaneAdapter(
 
     return {
       labels,
-      meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
       contact,
       onAddAddress: () => handleAddAddress(contact),
       ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
@@ -185,6 +177,8 @@ export function useContactDetailPaneAdapter(
     onAddressRowPress,
     populatedContactDetail,
   ]);
+  const getDisplayName = useContactDisplayName();
+  const dialogContact = populatedContactDetail?.contact ?? emptyContact;
   const addressDetailDialog = useMemo<ContactAddressDetailDialogProps>(() => {
     const isAddressActionDialogOpen =
       addressDetailActionsDialogs.deleteDialog.isOpen ||
@@ -193,7 +187,7 @@ export function useContactDetailPaneAdapter(
 
     return {
       isOpen: isOpen && !isAddressActionDialogOpen,
-      contactName: populatedContactDetail?.contact.name ?? emptyContact?.name ?? "",
+      contactName: dialogContact ? getDisplayName(dialogContact) : "",
       row: selection?.row,
       network: selection?.network,
       labels: addressDetailDialogLabels,
@@ -206,10 +200,10 @@ export function useContactDetailPaneAdapter(
     addressDetailActionsDialogs.renameDialog.isOpen,
     addressDetailActionsDialogs.signerMismatchDialog.isOpen,
     addressDetailDialogLabels,
-    emptyContact?.name,
+    dialogContact,
+    getDisplayName,
     isOpen,
     onCloseAddressDetail,
-    populatedContactDetail?.contact.name,
     selection?.network,
     selection?.row,
   ]);

@@ -10,11 +10,11 @@ import {
   nftLegacyTx,
   tokenTransaction,
 } from "../transaction.fixtures";
-import { getGasTracker } from "@ledgerhq/coin-evm/network/gasTracker/index";
+import { getGasTracker } from "@ledgerhq/coin-evm/network";
 import { getEditTransactionPatch } from "./getEditTransactionPatch";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
 
-jest.mock("@ledgerhq/coin-evm/network/gasTracker/index");
+jest.mock("@ledgerhq/coin-evm/network");
 const mockedGetGasTracker = jest.mocked(getGasTracker);
 
 jest.mock("./getMinEditTransactionFees");

@@ -16,7 +16,7 @@ import type {
   ZcashPrivateInfoRaw,
 } from "../network/types";
 import { rehydrateOutput } from "../network/serialization/rehydrate";
-import { walletBtcCurrencyById } from "../walletBtcCurrency";
+import { walletBtcCurrencyById, type ExplorerConfig } from "../walletBtcCurrency";
 
 // ── Transparent (bitcoinResources) serialization ────────────────────────
 //
@@ -67,13 +67,17 @@ export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw 
   };
 }
 
+// No explorer endpoint at deserialization: sync and broadcast bind it from the coin config
+// before first use (see bridge/explorer.ts), so a remote endpoint change is not frozen here.
+const UNBOUND_EXPLORER: ExplorerConfig = { explorer: { url: "" } };
+
 export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
     ...(r.walletAccount && {
       walletAccount: wallet.importFromSerializedAccountSync(
         r.walletAccount,
-        walletBtcCurrencyById(r.walletAccount.params.currency),
+        walletBtcCurrencyById(r.walletAccount.params.currency, UNBOUND_EXPLORER),
       ),
     }),
   };

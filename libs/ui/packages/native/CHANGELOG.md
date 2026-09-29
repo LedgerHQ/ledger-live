@@ -164,16 +164,4 @@
 - Updated dependencies [[`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77)]:
   - @ledgerhq/icons-ui@0.20.0-next.0
 
-## 0.57.0
-
-### Minor Changes
-
-- [#14266](https://github.com/LedgerHQ/ledger-live/pull/14266) [`2f07682`](https://github.com/LedgerHQ/ledger-live/commit/2f07682ccfb504caf38ba8798e3b22847302890d) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add Wallet V4 Tour drawer with slides showcasing new features
-
-## 0.57.0-next.0
-
-### Minor Changes
-
-- [#14266](https://github.com/LedgerHQ/ledger-live/pull/14266) [`2f07682`](https://github.com/LedgerHQ/ledger-live/commit/2f07682ccfb504caf38ba8798e3b22847302890d) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add Wallet V4 Tour drawer with slides showcasing new features
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react-native";
 import React from "react";
-import { PasswordDraftProvider, usePasswordDraft } from "../../state/passwordDraft";
+import { PasswordDraftProvider, usePasswordDraft } from "@features/platform-app-lock";
 import { useSetupPasswordViewModel } from "./viewModel";
 
 function wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -66,21 +66,5 @@ describe("useSetupPasswordViewModel", () => {
 
     expect(onValid).toHaveBeenCalledTimes(1);
     expect(result.current.draft.read()).toBe("123456");
-  });
-});
-
-describe("usePasswordDraft", () => {
-  it("throws without a provider, so the password cannot silently fall back to nav state", () => {
-    expect(() => renderHook(() => usePasswordDraft())).toThrow(/PasswordDraftProvider/);
-  });
-
-  it("clears on demand", () => {
-    const { result } = renderHook(() => usePasswordDraft(), { wrapper });
-
-    act(() => result.current.write("secret1"));
-    expect(result.current.read()).toBe("secret1");
-
-    act(() => result.current.clear());
-    expect(result.current.read()).toBeNull();
   });
 });

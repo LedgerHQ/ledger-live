@@ -21,3 +21,24 @@ export type CoreTransaction = {
   /* The token resolution for clear signing */
   resolution?: Resolution;
 };
+
+type StakeObjectBase = {
+  /** ID of the `StakedSui` receipt object. */
+  stakedSuiId: string;
+  principal: string;
+  stakeRequestEpoch: string;
+  stakeActiveEpoch: string;
+};
+
+/** A single `StakedSui` position. Discriminated on `status`; only `Active` accrues a reward. */
+export type StakeObject =
+  | (StakeObjectBase & { status: "Pending" })
+  | (StakeObjectBase & { status: "Active"; estimatedReward: string })
+  | (StakeObjectBase & { status: "Unstaked" });
+
+/** The stakes an owner holds in one validator's staking pool. */
+export type DelegatedStake = {
+  validatorAddress: string;
+  stakingPool: string;
+  stakes: StakeObject[];
+};

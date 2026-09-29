@@ -1,4 +1,3 @@
-import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
 import { extractCoinTypeFromUnsignedTx } from "../test/testUtils";
@@ -6,10 +5,7 @@ import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.
 
 import { buildTransaction } from "./buildTransaction";
 
-// SKIP — Sui JSON-RPC public-endpoint shutdown. This suite targets the public mainnet
-// fullnode (fullnode.mainnet.sui.io), which the Sui Foundation retired (testnet wk of
-// 2026-07-06, mainnet wk of 2026-07-20) as JSON-RPC is deprecated for gRPC/GraphQL.
-// Re-enable after porting the integ config to the GraphQL transport.
+// Skipped until re-validated live against the gRPC transport.
 describe.skip("buildTransaction", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
@@ -17,11 +13,12 @@ describe.skip("buildTransaction", () => {
         type: "active",
       },
       node: {
-        url: getJsonRpcFullnodeUrl("mainnet"),
         graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
-        grpcUrl: getJsonRpcFullnodeUrl("mainnet"),
+        grpcUrl: "https://fullnode.mainnet.sui.io:443",
       },
-      features: { transport: "json" },
+      features: { transport: "grpc" },
+      name: "Sui",
+      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 

@@ -4,6 +4,11 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
+import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
+import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";
+import { historyKey, inferCurrencyAPIID } from "@domain/entity-market-countervalues";
 import {
   getCryptoCurrencyById,
   findCryptoCurrencyById,
@@ -28,6 +33,10 @@ setFrameworkCryptoAssetsStore({
   findTokenByAddressInCurrency: () => Promise.resolve(undefined),
   getTokensSyncHash: () => Promise.resolve(""),
 });
+
+setAssetAggregationRateLookup({ calculate });
+setWalletAnalyticsRateLookup({ calculate });
+setWalletPnlRateLookup({ calculate, historyKey, currencyApiId: inferCurrencyAPIID });
 import "react-native-gesture-handler/jestSetup";
 import "@shopify/flash-list/jestSetup";
 import "@mocks/console";
@@ -138,6 +147,12 @@ jest.mock("expo-haptics", () => ({
 
 jest.mock("react-native-launch-arguments", () => ({}));
 
+NativeModules.AppVisibilityModule = {
+  isInForeground: () => true,
+  addListener: () => {},
+  removeListeners: () => {},
+};
+
 NativeModules.BluetoothHelperModule = {
   E_BLE_CANCELLED: "BLE_UNKNOWN_STATE",
 };
@@ -173,6 +188,15 @@ jest.mock("react-native-share", () => ({
   __esModule: true,
   default: { open: jest.fn(() => Promise.resolve({ success: true })) },
 }));
+
+jest.mock(
+  "react-native-fit-image",
+  () => {
+    const { Image } = require("react-native");
+    return { __esModule: true, default: Image };
+  },
+  { virtual: true },
+);
 
 jest.mock("react-native-view-shot", () => ({
   captureRef: jest.fn(() => Promise.resolve("file://mock.png")),
@@ -310,6 +334,17 @@ jest.mock("react-native-worklets", () => require("react-native-worklets/lib/modu
 
 // Setup Reanimated testing environment
 require("react-native-reanimated").setUpTests();
+
+// useAnimatedScrollHandler needs the worklets Babel transform, which Jest (SWC) doesn't run.
+jest.mock("LLM/components/Wallet40Background/useScrollOffset", () => {
+  const { useSharedValue } = jest.requireActual("react-native-reanimated");
+  return {
+    useScrollOffset: scrollY => {
+      const ownScrollY = useSharedValue(0);
+      return { scrollY: scrollY ?? ownScrollY, onScroll: undefined };
+    },
+  };
+});
 
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),

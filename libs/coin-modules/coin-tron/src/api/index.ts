@@ -16,9 +16,12 @@ import {
 import type { TronContext, TronCoinConfig } from "../config";
 import {
   broadcast,
+  buildEnergyRentRequest,
   combine,
+  craftRawTransaction,
   craftTransaction,
   estimateFees,
+  estimateSponsoredFeeQuote,
   estimateTronifyFees,
   getAccountInfo,
   getBalance,
@@ -33,6 +36,24 @@ import {
   validateIntent,
 } from "../logic";
 import { TRONIFY_FEE_OPTION_ID } from "../logic/constants";
+import {
+  awaitEnergyDelivery,
+  broadcastEnergyRentTransaction,
+  buildSignedEnergyRentTransaction,
+  craftEnergyRentTransaction,
+  getEnergyProvider,
+  getEnergyRentSignaturePayload,
+  getEnergyRentStatus,
+  isEnergyDeliveredOnChain,
+  nativeRentAmount,
+} from "../logic/energyRent";
+import type {
+  EnergyRentOrder,
+  EnergyRentOrderRef,
+  EnergyRentRequest,
+  EnergyRentSignedTransaction,
+  EnergyRentUnsignedTransaction,
+} from "../logic/energyRent";
 import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
 import type { TronMemo, TronTxData } from "../types";
 
@@ -47,16 +68,23 @@ export { TRONIFY_FEE_OPTION_ID };
 // Omitted rather than stubbed, and why:
 //   - `call`                — Tron contract reads (triggerconstantcontract) are not supported yet.
 //   - `getRewards`          — withdrawals already appear in `listOperations`.
-//   - `craftRawTransaction` — the chain takes no externally-built transaction.
 //   - `register`            — no enrollment step.
+// `craftRawTransaction` IS implemented (below) — the Tronify sponsorship flow (LIVE-32780) signs a
+// pre-built payment tx and needs this pass-through; the ordinary send path never calls it directly.
 // The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
 export function createApi() {
-  return {
+  const base = {
     broadcast: async (context, tx, _options?) => {
       const config = await context.config();
       return broadcast(context.logger, config, tx);
     },
     combine: (_context, tx, signature, _options?) => combine(tx, signature),
+    // Returns Tronify's pre-built payment tx verbatim (re-crafting would sign different bytes). Gated
+    // on a configured+supported provider — ungated, any raw-sign caller could get arbitrary bytes signed.
+    craftRawTransaction: async (context, transaction, _sender, _publicKey, _sequence) => {
+      getEnergyProvider(await context.config());
+      return craftRawTransaction(transaction);
+    },
     craftTransaction: async (context, transactionIntent, options?) => {
       const config = await context.config();
       return craftTransaction(context.logger, config, transactionIntent, options?.customFees);
@@ -128,6 +156,51 @@ export function createApi() {
     ): Promise<boolean> => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
   } satisfies CoinModuleImpl<TronCoinConfig, TronMemo, TronTxData>;
+
+  return base;
+}
+
+/** Energy-rent seam (Tronify sponsored send), kept off {@link createApi} since it isn't part of the
+ * generic `CoinModuleImpl`/`CoinModuleApi` contract; resolved via the registry's sponsored-API loaders. */
+export function createSponsoredSendApi(context: TronContext) {
+  return {
+    listFeeOptions: (intent: TransactionIntent<TronMemo, TronTxData>) =>
+      listFeeOptionsLogic(context, intent),
+    // Called with logger+config directly, not a framework Context.
+    estimateSponsoredFeeQuote: async (intent: TransactionIntent<TronMemo, TronTxData>) =>
+      estimateSponsoredFeeQuote(context.logger, await context.config(), intent),
+    buildEnergyRentRequest: async (intent: TransactionIntent<TronMemo, TronTxData>) =>
+      buildEnergyRentRequest(context.logger, await context.config(), intent),
+    craftEnergyRentTransaction: async (request: EnergyRentRequest) =>
+      craftEnergyRentTransaction(context.logger, await context.config(), request),
+    submitEnergyRentPayment: async (payment: {
+      orderId: string;
+      signedTransaction: EnergyRentSignedTransaction;
+    }) => broadcastEnergyRentTransaction(context.logger, await context.config(), payment),
+    getEnergyRentStatus: async (ref: EnergyRentOrderRef) =>
+      getEnergyRentStatus(context.logger, await context.config(), ref),
+    awaitEnergyDelivery: async (
+      ref: EnergyRentOrderRef,
+      target: { receiverAddress: string; energyNeeded: bigint },
+      opts?: {
+        intervalMs?: number;
+        timeoutMs?: number;
+        paymentTxId?: string;
+        signal?: AbortSignal;
+      },
+    ) => awaitEnergyDelivery(context.logger, await context.config(), ref, target, opts),
+    // The provider's advisory "delivered" must be corroborated on-chain before TX-C releases (ADR-058 C4).
+    isEnergyDelivered: async (target: { receiverAddress: string; energyNeeded: bigint }) =>
+      isEnergyDeliveredOnChain(context.logger, await context.config(), target),
+    // Wire transforms kept behind the seam so the generic Send flow never handles coin-tron's Tronify payload.
+    getEnergyRentSignaturePayload: (transaction: EnergyRentUnsignedTransaction) =>
+      getEnergyRentSignaturePayload(transaction),
+    buildSignedEnergyRentTransaction: (
+      transaction: EnergyRentUnsignedTransaction,
+      deviceSignature: string,
+    ) => buildSignedEnergyRentTransaction(transaction, deviceSignature),
+    nativeRentAmount: (order: EnergyRentOrder) => nativeRentAmount(order),
+  };
 }
 
 /**

@@ -23,7 +23,9 @@ export function CardOnboardingWidget({ onTopUp, onChooseCardType }: CardOnboardi
     handleGotIt,
   } = useCardOnboardingViewModel();
 
-  if (isLoading || isError || hasCompletedOnboarding) return null;
+  const choosingCardType = steps.find(step => !step.isDone)?.id === "choose-card-type";
+
+  if (isLoading || isError || (hasCompletedOnboarding && !choosingCardType)) return null;
 
   return (
     <>

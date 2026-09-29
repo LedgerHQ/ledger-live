@@ -10,6 +10,7 @@ describe("public API barrels", () => {
     expect(nativeApi.BottomSheetBackgroundContext).toBeDefined();
     expect(nativeApi.useBottomSheetBackgroundTone).toBeDefined();
     expect(nativeApi.useBottomSheetFooterInset).toBeDefined();
+    expect(nativeApi.useBottomSheetBottomInset).toBeDefined();
     expect(nativeApi.defaultQueuedBottomSheetAdapters).toBeDefined();
     expect(keyboardApi.useBottomSheetKeyboardAwareInput).toBeDefined();
     expect(Object.prototype.hasOwnProperty.call(nativeApi, "useQueuedBottomSheet")).toBe(false);

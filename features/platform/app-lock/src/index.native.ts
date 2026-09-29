@@ -1,9 +1,9 @@
 export * from "./state/schema";
 export * from "./state/types";
 export * from "./state/authenticationType";
+export * from "./state/lastProtection";
 export * from "./state/slice";
 export * from "./state/selectors";
-export * from "./appState";
 export * from "./biometricsType";
 export * from "./biometricsTypes";
 export * from "./errors";
@@ -12,4 +12,6 @@ export * from "./promptError";
 export * from "./scheme";
 export * from "./staleProtection";
 export * from "./biometrics.native";
+export * from "./PasswordField";
+export * from "./passwordDraft";
 export * from "./verifier";

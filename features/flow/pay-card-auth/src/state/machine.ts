@@ -294,8 +294,8 @@ export const cardLoginMachine = setup({
     authError: {
       entry: ["forgetAttempt", "publishSignedOut"],
       on: {
-        LOGIN: { target: "preparingAttempt" },
-        RETRY: { target: "preparingAttempt" },
+        RETRY: { target: "idle" },
+        DISMISS: { target: "idle" },
       },
     },
 
@@ -304,6 +304,10 @@ export const cardLoginMachine = setup({
       on: {
         LOGIN: { target: "preparingAttempt" },
         RETRY: { target: "fetchingUser", actions: "clearErrorKind" },
+        DISMISS: {
+          target: "clearingAttempt",
+          actions: [assign({ clearSession: true }), "clearErrorKind"],
+        },
       },
     },
 

@@ -2,6 +2,7 @@ import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
   formatCardTransactionDate,
+  formatFundingLabel,
   formatFundingSources,
   formatHistoryDayLabel,
   formatMaskedPanLast4,
@@ -13,6 +14,9 @@ import {
 const transaction = PayCardTransactionSchema.parse(mockPayCardTransactions()[0]);
 
 const TIMESTAMP = "2024-10-14T10:44:36.276Z";
+
+const USDC_SOURCE = { currency: "usdc", amount: "13.0214", sign: "DEBIT" as const };
+const BTC_SOURCE = { currency: "btc", amount: "0.00005231", sign: "DEBIT" as const };
 
 function formatLocale(locale: string) {
   return (date: Date) => new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date);
@@ -35,6 +39,15 @@ describe("formatCardTransactionItem", () => {
   it("formats every funding source used for the payment", () => {
     expect(formatFundingSources(transaction.fundingSources)).toBe("-13.0214 USDC");
     expect(formatFundingSources([])).toBeUndefined();
+  });
+
+  it("counts the funding assets rather than listing them when the payment used several", () => {
+    const translate = (count: number) => `Paid with ${count} assets`;
+
+    expect(formatFundingLabel(undefined, translate)).toBeUndefined();
+    expect(formatFundingLabel([], translate)).toBeUndefined();
+    expect(formatFundingLabel([USDC_SOURCE], translate)).toBe("-13.0214 USDC");
+    expect(formatFundingLabel([USDC_SOURCE, BTC_SOURCE], translate)).toBe("Paid with 2 assets");
   });
 
   it("removes the location suffix from the merchant name", () => {

@@ -3,7 +3,6 @@ import type { SuiCoinConfig } from "../config";
 
 const config = {
   node: {
-    url: "https://mockapi.sui.io",
     graphqlUrl: "https://mockapi.sui.io/graphql",
     grpcUrl: "https://mockapi.sui.io",
   },
@@ -53,30 +52,17 @@ import {
   stakeQueryCalls,
 } from "./sdk.graphql.fixtures";
 
-// JSON-RPC stays mocked — any caller leaking onto it fails loudly via this proxy.
-const unexpectedJsonRpc = jest.fn(() => {
-  throw new Error("JSON-RPC client invoked on GraphQL test path");
+// gRPC stays mocked — any caller leaking onto it fails loudly.
+const unexpectedGrpc = jest.fn(() => {
+  throw new Error("gRPC client invoked on GraphQL test path");
 });
 
 jest.mock("./graphql/client", () => ({
   createSuiGraphQLClient: jest.fn(),
 }));
 
-jest.mock("@mysten/sui/jsonRpc", () => ({
-  ...jest.requireActual("@mysten/sui/jsonRpc"),
-  SuiJsonRpcClient: jest.fn().mockImplementation(
-    () =>
-      new Proxy(
-        {},
-        {
-          get: (_t, prop) => {
-            if (typeof prop === "symbol" || prop === "then") return undefined;
-            return unexpectedJsonRpc;
-          },
-        },
-      ),
-  ),
-  getJsonRpcFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
+jest.mock("./grpc/client", () => ({
+  createSuiGrpcClient: jest.fn(() => unexpectedGrpc()),
 }));
 
 const factoryMock = createSuiGraphQLClient as unknown as jest.Mock;
@@ -84,7 +70,7 @@ const mockNext = bindMockNextGraphQLClient(factoryMock);
 
 beforeEach(() => {
   factoryMock.mockReset();
-  unexpectedJsonRpc.mockClear();
+  unexpectedGrpc.mockClear();
 });
 
 describe("getAllBalancesCached on GraphQL transport", () => {
@@ -104,8 +90,7 @@ describe("getAllBalancesCached on GraphQL transport", () => {
     // WHEN
     const result = await getAllBalancesCached(config, owner);
 
-    // THEN — cache stores only the narrow DispatchedCoinBalance shape; the
-    // GraphQL transport's neutral fillers for JSON-RPC-only fields are stripped.
+    // THEN
     expect(result).toEqual([
       {
         coinType: "0x2::sui::SUI",
@@ -172,7 +157,6 @@ describe("getAllBalancesCached on GraphQL transport", () => {
 
       // THEN
       // Pre-retry balance is discarded; only post-retry survives.
-      // Cache stores the narrow DispatchedCoinBalance shape.
       expect(result).toEqual([
         {
           coinType: "0x2::sui::SUI",
@@ -206,8 +190,7 @@ describe("getLastBlock on GraphQL transport", () => {
     // THEN
     expect(result).toEqual({
       digest: "AbCdEfDigestZ",
-      // Returned shape converts UInt53 back to a string for downstream
-      // JSON-RPC compatibility.
+      // UInt53 comes back as a string, matching the gRPC arm.
       sequenceNumber: "12345",
       timestampMs: String(new Date(isoTimestamp).getTime()),
     });
@@ -874,7 +857,7 @@ describe("executeTransactionBlock on GraphQL transport (mock)", () => {
   });
 
   it("flags missing effects in the GraphQL response with a diagnostic error", async () => {
-    // GIVEN — proxy/middleware stripped `effects`, mirroring the JSON-RPC null-effects path.
+    // GIVEN — proxy/middleware stripped `effects`.
     const query = jest.fn().mockResolvedValueOnce({
       data: { executeTransaction: { effects: null } },
     });
@@ -886,7 +869,7 @@ describe("executeTransactionBlock on GraphQL transport (mock)", () => {
       signature: "sig",
     } as never);
 
-    // THEN — surfaced as failure with the same diagnostic string the JSON-RPC branch uses.
+    // THEN — surfaced as failure with the same diagnostic string the gRPC arm uses.
     expect(result.effects.status.status).toBe("failure");
     expect(result.effects.status.error).toBe("missing effects in broadcast response");
   });
@@ -997,7 +980,7 @@ describe("getOperations on GraphQL transport", () => {
                 checkpoint: { sequenceNumber: 10, digest: "0xcp1" },
                 timestamp: "2026-05-12T00:00:00.000Z",
               },
-              transactionJson: { sender: ADDR, gasData: { owner: ADDR } },
+              transactionJson: { sender: ADDR, gasPayment: { owner: ADDR } },
             },
           ],
           pageInfo: { hasPreviousPage: false, startCursor: null },
@@ -1006,7 +989,7 @@ describe("getOperations on GraphQL transport", () => {
     });
     mockNext({ query });
 
-    const ops = await getOperations(config, "acc-1", ADDR, undefined, undefined);
+    const ops = await getOperations(config, "acc-1", ADDR, undefined);
 
     expect(query).toHaveBeenCalledTimes(1);
     expect(Array.isArray(ops)).toBe(true);
@@ -1023,7 +1006,7 @@ describe("getOperations on GraphQL transport", () => {
         checkpoint: { sequenceNumber, digest: `0xcp${sequenceNumber}` },
         timestamp: "2026-05-12T00:00:00.000Z",
       },
-      transactionJson: { sender: ADDR, gasData: { owner: ADDR } },
+      transactionJson: { sender: ADDR, gasPayment: { owner: ADDR } },
     });
     const query = jest
       .fn()
@@ -1045,7 +1028,7 @@ describe("getOperations on GraphQL transport", () => {
       });
     mockNext({ query });
 
-    const ops = await getOperations(config, "acc-1", ADDR, undefined, undefined);
+    const ops = await getOperations(config, "acc-1", ADDR, undefined);
 
     expect(query).toHaveBeenCalledTimes(2);
     expect(query.mock.calls[1][0].variables.before).toBe("cursor-page-2");
@@ -1071,7 +1054,7 @@ describe("getOperations on GraphQL transport", () => {
       });
     mockNext({ query });
 
-    await getOperations(config, "acc-1", ADDR, "0xcursorDigest", undefined);
+    await getOperations(config, "acc-1", ADDR, "0xcursorDigest");
 
     // `afterCheckpoint` is exclusive, so 41 is what keeps checkpoint 42 in range.
     expect(query.mock.calls[1][0].variables.afterCheckpoint).toBe(41);
@@ -1093,7 +1076,7 @@ describe("getOperations on GraphQL transport", () => {
       });
     mockNext({ query });
 
-    await getOperations(config, "acc-1", ADDR, "0xgenesisDigest", undefined);
+    await getOperations(config, "acc-1", ADDR, "0xgenesisDigest");
 
     expect(query.mock.calls[1][0].variables.afterCheckpoint).toBeUndefined();
   });
@@ -1111,7 +1094,7 @@ describe("getOperations on GraphQL transport", () => {
                 checkpoint: { sequenceNumber: 10, digest: "0xcp1" },
                 timestamp: "2026-05-19T00:00:00.000Z",
               },
-              transactionJson: { sender: ADDR, gasData: { owner: ADDR } },
+              transactionJson: { sender: ADDR, gasPayment: { owner: ADDR } },
             },
             // indexing lag: only the digest is known yet
             { digest: "0xlagged", effects: null, transactionJson: null },
@@ -1122,7 +1105,7 @@ describe("getOperations on GraphQL transport", () => {
     });
     mockNext({ query });
 
-    const ops = await getOperations(config, "acc-1", ADDR, undefined, undefined);
+    const ops = await getOperations(config, "acc-1", ADDR, undefined);
     const hashes = ops.map(o => o.hash);
     expect(hashes).toContain("0xfinalized");
     expect(hashes).not.toContain("0xlagged");
@@ -1142,7 +1125,7 @@ describe("getOperations on GraphQL transport", () => {
                 timestamp: "2026-05-19T00:00:00.000Z",
                 effectsJson: { status: { error: { description: "MoveAbort" } } },
               },
-              transactionJson: { sender: ADDR, gasData: { owner: ADDR } },
+              transactionJson: { sender: ADDR, gasPayment: { owner: ADDR } },
             },
           ],
           pageInfo: { hasPreviousPage: false, startCursor: null },
@@ -1151,7 +1134,7 @@ describe("getOperations on GraphQL transport", () => {
     });
     mockNext({ query });
 
-    const ops = await getOperations(config, "acc-1", ADDR, undefined, undefined);
+    const ops = await getOperations(config, "acc-1", ADDR, undefined);
     expect(ops.find(o => o.hash === "0xfail")?.hasFailed).toBe(true);
   });
 });
@@ -1291,7 +1274,7 @@ describe("getListOperations cursor bounds on the GraphQL transport", () => {
   it("keeps the cursor's own checkpoint in range when descending", async () => {
     const { filters } = stub(12, [[node("tx-a", 12), node("tx-m", 12)]]);
 
-    const page = await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-m`);
+    const page = await getListOperations(config, addr("11"), "desc", `${TS}:tx-m`);
 
     // `beforeCheckpoint` is the exclusive upper bound, so 13 keeps checkpoint 12 in range.
     expect(filters[0]?.beforeCheckpoint).toBe(13);
@@ -1301,7 +1284,7 @@ describe("getListOperations cursor bounds on the GraphQL transport", () => {
   it("keeps the cursor's own checkpoint in range when ascending", async () => {
     const { filters } = stub(12, [[node("tx-a", 12), node("tx-m", 12)]]);
 
-    const page = await getListOperations(config, addr("11"), "asc", undefined, `${TS}:tx-a`);
+    const page = await getListOperations(config, addr("11"), "asc", `${TS}:tx-a`);
 
     expect(filters[0]?.afterCheckpoint).toBe(11);
     expect(page.items.map(op => op.tx.hash)).toEqual(["tx-m"]);
@@ -1313,7 +1296,7 @@ describe("getListOperations cursor bounds on the GraphQL transport", () => {
     );
     const { filters } = stub(12, [stalled, [node("tx-older", 11, "2026-05-18T00:00:00.000Z")]]);
 
-    const page = await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-000`);
+    const page = await getListOperations(config, addr("11"), "desc", `${TS}:tx-000`);
 
     expect(filters).toHaveLength(2);
     expect(filters[0]?.beforeCheckpoint).toBe(13);
@@ -1333,7 +1316,7 @@ describe("getListOperations cursor bounds on the GraphQL transport", () => {
     ];
     const { filters } = stub(12, [full]);
 
-    const page = await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-cursor`);
+    const page = await getListOperations(config, addr("11"), "desc", `${TS}:tx-cursor`);
 
     expect(filters[0]?.beforeCheckpoint).toBe(13);
     expect(page.items).toHaveLength(49);
@@ -1346,7 +1329,7 @@ describe("getListOperations cursor bounds on the GraphQL transport", () => {
   it("requests the oldest slice when walking ascending", async () => {
     const { windows, filters } = stub(12, [[node("tx-a", 12)]]);
 
-    await getListOperations(config, addr("11"), "asc", undefined, `${TS}:tx-cursor`);
+    await getListOperations(config, addr("11"), "asc", `${TS}:tx-cursor`);
 
     expect(windows[0]).toEqual({ first: 50, last: null });
     expect(filters[0]?.afterCheckpoint).toBe(11);
@@ -1355,7 +1338,7 @@ describe("getListOperations cursor bounds on the GraphQL transport", () => {
   it("requests the newest slice when walking descending", async () => {
     const { windows } = stub(12, [[node("tx-a", 12)]]);
 
-    await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-cursor`);
+    await getListOperations(config, addr("11"), "desc", `${TS}:tx-cursor`);
 
     expect(windows[0]).toEqual({ first: null, last: 50 });
   });
@@ -1368,7 +1351,7 @@ describe("getListOperations cursor bounds on the GraphQL transport", () => {
     );
     stub(12, [full], true, true);
 
-    const page = await getListOperations(config, addr("11"), "asc", undefined, `${TS}:tx-cursor`);
+    const page = await getListOperations(config, addr("11"), "asc", `${TS}:tx-cursor`);
 
     expect(page.items).toHaveLength(50);
     expect(page.next).toEqual(expect.any(String));
@@ -1381,7 +1364,7 @@ describe("getListOperations cursor bounds on the GraphQL transport", () => {
     );
     stub(12, [full], true, false);
 
-    const page = await getListOperations(config, addr("11"), "asc", undefined, `${TS}:tx-cursor`);
+    const page = await getListOperations(config, addr("11"), "asc", `${TS}:tx-cursor`);
 
     expect(page.items).toHaveLength(50);
     expect(page.next).toBeUndefined();
@@ -1392,7 +1375,7 @@ describe("getListOperations cursor bounds on the GraphQL transport", () => {
   it("sends no lower bound when paging ascending from checkpoint zero", async () => {
     const { filters } = stub(0, [[node("tx-a", 0)]]);
 
-    await getListOperations(config, addr("11"), "asc", undefined, `${TS}:tx-cursor`);
+    await getListOperations(config, addr("11"), "asc", `${TS}:tx-cursor`);
 
     expect(filters[0]?.afterCheckpoint).toBeUndefined();
   });
@@ -1403,7 +1386,7 @@ describe("getListOperations cursor bounds on the GraphQL transport", () => {
     const full = Array.from({ length: 50 }, (_, i) => node(`tx-${String(i).padStart(3, "0")}`, 11));
     stub(12, [full], false);
 
-    const page = await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-cursor`);
+    const page = await getListOperations(config, addr("11"), "desc", `${TS}:tx-cursor`);
 
     expect(page.items).toHaveLength(50);
     expect(page.next).toBeUndefined();
@@ -1607,8 +1590,8 @@ describe("getBlockInfoFieldsGraphQL", () => {
   });
 
   // `digest` and `timestamp` are nullable in the schema. Coercing them would report a block with an
-  // empty hash or a 1970 timestamp, which sync stores as if it were real; JSON-RPC cannot produce
-  // either, so the GraphQL arm fails instead.
+  // empty hash or a 1970 timestamp, which sync stores as if it were real, so the GraphQL arm fails
+  // instead.
   it.each([
     ["digest", { digest: null, timestamp: "2026-01-01T00:00:00Z" }, /has no digest/],
     ["timestamp", { digest: "d", timestamp: null }, /has no timestamp/],

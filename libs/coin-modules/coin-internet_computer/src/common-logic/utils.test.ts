@@ -1,9 +1,12 @@
+import { BigNumber } from "bignumber.js";
+import { MAX_MEMO_VALUE } from "../consts";
 import { getNeuronStakeSubAccountIdentifier } from "../logic/buildNeuronTransaction";
 import { derivePrincipalFromPubkey } from "../logic/crypto";
 import type { InternetComputerOperation } from "../types";
 import {
   dedupeRetypedOperations,
   getBufferFromString,
+  getRandomTransferID,
   isValidHex,
   reassignOperationType,
 } from "./utils";
@@ -122,6 +125,30 @@ describe("reassignOperationType", () => {
     );
 
     expect(op!.type).toBe("OUT");
+  });
+});
+
+describe("getRandomTransferID", () => {
+  let random: jest.SpyInstance;
+
+  beforeEach(() => {
+    random = jest.spyOn(BigNumber, "random");
+  });
+
+  afterEach(() => {
+    random.mockRestore();
+  });
+
+  it("draws 1, not the top-up memo 0, from the lowest random value", () => {
+    random.mockReturnValue(new BigNumber(0));
+
+    expect(getRandomTransferID()).toBe("1");
+  });
+
+  it("draws MAX_MEMO_VALUE from the highest random value", () => {
+    random.mockReturnValue(new BigNumber("0.99999999999999999999"));
+
+    expect(getRandomTransferID()).toBe(String(MAX_MEMO_VALUE));
   });
 });
 

@@ -1,5 +1,5 @@
 import { ContactIdSchema } from "@domain/entity-contact";
-import { ContactAvatar } from "@features/platform-contacts";
+import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
 import type { MatchedContact } from "@ledgerhq/live-common/flows/send/recipient/types";
 import {
   Box,
@@ -52,6 +52,7 @@ export function RecipientCard({
   onUnsupportedNetwork,
   onDismissUnsupportedNetwork,
 }: RecipientCardProps) {
+  const getDisplayName = useContactDisplayName();
   return (
     <Card type="info" testID="send-recipient-card" lx={{ marginHorizontal: "s8" }}>
       <CardHeader lx={showActions ? undefined : { paddingBottom: "s16" }}>
@@ -60,6 +61,7 @@ export function RecipientCard({
             <ContactAvatar
               contactId={ContactIdSchema.parse(contact.contactId)}
               name={contact.contactName}
+              isMe={contact.isMe}
               size="md"
               testId="send-recipient-card-avatar"
             />
@@ -67,8 +69,14 @@ export function RecipientCard({
             <Spot appearance="icon" icon={Wallet} />
           )}
           <CardContent>
-            <CardContentTitle typography="body2SemiBold" numberOfLines={contact ? 1 : undefined}>
-              {contact?.contactName ?? recipient}
+            <CardContentTitle
+              testID="send-recipient-card-title"
+              typography="body2SemiBold"
+              numberOfLines={contact ? 1 : undefined}
+            >
+              {contact
+                ? getDisplayName({ name: contact.contactName, isMe: contact.isMe })
+                : recipient}
             </CardContentTitle>
             {(contact?.addressLabel ?? description) && (
               <CardContentDescription typography="body3">

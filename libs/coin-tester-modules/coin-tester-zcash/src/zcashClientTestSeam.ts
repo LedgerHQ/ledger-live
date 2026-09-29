@@ -33,7 +33,7 @@ import { toRegtestAddress } from "./regtestAddress";
 // The pinned catalog @ledgerhq/zcash-utils only added regtest network support
 // (LIVE-36479) after this seam was first written; both build jobs now force
 // `network: "regtest"` (instead of forwarding whatever coin-zcash's own
-// getZainoEndpoint() resolved -- see scenarii/zcash.ts, which deliberately
+// zainoEndpoint() derived from the coin config -- see scenarii/zcash.ts, which
 // keeps that at "mainnet" for the *sync* path, which does not accept
 // "regtest" -- see network.rs's parse_network vs parse_any_network) so the
 // native builder's NU5/NU6.3 activation-height gate is satisfiable at all

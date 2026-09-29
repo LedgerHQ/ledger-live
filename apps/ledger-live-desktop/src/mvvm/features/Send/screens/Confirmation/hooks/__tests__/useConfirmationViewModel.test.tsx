@@ -11,7 +11,10 @@ jest.mock("~/renderer/drawers/OperationDetails", () => ({
   OperationDetails: {},
 }));
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
-  sendFeatures: { isUserRefusedTransactionError: jest.fn() },
+  sendFeatures: {
+    isUserRefusedTransactionError: jest.fn(),
+    getTrackingAttributes: jest.fn(() => ({})),
+  },
 }));
 jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
   useFlowWizard: jest.fn(),
@@ -69,7 +72,9 @@ const mockNavigation = () => {
 };
 
 const mockData = (state: unknown) => {
-  (useSendFlowData as jest.Mock).mockReturnValue({ state });
+  (useSendFlowData as jest.Mock).mockReturnValue({
+    state: { transaction: { transaction: null }, ...(state as object) },
+  });
 };
 
 beforeEach(() => {

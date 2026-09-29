@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "@shared/i18n";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { featureIntroPageName, trackButtonClicked } from "@features/platform-pay-analytics";
 import { markPayCardFeatureTourSeen, selectPayCardHasSeenFeatureTour } from "../../state";
 import type { FeatureTourRow, FeatureTourRowIcon } from "./types";
 
@@ -11,11 +11,12 @@ export type FeatureTourViewModel = Readonly<{
   description: string;
   rows: readonly FeatureTourRow[];
   ctaLabel: string;
-  onDismiss: () => void;
+  onClose: () => void;
+  onContinue: () => void;
 }>;
 
-export const FEATURE_TOUR_PAGE = "card feature intro";
-const TRACK_FLOW = "card";
+export const FEATURE_TOUR_FLOW = "pay";
+export const FEATURE_TOUR_PAGE = featureIntroPageName(FEATURE_TOUR_FLOW);
 
 const KEY_PREFIX = "payTab.featureTour";
 
@@ -28,17 +29,21 @@ const ROWS: readonly { icon: FeatureTourRowIcon; key: string }[] = [
 export function useFeatureTourViewModel(): FeatureTourViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { trackButtonClicked } = usePayAnalyticsContext();
   const hasSeenFeatureTour = useSelector(selectPayCardHasSeenFeatureTour);
 
-  const onDismiss = useCallback(() => {
-    dispatch(markPayCardFeatureTourSeen());
-    trackButtonClicked({
-      button: "got it",
-      flow: TRACK_FLOW,
-      page: FEATURE_TOUR_PAGE,
-    });
-  }, [dispatch, trackButtonClicked]);
+  const dismiss = useCallback(
+    (button: "close" | "continue") => {
+      dispatch(markPayCardFeatureTourSeen());
+      trackButtonClicked({
+        button,
+        flow: FEATURE_TOUR_FLOW,
+        page: FEATURE_TOUR_PAGE,
+      });
+    },
+    [dispatch],
+  );
+  const onClose = useCallback(() => dismiss("close"), [dismiss]);
+  const onContinue = useCallback(() => dismiss("continue"), [dismiss]);
 
   const rows = useMemo(
     () =>
@@ -57,8 +62,9 @@ export function useFeatureTourViewModel(): FeatureTourViewModel {
       description: t(`${KEY_PREFIX}.description`),
       rows,
       ctaLabel: t(`${KEY_PREFIX}.cta`),
-      onDismiss,
+      onClose,
+      onContinue,
     }),
-    [hasSeenFeatureTour, t, rows, onDismiss],
+    [hasSeenFeatureTour, onClose, onContinue, rows, t],
   );
 }
