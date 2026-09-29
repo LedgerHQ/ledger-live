@@ -145,7 +145,8 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
       });
   }, [bridge, setTransaction, handleTransactionError]);
 
-  // Mirrors StepConnectDevice's own gate: once this is true, GenericStepConnectDevice mounts.
+  // Mirrors StepConnectDevice's own gate: once this is true on the connectDevice step,
+  // GenericStepConnectDevice mounts.
   const isReadyForDevice =
     !bridgePending &&
     !!(transaction?.fee || transaction?.fees) &&
@@ -157,8 +158,10 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
   // isReadyForDevice, that hook may already hold a live sign subscription keyed on this exact
   // `transaction` reference, and replacing it there tears the subscription down mid-flight,
   // abandoning a prompt the device could already be showing. So a fresh reference must never be
-  // produced past that point.
-  const mustFreezeTransaction = isReadyForDevice && !!device;
+  // produced past that point. Stepper mounts only the current step, so that hook cannot exist
+  // before connectDevice: a device already plugged in during validator/amount must not freeze the
+  // refresh there.
+  const mustFreezeTransaction = stepId === "connectDevice" && isReadyForDevice && !!device;
 
   // `mode` turns "delegate" the moment a pool address is entered (StepValidator's
   // onChangeValAddress), and coin-stacks's `validateIntent`/`estimateFees` require `startBurnHt`

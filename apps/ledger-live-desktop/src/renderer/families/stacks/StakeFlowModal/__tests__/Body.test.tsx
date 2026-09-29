@@ -375,6 +375,31 @@ describe("StakeFlowModal/Body", () => {
     clearIntervalSpy.mockRestore();
   });
 
+  it("keeps refreshing startBurnHt on the amount step even with a device already connected and the transaction ready", async () => {
+    // Stepper mounts only the current step, so no device-signing subscription can exist before
+    // connectDevice -- a device plugged in early must not freeze the refresh while the user is
+    // still on amount, or a long wait there submits a stale startBurnHt past a cycle boundary.
+    const clearIntervalSpy = jest.spyOn(global, "clearInterval");
+    fetchPoxInfoMock.mockResolvedValue({ current_burnchain_block_height: 123456 });
+    seedDelegateTransaction();
+    const { rerender, props } = renderBody(
+      { stepId: "amount" },
+      { initialState: connectedDeviceState },
+    );
+    await waitFor(() => expect(fetchPoxInfoMock).toHaveBeenCalledTimes(1));
+    clearIntervalSpy.mockClear();
+
+    currentTransaction = { ...currentTransaction, fee: new BigNumber(1) } as Transaction;
+    rerender(<Body {...props} stepId="amount" />);
+
+    await act(async () => {});
+    expect(clearIntervalSpy).not.toHaveBeenCalled();
+
+    rerender(<Body {...props} stepId="connectDevice" />);
+    await waitFor(() => expect(clearIntervalSpy).toHaveBeenCalled());
+    clearIntervalSpy.mockRestore();
+  });
+
   it("surfaces a pox info fetch failure instead of leaving the device step waiting", async () => {
     fetchPoxInfoMock.mockRejectedValue(new Error("pox unreachable"));
     seedDelegateTransaction();
