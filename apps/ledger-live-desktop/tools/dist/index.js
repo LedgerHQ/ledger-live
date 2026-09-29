@@ -253,16 +253,21 @@ const packTasks = args => [
       const commands = [
         "dist:internal",
         "--",
-        "--dir",
         // Mirrors electron-builder-nosign.yml: an unsigned Windows exe fails
         // this check otherwise. Harmless no-op on mac/linux.
         "-c.win.verifyUpdateCodeSignature=false",
         ...configArgs,
       ];
-      // --dir ignores the config's `arch: universal` and packs the host arch only.
-      if (process.platform === "darwin" && !args.mas) commands.push("--universal");
-      // MAS already forces --publish never via resolveElectronBuilderArgs.
-      if (!args.mas) commands.push("--publish", "never");
+      if (args.mas) {
+        // --dir would drop the mas target (packing darwin Electron instead), and
+        // MAS throws rather than skips when no identity is found, so pack the
+        // real mas target with signing explicitly disabled.
+        commands.push("-c.mac.identity=null");
+      } else {
+        commands.push("--dir", "--publish", "never");
+        // --dir ignores the config's `arch: universal` and packs the host arch only.
+        if (process.platform === "darwin") commands.push("--universal");
+      }
 
       await exec("npm", ["run", ...commands], {
         env: {
@@ -330,12 +335,13 @@ const mainTask = (args = {}) => {
 };
 
 const packMainTask = (args = {}) => {
-  const { dirty } = args;
+  const { dirty, mas } = args;
 
   return [
     {
       title: "Cleanup",
-      skip: () => (dirty ? "--dirty flag passed" : false),
+      // MAS packs from the CDN pack's .webpack, so cleaning would delete its input.
+      skip: () => (dirty ? "--dirty flag passed" : mas ? "reusing CDN pack output (--mas)" : false),
       task: () => setupList(cleaningTasks, args),
     },
     {
