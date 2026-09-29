@@ -31,7 +31,7 @@ export const useSecondStepSyncOnboardingViewModel = ({
       ? deviceInitialApps.params.apps
       : fallbackDefaultAppsToInstall;
 
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const sharedHeight = useSharedValue<number | null>(null);
   const sharedOpacity = useSharedValue<number>(0);

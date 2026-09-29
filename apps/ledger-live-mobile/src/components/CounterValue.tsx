@@ -75,7 +75,7 @@ export default function CounterValue({
     [counterValueCurrency, currency, trackingPairs],
   );
   useEffect(() => {
-    let t: NodeJS.Timeout | undefined;
+    let t: ReturnType<typeof setTimeout> | undefined;
 
     if (!hasTrackingPair) {
       addExtraSessionTrackingPair({
