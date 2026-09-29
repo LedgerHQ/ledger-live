@@ -77,7 +77,7 @@ describe("ContactsRenameContactDrawer", () => {
       "polite",
     );
     expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
-    expect(screen.getByText("3/32")).toBeVisible();
+    expect(screen.getByText("3/128")).toBeVisible();
   });
 
   it("should forward name changes", () => {

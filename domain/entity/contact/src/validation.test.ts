@@ -37,33 +37,33 @@ describe("contact name validation", () => {
   });
 
   it("reports the stable InvalidContactNameError name for a non-empty invalid draft name", () => {
-    expect(getContactNameValidationError("Olive@2")).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
-    expect(getContactNameValidationError("1Password")).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
+    expect(getContactNameValidationError("Olive 💎")).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
+    expect(getContactNameValidationError("Алексей")).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
     expect(getContactNameValidationError("Élodie")).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
   });
 
   it("reports a duplicate name after trimming, normalizing, and folding case", () => {
-    const existingNames = [ContactNameSchema.parse("Алексей")];
+    const existingNames = [ContactNameSchema.parse("Alexei")];
 
-    expect(getContactNameValidationError(" алексей ", existingNames)).toBe(
+    expect(getContactNameValidationError(" alexei ", existingNames)).toBe(
       DUPLICATE_CONTACT_NAME_ERROR_NAME,
     );
-    expect(isValidContactName(" алексей ", existingNames)).toBe(false);
-    expect(normalizeContactNameForComparison(" Алексей ")).toBe(
-      normalizeContactNameForComparison("алексей"),
+    expect(isValidContactName(" alexei ", existingNames)).toBe(false);
+    expect(normalizeContactNameForComparison(" Alexei ")).toBe(
+      normalizeContactNameForComparison("alexei"),
     );
   });
 
   it("validates trimmed names consistently", () => {
     expect(isValidContactName("  Ben  ")).toBe(true);
     expect(isValidContactName("Coinbase 1")).toBe(true);
-    expect(isValidContactName("1Password")).toBe(false);
-    expect(isValidContactName("Olive@2")).toBe(false);
+    expect(isValidContactName("1Password")).toBe(true);
+    expect(isValidContactName("Olive 💎")).toBe(false);
     expect(isValidContactName("")).toBe(false);
   });
 
   it("parseContactName throws InvalidContactNameError for an invalid draft name", () => {
-    expect(() => parseContactName("Olive@2")).toThrow(InvalidContactNameError);
+    expect(() => parseContactName("Olive 💎")).toThrow(InvalidContactNameError);
   });
 
   it("parseContactName throws DuplicateContactNameError for an existing name", () => {
@@ -77,7 +77,7 @@ describe("contact name validation", () => {
   });
 
   it("parseContactName returns a trimmed name", () => {
-    expect(parseContactName(" Алексей ")).toBe("Алексей");
+    expect(parseContactName(" Alexei ")).toBe("Alexei");
   });
 });
 

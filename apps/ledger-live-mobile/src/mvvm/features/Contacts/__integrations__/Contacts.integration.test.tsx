@@ -501,7 +501,7 @@ describe("Contacts integration", () => {
         name: "Anna",
         addresses: [mockContactAddress(), mockContactAddress({ id: "address-polygon" })],
       }),
-      mockContact({ id: "contact-zhanna", name: "Жанна" }),
+      mockContact({ id: "contact-zhanna", name: "Zhanna" }),
     ];
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withContactsPageReadyState(
@@ -518,7 +518,7 @@ describe("Contacts integration", () => {
       );
       expect(screen.getByTestId("contacts-saved-contact-contact-zahra")).toHaveTextContent(/Zahra/);
       expect(screen.getByTestId("contacts-saved-contact-contact-zhanna")).toHaveTextContent(
-        /Жанна/,
+        /Zhanna/,
       );
     });
   });
