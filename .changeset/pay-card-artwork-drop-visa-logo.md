@@ -1,5 +1,5 @@
 ---
-"@features/flow-pay-card-details": patch
+"@features/flow-pay-card-details": minor
 ---
 
 Remove the Visa logo from the Pay card artwork

@@ -1,6 +1,6 @@
 ---
-"live-mobile": patch
-"@features/flow-pay-card-auth": patch
+"live-mobile": minor
+"@features/flow-pay-card-auth": minor
 ---
 
 Wait for the app to be active before opening the Card's secure browser, instead of after every biometric prompt.

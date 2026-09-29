@@ -235,18 +235,4 @@
   - @ledgerhq/ledger-trust-service@0.8.11-next.0
   - @ledgerhq/hw-bolos@6.36.7-next.0
 
-## 0.18.1
-
-### Patch Changes
-
-- Updated dependencies [[`d8cb7de`](https://github.com/LedgerHQ/ledger-live/commit/d8cb7deff30c3c1a88ae873d7bcddd6ce0d7375f)]:
-  - @ledgerhq/coin-solana@0.59.1
-
-## 0.18.1-hotfix.0
-
-### Patch Changes
-
-- Updated dependencies [[`d8cb7de`](https://github.com/LedgerHQ/ledger-live/commit/d8cb7deff30c3c1a88ae873d7bcddd6ce0d7375f)]:
-  - @ledgerhq/coin-solana@0.59.1-hotfix.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

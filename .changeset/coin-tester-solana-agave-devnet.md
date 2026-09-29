@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tester-solana": patch
+"@ledgerhq/coin-tester-solana": minor
 ---
 
 chore: run the coin tester on both mainnet and devnet Agave validators

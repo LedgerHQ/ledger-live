@@ -1,6 +1,6 @@
 ---
-"live-mobile": patch
-"@features/flow-app-lock": patch
+"live-mobile": minor
+"@features/flow-app-lock": minor
 "@shared/ui-info-state": minor
 ---
 

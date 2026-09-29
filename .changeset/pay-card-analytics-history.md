@@ -1,16 +1,16 @@
 ---
-"@features/flow-pay-card": patch
-"@features/flow-pay-card-widget": patch
-"@features/flow-pay-card-transactions": patch
-"@features/flow-pay-feature-tour": patch
-"@features/flow-pay-card-auth": patch
-"@features/flow-pay-bank-transfer": patch
-"@features/flow-pay-balance": patch
-"@features/flow-pay-deposit": patch
-"@features/flow-pay-request": patch
-"@features/platform-pay-analytics": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@features/flow-pay-card": minor
+"@features/flow-pay-card-widget": minor
+"@features/flow-pay-card-transactions": minor
+"@features/flow-pay-feature-tour": minor
+"@features/flow-pay-card-auth": minor
+"@features/flow-pay-bank-transfer": minor
+"@features/flow-pay-balance": minor
+"@features/flow-pay-deposit": minor
+"@features/flow-pay-request": minor
+"@features/platform-pay-analytics": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Fix Pay analytics events that never reached Segment, and align the feature-intro page names.

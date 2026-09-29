@@ -1,8 +1,8 @@
 ---
 "@shared/ui-queued-bottom-sheet": minor
-"@features/flow-pay-card-assets": patch
-"@features/flow-pay-card-details": patch
-"@features/flow-pay-balance": patch
+"@features/flow-pay-card-assets": minor
+"@features/flow-pay-card-details": minor
+"@features/flow-pay-balance": minor
 ---
 
 Fix drag-and-drop reordering in the card's manage-assets sheet, which never got the gesture

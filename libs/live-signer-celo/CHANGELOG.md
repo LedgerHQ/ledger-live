@@ -192,22 +192,4 @@
   - @ledgerhq/hw-app-eth@7.8.11
   - @ledgerhq/hw-app-celo@7.1.8
 
-## 1.1.8-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
-  - @ledgerhq/coin-celo@2.10.0-next.0
-  - @ledgerhq/hw-app-eth@7.8.11-next.0
-  - @ledgerhq/hw-app-celo@7.1.8-next.0
-
-## 1.1.7
-
-### Patch Changes
-
-- Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f)]:
-  - @ledgerhq/coin-celo@2.9.0
-  - @ledgerhq/hw-app-eth@7.8.10
-  - @ledgerhq/hw-app-celo@7.1.7
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

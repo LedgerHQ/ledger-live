@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/coin-near": patch
-"@ledgerhq/coin-tester-near": patch
-"ledger-live-desktop": patch
+"@ledgerhq/coin-near": minor
+"@ledgerhq/coin-tester-near": minor
+"ledger-live-desktop": minor
 ---
 
 fix(near): size staking gas from measured usage and price it the way the chain does

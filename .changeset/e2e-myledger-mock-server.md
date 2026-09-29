@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-e2e-shared": patch
+"@ledgerhq/live-e2e-shared": minor
 ---
 
 Fix the mock server device presets for the Nano models, and add a way to seed installed apps.

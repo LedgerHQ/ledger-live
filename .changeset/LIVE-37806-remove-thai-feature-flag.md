@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/types-live": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/types-live": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 fix(i18n): keep Thai selected across app restarts
