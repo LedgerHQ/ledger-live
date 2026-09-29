@@ -10856,7 +10856,7 @@
           "title": "Manage assets",
           "description": "Your assets are listed in funding order. If one asset runs low, the next one is used automatically.",
           "reorder": "Reorder {{asset}}. Long press and drag, or use accessibility actions to move up and down.",
-          "addAssetCaption": "You'll be redirected to Baanx's page to add asset.",
+          "addAssetCaption": "You will be redirected to Monavate to add asset.",
           "addAsset": "Add asset"
         },
         "details": {
@@ -10865,8 +10865,8 @@
           "transactions": "Transactions"
         },
         "withdraw": {
-          "title": "You'll be redirected to Baanx",
-          "description": "Withdraw funds from your Baanx account to your Ledger wallet address.",
+          "title": "You will be redirected to Monavate",
+          "description": "Withdraw funds from your Monavate account to your Ledger wallet address.",
           "continue": "Continue"
         }
       },
