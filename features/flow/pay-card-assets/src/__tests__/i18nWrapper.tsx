@@ -15,14 +15,14 @@ export const CARD_ASSETS_COPY = {
   withdraw: "Withdraw",
   transactions: "Transactions",
   transactionsEmpty: "No card transactions yet",
-  withdrawTitle: "You'll be redirected to Baanx",
-  withdrawDescription: "Withdraw funds from your Baanx account to your Ledger wallet address.",
+  withdrawTitle: "You will be redirected to Monavate",
+  withdrawDescription: "Withdraw funds from your Monavate account to your Ledger wallet address.",
   continue: "Continue",
   manageDialogTitle: "Manage assets",
   manageDialogDescription:
     "Your assets are listed in funding order. If one asset runs low, the next one is used automatically.",
   reorder: "Reorder {{asset}}",
-  addAssetCaption: "You'll be redirected to Baanx's page to add asset.",
+  addAssetCaption: "You will be redirected to Monavate to add asset.",
   addAsset: "Add asset",
 } as const;
 
