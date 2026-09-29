@@ -451,6 +451,8 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
 
     const localConfig = {
       status: { type: "active" as const },
+      name: "Tron",
+      unit: { name: "TRX", code: "TRX", magnitude: 6 },
       explorer: { url: TRON_LOCAL_RPC },
     };
     LiveConfig.setConfig({

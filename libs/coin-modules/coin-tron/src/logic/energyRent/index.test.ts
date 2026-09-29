@@ -80,6 +80,8 @@ const purchaseOrder = (overrides: Record<string, unknown>) => ({
 const tronifyConfig = (): TronCoinConfig =>
   ({
     status: { type: "active" },
+    name: "Tron",
+    unit: { name: "TRX", code: "TRX", magnitude: 6 },
     explorer: { url: "https://tron.coin.ledger.com" },
     energyRent: {
       provider: "tronify",

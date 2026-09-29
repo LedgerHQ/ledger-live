@@ -20,6 +20,8 @@ const INDEXER = "https://near-indexer.coin.ledger.com";
 
 const config = {
   status: { type: "active" as const },
+  name: "NEAR",
+  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
   infra: {
     API_NEAR_PRIVATE_NODE: NODE,
     API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",

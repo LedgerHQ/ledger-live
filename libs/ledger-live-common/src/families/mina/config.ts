@@ -11,6 +11,8 @@ const minaConfig: CurrencyLiveConfigDefinition = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Mina",
+      unit: { name: "MINA", code: "MINA", magnitude: 9 },
       infra: {
         API_MINA_ROSETTA_NODE: "https://mina.coin.ledger.com/node",
         API_MINA_GRAPHQL_NODE: "https://mina.coin.ledger.com/node/graphql",

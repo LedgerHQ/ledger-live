@@ -17,6 +17,8 @@ describe.skip("buildTransaction", () => {
         grpcUrl: "https://fullnode.mainnet.sui.io:443",
       },
       features: { transport: "grpc" },
+      name: "Sui",
+      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 
