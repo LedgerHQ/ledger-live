@@ -17,7 +17,6 @@ import {
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } from "tests/utils/featureFlagUtils";
 import { NEW_SEND_FLOW_FAMILIES } from "tests/utils/newSendFlowUtils";
-import { unfreezeCard } from "tests/utils/payCardState";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const ALL_STABLECOINS = "All stablecoins";
@@ -227,6 +226,23 @@ test.describe("Pay tab", () => {
       await app.payTab.confirmFreeze();
       await app.payTab.expectCardNotFrozen();
       await app.payTab.expectFreezeTile(FREEZE);
+    },
+  );
+
+  test(
+    "Open a card transaction from history",
+    {
+      tag: [...DEVICE_TAGS],
+      annotation: { type: "TMS", description: "B2CQA-6331" },
+    },
+    async ({ app }) => {
+      await app.mainNavigation.openTargetFromMainNavigation("home");
+      await app.history.openFromTopBar();
+      await app.history.expectCryptoHistoryTab();
+      await app.history.expectCardHistoryTab();
+      await app.history.openCardHistoryTab();
+      await app.history.openFirstCardTransaction();
+      await app.history.expectCardTransactionDetail();
     },
   );
 });

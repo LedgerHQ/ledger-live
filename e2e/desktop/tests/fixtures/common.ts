@@ -37,7 +37,6 @@ import {
   CARD_SESSION_BOOTSTRAP_ENV,
   resolveCardSessionBootstrap,
 } from "@ledgerhq/baanx-test-client";
-import { unfreezeCard } from "tests/utils/payCardState";
 
 export type { CliCommand };
 
@@ -246,7 +245,6 @@ export const test = base.extend<TestFixtures>({
       env["CARD_BAANX_CLIENT_KEY"] =
         BAANX_TEST_CLIENT_KEY || "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6";
       env[CARD_SESSION_BOOTSTRAP_ENV] = await resolveCardSessionBootstrap();
-      await unfreezeCard(env[CARD_SESSION_BOOTSTRAP_ENV]);
     }
 
     // launch app
