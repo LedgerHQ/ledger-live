@@ -1,16 +1,23 @@
 import { ApiResponseSubmitTransaction } from "../types";
 import { API_BASE } from "./config";
+import { fetchWithRetry } from "./fetchWithRetry";
 
 export const submitTransaction = async (
   transactionJson: string,
 ): Promise<ApiResponseSubmitTransaction> => {
-  const response = await fetch(`${API_BASE}/transactions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  // "rate-limit" only: a 429 is turned away before the node handles it, so retrying cannot broadcast
+  // twice. A 5xx or a network error is not retried — the transaction may already have gone through.
+  const response = await fetchWithRetry(
+    `${API_BASE}/transactions`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: transactionJson,
     },
-    body: transactionJson,
-  });
+    "rate-limit",
+  );
 
   if (!response.ok) {
     const body = await response.text().catch(() => "");

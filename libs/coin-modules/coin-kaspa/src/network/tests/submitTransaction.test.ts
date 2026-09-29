@@ -51,4 +51,74 @@ describe("submitTransaction function", () => {
       "Network error",
     );
   });
+
+  it("Includes the node's reason in the error when it sends one", async () => {
+    global.fetch = jest.fn().mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      text: async () => "transaction is an orphan",
+    });
+
+    await expect(submitTransaction(JSON.stringify({ dummy: "data" }))).rejects.toThrow(
+      "kaspa: broadcast failed with status 400: transaction is an orphan",
+    );
+  });
+
+  it("Still reports the status when the error body cannot be read", async () => {
+    global.fetch = jest.fn().mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      text: async () => {
+        throw new Error("body stream already read");
+      },
+    });
+
+    await expect(submitTransaction(JSON.stringify({ dummy: "data" }))).rejects.toThrow(
+      /^kaspa: broadcast failed with status 400$/,
+    );
+  });
+
+  describe("retries", () => {
+    const txId = "396f29c47bdd95dddbe868203ce905535a3de1b48af7adeb40b769662885c008";
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it("waits out a 429 (not yet handled by the node) and broadcasts once", async () => {
+      jest.useFakeTimers();
+      global.fetch = jest
+        .fn()
+        .mockResolvedValueOnce({ ok: false, status: 429, headers: { get: () => null } })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({ transactionId: txId }),
+        });
+
+      const promise = submitTransaction(JSON.stringify({ dummy: "data" }));
+      await jest.advanceTimersByTimeAsync(1_000);
+
+      await expect(promise).resolves.toEqual({ txId });
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("never retries a 5xx — the transaction may already have been broadcast", async () => {
+      global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 503, text: async () => "" });
+
+      await expect(submitTransaction(JSON.stringify({ dummy: "data" }))).rejects.toThrow(
+        "kaspa: broadcast failed with status 503",
+      );
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it("never retries a network error — the transaction may already have been broadcast", async () => {
+      global.fetch = jest.fn().mockRejectedValue(new TypeError("fetch failed"));
+
+      await expect(submitTransaction(JSON.stringify({ dummy: "data" }))).rejects.toThrow(
+        "fetch failed",
+      );
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+  });
 });
