@@ -157,14 +157,17 @@ describe("createApi", () => {
 
     it("should pass txIntent in estimateFeesParams for ContractCall operation type", async () => {
       mockMapIntentToSDKOperation.mockReturnValue(HEDERA_OPERATION_TYPES.ContractCall);
-      mockEstimateFees.mockResolvedValue({ tinybars: new BigNumber(9000) });
+      mockEstimateFees.mockResolvedValue({
+        tinybars: new BigNumber(9000),
+        gas: new BigNumber(123456),
+      });
 
       // @ts-expect-error - testing with minimal required fields for TransactionIntent
       const txIntent: TransactionIntent<HederaMemo> = { recipient: "0.0.1234", amount: 100n };
 
       const result = await api.estimateFees(mockContext, txIntent);
 
-      expect(result).toEqual({ value: BigInt("9000") });
+      expect(result).toEqual({ value: 9000n, parameters: { gasLimit: 123456n } });
       expect(mockEstimateFees).toHaveBeenCalledTimes(1);
       expect(mockEstimateFees).toHaveBeenCalledWith(
         expect.objectContaining({
