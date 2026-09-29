@@ -1212,6 +1212,7 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
       await delegateCosmos(delegatingAccount);
       break;
     case Account.OSMO_1.currency.name:
+    case Account.BABY_1.currency.name:
       await delegateOsmosis(delegatingAccount);
       break;
     case Account.MULTIVERS_X_1.currency.name:

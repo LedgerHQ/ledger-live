@@ -12,12 +12,17 @@ import {
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getEnv } from "@shared/env";
+import type { PartialFeatures } from "@shared/feature-flags";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
   liveDataCommand,
   liveDataWithAddressCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { FF_MINA_STAKING_ENABLED, FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
+import {
+  FF_BABYLON_STAKING_ENABLED,
+  FF_MINA_STAKING_ENABLED,
+  FF_STAKE_PROGRAMS_MODAL,
+} from "tests/utils/featureFlagUtils";
 import { buildTags, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
 
@@ -35,6 +40,7 @@ const e2eDelegationAccounts: Array<{
   supportsLNS?: boolean;
   bugTicket?: string;
   requiresValidatorSelection?: boolean;
+  featureFlags?: PartialFeatures;
 }> = [
   {
     delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
@@ -59,6 +65,13 @@ const e2eDelegationAccounts: Array<{
     requiresValidatorSelection: true,
   },
   {
+    delegate: new Delegate(Account.BABY_1, "0.001", "Figment"),
+    xrayTicket: "B2CQA-XXXX",
+    transactionType: "Delegated",
+    requiresValidatorSelection: true,
+    featureFlags: FF_BABYLON_STAKING_ENABLED,
+  },
+  {
     delegate: new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG"),
     xrayTicket: "B2CQA-6115",
     transactionType: "Delegated",
@@ -66,10 +79,13 @@ const e2eDelegationAccounts: Array<{
   },
 ];
 
+const CURRENCIES_WITHOUT_PRESELECTED_VALIDATOR = new Set([Currency.OSMO.id, Currency.BABY.id]);
+
 const validators: Array<{
   delegate: Delegate;
   xrayTicket: string;
   bugTicket?: string;
+  featureFlags?: PartialFeatures;
 }> = [
   {
     delegate: new Delegate(Account.ATOM_2, "0.001", "Ledger"),
@@ -95,6 +111,11 @@ const validators: Array<{
     delegate: new Delegate(Account.OSMO_2, "1", "Ledger by Figment"),
     xrayTicket: "B2CQA-2768",
   },
+  {
+    delegate: new Delegate(Account.BABY_2, "1", "Figment"),
+    xrayTicket: "B2CQA-XXXX",
+    featureFlags: FF_BABYLON_STAKING_ENABLED,
+  },
 ];
 
 const liveApps = [
@@ -115,6 +136,7 @@ for (const account of e2eDelegationAccounts) {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.delegate.account.currency.speculosApp,
       cliCommands: [liveDataCommand(account.delegate.account)],
+      featureFlags: account.featureFlags,
     });
 
     test(
@@ -372,6 +394,7 @@ for (const validator of validators) {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: validator.delegate.account.currency.speculosApp,
       cliCommands: [liveDataCommand(validator.delegate.account)],
+      featureFlags: validator.featureFlags,
     });
 
     test(
@@ -393,7 +416,9 @@ for (const validator of validators) {
         await app.account.startStakingFlowFromMainStakeButton();
         await app.delegate.continue();
 
-        const isOsmosis = validator.delegate.account.currency.id === Currency.OSMO.id;
+        const hasNoPreselectedValidator = CURRENCIES_WITHOUT_PRESELECTED_VALIDATOR.has(
+          validator.delegate.account.currency.id,
+        );
 
         if (validator.delegate.account.currency.name == Currency.MULTIVERS_X.name) {
           await app.delegate.verifyContinueDisabled();
@@ -411,9 +436,9 @@ for (const validator of validators) {
           // Explicitly (re)select the provider to force a clean, settled transaction update.
           await app.delegate.verifyFirstProviderName(validator.delegate.provider);
           await app.delegate.selectProviderByName(validator.delegate.provider);
-        } else if (isOsmosis) {
-          // Osmosis has no Ledger validator pre-selection: the full list is already expanded
-          // and Continue stays disabled until a validator is explicitly picked.
+        } else if (hasNoPreselectedValidator) {
+          // Osmosis and Babylon have no Ledger validator pre-selection: the full list is already
+          // expanded and Continue stays disabled until a validator is explicitly picked.
           await app.delegate.verifyContinueDisabled();
           await app.delegate.checkValidatorListIsVisible();
           await app.delegate.inputProvider(validator.delegate.provider);
@@ -423,7 +448,7 @@ for (const validator of validators) {
           await app.delegate.verifyContinueEnabled();
         }
         await app.delegate.verifyProvider(1);
-        if (isOsmosis) {
+        if (hasNoPreselectedValidator) {
           await app.delegate.clearProviderSearch();
         } else {
           await app.delegate.openSearchProviderModal();

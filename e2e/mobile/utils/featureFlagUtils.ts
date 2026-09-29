@@ -99,6 +99,17 @@ export const FF_MINA_STAKING_ENABLED = {
   },
 } satisfies PartialFeatures;
 
+export const FF_BABYLON_STAKING_ENABLED = {
+  currencyBabylon: { enabled: true },
+  stakePrograms: {
+    enabled: true,
+    params: {
+      list: ["babylon"],
+      redirects: {},
+    },
+  },
+} satisfies PartialFeatures;
+
 export const FF_CONTACTS_ENABLED = {
   lwmContacts: {
     enabled: true,
