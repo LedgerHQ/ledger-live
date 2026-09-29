@@ -1,6 +1,7 @@
 /**
  * DeviceModelId is a unique identifier to identify the model of a Ledger hardware wallet.
  */
+// nx-affected-probe
 export enum DeviceModelId {
   blue = "blue",
   nanoS = "nanoS",
