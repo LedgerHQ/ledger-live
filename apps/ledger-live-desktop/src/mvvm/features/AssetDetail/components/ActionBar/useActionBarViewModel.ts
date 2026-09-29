@@ -98,13 +98,7 @@ export function useActionBarViewModel({
   const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
 
   const ledgerIdsForRamp = useMemo(
-    () =>
-      resolveRampLedgerIds({
-        ledgerIds,
-        marketCurrencyData,
-        distributionItem,
-        ledgerCurrency,
-      }),
+    () => resolveRampLedgerIds({ ledgerIds, marketCurrencyData, distributionItem, ledgerCurrency }),
     [ledgerIds, marketCurrencyData, distributionItem, ledgerCurrency],
   );
 
@@ -181,9 +175,7 @@ export function useActionBarViewModel({
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
-    navigateToBuy(ledgerCurrency, tickerHint, {
-      currencyIds: rampNavigationCurrencyIds,
-    });
+    navigateToBuy(ledgerCurrency, tickerHint, { currencyIds: rampNavigationCurrencyIds });
   }, [ledgerCurrency, tickerHint, navigateToBuy, trackingCurrencyId, rampNavigationCurrencyIds]);
 
   const onSell = useCallback(() => {
@@ -193,9 +185,7 @@ export function useActionBarViewModel({
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
-    navigateToSell(ledgerCurrency, tickerHint, {
-      currencyIds: rampNavigationCurrencyIds,
-    });
+    navigateToSell(ledgerCurrency, tickerHint, { currencyIds: rampNavigationCurrencyIds });
   }, [ledgerCurrency, tickerHint, navigateToSell, trackingCurrencyId, rampNavigationCurrencyIds]);
 
   const onSend = useCallback(() => {

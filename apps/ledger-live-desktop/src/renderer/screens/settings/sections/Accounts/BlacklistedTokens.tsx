@@ -173,8 +173,6 @@ const BlacklistedTokensSectionHeader = styled.div`
     letter-spacing: 0.1em;
   }
 `;
-const Show = styled(Box).attrs<{ $visible?: boolean }>(() => ({}))<{
-  $visible?: boolean;
-}>`
+const Show = styled(Box).attrs<{ $visible?: boolean }>(() => ({}))<{ $visible?: boolean }>`
   transform: rotate(${p => (p.$visible ? 0 : 270)}deg);
 `;

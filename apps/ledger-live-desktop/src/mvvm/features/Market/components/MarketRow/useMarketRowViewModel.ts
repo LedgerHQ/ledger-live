@@ -130,11 +130,7 @@ export function useMarketRowViewModel({
       available: availableOnBuy || availableOnSell,
       onClick: availableOnBuy ? onBuy : onSell,
     },
-    earnAction: {
-      available: availableOnStake,
-      onClick: onStake,
-      label: earnLabel,
-    },
+    earnAction: { available: availableOnStake, onClick: onStake, label: earnLabel },
     onFavouriteSelect,
     onMenuOpenChange,
   };

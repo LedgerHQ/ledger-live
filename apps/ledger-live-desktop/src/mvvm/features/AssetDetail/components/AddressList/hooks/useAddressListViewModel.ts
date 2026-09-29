@@ -124,9 +124,7 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
     allAddressesDialog: {
       open: isAllAddressesDialogOpen,
       title: t("assetDetails.addressesDialog.title"),
-      description: t("assetDetails.addressesDialog.description", {
-        ticker: assetTicker,
-      }),
+      description: t("assetDetails.addressesDialog.description", { ticker: assetTicker }),
       onOpenChange: onAllAddressesDialogOpenChange,
     },
   };

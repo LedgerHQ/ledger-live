@@ -44,9 +44,7 @@ describe("useMenuViewModel", () => {
   });
 
   it("navigates to the Backup Hub and marks recover seen when the flag is enabled", () => {
-    const { result } = renderHook(() => useMenuViewModel(), {
-      initialState: backupHubEnabled,
-    });
+    const { result } = renderHook(() => useMenuViewModel(), { initialState: backupHubEnabled });
 
     act(() => result.current.onRecoverClick());
 

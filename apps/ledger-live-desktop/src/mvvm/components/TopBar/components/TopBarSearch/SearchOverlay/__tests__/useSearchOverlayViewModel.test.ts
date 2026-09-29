@@ -134,11 +134,7 @@ describe("useSearchOverlayViewModel", () => {
 
       expect(mockedTrack).toHaveBeenCalledWith(
         "asset_clicked",
-        expect.objectContaining({
-          asset: "Bitcoin",
-          flow: "global_search",
-          searched: false,
-        }),
+        expect.objectContaining({ asset: "Bitcoin", flow: "global_search", searched: false }),
       );
     });
 
@@ -168,9 +164,7 @@ describe("useSearchOverlayViewModel", () => {
       ["/asset/bitcoin", true],
       ["/market/bitcoin", true],
     ])("navigates from %s with replace=%s", (pathname, replace) => {
-      const { result } = renderHook(() => useSearchOverlayViewModel(), {
-        initialRoute: pathname,
-      });
+      const { result } = renderHook(() => useSearchOverlayViewModel(), { initialRoute: pathname });
 
       act(() => result.current.contextValue.navigateToAsset("ethereum"));
 

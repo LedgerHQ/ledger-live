@@ -59,9 +59,7 @@ describe("useChartSectionViewModel", () => {
     });
 
     expect(store.getState().settings.selectedTimeRange).toBe("month");
-    expect(mockTrack).toHaveBeenCalledWith("timeframe_clicked", {
-      timeframe: "month",
-    });
+    expect(mockTrack).toHaveBeenCalledWith("timeframe_clicked", { timeframe: "month" });
   });
 
   it("masks the chart tooltip value when discreet mode is enabled", () => {
@@ -74,10 +72,7 @@ describe("useChartSectionViewModel", () => {
         }),
       {
         initialState: {
-          settings: {
-            ...chartSectionInitialState.settings,
-            discreetMode: true,
-          },
+          settings: { ...chartSectionInitialState.settings, discreetMode: true },
         },
       },
     );

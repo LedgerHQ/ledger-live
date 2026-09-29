@@ -8,26 +8,15 @@ jest.mock("@ledgerhq/live-common/hooks/useDebounce", () => ({
 }));
 
 jest.mock("LLD/features/Stocks/hooks/useStocksSectionViewModel", () => ({
-  useStocksSectionViewModel: () => ({
-    data: [],
-    isLoading: false,
-    isError: false,
-  }),
+  useStocksSectionViewModel: () => ({ data: [], isLoading: false, isError: false }),
 }));
 
 jest.mock("LLD/features/SearchAssets/hooks/useAssetSuggestionsViewModel", () => ({
-  useAssetSuggestionsViewModel: () => ({
-    cryptos: { data: [], isLoading: false },
-    isError: false,
-  }),
+  useAssetSuggestionsViewModel: () => ({ cryptos: { data: [], isLoading: false }, isError: false }),
 }));
 
 jest.mock("LLD/features/SearchAssets/hooks/useAssetSearchResultsViewModel", () => ({
-  useAssetSearchResultsViewModel: () => ({
-    data: [],
-    isLoading: false,
-    isError: false,
-  }),
+  useAssetSearchResultsViewModel: () => ({ data: [], isLoading: false, isError: false }),
 }));
 
 const mockedTrack = jest.mocked(track);

@@ -67,11 +67,7 @@ const CatalogProviderInput = () => {
               size="sm"
               appearance="accent"
               onClick={handleOnClickApplyProvider}
-              style={{
-                minWidth: 64,
-                display: "flex",
-                justifyContent: "center",
-              }}
+              style={{ minWidth: 64, display: "flex", justifyContent: "center" }}
               loading={isLoading}
             >
               {t("common.apply")}

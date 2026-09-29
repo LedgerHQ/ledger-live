@@ -30,14 +30,8 @@ describe("useTransactionsSectionViewModel", () => {
   });
 
   it("returns not visible when no operations are available", () => {
-    const account = genAccount("btc-root-empty", {
-      currency: btc,
-      operationsSize: 0,
-    });
-    const distributionItem = buildDistributionItem({
-      currency: btc,
-      accounts: [account],
-    });
+    const account = genAccount("btc-root-empty", { currency: btc, operationsSize: 0 });
+    const distributionItem = buildDistributionItem({ currency: btc, accounts: [account] });
 
     const { result } = renderHook(() => useTransactionsSectionViewModel(distributionItem), {
       initialState: { accounts: [account] },
@@ -48,14 +42,8 @@ describe("useTransactionsSectionViewModel", () => {
   });
 
   it("returns at most 3 recent rows and visible=true when operations exist", () => {
-    const account = genAccount("btc-root-many", {
-      currency: btc,
-      operationsSize: 4,
-    });
-    const distributionItem = buildDistributionItem({
-      currency: btc,
-      accounts: [account],
-    });
+    const account = genAccount("btc-root-many", { currency: btc, operationsSize: 4 });
+    const distributionItem = buildDistributionItem({ currency: btc, accounts: [account] });
 
     const { result } = renderHook(() => useTransactionsSectionViewModel(distributionItem), {
       initialState: { accounts: [account] },
@@ -66,14 +54,8 @@ describe("useTransactionsSectionViewModel", () => {
   });
 
   it("tracks and opens operation details when a row is clicked", () => {
-    const account = genAccount("btc-root-click", {
-      currency: btc,
-      operationsSize: 2,
-    });
-    const distributionItem = buildDistributionItem({
-      currency: btc,
-      accounts: [account],
-    });
+    const account = genAccount("btc-root-click", { currency: btc, operationsSize: 2 });
+    const distributionItem = buildDistributionItem({ currency: btc, accounts: [account] });
 
     const { result } = renderHook(() => useTransactionsSectionViewModel(distributionItem), {
       initialState: { accounts: [account] },

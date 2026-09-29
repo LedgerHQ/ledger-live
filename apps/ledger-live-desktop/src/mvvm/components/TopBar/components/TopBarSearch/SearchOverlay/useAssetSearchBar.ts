@@ -90,15 +90,5 @@ export function useAssetSearchBar() {
     return results.data.length > 0 ? "results" : "noResults";
   }, [trimmedQuery, suggestionsError, searchError, results]);
 
-  return {
-    query,
-    onChangeQuery,
-    clear,
-    isOpen,
-    open,
-    close,
-    mode,
-    suggestions,
-    results,
-  };
+  return { query, onChangeQuery, clear, isOpen, open, close, mode, suggestions, results };
 }

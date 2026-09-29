@@ -355,16 +355,9 @@ describe("useMarket", () => {
         initialState: {
           ...withFlagOverrides({
             lldRefreshMarketData: { enabled: false },
-            lwdWallet40: {
-              enabled: true,
-              params: { assetDiscoverability: true },
-            },
+            lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
           }),
-          settings: {
-            ...SETTINGS_INITIAL_STATE,
-            counterValue,
-            starredMarketCoins: [],
-          },
+          settings: { ...SETTINGS_INITIAL_STATE, counterValue, starredMarketCoins: [] },
           market: createMarketState([]),
         },
       });
@@ -379,9 +372,7 @@ describe("useMarket", () => {
         expect.objectContaining({ counterCurrency: "cop" }),
         { enabled: false },
       );
-      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", {
-        skip: true,
-      });
+      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", { skip: true });
       expect(result.current.marketData).toEqual([]);
       expect(result.current.loading).toBe(true);
     });
@@ -399,9 +390,7 @@ describe("useMarket", () => {
         { enabled: true },
       );
       // ...and the rate is fetched for the user's actual counter value.
-      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("cop", {
-        skip: false,
-      });
+      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("cop", { skip: false });
       // Values are rescaled back into COP, and rows are formatted with the COP unit.
       expect(result.current.marketData[0].price).toBe(400_000);
       expect(result.current.marketData[0].marketcap).toBe(800_000);
@@ -441,18 +430,13 @@ describe("useMarket", () => {
         { enabled: true },
       );
       // No USD->fiat conversion request fires for a natively supported counter value.
-      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", {
-        skip: false,
-      });
+      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", { skip: false });
       expect(result.current.marketData[0].price).toBe(100);
     });
 
     it("requests BTC counter values in USD and rescales by the USD->BTC rate when BTC is not natively supported", () => {
       mockSupportedCounterCurrencies(["usd", "eur"]);
-      mockedUseUsdToFiatRate.mockReturnValue({
-        status: "ready",
-        rate: 0.00001,
-      });
+      mockedUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.00001 });
       mockMarketData([createMarketCurrencyData({ id: "bitcoin", price: 100, marketcap: 200 })]);
 
       const { result } = renderWithCounterValue("BTC");
@@ -461,9 +445,7 @@ describe("useMarket", () => {
         expect.objectContaining({ counterCurrency: "usd" }),
         { enabled: true },
       );
-      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("btc", {
-        skip: false,
-      });
+      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("btc", { skip: false });
       expect(result.current.marketData[0].price).toBe(0.001);
       expect(result.current.marketData[0].marketcap).toBe(0.002);
       expect(result.current.marketParams.counterCurrency).toBe("btc");

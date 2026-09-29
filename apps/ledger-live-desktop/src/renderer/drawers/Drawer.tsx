@@ -18,10 +18,7 @@ const transitionStyles = {
   },
 };
 const DURATION = 200;
-const Bar = styled.div.attrs<{
-  state: TransitionStatus;
-  withPaddingTop: boolean;
-}>(props => ({
+const Bar = styled.div.attrs<{ state: TransitionStatus; withPaddingTop: boolean }>(props => ({
   style: {
     ...transitionStyles[props.state as keyof typeof transitionStyles],
   },

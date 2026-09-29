@@ -101,11 +101,7 @@ export function useTrackMarketDiscoverabilityPage(
     trackPage(
       {
         category: "Market",
-        props: getMarketDiscoverabilityPageAnalytics({
-          order,
-          range,
-          category,
-        }),
+        props: getMarketDiscoverabilityPageAnalytics({ order, range, category }),
       },
       { updateRoutes: true, refreshSource: true },
     );

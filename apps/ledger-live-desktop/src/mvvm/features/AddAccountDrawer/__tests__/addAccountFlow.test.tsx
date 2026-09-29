@@ -268,9 +268,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     await userEvent.click(buy);
     expect(mockNavigate).toHaveBeenCalledWith(
       "/exchange",
-      expect.objectContaining({
-        state: expect.objectContaining({ mode: "buy" }),
-      }),
+      expect.objectContaining({ state: expect.objectContaining({ mode: "buy" }) }),
     );
 
     const receive = screen.getByText(/receive crypto from another wallet/i);
@@ -369,9 +367,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
         "A new account cannot be added before you receive assets on your Arbitrum 2 account",
       ),
     ).toBeInTheDocument();
-    expectTrackPage(3, "cant add new account", {
-      reason: "ALREADY_EMPTY_ACCOUNT",
-    });
+    expectTrackPage(3, "cant add new account", { reason: "ALREADY_EMPTY_ACCOUNT" });
   });
 
   it("should allow name edit on already imported empty account", async () => {
@@ -416,9 +412,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     await mockScanAccountsSubscription([]);
 
     expect(screen.getByText("We couldn't add a new Hedera account")).toBeInTheDocument();
-    expectTrackPage(3, "cant add new account", {
-      reason: "NO_ASSOCIATED_ACCOUNTS",
-    });
+    expectTrackPage(3, "cant add new account", { reason: "NO_ASSOCIATED_ACCOUNTS" });
   });
 
   it("should add a Hedera account when one is scanned", async () => {

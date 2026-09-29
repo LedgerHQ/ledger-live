@@ -408,11 +408,7 @@ describe("History integration", () => {
       initialState: {
         accounts: [BTC_ACCOUNT],
         settings: AFTER_ONBOARDING_STATE,
-        payCardAuth: {
-          hasCard: true,
-          pendingLoginType: null,
-          status: "signedIn",
-        },
+        payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" },
         ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
       },
     });
@@ -442,9 +438,7 @@ describe("History integration", () => {
     expect(mockedTrackPage).toHaveBeenCalledWith(
       expect.objectContaining({
         category: "OperationList",
-        props: expect.objectContaining({
-          operationsCount: operationRows.length,
-        }),
+        props: expect.objectContaining({ operationsCount: operationRows.length }),
       }),
       expect.anything(),
     );

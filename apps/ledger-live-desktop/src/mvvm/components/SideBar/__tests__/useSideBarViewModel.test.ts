@@ -22,10 +22,7 @@ jest.mock("~/renderer/screens/card/CardPlatformApp", () => ({
 const mockedUseNavigate = jest.mocked(useNavigate);
 
 function renderViewModel(initialState = defaultInitialState) {
-  return renderHook(() => useSideBarViewModel(), {
-    initialState,
-    minimal: false,
-  });
+  return renderHook(() => useSideBarViewModel(), { initialState, minimal: false });
 }
 
 type NavHandlerName = NonNullable<
@@ -39,26 +36,10 @@ const NAV_HANDLER_CASES: ReadonlyArray<{
   path: string;
   trackEntry: string;
 }> = [
-  {
-    handler: "handleClickSwap",
-    path: SIDEBAR_VALUE_TO_PATH.swap,
-    trackEntry: "swap",
-  },
-  {
-    handler: "handleClickEarn",
-    path: SIDEBAR_VALUE_TO_PATH.earn,
-    trackEntry: "earn",
-  },
-  {
-    handler: "handleClickCatalog",
-    path: SIDEBAR_VALUE_TO_PATH.discover,
-    trackEntry: "platform",
-  },
-  {
-    handler: "handleClickCardWallet",
-    path: SIDEBAR_VALUE_TO_PATH.card,
-    trackEntry: "card",
-  },
+  { handler: "handleClickSwap", path: SIDEBAR_VALUE_TO_PATH.swap, trackEntry: "swap" },
+  { handler: "handleClickEarn", path: SIDEBAR_VALUE_TO_PATH.earn, trackEntry: "earn" },
+  { handler: "handleClickCatalog", path: SIDEBAR_VALUE_TO_PATH.discover, trackEntry: "platform" },
+  { handler: "handleClickCardWallet", path: SIDEBAR_VALUE_TO_PATH.card, trackEntry: "card" },
   { handler: "handleClickMarket", path: "/market", trackEntry: "market" },
   { handler: "handleClickManager", path: "/manager", trackEntry: "manager" },
   { handler: "handleClickExchange", path: "/exchange", trackEntry: "exchange" },
@@ -321,10 +302,7 @@ describe("useSideBarViewModel", () => {
     it("should delegate to handleClickRefer for 'refer'", () => {
       const { result } = renderViewModel(
         withFeatureFlags({
-          referralProgramDesktopSidebar: {
-            enabled: true,
-            params: { path: "/refer-a-friend" },
-          },
+          referralProgramDesktopSidebar: { enabled: true, params: { path: "/refer-a-friend" } },
         }),
       );
 

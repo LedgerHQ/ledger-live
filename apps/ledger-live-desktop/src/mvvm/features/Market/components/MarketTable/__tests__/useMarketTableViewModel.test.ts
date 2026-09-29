@@ -20,11 +20,7 @@ jest.mock("../../../hooks/useMarketListVirtualization", () => ({
 function createData(overrides: Partial<MarketTableData> = {}): MarketTableData {
   return {
     marketData: MOCK_MARKET_CURRENCY_DATA,
-    marketParams: {
-      order: Order.MarketCapDesc,
-      counterCurrency: "usd",
-      range: "24h",
-    },
+    marketParams: { order: Order.MarketCapDesc, counterCurrency: "usd", range: "24h" },
     locale: "en",
     freshLoading: false,
     isError: false,

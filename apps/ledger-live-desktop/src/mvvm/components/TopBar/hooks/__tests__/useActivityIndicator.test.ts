@@ -20,10 +20,7 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   useBridgeSync: jest.fn(),
   useGlobalSyncState: jest.fn(() => ({ pending: false, error: null })),
   useBatchAccountsSyncState: jest.fn(({ accounts }: { accounts: { id: string }[] }) =>
-    accounts.map(account => ({
-      syncState: { pending: false, error: null },
-      account,
-    })),
+    accounts.map(account => ({ syncState: { pending: false, error: null }, account })),
   ),
 }));
 
@@ -54,10 +51,7 @@ describe("useActivityIndicator", () => {
 
   it("should return Spinner icon and isRotating true when syncing", () => {
     mockUsePortfolioBalance.mockReturnValue(
-      makePortfolioBalanceReturn({
-        syncPhase: "syncing",
-        isBalanceLoading: true,
-      }),
+      makePortfolioBalanceReturn({ syncPhase: "syncing", isBalanceLoading: true }),
     );
 
     const { result } = renderHook(() => useActivityIndicator(), {
@@ -71,10 +65,7 @@ describe("useActivityIndicator", () => {
 
   it("should return Warning icon and isError true when failed", () => {
     mockUsePortfolioBalance.mockReturnValue(
-      makePortfolioBalanceReturn({
-        syncPhase: "failed",
-        listOfErrorAccountNames: "BTC",
-      }),
+      makePortfolioBalanceReturn({ syncPhase: "failed", listOfErrorAccountNames: "BTC" }),
     );
 
     const { result } = renderHook(() => useActivityIndicator(), {
@@ -97,10 +88,7 @@ describe("useActivityIndicator", () => {
   it("should track SyncErrorList on tooltip show when failed", () => {
     const trackSpy = jest.spyOn(segment, "track");
     mockUsePortfolioBalance.mockReturnValue(
-      makePortfolioBalanceReturn({
-        syncPhase: "failed",
-        listOfErrorAccountNames: "BTC/ETH",
-      }),
+      makePortfolioBalanceReturn({ syncPhase: "failed", listOfErrorAccountNames: "BTC/ETH" }),
     );
 
     const { result } = renderHook(() => useActivityIndicator(), {
