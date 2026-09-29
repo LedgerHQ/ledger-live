@@ -1,4 +1,5 @@
 import { setEnv } from "@shared/env";
+import { TEST_TIMEOUT } from "@e2e/utils/timeouts";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import type { Account as AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
@@ -158,7 +159,7 @@ export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[
  * The delegate and undelegate pickers can wait for the pair to settle, which the default per-test
  * budget cannot absorb on top of the flow itself.
  */
-const MINA_PAIR_TEST_TIMEOUT_MS = MINA_PAIR_SETTLE_TIMEOUT_MS + 6 * 60 * 1000;
+const MINA_PAIR_TEST_TIMEOUT_MS = MINA_PAIR_SETTLE_TIMEOUT_MS + TEST_TIMEOUT;
 
 const minaBeforeAll = (accounts: AccountType[]) => async () => {
   await app.init({

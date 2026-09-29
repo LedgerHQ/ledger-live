@@ -3,7 +3,7 @@ import { removeSpeculosAndDeregisterKnownSpeculos } from "@e2e/utils/speculosUti
 import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { isIos, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { device } from "detox";
-import { DEFAULT_TIMEOUT } from "@e2e/helpers/elementHelpers";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 import ErrorPage from "@e2e/page/error.page";
 import { isAggregatedAssetsEnabled } from "@e2e/utils/featureFlagUtils";
 
@@ -70,7 +70,7 @@ export default class CommonPage {
 
   @Step("Tap on view details")
   async successViewDetails() {
-    await waitForElementById(this.validateSuccessScreenId, DEFAULT_TIMEOUT, {
+    await waitForElementById(this.validateSuccessScreenId, TIMEOUT.xxlarge, {
       errorElementId: this.errorPage.genericErrorModalId,
     });
     await waitForElementById(this.successViewDetailsButtonId);

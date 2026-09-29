@@ -1,5 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 import {
   isAssetDiscoverabilityEnabled,
@@ -111,7 +112,7 @@ export default class MarketPage {
       await waitForElementById(this.headerBackButtonId);
       await tapById(this.headerBackButtonId);
     } else {
-      await waitForElementById(this.backButtonId, 5000);
+      await waitForElementById(this.backButtonId, TIMEOUT.small);
       await tapById(this.backButtonId);
     }
   }
