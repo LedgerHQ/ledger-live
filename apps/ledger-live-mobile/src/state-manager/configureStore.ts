@@ -42,6 +42,9 @@ import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
+/** Matches the `SWAP_API_BASE` default in `shared/env`, kept here at the point of use. */
+const SWAP_API_BASE_DEFAULT = "https://swap.ledger.com/v5";
+
 export const store = configureStore({
   reducer: reducers,
   devTools: Config.DEBUG_RNDEBUGGER
@@ -78,8 +81,9 @@ export const store = configureStore({
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
             ...swapApiExtra({
-              // Read on every request, so the debug settings can change it without a restart.
-              getSwapApiBaseUrl: () => getEnv("SWAP_API_BASE"),
+              // `Config`, not `getEnv`: the `@shared/env` copy only lands after
+              // `experimental.ts` awaits the stored envs, long after this read.
+              getSwapApiBaseUrl: () => Config.SWAP_API_BASE || SWAP_API_BASE_DEFAULT,
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
             ...authApiExtra({
