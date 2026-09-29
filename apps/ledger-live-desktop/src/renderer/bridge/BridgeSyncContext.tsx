@@ -31,9 +31,7 @@ export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) 
       accounts={accounts}
       updateAccountWithUpdater={updateAccount}
       recoverError={recoverError}
-      trackAnalytics={(event, properties, mandatory) => {
-        void track(event, properties, { mandatory: !!mandatory });
-      }}
+      trackAnalytics={trackAnalytics}
       prepareCurrency={prepareCurrency}
       hydrateCurrency={hydrateCurrency}
       blacklistedTokenIds={blacklistedTokenIds}
@@ -42,3 +40,7 @@ export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) 
     </BridgeSync>
   );
 };
+
+function trackAnalytics(event, properties, mandatory) {
+  void track(event, properties, { mandatory: !!mandatory });
+}
