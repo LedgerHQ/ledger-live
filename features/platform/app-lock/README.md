@@ -7,8 +7,9 @@ App lock protection state — whether a password exists, whether biometrics is e
 the app is currently locked — plus the biometrics status unions and the errors the unlock path
 raises. It says _what state the lock is in_, never _how a digest is compared_ (that lives in
 [`@shared/password-verifier`](../../../shared/password-verifier/README.md)). The screens live in
-[`@features/flow-app-lock`](../../flow/app-lock/README.md); only the UI several of those journeys
-share lives here (see [Shared UI](#shared-ui-native-only)).
+the flow packages — the unlock journey in [`@features/flow-app-unlock`](../../flow/app-unlock/README.md),
+the others in [`@features/flow-app-lock`](../../flow/app-lock/README.md) — and only the UI several of
+those journeys share lives here (see [Shared UI](#shared-ui-native-only)).
 
 ## Why platform and not domain/entity
 

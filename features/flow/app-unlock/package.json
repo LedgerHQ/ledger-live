@@ -1,8 +1,8 @@
 {
-  "name": "@features/flow-app-lock",
-  "version": "0.5.0",
+  "name": "@features/flow-app-unlock",
+  "version": "0.0.0",
   "private": true,
-  "description": "App lock flow for Ledger Wallet Mobile: password setup, change and removal, longer password migration and the protection prompt",
+  "description": "App unlock flow for Ledger Wallet Mobile: the unlock screen and the forgotten password sheet",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -20,15 +20,12 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/app-lock"
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/app-unlock"
   },
   "dependencies": {
     "@features/platform-app-lock": "workspace:*",
-    "@shared/analytics": "workspace:*",
-    "@shared/analytics-react": "workspace:*",
     "@shared/i18n": "workspace:*",
-    "@shared/ui-info-state": "workspace:*",
-    "@shared/ui-queued-bottom-sheet": "workspace:*"
+    "@shared/ui-info-state": "workspace:*"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
