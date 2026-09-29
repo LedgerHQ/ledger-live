@@ -20,7 +20,10 @@ const nodeModulesPaths = [
   path.resolve(__dirname, "node_modules"),
   path.resolve(projectRootDir, "node_modules"),
   path.resolve(projectRootDir, "node_modules", ".pnpm"),
-  path.resolve(projectRootDir, "node_modules", ".pnpm", "node_modules"),
+  // Skip node_modules/.pnpm/node_modules. Private hoist puts one copy of each
+  // package there, and that copy shadows the nested dependency a package
+  // actually declared (uint8arrays requires multiformats/basics from v9, while
+  // the hoisted copy is v13 and does not export that subpath).
   "node_modules",
 ];
 
