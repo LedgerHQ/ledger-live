@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import { accountRefOf } from "./accountRef";
+import { accountRefOf } from "./accountRefOf";
 
 const account = (over: Partial<Account> = {}) =>
   ({
