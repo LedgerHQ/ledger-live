@@ -2,8 +2,8 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { BTC, ETH, USDC, USD, SAT, WEI, USDC_UNIT } from "./currencies";
 import { makeAccount, makeAccountWithTokens, makeTokenAccount } from "./accounts";
 import { buy, sell } from "./operations";
-import { buildMultiCV } from "./countervalues";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { buildMultiCV } from "@domain/entity-market-countervalues/mock";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 
 export type MultiAssetScenario = {
   btcAccount: Account;

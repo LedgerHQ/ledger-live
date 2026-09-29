@@ -4,7 +4,13 @@ import { createApi } from ".";
 import { type BoilerplateContext } from "../config";
 
 const context: BoilerplateContext = {
-  config: async () => ({ nodeUrl: "", minReserve: 0, status: { type: "active" } }),
+  config: async () => ({
+    nodeUrl: "",
+    minReserve: 0,
+    status: { type: "active" },
+    name: "Boilerplate",
+    unit: { name: "BOL", code: "BOL", magnitude: 8 },
+  }),
   logger: () => {},
 };
 

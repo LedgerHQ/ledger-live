@@ -272,6 +272,17 @@ describe("coin-framework utils", () => {
       ],
       [
         "coin",
+        "tokenAssociate",
+        {},
+        {
+          parentType: "ASSOCIATE_TOKEN",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
         "delegate",
         {},
         {

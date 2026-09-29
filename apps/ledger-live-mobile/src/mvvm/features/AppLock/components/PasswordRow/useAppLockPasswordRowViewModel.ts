@@ -22,10 +22,9 @@ function useAppLockPasswordRowViewModel(): AppLockPasswordRowViewModel {
 
   const onValueChange = useCallback(
     async (enabled: boolean) => {
-      track("toggle_clicked", {
-        toggle: "Password Lock",
-        page: ScreenName.GeneralSettings,
-        enabled: hasPassword,
+      track("button_clicked", {
+        button: enabled ? "enable" : "disable",
+        type: "password",
       });
 
       if (isPendingRef.current) {
@@ -51,7 +50,7 @@ function useAppLockPasswordRowViewModel(): AppLockPasswordRowViewModel {
         isPendingRef.current = false;
       }
     },
-    [allowRemoval, hasPassword, navigate],
+    [allowRemoval, navigate],
   );
 
   return { isHydrated, hasPassword, onValueChange, isRefusing, onRefusalClose };

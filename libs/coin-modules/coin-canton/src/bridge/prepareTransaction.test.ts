@@ -20,6 +20,8 @@ describe("prepareTransaction", () => {
       status: {
         type: "active",
       },
+      name: "Canton Network (Devnet)",
+      unit: { name: "cc", code: "CC", magnitude: 38 },
     }));
   });
   beforeEach(() => {

@@ -55,6 +55,7 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",

@@ -50,6 +50,9 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "8.57.0",
+    "eslint-plugin-better-tailwindcss": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
@@ -58,6 +61,7 @@
     "react-native": "catalog:",
     "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

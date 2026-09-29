@@ -29,6 +29,7 @@ const mockBroadcast = jest.mocked(logic.broadcast);
 const mockCombine = jest.mocked(logic.combine);
 const mockCraftTransaction = jest.mocked(logic.craftTransaction);
 const mockEstimateFees = jest.mocked(logic.estimateFees);
+const mockGetAccountInfo = jest.mocked(logic.getAccountInfo);
 const mockGetBalance = jest.mocked(logic.getBalance);
 const mockLastBlockV2 = jest.mocked(logic.lastBlockV2);
 const mockGetBlockV2 = jest.mocked(logic.getBlockV2);
@@ -68,6 +69,7 @@ describe("createApi", () => {
     expect(impl.craftTransaction).toBeInstanceOf(Function);
     expect(impl.craftTransactionData).toBeInstanceOf(Function);
     expect(impl.estimateFees).toBeInstanceOf(Function);
+    expect(impl.getAccountInfo).toBeInstanceOf(Function);
     expect(impl.getBalance).toBeInstanceOf(Function);
     expect(impl.getBlock).toBeInstanceOf(Function);
     expect(impl.getBlockInfo).toBeInstanceOf(Function);
@@ -155,14 +157,17 @@ describe("createApi", () => {
 
     it("should pass txIntent in estimateFeesParams for ContractCall operation type", async () => {
       mockMapIntentToSDKOperation.mockReturnValue(HEDERA_OPERATION_TYPES.ContractCall);
-      mockEstimateFees.mockResolvedValue({ tinybars: new BigNumber(9000) });
+      mockEstimateFees.mockResolvedValue({
+        tinybars: new BigNumber(9000),
+        gas: new BigNumber(123456),
+      });
 
       // @ts-expect-error - testing with minimal required fields for TransactionIntent
       const txIntent: TransactionIntent<HederaMemo> = { recipient: "0.0.1234", amount: 100n };
 
       const result = await api.estimateFees(mockContext, txIntent);
 
-      expect(result).toEqual({ value: BigInt("9000") });
+      expect(result).toEqual({ value: 9000n, parameters: { gasLimit: 123456n } });
       expect(mockEstimateFees).toHaveBeenCalledTimes(1);
       expect(mockEstimateFees).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -170,6 +175,25 @@ describe("createApi", () => {
           txIntent,
         }),
       );
+    });
+  });
+
+  describe("getAccountInfo", () => {
+    it("should call getAccountInfo from logic with the context config", async () => {
+      const accountInfo = {
+        type: "hedera",
+        maxAutomaticTokenAssociations: -1,
+        stakedNodeId: 3,
+        balance: 1000,
+        pendingReward: 42,
+      };
+      mockGetAccountInfo.mockResolvedValue(accountInfo);
+
+      const result = await api.getAccountInfo(mockContext, "0.0.1234");
+
+      expect(mockGetAccountInfo).toHaveBeenCalledTimes(1);
+      expect(mockGetAccountInfo).toHaveBeenCalledWith(await mockContext.config(), "0.0.1234");
+      expect(result).toEqual(accountInfo);
     });
   });
 

@@ -32,6 +32,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@domain/entity-account": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",

@@ -3,7 +3,7 @@ import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/featu
 import { withCopyStoreHydration } from "@devtools/protocols/copyStore";
 import { sleepingListener } from "./sleepingListener";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
-import { calApiExtra } from "@shared/api-services";
+import { calApiExtra, countervaluesApi, cvsApiExtra } from "@shared/api-services";
 import { getEnv } from "@shared/env";
 import {
   trustchainHandlers,
@@ -24,6 +24,7 @@ const rootReducer = combineReducers({
   featureFlags: featureFlagsReducer,
   trustchain: trustchainReducer,
   [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer,
+  [countervaluesApi.reducerPath]: countervaluesApi.reducer,
 });
 
 export const store = configureStore({
@@ -31,14 +32,21 @@ export const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       thunk: {
-        extraArgument: calApiExtra({
-          calServiceUrl: getEnv("CAL_SERVICE_URL"),
-          ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-        }),
+        extraArgument: {
+          ...calApiExtra({
+            calServiceUrl: getEnv("CAL_SERVICE_URL"),
+            ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+          }),
+          ...cvsApiExtra({ getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API") }),
+        },
       },
     })
       .prepend(sleepingListener.middleware)
-      .concat(createFeatureFlagsMiddleware({ resolutionConfig: {} }), cryptoAssetsApi.middleware),
+      .concat(
+        createFeatureFlagsMiddleware({ resolutionConfig: {} }),
+        cryptoAssetsApi.middleware,
+        countervaluesApi.middleware,
+      ),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

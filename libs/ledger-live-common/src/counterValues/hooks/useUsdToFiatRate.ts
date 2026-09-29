@@ -1,5 +1,6 @@
-import { useMemo } from "react";
-import { useGetUsdToFiatRateQuery } from "../state-manager/api";
+import { log } from "@ledgerhq/logs";
+import { useEffect, useMemo } from "react";
+import { useGetUsdToFiatRateQuery } from "@domain/api-market-countervalues";
 
 const USD_FIAT_RATE_POLLING_MS = 60_000;
 
@@ -26,10 +27,14 @@ export function useUsdToFiatRate(
 ): UsdToFiatRate {
   const to = targetTicker.toLowerCase();
   const skip = options.skip || to === "usd";
-  const { data, isLoading, isError } = useGetUsdToFiatRateQuery(
+  const { data, isLoading, isError, error } = useGetUsdToFiatRateQuery(
     { to },
     { skip, pollingInterval: USD_FIAT_RATE_POLLING_MS },
   );
+
+  useEffect(() => {
+    if (error) log("countervaluesApi", `getUsdToFiatRate failed for ${to}`, { error });
+  }, [error, to]);
 
   return useMemo(() => {
     if (skip) return { status: "ready", rate: 1 };

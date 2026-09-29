@@ -43,6 +43,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     hasMemoForRecipient: jest.fn(() => true),
     getBalanceTypeConfig: jest.fn(() => null),
+    getTrackingAttributes: jest.fn(() => ({})),
   },
 }));
 jest.mock("../../context/RecipientContactSelectionContext", () => ({

@@ -32,7 +32,7 @@ import {
 } from "../../contactsDeviceActionFailure";
 import {
   mapBytesToProof,
-  mapChainIdToBigInt,
+  mapChainIdForFamily,
   mapGroupHandleToBytes,
   mapIdentifierToBytes,
   mapProofToBytes,
@@ -172,14 +172,14 @@ export const editExternalAddressIntentJob: Job<
     let storedHmacRest: Uint8Array;
     let previousIdentifier: Uint8Array;
     let newIdentifier: Uint8Array;
-    let chainId: bigint;
+    let chainId: bigint | undefined;
     try {
       groupHandle = mapGroupHandleToBytes(input.groupHandle);
       hmacProof = mapProofToBytes(input.hmacProof);
       storedHmacRest = mapProofToBytes(input.hmacRest);
-      previousIdentifier = mapIdentifierToBytes(input.previousAddress);
-      newIdentifier = mapIdentifierToBytes(input.newAddress);
-      chainId = mapChainIdToBigInt(input.chainId);
+      previousIdentifier = mapIdentifierToBytes(input.previousAddress, input.blockchainFamily);
+      newIdentifier = mapIdentifierToBytes(input.newAddress, input.blockchainFamily);
+      chainId = mapChainIdForFamily(input.chainId, input.blockchainFamily);
     } catch (error) {
       const failure = { type: "invalid-input", error: mapDmkErrorToError(error) } as const;
       reporter.report({ type: "failure", error: failure.error });

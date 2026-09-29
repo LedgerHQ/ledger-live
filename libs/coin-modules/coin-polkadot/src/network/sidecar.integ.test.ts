@@ -22,6 +22,8 @@ const CURRENCY_CONFIGS = {
     currency: getCryptoCurrencyById("polkadot"),
     config: {
       status: { type: "active" as const },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       node: { url: "https://polkadot-rpc.publicnode.com" },
       sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1/rc" },
       indexer: { url: "https://polkadot.coin.ledger.com" },
@@ -33,6 +35,8 @@ const CURRENCY_CONFIGS = {
     currency: getCryptoCurrencyById("assethub_polkadot"),
     config: {
       status: { type: "active" as const },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1" },
       node: { url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub" },
@@ -46,6 +50,8 @@ const CURRENCY_CONFIGS = {
     currency: getCryptoCurrencyById("westend"),
     config: {
       status: { type: "active" as const },
+      name: "Westend",
+      unit: { name: "WND", code: "WND", magnitude: 12 },
       sidecar: { url: "https://polkadot-westend-rest-api.coin.ledger.com/v1/rc" },
       node: { url: "https://polkadot-westend-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_westend" },
@@ -56,6 +62,8 @@ const CURRENCY_CONFIGS = {
     currency: getCryptoCurrencyById("assethub_westend"),
     config: {
       status: { type: "active" as const },
+      name: "Assethub Westend",
+      unit: { name: "WND", code: "WND", magnitude: 12 },
       sidecar: { url: "https://polkadot-westend-rest-api.coin.ledger.com/v1" },
       node: { url: "https://polkadot-westend-asset-hub-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub_westend" },

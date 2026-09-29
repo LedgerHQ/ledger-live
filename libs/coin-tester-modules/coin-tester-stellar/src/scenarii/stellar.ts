@@ -229,6 +229,8 @@ export const scenarioStellar: Scenario<GenericTransaction, Account> = {
     const { currencyBridge, accountBridge, getAddress } = await getBridges(stellarSigner);
     const localConfig = {
       status: { type: "active" as const },
+      name: "Stellar",
+      unit: { name: "Lumen", code: "XLM", magnitude: 7 },
       explorer: { url: HORIZON_URL, fetchLimit: 100 },
       useStaticFees: true,
     };

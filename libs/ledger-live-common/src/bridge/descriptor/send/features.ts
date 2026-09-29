@@ -42,6 +42,7 @@ const noCoinControlConfig: CoinControlConfig | null = null;
 const noBalanceTypeConfig: BalanceTypeConfig | null = null;
 const noAmountEffects: readonly FlowEffect[] = [];
 const defaultSelfTransferPolicy: SelfTransferPolicy = "impossible";
+const noTrackingAttributes: Record<string, string> = {};
 
 export const sendFeatures = {
   canSendMax: fromDescriptor(d => d.amount?.canSendMax, true),
@@ -127,6 +128,18 @@ export const sendFeatures = {
     currency: CryptoOrTokenCurrency | undefined,
   ): TransactionPatch | null => {
     return getSendDescriptor(currency)?.fees.defaultStrategy?.buildTransactionPatch() ?? null;
+  },
+  /**
+   * Family-agnostic attributes (e.g. Zcash's `privacy`/`flow`) appended to every
+   * send-flow page event. Never diverges from the descriptor's own hook: no
+   * family or currency check lives here.
+   */
+  getTrackingAttributes: (
+    currency: CryptoOrTokenCurrency | undefined,
+    transaction: unknown,
+  ): Record<string, string> => {
+    const d = getSendDescriptor(currency);
+    return d?.getTrackingAttributes?.(transaction) ?? noTrackingAttributes;
   },
   getMemoType: fromDescriptor(d => d.inputs.memo?.type, undefined),
   getMemoMaxLength: fromDescriptor(d => d.inputs.memo?.maxLength, undefined),

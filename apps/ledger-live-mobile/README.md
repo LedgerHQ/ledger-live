@@ -16,6 +16,8 @@ The app is built with React Native, React, Redux, and RxJS. It uses shared Ledge
 | `libs/**`                          | Legacy shared code                      |
 | `domain`, `features`, and `shared` | New locations for shared business logic |
 
+Product events are documented in [docs/analytics.md](docs/analytics.md).
+
 ## Prerequisites
 
 Run the repo root setup first:
@@ -92,6 +94,8 @@ e.g.
 ```bash
 ANALYTICS_CONSOLE=TRUE pnpm dev:llm
 ```
+
+That flag shows the analytics debug overlay. What the app still owns is in [docs/analytics.md](docs/analytics.md).
 
 ## Translations and localisation
 

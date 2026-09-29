@@ -16,6 +16,7 @@ const NON_REDISTRIBUTED = new Set([
   "@oxlint/binding-win32-x64-msvc",
   "@types/debug",
   "@types/node",
+  "@types/react",
   "@types/w3c-web-usb",
   "bun-types",
   "bunli",
