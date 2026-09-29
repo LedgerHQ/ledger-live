@@ -24,7 +24,7 @@ test.describe("My Ledger — uninstall an app with dependents", () => {
       tag: ["@myLedger", ...DEVICE_TAGS],
       annotation: { type: "TMS", description: "B2CQA-783" },
     },
-    async ({ app }) => {
+    async ({ app, mockServer }) => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.waitForDashboard();
 
@@ -32,6 +32,11 @@ test.describe("My Ledger — uninstall an app with dependents", () => {
       await app.myLedger.expectAppInstalled(AppInfos.ETHEREUM);
       await app.myLedger.expectAppInstalled(AppInfos.ETHEREUM_CLASSIC);
       await app.myLedger.expectAppInstalled(AppInfos.BITCOIN);
+      await mockServer.expectInstalledApps([
+        AppInfos.ETHEREUM.name,
+        AppInfos.ETHEREUM_CLASSIC.name,
+        AppInfos.BITCOIN.name,
+      ]);
 
       await app.myLedger.uninstallAppWithDependents(AppInfos.ETHEREUM);
 
@@ -41,6 +46,8 @@ test.describe("My Ledger — uninstall an app with dependents", () => {
       await app.myLedger.searchCatalog(AppInfos.ETHEREUM.name);
       await app.myLedger.expectAppUninstalled(AppInfos.ETHEREUM);
       await app.myLedger.expectAppUninstalled(AppInfos.ETHEREUM_CLASSIC);
+
+      await mockServer.expectInstalledApps([AppInfos.BITCOIN.name]);
     },
   );
 });
