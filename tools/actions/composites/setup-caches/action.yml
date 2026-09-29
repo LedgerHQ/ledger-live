@@ -57,6 +57,17 @@ runs:
       shell: bash
       run: echo "NX_SKIP_NX_CACHE=true" >> "$GITHUB_ENV"
 
+    - name: Detect pre-installed mise
+      id: mise-preinstalled
+      if: inputs.use-mise == 'true'
+      shell: bash
+      run: |
+        if command -v mise >/dev/null 2>&1; then
+          echo "found=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "found=false" >> "$GITHUB_OUTPUT"
+        fi
+
     - name: Install mise and tools
       if: inputs.use-mise == 'true'
       uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
@@ -64,7 +75,7 @@ runs:
         # pinned: following latest mise once broke plugin installs (TSDINT-1644)
         version: "2026.9.1"
         install: true
-        cache: true
+        cache: ${{ steps.mise-preinstalled.outputs.found != 'true' }}
         reshim: true
         experimental: true
         github_token: ${{ inputs['gh-token'] }}
