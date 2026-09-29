@@ -23,6 +23,11 @@ export type EnergyRentRequest = {
   durationSeconds: number;
   /** Extra TRX to bundle for bandwidth, in TRX (e.g. 0.8). Defaults to 0. */
   extraTrx?: number;
+  /** Ceiling on what the created order may cost (provider-native decimal string, same unit as
+   * {@link EnergyRentOrder.payCoinAmt}); `craftEnergyRentTransaction` rejects an order exceeding it. */
+  maxPayCoinAmt?: string;
+  /** Currency {@link maxPayCoinAmt} is denominated in; the order's `payCoinCode` must match it. */
+  maxPayCoinCode?: string;
 };
 
 /** Provider-agnostic price quote. Amounts kept as provider-native decimal strings. */
