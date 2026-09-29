@@ -30,7 +30,6 @@ const mockCurrency: CryptoCurrency = {
   coinType: 0,
   scheme: "bitcoin",
   blockAvgTime: 600,
-  ethereumLikeInfo: undefined,
   explorerViews: [],
   keywords: ["btc", "bitcoin"],
 } as unknown as CryptoCurrency;
