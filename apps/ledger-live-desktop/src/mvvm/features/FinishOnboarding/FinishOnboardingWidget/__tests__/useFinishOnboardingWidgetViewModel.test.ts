@@ -1,10 +1,15 @@
 import { act, renderHook } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { getLumenSymbolForActionId } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/utils";
 import { useFinishOnboardingWidgetViewModel } from "LLD/features/FinishOnboarding/FinishOnboardingWidget/useFinishOnboardingWidgetViewModel";
 import { useFinishOnboardingState } from "LLD/features/FinishOnboarding/hooks/useFinishOnboardingState";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("LLD/features/FinishOnboarding/hooks/useFinishOnboardingState");
 
