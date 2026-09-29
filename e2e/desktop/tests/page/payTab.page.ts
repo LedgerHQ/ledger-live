@@ -18,6 +18,9 @@ export class PayTabPage extends AppPage {
   );
   private readonly depositTile: Locator = this.page.getByTestId("action-tile-deposit");
   private readonly requestTile: Locator = this.page.getByTestId("action-tile-request");
+  private readonly payTile: Locator = this.page.getByTestId("action-tile-pay");
+  private readonly successStep: Locator = this.page.getByTestId("pay-success-step");
+  private readonly successClose: Locator = this.page.getByTestId("pay-success-close");
   private readonly depositOptions: Locator = this.page.getByTestId("pay-card-deposit-options");
   private readonly requestScreen: Locator = this.page.getByTestId("pay-request-receive");
   private readonly requestAddress: Locator = this.page.getByTestId("pay-request-receive-address");
@@ -159,6 +162,23 @@ export class PayTabPage extends AppPage {
     }
     await this.requestVerifyHint.getByRole("button", { name: "Got it" }).click();
     await expect(this.requestVerifyHint).toBeHidden();
+  }
+
+  @step("Open a new payment")
+  async openNewPayment() {
+    await this.payTile.click();
+  }
+
+  @step("Expect the Pay success screen")
+  async expectYouPaid() {
+    await expect(this.successStep).toBeVisible();
+    await expect(this.successStep).toContainText("You paid");
+  }
+
+  @step("Close the Pay success screen")
+  async closePaySuccess() {
+    await this.successClose.click();
+    await expect(this.successStep).toBeHidden();
   }
 
   @step("Close the request dialog")
