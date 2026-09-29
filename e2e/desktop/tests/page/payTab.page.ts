@@ -17,7 +17,17 @@ export class PayTabPage extends AppPage {
     "pay-card-balance-filter-confirm",
   );
   private readonly depositTile: Locator = this.page.getByTestId("action-tile-deposit");
+  private readonly requestTile: Locator = this.page.getByTestId("action-tile-request");
   private readonly depositOptions: Locator = this.page.getByTestId("pay-card-deposit-options");
+  private readonly requestScreen: Locator = this.page.getByTestId("pay-request-receive");
+  private readonly requestAddress: Locator = this.page.getByTestId("pay-request-receive-address");
+  private readonly requestQr: Locator = this.page.getByTestId("pay-request-receive-qr-code");
+  private readonly requestSave: Locator = this.page.getByTestId("pay-request-receive-save");
+  private readonly requestCopy: Locator = this.page.getByTestId("pay-request-receive-copy");
+  private readonly requestVerify: Locator = this.page.getByTestId("pay-request-receive-verify");
+  private readonly requestVerifyHint: Locator = this.page.getByTestId(
+    "pay-request-receive-verify-hint",
+  );
   private readonly bankTransferIntro: Locator = this.page.getByTestId(
     "pay-bank-transfer-intro-dialog",
   );
@@ -102,6 +112,60 @@ export class PayTabPage extends AppPage {
   async closeBankTransferIntro() {
     await this.bankTransferIntro.getByRole("button", { name: "Close" }).click();
     await expect(this.bankTransferIntro).toBeHidden();
+  }
+
+  @step("Open request")
+  async openRequest() {
+    await this.requestTile.click();
+  }
+
+  @step("Expect the request screen titled $0")
+  async expectRequestTitle(title: string) {
+    await expect(this.requestScreen).toBeVisible();
+    await expect(this.requestScreen).toContainText(title);
+  }
+
+  @step("Expect the request address")
+  async expectRequestAddress() {
+    await expect(this.requestAddress).toBeVisible();
+  }
+
+  @step("Expect the request QR code")
+  async expectRequestQrCode() {
+    await expect(this.requestQr).toBeVisible();
+  }
+
+  @step("Expect the request Save action")
+  async expectRequestSave() {
+    await expect(this.requestSave).toBeVisible();
+  }
+
+  @step("Expect the request Copy action")
+  async expectRequestCopy() {
+    await expect(this.requestCopy).toBeVisible();
+  }
+
+  @step("Expect the request Verify action")
+  async expectRequestVerify() {
+    await expect(this.requestVerify).toBeVisible();
+  }
+
+  @step("Dismiss the verify address hint when it is shown")
+  async dismissVerifyHintIfVisible() {
+    try {
+      await this.requestVerifyHint.waitFor({ state: "visible", timeout: 2_000 });
+    } catch {
+      return;
+    }
+    await this.requestVerifyHint.getByRole("button", { name: "Got it" }).click();
+    await expect(this.requestVerifyHint).toBeHidden();
+  }
+
+  @step("Close the request dialog")
+  async closeRequest() {
+    await this.dismissVerifyHintIfVisible();
+    await this.requestScreen.locator("..").getByRole("button", { name: "Close" }).click();
+    await expect(this.requestScreen).toBeHidden();
   }
 
   @step("Close the open dialog")
