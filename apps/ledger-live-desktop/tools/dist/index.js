@@ -181,7 +181,7 @@ const resolvePackedAppPath = args => {
       __dirname,
       rootFolder,
       "dist",
-      args.mas ? "mas" : "mac",
+      args.mas ? "mas-universal" : "mac-universal",
       `${pkg.productName}.app`,
     );
   }
@@ -189,38 +189,6 @@ const resolvePackedAppPath = args => {
     return path.resolve(__dirname, rootFolder, "dist", "win-unpacked");
   }
   return path.resolve(__dirname, rootFolder, "dist", "linux-unpacked");
-};
-
-// mac/mas configs target arch "universal", which isn't a real single arch:
-// under `--dir`, electron-builder falls back to the packaging host's actual
-// arch and suffixes the output dir with it (e.g. dist/mac-arm64 on Apple
-// Silicon runners), rather than the plain dist/mac our sign --input contract
-// promises. Normalize it — pack and sign always run on the same host within
-// one CI job, so whatever arch produced it is irrelevant once packed.
-const normalizePackedMacOutput = args => {
-  if (process.platform !== "darwin") return;
-
-  const distDir = path.resolve(__dirname, rootFolder, "dist");
-  const prefix = args.mas ? "mas" : "mac";
-  const expectedDir = path.join(distDir, prefix);
-  const appName = `${pkg.productName}.app`;
-  if (fs.existsSync(path.join(expectedDir, appName))) return;
-
-  const candidates = fs
-    .readdirSync(distDir, { withFileTypes: true })
-    .filter(entry => entry.isDirectory() && entry.name !== prefix && entry.name.startsWith(prefix));
-
-  for (const candidate of candidates) {
-    const candidatePath = path.join(distDir, candidate.name);
-    if (fs.existsSync(path.join(candidatePath, appName))) {
-      fs.renameSync(candidatePath, expectedDir);
-      return;
-    }
-  }
-
-  throw new Error(
-    `pack: could not locate packaged ${appName} under ${distDir} (looked in ${prefix}*)`,
-  );
 };
 
 // Same file used for both `mac.entitlements` and `mac.entitlementsInherit`
@@ -291,6 +259,8 @@ const packTasks = args => [
         "-c.win.verifyUpdateCodeSignature=false",
         ...configArgs,
       ];
+      // --dir ignores the config's `arch: universal` and packs the host arch only.
+      if (process.platform === "darwin" && !args.mas) commands.push("--universal");
       // MAS already forces --publish never via resolveElectronBuilderArgs.
       if (!args.mas) commands.push("--publish", "never");
 
@@ -308,7 +278,6 @@ const packTasks = args => [
         },
       });
 
-      normalizePackedMacOutput(args);
       console.log(`\nPack output ready for \`sign --input\`: ${resolvePackedAppPath(args)}\n`);
     },
   },
