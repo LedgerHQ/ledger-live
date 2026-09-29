@@ -3,8 +3,8 @@ import type { Account, Operation } from "@ledgerhq/types-live";
 import { ETH, USD, WEI } from "./currencies";
 import { makeAccount } from "./accounts";
 import { buy, sell, fail, makeOp } from "./operations";
-import { buildCV, dailyHistory } from "./countervalues";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { buildCV, dailyHistory } from "@domain/entity-market-countervalues/mock";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 
 const DUST_THRESHOLD = WEI.times("0.001");
 

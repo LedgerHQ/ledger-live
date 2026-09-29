@@ -36,6 +36,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:^",
     "@domain/entity-currency-token": "workspace:^",
+    "@domain/entity-market-countervalues": "workspace:^",
     "@domain/entity-recent-addresses": "workspace:^",
     "@domain/entity-wallet-sync": "workspace:^",
     "@features/platform-currencies": "workspace:*",
