@@ -18,7 +18,7 @@ test.describe("My Ledger — install an app for an unsupported asset", () => {
       tag: ["@myLedger", ...DEVICE_TAGS],
       annotation: { type: "TMS", description: "B2CQA-669" },
     },
-    async ({ app }) => {
+    async ({ app, mockServer }) => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.waitForDashboard();
 
@@ -32,6 +32,8 @@ test.describe("My Ledger — install an app for an unsupported asset", () => {
 
       await app.myLedger.openInstalledAppsTab();
       await app.myLedger.expectAppInstalled(AppInfos.KASPA);
+
+      await mockServer.expectInstalledApps([AppInfos.KASPA.name]);
 
       await app.myLedger.openCatalogTab();
       await app.myLedger.searchCatalog(AppInfos.KASPA.name);
