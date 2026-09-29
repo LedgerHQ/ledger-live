@@ -1,8 +1,8 @@
+import { installContentAbTestCopyOverrides } from "@features/platform-feature-flags/content-ab-test-copy";
 import { createInstance } from "i18next";
 import { initReactI18next } from "react-i18next";
 import { DEFAULT_LANGUAGE_LOCALE, locales } from "../languages";
 import { en } from "../locales";
-import { installContentAbTestCopyOverrides } from "./contentAbTestCopyOverrides";
 
 /**
  * The app's translation engine.

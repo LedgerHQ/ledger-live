@@ -9063,6 +9063,9 @@ importers:
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
+      i18next:
+        specifier: 'catalog:'
+        version: 25.7.3(@typescript/typescript6@6.0.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0

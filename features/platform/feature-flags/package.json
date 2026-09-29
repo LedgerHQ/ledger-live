@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./firebase": "./src/firebase.ts",
+    "./content-ab-test-copy": "./src/contentAbTestCopy.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -37,6 +38,7 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/react": "catalog:",
+    "i18next": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "react": "catalog:",

@@ -1,9 +1,9 @@
+import { installContentAbTestCopyOverrides } from "@features/platform-feature-flags/content-ab-test-copy";
 import { createInstance, type InitOptions } from "i18next";
 import { initReactI18next } from "react-i18next";
 import locales, { i18_DEFAULT_NAMESPACE } from ".";
 import { DEFAULT_LANGUAGE } from "~/config/languages";
 import en from "../../../static/i18n/en/app.json";
-import { installContentAbTestCopyOverrides } from "./contentAbTestCopyOverrides";
 
 const config: InitOptions = {
   resources: locales,

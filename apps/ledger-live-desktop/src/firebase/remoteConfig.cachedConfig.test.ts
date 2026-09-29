@@ -79,7 +79,8 @@ describe("readCachedFlags", () => {
     });
     expect(mockEnsureInitialized).toHaveBeenCalled();
     expect(mockFetchAndActivate).not.toHaveBeenCalled();
-    const { getContentAbTestCopy } = await import("./contentAbTestCopy");
+    const { getContentAbTestCopy } =
+      await import("@features/platform-feature-flags/content-ab-test-copy");
     expect(getContentAbTestCopy()).toEqual({ "upgrade.banner.title": "Cached title" });
     expect(mockGetAll).toHaveBeenCalledTimes(1);
   });
