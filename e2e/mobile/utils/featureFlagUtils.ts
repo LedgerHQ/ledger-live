@@ -137,6 +137,7 @@ export const getMergedFeatureFlags = ({
     },
     largeScreenUpsell: { enabled: false },
     releaseTour: { enabled: false },
+    brazePushNotifications: { enabled: false },
     llmModularDrawer: {
       enabled: true,
       params: {
