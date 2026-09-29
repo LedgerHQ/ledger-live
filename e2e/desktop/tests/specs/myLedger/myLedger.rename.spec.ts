@@ -19,13 +19,15 @@ test.describe("My Ledger — rename the device", () => {
       tag: ["@myLedger", ...deviceTagsWithoutLNS()],
       annotation: { type: "TMS", description: "B2CQA-2594" },
     },
-    async ({ app, mockDevice }) => {
+    async ({ app, mockDevice, mockServer }) => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.waitForDashboard();
 
       await app.myLedger.expectDeviceName(mockDevice.name!);
       await app.myLedger.renameDevice(RENAMED);
       await app.myLedger.expectDeviceName(RENAMED);
+
+      await mockServer.expectDeviceName(RENAMED);
     },
   );
 });
