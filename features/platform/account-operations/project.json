@@ -1,8 +1,0 @@
-{
-  "name": "@features/platform-account-operations",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

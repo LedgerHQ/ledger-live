@@ -29,3 +29,12 @@ export type TokenAccountId = z.infer<typeof TokenAccountIdSchema>;
  */
 export const AnyAccountIdSchema = z.union([AccountIdSchema, TokenAccountIdSchema]);
 export type AnyAccountId = z.infer<typeof AnyAccountIdSchema>;
+
+/** How to designate an account to a data source: enough to read it without owning the account object. */
+export const AccountRefSchema = z.object({
+  accountId: AccountIdSchema,
+  currencyId: z.string().min(1),
+  address: z.string().min(1),
+  derivationMode: z.string(),
+});
+export type AccountRef = z.infer<typeof AccountRefSchema>;

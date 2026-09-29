@@ -56,3 +56,12 @@ export type AccountOperationsState = {
 export type WithAccountOperations = { accountOperations: AccountOperationsState };
 
 export const initialAccountOperationsState: AccountOperationsState = { byAccount: {}, status: {} };
+
+export type AccountOperationsQuery = { cursor?: string; limit?: number };
+
+export type AccountOperationsPage = {
+  operations: AccountOperation[];
+  nextCursor?: string;
+  complete: boolean;
+  total?: number;
+};

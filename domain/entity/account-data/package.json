@@ -1,0 +1,23 @@
+{
+  "name": "@domain/entity-account-data",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Account data protocol, entity side: the open map of account data and how a slice receives it",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-data"
+  },
+  "dependencies": {
+    "@domain/entity-account": "workspace:^"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

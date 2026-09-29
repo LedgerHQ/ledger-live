@@ -2,15 +2,12 @@
   "name": "@features/platform-account-data",
   "version": "0.1.0",
   "private": true,
-  "description": "Account balance and operation reads: the source contracts, the fetch thunks and the React hooks",
+  "description": "Generic React hook that triggers and refreshes account data reads",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
     ".": {
       "default": "./src/index.ts"
-    },
-    "./react": {
-      "default": "./src/react.ts"
     },
     "./package.json": "./package.json"
   },
@@ -23,20 +20,20 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@domain/api-account-data-source": "workspace:^",
     "@domain/entity-account": "workspace:^",
-    "@domain/entity-account-balance": "workspace:^",
-    "@domain/entity-account-operations": "workspace:^"
+    "@domain/entity-account-data": "workspace:^",
+    "@reduxjs/toolkit": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
-    "@domain/entity-currency-crypto": "workspace:^",
-    "@domain/entity-currency-token": "workspace:^",
+    "@domain/entity-account-balance": "workspace:^",
+    "@domain/entity-account-operations": "workspace:^",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@shared/schema-primitives": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -49,7 +46,6 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",
-    "typescript": "catalog:",
-    "zod": "catalog:"
+    "typescript": "catalog:"
   }
 }

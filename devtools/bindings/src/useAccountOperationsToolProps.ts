@@ -2,13 +2,10 @@ import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
-import type { AccountRef } from "@features/platform-account-data";
-import { useAccountDataRouter } from "@features/platform-account-data/react";
+import type { AccountRef } from "@domain/entity-account";
+import { fetchAccountData, type AccountDataExtra } from "@domain/api-account-data-source";
 import {
-  fetchAccountOperations,
-  fetchMoreAccountOperations,
-} from "@features/platform-account-operations";
-import {
+  accountOperationsBinding,
   accountOperationsSlice,
   type WithAccountOperations,
 } from "@domain/entity-account-operations";
@@ -37,8 +34,8 @@ const {
 export function useAccountOperationsToolProps(
   inputs: readonly AccountOperationsInput[],
 ): AccountOperationsToolProps {
-  const dispatch = useDispatch<ThunkDispatch<WithAccountOperations, unknown, UnknownAction>>();
-  const router = useAccountDataRouter();
+  const dispatch =
+    useDispatch<ThunkDispatch<WithAccountOperations, AccountDataExtra, UnknownAction>>();
   const operations = useSelector((state: WithAccountOperations) => state.accountOperations);
 
   const accounts = useMemo<Row[]>(
@@ -82,18 +79,18 @@ export function useAccountOperationsToolProps(
     (accountId: string) => {
       const ref = refsById.get(accountId);
       if (!ref) return;
-      void dispatch(fetchAccountOperations(router, ref, { maxAge: 0 }));
+      void dispatch(fetchAccountData(accountOperationsBinding, ref, { maxAge: 0 }));
     },
-    [dispatch, router, refsById],
+    [dispatch, refsById],
   );
 
   const onLoadMore = useCallback(
     (accountId: string) => {
       const ref = refsById.get(accountId);
       if (!ref) return;
-      void dispatch(fetchMoreAccountOperations(router, ref));
+      void dispatch(fetchAccountData(accountOperationsBinding, ref, { more: true }));
     },
-    [dispatch, router, refsById],
+    [dispatch, refsById],
   );
 
   return { accounts, onRefresh, onLoadMore, ready: true };

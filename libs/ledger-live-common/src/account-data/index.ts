@@ -1,3 +1,3 @@
 export * from "./accountRefOf";
-export * from "./coinModuleSource";
+export * from "./coinModuleHost";
 export * from "./FullSyncSource";

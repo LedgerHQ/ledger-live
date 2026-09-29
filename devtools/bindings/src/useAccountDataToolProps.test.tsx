@@ -6,8 +6,8 @@ import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { mockAccountBalance } from "@domain/entity-account-balance/schema.mock";
 import { accountOperationsSlice } from "@domain/entity-account-operations";
 import { mockAccountOperation } from "@domain/entity-account-operations/schema.mock";
-import { createAccountDataRouter, type AccountRef } from "@features/platform-account-data";
-import { AccountDataProvider } from "@features/platform-account-data/react";
+import type { AccountRef } from "@domain/entity-account";
+import { createAccountDataRouter } from "@domain/api-account-data-source";
 import { useAccountBalancesToolProps } from "./useAccountBalancesToolProps";
 import { useAccountOperationsToolProps } from "./useAccountOperationsToolProps";
 
@@ -28,18 +28,18 @@ const setup = () => {
     complete: false,
   }));
   const router = createAccountDataRouter([
-    { id: "fake", supports: () => true, getBalances, getOperations },
+    { id: "fake", supports: () => true, balance: getBalances, operations: getOperations },
   ]);
   const store = configureStore({
     reducer: {
       accountBalances: accountBalancesSlice.reducer,
       accountOperations: accountOperationsSlice.reducer,
     },
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({ thunk: { extraArgument: { accountData: router } } }),
   });
   const wrapper = ({ children }: { children: ReactNode }) => (
-    <Provider store={store}>
-      <AccountDataProvider router={router}>{children}</AccountDataProvider>
-    </Provider>
+    <Provider store={store}>{children}</Provider>
   );
   return { wrapper, getBalances, getOperations };
 };

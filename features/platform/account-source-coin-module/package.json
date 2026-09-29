@@ -1,13 +1,12 @@
 {
-  "name": "@domain/entity-account-operations",
+  "name": "@features/platform-account-source-coin-module",
   "version": "0.1.0",
   "private": true,
-  "description": "AccountOperation entity: the paginated operation history for accounts and their token accounts",
+  "description": "Account data source reading balances and operations straight from a coin module: an address in, rows out",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./schema.mock": "./src/schema.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -16,16 +15,16 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-operations"
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/account-source-coin-module"
   },
   "dependencies": {
+    "@domain/api-account-data-source": "workspace:^",
     "@domain/entity-account": "workspace:^",
+    "@domain/entity-account-balance": "workspace:^",
     "@domain/entity-account-data": "workspace:^",
+    "@domain/entity-account-operations": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
-    "@domain/entity-currency-token": "workspace:^",
-    "@reduxjs/toolkit": "catalog:",
-    "@shared/schema-primitives": "workspace:^",
-    "zod": "catalog:"
+    "@ledgerhq/coin-module-framework": "catalog:"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",

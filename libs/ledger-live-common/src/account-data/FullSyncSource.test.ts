@@ -33,8 +33,8 @@ describe("FullSyncSource", () => {
   it("shares one sync between balances and operations requested together", async () => {
     const { source, sync } = makeSource();
     const [balances, ops] = await Promise.all([
-      source.getBalances(ref),
-      source.getOperations(ref, {}),
+      source.balance(ref, {}),
+      source.operations(ref, {}),
     ]);
     expect(sync).toHaveBeenCalledTimes(1);
     expect(balances[0]?.balance).toBe("10");
@@ -43,8 +43,8 @@ describe("FullSyncSource", () => {
 
   it("syncs again once the previous run settled", async () => {
     const { source, sync } = makeSource();
-    await source.getBalances(ref);
-    await source.getBalances(ref);
+    await source.balance(ref, {});
+    await source.balance(ref, {});
     expect(sync).toHaveBeenCalledTimes(2);
   });
 
@@ -52,7 +52,7 @@ describe("FullSyncSource", () => {
     const { source, sync } = makeSource();
     const controller = new AbortController();
     controller.abort();
-    await expect(source.getBalances(ref, controller.signal)).rejects.toThrow("aborted");
+    await expect(source.balance(ref, {}, controller.signal)).rejects.toThrow("aborted");
     expect(sync).not.toHaveBeenCalled();
   });
 
@@ -61,6 +61,6 @@ describe("FullSyncSource", () => {
       getAccount: () => undefined,
       prepareCurrency: async () => {},
     });
-    await expect(source.getBalances(ref)).rejects.toThrow("not in the store");
+    await expect(source.balance(ref, {})).rejects.toThrow("not in the store");
   });
 });

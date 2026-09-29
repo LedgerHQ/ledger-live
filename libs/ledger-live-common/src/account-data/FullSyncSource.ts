@@ -16,7 +16,9 @@ import {
 } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
-import type { AccountDataSource } from "@features/platform-account-data";
+import type { AccountRef } from "@domain/entity-account";
+import type { AccountDatum } from "@domain/entity-account-data";
+import type { AccountDataSource } from "@domain/api-account-data-source";
 import { getAccountBridge } from "../bridge";
 
 export type FullSyncSourceConfig = {
@@ -34,15 +36,18 @@ export class FullSyncSource implements AccountDataSource {
 
   constructor(private readonly config: FullSyncSourceConfig) {}
 
-  supports(ref: { currencyId: string }): boolean {
-    return findCryptoCurrencyById(ref.currencyId) !== undefined;
+  supports(ref: AccountRef, datum: AccountDatum): boolean {
+    return (
+      (datum === "balance" || datum === "operations") &&
+      findCryptoCurrencyById(ref.currencyId) !== undefined
+    );
   }
 
-  async getBalances(ref: { accountId: string }, signal?: AbortSignal) {
+  async balance(ref: AccountRef, _query: unknown, signal?: AbortSignal) {
     return toAccountBalances(await this.sync(ref.accountId, signal));
   }
 
-  async getOperations(ref: { accountId: string }, _query: unknown, signal?: AbortSignal) {
+  async operations(ref: AccountRef, _query: unknown, signal?: AbortSignal) {
     const operations = toAccountOperations(await this.sync(ref.accountId, signal));
     return { operations, complete: true, total: operations.length };
   }

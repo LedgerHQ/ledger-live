@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@domain/entity-account": "workspace:^",
+    "@domain/entity-account-data": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@domain/entity-currency-token": "workspace:^",
     "@reduxjs/toolkit": "catalog:",

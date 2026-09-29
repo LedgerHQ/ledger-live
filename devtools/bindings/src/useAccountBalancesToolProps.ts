@@ -2,10 +2,13 @@ import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
-import type { AccountRef } from "@features/platform-account-data";
-import { useAccountDataRouter } from "@features/platform-account-data/react";
-import { fetchAccountBalance } from "@features/platform-account-balance";
-import { accountBalancesSlice, type WithAccountBalances } from "@domain/entity-account-balance";
+import type { AccountRef } from "@domain/entity-account";
+import { fetchAccountData, type AccountDataExtra } from "@domain/api-account-data-source";
+import {
+  accountBalanceBinding,
+  accountBalancesSlice,
+  type WithAccountBalances,
+} from "@domain/entity-account-balance";
 
 type AccountBalancesToolProps = Extract<
   DevToolsConfig[number],
@@ -27,8 +30,8 @@ const { selectAccountBalance, selectSubAccountBalances, selectAccountBalanceStat
 export function useAccountBalancesToolProps(
   inputs: readonly AccountBalancesInput[],
 ): AccountBalancesToolProps {
-  const dispatch = useDispatch<ThunkDispatch<WithAccountBalances, unknown, UnknownAction>>();
-  const router = useAccountDataRouter();
+  const dispatch =
+    useDispatch<ThunkDispatch<WithAccountBalances, AccountDataExtra, UnknownAction>>();
   const balances = useSelector((state: WithAccountBalances) => state.accountBalances);
 
   const accounts = useMemo<Row[]>(
@@ -73,14 +76,14 @@ export function useAccountBalancesToolProps(
     (accountId: string) => {
       const ref = refsById.get(accountId);
       if (!ref) return;
-      void dispatch(fetchAccountBalance(router, ref, { maxAge: 0 }));
+      void dispatch(fetchAccountData(accountBalanceBinding, ref, { maxAge: 0 }));
     },
-    [dispatch, router, refsById],
+    [dispatch, refsById],
   );
 
   const onReadAll = useCallback(() => {
-    for (const { ref } of inputs) void dispatch(fetchAccountBalance(router, ref));
-  }, [dispatch, router, inputs]);
+    for (const { ref } of inputs) void dispatch(fetchAccountData(accountBalanceBinding, ref));
+  }, [dispatch, inputs]);
 
   return { accounts, onRead, onReadAll, ready: true };
 }

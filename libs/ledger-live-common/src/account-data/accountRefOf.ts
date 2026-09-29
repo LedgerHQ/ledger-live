@@ -1,6 +1,6 @@
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountIdSchema } from "@domain/entity-account";
-import type { AccountRef } from "@features/platform-account-data";
+import type { AccountRef } from "@domain/entity-account";
 
 export function accountRefOf(account: {
   id: string;

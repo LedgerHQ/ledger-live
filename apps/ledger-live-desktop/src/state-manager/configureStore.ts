@@ -32,13 +32,34 @@ import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
-import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
+import {
+  blacklistedTokenIdsSelector,
+  canPushDeviceIdsSelector,
+} from "~/renderer/reducers/settings";
 import { selectFeature } from "@shared/feature-flags";
 import { sleepingListener } from "./sleepingListener";
 import {
   createDesktopFeatureFlagsMiddleware,
   type FeatureFlagsSources,
 } from "./middleware/feature-flags";
+
+import { createAccountDataRouter } from "@domain/api-account-data-source";
+import { CoinModuleSource } from "@features/platform-account-source-coin-module";
+import { createCoinModuleHost, FullSyncSource } from "@ledgerhq/live-common/account-data/index";
+import { prepareCurrency } from "~/renderer/bridge/cache";
+import { accountSelector } from "~/renderer/reducers/accounts";
+
+function createAppAccountDataRouter(getState: () => State) {
+  const blacklistedTokenIds = () => blacklistedTokenIdsSelector(getState());
+  return createAccountDataRouter([
+    new CoinModuleSource(createCoinModuleHost({ blacklistedTokenIds })),
+    new FullSyncSource({
+      getAccount: accountId => accountSelector(getState(), { accountId }),
+      prepareCurrency,
+      blacklistedTokenIds,
+    }),
+  ]);
+}
 
 type Props = FeatureFlagsSources & {
   state?: State;
@@ -63,6 +84,7 @@ const customCreateStore = ({
           immutableCheck: false,
           thunk: {
             extraArgument: {
+              accountData: createAppAccountDataRouter((): State => store.getState()),
               ...calApiExtra({
                 calServiceUrl: getEnv("CAL_SERVICE_URL"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),

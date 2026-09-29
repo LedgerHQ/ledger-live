@@ -16,7 +16,7 @@ import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
-import { canPushDeviceIdsSelector } from "~/reducers/settings";
+import { blacklistedTokenIdsSelector, canPushDeviceIdsSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
 import {
   calApiExtra,
@@ -42,6 +42,24 @@ import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
+import { createAccountDataRouter } from "@domain/api-account-data-source";
+import { CoinModuleSource } from "@features/platform-account-source-coin-module";
+import { createCoinModuleHost, FullSyncSource } from "@ledgerhq/live-common/account-data/index";
+import { prepareCurrency } from "~/bridge/cache";
+import { accountSelector } from "~/reducers/accounts";
+
+function createAppAccountDataRouter(getState: () => State) {
+  const blacklistedTokenIds = () => blacklistedTokenIdsSelector(getState());
+  return createAccountDataRouter([
+    new CoinModuleSource(createCoinModuleHost({ blacklistedTokenIds })),
+    new FullSyncSource({
+      getAccount: accountId => accountSelector(getState(), { accountId }),
+      prepareCurrency,
+      blacklistedTokenIds,
+    }),
+  ]);
+}
+
 /** Matches the `SWAP_API_BASE` default in `shared/env`, kept here at the point of use. */
 const SWAP_API_BASE_DEFAULT = "https://swap.ledger.com/v5";
 
@@ -57,6 +75,7 @@ export const store = configureStore({
         immutableCheck: false,
         thunk: {
           extraArgument: {
+            accountData: createAppAccountDataRouter((): State => store.getState()),
             ...calApiExtra({
               calServiceUrl: getEnv("CAL_SERVICE_URL"),
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
