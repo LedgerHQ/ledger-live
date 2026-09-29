@@ -1,7 +1,7 @@
 import React from "react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { CounterValuesState } from "@domain/entity-market-countervalues";
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { FiatCurrency } from "@domain/entity-currency-fiat";

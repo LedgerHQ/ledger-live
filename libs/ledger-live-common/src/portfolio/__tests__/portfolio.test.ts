@@ -1,11 +1,10 @@
 import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./currencies";
-import { initialState } from "@ledgerhq/live-countervalues/logic";
+import { initialState, pairId } from "@domain/entity-market-countervalues";
 import { loadCountervalues } from "@domain/api-market-countervalues";
 import { createMockRateSource } from "@domain/api-market-countervalues/mock";
 import { inferTrackingPairForAccounts } from "../trackingPairs";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import {
   getPortfolioCount,
   getBalanceHistory,

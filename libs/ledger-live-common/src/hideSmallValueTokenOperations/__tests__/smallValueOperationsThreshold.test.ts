@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -16,11 +15,12 @@ import {
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
 } from "../smallValueOperationsThreshold";
 
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
+jest.mock("@domain/entity-market-countervalues", () => ({
+  ...jest.requireActual("@domain/entity-market-countervalues"),
   calculate: jest.fn(),
 }));
 
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { type CounterValuesState, calculate } from "@domain/entity-market-countervalues";
 
 const mockCalculate = jest.mocked(calculate);
 const mockCountervaluesState: CounterValuesState = { data: {}, status: {}, cache: {} };

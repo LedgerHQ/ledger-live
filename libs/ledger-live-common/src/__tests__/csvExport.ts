@@ -4,7 +4,7 @@ import { genAccount } from "../mock/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { accountsOpToCSV } from "../csvExport";
-import { initialState } from "@ledgerhq/live-countervalues/logic";
+import { initialState } from "@domain/entity-market-countervalues";
 import { loadCountervalues } from "@domain/api-market-countervalues";
 import { createMockRateSource } from "@domain/api-market-countervalues/mock";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
