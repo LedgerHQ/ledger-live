@@ -1,7 +1,7 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogBody } from "@ledgerhq/lumen-ui-react";
 import { PnLinfoDetail } from "./PnLinfoDetail";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import type { PnlDetailProps } from "./types";
 
 export type { PnlDetailItem, PnlDetailProps } from "./types";

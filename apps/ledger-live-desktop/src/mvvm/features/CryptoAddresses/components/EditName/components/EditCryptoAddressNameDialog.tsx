@@ -12,7 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@domain/entity-account-name";
 import { Chip } from "./Chip";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
 import { isWithinGhostClickGuard } from "./ghostClickGuard";
 
@@ -41,7 +41,10 @@ export const EditCryptoAddressNameDialog = ({
     if (newOpen) {
       openedAtRef.current = Date.now();
       setValue(initialValue);
-      track("button_clicked", { button: "edit_account_name", page: CRYPTO_TRACKING_PAGE_NAME });
+      track("button_clicked", {
+        button: "edit_account_name",
+        page: CRYPTO_TRACKING_PAGE_NAME,
+      });
     }
     setOpen(newOpen);
   };

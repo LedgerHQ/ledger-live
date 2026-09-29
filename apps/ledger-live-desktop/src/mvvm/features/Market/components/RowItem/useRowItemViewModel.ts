@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { Page, useMarketActions } from "LLD/features/Market/hooks/useMarketActions";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
@@ -63,13 +63,29 @@ export function useRowItemViewModel({ currency, toggleStar, range }: UseRowItemV
     if (!hasLedgerIds) return [];
     const items: MarketAction[] = [];
     if (availableOnBuy)
-      items.push({ type: "buy", label: t("accounts.contextMenu.buy"), onClick: onBuy });
+      items.push({
+        type: "buy",
+        label: t("accounts.contextMenu.buy"),
+        onClick: onBuy,
+      });
     if (availableOnSell)
-      items.push({ type: "sell", label: t("accounts.contextMenu.sell"), onClick: onSell });
+      items.push({
+        type: "sell",
+        label: t("accounts.contextMenu.sell"),
+        onClick: onSell,
+      });
     if (availableOnSwap)
-      items.push({ type: "swap", label: t("accounts.contextMenu.swap"), onClick: onSwap });
+      items.push({
+        type: "swap",
+        label: t("accounts.contextMenu.swap"),
+        onClick: onSwap,
+      });
     if (availableOnStake)
-      items.push({ type: "stake", label: earnStakeLabelCoin, onClick: onStake });
+      items.push({
+        type: "stake",
+        label: earnStakeLabelCoin,
+        onClick: onStake,
+      });
     return items;
   }, [
     hasLedgerIds,

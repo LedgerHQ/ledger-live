@@ -12,7 +12,7 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import CoinsIcon from "./assets/CoinsIcon";
-import { trackPage, track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -134,8 +134,12 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
   }, [dispatch]);
 
   useEffect(() => {
-    trackPage("Stake", "Service_modal", {
-      source: location.pathname,
+    trackPage({
+      category: "Stake",
+      name: "Service_modal",
+      props: {
+        source: location.pathname,
+      },
     });
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);

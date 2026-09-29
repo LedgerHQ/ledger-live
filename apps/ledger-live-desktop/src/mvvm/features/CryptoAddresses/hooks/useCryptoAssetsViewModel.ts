@@ -11,7 +11,7 @@ import {
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { useAllCurrencyTrends } from "LLD/features/Assets/hooks/useAllCurrencyTrends";
 import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource, track } from "@shared/analytics";
 import { buildPlaceholderAssetItemsFromAssetsData } from "LLD/features/Assets/utils/buildPlaceholderAssetItemsFromAssetsData";
 import { parseAssetsPageCategory } from "LLD/features/Assets/utils/buildAssetsPagePath";
 import { padItems } from "LLD/features/Assets/utils/assetTableHelpers";
@@ -28,7 +28,6 @@ import {
 } from "LLD/features/Assets/constants";
 import type { AssetTableItem } from "LLD/features/Assets/types";
 import type { CryptoAssetsViewModel } from "../types";
-import { track } from "~/renderer/analytics/segment";
 import { ASSETS_TRACKING_PAGE_NAME } from "../constants";
 
 const TITLE_I18N_KEY_BY_CATEGORY: Record<AssetsPageCategory, string> = {
@@ -77,25 +76,37 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
     () =>
       assetsData
         ? buildPlaceholderAssetItemsFromAssetsData(assetsData, stablecoinTickers)
-        : { cryptos: [] as AssetTableItem[], stablecoins: [] as AssetTableItem[] },
+        : {
+            cryptos: [] as AssetTableItem[],
+            stablecoins: [] as AssetTableItem[],
+          },
     [assetsData, stablecoinTickers],
   );
 
   const items = useMemo((): AssetTableItem[] => {
     if (category === ASSETS_PAGE_CATEGORY_STOCKS) {
-      return categorizedAssets.stocks.map(item => ({ ...item, isPlaceholder: false }));
+      return categorizedAssets.stocks.map(item => ({
+        ...item,
+        isPlaceholder: false,
+      }));
     }
     if (category === ASSETS_PAGE_CATEGORY_CRYPTOS) {
       if (isEmptyState) {
         return padItems([], resolvedDefaults.cryptos, EMPTY_STATE_CRYPTOS);
       }
-      const real = categorizedAssets.cryptos.map(item => ({ ...item, isPlaceholder: false }));
+      const real = categorizedAssets.cryptos.map(item => ({
+        ...item,
+        isPlaceholder: false,
+      }));
       return padItems(real, resolvedDefaults.cryptos, EMPTY_STATE_CRYPTOS);
     }
     if (isEmptyState) {
       return padItems([], resolvedDefaults.stablecoins, EMPTY_STATE_STABLECOINS);
     }
-    const real = categorizedAssets.stablecoins.map(item => ({ ...item, isPlaceholder: false }));
+    const real = categorizedAssets.stablecoins.map(item => ({
+      ...item,
+      isPlaceholder: false,
+    }));
     return padItems(real, resolvedDefaults.stablecoins, EMPTY_STATE_STABLECOINS);
   }, [
     category,
@@ -116,7 +127,11 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
 
   const trends = useAllCurrencyTrends(items, "day");
   const itemsWithTrend = useMemo(
-    () => items.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
+    () =>
+      items.map(item => ({
+        ...item,
+        trend: trends.get(item.currency.id) ?? null,
+      })),
     [items, trends],
   );
 

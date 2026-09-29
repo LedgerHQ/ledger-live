@@ -8,7 +8,7 @@ import {
   type TransactionInput,
 } from "@ledgerhq/asset-detail";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
@@ -133,9 +133,17 @@ export function useChartSectionViewModel({
   // switch — otherwise we'd grey out the previous asset's shape instead of
   // showing the new asset's loading/empty state.
   const hasData = currentPrices.length > 0;
-  const lastRenderedRef = useRef({ id, prices: currentPrices, timestamps: currentTimestamps });
+  const lastRenderedRef = useRef({
+    id,
+    prices: currentPrices,
+    timestamps: currentTimestamps,
+  });
   if (hasData) {
-    lastRenderedRef.current = { id, prices: currentPrices, timestamps: currentTimestamps };
+    lastRenderedRef.current = {
+      id,
+      prices: currentPrices,
+      timestamps: currentTimestamps,
+    };
   }
   const isLoading = isChartLoading || (isChartFetching && !hasData);
   const canReusePrevious = lastRenderedRef.current.id === id;
@@ -202,7 +210,11 @@ export function useChartSectionViewModel({
 
   const formatFiat = useCallback(
     (value: number) =>
-      formatCurrencyUnit(fiatUnit, new BigNumber(value), { showCode: true, locale, discreet }),
+      formatCurrencyUnit(fiatUnit, new BigNumber(value), {
+        showCode: true,
+        locale,
+        discreet,
+      }),
     [fiatUnit, locale, discreet],
   );
 

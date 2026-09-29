@@ -7,7 +7,7 @@ import { radii } from "~/renderer/styles/theme";
 import QRCodeCameraPickerCanvas from "~/renderer/components/QRCodeCameraPickerCanvas";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import IconQrCode from "~/renderer/icons/QrCode";
 import BigNumber from "bignumber.js";
 

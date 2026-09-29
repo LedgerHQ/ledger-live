@@ -1,10 +1,11 @@
 import { act, renderHook } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { mockPortfolioBalanceInfo } from "LLD/hooks/__tests__/fixtures";
 import { useChartSectionViewModel } from "../useChartSectionViewModel";
 import { chartSectionInitialState, portfolioWithHistory } from "./fixtures";
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 
@@ -58,7 +59,9 @@ describe("useChartSectionViewModel", () => {
     });
 
     expect(store.getState().settings.selectedTimeRange).toBe("month");
-    expect(mockTrack).toHaveBeenCalledWith("timeframe_clicked", { timeframe: "month" });
+    expect(mockTrack).toHaveBeenCalledWith("timeframe_clicked", {
+      timeframe: "month",
+    });
   });
 
   it("masks the chart tooltip value when discreet mode is enabled", () => {
@@ -71,7 +74,10 @@ describe("useChartSectionViewModel", () => {
         }),
       {
         initialState: {
-          settings: { ...chartSectionInitialState.settings, discreetMode: true },
+          settings: {
+            ...chartSectionInitialState.settings,
+            discreetMode: true,
+          },
         },
       },
     );

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { ModularDialogEventName } from "./modularDialog.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
@@ -31,7 +31,9 @@ const TrackDialogScreen = <T extends ModularDialogEventName>({
     return {
       source,
       flow,
-      ...(formatAssetConfig && { asset_component_features: formatAssetsConfig(assetsConfig) }),
+      ...(formatAssetConfig && {
+        asset_component_features: formatAssetsConfig(assetsConfig),
+      }),
       ...(formatNetworkConfig && {
         network_component_features: formatNetworksConfig(networksConfig),
       }),

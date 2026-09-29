@@ -71,18 +71,20 @@ describe("ReleaseNotes Integration", () => {
   });
 
   it("should track analytics on dialog open", () => {
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
+    const { track } = jest.requireMock("@shared/analytics");
     const { store } = renderReleaseNotes();
 
     act(() => {
       store.dispatch(openReleaseNotes());
     });
 
-    expect(track).toHaveBeenCalledWith("page_viewed", { page: "Release Notes Dialog" });
+    expect(track).toHaveBeenCalledWith("page_viewed", {
+      page: "Release Notes Dialog",
+    });
   });
 
   it("should track analytics when Got it is clicked", async () => {
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
+    const { track } = jest.requireMock("@shared/analytics");
     const { store, user } = renderReleaseNotes();
 
     act(() => {
@@ -92,7 +94,9 @@ describe("ReleaseNotes Integration", () => {
 
     await user.click(screen.getByTestId("release-notes-got-it"));
 
-    expect(track).toHaveBeenCalledWith("button_clicked", { button: "release_notes_got_it" });
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "release_notes_got_it",
+    });
   });
 
   it("should render all release notes entries", () => {

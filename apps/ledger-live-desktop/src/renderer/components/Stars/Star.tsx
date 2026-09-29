@@ -7,7 +7,7 @@ import starAnim from "~/renderer/images/starAnim.png";
 import starAnim2 from "~/renderer/images/starAnim2.png";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Transition } from "react-transition-group";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { State } from "~/renderer/reducers";
 import { accountStarredSelector } from "~/renderer/reducers/wallet";
 type Props = {

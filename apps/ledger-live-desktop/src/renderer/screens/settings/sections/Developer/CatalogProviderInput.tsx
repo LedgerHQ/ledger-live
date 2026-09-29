@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Input from "~/renderer/components/Input";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { Switch, Button } from "@ledgerhq/lumen-ui-react";
@@ -67,7 +67,11 @@ const CatalogProviderInput = () => {
               size="sm"
               appearance="accent"
               onClick={handleOnClickApplyProvider}
-              style={{ minWidth: 64, display: "flex", justifyContent: "center" }}
+              style={{
+                minWidth: 64,
+                display: "flex",
+                justifyContent: "center",
+              }}
               loading={isLoading}
             >
               {t("common.apply")}

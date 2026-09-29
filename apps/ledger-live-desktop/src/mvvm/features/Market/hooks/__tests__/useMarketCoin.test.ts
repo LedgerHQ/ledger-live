@@ -4,7 +4,7 @@ import { http, HttpResponse } from "msw";
 import { useMarketCoin } from "../useMarketCoin";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { MARKET_API, DADA_API, EMPTY_DADA_RESPONSE } from "./shared";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 const mockOnBuy = jest.fn();
 const mockOnSwap = jest.fn();
@@ -75,7 +75,9 @@ describe("useMarketCoin", () => {
   });
 
   it("should return isStarred=true when currencyId is in starredMarketCoins", () => {
-    const { result } = renderMarketCoinHook({ starredMarketCoins: ["bitcoin"] });
+    const { result } = renderMarketCoinHook({
+      starredMarketCoins: ["bitcoin"],
+    });
 
     expect(result.current.isStarred).toBe(true);
   });
@@ -89,13 +91,17 @@ describe("useMarketCoin", () => {
   it("should return isStarred=false when currencyId is undefined", () => {
     useParams.mockReturnValue({});
 
-    const { result } = renderMarketCoinHook({ starredMarketCoins: ["bitcoin"] });
+    const { result } = renderMarketCoinHook({
+      starredMarketCoins: ["bitcoin"],
+    });
 
     expect(result.current.isStarred).toBe(false);
   });
 
   it("should dispatch removeStarredMarketCoins when coin is starred", async () => {
-    const { result, store } = renderMarketCoinHook({ starredMarketCoins: ["bitcoin"] });
+    const { result, store } = renderMarketCoinHook({
+      starredMarketCoins: ["bitcoin"],
+    });
 
     await waitFor(() => {
       expect(result.current.currency).toBeDefined();

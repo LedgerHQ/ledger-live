@@ -5,7 +5,7 @@ import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import type { PnLCardProps } from "LLD/features/PnL/components/PnLCard/types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useAssetPnlViewModel } from "../useAssetPnlViewModel";
 
 const mockedTrack = jest.mocked(track);
@@ -18,7 +18,9 @@ const mockedUseAssetGroupPnL = jest.mocked(useAssetGroupPnL);
 
 const ZERO = new BigNumber(0);
 
-const flagsOn = withFlagOverrides({ lwdWallet40: { enabled: true, params: { pnl: true } } });
+const flagsOn = withFlagOverrides({
+  lwdWallet40: { enabled: true, params: { pnl: true } },
+});
 const flagsOff = withFlagOverrides({ lwdWallet40: { enabled: false } });
 
 const distributionItem = buildDistributionItem({
@@ -64,7 +66,10 @@ describe("useAssetPnlViewModel", () => {
   });
 
   it("hides the section when the distributionItem has no accounts", () => {
-    const empty = buildDistributionItem({ currency: BTC_ACCOUNT.currency, accounts: [] });
+    const empty = buildDistributionItem({
+      currency: BTC_ACCOUNT.currency,
+      accounts: [],
+    });
     const { result } = renderAssetPnlViewModel({ initialState: flagsOn }, empty);
 
     expect(result.current.shouldDisplayPnl).toBe(false);

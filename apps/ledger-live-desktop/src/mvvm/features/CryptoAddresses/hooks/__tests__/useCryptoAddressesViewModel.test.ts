@@ -4,7 +4,7 @@ import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { getAccountUrl } from "~/renderer/utils/accountUrl";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDialog.types";
@@ -15,7 +15,6 @@ import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
 const mockTrack = jest.fn();
 jest.mock("~/renderer/analytics/segment", () => ({
-  track: (event: string, props?: Record<string, unknown>) => mockTrack(event, props),
   setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
@@ -38,7 +37,9 @@ jest.mock("LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics", () =
   default: jest.fn(),
 }));
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: (event: string, props?: Record<string, unknown>) => mockTrack(event, props),
   setTrackingSource: jest.fn(),
 }));
 

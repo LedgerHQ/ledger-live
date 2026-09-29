@@ -1,7 +1,6 @@
 import { ChangeEvent } from "react";
 import { renderHook, act } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
-import { resetTrackingPages, setTrackingSource } from "~/renderer/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource, track } from "@shared/analytics";
 import { useAssetSearchBar } from "../useAssetSearchBar";
 
 jest.mock("@ledgerhq/live-common/hooks/useDebounce", () => ({
@@ -9,15 +8,26 @@ jest.mock("@ledgerhq/live-common/hooks/useDebounce", () => ({
 }));
 
 jest.mock("LLD/features/Stocks/hooks/useStocksSectionViewModel", () => ({
-  useStocksSectionViewModel: () => ({ data: [], isLoading: false, isError: false }),
+  useStocksSectionViewModel: () => ({
+    data: [],
+    isLoading: false,
+    isError: false,
+  }),
 }));
 
 jest.mock("LLD/features/SearchAssets/hooks/useAssetSuggestionsViewModel", () => ({
-  useAssetSuggestionsViewModel: () => ({ cryptos: { data: [], isLoading: false }, isError: false }),
+  useAssetSuggestionsViewModel: () => ({
+    cryptos: { data: [], isLoading: false },
+    isError: false,
+  }),
 }));
 
 jest.mock("LLD/features/SearchAssets/hooks/useAssetSearchResultsViewModel", () => ({
-  useAssetSearchResultsViewModel: () => ({ data: [], isLoading: false, isError: false }),
+  useAssetSearchResultsViewModel: () => ({
+    data: [],
+    isLoading: false,
+    isError: false,
+  }),
 }));
 
 const mockedTrack = jest.mocked(track);

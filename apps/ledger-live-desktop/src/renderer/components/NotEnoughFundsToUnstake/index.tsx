@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { Account } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useNavigate, useLocation } from "react-router";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import { openModal } from "~/renderer/actions/modals";

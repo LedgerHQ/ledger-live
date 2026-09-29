@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import ExportLogsBtn from "~/renderer/components/ExportLogsButton";
 import TroubleshootNetworkBtn from "~/renderer/components/TroubleshootNetworkButton";
 import OpenUserDataDirectoryBtn from "~/renderer/components/OpenUserDataDirectoryBtn";

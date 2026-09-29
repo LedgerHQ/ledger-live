@@ -14,7 +14,7 @@ import { urls } from "~/config/urls";
 import { setDataModal } from "~/renderer/actions/modals";
 import { removeAccount, updateAccount } from "~/renderer/actions/accounts";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Alert from "~/renderer/components/Alert";
 import Input from "~/renderer/components/Input";
