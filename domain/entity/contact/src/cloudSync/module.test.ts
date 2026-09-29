@@ -204,10 +204,10 @@ describe("contactsSyncModule.resolveIncrementalUpdate", () => {
     }
   });
 
-  it("should ignore a wire contact name containing an apostrophe instead of crashing", async () => {
+  it("should ignore a wire contact name containing non-ASCII characters instead of crashing", async () => {
     const incoming = {
       me: { name: "Me", addresses: [] },
-      contactGroups: [{ id: "contact-ada", name: "O'Connor", addresses: [] }],
+      contactGroups: [{ id: "contact-ada", name: "Élodie", addresses: [] }],
     };
 
     await expect(
