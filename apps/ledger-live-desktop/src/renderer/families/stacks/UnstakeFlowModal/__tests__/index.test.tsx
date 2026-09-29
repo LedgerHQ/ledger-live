@@ -57,19 +57,19 @@ describe("UnstakeFlowModal (wrapper)", () => {
   });
 
   it("renders nothing when the modal is closed", () => {
-    render(<UnstakeFlowModal account={account} />);
+    render(<UnstakeFlowModal />);
     expect(screen.queryByTestId("stacks-unstake-body")).not.toBeInTheDocument();
   });
 
   it("starts on the connectDevice step with the account passed to openModal", async () => {
-    render(<UnstakeFlowModal account={account} />, { initialState: openedState });
+    render(<UnstakeFlowModal />, { initialState: openedState });
 
     expect(await screen.findByTestId("body-step-id")).toHaveTextContent("connectDevice");
     expect(screen.getByTestId("body-account-id")).toHaveTextContent(account.id);
   });
 
   it("applies the step changes requested by the body", async () => {
-    const { user } = render(<UnstakeFlowModal account={account} />, { initialState: openedState });
+    const { user } = render(<UnstakeFlowModal />, { initialState: openedState });
 
     await act(async () => {
       await user.click(await screen.findByTestId("body-to-confirmation"));
@@ -79,7 +79,7 @@ describe("UnstakeFlowModal (wrapper)", () => {
   });
 
   it("closes the modal and resets the flow to the connectDevice step on reopen", async () => {
-    const { user, store } = render(<UnstakeFlowModal account={account} />, {
+    const { user, store } = render(<UnstakeFlowModal />, {
       initialState: openedState,
     });
 
@@ -97,7 +97,7 @@ describe("UnstakeFlowModal (wrapper)", () => {
   });
 
   it("locks the backdrop from the very first (connectDevice) step", async () => {
-    const { user, store } = render(<UnstakeFlowModal account={account} />, {
+    const { user, store } = render(<UnstakeFlowModal />, {
       initialState: openedState,
     });
     await screen.findByTestId("stacks-unstake-body");

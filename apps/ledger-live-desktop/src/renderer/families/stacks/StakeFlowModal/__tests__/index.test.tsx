@@ -57,19 +57,19 @@ describe("StakeFlowModal (wrapper)", () => {
   });
 
   it("renders nothing when the modal is closed", () => {
-    render(<StakeFlowModal account={account} />);
+    render(<StakeFlowModal />);
     expect(screen.queryByTestId("stacks-stake-body")).not.toBeInTheDocument();
   });
 
   it("starts on the validator step with the account passed to openModal", async () => {
-    render(<StakeFlowModal account={account} />, { initialState: openedState });
+    render(<StakeFlowModal />, { initialState: openedState });
 
     expect(await screen.findByTestId("body-step-id")).toHaveTextContent("validator");
     expect(screen.getByTestId("body-account-id")).toHaveTextContent(account.id);
   });
 
   it("applies the step changes requested by the body", async () => {
-    const { user } = render(<StakeFlowModal account={account} />, { initialState: openedState });
+    const { user } = render(<StakeFlowModal />, { initialState: openedState });
 
     await act(async () => {
       await user.click(await screen.findByTestId("body-to-connect-device"));
@@ -79,7 +79,7 @@ describe("StakeFlowModal (wrapper)", () => {
   });
 
   it("closes the modal and resets the flow to the validator step on reopen", async () => {
-    const { user, store } = render(<StakeFlowModal account={account} />, {
+    const { user, store } = render(<StakeFlowModal />, {
       initialState: openedState,
     });
 
@@ -97,7 +97,7 @@ describe("StakeFlowModal (wrapper)", () => {
   });
 
   it("lets a backdrop click dismiss the validator step", async () => {
-    const { user, store } = render(<StakeFlowModal account={account} />, {
+    const { user, store } = render(<StakeFlowModal />, {
       initialState: openedState,
     });
     await screen.findByTestId("stacks-stake-body");
@@ -110,7 +110,7 @@ describe("StakeFlowModal (wrapper)", () => {
   });
 
   it("locks the backdrop once the device step is reached", async () => {
-    const { user, store } = render(<StakeFlowModal account={account} />, {
+    const { user, store } = render(<StakeFlowModal />, {
       initialState: openedState,
     });
     await screen.findByTestId("stacks-stake-body");

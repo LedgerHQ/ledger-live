@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
-import { Operation } from "@ledgerhq/types-live";
-import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -11,9 +9,9 @@ import { StacksAccount, Transaction } from "@ledgerhq/live-common/families/stack
 import { fetchPoxInfo } from "@ledgerhq/live-common/families/stacks/react";
 import logger from "~/renderer/logger";
 import Track from "~/renderer/analytics/Track";
-import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Stepper from "~/renderer/components/Stepper";
+import { useStacksFlowState } from "../useStacksFlowState";
 import StepValidator, { StepValidatorFooter } from "./steps/StepValidator";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConnectDevice from "./steps/StepConnectDevice";
@@ -73,7 +71,6 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
   );
 
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
 
   const bridge = useAccountBridge<Transaction>(params.account);
@@ -93,19 +90,18 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
       return { account: params.account, transaction: initialTx };
     });
 
-  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
-  const [transactionError, setTransactionError] = useState<Error | null>(null);
+  const {
+    optimisticOperation,
+    transactionError,
+    signed,
+    setSigned,
+    resetFlowState,
+    handleOperationBroadcasted,
+    handleTransactionError,
+  } = useStacksFlowState(account);
   // Kept apart from transactionError so a later successful refresh can clear it without also
   // wiping a device/signing error.
   const [poxError, setPoxError] = useState<Error | null>(null);
-  const [signed, setSigned] = useState(false);
-
-  const handleTransactionError = useCallback((error: Error) => {
-    if (error?.name !== "UserRefusedOnDevice") {
-      logger.critical(error);
-    }
-    setTransactionError(error);
-  }, []);
 
   const transactionRef = useRef(transaction);
   useEffect(() => {
@@ -196,24 +192,12 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
     };
   }, [transaction?.mode, signed, mustFreezeTransaction, resolveStartBurnHt]);
 
-  const handleOperationBroadcasted = useCallback(
-    (op: Operation) => {
-      if (!account) return;
-      dispatch(updateAccountWithUpdater(account.id, a => addPendingOperation(a, op)));
-      setOptimisticOperation(op);
-      setTransactionError(null);
-    },
-    [account, dispatch],
-  );
-
   const handleRetry = useCallback(() => {
-    setTransactionError(null);
+    resetFlowState();
     setPoxError(null);
-    setOptimisticOperation(null);
-    setSigned(false);
     clearStartBurnHt();
     resolveStartBurnHt();
-  }, [clearStartBurnHt, resolveStartBurnHt]);
+  }, [resetFlowState, clearStartBurnHt, resolveStartBurnHt]);
 
   const handleStepChange = useCallback((e: Step) => onChangeStepId(e.id), [onChangeStepId]);
 

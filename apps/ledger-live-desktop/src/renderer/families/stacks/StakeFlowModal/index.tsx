@@ -1,42 +1,9 @@
-import React, { PureComponent } from "react";
-import Modal from "~/renderer/components/Modal";
-import Body, { Data } from "./Body";
-import { StepId } from "./types";
+import React from "react";
+import StacksFlowModal from "../StacksFlowModal";
+import Body from "./Body";
 
-type State = {
-  stepId: StepId;
-};
-
-const INITIAL_STATE: State = { stepId: "validator" };
-
-class StakeFlowModal extends PureComponent<Data, State> {
-  state: State = INITIAL_STATE;
-
-  handleReset = () => this.setState(INITIAL_STATE);
-
-  handleStepChange = (stepId: StepId) => this.setState({ stepId });
-
-  render() {
-    const { stepId } = this.state;
-    const isLocked = ["connectDevice", "confirmation"].includes(stepId);
-    return (
-      <Modal
-        name="MODAL_STACKS_STAKE"
-        centered
-        width={500}
-        onHide={this.handleReset}
-        preventBackdropClick={isLocked}
-        render={({ onClose, data }) => (
-          <Body
-            stepId={stepId}
-            onClose={onClose}
-            onChangeStepId={this.handleStepChange}
-            params={(data ?? {}) as Data}
-          />
-        )}
-      />
-    );
-  }
-}
+const StakeFlowModal = () => (
+  <StacksFlowModal name="MODAL_STACKS_STAKE" initialStepId="validator" Body={Body} />
+);
 
 export default StakeFlowModal;
