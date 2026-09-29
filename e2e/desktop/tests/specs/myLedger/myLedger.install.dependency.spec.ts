@@ -17,7 +17,7 @@ test.describe("My Ledger — install an app with a dependency", () => {
       tag: ["@myLedger", ...DEVICE_TAGS],
       annotation: { type: "TMS", description: "B2CQA-670" },
     },
-    async ({ app }) => {
+    async ({ app, mockServer }) => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.waitForDashboard();
 
@@ -31,6 +31,11 @@ test.describe("My Ledger — install an app with a dependency", () => {
       await app.myLedger.openInstalledAppsTab();
       await app.myLedger.expectAppInstalled(AppInfos.ETHEREUM_CLASSIC);
       await app.myLedger.expectAppInstalled(AppInfos.ETHEREUM);
+
+      await mockServer.expectInstalledApps([
+        AppInfos.ETHEREUM.name,
+        AppInfos.ETHEREUM_CLASSIC.name,
+      ]);
     },
   );
 });
