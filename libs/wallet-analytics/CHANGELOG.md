@@ -1,5 +1,30 @@
 # @ledgerhq/wallet-analytics
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#22348](https://github.com/LedgerHQ/ledger-live/pull/22348) [`f7cd861`](https://github.com/LedgerHQ/ledger-live/commit/f7cd8616265d3f94fef24332626402efe39eb83f) Thanks [@ysitbon](https://github.com/ysitbon)! - Let asset-aggregation and wallet-analytics declare the countervalues interface they need
+
+  Both packages only ever needed one countervalues operation, `calculate`, over a state they
+  receive as a parameter and never inspect. They now declare that operation themselves as a
+  `RateLookup` interface, treat the state as an opaque `RateSnapshot`, and drop
+  `@ledgerhq/live-countervalues` from their dependencies entirely. The apps fill the interface
+  at startup, beside the crypto-assets store and the currencies resolver.
+
+  No caller changes: the exported signatures keep their arity and the state argument is
+  assignable as before, so the 41 files consuming these two packages are untouched.
+
+  Tests get simpler as a side effect. Mocking countervalues was a module mock reaching across a
+  package boundary; it is now an injected fake passed to `setRateLookup`.
+
+### Patch Changes
+
+- Updated dependencies [[`2d869a5`](https://github.com/LedgerHQ/ledger-live/commit/2d869a596a4562a00003de01cc657d7277dc6b7c), [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d), [`a025d7a`](https://github.com/LedgerHQ/ledger-live/commit/a025d7a872b7b1e4681d16b2bfb54f8949bf6626), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`8c486aa`](https://github.com/LedgerHQ/ledger-live/commit/8c486aabe3dbd100b21e43d3f344fda5142858ed), [`88bae04`](https://github.com/LedgerHQ/ledger-live/commit/88bae04e2f7e7a3de8d55c340fe32b48e37bd78d)]:
+  - @ledgerhq/types-live@6.126.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.6.0-next.0
+  - @domain/entity-currency@0.4.5-next.0
+
 ## 0.4.2
 
 ### Patch Changes

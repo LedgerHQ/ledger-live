@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-market-index-fear-and-greed",
-  "version": "0.3.6",
+  "version": "0.4.0-next.0",
   "private": true,
   "description": "Domain API client for the CoinMarketCap Crypto Fear & Greed index: RTK Query endpoint typed on @domain/entity-market-index-fear-and-greed",
   "main": "src/index.ts",

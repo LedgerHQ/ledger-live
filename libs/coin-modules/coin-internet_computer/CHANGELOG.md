@@ -1,5 +1,23 @@
 # @ledgerhq/coin-internet_computer
 
+## 1.32.0-next.0
+
+### Minor Changes
+
+- [#22445](https://github.com/LedgerHQ/ledger-live/pull/22445) [`084013e`](https://github.com/LedgerHQ/ledger-live/commit/084013e91394c76a89c961defbc80de19dfbad2d) Thanks [@amaslakov](https://github.com/amaslakov)! - getTransactionStatus now refuses, before the device signs, an invalid followee list on a follow and a start or stop dissolving that the neuron's current state does not allow.
+
+- [#22652](https://github.com/LedgerHQ/ledger-live/pull/22652) [`830d7d7`](https://github.com/LedgerHQ/ledger-live/commit/830d7d7e86acce1c561666ebeef2f2e7469ffa0c) Thanks [@amaslakov](https://github.com/amaslakov)! - Exclude zero from the generated stake nonce, since a memo of 0 is read back as a top-up
+
+- [#21137](https://github.com/LedgerHQ/ledger-live/pull/21137) [`4f8d10f`](https://github.com/LedgerHQ/ledger-live/commit/4f8d10f35d421e460720edc5e26dc4aa70889744) Thanks [@amaslakov](https://github.com/amaslakov)! - Report an Internet Computer stake whose outcome the network did not settle as unconfirmed or unclaimed, never as a failed transaction, so the app does not offer to stake it again.
+
+  That covers a transfer the node took without certifying, or answered with a certificate that could not be read, and one that settled and was then refused a claim or left without a verdict. A call the node refused before replication, or the replica rejected, is reported as rejected: nothing ran, so it can be retried. A governance call the node takes without certifying is polled rather than reported as failed, and a refused status read is polled past rather than taken for a refused call.
+
+### Patch Changes
+
+- Updated dependencies [[`2d869a5`](https://github.com/LedgerHQ/ledger-live/commit/2d869a596a4562a00003de01cc657d7277dc6b7c), [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d), [`a025d7a`](https://github.com/LedgerHQ/ledger-live/commit/a025d7a872b7b1e4681d16b2bfb54f8949bf6626), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`8c486aa`](https://github.com/LedgerHQ/ledger-live/commit/8c486aabe3dbd100b21e43d3f344fda5142858ed), [`88bae04`](https://github.com/LedgerHQ/ledger-live/commit/88bae04e2f7e7a3de8d55c340fe32b48e37bd78d)]:
+  - @ledgerhq/types-live@6.126.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.6.0-next.0
+
 ## 1.31.0
 
 ### Minor Changes

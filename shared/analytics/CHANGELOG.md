@@ -1,5 +1,17 @@
 # @shared/analytics
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#22488](https://github.com/LedgerHQ/ledger-live/pull/22488) [`1302bc7`](https://github.com/LedgerHQ/ledger-live/commit/1302bc7968a7d3bf9cd3d556057b662444b22608) Thanks [@LL782](https://github.com/LL782)! - Replace mutable analytics screen refs with a function-only tracking-page API.
+
+- [#22451](https://github.com/LedgerHQ/ledger-live/pull/22451) [`3fdfcc0`](https://github.com/LedgerHQ/ledger-live/commit/3fdfcc07ffb1d8e0b5ef39c830a5e7204ced77e3) Thanks [@LL782](https://github.com/LL782)! - Make `track` always return `Promise<void>` so callers can reliably await delivery
+
+- [#22346](https://github.com/LedgerHQ/ledger-live/pull/22346) [`93e6db2`](https://github.com/LedgerHQ/ledger-live/commit/93e6db2db85721b483173e781db9f53db3699715) Thanks [@LL782](https://github.com/LL782)! - Allow "flushed" and "failed_identify" statuses in analytics events log
+
+- [#22346](https://github.com/LedgerHQ/ledger-live/pull/22346) [`8a305ed`](https://github.com/LedgerHQ/ledger-live/commit/8a305edb307d0a4cd30ad615ccd98ef5d7caf523) Thanks [@LL782](https://github.com/LL782)! - Preserve route refs in preparation for enabling analytics. Still doesn't track without consent.
+
 ## 0.3.0
 
 ### Minor Changes
