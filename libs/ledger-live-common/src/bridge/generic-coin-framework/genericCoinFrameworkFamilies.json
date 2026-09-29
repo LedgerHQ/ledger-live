@@ -6,5 +6,6 @@
   "tezos": true,
   "tron": true,
   "casper": true,
-  "solana": true
+  "solana": true,
+  "hedera": true
 }
