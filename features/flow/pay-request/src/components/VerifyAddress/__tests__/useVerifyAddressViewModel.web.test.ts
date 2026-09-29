@@ -6,6 +6,11 @@ import {
 } from "../../../__tests__/i18nWrapper";
 import { useVerifyAddressViewModel } from "../useVerifyAddressViewModel";
 import type { VerifyAddressProps } from "../../../types";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 function setup(overrides: Partial<VerifyAddressProps> = {}) {
   const props: VerifyAddressProps = {
@@ -14,7 +19,6 @@ function setup(overrides: Partial<VerifyAddressProps> = {}) {
     onVerify: jest.fn(),
     onGotIt: jest.fn(),
     onClose: jest.fn(),
-    onTrackEvent: jest.fn(),
     ...overrides,
   };
   const { result } = renderHook(() => useVerifyAddressViewModel(props), {
@@ -24,6 +28,10 @@ function setup(overrides: Partial<VerifyAddressProps> = {}) {
 }
 
 describe("useVerifyAddressViewModel", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("maps the phase to open flags", () => {
     expect(setup({ phase: "hidden" }).result.current).toMatchObject({
       isIntroOpen: false,
@@ -39,12 +47,13 @@ describe("useVerifyAddressViewModel", () => {
     });
   });
 
-  it("builds the two ordered next steps from translations", () => {
+  it("builds the three ordered next steps from translations", () => {
     const { result } = setup();
 
     expect(result.current.nextSteps).toEqual([
-      { index: 1, label: VERIFY_ADDRESS_COPY.nextStepShare },
-      { index: 2, label: VERIFY_ADDRESS_COPY.nextStepMatch },
+      { index: 1, label: VERIFY_ADDRESS_COPY.nextStepKeepDisplayed },
+      { index: 2, label: VERIFY_ADDRESS_COPY.nextStepPaste },
+      { index: 3, label: VERIFY_ADDRESS_COPY.nextStepCheckMatch },
     ]);
   });
 
@@ -53,7 +62,7 @@ describe("useVerifyAddressViewModel", () => {
 
     result.current.onVerify();
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "verify",
       buttonLocation: "verify address",
       page: "Pay",
@@ -67,19 +76,12 @@ describe("useVerifyAddressViewModel", () => {
 
     result.current.onGotIt();
 
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "got it",
       buttonLocation: "verify address",
       page: "Pay",
       flow: "request",
     });
     expect(props.onGotIt).toHaveBeenCalledTimes(1);
-  });
-
-  it("does not throw when no tracker is provided", () => {
-    const { props, result } = setup({ onTrackEvent: undefined });
-
-    expect(() => result.current.onVerify()).not.toThrow();
-    expect(props.onVerify).toHaveBeenCalledTimes(1);
   });
 });

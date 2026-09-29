@@ -6,19 +6,17 @@ import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import NetInfo from "@react-native-community/netinfo";
-import { Platform } from "react-native";
-import VersionNumber from "react-native-version-number";
 import reducers from "~/reducers";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
-import { setupCryptoAssetsStore } from "~/config/bridge-setup";
+import { setupCryptoAssetsStore, setupRateLookups } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
 import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
-import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings";
+import { canPushDeviceIdsSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
 import {
   calApiExtra,
@@ -39,32 +37,10 @@ import {
   refreshCardSession,
 } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
-import {
-  createFeatureFlagsMiddleware,
-  selectFeature,
-  type FeatureFlagsReadFailure,
-  type PartialFeatures,
-} from "@shared/feature-flags";
-import { fetchRemoteFlags, readCachedFlags } from "~/firebase/remoteConfig";
+import { selectFeature } from "@shared/feature-flags";
 import { sleepingListener } from "./sleepingListener";
+import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
-
-/**
- * Reports only the failures that actually degrade the session. A warm failure is routine: the
- * previously read values stay in place and the next poll retries. A cold one means the app is
- * running on compiled defaults, which is a misconfigured session rather than a passing network
- * blip, and is precisely the signal whose absence let a staging leak run unnoticed for a whole
- * release cycle.
- *
- * `console.error` because it is the level the monitoring tools intercept. Deliberately not the
- * app's `logger.critical`, which despite its name falls back to `console.log` outside
- * `DEBUG_ERROR` builds and so would make this *less* visible than a plain warning. Desktop uses
- * `logger.critical` instead, because there it really is the Datadog path.
- */
-function reportFeatureFlagsReadFailure(error: unknown, { stage, isCold }: FeatureFlagsReadFailure) {
-  if (!isCold) return;
-  console.error(`Feature flags: ${stage} read failed, resolving on compiled defaults`, error);
-}
 
 export const store = configureStore({
   reducer: reducers,
@@ -102,7 +78,8 @@ export const store = configureStore({
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
             ...swapApiExtra({
-              swapApiBaseUrl: getEnv("SWAP_API_BASE"),
+              // Read on every request, so the debug settings can change it without a restart.
+              getSwapApiBaseUrl: () => getEnv("SWAP_API_BASE"),
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
             ...authApiExtra({
@@ -138,19 +115,7 @@ export const store = configureStore({
           getAnalyticsConsent: canPushDeviceIdsSelector,
         }),
       )
-      .concat(
-        createFeatureFlagsMiddleware<State>({
-          resolutionConfig: {
-            platform: Platform.OS === "ios" ? "ios" : "android",
-            appVersion: VersionNumber.appVersion ?? undefined,
-            envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
-          },
-          readCachedFlags,
-          fetchRemoteFlags,
-          getAppLanguage: languageSelector,
-          onRemoteFlagsError: reportFeatureFlagsReadFailure,
-        }),
-      )
+      .concat(createMobileFeatureFlagsMiddleware())
       .concat(sleepingListener.middleware),
 
   enhancers: getDefaultEnhancers => {
@@ -184,4 +149,5 @@ setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
 });
 connectRecentAddressesStore(store, recentAddressesSelector);
 setupCryptoAssetsStore(store);
+setupRateLookups();
 setSwapQuotesStore(store.dispatch);

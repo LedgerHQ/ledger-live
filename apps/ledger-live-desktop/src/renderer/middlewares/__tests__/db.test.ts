@@ -78,7 +78,12 @@ type FakeState = {
   accounts: unknown[];
   identities: unknown;
   history: unknown;
-  featureFlags: { overrides: unknown; bannerVisible: unknown; remoteFlagsReady?: unknown };
+  featureFlags: {
+    overrides: unknown;
+    bannerVisible: unknown;
+    remoteFlagsReady?: unknown;
+    cachedFlagsSettled?: unknown;
+  };
   coinConfigOverrides: { overrides: Record<string, unknown> };
   largeScreenUpsellModal: { retriesModal: number; lastSeenAt: number | null };
   payCardBalance: {
@@ -97,6 +102,7 @@ type FakeState = {
     hasCompletedOnboarding: boolean;
     analyticsCardId: string | null;
     reportedAnalyticsMilestones: unknown[];
+    hasReadCardAccount: boolean;
   };
   trustchain?: unknown;
 };
@@ -120,6 +126,7 @@ const baseState = (): FakeState => ({
     hasCompletedOnboarding: false,
     analyticsCardId: null,
     reportedAnalyticsMilestones: [],
+    hasReadCardAccount: false,
   },
 });
 
@@ -211,7 +218,7 @@ describe("DBMiddleware - featureFlags branch", () => {
     mockedSetKey.mockReset();
   });
 
-  it("persists only { overrides, bannerVisible } — never the transient remoteFlagsReady gate", () => {
+  it("persists only { overrides, bannerVisible } — never the transient readiness flags", () => {
     const before = baseState();
     const after: FakeState = {
       ...before,
@@ -219,6 +226,7 @@ describe("DBMiddleware - featureFlags branch", () => {
         overrides: { mockFeature: { enabled: true } },
         bannerVisible: false,
         remoteFlagsReady: true,
+        cachedFlagsSettled: true,
       },
     };
 
@@ -232,6 +240,7 @@ describe("DBMiddleware - featureFlags branch", () => {
 
     const persisted = mockedSetKey.mock.calls[0][2] as Record<string, unknown>;
     expect(persisted).not.toHaveProperty("remoteFlagsReady");
+    expect(persisted).not.toHaveProperty("cachedFlagsSettled");
   });
 });
 
@@ -274,6 +283,7 @@ describe("DBMiddleware - payCard branch", () => {
       hasCompletedOnboarding: true,
       analyticsCardId: null,
       reportedAnalyticsMilestones: [],
+      hasReadCardAccount: false,
     },
   };
 
@@ -285,6 +295,7 @@ describe("DBMiddleware - payCard branch", () => {
     hasCompletedOnboarding: true,
     analyticsCardId: null,
     reportedAnalyticsMilestones: [],
+    hasReadCardAccount: false,
   };
 
   it.each([

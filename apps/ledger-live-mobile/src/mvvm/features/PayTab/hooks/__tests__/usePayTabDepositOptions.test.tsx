@@ -1,23 +1,15 @@
 import { act, renderHook } from "@tests/test-renderer";
-import { AssetCategory } from "@domain/api-aggregated-assets";
 import { NavigatorName, ScreenName } from "~/const";
-import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { usePayTabDepositOptions } from "../usePayTabDepositOptions";
 
 const mockNavigate = jest.fn();
-const mockHandleOpenReceiveDrawer = jest.fn();
+const mockOnCryptoAddress = jest.fn();
 const mockHandleOpenSwap = jest.fn();
 const mockHandleOpenBuySell = jest.fn();
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
-}));
-
-jest.mock("LLM/features/Receive", () => ({
-  useOpenReceiveDrawer: jest.fn(() => ({
-    handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
-  })),
 }));
 
 jest.mock("LLM/features/Swap", () => ({
@@ -28,8 +20,8 @@ jest.mock("LLM/features/Buy", () => ({
   useOpenBuySell: jest.fn(() => ({ handleOpenBuySell: mockHandleOpenBuySell })),
 }));
 
-function render(onTrackEvent = jest.fn()) {
-  return renderHook(() => usePayTabDepositOptions(onTrackEvent));
+function render() {
+  return renderHook(() => usePayTabDepositOptions(mockOnCryptoAddress));
 }
 
 describe("usePayTabDepositOptions", () => {
@@ -41,13 +33,6 @@ describe("usePayTabDepositOptions", () => {
     const { result } = render();
 
     expect(result.current.depositOptions.page).toBe("Pay");
-  });
-
-  it("passes the host tracking callback through", () => {
-    const onTrackEvent = jest.fn();
-    const { result } = render(onTrackEvent);
-
-    expect(result.current.depositOptions.onTrackEvent).toBe(onTrackEvent);
   });
 
   it("toggles isOpen via open and onClose", () => {
@@ -109,22 +94,12 @@ describe("usePayTabDepositOptions", () => {
     expect(mockHandleOpenBuySell).toHaveBeenCalledWith("buy");
   });
 
-  it("configures the receive drawer filtered to the stablecoin category", () => {
-    render();
-
-    expect(useOpenReceiveDrawer).toHaveBeenCalledWith({
-      categories: [AssetCategory.Stablecoins],
-      sourceScreenName: "Pay",
-      fromMenu: true,
-    });
-  });
-
-  it("opens the receive drawer filtered to stablecoins for receive", () => {
+  it("opens the request flow for the crypto address option", () => {
     const { result } = render();
 
     act(() => result.current.depositOptions.onSelect("receive"));
 
-    expect(mockHandleOpenReceiveDrawer).toHaveBeenCalledTimes(1);
+    expect(mockOnCryptoAddress).toHaveBeenCalledTimes(1);
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

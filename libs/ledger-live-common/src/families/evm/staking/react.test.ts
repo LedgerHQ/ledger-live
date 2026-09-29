@@ -7,7 +7,7 @@ import type { Unit } from "@domain/entity-currency-unit";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
-import * as stakingIndex from "@ledgerhq/coin-evm/staking/index";
+import * as stakingIndex from "@ledgerhq/coin-evm/staking";
 import * as accountModule from "../../../account";
 import {
   useEvmStakingValidators,
@@ -18,8 +18,8 @@ import {
 } from "./react";
 import { GenericTransaction } from "bridge/generic-coin-framework/types";
 
-jest.mock("@ledgerhq/coin-evm/staking/index", () => {
-  const actual = jest.requireActual("@ledgerhq/coin-evm/staking/index");
+jest.mock("@ledgerhq/coin-evm/staking", () => {
+  const actual = jest.requireActual("@ledgerhq/coin-evm/staking");
   return {
     ...actual,
     getValidators: jest.fn(),

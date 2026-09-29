@@ -120,6 +120,17 @@ export const stakePromptCases: StakePromptCase[] = [
     },
   },
   {
+    label: "Aleo unbond",
+    bucket: "undelegation/unstaking",
+    flowName: NavigatorName.AleoUnbondFlow,
+    familyExportKey: "AleoUnbondFlow",
+    successScreenName: ScreenName.AleoUnbondValidationSuccess,
+    errorScreenName: ScreenName.AleoUnbondValidationError,
+    accountKey: "aleo",
+    operationType: "UNBOND",
+    transaction: { family: "aleo", mode: "unbond_public" },
+  },
+  {
     label: "Algorand claim rewards",
     bucket: "revoke/claim/lifecycle",
     flowName: NavigatorName.AlgorandClaimRewardsFlow,

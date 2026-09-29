@@ -30,11 +30,12 @@ export function useContactAddressPickerViewModel({
     [contact],
   );
 
-  const title = useMemo(
-    () =>
-      contact === null ? "" : t("payTab.contacts.addressPicker.title", { name: contact.name }),
-    [contact, t],
-  );
+  const title = useMemo(() => {
+    if (contact === null) return "";
+    return contact.isMe
+      ? t("payTab.contacts.addressPicker.meTitle")
+      : t("payTab.contacts.addressPicker.title", { name: contact.name });
+  }, [contact, t]);
 
   const handleAddNewAddress = useMemo(
     () =>

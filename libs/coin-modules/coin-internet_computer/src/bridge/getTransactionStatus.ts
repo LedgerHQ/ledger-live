@@ -9,6 +9,7 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { Principal } from "@dfinity/principal";
 import BigNumber from "bignumber.js";
 import {
+  getNeuronActionPermissions,
   getNeuronDissolveDurationSeconds,
   minTopUpAmount,
   neuronCanAddHotKey,
@@ -17,11 +18,13 @@ import {
   neuronCanSpawn,
   neuronCanStakeMaturity,
   neuronStake,
+  parseNeuronId,
 } from "../common-logic/neuron";
 import {
   E8S_PER_ICP,
   FOLLOWABLE_TOPICS,
   ICP_FEES,
+  MAX_FOLLOWEES_PER_TOPIC,
   MAX_HOT_KEYS_PER_NEURON,
   MIN_NEURON_STAKE,
   NNS_MAXIMUM_DISSOLVE_DELAY,
@@ -34,11 +37,14 @@ import {
   ICPDissolveDelayGTMax,
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
+  ICPDuplicateFollowee,
+  ICPFolloweeIsSelf,
   ICPFollowTopicNotAllowed,
   ICPHotKeyAlreadyExists,
   ICPHotKeyIsController,
   ICPIncreaseStakeWarning,
   ICPInvalidDissolveDelayIncrease,
+  ICPInvalidFolloweeId,
   ICPInvalidHotKey,
   ICPInvalidPercentage,
   ICPNeuronNotFound,
@@ -46,6 +52,9 @@ import {
   ICPSplitNotAllowed,
   ICPStakeMaturityNotAllowed,
   ICPStakeMemoNotRecoverable,
+  ICPStartDissolvingNotAllowed,
+  ICPStopDissolvingNotAllowed,
+  ICPTooManyFollowees,
   ICPTooManyHotKeys,
   ICPTopUpBelowMinimumStake,
   InvalidMemoICP,
@@ -53,29 +62,8 @@ import {
 } from "../errors";
 import { validateAddress } from "../logic/validation";
 import { validateMemo } from "../logic/validateMemo";
-import {
-  ICPAccount,
-  ICPNeuron,
-  ICPTransactionType,
-  TRANSFER_TYPES,
-  Transaction,
-  TransactionStatus,
-} from "../types";
+import { ICPAccount, ICPNeuron, TRANSFER_TYPES, Transaction, TransactionStatus } from "../types";
 import { getAddress } from "./bridgeHelpers/addresses";
-
-// Governance ops that act on an existing neuron and therefore require a resolvable neuronId.
-// `send` and `list_neurons` also reach the switch default but need no neuron.
-const NEURON_REQUIRED_OPS = new Set<ICPTransactionType>([
-  "start_dissolving",
-  "stop_dissolving",
-  "disburse",
-  "spawn_neuron",
-  "spawn_neuron_from_maturity",
-  "stake_maturity",
-  "auto_stake_maturity",
-  "refresh_voting_power",
-  "follow",
-]);
 
 const isValidPrincipal = (text?: string): boolean => {
   if (!text) return false;
@@ -176,17 +164,30 @@ const validateRemoveHotKey = (
   return undefined;
 };
 
-// The pickers offer FOLLOWABLE_TOPICS only, so what this refuses is a transaction assembled some
+// The pickers offer FOLLOWABLE_TOPICS only, so a refused topic means a transaction assembled some
 // other way. Either kind of excluded topic spends the signature for nothing: a retired one is refused
 // by the canister after signing, one past the Ledger ICP app's cap is refused on the device.
 const validateFollow = (
   neuron: ICPNeuron | undefined,
   followTopic: Transaction["followTopic"],
+  followeesIds: readonly string[] = [],
 ): Error | undefined => {
   if (!neuron) return new ICPNeuronNotFound();
   // Absent is Unspecified, the default the builder applies.
   if (followTopic !== undefined && !(followTopic in FOLLOWABLE_TOPICS)) {
     return new ICPFollowTopicNotAllowed();
+  }
+  if (followeesIds.length > MAX_FOLLOWEES_PER_TOPIC) {
+    return new ICPTooManyFollowees("", { max: MAX_FOLLOWEES_PER_TOPIC });
+  }
+  const seen = new Set<string>();
+  for (const entry of followeesIds) {
+    const parsed = parseNeuronId(entry);
+    if (parsed.issue) return new ICPInvalidFolloweeId("", { id: entry });
+    const { id } = parsed;
+    if (seen.has(id)) return new ICPDuplicateFollowee("", { id });
+    if (id === neuron.id?.toString()) return new ICPFolloweeIsSelf("", { id });
+    seen.add(id);
   }
   return undefined;
 };
@@ -197,6 +198,21 @@ const validateFollow = (
 const validateDisburse = (neuron: ICPNeuron | undefined): Error | undefined => {
   if (!neuron) return new ICPNeuronNotFound();
   return neuronCanDisburse(neuron, BigInt(ICP_FEES)) ? undefined : new ICPDisburseNotAllowed();
+};
+
+const validateStartDissolving = (neuron: ICPNeuron | undefined): Error | undefined => {
+  if (!neuron) return new ICPNeuronNotFound();
+  return getNeuronActionPermissions(neuron).canStartDissolving
+    ? undefined
+    : new ICPStartDissolvingNotAllowed();
+};
+
+// The screens gate on this at render, but a dissolving neuron passes its unlock time on its own.
+const validateStopDissolving = (neuron: ICPNeuron | undefined): Error | undefined => {
+  if (!neuron) return new ICPNeuronNotFound();
+  return getNeuronActionPermissions(neuron).canStopDissolving
+    ? undefined
+    : new ICPStopDissolvingNotAllowed();
 };
 
 // refresh_neuron refuses a balance under the minimum stake once the transfer has settled, leaving
@@ -311,13 +327,18 @@ const validateNeuronOp = (transaction: Transaction, neuron?: ICPNeuron): NeuronO
     case "stake_maturity":
       return validateStakeMaturity(neuron, transaction.percentageToStake);
     case "follow":
-      return opResult(validateFollow(neuron, transaction.followTopic));
+      return opResult(validateFollow(neuron, transaction.followTopic, transaction.followeesIds));
     case "disburse":
       return opResult(validateDisburse(neuron));
+    case "start_dissolving":
+      return opResult(validateStartDissolving(neuron));
+    case "stop_dissolving":
+      return opResult(validateStopDissolving(neuron));
+    case "auto_stake_maturity":
+    case "refresh_voting_power":
+      return opResult(neuron ? undefined : new ICPNeuronNotFound());
     default:
-      return NEURON_REQUIRED_OPS.has(transaction.type) && !neuron
-        ? opResult(new ICPNeuronNotFound())
-        : opResult();
+      return opResult();
   }
 };
 

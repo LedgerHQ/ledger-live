@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-countervalues",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "description": "Ledger Live countervalues module",
   "keywords": [
     "Ledger"
@@ -22,9 +22,10 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/live-promise": "catalog:",
-    "@ledgerhq/live-env": "workspace:*"
+    "@ledgerhq/live-env": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",

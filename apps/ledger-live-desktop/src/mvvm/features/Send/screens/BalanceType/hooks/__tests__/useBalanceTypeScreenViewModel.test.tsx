@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { BalanceTypeOption } from "@ledgerhq/live-common/bridge/descriptor/types";
+import { trackPage } from "~/renderer/analytics/segment";
 import { useBalanceTypeScreenViewModel } from "../useBalanceTypeScreenViewModel";
 
 // Navigation mock
@@ -65,7 +66,16 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   useCalculateCountervalueCallback: jest.fn(() => (_from: unknown, value: unknown) => value),
 }));
 
+jest.mock("~/renderer/analytics/segment", () => ({
+  trackPage: jest.fn(),
+}));
+
+jest.mock("../../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: jest.fn(() => ({ flow: "send" })),
+}));
+
 const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
+const mockedTrackPage = jest.mocked(trackPage);
 
 const PUBLIC_POOL: BalanceTypeOption = {
   id: "public",
@@ -276,5 +286,31 @@ describe("useBalanceTypeScreenViewModel", () => {
 
     expect(mockUpdateTransactionAction).not.toHaveBeenCalled();
     expect(mockGoToStep).not.toHaveBeenCalled();
+  });
+
+  describe("page tracking", () => {
+    test("emits the balance-type page event once ready, with the send-flow tracking properties", () => {
+      renderViewModel();
+
+      expect(mockedTrackPage).toHaveBeenCalledTimes(1);
+      expect(mockedTrackPage).toHaveBeenCalledWith("Modal send - step balance type", null, {
+        flow: "send",
+      });
+    });
+
+    test("does not emit the page event before the view model is ready", () => {
+      mockState.account.account = null;
+
+      renderViewModel();
+
+      expect(mockedTrackPage).not.toHaveBeenCalled();
+    });
+
+    test("emits the page event only once across re-renders", () => {
+      const { rerender } = render(<Harness ref={React.createRef()} />);
+      rerender(<Harness ref={React.createRef()} />);
+
+      expect(mockedTrackPage).toHaveBeenCalledTimes(1);
+    });
   });
 });

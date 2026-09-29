@@ -23,18 +23,15 @@ import { parseTransactionBcs } from "@mysten/sui/client";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
+import { ACTIVE_ACCOUNT } from "../test/fixtures";
 import { createTransaction, DEFAULT_COIN_TYPE } from "./sdk";
 
 const GRPC_ID = "sui-grpc-build-mig";
 const GRAPHQL_ID = "sui-graphql-build-mig";
 
-/** Same mainnet account used in sdk.migration.integ.test — holds USDC + ~4.6k SUI. */
-const ACTIVE_ACCOUNT = "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3";
-
 beforeAll(() => {
   coinConfig.setCoinConfig(id => {
     const node = {
-      url: getEnv("API_SUI_NODE_PROXY"),
       graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
       grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
     };
@@ -99,8 +96,7 @@ const assertShapeBothBuilt = (grpcBytes: Uint8Array, gqlBytes: Uint8Array, label
   expect(label).not.toBe("");
 };
 
-// gRPC is the reference leg. It replaced JSON-RPC here after the Sui Foundation retired the public
-// mainnet fullnode (wk of 2026-07-20), which left this suite skipped with no runnable baseline.
+// gRPC is the reference leg.
 //
 // Disabled: every case compares a GraphQL build against the gRPC one, and the GraphQL transport is
 // being deprecated.

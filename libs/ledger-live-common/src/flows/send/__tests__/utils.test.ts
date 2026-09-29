@@ -168,6 +168,22 @@ describe("buildRecipientForMemoChange", () => {
     });
   });
 
+  it("should keep the selected contact when the memo changes", () => {
+    expect(
+      buildRecipientForMemoChange(
+        ADDRESS,
+        { address: ADDRESS, contactId: "contact-alice", displayLabel: "Alice" },
+        memo,
+      ),
+    ).toEqual({
+      address: ADDRESS,
+      ensName: undefined,
+      displayLabel: "Alice",
+      contactId: "contact-alice",
+      memo,
+    });
+  });
+
   it("should drop the previous ENS when the search no longer matches", () => {
     expect(
       buildRecipientForMemoChange(

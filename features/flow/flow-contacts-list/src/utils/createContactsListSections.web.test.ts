@@ -8,24 +8,28 @@ describe("createContactsListSections", () => {
         {
           contactId: ContactIdSchema.parse("contact-zahra"),
           name: "Zahra",
+          isMe: false,
           initial: "Z",
           addressCount: 0,
         },
         {
           contactId: ContactIdSchema.parse("contact-zhanna"),
           name: "Жанна",
+          isMe: false,
           initial: "Ж",
           addressCount: 1,
         },
         {
           contactId: ContactIdSchema.parse("contact-anna"),
           name: "Anna",
+          isMe: false,
           initial: "A",
           addressCount: 2,
         },
         {
           contactId: ContactIdSchema.parse("contact-amelia"),
           name: "Amelia",
+          isMe: false,
           initial: "A",
           addressCount: 0,
         },
@@ -37,12 +41,14 @@ describe("createContactsListSections", () => {
           {
             contactId: ContactIdSchema.parse("contact-anna"),
             name: "Anna",
+            isMe: false,
             initial: "A",
             addressCount: 2,
           },
           {
             contactId: ContactIdSchema.parse("contact-amelia"),
             name: "Amelia",
+            isMe: false,
             initial: "A",
             addressCount: 0,
           },
@@ -54,6 +60,7 @@ describe("createContactsListSections", () => {
           {
             contactId: ContactIdSchema.parse("contact-zahra"),
             name: "Zahra",
+            isMe: false,
             initial: "Z",
             addressCount: 0,
           },
@@ -65,6 +72,7 @@ describe("createContactsListSections", () => {
           {
             contactId: ContactIdSchema.parse("contact-zhanna"),
             name: "Жанна",
+            isMe: false,
             initial: "Ж",
             addressCount: 1,
           },

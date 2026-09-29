@@ -1,6 +1,6 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import type { DepositOptionsViewProps } from "../../types";
 import { DepositOptionRow } from "./DepositOptionRow";
 
@@ -8,7 +8,6 @@ export function DepositOptionsView({
   isOpen,
   title,
   options,
-  bottomInset = 0,
   onClose,
   onSelectOption,
 }: DepositOptionsViewProps) {
@@ -20,10 +19,7 @@ export function DepositOptionsView({
       testID="pay-card-deposit-sheet"
     >
       {isOpen ? (
-        <BottomSheetView
-          style={{ paddingHorizontal: 0, paddingBottom: bottomInset + 24 }}
-          testID="pay-card-deposit-sheet-content"
-        >
+        <DepositOptionsContent>
           <BottomSheetHeader spacing density="expanded" title={title} />
 
           <Box
@@ -38,8 +34,21 @@ export function DepositOptionsView({
               <DepositOptionRow key={option.id} option={option} onSelect={onSelectOption} />
             ))}
           </Box>
-        </BottomSheetView>
+        </DepositOptionsContent>
       ) : null}
     </QueuedBottomSheet>
+  );
+}
+
+function DepositOptionsContent({ children }: Readonly<{ children: React.ReactNode }>) {
+  const bottomInset = useBottomSheetBottomInset();
+
+  return (
+    <BottomSheetView
+      style={{ paddingHorizontal: 0, paddingBottom: bottomInset + 24 }}
+      testID="pay-card-deposit-sheet-content"
+    >
+      {children}
+    </BottomSheetView>
   );
 }

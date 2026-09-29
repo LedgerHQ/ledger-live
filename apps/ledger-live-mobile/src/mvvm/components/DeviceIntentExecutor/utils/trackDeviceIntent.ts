@@ -8,7 +8,7 @@ import {
   DiscoveryErrorTypes,
 } from "@ledgerhq/live-dmk-mobile";
 import { track } from "~/analytics";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { getCurrentTrackingPage } from "~/analytics/screenRefs";
 import type { DeviceIntentTrackingProperties, SourceFlow } from "./DeviceIntentTrackingContext";
 
 export const PAGE_CONNECT_DEVICE = {
@@ -253,7 +253,7 @@ export const trackDeviceflowCanceled = (params: {
   sourceFlow: SourceFlow;
   extraProperties: DeviceIntentTrackingProperties;
 }): void => {
-  const currentPage = currentRouteNameRef.current;
+  const currentPage = getCurrentTrackingPage();
   const isTerminalConnectDeviceErrorPage =
     currentPage === PAGE_CONNECT_DEVICE.DiscoveryError ||
     currentPage === PAGE_CONNECT_DEVICE.ConnectionError;

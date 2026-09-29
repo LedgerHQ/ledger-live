@@ -74,6 +74,20 @@ id = "generic-api-key"
     ]
 
 [[rules]]
+id = "datadog-access-token"
+
+    [[rules.allowlists]]
+    condition = "AND"
+    description = "Ignore CocoaPods SPEC CHECKSUMS entries in the mobile Podfile.lock -- these are SHA-1 integrity hashes of pod specs (several Datadog* pods among them), not secrets; matched by the exact 'Name: <40 lowercase hex>' checksum-line shape (no '=' or quotes), so a real secret in any other shape in this file would still be caught."
+    regexTarget = "match"
+    regexes = [
+        '''^[A-Za-z][A-Za-z0-9_-]*: [0-9a-f]{40}$''',
+    ]
+    paths = [
+        '''apps/ledger-live-mobile/ios/Podfile\.lock''',
+    ]
+
+[[rules]]
 id = "jwt"
 
     [[rules.allowlists]]

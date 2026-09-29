@@ -16,11 +16,13 @@ export type ContactAddressDetailActionsLabels = Readonly<{
 export type ResolveContactAddressDetailActionsLabelsOptions = Readonly<{
   t: (key: string, options?: Record<string, unknown>) => string;
   addressLabelTooLongKey?: string;
+  supportsDomain: boolean;
 }>;
 
 export function resolveContactAddressDetailActionsLabels({
   t,
   addressLabelTooLongKey = "contacts.addAddressName.tooLongLabel",
+  supportsDomain,
 }: ResolveContactAddressDetailActionsLabelsOptions): ContactAddressDetailActionsLabels {
   return {
     delete: {
@@ -39,7 +41,11 @@ export function resolveContactAddressDetailActionsLabels({
         [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: t(addressLabelTooLongKey),
       },
       addressValidation: {
-        addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
+        addressPlaceholder: t(
+          supportsDomain
+            ? "contacts.addAddressEntry.addressPlaceholder"
+            : "contacts.addAddressEntry.addressPlaceholderNoENS",
+        ),
         validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
         validAddress: t("contacts.addAddressEntry.validAddress"),
         invalidAddress: t("contacts.addAddressEntry.invalidAddress"),

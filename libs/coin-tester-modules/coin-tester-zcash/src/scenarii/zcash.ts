@@ -6,11 +6,8 @@ import type {
   ZcashAccount,
 } from "@ledgerhq/coin-zcash/types/bridge";
 import type { SignerContext } from "@ledgerhq/coin-zcash/types/signer";
-import type { ZcashConfigInfo } from "@ledgerhq/coin-zcash";
-import {
-  setZainoGrpcUrl,
-  ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
-} from "@ledgerhq/coin-zcash/constants";
+import type { ZcashCoinConfig } from "@ledgerhq/coin-zcash";
+import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "@ledgerhq/coin-zcash/constants";
 import {
   computeShieldedSpendFee,
   computeShieldingFee,
@@ -21,7 +18,6 @@ import { orchardAddressFromUfvk } from "@ledgerhq/zcash-utils";
 import { setZcashShieldedEnabled } from "@ledgerhq/live-common/bridge/zcashRouting";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setEnv } from "@ledgerhq/live-env";
 import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import {
   assertCommonTxProperties,
@@ -40,14 +36,7 @@ import { killRegtestNode, spawnRegtestNode, ZAINO_GRPC_URL } from "../regtestNod
 import { buildSigner } from "../signer";
 import { findNewUtxo } from "../utils";
 
-type ZcashCoinConfig = { info: ZcashConfigInfo };
 type ZcashScenarioTransaction = ScenarioTransaction<ZcashTransaction, ZcashAccount>;
-
-// zcash-utils is asked for "mainnet" throughout (UFVK/address derivation, PCZT
-// build, signing) to match the mainnet-prefixed addresses coin-zcash's own
-// classifier requires -- see zcash_regtest.ts and signer.ts for the full
-// rationale. Zaino is likewise addressed as "mainnet" for the same reason.
-const ZCASH_UTILS_NETWORK = "mainnet";
 
 // Deliberately small, fixed absolute amounts (not a fraction of the coinbase
 // reward, which is unknown at scenario-construction time and depends on the
@@ -341,11 +330,17 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
     const { signer, ufvk, xpub, accountIndex } = buildSigner();
     const signerContext: SignerContext = (_deviceId, fn) => fn(signer);
 
-    setEnv("EXPLORER", EXPLORER_ORIGIN);
-    setZainoGrpcUrl(ZAINO_GRPC_URL, ZCASH_UTILS_NETWORK);
     setZcashShieldedEnabled(true);
 
-    const coinConfig: ZcashCoinConfig = { info: { status: { type: "active" } } };
+    // The local zaino node and explorer. Zaino is addressed as "mainnet" (the
+    // network inferred from this URL), like every zcash-utils call here, to match
+    // the mainnet-prefixed addresses coin-zcash's own classifier requires -- see
+    // zcash_regtest.ts and signer.ts for the full rationale.
+    const coinConfig: ZcashCoinConfig = {
+      status: { type: "active" },
+      zaino: { url: ZAINO_GRPC_URL },
+      explorer: { url: EXPLORER_ORIGIN },
+    };
     LiveConfig.setConfig({
       config_currency_zcash_regtest: {
         type: "object",
@@ -353,7 +348,10 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
       },
     });
 
-    const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
+    const { accountBridge, currencyBridge } = createBridges(signerContext, {
+      config: async () => coinConfig,
+      logger: () => {},
+    });
     const ZCASH_REGTEST = getCryptoCurrencyById("zcash_regtest");
 
     const getAddress = resolver(signerContext);

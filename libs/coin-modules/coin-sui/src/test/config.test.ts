@@ -20,9 +20,9 @@ describe("Configuration", () => {
   };
 
   const baseConfig = {
-    node: { url: "123", graphqlUrl: "456", grpcUrl: "789" },
+    node: { graphqlUrl: "456", grpcUrl: "789" },
     status: { type: "active" as const },
-    features: { transport: "json" as const },
+    features: { transport: "grpc" as const },
   };
 
   beforeEach(() => {

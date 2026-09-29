@@ -17,7 +17,8 @@ export type UseBalanceDataParams = Readonly<{
   formatCountervalue: (value: number) => FormattedValue;
   onConfirmFilter: (filter: BalanceFilter) => void;
   onResetFilter: () => void;
-  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
+  discreet?: boolean;
+  onToggleDiscreetMode?: () => void;
 }>;
 
 // Host-facing data hook: both apps feed their portfolio source + formatters and get back
@@ -33,7 +34,8 @@ export function useBalanceData({
   formatCountervalue,
   onConfirmFilter,
   onResetFilter,
-  onTrackEvent,
+  discreet,
+  onToggleDiscreetMode,
 }: UseBalanceDataParams): BalanceData {
   const { t } = useTranslation();
   const allLabel = t("payTab.balance.filter.allStablecoins");
@@ -51,7 +53,6 @@ export function useBalanceData({
         formatCrypto,
         formatCountervalue,
         onConfirmFilter,
-        onTrackEvent,
       }),
     [
       stablecoins,
@@ -64,7 +65,6 @@ export function useBalanceData({
       formatCrypto,
       formatCountervalue,
       onConfirmFilter,
-      onTrackEvent,
     ],
   );
 
@@ -74,5 +74,5 @@ export function useBalanceData({
     }
   }, [shouldResetFilter, onResetFilter]);
 
-  return data;
+  return { ...data, discreet, onToggleDiscreetMode };
 }

@@ -195,7 +195,13 @@ describe("useUiHook - transaction.sign device-intent branching", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(
       NavigatorName.SignTransaction,
-      expect.objectContaining({ screen: ScreenName.SignTransactionSummary }),
+      expect.objectContaining({
+        screen: ScreenName.SignTransactionSummary,
+        params: expect.objectContaining({
+          manifestId: mockManifest.id,
+          manifestName: mockManifest.name,
+        }),
+      }),
     );
     expect(mockRequestDeviceIntentSign).not.toHaveBeenCalled();
   });
@@ -208,7 +214,14 @@ describe("useUiHook - transaction.sign device-intent branching", () => {
     await promise;
 
     expect(mockRequestDeviceIntentSign).toHaveBeenCalledWith(
-      expect.objectContaining({ account, transaction: preparedTx, onSuccess, onError }),
+      expect.objectContaining({
+        account,
+        transaction: preparedTx,
+        manifestId: mockManifest.id,
+        manifestName: mockManifest.name,
+        onSuccess,
+        onError,
+      }),
     );
     expect(mockNavigate).not.toHaveBeenCalled();
   });
@@ -235,6 +248,40 @@ describe("useUiHook - transaction.sign device-intent branching", () => {
       expect.objectContaining({ screen: ScreenName.SignTransactionSummary }),
     );
     expect(mockRequestDeviceIntentSign).not.toHaveBeenCalled();
+  });
+});
+
+describe("useUiHook - transaction.signRaw attribution", () => {
+  it("forwards the manifest through the raw-sign navigator", () => {
+    const { result } = renderHook(() =>
+      useUiHook({
+        manifest: mockManifest,
+        requestDeviceIntentSign: jest.fn(),
+        requestDeviceIntentSignMessage: jest.fn(),
+      }),
+    );
+
+    result.current["transaction.signRaw"]!({
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      account: { id: "js:2:cosmos:cosmos1:", type: "Account" } as unknown as AccountLike,
+      parentAccount: undefined,
+      transaction: "{}",
+      broadcast: true,
+      options: { hwAppId: "Cosmos", dependencies: [] },
+      onSuccess: jest.fn(),
+      onError: jest.fn(),
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      NavigatorName.SignRawTransaction,
+      expect.objectContaining({
+        screen: ScreenName.SignRawTransactionSelectDevice,
+        params: expect.objectContaining({
+          manifestId: mockManifest.id,
+          manifestName: mockManifest.name,
+        }),
+      }),
+    );
   });
 });
 

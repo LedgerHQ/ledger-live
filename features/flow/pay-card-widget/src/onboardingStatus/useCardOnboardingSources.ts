@@ -25,13 +25,38 @@ export type CardOnboardingSources = {
    * lists this one.
    */
   readonly cardAddedToDigitalWallet: boolean | undefined;
+  /** The first read only: after it, every signal has an answer to show. */
   readonly isLoading: boolean;
+  /** Any read in flight, refetches included, so the signals may be stale. */
+  readonly isFetching: boolean;
   readonly isError: boolean;
   readonly hasSourceError: boolean;
   readonly refresh: () => void;
 };
 
 const NO_CURRENCIES: ReadonlyMap<string, CryptoOrTokenCurrency> = new Map();
+
+type ReadFlags = {
+  readonly isLoading: boolean;
+  readonly isFetching: boolean;
+  readonly isError: boolean;
+};
+
+const QUIET_READ: ReadFlags = { isLoading: false, isFetching: false, isError: false };
+
+function isCardNotFoundError(error: unknown): boolean {
+  return typeof error === "object" && error !== null && "status" in error && error.status === 404;
+}
+
+function cardReads(cardMissing: boolean, reads: readonly ReadFlags[]): ReadFlags {
+  if (cardMissing) return QUIET_READ;
+
+  return {
+    isLoading: reads.some(read => read.isLoading),
+    isFetching: reads.some(read => read.isFetching),
+    isError: reads.some(read => read.isError),
+  };
+}
 
 /**
  * Asks the Card endpoints what they can answer about onboarding.
@@ -81,21 +106,20 @@ export function useCardOnboardingSources({
     refetchWallets();
   }, [skip, refetchUser, refetchCardStatus, refetchTransactions, refetchWallets]);
 
+  const cardMissing = cardStatus.data === undefined && isCardNotFoundError(cardStatus.error);
+  const card = cardReads(cardMissing, [cardStatus, transactions, linkedWallets]);
+
   return {
     signals,
     cardAddedToDigitalWallet: cardStatus.data?.cardAddedToDigitalWallet,
     refresh,
-    // `isFetching` on all four, not `isLoading`: a query reports `isLoading` only while it has no
-    // data, so after the first read a refetch would have looked idle.
-    isLoading:
-      user.isFetching ||
-      cardStatus.isFetching ||
-      transactions.isFetching ||
-      linkedWallets.isFetching,
+    isLoading: user.isLoading || card.isLoading,
+    // Every read in flight, refetches included: a consumer acting on the signals has to wait for
+    // them to settle, while `isLoading` only covers the first read.
+    isFetching: user.isFetching || card.isFetching,
     // A step that cannot be answered is reported as not done, so only a failure the holder can do
     // nothing about is surfaced: the account read itself.
     isError: user.isError,
-    hasSourceError:
-      user.isError || cardStatus.isError || transactions.isError || linkedWallets.isError,
+    hasSourceError: user.isError || card.isError,
   };
 }

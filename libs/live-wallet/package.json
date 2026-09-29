@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-wallet",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "private": true,
   "description": "Ledger Live wallet",
   "keywords": [
@@ -32,6 +32,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@domain/entity-account": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",

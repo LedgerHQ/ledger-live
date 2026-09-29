@@ -2,7 +2,8 @@ import { createFixtureOperation } from "../types/bridge.fixture";
 import coinConfig from "../config";
 import { broadcast } from "./broadcast";
 
-const executeTransactionBlock = jest.fn().mockResolvedValue({ digest: "test-digest-hash" });
+const SUCCESS = { digest: "test-digest-hash", effects: { status: { status: "success" } } };
+const executeTransactionBlock = jest.fn().mockResolvedValue(SUCCESS);
 
 jest.mock("../network", () => {
   return {
@@ -14,7 +15,7 @@ describe("broadcast", () => {
   beforeEach(() => {
     executeTransactionBlock.mockClear();
     coinConfig.setCoinConfig(() => ({}) as never);
-    executeTransactionBlock.mockResolvedValue({ digest: "test-digest-hash" });
+    executeTransactionBlock.mockResolvedValue(SUCCESS);
   });
 
   it("calls explorer for broadcast operation", async () => {

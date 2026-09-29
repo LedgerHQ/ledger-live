@@ -310,7 +310,6 @@
               { "name": "Kwei", "code": "Kwei", "magnitude": 3 },
               { "name": "wei", "code": "wei", "magnitude": 0 }
             ],
-            "ethereumLikeInfo": { "chainId": 1 },
             "explorerViews": [
               {
                 "tx": "https://etherscan.io/tx/$hash",

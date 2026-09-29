@@ -116,10 +116,6 @@ jest.mock("~/renderer/analytics/originFlow", () => ({
 
 jest.mock("~/renderer/analytics/segment", () => ({ track: jest.fn() }));
 
-jest.mock("~/renderer/analytics/screenRefs", () => ({
-  currentRouteNameRef: { current: null },
-}));
-
 jest.mock("~/renderer/analytics/hooks/variables", () => ({
   HOOKS_TRACKING_LOCATIONS: {},
 }));

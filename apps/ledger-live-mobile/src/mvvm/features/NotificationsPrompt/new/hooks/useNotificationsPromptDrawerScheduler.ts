@@ -14,7 +14,7 @@ import {
 export function useNotificationsPromptDrawerScheduler() {
   const dispatch = useDispatch();
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
-  const eventTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const eventTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const cancelPendingDrawer = useCallback(() => {
     if (eventTimeoutRef.current) {

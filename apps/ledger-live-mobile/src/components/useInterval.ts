@@ -10,7 +10,7 @@ const useInterval = (callback: () => void, delay: number) => {
   }, [callback]);
   // Set up the interval.
   useEffect(() => {
-    let id: NodeJS.Timeout;
+    let id: ReturnType<typeof setInterval> | undefined;
 
     function tick() {
       savedCallback.current();
@@ -21,7 +21,7 @@ const useInterval = (callback: () => void, delay: number) => {
     }
 
     return () => {
-      clearInterval(id);
+      if (id !== undefined) clearInterval(id);
     };
   }, [delay]);
 };

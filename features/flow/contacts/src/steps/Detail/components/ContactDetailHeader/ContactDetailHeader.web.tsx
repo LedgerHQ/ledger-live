@@ -1,5 +1,5 @@
 import React from "react";
-import { resolveMeContactDisplayName } from "@features/platform-contacts";
+import { useContactDisplayName } from "@features/platform-contacts";
 import type { ContactDetailViewProps } from "../../types";
 import {
   ContactDetailActions,
@@ -10,7 +10,7 @@ import { ContactDetailHeaderIdentity } from "./ContactDetailHeaderIdentity.web";
 
 type ContactDetailHeaderProps = Pick<
   ContactDetailViewProps,
-  "contact" | "labels" | "meAvatarSrc" | "onAddAddress"
+  "contact" | "labels" | "onAddAddress"
 > &
   Readonly<{
     detailActions?: ContactDetailActionsProps;
@@ -44,15 +44,11 @@ function getCompactHeaderLayout(detailActions?: ContactDetailActionsProps): Read
 export function ContactDetailHeader({
   contact,
   labels,
-  meAvatarSrc,
   onAddAddress,
   detailActions,
   isCollapsed,
 }: ContactDetailHeaderProps): React.ReactNode {
-  const displayName = resolveMeContactDisplayName(
-    contact,
-    labels.formatMeDisplayName ?? (name => name),
-  );
+  const getDisplayName = useContactDisplayName();
   const addAddressLabel = contact.isMe
     ? (labels.addYourAddress ?? labels.addAddress)
     : labels.addAddress;
@@ -68,8 +64,8 @@ export function ContactDetailHeader({
     >
       <ContactDetailHeaderIdentity
         contact={contact}
-        meAvatarSrc={meAvatarSrc}
-        name={displayName}
+
+        name={getDisplayName(contact)}
         addressCount={labels.formatAddressCount(contact.addresses.length)}
         isCollapsed={isCollapsed}
         compactContentRight={contentRight}

@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-currency-token",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": true,
   "description": "Domain API client for token currencies (Crypto Asset List): RTK Query endpoints typed on @domain/entity-currency-token",
   "main": "src/index.ts",
@@ -31,6 +31,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

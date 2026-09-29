@@ -13,8 +13,11 @@ export function CardDetails({
   assets,
   formatters,
   cardSettingsActions,
+  onViewRewards,
+  cardState = "ready",
 }: CardDetailsProps) {
   const reveal = useRevealViewModel();
+  const hasCard = cardState === "ready";
 
   return (
     <div className="flex flex-col gap-16">
@@ -24,13 +27,16 @@ export function CardDetails({
         reveal={reveal}
         cardFace={cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
       />
-      <CardActions reveal={reveal} cardSettingsActions={cardSettingsActions} />
-      <Reward
-        formatters={formatters}
-        currencies={assets?.currencies}
-        getCounterValue={assets?.getCounterValue}
-        formatCountervalue={assets?.formatCountervalue}
-      />
+      {hasCard ? <CardActions reveal={reveal} cardSettingsActions={cardSettingsActions} /> : null}
+      {hasCard ? (
+        <Reward
+          formatters={formatters}
+          currencies={assets?.currencies}
+          getCounterValue={assets?.getCounterValue}
+          formatCountervalue={assets?.formatCountervalue}
+          onViewRewards={onViewRewards}
+        />
+      ) : null}
     </div>
   );
 }

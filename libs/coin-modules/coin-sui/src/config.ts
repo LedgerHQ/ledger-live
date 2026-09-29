@@ -1,12 +1,8 @@
 import { type Context, type CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import buildCoinConfig from "@ledgerhq/coin-module-framework/config";
 
-/**
- * Network transport coin-sui talks to the chain with.
- *
- * `json` is deprecated upstream — the Sui Foundation decommissions JSON-RPC on 2026-09-30.
- */
-export type SuiTransport = "json" | "grpc" | "graphql";
+/** Network transport coin-sui talks to the chain with. */
+export type SuiTransport = "grpc" | "graphql";
 
 /**
  * Per-currency feature flags scoped to coin-sui. Populated at app startup by the LLC
@@ -20,8 +16,6 @@ export type SuiFeatureFlags = {
 
 export type SuiConfig = {
   node: {
-    /** JSON-RPC fullnode URL — used by `withApi` */
-    url: string;
     /** GraphQL endpoint URL — used by `withGraphQLApi` */
     graphqlUrl: string;
     /** gRPC-web base URL (no path) — used by `withGrpcApi` */

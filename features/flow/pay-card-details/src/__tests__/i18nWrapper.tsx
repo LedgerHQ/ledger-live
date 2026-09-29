@@ -18,13 +18,17 @@ export const CARD_COPY = {
   errorDescription: "Something went wrong. Please try again.",
   retry: "Try again",
   topUp: "Top up",
+  chooseCardType: "Choose card type",
   details: "Details",
   numbersReveal: "View",
   numbersHide: "Hide",
   numbersFailed: "Couldn't load card numbers",
   numbersImageAlt: "Card numbers",
-  reward: "Total cashback",
+  reward: "Total cashback · {{ratePercent}}% in {{ticker}}",
 } as const;
+
+/** {@link CARD_COPY.reward} as the banner renders it for the mocked cashback. */
+export const REWARD_SUBTITLE = "Total cashback · 1% in BTC";
 
 export const ADD_TO_WALLET_COPY = {
   entry: "Add to {{wallet}} Pay",
@@ -64,7 +68,8 @@ export const CARD_TRANSACTIONS_COPY = {
     status: "Status",
     card: "Card",
     cardInfo: "The last four digits of the card used for this payment.",
-    fundingSource: "Funding source",
+    fundingSource_one: "Funding source",
+    fundingSource_other: "Funding sources",
     transactionId: "Transaction ID",
     copyTransactionId: "Copy transaction ID",
     today: "Today {{time}}",
@@ -89,6 +94,7 @@ export const CARD_RESOURCES = {
           unfreeze: CARD_COPY.unfreeze,
           goBack: CARD_COPY.goBack,
           topUp: CARD_COPY.topUp,
+          chooseCardType: CARD_COPY.chooseCardType,
           details: CARD_COPY.details,
           freezeConfirm: {
             title: CARD_COPY.freezeTitle,

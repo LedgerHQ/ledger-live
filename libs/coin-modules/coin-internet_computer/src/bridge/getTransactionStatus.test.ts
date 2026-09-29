@@ -4,6 +4,7 @@ import { validateAddress } from "../logic/validation";
 import BigNumber from "bignumber.js";
 import {
   ICP_FEES,
+  MAX_FOLLOWEES_PER_TOPIC,
   MAX_HOT_KEYS_PER_NEURON,
   MIN_NEURON_STAKE,
   NNS_MAXIMUM_DISSOLVE_DELAY,
@@ -15,10 +16,13 @@ import {
   ICPDissolveDelayGTMax,
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
+  ICPDuplicateFollowee,
+  ICPFolloweeIsSelf,
   ICPFollowTopicNotAllowed,
   ICPHotKeyAlreadyExists,
   ICPHotKeyIsController,
   ICPInvalidDissolveDelayIncrease,
+  ICPInvalidFolloweeId,
   ICPInvalidHotKey,
   ICPInvalidPercentage,
   ICPNeuronNotFound,
@@ -26,6 +30,9 @@ import {
   ICPSplitNotAllowed,
   ICPStakeMaturityNotAllowed,
   ICPStakeMemoNotRecoverable,
+  ICPStartDissolvingNotAllowed,
+  ICPStopDissolvingNotAllowed,
+  ICPTooManyFollowees,
   ICPTooManyHotKeys,
   ICPTopUpBelowMinimumStake,
   InvalidMemoICP,
@@ -541,8 +548,107 @@ describe("getTransactionStatus", () => {
       });
     });
 
-    it("rejects a governance op with no neuronId", async () => {
-      const status = await getTransactionStatus(accountWith(), tx({ type: "start_dissolving" }));
+    describe("follow list", () => {
+      const follow = (followeesIds: string[]) =>
+        getTransactionStatus(
+          accountWith(neuron()),
+          tx({ type: "follow", neuronId: "7", followTopic: "Governance", followeesIds }),
+        );
+
+      it("accepts a list at the cap and refuses one past it, quoting the cap", async () => {
+        const overCap = Array.from({ length: MAX_FOLLOWEES_PER_TOPIC + 1 }, (_, i) =>
+          String(i + 10),
+        );
+        expect((await follow(overCap.slice(1))).errors.transaction).toBeUndefined();
+        const past = await follow(overCap);
+        expect(past.errors.transaction).toBeInstanceOf(ICPTooManyFollowees);
+        expect(past.errors.transaction).toMatchObject({ max: MAX_FOLLOWEES_PER_TOPIC });
+      });
+
+      it.each(["0", "-1", "1.5", "12a3", "0x10", " 5", "", String(2n ** 64n)])(
+        "refuses the followee id %p before signing",
+        async id => {
+          const status = await follow(["1", id]);
+          expect(status.errors.transaction).toBeInstanceOf(ICPInvalidFolloweeId);
+          expect(status.errors.transaction).toMatchObject({ id });
+        },
+      );
+
+      it("accepts the largest id a nat64 holds", async () => {
+        expect((await follow([String(2n ** 64n - 1n)])).errors.transaction).toBeUndefined();
+      });
+
+      it("refuses a neuron listed twice under any spelling, naming it canonically", async () => {
+        const status = await follow(["9", "009"]);
+        expect(status.errors.transaction).toBeInstanceOf(ICPDuplicateFollowee);
+        expect(status.errors.transaction).toMatchObject({ id: "9" });
+        expect((await follow(["9", "8"])).errors.transaction).toBeUndefined();
+      });
+
+      it.each(["7", "007"])("refuses the neuron itself as a followee, spelled %p", async id => {
+        const status = await follow(["1", id]);
+        expect(status.errors.transaction).toBeInstanceOf(ICPFolloweeIsSelf);
+        expect(status.errors.transaction).toMatchObject({ id: "7" });
+      });
+
+      it("accepts an empty list, which clears the topic", async () => {
+        expect((await follow([])).errors.transaction).toBeUndefined();
+      });
+    });
+
+    describe("dissolve transitions", () => {
+      const inState = (state: NeuronState) =>
+        neuron({
+          state,
+          dissolveState:
+            state === NeuronState.Locked
+              ? { DissolveDelaySeconds: BigInt(NNS_MINIMUM_DISSOLVE_DELAY) }
+              : unlockAt(state),
+        });
+      const submit = (type: "start_dissolving" | "stop_dissolving", n: ICPNeuron) =>
+        getTransactionStatus(accountWith(n), tx({ type, neuronId: "7" }));
+
+      it("lets only a locked neuron start dissolving", async () => {
+        const locked = await submit("start_dissolving", inState(NeuronState.Locked));
+        expect(locked.errors.transaction).toBeUndefined();
+        const dissolving = await submit("start_dissolving", inState(NeuronState.Dissolving));
+        expect(dissolving.errors.transaction).toBeInstanceOf(ICPStartDissolvingNotAllowed);
+        const dissolved = await submit("start_dissolving", inState(NeuronState.Dissolved));
+        expect(dissolved.errors.transaction).toBeInstanceOf(ICPStartDissolvingNotAllowed);
+      });
+
+      it("lets only a dissolving neuron stop dissolving", async () => {
+        const dissolving = await submit("stop_dissolving", inState(NeuronState.Dissolving));
+        expect(dissolving.errors.transaction).toBeUndefined();
+        const locked = await submit("stop_dissolving", inState(NeuronState.Locked));
+        expect(locked.errors.transaction).toBeInstanceOf(ICPStopDissolvingNotAllowed);
+        const dissolved = await submit("stop_dissolving", inState(NeuronState.Dissolved));
+        expect(dissolved.errors.transaction).toBeInstanceOf(ICPStopDissolvingNotAllowed);
+      });
+
+      it("refuses to stop dissolving a spawning neuron, which reads as dissolving", async () => {
+        const status = await submit("stop_dissolving", inState(NeuronState.Spawning));
+        expect(status.errors.transaction).toBeInstanceOf(ICPStopDissolvingNotAllowed);
+      });
+
+      it("refuses to stop dissolving once the unlock time has passed", async () => {
+        const stale = neuron({
+          state: NeuronState.Dissolving,
+          dissolveState: unlockAt(NeuronState.Dissolved),
+        });
+        expect((await submit("stop_dissolving", stale)).errors.transaction).toBeInstanceOf(
+          ICPStopDissolvingNotAllowed,
+        );
+      });
+    });
+
+    it.each([
+      "start_dissolving",
+      "stop_dissolving",
+      "auto_stake_maturity",
+      "refresh_voting_power",
+    ] as const)("rejects %s with no neuronId", async type => {
+      const status = await getTransactionStatus(accountWith(), tx({ type }));
       expect(status.errors.transaction).toBeInstanceOf(ICPNeuronNotFound);
     });
 

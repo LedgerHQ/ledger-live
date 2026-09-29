@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import "./starts-console";
 import "./setup"; // Needs to be imported first
-import { app, Menu, ipcMain, session, type BrowserWindow, dialog, protocol } from "electron";
+import { app, Menu, ipcMain, type BrowserWindow, dialog, protocol } from "electron";
 import Store from "electron-store";
 import menu from "./menu";
 import {
@@ -27,7 +27,6 @@ import {
   cleanupZcashNativeHost,
 } from "@ledgerhq/coin-zcash/network/ipc/main-host";
 import { setupWebviewHandlers } from "./webviewHandlers";
-import { queueHostedSessionDataWipe } from "./hostedSessionData";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
@@ -123,9 +122,6 @@ app.on("ready", async () => {
   // for it (see @ledgerhq/coin-zcash/network/ipc/main-host).
   setupZcashNativeHost();
 
-  ipcMain.handle("clearCardHostedSessionData", (_event, origins) =>
-    queueHostedSessionDataWipe(session.defaultSession, origins),
-  );
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
     return db.getKey(ns, keyPath, defaultValue);
   });

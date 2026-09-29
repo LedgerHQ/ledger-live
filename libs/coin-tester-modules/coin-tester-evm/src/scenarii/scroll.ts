@@ -142,7 +142,7 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks(scroll.ethereumLikeInfo?.chainId || 534352);
+    await indexBlocks(534352);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());

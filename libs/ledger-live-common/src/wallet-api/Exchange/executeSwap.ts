@@ -24,6 +24,10 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getAccountBridge } from "../../bridge";
 import { Transaction } from "../../coin-modules/transaction-types";
 import { CompleteExchangeError, getErrorDetails, getSwapStepFromError } from "../../exchange/error";
+import {
+  readEvmNotEnoughGasDiagnostics,
+  readNotEnoughBalanceDiagnostics,
+} from "../../exchange/swap/completeExchange";
 import { postSwapCancelled } from "../../exchange/swap";
 import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
@@ -121,13 +125,20 @@ export async function executeSwap(
       ? toParentAccount.freshAddress
       : (toAccount as Account).freshAddress;
 
+    let exchangeAppVersion: string | undefined;
+    let signingAppName: string | undefined;
+    let signingAppVersion: string | undefined;
+
     // Step 1: Open the drawer and open exchange app
     const startExchange = async () => {
       return new Promise<{ transactionId: string; device?: ExchangeStartResult["device"] }>(
         (resolve, reject) => {
           uiExchangeStart({
             exchangeParams: exchangeStartParams,
-            onSuccess: (nonce, device) => {
+            onSuccess: (nonce, device, meta) => {
+              exchangeAppVersion = meta?.exchangeAppVersion;
+              signingAppName = meta?.signingAppName;
+              signingAppVersion = meta?.signingAppVersion;
               tracking.startExchangeSuccess(trackingParams);
               resolve({ transactionId: nonce, device });
             },
@@ -312,6 +323,9 @@ export async function executeSwap(
             fromAccountAddress,
             toAccountAddress,
             fromAmount,
+            exchangeAppVersion,
+            signingAppName,
+            signingAppVersion,
             flags,
           });
 
@@ -353,6 +367,11 @@ export async function executeSwap(
             refundAddress,
             payoutAddress,
             fromAmount,
+            exchangeAppVersion,
+            signingAppName,
+            signingAppVersion,
+            ...readEvmNotEnoughGasDiagnostics(error),
+            ...readNotEnoughBalanceDiagnostics(error),
             seedIdFrom: mainFromAccount.seedIdentifier,
             seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
             data: (transaction as EvmTransaction).data
