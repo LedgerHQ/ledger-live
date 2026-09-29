@@ -1,4 +1,4 @@
-import type { BiometricsKind } from "@features/platform-app-lock";
+import type { BiometricsKind } from "../biometricsTypes";
 import type React from "react";
 import type { TextInput } from "react-native";
 

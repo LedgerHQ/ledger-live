@@ -1,4 +1,4 @@
-import { PASSWORD_MAX_LENGTH } from "@features/platform-app-lock";
+import { PASSWORD_MAX_LENGTH } from "../password";
 import { useTranslation } from "@shared/i18n";
 import { TextInput } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";

@@ -1,4 +1,4 @@
-import type { BiometricsKind } from "@features/platform-app-lock";
+import type { BiometricsKind } from "../../biometricsTypes";
 import { CursorTouch, FaceId, Fingerprint } from "@ledgerhq/lumen-ui-rnative/symbols";
 
 type BiometricsSymbol = typeof FaceId;
