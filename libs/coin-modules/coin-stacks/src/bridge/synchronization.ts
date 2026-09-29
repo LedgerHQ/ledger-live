@@ -43,6 +43,8 @@ type StakingPositionOnAccount = Omit<Stake, "amount" | "amountDeposited" | "amou
   amountRewarded?: BigNumber;
 };
 
+type StacksAccount = Account & { stakingPositions?: StakingPositionOnAccount[] };
+
 function toStakingPositionOnAccount(stake: Stake): StakingPositionOnAccount {
   const { amount, amountDeposited, amountRewarded, ...rest } = stake;
   return {
@@ -195,7 +197,7 @@ export async function buildTokenAccounts(
   }
 }
 
-export const getAccountShape: GetAccountShape = async info => {
+export const getAccountShape: GetAccountShape<StacksAccount> = async info => {
   const { initialAccount, currency, rest = {}, derivationMode } = info;
   // for bridge tests specifically the `rest` object is empty and therefore the publicKey is undefined
   // reconciliatePublicKey tries to get pubKey from rest object and then from accountId
@@ -275,7 +277,7 @@ export const getAccountShape: GetAccountShape = async info => {
     initialAccount,
   );
 
-  const result: Partial<Account> & { stakingPositions?: StakingPositionOnAccount[] } = {
+  const result: Partial<StacksAccount> = {
     id: accountId,
     subAccounts: tokenAccounts,
     xpub: pubKey,

@@ -714,7 +714,7 @@ describe("getAccountShape", () => {
   it("does not fail the whole account sync when the stake lookup fails", async () => {
     (getStakes as jest.Mock).mockRejectedValue(new Error("pox lookup failed"));
 
-    const result = await getAccountShape(info, { paginationConfig: {} });
+    await getAccountShape(info, { paginationConfig: {} });
 
     expect(mockLog).toHaveBeenCalledWith(
       "error",
