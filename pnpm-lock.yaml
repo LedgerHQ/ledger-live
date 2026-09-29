@@ -13831,6 +13831,9 @@ importers:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^8.0.0
         version: 8.0.0
+      '@domain/api-account-data-source':
+        specifier: workspace:^
+        version: link:../../domain/api/account-data-source
       '@domain/api-aggregated-assets':
         specifier: workspace:^
         version: link:../../domain/api/aggregated-assets
@@ -13840,9 +13843,18 @@ importers:
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../../domain/entity/account
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
+      '@domain/entity-account-operations':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-operations
       '@domain/entity-client-identity':
         specifier: workspace:^
         version: link:../../domain/entity/client-identity
@@ -14173,6 +14185,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../shared/feature-flags
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../shared/schema-primitives
       '@stellar/stellar-sdk':
         specifier: ^14.0.0
         version: 14.0.0
@@ -14321,9 +14336,6 @@ importers:
         specifier: 'catalog:'
         version: 4.4.3
     devDependencies:
-      '@domain/entity-account':
-        specifier: workspace:^
-        version: link:../../domain/entity/account
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
