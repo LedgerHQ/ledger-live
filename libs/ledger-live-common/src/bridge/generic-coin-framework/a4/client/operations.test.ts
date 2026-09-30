@@ -6,6 +6,7 @@ import {
   withDcRoamRetry,
 } from "./operations";
 import { A4HttpError } from "./errors";
+import { PaginationIntegrityError } from "../../paginateOperations";
 import { clearA4RegistrationCache, ensureA4Registered } from "./registration";
 import type { A4OperationView } from "./types";
 import { A4Client } from "./index";
@@ -919,6 +920,27 @@ describe("fetchA4Operations", () => {
     await expect(
       fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", "ethereum", 0, 5),
     ).rejects.toThrow(A4HttpError);
+    expect(jest.mocked(ensureA4Registered)).not.toHaveBeenCalled();
+  });
+
+  it("rethrows a stalled cursor as a PaginationIntegrityError, not an A4HttpError, and does not treat it as a DC roam", async () => {
+    // Goes through the real walk and the real `withDcRoamRetry`: the caller logs a malformed A4
+    // history apart from a transport failure by this type, and normalising it would erase it.
+    listOperationsSpy
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx1")], nextToken: "p1" },
+        version: undefined,
+      })
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx2")], nextToken: "p1" },
+        version: undefined,
+      });
+
+    await expect(
+      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", "ethereum", 0, 5),
+    ).rejects.toBeInstanceOf(PaginationIntegrityError);
+    expect(listOperationsSpy).toHaveBeenCalledTimes(2);
+    expect(jest.mocked(clearA4RegistrationCache)).not.toHaveBeenCalled();
     expect(jest.mocked(ensureA4Registered)).not.toHaveBeenCalled();
   });
 

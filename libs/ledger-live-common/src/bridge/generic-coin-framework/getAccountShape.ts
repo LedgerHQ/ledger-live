@@ -931,12 +931,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // from the stored one -- fields `buildSubAccounts` cannot reconstruct (`swapHistory` in
     // particular is local-only, never re-derivable from chain data). Emptying `operations` alone
     // still starves `mergeOps` of the old rows that would otherwise straddle the un-walked
-    // interval, while keeping every sub-account matched so that carry-over still runs.
+    // interval, while keeping every sub-account matched so that carry-over still runs. Gated on
+    // `discardOld`, the same condition as the parent merge below: a bounded round that filtered
+    // down to nothing keeps the parent history, so it has to keep the token histories too.
     const subAccounts = mergeSubAccounts(
       syncFromScratch
         ? []
         : (initialAccount?.subAccounts ?? []).map(sa =>
-            newOpsBounded ? { ...sa, operations: [] } : sa,
+            discardOld ? { ...sa, operations: [] } : sa,
           ),
       newSubAccounts,
       maxOperations,

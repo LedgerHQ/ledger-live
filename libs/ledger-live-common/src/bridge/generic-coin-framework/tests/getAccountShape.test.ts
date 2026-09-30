@@ -4112,6 +4112,23 @@ describe("genericGetAccountShape", () => {
         items: [failed("h10", 10), failed("h9", 9)],
         next: "c1",
       });
+      // A stored token history must survive for the same reason the parent one does.
+      const tokenOp = {
+        id: "tok-op",
+        accountId: "accId",
+        hash: "htok",
+        blockHeight: 2,
+        type: "IN",
+        date: new Date(2000),
+        extra: {},
+        senders: [],
+        recipients: [],
+      };
+      buildSubAccountsMock.mockReturnValue([
+        { id: "subNew", token: { id: "tok1" }, operations: [] },
+      ]);
+      const { mergeSubAccounts: realMergeSubAccounts } = jest.requireActual("../buildSubAccounts");
+      mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
 
       const getShape = genericGetAccountShape(network, currency.id);
       const result = await getShape(
@@ -4134,7 +4151,9 @@ describe("genericGetAccountShape", () => {
               },
             ],
             pendingOperations: [],
-            subAccounts: [],
+            subAccounts: [
+              { id: "subOld", token: { id: "tok1" }, operations: [tokenOp], pendingOperations: [] },
+            ],
           },
           currency,
           derivationMode: "",
@@ -4148,6 +4167,9 @@ describe("genericGetAccountShape", () => {
       // The old operation survives: with nothing new to show for this round, it is a no-op retry,
       // not a from-scratch reset.
       expect(result.operations?.map(op => op.blockHeight)).toEqual([3]);
+      expect((result.subAccounts as any[])[0].operations.map((op: any) => op.id)).toEqual([
+        "tok-op",
+      ]);
     });
   });
 
