@@ -22,8 +22,8 @@
   },
   "dependencies": {
     "@domain/api-market-countervalues": "workspace:*",
+    "@domain/entity-market-countervalues": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-countervalues": "workspace:*",
     "@ledgerhq/live-hooks": "workspace:*",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:*",

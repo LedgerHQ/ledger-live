@@ -48,6 +48,7 @@ type UseSendHeaderModelResult = Readonly<{
   handleRecipientInputChange: (value: string) => void;
   handleRecipientPaste: () => void;
   handleQrCodeClick: () => void;
+  handleQrScannerError: (error: Error) => void;
   handleScanPicked: (code: string) => void;
   isScannerOpen: boolean;
   recipientContact: RecipientHeaderContact | undefined;
@@ -117,7 +118,7 @@ export function useSendHeaderModel({
   const { close, transaction } = useSendFlowActions();
   const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
-  const { recipientType, setInputMethod } = useSendFlowTracking();
+  const { recipientType, setInputMethod, trackMessage } = useSendFlowTracking();
   const addNewContactHeader = useAddNewContactHeaderState();
   const { state: sponsoredState } = useSponsoredSend();
   const {
@@ -363,6 +364,31 @@ export function useSendHeaderModel({
     toggleScanner();
   }, [isScannerOpen, toggleScanner, trackingProperties]);
 
+  const handleQrScannerError = useCallback(
+    (error: Error) => {
+      trackMessage({
+        account: state.account.account,
+        parentAccount: state.account.parentAccount,
+        step: SEND_FLOW_STEP.RECIPIENT,
+        message: {
+          messageId: error.name,
+          messageType: "error",
+        },
+        metadata: {
+          recipientType,
+          recipientLength: recipientSearch.value.length,
+        },
+      });
+    },
+    [
+      recipientSearch.value.length,
+      recipientType,
+      state.account.account,
+      state.account.parentAccount,
+      trackMessage,
+    ],
+  );
+
   const pastedInputRef = useRef(false);
   const handleRecipientPaste = useCallback(() => {
     pastedInputRef.current = true;
@@ -432,6 +458,7 @@ export function useSendHeaderModel({
     handleRecipientInputChange,
     handleRecipientPaste,
     handleQrCodeClick,
+    handleQrScannerError,
     handleScanPicked,
     isScannerOpen: showScanner,
     recipientContact: recipientHeader.contact,

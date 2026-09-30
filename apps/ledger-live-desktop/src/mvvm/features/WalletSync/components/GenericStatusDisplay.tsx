@@ -7,7 +7,7 @@ import {
   AnalyticsPage,
   walletSyncEntryFlowProperties,
 } from "../hooks/useLedgerSyncAnalytics";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 
 export type GenericProps = {

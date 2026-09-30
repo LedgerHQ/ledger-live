@@ -3,8 +3,7 @@ import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "./currencies";
 import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";
 import { flattenOperationWithInternalsAndNfts } from "./operation";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { calculate, type CounterValuesState } from "@domain/entity-market-countervalues";
 import type { Currency } from "@domain/entity-currency";
 import {
   AccountNamesState,

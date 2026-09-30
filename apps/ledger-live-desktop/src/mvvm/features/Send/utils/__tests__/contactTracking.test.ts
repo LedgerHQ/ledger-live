@@ -170,8 +170,8 @@ describe("getRecipientResolution", () => {
 
   it("classifies unresolved input with the canonical contact-name rules", () => {
     expect(getRecipientResolution("Alice", createResult()).queryType).toBe("contact name");
-    expect(getRecipientResolution("1Password", createResult()).queryType).toBe("unrecognised");
-    expect(getRecipientResolution("@Olive", createResult()).queryType).toBe("unrecognised");
+    expect(getRecipientResolution("1Password", createResult()).queryType).toBe("contact name");
+    expect(getRecipientResolution("Élodie", createResult()).queryType).toBe("unrecognised");
   });
 });
 

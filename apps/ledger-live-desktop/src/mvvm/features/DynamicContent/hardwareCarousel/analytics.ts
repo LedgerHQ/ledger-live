@@ -1,4 +1,4 @@
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 
 export const HARDWARE_CAROUSEL_PAGE = "carousel hardware";
 
@@ -39,11 +39,11 @@ export function trackHardwareCarouselShown(
   sharedProps: HardwareCarouselSharedAnalyticsProps,
 ): void {
   trackPage(
-    HARDWARE_CAROUSEL_PAGE,
-    undefined,
-    buildHardwareCarouselPageEventProperties(sharedProps),
-    true,
-    false,
+    {
+      category: HARDWARE_CAROUSEL_PAGE,
+      props: buildHardwareCarouselPageEventProperties(sharedProps),
+    },
+    { updateRoutes: true },
   );
 }
 

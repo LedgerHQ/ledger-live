@@ -20,7 +20,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import React from "react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import type { State } from "~/renderer/reducers";
 import createStore, { type ReduxStore } from "~/state-manager/configureStore";
 
@@ -37,7 +37,8 @@ jest.mock("LLD/hooks/useLazyOnboardingActions", () => ({
   }),
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 

@@ -13,7 +13,7 @@ import {
 import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { ComponentProps } from "react";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 type ConnectedDevice = ComponentProps<DeviceDisconnectedComponent>["device"];
 

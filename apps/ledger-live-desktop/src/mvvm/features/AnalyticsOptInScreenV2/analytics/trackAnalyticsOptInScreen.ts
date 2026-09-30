@@ -1,4 +1,4 @@
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import {
   ANALYTICS_OPT_IN_SCREEN_FLOW,
   ANALYTICS_OPT_IN_SCREEN_PAGES,
@@ -28,7 +28,7 @@ export const trackAnalyticsOptInScreenClick = (
       flow: ANALYTICS_OPT_IN_SCREEN_FLOW,
       entryPoint: "Onboarding",
     },
-    shouldWeTrack,
+    { mandatory: shouldWeTrack },
   );
 };
 
@@ -46,6 +46,6 @@ export const trackAnalyticsOptInScreenToggle = (
       flow: ANALYTICS_OPT_IN_SCREEN_FLOW,
       entryPoint: "Onboarding",
     },
-    shouldWeTrack,
+    { mandatory: shouldWeTrack },
   );
 };

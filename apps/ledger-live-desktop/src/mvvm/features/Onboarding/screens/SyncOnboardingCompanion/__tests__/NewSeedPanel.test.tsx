@@ -2,13 +2,13 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 
 import NewSeedPanel from "../components/NewSeedPanel";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { State } from "~/renderer/reducers";
 import * as UseOpenAssetFlow from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { analyticsFlowName } from "~/renderer/components/SyncOnboarding/Manual/shared";
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 

@@ -32,7 +32,7 @@ describe("useAddContactContentViewModel", () => {
     );
 
     act(() => {
-      result.current.onDraftNameChange("Ada@1");
+      result.current.onDraftNameChange("Ada 💎");
     });
 
     expect(result.current).toMatchObject({
@@ -148,7 +148,7 @@ describe("useAddContactContentViewModel", () => {
     });
 
     act(() => {
-      result.current.onDraftNameChange("Ada@1");
+      result.current.onDraftNameChange("Ada 💎");
     });
 
     expect(result.current.draftName).toBe("Ada");

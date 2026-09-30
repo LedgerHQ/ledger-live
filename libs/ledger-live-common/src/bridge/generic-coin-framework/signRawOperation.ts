@@ -1,4 +1,4 @@
-import { Observable, type Subscriber } from "rxjs";
+import { defer, Observable, switchMap, type Subscriber } from "rxjs";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
@@ -98,9 +98,22 @@ export const genericSignRawOperation =
     transaction: string;
     deviceId: DeviceId;
   }): Observable<SignOperationEvent> =>
-    new Observable(o => {
-      signRawAndEmit(o, { network, kind, signerContext, account, transaction, deviceId }).then(
-        () => o.complete(),
-        e => o.error(e),
-      );
-    });
+    defer(() => getBridgeApi(account.currency, network)).pipe(
+      switchMap(
+        bridgeApi =>
+          bridgeApi.signRawOperation?.({ account, transaction, deviceId }) ??
+          new Observable<SignOperationEvent>(o => {
+            signRawAndEmit(o, {
+              network,
+              kind,
+              signerContext,
+              account,
+              transaction,
+              deviceId,
+            }).then(
+              () => o.complete(),
+              e => o.error(e),
+            );
+          }),
+      ),
+    );
