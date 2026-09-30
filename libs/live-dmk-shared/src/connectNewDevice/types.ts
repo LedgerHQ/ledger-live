@@ -35,6 +35,7 @@ export type ConnectNewDeviceStateMachineInput<
   deviceDiscoveryService: DeviceDiscoveryService<TDiscoveryError>;
   observer: Observer<ConnectNewDeviceUIState<TDiscoveryError, TConnectionError>>;
   onConnected: (result: DeviceConnectionResult) => void;
+  onClose: () => void;
   mapConnectionError: ConnectNewDeviceMapConnectionError<TConnectionError>;
   buildCompatDeviceId?: (device: ConnectedDevice) => string;
   deviceNotFoundDelay?: number;
@@ -63,8 +64,10 @@ export enum ConnectNewDeviceStateMachineEventTypes {
   UserTapsDevice = "user-taps-device",
   UserTapsDiscoveryRetry = "user-taps-discovery-retry",
   UserTapsDiscoveryIgnore = "user-taps-discovery-ignore",
+  UserClosesDiscoveryError = "user-closes-discovery-error",
   UserTapsConnectionRetry = "user-taps-connection-retry",
   UserTapsConnectionIgnore = "user-taps-connection-ignore",
+  UserClosesConnectionError = "user-closes-connection-error",
 }
 
 export type ConnectNewDeviceStateMachineEvent<
@@ -89,10 +92,16 @@ export type ConnectNewDeviceStateMachineEvent<
       type: ConnectNewDeviceStateMachineEventTypes.UserTapsDiscoveryIgnore;
     }
   | {
+      type: ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError;
+    }
+  | {
       type: ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionRetry;
     }
   | {
       type: ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionIgnore;
+    }
+  | {
+      type: ConnectNewDeviceStateMachineEventTypes.UserClosesConnectionError;
     };
 
 /**
@@ -105,6 +114,7 @@ export const ConnectNewDeviceUIStateTypes = {
   Connecting: "connecting",
   Connected: "connected",
   Done: "done",
+  Terminated: "terminated",
 } as const;
 
 export type ConnectNewDeviceUIStateType =
@@ -130,6 +140,9 @@ export type ConnectNewDeviceUIState<
   | {
       type: typeof ConnectNewDeviceUIStateTypes.Done;
     }
-  | DiscoveryErrorUIState<TDiscoveryError>
-  | ConnectionErrorUIState<TConnectionError>
+  | {
+      type: typeof ConnectNewDeviceUIStateTypes.Terminated;
+    }
+  | (DiscoveryErrorUIState<TDiscoveryError> & { close: () => void })
+  | (ConnectionErrorUIState<TConnectionError> & { close: () => void })
   | UnknownErrorUIState;

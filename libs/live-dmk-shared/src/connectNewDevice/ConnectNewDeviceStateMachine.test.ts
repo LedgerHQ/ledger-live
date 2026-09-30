@@ -97,6 +97,7 @@ const setupTest = ({
     getConnectedDevice: jest.fn(() => connectedDevice),
   } as unknown as DeviceManagementKit;
   const onConnected = jest.fn();
+  const onClose = jest.fn();
 
   const states: Array<ConnectNewDeviceUIState> = [];
   const observer: Observer<ConnectNewDeviceUIState> = {
@@ -118,6 +119,7 @@ const setupTest = ({
     deviceDiscoveryService,
     observer,
     onConnected,
+    onClose,
     mapConnectionError,
     ...(buildCompatDeviceId ? { buildCompatDeviceId } : {}),
     ...(deviceNotFoundDelay === undefined ? {} : { deviceNotFoundDelay }),
@@ -140,6 +142,7 @@ const setupTest = ({
     lastState,
     machine,
     onConnected,
+    onClose,
     states,
   };
 };
@@ -604,6 +607,7 @@ describe("ConnectNewDeviceStateMachine", () => {
           device: nanoXDevice,
           retry: expect.any(Function),
           ignore: expect.any(Function),
+          close: expect.any(Function),
         });
       },
     );
@@ -686,7 +690,151 @@ describe("ConnectNewDeviceStateMachine", () => {
     });
   });
 
+  describe("Closing error sheets", () => {
+    const connectionFailure = new Error("connection failed");
+
+    it("should emit Terminated when a DiscoveryError is closed", () => {
+      const { emitDiscoveryError, lastState, machine } = setupTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError());
+      lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).close();
+
+      lastState(ConnectNewDeviceUIStateTypes.Terminated);
+    });
+
+    it("should call onClose once when a DiscoveryError is closed", () => {
+      const { emitDiscoveryError, lastState, machine, onClose } = setupTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError());
+      lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).close();
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("should emit Terminated before calling onClose when a DiscoveryError is closed", () => {
+      const { emitDiscoveryError, lastState, machine, onClose, states } = setupTest();
+      const stateTypesWhenClosed: Array<string> = [];
+      onClose.mockImplementation(() =>
+        states.forEach(state => stateTypesWhenClosed.push(state.type)),
+      );
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError());
+      lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).close();
+
+      expect(stateTypesWhenClosed[stateTypesWhenClosed.length - 1]).toBe(
+        ConnectNewDeviceUIStateTypes.Terminated,
+      );
+    });
+
+    it("should not start discovery again when a DiscoveryError is closed", () => {
+      const { deviceDiscoveryService, emitDiscoveryError, lastState, machine } = setupTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError());
+      lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).close();
+
+      expect(deviceDiscoveryService.start).toHaveBeenCalledTimes(1);
+    });
+
+    it("should emit Terminated and call onClose when a DiscoveryError is closed during a retry", () => {
+      const retry = jest.fn(() => new Promise<true>(() => {}));
+      const { emitDiscoveryError, lastState, machine, onClose } = setupTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError({ resolution: { type: "prompt", retry } }));
+      const discoveryErrorState = lastState(ConnectNewDeviceUIStateTypes.DiscoveryError);
+      discoveryErrorState.retry!();
+      discoveryErrorState.close();
+
+      lastState(ConnectNewDeviceUIStateTypes.Terminated);
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("should ignore the retry result when a DiscoveryError is closed during a retry", async () => {
+      let resolveRetry: (result: true) => void = () => {};
+      const retry = jest.fn(
+        () =>
+          new Promise<true>(resolve => {
+            resolveRetry = resolve;
+          }),
+      );
+      const { deviceDiscoveryService, emitDiscoveryError, lastState, machine } = setupTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError({ resolution: { type: "prompt", retry } }));
+      const discoveryErrorState = lastState(ConnectNewDeviceUIStateTypes.DiscoveryError);
+      discoveryErrorState.retry!();
+      discoveryErrorState.close();
+      resolveRetry(true);
+      await flushPromises();
+
+      lastState(ConnectNewDeviceUIStateTypes.Terminated);
+      expect(deviceDiscoveryService.start).toHaveBeenCalledTimes(1);
+    });
+
+    it("should do nothing when a DiscoveryError is closed after it was ignored", () => {
+      const { emitDiscoveryError, lastState, machine, onClose } = setupTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError());
+      const discoveryErrorState = lastState(ConnectNewDeviceUIStateTypes.DiscoveryError);
+      discoveryErrorState.ignore();
+      discoveryErrorState.close();
+
+      lastState(ConnectNewDeviceUIStateTypes.Discovering);
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("should start discovery again with an empty list when a ConnectionError is closed", async () => {
+      const setup = setupTest({ connect: jest.fn().mockRejectedValue(connectionFailure) });
+
+      await connectToNanoX(setup);
+      setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).close();
+
+      expect(setup.deviceDiscoveryService.start).toHaveBeenCalledTimes(2);
+      expect(setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices).toEqual([]);
+    });
+
+    it("should not call onClose when a ConnectionError is closed", async () => {
+      const setup = setupTest({ connect: jest.fn().mockRejectedValue(connectionFailure) });
+
+      await connectToNanoX(setup);
+      setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).close();
+
+      expect(setup.onClose).not.toHaveBeenCalled();
+    });
+
+    it("should do nothing when a ConnectionError is closed after it was retried", async () => {
+      const connect = jest
+        .fn()
+        .mockRejectedValueOnce(connectionFailure)
+        .mockReturnValue(new Promise<string>(() => {}));
+      const setup = setupTest({ connect });
+
+      await connectToNanoX(setup);
+      const connectionErrorState = setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError);
+      connectionErrorState.retry();
+      connectionErrorState.close();
+
+      setup.lastState(ConnectNewDeviceUIStateTypes.Connecting);
+      expect(setup.deviceDiscoveryService.start).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("stop", () => {
+    it("should not call onClose when the machine is stopped", () => {
+      const { emitDiscoveryError, machine, onClose } = setupTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError());
+      machine.stop();
+
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
     it("should emit no state when the machine is stopped while discovering", () => {
       const { machine, states } = setupTest();
 

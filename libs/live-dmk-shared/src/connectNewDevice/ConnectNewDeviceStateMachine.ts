@@ -163,6 +163,8 @@ const createConnectNewDeviceStateMachine = <
           error: context.discoveryError!,
           ignore: () =>
             self.send({ type: ConnectNewDeviceStateMachineEventTypes.UserTapsDiscoveryIgnore }),
+          close: () =>
+            self.send({ type: ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError }),
           ...(context.discoveryError!.resolution !== undefined &&
           context.discoveryError!.resolution.type !== "none"
             ? {
@@ -189,6 +191,8 @@ const createConnectNewDeviceStateMachine = <
             self.send({ type: ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionRetry }),
           ignore: () =>
             self.send({ type: ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionIgnore }),
+          close: () =>
+            self.send({ type: ConnectNewDeviceStateMachineEventTypes.UserClosesConnectionError }),
         });
       },
       emitConnected: ({ context }) => {
@@ -196,6 +200,12 @@ const createConnectNewDeviceStateMachine = <
       },
       emitDone: ({ context }) => {
         context.observer.next({ type: ConnectNewDeviceUIStateTypes.Done });
+      },
+      emitTerminated: ({ context }) => {
+        context.observer.next({ type: ConnectNewDeviceUIStateTypes.Terminated });
+      },
+      onClose: ({ context }) => {
+        context.onClose();
       },
       onConnected: ({ context }) => {
         const connectedDevice = context.dmk.getConnectedDevice({ sessionId: context.sessionId! });
@@ -277,6 +287,9 @@ const createConnectNewDeviceStateMachine = <
           [ConnectNewDeviceStateMachineEventTypes.UserTapsDiscoveryRetry]: {
             target: "RetryDiscovery",
           },
+          [ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError]: {
+            target: "Terminated",
+          },
         },
       },
       RetryDiscovery: {
@@ -284,6 +297,9 @@ const createConnectNewDeviceStateMachine = <
           [ConnectNewDeviceStateMachineEventTypes.UserTapsDiscoveryIgnore]: {
             target: "Discovering",
             actions: "ignoreDiscoveryError",
+          },
+          [ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError]: {
+            target: "Terminated",
           },
         },
         invoke: {
@@ -349,6 +365,9 @@ const createConnectNewDeviceStateMachine = <
           [ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionIgnore]: {
             target: "Discovering",
           },
+          [ConnectNewDeviceStateMachineEventTypes.UserClosesConnectionError]: {
+            target: "Discovering",
+          },
         },
       },
       Connected: {
@@ -362,6 +381,10 @@ const createConnectNewDeviceStateMachine = <
       Done: {
         type: "final",
         entry: ["emitDone", "onConnected"],
+      },
+      Terminated: {
+        type: "final",
+        entry: ["emitTerminated", "onClose"],
       },
     },
   });
