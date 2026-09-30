@@ -12,7 +12,7 @@ import { track } from "~/renderer/analytics/segment";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate } from "@domain/entity-market-countervalues";
 import { useSelector } from "LLD/hooks/redux";
 import {
   getExtremaPointMarkers,

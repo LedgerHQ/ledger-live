@@ -7,7 +7,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@ledgerhq/live-countervalues-react";
 import { useTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/useTrackingPairForAccounts";
-import { resolveTrackingPairs } from "@ledgerhq/live-countervalues/logic";
+import { resolveTrackingPairs } from "@domain/entity-market-countervalues";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
