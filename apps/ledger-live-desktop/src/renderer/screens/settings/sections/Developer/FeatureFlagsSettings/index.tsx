@@ -11,7 +11,7 @@ import {
   setAllOverrides,
   setBannerVisible,
 } from "@shared/feature-flags";
-import { useFeature, useHasLocallyOverriddenFeatureFlags } from "@features/platform-feature-flags";
+import { useHasLocallyOverriddenFeatureFlags } from "@features/platform-feature-flags";
 import { Flex, SearchInput, Alert, Tag, Text } from "@ledgerhq/react-ui";
 import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
@@ -23,6 +23,7 @@ import FeatureFlagDetails from "./FeatureFlagDetails";
 import GroupedFeatures from "./GroupedFeatures";
 import TabBar from "~/renderer/components/TabBar";
 import { objectKeysType } from "@ledgerhq/live-common/helpers";
+import { getFirebaseConfig } from "~/firebase-setup";
 
 export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boolean }) => {
   const { t } = useTranslation();
@@ -96,10 +97,8 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
     [filteredGroups, focusedGroupName],
   );
 
-  const config = useFeature("firebaseEnvironmentReadOnly");
-  const params = config?.params;
-  const project =
-    params !== null && typeof params === "object" && "project" in params ? params.project : "";
+  // From the build env: the remote flag value is set by hand and can be wrong.
+  const project = getFirebaseConfig().projectId;
 
   const handleChangeTab = useCallback((index: number) => {
     setActiveTabIndex(index);
