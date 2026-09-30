@@ -35,8 +35,6 @@ export class PayTabPage extends AppPage {
     "pay-bank-transfer-intro-dialog",
   );
   private readonly closeButton: Locator = this.page.getByRole("button", { name: "Close" });
-  private readonly explorePay: Locator = this.page.getByRole("button", { name: "Explore Pay" });
-
   private filterOption(rowKey: string) {
     return this.page.getByTestId(`pay-card-balance-filter-option-${rowKey}`);
   }
@@ -48,15 +46,6 @@ export class PayTabPage extends AppPage {
   @step("Expect the Pay tab screen")
   async expectScreenVisible() {
     await expect(this.screen).toBeVisible();
-  }
-
-  @step("Dismiss the Pay feature tour when it is shown")
-  async dismissFeatureTourIfVisible() {
-    await expect(this.screen).toBeVisible();
-    if (await this.explorePay.isVisible()) {
-      await this.explorePay.click();
-      await expect(this.explorePay).toBeHidden();
-    }
   }
 
   @step("Expect the Pay tab to show a funded balance")
