@@ -1,4 +1,7 @@
-import type { EnergyRentOrder } from "../../../bridge/generic-coin-framework/sponsored";
+import type {
+  EnergyRentOrder,
+  RentPayment,
+} from "../../../bridge/generic-coin-framework/sponsored";
 
 export const SPONSORED_PHASE = {
   IDLE: "IDLE",
@@ -25,7 +28,7 @@ export type SponsoredState = Readonly<{
   order: EnergyRentOrder | null;
   // Coupled to order: cleared on retry-recraft, re-set at CRAFT_SUCCESS.
   toSign: string | null;
-  reservedNativeAmount: bigint | null;
+  rentPayment: RentPayment | null;
   payerAddress: string | null;
   // Delivery poll gates TX-C on receiverAddress's on-chain energy reaching energyNeeded.
   receiverAddress: string | null;

@@ -56,6 +56,9 @@ jest.mock("../../context/AddNewContactHeaderContext", () => ({
     onAddressPhaseBack: null,
   })),
 }));
+jest.mock("../../context/SponsoredSendContext", () => ({
+  useSponsoredSend: jest.fn(() => ({ state: { phase: "IDLE" } })),
+}));
 jest.mock("../../context/SendFlowTrackingContext", () => ({
   useSendFlowTracking: jest.fn(() => ({
     inputMethod: "manual",
@@ -78,6 +81,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useContactsFeature } from "@features/platform-contacts";
 import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
 import { useAddNewContactHeaderState } from "../../context/AddNewContactHeaderContext";
+import { useSponsoredSend } from "../../context/SponsoredSendContext";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 type VM = ReturnType<typeof useSendHeaderModel>;
@@ -185,6 +189,7 @@ beforeEach(() => {
     titleKey: "contacts.addContact",
     onAddressPhaseBack: null,
   });
+  jest.mocked(useSponsoredSend).mockReturnValue({ state: { phase: "IDLE" } } as never);
 });
 
 afterEach(() => {
@@ -1056,6 +1061,40 @@ describe("useSendHeaderModel", () => {
       const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
       const ethTx = { family: "ethereum" };
       expect(updater(ethTx)).toBe(ethTx);
+    });
+  });
+
+  describe("signature step", () => {
+    const mockSignatureStep = (phase: string) => {
+      mockActions();
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.SIGNATURE,
+        currentStepConfig: { showTitle: false, height: "fit" },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => false,
+        },
+      });
+      jest.mocked(useSponsoredSend).mockReturnValue({ state: { phase } } as never);
+    };
+
+    it("titles a sponsored send's transfer signature as its second step", () => {
+      mockSignatureStep("TRANSFER");
+
+      renderHook("$5,969.83");
+
+      expect(latestVM?.title).toBe("Step 2 of 2");
+      expect(latestVM?.descriptionText).toBe("");
+    });
+
+    it("keeps a standard send's signature untitled", () => {
+      mockSignatureStep("IDLE");
+
+      renderHook("$5,969.83");
+
+      expect(latestVM?.title).toBe("");
+      expect(latestVM?.descriptionText).toBe("");
     });
   });
 });

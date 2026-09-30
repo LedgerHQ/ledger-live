@@ -10,7 +10,11 @@ import {
   triggerConstantContract,
 } from "../network";
 import { decode58Check } from "../network/format";
-import type { AccountTronAPI, ChainParameters } from "../network/types";
+import type {
+  AccountTronAPI,
+  ChainParameters,
+  TriggerConstantContractResponse,
+} from "../network/types";
 import { abiEncodeTrc20Transfer } from "../network/utils";
 import type { NetworkInfo } from "../types";
 import type { TronMemo, TronTxData } from "../types";
@@ -125,6 +129,14 @@ const sendTrc20: TransactionIntent<TronMemo, TronTxData> = {
   amount: BigInt(1000),
   asset: { type: "trc20", assetReference: TRC20_CONTRACT },
   data: { type: "tron" },
+};
+
+const revertedTransferSimulation: TriggerConstantContractResponse = {
+  result: { result: true, message: Buffer.from("REVERT opcode executed").toString("hex") },
+  energy_used: 8_624,
+  energy_penalty: 6_640,
+  constant_result: [""],
+  transaction: { ret: [{ ret: "FAILED" }] },
 };
 
 const mockConfig = {
@@ -378,6 +390,19 @@ describe("estimateFees", () => {
 
       expect(result.value).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
     });
+
+    it("falls back to the flat fee, as unestimated, when a revert still reports result.result true", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({ freeNetLimit: new BigNumber(5000) }),
+      );
+      mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
+      mockTriggerConstantContract.mockResolvedValue(revertedTransferSimulation);
+
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
+
+      expect(result.value).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
+      expect(breakdownOf(result).energyEstimated).toBe(false);
+    });
   });
 
   describe("estimatedTxSize (exported helper)", () => {
@@ -431,6 +456,27 @@ describe("estimateFees", () => {
       await expect(estimateEnergy(mockLogger, mockConfig, sendTrc20)).rejects.toThrow(
         /triggerConstantContract failed/,
       );
+    });
+
+    it("throws when the returned transaction is FAILED even though result.result is true", async () => {
+      mockTriggerConstantContract.mockResolvedValue(revertedTransferSimulation);
+
+      await expect(estimateEnergy(mockLogger, mockConfig, sendTrc20)).rejects.toThrow(
+        /triggerConstantContract failed/,
+      );
+    });
+
+    it("returns energy_used when the returned transaction carries an empty (successful) ret entry", async () => {
+      mockTriggerConstantContract.mockResolvedValue({
+        result: { result: true },
+        energy_used: 130_285,
+        energy_penalty: 100_635,
+        transaction: { ret: [{}] },
+      });
+
+      const result = await estimateEnergy(mockLogger, mockConfig, sendTrc20);
+
+      expect(result).toBe(130_285);
     });
 
     it("throws when a successful simulation omits energy_used", async () => {
@@ -737,14 +783,14 @@ function breakdownOf(estimation: { parameters?: Record<string, unknown> }): Tron
 //   total: 7_047_950n
 const STANDARD_BURN = 7_047_950n;
 const ENERGY_USED = 31_895;
-const TRX_QUOTE_AMT = "3.5"; // → 3_500_000 SUN
-const TRONIFY_VALUE = 3_500_000n;
+const USDT_QUOTE_AMT = "3.2"; // → 3_200_000 USDT base units
+const TRONIFY_VALUE = 3_200_000n;
 
-const trxQuote = {
+const usdtQuote = {
   energy: BigInt(ENERGY_USED),
   durationSeconds: 600,
-  payCoinCode: "TRX",
-  payCoinAmt: TRX_QUOTE_AMT,
+  payCoinCode: "USDT",
+  payCoinAmt: USDT_QUOTE_AMT,
   fees: { energy: "2.727", trx: "0.773", bandwidth: "0", activateAccount: "0" },
 };
 
@@ -767,15 +813,16 @@ describe("estimateTronifyFees", () => {
     mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
     mockGetChainParameters.mockResolvedValue(chainParams);
     mockTriggerConstantContract.mockResolvedValue({ energy_used: ENERGY_USED });
-    mockGetEnergyRentQuote.mockResolvedValue(trxQuote);
+    mockGetEnergyRentQuote.mockResolvedValue(usdtQuote);
   });
 
-  it("should return value, originalValue, savings and a resource breakdown when the quote is TRX-denominated", async () => {
+  it("should return the rent in USDT base units, the standard burn in sun, a breakdown and no savings", async () => {
     const result = await estimateTronifyFees(mockLogger, config, sendTrc20);
 
     expect(result.value).toBe(TRONIFY_VALUE);
     expect(result.originalValue).toBe(STANDARD_BURN);
-    expect(result.savings).toBe(STANDARD_BURN - TRONIFY_VALUE);
+    // Rent and burn are in different units, so no savings figure exists at this layer.
+    expect(result.savings).toBeUndefined();
     expect(result.parameters).toMatchObject({
       energyRequired: String(ENERGY_USED),
       energyEstimated: true,
@@ -898,12 +945,12 @@ describe("estimateTronifyFees", () => {
     );
   });
 
-  it("should compute savings as originalValue - value", async () => {
+  it("should round a sub-unit USDT quote up to the next base unit", async () => {
+    mockGetEnergyRentQuote.mockResolvedValue({ ...usdtQuote, payCoinAmt: "3.1245271" });
+
     const result = await estimateTronifyFees(mockLogger, config, sendTrc20);
 
-    expect(result.originalValue).toBe(STANDARD_BURN);
-    const originalValue = result.originalValue as bigint;
-    expect(result.savings).toBe(originalValue - result.value);
+    expect(result.value).toBe(3_124_528n);
   });
 
   it("should throw when the intent is a native TRX send", async () => {
@@ -927,19 +974,33 @@ describe("estimateTronifyFees", () => {
     expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
   });
 
-  it("should throw when Tronify returns a USDT-denominated quote", async () => {
-    mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinCode: "USDT" });
+  it.each([
+    ["a TRX-denominated quote", { ...usdtQuote, payCoinCode: "TRX" }],
+    [
+      "the TRX-payment shape (no payCoinCode or payCoinAmt)",
+      { ...usdtQuote, payCoinCode: undefined, payCoinAmt: undefined },
+    ],
+  ])("should throw on %s", async (_label, quote) => {
+    mockGetEnergyRentQuote.mockResolvedValue(quote);
 
     await expect(estimateTronifyFees(mockLogger, config, sendTrc20)).rejects.toThrow(
       /unsupported payCoinCode/,
     );
   });
 
+  it("should accept a lower-case usdt quote code", async () => {
+    mockGetEnergyRentQuote.mockResolvedValue({ ...usdtQuote, payCoinCode: "usdt" });
+
+    await expect(estimateTronifyFees(mockLogger, config, sendTrc20)).resolves.toMatchObject({
+      value: TRONIFY_VALUE,
+    });
+  });
+
   it("should throw a clear error (not a TypeError) when payCoinCode is missing", async () => {
     // payCoinCode is unvalidated network data; a missing/non-string value must yield the explicit
     // "unsupported payCoinCode" error rather than a raw TypeError from toUpperCase().
     mockGetEnergyRentQuote.mockResolvedValue({
-      ...trxQuote,
+      ...usdtQuote,
       payCoinCode: undefined as unknown as string,
     });
 
@@ -949,7 +1010,15 @@ describe("estimateTronifyFees", () => {
   });
 
   it("should throw when Tronify returns a non-numeric payCoinAmt", async () => {
-    mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinAmt: "not-a-number" });
+    mockGetEnergyRentQuote.mockResolvedValue({ ...usdtQuote, payCoinAmt: "not-a-number" });
+
+    await expect(estimateTronifyFees(mockLogger, config, sendTrc20)).rejects.toThrow(
+      /invalid payCoinAmt/,
+    );
+  });
+
+  it.each([["0"], ["-1"]])("should throw on a non-positive payCoinAmt (%s)", async payCoinAmt => {
+    mockGetEnergyRentQuote.mockResolvedValue({ ...usdtQuote, payCoinAmt });
 
     await expect(estimateTronifyFees(mockLogger, config, sendTrc20)).rejects.toThrow(
       /invalid payCoinAmt/,
@@ -978,23 +1047,21 @@ describe("estimateTronifyFees", () => {
     expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
   });
 
+  it("should not quote a rental sized on a reverted simulation's energy_used", async () => {
+    mockTriggerConstantContract.mockResolvedValue(revertedTransferSimulation);
+
+    await expect(estimateTronifyFees(mockLogger, config, sendTrc20)).rejects.toThrow(
+      /triggerConstantContract failed/,
+    );
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
+
   it("should propagate a getChainParameters failure without silent fallback to pessimistic originalValue", async () => {
     mockGetChainParameters.mockRejectedValue(new Error("chain params unavailable"));
 
     await expect(estimateTronifyFees(mockLogger, config, sendTrc20)).rejects.toThrow(
       "chain params unavailable",
     );
-  });
-
-  it("should clamp savings to 0n when the Tronify quote exceeds the standard burn", async () => {
-    // 10 TRX (10_000_000 SUN) > STANDARD_BURN (7_047_950n)
-    mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinAmt: "10" });
-
-    const result = await estimateTronifyFees(mockLogger, config, sendTrc20);
-
-    expect(result.savings).toBe(0n);
-    expect(result.value).toBe(10_000_000n);
-    expect(result.originalValue).toBe(STANDARD_BURN);
   });
 
   it("should propagate the Tronify API response when simulation returns energyNeeded=0", async () => {
@@ -1042,17 +1109,32 @@ describe("estimateSponsoredFeeQuote", () => {
     mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
     mockGetChainParameters.mockResolvedValue(chainParams);
     mockTriggerConstantContract.mockResolvedValue({ energy_used: ENERGY_USED });
-    mockGetEnergyRentQuote.mockResolvedValue(trxQuote);
+    mockGetEnergyRentQuote.mockResolvedValue(usdtQuote);
   });
 
-  it("returns the Tronify quote's value/originalValue/savings from the injected config", async () => {
+  it("returns the USDT fee asset, the rent in its base units and the standard burn in sun", async () => {
     const result = await estimateSponsoredFeeQuote(mockLogger, config, sendTrc20);
 
     expect(result).toEqual({
+      feeAsset: {
+        type: "trc20",
+        assetReference: TRC20_CONTRACT,
+        name: "Tether USD",
+        unit: { name: "USDT", code: "USDT", magnitude: 6 },
+      },
       value: TRONIFY_VALUE,
       originalValue: STANDARD_BURN,
-      savings: STANDARD_BURN - TRONIFY_VALUE,
     });
+  });
+
+  it("returns a fresh fee asset per call, so mutating one never leaks into the next", async () => {
+    const first = await estimateSponsoredFeeQuote(mockLogger, config, sendTrc20);
+    const mutated = first.feeAsset.unit as { code: string };
+    mutated.code = "MUTATED";
+
+    const second = await estimateSponsoredFeeQuote(mockLogger, config, sendTrc20);
+
+    expect(second.feeAsset.unit?.code).toBe("USDT");
   });
 
   it("propagates estimateTronifyFees' throw on a non-TRC-20 intent (caller renders no savings)", async () => {
@@ -1081,10 +1163,15 @@ describe("buildEnergyRentRequest", () => {
     mockGetEnergyRentQuote.mockResolvedValue({
       energy: BigInt(ENERGY_USED),
       durationSeconds: 600,
-      payCoinCode: "TRX",
+      payCoinCode: "USDT",
       payCoinAmt: "12.5",
       fees: { energy: "0", trx: "0", bandwidth: "0", activateAccount: "0" },
     } as unknown as Awaited<ReturnType<typeof getEnergyRentQuote>>);
+    // Exactly the 12.5 USDT rent plus sendTrc20's 1000-base-unit amount.
+    mockGetBalance.mockResolvedValue([
+      { value: 50_000_000n, asset: { type: "native" } },
+      { value: 12_501_000n, asset: { type: "trc20", assetReference: TRC20_CONTRACT } },
+    ]);
   });
 
   it("delegates energy to the sender and applies the default rental window / extra-TRX", async () => {
@@ -1097,7 +1184,7 @@ describe("buildEnergyRentRequest", () => {
       durationSeconds: 600,
       extraTrx: 0.8,
       maxPayCoinAmt: "12.5",
-      maxPayCoinCode: "TRX",
+      maxPayCoinCode: "USDT",
     });
   });
 
@@ -1121,10 +1208,10 @@ describe("buildEnergyRentRequest", () => {
     ).rejects.toThrow("Energy rent requires a recipient");
   });
 
-  it("throws on a non-TRX quote rather than stamping a non-TRX ceiling", async () => {
+  it("throws on a non-USDT quote rather than stamping a non-USDT ceiling", async () => {
     mockGetEnergyRentQuote.mockResolvedValue({
-      ...trxQuote,
-      payCoinCode: "USDT",
+      ...usdtQuote,
+      payCoinCode: "TRX",
     } as unknown as Awaited<ReturnType<typeof getEnergyRentQuote>>);
 
     await expect(buildEnergyRentRequest(mockLogger, config, sendTrc20)).rejects.toThrow(
@@ -1134,7 +1221,7 @@ describe("buildEnergyRentRequest", () => {
 
   it("throws on a missing payCoinAmt rather than stamping an undefined ceiling", async () => {
     mockGetEnergyRentQuote.mockResolvedValue({
-      ...trxQuote,
+      ...usdtQuote,
       payCoinAmt: undefined as unknown as string,
     } as unknown as Awaited<ReturnType<typeof getEnergyRentQuote>>);
 
@@ -1145,7 +1232,7 @@ describe("buildEnergyRentRequest", () => {
 
   it("throws on a non-numeric payCoinAmt", async () => {
     mockGetEnergyRentQuote.mockResolvedValue({
-      ...trxQuote,
+      ...usdtQuote,
       payCoinAmt: "not-a-number",
     } as unknown as Awaited<ReturnType<typeof getEnergyRentQuote>>);
 
@@ -1154,14 +1241,79 @@ describe("buildEnergyRentRequest", () => {
     );
   });
 
-  it("normalizes a lower-case TRX quote code into the approved ceiling", async () => {
+  it("normalizes a lower-case usdt quote code into the approved ceiling", async () => {
     mockGetEnergyRentQuote.mockResolvedValue({
-      ...trxQuote,
-      payCoinCode: "trx",
+      ...usdtQuote,
+      payCoinCode: "usdt",
     } as unknown as Awaited<ReturnType<typeof getEnergyRentQuote>>);
 
     const request = await buildEnergyRentRequest(mockLogger, config, sendTrc20);
 
-    expect(request.maxPayCoinCode).toBe("TRX");
+    expect(request.maxPayCoinCode).toBe("USDT");
+  });
+
+  it("accepts a USDT balance that exactly covers the transfer plus the rent", async () => {
+    await expect(buildEnergyRentRequest(mockLogger, config, sendTrc20)).resolves.toMatchObject({
+      maxPayCoinAmt: "12.5",
+      maxPayCoinCode: "USDT",
+    });
+    expect(mockGetBalance).toHaveBeenCalledWith(mockLogger, config, SENDER);
+  });
+
+  it("throws EnergyRentInsufficientBalance when the USDT balance is one base unit short", async () => {
+    mockGetBalance.mockResolvedValue([
+      { value: 12_500_999n, asset: { type: "trc20", assetReference: TRC20_CONTRACT } },
+    ]);
+
+    await expect(buildEnergyRentRequest(mockLogger, config, sendTrc20)).rejects.toMatchObject({
+      name: "EnergyRentInsufficientBalance",
+    });
+  });
+
+  it("throws EnergyRentInsufficientBalance when the sender holds no USDT", async () => {
+    mockGetBalance.mockResolvedValue([{ value: 50_000_000n, asset: { type: "native" } }]);
+
+    await expect(buildEnergyRentRequest(mockLogger, config, sendTrc20)).rejects.toMatchObject({
+      name: "EnergyRentInsufficientBalance",
+    });
+  });
+
+  it("counts only the rent against USDT when the transfer is another TRC-20 token", async () => {
+    mockGetBalance.mockResolvedValue([
+      { value: 12_500_000n, asset: { type: "trc20", assetReference: TRC20_CONTRACT } },
+    ]);
+    const otherToken: TransactionIntent<TronMemo, TronTxData> = {
+      ...sendTrc20,
+      asset: { type: "trc20", assetReference: "TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8" },
+    };
+
+    await expect(buildEnergyRentRequest(mockLogger, config, otherToken)).resolves.toMatchObject({
+      maxPayCoinCode: "USDT",
+    });
+  });
+
+  it("rejects a max send before simulating or quoting (the amount must be resolved first)", async () => {
+    await expect(
+      buildEnergyRentRequest(mockLogger, config, { ...sendTrc20, amount: 0n, useAllAmount: true }),
+    ).rejects.toThrow("Energy rent requires a resolved amount, not a max send");
+    expect(mockTriggerConstantContract).not.toHaveBeenCalled();
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
+
+  it("rejects a TRC-20 intent without an asset reference", async () => {
+    await expect(
+      buildEnergyRentRequest(mockLogger, config, { ...sendTrc20, asset: { type: "trc20" } }),
+    ).rejects.toThrow("Energy rent is only available for TRC-20 send intents");
+  });
+
+  it.each([["0"], ["-1"]])("throws on a non-positive payCoinAmt (%s)", async payCoinAmt => {
+    mockGetEnergyRentQuote.mockResolvedValue({
+      ...usdtQuote,
+      payCoinAmt,
+    } as unknown as Awaited<ReturnType<typeof getEnergyRentQuote>>);
+
+    await expect(buildEnergyRentRequest(mockLogger, config, sendTrc20)).rejects.toThrow(
+      /invalid payCoinAmt/,
+    );
   });
 });

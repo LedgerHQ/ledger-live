@@ -88,7 +88,7 @@ const standardOption = {
 };
 const tronifyOption = {
   id: TRONIFY_FEE_OPTION_ID,
-  feeAsset: expect.objectContaining({ type: "native" }),
+  feeAsset: expect.objectContaining({ type: "trc20", assetReference: TRC20_CONTRACT }),
 };
 
 describe("listFeeOptions", () => {
@@ -127,9 +127,39 @@ describe("listFeeOptions", () => {
     expect(mockLogger).not.toHaveBeenCalled();
   });
 
-  it("returns [standard] when the Tronify provider is present but under-configured", async () => {
+  it("returns [standard] and logs when the Tronify provider block is malformed (no url)", async () => {
     mockConfig.mockResolvedValue(malformedProviderConfig);
     await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
+    expect(mockEstimateFees).not.toHaveBeenCalled();
+    expect(mockLogger).toHaveBeenCalledWith(
+      "tron/listFeeOptions",
+      expect.any(String),
+      expect.anything(),
+    );
+  });
+
+  it.each([
+    ["missing", { url: "https://tronify.api.live.ledger.com" }],
+    ["blank", { url: "https://tronify.api.live.ledger.com", sourceFlag: "  " }],
+  ])(
+    "returns [standard] without estimating or logging while the sourceFlag is %s",
+    async (_label, tronify) => {
+      mockConfig.mockResolvedValue({
+        ...activatedConfig,
+        energyRent: { provider: "tronify", tronify },
+      } as unknown as TronCoinConfig);
+      await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
+      expect(mockEstimateFees).not.toHaveBeenCalled();
+      expect(mockLogger).not.toHaveBeenCalled();
+    },
+  );
+
+  it("returns [standard] for a non-USDT TRC-20 transfer, without estimating", async () => {
+    const otherToken: TransactionIntent<TronMemo, TronTxData> = {
+      ...sendTrc20(),
+      asset: { type: "trc20", assetReference: "TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8" },
+    };
+    await expect(listFeeOptions(mockContext, otherToken)).resolves.toEqual([standardOption]);
     expect(mockEstimateFees).not.toHaveBeenCalled();
   });
 
@@ -156,12 +186,17 @@ describe("listFeeOptions", () => {
     await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
   });
 
-  it("reports the fee asset as native TRX for every option", async () => {
+  it("reports USDT as the Tronify fee asset and native TRX as the standard one", async () => {
     const options = await listFeeOptions(mockContext, sendTrc20());
     expect(options).toEqual([
       {
         id: TRONIFY_FEE_OPTION_ID,
-        feeAsset: { type: "native", name: "Tron", unit: expect.objectContaining({ code: "TRX" }) },
+        feeAsset: {
+          type: "trc20",
+          assetReference: TRC20_CONTRACT,
+          name: "Tether USD",
+          unit: { name: "USDT", code: "USDT", magnitude: 6 },
+        },
       },
       {
         id: STANDARD_FEE_OPTION_ID,

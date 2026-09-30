@@ -1,3 +1,4 @@
+import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { BigNumber } from "bignumber.js";
 
 export const SUN_PER_TRX = 1_000_000;
@@ -37,3 +38,25 @@ export const ENERGY_RENT_POLL_TIMEOUT_MS = 120_000;
 // The rental is already paid for by the time we poll, so a transient Tronify error must not abandon
 // it. `network()` retries GETs only and Tronify's status call is a POST, so the tolerance lives here.
 export const ENERGY_RENT_POLL_MAX_CONSECUTIVE_ERRORS = 5;
+
+/** What Tronify rent is paid in: coin-tron always sends `extraTrxNum`, which selects Tronify's USDT
+ * payment ("Flow 2"). */
+export const TRONIFY_PAY_ASSET = {
+  type: "trc20",
+  assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+  name: "Tether USD",
+  unit: { name: "USDT", code: "USDT", magnitude: 6 },
+} as const;
+
+/** A fresh copy per call, so a caller mutating the result never leaks into the shared constant. */
+export function tronifyPayAsset(): AssetInfo {
+  return { ...TRONIFY_PAY_ASSET, unit: { ...TRONIFY_PAY_ASSET.unit } };
+}
+
+/** A decimal USDT amount in USDT base units, rounded up so a sub-unit amount never under-states
+ * the rent. NaN when `amount` does not parse. */
+export function payAssetBaseUnits(amount: BigNumber.Value): BigNumber {
+  return new BigNumber(amount)
+    .shiftedBy(TRONIFY_PAY_ASSET.unit.magnitude)
+    .integerValue(BigNumber.ROUND_CEIL);
+}

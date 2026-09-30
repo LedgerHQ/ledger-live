@@ -14,6 +14,7 @@ import { trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { openURL } from "~/renderer/linking";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 
 type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;
@@ -47,6 +48,12 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const {
+    selectedFeeOptionId,
+    sponsoredFeeOptionId,
+    available: sponsoredAvailable,
+    intentReady: sponsoredIntentReady,
+  } = useSponsoredSend();
 
   const trackingProperties = useMemo(
     () => ({
@@ -134,8 +141,20 @@ export function useAmountScreen(): AmountScreenViewModel {
   );
 
   const onReview = useCallback(() => {
+    if (selectedFeeOptionId === sponsoredFeeOptionId && sponsoredAvailable) {
+      // Wait rather than go to SIGNATURE: the tx is marked sponsored, so its native fee wouldn't be locked.
+      if (!sponsoredIntentReady) return;
+      navigation.goToStep(SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE);
+      return;
+    }
     navigation.goToStep(SEND_FLOW_STEP.SIGNATURE);
-  }, [navigation]);
+  }, [
+    navigation,
+    selectedFeeOptionId,
+    sponsoredFeeOptionId,
+    sponsoredAvailable,
+    sponsoredIntentReady,
+  ]);
 
   const onSelectCoinControl = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.COIN_CONTROL);

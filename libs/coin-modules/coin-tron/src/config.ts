@@ -2,7 +2,7 @@ import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/co
 
 /** Settings for the Tronify energy-rent provider. */
 export type TronifyProviderConfig = {
-  /** Base URL of the Tronify REST API (e.g. https://open.tronify.io). */
+  /** Base URL of the Tronify REST API; defaults to the Ledger proxy (https://tronify.api.live.ledger.com). */
   url: string;
   /**
    * Channel name agreed with Tronify, sent as `sourceFlag` on every request that takes it

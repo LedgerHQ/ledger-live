@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, act, withFlagOverrides } from "tests/testSetup";
 import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -7,13 +7,18 @@ import type { Contact } from "@domain/entity-contact";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { BalanceTypeConfig } from "@ledgerhq/live-common/bridge/descriptor/types";
+import type { SponsoredCoinApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
+import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import type { SponsoredState } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { TRON_USDT_FEE_ASSET } from "../screens/Recipient/__integrations__/__fixtures__/accounts";
 import { SendWorkflow } from "../index";
 
-export { screen, waitFor };
+export { screen, waitFor, act };
 
-type SupportedMockFamily = "bitcoin" | "evm";
+type SupportedMockFamily = "bitcoin" | "evm" | "tron";
 type EvmTransaction = Extract<Transaction, { family: "evm" }>;
 type BtcTransaction = Extract<Transaction, { family: "bitcoin" }>;
+type TronTransaction = Extract<Transaction, { family: "tron" }>;
 
 export type MockTransactionStatus = {
   errors: Record<string, Error>;
@@ -33,6 +38,7 @@ let mockCoinFamily: Record<string, unknown> = {};
 const mockSetTransaction = jest.fn();
 const mockUpdateTransaction = jest.fn();
 const mockSetAccount = jest.fn();
+const mockUpdateAccount = jest.fn();
 const mockRecentAddressesStore = {
   getAddresses: jest.fn(() => []),
   addAddress: jest.fn(),
@@ -98,9 +104,26 @@ export const createMinimalBtcTransaction = (overrides?: Partial<BtcTransaction>)
   ...overrides,
 });
 
+const defaultTronTransaction: TronTransaction = {
+  family: "tron",
+  mode: "send",
+  amount: new BigNumber(0),
+  recipient: "",
+  useAllAmount: false,
+  subAccountId: null,
+};
+
+export const createMinimalTronTransaction = (
+  overrides?: Partial<TronTransaction>,
+): Transaction => ({
+  ...defaultTronTransaction,
+  ...overrides,
+});
+
 const transactionFactories: Record<SupportedMockFamily, () => Transaction> = {
   bitcoin: createMinimalBtcTransaction,
   evm: createMinimalEvmTransaction,
+  tron: createMinimalTronTransaction,
 };
 
 let mockTransaction: Transaction = createMinimalEvmTransaction();
@@ -159,6 +182,43 @@ export const setMockLLDCoinFamily = (family: Record<string, unknown> = {}) => {
   mockCoinFamily = family;
 };
 
+let mockSponsoredApi: SponsoredCoinApi | null = null;
+const mockSponsoredIntent: unknown = { kind: "mock-sponsored-intent" };
+
+function fakeSponsoredSeam(overrides: Partial<SponsoredCoinApi> = {}): SponsoredCoinApi {
+  return {
+    feeOptionId: "tronify",
+    providerName: "Tronify",
+    waivesErrorKeys: ["gasLimit"],
+    reservationDedupKey: jest.fn().mockReturnValue("1.5"),
+    listFeeOptions: jest.fn().mockResolvedValue([]),
+    estimateSponsoredFeeQuote: jest
+      .fn()
+      .mockResolvedValue({ feeAsset: TRON_USDT_FEE_ASSET, value: 0n, originalValue: 0n }),
+    buildEnergyRentRequest: jest.fn().mockResolvedValue({
+      payerAddress: "TPayerAddress",
+      receiverAddress: "TReceiverAddress",
+      energy: 1000n,
+      durationSeconds: 60,
+    }),
+    craftEnergyRentTransaction: jest.fn(),
+    submitEnergyRentPayment: jest.fn().mockResolvedValue(undefined),
+    getEnergyRentStatus: jest.fn().mockResolvedValue("pending"),
+    awaitEnergyDelivery: jest.fn().mockResolvedValue(undefined),
+    isEnergyDelivered: jest.fn().mockResolvedValue(false),
+    getEnergyRentSignaturePayload: jest
+      .fn()
+      .mockReturnValue({ toSign: "0a02abcd", paymentTxId: "txA" }),
+    buildSignedEnergyRentTransaction: jest.fn().mockReturnValue({}),
+    rentPayment: jest.fn().mockReturnValue({ asset: TRON_USDT_FEE_ASSET, amount: 0n }),
+    ...overrides,
+  };
+}
+
+export const setMockSponsoredSeam = (overrides: Partial<SponsoredCoinApi>) => {
+  mockSponsoredApi = fakeSponsoredSeam(overrides);
+};
+
 export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   jest.clearAllMocks();
   resetBridgeState(family);
@@ -168,10 +228,67 @@ export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   setMockContacts([], false);
   setMockBalanceTypeConfig(null);
   setMockLLDCoinFamily();
+  mockSponsoredApi = null;
+  resetMockOrchestration();
 };
 
 jest.mock("~/renderer/families", () => ({
   useLLDCoinFamily: () => mockCoinFamily,
+}));
+
+jest.mock("@ledgerhq/live-common/bridge/generic-coin-framework/sponsored", () => ({
+  getSponsoredCoinApi: jest.fn(() => Promise.resolve(mockSponsoredApi)),
+}));
+
+jest.mock("@ledgerhq/live-common/bridge/generic-coin-framework/buildIntent", () => ({
+  buildGenericTransactionIntent: jest.fn(() => Promise.resolve(mockSponsoredIntent)),
+}));
+
+// Fake orchestration: the real one's POLLING setInterval stops act() settling. Must start IDLE:
+// useSponsoredPhaseNavigator routes any other phase on mount, sponsored or not.
+const initialMockOrchestrationState: SponsoredState = {
+  phase: SPONSORED_PHASE.IDLE,
+  order: null,
+  toSign: null,
+  rentPayment: null,
+  payerAddress: null,
+  receiverAddress: null,
+  energyNeeded: null,
+  paymentTxId: null,
+  failureKind: null,
+  failureError: null,
+  contractDataResumePhase: SPONSORED_PHASE.RENT_SIGNING,
+};
+let mockOrchestrationState: SponsoredState = initialMockOrchestrationState;
+let mockOrchestrationSetState: ((state: SponsoredState) => void) | null = null;
+
+export const mockSponsoredOrchestrationActions = {
+  craftRent: jest.fn(() => Promise.resolve()),
+  startRentPayment: jest.fn(() => Promise.resolve()),
+  onTransferSuccess: jest.fn(),
+  onTransferError: jest.fn(),
+  setContractDataFailure: jest.fn(),
+  retry: jest.fn(),
+  reset: jest.fn(),
+};
+
+/** Call inside act(): re-renders the mounted mocked hook. */
+export const setMockOrchestrationState = (patch: Partial<SponsoredState>) => {
+  mockOrchestrationState = { ...mockOrchestrationState, ...patch };
+  mockOrchestrationSetState?.(mockOrchestrationState);
+};
+
+const resetMockOrchestration = () => {
+  mockOrchestrationState = initialMockOrchestrationState;
+  mockOrchestrationSetState = null;
+};
+
+jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration", () => ({
+  useSponsoredSendOrchestration: () => {
+    const [state, setState] = React.useState(mockOrchestrationState);
+    mockOrchestrationSetState = setState;
+    return { state, actions: mockSponsoredOrchestrationActions };
+  },
 }));
 
 jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
@@ -210,6 +327,7 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () =>
       bridgeError: null,
       bridgePending: mockBridgePending,
       setAccount: mockSetAccount,
+      updateAccount: mockUpdateAccount,
     };
   }),
 );
@@ -339,27 +457,28 @@ jest.mock("../screens/Recipient/components/RecipientQrScanner", () => {
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   useTransactionAction: jest.fn(() => jest.fn()),
+  useRawTransactionAction: jest.fn(() => jest.fn()),
 }));
 
+const mockStableBroadcast = jest.fn(() =>
+  Promise.resolve({
+    id: "op-1",
+    hash: "0xabc",
+    type: "OUT",
+    value: new BigNumber(1000),
+    fee: new BigNumber(100),
+    senders: ["sender"],
+    recipients: ["recipient"],
+    accountId: "mock-account-id",
+    date: new Date(),
+    blockHeight: null,
+    blockHash: null,
+    extra: {},
+  }),
+);
+
 jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
-  useBroadcast: jest.fn(() =>
-    jest.fn(() =>
-      Promise.resolve({
-        id: "op-1",
-        hash: "0xabc",
-        type: "OUT",
-        value: new BigNumber(1000),
-        fee: new BigNumber(100),
-        senders: ["sender"],
-        recipients: ["recipient"],
-        accountId: "mock-account-id",
-        date: new Date(),
-        blockHeight: null,
-        blockHash: null,
-        extra: {},
-      }),
-    ),
-  ),
+  useBroadcast: jest.fn(() => mockStableBroadcast),
 }));
 
 const ethCurrency = getCryptoCurrencyById("ethereum");
@@ -405,10 +524,28 @@ export const createRippleAccount = (overrides?: Partial<Account>): Account => {
   };
 };
 
+const tronCurrency = getCryptoCurrencyById("tron");
+
+export const VALID_TRON_RECIPIENT = "TWKsL6EqQgQXqhq6cJnP2sQrbUdRJDvUCX";
+
+export const createTronAccount = (overrides?: Partial<Account>): Account => {
+  const account = genAccount("send-tron-integration-test");
+  return {
+    ...account,
+    id: "mock-tron-account-id",
+    freshAddress: "TLsV52sRDL79HXGGm9yzwKibb6BeruhUzy",
+    balance: new BigNumber("100000000"),
+    spendableBalance: new BigNumber("100000000"),
+    currency: tronCurrency,
+    ...overrides,
+  };
+};
+
 export const renderSendFlow = (
   account: Account,
   params: Omit<NonNullable<React.ComponentProps<typeof SendWorkflow>["params"]>, "account"> = {},
   contacts: readonly Contact[] = [],
+  options?: { flags?: Parameters<typeof withFlagOverrides>[0] },
 ) =>
   render(<SendWorkflow isOpen onClose={jest.fn()} params={{ account, ...params }} />, {
     initialState: {
@@ -419,6 +556,7 @@ export const renderSendFlow = (
         counterValueExchange: "BINANCE",
         currenciesSettings: {},
       },
+      ...(options?.flags ? withFlagOverrides(options.flags) : {}),
     },
   });
 

@@ -13,7 +13,8 @@ import {
   TooltipContent,
   Tooltip,
 } from "@ledgerhq/lumen-ui-react";
-import { ChevronUpDown, Information, Check } from "@ledgerhq/lumen-ui-react/symbols";
+import { ChevronDown, ChevronUpDown, Information, Check } from "@ledgerhq/lumen-ui-react/symbols";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { useTranslation } from "react-i18next";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
@@ -21,7 +22,8 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import type { FeeSelectorOption } from "../../types";
+import type { FeeSelectorOption, SponsoredFeeDisplay } from "../../types";
+import { SponsoredFeeNudge, type SponsoredFeeNudgeProps } from "./SponsoredFeeNudge";
 
 type FeesDisplay = Readonly<{
   label: string;
@@ -40,9 +42,37 @@ type FeesSelector = Readonly<{
 type NetworkFeesMenuProps = Readonly<{
   display: FeesDisplay;
   feeSelector: FeesSelector;
+  sponsoredNudge?: SponsoredFeeNudgeProps;
+  sponsoredFee?: SponsoredFeeDisplay | null;
 }>;
 
-export function NetworkFeesMenu({ display, feeSelector }: NetworkFeesMenuProps) {
+function SponsoredFeeValue({ fee }: Readonly<{ fee: SponsoredFeeDisplay }>) {
+  return (
+    <span className="flex items-center gap-4">
+      {fee.feeAsset ? (
+        <CryptoIcon ledgerId={fee.feeAsset.ledgerId} ticker={fee.feeAsset.ticker} size={16} />
+      ) : null}
+      {fee.originalValue ? (
+        <span
+          className="body-3 text-muted line-through"
+          data-testid="send-sponsored-fee-original-value"
+        >
+          {fee.originalValue}
+        </span>
+      ) : null}
+      <span className="body-3 text-base" data-testid="send-sponsored-fee-value">
+        {fee.value}
+      </span>
+    </span>
+  );
+}
+
+export function NetworkFeesMenu({
+  display,
+  feeSelector,
+  sponsoredNudge,
+  sponsoredFee,
+}: NetworkFeesMenuProps) {
   const {
     label: feesLabel,
     value: feesValue,
@@ -69,6 +99,9 @@ export function NetworkFeesMenu({ display, feeSelector }: NetworkFeesMenuProps) 
   const coinControlOption = options.find(option => option.kind === "coinControl");
 
   const networkFeesInfo = sendFeatures.getNetworkFeesInfo(currency, { transaction, status });
+  const networkFeesDescription = networkFeesInfo
+    ? t(`newSendFlow.${networkFeesInfo.translationKey}.description`, networkFeesInfo.values)
+    : t("newSendFlow.feesPaid");
 
   const informationIcon = (
     <Tooltip>
@@ -76,16 +109,25 @@ export function NetworkFeesMenu({ display, feeSelector }: NetworkFeesMenuProps) 
         <Information size={16} className="text-muted" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>
-          {networkFeesInfo
-            ? t(`newSendFlow.${networkFeesInfo.translationKey}.description`, networkFeesInfo.values)
-            : t("newSendFlow.feesPaid")}
-        </p>
+        <p>{sponsoredFee ? sponsoredFee.description : networkFeesDescription}</p>
       </TooltipContent>
     </Tooltip>
   );
 
-  if (!canOpen) {
+  // A sponsored fee is priced by its provider, so the strategy presets don't apply to it; while
+  // one is offered, the fee value opens the fee payment step instead of the strategy menu.
+  if (!canOpen || sponsoredFee || sponsoredNudge?.available) {
+    const feeValue = sponsoredFee ? (
+      <SponsoredFeeValue fee={sponsoredFee} />
+    ) : (
+      <span className="flex items-center gap-4">
+        <span className="body-3 text-base">{feesValue}</span>
+        {feesSecondaryValue ? (
+          <span className="body-3 text-muted">{feesSecondaryValue}</span>
+        ) : null}
+      </span>
+    );
+
     return (
       <div
         className="flex w-full items-center justify-between mt-8 mb-12"
@@ -95,12 +137,22 @@ export function NetworkFeesMenu({ display, feeSelector }: NetworkFeesMenuProps) 
           <span className="body-3">{feesLabel}</span>
           {informationIcon}
         </span>
-        <span className="flex items-center gap-4">
-          <span className="body-3 text-base">{feesValue}</span>
-          {feesSecondaryValue ? (
-            <span className="body-3 text-muted">{feesSecondaryValue}</span>
-          ) : null}
-        </span>
+        {sponsoredNudge?.available ? (
+          <button
+            type="button"
+            onClick={sponsoredNudge.onOpen}
+            className="flex flex-col items-end gap-4 transition-colors hover:opacity-70 cursor-pointer"
+            data-testid="send-fee-payment-entry"
+          >
+            <SponsoredFeeNudge {...sponsoredNudge} />
+            <span className="flex items-center gap-4">
+              {feeValue}
+              <ChevronDown size={16} className="text-muted" />
+            </span>
+          </button>
+        ) : (
+          feeValue
+        )}
       </div>
     );
   }

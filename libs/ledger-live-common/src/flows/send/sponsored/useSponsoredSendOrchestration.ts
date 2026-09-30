@@ -10,6 +10,7 @@ import {
 import { getSponsoredCoinApi } from "../../../bridge/generic-coin-framework/sponsored";
 import type {
   EnergyRentOrder,
+  RentPayment,
   SponsoredCoinApi,
 } from "../../../bridge/generic-coin-framework/sponsored";
 import { SponsoredSendUnavailableError } from "./errors";
@@ -25,7 +26,7 @@ export type UseSponsoredSendOrchestrationParams = Readonly<{
   onRentPaymentBroadcast?: (info: {
     paymentTxId?: string;
     payerAddress: string;
-    reservedNativeAmount: bigint;
+    rentPayment: RentPayment;
   }) => void;
 }>;
 
@@ -44,7 +45,7 @@ const initialState: SponsoredState = {
   phase: SPONSORED_PHASE.IDLE,
   order: null,
   toSign: null,
-  reservedNativeAmount: null,
+  rentPayment: null,
   payerAddress: null,
   receiverAddress: null,
   energyNeeded: null,
@@ -60,7 +61,7 @@ type Action =
       order: EnergyRentOrder;
       toSign: string;
       paymentTxId: string;
-      reservedNativeAmount: bigint;
+      rentPayment: RentPayment;
       payerAddress: string;
       receiverAddress: string;
       energyNeeded: bigint;
@@ -89,7 +90,7 @@ function reducer(state: SponsoredState, action: Action): SponsoredState {
         phase: SPONSORED_PHASE.RENT_SIGNING,
         order: action.order,
         toSign: action.toSign,
-        reservedNativeAmount: action.reservedNativeAmount,
+        rentPayment: action.rentPayment,
         payerAddress: action.payerAddress,
         receiverAddress: action.receiverAddress,
         energyNeeded: action.energyNeeded,
@@ -179,7 +180,7 @@ function reducer(state: SponsoredState, action: Action): SponsoredState {
             phase: SPONSORED_PHASE.RENT_SIGNING,
             order: null,
             toSign: null,
-            reservedNativeAmount: null,
+            rentPayment: null,
             payerAddress: null,
             receiverAddress: null,
             energyNeeded: null,
@@ -439,7 +440,7 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
         order,
         toSign,
         paymentTxId,
-        reservedNativeAmount: seam.nativeRentAmount(order),
+        rentPayment: seam.rentPayment(order),
         payerAddress: request.payerAddress,
         receiverAddress: request.receiverAddress,
         energyNeeded: request.energy,
@@ -465,11 +466,11 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
         const paymentTxId = s.paymentTxId ?? undefined;
 
         const reserveRentPayment = () => {
-          if (!s.payerAddress || s.reservedNativeAmount == null) return;
+          if (!s.payerAddress || !s.rentPayment) return;
           params.onRentPaymentBroadcast?.({
             paymentTxId,
             payerAddress: s.payerAddress,
-            reservedNativeAmount: s.reservedNativeAmount,
+            rentPayment: s.rentPayment,
           });
         };
 
