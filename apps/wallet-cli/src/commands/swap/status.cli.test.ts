@@ -122,6 +122,7 @@ describe("swap status", () => {
     expect(error.message).toContain(`"oneinch"`);
     expect(error.message).toContain(`"uniswap"`);
     expect(error.message).not.toContain(`"lifi"`);
+    expect(error.message).toContain("Check which provider was used to create your swap");
     expect(error.message).not.toContain("--provider oneinch");
   });
 });

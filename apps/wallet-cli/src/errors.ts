@@ -5,7 +5,7 @@ function matchingProvidersHint(matchingProviders: string[]): string {
     return ` This swap belongs to provider "${onlyMatch}"; re-run with --provider ${onlyMatch}.`;
   }
   const quoted = matchingProviders.map(p => `"${p}"`).join(", ");
-  return ` Providers that know this swap id: ${quoted}; re-run with the one used by swap execute.`;
+  return ` Multiple providers report a status for this swap id: ${quoted}. Check which provider was used to create your swap, then re-run with that --provider.`;
 }
 
 export class SwapNotFoundForProviderError extends Error {
