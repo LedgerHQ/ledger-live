@@ -1,6 +1,8 @@
 import React from "react";
-import { LinearGradient } from "@ledgerhq/lumen-ui-rnative";
+import { LinearGradient, useTheme } from "@ledgerhq/lumen-ui-rnative";
+import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { Halftone } from "./Halftone.native";
+import { CardFade } from "./CardFade.native";
 import { CARD_GRADIENT_END, CARD_GRADIENT_START } from "./cardColors";
 
 const CARD_ASPECT_RATIO = 343 / 193;
@@ -10,7 +12,14 @@ const CARD_GRADIENT_STOPS = [
   { color: CARD_GRADIENT_END, offset: 1 },
 ] as const;
 
-export function CardArtwork() {
+type CardArtworkProps = Readonly<{
+  isFaded?: boolean;
+}>;
+
+export function CardArtwork({ isFaded = false }: CardArtworkProps) {
+  const { theme } = useTheme();
+  const fadeColor = theme.colors.bg?.base ?? ledgerLiveThemes.light.colors.bg.base;
+
   return (
     <LinearGradient
       direction={120}
@@ -25,6 +34,7 @@ export function CardArtwork() {
     >
       <Halftone variant="right" />
       <Halftone variant="left" />
+      {isFaded ? <CardFade color={fadeColor} /> : null}
     </LinearGradient>
   );
 }
