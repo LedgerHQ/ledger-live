@@ -83,6 +83,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPortfolio,
     onNavigateToPayTab,
     onNavigateToPaySuccess,
+    onNavigateToPaySuccessMe,
     onNavigateToSendSuccess,
     hasSeenLoginIntro,
     resetPayCardLoginIntroSeen,
@@ -93,6 +94,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPortfolio ||
     onNavigateToPayTab ||
     onNavigateToPaySuccess ||
+    onNavigateToPaySuccessMe ||
     onNavigateToSendSuccess,
   );
   const [screen, setScreen] = useState<"tool" | SubScreenName>("tool");
@@ -268,6 +270,11 @@ function PayCard(props: Readonly<PayCardToolProps>) {
                 {onNavigateToPaySuccess ? (
                   <Button appearance="gray" size="sm" onPress={onNavigateToPaySuccess}>
                     Pay contact success
+                  </Button>
+                ) : null}
+                {onNavigateToPaySuccessMe ? (
+                  <Button appearance="gray" size="sm" onPress={onNavigateToPaySuccessMe}>
+                    Pay contact success (Me)
                   </Button>
                 ) : null}
                 {onNavigateToSendSuccess ? (

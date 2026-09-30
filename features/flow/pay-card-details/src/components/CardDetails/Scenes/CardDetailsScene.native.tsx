@@ -41,6 +41,7 @@ export function CardDetailsScene({
           copy={assetDetails.viewModel.dialogCopy}
           formatBalance={assetDetails.viewModel.formatBalance}
           formatters={assetDetails.viewModel.formatters}
+          discreet={assetDetails.viewModel.discreet}
           onTopUp={assetDetails.viewModel.onTopUpPress}
           onWithdraw={assetDetails.viewModel.onWithdrawPress}
           onShowHistory={assetDetails.viewModel.onShowHistoryPress}

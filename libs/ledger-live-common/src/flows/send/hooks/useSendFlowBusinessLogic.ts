@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { FLOW_STATUS, type FlowStatus } from "../../wizard/types";
 import { useSendFlowAccount } from "./useSendFlowAccount";
+import { useSyncSendFlowAccount } from "./useSyncSendFlowAccount";
 import { getSendUiConfig } from "../uiConfig";
 import { canSkipRecipientStep } from "../types";
 import type {
@@ -14,8 +15,12 @@ import type {
   SendFlowTransactionState,
 } from "../types";
 
+const NO_ACCOUNTS: readonly Account[] = [];
+
 type UseSendFlowBusinessLogicParams = Readonly<{
   initParams?: SendFlowInitParams;
+  /** Store accounts, used to keep the flow on the synced version of its account. */
+  accounts?: readonly Account[];
 
   useOperationHook: (params: {
     account: AccountLike | null;
@@ -67,6 +72,7 @@ type UseSendFlowBusinessLogicResult = Readonly<{
  */
 export function useSendFlowBusinessLogic({
   initParams,
+  accounts = NO_ACCOUNTS,
   useOperationHook,
   useTransactionHook,
 }: UseSendFlowBusinessLogicParams): UseSendFlowBusinessLogicResult {
@@ -105,6 +111,23 @@ export function useSendFlowBusinessLogic({
     },
     [accountHook, transactionHook.actions],
   );
+
+  const { setAccount: setFlowAccount } = accountHook;
+  const { updateAccount: updateTransactionAccount } = transactionHook.actions;
+  const handleAccountRefreshed = useCallback(
+    (account: AccountLike, parentAccount: Account | null) => {
+      setFlowAccount(account, parentAccount);
+      updateTransactionAccount(account, parentAccount);
+    },
+    [setFlowAccount, updateTransactionAccount],
+  );
+
+  useSyncSendFlowAccount({
+    account: accountHook.state.account,
+    parentAccount: accountHook.state.parentAccount,
+    accounts,
+    onAccountRefreshed: handleAccountRefreshed,
+  });
 
   const handleRecipientSet = useCallback(
     (newRecipient: RecipientData) => {

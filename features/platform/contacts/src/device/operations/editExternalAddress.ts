@@ -53,7 +53,7 @@ export function createEditExternalAddressOperation(
     throw new Error("Contact device credentials are required to edit an address");
   }
 
-  const context = resolveContactDeviceContext(input.address.currencyId);
+  const context = resolveContactDeviceContext(input.address.currencyId, input.config);
   return {
     intentDefinition: intentDefinition,
     intentInput: {

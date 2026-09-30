@@ -171,9 +171,6 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
         magnitude: 0,
       },
     ],
-    ethereumLikeInfo: {
-      chainId: 1,
-    },
     explorerViews: [
       {
         tx: "https://etherscan.io/tx/$hash",
@@ -182,7 +179,6 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       },
     ],
     keywords: ["eth", "ethereum"],
-    explorerId: "eth",
   },
   {
     type: "CryptoCurrency",

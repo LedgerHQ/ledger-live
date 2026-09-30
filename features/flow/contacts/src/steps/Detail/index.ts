@@ -11,6 +11,7 @@ export * from "./useContactAddressDetailActionsViewModel";
 export * from "./useContactAddressDetailActionsFlowViewModel";
 export * from "./model/viewModel";
 export * from "./model/defaultContactAddressCurrencyPort";
+export * from "./model/resolveContactAddressSupportsDomain";
 export * from "./model/resolveContactAddressIcon";
 export * from "./utils/truncateContactAddress";
 export * from "./model/contactDetailSharedState";

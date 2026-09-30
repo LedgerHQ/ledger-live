@@ -1,20 +1,15 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { ContactId } from "@domain/entity-contact";
-import {
-  createMeDisplayNameFormatter,
-  useContacts,
-  useContactsMeContact,
-} from "@features/platform-contacts";
+import { useContacts, useContactsMeContact } from "@features/platform-contacts";
 import {
   useContactsSearchViewModel,
   type ContactsListViewLabels,
 } from "@features/flow-contacts-list";
 import type { AddNewContactHeaderState } from "LLD/features/Send/context/AddNewContactHeaderContext";
 import { useSendPrefillAddAddressFlow } from "LLD/features/Send/hooks/useSendPrefillAddAddressFlow";
-import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 
 const SELECT_CONTACT_HEADER_STATE: AddNewContactHeaderState = {
   titleKey: "newSendFlow.addContact.selectContact",
@@ -34,23 +29,23 @@ export function useAddToExistingContactViewModel() {
   const labels = useMemo(
     (): Pick<
       ContactsListViewLabels,
-      "searchPlaceholder" | "searchNoResults" | "formatAddressCount" | "formatMeDisplayName"
+      "searchPlaceholder" | "searchNoResults" | "formatAddressCount"
     > => ({
       searchPlaceholder: t("contacts.searchPlaceholder"),
       searchNoResults: t("contacts.searchNoResults"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
     }),
     [t],
   );
 
-  const listViewModel = useContactsSearchViewModel(searchQuery, labels.formatMeDisplayName);
+  const listViewModel = useContactsSearchViewModel(searchQuery);
   const trackingProperties = useSendFlowTrackingProperties();
 
   useEffect(() => {
-    trackPage("Modal send - select existing contact", null, trackingProperties);
+    trackPage({
+      category: "Modal send - select existing contact",
+      props: trackingProperties,
+    });
   }, [trackingProperties]);
 
   const onSearchInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
@@ -83,7 +78,6 @@ export function useAddToExistingContactViewModel() {
     listViewModel,
     searchQuery,
     labels,
-    meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
     onSearchInputChange,
     onSelectContact,
   };

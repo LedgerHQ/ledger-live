@@ -20,7 +20,7 @@ import IconTrash from "~/renderer/icons/Trash";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
 import { Button as LumenButton } from "@ledgerhq/lumen-ui-react";
 import { ArrowDown } from "@ledgerhq/lumen-ui-react/symbols";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 const ExternalLinkIconContainer = styled.span`
   display: inline-flex;

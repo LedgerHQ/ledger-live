@@ -1,13 +1,13 @@
 # Builds a `clarinet-cli` binary with the fixes below applied on top of a pinned
-# `stx-labs/clarinet` commit -- see the package README's "Known limitations" for full detail:
-# 1. The published `ghcr.io/stx-labs/clarinet` image ships `bollard` 0.17, which mis-parses some
-#    Docker Engine API responses as empty JSON and breaks the postgres container boot (reproduces
-#    on native arm64 and, being an HTTP JSON-parsing bug unrelated to CPU architecture, is expected
-#    to reproduce on amd64 too).
-# 2. A genuine upstream bug: the generated `Stacks.toml`'s `[burnchain].rpc_port` is set from
-#    `orchestrator_ingestion_port` (clarinet's own event-listener port) instead of
-#    `bitcoin_node_rpc_port` (bitcoind's actual RPC port), so `stacks-node` tries to reach bitcoind
-#    on the wrong port and its burnchain sync never progresses.
+# `stx-labs/clarinet` commit (v3.24.1) -- see the package README for the full picture:
+# 1. `bollard` (Clarinet's Docker-API client) 0.17 mis-parses some Docker Engine API responses as
+#    empty JSON and breaks the postgres container boot. `bollard-fix.patch` bumps it to 0.18 (plus
+#    the one call-site change that needs) and retries a postgres container that vanishes on start.
+# 2. Deliberately NOT patched: the generated `Stacks.toml`'s `[burnchain].rpc_port` points at
+#    `orchestrator_ingestion_port`. That is Clarinet's Bitcoin RPC proxy, not a typo: the
+#    stacks-node reaches bitcoind through it, and Clarinet mines the next block whenever it relays a
+#    miner's block-commit (`NotifyBitcoinTransactionProxied`). Redirecting it straight to bitcoind
+#    stops Clarinet from mining at all.
 # 3. Clarinet gives up waiting on the bitcoind container after ~15s (30 attempts * 500ms) and
 #    treats that as fatal, tearing the whole devnet down -- too tight on a CI runner cold-pulling
 #    the bitcoind image, verified reproducing there (never reproduces locally, where the image is
@@ -20,17 +20,29 @@
 #    permissions, so on a real Linux Docker host (unlike Docker Desktop for Mac) the container's
 #    `user: "1000"` cannot write into it -- bitcoind crashes on boot. Fixed by
 #    `bitcoin-node-datadir-permissions.patch` (chmod 777 right after creation).
+# 6. When booting from the snapshot, Clarinet copies the bitcoin chain state into the bitcoind
+#    container with `docker cp` after starting it. That races bitcoind: on Linux it can't read the
+#    copied files (they don't get an owner uid 1000 can use), and when it has already begun its own
+#    chain state the stacks-node's snapshot no longer matches its blocks ("Non-contiguous header",
+#    intermittent). Fixed by `bitcoin-node-snapshot-host-copy.patch`: with the data directory
+#    bind-mounted, the snapshot is copied on the host into that directory before the container is
+#    created, and made world-readable and writable.
 # Built locally/in CI rather than depending on an upstream release picking up any of these.
-FROM rust:1-bookworm AS builder
+# Base image and nightly pinned (not `rust:1-bookworm` / plain `nightly`): both floated, so a moved
+# image or nightly could break the build with no change on our side.
+# RUST_TOOLCHAIN is the single source: `src/devnet.ts` reads this line for the local (non-Docker)
+# build, and CI's clarinet cache key hashes this directory, so bumping it here rebuilds everywhere.
+FROM rust:1.98.1-bookworm@sha256:93ce27a88655056a51dbdd8f5f2d7ddc071c7b0070fb288a37b5a285fc83971e AS builder
 
-RUN rustup toolchain install nightly && rustup default nightly
+ARG RUST_TOOLCHAIN=nightly-2026-09-25
+RUN rustup toolchain install ${RUST_TOOLCHAIN} && rustup default ${RUST_TOOLCHAIN}
 RUN apt-get update \
   && apt-get install -y --no-install-recommends git pkg-config libssl-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Pinned, not `main`/`master`: reproducibility, and this is the exact commit the fix was verified
 # against.
-ARG CLARINET_COMMIT=4220f34773a20960ce955a6b76590c97751e8a60
+ARG CLARINET_COMMIT=a83c93231fde5391912f88c98c4175b0f359a2ba
 RUN git clone https://github.com/stx-labs/clarinet.git /src \
   && cd /src && git checkout ${CLARINET_COMMIT}
 
@@ -46,10 +58,13 @@ RUN cd /src && git apply /tmp/bitcoin-node-no-autoremove.patch
 COPY bitcoin-node-datadir-permissions.patch /tmp/bitcoin-node-datadir-permissions.patch
 RUN cd /src && git apply /tmp/bitcoin-node-datadir-permissions.patch
 
-# Nightly is required (not just installed defensively): a transitive `stacks-core`/`stacks-common`
-# git dependency at this commit uses unstable features (`debug_closure_helpers`, `slice_as_array`)
-# that don't compile on stable.
-RUN cd /src && cargo +nightly build --release -p clarinet-cli
+COPY bitcoin-node-snapshot-host-copy.patch /tmp/bitcoin-node-snapshot-host-copy.patch
+RUN cd /src && git apply /tmp/bitcoin-node-snapshot-host-copy.patch
+
+# Nightly because the previous Clarinet pin needed unstable features (`debug_closure_helpers`,
+# `slice_as_array`) through a transitive `stacks-core` git dependency. v3.24.1 declares
+# `channel = "stable"` in its own `rust-toolchain`, so a pinned stable toolchain would likely do too.
+RUN cd /src && cargo +${RUST_TOOLCHAIN} build --release -p clarinet-cli
 
 FROM debian:bookworm-slim
 RUN apt-get update \

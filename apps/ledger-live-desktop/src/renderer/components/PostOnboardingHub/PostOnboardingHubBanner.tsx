@@ -5,7 +5,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useNavigateToPostOnboardingHubCallback } from "./logic/useNavigateToPostOnboardingHubCallback";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { Card } from "../Box";
 import ActionCard from "../ContentCards/ActionCard";
 import StaxBannerIllustration from "./StaxBannerIllustration";

@@ -1,6 +1,8 @@
 import React from "react";
 import { render, screen, fireEvent } from "tests/testSetup";
+import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { ETH_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
+import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import NoFundsStakeModal from "./index";
 
 const mockNavigate = jest.fn();
@@ -92,8 +94,25 @@ describe("NoFundsStakeModal", () => {
 
       const state = mockNavigate.mock.calls[0][1].state;
       expect(state.defaultCurrency).toEqual({ toCurrencyId: "ethereum/erc20/usd__coin" });
+      expect(state.defaultToken).toEqual({ toTokenId: "ethereum/erc20/usd__coin" });
       expect(state.defaultAccountId).toBe(usdcSubAccount.id);
       expect(state.defaultParentAccountId).toBe(ethAccountWithUsdc.id);
+    });
+
+    it("pre-fills the token instead of the account when the token account is absent from the store", () => {
+      const syntheticUsdcAccount = makeEmptyTokenAccount(ETH_ACCOUNT, usdcToken);
+
+      render(<NoFundsStakeModal account={syntheticUsdcAccount} parentAccount={ETH_ACCOUNT} />, {
+        initialState: modalOpenState,
+      });
+
+      fireEvent.click(screen.getByText("Swap"));
+
+      const state = mockNavigate.mock.calls[0][1].state;
+      expect(state.defaultToken).toEqual({ toTokenId: usdcToken.id });
+      expect(state.defaultCurrency).toEqual({ toCurrencyId: usdcToken.id });
+      expect(state.defaultAccountId).toBeUndefined();
+      expect(state.defaultParentAccountId).toBeUndefined();
     });
   });
 

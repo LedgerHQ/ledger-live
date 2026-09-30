@@ -1,6 +1,6 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent } from "@ledgerhq/lumen-ui-react";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import type { AnalyticsConsentDialogPhase } from "../types";
 import { AnalyticsConsentDialogCopyBlock } from "../components/AnalyticsConsentDialogCopyBlock";
 import { AnalyticsConsentDialogFooterActions } from "../components/AnalyticsConsentDialogFooterActions";

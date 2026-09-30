@@ -11,6 +11,7 @@ import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { Snow } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
 import { CardArtwork } from "../CardArtwork/CardArtwork";
+import { CardFade } from "../CardArtwork/CardFade";
 import type { CardVisualViewProps } from "../../types";
 
 export function CardVisualView({
@@ -19,6 +20,8 @@ export function CardVisualView({
   balanceLabel,
   isLoading = false,
   isFrozen,
+  fadeColor,
+  discreet,
 }: CardVisualViewProps) {
   const { i18n } = useTranslation();
 
@@ -28,25 +31,31 @@ export function CardVisualView({
       colorScheme="dark"
       locale={i18n.language as SupportedLocale}
     >
-      <Box style={{ position: "relative" }} testID="card-visual">
+      <Box
+        lx={{ borderRadius: "lg" }}
+        style={{ position: "relative", overflow: "hidden" }}
+        testID="card-visual"
+      >
         <Box style={{ opacity: isFrozen ? 0.5 : 1 }}>
           <CardArtwork />
           <Box
-            lx={{ gap: "s8", padding: "s16" }}
+            lx={{ gap: "s4", padding: "s16" }}
             style={{ position: "absolute", top: 0, left: 0, right: 0 }}
           >
-            <Text typography="body2" lx={{ color: "muted" }}>
+            <Text typography="body3" lx={{ color: "muted" }}>
               {balanceLabel}
             </Text>
             <AmountDisplay
               value={balance}
               formatter={formatCountervalue}
               loading={isLoading}
+              hidden={discreet}
               size="sm"
               testID="card-visual-amount"
             />
           </Box>
         </Box>
+        {fadeColor ? <CardFade color={fadeColor} /> : null}
 
         {isFrozen ? (
           <Box

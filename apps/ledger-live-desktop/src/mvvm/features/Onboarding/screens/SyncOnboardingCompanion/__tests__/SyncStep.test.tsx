@@ -54,7 +54,7 @@ describe("SyncStep", () => {
       </>,
     );
 
-    const skipButton = screen.getByTestId("skip-cta-button");
+    const skipButton = screen.getByTestId("onboarding-sync-skip");
 
     expect(skipButton).toBeVisible();
 

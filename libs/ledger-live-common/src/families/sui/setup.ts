@@ -20,28 +20,29 @@ const createSigner: CreateSigner<SuiSigner> = (transport: Transport) => {
  * `setSuiTransport`); read by every `getCurrencyConfig` call. Mirrors the
  * `ldmkCosmosSigner` pattern.
  */
-let _suiTransport: SuiTransport = "json";
+let _suiTransport: SuiTransport = "grpc";
 
 export const setSuiTransport = (transport: SuiTransport): void => {
   _suiTransport = transport;
 };
 
-const SUI_TRANSPORTS: readonly SuiTransport[] = ["json", "grpc", "graphql"];
+const SUI_TRANSPORTS: readonly SuiTransport[] = ["grpc", "graphql"];
 
 type SuiTransportFeature = { enabled?: boolean; params?: { transport?: string } } | null;
 
 /**
- * Resolves the `suiTransport` feature flag to a transport, defaulting to `json`.
+ * Resolves the `suiTransport` feature flag to a transport, defaulting to `grpc`.
  *
  * Remote flag payloads reach the app unparsed — the registry's zod schemas supply defaults but do not
  * validate the fetched config — so neither field is trusted to hold its declared type. `enabled` must
  * be exactly `true`, because a truthiness test would let `"false"` switch a transport on, and an
- * unrecognised `params.transport` falls back rather than being returned as a `SuiTransport`.
+ * unrecognised `params.transport` (including the retired `json`) falls back rather than being
+ * returned as a `SuiTransport`.
  */
 export const resolveSuiTransport = (suiTransportFeature?: SuiTransportFeature): SuiTransport => {
-  if (suiTransportFeature?.enabled !== true) return "json";
+  if (suiTransportFeature?.enabled !== true) return "grpc";
   const transport = suiTransportFeature.params?.transport;
-  return SUI_TRANSPORTS.find(candidate => candidate === transport) ?? "json";
+  return SUI_TRANSPORTS.find(candidate => candidate === transport) ?? "grpc";
 };
 
 const getCurrencyConfig = (currencyId?: string): SuiCoinConfig => {

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
+import React from "react";
+import { getConnectDeviceSubError, useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
 import {
   BaseDiscoveryErrorTypes,
   ConnectDeviceUIStateTypes,
@@ -11,15 +11,13 @@ import { InfoState } from "@shared/ui-info-state";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import {
   CONNECT_DEVICE_BUTTON,
-  getTrackingSubError,
   getTrackingTransport,
   PAGE_CONNECT_DEVICE,
-  setIsInTerminalConnectDeviceError,
   trackConnectDeviceButtonClicked,
 } from "../../utils/trackDeviceIntent";
 
 type DiscoveryErrorStateProps = {
-  state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.DiscoveryError }>;
+  state: Extract<ConnectDeviceUIState, { type: typeof ConnectDeviceUIStateTypes.DiscoveryError }>;
 };
 
 export function DiscoveryErrorState({
@@ -28,11 +26,6 @@ export function DiscoveryErrorState({
   const { t } = useTranslation();
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const trackingTransport = getTrackingTransport(state.error.transportId);
-
-  useEffect(() => {
-    setIsInTerminalConnectDeviceError(!state.retry);
-    return () => setIsInTerminalConnectDeviceError(false);
-  }, [state.retry]);
 
   if (state.error.type !== BaseDiscoveryErrorTypes.Unknown) {
     return null;
@@ -43,7 +36,7 @@ export function DiscoveryErrorState({
       <TrackDIEScreen
         category={PAGE_CONNECT_DEVICE.DiscoveryError}
         {...(trackingTransport ? { transport: trackingTransport } : {})}
-        subError={getTrackingSubError(state.error.type)}
+        subError={getConnectDeviceSubError(state.error)}
         refreshSource
       />
       <InfoState

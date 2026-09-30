@@ -14,8 +14,7 @@ import { buildUnrealisedReturnCard } from "../builders/buildUnrealisedReturnCard
 import { buildInfoCard } from "../builders/buildInfoCard";
 import type { PnlNamespace, PnlNumbers, PnlSecondaryCardConfig, PnlViewModel } from "../types";
 import type { PnLCardProps } from "../components/PnLCard/types";
-import { track } from "~/renderer/analytics/segment";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage, track } from "@shared/analytics";
 
 const ZERO = new BigNumber(0);
 
@@ -55,7 +54,7 @@ export function usePnlViewModelBase({
     setDetailOpen(true);
     track("button_clicked", {
       button: "Pnl details",
-      page: currentRouteNameRef.current,
+      page: getCurrentTrackingPage(),
     });
   }, []);
 

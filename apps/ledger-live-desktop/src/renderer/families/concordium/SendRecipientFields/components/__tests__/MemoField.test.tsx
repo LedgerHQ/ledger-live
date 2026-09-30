@@ -1,8 +1,14 @@
 import React from "react";
 import { screen, fireEvent, render } from "tests/testSetup";
 import BigNumber from "bignumber.js";
+import { track } from "@shared/analytics";
 import MemoField from "../MemoField";
 import { createMockAccount, createMockConcordiumCurrency } from "../../../__tests__/testUtils";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getAccountBridge: jest.fn(() => {
@@ -67,7 +73,6 @@ describe("MemoField", () => {
   });
 
   it("should track memo input event", () => {
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
     const trackProperties = { flow: "send" };
 
     render(<MemoField {...defaultProps} trackProperties={trackProperties} />);

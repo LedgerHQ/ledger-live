@@ -18,6 +18,34 @@ const getPaginationDirection = (fetchAllPages: boolean, order: string) => {
   return order === "asc" ? "_gt" : "_lt";
 };
 
+const toNanoseconds = (timestamp: string): string => {
+  const [seconds, fraction = ""] = timestamp.split(".");
+  return seconds + fraction.padEnd(9, "0");
+};
+
+const ERC20_TRANSFERS_QUERY = `
+  query GetERC20Transfers($where: erc_token_transfer_bool_exp!, $order: order_by!, $limit: Int!) {
+    erc_token_transfer(where: $where, order_by: { consensus_timestamp: $order }, limit: $limit) {
+      token_id
+      token_evm_address
+      sender_evm_address
+      sender_account_id
+      receiver_evm_address
+      receiver_account_id
+      payer_account_id
+      amount
+      transfer_type
+      consensus_timestamp
+      transaction_hash
+    }
+  }
+`;
+
+const ERC20_TRANSFER_FILTER = {
+  transfer_type: { _in: ["transfer", "mint", "burn"] },
+  contract_type: { _eq: "ERC_20" },
+};
+
 const throwOnGraphQLErrors: <T>(
   res: LiveNetworkResponse<HgraphResponse<T>>,
   context: string,
@@ -39,12 +67,9 @@ async function getLatestIndexedConsensusTimestamp({
     method: "POST",
     data: {
       query: `
-        query LatestTransaction {
-          ethereum_transaction(
-            limit: 1, 
-            order_by: { consensus_timestamp: desc }
-          ) {
-            consensus_timestamp
+        query ErcWatermark {
+          erc_watermark(where: { job_name: { _eq: "transfer_indexing" } }) {
+            last_processed_ns
           }
         }
       `,
@@ -53,10 +78,10 @@ async function getLatestIndexedConsensusTimestamp({
 
   throwOnGraphQLErrors(res, "latest indexed consensus timestamp");
 
-  const lastTransactionTimestamp = res.data.data.ethereum_transaction[0]?.consensus_timestamp;
-  invariant(lastTransactionTimestamp, "No transactions found in Hgraph");
+  const lastProcessedNs = res.data.data.erc_watermark[0]?.last_processed_ns;
+  invariant(lastProcessedNs, "No ERC20 watermark found in Hgraph");
 
-  return new BigNumber(lastTransactionTimestamp);
+  return new BigNumber(lastProcessedNs);
 }
 
 async function getERC20Balances({
@@ -106,6 +131,7 @@ async function getERC20Transfers({
   limit = 100,
   order = "desc",
   fetchAllPages,
+  minTimestamp,
 }: {
   configOrCurrencyId: HederaCoinConfig | string;
   address: string;
@@ -114,6 +140,7 @@ async function getERC20Transfers({
   timestamp?: string;
   limit?: number;
   order?: "asc" | "desc";
+  minTimestamp?: string;
 }): Promise<ERC20TokenTransfer[]> {
   if (tokenEvmAddresses.length === 0) {
     return [];
@@ -122,50 +149,27 @@ async function getERC20Transfers({
   const config = resolveConfig(configOrCurrencyId);
   let hasMorePages = true;
   let cursor = timestamp?.replace(".", "") ?? null;
+  const minTimestampCursor = minTimestamp ? toNanoseconds(minTimestamp) : null;
   const transfers: ERC20TokenTransfer[] = [];
   const accountId = address.split(".").pop();
 
   while (hasMorePages) {
+    const where = {
+      ...ERC20_TRANSFER_FILTER,
+      token_evm_address: { _in: tokenEvmAddresses },
+      consensus_timestamp: {
+        ...(cursor && { [getPaginationDirection(fetchAllPages, order)]: cursor }),
+        ...(minTimestampCursor && { _gte: minTimestampCursor }),
+      },
+      _or: [{ sender_account_id: { _eq: accountId } }, { receiver_account_id: { _eq: accountId } }],
+    };
+
     const res = await network<HgraphErcTokenTransferResponse>({
       url: config.apiUrls.hgraph,
       method: "POST",
       data: {
-        query: `
-          query GetAccountTransfers($accountId: bigint!, $tokenEvmAddresses: [String!]!, $cursor: bigint, $limit: Int!) {
-            erc_token_transfer(
-                where: {
-                    transfer_type: { _in: ["transfer", "mint", "burn"] }
-                    contract_type: { _eq: "ERC_20" }
-                    token_evm_address: { _in: $tokenEvmAddresses }
-                    ${cursor ? `consensus_timestamp: { ${getPaginationDirection(fetchAllPages, order)}: $cursor }` : ""}
-                    _or: [
-                        { sender_account_id: { _eq: $accountId } }
-                        { receiver_account_id: { _eq: $accountId } }
-                    ]
-                }
-                order_by: { consensus_timestamp: ${order} }
-                limit: $limit
-            ) {
-                token_id
-                token_evm_address
-                sender_evm_address
-                sender_account_id
-                receiver_evm_address
-                receiver_account_id
-                payer_account_id
-                amount
-                transfer_type
-                consensus_timestamp
-                transaction_hash
-            }
-          }
-        `,
-        variables: {
-          accountId,
-          tokenEvmAddresses,
-          limit,
-          ...(cursor && { cursor }),
-        },
+        query: ERC20_TRANSFERS_QUERY,
+        variables: { where, order, limit },
       },
     });
 
@@ -220,43 +224,20 @@ async function getERC20TransfersByTimestampRange({
   const normalizedEndTimestamp = endTimestamp.replace(".", "");
 
   while (hasMorePages) {
+    const where = {
+      ...ERC20_TRANSFER_FILTER,
+      consensus_timestamp: {
+        ...(cursor ? { _gt: cursor } : { _gte: normalizedStartTimestamp }),
+        _lt: normalizedEndTimestamp,
+      },
+    };
+
     const res: LiveNetworkResponse<HgraphErcTokenTransferResponse> = await network({
       url: config.apiUrls.hgraph,
       method: "POST",
       data: {
-        query: `
-          query GetAccountTransfers(${cursor ? "$cursor: bigint!" : "$startTimestamp: bigint!"}, $endTimestamp: bigint!, $limit: Int!) {
-            erc_token_transfer(
-                where: {
-                    transfer_type: { _in: ["transfer", "mint", "burn"] }
-                    contract_type: { _eq: "ERC_20" }
-                    consensus_timestamp: { 
-                      ${cursor ? "_gt: $cursor" : "_gte: $startTimestamp"}
-                      _lt: $endTimestamp 
-                    }
-                }
-                order_by: { consensus_timestamp: ${order} }
-                limit: $limit
-            ) {
-                token_id
-                token_evm_address
-                sender_evm_address
-                sender_account_id
-                receiver_evm_address
-                receiver_account_id
-                payer_account_id
-                amount
-                transfer_type
-                consensus_timestamp
-                transaction_hash
-            }
-          }
-        `,
-        variables: {
-          endTimestamp: normalizedEndTimestamp,
-          limit,
-          ...(cursor ? { cursor } : { startTimestamp: normalizedStartTimestamp }),
-        },
+        query: ERC20_TRANSFERS_QUERY,
+        variables: { where, order, limit },
       },
     });
 

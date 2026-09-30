@@ -1,7 +1,7 @@
 import { renderHook, act } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useHiddenBannerViewModel } from "../useHiddenBannerViewModel";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 

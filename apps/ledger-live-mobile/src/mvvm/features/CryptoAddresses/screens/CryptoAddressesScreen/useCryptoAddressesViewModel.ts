@@ -14,7 +14,7 @@ import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/Acc
 import { Account } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate } from "@domain/entity-market-countervalues";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useTranslation } from "~/context/Locale";
 import BigNumber from "bignumber.js";

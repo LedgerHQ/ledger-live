@@ -23,8 +23,8 @@ const baseArgs = {
 describe("getRecipientHeaderPresentation", () => {
   it("should return the contact when the address belongs to a contact", () => {
     expect(getRecipientHeaderPresentation(baseArgs)).toEqual({
-      label: "Benoit Jean",
-      contact: { id: "contact-benoit", name: "Benoit Jean" },
+      recipientDisplayValue: FORMATTED_ADDRESS,
+      contact: { id: "contact-benoit", name: "Benoit Jean", isMe: false },
     });
   });
 
@@ -33,13 +33,33 @@ describe("getRecipientHeaderPresentation", () => {
       getRecipientHeaderPresentation({
         ...baseArgs,
         recipient: { address: ADDRESS, ensName: "vitalik.eth" },
-      }).label,
+      }).contact?.name,
     ).toBe("Benoit Jean");
+  });
+
+  it("should prefer the explicitly selected contact when an address is saved more than once", () => {
+    const duplicateContact = {
+      ...contacts[0],
+      id: "contact-alice",
+      name: "Alice",
+      addresses: [{ ...contacts[0].addresses[0], id: "address-2" }],
+    };
+
+    expect(
+      getRecipientHeaderPresentation({
+        ...baseArgs,
+        contacts: [...contacts, duplicateContact],
+        recipient: { address: ADDRESS, contactId: "contact-alice" },
+      }),
+    ).toEqual({
+      recipientDisplayValue: FORMATTED_ADDRESS,
+      contact: { id: "contact-alice", name: "Alice", isMe: false },
+    });
   });
 
   it("should fall back to the formatted address when no contact matches", () => {
     expect(getRecipientHeaderPresentation({ ...baseArgs, contacts: [] })).toEqual({
-      label: FORMATTED_ADDRESS,
+      recipientDisplayValue: FORMATTED_ADDRESS,
       contact: undefined,
     });
   });
@@ -47,19 +67,19 @@ describe("getRecipientHeaderPresentation", () => {
   it("should fall back to the formatted address when the contacts feature is disabled", () => {
     expect(
       getRecipientHeaderPresentation({ ...baseArgs, isContactsFeatureEnabled: false }),
-    ).toEqual({ label: FORMATTED_ADDRESS, contact: undefined });
+    ).toEqual({ recipientDisplayValue: FORMATTED_ADDRESS, contact: undefined });
   });
 
   it("should fall back to the formatted address when the currency is unknown", () => {
     expect(getRecipientHeaderPresentation({ ...baseArgs, currencyId: undefined })).toEqual({
-      label: FORMATTED_ADDRESS,
+      recipientDisplayValue: FORMATTED_ADDRESS,
       contact: undefined,
     });
   });
 
-  it("should return an empty label for a null recipient", () => {
+  it("should return an empty display value for a null recipient", () => {
     expect(getRecipientHeaderPresentation({ ...baseArgs, recipient: null })).toEqual({
-      label: "",
+      recipientDisplayValue: "",
       contact: undefined,
     });
   });

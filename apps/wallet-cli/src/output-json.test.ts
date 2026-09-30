@@ -2,7 +2,7 @@ import "./live-common-setup";
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
-import { USDT_TOKEN_INFO } from "./test/helpers/cal-fixtures";
+import { USDT_TOKEN_INFO } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
 
 const { createCommandOutput } = await import("./output");

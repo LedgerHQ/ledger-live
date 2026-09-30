@@ -12,8 +12,7 @@ import customLockScreenFetch, {
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import { getEnv } from "@shared/env";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import TrackPage from "~/renderer/analytics/TrackPage";
-import Track from "~/renderer/analytics/Track";
+import { TrackPage, Track } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Interactions from "~/renderer/icons/device/interactions";

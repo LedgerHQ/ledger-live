@@ -4,8 +4,8 @@
 import BigNumber from "bignumber.js";
 import { renderHook, waitFor } from "@testing-library/react";
 import { Transaction } from "@ledgerhq/live-common/families/evm/types";
-import { getGasTracker } from "@ledgerhq/coin-evm/network/gasTracker/index";
-import type { GasTrackerApi } from "@ledgerhq/coin-evm/network/gasTracker/types";
+import { getGasTracker } from "@ledgerhq/coin-evm/network";
+import type { GasTrackerApi } from "@ledgerhq/coin-evm/network";
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { useGasOptions } from "./react";
@@ -13,16 +13,13 @@ import { useGasOptions } from "./react";
 jest.useFakeTimers();
 jest.spyOn(global, "setInterval");
 
-jest.mock("@ledgerhq/coin-evm/network/gasTracker/index");
+jest.mock("@ledgerhq/coin-evm/network");
 const mockedGetGasTracker = jest.mocked(getGasTracker);
 
 const mockedGetGasOptions = jest.fn();
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: CryptoCurrencyIdSchema.parse("my_new_chain"),
-  ethereumLikeInfo: {
-    chainId: 1,
-  },
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
 };
 

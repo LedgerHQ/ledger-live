@@ -1,4 +1,4 @@
-import { CounterValuesStateRaw, CounterValuesStatus } from "@ledgerhq/live-countervalues/types";
+import { CounterValuesStateRaw, CounterValuesStatus } from "@domain/entity-market-countervalues";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export const initialCountervaluesMock = {

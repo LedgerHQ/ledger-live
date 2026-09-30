@@ -8,6 +8,7 @@ import {
   TRX_UNIT,
 } from "./constants";
 import { estimateFees } from "./estimateFees";
+import { getEnergyProvider } from "./energyRent";
 import { validateAddress } from "./validateAddress";
 
 type TronIntent = TransactionIntent<TronMemo, TronTxData>;
@@ -24,20 +25,9 @@ const feeOption = (id: string): FeeOptionMeta => ({
 // Fresh array per call so a caller can't mutate a shared module-level list.
 const standardOnly = (): FeeOptionMeta[] => [feeOption(STANDARD_FEE_OPTION_ID)];
 
-/**
- * List the fee-payment options available for an intent (ADR-050 Option 3) — availability metadata
- * only, no amounts. The Tronify energy-rent option is offered alongside the standard TRX burn only
- * when all of the following hold:
- *   - the intent is a TRC-20 transfer (Tronify covers nothing else — never native or TRC-10 sends),
- *   - the Tronify provider is activated in remote coin-config (its `energyRent` block is present),
- *   - the standard path would actually burn TRX (the sender lacks the staked energy/bandwidth to
- *     send for free — otherwise Tronify saves nothing).
- *
- * Never throws: any failure (unreadable config, a failed energy simulation) degrades to the
- * standard-only list, so the standard path always works (ADR-050 Option 3 AC). Availability is not
- * probed over the network here — the actual Tronify price (and hence its live availability) is
- * fetched later by `estimateFees(intent, "tronify")`, which surfaces any failure explicitly.
- */
+/** Fee-payment options (ADR-050 Option 3); never throws — any failure degrades to standard-only.
+ * Tronify is offered only on a genuine energy shortfall, since the on-chain delivery gate reads
+ * absolute energy and would otherwise risk releasing TX-C on an undelivered rental. */
 export async function listFeeOptions(
   context: TronContext,
   intent: TronIntent,
@@ -53,15 +43,24 @@ export async function listFeeOptions(
 
     const config = await context.config();
 
-    // Activation gate: Tronify is offered only when configured in remote coin-config. Presence of the
-    // `energyRent` block is the activation switch — the same source `getEnergyProvider` dispatches on.
+    // Not enabled is the normal state, not a failure — return before the gate so it isn't logged below.
     if (!config.energyRent) return standardOnly();
 
-    // Offer Tronify only when the standard path would burn TRX. The standard estimate folds energy,
-    // bandwidth and activation into one value; `value === 0n` means the sender covers the transfer
-    // for free (enough staked energy/bandwidth), so Tronify would save nothing.
+    // A malformed energyRent block (missing url/sourceFlag, unknown provider) throws here, degrading
+    // to standard-only in the catch instead of advertising an option that only fails later.
+    getEnergyProvider(config);
+
     const standard = await estimateFees(context.logger, config, intent);
-    if (standard.value === 0n) return standardOnly();
+    const energyRequired = standard.parameters?.energyRequired;
+    const energyAvailable = standard.parameters?.energyAvailable;
+    if (
+      standard.parameters?.energyEstimated !== true ||
+      typeof energyRequired !== "string" ||
+      typeof energyAvailable !== "string" ||
+      BigInt(energyRequired) <= BigInt(energyAvailable)
+    ) {
+      return standardOnly();
+    }
 
     return [feeOption(TRONIFY_FEE_OPTION_ID), feeOption(STANDARD_FEE_OPTION_ID)];
   } catch (err) {

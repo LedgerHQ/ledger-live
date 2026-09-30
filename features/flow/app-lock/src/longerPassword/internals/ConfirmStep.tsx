@@ -1,5 +1,8 @@
 import React from "react";
-import { ConfirmPasswordView, useConfirmPasswordViewModel } from "../../screens/ConfirmPassword";
+import {
+  ConfirmPasswordView,
+  useConfirmPasswordViewModel,
+} from "@features/flow-app-password-setup";
 
 export function ConfirmStep({
   onConfirmed,

@@ -1,3 +1,7 @@
+import type {
+  StartExchangeErrorResult,
+  StartExchangeSuccessResult,
+} from "@ledgerhq/live-common/hw/actions/startExchange";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Exchange } from "@ledgerhq/live-common/exchange/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -5,8 +9,8 @@ import type { Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 
 export type ResultStart = {
-  startExchangeResult?: { nonce: string; device: Device };
-  startExchangeError?: { error: Error; device?: Device };
+  startExchangeResult?: StartExchangeSuccessResult;
+  startExchangeError?: StartExchangeErrorResult;
   device?: Device;
 };
 

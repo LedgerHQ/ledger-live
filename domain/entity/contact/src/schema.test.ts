@@ -47,30 +47,29 @@ describe("ContactSchema", () => {
     expect(() => ContactSchema.parse(mockContact({ name: "   " }))).toThrow();
   });
 
-  it("accepts international contact names with numbers", () => {
+  it("accepts printable ASCII contact names", () => {
     expect(ContactNameInputSchema.parse(" Jean Luc ")).toBe("Jean Luc");
     expect(ContactNameSchema.parse("Jean Luc")).toBe("Jean Luc");
     expect(ContactNameSchema.parse("Coinbase 1")).toBe("Coinbase 1");
-    expect(ContactNameSchema.parse("Web3")).toBe("Web3");
-    expect(ContactNameSchema.parse("Алексей")).toBe("Алексей");
-    expect(ContactNameSchema.parse("مريم")).toBe("مريم");
-    expect(ContactNameSchema.parse("田中")).toBe("田中");
-    expect(ContactNameSchema.parse("नमस्ते")).toBe("नमस्ते");
+    expect(ContactNameSchema.parse("1Password")).toBe("1Password");
+    expect(ContactNameSchema.parse("O'Connor")).toBe("O'Connor");
+    expect(ContactNameSchema.parse("Jean-Luc")).toBe("Jean-Luc");
+    expect(ContactNameSchema.parse("Olive@2")).toBe("Olive@2");
+    expect(ContactNameSchema.parse("a")).toBe("a");
   });
 
-  it("rejects unsupported contact name characters", () => {
+  it("rejects non-ASCII, control-character, and blank contact names", () => {
     expect(() => ContactNameSchema.parse("Élodie")).toThrow();
     expect(() => ContactNameSchema.parse("E\u0301lodie")).toThrow();
-    expect(() => ContactNameSchema.parse("\u0301")).toThrow();
-    expect(() => ContactNameSchema.parse("1Password")).toThrow();
-    expect(() => ContactNameSchema.parse("@Olive")).toThrow();
-    expect(() => ContactNameSchema.parse("Olive@2")).toThrow();
+    expect(() => ContactNameSchema.parse("Алексей")).toThrow();
+    expect(() => ContactNameSchema.parse("مريم")).toThrow();
+    expect(() => ContactNameSchema.parse("田中")).toThrow();
     expect(() => ContactNameSchema.parse("Olive 💎")).toThrow();
-    expect(() => ContactNameSchema.parse("Olive@")).toThrow();
-    expect(() => ContactNameSchema.parse("aaa'")).toThrow();
-    expect(() => ContactNameSchema.parse("O'Connor")).toThrow();
     expect(() => ContactNameSchema.parse("O’Connor")).toThrow();
-    expect(() => ContactNameSchema.parse("Jean-Luc")).toThrow();
+    expect(() => ContactNameSchema.parse("Olive\nSmith")).toThrow();
+    expect(() => ContactNameSchema.parse("Olive\tSmith")).toThrow();
+    expect(() => ContactNameSchema.parse("   ")).toThrow();
+    expect(() => ContactNameSchema.parse("")).toThrow();
   });
 
   it("rejects contact names longer than the domain limit", () => {

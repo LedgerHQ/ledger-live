@@ -178,6 +178,8 @@ export interface PayCardTransactionsMockProps {
   readonly fill: () => void;
   readonly empty: () => void;
   readonly receive: (asset: PayCardMockTransactionAsset) => void;
+  /** One charge funded by several assets, which is what crowds a transaction row. */
+  readonly receiveMultiAsset: () => void;
   readonly clear: () => void;
 }
 
@@ -234,6 +236,8 @@ export interface PayCardToolProps {
   readonly onNavigateToPayTab?: () => void;
   /** Host-only: jump to the Pay contact success screen. Omitted when the host cannot navigate. */
   readonly onNavigateToPaySuccess?: () => void;
+  /** Host-only: jump to the Pay contact success screen paid to Me. Omitted when the host cannot navigate. */
+  readonly onNavigateToPaySuccessMe?: () => void;
   /** Host-only: jump to the generic Send success screen. Omitted when the host cannot navigate. */
   readonly onNavigateToSendSuccess?: () => void;
   readonly auth?: PayCardAuthProps;

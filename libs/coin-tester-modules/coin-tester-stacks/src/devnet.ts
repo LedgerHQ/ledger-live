@@ -1,12 +1,14 @@
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { exec } from "node:child_process";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import chalk from "chalk";
 
 // Matches `settings/Devnet.toml`'s `stacks_api_port` (left at Clarinet's own default), which in
-// turn matches `@stacks/network`'s `HIRO_MOCKNET_DEFAULT`/`StacksDevnet` default URL — a
-// reassuring cross-check, not a coincidence this package relies on.
+// turn matches `@stacks/network`'s `STACKS_DEVNET` default URL (`DEVNET_URL`) — a reassuring
+// cross-check, not a coincidence this package relies on.
 export const STACKS_DEVNET_URL = "http://127.0.0.1:3999";
 
 // Matches `Clarinet.toml`'s `[project].name` + `settings/Devnet.toml`'s `[network].name` --
@@ -15,15 +17,52 @@ export const STACKS_DEVNET_URL = "http://127.0.0.1:3999";
 const DEVNET_NETWORK_NAME = "coin-tester-stacks.devnet";
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
 const DOCKER_DIR = path.join(PACKAGE_ROOT, "docker", "clarinet");
-// Pinned upstream commit `docker/clarinet/Dockerfile` builds from -- kept in one place so the
-// cache key and the Dockerfile's own default stay in sync.
-const CLARINET_COMMIT = "4220f34773a20960ce955a6b76590c97751e8a60";
-const CACHE_DIR = path.join(PACKAGE_ROOT, ".clarinet-cache", CLARINET_COMMIT);
-const CACHED_BINARY = path.join(CACHE_DIR, "clarinet");
+// The patch files, applied in this order on top of the pinned Clarinet commit -- here for the local
+// (non-Linux) build, in `docker/clarinet/Dockerfile` for the Linux one.
+const CLARINET_PATCHES = [
+  "bollard-fix.patch",
+  "bitcoin-node-patience.patch",
+  "bitcoin-node-no-autoremove.patch",
+  "bitcoin-node-datadir-permissions.patch",
+  "bitcoin-node-snapshot-host-copy.patch",
+];
 
 /**
- * Produces a patched `clarinet` binary (see `docker/clarinet/bollard-fix.patch` for the two real
- * upstream bugs it fixes) and returns its path, building/caching it on first use only.
+ * Reads an `ARG NAME=value` default from `docker/clarinet/Dockerfile`, the single source for the
+ * pinned Clarinet commit and Rust toolchain: the Docker build uses them directly, the local build
+ * reads them here.
+ */
+function readDockerfileArg(name: string): string {
+  const dockerfile = fs.readFileSync(path.join(DOCKER_DIR, "Dockerfile"), "utf8");
+  const match = new RegExp(`^ARG ${name}=(\\S+)$`, "m").exec(dockerfile);
+  if (!match) {
+    throw new Error(`coin-tester-stacks: no \`ARG ${name}=\` found in docker/clarinet/Dockerfile`);
+  }
+  return match[1];
+}
+
+/**
+ * Hash of every file in `docker/clarinet/` (Dockerfile + patches), i.e. every input of the Clarinet
+ * build: the pinned commit, the patches and the toolchain. The local cache directory is named after
+ * it, so changing any of them rebuilds, and CI's cache key hashes the same directory.
+ */
+function clarinetBuildHash(): string {
+  const hash = createHash("sha256");
+  for (const file of fs.readdirSync(DOCKER_DIR).sort()) {
+    hash.update(file).update(fs.readFileSync(path.join(DOCKER_DIR, file)));
+  }
+  return hash.digest("hex").slice(0, 16);
+}
+
+const CACHE_DIR = path.join(PACKAGE_ROOT, ".clarinet-cache", clarinetBuildHash());
+const CACHED_BINARY = path.join(CACHE_DIR, "clarinet");
+// Clarinet's own output when `DEBUG` is unset: kept on disk (not in `.clarinet-cache/`, which CI
+// uploads as a cache) so a boot failure can still print it -- see `dumpBootDiagnostics`.
+const CLARINET_LOG = path.join(os.tmpdir(), "coin-tester-stacks-clarinet.log");
+
+/**
+ * Produces a patched `clarinet` binary (see `docker/clarinet/Dockerfile` for what each patch fixes)
+ * and returns its path, building/caching it on first use only.
  *
  * Deliberately runs `clarinet` as a **native host process**, never inside a container: an earlier
  * version of this file ran `clarinet integrate` inside the patched Docker image, which works for
@@ -39,8 +78,8 @@ const CACHED_BINARY = path.join(CACHE_DIR, "clarinet");
  * - On Linux, the binary is built *inside* Docker (matching the host architecture exactly) and
  *   extracted with `docker cp` -- no Rust toolchain needs to be installed on the host/CI runner.
  * - Elsewhere (e.g. macOS, where a container-built binary is a Linux ELF that can't run on the
- *   host at all), it's built with a local `cargo +nightly` instead -- requires `rustup` with the
- *   `nightly` toolchain installed locally; there is no way around a host-matching compile here.
+ *   host at all), it's built with a local `cargo +<RUST_TOOLCHAIN>` instead -- requires `rustup`;
+ *   there is no way around a host-matching compile here.
  */
 function ensureClarinetBinary(): string {
   if (fs.existsSync(CACHED_BINARY)) {
@@ -79,39 +118,55 @@ function ensureClarinetBinary(): string {
   } else {
     const sourceDir = path.join(CACHE_DIR, "src");
     if (!fs.existsSync(sourceDir)) {
+      // Prepared in a scratch directory and only renamed to `src` once cloned, checked out and
+      // fully patched, so an existing `src` always is the pinned, patched tree: a clone or patch
+      // that fails halfway leaves only `src.partial`, which the next attempt starts over from.
+      const partialDir = `${sourceDir}.partial`;
+      fs.rmSync(partialDir, { recursive: true, force: true });
       const clone = spawnSync(
         "git",
-        ["clone", "https://github.com/stx-labs/clarinet.git", sourceDir],
+        ["clone", "https://github.com/stx-labs/clarinet.git", partialDir],
         { stdio: "inherit" },
       );
       if (clone.status !== 0) {
         throw new Error("coin-tester-stacks: failed to clone stx-labs/clarinet");
       }
-      spawnSync("git", ["checkout", CLARINET_COMMIT], { cwd: sourceDir, stdio: "inherit" });
-      for (const patch of [
-        "bollard-fix.patch",
-        "bitcoin-node-patience.patch",
-        "bitcoin-node-no-autoremove.patch",
-        "bitcoin-node-datadir-permissions.patch",
-      ]) {
+      const checkout = spawnSync("git", ["checkout", readDockerfileArg("CLARINET_COMMIT")], {
+        cwd: partialDir,
+        stdio: "inherit",
+      });
+      if (checkout.status !== 0) {
+        throw new Error("coin-tester-stacks: failed to check out the pinned clarinet commit");
+      }
+      for (const patch of CLARINET_PATCHES) {
         const apply = spawnSync("git", ["apply", path.join(DOCKER_DIR, patch)], {
-          cwd: sourceDir,
+          cwd: partialDir,
           stdio: "inherit",
         });
         if (apply.status !== 0) {
           throw new Error(`coin-tester-stacks: failed to apply ${patch}`);
         }
       }
+      fs.renameSync(partialDir, sourceDir);
     }
 
-    const build = spawnSync("cargo", ["+nightly", "build", "--release", "-p", "clarinet-cli"], {
-      cwd: sourceDir,
+    const RUST_TOOLCHAIN = readDockerfileArg("RUST_TOOLCHAIN");
+    // `rustup` installs the pinned toolchain on first use if it's missing; a no-op afterwards.
+    spawnSync("rustup", ["toolchain", "install", RUST_TOOLCHAIN, "--profile", "minimal"], {
       stdio: "inherit",
     });
+    const build = spawnSync(
+      "cargo",
+      [`+${RUST_TOOLCHAIN}`, "build", "--release", "-p", "clarinet-cli"],
+      {
+        cwd: sourceDir,
+        stdio: "inherit",
+      },
+    );
     if (build.status !== 0) {
       throw new Error(
         "coin-tester-stacks: failed to build clarinet-cli locally -- requires `rustup` with the " +
-          "`nightly` toolchain installed (`rustup toolchain install nightly`)",
+          `\`${RUST_TOOLCHAIN}\` toolchain installed (\`rustup toolchain install ${RUST_TOOLCHAIN}\`)`,
       );
     }
     fs.copyFileSync(path.join(sourceDir, "target", "release", "clarinet"), CACHED_BINARY);
@@ -122,36 +177,6 @@ function ensureClarinetBinary(): string {
 }
 
 let clarinetProcess: ChildProcess | null = null;
-let bitcoinMinerProcess: ChildProcess | null = null;
-
-/**
- * Works around a genuine upstream `clarinet` bug: `chains_coordinator.rs`'s
- * `handle_bitcoin_mining` is supposed to call bitcoind's `generatetoaddress` every
- * `bitcoin_controller_block_time` to keep the regtest chain progressing, but on several
- * verification runs it silently stopped doing so after mining exactly one block past genesis — no
- * error, no further log line, chain height frozen indefinitely. Verified this is not bitcoind's
- * fault: manually issuing the same `generatetoaddress` RPC call bitcoind itself (not through
- * `clarinet`) mines new blocks immediately and reliably every time.
- *
- * `scripts/bitcoin-miner.js` replaces Clarinet's own (broken) periodic miner with an equivalent
- * one, calling the exact same RPC bitcoind already exposes. It runs as a **separate OS process**,
- * not an in-process `setInterval`: an earlier version did exactly that in-process and was itself
- * unreliable, because Jest's own CPU-bound work (signing, `--runInBand` test execution) delays or
- * starves the shared event loop long enough to occasionally miss ticks for minutes — from the
- * test's point of view, indistinguishable from the original bug. A separate process has its own
- * event loop, unaffected by Jest's load.
- */
-function startBitcoinMiningWorkaround(): void {
-  bitcoinMinerProcess = spawn("node", [path.join(PACKAGE_ROOT, "scripts", "bitcoin-miner.js")], {
-    stdio: ["ignore", process.env.DEBUG ? "inherit" : "ignore", "inherit"],
-  });
-  bitcoinMinerProcess.on("error", err => {
-    console.error(
-      chalk.red("coin-tester-stacks: failed to spawn the bitcoin mining workaround"),
-      err,
-    );
-  });
-}
 
 async function waitUntilReady(timeoutMs: number): Promise<void> {
   const deadline = Date.now() + timeoutMs;
@@ -193,12 +218,11 @@ async function waitUntilReady(timeoutMs: number): Promise<void> {
 }
 
 /**
- * The devnet's own genesis deployment plan (`deployments/default.devnet-plan.yaml`) publishes
- * this package's `contracts/sip-010-test-token.clar` a handful of blocks after the chain boots
- * (batch 1, epoch 3.0) — stacks-api reporting "ready" only means the API/Postgres pair is up, not
- * that this later batch has actually been mined yet. Poll the contract-interface endpoint (200
- * once the contract exists on-chain, 404 until then) so scenario transactions never race a
- * not-yet-deployed contract.
+ * Clarinet publishes this package's contracts (`Clarinet.toml`) through its deployment plan
+ * (`deployments/default.devnet-plan.yaml`) once the devnet is up -- stacks-api reporting "ready"
+ * only means the API/Postgres pair is up, not that the deployment transactions have been mined yet.
+ * Poll the contract-interface endpoint (200 once the contract exists on-chain, 404 until then) so
+ * scenario transactions never race a not-yet-deployed contract.
  */
 export async function waitForContractDeployment(
   deployerAddress: string,
@@ -225,10 +249,19 @@ export async function waitForContractDeployment(
 
 /**
  * Spawns a local Clarinet devnet (bitcoind regtest + stacks-node + stacks-signer + the bundled
- * stacks-blockchain-api/Postgres pair — bundled by default, verified against `NetworkManifest`'s
- * `DevnetConfig` in the `clarinet` source, not assumed) by running a patched `clarinet` binary
- * (see `ensureClarinetBinary`) directly on the host -- `clarinet` itself still talks to the local
+ * stacks-blockchain-api/Postgres pair) by running a patched `clarinet` binary (see
+ * `ensureClarinetBinary`) directly on the host -- `clarinet` itself still talks to the local
  * Docker daemon to spawn/manage those sibling containers, exactly as it's designed to.
+ *
+ * The devnet boots from Clarinet's own chain-state snapshot, embedded in the binary, which starts
+ * at burn height 163 (past epoch 4.0), so the scenarios never wait for the epoch 3.0/4.0
+ * transitions. Clarinet only uses it when `settings/Devnet.toml` matches its defaults on the
+ * snapshot's significant fields (epochs, signer keys, stacking orders); otherwise it falls back to
+ * a genesis boot, which works but is ~10 minutes slower -- see the README.
+ *
+ * Blocks are mined by Clarinet itself: the stacks-node reaches bitcoind through Clarinet's Bitcoin
+ * RPC proxy (`[burnchain].rpc_port` = Clarinet's ingestion port), and Clarinet mines the next block
+ * each time it relays a miner's block-commit.
  */
 export async function spawnDevnet(): Promise<void> {
   console.log("Starting Stacks Clarinet devnet (this can take a few minutes)…");
@@ -241,23 +274,16 @@ export async function spawnDevnet(): Promise<void> {
 
   const binary = ensureClarinetBinary();
 
+  const clarinetOutput = process.env.DEBUG ? "inherit" : fs.openSync(CLARINET_LOG, "w");
   clarinetProcess = spawn(
     binary,
-    ["integrate", "--no-dashboard", "--manifest-path", "Clarinet.toml", "--from-genesis"],
+    ["integrate", "--no-dashboard", "--manifest-path", "Clarinet.toml"],
     {
       cwd: PACKAGE_ROOT,
-      // stdin piped (not ignored/closed): `Devnet.toml`'s own comment on `pox_stacking_orders`
-      // documents that the genesis-snapshot-compatibility confirmation fires unconditionally,
-      // *before* `--from-genesis` is even consulted, whenever a "significant field" (`epoch_*`,
-      // `stacks_signers_keys`, `pox_stacking_orders`) differs from the bundled snapshot -- which
-      // the staking scenario's explicit `epoch_4_0` now does on purpose. Pre-answering "y\n" makes
-      // that prompt (if it fires) resolve immediately instead of blocking on a closed stdin; it's a
-      // harmless no-op on runs where the prompt never appears.
-      stdio: [
-        "pipe",
-        process.env.DEBUG ? "inherit" : "ignore",
-        process.env.DEBUG ? "inherit" : "ignore",
-      ],
+      // stdin piped and pre-answered below: if `Devnet.toml` ever stops matching the snapshot,
+      // Clarinet asks on stdin whether to continue without it. Answering "y" keeps the run going on
+      // a (slower) genesis boot instead of blocking until the boot deadline.
+      stdio: ["pipe", clarinetOutput, clarinetOutput],
     },
   );
 
@@ -269,13 +295,46 @@ export async function spawnDevnet(): Promise<void> {
     console.error(chalk.red("coin-tester-stacks: failed to spawn clarinet"), err);
   });
 
-  // CI's shared runner is markedly slower/more resource-constrained than a local machine at
-  // booting bitcoind + stacks-node + stacks-signer + the bundled stacks-blockchain-api/Postgres
-  // pair -- verified failing at 5 min there twice in a row while consistently ready well within
-  // that budget locally. 15 min matches waitForContractDeployment's own budget below.
-  await waitUntilReady(15 * 60 * 1000);
-  startBitcoinMiningWorkaround();
+  // A snapshot boot is ready in about a minute, in CI too (the first run on a runner also pulls
+  // the devnet images). 5 minutes leaves margin without letting a broken boot hold CI for long.
+  const bootDeadline = Date.now() + 5 * 60 * 1000;
+
+  try {
+    await waitUntilReady(bootDeadline - Date.now());
+  } catch (error) {
+    await dumpBootDiagnostics();
+    throw error;
+  }
   console.log(chalk.bgBlueBright(" -  STACKS DEVNET READY ✅  - "));
+}
+
+/**
+ * Prints why the devnet failed to boot, without needing `DEBUG`: the tail of Clarinet's own output
+ * and, for every container on the devnet network, its exit state and last log lines. Runs before
+ * `killDevnet` removes the containers. In CI this is the only place the actual cause shows up.
+ */
+async function dumpBootDiagnostics(): Promise<void> {
+  if (!process.env.DEBUG && fs.existsSync(CLARINET_LOG)) {
+    const lines = fs.readFileSync(CLARINET_LOG, "utf8").trimEnd().split("\n");
+    console.log(`[boot diagnostic] last clarinet output:\n${lines.slice(-80).join("\n")}`);
+  }
+  await dumpContainerDiagnostics("boot diagnostic");
+}
+
+async function dumpContainerDiagnostics(label: string): Promise<void> {
+  const containerIds = await execAsync(`docker ps -aq --filter "network=${DEVNET_NETWORK_NAME}"`);
+  if (!containerIds) {
+    console.log(`[${label}] no container on ${DEVNET_NETWORK_NAME}`);
+    return;
+  }
+  for (const id of containerIds.split("\n")) {
+    const info = await execAsync(
+      `docker inspect ${id} --format '{{.Name}} status={{.State.Status}} exitCode={{.State.ExitCode}} error={{.State.Error}}'`,
+    );
+    console.log(`[${label}] ${info}`);
+    const logs = await execAsync(`docker logs --tail 50 ${id} 2>&1`);
+    console.log(`[${label}] logs for ${id}:\n${logs}`);
+  }
 }
 
 function execAsync(command: string): Promise<string> {
@@ -295,29 +354,17 @@ function execAsync(command: string): Promise<string> {
  */
 export async function killDevnet(): Promise<void> {
   console.log("Stopping Stacks Clarinet devnet…");
-  bitcoinMinerProcess?.kill("SIGTERM");
-  bitcoinMinerProcess = null;
   clarinetProcess?.kill("SIGTERM");
   clarinetProcess = null;
 
   const containerIds = await execAsync(`docker ps -aq --filter "network=${DEVNET_NETWORK_NAME}"`);
   if (containerIds) {
-    // On a scenario failure this runs (via `scenarii.test.ts`'s catch blocks) immediately, in the
-    // same process -- disabling clarinet's own `auto_remove` (see
-    // `bitcoin-node-no-autoremove.patch`) is useless if this call force-removes the same
-    // containers moments later before anyone can inspect them. Dump each container's exit state
-    // and logs right here, first, while they still exist, gated behind `DEBUG` since it's verbose
-    // and only useful when actively investigating a devnet-boot failure like the one this surfaced
-    // (see the README's "Known limitations").
+    // Containers are force-removed right below, so this is the last chance to see their exit
+    // state and logs (clarinet's own `auto_remove` is disabled for the same reason, see
+    // `bitcoin-node-no-autoremove.patch`). A boot failure already prints them without `DEBUG`
+    // (`dumpBootDiagnostics`); this covers failures later in a scenario.
     if (process.env.DEBUG) {
-      for (const id of containerIds.split("\n")) {
-        const info = await execAsync(
-          `docker inspect ${id} --format '{{.Name}} status={{.State.Status}} exitCode={{.State.ExitCode}} error={{.State.Error}}'`,
-        );
-        console.log(`[killDevnet diagnostic] ${info}`);
-        const logs = await execAsync(`docker logs --tail 100 ${id} 2>&1`);
-        console.log(`[killDevnet diagnostic] logs for ${id}:\n${logs}`);
-      }
+      await dumpContainerDiagnostics("killDevnet diagnostic");
     }
     await execAsync(`docker rm -f ${containerIds.split("\n").join(" ")}`);
   }

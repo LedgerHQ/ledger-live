@@ -10,7 +10,7 @@ import SkipSyncDrawer from "../SkipSyncDrawer";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setSkipDrawerVisibility } from "~/renderer/reducers/onboarding";
 import { walletSyncDrawerVisibilitySelector } from "~/renderer/reducers/walletSync";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { analyticsFlowName } from "../../utils/constants/analytics";
 
 interface SyncStepProps {
@@ -56,9 +56,12 @@ const SyncStep = ({
 
   useEffect(() => {
     if (isLedgerSyncActive && !isSyncDrawerOpen) {
-      trackPage(`Set up ${deviceName}: Step 4 Ledger Sync Success`, null, {
-        seedConfiguration,
-        flow: analyticsFlowName,
+      trackPage({
+        category: `Set up ${deviceName}: Step 4 Ledger Sync Success`,
+        props: {
+          seedConfiguration,
+          flow: analyticsFlowName,
+        },
       });
       const timer = setTimeout(handleContinue, 2000);
 
@@ -116,7 +119,7 @@ const SyncStep = ({
           <Button variant="main" onClick={openDrawer} data-testid="onboarding-sync" mt={6}>
             {t("common.continue")}
           </Button>
-          <Link onClick={openSkipDrawer} data-testid="skip-cta-button" mt={6} flex={1}>
+          <Link onClick={openSkipDrawer} data-testid="onboarding-sync-skip" mt={6} flex={1}>
             {t("syncOnboarding.manual.sync.skipButton")}
           </Link>
         </>

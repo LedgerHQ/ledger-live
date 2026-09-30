@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-react",
-  "version": "0.6.19",
+  "version": "0.6.20",
   "private": true,
   "description": "Ledger Live device react module",
   "keywords": [
@@ -25,6 +25,7 @@
     "@ledgerhq/device-core": "workspace:^"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

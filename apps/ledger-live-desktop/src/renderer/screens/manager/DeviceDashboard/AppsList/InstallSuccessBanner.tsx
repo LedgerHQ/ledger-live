@@ -105,7 +105,12 @@ const InstallSuccessBanner = ({ state, addAccount, disabled }: Props) => {
             </IconContainer>
             <Box flex={1} justifyContent="space-between">
               <Box mb={3}>
-                <Text ff="Inter|SemiBold" fontSize={6} color="neutral.c00">
+                <Text
+                  ff="Inter|SemiBold"
+                  fontSize={6}
+                  color="neutral.c00"
+                  data-testid="install-success-banner"
+                >
                   <Trans
                     i18nKey="manager.applist.installSuccess.title"
                     values={{
@@ -116,7 +121,13 @@ const InstallSuccessBanner = ({ state, addAccount, disabled }: Props) => {
                 </Text>
               </Box>
               <Box horizontal>
-                <Button primary inverted onClick={onAddAccount} mr={1}>
+                <Button
+                  primary
+                  inverted
+                  onClick={onAddAccount}
+                  mr={1}
+                  data-testid="install-success-manage-accounts-button"
+                >
                   <Trans i18nKey="manager.applist.installSuccess.manageAccount" />
                 </Button>
               </Box>

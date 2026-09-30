@@ -56,7 +56,15 @@ export type SwapUiRequest = CompleteExchangeUiRequest & {
 export type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
     exchangeParams: ExchangeStartParamsUiRequest;
-    onSuccess: (nonce: string, device?: ExchangeStartResult["device"]) => void;
+    onSuccess: (
+      nonce: string,
+      device?: ExchangeStartResult["device"],
+      meta?: {
+        exchangeAppVersion?: string;
+        signingAppName?: string;
+        signingAppVersion?: string;
+      },
+    ) => void;
     onCancel: (error: Error, device?: ExchangeStartResult["device"]) => void;
   }) => void;
   "custom.exchange.complete": (params: {

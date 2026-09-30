@@ -6,7 +6,7 @@ import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { isAwaitingDelegation, useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { useSelector } from "LLD/hooks/redux";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

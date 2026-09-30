@@ -14,7 +14,7 @@ import {
   blacklistedTokenIdsSelector,
   starredMarketCoinsSelector,
 } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 
 export type UseOptionsMenuViewModelProps = Readonly<{

@@ -13,10 +13,10 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { PayTrackPage } from "@features/platform-pay-analytics";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
+import { FEATURE_INTRO_PAGE, PayTrackPage } from "@features/platform-pay-analytics";
 import heroImage from "./payTabTour.webp";
-import { FEATURE_TOUR_PAGE, type FeatureTourViewModel } from "./useFeatureTourViewModel";
+import { FEATURE_TOUR_FLOW, type FeatureTourViewModel } from "./useFeatureTourViewModel";
 
 type FeatureTourViewProps = FeatureTourViewModel;
 
@@ -26,7 +26,8 @@ export function FeatureTourView({
   description,
   rows,
   ctaLabel,
-  onDismiss,
+  onClose,
+  onContinue,
 }: FeatureTourViewProps) {
   const dismissed = useRef(false);
   const [isOpen, setIsOpen] = useState(isVisible);
@@ -38,27 +39,36 @@ export function FeatureTourView({
     }
   }, [isVisible]);
 
-  const handleDismiss = useCallback(() => {
-    if (dismissed.current) {
-      return;
-    }
+  const handleClose = useCallback(() => {
+    if (dismissed.current) return;
     dismissed.current = true;
     setIsOpen(false);
-    onDismiss();
-  }, [onDismiss]);
+    onClose();
+  }, [onClose]);
+
+  const handleContinue = useCallback(() => {
+    if (dismissed.current) return;
+    dismissed.current = true;
+    setIsOpen(false);
+    onContinue();
+  }, [onContinue]);
 
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
-      onClose={handleDismiss}
+      onClose={handleClose}
       enableDynamicSizing
       testID="pay-feature-tour-sheet"
     >
       {isOpen ? (
-        <BottomSheetView>
-          <PayTrackPage page={FEATURE_TOUR_PAGE} />
+        <FeatureTourContent>
+          <PayTrackPage
+            page={FEATURE_INTRO_PAGE}
+            name={FEATURE_TOUR_FLOW}
+            flow={FEATURE_TOUR_FLOW}
+          />
           <BottomSheetHeader density="compact" />
-          <Box lx={{ paddingBottom: "s24", gap: "s16" }}>
+          <Box lx={{ gap: "s16" }}>
             <Image
               source={heroImage as unknown as ImageSourcePropType}
               resizeMode="cover"
@@ -97,14 +107,20 @@ export function FeatureTourView({
               appearance="base"
               size="lg"
               isFull
-              onPress={handleDismiss}
+              onPress={handleContinue}
               accessibilityLabel={ctaLabel}
             >
               {ctaLabel}
             </Button>
           </Box>
-        </BottomSheetView>
+        </FeatureTourContent>
       ) : null}
     </QueuedBottomSheet>
   );
+}
+
+function FeatureTourContent({ children }: Readonly<{ children: React.ReactNode }>) {
+  const bottomInset = useBottomSheetBottomInset();
+
+  return <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>{children}</BottomSheetView>;
 }

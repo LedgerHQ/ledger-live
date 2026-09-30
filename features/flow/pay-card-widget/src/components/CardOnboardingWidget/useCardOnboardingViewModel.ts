@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { trackCardOnboardingWidgetToggled } from "@features/platform-pay-analytics";
 import { markCardOnboardingCompleted, selectHasCompletedCardOnboarding } from "../../state";
 import { useCardOnboardingStatus } from "../../onboardingStatus";
 import { useOnboardingSteps, type CardOnboardingStepWithCopy } from "./useOnboardingSteps";
@@ -21,7 +21,6 @@ export type CardOnboardingViewModelResult = {
 
 export function useCardOnboardingViewModel(): CardOnboardingViewModelResult {
   const [isOpen, setIsOpen] = useState(false);
-  const { trackCardOnboardingWidgetToggled } = usePayAnalyticsContext();
   const { data, isLoading, isError } = useCardOnboardingStatus();
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(selectHasCompletedCardOnboarding);
@@ -51,14 +50,14 @@ export function useCardOnboardingViewModel(): CardOnboardingViewModelResult {
       ...trackingProperties,
     });
     setIsOpen(true);
-  }, [trackCardOnboardingWidgetToggled, trackingProperties]);
+  }, [trackingProperties]);
   const handleClose = useCallback(() => {
     trackCardOnboardingWidgetToggled({
       opened: false,
       ...trackingProperties,
     });
     setIsOpen(false);
-  }, [trackCardOnboardingWidgetToggled, trackingProperties]);
+  }, [trackingProperties]);
   const handleGotIt = useCallback(() => {
     dispatch(markCardOnboardingCompleted());
     handleClose();

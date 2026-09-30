@@ -1,4 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
@@ -11,7 +12,7 @@ import {
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientScanner } from "../../../context/RecipientScannerContext";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import { t } from "~/renderer/i18n/init";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
@@ -33,6 +34,7 @@ export type ReadyRecipientScreenViewModel = Readonly<{
     ensName?: string,
     goToNextStep?: boolean,
     memo?: Memo,
+    contactId?: string,
   ) => void;
 }>;
 
@@ -57,10 +59,16 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     [state.account.currency, account],
   );
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const config = useMemo(() => resolveCurrencyConfig(currency?.id), [currency]);
   const trackingProperties = useMemo(() => {
     const contactsOnNetwork =
       isContactsFeatureEnabled &&
-      isEligibleAddressCurrency(eligibleAddressFamilies, currency ?? undefined, excludedCurrencyIds)
+      isEligibleAddressCurrency(
+        eligibleAddressFamilies,
+        currency ?? undefined,
+        excludedCurrencyIds,
+        config,
+      )
         ? filterContactsByNetwork(contacts, currency?.id ?? "")
         : [];
 
@@ -73,6 +81,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     sendFlowTrackingProperties,
     contacts,
     currency,
+    config,
     eligibleAddressFamilies,
     excludedCurrencyIds,
     isContactsFeatureEnabled,
@@ -84,11 +93,20 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
       return;
     }
     hasTrackedRef.current = true;
-    trackPage("Modal send - step recipient", null, trackingProperties);
+    trackPage({
+      category: "Modal send - step recipient",
+      props: trackingProperties,
+    });
   }, [account, currency, trackingProperties]);
 
   const onAddressSelected = useCallback(
-    (address: string, ensName?: string, goToNextStep?: boolean, memo?: Memo) => {
+    (
+      address: string,
+      ensName?: string,
+      goToNextStep?: boolean,
+      memo?: Memo,
+      contactId?: string,
+    ) => {
       // A typed/pasted address can be the account's own self-transfer target (its
       // other pool) without going through the self-transfer shortcut. Recognize it
       // the same way the shortcut does, so it gets the same pool label and locks
@@ -106,6 +124,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
         ...state.recipient,
         address,
         ensName,
+        contactId,
         displayLabel: matchedSelfTransferTarget
           ? t(`newSendFlow.${matchedSelfTransferTarget.translationKey}.label`)
           : undefined,

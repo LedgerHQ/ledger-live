@@ -7,7 +7,7 @@ import {
   Stepper,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { CardOnboardingOption } from "../CardOnboardingOption/CardOnboardingOption";
 import { AddToWalletInstructions } from "../AddToWalletInstructions/AddToWalletInstructions.native";
 import type { CardOnboardingDialogViewProps } from "./useCardOnboardingDialogViewModel";
@@ -51,7 +51,7 @@ export function CardOnboardingDialogView({
       testID="pay-card-onboarding-sheet"
     >
       {isOpen ? (
-        <BottomSheetView testID="pay-card-onboarding-sheet-content">
+        <CardOnboardingDialogContent>
           <BottomSheetHeader spacing density="expanded" />
           {isAddToWalletSceneOpen ? (
             <AddToWalletInstructions onDone={onCloseAddToWalletScene} />
@@ -85,8 +85,21 @@ export function CardOnboardingDialogView({
               ) : null}
             </>
           )}
-        </BottomSheetView>
+        </CardOnboardingDialogContent>
       ) : null}
     </QueuedBottomSheet>
+  );
+}
+
+function CardOnboardingDialogContent({ children }: Readonly<{ children: React.ReactNode }>) {
+  const bottomInset = useBottomSheetBottomInset();
+
+  return (
+    <BottomSheetView
+      style={{ paddingBottom: bottomInset + 24 }}
+      testID="pay-card-onboarding-sheet-content"
+    >
+      {children}
+    </BottomSheetView>
   );
 }

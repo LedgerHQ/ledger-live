@@ -124,7 +124,7 @@ export interface HederaMirrorNode {
   description: string;
   max_stake: number;
   min_stake: number;
-  stake: number;
+  stake?: number | null;
   stake_rewarded: number;
   reward_rate_start: number;
 }

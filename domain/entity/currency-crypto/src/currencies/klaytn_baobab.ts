@@ -38,9 +38,6 @@ export const klaytn_baobab = currency({
     },
   ],
   isTestnetFor: "klaytn",
-  ethereumLikeInfo: {
-    chainId: 1001,
-  },
   explorerViews: [
     {
       tx: "https://baobab.klaytnfinder.io/tx/$hash",

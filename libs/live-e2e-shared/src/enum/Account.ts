@@ -48,6 +48,9 @@ export class Account {
   static readonly ATOM_1 = new Account(Currency.ATOM, "Cosmos 1", 0, "44'/118'/0'/0/0");
   static readonly ATOM_2 = new Account(Currency.ATOM, "Cosmos 2", 1, "44'/118'/1'/0/0");
 
+  static readonly BABY_1 = new Account(Currency.BABY, "Babylon 1", 0, "44'/118'/0'/0/0");
+  static readonly BABY_2 = new Account(Currency.BABY, "Babylon 2", 1, "44'/118'/1'/0/0");
+
   static readonly BCH_1 = new Account(
     Currency.BCH,
     "Bitcoin Cash 1",

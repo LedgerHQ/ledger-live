@@ -19,25 +19,6 @@ export const ExplorerViewSchema = z.object({
   stakePool: z.string().optional(),
 });
 
-/** EVM chain metadata, inferred from {@link EthereumLikeInfoSchema}. */
-export const EthereumLikeInfoSchema = z.object({
-  /** EIP-155 chain id (e.g. `1` for Ethereum mainnet, `137` for Polygon). */
-  chainId: z.number().int(),
-});
-
-/**
- * Bitcoin-like chain metadata used for address derivation and XPUB encoding.
- * Values correspond to the network's version bytes.
- */
-export const BitcoinLikeInfoSchema = z.object({
-  /** P2PKH version byte (e.g. `0` for Bitcoin mainnet). */
-  P2PKH: z.number().int(),
-  /** P2SH version byte (e.g. `5` for Bitcoin mainnet). */
-  P2SH: z.number().int(),
-  /** XPUB version bytes (e.g. `76066276` / `0x0488B21E` for Bitcoin mainnet). */
-  XPUBVersion: z.number().int().optional(),
-});
-
 /**
  * Canonical Zod-first schema for a crypto currency entity.
  *
@@ -88,17 +69,8 @@ export const CryptoCurrencySchema = z.object({
   supportsNativeSegwit: z.boolean().optional(),
   /** If set, this is a testnet for the currency with this id. */
   isTestnetFor: z.string().optional(),
-  /** Bitcoin-like chain metadata (version bytes). Present for `family: "bitcoin"`. */
-  bitcoinLikeInfo: BitcoinLikeInfoSchema.optional(),
-  /** EVM chain metadata. Present for `family: "ethereum"` and `family: "evm"`. */
-  ethereumLikeInfo: EthereumLikeInfoSchema.optional(),
   /** One or more blockchain explorer URL templates. */
   explorerViews: z.array(ExplorerViewSchema),
-  /**
-   * Id used to connect to the Ledger explorer endpoint (when different from the currency id and ticker).
-   * @deprecated Kept only for backward compatibility; the explorer-id concept is being phased out.
-   */
-  explorerId: z.string().optional(),
   /** Token standards supported by this chain (e.g. `["erc20"]`). */
   tokenTypes: z.array(z.string()).optional(),
 });
@@ -109,7 +81,3 @@ export type CryptoCurrencyId = z.infer<typeof CryptoCurrencyIdSchema>;
 export type CryptoCurrency = z.infer<typeof CryptoCurrencySchema>;
 /** Explorer view value object, inferred from {@link ExplorerViewSchema}. */
 export type ExplorerView = z.infer<typeof ExplorerViewSchema>;
-/** EVM chain info value object, inferred from {@link EthereumLikeInfoSchema}. */
-export type EthereumLikeInfo = z.infer<typeof EthereumLikeInfoSchema>;
-/** Bitcoin-like chain info value object, inferred from {@link BitcoinLikeInfoSchema}. */
-export type BitcoinLikeInfo = z.infer<typeof BitcoinLikeInfoSchema>;

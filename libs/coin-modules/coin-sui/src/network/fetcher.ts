@@ -14,7 +14,7 @@ export function inferNetworkFromUrl(url: string): SuiClientTypes.Network {
 }
 
 /**
- * Retry-aware fetch shared by JSON-RPC and GraphQL transports. Each attempt
+ * Retry-aware fetch shared by the gRPC-web and GraphQL transports. Each attempt
  * gets its own AbortController as a per-request timeout safety net so a stuck
  * request can't hang forever; the timer is cleared per-attempt so timers don't
  * pile up across retries.

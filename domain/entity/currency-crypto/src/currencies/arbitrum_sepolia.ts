@@ -38,9 +38,6 @@ export const arbitrum_sepolia = currency({
     },
   ],
   isTestnetFor: "arbitrum",
-  ethereumLikeInfo: {
-    chainId: 421614,
-  },
   explorerViews: [
     {
       tx: "https://arbitrum-sepolia.blockscout.com/tx/$hash",

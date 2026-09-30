@@ -1,21 +1,16 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { computeAllTimeValueChangeFromFirstReceive } from "../computeAllTimeValueChangeFromFirstReceive";
+import { resetRateLookup, setRateLookup } from "../rateLookup";
 
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
-  calculate: jest.fn(),
-}));
-
-const mockCalculate = jest.mocked(calculate);
+const mockCalculate = jest.fn();
 
 const btc = getCryptoCurrencyById("bitcoin");
 const usd = getFiatCurrencyByTicker("USD");
-const mockCvState = { data: {}, status: {}, cache: {} } as CounterValuesState;
+const mockCvState = { data: {}, status: {}, cache: {} };
 
 function accountWithReceive(id: string, receiveDate: Date, receiveValue: number): Account {
   const account = genAccount(id, { currency: btc, operationsSize: 1 });
@@ -34,6 +29,11 @@ function accountWithReceive(id: string, receiveDate: Date, receiveValue: number)
 describe("computeAllTimeValueChangeFromFirstReceive", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    setRateLookup({ calculate: mockCalculate });
+  });
+
+  afterAll(() => {
+    resetRateLookup();
   });
 
   it("returns null percentage when there are no receive operations", () => {

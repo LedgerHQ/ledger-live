@@ -99,6 +99,7 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
       },
       chainId: 534352,
       name: "Scroll",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
         uri: "http://127.0.0.1:8545",
@@ -142,7 +143,7 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks(scroll.ethereumLikeInfo?.chainId || 534352);
+    await indexBlocks(534352);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());

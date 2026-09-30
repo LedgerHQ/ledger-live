@@ -12,6 +12,8 @@ export const cardanoConfig: CurrencyLiveConfigDefinition = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Cardano",
+      unit: { name: "ada", code: "ADA", magnitude: 6 },
       maxFeesWarning: 5e6,
       maxFeesError: 10e6,
     } as CardanoCoinConfig,

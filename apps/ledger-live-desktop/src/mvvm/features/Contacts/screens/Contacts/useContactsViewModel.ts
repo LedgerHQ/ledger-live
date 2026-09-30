@@ -27,6 +27,7 @@ import {
   useContactsListPageAnalytics,
   useContactsLedgerSyncMutationGuard,
   trackContactsLedgerSyncDismiss,
+  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
 import {
   useAddAddressCurrencySelectionViewModel,
@@ -44,14 +45,14 @@ import {
   useContactsFeatureIntroductionState,
 } from "@features/flow-contacts-introduction";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import {
-  createMeDisplayNameFormatter,
+  useContactDisplayName,
   useContacts,
   useContactsMeContact,
-  type OtherContactAddress,
+  useOtherContactsAddresses,
 } from "@features/platform-contacts";
 import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
-import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
 import { contactsIntentLWDDefinitions } from "../../deviceIntents/contactsIntentPlatformDefinitions";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
@@ -65,6 +66,7 @@ import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteA
 import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import type { ContactsAddAddressFlowDialogProps } from "./components/ContactsAddAddressFlowDialog";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact" | "addContactDialog"> &
   Readonly<{
@@ -98,16 +100,11 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const currencySelection = useContactsCurrencySelectionAdapter();
   const { cancelCurrencySelection } = currencySelection;
   const addressValidation = useContactsAddressValidationAdapter();
-  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
-    () =>
-      contacts.flatMap(c =>
-        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
-      ),
-    [contacts],
-  );
+  const allContactsAddresses = useOtherContactsAddresses();
   const { selectCurrency } = useAddAddressCurrencySelectionViewModel({
     platform: "desktop",
     currencySelection,
+    getConfig: resolveCurrencyConfig,
   });
   const {
     state: addAddressFlowState,
@@ -157,11 +154,14 @@ export function useContactsViewModel(): ContactsPageViewModel {
           flow: CONTACTS_FLOW.CONTACTS,
         });
 
+        const config = resolveCurrencyConfig(flowState.selectedCurrencyId);
+
         const signedAddress = await deviceIntents.registerExternalAddress({
           contact: selectedContact,
           currencyId: flowState.selectedCurrencyId,
           label: flowState.addressLabel.label,
           address: flowState.addressEntry.resolvedAddress,
+          config,
         });
 
         const address = contactAddress({
@@ -311,10 +311,20 @@ export function useContactsViewModel(): ContactsPageViewModel {
     goBackAddAddress();
     selectCurrencyForContact(selectedContactId);
   }, [addAddressFlowState, goBackAddAddress, selectCurrencyForContact]);
+  const addAddressSupportsDomain = resolveContactAddressSupportsDomain(
+    "selectedCurrencyId" in addAddressFlowState
+      ? addAddressFlowState.selectedCurrencyId
+      : undefined,
+    sendFeatures.supportsDomain,
+  );
   const addAddressEntryLabels = useMemo<AddAddressEntryLabels>(
     () => ({
       title: t("contacts.addAddressEntry.title"),
-      addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
+      addressPlaceholder: t(
+        addAddressSupportsDomain
+          ? "contacts.addAddressEntry.addressPlaceholder"
+          : "contacts.addAddressEntry.addressPlaceholderNoENS",
+      ),
       confirmAddress: t("contacts.addAddressEntry.confirmAddress"),
       validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
       validAddress: t("contacts.addAddressEntry.validAddress"),
@@ -327,7 +337,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       duplicateAddress: (contactName: string) =>
         t("contacts.addAddressEntry.duplicateAddress", { contactName }),
     }),
-    [t],
+    [addAddressSupportsDomain, t],
   );
   const addAddressNameLabels = useMemo<ContactsAddAddressNameLabels>(
     () => ({
@@ -424,9 +434,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
     }),
     [t],
   );
@@ -439,18 +446,14 @@ export function useContactsViewModel(): ContactsPageViewModel {
       })),
     [t],
   );
+  const getDisplayName = useContactDisplayName();
   const viewModel = useMemo(() => {
     if (searchQuery.trim().length > 0) {
-      return createContactsSearchViewModel(
-        meContact,
-        contacts,
-        searchQuery,
-        labels.formatMeDisplayName,
-      );
+      return createContactsSearchViewModel(meContact, contacts, searchQuery, getDisplayName);
     }
 
-    return createContactsListViewModel(meContact, contacts, labels.formatMeDisplayName);
-  }, [contacts, labels.formatMeDisplayName, meContact, searchQuery]);
+    return createContactsListViewModel(meContact, contacts);
+  }, [contacts, getDisplayName, meContact, searchQuery]);
   const onSearchInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   }, []);
@@ -508,7 +511,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     viewModel,
     labels,
     searchQuery,
-    meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
     onSearchInputChange,
     onClearSearch,
     onRequestAddContact,

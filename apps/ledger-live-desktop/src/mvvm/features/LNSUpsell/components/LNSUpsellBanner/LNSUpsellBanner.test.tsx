@@ -8,15 +8,15 @@ import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, fireEvent, withFlagOverrides } from "tests/testSetup";
 import { openURL } from "~/renderer/linking";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { BANNER_PLACEMENT_BY_LOCATION } from "LLD/features/LNSUpsell/types";
 import { LNSUpsellBanner } from ".";
 
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
 }));
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
@@ -192,14 +192,14 @@ describe("LNSUpsellBanner", () => {
       renderBanner({});
 
       expect(trackPage).toHaveBeenCalledWith(
-        bannerPageName,
-        undefined,
         {
-          name: bannerPageName,
-          ...OPTED_IN_ANALYTICS_PROPS,
+          category: bannerPageName,
+          props: {
+            name: bannerPageName,
+            ...OPTED_IN_ANALYTICS_PROPS,
+          },
         },
-        true,
-        false,
+        { updateRoutes: true },
       );
     });
 

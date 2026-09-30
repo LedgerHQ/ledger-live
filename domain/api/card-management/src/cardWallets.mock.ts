@@ -1,7 +1,6 @@
 import type {
   PayCardInternalWallet,
   PayCardLinkedWalletResponse,
-  PayCardRewardWallet,
   PayCardWalletPrioritiesRequest,
 } from "./types";
 
@@ -41,8 +40,6 @@ const MOCK_WALLETS = [
     balance: "12.500000000",
   },
 ] as const;
-
-const MOCK_REWARD_WALLET_ID = "44444444-4444-4444-8444-444444444444";
 
 export type PayCardMockWalletAsset = "usdc" | "btc" | "sol";
 
@@ -106,15 +103,6 @@ export function reorderPayCardLinkedWalletsMock(
 
   linkedPrioritiesOverride = priorities;
   return true;
-}
-
-export function mockPayCardRewardWallet(): PayCardRewardWallet {
-  return {
-    id: MOCK_REWARD_WALLET_ID,
-    balance: "10.32",
-    currency: "usdc",
-    isWithdrawable: true,
-  };
 }
 
 /** An explicit devtool answer. `undefined` leaves both wallet endpoints under normal handling. */

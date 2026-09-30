@@ -13,10 +13,14 @@ import {
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { BroadcastFlow } from "@e2e/helpers/broadcastRotation";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "@e2e/models/stake";
-import { FF_MINA_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
+import { FF_BABYLON_STAKING_ENABLED, FF_MINA_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { getCurrencyManagerApp } from "@e2e/models/currencies";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+
+const DELEGATE_FEATURE_FLAGS = new Map<string, PartialFeatures>([
+  [Currency.BABY.id, FF_BABYLON_STAKING_ENABLED],
+]);
 
 const beforeAllFunction = async (delegation: DelegateType, featureFlags?: PartialFeatures) => {
   await app.init({
@@ -34,7 +38,10 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
   tags.forEach(tag => $Tag(tag));
   describe("Delegate", () => {
     beforeAll(async () => {
-      await beforeAllFunction(delegation);
+      await beforeAllFunction(
+        delegation,
+        DELEGATE_FEATURE_FLAGS.get(delegation.account.currency.id),
+      );
     });
 
     it(`[${delegation.account.currency.testLabel}] - Delegate`, async () => {
@@ -53,10 +60,11 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
       await app.account.tapEarn();
 
       await app.stake.dismissDelegationStart(currencyId);
-      // Osmosis, like MultiversX, has no pre-selected validator: pick it after the amount.
+      // Osmosis, Babylon and MultiversX have no pre-selected validator: pick it after the amount.
       if (
         delegation.account.currency.name === Currency.MULTIVERS_X.name ||
-        delegation.account.currency.name === Currency.OSMO.name
+        delegation.account.currency.name === Currency.OSMO.name ||
+        delegation.account.currency.name === Currency.BABY.name
       ) {
         await app.stake.setAmount(currencyId, delegation.amount);
         await app.stake.validateAmount(currencyId);

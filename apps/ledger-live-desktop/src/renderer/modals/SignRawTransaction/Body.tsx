@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Stepper from "~/renderer/components/Stepper";
 import logger from "~/renderer/logger";
 import { getCurrentDevice } from "~/renderer/reducers/devices";

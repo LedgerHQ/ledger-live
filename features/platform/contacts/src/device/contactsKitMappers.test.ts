@@ -2,6 +2,7 @@ import { ContactDeviceIntentInputError } from "./errors";
 import {
   mapBytesToGroupHandle,
   mapBytesToProof,
+  mapChainIdForFamily,
   mapChainIdToBigInt,
   mapGroupHandleToBytes,
   mapIdentifierToBytes,
@@ -44,17 +45,51 @@ describe("tryDecodeHex", () => {
 });
 
 describe("mapIdentifierToBytes", () => {
-  it("GIVEN a valid hex identifier WHEN mapping THEN it returns the decoded bytes", () => {
+  it("GIVEN a valid hex EVM identifier WHEN mapping THEN it returns the decoded bytes", () => {
     // WHEN
-    const result = mapIdentifierToBytes("0xabc0");
+    const result = mapIdentifierToBytes("0xabc0", "evm");
 
     // THEN
     expect(result).toEqual(new Uint8Array([0xab, 0xc0]));
   });
 
-  it("GIVEN a non-hex identifier WHEN mapping THEN it throws ContactDeviceIntentInputError", () => {
+  it("GIVEN a non-hex EVM identifier WHEN mapping THEN it throws ContactDeviceIntentInputError", () => {
     // WHEN / THEN
-    expect(() => mapIdentifierToBytes("not-hex")).toThrow(ContactDeviceIntentInputError);
+    expect(() => mapIdentifierToBytes("not-hex", "evm")).toThrow(ContactDeviceIntentInputError);
+  });
+
+  it("GIVEN a base58 Tron address WHEN mapping THEN it returns the 21-byte 0x41-prefixed form", () => {
+    // WHEN
+    const result = mapIdentifierToBytes("TUjT4fqfNmuCq5wnPfgZayswhGTBcF3U11", "tron");
+
+    // THEN
+    expect(result).toEqual(tryDecodeHex("0x41cdd04e1580f2ae3447aa7129a21aa57a92be6c14"));
+  });
+
+  it.each([
+    ["a bad checksum", "TUjT4fqfNmuCq5wnPfgZayswhGTBcF3U12"],
+    ["a hex address", "0x41cdd04e1580f2ae3447aa7129a21aa57a92be6c14"],
+    ["a non-base58 character", "TUjT4fqfNmuCq5wnPfgZayswhGTBcF3U10"],
+    ["an EVM address", "0xAbC0000000000000000000000000000000000001"],
+    ["an empty string", ""],
+  ])("GIVEN a Tron identifier with %s WHEN mapping THEN it throws", (_label, value) => {
+    // WHEN / THEN
+    expect(() => mapIdentifierToBytes(value, "tron")).toThrow(ContactDeviceIntentInputError);
+  });
+});
+
+describe("mapChainIdForFamily", () => {
+  it("GIVEN the EVM family WHEN mapping THEN it returns the chainId as a bigint", () => {
+    expect(mapChainIdForFamily(137, "evm")).toBe(137n);
+  });
+
+  it("GIVEN the Tron family WHEN mapping THEN it omits the chainId", () => {
+    // Tron's coin type must never reach the device: the signer provides without one.
+    expect(mapChainIdForFamily(195, "tron")).toBeUndefined();
+  });
+
+  it("GIVEN the EVM family and a non-numeric chainId WHEN mapping THEN it throws", () => {
+    expect(() => mapChainIdForFamily("nope", "evm")).toThrow(ContactDeviceIntentInputError);
   });
 });
 

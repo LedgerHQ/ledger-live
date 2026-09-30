@@ -19,7 +19,7 @@ import { toggleStarAction } from "~/renderer/actions/wallet";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { swapSelectableCurrenciesSelector } from "~/renderer/reducers/settings";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { ContextMenuItemType } from "./ContextMenuWrapper";
 import { IconsLegacy } from "@ledgerhq/react-ui";
@@ -29,6 +29,7 @@ import { useStake } from "LLD/hooks/useStake";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import IconCoins from "~/renderer/icons/Coins";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 
 type Props = {
   account: AccountLike;
@@ -134,13 +135,12 @@ export default function AccountContextMenu({
         callback: () => {
           setTrackingSource("account context menu");
           navigate("/swap", {
-            state: {
+            state: buildSwapNavigationState({
               defaultCurrency: currency,
-              defaultAccountId: account.id,
-              defaultAmountFrom: "0",
-              defaultParentAccountId: parentAccount?.id,
-              from: location.pathname,
-            },
+              fromPath: location.pathname,
+              account,
+              parentAccount: parentAccount ?? undefined,
+            }),
           });
         },
       });

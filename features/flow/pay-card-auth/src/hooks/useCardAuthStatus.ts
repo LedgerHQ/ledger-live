@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { selectCardAuthStatus } from "../state/selectors";
+import { selectCardAuthStatus, selectIsCardSessionResolving } from "../state/selectors";
 import type { PayCardAuthStatus } from "../state/types";
 
 /**
@@ -8,5 +8,8 @@ import type { PayCardAuthStatus } from "../state/types";
  * can hold the login CTA back until the login machine has hydrated the stored session.
  */
 export function useCardAuthStatus(): PayCardAuthStatus {
-  return useSelector(selectCardAuthStatus);
+  const status = useSelector(selectCardAuthStatus);
+  const isSessionResolving = useSelector(selectIsCardSessionResolving);
+
+  return status !== "signedIn" && isSessionResolving ? "unknown" : status;
 }

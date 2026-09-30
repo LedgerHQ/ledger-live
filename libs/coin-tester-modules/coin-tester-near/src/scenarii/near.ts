@@ -113,7 +113,15 @@ function makeTransactions(): NearScenarioTransaction[] {
         const [latestOp] = current.operations;
         expect(latestOp.type).toBe("WITHDRAW_UNSTAKED");
         expect(latestOp.fee.gt(0)).toBe(true);
-        expect(current.spendableBalance.gt(previous.spendableBalance)).toBe(true);
+        // The pool pays out through a Transfer receipt that lands a block after the call, while
+        // the gas refund can land first. A bare "spendable went up" is met by the refund alone,
+        // and the next step would then size its send-max on a balance the 5 NEAR are still
+        // missing from. Require the withdrawn amount itself to have arrived.
+        expect(
+          current.spendableBalance
+            .minus(previous.spendableBalance)
+            .gte(FIVE_NEAR.minus(latestOp.fee)),
+        ).toBe(true);
       },
     },
     {
@@ -168,7 +176,7 @@ export const scenarioNear: Scenario<GenericTransaction, Account> = {
     // the only way to reach it without waiting for real time to pass.
     if (step === WITHDRAW_STEP && sandbox) {
       await sandbox.fastForward(EPOCHS_TO_UNLOCK_BLOCKS);
-      await pingPool(await sandbox.near.account(SENDER_ID));
+      await pingPool(sandbox.account(SENDER_ID));
     }
     step += 1;
   },

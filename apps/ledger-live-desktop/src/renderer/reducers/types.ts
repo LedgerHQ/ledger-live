@@ -1,4 +1,4 @@
-import { CountervaluesSettings, CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { CountervaluesSettings, CounterValuesState } from "@domain/entity-market-countervalues";
 
 export type Handlers<State, Types, PreciseKey = true> = {
   [Key in keyof Types]: (

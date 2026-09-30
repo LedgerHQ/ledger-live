@@ -9,9 +9,11 @@ import {
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Observable } from "rxjs";
 
-import { type MobileConnectDeviceUIState, type MobileDiscoveryError } from "./types";
-import { RnBleDeviceDiscoverySource } from "./discoveryService/sources/RnBleDeviceDiscoverySource";
-import { RnHidDeviceDiscoverySource } from "./discoveryService/sources/RnHidDeviceDiscoverySource";
+import type { MobileDiscoveryError } from "../deviceConnectivity/types";
+import type { MobileConnectDeviceUIState } from "./types";
+import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
+import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
+import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
 import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
 
 export type ConnectDeviceInput = {
@@ -24,12 +26,14 @@ export type ConnectDeviceInput = {
 export function connectDevice(input: ConnectDeviceInput): Observable<MobileConnectDeviceUIState> {
   const rnHidSource = new RnHidDeviceDiscoverySource(input.dmk);
   const rnBleSource = new RnBleDeviceDiscoverySource(input.dmk);
+  const speculosSource = new SpeculosDeviceDiscoverySource(input.dmk);
   const discoverySources: Map<
     TransportIdentifier,
     DeviceDiscoverySource<MobileDiscoveryError>
   > = new Map();
   discoverySources.set(rnHidSource.transportId, rnHidSource);
   discoverySources.set(rnBleSource.transportId, rnBleSource);
+  discoverySources.set(speculosSource.transportId, speculosSource);
 
   return connectDeviceUseCase({
     ...input,

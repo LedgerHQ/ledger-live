@@ -163,6 +163,30 @@ describe("useCardViewModel", () => {
     );
   });
 
+  it("opens the cashback page on the hosted manifest", async () => {
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => {
+      await result.current.onViewRewards();
+    });
+
+    expect(topUpUrlFrom(mockNavigate)).toBe("https://ledger.baanxapi.test/cashback");
+  });
+
+  it("names the US app on the cashback page for a US card holder", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { result } = renderCardViewModel(null);
+
+    await act(async () => {
+      await result.current.onViewRewards();
+    });
+
+    expect(topUpUrlFrom(mockNavigate)).toBe(
+      "https://ledger.baanxapi.test/cashback?app_id=LEDGERUS",
+    );
+  });
+
   it("pre-selects the asset the user topped up from", async () => {
     const { result } = renderCardViewModel(null);
 

@@ -37,9 +37,6 @@ export const arbitrum = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 42161,
-  },
   explorerViews: [
     {
       tx: "https://arbitrum.blockscout.com/tx/$hash",

@@ -6,7 +6,7 @@ import { MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 import { ContextMenuTransition } from "./ContextMenuTransition";
 import { CONTEXT_MENU_REGISTRY } from "./registry";
 import type { ContextMenuViewProps } from "./types";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 
 const side = "bottom";
 const align = "end";

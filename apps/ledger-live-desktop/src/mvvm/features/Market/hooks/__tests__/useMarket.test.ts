@@ -10,7 +10,7 @@ import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useU
 import { useMarket } from "../useMarket";
 import { addStarredMarketCoins } from "~/renderer/actions/settings";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider");
 jest.mock("@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider");

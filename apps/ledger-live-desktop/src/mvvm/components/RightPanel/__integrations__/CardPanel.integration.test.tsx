@@ -1,14 +1,14 @@
 import React from "react";
+import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashback";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
-import { mockPayCardRewardWallet } from "@domain/api-card-management/mock/card-wallets";
 import { getEnv } from "@shared/env";
 import { http, HttpResponse, server } from "tests/server";
-import { fireEvent, render, screen, within } from "tests/testSetup";
+import { fireEvent, render, screen, waitFor, within } from "tests/testSetup";
 import { initialCountervaluesMock } from "tests/mocks/countervalues.mock";
 import { Card } from "../Card";
 
 const CARD_TRANSACTIONS_URL = `${getEnv("CARD_BAANX_API_URL")}/v1/card/transactions`;
-const CARD_REWARD_WALLET_URL = `${getEnv("CARD_BAANX_API_URL")}/v1/wallet/reward`;
+const CARD_CASHBACK_URL = `${getEnv("CARD_BAANX_API_URL")}/v1/card/cashback`;
 const CAL_TOKENS_URL = `${getEnv("CAL_SERVICE_URL")}/v1/tokens`;
 const USDC_ID = "ethereum/erc20/usd__coin";
 
@@ -24,10 +24,15 @@ const usdcToken = {
   units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
 };
 
-function answerRewardWallet(balance: string) {
+function answerCashback(amount: string) {
   server.use(
-    http.get(CARD_REWARD_WALLET_URL, () =>
-      HttpResponse.json({ ...mockPayCardRewardWallet(), balance }),
+    http.get(CARD_CASHBACK_URL, () =>
+      HttpResponse.json({
+        ...mockPayCardCashback(),
+        currency: "usdc",
+        network: "ethereum",
+        amount,
+      }),
     ),
   );
 }
@@ -72,7 +77,7 @@ describe("RightPanel card integration", () => {
     const panel = screen.getByRole("region", { name: "Crypto card" });
     expect(panel).toContainElement(item);
     expect(panel.parentElement).toHaveClass("overflow-y-auto");
-    expect(within(panel).getByText("Disclaimer placeholder")).toBeVisible();
+    expect(within(panel).getByText("Provided by Monavate Onchain")).toBeVisible();
   });
 
   it("should format the transaction amounts with the Desktop formatter", async () => {
@@ -87,7 +92,7 @@ describe("RightPanel card integration", () => {
   });
 
   it("should show what the reward is worth once its currency and rate resolve", async () => {
-    answerRewardWallet("1234.56");
+    answerCashback("1234.56");
     resolveUsdc();
 
     render(<Card />, { initialState: signedIn, initialCountervalues: initialCountervaluesMock });
@@ -99,9 +104,9 @@ describe("RightPanel card integration", () => {
     expect(await within(reward).findByText(/1,234\.4/)).toHaveTextContent("$");
   });
 
-  it("should format the reward balance with the Desktop formatter while nothing prices it", async () => {
+  it("should format the reward amount with the Desktop formatter while nothing prices it", async () => {
     // No CAL answer, so the token never resolves and the banner falls back to the asset amount.
-    answerRewardWallet("1234.56");
+    answerCashback("1234.56");
 
     render(<Card />, { initialState: signedIn });
 
@@ -135,7 +140,7 @@ describe("RightPanel card integration", () => {
   it("should not ask for the history while the card session is unresolved", async () => {
     render(<Card />);
 
-    expect(await screen.findByTestId("card-artwork")).toBeVisible();
+    await waitFor(() => expect(screen.getByTestId("card-artwork")).toBeVisible());
     expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
     expect(onTransactionsRequest).not.toHaveBeenCalled();
   });
