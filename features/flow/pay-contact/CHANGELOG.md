@@ -1,5 +1,12 @@
 # @features/flow-pay-contact
 
+## 0.5.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/flow-contacts@0.13.0-next.2
+
 ## 0.5.0-next.1
 
 ### Patch Changes

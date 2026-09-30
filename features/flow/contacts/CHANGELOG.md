@@ -1,5 +1,12 @@
 # @features/flow-contacts
 
+## 0.13.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`4fc2063`](https://github.com/LedgerHQ/ledger-live/commit/4fc2063b0e49a445ebb660f750214e69d5c4355a)]:
+  - @features/flow-contacts-introduction@1.3.0-next.0
+
 ## 0.13.0-next.1
 
 ### Patch Changes
