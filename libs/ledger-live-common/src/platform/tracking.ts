@@ -3,7 +3,7 @@ import type { LiveAppManifest } from "./types";
 /**
  * This signature is to be compatible with track method of `segment.js` file in LLM and LLD
  * `track(event: string, properties: ?Object, mandatory: ?boolean)` in jsflow
- * {@link @ledger-desktop/renderer/analytics/segment#track}
+ * {@link @shared/analytics#track}
  */
 type TrackPlatform = (
   event: string,
