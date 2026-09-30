@@ -1,4 +1,4 @@
-import { isCantonAccount } from "@ledgerhq/coin-canton";
+import { isCantonAccount, TransferOfferExpiredError } from "@ledgerhq/coin-canton";
 import type { Sync } from "@ledgerhq/live-common/bridge/react/types";
 import { useFeature } from "@features/platform-feature-flags";
 import {
@@ -194,18 +194,25 @@ export function usePendingTransferProposalsViewModel({
           redirectToReonboarding(action, contractId);
           return;
         }
-        if ((error as { name?: string })?.name === "TransferOfferExpiredError") {
+        const isExpiredError = (error as { name?: string })?.name === "TransferOfferExpiredError";
+        // The gateway checks expiry only at prepare: an accept whose deadline passes while
+        // signing fails at submit with a generic error.
+        const proposal = allProposals.find(p => p.contractId === contractId);
+        const expiredDuringAccept =
+          action === "accept" && !!proposal && Date.now() > proposal.expiresAtMicros / 1000;
+        if (isExpiredError || expiredDuringAccept) {
           sync({
             type: "SYNC_ONE_ACCOUNT",
             accountId: account.id,
             priority: 10,
             reason: "canton-pending-transaction-action",
           });
+          throw isExpiredError ? error : new TransferOfferExpiredError();
         }
         throw error;
       }
     },
-    [performTransferInstruction, sync, account, redirectToReonboarding],
+    [performTransferInstruction, sync, account, allProposals, redirectToReonboarding],
   );
 
   const onOpenModal = useCallback((contractId: string, action: TransferProposalAction) => {

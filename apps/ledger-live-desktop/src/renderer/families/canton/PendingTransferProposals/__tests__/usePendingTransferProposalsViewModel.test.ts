@@ -206,6 +206,44 @@ describe("usePendingTransferProposalsViewModel", () => {
       });
       expect(mockHandleTopologyChangeError).not.toHaveBeenCalled();
     });
+
+    describe("when the action fails after the offer's deadline", () => {
+      const submitError = new Error("An internal server occurred");
+
+      beforeEach(() => {
+        mockPerformTransferInstruction.mockRejectedValueOnce(submitError);
+      });
+
+      const confirmAfterDeadline = async (action: "accept" | "reject") => {
+        const account = createAccountWithProposal("contract-123", "sender-address", "test-xpub", {
+          expires_at_micros: (Date.now() - 1000) * 1000,
+        });
+        const { result } = renderHook(
+          () => usePendingTransferProposalsViewModel(account, account),
+          { initialState: buildInitialState() },
+        );
+
+        act(() => {
+          result.current.onOpenModal("contract-123", action);
+        });
+
+        let thrown: unknown;
+        await act(async () => {
+          thrown = await result.current.onDeviceConfirm("device-id").catch(e => e);
+        });
+        return thrown;
+      };
+
+      it("should report a failed accept as TransferOfferExpiredError and sync", async () => {
+        expect(await confirmAfterDeadline("accept")).toBeInstanceOf(TransferOfferExpiredError);
+        expect(mockSync).toHaveBeenCalled();
+      });
+
+      it("should rethrow a failed reject unchanged, since reject still works after expiry", async () => {
+        expect(await confirmAfterDeadline("reject")).toBe(submitError);
+        expect(mockSync).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe("proposal processing", () => {

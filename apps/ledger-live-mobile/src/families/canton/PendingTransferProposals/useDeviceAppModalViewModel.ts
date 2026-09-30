@@ -1,5 +1,5 @@
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSelector } from "~/context/hooks";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
@@ -35,12 +35,14 @@ export function useDeviceAppModalViewModel({
 
   const request = useMemo(() => ({ appName }), [appName]);
 
-  useEffect(() => {
-    if (isOpen) {
-      setConfirmationState("pending");
-      setError(null);
-    }
-  }, [isOpen]);
+  // Reset on open and on close: the error sheet opens whenever `error` is set, so a stale error
+  // would reopen it on the next focus.
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
+    setConfirmationState("pending");
+    setError(null);
+  }
 
   const handleConfirm = useCallback(
     async (deviceId: string) => {
