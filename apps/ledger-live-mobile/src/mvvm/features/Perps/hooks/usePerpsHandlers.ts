@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
@@ -11,6 +11,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ScreenName } from "~/const";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { beginDepositRequest, cancelDepositRequest } from "../utils/perpsDepositRequest";
 
 export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandlers {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
@@ -49,10 +50,14 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
 
   const uiDepositExecute = useCallback(
     (params: PerpsDepositUiParams) => {
+      const request = beginDepositRequest();
       navigation.navigate(ScreenName.PerpsDeposit, params);
+      return request;
     },
     [navigation],
   );
+
+  useEffect(() => cancelDepositRequest, []);
 
   return useMemo<WalletAPICustomHandlers>(
     () =>

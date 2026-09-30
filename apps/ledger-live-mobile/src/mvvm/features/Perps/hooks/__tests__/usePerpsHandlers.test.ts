@@ -1,6 +1,8 @@
 import { renderHook } from "@tests/test-renderer";
 import { usePerpsHandlers } from "../usePerpsHandlers";
 import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { getDepositRequestId, settleDepositRequest } from "../../utils/perpsDepositRequest";
 
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
   handlers: jest.fn().mockReturnValue({
@@ -60,15 +62,30 @@ describe("usePerpsHandlers", () => {
     });
   });
 
-  it("should navigate to the deposit amount form when deposit.execute is called", () => {
+  it("should navigate to the deposit form and resolve once the deposit settles", async () => {
     const accounts = [{ id: "acc-1" }] as never[];
     const receiverAccount = { id: "receiver-1", name: "HL Account" } as never;
 
     renderHook(() => usePerpsHandlers(accounts));
 
     const depositExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["deposit.execute"];
-    depositExecute?.({ receiverAccount });
+    const request = depositExecute?.({ receiverAccount });
+    settleDepositRequest(getDepositRequestId(), { swapId: "swap-1" });
 
     expect(mockNavigate).toHaveBeenCalledWith("PerpsDeposit", { receiverAccount });
+    await expect(request).resolves.toEqual({ swapId: "swap-1" });
+  });
+
+  it("should reject an in-flight deposit when the live app unmounts", async () => {
+    const accounts = [{ id: "acc-1" }] as never[];
+    const receiverAccount = { id: "receiver-1", name: "HL Account" } as never;
+
+    const { unmount } = renderHook(() => usePerpsHandlers(accounts));
+
+    const depositExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["deposit.execute"];
+    const request = depositExecute?.({ receiverAccount });
+    unmount();
+
+    await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
   });
 });

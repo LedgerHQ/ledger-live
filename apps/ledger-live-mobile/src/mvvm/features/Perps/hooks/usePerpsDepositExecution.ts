@@ -30,6 +30,7 @@ import type { Status } from "~/components/DeviceAction";
 import { broadcastLogger } from "~/datadog";
 import { track } from "~/analytics";
 import { isUserRefusal } from "../utils/isUserRefusal";
+import { getDepositRequestId, settleDepositRequest } from "../utils/perpsDepositRequest";
 
 type StartResult = StartExchangeResult;
 type CompleteResult = CompleteExchangeResult;
@@ -218,6 +219,7 @@ export function usePerpsDepositExecution(
   );
 
   const executeDeposit = useCallback(async () => {
+    const requestId = getDepositRequestId();
     try {
       // Reset to the loading state on every run (including retry after an error).
       setDeviceStep(PROCESSING_STEP);
@@ -275,6 +277,7 @@ export function usePerpsDepositExecution(
 
       if (!signed) return;
 
+      settleDepositRequest(requestId, { swapId: signed.swapId, amountTo });
       onDone({ swapId: signed.swapId });
     } catch (e) {
       if (isUserRefusal(e)) {
@@ -286,6 +289,7 @@ export function usePerpsDepositExecution(
   }, [
     accounts,
     amountSent,
+    amountTo,
     confirmSignAndBroadcast,
     depositAccount,
     getFeature,
