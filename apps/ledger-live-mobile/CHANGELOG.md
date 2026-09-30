@@ -1,5 +1,14 @@
 # live-mobile
 
+## 4.23.0-next.5
+
+### Patch Changes
+
+- Updated dependencies [[`4fc2063`](https://github.com/LedgerHQ/ledger-live/commit/4fc2063b0e49a445ebb660f750214e69d5c4355a)]:
+  - @features/flow-contacts-introduction@1.3.0-next.0
+  - @features/flow-contacts@0.13.0-next.2
+  - @features/flow-pay-contact@0.5.0-next.2
+
 ## 4.23.0-next.4
 
 ### Patch Changes
