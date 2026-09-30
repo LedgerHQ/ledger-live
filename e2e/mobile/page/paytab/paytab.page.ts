@@ -25,6 +25,9 @@ export default class PayTabPage {
   requestVerifyId = "pay-request-receive-verify";
   requestVerifyHintId = "pay-request-receive-verify-hint";
   requestCloseId = "pay-request-receive-close";
+  payTileId = "pay-contacts-pay-tile";
+  successStepId = "pay-success-step";
+  successCloseId = "pay-success-close";
 
   filterOptionId = (rowKey: string) => `pay-card-balance-filter-option-${rowKey}`;
   depositOptionId = (optionId: PayDepositOptionId) => `pay-card-deposit-option-${optionId}`;
@@ -135,5 +138,22 @@ export default class PayTabPage {
     await this.dismissVerifyHintIfVisible();
     await tapById(this.requestCloseId);
     await waitForElementNotVisible(this.requestScreenId);
+  }
+
+  @Step("Open a new payment")
+  async openNewPayment() {
+    await tapById(this.payTileId);
+  }
+
+  @Step("Expect the Pay success screen")
+  async expectYouPaid() {
+    await waitForElementById(this.successCloseId);
+    await waitForElementByText(/You paid .+/);
+  }
+
+  @Step("Close the Pay success screen")
+  async closePaySuccess() {
+    await tapById(this.successCloseId);
+    await waitForElementNotVisible(this.successStepId);
   }
 }
