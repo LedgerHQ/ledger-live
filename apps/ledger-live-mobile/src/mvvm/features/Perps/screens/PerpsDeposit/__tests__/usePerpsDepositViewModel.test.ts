@@ -25,8 +25,8 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
 
 // Prices the typed amount back into the funding currency, in its smallest unit.
 const mockCalculate = jest.fn();
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
+jest.mock("@domain/entity-market-countervalues", () => ({
+  ...jest.requireActual("@domain/entity-market-countervalues"),
   calculate: (...args: unknown[]) => mockCalculate(...args),
 }));
 

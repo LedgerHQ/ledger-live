@@ -26,7 +26,7 @@ import type {
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import type { Steps } from "LLM/features/WalletSync/types/Activation";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 import type { UnknownAction } from "redux";
 import type {
   BrazeContentCard,

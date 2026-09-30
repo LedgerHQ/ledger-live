@@ -2065,9 +2065,6 @@ importers:
       '@ledgerhq/live-config':
         specifier: 'catalog:'
         version: 3.9.0
-      '@ledgerhq/live-countervalues':
-        specifier: workspace:^
-        version: link:../../libs/live-countervalues
       '@ledgerhq/live-countervalues-react':
         specifier: workspace:^
         version: link:../../libs/live-countervalues-react

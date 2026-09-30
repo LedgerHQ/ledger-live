@@ -6,9 +6,8 @@ import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currenc
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate, historyKey, inferCurrencyAPIID } from "@domain/entity-market-countervalues";
 import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";
-import { historyKey, inferCurrencyAPIID } from "@domain/entity-market-countervalues";
 import {
   getCryptoCurrencyById,
   findCryptoCurrencyById,
